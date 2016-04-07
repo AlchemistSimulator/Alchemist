@@ -1,0 +1,24 @@
+incarnation: sapere
+
+network-model:
+  type: EuclideanDistance
+  parameters: [0.5]
+
+send: &send
+  - time-distribution: 1
+    program: >
+      {token} --> {token} *{token}
+  - program: >
+      {token}{token} --> {token}
+
+displacements:
+  - in:
+      type: Grid
+      parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
+    contents:
+      - in:
+          type: Rectangle
+          parameters: [-0.5, -0.5, 1, 1]
+        molecule: token
+    programs:
+      - *send

@@ -1,0 +1,18 @@
+val x = 1
+
+default environment
+linking nodes in range 1.5
+ 
+protelis program prog 
+import java.lang.Math.min
+rep(d <- Infinity) {
+    mux (self.getDeviceUID() == 0) {
+    	0
+    } else {
+//    	hood(min, Infinity, nbr(d))  	
+	minHood(nbr(d))
+    }
+}
+@x,x
+  
+place 100 nodes within rect (0,0,9,9) with program prog 

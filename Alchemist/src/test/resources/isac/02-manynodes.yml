@@ -1,0 +1,10 @@
+incarnation: sapere
+
+network-model:
+  type: EuclideanDistance
+  parameters: [0.5]
+  
+displacements:
+  - in:
+      type: Circle
+      parameters: [10000, 0, 0, 10]

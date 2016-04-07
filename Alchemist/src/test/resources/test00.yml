@@ -1,0 +1,69 @@
+---
+variables:
+  testVar: &testVar
+    min: 0
+    max: 10
+    step: 1
+    default: 2
+    
+incarnation: protelis
+
+seeds:
+  scenario: 1
+  simulation: *testVar
+
+network-model:
+  type: EuclideanDistance
+  parameters: [1.5]
+  
+environment:
+  type: Continuous2DEnvironment
+  
+positions:
+  type: Continuous2DEuclidean
+  
+molecules:
+  testref: &testRef test
+
+pools:
+  - pool: &program
+      - time-distribution: *testVar
+        program: test
+      - time-distribution: null
+        program: send
+      - time-distribution: 1
+        type: Event
+        conditions: []
+        actions:
+          - type: BrownianMove
+            parameters: [1]
+      - time-distribution:
+          type: Trigger
+          parameters: [1]
+        type: Event
+        conditions: []
+        actions:
+          - type: BrownianMove
+            parameters: [1]
+
+contents:
+  - source: &content
+      in:
+        type: Rectangle
+        parameters: [-0.2, -0.2, 2.4, 2.4]
+      molecule: source
+      concentration: true
+  - test: &test
+      molecule: *testRef
+      concentration: *testVar
+    
+displacements:
+  - in:
+      type: Circle
+      parameters: [100, 0, 0, 2.8]
+    contents:
+      - *content
+      - *test
+    programs:
+      - *program
+      

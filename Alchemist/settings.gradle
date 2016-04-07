@@ -1,0 +1,13 @@
+include(
+    'alchemist-engine',
+    'alchemist-enginedependentmodel',
+    'alchemist-implementationbase',
+    'alchemist-incarnation-protelis',
+    'alchemist-incarnation-sapere',
+    'alchemist-interfaces',
+    'alchemist-maps',
+    'alchemist-sapere-mathexp',
+    'alchemist-swingui',
+    'alchemist-time'
+    )
+rootProject.name = "${artifactId}"

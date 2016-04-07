@@ -1,0 +1,176 @@
+/**
+ * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
+ */
+options
+{
+  JDK_VERSION = "1.5";
+  static = false;
+}
+
+PARSER_BEGIN(Exp)
+package alice.alchemist.parserGenerator;
+import alice.alchemist.implementations.MathExpression.*;
+import java.util.*;
+import alice.alchemist.implementations.MathExpression.DoubleTreeNode.Type;
+public class Exp {
+public static void main(String args[]) {
+Exp parser = new Exp(System.in);
+try{
+System.out.println("OK, here's the Prolog tree:");
+DoubleTree t=parser.Init();
+System.out.println(""+t);
+HashMap<String,Object > map=new HashMap<String,Object >();
+map.put("X",1.0);
+DoubleTreeNode lis=new DoubleTreeNode("NumList",Type.List);
+lis.addChild(new DoubleTreeNode(1,Type.Num));
+map.put("L",lis);
+System.out.println(t.evaluation(map));
+}catch (Exception e){
+e.printStackTrace();
+System.out.println("Exception!");
+}catch (Error e){
+ e.printStackTrace(); 
+System.out.println("Error!");
+} } }
+PARSER_END(Exp)
+SKIP : /* WHITE SPACE */ {
+" " | "\t" | "\n" | "\r"| "\f"
+}
+TOKEN :
+{
+<RETURN : "return"> |
+<MIN: "min" > |
+<MAX: "max" > |
+<ADD: "add" > |
+<DEL: "del" > |
+<DEF: "def" > |
+<COMP: ">"|"<"|"="|">="|"<="|"!=" > |
+<LISTCOMP: "has"|"hasnot" > |
+<UNARYLISTCOMP: "isempty" | "notempty" > |
+<NUM: (["0"-"9"])+ | (["0"-"9"])+ ["."] (["0"-"9"])+ > |
+<VAR :["#","A"-"Z"] ( ["a"-"z","A"-"Z","0"-"9"] )* > |
+<LIT :["a"-"z"] ( ["a"-"z","A"-"Z","0"-"9"] )* >
+}
+
+DoubleTree Init():{ DoubleTree res; DoubleTreeNode n;}{
+	n = E() <EOF> {
+	  res=new DoubleTree();
+	  res.setRootElement(n);	
+	  return res;}
+}
+DoubleTreeNode E():{ DoubleTreeNode op,s1=null,s2,s3=null; op=null;String cmp=null;}{
+	(
+	  
+	  < DEF > ":" s1=Var() ( cmp=Comparator() s2=Expr()  {op=new DoubleTreeNode(cmp,Type.Comparator); op.addChild(s1);op.addChild(s2);} |
+	  						 cmp=ListComparator() s2=ListExpr()  {op=new DoubleTreeNode(cmp,Type.ListComparator); op.addChild(s1);op.addChild(s2);}|
+   							 cmp=UnaryListComparator() {op=new DoubleTreeNode(cmp,Type.ListComparator); op.addChild(s1);}
+	  						 )
+	     {
+	      return op;
+	     }
+    )|
+
+	s1=Expr(){op=s1;return op;}|
+	s1=ListExpr(){op=s1;return op;}
+	
+	
+}
+
+String ListComparator():{Token t;}{
+     t=<LISTCOMP> {return t.image;}
+}
+
+String UnaryListComparator():{Token t;}{
+     t=<UNARYLISTCOMP> {return t.image;}
+}
+
+String Comparator():{Token t;}{
+     t=<COMP> {return t.image;}
+}
+DoubleTreeNode ListExpr():{ DoubleTreeNode op,s1; op=null;}{
+	{
+		op=new DoubleTreeNode("lista",Type.List); 
+		List<Object > listVal= new ArrayList< Object>();
+	}
+	"["
+		(
+			("]") |
+			
+			((s1=Var() | s1=Cost() | s1=Number()) ";" {listVal.add(s1);} )+ "]" {op.setType(Type.List);} 
+		  	//(s1=Cost() ";" {listVal.add(s1);} )+ "]" {op.setType(Type.List);}  | //Invece di tipo List potrei qui creare NumList e ConstList
+		  	//(s1=Number() ";" {listVal.add(s1);} )+ "]" {op.setType(Type.List);} 
+		)
+
+	{ op.setData(listVal);
+	  return op;}
+
+	
+}
+DoubleTreeNode Expr():{ DoubleTreeNode op,s1,s2=null; op=null;}{
+	s1 = TimesExpr()  
+	{
+	  op=new DoubleTreeNode(s1.getData(),Type.Operator);
+	}
+	
+	( "+" s2 = TimesExpr() {op.setData("plus"); op.addChild(s1); op.addChild(s2);}|
+	  "-" s2 = TimesExpr() {op.setData("minus"); op.addChild(s1); op.addChild(s2);}|
+	  <ADD> (s2 = ListExpr()|s2=Var()) {op.setData("add"); op.addChild(s1); op.addChild(s2);}|
+	  <DEL> (s2 = ListExpr()|s2=Var()) {op.setData("del"); op.addChild(s1); op.addChild(s2);}
+	  )*
+	{if(s2==null)
+		return s1;
+	 else
+	    return op;}
+}
+DoubleTreeNode TimesExpr():{ DoubleTreeNode op,s1,s2=null; op=null; }{
+	s1 = AtomicExpr()
+	{
+	   op=new DoubleTreeNode(s1.getData(),Type.Operator);
+	}
+	
+	( "*" s2= AtomicExpr() { op.setData("per"); op.addChild(s1); op.addChild(s2);}|
+	  "/" s2= AtomicExpr() { op.setData("div"); op.addChild(s1); op.addChild(s2);})*
+	{if(s2==null)
+		return s1;
+	 else
+    return op;}
+}
+
+DoubleTreeNode AtomicExpr():{DoubleTreeNode s;}{
+	("(" s=Expr() ")" | "|"s=ModExpr() "|" | <MIN > "(" s=MinExpr() ")" | <MAX > "(" s=MaxExpr() ")" | s=Var() | s=Cost() | s=Number() )
+	{return s;}
+}
+
+DoubleTreeNode ModExpr():{DoubleTreeNode op=null,s1,s2;}{
+	{op=new DoubleTreeNode("mod",Type.Operator);}	s1 = Expr() { op.addChild(s1); return op;	}
+
+}
+DoubleTreeNode MinExpr():{DoubleTreeNode op=null,s1,s2;}{
+	{ op=new DoubleTreeNode("min",Type.Operator);}
+	//caso min([lista])
+	((s1 = ListExpr() | s1=Var())	{op.addChild(s1); }|
+	//caso min(n1;n2)
+	(s1 = Expr() ";" s2 = Expr() ) { op.addChild(s1); op.addChild(s2);}  
+	
+	) 
+	{
+	  return op;
+	}
+}
+DoubleTreeNode MaxExpr():{DoubleTreeNode op=null,s1,s2;}{
+	{ op=new DoubleTreeNode("max",Type.Operator);}
+	//caso max([lista])
+	((s1 = ListExpr() | s1=Var() )	{op.addChild(s1); }|
+	//caso max(n1;n2)
+	(s1 = Expr() ";" s2 = Expr() ) { op.addChild(s1); op.addChild(s2);}  
+	) 
+	{
+	  return op;
+	}
+} 
+DoubleTreeNode Var():{Token t;}{
+	t=<VAR> {return new DoubleTreeNode(t.image,Type.Var);}}
+DoubleTreeNode Cost():{Token t;}{
+	t=<LIT> {return new DoubleTreeNode(t.image,Type.Const);}}	
+DoubleTreeNode Number():{Token t;}{
+	t=<NUM> {return new DoubleTreeNode(Double.parseDouble(t.image),Type.Num);}}

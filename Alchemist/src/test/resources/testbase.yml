@@ -1,0 +1,35 @@
+---
+export: [time]
+
+incarnation: protelis
+
+seeds: 
+ scenario: 0
+ simulation: 0
+ 
+network-model:
+ type: EuclideanDistance
+ parameters: [1.8]
+ 
+environment: 
+ type: Continuous2DEnvironment
+ 
+positions:
+ type: Continuous2DEuclidean
+ 
+pools:
+ - pool: &program
+   - time-distribution: 1
+     program: 1 
+   - time-distribution: null
+     program: send
+
+displacements:
+ - in:
+     type: Grid 
+     parameters: [0, 0, 10, 10, 1, 1, 0.1, 0.1]
+   programs: 
+     - *program
+   contents: 
+     - molecule: boolval
+       concentration: true

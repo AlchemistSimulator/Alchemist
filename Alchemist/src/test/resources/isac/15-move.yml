@@ -1,0 +1,56 @@
+incarnation: sapere
+
+variables:
+  rate: &rate
+    type: GeometricVariable
+    parameters: [1, 0.1, 10, 9]
+  size: &size
+    min: 1
+    max: 10
+    step: 1
+    default: 5
+  mSize: &mSize
+    formula: -$size
+  sourceStart: &sourceStart
+    formula: $mSize / 10
+  sourceSize: &sourceSize
+    formula: $size / 5
+
+network-model:
+  type: EuclideanDistance
+  parameters: [0.5]
+
+send: &grad
+  - time-distribution: *rate
+    program: "{token, N, L} --> {token, N, L} *{token, N+#D, L add [#NODE;]}"
+  - program: >
+      {token, N, L}{token, def: N2>=N, L2} --> {token, N, L}
+# Age information
+  - time-distribution:
+      type: DiracComb
+      parameters: [0.1]
+    program: >
+      {token, def: N>0, L} --> {token, def: N + 1, L}
+# Cleanup old information
+    program: >
+      {token, def: N>30, L} -->
+      
+move: &move
+  - time-distribution: 0.5
+    type: Event
+    actions:
+      - type: BrownianMove
+        parameters: [0.1]
+
+displacements:
+  - in:
+      type: Grid
+      parameters: [*mSize, *mSize, *size, *size, 0.25, 0.25, 0.1, 0.1]
+    contents:
+      - in:
+          type: Rectangle
+          parameters: [*sourceStart, *sourceStart, *sourceSize, *sourceSize]
+        molecule: token, 0, []
+    programs:
+      - *grad
+      - *move

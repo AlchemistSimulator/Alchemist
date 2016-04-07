@@ -1,0 +1,72 @@
+/*
+ * Copyright (C) 2010-2014, Danilo Pianini and contributors
+ * listed in the project's pom.xml file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of
+ * the GNU General Public License, with a linking exception, as described
+ * in the file LICENSE in the Alchemist distribution's top directory.
+ */
+package it.unibo.alchemist.model.implementations.environments;
+
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
+
+/**
+ * This class represents a 2D continuous environment with spatial limitations.
+ * Those limitations will prevent nodes to move in positions which are not
+ * allowed.
+ * 
+ * @param <T>
+ */
+public abstract class LimitedContinuos2D<T> extends Continuous2DEnvironment<T> {
+
+    private static final long serialVersionUID = -7838255122589911058L;
+
+    @Override
+    public void moveNodeToPosition(final Node<T> node, final Position newPos) {
+        final double[] cur = getPosition(node).getCartesianCoordinates();
+        final double[] np = newPos.getCartesianCoordinates();
+        // Calculate the next position allowed
+        final Position next = next(cur[0], cur[1], np[0], np[1]);
+        super.moveNodeToPosition(node, next);
+    }
+
+    @Override
+    protected boolean nodeShouldBeAdded(final Node<T> node, final Position p) {
+        return isAllowed(p);
+    }
+
+    /**
+     * This method must calculate the ABSOLUTE next allowed position given the
+     * current position and the position in which the node wants to move. For
+     * example, if your node is in position [2,3], wants to move to [3,4] but
+     * the next allowed position (because, e.g., of physical obstacles) is
+     * [2.5,3.5], the result must be a Position containing coordinates
+     * [2.5,3.5].
+     * 
+     * @param ox
+     *            The current X position
+     * @param oy
+     *            The current Y position
+     * @param nx
+     *            The requested X position
+     * @param ny
+     *            The requested Y position
+     * 
+     * @return the next allowed position, where the node can actually move. This
+     *         position MUST be considered as a vector whose start point is in
+     *         [ox, oy].
+     */
+    protected abstract Position next(double ox, double oy, double nx, double ny);
+
+    /**
+     * Checks whether a position is allowed to be occupied by a node in this
+     * environment.
+     * 
+     * @param p
+     *            the position to check
+     * @return true if the position is allowed
+     */
+    protected abstract boolean isAllowed(Position p);
+
+}

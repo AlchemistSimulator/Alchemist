@@ -1,0 +1,13 @@
+incarnation: sapere
+
+network-model:
+  type: EuclideanDistance
+  parameters: [5]
+  
+displacements:
+  - in:
+      type: Point
+      parameters: [0, 0]
+  - in:
+      type: Point
+      parameters: [0, 1]

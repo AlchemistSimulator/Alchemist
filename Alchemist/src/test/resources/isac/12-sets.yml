@@ -1,0 +1,23 @@
+incarnation: sapere
+
+network-model:
+  type: EuclideanDistance
+  parameters: [0.5]
+
+send: &grad
+  - time-distribution: 1
+    program: "{token, N, L} --> {token, N, L} *{token, N+#D, L add [#NODE;]}"
+  - program: >
+      {token, N, L}{token, def: N2>=N, L2} --> {token, N, L}
+ 
+displacements:
+  - in:
+      type: Grid
+      parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
+    contents:
+      - in:
+          type: Rectangle
+          parameters: [-0.5, -0.5, 1, 1]
+        molecule: token, 0, []
+    programs:
+      - *grad

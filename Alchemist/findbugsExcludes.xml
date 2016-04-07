@@ -1,0 +1,7 @@
+<FindBugsFilter>
+	<Match>
+		<Bug pattern="CN_IDIOM_NO_SUPER_CALL" />
+		<Bug pattern="IMA_INEFFICIENT_MEMBER_ACCESS" />
+		<Bug pattern="SE_INNER_CLASS" />
+	</Match>
+</FindBugsFilter>

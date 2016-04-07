@@ -1,0 +1,10 @@
+val x = 1
+
+default environment
+linking nodes in range 1.5
+ 
+protelis program prog 
+nbr(1)
+@x,x
+  
+place 100 nodes within rect (0,0,9,9) with program prog 

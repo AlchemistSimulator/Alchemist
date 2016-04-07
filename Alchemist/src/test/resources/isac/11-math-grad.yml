@@ -1,0 +1,30 @@
+incarnation: sapere
+
+network-model:
+  type: EuclideanDistance
+  parameters: [0.5]
+
+send: &grad
+  - time-distribution: 0.1
+    program: "{source} --> {source} {gradient, 0}"
+  - time-distribution: 1
+    program: "{gradient, N} --> {gradient, N} *{gradient, N+#D}"
+  - program: >
+      {gradient, N}{gradient, def: N2>=N} --> {gradient, N}
+  - time-distribution: 0.1
+    program: >
+      {gradient, N} --> {gradient, N + 1}
+  - program: >
+      {gradient, def: N > 30} --> 
+ 
+displacements:
+  - in:
+      type: Grid
+      parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
+    contents:
+      - in:
+          type: Rectangle
+          parameters: [-0.5, -0.5, 1, 1]
+        molecule: source
+    programs:
+      - *grad

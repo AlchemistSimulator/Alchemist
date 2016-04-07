@@ -1,0 +1,12 @@
+dependencies {
+    compile (
+        project(':alchemist-interfaces'),
+        project(':alchemist-time'),
+        "com.google.guava:guava:$guavaVersion",
+        "info.debatty:java-string-similarity:$stringSimilarityVersion",
+        "net.sourceforge.streamsupport:streamsupport:$streamsupportVersion",
+        "org.danilopianini:javalib:$javalibVersion",
+        "org.danilopianini:javalib-java7:$javalib7Version",
+        "org.reflections:reflections:$reflectionsVersion"
+    )
+}

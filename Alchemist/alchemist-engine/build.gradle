@@ -1,0 +1,7 @@
+dependencies {
+	compile (
+			project(':alchemist-interfaces'),
+			project(':alchemist-time'),
+			"org.danilopianini:javalib-java7:$javalib7Version"
+			)
+}

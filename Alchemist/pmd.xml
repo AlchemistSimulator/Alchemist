@@ -5,7 +5,6 @@
 	<description>Alchemist PMD Plugin preferences rule set</description>
 	<rule ref="rulesets/java/design.xml/AbstractClassWithoutAbstractMethod" />
 	<rule ref="rulesets/java/design.xml/AbstractClassWithoutAnyMethod" />
-	<rule ref="rulesets/java/design.xml/AccessorClassGeneration" />
 	<rule ref="rulesets/java/optimizations.xml/AddEmptyString" />
 	<rule ref="rulesets/java/strings.xml/AppendCharacterWithChar" />
 	<rule ref="rulesets/java/sunsecure.xml/ArrayIsStoredDirectly" />
@@ -121,7 +120,6 @@
 	<rule ref="rulesets/java/migrating.xml/JUnit4TestShouldUseAfterAnnotation" />
 	<rule ref="rulesets/java/migrating.xml/JUnit4TestShouldUseBeforeAnnotation" />
 	<rule ref="rulesets/java/migrating.xml/JUnit4TestShouldUseTestAnnotation" />
-	<rule ref="rulesets/java/junit.xml/JUnitAssertionsShouldIncludeMessage" />
 	<rule ref="rulesets/java/junit.xml/JUnitSpelling" />
 	<rule ref="rulesets/java/junit.xml/JUnitStaticSuite" />
 	<rule ref="rulesets/java/junit.xml/JUnitTestsShouldIncludeAssert" />

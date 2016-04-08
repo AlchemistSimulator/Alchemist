@@ -4,7 +4,7 @@ Alchemist is a simulator built upon the kinetic Monte Carlo idea, but heavily en
 
 
 ## Build Status
-[![Build Status](https://drone.io/github.com/DanySK/alchemist-time/status.png)](https://drone.io/github.com/DanySK/alchemist-time/latest)
+[![Build Status](https://drone.io/github.com/AlchemistSimulator/Alchemist/status.png)](https://drone.io/github.com/AlchemistSimulator/Alchemist/latest)
 
 
 ### Javadocs

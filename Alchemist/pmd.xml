@@ -120,7 +120,6 @@
 	<rule ref="rulesets/java/migrating.xml/JUnit4TestShouldUseAfterAnnotation" />
 	<rule ref="rulesets/java/migrating.xml/JUnit4TestShouldUseBeforeAnnotation" />
 	<rule ref="rulesets/java/migrating.xml/JUnit4TestShouldUseTestAnnotation" />
-	<rule ref="rulesets/java/junit.xml/JUnitAssertionsShouldIncludeMessage" />
 	<rule ref="rulesets/java/junit.xml/JUnitSpelling" />
 	<rule ref="rulesets/java/junit.xml/JUnitStaticSuite" />
 	<rule ref="rulesets/java/junit.xml/JUnitTestsShouldIncludeAssert" />

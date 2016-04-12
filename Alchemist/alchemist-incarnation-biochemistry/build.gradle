@@ -1,0 +1,7 @@
+dependencies {
+    compile (
+        project(':alchemist-maps'),
+        "com.google.guava:guava:$guavaVersion",
+        "org.danilopianini:javalib-java7:$javalib7Version",
+    )
+}

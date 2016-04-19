@@ -12,6 +12,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.nodes.CellNode;
+import it.unibo.alchemist.model.implementations.reactions.ChemicalReaction;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -32,7 +33,7 @@ public class BiochemistryIncarnation implements Incarnation<Double> {
     }
 
     @Override
-    public Molecule createMolecule(final String s) {
+    public Biomolecule createMolecule(final String s) {
         return new Biomolecule(s);
     }
 
@@ -55,8 +56,11 @@ public class BiochemistryIncarnation implements Incarnation<Double> {
     @Override
     public Reaction<Double> createReaction(final RandomGenerator rand, final Environment<Double> env, final Node<Double> node,
             final TimeDistribution<Double> time, final String param) {
-        // TODO Auto-generated method stub
-        return null;
+        final ChemicalReaction<Double> reaction = new ChemicalReaction<>(node, time);
+
+        // TODO
+
+        return reaction;
     }
 
     @Override

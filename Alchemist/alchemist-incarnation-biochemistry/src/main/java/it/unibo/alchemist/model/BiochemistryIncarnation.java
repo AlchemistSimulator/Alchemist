@@ -8,8 +8,13 @@
  */
 package it.unibo.alchemist.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.apache.commons.math3.random.RandomGenerator;
 
+import it.unibo.alchemist.model.implementations.actions.ChangeBiomolConcentrationInCell;
+import it.unibo.alchemist.model.implementations.conditions.BiomolPresentInCell;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.nodes.CellNode;
 import it.unibo.alchemist.model.implementations.reactions.ChemicalReaction;
@@ -39,27 +44,35 @@ public class BiochemistryIncarnation implements Incarnation<Double> {
 
     @Override
     public Node<Double> createNode(final RandomGenerator rand, final Environment<Double> env, final String param) {
-        // TODO Auto-generated method stub
-        //return null;
-        return new CellNode(env);
+        // TODO it is just a test
+        final CellNode n = new CellNode(env);
+        n.setConcentration(new Biomolecule("a"), 100d);
+        return n;
     }
 
     @Override
     public TimeDistribution<Double> createTimeDistribution(final RandomGenerator rand, final Environment<Double> env,
             final Node<Double> node, final String param) {
-        // TODO Auto-generated method stub
-        //return null;
-        final double arg = Double.parseDouble(param);
-        return new ExponentialTime<Double>(arg, rand);
+        try {
+            final double rate = Double.parseDouble(param);
+            return new ExponentialTime<>(rate, rand);
+        } catch (NumberFormatException e) { // TODO exponential time with rate 1?
+            return new ExponentialTime<>(1.0, rand);
+        }
     }
 
     @Override
     public Reaction<Double> createReaction(final RandomGenerator rand, final Environment<Double> env, final Node<Double> node,
             final TimeDistribution<Double> time, final String param) {
         final ChemicalReaction<Double> reaction = new ChemicalReaction<>(node, time);
+        final Biomolecule mol = new Biomolecule("a");
+        final double delta = -0.1;
+        // set the conditions (molecule a is present)
+        reaction.setConditions(new ArrayList<>(Arrays.asList(new BiomolPresentInCell(mol, 1.0, (CellNode) node))));
+        reaction.setActions(new ArrayList<>(Arrays.asList(
+                new ChangeBiomolConcentrationInCell(mol, delta, (CellNode) node))));
 
-        // TODO
-
+        // TODO (is just a test method)
         return reaction;
     }
 
@@ -79,8 +92,14 @@ public class BiochemistryIncarnation implements Incarnation<Double> {
 
     @Override
     public Double createConcentration(final String s) {
-        // TODO Auto-generated method stub
-        return null;
+        if (s == null) {
+            throw new IllegalArgumentException("The concentration must be a number");
+        }
+        try {
+            return Double.parseDouble(s);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("The concentration must be a number");
+        }
     }
 
     @Override

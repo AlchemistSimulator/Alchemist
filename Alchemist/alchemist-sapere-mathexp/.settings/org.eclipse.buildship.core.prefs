@@ -1,0 +1,3 @@
+GRADLE_BUILD_COMMANDS=org.eclipse.jdt.core.javabuilder
+GRADLE_NATURES=org.eclipse.jdt.core.javanature
+eclipse.preferences.version=1

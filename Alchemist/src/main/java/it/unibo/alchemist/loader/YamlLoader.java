@@ -211,9 +211,13 @@ public class YamlLoader implements Loader, Serializable {
         /*
          * Incarnation
          */
-        final String incStr = contents.get(INCARNATION).toString();
-        incarnation = SupportedIncarnations.get(incStr)
-                .orElseThrow(() -> new IllegalStateException(incStr
+        final Object incObj = contents.get(INCARNATION);
+        if (incObj == null) {
+            throw new IllegalAlchemistYAMLException("You must specify an incarnation.",
+                    new IllegalStateException("No incarnation specified in YAML simulation file"));
+        }
+        incarnation = SupportedIncarnations.get(incObj.toString())
+                .orElseThrow(() -> new IllegalStateException(incObj
                         + " is not a valid incarnation. Supported incarnations are: "
                         + SupportedIncarnations.getAvailableIncarnations()));
         /*

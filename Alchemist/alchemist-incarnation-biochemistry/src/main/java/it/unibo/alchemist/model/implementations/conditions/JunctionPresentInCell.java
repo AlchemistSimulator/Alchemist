@@ -23,7 +23,7 @@ public class JunctionPresentInCell extends GenericMoleculePresent<Double> {
      * @param node the node
      */
     public JunctionPresentInCell(final String junName, final Node<Double> node) {
-        super(null, Double.NaN, node); // TODO This is just a stub
+        super(null, node, Double.NaN); // TODO This is just a stub
     }
 
 }

@@ -29,7 +29,7 @@ public class BiomolPresentInNeighbor extends GenericMoleculePresent<Double> {
      * @param env 
      */
     public BiomolPresentInNeighbor(final Molecule molecule, final Double concentration, final Node<Double> node, final Environment<Double> env) {
-        super(molecule, concentration, node);
+        super(molecule, node, concentration);
         // TODO Auto-generated constructor stub
     }
 

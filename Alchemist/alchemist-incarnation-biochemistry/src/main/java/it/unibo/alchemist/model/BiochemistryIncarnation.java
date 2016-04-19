@@ -11,7 +11,8 @@ package it.unibo.alchemist.model;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
-
+import it.unibo.alchemist.model.implementations.nodes.CellNode;
+import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
@@ -23,7 +24,7 @@ import it.unibo.alchemist.model.interfaces.Incarnation;
 
 /**
  */
-public class BioIncarnation implements Incarnation<Double> {
+public class BiochemistryIncarnation implements Incarnation<Double> {
 
     @Override
     public double getProperty(final Node<Double> node, final Molecule mol, final String prop) {
@@ -32,20 +33,23 @@ public class BioIncarnation implements Incarnation<Double> {
 
     @Override
     public Molecule createMolecule(final String s) {
-        return (Molecule) new Biomolecule(s);
+        return new Biomolecule(s);
     }
 
     @Override
     public Node<Double> createNode(final RandomGenerator rand, final Environment<Double> env, final String param) {
         // TODO Auto-generated method stub
-        return null;
+        //return null;
+        return new CellNode(env);
     }
 
     @Override
     public TimeDistribution<Double> createTimeDistribution(final RandomGenerator rand, final Environment<Double> env,
             final Node<Double> node, final String param) {
         // TODO Auto-generated method stub
-        return null;
+        //return null;
+        final double arg = Double.parseDouble(param);
+        return new ExponentialTime<Double>(arg, rand);
     }
 
     @Override
@@ -73,5 +77,10 @@ public class BioIncarnation implements Incarnation<Double> {
     public Double createConcentration(final String s) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
     }
 }

@@ -26,7 +26,7 @@ public class BiomolPresentInEnv extends GenericMoleculePresent<Double> {
      * @param env 
      */
     public BiomolPresentInEnv(final Biomolecule biomol, final Double concentration, final EnvironmentNode node, final Environment<Double> env) {
-        super(biomol, concentration, node);
+        super(biomol, node, concentration);
     }
 
     @Override

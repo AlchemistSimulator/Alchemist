@@ -18,7 +18,7 @@ import java.util.StringTokenizer;
 import org.danilopianini.lang.HashUtils;
 import org.danilopianini.view.ExportForGUI;
 
-import it.unibo.alchemist.model.BioIncarnation;
+import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -42,7 +42,7 @@ public class ConcentrationLogger extends NodeInspector<Double> {
     private String molCache;
     private final List<Molecule> mols = new LinkedList<>();
 
-    private final transient Incarnation<Double> bio = new BioIncarnation();
+    private final transient Incarnation<Double> bio = new BiochemistryIncarnation();
 
 
     @Override

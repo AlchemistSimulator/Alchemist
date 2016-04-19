@@ -24,6 +24,6 @@ public class JunctionPresentInNeighbor extends GenericMoleculePresent<Double> {
      * @param env 
      */
     public JunctionPresentInNeighbor(final String junName, final Node<Double> node, final Environment<Double> env) {
-        super(null, Double.NaN, node); // TODO This is just a stub
+        super(null, node, Double.NaN); // TODO This is just a stub
     }
 }

@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.ICellNode;
  *
  */
 
-public class CellNode extends GenericNode<Double> implements ICellNode {
+public class CellNode extends DoubleNode implements ICellNode {
 
     private static final long serialVersionUID = 837704874534888283L;
 

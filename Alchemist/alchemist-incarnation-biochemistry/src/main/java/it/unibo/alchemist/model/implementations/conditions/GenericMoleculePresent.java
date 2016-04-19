@@ -6,60 +6,101 @@
  * the GNU General Public License, with a linking exception, as described
  * in the file LICENSE in the Alchemist distribution's top directory.
  */
-
 package it.unibo.alchemist.model.implementations.conditions;
 
-import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 
+import org.apache.commons.math3.util.CombinatoricsUtils;
+
 /**
- * 
- * @param <T>
+ * This class implements a condition which checks if a molecule is present or
+ * not.
+ * @param <T> the concentration type
  */
-public class GenericMoleculePresent<T> extends AbstractCondition<T> {
+public class GenericMoleculePresent<T extends Number> extends
+        AbstractCondition<T> {
 
-    private static final long serialVersionUID = -4341823735340536583L;
-
-//    private final Molecule mol;
-//    private final T concentration;
-//    private final Node<T> node;
+    private static final long serialVersionUID = -7400434133059391639L;
+    private final Molecule molecule;
+    private final T qty;
 
     /**
-     * Creates the generic molecule present condition.
-     * @param molecule a molecule
-     * @param concentration the concentration of the molecule
-     * @param node the node
+     * Builds a new condition, which checks if the molecule exists or not inside
+     * the node n.
+     * 
+     * @param mol the molecule whose presence should be checked
+     * @param n the current node
+     * @param quantity the amount of molecules which should be present. Must be positive.
      */
-    public GenericMoleculePresent(final Molecule molecule, final T concentration, final Node<T> node) {
-        super(node);
-        /*this.mol = molecule;
-        this.concentration = concentration;
-        this.node = node;*/
-    }
-
-    @Override
-    public Condition<T> cloneOnNewNode(final Node<T> n) {
-        // TODO Auto-generated method stub
-        return null;
+    public GenericMoleculePresent(final Molecule mol, final Node<T> n, final T quantity) {
+        super(n);
+        if (quantity.doubleValue() <= 0d) {
+            throw new IllegalArgumentException("The quantity of compound must be a positive number.");
+        }
+        molecule = mol;
+        qty = quantity;
+        addReadMolecule(mol);
     }
 
     @Override
     public Context getContext() {
-        // TODO Auto-generated method stub
-        return null;
+        return Context.LOCAL;
     }
 
-    @Override
-    public double getPropensityConditioning() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
+    /**
+     * @return true if the concentration of the molecule is higher or equal the
+     *         value.
+     */
     @Override
     public boolean isValid() {
-        // TODO Auto-generated method stub
-        return false;
+        return getNode().getConcentration(molecule).doubleValue() >= qty
+                .doubleValue();
+    }
+
+    @Override
+    public String toString() {
+        return molecule.toString() + ">=" + qty;
+    }
+
+    @Override
+    public GenericMoleculePresent<T> cloneOnNewNode(final Node<T> n) {
+        return new GenericMoleculePresent<T>(molecule, n, qty);
+    }
+
+    /**
+     * Propensity influence is computed through the binomial coefficient. See
+     * Bernardo, Degano, Zavattaro - Formal Methods for Computational Systems
+     * Biology for the formulae.
+     * 
+     * @return the propensity influence
+     */
+    @Override
+    public double getPropensityConditioning() {
+        final int n = getNode().getConcentration(molecule).intValue();
+        final int k = qty.intValue();
+        if (k > n) {
+            return 0;
+        }
+        return CombinatoricsUtils.binomialCoefficientDouble(n, k);
+    }
+
+    /**
+     * Allows to access the threshold.
+     * 
+     * @return the current threshold
+     */
+    public T getQuantity() {
+        return qty;
+    }
+
+    /**
+     * Allows to access the molecule.
+     * 
+     * @return the current molecule
+     */
+    public Molecule getMolecule() {
+        return molecule;
     }
 }

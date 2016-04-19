@@ -6,30 +6,28 @@
  * the GNU General Public License, with a linking exception, as described
  * in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.implementations.nodes;
 
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.IEnvironmentNode;
 
 /**
- *
  */
-public class EnvironmentNode extends DoubleNode implements IEnvironmentNode {
+public abstract class IntegerNode extends GenericNode<Integer> {
 
-    private static final long serialVersionUID = 1880007336956353256L;
+    private static final long serialVersionUID = -1064026943504464379L;
 
     /**
-     * Create a new environment node.
+     * Create a new integer node.
      * @param env the environment
      */
-    public EnvironmentNode(final Environment<Double> env) {
+    public IntegerNode(final Environment<Integer> env) {
         super(env);
-        // TODO Auto-generated constructor stub
     }
 
     @Override
-    protected Double createT() {
-        // TODO Auto-generated method stub
-        return null;
+    protected Integer createT() {
+        return 0;
     }
+
 }

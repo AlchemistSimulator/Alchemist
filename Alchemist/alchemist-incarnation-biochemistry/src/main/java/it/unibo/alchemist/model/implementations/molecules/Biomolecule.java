@@ -34,4 +34,9 @@ public class Biomolecule extends SimpleMolecule {
         this(new FasterString(name));
     }
 
+    @Override
+    public String toString() {
+        return toFasterString().toString();
+    }
+
 }

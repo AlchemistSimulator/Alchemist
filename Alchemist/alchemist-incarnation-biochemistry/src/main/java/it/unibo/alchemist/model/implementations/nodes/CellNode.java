@@ -29,7 +29,6 @@ public class CellNode extends DoubleNode implements ICellNode {
 
     @Override
     protected Double createT() {
-        // TODO Auto-generated method stub
-        return null;
+        return 0d;
     }
 }

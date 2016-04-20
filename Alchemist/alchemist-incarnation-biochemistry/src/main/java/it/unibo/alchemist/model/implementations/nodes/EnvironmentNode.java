@@ -29,7 +29,6 @@ public class EnvironmentNode extends DoubleNode implements IEnvironmentNode {
 
     @Override
     protected Double createT() {
-        // TODO Auto-generated method stub
-        return null;
+        return 0d;
     }
 }

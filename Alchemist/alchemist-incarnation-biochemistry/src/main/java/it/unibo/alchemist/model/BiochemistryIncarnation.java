@@ -46,7 +46,7 @@ public class BiochemistryIncarnation implements Incarnation<Double> {
     public Node<Double> createNode(final RandomGenerator rand, final Environment<Double> env, final String param) {
         // TODO it is just a test
         final CellNode n = new CellNode(env);
-        n.setConcentration(new Biomolecule("a"), 100d);
+        n.setConcentration(new Biomolecule("H2O"), 1000d);
         return n;
     }
 
@@ -65,13 +65,26 @@ public class BiochemistryIncarnation implements Incarnation<Double> {
     public Reaction<Double> createReaction(final RandomGenerator rand, final Environment<Double> env, final Node<Double> node,
             final TimeDistribution<Double> time, final String param) {
         final ChemicalReaction<Double> reaction = new ChemicalReaction<>(node, time);
-        final Biomolecule mol = new Biomolecule("a");
-        final double delta = -0.1;
+        final Biomolecule h2o = new Biomolecule("H2O");
+        final Biomolecule h3o = new Biomolecule("H3O");
+        final Biomolecule oh = new Biomolecule("OH");
+        final double delta = 2.0;
         // set the conditions (molecule a is present)
-        reaction.setConditions(new ArrayList<>(Arrays.asList(new BiomolPresentInCell(mol, 1.0, (CellNode) node))));
-        reaction.setActions(new ArrayList<>(Arrays.asList(
-                new ChangeBiomolConcentrationInCell(mol, delta, (CellNode) node))));
-
+        if (param.replaceAll("\n+", "").equals("w->ions")) {
+            reaction.setConditions(new ArrayList<>(Arrays.asList(new BiomolPresentInCell(h2o, delta, (CellNode) node))));
+            reaction.setActions(new ArrayList<>(Arrays.asList(
+                    new ChangeBiomolConcentrationInCell(h3o, 1.0, (CellNode) node),
+                    new ChangeBiomolConcentrationInCell(oh, 1.0, (CellNode) node),
+                    new ChangeBiomolConcentrationInCell(h2o, -delta, (CellNode) node))));
+        } else {
+            reaction.setConditions(new ArrayList<>(Arrays.asList(
+                    new BiomolPresentInCell(oh, 1.0, (CellNode) node), 
+                    new BiomolPresentInCell(h3o, 1.0, (CellNode) node))));
+            reaction.setActions(new ArrayList<>(Arrays.asList(
+                    new ChangeBiomolConcentrationInCell(h3o, -1.0, (CellNode) node),
+                    new ChangeBiomolConcentrationInCell(oh, -1.0, (CellNode) node),
+                    new ChangeBiomolConcentrationInCell(h2o, delta, (CellNode) node))));
+        }
         // TODO (is just a test method)
         return reaction;
     }

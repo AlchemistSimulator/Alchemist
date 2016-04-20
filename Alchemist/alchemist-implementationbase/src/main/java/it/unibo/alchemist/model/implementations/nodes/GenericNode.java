@@ -189,8 +189,6 @@ public abstract class GenericNode<T> implements Node<T> {
 
     @Override
     public void setConcentration(final Molecule mol, final T c) {
-        System.out.println(mol);
-        System.out.println(c);
         molecules.put(mol, c);
     }
 

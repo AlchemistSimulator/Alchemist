@@ -153,5 +153,14 @@
 				<arguments>1.0-projectRelativePath-matches-false-false-.gradle</arguments>
 			</matcher>
 		</filter>
+		<filter>
+			<id>1461160394349</id>
+			<name></name>
+			<type>26</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-projectRelativePath-matches-false-false-alchemist-incarnation-biochemistry</arguments>
+			</matcher>
+		</filter>
 	</filteredResources>
 </projectDescription>

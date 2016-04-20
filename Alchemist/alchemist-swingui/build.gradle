@@ -3,6 +3,7 @@ dependencies {
         project(':alchemist-engine'),
         project(':alchemist-implementationbase'),
         project(':alchemist-interfaces'),
+        project(':alchemist-loading'),
         project(':alchemist-maps'),
         "com.miglayout:miglayout-swing:$miglayoutVersion",
         "org.apache.commons:commons-math3:$math3Version",

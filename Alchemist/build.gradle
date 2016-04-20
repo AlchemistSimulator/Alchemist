@@ -234,8 +234,6 @@ dependencies {
     compile (
         "commons-cli:commons-cli:$cliVersion",
         "net.sourceforge.streamsupport:streamsupport:$streamsupportVersion",
-        "org.danilopianini:javalib:$javalibVersion",
-        "org.yaml:snakeyaml:$snakeyamlVersion"
     )
 }
 

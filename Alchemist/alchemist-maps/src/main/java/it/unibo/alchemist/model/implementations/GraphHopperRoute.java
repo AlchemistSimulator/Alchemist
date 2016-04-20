@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.graphhopper.GHResponse;
+import com.graphhopper.PathWrapper;
 import com.graphhopper.util.PointList;
 
 /**
@@ -29,11 +30,12 @@ public class GraphHopperRoute implements IRoute {
     private final List<Position> points;
 
     /**
-     * @param resp
+     * @param response
      *            the response to use
      */
-    public GraphHopperRoute(final GHResponse resp) {
-        time = resp.getMillis() / 1000d;
+    public GraphHopperRoute(final GHResponse response) {
+        final PathWrapper resp = response.getBest();
+        time = resp.getTime() / 1000d;
         distance = resp.getDistance();
         final PointList pts = resp.getPoints();
         size = pts.getSize();

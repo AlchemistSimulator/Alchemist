@@ -41,6 +41,8 @@ import it.unibo.alchemist.core.interfaces.Status;
 import org.apache.commons.math3.random.RandomGenerator;
 import it.unibo.alchemist.language.EnvironmentBuilder;
 import it.unibo.alchemist.language.EnvironmentBuilder.Result;
+import it.unibo.alchemist.loader.Loader;
+import it.unibo.alchemist.loader.YamlLoader;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
 
@@ -52,7 +54,7 @@ import static it.unibo.alchemist.boundary.l10n.R.getString;
 public class Perspective<T> extends JPanel implements ChangeListener, ActionListener {
 
     private static final long serialVersionUID = -6074331788924400019L;
-    private static final FileFilter XML_FILTER = new FileNameExtensionFilter(getString("alchemist_xml"), "xml");
+    private static final FileFilter FILE_FILTER = new FileNameExtensionFilter(getString("alchemist_xml"), "xml", "yml", "yaml", "YML", "YAML");
     private static final Logger L = LoggerFactory.getLogger(Perspective.class);
     private static final String FILE_NOT_VALID = getString("file_not_valid");
     private static final String RANDOM_REINIT_SUCCESS = getString("random_reinit_success");
@@ -70,7 +72,7 @@ public class Perspective<T> extends JPanel implements ChangeListener, ActionList
     private JEffectsTab<T> effectsTab;
     private transient Simulation<T> sim;
     private final StatusBar status;
-    private File xml;
+    private File fileToLoad;
 
 
     /**
@@ -117,7 +119,7 @@ public class Perspective<T> extends JPanel implements ChangeListener, ActionList
     @Override
     public void actionPerformed(final ActionEvent e) {
         if (Commands.OPEN.equalsToString(e.getActionCommand())) {
-            openXML();
+            openFile();
         } else if (Commands.PARALLEL.equalsToString(e.getActionCommand())) {
             process(true);
         } else if (Commands.PROCESS.equalsToString(e.getActionCommand())) {
@@ -163,24 +165,24 @@ public class Perspective<T> extends JPanel implements ChangeListener, ActionList
         setMainDisplay(display);
     }
 
-    private void openXML() {
+    private void openFile() {
         final JFileChooser fc = new JFileChooser();
         fc.setMultiSelectionEnabled(false);
-        fc.setFileFilter(XML_FILTER);
+        fc.setFileFilter(FILE_FILTER);
         fc.setCurrentDirectory(currentDirectory);
         final int returnVal = fc.showOpenDialog(null);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            xml = fc.getSelectedFile();
+            fileToLoad = fc.getSelectedFile();
             currentDirectory = fc.getSelectedFile().getParentFile();
-            if (xml.exists() && xml.getName().endsWith("xml")) {
-                status.setText(getString("ready_to_process") + " " + xml.getAbsolutePath());
+            if (fileToLoad.exists()) {
+                status.setText(getString("ready_to_process") + " " + fileToLoad.getAbsolutePath());
                 status.setOK();
                 if (sim != null) {
                     sim.addCommand(new Engine.StateCommand<T>().stop().build());
                 }
                 bar.setFileOK(true);
             } else {
-                status.setText(FILE_NOT_VALID + " " + xml.getAbsolutePath());
+                status.setText(FILE_NOT_VALID + " " + fileToLoad.getAbsolutePath());
                 status.setNo();
                 bar.setFileOK(false);
             }
@@ -194,9 +196,16 @@ public class Perspective<T> extends JPanel implements ChangeListener, ActionList
         }
         try {
             sim = null;
-            final Future<Result<T>> fenv = EnvironmentBuilder.build(new FileInputStream(xml));
-            final Environment<T> env = fenv.get().getEnvironment();
-            rand = fenv.get().getRandomGenerator();
+            final Environment<T> env;
+            if (fileToLoad.getName().toLowerCase().endsWith("xml")) {
+                final Future<Result<T>> fenv = EnvironmentBuilder.build(new FileInputStream(fileToLoad));
+                env = fenv.get().getEnvironment();
+                rand = fenv.get().getRandomGenerator();
+            } else {
+                rand = null;
+                final Loader loader = new YamlLoader(new FileInputStream(fileToLoad));
+                env = loader.getDefault();
+            }
             sim = new Engine<>(env, new DoubleTime(Double.POSITIVE_INFINITY), parallel);
             bar.setSimulation(sim);
             scp.setSimulation(sim);
@@ -209,7 +218,7 @@ public class Perspective<T> extends JPanel implements ChangeListener, ActionList
             bar.setProcessOK(true);
             effectsTab.setEnabled(true);
             status.setOK();
-            status.setText(getString("file_processed") + ": " + xml.getAbsolutePath());
+            status.setText(getString("file_processed") + ": " + fileToLoad.getAbsolutePath());
         } catch (Exception e) {
             processError(e);
         }
@@ -219,26 +228,34 @@ public class Perspective<T> extends JPanel implements ChangeListener, ActionList
         SwingUtilities.invokeLater(() -> {
             bar.setFileOK(false);
             bar.setProcessOK(false);
-            status.setText(FILE_NOT_VALID + " " + xml.getAbsolutePath());
+            status.setText(FILE_NOT_VALID + " " + fileToLoad.getAbsolutePath());
             status.setNo();
             L.error("Process error", e);
         });
     }
 
     private void setMainDisplay(final GraphicalOutputMonitor<T> gom) {
+        if (!(gom instanceof Component)) {
+            throw new IllegalArgumentException("Java Swing can not load a " + gom);
+        }
+        final Component gomComp = (Component) gom;
         if (main != null) {
             sim.removeOutputMonitor(main);
             gom.setStep(main.getStep());
             gom.setRealTime(main.isRealTime());
-            remove((Component) main);
+            final Component mainComp = (Component) main;
+            gomComp.setSize(mainComp.getSize());
+            remove(mainComp);
+        } else {
+            gomComp.setSize(getSize());
         }
         main = gom;
+        add(gomComp, BorderLayout.CENTER);
+        revalidate();
+        makeEffects();
         if (sim != null) {
             new Thread(() -> sim.addOutputMonitor(main)).start();
         }
-        add((Component) main, BorderLayout.CENTER);
-        makeEffects();
-        revalidate();
     }
 
     private void setRandom() {

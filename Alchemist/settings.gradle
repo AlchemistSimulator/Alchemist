@@ -5,6 +5,7 @@ include(
     'alchemist-incarnation-protelis',
     'alchemist-incarnation-sapere',
     'alchemist-interfaces',
+    'alchemist-loading',
     'alchemist-maps',
     'alchemist-sapere-mathexp',
     'alchemist-swingui',

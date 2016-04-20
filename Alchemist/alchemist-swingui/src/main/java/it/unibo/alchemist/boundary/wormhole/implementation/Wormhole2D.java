@@ -65,7 +65,7 @@ public class Wormhole2D implements IWormhole2D {
 
     private double getViewRatio() {
         final Dimension size = view.getSize();
-        return size.getWidth() / size.getHeight();
+        return Math.max(1, size.getWidth()) / Math.max(1, size.getHeight());
     }
 
     /**
@@ -190,9 +190,9 @@ public class Wormhole2D implements IWormhole2D {
     @Override
     public void optimalZoom() {
         if (getEnvRatio() <= getViewRatio()) {
-            zoom = view.getHeight() / model.getSize()[1];
+            zoom = Math.max(1, view.getHeight()) / model.getSize()[1];
         } else {
-            zoom = view.getWidth() / model.getSize()[0];
+            zoom = Math.max(1, view.getWidth()) / model.getSize()[0];
         }
 
     }
@@ -237,7 +237,7 @@ public class Wormhole2D implements IWormhole2D {
 
     @Override
     public void setZoom(final double value) {
-        if (value < 0d) {
+        if (value <= 0d) {
             zoom = 0d;
         }
         zoom = value;
@@ -252,7 +252,9 @@ public class Wormhole2D implements IWormhole2D {
     protected AffineTransform calculateTransform() {
         final AffineTransform t;
         if (getMode() == Mode.ISOMETRIC) {
-            t = new AffineTransform(getZoom(), 0d, 0d, -getZoom(), getViewPosition().getX(), getViewPosition().getY());
+            t = new AffineTransform(
+                    getZoom(),  0d,                       0d,
+                    -getZoom(), getViewPosition().getX(), getViewPosition().getY());
         } else {
             t = new AffineTransform(getZoom() * getHRate(), 0d, 0d, -getZoom() * getVRate(), getViewPosition().getX(), getViewPosition().getY());
         }

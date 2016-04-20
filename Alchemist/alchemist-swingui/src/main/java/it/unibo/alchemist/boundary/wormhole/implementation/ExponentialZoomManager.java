@@ -44,6 +44,9 @@ public class ExponentialZoomManager extends AbstractSlideInputManager implements
      *         slides
      */
     protected static double getSlideValueFromZoom(final double z, final double b, final double n) {
+        if (z <= 0 || b <= 0) {
+            throw new IllegalArgumentException("Not zoom nor the base can be zero or negative. (zoom=" + z + ", base=" + b + ")");
+        }
         return n * Math.log(z) / Math.log(b);
     }
 

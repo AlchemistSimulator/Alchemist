@@ -58,29 +58,21 @@ The project has been developed using Eclipse, and can be easily imported in such
 
 #### Recommended configuration
 * Download [the latest Eclipse for Java SE developers][eclipse]. Arch Linux users can use the package extra/eclipse-java, which is rather up-to-date.
-* Install the Gradle plug-in
-	* In Eclipse, click Help -> Eclipse Marketplace...
-	* In the search form enter "gradle", then press Enter
-	* One of the retrieved entries should be "Gradle IDE Pack", click Install
-	* Follow the instructions, accept the license, wait for Eclipse to download and install the product, accept the installation and restart the IDE.
-* Install the FindBugs plug-in
+  * The minimum version required for a smooth import is Eclipse Mars.1, which integrates Gradle Buildship
+  * Previous Eclipse versions are okay, provided that the Gradle Buildship plugin is installed
+* Install the code quality plugins:
 	* In Eclipse, click Help -> Eclipse Marketplace...
 	* In the search form enter "findbugs", then press Enter
 	* One of the retrieved entries should be "FindBugs Eclipse Plugin", click Install
-	* Follow the instructions, accept the license, wait for Eclipse to download and install the product, accept the installation and restart the IDE.
-* Install the PMD plug-in
-	* **Do not** install eclipse-pmd from the Eclipse Marketplace
-	* In Eclipse, click Help -> Install New Software
-	* In the text field labelled "Work with:", enter: https://sourceforge.net/projects/pmd/files/pmd-eclipse/update-site-latest/
-	* Press Enter
-	* PMD for Eclipse 4 will appear in the plugin list. Select it and click Next.
-	* Follow the instructions, accept the license, wait for Eclipse to download and install the product, accept the installation and restart the IDE.
-* Install the Checkstyle plug-in
-	* In Eclipse, click Help -> Eclipse Marketplace...
+  * Click "< Install More"
+  * In the search form enter "pmd", then press Enter
+  * One of the retrieved entries should be "pmd-eclipse-plugin". **Do not** confuse it with eclipse-pmd. click Install
 	* In the search form enter "checkstyle", then press Enter
 	* One of the retrieved entries should be "Checkstyle Plug-in" with a written icon whose text is "eclipse-cs", click Install
+  * Click "Install Now >"
+  * Wait for Eclipse to resolve all the features
+  * Click "Confirm >"
 	* Follow the instructions, accept the license, wait for Eclipse to download and install the product, accept the installation and restart the IDE.
-
 
 #### Import Procedure
 * Open Eclipse
@@ -117,11 +109,11 @@ We release often. We are not scared of high version numbers, they are just numbe
 We use a three levels numbering:
 
 * **Update of the minor number**: there are some small changes, and no backwards compatibility is broken. Probably, it is better saying that there is nothing suggesting that any project that depends on this one may have any problem compiling or running. Raise the minor version if there is just a bug fix, or a code improvement, such that no interface, constructor, or non-private member of a class is modified either in syntax or in semantics. Also, no new classes should be provided.
-	* Example: switch from 1.2.3 to 1.2.4 
+	* Example: switch from 1.2.3 to 1.2.4
 * **Update of the middle number**: there are changes that should not break any backwards compatibility, but the possibility exists. Raise the middle version number if there is a remote probability that projects that depend upon this one may have problems compiling if they update. For instance, if you have added a new class, since a depending project may have already defined it, that is enough to trigger a mid-number change. Also updating the version ranges of a dependency, or adding a new dependency, should cause the mid-number to raise. As for minor numbers, no changes to interfaces, constructors or non-private member of classes are allowed. If mid-number is update, minor number should be reset to 0.
-	* Example: switch from 1.2.3 to 1.3.0 
+	* Example: switch from 1.2.3 to 1.3.0
 * **Update of the major number**: *non-backwards-compatible change*. If a change in interfaces, constructors, or public member of some class have happened, a new major number should be issued. This is also the case if the semantics of some method has changed. In general, if there is a high probability that projects depending upon this one may experience compile-time or run-time issues if they switch to the new version, then a new major number should be adopted. If the major version number is upgraded, the mid and minor numbers should be reset to 0.
-	* Example: switch from 1.2.3 to 2.0.0 
+	* Example: switch from 1.2.3 to 2.0.0
 
 
 [Alchemist]: http://alchemist-simulator.github.io/

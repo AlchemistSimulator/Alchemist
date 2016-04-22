@@ -317,8 +317,8 @@ public class YamlLoader implements Loader, Serializable {
                     if (obj instanceof Map) {
                         final Map<String, Object> mapObj = (Map<String, Object>) obj;
                         if (mapObj.containsKey(MOLECULE)) {
-                            Object aggregatorObj = mapObj.getOrDefault(AGGREGATORS, Collections.emptyList());
-                            List<String> aggregators = aggregatorObj instanceof List ? (List<String>) aggregatorObj : Collections.emptyList();
+                            final Object aggregatorObj = mapObj.getOrDefault(AGGREGATORS, Collections.emptyList());
+                            final List<String> aggregators = aggregatorObj instanceof List ? (List<String>) aggregatorObj : Collections.emptyList();
                             return new MoleculeReader<>(
                                     mapObj.get(MOLECULE).toString(),
                                     mapObj.getOrDefault(PROPERTY, "").toString(),

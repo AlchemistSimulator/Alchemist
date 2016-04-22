@@ -113,7 +113,7 @@ public class TestIncarnation {
      */
     @Test
     public void testCreateConcentration() {
-        assertEquals("test", INC.createConcentration("test"));
+        assertEquals("aString", INC.createConcentration("aString"));
         assertEquals(1.0, INC.createConcentration("1"));
         assertEquals("foo", INC.createConcentration("let a = \"foo\"; a"));
     }

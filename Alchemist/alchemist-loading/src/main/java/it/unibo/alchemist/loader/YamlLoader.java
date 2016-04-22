@@ -71,22 +71,6 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
  */
 public class YamlLoader implements Loader, Serializable {
 
-    private class PlaceHolder {
-        private final String str;
-
-        PlaceHolder(final String str) {
-            this.str = str;
-        }
-
-        private String get() {
-            return str;
-        }
-
-        @Override
-        public String toString() {
-            return str + ":" + lookupTable.get(str);
-        }
-    }
     /**
      * 
      */
@@ -164,6 +148,23 @@ public class YamlLoader implements Loader, Serializable {
     private final List<Map<String, Object>> displacements;
 
     private transient Incarnation<?> incarnation;
+
+    private class PlaceHolder {
+        private final String str;
+
+        PlaceHolder(final String str) {
+            this.str = str;
+        }
+
+        private String get() {
+            return str;
+        }
+
+        @Override
+        public String toString() {
+            return str + ":" + lookupTable.get(str);
+        }
+    }
 
     /**
      * @param source

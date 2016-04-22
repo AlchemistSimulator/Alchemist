@@ -869,7 +869,9 @@ public class YamlLoader implements Loader, Serializable {
                         if (attempt.isPresent()) {
                             return attempt.get();
                         }
-                    } catch (NumberFormatException e) { }
+                    } catch (final NumberFormatException e) {
+                        return null;
+                    }
                 }
                 if (Boolean.class.isAssignableFrom(expectedClass) || boolean.class.isAssignableFrom(expectedClass)) {
                     if (param instanceof Boolean) {
@@ -878,7 +880,9 @@ public class YamlLoader implements Loader, Serializable {
                     if (param instanceof String) {
                         try {
                             return Boolean.parseBoolean((String) param);
-                        } catch (NumberFormatException e) { }
+                        } catch (final NumberFormatException e) {
+                            return null;
+                        }
                     }
                 }
                 if (CharSequence.class.isAssignableFrom(expectedClass)) {

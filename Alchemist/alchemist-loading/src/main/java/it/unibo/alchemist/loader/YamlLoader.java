@@ -399,7 +399,7 @@ public class YamlLoader implements Loader, Serializable {
                     actualVars.putIfAbsent(name, value);
                     it.remove();
                 } catch (IllegalStateException e) {
-                    L.debug("{} could not be initialized: maybe it depends on another, not yet initialized variable.", name);
+                    L.debug("{} could not be initialized: maybe it depends on another, not yet initialized variable.\nReason: {}", name, e);
                 }
             }
         }

@@ -9,4 +9,7 @@ dependencies {
         testCompile(
             project(':alchemist-maps')
         )
+        testRuntime(
+            project(':alchemist-incarnation-sapere')
+        )
 }

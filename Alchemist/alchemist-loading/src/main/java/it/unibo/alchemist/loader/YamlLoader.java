@@ -430,9 +430,6 @@ public class YamlLoader implements Loader, Serializable {
                 final List<?> parameters = extractParams(displacementShapeMap);
                 final Displacement displ = create(displacementClass, parameters, incarnation, actualVars, scenarioRandom, env, pmaker);
                 L.debug("Displacement initialized: {}", displ);
-                final Supplier<Node<T>> nodeSupplier = makeSupplier(
-                        () -> currIncarnation.createNode(simRandom, env, null),
-                        displacement, NODES_PACKAGE_ROOT, actualVars, simRandom, env);
                 final List<Map<String, Object>> contents = Optional
                         .ofNullable((List<Map<String, Object>>) displacement.get(CONTENTS))
                         .orElse(Collections.emptyList());
@@ -475,6 +472,9 @@ public class YamlLoader implements Loader, Serializable {
                         .parallelStream()
                         .flatMap(pool -> pool.stream())
                         .collect(Collectors.toList());
+                final Supplier<Node<T>> nodeSupplier = makeSupplier(
+                        () -> currIncarnation.createNode(simRandom, env, null),
+                        displacement, NODES_PACKAGE_ROOT, actualVars, simRandom, env);
                 for (final Position pos: displ) {
                     final Node<T> node = nodeSupplier.get();
                     for (final Map<String, Object> content: contents) {

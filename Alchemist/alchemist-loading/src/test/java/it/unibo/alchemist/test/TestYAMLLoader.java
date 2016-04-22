@@ -1,4 +1,4 @@
-package alchemist;
+package it.unibo.alchemist.test;
 
 import static org.junit.Assert.assertNotNull;
 

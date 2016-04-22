@@ -5,6 +5,8 @@ dependencies {
             project(':alchemist-time'),
             "org.danilopianini:javalib:$javalibVersion",
             "org.yaml:snakeyaml:$snakeyamlVersion"
-            )
-        
+        )
+        testCompile(
+            project(':alchemist-maps')
+        )
 }

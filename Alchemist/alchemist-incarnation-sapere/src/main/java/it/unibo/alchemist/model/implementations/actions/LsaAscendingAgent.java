@@ -35,8 +35,8 @@ public class LsaAscendingAgent extends SAPEREMoveNodeAgent {
     private final int gradDistPos;
 
     private boolean firstRun = true;
-    private double startTimeSIMU = 0;
-    private long startTimeREAL = 0;
+    private double startTimeSIMU;
+    private long startTimeREAL;
 
     /**
      * @param reaction

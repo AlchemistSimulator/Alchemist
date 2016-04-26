@@ -42,6 +42,12 @@ allprojects {
         pmd "net.sourceforge.pmd:pmd-java:$pmdVersion"
     }
 
+    test {
+        testLogging {
+            exceptionFormat = 'full'
+        }
+    }
+
     jar {
         manifest {
             attributes 'Implementation-Title': artifactId, 'Implementation-Version': version

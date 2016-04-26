@@ -654,7 +654,7 @@ public class Engine<T> implements Simulation<T> {
                     }
                 }
             } catch (RuntimeException | InterruptedException | ExecutionException | Error e) {
-                L.error(e.getMessage());
+                L.error("The simulation engine crashed.", e);
             } finally {
                 status = Status.STOPPED;
                 L.info("Now in STOPPED status");

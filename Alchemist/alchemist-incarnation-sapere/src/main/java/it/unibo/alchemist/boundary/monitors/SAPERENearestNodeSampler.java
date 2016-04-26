@@ -8,16 +8,6 @@
  */
 package it.unibo.alchemist.boundary.monitors;
 
-import it.unibo.alchemist.model.SAPEREIncarnation;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.ILsaMolecule;
-import it.unibo.alchemist.model.interfaces.Molecule;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.Time;
-import it.unibo.alchemist.model.interfaces.Incarnation;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -29,6 +19,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.lang.HashUtils;
 import org.danilopianini.view.ExportForGUI;
+
+import it.unibo.alchemist.model.SAPEREIncarnation;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.ILsaMolecule;
+import it.unibo.alchemist.model.interfaces.Molecule;
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.Time;
 
 /**
  */
@@ -49,7 +48,7 @@ public class SAPERENearestNodeSampler extends PositionSampler<List<? extends ILs
     private String lsaCache;
     private Molecule mol;
     private final List<String> properties = new LinkedList<>();
-    private final Incarnation<List<? extends ILsaMolecule>> sapere = new SAPEREIncarnation();
+    private final SAPEREIncarnation sapere = new SAPEREIncarnation();
     private final Map<Position, Node<List<? extends ILsaMolecule>>> pnCache = new ConcurrentHashMap<>();
     private Environment<List<? extends ILsaMolecule>> envCache;
 
@@ -96,6 +95,20 @@ public class SAPERENearestNodeSampler extends PositionSampler<List<? extends ILs
      */
     protected void setPropertySeparators(final String ps) {
         this.propertySeparators = ps;
+    }
+
+    /**
+     * @return if mobility support is enabled
+     */
+    protected boolean isMobility() {
+        return mobility;
+    }
+
+    /**
+     * @param mobility true if mobility support should be enabled.
+     */
+    protected void setMobility(final boolean mobility) {
+        this.mobility = mobility;
     }
 
     @Override

@@ -35,8 +35,8 @@ public class LsaAscendingAgent extends SAPEREMoveNodeAgent {
     private final int gradDistPos;
 
     private boolean firstRun = true;
-    private double startTimeSIMU = 0;
-    private long startTimeREAL = 0;
+    private double startTimeSIMU;
+    private long startTimeREAL;
 
     /**
      * @param reaction
@@ -63,12 +63,6 @@ public class LsaAscendingAgent extends SAPEREMoveNodeAgent {
     @Override
     public void execute() {
         double minGrad = Double.MAX_VALUE;
-
-        final Position mypos = getCurrentPosition();
-        final double myx = mypos.getCartesianCoordinates()[0];
-        final double myy = mypos.getCartesianCoordinates()[1];
-        double x = 0;
-        double y = 0;
         final Neighborhood<List<? extends ILsaMolecule>> neigh = getLocalNeighborhood();
         Position targetPositions = null;
         Node<List<? extends ILsaMolecule>> bestNode = null;
@@ -91,7 +85,11 @@ public class LsaAscendingAgent extends SAPEREMoveNodeAgent {
         if (bestNode == null || bestNode.contains(ACTIVE)) {
             return;
         }
-
+        final Position mypos = getCurrentPosition();
+        final double myx = mypos.getCartesianCoordinates()[0];
+        final double myy = mypos.getCartesianCoordinates()[1];
+        double x = 0;
+        double y = 0;
         if (targetPositions != null) {
             x = targetPositions.getCartesianCoordinates()[0];
             y = targetPositions.getCartesianCoordinates()[1];

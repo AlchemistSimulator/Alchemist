@@ -3,7 +3,6 @@ package it.unibo.alchemist.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.List;
@@ -40,7 +39,7 @@ public final class TestIncarnation {
     private static ILsaMolecule mkMol(final String s, final int args, final boolean ground) {
         final ILsaMolecule res = INCARNATION.createMolecule(s);
         assertNotNull(res);
-        assertTrue(res.isIstance() == ground);
+        assertEquals(ground, res.isIstance());
         assertEquals(args, res.argsNumber());
         assertEquals(args, res.size());
         return res;

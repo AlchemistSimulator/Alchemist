@@ -67,14 +67,7 @@ public class CrowdSteeringService extends SAPEREMoveNodeAgent {
     @Override
     public void execute() {
         double minGrad = Double.MAX_VALUE;
-        final Position mypos = getCurrentPosition();
-        final double myx = mypos.getCartesianCoordinates()[0];
-        final double myy = mypos.getCartesianCoordinates()[1];
-        double x = 0;
-        double y = 0;
-
         final FasterString idValue = getNode().getConcentration(GRADID).get(0).getArg(1).getAST().toFasterString();
-
         final Neighborhood<List<? extends ILsaMolecule>> neigh = getLocalNeighborhood();
         Position targetPositions = null;
         Node<List<? extends ILsaMolecule>> bestNode = null;
@@ -99,7 +92,11 @@ public class CrowdSteeringService extends SAPEREMoveNodeAgent {
         if (bestNode == null) {
             return;
         }
-
+        final Position mypos = getCurrentPosition();
+        final double myx = mypos.getCartesianCoordinates()[0];
+        final double myy = mypos.getCartesianCoordinates()[1];
+        double x = 0;
+        double y = 0;
         if (targetPositions != null) {
             x = targetPositions.getCartesianCoordinates()[0];
             y = targetPositions.getCartesianCoordinates()[1];

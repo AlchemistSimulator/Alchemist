@@ -692,7 +692,7 @@ public class Engine<T> implements Simulation<T> {
             mu = root;
             final Time t = mu.getTau();
             if (t.compareTo(currentTime) < 0) {
-                L.warn(mu + "\nis scheduled in the past at time " + t + ", current time is " + currentTime
+                L.error(mu + "\nis scheduled in the past at time " + t + ", current time is " + currentTime
                         + "\nProblem occurred at step " + curStep);
             }
             currentTime = t;

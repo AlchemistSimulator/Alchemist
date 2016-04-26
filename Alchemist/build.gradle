@@ -257,9 +257,6 @@ task fatJar(type: Jar, dependsOn: subprojects.assemble) {
         'Main-Class': 'it.unibo.alchemist.Alchemist'
     }
     baseName = "${rootProject.name}-redist"
-//    from(subprojects.collectMany([] as Set){subproject ->
-//        subproject.configurations.runtime.collect{ it.isDirectory() ? it : zipTree(it) }
-//    })
     from(configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) }) {
         // remove all signature files
         exclude "META-INF/*.SF"

@@ -8,19 +8,9 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-import it.unibo.alchemist.core.implementations.Engine;
-import it.unibo.alchemist.core.implementations.Engine.StateCommand;
-import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.language.EnvironmentBuilder;
-import it.unibo.alchemist.language.protelis.ProtelisDSLStandaloneSetup;
-import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Node;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -33,7 +23,6 @@ import java.util.function.Consumer;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.io.Charsets;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.generator.IGenerator;
@@ -45,6 +34,16 @@ import org.protelis.lang.datatype.Field;
 import org.xml.sax.SAXException;
 
 import com.google.inject.Injector;
+
+import it.unibo.alchemist.core.implementations.Engine;
+import it.unibo.alchemist.core.implementations.Engine.StateCommand;
+import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.language.EnvironmentBuilder;
+import it.unibo.alchemist.language.protelis.ProtelisDSLStandaloneSetup;
+import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
+import it.unibo.alchemist.model.implementations.times.DoubleTime;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Node;
 
 
 /**

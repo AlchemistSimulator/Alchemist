@@ -25,6 +25,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
@@ -113,7 +114,7 @@ public class TestInSimulator {
         if (files.size() != 1) {
             fail();
         }
-        final ByteArrayInputStream strIS = new ByteArrayInputStream(files.stream().findFirst().get().toString().getBytes(Charsets.UTF_8));
+        final ByteArrayInputStream strIS = new ByteArrayInputStream(files.stream().findFirst().get().toString().getBytes(StandardCharsets.UTF_8));
         final Environment<Object> env = EnvironmentBuilder.build(strIS).get().getEnvironment();
         final Simulation<Object> sim = new Engine<>(env, new DoubleTime(finalTime));
         sim.addCommand(new StateCommand<>().run().build());

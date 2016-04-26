@@ -8,6 +8,7 @@
  */
 package it.unibo.alchemist.model;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,11 +45,10 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
 
 /**
  */
-public final class SAPEREIncarnation implements Incarnation<List<? extends ILsaMolecule>> {
+public final class SAPEREIncarnation implements Incarnation<List<? extends ILsaMolecule>>, Serializable {
 
+    private static final long serialVersionUID = 1L;
     private static final Logger L = LoggerFactory.getLogger(SAPEREIncarnation.class);
-//    private static final String PARAM_GROUP_NAME = "params";
-//    private static final Pattern PARAMS = Pattern.compile(".*?\\((?<" + PARAM_GROUP_NAME + ">.*?)\\)");
     private static final String CONDITION_GROUP = "condition";
     private static final String CONDITIONS_GROUP = "conditions";
     private static final String ACTION_GROUP = "action";

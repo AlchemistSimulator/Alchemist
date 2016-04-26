@@ -61,18 +61,18 @@ The project has been developed using Eclipse, and can be easily imported in such
   * The minimum version required for a smooth import is Eclipse Mars.1, which integrates Gradle Buildship
   * Previous Eclipse versions are okay, provided that the Gradle Buildship plugin is installed
 * Install the code quality plugins:
-	* In Eclipse, click Help -> Eclipse Marketplace...
-	* In the search form enter "findbugs", then press Enter
-	* One of the retrieved entries should be "FindBugs Eclipse Plugin", click Install
+  * In Eclipse, click Help -> Eclipse Marketplace...
+  * In the search form enter "findbugs", then press Enter
+  * One of the retrieved entries should be "FindBugs Eclipse Plugin", click Install
   * Click "< Install More"
   * In the search form enter "pmd", then press Enter
   * One of the retrieved entries should be "pmd-eclipse-plugin". **Do not** confuse it with eclipse-pmd. click Install
-	* In the search form enter "checkstyle", then press Enter
-	* One of the retrieved entries should be "Checkstyle Plug-in" with a written icon whose text is "eclipse-cs", click Install
+  * In the search form enter "checkstyle", then press Enter
+  * One of the retrieved entries should be "Checkstyle Plug-in" with a written icon whose text is "eclipse-cs", click Install
   * Click "Install Now >"
   * Wait for Eclipse to resolve all the features
   * Click "Confirm >"
-	* Follow the instructions, accept the license, wait for Eclipse to download and install the product, accept the installation and restart the IDE.
+  * Follow the instructions, accept the license, wait for Eclipse to download and install the product, accept the installation and restart the IDE.
 
 #### Import Procedure
 * Open Eclipse

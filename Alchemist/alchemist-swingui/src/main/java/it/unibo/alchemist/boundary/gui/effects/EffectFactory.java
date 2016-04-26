@@ -30,7 +30,7 @@ public final class EffectFactory {
         if (DrawShape.class.isAssignableFrom(effect)) {
             return buildDefaultEffect();
         }
-        return null;
+        return buildDefaultEffect();
     }
 
     private EffectFactory() {

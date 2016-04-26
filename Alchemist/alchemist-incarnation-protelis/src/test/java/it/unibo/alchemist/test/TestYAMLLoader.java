@@ -1,17 +1,12 @@
-package alchemist;
+package it.unibo.alchemist.test;
 
 import static org.junit.Assert.assertNotNull;
 
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.junit.Test;
-import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
 
 import com.google.common.collect.Maps;
 
@@ -24,12 +19,6 @@ import it.unibo.alchemist.model.interfaces.Environment;
  * A series of tests checking that our Yaml Loader is working as expected.
  */
 public class TestYAMLLoader {
-
-    /*
-     * To run a single test, just change from "any two digits" to the exact test
-     * number. Yay!
-     */
-    private static final String ISAC_REGEX = "\\d{2}-.*\\.yml";
 
     /**
      * Basic loading capabilities.
@@ -55,23 +44,6 @@ public class TestYAMLLoader {
         final Map<String, Double> map = Maps.newLinkedHashMap();
         map.put("testVar", 10d);
         testLoading("/test00.yml", map);
-    }
-
-    /**
-     * Tests the whole laboratory lesson of the UniBo course
-     * "Engineering of Adaptive Software Systems".
-     * 
-     * Useful as regression test.
-     */
-    @Test
-    public void testISAC2016Lab() {
-        final Reflections reflections = new Reflections(new ConfigurationBuilder()
-                .setUrls(ClasspathHelper.forPackage("isac"))
-                .setScanners(new ResourcesScanner()));
-        reflections.getResources(Pattern.compile(ISAC_REGEX))
-            .parallelStream()
-            .map(r -> "/" + r)
-            .forEach(TestYAMLLoader::testNoVar);
     }
 
     private static void testNoVar(final String resource) {

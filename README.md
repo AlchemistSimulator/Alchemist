@@ -18,7 +18,7 @@ Add this dependency to your build
 <dependency>
     <groupId>it.unibo.alchemist</groupId>
     <artifactId>alchemist</artifactId>
-    <version>2.1.0</version>
+    <version>2.3.1</version>
 </dependency>
 ```
 
@@ -27,7 +27,7 @@ Add this dependency to your build
 Add this dependency to your build (change the scope appropriately if you need Alchemist only for runtime or testing)
 
 ```groovy
-compile 'it.unibo.alchemist:alchemist:2.1.0'
+compile 'it.unibo.alchemist:alchemist:2.3.1'
 ```
 
 ### Importing a subset of the modules

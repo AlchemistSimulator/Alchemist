@@ -12,4 +12,5 @@ dependencies {
         "org.jfree:jfreesvg:$jfreesvgVersion",
         "org.mapsforge:mapsforge-map-awt:$mapsforgeVersion",
     )
+    testRuntime(project(':alchemist-incarnation-protelis'))
 }

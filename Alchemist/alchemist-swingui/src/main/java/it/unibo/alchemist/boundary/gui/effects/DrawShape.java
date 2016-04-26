@@ -68,7 +68,7 @@ public class DrawShape implements Effect {
     private static final int SCALE_INITIAL = (SCALE_DIFF) / 2 + MIN_SCALE;
     private static final Logger L = LoggerFactory.getLogger(DrawShape.class);
 
-    private static final long serialVersionUID = 1993455990254876325L;
+    private static final long serialVersionUID = 1L;
 
     @ExportForGUI(nameToExport = "Incarnation to use")
     private CollectionWithCurrentElement<String> curIncarnation;

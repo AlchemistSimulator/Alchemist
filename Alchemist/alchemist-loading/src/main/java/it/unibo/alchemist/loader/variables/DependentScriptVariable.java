@@ -53,7 +53,7 @@ public class DependentScriptVariable implements DependentVariable {
         } catch (final ScriptException | ClassCastException e) {
             throw new IllegalStateException("The expression engine could not perform the requested operation. " + script
                     + " got transformed in " + formula
-                    + ", but this is either not a valid script, or its return type is not compatible with a Java Number");
+                    + ", but this is either not a valid script, or its return type is not compatible with a Java Number", e);
         }
     }
 

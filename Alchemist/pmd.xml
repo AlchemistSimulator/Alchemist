@@ -61,7 +61,6 @@
 	<rule ref="rulesets/java/design.xml/CompareObjectsWithEquals" />
 	<rule ref="rulesets/java/strings.xml/ConsecutiveLiteralAppends" />
 	<rule ref="rulesets/java/design.xml/ConstructorCallsOverridableMethod" />
-	<rule ref="rulesets/java/coupling.xml/CouplingBetweenObjects" />
 	<rule ref="rulesets/java/design.xml/DefaultLabelNotLastInSwitchStmt" />
 	<rule ref="rulesets/java/controversial.xml/DefaultPackage" />
 	<rule ref="rulesets/java/controversial.xml/DoNotCallGarbageCollectionExplicitly" />

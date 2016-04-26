@@ -135,7 +135,7 @@
 		<module name="InnerAssignment" />
 		<module name="MagicNumber">
 			<property name="ignoreNumbers"
-				value="-1, 0, 0.5, 1, 2, 3, 4, 8, 10, 16, 32, 64, 90, 100, 180, 360, 1000" />
+				value="-0.5, -1, 0, 0.5, 1, 2, 3, 4, 8, 10, 16, 32, 64, 90, 100, 180, 360, 1000" />
 		</module>
 		<module name="MissingSwitchDefault" />
 		<module name="SimplifyBooleanExpression" />

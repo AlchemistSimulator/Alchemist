@@ -71,22 +71,6 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
  */
 public class YamlLoader implements Loader, Serializable {
 
-    private class PlaceHolder {
-        private final String str;
-
-        PlaceHolder(final String str) {
-            this.str = str;
-        }
-
-        private String get() {
-            return str;
-        }
-
-        @Override
-        public String toString() {
-            return str + ":" + lookupTable.get(str);
-        }
-    }
     /**
      * 
      */
@@ -139,11 +123,12 @@ public class YamlLoader implements Loader, Serializable {
     private static final String VARIABLE = "is a variable";
 
     private static final Logger L = LoggerFactory.getLogger(YamlLoader.class);
+    private static final String UNCHECKED = "unchecked";
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({ UNCHECKED, "rawtypes" })
     private static final Class<? extends Environment<?>> DEFAULT_ENVIRONMENT_CLASS =
         (Class<? extends Environment<?>>) (Class<? extends Environment>) Continuous2DEnvironment.class;
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({ UNCHECKED, "rawtypes" })
     private static final Class<? extends LinkingRule<?>> DEFAULT_LINKING_CLASS =
         (Class<? extends LinkingRule<?>>) (Class<? extends LinkingRule>) NoLinks.class;
     private static final Class<? extends Position> DEFAULT_POSITION_CLASS = Continuous2DEuclidean.class;
@@ -165,6 +150,23 @@ public class YamlLoader implements Loader, Serializable {
 
     private transient Incarnation<?> incarnation;
 
+    private class PlaceHolder {
+        private final String str;
+
+        PlaceHolder(final String str) {
+            this.str = str;
+        }
+
+        private String get() {
+            return str;
+        }
+
+        @Override
+        public String toString() {
+            return str + ":" + lookupTable.get(str);
+        }
+    }
+
     /**
      * @param source
      *            the YAML file
@@ -177,7 +179,7 @@ public class YamlLoader implements Loader, Serializable {
      * @param source
      *            the YAML file
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public YamlLoader(final Reader source) {
         final Yaml yaml = new Yaml();
         final Object yamlObj = yaml.load(source);
@@ -315,8 +317,8 @@ public class YamlLoader implements Loader, Serializable {
                     if (obj instanceof Map) {
                         final Map<String, Object> mapObj = (Map<String, Object>) obj;
                         if (mapObj.containsKey(MOLECULE)) {
-                            Object aggregatorObj = mapObj.getOrDefault(AGGREGATORS, Collections.emptyList());
-                            List<String> aggregators = aggregatorObj instanceof List ? (List<String>) aggregatorObj : Collections.emptyList();
+                            final Object aggregatorObj = mapObj.getOrDefault(AGGREGATORS, Collections.emptyList());
+                            final List<String> aggregators = aggregatorObj instanceof List ? (List<String>) aggregatorObj : Collections.emptyList();
                             return new MoleculeReader<>(
                                     mapObj.get(MOLECULE).toString(),
                                     mapObj.getOrDefault(PROPERTY, "").toString(),
@@ -355,7 +357,7 @@ public class YamlLoader implements Loader, Serializable {
         this(new StringReader(yaml));
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     private Map<String, Object> castOrEmpty(final Object target) {
         return target instanceof Map ? (Map<String, Object>) target : Collections.emptyMap();
     }
@@ -378,7 +380,7 @@ public class YamlLoader implements Loader, Serializable {
         return Collections.unmodifiableMap(lookupTable);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     @Override
     public <T> Environment<T> getWith(final Map<String, Double> values) {
         final Map<String, Double> actualVars = lookupTable.entrySet().stream().collect(Collectors.toMap(
@@ -399,7 +401,7 @@ public class YamlLoader implements Loader, Serializable {
                     actualVars.putIfAbsent(name, value);
                     it.remove();
                 } catch (IllegalStateException e) {
-                    L.debug("{} could not be initialized: maybe it depends on another, not yet initialized variable.", name);
+                    L.debug("{} could not be initialized: maybe it depends on another, not yet initialized variable.\nReason: {}", name, e);
                 }
             }
         }
@@ -428,9 +430,6 @@ public class YamlLoader implements Loader, Serializable {
                 final List<?> parameters = extractParams(displacementShapeMap);
                 final Displacement displ = create(displacementClass, parameters, incarnation, actualVars, scenarioRandom, env, pmaker);
                 L.debug("Displacement initialized: {}", displ);
-                final Supplier<Node<T>> nodeSupplier = makeSupplier(
-                        () -> currIncarnation.createNode(simRandom, env, null),
-                        displacement, NODES_PACKAGE_ROOT, actualVars, simRandom, env);
                 final List<Map<String, Object>> contents = Optional
                         .ofNullable((List<Map<String, Object>>) displacement.get(CONTENTS))
                         .orElse(Collections.emptyList());
@@ -473,6 +472,9 @@ public class YamlLoader implements Loader, Serializable {
                         .parallelStream()
                         .flatMap(pool -> pool.stream())
                         .collect(Collectors.toList());
+                final Supplier<Node<T>> nodeSupplier = makeSupplier(
+                        () -> currIncarnation.createNode(simRandom, env, null),
+                        displacement, NODES_PACKAGE_ROOT, actualVars, simRandom, env);
                 for (final Position pos: displ) {
                     final Node<T> node = nodeSupplier.get();
                     for (final Map<String, Object> content: contents) {
@@ -684,7 +686,7 @@ public class YamlLoader implements Loader, Serializable {
         incarnation = SupportedIncarnations.get((String) ois.readObject()).get();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     private static Optional<Map<?, Double>> aVariable(final Object o) {
         if (o instanceof Map<?, ?>) {
             final Map<?, ?> var = (Map<?, ?>) o;
@@ -748,7 +750,7 @@ public class YamlLoader implements Loader, Serializable {
             final Node<?> node,
             final TimeDistribution<?> timedist,
             final Reaction<?> reaction) {
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings(UNCHECKED)
         final Optional<O> result = Arrays.stream(clazz.getConstructors())
             .sorted((c1, c2) -> {
                 final int n1 = c1.getParameterCount();
@@ -867,7 +869,9 @@ public class YamlLoader implements Loader, Serializable {
                         if (attempt.isPresent()) {
                             return attempt.get();
                         }
-                    } catch (NumberFormatException e) { }
+                    } catch (final NumberFormatException e) {
+                        return null;
+                    }
                 }
                 if (Boolean.class.isAssignableFrom(expectedClass) || boolean.class.isAssignableFrom(expectedClass)) {
                     if (param instanceof Boolean) {
@@ -876,7 +880,9 @@ public class YamlLoader implements Loader, Serializable {
                     if (param instanceof String) {
                         try {
                             return Boolean.parseBoolean((String) param);
-                        } catch (NumberFormatException e) { }
+                        } catch (final NumberFormatException e) {
+                            return null;
+                        }
                     }
                 }
                 if (CharSequence.class.isAssignableFrom(expectedClass)) {
@@ -905,7 +911,7 @@ public class YamlLoader implements Loader, Serializable {
         }
         return Optional.empty();
     }
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     private static <T> Class<T> extractClass(final Map<String, Object> yaml, final String root, final Class<T> defaultClass) {
         String className = (String) yaml.get(TYPE);
         if (className != null && !className.contains(".")) {
@@ -924,7 +930,7 @@ public class YamlLoader implements Loader, Serializable {
         return Optional.ofNullable(extractClass(target, pkg, null));
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     private static Variable makeVar(final Object varObj) {
         final Map<String, Object> var = (Map<String, Object>) varObj;
         var.put(VARIABLE, true);
@@ -948,7 +954,7 @@ public class YamlLoader implements Loader, Serializable {
     }
 
     private static DependentVariable makeDepVar(final Object varObj) {
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings(UNCHECKED)
         final Map<String, Object> var = (Map<String, Object>) varObj;
         final Object formula = var.get(FORMULA);
         var.put(VARIABLE, true);

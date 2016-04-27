@@ -56,7 +56,7 @@ cellReactionLeftInEnvContext:
 ;
 
 cellReactionLeftInNeighborContext:
-    '[' ( elems+=cellReactionLeftElem ('+' elems+=cellReactionLeftElem)* )? 'in' 'neighbour' ']'
+    '[' ( elems+=cellReactionLeftElem ('+' elems+=cellReactionLeftElem)* )? 'in' 'neighbor' ']'
 ;
 
 cellReactionLeftElem:
@@ -76,7 +76,7 @@ cellReactionRightInEnvContext:
 ;
 
 cellReactionRightInNeighborContext:
-    '[' ( elems+=cellReactionRightElem ('+' elems+=cellReactionRightElem)* )? 'in' 'neighbour' ']'
+    '[' ( elems+=cellReactionRightElem ('+' elems+=cellReactionRightElem)* )? 'in' 'neighbor' ']'
 ;
 
 cellReactionRightElem:
@@ -112,7 +112,10 @@ POSDOUBLE :
 ;
 
 LITERAL: 
-    ([a-zA-Z]) ([a-zA-Z0-9] | '_' | '-')*
+    ([a-zA-Z]) ([a-zA-Z0-9] | '_')*
 ;
 
 WS : [ \t\r\n]+ -> skip ;
+
+// handle characters which failed to match any other token
+ErrorCharacter : . ;

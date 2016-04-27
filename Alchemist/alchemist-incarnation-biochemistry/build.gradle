@@ -1,7 +1,31 @@
+apply plugin: 'antlr'
+
 dependencies {
     compile (
         project(':alchemist-maps'),
         "com.google.guava:guava:$guavaVersion",
         "org.danilopianini:javalib-java7:$javalib7Version",
     )
+    antlr "org.antlr:antlr4:$antlrVersion"
+}
+
+sourceSets {
+    antlr
+    /*{
+        java {
+            srcDir 
+        }
+    }*/
+}
+
+generateGrammarSource {
+    arguments += ["-visitor", "-package", "it.unibo.alchemist.biochemistrydsl"]
+    outputDirectory = new File('src/antlr/java')
+/*    doLast {
+        copy {
+            from 'build/generated-src/antlr/main'
+            into 'src/main/java'
+        }
+        project.delete fileTree('build/generated-src/')
+    }*/
 }

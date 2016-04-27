@@ -69,7 +69,7 @@ public class BiochemistryIncarnation implements Incarnation<Double> {
         final Biomolecule h3o = new Biomolecule("H3O");
         final Biomolecule oh = new Biomolecule("OH");
         final double delta = 2.0;
-        // set the conditions (molecule a is present)
+
         if (param.replaceAll("\n+", "").equals("w->ions")) {
             reaction.setConditions(new ArrayList<>(Arrays.asList(new BiomolPresentInCell(h2o, delta, (CellNode) node))));
             reaction.setActions(new ArrayList<>(Arrays.asList(
@@ -85,7 +85,7 @@ public class BiochemistryIncarnation implements Incarnation<Double> {
                     new ChangeBiomolConcentrationInCell(oh, -1.0, (CellNode) node),
                     new ChangeBiomolConcentrationInCell(h2o, delta, (CellNode) node))));
         }
-        // TODO (is just a test method)
+        // TODO (it's just a test)
         return reaction;
     }
 

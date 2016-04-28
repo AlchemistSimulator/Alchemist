@@ -1,0 +1,163 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+    "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
+    "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+<!-- Checkstyle configuration that checks a relaxed version of the Java Coding Conventions from: 
+	- the Java Language Specification at http://java.sun.com/docs/books/jls/second_edition/html/index.html 
+	- the Sun Code Conventions at http://java.sun.com/docs/codeconv/ - the Javadoc 
+	guidelines at http://java.sun.com/j2se/javadoc/writingdoccomments/index.html 
+	- the JDK Api documentation http://java.sun.com/j2se/docs/api/index.html 
+	- some best practices Checkstyle is very configurable. Be sure to read the 
+	documentation at http://checkstyle.sf.net (or in your downloaded distribution). 
+	Most Checks are configurable, be sure to consult the documentation. To completely 
+	disable a check, just comment it out or delete it from the file. Finally, 
+	it is worth reading the documentation. -->
+
+<module name="Checker">
+
+	<module name="SuppressionCommentFilter" />
+
+	<property name="severity" value="warning" />
+
+	<!-- Checks that property files contain the same keys. -->
+	<!-- See http://checkstyle.sf.net/config_misc.html#Translation -->
+	<module name="Translation" />
+
+	<!-- Checks for whitespace -->
+	<!-- See http://checkstyle.sf.net/config_whitespace.html -->
+	<module name="FileTabCharacter">
+		<property name="fileExtensions" value="java" />
+	    <property name="severity" value="warning" />
+	</module>
+
+	<!-- Miscellaneous other checks. -->
+	<!-- See http://checkstyle.sf.net/config_misc.html -->
+	<module name="RegexpSingleline">
+		<property name="severity" value="warning" />
+		<property name="format" value="\s{2,}$" />
+		<property name="fileExtensions" value="java,xtend" />
+		<property name="message" value="Line has trailing spaces." />
+	</module>
+	<module name="RegexpSingleline">
+		<property name="severity" value="warning" />
+		<property name="format" value="\t" />
+		<property name="fileExtensions" value="java,xtend" />
+		<property name="message"
+			value="Line is tab-indented (see Java Code Conventions, Section 4.2)." />
+	</module>
+	<module name="RegexpSingleline">
+		<property name="severity" value="warning" />
+		<property name="format" value="@author" />
+		<property name="fileExtensions" value="java,xtend" />
+		<property name="message"
+			value="@author should no longer be used. If you want to identify authors, use a DVCS properly." />
+	</module>
+	<module name="RegexpSingleline">
+		<property name="severity" value="warning" />
+		<property name="format" value="@version" />
+		<property name="fileExtensions" value="java,xtend" />
+		<property name="message"
+			value="@version should no longer be used. You should version your source with a proper tool." />
+	</module>
+
+	<module name="TreeWalker">
+		<property name="tabWidth" value="8" />
+		<!-- Checks for Javadoc comments. -->
+		<!-- See http://checkstyle.sf.net/config_javadoc.html -->
+		<module name="JavadocMethod">
+			<property name="scope" value="protected" />
+			<property name="logLoadErrors" value="true" />
+			<property name="suppressLoadErrors" value="true" />
+		</module>
+		<module name="JavadocType">
+			<property name="scope" value="protected" />
+		</module>
+		<module name="JavadocVariable">
+			<property name="scope" value="protected" />
+		</module>
+		<module name="JavadocStyle">
+			<property name="scope" value="protected" />
+		</module>
+
+		<!-- Checks for Naming Conventions. -->
+		<!-- See http://checkstyle.sf.net/config_naming.html -->
+		<module name="ConstantName" />
+		<module name="LocalFinalVariableName" />
+		<module name="LocalVariableName" />
+		<module name="MemberName" />
+		<module name="MethodName">
+			<property name="format" value="^[a-z][a-zA-Z0-9_]*$" />
+		</module>
+		<module name="PackageName" />
+		<module name="ParameterName" />
+		<module name="StaticVariableName" />
+		<module name="TypeName" />
+
+		<!-- Checks for imports -->
+		<!-- See http://checkstyle.sf.net/config_import.html -->
+		<module name="AvoidStarImport" />
+		<module name="IllegalImport" />
+		<module name="RedundantImport" />
+
+		<!-- Checks for whitespace -->
+		<!-- See http://checkstyle.sf.net/config_whitespace.html -->
+		<module name="EmptyForIteratorPad" />
+		<module name="MethodParamPad" />
+		<module name="NoWhitespaceAfter">
+			<property name="tokens"
+				value="BNOT,DEC,DOT,INC,LNOT,UNARY_MINUS,UNARY_PLUS" />
+		</module>
+		<module name="NoWhitespaceBefore" />
+		<module name="OperatorWrap" />
+		<module name="ParenPad" />
+		<module name="TypecastParenPad" />
+		<module name="WhitespaceAfter" />
+		<module name="WhitespaceAround">
+			<property name="tokens"
+				value="ASSIGN,BAND,BAND_ASSIGN,BOR,BOR_ASSIGN,BSR,BSR_ASSIGN,BXOR,BXOR_ASSIGN,COLON,DIV,DIV_ASSIGN,EQUAL,GE,GT,LAND,LCURLY,LE,LITERAL_ASSERT,LITERAL_CATCH,LITERAL_DO,LITERAL_ELSE,LITERAL_FINALLY,LITERAL_FOR,LITERAL_IF,LITERAL_RETURN,LITERAL_SYNCHRONIZED,LITERAL_TRY,LITERAL_WHILE,LOR,LT,MINUS,MINUS_ASSIGN,MOD,MOD_ASSIGN,NOT_EQUAL,PLUS,PLUS_ASSIGN,QUESTION,RCURLY,SL,SLIST,SL_ASSIGN,SR,SR_ASSIGN,STAR,STAR_ASSIGN,LITERAL_ASSERT,TYPE_EXTENSION_AND" />
+		</module>
+
+		<!-- Modifier Checks -->
+		<!-- See http://checkstyle.sf.net/config_modifiers.html -->
+		<module name="ModifierOrder" />
+		<module name="RedundantModifier" />
+
+		<!-- Checks for blocks. You know, those {}'s -->
+		<!-- See http://checkstyle.sf.net/config_blocks.html -->
+		<module name="AvoidNestedBlocks" />
+		<module name="EmptyBlock" />
+		<module name="LeftCurly" />
+		<module name="NeedBraces" />
+		<module name="RightCurly" />
+		<module name="EmptyStatement" />
+		<module name="EqualsHashCode" />
+		<module name="IllegalInstantiation" />
+		<module name="InnerAssignment" />
+		<module name="MagicNumber">
+			<property name="ignoreNumbers"
+				value="-0.5, -1, 0, 0.5, 1, 2, 3, 4, 8, 10, 16, 32, 64, 90, 100, 180, 360, 1000" />
+		</module>
+		<module name="MissingSwitchDefault" />
+		<module name="SimplifyBooleanExpression" />
+		<module name="SimplifyBooleanReturn" />
+
+		<!-- Checks for class design -->
+		<!-- See http://checkstyle.sf.net/config_design.html -->
+		<module name="FinalClass" />
+		<module name="HideUtilityClassConstructor" />
+		<module name="InterfaceIsType" />
+		<module name="VisibilityModifier" />
+
+		<!-- Miscellaneous other checks. -->
+		<!-- See http://checkstyle.sf.net/config_misc.html -->
+		<module name="ArrayTypeStyle" />
+		<module name="FinalParameters" />
+		<module name="TodoComment">
+			<property name="severity" value="ignore" />
+		</module>
+		<module name="UpperEll" />
+		<module name="FileContentsHolder" />
+
+	</module>
+</module>
+

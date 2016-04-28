@@ -80,7 +80,7 @@ The project has been developed using Eclipse, and can be easily imported in such
   * If you are a Windows user, you might find easier to import via HTTPS: `git clone https://github.com/AlchemistSimulator/Alchemist.git`
 * Open Eclipse
 * Click File -> Import -> Gradle -> Gradle Project -> Next
-* Select the project root directory, namely, the `Alchemist` folder located inside the folder where you have cloned the repository. Do not point to the folder containing this `README.md` file, but to the `Alchemist` folder on the same level.
+* Select the project root directory, namely, the `alchemist` folder located inside the folder where you have cloned the repository. Do not point to the folder containing this `README.md` file, but to the `alchemist` folder on the same level.
 * Next
 * Make sure that "Gradle weapper (recommended)" is selected
 * Next

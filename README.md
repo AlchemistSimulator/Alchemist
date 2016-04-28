@@ -18,7 +18,7 @@ Add this dependency to your build
 <dependency>
     <groupId>it.unibo.alchemist</groupId>
     <artifactId>alchemist</artifactId>
-    <version>2.1.0</version>
+    <version>2.3.1</version>
 </dependency>
 ```
 
@@ -27,7 +27,7 @@ Add this dependency to your build
 Add this dependency to your build (change the scope appropriately if you need Alchemist only for runtime or testing)
 
 ```groovy
-compile 'it.unibo.alchemist:alchemist:2.1.0'
+compile 'it.unibo.alchemist:alchemist:2.3.1'
 ```
 
 ### Importing a subset of the modules
@@ -55,35 +55,40 @@ Complete build reports can be downloaded [here][reports]
 ### Importing the project
 The project has been developed using Eclipse, and can be easily imported in such IDE.
 
-
 #### Recommended configuration
 * Download [the latest Eclipse for Java SE developers][eclipse]. Arch Linux users can use the package extra/eclipse-java, which is rather up-to-date.
   * The minimum version required for a smooth import is Eclipse Mars.1, which integrates Gradle Buildship
   * Previous Eclipse versions are okay, provided that the Gradle Buildship plugin is installed
 * Install the code quality plugins:
-	* In Eclipse, click Help -> Eclipse Marketplace...
-	* In the search form enter "findbugs", then press Enter
-	* One of the retrieved entries should be "FindBugs Eclipse Plugin", click Install
+  * In Eclipse, click Help -> Eclipse Marketplace...
+  * In the search form enter "findbugs", then press Enter
+  * One of the retrieved entries should be "FindBugs Eclipse Plugin", click Install
   * Click "< Install More"
   * In the search form enter "pmd", then press Enter
   * One of the retrieved entries should be "pmd-eclipse-plugin". **Do not** confuse it with eclipse-pmd. click Install
-	* In the search form enter "checkstyle", then press Enter
-	* One of the retrieved entries should be "Checkstyle Plug-in" with a written icon whose text is "eclipse-cs", click Install
+  * In the search form enter "checkstyle", then press Enter
+  * One of the retrieved entries should be "Checkstyle Plug-in" with a written icon whose text is "eclipse-cs", click Install
   * Click "Install Now >"
   * Wait for Eclipse to resolve all the features
   * Click "Confirm >"
-	* Follow the instructions, accept the license, wait for Eclipse to download and install the product, accept the installation and restart the IDE.
+  * Follow the instructions, accept the license, wait for Eclipse to download and install the product, accept the installation and restart the IDE.
 
 #### Import Procedure
+* Install git on your system, if you haven't yet
+* Pull up a terminal, and `cd` to the folder where you want the project to be cloned (presumably, your Eclipse workspace)
+* Clone the project with `git clone git@github.com:AlchemistSimulator/alchemist.git`
+  * If you are a Windows user, you might find easier to import via HTTPS: `git clone https://github.com/AlchemistSimulator/Alchemist.git`
 * Open Eclipse
-* Click File -> Import -> Git -> Projects from Git -> Next
-* Clone URI -> Next
-* Paste `git@github.com:DanySK/alchemist-time.git` as URI -> Next -> Next
-* Select the directory where you want to clone the repository. Beware that it **does not** point to the current Eclipse workspace by default
-* Next -> Next -> Finish
-* The project will appear in your projects list.
-* Right click on the project, select Gradle -> Refresh Dependencies. If the option is disabled, do first Gradle -> Enable Dependency Management and then try again.
-* Checkstyle, PMD and FindBugs should be pre-configured. **Do not** run Gradle -> Refresh all, because that would delete the automatic invocation of the code checkers.
+* Click File -> Import -> Gradle -> Gradle Project -> Next
+* Select the project root directory, namely, the `alchemist` folder located inside the folder where you have cloned the repository. Do not point to the folder containing this `README.md` file, but to the `alchemist` folder on the same level.
+* Next
+* Make sure that "Gradle weapper (recommended)" is selected
+* Next
+* Wait for Eclipse to scan the project, then make sure that the Gradle project structure can be expanded, and contains an external `alchemist` project and many `alchemist-*` subprojects. If it does not, you have pointed to the wrong folder while importing, go back and select the correct one.
+* Finish
+* When asked about the existing Eclipse configuration, select "Keep" (so that all the default development options are imported)
+* The projects will appear in your projects list.
+* Checkstyle, PMD and FindBugs should be pre-configured.
 
 ### Developing the project
 Contributions to this project are welcome. Just some rules:

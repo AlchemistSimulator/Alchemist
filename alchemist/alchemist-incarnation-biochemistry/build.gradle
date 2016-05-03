@@ -8,7 +8,8 @@ dependencies {
     compile (
         project(':alchemist-maps'),
         "com.google.guava:guava:$guavaVersion",
-        "org.danilopianini:javalib-java7:$javalib7Version"
+        "org.danilopianini:javalib-java7:$javalib7Version",
+        project.sourceSets.antlr.output
     )
     antlr "org.antlr:antlr4:$antlrVersion"
     antlrCompile "org.antlr:antlr4:$antlrVersion"
@@ -17,4 +18,16 @@ dependencies {
 generateGrammarSource {
     arguments += ["-visitor", "-package", "it.unibo.alchemist.biochemistrydsl"]
     outputDirectory = new File('src/antlr/java')
+}
+
+checkstyle {
+    sourceSets = [project.sourceSets.main, project.sourceSets.test]
+}
+
+pmd {
+    sourceSets = [project.sourceSets.main, project.sourceSets.test]
+}
+
+findbugs {
+    sourceSets = [project.sourceSets.main, project.sourceSets.test]
 }

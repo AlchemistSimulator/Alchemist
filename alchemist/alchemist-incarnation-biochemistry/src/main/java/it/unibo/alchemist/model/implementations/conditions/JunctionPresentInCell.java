@@ -9,21 +9,22 @@
 
 package it.unibo.alchemist.model.implementations.conditions;
 
+import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.Node;
 
 /**
  */
-public class JunctionPresentInCell extends GenericMoleculePresent<Double> {
+public class JunctionPresentInCell extends GenericJunctionPresent {
 
     private static final long serialVersionUID = 4213307452790768059L;
 
     /**
      * 
-     * @param junName the name of the junction
+     * @param junction the junction
      * @param node the node
      */
-    public JunctionPresentInCell(final String junName, final Node<Double> node) {
-        super(null, node, Double.NaN); // TODO This is just a stub
+    public JunctionPresentInCell(final Junction junction, final Node<Double> node) {
+        super(junction, node); // TODO This is just a stub
     }
 
 }

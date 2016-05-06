@@ -9,6 +9,7 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.interfaces.Context;
+import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -22,11 +23,11 @@ public class AddJunctionInNeighbor extends AbstractAction<Double> {
 
     /**
      * 
-     * @param junName 
+     * @param junction 
      * @param node 
      * @param env 
      */
-    public AddJunctionInNeighbor(final String junName, final Node<Double> node, final Environment<Double> env) {
+    public AddJunctionInNeighbor(final Junction junction, final Node<Double> node, final Environment<Double> env) {
         super(node);
         // TODO Auto-generated constructor stub
     }

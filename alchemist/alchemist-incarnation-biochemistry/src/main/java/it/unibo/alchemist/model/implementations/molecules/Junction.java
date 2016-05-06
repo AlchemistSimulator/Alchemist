@@ -1,0 +1,92 @@
+package it.unibo.alchemist.model.implementations.molecules;
+
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.Map;
+
+import it.unibo.alchemist.model.implementations.nodes.CellNode;
+import java.util.Optional;
+
+import org.danilopianini.lang.util.FasterString;
+
+/**
+ * Represents a junction between two cells.
+ */
+public class Junction implements Serializable {
+
+    private static final long serialVersionUID = -5538036651435573599L;
+
+    private final FasterString name;
+    private final Map<Biomolecule, Double> moleculesInCurrentNode;
+    private final Map<Biomolecule, Double> moleculesInNeighborNode;
+    private Optional<CellNode> neighborNode = Optional.empty();
+
+    /**
+     * Build a junction.
+     * @param name the name of the junction.
+     * @param moleculesInCurrentNode 
+     *  A map of molecules (with their concentration) which was in the current node. When the junction is removed that molecules will be released in the current node.
+     * @param moleculesInNeighborNode
+     *  A map of molecules (with their concentration) which was in the current node. When the junction is removed that molecules will be released in the current node.
+     */
+    public Junction(final String name, final Map<Biomolecule, Double> moleculesInCurrentNode, final Map<Biomolecule, Double> moleculesInNeighborNode) {
+        this.name = new FasterString(name);
+        this.moleculesInCurrentNode = moleculesInCurrentNode;
+        this.moleculesInNeighborNode = moleculesInNeighborNode;
+    }
+
+    /**
+     * @return the name of the junction.
+     */
+    public String getName() {
+        return name.toString();
+    }
+
+    /**
+     * @return a amp of molecules and concentrations associated with this junction in the current node.
+     */
+    public Map<Biomolecule, Double> getMoleculesInCurrentNode() {
+        return Collections.unmodifiableMap(moleculesInCurrentNode);
+    }
+
+    /**
+     * @return a amp of molecules and concentrations associated with this junction in the current node.
+     */
+    public Map<Biomolecule, Double> getMoleculesInNeighborNode() {
+        return Collections.unmodifiableMap(moleculesInNeighborNode);
+    }
+
+    /**
+     * 
+     * @return the neighbor node if it's present. Return an Optional.empty() instead.
+     */
+    public Optional<CellNode> getNeighborNode() {
+        return neighborNode;
+    }
+
+    /**
+     * Set the neighbor node of the junction.
+     * @param neighbor the neighbor node.
+     */
+    public void setNeighborNode(final CellNode neighbor) {
+        neighborNode = Optional.ofNullable(neighbor);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj instanceof Junction) {
+            return (((Junction) obj).name.equals(name) && ((Junction) obj).neighborNode.equals(neighborNode));
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode() + neighborNode.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return name.toString();
+    }
+}

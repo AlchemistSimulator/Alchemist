@@ -8,6 +8,7 @@
  */
 package it.unibo.alchemist.model.implementations.conditions;
 
+import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 
@@ -19,11 +20,11 @@ public class JunctionPresentInNeighbor extends GenericMoleculePresent<Double> {
 
     /**
      * 
-     * @param junName 
+     * @param junction 
      * @param node 
      * @param env 
      */
-    public JunctionPresentInNeighbor(final String junName, final Node<Double> node, final Environment<Double> env) {
+    public JunctionPresentInNeighbor(final Junction junction, final Node<Double> node, final Environment<Double> env) {
         super(null, node, Double.NaN); // TODO This is just a stub
     }
 }

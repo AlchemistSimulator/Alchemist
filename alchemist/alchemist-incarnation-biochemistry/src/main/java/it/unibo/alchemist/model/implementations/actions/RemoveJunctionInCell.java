@@ -9,6 +9,7 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.interfaces.Context;
+import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
@@ -21,10 +22,10 @@ public class RemoveJunctionInCell extends AbstractAction<Double> {
 
     /**
      * 
-     * @param junName the name of the junction
+     * @param junction the junction
      * @param node the node where the action is performed
      */
-    public RemoveJunctionInCell(final String junName, final Node<Double> node) {
+    public RemoveJunctionInCell(final Junction junction, final Node<Double> node) {
         super(node);
         // TODO Auto-generated constructor stub
     }

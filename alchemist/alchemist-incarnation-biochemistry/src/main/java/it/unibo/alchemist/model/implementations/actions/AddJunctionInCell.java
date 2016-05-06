@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.implementations.actions;
 
+import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -21,11 +22,10 @@ public class AddJunctionInCell extends AbstractAction<Double> {
     private static final long serialVersionUID = -7074995950043793067L;
 
     /**
-     * 
-     * @param junName 
-     * @param node 
+     * @param junction the junction
+     * @param node the node
      */
-    protected AddJunctionInCell(final String junName, final Node<Double> node) {
+    public AddJunctionInCell(final Junction junction, final Node<Double> node) {
         super(node);
         // TODO Auto-generated constructor stub
     }

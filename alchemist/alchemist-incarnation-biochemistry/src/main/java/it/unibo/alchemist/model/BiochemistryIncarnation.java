@@ -17,6 +17,7 @@ import it.unibo.alchemist.model.implementations.actions.ChangeBiomolConcentratio
 import it.unibo.alchemist.model.implementations.conditions.BiomolPresentInCell;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.nodes.CellNode;
+import it.unibo.alchemist.model.implementations.reactions.BiochemicalReactionBuilder;
 import it.unibo.alchemist.model.implementations.reactions.ChemicalReaction;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.interfaces.Molecule;
@@ -64,7 +65,7 @@ public class BiochemistryIncarnation implements Incarnation<Double> {
     @Override
     public Reaction<Double> createReaction(final RandomGenerator rand, final Environment<Double> env, final Node<Double> node,
             final TimeDistribution<Double> time, final String param) {
-        final ChemicalReaction<Double> reaction = new ChemicalReaction<>(node, time);
+       /* final ChemicalReaction<Double> reaction = new ChemicalReaction<>(node, time);
         final Biomolecule h2o = new Biomolecule("H2O");
         final Biomolecule h3o = new Biomolecule("H3O");
         final Biomolecule oh = new Biomolecule("OH");
@@ -86,7 +87,9 @@ public class BiochemistryIncarnation implements Incarnation<Double> {
                     new ChangeBiomolConcentrationInCell(h2o, delta, (CellNode) node))));
         }
         // TODO (it's just a test)
-        return reaction;
+        return reaction;*/
+
+        return new BiochemicalReactionBuilder(rand, this, time, node, env, param).build();
     }
 
     @Override

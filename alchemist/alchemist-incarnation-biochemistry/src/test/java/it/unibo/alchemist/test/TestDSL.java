@@ -29,13 +29,52 @@ public class TestDSL {
         final CommonTokenStream tokens = new CommonTokenStream(lexer);
         final BiochemistrydslParser parser = new BiochemistrydslParser(tokens);
         parser.removeErrorListeners(); // default error listener log on the console and not throwing any error
-        parser.addErrorListener(new MyAntlrErrorListener());
+        parser.addErrorListener(new ANTLRErrorListener() {
+            @Override
+            public void syntaxError(final Recognizer<?, ?> recognizer,
+                    final Object offendingSymbol, 
+                    final int line,
+                    final int charPositionInLine,
+                    final String msg,
+                    final RecognitionException e) {
+                throw new RuntimeException("syntax error");
+            }
+            @Override
+            public void reportAmbiguity(final Parser recognizer, 
+                    final DFA dfa, 
+                    final int startIndex,
+                    final int stopIndex,
+                    final boolean exact,
+                    final BitSet ambigAlts, 
+                    final ATNConfigSet configs) {
+                throw new RuntimeException("report ambiguity");
+            }
+            @Override
+            public void reportAttemptingFullContext(final Parser recognizer,
+                    final DFA dfa,
+                    final int startIndex,
+                    final int stopIndex,
+                    final BitSet conflictingAlts,
+                    final ATNConfigSet configs) {
+                throw new RuntimeException("report attempting full context");
+            }
+
+            @Override
+            public void reportContextSensitivity(final Parser recognizer,
+                    final DFA dfa, 
+                    final int startIndex,
+                    final int stopIndex,
+                    final int prediction,
+                    final ATNConfigSet configs) {
+                throw new RuntimeException("report context sensitivity");
+            }
+        });
         return parser;
     }
 
     private void testValidReaction(final String reaction) {
         try {
-            getParser(reaction).explicitCellReaction();
+            getParser(reaction).reaction();
         } catch (RuntimeException e) {
             fail();
         }
@@ -43,7 +82,7 @@ public class TestDSL {
 
     private void testInvalidReaction(final String reaction) {
         try {
-            getParser(reaction).explicitCellReaction();
+            getParser(reaction).reaction();
             fail();
         } catch (RuntimeException e) {
             assertFalse(e.getMessage().isEmpty());
@@ -54,8 +93,8 @@ public class TestDSL {
      * Tests.
      */
     @Test
-    public void test() {
-        // Valid reactions 
+    public void test() { // NOPMD on NCSS line count
+        /********** Valid reactions **********/
         testValidReaction("[] --> []");
         testValidReaction("[a] --> []");
         testValidReaction("[] --> [b]");
@@ -76,30 +115,46 @@ public class TestDSL {
         testValidReaction("[5 MolA + 2 MolB in cell] + [MolC in neighbor] --> [2 MolD in cell] + [MolE in env]");
         testValidReaction("[MolA in env]+[MolB + 3MolC in cell] --> [MolD]");
         testValidReaction("[MolA] + [MolB + 3MolC in neighbor] --> [4 MolD in env]");
-        testValidReaction("[MolA + MolB] --> [junction A-B]");
-        testValidReaction("[3 MolA in cell] + [junction A-B] --> [MolA in neighbor]");
-        testValidReaction("[3 MolA + MolB] + [junction A-B] --> [junction A-B] + [2 MolC in env]");
-        testValidReaction("[MolA + MolB] -20-> [2 MolC]");
-        testValidReaction("[junction A-B + MolA] -0.1-> [MolB in env]");
+        testValidReaction("[MolA + MolB] --> [2 MolC]");
         testValidReaction("[3 MolA in cell] + [2 MolB in env] --> [MyCustomAction()]");
         testValidReaction("[3 MolA in cell] + [2 MolB in env] --> [MyCustomAction(1, 2, 3)]");
         testValidReaction("[3 MolA in cell] + [2 MolB in env] --> [MyCustomAction(a, bb, ccc, 1, 2)]");
         testValidReaction("[3 MolA in cell] + [2 MolB in env] --> [3 MolA + MyCustomAction()]");
         testValidReaction("[3 MolA in cell] + [2 MolB in env] --> [MyCustomAction1() + MyCustomAction2(1.5)]");
         testValidReaction("[] --> [2 MolA in neighbor] if MyCustomCondition()");
-        testValidReaction("[5 MolA + junction A-B in cell] --> [2 MolB in env] if MyCustomCondition(1, 2, 3)");
-        testValidReaction("[5 MolA + junction A-B in cell] --> [2 MolB in env] if MyCustomCondition(a, bb, ccc)");
+        testValidReaction("[5 MolA + MolB in cell] --> [2 MolB in env] if MyCustomCondition(1, 2, 3)");
+        testValidReaction("[5 MolA + MolB in cell] --> [2 MolB in env] if MyCustomCondition(a, bb, ccc)");
         testValidReaction("[5 MolA] --> [2 MolB in env] if MyCustomCondition1(), MyCustomCondition2(a, 1.2)");
         testValidReaction("[3 MolA in env] --> [2 MolB] reaction type MyCustomReaction()");
         testValidReaction("[3 MolA in env] --> [2 MolB] reaction type MyCustomReaction(1, 2, 3)");
         testValidReaction("[3 MolA in env] --> [2 MolB] reaction type MyCustomReaction(a, bb, ccc)");
         testValidReaction("[3 MolA in env] --> [2 MolB] reaction type MyCustomReaction1(), MyCustomReaction2(1.2, qwerty)");
         testValidReaction("[3 MolA + 2.5 MolB] + [ MolC + 1.1 MolD in cell ] + [MolE in env] + "
-                + "[MolF+2 MolG in env]+[junction A-B] -5.5-> [junction C-D] + [3 MolH in neighbor] + "
+                + "[MolF+2 MolG in env] --> [3 MolH in neighbor] + "
                 + "[2 MolI + 4.8 MolL in cell] + [MyCustomAction1() + MyCustomAction2(1.2, abcde, 5)] "
                 + "if MyCustomCondition(1, 2, 3), MyCustomCondition2() reaction type MyCustomReaction(2.2, abcde, 5)");
+        // create junction (control of the presence of molecules in the left side of the reaction isn't done here)
+        testValidReaction("[MolA] + [MolC in neighbor] --> [junction MolA-MolC]");
+        testValidReaction("[MolC  in neighbor] + [MolA] --> [junction MolA-MolC]");
+        testValidReaction("[MolC in neighbor] + [MolE in env] + [MolA] --> [junction MolA-MolC]");
+        testValidReaction("[MolZ in env] + [4 MolT + MolR in neighbor] + [MolA+ MolB in env] + [MolH + 8 MolF] + [MolS in env] --> [junction MolH:5MolF-4MolT:MolR]");
+        testValidReaction("[MolA] + [MolB in neighbor] --> [MolC in env] + [junction MolA-MolB]");
+        testValidReaction("[MolA] + [MolB in neighbor] --> [junction MolA-MolB] + [MolB]");
+        testValidReaction("[MolA + 3 MolB] + [2 MolC in neighbor] + [MolD in env] --> [junction MolA:2MolB-2MolC]");
+        testValidReaction("[2 MolC in neighbor] + [MolD in env] + [MolA + 3 MolB]  --> [MolS] + [junction MolA:3MolB-MolC] + [MolE]");
+        // use junctions
+        testValidReaction("[junction A-B] --> []");
+        testValidReaction("[3 MolA + MolB] + [junction A-B] --> []");
+        testValidReaction("[3 MolA + MolB] + [junction A-B] --> [junction A-B]");
+        testValidReaction("[3 MolA + MolB] + [junction A-B] + [MolC + 8 MolD in env] + [junction B-C] --> [junction A-B]");
+        testValidReaction("[3 MolA + MolB] + [junction A-B] --> [MolA] + [MolB in env] + [junction A-B] + [MolE] + [MolR in neighbor]");
+        testValidReaction("[3 MolA + MolB] + [junction A-B] --> [junction A-B] + [MolA] + [MolC]");
+        testValidReaction("[junction A-B] --> [MolB in env] + [MolB]");
+        testValidReaction("[junction A-B] + [MolA in env] + [junction C-D] --> [MolB in env] + [junction C-D]");
+        testValidReaction("[junction A-B] + [MolA in env] + [junction C-D] --> [MolB in env] + [junction C-D]");
 
-        // Invalid reactions
+
+        /********** Invalid reactions **********/
         testInvalidReaction("");
         testInvalidReaction("-->");
         testInvalidReaction("--> []");
@@ -128,18 +183,8 @@ public class TestDSL {
         testInvalidReaction("[MolA cell] --> [MolB in env]"); // cell instead of in cell
         testInvalidReaction("[MolA in env in cell] --> [MolB]"); // duplicated context declaration
         testInvalidReaction("[MolA in cell + MolB in neighbor] --> [MolB]"); // duplicated context declaration (use [.. in cell] + [.. in neighbor])
-        testInvalidReaction("[Junction A-B] --> [MolA in env]"); // Junction instead of junction
-        testInvalidReaction("[junction AB] --> [MolB]"); // correct syntax for junction is LITERAL-LITERAL
-        testInvalidReaction("[junction A-2B] --> [MolB]"); // LITERAL cannot begin with a number
-        testInvalidReaction("[3 junction A-B] --> [2 MolA]"); // junctions cannot have concentration
         testInvalidReaction("[MolA + MolB] --> MyCustomAction()"); // custom actions must be surrounded by []
         testInvalidReaction("[MolA + MolB] --> [MyCustomAction(), MyCustomAction()]"); // , instead of +
-        testInvalidReaction("[MolA] --5-> [MolB]"); // rate must be -rate->
-        testInvalidReaction("[MolA] -5--> [MolB]");
-        testInvalidReaction("[MolA] 5--> [MolB]");
-        testInvalidReaction("[MolA] --5> [MolB]");
-        testInvalidReaction("[MolA] -->5 [MolB]");
-        testInvalidReaction("[MolA] -a-> [MolB]"); // rate must be a number
         testInvalidReaction("[MolA] --> [MolB] if MyCustomCondition"); // custom conditions must have brackets (MyCustomCondition())
         testInvalidReaction("MyCustomCondition() --> [MolB]");
         testInvalidReaction("[MyCustomCondition()] --> [MolB]");
@@ -149,47 +194,22 @@ public class TestDSL {
         testInvalidReaction("[MolA] --> [MolB] if MyCustomCondition() if MyCustomCondition2()"); // duplicate if
         testInvalidReaction("[MolA] --> [MolB] reaction type MyCustomReaction"); // custom reactions must have brackets (MyCustomReaction())
         testInvalidReaction("[MolA] --> [MolB] reaction MyCustomReaction()"); // reaction instead reaction type
-    }
+        //junctions
+        testInvalidReaction("[Junction A-B] --> [MolA in env]"); // Junction instead of junction
+        testInvalidReaction("[junction AB] --> [MolB]"); // correct syntax for junction is biomolecule(:biomolecule)*-biomolecule(:biomolecule)*
+        testInvalidReaction("[junction A,B-B] --> [MolB]"); // the biomolecule separator is ':'
+        testInvalidReaction("[3 junction A-B] --> [2 MolA]"); // junctions cannot have concentration
+        testInvalidReaction("[junction A-B in env] --> [2 MolA]"); // junctions cannot have context
+        testInvalidReaction("[junction A-B in cell] --> [2 MolA]");
+        testInvalidReaction("[junction A-B in neighbor] --> [2 MolA]");
+        testInvalidReaction("[MolA] --> [junction A-B]"); // the creation of a junction requires at least 1 molecule in cell and 1 molecule in neighbor
+        testInvalidReaction("[MolA in neighbor] --> [junction A-B]");
+        testInvalidReaction("[MolA in neighbor] + [MolB in env] --> [junction A-B]");
+        testInvalidReaction("[MolA] + [MolB in env] --> [junction A-B]");
+        testInvalidReaction("[MolA] + [MolB in neighbor] + [MolC in cell] --> [junction A-B]"); // the creation of a junction cannot have 2 cell contexts. Use [MolA + MolC].
+        testInvalidReaction("[MolA] + [MolB in neighbor] + [MolC in neighbor] --> [junction A-B]"); // the creation of a junction cannot have 2 neighbor contexts. Use [MolB + MolC in neighbor].
+        testInvalidReaction("[MolA] + [MolB in neighbor] --> [junction A-B] + [junction C-D]"); // cannot create 2 junction at the same time. Use 2 reactions
+        testInvalidReaction("[MolA] + [MolB in neighbor] --> [junction A-B] + [MolF in env] + [junction C-D]");
 
-    private static class MyAntlrErrorListener implements ANTLRErrorListener {
-
-        @Override
-        public void syntaxError(final Recognizer<?, ?> recognizer,
-                final Object offendingSymbol, 
-                final int line,
-                final int charPositionInLine,
-                final String msg,
-                final RecognitionException e) {
-            throw new RuntimeException("syntax error");
-        }
-        @Override
-        public void reportAmbiguity(final Parser recognizer, 
-                final DFA dfa, 
-                final int startIndex,
-                final int stopIndex,
-                final boolean exact,
-                final BitSet ambigAlts, 
-                final ATNConfigSet configs) {
-            throw new RuntimeException("report ambiguity");
-        }
-        @Override
-        public void reportAttemptingFullContext(final Parser recognizer,
-                final DFA dfa,
-                final int startIndex,
-                final int stopIndex,
-                final BitSet conflictingAlts,
-                final ATNConfigSet configs) {
-            throw new RuntimeException("report attempting full context");
-        }
-
-        @Override
-        public void reportContextSensitivity(final Parser recognizer,
-                final DFA dfa, 
-                final int startIndex,
-                final int stopIndex,
-                final int prediction,
-                final ATNConfigSet configs) {
-            throw new RuntimeException("report context sensitivity");
-        }
     }
 }

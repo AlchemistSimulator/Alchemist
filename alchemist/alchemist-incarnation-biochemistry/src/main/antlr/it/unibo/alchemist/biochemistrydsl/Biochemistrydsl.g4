@@ -7,31 +7,31 @@ reaction
     ;
 
 biochemicalReaction:
-    BiochemicalReactionLeft=biochemicalReactionLeft
+    biochemicalReactionLeft
     '-->'
-    BiochemicalReactionRight=biochemicalReactionRight
-    (CustomConditions=customConditions)?
-    (CustomReactionType=customReactionType)?
+    biochemicalReactionRight
+    customConditions?
+    customReactionType?
     ;
 
 createJunction: 
-    CreateJunctionLeft=createJunctionLeft
+    createJunctionLeft
     '-->'
-    CreateJunctionRight=createJunctionRight
-    (CustomConditions=customConditions)?
-    (CustomReactionType=customReactionType)?
+    createJunctionRight
+    customConditions?
+    customReactionType?
     ;
 
 junctionReaction:
-    JunctionReactionLeft=junctionReactionLeft
+    junctionReactionLeft
     '-->'
-    JunctionReactionRight=junctionReactionRight
-    (CustomConditions=customConditions)?
-    (CustomReactionType=customReactionType)?
+    junctionReactionRight
+    customConditions?
+    customReactionType?
     ;
 
-javaConstructor:
-    JavaClass=javaClass '(' (javaArgList=argList)? ')'
+javaConstructor
+    : javaClass '(' (argList)? ')'
     ;
 
 javaClass:
@@ -39,49 +39,41 @@ javaClass:
     ;
     
  argList
-    : args+=arg (',' args+=arg)*
+    : arg (',' arg)*
     ;
 
 arg
-    : doubleArg=decimal
-    | literalArg=LITERAL
+    : decimal
+    | LITERAL
     ;   
 
 createJunctionLeft
-    :   ((biochemicalReactionLeftContexts+=biochemicalReactionLeftContext '+' )*
-        createJunctionCellConditions=createJunctionCellCondition '+' 
-        (biochemicalReactionLeftContexts+=biochemicalReactionLeftContext '+' )*
-        createJunctionNeighborConditions=createJunctionNeighborCondition
-        ('+' biochemicalReactionLeftContexts+=biochemicalReactionLeftContext)*)
-    |   ((biochemicalReactionLeftContexts+=biochemicalReactionLeftContext '+' )*
-        createJunctionNeighborConditions=createJunctionNeighborCondition '+' 
-        (biochemicalReactionLeftContexts+=biochemicalReactionLeftContext '+' )*
-        createJunctionCellConditions=createJunctionCellCondition
-        ('+' biochemicalReactionLeftContexts+=biochemicalReactionLeftContext)*)
-    ;
-
-createJunctionCellCondition: 
-    '[' elems+=biomolecule ('+' elems+=biomolecule)* ('in' 'cell')? ']'
-    ;
-
-createJunctionNeighborCondition: 
-    '[' elems+=biomolecule ('+' elems+=biomolecule)* 'in' 'neighbor' ']'
+    :   ((biochemicalReactionLeftContext '+' )*
+        biochemicalReactionLeftInCellContext '+' 
+        (biochemicalReactionLeftContext '+' )*
+        biochemicalReactionLeftInNeighborContext
+        ('+' biochemicalReactionLeftContext)*)
+    |   ((biochemicalReactionLeftContext '+' )*
+        biochemicalReactionLeftInNeighborContext '+' 
+        (biochemicalReactionLeftContext '+' )*
+        biochemicalReactionLeftInCellContext
+        ('+' biochemicalReactionLeftContext)*)
     ;
 
 createJunctionRight: 
-    (biochemicalReactionRightContexts+=biochemicalReactionRightContext '+')*
-    CreateJunctionJunction=createJunctionJunction
-    ('+' biochemicalReactionRightContexts+=biochemicalReactionRightContext)*
+    (biochemicalReactionRightContext '+')*
+    createJunctionJunction
+    ('+' biochemicalReactionRightContext)*
     ;
     
 createJunctionJunction
-    : '[' Junction=junction ']'
+    : '[' junction ']'
     ;
     
 junctionReactionLeft: 
-    (biochemicalReactionLeftContexts+=biochemicalReactionLeftContext '+')*
-    JunctionReactionJunctionConditions+=junctionReactionJunctionCondition
-    ('+' (biochemicalReactionLeftContexts+=biochemicalReactionLeftContext | JunctionReactionJunctionConditions+=junctionReactionJunctionCondition))*
+    (biochemicalReactionLeftContext '+')*
+    junctionReactionJunctionCondition
+    ('+' (biochemicalReactionLeftContext | junctionReactionJunctionCondition))*
     ;
     
 junctionReactionRight
@@ -90,70 +82,75 @@ junctionReactionRight
     ;
     
 junctionReactionJunctionCondition
-    : '[' Junction=junction ']'
+    : '[' junction ']'
     ;
     
 junctionReactionJunction
-    : '[' Junction=junction ']'
+    : '[' junction ']'
     ;
     
 
 biochemicalReactionLeft:
-    biochemicalReactionLeftContexts+=biochemicalReactionLeftContext
-    ('+' biochemicalReactionLeftContexts+=biochemicalReactionLeftContext)*
+    biochemicalReactionLeftContext
+    ('+' biochemicalReactionLeftContext)*
     ;
 
 biochemicalReactionRight:
-    biochemicalReactionRightContexts+=biochemicalReactionRightContext
-    ('+' biochemicalReactionRightContexts+=biochemicalReactionRightContext)*
+    biochemicalReactionRightContext
+    ('+' biochemicalReactionRightContext)*
     ;
 
 customConditions:
-    'if' conditions+=customCondition (',' conditions+=customCondition)*
+    'if' customCondition (',' customCondition)*
     ;
 
 customReactionType:
-    'reaction' 'type' JavaConstructor=javaConstructor
+    'reaction' 'type' javaConstructor
     ;
 
-biochemicalReactionLeftContext:
-    inCell=biochemicalReactionLeftInCellContext | inEnv=biochemicalReactionLeftInEnvContext | inNeighbor=biochemicalReactionLeftInNeighborContext
+biochemicalReactionLeftContext
+    : biochemicalReactionLeftInCellContext 
+    | biochemicalReactionLeftInEnvContext 
+    | biochemicalReactionLeftInNeighborContext
     ;
 
 biochemicalReactionLeftInCellContext:
-    '[' ( elems+=biomolecule ('+' elems+=biomolecule)* )? ('in' 'cell')? ']'
+    '[' ( biomolecule ('+' biomolecule)* )? ('in' 'cell')? ']'
     ;
 
 biochemicalReactionLeftInEnvContext:
-    '[' ( elems+=biomolecule ('+' elems+=biomolecule)* )? 'in' 'env' ']'
+    '[' ( biomolecule ('+' biomolecule)* )? 'in' 'env' ']'
     ;
 
 biochemicalReactionLeftInNeighborContext:
-    '[' ( elems+=biomolecule ('+' elems+=biomolecule)* )? 'in' 'neighbor' ']'
+    '[' ( biomolecule ('+' biomolecule)* )? 'in' 'neighbor' ']'
     ;
 
-biochemicalReactionRightContext:
-    inCell=biochemicalReactionRightInCellContext | inEnv=biochemicalReactionRightInEnvContext | inNeighbor=biochemicalReactionRightInNeighborContext
+biochemicalReactionRightContext
+    : biochemicalReactionRightInCellContext 
+    | biochemicalReactionRightInEnvContext 
+    | biochemicalReactionRightInNeighborContext
     ;
 
 biochemicalReactionRightInCellContext:
-    '[' ( elems+=biochemicalReactionRightElem ('+' elems+=biochemicalReactionRightElem)* )? ('in' 'cell')? ']'
+    '[' ( biochemicalReactionRightElem ('+' biochemicalReactionRightElem)* )? ('in' 'cell')? ']'
     ;
 
 biochemicalReactionRightInEnvContext:
-    '[' ( elems+=biochemicalReactionRightElem ('+' elems+=biochemicalReactionRightElem)* )? 'in' 'env' ']'
+    '[' ( biochemicalReactionRightElem ('+' biochemicalReactionRightElem)* )? 'in' 'env' ']'
     ;
 
 biochemicalReactionRightInNeighborContext:
-    '[' ( elems+=biochemicalReactionRightElem ('+' elems+=biochemicalReactionRightElem)* )? 'in' 'neighbor' ']'
+    '[' ( biochemicalReactionRightElem ('+' biochemicalReactionRightElem)* )? 'in' 'neighbor' ']'
     ;
 
-biochemicalReactionRightElem:
-    Biomolecule=biomolecule | JavaConstructor=javaConstructor
+biochemicalReactionRightElem
+    : biomolecule 
+    | javaConstructor
     ;
 
-customCondition:
-    JavaConstructor=javaConstructor
+customCondition
+    : javaConstructor
     ;
 
 junction:
@@ -169,11 +166,11 @@ junctionRight
     ;
 
 biomolecule:
-    (Concentration=concentration)? name=LITERAL
+    (concentration)? name=LITERAL
     ;
 
-concentration:
-    doubleConc=POSDOUBLE
+concentration
+    : POSDOUBLE
     ;
 
 decimal : 

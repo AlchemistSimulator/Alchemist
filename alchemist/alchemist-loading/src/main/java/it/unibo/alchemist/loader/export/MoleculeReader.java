@@ -1,9 +1,11 @@
 package it.unibo.alchemist.loader.export;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 
 import org.apache.commons.math3.stat.descriptive.UnivariateStatistic;
 import org.danilopianini.lang.LangUtils;
@@ -65,13 +67,20 @@ public class MoleculeReader<T> implements Extractor {
     @Override
     public double[] extractData(final Environment<?> env, final Reaction<?> r, final Time time, final long step) {
         @SuppressWarnings("unchecked")
-        final double[] values = ((Environment<T>) env).getNodes().parallelStream()
-                .mapToDouble(node -> incarnation.getProperty(node, mol, property))
-                .toArray();
+        final DoubleStream values = ((Environment<T>) env).getNodes().parallelStream()
+                .mapToDouble(node -> incarnation.getProperty(node, mol, property));
         if (aggregators.isEmpty()) {
-            return values;
+            return values.toArray();
         } else {
-            return aggregators.parallelStream().mapToDouble(a -> a.evaluate(values)).toArray();
+            final double[] input = values.filter(Double::isFinite).toArray();
+            if (input.length == 0) {
+                final double[] result = new double[aggregators.size()];
+                Arrays.fill(result, Double.NaN);
+                return result;
+            }
+            return aggregators.parallelStream()
+                    .mapToDouble(a -> a.evaluate(input))
+                    .toArray();
         }
     }
 

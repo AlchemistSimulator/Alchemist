@@ -414,7 +414,7 @@ public class BiochemicalReactionBuilder {
             for (final BiomoleculeContext b : ctx.biomolecule()) {
                 final Biomolecule biomol = createBiomolecule(b);
                 final double concentration = createConcentration(b);
-                conditionList.add(new BiomolPresentInEnv(biomol, concentration, (EnvironmentNode) node, env)); // TODO environment node is fake
+                conditionList.add(new BiomolPresentInEnv(biomol, concentration, new EnvironmentNode(env), env)); // TODO environment node is fake
                 actionList.add(new ChangeBiomolConcentrationInEnv(biomol, -concentration, node, env));
                 System.out.println("* add biomol present in env condition - biomol is: " + biomol + " - concentration is: " + concentration);
             }
@@ -460,7 +460,7 @@ public class BiochemicalReactionBuilder {
                 if (re.biomolecule() != null) {
                     final Biomolecule biomol = createBiomolecule(re.biomolecule());
                     final double concentration = createConcentration(re.biomolecule());
-                    actionList.add(new ChangeBiomolConcentrationInEnv(biomol, concentration, node, env)); // TODO fake environment node
+                    actionList.add(new ChangeBiomolConcentrationInEnv(biomol, concentration, new EnvironmentNode(env), env)); // TODO fake environment node
                     System.out.println("* add change biomol conc in env action - biomol is: " + biomol + " - concentration is: " + concentration);
                 } else if (re.javaConstructor() != null) {
                     // TODO I don't know (reflection I guess)

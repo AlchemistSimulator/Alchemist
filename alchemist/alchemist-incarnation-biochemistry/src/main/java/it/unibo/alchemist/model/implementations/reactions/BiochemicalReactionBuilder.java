@@ -4,14 +4,21 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.atn.ATNConfigSet;
+import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.PrimitiveUtils;
@@ -23,6 +30,7 @@ import it.unibo.alchemist.biochemistrydsl.BiochemistrydslLexer;
 import it.unibo.alchemist.biochemistrydsl.BiochemistrydslParser;
 import it.unibo.alchemist.biochemistrydsl.BiochemistrydslParser.BiochemicalReactionRightElemContext;
 import it.unibo.alchemist.biochemistrydsl.BiochemistrydslParser.BiomoleculeContext;
+import it.unibo.alchemist.exceptions.BiochemistryParseException;
 import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.implementations.actions.AddJunctionInCell;
 import it.unibo.alchemist.model.implementations.actions.ChangeBiomolConcentrationInCell;
@@ -84,6 +92,8 @@ public class BiochemicalReactionBuilder {
     public Reaction<Double> build()  {
         final BiochemistrydslLexer lexer = new BiochemistrydslLexer(new ANTLRInputStream(program));
         final BiochemistrydslParser parser = new BiochemistrydslParser(new CommonTokenStream(lexer));
+        parser.removeErrorListeners();
+        parser.addErrorListener(new BiochemistryParseErrorListener(program));
         final ParseTree tree = parser.reaction();
         final BiochemistryDSLVisitor eval = new BiochemistryDSLVisitor(rand, incarnation, time, node, env);
         return eval.visit(tree);
@@ -187,7 +197,6 @@ public class BiochemicalReactionBuilder {
                                     return p1.getSimpleName().compareTo(p2.getSimpleName());
                                 }
                             }
-                           // L.warn("There are apparently two identical constructors.");
                             return 0;
                         }
                         final int target = params.size();
@@ -205,7 +214,7 @@ public class BiochemicalReactionBuilder {
                 if (result.isPresent()) {
                     return result.get();
                 }
-                //L.error("Unable to create a {} with {}", clazz.getSimpleName(), params);
+                //L.error("Unable to create a {} with {}", clazz.getSimpleName(), params); TODO mettere errore
                 return null;
         }
 
@@ -277,7 +286,6 @@ public class BiochemicalReactionBuilder {
                         if (param instanceof Number) {
                             return new DoubleTime(((Number) param).doubleValue());
                         }
-                        //L.warn("Created a time zero, due to non-numeric parameter {}", param);
                         return new DoubleTime();
                     }
                     if (Molecule.class.isAssignableFrom(expectedClass) && param instanceof String) {
@@ -288,11 +296,9 @@ public class BiochemicalReactionBuilder {
             }).toArray();
             try {
                 final O result = constructor.newInstance(actualArgs);
-                //L.debug("{} produced {} with arguments {}", constructor, result, actualArgs);
                 return Optional.of(result);
-            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException //NOPMD on avoid empty catch block
                     | InvocationTargetException e) {
-                //L.debug("No luck with {} and arguments {}", constructor, actualArgs);
             }
             return Optional.empty();
         }
@@ -346,7 +352,6 @@ public class BiochemicalReactionBuilder {
             }
             reaction.setConditions(conditionList);
             reaction.setActions(actionList);
-            System.out.println("* visit biochemical reaction");
             return reaction;
         }
 
@@ -362,7 +367,6 @@ public class BiochemicalReactionBuilder {
             }
             reaction.setConditions(conditionList);
             reaction.setActions(actionList);
-            System.out.println("* visit create junction");
             return reaction;
         }
 
@@ -379,7 +383,6 @@ public class BiochemicalReactionBuilder {
             junctionList.forEach((j -> actionList.add(new RemoveJunctionInCell(j, node))));
             reaction.setConditions(conditionList);
             reaction.setActions(actionList);
-            System.out.println("* visit junction reaction");
             return reaction;
         }
 
@@ -391,7 +394,6 @@ public class BiochemicalReactionBuilder {
                 insertInMap(biomolConditionsInCell, biomol, concentration);
                 conditionList.add(new BiomolPresentInCell(biomol, concentration, (CellNode) node));
                 actionList.add(new ChangeBiomolConcentrationInCell(biomol, -concentration, (CellNode) node));
-                System.out.println("* add biomol present in cell condition - biomol is: " + biomol + " - concentration is: " + concentration);
             }
             return reaction;
         }
@@ -404,7 +406,6 @@ public class BiochemicalReactionBuilder {
                 insertInMap(biomolConditionsInNeighbor, biomol, concentration);
                 conditionList.add(new BiomolPresentInNeighbor(biomol, concentration, node, env));
                 actionList.add(new ChangeBiomolConcentrationInNeighbor(biomol, -concentration, (CellNode) node, env));
-                System.out.println("* add biomol present in neighbor condition - biomol is: " + biomol + " - concentration is: " + concentration);
             }
             return reaction;
         }
@@ -416,7 +417,6 @@ public class BiochemicalReactionBuilder {
                 final double concentration = createConcentration(b);
                 conditionList.add(new BiomolPresentInEnv(biomol, concentration, new EnvironmentNode(env), env)); // TODO environment node is fake
                 actionList.add(new ChangeBiomolConcentrationInEnv(biomol, -concentration, node, env));
-                System.out.println("* add biomol present in env condition - biomol is: " + biomol + " - concentration is: " + concentration);
             }
             return reaction;
         }
@@ -428,10 +428,7 @@ public class BiochemicalReactionBuilder {
                     final Biomolecule biomol = createBiomolecule(re.biomolecule());
                     final double concentration = createConcentration(re.biomolecule());
                     actionList.add(new ChangeBiomolConcentrationInCell(biomol, concentration, (CellNode) node));
-                    System.out.println("* add change biomol conc in cell action - biomol is: " + biomol + " - concentration is: " + concentration);
                 } else if (re.javaConstructor() != null) {
-                    // TODO I don't know (reflection I guess)
-                    System.out.println("* custom action (to do)");
                     actionList.add(createObject(re.javaConstructor(), ACTIONS_PACKAGE, currentInc, rand, node, time, env, reaction));
                 }
             }
@@ -445,10 +442,8 @@ public class BiochemicalReactionBuilder {
                     final Biomolecule biomol = createBiomolecule(re.biomolecule());
                     final double concentration = createConcentration(re.biomolecule());
                     actionList.add(new ChangeBiomolConcentrationInNeighbor(biomol, concentration, node, env));
-                    System.out.println("* add change biomol conc in neighbor action - biomol is: " + biomol + " - concentration is: " + concentration);
                 } else if (re.javaConstructor() != null) {
-                    // TODO I don't know (reflection I guess)
-                    System.out.println("* custom action (to do)");
+                    actionList.add(createObject(re.javaConstructor(), ACTIONS_PACKAGE, currentInc, rand, node, time, env, reaction));
                 }
             }
             return reaction;
@@ -461,10 +456,8 @@ public class BiochemicalReactionBuilder {
                     final Biomolecule biomol = createBiomolecule(re.biomolecule());
                     final double concentration = createConcentration(re.biomolecule());
                     actionList.add(new ChangeBiomolConcentrationInEnv(biomol, concentration, new EnvironmentNode(env), env)); // TODO fake environment node
-                    System.out.println("* add change biomol conc in env action - biomol is: " + biomol + " - concentration is: " + concentration);
                 } else if (re.javaConstructor() != null) {
-                    // TODO I don't know (reflection I guess)
-                    System.out.println("* custom action (to do)");
+                    actionList.add(createObject(re.javaConstructor(), ACTIONS_PACKAGE, currentInc, rand, node, time, env, reaction));
                 }
             }
             return reaction;
@@ -475,16 +468,15 @@ public class BiochemicalReactionBuilder {
             final Junction j = createJunction(ctx.junction());
             j.getMoleculesInCurrentNode().forEach((k, v) -> {
                 if (!biomolConditionsInCell.containsKey(k) || biomolConditionsInCell.get(k) < v) {
-                    throw new RuntimeException("the junction require " + v + " biomolecule(s) " + k + " in cell, but are not presents in conditions.");
+                    throw new BiochemistryParseException("The creation of the junction " + j + " requires " + v + " " + k + " in the current node, specify a greater or equal value in conditions.");
                 }
             });
             j.getMoleculesInNeighborNode().forEach((k, v) -> {
                 if (!biomolConditionsInNeighbor.containsKey(k) || biomolConditionsInNeighbor.get(k) < v) {
-                    throw new RuntimeException("the junction require " +  v + " biomolecule(s) " + k + " in cell, but are not presents in conditions.");
+                    throw new BiochemistryParseException("The creation of the junction " + j + " requires " + v + " " + k + " in the neighbor node, specify a greater or equal value in conditions.");
                 }
             });
             actionList.add(new AddJunctionInCell(j, node));
-            System.out.println("* add junction in cell action");
             return reaction;
         }
 
@@ -493,7 +485,6 @@ public class BiochemicalReactionBuilder {
             final Junction j = createJunction(ctx.junction());
             junctionList.add(j);
             conditionList.add(new JunctionPresentInCell(j, node));
-            System.out.println("* add junction preent in cell condition");
             return reaction;
         }
 
@@ -501,7 +492,8 @@ public class BiochemicalReactionBuilder {
         public Reaction<Double> visitJunctionReactionJunction(final BiochemistrydslParser.JunctionReactionJunctionContext ctx) {
             final Junction j = createJunction(ctx.junction());
             if (!junctionList.remove(j)) { // the junction is not present in the list, witch means that this junction is undefined (e.g. [junction A-B] --> [junction C-D]
-                throw new RuntimeException("The junction " + j + " is not present in conditions.");
+                throw new BiochemistryParseException("The junction " + j + " is not present in conditions.\n"
+                        + "If you want to create the junction " + j + " do it on a separate reaction.");
             }
             return reaction;
         }
@@ -510,6 +502,54 @@ public class BiochemicalReactionBuilder {
         public Reaction<Double> visitCustomCondition(final BiochemistrydslParser.CustomConditionContext ctx) {
             conditionList.add(createObject(ctx.javaConstructor(), CONDITIONS_PACKAGE, currentInc, rand, node, time, env, reaction));
             return reaction;
+        }
+    }
+
+    private static final class BiochemistryParseErrorListener implements ANTLRErrorListener {
+
+        private final String reaction;
+
+        private BiochemistryParseErrorListener(final String reactionString) {
+            reaction = reactionString;
+        }
+
+        @Override
+        public void syntaxError(final Recognizer<?, ?> recognizer,
+                final Object offendingSymbol, 
+                final int line,
+                final int charPositionInLine,
+                final String msg,
+                final RecognitionException e) {
+            throw new BiochemistryParseException("Error in reaction " + reaction + msg);
+        }
+        @Override
+        public void reportAmbiguity(final Parser recognizer, 
+                final DFA dfa, 
+                final int startIndex,
+                final int stopIndex,
+                final boolean exact,
+                final BitSet ambigAlts, 
+                final ATNConfigSet configs) {
+            throw new BiochemistryParseException("report ambiguity in " + reaction);
+        }
+        @Override
+        public void reportAttemptingFullContext(final Parser recognizer,
+                final DFA dfa,
+                final int startIndex,
+                final int stopIndex,
+                final BitSet conflictingAlts,
+                final ATNConfigSet configs) {
+            throw new BiochemistryParseException("report attempting full context in " + reaction);
+        }
+
+        @Override
+        public void reportContextSensitivity(final Parser recognizer,
+                final DFA dfa, 
+                final int startIndex,
+                final int stopIndex,
+                final int prediction,
+                final ATNConfigSet configs) {
+            throw new BiochemistryParseException("report context sensitivity in " + reaction);
         }
     }
 }

@@ -17,6 +17,7 @@ import org.junit.Test;
 
 import it.unibo.alchemist.biochemistrydsl.BiochemistrydslLexer;
 import it.unibo.alchemist.biochemistrydsl.BiochemistrydslParser;
+import it.unibo.alchemist.exceptions.BiochemistryParseException;
 
 /**
  * Tests for domain specific language of the incarnation.
@@ -37,7 +38,7 @@ public class TestDSL {
                     final int charPositionInLine,
                     final String msg,
                     final RecognitionException e) {
-                throw new RuntimeException("syntax error");
+                throw new BiochemistryParseException("Error in " + reaction + "\n" + msg);
             }
             @Override
             public void reportAmbiguity(final Parser recognizer, 
@@ -47,7 +48,7 @@ public class TestDSL {
                     final boolean exact,
                     final BitSet ambigAlts, 
                     final ATNConfigSet configs) {
-                throw new RuntimeException("report ambiguity");
+                throw new BiochemistryParseException("report ambiguity");
             }
             @Override
             public void reportAttemptingFullContext(final Parser recognizer,
@@ -56,7 +57,7 @@ public class TestDSL {
                     final int stopIndex,
                     final BitSet conflictingAlts,
                     final ATNConfigSet configs) {
-                throw new RuntimeException("report attempting full context");
+                throw new BiochemistryParseException("report attempting full context");
             }
 
             @Override
@@ -66,7 +67,7 @@ public class TestDSL {
                     final int stopIndex,
                     final int prediction,
                     final ATNConfigSet configs) {
-                throw new RuntimeException("report context sensitivity");
+                throw new BiochemistryParseException("report context sensitivity");
             }
         });
         return parser;
@@ -75,7 +76,7 @@ public class TestDSL {
     private void testValidReaction(final String reaction) {
         try {
             getParser(reaction).reaction();
-        } catch (RuntimeException e) {
+        } catch (BiochemistryParseException e) {
             fail();
         }
     }
@@ -84,7 +85,7 @@ public class TestDSL {
         try {
             getParser(reaction).reaction();
             fail();
-        } catch (RuntimeException e) {
+        } catch (BiochemistryParseException e) {
             assertFalse(e.getMessage().isEmpty());
         }
     }
@@ -94,7 +95,7 @@ public class TestDSL {
      */
     @Test
     public void test() { // NOPMD on NCSS line count
-        /********** Valid reactions **********/
+        /* ********* Valid reactions **********/
         testValidReaction("[] --> []");
         testValidReaction("[a] --> []");
         testValidReaction("[] --> [b]");
@@ -154,7 +155,7 @@ public class TestDSL {
         testValidReaction("[junction A-B] + [MolA in env] + [junction C-D] --> [MolB in env] + [junction C-D]");
 
 
-        /********** Invalid reactions **********/
+        /* ********* Invalid reactions **********/
         testInvalidReaction("");
         testInvalidReaction("-->");
         testInvalidReaction("--> []");
@@ -210,6 +211,5 @@ public class TestDSL {
         testInvalidReaction("[MolA] + [MolB in neighbor] + [MolC in neighbor] --> [junction A-B]"); // the creation of a junction cannot have 2 neighbor contexts. Use [MolB + MolC in neighbor].
         testInvalidReaction("[MolA] + [MolB in neighbor] --> [junction A-B] + [junction C-D]"); // cannot create 2 junction at the same time. Use 2 reactions
         testInvalidReaction("[MolA] + [MolB in neighbor] --> [junction A-B] + [MolF in env] + [junction C-D]");
-
     }
 }

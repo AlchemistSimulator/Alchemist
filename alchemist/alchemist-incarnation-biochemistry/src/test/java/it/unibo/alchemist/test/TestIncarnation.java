@@ -13,6 +13,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.Before;
 import org.junit.Test;
 
+import it.unibo.alchemist.exceptions.BiochemistryParseException;
 import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.implementations.actions.AddJunctionInCell;
 import it.unibo.alchemist.model.implementations.actions.AddJunctionInEnv;
@@ -32,7 +33,6 @@ import it.unibo.alchemist.model.implementations.conditions.JunctionPresentInNeig
 import it.unibo.alchemist.model.implementations.environments.Rect2DEnvironment;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.nodes.CellNode;
-import it.unibo.alchemist.model.implementations.nodes.EnvironmentNode;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ICellNode;
@@ -121,7 +121,7 @@ public class TestIncarnation {
         try {
             INCARNATION.createReaction(rand, env, node, time, param);
             fail();
-        } catch (final IllegalArgumentException e) { // TODO decide the exception
+        } catch (final BiochemistryParseException e) {
             assertFalse(e.getMessage().isEmpty());
         }
     }
@@ -162,5 +162,14 @@ public class TestIncarnation {
         testR("[] --> [B in env] if BiomolPresentInCell(A, 2)", 1, 1, 1, 0, 0, 0, 0, 1); // if a custom condition is used the molecules present in the custom condition will NOT be removed.
         testR("[A] + [B in neighbor] + [C in env] --> [D in cell] + [E in neighbor] + [F in env] + [BrownianMove(1)] if BiomolPresentInCell(A, 2)", 4, 7, 2, 2, 1, 2, 1, 2);
         // CHECKSTYLE:ON magicnumber
+        testNoR("[A] + [B in neighbor] --> [junction A-C]"); // C is not present in conditions
+        testNoR("[A] + [B in neighbor] --> [junction A-2B]"); // only one molecule B is present in conditions
+        testNoR("[A] + [B in neighbor] --> [junction B-A]"); // A is in cell an B is in neighbor. Correct syntax is junction A-B
+        testNoR("[A + B] + [C in neighbor] --> [junction AB-C]"); // AB is considered one molecule. Use A:B
+        testNoR("[A + 3B] + [C in neighbor] --> [junction 4B-C]"); // only 3 molecules of B can be used for create the junction
+        testNoR("[A] + [B in neighbor] + [C in env] --> [junction A-B:C]"); // molecules in environment cannot be included in junctions
+        testNoR("[junction A-B] --> [junction C-D]"); // cannot have a new junction in the right side if is present a junction in the left side
+        testNoR("[A] + [B in neighbor] + [junction X-Y] --> [junction A-B]"); // cannot create junctions with junctions conditions
+        testNoR("[junction A-B] --> [junction B-A]"); // junction A-B != junction B-A
     }
 }

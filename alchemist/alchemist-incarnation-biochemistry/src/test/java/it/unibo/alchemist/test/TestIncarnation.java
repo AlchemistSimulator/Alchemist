@@ -32,6 +32,7 @@ import it.unibo.alchemist.model.implementations.conditions.JunctionPresentInNeig
 import it.unibo.alchemist.model.implementations.environments.Rect2DEnvironment;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.nodes.CellNode;
+import it.unibo.alchemist.model.implementations.nodes.EnvironmentNode;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ICellNode;
@@ -71,17 +72,17 @@ public class TestIncarnation {
     public void testCreateMolecule() {
         makeMol("C");
         makeMol("H");
-        makeMol("O");
+        makeMol("OH");
+        makeMol("abcdef");
 
         assertEquals(makeMol("Cl"), makeMol("Cl"));
-        assertEquals(makeMol("asdfghjkl"), makeMol("asdfghjkl"));
+        assertEquals(makeMol("abcdef"), makeMol("abcdef"));
         assertNotEquals(makeMol("X"), makeMol("Y"));
-        assertNotEquals(makeMol("asdfghjkl"), makeMol("Asdfghjkl"));
+        assertNotEquals(makeMol("abc"), makeMol("Abc"));
     }
 
-
     private int count(final List<?> target, final Class<?> clazz) {
-        return (int) target.stream().filter(t -> toString().getClass().equals(clazz)).count();
+        return (int) target.stream().filter(t -> t.getClass().equals(clazz)).count();
     }
 
     private void testR(final String param, 
@@ -92,7 +93,7 @@ public class TestIncarnation {
             final int nNeighCond,
             final int nNeighAct,
             final int nEnvCond, 
-            final int nEnvAct) {
+            final int nEnvAct) { // TODO custom conditions and actions
         final Reaction<Double> r = INCARNATION.createReaction(rand, env, node, time, param);
         assertNotNull(r);
         assertEquals(nCond, r.getConditions().size());
@@ -116,11 +117,11 @@ public class TestIncarnation {
                 + count(r.getActions(), RemoveJunctionInEnv.class));
     }
 
-    private void testNoR(final String param) {
+    private void testNoR(final String param) { // used for cases like [A] + [B in neighbor] --> [junction A-C]
         try {
             INCARNATION.createReaction(rand, env, node, time, param);
             fail();
-        } catch (final IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) { // TODO decide the exception
             assertFalse(e.getMessage().isEmpty());
         }
     }
@@ -130,10 +131,36 @@ public class TestIncarnation {
      */
     @Test
     public void testCreateReaction() {
-        testR(null, 0, 0, 0, 0, 0, 0, 0, 0);
-        /*
-         * TODO
-         */
+        //CHECKSTYLE:OFF: magicnumber
+        testR("[] --> []", 0, 0, 0, 0, 0, 0, 0, 0);
+        testR("[] + [] --> [] + []", 0, 0, 0, 0, 0, 0, 0, 0);
+        testR("[A] --> []", 1, 1, 1, 1, 0, 0, 0, 0);
+        testR("[] --> [A]", 0, 1, 0, 1, 0, 0, 0, 0);
+        testR("[A] --> [B]", 1, 2, 1, 2, 0, 0, 0, 0);
+        testR("[A + B] --> []", 2, 2, 2, 2, 0, 0, 0, 0);
+        testR("[A + B] + [C + D] --> []", 4, 4, 4, 4, 0, 0, 0, 0);
+        testR("[] --> [2 A + 5B]", 0, 2, 0, 2, 0, 0, 0, 0);
+        testR("[2A in neighbor] --> []", 1, 1, 0, 0, 1, 1, 0, 0);
+        testR("[A + 3B in neighbor] --> []", 2, 2, 0, 0, 2, 2, 0, 0);
+        testR("[] --> [A in neighbor]", 0, 1, 0, 0, 0, 1, 0, 0);
+        testR("[A] + [B in neighbor] --> [C]", 2, 3, 1, 2, 1, 1, 0, 0);
+        testR("[A] --> [B] + [C + D in neighbor]", 1, 4, 1, 2, 0, 2, 0, 0);
+        testR("[A in env] --> []", 1, 1, 0, 0, 0, 0, 1, 1);
+        testR("[A + 3B in env] --> []", 2, 2, 0, 0, 0, 0, 2, 2);
+        testR("[] --> [A in env]", 0, 1, 0, 0, 0, 0, 0, 1);
+        testR("[A] + [B in env] --> [C]", 2, 3, 1, 2, 0, 0, 1, 1);
+        testR("[A] --> [B] + [C + D in env]", 1, 4, 1, 2, 0, 0, 0, 2);
+        testR("[A] + [B + 2C in neighbor] + [D in env] --> [E in cell] + [F + 4G in env]", 4, 7, 1, 2, 2, 2, 1, 3);
+        testR("[A in env] + [B in env] + [C + 4D in neighbor] --> [E + F + G]", 4, 7, 0, 3, 2, 2, 2, 2);
+        testR("[A] + [B in neighbor] --> [junction A-B]", 2, 3, 1, 2, 1, 1, 0, 0);
+        testR("[A + 3B] + [C in neighbor] + [D in env] --> [junction A:3B-C] + [D in env]", 4, 6, 2, 3, 1, 1, 1, 2);
+        testR("[junction A-B] + [A in cell] --> [A in env]", 2, 3, 2, 2, 0, 0, 0, 1);
+        testR("[A in env] + [B + 2C] + [junction A-B] --> [junction A-B] + [D in neighbor]", 4, 4, 3, 2, 0, 1, 1, 1); // the junction is not removed like a biomolecule if the same junction is present in the right side.
+        testR("[junction A-B] + [junction C-D] --> [A in env]", 2, 3, 2, 2, 0, 0, 0, 1); // the junctions will be removed, because they are not present in the right side.
+        testR("[junction A-B] --> [junction A-B] + [A in cell]", 1, 1, 1, 1, 0, 0, 0, 0);
+        testR("[A + B] --> [BrownianMove(0.1)]", 2, 3, 2, 2, 0, 0, 0, 0);
+        testR("[] --> [B in env] if BiomolPresentInCell(A, 2)", 1, 1, 1, 0, 0, 0, 0, 1); // if a custom condition is used the molecules present in the custom condition will NOT be removed.
+        testR("[A] + [B in neighbor] + [C in env] --> [D in cell] + [E in neighbor] + [F in env] + [BrownianMove(1)] if BiomolPresentInCell(A, 2)", 4, 7, 2, 2, 1, 2, 1, 2);
+        // CHECKSTYLE:ON magicnumber
     }
-
 }

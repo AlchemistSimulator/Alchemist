@@ -8,17 +8,12 @@
  */
 package it.unibo.alchemist.model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import it.unibo.alchemist.model.implementations.actions.ChangeBiomolConcentrationInCell;
-import it.unibo.alchemist.model.implementations.conditions.BiomolPresentInCell;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.nodes.CellNode;
 import it.unibo.alchemist.model.implementations.reactions.BiochemicalReactionBuilder;
-import it.unibo.alchemist.model.implementations.reactions.ChemicalReaction;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -65,30 +60,6 @@ public class BiochemistryIncarnation implements Incarnation<Double> {
     @Override
     public Reaction<Double> createReaction(final RandomGenerator rand, final Environment<Double> env, final Node<Double> node,
             final TimeDistribution<Double> time, final String param) {
-       /* final ChemicalReaction<Double> reaction = new ChemicalReaction<>(node, time);
-        final Biomolecule h2o = new Biomolecule("H2O");
-        final Biomolecule h3o = new Biomolecule("H3O");
-        final Biomolecule oh = new Biomolecule("OH");
-        final double delta = 2.0;
-
-        if (param.replaceAll("\n+", "").equals("w->ions")) {
-            reaction.setConditions(new ArrayList<>(Arrays.asList(new BiomolPresentInCell(h2o, delta, (CellNode) node))));
-            reaction.setActions(new ArrayList<>(Arrays.asList(
-                    new ChangeBiomolConcentrationInCell(h3o, 1.0, (CellNode) node),
-                    new ChangeBiomolConcentrationInCell(oh, 1.0, (CellNode) node),
-                    new ChangeBiomolConcentrationInCell(h2o, -delta, (CellNode) node))));
-        } else {
-            reaction.setConditions(new ArrayList<>(Arrays.asList(
-                    new BiomolPresentInCell(oh, 1.0, (CellNode) node), 
-                    new BiomolPresentInCell(h3o, 1.0, (CellNode) node))));
-            reaction.setActions(new ArrayList<>(Arrays.asList(
-                    new ChangeBiomolConcentrationInCell(h3o, -1.0, (CellNode) node),
-                    new ChangeBiomolConcentrationInCell(oh, -1.0, (CellNode) node),
-                    new ChangeBiomolConcentrationInCell(h2o, delta, (CellNode) node))));
-        }
-        // TODO (it's just a test)
-        return reaction;*/
-
         return new BiochemicalReactionBuilder(rand, this, time, node, env, param).build();
     }
 

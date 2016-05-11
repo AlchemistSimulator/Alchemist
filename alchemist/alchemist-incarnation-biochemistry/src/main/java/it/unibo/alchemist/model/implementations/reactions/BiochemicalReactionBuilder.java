@@ -1,3 +1,11 @@
+/*
+ * Copyright (C) 2010-2016, Danilo Pianini and contributors
+ * listed in the project's pom.xml file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of
+ * the GNU General Public License, with a linking exception, as described
+ * in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.model.implementations.reactions;
 
 import java.lang.reflect.Constructor;
@@ -22,6 +30,8 @@ import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.PrimitiveUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -61,28 +71,68 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
  */
 public class BiochemicalReactionBuilder {
 
-    private final String program;
+    private static final Logger L = LoggerFactory.getLogger(BiochemicalReactionBuilder.class);
+
+    private final BiochemistryIncarnation incarnation;
     private final Node<Double> node;
     private final Environment<Double> env;
-    private final TimeDistribution<Double> time;
-    private final RandomGenerator rand;
-    private final BiochemistryIncarnation incarnation;
+    private RandomGenerator rand;
+    private TimeDistribution<Double> time;
+    private String reactionString;
+
 
     /**
-     * @param randGen the random generator
-     * @param currentIncarnation the current biochemistry incarnation
-     * @param time the time distribution
-     * @param node the node where this reaction will be created
-     * @param environment the environment
-     * @param param a string contains a program written in biochemistry DSL
+     * Construct a builder for biochemical reactions.
+     * @param inc the current incarnation
+     * @param currentNode the node where the reaction is placed.
+     * @param environment the environment.
      */
-    public BiochemicalReactionBuilder(final RandomGenerator randGen, final BiochemistryIncarnation currentIncarnation, final TimeDistribution<Double> time, final Node<Double> node, final Environment<Double> environment, final String param) {
-        this.node = node;
+    public BiochemicalReactionBuilder(final BiochemistryIncarnation inc, final Node<Double> currentNode, final Environment<Double> environment) {
+        incarnation = inc;
+        node = currentNode;
         env = environment;
-        program = param;
-        this.time = time;
-        rand = randGen;
-        incarnation = currentIncarnation;
+    }
+
+    /**
+     * set the random generator to the passed object.
+     * @param rg the random generator.
+     * @return .
+     */
+    public BiochemicalReactionBuilder randomGenerator(final RandomGenerator rg) {
+        rand = rg;
+        return this;
+    }
+
+    /**
+     * Set the time distribution to the passed object.
+     * @param td the time distribution
+     * @return .
+     */
+    public BiochemicalReactionBuilder timeDistribution(final TimeDistribution<Double> td) {
+        time = td;
+        return this;
+    }
+
+    /**
+     * Set the reaction to the passed program string.
+     * @param program 
+     * @return .
+     */
+    public BiochemicalReactionBuilder program(final String program) {
+        reactionString = program;
+        return this;
+    }
+
+    private void checkReaction() {
+        if (rand == null) {
+            throw new IllegalArgumentException("Random generator cannot be null");
+        }
+        if (time == null) {
+            throw new IllegalArgumentException("Time distribution cannot be null");
+        }
+        if (reactionString == null) {
+            throw new IllegalArgumentException("Reaction string cannot be null");
+        }
     }
 
     /**
@@ -90,10 +140,11 @@ public class BiochemicalReactionBuilder {
      * @return a builded chemical reaction based on the given program
      */
     public Reaction<Double> build()  {
-        final BiochemistrydslLexer lexer = new BiochemistrydslLexer(new ANTLRInputStream(program));
+        checkReaction();
+        final BiochemistrydslLexer lexer = new BiochemistrydslLexer(new ANTLRInputStream(reactionString));
         final BiochemistrydslParser parser = new BiochemistrydslParser(new CommonTokenStream(lexer));
         parser.removeErrorListeners();
-        parser.addErrorListener(new BiochemistryParseErrorListener(program));
+        parser.addErrorListener(new BiochemistryParseErrorListener(reactionString));
         final ParseTree tree = parser.reaction();
         final BiochemistryDSLVisitor eval = new BiochemistryDSLVisitor(rand, incarnation, time, node, env);
         return eval.visit(tree);
@@ -190,13 +241,14 @@ public class BiochemicalReactionBuilder {
                                     if (Integer.class.isAssignableFrom(p2) || int.class.isAssignableFrom(p2)) {
                                         return 1;
                                     }
-                                    //L.trace("Fall back to lexicographic comparison for {} and {}", p1, p2);
+                                    L.trace("Fall back to lexicographic comparison for {} and {}", p1, p2);
                                     if (p1.getSimpleName().equals(p1.getSimpleName())) {
                                         return p1.toString().compareTo(p2.toString());
                                     }
                                     return p1.getSimpleName().compareTo(p2.getSimpleName());
                                 }
                             }
+                            L.warn("There are apparently two identical constructors for {}", clazz.getSimpleName());
                             return 0;
                         }
                         final int target = params.size();
@@ -214,7 +266,7 @@ public class BiochemicalReactionBuilder {
                 if (result.isPresent()) {
                     return result.get();
                 }
-                //L.error("Unable to create a {} with {}", clazz.getSimpleName(), params); TODO mettere errore
+                L.error("Unable to create a {} with {}", clazz.getSimpleName(), params);
                 return null;
         }
 
@@ -286,6 +338,7 @@ public class BiochemicalReactionBuilder {
                         if (param instanceof Number) {
                             return new DoubleTime(((Number) param).doubleValue());
                         }
+                        L.warn("Created a time zero, due to non-numeric parameter {}", param);
                         return new DoubleTime();
                     }
                     if (Molecule.class.isAssignableFrom(expectedClass) && param instanceof String) {
@@ -297,8 +350,9 @@ public class BiochemicalReactionBuilder {
             try {
                 final O result = constructor.newInstance(actualArgs);
                 return Optional.of(result);
-            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException //NOPMD on avoid empty catch block
+            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
                     | InvocationTargetException e) {
+                L.debug("No luck with {} and arguments {}", constructor, actualArgs);
             }
             return Optional.empty();
         }
@@ -520,7 +574,7 @@ public class BiochemicalReactionBuilder {
                 final int charPositionInLine,
                 final String msg,
                 final RecognitionException e) {
-            throw new BiochemistryParseException("Error in reaction " + reaction + msg);
+            throw new BiochemistryParseException("Error in reaction: " + reaction + "at character " + charPositionInLine + "\n" + msg);
         }
         @Override
         public void reportAmbiguity(final Parser recognizer, 

@@ -40,10 +40,7 @@ public class BiochemistryIncarnation implements Incarnation<Double> {
 
     @Override
     public Node<Double> createNode(final RandomGenerator rand, final Environment<Double> env, final String param) {
-        // TODO it is just a test
-        final CellNode n = new CellNode(env);
-        n.setConcentration(new Biomolecule("H2O"), 1000d);
-        return n;
+        return new CellNode(env);
     }
 
     @Override
@@ -52,15 +49,22 @@ public class BiochemistryIncarnation implements Incarnation<Double> {
         try {
             final double rate = Double.parseDouble(param);
             return new ExponentialTime<>(rate, rand);
-        } catch (NumberFormatException e) { // TODO exponential time with rate 1?
+        } catch (NumberFormatException e) {
             return new ExponentialTime<>(1.0, rand);
         }
     }
 
     @Override
-    public Reaction<Double> createReaction(final RandomGenerator rand, final Environment<Double> env, final Node<Double> node,
-            final TimeDistribution<Double> time, final String param) {
-        return new BiochemicalReactionBuilder(rand, this, time, node, env, param).build();
+    public Reaction<Double> createReaction(final RandomGenerator rand, 
+            final Environment<Double> env, 
+            final Node<Double> node,
+            final TimeDistribution<Double> time, 
+            final String param) {
+        return new BiochemicalReactionBuilder(this, node, env)
+                .randomGenerator(rand)
+                .timeDistribution(time)
+                .program(param)
+                .build();
     }
 
     @Override
@@ -79,8 +83,8 @@ public class BiochemistryIncarnation implements Incarnation<Double> {
 
     @Override
     public Double createConcentration(final String s) {
-        if (s == null) {
-            throw new IllegalArgumentException("The concentration must be a number");
+        if (s == null) { // deafult value
+            return 1d;
         }
         try {
             return Double.parseDouble(s);

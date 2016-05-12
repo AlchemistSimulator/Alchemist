@@ -369,8 +369,8 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements IMa
                         final GraphHopper gh = navigators.get(vehicle);
                         mapLock.release();
                         if (gh != null) {
-                                final GHResponse resp = gh.route(req);
-                                return new GraphHopperRoute(resp);
+                            final GHResponse resp = gh.route(req);
+                            return new GraphHopperRoute(resp);
                         }
                         return null;
                     }

@@ -12,22 +12,22 @@ Alchemist is available on Maven Central. You can import all the components by im
 
 ### Maven
 
-Add this dependency to your build
+Add this dependency to your build, substitute `ALCHEMIST_VERSION` with the version you want to use.
 
 ```xml
 <dependency>
     <groupId>it.unibo.alchemist</groupId>
     <artifactId>alchemist</artifactId>
-    <version>2.3.1</version>
+    <version>ALCHEMIST_VERSION</version>
 </dependency>
 ```
 
 ### Gradle
 
-Add this dependency to your build (change the scope appropriately if you need Alchemist only for runtime or testing)
+Add this dependency to your build, substituting `ALCHEMIST_VERSION` with the version you want to use (change the scope appropriately if you need Alchemist only for runtime or testing).
 
 ```groovy
-compile 'it.unibo.alchemist:alchemist:2.3.1'
+compile 'it.unibo.alchemist:alchemist:ALCHEMIST_VERSION'
 ```
 
 ### Importing a subset of the modules

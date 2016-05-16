@@ -92,10 +92,14 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
         if (val instanceof Number) {
             return ((Number) val).doubleValue();
         } else if (val instanceof String) {
-            if (val.equals(prop)) {
-                return 1;
+            try {
+                return Double.parseDouble(val.toString());
+            } catch (final NumberFormatException e) {
+                if (val.equals(prop)) {
+                    return 1;
+                }
+                return 0;
             }
-            return 0;
         } else if (val instanceof Boolean) {
             final Boolean cond = (Boolean) val;
             if (cond) {

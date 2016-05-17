@@ -94,7 +94,7 @@ The project has been developed using Eclipse, and can be easily imported in such
 * Clone the project with `git clone git@github.com:AlchemistSimulator/alchemist.git`
   * If you are a Windows user, you might find easier to import via HTTPS: `git clone https://github.com/AlchemistSimulator/Alchemist.git`
   * If the cloning ends with `Permission denied (publickey)` error, please, follow [this](https://help.github.com/articles/error-permission-denied-publickey/) guide.
-* In terminal type `git branch`. This shows you all the branches. If you only have the master branch type `git branch -a` to see local and remote branches. For add a remote branch to your local branches type `git checkout -b <branch-name> origin/<branch-name>`. For switch between branches use `git checkout <branch-name>`.
+* In terminal type `git branch`. This shows you all the branches. If you only have the master branch type `git branch -a` to see local and remote branches. For add a remote branch to your local repository type `git checkout -b <branch-name> origin/<branch-name>`. For switch between branches use `git checkout <branch-name>`.
 * Open Eclipse
 * Click File -> Import -> Gradle -> Gradle Project -> Next
 * Select the project root directory, namely, the `alchemist` folder located inside the folder where you have cloned the repository. Do not point to the folder containing this `README.md` file, but to the `alchemist` folder on the same level.
@@ -109,6 +109,8 @@ The project has been developed using Eclipse, and can be easily imported in such
 * If you have errors in `alchemist-incarnation-biochemistry` project open a terminal in alchemist folder (do not point to the folder containing this `README.md` file, but to the `alchemist` folder on the same level) and run:
   * If you are a Linux or Mac user `./gradlew alchemist-incarnation-biochemistry:generateGrammarSource`
   * If you are a Windows user: `gradlew.bat alchemist-incarnation-biochemistry:generateGrammarSource`
+
+  Go to Eclipse, right click on `alchemist-incarnation-biochemistry` project -> Refresh
 
 
 

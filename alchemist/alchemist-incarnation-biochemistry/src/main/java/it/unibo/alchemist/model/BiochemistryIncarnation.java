@@ -83,7 +83,7 @@ public class BiochemistryIncarnation implements Incarnation<Double> {
 
     @Override
     public Double createConcentration(final String s) {
-        if (s == null) { // deafult value
+        if (s == null) { // default value
             return 1d;
         }
         try {

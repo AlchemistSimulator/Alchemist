@@ -12,15 +12,7 @@
 
 package it.unibo.alchemist.model.implementations.reactions;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-
-
-import gnu.trove.map.TObjectDoubleMap;
-//import it.unibo.alchemist.model.interfaces.IConditionBind;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
@@ -32,7 +24,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
 public class BiochemicalReaction extends ChemicalReaction<Double> {
 
     private static final long serialVersionUID = 3849210665619933894L;
-    private final Map<Node<Double>, TObjectDoubleMap<Molecule>> validNeighNodes = new LinkedHashMap<>();
+    //private final Map<Node<Double>, TObjectDoubleMap<Molecule>> validNeighNodes = new LinkedHashMap<>();
     //private double totalPropensity;
 
     /**

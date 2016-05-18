@@ -1,9 +1,9 @@
 package it.unibo.alchemist.model.implementations.molecules;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
 
+import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.implementations.nodes.CellNode;
 import java.util.Optional;
 
@@ -12,14 +12,14 @@ import org.danilopianini.lang.util.FasterString;
 /**
  * Represents a junction between two cells.
  */
-public class Junction implements Serializable {
+public class Junction implements Molecule {
 
     private static final long serialVersionUID = -5538036651435573599L;
 
     private final FasterString name;
     private final Map<Biomolecule, Double> moleculesInCurrentNode;
     private final Map<Biomolecule, Double> moleculesInNeighborNode;
-    private Optional<CellNode> neighborNode = Optional.empty();
+    private CellNode neighborNode;
 
     /**
      * Build a junction.
@@ -50,7 +50,7 @@ public class Junction implements Serializable {
     }
 
     /**
-     * @return a amp of molecules and concentrations associated with this junction in the current node.
+     * @return a map of molecules and concentrations associated with this junction in the neighbor node.
      */
     public Map<Biomolecule, Double> getMoleculesInNeighborNode() {
         return Collections.unmodifiableMap(moleculesInNeighborNode);
@@ -61,7 +61,7 @@ public class Junction implements Serializable {
      * @return the neighbor node if it's present. Return an Optional.empty() instead.
      */
     public Optional<CellNode> getNeighborNode() {
-        return neighborNode;
+        return Optional.ofNullable(neighborNode);
     }
 
     /**
@@ -69,7 +69,7 @@ public class Junction implements Serializable {
      * @param neighbor the neighbor node.
      */
     public void setNeighborNode(final CellNode neighbor) {
-        neighborNode = Optional.ofNullable(neighbor);
+        neighborNode = neighbor;
     }
 
     @Override
@@ -89,4 +89,15 @@ public class Junction implements Serializable {
     public String toString() {
         return name.toString();
     }
+
+    @Override
+    public long getId() {
+        return name.hash64();
+    }
+
+    @Override
+    public boolean dependsOn(final Molecule mol) {
+        return false;
+    }
+
 }

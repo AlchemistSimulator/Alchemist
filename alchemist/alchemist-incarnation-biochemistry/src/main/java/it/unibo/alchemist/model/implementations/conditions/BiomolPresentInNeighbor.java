@@ -9,17 +9,29 @@
 
 package it.unibo.alchemist.model.implementations.conditions;
 
+import java.util.Collection;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.math3.util.CombinatoricsUtils;
+
+import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 
 /**
  * 
  *
  */
-public class BiomolPresentInNeighbor extends GenericMoleculePresent<Double> {
+public class BiomolPresentInNeighbor extends AbstractNeighborCondition<Double> {
 
     private static final long serialVersionUID = 499903479123400111L;
+
+    private final Biomolecule mol;
+    private final Double conc;
+    private final Environment<Double> environment;
+    private boolean valid;
+    private double propensity;
 
     /**
      * 
@@ -28,9 +40,49 @@ public class BiomolPresentInNeighbor extends GenericMoleculePresent<Double> {
      * @param node 
      * @param env 
      */
-    public BiomolPresentInNeighbor(final Molecule molecule, final Double concentration, final Node<Double> node, final Environment<Double> env) {
-        super(molecule, node, concentration);
-        // TODO Auto-generated constructor stub
+    public BiomolPresentInNeighbor(final Biomolecule molecule, final Double concentration, final Node<Double> node, final Environment<Double> env) {
+        super(node, env);
+        addReadMolecule(molecule);
+        mol = molecule;
+        conc = concentration;
+        environment = env;
+    }
+
+    @Override
+    public double getPropensityConditioning() {
+        return propensity;
+    }
+
+    @Override
+    public boolean isValid() {
+        return valid;
+    }
+
+    @Override
+    public BiomolPresentInNeighbor cloneOnNewNode(final Node<Double> n) {
+        return new BiomolPresentInNeighbor(mol, conc, n, environment);
+    }
+
+    @Override
+    public Map<Node<Double>, Double> getValidNeighbors(final Collection<? extends Node<Double>> neighborhood) {
+        final Map<Node<Double>, Double> map = neighborhood.stream()
+                    .filter(n -> n.getConcentration(mol) >= conc)
+                    .collect(Collectors.<Node<Double>, Node<Double>, Double>toMap(
+                                          n -> n,
+                                          n -> CombinatoricsUtils.binomialCoefficientDouble(n.getConcentration(mol).intValue(), conc.intValue())));
+        if (map.isEmpty()) {
+            valid = false;
+            propensity = 0;
+        } else {
+            valid = true;
+            propensity = map.values().stream().max((d1, d2) -> d1.compareTo(d2)).get();
+        }
+        return map;
+    }
+
+    @Override
+    public String toString() {
+        return mol.toString() + " >= " + conc + " in neighbor";
     }
 
 }

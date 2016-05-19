@@ -12,6 +12,16 @@
 
 package it.unibo.alchemist.model.implementations.reactions;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import it.unibo.alchemist.model.implementations.actions.AbstractNeighborAction;
+import it.unibo.alchemist.model.implementations.conditions.AbstractNeighborCondition;
+import it.unibo.alchemist.model.interfaces.Action;
+import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Time;
@@ -24,8 +34,26 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
 public class BiochemicalReaction extends ChemicalReaction<Double> {
 
     private static final long serialVersionUID = 3849210665619933894L;
-    //private final Map<Node<Double>, TObjectDoubleMap<Molecule>> validNeighNodes = new LinkedHashMap<>();
-    //private double totalPropensity;
+    private Map<Node<Double>, Double> validNeighbors = new HashMap<>(0);
+    private final Node<Double> node;
+    /*
+     * Check if at least a neghbor condition is present in the reaction.
+     * It is used when a neighbor action is present:
+     * - If a neighbor condition AND a neighbor action are present, the target node for the action must be 
+     *   calculated.
+     * - If only neighbors actions are present the target node must be randomly choose.
+     */
+    private boolean neighborConditionsPresent;
+
+    private static Map<Node<Double>, Double> intersectMap(final Map<Node<Double>, Double> map1, final Map<Node<Double>, Double> map2) {
+        final Map<Node<Double>, Double> ret = new HashMap<>();
+        for (final Node<Double> n : map1.keySet()) {
+            if (map2.containsKey(n)) {
+                ret.put(n, map1.get(n) + map2.get(n));
+            }
+        }
+        return ret;
+    }
 
     /**
      * @param n
@@ -35,39 +63,58 @@ public class BiochemicalReaction extends ChemicalReaction<Double> {
      */
     public BiochemicalReaction(final Node<Double> n, final TimeDistribution<Double> td) {
         super(n, td);
+        node = n;
+    }
+
+    @Override
+    public BiochemicalReaction cloneOnNewNode(final Node<Double> node) {
+        return new BiochemicalReaction(node, getTimeDistribution());
     }
 
     @Override 
     protected void updateInternalStatus(final Time curTime, final boolean executed, final Environment<Double> env) {
-//        validNeighNodes.clear();
-//        for (final Node<Double> n: env.getNeighborhood(super.getNode())) {
-//            validNeighNodes.put(n, new TObjectDoubleHashMap<Molecule>());
-//        }
-//        for (final Condition<Double> cond : getConditions())  {
-//            if (cond instanceof IConditionBind) {
-//                final IConditionBind cbind = (IConditionBind) cond;
-//                cbind.setValidNeighborood(validNeighNodes);
-//            }
-//        }
-//        super.updateInternalStatus(curTime, executed, env);
+        validNeighbors.clear();
+        validNeighbors = env.getNeighborhood(node).getNeighbors().stream().collect(Collectors.<Node<Double>, Node<Double>, Double>toMap(
+                n -> n,
+                n -> 0d));
+        for (final Condition<Double> cond : getConditions()) {
+            if (cond instanceof AbstractNeighborCondition) {
+                validNeighbors = intersectMap(validNeighbors, ((AbstractNeighborCondition<Double>) cond).getValidNeighbors(validNeighbors.keySet()));
+//                if (validNeighbors.isEmpty()) { maybe speedup the check
+//                    break;
+//                }
+            }
+        }
+        super.updateInternalStatus(curTime, executed, env);
     }
 
     @Override 
     public void execute() {
-//        final double r = randomNumb.nextDouble() * totalMoleculeNumb;
-//        super.g;
-//
-//        double p = 0;
-//        for (final TObjectDoubleIterator<Node<Double>> it = validNeighNodes.iterator(); it.hasNext();) {
-//            it.advance();
-//            p += it.value();
-//            if (p >= r) {
-//                executeActionOnNeigh(it.key());
-//                break;
-//            }
-//        }
-//        act.bindNeigh(n);
-//        super.execute();
+        if (neighborConditionsPresent) {
+            final Optional<Map.Entry<Node<Double>, Double>> neighTarget = validNeighbors.entrySet().stream().max((e1, e2) -> e1.getValue().compareTo(e2.getValue()));
+            for (final Action<Double> a : getActions()) {
+                if (a instanceof AbstractNeighborAction && neighTarget.isPresent()) {
+                    ((AbstractNeighborAction<Double>) a).execute(neighTarget.get().getKey());
+                } else {
+                    a.execute();
+                }
+            }
+        } else {
+            for (final Action<Double> a : getActions()) {
+                    a.execute();
+            }
+        }
+    }
+
+    @Override
+    public void setConditions(final List<? extends Condition<Double>> c) {
+        for (final Condition<Double> cond : c) {
+            if (cond instanceof AbstractNeighborCondition) {
+                neighborConditionsPresent = true;
+                break;
+            }
+        }
+        super.setConditions(c);
     }
 
 }

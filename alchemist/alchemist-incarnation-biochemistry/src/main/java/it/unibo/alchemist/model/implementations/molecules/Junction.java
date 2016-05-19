@@ -1,5 +1,6 @@
 package it.unibo.alchemist.model.implementations.molecules;
 
+import java.util.Objects;
 import java.util.Collections;
 import java.util.Map;
 
@@ -75,7 +76,7 @@ public class Junction implements Molecule {
     @Override
     public boolean equals(final Object obj) {
         if (obj instanceof Junction) {
-            return (((Junction) obj).name.equals(name) && ((Junction) obj).neighborNode.equals(neighborNode));
+            return (((Junction) obj).name.equals(name) && Objects.equals(((Junction) obj).neighborNode, neighborNode));
         }
         return false;
     }

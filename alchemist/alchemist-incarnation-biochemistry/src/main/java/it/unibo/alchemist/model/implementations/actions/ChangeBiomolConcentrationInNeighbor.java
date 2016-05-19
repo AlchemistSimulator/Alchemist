@@ -8,48 +8,64 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
+import org.apache.commons.math3.random.RandomGenerator;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
-import it.unibo.alchemist.model.interfaces.Context;
-import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
  */
-public class ChangeBiomolConcentrationInNeighbor extends AbstractAction<Double> {
+public class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborAction<Double> {
 
     private static final long serialVersionUID = -6262967512444676061L;
+
+    private final Biomolecule mol;
+    private final double delta;
+    private final Environment<Double> env;
+    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All provided RandomGenerator implementations are actually Serializable")
+    private final RandomGenerator rand;
 
     /**
      * 
      * @param biomol 
      * @param deltaConcentration 
      * @param node 
-     * @param env 
+     * @param environment 
+     * @param randGen 
      */
     public ChangeBiomolConcentrationInNeighbor(final Biomolecule biomol,
             final Double deltaConcentration,
             final Node<Double> node,
-            final Environment<Double> env) {
-        super(node);
-        // TODO Auto-generated constructor stub
+            final Environment<Double> environment,
+            final RandomGenerator randGen) {
+        super(node, environment, randGen);
+        addModifiedMolecule(biomol);
+        mol = biomol;
+        delta = deltaConcentration;
+        env = environment;
+        rand = randGen;
     }
 
     @Override
-    public Action<Double> cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
-        // TODO Auto-generated method stub
-        return null;
+    public ChangeBiomolConcentrationInNeighbor cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
+        return new ChangeBiomolConcentrationInNeighbor(mol, delta, n, env, rand);
     }
 
     @Override
-    public void execute() {
-        // TODO Auto-generated method stub
+    public void execute(final Node<Double> targetNode) {
+        targetNode.setConcentration(mol, targetNode.getConcentration(mol) + delta);
     }
 
     @Override
-    public Context getContext() {
-        return Context.LOCAL; // TODO this is just a stub
+    public String toString() {
+         if (delta > 0) {
+             return "add " + delta + " of " + mol + " in neighbor ";
+         }  else {
+             return "remove " + (-delta) + " of " + mol + " in neighbor ";
+         }
     }
 
 }

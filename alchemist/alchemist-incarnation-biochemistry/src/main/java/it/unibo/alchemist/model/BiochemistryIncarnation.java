@@ -46,6 +46,9 @@ public class BiochemistryIncarnation implements Incarnation<Double> {
     @Override
     public TimeDistribution<Double> createTimeDistribution(final RandomGenerator rand, final Environment<Double> env,
             final Node<Double> node, final String param) {
+        if (param == null || param.isEmpty()) {
+            return new ExponentialTime<>(1.0, rand);
+        }
         try {
             final double rate = Double.parseDouble(param);
             return new ExponentialTime<>(rate, rand);

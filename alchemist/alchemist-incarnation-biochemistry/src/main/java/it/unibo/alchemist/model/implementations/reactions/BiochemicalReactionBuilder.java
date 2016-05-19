@@ -390,7 +390,7 @@ public class BiochemicalReactionBuilder {
             time = timeDistribution;
             this.node = currentNode;
             env = environment;
-            reaction = new ChemicalReaction<>(node, time);
+            reaction = new BiochemicalReaction(node, time);
         }
 
         @Override 
@@ -458,7 +458,7 @@ public class BiochemicalReactionBuilder {
                 final double concentration = createConcentration(b);
                 insertInMap(biomolConditionsInNeighbor, biomol, concentration);
                 conditionList.add(new BiomolPresentInNeighbor(biomol, concentration, node, env));
-                actionList.add(new ChangeBiomolConcentrationInNeighbor(biomol, -concentration, (CellNode) node, env));
+                actionList.add(new ChangeBiomolConcentrationInNeighbor(biomol, -concentration, (CellNode) node, env, rand));
             }
             return reaction;
         }
@@ -494,7 +494,7 @@ public class BiochemicalReactionBuilder {
                 if (re.biomolecule() != null) {
                     final Biomolecule biomol = createBiomolecule(re.biomolecule());
                     final double concentration = createConcentration(re.biomolecule());
-                    actionList.add(new ChangeBiomolConcentrationInNeighbor(biomol, concentration, node, env));
+                    actionList.add(new ChangeBiomolConcentrationInNeighbor(biomol, concentration, node, env, rand));
                 } else if (re.javaConstructor() != null) {
                     actionList.add(createObject(re.javaConstructor(), ACTIONS_PACKAGE, currentInc, rand, node, time, env, reaction));
                 }

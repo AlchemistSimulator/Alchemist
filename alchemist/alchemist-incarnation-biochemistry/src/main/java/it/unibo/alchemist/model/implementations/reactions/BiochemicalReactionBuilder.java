@@ -390,7 +390,7 @@ public class BiochemicalReactionBuilder {
             time = timeDistribution;
             this.node = currentNode;
             env = environment;
-            reaction = new BiochemicalReaction(node, time);
+            reaction = new BiochemicalReaction(node, time, env);
         }
 
         @Override 

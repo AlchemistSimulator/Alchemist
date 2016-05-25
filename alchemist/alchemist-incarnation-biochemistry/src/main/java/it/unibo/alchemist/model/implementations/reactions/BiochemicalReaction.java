@@ -22,7 +22,9 @@ import it.unibo.alchemist.model.implementations.actions.AbstractNeighborAction;
 import it.unibo.alchemist.model.implementations.conditions.AbstractNeighborCondition;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Condition;
+import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
@@ -36,6 +38,7 @@ public class BiochemicalReaction extends ChemicalReaction<Double> {
     private static final long serialVersionUID = 3849210665619933894L;
     private Map<Node<Double>, Double> validNeighbors = new HashMap<>(0);
     private final Node<Double> node;
+    private final Environment<Double> environment;
     /*
      * Check if at least a neghbor condition is present in the reaction.
      * It is used when a neighbor action is present:
@@ -44,6 +47,7 @@ public class BiochemicalReaction extends ChemicalReaction<Double> {
      * - If only neighbor actions are present the target node must be randomly choose.
      */
     private boolean neighborConditionsPresent;
+    private boolean neighborActionsPresent;
 
     private static Map<Node<Double>, Double> intersectMap(final Map<Node<Double>, Double> map1, final Map<Node<Double>, Double> map2) {
         final Map<Node<Double>, Double> ret = new HashMap<>();
@@ -60,15 +64,18 @@ public class BiochemicalReaction extends ChemicalReaction<Double> {
      *            node
      * @param td
      *            time distribution
+     * @param env 
+     *            the environment
      */
-    public BiochemicalReaction(final Node<Double> n, final TimeDistribution<Double> td) {
+    public BiochemicalReaction(final Node<Double> n, final TimeDistribution<Double> td, final Environment<Double> env) {
         super(n, td);
         node = n;
+        environment = env;
     }
 
     @Override
     public BiochemicalReaction cloneOnNewNode(final Node<Double> node) {
-        return new BiochemicalReaction(node, getTimeDistribution());
+        return new BiochemicalReaction(node, getTimeDistribution(), environment);
     }
 
     @Override 
@@ -102,21 +109,32 @@ public class BiochemicalReaction extends ChemicalReaction<Double> {
                 }
             }
         } else {
-            for (final Action<Double> a : getActions()) { // maybe super.execute
-                    a.execute();
-            }
+            super.execute();
         }
     }
 
     @Override
-    public void setConditions(final List<? extends Condition<Double>> c) {
-        for (final Condition<Double> cond : c) {
-            if (cond instanceof AbstractNeighborCondition) {
-                neighborConditionsPresent = true;
-                break;
+    public boolean canExecute() {
+        if (neighborActionsPresent || neighborConditionsPresent) { // check if the neighborhood is actually present. It can be not present due to node movement or node deleting
+            final Neighborhood<Double> currentNeigh = environment.getNeighborhood(node);
+            validNeighbors.entrySet().stream().filter(e -> currentNeigh.contains(e.getKey())).collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+            if (validNeighbors.isEmpty()) {
+                return false;
             }
         }
+        return super.canExecute();
+    }
+
+    @Override
+    public void setConditions(final List<? extends Condition<Double>> c) {
         super.setConditions(c);
+        neighborConditionsPresent = getInputContext().equals(Context.NEIGHBORHOOD);
+    }
+
+    @Override
+    public void setActions(final List<? extends Action<Double>> c) {
+        super.setActions(c);
+        neighborActionsPresent = getOutputContext().equals(Context.NEIGHBORHOOD);
     }
 
 }

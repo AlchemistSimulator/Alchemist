@@ -41,7 +41,7 @@ public class BiochemicalReaction extends ChemicalReaction<Double> {
      * It is used when a neighbor action is present:
      * - If a neighbor condition AND a neighbor action are present, the target node for the action must be 
      *   calculated.
-     * - If only neighbors actions are present the target node must be randomly choose.
+     * - If only neighbor actions are present the target node must be randomly choose.
      */
     private boolean neighborConditionsPresent;
 
@@ -49,7 +49,7 @@ public class BiochemicalReaction extends ChemicalReaction<Double> {
         final Map<Node<Double>, Double> ret = new HashMap<>();
         for (final Node<Double> n : map1.keySet()) {
             if (map2.containsKey(n)) {
-                ret.put(n, map1.get(n) + map2.get(n));
+                ret.put(n, map1.get(n) + map2.get(n)); // why addition? search in some papers. TODO
             }
         }
         return ret;
@@ -73,16 +73,18 @@ public class BiochemicalReaction extends ChemicalReaction<Double> {
 
     @Override 
     protected void updateInternalStatus(final Time curTime, final boolean executed, final Environment<Double> env) {
-        validNeighbors.clear();
-        validNeighbors = env.getNeighborhood(node).getNeighbors().stream().collect(Collectors.<Node<Double>, Node<Double>, Double>toMap(
-                n -> n,
-                n -> 0d));
-        for (final Condition<Double> cond : getConditions()) {
-            if (cond instanceof AbstractNeighborCondition) {
-                validNeighbors = intersectMap(validNeighbors, ((AbstractNeighborCondition<Double>) cond).getValidNeighbors(validNeighbors.keySet()));
-//                if (validNeighbors.isEmpty()) { maybe speedup the check
-//                    break;
-//                }
+        if (neighborConditionsPresent) {
+            validNeighbors.clear();
+            validNeighbors = env.getNeighborhood(node).getNeighbors().stream().collect(Collectors.<Node<Double>, Node<Double>, Double>toMap(
+                    n -> n,
+                    n -> 0d));
+            for (final Condition<Double> cond : getConditions()) {
+                if (cond instanceof AbstractNeighborCondition) {
+                    validNeighbors = intersectMap(validNeighbors, ((AbstractNeighborCondition<Double>) cond).getValidNeighbors(validNeighbors.keySet()));
+                    if (validNeighbors.isEmpty()) { // maybe speedup the check
+                        break;
+                    }
+                }
             }
         }
         super.updateInternalStatus(curTime, executed, env);
@@ -100,7 +102,7 @@ public class BiochemicalReaction extends ChemicalReaction<Double> {
                 }
             }
         } else {
-            for (final Action<Double> a : getActions()) {
+            for (final Action<Double> a : getActions()) { // maybe super.execute
                     a.execute();
             }
         }

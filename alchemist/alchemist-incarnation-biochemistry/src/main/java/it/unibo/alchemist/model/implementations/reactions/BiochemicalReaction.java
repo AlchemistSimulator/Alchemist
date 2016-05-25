@@ -117,9 +117,14 @@ public class BiochemicalReaction extends ChemicalReaction<Double> {
     public boolean canExecute() {
         if (neighborActionsPresent || neighborConditionsPresent) { // check if the neighborhood is actually present. It can be not present due to node movement or node deleting
             final Neighborhood<Double> currentNeigh = environment.getNeighborhood(node);
-            validNeighbors.entrySet().stream().filter(e -> currentNeigh.contains(e.getKey())).collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
-            if (validNeighbors.isEmpty()) {
+            if (currentNeigh.isEmpty()) {
                 return false;
+            }
+            if (!validNeighbors.isEmpty()) {
+                validNeighbors.entrySet().stream().filter(e -> currentNeigh.contains(e.getKey())).collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+                if (validNeighbors.isEmpty()) {
+                    return false;
+                }
             }
         }
         return super.canExecute();

@@ -37,6 +37,16 @@ public class Junction implements Molecule {
     }
 
     /**
+     * Builds a junction from another junction. The neighbor node of the created junction is NOT set.
+     * @param toClone the junction to clone.
+     */
+    public Junction(final Junction toClone) {
+        name = toClone.name;
+        moleculesInCurrentNode = toClone.getMoleculesInCurrentNode();
+        moleculesInNeighborNode = toClone.getMoleculesInNeighborNode();
+    }
+
+    /**
      * @return the name of the junction.
      */
     public String getName() {
@@ -44,7 +54,7 @@ public class Junction implements Molecule {
     }
 
     /**
-     * @return a amp of molecules and concentrations associated with this junction in the current node.
+     * @return a map of molecules and concentrations associated with this junction in the current node.
      */
     public Map<Biomolecule, Double> getMoleculesInCurrentNode() {
         return Collections.unmodifiableMap(moleculesInCurrentNode);

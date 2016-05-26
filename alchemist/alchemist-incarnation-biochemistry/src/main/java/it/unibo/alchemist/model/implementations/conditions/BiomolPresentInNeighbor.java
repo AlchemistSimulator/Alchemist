@@ -65,15 +65,14 @@ public class BiomolPresentInNeighbor extends AbstractNeighborCondition<Double> {
 
     @Override
     public Map<Node<Double>, Double> getValidNeighbors(final Collection<? extends Node<Double>> neighborhood) {
+        valid = false;
+        propensity = 0;
         final Map<Node<Double>, Double> map = neighborhood.stream()
                     .filter(n -> n.getConcentration(mol) >= conc)
                     .collect(Collectors.<Node<Double>, Node<Double>, Double>toMap(
                                           n -> n,
                                           n -> CombinatoricsUtils.binomialCoefficientDouble(n.getConcentration(mol).intValue(), conc.intValue())));
-        if (map.isEmpty()) {
-            valid = false;
-            propensity = 0;
-        } else {
+        if (!map.isEmpty()) {
             valid = true;
             propensity = map.values().stream().max((d1, d2) -> d1.compareTo(d2)).get();
         }

@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.implementations.nodes;
 
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ICellNode;
+import it.unibo.alchemist.model.interfaces.Molecule;
 
 /**
  *
@@ -31,4 +32,14 @@ public class CellNode extends DoubleNode implements ICellNode {
     protected Double createT() {
         return 0d;
     }
+
+    @Override
+    public void setConcentration(final Molecule mol, final Double c) {
+        if (c > 0) {
+            super.setConcentration(mol, c);
+        } else {
+            removeConcentration(mol);
+        }
+    }
+
 }

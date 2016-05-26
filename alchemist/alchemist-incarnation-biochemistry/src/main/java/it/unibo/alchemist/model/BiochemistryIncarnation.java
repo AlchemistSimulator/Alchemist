@@ -30,7 +30,7 @@ public class BiochemistryIncarnation implements Incarnation<Double> {
 
     @Override
     public double getProperty(final Node<Double> node, final Molecule mol, final String prop) {
-        return (Double) node.getConcentration(mol);
+        return node.getConcentration(mol);
     }
 
     @Override

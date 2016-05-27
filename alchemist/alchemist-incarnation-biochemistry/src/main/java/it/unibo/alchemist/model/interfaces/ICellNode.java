@@ -11,7 +11,6 @@ package it.unibo.alchemist.model.interfaces;
 import java.util.List;
 
 import it.unibo.alchemist.model.implementations.molecules.Junction;
-import it.unibo.alchemist.model.implementations.nodes.CellNode;
 
 /**
  */
@@ -44,5 +43,5 @@ public interface ICellNode extends Node<Double> {
      * @param j the junction to remove
      * @param neighbor the node at the other side of the junction.
      */
-    void removeJunction(final Junction j, final CellNode neighbor);
+    void removeJunction(final Junction j, final ICellNode neighbor);
 }

@@ -50,41 +50,23 @@ public class CellNode extends DoubleNode implements ICellNode {
         }
     }
 
-    /**
-     * 
-     * @return a unmodifiable list of junctions contained in this node.
-     */
+    @Override
     public List<Junction> getJunctions() {
         return Collections.unmodifiableList(junctionList);
     }
 
-    /**
-     * Add a junction to the current node.
-     * @param j the junction
-     */
+    @Override
     public void addJunction(final Junction j) {
         junctionList.add(j);
     }
 
-    /**
-     * Return true if a junction is present in the current node, false otherwise.
-     * Note: a junction is considered present if the method junction.equals(j) return true. 
-     * The neighbor node should NOT be considered in this comparison, depend on the implementation of junction.
-     * See {@link Junction#equals(Object)} for more details. 
-     * 
-     * @param j the junction
-     * @return true if the junction is present, false otherwise.
-     */
+    @Override
     public boolean containsJunction(final Junction j) {
         return junctionList.contains(j);
     }
 
-    /**
-     * Remove a junction from this node. If the junction is not present do nothing
-     * @param j the junction to remove
-     * @param neighbor the node at the other side.
-     */
-    public void removeJunction(final Junction j, final CellNode neighbor) {
+    @Override
+    public void removeJunction(final Junction j, final ICellNode neighbor) {
         final Iterator<Junction> it = junctionList.iterator();
         for (int i = 0; it.hasNext(); i++) {
             final Junction jun = it.next();

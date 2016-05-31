@@ -51,6 +51,7 @@ import it.unibo.alchemist.model.implementations.conditions.BiomolPresentInCell;
 import it.unibo.alchemist.model.implementations.conditions.BiomolPresentInEnv;
 import it.unibo.alchemist.model.implementations.conditions.BiomolPresentInNeighbor;
 import it.unibo.alchemist.model.implementations.conditions.JunctionPresentInCell;
+import it.unibo.alchemist.model.implementations.conditions.NeighborhoodPresent;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.implementations.nodes.CellNode;
@@ -166,6 +167,7 @@ public class BiochemicalReactionBuilder {
         private final Map<Biomolecule, Double> biomolConditionsInCell = new HashMap<>();
         private final Map<Biomolecule, Double> biomolConditionsInNeighbor = new HashMap<>();
         private final List<Junction> junctionList = new ArrayList<>();
+        private boolean neighborActionPresent;
 
         private static void insertInMap(final Map<Biomolecule, Double> map, final Biomolecule mol, final double conc) {
             if (map.containsKey(mol)) {
@@ -403,6 +405,16 @@ public class BiochemicalReactionBuilder {
             if (ctx.customReactionType() != null) {
                 visit(ctx.customReactionType());
             }
+            /*
+             * if the reaction has at least one neighbor action but no neighbor condition 
+             * add the neighborhoodPresent condition.
+             * This is necessary because if the node which contain this reaction don't have
+             * a neighborhood and the reaction is valid (all conditions are valid) the neighbor action
+             * is undefined, and can lead to unwanted behavior.
+             */
+            if (neighborActionPresent && biomolConditionsInNeighbor.isEmpty()) { 
+                conditionList.add(new NeighborhoodPresent<>(node, env));
+            }
             reaction.setConditions(conditionList);
             reaction.setActions(actionList);
             return reaction;
@@ -499,6 +511,7 @@ public class BiochemicalReactionBuilder {
                     actionList.add(createObject(re.javaConstructor(), ACTIONS_PACKAGE, currentInc, rand, node, time, env, reaction));
                 }
             }
+            neighborActionPresent = true;
             return reaction;
         }
 

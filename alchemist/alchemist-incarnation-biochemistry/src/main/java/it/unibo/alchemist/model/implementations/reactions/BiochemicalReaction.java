@@ -22,9 +22,7 @@ import it.unibo.alchemist.model.implementations.actions.AbstractNeighborAction;
 import it.unibo.alchemist.model.implementations.conditions.AbstractNeighborCondition;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Condition;
-import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
@@ -40,14 +38,13 @@ public class BiochemicalReaction extends ChemicalReaction<Double> {
     private final Node<Double> node;
     private final Environment<Double> environment;
     /*
-     * Check if at least a neghbor condition is present in the reaction.
+     * Check if at least a neighbor condition is present in the reaction.
      * It is used when a neighbor action is present:
      * - If a neighbor condition AND a neighbor action are present, the target node for the action must be 
      *   calculated.
      * - If only neighbor actions are present the target node must be randomly choose.
      */
     private boolean neighborConditionsPresent;
-    private boolean neighborActionsPresent;
 
     private static Map<Node<Double>, Double> intersectMap(final Map<Node<Double>, Double> map1, final Map<Node<Double>, Double> map2) {
         final Map<Node<Double>, Double> ret = new HashMap<>();
@@ -114,32 +111,14 @@ public class BiochemicalReaction extends ChemicalReaction<Double> {
     }
 
     @Override
-    public boolean canExecute() {
-        if (neighborActionsPresent || neighborConditionsPresent) { // check if the neighborhood is actually present. It can be not present due to node movement or node deleting
-            final Neighborhood<Double> currentNeigh = environment.getNeighborhood(node);
-            if (currentNeigh.isEmpty()) {
-                return false;
-            }
-            if (!validNeighbors.isEmpty()) {
-                validNeighbors.entrySet().stream().filter(e -> currentNeigh.contains(e.getKey())).collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
-                if (validNeighbors.isEmpty()) {
-                    return false;
-                }
+    public void setConditions(final List<? extends Condition<Double>> c) {
+        for (final Condition<Double> cond : c) {
+            if (cond instanceof AbstractNeighborCondition) {
+                neighborConditionsPresent = true;
+                break;
             }
         }
-        return super.canExecute();
-    }
-
-    @Override
-    public void setConditions(final List<? extends Condition<Double>> c) {
         super.setConditions(c);
-        neighborConditionsPresent = getInputContext().equals(Context.NEIGHBORHOOD);
-    }
-
-    @Override
-    public void setActions(final List<? extends Action<Double>> c) {
-        super.setActions(c);
-        neighborActionsPresent = getOutputContext().equals(Context.NEIGHBORHOOD);
     }
 
 }

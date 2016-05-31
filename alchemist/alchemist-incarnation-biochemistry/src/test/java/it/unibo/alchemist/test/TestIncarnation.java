@@ -30,6 +30,7 @@ import it.unibo.alchemist.model.implementations.conditions.BiomolPresentInNeighb
 import it.unibo.alchemist.model.implementations.conditions.JunctionPresentInCell;
 import it.unibo.alchemist.model.implementations.conditions.JunctionPresentInEnv;
 import it.unibo.alchemist.model.implementations.conditions.JunctionPresentInNeighbor;
+import it.unibo.alchemist.model.implementations.conditions.NeighborhoodPresent;
 import it.unibo.alchemist.model.implementations.environments.Rect2DEnvironment;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.nodes.CellNode;
@@ -102,7 +103,8 @@ public class TestIncarnation {
         assertEquals(nCellCond, count(r.getConditions(), BiomolPresentInCell.class)
                 + count(r.getConditions(), JunctionPresentInCell.class));
         assertEquals(nNeighCond, count(r.getConditions(), BiomolPresentInNeighbor.class)
-                + count(r.getConditions(), JunctionPresentInNeighbor.class));
+                + count(r.getConditions(), JunctionPresentInNeighbor.class)
+                + count(r.getConditions(), NeighborhoodPresent.class));
         assertEquals(nEnvCond, count(r.getConditions(), BiomolPresentInEnv.class)
                 + count(r.getConditions(), JunctionPresentInEnv.class));
         // actions
@@ -142,9 +144,9 @@ public class TestIncarnation {
         testR("[] --> [2 A + 5B]", 0, 2, 0, 2, 0, 0, 0, 0);
         testR("[2A in neighbor] --> []", 1, 1, 0, 0, 1, 1, 0, 0);
         testR("[A + 3B in neighbor] --> []", 2, 2, 0, 0, 2, 2, 0, 0);
-        testR("[] --> [A in neighbor]", 0, 1, 0, 0, 0, 1, 0, 0);
-        testR("[A] + [B in neighbor] --> [C]", 2, 3, 1, 2, 1, 1, 0, 0);
-        testR("[A] --> [B] + [C + D in neighbor]", 1, 4, 1, 2, 0, 2, 0, 0);
+        testR("[] --> [A in neighbor]", 1, 1, 0, 0, 1, 1, 0, 0); // neighborhoodPresent condition is present
+        testR("[A] + [B in neighbor] --> [C]", 2, 3, 1, 2, 1, 1, 0, 0); // neighborhoodPresent condition is present
+        testR("[A] --> [B] + [C + D in neighbor]", 2, 4, 1, 2, 1, 2, 0, 0); // neighborhoodPresent condition is present
         testR("[A in env] --> []", 1, 1, 0, 0, 0, 0, 1, 1);
         testR("[A + 3B in env] --> []", 2, 2, 0, 0, 0, 0, 2, 2);
         testR("[] --> [A in env]", 0, 1, 0, 0, 0, 0, 0, 1);
@@ -161,7 +163,7 @@ public class TestIncarnation {
         testR("[A + B] --> [BrownianMove(0.1)]", 2, 3, 2, 2, 0, 0, 0, 0);
         testR("[] --> [B in env] if BiomolPresentInCell(A, 2)", 1, 1, 1, 0, 0, 0, 0, 1); // if a custom condition is used the molecules present in the custom condition will NOT be removed.
         testR("[A] + [B in neighbor] + [C in env] --> [D in cell] + [E in neighbor] + [F in env] + [BrownianMove(1)] if BiomolPresentInCell(A, 2)", 4, 7, 2, 2, 1, 2, 1, 2);
-        // CHECKSTYLE:ON magicnumber
+        // CHECKSTYLE:ON: magicnumber
         testNoR("[A] + [B in neighbor] --> [junction A-C]"); // C is not present in conditions
         testNoR("[A] + [B in neighbor] --> [junction A-2B]"); // only one molecule B is present in conditions
         testNoR("[A] + [B in neighbor] --> [junction B-A]"); // A is in cell an B is in neighbor. Correct syntax is junction A-B
@@ -172,4 +174,5 @@ public class TestIncarnation {
         testNoR("[A] + [B in neighbor] + [junction X-Y] --> [junction A-B]"); // cannot create junctions with junctions conditions
         testNoR("[junction A-B] --> [junction B-A]"); // junction A-B != junction B-A
     }
+
 }

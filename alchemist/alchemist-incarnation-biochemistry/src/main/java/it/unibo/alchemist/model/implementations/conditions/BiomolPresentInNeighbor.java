@@ -10,6 +10,7 @@
 package it.unibo.alchemist.model.implementations.conditions;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,7 @@ import org.apache.commons.math3.util.CombinatoricsUtils;
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 
 /**
@@ -30,8 +32,8 @@ public class BiomolPresentInNeighbor extends AbstractNeighborCondition<Double> {
     private final Biomolecule mol;
     private final Double conc;
     private final Environment<Double> environment;
-    private boolean valid;
     private double propensity;
+    private Map<Node<Double>, Double> neigh = new HashMap<>();
 
     /**
      * 
@@ -55,7 +57,8 @@ public class BiomolPresentInNeighbor extends AbstractNeighborCondition<Double> {
 
     @Override
     public boolean isValid() {
-        return valid;
+        final Neighborhood<Double> neighborhood = environment.getNeighborhood(getNode());
+        return neigh.entrySet().stream().filter(n -> neighborhood.contains(n.getKey())).allMatch(n -> n.getKey().getConcentration(mol) >= conc);
     }
 
     @Override
@@ -65,18 +68,16 @@ public class BiomolPresentInNeighbor extends AbstractNeighborCondition<Double> {
 
     @Override
     public Map<Node<Double>, Double> getValidNeighbors(final Collection<? extends Node<Double>> neighborhood) {
-        valid = false;
         propensity = 0;
-        final Map<Node<Double>, Double> map = neighborhood.stream()
+        neigh = neighborhood.stream()
                     .filter(n -> n.getConcentration(mol) >= conc)
                     .collect(Collectors.<Node<Double>, Node<Double>, Double>toMap(
                                           n -> n,
                                           n -> CombinatoricsUtils.binomialCoefficientDouble(n.getConcentration(mol).intValue(), conc.intValue())));
-        if (!map.isEmpty()) {
-            valid = true;
-            propensity = map.values().stream().max((d1, d2) -> d1.compareTo(d2)).get();
+        if (!neigh.isEmpty()) {
+            propensity = neigh.values().stream().max((d1, d2) -> d1.compareTo(d2)).get();
         }
-        return map;
+        return new HashMap<>(neigh);
     }
 
     @Override

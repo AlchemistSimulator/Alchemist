@@ -28,7 +28,6 @@ import it.unibo.alchemist.model.implementations.conditions.BiomolPresentInCell;
 import it.unibo.alchemist.model.implementations.conditions.BiomolPresentInEnv;
 import it.unibo.alchemist.model.implementations.conditions.BiomolPresentInNeighbor;
 import it.unibo.alchemist.model.implementations.conditions.JunctionPresentInCell;
-import it.unibo.alchemist.model.implementations.conditions.JunctionPresentInEnv;
 import it.unibo.alchemist.model.implementations.conditions.JunctionPresentInNeighbor;
 import it.unibo.alchemist.model.implementations.conditions.NeighborhoodPresent;
 import it.unibo.alchemist.model.implementations.environments.Rect2DEnvironment;
@@ -105,8 +104,7 @@ public class TestIncarnation {
         assertEquals(nNeighCond, count(r.getConditions(), BiomolPresentInNeighbor.class)
                 + count(r.getConditions(), JunctionPresentInNeighbor.class)
                 + count(r.getConditions(), NeighborhoodPresent.class));
-        assertEquals(nEnvCond, count(r.getConditions(), BiomolPresentInEnv.class)
-                + count(r.getConditions(), JunctionPresentInEnv.class));
+        assertEquals(nEnvCond, count(r.getConditions(), BiomolPresentInEnv.class));
         // actions
         assertEquals(nCellAct, count(r.getActions(), AddJunctionInCell.class)
                 + count(r.getActions(), ChangeBiomolConcentrationInCell.class)

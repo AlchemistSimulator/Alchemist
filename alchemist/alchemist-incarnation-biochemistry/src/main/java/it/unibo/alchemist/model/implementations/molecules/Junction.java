@@ -92,7 +92,7 @@ public class Junction implements Molecule {
 
     @Override
     public int hashCode() {
-        return name.hashCode() + neighborNode.hashCode();
+        return name.hashCode();
     }
 
     @Override

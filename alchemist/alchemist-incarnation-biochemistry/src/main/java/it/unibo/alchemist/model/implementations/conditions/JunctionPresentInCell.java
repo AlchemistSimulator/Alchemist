@@ -68,7 +68,7 @@ public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
 
     @Override
     public String toString() {
-        return j.toString() + " present ";
+        return "junction " +  j.toString() + " present ";
     }
 
 }

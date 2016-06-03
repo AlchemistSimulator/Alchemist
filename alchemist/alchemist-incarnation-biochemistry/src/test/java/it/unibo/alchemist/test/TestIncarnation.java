@@ -16,13 +16,11 @@ import org.junit.Test;
 import it.unibo.alchemist.exceptions.BiochemistryParseException;
 import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.implementations.actions.AddJunctionInCell;
-import it.unibo.alchemist.model.implementations.actions.AddJunctionInEnv;
 import it.unibo.alchemist.model.implementations.actions.AddJunctionInNeighbor;
 import it.unibo.alchemist.model.implementations.actions.ChangeBiomolConcentrationInCell;
 import it.unibo.alchemist.model.implementations.actions.ChangeBiomolConcentrationInEnv;
 import it.unibo.alchemist.model.implementations.actions.ChangeBiomolConcentrationInNeighbor;
 import it.unibo.alchemist.model.implementations.actions.RemoveJunctionInCell;
-import it.unibo.alchemist.model.implementations.actions.RemoveJunctionInEnv;
 import it.unibo.alchemist.model.implementations.actions.RemoveJunctionInNeighbor;
 import it.unibo.alchemist.model.implementations.conditions.BiomolPresentInCell;
 import it.unibo.alchemist.model.implementations.conditions.BiomolPresentInEnv;
@@ -112,9 +110,7 @@ public class TestIncarnation {
         assertEquals(nNeighAct, count(r.getActions(), AddJunctionInNeighbor.class)
                 + count(r.getActions(), ChangeBiomolConcentrationInNeighbor.class)
                 + count(r.getActions(), RemoveJunctionInNeighbor.class));
-        assertEquals(nEnvAct, count(r.getActions(), AddJunctionInEnv.class)
-                + count(r.getActions(), ChangeBiomolConcentrationInEnv.class)
-                + count(r.getActions(), RemoveJunctionInEnv.class));
+        assertEquals(nEnvAct, count(r.getActions(), ChangeBiomolConcentrationInEnv.class));
     }
 
     private void testNoR(final String param) { // used for cases like [A] + [B in neighbor] --> [junction A-C]

@@ -8,7 +8,8 @@
  */
 package it.unibo.alchemist.model.interfaces;
 
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 
@@ -17,22 +18,20 @@ import it.unibo.alchemist.model.implementations.molecules.Junction;
 public interface ICellNode extends Node<Double> {
     /**
      * 
-     * @return the list of junctions contained in this node.
+     * @return the map junction - node - quantity
      */
-    List<Junction> getJunctions();
+    Map<Junction, Map<ICellNode, Integer>> getJunctions();
 
     /**
      * Add a junction to the current node.
      * @param j the junction
+     * @param neighbor the neighbor node at the other side of the junction
      */
-    void addJunction(final Junction j);
+    void addJunction(final Junction j, final ICellNode neighbor);
 
     /**
      * Return true if a junction is present in the current node, false otherwise.
      * Note: a junction is considered present if the method junction.equals(j) return true. 
-     * The neighbor node should NOT be considered in this comparison, it depends on the implementation of junction.
-     * See {@link Junction#equals(Object)} for more details. 
-     * 
      * @param j the junction
      * @return true if the junction is present, false otherwise.
      */
@@ -44,4 +43,17 @@ public interface ICellNode extends Node<Double> {
      * @param neighbor the node at the other side of the junction.
      */
     void removeJunction(final Junction j, final ICellNode neighbor);
+
+    /**
+     * Returns a set of ICellNode which are linked with the current node by a junction of the type j.
+     * @param j the junction
+     * @return a set of ICellNode which are linked with the current node by a junction of the type j
+     */
+    Set<ICellNode> getNeighborsLinkWithJunction(final Junction j);
+
+    /**
+     * 
+     * @return The total number of junctions presents in this node
+     */
+    int getJunctionNumber();
 }

@@ -43,10 +43,12 @@ import it.unibo.alchemist.biochemistrydsl.BiochemistrydslParser.BiomoleculeConte
 import it.unibo.alchemist.exceptions.BiochemistryParseException;
 import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.implementations.actions.AddJunctionInCell;
+import it.unibo.alchemist.model.implementations.actions.AddJunctionInNeighbor;
 import it.unibo.alchemist.model.implementations.actions.ChangeBiomolConcentrationInCell;
 import it.unibo.alchemist.model.implementations.actions.ChangeBiomolConcentrationInEnv;
 import it.unibo.alchemist.model.implementations.actions.ChangeBiomolConcentrationInNeighbor;
 import it.unibo.alchemist.model.implementations.actions.RemoveJunctionInCell;
+import it.unibo.alchemist.model.implementations.actions.RemoveJunctionInNeighbor;
 import it.unibo.alchemist.model.implementations.conditions.BiomolPresentInCell;
 import it.unibo.alchemist.model.implementations.conditions.BiomolPresentInEnv;
 import it.unibo.alchemist.model.implementations.conditions.BiomolPresentInNeighbor;
@@ -446,7 +448,10 @@ public class BiochemicalReactionBuilder {
             if (ctx.customReactionType() != null) {
                 visit(ctx.customReactionType());
             }
-            junctionList.forEach((j -> actionList.add(new RemoveJunctionInCell(j, node))));
+            junctionList.forEach((j -> {
+                actionList.add(new RemoveJunctionInCell(j, node));
+                actionList.add(new RemoveJunctionInNeighbor(j, node, env));
+            }));
             reaction.setConditions(conditionList);
             reaction.setActions(actionList);
             return reaction;
@@ -544,6 +549,7 @@ public class BiochemicalReactionBuilder {
                 }
             });
             actionList.add(new AddJunctionInCell(j, node));
+            actionList.add(new AddJunctionInNeighbor(j, node, env));
             return reaction;
         }
 

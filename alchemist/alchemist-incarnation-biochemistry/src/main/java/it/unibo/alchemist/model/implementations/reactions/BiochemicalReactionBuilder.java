@@ -60,6 +60,7 @@ import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.ICellNode;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -75,7 +76,7 @@ public class BiochemicalReactionBuilder {
     private static final Logger L = LoggerFactory.getLogger(BiochemicalReactionBuilder.class);
 
     private final BiochemistryIncarnation incarnation;
-    private final Node<Double> node;
+    private final ICellNode node;
     private final Environment<Double> env;
     private RandomGenerator rand;
     private TimeDistribution<Double> time;
@@ -88,7 +89,7 @@ public class BiochemicalReactionBuilder {
      * @param currentNode the node where the reaction is placed.
      * @param environment the environment.
      */
-    public BiochemicalReactionBuilder(final BiochemistryIncarnation inc, final Node<Double> currentNode, final Environment<Double> environment) {
+    public BiochemicalReactionBuilder(final BiochemistryIncarnation inc, final ICellNode currentNode, final Environment<Double> environment) {
         incarnation = inc;
         node = currentNode;
         env = environment;
@@ -159,7 +160,7 @@ public class BiochemicalReactionBuilder {
         private final RandomGenerator rand;
         private final BiochemistryIncarnation currentInc;
         private final TimeDistribution<Double> time;
-        private final Node<Double> node;
+        private final ICellNode node;
         private final Environment<Double> env;
         private final Reaction<Double> reaction;
         private final List<Condition<Double>> conditionList = new ArrayList<>(0);
@@ -374,7 +375,7 @@ public class BiochemicalReactionBuilder {
             for (final BiomoleculeContext b : ctx.junctionRight().biomolecule()) {
                 insertInMap(neighborNodeMolecules, createBiomolecule(b), createConcentration(b));
             }
-            return new Junction(ctx.getText(), currentNodeMolecules, neighborNodeMolecules); // TODO the junction name is like junctionA-B. Define the junction name.
+            return new Junction(ctx.junctionLeft().getText() + "-" + ctx.junctionRight().getText(), currentNodeMolecules, neighborNodeMolecules);
         }
 
         private static Biomolecule createBiomolecule(final BiomoleculeContext ctx) {
@@ -386,7 +387,7 @@ public class BiochemicalReactionBuilder {
             return (ctx.concentration() == null) ? 1.0 : Double.parseDouble(ctx.concentration().POSDOUBLE().getText());
         }
 
-        private BiochemistryDSLVisitor(final RandomGenerator rand, final BiochemistryIncarnation incarnation, final TimeDistribution<Double> timeDistribution, final Node<Double> currentNode, final Environment<Double> environment) {
+        private BiochemistryDSLVisitor(final RandomGenerator rand, final BiochemistryIncarnation incarnation, final TimeDistribution<Double> timeDistribution, final ICellNode currentNode, final Environment<Double> environment) {
             this.rand = rand;
             currentInc = incarnation;
             time = timeDistribution;
@@ -550,7 +551,7 @@ public class BiochemicalReactionBuilder {
         public Reaction<Double> visitJunctionReactionJunctionCondition(final BiochemistrydslParser.JunctionReactionJunctionConditionContext ctx) {
             final Junction j = createJunction(ctx.junction());
             junctionList.add(j);
-            conditionList.add(new JunctionPresentInCell(j, node));
+            conditionList.add(new JunctionPresentInCell(j, node, env));
             return reaction;
         }
 

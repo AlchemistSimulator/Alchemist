@@ -9,22 +9,66 @@
 
 package it.unibo.alchemist.model.implementations.conditions;
 
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import it.unibo.alchemist.model.implementations.molecules.Junction;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.ICellNode;
 import it.unibo.alchemist.model.interfaces.Node;
 
 /**
  */
-public class JunctionPresentInCell extends GenericJunctionPresent {
+public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
 
     private static final long serialVersionUID = 4213307452790768059L;
+
+    private final ICellNode node;
+    private final Junction j;
+    private final Environment<Double> env;
 
     /**
      * 
      * @param junction the junction
-     * @param node the node
+     * @param n the node
+     * @param e the environment
      */
-    public JunctionPresentInCell(final Junction junction, final Node<Double> node) {
-        super(junction, node); // TODO This is just a stub
+    public JunctionPresentInCell(final Junction junction, final ICellNode n, final Environment<Double> e) {
+        super(n, e);
+        j = junction;
+        node = n;
+        env = e;
+    }
+
+    @Override
+    public double getPropensityConditioning() {
+        return isValid() ? 1 : 0;
+    }
+
+    @Override
+    public boolean isValid() {
+        return node.containsJunction(j);
+    }
+
+    @Override
+    public JunctionPresentInCell cloneOnNewNode(final Node<Double> n) {
+        return new JunctionPresentInCell(j, (ICellNode) n, env);
+    }
+
+    @Override
+    public Map<Node<Double>, Double> getValidNeighbors(final Collection<? extends Node<Double>> neighborhood) {
+        final Set<ICellNode> linkedNodes = node.getNeighborsLinkWithJunction(j);
+        return neighborhood.stream().filter(n -> linkedNodes.contains(n))
+        .collect(Collectors.<Node<Double>, Node<Double>, Double>toMap(
+                n -> n,
+                n -> 1.0));
+    }
+
+    @Override
+    public String toString() {
+        return j.toString() + " present ";
     }
 
 }

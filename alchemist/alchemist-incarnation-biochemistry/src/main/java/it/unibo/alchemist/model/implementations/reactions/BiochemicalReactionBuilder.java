@@ -181,6 +181,12 @@ public class BiochemicalReactionBuilder {
             }
         }
 
+        private static Junction reverseJunction(final Junction j) {
+            final String[] split = j.getName().split("-");
+            final String revName = split[1] + "-" + split[0];
+            return new Junction(revName, j.getMoleculesInNeighborNode(), j.getMoleculesInCurrentNode());
+        }
+
         @SuppressWarnings("unchecked")
         private static <O> O createObject(final BiochemistrydslParser.JavaConstructorContext ctx,
                 final String packageName, 
@@ -450,7 +456,7 @@ public class BiochemicalReactionBuilder {
             }
             junctionList.forEach((j -> {
                 actionList.add(new RemoveJunctionInCell(j, node));
-                actionList.add(new RemoveJunctionInNeighbor(j, node, env));
+                actionList.add(new RemoveJunctionInNeighbor(reverseJunction(j), node, env));
             }));
             reaction.setConditions(conditionList);
             reaction.setActions(actionList);
@@ -549,7 +555,7 @@ public class BiochemicalReactionBuilder {
                 }
             });
             actionList.add(new AddJunctionInCell(j, node));
-            actionList.add(new AddJunctionInNeighbor(j, node, env));
+            actionList.add(new AddJunctionInNeighbor(reverseJunction(j), node, env));
             return reaction;
         }
 

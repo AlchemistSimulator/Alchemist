@@ -554,7 +554,7 @@ public class BiochemicalReactionBuilder {
                     throw new BiochemistryParseException("The creation of the junction " + j + " requires " + v + " " + k + " in the neighbor node, specify a greater or equal value in conditions.");
                 }
             });
-            actionList.add(new AddJunctionInCell(j, node));
+            actionList.add(new AddJunctionInCell(j, node, env, rand));
             actionList.add(new AddJunctionInNeighbor(reverseJunction(j), node, env));
             return reaction;
         }

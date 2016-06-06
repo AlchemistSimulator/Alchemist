@@ -9,42 +9,66 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.interfaces.Context;
+
+import org.apache.commons.math3.random.RandomGenerator;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
-import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.ICellNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
+ * Represent the action of removing a junction between a neighbor and the current node. <br/>
+ * This action only remove the junction reference inside the neighbor node, the current one totally ignore 
+ * that a junction has been removed. <br/>
+ * This is a part of the junction remotion process. <br/>
+ * See {@link RemoveJunctionInCell} for the other part of the process.
  */
-public class RemoveJunctionInNeighbor extends AbstractAction<Double> {
+public class RemoveJunctionInNeighbor extends AbstractNeighborAction<Double> {
 
     private static final long serialVersionUID = -5033532863301442377L;
+
+    private final Junction jun;
+    private final Environment<Double> env;
+    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All provided RandomGenerator implementations are actually Serializable")
+    private final RandomGenerator rand;
+    private final ICellNode node;
 
     /**
      * 
      * @param junction 
-     * @param node 
-     * @param env 
+     * @param n 
+     * @param e 
+     * @param rg 
      */
-    public RemoveJunctionInNeighbor(final Junction junction, final Node<Double> node, final Environment<Double> env) {
-        super(node);
-        // TODO Auto-generated constructor stub
+    public RemoveJunctionInNeighbor(final Junction junction, final ICellNode n, final Environment<Double> e, final RandomGenerator rg) {
+        super(n, e, rg);
+        jun = junction;
+        node = n;
+        env = e;
+        rand = rg;
     }
 
     @Override
-    public Action<Double> cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
-        // TODO Auto-generated method stub
-        return null;
+    public RemoveJunctionInNeighbor cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
+        return new RemoveJunctionInNeighbor(jun, (ICellNode) n, env, rand);
     }
 
+    /**
+     * If no target node is given DO NOTHING. The junction can not be removed.
+     */
     @Override
-    public void execute() {
-        // TODO Auto-generated method stub
-    }
+    public void execute() { }
 
     @Override
     public Context getContext() {
-        return Context.LOCAL; // TODO this is just a stub
+        return Context.NEIGHBORHOOD; // TODO try local
+    }
+
+    @Override
+    public void execute(final Node<Double> targetNode) {
+        ((ICellNode) targetNode).removeJunction(jun, node);
     }
 }

@@ -54,6 +54,15 @@ public class CellNode extends DoubleNode implements ICellNode {
     }
 
     @Override
+    public boolean contains(final Molecule m) {
+        if (m instanceof Junction) {
+            return containsJunction((Junction) m);
+        } else {
+            return super.contains(m);
+        }
+    }
+
+    @Override
     public Map<Junction, Map<ICellNode, Integer>> getJunctions() {
         return Collections.unmodifiableMap(junctions);
     }
@@ -82,14 +91,6 @@ public class CellNode extends DoubleNode implements ICellNode {
 
     @Override
     public void removeJunction(final Junction j, final ICellNode neighbor) {
-//        final Iterator<Junction> it = junctionList.iterator();
-//        for (int i = 0; it.hasNext(); i++) {
-//            final Junction jun = it.next();
-//            if (jun.equals(j) && jun.getNeighborNode().get().equals(neighbor)) {
-//                junctionList.remove(i);
-//                return;
-//            }
-//        }
         if (junctions.containsKey(j)) {
             final Map<ICellNode, Integer> inner = junctions.get(j);
             if (inner.containsKey(neighbor)) {
@@ -98,7 +99,12 @@ public class CellNode extends DoubleNode implements ICellNode {
                 } else {
                     inner.put(neighbor, inner.get(neighbor) - 1);
                 }
-                junctions.put(j, inner);
+                if (inner.isEmpty()) {
+                    junctions.remove(j);
+                } else {
+                    junctions.put(j, inner);
+                }
+
             }
         }
     }

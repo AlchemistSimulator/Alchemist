@@ -12,9 +12,12 @@ import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ICellNode;
 
+import java.util.Map;
+
 import org.apache.commons.math3.random.RandomGenerator;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
@@ -45,6 +48,7 @@ public class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
      */
     public RemoveJunctionInCell(final Junction junction, final ICellNode n, final Environment<Double> e, final RandomGenerator rg) {
         super(n, e, rg);
+        addModifiedMolecule(junction);
         jun = junction;
         node = n;
         env = e;
@@ -53,7 +57,6 @@ public class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
 
     @Override
     public RemoveJunctionInCell cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
-        // TODO Auto-generated method stub
         return new RemoveJunctionInCell(jun, (ICellNode) n, env, rand);
     }
 
@@ -74,5 +77,14 @@ public class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
     @Override
     public void execute(final Node<Double> targetNode) { 
         node.removeJunction(jun, (ICellNode) targetNode);
+        for (final Map.Entry<Biomolecule, Double> e : jun.getMoleculesInCurrentNode().entrySet()) {
+            node.setConcentration(e.getKey(), e.getValue());
+        }
     }
+
+    @Override 
+    public String toString() {
+        return "remove junction " + jun.toString() + " in cell";
+    }
+
 }

@@ -3,9 +3,7 @@ package it.unibo.alchemist.model.implementations.molecules;
 import java.util.Collections;
 import java.util.Map;
 
-import it.unibo.alchemist.model.interfaces.ICellNode;
 import it.unibo.alchemist.model.interfaces.Molecule;
-import java.util.Optional;
 
 import org.danilopianini.lang.util.FasterString;
 
@@ -19,8 +17,6 @@ public class Junction implements Molecule {
     private final FasterString name;
     private final Map<Biomolecule, Double> moleculesInCurrentNode;
     private final Map<Biomolecule, Double> moleculesInNeighborNode;
-    private ICellNode neighborNode;
-
     /**
      * Build a junction.
      * @param name the name of the junction.
@@ -66,22 +62,6 @@ public class Junction implements Molecule {
         return Collections.unmodifiableMap(moleculesInNeighborNode);
     }
 
-    /**
-     * 
-     * @return the neighbor node if it's present. Return an Optional.empty() instead.
-     */
-    public Optional<ICellNode> getNeighborNode() {
-        return Optional.ofNullable(neighborNode);
-    }
-
-    /**
-     * Set the neighbor node of the junction.
-     * @param neighbor the neighbor node.
-     */
-    public void setNeighborNode(final ICellNode neighbor) {
-        neighborNode = neighbor;
-    }
-
     @Override
     public boolean equals(final Object obj) {
         if (obj instanceof Junction) {
@@ -107,7 +87,7 @@ public class Junction implements Molecule {
 
     @Override
     public boolean dependsOn(final Molecule mol) {
-        return false;
+        return equals(mol);
     }
 
 }

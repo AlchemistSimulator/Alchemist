@@ -37,6 +37,7 @@ public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
      */
     public JunctionPresentInCell(final Junction junction, final ICellNode n, final Environment<Double> e) {
         super(n, e);
+        addReadMolecule(junction);
         j = junction;
         node = n;
         env = e;

@@ -44,6 +44,7 @@ public class AddJunctionInCell extends AbstractNeighborAction<Double> {
      */
     public AddJunctionInCell(final Junction j, final ICellNode n, final Environment<Double> e, final RandomGenerator rg) {
         super(n, e, rg);
+        addModifiedMolecule(j);
         jun = j;
         node = n;
         env = e;
@@ -72,5 +73,10 @@ public class AddJunctionInCell extends AbstractNeighborAction<Double> {
     @Override
     public void execute(final Node<Double> targetNode) { 
         node.addJunction(jun, (ICellNode) targetNode);
+    }
+
+    @Override 
+    public String toString() {
+        return "add junction " + jun.toString() + " in node";
     }
 }

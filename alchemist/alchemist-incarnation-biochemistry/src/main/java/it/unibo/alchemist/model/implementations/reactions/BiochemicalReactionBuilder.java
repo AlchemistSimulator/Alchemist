@@ -455,8 +455,8 @@ public class BiochemicalReactionBuilder {
                 visit(ctx.customReactionType());
             }
             junctionList.forEach((j -> {
-                actionList.add(new RemoveJunctionInCell(j, node));
-                actionList.add(new RemoveJunctionInNeighbor(reverseJunction(j), node, env));
+                actionList.add(new RemoveJunctionInCell(j, node, env, rand));
+                actionList.add(new RemoveJunctionInNeighbor(reverseJunction(j), node, env, rand));
             }));
             reaction.setConditions(conditionList);
             reaction.setActions(actionList);
@@ -555,7 +555,7 @@ public class BiochemicalReactionBuilder {
                 }
             });
             actionList.add(new AddJunctionInCell(j, node, env, rand));
-            actionList.add(new AddJunctionInNeighbor(reverseJunction(j), node, env));
+            actionList.add(new AddJunctionInNeighbor(reverseJunction(j), node, env, rand));
             return reaction;
         }
 

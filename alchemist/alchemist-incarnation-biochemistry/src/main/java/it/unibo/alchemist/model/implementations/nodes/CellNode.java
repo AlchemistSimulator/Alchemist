@@ -118,6 +118,15 @@ public class CellNode extends DoubleNode implements ICellNode {
     }
 
     @Override
+    public Set<ICellNode> getAllNodesLinkWithJunction() {
+        final Set<ICellNode> r = new HashSet<>();
+        for (final Map.Entry<Junction, Map<ICellNode, Integer>> e : junctions.entrySet()) {
+            r.addAll(e.getValue().keySet());
+        }
+        return r;
+    }
+
+    @Override
     public int getJunctionNumber() {
         return junctions.values().stream().mapToInt(m -> m.values().stream().mapToInt(v -> v.intValue()).sum()).sum();
     }

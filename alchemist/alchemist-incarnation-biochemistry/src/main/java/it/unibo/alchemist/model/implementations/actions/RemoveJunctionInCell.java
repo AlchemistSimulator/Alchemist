@@ -49,6 +49,9 @@ public class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
     public RemoveJunctionInCell(final Junction junction, final ICellNode n, final Environment<Double> e, final RandomGenerator rg) {
         super(n, e, rg);
         addModifiedMolecule(junction);
+        for (final Map.Entry<Biomolecule, Double> entry : junction.getMoleculesInCurrentNode().entrySet()) {
+            addModifiedMolecule(entry.getKey());
+        }
         jun = junction;
         node = n;
         env = e;
@@ -76,6 +79,9 @@ public class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
      */
     @Override
     public void execute(final Node<Double> targetNode) { 
+        if (!env.getNeighborhood(node).contains(targetNode)) {
+            throw new IllegalStateException("Remove Junction in cell - current node " + node.getId() + " target node " + targetNode.getId());
+        }
         node.removeJunction(jun, (ICellNode) targetNode);
         for (final Map.Entry<Biomolecule, Double> e : jun.getMoleculesInCurrentNode().entrySet()) {
             node.setConcentration(e.getKey(), e.getValue());

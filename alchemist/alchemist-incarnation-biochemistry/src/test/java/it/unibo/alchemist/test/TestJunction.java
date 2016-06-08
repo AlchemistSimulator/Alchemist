@@ -10,7 +10,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import it.unibo.alchemist.model.implementations.environments.Rect2DEnvironment;
+import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.implementations.nodes.CellNode;
@@ -29,7 +29,7 @@ public class TestJunction {
      */
     @Before
     public void setUp() {
-        final Environment<Double> env = new Rect2DEnvironment();
+        final Environment<Double> env = new BioRect2DEnvironment();
         node1 = new CellNode(env);
         node2 = new CellNode(env);
         node3 = new CellNode(env);

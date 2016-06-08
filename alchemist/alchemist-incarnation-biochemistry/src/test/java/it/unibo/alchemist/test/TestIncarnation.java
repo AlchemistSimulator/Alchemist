@@ -28,7 +28,7 @@ import it.unibo.alchemist.model.implementations.conditions.BiomolPresentInNeighb
 import it.unibo.alchemist.model.implementations.conditions.JunctionPresentInCell;
 import it.unibo.alchemist.model.implementations.conditions.JunctionPresentInNeighbor;
 import it.unibo.alchemist.model.implementations.conditions.NeighborhoodPresent;
-import it.unibo.alchemist.model.implementations.environments.Rect2DEnvironment;
+import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.nodes.CellNode;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
@@ -58,7 +58,7 @@ public class TestIncarnation {
      */
     @Before
     public void setUp() {
-        env = new Rect2DEnvironment();
+        env = new BioRect2DEnvironment();
         node = new CellNode(env);
         rand = new MersenneTwister();
         time = new ExponentialTime<>(1, rand);

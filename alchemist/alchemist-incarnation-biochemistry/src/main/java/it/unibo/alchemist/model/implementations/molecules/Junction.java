@@ -62,6 +62,16 @@ public class Junction implements Molecule {
         return Collections.unmodifiableMap(moleculesInNeighborNode);
     }
 
+    /**
+     * Return the reversed junction of the current junction. E.g. junction A-B return junction B-A
+     * @return the reversed junction
+     */
+    public Junction reverse() {
+        final String[] split = getName().split("-");
+        final String revName = split[1] + "-" + split[0];
+        return new Junction(revName, getMoleculesInNeighborNode(), getMoleculesInCurrentNode());
+    }
+
     @Override
     public boolean equals(final Object obj) {
         if (obj instanceof Junction) {

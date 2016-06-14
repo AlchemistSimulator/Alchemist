@@ -80,9 +80,6 @@ public class RemoveJunctionInNeighbor extends AbstractNeighborAction<Double> {
             throw new IllegalStateException("Remove Junction in neighbor - current node " + node.getId() + " target node " + targetNode.getId());
         }
         ((ICellNode) targetNode).removeJunction(jun, node);
-        for (final Map.Entry<Biomolecule, Double> e : jun.getMoleculesInCurrentNode().entrySet()) {
-            ((ICellNode) targetNode).setConcentration(e.getKey(), e.getValue());
-        }
     }
 
     @Override 

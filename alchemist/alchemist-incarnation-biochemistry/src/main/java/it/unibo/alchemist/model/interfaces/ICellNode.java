@@ -62,4 +62,5 @@ public interface ICellNode extends Node<Double> {
      * @return A set of nodes which are linked by a junction with the current node
      */
     Set<ICellNode> getAllNodesLinkWithJunction();
+
 }

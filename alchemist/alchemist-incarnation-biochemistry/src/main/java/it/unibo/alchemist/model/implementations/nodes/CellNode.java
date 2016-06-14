@@ -17,6 +17,7 @@ import java.util.Set;
 
 import com.google.common.collect.MapMaker;
 
+import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ICellNode;
@@ -64,7 +65,10 @@ public class CellNode extends DoubleNode implements ICellNode {
 
     @Override
     public Map<Junction, Map<ICellNode, Integer>> getJunctions() {
-        return Collections.unmodifiableMap(junctions);
+        //return Collections.unmodifiableMap(junctions);
+        final Map<Junction, Map<ICellNode, Integer>> ret = new HashMap<>();
+        junctions.entrySet().forEach(e -> ret.put(e.getKey(), new HashMap<>(e.getValue())));
+        return ret;
     }
 
     @Override
@@ -104,7 +108,9 @@ public class CellNode extends DoubleNode implements ICellNode {
                 } else {
                     junctions.put(j, inner);
                 }
-
+                for (final Map.Entry<Biomolecule, Double> e : j.getMoleculesInCurrentNode().entrySet()) {
+                    setConcentration(e.getKey(), getConcentration(e.getKey()) +  e.getValue());
+                }
             }
         }
     }

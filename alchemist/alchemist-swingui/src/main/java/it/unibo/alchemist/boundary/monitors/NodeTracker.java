@@ -92,7 +92,7 @@ public class NodeTracker<T> extends JPanel implements OutputMonitor<T>, ActionLi
                 sb.append(JUNCTION);
                 sb.append('\n');
                 for (final Entry<Junction, Map<ICellNode, Integer>> e : ((ICellNode) n).getJunctions().entrySet()) {
-                    e.getValue().keySet().forEach(nd -> sb.append("junction " + e.getKey().toString() + " with node " + nd.getId()));
+                    e.getValue().keySet().forEach(nd -> sb.append("junction " + e.getKey().toString() + " with node " + nd.getId() + " > " + e.getValue().get(nd) + "\n"));
                     sb.append('\n');
                 }
             }

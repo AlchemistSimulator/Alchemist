@@ -29,7 +29,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
 
 
 /** 
- * Unused class (probably it will be removed).
+ * A biochemical Reaction.
  */
 public class BiochemicalReaction extends ChemicalReaction<Double> {
 
@@ -50,7 +50,7 @@ public class BiochemicalReaction extends ChemicalReaction<Double> {
         final Map<Node<Double>, Double> ret = new HashMap<>();
         for (final Node<Double> n : map1.keySet()) {
             if (map2.containsKey(n)) {
-                ret.put(n, map1.get(n) + map2.get(n)); // why addition? search in some papers. TODO
+                ret.put(n, map1.get(n) + map2.get(n));
             }
         }
         return ret;

@@ -101,8 +101,10 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
             final Map<Junction, Map<ICellNode, Integer>> jun = ((CellNode) node).getJunctions();
             jun.entrySet().stream().forEach(e -> e.getValue().entrySet().forEach(e2 -> {
                 if (!neigh.contains(e2.getKey())) { // there is a junction that links a node which isn't in the neighborhood after the movement
-                   ((CellNode) node).removeJunction(e.getKey(), e2.getKey());
-                   e2.getKey().removeJunction(e.getKey().reverse(), (ICellNode) node);
+                   for (int i = 0; i < e2.getValue(); i++) {
+                       ((CellNode) node).removeJunction(e.getKey(), e2.getKey());
+                       e2.getKey().removeJunction(e.getKey().reverse(), (ICellNode) node);
+                   }
                 }
             }));
         }

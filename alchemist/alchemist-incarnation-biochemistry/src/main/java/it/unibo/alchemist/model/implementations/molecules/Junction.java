@@ -32,7 +32,7 @@ public class Junction implements Molecule {
     }
 
     /**
-     * Builds a junction from another junction. The neighbor node of the created junction is NOT set.
+     * Builds a junction from another junction.
      * @param toClone the junction to clone.
      */
     public Junction(final Junction toClone) {

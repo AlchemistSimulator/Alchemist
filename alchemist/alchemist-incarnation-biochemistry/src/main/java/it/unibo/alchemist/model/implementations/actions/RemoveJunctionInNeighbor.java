@@ -76,9 +76,6 @@ public class RemoveJunctionInNeighbor extends AbstractNeighborAction<Double> {
 
     @Override
     public void execute(final Node<Double> targetNode) {
-        if (!env.getNeighborhood(node).contains(targetNode)) {
-            throw new IllegalStateException("Remove Junction in neighbor - current node " + node.getId() + " target node " + targetNode.getId());
-        }
         ((ICellNode) targetNode).removeJunction(jun, node);
     }
 

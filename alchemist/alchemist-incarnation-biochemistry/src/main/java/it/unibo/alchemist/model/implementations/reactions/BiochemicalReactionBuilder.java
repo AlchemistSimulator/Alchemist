@@ -157,7 +157,6 @@ public class BiochemicalReactionBuilder {
     private static final class BiochemistryDSLVisitor extends BiochemistrydslBaseVisitor<Reaction<Double>> {
         private static final String CONDITIONS_PACKAGE = "it.unibo.alchemist.model.implementations.conditions.";
         private static final String ACTIONS_PACKAGE = "it.unibo.alchemist.model.implementations.actions.";
-        private static final String REACTIONS_PACKAGE = "it.unibo.alchemist.model.implementations.reactions.";
 
         private final RandomGenerator rand;
         private final BiochemistryIncarnation currentInc;

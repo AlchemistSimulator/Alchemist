@@ -74,14 +74,12 @@ public class BiochemistryIncarnation implements Incarnation<Double> {
     @Override
     public Condition<Double> createCondition(final RandomGenerator rand, final Environment<Double> env, final Node<Double> node,
             final TimeDistribution<Double> time, final Reaction<Double> reaction, final String param) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public Action<Double> createAction(final RandomGenerator rand, final Environment<Double> env, final Node<Double> node,
             final TimeDistribution<Double> time, final Reaction<Double> reaction, final String param) {
-        // TODO Auto-generated method stub
         return null;
     }
 

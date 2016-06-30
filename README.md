@@ -72,12 +72,29 @@ The project has been developed using Eclipse, and can be easily imported in such
   * Wait for Eclipse to resolve all the features
   * Click "Confirm >"
   * Follow the instructions, accept the license, wait for Eclipse to download and install the product, accept the installation and restart the IDE.
+* Set the line delimiter to LF (only for Windows users)
+  * In Eclipse, click window -> preferences
+  * In the search form enter "encoding", then press Enter
+  * Go to General -> Workspace
+  * In the section "New text file line delimiter" check "Other" and choose Unix
+  * Apply
+* Use space instead of tabs
+  * In Eclipse, click window -> preferences
+  * Go to General -> Editors -> Tex Editors
+  * Check "insert spaces for tabs" option.
+  * Apply.
+  * Go to Java -> Code style -> Formatter
+  * Click Edit button
+  * In Indentation tab, under "General Settings", set "tab policy" to "Spaces only"
+  * Apply (you should probably rename the formatter settings).
 
 #### Import Procedure
 * Install git on your system, if you haven't yet
 * Pull up a terminal, and `cd` to the folder where you want the project to be cloned (presumably, your Eclipse workspace)
 * Clone the project with `git clone git@github.com:AlchemistSimulator/alchemist.git`
   * If you are a Windows user, you might find easier to import via HTTPS: `git clone https://github.com/AlchemistSimulator/Alchemist.git`
+  * If the cloning ends with `Permission denied (publickey)` error, please, follow [this](https://help.github.com/articles/error-permission-denied-publickey/) guide.
+* In terminal type `git branch`. This shows you all the branches. If you only have the master branch type `git branch -a` to see local and remote branches. For add a remote branch to your local repository type `git checkout -b <branch-name> origin/<branch-name>`. For switch between branches use `git checkout <branch-name>`.
 * Open Eclipse
 * Click File -> Import -> Gradle -> Gradle Project -> Next
 * Select the project root directory, namely, the `alchemist` folder located inside the folder where you have cloned the repository. Do not point to the folder containing this `README.md` file, but to the `alchemist` folder on the same level.
@@ -89,6 +106,13 @@ The project has been developed using Eclipse, and can be easily imported in such
 * When asked about the existing Eclipse configuration, select "Keep" (so that all the default development options are imported)
 * The projects will appear in your projects list.
 * Checkstyle, PMD and FindBugs should be pre-configured.
+* If you have errors in `alchemist-incarnation-biochemistry` project open a terminal in alchemist folder (do not point to the folder containing this `README.md` file, but to the `alchemist` folder on the same level) and run:
+  * If you are a Linux or Mac user `./gradlew alchemist-incarnation-biochemistry:generateGrammarSource`
+  * If you are a Windows user: `gradlew.bat alchemist-incarnation-biochemistry:generateGrammarSource`
+
+  Go to Eclipse, right click on `alchemist-incarnation-biochemistry` project -> Refresh
+
+
 
 ### Developing the project
 Contributions to this project are welcome. Just some rules:
@@ -109,6 +133,17 @@ If you want to generate the artifacts, you can rely on Gradle. Just point a term
 This will trigger the creation of the artifacts the executions of the tests, the generation of the documentation and of the project reports.
 
 
+#### Run Alchemist
+Alchemist uses YAML for writing simulations. If you want to write your own simulation please follow [this](https://alchemistsimulator.github.io/pages/tutorial/simulations/) guide.<br/>
+The complete documentation of alchemist graphical interface can be found [here](https://alchemistsimulator.github.io/pages/tutorial/swingui/)
+* In Eclipse
+  * Right click on the `alchemist` project -> Run As -> Java Application.
+  * Select `Alchemist - it.unibo.alchemist` and click Ok.
+* If you have the JAR file
+  * Open a terminal
+  * Go into the directory where you have downloaded       alchemist-redist-VERSION.jar
+  * Launch `java -jar alchemist-redist-VERSION.jar`, the graphical interface should pop up (remember to substitute VERSION with the actual version you have downloaded).
+
 #### Release numbers explained
 We release often. We are not scared of high version numbers, they are just numbers in the end.
 We use a three levels numbering:
@@ -122,7 +157,7 @@ We use a three levels numbering:
 
 
 [Alchemist]: http://alchemist-simulator.github.io/
-[Javadoc]: http://hephaestus.apice.unibo.it/alchemist-build/Alchemist/build/docs/javadoc/
-[Jars]: http://hephaestus.apice.unibo.it/alchemist-build/Alchemist/build/libs/
-[reports]: http://hephaestus.apice.unibo.it/alchemist-build/Alchemist/build/reports/buildDashboard/
+[Javadoc]: http://hephaestus.apice.unibo.it/alchemist-build/alchemist/build/docs/javadoc/
+[Jars]: http://hephaestus.apice.unibo.it/alchemist-build/alchemist/build/libs/
+[reports]: http://hephaestus.apice.unibo.it/alchemist-build/alchemist/build/reports/buildDashboard/
 [eclipse]: https://eclipse.org/downloads/

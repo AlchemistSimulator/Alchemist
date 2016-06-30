@@ -5,6 +5,7 @@ dependencies {
         project(':alchemist-interfaces'),
         project(':alchemist-loading'),
         project(':alchemist-maps'),
+        project(':alchemist-incarnation-biochemistry'),
         "com.miglayout:miglayout-swing:$miglayoutVersion",
         "org.apache.commons:commons-math3:$math3Version",
         "org.danilopianini:javalib-java7:$javalib7Version",

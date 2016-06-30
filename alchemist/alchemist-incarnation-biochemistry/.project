@@ -25,6 +25,11 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.buildship.core.gradleprojectbuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
@@ -35,7 +40,7 @@
 	</natures>
 	<filteredResources>
 		<filter>
-			<id>1461159941202</id>
+			<id>1461160394577</id>
 			<name></name>
 			<type>26</type>
 			<matcher>
@@ -44,7 +49,7 @@
 			</matcher>
 		</filter>
 		<filter>
-			<id>1461159941261</id>
+			<id>1461160394607</id>
 			<name></name>
 			<type>26</type>
 			<matcher>

@@ -58,9 +58,12 @@ public class AddJunctionInCell extends AbstractNeighborAction<Double> {
 
     /**
      * If no target node is given DO NOTHING. The junction can not be created.
+     * @throws UnsupportedOperationException if this method is called.
      */
     @Override
-    public void execute() { }
+    public void execute() {
+        throw new UnsupportedOperationException("A junction CAN NOT be created without a target node.");
+    }
 
     @Override
     public Context getContext() {

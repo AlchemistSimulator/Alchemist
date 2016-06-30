@@ -35,9 +35,9 @@ public class ConcentrationLogger extends NodeInspector<Double> {
     private static final long serialVersionUID = -7930729203484494987L;
 
     @ExportForGUI(nameToExport = "Molecules to track")
-    private final String molToTrack = "";
+    private final String molToTrack = ""; // NOPMD, this is just a stub class
     @ExportForGUI(nameToExport = "Molecule separators")
-    private final String molSeparators = " ;,:";
+    private final String molSeparators = " ;,:"; // NOPMD, this is just a stub class
 
     private String molCache;
     private final List<Molecule> mols = new LinkedList<>();

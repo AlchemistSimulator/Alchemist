@@ -8,11 +8,9 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Action;
-import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
@@ -24,12 +22,9 @@ public class ChangeBiomolConcentrationInEnv extends AbstractAction<Double> {
 
     /**
      * 
-     * @param biomol 
-     * @param deltaConcentration 
      * @param node 
-     * @param env 
      */
-    public ChangeBiomolConcentrationInEnv(final Biomolecule biomol, final Double deltaConcentration, final Node<Double> node, final Environment<Double> env) {
+    public ChangeBiomolConcentrationInEnv(final Node<Double> node) {
         super(node);
         // TODO Auto-generated constructor stub
     }

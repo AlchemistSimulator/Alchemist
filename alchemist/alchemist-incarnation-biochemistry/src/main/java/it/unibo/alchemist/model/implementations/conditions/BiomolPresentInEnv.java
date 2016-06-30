@@ -10,7 +10,6 @@ package it.unibo.alchemist.model.implementations.conditions;
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.nodes.EnvironmentNode;
-import it.unibo.alchemist.model.interfaces.Environment;
 /**
  *
  */
@@ -23,9 +22,8 @@ public class BiomolPresentInEnv extends GenericMoleculePresent<Double> {
      * @param biomol 
      * @param concentration 
      * @param node 
-     * @param env 
      */
-    public BiomolPresentInEnv(final Biomolecule biomol, final Double concentration, final EnvironmentNode node, final Environment<Double> env) {
+    public BiomolPresentInEnv(final Biomolecule biomol, final Double concentration, final EnvironmentNode node) {
         super(biomol, node, concentration);
     }
 

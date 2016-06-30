@@ -491,8 +491,8 @@ public class BiochemicalReactionBuilder {
             for (final BiomoleculeContext b : ctx.biomolecule()) {
                 final Biomolecule biomol = createBiomolecule(b);
                 final double concentration = createConcentration(b);
-                conditionList.add(new BiomolPresentInEnv(biomol, concentration, new EnvironmentNode(env), env)); // TODO environment node is fake
-                actionList.add(new ChangeBiomolConcentrationInEnv(biomol, -concentration, node, env));
+                conditionList.add(new BiomolPresentInEnv(biomol, concentration, new EnvironmentNode(env))); // TODO environment node is fake
+                actionList.add(new ChangeBiomolConcentrationInEnv(node)); // TODO just a stub
             }
             return reaction;
         }
@@ -530,9 +530,9 @@ public class BiochemicalReactionBuilder {
         public Reaction<Double> visitBiochemicalReactionRightInEnvContext(final BiochemistrydslParser.BiochemicalReactionRightInEnvContextContext ctx) {
             for (final BiochemicalReactionRightElemContext re : ctx.biochemicalReactionRightElem()) {
                 if (re.biomolecule() != null) {
-                    final Biomolecule biomol = createBiomolecule(re.biomolecule());
-                    final double concentration = createConcentration(re.biomolecule());
-                    actionList.add(new ChangeBiomolConcentrationInEnv(biomol, concentration, new EnvironmentNode(env), env)); // TODO fake environment node
+                    //final Biomolecule biomol = createBiomolecule(re.biomolecule());
+                    //final double concentration = createConcentration(re.biomolecule());
+                    actionList.add(new ChangeBiomolConcentrationInEnv(new EnvironmentNode(env))); // TODO just a stub
                 } else if (re.javaConstructor() != null) {
                     actionList.add(createObject(re.javaConstructor(), ACTIONS_PACKAGE, currentInc, rand, node, time, env, reaction));
                 }

@@ -29,11 +29,11 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.danilopianini.concurrency.FastReadWriteLock;
@@ -308,12 +308,22 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements IMa
         }
     }
 
-    private static synchronized GraphHopper initNavigationSystem(final File mapFile, final String internalWorkdir, final Vehicle v) {
+    private static synchronized GraphHopper initNavigationSystem(final File mapFile, final String internalWorkdir, final Vehicle v) throws IOException {
         final GraphHopper gh = new GraphHopper().forDesktop();
         gh.setOSMFile(mapFile.getAbsolutePath());
         gh.setGraphHopperLocation(internalWorkdir);
         gh.setEncodingManager(new EncodingManager(v.toString()));
-        gh.importOrLoad();
+        try {
+            gh.importOrLoad();
+        } catch (final IllegalStateException e) {
+            if (e.getMessage().contains("Version of edges unsupported")) {
+                L.warn("The map has already been processed with a different version of Alchemist. The previous files will be deleted.");
+                FileUtils.deleteDirectory(new File(internalWorkdir));
+                mkdirsIfNeeded(internalWorkdir);
+                gh.importOrLoad();
+            }
+            throw e;
+        }
         return gh;
     }
 
@@ -397,9 +407,8 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements IMa
 
     private Optional<Position> getNearestStreetPoint(final Position position) {
         assert position != null;
-        final Vehicle v = Vehicle.BIKE;
         mapLock.read();
-        final GraphHopper gh = Objects.requireNonNull(navigators.get(v), "No map data available for " + v);
+        final GraphHopper gh = navigators.get(Vehicle.BIKE);
         mapLock.release();
         final QueryResult qr = gh.getLocationIndex().findClosest(position.getCoordinate(1), position.getCoordinate(0), EdgeFilter.ALL_EDGES);
         if (qr.isValid()) {

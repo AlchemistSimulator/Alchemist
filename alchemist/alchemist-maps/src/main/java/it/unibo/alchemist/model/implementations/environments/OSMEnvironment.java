@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -396,8 +397,9 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements IMa
 
     private Optional<Position> getNearestStreetPoint(final Position position) {
         assert position != null;
+        final Vehicle v = Vehicle.BIKE;
         mapLock.read();
-        final GraphHopper gh = navigators.get(Vehicle.BIKE);
+        final GraphHopper gh = Objects.requireNonNull(navigators.get(v), "No map data available for " + v);
         mapLock.release();
         final QueryResult qr = gh.getLocationIndex().findClosest(position.getCoordinate(1), position.getCoordinate(0), EdgeFilter.ALL_EDGES);
         if (qr.isValid()) {

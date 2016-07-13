@@ -14,6 +14,7 @@ package it.unibo.alchemist.model.implementations.conditions;
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
+import java8.util.Objects;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,7 @@ public abstract class AbstractCondition<T> implements Condition<T> {
      * @param node the node this Condition belongs to
      */
     public AbstractCondition(final Node<T> node) {
-        this.n = node;
+        this.n = Objects.requireNonNull(node);
     }
 
     @Override

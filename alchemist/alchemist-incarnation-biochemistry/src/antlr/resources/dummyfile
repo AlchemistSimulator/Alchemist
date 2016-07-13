@@ -1,0 +1,2 @@
+this dummy file is here beacuse the antlr gradle plugin is apparently not smart enough to figure out whether or not
+the resources folder is actually used (makes fatJar fail).

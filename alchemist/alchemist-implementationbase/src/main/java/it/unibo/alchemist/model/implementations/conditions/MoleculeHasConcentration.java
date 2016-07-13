@@ -12,7 +12,7 @@ import it.unibo.alchemist.model.interfaces.Node;
  * 
  * @param <T> concentration type
  */
-public class MoleculeHasValue<T> extends AbstractCondition<T> {
+public class MoleculeHasConcentration<T> extends AbstractCondition<T> {
 
     private static final long serialVersionUID = 1L;
     private final Molecule mol;
@@ -26,7 +26,7 @@ public class MoleculeHasValue<T> extends AbstractCondition<T> {
      * @param value
      *            the desired concentration
      */
-    public MoleculeHasValue(final Node<T> node, final Molecule molecule, final T value) {
+    public MoleculeHasConcentration(final Node<T> node, final Molecule molecule, final T value) {
         super(node);
         this.mol = Objects.requireNonNull(molecule);
         this.value = Objects.requireNonNull(value);
@@ -35,7 +35,7 @@ public class MoleculeHasValue<T> extends AbstractCondition<T> {
 
     @Override
     public Condition<T> cloneOnNewNode(final Node<T> n) {
-        return new MoleculeHasValue<>(n, mol, value);
+        return new MoleculeHasConcentration<>(n, mol, value);
     }
 
     @Override

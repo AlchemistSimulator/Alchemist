@@ -14,6 +14,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
@@ -104,7 +105,10 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
      */
     public ImageEnvironment(final int obs, final String path, final double zoom, final double dx, final double dy) throws IOException {
         super();
-        final BufferedImage img = ImageIO.read(new File(path));
+        final InputStream resource = ImageEnvironment.class.getResourceAsStream(path);
+        final BufferedImage img = resource == null 
+                ? ImageIO.read(new File(path))
+                : ImageIO.read(resource);
         final int w = img.getWidth();
         final int h = img.getHeight();
         final boolean[][] bmat = new boolean[w][h];

@@ -1,4 +1,14 @@
 GRADLE_BUILD_COMMANDS=org.eclipse.jdt.core.javabuilder
 GRADLE_FILTERS=1.0-projectRelativePath-matches-false-false-alchemist-engine,1.0-projectRelativePath-matches-false-false-alchemist-enginedependentmodel,1.0-projectRelativePath-matches-false-false-alchemist-implementationbase,1.0-projectRelativePath-matches-false-false-alchemist-incarnation-protelis,1.0-projectRelativePath-matches-false-false-alchemist-incarnation-sapere,1.0-projectRelativePath-matches-false-false-alchemist-interfaces,1.0-projectRelativePath-matches-false-false-alchemist-maps,1.0-projectRelativePath-matches-false-false-alchemist-sapere-mathexp,1.0-projectRelativePath-matches-false-false-alchemist-swingui,1.0-projectRelativePath-matches-false-false-alchemist-time,1.0-projectRelativePath-matches-false-false-build,1.0-projectRelativePath-matches-false-false-.gradle,1.0-projectRelativePath-matches-false-false-alchemist-loading,1.0-projectRelativePath-matches-false-false-alchemist-incarnation-biochemistry
 GRADLE_NATURES=org.eclipse.jdt.core.javanature
+build.commands=org.eclipse.jdt.core.javabuilder
+connection.arguments=
+connection.gradle.distribution=GRADLE_DISTRIBUTION(WRAPPER)
+connection.gradle.user.home=null
+connection.java.home=null
+connection.jvm.arguments=
+connection.project.dir=
+derived.resources=.gradle,build
 eclipse.preferences.version=1
+natures=org.eclipse.jdt.core.javanature
+project.path=\:

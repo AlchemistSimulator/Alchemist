@@ -3,13 +3,20 @@
  */
 package it.unibo.alchemist.protelis;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.HashUtils;
 import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.lang.datatype.Tuple;
 import org.protelis.vm.ExecutionEnvironment;
 import org.protelis.vm.impl.AbstractExecutionContext;
 
-import org.apache.commons.math3.random.RandomGenerator;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -22,6 +29,18 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  */
 public class AlchemistExecutionContext extends AbstractExecutionContext {
 
+    private final LoadingCache<Position, Double> cache = CacheBuilder.newBuilder()
+            .expireAfterAccess(10, TimeUnit.MINUTES)
+            .maximumSize(100)
+            .build(new CacheLoader<Position, Double>() {
+                @Override
+                public Double load(final Position dest) {
+                    if (env instanceof IMapEnvironment<?>) {
+                        return ((IMapEnvironment<Object>) env).computeRoute(node, dest).getDistance();
+                    }
+                    return getDevicePosition().getDistanceTo(dest);
+                }
+            });
     private final ProtelisNode node;
     private final Environment<Object> env;
     private final Reaction<Object> react;
@@ -96,8 +115,9 @@ public class AlchemistExecutionContext extends AbstractExecutionContext {
      *            the destination, as a {@link Tuple} of two values: [latitude,
      *            longitude]
      * @return the distance on a map
+     * @throws ExecutionException 
      */
-    public double routingDistance(final Tuple dest) {
+    public double routingDistance(final Tuple dest) throws ExecutionException {
         if (dest.size() == 2) {
             return routingDistance(new LatLongPosition((Number) dest.get(0), (Number) dest.get(1)));
         }
@@ -112,8 +132,9 @@ public class AlchemistExecutionContext extends AbstractExecutionContext {
      *            integer numbers will be cast to integers by
      *            {@link Number#intValue()}.
      * @return the distance on a map
+     * @throws ExecutionException 
      */
-    public double routingDistance(final Number dest) {
+    public double routingDistance(final Number dest) throws ExecutionException {
         return routingDistance(env.getNodeByID(dest.intValue()));
     }
 
@@ -123,8 +144,9 @@ public class AlchemistExecutionContext extends AbstractExecutionContext {
      * @param dest
      *            the destination, in form of a destination node
      * @return the distance on a map
+     * @throws ExecutionException 
      */
-    public double routingDistance(final Node<Object> dest) {
+    public double routingDistance(final Node<Object> dest) throws ExecutionException {
         return routingDistance(env.getPosition(dest));
     }
 
@@ -134,12 +156,10 @@ public class AlchemistExecutionContext extends AbstractExecutionContext {
      * @param dest
      *            the destination
      * @return the distance on a map
+     * @throws ExecutionException 
      */
-    public double routingDistance(final Position dest) {
-        if (env instanceof IMapEnvironment<?>) {
-            return ((IMapEnvironment<Object>) env).computeRoute(node, dest).getDistance();
-        }
-        return getDevicePosition().getDistanceTo(dest);
+    public double routingDistance(final Position dest) throws ExecutionException {
+        return cache.get(dest);
     }
 
     @Override

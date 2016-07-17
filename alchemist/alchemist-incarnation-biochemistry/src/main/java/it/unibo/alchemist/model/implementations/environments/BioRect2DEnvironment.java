@@ -61,10 +61,10 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
      * Builds a BioRect2DEnvironment with infinite bounds.
      */
     public BioRect2DEnvironment() {
-        minX = Double.MIN_VALUE;
-        maxX = Double.MAX_VALUE;
-        minY = Double.MIN_VALUE;
-        maxY = Double.MAX_VALUE;
+        minX = Double.NEGATIVE_INFINITY;
+        maxX = Double.POSITIVE_INFINITY;
+        minY = Double.NEGATIVE_INFINITY;
+        maxY = Double.POSITIVE_INFINITY;
     }
 
     @Override

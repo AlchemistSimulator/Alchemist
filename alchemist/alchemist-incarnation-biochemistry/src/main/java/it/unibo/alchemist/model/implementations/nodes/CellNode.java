@@ -17,18 +17,24 @@ import java.util.Set;
 
 import com.google.common.collect.MapMaker;
 
+import it.unibo.alchemist.model.implementations.cellshapes.CircolarShape;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
+import it.unibo.alchemist.model.interfaces.CellShape;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ICellNode;
+import it.unibo.alchemist.model.interfaces.ICellNodeWithShape;
 import it.unibo.alchemist.model.interfaces.Molecule;
 
 /**
  *
  */
-public class CellNode extends DoubleNode implements ICellNode {
+public class CellNode extends DoubleNode implements ICellNode, ICellNodeWithShape {
 
     private static final long serialVersionUID = 837704874534888283L;
+    private static final CellShape STANDARD_VOLUME = new CircolarShape();
+    
+    private CellShape cellShape;
 
     private final Map<Junction, Map<ICellNode, Integer>> junctions = new MapMaker().concurrencyLevel(2).makeMap();
 
@@ -38,6 +44,7 @@ public class CellNode extends DoubleNode implements ICellNode {
      */
     public CellNode(final Environment<Double> env) {
         super(env);
+        cellShape = STANDARD_VOLUME;
     }
 
     @Override
@@ -47,6 +54,9 @@ public class CellNode extends DoubleNode implements ICellNode {
 
     @Override
     public void setConcentration(final Molecule mol, final Double c) {
+        if (c < 0) {
+            throw new IllegalArgumentException("No negative concentrations allowed (" + mol + " -> " + c + ")");
+        }
         if (c > 0) {
             super.setConcentration(mol, c);
         } else {
@@ -135,6 +145,11 @@ public class CellNode extends DoubleNode implements ICellNode {
     @Override
     public int getJunctionNumber() {
         return junctions.values().stream().mapToInt(m -> m.values().stream().mapToInt(v -> v.intValue()).sum()).sum();
+    }
+
+    @Override
+    public CellShape getShape() {
+        return cellShape;
     }
 
 }

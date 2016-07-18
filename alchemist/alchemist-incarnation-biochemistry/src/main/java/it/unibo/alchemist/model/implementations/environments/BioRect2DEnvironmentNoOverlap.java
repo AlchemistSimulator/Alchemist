@@ -44,13 +44,7 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
     @Override
     protected boolean nodeShouldBeAdded(final Node<Double> node, final Position p) {
         final boolean isWithinLimits = super.nodeShouldBeAdded(node, p);
-        final double maxRange = getMaximumRangeAmongAllCellShapes();
-        final double range;
-        if (maxRange != 0) {
-            range = (((ICellNodeWithShape) node).getShape().getMaxRange() / 2) + (maxRange / 2);
-        } else {
-            range = ((ICellNodeWithShape) node).getShape().getMaxRange();
-        }
+        final double range = ((ICellNodeWithShape) node).getShape().getMaxRange();
         return isWithinLimits 
                 && !(getNodesWithinRange(p, range).stream()
                      .filter(n -> getPosition(n).getDistanceTo(p) < ((ICellNodeWithShape) node).getShape().getMaxRange())

@@ -1,56 +1,48 @@
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.*;
-
-import org.apache.commons.math3.random.MersenneTwister;
-import org.apache.commons.math3.random.RandomGenerator;
+import static org.junit.Assert.assertTrue;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.Before;
 import org.junit.Test;
-
-import it.unibo.alchemist.model.BiochemistryIncarnation;
-import it.unibo.alchemist.model.implementations.environments.BioRect2DEnviromentNoOverlap;
-import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment;
-import it.unibo.alchemist.model.implementations.linkingrules.EuclideanDistance;
+import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironmentNoOverlap;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
 import it.unibo.alchemist.model.implementations.nodes.CellNode;
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
-import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.ICellNode;
 import it.unibo.alchemist.model.interfaces.ICellNodeWithShape;
 import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.TimeDistribution;
-
+/**
+ *
+ */
 public class TestBioRect2DEnviromentNoOverlap {
-    
+
     private Environment<Double> env;
-    
+
     @Before
     public void setUp() {
-        env = new BioRect2DEnviromentNoOverlap();
+        env = new BioRect2DEnvironmentNoOverlap();
         env.setLinkingRule(new NoLinks<>());
     }
-    
+
     @Test
     public void testAddNode() {
-        ICellNodeWithShape n1 = new CellNode(env);
-        ICellNodeWithShape n2 = new CellNode(env);
-        ICellNodeWithShape n3 = new CellNode(env);
-        ICellNodeWithShape n4 = new CellNode(env);
-        ICellNodeWithShape n5 = new CellNode(env);
-        ICellNodeWithShape n6 = new CellNode(env);
-        ICellNodeWithShape n7 = new CellNode(env);
-        ICellNodeWithShape n8 = new CellNode(env);
-        ICellNodeWithShape n9 = new CellNode(env);
-        ICellNodeWithShape n10 = new CellNode(env);
-        ICellNodeWithShape n11 = new CellNode(env);
-        
-        Position p1 = new Continuous2DEuclidean(0, 0);
-        Position p2 = new Continuous2DEuclidean(10, 0);
+        final ICellNodeWithShape n1 = new CellNode(env);
+        final ICellNodeWithShape n2 = new CellNode(env);
+        final ICellNodeWithShape n3 = new CellNode(env);
+        final ICellNodeWithShape n4 = new CellNode(env);
+        final ICellNodeWithShape n5 = new CellNode(env);
+        final ICellNodeWithShape n6 = new CellNode(env);
+        final ICellNodeWithShape n7 = new CellNode(env);
+        final ICellNodeWithShape n8 = new CellNode(env);
+        final ICellNodeWithShape n9 = new CellNode(env);
+        final ICellNodeWithShape n10 = new CellNode(env);
+        final ICellNodeWithShape n11 = new CellNode(env);
+
+        final Position p1 = new Continuous2DEuclidean(0, 0);
+        final Position p2 = new Continuous2DEuclidean(10, 0);
         env.addNode(n1, p1);
         env.addNode(n2, p2);
-        
+
         Position p3 = new Continuous2DEuclidean(0, 20); //ok
         env.addNode(n3, p3);
         assertTrue("n3 not in pos " + p3.toString() + "; it's in pos " + env.getPosition(n3),

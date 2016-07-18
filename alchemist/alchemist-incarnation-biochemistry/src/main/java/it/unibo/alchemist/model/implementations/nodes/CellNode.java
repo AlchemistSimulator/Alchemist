@@ -32,8 +32,8 @@ import it.unibo.alchemist.model.interfaces.Molecule;
 public class CellNode extends DoubleNode implements ICellNode, ICellNodeWithShape {
 
     private static final long serialVersionUID = 837704874534888283L;
-    private static final CellShape STANDARD_VOLUME = new CircolarShape();
-    
+    private static final CellShape STANDARD_SHAPE = new CircolarShape();
+
     private CellShape cellShape;
 
     private final Map<Junction, Map<ICellNode, Integer>> junctions = new MapMaker().concurrencyLevel(2).makeMap();
@@ -44,7 +44,7 @@ public class CellNode extends DoubleNode implements ICellNode, ICellNodeWithShap
      */
     public CellNode(final Environment<Double> env) {
         super(env);
-        cellShape = STANDARD_VOLUME;
+        cellShape = STANDARD_SHAPE;
     }
 
     @Override

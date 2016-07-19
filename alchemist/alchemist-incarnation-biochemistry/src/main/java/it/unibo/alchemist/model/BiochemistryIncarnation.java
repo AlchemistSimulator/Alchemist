@@ -41,6 +41,9 @@ public class BiochemistryIncarnation implements Incarnation<Double> {
 
     @Override
     public ICellNode createNode(final RandomGenerator rand, final Environment<Double> env, final String param) {
+        if (param != null && !param.isEmpty()) {
+            return new CellNode(env, Double.parseDouble(param));
+        }
         return new CellNode(env);
     }
 

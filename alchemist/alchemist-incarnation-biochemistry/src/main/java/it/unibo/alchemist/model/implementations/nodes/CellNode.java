@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016, Danilo Pianini and contributors
+a * Copyright (C) 2010-2016, Danilo Pianini and contributors
 
  * listed in the project's pom.xml file.
  * 
@@ -17,34 +17,43 @@ import java.util.Set;
 
 import com.google.common.collect.MapMaker;
 
-import it.unibo.alchemist.model.implementations.cellshapes.CircolarShape;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
-import it.unibo.alchemist.model.interfaces.CellShape;
+import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ICellNode;
-import it.unibo.alchemist.model.interfaces.ICellNodeWithShape;
 import it.unibo.alchemist.model.interfaces.Molecule;
 
 /**
  *
  */
-public class CellNode extends DoubleNode implements ICellNode, ICellNodeWithShape {
+public class CellNode extends DoubleNode implements ICellNode, CellWithCircularArea {
 
     private static final long serialVersionUID = 837704874534888283L;
-    private static final CellShape STANDARD_SHAPE = new CircolarShape();
 
-    private CellShape cellShape;
-
-    private final Map<Junction, Map<ICellNode, Integer>> junctions = new MapMaker().concurrencyLevel(2).makeMap();
+    private final Map<Junction, Map<ICellNode, Integer>> junctions = new MapMaker()
+            .concurrencyLevel(2).makeMap();
+    private final double diameter;
 
     /**
      * create a new cell node.
-     * @param env the environment
+     * 
+     * @param env
+     *            the environment
+     * @param diameter
+     *            the diameter
+     */
+    public CellNode(final Environment<Double> env, final double diameter) {
+        super(env);
+        this.diameter = diameter;
+    }
+
+    /**
+     * @param env
+     *            the environment
      */
     public CellNode(final Environment<Double> env) {
-        super(env);
-        cellShape = STANDARD_SHAPE;
+        this(env, 0);
     }
 
     @Override
@@ -148,8 +157,15 @@ public class CellNode extends DoubleNode implements ICellNode, ICellNodeWithShap
     }
 
     @Override
-    public CellShape getShape() {
-        return cellShape;
+    public double getDiameter() {
+        return diameter;
     }
+
+    @Override
+    public double getRadius() {
+        return getDiameter() / 2;
+    }
+    
+    
 
 }

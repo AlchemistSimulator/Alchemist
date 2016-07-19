@@ -2,10 +2,7 @@ package it.unibo.alchemist.model.implementations.environments;
 
 import java.util.Optional;
 import java.util.function.Predicate;
-
 import org.apache.commons.math3.util.FastMath;
-
-import edu.umd.cs.findbugs.gui2.NewFilterFromBug;
 import it.unibo.alchemist.model.implementations.nodes.CellNode;
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
@@ -22,6 +19,7 @@ import it.unibo.alchemist.model.interfaces.Position;
 public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
 
     private static final long serialVersionUID = 1L;
+    private static final String NOT_SUPPORTED = " is not compatible with biochemistry.";
     private double maxDiameterAmongAllCells;
     private int biggestCellID;
 
@@ -48,7 +46,7 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
     @Override
     protected boolean nodeShouldBeAdded(final Node<Double> node, final Position p) {
         if (!(node instanceof CellWithCircularArea)) {
-            throw new IllegalArgumentException(node.getClass().getName() + " is not compatible with biochemistry.");
+            throw new IllegalArgumentException(node.getClass().getName() + NOT_SUPPORTED);
         }
         final boolean isWithinLimits = super.nodeShouldBeAdded(node, p);
         double range = getMaxDiameterAmongCells();
@@ -73,16 +71,9 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
         super.moveNodeToPosition(node, nextPos);
     }
 
-//    @Override
-//    protected Position next(final double ox, final double oy, final double nx, final double ny) {
-//        // check if the requested position (nx, ny) is within limits
-//        Position nextPos = super.next(ox, oy, nx, ny);
-//        // check if the requested position is already occupied by some other cells
-//        nextPos = findNearestFreePosition(new Continuous2DEuclidean(ox, oy), nextPos);
-//        return nextPos;
-//    }
-
-    // finds the first position, in requested direction (requestedPos - originalPos), that can be occupied by the cell.
+    /*
+     *  finds the first position, in requested direction (requestedPos - originalPos), that can be occupied by the cell.
+     */
     private Position findNearestFreePosition(final Node<Double> nodeToMove, final Position originalPos, final Position requestedPos) {
         // get the maximum range depending by cellular shape
         final double maxDiameter = getMaxDiameterAmongCells();
@@ -152,7 +143,7 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
     // returns the Optional containing the position of the node, if it's an obstacle for movement
     private Optional<Position> getPositionIfNodeIsObstacle(final Node<Double> nodeToMove, final Node<Double> node, final Position originalPos, final Position requestedPos) {
         if (!(node instanceof CellWithCircularArea) && !(nodeToMove instanceof CellWithCircularArea)) {
-            throw new IllegalArgumentException(node.getClass().getName() + " is not compatible with biochemistry.");
+            throw new IllegalArgumentException(node.getClass().getName() + NOT_SUPPORTED);
         }
         // coordinates of original position, requested position and of node's position
         final double yo = originalPos.getCoordinate(1);
@@ -207,7 +198,7 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
     protected void nodeAdded(final Node<Double> node, final Position position, final Neighborhood<Double> neighborhood) {
         super.nodeAdded(node, position, neighborhood);
         if (!(node instanceof CellWithCircularArea)) {
-            throw new IllegalArgumentException(node.getClass().getName() + " is not compatible with biochemistry.");
+            throw new IllegalArgumentException(node.getClass().getName() + NOT_SUPPORTED);
         }
         if (((CellWithCircularArea) node).getDiameter() > this.maxDiameterAmongAllCells) {
             setBiggestCell((CellWithCircularArea) node); 
@@ -217,7 +208,7 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
     @Override
     protected void nodeRemoved(final Node<Double> node, final Neighborhood<Double> neighborhood) {
         if (!(node instanceof CellWithCircularArea)) {
-            throw new IllegalArgumentException(node.getClass().getName() + " is not compatible with biochemistry.");
+            throw new IllegalArgumentException(node.getClass().getName() + NOT_SUPPORTED);
         }
         if (node.getId() == this.biggestCellID) {
             final CellWithCircularArea newBiggest = (CellWithCircularArea) getNodes().stream()
@@ -229,26 +220,6 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
         }
     }
 
-//    /**
-//     * Given a {@link Collection} of nodes, returns a {@link List} the shapes of the nodes.
-//     * @param nodes the {@link Collection} of nodes
-//     * @return a {@link List} of the nodes' shapes.
-//     */
-//    public List<CellShape> getCellShapes(final Collection<Node<Double>> nodes) {
-//        return nodes.stream()
-//                .map(n -> ((CellWithCircularArea) n).getShape())
-//                .distinct()
-//                .collect(Collectors.toList());
-//    }
-
-//    /**
-//     * 
-//     * @return a {@link List} containing all cell shapes in this environment.
-//     */
-//    public List<CellShape> getAllCellShapes() {
-//        return getCellShapes(getNodes());
-//    }
-
     private double getMaxDiameterAmongCells() {
         return this.maxDiameterAmongAllCells;
     }
@@ -258,18 +229,4 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
         this.maxDiameterAmongAllCells = newBiggest.getDiameter();
     }
 
-//    private double getMaximumRangeAmongAllCellShapes() {
-//        return getMaximumRangeAmongCellShapes(getAllCellShapes());
-//    }
-
-//    private double getMinDiameterAmongCellShapes(final Collection<CellShape> shapes) {
-//        return shapes.stream()
-//                .map(s -> s.getMaxRange())
-//                .min((r1, r2) -> (int) FastMath.round(r1 - r2))
-//                .orElseGet(() -> 0d);
-//    }
-
-//    private double getMinimumRangeAmongAllCellShapes() {
-//        return getMinimumRangeAmongCellShapes(getAllCellShapes());
-//    }
 }

@@ -21,20 +21,22 @@ import it.unibo.alchemist.model.interfaces.Position;
  */
 public class TestBioRect2DEnviromentNoOverlap {
 
-    private final double STANDARD_DIAMETER = 10;
-    private Position originalPos = new Continuous2DEuclidean(0, 0);
+    private static final double STANDARD_DIAMETER = 10;
+    private final Position originalPos = new Continuous2DEuclidean(0, 0);
     private CellWithCircularArea ng1; 
     private CellWithCircularArea ng2; 
     private CellWithCircularArea ng3;
     private CellWithCircularArea nm1;
     private CellWithCircularArea nm2;
-    private CellWithCircularArea nm3;
     private CellWithCircularArea np1;
     private CellWithCircularArea np2;
     private CellWithCircularArea np3;
 
     private Environment<Double> env;
 
+    /**
+     * 
+     */
     @Before
     public void setUp() {
         env = new BioRect2DEnvironmentNoOverlap();
@@ -44,12 +46,14 @@ public class TestBioRect2DEnviromentNoOverlap {
         ng3 = new CellNode(env, 3 * STANDARD_DIAMETER);
         nm1 = new CellNode(env, 2 * STANDARD_DIAMETER);
         nm2 = new CellNode(env, 2 * STANDARD_DIAMETER);
-        nm3 = new CellNode(env, 2 * STANDARD_DIAMETER);
         np1 = new CellNode(env, STANDARD_DIAMETER);
         np2 = new CellNode(env, STANDARD_DIAMETER);
         np3 = new CellNode(env, STANDARD_DIAMETER);
     }
 
+    /**
+     * 
+     */
     @Test
     public void testAddNode() {
         final CellWithCircularArea n1 = new CellNode(env, STANDARD_DIAMETER);
@@ -113,6 +117,9 @@ public class TestBioRect2DEnviromentNoOverlap {
         env.removeNode(n2);
     }
 
+    /**
+     * 
+     */
     @Test
     public void testMoveNode1() {
         // test1
@@ -128,6 +135,9 @@ public class TestBioRect2DEnviromentNoOverlap {
         env.removeNode(c1);
     }
 
+    /**
+     * 
+     */
     @Test
     public void testMoveNode2() {
         // test2 
@@ -147,6 +157,9 @@ public class TestBioRect2DEnviromentNoOverlap {
         env.removeNode(c3);
     }
 
+    /**
+     * 
+     */
     @Test
     public void testMoveNode3() {
         // test3
@@ -162,6 +175,9 @@ public class TestBioRect2DEnviromentNoOverlap {
         env.removeNode(c4);
     }
 
+    /**
+     * 
+     */
     @Test
     public void testMoveNode4() {
         // test4
@@ -177,6 +193,9 @@ public class TestBioRect2DEnviromentNoOverlap {
         env.removeNode(c5);
     }
 
+    /**
+     * 
+     */
     @Test
     public void testMoveNode5() {
         // test5
@@ -192,6 +211,9 @@ public class TestBioRect2DEnviromentNoOverlap {
         env.removeNode(c6);
     }
 
+    /**
+     * 
+     */
     @Test
     public void testMoveNode6() {
         // test6
@@ -207,6 +229,9 @@ public class TestBioRect2DEnviromentNoOverlap {
         env.removeNode(c7);
     }
 
+    /**
+     * 
+     */
     @Test
     public void testMoveNode7() {
         // test7
@@ -222,6 +247,9 @@ public class TestBioRect2DEnviromentNoOverlap {
         env.removeNode(c8);
     }
 
+    /**
+     * 
+     */
     public void testMoveNode8() {
         // test8
         final CellWithCircularArea cellToMove8 = new CellNode(env, STANDARD_DIAMETER);
@@ -235,9 +263,12 @@ public class TestBioRect2DEnviromentNoOverlap {
         env.removeNode(cellToMove8);
         env.removeNode(c9);
     }
-    
+
     // TODO test with different cells
-    
+
+    /**
+     * 
+     */
     @Test
     public void testAddDifferentDiam1() {
         env.addNode(ng1, originalPos);
@@ -255,11 +286,14 @@ public class TestBioRect2DEnviromentNoOverlap {
         assertNull("np3 not in pos null; it's in pos " + env.getPosition(np3),
                 env.getPosition(np3));
     }
-    
+
+    /**
+     * 
+     */
     @Test
     public void testAddDifferentDiam2() {
         env.addNode(np1, originalPos);
-        
+
         final Position p1 = new Continuous2DEuclidean(STANDARD_DIAMETER, 0);
         final Position p2 = new Continuous2DEuclidean(2 * STANDARD_DIAMETER, 0);
         final Position p3 = new Continuous2DEuclidean(3 * STANDARD_DIAMETER, 0);
@@ -277,7 +311,10 @@ public class TestBioRect2DEnviromentNoOverlap {
         assertTrue("ng3 not in pos " + p3 + "; it's in pos " + env.getPosition(ng3),
                 env.getPosition(ng3).equals(p3));
     }
-    
+
+    /**
+     * 
+     */
     @Test
     public void testAddDifferentDiam3() {
         env.addNode(np1, originalPos);
@@ -298,20 +335,26 @@ public class TestBioRect2DEnviromentNoOverlap {
         assertNull("np2 not in pos " + null + "; it's in pos " + env.getPosition(np2),
                 env.getPosition(np2));
     }
-    
+
+    /**
+     * 
+     */
     @Test
     public void testMoveDifferentDiam1() {
         final CellWithCircularArea cellToMove1 = np1;
         env.addNode(cellToMove1, originalPos);
         final Position pd = new Continuous2DEuclidean(50, 0);
-        
+
         final Position p1 = new Continuous2DEuclidean(25, 20);
-        env.addNode(ng1, p1);        
+        env.addNode(ng1, p1);
         env.moveNode(cellToMove1, pd);
         assertTrue("cellToMove1 is in position: " + env.getPosition(cellToMove1),
                 env.getPosition(cellToMove1).equals(pd));
     }
-    
+
+    /**
+     * 
+     */
     @Test
     public void testMoveDifferentDiam2() {
         final Position pd = new Continuous2DEuclidean(50, 0);
@@ -324,13 +367,16 @@ public class TestBioRect2DEnviromentNoOverlap {
         assertTrue("cellToMove2 is in position: " + env.getPosition(cellToMove2),
                 env.getPosition(cellToMove2).equals(pd));
     }
-    
+
+    /**
+     * 
+     */
     @Test
     public void testMoveDifferentDiam3() {
         final Position pd = new Continuous2DEuclidean(50, 0);
         final CellWithCircularArea cellToMove3 = np3;
         env.addNode(cellToMove3, originalPos);
-        
+
         final Position p1 = new Continuous2DEuclidean(25, 0);
         env.addNode(ng1, p1);
         env.moveNode(cellToMove3, pd);
@@ -343,12 +389,15 @@ public class TestBioRect2DEnviromentNoOverlap {
                 env.getPosition(cellToMove3).equals(new Continuous2DEuclidean(10, 0)));
     }
 
+    /**
+     * 
+     */
     @Test
     public void testMoveDifferentDiam4() {
         final Position pd = new Continuous2DEuclidean(-50, 0);
         final CellWithCircularArea cellToMove4 = np3;
         env.addNode(cellToMove4, originalPos);
-        
+
         final Position p1 = new Continuous2DEuclidean(-25, 0);
         env.addNode(ng1, p1);
         env.moveNode(cellToMove4, pd);
@@ -361,12 +410,15 @@ public class TestBioRect2DEnviromentNoOverlap {
                 env.getPosition(cellToMove4).equals(new Continuous2DEuclidean(-10, 0)));
     }
 
+    /**
+     * 
+     */
     @Test
     public void testMoveDifferentDiam5() {
         final Position pd = new Continuous2DEuclidean(50, 50);
         final CellWithCircularArea cellToMove5 = np3;
         env.addNode(cellToMove5, originalPos);
-        
+
         final Position p1 = new Continuous2DEuclidean(25, 25);
         env.addNode(ng1, p1);
         env.moveNode(cellToMove5, pd);
@@ -378,13 +430,16 @@ public class TestBioRect2DEnviromentNoOverlap {
         assertFalse("cellToMove5 is in position: " + env.getPosition(cellToMove5),
                 env.getPosition(cellToMove5).equals(pd));
     }
-    
+
+    /**
+     * 
+     */
     @Test
     public void testMoveDifferentDiam6() {
         final CellWithCircularArea cellToMove6 = np1;
         env.addNode(cellToMove6, originalPos);
         final Position pd = new Continuous2DEuclidean(50, 0);
-        
+
         final Position p1 = new Continuous2DEuclidean(25, 20);
         env.addNode(ng1, p1); 
         final Position p2 = new Continuous2DEuclidean(-10, 0);
@@ -393,13 +448,16 @@ public class TestBioRect2DEnviromentNoOverlap {
         assertTrue("cellToMove6 is in position: " + env.getPosition(cellToMove6),
                 env.getPosition(cellToMove6).equals(pd));
     }
-    
+
+    /**
+     * 
+     */
     @Test
     public void testMoveDifferentDiam7() {
         final CellWithCircularArea cellToMove7 = np1;
         env.addNode(cellToMove7, originalPos);
         final Position pd = new Continuous2DEuclidean(50, 0);
-        
+
         final Position p1 = new Continuous2DEuclidean(25, 20);
         env.addNode(ng1, p1); 
         final Position p2 = new Continuous2DEuclidean(60, 5);
@@ -408,13 +466,16 @@ public class TestBioRect2DEnviromentNoOverlap {
         assertTrue("cellToMove7 is in position: " + env.getPosition(cellToMove7),
                 env.getPosition(cellToMove7).equals(pd));
     }
-    
+
+    /**
+     * 
+     */
     @Test
     public void testMoveDifferentDiam8() {
         final CellWithCircularArea cellToMove8 = np1;
         env.addNode(cellToMove8, originalPos);
         final Position pd = new Continuous2DEuclidean(50, 0);
-        
+
         final Position p1 = new Continuous2DEuclidean(25, 20);
         env.addNode(ng1, p1); 
         final Position p2 = new Continuous2DEuclidean(0, 10);
@@ -423,5 +484,5 @@ public class TestBioRect2DEnviromentNoOverlap {
         assertTrue("cellToMove8 is in position: " + env.getPosition(cellToMove8),
                 env.getPosition(cellToMove8).equals(pd));
     }
-    
+
 }

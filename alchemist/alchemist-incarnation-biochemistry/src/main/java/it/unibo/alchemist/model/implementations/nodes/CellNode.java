@@ -165,7 +165,5 @@ public class CellNode extends DoubleNode implements ICellNode, CellWithCircularA
     public double getRadius() {
         return getDiameter() / 2;
     }
-    
-    
 
 }

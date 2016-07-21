@@ -100,6 +100,7 @@ public class YamlLoader implements Loader, Serializable {
     private static final String MAX = SYNTAX.getString("max");
     private static final String MOLECULE = SYNTAX.getString("molecule");
     private static final String MOLECULES_PACKAGE_ROOT = "it.unibo.alchemist.model.implementations.molecules.";
+    private static final String NODE = SYNTAX.getString("node");
     private static final String NODES = SYNTAX.getString("nodes");
     private static final String NODES_PACKAGE_ROOT = "it.unibo.alchemist.model.implementations.nodes.";
     private static final String PARAMS = SYNTAX.getString("parameters");
@@ -472,9 +473,11 @@ public class YamlLoader implements Loader, Serializable {
                         .parallelStream()
                         .flatMap(pool -> pool.stream())
                         .collect(Collectors.toList());
+                final Object nodeDescriptor = displacement.get(NODE);
                 final Supplier<Node<T>> nodeSupplier = makeSupplier(
-                        () -> currIncarnation.createNode(simRandom, env, null),
-                        displacement, NODES_PACKAGE_ROOT, actualVars, simRandom, env);
+                        () -> currIncarnation.createNode(simRandom, env, stringOrNull(nodeDescriptor)),
+                        nodeDescriptor instanceof Map ? (Map<String, Object>) nodeDescriptor : Collections.emptyMap(),
+                        NODES_PACKAGE_ROOT, actualVars, simRandom, env);
                 for (final Position pos: displ) {
                     final Node<T> node = nodeSupplier.get();
                     for (final Map<String, Object> content: contents) {
@@ -913,11 +916,11 @@ public class YamlLoader implements Loader, Serializable {
     }
     @SuppressWarnings(UNCHECKED)
     private static <T> Class<T> extractClass(final Map<String, Object> yaml, final String root, final Class<T> defaultClass) {
-        String className = (String) yaml.get(TYPE);
-        if (className != null && !className.contains(".")) {
-            className = root + className;
+        final String className = (String) yaml.get(TYPE);
+        if (className != null) {
             try {
-                return (Class<T>) Class.forName(className);
+                final String prefix = className.contains(".") ? "" : root;
+                return (Class<T>) Class.forName(prefix + className);
             } catch (ClassNotFoundException e) {
                 L.debug("Cannot instance {}", className);
             }

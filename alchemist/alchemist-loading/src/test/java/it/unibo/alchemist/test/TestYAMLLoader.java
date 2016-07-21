@@ -1,6 +1,7 @@
 package it.unibo.alchemist.test;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.util.Collections;
@@ -17,6 +18,7 @@ import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.loader.YamlLoader;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.test.util.TestNode;
 
 /**
  * A series of tests checking that our Yaml Loader is working as expected.
@@ -46,11 +48,22 @@ public class TestYAMLLoader {
             .forEach(TestYAMLLoader::testNoVar);
     }
 
-    private static void testNoVar(final String resource) {
-        testLoading(resource, Collections.emptyMap());
+    /**
+     * Test loading a custom node class.
+     */
+    @Test
+    public void testCustomNodes() {
+        testNoVar("/synthetic/customnode.yml")
+        .forEach(n -> assertTrue(
+                "Node are not instances of " + TestNode.class.getName() + " as expected, but " + n.getClass().getName() + " instead",
+                n instanceof TestNode));
     }
 
-    private static <T> void testLoading(final String resource, final Map<String, Double> vars) {
+    private static <T> Environment<T> testNoVar(final String resource) {
+        return testLoading(resource, Collections.emptyMap());
+    }
+
+    private static <T> Environment<T> testLoading(final String resource, final Map<String, Double> vars) {
         final InputStream res = TestYAMLLoader.class.getResourceAsStream(resource);
         assertNotNull("Missing test resource " + resource, res);
         final Environment<T> env = new YamlLoader(res).getWith(vars);
@@ -60,6 +73,7 @@ public class TestYAMLLoader {
 //            it.unibo.alchemist.boundary.gui.SingleRunGUI.make(sim);
 //        }
         sim.run();
+        return env;
     }
 
 }

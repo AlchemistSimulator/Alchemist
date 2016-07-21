@@ -9,12 +9,12 @@
 package it.unibo.alchemist.model.implementations.nodes;
 
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.IEnvironmentNode;
+import it.unibo.alchemist.model.interfaces.EnvironmentNode;
 
 /**
  *
  */
-public class EnvironmentNode extends DoubleNode implements IEnvironmentNode {
+public class EnvironmentNodeImpl extends DoubleNode implements EnvironmentNode {
 
     private static final long serialVersionUID = 1880007336956353256L;
 
@@ -22,7 +22,7 @@ public class EnvironmentNode extends DoubleNode implements IEnvironmentNode {
      * Create a new environment node.
      * @param env the environment
      */
-    public EnvironmentNode(final Environment<Double> env) {
+    public EnvironmentNodeImpl(final Environment<Double> env) {
         super(env);
         // TODO Auto-generated constructor stub
     }

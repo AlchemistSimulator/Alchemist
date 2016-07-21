@@ -16,9 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.model.implementations.molecules.Junction;
-import it.unibo.alchemist.model.implementations.nodes.CellNode;
+import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
-import it.unibo.alchemist.model.interfaces.ICellNode;
+import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
@@ -95,15 +95,15 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
 
     @Override
     public void moveNode(final Node<Double> node, final Position direction) {
-        if (node instanceof CellNode) {
+        if (node instanceof CellNodeImpl) {
             super.moveNode(node, direction);
             final Neighborhood<Double> neigh = getNeighborhood(node);
-            final Map<Junction, Map<ICellNode, Integer>> jun = ((CellNode) node).getJunctions();
+            final Map<Junction, Map<CellNode, Integer>> jun = ((CellNodeImpl) node).getJunctions();
             jun.entrySet().stream().forEach(e -> e.getValue().entrySet().forEach(e2 -> {
                 if (!neigh.contains(e2.getKey())) { // there is a junction that links a node which isn't in the neighborhood after the movement
                    for (int i = 0; i < e2.getValue(); i++) {
-                       ((CellNode) node).removeJunction(e.getKey(), e2.getKey());
-                       e2.getKey().removeJunction(e.getKey().reverse(), (ICellNode) node);
+                       ((CellNodeImpl) node).removeJunction(e.getKey(), e2.getKey());
+                       e2.getKey().removeJunction(e.getKey().reverse(), (CellNode) node);
                    }
                 }
             }));

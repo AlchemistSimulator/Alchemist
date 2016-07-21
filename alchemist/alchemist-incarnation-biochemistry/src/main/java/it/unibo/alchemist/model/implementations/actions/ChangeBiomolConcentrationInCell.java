@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 
-import it.unibo.alchemist.model.implementations.nodes.CellNode;
+import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
@@ -30,7 +30,7 @@ public class ChangeBiomolConcentrationInCell extends AbstractActionOnSingleMolec
      * @param deltaConcentration 
      * @param node 
      */
-    public ChangeBiomolConcentrationInCell(final Biomolecule biomol, final double deltaConcentration, final CellNode node) {
+    public ChangeBiomolConcentrationInCell(final Biomolecule biomol, final double deltaConcentration, final CellNodeImpl node) {
         super(node, biomol);
         this.deltaC = deltaConcentration;
     }
@@ -60,7 +60,7 @@ public class ChangeBiomolConcentrationInCell extends AbstractActionOnSingleMolec
     }
 
     @Override
-    public CellNode getNode() {
-        return (CellNode) super.getNode();
+    public CellNodeImpl getNode() {
+        return (CellNodeImpl) super.getNode();
     }
 }

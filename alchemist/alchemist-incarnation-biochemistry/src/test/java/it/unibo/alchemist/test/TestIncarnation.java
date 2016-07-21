@@ -29,10 +29,10 @@ import it.unibo.alchemist.model.implementations.conditions.JunctionPresentInCell
 import it.unibo.alchemist.model.implementations.conditions.NeighborhoodPresent;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
-import it.unibo.alchemist.model.implementations.nodes.CellNode;
+import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.ICellNode;
+import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 
@@ -42,7 +42,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
 public class TestIncarnation {
 
     private static final BiochemistryIncarnation INCARNATION = new BiochemistryIncarnation();
-    private ICellNode node;
+    private CellNode node;
     private Environment<Double> env;
     private RandomGenerator rand;
     private TimeDistribution<Double> time;
@@ -58,7 +58,7 @@ public class TestIncarnation {
     @Before
     public void setUp() {
         env = new BioRect2DEnvironment();
-        node = new CellNode(env);
+        node = new CellNodeImpl(env);
         rand = new MersenneTwister();
         time = new ExponentialTime<>(1, rand);
     }

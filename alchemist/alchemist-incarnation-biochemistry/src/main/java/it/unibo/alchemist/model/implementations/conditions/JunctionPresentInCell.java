@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.ICellNode;
+import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Node;
 
 /**
@@ -25,7 +25,7 @@ public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
 
     private static final long serialVersionUID = 4213307452790768059L;
 
-    private final ICellNode node;
+    private final CellNode node;
     private final Junction j;
     private final Environment<Double> env;
 
@@ -35,7 +35,7 @@ public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
      * @param n the node
      * @param e the environment
      */
-    public JunctionPresentInCell(final Junction junction, final ICellNode n, final Environment<Double> e) {
+    public JunctionPresentInCell(final Junction junction, final CellNode n, final Environment<Double> e) {
         super(n, e);
         addReadMolecule(junction);
         j = junction;
@@ -55,12 +55,12 @@ public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
 
     @Override
     public JunctionPresentInCell cloneOnNewNode(final Node<Double> n) {
-        return new JunctionPresentInCell(j, (ICellNode) n, env);
+        return new JunctionPresentInCell(j, (CellNode) n, env);
     }
 
     @Override
     public Map<Node<Double>, Double> getValidNeighbors(final Collection<? extends Node<Double>> neighborhood) {
-        final Set<ICellNode> linkedNodes = node.getNeighborsLinkWithJunction(j);
+        final Set<CellNode> linkedNodes = node.getNeighborsLinkWithJunction(j);
         return neighborhood.stream().filter(n -> linkedNodes.contains(n))
         .collect(Collectors.<Node<Double>, Node<Double>, Double>toMap(
                 n -> n,

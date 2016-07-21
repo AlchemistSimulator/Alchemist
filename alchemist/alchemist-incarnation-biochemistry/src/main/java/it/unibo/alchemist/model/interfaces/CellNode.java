@@ -15,19 +15,19 @@ import it.unibo.alchemist.model.implementations.molecules.Junction;
 
 /**
  */
-public interface ICellNode extends Node<Double> {
+public interface CellNode extends Node<Double> {
     /**
      * 
      * @return the map junction - node - quantity
      */
-    Map<Junction, Map<ICellNode, Integer>> getJunctions();
+    Map<Junction, Map<CellNode, Integer>> getJunctions();
 
     /**
      * Add a junction to the current node.
      * @param j the junction
      * @param neighbor the neighbor node at the other side of the junction
      */
-    void addJunction(final Junction j, final ICellNode neighbor);
+    void addJunction(final Junction j, final CellNode neighbor);
 
     /**
      * Return true if a junction is present in the current node, false otherwise.
@@ -42,14 +42,14 @@ public interface ICellNode extends Node<Double> {
      * @param j the junction to remove
      * @param neighbor the node at the other side of the junction.
      */
-    void removeJunction(final Junction j, final ICellNode neighbor);
+    void removeJunction(final Junction j, final CellNode neighbor);
 
     /**
      * Returns a set of ICellNode which are linked with the current node by a junction of the type j.
      * @param j the junction
      * @return a set of ICellNode which are linked with the current node by a junction of the type j
      */
-    Set<ICellNode> getNeighborsLinkWithJunction(final Junction j);
+    Set<CellNode> getNeighborsLinkWithJunction(final Junction j);
 
     /**
      * 
@@ -61,6 +61,6 @@ public interface ICellNode extends Node<Double> {
      * 
      * @return A set of nodes which are linked by a junction with the current node
      */
-    Set<ICellNode> getAllNodesLinkWithJunction();
+    Set<CellNode> getAllNodesLinkWithJunction();
 
 }

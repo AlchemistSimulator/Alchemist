@@ -10,7 +10,7 @@ package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.ICellNode;
+import it.unibo.alchemist.model.interfaces.CellNode;
 
 import java.util.Map;
 
@@ -37,7 +37,7 @@ public class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
     private final Environment<Double> env;
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All provided RandomGenerator implementations are actually Serializable")
     private final RandomGenerator rand;
-    private final ICellNode node;
+    private final CellNode node;
 
     /**
      * 
@@ -46,7 +46,7 @@ public class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
      * @param e the environment
      * @param rg the random generator
      */
-    public RemoveJunctionInCell(final Junction junction, final ICellNode n, final Environment<Double> e, final RandomGenerator rg) {
+    public RemoveJunctionInCell(final Junction junction, final CellNode n, final Environment<Double> e, final RandomGenerator rg) {
         super(n, e, rg);
         addModifiedMolecule(junction);
         for (final Map.Entry<Biomolecule, Double> entry : junction.getMoleculesInCurrentNode().entrySet()) {
@@ -60,7 +60,7 @@ public class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
 
     @Override
     public RemoveJunctionInCell cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
-        return new RemoveJunctionInCell(jun, (ICellNode) n, env, rand);
+        return new RemoveJunctionInCell(jun, (CellNode) n, env, rand);
     }
 
     /**
@@ -79,7 +79,7 @@ public class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
      */
     @Override
     public void execute(final Node<Double> targetNode) { 
-        node.removeJunction(jun, (ICellNode) targetNode);
+        node.removeJunction(jun, (CellNode) targetNode);
     }
 
     @Override 

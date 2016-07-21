@@ -56,13 +56,13 @@ import it.unibo.alchemist.model.implementations.conditions.JunctionPresentInCell
 import it.unibo.alchemist.model.implementations.conditions.NeighborhoodPresent;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
-import it.unibo.alchemist.model.implementations.nodes.CellNode;
-import it.unibo.alchemist.model.implementations.nodes.EnvironmentNode;
+import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
+import it.unibo.alchemist.model.implementations.nodes.EnvironmentNodeImpl;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.ICellNode;
+import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -78,7 +78,7 @@ public class BiochemicalReactionBuilder {
     private static final Logger L = LoggerFactory.getLogger(BiochemicalReactionBuilder.class);
 
     private final BiochemistryIncarnation incarnation;
-    private final ICellNode node;
+    private final CellNode node;
     private final Environment<Double> env;
     private RandomGenerator rand;
     private TimeDistribution<Double> time;
@@ -91,7 +91,7 @@ public class BiochemicalReactionBuilder {
      * @param currentNode the node where the reaction is placed.
      * @param environment the environment.
      */
-    public BiochemicalReactionBuilder(final BiochemistryIncarnation inc, final ICellNode currentNode, final Environment<Double> environment) {
+    public BiochemicalReactionBuilder(final BiochemistryIncarnation inc, final CellNode currentNode, final Environment<Double> environment) {
         incarnation = inc;
         node = currentNode;
         env = environment;
@@ -161,7 +161,7 @@ public class BiochemicalReactionBuilder {
         private final RandomGenerator rand;
         private final BiochemistryIncarnation currentInc;
         private final TimeDistribution<Double> time;
-        private final ICellNode node;
+        private final CellNode node;
         private final Environment<Double> env;
         private final Reaction<Double> reaction;
         private final List<Condition<Double>> conditionList = new ArrayList<>(0);
@@ -394,7 +394,7 @@ public class BiochemicalReactionBuilder {
             return (ctx.concentration() == null) ? 1.0 : Double.parseDouble(ctx.concentration().POSDOUBLE().getText());
         }
 
-        private BiochemistryDSLVisitor(final RandomGenerator rand, final BiochemistryIncarnation incarnation, final TimeDistribution<Double> timeDistribution, final ICellNode currentNode, final Environment<Double> environment) {
+        private BiochemistryDSLVisitor(final RandomGenerator rand, final BiochemistryIncarnation incarnation, final TimeDistribution<Double> timeDistribution, final CellNode currentNode, final Environment<Double> environment) {
             this.rand = rand;
             currentInc = incarnation;
             time = timeDistribution;
@@ -468,8 +468,8 @@ public class BiochemicalReactionBuilder {
                 final Biomolecule biomol = createBiomolecule(b);
                 final double concentration = createConcentration(b);
                 insertInMap(biomolConditionsInCell, biomol, concentration);
-                conditionList.add(new BiomolPresentInCell(biomol, concentration, (CellNode) node));
-                actionList.add(new ChangeBiomolConcentrationInCell(biomol, -concentration, (CellNode) node));
+                conditionList.add(new BiomolPresentInCell(biomol, concentration, (CellNodeImpl) node));
+                actionList.add(new ChangeBiomolConcentrationInCell(biomol, -concentration, (CellNodeImpl) node));
             }
             return reaction;
         }
@@ -481,7 +481,7 @@ public class BiochemicalReactionBuilder {
                 final double concentration = createConcentration(b);
                 insertInMap(biomolConditionsInNeighbor, biomol, concentration);
                 conditionList.add(new BiomolPresentInNeighbor(biomol, concentration, node, env));
-                actionList.add(new ChangeBiomolConcentrationInNeighbor(biomol, -concentration, (CellNode) node, env, rand));
+                actionList.add(new ChangeBiomolConcentrationInNeighbor(biomol, -concentration, (CellNodeImpl) node, env, rand));
             }
             return reaction;
         }
@@ -491,7 +491,7 @@ public class BiochemicalReactionBuilder {
             for (final BiomoleculeContext b : ctx.biomolecule()) {
                 final Biomolecule biomol = createBiomolecule(b);
                 final double concentration = createConcentration(b);
-                conditionList.add(new BiomolPresentInEnv(biomol, concentration, new EnvironmentNode(env))); // TODO environment node is fake
+                conditionList.add(new BiomolPresentInEnv(biomol, concentration, new EnvironmentNodeImpl(env))); // TODO environment node is fake
                 actionList.add(new ChangeBiomolConcentrationInEnv(node)); // TODO just a stub
             }
             return reaction;
@@ -503,7 +503,7 @@ public class BiochemicalReactionBuilder {
                 if (re.biomolecule() != null) {
                     final Biomolecule biomol = createBiomolecule(re.biomolecule());
                     final double concentration = createConcentration(re.biomolecule());
-                    actionList.add(new ChangeBiomolConcentrationInCell(biomol, concentration, (CellNode) node));
+                    actionList.add(new ChangeBiomolConcentrationInCell(biomol, concentration, (CellNodeImpl) node));
                 } else if (re.javaConstructor() != null) {
                     actionList.add(createObject(re.javaConstructor(), ACTIONS_PACKAGE, currentInc, rand, node, time, env, reaction));
                 }
@@ -532,7 +532,7 @@ public class BiochemicalReactionBuilder {
                 if (re.biomolecule() != null) {
                     //final Biomolecule biomol = createBiomolecule(re.biomolecule());
                     //final double concentration = createConcentration(re.biomolecule());
-                    actionList.add(new ChangeBiomolConcentrationInEnv(new EnvironmentNode(env))); // TODO just a stub
+                    actionList.add(new ChangeBiomolConcentrationInEnv(new EnvironmentNodeImpl(env))); // TODO just a stub
                 } else if (re.javaConstructor() != null) {
                     actionList.add(createObject(re.javaConstructor(), ACTIONS_PACKAGE, currentInc, rand, node, time, env, reaction));
                 }

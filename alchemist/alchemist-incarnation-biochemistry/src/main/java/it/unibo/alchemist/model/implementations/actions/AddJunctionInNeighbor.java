@@ -14,9 +14,9 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
-import it.unibo.alchemist.model.implementations.nodes.CellNode;
+import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.ICellNode;
+import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
@@ -35,7 +35,7 @@ public class AddJunctionInNeighbor extends AbstractNeighborAction<Double> {
     private final Environment<Double> env;
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All provided RandomGenerator implementations are actually Serializable")
     private final RandomGenerator rand;
-    private final ICellNode node;
+    private final CellNode node;
     /**
      * 
      * @param junction the junction
@@ -43,7 +43,7 @@ public class AddJunctionInNeighbor extends AbstractNeighborAction<Double> {
      * @param e the environment
      * @param rg the random generator
      */
-    public AddJunctionInNeighbor(final Junction junction, final ICellNode n, final Environment<Double> e, final RandomGenerator rg) {
+    public AddJunctionInNeighbor(final Junction junction, final CellNode n, final Environment<Double> e, final RandomGenerator rg) {
         super(n, e, rg);
         addModifiedMolecule(junction);
         jun = junction; 
@@ -54,7 +54,7 @@ public class AddJunctionInNeighbor extends AbstractNeighborAction<Double> {
 
     @Override
     public AddJunctionInNeighbor cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
-        return new AddJunctionInNeighbor(jun, (CellNode) n, env, rand);
+        return new AddJunctionInNeighbor(jun, (CellNodeImpl) n, env, rand);
     }
 
     /**
@@ -76,7 +76,7 @@ public class AddJunctionInNeighbor extends AbstractNeighborAction<Double> {
      */
     @Override
     public void execute(final Node<Double> targetNode) {
-        ((CellNode) targetNode).addJunction(jun, node);
+        ((CellNodeImpl) targetNode).addJunction(jun, node);
     }
 
     @Override 

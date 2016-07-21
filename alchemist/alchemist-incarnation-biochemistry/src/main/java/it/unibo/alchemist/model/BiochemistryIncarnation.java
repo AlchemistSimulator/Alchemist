@@ -12,7 +12,7 @@ package it.unibo.alchemist.model;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
-import it.unibo.alchemist.model.implementations.nodes.CellNode;
+import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
 import it.unibo.alchemist.model.implementations.reactions.BiochemicalReactionBuilder;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.interfaces.Molecule;
@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.ICellNode;
+import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 
 /**
@@ -40,11 +40,11 @@ public class BiochemistryIncarnation implements Incarnation<Double> {
     }
 
     @Override
-    public ICellNode createNode(final RandomGenerator rand, final Environment<Double> env, final String param) {
+    public CellNode createNode(final RandomGenerator rand, final Environment<Double> env, final String param) {
         if (param != null && !param.isEmpty()) {
-            return new CellNode(env, Double.parseDouble(param));
+            return new CellNodeImpl(env, Double.parseDouble(param));
         }
-        return new CellNode(env);
+        return new CellNodeImpl(env);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class BiochemistryIncarnation implements Incarnation<Double> {
             final Node<Double> node,
             final TimeDistribution<Double> time, 
             final String param) {
-        return new BiochemicalReactionBuilder(this, (CellNode) node, env)
+        return new BiochemicalReactionBuilder(this, (CellNodeImpl) node, env)
                 .randomGenerator(rand)
                 .timeDistribution(time)
                 .program(param)

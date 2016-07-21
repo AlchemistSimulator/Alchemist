@@ -15,7 +15,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.ICellNode;
+import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
@@ -34,7 +34,7 @@ public class AddJunctionInCell extends AbstractNeighborAction<Double> {
     private final Environment<Double> env;
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All provided RandomGenerator implementations are actually Serializable")
     private final RandomGenerator rand;
-    private final ICellNode node;
+    private final CellNode node;
 
     /**
      * @param j the junction
@@ -42,7 +42,7 @@ public class AddJunctionInCell extends AbstractNeighborAction<Double> {
      * @param e the current environment
      * @param rg the random generator
      */
-    public AddJunctionInCell(final Junction j, final ICellNode n, final Environment<Double> e, final RandomGenerator rg) {
+    public AddJunctionInCell(final Junction j, final CellNode n, final Environment<Double> e, final RandomGenerator rg) {
         super(n, e, rg);
         addModifiedMolecule(j);
         jun = j;
@@ -53,7 +53,7 @@ public class AddJunctionInCell extends AbstractNeighborAction<Double> {
 
     @Override
     public AddJunctionInCell cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
-        return new AddJunctionInCell(jun, (ICellNode) n, env, rand);
+        return new AddJunctionInCell(jun, (CellNode) n, env, rand);
     }
 
     /**
@@ -75,7 +75,7 @@ public class AddJunctionInCell extends AbstractNeighborAction<Double> {
      */
     @Override
     public void execute(final Node<Double> targetNode) { 
-        node.addJunction(jun, (ICellNode) targetNode);
+        node.addJunction(jun, (CellNode) targetNode);
     }
 
     @Override 

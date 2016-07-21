@@ -21,17 +21,17 @@ import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.ICellNode;
+import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Molecule;
 
 /**
  *
  */
-public class CellNode extends DoubleNode implements ICellNode, CellWithCircularArea {
+public class CellNodeImpl extends DoubleNode implements CellNode, CellWithCircularArea {
 
     private static final long serialVersionUID = 837704874534888283L;
 
-    private final Map<Junction, Map<ICellNode, Integer>> junctions = new MapMaker()
+    private final Map<Junction, Map<CellNode, Integer>> junctions = new MapMaker()
             .concurrencyLevel(2).makeMap();
     private final double diameter;
 
@@ -43,7 +43,7 @@ public class CellNode extends DoubleNode implements ICellNode, CellWithCircularA
      * @param diameter
      *            the diameter
      */
-    public CellNode(final Environment<Double> env, final double diameter) {
+    public CellNodeImpl(final Environment<Double> env, final double diameter) {
         super(env);
         this.diameter = diameter;
     }
@@ -52,7 +52,7 @@ public class CellNode extends DoubleNode implements ICellNode, CellWithCircularA
      * @param env
      *            the environment
      */
-    public CellNode(final Environment<Double> env) {
+    public CellNodeImpl(final Environment<Double> env) {
         this(env, 0);
     }
 
@@ -83,17 +83,17 @@ public class CellNode extends DoubleNode implements ICellNode, CellWithCircularA
     }
 
     @Override
-    public Map<Junction, Map<ICellNode, Integer>> getJunctions() {
+    public Map<Junction, Map<CellNode, Integer>> getJunctions() {
         //return Collections.unmodifiableMap(junctions);
-        final Map<Junction, Map<ICellNode, Integer>> ret = new HashMap<>();
+        final Map<Junction, Map<CellNode, Integer>> ret = new HashMap<>();
         junctions.entrySet().forEach(e -> ret.put(e.getKey(), new HashMap<>(e.getValue())));
         return ret;
     }
 
     @Override
-    public void addJunction(final Junction j, final ICellNode neighbor) {
+    public void addJunction(final Junction j, final CellNode neighbor) {
         if (junctions.containsKey(j)) {
-            final Map<ICellNode, Integer> inner = junctions.get(j);
+            final Map<CellNode, Integer> inner = junctions.get(j);
             if (inner.containsKey(neighbor)) {
                 inner.put(neighbor, inner.get(neighbor) + 1);
             } else {
@@ -101,7 +101,7 @@ public class CellNode extends DoubleNode implements ICellNode, CellWithCircularA
             }
             junctions.put(j, inner);
         } else {
-            final Map<ICellNode, Integer> tmp = new HashMap<>(1);
+            final Map<CellNode, Integer> tmp = new HashMap<>(1);
             tmp.put(neighbor, 1);
             junctions.put(j, tmp);
         }
@@ -113,9 +113,9 @@ public class CellNode extends DoubleNode implements ICellNode, CellWithCircularA
     }
 
     @Override
-    public void removeJunction(final Junction j, final ICellNode neighbor) {
+    public void removeJunction(final Junction j, final CellNode neighbor) {
         if (junctions.containsKey(j)) {
-            final Map<ICellNode, Integer> inner = junctions.get(j);
+            final Map<CellNode, Integer> inner = junctions.get(j);
             if (inner.containsKey(neighbor)) {
                 if (inner.get(neighbor) == 1) { // only one junction j with neighbor
                     inner.remove(neighbor);
@@ -135,7 +135,7 @@ public class CellNode extends DoubleNode implements ICellNode, CellWithCircularA
     }
 
     @Override
-    public Set<ICellNode> getNeighborsLinkWithJunction(final Junction j) {
+    public Set<CellNode> getNeighborsLinkWithJunction(final Junction j) {
         if (junctions.get(j) == null) {
             return Collections.emptySet();
         }
@@ -143,9 +143,9 @@ public class CellNode extends DoubleNode implements ICellNode, CellWithCircularA
     }
 
     @Override
-    public Set<ICellNode> getAllNodesLinkWithJunction() {
-        final Set<ICellNode> r = new HashSet<>();
-        for (final Map.Entry<Junction, Map<ICellNode, Integer>> e : junctions.entrySet()) {
+    public Set<CellNode> getAllNodesLinkWithJunction() {
+        final Set<CellNode> r = new HashSet<>();
+        for (final Map.Entry<Junction, Map<CellNode, Integer>> e : junctions.entrySet()) {
             r.addAll(e.getValue().keySet());
         }
         return r;

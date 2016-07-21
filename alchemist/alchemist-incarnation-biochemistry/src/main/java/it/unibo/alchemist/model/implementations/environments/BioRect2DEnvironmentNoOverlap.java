@@ -3,7 +3,7 @@ package it.unibo.alchemist.model.implementations.environments;
 import java.util.Optional;
 import java.util.function.Predicate;
 import org.apache.commons.math3.util.FastMath;
-import it.unibo.alchemist.model.implementations.nodes.CellNode;
+import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
@@ -215,7 +215,7 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
                     .parallel()
                     .filter(n -> n instanceof CellWithCircularArea)
                     .max((c1, c2) -> (int) (((CellWithCircularArea) c1).getDiameter() - ((CellWithCircularArea) c2).getDiameter()))
-                    .orElse(new CellNode(this, 0));
+                    .orElse(new CellNodeImpl(this, 0));
             setBiggestCell(newBiggest);
         }
     }

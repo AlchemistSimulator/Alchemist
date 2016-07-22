@@ -7,6 +7,7 @@ allprojects {
     apply plugin: 'findbugs'
     apply plugin: 'pmd'
     apply plugin: 'checkstyle'
+    apply plugin: 'jacoco'
     apply plugin: 'maven'
     apply plugin: 'signing'
 
@@ -150,6 +151,16 @@ allprojects {
         out: new File(reports.xml.destination.parent, 'test.html'))
     }
 
+    jacocoTestReport {
+        reports {
+            xml.enabled false
+            csv.enabled false
+            html.enabled true
+        }
+    }
+
+    jacocoTestReport.dependsOn 'test'
+
     signArchives.onlyIf { Boolean.parseBoolean(signArchivesIsEnabled) }
 
     uploadArchives {
@@ -234,6 +245,21 @@ allprojects {
 }
 
 subprojects.each { subproject -> rootProject.evaluationDependsOn(subproject.path)}
+
+buildDashboard.dependsOn 'jacocoTestReport'
+buildDashboard.dependsOn 'check'
+
+/*
+ * Running a task on the parent project implies running the same task first on any subproject
+ */
+tasks.each { task -> 
+    subprojects.each { subproject ->
+        def subtask = subproject.tasks.findByPath("${task.name}")
+        if (subtask != null) {
+            task.dependsOn(subtask)
+        }
+    }
+}
 
 dependencies {
     compile subprojects

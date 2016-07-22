@@ -70,7 +70,7 @@ public class MoveOnMap<T> extends AbstractMoveNode<T> {
         double maxWalk = speedStrategy.getCurrentSpeed(end);
         final IMapEnvironment<T> env = getEnvironment();
         final Node<T> node = getNode();
-        final Position curPos = env.getPosition(node);
+        Position curPos = env.getPosition(node);
         if (curPos.getDistanceTo(end) <= maxWalk) {
             final Position destination = end;
             end = targetStrategy.getNextTarget();
@@ -94,6 +94,7 @@ public class MoveOnMap<T> extends AbstractMoveNode<T> {
             }
             curStep++;
             maxWalk -= toWalk;
+            curPos = target;
         } while (curStep != route.getPointsNumber());
         /*
          * I've followed the whole route

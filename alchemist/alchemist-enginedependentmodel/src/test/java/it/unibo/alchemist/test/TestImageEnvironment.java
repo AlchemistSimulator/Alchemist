@@ -47,7 +47,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina1white() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/piantina1.png").getPath(), MAX, MAX, MAX));
+            assertNotNull(new ImageEnvironment<Object>("/piantina1.png", MAX, MAX, MAX));
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -61,7 +61,7 @@ public class TestImageEnvironment {
     @Test
     public void testPlanimetria() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/planimetriabn1.png").getPath()));
+            assertNotNull(new ImageEnvironment<Object>("/planimetriabn1.png"));
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -75,7 +75,7 @@ public class TestImageEnvironment {
     @Test
     public void testPlanimetriaWhite() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/planimetriabn1.png").getPath(), MAX, MAX, MAX));
+            assertNotNull(new ImageEnvironment<Object>("/planimetriabn1.png", MAX, MAX, MAX));
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -89,7 +89,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina2() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/piantina2.png").getPath()));
+            assertNotNull(new ImageEnvironment<Object>("/piantina2.png"));
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -103,7 +103,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina2White() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/piantina2.png").getPath(), MAX, MAX, MAX));
+            assertNotNull(new ImageEnvironment<Object>("/piantina2.png", MAX, MAX, MAX));
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -117,7 +117,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina3() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/piantina3.png").getPath()));
+            assertNotNull(new ImageEnvironment<Object>("/piantina3.png"));
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -131,7 +131,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina3White() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/piantina3.png").getPath(), MAX, MAX, MAX));
+            assertNotNull(new ImageEnvironment<Object>("/piantina3.png", MAX, MAX, MAX));
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -145,7 +145,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina4() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/piantina4.png").getPath()));
+            assertNotNull(new ImageEnvironment<Object>("/piantina4.png"));
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -159,7 +159,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina4White() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/piantina4.png").getPath(), MAX, MAX, MAX));
+            assertNotNull(new ImageEnvironment<Object>("/piantina4.png", MAX, MAX, MAX));
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -173,7 +173,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina5() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/piantina5.png").getPath()));
+            assertNotNull(new ImageEnvironment<Object>("/piantina5.png"));
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -187,7 +187,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina5White() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/piantina5.png").getPath(), MAX, MAX, MAX));
+            assertNotNull(new ImageEnvironment<Object>("/piantina5.png", MAX, MAX, MAX));
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -201,7 +201,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina6() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/piantina6.png").getPath()));
+            assertNotNull(new ImageEnvironment<Object>("/piantina6.png"));
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -215,7 +215,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina6White() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/piantina6.png").getPath(), MAX, MAX, MAX));
+            assertNotNull(new ImageEnvironment<Object>("/piantina6.png", MAX, MAX, MAX));
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -229,7 +229,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina7() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/piantina7.png").getPath()));
+            assertNotNull(new ImageEnvironment<Object>("/piantina7.png"));
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -243,7 +243,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina7White() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/piantina7.png").getPath(), MAX, MAX, MAX));
+            assertNotNull(new ImageEnvironment<Object>("/piantina7.png", MAX, MAX, MAX));
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -257,7 +257,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina8() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/piantina8.png").getPath()));
+            assertNotNull(new ImageEnvironment<Object>("/piantina8.png"));
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -271,7 +271,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina8White() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/piantina8.png").getPath(), MAX, MAX, MAX));
+            assertNotNull(new ImageEnvironment<Object>("/piantina8.png", MAX, MAX, MAX));
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -285,7 +285,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina9() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/piantina9.png").getPath()));
+            assertNotNull(new ImageEnvironment<Object>("/piantina9.png"));
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -299,7 +299,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina9White() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/piantina9.png").getPath(), MAX, MAX, MAX));
+            assertNotNull(new ImageEnvironment<Object>("/piantina9.png", MAX, MAX, MAX));
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -313,7 +313,7 @@ public class TestImageEnvironment {
     @Test
     public void testPastorello() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/Pastorello.png").getPath()));
+            assertNotNull(new ImageEnvironment<Object>("/Pastorello.png"));
         } catch (IOException e) {
             assumeNoException(e);
         }
@@ -326,7 +326,7 @@ public class TestImageEnvironment {
     @Test
     public void testPastorelloWhite() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/Pastorello.png").getPath(), MAX, MAX, MAX));
+            assertNotNull(new ImageEnvironment<Object>("/Pastorello.png", MAX, MAX, MAX));
         } catch (IOException e) {
             assumeNoException(e);
         }
@@ -339,7 +339,7 @@ public class TestImageEnvironment {
     @Test
     public void testSenzanome() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/Senzanome.png").getPath()));
+            assertNotNull(new ImageEnvironment<Object>("/Senzanome.png"));
         } catch (IOException e) {
             assumeNoException(e);
         }
@@ -352,7 +352,7 @@ public class TestImageEnvironment {
     @Test
     public void testSenzanomeWhite() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/Senzanome.png").getPath(), MAX, MAX, MAX));
+            assertNotNull(new ImageEnvironment<Object>("/Senzanome.png", MAX, MAX, MAX));
         } catch (IOException e) {
             assumeNoException(e);
         }
@@ -365,7 +365,7 @@ public class TestImageEnvironment {
     @Test
     public void testDuelocali() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/duelocalioreno-pianta3.png").getPath()));
+            assertNotNull(new ImageEnvironment<Object>("/duelocalioreno-pianta3.png"));
         } catch (IOException e) {
             assumeNoException(e);
         }
@@ -378,7 +378,7 @@ public class TestImageEnvironment {
     @Test
     public void testDuelocaliWhite() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/duelocalioreno-pianta3.png").getPath(), MAX, MAX, MAX));
+            assertNotNull(new ImageEnvironment<Object>("/duelocalioreno-pianta3.png", MAX, MAX, MAX));
         } catch (IOException e) {
             assumeNoException(e);
         }
@@ -391,7 +391,7 @@ public class TestImageEnvironment {
     @Test
     public void test2Rettangoli() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/2rettangolo_nero.png").getPath()));
+            assertNotNull(new ImageEnvironment<Object>("/2rettangolo_nero.png"));
         } catch (IOException e) {
             assumeNoException(e);
         }
@@ -404,7 +404,7 @@ public class TestImageEnvironment {
     @Test
     public void test2RettangoliWhite() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/2rettangolo_nero.png").getPath(), MAX, MAX, MAX));
+            assertNotNull(new ImageEnvironment<Object>("/2rettangolo_nero.png", MAX, MAX, MAX));
         } catch (IOException e) {
             assumeNoException(e);
         }
@@ -417,7 +417,7 @@ public class TestImageEnvironment {
     @Test
     public void testPlanimetriaChiaravalle1() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/PlanimetriaChiaravalle1.png").getPath()));
+            assertNotNull(new ImageEnvironment<Object>("/PlanimetriaChiaravalle1.png"));
         } catch (IOException e) {
             assumeNoException(e);
         }
@@ -430,7 +430,7 @@ public class TestImageEnvironment {
     @Test
     public void testPlanimetriaChiaravalle1White() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/PlanimetriaChiaravalle1.png").getPath(), MAX, MAX, MAX));
+            assertNotNull(new ImageEnvironment<Object>("/PlanimetriaChiaravalle1.png", MAX, MAX, MAX));
         } catch (IOException e) {
             assumeNoException(e);
         }

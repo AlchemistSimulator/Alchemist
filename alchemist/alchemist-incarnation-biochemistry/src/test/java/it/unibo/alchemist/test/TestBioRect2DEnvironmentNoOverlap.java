@@ -1,13 +1,23 @@
 package it.unibo.alchemist.test;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import org.apache.commons.math3.util.FastMath;
 import org.junit.Before;
 import org.junit.Test;
 
+
+import it.unibo.alchemist.core.implementations.Engine;
+import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.loader.YamlLoader;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironmentNoOverlap;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
 import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
@@ -19,7 +29,7 @@ import it.unibo.alchemist.model.interfaces.Position;
 /**
  *
  */
-public class TestBioRect2DEnviromentNoOverlap {
+public class TestBioRect2DEnvironmentNoOverlap {
 
     private static final double STANDARD_DIAMETER = 10;
     private final Position originalPos = new Continuous2DEuclidean(0, 0);
@@ -484,5 +494,39 @@ public class TestBioRect2DEnviromentNoOverlap {
         assertTrue("cellToMove8 is in position: " + env.getPosition(cellToMove8),
                 env.getPosition(cellToMove8).equals(pd));
     }
+
+    /**
+     * Test a simulation
+     */
+    @Test
+    public void testNoOverlapInSimulation() {
+        System.out.println(System.getProperty("user.dir"));
+        Environment<Double> enviro = testNoVar("/provaBCReaction.yml");
+        enviro.getNodes().stream()
+          .flatMap(n -> n instanceof CellWithCircularArea ? Stream.of((CellWithCircularArea) n) : Stream.empty())
+          .forEach(n -> assertFalse(enviro.getNodesWithinRange(n, n.getRadius()).stream()
+                  .findAny()
+                  .isPresent()));
+    }
+
+
+    private static <T> Environment<T> testNoVar(final String resource) {
+        Environment<T> enviro = testLoading(resource, Collections.emptyMap());
+        return enviro;
+    }
+
+    private static <T> Environment<T> testLoading(final String resource, final Map<String, Double> vars) {
+        final InputStream res = TestBioRect2DEnvironmentNoOverlap.class.getResourceAsStream(resource);
+        assertNotNull("Missing test resource " + resource, res);
+        final Environment<T> env = new YamlLoader(res).getWith(vars);
+        final Simulation<T> sim = new Engine<>(env, 10000);
+        sim.addCommand(new Engine.StateCommand<T>().run().build());
+        //            if (!java.awt.GraphicsEnvironment.isHeadless()) {
+        //                it.unibo.alchemist.boundary.gui.SingleRunGUI.make(sim);
+        //            }
+        sim.run();
+        return env;
+    }
+
 
 }

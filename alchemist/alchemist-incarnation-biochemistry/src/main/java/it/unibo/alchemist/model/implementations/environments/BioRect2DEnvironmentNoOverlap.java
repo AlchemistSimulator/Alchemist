@@ -1,9 +1,11 @@
 package it.unibo.alchemist.model.implementations.environments;
 
-import java.util.Optional;
-import java.util.function.Predicate;
+import java.util.stream.Stream;
+
 import org.apache.commons.math3.util.FastMath;
-import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
+
+import com.google.common.base.Optional;
+
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
@@ -20,15 +22,13 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
 
     private static final long serialVersionUID = 1L;
     private static final String NOT_SUPPORTED = " is not compatible with biochemistry.";
-    private double maxDiameterAmongAllCells;
-    private int biggestCellID;
+    private Optional<CellWithCircularArea> biggestCell = Optional.absent();
 
     /**
      * Returns an infinite BioRect2DEnviroment.
      */
     public BioRect2DEnvironmentNoOverlap() {
         super();
-        this.maxDiameterAmongAllCells = 0;
     }
     /**
      * Returns a limited rectangular BioRect2DEnviroment.
@@ -40,7 +40,6 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
      */
     public BioRect2DEnvironmentNoOverlap(final double minX, final double maxX, final double minY, final double maxY) {
         super(minX, maxX, minY, maxY);
-        this.maxDiameterAmongAllCells = 0;
     }
 
     @Override
@@ -102,36 +101,32 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
         return getNodesWithinRange(midPoint, range).stream()
                 .parallel()
                 .filter(n -> !getPosition(n).equals(originalPos))
-                .filter(new Predicate<Node<Double>>() {
-
-                    @Override
-                    public boolean test(final Node<Double> n) {
-                        final double xn = getPosition(n).getCoordinate(0);
-                        final double yn = getPosition(n).getCoordinate(1);
-                        final double xIntersect;
-                        final double yIntersect;
-                        if (oy == ry) {
-                            yIntersect = oy;
-                            xIntersect = xn;
-                        } else if (ox == rx) {
-                            xIntersect = ox;
-                            yIntersect = yn;
-                        } else {
-                            // computes parameters of the straight line from original position to requested position
-                            final double m1 = (oy - ry) / (ox - rx);
-                            final double q1 = oy - m1 * ox;
-                            // computes parameter of straight line, perpendicular to the previous, passing through the cell
-                            final double m2 = -1 / m1;
-                            final double q2 = yn - m2 * xn;
-                            // compute intersection between this two straight lines
-                            xIntersect = (q2 - q1) / (m1 - m2);
-                            yIntersect = m2 * xIntersect + q2;
-                        }
-                        final Position intersection = new Continuous2DEuclidean(xIntersect, yIntersect);
-                        final double distanceReqInt = intersection.getDistanceTo(requestedPos);
-                        final double distanceOrigInt = intersection.getDistanceTo(originalPos);
-                        return distanceReqInt < distanceToReq && distanceOrigInt < distanceToReq;
+                .filter(n -> {
+                    final double xn = getPosition(n).getCoordinate(0);
+                    final double yn = getPosition(n).getCoordinate(1);
+                    final double xIntersect;
+                    final double yIntersect;
+                    if (oy == ry) {
+                        yIntersect = oy;
+                        xIntersect = xn;
+                    } else if (ox == rx) {
+                        xIntersect = ox;
+                        yIntersect = yn;
+                    } else {
+                        // computes parameters of the straight line from original position to requested position
+                        final double m1 = (oy - ry) / (ox - rx);
+                        final double q1 = oy - m1 * ox;
+                        // computes parameter of straight line, perpendicular to the previous, passing through the cell
+                        final double m2 = -1 / m1;
+                        final double q2 = yn - m2 * xn;
+                        // compute intersection between this two straight lines
+                        xIntersect = (q2 - q1) / (m1 - m2);
+                        yIntersect = m2 * xIntersect + q2;
                     }
+                    final Position intersection = new Continuous2DEuclidean(xIntersect, yIntersect);
+                    final double distanceReqInt = intersection.getDistanceTo(requestedPos);
+                    final double distanceOrigInt = intersection.getDistanceTo(originalPos);
+                    return distanceReqInt < distanceToReq && distanceOrigInt < distanceToReq;
                 }) 
                 .map(n -> getPositionIfNodeIsObstacle(nodeToMove, n, originalPos, requestedPos)) 
                 .filter(Optional::isPresent) 
@@ -180,7 +175,7 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
         // if cat is bigger than cellRange, actual cell isn't an obstacle for the cellular movement
         if (cat >= cellRange) {
             // so returns an empty optional
-            return Optional.empty();
+            return Optional.absent();
         }
         // otherwise, compute the maximum practicable distance for the cell
         final double cat2 = FastMath.sqrt((FastMath.pow(cellRange, 2) - FastMath.pow(cat, 2)));
@@ -197,36 +192,39 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
     @Override
     protected void nodeAdded(final Node<Double> node, final Position position, final Neighborhood<Double> neighborhood) {
         super.nodeAdded(node, position, neighborhood);
-        if (!(node instanceof CellWithCircularArea)) {
-            throw new IllegalArgumentException(node.getClass().getName() + NOT_SUPPORTED);
-        }
-        if (((CellWithCircularArea) node).getDiameter() > this.maxDiameterAmongAllCells) {
-            setBiggestCell((CellWithCircularArea) node); 
+        if (node instanceof CellWithCircularArea) {
+            final CellWithCircularArea cell = (CellWithCircularArea) node;
+            if (cell.getDiameter() > getMaxDiameterAmongCells()) {
+                biggestCell = Optional.of(cell); 
+            }
         }
     }
 
     @Override
     protected void nodeRemoved(final Node<Double> node, final Neighborhood<Double> neighborhood) {
-        if (!(node instanceof CellWithCircularArea)) {
-            throw new IllegalArgumentException(node.getClass().getName() + NOT_SUPPORTED);
-        }
-        if (node.getId() == this.biggestCellID) {
-            final CellWithCircularArea newBiggest = (CellWithCircularArea) getNodes().stream()
+        if (biggestCell.isPresent() && biggestCell.get().equals(node)) {
+            biggestCell = getNodes().stream()
                     .parallel()
-                    .filter(n -> n instanceof CellWithCircularArea)
-                    .max((c1, c2) -> (int) (((CellWithCircularArea) c1).getDiameter() - ((CellWithCircularArea) c2).getDiameter()))
-                    .orElse(new CellNodeImpl(this, 0));
-            setBiggestCell(newBiggest);
+                    .flatMap(n -> n instanceof CellWithCircularArea ? Stream.of((CellWithCircularArea) n) : Stream.empty())
+                    .max((c1, c2) -> Double.compare(c1.getDiameter(), c2.getDiameter()))
+                    .map(Optional::of)
+                    .orElse(Optional.absent());
         }
     }
 
     private double getMaxDiameterAmongCells() {
-        return this.maxDiameterAmongAllCells;
+        return biggestCell
+                .transform(n -> n.getDiameter())
+                .or(0d);
     }
 
-    private void setBiggestCell(final CellWithCircularArea newBiggest) {
-        this.biggestCellID = newBiggest.getId();
-        this.maxDiameterAmongAllCells = newBiggest.getDiameter();
-    }
+//    private void setBiggestCell(final Optional<CellWithCircularArea> newBiggest) {
+//        if(newBiggest.isPresent()) {
+//            this.biggestCellID = newBiggest.get().getId();
+//            this.maxDiameterAmongAllCells = newBiggest.get().getDiameter();
+//        } else {
+//            
+//        }
+//    }
 
 }

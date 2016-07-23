@@ -1,0 +1,36 @@
+# simulazione di test: una cellula e un nodo ambientale interagiscono.
+# il risultato finale dovrebbe essere che la concentrazione di A nel nodo ambientale dovrebbe essere 1000.
+
+incarnation: biochemistry
+
+network-model:
+  type: EuclideanDistance
+  parameters: [2]
+
+environment:
+  type: BioRect2DEnvironment
+  parameters: []
+
+reactions: &reactions
+    - time-distribution: 0.1
+      program: >
+        [A] --> [A in env]
+
+displacements:
+  - in:
+      type: Point
+      parameters: [0, 0]
+    nodes:
+      type: CellNodeImpl
+      parameters: []
+    contents:
+      - molecule: A
+        concentration: 1000
+    programs:
+      - *reactions
+  - in:
+      type: Point
+      parameters: [1, 0]
+    nodes:
+      type: EnvironmentNodeImpl
+      parameters: []

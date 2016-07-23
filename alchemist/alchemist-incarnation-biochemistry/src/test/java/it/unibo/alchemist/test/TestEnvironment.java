@@ -1,62 +1,86 @@
 package it.unibo.alchemist.test;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Map;
 
-import org.junit.Test;
+import javax.swing.SwingUtilities;
 
-import com.google.common.collect.Maps;
+import org.junit.Test;
 
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.loader.YamlLoader;
+import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
+import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
+import it.unibo.alchemist.model.implementations.nodes.EnvironmentNodeImpl;
 import it.unibo.alchemist.model.interfaces.Environment;
 
 public class TestEnvironment {
-//
-//    /**
-//     * Basic loading capabilities.
-//     */
-//    @Test
-//    public void testBase() {
-//        testNoVar("/testbase.yml");
-//    }
-//
-//    /**
-//     * Test the ability to load a Protelis module from classpath.
-//     */
-//    @Test
-//    public void testLoadProtelisModule() {
-//        testNoVar("/test00.yml");
-//    }
-//
-//    /**
-//     * Test the ability to inject variables.
-//     */
-//    @Test
-//    public void testLoadWIthVariable() {
-//        final Map<String, Double> map = Maps.newLinkedHashMap();
-//        map.put("testVar", 10d);
-//        testLoading("/test00.yml", map);
-//    }
-//
-//    private static void testNoVar(final String resource) {
-//        testLoading(resource, Collections.emptyMap());
-//    }
-//
-//    private static <T> void testLoading(final String resource, final Map<String, Double> vars) {
-//        final InputStream res = TestYAMLLoader.class.getResourceAsStream(resource);
-//        assertNotNull("Missing test resource " + resource, res);
-//        final Environment<T> env = new YamlLoader(res).getWith(vars);
-//        final Simulation<T> sim = new Engine<>(env, 10000);
-//        sim.addCommand(new Engine.StateCommand<T>().run().build());
-//        //            if (!java.awt.GraphicsEnvironment.isHeadless()) {
-//        //                it.unibo.alchemist.boundary.gui.SingleRunGUI.make(sim);
-//        //            }
-//        sim.run();
-//    }
+
+    /**
+     * Simple interaction between a CellNode and an EnviromentalNode.
+     * Test transport of a molecule from cell to env.
+     */
+    @Test
+    public void testEnv1() {
+        final double conA = (double) testNoVar("/testEnv1.yml").getNodes().stream()
+                .parallel()
+                .filter(n -> n.getClass().equals(EnvironmentNodeImpl.class))
+                .findFirst()
+                .get()
+                .getConcentration(new Biomolecule("A"));
+        assertTrue("conA = " + conA, conA == 1000);
+    }
+
+    /**
+     * Simple interaction between a CellNode and 4 EnviromentalNodes.
+     */
+    @Test
+    public void testEnv2() {
+        testNoVar("/testEnv2.yml").getNodes().stream()
+        .parallel()
+        .filter(n -> n.getClass().equals(EnvironmentNodeImpl.class))
+        .mapToDouble(n -> (double) n.getConcentration(new Biomolecule("A")))
+        .forEach(c -> assertFalse("concentration is " + c, c == 0 || c == 1000));
+    }
+
+    /**
+     * Simple interaction between a CellNode and an EnviromentalNode.
+     * Test transport of a molecule from env to cell.
+     */
+    @Test
+    public void testEnv3() {
+        final double conA = (double) testNoVar("/testEnv3.yml").getNodes().stream()
+                .parallel()
+                .filter(n -> n.getClass().equals(CellNodeImpl.class) )
+                .findAny()
+                .get()
+                .getConcentration(new Biomolecule("A"));
+        assertTrue("conA = " + conA, conA == 1000);
+    }
+
+    private static <T> Environment<T> testNoVar(final String resource) {
+        return testLoading(resource, Collections.emptyMap());
+    }
+
+    private static <T> Environment<T> testLoading(final String resource, final Map<String, Double> vars) {
+        final InputStream res = TestEnvironment.class.getResourceAsStream(resource);
+        assertNotNull("Missing test resource " + resource, res);
+        final Environment<T> env = new YamlLoader(res).getWith(vars);
+        final Simulation<T> sim = new Engine<>(env, 10000);
+        sim.addCommand(new Engine.StateCommand<T>().run().build());
+        try {
+            SwingUtilities.invokeAndWait(sim);
+        } catch (InvocationTargetException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return env;
+    }
 
 }

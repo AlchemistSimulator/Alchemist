@@ -1,0 +1,37 @@
+# simulazione di test: una cellula e 4 nodi ambientale interagiscono.
+# il risultato finale dovrebbe essere: 0 A in CellNodeImpl, intorno al 250 in ogni EnvironmentNodeImpl.
+# Infatti si deve inviare ogni volta la molecola a un nodo ambientale causuale nel vicinato.
+
+incarnation: biochemistry
+
+network-model:
+  type: EuclideanDistance
+  parameters: [2]
+
+environment:
+  type: BioRect2DEnvironment
+  parameters: []
+
+reactions: &reactions
+    - time-distribution: 0.1
+      program: >
+        [A] --> [A in env]
+
+displacements:
+  - in:
+      type: Point
+      parameters: [0, 0]
+    nodes:
+      type: CellNodeImpl
+      parameters: []
+    contents:
+      - molecule: A
+        concentration: 1000
+    programs:
+      - *reactions
+  - in:
+      type: Circle
+      parameters: [4, 0, 0, 2]
+    nodes:
+      type: EnvironmentNodeImpl
+      parameters: []

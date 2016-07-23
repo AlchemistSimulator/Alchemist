@@ -20,11 +20,12 @@ ionic: &waterDissociation
         [] --> [BrownianMove(0.2)] if BiomolPresentInCell(H2O, 1)
 
 displacements:
-  type: CellNode
-  parameters: [10]
   - in:
       type: Circle
       parameters: [100, 0, 0, 5]
+    nodes:
+      type: CellNodeImpl
+      parameters: [10.0]
     contents:
       - molecule: H2O
         concentration: 1000

@@ -218,13 +218,4 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
                 .or(0d);
     }
 
-//    private void setBiggestCell(final Optional<CellWithCircularArea> newBiggest) {
-//        if(newBiggest.isPresent()) {
-//            this.biggestCellID = newBiggest.get().getId();
-//            this.maxDiameterAmongAllCells = newBiggest.get().getDiameter();
-//        } else {
-//            
-//        }
-//    }
-
 }

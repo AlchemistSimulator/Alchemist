@@ -10,6 +10,7 @@ package it.unibo.alchemist.model.implementations.nodes;
 
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
+import it.unibo.alchemist.model.interfaces.Molecule;
 
 /**
  *
@@ -24,11 +25,22 @@ public class EnvironmentNodeImpl extends DoubleNode implements EnvironmentNode {
      */
     public EnvironmentNodeImpl(final Environment<Double> env) {
         super(env);
-        // TODO Auto-generated constructor stub
     }
 
     @Override
     protected Double createT() {
         return 0d;
+    }
+
+    @Override
+    public void setConcentration(final Molecule mol, final Double c) {
+        if (c < 0) {
+            throw new IllegalArgumentException("No negative concentrations allowed (" + mol + " -> " + c + ")");
+        }
+        if (c > 0) {
+            super.setConcentration(mol, c);
+        } else {
+            removeConcentration(mol);
+        }
     }
 }

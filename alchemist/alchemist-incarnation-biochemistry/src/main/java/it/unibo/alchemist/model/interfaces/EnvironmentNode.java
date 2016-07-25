@@ -11,5 +11,5 @@ package it.unibo.alchemist.model.interfaces;
 /**
  */
 public interface EnvironmentNode extends Node<Double> {
-    // TODO
+    
 }

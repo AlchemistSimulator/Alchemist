@@ -66,6 +66,8 @@ public class ChangeBiomolConcentrationInEnv extends AbstractActionOnSingleMolecu
     @Override
     public void execute() {
         if (delta < 0) {
+            // molecules follow concentration gradient. So if a delta of a molecule has to be subtracted, 
+            // that will happen in the EnvironmentNode with highest concentration of this molecule.
             getEnviromentNodesSurrounding().stream()
             .max((n1, n2) -> Double.compare(n1.getConcentration(getBiomolecule()), n2.getConcentration(getBiomolecule())))
             .ifPresent(n -> {
@@ -76,6 +78,8 @@ public class ChangeBiomolConcentrationInEnv extends AbstractActionOnSingleMolecu
                 }
             });
         } else {
+            // vice versa, if a delta has to be added, that will be added in the EnvironmentNode
+            // with lowest concentration.
             getEnviromentNodesSurrounding().stream()
             .min((n1, n2) -> Double.compare(n1.getConcentration(getBiomolecule()), n2.getConcentration(getBiomolecule())))
             .ifPresent(n -> n.setConcentration(getBiomolecule(), n.getConcentration(getBiomolecule()) + delta));

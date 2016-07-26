@@ -1,37 +1,38 @@
-# simulazione di test: cerco di creare un gradiente in una griglia di nodi ambientali.
-
 incarnation: biochemistry
 
 network-model:
   type: EuclideanDistance
-  parameters: [1.5]
+  parameters: [2]
 
 environment:
   type: BioRect2DEnvironment
   parameters: []
 
-originGradent: &originGradent
-    - time-distribution: 1
-      program: >
-        [] --> [A]
-
-propagateGradient: &propagateGradient
+reactions: &reactions
     - time-distribution: 0.1
       program: >
-        [A] --> [A in env]
+        [A] --> [A in neighbor]
 
 displacements:
   - in:
-      type: Grid
-      parameters: [-5, -5, 5, 5, 1, 1]
+      type: Point
+      parameters: [0, 0]
+    nodes:
+      type: CellNodeImpl
+      parameters: []
+    contents:
+      - molecule: A
+        concentration: 1000
+    programs:
+      - *reactions
+  - in:
+      type: Circle
+      parameters: [4, 0, 0, 2]
     nodes:
       type: EnvironmentNodeImpl
       parameters: []
+    contents:
+      - molecule: A
+        concentration: 250
     programs:
-      - *propagateGradient
-      - in:
-          type: Rectangle
-          parameters: [-1, -1, 1, 1]
-        time-distribution: 1
-        program: >
-          [] --> [A]
+      - *reactions

@@ -1,6 +1,3 @@
-# simulazione di test: una cellula e un nodo ambientale interagiscono.
-# il risultato finale dovrebbe essere che la concentrazione di A nella cellula e nell'ambiente 0.
-
 incarnation: biochemistry
 
 network-model:

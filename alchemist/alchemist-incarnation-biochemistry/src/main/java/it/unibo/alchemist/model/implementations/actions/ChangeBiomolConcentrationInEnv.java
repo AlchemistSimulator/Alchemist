@@ -9,8 +9,8 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.math3.util.FastMath;
 
@@ -65,25 +65,24 @@ public class ChangeBiomolConcentrationInEnv extends AbstractActionOnSingleMolecu
 
     @Override
     public void execute() {
-        if (delta < 0) {
-            // molecules follow concentration gradient. So if a delta of a molecule has to be subtracted, 
-            // that will happen in the EnvironmentNode with highest concentration of this molecule.
-            getEnviromentNodesSurrounding().stream()
-            .max((n1, n2) -> Double.compare(n1.getConcentration(getBiomolecule()), n2.getConcentration(getBiomolecule())))
-            .ifPresent(n -> {
-                if (n.getConcentration(getBiomolecule()) > FastMath.abs(delta)) {
-                    n.setConcentration(getBiomolecule(), n.getConcentration(getBiomolecule()) + delta);
-                } else {
-                    n.removeConcentration(getBiomolecule());
-                }
-            });
-        } else {
-            // vice versa, if a delta has to be added, that will be added in the EnvironmentNode
-            // with lowest concentration.
-            getEnviromentNodesSurrounding().stream()
-            .min((n1, n2) -> Double.compare(n1.getConcentration(getBiomolecule()), n2.getConcentration(getBiomolecule())))
-            .ifPresent(n -> n.setConcentration(getBiomolecule(), n.getConcentration(getBiomolecule()) + delta));
-        }
+        // add delta to the nearest node.
+        getEnviromentNodesSurrounding().stream()
+        .parallel()
+        .min((n1, n2) -> Double.compare(
+                env.getPosition(n1).getDistanceTo(env.getPosition(getNode())), 
+                env.getPosition(n2).getDistanceTo(env.getPosition(getNode()))
+                ))
+                .ifPresent(n -> {
+                    if (delta < 0) {
+                        if (n.getConcentration(getBiomolecule()) > FastMath.abs(delta)) {
+                            n.setConcentration(getBiomolecule(), n.getConcentration(getBiomolecule()) + delta);
+                        } else {
+                            n.removeConcentration(getBiomolecule());
+                        }
+                    } else {
+                        n.setConcentration(getBiomolecule(), n.getConcentration(getBiomolecule()) + delta);
+                    }
+                });
     }
 
     @Override
@@ -91,15 +90,15 @@ public class ChangeBiomolConcentrationInEnv extends AbstractActionOnSingleMolecu
         return Context.NEIGHBORHOOD;
     }
 
-    private List<Node<Double>> getEnviromentNodesSurrounding() {
-        final List<Node<Double>> list = new ArrayList<>();
-        env
-        .getNeighborhood(getNode())
-        .getNeighbors()
-        .stream()
-        .filter(n -> n instanceof EnvironmentNode)
-        .forEach(n -> list.add(n));
-        return list;
+    /**
+     * 
+     * @return a list of EnvironmentNodes near to the node where this condition is located.
+     */
+    protected final List<Node<Double>> getEnviromentNodesSurrounding() {
+        return env.getNeighborhood(getNode()).getNeighbors().stream()
+                .parallel()
+                .filter(n -> n instanceof EnvironmentNode)
+                .collect(Collectors.toList());
     }
 
     private Biomolecule getBiomolecule() {

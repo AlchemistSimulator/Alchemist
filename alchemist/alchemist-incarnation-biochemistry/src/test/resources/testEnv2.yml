@@ -1,7 +1,3 @@
-# simulazione di test: una cellula e 4 nodi ambientale interagiscono.
-# il risultato finale dovrebbe essere: 0 A in CellNodeImpl, intorno al 250 in ogni EnvironmentNodeImpl.
-# Infatti si deve inviare ogni volta la molecola a un nodo ambientale causuale nel vicinato.
-
 incarnation: biochemistry
 
 network-model:

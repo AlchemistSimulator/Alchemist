@@ -8,8 +8,9 @@
  */
 package it.unibo.alchemist.model.implementations.conditions;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.commons.math3.util.CombinatoricsUtils;
 import org.apache.commons.math3.util.FastMath;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
@@ -51,31 +52,31 @@ public class BiomolPresentInEnv extends GenericMoleculePresent<Double> {
             return 0;
         }
         final double totalQuantity = getEnviromentNodesSurrounding().stream()
+                .parallel()
                 .mapToDouble(n -> n.getConcentration(getBiomolecule()))
                 .sum();
-        if (totalQuantity < getConcentrationReqired()) {
+        if (totalQuantity < getQuantity()) {
             return 0;
         }
         return CombinatoricsUtils.binomialCoefficientDouble(
                 (int) FastMath.round(totalQuantity), 
-                (int) FastMath.round(getConcentrationReqired())
+                (int) FastMath.round(getQuantity())
                 );
     }
 
-    private List<Node<Double>> getEnviromentNodesSurrounding() {
-        final List<Node<Double>> list = new ArrayList<>();
-        environment
-        .getNeighborhood(getNode())
-        .getNeighbors()
-        .stream()
-        .filter(n -> n instanceof EnvironmentNode)
-        .forEach(n -> list.add(n));
-        return list;
+    /**
+     * @return a list of EnvironmentNodes near to the node where this condition is located.
+     */
+    protected final List<Node<Double>> getEnviromentNodesSurrounding() {
+        return environment.getNeighborhood(getNode()).getNeighbors().stream()
+                .parallel()
+                .filter(n -> n instanceof EnvironmentNode)
+                .collect(Collectors.toList());
     }
 
     @Override 
     public BiomolPresentInEnv cloneOnNewNode(final Node<Double> n) {
-        return new BiomolPresentInEnv(getBiomolecule(), getConcentrationReqired(), n, environment);
+        return new BiomolPresentInEnv(getBiomolecule(), getQuantity(), n, environment);
     }
 
     @Override
@@ -89,17 +90,14 @@ public class BiomolPresentInEnv extends GenericMoleculePresent<Double> {
             return false;
         } else {
             return getEnviromentNodesSurrounding().stream()
+                    .parallel()
                     .mapToDouble(n -> n.getConcentration(getBiomolecule()))
-                    .sum() >= getConcentrationReqired();
+                    .sum() >= getQuantity();
         }
     }
 
     private Biomolecule getBiomolecule() {
         return (Biomolecule) getMolecule();
-    }
-
-    private double getConcentrationReqired() {
-        return getQuantity();
     }
 
 }

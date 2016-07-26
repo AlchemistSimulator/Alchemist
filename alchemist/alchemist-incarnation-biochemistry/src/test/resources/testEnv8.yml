@@ -11,7 +11,7 @@ environment:
 reactions: &reactions
     - time-distribution: 0.1
       program: >
-        [A] --> [A in env]
+        [A] --> [A in neighbor]
 
 displacements:
   - in:
@@ -26,8 +26,8 @@ displacements:
     programs:
       - *reactions
   - in:
-      type: Point
-      parameters: [1, 0]
+      type: Circle
+      parameters: [4, 0, 0, 2]
     nodes:
       type: EnvironmentNodeImpl
       parameters: []

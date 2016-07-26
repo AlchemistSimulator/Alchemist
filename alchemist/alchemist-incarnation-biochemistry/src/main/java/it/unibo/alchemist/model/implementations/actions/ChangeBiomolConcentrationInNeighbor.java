@@ -8,11 +8,16 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.math3.random.RandomGenerator;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
+import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
@@ -52,6 +57,22 @@ public class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborAction<
     @Override
     public ChangeBiomolConcentrationInNeighbor cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
         return new ChangeBiomolConcentrationInNeighbor(mol, delta, n, env, rand);
+    }
+
+    @Override
+    public void execute() {
+        final Neighborhood<Double> neighborhood = env.getNeighborhood(getNode());
+        final List<Integer> validTargetsIds = new ArrayList<>();
+        neighborhood
+        .getNeighbors()
+        .stream()
+        .filter(n -> n instanceof CellNode)
+        .mapToInt(n -> n.getId())
+        .forEach(i -> validTargetsIds.add(i));
+        if (!validTargetsIds.isEmpty()) {
+            final int targetId = validTargetsIds.get(rand.nextInt(validTargetsIds.size()));
+            execute(neighborhood.getNeighborByNumber(targetId));
+        }
     }
 
     @Override

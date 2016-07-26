@@ -1,8 +1,6 @@
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
@@ -13,12 +11,10 @@ import java.util.Map;
 import javax.swing.SwingUtilities;
 
 import org.apache.commons.math3.random.MersenneTwister;
-import org.apache.commons.math3.util.FastMath;
 import org.junit.Test;
 
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.exceptions.BiochemistryParseException;
 import it.unibo.alchemist.loader.YamlLoader;
 import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment;
@@ -31,6 +27,7 @@ import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
 import it.unibo.alchemist.model.interfaces.Molecule;
+import it.unibo.alchemist.model.interfaces.Node;
 
 /**
  * Test implementation of extra-cellular environment  created with EnvironmentNodes.
@@ -85,11 +82,21 @@ public class TestEnvironmentNodes {
      */
     @Test
     public void testEnv2() {
-        testNoVar("/testEnv2.yml").getNodes().stream()
-        .parallel()
-        .filter(n -> n.getClass().equals(EnvironmentNodeImpl.class))
-        .mapToDouble(n -> (double) n.getConcentration(new Biomolecule("A")))
-        .forEach(c -> assertFalse("concentration is " + c, c == 0 || c == 1000));
+        final Environment<Double> env = testNoVar("/testEnv2.yml");
+        final Node<Double> center = env.getNodes().stream()
+                .parallel()
+                .filter(n -> n instanceof CellNode)
+                .findAny()
+                .get();
+        final double conAInNearest = env.getNodes().stream()
+                .parallel()
+                .filter(n -> n.getClass().equals(EnvironmentNodeImpl.class))
+                .min((n1, n2) -> Double.compare(
+                        env.getPosition(n1).getDistanceTo(env.getPosition(center)), 
+                        env.getPosition(n2).getDistanceTo(env.getPosition(center))
+                        ))
+                .get().getConcentration(new Biomolecule("A"));
+        assertTrue(conAInNearest == 1000);
     }
 
     /**
@@ -134,7 +141,7 @@ public class TestEnvironmentNodes {
                 .getConcentration(new Biomolecule("A"));
         assertTrue("conAInCell = " + conAInCell + " ; conAInEnv = " + conAInEnv, conAInCell == 0 && conAInEnv == 0);
     }
-    
+
     /**
      * test programming an environment node.
      */
@@ -164,20 +171,40 @@ public class TestEnvironmentNodes {
     public void testEnv6() {
         testNoVar("/testEnv6.yml");
     }
-
-    private void tryProgrammingAChemicalGradient() {
+    
+    /**
+     * test if neighbors are selected correctly.
+     */
+    @Test
+    public void testEnv7() {
         final Environment<Double> env = testNoVar("/testEnv7.yml");
-        double[][] gradMatrix = new double[10][10];
-        final Biomolecule a = new Biomolecule("A");
-        env.getNodes()
-        .stream()
-        .forEach(n -> {
-            final int x = (int) FastMath.round(env.getPosition(n).getCoordinate(0));
-            final int y = (int) FastMath.round(env.getPosition(n).getCoordinate(1));
-            gradMatrix[x][y] = n.getConcentration(a);
-        });
-        System.out.println("gradMatrix");
-        System.out.println(gradMatrix);
+        final double conAInCell = (double) env.getNodes().stream()
+                .parallel()
+                .filter(n -> n instanceof CellNode)
+                .findAny()
+                .get()
+                .getConcentration(new Biomolecule("A"));
+        final double conAInEnv = (double) env.getNodes().stream()
+                .parallel()
+                .filter(n -> n instanceof EnvironmentNode)
+                .mapToDouble(n -> n.getConcentration(new Biomolecule("A")))
+                .sum();
+        assertTrue("conAInCell = " + conAInCell + " ; conAInEnv = " + conAInEnv, conAInCell == 2000 && conAInEnv == 0);
+    }
+
+    /**
+     * test if neighbors are selected correctly.
+     */
+    @Test
+    public void testEnv8() {
+        final Environment<Double> env = testNoVar("/testEnv8.yml");
+        final double conAInCell = (double) env.getNodes().stream()
+                .parallel()
+                .filter(n -> n instanceof CellNode)
+                .findAny()
+                .get()
+                .getConcentration(new Biomolecule("A"));
+        assertTrue("conAInCell = " + conAInCell, conAInCell == 1000);
     }
 
     private static <T> Environment<T> testNoVar(final String resource) {

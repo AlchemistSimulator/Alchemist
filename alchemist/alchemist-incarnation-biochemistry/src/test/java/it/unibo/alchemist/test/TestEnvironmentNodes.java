@@ -13,10 +13,12 @@ import java.util.Map;
 import javax.swing.SwingUtilities;
 
 import org.apache.commons.math3.random.MersenneTwister;
+import org.apache.commons.math3.util.FastMath;
 import org.junit.Test;
 
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.exceptions.BiochemistryParseException;
 import it.unibo.alchemist.loader.YamlLoader;
 import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment;
@@ -131,6 +133,51 @@ public class TestEnvironmentNodes {
                 .get()
                 .getConcentration(new Biomolecule("A"));
         assertTrue("conAInCell = " + conAInCell + " ; conAInEnv = " + conAInEnv, conAInCell == 0 && conAInEnv == 0);
+    }
+    
+    /**
+     * test programming an environment node.
+     */
+    @Test
+    public void testEnv5() {
+        final Environment<Double> env = testNoVar("/testEnv5.yml");
+        final double conAInEnv1 = (double) env.getNodes().stream()
+                .parallel()
+                .filter(n -> env.getPosition(n).equals(new Continuous2DEuclidean(0, 0)))
+                .findAny()
+                .get()
+                .getConcentration(new Biomolecule("A"));
+        final double conAInEnv2 = (double) env.getNodes().stream()
+                .parallel()
+                .filter(n -> env.getPosition(n).equals(new Continuous2DEuclidean(1, 0)))
+                .findAny()
+                .get()
+                .getConcentration(new Biomolecule("A"));
+        assertTrue("conAInEnv1 = " + conAInEnv1 + " ; conAInEnv2 = " + conAInEnv2, conAInEnv1 == 0 && conAInEnv2 == 1000);
+    }
+
+    /**
+     * test initialization of a junction between an EnvironmentNode and a CellNode.
+     * Now this will throw an UnsupportedOperationException
+     */
+    @Test (expected = UnsupportedOperationException.class)
+    public void testEnv6() {
+        testNoVar("/testEnv6.yml");
+    }
+
+    private void tryProgrammingAChemicalGradient() {
+        final Environment<Double> env = testNoVar("/testEnv7.yml");
+        double[][] gradMatrix = new double[10][10];
+        final Biomolecule a = new Biomolecule("A");
+        env.getNodes()
+        .stream()
+        .forEach(n -> {
+            final int x = (int) FastMath.round(env.getPosition(n).getCoordinate(0));
+            final int y = (int) FastMath.round(env.getPosition(n).getCoordinate(1));
+            gradMatrix[x][y] = n.getConcentration(a);
+        });
+        System.out.println("gradMatrix");
+        System.out.println(gradMatrix);
     }
 
     private static <T> Environment<T> testNoVar(final String resource) {

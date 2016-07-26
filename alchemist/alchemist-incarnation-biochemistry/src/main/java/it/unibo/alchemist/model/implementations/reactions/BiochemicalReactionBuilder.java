@@ -57,7 +57,6 @@ import it.unibo.alchemist.model.implementations.conditions.NeighborhoodPresent;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
-import it.unibo.alchemist.model.implementations.nodes.EnvironmentNodeImpl;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Condition;
@@ -78,7 +77,7 @@ public class BiochemicalReactionBuilder {
     private static final Logger L = LoggerFactory.getLogger(BiochemicalReactionBuilder.class);
 
     private final BiochemistryIncarnation incarnation;
-    private final CellNode node;
+    private final Node<Double> node;
     private final Environment<Double> env;
     private RandomGenerator rand;
     private TimeDistribution<Double> time;
@@ -91,7 +90,7 @@ public class BiochemicalReactionBuilder {
      * @param currentNode the node where the reaction is placed.
      * @param environment the environment.
      */
-    public BiochemicalReactionBuilder(final BiochemistryIncarnation inc, final CellNode currentNode, final Environment<Double> environment) {
+    public BiochemicalReactionBuilder(final BiochemistryIncarnation inc, final Node<Double> currentNode, final Environment<Double> environment) {
         incarnation = inc;
         node = currentNode;
         env = environment;
@@ -161,7 +160,7 @@ public class BiochemicalReactionBuilder {
         private final RandomGenerator rand;
         private final BiochemistryIncarnation currentInc;
         private final TimeDistribution<Double> time;
-        private final CellNode node;
+        private final Node<Double> node;
         private final Environment<Double> env;
         private final Reaction<Double> reaction;
         private final List<Condition<Double>> conditionList = new ArrayList<>(0);
@@ -394,7 +393,7 @@ public class BiochemicalReactionBuilder {
             return (ctx.concentration() == null) ? 1.0 : Double.parseDouble(ctx.concentration().POSDOUBLE().getText());
         }
 
-        private BiochemistryDSLVisitor(final RandomGenerator rand, final BiochemistryIncarnation incarnation, final TimeDistribution<Double> timeDistribution, final CellNode currentNode, final Environment<Double> environment) {
+        private BiochemistryDSLVisitor(final RandomGenerator rand, final BiochemistryIncarnation incarnation, final TimeDistribution<Double> timeDistribution, final Node<Double> currentNode, final Environment<Double> environment) {
             this.rand = rand;
             currentInc = incarnation;
             time = timeDistribution;
@@ -454,8 +453,12 @@ public class BiochemicalReactionBuilder {
                 visit(ctx.customReactionType());
             }
             junctionList.forEach((j -> {
-                actionList.add(new RemoveJunctionInCell(j, node, env, rand));
-                actionList.add(new RemoveJunctionInNeighbor(reverseJunction(j), node, env, rand));
+                if (node instanceof CellNode) {
+                    actionList.add(new RemoveJunctionInCell(j, (CellNode) node, env, rand));
+                    actionList.add(new RemoveJunctionInNeighbor(reverseJunction(j), (CellNode) node, env, rand));
+                } else {
+                    throw new UnsupportedOperationException("Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName());
+                }
             }));
             reaction.setConditions(conditionList);
             reaction.setActions(actionList);
@@ -468,8 +471,8 @@ public class BiochemicalReactionBuilder {
                 final Biomolecule biomol = createBiomolecule(b);
                 final double concentration = createConcentration(b);
                 insertInMap(biomolConditionsInCell, biomol, concentration);
-                conditionList.add(new BiomolPresentInCell(biomol, concentration, (CellNodeImpl) node));
-                actionList.add(new ChangeBiomolConcentrationInCell(biomol, -concentration, (CellNodeImpl) node));
+                conditionList.add(new BiomolPresentInCell(biomol, concentration, node));
+                actionList.add(new ChangeBiomolConcentrationInCell(biomol, -concentration, node));
             }
             return reaction;
         }
@@ -481,7 +484,7 @@ public class BiochemicalReactionBuilder {
                 final double concentration = createConcentration(b);
                 insertInMap(biomolConditionsInNeighbor, biomol, concentration);
                 conditionList.add(new BiomolPresentInNeighbor(biomol, concentration, node, env));
-                actionList.add(new ChangeBiomolConcentrationInNeighbor(biomol, -concentration, (CellNodeImpl) node, env, rand));
+                actionList.add(new ChangeBiomolConcentrationInNeighbor(biomol, -concentration, node, env, rand));
             }
             return reaction;
         }
@@ -553,17 +556,25 @@ public class BiochemicalReactionBuilder {
                     throw new BiochemistryParseException("The creation of the junction " + j + " requires " + v + " " + k + " in the neighbor node, specify a greater or equal value in conditions.");
                 }
             });
-            actionList.add(new AddJunctionInCell(j, node, env, rand));
-            actionList.add(new AddJunctionInNeighbor(reverseJunction(j), node, env, rand));
+            if (node instanceof CellNode) {
+                actionList.add(new AddJunctionInCell(j, (CellNode) node, env, rand));
+                actionList.add(new AddJunctionInNeighbor(reverseJunction(j), (CellNode) node, env, rand));
+            } else {
+                throw new UnsupportedOperationException("Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName());
+            }
             return reaction;
         }
 
         @Override
         public Reaction<Double> visitJunctionReactionJunctionCondition(final BiochemistrydslParser.JunctionReactionJunctionConditionContext ctx) {
-            final Junction j = createJunction(ctx.junction());
-            junctionList.add(j);
-            conditionList.add(new JunctionPresentInCell(j, node, env));
-            return reaction;
+            if (node instanceof CellNode) {
+                final Junction j = createJunction(ctx.junction());
+                junctionList.add(j);
+                conditionList.add(new JunctionPresentInCell(j, (CellNode) node, env));
+                return reaction;
+            } else {
+                throw new UnsupportedOperationException("Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName());
+            }
         }
 
         @Override

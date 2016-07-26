@@ -67,7 +67,7 @@ public class BiochemistryIncarnation implements Incarnation<Double> {
             final Node<Double> node,
             final TimeDistribution<Double> time, 
             final String param) {
-        return new BiochemicalReactionBuilder(this, (CellNodeImpl) node, env)
+        return new BiochemicalReactionBuilder(this, node, env)
                 .randomGenerator(rand)
                 .timeDistribution(time)
                 .program(param)

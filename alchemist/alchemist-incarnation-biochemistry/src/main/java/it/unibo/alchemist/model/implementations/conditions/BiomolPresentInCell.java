@@ -8,8 +8,8 @@
  */
 package it.unibo.alchemist.model.implementations.conditions;
 
-import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
 import it.unibo.alchemist.model.interfaces.Molecule;
+import it.unibo.alchemist.model.interfaces.Node;
 /**
  *
  */
@@ -23,13 +23,8 @@ public class BiomolPresentInCell extends GenericMoleculePresent<Double> {
      * @param concentration 
      * @param node 
      */
-    public BiomolPresentInCell(final Molecule biomol, final Double concentration, final CellNodeImpl node) {
+    public BiomolPresentInCell(final Molecule biomol, final Double concentration, final Node<Double> node) {
         super(biomol, node, concentration);
-    }
-
-    @Override
-    public CellNodeImpl getNode() {
-        return (CellNodeImpl) super.getNode();
     }
 
 }

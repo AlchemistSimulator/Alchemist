@@ -12,6 +12,8 @@ import javax.swing.SwingUtilities;
 
 import org.apache.commons.math3.random.MersenneTwister;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -22,6 +24,7 @@ import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
 import it.unibo.alchemist.model.implementations.nodes.EnvironmentNodeImpl;
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
+import it.unibo.alchemist.model.implementations.reactions.BiochemicalReactionBuilder;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -34,6 +37,8 @@ import it.unibo.alchemist.model.interfaces.Node;
  *
  */
 public class TestEnvironmentNodes {
+    
+    private static final Logger L = LoggerFactory.getLogger(BiochemicalReactionBuilder.class);
 
     /**
      * test a simple reaction "[A] --> [A in env]".
@@ -57,7 +62,7 @@ public class TestEnvironmentNodes {
         try {
             SwingUtilities.invokeAndWait(sim);
         } catch (InvocationTargetException | InterruptedException e) {
-            e.printStackTrace();
+            L.error(e.getMessage());
         }
         assertTrue(envNode.getConcentration(a) == 1000);
     }

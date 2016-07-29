@@ -10,15 +10,15 @@ public class BiomolStepLayer extends StepLayer<Double> implements BiomolLayer {
     public BiomolStepLayer(
             final double mx, 
             final double my, 
-            final Double minValue, 
             final Double maxValue, 
+            final Double minValue, 
             final Biomolecule biomol) {
-        super(mx, my, minValue, maxValue);
+        super(mx, my, maxValue, minValue);
         biomolecule = biomol;
     }
 
-    public BiomolStepLayer(final Double minValue, final Double maxValue, final Biomolecule biomol) {
-        this(0, 0, minValue, maxValue, biomol);
+    public BiomolStepLayer(final Double maxValue, final Double minValue, final Biomolecule biomol) {
+        this(0, 0, maxValue, minValue, biomol);
     }
 
     @Override

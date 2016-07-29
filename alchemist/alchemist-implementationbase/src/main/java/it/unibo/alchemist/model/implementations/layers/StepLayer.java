@@ -23,7 +23,7 @@ public class StepLayer<T> implements Layer<T> {
      * @param minValue 
      * @param maxValue
      */
-    public StepLayer(final double mx, final double my, final T minValue, final T maxValue) {
+    public StepLayer(final double mx, final double my, final T maxValue, final T minValue) {
         maxx = mx;
         maxy = my;
         highValue = maxValue;

@@ -10,9 +10,11 @@ package it.unibo.alchemist.model.implementations.environments;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -44,6 +46,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     private final TIntObjectHashMap<Node<T>> nodes = new TIntObjectHashMap<Node<T>>();
     private String separator = System.getProperty("line.separator");
     private final SpatialIndex<Node<T>> spatialIndex;
+    private final List<Layer<T>> layerList = new ArrayList<>();
 
     /**
      * @param internalIndex
@@ -244,5 +247,20 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     @Override
     public Spliterator<Node<T>> spliterator() {
         return getNodes().spliterator();
+    }
+
+    @Override
+    public void addLayer(final Layer<T> l) {
+        layerList.add(l);
+    }
+
+    @Override
+    public void removeLayer(final Layer<T> l) {
+        layerList.remove(l);
+    }
+
+    @Override
+    public List<Layer<T>> getLayers() {
+        return layerList;
     }
 }

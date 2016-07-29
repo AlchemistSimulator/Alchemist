@@ -486,6 +486,12 @@ public class YamlLoader implements Loader, Serializable {
                             final Molecule mol = makeMolecule(content, actualVars, simRandom, currIncarnation, env, node);
                             node.setConcentration(mol, makeConcentration(content, actualVars, simRandom, currIncarnation, env, node));
                         }
+                        /* Comm01: nel caso di modifiche, queste andrebbero fatte qui. 
+                         * Si dovrebbe aggiungere un content.get(SPATIAL_DISTRIBUTION),
+                         * forse un metodo makeSpatialDistribution, 
+                         * un controllo per vedere se il nodo in cui si sta settando
+                         * la distribuzione la può supportare.
+                        */
                     }
                     for (final Map<String, Object> program: programs) {
                         final TimeDistribution<T> td = makeTimeDistribution(program, actualVars, simRandom, currIncarnation, env, node);

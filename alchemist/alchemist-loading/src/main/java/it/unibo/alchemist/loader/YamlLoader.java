@@ -37,7 +37,9 @@ import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 
 import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.loader.displacements.Displacement;
@@ -51,6 +53,7 @@ import it.unibo.alchemist.loader.variables.DependentVariable;
 import it.unibo.alchemist.loader.variables.LinearVariable;
 import it.unibo.alchemist.loader.variables.Variable;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
+import it.unibo.alchemist.model.implementations.layers.EmptyLayer;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
@@ -58,6 +61,7 @@ import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
+import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.LinkingRule;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -94,6 +98,8 @@ public class YamlLoader implements Loader, Serializable {
     private static final String FORMULA = SYNTAX.getString("formula");
     private static final String IN = SYNTAX.getString("in");
     private static final String INCARNATION = SYNTAX.getString("incarnation");
+    private static final String LAYERS = SYNTAX.getString("layers");
+    private static final String LAYERS_PACKAGE_ROOT = "it.unibo.alchemist.model.implementations.layers.";
     private static final String LINKING_PACKAGE_ROOT = "it.unibo.alchemist.model.implementations.linkingrules.";
     private static final String LINKING_RULE = SYNTAX.getString("linking-rule");
     private static final String MIN = SYNTAX.getString("min");
@@ -132,6 +138,9 @@ public class YamlLoader implements Loader, Serializable {
     @SuppressWarnings({ UNCHECKED, "rawtypes" })
     private static final Class<? extends LinkingRule<?>> DEFAULT_LINKING_CLASS =
         (Class<? extends LinkingRule<?>>) (Class<? extends LinkingRule>) NoLinks.class;
+    @SuppressWarnings({ UNCHECKED, "rawtypes" })
+    private static final Class<? extends Layer<?>> DEFAULT_LAYER_CLASS =
+            (Class<? extends Layer<?>>) (Class<? extends Layer>) EmptyLayer.class;
     private static final Class<? extends Position> DEFAULT_POSITION_CLASS = Continuous2DEuclidean.class;
     private static final Shape IN_ALL = (p) -> true;
 
@@ -146,6 +155,7 @@ public class YamlLoader implements Loader, Serializable {
     private final Class<? extends LinkingRule<?>> linkingClass;
     private final List<?> envArgs;
     private final List<?> linkingArgs;
+    private final Multimap<Class<? extends Layer<?>>, List<?>> layersMap = ArrayListMultimap.create();
 
     private final List<Map<String, Object>> displacements;
 
@@ -247,6 +257,21 @@ public class YamlLoader implements Loader, Serializable {
             envClass = extractClass(envYaml, ENV_PACKAGE_ROOT, DEFAULT_ENVIRONMENT_CLASS);
             envArgs = extractParams(envYaml);
             L.trace("Environment parameters: {}", envArgs);
+            // prendo la chiave layers da envYaml, se c'è.
+            if (envYaml.containsKey(LAYERS)) {
+                final Object layersObj = envYaml.get(LAYERS);
+                // se è una lista metto tutte le classi e i parametri in una mappa
+                if (layersObj instanceof List) {
+                    final List<Map<String, Object>> layersList = (List<Map<String, Object>>) envYaml.get(LAYERS);
+                    for (final Map<String, Object> layer : layersList) {
+                        layersMap.put(extractClass(layer, LAYERS_PACKAGE_ROOT, DEFAULT_LAYER_CLASS),
+                                extractParams(layer));
+                    }
+                } else { // altrimenti uso quelli di default
+                    missingPart(LAYERS, DEFAULT_LAYER_CLASS.getName());
+                    layersMap.put(DEFAULT_LAYER_CLASS, Collections.emptyList());
+                }
+            }
         } else {
             missingPart(ENVIRONMENT, DEFAULT_ENVIRONMENT_CLASS.getName());
             envClass = DEFAULT_ENVIRONMENT_CLASS;
@@ -422,6 +447,9 @@ public class YamlLoader implements Loader, Serializable {
         final LinkingRule<T> linking = (LinkingRule<T>) create(linkingClass, linkingArgs, incarnation, actualVars, scenarioRandom, env);
         L.debug("Linking rule is: {}", linking);
         env.setLinkingRule(Objects.requireNonNull(linking, "The linking rule can not be null."));
+        // aggiunge i layer all'environment 
+        layersMap.entries().stream()
+        .forEach(e -> env.addLayer((Layer<T>) create(e.getKey(), e.getValue(), incarnation, actualVars)));
         final PositionMaker pmaker = new PositionMaker(posClass);
         final Incarnation<T> currIncarnation = (Incarnation<T>) incarnation;
         for (final Map<String, Object> displacement : displacements) {

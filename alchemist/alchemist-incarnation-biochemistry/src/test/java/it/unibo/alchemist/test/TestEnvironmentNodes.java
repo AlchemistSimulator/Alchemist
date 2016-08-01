@@ -37,7 +37,7 @@ import it.unibo.alchemist.model.interfaces.Node;
  *
  */
 public class TestEnvironmentNodes {
-    
+
     private static final Logger L = LoggerFactory.getLogger(BiochemicalReactionBuilder.class);
 
     /**

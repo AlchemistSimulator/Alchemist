@@ -21,30 +21,28 @@ public class ChemiotaxisMove extends AbstractMoveNode<Double> {
     private final boolean ascendent;
     private final Biomolecule biomolecule;
 
+    /**
+     * Initialize a ChemiotaxisMove.
+     * @param environment the {@link Environment} where the node is.
+     * @param node the {@link Node} containign this {@link Action}.
+     * @param step 
+     * @param ascendent
+     * @param biomol
+     */
     public ChemiotaxisMove(Environment<Double> environment, 
             final Node<Double> node, 
             final double step, 
             final boolean ascendent, 
-            final Biomolecule biomol) {
+            final String biomol) {
         super(environment, node);
         this.step = step;
         this.ascendent = ascendent;
-        biomolecule = biomol;
-    }
-
-    public ChemiotaxisMove(Environment<Double> environment, 
-            final Node<Double> node, 
-            final double step, 
-            final boolean ascendent) {
-        super(environment, node);
-        this.step = step;
-        this.ascendent = ascendent;
-        biomolecule = new Biomolecule("B");
+        biomolecule = new Biomolecule(biomol);
     }
 
     @Override
     public Action<Double> cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
-        return new ChemiotaxisMove(getEnvironment(), getNode(), step, ascendent, biomolecule);
+        return new ChemiotaxisMove(getEnvironment(), getNode(), step, ascendent, biomolecule.toString());
     }
 
     @Override

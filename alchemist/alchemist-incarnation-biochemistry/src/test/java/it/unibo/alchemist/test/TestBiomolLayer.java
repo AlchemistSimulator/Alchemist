@@ -11,6 +11,7 @@ import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment;
+import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironmentNoOverlap;
 import it.unibo.alchemist.model.implementations.layers.BiomolGradientLayer;
 import it.unibo.alchemist.model.implementations.layers.BiomolStepLayer;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
@@ -104,6 +105,56 @@ public class TestBiomolLayer {
     @Test
     public void testBiomolGradientLayer() {
         final Environment<Double> env = new BioRect2DEnvironment();
+        final Position direction = new Continuous2DEuclidean(0, 1);
+        final Biomolecule b = new Biomolecule("B");
+        final BiomolLayer bgLayer = new BiomolGradientLayer(direction, 1, 0, b);
+        final CellNode cellNode = new CellNodeImpl(env);
+        final MersenneTwister rand = new MersenneTwister(0);
+        final Reaction<Double> underTest = INCARNATION.createReaction(
+                rand, env, cellNode,
+                INCARNATION.createTimeDistribution(rand, env, cellNode, "1"),
+                "[] --> [ChemiotaxisMove(1, true, B)]"
+                );
+        cellNode.addReaction(underTest);
+        env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.EuclideanDistance<>(2));
+        env.addNode(cellNode, new Continuous2DEuclidean(0, 0));
+        env.addLayer(bgLayer);
+
+        final Simulation<Double> sim = new Engine<>(env, 1000);
+        sim.addCommand(new Engine.StateCommand<Double>().run().build());
+        sim.addOutputMonitor(new OutputMonitor<Double>() {
+
+            /**
+             * 
+             */
+            private static final long serialVersionUID = 5946592128892608552L;
+            private int i = 0;
+
+            @Override
+            public void stepDone(final Environment<Double> env, final Reaction<Double> r, final Time time, final long step) {
+                assertEquals(new Continuous2DEuclidean(0, i), env.getPosition(cellNode));
+                i++;
+            }
+
+            @Override
+            public void initialized(final Environment<Double> env) {
+                assertEquals(new Continuous2DEuclidean(0, 0), env.getPosition(env.getNodes().stream().findAny().get()));
+            }
+
+            @Override
+            public void finished(final Environment<Double> env, final Time time, final long step) {
+                assertEquals(new Continuous2DEuclidean(0, 1000), env.getPosition(env.getNodes().stream().findAny().get()));
+            }
+        });
+        sim.run();
+    }
+    
+    /**
+     * 
+     */
+    @Test
+    public void testBiomolGradientLayerWithCircularCells() {
+        final Environment<Double> env = new BioRect2DEnvironmentNoOverlap();
         final Position direction = new Continuous2DEuclidean(0, 1);
         final Biomolecule b = new Biomolecule("B");
         final BiomolLayer bgLayer = new BiomolGradientLayer(direction, 1, 0, b);

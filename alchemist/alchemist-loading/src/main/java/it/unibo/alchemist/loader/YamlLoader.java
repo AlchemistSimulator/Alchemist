@@ -257,20 +257,23 @@ public class YamlLoader implements Loader, Serializable {
             envClass = extractClass(envYaml, ENV_PACKAGE_ROOT, DEFAULT_ENVIRONMENT_CLASS);
             envArgs = extractParams(envYaml);
             L.trace("Environment parameters: {}", envArgs);
-            // prendo la chiave layers da envYaml, se c'è.
+            // if envYaml contains LAYERS key 
             if (envYaml.containsKey(LAYERS)) {
+                // get its value;
                 final Object layersObj = envYaml.get(LAYERS);
-                // se è una lista metto tutte le classi e i parametri in una mappa
+                // if layersObj is a list
                 if (layersObj instanceof List) {
+                    // extract classes and parameter from the list and put them inside layersMap.
                     final List<Map<String, Object>> layersList = (List<Map<String, Object>>) envYaml.get(LAYERS);
                     for (final Map<String, Object> layer : layersList) {
                         layersMap.put(extractClass(layer, LAYERS_PACKAGE_ROOT, DEFAULT_LAYER_CLASS),
                                 extractParams(layer));
                     }
-                } else { // altrimenti uso quelli di default
-                    missingPart(LAYERS, DEFAULT_LAYER_CLASS.getName());
-                    layersMap.put(DEFAULT_LAYER_CLASS, Collections.emptyList());
+                } else {
+                    L.warn("'layers' key should be associated to a List. No layers will be added to " + envClass);
                 }
+            } else {
+                L.info("'layers' key not found in environment. The " + envClass + " won't contain any layer.");
             }
         } else {
             missingPart(ENVIRONMENT, DEFAULT_ENVIRONMENT_CLASS.getName());
@@ -447,9 +450,11 @@ public class YamlLoader implements Loader, Serializable {
         final LinkingRule<T> linking = (LinkingRule<T>) create(linkingClass, linkingArgs, incarnation, actualVars, scenarioRandom, env);
         L.debug("Linking rule is: {}", linking);
         env.setLinkingRule(Objects.requireNonNull(linking, "The linking rule can not be null."));
-        // aggiunge i layer all'environment 
-        layersMap.entries().stream()
-        .forEach(e -> env.addLayer((Layer<T>) create(e.getKey(), e.getValue(), incarnation, actualVars)));
+        // add layers to the environment.
+        if (!layersMap.isEmpty()) {
+            layersMap.entries().stream()
+            .forEach(e -> env.addLayer((Layer<T>) create(e.getKey(), e.getValue(), incarnation, actualVars)));
+        }
         final PositionMaker pmaker = new PositionMaker(posClass);
         final Incarnation<T> currIncarnation = (Incarnation<T>) incarnation;
         for (final Map<String, Object> displacement : displacements) {

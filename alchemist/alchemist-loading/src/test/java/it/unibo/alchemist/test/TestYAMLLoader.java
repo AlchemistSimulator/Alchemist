@@ -64,17 +64,20 @@ public class TestYAMLLoader {
                 "Node are not instances of " + TestNode.class.getName() + " as expected, but " + n.getClass().getName() + " instead",
                 n instanceof TestNode));
     }
-    
+
+    /**
+     * Test loading layer classes.
+     */
     @Test
     public void testLayers() {
-        Set<Layer<Object>> layers= testNoVar("/synthetic/testlayer.yml").getLayers();
+        final Set<Layer<Object>> layers = testNoVar("/synthetic/testlayer.yml").getLayers();
         assertFalse(layers.isEmpty());
-        assertEquals(3l, layers.stream()
+        assertEquals(3L, layers.stream()
                 .count());
-        assertEquals(2l, layers.stream()
+        assertEquals(2L, layers.stream()
                 .filter(l -> l instanceof StepLayer)
                 .count());
-        assertEquals(1l, layers.stream()
+        assertEquals(1L, layers.stream()
                 .filter(l -> l instanceof EmptyLayer)
                 .count());
     }

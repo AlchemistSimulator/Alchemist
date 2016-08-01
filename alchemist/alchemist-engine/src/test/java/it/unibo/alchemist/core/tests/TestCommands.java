@@ -421,13 +421,7 @@ public class TestCommands {
         }
 
         @Override
-        public void removeLayer(final Layer<Object> l) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public List<Layer<Object>> getLayers() {
+        public Set<Layer<Object>> getLayers() {
             // TODO Auto-generated method stub
             return null;
         }

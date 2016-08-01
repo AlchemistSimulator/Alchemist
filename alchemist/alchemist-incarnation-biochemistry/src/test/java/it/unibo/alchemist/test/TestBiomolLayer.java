@@ -70,7 +70,6 @@ public class TestBiomolLayer {
             @Override
             public void stepDone(final Environment<Double> env, final Reaction<Double> r, final Time time, final long step) {
                 final Position curPos = env.getPosition(env.getNodes().stream().findAny().get());
-                System.out.println(curPos);
                 if (curPos.getCoordinate(0) >= 0 && curPos.getCoordinate(1) >= 0) {
                     schedulability(true);
                 } else {

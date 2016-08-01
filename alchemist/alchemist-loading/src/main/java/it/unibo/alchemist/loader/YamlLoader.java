@@ -261,7 +261,7 @@ public class YamlLoader implements Loader, Serializable {
             if (envYaml.containsKey(LAYERS)) {
                 // get its value;
                 final Object layersObj = envYaml.get(LAYERS);
-                // if layersObj is a list
+                // if layersObj is a List
                 if (layersObj instanceof List) {
                     // extract classes and parameter from the list and put them inside layersMap.
                     final List<Map<String, Object>> layersList = (List<Map<String, Object>>) envYaml.get(LAYERS);

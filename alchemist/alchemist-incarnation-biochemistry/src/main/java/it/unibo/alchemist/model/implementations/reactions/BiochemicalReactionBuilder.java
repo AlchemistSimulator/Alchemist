@@ -534,7 +534,7 @@ public class BiochemicalReactionBuilder {
             for (final BiochemicalReactionRightElemContext re : ctx.biochemicalReactionRightElem()) {
                 if (re.biomolecule() != null) {
                     final Biomolecule biomol = createBiomolecule(re.biomolecule());
-                    final double concentration = createConcentration(re.biomolecule());  
+                    final double concentration = createConcentration(re.biomolecule());
                     actionList.add(new ChangeBiomolConcentrationInEnv(node, biomol, concentration, env));
                 } else if (re.javaConstructor() != null) {
                     actionList.add(createObject(re.javaConstructor(), ACTIONS_PACKAGE, currentInc, rand, node, time, env, reaction));

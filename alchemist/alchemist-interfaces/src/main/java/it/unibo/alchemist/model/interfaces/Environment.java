@@ -13,6 +13,8 @@ package it.unibo.alchemist.model.interfaces;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The type which describes the concentration of a molecule
@@ -192,5 +194,17 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
      * @return the current linking rule
      */
     LinkingRule<T> getLinkingRule();
+
+    /**
+     * Add a {@link Layer} to the {@link Environment}.
+     * @param l the {@link Layer}
+     */
+    void addLayer(Layer<T> l);
+
+    /**
+     * Return all the Layers in this {@link Environment}.
+     * @return a {@link List} of {@link Layer}.
+     */
+    Set<Layer<T>> getLayers();
 
 }

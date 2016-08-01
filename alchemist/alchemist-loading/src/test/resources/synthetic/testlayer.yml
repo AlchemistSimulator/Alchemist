@@ -1,0 +1,12 @@
+incarnation: sapere
+
+environment:
+  type: Continuous2DEnvironment
+  parameters: []
+  layers:
+    - type: StepLayer
+      parameters: [2, 2, 100, 0]
+    - type: StepLayer
+      parameters: [-2, -2, 0, 100]
+    - type: EmptyLayer
+      parameters: []

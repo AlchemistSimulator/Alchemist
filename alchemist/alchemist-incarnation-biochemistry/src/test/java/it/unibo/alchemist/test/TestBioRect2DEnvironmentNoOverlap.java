@@ -1,5 +1,6 @@
 package it.unibo.alchemist.test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -14,7 +15,7 @@ import org.apache.commons.math3.util.FastMath;
 import org.junit.Before;
 import org.junit.Test;
 
-
+import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.loader.YamlLoader;
@@ -22,9 +23,12 @@ import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironmen
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
 import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
+import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.Time;
 
 /**
  *
@@ -260,6 +264,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
     /**
      * 
      */
+    @Test
     public void testMoveNode8() {
         // test8
         final CellWithCircularArea cellToMove8 = new CellNodeImpl(env, STANDARD_DIAMETER);
@@ -500,32 +505,47 @@ public class TestBioRect2DEnvironmentNoOverlap {
      */
     @Test
     public void testNoOverlapInSimulation() {
-        System.out.println(System.getProperty("user.dir"));
-        Environment<Double> enviro = testNoVar("/provaBCReaction.yml");
-        enviro.getNodes().stream()
-          .flatMap(n -> n instanceof CellWithCircularArea ? Stream.of((CellWithCircularArea) n) : Stream.empty())
-          .forEach(n -> assertFalse(enviro.getNodesWithinRange(n, n.getRadius()).stream()
-                  .findAny()
-                  .isPresent()));
+        testNoVar("/provaBCReaction.yml");;
     }
 
 
-    private static <T> Environment<T> testNoVar(final String resource) {
-        Environment<T> enviro = testLoading(resource, Collections.emptyMap());
-        return enviro;
+    private static void testNoVar(final String resource) {
+        testLoading(resource, Collections.emptyMap());
     }
 
-    private static <T> Environment<T> testLoading(final String resource, final Map<String, Double> vars) {
+    private static void testLoading(final String resource, final Map<String, Double> vars) {
         final InputStream res = TestBioRect2DEnvironmentNoOverlap.class.getResourceAsStream(resource);
         assertNotNull("Missing test resource " + resource, res);
-        final Environment<T> env = new YamlLoader(res).getWith(vars);
-        final Simulation<T> sim = new Engine<>(env, 10000);
-        sim.addCommand(new Engine.StateCommand<T>().run().build());
+        final Environment<Double> env = new YamlLoader(res).getWith(vars);
+        final Simulation<Double> sim = new Engine<>(env, 10000);
+        sim.addCommand(new Engine.StateCommand<Double>().run().build());
         //            if (!java.awt.GraphicsEnvironment.isHeadless()) {
         //                it.unibo.alchemist.boundary.gui.SingleRunGUI.make(sim);
         //            }
         sim.run();
-        return env;
+        sim.addOutputMonitor(new OutputMonitor<Double>() {
+            @Override
+            public void stepDone(Environment<Double> env, Reaction<Double> r, Time time, long step) {
+                thereIsOverlap();
+            }
+            
+            @Override
+            public void initialized(Environment<Double> env) {
+                thereIsOverlap();
+            }
+            
+            @Override
+            public void finished(Environment<Double> env, Time time, long step) {
+                thereIsOverlap();
+            }
+            private void thereIsOverlap() {
+                env.getNodes().stream()
+                .filter(n -> n instanceof CellWithCircularArea)
+                .forEach(n -> assertFalse(env.getNodesWithinRange(n, ((CellWithCircularArea) n).getRadius()).stream()
+                        .findAny()
+                        .isPresent()));
+            }
+        });
     }
 
 

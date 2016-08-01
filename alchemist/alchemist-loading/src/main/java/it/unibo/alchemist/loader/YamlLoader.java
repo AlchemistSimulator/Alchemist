@@ -37,7 +37,9 @@ import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 
 import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.loader.displacements.Displacement;
@@ -51,6 +53,7 @@ import it.unibo.alchemist.loader.variables.DependentVariable;
 import it.unibo.alchemist.loader.variables.LinearVariable;
 import it.unibo.alchemist.loader.variables.Variable;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
+import it.unibo.alchemist.model.implementations.layers.EmptyLayer;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
@@ -58,6 +61,7 @@ import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
+import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.LinkingRule;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -94,6 +98,8 @@ public class YamlLoader implements Loader, Serializable {
     private static final String FORMULA = SYNTAX.getString("formula");
     private static final String IN = SYNTAX.getString("in");
     private static final String INCARNATION = SYNTAX.getString("incarnation");
+    private static final String LAYERS = SYNTAX.getString("layers");
+    private static final String LAYERS_PACKAGE_ROOT = "it.unibo.alchemist.model.implementations.layers.";
     private static final String LINKING_PACKAGE_ROOT = "it.unibo.alchemist.model.implementations.linkingrules.";
     private static final String LINKING_RULE = SYNTAX.getString("linking-rule");
     private static final String MIN = SYNTAX.getString("min");
@@ -132,6 +138,9 @@ public class YamlLoader implements Loader, Serializable {
     @SuppressWarnings({ UNCHECKED, "rawtypes" })
     private static final Class<? extends LinkingRule<?>> DEFAULT_LINKING_CLASS =
         (Class<? extends LinkingRule<?>>) (Class<? extends LinkingRule>) NoLinks.class;
+    @SuppressWarnings({ UNCHECKED, "rawtypes" })
+    private static final Class<? extends Layer<?>> DEFAULT_LAYER_CLASS =
+            (Class<? extends Layer<?>>) (Class<? extends Layer>) EmptyLayer.class;
     private static final Class<? extends Position> DEFAULT_POSITION_CLASS = Continuous2DEuclidean.class;
     private static final Shape IN_ALL = (p) -> true;
 
@@ -146,6 +155,7 @@ public class YamlLoader implements Loader, Serializable {
     private final Class<? extends LinkingRule<?>> linkingClass;
     private final List<?> envArgs;
     private final List<?> linkingArgs;
+    private final Multimap<Class<? extends Layer<?>>, List<?>> layersMap = ArrayListMultimap.create();
 
     private final List<Map<String, Object>> displacements;
 
@@ -247,6 +257,24 @@ public class YamlLoader implements Loader, Serializable {
             envClass = extractClass(envYaml, ENV_PACKAGE_ROOT, DEFAULT_ENVIRONMENT_CLASS);
             envArgs = extractParams(envYaml);
             L.trace("Environment parameters: {}", envArgs);
+            // if envYaml contains LAYERS key 
+            if (envYaml.containsKey(LAYERS)) {
+                // get its value;
+                final Object layersObj = envYaml.get(LAYERS);
+                // if layersObj is a List
+                if (layersObj instanceof List) {
+                    // extract classes and parameter from the list and put them inside layersMap.
+                    final List<Map<String, Object>> layersList = (List<Map<String, Object>>) envYaml.get(LAYERS);
+                    for (final Map<String, Object> layer : layersList) {
+                        layersMap.put(extractClass(layer, LAYERS_PACKAGE_ROOT, DEFAULT_LAYER_CLASS),
+                                extractParams(layer));
+                    }
+                } else {
+                    L.warn("'layers' key should be associated to a List. No layers will be added to " + envClass);
+                }
+            } else {
+                L.info("'layers' key not found in environment. The " + envClass + " won't contain any layer.");
+            }
         } else {
             missingPart(ENVIRONMENT, DEFAULT_ENVIRONMENT_CLASS.getName());
             envClass = DEFAULT_ENVIRONMENT_CLASS;
@@ -422,6 +450,11 @@ public class YamlLoader implements Loader, Serializable {
         final LinkingRule<T> linking = (LinkingRule<T>) create(linkingClass, linkingArgs, incarnation, actualVars, scenarioRandom, env);
         L.debug("Linking rule is: {}", linking);
         env.setLinkingRule(Objects.requireNonNull(linking, "The linking rule can not be null."));
+        // add layers to the environment.
+        if (!layersMap.isEmpty()) {
+            layersMap.entries().stream()
+            .forEach(e -> env.addLayer((Layer<T>) create(e.getKey(), e.getValue(), incarnation, actualVars)));
+        }
         final PositionMaker pmaker = new PositionMaker(posClass);
         final Incarnation<T> currIncarnation = (Incarnation<T>) incarnation;
         for (final Map<String, Object> displacement : displacements) {
@@ -486,6 +519,12 @@ public class YamlLoader implements Loader, Serializable {
                             final Molecule mol = makeMolecule(content, actualVars, simRandom, currIncarnation, env, node);
                             node.setConcentration(mol, makeConcentration(content, actualVars, simRandom, currIncarnation, env, node));
                         }
+                        /* Comm01: nel caso di modifiche, queste andrebbero fatte qui. 
+                         * Si dovrebbe aggiungere un content.get(SPATIAL_DISTRIBUTION),
+                         * forse un metodo makeSpatialDistribution, 
+                         * un controllo per vedere se il nodo in cui si sta settando
+                         * la distribuzione la può supportare.
+                        */
                     }
                     for (final Map<String, Object> program: programs) {
                         final TimeDistribution<T> td = makeTimeDistribution(program, actualVars, simRandom, currIncarnation, env, node);

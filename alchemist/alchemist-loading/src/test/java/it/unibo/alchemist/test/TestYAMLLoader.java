@@ -1,11 +1,14 @@
 package it.unibo.alchemist.test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.junit.Test;
@@ -17,7 +20,10 @@ import org.reflections.util.ConfigurationBuilder;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.loader.YamlLoader;
+import it.unibo.alchemist.model.implementations.layers.EmptyLayer;
+import it.unibo.alchemist.model.implementations.layers.StepLayer;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.test.util.TestNode;
 
 /**
@@ -57,6 +63,23 @@ public class TestYAMLLoader {
         .forEach(n -> assertTrue(
                 "Node are not instances of " + TestNode.class.getName() + " as expected, but " + n.getClass().getName() + " instead",
                 n instanceof TestNode));
+    }
+
+    /**
+     * Test loading layer classes.
+     */
+    @Test
+    public void testLayers() {
+        final Set<Layer<Object>> layers = testNoVar("/synthetic/testlayer.yml").getLayers();
+        assertFalse(layers.isEmpty());
+        assertEquals(3L, layers.stream()
+                .count());
+        assertEquals(2L, layers.stream()
+                .filter(l -> l instanceof StepLayer)
+                .count());
+        assertEquals(1L, layers.stream()
+                .filter(l -> l instanceof EmptyLayer)
+                .count());
     }
 
     private static <T> Environment<T> testNoVar(final String resource) {

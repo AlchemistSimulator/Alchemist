@@ -8,16 +8,13 @@
  */
 package it.unibo.alchemist.model.implementations.environments;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
-
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -25,6 +22,12 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.danilopianini.lang.SpatialIndex;
+
+import gnu.trove.map.hash.TIntObjectHashMap;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Layer;
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * Very generic and basic implementation for an environment. Basically, only
@@ -44,6 +47,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     private final TIntObjectHashMap<Node<T>> nodes = new TIntObjectHashMap<Node<T>>();
     private String separator = System.getProperty("line.separator");
     private final SpatialIndex<Node<T>> spatialIndex;
+    private final Set<Layer<T>> layerSet = new HashSet<>();
 
     /**
      * @param internalIndex
@@ -244,5 +248,15 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     @Override
     public Spliterator<Node<T>> spliterator() {
         return getNodes().spliterator();
+    }
+
+    @Override
+    public void addLayer(final Layer<T> l) {
+        layerSet.add(l);
+    }
+
+    @Override
+    public Set<Layer<T>> getLayers() {
+        return layerSet;
     }
 }

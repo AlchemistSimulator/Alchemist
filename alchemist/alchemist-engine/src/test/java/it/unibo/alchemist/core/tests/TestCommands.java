@@ -28,6 +28,7 @@ import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.LinkingRule;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
@@ -411,6 +412,18 @@ public class TestCommands {
         @Override
         public LinkingRule<Object> getLinkingRule() {
             throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void addLayer(final Layer<Object> l) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public Set<Layer<Object>> getLayers() {
+            // TODO Auto-generated method stub
+            return null;
         }
 
     }

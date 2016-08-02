@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
@@ -37,9 +38,8 @@ import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import com.google.common.base.Charsets;
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
+
 
 import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.loader.displacements.Displacement;
@@ -151,7 +151,7 @@ public class YamlLoader implements Loader, Serializable {
     private final Class<? extends LinkingRule<?>> linkingClass;
     private final List<?> envArgs;
     private final List<?> linkingArgs;
-    private final Multimap<Class<? extends Layer<?>>, List<?>> layersMap = ArrayListMultimap.create();
+    private List<?> layersList = new ArrayList<>();
 
     private final List<Map<String, Object>> displacements;
 
@@ -260,20 +260,12 @@ public class YamlLoader implements Loader, Serializable {
                 // if layersObj is a List
                 if (layersObj instanceof List) {
                     // extract classes and parameter from the list and put them inside layersMap.
-                    final List<Map<String, Object>> layersList = (List<Map<String, Object>>) envYaml.get(LAYERS);
-                    for (final Map<String, Object> layer : layersList) {
-                        final Optional<Class<Object>> classOp = extractClassIfDeclared(layer, LAYERS_PACKAGE_ROOT);
-                        if (classOp.isPresent()) {
-                            layersMap.put((Class<? extends Layer<?>>) classOp.get(), extractParams(layer));
-                        } else {
-                            L.warn("Layer class not found. This layer won't be added to the environment.");
-                        }
-                    }
+                    layersList = (List<?>) envYaml.get(LAYERS);
                 } else {
-                    L.warn("'layers' key should be associated to a List. No layers will be added to " + envClass);
+                    throw new IllegalAlchemistYAMLException(layersObj + " is not a valid layer list");
                 }
             } else {
-                L.info("'layers' key not found in environment. The " + envClass + " won't contain any layer.");
+                L.info("\"" + LAYERS + "\" key not found in environment. The " + envClass + " won't contain any layer.");
             }
         } else {
             missingPart(ENVIRONMENT, DEFAULT_ENVIRONMENT_CLASS.getName());
@@ -450,13 +442,31 @@ public class YamlLoader implements Loader, Serializable {
         final LinkingRule<T> linking = (LinkingRule<T>) create(linkingClass, linkingArgs, incarnation, actualVars, scenarioRandom, env);
         L.debug("Linking rule is: {}", linking);
         env.setLinkingRule(Objects.requireNonNull(linking, "The linking rule can not be null."));
-        // add layers to the environment.
-        if (!layersMap.isEmpty()) {
-            layersMap.entries().stream()
-            .forEach(e -> env.addLayer((Layer<T>) create(e.getKey(), e.getValue(), incarnation, actualVars)));
-        }
         final PositionMaker pmaker = new PositionMaker(posClass);
         final Incarnation<T> currIncarnation = (Incarnation<T>) incarnation;
+        // add layers to the environment.
+        if (!layersList.isEmpty()) {
+            for (final Object layerObj: layersList) {
+                if (layerObj instanceof Map) {
+                    final Map<String, Object> layer = (Map<String, Object>) layerObj;
+                    if (layer.containsKey(MOLECULE) && layer.get(MOLECULE) instanceof String) {
+                        final Molecule molecule = currIncarnation.createMolecule((String) layer.get(MOLECULE));
+                        Class<? extends Layer<T>> layClass;
+                        if (extractClassIfDeclared(layer, LAYERS_PACKAGE_ROOT).isPresent()) {
+                            layClass = (Class<? extends Layer<T>>) extractClassIfDeclared(layer, LAYERS_PACKAGE_ROOT).get();
+                        } else {
+                            throw new IllegalAlchemistYAMLException(layerObj + " is not a valid layer description: layer class missing or invald layer class name");
+                        }
+                        final List<?> layArgs = extractParams(layer);
+                        env.addLayer(molecule, create(layClass, layArgs));
+                    } else {
+                        throw new IllegalAlchemistYAMLException(layerObj + " is not a valid layer description: molecule missing or invald molecule name");
+                    }
+                } else {
+                    throw new IllegalAlchemistYAMLException(layerObj + " is not a valid layer description");
+                }
+            }
+        }
         for (final Map<String, Object> displacement : displacements) {
             final Map<String, Object> displacementShapeMap = (Map<String, Object>) displacement.get(IN);
             final Class<Displacement> displacementClass = extractClass(displacementShapeMap, DISPLACEMENTS_PACKAGE_ROOT, null);

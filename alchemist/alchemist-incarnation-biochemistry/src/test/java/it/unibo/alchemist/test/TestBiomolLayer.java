@@ -18,10 +18,10 @@ import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.implementations.timedistributions.DiracComb;
-import it.unibo.alchemist.model.interfaces.BiomolLayer;
 import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
+import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
@@ -42,7 +42,7 @@ public class TestBiomolLayer {
     public void testBiomolStepLayer() {
         final Environment<Double> env = new BioRect2DEnvironment();
         final Biomolecule b = new Biomolecule("B");
-        final BiomolLayer bLayer = new BiomolStepLayer(100d, 0d, b);
+        final Layer<Double> bLayer = new BiomolStepLayer(100d, 0d);
         final CellNode cellNode = new CellNodeImpl(env);
         final MersenneTwister rand = new MersenneTwister(0);
         final Molecule a = new Biomolecule("A");
@@ -58,7 +58,7 @@ public class TestBiomolLayer {
         cellNode.setConcentration(a, 0d);
         env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.EuclideanDistance<>(2));
         env.addNode(cellNode, new Continuous2DEuclidean(0, 0));
-        env.addLayer(bLayer);
+        env.addLayer(b, bLayer);
 
         final Simulation<Double> sim = new Engine<>(env, 3000);
         sim.addCommand(new Engine.StateCommand<Double>().run().build());
@@ -107,7 +107,7 @@ public class TestBiomolLayer {
         final Environment<Double> env = new BioRect2DEnvironment();
         final Position direction = new Continuous2DEuclidean(0, 1);
         final Biomolecule b = new Biomolecule("B");
-        final BiomolLayer bgLayer = new BiomolGradientLayer(direction, 1, 0, b);
+        final Layer<Double> bgLayer = new BiomolGradientLayer(direction, 1, 0);
         final CellNode cellNode = new CellNodeImpl(env);
         final MersenneTwister rand = new MersenneTwister(0);
         final Reaction<Double> underTest = INCARNATION.createReaction(
@@ -118,7 +118,7 @@ public class TestBiomolLayer {
         cellNode.addReaction(underTest);
         env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.EuclideanDistance<>(2));
         env.addNode(cellNode, new Continuous2DEuclidean(0, 0));
-        env.addLayer(bgLayer);
+        env.addLayer(b, bgLayer);
 
         final Simulation<Double> sim = new Engine<>(env, 1000);
         sim.addCommand(new Engine.StateCommand<Double>().run().build());
@@ -148,27 +148,27 @@ public class TestBiomolLayer {
         });
         sim.run();
     }
-    
+
     /**
-     * 
+     * Useless
      */
     @Test
     public void testBiomolGradientLayerWithCircularCells() {
         final Environment<Double> env = new BioRect2DEnvironmentNoOverlap();
         final Position direction = new Continuous2DEuclidean(0, 1);
         final Biomolecule b = new Biomolecule("B");
-        final BiomolLayer bgLayer = new BiomolGradientLayer(direction, 1, 0, b);
+        final Layer<Double> bgLayer = new BiomolGradientLayer(direction, 1, 0);
         final CellNode cellNode = new CellNodeImpl(env);
         final MersenneTwister rand = new MersenneTwister(0);
         final Reaction<Double> underTest = INCARNATION.createReaction(
                 rand, env, cellNode,
                 INCARNATION.createTimeDistribution(rand, env, cellNode, "1"),
-                "[] --> [ChemiotaxisMove(1, true)]"
+                "[] --> [ChemiotaxisMove(1, true, B)]"
                 );
         cellNode.addReaction(underTest);
         env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.EuclideanDistance<>(2));
         env.addNode(cellNode, new Continuous2DEuclidean(0, 0));
-        env.addLayer(bgLayer);
+        env.addLayer(b, bgLayer);
 
         final Simulation<Double> sim = new Engine<>(env, 1000);
         sim.addCommand(new Engine.StateCommand<Double>().run().build());

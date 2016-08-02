@@ -15,7 +15,6 @@ import org.apache.commons.math3.util.CombinatoricsUtils;
 import org.apache.commons.math3.util.FastMath;
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
-import it.unibo.alchemist.model.interfaces.BiomolLayer;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
@@ -51,17 +50,14 @@ public class BiomolPresentInEnv extends GenericMoleculePresent<Double> {
 
     @Override
     public double getPropensityConditioning() {
-        if (getEnviromentNodesSurrounding().isEmpty() && getBiomolLayers().isEmpty()) {
-            return 0;
+        double quantityInEnvNodes = 0;
+        if (!getEnviromentNodesSurrounding().isEmpty()){
+            quantityInEnvNodes = getEnviromentNodesSurrounding().stream()
+                    .parallel()
+                    .mapToDouble(n -> n.getConcentration(getBiomolecule()))
+                    .sum();
         }
-        final double quantityInEnvNodes = getEnviromentNodesSurrounding().stream()
-                .parallel()
-                .mapToDouble(n -> n.getConcentration(getBiomolecule()))
-                .sum();
-        final double quantityInLayers = getBiomolLayers().stream()
-                .parallel()
-                .mapToDouble(l -> l.getValue(environment.getPosition(getNode())))
-                .sum();
+        final double quantityInLayers = environment.getLayer(getBiomolecule()).getValue(environment.getPosition(getNode()));
         final double totalQuantity = quantityInEnvNodes + quantityInLayers;
         if (totalQuantity < getQuantity()) {
             return 0;
@@ -70,17 +66,6 @@ public class BiomolPresentInEnv extends GenericMoleculePresent<Double> {
                 (int) FastMath.round(totalQuantity), 
                 (int) FastMath.round(getQuantity())
                 );
-    }
-
-    /**
-     * 
-     * @return a {@link List} of {@link BiomolLayer} containing the {@link Biomolecule} of this condition.
-     */
-    protected final List<Layer<Double>> getBiomolLayers() {
-        return environment.getLayers().stream()
-                .filter(l -> l instanceof BiomolLayer 
-                        && ((BiomolLayer) l).isBiomoleculePresent(getBiomolecule()))
-                .collect(Collectors.toList());
     }
 
     /**
@@ -105,19 +90,16 @@ public class BiomolPresentInEnv extends GenericMoleculePresent<Double> {
 
     @Override
     public boolean isValid() {
-        if (getEnviromentNodesSurrounding().isEmpty() && getBiomolLayers().isEmpty()) {
-            return false;
-        } else {
-            final double quantityInEnvNodes = getEnviromentNodesSurrounding().stream()
+        double quantityInEnvNodes = 0;
+        if (!getEnviromentNodesSurrounding().isEmpty()){
+            quantityInEnvNodes = getEnviromentNodesSurrounding().stream()
                     .parallel()
                     .mapToDouble(n -> n.getConcentration(getBiomolecule()))
                     .sum();
-            final double quantityInLayers = getBiomolLayers().stream()
-                    .mapToDouble(l -> l.getValue(environment.getPosition(getNode())))
-                    .sum();
-            final double totalQuantity = quantityInEnvNodes + quantityInLayers;
-            return totalQuantity >= getQuantity();
         }
+        final double quantityInLayers = environment.getLayer(getBiomolecule()).getValue(environment.getPosition(getNode()));
+        final double totalQuantity = quantityInEnvNodes + quantityInLayers;
+        return totalQuantity >= getQuantity();
     }
 
     private Biomolecule getBiomolecule() {

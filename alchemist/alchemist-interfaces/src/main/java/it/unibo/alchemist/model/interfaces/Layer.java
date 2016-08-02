@@ -1,12 +1,14 @@
 package it.unibo.alchemist.model.interfaces;
 
+import java.io.Serializable;
+
 /**
  * 
  * Interface for static layer, containing a substance or a molecule with a spatial distribution.
  *
  * @param <T> the value that measure the substance in a point.
  */
-public interface Layer<T> {
+public interface Layer<T> extends Serializable {
 
     /**
      * 

@@ -361,13 +361,13 @@ public class TestCommands {
         }
 
         @Override
-        public Collection<Node<Object>> getNodesWithinRange(final Node<Object> center, final double range) {
-            return Collections.emptyList();
+        public Set<Node<Object>> getNodesWithinRange(final Node<Object> center, final double range) {
+            return Collections.emptySet();
         }
 
         @Override
-        public Collection<Node<Object>> getNodesWithinRange(final Position center, final double range) {
-            return Collections.emptyList();
+        public Set<Node<Object>> getNodesWithinRange(final Position center, final double range) {
+            return Collections.emptySet();
         }
 
         @Override
@@ -415,15 +415,18 @@ public class TestCommands {
         }
 
         @Override
-        public void addLayer(final Layer<Object> l) {
-            // TODO Auto-generated method stub
-
+        public void addLayer(final Molecule m, final Layer<Object> l) {
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public Set<Layer<Object>> getLayers() {
-            // TODO Auto-generated method stub
-            return null;
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Layer<Object> getLayer(final Molecule m) {
+            throw new UnsupportedOperationException();
         }
 
     }

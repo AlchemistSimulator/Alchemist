@@ -101,7 +101,7 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
      *            the exploration range
      * @return the list of nodes within the range
      */
-    Collection<Node<T>> getNodesWithinRange(Node<T> center, double range);
+    Set<Node<T>> getNodesWithinRange(Node<T> center, double range);
 
     /**
      * Given a {@link Position}(center) this method returns a list of all the
@@ -114,7 +114,7 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
      *            the exploration range
      * @return the list of nodes within the range
      */
-    Collection<Node<T>> getNodesWithinRange(Position center, double range);
+    Set<Node<T>> getNodesWithinRange(Position center, double range);
 
     /**
      * This method allows to know which are the smallest coordinates
@@ -197,9 +197,17 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
 
     /**
      * Add a {@link Layer} to the {@link Environment}.
+     * @param m the {@link Molecule} of the {@link Layer}
      * @param l the {@link Layer}
      */
-    void addLayer(Layer<T> l);
+    void addLayer(final Molecule m, Layer<T> l);
+
+    /**
+     * Get the layer associate to the given molecule.
+     * @param m the {@link Molecule}
+     * @return the {@link Layer}
+     */
+    Layer<T> getLayer(Molecule m);
 
     /**
      * Return all the Layers in this {@link Environment}.

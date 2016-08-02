@@ -7,6 +7,7 @@ import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
@@ -71,12 +72,12 @@ public class ChemiotaxisMove extends AbstractMoveNode<Double> {
     }
 
     private Optional<BiomolGradientLayer> getGradientLayer() {
-        return getEnvironment().getLayers().stream()
-                .parallel()
-                .filter(l -> l instanceof BiomolGradientLayer)
-                .map(l -> ((BiomolGradientLayer) l))
-                .filter(l -> l.getBiomolecule().equals(biomolecule))
-                .findFirst();
+        final Layer<Double> result = getEnvironment().getLayer(biomolecule);
+        if (result instanceof BiomolGradientLayer) {
+            return Optional.of((BiomolGradientLayer) result);
+        } else {
+            return Optional.empty();
+        }
     }
 
 }

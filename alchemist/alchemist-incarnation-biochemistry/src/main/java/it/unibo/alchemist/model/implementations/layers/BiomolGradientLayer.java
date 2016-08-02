@@ -2,19 +2,21 @@ package it.unibo.alchemist.model.implementations.layers;
 
 import org.apache.commons.math3.util.FastMath;
 
-import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
-import it.unibo.alchemist.model.interfaces.BiomolLayer;
+import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Position;
 
-public class BiomolGradientLayer implements BiomolLayer {
+public class BiomolGradientLayer implements Layer<Double>{
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6628458356492258225L;
     private final double a;
     private final double b;
     private final double c;
-    private final Biomolecule biomolecule;
     private final double steep;
 
-    public BiomolGradientLayer(final Position direction, final double unitVariation, final double offset, final Biomolecule biomol) {
+    public BiomolGradientLayer(final Position direction, final double unitVariation, final double offset) {
         final double dirx = direction.getCoordinate(0);
         final double diry = direction.getCoordinate(1);
         final double dirModule = FastMath.sqrt(FastMath.pow(dirx, 2) + FastMath.pow(diry, 2));
@@ -27,7 +29,6 @@ public class BiomolGradientLayer implements BiomolLayer {
         c = offset;
         a = unitVariation * vx;
         b = unitVariation * vy;
-        biomolecule = biomol;
     }
 
     @Override
@@ -37,19 +38,9 @@ public class BiomolGradientLayer implements BiomolLayer {
     }
 
     @Override
-    public Biomolecule getBiomolecule() {
-        return biomolecule;
-    }
-
-    @Override
-    public boolean isBiomoleculePresent(Biomolecule biomol) {
-        return biomol.equals(biomolecule);
-    }
-
-    @Override
     public String toString() {
-        return "Layer representing a gradient of molecule " + getBiomolecule() +
-                ". The equation describing this gradient is: concentration = " + a +
+        return "Layer representing a gradient of the molecule. "
+                + "The equation describing this gradient is: concentration = " + a +
                 "x + " + b + "y + " + c;
     }
 

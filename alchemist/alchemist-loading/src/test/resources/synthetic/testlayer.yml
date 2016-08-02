@@ -6,5 +6,7 @@ environment:
   layers:
     - type: StepLayer
       parameters: [2, 2, 100, 0]
+      molecule: A
     - type: StepLayer
       parameters: [-2, -2, 0, 100]
+      molecule: B

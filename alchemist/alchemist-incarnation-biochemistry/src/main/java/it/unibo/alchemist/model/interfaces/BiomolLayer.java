@@ -3,7 +3,7 @@ package it.unibo.alchemist.model.interfaces;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 
 /**
- * A specific interface of Layers in incarnation biochemistry
+ * A specific interface of Layers in incarnation biochemistry.
  *
  */
 public interface BiomolLayer extends Layer<Double> {

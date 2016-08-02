@@ -72,13 +72,10 @@ public class TestYAMLLoader {
     public void testLayers() {
         final Set<Layer<Object>> layers = testNoVar("/synthetic/testlayer.yml").getLayers();
         assertFalse(layers.isEmpty());
-        assertEquals(3L, layers.stream()
+        assertEquals(2L, layers.stream()
                 .count());
         assertEquals(2L, layers.stream()
                 .filter(l -> l instanceof StepLayer)
-                .count());
-        assertEquals(1L, layers.stream()
-                .filter(l -> l instanceof EmptyLayer)
                 .count());
     }
 

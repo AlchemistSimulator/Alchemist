@@ -53,7 +53,6 @@ import it.unibo.alchemist.loader.variables.DependentVariable;
 import it.unibo.alchemist.loader.variables.LinearVariable;
 import it.unibo.alchemist.loader.variables.Variable;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
-import it.unibo.alchemist.model.implementations.layers.EmptyLayer;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
@@ -138,9 +137,6 @@ public class YamlLoader implements Loader, Serializable {
     @SuppressWarnings({ UNCHECKED, "rawtypes" })
     private static final Class<? extends LinkingRule<?>> DEFAULT_LINKING_CLASS =
         (Class<? extends LinkingRule<?>>) (Class<? extends LinkingRule>) NoLinks.class;
-    @SuppressWarnings({ UNCHECKED, "rawtypes" })
-    private static final Class<? extends Layer<?>> DEFAULT_LAYER_CLASS =
-            (Class<? extends Layer<?>>) (Class<? extends Layer>) EmptyLayer.class;
     private static final Class<? extends Position> DEFAULT_POSITION_CLASS = Continuous2DEuclidean.class;
     private static final Shape IN_ALL = (p) -> true;
 
@@ -266,8 +262,12 @@ public class YamlLoader implements Loader, Serializable {
                     // extract classes and parameter from the list and put them inside layersMap.
                     final List<Map<String, Object>> layersList = (List<Map<String, Object>>) envYaml.get(LAYERS);
                     for (final Map<String, Object> layer : layersList) {
-                        layersMap.put(extractClass(layer, LAYERS_PACKAGE_ROOT, DEFAULT_LAYER_CLASS),
-                                extractParams(layer));
+                        final Optional<Class<Object>> classOp = extractClassIfDeclared(layer, LAYERS_PACKAGE_ROOT);
+                        if (classOp.isPresent()) {
+                            layersMap.put((Class<? extends Layer<?>>) classOp.get(), extractParams(layer));
+                        } else {
+                            L.warn("Layer class not found. This layer won't be added to the environment.");
+                        }
                     }
                 } else {
                     L.warn("'layers' key should be associated to a List. No layers will be added to " + envClass);

@@ -84,9 +84,9 @@ public class TestYAMLLoader {
                 .count());
         final Incarnation<List<? extends ILsaMolecule>> inc = new SAPEREIncarnation();
         final Molecule a = inc.createMolecule("A");
-        assertTrue(env.getLayer(a) instanceof StepLayer);
+        assertTrue(env.getLayer(a).get() instanceof StepLayer);
         final Molecule b = inc.createMolecule("B");
-        assertTrue(env.getLayer(b) instanceof StepLayer);
+        assertTrue(env.getLayer(b).get() instanceof StepLayer);
     }
 
     private static <T> Environment<T> testNoVar(final String resource) {

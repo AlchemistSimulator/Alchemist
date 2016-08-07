@@ -14,6 +14,7 @@ package it.unibo.alchemist.model.interfaces;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -203,11 +204,11 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
     void addLayer(final Molecule m, Layer<T> l);
 
     /**
-     * Get the layer associate to the given molecule.
+     * Get the layer associate to the given molecule. If no Layer is associated with the given molecule, return an empty optional.
      * @param m the {@link Molecule}
-     * @return the {@link Layer}
+     * @return the {@link Optional} containing the {@link Layer} associated with the requested molecule
      */
-    Layer<T> getLayer(Molecule m);
+    Optional<Layer<T>> getLayer(Molecule m);
 
     /**
      * Return all the Layers in this {@link Environment}.

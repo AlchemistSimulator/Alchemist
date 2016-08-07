@@ -1,17 +1,21 @@
 package it.unibo.alchemist.core.tests;
 
+//CHECKSTYLE:OFF
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-//CHECKSTYLE:OFF
-import static org.junit.Assert.*;
 //CHECKSTYLE:ON
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -425,7 +429,7 @@ public class TestCommands {
         }
 
         @Override
-        public Layer<Object> getLayer(final Molecule m) {
+        public Optional<Layer<Object>> getLayer(final Molecule m) {
             throw new UnsupportedOperationException();
         }
 

@@ -16,6 +16,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.function.Consumer;
@@ -262,12 +263,8 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     }
 
     @Override
-    public Layer<T> getLayer(final Molecule m) {
-        final Layer<T> result = layers.get(m);
-        if (result == null) {
-            throw new IllegalArgumentException("No layer is associated with " + m);
-        }
-        return result;
+    public Optional<Layer<T>> getLayer(final Molecule m) {
+        return Optional.ofNullable(layers.get(m));
     }
 
     @Override

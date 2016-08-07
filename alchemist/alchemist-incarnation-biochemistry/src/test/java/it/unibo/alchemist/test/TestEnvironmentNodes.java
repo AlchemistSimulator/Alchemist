@@ -122,7 +122,7 @@ public class TestEnvironmentNodes {
                 .findAny()
                 .get()
                 .getConcentration(new Biomolecule("A"));
-        assertTrue(conAInCell == 1000);
+        assertTrue("conAInCell = " + conAInCell, conAInCell == 1000);
         assertTrue(conAInEnv == 0);
     }
 
@@ -222,11 +222,7 @@ public class TestEnvironmentNodes {
         final Environment<T> env = new YamlLoader(res).getWith(vars);
         final Simulation<T> sim = new Engine<>(env, 10000);
         sim.addCommand(new Engine.StateCommand<T>().run().build());
-        try {
-            SwingUtilities.invokeAndWait(sim);
-        } catch (InvocationTargetException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        sim.run();
         return env;
     }
 

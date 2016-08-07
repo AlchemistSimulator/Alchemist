@@ -1,5 +1,7 @@
 package it.unibo.alchemist.test;
 
+import java.util.Optional;
+
 import org.danilopianini.lang.FlexibleQuadTree;
 
 import it.unibo.alchemist.model.implementations.environments.AbstractEnvironment;
@@ -61,7 +63,7 @@ class DummyEnvironment extends AbstractEnvironment<Object> {
     protected void nodeRemoved(final Node<Object> node, final Position pos) {
     }
     @Override
-    public Layer<Object> getLayer(final Molecule m) {
+    public Optional<Layer<Object>> getLayer(final Molecule m) {
         throw new UnsupportedOperationException();
     }
 }

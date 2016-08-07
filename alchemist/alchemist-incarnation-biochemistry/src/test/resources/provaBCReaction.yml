@@ -1,0 +1,24 @@
+incarnation: biochemistry
+
+network-model:
+  type: EuclideanDistance
+  parameters: [1]
+
+environment:
+  type: BioRect2DEnvironmentNoOverlap
+  parameters: [-5, 5, -5, 5]
+
+ionic: &waterDissociation
+    - time-distribution: 10
+      program: >
+        [] --> [BrownianMove(10)]
+
+displacements:
+  - in:
+      type: Circle
+      parameters: [20, 0, 0, 5]
+    nodes:
+      type: CellNodeImpl
+      parameters: [1, p] # p parametro inutile
+    programs:
+      - *waterDissociation

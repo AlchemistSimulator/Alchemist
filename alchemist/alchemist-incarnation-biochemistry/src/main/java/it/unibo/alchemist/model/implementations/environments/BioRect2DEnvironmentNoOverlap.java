@@ -66,41 +66,51 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
         final double[] cur = getPosition(node).getCartesianCoordinates();
         final double[] np = newPos.getCartesianCoordinates();
         final Position nextWithinLimts = super.next(cur[0], cur[1], np[0], np[1]);
-        final Position nextPos = findNearestFreePosition(node, new Continuous2DEuclidean(cur[0], cur[1]), nextWithinLimts);
-        super.moveNodeToPosition(node, nextPos);
+        if (node instanceof CellWithCircularArea) {
+            final Position nextPos = findNearestFreePosition((CellWithCircularArea) node, new Continuous2DEuclidean(cur[0], cur[1]), nextWithinLimts);
+            super.moveNodeToPosition(node, nextPos);
+        } else {
+            super.moveNodeToPosition(node, nextWithinLimts);
+        }
     }
 
     /*
      *  finds the first position, in requested direction (requestedPos - originalPos), that can be occupied by the cell.
      */
-    private Position findNearestFreePosition(final Node<Double> nodeToMove, final Position originalPos, final Position requestedPos) {
+    private Position findNearestFreePosition(final CellWithCircularArea nodeToMove, final Position originalPos, final Position requestedPos) {
         // get the maximum range depending by cellular shape
         final double maxDiameter = getMaxDiameterAmongCells();
-        if (maxDiameter == 0d) {
+        final double distanceToReq = originalPos.getDistanceTo(requestedPos);
+        if (maxDiameter == 0d || distanceToReq == 0) {
             return requestedPos;
         }
-        final double distanceToReq = originalPos.getDistanceTo(requestedPos);
-        final double halfDistance = (distanceToReq / 2);
-        // compute position of the midpoint between originalPos and requestedPos
+        final double distanceToScan = distanceToReq + nodeToMove.getRadius() + (maxDiameter / 2);
+        final double halfDistance = (distanceToScan / 2);
+        // compute position of the midpoint between originalPos and a point at distance distanceToScan
         final double rx = requestedPos.getCoordinate(0);
         final double ox = originalPos.getCoordinate(0);
-        final double xMid = (rx - ox) / 2 + ox;
+        final double xVec = rx - ox;
         final double ry = requestedPos.getCoordinate(1);
         final double oy = originalPos.getCoordinate(1);
-        final double yMid = (ry - oy) / 2 + oy;
-        final Position midPoint = new Continuous2DEuclidean(xMid, yMid);
+        final double yVec = ry - oy;
+        final double module = FastMath.sqrt(FastMath.pow(xVec, 2) + FastMath.pow(yVec, 2));
+        final double xVer = xVec / module;
+        final double yVer = yVec / module;
+        final double xVecToMid1 = xVer * halfDistance;
+        final double yVecToMid1 = yVer * halfDistance;
+        final Position vecToMid1 = new Continuous2DEuclidean(xVecToMid1, yVecToMid1);
+        final Position midPoint = originalPos.sum(vecToMid1);
         // compute optimum scanning range
         double range = FastMath.sqrt(FastMath.pow(halfDistance, 2) + FastMath.pow(maxDiameter, 2));
         final double newMaxDiameter = getNodesWithinRange(midPoint, range).stream()
-                .parallel()
                 .filter(n -> n instanceof CellWithCircularArea)
                 .mapToDouble(n -> ((CellWithCircularArea) n).getDiameter())
                 .max()
                 .orElse(0);
-        range = FastMath.sqrt(FastMath.pow(halfDistance, 2) + FastMath.pow(newMaxDiameter, 2));
+        final double newDistanceToScan = distanceToReq + nodeToMove.getRadius() + newMaxDiameter;
+        final double newHalfDistance = newDistanceToScan / 2;
+        range = FastMath.sqrt(FastMath.pow(newHalfDistance, 2) + FastMath.pow(newMaxDiameter, 2));
         return getNodesWithinRange(midPoint, range).stream()
-                .parallel()
-                .filter(n -> !getPosition(n).equals(originalPos))
                 .filter(n -> {
                     final double xn = getPosition(n).getCoordinate(0);
                     final double yn = getPosition(n).getCoordinate(1);
@@ -124,11 +134,11 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
                         yIntersect = m2 * xIntersect + q2;
                     }
                     final Position intersection = new Continuous2DEuclidean(xIntersect, yIntersect);
-                    final double distanceReqInt = intersection.getDistanceTo(requestedPos);
-                    final double distanceOrigInt = intersection.getDistanceTo(originalPos);
-                    return distanceReqInt < distanceToReq && distanceOrigInt < distanceToReq;
+                    final double intersectionToReq = intersection.getDistanceTo(requestedPos);
+                    final double intersectionToOrigin = intersection.getDistanceTo(originalPos);
+                    return intersectionToOrigin < (distanceToReq + nodeToMove.getRadius() + ((CellWithCircularArea) n).getRadius()) && intersectionToReq < distanceToReq;
                 }) 
-                .map(n -> getPositionIfNodeIsObstacle(nodeToMove, n, originalPos, requestedPos)) 
+                .map(n -> getPositionIfNodeIsObstacle(nodeToMove, (CellWithCircularArea) n, originalPos, requestedPos)) 
                 .filter(Optional::isPresent) 
                 .map(Optional::get)
                 .min((p1, p2) -> (int) FastMath.round(p1.getDistanceTo(originalPos) - p2.getDistanceTo(originalPos)))
@@ -136,10 +146,7 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
     }
 
     // returns the Optional containing the position of the node, if it's an obstacle for movement
-    private Optional<Position> getPositionIfNodeIsObstacle(final Node<Double> nodeToMove, final Node<Double> node, final Position originalPos, final Position requestedPos) {
-        if (!(node instanceof CellWithCircularArea) && !(nodeToMove instanceof CellWithCircularArea)) {
-            throw new IllegalArgumentException(node.getClass().getName() + NOT_SUPPORTED);
-        }
+    private Optional<Position> getPositionIfNodeIsObstacle(final CellWithCircularArea nodeToMove, final CellWithCircularArea node, final Position originalPos, final Position requestedPos) {
         // coordinates of original position, requested position and of node's position
         final double yo = originalPos.getCoordinate(1);
         final double yr = requestedPos.getCoordinate(1);
@@ -148,7 +155,7 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
         final double yn = getPosition(node).getCoordinate(1);
         final double xn = getPosition(node).getCoordinate(0);
         // cellular range
-        final double cellRange = ((CellWithCircularArea) node).getRadius() + ((CellWithCircularArea) nodeToMove).getRadius();
+        final double cellRange = node.getRadius() + nodeToMove.getRadius() + Double.MIN_NORMAL;
         // compute intersection
         final double xIntersect;
         final double yIntersect;
@@ -179,14 +186,25 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
         }
         // otherwise, compute the maximum practicable distance for the cell
         final double cat2 = FastMath.sqrt((FastMath.pow(cellRange, 2) - FastMath.pow(cat, 2)));
-        final double distToSum  = originalPos.getDistanceTo(intersection) - cat2;
+        double distToSum  = originalPos.getDistanceTo(intersection) - cat2;
         // compute the versor relative to requested direction of cell movement
         final double module =  FastMath.sqrt(FastMath.pow((yIntersect - yo), 2) + FastMath.pow((xIntersect - xo), 2));
         final Position versor = new Continuous2DEuclidean((xIntersect - xo) / module, (yIntersect - yo) / module);
         // computes vector representing the practicable movement
-        final Position vectorToSum = new Continuous2DEuclidean(distToSum * (versor.getCoordinate(0)), distToSum * (versor.getCoordinate(1)));
+        Position vectorToSum = new Continuous2DEuclidean(distToSum * (versor.getCoordinate(0)), distToSum * (versor.getCoordinate(1)));
         // returns the right position of the cell
-        return Optional.of(originalPos.sum(vectorToSum));
+        Position result = originalPos.sum(vectorToSum);
+        /*
+         * Temporary and nonsense solution.
+         */
+        if (result.getDistanceTo(getPosition(node)) < cellRange){
+//            System.out.println(result.getDistanceTo(getPosition(node)));
+            distToSum = distToSum - (cellRange * 0.01);
+            vectorToSum = new Continuous2DEuclidean(distToSum * (versor.getCoordinate(0)), distToSum * (versor.getCoordinate(1)));
+            // returns the right position of the cell
+            result = originalPos.sum(vectorToSum);
+        }
+        return Optional.of(result);
     }
 
     @Override

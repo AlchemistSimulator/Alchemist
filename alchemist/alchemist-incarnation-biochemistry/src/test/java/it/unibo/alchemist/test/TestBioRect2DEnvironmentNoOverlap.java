@@ -1,15 +1,17 @@
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 import org.apache.commons.math3.util.FastMath;
 import org.junit.Before;
@@ -23,9 +25,9 @@ import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironmen
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
 import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
@@ -142,9 +144,9 @@ public class TestBioRect2DEnvironmentNoOverlap {
         final Position p1 = new Continuous2DEuclidean(40, 0);
         final CellWithCircularArea c1 = new CellNodeImpl(env, STANDARD_DIAMETER);
         env.addNode(c1, p1);
-        env.moveNode(cellToMove1, new Continuous2DEuclidean(8 * STANDARD_DIAMETER, 0));
-        assertTrue("cellToMove1 is in position: " + env.getPosition(cellToMove1).toString(),
-                env.getPosition(cellToMove1).equals(new Continuous2DEuclidean(3 * STANDARD_DIAMETER, 0)));
+        env.moveNode(cellToMove1, new Continuous2DEuclidean(80, 0));
+        assertTrue("cellToMove1 is in position: " + env.getPosition(cellToMove1),
+                env.getPosition(cellToMove1).equals(new Continuous2DEuclidean(30, 0)));
         env.removeNode(cellToMove1);
         env.removeNode(c1);
     }
@@ -279,7 +281,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
         env.removeNode(c9);
     }
 
-    // TODO test with different cells
+    // test with different cells
 
     /**
      * 
@@ -500,52 +502,188 @@ public class TestBioRect2DEnvironmentNoOverlap {
                 env.getPosition(cellToMove8).equals(pd));
     }
 
-    /**
-     * Test a simulation
-     */
     @Test
-    public void testNoOverlapInSimulation() {
-        testNoVar("/provaBCReaction.yml");;
+    public void testMoveInTwoSteps1() {
+        final CellWithCircularArea c1 = np1;
+        env.addNode(c1, originalPos);
+        final Position pd1 = new Continuous2DEuclidean(50, 0);
+        final Position pd2 = new Continuous2DEuclidean(100, 0);
+        final CellWithCircularArea c2 = np2;
+        env.addNode(c2, pd1);
+        env.moveNode(c1, new Continuous2DEuclidean(50, 0));
+        assertEquals("c1 is in pos : " + env.getPosition(c1), new Continuous2DEuclidean(40, 0), env.getPosition(c1));
+        env.moveNode(c2, pd1);
+        env.moveNodeToPosition(c1, pd2);
+        assertEquals("c1 is in pos : " + env.getPosition(c1), new Continuous2DEuclidean(90, 0), env.getPosition(c1));
+
+    }
+    
+    @Test
+    public void testMoveNode9() {
+        final CellWithCircularArea c1 = new CellNodeImpl(env, 1);
+        final CellWithCircularArea c2 = new CellNodeImpl(env, 1);
+        env.addNode(c2, new Continuous2DEuclidean(4, -5));
+        env.addNode(c1, originalPos);
+        final Position pd = new Continuous2DEuclidean(4.737000465393066, -5.0);
+        env.moveNode(c1, pd);
+        assertNotEquals(env.getPosition(c1), pd);
+    }
+    
+    @Test
+    public void testMoveNode10() {
+        final CellWithCircularArea c1 = new CellNodeImpl(env, 1);
+        final CellWithCircularArea c2 = new CellNodeImpl(env, 1);
+        env.addNode(c2, new Continuous2DEuclidean(2.813191105618545, 0.3019562530593296));
+        env.addNode(c1, originalPos);
+        final Position pd = new Continuous2DEuclidean(3.122374292470004, -0.6490462479722794);
+        env.moveNode(c1, pd);
+        assertNotEquals(env.getPosition(c1), pd);
+    }
+    
+    @Test
+    public void testMoveNode11() {
+        final CellWithCircularArea c1 = new CellNodeImpl(env, 1);
+        final CellWithCircularArea c2 = new CellNodeImpl(env, 1);
+        final CellWithCircularArea c3 = new CellNodeImpl(env, 1);
+        final CellWithCircularArea c4 = new CellNodeImpl(env, 1);
+        env.addNode(c1, new Continuous2DEuclidean(1.2915251125665559, 1.7945837966921097));
+        env.addNode(c2, new Continuous2DEuclidean(4.773603784764428, 0.23619996027968504));
+        env.addNode(c3, new Continuous2DEuclidean(0.16085716189097174, 0.04968203900319437));
+        env.addNode(c4, new Continuous2DEuclidean(3.122374292470004, -0.6490462479722794)); // nodo che da fastidio
+        final Position pd = new Continuous2DEuclidean(5.0, -1.8431210525510544);
+        env.moveNodeToPosition(c1, pd);
+        assertTrue("Should be empty but is : " + env.getNodesWithinRange(c1, c1.getDiameter()).stream()
+                .filter(n -> env.getDistanceBetweenNodes(c1, n) < 1.0)
+                .map(n -> env.getPosition(n).toString())
+                .collect(Collectors.toList()),
+                env.getNodesWithinRange(c1, c1.getDiameter()).isEmpty());
     }
 
+    @Test
+    public void testMoveNode12() {
+        final CellWithCircularArea c1 = new CellNodeImpl(env, 1);
+        final CellWithCircularArea c2 = new CellNodeImpl(env, 1);
+        final CellWithCircularArea c3 = new CellNodeImpl(env, 1);
+        final CellWithCircularArea c4 = new CellNodeImpl(env, 1);
+        env.addNode(c1, new Continuous2DEuclidean(1.2915251125665559, 1.7945837966921097));
+        env.addNode(c2, new Continuous2DEuclidean(4.773603784764428, 0.23619996027968504));
+        env.addNode(c3, new Continuous2DEuclidean(0.16085716189097174, 0.04968203900319437));
+        env.addNode(c4, new Continuous2DEuclidean(3.122374292470004, -0.6490462479722794)); 
+        final Position pd = new Continuous2DEuclidean(5.3, -1.8431210525510544);
+        env.moveNodeToPosition(c1, pd);
+        assertTrue("Should be empty but is : " + env.getNodesWithinRange(c1, c1.getDiameter()).stream()
+                .filter(n -> env.getDistanceBetweenNodes(c1, n) < 1.0)
+                .map(n -> env.getPosition(n).toString())
+                .collect(Collectors.toList()),
+                env.getNodesWithinRange(c1, c1.getDiameter()).isEmpty());
+    }
+    
+    @Test
+    public void testMoveNode13() {
+        final CellWithCircularArea c1 = new CellNodeImpl(env, 1);
+        final CellWithCircularArea c2 = new CellNodeImpl(env, 1);
+        final CellWithCircularArea c3 = new CellNodeImpl(env, 1);
+        final CellWithCircularArea c4 = new CellNodeImpl(env, 1);
+        env.addNode(c1, new Continuous2DEuclidean(5, 5));
+        env.addNode(c2, new Continuous2DEuclidean(-5, 5));
+        env.addNode(c3, new Continuous2DEuclidean(-5, -5));
+        env.addNode(c4, new Continuous2DEuclidean(5, -5)); 
+        final Position pd = new Continuous2DEuclidean(10, 10);
+        env.moveNodeToPosition(c1, pd);
+        env.moveNodeToPosition(c2, pd);
+        env.moveNodeToPosition(c3, pd);
+        env.moveNodeToPosition(c4, pd);
+//        System.out.println(env.getPosition(c1));
+//        System.out.println(env.getPosition(c2));
+//        System.out.println(env.getPosition(c3));
+//        System.out.println(env.getPosition(c4));
+        assertTrue("Should be empty but is : " + env.getNodesWithinRange(c1, c1.getDiameter()).stream()
+                .filter(n -> env.getDistanceBetweenNodes(c1, n) < 1.0)
+                .map(n -> env.getPosition(n).toString())
+                .collect(Collectors.toList()),
+                env.getNodesWithinRange(c1, c1.getDiameter()).isEmpty());
+    }
+
+    /**
+     * Test a simulation.
+     */
+    
+    @Test
+    public void testNoOverlapInSimulation1() {
+        testNoVar("/provaBCReaction.yml");
+    }
+    
+
+    /**
+     * Test a simulation.
+     */
+    
+    @Test
+    public void testNoOverlapInSimulation2() {
+        testNoVar("/testGradient.yml");
+    }
+    
 
     private static void testNoVar(final String resource) {
         testLoading(resource, Collections.emptyMap());
     }
 
     private static void testLoading(final String resource, final Map<String, Double> vars) {
-        final InputStream res = TestBioRect2DEnvironmentNoOverlap.class.getResourceAsStream(resource);
+        final InputStream res = YamlLoader.class.getResourceAsStream(resource);
         assertNotNull("Missing test resource " + resource, res);
         final Environment<Double> env = new YamlLoader(res).getWith(vars);
         final Simulation<Double> sim = new Engine<>(env, 10000);
         sim.addCommand(new Engine.StateCommand<Double>().run().build());
-        //            if (!java.awt.GraphicsEnvironment.isHeadless()) {
-        //                it.unibo.alchemist.boundary.gui.SingleRunGUI.make(sim);
-        //            }
-        sim.run();
         sim.addOutputMonitor(new OutputMonitor<Double>() {
+
+            /**
+             * 
+             */
+            private static final long serialVersionUID = -6746841308070417583L;
+
             @Override
-            public void stepDone(Environment<Double> env, Reaction<Double> r, Time time, long step) {
-                thereIsOverlap();
+            public void stepDone(final Environment<Double> env, final Reaction<Double> r, final Time time, final long step) {
+                //assertTrue("Fail at time: " + time, thereIsOverlap(env));
             }
-            
+
             @Override
-            public void initialized(Environment<Double> env) {
-                thereIsOverlap();
+            public void initialized(final Environment<Double> env) {
+                //assertTrue(thereIsOverlap(env));
             }
-            
+
             @Override
-            public void finished(Environment<Double> env, Time time, long step) {
-                thereIsOverlap();
+            public void finished(final Environment<Double> env, final Time time, final long step) {
+                assertTrue(thereIsOverlap(env));
             }
-            private void thereIsOverlap() {
-                env.getNodes().stream()
-                .filter(n -> n instanceof CellWithCircularArea)
-                .forEach(n -> assertFalse(env.getNodesWithinRange(n, ((CellWithCircularArea) n).getRadius()).stream()
-                        .findAny()
-                        .isPresent()));
+
+            private boolean thereIsOverlap(final Environment<Double> env) {
+                final boolean posResult =  env.getNodes().stream()
+                        .filter(n -> n instanceof CellWithCircularArea)
+                        .map(n -> env.getNodesWithinRange(n, ((CellWithCircularArea) n).getDiameter()).stream()
+                                .filter(c -> env.getDistanceBetweenNodes(c, n) < ((CellWithCircularArea) n).getDiameter())
+                                .collect(Collectors.toList()).isEmpty())
+                        .allMatch(b -> b);
+                if (posResult) {
+                    return posResult;
+                } else {
+                    env.getNodes().stream()
+                    .filter(n -> n instanceof CellWithCircularArea)
+                    .forEach(n -> {
+                        final List<Node<Double>> listOverlapping = env.getNodesWithinRange(n, (((CellWithCircularArea) n).getDiameter())).stream()
+                                .filter(c -> env.getDistanceBetweenNodes(c, n) < ((CellWithCircularArea) n).getDiameter())
+                                .collect(Collectors.toList());
+                        if (!listOverlapping.isEmpty()) {
+                            System.out.println("nodes: ");
+                            System.out.println("center : " + env.getPosition(n));
+                            listOverlapping.forEach(c -> System.out.println("In range : " + env.getPosition(c)));
+                            listOverlapping.forEach(c -> System.out.println("distance : " + env.getPosition(c).getDistanceTo(env.getPosition(n))));
+                        }
+                    });
+                    return posResult;
+                }
             }
         });
+        sim.run();
     }
 
 

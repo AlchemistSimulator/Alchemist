@@ -15,10 +15,8 @@ public class BiomolGradientLayer implements Layer<Double>{
     private final double b;
     private final double c;
     private final double steep;
-
-    public BiomolGradientLayer(final Position direction, final double unitVariation, final double offset) {
-        final double dirx = direction.getCoordinate(0);
-        final double diry = direction.getCoordinate(1);
+    
+    public BiomolGradientLayer(final double dirx, final double diry, final double unitVariation, final double offset) {
         final double dirModule = FastMath.sqrt(FastMath.pow(dirx, 2) + FastMath.pow(diry, 2));
         steep = unitVariation;
         // versor coordinates
@@ -29,6 +27,10 @@ public class BiomolGradientLayer implements Layer<Double>{
         c = offset;
         a = unitVariation * vx;
         b = unitVariation * vy;
+    }
+    
+    public BiomolGradientLayer(final Position direction, final double unitVariation, final double offset) {
+        this(direction.getCoordinate(0), direction.getCoordinate(1), unitVariation, offset);
     }
 
     @Override

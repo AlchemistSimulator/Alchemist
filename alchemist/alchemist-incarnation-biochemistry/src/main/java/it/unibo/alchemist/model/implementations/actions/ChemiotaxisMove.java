@@ -72,9 +72,14 @@ public class ChemiotaxisMove extends AbstractMoveNode<Double> {
     }
 
     private Optional<BiomolGradientLayer> getGradientLayer() {
-        final Layer<Double> result = getEnvironment().getLayer(biomolecule);
-        if (result instanceof BiomolGradientLayer) {
-            return Optional.of((BiomolGradientLayer) result);
+        final Optional<Layer<Double>> opResult = getEnvironment().getLayer(biomolecule);
+        if (opResult.isPresent()) {
+            Layer<Double> result = opResult.get();
+            if (result instanceof BiomolGradientLayer) {
+                return Optional.of((BiomolGradientLayer) result);
+            } else {
+                return Optional.empty();
+            }
         } else {
             return Optional.empty();
         }

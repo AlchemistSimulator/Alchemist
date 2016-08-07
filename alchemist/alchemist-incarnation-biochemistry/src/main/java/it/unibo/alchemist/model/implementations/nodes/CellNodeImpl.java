@@ -33,7 +33,7 @@ public class CellNodeImpl extends DoubleNode implements CellNode, CellWithCircul
 
     private final Map<Junction, Map<CellNode, Integer>> junctions = new MapMaker()
             .concurrencyLevel(2).makeMap();
-    private final double diameter;
+    private double diameter;
 
     /**
      * create a new cell node.
@@ -166,4 +166,8 @@ public class CellNodeImpl extends DoubleNode implements CellNode, CellWithCircul
         return getDiameter() / 2;
     }
 
+    @Override
+    public String toString() {
+        return "Instance of CellNodeImpl with diameter = " + diameter;
+    }
 }

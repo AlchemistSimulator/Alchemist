@@ -57,7 +57,10 @@ public class BiomolPresentInEnv extends GenericMoleculePresent<Double> {
                     .mapToDouble(n -> n.getConcentration(getBiomolecule()))
                     .sum();
         }
-        final double quantityInLayers = environment.getLayer(getBiomolecule()).getValue(environment.getPosition(getNode()));
+        double quantityInLayers = 0;
+        if (environment.getLayer(getBiomolecule()).isPresent()) {
+            quantityInLayers = environment.getLayer(getBiomolecule()).get().getValue(environment.getPosition(getNode()));
+        }
         final double totalQuantity = quantityInEnvNodes + quantityInLayers;
         if (totalQuantity < getQuantity()) {
             return 0;
@@ -97,7 +100,10 @@ public class BiomolPresentInEnv extends GenericMoleculePresent<Double> {
                     .mapToDouble(n -> n.getConcentration(getBiomolecule()))
                     .sum();
         }
-        final double quantityInLayers = environment.getLayer(getBiomolecule()).getValue(environment.getPosition(getNode()));
+        double quantityInLayers = 0;
+        if (environment.getLayer(getBiomolecule()).isPresent()) {
+            quantityInLayers = environment.getLayer(getBiomolecule()).get().getValue(environment.getPosition(getNode()));
+        }
         final double totalQuantity = quantityInEnvNodes + quantityInLayers;
         return totalQuantity >= getQuantity();
     }

@@ -38,6 +38,7 @@ import it.unibo.alchemist.model.interfaces.Time;
 public class TestBioRect2DEnvironmentNoOverlap {
 
     private static final double STANDARD_DIAMETER = 10;
+    private static final double MAX_PRECISION = 0.9999999999;
     private final Position originalPos = new Continuous2DEuclidean(0, 0);
     private CellWithCircularArea ng1; 
     private CellWithCircularArea ng2; 
@@ -556,7 +557,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
                 .filter(n -> env.getDistanceBetweenNodes(c1, n) < 1.0)
                 .map(n -> env.getPosition(n).toString())
                 .collect(Collectors.toList()),
-                env.getNodesWithinRange(c1, c1.getDiameter()).isEmpty());
+                env.getNodesWithinRange(c1, c1.getDiameter() * MAX_PRECISION).isEmpty());
     }
 
     @Test
@@ -607,22 +608,18 @@ public class TestBioRect2DEnvironmentNoOverlap {
     /**
      * Test a simulation.
      */
-    
     @Test
     public void testNoOverlapInSimulation1() {
         testNoVar("/provaBCReaction.yml");
     }
-    
 
     /**
      * Test a simulation.
      */
-    
     @Test
     public void testNoOverlapInSimulation2() {
         testNoVar("/testGradient.yml");
     }
-    
 
     private static void testNoVar(final String resource) {
         testLoading(resource, Collections.emptyMap());
@@ -643,12 +640,12 @@ public class TestBioRect2DEnvironmentNoOverlap {
 
             @Override
             public void stepDone(final Environment<Double> env, final Reaction<Double> r, final Time time, final long step) {
-                //assertTrue("Fail at time: " + time, thereIsOverlap(env));
+                assertTrue("Fail at time: " + time, thereIsOverlap(env));
             }
 
             @Override
             public void initialized(final Environment<Double> env) {
-                //assertTrue(thereIsOverlap(env));
+                assertTrue(thereIsOverlap(env));
             }
 
             @Override
@@ -660,12 +657,13 @@ public class TestBioRect2DEnvironmentNoOverlap {
                 final boolean posResult =  env.getNodes().stream()
                         .filter(n -> n instanceof CellWithCircularArea)
                         .map(n -> env.getNodesWithinRange(n, ((CellWithCircularArea) n).getDiameter()).stream()
-                                .filter(c -> env.getDistanceBetweenNodes(c, n) < ((CellWithCircularArea) n).getDiameter())
+                                .filter(c -> env.getDistanceBetweenNodes(c, n) < (((CellWithCircularArea) n).getDiameter() * MAX_PRECISION))
                                 .collect(Collectors.toList()).isEmpty())
                         .allMatch(b -> b);
                 if (posResult) {
                     return posResult;
                 } else {
+                    /* debug 
                     env.getNodes().stream()
                     .filter(n -> n instanceof CellWithCircularArea)
                     .forEach(n -> {
@@ -679,6 +677,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
                             listOverlapping.forEach(c -> System.out.println("distance : " + env.getPosition(c).getDistanceTo(env.getPosition(n))));
                         }
                     });
+                    */
                     return posResult;
                 }
             }

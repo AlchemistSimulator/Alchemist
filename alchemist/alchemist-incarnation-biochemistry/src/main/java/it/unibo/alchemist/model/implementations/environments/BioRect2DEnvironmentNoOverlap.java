@@ -108,11 +108,13 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
                 .mapToDouble(n -> ((CellWithCircularArea) n).getDiameter())
                 .max()
                 .orElse(0);
-        final double newDistanceToScan = distanceToReq + nodeToMove.getRadius() + newMaxDiameter;
+        final double newDistanceToScan = distanceToReq + nodeToMove.getRadius() + newMaxDiameter / 2;
         final double newHalfDistance = newDistanceToScan / 2;
+        final Position vecToMid2 = new Continuous2DEuclidean(xVer * newHalfDistance, yVer * newHalfDistance);
+        final Position newMidPoint = originalPos.sum(vecToMid2);
         range = FastMath.sqrt(FastMath.pow(newHalfDistance, 2) + FastMath.pow(newMaxDiameter, 2));
-        return getNodesWithinRange(midPoint, range).stream()
-                .parallel()
+        return getNodesWithinRange(newMidPoint, range).stream()
+//                .parallel()
                 .filter(n -> !n.equals(nodeToMove))
                 .filter(n -> isNodeNearEnoughtToReqPosition((CellWithCircularArea) n, nodeToMove, requestedPos, xVer, yVer) && isNodeBetweenReqAndOrigin(n, getPosition(nodeToMove), xVer, yVer)) 
                 .map(n -> getPositionIfNodeIsObstacle(nodeToMove, (CellWithCircularArea) n, originalPos, requestedPos)) 
@@ -186,10 +188,13 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
             return Optional.absent();
         }
         // otherwise, compute the maximum practicable distance for the cell
+        final double module =  FastMath.sqrt(FastMath.pow((yIntersect - yo), 2) + FastMath.pow((xIntersect - xo), 2));
+        if (module == 0) { // if module == 0 the translation is 0, so return originalPos
+            return Optional.of(originalPos);
+        }
+        // compute the versor relative to requested direction of cell movement
         final double cat2 = FastMath.sqrt((FastMath.pow(cellRange, 2) - FastMath.pow(cat, 2)));
         final double distToSum  = originalPos.getDistanceTo(intersection) - cat2;
-        // compute the versor relative to requested direction of cell movement
-        final double module =  FastMath.sqrt(FastMath.pow((yIntersect - yo), 2) + FastMath.pow((xIntersect - xo), 2));
         final Position versor = new Continuous2DEuclidean((xIntersect - xo) / module, (yIntersect - yo) / module);
         // computes vector representing the practicable movement
         final Position vectorToSum = new Continuous2DEuclidean(distToSum * (versor.getCoordinate(0)), distToSum * (versor.getCoordinate(1)));

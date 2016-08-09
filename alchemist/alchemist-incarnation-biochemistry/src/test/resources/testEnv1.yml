@@ -22,7 +22,7 @@ displacements:
       parameters: []
     contents:
       - molecule: A
-        concentration: 1000
+        concentration: 
     programs:
       - *reactions
   - in:

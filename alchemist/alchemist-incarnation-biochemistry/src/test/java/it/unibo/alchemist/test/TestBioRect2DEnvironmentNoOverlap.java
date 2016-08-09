@@ -620,6 +620,14 @@ public class TestBioRect2DEnvironmentNoOverlap {
     public void testNoOverlapInSimulation2() {
         testNoVar("/testGradient.yml");
     }
+    
+    /**
+     * Test a simulation.
+     */
+    @Test
+    public void testNoOverlapInSimulation3() {
+        testNoVar2("/provaBCReaction2.yml");
+    }
 
     private static void testNoVar(final String resource) {
         testLoading(resource, Collections.emptyMap());
@@ -685,5 +693,68 @@ public class TestBioRect2DEnvironmentNoOverlap {
         sim.run();
     }
 
+    private static void testNoVar2(final String resource) {
+        testLoading2(resource, Collections.emptyMap());
+    }
+
+    private static void testLoading2(final String resource, final Map<String, Double> vars) {
+        final InputStream res = YamlLoader.class.getResourceAsStream(resource);
+        assertNotNull("Missing test resource " + resource, res);
+        final Environment<Double> env = new YamlLoader(res).getWith(vars);
+        final Simulation<Double> sim = new Engine<>(env, 10000);
+        sim.addCommand(new Engine.StateCommand<Double>().run().build());
+        sim.addOutputMonitor(new OutputMonitor<Double>() {
+
+            /**
+             * 
+             */
+            private static final long serialVersionUID = -6746841308070417583L;
+
+            @Override
+            public void stepDone(final Environment<Double> env, final Reaction<Double> r, final Time time, final long step) {
+                assertTrue("Fail at time: " + time, thereIsOverlap(env));
+            }
+
+            @Override
+            public void initialized(final Environment<Double> env) {
+                assertTrue(thereIsOverlap(env));
+            }
+
+            @Override
+            public void finished(final Environment<Double> env, final Time time, final long step) {
+                assertTrue(thereIsOverlap(env));
+            }
+
+            private boolean thereIsOverlap(final Environment<Double> env) {
+                final boolean posResult =  env.getNodes().stream()
+                        .filter(n -> n instanceof CellWithCircularArea)
+                        .map(n -> env.getNodesWithinRange(n, 4).stream()
+                                .filter(c -> env.getDistanceBetweenNodes(c, n) < ((((CellWithCircularArea) n).getRadius() + ((CellWithCircularArea) c).getRadius()) * MAX_PRECISION))
+                                .collect(Collectors.toList()).isEmpty())
+                        .allMatch(b -> b);
+                if (posResult) {
+                    return posResult;
+                } else {
+                     
+                    env.getNodes().stream()
+                    .filter(n -> n instanceof CellWithCircularArea)
+                    .forEach(n -> {
+                        final List<Node<Double>> listOverlapping = env.getNodesWithinRange(n, (((CellWithCircularArea) n).getDiameter())).stream()
+                                .filter(c -> env.getDistanceBetweenNodes(c, n) < ((((CellWithCircularArea) n).getRadius() + ((CellWithCircularArea) c).getRadius())))
+                                .collect(Collectors.toList());
+                        if (!listOverlapping.isEmpty()) {
+                            System.out.println("nodes: ");
+                            System.out.println(n + " center : " + env.getPosition(n));
+                            listOverlapping.forEach(c -> System.out.println(c + " In range : " + env.getPosition(c)));
+                            listOverlapping.forEach(c -> System.out.println("distance : " + env.getPosition(c).getDistanceTo(env.getPosition(n))));
+                        }
+                    });
+                    
+                    return posResult;
+                }
+            }
+        });
+        sim.run();
+    }
 
 }

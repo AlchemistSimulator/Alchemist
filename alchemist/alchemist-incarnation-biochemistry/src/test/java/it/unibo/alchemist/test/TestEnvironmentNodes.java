@@ -2,6 +2,7 @@ package it.unibo.alchemist.test;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -79,7 +80,7 @@ public class TestEnvironmentNodes {
                 .findFirst()
                 .get()
                 .getConcentration(new Biomolecule("A"));
-        assertTrue(conA == 1000);
+        assertEquals("conA = " + conA, conA, 1000, Double.MIN_VALUE);
     }
 
     /**

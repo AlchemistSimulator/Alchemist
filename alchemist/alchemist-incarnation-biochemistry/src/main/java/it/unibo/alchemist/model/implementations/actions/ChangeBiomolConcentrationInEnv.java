@@ -65,24 +65,61 @@ public class ChangeBiomolConcentrationInEnv extends AbstractActionOnSingleMolecu
 
     @Override
     public void execute() {
+        System.out.println("entrato1, delta = " + delta);
         // add delta to the nearest node.
-        getEnviromentNodesSurrounding().stream()
-        .parallel()
-        .min((n1, n2) -> Double.compare(
-                env.getPosition(n1).getDistanceTo(env.getPosition(getNode())), 
-                env.getPosition(n2).getDistanceTo(env.getPosition(getNode()))
-                ))
-                .ifPresent(n -> {
-                    if (delta < 0) {
-                        if (n.getConcentration(getBiomolecule()) > FastMath.abs(delta)) {
-                            n.setConcentration(getBiomolecule(), n.getConcentration(getBiomolecule()) + delta);
-                        } else {
-                            n.removeConcentration(getBiomolecule());
-                        }
-                    } else {
-                        n.setConcentration(getBiomolecule(), n.getConcentration(getBiomolecule()) + delta);
+        if (delta < 0) {
+            double deltaTemp = delta;
+            final List<Node<Double>> l = getEnviromentNodesSurrounding().stream()
+                    .parallel()
+                    .filter(n -> n.contains(getBiomolecule()))
+                    .sorted((n1, n2) -> Double.compare(
+                            env.getPosition(n1).getDistanceTo(env.getPosition(getNode())), 
+                            env.getPosition(n2).getDistanceTo(env.getPosition(getNode()))
+                            ))
+                    .collect(Collectors.toList());
+            for(Node<Double> n : l) {
+                if (n.getConcentration(getBiomolecule()) > FastMath.abs(delta)) {
+                    n.setConcentration(getBiomolecule(), n.getConcentration(getBiomolecule()) + delta);
+                    deltaTemp = 0;
+                } else {
+                    n.removeConcentration(getBiomolecule());
+                    deltaTemp = n.getConcentration(getBiomolecule()) + deltaTemp;
+                    if (deltaTemp == 0) {
+                        break;
                     }
+                }
+            }
+        } else {
+            System.out.println("entrato2, delta = " + delta);
+            final boolean allEnvNodesAreAtTheSameDistance = getEnviromentNodesSurrounding().stream()
+                    .parallel()
+                    .mapToDouble(n -> env.getDistanceBetweenNodes(n, getNode()))
+                    .count() == 1;
+            System.out.println("allEnvNodesAreAtTheSameDistance = " + allEnvNodesAreAtTheSameDistance);
+            if (allEnvNodesAreAtTheSameDistance && getEnviromentNodesSurrounding().size() != 1) {
+                System.out.println("Sono entrato nel primo");
+                getEnviromentNodesSurrounding().stream()
+                .parallel()
+                .min((n1, n2) -> Double.compare(
+                        n1.getConcentration(getBiomolecule()), 
+                        n2.getConcentration(getBiomolecule())
+                        ))
+                .ifPresent(n -> n.setConcentration(getBiomolecule(), n.getConcentration(getBiomolecule()) + delta));
+            } else {
+                System.out.println("Sono entrato nel secondo");
+                getEnviromentNodesSurrounding().stream()
+                .parallel()
+                .min((n1, n2) -> Double.compare(
+                        env.getPosition(n1).getDistanceTo(env.getPosition(getNode())), 
+                        env.getPosition(n2).getDistanceTo(env.getPosition(getNode()))
+                        ))
+                .ifPresent(n -> { 
+                    System.out.println("conA = " + n.getConcentration(getBiomolecule()));
+                    n.setConcentration(getBiomolecule(), n.getConcentration(getBiomolecule()) + delta);
+                    System.out.println("conA = " + n.getConcentration(getBiomolecule()));
                 });
+            }
+        }
     }
 
     @Override

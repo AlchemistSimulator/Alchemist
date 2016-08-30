@@ -8,10 +8,6 @@
  */
 package it.unibo.alchemist.model.implementations;
 
-import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
-import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.IRoute;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,9 +16,14 @@ import com.graphhopper.GHResponse;
 import com.graphhopper.PathWrapper;
 import com.graphhopper.util.PointList;
 
+import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
+import it.unibo.alchemist.model.interfaces.IRoute;
+import it.unibo.alchemist.model.interfaces.Position;
+import java.util.stream.Collectors;
+
 /**
  */
-public class GraphHopperRoute implements IRoute {
+public final class GraphHopperRoute implements IRoute {
 
     private static final long serialVersionUID = -1455332156736222268L;
     private final int size;
@@ -34,16 +35,22 @@ public class GraphHopperRoute implements IRoute {
      *            the response to use
      */
     public GraphHopperRoute(final GHResponse response) {
-        final PathWrapper resp = response.getBest();
-        time = resp.getTime() / 1000d;
-        distance = resp.getDistance();
-        final PointList pts = resp.getPoints();
-        size = pts.getSize();
-        final List<Position> temp = new ArrayList<>(size);
-        for (int i = 0; i < pts.getSize(); i++) {
-            temp.add(new LatLongPosition(pts.getLatitude(i), pts.getLongitude(i)));
+        final List<Throwable> errs = response.getErrors();
+        if (errs.isEmpty()) {
+            final PathWrapper resp = response.getBest();
+            time = resp.getTime() / 1000d;
+            distance = resp.getDistance();
+            final PointList pts = resp.getPoints();
+            size = pts.getSize();
+            final List<Position> temp = new ArrayList<>(size);
+            for (int i = 0; i < pts.getSize(); i++) {
+                temp.add(new LatLongPosition(pts.getLatitude(i), pts.getLongitude(i)));
+            }
+            points = Collections.unmodifiableList(temp);
+        } else {
+            final String msg = errs.stream().map(Throwable::getMessage).collect(Collectors.joining("\n"));
+            throw new IllegalArgumentException(msg, errs.get(0));
         }
-        points = Collections.unmodifiableList(temp);
     }
 
     @Override

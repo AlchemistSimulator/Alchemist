@@ -36,7 +36,7 @@ public class CellNodeImpl extends DoubleNode implements CellNode, CellWithCircul
     private final Map<Junction, Map<CellNode, Integer>> junctions = new MapMaker()
             .concurrencyLevel(2).makeMap();
     private double diameter;
-    Position polarizationVersor;
+    private Position polarizationVersor;
 
     /**
      * create a new cell node.

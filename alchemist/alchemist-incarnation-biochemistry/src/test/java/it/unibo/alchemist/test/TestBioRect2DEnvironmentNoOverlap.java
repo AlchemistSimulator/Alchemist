@@ -617,14 +617,6 @@ public class TestBioRect2DEnvironmentNoOverlap {
      * Test a simulation.
      */
     @Test
-    public void testNoOverlapInSimulation2() {
-        testNoVar("/testGradient.yml");
-    }
-    
-    /**
-     * Test a simulation.
-     */
-    @Test
     public void testNoOverlapInSimulation3() {
         testNoVar2("/provaBCReaction2.yml");
     }

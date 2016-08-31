@@ -65,7 +65,6 @@ public class ChangeBiomolConcentrationInEnv extends AbstractActionOnSingleMolecu
 
     @Override
     public void execute() {
-        System.out.println("entrato1, delta = " + delta);
         // add delta to the nearest node.
         if (delta < 0) {
             double deltaTemp = delta;
@@ -77,7 +76,7 @@ public class ChangeBiomolConcentrationInEnv extends AbstractActionOnSingleMolecu
                             env.getPosition(n2).getDistanceTo(env.getPosition(getNode()))
                             ))
                     .collect(Collectors.toList());
-            for(Node<Double> n : l) {
+            for (final Node<Double> n : l) {
                 if (n.getConcentration(getBiomolecule()) > FastMath.abs(delta)) {
                     n.setConcentration(getBiomolecule(), n.getConcentration(getBiomolecule()) + delta);
                     deltaTemp = 0;
@@ -90,14 +89,11 @@ public class ChangeBiomolConcentrationInEnv extends AbstractActionOnSingleMolecu
                 }
             }
         } else {
-            System.out.println("entrato2, delta = " + delta);
             final boolean allEnvNodesAreAtTheSameDistance = getEnviromentNodesSurrounding().stream()
                     .parallel()
                     .mapToDouble(n -> env.getDistanceBetweenNodes(n, getNode()))
                     .count() == 1;
-            System.out.println("allEnvNodesAreAtTheSameDistance = " + allEnvNodesAreAtTheSameDistance);
             if (allEnvNodesAreAtTheSameDistance && getEnviromentNodesSurrounding().size() != 1) {
-                System.out.println("Sono entrato nel primo");
                 getEnviromentNodesSurrounding().stream()
                 .parallel()
                 .min((n1, n2) -> Double.compare(
@@ -106,7 +102,6 @@ public class ChangeBiomolConcentrationInEnv extends AbstractActionOnSingleMolecu
                         ))
                 .ifPresent(n -> n.setConcentration(getBiomolecule(), n.getConcentration(getBiomolecule()) + delta));
             } else {
-                System.out.println("Sono entrato nel secondo");
                 getEnviromentNodesSurrounding().stream()
                 .parallel()
                 .min((n1, n2) -> Double.compare(
@@ -114,9 +109,7 @@ public class ChangeBiomolConcentrationInEnv extends AbstractActionOnSingleMolecu
                         env.getPosition(n2).getDistanceTo(env.getPosition(getNode()))
                         ))
                 .ifPresent(n -> { 
-                    System.out.println("conA = " + n.getConcentration(getBiomolecule()));
                     n.setConcentration(getBiomolecule(), n.getConcentration(getBiomolecule()) + delta);
-                    System.out.println("conA = " + n.getConcentration(getBiomolecule()));
                 });
             }
         }

@@ -11,6 +11,10 @@ import it.unibo.alchemist.model.interfaces.Position;
  */
 public class StepLayer<T> implements Layer<T> {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4002670240161927416L;
     private final double maxx;
     private final double maxy;
     private final T highValue;

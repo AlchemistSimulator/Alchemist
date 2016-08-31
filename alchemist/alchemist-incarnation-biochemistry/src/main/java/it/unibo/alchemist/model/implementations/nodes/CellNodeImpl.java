@@ -19,10 +19,12 @@ import com.google.common.collect.MapMaker;
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
+import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Molecule;
+import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  *
@@ -34,6 +36,7 @@ public class CellNodeImpl extends DoubleNode implements CellNode, CellWithCircul
     private final Map<Junction, Map<CellNode, Integer>> junctions = new MapMaker()
             .concurrencyLevel(2).makeMap();
     private double diameter;
+    Position polarizationVersor;
 
     /**
      * create a new cell node.
@@ -45,6 +48,7 @@ public class CellNodeImpl extends DoubleNode implements CellNode, CellWithCircul
      */
     public CellNodeImpl(final Environment<Double> env, final double diameter) {
         super(env);
+        this.polarizationVersor = new Continuous2DEuclidean(0, 0);
         this.diameter = diameter;
     }
 
@@ -71,6 +75,11 @@ public class CellNodeImpl extends DoubleNode implements CellNode, CellWithCircul
         } else {
             removeConcentration(mol);
         }
+    }
+
+    @Override
+    public void setPolarization(final Position v) {
+        this.polarizationVersor = v;
     }
 
     @Override

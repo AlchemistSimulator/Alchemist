@@ -169,12 +169,12 @@ public class TestChemiotaxis {
         r1.execute();
         r2.execute();
         assertEquals("the cell is in pos = " + env.getPosition(cellNode1), 
-                1 - FastMath.sqrt(0.5),
+                1,
                 env.getPosition(cellNode1).getCoordinate(0),
                 0.000000000001
                 );
         assertEquals("the cell is in pos = " + env.getPosition(cellNode1), 
-                1 - FastMath.sqrt(0.5),
+                1,
                 env.getPosition(cellNode1).getCoordinate(1),
                 0.000000000001
                 );

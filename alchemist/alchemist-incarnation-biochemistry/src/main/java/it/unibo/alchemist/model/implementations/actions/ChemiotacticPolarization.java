@@ -56,40 +56,51 @@ public class ChemiotacticPolarization extends AbstractAction<Double> {
                 .parallel()
                 .filter(n -> n instanceof EnvironmentNode && n.contains(biomol))
                 .collect(Collectors.toList());
-        Position newPolVer = weightedAverage(l);
-        final double newPolVerModule = FastMath.sqrt(FastMath.pow(
-                newPolVer.getCoordinate(0), 2) + FastMath.pow(newPolVer.getCoordinate(1), 2)
-                );
-        if (newPolVerModule == 0) {
-            ((CellNode) getNode()).setPolarization(newPolVer);
+        if (l.isEmpty()) {
+            ((CellNode) getNode()).setPolarization(new Continuous2DEuclidean(0, 0));
         } else {
-            newPolVer = new Continuous2DEuclidean(newPolVer.getCoordinate(0) / newPolVerModule, newPolVer.getCoordinate(1) / newPolVerModule);
-            if (ascend) {
-                ((CellNode) getNode()).setPolarization(newPolVer);
+            boolean isNodeOnMaxConc = env.getPosition(l.stream()
+                    .max((n1, n2) -> Double.compare(n1.getConcentration(biomol), n2.getConcentration(biomol)))
+                    .get()).equals(env.getPosition(getNode()));
+            if (isNodeOnMaxConc) {
+                ((CellNode) getNode()).setPolarization(new Continuous2DEuclidean(0, 0));
             } else {
-                ((CellNode) getNode()).setPolarization(new Continuous2DEuclidean(
-                        -newPolVer.getCoordinate(0), 
-                        -newPolVer.getCoordinate(1))
+                Position newPolVer = weightedAverageVectors(l);
+                final double newPolVerModule = FastMath.sqrt(FastMath.pow(
+                        newPolVer.getCoordinate(0), 2) + FastMath.pow(newPolVer.getCoordinate(1), 2)
                         );
+                if (newPolVerModule == 0) {
+                    ((CellNode) getNode()).setPolarization(newPolVer);
+                } else {
+                    newPolVer = new Continuous2DEuclidean(newPolVer.getCoordinate(0) / newPolVerModule, newPolVer.getCoordinate(1) / newPolVerModule);
+                    if (ascend) {
+                        ((CellNode) getNode()).setPolarization(newPolVer);
+                    } else {
+                        ((CellNode) getNode()).setPolarization(new Continuous2DEuclidean(
+                                -newPolVer.getCoordinate(0), 
+                                -newPolVer.getCoordinate(1))
+                                );
+                    }
+                }
             }
         }
     }
 
-    private Position weightedAverage(final List<Node<Double>> list) {
-        if (list.isEmpty()) {
-            return new Continuous2DEuclidean(0, 0);
-        }
-        final double denom = list.stream().mapToDouble(n -> FastMath.pow(n.getConcentration(biomol), 2)).sum();
-        double xRes = 0;
-        double yRes = 0;
+    private Position weightedAverageVectors(final List<Node<Double>> list) {
+        Position res = new Continuous2DEuclidean(0, 0);
         for (final Node<Double> n : list) {
-            xRes = xRes + FastMath.pow(n.getConcentration(biomol), 2) * env.getPosition(n).getCoordinate(0);
-            yRes = yRes + FastMath.pow(n.getConcentration(biomol), 2) * env.getPosition(n).getCoordinate(1);
+            Position vecTemp = new Continuous2DEuclidean(
+                    env.getPosition(n).getCoordinate(0) - env.getPosition(getNode()).getCoordinate(0),
+                    env.getPosition(n).getCoordinate(1) - env.getPosition(getNode()).getCoordinate(1));
+            final double vecTempModule = FastMath.sqrt(FastMath.pow(vecTemp.getCoordinate(0), 2) + FastMath.pow(vecTemp.getCoordinate(1), 2));
+            vecTemp = new Continuous2DEuclidean(
+                    n.getConcentration(biomol) * (vecTemp.getCoordinate(0) / vecTempModule), 
+                    n.getConcentration(biomol) * (vecTemp.getCoordinate(1) / vecTempModule));
+            res = new Continuous2DEuclidean(
+                    res.getCoordinate(0) + vecTemp.getCoordinate(0),
+                    res.getCoordinate(1) + vecTemp.getCoordinate(1));
         }
-        xRes = xRes / denom;
-        yRes = yRes / denom;
-        final double[] nodeCoord = env.getPosition(getNode()).getCartesianCoordinates();
-        return new Continuous2DEuclidean(xRes - nodeCoord[0], yRes - nodeCoord[1]);
+        return res;
     }
 
     @Override

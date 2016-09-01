@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.math3.util.FastMath;
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
+import it.unibo.alchemist.model.implementations.nodes.EnvironmentNodeImpl;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -93,7 +94,8 @@ public class ChangeBiomolConcentrationInEnv extends AbstractActionOnSingleMolecu
                     .parallel()
                     .mapToDouble(n -> env.getDistanceBetweenNodes(n, getNode()))
                     .count() == 1;
-            if (allEnvNodesAreAtTheSameDistance && getEnviromentNodesSurrounding().size() != 1) {
+            if ((allEnvNodesAreAtTheSameDistance && getEnviromentNodesSurrounding().size() != 1) 
+                    || getNode().getClass().equals(EnvironmentNodeImpl.class)) {
                 getEnviromentNodesSurrounding().stream()
                 .parallel()
                 .min((n1, n2) -> Double.compare(

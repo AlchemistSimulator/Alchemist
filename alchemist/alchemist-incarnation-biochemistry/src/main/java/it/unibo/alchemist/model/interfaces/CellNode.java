@@ -62,11 +62,17 @@ public interface CellNode extends Node<Double> {
      * @return A set of nodes which are linked by a junction with the current node
      */
     Set<CellNode> getAllNodesLinkWithJunction();
-    
+
     /**
      * set the polarization versor, e.g. a versor indicating the direction in which the cell will move the next time.
      * @param v The {@link Position} representing the new polarization versor.
      */
     void setPolarization(Position v);
+
+    /**
+     * 
+     * @return the {@link Position} representing the direction of cell polarization.
+     */
+    Position getPolarizationVersor();
 
 }

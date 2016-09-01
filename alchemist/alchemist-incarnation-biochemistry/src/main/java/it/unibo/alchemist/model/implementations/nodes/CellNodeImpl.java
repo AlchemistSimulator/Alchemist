@@ -83,6 +83,11 @@ public class CellNodeImpl extends DoubleNode implements CellNode, CellWithCircul
     }
 
     @Override
+    public Position getPolarizationVersor() {
+        return polarizationVersor;
+    }
+
+    @Override
     public boolean contains(final Molecule m) {
         if (m instanceof Junction) {
             return containsJunction((Junction) m);

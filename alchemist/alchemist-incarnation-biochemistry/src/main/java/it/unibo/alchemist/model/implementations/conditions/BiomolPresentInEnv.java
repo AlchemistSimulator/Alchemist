@@ -18,7 +18,6 @@ import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
-import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Node;
 /**
  *
@@ -51,7 +50,7 @@ public class BiomolPresentInEnv extends GenericMoleculePresent<Double> {
     @Override
     public double getPropensityConditioning() {
         double quantityInEnvNodes = 0;
-        if (!getEnviromentNodesSurrounding().isEmpty()){
+        if (!getEnviromentNodesSurrounding().isEmpty()) {
             quantityInEnvNodes = getEnviromentNodesSurrounding().stream()
                     .parallel()
                     .mapToDouble(n -> n.getConcentration(getBiomolecule()))

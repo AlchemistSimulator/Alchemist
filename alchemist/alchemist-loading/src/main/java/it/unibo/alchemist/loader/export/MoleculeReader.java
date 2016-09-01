@@ -30,6 +30,7 @@ public class MoleculeReader<T> implements Extractor {
     private final Incarnation<T> incarnation;
     private final String property;
     private final Molecule mol;
+    private final FilteringPolicy filter;
 
     /**
      * @param molecule
@@ -38,16 +39,23 @@ public class MoleculeReader<T> implements Extractor {
      *            the target property
      * @param incarnation
      *            the target incarnation
+     * @param filter
+     *            the {@link FilteringPolicy} to use
      * @param aggregators
      *            the names of the {@link UnivariateStatistic} to use for
      *            aggregating data. If an empty list is passed, then the values
      *            will be logged indipendently for each node.
      */
-    public MoleculeReader(final String molecule, final String property, final Incarnation<T> incarnation, final List<String> aggregators) {
-        LangUtils.requireNonNull(incarnation, aggregators);
+    public MoleculeReader(final String molecule,
+                          final String property,
+                          final Incarnation<T> incarnation,
+                          final FilteringPolicy filter,
+                          final List<String> aggregators) {
+        LangUtils.requireNonNull(incarnation, aggregators, filter);
         this.incarnation = incarnation;
         this.property = property;
         this.mol = incarnation.createMolecule(molecule);
+        this.filter = filter;
         this.aggregators = aggregators.parallelStream()
                 .map(StatUtil::makeUnivariateStatistic)
                 .filter(Optional::isPresent)
@@ -67,12 +75,12 @@ public class MoleculeReader<T> implements Extractor {
     @Override
     public double[] extractData(final Environment<?> env, final Reaction<?> r, final Time time, final long step) {
         @SuppressWarnings("unchecked")
-        final DoubleStream values = ((Environment<T>) env).getNodes().parallelStream()
+        final DoubleStream values = ((Environment<T>) env).getNodes().stream()
                 .mapToDouble(node -> incarnation.getProperty(node, mol, property));
         if (aggregators.isEmpty()) {
             return values.toArray();
         } else {
-            final double[] input = values.filter(Double::isFinite).toArray();
+            final double[] input = values.flatMap(filter::apply).toArray();
             if (input.length == 0) {
                 final double[] result = new double[aggregators.size()];
                 Arrays.fill(result, Double.NaN);

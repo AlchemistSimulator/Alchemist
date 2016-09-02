@@ -37,7 +37,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
  */
 public class TestIncarnation {
 
-    private static final ProtelisIncarnation INC = ProtelisIncarnation.instance();
+    private static final ProtelisIncarnation INC = new ProtelisIncarnation();
 
     /**
      * Tests the ability of {@link ProtelisIncarnation} of properly building a

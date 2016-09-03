@@ -9,6 +9,10 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
+/**
+ * 
+ *
+ */
 public class CellMove extends AbstractMoveNode<Double> {
 
     /**

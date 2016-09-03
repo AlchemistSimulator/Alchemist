@@ -30,9 +30,9 @@ public class ChemiotacticPolarization extends AbstractAction<Double> {
 
     /**
      * Initialize a polarization activity regulated by environmental concentration of a molecule.
-     * @param environment
-     * @param node
-     * @param biomol
+     * @param environment 
+     * @param node 
+     * @param biomol 
      * @param ascendGrad if that parameter is true, the polarization versor of the cell will be directed in direction of the greates concentration of biomolecule in neighborhood; if it's false, the versor will be directed in the exactly the opposite direction.
      */
     public ChemiotacticPolarization(final Environment<Double> environment, final Node<Double> node, final String biomol, final boolean ascendGrad) {
@@ -46,7 +46,7 @@ public class ChemiotacticPolarization extends AbstractAction<Double> {
     }
 
     @Override
-    public ChemiotacticPolarization cloneOnNewNode(Node<Double> n, Reaction<Double> r) {
+    public ChemiotacticPolarization cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
         return new ChemiotacticPolarization(env, n, biomol.toString(), ascend);
     }
 
@@ -59,7 +59,7 @@ public class ChemiotacticPolarization extends AbstractAction<Double> {
         if (l.isEmpty()) {
             ((CellNode) getNode()).setPolarization(new Continuous2DEuclidean(0, 0));
         } else {
-            boolean isNodeOnMaxConc = env.getPosition(l.stream()
+            final boolean isNodeOnMaxConc = env.getPosition(l.stream()
                     .max((n1, n2) -> Double.compare(n1.getConcentration(biomol), n2.getConcentration(biomol)))
                     .get()).equals(env.getPosition(getNode()));
             if (isNodeOnMaxConc) {

@@ -138,7 +138,7 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
     @Override
     public double getProperty(final Node<Object> node, final Molecule mol, final String prop) {
         try {
-            SynchronizedVM vm = cache.get(new CacheKey(node, mol, prop));
+            final SynchronizedVM vm = cache.get(new CacheKey(node, mol, prop));
             final Object val = vm.runCycle();
             if (val instanceof Number) {
                 return ((Number) val).doubleValue();

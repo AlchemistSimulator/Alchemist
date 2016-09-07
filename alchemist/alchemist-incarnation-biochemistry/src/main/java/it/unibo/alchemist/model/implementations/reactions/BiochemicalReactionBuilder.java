@@ -56,7 +56,6 @@ import it.unibo.alchemist.model.implementations.conditions.JunctionPresentInCell
 import it.unibo.alchemist.model.implementations.conditions.NeighborhoodPresent;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
-import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Condition;
@@ -495,7 +494,7 @@ public class BiochemicalReactionBuilder {
                 final Biomolecule biomol = createBiomolecule(b);
                 final double concentration = createConcentration(b);
                 conditionList.add(new BiomolPresentInEnv(biomol, concentration, node, env));
-                actionList.add(new ChangeBiomolConcentrationInEnv(node, biomol, env)); // TODO just a stub
+                actionList.add(new ChangeBiomolConcentrationInEnv(node, biomol, env, rand)); 
             }
             return reaction;
         }
@@ -535,7 +534,7 @@ public class BiochemicalReactionBuilder {
                 if (re.biomolecule() != null) {
                     final Biomolecule biomol = createBiomolecule(re.biomolecule());
                     final double concentration = createConcentration(re.biomolecule());
-                    actionList.add(new ChangeBiomolConcentrationInEnv(node, biomol, concentration, env));
+                    actionList.add(new ChangeBiomolConcentrationInEnv(node, biomol, concentration, env, rand));
                 } else if (re.javaConstructor() != null) {
                     actionList.add(createObject(re.javaConstructor(), ACTIONS_PACKAGE, currentInc, rand, node, time, env, reaction));
                 }

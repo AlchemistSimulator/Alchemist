@@ -63,12 +63,21 @@ public class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborAction<
     public void execute() {
         final Neighborhood<Double> neighborhood = env.getNeighborhood(getNode());
         final List<Integer> validTargetsIds = new ArrayList<>();
-        neighborhood
-        .getNeighbors()
-        .stream()
-        .filter(n -> n instanceof CellNode)
-        .mapToInt(n -> n.getId())
-        .forEach(i -> validTargetsIds.add(i));
+        if (delta < 0) {
+            neighborhood
+            .getNeighbors()
+            .stream()
+            .filter(n -> n instanceof CellNode && n.getConcentration(mol) >= delta)
+            .mapToInt(n -> n.getId())
+            .forEach(i -> validTargetsIds.add(i));
+        } else {
+            neighborhood
+            .getNeighbors()
+            .stream()
+            .filter(n -> n instanceof CellNode && n.getConcentration(mol) >= delta)
+            .mapToInt(n -> n.getId())
+            .forEach(i -> validTargetsIds.add(i));
+        }
         if (!validTargetsIds.isEmpty()) {
             final int targetId = validTargetsIds.get(rand.nextInt(validTargetsIds.size()));
             execute(neighborhood.getNeighborByNumber(targetId));

@@ -67,6 +67,33 @@ public class TestEnvironmentNodes {
         }
         assertTrue(envNode.getConcentration(a) == 1000);
     }
+    
+    /**
+     * test a simple reaction "[A] --> [A in env]".
+     */
+    @Test
+    public void test2() {
+        final Environment<Double> env = new BioRect2DEnvironment();
+        final EnvironmentNode envNode1 = new EnvironmentNodeImpl(env);
+        final EnvironmentNode envNode2 = new EnvironmentNodeImpl(env);
+        final MersenneTwister rand = new MersenneTwister();
+        final Molecule a = new Biomolecule("A");
+        envNode1.addReaction(new BiochemistryIncarnation().createReaction(
+                rand, env, envNode1, new ExponentialTime<>(1, rand), "[A] --> [A in env]"
+                ));
+        envNode1.setConcentration(a, 1000.0);
+        env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.EuclideanDistance<>(2));
+        env.addNode(envNode1, new Continuous2DEuclidean(0, 0));
+        env.addNode(envNode2, new Continuous2DEuclidean(0, 1));
+        final Simulation<Double> sim = new Engine<>(env, 10000);
+        sim.addCommand(new Engine.StateCommand<Double>().run().build());
+        try {
+            SwingUtilities.invokeAndWait(sim);
+        } catch (InvocationTargetException | InterruptedException e) {
+            L.error(e.getMessage());
+        }
+        assertTrue(envNode2.getConcentration(a) == 1000 && envNode1.getConcentration(a) == 0);
+    }
 
     /**
      * Simple interaction between a CellNode and an EnviromentalNode.
@@ -177,7 +204,7 @@ public class TestEnvironmentNodes {
     public void testEnv6() {
         testNoVar("/testEnv6.yml");
     }
-    
+
     /**
      * test if neighbors are selected correctly.
      */

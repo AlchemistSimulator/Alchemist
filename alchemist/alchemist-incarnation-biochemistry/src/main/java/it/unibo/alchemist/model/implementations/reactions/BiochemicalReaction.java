@@ -96,10 +96,12 @@ public class BiochemicalReaction extends ChemicalReaction<Double> {
 
     @Override 
     public void execute() {
+        //System.out.println("reaction called");
         if (neighborConditionsPresent) {
             final Optional<Map.Entry<Node<Double>, Double>> neighTarget = validNeighbors.entrySet().stream().max((e1, e2) -> e1.getValue().compareTo(e2.getValue()));
             for (final Action<Double> a : getActions()) {
                 if (a instanceof AbstractNeighborAction && neighTarget.isPresent()) {
+                    //System.out.println(a.getClass().getName());
                     ((AbstractNeighborAction<Double>) a).execute(neighTarget.get().getKey());
                 } else {
                     a.execute();

@@ -21,7 +21,6 @@ import it.unibo.alchemist.model.interfaces.Position;
 public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
 
     private static final long serialVersionUID = 1L;
-    private static final String NOT_SUPPORTED = " is not compatible with biochemistry.";
     private Optional<CellWithCircularArea> biggestCell = Optional.absent();
 
     /**

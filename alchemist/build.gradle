@@ -248,8 +248,8 @@ allprojects {
                     }
                     scm {
                         url "$scmRootUrl/$artifactId"
-                        connection "%scmType:$scmLogin/$scmRepoName"
-                        developerConnection "%scmType:$scmLogin/$scmRepoName"
+                        connection "$scmType:$scmLogin/$scmRepoName"
+                        developerConnection "$scmType:$scmLogin/$scmRepoName"
                     }
                 }
             }

@@ -97,21 +97,50 @@ public class TestEnvironmentNodes {
         env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.EuclideanDistance<>(2));
         env.addNode(envNode1, new Continuous2DEuclidean(0, 0));
         env.addNode(envNode2, new Continuous2DEuclidean(0, 1));
-        env.addNode(envNode3, new Continuous2DEuclidean(1, 1));
+        env.addNode(envNode3, new Continuous2DEuclidean(1, 0));
         env.addNode(envNode4, new Continuous2DEuclidean(-1, 0));
         env.addNode(envNode5, new Continuous2DEuclidean(0, -1));
         final Simulation<Double> sim = new Engine<>(env, 10000);
         sim.addCommand(new Engine.StateCommand<Double>().run().build());
         sim.run();
-        System.out.println("envNode2 " + envNode2.getConcentration(a));
-        System.out.println("envNode3 " + envNode3.getConcentration(a));
-        System.out.println("envNode4 " + envNode4.getConcentration(a));
-        System.out.println("envNode5 " + envNode5.getConcentration(a));
-        assertTrue(envNode2.getConcentration(a) != 0 && 
-                envNode1.getConcentration(a) == 0 &&
-                envNode3.getConcentration(a) != 0 &&
-                envNode4.getConcentration(a) != 0 &&
-                envNode5.getConcentration(a) != 0);
+        assertTrue(envNode2.getConcentration(a) != 0 
+                && envNode1.getConcentration(a) == 0 
+                && envNode3.getConcentration(a) != 0 
+                && envNode4.getConcentration(a) != 0 
+                && envNode5.getConcentration(a) != 0);
+    }
+
+    /**
+     * 
+     */
+    @Test
+    public void test4() {
+        final Environment<Double> env = new BioRect2DEnvironment();
+        final CellNode cellNode = new CellNodeImpl(env);
+        final EnvironmentNode envNode2 = new EnvironmentNodeImpl(env);
+        final EnvironmentNode envNode3 = new EnvironmentNodeImpl(env);
+        final EnvironmentNode envNode4 = new EnvironmentNodeImpl(env);
+        final EnvironmentNode envNode5 = new EnvironmentNodeImpl(env);
+        final MersenneTwister rand = new MersenneTwister();
+        final Molecule a = new Biomolecule("A");
+        cellNode.addReaction(new BiochemistryIncarnation().createReaction(
+                rand, env, cellNode, new ExponentialTime<>(1, rand), "[A] --> [A in env]"
+                ));
+        cellNode.setConcentration(a, 1000.0);
+        env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.EuclideanDistance<>(2));
+        env.addNode(cellNode, new Continuous2DEuclidean(0, 0));
+        env.addNode(envNode2, new Continuous2DEuclidean(0, 1));
+        env.addNode(envNode3, new Continuous2DEuclidean(1, 0));
+        env.addNode(envNode4, new Continuous2DEuclidean(-1, 0));
+        env.addNode(envNode5, new Continuous2DEuclidean(0, -1));
+        final Simulation<Double> sim = new Engine<>(env, 10000);
+        sim.addCommand(new Engine.StateCommand<Double>().run().build());
+        sim.run();
+        assertTrue(envNode2.getConcentration(a) != 0 
+                && cellNode.getConcentration(a) == 0 
+                && envNode3.getConcentration(a) != 0 
+                && envNode4.getConcentration(a) != 0 
+                && envNode5.getConcentration(a) != 0);
     }
 
     /**

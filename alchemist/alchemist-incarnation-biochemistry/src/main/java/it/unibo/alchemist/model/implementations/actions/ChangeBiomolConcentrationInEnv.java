@@ -9,6 +9,7 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +20,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.nodes.EnvironmentNodeImpl;
 import it.unibo.alchemist.model.interfaces.Action;
-import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
@@ -72,73 +72,89 @@ public class ChangeBiomolConcentrationInEnv extends AbstractAction<Double> {
 
     @Override
     public Action<Double> cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
-        return new ChangeBiomolConcentrationInEnv(n, getBiomolecule(), env, rand);
+        return new ChangeBiomolConcentrationInEnv(n, biomolecule, env, rand);
     }
 
     @Override
     public void execute() {
-        // add delta to the nearest node.
-        if (delta < 0) {
-            double deltaTemp = delta;
-            final List<Node<Double>> l = getEnviromentNodesSurrounding().stream()
-                    .parallel()
-                    .filter(n -> n.contains(getBiomolecule()))
-                    .sorted((n1, n2) -> {
-                        if (getNode() instanceof CellNode) {
-                            return Double.compare(
-                                    env.getPosition(n1).getDistanceTo(env.getPosition(getNode())), 
-                                    env.getPosition(n2).getDistanceTo(env.getPosition(getNode())));
-                        } else if (getNode().getClass().equals(EnvironmentNodeImpl.class)) {
-                            return rand.nextInt(3) - 1;
-                        } else {
-                            throw new UnsupportedOperationException(
-                                    "Neighborhood can be composed only by CellNodes "
-                                    + "or EnvironmentNodes; the node found is of type : "
-                                            + getNode().getClass().getName()
-                                    );
-                        }
-                    })
-                    .collect(Collectors.toList());
-            for (final Node<Double> n : l) {
-                if (n.getConcentration(getBiomolecule()) > FastMath.abs(delta)) {
-                    n.setConcentration(getBiomolecule(), n.getConcentration(getBiomolecule()) + delta);
-                    deltaTemp = 0;
-                } else {
-                    deltaTemp = n.getConcentration(getBiomolecule()) + deltaTemp;
-                    n.removeConcentration(getBiomolecule());
-                    if (deltaTemp == 0) {
+        // get the environment surrounding
+        final List<EnvironmentNode> environmentNodesSurrounding = getEnvironmentNodesSurrounding();
+        // if the node is an EnvironmentNode...
+        if (getNode().getClass().equals(EnvironmentNodeImpl.class)) {
+            // sort the env node randomly
+            Collections.shuffle(environmentNodesSurrounding);
+            if (delta < 0) {
+                double deltaTemp = delta;
+                for (final EnvironmentNode n : environmentNodesSurrounding) {
+                    final double nodeConcentration = n.getConcentration(biomolecule);
+                    // if nodeConcentration >= |deltaTemp|, remove the a delta quantity of the biomol only from this node
+                    if (nodeConcentration >= FastMath.abs(deltaTemp)) {
+                        n.setConcentration(biomolecule, nodeConcentration + deltaTemp);
                         break;
+                    // else, remove all molecule of that species from that node and go on till deltaTemp is smaller than nodeConcetration
+                    } else {
+                        deltaTemp = deltaTemp + nodeConcentration;
+                        n.removeConcentration(biomolecule);
                     }
                 }
+            } else {
+                // if delta > 0, simply add delta to the first node of the list (which has been sorted randomly)
+                final Node<Double> target = environmentNodesSurrounding.get(0);
+                target.setConcentration(biomolecule, target.getConcentration(biomolecule) + delta);
             }
         } else {
-            if (getNode().getClass().equals(EnvironmentNodeImpl.class)) {
-                final Node<Double> target = getEnviromentNodesSurrounding().get(rand.nextInt(getEnviromentNodesSurrounding().size()));
-                target.setConcentration(getBiomolecule(), target.getConcentration(getBiomolecule()) + delta);
-            } else {
-                final boolean allEnvNodesAreAtTheSameDistance = getEnviromentNodesSurrounding().stream()
-                        .parallel()
-                        .mapToDouble(n -> env.getDistanceBetweenNodes(n, getNode()))
+            // if getNode() instanceof CellNode, check if all nodes are at the same distance
+            final boolean areAllEnvNodesAtTheSameDistance = environmentNodesSurrounding.stream()
+                    .mapToDouble(n -> {
+                    return env.getDistanceBetweenNodes(getNode(), n);
+                    })
+                    .distinct()
+                    .count() == 1;
+            if (areAllEnvNodesAtTheSameDistance) {
+                // if they are, check if they have all the same concentration of the biomolecule
+                final boolean haveAllNodeTheSameConcentration = environmentNodesSurrounding.stream()
+                        .mapToDouble(n -> n.getConcentration(biomolecule))
+                        .distinct()
                         .count() == 1;
-                if (allEnvNodesAreAtTheSameDistance && getEnviromentNodesSurrounding().size() != 1) {
-                    getEnviromentNodesSurrounding().stream()
-                    .parallel()
-                    .min((n1, n2) -> Double.compare(
-                            n1.getConcentration(getBiomolecule()), 
-                            n2.getConcentration(getBiomolecule())
-                            ))
-                    .ifPresent(n -> n.setConcentration(getBiomolecule(), n.getConcentration(getBiomolecule()) + delta));
+                if (haveAllNodeTheSameConcentration) {
+                    // if they have, sort the list randomly
+                    Collections.shuffle(environmentNodesSurrounding);
                 } else {
-                    getEnviromentNodesSurrounding().stream()
-                    .parallel()
-                    .min((n1, n2) -> Double.compare(
-                            env.getPosition(n1).getDistanceTo(env.getPosition(getNode())), 
-                            env.getPosition(n2).getDistanceTo(env.getPosition(getNode()))
-                            ))
-                    .ifPresent(n -> { 
-                        n.setConcentration(getBiomolecule(), n.getConcentration(getBiomolecule()) + delta);
-                    });
+                    // else, sort the list by the concentration of the biomolecule
+                    environmentNodesSurrounding.sort(
+                            (n1, n2) -> Double.compare(
+                                    n1.getConcentration(biomolecule), 
+                                    n2.getConcentration(biomolecule)
+                                    )
+                            );
                 }
+            } else {
+                // else, sort the list by the distance from the node
+                environmentNodesSurrounding.sort(
+                        (n1, n2) -> Double.compare(
+                                env.getDistanceBetweenNodes(getNode(), n1), 
+                                env.getDistanceBetweenNodes(getNode(), n2)
+                                )
+                        );
+            }
+            if (delta < 0) {
+                double deltaTemp = delta;
+                for (final EnvironmentNode n : environmentNodesSurrounding) {
+                    final double nodeConcentration = n.getConcentration(biomolecule);
+                    // if nodeConcentration >= |deltaTemp|, remove the a delta quantity of the biomol only from this node
+                    if (nodeConcentration >= FastMath.abs(deltaTemp)) {
+                        n.setConcentration(biomolecule, nodeConcentration + deltaTemp);
+                        break;
+                    // else, remove all molecule of that species from that node and go on till deltaTemp is smaller than nodeConcetration
+                    } else {
+                        deltaTemp = deltaTemp + nodeConcentration;
+                        n.removeConcentration(biomolecule);
+                    }
+                }
+            } else {
+                // if delta > 0, simply add delta to the first node of the list (which has been sorted randomly)
+                final Node<Double> target = environmentNodesSurrounding.get(0);
+                target.setConcentration(biomolecule, target.getConcentration(biomolecule) + delta);
             }
         }
     }
@@ -150,28 +166,13 @@ public class ChangeBiomolConcentrationInEnv extends AbstractAction<Double> {
 
     /**
      * 
-     * @return a list of EnvironmentNodes near to the node where this condition is located.
+     * @return a list containing the environment nodes around
      */
-    protected final List<Node<Double>> getEnviromentNodesSurrounding() {
-        return env.getNeighborhood(getNode()).getNeighbors().stream()
+    @SuppressWarnings("unchecked")
+    protected List<EnvironmentNode> getEnvironmentNodesSurrounding() {
+        return (List<EnvironmentNode>) env.getNeighborhood(getNode()).getNeighbors().stream()
                 .parallel()
                 .filter(n -> n instanceof EnvironmentNode)
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * 
-     * @return a {@link List} of the environment nodes surrounding's ids. Than can be useful for selecting randomly on of them.
-     */
-    protected final List<Integer> getEnviromentNodesSurroundingIds() {
-        return env.getNeighborhood(getNode()).getNeighbors().stream()
-                .parallel()
-                .filter(n -> n instanceof EnvironmentNode)
-                .map(n -> n.getId())
-                .collect(Collectors.toList());
-    }
-
-    private Biomolecule getBiomolecule() {
-        return this.biomolecule;
     }
 }

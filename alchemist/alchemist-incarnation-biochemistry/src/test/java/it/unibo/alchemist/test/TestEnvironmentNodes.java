@@ -5,16 +5,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Map;
 
-import javax.swing.SwingUtilities;
 
 import org.apache.commons.math3.random.MersenneTwister;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -25,7 +21,6 @@ import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
 import it.unibo.alchemist.model.implementations.nodes.EnvironmentNodeImpl;
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
-import it.unibo.alchemist.model.implementations.reactions.BiochemicalReactionBuilder;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -38,8 +33,6 @@ import it.unibo.alchemist.model.interfaces.Node;
  *
  */
 public class TestEnvironmentNodes {
-
-    private static final Logger L = LoggerFactory.getLogger(BiochemicalReactionBuilder.class);
 
     /**
      * test a simple reaction "[A] --> [A in env]".
@@ -60,14 +53,10 @@ public class TestEnvironmentNodes {
         env.addNode(envNode, new Continuous2DEuclidean(0, 1));
         final Simulation<Double> sim = new Engine<>(env, 10000);
         sim.addCommand(new Engine.StateCommand<Double>().run().build());
-        try {
-            SwingUtilities.invokeAndWait(sim);
-        } catch (InvocationTargetException | InterruptedException e) {
-            L.error(e.getMessage());
-        }
+        sim.run();
         assertTrue(envNode.getConcentration(a) == 1000);
     }
-    
+
     /**
      * test a simple reaction "[A] --> [A in env]".
      */
@@ -87,12 +76,42 @@ public class TestEnvironmentNodes {
         env.addNode(envNode2, new Continuous2DEuclidean(0, 1));
         final Simulation<Double> sim = new Engine<>(env, 10000);
         sim.addCommand(new Engine.StateCommand<Double>().run().build());
-        try {
-            SwingUtilities.invokeAndWait(sim);
-        } catch (InvocationTargetException | InterruptedException e) {
-            L.error(e.getMessage());
-        }
+        sim.run();
         assertTrue(envNode2.getConcentration(a) == 1000 && envNode1.getConcentration(a) == 0);
+    }
+
+    @Test
+    public void test3() {
+        final Environment<Double> env = new BioRect2DEnvironment();
+        final EnvironmentNode envNode1 = new EnvironmentNodeImpl(env);
+        final EnvironmentNode envNode2 = new EnvironmentNodeImpl(env);
+        final EnvironmentNode envNode3 = new EnvironmentNodeImpl(env);
+        final EnvironmentNode envNode4 = new EnvironmentNodeImpl(env);
+        final EnvironmentNode envNode5 = new EnvironmentNodeImpl(env);
+        final MersenneTwister rand = new MersenneTwister();
+        final Molecule a = new Biomolecule("A");
+        envNode1.addReaction(new BiochemistryIncarnation().createReaction(
+                rand, env, envNode1, new ExponentialTime<>(1, rand), "[A] --> [A in env]"
+                ));
+        envNode1.setConcentration(a, 1000.0);
+        env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.EuclideanDistance<>(2));
+        env.addNode(envNode1, new Continuous2DEuclidean(0, 0));
+        env.addNode(envNode2, new Continuous2DEuclidean(0, 1));
+        env.addNode(envNode3, new Continuous2DEuclidean(1, 1));
+        env.addNode(envNode4, new Continuous2DEuclidean(-1, 0));
+        env.addNode(envNode5, new Continuous2DEuclidean(0, -1));
+        final Simulation<Double> sim = new Engine<>(env, 10000);
+        sim.addCommand(new Engine.StateCommand<Double>().run().build());
+        sim.run();
+        System.out.println("envNode2 " + envNode2.getConcentration(a));
+        System.out.println("envNode3 " + envNode3.getConcentration(a));
+        System.out.println("envNode4 " + envNode4.getConcentration(a));
+        System.out.println("envNode5 " + envNode5.getConcentration(a));
+        assertTrue(envNode2.getConcentration(a) != 0 && 
+                envNode1.getConcentration(a) == 0 &&
+                envNode3.getConcentration(a) != 0 &&
+                envNode4.getConcentration(a) != 0 &&
+                envNode5.getConcentration(a) != 0);
     }
 
     /**

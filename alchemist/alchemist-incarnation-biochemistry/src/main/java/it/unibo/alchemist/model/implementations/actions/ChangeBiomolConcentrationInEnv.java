@@ -27,6 +27,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
+ * Action implementing the changing of the concentration of a given biomolecule in environment.
  */
 public class ChangeBiomolConcentrationInEnv extends AbstractAction<Double> {
 
@@ -88,9 +89,7 @@ public class ChangeBiomolConcentrationInEnv extends AbstractAction<Double> {
                                     env.getPosition(n1).getDistanceTo(env.getPosition(getNode())), 
                                     env.getPosition(n2).getDistanceTo(env.getPosition(getNode())));
                         } else if (getNode().getClass().equals(EnvironmentNodeImpl.class)) {
-                            int testVar = rand.nextInt(3) - 1;
-                            System.out.println(testVar);
-                            return testVar;
+                            return rand.nextInt(3) - 1;
                         } else {
                             throw new UnsupportedOperationException(
                                     "Neighborhood can be composed only by CellNodes "
@@ -105,8 +104,8 @@ public class ChangeBiomolConcentrationInEnv extends AbstractAction<Double> {
                     n.setConcentration(getBiomolecule(), n.getConcentration(getBiomolecule()) + delta);
                     deltaTemp = 0;
                 } else {
-                    n.removeConcentration(getBiomolecule());
                     deltaTemp = n.getConcentration(getBiomolecule()) + deltaTemp;
+                    n.removeConcentration(getBiomolecule());
                     if (deltaTemp == 0) {
                         break;
                     }
@@ -114,11 +113,8 @@ public class ChangeBiomolConcentrationInEnv extends AbstractAction<Double> {
             }
         } else {
             if (getNode().getClass().equals(EnvironmentNodeImpl.class)) {
-                getEnviromentNodesSurrounding().stream()
-                .parallel()
-                .sorted((n1, n2) -> rand.nextInt(2) - 1)
-                .findFirst()
-                .ifPresent(n -> n.setConcentration(getBiomolecule(), n.getConcentration(getBiomolecule()) + delta));
+                final Node<Double> target = getEnviromentNodesSurrounding().get(rand.nextInt(getEnviromentNodesSurrounding().size()));
+                target.setConcentration(getBiomolecule(), target.getConcentration(getBiomolecule()) + delta);
             } else {
                 final boolean allEnvNodesAreAtTheSameDistance = getEnviromentNodesSurrounding().stream()
                         .parallel()
@@ -160,6 +156,18 @@ public class ChangeBiomolConcentrationInEnv extends AbstractAction<Double> {
         return env.getNeighborhood(getNode()).getNeighbors().stream()
                 .parallel()
                 .filter(n -> n instanceof EnvironmentNode)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 
+     * @return a {@link List} of the environment nodes surrounding's ids. Than can be useful for selecting randomly on of them.
+     */
+    protected final List<Integer> getEnviromentNodesSurroundingIds() {
+        return env.getNeighborhood(getNode()).getNeighbors().stream()
+                .parallel()
+                .filter(n -> n instanceof EnvironmentNode)
+                .map(n -> n.getId())
                 .collect(Collectors.toList());
     }
 

@@ -81,6 +81,9 @@ public class TestEnvironmentNodes {
         assertTrue(envNode2.getConcentration(a) == 1000 && envNode1.getConcentration(a) == 0);
     }
 
+    /**
+     * Test if env nodes are selected randomly
+     */
     @Test
     public void test3() {
         final Environment<Double> env = new BioRect2DEnvironment();
@@ -112,7 +115,7 @@ public class TestEnvironmentNodes {
     }
 
     /**
-     * 
+     * Test if env nodes with same concentration are selected randomly
      */
     @Test
     public void test4() {
@@ -142,6 +145,41 @@ public class TestEnvironmentNodes {
                 && envNode3.getConcentration(a) != 0 
                 && envNode4.getConcentration(a) != 0 
                 && envNode5.getConcentration(a) != 0);
+    }
+ 
+    /**
+     * Test if env nodes with same concentration are selected randomly
+     */
+    @Test
+    public void test5() {
+        final Environment<Double> env = new BioRect2DEnvironment();
+        final CellNode cellNode = new CellNodeImpl(env);
+        final EnvironmentNode envNode1 = new EnvironmentNodeImpl(env);
+        final EnvironmentNode envNode2 = new EnvironmentNodeImpl(env);
+        final EnvironmentNode envNode3 = new EnvironmentNodeImpl(env);
+        final EnvironmentNode envNode4 = new EnvironmentNodeImpl(env);
+        final MersenneTwister rand = new MersenneTwister();
+        final Molecule a = new Biomolecule("A");
+        cellNode.addReaction(new BiochemistryIncarnation().createReaction(
+                rand, env, cellNode, new ExponentialTime<>(1, rand), "[A] --> [A in env]"
+                ));
+        envNode1.addReaction(new BiochemistryIncarnation().createReaction(
+                rand, env, envNode1, new ExponentialTime<>(1000, rand), "[A] --> [A in env]"
+                ));
+        envNode2.addReaction(new BiochemistryIncarnation().createReaction(
+                rand, env, envNode2, new ExponentialTime<>(1000, rand), "[A] --> [A in env]"
+                ));
+        cellNode.setConcentration(a, 1000.0);
+        env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.EuclideanDistance<>(1));
+        env.addNode(cellNode, new Continuous2DEuclidean(0, 0));
+        env.addNode(envNode1, new Continuous2DEuclidean(0, -0.75));
+        env.addNode(envNode2, new Continuous2DEuclidean(0, 0.75));
+        env.addNode(envNode3, new Continuous2DEuclidean(0, 1.5));
+        env.addNode(envNode4, new Continuous2DEuclidean(0, -1.5));
+        final Simulation<Double> sim = new Engine<>(env, 10000);
+        sim.addCommand(new Engine.StateCommand<Double>().run().build());
+        sim.run();
+        assertTrue(envNode3.getConcentration(a) != 0 && envNode4.getConcentration(a) != 0);
     }
 
     /**

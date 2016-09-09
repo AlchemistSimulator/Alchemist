@@ -32,6 +32,7 @@ import it.unibo.alchemist.model.interfaces.Node;
  * Test implementation of extra-cellular environment  created with EnvironmentNodes.
  *
  */
+// CHECKSTYLE:OFF: MagicNumber
 public class TestEnvironmentNodes {
 
     /**
@@ -45,7 +46,7 @@ public class TestEnvironmentNodes {
         final MersenneTwister rand = new MersenneTwister();
         final Molecule a = new Biomolecule("A");
         cellNode.addReaction(new BiochemistryIncarnation().createReaction(
-                rand, env, cellNode, new ExponentialTime<>(1, rand), "[A] --> [A in env]"
+                rand, env, cellNode, new ExponentialTime<>(1, rand), "[A] --> [A in env]" //NOPMD
                 ));
         cellNode.setConcentration(a, 1000.0);
         env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.EuclideanDistance<>(2));
@@ -54,7 +55,7 @@ public class TestEnvironmentNodes {
         final Simulation<Double> sim = new Engine<>(env, 10000);
         sim.addCommand(new Engine.StateCommand<Double>().run().build());
         sim.run();
-        assertTrue(envNode.getConcentration(a) == 1000);
+        assertEquals(envNode.getConcentration(a), 1000, 0.000000000001);
     }
 
     /**
@@ -177,7 +178,7 @@ public class TestEnvironmentNodes {
                         env.getPosition(n2).getDistanceTo(env.getPosition(center))
                         ))
                 .get().getConcentration(new Biomolecule("A"));
-        assertTrue(conAInNearest == 1000);
+        assertEquals(conAInNearest, 1000, 0.00000000001);
     }
 
     /**
@@ -198,8 +199,8 @@ public class TestEnvironmentNodes {
                 .findAny()
                 .get()
                 .getConcentration(new Biomolecule("A"));
-        assertTrue("conAInCell = " + conAInCell, conAInCell == 1000);
-        assertTrue(conAInEnv == 0);
+        assertEquals("conAInCell = " + conAInCell, conAInCell, 1000, 0.0000000000001); //NOPMD
+        assertEquals(conAInEnv, 0, 0.000000000001);
     }
 
     /**
@@ -285,7 +286,7 @@ public class TestEnvironmentNodes {
                 .findAny()
                 .get()
                 .getConcentration(new Biomolecule("A"));
-        assertTrue("conAInCell = " + conAInCell, conAInCell == 1000);
+        assertEquals("conAInCell = " + conAInCell, conAInCell, 1000, 0.000000000001);
     }
 
     private static <T> Environment<T> testNoVar(final String resource) {

@@ -64,7 +64,8 @@ public class BiomolPresentInNeighbor extends AbstractNeighborCondition<Double> {
             final Neighborhood<Double> neighborhood = environment.getNeighborhood(getNode());
             return neigh.entrySet().stream()
                     .filter(n -> n.getKey() instanceof CellNode)
-                    .allMatch(n -> neighborhood.contains(n.getKey()) && n.getKey().getConcentration(mol) >=  conc);
+                    .allMatch(n -> neighborhood.contains(n.getKey()) 
+                            && n.getKey().getConcentration(mol) >=  conc);
         }
     }
 

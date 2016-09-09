@@ -1,11 +1,17 @@
 package it.unibo.alchemist.model.implementations.layers;
 
+import java.lang.reflect.Array;
+
 import org.apache.commons.math3.util.FastMath;
 
 import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Position;
 
-public class BiomolGradientLayer implements Layer<Double>{
+/**
+ * A {@link Layer} representing a linear distribution in space of a molecule.
+ *
+ */
+public class BiomolGradientLayer implements Layer<Double> {
 
     /**
      * 
@@ -15,7 +21,15 @@ public class BiomolGradientLayer implements Layer<Double>{
     private final double b;
     private final double c;
     private final double steep;
-    
+
+    /**
+     * Initialize a gradient layer which grows in concentration proportionaly in space. 
+     * 
+     * @param dirx x coordinate of the vector representing the direction in which the gradient grows
+     * @param diry y coordinate of the vector representing the direction in which the gradient grows
+     * @param unitVariation unit variation of the gradient
+     * @param offset minimum value of concentration reached by this spatial distribution
+     */
     public BiomolGradientLayer(final double dirx, final double diry, final double unitVariation, final double offset) {
         final double dirModule = FastMath.sqrt(FastMath.pow(dirx, 2) + FastMath.pow(diry, 2));
         steep = unitVariation;
@@ -28,13 +42,20 @@ public class BiomolGradientLayer implements Layer<Double>{
         a = unitVariation * vx;
         b = unitVariation * vy;
     }
-    
+
+    /**
+     * Initialize a gradient layer which grows in concentration proportionaly in space. 
+     * 
+     * @param direction the {@link Position} representing the direction in which the gradient grows (here the positions is considered as a vector)
+     * @param unitVariation unit variation of the gradient
+     * @param offset minimum value of concentration reached by this spatial distribution
+     */
     public BiomolGradientLayer(final Position direction, final double unitVariation, final double offset) {
         this(direction.getCoordinate(0), direction.getCoordinate(1), unitVariation, offset);
     }
 
     @Override
-    public Double getValue(Position p) {
+    public Double getValue(final Position p) {
         final double[] cord = p.getCartesianCoordinates();
         return (cord[0] * a) + (cord[1] * b) + c;
     }
@@ -42,14 +63,22 @@ public class BiomolGradientLayer implements Layer<Double>{
     @Override
     public String toString() {
         return "Layer representing a gradient of the molecule. "
-                + "The equation describing this gradient is: concentration = " + a +
-                "x + " + b + "y + " + c;
+                + "The equation describing this gradient is: concentration = " + a 
+                + "x + " + b + "y + " + c;
     }
 
+    /**
+     * 
+     * @return the parameters describing this spatial distribution, that's actually a plain. So the {@link Array} a returned by this method contains the parameters of that plain ( concentration = a[0] * x + a[1] * y + a[2])
+     */
     public double[] getParameters() {
         return new double[]{a, b, c};
     }
-    
+
+    /**
+     * 
+     * @return the steepness of the gradient
+     */
     public double getSteep() {
         return steep;
     }

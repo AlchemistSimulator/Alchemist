@@ -11,9 +11,7 @@ import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment;
-import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironmentNoOverlap;
-import it.unibo.alchemist.model.implementations.layers.BiomolGradientLayer;
-import it.unibo.alchemist.model.implementations.layers.BiomolStepLayer;
+import it.unibo.alchemist.model.implementations.layers.StepLayer;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
@@ -33,8 +31,9 @@ import it.unibo.alchemist.model.interfaces.Time;
  */
 public class TestBiomolLayer {
 
-
+    private static final double PRECISION = 0.00000001d;
     private static final Incarnation<Double> INCARNATION = new BiochemistryIncarnation();
+
     /**
      * Test if cell status is correctly updated in movement.
      */
@@ -42,7 +41,7 @@ public class TestBiomolLayer {
     public void testBiomolStepLayer() {
         final Environment<Double> env = new BioRect2DEnvironment();
         final Biomolecule b = new Biomolecule("B");
-        final Layer<Double> bLayer = new BiomolStepLayer(100d, 0d);
+        final Layer<Double> bLayer = new StepLayer<>(100d, 0d);
         final CellNode cellNode = new CellNodeImpl(env);
         final MersenneTwister rand = new MersenneTwister(0);
         final Molecule a = new Biomolecule("A");
@@ -92,7 +91,7 @@ public class TestBiomolLayer {
                 if (val) {
                     assertTrue("The reaction should be schedulable at time " + time,  time >= 0 && !Double.isNaN(time) && !Double.isInfinite(time));
                 } else {
-                    assertEquals("The reaction should not be schedulable at time " + time, Double.POSITIVE_INFINITY, time, 0.00000001d);
+                    assertEquals("The reaction should not be schedulable at time " + time, Double.POSITIVE_INFINITY, time, PRECISION);
                 }
             }
         });

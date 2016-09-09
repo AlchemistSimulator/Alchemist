@@ -22,19 +22,26 @@ import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 
+/**
+ * 
+ */
+// CHECKSTYLE:OFF: MagicNumber
 public class TestChemiotaxis {
-    
+
     private Environment<Double> env;
     private CellNode cellNode1;
     private EnvironmentNode envNode1;
     private EnvironmentNode envNode2;
     private EnvironmentNode envNode3;
     private EnvironmentNode envNode4;
-    Biomolecule biomolA = new Biomolecule("A");
-    Incarnation<Double> inc = new BiochemistryIncarnation();
+    private final Biomolecule biomolA = new Biomolecule("A");
+    private final Incarnation<Double> inc = new BiochemistryIncarnation();
     private RandomGenerator rand;
-    private TimeDistribution<Double> time;  
-    
+    private TimeDistribution<Double> time;
+
+    /**
+     * 
+     */
     @Before
     public void setUp() {
         env = new BioRect2DEnvironmentNoOverlap();
@@ -47,7 +54,10 @@ public class TestChemiotaxis {
         rand = new MersenneTwister();
         time = new ExponentialTime<>(1, rand);
     }
-    
+
+    /**
+     * Testing if cell is polarized correctly.
+     */
     @Test
     public void testChemiotacticPolarization1() {
         env.addNode(envNode1, new Continuous2DEuclidean(0, 0));
@@ -58,9 +68,9 @@ public class TestChemiotaxis {
         envNode4.setConcentration(biomolA, 10d);
         envNode2.setConcentration(biomolA, 5d);
         envNode3.setConcentration(biomolA, 5d);
-        final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, "[] --> [ChemiotacticPolarization(A, true)]");
+        final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, "[] --> [ChemiotacticPolarization(A, true)]"); //NOPMD
         r.execute();
-        assertEquals("the polarization is = " + cellNode1.getPolarizationVersor(), 
+        assertEquals("the polarization is = " + cellNode1.getPolarizationVersor(), //NOPMD
                 cellNode1.getPolarizationVersor().getCoordinate(0),
                 FastMath.sqrt(0.5),
                 0.000000000000001
@@ -71,7 +81,10 @@ public class TestChemiotaxis {
                 0.000000000000001
                 );
     }
-    
+
+    /**
+     * Testing if cell is polarized correctly.
+     */
     @Test
     public void testChemiotacticPolarization2() {
         env.addNode(envNode1, new Continuous2DEuclidean(0, 0));
@@ -95,7 +108,10 @@ public class TestChemiotaxis {
                 0.000000000000001
                 );
     }
-    
+
+    /**
+     * Testing if cell is polarized correctly.
+     */
     @Test
     public void testChemiotacticPolarization3() {
         env.addNode(envNode1, new Continuous2DEuclidean(0, 0));
@@ -116,7 +132,10 @@ public class TestChemiotaxis {
                 0.000000000000001
                 );
     }
-    
+
+    /**
+     * Testing if cell is polarized correctly.
+     */
     @Test
     public void testChemiotacticPolarization4() {
         env.addNode(cellNode1, new Continuous2DEuclidean(0.5, 0.5));
@@ -133,7 +152,10 @@ public class TestChemiotaxis {
                 0.000000000000001
                 );
     }
-    
+
+    /**
+     * Testing if cell moves according to the given polarization.
+     */
     @Test
     public void testChemiotacticMove1() {
         env.addNode(envNode1, new Continuous2DEuclidean(0, 0));
@@ -148,12 +170,15 @@ public class TestChemiotaxis {
         final Reaction<Double> r2 = inc.createReaction(rand, env, cellNode1, time, "[] --> [CellMove(false, 1)]");
         r1.execute();
         r2.execute();
-        assertEquals("the cell is in pos = " + env.getPosition(cellNode1), 
+        assertEquals("the cell is in pos = " + env.getPosition(cellNode1), //NOPMD
                 new Continuous2DEuclidean(0.5 + FastMath.sqrt(0.5), 0.5 + FastMath.sqrt(0.5)),
                 env.getPosition(cellNode1)
                 );
     }
-    
+
+    /**
+     * Testing if cell moves according to the given polarization.
+     */
     @Test
     public void testChemiotacticMove2() {
         env.addNode(envNode1, new Continuous2DEuclidean(0, 0));
@@ -179,7 +204,10 @@ public class TestChemiotaxis {
                 0.000000000001
                 );
     }
-    
+
+    /**
+     * Testing if cell moves according to the given polarization.
+     */
     @Test
     public void testChemiotacticMove3() {
         env.addNode(envNode1, new Continuous2DEuclidean(0, 0));

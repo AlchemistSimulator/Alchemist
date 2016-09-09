@@ -1,13 +1,13 @@
 package it.unibo.alchemist.model.implementations.nodes;
 
-import it.unibo.alchemist.model.interfaces.CirularDeformableCell;
+import it.unibo.alchemist.model.interfaces.CircularDeformableCell;
 import it.unibo.alchemist.model.interfaces.Environment;
 
 /**
  * Implementation of a circular deformable cell.
  *
  */
-public class CircularDeformableCellImpl extends CellNodeImpl implements CirularDeformableCell {
+public class CircularDeformableCellImpl extends CellNodeImpl implements CircularDeformableCell {
 
     /**
      * 

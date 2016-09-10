@@ -93,7 +93,7 @@ public class BiomolPresentInEnv extends GenericMoleculePresent<Double> {
     @Override
     public boolean isValid() {
         double quantityInEnvNodes = 0;
-        if (!getEnviromentNodesSurrounding().isEmpty()){
+        if (!getEnviromentNodesSurrounding().isEmpty()) {
             quantityInEnvNodes = getEnviromentNodesSurrounding().stream()
                     .parallel()
                     .mapToDouble(n -> n.getConcentration(getBiomolecule()))

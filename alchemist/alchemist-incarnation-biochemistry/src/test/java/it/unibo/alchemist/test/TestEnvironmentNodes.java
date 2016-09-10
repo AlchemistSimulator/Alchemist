@@ -181,6 +181,27 @@ public class TestEnvironmentNodes {
         sim.run();
         assertTrue(envNode3.getConcentration(a) != 0 && envNode4.getConcentration(a) != 0);
     }
+    
+    /**
+     * test a simple reaction "[A] --> [A in env]".
+     */
+    @Test
+    public void test6() {
+        final Environment<Double> env = new BioRect2DEnvironment();
+        final CellNode cellNode = new CellNodeImpl(env);
+        final MersenneTwister rand = new MersenneTwister();
+        final Molecule a = new Biomolecule("A");
+        cellNode.addReaction(new BiochemistryIncarnation().createReaction(
+                rand, env, cellNode, new ExponentialTime<>(1, rand), "[A] --> [A in env]" //NOPMD
+                ));
+        cellNode.setConcentration(a, 1000.0);
+        env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.EuclideanDistance<>(2));
+        env.addNode(cellNode, new Continuous2DEuclidean(0, 0));
+        final Simulation<Double> sim = new Engine<>(env, 10000);
+        sim.addCommand(new Engine.StateCommand<Double>().run().build());
+        sim.run();
+        assertEquals(cellNode.getConcentration(a), 1000, 0.000000000001);
+    }
 
     /**
      * Simple interaction between a CellNode and an EnviromentalNode.

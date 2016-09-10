@@ -91,7 +91,7 @@ public class ChangeBiomolConcentrationInEnv extends AbstractAction<Double> {
                     if (nodeConcentration >= FastMath.abs(deltaTemp)) {
                         n.setConcentration(biomolecule, nodeConcentration + deltaTemp);
                         break;
-                    // else, remove all molecule of that species from that node and go on till deltaTemp is smaller than nodeConcetration
+                        // else, remove all molecule of that species from that node and go on till deltaTemp is smaller than nodeConcetration
                     } else {
                         deltaTemp = deltaTemp + nodeConcentration;
                         n.removeConcentration(biomolecule);
@@ -106,7 +106,7 @@ public class ChangeBiomolConcentrationInEnv extends AbstractAction<Double> {
             // if getNode() instanceof CellNode, check if all nodes are at the same distance
             final boolean areAllEnvNodesAtTheSameDistance = environmentNodesSurrounding.stream()
                     .mapToDouble(n -> {
-                    return env.getDistanceBetweenNodes(getNode(), n);
+                        return env.getDistanceBetweenNodes(getNode(), n);
                     })
                     .distinct()
                     .count() == 1;
@@ -145,7 +145,7 @@ public class ChangeBiomolConcentrationInEnv extends AbstractAction<Double> {
                     if (nodeConcentration >= FastMath.abs(deltaTemp)) {
                         n.setConcentration(biomolecule, nodeConcentration + deltaTemp);
                         break;
-                    // else, remove all molecule of that species from that node and go on till deltaTemp is smaller than nodeConcetration
+                        // else, remove all molecule of that species from that node and go on till deltaTemp is smaller than nodeConcetration
                     } else {
                         deltaTemp = deltaTemp + nodeConcentration;
                         n.removeConcentration(biomolecule);

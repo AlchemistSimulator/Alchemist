@@ -52,6 +52,7 @@ import it.unibo.alchemist.model.implementations.actions.RemoveJunctionInNeighbor
 import it.unibo.alchemist.model.implementations.conditions.BiomolPresentInCell;
 import it.unibo.alchemist.model.implementations.conditions.BiomolPresentInEnv;
 import it.unibo.alchemist.model.implementations.conditions.BiomolPresentInNeighbor;
+import it.unibo.alchemist.model.implementations.conditions.EnvPresent;
 import it.unibo.alchemist.model.implementations.conditions.JunctionPresentInCell;
 import it.unibo.alchemist.model.implementations.conditions.NeighborhoodPresent;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
@@ -168,6 +169,8 @@ public class BiochemicalReactionBuilder {
         private final Map<Biomolecule, Double> biomolConditionsInNeighbor = new HashMap<>();
         private final List<Junction> junctionList = new ArrayList<>();
         private boolean neighborActionPresent;
+        private boolean envConditionPresent;
+        private boolean envActionPresent;
 
         private static void insertInMap(final Map<Biomolecule, Double> map, final Biomolecule mol, final double conc) {
             if (map.containsKey(mol)) {
@@ -421,6 +424,9 @@ public class BiochemicalReactionBuilder {
             if (neighborActionPresent && biomolConditionsInNeighbor.isEmpty()) { 
                 conditionList.add(new NeighborhoodPresent<>(node, env));
             }
+            if (envActionPresent && !envConditionPresent) {
+                conditionList.add(new EnvPresent(node, env));
+            }
             reaction.setConditions(conditionList);
             reaction.setActions(actionList);
             return reaction;
@@ -494,7 +500,8 @@ public class BiochemicalReactionBuilder {
                 final Biomolecule biomol = createBiomolecule(b);
                 final double concentration = createConcentration(b);
                 conditionList.add(new BiomolPresentInEnv(biomol, concentration, node, env));
-                actionList.add(new ChangeBiomolConcentrationInEnv(node, biomol, env, rand)); 
+                actionList.add(new ChangeBiomolConcentrationInEnv(node, biomol, env, rand));
+                envConditionPresent = true;
             }
             return reaction;
         }
@@ -538,6 +545,7 @@ public class BiochemicalReactionBuilder {
                 } else if (re.javaConstructor() != null) {
                     actionList.add(createObject(re.javaConstructor(), ACTIONS_PACKAGE, currentInc, rand, node, time, env, reaction));
                 }
+                envActionPresent = true;
             }
             return reaction;
         }

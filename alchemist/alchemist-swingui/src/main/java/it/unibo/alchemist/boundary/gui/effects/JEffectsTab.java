@@ -82,7 +82,7 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
     public JEffectsTab(final GraphicalOutputMonitor<T> main, final boolean displayPaintLinks) {
         super(EFFECT_TAB);
         this.main = main;
-        this.stackSec = new JTapeFeatureStack(Type.HORIZONTAL_STACK);
+        stackSec = new JTapeFeatureStack(Type.HORIZONTAL_STACK);
         final JTapeGroup effectsGroup = new JTapeGroup(EFFECTS_GROUP);
         if (displayPaintLinks) {
             final JTapeGroup showGroup = new JTapeGroup(DRAW_LINKS);
@@ -95,20 +95,20 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
             registerGroup(showGroup);
         }
         final JTapeSection saveLoadSec = new JTapeFeatureStack(Type.VERTICAL_STACK);
-        this.saveButton = new JButton(SAVE);
-        this.saveButton.addActionListener((e) -> save(makeFileChooser()));
-        this.loadButton = new JButton(LOAD);
-        this.loadButton.addActionListener((e) -> load(makeFileChooser()));
-        saveLoadSec.registerFeature(this.saveButton);
-        saveLoadSec.registerFeature(this.loadButton);
+        saveButton = new JButton(SAVE);
+        saveButton.addActionListener((e) -> save(makeFileChooser()));
+        loadButton = new JButton(LOAD);
+        loadButton.addActionListener((e) -> load(makeFileChooser()));
+        saveLoadSec.registerFeature(saveButton);
+        saveLoadSec.registerFeature(loadButton);
         effectsGroup.registerSection(saveLoadSec);
         final JTapeSection addRemSec = new JTapeFeatureStack(Type.VERTICAL_STACK);
-        this.addEffectButton = new JButton(ADD_EFFECT);
-        this.addEffectButton.addActionListener((e) -> {
+        addEffectButton = new JButton(ADD_EFFECT);
+        addEffectButton.addActionListener((e) -> {
             final EffectBuilder eb = new EffectBuilder();
             eb.pack();
-            final Point location = this.addEffectButton.getLocation();
-            SwingUtilities.convertPointToScreen(location, this.addEffectButton);
+            final Point location = addEffectButton.getLocation();
+            SwingUtilities.convertPointToScreen(location, addEffectButton);
             eb.setLocation(location);
             eb.setVisible(true);
             new Thread(() -> {
@@ -117,27 +117,27 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
                 genEvents();
             }).start();
         });
-        this.remEffectButton = new JButton(REMOVE_EFFECT);
-        this.remEffectButton.addActionListener((event) -> {
-            if (this.selected != null) {
-                this.stackSec.unregisterFeature(this.selected);
-                this.selected = null;
+        remEffectButton = new JButton(REMOVE_EFFECT);
+        remEffectButton.addActionListener((event) -> {
+            if (selected != null) {
+                stackSec.unregisterFeature(selected);
+                selected = null;
                 genEvents();
             }
         });
-        addRemSec.registerFeature(this.addEffectButton);
-        addRemSec.registerFeature(this.remEffectButton);
+        addRemSec.registerFeature(addEffectButton);
+        addRemSec.registerFeature(remEffectButton);
         effectsGroup.registerSection(addRemSec);
         final JTapeSection moveSec = new JTapeFeatureStack(Type.VERTICAL_STACK);
-        this.moveLeftButton = new JButton("<");
-        this.moveLeftButton.addActionListener((e) -> moveSelectedLeft());
-        this.moveRightButton = new JButton(">");
-        this.moveRightButton.addActionListener((e) -> moveSelectedRight());
-        moveSec.registerFeature(this.moveLeftButton);
-        moveSec.registerFeature(this.moveRightButton);
+        moveLeftButton = new JButton("<");
+        moveLeftButton.addActionListener((e) -> moveSelectedLeft());
+        moveRightButton = new JButton(">");
+        moveRightButton.addActionListener((e) -> moveSelectedRight());
+        moveSec.registerFeature(moveLeftButton);
+        moveSec.registerFeature(moveRightButton);
         effectsGroup.registerSection(moveSec);
-        this.stackSec.setBorder(new LineBorder(Color.BLACK, 1, false));
-        effectsGroup.registerSection(this.stackSec);
+        stackSec.setBorder(new LineBorder(Color.BLACK, 1, false));
+        effectsGroup.registerSection(stackSec);
         registerGroup(effectsGroup);
         addActionListener((e) -> {
             if (main != null) {
@@ -158,7 +158,7 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
      *            the {@link ActionListener} to add
      */
     public void addActionListener(final ActionListener al) {
-        this.listeners.add(al);
+        listeners.add(al);
     }
 
     /**
@@ -168,22 +168,22 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
      *            the {@link Effect} to add
      */
     public void addEffect(final Effect e) {
-        final JEffectRepresentation<T> er = new JEffectRepresentation<>(e, this.main);
+        final JEffectRepresentation<T> er = new JEffectRepresentation<>(e, main);
         registerItemSelectable(er);
-        this.stackSec.registerFeature(er);
+        stackSec.registerFeature(er);
     }
 
     /**
      * Removes every effect.
      */
     public void clearEffects() {
-        this.stackSec.removeAll();
+        stackSec.removeAll();
     }
 
     private void genEvents() {
         revalidate();
         final ActionEvent event = new ActionEvent(this, 0, "");
-        for (final ActionListener al : this.listeners) {
+        for (final ActionListener al : listeners) {
             al.actionPerformed(event);
         }
     }
@@ -192,7 +192,7 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
      * @return The list of currently active {@link Effect}s.
      */
     public List<Effect> getEffects() {
-        final List<Component> l = this.stackSec.getOrderedComponents();
+        final List<Component> l = stackSec.getOrderedComponents();
         final List<Effect> l1 = new ArrayList<>(l.size());
         for (final Component c : l) {
             l1.add(((JEffectRepresentation<?>) c).getEffect());
@@ -204,10 +204,10 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
     @Override
     public void itemStateChanged(final ItemEvent e) {
         if (e.getStateChange() == ItemEvent.SELECTED) {
-            this.selected = (JEffectRepresentation<T>) e.getItem();
-            for (final Component c : this.stackSec.getComponents()) {
+            selected = (JEffectRepresentation<T>) e.getItem();
+            for (final Component c : stackSec.getComponents()) {
                 final JEffectRepresentation<T> er = (JEffectRepresentation<T>) c;
-                if (!er.equals(this.selected) && er.isSelected()) {
+                if (!er.equals(selected) && er.isSelected()) {
                     er.setSelected(false);
                 }
             }
@@ -218,11 +218,11 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
      * Decreases the priority of the selected effect.
      */
     protected void moveSelectedLeft() {
-        if (this.selected != null) {
-            final List<Component> l = this.stackSec.getOrderedComponents();
-            final int index = l.indexOf(this.selected);
+        if (selected != null) {
+            final List<Component> l = stackSec.getOrderedComponents();
+            final int index = l.indexOf(selected);
             if (index > 0) {
-                this.stackSec.setComponentOrder(this.selected, index - 1);
+                stackSec.setComponentOrder(selected, index - 1);
                 genEvents();
             }
         }
@@ -232,12 +232,12 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
      * Increases the priority of the selected effect.
      */
     protected void moveSelectedRight() {
-        if (this.selected != null) {
-            final List<Component> l = this.stackSec.getOrderedComponents();
-            final int index = l.indexOf(this.selected);
+        if (selected != null) {
+            final List<Component> l = stackSec.getOrderedComponents();
+            final int index = l.indexOf(selected);
             final int last = l.size() - 1;
             if (index < last) {
-                this.stackSec.setComponentOrder(this.selected, index + 1);
+                stackSec.setComponentOrder(selected, index + 1);
                 genEvents();
             }
         }
@@ -264,13 +264,13 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
     @Override
     public void setEnabled(final boolean value) {
         super.setEnabled(value);
-        this.addEffectButton.setEnabled(value);
-        this.remEffectButton.setEnabled(value);
-        this.saveButton.setEnabled(value);
-        this.loadButton.setEnabled(value);
-        this.moveLeftButton.setEnabled(value);
-        this.moveRightButton.setEnabled(value);
-        for (final Component c : this.stackSec.getComponents()) {
+        addEffectButton.setEnabled(value);
+        remEffectButton.setEnabled(value);
+        saveButton.setEnabled(value);
+        loadButton.setEnabled(value);
+        moveLeftButton.setEnabled(value);
+        moveRightButton.setEnabled(value);
+        for (final Component c : stackSec.getComponents()) {
             c.setEnabled(value);
         }
     }
@@ -288,14 +288,14 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
                 return DESC;
             }
         });
-        fc.setCurrentDirectory(this.currentDirectory);
+        fc.setCurrentDirectory(currentDirectory);
         return fc;
     }
 
     private void save(final JFileChooser fc) {
         final int result = fc.showSaveDialog(null);
         if (result == JFileChooser.APPROVE_OPTION) {
-            this.currentDirectory = fc.getSelectedFile().getParentFile();
+            currentDirectory = fc.getSelectedFile().getParentFile();
             try {
                 final File f = fc.getSelectedFile();
                 final File fileToWrite = f.getName().endsWith(EXT) ? f : new File(f.getAbsolutePath() + EXT);
@@ -309,7 +309,7 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
     private void load(final JFileChooser fc) {
         final int result = fc.showOpenDialog(null);
         if (result == JFileChooser.APPROVE_OPTION) {
-            this.currentDirectory = fc.getSelectedFile().getParentFile();
+            currentDirectory = fc.getSelectedFile().getParentFile();
             try {
                 clearEffects();
                 setEffects(EffectSerializationFactory.effectsFromFile(fc.getSelectedFile()));

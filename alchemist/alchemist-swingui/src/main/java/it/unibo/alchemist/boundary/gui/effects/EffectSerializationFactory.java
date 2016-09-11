@@ -68,13 +68,14 @@ public final class EffectSerializationFactory {
     @SuppressWarnings("unchecked")
     public static List<Effect> effectsFromFile(final File effectFile) throws IOException, ClassNotFoundException {
         // Try to deserialize a JSON file at first
+        final Reader fr = new FileReader(effectFile);
         try {
-            final Reader fr = new FileReader(effectFile);
             final List<Effect> effects = GSON.fromJson(fr, new TypeToken<List<Effect>>() {
             }.getType());
             fr.close();
             return effects;
         } catch (Exception e) {
+            fr.close();
             final Object res = FileUtilities.fileToObject(effectFile);
             if (res instanceof Effect) {
                 final List<Effect> effects = new ArrayList<Effect>();

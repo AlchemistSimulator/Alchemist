@@ -314,8 +314,8 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
                 clearEffects();
                 setEffects(EffectSerializationFactory.effectsFromFile(fc.getSelectedFile()));
                 revalidate();
-            } catch (final IOException e1) {
-                GUIUtilities.errorMessage(e1);
+            } catch (final IOException | ClassNotFoundException e) {
+                GUIUtilities.errorMessage(e);
             }
         }
     }

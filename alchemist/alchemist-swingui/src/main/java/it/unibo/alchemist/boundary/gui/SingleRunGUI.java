@@ -101,7 +101,7 @@ public final class SingleRunGUI {
             if (effectsFile != null) {
                 try {
                     effects.setEffects(EffectSerializationFactory.effectsFromFile(effectsFile));
-                } catch (IOException ex) {
+                } catch (IOException | ClassNotFoundException ex) {
                     errorLoadingEffects(ex);
                 }
             }

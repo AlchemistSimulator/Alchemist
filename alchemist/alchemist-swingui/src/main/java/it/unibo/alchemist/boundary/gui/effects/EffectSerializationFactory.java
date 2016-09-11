@@ -9,6 +9,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.danilopianini.io.FileUtilities;
 import org.danilopianini.lang.CollectionWithCurrentElement;
 import org.danilopianini.lang.ImmutableCollectionWithCurrentElement;
 
@@ -52,20 +53,37 @@ public final class EffectSerializationFactory {
             .setPrettyPrinting().create();
 
     /**
-     * Get a list of effects from the specified file.
+     * Get a list of effects from the specified file. Try to deserialize a JSON
+     * file at first. If this operation is not successful (for the sake of
+     * backward compatibility) try to deserialize a binary file.
      * 
      * @param effectFile
      *            Source file
      * @return List of the effects collected from the file
      * @throws IOException
      *             Exception in handling the file
+     * @throws ClassNotFoundException
+     *             In case the serialized binary object is not an effect
      */
-    public static List<Effect> effectsFromFile(final File effectFile) throws IOException {
-        final Reader fr = new FileReader(effectFile);
-        final List<Effect> effects = GSON.fromJson(fr, new TypeToken<List<Effect>>() {
-        }.getType());
-        fr.close();
-        return effects;
+    @SuppressWarnings("unchecked")
+    public static List<Effect> effectsFromFile(final File effectFile) throws IOException, ClassNotFoundException {
+        // Try to deserialize a JSON file at first
+        try {
+            final Reader fr = new FileReader(effectFile);
+            final List<Effect> effects = GSON.fromJson(fr, new TypeToken<List<Effect>>() {
+            }.getType());
+            fr.close();
+            return effects;
+        } catch (Exception e) {
+            final Object res = FileUtilities.fileToObject(effectFile);
+            if (res instanceof Effect) {
+                final List<Effect> effects = new ArrayList<Effect>();
+                effects.add((Effect) res);
+                return effects;
+            }
+            // Backward compatibility: try to deserialize a binary file
+            return (List<Effect>) FileUtilities.fileToObject(effectFile);
+        }
     }
 
     /**

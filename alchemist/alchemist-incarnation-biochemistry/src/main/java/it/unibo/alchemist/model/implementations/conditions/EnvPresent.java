@@ -30,7 +30,7 @@ public class EnvPresent extends AbstractCondition<Double> {
 
     @Override
     public Condition<Double> cloneOnNewNode(final Node<Double> n) {
-        return new EnvPresent(getNode(), environment);
+        return new EnvPresent(n, environment);
     }
 
     @Override

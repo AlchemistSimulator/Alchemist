@@ -46,12 +46,13 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
         if (!(node instanceof CellWithCircularArea)) {
             return true;
         }
+        final CellWithCircularArea thisNode = (CellWithCircularArea) node;
         final boolean isWithinLimits = super.nodeShouldBeAdded(node, p);
         double range = getMaxDiameterAmongCells();
-        if (((CellWithCircularArea) node).getDiameter() > range) {
-            range = ((CellWithCircularArea) node).getDiameter();
+        if (thisNode.getDiameter() > range) {
+            range = thisNode.getDiameter();
         }
-        final double nodeRadius = ((CellWithCircularArea) node).getRadius();
+        final double nodeRadius = thisNode.getRadius();
         return isWithinLimits 
                 && !(getNodesWithinRange(p, range).stream()
                         .parallel()
@@ -113,48 +114,48 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
         final Position newMidPoint = originalPos.sum(vecToMid2);
         range = FastMath.sqrt(FastMath.pow(newHalfDistance, 2) + FastMath.pow(newMaxDiameter, 2));
         return getNodesWithinRange(newMidPoint, range).stream()
-//                .parallel()
-                .filter(n -> !n.equals(nodeToMove))
-                .filter(n -> n instanceof CellWithCircularArea)
-                .filter(n -> isNodeNearEnoughtToReqPosition((CellWithCircularArea) n, nodeToMove, requestedPos, xVer, yVer) && isNodeBetweenReqAndOrigin(n, getPosition(nodeToMove), xVer, yVer)) 
-                .map(n -> getPositionIfNodeIsObstacle(nodeToMove, (CellWithCircularArea) n, originalPos, requestedPos)) 
+                .parallel()
+                .filter(n -> !n.equals(nodeToMove) && n instanceof CellWithCircularArea)
+                .map(n -> (CellWithCircularArea) n)
+                .filter(n -> selectNodes(n, nodeToMove, getPosition(nodeToMove), requestedPos, xVer, yVer))
+                .map(n -> getPositionIfNodeIsObstacle(nodeToMove, n, originalPos, oy, ox, ry, rx)) 
                 .filter(Optional::isPresent) 
                 .map(Optional::get)
                 .min((p1, p2) -> Double.compare(p1.getDistanceTo(originalPos), p2.getDistanceTo(originalPos)))
                 .orElse(requestedPos);
     }
 
-    private boolean isNodeBetweenReqAndOrigin(final Node<Double> node, final Position origin, final double xVer, final double yVer) {
+    private boolean selectNodes(final CellWithCircularArea node, final CellWithCircularArea nodeToMove, final Position origin, final Position requestedPos, final double xVer, final double yVer) {
+        // testing if node is between requested position and original position
         final Position nodePos = getPosition(node);
-        final Position nodeOrientation = new Continuous2DEuclidean(nodePos.getCoordinate(0) - origin.getCoordinate(0), 
+        final Position nodeOrientationFromOrigin = new Continuous2DEuclidean(nodePos.getCoordinate(0) - origin.getCoordinate(0), 
                 nodePos.getCoordinate(1) - origin.getCoordinate(1));
-        final double scalarProductResult = xVer * nodeOrientation.getCoordinate(0) + yVer * nodeOrientation.getCoordinate(1);
-        return scalarProductResult >= 0;
-    }
-
-    private boolean isNodeNearEnoughtToReqPosition(final CellWithCircularArea node, final CellWithCircularArea nodeToMove, final Position requestedPos, final double xVer, final double yVer) {
+        final double scalarProductResult1 = xVer * nodeOrientationFromOrigin.getCoordinate(0) + yVer * nodeOrientationFromOrigin.getCoordinate(1);
+        // testing if node is near enough to requested position to be an obstacle
         final Position oppositeVersor = new Continuous2DEuclidean(-xVer, -yVer);
-        final Position nodePos = getPosition(node);
-        final Position nodeOrientation = new Continuous2DEuclidean(nodePos.getCoordinate(0) - requestedPos.getCoordinate(0), 
+        final Position nodeOrientationFromReq = new Continuous2DEuclidean(nodePos.getCoordinate(0) - requestedPos.getCoordinate(0), 
                 nodePos.getCoordinate(1) - requestedPos.getCoordinate(1));
-        final double scalarProductResult = oppositeVersor.getCoordinate(0) * nodeOrientation.getCoordinate(0) + oppositeVersor.getCoordinate(1) * nodeOrientation.getCoordinate(1);
-        if (scalarProductResult <= 0) {
-            return nodePos.getDistanceTo(requestedPos) < node.getRadius() + nodeToMove.getRadius();
+        final double scalarProductResult2 = oppositeVersor.getCoordinate(0) * nodeOrientationFromReq.getCoordinate(0) + oppositeVersor.getCoordinate(1) * nodeOrientationFromReq.getCoordinate(1);
+        if (scalarProductResult2 <= 0) {
+            return (nodePos.getDistanceTo(requestedPos) < node.getRadius() + nodeToMove.getRadius())
+                    && scalarProductResult1 >= 0;
         }
-        return true;
+        return scalarProductResult1 >= 0;
     }
 
     // returns the Optional containing the position of the node, if it's an obstacle for movement
-    private Optional<Position> getPositionIfNodeIsObstacle(final CellWithCircularArea nodeToMove, final CellWithCircularArea node, final Position originalPos, final Position requestedPos) {
+    private Optional<Position> getPositionIfNodeIsObstacle(final CellWithCircularArea nodeToMove, 
+            final CellWithCircularArea node, 
+            final Position originalPos, 
+            final double yo,
+            final double xo,
+            final double yr,
+            final double xr) {
         // coordinates of original position, requested position and of node's position
-        final double yo = originalPos.getCoordinate(1);
-        final double yr = requestedPos.getCoordinate(1);
-        final double xo = originalPos.getCoordinate(0);
-        final double xr = requestedPos.getCoordinate(0);
         final double yn = getPosition(node).getCoordinate(1);
         final double xn = getPosition(node).getCoordinate(0);
         // cellular range
-        final double cellRange = node.getRadius() + nodeToMove.getRadius() + Double.MIN_NORMAL;
+        final double cellRange = node.getRadius() + nodeToMove.getRadius();
         // compute intersection
         final double xIntersect;
         final double yIntersect;

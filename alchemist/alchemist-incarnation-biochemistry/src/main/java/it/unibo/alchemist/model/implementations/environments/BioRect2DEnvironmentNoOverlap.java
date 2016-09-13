@@ -43,11 +43,13 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
 
     @Override
     protected boolean nodeShouldBeAdded(final Node<Double> node, final Position p) {
-        if (!(node instanceof CellWithCircularArea)) {
+        final boolean isWithinLimits = super.nodeShouldBeAdded(node, p);
+        if (!(node instanceof CellWithCircularArea) && isWithinLimits) {
             return true;
+        } else if (!isWithinLimits) {
+            return false;
         }
         final CellWithCircularArea thisNode = (CellWithCircularArea) node;
-        final boolean isWithinLimits = super.nodeShouldBeAdded(node, p);
         double range = getMaxDiameterAmongCells();
         if (thisNode.getDiameter() > range) {
             range = thisNode.getDiameter();
@@ -56,7 +58,7 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
         return isWithinLimits 
                 && !(getNodesWithinRange(p, range).stream()
                         .parallel()
-                        .filter(n -> getPosition(n).getDistanceTo(p) < nodeRadius + ((CellWithCircularArea) n).getRadius())
+                        .filter(n -> (n instanceof CellWithCircularArea) && (getPosition(n).getDistanceTo(p) < nodeRadius + ((CellWithCircularArea) n).getRadius()))
                         .findFirst()
                         .isPresent());
     }

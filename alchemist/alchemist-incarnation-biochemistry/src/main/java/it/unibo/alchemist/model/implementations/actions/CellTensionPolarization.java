@@ -64,15 +64,12 @@ public class CellTensionPolarization extends AbstractAction<Double> {
                     final double minDN = ((CircularDeformableCell) getNode()).getRadius();
                     if (n instanceof CircularDeformableCell) {
                         maxDn = ((CircularDeformableCell) n).getMaxRadius();
-                        System.out.println("maxRadius = " + maxDn);
                         minDn = ((CircularDeformableCell) n).getRadius();
-                        System.out.println("minRadius = " + minDn);
                     } else {
                         maxDn = ((CellWithCircularArea) n).getRadius();
                         minDn = maxDn;
                     }
                     final double intensity = ((maxDn + maxDN) - env.getDistanceBetweenNodes(n, getNode())) / ((maxDn + maxDN) - (minDn + minDN));
-                    System.out.println("intensity = " + intensity);
                     if (intensity != 0) {
                         double[] propensityVect = new double[]{nodePos[0] - nPos[0], nodePos[1] - nPos[1]};
                         final double module = FastMath.sqrt(FastMath.pow(propensityVect[0], 2) + FastMath.pow(propensityVect[1], 2));

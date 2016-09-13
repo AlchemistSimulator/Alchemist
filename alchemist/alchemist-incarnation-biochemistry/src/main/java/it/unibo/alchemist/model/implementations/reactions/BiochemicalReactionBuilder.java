@@ -215,7 +215,9 @@ public class BiochemicalReactionBuilder {
                 final Environment<Double> env,
                 final Reaction<Double> reaction) {
             final List<Object> params = new ArrayList<>(0);
-            ctx.arg().forEach(arg -> params.add((arg.decimal() != null) ? Double.parseDouble(arg.decimal().getText()) : arg.LITERAL().getText()));
+            if (ctx != null) {
+                ctx.arg().forEach(arg -> params.add((arg.decimal() != null) ? Double.parseDouble(arg.decimal().getText()) : arg.LITERAL().getText()));
+            }
             final Optional<O> result = Arrays.stream(clazz.getConstructors())
                     .sorted((c1, c2) -> {
                         final int n1 = c1.getParameterCount();

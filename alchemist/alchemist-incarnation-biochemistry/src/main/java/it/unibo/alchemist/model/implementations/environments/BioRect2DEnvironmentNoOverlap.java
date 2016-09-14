@@ -8,6 +8,8 @@ import com.google.common.base.Optional;
 
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
+import it.unibo.alchemist.model.interfaces.CircularDeformableCell;
+import it.unibo.alchemist.model.interfaces.EnvironmentSupportingDeformableCells;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
@@ -18,10 +20,11 @@ import it.unibo.alchemist.model.interfaces.Position;
  * 
  * 
  */
-public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
+public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment implements EnvironmentSupportingDeformableCells {
 
     private static final long serialVersionUID = 1L;
     private Optional<CellWithCircularArea> biggestCell = Optional.absent();
+    private Optional<CircularDeformableCell> biggestDeformableCell = Optional.absent();
 
     /**
      * Returns an infinite BioRect2DEnviroment.
@@ -215,6 +218,12 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
                 biggestCell = Optional.of(cell); 
             }
         }
+        if (node instanceof CircularDeformableCell) {
+            final CircularDeformableCell cell = (CircularDeformableCell) node;
+            if (cell.getMaxDiameter() > getMaxDiameterAmongDeformableCells()) {
+                biggestDeformableCell = Optional.of(cell); 
+            }
+        }
     }
 
     @Override
@@ -227,11 +236,25 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment {
                     .map(Optional::of)
                     .orElse(Optional.absent());
         }
+        if (biggestDeformableCell.isPresent() && biggestDeformableCell.get().equals(node)) {
+            biggestDeformableCell = getNodes().stream()
+                    .parallel()
+                    .flatMap(n -> n instanceof CircularDeformableCell ? Stream.of((CircularDeformableCell) n) : Stream.empty())
+                    .max((c1, c2) -> Double.compare(c1.getMaxDiameter(), c2.getMaxDiameter()))
+                    .map(Optional::of)
+                    .orElse(Optional.absent());
+        }
     }
 
     private double getMaxDiameterAmongCells() {
         return biggestCell
                 .transform(n -> n.getDiameter())
+                .or(0d);
+    }
+    @Override
+    public double getMaxDiameterAmongDeformableCells() {
+        return biggestDeformableCell
+                .transform(n -> n.getMaxDiameter())
                 .or(0d);
     }
 

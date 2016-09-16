@@ -11,25 +11,15 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.Before;
 import org.junit.Test;
 
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
-import it.unibo.alchemist.core.implementations.Engine;
-import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironmentNoOverlap;
-import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.nodes.CircularDeformableCellImpl;
-import it.unibo.alchemist.model.implementations.nodes.EnvironmentNodeImpl;
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.interfaces.CircularDeformableCell;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.EnvironmentNode;
 import it.unibo.alchemist.model.interfaces.EnvironmentSupportingDeformableCells;
 import it.unibo.alchemist.model.interfaces.Incarnation;
-import it.unibo.alchemist.model.interfaces.Molecule;
-import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 
 /**
@@ -265,51 +255,4 @@ public class TestDeformableCell {
         assertEquals("Position of cellNode1 = " + env.getPosition(cellNode1), env.getPosition(cellNode1), new Continuous2DEuclidean(0, 5));
     }
     
-    /*
-    @Test
-    public void testSimulation() {
-        final Environment<Double> env = new BioRect2DEnvironmentNoOverlap(-6, 6, -6, 6);
-        env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.EuclideanDistance<>(2));
-        final Molecule a = new Biomolecule("A");
-        cellNode2.addReaction(inc.createReaction(rand, env, cellNode2, time, "[] --> [CellTensionPolarization()] if TensionPresent()"));
-        cellNode2.addReaction(inc.createReaction(rand, env, cellNode2, time, "[] --> [CellMove(false, 0.5)]"));
-        cellNode1.addReaction(inc.createReaction(rand, env, cellNode1, time, "[] --> [CellMove(false, 0.5)]"));
-        cellNode1.addReaction(inc.createReaction(rand, env, cellNode1, time, "[] --> [ChemiotacticPolarization(true, A)]"));
-        for(int i = 0; i == 80; i++) {
-            final EnvironmentNode envNode = new EnvironmentNodeImpl(env);
-            envNode.setConcentration(a, (double) i);
-            env.addNode(envNode, new Continuous2DEuclidean((0.1 * i) - 2, 0));
-        }
-        cellNode1.setPolarization(new Continuous2DEuclidean(1, 0));
-        env.addNode(cellNode1, new Continuous2DEuclidean(-2, 0));
-        env.addNode(cellNode2, new Continuous2DEuclidean(0, 0));
-        assertFalse(cellNode1.getReactions().isEmpty());
-        assertFalse(cellNode2.getReactions().isEmpty());
-        final Simulation<Double> sim = new Engine<>(env, 10000);
-        sim.addCommand(new Engine.StateCommand<Double>().run().build());
-        sim.addOutputMonitor(new OutputMonitor<Double>() {
-            
-            @Override
-            public void stepDone(Environment<Double> env, Reaction<Double> r, Time time, long step) {
-                System.out.println(env.getPosition(cellNode1));
-            }
-            
-            @Override
-            public void initialized(Environment<Double> env) {
-                // TODO Auto-generated method stub
-                
-            }
-            
-            @Override
-            public void finished(Environment<Double> env, Time time, long step) {
-                // TODO Auto-generated method stub
-                
-            }
-        });
-        sim.run();
-        final Position finalPos = env.getPosition(cellNode2);
-        assertEquals(new Continuous2DEuclidean(6, 0), finalPos);
-    }
-    */
-
 }

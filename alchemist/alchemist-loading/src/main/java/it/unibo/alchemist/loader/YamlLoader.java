@@ -448,7 +448,6 @@ public class YamlLoader implements Loader, Serializable {
                 if (layerObj instanceof Map) {
                     final Map<String, Object> layer = (Map<String, Object>) layerObj;
                     if (layer.containsKey(MOLECULE) && layer.get(MOLECULE) instanceof String) {
-                        final Molecule molecule = incarnation.createMolecule((String) layer.get(MOLECULE));
                         Class<? extends Layer<T>> layClass;
                         if (extractClassIfDeclared(layer, LAYERS_PACKAGE_ROOT).isPresent()) {
                             layClass = (Class<? extends Layer<T>>) extractClassIfDeclared(layer, LAYERS_PACKAGE_ROOT).get();
@@ -456,6 +455,7 @@ public class YamlLoader implements Loader, Serializable {
                             throw new IllegalAlchemistYAMLException(layerObj + " is not a valid layer description: layer class missing or invald layer class name");
                         }
                         final List<?> layArgs = extractParams(layer);
+                        final Molecule molecule = incarnation.createMolecule((String) layer.get(MOLECULE));
                         env.addLayer(molecule, create(layClass, layArgs));
                     } else {
                         throw new IllegalAlchemistYAMLException(layerObj + " is not a valid layer description: molecule missing or invald molecule name");
@@ -529,12 +529,6 @@ public class YamlLoader implements Loader, Serializable {
                             final Molecule mol = makeMolecule(content, actualVars, simRandom, currIncarnation, env, node);
                             node.setConcentration(mol, makeConcentration(content, actualVars, simRandom, currIncarnation, env, node));
                         }
-                        /* Comm01: nel caso di modifiche, queste andrebbero fatte qui. 
-                         * Si dovrebbe aggiungere un content.get(SPATIAL_DISTRIBUTION),
-                         * forse un metodo makeSpatialDistribution, 
-                         * un controllo per vedere se il nodo in cui si sta settando
-                         * la distribuzione la può supportare.
-                        */
                     }
                     for (final Map<String, Object> program: programs) {
                         final TimeDistribution<T> td = makeTimeDistribution(program, actualVars, simRandom, currIncarnation, env, node);

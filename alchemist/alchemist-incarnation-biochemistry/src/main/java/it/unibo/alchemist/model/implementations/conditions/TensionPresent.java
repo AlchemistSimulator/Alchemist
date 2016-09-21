@@ -50,7 +50,7 @@ public class TensionPresent extends AbstractCondition<Double> {
     @Override
     public double getPropensityConditioning() {
         return env.getNodesWithinRange(getNode(), env.getMaxDiameterAmongDeformableCells()).stream()
-                .parallel()
+                //.parallel()
                 .flatMap(n -> n instanceof CellWithCircularArea 
                         ? Stream.of((CellWithCircularArea) n) 
                                 : Stream.empty())
@@ -66,7 +66,12 @@ public class TensionPresent extends AbstractCondition<Double> {
                         maxDn = n.getRadius();
                         minDn = maxDn;
                     }
-                    return ((maxDn + maxDN) - env.getDistanceBetweenNodes(n, getNode())) / ((maxDn + maxDN) - (minDn + minDN));
+                    final double distance = env.getDistanceBetweenNodes(n, getNode());
+                    if (((maxDn + maxDN) - distance) <= 0) {
+                        return 0;
+                    } else {
+                        return ((maxDn + maxDN) - distance) / ((maxDn + maxDN) - (minDn + minDN));
+                    }
                 })
                 .sum();
     }

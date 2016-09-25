@@ -19,6 +19,7 @@ import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
 import it.unibo.alchemist.model.interfaces.Incarnation;
+import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 
@@ -68,7 +69,7 @@ public class TestChemiotaxis {
         envNode4.setConcentration(biomolA, 10d);
         envNode2.setConcentration(biomolA, 5d);
         envNode3.setConcentration(biomolA, 5d);
-        final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, "[] --> [ChemiotacticPolarization(A, true)]"); //NOPMD
+        final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, "[] --> [ChemiotacticPolarization(A, up)]"); //NOPMD
         r.execute();
         assertEquals("the polarization is = " + cellNode1.getPolarizationVersor(), //NOPMD
                 cellNode1.getPolarizationVersor().getCoordinate(0),
@@ -95,7 +96,7 @@ public class TestChemiotaxis {
         envNode4.setConcentration(biomolA, 10d);
         envNode2.setConcentration(biomolA, 5d);
         envNode3.setConcentration(biomolA, 5d);
-        final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, "[] --> [ChemiotacticPolarization(A, true)]");
+        final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, "[] --> [ChemiotacticPolarization(A, up)]");
         r.execute();
         assertEquals("the polarization is = " + cellNode1.getPolarizationVersor(), 
                 cellNode1.getPolarizationVersor().getCoordinate(0),
@@ -119,7 +120,7 @@ public class TestChemiotaxis {
         env.addNode(envNode3, new Continuous2DEuclidean(0, 1));
         env.addNode(envNode4, new Continuous2DEuclidean(1, 1));
         env.addNode(cellNode1, new Continuous2DEuclidean(0.5, 0.5));
-        final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, "[] --> [ChemiotacticPolarization(A, true)]");
+        final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, "[] --> [ChemiotacticPolarization(A, up)]");
         r.execute();
         assertEquals("the polarization is = " + cellNode1.getPolarizationVersor(), 
                 cellNode1.getPolarizationVersor().getCoordinate(0),
@@ -139,8 +140,36 @@ public class TestChemiotaxis {
     @Test
     public void testChemiotacticPolarization4() {
         env.addNode(cellNode1, new Continuous2DEuclidean(0.5, 0.5));
-        final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, "[] --> [ChemiotacticPolarization(A, true)]");
+        final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, "[] --> [ChemiotacticPolarization(A, up)]");
         r.execute();
+        assertEquals("the polarization is = " + cellNode1.getPolarizationVersor(), 
+                cellNode1.getPolarizationVersor().getCoordinate(0),
+                0,
+                0.000000000000001
+                );
+        assertEquals("the polarization is = " + cellNode1.getPolarizationVersor(), 
+                cellNode1.getPolarizationVersor().getCoordinate(1),
+                0,
+                0.000000000000001
+                );
+    }
+    
+    /**
+     * Testing if cell is polarized correctly.
+     */
+    @Test
+    public void testChemiotacticPolarization5() {
+        env.addNode(cellNode1, new Continuous2DEuclidean(0, 0));
+        final Molecule a = new Biomolecule("A");
+        final Molecule b = new Biomolecule("B");
+        envNode1.setConcentration(a, 1d);
+        envNode2.setConcentration(b, 1d);
+        env.addNode(envNode1, new Continuous2DEuclidean(1, 0));
+        env.addNode(envNode2, new Continuous2DEuclidean(-1, 0));
+        final Reaction<Double> r1 = inc.createReaction(rand, env, cellNode1, time, "[] --> [ChemiotacticPolarization(A, up)]");
+        final Reaction<Double> r2 = inc.createReaction(rand, env, cellNode1, time, "[] --> [ChemiotacticPolarization(B, up)]");
+        r1.execute();
+        r2.execute();
         assertEquals("the polarization is = " + cellNode1.getPolarizationVersor(), 
                 cellNode1.getPolarizationVersor().getCoordinate(0),
                 0,
@@ -166,7 +195,7 @@ public class TestChemiotaxis {
         envNode4.setConcentration(biomolA, 10d);
         envNode2.setConcentration(biomolA, 5d);
         envNode3.setConcentration(biomolA, 5d);
-        final Reaction<Double> r1 = inc.createReaction(rand, env, cellNode1, time, "[] --> [ChemiotacticPolarization(A, true)]");
+        final Reaction<Double> r1 = inc.createReaction(rand, env, cellNode1, time, "[] --> [ChemiotacticPolarization(A, up)]");
         final Reaction<Double> r2 = inc.createReaction(rand, env, cellNode1, time, "[] --> [CellMove(false, 1)]");
         r1.execute();
         r2.execute();
@@ -189,7 +218,7 @@ public class TestChemiotaxis {
         envNode4.setConcentration(biomolA, 10d);
         envNode2.setConcentration(biomolA, 5d);
         envNode3.setConcentration(biomolA, 5d);
-        final Reaction<Double> r1 = inc.createReaction(rand, env, cellNode1, time, "[] --> [ChemiotacticPolarization(A, true)]");
+        final Reaction<Double> r1 = inc.createReaction(rand, env, cellNode1, time, "[] --> [ChemiotacticPolarization(A, up)]");
         final Reaction<Double> r2 = inc.createReaction(rand, env, cellNode1, time, "[] --> [CellMove(false, 1)]");
         r1.execute();
         r2.execute();
@@ -219,7 +248,7 @@ public class TestChemiotaxis {
         envNode2.setConcentration(biomolA, 10d);
         envNode3.setConcentration(biomolA, 10d);
         envNode1.setConcentration(biomolA, 10d);
-        final Reaction<Double> r1 = inc.createReaction(rand, env, cellNode1, time, "[] --> [ChemiotacticPolarization(A, true)]");
+        final Reaction<Double> r1 = inc.createReaction(rand, env, cellNode1, time, "[] --> [ChemiotacticPolarization(A, up)]");
         final Reaction<Double> r2 = inc.createReaction(rand, env, cellNode1, time, "[] --> [CellMove(false, 1)]");
         r1.execute();
         r2.execute();

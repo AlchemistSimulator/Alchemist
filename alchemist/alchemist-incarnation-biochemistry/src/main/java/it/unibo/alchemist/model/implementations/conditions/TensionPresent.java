@@ -55,22 +55,26 @@ public class TensionPresent extends AbstractCondition<Double> {
                         ? Stream.of((CellWithCircularArea) n) 
                                 : Stream.empty())
                 .mapToDouble(n -> {
-                    final double maxDn;
-                    final double minDn;
-                    final double maxDN = ((CircularDeformableCell) getNode()).getMaxRadius();
-                    final double minDN = ((CircularDeformableCell) getNode()).getRadius();
+                    final double maxRn;
+                    final double minRn;
+                    final double maxRN = ((CircularDeformableCell) getNode()).getMaxRadius();
+                    final double minRN = ((CircularDeformableCell) getNode()).getRadius();
                     if (n instanceof CircularDeformableCell) {
-                        maxDn = ((CircularDeformableCell) n).getMaxRadius();
-                        minDn = ((CircularDeformableCell) n).getRadius();
+                        maxRn = ((CircularDeformableCell) n).getMaxRadius();
+                        minRn = ((CircularDeformableCell) n).getRadius();
                     } else {
-                        maxDn = n.getRadius();
-                        minDn = maxDn;
+                        maxRn = n.getRadius();
+                        minRn = maxRn;
                     }
                     final double distance = env.getDistanceBetweenNodes(n, getNode());
-                    if (((maxDn + maxDN) - distance) <= 0) {
+                    if (((maxRn + maxRN) - distance) < 0) {
                         return 0;
                     } else {
-                        return ((maxDn + maxDN) - distance) / ((maxDn + maxDN) - (minDn + minDN));
+                        if (maxRn == minRn && maxRN == minRN) {
+                            return 1;
+                        } else {
+                            return ((maxRn + maxRN) - distance) / ((maxRn + maxRN) - (minRn + minRN));
+                        }
                     }
                 })
                 .sum();

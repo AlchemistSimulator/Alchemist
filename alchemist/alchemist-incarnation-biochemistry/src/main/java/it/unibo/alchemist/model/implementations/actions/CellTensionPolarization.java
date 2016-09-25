@@ -55,21 +55,38 @@ public class CellTensionPolarization extends AbstractAction<Double> {
         final double[] nodePos = env.getPosition(getNode()).getCartesianCoordinates();
         final List<Position> pushForces = env.getNodesWithinRange(getNode(), env.getMaxDiameterAmongDeformableCells()).stream()
                 .parallel()
-                .filter(n -> n instanceof CellWithCircularArea)
+                .filter(n -> {
+                    if (n instanceof CellWithCircularArea) {
+                        double maxDist;
+                        if (n instanceof CircularDeformableCell) {
+                             maxDist = (((CircularDeformableCell) getNode()).getMaxRadius() + ((CircularDeformableCell) n).getMaxRadius());
+                        } else {
+                             maxDist = (((CircularDeformableCell) getNode()).getMaxRadius() + ((CellWithCircularArea) n).getRadius());
+                        }
+                        return env.getDistanceBetweenNodes(getNode(), n) < maxDist;
+                    } else {
+                        return false;
+                    }
+                })
                 .map(n -> {
                     final double[] nPos =  env.getPosition(n).getCartesianCoordinates();
-                    final double maxDn;
-                    final double minDn;
-                    final double maxDN = ((CircularDeformableCell) getNode()).getMaxRadius();
-                    final double minDN = ((CircularDeformableCell) getNode()).getRadius();
+                    final double maxRn;
+                    final double minRn;
+                    final double maxRN = ((CircularDeformableCell) getNode()).getMaxRadius();
+                    final double minRN = ((CircularDeformableCell) getNode()).getRadius();
+                    final double intensity;
                     if (n instanceof CircularDeformableCell) {
-                        maxDn = ((CircularDeformableCell) n).getMaxRadius();
-                        minDn = ((CircularDeformableCell) n).getRadius();
+                        maxRn = ((CircularDeformableCell) n).getMaxRadius();
+                        minRn = ((CircularDeformableCell) n).getRadius();
                     } else {
-                        maxDn = ((CellWithCircularArea) n).getRadius();
-                        minDn = maxDn;
+                        maxRn = ((CellWithCircularArea) n).getRadius();
+                        minRn = maxRn;
                     }
-                    final double intensity = ((maxDn + maxDN) - env.getDistanceBetweenNodes(n, getNode())) / ((maxDn + maxDN) - (minDn + minDN));
+                    if (maxRn == minRn && maxRN == minRN) {
+                        intensity = 1;
+                    } else {
+                        intensity = ((maxRn + maxRN) - env.getDistanceBetweenNodes(n, getNode())) / ((maxRn + maxRN) - (minRn + minRN));
+                    }
                     if (intensity != 0) {
                         double[] propensityVect = new double[]{nodePos[0] - nPos[0], nodePos[1] - nPos[1]};
                         final double module = FastMath.sqrt(FastMath.pow(propensityVect[0], 2) + FastMath.pow(propensityVect[1], 2));
@@ -84,7 +101,7 @@ public class CellTensionPolarization extends AbstractAction<Double> {
                 })
                 .collect(Collectors.toList());
         if (pushForces.isEmpty()) {
-            ((CellNode) getNode()).setPolarization(new Continuous2DEuclidean(0, 0));
+            ((CellNode) getNode()).addPolarization(new Continuous2DEuclidean(0, 0));
         } else {
             for (final Position p : pushForces) {
                 resVersor[0] = resVersor[0] + p.getCoordinate(0);
@@ -92,9 +109,9 @@ public class CellTensionPolarization extends AbstractAction<Double> {
             }
             final double module = FastMath.sqrt(FastMath.pow(resVersor[0], 2) + FastMath.pow(resVersor[1], 2));
             if (module == 0) {
-                ((CellNode) getNode()).setPolarization(new Continuous2DEuclidean(0, 0));
+                ((CellNode) getNode()).addPolarization(new Continuous2DEuclidean(0, 0));
             } else {
-                ((CellNode) getNode()).setPolarization(new Continuous2DEuclidean(resVersor[0] / module, resVersor[1] / module));
+                ((CellNode) getNode()).addPolarization(new Continuous2DEuclidean(resVersor[0] / module, resVersor[1] / module));
             }
         }
     }

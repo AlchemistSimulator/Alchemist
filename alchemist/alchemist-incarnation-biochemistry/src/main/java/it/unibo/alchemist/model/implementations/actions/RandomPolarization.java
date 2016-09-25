@@ -50,9 +50,13 @@ public class RandomPolarization extends AbstractAction<Double> {
                 randomVersor = new Continuous2DEuclidean(1, 0);
             } else {
                 final double module = FastMath.sqrt(FastMath.pow(x, 2) + FastMath.pow(y, 2));
-                randomVersor = new Continuous2DEuclidean(x / module, y / module);
+                if (module == 0) {
+                    randomVersor = new Continuous2DEuclidean(0, 0);
+                } else {
+                    randomVersor = new Continuous2DEuclidean(x / module, y / module);
+                }
             }
-            ((CellNode) getNode()).setPolarization(randomVersor);
+            ((CellNode) getNode()).addPolarization(randomVersor);
         }
     }
 

@@ -65,7 +65,7 @@ public interface CellNode extends Node<Double> {
 
     /**
      * set the polarization versor, e.g. a versor indicating the direction in which the cell will move the next time.
-     * @param v The {@link Position} representing the new polarization versor.
+     * @param v The {@link Position} representing the new polarization versor. Note: v MUST be a versor, so a vector with module = 1.
      */
     void setPolarization(Position v);
 
@@ -74,5 +74,11 @@ public interface CellNode extends Node<Double> {
      * @return the {@link Position} representing the direction of cell polarization.
      */
     Position getPolarizationVersor();
+
+    /**
+     * add v to the polarization versor inside the cell; useful for considering the combination of various stimuli in a cell.
+     * @param v 
+     */
+    void addPolarization(Position v);
 
 }

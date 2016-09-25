@@ -176,11 +176,13 @@ public class TestDeformableCell {
         .get().execute();
         assertEquals(new Continuous2DEuclidean(0, -1), cellNode1.getPolarizationVersor());
         env.moveNodeToPosition(cellNode3, new Continuous2DEuclidean(0, 1.25));
+        cellNode1.setPolarization(new Continuous2DEuclidean(0, 0));
         cellNode1.getReactions().stream()
         .findFirst()
         .get().execute();
         assertEquals(new Continuous2DEuclidean(0, -1), cellNode1.getPolarizationVersor());
         env.moveNodeToPosition(cellNode3, new Continuous2DEuclidean(0, 1.5));
+        cellNode1.setPolarization(new Continuous2DEuclidean(0, 0));
         cellNode1.getReactions().stream()
         .findFirst()
         .get().execute();
@@ -230,16 +232,69 @@ public class TestDeformableCell {
         .get().execute();
         assertEquals(new Continuous2DEuclidean(1, 0), cellNode1.getPolarizationVersor());
         env.moveNodeToPosition(cellNode3, new Continuous2DEuclidean(-1.5, 1.5));
+        cellNode1.setPolarization(new Continuous2DEuclidean(0, 0));
         cellNode1.getReactions().stream()
         .findFirst()
         .get().execute();
         assertEquals(cellNode1.getPolarizationVersor().getCoordinate(0), cellNode1.getPolarizationVersor().getCoordinate(0), 0.0001);
         env.moveNodeToPosition(cellNode3, new Continuous2DEuclidean(-1, 1));
         env.moveNodeToPosition(cellNode5, new Continuous2DEuclidean(-1.5, -1.5));
+        cellNode1.setPolarization(new Continuous2DEuclidean(0, 0));
         cellNode1.getReactions().stream()
         .findFirst()
         .get().execute();
         assertEquals(cellNode1.getPolarizationVersor().getCoordinate(0), -cellNode1.getPolarizationVersor().getCoordinate(1), 0.0001);
+    }
+
+    /**
+     * 
+     */
+    @Test
+    public void testTensionPolarization4() {
+        //CHECKSTYLE:OFF: MagicNumber
+        env.addNode(cellNode3, new Continuous2DEuclidean(0, 0));
+        env.addNode(cellNode5, new Continuous2DEuclidean(-1, 0));
+        env.addNode(cellNode2, new Continuous2DEuclidean(1.5, 0));
+        cellNode3.addReaction(inc.createReaction(rand, env, cellNode3, time, "[] --> [CellTensionPolarization()]"));
+        assertFalse(cellNode3.getReactions().isEmpty());
+        cellNode3.getReactions().stream()
+        .findFirst()
+        .get().execute();
+        assertEquals(new Continuous2DEuclidean(1, 0), cellNode3.getPolarizationVersor());
+    }
+
+    /**
+     * 
+     */
+    @Test
+    public void testTensionPolarization5() {
+        //CHECKSTYLE:OFF: MagicNumber
+        env.addNode(cellNode3, new Continuous2DEuclidean(0, 0));
+        env.addNode(cellNode5, new Continuous2DEuclidean(-1, 0));
+        env.addNode(cellNode2, new Continuous2DEuclidean(1.75, 0));
+        cellNode3.addReaction(inc.createReaction(rand, env, cellNode3, time, "[] --> [CellTensionPolarization()]"));
+        assertFalse(cellNode3.getReactions().isEmpty());
+        cellNode3.getReactions().stream()
+        .findFirst()
+        .get().execute();
+        assertEquals(new Continuous2DEuclidean(1, 0), cellNode3.getPolarizationVersor());
+    }
+    
+    /**
+     * 
+     */
+    @Test
+    public void testTensionPolarization6() {
+        //CHECKSTYLE:OFF: MagicNumber
+        env.addNode(cellNode3, new Continuous2DEuclidean(0, 0));
+        env.addNode(cellNode4, new Continuous2DEuclidean(-4, 0));
+        env.addNode(cellNode2, new Continuous2DEuclidean(1.75, 0));
+        cellNode3.addReaction(inc.createReaction(rand, env, cellNode3, time, "[] --> [CellTensionPolarization()]"));
+        assertFalse(cellNode3.getReactions().isEmpty());
+        cellNode3.getReactions().stream()
+        .findFirst()
+        .get().execute();
+        assertEquals(new Continuous2DEuclidean(0, 0), cellNode3.getPolarizationVersor());
     }
     
     /**

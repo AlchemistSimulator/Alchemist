@@ -15,6 +15,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.math3.util.FastMath;
+
 import com.google.common.collect.MapMaker;
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
@@ -85,6 +87,17 @@ public class CellNodeImpl extends DoubleNode implements CellNode, CellWithCircul
     @Override
     public Position getPolarizationVersor() {
         return polarizationVersor;
+    }
+
+    @Override
+    public void addPolarization(final Position v) {
+        final double[] tempCor = this.polarizationVersor.sum(v).getCartesianCoordinates();
+        final double module = FastMath.sqrt(FastMath.pow(tempCor[0], 2) + FastMath.pow(tempCor[1], 2));
+        if (module != 0) {
+            this.polarizationVersor = new Continuous2DEuclidean(tempCor[0] / module, tempCor[1] / module); 
+        } else {
+            this.polarizationVersor = new Continuous2DEuclidean(0, 0);
+        }
     }
 
     @Override
@@ -184,4 +197,5 @@ public class CellNodeImpl extends DoubleNode implements CellNode, CellWithCircul
     public String toString() {
         return "Instance of CellNodeImpl with diameter = " + diameter;
     }
+
 }

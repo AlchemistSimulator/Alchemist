@@ -42,18 +42,18 @@ public class ChemiotacticPolarization extends AbstractAction<Double> {
         }
         this.env = environment;
         this.biomol = new Biomolecule(biomol);
-        if (ascendGrad.equals("+") || ascendGrad.equals("up")) {
+        if (ascendGrad.equals("up")) {
             this.ascend = true;
-        } else if (ascendGrad.equals("-") || ascendGrad.equals("down")) {
+        } else if (ascendGrad.equals("down")) {
             this.ascend = false;
         } else {
-            throw new IllegalArgumentException("Possible imput string are only up, down, +, -");
+            throw new IllegalArgumentException("Possible imput string are only up or down");
         }
     }
 
     @Override
     public ChemiotacticPolarization cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
-        return new ChemiotacticPolarization(env, n, biomol.toString(), ascend ? "+" : "-");
+        return new ChemiotacticPolarization(env, n, biomol.toString(), ascend ? "up" : "down");
     }
 
     @Override
@@ -63,26 +63,26 @@ public class ChemiotacticPolarization extends AbstractAction<Double> {
                 .filter(n -> n instanceof EnvironmentNode && n.contains(biomol))
                 .collect(Collectors.toList());
         if (l.isEmpty()) {
-            ((CellNode) getNode()).setPolarization(new Continuous2DEuclidean(0, 0));
+            ((CellNode) getNode()).addPolarization(new Continuous2DEuclidean(0, 0));
         } else {
             final boolean isNodeOnMaxConc = env.getPosition(l.stream()
                     .max((n1, n2) -> Double.compare(n1.getConcentration(biomol), n2.getConcentration(biomol)))
                     .get()).equals(env.getPosition(getNode()));
             if (isNodeOnMaxConc) {
-                ((CellNode) getNode()).setPolarization(new Continuous2DEuclidean(0, 0));
+                ((CellNode) getNode()).addPolarization(new Continuous2DEuclidean(0, 0));
             } else {
                 Position newPolVer = weightedAverageVectors(l);
                 final double newPolVerModule = FastMath.sqrt(FastMath.pow(
                         newPolVer.getCoordinate(0), 2) + FastMath.pow(newPolVer.getCoordinate(1), 2)
                         );
                 if (newPolVerModule == 0) {
-                    ((CellNode) getNode()).setPolarization(newPolVer);
+                    ((CellNode) getNode()).addPolarization(newPolVer);
                 } else {
                     newPolVer = new Continuous2DEuclidean(newPolVer.getCoordinate(0) / newPolVerModule, newPolVer.getCoordinate(1) / newPolVerModule);
                     if (ascend) {
-                        ((CellNode) getNode()).setPolarization(newPolVer);
+                        ((CellNode) getNode()).addPolarization(newPolVer);
                     } else {
-                        ((CellNode) getNode()).setPolarization(new Continuous2DEuclidean(
+                        ((CellNode) getNode()).addPolarization(new Continuous2DEuclidean(
                                 -newPolVer.getCoordinate(0), 
                                 -newPolVer.getCoordinate(1))
                                 );

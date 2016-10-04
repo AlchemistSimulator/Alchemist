@@ -19,11 +19,11 @@ public class CircularDeformableCellImpl extends CellNodeImpl implements Circular
      * Create a circular deformable cell of maxDiam = maxDiameter and minDiam = deformability * maxDiam.
      * @param env 
      * @param maxDiameter 
-     * @param deformability 
+     * @param rigidity 
      */
-    public CircularDeformableCellImpl(final Environment<Double> env, final double maxDiameter, final double deformability) {
-        super(env, maxDiameter * (1 - deformability));
-        if (deformability > 1 || deformability < 0) {
+    public CircularDeformableCellImpl(final Environment<Double> env, final double maxDiameter, final double rigidity) {
+        super(env, maxDiameter * rigidity);
+        if (rigidity > 1 || rigidity < 0) {
             throw new IllegalArgumentException("deformability must be between 0 and 1");
         }
         this.maxDiam = maxDiameter;

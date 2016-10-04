@@ -169,7 +169,7 @@ public class TestDeformableCell {
         //CHECKSTYLE:OFF: MagicNumber
         env.addNode(cellNode1, new Continuous2DEuclidean(0, 0));
         env.addNode(cellNode3, new Continuous2DEuclidean(0, 1));
-        cellNode1.addReaction(inc.createReaction(rand, env, cellNode1, time, "[] --> [CellTensionPolarization()]"));
+        cellNode1.addReaction(inc.createReaction(rand, env, cellNode1, time, "[] --> [CellTensionPolarization()]")); //NOPMD
         assertFalse(cellNode1.getReactions().isEmpty());
         cellNode1.getReactions().stream()
         .findFirst()

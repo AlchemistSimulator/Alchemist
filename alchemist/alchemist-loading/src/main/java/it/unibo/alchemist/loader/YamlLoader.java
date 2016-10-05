@@ -640,10 +640,10 @@ public class YamlLoader implements Loader, Serializable {
             final List<Action<T>> actions = Stream.concat(reaction.getActions().stream(), 
                 actList.stream()
                     .map(actObj -> Optional.ofNullable(
-                            makeSupplier(
-                                    () -> incarnation.createAction(rand, env, node, td, reaction, stringOrNull(actObj)),
-                                    castOrEmpty(actObj), ACTIONS_PACKAGE_ROOT, actualVars, rand, env, pMaker, node, td, reaction)
-                        .get()).orElseThrow(() -> new IllegalAlchemistYAMLException("Can not build an action with " + actObj))))
+                        makeSupplier(
+                                () -> incarnation.createAction(rand, env, node, td, reaction, stringOrNull(actObj)),
+                                castOrEmpty(actObj), ACTIONS_PACKAGE_ROOT, actualVars, rand, env, pMaker, node, td, reaction).get())
+                    .orElseThrow(() -> new IllegalAlchemistYAMLException("Can not build an action with " + actObj))))
                 .collect(Collectors.toList());
             L.trace("actions: {}", actions);
             reaction.setActions(actions);
@@ -668,10 +668,10 @@ public class YamlLoader implements Loader, Serializable {
             final List<Condition<T>> conditions = Stream.concat(reaction.getConditions().stream(), 
                 condList.stream()
                     .map(condObj -> Optional.ofNullable(
-                            makeSupplier(
-                                    () -> incarnation.createCondition(rand, env, node, td, reaction, stringOrNull(condObj)),
-                                    castOrEmpty(condObj), CONDITIONS_PACKAGE_ROOT, actualVars, rand, env, pMaker, node, td, reaction)
-                        .get()).orElseThrow(() -> new IllegalAlchemistYAMLException("Can not build a condition with " + condObj))))
+                        makeSupplier(
+                            () -> incarnation.createCondition(rand, env, node, td, reaction, stringOrNull(condObj)),
+                            castOrEmpty(condObj), CONDITIONS_PACKAGE_ROOT, actualVars, rand, env, pMaker, node, td, reaction).get())
+                    .orElseThrow(() -> new IllegalAlchemistYAMLException("Can not build a condition with " + condObj))))
                 .collect(Collectors.toList());
             L.trace("conditions: {}", conditions);
             reaction.setConditions(conditions);

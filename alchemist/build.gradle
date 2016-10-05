@@ -1,26 +1,21 @@
-apply plugin: 'build-dashboard'
 apply plugin: 'project-report'
 
+buildscript {
+    repositories {
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath "org.danilopianini:build-commons:0.1.6"
+    }
+}
+
 allprojects {
-    apply plugin: 'java'
-    apply plugin: 'eclipse'
-    apply plugin: 'findbugs'
-    apply plugin: 'pmd'
-    apply plugin: 'checkstyle'
-    apply plugin: 'jacoco'
-    apply plugin: 'maven'
-    apply plugin: 'signing'
-
-    repositories { mavenCentral() }
-
+    
+    apply plugin: 'org.danilopianini.build-commons'
+    
     configurations {
-        doc { transitive false }
-        doclet
         all*.exclude group: 'org.eclipse.xtext', module: 'org.eclipse.xtext.dependencies'
     }
-
-    sourceCompatibility = jdkVersion
-    targetCompatibility = jdkVersion
 
     dependencies {
         compile "org.danilopianini:gson-extras:$gsonExtrasVersion"
@@ -44,147 +39,19 @@ allprojects {
         pmd "net.sourceforge.pmd:pmd-java:$pmdVersion"
     }
 
-    test {
-        testLogging {
-            exceptionFormat = 'full'
-        }
-    }
-
-    jar {
-        manifest {
-            attributes 'Implementation-Title': artifactId, 'Implementation-Version': version
-        }
-        manifest.attributes provider: 'Alma Mater Studiorum Università di Bologna'
-    }
-
-    task javadoc(type: Javadoc, overwrite: true) {
-        source configurations.doc.collect { zipTree(it) }
-        source sourceSets.main.allJava
-        classpath = sourceSets.main.output + sourceSets.main.compileClasspath
-        include '**/*.java'
-        destinationDir file("$project.buildDir/docs/javadoc/")
-        failOnError = false
-        options.showAll()
-        options.addBooleanOption('nopackagediagram', true)
-        options.addStringOption('Xdoclint:none', '-quiet')
+    javadoc {
         configure(options) {
-            windowTitle "$projectLongName version $project.version Javadoc API"
-            docTitle "$projectLongName $project.version reference API"
             links 'http://docs.oracle.com/javase/8/docs/api/'
             links 'http://trove4j.sourceforge.net/javadocs/'
             links 'http://hephaestus.apice.unibo.it/javalib-build/javalib-java7/build/docs/javadoc/'
             links 'http://hephaestus.apice.unibo.it/javalib-build/javalib/build/docs/javadoc/'
-            doclet 'org.jboss.apiviz.APIviz'
-            docletpath file(configurations.doclet.asPath)
         }
     }
-
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        classifier = 'sources'
-        from sourceSets.main.allSource
-    }
-
-    task javadocJar(type: Jar, dependsOn: javadoc) {
-        classifier = 'javadoc'
-        from javadoc.destinationDir
-    }
-
-    artifacts {
-        archives sourcesJar
-        archives javadocJar
-    }
-
-    signing { sign configurations.archives }
-
-    eclipse {
-        classpath {
-            downloadJavadoc = true
-            downloadSources = true
-        }
-    }
-
-    findbugs {
-        if (JavaVersion.current().isJava6()) {
-            toolVersion = "2.0.3"
-        }
-        ignoreFailures = true
-        effort = "max"
-        reportLevel = "low"
-        excludeFilterConfig = resources.text.fromFile("${rootProject.projectDir}/findbugsExcludes.xml")
-    }
-
-    tasks.withType(FindBugs) {
-        reports {
-            xml.enabled = false
-            html.enabled = true
-        }
-    }
-
-    pmd {
-        ignoreFailures = true
-        ruleSets = []
-        ruleSetFiles = files("${rootProject.projectDir}/pmd.xml")
-        targetJdk = pmdTargetJdk
-        toolVersion = pmdVersion
-    }
-
-    tasks.withType(Pmd) {
-        reports {
-            xml.enabled = false
-            html.enabled = true
-        }
-    }
-
-    checkstyle {
-        ignoreFailures = true
-        configFile = new File("${rootProject.projectDir}/style.xml")
-    }
-
-    checkstyleMain << {
-        ant.xslt(in: reports.xml.destination,
-        style: new File("${rootProject.projectDir}/checkstyle-noframes-sorted.xsl"),
-        out: new File(reports.xml.destination.parent, 'main.html'))
-    }
-
-    checkstyleTest << {
-        ant.xslt(in: reports.xml.destination,
-        style: new File("${rootProject.projectDir}/checkstyle-noframes-sorted.xsl"),
-        out: new File(reports.xml.destination.parent, 'test.html'))
-    }
-
-    jacocoTestReport {
-        reports {
-            xml.enabled false
-            csv.enabled false
-            html.enabled true
-        }
-    }
-
-    jacocoTestReport.dependsOn 'test'
-
-    signArchives.onlyIf { Boolean.parseBoolean(signArchivesIsEnabled) }
 
     uploadArchives {
         repositories {
             mavenDeployer {
-                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                    authentication(userName: ossrhUsername, password: ossrhPassword)
-                }
-                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                    authentication(userName: ossrhUsername, password: ossrhPassword)
-                }
                 pom.project {
-                    name artifactId
-                    description projectDescription
-                    packaging 'jar'
-                    url "$scmRootUrl/$artifactId"
-                    licenses {
-                        license {
-                            name licenseName
-                            url licenseUrl
-                        }
-                    }
                     developers {
                         developer {
                             name 'Danilo Pianini'
@@ -247,11 +114,6 @@ allprojects {
                             email 'franco.pradelli@studio.unibo.it'
                         }
                     }
-                    scm {
-                        url "$scmRootUrl/$artifactId"
-                        connection "$scmType:$scmLogin/$scmRepoName"
-                        developerConnection "$scmType:$scmLogin/$scmRepoName"
-                    }
                 }
             }
         }
@@ -288,8 +150,6 @@ javadoc {
     source subprojects.javadoc.source
 }
 
-task wrapper(type: Wrapper) { gradleVersion = gradleVersionToUse }
-
 task fatJar(type: Jar, dependsOn: subprojects.assemble) {
     manifest {
         attributes 'Implementation-Title': 'Alchemist',
@@ -302,6 +162,12 @@ task fatJar(type: Jar, dependsOn: subprojects.assemble) {
         exclude "META-INF/*.SF"
         exclude "META-INF/*.DSA"
         exclude "META-INF/*.RSA"
+        exclude 'build'
+        exclude '.gradle'
+        exclude 'build.gradle'
+        exclude 'gradle'
+        exclude 'gradlew'
+        exclude 'gradlew.bat'
     }
     with jar
 }

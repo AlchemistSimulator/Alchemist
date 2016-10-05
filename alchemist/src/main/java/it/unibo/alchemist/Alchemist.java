@@ -144,6 +144,7 @@ public final class Alchemist {
                             executor.awaitTermination(Integer.MAX_VALUE, TimeUnit.DAYS);
                         } catch (InterruptedException e1) {
                             L.error("Main thread got interrupted.", e1);
+                            System.exit(3);
                         }
                         System.exit(0);
                     } else {

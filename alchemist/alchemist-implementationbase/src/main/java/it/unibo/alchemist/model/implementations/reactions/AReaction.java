@@ -24,6 +24,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -331,11 +332,12 @@ public abstract class AReaction<T> implements Reaction<T> {
 
     @Override
     public void setActions(final List<? extends Action<T>> a) {
-        actions = a;
+        actions = Objects.requireNonNull(a, "The actions list can't be null");
         Context lessStrict = Context.LOCAL;
         influenced = new ArrayList<Molecule>();
         for (final Action<T> act : actions) {
-            final Context condcontext = act.getContext();
+            final Context condcontext = Objects.requireNonNull(act, "Actions can't be null")
+                    .getContext();
             lessStrict = lessStrict.isMoreStrict(condcontext) ? condcontext : lessStrict;
             final List<? extends Molecule> mod = act.getModifiedMolecules();
             /*

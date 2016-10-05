@@ -190,11 +190,6 @@ allprojects {
                             email 'danilo.pianini@unibo.it'
                             url 'http://www.danilopianini.org'
                         }
-                        developer {
-                            name 'Giacomo Pronti'
-                            email 'giacomo.pronti@studio.unibo.it'
-                            url 'http://apice.unibo.it/xwiki/bin/view/XWiki/GiacomoPronti/'
-                        }
                     }
                     contributors {
                         contributor {
@@ -232,11 +227,29 @@ allprojects {
                             email 'luca.nenni@studio.unibo.it'
                             url 'http://apice.unibo.it/xwiki/bin/view/XWiki/LucaNenni/'
                         }
+                        contributor {
+                            name 'Giacomo Pronti'
+                            email 'giacomo.pronti@studio.unibo.it'
+                            url 'http://apice.unibo.it/xwiki/bin/view/XWiki/GiacomoPronti/'
+                        }
+                        contributor {
+                            name 'Giacomo Scaparrotti'
+                            email 'giacomo.scaparrotti@studio.unibo.it'
+                            url 'https://www.linkedin.com/in/giacomo-scaparrotti-0aa77569'
+                        }
+                        contributor {
+                            name 'Gabriele Graffieti'
+                            email 'gabriele.graffieti@studio.unibo.it'
+                        }
+                        contributor {
+                            name 'Franco Pradelli'
+                            email 'franco.pradelli@studio.unibo.it'
+                        }
                     }
                     scm {
                         url "$scmRootUrl/$artifactId"
-                        connection "%scmType:$scmLogin/$scmRepoName"
-                        developerConnection "%scmType:$scmLogin/$scmRepoName"
+                        connection "$scmType:$scmLogin/$scmRepoName"
+                        developerConnection "$scmType:$scmLogin/$scmRepoName"
                     }
                 }
             }

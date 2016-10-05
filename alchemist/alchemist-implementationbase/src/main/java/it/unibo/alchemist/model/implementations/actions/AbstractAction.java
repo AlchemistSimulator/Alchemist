@@ -45,18 +45,6 @@ public abstract class AbstractAction<T> implements Action<T> {
     }
 
     /**
-     * @return the node this action belongs to
-     */
-    public Node<T> getNode() {
-        return n;
-    }
-
-    @Override
-    public List<? extends Molecule> getModifiedMolecules() {
-        return influenced;
-    }
-
-    /**
      * Allows to add an Molecule to the set of molecules which are modified by
      * this action. This method must be called in the constructor, and not
      * during the execution.
@@ -71,6 +59,29 @@ public abstract class AbstractAction<T> implements Action<T> {
     /**
      * @param m
      *            the molecule
+     * @return An {@link Optional} with the value of concentration, or an empty
+     *         {@link Optional} if the molecule if
+     *         {@link Node#getConcentration(Molecule)} returns null
+     */
+    protected final Optional<T> getConcentration(final Molecule m) {
+        return Optional.ofNullable(getNode().getConcentration(m));
+    }
+
+    @Override
+    public List<? extends Molecule> getModifiedMolecules() {
+        return influenced;
+    }
+
+    /**
+     * @return the node this action belongs to
+     */
+    public Node<T> getNode() {
+        return n;
+    }
+
+    /**
+     * @param m
+     *            the molecule
      * @return true if the local node contains the molecule
      */
     protected final boolean nodeContains(final Molecule m) {
@@ -78,14 +89,27 @@ public abstract class AbstractAction<T> implements Action<T> {
     }
 
     /**
-     * @param m
-     *            the molecule
-     * @return An {@link Optional} with the value of concentration, or an empty
-     *         {@link Optional} if the molecule if
-     *         {@link Node#getConcentration(Molecule)} returns null
+     * Deletes a molecule entirely in the local node.
+     * 
+     * @param molecule
+     *            molecule
      */
-    protected final Optional<T> getConcentration(final Molecule m) {
-        return Optional.ofNullable(getNode().getConcentration(m));
+    protected final void removeConcentration(final Molecule molecule) {
+        getNode().removeConcentration(Objects.requireNonNull(molecule, "The molecule can not be null"));
+    }
+
+    /**
+     * Sets the concentration locally.
+     * 
+     * @param molecule
+     *            molecule
+     * @param concentration
+     *            concentration
+     */
+    protected final void setConcentration(final Molecule molecule, final T concentration) {
+        getNode().setConcentration(
+                Objects.requireNonNull(molecule, "The molecule can not be null"),
+                Objects.requireNonNull(concentration, "Cannot inject null concentrations"));
     }
 
 }

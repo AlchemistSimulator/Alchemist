@@ -122,26 +122,20 @@ allprojects {
 
 subprojects.each { subproject -> rootProject.evaluationDependsOn(subproject.path)}
 
-buildDashboard.dependsOn 'jacocoTestReport'
-buildDashboard.dependsOn 'check'
-
 /*
- * Remove wrapper from subprojects
+ * Remove tasks that should not exist in subprojects
  */
 subprojects.each { it.tasks.remove(wrapper) }
+subprojects.each { it.tasks.remove(closeRepository) }
 
 /*
  * Running a task on the parent project implies running the same task first on any subproject
  */
 tasks.each { task -> 
-    if (!task.name.contains('wrapper')) {
-        println task.name
-        println task.name.contains('wrapper')
-        subprojects.each { subproject ->
-            def subtask = subproject.tasks.findByPath("${task.name}")
-            if (subtask != null) {
-                task.dependsOn(subtask)
-            }
+    subprojects.each { subproject ->
+        def subtask = subproject.tasks.findByPath("${task.name}")
+        if (subtask != null) {
+            task.dependsOn(subtask)
         }
     }
 }

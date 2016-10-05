@@ -6,3 +6,4 @@ bin/
 .gradle
 gradle.prefs
 **/src/antlr/java/**/biochemistrydsl
+version.info

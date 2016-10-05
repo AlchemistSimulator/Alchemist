@@ -7,3 +7,4 @@ bin/
 gradle.prefs
 **/src/antlr/java/**/biochemistrydsl
 version.info
+prepare_environment.sh

@@ -23,6 +23,7 @@ allprojects {
     targetCompatibility = jdkVersion
 
     dependencies {
+        compile "org.danilopianini:gson-extras:$gsonExtrasVersion"
         compile "com.google.code.findbugs:findbugs:$findBugsVersion"
         compile "org.apache.commons:commons-math3:$math3Version"
         compile "org.slf4j:slf4j-api:$slf4jVersion"

@@ -10,3 +10,4 @@ script:
   - cd alchemist 
   - ./gradlew check projectReport uploadArchives 
   - ./gradlew closeRepository || exit 0
+  - ./gradlew fatJar

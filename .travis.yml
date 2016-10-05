@@ -7,6 +7,5 @@ before_install:
   - openssl aes-256-cbc -K $encrypted_9993846e3f84_key -iv $encrypted_9993846e3f84_iv -in prepare_environment.sh.enc -out prepare_environment.sh -d
   - sh prepare_environment.sh
 script:
-  - cd alchemist && ./gradlew
   - cd alchemist && ./gradlew uploadArchives
-  - cd alchemist && ./gradlew closeRepository publishPlugins --continue || exit 0
+  - cd alchemist && ./gradlew closeRepository || exit 0

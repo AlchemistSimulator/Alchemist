@@ -126,13 +126,22 @@ buildDashboard.dependsOn 'jacocoTestReport'
 buildDashboard.dependsOn 'check'
 
 /*
+ * Remove wrapper from subprojects
+ */
+subprojects.each { it.tasks.remove(wrapper) }
+
+/*
  * Running a task on the parent project implies running the same task first on any subproject
  */
 tasks.each { task -> 
-    subprojects.each { subproject ->
-        def subtask = subproject.tasks.findByPath("${task.name}")
-        if (subtask != null) {
-            task.dependsOn(subtask)
+    if (!task.name.contains('wrapper')) {
+        println task.name
+        println task.name.contains('wrapper')
+        subprojects.each { subproject ->
+            def subtask = subproject.tasks.findByPath("${task.name}")
+            if (subtask != null) {
+                task.dependsOn(subtask)
+            }
         }
     }
 }

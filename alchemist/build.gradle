@@ -172,4 +172,4 @@ task fatJar(type: Jar, dependsOn: subprojects.assemble) {
     with jar
 }
 
-defaultTasks 'wrapper', 'clean', 'build', 'check', 'javadoc', 'assemble', 'install', 'projectReport', 'buildDashboard', 'fatJar'
+defaultTasks 'clean', 'build', 'check', 'javadoc', 'assemble', 'install', 'projectReport', 'buildDashboard', 'fatJar'

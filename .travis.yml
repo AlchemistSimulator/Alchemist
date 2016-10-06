@@ -15,13 +15,11 @@ script:
   - cd alchemist
   - "./gradlew check projectReport uploadArchives"
   - "./gradlew fatJar"
+  - mkdir report
+  - cp --parent */build/reports build/reports report -R
 #  - "./gradlew closeRepository || exit 0"
 
-before_deploy:
-  - mkdir report
-  - pwd
-  - ls -ahl
-  - cp --parent */build/reports build/reports report -R
+before_deploy: echo Preparing for deploy
 deploy:
   - provider: releases
     skip_cleanup: true

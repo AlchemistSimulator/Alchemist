@@ -44,10 +44,12 @@ deploy:
     skip_cleanup: true
     project: "./report"
     domain: alchemist-reports.surge.sh
-    on: master
+    on:
+      tags: true
   - provider: surge
     skip_cleanup: true
     project: "./alchemist/build/docs/javadoc/"
     domain: alchemist-doc.surge.sh
-    on: master
+    on:
+      tags: true
 after_deploy: echo Deployment phase concluded.

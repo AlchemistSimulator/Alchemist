@@ -14,10 +14,10 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.github.davidmoten.rtree.Entry;
 import com.github.davidmoten.rtree.RTree;
 import com.github.davidmoten.rtree.geometry.Geometries;
 import com.github.davidmoten.rtree.geometry.Rectangle;
+import com.github.davidmoten.rtree.internal.EntryDefault;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
@@ -154,7 +154,7 @@ public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements E
         rtree = RTree.<RectObstacle2D, Rectangle>create().add(
             ((List<?>) o.readObject()).parallelStream()
                 .map(obs -> (RectObstacle2D) obs)
-                .map(obs -> new Entry<>(obs, toGeometry(obs)))
+                .map(obs -> new EntryDefault<>(obs, toGeometry(obs)))
                 .collect(Collectors.toList())
         );
     }

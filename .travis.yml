@@ -10,11 +10,13 @@ env:
   global:
     - secure: "OMDTeFBKjw0acBlmqh4+FZ5nnt/Aj2pF705Tta0qm3Sf61S+k1u503Dzt+nDs+/yY19HyyDFUj3+56a88IssEjd3xUVzPOz7kCW0p/lcqbAQ8jIATmoWpoMM9cOI4Xv9h+JJxOqLR54ODR0MGo/BVa51w93jsdpDnrlLNOoNf08r1bfA2Hifh/iKD/YzMyGqFI+vxvED7HhbDNG48chsr3QSGxsizXDtEZK+u0JZ6/CR2rHZTQzD6bkv3N2Vbq/4tc4pZVdH7zMXWRkrGunhHchwmgEwz90iJeo4fEeMBiWpchWg7Huxr2LUisdRKjzNqf+UjV5DljtK/RDbzyjC8vIAllD2hsmPJW1EfTOrIfIVgT2CoRrKKGIp/Dk5LkOTePMCXloe+M7gYipEWreAXeGYotAOdnxW1IoxhM3Dsbb4yxd6h1h2bFXToj0bzIEMySgivYJ0n0PhvuwWb/KUf2vt8r+ULdWvPVjgqQUDv38fgnqyfMmgMDfABlGpSxQWT2gy5VAinpgQzfNrVeOkDxxGDBLa4vOMy/yQm/bnXJyyUA0NAv5xQBCZhsDqjTOwzKWGFWkdrN0e91JjF7+bvkKnH1JQhz8yuLdLASm5LEj5nZbCZeDu4jbZhags1pkmNxwlPJjWfpzeXiiXwMdAkIn1RrkMefHPfJ5hq+G3y9I="
     - secure: "NxGbZ0Ni7kc4KTux5xmTEPLc0A6pohfst76lPPBFSnsGiDt+xVA0nywYc/UUR9UsWRKXdqCqSiqjwjldbbMjkhGILl/+cV6UNhfWUDc++u0keeBVVYpz9Ekfqz+U0mnuZXh8gIh6+bCNYH4iCmqYU/UcZCtJGa0AxDMWXPKwhd/WPoUF5DOcHgRj9WpBwnOG1TtSlWBk18wCbscYAUbtu2gOmStingjTfn4nZ1IhaYFbC1Ba+gcTmLxGf4JSBxZ0CYnH+IVOQQK5PKsxht9yRFpfcmYEZMZFZ/kp0H25gBPdITeHuz7zq7oe2Si7UZ6PJp8Gnin0gMmp0FZPlqbV2Xl1AKaQD/2+AxqBSNDnEWIHwLToFbrER3zJX/Fhds8iXt1o3RrNQHwPrWiJMjzSZbAqCd1tgzSMSSPQFsrOh5P8FX+xiroz454BQBmYPikh7InAHXxF2iu2hZ+fr0RHKYMYhdZZMd0Cx2ph+5W7R/QDlTIHmsmSkBfi5s299tRCPHCenk+50t3zboVHLw9BjcVpSEbziB1GQI3EkJxE9m8Etoir++bgB7EQn30uwS9xErDdl+p0pfEM6acQVc10VfeIGmkLT2KhqPHDAvo2EYGFzN0W1st2/sGQp5YJ5TmBq3deqyVN8qWy63JPa9XyqcrON1dNaWWLR1os+6r0X/k="
+
 script:
   - cd alchemist
   - "./gradlew check projectReport uploadArchives"
   - "./gradlew fatJar"
-  - "./gradlew closeRepository || exit 0"
+#  - "./gradlew closeRepository || exit 0"
+
 before_deploy: echo Deployment phase beginning.
 deploy:
   - provider: releases
@@ -29,6 +31,21 @@ deploy:
   - provider: surge
     skip_cleanup: true
     project: "./alchemist/build/docs/javadoc/"
-    domain: alchemist-doc-unstable.surge.sh
+    domain: alchemist-unstable-doc.surge.sh
     on: develop
+  - provider: surge
+    skip_cleanup: true
+    project: "./alchemist/build/reports/"
+    domain: alchemist-unstable-reports.surge.sh
+    on: develop
+  - provider: surge
+    skip_cleanup: true
+    project: "./alchemist/build/reports/"
+    domain: alchemist-reports.surge.sh
+    on: master
+  - provider: surge
+    skip_cleanup: true
+    project: "./alchemist/build/docs/javadoc/"
+    domain: alchemist-doc.surge.sh
+    on: master
 after_deploy: echo Deployment phase concluded.

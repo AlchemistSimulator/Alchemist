@@ -17,7 +17,9 @@ script:
   - "./gradlew fatJar"
 #  - "./gradlew closeRepository || exit 0"
 
-before_deploy: echo Deployment phase beginning.
+before_deploy:
+  - mkdir report
+  - cp --parent alchemist/**/build/reports alchemist/build/reports report -R
 deploy:
   - provider: releases
     skip_cleanup: true
@@ -35,12 +37,12 @@ deploy:
     on: develop
   - provider: surge
     skip_cleanup: true
-    project: "./alchemist/build/reports/"
+    project: "./report/alchemist/build/reports/"
     domain: alchemist-unstable-reports.surge.sh
     on: develop
   - provider: surge
     skip_cleanup: true
-    project: "./alchemist/build/reports/"
+    project: "./report/alchemist/build/reports/"
     domain: alchemist-reports.surge.sh
     on: master
   - provider: surge

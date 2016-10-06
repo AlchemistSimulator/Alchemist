@@ -27,6 +27,11 @@ public enum Vehicle {
      */
     FOOT,
 
+    /**
+     * Allows walking along mountain paths.
+     */
+    HIKE,
+
 //    /**
 //     * Bikes, with improved elevation interpolation.
 //     */

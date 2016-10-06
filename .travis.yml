@@ -19,6 +19,8 @@ script:
 
 before_deploy:
   - mkdir report
+  - pwd
+  - ls -ahl
   - cp --parent alchemist/**/build/reports alchemist/build/reports report -R
 deploy:
   - provider: releases

@@ -37,12 +37,12 @@ deploy:
     on: develop
   - provider: surge
     skip_cleanup: true
-    project: "./report/alchemist/build/reports/"
+    project: "./report"
     domain: alchemist-unstable-reports.surge.sh
     on: develop
   - provider: surge
     skip_cleanup: true
-    project: "./report/alchemist/build/reports/"
+    project: "./report"
     domain: alchemist-reports.surge.sh
     on: master
   - provider: surge

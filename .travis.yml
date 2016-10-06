@@ -21,7 +21,7 @@ before_deploy:
   - mkdir report
   - pwd
   - ls -ahl
-  - cp --parent alchemist/**/build/reports alchemist/build/reports report -R
+  - cp --parent */build/reports build/reports report -R
 deploy:
   - provider: releases
     skip_cleanup: true
@@ -39,12 +39,12 @@ deploy:
     on: develop
   - provider: surge
     skip_cleanup: true
-    project: "./report"
+    project: "./alchemist/report"
     domain: alchemist-unstable-reports.surge.sh
     on: develop
   - provider: surge
     skip_cleanup: true
-    project: "./report"
+    project: "./alchemist/report"
     domain: alchemist-reports.surge.sh
     on:
       tags: true

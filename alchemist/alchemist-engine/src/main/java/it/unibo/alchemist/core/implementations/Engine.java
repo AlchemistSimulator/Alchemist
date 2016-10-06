@@ -489,12 +489,6 @@ public class Engine<T> implements Simulation<T> {
             monitorLock.write();
             monitors.add(op);
             monitorLock.release();
-            /*
-             * Make sure the environment has been initialized
-             */
-            monitorLock.read();
-            op.stepDone(env, mu, currentTime, curStep);
-            monitorLock.release();
     }
 
 

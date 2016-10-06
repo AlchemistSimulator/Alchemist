@@ -6,13 +6,9 @@ import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import javax.swing.BoxLayout;
@@ -22,7 +18,7 @@ import javax.swing.JPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.unibo.alchemist.boundary.gui.effects.Effect;
+import it.unibo.alchemist.boundary.gui.effects.EffectSerializationFactory;
 import it.unibo.alchemist.boundary.gui.effects.JEffectsTab;
 import it.unibo.alchemist.boundary.gui.monitors.JMonitorsTab;
 import it.unibo.alchemist.boundary.gui.util.GraphicalMonitorFactory;
@@ -53,7 +49,7 @@ public final class SingleRunGUI {
      *            concentration type
      */
     public static <T> void make(final Simulation<T> sim) {
-        make(sim, (InputStream) null);
+        make(sim, (File) null);
     }
 
     /**
@@ -71,26 +67,6 @@ public final class SingleRunGUI {
         make(sim, new File(effectsFile));
     }
 
-    /**
-     * Builds a single-use graphical interface.
-     * 
-     * @param sim
-     *            the simulation for this GUI
-     * @param effectsFile
-     *            the effects file
-     * @param <T>
-     *            concentration type
-     * @throws FileNotFoundException 
-     */
-    public static <T> void make(final Simulation<T> sim, final File effectsFile) {
-        try {
-            make(sim, new FileInputStream(effectsFile));
-        } catch (FileNotFoundException e) {
-            errorLoadingEffects(e);
-            make(sim);
-        }
-    }
-
     private static void errorLoadingEffects(final Throwable e) {
         L.error(R.getString("cannot_load_effects"), e);
     }
@@ -105,8 +81,7 @@ public final class SingleRunGUI {
      * @param <T>
      *            concentration type
      */
-    @SuppressWarnings("unchecked")
-    public static <T> void make(final Simulation<T> sim, final InputStream effectsFile) {
+    public static <T> void make(final Simulation<T> sim, final File effectsFile) {
         final GraphicalOutputMonitor<T> main = GraphicalMonitorFactory.createMonitor(sim,
                 e -> L.error("Cannot init the UI.", e));
         if (main instanceof Component) {
@@ -124,8 +99,8 @@ public final class SingleRunGUI {
             canvas.add(upper, BorderLayout.NORTH);
             final JEffectsTab<T> effects = new JEffectsTab<>(main, false);
             if (effectsFile != null) {
-                try (final ObjectInputStream ois = new ObjectInputStream(effectsFile)) {
-                    effects.setEffects((List<Effect>) ois.readObject());
+                try {
+                    effects.setEffects(EffectSerializationFactory.effectsFromFile(effectsFile));
                 } catch (IOException | ClassNotFoundException ex) {
                     errorLoadingEffects(ex);
                 }

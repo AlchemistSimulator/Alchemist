@@ -2,12 +2,24 @@ sudo: required
 dist: trusty
 language: java
 before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install -y graphviz
-  - openssl aes-256-cbc -K $encrypted_9993846e3f84_key -iv $encrypted_9993846e3f84_iv -in prepare_environment.sh.enc -out prepare_environment.sh -d
-  - sh prepare_environment.sh
+- sudo apt-get -qq update
+- sudo apt-get install -y graphviz
+- openssl aes-256-cbc -K $encrypted_9993846e3f84_key -iv $encrypted_9993846e3f84_iv
+  -in prepare_environment.sh.enc -out prepare_environment.sh -d
+- sh prepare_environment.sh
+
 script:
-  - cd alchemist 
-  - ./gradlew check projectReport uploadArchives 
-  - ./gradlew fatJar
-  - ./gradlew closeRepository || exit 0
+- cd alchemist
+- "./gradlew check projectReport uploadArchives"
+- "./gradlew fatJar"
+- "./gradlew closeRepository || exit 0"
+
+deploy:
+  provider: releases
+  api_key:
+    secure: OiCBDNskosVJ+svWTi6VrgjRiQJr/veNuz79FpoVZk3wFjWHj6yQICkBHEcYO/XQzXB9EYwZsXQkMNhMBX3OTeG3c1nHDvFINpGKB2cKqYS8/qmY228ZPF51ovXmT1v+C6Y+TMJFK8+uNVMHukzJZMW0TupFgjXaFRGr7odee62Oa5zYd5WWl2a5NkCtrHllKdyTnrizaLAVMGU9CUqIDMKHrIe4tD79utn9rgo1uAxIKSrPZMKomul6D+kp3eZAkBi0YWqem9QPzSXa+Bs8e4QbhydwFYx7B5OcnY2e5iYZlM6AXJJeUQ499Ntyhw7t64C6ThPevKrdg7zQ8MCcSbOFNv0Sehm639AzgM+5ripXowSJVpLxb5+dEbe+uc8TKb9NKEniY4Ox5Ml3o193+1BSUDVEapoLA7VVGc+E+qeL1ZwGyNwTmMQJ3pg50AS9xH4cO5F2Z7ffnX1iUGEGoAc1aS7nr4fu7cH04P4CJ0OYYmB9/ERUudPbTdx4Jt8+WaiRLarnLRdgr8Ui7MgVL+Ck5auwA7z5Rw/gX4GNlxmqZeCNUmo7qkwo+e5HqjbifrZifIynl45oj/bbBy8JeioC5ug0FK5I8IKDFyTn2doHHpoU4Wq6EGhTK02Mcvc5brVz5D2cV4++lzauDGUUypJO1o19W6Kbb1THZTLgYAQ=
+  file_glob: true
+  file: "${HOME}/build/${TRAVIS_REPO_SLUG}/alchemist/build/libs/alchemist-redist*.jar"
+  on:
+    repo: AlchemistSimulator/Alchemist
+    tags: true

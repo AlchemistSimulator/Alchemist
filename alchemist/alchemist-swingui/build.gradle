@@ -11,6 +11,7 @@ dependencies {
         "org.jfree:jfreechart:$jfreechartVersion",
         "org.jfree:jfreesvg:$jfreesvgVersion",
         "org.mapsforge:mapsforge-map-awt:$mapsforgeVersion",
+        "org.danilopianini:gson-extras:$gsonExtrasVersion"
     )
     testRuntime(project(':alchemist-incarnation-protelis'))
 }

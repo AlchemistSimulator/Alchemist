@@ -30,13 +30,6 @@ allprojects {
         testRuntime "ch.qos.logback:logback-classic:$logbackVersion"
 
         doclet "org.jboss.apiviz:apiviz:$apivizVersion"
-
-        pmd "net.sourceforge.pmd:pmd-core:$pmdVersion"
-        pmd "net.sourceforge.pmd:pmd-vm:$pmdVersion"
-        pmd "net.sourceforge.pmd:pmd-plsql:$pmdVersion"
-        pmd "net.sourceforge.pmd:pmd-jsp:$pmdVersion"
-        pmd "net.sourceforge.pmd:pmd-xml:$pmdVersion"
-        pmd "net.sourceforge.pmd:pmd-java:$pmdVersion"
     }
 
     javadoc {

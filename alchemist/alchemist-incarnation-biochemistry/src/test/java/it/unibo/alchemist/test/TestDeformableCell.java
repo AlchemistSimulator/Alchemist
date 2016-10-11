@@ -12,6 +12,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import it.unibo.alchemist.model.BiochemistryIncarnation;
+import it.unibo.alchemist.model.implementations.actions.CellTensionPolarization;
+import it.unibo.alchemist.model.implementations.conditions.TensionPresent;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironmentNoOverlap;
 import it.unibo.alchemist.model.implementations.nodes.CircularDeformableCellImpl;
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
@@ -56,7 +58,7 @@ public class TestDeformableCell {
     }
 
     /**
-     * 
+     * Testing if CircularDeformableCells are added correctly
      */
     @Test
     public void testAddNode1() {
@@ -72,7 +74,7 @@ public class TestDeformableCell {
     }
     
     /**
-     * 
+     * Testing if Environment updates correctly after node's remotion
      */
     @Test
     public void testAddAndRemoveNode() {
@@ -90,7 +92,7 @@ public class TestDeformableCell {
     }
     
     /**
-     * 
+     * Testing {@link TensionPresent}
      */
     @Test
     public void testTensionPresent1() {
@@ -121,7 +123,7 @@ public class TestDeformableCell {
     }
     
     /**
-     * 
+     * Testing {@link TensionPresent}
      */
     @Test
     public void testTensionPresent2() {
@@ -162,7 +164,7 @@ public class TestDeformableCell {
     }
     
     /**
-     * 
+     * Testing {@link CellTensionPolarization}
      */
     @Test
     public void testTensionPolarization1() {
@@ -190,7 +192,7 @@ public class TestDeformableCell {
     }
     
     /**
-     * 
+     * Testing {@link CellTensionPolarization}
      */
     @Test
     public void testTensionPolarization2() {
@@ -217,7 +219,7 @@ public class TestDeformableCell {
     }
     
     /**
-     * 
+     * Testing {@link CellTensionPolarization}
      */
     @Test
     public void testTensionPolarization3() {
@@ -247,7 +249,7 @@ public class TestDeformableCell {
     }
 
     /**
-     * 
+     * Testing {@link CellTensionPolarization}
      */
     @Test
     public void testTensionPolarization4() {
@@ -264,7 +266,7 @@ public class TestDeformableCell {
     }
 
     /**
-     * 
+     * Testing {@link CellTensionPolarization}
      */
     @Test
     public void testTensionPolarization5() {
@@ -281,7 +283,7 @@ public class TestDeformableCell {
     }
     
     /**
-     * 
+     * Testing {@link CellTensionPolarization}
      */
     @Test
     public void testTensionPolarization6() {
@@ -298,7 +300,7 @@ public class TestDeformableCell {
     }
     
     /**
-     * 
+     * Test if cell, in motion, stops when meets another cell.
      */
     @Test
     public void testMoveNode1() {

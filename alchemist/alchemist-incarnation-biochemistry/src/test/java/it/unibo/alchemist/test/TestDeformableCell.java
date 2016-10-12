@@ -48,7 +48,7 @@ public class TestDeformableCell {
         //CHECKSTYLE:OFF: MagicNumber
         env = new BioRect2DEnvironmentNoOverlap(-10, 10, -10, 10);
         env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.EuclideanDistance<>(2));
-        cellNode1 = new CircularDeformableCellImpl(env, 1, 0);
+        cellNode1 = new CircularDeformableCellImpl(env, 1, 1); // max rigidity
         cellNode2 = new CircularDeformableCellImpl(env, 1, 0.5);
         cellNode3 = new CircularDeformableCellImpl(env, 2, 0.5);
         cellNode4 = new CircularDeformableCellImpl(env, 3, 0.5);
@@ -197,9 +197,9 @@ public class TestDeformableCell {
     @Test
     public void testTensionPolarization2() {
         //CHECKSTYLE:OFF: MagicNumber
-        env.addNode(cellNode1, new Continuous2DEuclidean(0, 0));
-        env.addNode(cellNode3, new Continuous2DEuclidean(0, 1));
-        env.addNode(cellNode2, new Continuous2DEuclidean(0, -0.75));
+        env.addNode(cellNode1, new Continuous2DEuclidean(0, 0)); // 1 1
+        env.addNode(cellNode3, new Continuous2DEuclidean(0, 1)); // 2 1
+        env.addNode(cellNode2, new Continuous2DEuclidean(0, -0.75)); // 1 0.5
         cellNode1.addReaction(inc.createReaction(rand, env, cellNode1, time, "[] --> [CellTensionPolarization()]"));
         assertFalse(cellNode1.getReactions().isEmpty());
         cellNode1.getReactions().stream()

@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.math3.util.CombinatoricsUtils;
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
+import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -61,7 +62,10 @@ public class BiomolPresentInNeighbor extends AbstractNeighborCondition<Double> {
             return false;
         } else {
             final Neighborhood<Double> neighborhood = environment.getNeighborhood(getNode());
-            return neigh.entrySet().stream().allMatch(n -> neighborhood.contains(n.getKey()) && n.getKey().getConcentration(mol) >=  conc);
+            return neigh.entrySet().stream()
+                    .filter(n -> n.getKey() instanceof CellNode)
+                    .allMatch(n -> neighborhood.contains(n.getKey()) 
+                            && n.getKey().getConcentration(mol) >=  conc);
         }
     }
 
@@ -74,10 +78,10 @@ public class BiomolPresentInNeighbor extends AbstractNeighborCondition<Double> {
     public Map<Node<Double>, Double> getValidNeighbors(final Collection<? extends Node<Double>> neighborhood) {
         propensity = 0;
         neigh = neighborhood.stream()
-                    .filter(n -> n.getConcentration(mol) >= conc)
-                    .collect(Collectors.<Node<Double>, Node<Double>, Double>toMap(
-                                          n -> n,
-                                          n -> CombinatoricsUtils.binomialCoefficientDouble(n.getConcentration(mol).intValue(), conc.intValue())));
+                .filter(n -> n instanceof CellNode && n.getConcentration(mol) >= conc)
+                .collect(Collectors.<Node<Double>, Node<Double>, Double>toMap(
+                        n -> n,
+                        n -> CombinatoricsUtils.binomialCoefficientDouble(n.getConcentration(mol).intValue(), conc.intValue())));
         if (!neigh.isEmpty()) {
             propensity = neigh.values().stream().max((d1, d2) -> d1.compareTo(d2)).get();
         }

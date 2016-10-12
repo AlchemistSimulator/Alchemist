@@ -17,6 +17,11 @@ import java.io.Serializable;
 public interface Molecule extends Serializable {
 
     /**
+     * @return the name of this {@link Molecule}
+     */
+    String getName();
+
+    /**
      * Allows to access the id of a molecule.
      * 
      * @return the id of the molecule

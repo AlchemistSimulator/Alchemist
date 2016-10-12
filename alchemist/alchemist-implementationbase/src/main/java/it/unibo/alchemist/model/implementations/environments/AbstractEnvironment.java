@@ -8,16 +8,16 @@
  */
 package it.unibo.alchemist.model.implementations.environments;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -25,6 +25,14 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.danilopianini.lang.SpatialIndex;
+
+
+import gnu.trove.map.hash.TIntObjectHashMap;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Layer;
+import it.unibo.alchemist.model.interfaces.Molecule;
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * Very generic and basic implementation for an environment. Basically, only
@@ -44,6 +52,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     private final TIntObjectHashMap<Node<T>> nodes = new TIntObjectHashMap<Node<T>>();
     private String separator = System.getProperty("line.separator");
     private final SpatialIndex<Node<T>> spatialIndex;
+    private final Map<Molecule, Layer<T>> layers = new LinkedHashMap<>();
 
     /**
      * @param internalIndex
@@ -185,12 +194,12 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     }
 
     @Override
-    public List<Node<T>> getNodesWithinRange(final Node<T> center, final double range) {
+    public Set<Node<T>> getNodesWithinRange(final Node<T> center, final double range) {
         /*
          * Remove the center node
          */
         return getAllNodesInRange(getPosition(center), range).filter((n) -> !n.equals(center))
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     private Stream<Node<T>> getAllNodesInRange(final Position center, final double range) {
@@ -204,11 +213,11 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     }
 
     @Override
-    public List<Node<T>> getNodesWithinRange(final Position center, final double range) {
+    public Set<Node<T>> getNodesWithinRange(final Position center, final double range) {
         /*
          * Collect every node in range
          */
-        return getAllNodesInRange(center, range).collect(Collectors.toList());
+        return getAllNodesInRange(center, range).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
@@ -244,5 +253,22 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     @Override
     public Spliterator<Node<T>> spliterator() {
         return getNodes().spliterator();
+    }
+
+    @Override
+    public void addLayer(final Molecule m, final Layer<T> l) {
+        if (layers.put(m, l) != null) {
+            throw new IllegalStateException("Two layers have been associated to " + m);
+        }
+    }
+
+    @Override
+    public Optional<Layer<T>> getLayer(final Molecule m) {
+        return Optional.ofNullable(layers.get(m));
+    }
+
+    @Override
+    public Set<Layer<T>> getLayers() {
+        return layers.values().stream().collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

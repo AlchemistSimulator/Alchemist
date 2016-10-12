@@ -6,27 +6,19 @@ network-model:
 
 environment:
   type: BioRect2DEnvironmentNoOverlap
-  parameters: []
+  parameters: [-5, 5, -5, 5]
 
 ionic: &waterDissociation
-    - time-distribution: 0.1
-      program: >
-        [2 H2O] --> [H3O + OH]
     - time-distribution: 10
       program: >
-        [H3O + OH] --> [2 H2O]
-    - time-distribution: 10
-      program: >
-        [] --> [BrownianMove(0.2)] if BiomolPresentInCell(H2O, 1)
+        [] --> [BrownianMove(10)]
 
 displacements:
-  type: CellNode
-  parameters: [10]
   - in:
       type: Circle
-      parameters: [100, 0, 0, 5]
-    contents:
-      - molecule: H2O
-        concentration: 1000
+      parameters: [20, 0, 0, 5]
+    nodes:
+      type: CellNodeImpl
+      parameters: [1, p] # p parametro inutile
     programs:
       - *waterDissociation

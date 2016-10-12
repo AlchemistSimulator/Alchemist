@@ -1,0 +1,36 @@
+incarnation: biochemistry
+
+network-model:
+  type: EuclideanDistance
+  parameters: [2]
+
+environment:
+  type: BioRect2DEnvironment
+  parameters: []
+
+reactions: &reactions
+    - time-distribution: 1
+      program: >
+        [A] + [B in neighbor] --> [junction A-B]
+
+displacements:
+  - in:
+      type: Point
+      parameters: [0, 0]
+    nodes:
+      type: EnvironmentNodeImpl
+      parameters: []
+    contents:
+      - molecule: A
+        concentration: 10
+    programs:
+      - *reactions
+  - in:
+      type: Point
+      parameters: [1, 0]
+    nodes:
+      type: CellNodeImpl
+      parameters: []
+    contents:
+      - molecule: B
+        concentration: 10

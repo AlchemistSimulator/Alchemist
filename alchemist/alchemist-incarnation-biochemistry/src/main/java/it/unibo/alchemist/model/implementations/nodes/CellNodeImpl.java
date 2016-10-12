@@ -15,14 +15,18 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.math3.util.FastMath;
+
 import com.google.common.collect.MapMaker;
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
+import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Molecule;
+import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  *
@@ -33,7 +37,8 @@ public class CellNodeImpl extends DoubleNode implements CellNode, CellWithCircul
 
     private final Map<Junction, Map<CellNode, Integer>> junctions = new MapMaker()
             .concurrencyLevel(2).makeMap();
-    private final double diameter;
+    private double diameter;
+    private Position polarizationVersor;
 
     /**
      * create a new cell node.
@@ -45,6 +50,7 @@ public class CellNodeImpl extends DoubleNode implements CellNode, CellWithCircul
      */
     public CellNodeImpl(final Environment<Double> env, final double diameter) {
         super(env);
+        this.polarizationVersor = new Continuous2DEuclidean(0, 0);
         this.diameter = diameter;
     }
 
@@ -70,6 +76,27 @@ public class CellNodeImpl extends DoubleNode implements CellNode, CellWithCircul
             super.setConcentration(mol, c);
         } else {
             removeConcentration(mol);
+        }
+    }
+
+    @Override
+    public void setPolarization(final Position v) {
+        this.polarizationVersor = v;
+    }
+
+    @Override
+    public Position getPolarizationVersor() {
+        return polarizationVersor;
+    }
+
+    @Override
+    public void addPolarization(final Position v) {
+        final double[] tempCor = this.polarizationVersor.sum(v).getCartesianCoordinates();
+        final double module = FastMath.sqrt(FastMath.pow(tempCor[0], 2) + FastMath.pow(tempCor[1], 2));
+        if (module != 0) {
+            this.polarizationVersor = new Continuous2DEuclidean(tempCor[0] / module, tempCor[1] / module); 
+        } else {
+            this.polarizationVersor = new Continuous2DEuclidean(0, 0);
         }
     }
 
@@ -164,6 +191,11 @@ public class CellNodeImpl extends DoubleNode implements CellNode, CellWithCircul
     @Override
     public double getRadius() {
         return getDiameter() / 2;
+    }
+
+    @Override
+    public String toString() {
+        return "Instance of CellNodeImpl with diameter = " + diameter;
     }
 
 }

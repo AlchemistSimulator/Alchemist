@@ -1,17 +1,21 @@
 package it.unibo.alchemist.core.tests;
 
+//CHECKSTYLE:OFF
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-//CHECKSTYLE:OFF
-import static org.junit.Assert.*;
 //CHECKSTYLE:ON
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -28,6 +32,7 @@ import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.LinkingRule;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
@@ -360,13 +365,13 @@ public class TestCommands {
         }
 
         @Override
-        public Collection<Node<Object>> getNodesWithinRange(final Node<Object> center, final double range) {
-            return Collections.emptyList();
+        public Set<Node<Object>> getNodesWithinRange(final Node<Object> center, final double range) {
+            return Collections.emptySet();
         }
 
         @Override
-        public Collection<Node<Object>> getNodesWithinRange(final Position center, final double range) {
-            return Collections.emptyList();
+        public Set<Node<Object>> getNodesWithinRange(final Position center, final double range) {
+            return Collections.emptySet();
         }
 
         @Override
@@ -410,6 +415,21 @@ public class TestCommands {
 
         @Override
         public LinkingRule<Object> getLinkingRule() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void addLayer(final Molecule m, final Layer<Object> l) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Set<Layer<Object>> getLayers() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Optional<Layer<Object>> getLayer(final Molecule m) {
             throw new UnsupportedOperationException();
         }
 

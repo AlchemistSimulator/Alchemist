@@ -141,9 +141,9 @@ public class TestIncarnation {
         testR("[A] --> [B] + [C + D in neighbor]", 2, 4, 1, 2, 1, 2, 0, 0); // neighborhoodPresent condition is present
         testR("[A in env] --> []", 1, 1, 0, 0, 0, 0, 1, 1);
         testR("[A + 3B in env] --> []", 2, 2, 0, 0, 0, 0, 2, 2);
-        testR("[] --> [A in env]", 0, 1, 0, 0, 0, 0, 0, 1);
+        testR("[] --> [A in env]", 1, 1, 0, 0, 0, 0, 0, 1);
         testR("[A] + [B in env] --> [C]", 2, 3, 1, 2, 0, 0, 1, 1);
-        testR("[A] --> [B] + [C + D in env]", 1, 4, 1, 2, 0, 0, 0, 2);
+        testR("[A] --> [B] + [C + D in env]", 2, 4, 1, 2, 0, 0, 0, 2);
         testR("[A] + [B + 2C in neighbor] + [D in env] --> [E in cell] + [F + 4G in env]", 4, 7, 1, 2, 2, 2, 1, 3);
         testR("[A in env] + [B in env] + [C + 4D in neighbor] --> [E + F + G]", 4, 7, 0, 3, 2, 2, 2, 2);
         testR("[A] + [B in neighbor] --> [junction A-B]", 2, 4, 1, 2, 1, 2, 0, 0);
@@ -153,7 +153,7 @@ public class TestIncarnation {
         testR("[junction A-B] + [junction C-D] --> [A in env]", 2, 5, 2, 2, 0, 2, 0, 1); // the junctions will be removed, because they are not present in the right side.
         testR("[junction A-B] --> [junction A-B] + [A in cell]", 1, 1, 1, 1, 0, 0, 0, 0);
         testR("[A + B] --> [BrownianMove(0.1)]", 2, 3, 2, 2, 0, 0, 0, 0);
-        testR("[] --> [B in env] if BiomolPresentInCell(A, 2)", 1, 1, 1, 0, 0, 0, 0, 1); // if a custom condition is used the molecules present in the custom condition will NOT be removed.
+        testR("[] --> [B in env] if BiomolPresentInCell(A, 2)", 2, 1, 1, 0, 0, 0, 0, 1); // if a custom condition is used the molecules present in the custom condition will NOT be removed.
         testR("[A] + [B in neighbor] + [C in env] --> [D in cell] + [E in neighbor] + [F in env] + [BrownianMove(1)] if BiomolPresentInCell(A, 2)", 4, 7, 2, 2, 1, 2, 1, 2);
         // CHECKSTYLE:ON: magicnumber
         testNoR("[A] + [B in neighbor] --> [junction A-C]"); // C is not present in conditions

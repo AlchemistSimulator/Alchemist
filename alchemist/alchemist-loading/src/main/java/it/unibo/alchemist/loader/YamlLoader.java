@@ -44,8 +44,10 @@ import com.google.common.collect.Lists;
 import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.loader.displacements.Displacement;
 import it.unibo.alchemist.loader.export.Extractor;
+import it.unibo.alchemist.loader.export.FilteringPolicy;
 import it.unibo.alchemist.loader.export.MoleculeReader;
 import it.unibo.alchemist.loader.export.NumberOfNodes;
+import it.unibo.alchemist.loader.export.filters.CommonFilters;
 import it.unibo.alchemist.loader.shapes.Shape;
 import it.unibo.alchemist.loader.variables.ArbitraryVariable;
 import it.unibo.alchemist.loader.variables.DependentScriptVariable;
@@ -78,53 +80,56 @@ public class YamlLoader implements Loader, Serializable {
      * 
      */
     private static final long serialVersionUID = -8503453282930319680L;
+    private static final String ALCHEMIST_PACKAGE_ROOT = "it.unibo.alchemist.";
     private static final String SYNTAX_NAME = "YamlSyntax";
     private static final ResourceBundle SYNTAX = getBundle(YamlLoader.class.getPackage().getName() + '.' + SYNTAX_NAME, Locale.US);
     private static final String ACTIONS = SYNTAX.getString("actions");
-    private static final String ACTIONS_PACKAGE_ROOT = "it.unibo.alchemist.model.implementations.actions.";
+    private static final String ACTIONS_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "model.implementations.actions.";
     private static final String AGGREGATORS = SYNTAX.getString("aggregators");
     private static final String CONCENTRATION = SYNTAX.getString("concentration");
-    private static final String CONCENTRATIONS_PACKAGE_ROOT = "it.unibo.alchemist.model.implementations.concentrations.";
+    private static final String CONCENTRATIONS_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "model.implementations.concentrations.";
     private static final String CONDITIONS = SYNTAX.getString("conditions");
-    private static final String CONDITIONS_PACKAGE_ROOT = "it.unibo.alchemist.model.implementations.conditions.";
+    private static final String CONDITIONS_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "model.implementations.conditions.";
     private static final String CONTENTS = SYNTAX.getString("contents");
     private static final String DEFAULT = SYNTAX.getString("default");
     private static final String DISPLACEMENTS = SYNTAX.getString("displacements");
-    private static final String DISPLACEMENTS_PACKAGE_ROOT = "it.unibo.alchemist.loader.displacements.";
-    private static final String ENV_PACKAGE_ROOT = "it.unibo.alchemist.model.implementations.environments.";
+    private static final String DISPLACEMENTS_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "loader.displacements.";
+    private static final String ENV_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "model.implementations.environments.";
     private static final String ENVIRONMENT = SYNTAX.getString("environment");
     private static final String EXPORT = SYNTAX.getString("export");
     private static final String FORMULA = SYNTAX.getString("formula");
     private static final String IN = SYNTAX.getString("in");
     private static final String INCARNATION = SYNTAX.getString("incarnation");
     private static final String LAYERS = SYNTAX.getString("layers");
-    private static final String LAYERS_PACKAGE_ROOT = "it.unibo.alchemist.model.implementations.layers.";
-    private static final String LINKING_PACKAGE_ROOT = "it.unibo.alchemist.model.implementations.linkingrules.";
+    private static final String LAYERS_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "model.implementations.layers.";
+    private static final String LINKING_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "model.implementations.linkingrules.";
     private static final String LINKING_RULE = SYNTAX.getString("linking-rule");
     private static final String MIN = SYNTAX.getString("min");
     private static final String MAX = SYNTAX.getString("max");
     private static final String MOLECULE = SYNTAX.getString("molecule");
-    private static final String MOLECULES_PACKAGE_ROOT = "it.unibo.alchemist.model.implementations.molecules.";
+    private static final String MOLECULES_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "model.implementations.molecules.";
     private static final String NODE = SYNTAX.getString("node");
     private static final String NODES = SYNTAX.getString("nodes");
-    private static final String NODES_PACKAGE_ROOT = "it.unibo.alchemist.model.implementations.nodes.";
+    private static final String NODES_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "model.implementations.nodes.";
     private static final String PARAMS = SYNTAX.getString("parameters");
     private static final String POSITIONS = SYNTAX.getString("positions");
-    private static final String POSITIONS_PACKAGE_ROOT = "it.unibo.alchemist.model.implementations.positions.";
+    private static final String POSITIONS_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "model.implementations.positions.";
     private static final String PROGRAMS = SYNTAX.getString("programs");
     private static final String PROPERTY = SYNTAX.getString("property");
     private static final String REACTION = SYNTAX.getString("reaction");
-    private static final String REACTIONS_PACKAGE_ROOT = "it.unibo.alchemist.model.implementations.reactions.";
+    private static final String REACTIONS_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "model.implementations.reactions.";
     private static final String SCENARIO_SEED = SYNTAX.getString("scenario-seed");
     private static final String SEEDS = SYNTAX.getString("seeds");
-    private static final String SHAPES_PACKAGE_ROOT = "it.unibo.alchemist.loader.shapes.";
+    private static final String SHAPES_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "loader.shapes.";
     private static final String SIMULATION_SEED = SYNTAX.getString("simulation-seed");
     private static final String STEP = SYNTAX.getString("step");
     private static final String TIME = SYNTAX.getString("time");
     private static final String TIMEDISTRIBUTION = SYNTAX.getString("time-distribution");
-    private static final String TIMEDISTRIBUTIONS_PACKAGE_ROOT = "it.unibo.alchemist.model.implementations.timedistributions.";
+    private static final String TIMEDISTRIBUTIONS_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "model.implementations.timedistributions.";
     private static final String TYPE = SYNTAX.getString("type");
     private static final String VALUES = SYNTAX.getString("values");
+    private static final String VALUE_FILTER = SYNTAX.getString("value-filter");
+    private static final String VALUE_FILTER_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "loader.export.filters";
     private static final String VARIABLES = SYNTAX.getString("variables");
     private static final String VARIABLE = "is a variable";
 
@@ -340,10 +345,18 @@ public class YamlLoader implements Loader, Serializable {
                         if (mapObj.containsKey(MOLECULE)) {
                             final Object aggregatorObj = mapObj.getOrDefault(AGGREGATORS, Collections.emptyList());
                             final List<String> aggregators = aggregatorObj instanceof List ? (List<String>) aggregatorObj : Collections.emptyList();
+                            final Object filterObj = mapObj.getOrDefault(VALUE_FILTER, "NoFilter");
+                            final FilteringPolicy filter = filterObj instanceof Map
+                                    ? extractClassIfDeclared((Map<String, Object>) filterObj, VALUE_FILTER_PACKAGE_ROOT)
+                                        .map(clazz -> create(clazz, extractParams((Map<String, Object>) filterObj)))
+                                        .map(f -> (FilteringPolicy) f)
+                                        .orElseThrow(() -> new IllegalAlchemistYAMLException(filterObj + " is not a valid value filter."))
+                                    : CommonFilters.fromString(filterObj.toString());
                             return new MoleculeReader<>(
                                     mapObj.get(MOLECULE).toString(),
                                     mapObj.getOrDefault(PROPERTY, "").toString(),
                                     incarnation,
+                                    filter,
                                     aggregators);
                         }
                         final Optional<Class<Extractor>> extrClass = extractClassIfDeclared(mapObj, "it.unibo.alchemist.loader.export.");
@@ -351,10 +364,8 @@ public class YamlLoader implements Loader, Serializable {
                             final List<?> params = extractParams(mapObj);
                             return create(extrClass.get(), params, incarnation);
                         }
-                        L.warn("Could not create the exporter");
                     }
-                    L.warn("Ignored {}", obj);
-                    return null;
+                    throw new IllegalAlchemistYAMLException("Could not create an exporter with " + obj);
                 })
                 .filter(e -> e != null)
                 .collect(Collectors.toList())
@@ -538,8 +549,8 @@ public class YamlLoader implements Loader, Serializable {
                                 program, REACTIONS_PACKAGE_ROOT, actualVars, simRandom, env, node, td)
                             .get();
                         node.addReaction(reaction);
-                        populateConditions(actualVars, program, simRandom, currIncarnation, env, node, td, reaction);
-                        populateActions(actualVars, program, simRandom, currIncarnation, env, node, td, reaction);
+                        populateConditions(actualVars, program, simRandom, currIncarnation, env, pmaker, node, td, reaction);
+                        populateActions(actualVars, program, simRandom, currIncarnation, env, pmaker, node, td, reaction);
                         L.trace("{}", reaction);
                     }
                     env.addNode(node, pos);
@@ -588,6 +599,7 @@ public class YamlLoader implements Loader, Serializable {
             final RandomGenerator rand,
             final Environment<?> env) {
         assert target != null;
+        assert pkg != null;
         return makeSupplier(orElse, target, pkg, actualVars, rand, env, null, null);
     }
 
@@ -611,20 +623,7 @@ public class YamlLoader implements Loader, Serializable {
             final Environment<?> env,
             final Node<?> node,
             final TimeDistribution<?> timedist) {
-        return makeSupplier(orElse, target, pkg, actualVars, rand, env, node, timedist, null);
-    }
-
-    private <O> Supplier<O> makeSupplier(
-            final Supplier<O> orElse,
-            final Map<String, Object> target,
-            final String pkg,
-            final Map<String, Double> actualVars,
-            final RandomGenerator rand,
-            final Environment<?> env,
-            final Node<?> node,
-            final TimeDistribution<?> timedist,
-            final Reaction<?> reaction) {
-        return makeSupplier(orElse, target, pkg, actualVars, rand, env, null, node, timedist, reaction);
+        return makeSupplier(orElse, target, pkg, actualVars, rand, env, null, node, timedist, null);
     }
 
     private <O> Supplier<O> makeSupplier(
@@ -651,6 +650,7 @@ public class YamlLoader implements Loader, Serializable {
             final TimeDistribution<?> timedist,
             final Reaction<?> reaction) {
         assert target != null;
+        assert pkg != null;
         final Optional<Class<O>> clazz = extractClassIfDeclared(target, pkg);
         return clazz.isPresent()
                 ? () -> create(clazz.get(), extractParams(target), incarnation, actualVars, rand, env, posMaker, node, timedist, reaction)
@@ -671,20 +671,22 @@ public class YamlLoader implements Loader, Serializable {
             final RandomGenerator rand,
             final Incarnation<T> incarnation,
             final Environment<T> env,
+            final PositionMaker pMaker,
             final Node<T> node,
             final TimeDistribution<T> td,
             final Reaction<T> reaction) {
-        final List<?> condList = (List<?>) program.get(ACTIONS);
-        if (condList != null) {
+        final List<?> actList = (List<?>) program.get(ACTIONS);
+        if (actList != null) {
             /*
              * Merge existing actions and those listed.
              */
             final List<Action<T>> actions = Stream.concat(reaction.getActions().stream(), 
-                condList.stream()
-                    .map(condObj -> makeSupplier(
-                            () -> incarnation.createAction(rand, env, node, td, reaction, stringOrNull(condObj)),
-                            castOrEmpty(condObj), ACTIONS_PACKAGE_ROOT, actualVars, rand, env, node, td, reaction)
-                        .get()))
+                actList.stream()
+                    .map(actObj -> Optional.ofNullable(
+                        makeSupplier(
+                                () -> incarnation.createAction(rand, env, node, td, reaction, stringOrNull(actObj)),
+                                castOrEmpty(actObj), ACTIONS_PACKAGE_ROOT, actualVars, rand, env, pMaker, node, td, reaction).get())
+                    .orElseThrow(() -> new IllegalAlchemistYAMLException("Can not build an action with " + actObj))))
                 .collect(Collectors.toList());
             L.trace("actions: {}", actions);
             reaction.setActions(actions);
@@ -697,6 +699,7 @@ public class YamlLoader implements Loader, Serializable {
             final RandomGenerator rand,
             final Incarnation<T> incarnation,
             final Environment<T> env,
+            final PositionMaker pMaker,
             final Node<T> node,
             final TimeDistribution<T> td,
             final Reaction<T> reaction) {
@@ -707,10 +710,11 @@ public class YamlLoader implements Loader, Serializable {
              */
             final List<Condition<T>> conditions = Stream.concat(reaction.getConditions().stream(), 
                 condList.stream()
-                    .map(condObj -> makeSupplier(
+                    .map(condObj -> Optional.ofNullable(
+                        makeSupplier(
                             () -> incarnation.createCondition(rand, env, node, td, reaction, stringOrNull(condObj)),
-                            castOrEmpty(condObj), CONDITIONS_PACKAGE_ROOT, actualVars, rand, env, node, td, reaction)
-                        .get()))
+                            castOrEmpty(condObj), CONDITIONS_PACKAGE_ROOT, actualVars, rand, env, pMaker, node, td, reaction).get())
+                    .orElseThrow(() -> new IllegalAlchemistYAMLException("Can not build a condition with " + condObj))))
                 .collect(Collectors.toList());
             L.trace("conditions: {}", conditions);
             reaction.setConditions(conditions);
@@ -938,11 +942,17 @@ public class YamlLoader implements Loader, Serializable {
                     if (param instanceof Number) {
                         return new DoubleTime(((Number) param).doubleValue());
                     }
-                    L.warn("Created a time zero, due to non-numeric parameter {}", param);
                     return new DoubleTime();
                 }
                 if (Molecule.class.isAssignableFrom(expectedClass) && param instanceof String) {
                     return incarnation.createMolecule(param.toString());
+                }
+                if (Position.class.isAssignableFrom(expectedClass) && param instanceof List) {
+                    final List<?> coordList = ((List<?>) param);
+                    if (coordList.stream().allMatch(n -> n instanceof Number)) {
+                        return posMaker.makePosition(coordList.stream().map(v -> (Number) v).toArray(i -> new Number[i]));
+                    }
+                    return null;
                 }
             }
             return null;
@@ -957,10 +967,13 @@ public class YamlLoader implements Loader, Serializable {
         }
         return Optional.empty();
     }
+
     @SuppressWarnings(UNCHECKED)
     private static <T> Class<T> extractClass(final Map<String, Object> yaml, final String root, final Class<T> defaultClass) {
-        final String className = (String) yaml.get(TYPE);
-        if (className != null) {
+        assert root != null;
+        final Object clazz = yaml.get(TYPE);
+        if (clazz != null) {
+            final String className = clazz.toString();
             try {
                 final String prefix = className.contains(".") ? "" : root;
                 return (Class<T>) Class.forName(prefix + className);
@@ -973,6 +986,7 @@ public class YamlLoader implements Loader, Serializable {
 
     private static <O> Optional<Class<O>> extractClassIfDeclared(final Map<String, Object> target, final String pkg) {
         assert target != null;
+        assert pkg != null;
         return Optional.ofNullable(extractClass(target, pkg, null));
     }
 

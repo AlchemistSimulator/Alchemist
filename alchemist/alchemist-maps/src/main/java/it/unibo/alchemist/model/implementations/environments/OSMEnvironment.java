@@ -312,11 +312,11 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements IMa
         final GraphHopper gh = new GraphHopper().forDesktop();
         gh.setOSMFile(mapFile.getAbsolutePath());
         gh.setGraphHopperLocation(internalWorkdir);
-        gh.setEncodingManager(new EncodingManager(v.toString()));
+        gh.setEncodingManager(new EncodingManager(v.toString().toLowerCase()));
         try {
             gh.importOrLoad();
         } catch (final IllegalStateException e) {
-            if (e.getMessage().contains("Version of edges unsupported")) {
+            if (e.getMessage().matches("Version of \\w*? unsupported.*")) {
                 L.warn("The map has already been processed with a different version of Alchemist. The previous files will be deleted.");
                 FileUtils.deleteDirectory(new File(internalWorkdir));
                 mkdirsIfNeeded(internalWorkdir);

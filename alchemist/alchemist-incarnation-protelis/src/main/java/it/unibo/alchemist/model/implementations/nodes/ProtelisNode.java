@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.protelis.lang.datatype.DeviceUID;
+import org.protelis.lang.datatype.Field;
 import org.protelis.vm.ExecutionEnvironment;
 import org.protelis.vm.NetworkManager;
 
@@ -85,7 +86,7 @@ public class ProtelisNode extends GenericNode<Object>implements DeviceUID, Execu
     }
 
     private static Molecule makeMol(final String id) {
-        return ProtelisIncarnation.instance().createMolecule(id);
+        return new ProtelisIncarnation().createMolecule(id);
     }
 
     @Override
@@ -105,6 +106,19 @@ public class ProtelisNode extends GenericNode<Object>implements DeviceUID, Execu
 
     @Override
     public boolean put(final String id, final Object v) {
+        setConcentration(makeMol(id), v);
+        return true;
+    }
+
+    /**
+     * Allows writing a {@link Field} as a value. Use only for debug purposes, storing
+     * fields and reusing them over time breaks Field Calculus alignment.
+     * 
+     * @param id variable name
+     * @param v the {@link Field}
+     * @return true
+     */
+    public boolean putField(final String id, final Field v) {
         setConcentration(makeMol(id), v);
         return true;
     }

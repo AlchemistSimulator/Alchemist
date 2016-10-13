@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 /**
  * A series of tests checking that our Yaml Loader is working as expected.
  */
-public class TestYAMLLoader {
+public class TestSimulationsFromYAML {
 
     /**
      * Basic loading capabilities.
@@ -51,7 +51,7 @@ public class TestYAMLLoader {
     }
 
     private static <T> void testLoading(final String resource, final Map<String, Double> vars) {
-        final InputStream res = TestYAMLLoader.class.getResourceAsStream(resource);
+        final InputStream res = TestSimulationsFromYAML.class.getResourceAsStream(resource);
         assertNotNull("Missing test resource " + resource, res);
         final Environment<T> env = new YamlLoader(res).getWith(vars);
         final Simulation<T> sim = new Engine<>(env, 10000);

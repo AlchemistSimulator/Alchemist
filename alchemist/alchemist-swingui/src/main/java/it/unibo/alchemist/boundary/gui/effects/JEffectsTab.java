@@ -6,16 +6,8 @@
  * the GNU General Public License, with a linking exception, as described
  * in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.boundary.gui.tape.JTapeFeatureStack;
-import it.unibo.alchemist.boundary.gui.tape.JTapeFeatureStack.Type;
-import it.unibo.alchemist.boundary.gui.tape.JTapeGroup;
-import it.unibo.alchemist.boundary.gui.tape.JTapeMainFeature;
-import it.unibo.alchemist.boundary.gui.tape.JTapeSection;
-import it.unibo.alchemist.boundary.gui.tape.JTapeTab;
-import it.unibo.alchemist.boundary.interfaces.GraphicalOutputMonitor;
-import it.unibo.alchemist.boundary.l10n.R;
+package it.unibo.alchemist.boundary.gui.effects;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -39,8 +31,16 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileFilter;
 
-import org.danilopianini.io.FileUtilities;
 import org.danilopianini.view.GUIUtilities;
+
+import it.unibo.alchemist.boundary.gui.tape.JTapeFeatureStack;
+import it.unibo.alchemist.boundary.gui.tape.JTapeFeatureStack.Type;
+import it.unibo.alchemist.boundary.gui.tape.JTapeGroup;
+import it.unibo.alchemist.boundary.gui.tape.JTapeMainFeature;
+import it.unibo.alchemist.boundary.gui.tape.JTapeSection;
+import it.unibo.alchemist.boundary.gui.tape.JTapeTab;
+import it.unibo.alchemist.boundary.interfaces.GraphicalOutputMonitor;
+import it.unibo.alchemist.boundary.l10n.R;
 
 /**
  * Graphic component to handle effects.
@@ -62,6 +62,7 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
     private static final String LOAD = R.getString("load");
     private static final String ADD_EFFECT = R.getString("add_effect");
     private static final String REMOVE_EFFECT = R.getString("remove_effect");
+
     private final GraphicalOutputMonitor<T> main;
     private final List<ActionListener> listeners = new LinkedList<>();
     private final JTapeFeatureStack stackSec;
@@ -281,6 +282,7 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
             public boolean accept(final File f) {
                 return f.getName().endsWith(EXT) || f.isDirectory();
             }
+
             @Override
             public String getDescription() {
                 return DESC;
@@ -297,7 +299,7 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
             try {
                 final File f = fc.getSelectedFile();
                 final File fileToWrite = f.getName().endsWith(EXT) ? f : new File(f.getAbsolutePath() + EXT);
-                FileUtilities.objectToFile(getEffects(), fileToWrite, false);
+                EffectSerializationFactory.effectsToFile(fileToWrite, getEffects());
             } catch (final IOException e1) {
                 GUIUtilities.errorMessage(e1);
             }
@@ -310,14 +312,11 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
             currentDirectory = fc.getSelectedFile().getParentFile();
             try {
                 clearEffects();
-                @SuppressWarnings("unchecked")
-                final List<Effect> effects = (List<Effect>) FileUtilities.fileToObject(fc.getSelectedFile());
-                setEffects(effects);
+                setEffects(EffectSerializationFactory.effectsFromFile(fc.getSelectedFile()));
                 revalidate();
-            } catch (IOException | ClassNotFoundException e1) {
-                GUIUtilities.errorMessage(e1);
+            } catch (final IOException | ClassNotFoundException e) {
+                GUIUtilities.errorMessage(e);
             }
         }
     }
-
 }

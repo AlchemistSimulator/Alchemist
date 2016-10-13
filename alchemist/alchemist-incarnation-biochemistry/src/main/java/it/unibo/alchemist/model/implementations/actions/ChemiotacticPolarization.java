@@ -40,9 +40,9 @@ public class ChemiotacticPolarization extends AbstractAction<Double> {
         if (node instanceof CellNode) {
             this.env = environment;
             this.biomol = new Biomolecule(biomol);
-            if (ascendGrad.equals("up")) {
+            if (ascendGrad.equalsIgnoreCase("up")) {
                 this.ascend = true;
-            } else if (ascendGrad.equals("down")) {
+            } else if (ascendGrad.equalsIgnoreCase("down")) {
                 this.ascend = false;
             } else {
                 throw new IllegalArgumentException("Possible imput string are only up or down");

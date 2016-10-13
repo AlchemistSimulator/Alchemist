@@ -18,7 +18,7 @@ public class CellMove extends AbstractMoveNode<Double> {
     /**
      * 
      */
-    private static final long serialVersionUID = 4257637672272674160L;
+    private static final long serialVersionUID = 1L;
     private final boolean inPer;
     private final double delta;
 
@@ -34,14 +34,19 @@ public class CellMove extends AbstractMoveNode<Double> {
      */
     public CellMove(final Environment<Double> environment, final Node<Double> node, final boolean inPercent, final double delta) {
         super(environment, node);
-        if (!(node instanceof CellNode)) {
-            throw  new UnsupportedOperationException("CellMove can be setted only in cells.");
-        }
         this.inPer = inPercent;
-        if (!inPercent || ((CellWithCircularArea) node).getRadius() == 0) {
-            this.delta = delta;
+        if (node instanceof CellNode) {
+            if (inPercent) {
+                if (node instanceof CellWithCircularArea && ((CellWithCircularArea) node).getRadius() != 0) {
+                    this.delta = ((CellWithCircularArea) node).getDiameter() * delta;
+                } else {
+                    throw new IllegalArgumentException("Can't set distance in percent of the cell's diameter if cell has not a diameter");
+                }
+            } else {
+                this.delta = delta;
+            }
         } else {
-            this.delta = ((CellWithCircularArea) node).getDiameter() * delta;
+            throw  new UnsupportedOperationException("CellMove can be setted only in cells.");
         }
     }
 

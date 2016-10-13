@@ -6,6 +6,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import javax.swing.event.CellEditorListener;
+
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.Before;
@@ -15,9 +17,11 @@ import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.implementations.actions.CellTensionPolarization;
 import it.unibo.alchemist.model.implementations.conditions.TensionPresent;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironmentNoOverlap;
+import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
 import it.unibo.alchemist.model.implementations.nodes.CircularDeformableCellImpl;
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
+import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
 import it.unibo.alchemist.model.interfaces.CircularDeformableCell;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentSupportingDeformableCells;

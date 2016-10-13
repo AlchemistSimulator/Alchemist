@@ -85,26 +85,7 @@ public class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<D
         // if the node is an EnvironmentNode...
         if (thisNode instanceof EnvironmentNode) {
             // sort the env node randomly
-            Collections.shuffle(environmentNodesSurrounding);
-            if (delta < 0) {
-                double deltaTemp = delta;
-                for (final EnvironmentNode n : environmentNodesSurrounding) {
-                    final double nodeConcentration = n.getConcentration(biomolecule);
-                    // if nodeConcentration >= |deltaTemp|, remove the a delta quantity of the biomol only from this node
-                    if (nodeConcentration >= FastMath.abs(deltaTemp)) {
-                        n.setConcentration(biomolecule, nodeConcentration + deltaTemp);
-                        break;
-                        // else, remove all molecule of that species from that node and go on till deltaTemp is smaller than nodeConcetration
-                    } else {
-                        deltaTemp = deltaTemp + nodeConcentration;
-                        n.removeConcentration(biomolecule);
-                    }
-                }
-            } else {
-                // if delta > 0, simply add delta to the first node of the list (which has been sorted randomly)
-                final Node<Double> target = environmentNodesSurrounding.get(0);
-                target.setConcentration(biomolecule, target.getConcentration(biomolecule) + delta);
-            }
+            changeConcentrationInRandomNodes(environmentNodesSurrounding);
         } else {
             // if getNode() instanceof CellNode, check if all nodes are at the same distance
             final boolean areAllEnvNodesAtTheSameDistance = environmentNodesSurrounding.stream()
@@ -118,8 +99,8 @@ public class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<D
                         .distinct()
                         .count() == 1;
                 if (haveAllNodeTheSameConcentration) {
-                    // if they have, sort the list randomly
-                    Collections.shuffle(environmentNodesSurrounding);
+                    // if they have, pick up from the list randomly
+                    changeConcentrationInRandomNodes(environmentNodesSurrounding);
                 } else {
                     // else, sort the list by the concentration of the biomolecule
                     environmentNodesSurrounding.sort(
@@ -128,6 +109,7 @@ public class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<D
                                     n2.getConcentration(biomolecule)
                                     )
                             );
+                    changeConcentrationInSortedNodes(environmentNodesSurrounding);
                 }
             } else {
                 // else, sort the list by the distance from the node
@@ -137,25 +119,7 @@ public class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<D
                                 env.getDistanceBetweenNodes(thisNode, n2)
                                 )
                         );
-            }
-            if (delta < 0) {
-                double deltaTemp = delta;
-                for (final EnvironmentNode n : environmentNodesSurrounding) {
-                    final double nodeConcentration = n.getConcentration(biomolecule);
-                    // if nodeConcentration >= |deltaTemp|, remove the a delta quantity of the biomol only from this node
-                    if (nodeConcentration >= FastMath.abs(deltaTemp)) {
-                        n.setConcentration(biomolecule, nodeConcentration + deltaTemp);
-                        break;
-                        // else, remove all molecule of that species from that node and go on till deltaTemp is smaller than nodeConcetration
-                    } else {
-                        deltaTemp = deltaTemp + nodeConcentration;
-                        n.removeConcentration(biomolecule);
-                    }
-                }
-            } else {
-                // if delta > 0, simply add delta to the first node of the list (which has been sorted randomly)
-                final Node<Double> target = environmentNodesSurrounding.get(0);
-                target.setConcentration(biomolecule, target.getConcentration(biomolecule) + delta);
+                changeConcentrationInSortedNodes(environmentNodesSurrounding);
             }
         }
     }
@@ -174,5 +138,52 @@ public class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<D
                 .parallel()
                 .flatMap(n -> n instanceof EnvironmentNode ? Stream.of((EnvironmentNode) n) : Stream.empty())
                 .collect(Collectors.toList());
+    }
+
+    private void changeConcentrationInSortedNodes(final List<EnvironmentNode> envNodesSurrounding) {
+        if (delta < 0) {
+            double deltaTemp = delta;
+            for (final EnvironmentNode n : envNodesSurrounding) {
+                final double nodeConcentration = n.getConcentration(biomolecule);
+                // if nodeConcentration >= |deltaTemp|, remove the a delta quantity of the biomol only from this node
+                if (nodeConcentration >= FastMath.abs(deltaTemp)) {
+                    n.setConcentration(biomolecule, nodeConcentration + deltaTemp);
+                    break;
+                    // else, remove all molecule of that species from that node and go on till deltaTemp is smaller than nodeConcetration
+                } else {
+                    deltaTemp = deltaTemp + nodeConcentration;
+                    n.removeConcentration(biomolecule);
+                }
+            }
+        } else {
+            // if delta > 0, simply add delta to the first node of the list (which has been sorted randomly)
+            final Node<Double> target = envNodesSurrounding.get(0);
+            target.setConcentration(biomolecule, target.getConcentration(biomolecule) + delta);
+        }
+    }
+
+    private void changeConcentrationInRandomNodes(final List<EnvironmentNode> envNodesSurrounding) {
+        if (delta < 0) {
+            double deltaTemp = delta;
+            while (deltaTemp < 0) {
+                final int index = getRandomGenerator().nextInt(envNodesSurrounding.size());
+                final EnvironmentNode pickedNode = envNodesSurrounding.get(index);
+                final double nodeConcentration = pickedNode.getConcentration(biomolecule);
+                // if nodeConcentration >= |deltaTemp|, remove the a delta quantity of the biomol only from this node
+                if (nodeConcentration >= FastMath.abs(deltaTemp)) {
+                    pickedNode.setConcentration(biomolecule, nodeConcentration + deltaTemp);
+                    break;
+                    // else, remove all molecule of that species from that node and go on till deltaTemp is smaller than nodeConcetration
+                } else {
+                    deltaTemp = deltaTemp + nodeConcentration;
+                    pickedNode.removeConcentration(biomolecule);
+                }
+                envNodesSurrounding.remove(index);
+            }
+        } else {
+            // if delta > 0, simply add delta to the first node of the list (which has been sorted randomly)
+            final Node<Double> target = envNodesSurrounding.get(getRandomGenerator().nextInt(envNodesSurrounding.size()));
+            target.setConcentration(biomolecule, target.getConcentration(biomolecule) + delta);
+        }
     }
 }

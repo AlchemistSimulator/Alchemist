@@ -14,7 +14,6 @@ import java.util.Map;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -35,8 +34,6 @@ public class RemoveJunctionInNeighbor extends AbstractNeighborAction<Double> {
 
     private final Junction jun;
     private final Environment<Double> env;
-    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All provided RandomGenerator implementations are actually Serializable")
-    private final RandomGenerator rand;
     private final CellNode node;
 
     /**
@@ -55,12 +52,11 @@ public class RemoveJunctionInNeighbor extends AbstractNeighborAction<Double> {
         jun = junction;
         node = n;
         env = e;
-        rand = rg;
     }
 
     @Override
     public RemoveJunctionInNeighbor cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
-        return new RemoveJunctionInNeighbor(env, (CellNode) n, jun, rand);
+        return new RemoveJunctionInNeighbor(env, (CellNode) n, jun, getRandomGenerator());
     }
 
     /**

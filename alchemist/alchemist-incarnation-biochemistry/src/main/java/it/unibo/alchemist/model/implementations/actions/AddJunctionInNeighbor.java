@@ -12,7 +12,6 @@ import it.unibo.alchemist.model.interfaces.Context;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.CellNode;
@@ -32,8 +31,6 @@ public class AddJunctionInNeighbor extends AbstractNeighborAction<Double> {
 
     private final Junction jun;
     private final Environment<Double> env;
-    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All provided RandomGenerator implementations are actually Serializable")
-    private final RandomGenerator rand;
     private final CellNode node;
     /**
      * 
@@ -47,13 +44,12 @@ public class AddJunctionInNeighbor extends AbstractNeighborAction<Double> {
         addModifiedMolecule(junction);
         jun = junction; 
         env = e;
-        rand = rg;
         node = n;
     }
 
     @Override
     public AddJunctionInNeighbor cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
-        return new AddJunctionInNeighbor(env, (CellNode) n, jun, rand);
+        return new AddJunctionInNeighbor(env, (CellNode) n, jun, getRandomGenerator());
     }
 
     /**

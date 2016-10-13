@@ -17,7 +17,6 @@ import java.util.stream.Stream;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.CellNode;
@@ -30,14 +29,12 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 /**
  * Action implementing the changing of the concentration of a given biomolecule in environment.
  */
-public class ChangeBiomolConcentrationInEnv extends AbstractAction<Double> {
+public class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<Double> {
 
     private static final long serialVersionUID = 1L;
     private final double delta;
     private final Biomolecule biomolecule;
     private final Environment<Double> env;
-    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All provided RandomGenerator implementations are actually Serializable")
-    private final RandomGenerator rand;
 
     /**
      * Initialize a new {@link Action} that change concentration of the given
@@ -51,12 +48,11 @@ public class ChangeBiomolConcentrationInEnv extends AbstractAction<Double> {
      */
     public ChangeBiomolConcentrationInEnv(final Environment<Double> environment, final Node<Double> node, final Biomolecule biomol, 
             final double deltaCon, final RandomGenerator randomGen) {
-        super(node);
+        super(node, randomGen);
         if (node instanceof EnvironmentNode || node instanceof CellNode) {
-        biomolecule = biomol;
-        delta = deltaCon;
-        env = environment;
-        rand = randomGen;
+            biomolecule = biomol;
+            delta = deltaCon;
+            env = environment;
         } else {
             throw  new UnsupportedOperationException("This condition can be set only in EnvironmentNode and CellNode");
         }
@@ -77,7 +73,7 @@ public class ChangeBiomolConcentrationInEnv extends AbstractAction<Double> {
 
     @Override
     public Action<Double> cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
-        return new ChangeBiomolConcentrationInEnv(n, biomolecule, env, rand);
+        return new ChangeBiomolConcentrationInEnv(n, biomolecule, env, getRandomGenerator());
     }
 
     @Override

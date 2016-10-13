@@ -13,7 +13,6 @@ import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -30,8 +29,6 @@ public class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborAction<
     private final Biomolecule mol;
     private final double delta;
     private final Environment<Double> env;
-    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All provided RandomGenerator implementations are actually Serializable")
-    private final RandomGenerator rand;
 
     /**
      * 
@@ -51,12 +48,11 @@ public class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborAction<
         mol = biomol;
         delta = deltaConcentration;
         env = environment;
-        rand = randGen;
     }
 
     @Override
     public ChangeBiomolConcentrationInNeighbor cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
-        return new ChangeBiomolConcentrationInNeighbor(env, n, mol, rand, delta);
+        return new ChangeBiomolConcentrationInNeighbor(env, n, mol, getRandomGenerator(), delta);
     }
 
     @Override
@@ -75,7 +71,7 @@ public class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborAction<
             .forEach(i -> validTargetsIds.add(i));
         }
         if (!validTargetsIds.isEmpty()) {
-            final int targetId = validTargetsIds.get(rand.nextInt(validTargetsIds.size()));
+            final int targetId = validTargetsIds.get(getRandomGenerator().nextInt(validTargetsIds.size()));
             execute(neighborhood.getNeighborByNumber(targetId));
         }
     }

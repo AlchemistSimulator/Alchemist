@@ -21,12 +21,11 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  * Represents an action on a neighbor.
  * @param <T> the concentration type.
  */
-public abstract class AbstractNeighborAction<T> extends AbstractAction<T> {
+public abstract class AbstractNeighborAction<T> extends AbstractRandomizableAction<T> {
 
     private static final long serialVersionUID = -2287346030993830896L;
     private final Environment<T> env;
     private final Node<T> node;
-    private final RandomGenerator rand;
 
     /**
      * 
@@ -35,10 +34,9 @@ public abstract class AbstractNeighborAction<T> extends AbstractAction<T> {
      * @param randomGenerator the random generator
      */
     protected AbstractNeighborAction(final Node<T> node, final Environment<T> environment, final RandomGenerator randomGenerator) {
-        super(node);
+        super(node, randomGenerator);
         this.node = node;
         env = environment;
-        rand = randomGenerator;
     }
 
     /**
@@ -48,7 +46,7 @@ public abstract class AbstractNeighborAction<T> extends AbstractAction<T> {
     public void execute() {
         final Neighborhood<T> neighborhood = env.getNeighborhood(node);
         if (!neighborhood.isEmpty()) {
-            execute(neighborhood.getNeighborByNumber(rand.nextInt(neighborhood.size())));
+            execute(neighborhood.getNeighborByNumber(getRandomGenerator().nextInt(neighborhood.size())));
         }
     }
 

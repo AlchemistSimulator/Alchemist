@@ -109,10 +109,12 @@ public class ChemiotacticPolarization extends AbstractAction<Double> {
 
     private Position weightedAverageVectors(final List<Node<Double>> list, final CellNode thisNode) {
         Position res = new Continuous2DEuclidean(0, 0);
+        final Position thisNodePos = env.getPosition(thisNode);
         for (final Node<Double> n : list) {
+            final Position nPos = env.getPosition(n);
             Position vecTemp = new Continuous2DEuclidean(
-                    env.getPosition(n).getCoordinate(0) - env.getPosition(thisNode).getCoordinate(0),
-                    env.getPosition(n).getCoordinate(1) - env.getPosition(thisNode).getCoordinate(1));
+                    nPos.getCoordinate(0) - thisNodePos.getCoordinate(0),
+                    nPos.getCoordinate(1) - thisNodePos.getCoordinate(1));
             final double vecTempModule = FastMath.sqrt(FastMath.pow(vecTemp.getCoordinate(0), 2) + FastMath.pow(vecTemp.getCoordinate(1), 2));
             vecTemp = new Continuous2DEuclidean(
                     n.getConcentration(biomol) * (vecTemp.getCoordinate(0) / vecTempModule), 

@@ -160,9 +160,11 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment implemen
             final double xo,
             final double yr,
             final double xr) {
+        // original position 
+        final Position possibleObstaclePosition = getPosition(node);
         // coordinates of original position, requested position and of node's position
-        final double yn = getPosition(node).getCoordinate(1);
-        final double xn = getPosition(node).getCoordinate(0);
+        final double yn = possibleObstaclePosition.getCoordinate(1);
+        final double xn = possibleObstaclePosition.getCoordinate(0);
         // cellular range
         final double cellRange = node.getRadius() + nodeToMove.getRadius();
         // compute intersection
@@ -187,7 +189,7 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment implemen
         }
         final Position intersection = new Continuous2DEuclidean(xIntersect, yIntersect);
         // computes distance between the cell and the first straight line
-        final double cat = intersection.getDistanceTo(getPosition(node));
+        final double cat = intersection.getDistanceTo(possibleObstaclePosition);
         // if cat is bigger than cellRange, actual cell isn't an obstacle for the cellular movement
         if (cat >= cellRange) {
             // so returns an empty optional

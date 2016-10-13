@@ -167,4 +167,12 @@ public class TestIncarnation {
         testNoR("[junction A-B] --> [junction B-A]"); // junction A-B != junction B-A
     }
 
+    /**
+     * 
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testCreateNode() {
+        INCARNATION.createNode(rand, env, "foo");
+    }
+
 }

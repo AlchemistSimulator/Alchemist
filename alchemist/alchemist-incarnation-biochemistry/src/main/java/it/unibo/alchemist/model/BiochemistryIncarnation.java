@@ -44,7 +44,11 @@ public class BiochemistryIncarnation implements Incarnation<Double> {
         if (param == null || param.isEmpty()) {
             return new CellNodeImpl(env);
         }
-        return new CellNodeImpl(env, Double.parseDouble(param));
+        try {
+            return new CellNodeImpl(env, Double.parseDouble(param));
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Inserted a string not attributable to a Double");
+        }
     }
 
     @Override

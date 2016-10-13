@@ -32,7 +32,7 @@ public class CellTensionPolarization extends AbstractAction<Double> {
      * @param node 
      * @param env 
      */
-    public CellTensionPolarization(final Node<Double> node, final Environment<Double> env) {
+    public CellTensionPolarization(final Environment<Double> env, final Node<Double> node) {
         super(node);
         if (!(node instanceof CircularDeformableCell)) {
             throw new IllegalArgumentException("This Condition can only be setted in a CircularDeformableCell");
@@ -46,7 +46,7 @@ public class CellTensionPolarization extends AbstractAction<Double> {
 
     @Override
     public CellTensionPolarization cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
-        return new CellTensionPolarization(n, env);
+        return new CellTensionPolarization(env, n);
     }
 
     @Override

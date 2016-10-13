@@ -427,7 +427,7 @@ public class BiochemicalReactionBuilder {
                 conditionList.add(new NeighborhoodPresent<>(node, env));
             }
             if (envActionPresent && !envConditionPresent) {
-                conditionList.add(new EnvPresent(node, env));
+                conditionList.add(new EnvPresent(env, node));
             }
             reaction.setConditions(conditionList);
             reaction.setActions(actionList);
@@ -501,7 +501,7 @@ public class BiochemicalReactionBuilder {
             for (final BiomoleculeContext b : ctx.biomolecule()) {
                 final Biomolecule biomol = createBiomolecule(b);
                 final double concentration = createConcentration(b);
-                conditionList.add(new BiomolPresentInEnv(biomol, concentration, node, env));
+                conditionList.add(new BiomolPresentInEnv(env, biomol, concentration, node));
                 actionList.add(new ChangeBiomolConcentrationInEnv(node, biomol, env, rand));
                 envConditionPresent = true;
             }
@@ -543,7 +543,7 @@ public class BiochemicalReactionBuilder {
                 if (re.biomolecule() != null) {
                     final Biomolecule biomol = createBiomolecule(re.biomolecule());
                     final double concentration = createConcentration(re.biomolecule());
-                    actionList.add(new ChangeBiomolConcentrationInEnv(node, biomol, concentration, env, rand));
+                    actionList.add(new ChangeBiomolConcentrationInEnv(env, node, biomol, concentration, rand));
                 } else if (re.javaConstructor() != null) {
                     actionList.add(createObject(re.javaConstructor(), ACTIONS_PACKAGE, currentInc, rand, node, time, env, reaction));
                 }

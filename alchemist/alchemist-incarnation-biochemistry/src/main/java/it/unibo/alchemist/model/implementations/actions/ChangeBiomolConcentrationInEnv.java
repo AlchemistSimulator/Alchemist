@@ -48,8 +48,8 @@ public class ChangeBiomolConcentrationInEnv extends AbstractAction<Double> {
      * @param environment the {@link Environment} where the node is located.
      * @param randomGen 
      */
-    public ChangeBiomolConcentrationInEnv(final Node<Double> node, final Biomolecule biomol, 
-            final double deltaCon, final Environment<Double> environment, final RandomGenerator randomGen) {
+    public ChangeBiomolConcentrationInEnv(final Environment<Double> environment, final Node<Double> node, final Biomolecule biomol, 
+            final double deltaCon, final RandomGenerator randomGen) {
         super(node);
         biomolecule = biomol;
         delta = deltaCon;
@@ -67,7 +67,7 @@ public class ChangeBiomolConcentrationInEnv extends AbstractAction<Double> {
      */
     public ChangeBiomolConcentrationInEnv(final Node<Double> node, final Biomolecule biomol, 
             final Environment<Double> environment, final RandomGenerator randomGen) {
-        this(node, biomol, -1, environment, randomGen);
+        this(environment, node, biomol, -1, randomGen);
     }
 
     @Override

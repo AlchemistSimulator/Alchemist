@@ -23,14 +23,14 @@ public class EnvPresent extends AbstractCondition<Double> {
      * @param node 
      * @param env 
      */
-    public EnvPresent(final Node<Double> node, final Environment<Double> env) {
+    public EnvPresent(final Environment<Double> env, final Node<Double> node) {
         super(node);
         environment = env;
     }
 
     @Override
     public Condition<Double> cloneOnNewNode(final Node<Double> n) {
-        return new EnvPresent(n, environment);
+        return new EnvPresent(environment, n);
     }
 
     @Override

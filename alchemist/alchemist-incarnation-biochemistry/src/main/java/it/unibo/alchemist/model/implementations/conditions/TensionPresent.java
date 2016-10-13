@@ -25,7 +25,7 @@ public class TensionPresent extends AbstractCondition<Double> {
      * @param node 
      * @param env 
      */
-    public TensionPresent(final Node<Double> node, final Environment<Double> env) {
+    public TensionPresent(final Environment<Double> env, final Node<Double> node) {
         super(node);
         if (!(node instanceof CircularDeformableCell)) {
             throw new IllegalArgumentException("This Condition can only be setted in a CircularDeformableCell");
@@ -39,7 +39,7 @@ public class TensionPresent extends AbstractCondition<Double> {
 
     @Override
     public TensionPresent cloneOnNewNode(final Node<Double> n) {
-        return new TensionPresent(n, env);
+        return new TensionPresent(env, n);
     }
 
     @Override

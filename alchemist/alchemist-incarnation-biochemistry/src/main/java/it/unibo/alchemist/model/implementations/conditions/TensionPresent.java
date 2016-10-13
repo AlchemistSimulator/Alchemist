@@ -27,14 +27,15 @@ public class TensionPresent extends AbstractCondition<Double> {
      */
     public TensionPresent(final Environment<Double> env, final Node<Double> node) {
         super(node);
-        if (!(node instanceof CircularDeformableCell)) {
+        if (node instanceof CircularDeformableCell) {
+            if (env instanceof EnvironmentSupportingDeformableCells) {
+                this.env = (EnvironmentSupportingDeformableCells) env;
+            } else {
+                throw new IllegalArgumentException("This Condition can only be supported in an EnironmentSupportingDeformableCells");
+            }
+        } else {
             throw new IllegalArgumentException("This Condition can only be setted in a CircularDeformableCell");
         } 
-        if (env instanceof EnvironmentSupportingDeformableCells) {
-            this.env = (EnvironmentSupportingDeformableCells) env;
-        } else {
-            throw new IllegalArgumentException("This Condition can only be supported in an EnironmentSupportingDeformableCells");
-        }
     }
 
     @Override

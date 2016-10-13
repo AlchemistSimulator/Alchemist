@@ -37,17 +37,18 @@ public class ChemiotacticPolarization extends AbstractAction<Double> {
      */
     public ChemiotacticPolarization(final Environment<Double> environment, final Node<Double> node, final String biomol, final String ascendGrad) {
         super(node);
-        if (!(node instanceof CellNode)) {
-            throw  new UnsupportedOperationException("Polarization can happen only in cells.");
-        }
-        this.env = environment;
-        this.biomol = new Biomolecule(biomol);
-        if (ascendGrad.equals("up")) {
-            this.ascend = true;
-        } else if (ascendGrad.equals("down")) {
-            this.ascend = false;
+        if (node instanceof CellNode) {
+            this.env = environment;
+            this.biomol = new Biomolecule(biomol);
+            if (ascendGrad.equals("up")) {
+                this.ascend = true;
+            } else if (ascendGrad.equals("down")) {
+                this.ascend = false;
+            } else {
+                throw new IllegalArgumentException("Possible imput string are only up or down");
+            }
         } else {
-            throw new IllegalArgumentException("Possible imput string are only up or down");
+            throw  new UnsupportedOperationException("Polarization can happen only in cells.");
         }
     }
 
@@ -63,26 +64,26 @@ public class ChemiotacticPolarization extends AbstractAction<Double> {
                 .filter(n -> n instanceof EnvironmentNode && n.contains(biomol))
                 .collect(Collectors.toList());
         if (l.isEmpty()) {
-            ((CellNode) getNode()).addPolarization(new Continuous2DEuclidean(0, 0));
+            getNode().addPolarization(new Continuous2DEuclidean(0, 0));
         } else {
             final boolean isNodeOnMaxConc = env.getPosition(l.stream()
                     .max((n1, n2) -> Double.compare(n1.getConcentration(biomol), n2.getConcentration(biomol)))
                     .get()).equals(env.getPosition(getNode()));
             if (isNodeOnMaxConc) {
-                ((CellNode) getNode()).addPolarization(new Continuous2DEuclidean(0, 0));
+                getNode().addPolarization(new Continuous2DEuclidean(0, 0));
             } else {
                 Position newPolVer = weightedAverageVectors(l);
                 final double newPolVerModule = FastMath.sqrt(FastMath.pow(
                         newPolVer.getCoordinate(0), 2) + FastMath.pow(newPolVer.getCoordinate(1), 2)
                         );
                 if (newPolVerModule == 0) {
-                    ((CellNode) getNode()).addPolarization(newPolVer);
+                    getNode().addPolarization(newPolVer);
                 } else {
                     newPolVer = new Continuous2DEuclidean(newPolVer.getCoordinate(0) / newPolVerModule, newPolVer.getCoordinate(1) / newPolVerModule);
                     if (ascend) {
-                        ((CellNode) getNode()).addPolarization(newPolVer);
+                        getNode().addPolarization(newPolVer);
                     } else {
-                        ((CellNode) getNode()).addPolarization(new Continuous2DEuclidean(
+                        getNode().addPolarization(new Continuous2DEuclidean(
                                 -newPolVer.getCoordinate(0), 
                                 -newPolVer.getCoordinate(1))
                                 );
@@ -112,6 +113,11 @@ public class ChemiotacticPolarization extends AbstractAction<Double> {
     @Override
     public Context getContext() {
         return Context.LOCAL;
+    }
+
+    @Override
+    public CellNode getNode() {
+        return (CellNode) super.getNode();
     }
 
 }

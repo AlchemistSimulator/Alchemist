@@ -32,7 +32,11 @@ public class RandomPolarization extends AbstractAction<Double> {
      */
     public RandomPolarization(final Node<Double> node, final RandomGenerator random) {
         super(node);
-        rand = random;
+        if (node instanceof CellNode) {
+            rand = random;
+        } else {
+            throw  new UnsupportedOperationException("Polarization can happen only in cells.");
+        }
     }
 
     /**
@@ -40,24 +44,22 @@ public class RandomPolarization extends AbstractAction<Double> {
      */
     @Override
     public void execute() {
-        if (getNode() instanceof CellNode) {
-            final double x = rand.nextFloat() - 0.5;
-            final double y = rand.nextFloat() - 0.5;
-            Position randomVersor = new Continuous2DEuclidean(x, y);
-            if (x == 0) {
-                randomVersor = new Continuous2DEuclidean(0, 1);
-            } else if (y == 0) {
-                randomVersor = new Continuous2DEuclidean(1, 0);
+        final double x = rand.nextFloat() - 0.5;
+        final double y = rand.nextFloat() - 0.5;
+        Position randomVersor = new Continuous2DEuclidean(x, y);
+        if (x == 0) {
+            randomVersor = new Continuous2DEuclidean(0, 1);
+        } else if (y == 0) {
+            randomVersor = new Continuous2DEuclidean(1, 0);
+        } else {
+            final double module = FastMath.sqrt(FastMath.pow(x, 2) + FastMath.pow(y, 2));
+            if (module == 0) {
+                randomVersor = new Continuous2DEuclidean(0, 0);
             } else {
-                final double module = FastMath.sqrt(FastMath.pow(x, 2) + FastMath.pow(y, 2));
-                if (module == 0) {
-                    randomVersor = new Continuous2DEuclidean(0, 0);
-                } else {
-                    randomVersor = new Continuous2DEuclidean(x / module, y / module);
-                }
+                randomVersor = new Continuous2DEuclidean(x / module, y / module);
             }
-            ((CellNode) getNode()).addPolarization(randomVersor);
         }
+        getNode().addPolarization(randomVersor);
     }
 
     /**
@@ -71,6 +73,11 @@ public class RandomPolarization extends AbstractAction<Double> {
     @Override
     public Action<Double> cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
         return new RandomPolarization(n, rand);
+    }
+    
+    @Override 
+    public CellNode getNode()  {
+        return (CellNode) super.getNode();
     }
 
 }

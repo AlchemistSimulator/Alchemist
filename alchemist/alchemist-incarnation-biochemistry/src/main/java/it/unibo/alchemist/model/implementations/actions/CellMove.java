@@ -58,15 +58,20 @@ public class CellMove extends AbstractMoveNode<Double> {
     @Override
     public Position getNextPosition() {
         return new Continuous2DEuclidean(
-                delta * ((CellNode) getNode()).getPolarizationVersor().getCoordinate(0),
-                delta * ((CellNode) getNode()).getPolarizationVersor().getCoordinate(1)
+                delta * getNode().getPolarizationVersor().getCoordinate(0),
+                delta * getNode().getPolarizationVersor().getCoordinate(1)
                 );
     }
 
     @Override
     public void execute() {
         super.execute();
-        ((CellNode) getNode()).setPolarization(new Continuous2DEuclidean(0, 0));
+        getNode().setPolarization(new Continuous2DEuclidean(0, 0));
+    }
+
+    @Override
+    public CellNode getNode() {
+        return ((CellNode) super.getNode());
     }
 
 }

@@ -41,11 +41,11 @@ public class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborAction<
      * @param environment 
      * @param randGen 
      */
-    public ChangeBiomolConcentrationInNeighbor(final Biomolecule biomol,
-            final Double deltaConcentration,
+    public ChangeBiomolConcentrationInNeighbor(final Environment<Double> environment,
             final Node<Double> node,
-            final Environment<Double> environment,
-            final RandomGenerator randGen) {
+            final Biomolecule biomol, 
+            final RandomGenerator randGen,
+            final Double deltaConcentration) {
         super(node, environment, randGen);
         addModifiedMolecule(biomol);
         mol = biomol;
@@ -56,7 +56,7 @@ public class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborAction<
 
     @Override
     public ChangeBiomolConcentrationInNeighbor cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
-        return new ChangeBiomolConcentrationInNeighbor(mol, delta, n, env, rand);
+        return new ChangeBiomolConcentrationInNeighbor(env, n, mol, rand, delta);
     }
 
     @Override

@@ -42,7 +42,7 @@ public class AddJunctionInCell extends AbstractNeighborAction<Double> {
      * @param e the current environment
      * @param rg the random generator
      */
-    public AddJunctionInCell(final Junction j, final CellNode n, final Environment<Double> e, final RandomGenerator rg) {
+    public AddJunctionInCell(final Environment<Double> e, final CellNode n, final Junction j, final RandomGenerator rg) {
         super(n, e, rg);
         addModifiedMolecule(j);
         jun = j;
@@ -53,7 +53,7 @@ public class AddJunctionInCell extends AbstractNeighborAction<Double> {
 
     @Override
     public AddJunctionInCell cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
-        return new AddJunctionInCell(jun, (CellNode) n, env, rand);
+        return new AddJunctionInCell(env, (CellNode) n, jun, rand);
     }
 
     /**

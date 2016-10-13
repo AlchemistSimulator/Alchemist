@@ -28,7 +28,7 @@ public class ChangeBiomolConcentrationInCell extends AbstractActionOnSingleMolec
      * @param deltaConcentration 
      * @param node 
      */
-    public ChangeBiomolConcentrationInCell(final Biomolecule biomol, final double deltaConcentration, final Node<Double> node) {
+    public ChangeBiomolConcentrationInCell(final Node<Double> node, final Biomolecule biomol, final double deltaConcentration) {
         super(node, biomol);
         this.deltaC = deltaConcentration;
     }

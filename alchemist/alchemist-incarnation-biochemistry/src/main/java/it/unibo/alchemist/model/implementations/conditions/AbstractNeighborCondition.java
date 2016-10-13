@@ -33,7 +33,7 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
      * @param node the node hosting this condition
      * @param environment the current environment
      */
-    protected AbstractNeighborCondition(final Node<T> node, final Environment<T> environment) {
+    protected AbstractNeighborCondition(final Environment<T> environment, final Node<T> node) {
         super(node);
         env = environment;
         this.node = node;

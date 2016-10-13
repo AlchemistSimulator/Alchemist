@@ -424,7 +424,7 @@ public class BiochemicalReactionBuilder {
              * is undefined, and can lead to unwanted behavior.
              */
             if (neighborActionPresent && biomolConditionsInNeighbor.isEmpty()) { 
-                conditionList.add(new NeighborhoodPresent<>(node, env));
+                conditionList.add(new NeighborhoodPresent<>(env, node));
             }
             if (envActionPresent && !envConditionPresent) {
                 conditionList.add(new EnvPresent(env, node));
@@ -461,8 +461,8 @@ public class BiochemicalReactionBuilder {
             }
             junctionList.forEach((j -> {
                 if (node instanceof CellNode) {
-                    actionList.add(new RemoveJunctionInCell(j, (CellNode) node, env, rand));
-                    actionList.add(new RemoveJunctionInNeighbor(reverseJunction(j), (CellNode) node, env, rand));
+                    actionList.add(new RemoveJunctionInCell(env, (CellNode) node, j, rand));
+                    actionList.add(new RemoveJunctionInNeighbor(env, (CellNode) node, reverseJunction(j), rand));
                 } else {
                     throw new UnsupportedOperationException("Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName());
                 }
@@ -478,8 +478,8 @@ public class BiochemicalReactionBuilder {
                 final Biomolecule biomol = createBiomolecule(b);
                 final double concentration = createConcentration(b);
                 insertInMap(biomolConditionsInCell, biomol, concentration);
-                conditionList.add(new BiomolPresentInCell(biomol, concentration, node));
-                actionList.add(new ChangeBiomolConcentrationInCell(biomol, -concentration, node));
+                conditionList.add(new BiomolPresentInCell(node, biomol, concentration));
+                actionList.add(new ChangeBiomolConcentrationInCell(node, biomol, -concentration));
             }
             return reaction;
         }
@@ -490,8 +490,8 @@ public class BiochemicalReactionBuilder {
                 final Biomolecule biomol = createBiomolecule(b);
                 final double concentration = createConcentration(b);
                 insertInMap(biomolConditionsInNeighbor, biomol, concentration);
-                conditionList.add(new BiomolPresentInNeighbor(biomol, concentration, node, env));
-                actionList.add(new ChangeBiomolConcentrationInNeighbor(biomol, -concentration, node, env, rand));
+                conditionList.add(new BiomolPresentInNeighbor(env, node, biomol, concentration));
+                actionList.add(new ChangeBiomolConcentrationInNeighbor(env, node, biomol, rand, -concentration));
             }
             return reaction;
         }
@@ -501,7 +501,7 @@ public class BiochemicalReactionBuilder {
             for (final BiomoleculeContext b : ctx.biomolecule()) {
                 final Biomolecule biomol = createBiomolecule(b);
                 final double concentration = createConcentration(b);
-                conditionList.add(new BiomolPresentInEnv(env, biomol, concentration, node));
+                conditionList.add(new BiomolPresentInEnv(env, node, biomol, concentration));
                 actionList.add(new ChangeBiomolConcentrationInEnv(node, biomol, env, rand));
                 envConditionPresent = true;
             }
@@ -514,7 +514,7 @@ public class BiochemicalReactionBuilder {
                 if (re.biomolecule() != null) {
                     final Biomolecule biomol = createBiomolecule(re.biomolecule());
                     final double concentration = createConcentration(re.biomolecule());
-                    actionList.add(new ChangeBiomolConcentrationInCell(biomol, concentration, node));
+                    actionList.add(new ChangeBiomolConcentrationInCell(node, biomol, concentration));
                 } else if (re.javaConstructor() != null) {
                     actionList.add(createObject(re.javaConstructor(), ACTIONS_PACKAGE, currentInc, rand, node, time, env, reaction));
                 }
@@ -528,7 +528,7 @@ public class BiochemicalReactionBuilder {
                 if (re.biomolecule() != null) {
                     final Biomolecule biomol = createBiomolecule(re.biomolecule());
                     final double concentration = createConcentration(re.biomolecule());
-                    actionList.add(new ChangeBiomolConcentrationInNeighbor(biomol, concentration, node, env, rand));
+                    actionList.add(new ChangeBiomolConcentrationInNeighbor(env, node, biomol, rand, concentration));
                 } else if (re.javaConstructor() != null) {
                     actionList.add(createObject(re.javaConstructor(), ACTIONS_PACKAGE, currentInc, rand, node, time, env, reaction));
                 }
@@ -566,8 +566,8 @@ public class BiochemicalReactionBuilder {
                 }
             });
             if (node instanceof CellNode) {
-                actionList.add(new AddJunctionInCell(j, (CellNode) node, env, rand));
-                actionList.add(new AddJunctionInNeighbor(reverseJunction(j), (CellNode) node, env, rand));
+                actionList.add(new AddJunctionInCell(env, (CellNode) node, j, rand));
+                actionList.add(new AddJunctionInNeighbor(env, (CellNode) node, reverseJunction(j), rand));
             } else {
                 throw new UnsupportedOperationException("Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName());
             }
@@ -579,7 +579,7 @@ public class BiochemicalReactionBuilder {
             if (node instanceof CellNode) {
                 final Junction j = createJunction(ctx.junction());
                 junctionList.add(j);
-                conditionList.add(new JunctionPresentInCell(j, (CellNode) node, env));
+                conditionList.add(new JunctionPresentInCell(env, (CellNode) node, j));
                 return reaction;
             } else {
                 throw new UnsupportedOperationException("Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName());

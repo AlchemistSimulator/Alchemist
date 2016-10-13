@@ -30,8 +30,8 @@ public class GenericMoleculeUnderLevel<T extends Number> extends
      * @param n the node
      * @param quantity how many molecules should be present
      */
-    public GenericMoleculeUnderLevel(final Molecule mol, final Node<T> n, final T quantity) {
-        super(mol, n, quantity);
+    public GenericMoleculeUnderLevel(final Node<T> n, final Molecule mol, final T quantity) {
+        super(n, mol, quantity);
     }
 
     /**
@@ -51,7 +51,7 @@ public class GenericMoleculeUnderLevel<T extends Number> extends
      */
     @Override
     public GenericMoleculeUnderLevel<T> cloneOnNewNode(final Node<T> n) {
-        return new GenericMoleculeUnderLevel<T>(getMolecule(), n, getQuantity());
+        return new GenericMoleculeUnderLevel<T>(n, getMolecule(), getQuantity());
     }
 
     /**

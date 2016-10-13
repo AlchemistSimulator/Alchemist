@@ -23,8 +23,8 @@ public class BiomolPresentInCell extends GenericMoleculePresent<Double> {
      * @param concentration 
      * @param node 
      */
-    public BiomolPresentInCell(final Molecule biomol, final Double concentration, final Node<Double> node) {
-        super(biomol, node, concentration);
+    public BiomolPresentInCell(final Node<Double> node, final Molecule biomol, final Double concentration) {
+        super(node, biomol, concentration);
     }
 
 }

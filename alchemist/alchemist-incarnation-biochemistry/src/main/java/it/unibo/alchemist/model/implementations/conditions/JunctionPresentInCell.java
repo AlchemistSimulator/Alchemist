@@ -35,8 +35,8 @@ public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
      * @param n the node
      * @param e the environment
      */
-    public JunctionPresentInCell(final Junction junction, final CellNode n, final Environment<Double> e) {
-        super(n, e);
+    public JunctionPresentInCell(final Environment<Double> e, final CellNode n, final Junction junction) {
+        super(e, n);
         addReadMolecule(junction);
         j = junction;
         node = n;
@@ -55,7 +55,7 @@ public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
 
     @Override
     public JunctionPresentInCell cloneOnNewNode(final Node<Double> n) {
-        return new JunctionPresentInCell(j, (CellNode) n, env);
+        return new JunctionPresentInCell(env, (CellNode) n, j);
     }
 
     @Override

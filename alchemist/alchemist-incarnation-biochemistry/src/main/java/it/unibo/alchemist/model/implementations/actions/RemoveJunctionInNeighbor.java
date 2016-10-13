@@ -46,7 +46,7 @@ public class RemoveJunctionInNeighbor extends AbstractNeighborAction<Double> {
      * @param e 
      * @param rg 
      */
-    public RemoveJunctionInNeighbor(final Junction junction, final CellNode n, final Environment<Double> e, final RandomGenerator rg) {
+    public RemoveJunctionInNeighbor(final Environment<Double> e, final CellNode n, final Junction junction, final RandomGenerator rg) {
         super(n, e, rg);
         addModifiedMolecule(junction);
         for (final Map.Entry<Biomolecule, Double> entry : junction.getMoleculesInCurrentNode().entrySet()) {
@@ -60,7 +60,7 @@ public class RemoveJunctionInNeighbor extends AbstractNeighborAction<Double> {
 
     @Override
     public RemoveJunctionInNeighbor cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
-        return new RemoveJunctionInNeighbor(jun, (CellNode) n, env, rand);
+        return new RemoveJunctionInNeighbor(env, (CellNode) n, jun, rand);
     }
 
     /**

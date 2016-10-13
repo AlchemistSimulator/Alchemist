@@ -30,14 +30,14 @@ public class NeighborhoodPresent<T> extends AbstractCondition<T> {
      * @param node the node
      * @param environment the current environment.
      */
-    public NeighborhoodPresent(final Node<T> node, final Environment<T> environment) {
+    public NeighborhoodPresent(final Environment<T> environment, final Node<T> node) {
         super(node);
         env = environment;
     }
 
     @Override
     public NeighborhoodPresent<T> cloneOnNewNode(final Node<T> n) {
-        return new NeighborhoodPresent<>(n, env);
+        return new NeighborhoodPresent<>(env, n);
     }
 
     @Override

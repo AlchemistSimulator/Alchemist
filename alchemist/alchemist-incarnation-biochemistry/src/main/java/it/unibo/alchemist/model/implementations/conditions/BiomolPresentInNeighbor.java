@@ -43,8 +43,8 @@ public class BiomolPresentInNeighbor extends AbstractNeighborCondition<Double> {
      * @param node 
      * @param env 
      */
-    public BiomolPresentInNeighbor(final Biomolecule molecule, final Double concentration, final Node<Double> node, final Environment<Double> env) {
-        super(node, env);
+    public BiomolPresentInNeighbor(final Environment<Double> env, final Node<Double> node, final Biomolecule molecule, final Double concentration) {
+        super(env, node);
         addReadMolecule(molecule);
         mol = molecule;
         conc = concentration;
@@ -71,7 +71,7 @@ public class BiomolPresentInNeighbor extends AbstractNeighborCondition<Double> {
 
     @Override
     public BiomolPresentInNeighbor cloneOnNewNode(final Node<Double> n) {
-        return new BiomolPresentInNeighbor(mol, conc, n, environment);
+        return new BiomolPresentInNeighbor(environment, n, mol, conc);
     }
 
     @Override

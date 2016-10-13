@@ -41,9 +41,8 @@ public class BiomolPresentInEnv extends GenericMoleculePresent<Double> {
      * @param env
      *            the {@link Environment} where the node is located.
      */
-    public BiomolPresentInEnv(final Environment<Double> env, final Biomolecule biomol, final Double conc, 
-            final Node<Double> node) {
-        super(biomol, node, conc);
+    public BiomolPresentInEnv(final Environment<Double> env, final Node<Double> node, final Biomolecule biomol, final Double conc) {
+        super(node, biomol, conc);
         environment = env;
     }
 
@@ -82,7 +81,7 @@ public class BiomolPresentInEnv extends GenericMoleculePresent<Double> {
 
     @Override 
     public BiomolPresentInEnv cloneOnNewNode(final Node<Double> n) {
-        return new BiomolPresentInEnv(environment, getBiomolecule(), getQuantity(), n);
+        return new BiomolPresentInEnv(environment, n, getBiomolecule(), getQuantity());
     }
 
     @Override

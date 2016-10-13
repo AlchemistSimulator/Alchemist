@@ -1,6 +1,6 @@
 package it.unibo.alchemist.core.tests;
 
-//CHECKSTYLE:OFF
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;

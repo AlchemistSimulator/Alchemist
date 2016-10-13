@@ -82,27 +82,27 @@ public class CellTensionPolarization extends AbstractAction<Double> {
                     // position of node n as array
                     final double[] nPos =  env.getPosition(n).getCartesianCoordinates();
                     // max radius of n
-                    final double maxRn;
+                    final double localNodeMaxRadius;
                     // min radius of n
-                    final double minRn;
+                    final double localNodeMinRadius;
                     // max radius of this node (getNode())
-                    final double maxRN = getNode().getMaxRadius();
+                    final double nodeMaxRadius = getNode().getMaxRadius();
                     // min radius of this node (getNode())
-                    final double minRN = getNode().getRadius();
+                    final double nodeMinRadius = getNode().getRadius();
                     // intensity of tension between n and this node (getNode()), measured as value between 0 and 1
                     final double intensity;
                     if (n instanceof CircularDeformableCell) {
-                        maxRn = ((CircularDeformableCell) n).getMaxRadius();
-                        minRn = ((CircularDeformableCell) n).getRadius();
+                        localNodeMaxRadius = ((CircularDeformableCell) n).getMaxRadius();
+                        localNodeMinRadius = ((CircularDeformableCell) n).getRadius();
                     } else {
-                        maxRn = ((CellWithCircularArea) n).getRadius();
-                        minRn = maxRn;
+                        localNodeMaxRadius = ((CellWithCircularArea) n).getRadius();
+                        localNodeMinRadius = localNodeMaxRadius;
                     }
                     // if both cells has no difference between maxRad and minRad intensity must be 1
-                    if (maxRn == minRn && maxRN == minRN) {
+                    if (localNodeMaxRadius == localNodeMinRadius && nodeMaxRadius == nodeMinRadius) {
                         intensity = 1;
                     } else {
-                        intensity = ((maxRn + maxRN) - env.getDistanceBetweenNodes(n, getNode())) / ((maxRn + maxRN) - (minRn + minRN));
+                        intensity = ((localNodeMaxRadius + nodeMaxRadius) - env.getDistanceBetweenNodes(n, getNode())) / ((localNodeMaxRadius + nodeMaxRadius) - (localNodeMinRadius + nodeMinRadius));
                     }
                     if (intensity != 0) {
                         double[] propensityVect = new double[]{nodePos[0] - nPos[0], nodePos[1] - nPos[1]};

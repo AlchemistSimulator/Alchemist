@@ -12,6 +12,7 @@ package it.unibo.alchemist.model.implementations.actions;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
@@ -20,6 +21,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.CellNode;
+import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
@@ -172,11 +174,10 @@ public class ChangeBiomolConcentrationInEnv extends AbstractAction<Double> {
      * 
      * @return a list containing the environment nodes around
      */
-    @SuppressWarnings("unchecked")
     protected List<EnvironmentNode> getEnvironmentNodesSurrounding() {
         return (List<EnvironmentNode>) env.getNeighborhood(getNode()).getNeighbors().stream()
                 .parallel()
-                .filter(n -> n instanceof EnvironmentNode)
+                .flatMap(n -> n instanceof EnvironmentNode ? Stream.of((EnvironmentNode) n) : Stream.empty())
                 .collect(Collectors.toList());
     }
 }

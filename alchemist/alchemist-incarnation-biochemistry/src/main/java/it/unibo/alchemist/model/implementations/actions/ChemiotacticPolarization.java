@@ -23,7 +23,7 @@ public class ChemiotacticPolarization extends AbstractAction<Double> {
     /**
      * 
      */
-    private static final long serialVersionUID = -6147634743476443019L;
+    private static final long serialVersionUID = 1L;
     private final Environment<Double> env;
     private final Biomolecule biomol;
     private final boolean ascend;

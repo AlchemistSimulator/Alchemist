@@ -15,7 +15,7 @@ public class EnvPresent extends AbstractCondition<Double> {
     /**
      * 
      */
-    private static final long serialVersionUID = -389543469391097488L;
+    private static final long serialVersionUID = 1L;
     private final Environment<Double> environment;
 
     /**

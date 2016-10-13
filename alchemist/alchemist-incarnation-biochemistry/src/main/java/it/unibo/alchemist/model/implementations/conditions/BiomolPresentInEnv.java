@@ -24,7 +24,7 @@ import it.unibo.alchemist.model.interfaces.Node;
  */
 public class BiomolPresentInEnv extends GenericMoleculePresent<Double> {
 
-    private static final long serialVersionUID = 6527297022655890961L;
+    private static final long serialVersionUID = 1L;
 
     private final Environment<Double> environment;
 

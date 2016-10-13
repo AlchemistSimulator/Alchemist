@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.interfaces.Molecule;
  */
 public class EnvironmentNodeImpl extends DoubleNode implements EnvironmentNode {
 
-    private static final long serialVersionUID = 1880007336956353256L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Create a new environment node.

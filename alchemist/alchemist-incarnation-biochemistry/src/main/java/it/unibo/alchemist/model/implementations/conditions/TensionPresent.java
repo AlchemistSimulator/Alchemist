@@ -17,7 +17,7 @@ public class TensionPresent extends AbstractCondition<Double> {
     /**
      * 
      */
-    private static final long serialVersionUID = 4444764520770307664L;
+    private static final long serialVersionUID = 1L;
     private final EnvironmentSupportingDeformableCells env;
 
     /**

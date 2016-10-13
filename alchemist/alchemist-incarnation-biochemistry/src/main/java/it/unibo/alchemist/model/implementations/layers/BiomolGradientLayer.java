@@ -16,7 +16,7 @@ public class BiomolGradientLayer implements Layer<Double> {
     /**
      * 
      */
-    private static final long serialVersionUID = 6628458356492258225L;
+    private static final long serialVersionUID = 1L;
     private final double a;
     private final double b;
     private final double c;

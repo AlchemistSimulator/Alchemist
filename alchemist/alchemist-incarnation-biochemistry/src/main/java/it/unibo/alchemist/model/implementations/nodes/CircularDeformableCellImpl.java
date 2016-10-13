@@ -12,7 +12,7 @@ public class CircularDeformableCellImpl extends CellNodeImpl implements Circular
     /**
      * 
      */
-    private static final long serialVersionUID = 8809465040639185094L;
+    private static final long serialVersionUID = 1L;
     private final double maxDiam;
 
     /**

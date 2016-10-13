@@ -20,7 +20,7 @@ public class RandomPolarization extends AbstractAction<Double> {
     /**
      * 
      */
-    private static final long serialVersionUID = -1475157288544618036L;
+    private static final long serialVersionUID = 1L;
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All provided RandomGenerator implementations are actually Serializable")
     private final RandomGenerator rand;
 
@@ -74,7 +74,7 @@ public class RandomPolarization extends AbstractAction<Double> {
     public Action<Double> cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
         return new RandomPolarization(n, rand);
     }
-    
+
     @Override 
     public CellNode getNode()  {
         return (CellNode) super.getNode();

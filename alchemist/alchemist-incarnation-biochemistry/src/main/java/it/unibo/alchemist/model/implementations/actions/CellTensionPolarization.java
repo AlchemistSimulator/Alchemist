@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.math3.util.FastMath;
 
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
-import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
 import it.unibo.alchemist.model.interfaces.CircularDeformableCell;
 import it.unibo.alchemist.model.interfaces.Context;
@@ -24,7 +23,7 @@ public class CellTensionPolarization extends AbstractAction<Double> {
     /**
      * 
      */
-    private static final long serialVersionUID = 4007473626119435396L;
+    private static final long serialVersionUID = 1L;
     private final EnvironmentSupportingDeformableCells env;
 
     /**

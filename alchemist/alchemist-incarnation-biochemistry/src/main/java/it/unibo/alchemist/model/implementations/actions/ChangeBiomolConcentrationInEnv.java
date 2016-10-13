@@ -31,7 +31,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  */
 public class ChangeBiomolConcentrationInEnv extends AbstractAction<Double> {
 
-    private static final long serialVersionUID = -1442417685847647706L;
+    private static final long serialVersionUID = 1L;
     private final double delta;
     private final Biomolecule biomolecule;
     private final Environment<Double> env;

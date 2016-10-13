@@ -6,12 +6,12 @@ sourceSets {
 
 dependencies {
     compile (
-        project(':alchemist-loading'),
         project(':alchemist-maps'),
         "com.google.guava:guava:$guavaVersion",
         "org.danilopianini:javalib-java7:$javalib7Version",
         project.sourceSets.antlr.output
     )
+    testCompile(project(':alchemist-loading'))
     antlr "org.antlr:antlr4:$antlrVersion"
     antlrCompile "org.antlr:antlr4:$antlrVersion"
 }

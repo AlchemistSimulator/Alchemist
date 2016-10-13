@@ -41,10 +41,10 @@ public class BiochemistryIncarnation implements Incarnation<Double> {
 
     @Override
     public CellNode createNode(final RandomGenerator rand, final Environment<Double> env, final String param) {
-        if (param != null && !param.isEmpty()) {
-            return new CellNodeImpl(env, Double.parseDouble(param));
+        if (param == null || param.isEmpty()) {
+            return new CellNodeImpl(env);
         }
-        return new CellNodeImpl(env);
+        return new CellNodeImpl(env, Double.parseDouble(param));
     }
 
     @Override

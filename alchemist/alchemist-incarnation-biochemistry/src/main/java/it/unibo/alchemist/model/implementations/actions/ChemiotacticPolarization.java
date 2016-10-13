@@ -29,17 +29,17 @@ public class ChemiotacticPolarization extends AbstractAction<Double> {
     private final boolean ascend;
 
     /**
-     * Initialize a polarization activity regulated by environmental concentration of a molecule.
+     * 
      * @param environment 
      * @param node 
      * @param biomol 
-     * @param ascendGrad if that parameter is true, the polarization versor of the cell will be directed in direction of the greates concentration of biomolecule in neighborhood; if it's false, the versor will be directed in the exactly the opposite direction.
+     * @param ascendGrad 
      */
-    public ChemiotacticPolarization(final Environment<Double> environment, final Node<Double> node, final String biomol, final String ascendGrad) {
+    public ChemiotacticPolarization(final Environment<Double> environment, final Node<Double> node, final Biomolecule biomol, final String ascendGrad) {
         super(node);
         if (node instanceof CellNode) {
             this.env = environment;
-            this.biomol = new Biomolecule(biomol);
+            this.biomol = biomol;
             if (ascendGrad.equalsIgnoreCase("up")) {
                 this.ascend = true;
             } else if (ascendGrad.equalsIgnoreCase("down")) {
@@ -51,6 +51,18 @@ public class ChemiotacticPolarization extends AbstractAction<Double> {
             throw  new UnsupportedOperationException("Polarization can happen only in cells.");
         }
     }
+
+    /**
+     * Initialize a polarization activity regulated by environmental concentration of a molecule.
+     * @param environment 
+     * @param node 
+     * @param biomol biomolecule's name
+     * @param ascendGrad if that parameter is true, the polarization versor of the cell will be directed in direction of the greates concentration of biomolecule in neighborhood; if it's false, the versor will be directed in the exactly the opposite direction.
+     */
+    public ChemiotacticPolarization(final Environment<Double> environment, final Node<Double> node, final String biomol, final String ascendGrad) {
+        this(environment, node, new Biomolecule(biomol), ascendGrad);
+    }
+
 
     @Override
     public ChemiotacticPolarization cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {

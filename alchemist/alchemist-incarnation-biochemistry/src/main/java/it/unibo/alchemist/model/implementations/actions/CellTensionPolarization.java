@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.math3.util.FastMath;
+import org.danilopianini.lang.MathUtils;
 
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
@@ -102,7 +103,7 @@ public class CellTensionPolarization extends AbstractAction<Double> {
                         localNodeMinRadius = localNodeMaxRadius;
                     }
                     // if both cells has no difference between maxRad and minRad intensity must be 1
-                    if (localNodeMaxRadius == localNodeMinRadius && nodeMaxRadius == nodeMinRadius) {
+                    if (MathUtils.fuzzyEquals(localNodeMaxRadius, localNodeMinRadius) && MathUtils.fuzzyEquals(nodeMaxRadius, nodeMinRadius)) {
                         intensity = 1;
                     } else {
                         intensity = ((localNodeMaxRadius + nodeMaxRadius) - env.getDistanceBetweenNodes(n, thisNode)) / ((localNodeMaxRadius + nodeMaxRadius) - (localNodeMinRadius + nodeMinRadius));

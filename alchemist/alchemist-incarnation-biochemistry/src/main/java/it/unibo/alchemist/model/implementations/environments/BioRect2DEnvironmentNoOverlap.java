@@ -3,6 +3,7 @@ package it.unibo.alchemist.model.implementations.environments;
 import java.util.stream.Stream;
 
 import org.apache.commons.math3.util.FastMath;
+import org.danilopianini.lang.MathUtils;
 
 import com.google.common.base.Optional;
 
@@ -167,14 +168,10 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment implemen
         // compute intersection
         final double xIntersect;
         final double yIntersect;
-        /*
-         * yo and yr are converted to float precision to avoid numbers too big or too little.
-         * Same for xo and xr.
-         */
-        if ((float) yo == (float) yr) {
+        if (MathUtils.fuzzyEquals(yo, yr)) {
             yIntersect = yo;
             xIntersect = xn;
-        } else if ((float) xo == (float) xr) {
+        } else if (MathUtils.fuzzyEquals(xo, xr)) {
             xIntersect = xo;
             yIntersect = yn;
         } else {

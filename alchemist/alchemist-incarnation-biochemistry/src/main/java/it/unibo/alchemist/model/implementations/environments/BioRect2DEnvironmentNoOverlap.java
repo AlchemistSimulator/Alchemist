@@ -47,23 +47,26 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment implemen
     @Override
     protected boolean nodeShouldBeAdded(final Node<Double> node, final Position p) {
         final boolean isWithinLimits = super.nodeShouldBeAdded(node, p);
-        if (!(node instanceof CellWithCircularArea) && isWithinLimits) {
-            return true;
-        } else if (!isWithinLimits) {
+        if (isWithinLimits) {
+            if (node instanceof CellWithCircularArea) {
+                final CellWithCircularArea thisNode = (CellWithCircularArea) node;
+                double range = getMaxDiameterAmongCells();
+                if (thisNode.getDiameter() > range) {
+                    range = thisNode.getDiameter();
+                }
+                final double nodeRadius = thisNode.getRadius();
+                return isWithinLimits 
+                        && !(getNodesWithinRange(p, range).stream()
+                                .parallel()
+                                .filter(n -> (n instanceof CellWithCircularArea) && (getPosition(n).getDistanceTo(p) < nodeRadius + ((CellWithCircularArea) n).getRadius()))
+                                .findFirst()
+                                .isPresent());
+            } else {
+                return true;
+            }
+        } else {
             return false;
         }
-        final CellWithCircularArea thisNode = (CellWithCircularArea) node;
-        double range = getMaxDiameterAmongCells();
-        if (thisNode.getDiameter() > range) {
-            range = thisNode.getDiameter();
-        }
-        final double nodeRadius = thisNode.getRadius();
-        return isWithinLimits 
-                && !(getNodesWithinRange(p, range).stream()
-                        .parallel()
-                        .filter(n -> (n instanceof CellWithCircularArea) && (getPosition(n).getDistanceTo(p) < nodeRadius + ((CellWithCircularArea) n).getRadius()))
-                        .findFirst()
-                        .isPresent());
     }
 
     @Override

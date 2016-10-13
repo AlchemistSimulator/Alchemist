@@ -8,6 +8,7 @@ import org.apache.commons.math3.util.FastMath;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.interfaces.CellNode;
+import it.unibo.alchemist.model.interfaces.CircularDeformableCell;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
@@ -59,31 +60,33 @@ public class ChemiotacticPolarization extends AbstractAction<Double> {
 
     @Override
     public void execute() {
-        final List<Node<Double>> l = env.getNeighborhood(getNode()).getNeighbors().stream()
+        // declaring a variable for the node where this action is set, to have faster access
+        final CellNode thisNode = getNode();
+        final List<Node<Double>> l = env.getNeighborhood(thisNode).getNeighbors().stream()
                 .parallel()
                 .filter(n -> n instanceof EnvironmentNode && n.contains(biomol))
                 .collect(Collectors.toList());
         if (l.isEmpty()) {
-            getNode().addPolarization(new Continuous2DEuclidean(0, 0));
+            thisNode.addPolarization(new Continuous2DEuclidean(0, 0));
         } else {
             final boolean isNodeOnMaxConc = env.getPosition(l.stream()
                     .max((n1, n2) -> Double.compare(n1.getConcentration(biomol), n2.getConcentration(biomol)))
-                    .get()).equals(env.getPosition(getNode()));
+                    .get()).equals(env.getPosition(thisNode));
             if (isNodeOnMaxConc) {
-                getNode().addPolarization(new Continuous2DEuclidean(0, 0));
+                thisNode.addPolarization(new Continuous2DEuclidean(0, 0));
             } else {
-                Position newPolVer = weightedAverageVectors(l);
+                Position newPolVer = weightedAverageVectors(l, thisNode);
                 final double newPolVerModule = FastMath.sqrt(FastMath.pow(
                         newPolVer.getCoordinate(0), 2) + FastMath.pow(newPolVer.getCoordinate(1), 2)
                         );
                 if (newPolVerModule == 0) {
-                    getNode().addPolarization(newPolVer);
+                    thisNode.addPolarization(newPolVer);
                 } else {
                     newPolVer = new Continuous2DEuclidean(newPolVer.getCoordinate(0) / newPolVerModule, newPolVer.getCoordinate(1) / newPolVerModule);
                     if (ascend) {
-                        getNode().addPolarization(newPolVer);
+                        thisNode.addPolarization(newPolVer);
                     } else {
-                        getNode().addPolarization(new Continuous2DEuclidean(
+                        thisNode.addPolarization(new Continuous2DEuclidean(
                                 -newPolVer.getCoordinate(0), 
                                 -newPolVer.getCoordinate(1))
                                 );
@@ -93,12 +96,12 @@ public class ChemiotacticPolarization extends AbstractAction<Double> {
         }
     }
 
-    private Position weightedAverageVectors(final List<Node<Double>> list) {
+    private Position weightedAverageVectors(final List<Node<Double>> list, final CellNode thisNode) {
         Position res = new Continuous2DEuclidean(0, 0);
         for (final Node<Double> n : list) {
             Position vecTemp = new Continuous2DEuclidean(
-                    env.getPosition(n).getCoordinate(0) - env.getPosition(getNode()).getCoordinate(0),
-                    env.getPosition(n).getCoordinate(1) - env.getPosition(getNode()).getCoordinate(1));
+                    env.getPosition(n).getCoordinate(0) - env.getPosition(thisNode).getCoordinate(0),
+                    env.getPosition(n).getCoordinate(1) - env.getPosition(thisNode).getCoordinate(1));
             final double vecTempModule = FastMath.sqrt(FastMath.pow(vecTemp.getCoordinate(0), 2) + FastMath.pow(vecTemp.getCoordinate(1), 2));
             vecTemp = new Continuous2DEuclidean(
                     n.getConcentration(biomol) * (vecTemp.getCoordinate(0) / vecTempModule), 

@@ -77,10 +77,12 @@ public class ChangeBiomolConcentrationInEnv extends AbstractAction<Double> {
 
     @Override
     public void execute() {
+     // declaring a variable for the node where this action is set, to have faster access
+        final Node<Double> thisNode = getNode();
         // get the environment surrounding
         final List<EnvironmentNode> environmentNodesSurrounding = getEnvironmentNodesSurrounding();
         // if the node is an EnvironmentNode...
-        if (getNode().getClass().equals(EnvironmentNodeImpl.class)) {
+        if (thisNode.getClass().equals(EnvironmentNodeImpl.class)) {
             // sort the env node randomly
             Collections.shuffle(environmentNodesSurrounding);
             if (delta < 0) {
@@ -106,7 +108,7 @@ public class ChangeBiomolConcentrationInEnv extends AbstractAction<Double> {
             // if getNode() instanceof CellNode, check if all nodes are at the same distance
             final boolean areAllEnvNodesAtTheSameDistance = environmentNodesSurrounding.stream()
                     .mapToDouble(n -> {
-                        return env.getDistanceBetweenNodes(getNode(), n);
+                        return env.getDistanceBetweenNodes(thisNode, n);
                     })
                     .distinct()
                     .count() == 1;
@@ -132,8 +134,8 @@ public class ChangeBiomolConcentrationInEnv extends AbstractAction<Double> {
                 // else, sort the list by the distance from the node
                 environmentNodesSurrounding.sort(
                         (n1, n2) -> Double.compare(
-                                env.getDistanceBetweenNodes(getNode(), n1), 
-                                env.getDistanceBetweenNodes(getNode(), n2)
+                                env.getDistanceBetweenNodes(thisNode, n1), 
+                                env.getDistanceBetweenNodes(thisNode, n2)
                                 )
                         );
             }

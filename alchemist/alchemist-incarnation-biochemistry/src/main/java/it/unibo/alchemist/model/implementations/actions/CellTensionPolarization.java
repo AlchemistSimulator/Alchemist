@@ -55,9 +55,11 @@ public class CellTensionPolarization extends AbstractAction<Double> {
         final double[] nodePos = env.getPosition(getNode()).getCartesianCoordinates();
         // initializing resulting versor
         double[] resVersor = new double[nodePos.length];
+        // declaring a variable for the node where this action is set, to have faster access
+        final CircularDeformableCell thisNode = getNode();
         // transforming each node around in a vector (Position) 
         final List<Position> pushForces = env.getNodesWithinRange(
-                getNode(),
+                thisNode,
                 env.getMaxDiameterAmongDeformableCells()).stream()
                 .parallel()
                 .filter(n -> { // only cells overlapping this cell are selected
@@ -66,13 +68,13 @@ public class CellTensionPolarization extends AbstractAction<Double> {
                         double maxDist;
                         if (n instanceof CircularDeformableCell) {
                             // for deformable cell is maxRad + maxRad
-                             maxDist = (getNode().getMaxRadius() + ((CircularDeformableCell) n).getMaxRadius());
+                             maxDist = (thisNode.getMaxRadius() + ((CircularDeformableCell) n).getMaxRadius());
                         } else {
                             // for simple cells is maxRad + rad
-                             maxDist = (getNode().getMaxRadius() + ((CellWithCircularArea) n).getRadius());
+                             maxDist = (thisNode.getMaxRadius() + ((CellWithCircularArea) n).getRadius());
                         }
                         // check
-                        return env.getDistanceBetweenNodes(getNode(), n) < maxDist;
+                        return env.getDistanceBetweenNodes(thisNode, n) < maxDist;
                     } else {
                         // only CellWithCircularArea are selected.
                         return false;
@@ -85,15 +87,16 @@ public class CellTensionPolarization extends AbstractAction<Double> {
                     final double localNodeMaxRadius;
                     // min radius of n
                     final double localNodeMinRadius;
-                    // max radius of this node (getNode())
-                    final double nodeMaxRadius = getNode().getMaxRadius();
-                    // min radius of this node (getNode())
-                    final double nodeMinRadius = getNode().getRadius();
-                    // intensity of tension between n and this node (getNode()), measured as value between 0 and 1
+                    // max radius of this node (thisNode)
+                    final double nodeMaxRadius = thisNode.getMaxRadius();
+                    // min radius of this node (thisNode)
+                    final double nodeMinRadius = thisNode.getRadius();
+                    // intensity of tension between n and this node (thisNode), measured as value between 0 and 1
                     final double intensity;
                     if (n instanceof CircularDeformableCell) {
-                        localNodeMaxRadius = ((CircularDeformableCell) n).getMaxRadius();
-                        localNodeMinRadius = ((CircularDeformableCell) n).getRadius();
+                        final CircularDeformableCell localNode = (CircularDeformableCell) n;
+                        localNodeMaxRadius = localNode.getMaxRadius();
+                        localNodeMinRadius = localNode.getRadius();
                     } else {
                         localNodeMaxRadius = ((CellWithCircularArea) n).getRadius();
                         localNodeMinRadius = localNodeMaxRadius;
@@ -102,7 +105,7 @@ public class CellTensionPolarization extends AbstractAction<Double> {
                     if (localNodeMaxRadius == localNodeMinRadius && nodeMaxRadius == nodeMinRadius) {
                         intensity = 1;
                     } else {
-                        intensity = ((localNodeMaxRadius + nodeMaxRadius) - env.getDistanceBetweenNodes(n, getNode())) / ((localNodeMaxRadius + nodeMaxRadius) - (localNodeMinRadius + nodeMinRadius));
+                        intensity = ((localNodeMaxRadius + nodeMaxRadius) - env.getDistanceBetweenNodes(n, thisNode)) / ((localNodeMaxRadius + nodeMaxRadius) - (localNodeMinRadius + nodeMinRadius));
                     }
                     if (intensity != 0) {
                         double[] propensityVect = new double[]{nodePos[0] - nPos[0], nodePos[1] - nPos[1]};
@@ -118,7 +121,7 @@ public class CellTensionPolarization extends AbstractAction<Double> {
                 })
                 .collect(Collectors.toList());
         if (pushForces.isEmpty()) {
-            getNode().addPolarization(new Continuous2DEuclidean(0, 0));
+            thisNode.addPolarization(new Continuous2DEuclidean(0, 0));
         } else {
             for (final Position p : pushForces) {
                 for (int i = 0; i < p.getDimensions(); i++) {
@@ -127,9 +130,9 @@ public class CellTensionPolarization extends AbstractAction<Double> {
             }
             final double module = FastMath.sqrt(FastMath.pow(resVersor[0], 2) + FastMath.pow(resVersor[1], 2));
             if (module == 0) {
-                getNode().addPolarization(new Continuous2DEuclidean(0, 0));
+                thisNode.addPolarization(new Continuous2DEuclidean(0, 0));
             } else {
-                getNode().addPolarization(new Continuous2DEuclidean(resVersor[0] / module, resVersor[1] / module));
+                thisNode.addPolarization(new Continuous2DEuclidean(resVersor[0] / module, resVersor[1] / module));
             }
         }
     }

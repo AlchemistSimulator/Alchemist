@@ -18,8 +18,8 @@ import org.apache.commons.math3.util.FastMath;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
-import it.unibo.alchemist.model.implementations.nodes.EnvironmentNodeImpl;
 import it.unibo.alchemist.model.interfaces.Action;
+import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
@@ -51,10 +51,14 @@ public class ChangeBiomolConcentrationInEnv extends AbstractAction<Double> {
     public ChangeBiomolConcentrationInEnv(final Environment<Double> environment, final Node<Double> node, final Biomolecule biomol, 
             final double deltaCon, final RandomGenerator randomGen) {
         super(node);
+        if (node instanceof EnvironmentNode || node instanceof CellNode) {
         biomolecule = biomol;
         delta = deltaCon;
         env = environment;
         rand = randomGen;
+        } else {
+            throw  new UnsupportedOperationException("This condition can be set only in EnvironmentNode and CellNode");
+        }
     }
 
     /**
@@ -82,7 +86,7 @@ public class ChangeBiomolConcentrationInEnv extends AbstractAction<Double> {
         // get the environment surrounding
         final List<EnvironmentNode> environmentNodesSurrounding = getEnvironmentNodesSurrounding();
         // if the node is an EnvironmentNode...
-        if (thisNode.getClass().equals(EnvironmentNodeImpl.class)) {
+        if (thisNode instanceof EnvironmentNode) {
             // sort the env node randomly
             Collections.shuffle(environmentNodesSurrounding);
             if (delta < 0) {
@@ -107,9 +111,7 @@ public class ChangeBiomolConcentrationInEnv extends AbstractAction<Double> {
         } else {
             // if getNode() instanceof CellNode, check if all nodes are at the same distance
             final boolean areAllEnvNodesAtTheSameDistance = environmentNodesSurrounding.stream()
-                    .mapToDouble(n -> {
-                        return env.getDistanceBetweenNodes(thisNode, n);
-                    })
+                    .mapToDouble(n -> env.getDistanceBetweenNodes(thisNode, n))
                     .distinct()
                     .count() == 1;
             if (areAllEnvNodesAtTheSameDistance) {

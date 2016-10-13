@@ -14,7 +14,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
-import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -54,7 +53,7 @@ public class AddJunctionInNeighbor extends AbstractNeighborAction<Double> {
 
     @Override
     public AddJunctionInNeighbor cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
-        return new AddJunctionInNeighbor(jun, (CellNodeImpl) n, env, rand);
+        return new AddJunctionInNeighbor(jun, (CellNode) n, env, rand);
     }
 
     /**
@@ -76,7 +75,7 @@ public class AddJunctionInNeighbor extends AbstractNeighborAction<Double> {
      */
     @Override
     public void execute(final Node<Double> targetNode) {
-        ((CellNodeImpl) targetNode).addJunction(jun, node);
+        ((CellNode) targetNode).addJunction(jun, node);
     }
 
     @Override 

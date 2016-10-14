@@ -25,7 +25,6 @@ public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
 
     private static final long serialVersionUID = 4213307452790768059L;
 
-    private final CellNode node;
     private final Junction j;
     private final Environment<Double> env;
 
@@ -35,12 +34,15 @@ public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
      * @param n the node
      * @param e the environment
      */
-    public JunctionPresentInCell(final Environment<Double> e, final CellNode n, final Junction junction) {
+    public JunctionPresentInCell(final Environment<Double> e, final Node<Double> n, final Junction junction) {
         super(e, n);
-        addReadMolecule(junction);
-        j = junction;
-        node = n;
-        env = e;
+        if (n instanceof CellNode) {
+            addReadMolecule(junction);
+            j = junction;
+            env = e;
+        } else {
+            throw new UnsupportedOperationException("This Condition can be set only in CellNodes");
+        }
     }
 
     @Override
@@ -50,7 +52,7 @@ public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
 
     @Override
     public boolean isValid() {
-        return node.containsJunction(j);
+        return getNode().containsJunction(j);
     }
 
     @Override
@@ -60,7 +62,7 @@ public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
 
     @Override
     public Map<Node<Double>, Double> getValidNeighbors(final Collection<? extends Node<Double>> neighborhood) {
-        final Set<CellNode> linkedNodes = node.getNeighborsLinkWithJunction(j);
+        final Set<CellNode> linkedNodes = getNode().getNeighborsLinkWithJunction(j);
         return neighborhood.stream().filter(n -> linkedNodes.contains(n))
         .collect(Collectors.<Node<Double>, Node<Double>, Double>toMap(
                 n -> n,
@@ -70,6 +72,11 @@ public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
     @Override
     public String toString() {
         return "junction " +  j.toString() + " present ";
+    }
+
+    @Override
+    public CellNode getNode() {
+        return (CellNode) super.getNode();
     }
 
 }

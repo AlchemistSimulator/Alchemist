@@ -42,14 +42,18 @@ public class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
      * @param e the environment
      * @param rg the random generator
      */
-    public RemoveJunctionInCell(final Environment<Double> e, final CellNode n, final Junction junction, final RandomGenerator rg) {
+    public RemoveJunctionInCell(final Environment<Double> e, final Node<Double> n, final Junction junction, final RandomGenerator rg) {
         super(n, e, rg);
-        addModifiedMolecule(junction);
-        for (final Map.Entry<Biomolecule, Double> entry : junction.getMoleculesInCurrentNode().entrySet()) {
-            addModifiedMolecule(entry.getKey());
+        if (n instanceof CellNode) {
+            addModifiedMolecule(junction);
+            for (final Map.Entry<Biomolecule, Double> entry : junction.getMoleculesInCurrentNode().entrySet()) {
+                addModifiedMolecule(entry.getKey());
+            }
+            jun = junction;
+            env = e;
+        } else {
+            throw new UnsupportedOperationException("This Action can be set only in CellNodes");
         }
-        jun = junction;
-        env = e;
     }
 
     @Override

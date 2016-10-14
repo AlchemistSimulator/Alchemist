@@ -38,11 +38,15 @@ public class AddJunctionInNeighbor extends AbstractNeighborAction<Double> {
      * @param e the environment
      * @param rg the random generator
      */
-    public AddJunctionInNeighbor(final Environment<Double> e, final CellNode n, final Junction junction, final RandomGenerator rg) {
+    public AddJunctionInNeighbor(final Environment<Double> e, final Node<Double> n, final Junction junction, final RandomGenerator rg) {
         super(n, e, rg);
+        if (n instanceof CellNode) {
         addModifiedMolecule(junction);
         jun = junction; 
         env = e;
+        } else {
+            throw new UnsupportedOperationException("This Action can be set only in CellNodes");
+        }
     }
 
     @Override

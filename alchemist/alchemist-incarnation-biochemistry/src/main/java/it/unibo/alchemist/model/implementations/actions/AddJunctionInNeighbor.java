@@ -41,9 +41,9 @@ public class AddJunctionInNeighbor extends AbstractNeighborAction<Double> {
     public AddJunctionInNeighbor(final Environment<Double> e, final Node<Double> n, final Junction junction, final RandomGenerator rg) {
         super(n, e, rg);
         if (n instanceof CellNode) {
-        addModifiedMolecule(junction);
-        jun = junction; 
-        env = e;
+            addModifiedMolecule(junction);
+            jun = junction; 
+            env = e;
         } else {
             throw new UnsupportedOperationException("This Action can be set only in CellNodes");
         }
@@ -73,7 +73,11 @@ public class AddJunctionInNeighbor extends AbstractNeighborAction<Double> {
      */
     @Override
     public void execute(final Node<Double> targetNode) {
-        ((CellNode) targetNode).addJunction(jun, getNode());
+        if (targetNode instanceof CellNode) {
+            ((CellNode) targetNode).addJunction(jun, getNode());
+        } else {
+            throw new UnsupportedOperationException("Can't add Junction in a node that it's not a CellNode");
+        }
     }
 
     @Override 

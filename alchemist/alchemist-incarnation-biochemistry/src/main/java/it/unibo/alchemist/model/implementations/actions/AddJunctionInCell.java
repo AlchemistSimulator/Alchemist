@@ -73,7 +73,11 @@ public class AddJunctionInCell extends AbstractNeighborAction<Double> {
      */
     @Override
     public void execute(final Node<Double> targetNode) { 
-        getNode().addJunction(jun, (CellNode) targetNode);
+        if (targetNode instanceof CellNode) {
+            getNode().addJunction(jun, (CellNode) targetNode);
+        } else {
+            throw new UnsupportedOperationException("Can't add Junction in a node that it's not a CellNode");
+        }
     }
 
     @Override 

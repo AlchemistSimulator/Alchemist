@@ -57,7 +57,7 @@ public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
 
     @Override
     public JunctionPresentInCell cloneOnNewNode(final Node<Double> n) {
-        return new JunctionPresentInCell(env, (CellNode) n, j);
+        return new JunctionPresentInCell(env, n, j);
     }
 
     @Override

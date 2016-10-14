@@ -58,7 +58,7 @@ public class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
 
     @Override
     public RemoveJunctionInCell cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
-        return new RemoveJunctionInCell(env, (CellNode) n, jun, getRandomGenerator());
+        return new RemoveJunctionInCell(env, n, jun, getRandomGenerator());
     }
 
     /**

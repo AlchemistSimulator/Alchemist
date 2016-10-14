@@ -11,7 +11,6 @@ package it.unibo.alchemist.model.implementations.actions;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -32,9 +31,6 @@ public class AddJunctionInCell extends AbstractNeighborAction<Double> {
 
     private final Junction jun;
     private final Environment<Double> env;
-    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All provided RandomGenerator implementations are actually Serializable")
-    private final RandomGenerator rand;
-    private final CellNode node;
 
     /**
      * @param j the junction
@@ -46,14 +42,12 @@ public class AddJunctionInCell extends AbstractNeighborAction<Double> {
         super(n, e, rg);
         addModifiedMolecule(j);
         jun = j;
-        node = n;
         env = e;
-        rand = rg;
     }
 
     @Override
     public AddJunctionInCell cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
-        return new AddJunctionInCell(env, (CellNode) n, jun, rand);
+        return new AddJunctionInCell(env, (CellNode) n, jun, getRandomGenerator());
     }
 
     /**
@@ -75,11 +69,16 @@ public class AddJunctionInCell extends AbstractNeighborAction<Double> {
      */
     @Override
     public void execute(final Node<Double> targetNode) { 
-        node.addJunction(jun, (CellNode) targetNode);
+        getNode().addJunction(jun, (CellNode) targetNode);
     }
 
     @Override 
     public String toString() {
         return "add junction " + jun.toString() + " in node";
+    }
+
+    @Override
+    public CellNode getNode() {
+        return (CellNode) super.getNode();
     }
 }

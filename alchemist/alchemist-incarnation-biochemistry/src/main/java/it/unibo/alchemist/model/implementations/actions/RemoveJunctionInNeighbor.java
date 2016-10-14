@@ -34,7 +34,6 @@ public class RemoveJunctionInNeighbor extends AbstractNeighborAction<Double> {
 
     private final Junction jun;
     private final Environment<Double> env;
-    private final CellNode node;
 
     /**
      * 
@@ -50,7 +49,6 @@ public class RemoveJunctionInNeighbor extends AbstractNeighborAction<Double> {
             addModifiedMolecule(entry.getKey());
         }
         jun = junction;
-        node = n;
         env = e;
     }
 
@@ -72,12 +70,17 @@ public class RemoveJunctionInNeighbor extends AbstractNeighborAction<Double> {
 
     @Override
     public void execute(final Node<Double> targetNode) {
-        ((CellNode) targetNode).removeJunction(jun, node);
+        ((CellNode) targetNode).removeJunction(jun, getNode());
     }
 
     @Override 
     public String toString() {
         return "remove junction " + jun.toString() + " in neighbor";
+    }
+
+    @Override
+    public CellNode getNode() {
+        return (CellNode) super.getNode();
     }
 
 }

@@ -26,7 +26,6 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
     private static final long serialVersionUID = 1133243697147282024L;
 
     private final Environment<T> env;
-    private final Node<T> node;
 
     /**
      * 
@@ -36,7 +35,6 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
     protected AbstractNeighborCondition(final Environment<T> environment, final Node<T> node) {
         super(node);
         env = environment;
-        this.node = node;
     }
 
     @Override
@@ -53,7 +51,7 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
      * @return a map of neighbors which satisfy the condition and their propensity
      */
     public Map<Node<T>, Double> getValidNeighbors() {
-        return getValidNeighbors(env.getNeighborhood(node).getNeighbors());
+        return getValidNeighbors(env.getNeighborhood(getNode()).getNeighbors());
     }
 
     /**

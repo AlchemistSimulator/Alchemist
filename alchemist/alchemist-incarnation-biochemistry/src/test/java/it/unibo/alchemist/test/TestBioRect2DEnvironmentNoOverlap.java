@@ -33,7 +33,7 @@ import it.unibo.alchemist.model.interfaces.Time;
 /**
  *
  */
-//CHECKSTYLE:OFF: MagicNumber
+//CHECKSTYLE:OFF MagicNumbers
 public class TestBioRect2DEnvironmentNoOverlap {
 
     private static final double MAX_PRECISION = 0.9999999999;
@@ -282,7 +282,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
     @Test
     public void testAddDifferentDiam1() {
         env.addNode(ng1, originalPos);
-        
+
         final Position p1 = new Continuous2DEuclidean(10, 0);
         final Position p2 = new Continuous2DEuclidean(0, 10);
         final Position p3 = new Continuous2DEuclidean(-10, -10);
@@ -329,7 +329,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
     public void testAddDifferentDiam3() {
         env.addNode(np1, originalPos);
 
-        final Position p1 = new Continuous2DEuclidean(20 , 0);
+        final Position p1 = new Continuous2DEuclidean(20, 0);
         final Position p2 = new Continuous2DEuclidean(0, 15);
         final Position p3 = new Continuous2DEuclidean(10, 10);
         env.addNode(ng1, p1);
@@ -513,7 +513,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
         assertEquals("c1 is in pos : " + env.getPosition(c1), new Continuous2DEuclidean(90, 0), env.getPosition(c1));
 
     }
-    
+
     /**
      * Testing if node moves respecting dimension of all the others.
      */
@@ -527,7 +527,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
         env.moveNode(c1, pd);
         assertNotEquals(env.getPosition(c1), pd);
     }
-    
+
     /**
      * Testing if node moves respecting dimension of all the others.
      */
@@ -541,7 +541,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
         env.moveNode(c1, pd);
         assertNotEquals(env.getPosition(c1), pd);
     }
-    
+
     /**
      * Testing if node moves respecting dimension of all the others.
      */
@@ -585,7 +585,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
                 .collect(Collectors.toList()),
                 env.getNodesWithinRange(c1, c1.getDiameter()).isEmpty());
     }
-    
+
     /**
      * Testing if node moves respecting dimension of all the others.
      */
@@ -730,7 +730,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
                                 .filter(c -> env.getDistanceBetweenNodes(c, n) < ((((CellWithCircularArea) n).getRadius() + ((CellWithCircularArea) c).getRadius()) * MAX_PRECISION))
                                 .collect(Collectors.toList()).isEmpty())
                         .allMatch(b -> b);
-                return posResult;                
+                return posResult;
                 /* debug
                 if (posResult) {
                     return posResult;

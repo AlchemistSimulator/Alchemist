@@ -9,6 +9,7 @@
 package it.unibo.alchemist.model.implementations.conditions;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.math3.util.CombinatoricsUtils;
@@ -18,6 +19,7 @@ import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
+import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Node;
 /**
  *
@@ -56,8 +58,9 @@ public class BiomolPresentInEnv extends GenericMoleculePresent<Double> {
                     .sum();
         }
         double quantityInLayers = 0;
-        if (environment.getLayer(getBiomolecule()).isPresent()) {
-            quantityInLayers = environment.getLayer(getBiomolecule()).get().getValue(environment.getPosition(getNode()));
+        final Optional<Layer<Double>> layer = environment.getLayer(getBiomolecule());
+        if (layer.isPresent()) {
+            quantityInLayers = layer.get().getValue(environment.getPosition(getNode()));
         }
         final double totalQuantity = quantityInEnvNodes + quantityInLayers;
         if (totalQuantity < getQuantity()) {
@@ -99,8 +102,9 @@ public class BiomolPresentInEnv extends GenericMoleculePresent<Double> {
                     .sum();
         }
         double quantityInLayers = 0;
-        if (environment.getLayer(getBiomolecule()).isPresent()) {
-            quantityInLayers = environment.getLayer(getBiomolecule()).get().getValue(environment.getPosition(getNode()));
+        final Optional<Layer<Double>> layer = environment.getLayer(getBiomolecule());
+        if (layer.isPresent()) {
+            quantityInLayers = layer.get().getValue(environment.getPosition(getNode()));
         }
         final double totalQuantity = quantityInEnvNodes + quantityInLayers;
         return totalQuantity >= getQuantity();

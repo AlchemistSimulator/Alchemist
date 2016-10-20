@@ -62,8 +62,9 @@ public class TensionPresent extends AbstractCondition<Double> {
                     final double maxRN = thisNode.getMaxRadius();
                     final double minRN = thisNode.getRadius();
                     if (n instanceof CircularDeformableCell) {
-                        maxRn = ((CircularDeformableCell) n).getMaxRadius();
-                        minRn = ((CircularDeformableCell) n).getRadius();
+                        final CircularDeformableCell cell = (CircularDeformableCell) n;
+                        maxRn = cell.getMaxRadius();
+                        minRn = cell.getRadius();
                     } else {
                         maxRn = n.getRadius();
                         minRn = maxRn;

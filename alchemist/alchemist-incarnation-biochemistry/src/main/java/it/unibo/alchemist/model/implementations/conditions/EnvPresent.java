@@ -40,11 +40,7 @@ public class EnvPresent extends AbstractCondition<Double> {
 
     @Override
     public double getPropensityConditioning() {
-        return environment.getNeighborhood(getNode()).getNeighbors().stream()
-                .parallel()
-                .filter(n -> n instanceof EnvironmentNode)
-                .findAny()
-                .isPresent() ? 1d : 0d;
+        return isValid() ? 1d : 0d;
     }
 
     @Override

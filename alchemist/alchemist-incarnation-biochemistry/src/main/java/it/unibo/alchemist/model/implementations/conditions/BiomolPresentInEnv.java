@@ -50,19 +50,7 @@ public class BiomolPresentInEnv extends GenericMoleculePresent<Double> {
 
     @Override
     public double getPropensityConditioning() {
-        double quantityInEnvNodes = 0;
-        if (!getEnviromentNodesSurrounding().isEmpty()) {
-            quantityInEnvNodes = getEnviromentNodesSurrounding().stream()
-                    .parallel()
-                    .mapToDouble(n -> n.getConcentration(getBiomolecule()))
-                    .sum();
-        }
-        double quantityInLayers = 0;
-        final Optional<Layer<Double>> layer = environment.getLayer(getBiomolecule());
-        if (layer.isPresent()) {
-            quantityInLayers = layer.get().getValue(environment.getPosition(getNode()));
-        }
-        final double totalQuantity = quantityInEnvNodes + quantityInLayers;
+        final double totalQuantity = getTotalQuantity();
         if (totalQuantity < getQuantity()) {
             return 0;
         }
@@ -94,6 +82,14 @@ public class BiomolPresentInEnv extends GenericMoleculePresent<Double> {
 
     @Override
     public boolean isValid() {
+        return getTotalQuantity() >= getQuantity();
+    }
+
+    private Biomolecule getBiomolecule() {
+        return (Biomolecule) getMolecule();
+    }
+
+    private double getTotalQuantity() {
         double quantityInEnvNodes = 0;
         if (!getEnviromentNodesSurrounding().isEmpty()) {
             quantityInEnvNodes = getEnviromentNodesSurrounding().stream()
@@ -106,12 +102,7 @@ public class BiomolPresentInEnv extends GenericMoleculePresent<Double> {
         if (layer.isPresent()) {
             quantityInLayers = layer.get().getValue(environment.getPosition(getNode()));
         }
-        final double totalQuantity = quantityInEnvNodes + quantityInLayers;
-        return totalQuantity >= getQuantity();
-    }
-
-    private Biomolecule getBiomolecule() {
-        return (Biomolecule) getMolecule();
+        return quantityInEnvNodes + quantityInLayers;
     }
 
 }

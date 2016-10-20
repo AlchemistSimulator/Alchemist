@@ -92,7 +92,7 @@ public class TensionPresent extends AbstractCondition<Double> {
                         ? Stream.of((CellWithCircularArea) n) 
                                 : Stream.empty())
                 .filter(n -> {
-                    final double maxDN = ((CircularDeformableCell) thisNode).getMaxRadius();
+                    final double maxDN =  thisNode.getMaxRadius();
                     if (n instanceof CircularDeformableCell) {
                         return env.getDistanceBetweenNodes(n, thisNode) < (maxDN + ((CircularDeformableCell) n).getMaxRadius());
                     } else {

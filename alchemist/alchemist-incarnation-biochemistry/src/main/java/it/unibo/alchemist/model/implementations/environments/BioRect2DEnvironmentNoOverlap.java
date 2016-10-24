@@ -1,13 +1,19 @@
 package it.unibo.alchemist.model.implementations.environments;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.stream.Stream;
 
+import org.apache.bcel.classfile.ClassFormatException;
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.lang.MathUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
+import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
 import it.unibo.alchemist.model.interfaces.CircularDeformableCell;
 import it.unibo.alchemist.model.interfaces.EnvironmentSupportingDeformableCells;
@@ -24,8 +30,9 @@ import it.unibo.alchemist.model.interfaces.Position;
 public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment implements EnvironmentSupportingDeformableCells {
 
     private static final long serialVersionUID = 1L;
-    private Optional<CellWithCircularArea> biggestCell = Optional.absent();
-    private Optional<CircularDeformableCell> biggestDeformableCell = Optional.absent();
+    private static final Logger L = LoggerFactory.getLogger(BioRect2DEnvironmentNoOverlap.class);
+    private Optional<CellWithCircularArea> biggestCellWithCircularArea = Optional.absent();
+    private Optional<CircularDeformableCell> biggestCircularDeformableCell = Optional.absent();
 
     /**
      * Returns an infinite BioRect2DEnviroment.
@@ -217,45 +224,86 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment implemen
         if (node instanceof CellWithCircularArea) {
             final CellWithCircularArea cell = (CellWithCircularArea) node;
             if (cell.getDiameter() > getMaxDiameterAmongCells()) {
-                biggestCell = Optional.of(cell); 
+                biggestCellWithCircularArea = Optional.of(cell); 
             }
         }
         if (node instanceof CircularDeformableCell) {
             final CircularDeformableCell cell = (CircularDeformableCell) node;
             if (cell.getMaxDiameter() > getMaxDiameterAmongDeformableCells()) {
-                biggestDeformableCell = Optional.of(cell); 
+                biggestCircularDeformableCell = Optional.of(cell); 
             }
         }
     }
 
     @Override
     protected void nodeRemoved(final Node<Double> node, final Neighborhood<Double> neighborhood) {
-        if (biggestCell.isPresent() && biggestCell.get().equals(node)) {
-            biggestCell = getNodes().stream()
-                    .parallel()
-                    .flatMap(n -> n instanceof CellWithCircularArea ? Stream.of((CellWithCircularArea) n) : Stream.empty())
-                    .max((c1, c2) -> Double.compare(c1.getDiameter(), c2.getDiameter()))
-                    .map(Optional::of)
-                    .orElse(Optional.absent());
-        }
-        if (biggestDeformableCell.isPresent() && biggestDeformableCell.get().equals(node)) {
-            biggestDeformableCell = getNodes().stream()
-                    .parallel()
-                    .flatMap(n -> n instanceof CircularDeformableCell ? Stream.of((CircularDeformableCell) n) : Stream.empty())
-                    .max((c1, c2) -> Double.compare(c1.getMaxDiameter(), c2.getMaxDiameter()))
-                    .map(Optional::of)
-                    .orElse(Optional.absent());
+        if (node instanceof CellWithCircularArea) {
+            if (biggestCircularDeformableCell.isPresent() && biggestCircularDeformableCell.get().equals(node)) {
+                biggestCircularDeformableCell = getBiggest(CircularDeformableCell.class);
+            }
+            if (biggestCellWithCircularArea.isPresent() && biggestCellWithCircularArea.get().equals(node)) {
+                biggestCellWithCircularArea = getBiggest(CellWithCircularArea.class);
+            }
         }
     }
 
+    private <C> Optional<C> getBiggest(final Class<C> cellClass) {
+        final boolean isDeformable;
+        if (cellClass.equals(CircularDeformableCell.class)) {
+            isDeformable = true;
+        } else if (cellClass.equals(CellWithCircularArea.class)) {
+            isDeformable = false;
+        } else {
+            throw new UnsupportedOperationException("Input type must be CellWithCircuolarShape or CircularDeformableCell");
+        }
+
+        return getNodes().stream()
+                .parallel()
+                .flatMap(n -> cellClass.isInstance(n) ? Stream.of(cellClass.cast(n)) : Stream.empty())
+                .max((c1, c2) -> {
+                    final Method diameterToCompare;
+                    try {
+                        if (isDeformable) {
+                            diameterToCompare = cellClass.getMethod("getMaxDiameter");
+                        } else {
+                            diameterToCompare = cellClass.getMethod("getDiameter");
+                        }
+                        if (diameterToCompare.getReturnType().equals(double.class)) {
+                            try {
+                                return Double.compare((double) diameterToCompare.invoke(c1), (double) diameterToCompare.invoke(c2));
+                            } catch (IllegalAccessException e) {
+                                L.error("Method not accessible");
+                                return 0;
+                            } catch (IllegalArgumentException e) {
+                                L.error("Wrong parameter types, or wrong parameters' number");
+                                return 0;
+                            } catch (InvocationTargetException e) {
+                                L.error("Invoked method throwed an exception");
+                                return 0;
+                            } catch (ExceptionInInitializerError e) {
+                                L.error("Initialization failed");
+                                return 0;
+                            }
+                        } else {
+                            throw new ClassFormatException("Return type of method " + diameterToCompare.getName() + " should be double");
+                        }
+                    } catch (NoSuchMethodException e) {
+                        L.error("Method " + (isDeformable ? "getMaxDiameter" : "getDiameter") + "not foung in class " + cellClass.getName());
+                        return 0;
+                    }
+                })
+                .map(Optional::of)
+                .orElse(Optional.absent());
+    }
+
     private double getMaxDiameterAmongCells() {
-        return biggestCell
+        return biggestCellWithCircularArea
                 .transform(n -> n.getDiameter())
                 .or(0d);
     }
     @Override
     public double getMaxDiameterAmongDeformableCells() {
-        return biggestDeformableCell
+        return biggestCircularDeformableCell
                 .transform(n -> n.getMaxDiameter())
                 .or(0d);
     }

@@ -51,7 +51,7 @@ public class TensionPresent extends AbstractCondition<Double> {
     @Override
     public double getPropensityConditioning() {
         final CircularDeformableCell thisNode = (CircularDeformableCell) getNode();
-        return env.getNodesWithinRange(thisNode, env.getMaxDiameterAmongDeformableCells()).stream()
+        return env.getNodesWithinRange(thisNode, env.getMaxDiameterAmongCircularDeformableCells()).stream()
                 //.parallel()
                 .flatMap(n -> n instanceof CellWithCircularArea 
                         ? Stream.of((CellWithCircularArea) n) 
@@ -86,7 +86,7 @@ public class TensionPresent extends AbstractCondition<Double> {
     @Override
     public boolean isValid() {
         final CircularDeformableCell thisNode = (CircularDeformableCell) getNode();
-        return env.getNodesWithinRange(thisNode, env.getMaxDiameterAmongDeformableCells()).stream()
+        return env.getNodesWithinRange(thisNode, env.getMaxDiameterAmongCircularDeformableCells()).stream()
                 .parallel()
                 .flatMap(n -> n instanceof CellWithCircularArea 
                         ? Stream.of((CellWithCircularArea) n) 

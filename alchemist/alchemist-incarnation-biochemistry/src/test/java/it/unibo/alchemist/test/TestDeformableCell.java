@@ -84,12 +84,12 @@ public class TestDeformableCell {
         env.addNode(cellNode2, new Continuous2DEuclidean(4, 4));
         env.addNode(cellNode3, new Continuous2DEuclidean(0, -4));
         env.addNode(cellNode4, new Continuous2DEuclidean(4, 0));
-        assertEquals(3d, ((EnvironmentSupportingDeformableCells) env).getMaxDiameterAmongDeformableCells(), 0.0000000000001);
+        assertEquals(3d, ((EnvironmentSupportingDeformableCells) env).getMaxDiameterAmongCircularDeformableCells(), 0.0000000000001);
         env.removeNode(cellNode1);
         env.removeNode(cellNode2);
         env.removeNode(cellNode3);
         env.removeNode(cellNode4);
-        assertEquals(0d, ((EnvironmentSupportingDeformableCells) env).getMaxDiameterAmongDeformableCells(), 0.0000000000001);
+        assertEquals(0d, ((EnvironmentSupportingDeformableCells) env).getMaxDiameterAmongCircularDeformableCells(), 0.0000000000001);
     }
     
     /**

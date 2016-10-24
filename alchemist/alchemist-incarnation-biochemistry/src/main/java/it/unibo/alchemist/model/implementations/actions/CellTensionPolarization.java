@@ -61,7 +61,7 @@ public class CellTensionPolarization extends AbstractAction<Double> {
         // transforming each node around in a vector (Position) 
         final List<Position> pushForces = env.getNodesWithinRange(
                 thisNode,
-                env.getMaxDiameterAmongDeformableCells()).stream()
+                env.getMaxDiameterAmongCircularDeformableCells()).stream()
                 .parallel()
                 .filter(n -> { // only cells overlapping this cell are selected
                     if (n instanceof CellWithCircularArea) {

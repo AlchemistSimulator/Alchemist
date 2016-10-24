@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
-import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
 import it.unibo.alchemist.model.interfaces.CircularDeformableCell;
 import it.unibo.alchemist.model.interfaces.EnvironmentSupportingDeformableCells;
@@ -58,7 +57,7 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment implemen
         if (isWithinLimits) {
             if (node instanceof CellWithCircularArea) {
                 final CellWithCircularArea thisNode = (CellWithCircularArea) node;
-                double range = getMaxDiameterAmongCells();
+                double range = getMaxDiameterAmongCellWithCircularShape();
                 if (thisNode.getDiameter() > range) {
                     range = thisNode.getDiameter();
                 }
@@ -95,7 +94,7 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment implemen
      */
     private Position findNearestFreePosition(final CellWithCircularArea nodeToMove, final Position originalPos, final Position requestedPos) {
         // get the maximum range depending by cellular shape
-        final double maxDiameter = getMaxDiameterAmongCells();
+        final double maxDiameter = getMaxDiameterAmongCellWithCircularShape();
         final double distanceToReq = originalPos.getDistanceTo(requestedPos);
         if (maxDiameter == 0d || distanceToReq == 0) {
             return requestedPos;
@@ -223,13 +222,13 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment implemen
         super.nodeAdded(node, position, neighborhood);
         if (node instanceof CellWithCircularArea) {
             final CellWithCircularArea cell = (CellWithCircularArea) node;
-            if (cell.getDiameter() > getMaxDiameterAmongCells()) {
+            if (cell.getDiameter() > getMaxDiameterAmongCellWithCircularShape()) {
                 biggestCellWithCircularArea = Optional.of(cell); 
             }
         }
         if (node instanceof CircularDeformableCell) {
             final CircularDeformableCell cell = (CircularDeformableCell) node;
-            if (cell.getMaxDiameter() > getMaxDiameterAmongDeformableCells()) {
+            if (cell.getMaxDiameter() > getMaxDiameterAmongCircularDeformableCells()) {
                 biggestCircularDeformableCell = Optional.of(cell); 
             }
         }
@@ -296,16 +295,18 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment implemen
                 .orElse(Optional.absent());
     }
 
-    private double getMaxDiameterAmongCells() {
-        return biggestCellWithCircularArea
-                .transform(n -> n.getDiameter())
-                .or(0d);
-    }
-    @Override
-    public double getMaxDiameterAmongDeformableCells() {
-        return biggestCircularDeformableCell
-                .transform(n -> n.getMaxDiameter())
-                .or(0d);
+    private double getMaxDiameterAmongCellWithCircularShape() {
+        return getDiameterFromCell(biggestCellWithCircularArea);
     }
 
-}
+    @Override
+    public double getMaxDiameterAmongCircularDeformableCells() {
+        return getDiameterFromCell(biggestCircularDeformableCell);
+    }
+
+    private double getDiameterFromCell(final Optional<? extends CellWithCircularArea> biggest) {
+        return biggest
+                .transform(n -> n instanceof CircularDeformableCell ? ((CircularDeformableCell) n).getMaxDiameter() : n.getDiameter())
+                .or(0d);
+    }
+        }

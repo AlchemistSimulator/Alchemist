@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.implementations.conditions;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -34,7 +34,7 @@ public class BiomolPresentInNeighbor extends AbstractNeighborCondition<Double> {
     private final Double conc;
     private final Environment<Double> environment;
     private double propensity;
-    private Map<Node<Double>, Double> neigh = new HashMap<>();
+    private Map<Node<Double>, Double> neigh = new LinkedHashMap<>();
 
     /**
      * 
@@ -85,7 +85,7 @@ public class BiomolPresentInNeighbor extends AbstractNeighborCondition<Double> {
         if (!neigh.isEmpty()) {
             propensity = neigh.values().stream().max((d1, d2) -> d1.compareTo(d2)).get();
         }
-        return new HashMap<>(neigh);
+        return new LinkedHashMap<>(neigh);
     }
 
     @Override

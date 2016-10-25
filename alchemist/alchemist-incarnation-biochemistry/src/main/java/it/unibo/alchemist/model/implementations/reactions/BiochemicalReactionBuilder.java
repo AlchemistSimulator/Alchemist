@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Deque;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -165,8 +165,8 @@ public class BiochemicalReactionBuilder {
         private final Reaction<Double> reaction;
         private final List<Condition<Double>> conditionList = new ArrayList<>(0);
         private final List<Action<Double>> actionList = new ArrayList<>(0);
-        private final Map<Biomolecule, Double> biomolConditionsInCell = new HashMap<>();
-        private final Map<Biomolecule, Double> biomolConditionsInNeighbor = new HashMap<>();
+        private final Map<Biomolecule, Double> biomolConditionsInCell = new LinkedHashMap<>();
+        private final Map<Biomolecule, Double> biomolConditionsInNeighbor = new LinkedHashMap<>();
         private final List<Junction> junctionList = new ArrayList<>();
         private boolean neighborActionPresent;
         private boolean envConditionPresent;
@@ -377,8 +377,8 @@ public class BiochemicalReactionBuilder {
         }
 
         private static Junction createJunction(final BiochemistrydslParser.JunctionContext ctx) {
-            final Map<Biomolecule, Double> currentNodeMolecules = new HashMap<>();
-            final Map<Biomolecule, Double> neighborNodeMolecules = new HashMap<>();
+            final Map<Biomolecule, Double> currentNodeMolecules = new LinkedHashMap<>();
+            final Map<Biomolecule, Double> neighborNodeMolecules = new LinkedHashMap<>();
             for (final BiomoleculeContext b : ctx.junctionLeft().biomolecule()) {
                 insertInMap(currentNodeMolecules, createBiomolecule(b), createConcentration(b));
             }

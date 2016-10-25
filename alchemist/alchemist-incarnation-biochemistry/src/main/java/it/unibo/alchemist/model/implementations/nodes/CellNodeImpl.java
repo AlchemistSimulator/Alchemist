@@ -10,21 +10,19 @@ a * Copyright (C) 2010-2016, Danilo Pianini and contributors
 package it.unibo.alchemist.model.implementations.nodes;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.math3.util.FastMath;
 
-import com.google.common.collect.MapMaker;
-
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
+import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Position;
 
@@ -35,8 +33,7 @@ public class CellNodeImpl extends DoubleNode implements CellNode, CellWithCircul
 
     private static final long serialVersionUID = 837704874534888283L;
 
-    private final Map<Junction, Map<CellNode, Integer>> junctions = new MapMaker()
-            .concurrencyLevel(2).makeMap();
+    private final Map<Junction, Map<CellNode, Integer>> junctions = new LinkedHashMap<>();
     private double diameter;
     private Position polarizationVersor;
 
@@ -110,8 +107,8 @@ public class CellNodeImpl extends DoubleNode implements CellNode, CellWithCircul
     @Override
     public Map<Junction, Map<CellNode, Integer>> getJunctions() {
         //return Collections.unmodifiableMap(junctions);
-        final Map<Junction, Map<CellNode, Integer>> ret = new HashMap<>();
-        junctions.entrySet().forEach(e -> ret.put(e.getKey(), new HashMap<>(e.getValue())));
+        final Map<Junction, Map<CellNode, Integer>> ret = new LinkedHashMap<>();
+        junctions.entrySet().forEach(e -> ret.put(e.getKey(), new LinkedHashMap<>(e.getValue())));
         return ret;
     }
 
@@ -126,7 +123,7 @@ public class CellNodeImpl extends DoubleNode implements CellNode, CellWithCircul
             }
             junctions.put(j, inner);
         } else {
-            final Map<CellNode, Integer> tmp = new HashMap<>(1);
+            final Map<CellNode, Integer> tmp = new LinkedHashMap<>(1);
             tmp.put(neighbor, 1);
             junctions.put(j, tmp);
         }

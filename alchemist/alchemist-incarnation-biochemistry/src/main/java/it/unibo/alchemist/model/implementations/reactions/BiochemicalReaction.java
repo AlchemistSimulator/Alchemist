@@ -12,7 +12,7 @@
 
 package it.unibo.alchemist.model.implementations.reactions;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,7 +34,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
 public class BiochemicalReaction extends ChemicalReaction<Double> {
 
     private static final long serialVersionUID = 3849210665619933894L;
-    private Map<Node<Double>, Double> validNeighbors = new HashMap<>(0);
+    private Map<Node<Double>, Double> validNeighbors = new LinkedHashMap<>(0);
     private final Node<Double> node;
     private final Environment<Double> environment;
     /*
@@ -47,7 +47,7 @@ public class BiochemicalReaction extends ChemicalReaction<Double> {
     private boolean neighborConditionsPresent;
 
     private static Map<Node<Double>, Double> intersectMap(final Map<Node<Double>, Double> map1, final Map<Node<Double>, Double> map2) {
-        final Map<Node<Double>, Double> ret = new HashMap<>();
+        final Map<Node<Double>, Double> ret = new LinkedHashMap<>();
         for (final Node<Double> n : map1.keySet()) {
             if (map2.containsKey(n)) {
                 ret.put(n, map1.get(n) + map2.get(n));

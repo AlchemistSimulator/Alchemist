@@ -93,11 +93,9 @@ public class CellNodeImpl extends DoubleNode implements CellNode, CellWithCircul
     public void addPolarization(final Position v) {
         final double[] tempCor = this.polarizationVersor.sum(v).getCartesianCoordinates();
         final double module = FastMath.sqrt(FastMath.pow(tempCor[0], 2) + FastMath.pow(tempCor[1], 2));
-        if (module != 0) {
-            this.polarizationVersor = new Continuous2DEuclidean(tempCor[0] / module, tempCor[1] / module); 
-        } else {
-            this.polarizationVersor = new Continuous2DEuclidean(0, 0);
-        }
+        this.polarizationVersor = module == 0 
+                ? new Continuous2DEuclidean(0, 0) 
+                        : new Continuous2DEuclidean(tempCor[0] / module, tempCor[1] / module);
     }
 
     @Override

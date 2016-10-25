@@ -23,6 +23,7 @@ import it.unibo.alchemist.model.interfaces.CircularDeformableCell;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentSupportingDeformableCells;
 import it.unibo.alchemist.model.interfaces.Incarnation;
+import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 
 /**
@@ -31,6 +32,37 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
  */
 public class TestDeformableCell {
 
+    private static final double PRECISION = 0.0000000000001;
+    private static final double XMIN = -10;
+    private static final double XMAX = 10;
+    private static final double YMIN = -10;
+    private static final double YMAX = 10;
+    private static final Position CELL_POS1_1 = new Continuous2DEuclidean(0, 0);
+    private static final Position CELL_POS1_2 = new Continuous2DEuclidean(0, 0.75);
+    private static final Position CELL_POS1_3 = new Continuous2DEuclidean(0, -1);
+    private static final Position CELL_POS1_4 = new Continuous2DEuclidean(0,  0);
+    private static final Position CELL_POS2_1 = new Continuous2DEuclidean(0, 0);
+    private static final Position CELL_POS2_2 = new Continuous2DEuclidean(4, 4);
+    private static final Position CELL_POS2_3 = new Continuous2DEuclidean(0, -4);
+    private static final Position CELL_POS2_4 = new Continuous2DEuclidean(4, 0);
+    private static final Position CELL_POS_TENSPRES1_1 = new Continuous2DEuclidean(0, 0);
+    private static final Position CELL_POS_TENSPRES1_2 = new Continuous2DEuclidean(0, 0.75);
+    private static final Position MOVE_TO_POS2_1 = new Continuous2DEuclidean(0, 1.25);
+    private static final Position MOVE_TO_POS2_2 = new Continuous2DEuclidean(0, 1.5);
+    private static final Position MOVE_TO_POS_TENSPOL1_1 = new Continuous2DEuclidean(0, 1.25);
+    private static final Position MOVE_TO_POS_TENSPOL1_2 = new Continuous2DEuclidean(0, 1.5);
+    private static final Position MOVE_TO_POS_TENSPOL2_3 = new Continuous2DEuclidean(0, -0.75);
+    private static final Position MOVE_TO_POS_TENSPOL2_1 = new Continuous2DEuclidean(0, 1.25);
+    private static final Position MOVE_TO_POS_TENSPOL2_2 = new Continuous2DEuclidean(0, 1.5);
+    private static final Position MOVE_TO_POS_TENSPOL3_1 = new Continuous2DEuclidean(-1.5, 1.5);
+    private static final Position MOVE_TO_POS_TENSPOL3_3 = new Continuous2DEuclidean(-1.5, -1.5);
+    private static final Position CELL_POS_TENSPOL4_1 = new Continuous2DEuclidean(1.5, 0);
+    private static final Position CELL_POS_TENSPOL5_1 = new Continuous2DEuclidean(1.75, 0);
+    private static final Position CELL_POS_TENSPOL6_1 = new Continuous2DEuclidean(-4, 0);
+    private static final Position CELL_POS_TENSPOL6_2 = new Continuous2DEuclidean(1.75, 0);
+    private static final Position CELL_POS_MOV1 = new Continuous2DEuclidean(0, 5.75);
+    private static final Position EXPECTED_POS_MOV1 = new Continuous2DEuclidean(0, 5);
+    private static final String CELL_TENSION_POLARIZATION = "[] --> [CellTensionPolarization()]";
     private Environment<Double> env;
     private CircularDeformableCell cellNode1;
     private CircularDeformableCell cellNode2;
@@ -46,8 +78,7 @@ public class TestDeformableCell {
      */
     @Before
     public void setUp() {
-        //CHECKSTYLE:OFF: MagicNumber
-        env = new BioRect2DEnvironmentNoOverlap(-10, 10, -10, 10);
+        env = new BioRect2DEnvironmentNoOverlap(XMIN, XMAX, YMIN, YMAX);
         env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.EuclideanDistance<>(2));
         cellNode1 = new CircularDeformableCellImpl(env, 1, 1); // max rigidity
         cellNode2 = new CircularDeformableCellImpl(env, 1, 0.5);
@@ -59,47 +90,44 @@ public class TestDeformableCell {
     }
 
     /**
-     * Testing if CircularDeformableCells are added correctly
+     * Testing if CircularDeformableCells are added correctly.
      */
     @Test
     public void testAddNode1() {
-        //CHECKSTYLE:OFF: MagicNumber
-        env.addNode(cellNode1, new Continuous2DEuclidean(0, 0));
-        env.addNode(cellNode2, new Continuous2DEuclidean(0, 0.75));
-        env.addNode(cellNode3, new Continuous2DEuclidean(0, -1));
-        env.addNode(cellNode4, new Continuous2DEuclidean(0,  0));
+        env.addNode(cellNode1, CELL_POS1_1);
+        env.addNode(cellNode2, CELL_POS1_2);
+        env.addNode(cellNode3, CELL_POS1_3);
+        env.addNode(cellNode4, CELL_POS1_4);
 
         assertNotNull("Position of cellNode2 = " + env.getPosition(cellNode2), env.getPosition(cellNode2));
         assertNotNull("Position of cellNode3 = " + env.getPosition(cellNode3), env.getPosition(cellNode3));
         assertNull("Position of cellNode4 = " + env.getPosition(cellNode3), env.getPosition(cellNode4));
     }
-    
+
     /**
-     * Testing if Environment updates correctly after node's remotion
+     * Testing if Environment updates correctly after node's remotion.
      */
     @Test
     public void testAddAndRemoveNode() {
-        //CHECKSTYLE:OFF: MagicNumber
-        env.addNode(cellNode1, new Continuous2DEuclidean(0, 0));
-        env.addNode(cellNode2, new Continuous2DEuclidean(4, 4));
-        env.addNode(cellNode3, new Continuous2DEuclidean(0, -4));
-        env.addNode(cellNode4, new Continuous2DEuclidean(4, 0));
-        assertEquals(3d, ((EnvironmentSupportingDeformableCells) env).getMaxDiameterAmongCircularDeformableCells(), 0.0000000000001);
+        env.addNode(cellNode1, CELL_POS2_1);
+        env.addNode(cellNode2, CELL_POS2_2);
+        env.addNode(cellNode3, CELL_POS2_3);
+        env.addNode(cellNode4, CELL_POS2_4);
+        assertEquals(3d, ((EnvironmentSupportingDeformableCells) env).getMaxDiameterAmongCircularDeformableCells(), PRECISION);
         env.removeNode(cellNode1);
         env.removeNode(cellNode2);
         env.removeNode(cellNode3);
         env.removeNode(cellNode4);
-        assertEquals(0d, ((EnvironmentSupportingDeformableCells) env).getMaxDiameterAmongCircularDeformableCells(), 0.0000000000001);
+        assertEquals(0d, ((EnvironmentSupportingDeformableCells) env).getMaxDiameterAmongCircularDeformableCells(), PRECISION);
     }
-    
+
     /**
-     * Testing {@link TensionPresent}
+     * Testing {@link TensionPresent}.
      */
     @Test
     public void testTensionPresent1() {
-        //CHECKSTYLE:OFF: MagicNumber
-        env.addNode(cellNode1, new Continuous2DEuclidean(0, 0));
-        env.addNode(cellNode2, new Continuous2DEuclidean(0, 0.75));
+        env.addNode(cellNode1, CELL_POS_TENSPRES1_1);
+        env.addNode(cellNode2, CELL_POS_TENSPRES1_2);
         cellNode1.addReaction(inc.createReaction(rand, env, cellNode1, time, "[] --> [A] if TensionPresent()"));
         assertFalse(cellNode1.getReactions().isEmpty());
         assertTrue(cellNode1.getReactions().stream()
@@ -110,7 +138,7 @@ public class TestDeformableCell {
                 .findFirst()
                 .get()
                 .getConditions().get(0).getPropensityConditioning(), 
-                0.0000000001);
+                PRECISION);
         env.moveNodeToPosition(cellNode2, new Continuous2DEuclidean(0, 4));
         assertFalse(cellNode1.getReactions().stream()
                 .findFirst()
@@ -120,15 +148,14 @@ public class TestDeformableCell {
                 .findFirst()
                 .get()
                 .getConditions().get(0).getPropensityConditioning(), 
-                0.0000000001);
+                PRECISION);
     }
-    
+
     /**
-     * Testing {@link TensionPresent}
+     * Testing {@link TensionPresent}.
      */
     @Test
     public void testTensionPresent2() {
-        //CHECKSTYLE:OFF: MagicNumber
         env.addNode(cellNode1, new Continuous2DEuclidean(0, 0));
         env.addNode(cellNode3, new Continuous2DEuclidean(0, 1));
         cellNode1.addReaction(inc.createReaction(rand, env, cellNode1, time, "[] --> [A] if TensionPresent()"));
@@ -141,8 +168,8 @@ public class TestDeformableCell {
                 .findFirst()
                 .get()
                 .getConditions().get(0).getPropensityConditioning(), 
-                0.0000000001);
-        env.moveNodeToPosition(cellNode3, new Continuous2DEuclidean(0, 1.25));
+                PRECISION);
+        env.moveNodeToPosition(cellNode3, MOVE_TO_POS2_1);
         assertTrue(cellNode1.getReactions().stream()
                 .findFirst()
                 .get()
@@ -151,8 +178,8 @@ public class TestDeformableCell {
                 .findFirst()
                 .get()
                 .getConditions().get(0).getPropensityConditioning(), 
-                0.0000000001);
-        env.moveNodeToPosition(cellNode3, new Continuous2DEuclidean(0, 1.5));
+                PRECISION);
+        env.moveNodeToPosition(cellNode3, MOVE_TO_POS2_2);
         assertFalse(cellNode1.getReactions().stream()
                 .findFirst()
                 .get()
@@ -161,104 +188,100 @@ public class TestDeformableCell {
                 .findFirst()
                 .get()
                 .getConditions().get(0).getPropensityConditioning(), 
-                0.0000000001);
+                PRECISION);
     }
-    
+
     /**
-     * Testing {@link CellTensionPolarization}
+     * Testing {@link CellTensionPolarization}.
      */
     @Test
     public void testTensionPolarization1() {
-        //CHECKSTYLE:OFF: MagicNumber
         env.addNode(cellNode1, new Continuous2DEuclidean(0, 0));
         env.addNode(cellNode3, new Continuous2DEuclidean(0, 1));
-        cellNode1.addReaction(inc.createReaction(rand, env, cellNode1, time, "[] --> [CellTensionPolarization()]")); //NOPMD
+        cellNode1.addReaction(inc.createReaction(rand, env, cellNode1, time, CELL_TENSION_POLARIZATION)); 
         assertFalse(cellNode1.getReactions().isEmpty());
         cellNode1.getReactions().stream()
         .findFirst()
         .get().execute();
         assertEquals(new Continuous2DEuclidean(0, -1), cellNode1.getPolarizationVersor());
-        env.moveNodeToPosition(cellNode3, new Continuous2DEuclidean(0, 1.25));
+        env.moveNodeToPosition(cellNode3, MOVE_TO_POS_TENSPOL1_1);
         cellNode1.setPolarization(new Continuous2DEuclidean(0, 0));
         cellNode1.getReactions().stream()
         .findFirst()
         .get().execute();
         assertEquals(new Continuous2DEuclidean(0, -1), cellNode1.getPolarizationVersor());
-        env.moveNodeToPosition(cellNode3, new Continuous2DEuclidean(0, 1.5));
+        env.moveNodeToPosition(cellNode3, MOVE_TO_POS_TENSPOL1_2);
         cellNode1.setPolarization(new Continuous2DEuclidean(0, 0));
         cellNode1.getReactions().stream()
         .findFirst()
         .get().execute();
         assertEquals(new Continuous2DEuclidean(0, 0), cellNode1.getPolarizationVersor());
     }
-    
+
     /**
-     * Testing {@link CellTensionPolarization}
+     * Testing {@link CellTensionPolarization}.
      */
     @Test
     public void testTensionPolarization2() {
-        //CHECKSTYLE:OFF: MagicNumber
-        env.addNode(cellNode1, new Continuous2DEuclidean(0, 0)); // 1 1
-        env.addNode(cellNode3, new Continuous2DEuclidean(0, 1)); // 2 1
-        env.addNode(cellNode2, new Continuous2DEuclidean(0, -0.75)); // 1 0.5
-        cellNode1.addReaction(inc.createReaction(rand, env, cellNode1, time, "[] --> [CellTensionPolarization()]"));
+        env.addNode(cellNode1, new Continuous2DEuclidean(0, 0)); 
+        env.addNode(cellNode3, new Continuous2DEuclidean(0, 1)); 
+        env.addNode(cellNode2, MOVE_TO_POS_TENSPOL2_3);
+        cellNode1.addReaction(inc.createReaction(rand, env, cellNode1, time, CELL_TENSION_POLARIZATION));
         assertFalse(cellNode1.getReactions().isEmpty());
         cellNode1.getReactions().stream()
         .findFirst()
         .get().execute();
         assertEquals(new Continuous2DEuclidean(0, 0), cellNode1.getPolarizationVersor());
-        env.moveNodeToPosition(cellNode3, new Continuous2DEuclidean(0, 1.25));
+        env.moveNodeToPosition(cellNode3, MOVE_TO_POS_TENSPOL2_1);
         cellNode1.getReactions().stream()
         .findFirst()
         .get().execute();
         assertEquals(new Continuous2DEuclidean(0, 1), cellNode1.getPolarizationVersor());
-        env.moveNodeToPosition(cellNode3, new Continuous2DEuclidean(0, 1.5));
+        env.moveNodeToPosition(cellNode3, MOVE_TO_POS_TENSPOL2_2);
         cellNode1.getReactions().stream()
         .findFirst()
         .get().execute();
         assertEquals(new Continuous2DEuclidean(0, 1), cellNode1.getPolarizationVersor());
     }
-    
+
     /**
-     * Testing {@link CellTensionPolarization}
+     * Testing {@link CellTensionPolarization}.
      */
     @Test
     public void testTensionPolarization3() {
-        //CHECKSTYLE:OFF: MagicNumber
         env.addNode(cellNode1, new Continuous2DEuclidean(0, 0));
         env.addNode(cellNode3, new Continuous2DEuclidean(-1, 1));
         env.addNode(cellNode5, new Continuous2DEuclidean(-1, -1));
-        cellNode1.addReaction(inc.createReaction(rand, env, cellNode1, time, "[] --> [CellTensionPolarization()]"));
+        cellNode1.addReaction(inc.createReaction(rand, env, cellNode1, time, CELL_TENSION_POLARIZATION));
         assertFalse(cellNode1.getReactions().isEmpty());
         cellNode1.getReactions().stream()
         .findFirst()
         .get().execute();
         assertEquals(new Continuous2DEuclidean(1, 0), cellNode1.getPolarizationVersor());
-        env.moveNodeToPosition(cellNode3, new Continuous2DEuclidean(-1.5, 1.5));
+        env.moveNodeToPosition(cellNode3, MOVE_TO_POS_TENSPOL3_1);
         cellNode1.setPolarization(new Continuous2DEuclidean(0, 0));
         cellNode1.getReactions().stream()
         .findFirst()
         .get().execute();
-        assertEquals(cellNode1.getPolarizationVersor().getCoordinate(0), cellNode1.getPolarizationVersor().getCoordinate(0), 0.0001);
+        assertEquals(cellNode1.getPolarizationVersor().getCoordinate(0), cellNode1.getPolarizationVersor().getCoordinate(0), PRECISION);
         env.moveNodeToPosition(cellNode3, new Continuous2DEuclidean(-1, 1));
-        env.moveNodeToPosition(cellNode5, new Continuous2DEuclidean(-1.5, -1.5));
+        env.moveNodeToPosition(cellNode5, MOVE_TO_POS_TENSPOL3_3);
         cellNode1.setPolarization(new Continuous2DEuclidean(0, 0));
         cellNode1.getReactions().stream()
         .findFirst()
         .get().execute();
-        assertEquals(cellNode1.getPolarizationVersor().getCoordinate(0), -cellNode1.getPolarizationVersor().getCoordinate(1), 0.0001);
+        assertEquals(cellNode1.getPolarizationVersor().getCoordinate(0), -cellNode1.getPolarizationVersor().getCoordinate(1), PRECISION);
     }
 
     /**
-     * Testing {@link CellTensionPolarization}
+     * Testing {@link CellTensionPolarization}.
      */
     @Test
     public void testTensionPolarization4() {
-        //CHECKSTYLE:OFF: MagicNumber
         env.addNode(cellNode3, new Continuous2DEuclidean(0, 0));
         env.addNode(cellNode5, new Continuous2DEuclidean(-1, 0));
-        env.addNode(cellNode2, new Continuous2DEuclidean(1.5, 0));
-        cellNode3.addReaction(inc.createReaction(rand, env, cellNode3, time, "[] --> [CellTensionPolarization()]"));
+        env.addNode(cellNode2, CELL_POS_TENSPOL4_1);
+        cellNode3.addReaction(inc.createReaction(rand, env, cellNode3, time, CELL_TENSION_POLARIZATION));
         assertFalse(cellNode3.getReactions().isEmpty());
         cellNode3.getReactions().stream()
         .findFirst()
@@ -267,50 +290,45 @@ public class TestDeformableCell {
     }
 
     /**
-     * Testing {@link CellTensionPolarization}
+     * Testing {@link CellTensionPolarization}.
      */
     @Test
     public void testTensionPolarization5() {
-        //CHECKSTYLE:OFF: MagicNumber
         env.addNode(cellNode3, new Continuous2DEuclidean(0, 0));
         env.addNode(cellNode5, new Continuous2DEuclidean(-1, 0));
-        env.addNode(cellNode2, new Continuous2DEuclidean(1.75, 0));
-        cellNode3.addReaction(inc.createReaction(rand, env, cellNode3, time, "[] --> [CellTensionPolarization()]"));
+        env.addNode(cellNode2, CELL_POS_TENSPOL5_1);
+        cellNode3.addReaction(inc.createReaction(rand, env, cellNode3, time, CELL_TENSION_POLARIZATION));
         assertFalse(cellNode3.getReactions().isEmpty());
         cellNode3.getReactions().stream()
         .findFirst()
         .get().execute();
         assertEquals(new Continuous2DEuclidean(1, 0), cellNode3.getPolarizationVersor());
     }
-    
+
     /**
-     * Testing {@link CellTensionPolarization}
+     * Testing {@link CellTensionPolarization}.
      */
     @Test
     public void testTensionPolarization6() {
-        //CHECKSTYLE:OFF: MagicNumber
         env.addNode(cellNode3, new Continuous2DEuclidean(0, 0));
-        env.addNode(cellNode4, new Continuous2DEuclidean(-4, 0));
-        env.addNode(cellNode2, new Continuous2DEuclidean(1.75, 0));
-        cellNode3.addReaction(inc.createReaction(rand, env, cellNode3, time, "[] --> [CellTensionPolarization()]"));
+        env.addNode(cellNode4, CELL_POS_TENSPOL6_1);
+        env.addNode(cellNode2, CELL_POS_TENSPOL6_2);
+        cellNode3.addReaction(inc.createReaction(rand, env, cellNode3, time, CELL_TENSION_POLARIZATION));
         assertFalse(cellNode3.getReactions().isEmpty());
         cellNode3.getReactions().stream()
         .findFirst()
         .get().execute();
         assertEquals(new Continuous2DEuclidean(0, 0), cellNode3.getPolarizationVersor());
     }
-    
+
     /**
      * Test if cell, in motion, stops when meets another cell.
      */
     @Test
     public void testMoveNode1() {
-        //CHECKSTYLE:OFF: MagicNumber
         env.addNode(cellNode1, new Continuous2DEuclidean(0, 0));
-        env.addNode(cellNode2, new Continuous2DEuclidean(0, 5.75));
+        env.addNode(cellNode2, CELL_POS_MOV1);
         env.moveNodeToPosition(cellNode1, new Continuous2DEuclidean(0, 10));
-
-        assertEquals("Position of cellNode1 = " + env.getPosition(cellNode1), env.getPosition(cellNode1), new Continuous2DEuclidean(0, 5));
+        assertEquals("Position of cellNode1 = " + env.getPosition(cellNode1), env.getPosition(cellNode1), EXPECTED_POS_MOV1);
     }
-    
 }

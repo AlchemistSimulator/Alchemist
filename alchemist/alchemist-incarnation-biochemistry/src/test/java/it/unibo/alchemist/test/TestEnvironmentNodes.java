@@ -27,14 +27,17 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * Test implementation of extra-cellular environment  created with EnvironmentNodes.
  *
  */
-// CHECKSTYLE:OFF: MagicNumber
+
 public class TestEnvironmentNodes {
 
+    private static final double PRECISION = 0.000000000001;
+    private static final String CON_A_IN_CELL = "conAInCell = ";
     /**
      * test a simple reaction "[A] --> [A in env]".
      */
@@ -55,7 +58,7 @@ public class TestEnvironmentNodes {
         final Simulation<Double> sim = new Engine<>(env, 10000);
         sim.addCommand(new Engine.StateCommand<Double>().run().build());
         sim.run();
-        assertEquals(envNode.getConcentration(a), 1000, 0.000000000001);
+        assertEquals(envNode.getConcentration(a), 1000, PRECISION);
     }
 
     /**
@@ -82,7 +85,7 @@ public class TestEnvironmentNodes {
     }
 
     /**
-     * Test if env nodes are selected randomly
+     * Test if env nodes are selected randomly.
      */
     @Test
     public void test3() {
@@ -115,7 +118,7 @@ public class TestEnvironmentNodes {
     }
 
     /**
-     * Test if env nodes with same concentration are selected randomly
+     * Test if env nodes with same concentration are selected randomly.
      */
     @Test
     public void test4() {
@@ -148,7 +151,7 @@ public class TestEnvironmentNodes {
     }
  
     /**
-     * Test if env nodes with same concentration are selected randomly
+     * Test if env nodes with same concentration are selected randomly.
      */
     @Test
     public void test5() {
@@ -171,17 +174,21 @@ public class TestEnvironmentNodes {
                 ));
         cellNode.setConcentration(a, 1000.0);
         env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.EuclideanDistance<>(1));
+        final Position pos1 = new Continuous2DEuclidean(0, -0.75);
+        final Position pos2 = new Continuous2DEuclidean(0, 0.75);
+        final Position pos3 = new Continuous2DEuclidean(0, 1.5);
+        final Position pos4 = new Continuous2DEuclidean(0, -1.5);
         env.addNode(cellNode, new Continuous2DEuclidean(0, 0));
-        env.addNode(envNode1, new Continuous2DEuclidean(0, -0.75));
-        env.addNode(envNode2, new Continuous2DEuclidean(0, 0.75));
-        env.addNode(envNode3, new Continuous2DEuclidean(0, 1.5));
-        env.addNode(envNode4, new Continuous2DEuclidean(0, -1.5));
+        env.addNode(envNode1, pos1);
+        env.addNode(envNode2, pos2);
+        env.addNode(envNode3, pos3);
+        env.addNode(envNode4, pos4);
         final Simulation<Double> sim = new Engine<>(env, 10000);
         sim.addCommand(new Engine.StateCommand<Double>().run().build());
         sim.run();
         assertTrue(envNode3.getConcentration(a) != 0 && envNode4.getConcentration(a) != 0);
     }
-    
+
     /**
      * test a simple reaction "[A] --> [A in env]".
      */
@@ -200,7 +207,7 @@ public class TestEnvironmentNodes {
         final Simulation<Double> sim = new Engine<>(env, 10000);
         sim.addCommand(new Engine.StateCommand<Double>().run().build());
         sim.run();
-        assertEquals(cellNode.getConcentration(a), 1000, 0.000000000001);
+        assertEquals(cellNode.getConcentration(a), 1000, PRECISION);
     }
 
     /**
@@ -237,7 +244,7 @@ public class TestEnvironmentNodes {
                         env.getPosition(n2).getDistanceTo(env.getPosition(center))
                         ))
                 .get().getConcentration(new Biomolecule("A"));
-        assertEquals(conAInNearest, 1000, 0.00000000001);
+        assertEquals(conAInNearest, 1000, PRECISION);
     }
 
     /**
@@ -258,8 +265,8 @@ public class TestEnvironmentNodes {
                 .findAny()
                 .get()
                 .getConcentration(new Biomolecule("A"));
-        assertEquals("conAInCell = " + conAInCell, conAInCell, 1000, 0.0000000000001); //NOPMD
-        assertEquals(conAInEnv, 0, 0.000000000001);
+        assertEquals(CON_A_IN_CELL + conAInCell, conAInCell, 1000, PRECISION); 
+        assertEquals(conAInEnv, 0, PRECISION);
     }
 
     /**
@@ -280,7 +287,7 @@ public class TestEnvironmentNodes {
                 .findAny()
                 .get()
                 .getConcentration(new Biomolecule("A"));
-        assertTrue("conAInCell = " + conAInCell + " ; conAInEnv = " + conAInEnv, conAInCell == 0 && conAInEnv == 0);
+        assertTrue(CON_A_IN_CELL + conAInCell + " ; conAInEnv = " + conAInEnv, conAInCell == 0 && conAInEnv == 0);
     }
 
     /**
@@ -330,7 +337,9 @@ public class TestEnvironmentNodes {
                 .filter(n -> n instanceof EnvironmentNode)
                 .mapToDouble(n -> n.getConcentration(new Biomolecule("A")))
                 .sum();
-        assertTrue("conAInCell = " + conAInCell + " ; conAInEnv = " + conAInEnv, conAInCell == 2000 && conAInEnv == 0);
+        final double expectedConcInCell = 2000;
+        final double expectedCOncInEnv = 0;
+        assertTrue(CON_A_IN_CELL + conAInCell + " ; conAInEnv = " + conAInEnv, conAInCell == expectedConcInCell && conAInEnv == expectedCOncInEnv);
     }
 
     /**
@@ -345,7 +354,7 @@ public class TestEnvironmentNodes {
                 .findAny()
                 .get()
                 .getConcentration(new Biomolecule("A"));
-        assertEquals("conAInCell = " + conAInCell, conAInCell, 1000, 0.000000000001);
+        assertEquals(CON_A_IN_CELL + conAInCell, conAInCell, 1000, PRECISION);
     }
 
     private static <T> Environment<T> testNoVar(final String resource) {

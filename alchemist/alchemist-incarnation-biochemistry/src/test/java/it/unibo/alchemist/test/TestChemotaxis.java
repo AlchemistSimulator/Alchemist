@@ -20,6 +20,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
+import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 
@@ -29,7 +30,9 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
 public class TestChemotaxis {
 
     private static final double CONCENTRATION1 = 5;
-    private static final String CHEMIOTACTIC_POLARIZATION_REACTION = "[] --> [ChemiotacticPolarization(A, up)]";
+    private static final double CONCENTRATION2 = 10;
+    private static final double CONCENTRATION3 = 1;
+    private static final String CHEMIOTACTIC_POLARIZATION_REACTION = "[] --> [ChemotacticPolarization(A, up)]";
     private static final String POLARIZATION_IS = "the polarization is = ";
     private static final String CELL_IS_IN_POS = "the cell is in pos = ";
     private static final double PRECISION = 0.000000000000001;
@@ -65,13 +68,18 @@ public class TestChemotaxis {
      * Testing if cell is polarized correctly.
      */
     @Test
-    public void testChemiotacticPolarization1() {
-        env.addNode(envNode1, new Continuous2DEuclidean(0, 0));
-        env.addNode(envNode2, new Continuous2DEuclidean(1, 0));
-        env.addNode(envNode3, new Continuous2DEuclidean(0, 1));
-        env.addNode(envNode4, new Continuous2DEuclidean(1, 1));
-        env.addNode(cellNode1, new Continuous2DEuclidean(0.5, 0.5));
-        envNode4.setConcentration(biomolA, 10d);
+    public void testChemotacticPolarization1() {
+        final Position p1 =  new Continuous2DEuclidean(0, 0);
+        final Position p2 = new Continuous2DEuclidean(1, 0);
+        final Position p3 =  new Continuous2DEuclidean(0, 1);
+        final Position p4 =  new Continuous2DEuclidean(1, 1);
+        final Position p5 =  new Continuous2DEuclidean(0.5, 0.5);
+        env.addNode(envNode1, p1);
+        env.addNode(envNode2, p2);
+        env.addNode(envNode3, p3);
+        env.addNode(envNode4, p4);
+        env.addNode(cellNode1, p5);
+        envNode4.setConcentration(biomolA, CONCENTRATION2);
         envNode2.setConcentration(biomolA, CONCENTRATION1);
         envNode3.setConcentration(biomolA, CONCENTRATION1);
         final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION); 
@@ -92,13 +100,18 @@ public class TestChemotaxis {
      * Testing if cell is polarized correctly.
      */
     @Test
-    public void testChemiotacticPolarization2() {
-        env.addNode(envNode1, new Continuous2DEuclidean(0, 0));
-        env.addNode(envNode2, new Continuous2DEuclidean(1, 0));
-        env.addNode(envNode3, new Continuous2DEuclidean(0, 1));
-        env.addNode(envNode4, new Continuous2DEuclidean(3, 3));
-        env.addNode(cellNode1, new Continuous2DEuclidean(0.5, 0.5));
-        envNode4.setConcentration(biomolA, 10d);
+    public void testChemotacticPolarization2() {
+        final Position p1 =  new Continuous2DEuclidean(0, 0);
+        final Position p2 = new Continuous2DEuclidean(1, 0);
+        final Position p3 =  new Continuous2DEuclidean(0, 1);
+        final Position p4 =  new Continuous2DEuclidean(3, 3);
+        final Position p5 =  new Continuous2DEuclidean(0.5, 0.5);
+        env.addNode(envNode1, p1);
+        env.addNode(envNode2, p2);
+        env.addNode(envNode3, p3);
+        env.addNode(envNode4, p4);
+        env.addNode(cellNode1, p5);
+        envNode4.setConcentration(biomolA, CONCENTRATION2);
         envNode2.setConcentration(biomolA, CONCENTRATION1);
         envNode3.setConcentration(biomolA, CONCENTRATION1);
         final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
@@ -119,12 +132,17 @@ public class TestChemotaxis {
      * Testing if cell is polarized correctly.
      */
     @Test
-    public void testChemiotacticPolarization3() {
-        env.addNode(envNode1, new Continuous2DEuclidean(0, 0));
-        env.addNode(envNode2, new Continuous2DEuclidean(1, 0));
-        env.addNode(envNode3, new Continuous2DEuclidean(0, 1));
-        env.addNode(envNode4, new Continuous2DEuclidean(1, 1));
-        env.addNode(cellNode1, new Continuous2DEuclidean(0.5, 0.5));
+    public void testChemotacticPolarization3() {
+        final Position p1 =  new Continuous2DEuclidean(0, 0);
+        final Position p2 = new Continuous2DEuclidean(1, 0);
+        final Position p3 =  new Continuous2DEuclidean(0, 1);
+        final Position p4 =  new Continuous2DEuclidean(1, 1);
+        final Position p5 =  new Continuous2DEuclidean(0.5, 0.5);
+        env.addNode(envNode1, p1);
+        env.addNode(envNode2, p2);
+        env.addNode(envNode3, p3);
+        env.addNode(envNode4, p4);
+        env.addNode(cellNode1, p5);
         final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
         r.execute();
         assertEquals(POLARIZATION_IS + cellNode1.getPolarizationVersor(), 
@@ -143,8 +161,9 @@ public class TestChemotaxis {
      * Testing if cell is polarized correctly.
      */
     @Test
-    public void testChemiotacticPolarization4() {
-        env.addNode(cellNode1, new Continuous2DEuclidean(0.5, 0.5));
+    public void testChemotacticPolarization4() {
+        final Position p1 = new Continuous2DEuclidean(0.5, 0.5);
+        env.addNode(cellNode1, p1);
         final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
         r.execute();
         assertEquals(POLARIZATION_IS + cellNode1.getPolarizationVersor(), 
@@ -163,16 +182,19 @@ public class TestChemotaxis {
      * Testing if cell is polarized correctly.
      */
     @Test
-    public void testChemiotacticPolarization5() {
-        env.addNode(cellNode1, new Continuous2DEuclidean(0, 0));
+    public void testChemotacticPolarization5() {
+        final Position p1 = new Continuous2DEuclidean(0, 0);
+        final Position p2 = new Continuous2DEuclidean(1, 0);
+        final Position p3 = new Continuous2DEuclidean(-1, 0);
+        env.addNode(cellNode1, p1);
         final Molecule a = new Biomolecule("A");
         final Molecule b = new Biomolecule("B");
-        envNode1.setConcentration(a, 1d);
-        envNode2.setConcentration(b, 1d);
-        env.addNode(envNode1, new Continuous2DEuclidean(1, 0));
-        env.addNode(envNode2, new Continuous2DEuclidean(-1, 0));
+        envNode1.setConcentration(a, CONCENTRATION3);
+        envNode2.setConcentration(b, CONCENTRATION3);
+        env.addNode(envNode1, p2);
+        env.addNode(envNode2, p3);
         final Reaction<Double> r1 = inc.createReaction(rand, env, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
-        final Reaction<Double> r2 = inc.createReaction(rand, env, cellNode1, time, "[] --> [ChemiotacticPolarization(B, up)]");
+        final Reaction<Double> r2 = inc.createReaction(rand, env, cellNode1, time, "[] --> [ChemotacticPolarization(B, up)]");
         r1.execute();
         r2.execute();
         assertEquals(POLARIZATION_IS + cellNode1.getPolarizationVersor(), 
@@ -191,13 +213,18 @@ public class TestChemotaxis {
      * Testing if cell moves according to the given polarization.
      */
     @Test
-    public void testChemiotacticMove1() {
-        env.addNode(envNode1, new Continuous2DEuclidean(0, 0));
-        env.addNode(envNode2, new Continuous2DEuclidean(1, 0));
-        env.addNode(envNode3, new Continuous2DEuclidean(0, 1));
-        env.addNode(envNode4, new Continuous2DEuclidean(1, 1));
-        env.addNode(cellNode1, new Continuous2DEuclidean(0.5, 0.5));
-        envNode4.setConcentration(biomolA, 10d);
+    public void testChemotacticMove1() {
+        final Position p1 = new Continuous2DEuclidean(0, 0);
+        final Position p2 = new Continuous2DEuclidean(1, 0);
+        final Position p3 = new Continuous2DEuclidean(0, 1);
+        final Position p4 = new Continuous2DEuclidean(1, 1);
+        final Position p5 = new Continuous2DEuclidean(0.5, 0.5);
+        env.addNode(envNode1, p1);
+        env.addNode(envNode2, p2);
+        env.addNode(envNode3, p3);
+        env.addNode(envNode4, p4);
+        env.addNode(cellNode1, p5);
+        envNode4.setConcentration(biomolA, CONCENTRATION2);
         envNode2.setConcentration(biomolA, CONCENTRATION1);
         envNode3.setConcentration(biomolA, CONCENTRATION1);
         final Reaction<Double> r1 = inc.createReaction(rand, env, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
@@ -214,13 +241,18 @@ public class TestChemotaxis {
      * Testing if cell moves according to the given polarization.
      */
     @Test
-    public void testChemiotacticMove2() {
-        env.addNode(envNode1, new Continuous2DEuclidean(0, 0));
-        env.addNode(envNode2, new Continuous2DEuclidean(1, 0));
-        env.addNode(envNode3, new Continuous2DEuclidean(0, 1));
-        env.addNode(envNode4, new Continuous2DEuclidean(1, 1));
-        env.addNode(cellNode1, new Continuous2DEuclidean(1, 1));
-        envNode4.setConcentration(biomolA, 10d);
+    public void testChemotacticMove2() {
+        final Position p1 = new Continuous2DEuclidean(0, 0);
+        final Position p2 = new Continuous2DEuclidean(1, 0);
+        final Position p3 = new Continuous2DEuclidean(0, 1);
+        final Position p4 = new Continuous2DEuclidean(1, 1);
+        final Position p5 = new Continuous2DEuclidean(1, 1);
+        env.addNode(envNode1, p1);
+        env.addNode(envNode2, p2);
+        env.addNode(envNode3, p3);
+        env.addNode(envNode4, p4);
+        env.addNode(cellNode1, p5);
+        envNode4.setConcentration(biomolA, CONCENTRATION2);
         envNode2.setConcentration(biomolA, CONCENTRATION1);
         envNode3.setConcentration(biomolA, CONCENTRATION1);
         final Reaction<Double> r1 = inc.createReaction(rand, env, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
@@ -243,16 +275,21 @@ public class TestChemotaxis {
      * Testing if cell moves according to the given polarization.
      */
     @Test
-    public void testChemiotacticMove3() {
-        env.addNode(envNode1, new Continuous2DEuclidean(0, 0));
-        env.addNode(envNode2, new Continuous2DEuclidean(1, 0));
-        env.addNode(envNode3, new Continuous2DEuclidean(0, 1));
-        env.addNode(envNode4, new Continuous2DEuclidean(1, 1));
-        env.addNode(cellNode1, new Continuous2DEuclidean(0.5, 0.5));
-        envNode4.setConcentration(biomolA, 10d);
-        envNode2.setConcentration(biomolA, 10d);
-        envNode3.setConcentration(biomolA, 10d);
-        envNode1.setConcentration(biomolA, 10d);
+    public void testChemotacticMove3() {
+        final Position p1 = new Continuous2DEuclidean(0, 0);
+        final Position p2 = new Continuous2DEuclidean(1, 0);
+        final Position p3 = new Continuous2DEuclidean(0, 1);
+        final Position p4 = new Continuous2DEuclidean(1, 1);
+        final Position p5 = new Continuous2DEuclidean(0.5, 0.5);
+        env.addNode(envNode1, p1);
+        env.addNode(envNode2, p2);
+        env.addNode(envNode3, p3);
+        env.addNode(envNode4, p4);
+        env.addNode(cellNode1, p5);
+        envNode4.setConcentration(biomolA, CONCENTRATION2);
+        envNode2.setConcentration(biomolA, CONCENTRATION2);
+        envNode3.setConcentration(biomolA, CONCENTRATION2);
+        envNode1.setConcentration(biomolA, CONCENTRATION2);
         final Reaction<Double> r1 = inc.createReaction(rand, env, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
         final Reaction<Double> r2 = inc.createReaction(rand, env, cellNode1, time, CELL_MOVE_REACTION);
         r1.execute();

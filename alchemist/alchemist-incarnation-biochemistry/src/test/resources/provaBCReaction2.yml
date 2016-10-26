@@ -19,7 +19,7 @@ displacements:
       parameters: [4, 0, 0, 5]
     nodes:
       type: CellNodeImpl
-      parameters: [4, p] # p parametro inutile
+      parameters: [4, p] # p useless parameter
     programs:
       - *waterDissociation
   - in:
@@ -27,7 +27,7 @@ displacements:
       parameters: [5, 0, 0, 5]
     nodes:
       type: CellNodeImpl
-      parameters: [3, p] # p parametro inutile
+      parameters: [3, p] # p useless parameter
     programs:
       - *waterDissociation
   - in:
@@ -35,7 +35,7 @@ displacements:
       parameters: [5, 0, 0, 5]
     nodes:
       type: CellNodeImpl
-      parameters: [2, p] # p parametro inutile
+      parameters: [2, p] # p useless parameter
     programs:
       - *waterDissociation
   - in:
@@ -43,6 +43,6 @@ displacements:
       parameters: [5, 0, 0, 5]
     nodes:
       type: CellNodeImpl
-      parameters: [1, p] # p parametro inutile
+      parameters: [1, p] # p useless parameter
     programs:
       - *waterDissociation

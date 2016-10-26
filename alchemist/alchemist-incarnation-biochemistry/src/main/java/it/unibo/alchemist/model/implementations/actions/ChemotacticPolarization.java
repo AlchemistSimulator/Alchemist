@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 /**
  *
  */
-public class ChemiotacticPolarization extends AbstractAction<Double> {
+public class ChemotacticPolarization extends AbstractAction<Double> {
 
     /**
      * 
@@ -35,7 +35,7 @@ public class ChemiotacticPolarization extends AbstractAction<Double> {
      * @param biomol 
      * @param ascendGrad 
      */
-    public ChemiotacticPolarization(final Environment<Double> environment, final Node<Double> node, final Biomolecule biomol, final String ascendGrad) {
+    public ChemotacticPolarization(final Environment<Double> environment, final Node<Double> node, final Biomolecule biomol, final String ascendGrad) {
         super(node);
         if (node instanceof CellNode) {
             this.env = environment;
@@ -59,14 +59,14 @@ public class ChemiotacticPolarization extends AbstractAction<Double> {
      * @param biomol biomolecule's name
      * @param ascendGrad if that parameter is true, the polarization versor of the cell will be directed in direction of the greates concentration of biomolecule in neighborhood; if it's false, the versor will be directed in the exactly the opposite direction.
      */
-    public ChemiotacticPolarization(final Environment<Double> environment, final Node<Double> node, final String biomol, final String ascendGrad) {
+    public ChemotacticPolarization(final Environment<Double> environment, final Node<Double> node, final String biomol, final String ascendGrad) {
         this(environment, node, new Biomolecule(biomol), ascendGrad);
     }
 
 
     @Override
-    public ChemiotacticPolarization cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
-        return new ChemiotacticPolarization(env, n, biomol.toString(), ascend ? "up" : "down");
+    public ChemotacticPolarization cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
+        return new ChemotacticPolarization(env, n, biomol.toString(), ascend ? "up" : "down");
     }
 
     @Override

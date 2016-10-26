@@ -26,7 +26,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
 /**
  * 
  */
-public class TestChemiotaxis {
+public class TestChemotaxis {
 
     private static final double CONCENTRATION1 = 5;
     private static final String CHEMIOTACTIC_POLARIZATION_REACTION = "[] --> [ChemiotacticPolarization(A, up)]";

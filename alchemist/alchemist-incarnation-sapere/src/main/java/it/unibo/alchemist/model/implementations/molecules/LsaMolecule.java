@@ -33,7 +33,7 @@ import java.util.function.Consumer;
  *         Expression.
  * 
  */
-public class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
+public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
 
     private static final String OPEN_SYMBOL = "<", CLOSE_SYMBOL = ">", SEPARATOR = ", ";
     private static final long serialVersionUID = -2727376723102146271L;
@@ -270,6 +270,11 @@ public class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
     @Override
     public boolean equals(final Object o) {
         return o instanceof LsaMolecule && super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode() ^ -1;
     }
 
     @Override

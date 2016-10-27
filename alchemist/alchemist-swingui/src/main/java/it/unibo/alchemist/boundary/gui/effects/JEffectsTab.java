@@ -58,8 +58,8 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
     private static final String EFFECT_TAB = R.getString("effect_tab");
     private static final String EFFECTS_GROUP = R.getString("effects_group");
     private static final String DRAW_LINKS = R.getString("draw_links");
-    private static final String SAVE = R.getString("save");
-    private static final String LOAD = R.getString("load");
+    private static final String SAVE_TEXT = R.getString("save");
+    private static final String LOAD_TEXT = R.getString("load");
     private static final String ADD_EFFECT = R.getString("add_effect");
     private static final String REMOVE_EFFECT = R.getString("remove_effect");
 
@@ -95,9 +95,9 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
             registerGroup(showGroup);
         }
         final JTapeSection saveLoadSec = new JTapeFeatureStack(Type.VERTICAL_STACK);
-        saveButton = new JButton(SAVE);
+        saveButton = new JButton(SAVE_TEXT);
         saveButton.addActionListener((e) -> save(makeFileChooser()));
-        loadButton = new JButton(LOAD);
+        loadButton = new JButton(LOAD_TEXT);
         loadButton.addActionListener((e) -> load(makeFileChooser()));
         saveLoadSec.registerFeature(saveButton);
         saveLoadSec.registerFeature(loadButton);
@@ -167,7 +167,7 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
      * @param e
      *            the {@link Effect} to add
      */
-    public void addEffect(final Effect e) {
+    public final void addEffect(final Effect e) {
         final JEffectRepresentation<T> er = new JEffectRepresentation<>(e, main);
         registerItemSelectable(er);
         stackSec.registerFeature(er);
@@ -176,7 +176,7 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
     /**
      * Removes every effect.
      */
-    public void clearEffects() {
+    public final void clearEffects() {
         stackSec.removeAll();
     }
 
@@ -191,7 +191,7 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
     /**
      * @return The list of currently active {@link Effect}s.
      */
-    public List<Effect> getEffects() {
+    public final List<Effect> getEffects() {
         final List<Component> l = stackSec.getOrderedComponents();
         final List<Effect> l1 = new ArrayList<>(l.size());
         for (final Component c : l) {
@@ -217,7 +217,7 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
     /**
      * Decreases the priority of the selected effect.
      */
-    protected void moveSelectedLeft() {
+    protected final void moveSelectedLeft() {
         if (selected != null) {
             final List<Component> l = stackSec.getOrderedComponents();
             final int index = l.indexOf(selected);
@@ -231,7 +231,7 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
     /**
      * Increases the priority of the selected effect.
      */
-    protected void moveSelectedRight() {
+    protected final void moveSelectedRight() {
         if (selected != null) {
             final List<Component> l = stackSec.getOrderedComponents();
             final int index = l.indexOf(selected);
@@ -253,7 +253,7 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
      * @param effects
      *            is a {@link List} of effects
      */
-    public void setEffects(final List<Effect> effects) {
+    public final void setEffects(final List<Effect> effects) {
         clearEffects();
         for (final Effect e : effects) {
             addEffect(e);

@@ -19,9 +19,9 @@ public class TestWormhole2D {
     @Test
     public void testZeroSizeEnvironment() {
         final Environment<Object> env = new Continuous2DEnvironment<>();
-        @SuppressWarnings("serial") // CHECKSTYLE:OFF
-        final Wormhole2D worm = new Wormhole2D(env, new Component() {} );
-        // CHECKSTYLE:ON
+        final Wormhole2D worm = new Wormhole2D(env, new Component() {
+            private static final long serialVersionUID = 1L;
+        });
         worm.center();
     }
 

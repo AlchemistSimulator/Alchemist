@@ -40,8 +40,6 @@ public class Expression implements IExpression {
     private final ITreeNode<?> rootNode;
     private final FasterString syntactic;
 
-
-
     private static boolean comparatorVsConst(final IExpression comparator, final IExpression constant, final Map<FasterString, ITreeNode<?>> matches) {
         if (comparator.getRootNodeData().equals(EQUALS)) {
             return constant.getRootNodeData().equals(comparator.getRightChildren().getValue(matches));
@@ -128,8 +126,7 @@ public class Expression implements IExpression {
 
     private static boolean matchesAll(final Set<ITreeNode<?>> bigger, final Set<ITreeNode<?>> contained) {
         /*
-         * TODO: Something still smells here. But cannot find a non-working
-         * case.
+         * Something still smells here. But cannot find a non-working case.
          */
         if (bigger.size() < contained.size()) {
             return false;

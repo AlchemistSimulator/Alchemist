@@ -45,7 +45,6 @@
 	<rule ref="rulesets/java/basic.xml/BigIntegerInstantiation" />
 	<rule ref="rulesets/java/naming.xml/BooleanGetMethodName" />
 	<rule ref="rulesets/java/basic.xml/BooleanInstantiation" />
-	<rule ref="rulesets/java/controversial.xml/BooleanInversion" />
 	<rule ref="rulesets/java/basic.xml/BrokenNullCheck" />
 	<rule ref="rulesets/java/migrating.xml/ByteInstantiation" />
 	<rule ref="rulesets/java/android.xml/CallSuperLast" />

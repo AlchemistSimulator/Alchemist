@@ -78,4 +78,9 @@ public class SimpleMolecule implements Molecule {
         return n;
     }
 
+    @Override
+    public final String getName() {
+        return n.toString();
+    }
+
 }

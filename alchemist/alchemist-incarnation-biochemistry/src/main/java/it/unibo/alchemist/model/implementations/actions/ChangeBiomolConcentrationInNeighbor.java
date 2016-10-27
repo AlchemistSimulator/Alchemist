@@ -8,11 +8,15 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.math3.random.RandomGenerator;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
+import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
@@ -25,8 +29,6 @@ public class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborAction<
     private final Biomolecule mol;
     private final double delta;
     private final Environment<Double> env;
-    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All provided RandomGenerator implementations are actually Serializable")
-    private final RandomGenerator rand;
 
     /**
      * 
@@ -36,22 +38,42 @@ public class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborAction<
      * @param environment 
      * @param randGen 
      */
-    public ChangeBiomolConcentrationInNeighbor(final Biomolecule biomol,
-            final Double deltaConcentration,
+    public ChangeBiomolConcentrationInNeighbor(final Environment<Double> environment,
             final Node<Double> node,
-            final Environment<Double> environment,
-            final RandomGenerator randGen) {
+            final Biomolecule biomol, 
+            final RandomGenerator randGen,
+            final Double deltaConcentration) {
         super(node, environment, randGen);
         addModifiedMolecule(biomol);
         mol = biomol;
         delta = deltaConcentration;
         env = environment;
-        rand = randGen;
     }
 
     @Override
     public ChangeBiomolConcentrationInNeighbor cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
-        return new ChangeBiomolConcentrationInNeighbor(mol, delta, n, env, rand);
+        return new ChangeBiomolConcentrationInNeighbor(env, n, mol, getRandomGenerator(), delta);
+    }
+
+    @Override
+    public void execute() {
+        final Neighborhood<Double> neighborhood = env.getNeighborhood(getNode());
+        final List<Integer> validTargetsIds = new ArrayList<>();
+        if (delta < 0) {
+            neighborhood.getNeighbors().stream()
+            .filter(n -> n instanceof CellNode && n.getConcentration(mol) >= delta)
+            .mapToInt(n -> n.getId())
+            .forEach(i -> validTargetsIds.add(i));
+        } else {
+            neighborhood.getNeighbors().stream()
+            .filter(n -> n instanceof CellNode && n.getConcentration(mol) >= delta)
+            .mapToInt(n -> n.getId())
+            .forEach(i -> validTargetsIds.add(i));
+        }
+        if (!validTargetsIds.isEmpty()) {
+            final int targetId = validTargetsIds.get(getRandomGenerator().nextInt(validTargetsIds.size()));
+            execute(neighborhood.getNeighborByNumber(targetId));
+        }
     }
 
     @Override

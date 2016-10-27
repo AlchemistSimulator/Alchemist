@@ -9,7 +9,7 @@
 package it.unibo.alchemist.expressions.implementations;
 
 import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -318,15 +318,9 @@ public class Expression implements IExpression {
      *            The String representing the expression
      */
     public Expression(final String s) {
-        ITree a = null;
         Exp parser;
-        try {
-            parser = new Exp(new ByteArrayInputStream(s.getBytes("UTF-8")));
-            a = parser.Init();
-        } catch (UnsupportedEncodingException e) {
-            L.error("", e);
-        }
-        ast = a;
+        parser = new Exp(new ByteArrayInputStream(s.getBytes(StandardCharsets.UTF_8)));
+        ast = parser.Init();
         rootNode = ast.getRoot();
         astType = rootNode.getType();
         astData = rootNode.getData();

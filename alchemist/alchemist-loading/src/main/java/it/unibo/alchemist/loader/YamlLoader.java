@@ -453,21 +453,23 @@ public class YamlLoader implements Loader, Serializable {
         final LinkingRule<T> linking = (LinkingRule<T>) create(linkingClass, linkingArgs, incarnation, actualVars, scenarioRandom, env);
         L.debug("Linking rule is: {}", linking);
         env.setLinkingRule(Objects.requireNonNull(linking, "The linking rule can not be null."));
-        // add layers to the environment.
+        /*
+         * Layers.
+         */
         if (!layersList.isEmpty()) {
             for (final Object layerObj: layersList) {
                 if (layerObj instanceof Map) {
                     final Map<String, Object> layer = (Map<String, Object>) layerObj;
                     if (layer.containsKey(MOLECULE) && layer.get(MOLECULE) instanceof String) {
-                        Class<? extends Layer<T>> layClass;
-                        if (extractClassIfDeclared(layer, LAYERS_PACKAGE_ROOT).isPresent()) {
-                            layClass = (Class<? extends Layer<T>>) extractClassIfDeclared(layer, LAYERS_PACKAGE_ROOT).get();
+                        final Optional<Class<Layer<T>>> layerDescriptor = extractClassIfDeclared(layer, LAYERS_PACKAGE_ROOT);
+                        if (layerDescriptor.isPresent()) {
+                            final Class<Layer<T>> layerClass = layerDescriptor.get();
+                            final List<?> layArgs = extractParams(layer);
+                            final Molecule molecule = incarnation.createMolecule((String) layer.get(MOLECULE));
+                            env.addLayer(molecule, create(layerClass, layArgs));
                         } else {
                             throw new IllegalAlchemistYAMLException(layerObj + " is not a valid layer description: layer class missing or invald layer class name");
                         }
-                        final List<?> layArgs = extractParams(layer);
-                        final Molecule molecule = incarnation.createMolecule((String) layer.get(MOLECULE));
-                        env.addLayer(molecule, create(layClass, layArgs));
                     } else {
                         throw new IllegalAlchemistYAMLException(layerObj + " is not a valid layer description: molecule missing or invald molecule name");
                     }

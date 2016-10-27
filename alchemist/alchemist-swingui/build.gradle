@@ -8,7 +8,6 @@ dependencies {
         "com.miglayout:miglayout-swing:$miglayoutVersion",
         "org.apache.commons:commons-math3:$math3Version",
         "org.danilopianini:javalib-java7:$javalib7Version",
-        "org.jfree:jfreechart:$jfreechartVersion",
         "org.jfree:jfreesvg:$jfreesvgVersion",
         "org.mapsforge:mapsforge-map-awt:$mapsforgeVersion",
         "org.danilopianini:gson-extras:$gsonExtrasVersion"

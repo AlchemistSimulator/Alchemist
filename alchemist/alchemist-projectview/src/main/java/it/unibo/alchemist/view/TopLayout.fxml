@@ -1,57 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ButtonBar?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 
-<AnchorPane prefHeight="100.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="100.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unibo.alchemist.controller.TopLayoutController">
    <children>
-      <ButtonBar layoutX="52.0" layoutY="30.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <buttons>
-            <Button mnemonicParsing="false" text="Import">
-               <graphic>
-                  <ImageView pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../../../../resources/icon%20import.png" />
-                     </image>
-                  </ImageView>
-               </graphic></Button>
-            <Button mnemonicParsing="false" text="Save As...">
-               <graphic>
-                  <ImageView pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../../../../resources/icon%20save%20as.png" />
-                     </image>
-                  </ImageView>
-               </graphic></Button>
-            <Button mnemonicParsing="false" text="Save">
-               <graphic>
-                  <ImageView pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../../../../resources/icon%20save.png" />
-                     </image>
-                  </ImageView>
-               </graphic></Button>
-            <Button mnemonicParsing="false" text="Open">
-               <graphic>
-                  <ImageView pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../../../../resources/icon%20open.png" />
-                     </image>
-                  </ImageView>
-               </graphic></Button>
-          	<Button fx:id="newBtn" mnemonicParsing="false" text="New">
-               <graphic>
-                  <ImageView pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../../../../resources/icon%20new.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-          	</Button>
-        </buttons>
-      </ButtonBar>
+      <HBox prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Button fx:id="btnNew" mnemonicParsing="false" styleClass="btnMenu" text="New" />
+            <Button fx:id="btnOpen" mnemonicParsing="false" styleClass="btnMenu" text="Open" />
+            <Separator orientation="VERTICAL" prefHeight="200.0">
+               <padding>
+                  <Insets bottom="10.0" top="10.0" />
+               </padding>
+            </Separator>
+            <Button fx:id="btnSave" mnemonicParsing="false" styleClass="btnMenu" text="Save" />
+            <Button fx:id="btnSaveAs" mnemonicParsing="false" styleClass="btnMenu" text="Save As..." />
+            <Separator orientation="VERTICAL" prefHeight="200.0">
+               <padding>
+                  <Insets bottom="10.0" top="10.0" />
+               </padding>
+            </Separator>
+            <Button fx:id="btnImport" mnemonicParsing="false" styleClass="btnMenu" text="Import" />
+         </children>
+      </HBox>
    </children>
 </AnchorPane>

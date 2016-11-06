@@ -72,9 +72,9 @@
                         <Label fx:id="path" text="&lt;path&gt;" GridPane.columnIndex="1" GridPane.columnSpan="6" GridPane.rowIndex="2" />
                         <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="7" GridPane.rowIndex="1">
                            <children>
-                              <Button mnemonicParsing="false" text="Set" styleClass="btnHB" />
-                              <Button mnemonicParsing="false" text="New" styleClass="btnHB" onAction="#clickNewYaml"/>
-                              <Button mnemonicParsing="false" text="Edit" styleClass="btnHB" />
+                              <Button mnemonicParsing="false" styleClass="btnHB" text="Set" />
+                              <Button mnemonicParsing="false" onAction="#clickNewYaml" styleClass="btnHB" text="New" />
+                              <Button mnemonicParsing="false" styleClass="btnHB" text="Edit" />
                            </children>
                         </HBox>
                      </children>
@@ -103,9 +103,9 @@
                         <Label fx:id="path" text="&lt;path&gt;" GridPane.columnIndex="1" GridPane.columnSpan="6" GridPane.rowIndex="2" />
                         <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="7" GridPane.rowIndex="1">
                            <children>
-                              <Button mnemonicParsing="false" text="Set" styleClass="btnHB" />
-                              <Button mnemonicParsing="false" text="New" styleClass="btnHB" onAction="#clickNewEffect"/>
-                              <Button mnemonicParsing="false" text="Edit" styleClass="btnHB" />
+                              <Button mnemonicParsing="false" styleClass="btnHB" text="Set" />
+                              <Button mnemonicParsing="false" onAction="#clickNewEffect" styleClass="btnHB" text="New" />
+                              <Button mnemonicParsing="false" styleClass="btnHB" text="Edit" />
                            </children>
                         </HBox>
                      </children>
@@ -114,7 +114,7 @@
             </AnchorPane>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="anchorpane" GridPane.columnIndex="1">
                <children>
-                  <GridPane layoutX="14.0" layoutY="47.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <GridPane fx:id="gridOut" layoutX="7.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="7.0" AnchorPane.rightAnchor="-7.0" AnchorPane.topAnchor="0.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -130,17 +130,21 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label fx:id="title" text="Output file" GridPane.columnIndex="3" GridPane.columnSpan="5" />
+                        <Label fx:id="title" text="Output file" GridPane.columnIndex="2" GridPane.columnSpan="6" />
                         <Label fx:id="path" text="&lt;path&gt;" GridPane.columnIndex="3" GridPane.columnSpan="5" GridPane.rowIndex="1" />
-                        <Button mnemonicParsing="false" text="Set" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+                        <Button fx:id="btnSet" mnemonicParsing="false" text="Set" GridPane.columnSpan="2" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
                </children>
             </AnchorPane>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="anchorpane" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.rowSpan="2">
                <children>
-                  <GridPane layoutX="48.0" layoutY="91.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <GridPane fx:id="gridVar" layoutX="48.0" layoutY="91.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -154,9 +158,9 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label fx:id="title" text="Variables YAML" GridPane.columnIndex="1" GridPane.columnSpan="2" />
-                        <ListView fx:id="listYaml" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="3" GridPane.rowIndex="1" GridPane.rowSpan="4" />
-                        <Button fx:id="batch" mnemonicParsing="false" text="Start batch" GridPane.columnSpan="3" GridPane.halignment="RIGHT" GridPane.rowIndex="5" />
+                        <Label fx:id="title" text="Variables YAML" GridPane.columnIndex="2" GridPane.columnSpan="4" />
+                        <ListView fx:id="listYaml" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="7" GridPane.rowIndex="1" GridPane.rowSpan="4" />
+                        <Button fx:id="batch" mnemonicParsing="false" text="Start batch" GridPane.columnSpan="7" GridPane.halignment="RIGHT" GridPane.rowIndex="5" />
                      </children>
                   </GridPane>
                </children>

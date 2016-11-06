@@ -24,7 +24,7 @@
                   <Insets bottom="10.0" top="10.0" />
                </padding>
             </Separator>
-            <Button fx:id="btnImport" mnemonicParsing="false" styleClass="btnMenu" text="Import" />
+            <Button fx:id="btnImport" mnemonicParsing="false" styleClass="btnMenu" text="Import" onAction="#clickImport"/>
          </children>
       </HBox>
    </children>

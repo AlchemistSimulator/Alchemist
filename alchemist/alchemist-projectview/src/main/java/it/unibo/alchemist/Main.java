@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import it.unibo.alchemist.controller.CenterLayoutController;
+import it.unibo.alchemist.controller.TopLayoutController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -21,6 +23,14 @@ public class Main extends Application {
 
     private Stage primaryStage;
     private BorderPane root;
+
+    /**
+     * Returns the primary stage.
+     * @return primary stage
+     */
+    public Stage getStage() {
+        return this.primaryStage;
+    }
 
     /**
      * Method that initializes the scene by loading all needed .fxml files and 
@@ -62,6 +72,9 @@ public class Main extends Application {
                     .getResource("view/TopLayout.fxml"));
             final AnchorPane top = (AnchorPane) loaderTop.load();
             this.root.setTop(top);
+
+            final TopLayoutController controller = loaderTop.getController();
+            controller.setMain(this);
         } catch (IOException e) {
             LOG.log(Level.SEVERE, IOEXP, e);
         }
@@ -86,6 +99,9 @@ public class Main extends Application {
                     .getResource("view/CenterLayout.fxml"));
             final AnchorPane center = (AnchorPane) loaderCenter.load();
             this.root.setCenter(center);
+
+            final CenterLayoutController controller = loaderCenter.getController();
+            controller.setMain(this);
         } catch (IOException e) {
             LOG.log(Level.SEVERE, IOEXP, e);
         }

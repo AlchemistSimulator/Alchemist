@@ -1,0 +1,6 @@
+dependencies {
+    compile (
+        project(':alchemist-interfaces'),
+        "org.controlsfx:controlsfx:${controlsFXVersion}"
+    )
+}

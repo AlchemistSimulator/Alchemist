@@ -32,7 +32,7 @@ public class CenterLayoutController {
     @FXML
     private GridPane gridVar; 
     @FXML
-    private Label path;
+    private Label pathOut;
     @FXML
     private ListView<String> listYaml;
 
@@ -77,7 +77,7 @@ public class CenterLayoutController {
     private void setComponentVisible(final ToggleSwitch ts, final boolean vis) {
         if (ts.equals(this.tsOut)) {
             this.btnSet.setVisible(vis);
-            this.path.setVisible(vis);
+            this.pathOut.setVisible(vis);
         } else {
             this.batch.setVisible(vis);
             this.listYaml.setVisible(vis);

@@ -13,14 +13,14 @@
 	-fx-border-insets: 0 0 5 5;
 }
 
-#title {
+.title {
 	-fx-font-size: 2em;
 	-fx-text-fill: #cc0000;
 	-fx-font-weight: bold;
 	-fx-padding: 0 0 10 0;
 }
 
-#path {
+.path {
 	-fx-font-family: "monospace";
 }
 

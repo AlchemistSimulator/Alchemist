@@ -9,6 +9,7 @@ include(
     'alchemist-loading',
     'alchemist-maps',
     'alchemist-projectview',
+    'alchemist-runner',
     'alchemist-sapere-mathexp',
     'alchemist-swingui',
     'alchemist-time'

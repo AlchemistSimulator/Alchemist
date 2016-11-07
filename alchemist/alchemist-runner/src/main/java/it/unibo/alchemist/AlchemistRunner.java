@@ -29,8 +29,10 @@ import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.export.Exporter;
 import it.unibo.alchemist.loader.variables.Variable;
+import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Time;
+import java8.util.Objects;
 
 /**
  * Starts Alchemist.
@@ -46,57 +48,130 @@ public final class AlchemistRunner {
     private final double samplingInterval;
     private final int parallelism;
     private final boolean headless;
-    
+
+    /**
+     * 
+     *
+     */
     public static class Builder {
-        private final Loader loader;
         private int parallelism = Runtime.getRuntime().availableProcessors() + 1;
+        private boolean headless;
+        private double samplingInt = 1;
+        private final Loader loader;
+        private Optional<String> exportFileRoot = Optional.empty();
+        private Optional<String> effectsFile = Optional.empty();
+        private Time endTime = DoubleTime.INFINITE_TIME;
+
+        /**
+         * 
+         * @param loader loader
+         */
         public Builder(final Loader loader) {
-            this.loader = loader;
+            this.loader = Objects.requireNonNull(loader, "Loader can't be null.");
         }
-        public Builder setEffects(String uri) {
-            return this;
-        }
-        
-        public Builder setInterval(double deltaTime) {
-            return this;
-        }
-        
-        public Builder setOutputFile(String uri) {
-            return this;
-        }
-        
-        public Builder setEndTime(double t) {
-            return this;
-        }
-        
-        public Builder setHeadless(boolean headless) {
+
+        /**
+         * 
+         * @param uri effect uri
+         * @return builder
+         */
+        public Builder setEffects(final String uri) {
+            this.effectsFile = Optional.ofNullable(uri);
             return this;
         }
 
-        public Builder setParallelism(int threads) {
+        /**
+         * 
+         * @param deltaTime time interval
+         * @return builder
+         */
+        public Builder setInterval(final double deltaTime) {
+            if (deltaTime > 0) {
+                this.samplingInt = deltaTime;
+            } else {
+                throw new IllegalArgumentException("A sampling interval negative makes no sense.");
+            }
             return this;
         }
 
+        /**
+         * 
+         * @param uri output uri
+         * @return builder
+         */
+        public Builder setOutputFile(final String uri) {
+            this.exportFileRoot = Optional.ofNullable(uri);
+            return this;
+        }
+
+        /**
+         * 
+         * @param t end time
+         * @return builder
+         */
+        public Builder setEndTime(final Time t) {
+            this.endTime = t;
+            return this;
+        }
+
+        /**
+         * 
+         * @param headless is headless
+         * @return builder
+         */
+        public Builder setHeadless(final boolean headless) {
+            this.headless = headless;
+            return this;
+        }
+
+        /**
+         * 
+         * @param threads threads number
+         * @return builder
+         */
+        public Builder setParallelism(final int threads) {
+            this.parallelism = threads;
+            return this;
+        }
+
+        /**
+         * 
+         * @return AlchemistRunner
+         */
         public AlchemistRunner build() {
-            return new AlchemistRunner(null, null, null, null, 0d, 0, false);
+            return new AlchemistRunner(this.loader, this.endTime, this.exportFileRoot, this.effectsFile, this.samplingInt, this.parallelism, this.headless);
         }
     }
 
-    private AlchemistRunner(final Loader source, Time endTime, Optional<String> exportRoot, Optional<String> effectsFile, double sampling, int parallelism, boolean headless) {
-        loader = source;
-        this.endTime = endTime;
-        exportFileRoot = exportRoot;
-        samplingInterval = sampling;
-        this.parallelism = parallelism;
-        this.headless = headless;
+    private AlchemistRunner(final Loader source, 
+            final Time endTime, 
+            final Optional<String> exportRoot, 
+            final Optional<String> effectsFile, 
+            final double sampling, 
+            final int parallelism, 
+            final boolean headless) {
         this.effectsFile = effectsFile;
+        this.endTime = endTime;
+        this.exportFileRoot = exportRoot;
+        this.headless = headless;
+        this.loader = source;
+        this.parallelism = parallelism;
+        this.samplingInterval = sampling;
     }
-    
+
+    /**
+     * 
+     * @return loader variables
+     */
     public Map<String, Variable> getVariables() {
         return loader.getVariables();
     }
-    
-    public void launch(String... variables) {
+
+    /**
+     * 
+     * @param variables loader variables
+     */
+    public void launch(final String... variables) {
         if (variables != null && variables.length > 0) {
             /*
              * Batch mode

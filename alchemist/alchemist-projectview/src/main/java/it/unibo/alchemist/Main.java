@@ -1,8 +1,9 @@
 package it.unibo.alchemist;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.controller.CenterLayoutController;
 import it.unibo.alchemist.controller.TopLayoutController;
@@ -18,8 +19,7 @@ import javafx.stage.Stage;
  */
 public class Main extends Application {
 
-    private static final Logger LOG = Logger.getLogger("EXCEPTION");
-    private static final String IOEXP = "IOException";
+    private static final Logger L = LoggerFactory.getLogger(Main.class);
 
     private Stage primaryStage;
     private BorderPane root;
@@ -41,69 +41,42 @@ public class Main extends Application {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Alchemist");
 
-        initRootLayout();
-        showTopLayout();
-        showLeftLayout();
-        showCenterLayout();
+        initLayout("RootLayout");
+        initLayout("TopLayout");
+        initLayout("LeftLayout");
+        initLayout("CenterLayout");
     }
 
-    private void initRootLayout() {
+    private void initLayout(final String layoutName) {
+        final FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(Main.class.getResource("view/" + layoutName + ".fxml"));
         try {
-            final FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(Main.class.getResource("view/RootLayout.fxml"));
-            this.root = (BorderPane) loader.load();
+            if (layoutName.equals("RootLayout")) {
+                this.root = (BorderPane) loader.load();
+                /*TODO: remove pixel values*/
+                final Scene scene = new Scene(this.root, 1200, 950);
+                scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+                this.primaryStage.setScene(scene);
+                this.primaryStage.show();
+            } else {
+                final AnchorPane pane = (AnchorPane) loader.load();
+                if (layoutName.equals("TopLayout")) {
+                    this.root.setTop(pane);
 
-            /*Modificare dimensione*/
-            final Scene scene = new Scene(this.root, 1200, 950);
-            scene.getStylesheets().add(getClass().getResource("/style.css")
-                    .toExternalForm());
+                    final TopLayoutController controller = loader.getController();
+                    controller.setMain(this);
+                } else if (layoutName.equals("LeftLayout")) {
+                    this.root.setLeft(pane);
+                } else {
+                    this.root.setCenter(pane);
 
-            this.primaryStage.setScene(scene);
-            this.primaryStage.show();
+                    final CenterLayoutController controller = loader.getController();
+                    controller.setMain(this);
+                }
+            }
         } catch (IOException e) {
-            LOG.log(Level.SEVERE, IOEXP, e);
-        }
-    }
-
-    private void showTopLayout() {
-        try {
-            final FXMLLoader loaderTop = new FXMLLoader();
-            loaderTop.setLocation(Main.class
-                    .getResource("view/TopLayout.fxml"));
-            final AnchorPane top = (AnchorPane) loaderTop.load();
-            this.root.setTop(top);
-
-            final TopLayoutController controller = loaderTop.getController();
-            controller.setMain(this);
-        } catch (IOException e) {
-            LOG.log(Level.SEVERE, IOEXP, e);
-        }
-    }
-
-    private void showLeftLayout() {
-        try {
-            final FXMLLoader loaderLeft = new FXMLLoader();
-            loaderLeft.setLocation(Main.class
-                    .getResource("view/LeftLayout.fxml"));
-            final AnchorPane left = (AnchorPane) loaderLeft.load();
-            this.root.setLeft(left);
-        } catch (IOException e) {
-            LOG.log(Level.SEVERE, IOEXP, e);
-        }
-    }
-
-    private void showCenterLayout() {
-        try {
-            final FXMLLoader loaderCenter = new FXMLLoader();
-            loaderCenter.setLocation(Main.class
-                    .getResource("view/CenterLayout.fxml"));
-            final AnchorPane center = (AnchorPane) loaderCenter.load();
-            this.root.setCenter(center);
-
-            final CenterLayoutController controller = loaderCenter.getController();
-            controller.setMain(this);
-        } catch (IOException e) {
-            LOG.log(Level.SEVERE, IOEXP, e);
+            L.error("Error loading the graphical interface. This is most likely a bug.", e);
+            System.exit(1);
         }
     }
 

@@ -3,6 +3,8 @@ package it.unibo.alchemist.controller;
 import java.io.IOException;
 
 import org.controlsfx.control.ToggleSwitch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.Main;
 import javafx.beans.value.ChangeListener;
@@ -22,6 +24,8 @@ import javafx.stage.Stage;
  * Controller of CenterLayout view.
  */
 public class CenterLayoutController {
+
+    private static final Logger L = LoggerFactory.getLogger(Main.class);
 
     @FXML
     private Button batch;
@@ -89,7 +93,7 @@ public class CenterLayoutController {
      */
     @FXML
     protected void clickNewYaml() {
-        newFile(".yaml");
+        newFile(".yml");
     }
 
     /**
@@ -97,7 +101,7 @@ public class CenterLayoutController {
      */
     @FXML
     protected void clickNewEffect() {
-        newFile(".aes");
+        newFile(".json");
     }
 
     private void newFile(final String extension) {
@@ -120,7 +124,8 @@ public class CenterLayoutController {
 
             stage.showAndWait();
         } catch (IOException e) {
-            e.printStackTrace();
+            L.error("Error loading the graphical interface. This is most likely a bug.", e);
+            System.exit(1);
         }
     }
 

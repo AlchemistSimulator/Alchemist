@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.Main;
+import it.unibo.alchemist.boundary.l10n.R;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -15,6 +16,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
@@ -28,22 +31,90 @@ public class CenterLayoutController {
     private static final Logger L = LoggerFactory.getLogger(Main.class);
 
     @FXML
+    private Button addClass;
+    @FXML
     private Button batch;
     @FXML
-    private Button btnSet;
+    private Button editEff;
+    @FXML
+    private Button editYaml;
+    @FXML
+    private Button newEff;
+    @FXML
+    private Button newYaml;
+    @FXML
+    private Button setEff;
+    @FXML
+    private Button setOut;
+    @FXML
+    private Button setYaml;
     @FXML
     private GridPane gridOut;
     @FXML
-    private GridPane gridVar; 
+    private GridPane gridVar;
+    @FXML
+    private Label baseNameOut;
+    @FXML
+    private Label batchMode;
+    @FXML
+    private Label classpath;
+    @FXML
+    private Label eff;
+    @FXML
+    private Label endTime;
+    @FXML
+    private Label intOut;
+    @FXML
+    private Label output;
     @FXML
     private Label pathOut;
     @FXML
+    private Label simConf;
+    @FXML
+    private Label thread;
+    @FXML
+    private Label unitOut;
+    @FXML
+    private Label unitTime;
+    @FXML
     private ListView<String> listYaml;
+    @FXML
+    private Spinner<Integer> spinBatch;
+    @FXML
+    private Spinner<Double> spinOut;
+    @FXML
+    private TextField bnTextOut;
 
     private Main main;
 
     private final ToggleSwitch tsOut = new ToggleSwitch();
     private final ToggleSwitch tsVar = new ToggleSwitch();
+
+    /**
+     * 
+     */
+    public void initialize() {
+        this.addClass.setText(R.getString("add"));
+        this.baseNameOut.setText(R.getString("base_name"));
+        this.batch.setText(R.getString("batch_start"));
+        this.batchMode.setText(R.getString("batch_pane_title"));
+        this.classpath.setText(R.getString("classpath_pane_title"));
+        this.editEff.setText(R.getString("edit"));
+        this.editYaml.setText(R.getString("edit"));
+        this.eff.setText(R.getString("eff_pane_title"));
+        this.endTime.setText(R.getString("end_time"));
+        this.intOut.setText(R.getString("interval"));
+        this.newEff.setText(R.getString("new"));
+        this.newYaml.setText(R.getString("new"));
+        this.output.setText(R.getString("out_pane_title"));
+        this.setEff.setText(R.getString("set"));
+        this.setOut.setText(R.getString("set_folder"));
+        this.setYaml.setText(R.getString("set"));
+        this.simConf.setText(R.getString("sim_pane_title"));
+        this.thread.setText(R.getString("n_thread"));
+        this.unitOut.setText(R.getString("sec"));
+        this.unitTime.setText(R.getString("sec"));
+    }
 
     /**
      * Sets the main class and adds toggle switch to view.
@@ -80,11 +151,18 @@ public class CenterLayoutController {
 
     private void setComponentVisible(final ToggleSwitch ts, final boolean vis) {
         if (ts.equals(this.tsOut)) {
-            this.btnSet.setVisible(vis);
+            this.setOut.setVisible(vis);
             this.pathOut.setVisible(vis);
+            this.baseNameOut.setVisible(vis);
+            this.bnTextOut.setVisible(vis);
+            this.intOut.setVisible(vis);
+            this.unitOut.setVisible(vis);
+            this.spinOut.setVisible(vis);
         } else {
             this.batch.setVisible(vis);
             this.listYaml.setVisible(vis);
+            this.spinBatch.setVisible(vis);
+            this.thread.setVisible(vis);
         }
     }
 
@@ -93,7 +171,7 @@ public class CenterLayoutController {
      */
     @FXML
     protected void clickNewYaml() {
-        newFile(".yml");
+        newFile(R.getString("yaml_ext"));
     }
 
     /**
@@ -101,7 +179,7 @@ public class CenterLayoutController {
      */
     @FXML
     protected void clickNewEffect() {
-        newFile(".json");
+        newFile(R.getString("eff_ext"));
     }
 
     private void newFile(final String extension) {
@@ -111,7 +189,7 @@ public class CenterLayoutController {
             final AnchorPane pane = (AnchorPane) loader.load();
 
             final Stage stage = new Stage();
-            stage.setTitle("File name");
+            stage.setTitle(R.getString("file_name_title"));
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(this.main.getStage());
             stage.setResizable(false);

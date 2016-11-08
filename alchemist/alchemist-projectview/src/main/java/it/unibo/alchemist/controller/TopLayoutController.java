@@ -4,7 +4,9 @@ import java.io.File;
 //import java.io.IOException;
 
 import it.unibo.alchemist.Main;
+import it.unibo.alchemist.boundary.l10n.R;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.stage.DirectoryChooser;
 
 /**
@@ -13,7 +15,29 @@ import javafx.stage.DirectoryChooser;
  */
 public class TopLayoutController {
 
+    @FXML
+    private Button btnNew;
+    @FXML
+    private Button btnOpen;
+    @FXML
+    private Button btnImport;
+    @FXML
+    private Button btnSave;
+    @FXML
+    private Button btnSaveAs;
+
     private Main main;
+
+    /**
+     * 
+     */
+    public void initialize() {
+        this.btnNew.setText(R.getString("new"));
+        this.btnOpen.setText(R.getString("open"));
+        this.btnImport.setText(R.getString("import"));
+        this.btnSave.setText(R.getString("save"));
+        this.btnSaveAs.setText(R.getString("save_as"));
+    }
 
     /**
      * Sets the main class.

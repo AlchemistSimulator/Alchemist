@@ -21,15 +21,15 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="File name:" />
-            <TextField fx:id="nameFile" promptText="Type file name" GridPane.columnIndex="1" />
+            <Label fx:id="fileName" />
+            <TextField fx:id="tfNameFile" promptText="Type file name" GridPane.columnIndex="1" />
             <Label fx:id="lbEx" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
          </children>
       </GridPane>
       <ButtonBar layoutX="149.0" layoutY="96.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
         <buttons>
-          <Button mnemonicParsing="false" onAction="#clickOK" text="OK" />
-          <Button mnemonicParsing="false" onAction="#clickCancel" text="Cancel" />
+          <Button mnemonicParsing="false" fx:id="btnOk" onAction="#clickOK" />
+          <Button mnemonicParsing="false" fx:id="btnCancel" onAction="#clickCancel" />
         </buttons>
       </ButtonBar>
    </children>

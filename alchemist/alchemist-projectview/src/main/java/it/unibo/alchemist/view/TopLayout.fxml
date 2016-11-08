@@ -10,15 +10,15 @@
    <children>
       <HBox prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Button fx:id="btnNew" mnemonicParsing="false" styleClass="btnMenu" text="New" />
-            <Button fx:id="btnOpen" mnemonicParsing="false" styleClass="btnMenu" text="Open" />
+            <Button fx:id="btnNew" mnemonicParsing="false" styleClass="btnMenu" />
+            <Button fx:id="btnOpen" mnemonicParsing="false" styleClass="btnMenu" />
             <Separator orientation="VERTICAL" prefHeight="200.0">
                <padding>
                   <Insets bottom="10.0" top="10.0" />
                </padding>
             </Separator>
-            <Button fx:id="btnSave" mnemonicParsing="false" styleClass="btnMenu" text="Save" />
-            <Button fx:id="btnSaveAs" mnemonicParsing="false" styleClass="btnMenu" text="Save As..." />
+            <Button fx:id="btnSave" mnemonicParsing="false" styleClass="btnMenu" />
+            <Button fx:id="btnSaveAs" mnemonicParsing="false" styleClass="btnMenu" />
             <Separator orientation="VERTICAL" prefHeight="200.0">
                <padding>
                   <Insets bottom="10.0" top="10.0" />

@@ -5,6 +5,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import it.unibo.alchemist.Main;
 import it.unibo.alchemist.boundary.l10n.R;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -20,6 +24,8 @@ import javafx.stage.Stage;
  *
  */
 public class FileNameDialogController {
+
+    private static final Logger L = LoggerFactory.getLogger(Main.class);
 
     @FXML
     private Button btnCancel;
@@ -42,6 +48,7 @@ public class FileNameDialogController {
         this.btnCancel.setText(R.getString("cancel"));
         this.btnOk.setText(R.getString("ok"));
         this.fileName.setText(R.getString("file_name"));
+        this.tfNameFile.setPromptText(R.getString("enter_file_name"));
     }
 
     /**
@@ -61,8 +68,11 @@ public class FileNameDialogController {
         this.lbEx.setText(extension);
     }
 
+    /**
+     * 
+     */
     @FXML
-    private void clickOK() {
+    protected void clickOK() {
         if (!this.tfNameFile.getText().isEmpty()) {
             final String userDirectory = System.getProperty("user.home"); //TODO: get root position from project file
             final File file = new File(userDirectory + File.separator + tfNameFile.getText() + this.extension);
@@ -75,8 +85,8 @@ public class FileNameDialogController {
                 } else {
                     final Alert alert = new Alert(AlertType.CONFIRMATION);
                     alert.setTitle(R.getString("file_name_exists"));
-                    alert.setHeaderText("This file name already exists in this location");
-                    alert.setContentText("Do you want edit the existing file?");
+                    alert.setHeaderText(R.getString("file_name_exists_header"));
+                    alert.setContentText(R.getString("file_name_exists_content"));
                     final Optional<ButtonType> result = alert.showAndWait();
                     if (result.get() == ButtonType.OK) {
                         this.dialogStage.close();
@@ -84,19 +94,23 @@ public class FileNameDialogController {
                     }
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                L.error("Error creation new file.", e);
+                System.exit(1);
             }
         } else {
             final Alert alert = new Alert(AlertType.WARNING);
-            alert.setTitle("File name wrong");
-            alert.setHeaderText("The inserted file name is wrong.");
-            alert.setContentText("Please type a file name at least along one character.");
+            alert.setTitle(R.getString("file_name_wrong"));
+            alert.setHeaderText(R.getString("file_name_wrong_header"));
+            alert.setContentText(R.getString("file_name_wrong_content"));
             alert.showAndWait();
         }
     }
 
+    /**
+     * 
+     */
     @FXML
-    private void clickCancel() {
+    protected void clickCancel() {
         this.dialogStage.close();
     }
 

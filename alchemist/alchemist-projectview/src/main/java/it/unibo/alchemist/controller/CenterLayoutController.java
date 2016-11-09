@@ -17,6 +17,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -29,6 +30,11 @@ import javafx.stage.Stage;
 public class CenterLayoutController {
 
     private static final Logger L = LoggerFactory.getLogger(Main.class);
+    private static final double MIN_SAM = 0.01;
+    private static final double MAX_SAM = 600;
+    private static final int MAX_TIME = 18000;
+    private static final double STEP_SAM = 0.01;
+    private static final int VALUE_TIME = 60;
 
     @FXML
     private Button addClass;
@@ -81,6 +87,8 @@ public class CenterLayoutController {
     @FXML
     private Spinner<Integer> spinBatch;
     @FXML
+    private Spinner<Integer> spinTime;
+    @FXML
     private Spinner<Double> spinOut;
     @FXML
     private TextField bnTextOut;
@@ -98,6 +106,8 @@ public class CenterLayoutController {
         this.baseNameOut.setText(R.getString("base_name"));
         this.batch.setText(R.getString("batch_start"));
         this.batchMode.setText(R.getString("batch_pane_title"));
+        this.bnTextOut.setPromptText(R.getString("enter_base_name"));
+        this.bnTextOut.setText(R.getString("base_name_text"));
         this.classpath.setText(R.getString("classpath_pane_title"));
         this.editEff.setText(R.getString("edit"));
         this.editYaml.setText(R.getString("edit"));
@@ -111,6 +121,17 @@ public class CenterLayoutController {
         this.setOut.setText(R.getString("set_folder"));
         this.setYaml.setText(R.getString("set"));
         this.simConf.setText(R.getString("sim_pane_title"));
+        this.spinBatch.setValueFactory(
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 
+                        Runtime.getRuntime().availableProcessors() + 1,
+                        Runtime.getRuntime().availableProcessors() + 1, 
+                        1));
+        this.spinOut.setEditable(true);
+        this.spinOut.setValueFactory(
+                new SpinnerValueFactory.DoubleSpinnerValueFactory(MIN_SAM, MAX_SAM, 1, STEP_SAM));
+        this.spinTime.setEditable(true);
+        this.spinTime.setValueFactory(
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, MAX_TIME, VALUE_TIME, 1));
         this.thread.setText(R.getString("n_thread"));
         this.unitOut.setText(R.getString("sec"));
         this.unitTime.setText(R.getString("sec"));

@@ -47,22 +47,25 @@ public class TopLayoutController {
         this.main = main;
     }
 
+    /**
+     * 
+     */
     @FXML
-    private void clickImport() {
+    public void clickImport() {
         final DirectoryChooser dirChooser = new DirectoryChooser();
         dirChooser.setTitle("Import project folder");
         dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-        File dir = dirChooser.showDialog(this.main.getStage());  // eccezione se non si seleziona nulla!
-        System.out.println("base: " + dir.getName());
+        final File dir = dirChooser.showDialog(this.main.getStage());  // eccezione se non si seleziona nulla!
+        //System.out.println("base: " + dir.getName());
         displayDirectoryContent(dir);
     }
 
     private void displayDirectoryContent(final File dir) {
         //try {
-            File[] files = dir.listFiles();
-            for (File file: files) {
+            final File[] files = dir.listFiles();
+            for (final File file: files) {
                 if (file.isDirectory()) {
-                    System.out.println("   directory: " + file.getName());
+                    //System.out.println("   directory: " + file.getName());
                     displayDirectoryContent(file);
                 } else {
                     System.out.println("      file: " + file.getName());

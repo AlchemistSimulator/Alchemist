@@ -22,7 +22,7 @@
         </rowConstraints>
          <children>
             <Label fx:id="fileName" />
-            <TextField fx:id="tfNameFile" promptText="Type file name" GridPane.columnIndex="1" />
+            <TextField fx:id="tfNameFile" GridPane.columnIndex="1" />
             <Label fx:id="lbEx" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
          </children>
       </GridPane>

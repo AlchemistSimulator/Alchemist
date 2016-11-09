@@ -43,6 +43,8 @@
 }
 
 #batch {
+	-fx-border-insets: 10 0 5 0;
+	-fx-background-insets: 10 0 5 0;
 	-fx-border-radius: 0;
 	-fx-border-color: #000000;
 	-fx-background-color: /*#cccccc*/#444444;
@@ -105,7 +107,7 @@
 	-fx-background-insets: 0 10 0 0;
 }
 
-#listYaml {
+/*#listYaml {
 	-fx-border-insets: 0 0 10 0;
 	-fx-background-insets: 0 0 10 0;
-}
+}*/

@@ -2,12 +2,18 @@ package it.unibo.alchemist.controller;
 
 import java.io.File;
 //import java.io.IOException;
+import java.io.IOException;
 
 import it.unibo.alchemist.Main;
 import it.unibo.alchemist.boundary.l10n.R;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 /**
  * 
@@ -45,6 +51,30 @@ public class TopLayoutController {
      */
     public void setMain(final Main main) {
         this.main = main;
+    }
+
+    /**
+     * 
+     */
+    @FXML
+    public void clickNew() {
+        final FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(Main.class.getResource("view/NewProjLayoutFolder.fxml"));
+        try {
+            final AnchorPane pane = (AnchorPane) loader.load();
+
+            final Stage stage = new Stage();
+            stage.setTitle(R.getString("new_proj"));
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(this.main.getStage());
+            final Scene scene = new Scene(pane);
+            stage.setScene(scene);
+
+            stage.showAndWait();
+        } catch (IOException e) {
+            //L.error("Error loading the graphical interface. This is most likely a bug.", e);
+            System.exit(1);
+        }
     }
 
     /**

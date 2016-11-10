@@ -70,6 +70,10 @@ public class TopLayoutController {
             final Scene scene = new Scene(pane);
             stage.setScene(scene);
 
+            final NewProjLayoutFolderController ctrl = loader.getController();
+            ctrl.setMain(this.main);
+            ctrl.setStage(stage);
+
             stage.showAndWait();
         } catch (IOException e) {
             //L.error("Error loading the graphical interface. This is most likely a bug.", e);

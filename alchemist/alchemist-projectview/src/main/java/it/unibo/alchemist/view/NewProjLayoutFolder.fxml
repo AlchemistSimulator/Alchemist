@@ -20,13 +20,13 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button fx:id="selectFolder" mnemonicParsing="false" />
-            <Label GridPane.columnIndex="1" />
+            <Button fx:id="selectFolder" mnemonicParsing="false" onAction="#clickSelect"/>
+            <Label fx:id="folderPath" GridPane.columnIndex="1" />
          </children>
       </GridPane>
       <ButtonBar layoutX="153.0" layoutY="88.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
         <buttons>
-            <Button fx:id="next" mnemonicParsing="false" />
+            <Button fx:id="next" mnemonicParsing="false"  onAction="#clickNext"/>
         </buttons>
       </ButtonBar>
    </children>

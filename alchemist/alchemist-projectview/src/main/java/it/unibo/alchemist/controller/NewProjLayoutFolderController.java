@@ -34,6 +34,7 @@ public class NewProjLayoutFolderController {
 
     private Main main;
     private Stage stage;
+    private String path;
 
     /**
      * 
@@ -62,6 +63,15 @@ public class NewProjLayoutFolderController {
 
     /**
      * 
+     * @param path Folder path
+     */
+    public void setPath(final String path) {
+        this.path = path;
+        this.folderPath.setText(this.path);
+    }
+
+    /**
+     * 
      */
     @FXML
     public void clickSelect() {
@@ -70,6 +80,7 @@ public class NewProjLayoutFolderController {
         dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         final File dir = dirChooser.showDialog(this.main.getStage());
         if (dir != null) {
+            this.path = dir.getAbsolutePath();
             this.folderPath.setText(dir.getAbsolutePath());
             this.next.setDisable(false);
         }
@@ -86,6 +97,11 @@ public class NewProjLayoutFolderController {
             final AnchorPane pane = (AnchorPane) loader.load();
             final Scene scene = new Scene(pane);
             this.stage.setScene(scene);
+
+            final NewProjLayoutSelectController ctrl = loader.getController();
+            ctrl.setFolderPath(this.path);
+            ctrl.setMain(this.main);
+            ctrl.setStage(this.stage);
         } catch (IOException e) {
             L.error("Error loading the graphical interface. This is most likely a bug.", e);
             System.exit(1);

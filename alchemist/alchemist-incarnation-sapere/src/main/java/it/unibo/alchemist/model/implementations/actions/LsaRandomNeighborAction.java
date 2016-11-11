@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
-import it.unibo.alchemist.model.interfaces.IMapEnvironment;
+import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.IRoute;
@@ -29,7 +29,7 @@ import java.util.List;
 public class LsaRandomNeighborAction extends LsaStandardAction {
     private static final long serialVersionUID = -7128058274012426458L;
     private final Environment<List<? extends ILsaMolecule>> env;
-    private final IMapEnvironment<List<? extends ILsaMolecule>> menv;
+    private final MapEnvironment<List<? extends ILsaMolecule>> menv;
     private final boolean initO, initD, initNeigh, initRoute, mapEnv;
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All provided RandomGenerator implementations are actually Serializable")
     private final RandomGenerator randomEngine;
@@ -58,8 +58,8 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
         initNeigh = molString.contains(LsaMolecule.SYN_NEIGH);
         initRoute = molString.contains(LsaMolecule.SYN_ROUTE);
         env = environment;
-        mapEnv = environment instanceof IMapEnvironment;
-        menv = mapEnv ? (IMapEnvironment<List<? extends ILsaMolecule>>) env : null;
+        mapEnv = environment instanceof MapEnvironment;
+        menv = mapEnv ? (MapEnvironment<List<? extends ILsaMolecule>>) env : null;
         randomEngine = random;
     }
 

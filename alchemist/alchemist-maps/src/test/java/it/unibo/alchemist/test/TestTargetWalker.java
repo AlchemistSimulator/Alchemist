@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.implementations.nodes.GenericNode;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.implementations.reactions.Event;
 import it.unibo.alchemist.model.implementations.timedistributions.DiracComb;
-import it.unibo.alchemist.model.interfaces.IMapEnvironment;
+import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
@@ -47,7 +47,7 @@ public class TestTargetWalker {
      * Near Montefiore
      */
     private static final Position ENDPOSITION = new LatLongPosition(ENDLAT, ENDLON);
-    private IMapEnvironment<Object> env;
+    private MapEnvironment<Object> env;
     private Node<Object> node;
     private Reaction<Object> reaction;
 

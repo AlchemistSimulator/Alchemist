@@ -26,7 +26,7 @@ import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.IMapEnvironment;
+import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
@@ -39,7 +39,7 @@ import java8.util.function.Functions;
 public class AlchemistExecutionContext extends AbstractExecutionContext implements SpatiallyEmbeddedDevice, LocalizedDevice, TimeAwareDevice {
 
     /**
-     * Put this {@link Molecule} inside nodes that should compute distances using routes. It only makes sense in case the environment is a {@link IMapEnvironment}
+     * Put this {@link Molecule} inside nodes that should compute distances using routes. It only makes sense in case the environment is a {@link MapEnvironment}
      */
     public static final Molecule USE_ROUTES_AS_DISTANCES = new SimpleMolecule("ROUTES_AS_DISTANCE");
     private final LoadingCache<Position, Double> cache = CacheBuilder.newBuilder()
@@ -48,8 +48,8 @@ public class AlchemistExecutionContext extends AbstractExecutionContext implemen
             .build(new CacheLoader<Position, Double>() {
                 @Override
                 public Double load(final Position dest) {
-                    if (env instanceof IMapEnvironment<?>) {
-                        return ((IMapEnvironment<Object>) env).computeRoute(node, dest).getDistance();
+                    if (env instanceof MapEnvironment<?>) {
+                        return ((MapEnvironment<Object>) env).computeRoute(node, dest).getDistance();
                     }
                     return getDevicePosition().getDistanceTo(dest);
                 }
@@ -122,7 +122,7 @@ public class AlchemistExecutionContext extends AbstractExecutionContext implemen
     }
 
     /**
-     * Computes the distance along a map. Requires a {@link IMapEnvironment}.
+     * Computes the distance along a map. Requires a {@link MapEnvironment}.
      * 
      * @param dest
      *            the destination, as a {@link Tuple} of two values: [latitude,
@@ -138,7 +138,7 @@ public class AlchemistExecutionContext extends AbstractExecutionContext implemen
     }
 
     /**
-     * Computes the distance along a map. Requires a {@link IMapEnvironment}.
+     * Computes the distance along a map. Requires a {@link MapEnvironment}.
      * 
      * @param dest
      *            the destination, in form of {@link ProtelisNode} ID. Non
@@ -151,7 +151,7 @@ public class AlchemistExecutionContext extends AbstractExecutionContext implemen
     }
 
     /**
-     * Computes the distance along a map. Requires a {@link IMapEnvironment}.
+     * Computes the distance along a map. Requires a {@link MapEnvironment}.
      * 
      * @param dest
      *            the destination, in form of a destination node
@@ -162,7 +162,7 @@ public class AlchemistExecutionContext extends AbstractExecutionContext implemen
     }
 
     /**
-     * Computes the distance along a map. Requires a {@link IMapEnvironment}.
+     * Computes the distance along a map. Requires a {@link MapEnvironment}.
      * 
      * @param dest
      *            the destination
@@ -219,7 +219,7 @@ public class AlchemistExecutionContext extends AbstractExecutionContext implemen
     @Override
     public Field nbrRange() {
         return buildFieldWithPosition(p -> {
-            if (env instanceof IMapEnvironment<?> && node.contains(USE_ROUTES_AS_DISTANCES)) {
+            if (env instanceof MapEnvironment<?> && node.contains(USE_ROUTES_AS_DISTANCES)) {
                 return routingDistance(p);
             }
             return getDevicePosition().getDistanceTo(p);

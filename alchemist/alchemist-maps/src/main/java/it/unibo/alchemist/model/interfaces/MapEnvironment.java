@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.interfaces;
 /**
  * @param <T>
  */
-public interface IMapEnvironment<T> extends Environment<T> {
+public interface MapEnvironment<T> extends Environment<T> {
 
     /**
      * The default vehicle.

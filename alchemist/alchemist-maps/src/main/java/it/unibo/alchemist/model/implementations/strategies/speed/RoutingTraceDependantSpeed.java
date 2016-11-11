@@ -3,7 +3,7 @@
  */
 package it.unibo.alchemist.model.implementations.strategies.speed;
 
-import it.unibo.alchemist.model.interfaces.IMapEnvironment;
+import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
@@ -30,13 +30,13 @@ public class RoutingTraceDependantSpeed<T> extends TraceDependantSpeed<T> {
      * @param vehicle
      *            the vehicle
      */
-    public RoutingTraceDependantSpeed(final IMapEnvironment<T> e, final Node<T> n, final Reaction<T> r, final Vehicle vehicle) {
+    public RoutingTraceDependantSpeed(final MapEnvironment<T> e, final Node<T> n, final Reaction<T> r, final Vehicle vehicle) {
         super(e, n, r);
         v = vehicle;
     }
 
     @Override
-    protected double computeDistance(final IMapEnvironment<T> environment, final Node<T> curNode, final Position targetPosition) {
+    protected double computeDistance(final MapEnvironment<T> environment, final Node<T> curNode, final Position targetPosition) {
         return environment.computeRoute(curNode, targetPosition, v).getDistance();
     }
 

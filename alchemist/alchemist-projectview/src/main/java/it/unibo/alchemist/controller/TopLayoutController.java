@@ -33,6 +33,7 @@ public class TopLayoutController {
     private Button btnSaveAs;
 
     private Main main;
+    private LeftLayoutController ctrlLeft;
 
     /**
      * 
@@ -51,6 +52,14 @@ public class TopLayoutController {
      */
     public void setMain(final Main main) {
         this.main = main;
+    }
+
+    /**
+     * 
+     * @param controller LeftLayout controller
+     */
+    public void setCtrlLeft(final LeftLayoutController controller) {
+        this.ctrlLeft = controller;
     }
 
     /**
@@ -76,8 +85,23 @@ public class TopLayoutController {
 
             stage.showAndWait();
         } catch (IOException e) {
+            //TODO: add logger
             //L.error("Error loading the graphical interface. This is most likely a bug.", e);
             System.exit(1);
+        }
+    }
+
+    /**
+     * 
+     */
+    @FXML
+    public void clickOpen() {
+        final DirectoryChooser dirChooser = new DirectoryChooser();
+        dirChooser.setTitle(R.getString("select_folder_proj"));
+        dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        final File dir = dirChooser.showDialog(this.main.getStage());
+        if (dir != null) {
+            this.ctrlLeft.setTreeView(dir);
         }
     }
 
@@ -89,25 +113,25 @@ public class TopLayoutController {
         final DirectoryChooser dirChooser = new DirectoryChooser();
         dirChooser.setTitle("Import project folder");
         dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-        final File dir = dirChooser.showDialog(this.main.getStage());  // eccezione se non si seleziona nulla!
+        //final File dir = dirChooser.showDialog(this.main.getStage());  // eccezione se non si seleziona nulla!
         //System.out.println("base: " + dir.getName());
-        displayDirectoryContent(dir);
+        //displayDirectoryContent(dir);
     }
 
-    private void displayDirectoryContent(final File dir) {
-        //try {
+    /*private void displayDirectoryContent(final File dir) {
+        try {
             final File[] files = dir.listFiles();
             for (final File file: files) {
                 if (file.isDirectory()) {
-                    //System.out.println("   directory: " + file.getName());
+                    System.out.println("   directory: " + file.getName());
                     displayDirectoryContent(file);
                 } else {
                     System.out.println("      file: " + file.getName());
                 }
             }
-        /*} catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
-        }*/
-    }
+        }
+    }*/
 
 }

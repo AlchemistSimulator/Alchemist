@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.controller.CenterLayoutController;
+import it.unibo.alchemist.controller.LeftLayoutController;
 import it.unibo.alchemist.controller.TopLayoutController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -23,6 +24,7 @@ public class Main extends Application {
 
     private Stage primaryStage;
     private BorderPane root;
+    private LeftLayoutController controllerLeft;
 
     /**
      * Returns the primary stage.
@@ -42,8 +44,8 @@ public class Main extends Application {
         this.primaryStage.setTitle("Alchemist");
 
         initLayout("RootLayout");
-        initLayout("TopLayout");
         initLayout("LeftLayout");
+        initLayout("TopLayout");
         initLayout("CenterLayout");
     }
 
@@ -65,8 +67,11 @@ public class Main extends Application {
 
                     final TopLayoutController controller = loader.getController();
                     controller.setMain(this);
+                    controller.setCtrlLeft(this.controllerLeft);
                 } else if (layoutName.equals("LeftLayout")) {
                     this.root.setLeft(pane);
+
+                    this.controllerLeft = loader.getController();
                 } else {
                     this.root.setCenter(pane);
 

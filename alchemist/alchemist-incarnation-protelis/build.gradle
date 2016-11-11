@@ -13,3 +13,9 @@ dependencies {
         "it.unibo.alchemist:alchemist.protelisdsl:$protelisdslVersion"
     )
 }
+
+configurations {
+    compile {
+        exclude group: 'org.protelis', module: 'protelis-test'
+    } 
+}

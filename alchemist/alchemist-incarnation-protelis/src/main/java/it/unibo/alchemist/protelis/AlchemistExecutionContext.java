@@ -8,27 +8,40 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.HashUtils;
+import org.protelis.lang.datatype.DatatypeFactory;
 import org.protelis.lang.datatype.DeviceUID;
+import org.protelis.lang.datatype.Field;
 import org.protelis.lang.datatype.Tuple;
 import org.protelis.vm.ExecutionEnvironment;
+import org.protelis.vm.LocalizedDevice;
+import org.protelis.vm.SpatiallyEmbeddedDevice;
+import org.protelis.vm.TimeAwareDevice;
 import org.protelis.vm.impl.AbstractExecutionContext;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
+import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.IMapEnvironment;
+import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import java8.util.function.Function;
+import java8.util.function.Functions;
 
 /**
  */
-public class AlchemistExecutionContext extends AbstractExecutionContext {
+public class AlchemistExecutionContext extends AbstractExecutionContext implements SpatiallyEmbeddedDevice, LocalizedDevice, TimeAwareDevice {
 
+    /**
+     * Put this {@link Molecule} inside nodes that should compute distances using routes. It only makes sense in case the environment is a {@link IMapEnvironment}
+     */
+    public static final Molecule USE_ROUTES_AS_DISTANCES = new SimpleMolecule("ROUTES_AS_DISTANCE");
     private final LoadingCache<Position, Double> cache = CacheBuilder.newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES)
             .maximumSize(100)
@@ -132,9 +145,8 @@ public class AlchemistExecutionContext extends AbstractExecutionContext {
      *            integer numbers will be cast to integers by
      *            {@link Number#intValue()}.
      * @return the distance on a map
-     * @throws ExecutionException 
      */
-    public double routingDistance(final Number dest) throws ExecutionException {
+    public double routingDistance(final Number dest) {
         return routingDistance(env.getNodeByID(dest.intValue()));
     }
 
@@ -144,9 +156,8 @@ public class AlchemistExecutionContext extends AbstractExecutionContext {
      * @param dest
      *            the destination, in form of a destination node
      * @return the distance on a map
-     * @throws ExecutionException 
      */
-    public double routingDistance(final Node<Object> dest) throws ExecutionException {
+    public double routingDistance(final Node<Object> dest) {
         return routingDistance(env.getPosition(dest));
     }
 
@@ -156,10 +167,13 @@ public class AlchemistExecutionContext extends AbstractExecutionContext {
      * @param dest
      *            the destination
      * @return the distance on a map
-     * @throws ExecutionException 
      */
-    public double routingDistance(final Position dest) throws ExecutionException {
-        return cache.get(dest);
+    public double routingDistance(final Position dest) {
+        try {
+            return cache.get(dest);
+        } catch (ExecutionException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Override
@@ -185,6 +199,35 @@ public class AlchemistExecutionContext extends AbstractExecutionContext {
     @Override
     public ExecutionEnvironment getExecutionEnvironment() {
         return node;
+    }
+
+    @Override
+    public Field nbrLag() {
+        return buildField(Functions.identity(), 0);
+    }
+
+    @Override
+    public Tuple getCoordinates() {
+        return DatatypeFactory.createTuple(getDevicePosition().getCartesianCoordinates());
+    }
+
+    @Override
+    public Field nbrVector() {
+        return buildFieldWithPosition(p -> getDevicePosition().subtract(p));
+    }
+
+    @Override
+    public Field nbrRange() {
+        return buildFieldWithPosition(p -> {
+            if (env instanceof IMapEnvironment<?> && node.contains(USE_ROUTES_AS_DISTANCES)) {
+                return routingDistance(p);
+            }
+            return getDevicePosition().getDistanceTo(p);
+        });
+    }
+
+    private Field buildFieldWithPosition(final Function<Position, ?> fun) {
+        return buildField(fun, getDevicePosition());
     }
 
 }

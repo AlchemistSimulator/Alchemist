@@ -109,7 +109,7 @@ public class Continuous2DEnvironment<T> extends AbstractLinkingRuleEnvironment<T
     @Override
     public void moveNode(final Node<T> node, final Position direction) {
         final Position oldcoord = getPosition(node);
-        moveNodeToPosition(node, oldcoord.sum(direction));
+        moveNodeToPosition(node, oldcoord.add(direction));
     }
 
     @Override

@@ -70,6 +70,14 @@ public interface Position extends Serializable, Comparable<Position> {
      * @param other the other position
      * @return a new {@link Position} that is the sum of the two.
      */
-    Position sum(Position other);
+    Position add(Position other);
+
+    /**
+     * Considers both positions as vectors, and returns the difference between this position and the passed one.
+     * 
+     * @param other the other position
+     * @return a new {@link Position} that is this position minus the one passed.
+     */
+    Position subtract(Position other);
 
 }

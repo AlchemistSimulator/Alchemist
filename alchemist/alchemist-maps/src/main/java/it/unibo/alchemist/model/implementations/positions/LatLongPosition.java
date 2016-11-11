@@ -19,6 +19,7 @@ import static org.apache.commons.math3.util.FastMath.toDegrees;
 import static org.apache.commons.math3.util.FastMath.toRadians;
 
 import java.util.List;
+import java.util.function.BinaryOperator;
 
 import org.danilopianini.lang.HashUtils;
 
@@ -324,15 +325,23 @@ public final class LatLongPosition implements Position {
     }
 
     @Override
-    public Position sum(final Position other) {
+    public Position add(final Position other) {
+        return ebeOperation((self, b) -> self + b, other);
+    }
+
+    @Override
+    public Position subtract(final Position other) {
+        return ebeOperation((self, o) -> self - o, other);
+    }
+
+    private LatLongPosition ebeOperation(final BinaryOperator<Double> op, final Position other) {
         if (other instanceof LatLongPosition) {
-            final LatLng l = ((LatLongPosition) other).latlng;
+            final LatLng l2 = ((LatLongPosition) other).latlng;
             return new LatLongPosition(
-                    latlng.getLatitude() + l.getLatitude(),
-                    latlng.getLongitude() + l.getLongitude());
+                    op.apply(latlng.getLatitude(), l2.getLatitude()),
+                    op.apply(latlng.getLongitude(), l2.getLongitude()));
         }
-        throw new IllegalArgumentException(
-                "You are summing a " + getClass() + "with a " + other.getClass() + ". This is not supported.");
+        throw new IllegalArgumentException("You are trying to do math combining " + this + "with " + other + ". This is not supported.");
     }
 
 }

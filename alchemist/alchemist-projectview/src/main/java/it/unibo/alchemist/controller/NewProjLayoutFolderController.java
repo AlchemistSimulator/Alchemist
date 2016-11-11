@@ -2,7 +2,9 @@ package it.unibo.alchemist.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,8 +13,11 @@ import it.unibo.alchemist.boundary.l10n.R;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -80,9 +85,30 @@ public class NewProjLayoutFolderController {
         dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         final File dir = dirChooser.showDialog(this.main.getStage());
         if (dir != null) {
-            this.path = dir.getAbsolutePath();
-            this.folderPath.setText(dir.getAbsolutePath());
-            this.next.setDisable(false);
+            if (dir.listFiles().length == 0) {
+                setSelectedFolder(dir);
+            } else {
+                final Alert alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle(R.getString("select_folder_full"));
+                alert.setHeaderText(R.getString("select_folder_full_header"));
+                alert.setContentText(R.getString("select_folder_full_content"));
+                final Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    try {
+                        FileUtils.cleanDirectory(dir);
+                        setSelectedFolder(dir);
+                    } catch (IOException e) {
+                        L.error("Error cleaning is unsuccessfull.", e);
+                        System.exit(1);
+                    }
+                } else {
+                    final Alert alertCancel = new Alert(AlertType.WARNING);
+                    alertCancel.setTitle(R.getString("select_folder_full_cancel"));
+                    alertCancel.setHeaderText(R.getString("select_folder_full_cancel_header"));
+                    alertCancel.setContentText(R.getString("select_folder_full_cancel_content"));
+                    alertCancel.showAndWait();
+                }
+            }
         }
     }
 
@@ -106,5 +132,11 @@ public class NewProjLayoutFolderController {
             L.error("Error loading the graphical interface. This is most likely a bug.", e);
             System.exit(1);
         }
+    }
+
+    private void setSelectedFolder(final File dir) {
+        this.path = dir.getAbsolutePath();
+        this.folderPath.setText(this.path);
+        this.next.setDisable(false);
     }
 }

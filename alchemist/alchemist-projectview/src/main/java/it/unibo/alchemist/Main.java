@@ -24,6 +24,7 @@ public class Main extends Application {
 
     private Stage primaryStage;
     private BorderPane root;
+    private CenterLayoutController controllerCenter;
     private LeftLayoutController controllerLeft;
 
     /**
@@ -45,8 +46,8 @@ public class Main extends Application {
 
         initLayout("RootLayout");
         initLayout("LeftLayout");
-        initLayout("TopLayout");
         initLayout("CenterLayout");
+        initLayout("TopLayout");
     }
 
     private void initLayout(final String layoutName) {
@@ -68,6 +69,7 @@ public class Main extends Application {
                     final TopLayoutController controller = loader.getController();
                     controller.setMain(this);
                     controller.setCtrlLeft(this.controllerLeft);
+                    controller.setCtrlCenter(this.controllerCenter);
                 } else if (layoutName.equals("LeftLayout")) {
                     this.root.setLeft(pane);
 
@@ -78,6 +80,7 @@ public class Main extends Application {
                     final CenterLayoutController controller = loader.getController();
                     controller.setMain(this);
                     controller.setCtrlLeft(this.controllerLeft);
+                    this.controllerCenter = controller;
                 }
             }
         } catch (IOException e) {

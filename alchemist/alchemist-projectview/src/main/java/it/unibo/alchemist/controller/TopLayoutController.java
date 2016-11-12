@@ -1,11 +1,14 @@
 package it.unibo.alchemist.controller;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.gson.stream.JsonWriter;
 
 import it.unibo.alchemist.Main;
 import it.unibo.alchemist.boundary.l10n.R;
@@ -39,8 +42,10 @@ public class TopLayoutController {
     @FXML
     private Button btnSaveAs;
 
+    private CenterLayoutController ctrlCenter;
     private Main main;
     private LeftLayoutController ctrlLeft;
+    private String pathFolder;
 
     /**
      * 
@@ -67,6 +72,14 @@ public class TopLayoutController {
      */
     public void setCtrlLeft(final LeftLayoutController controller) {
         this.ctrlLeft = controller;
+    }
+
+    /**
+     * 
+     * @param controller CenterLayout controller
+     */
+    public void setCtrlCenter(final CenterLayoutController controller) {
+        this.ctrlCenter = controller;
     }
 
     /**
@@ -101,13 +114,13 @@ public class TopLayoutController {
      * 
      */
     @FXML
-    public void clickOpen() {
+    public void clickOpen() { //TODO: read .alchemist_project_descriptor.json and set field
         final DirectoryChooser dirChooser = new DirectoryChooser();
         dirChooser.setTitle(R.getString("select_folder_proj"));
         dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         final File dir = dirChooser.showDialog(this.main.getStage());
         if (dir != null) {
-            int containsFile =  dir.listFiles(new FilenameFilter() {
+            final int containsFile =  dir.listFiles(new FilenameFilter() {
 
                 @Override
                 public boolean accept(final File dir, final String filename) {
@@ -123,9 +136,69 @@ public class TopLayoutController {
                 alert.setContentText(R.getString("folder_wrong_content"));
                 alert.showAndWait();
             } else {
+                this.pathFolder = dir.getAbsolutePath();
                 this.ctrlLeft.setTreeView(dir);
             }
         }
+    }
+
+    /**
+     * 
+     */
+    @FXML
+    public void clickSave() {
+        JsonWriter json = null;
+        try {
+            json = new JsonWriter(new FileWriter(this.pathFolder + File.separator + ".alchemist_project_descriptor.json"));
+            json.beginObject();
+            json.name("Simulation");
+            json.value(this.ctrlCenter.getSimulation());
+            json.name("EndTime");
+            json.value(this.ctrlCenter.getEndTime());
+            json.name("Effect");
+            json.value(this.ctrlCenter.getEffect());
+            json.name("Output");
+            json.beginArray();
+            json.beginObject();
+            json.name("Select");
+            json.value(this.ctrlCenter.isSwitchOutputSelected());
+            json.name("Folder");
+            json.value(!this.ctrlCenter.isSwitchOutputSelected() ? "" : this.ctrlCenter.getOutputFolder());
+            json.name("Base name");
+            json.value(!this.ctrlCenter.isSwitchOutputSelected() ? "" : this.ctrlCenter.getBaseName());
+            json.name("Interval");
+            json.value(!this.ctrlCenter.isSwitchOutputSelected() ? -1 : this.ctrlCenter.getSamplInterval());
+            json.endObject();
+            json.endArray();
+            json.name("Batch");
+            json.beginArray();
+            json.beginObject();
+            json.name("Select");
+            json.value(this.ctrlCenter.isSwitchBatchSelected());
+            json.name("Variables");
+            json.beginArray();
+            if (!this.ctrlCenter.isSwitchBatchSelected()) {
+                json.value("");
+            } else {
+                json.value(false); //TODO:change
+            }
+            json.endArray();
+            json.name("Threads");
+            json.value(!this.ctrlCenter.isSwitchBatchSelected() ? -1 : this.ctrlCenter.getNumberThreads());
+            json.endObject();
+            json.endArray();
+            json.name("Classpath");
+            json.beginArray();
+            for (final String s: this.ctrlCenter.getClasspath()) {
+                json.value(s);
+            }
+            json.endArray();
+            json.endObject();
+            json.close();
+        } catch (IOException e) {
+            L.error("Error writing the file. This is most likely a bug.", e);
+        }
+
     }
 
     /**

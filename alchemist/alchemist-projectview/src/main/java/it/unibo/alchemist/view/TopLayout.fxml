@@ -17,7 +17,7 @@
                   <Insets bottom="10.0" top="10.0" />
                </padding>
             </Separator>
-            <Button fx:id="btnSave" mnemonicParsing="false" styleClass="btnMenu" />
+            <Button fx:id="btnSave" mnemonicParsing="false" styleClass="btnMenu" onAction="#clickSave" />
             <Button fx:id="btnSaveAs" mnemonicParsing="false" styleClass="btnMenu" />
             <Separator orientation="VERTICAL" prefHeight="200.0">
                <padding>

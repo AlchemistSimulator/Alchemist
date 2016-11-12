@@ -297,6 +297,88 @@ public class CenterLayoutController {
         }
     }
 
+    /**
+     * 
+     * @return Selected simulation path
+     */
+    public String getSimulation() {
+        return this.pathYaml.getText();
+    }
+
+    /**
+     * 
+     * @return Selected end time
+     */
+    public int getEndTime() {
+        return this.spinTime.getValueFactory().getValue();
+    }
+
+    /**
+     * 
+     * @return Selected effect path
+     */
+    public String getEffect() {
+        return this.pathEff.getText();
+    }
+
+    /**
+     * 
+     * @return true if the output switch is selected.
+     */
+    public boolean isSwitchOutputSelected() {
+        return this.tsOut.isSelected();
+    }
+
+    /**
+     * 
+     * @return Selected output folder
+     */
+    public String getOutputFolder() {
+        return this.pathOut.getText();
+    }
+
+    /**
+     * 
+     * @return Base name typed
+     */
+    public String getBaseName() {
+        return this.bnTextOut.getText();
+    }
+
+    /**
+     * 
+     * @return Selected sampling interval
+     */
+    public double getSamplInterval() {
+        return this.spinOut.getValueFactory().getValue();
+    }
+
+    /**
+     * 
+     * @return true if the batch mode switch is selected.
+     */
+    public boolean isSwitchBatchSelected() {
+        return this.tsVar.isSelected();
+    }
+
+    //TODO: list of variable selected
+
+    /**
+     * 
+     * @return Selected number of threads
+     */
+    public int getNumberThreads() {
+        return this.spinBatch.getValueFactory().getValue();
+    }
+
+    /**
+     * 
+     * @return The libraries to add to the classpath.
+     */
+    public ObservableList<String> getClasspath() {
+        return this.listClass.getItems();
+    }
+
     private void manageFile(final String extension, final boolean edit) {
         if (this.ctrlLeft.getSelectedFilePath() == null) {
             setAlert(R.getString("file_no_selected"), R.getString("file_no_selected_header"), R.getString("file_no_selected_content"));

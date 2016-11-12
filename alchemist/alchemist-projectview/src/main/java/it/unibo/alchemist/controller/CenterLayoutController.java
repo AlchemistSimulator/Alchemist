@@ -54,6 +54,8 @@ public class CenterLayoutController {
     @FXML
     private Button batch;
     @FXML
+    private Button removeClass;
+    @FXML
     private Button editEff;
     @FXML
     private Button editYaml;
@@ -119,7 +121,7 @@ public class CenterLayoutController {
     private LeftLayoutController ctrlLeft;
     private Main main;
 
-    private ObservableList<String> data = FXCollections.observableArrayList();
+    private final ObservableList<String> data = FXCollections.observableArrayList();
     private final ToggleSwitch tsOut = new ToggleSwitch();
     private final ToggleSwitch tsVar = new ToggleSwitch();
 
@@ -134,6 +136,7 @@ public class CenterLayoutController {
         this.bnTextOut.setPromptText(R.getString("enter_base_name"));
         this.bnTextOut.setText(R.getString("base_name_text"));
         this.classpath.setText(R.getString("classpath_pane_title"));
+        this.removeClass.setText(R.getString("remove"));
         this.editEff.setText(R.getString("edit"));
         this.editYaml.setText(R.getString("edit"));
         this.eff.setText(R.getString("eff_pane_title"));
@@ -160,6 +163,9 @@ public class CenterLayoutController {
         this.thread.setText(R.getString("n_thread"));
         this.unitOut.setText(R.getString("sec"));
         this.unitTime.setText(R.getString("sec"));
+        if (this.listClass.getItems().size() == 0) {
+            this.removeClass.setDisable(true);
+        }
     }
 
     /**
@@ -273,7 +279,22 @@ public class CenterLayoutController {
      */
     @FXML
     public void clickAddClass() {
+        if (this.listClass.getItems().size() == 0) {
+            this.removeClass.setDisable(false);
+        }
         manageFile(R.getString("jar_ext"), false);
+    }
+
+    /**
+     * 
+     */
+    @FXML
+    public void clickRemoveClass() {
+        final String nameFile = this.listClass.getSelectionModel().getSelectedItem();
+        this.listClass.getItems().remove(nameFile);
+        if (this.listClass.getItems().size() == 0) {
+            this.removeClass.setDisable(true);
+        }
     }
 
     private void manageFile(final String extension, final boolean edit) {
@@ -353,7 +374,7 @@ public class CenterLayoutController {
             imgView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(final MouseEvent event) {
-                    pathYaml.setText("");  //TODO: isEmpty = true
+                    pathYaml.setText(""); 
                     gridYaml.getChildren().remove(imgView);
                 }
             });

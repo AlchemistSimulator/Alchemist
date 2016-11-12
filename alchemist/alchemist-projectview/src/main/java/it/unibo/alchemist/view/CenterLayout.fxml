@@ -181,7 +181,8 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Button fx:id="addClass" mnemonicParsing="false" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.rowSpan="6" GridPane.valignment="CENTER" onAction="#clickAddClass"/>
+                        <Button fx:id="addClass" mnemonicParsing="false" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" onAction="#clickAddClass"/>
+                        <Button fx:id="removeClass" mnemonicParsing="false" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" onAction="#clickRemoveClass"/>
                         <Label fx:id="classpath" styleClass="title" GridPane.columnSpan="9" GridPane.halignment="CENTER" />
                         <ListView fx:id="listClass" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="8" GridPane.rowIndex="1" GridPane.rowSpan="6" />
                      </children>

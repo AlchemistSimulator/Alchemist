@@ -273,6 +273,7 @@ public class CenterLayoutController {
             final FileNameDialogController controller = loader.getController();
             controller.setDialogStage(stage);
             controller.setExtension(extension);
+            controller.setCtrlLeftLayout(this.ctrlLeft);
 
             stage.showAndWait();
         } catch (IOException e) {

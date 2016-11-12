@@ -38,6 +38,7 @@ public class FileNameDialogController {
     @FXML
     private TextField tfNameFile;
 
+    private LeftLayoutController ctrlLeft;
     private Stage dialogStage;
     private String extension;
 
@@ -61,7 +62,7 @@ public class FileNameDialogController {
 
     /**
      * Sets the extension of the file.
-     * @param extension file extension
+     * @param extension File extension
      */
     public void setExtension(final String extension) {
         this.extension = extension;
@@ -70,17 +71,32 @@ public class FileNameDialogController {
 
     /**
      * 
+     * @param ctrl Left Layout controller
+     */
+    public void setCtrlLeftLayout(final LeftLayoutController ctrl) {
+        this.ctrlLeft = ctrl;
+    }
+
+    /**
+     * 
      */
     @FXML
     protected void clickOK() {
         if (!this.tfNameFile.getText().isEmpty()) {
-            final String userDirectory = System.getProperty("user.home"); //TODO: get root position from project file
-            final File file = new File(userDirectory + File.separator + tfNameFile.getText() + this.extension);
+            final String projPath = this.ctrlLeft.getPathFolder();
+            final File file;
+            final String path = projPath + File.separator + "src" + File.separator;
+            if (this.extension.equals(R.getString("yaml_ext"))) {
+                file = new File(path + "yaml" + File.separator + tfNameFile.getText() + this.extension);
+            } else {
+                file = new File(path + "json" + File.separator + tfNameFile.getText() + this.extension);
+            }
             final Desktop desk = Desktop.getDesktop();
             try {
                 if (!file.exists()) {
                     file.createNewFile();
                     this.dialogStage.close();
+                    this.ctrlLeft.setTreeView(new File(projPath));
                     desk.open(file);
                 } else {
                     final Alert alert = new Alert(AlertType.CONFIRMATION);

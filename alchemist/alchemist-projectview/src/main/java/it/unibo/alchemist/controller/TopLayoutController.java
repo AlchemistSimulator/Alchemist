@@ -1,14 +1,20 @@
 package it.unibo.alchemist.controller;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.Main;
 import it.unibo.alchemist.boundary.l10n.R;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
@@ -19,6 +25,8 @@ import javafx.stage.Stage;
  *
  */
 public class TopLayoutController {
+
+    private static final Logger L = LoggerFactory.getLogger(Main.class);
 
     @FXML
     private Button btnNew;
@@ -84,8 +92,7 @@ public class TopLayoutController {
 
             stage.showAndWait();
         } catch (IOException e) {
-            //TODO: add logger
-            //L.error("Error loading the graphical interface. This is most likely a bug.", e);
+            L.error("Error loading the graphical interface. This is most likely a bug.", e);
             System.exit(1);
         }
     }
@@ -100,8 +107,24 @@ public class TopLayoutController {
         dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         final File dir = dirChooser.showDialog(this.main.getStage());
         if (dir != null) {
-            //TODO: control if the folder contains file .alchemist_project_descriptor.json otherwise refuse folder
-            this.ctrlLeft.setTreeView(dir);
+            int containsFile =  dir.listFiles(new FilenameFilter() {
+
+                @Override
+                public boolean accept(final File dir, final String filename) {
+                    return filename.endsWith(".alchemist_project_descriptor.json");
+                }
+
+            }).length;
+
+            if (containsFile == 0) {
+                final Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle(R.getString("folder_wrong"));
+                alert.setHeaderText(R.getString("folder_wrong_header"));
+                alert.setContentText(R.getString("folder_wrong_content"));
+                alert.showAndWait();
+            } else {
+                this.ctrlLeft.setTreeView(dir);
+            }
         }
     }
 
@@ -110,12 +133,12 @@ public class TopLayoutController {
      */
     @FXML
     public void clickImport() {
-        final DirectoryChooser dirChooser = new DirectoryChooser();
+        /*final DirectoryChooser dirChooser = new DirectoryChooser();
         dirChooser.setTitle("Import project folder");
         dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-        //final File dir = dirChooser.showDialog(this.main.getStage());  // eccezione se non si seleziona nulla!
-        //System.out.println("base: " + dir.getName());
-        //displayDirectoryContent(dir);
+        final File dir = dirChooser.showDialog(this.main.getStage());  // eccezione se non si seleziona nulla!
+        System.out.println("base: " + dir.getName());
+        displayDirectoryContent(dir);*/
     }
 
     /*private void displayDirectoryContent(final File dir) {

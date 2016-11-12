@@ -12,6 +12,8 @@ import it.unibo.alchemist.Main;
 import it.unibo.alchemist.boundary.l10n.R;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -102,6 +104,8 @@ public class CenterLayoutController {
     @FXML
     private Label unitTime;
     @FXML
+    private ListView<String> listClass = new ListView<>();
+    @FXML
     private ListView<String> listYaml;
     @FXML
     private Spinner<Integer> spinBatch;
@@ -115,6 +119,7 @@ public class CenterLayoutController {
     private LeftLayoutController ctrlLeft;
     private Main main;
 
+    private ObservableList<String> data = FXCollections.observableArrayList();
     private final ToggleSwitch tsOut = new ToggleSwitch();
     private final ToggleSwitch tsVar = new ToggleSwitch();
 
@@ -263,6 +268,13 @@ public class CenterLayoutController {
         manageFile(EFF_EXT, true);
     }
 
+    /**
+     * 
+     */
+    @FXML
+    public void clickAddClass() {
+        manageFile(R.getString("jar_ext"), false);
+    }
 
     private void manageFile(final String extension, final boolean edit) {
         if (this.ctrlLeft.getSelectedFilePath() == null) {
@@ -274,14 +286,23 @@ public class CenterLayoutController {
             } else if (extension.equals(EFF_EXT) && !edit) {
                 this.pathEff.setText(this.ctrlLeft.getSelectedFilePath());
                 setDeleteIcon(false);
-            } else {
+            } else if (extension.equals(EFF_EXT) && edit) {
                 editFile();
+            } else {
+                if (!this.data.contains(this.ctrlLeft.getSelectedFilePath())) {
+                    this.data.add(this.ctrlLeft.getSelectedFilePath());
+                    this.listClass.setItems(data);
+                } else {
+                    setAlert(R.getString("file_name_exists"), R.getString("file_name_jar_header"), R.getString("file_name_jar_content"));
+                }
             }
         } else {
             if (extension.equals(YAML_EXT)) {
-                setAlert(R.getString("file_wrong"), R.getString("file_wrong_yaml_header"), R.getString("file_wrong_yaml_content"));
+                setAlert(R.getString("file_wrong"), R.getString("file_wrong_yaml_header"), R.getString("file_wrong_content"));
+            } else if (extension.equals(EFF_EXT)) {
+                setAlert(R.getString("file_wrong"), R.getString("file_wrong_effect_header"), R.getString("file_wrong_content"));
             } else {
-                setAlert(R.getString("file_wrong"), R.getString("file_wrong_effect_header"), R.getString("file_wrong_effect_content"));
+                setAlert(R.getString("file_wrong"), R.getString("file_wrong_jar_header"), R.getString("file_wrong_content"));
             }
         }
     }

@@ -12,6 +12,7 @@ import it.unibo.alchemist.Main;
 import it.unibo.alchemist.boundary.l10n.R;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -22,6 +23,10 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -61,9 +66,13 @@ public class CenterLayoutController {
     @FXML
     private Button setYaml;
     @FXML
+    private GridPane gridEff;
+    @FXML
     private GridPane gridOut;
     @FXML
     private GridPane gridVar;
+    @FXML
+    private GridPane gridYaml;
     @FXML
     private Label baseNameOut;
     @FXML
@@ -254,16 +263,17 @@ public class CenterLayoutController {
         manageFile(EFF_EXT, true);
     }
 
+
     private void manageFile(final String extension, final boolean edit) {
         if (this.ctrlLeft.getSelectedFilePath() == null) {
             setAlert(R.getString("file_no_selected"), R.getString("file_no_selected_header"), R.getString("file_no_selected_content"));
         } else if (this.ctrlLeft.getSelectedFilePath().endsWith(extension)) {
             if (extension.equals(YAML_EXT) && !edit) {
                 this.pathYaml.setText(this.ctrlLeft.getSelectedFilePath());
-                //TODO: add delete button
+                setDeleteIcon(true);
             } else if (extension.equals(EFF_EXT) && !edit) {
                 this.pathEff.setText(this.ctrlLeft.getSelectedFilePath());
-                //TODO: add delete button
+                setDeleteIcon(false);
             } else {
                 editFile();
             }
@@ -309,6 +319,32 @@ public class CenterLayoutController {
         } catch (IOException e) {
             L.error("Error opening file.", e);
             System.exit(1);
+        }
+    }
+
+    private void setDeleteIcon(final boolean isYaml) {
+        final ImageView imgView = new ImageView(new Image(Main.class.getResource("/icon/icon-delete.png").toExternalForm()));
+        final Tooltip tooltip = new Tooltip();
+        tooltip.setText(R.getString("delete"));
+        Tooltip.install(imgView, tooltip);
+        if (isYaml) {
+            this.gridYaml.add(imgView, 0, 2);
+            imgView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(final MouseEvent event) {
+                    pathYaml.setText("");  //TODO: isEmpty = true
+                    gridYaml.getChildren().remove(imgView);
+                }
+            });
+        } else {
+            this.gridEff.add(imgView, 0, 2);
+            imgView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(final MouseEvent event) {
+                    pathEff.setText("");
+                    gridEff.getChildren().remove(imgView);
+                }
+            });
         }
     }
 

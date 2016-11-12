@@ -1,5 +1,7 @@
 package it.unibo.alchemist.controller;
 
+import java.awt.Desktop;
+import java.io.File;
 import java.io.IOException;
 
 import org.controlsfx.control.ToggleSwitch;
@@ -209,7 +211,7 @@ public class CenterLayoutController {
      */
     @FXML
     public void clickSetYaml() {
-        setFile(YAML_EXT);
+        manageFile(YAML_EXT, false);
     }
 
     /**
@@ -224,8 +226,16 @@ public class CenterLayoutController {
      * 
      */
     @FXML
+    public void clickEditYaml() {
+        manageFile(YAML_EXT, true);
+    }
+
+    /**
+     * 
+     */
+    @FXML
     public void clickSetEffect() {
-        setFile(EFF_EXT);
+        manageFile(EFF_EXT, false);
     }
 
     /**
@@ -236,16 +246,26 @@ public class CenterLayoutController {
         newFile(EFF_EXT);
     }
 
-    private void setFile(final String extension) {
+    /**
+     * 
+     */
+    @FXML
+    public void clickEditEffect() {
+        manageFile(EFF_EXT, true);
+    }
+
+    private void manageFile(final String extension, final boolean edit) {
         if (this.ctrlLeft.getSelectedFilePath() == null) {
             setAlert(R.getString("file_no_selected"), R.getString("file_no_selected_header"), R.getString("file_no_selected_content"));
         } else if (this.ctrlLeft.getSelectedFilePath().endsWith(extension)) {
-            if (extension.equals(YAML_EXT)) {
+            if (extension.equals(YAML_EXT) && !edit) {
                 this.pathYaml.setText(this.ctrlLeft.getSelectedFilePath());
                 //TODO: add delete button
-            } else {
+            } else if (extension.equals(EFF_EXT) && !edit) {
                 this.pathEff.setText(this.ctrlLeft.getSelectedFilePath());
-              //TODO: add delete button
+                //TODO: add delete button
+            } else {
+                editFile();
             }
         } else {
             if (extension.equals(YAML_EXT)) {
@@ -278,6 +298,16 @@ public class CenterLayoutController {
             stage.showAndWait();
         } catch (IOException e) {
             L.error("Error loading the graphical interface. This is most likely a bug.", e);
+            System.exit(1);
+        }
+    }
+
+    private void editFile() {
+        final Desktop desk = Desktop.getDesktop();
+        try {
+            desk.open(new File(this.ctrlLeft.getSelectedFilePath()));
+        } catch (IOException e) {
+            L.error("Error opening file.", e);
             System.exit(1);
         }
     }

@@ -52,7 +52,7 @@
                            <children>
                               <Button fx:id="setYaml" mnemonicParsing="false" onAction="#clickSetYaml" styleClass="btnHB" />
                               <Button fx:id="newYaml" mnemonicParsing="false" onAction="#clickNewYaml" styleClass="btnHB" />
-                              <Button fx:id="editYaml" mnemonicParsing="false" styleClass="btnHB" />
+                              <Button fx:id="editYaml" mnemonicParsing="false" onAction="#clickEditYaml" styleClass="btnHB" />
                            </children>
                         </HBox>
                         <Label fx:id="endTime" GridPane.columnSpan="2" GridPane.rowIndex="3" />
@@ -84,9 +84,9 @@
                         <Label fx:id="pathEff" styleClass="path" GridPane.columnIndex="1" GridPane.columnSpan="6" GridPane.rowIndex="2" />
                         <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="7" GridPane.rowIndex="1">
                            <children>
-                              <Button fx:id="setEff" mnemonicParsing="false" styleClass="btnHB" onAction="#clickSetEffect"/>
+                              <Button fx:id="setEff" mnemonicParsing="false" onAction="#clickSetEffect" styleClass="btnHB" />
                               <Button fx:id="newEff" mnemonicParsing="false" onAction="#clickNewEffect" styleClass="btnHB" />
-                              <Button fx:id="editEff" mnemonicParsing="false" styleClass="btnHB" />
+                              <Button fx:id="editEff" mnemonicParsing="false" onAction="#clickEditEffect" styleClass="btnHB" />
                            </children>
                         </HBox>
                      </children>

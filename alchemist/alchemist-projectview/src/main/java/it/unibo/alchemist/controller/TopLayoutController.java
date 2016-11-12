@@ -1,7 +1,6 @@
 package it.unibo.alchemist.controller;
 
 import java.io.File;
-//import java.io.IOException;
 import java.io.IOException;
 
 import it.unibo.alchemist.Main;
@@ -101,6 +100,7 @@ public class TopLayoutController {
         dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         final File dir = dirChooser.showDialog(this.main.getStage());
         if (dir != null) {
+            //TODO: control if the folder contains file .alchemist_project_descriptor.json otherwise refuse folder
             this.ctrlLeft.setTreeView(dir);
         }
     }

@@ -3,6 +3,8 @@ package it.unibo.alchemist.controller;
 import java.io.File;
 
 import it.unibo.alchemist.boundary.l10n.R;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TreeItem;
@@ -22,6 +24,9 @@ public class LeftLayoutController {
     @FXML
     private TreeView<String> treeView;
 
+    private String pathFolder;
+    private String selectedFile;
+
     /**
      * 
      */
@@ -31,9 +36,27 @@ public class LeftLayoutController {
 
     /**
      * 
+     * @return path of project folder
+     */
+    public String getPathFolder() {
+        return this.pathFolder;
+    }
+
+    /**
+     * 
+     * @return path of selected file
+     */
+    public String getSelectedFilePath() {
+        return this.selectedFile;
+    }
+
+    /**
+     * 
      * @param dir Selected directory
      */
     public void setTreeView(final File dir) {
+        this.pathFolder = dir.getAbsolutePath();
+
         final TreeItem<String> root = new TreeItem<>(dir.getName());
         root.setExpanded(true);
         this.treeView = new TreeView<>(root);
@@ -41,6 +64,26 @@ public class LeftLayoutController {
         displayProjectContent(dir, root);
 
         this.pane.getChildren().add(this.treeView);
+
+        this.treeView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<String>>() {
+
+            @Override
+            public void changed(final ObservableValue<? extends TreeItem<String>> observable, 
+                    final TreeItem<String> oldVal,
+                    final TreeItem<String> newVal) {
+                final TreeItem<String> selectedItem = (TreeItem<String>) newVal;
+                TreeItem<String> parent = selectedItem.getParent();
+                String path = File.separator + selectedItem.getValue();
+                while (parent != null)  {
+                    if (parent.getParent() != null) {
+                        path = File.separator + parent.getValue() + path;
+                    }
+                    parent = parent.getParent();
+                }
+                selectedFile = pathFolder + path;
+            }
+
+        });
     }
 
     private void displayProjectContent(final File dir, final TreeItem<String> root) {

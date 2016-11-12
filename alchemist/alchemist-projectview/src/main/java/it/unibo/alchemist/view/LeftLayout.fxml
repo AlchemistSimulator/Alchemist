@@ -31,7 +31,7 @@
             <Button fx:id="run" alignment="CENTER" mnemonicParsing="false" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER" />
             <StackPane fx:id="pane" prefHeight="150.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowSpan="9">
                <children>
-                  <TreeView fx:id="treeView" prefHeight="200.0" prefWidth="200.0" />
+                  <TreeView prefHeight="200.0" prefWidth="200.0"/>
                </children>
             </StackPane>
          </children>

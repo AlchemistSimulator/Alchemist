@@ -77,6 +77,7 @@ public class Main extends Application {
 
                     final CenterLayoutController controller = loader.getController();
                     controller.setMain(this);
+                    controller.setCtrlLeft(this.controllerLeft);
                 }
             }
         } catch (IOException e) {

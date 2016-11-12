@@ -13,12 +13,14 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
@@ -32,9 +34,11 @@ public class CenterLayoutController {
     private static final Logger L = LoggerFactory.getLogger(Main.class);
     private static final double MIN_SAM = 0.01;
     private static final double MAX_SAM = 600;
-    private static final int MAX_TIME = 18000;
     private static final double STEP_SAM = 0.01;
+    private static final int MAX_TIME = 18000;
     private static final int VALUE_TIME = 60;
+    private static final String EFF_EXT = R.getString("eff_ext");
+    private static final String YAML_EXT = R.getString("yaml_ext");
 
     @FXML
     private Button addClass;
@@ -73,7 +77,11 @@ public class CenterLayoutController {
     @FXML
     private Label output;
     @FXML
+    private Label pathEff;
+    @FXML
     private Label pathOut;
+    @FXML
+    private Label pathYaml;
     @FXML
     private Label simConf;
     @FXML
@@ -93,6 +101,7 @@ public class CenterLayoutController {
     @FXML
     private TextField bnTextOut;
 
+    private LeftLayoutController ctrlLeft;
     private Main main;
 
     private final ToggleSwitch tsOut = new ToggleSwitch();
@@ -150,6 +159,14 @@ public class CenterLayoutController {
         controlSwitch(this.tsVar);
     }
 
+    /**
+     * 
+     * @param controller LeftLayout controller
+     */
+    public void setCtrlLeft(final LeftLayoutController controller) {
+        this.ctrlLeft = controller;
+    }
+
     private void controlSwitch(final ToggleSwitch ts) {
         if (ts.isSelected()) {
             setComponentVisible(ts, true);
@@ -188,19 +205,55 @@ public class CenterLayoutController {
     }
 
     /**
+     * 
+     */
+    @FXML
+    public void clickSetYaml() {
+        setFile(YAML_EXT);
+    }
+
+    /**
      * Show dialog to create new YAML file.
      */
     @FXML
-    protected void clickNewYaml() {
-        newFile(R.getString("yaml_ext"));
+    public void clickNewYaml() {
+        newFile(YAML_EXT);
+    }
+
+    /**
+     * 
+     */
+    @FXML
+    public void clickSetEffect() {
+        setFile(EFF_EXT);
     }
 
     /**
      * Show dialog to create new effect file.
      */
     @FXML
-    protected void clickNewEffect() {
-        newFile(R.getString("eff_ext"));
+    public void clickNewEffect() {
+        newFile(EFF_EXT);
+    }
+
+    private void setFile(final String extension) {
+        if (this.ctrlLeft.getSelectedFilePath() == null) {
+            setAlert(R.getString("file_no_selected"), R.getString("file_no_selected_header"), R.getString("file_no_selected_content"));
+        } else if (this.ctrlLeft.getSelectedFilePath().endsWith(extension)) {
+            if (extension.equals(YAML_EXT)) {
+                this.pathYaml.setText(this.ctrlLeft.getSelectedFilePath());
+                //TODO: add delete button
+            } else {
+                this.pathEff.setText(this.ctrlLeft.getSelectedFilePath());
+              //TODO: add delete button
+            }
+        } else {
+            if (extension.equals(YAML_EXT)) {
+                setAlert(R.getString("file_wrong"), R.getString("file_wrong_yaml_header"), R.getString("file_wrong_yaml_content"));
+            } else {
+                setAlert(R.getString("file_wrong"), R.getString("file_wrong_effect_header"), R.getString("file_wrong_effect_content"));
+            }
+        }
     }
 
     private void newFile(final String extension) {
@@ -226,6 +279,14 @@ public class CenterLayoutController {
             L.error("Error loading the graphical interface. This is most likely a bug.", e);
             System.exit(1);
         }
+    }
+
+    private void setAlert(final String title, final String header, final String content) {
+        final Alert alert = new Alert(AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
 }

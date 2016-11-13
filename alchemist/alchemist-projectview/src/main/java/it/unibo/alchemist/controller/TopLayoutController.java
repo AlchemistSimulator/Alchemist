@@ -4,14 +4,19 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.stream.JsonWriter;
+import com.google.gson.Gson;
 
 import it.unibo.alchemist.Main;
 import it.unibo.alchemist.boundary.l10n.R;
+import it.unibo.alchemist.model.Batch;
+import it.unibo.alchemist.model.Output;
+import it.unibo.alchemist.model.Project;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -56,6 +61,7 @@ public class TopLayoutController {
         this.btnImport.setText(R.getString("import"));
         this.btnSave.setText(R.getString("save"));
         this.btnSaveAs.setText(R.getString("save_as"));
+        this.btnSave.setDisable(true);
     }
 
     /**
@@ -138,6 +144,7 @@ public class TopLayoutController {
             } else {
                 this.pathFolder = dir.getAbsolutePath();
                 this.ctrlLeft.setTreeView(dir);
+                this.btnSave.setDisable(false);
             }
         }
     }
@@ -147,58 +154,39 @@ public class TopLayoutController {
      */
     @FXML
     public void clickSave() {
-        JsonWriter json = null;
+        final Output out = new Output();
+        out.setSelect(this.ctrlCenter.isSwitchOutputSelected());
+        out.setFolder(this.ctrlCenter.getOutputFolder());
+        out.setBaseName(this.ctrlCenter.getBaseName());
+        out.setSamplInterval(this.ctrlCenter.getSamplInterval());
+
+        final Batch batch = new Batch();
+        batch.setSelect(this.ctrlCenter.isSwitchBatchSelected());
+        batch.setVariables(new ArrayList<String>()); // TODO: change
+        batch.setThread(this.ctrlCenter.getNumberThreads());
+
+        final List<String> classpathList = new ArrayList<>();
+        for (final String s: this.ctrlCenter.getClasspath()) {
+            classpathList.add(s);
+        }
+
+        final Project proj = new Project();
+        proj.setSimulation(this.ctrlCenter.getSimulation());
+        proj.setEndTime(this.ctrlCenter.getEndTime());
+        proj.setEffect(this.ctrlCenter.getEffect());
+        proj.setOutput(out);
+        proj.setBatch(batch);
+        proj.setClasspath(classpathList);
+
+        final Gson gson = new Gson();
+        final String json = gson.toJson(proj);
         try {
-            json = new JsonWriter(new FileWriter(this.pathFolder + File.separator + ".alchemist_project_descriptor.json"));
-            json.beginObject();
-            json.name("Simulation");
-            json.value(this.ctrlCenter.getSimulation());
-            json.name("EndTime");
-            json.value(this.ctrlCenter.getEndTime());
-            json.name("Effect");
-            json.value(this.ctrlCenter.getEffect());
-            json.name("Output");
-            json.beginArray();
-            json.beginObject();
-            json.name("Select");
-            json.value(this.ctrlCenter.isSwitchOutputSelected());
-            json.name("Folder");
-            json.value(!this.ctrlCenter.isSwitchOutputSelected() ? "" : this.ctrlCenter.getOutputFolder());
-            json.name("Base name");
-            json.value(!this.ctrlCenter.isSwitchOutputSelected() ? "" : this.ctrlCenter.getBaseName());
-            json.name("Interval");
-            json.value(!this.ctrlCenter.isSwitchOutputSelected() ? -1 : this.ctrlCenter.getSamplInterval());
-            json.endObject();
-            json.endArray();
-            json.name("Batch");
-            json.beginArray();
-            json.beginObject();
-            json.name("Select");
-            json.value(this.ctrlCenter.isSwitchBatchSelected());
-            json.name("Variables");
-            json.beginArray();
-            if (!this.ctrlCenter.isSwitchBatchSelected()) {
-                json.value("");
-            } else {
-                json.value(false); //TODO:change
-            }
-            json.endArray();
-            json.name("Threads");
-            json.value(!this.ctrlCenter.isSwitchBatchSelected() ? -1 : this.ctrlCenter.getNumberThreads());
-            json.endObject();
-            json.endArray();
-            json.name("Classpath");
-            json.beginArray();
-            for (final String s: this.ctrlCenter.getClasspath()) {
-                json.value(s);
-            }
-            json.endArray();
-            json.endObject();
-            json.close();
+            final FileWriter writer = new FileWriter(this.pathFolder + File.separator + ".alchemist_project_descriptor.json");
+            writer.write(json);
+            writer.close();
         } catch (IOException e) {
             L.error("Error writing the file. This is most likely a bug.", e);
         }
-
     }
 
     /**

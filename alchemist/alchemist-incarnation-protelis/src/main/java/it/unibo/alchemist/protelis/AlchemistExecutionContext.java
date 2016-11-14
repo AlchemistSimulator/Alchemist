@@ -203,7 +203,14 @@ public class AlchemistExecutionContext extends AbstractExecutionContext implemen
 
     @Override
     public Field nbrLag() {
-        return buildField(Functions.identity(), 0);
+        return buildField(time -> getCurrentTime().doubleValue() - time, getCurrentTime().doubleValue());
+    }
+
+    /**
+     * @return The same behavior of MIT Proto's nbrdelay (forward view).
+     */
+    public Field nbrDelay() {
+        return buildField(Functions.identity(), getDeltaTime());
     }
 
     @Override

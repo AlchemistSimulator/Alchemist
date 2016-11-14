@@ -116,8 +116,8 @@
                      </rowConstraints>
                      <children>
                         <Label fx:id="output" styleClass="title" GridPane.columnIndex="2" GridPane.columnSpan="6" />
-                        <Label fx:id="pathOut" styleClass="path" GridPane.columnIndex="2" GridPane.columnSpan="6" GridPane.rowIndex="2" />
-                        <Button fx:id="setOut" mnemonicParsing="false" text="Set" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+                        <Label fx:id="pathOut" styleClass="path" GridPane.columnIndex="1" GridPane.columnSpan="7" GridPane.rowIndex="2" />
+                        <Button fx:id="setOut" mnemonicParsing="false" onAction="#clickSetFolderOut" text="Set" GridPane.columnSpan="2" GridPane.rowIndex="1" />
                         <Label fx:id="baseNameOut" GridPane.columnSpan="3" GridPane.rowIndex="3" />
                         <TextField fx:id="bnTextOut" GridPane.columnIndex="3" GridPane.columnSpan="5" GridPane.rowIndex="3" />
                         <Label fx:id="intOut" GridPane.columnSpan="3" GridPane.rowIndex="4" />
@@ -181,8 +181,8 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Button fx:id="addClass" mnemonicParsing="false" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" onAction="#clickAddClass"/>
-                        <Button fx:id="removeClass" mnemonicParsing="false" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" onAction="#clickRemoveClass"/>
+                        <Button fx:id="addClass" mnemonicParsing="false" onAction="#clickAddClass" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+                        <Button fx:id="removeClass" mnemonicParsing="false" onAction="#clickRemoveClass" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
                         <Label fx:id="classpath" styleClass="title" GridPane.columnSpan="9" GridPane.halignment="CENTER" />
                         <ListView fx:id="listClass" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="8" GridPane.rowIndex="1" GridPane.rowSpan="6" />
                      </children>

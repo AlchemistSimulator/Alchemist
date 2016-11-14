@@ -4,6 +4,7 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.io.FilenameUtils;
 import org.controlsfx.control.ToggleSwitch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -278,6 +279,29 @@ public class CenterLayoutController {
      * 
      */
     @FXML
+    public void clickSetFolderOut() {
+        if (this.ctrlLeft.getSelectedFilePath() == null) {
+            setAlert(R.getString("folder_no_selected"), R.getString("folder_no_selected_header"), R.getString("folder_no_selected_content"));
+        } else if (!FilenameUtils.getExtension(this.ctrlLeft.getSelectedFilePath()).isEmpty()) {
+            setAlert(R.getString("wrong_selection"), R.getString("wrong_selection_header"), R.getString("wrong_selection_content"));
+        } else {
+            File file = new File(this.ctrlLeft.getSelectedFilePath());
+            while (!file.getName().equals(R.getString("folder_output")) && !file.getName().equals(new File(this.ctrlLeft.getPathFolder()).getName())) {
+                    file = file.getParentFile();
+            }
+            if (file.getName().equals(R.getString("folder_output"))) {
+                this.pathOut.setText(this.ctrlLeft.getSelectedFilePath());
+                setDeleteIcon(this.gridOut, this.pathOut);
+            } else {
+                setAlert(R.getString("folder_wrong"), R.getString("folder_wrong_header"), R.getString("folder_wrong_content"));
+            }
+        }
+    }
+
+    /**
+     * 
+     */
+    @FXML
     public void clickAddClass() {
         if (this.listClass.getItems().size() == 0) {
             this.removeClass.setDisable(false);
@@ -385,10 +409,10 @@ public class CenterLayoutController {
         } else if (this.ctrlLeft.getSelectedFilePath().endsWith(extension)) {
             if (extension.equals(YAML_EXT) && !edit) {
                 this.pathYaml.setText(this.ctrlLeft.getSelectedFilePath());
-                setDeleteIcon(true);
+                setDeleteIcon(this.gridYaml, this.pathYaml);
             } else if (extension.equals(EFF_EXT) && !edit) {
                 this.pathEff.setText(this.ctrlLeft.getSelectedFilePath());
-                setDeleteIcon(false);
+                setDeleteIcon(this.gridEff, this.pathEff);
             } else if (extension.equals(EFF_EXT) && edit) {
                 editFile();
             } else {
@@ -446,30 +470,19 @@ public class CenterLayoutController {
         }
     }
 
-    private void setDeleteIcon(final boolean isYaml) {
+    private void setDeleteIcon(final GridPane grid, final Label label) {
         final ImageView imgView = new ImageView(new Image(Main.class.getResource("/icon/icon-delete.png").toExternalForm()));
         final Tooltip tooltip = new Tooltip();
         tooltip.setText(R.getString("delete"));
         Tooltip.install(imgView, tooltip);
-        if (isYaml) {
-            this.gridYaml.add(imgView, 0, 2);
-            imgView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(final MouseEvent event) {
-                    pathYaml.setText(""); 
-                    gridYaml.getChildren().remove(imgView);
-                }
-            });
-        } else {
-            this.gridEff.add(imgView, 0, 2);
-            imgView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(final MouseEvent event) {
-                    pathEff.setText("");
-                    gridEff.getChildren().remove(imgView);
-                }
-            });
-        }
+        grid.add(imgView, 0, 2);
+        imgView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(final MouseEvent event) {
+                label.setText(""); 
+                grid.getChildren().remove(imgView);
+            }
+        });
     }
 
     private void setAlert(final String title, final String header, final String content) {

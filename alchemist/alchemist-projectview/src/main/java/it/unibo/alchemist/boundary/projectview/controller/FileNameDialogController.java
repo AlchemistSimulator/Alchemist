@@ -4,6 +4,7 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,7 @@ import javafx.stage.Stage;
 public class FileNameDialogController {
 
     private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
+    private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
 
     @FXML
     private Button btnCancel;
@@ -46,10 +48,10 @@ public class FileNameDialogController {
      * 
      */
     public void initialize() {
-        this.btnCancel.setText(LocalizedResourceBundle.getString("cancel"));
-        this.btnOk.setText(LocalizedResourceBundle.getString("ok"));
-        this.fileName.setText(LocalizedResourceBundle.getString("file_name"));
-        this.tfNameFile.setPromptText(LocalizedResourceBundle.getString("enter_file_name"));
+        this.btnCancel.setText(RESOURCES.getString("cancel"));
+        this.btnOk.setText(RESOURCES.getString("ok"));
+        this.fileName.setText(RESOURCES.getString("file_name"));
+        this.tfNameFile.setPromptText(RESOURCES.getString("enter_file_name"));
     }
 
     /**
@@ -86,7 +88,7 @@ public class FileNameDialogController {
             final String projPath = this.ctrlLeft.getPathFolder();
             final File file;
             final String path = projPath + File.separator + "src" + File.separator;
-            if (this.extension.equals(LocalizedResourceBundle.getString("yaml_ext"))) {
+            if (this.extension.equals(RESOURCES.getString("yaml_ext"))) {
                 file = new File(path + "yaml" + File.separator + tfNameFile.getText() + this.extension);
             } else {
                 file = new File(path + "json" + File.separator + tfNameFile.getText() + this.extension);
@@ -100,9 +102,9 @@ public class FileNameDialogController {
                     desk.open(file);
                 } else {
                     final Alert alert = new Alert(AlertType.CONFIRMATION);
-                    alert.setTitle(LocalizedResourceBundle.getString("file_name_exists"));
-                    alert.setHeaderText(LocalizedResourceBundle.getString("file_name_exists_header"));
-                    alert.setContentText(LocalizedResourceBundle.getString("file_name_exists_content"));
+                    alert.setTitle(RESOURCES.getString("file_name_exists"));
+                    alert.setHeaderText(RESOURCES.getString("file_name_exists_header"));
+                    alert.setContentText(RESOURCES.getString("file_name_exists_content"));
                     final Optional<ButtonType> result = alert.showAndWait();
                     if (result.get() == ButtonType.OK) {
                         this.dialogStage.close();
@@ -115,9 +117,9 @@ public class FileNameDialogController {
             }
         } else {
             final Alert alert = new Alert(AlertType.WARNING);
-            alert.setTitle(LocalizedResourceBundle.getString("file_name_wrong"));
-            alert.setHeaderText(LocalizedResourceBundle.getString("file_name_wrong_header"));
-            alert.setContentText(LocalizedResourceBundle.getString("file_name_wrong_content"));
+            alert.setTitle(RESOURCES.getString("file_name_wrong"));
+            alert.setHeaderText(RESOURCES.getString("file_name_wrong_header"));
+            alert.setContentText(RESOURCES.getString("file_name_wrong_content"));
             alert.showAndWait();
         }
     }

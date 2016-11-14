@@ -9,11 +9,13 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
@@ -40,6 +42,7 @@ import javafx.stage.Stage;
 public class TopLayoutController {
 
     private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
+    private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
 
     @FXML
     private Button btnNew;
@@ -61,11 +64,11 @@ public class TopLayoutController {
      * 
      */
     public void initialize() {
-        this.btnNew.setText(LocalizedResourceBundle.getString("new"));
-        this.btnOpen.setText(LocalizedResourceBundle.getString("open"));
-        //this.btnImport.setText(R.getString("import"));
-        this.btnSave.setText(LocalizedResourceBundle.getString("save"));
-        //this.btnSaveAs.setText(R.getString("save_as"));
+        this.btnNew.setText(RESOURCES.getString("new"));
+        this.btnOpen.setText(RESOURCES.getString("open"));
+        //this.btnImport.setText(RESOURCES.getString("import"));
+        this.btnSave.setText(RESOURCES.getString("save"));
+        //this.btnSaveAs.setText(RESOURCES.getString("save_as"));
         this.btnSave.setDisable(true);
     }
 
@@ -104,7 +107,7 @@ public class TopLayoutController {
             final AnchorPane pane = (AnchorPane) loader.load();
 
             final Stage stage = new Stage();
-            stage.setTitle(LocalizedResourceBundle.getString("new_proj"));
+            stage.setTitle(RESOURCES.getString("new_proj"));
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(this.main.getStage());
             final Scene scene = new Scene(pane);
@@ -127,7 +130,7 @@ public class TopLayoutController {
     @FXML
     public void clickOpen() {
         final DirectoryChooser dirChooser = new DirectoryChooser();
-        dirChooser.setTitle(LocalizedResourceBundle.getString("select_folder_proj"));
+        dirChooser.setTitle(RESOURCES.getString("select_folder_proj"));
         dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         final File dir = dirChooser.showDialog(this.main.getStage());
         if (dir != null) {
@@ -142,9 +145,9 @@ public class TopLayoutController {
 
             if (containsFile == 0) {
                 final Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle(LocalizedResourceBundle.getString("proj_folder_wrong"));
-                alert.setHeaderText(LocalizedResourceBundle.getString("proj_folder_wrong_header"));
-                alert.setContentText(LocalizedResourceBundle.getString("proj_folder_wrong_content"));
+                alert.setTitle(RESOURCES.getString("proj_folder_wrong"));
+                alert.setHeaderText(RESOURCES.getString("proj_folder_wrong_header"));
+                alert.setContentText(RESOURCES.getString("proj_folder_wrong_content"));
                 alert.showAndWait();
             } else {
                 this.pathFolder = dir.getAbsolutePath();
@@ -214,14 +217,14 @@ public class TopLayoutController {
         }
 
         final Project proj = new Project();
-        proj.setSimulation(this.ctrlCenter.getSimulation());
+        proj.setSimulation(this.ctrlCenter.getSimulationFilePath());
         proj.setEndTime(this.ctrlCenter.getEndTime());
         proj.setEffect(this.ctrlCenter.getEffect());
         proj.setOutput(out);
         proj.setBatch(batch);
         proj.setClasspath(classpathList);
 
-        final Gson gson = new Gson();
+        final Gson gson = new GsonBuilder().setPrettyPrinting().create();
         final String json = gson.toJson(proj);
         try {
             final FileWriter writer = new FileWriter(this.pathFolder + File.separator + ".alchemist_project_descriptor.json");

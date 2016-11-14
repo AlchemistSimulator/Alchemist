@@ -3,6 +3,7 @@ package it.unibo.alchemist.boundary.projectview.controller;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.ResourceBundle;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -29,6 +30,7 @@ import javafx.stage.Stage;
 public class NewProjLayoutFolderController {
 
     private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
+    private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
 
     @FXML
     private Button next;
@@ -45,9 +47,9 @@ public class NewProjLayoutFolderController {
      * 
      */
     public void initialize() {
-        this.next.setText(LocalizedResourceBundle.getString("next"));
+        this.next.setText(RESOURCES.getString("next"));
         this.next.setDisable(true);
-        this.selectFolder.setText(LocalizedResourceBundle.getString("select_folder"));
+        this.selectFolder.setText(RESOURCES.getString("select_folder"));
     }
 
     /**
@@ -81,7 +83,7 @@ public class NewProjLayoutFolderController {
     @FXML
     public void clickSelect() {
         final DirectoryChooser dirChooser = new DirectoryChooser();
-        dirChooser.setTitle(LocalizedResourceBundle.getString("select_folder_proj"));
+        dirChooser.setTitle(RESOURCES.getString("select_folder_proj"));
         dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         final File dir = dirChooser.showDialog(this.main.getStage());
         if (dir != null) {
@@ -89,9 +91,9 @@ public class NewProjLayoutFolderController {
                 setSelectedFolder(dir);
             } else {
                 final Alert alert = new Alert(AlertType.CONFIRMATION);
-                alert.setTitle(LocalizedResourceBundle.getString("select_folder_full"));
-                alert.setHeaderText(LocalizedResourceBundle.getString("select_folder_full_header"));
-                alert.setContentText(LocalizedResourceBundle.getString("select_folder_full_content"));
+                alert.setTitle(RESOURCES.getString("select_folder_full"));
+                alert.setHeaderText(RESOURCES.getString("select_folder_full_header"));
+                alert.setContentText(RESOURCES.getString("select_folder_full_content"));
                 final Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
                     try {
@@ -103,9 +105,9 @@ public class NewProjLayoutFolderController {
                     }
                 } else {
                     final Alert alertCancel = new Alert(AlertType.WARNING);
-                    alertCancel.setTitle(LocalizedResourceBundle.getString("select_folder_full_cancel"));
-                    alertCancel.setHeaderText(LocalizedResourceBundle.getString("select_folder_full_cancel_header"));
-                    alertCancel.setContentText(LocalizedResourceBundle.getString("select_folder_full_cancel_content"));
+                    alertCancel.setTitle(RESOURCES.getString("select_folder_full_cancel"));
+                    alertCancel.setHeaderText(RESOURCES.getString("select_folder_full_cancel_header"));
+                    alertCancel.setContentText(RESOURCES.getString("select_folder_full_cancel_content"));
                     alertCancel.showAndWait();
                 }
             }

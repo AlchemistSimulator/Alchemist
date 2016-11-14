@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import it.unibo.alchemist.AlchemistRunner;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import it.unibo.alchemist.boundary.projectview.model.Project;
+import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.YamlLoader;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import javafx.beans.value.ChangeListener;
@@ -34,6 +36,7 @@ import javafx.scene.layout.StackPane;
 public class LeftLayoutController {
 
     private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
+    private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
 
     @FXML
     private Button run;
@@ -44,12 +47,13 @@ public class LeftLayoutController {
 
     private String pathFolder;
     private String selectedFile;
+    private Loader loader;
 
     /**
      * 
      */
     public void initialize() {
-        this.run.setText(LocalizedResourceBundle.getString("run"));
+        this.run.setText(RESOURCES.getString("run"));
     }
 
     /**
@@ -113,9 +117,10 @@ public class LeftLayoutController {
         try {
             final BufferedReader br = new BufferedReader(new FileReader(this.pathFolder + File.separator + ".alchemist_project_descriptor.json"));
             final Project proj = gson.fromJson(br, Project.class);
+            //AlchemistRunner.Builder runnerBuilder = new AlchemistRunner.Builder(new YamlLoader(getSimulation());
 
             if (proj.getSimulation().isEmpty()) {
-                setAlert(LocalizedResourceBundle.getString("sim_no_selected"), LocalizedResourceBundle.getString("sim_no_selected_header"), LocalizedResourceBundle.getString("sim_no_selected_content"));
+                setAlert(RESOURCES.getString("sim_no_selected"), RESOURCES.getString("sim_no_selected_header"), RESOURCES.getString("sim_no_selected_content"));
             } else {
                 final String effect;
                 if (proj.getEffect().isEmpty()) {

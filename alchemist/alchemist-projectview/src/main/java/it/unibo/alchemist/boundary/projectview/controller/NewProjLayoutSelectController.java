@@ -3,6 +3,7 @@ package it.unibo.alchemist.boundary.projectview.controller;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -30,6 +31,7 @@ import javafx.stage.Stage;
 public class NewProjLayoutSelectController {
 
     private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
+    private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
 
     @FXML
     private Button backBtn;
@@ -46,10 +48,10 @@ public class NewProjLayoutSelectController {
      * 
      */
     public void initialize() {
-        this.backBtn.setText(LocalizedResourceBundle.getString("back"));
-        this.finishBtn.setText(LocalizedResourceBundle.getString("finish"));
+        this.backBtn.setText(RESOURCES.getString("back"));
+        this.finishBtn.setText(RESOURCES.getString("finish"));
         this.finishBtn.setDisable(true);
-        this.select.setText(LocalizedResourceBundle.getString("select"));
+        this.select.setText(RESOURCES.getString("select"));
 
         final Reflections ref = new Reflections(new ConfigurationBuilder()
                 .setUrls(ClasspathHelper.forPackage("templates"))

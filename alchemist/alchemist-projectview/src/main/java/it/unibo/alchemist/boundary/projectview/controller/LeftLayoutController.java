@@ -15,7 +15,7 @@ import com.google.gson.Gson;
 import it.unibo.alchemist.AlchemistRunner;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
-import it.unibo.alchemist.boundary.projectview.model.Project;
+import it.unibo.alchemist.boundary.projectview.model.ProjectImpl;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.YamlLoader;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
@@ -116,7 +116,7 @@ public class LeftLayoutController {
         final Gson gson = new Gson();
         try {
             final BufferedReader br = new BufferedReader(new FileReader(this.pathFolder + File.separator + ".alchemist_project_descriptor.json"));
-            final Project proj = gson.fromJson(br, Project.class);
+            final ProjectImpl proj = gson.fromJson(br, ProjectImpl.class);
             //AlchemistRunner.Builder runnerBuilder = new AlchemistRunner.Builder(new YamlLoader(getSimulation());
 
             if (proj.getSimulation().isEmpty()) {

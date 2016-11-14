@@ -1,54 +1,57 @@
 package it.unibo.alchemist.boundary.projectview.model;
 
 /**
- * 
+ * An entity which is able to produce a structure for Output section of Alchemist project.
  *
  */
-public class Output implements IOutput {
+public interface Output {
 
-    private boolean select;
-    private String folder;
-    private String baseName;
-    private double samplInterval;
+    /**
+     * 
+     * @return a base name of output file.
+     */
+    String getBaseName();
 
-    @Override
-    public String getBaseName() {
-        return this.baseName;
-    }
+    /**
+     * 
+     * @return a path of output folder.
+     */
+    String getFolder();
 
-    @Override
-    public String getFolder() {
-        return this.folder;
-    }
+    /**
+     * 
+     * @return a sampling interval.
+     */
+    double getSamplInterval();
 
-    @Override
-    public double getSamplInterval() {
-        return this.samplInterval;
-    }
+    /**
+     * 
+     * @return true if the switch of Output section is selected, otherwise false.
+     */
+    boolean isSelect();
 
-    @Override
-    public boolean isSelect() {
-        return this.select;
-    }
+    /**
+     * 
+     * @param baseName a base name for output file.
+     */
+    void setBaseName(final String baseName);
 
-    @Override
-    public void setBaseName(final String baseName) {
-        this.baseName = baseName;
-    }
+    /**
+     * 
+     * @param folder a path for output folder.
+     */
+    void setFolder(final String folder);
 
-    @Override
-    public void setFolder(final String folder) {
-        this.folder = folder;
-    }
+    /**
+     * 
+     * @param samplInterval a sampling interval.
+     */
+    void setSamplInterval(final double samplInterval);
 
-    @Override
-    public void setSamplInterval(final double samplInterval) {
-        this.samplInterval = samplInterval;
-    }
-
-    @Override
-    public void setSelect(final boolean sel) {
-        this.select = sel;
-    }
+    /**
+     * 
+     * @param sel true if the switch of Output section must be selected, otherwise false.
+     */
+    void setSelect(final boolean sel);
 
 }

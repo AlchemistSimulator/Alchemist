@@ -19,9 +19,9 @@ import com.google.gson.GsonBuilder;
 
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
-import it.unibo.alchemist.boundary.projectview.model.Batch;
-import it.unibo.alchemist.boundary.projectview.model.Output;
-import it.unibo.alchemist.boundary.projectview.model.Project;
+import it.unibo.alchemist.boundary.projectview.model.BatchImpl;
+import it.unibo.alchemist.boundary.projectview.model.OutputImpl;
+import it.unibo.alchemist.boundary.projectview.model.ProjectImpl;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -158,7 +158,7 @@ public class TopLayoutController {
                     final BufferedReader br = new BufferedReader(new FileReader(this.pathFolder + File.separator + ".alchemist_project_descriptor.json"));
                     try {
                         if (br.ready()) {
-                            final Project proj = gson.fromJson(br, Project.class);
+                            final ProjectImpl proj = gson.fromJson(br, ProjectImpl.class);
                             if (!proj.getSimulation().isEmpty()) {
                                 this.ctrlCenter.setSimulation(proj.getSimulation());
                             }
@@ -200,13 +200,13 @@ public class TopLayoutController {
      */
     @FXML
     public void clickSave() {
-        final Output out = new Output();
+        final OutputImpl out = new OutputImpl();
         out.setSelect(this.ctrlCenter.isSwitchOutputSelected());
         out.setFolder(this.ctrlCenter.getOutputFolder());
         out.setBaseName(this.ctrlCenter.getBaseName());
         out.setSamplInterval(this.ctrlCenter.getSamplInterval());
 
-        final Batch batch = new Batch();
+        final BatchImpl batch = new BatchImpl();
         batch.setSelect(this.ctrlCenter.isSwitchBatchSelected());
         batch.setVariables(new ArrayList<String>()); // TODO: change
         batch.setThread(this.ctrlCenter.getNumberThreads());
@@ -216,7 +216,7 @@ public class TopLayoutController {
             classpathList.add(s);
         }
 
-        final Project proj = new Project();
+        final ProjectImpl proj = new ProjectImpl();
         proj.setSimulation(this.ctrlCenter.getSimulationFilePath());
         proj.setEndTime(this.ctrlCenter.getEndTime());
         proj.setEffect(this.ctrlCenter.getEffect());

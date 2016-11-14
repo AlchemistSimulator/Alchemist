@@ -3,76 +3,80 @@ package it.unibo.alchemist.boundary.projectview.model;
 import java.util.List;
 
 /**
- * 
+ * An entity which is able to produce a structure for an Alchemist project to go through a Json reader or writer.
  *
  */
-public class Project implements IProject {
+public interface Project {
 
-    private String simulation;
-    private int endTime;
-    private String effect;
-    private Output output;
-    private Batch batch;
-    private List<String> classpath;
+    /**
+     * 
+     * @return an entity of Batch mode.
+     */
+    Batch getBatch();
 
-    @Override
-    public Batch getBatch() {
-        return this.batch;
-    }
+    /**
+     * 
+     * @return a list of the libraries to add to the classpath.
+     */
+    List<String> getClasspath();
 
-    @Override
-    public List<String> getClasspath() {
-        return this.classpath;
-    }
+    /**
+     * 
+     * @return a end time of simulation.
+     */
+    int getEndTime();
 
-    @Override
-    public int getEndTime() {
-        return this.endTime;
-    }
+    /**
+     * 
+     * @return a path of effect file.
+     */
+    String getEffect();
 
-    @Override
-    public String getEffect() {
-        return this.effect;
-    }
+    /**
+     * 
+     * @return an entity of the Output.
+     */
+    OutputImpl getOutput();
 
-    @Override
-    public Output getOutput() {
-        return this.output;
-    }
+    /**
+     * 
+     * @return a path of simulation file.
+     */
+    String getSimulation();
 
-    @Override
-    public String getSimulation() {
-        return this.simulation;
-    }
+    /**
+     * 
+     * @param batch a entity of Batch mode.
+     */
+    void setBatch(final BatchImpl batch);
 
-    @Override
-    public void setBatch(final Batch batch) {
-        this.batch = batch;
-    }
+    /**
+     * 
+     * @param classpath a list of libraries.
+     */
+    void setClasspath(final List<String> classpath);
 
-    @Override
-    public void setClasspath(final List<String> classpath) {
-        this.classpath = classpath;
-    }
+    /**
+     * 
+     * @param endTime an end time.
+     */
+    void setEndTime(final int endTime);
 
-    @Override
-    public void setEndTime(final int endTime) {
-        this.endTime = endTime;
-    }
+    /**
+     * 
+     * @param eff a path of a effect file.
+     */
+    void setEffect(final String eff);
 
-    @Override
-    public void setEffect(final String eff) {
-        this.effect = eff;
-    }
+    /**
+     * 
+     * @param out an entity of Output.
+     */
+    void setOutput(final OutputImpl out);
 
-    @Override
-    public void setOutput(final Output out) {
-        this.output = out;
-    }
-
-    @Override
-    public void setSimulation(final String sim) {
-        this.simulation = sim;
-    }
-
+    /**
+     * 
+     * @param sim a path of a simulation file.
+     */
+    void setSimulation(final String sim);
 }

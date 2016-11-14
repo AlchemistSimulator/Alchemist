@@ -24,7 +24,7 @@ public interface Batch {
      * 
      * @return true if the Batch mode section switch is selected, otherwise false.
      */
-    boolean isSelect();
+    boolean isSelected();
 
     /**
      * 

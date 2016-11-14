@@ -23,7 +23,7 @@ public class BatchImpl implements Batch {
     }
 
     @Override
-    public boolean isSelect() {
+    public boolean isSelected() {
         return this.select;
     }
 

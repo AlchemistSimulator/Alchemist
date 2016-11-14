@@ -172,8 +172,8 @@ public class TopLayoutController {
                                 this.ctrlCenter.setBaseName(proj.getOutput().getBaseName());
                                 this.ctrlCenter.setSamplInterval(proj.getOutput().getSamplInterval());
                             }
-                            this.ctrlCenter.setSwitchBatchSelected(proj.getBatch().isSelect());
-                            if (proj.getBatch().isSelect()) {
+                            this.ctrlCenter.setSwitchBatchSelected(proj.getBatch().isSelected());
+                            if (proj.getBatch().isSelected()) {
                                 //TODO: set variables selected and all variables of yaml file.
                                 this.ctrlCenter.setNumberThreads(proj.getBatch().getThread());
                             }

@@ -42,6 +42,6 @@ public interface Batch {
      * 
      * @param sel true if the Batch mode section switch must be selected, otherwise false.
      */
-    void setSelect(final boolean sel);
+    void setSelected(final boolean sel);
 
 }

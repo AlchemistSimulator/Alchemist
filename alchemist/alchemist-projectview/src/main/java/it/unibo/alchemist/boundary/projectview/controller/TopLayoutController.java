@@ -207,7 +207,7 @@ public class TopLayoutController {
         out.setSamplInterval(this.ctrlCenter.getSamplInterval());
 
         final BatchImpl batch = new BatchImpl();
-        batch.setSelect(this.ctrlCenter.isSwitchBatchSelected());
+        batch.setSelected(this.ctrlCenter.isSwitchBatchSelected());
         batch.setVariables(new ArrayList<String>()); // TODO: change
         batch.setThreadCount(this.ctrlCenter.getNumberThreads());
 

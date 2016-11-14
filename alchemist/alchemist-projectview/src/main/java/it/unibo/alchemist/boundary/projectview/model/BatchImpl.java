@@ -38,7 +38,7 @@ public class BatchImpl implements Batch {
     }
 
     @Override
-    public void setSelect(final boolean sel) {
+    public void setSelected(final boolean sel) {
         this.select = sel;
     }
 

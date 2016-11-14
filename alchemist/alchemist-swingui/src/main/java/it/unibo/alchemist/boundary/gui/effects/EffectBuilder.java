@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.boundary.gui.AlchemistSwingUI;
-import it.unibo.alchemist.boundary.l10n.ResourceAccess;
+import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 
 /**
  */
@@ -41,9 +41,9 @@ public class EffectBuilder extends JFrame implements ActionListener {
     private static final long serialVersionUID = -5030318714404946998L;
     private static final Set<Class<? extends Effect>> EFFECTS = REFLECTIONS.getSubTypesOf(Effect.class);
     private static final Logger L = LoggerFactory.getLogger(EffectBuilder.class);
-    private static final String ALCHEMIST_EFFECT_BUILDER = ResourceAccess.getString("alchemist_effect_builder");
-    private static final String EFFECT = ResourceAccess.getString("effect");
-    private final JButton button = new JButton(ResourceAccess.getString("done"));
+    private static final String ALCHEMIST_EFFECT_BUILDER = LocalizedResourceBundle.getString("alchemist_effect_builder");
+    private static final String EFFECT = LocalizedResourceBundle.getString("effect");
+    private final JButton button = new JButton(LocalizedResourceBundle.getString("done"));
     private final CountDownLatch barrier = new CountDownLatch(1);
     private final JComboBox<Class<? extends Effect>> effectBox;
 

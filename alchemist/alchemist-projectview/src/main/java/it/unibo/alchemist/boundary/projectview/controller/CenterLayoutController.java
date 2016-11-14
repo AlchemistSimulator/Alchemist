@@ -11,7 +11,7 @@ import org.controlsfx.control.ToggleSwitch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.unibo.alchemist.boundary.l10n.ResourceAccess;
+import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -53,8 +53,8 @@ public class CenterLayoutController {
     private static final double STEP_SAM = 0.01;
     private static final int MAX_TIME = 18000;
     private static final int VALUE_TIME = 60;
-    private static final String EFF_EXT = ResourceAccess.getString("eff_ext");
-    private static final String YAML_EXT = ResourceAccess.getString("yaml_ext");
+    private static final String EFF_EXT = LocalizedResourceBundle.getString("eff_ext");
+    private static final String YAML_EXT = LocalizedResourceBundle.getString("yaml_ext");
 
     @FXML
     private Button addClass;
@@ -137,26 +137,26 @@ public class CenterLayoutController {
      * 
      */
     public void initialize() {
-        this.addClass.setText(ResourceAccess.getString("add"));
-        this.baseNameOut.setText(ResourceAccess.getString("base_name"));
-        this.batch.setText(ResourceAccess.getString("batch_start"));
-        this.batchMode.setText(ResourceAccess.getString("batch_pane_title"));
-        this.bnTextOut.setPromptText(ResourceAccess.getString("enter_base_name"));
-        this.bnTextOut.setText(ResourceAccess.getString("base_name_text"));
-        this.classpath.setText(ResourceAccess.getString("classpath_pane_title"));
-        this.removeClass.setText(ResourceAccess.getString("remove"));
-        this.editEff.setText(ResourceAccess.getString("edit"));
-        this.editYaml.setText(ResourceAccess.getString("edit"));
-        this.eff.setText(ResourceAccess.getString("eff_pane_title"));
-        this.endTime.setText(ResourceAccess.getString("end_time"));
-        this.intOut.setText(ResourceAccess.getString("interval"));
-        this.newEff.setText(ResourceAccess.getString("new"));
-        this.newYaml.setText(ResourceAccess.getString("new"));
-        this.output.setText(ResourceAccess.getString("out_pane_title"));
-        this.setEff.setText(ResourceAccess.getString("set"));
-        this.setOut.setText(ResourceAccess.getString("set_folder"));
-        this.setYaml.setText(ResourceAccess.getString("set"));
-        this.simConf.setText(ResourceAccess.getString("sim_pane_title"));
+        this.addClass.setText(LocalizedResourceBundle.getString("add"));
+        this.baseNameOut.setText(LocalizedResourceBundle.getString("base_name"));
+        this.batch.setText(LocalizedResourceBundle.getString("batch_start"));
+        this.batchMode.setText(LocalizedResourceBundle.getString("batch_pane_title"));
+        this.bnTextOut.setPromptText(LocalizedResourceBundle.getString("enter_base_name"));
+        this.bnTextOut.setText(LocalizedResourceBundle.getString("base_name_text"));
+        this.classpath.setText(LocalizedResourceBundle.getString("classpath_pane_title"));
+        this.removeClass.setText(LocalizedResourceBundle.getString("remove"));
+        this.editEff.setText(LocalizedResourceBundle.getString("edit"));
+        this.editYaml.setText(LocalizedResourceBundle.getString("edit"));
+        this.eff.setText(LocalizedResourceBundle.getString("eff_pane_title"));
+        this.endTime.setText(LocalizedResourceBundle.getString("end_time"));
+        this.intOut.setText(LocalizedResourceBundle.getString("interval"));
+        this.newEff.setText(LocalizedResourceBundle.getString("new"));
+        this.newYaml.setText(LocalizedResourceBundle.getString("new"));
+        this.output.setText(LocalizedResourceBundle.getString("out_pane_title"));
+        this.setEff.setText(LocalizedResourceBundle.getString("set"));
+        this.setOut.setText(LocalizedResourceBundle.getString("set_folder"));
+        this.setYaml.setText(LocalizedResourceBundle.getString("set"));
+        this.simConf.setText(LocalizedResourceBundle.getString("sim_pane_title"));
         this.spinBatch.setValueFactory(
                 new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 
                         Runtime.getRuntime().availableProcessors() + 1,
@@ -168,9 +168,9 @@ public class CenterLayoutController {
         this.spinTime.setEditable(true);
         this.spinTime.setValueFactory(
                 new SpinnerValueFactory.IntegerSpinnerValueFactory(1, MAX_TIME, VALUE_TIME, 1));
-        this.thread.setText(ResourceAccess.getString("n_thread"));
-        this.unitOut.setText(ResourceAccess.getString("sec"));
-        this.unitTime.setText(ResourceAccess.getString("sec"));
+        this.thread.setText(LocalizedResourceBundle.getString("n_thread"));
+        this.unitOut.setText(LocalizedResourceBundle.getString("sec"));
+        this.unitTime.setText(LocalizedResourceBundle.getString("sec"));
         if (this.listClass.getItems().size() == 0) {
             this.removeClass.setDisable(true);
         }
@@ -228,7 +228,7 @@ public class CenterLayoutController {
             this.spinOut.setVisible(vis);
         } else {
             if (ts.isSelected() && this.pathYaml.getText().equals("")) {
-                setAlert(ResourceAccess.getString("file_no_selected"), ResourceAccess.getString("yaml_no_selected_header"), ResourceAccess.getString("yaml_no_selected_content"));
+                setAlert(LocalizedResourceBundle.getString("file_no_selected"), LocalizedResourceBundle.getString("yaml_no_selected_header"), LocalizedResourceBundle.getString("yaml_no_selected_content"));
                 setVisibilityBatch(false);
                 ts.setSelected(false);
             } else {
@@ -327,19 +327,19 @@ public class CenterLayoutController {
     @FXML
     public void clickSetFolderOut() {
         if (this.ctrlLeft.getSelectedFilePath() == null) {
-            setAlert(ResourceAccess.getString("folder_no_selected"), ResourceAccess.getString("folder_no_selected_header"), ResourceAccess.getString("folder_no_selected_content"));
+            setAlert(LocalizedResourceBundle.getString("folder_no_selected"), LocalizedResourceBundle.getString("folder_no_selected_header"), LocalizedResourceBundle.getString("folder_no_selected_content"));
         } else if (!FilenameUtils.getExtension(this.ctrlLeft.getSelectedFilePath()).isEmpty()) {
-            setAlert(ResourceAccess.getString("wrong_selection"), ResourceAccess.getString("wrong_selection_header"), ResourceAccess.getString("wrong_selection_content"));
+            setAlert(LocalizedResourceBundle.getString("wrong_selection"), LocalizedResourceBundle.getString("wrong_selection_header"), LocalizedResourceBundle.getString("wrong_selection_content"));
         } else {
             File file = new File(this.ctrlLeft.getSelectedFilePath());
-            while (!file.getName().equals(ResourceAccess.getString("folder_output")) && !file.getName().equals(new File(this.ctrlLeft.getPathFolder()).getName())) {
+            while (!file.getName().equals(LocalizedResourceBundle.getString("folder_output")) && !file.getName().equals(new File(this.ctrlLeft.getPathFolder()).getName())) {
                     file = file.getParentFile();
             }
-            if (file.getName().equals(ResourceAccess.getString("folder_output"))) {
+            if (file.getName().equals(LocalizedResourceBundle.getString("folder_output"))) {
                 this.pathOut.setText(this.ctrlLeft.getSelectedFilePath());
                 setDeleteIcon(this.gridOut, this.pathOut);
             } else {
-                setAlert(ResourceAccess.getString("folder_wrong"), ResourceAccess.getString("folder_wrong_header"), ResourceAccess.getString("folder_wrong_content"));
+                setAlert(LocalizedResourceBundle.getString("folder_wrong"), LocalizedResourceBundle.getString("folder_wrong_header"), LocalizedResourceBundle.getString("folder_wrong_content"));
             }
         }
     }
@@ -352,7 +352,7 @@ public class CenterLayoutController {
         if (this.listClass.getItems().size() == 0) {
             this.removeClass.setDisable(false);
         }
-        manageFile(ResourceAccess.getString("jar_ext"), false);
+        manageFile(LocalizedResourceBundle.getString("jar_ext"), false);
     }
 
     /**
@@ -534,7 +534,7 @@ public class CenterLayoutController {
 
     private void manageFile(final String extension, final boolean edit) {
         if (this.ctrlLeft.getSelectedFilePath() == null) {
-            setAlert(ResourceAccess.getString("file_no_selected"), ResourceAccess.getString("file_no_selected_header"), ResourceAccess.getString("file_no_selected_content"));
+            setAlert(LocalizedResourceBundle.getString("file_no_selected"), LocalizedResourceBundle.getString("file_no_selected_header"), LocalizedResourceBundle.getString("file_no_selected_content"));
         } else if (this.ctrlLeft.getSelectedFilePath().endsWith(extension)) {
             if (extension.equals(YAML_EXT) && !edit) {
                 this.pathYaml.setText(this.ctrlLeft.getSelectedFilePath());
@@ -549,16 +549,16 @@ public class CenterLayoutController {
                     this.data.add(this.ctrlLeft.getSelectedFilePath());
                     this.listClass.setItems(data);
                 } else {
-                    setAlert(ResourceAccess.getString("file_name_exists"), ResourceAccess.getString("file_name_jar_header"), ResourceAccess.getString("file_name_jar_content"));
+                    setAlert(LocalizedResourceBundle.getString("file_name_exists"), LocalizedResourceBundle.getString("file_name_jar_header"), LocalizedResourceBundle.getString("file_name_jar_content"));
                 }
             }
         } else {
             if (extension.equals(YAML_EXT)) {
-                setAlert(ResourceAccess.getString("file_wrong"), ResourceAccess.getString("file_wrong_yaml_header"), ResourceAccess.getString("file_wrong_content"));
+                setAlert(LocalizedResourceBundle.getString("file_wrong"), LocalizedResourceBundle.getString("file_wrong_yaml_header"), LocalizedResourceBundle.getString("file_wrong_content"));
             } else if (extension.equals(EFF_EXT)) {
-                setAlert(ResourceAccess.getString("file_wrong"), ResourceAccess.getString("file_wrong_effect_header"), ResourceAccess.getString("file_wrong_content"));
+                setAlert(LocalizedResourceBundle.getString("file_wrong"), LocalizedResourceBundle.getString("file_wrong_effect_header"), LocalizedResourceBundle.getString("file_wrong_content"));
             } else {
-                setAlert(ResourceAccess.getString("file_wrong"), ResourceAccess.getString("file_wrong_jar_header"), ResourceAccess.getString("file_wrong_content"));
+                setAlert(LocalizedResourceBundle.getString("file_wrong"), LocalizedResourceBundle.getString("file_wrong_jar_header"), LocalizedResourceBundle.getString("file_wrong_content"));
             }
         }
     }
@@ -570,7 +570,7 @@ public class CenterLayoutController {
             final AnchorPane pane = (AnchorPane) loader.load();
 
             final Stage stage = new Stage();
-            stage.setTitle(ResourceAccess.getString("file_name_title"));
+            stage.setTitle(LocalizedResourceBundle.getString("file_name_title"));
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(this.main.getStage());
             stage.setResizable(false);
@@ -602,7 +602,7 @@ public class CenterLayoutController {
     private void setDeleteIcon(final GridPane grid, final Label label) {
         final ImageView imgView = new ImageView(new Image(ProjectGUI.class.getResource("/icon/icon-delete.png").toExternalForm()));
         final Tooltip tooltip = new Tooltip();
-        tooltip.setText(ResourceAccess.getString("delete"));
+        tooltip.setText(LocalizedResourceBundle.getString("delete"));
         Tooltip.install(imgView, tooltip);
         grid.add(imgView, 0, 2);
         imgView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {

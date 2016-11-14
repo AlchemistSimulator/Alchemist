@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-import static it.unibo.alchemist.boundary.l10n.ResourceAccess.getString;
+import static it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle.getString;
 
 /**
  */

@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 
-import it.unibo.alchemist.boundary.l10n.ResourceAccess;
+import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import it.unibo.alchemist.boundary.projectview.model.Batch;
 import it.unibo.alchemist.boundary.projectview.model.Output;
@@ -61,10 +61,10 @@ public class TopLayoutController {
      * 
      */
     public void initialize() {
-        this.btnNew.setText(ResourceAccess.getString("new"));
-        this.btnOpen.setText(ResourceAccess.getString("open"));
+        this.btnNew.setText(LocalizedResourceBundle.getString("new"));
+        this.btnOpen.setText(LocalizedResourceBundle.getString("open"));
         //this.btnImport.setText(R.getString("import"));
-        this.btnSave.setText(ResourceAccess.getString("save"));
+        this.btnSave.setText(LocalizedResourceBundle.getString("save"));
         //this.btnSaveAs.setText(R.getString("save_as"));
         this.btnSave.setDisable(true);
     }
@@ -104,7 +104,7 @@ public class TopLayoutController {
             final AnchorPane pane = (AnchorPane) loader.load();
 
             final Stage stage = new Stage();
-            stage.setTitle(ResourceAccess.getString("new_proj"));
+            stage.setTitle(LocalizedResourceBundle.getString("new_proj"));
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(this.main.getStage());
             final Scene scene = new Scene(pane);
@@ -127,7 +127,7 @@ public class TopLayoutController {
     @FXML
     public void clickOpen() {
         final DirectoryChooser dirChooser = new DirectoryChooser();
-        dirChooser.setTitle(ResourceAccess.getString("select_folder_proj"));
+        dirChooser.setTitle(LocalizedResourceBundle.getString("select_folder_proj"));
         dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         final File dir = dirChooser.showDialog(this.main.getStage());
         if (dir != null) {
@@ -142,9 +142,9 @@ public class TopLayoutController {
 
             if (containsFile == 0) {
                 final Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle(ResourceAccess.getString("proj_folder_wrong"));
-                alert.setHeaderText(ResourceAccess.getString("proj_folder_wrong_header"));
-                alert.setContentText(ResourceAccess.getString("proj_folder_wrong_content"));
+                alert.setTitle(LocalizedResourceBundle.getString("proj_folder_wrong"));
+                alert.setHeaderText(LocalizedResourceBundle.getString("proj_folder_wrong_header"));
+                alert.setContentText(LocalizedResourceBundle.getString("proj_folder_wrong_content"));
                 alert.showAndWait();
             } else {
                 this.pathFolder = dir.getAbsolutePath();

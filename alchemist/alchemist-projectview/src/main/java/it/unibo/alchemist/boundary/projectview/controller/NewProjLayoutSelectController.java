@@ -13,7 +13,7 @@ import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.unibo.alchemist.boundary.l10n.ResourceAccess;
+import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -46,10 +46,10 @@ public class NewProjLayoutSelectController {
      * 
      */
     public void initialize() {
-        this.backBtn.setText(ResourceAccess.getString("back"));
-        this.finishBtn.setText(ResourceAccess.getString("finish"));
+        this.backBtn.setText(LocalizedResourceBundle.getString("back"));
+        this.finishBtn.setText(LocalizedResourceBundle.getString("finish"));
         this.finishBtn.setDisable(true);
-        this.select.setText(ResourceAccess.getString("select"));
+        this.select.setText(LocalizedResourceBundle.getString("select"));
 
         final Reflections ref = new Reflections(new ConfigurationBuilder()
                 .setUrls(ClasspathHelper.forPackage("templates"))

@@ -8,7 +8,7 @@
  */
 package it.unibo.alchemist.boundary.gui;
 
-import static it.unibo.alchemist.boundary.l10n.ResourceAccess.getString;
+import static it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle.getString;
 
 /**
  */

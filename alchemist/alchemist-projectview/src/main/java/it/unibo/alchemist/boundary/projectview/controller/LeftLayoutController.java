@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 
 import it.unibo.alchemist.AlchemistRunner;
-import it.unibo.alchemist.boundary.l10n.ResourceAccess;
+import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import it.unibo.alchemist.boundary.projectview.model.Project;
 import it.unibo.alchemist.loader.YamlLoader;
@@ -49,7 +49,7 @@ public class LeftLayoutController {
      * 
      */
     public void initialize() {
-        this.run.setText(ResourceAccess.getString("run"));
+        this.run.setText(LocalizedResourceBundle.getString("run"));
     }
 
     /**
@@ -115,7 +115,7 @@ public class LeftLayoutController {
             final Project proj = gson.fromJson(br, Project.class);
 
             if (proj.getSimulation().isEmpty()) {
-                setAlert(ResourceAccess.getString("sim_no_selected"), ResourceAccess.getString("sim_no_selected_header"), ResourceAccess.getString("sim_no_selected_content"));
+                setAlert(LocalizedResourceBundle.getString("sim_no_selected"), LocalizedResourceBundle.getString("sim_no_selected_header"), LocalizedResourceBundle.getString("sim_no_selected_content"));
             } else {
                 final String effect;
                 if (proj.getEffect().isEmpty()) {

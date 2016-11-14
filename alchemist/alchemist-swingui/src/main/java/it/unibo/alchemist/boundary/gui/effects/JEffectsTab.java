@@ -40,7 +40,7 @@ import it.unibo.alchemist.boundary.gui.tape.JTapeMainFeature;
 import it.unibo.alchemist.boundary.gui.tape.JTapeSection;
 import it.unibo.alchemist.boundary.gui.tape.JTapeTab;
 import it.unibo.alchemist.boundary.interfaces.GraphicalOutputMonitor;
-import it.unibo.alchemist.boundary.l10n.ResourceAccess;
+import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 
 /**
  * Graphic component to handle effects.
@@ -55,13 +55,13 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
      */
     private static final long serialVersionUID = 5687806032498247246L;
     private static final String EXT = ".aes", DESC = "Alchemist Effect Stack";
-    private static final String EFFECT_TAB = ResourceAccess.getString("effect_tab");
-    private static final String EFFECTS_GROUP = ResourceAccess.getString("effects_group");
-    private static final String DRAW_LINKS = ResourceAccess.getString("draw_links");
-    private static final String SAVE_TEXT = ResourceAccess.getString("save");
-    private static final String LOAD_TEXT = ResourceAccess.getString("load");
-    private static final String ADD_EFFECT = ResourceAccess.getString("add_effect");
-    private static final String REMOVE_EFFECT = ResourceAccess.getString("remove_effect");
+    private static final String EFFECT_TAB = LocalizedResourceBundle.getString("effect_tab");
+    private static final String EFFECTS_GROUP = LocalizedResourceBundle.getString("effects_group");
+    private static final String DRAW_LINKS = LocalizedResourceBundle.getString("draw_links");
+    private static final String SAVE_TEXT = LocalizedResourceBundle.getString("save");
+    private static final String LOAD_TEXT = LocalizedResourceBundle.getString("load");
+    private static final String ADD_EFFECT = LocalizedResourceBundle.getString("add_effect");
+    private static final String REMOVE_EFFECT = LocalizedResourceBundle.getString("remove_effect");
 
     private final GraphicalOutputMonitor<T> main;
     private final List<ActionListener> listeners = new LinkedList<>();

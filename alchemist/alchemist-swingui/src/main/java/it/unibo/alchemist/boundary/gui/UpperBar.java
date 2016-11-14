@@ -25,7 +25,7 @@ import it.unibo.alchemist.boundary.gui.tape.JTapeGroup;
 import it.unibo.alchemist.boundary.gui.tape.JTapeMainFeature;
 import it.unibo.alchemist.boundary.gui.tape.JTapeSection;
 import it.unibo.alchemist.boundary.gui.tape.JTapeTab;
-import it.unibo.alchemist.boundary.l10n.ResourceAccess;
+import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.monitors.TimeStepMonitor;
 import it.unibo.alchemist.core.interfaces.Simulation;
 
@@ -54,16 +54,16 @@ public final class UpperBar extends JTape {
     private static final byte COLUMNS = 12;
 
     private static final long serialVersionUID = 7964622676457801603L;
-    private static final String HOME_TAB = ResourceAccess.getString("home_tab");
-    private static final String FLOW_TAB = ResourceAccess.getString("flow_tab");
-    private static final String START = ResourceAccess.getString("start");
-    private static final String RANDOM = ResourceAccess.getString("random");
-    private static final String TIME = ResourceAccess.getString("time");
-    private static final String OPEN = ResourceAccess.getString("open");
-    private static final String LOAD_PARALLEL = ResourceAccess.getString("load_parallel");
-    private static final String LOAD_SINGLE = ResourceAccess.getString("load_single");
-    private static final String PROCESS_FILE = ResourceAccess.getString("process_file");
-    private static final String CHANGE_RANDOM_SEED = ResourceAccess.getString("change_random_seed");
+    private static final String HOME_TAB = LocalizedResourceBundle.getString("home_tab");
+    private static final String FLOW_TAB = LocalizedResourceBundle.getString("flow_tab");
+    private static final String START = LocalizedResourceBundle.getString("start");
+    private static final String RANDOM = LocalizedResourceBundle.getString("random");
+    private static final String TIME = LocalizedResourceBundle.getString("time");
+    private static final String OPEN = LocalizedResourceBundle.getString("open");
+    private static final String LOAD_PARALLEL = LocalizedResourceBundle.getString("load_parallel");
+    private static final String LOAD_SINGLE = LocalizedResourceBundle.getString("load_single");
+    private static final String PROCESS_FILE = LocalizedResourceBundle.getString("process_file");
+    private static final String CHANGE_RANDOM_SEED = LocalizedResourceBundle.getString("change_random_seed");
 
     private final JMonitorsTab<?> monTab;
     private final JButton open, parallel, process, dice;

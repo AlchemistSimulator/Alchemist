@@ -135,7 +135,7 @@ public class LeftLayoutController {
                     outputPath = proj.getOutput().getFolder() + File.separator + proj.getOutput().getBaseName();
                 }
                 launchRunner(proj.getSimulation(), (double) proj.getEndTime(), effect, outputPath,
-                        proj.getOutput().getSamplInterval(), proj.getBatch().getThread());
+                        proj.getOutput().getSamplInterval(), proj.getBatch().getThreadCount());
             }
         } catch (FileNotFoundException e) {
             L.error("Error reading the file. This is most likely a bug.", e);

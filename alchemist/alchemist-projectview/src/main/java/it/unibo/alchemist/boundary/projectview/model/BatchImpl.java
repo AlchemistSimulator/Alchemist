@@ -13,7 +13,7 @@ public class BatchImpl implements Batch {
     private int thread;
 
     @Override
-    public int getThread() {
+    public int getThreadCount() {
         return this.thread;
     }
 
@@ -28,7 +28,7 @@ public class BatchImpl implements Batch {
     }
 
     @Override
-    public void setThread(final int thread) {
+    public void setThreadCount(final int thread) {
         this.thread = thread;
     }
 

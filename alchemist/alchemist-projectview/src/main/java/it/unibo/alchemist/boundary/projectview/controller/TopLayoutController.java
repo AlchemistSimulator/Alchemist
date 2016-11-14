@@ -175,7 +175,7 @@ public class TopLayoutController {
                             this.ctrlCenter.setSwitchBatchSelected(proj.getBatch().isSelected());
                             if (proj.getBatch().isSelected()) {
                                 //TODO: set variables selected and all variables of yaml file.
-                                this.ctrlCenter.setNumberThreads(proj.getBatch().getThread());
+                                this.ctrlCenter.setNumberThreads(proj.getBatch().getThreadCount());
                             }
                             if (!proj.getClasspath().isEmpty()) {
                                 final ObservableList<String> list = FXCollections.observableArrayList();
@@ -209,7 +209,7 @@ public class TopLayoutController {
         final BatchImpl batch = new BatchImpl();
         batch.setSelect(this.ctrlCenter.isSwitchBatchSelected());
         batch.setVariables(new ArrayList<String>()); // TODO: change
-        batch.setThread(this.ctrlCenter.getNumberThreads());
+        batch.setThreadCount(this.ctrlCenter.getNumberThreads());
 
         final List<String> classpathList = new ArrayList<>();
         for (final String s: this.ctrlCenter.getClasspath()) {

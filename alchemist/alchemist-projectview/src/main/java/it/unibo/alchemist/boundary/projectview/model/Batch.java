@@ -12,7 +12,7 @@ public interface Batch {
      * 
      * @return a number of threads to use.
      */
-    int getThread();
+    int getThreadCount();
 
     /**
      * 
@@ -30,7 +30,7 @@ public interface Batch {
      * 
      * @param thread a number of threads.
      */
-    void setThread(final int thread);
+    void setThreadCount(final int thread);
 
     /**
      * 

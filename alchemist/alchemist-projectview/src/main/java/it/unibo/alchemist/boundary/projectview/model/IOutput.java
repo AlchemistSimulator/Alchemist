@@ -1,4 +1,4 @@
-package it.unibo.alchemist.model;
+package it.unibo.alchemist.boundary.projectview.model;
 
 /**
  * An entity which is able to produce a structure for Output section of Alchemist project.

@@ -23,7 +23,7 @@ import it.unibo.alchemist.boundary.gui.effects.JEffectsTab;
 import it.unibo.alchemist.boundary.gui.monitors.JMonitorsTab;
 import it.unibo.alchemist.boundary.gui.util.GraphicalMonitorFactory;
 import it.unibo.alchemist.boundary.interfaces.GraphicalOutputMonitor;
-import it.unibo.alchemist.boundary.l10n.R;
+import it.unibo.alchemist.boundary.l10n.ResourceAccess;
 import it.unibo.alchemist.boundary.monitors.TimeStepMonitor;
 import it.unibo.alchemist.core.interfaces.Simulation;
 
@@ -68,7 +68,7 @@ public final class SingleRunGUI {
     }
 
     private static void errorLoadingEffects(final Throwable e) {
-        L.error(R.getString("cannot_load_effects"), e);
+        L.error(ResourceAccess.getString("cannot_load_effects"), e);
     }
 
     /**

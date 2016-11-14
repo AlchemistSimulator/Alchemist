@@ -1,12 +1,20 @@
-package it.unibo.alchemist.controller;
+package it.unibo.alchemist.boundary.projectview.controller;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.Collection;
+import java.util.Set;
+import java.util.regex.Pattern;
 
+import org.reflections.Reflections;
+import org.reflections.scanners.ResourcesScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.unibo.alchemist.Main;
-import it.unibo.alchemist.boundary.l10n.R;
+import it.unibo.alchemist.boundary.l10n.ResourceAccess;
+import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -21,7 +29,7 @@ import javafx.stage.Stage;
  */
 public class NewProjLayoutSelectController {
 
-    private static final Logger L = LoggerFactory.getLogger(Main.class);
+    private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
 
     @FXML
     private Button backBtn;
@@ -30,7 +38,7 @@ public class NewProjLayoutSelectController {
     @FXML
     private Label select;
 
-    private Main main;
+    private ProjectGUI main;
     private String folderPath;
     private Stage stage;
 
@@ -38,17 +46,32 @@ public class NewProjLayoutSelectController {
      * 
      */
     public void initialize() {
-        this.backBtn.setText(R.getString("back"));
-        this.finishBtn.setText(R.getString("finish"));
+        this.backBtn.setText(ResourceAccess.getString("back"));
+        this.finishBtn.setText(ResourceAccess.getString("finish"));
         this.finishBtn.setDisable(true);
-        this.select.setText(R.getString("select"));
+        this.select.setText(ResourceAccess.getString("select"));
+
+        final Reflections ref = new Reflections(new ConfigurationBuilder()
+                .setUrls(ClasspathHelper.forPackage("templates"))
+                .setScanners(new ResourcesScanner()));
+        Set<String> set = ref.getResources(Pattern.compile("."));
+        //System.out.println("TEMPLATES\nSize: " + set.size());
+
+        /*Collection<URL> coll = ClasspathHelper.forPackage("/icon");
+        for (URL url: coll) {
+            System.out.println("- " + url.toString());
+        }*/
+
+        /*for (String prop: set) {
+            System.out.println("- " + prop);
+        }*/
     }
 
     /**
      * 
      * @param main main
      */
-    public void setMain(final Main main) {
+    public void setMain(final ProjectGUI main) {
         this.main = main;
     }
 
@@ -74,7 +97,7 @@ public class NewProjLayoutSelectController {
     @FXML
     public void clickBack() {
         final FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(Main.class.getResource("view/NewProjLayoutFolder.fxml"));
+        loader.setLocation(ProjectGUI.class.getResource("view/NewProjLayoutFolder.fxml"));
         try {
             final AnchorPane pane = (AnchorPane) loader.load();
             final Scene scene = new Scene(pane);

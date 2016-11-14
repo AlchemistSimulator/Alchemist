@@ -1,4 +1,4 @@
-package it.unibo.alchemist.controller;
+package it.unibo.alchemist.boundary.projectview.controller;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,8 +8,8 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.unibo.alchemist.Main;
-import it.unibo.alchemist.boundary.l10n.R;
+import it.unibo.alchemist.boundary.l10n.ResourceAccess;
+import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -28,7 +28,7 @@ import javafx.stage.Stage;
  */
 public class NewProjLayoutFolderController {
 
-    private static final Logger L = LoggerFactory.getLogger(Main.class);
+    private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
 
     @FXML
     private Button next;
@@ -37,7 +37,7 @@ public class NewProjLayoutFolderController {
     @FXML
     private Label folderPath;
 
-    private Main main;
+    private ProjectGUI main;
     private Stage stage;
     private String path;
 
@@ -45,16 +45,16 @@ public class NewProjLayoutFolderController {
      * 
      */
     public void initialize() {
-        this.next.setText(R.getString("next"));
+        this.next.setText(ResourceAccess.getString("next"));
         this.next.setDisable(true);
-        this.selectFolder.setText(R.getString("select_folder"));
+        this.selectFolder.setText(ResourceAccess.getString("select_folder"));
     }
 
     /**
      * 
      * @param main main
      */
-    public void setMain(final Main main) {
+    public void setMain(final ProjectGUI main) {
         this.main = main;
     }
 
@@ -81,7 +81,7 @@ public class NewProjLayoutFolderController {
     @FXML
     public void clickSelect() {
         final DirectoryChooser dirChooser = new DirectoryChooser();
-        dirChooser.setTitle(R.getString("select_folder_proj"));
+        dirChooser.setTitle(ResourceAccess.getString("select_folder_proj"));
         dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         final File dir = dirChooser.showDialog(this.main.getStage());
         if (dir != null) {
@@ -89,9 +89,9 @@ public class NewProjLayoutFolderController {
                 setSelectedFolder(dir);
             } else {
                 final Alert alert = new Alert(AlertType.CONFIRMATION);
-                alert.setTitle(R.getString("select_folder_full"));
-                alert.setHeaderText(R.getString("select_folder_full_header"));
-                alert.setContentText(R.getString("select_folder_full_content"));
+                alert.setTitle(ResourceAccess.getString("select_folder_full"));
+                alert.setHeaderText(ResourceAccess.getString("select_folder_full_header"));
+                alert.setContentText(ResourceAccess.getString("select_folder_full_content"));
                 final Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
                     try {
@@ -103,9 +103,9 @@ public class NewProjLayoutFolderController {
                     }
                 } else {
                     final Alert alertCancel = new Alert(AlertType.WARNING);
-                    alertCancel.setTitle(R.getString("select_folder_full_cancel"));
-                    alertCancel.setHeaderText(R.getString("select_folder_full_cancel_header"));
-                    alertCancel.setContentText(R.getString("select_folder_full_cancel_content"));
+                    alertCancel.setTitle(ResourceAccess.getString("select_folder_full_cancel"));
+                    alertCancel.setHeaderText(ResourceAccess.getString("select_folder_full_cancel_header"));
+                    alertCancel.setContentText(ResourceAccess.getString("select_folder_full_cancel_content"));
                     alertCancel.showAndWait();
                 }
             }
@@ -118,7 +118,7 @@ public class NewProjLayoutFolderController {
     @FXML
     public void clickNext() {
         final FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(Main.class.getResource("view/NewProjLayoutSelect.fxml"));
+        loader.setLocation(ProjectGUI.class.getResource("view/NewProjLayoutSelect.fxml"));
         try {
             final AnchorPane pane = (AnchorPane) loader.load();
             final Scene scene = new Scene(pane);

@@ -28,7 +28,7 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button fx:id="run" alignment="CENTER" mnemonicParsing="false" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER" />
+            <Button fx:id="run" alignment="CENTER" mnemonicParsing="false" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER" onAction="#clickRun" />
             <StackPane fx:id="pane" prefHeight="150.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowSpan="9">
                <children>
                   <TreeView prefHeight="200.0" prefWidth="200.0"/>

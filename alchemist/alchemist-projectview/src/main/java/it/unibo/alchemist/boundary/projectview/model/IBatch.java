@@ -1,4 +1,4 @@
-package it.unibo.alchemist.model;
+package it.unibo.alchemist.boundary.projectview.model;
 
 import java.util.List;
 

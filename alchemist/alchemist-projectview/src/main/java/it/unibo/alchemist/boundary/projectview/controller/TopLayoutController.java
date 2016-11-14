@@ -1,4 +1,4 @@
-package it.unibo.alchemist.controller;
+package it.unibo.alchemist.boundary.projectview.controller;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,11 +15,11 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 
-import it.unibo.alchemist.Main;
-import it.unibo.alchemist.boundary.l10n.R;
-import it.unibo.alchemist.model.Batch;
-import it.unibo.alchemist.model.Output;
-import it.unibo.alchemist.model.Project;
+import it.unibo.alchemist.boundary.l10n.ResourceAccess;
+import it.unibo.alchemist.boundary.projectview.ProjectGUI;
+import it.unibo.alchemist.boundary.projectview.model.Batch;
+import it.unibo.alchemist.boundary.projectview.model.Output;
+import it.unibo.alchemist.boundary.projectview.model.Project;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -39,7 +39,7 @@ import javafx.stage.Stage;
  */
 public class TopLayoutController {
 
-    private static final Logger L = LoggerFactory.getLogger(Main.class);
+    private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
 
     @FXML
     private Button btnNew;
@@ -53,7 +53,7 @@ public class TopLayoutController {
     private Button btnSaveAs;*/
 
     private CenterLayoutController ctrlCenter;
-    private Main main;
+    private ProjectGUI main;
     private LeftLayoutController ctrlLeft;
     private String pathFolder;
 
@@ -61,10 +61,10 @@ public class TopLayoutController {
      * 
      */
     public void initialize() {
-        this.btnNew.setText(R.getString("new"));
-        this.btnOpen.setText(R.getString("open"));
+        this.btnNew.setText(ResourceAccess.getString("new"));
+        this.btnOpen.setText(ResourceAccess.getString("open"));
         //this.btnImport.setText(R.getString("import"));
-        this.btnSave.setText(R.getString("save"));
+        this.btnSave.setText(ResourceAccess.getString("save"));
         //this.btnSaveAs.setText(R.getString("save_as"));
         this.btnSave.setDisable(true);
     }
@@ -73,7 +73,7 @@ public class TopLayoutController {
      * Sets the main class.
      * @param main main class
      */
-    public void setMain(final Main main) {
+    public void setMain(final ProjectGUI main) {
         this.main = main;
     }
 
@@ -99,12 +99,12 @@ public class TopLayoutController {
     @FXML
     public void clickNew() {
         final FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(Main.class.getResource("view/NewProjLayoutFolder.fxml"));
+        loader.setLocation(ProjectGUI.class.getResource("view/NewProjLayoutFolder.fxml"));
         try {
             final AnchorPane pane = (AnchorPane) loader.load();
 
             final Stage stage = new Stage();
-            stage.setTitle(R.getString("new_proj"));
+            stage.setTitle(ResourceAccess.getString("new_proj"));
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(this.main.getStage());
             final Scene scene = new Scene(pane);
@@ -127,7 +127,7 @@ public class TopLayoutController {
     @FXML
     public void clickOpen() {
         final DirectoryChooser dirChooser = new DirectoryChooser();
-        dirChooser.setTitle(R.getString("select_folder_proj"));
+        dirChooser.setTitle(ResourceAccess.getString("select_folder_proj"));
         dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         final File dir = dirChooser.showDialog(this.main.getStage());
         if (dir != null) {
@@ -142,9 +142,9 @@ public class TopLayoutController {
 
             if (containsFile == 0) {
                 final Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle(R.getString("proj_folder_wrong"));
-                alert.setHeaderText(R.getString("proj_folder_wrong_header"));
-                alert.setContentText(R.getString("proj_folder_wrong_content"));
+                alert.setTitle(ResourceAccess.getString("proj_folder_wrong"));
+                alert.setHeaderText(ResourceAccess.getString("proj_folder_wrong_header"));
+                alert.setContentText(ResourceAccess.getString("proj_folder_wrong_content"));
                 alert.showAndWait();
             } else {
                 this.pathFolder = dir.getAbsolutePath();

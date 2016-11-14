@@ -1,13 +1,13 @@
-package it.unibo.alchemist;
+package it.unibo.alchemist.boundary.projectview;
 
 import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.unibo.alchemist.controller.CenterLayoutController;
-import it.unibo.alchemist.controller.LeftLayoutController;
-import it.unibo.alchemist.controller.TopLayoutController;
+import it.unibo.alchemist.boundary.projectview.controller.CenterLayoutController;
+import it.unibo.alchemist.boundary.projectview.controller.LeftLayoutController;
+import it.unibo.alchemist.boundary.projectview.controller.TopLayoutController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -18,9 +18,9 @@ import javafx.stage.Stage;
 /**
  * Main class to start the application.
  */
-public class Main extends Application {
+public class ProjectGUI extends Application {
 
-    private static final Logger L = LoggerFactory.getLogger(Main.class);
+    private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
 
     private Stage primaryStage;
     private BorderPane root;
@@ -52,7 +52,7 @@ public class Main extends Application {
 
     private void initLayout(final String layoutName) {
         final FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(Main.class.getResource("view/" + layoutName + ".fxml"));
+        loader.setLocation(ProjectGUI.class.getResource("view/" + layoutName + ".fxml"));
         try {
             if (layoutName.equals("RootLayout")) {
                 this.root = (BorderPane) loader.load();

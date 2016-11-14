@@ -1,16 +1,18 @@
-package it.unibo.alchemist.controller;
+package it.unibo.alchemist.boundary.projectview.controller;
 
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
 import org.controlsfx.control.ToggleSwitch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.unibo.alchemist.Main;
-import it.unibo.alchemist.boundary.l10n.R;
+import it.unibo.alchemist.boundary.l10n.ResourceAccess;
+import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -45,14 +47,14 @@ import javafx.util.Callback;
  */
 public class CenterLayoutController {
 
-    private static final Logger L = LoggerFactory.getLogger(Main.class);
+    private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
     private static final double MIN_SAM = 0.01;
     private static final double MAX_SAM = 600;
     private static final double STEP_SAM = 0.01;
     private static final int MAX_TIME = 18000;
     private static final int VALUE_TIME = 60;
-    private static final String EFF_EXT = R.getString("eff_ext");
-    private static final String YAML_EXT = R.getString("yaml_ext");
+    private static final String EFF_EXT = ResourceAccess.getString("eff_ext");
+    private static final String YAML_EXT = ResourceAccess.getString("yaml_ext");
 
     @FXML
     private Button addClass;
@@ -124,8 +126,9 @@ public class CenterLayoutController {
     private TextField bnTextOut;
 
     private LeftLayoutController ctrlLeft;
-    private Main main;
+    private ProjectGUI main;
 
+    private final List<String> varibles = new ArrayList<>();
     private final ObservableList<String> data = FXCollections.observableArrayList();
     private final ToggleSwitch tsOut = new ToggleSwitch();
     private final ToggleSwitch tsVar = new ToggleSwitch();
@@ -134,26 +137,26 @@ public class CenterLayoutController {
      * 
      */
     public void initialize() {
-        this.addClass.setText(R.getString("add"));
-        this.baseNameOut.setText(R.getString("base_name"));
-        this.batch.setText(R.getString("batch_start"));
-        this.batchMode.setText(R.getString("batch_pane_title"));
-        this.bnTextOut.setPromptText(R.getString("enter_base_name"));
-        this.bnTextOut.setText(R.getString("base_name_text"));
-        this.classpath.setText(R.getString("classpath_pane_title"));
-        this.removeClass.setText(R.getString("remove"));
-        this.editEff.setText(R.getString("edit"));
-        this.editYaml.setText(R.getString("edit"));
-        this.eff.setText(R.getString("eff_pane_title"));
-        this.endTime.setText(R.getString("end_time"));
-        this.intOut.setText(R.getString("interval"));
-        this.newEff.setText(R.getString("new"));
-        this.newYaml.setText(R.getString("new"));
-        this.output.setText(R.getString("out_pane_title"));
-        this.setEff.setText(R.getString("set"));
-        this.setOut.setText(R.getString("set_folder"));
-        this.setYaml.setText(R.getString("set"));
-        this.simConf.setText(R.getString("sim_pane_title"));
+        this.addClass.setText(ResourceAccess.getString("add"));
+        this.baseNameOut.setText(ResourceAccess.getString("base_name"));
+        this.batch.setText(ResourceAccess.getString("batch_start"));
+        this.batchMode.setText(ResourceAccess.getString("batch_pane_title"));
+        this.bnTextOut.setPromptText(ResourceAccess.getString("enter_base_name"));
+        this.bnTextOut.setText(ResourceAccess.getString("base_name_text"));
+        this.classpath.setText(ResourceAccess.getString("classpath_pane_title"));
+        this.removeClass.setText(ResourceAccess.getString("remove"));
+        this.editEff.setText(ResourceAccess.getString("edit"));
+        this.editYaml.setText(ResourceAccess.getString("edit"));
+        this.eff.setText(ResourceAccess.getString("eff_pane_title"));
+        this.endTime.setText(ResourceAccess.getString("end_time"));
+        this.intOut.setText(ResourceAccess.getString("interval"));
+        this.newEff.setText(ResourceAccess.getString("new"));
+        this.newYaml.setText(ResourceAccess.getString("new"));
+        this.output.setText(ResourceAccess.getString("out_pane_title"));
+        this.setEff.setText(ResourceAccess.getString("set"));
+        this.setOut.setText(ResourceAccess.getString("set_folder"));
+        this.setYaml.setText(ResourceAccess.getString("set"));
+        this.simConf.setText(ResourceAccess.getString("sim_pane_title"));
         this.spinBatch.setValueFactory(
                 new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 
                         Runtime.getRuntime().availableProcessors() + 1,
@@ -165,9 +168,9 @@ public class CenterLayoutController {
         this.spinTime.setEditable(true);
         this.spinTime.setValueFactory(
                 new SpinnerValueFactory.IntegerSpinnerValueFactory(1, MAX_TIME, VALUE_TIME, 1));
-        this.thread.setText(R.getString("n_thread"));
-        this.unitOut.setText(R.getString("sec"));
-        this.unitTime.setText(R.getString("sec"));
+        this.thread.setText(ResourceAccess.getString("n_thread"));
+        this.unitOut.setText(ResourceAccess.getString("sec"));
+        this.unitTime.setText(ResourceAccess.getString("sec"));
         if (this.listClass.getItems().size() == 0) {
             this.removeClass.setDisable(true);
         }
@@ -177,7 +180,7 @@ public class CenterLayoutController {
      * Sets the main class and adds toggle switch to view.
      * @param main main class.
      */
-    public void setMain(final Main main) {
+    public void setMain(final ProjectGUI main) {
         this.main = main;
 
         this.gridOut.add(this.tsOut, 0, 0);
@@ -225,7 +228,7 @@ public class CenterLayoutController {
             this.spinOut.setVisible(vis);
         } else {
             if (ts.isSelected() && this.pathYaml.getText().equals("")) {
-                setAlert(R.getString("file_no_selected"), R.getString("yaml_no_selected_header"), R.getString("yaml_no_selected_content"));
+                setAlert(ResourceAccess.getString("file_no_selected"), ResourceAccess.getString("yaml_no_selected_header"), ResourceAccess.getString("yaml_no_selected_content"));
                 setVisibilityBatch(false);
                 ts.setSelected(false);
             } else {
@@ -237,14 +240,23 @@ public class CenterLayoutController {
                     } catch (FileNotFoundException e) {
                     }*/
                     final ObservableList<String> vars = FXCollections.observableArrayList();
-                    vars.addAll("var1", "var2", "var3", "var4", "var5", "var6", "var7", "var8", "var9", "var10"); //TODO: change with obtained variables
+                    //TODO: change with obtained variables
+                    vars.addAll("var1", "var2", "var3", "var4", "var5", "var6", "var7", "var8", "var9", "var10");
                     this.listYaml.setItems(vars);
                     this.listYaml.setCellFactory(CheckBoxListCell.forListView(new Callback<String, ObservableValue<Boolean>>() {
                         @Override
                         public ObservableValue<Boolean> call(final String var) {
                             final BooleanProperty observable = new SimpleBooleanProperty();
                             observable.addListener((obs, wasSelected, isNowSelected) -> 
-                                System.out.println("Check box for " + var + " changed from " + wasSelected + " to " + isNowSelected) //TODO: add or remove variables selected into list
+                                {
+                                    //System.out.println("Check box for " + var + " changed from " + wasSelected + " to " + isNowSelected); //TODO: add or remove variables selected into list
+                                    if (wasSelected && !isNowSelected) {
+                                        //TODO: delete from list
+                                    }
+                                    if (!wasSelected && isNowSelected) {
+                                        //TODO: add to list
+                                    }
+                                }
                             );
                             return observable;
                         }
@@ -315,19 +327,19 @@ public class CenterLayoutController {
     @FXML
     public void clickSetFolderOut() {
         if (this.ctrlLeft.getSelectedFilePath() == null) {
-            setAlert(R.getString("folder_no_selected"), R.getString("folder_no_selected_header"), R.getString("folder_no_selected_content"));
+            setAlert(ResourceAccess.getString("folder_no_selected"), ResourceAccess.getString("folder_no_selected_header"), ResourceAccess.getString("folder_no_selected_content"));
         } else if (!FilenameUtils.getExtension(this.ctrlLeft.getSelectedFilePath()).isEmpty()) {
-            setAlert(R.getString("wrong_selection"), R.getString("wrong_selection_header"), R.getString("wrong_selection_content"));
+            setAlert(ResourceAccess.getString("wrong_selection"), ResourceAccess.getString("wrong_selection_header"), ResourceAccess.getString("wrong_selection_content"));
         } else {
             File file = new File(this.ctrlLeft.getSelectedFilePath());
-            while (!file.getName().equals(R.getString("folder_output")) && !file.getName().equals(new File(this.ctrlLeft.getPathFolder()).getName())) {
+            while (!file.getName().equals(ResourceAccess.getString("folder_output")) && !file.getName().equals(new File(this.ctrlLeft.getPathFolder()).getName())) {
                     file = file.getParentFile();
             }
-            if (file.getName().equals(R.getString("folder_output"))) {
+            if (file.getName().equals(ResourceAccess.getString("folder_output"))) {
                 this.pathOut.setText(this.ctrlLeft.getSelectedFilePath());
                 setDeleteIcon(this.gridOut, this.pathOut);
             } else {
-                setAlert(R.getString("folder_wrong"), R.getString("folder_wrong_header"), R.getString("folder_wrong_content"));
+                setAlert(ResourceAccess.getString("folder_wrong"), ResourceAccess.getString("folder_wrong_header"), ResourceAccess.getString("folder_wrong_content"));
             }
         }
     }
@@ -340,7 +352,7 @@ public class CenterLayoutController {
         if (this.listClass.getItems().size() == 0) {
             this.removeClass.setDisable(false);
         }
-        manageFile(R.getString("jar_ext"), false);
+        manageFile(ResourceAccess.getString("jar_ext"), false);
     }
 
     /**
@@ -522,7 +534,7 @@ public class CenterLayoutController {
 
     private void manageFile(final String extension, final boolean edit) {
         if (this.ctrlLeft.getSelectedFilePath() == null) {
-            setAlert(R.getString("file_no_selected"), R.getString("file_no_selected_header"), R.getString("file_no_selected_content"));
+            setAlert(ResourceAccess.getString("file_no_selected"), ResourceAccess.getString("file_no_selected_header"), ResourceAccess.getString("file_no_selected_content"));
         } else if (this.ctrlLeft.getSelectedFilePath().endsWith(extension)) {
             if (extension.equals(YAML_EXT) && !edit) {
                 this.pathYaml.setText(this.ctrlLeft.getSelectedFilePath());
@@ -537,16 +549,16 @@ public class CenterLayoutController {
                     this.data.add(this.ctrlLeft.getSelectedFilePath());
                     this.listClass.setItems(data);
                 } else {
-                    setAlert(R.getString("file_name_exists"), R.getString("file_name_jar_header"), R.getString("file_name_jar_content"));
+                    setAlert(ResourceAccess.getString("file_name_exists"), ResourceAccess.getString("file_name_jar_header"), ResourceAccess.getString("file_name_jar_content"));
                 }
             }
         } else {
             if (extension.equals(YAML_EXT)) {
-                setAlert(R.getString("file_wrong"), R.getString("file_wrong_yaml_header"), R.getString("file_wrong_content"));
+                setAlert(ResourceAccess.getString("file_wrong"), ResourceAccess.getString("file_wrong_yaml_header"), ResourceAccess.getString("file_wrong_content"));
             } else if (extension.equals(EFF_EXT)) {
-                setAlert(R.getString("file_wrong"), R.getString("file_wrong_effect_header"), R.getString("file_wrong_content"));
+                setAlert(ResourceAccess.getString("file_wrong"), ResourceAccess.getString("file_wrong_effect_header"), ResourceAccess.getString("file_wrong_content"));
             } else {
-                setAlert(R.getString("file_wrong"), R.getString("file_wrong_jar_header"), R.getString("file_wrong_content"));
+                setAlert(ResourceAccess.getString("file_wrong"), ResourceAccess.getString("file_wrong_jar_header"), ResourceAccess.getString("file_wrong_content"));
             }
         }
     }
@@ -554,11 +566,11 @@ public class CenterLayoutController {
     private void newFile(final String extension) {
         try {
             final FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(Main.class.getResource("view/FileNameDialog.fxml"));
+            loader.setLocation(ProjectGUI.class.getResource("view/FileNameDialog.fxml"));
             final AnchorPane pane = (AnchorPane) loader.load();
 
             final Stage stage = new Stage();
-            stage.setTitle(R.getString("file_name_title"));
+            stage.setTitle(ResourceAccess.getString("file_name_title"));
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(this.main.getStage());
             stage.setResizable(false);
@@ -588,9 +600,9 @@ public class CenterLayoutController {
     }
 
     private void setDeleteIcon(final GridPane grid, final Label label) {
-        final ImageView imgView = new ImageView(new Image(Main.class.getResource("/icon/icon-delete.png").toExternalForm()));
+        final ImageView imgView = new ImageView(new Image(ProjectGUI.class.getResource("/icon/icon-delete.png").toExternalForm()));
         final Tooltip tooltip = new Tooltip();
-        tooltip.setText(R.getString("delete"));
+        tooltip.setText(ResourceAccess.getString("delete"));
         Tooltip.install(imgView, tooltip);
         grid.add(imgView, 0, 2);
         imgView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {

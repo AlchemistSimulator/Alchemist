@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.Main;
 import it.unibo.alchemist.boundary.l10n.R;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -27,6 +29,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -35,6 +38,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 /**
  * Controller of CenterLayout view.
@@ -109,7 +113,7 @@ public class CenterLayoutController {
     @FXML
     private ListView<String> listClass = new ListView<>();
     @FXML
-    private ListView<String> listYaml;
+    private ListView<String> listYaml = new ListView<>();;
     @FXML
     private Spinner<Integer> spinBatch;
     @FXML
@@ -220,11 +224,41 @@ public class CenterLayoutController {
             this.unitOut.setVisible(vis);
             this.spinOut.setVisible(vis);
         } else {
-            this.batch.setVisible(vis);
-            this.listYaml.setVisible(vis);
-            this.spinBatch.setVisible(vis);
-            this.thread.setVisible(vis);
+            if (ts.isSelected() && this.pathYaml.getText().equals("")) {
+                setAlert(R.getString("file_no_selected"), R.getString("yaml_no_selected_header"), R.getString("yaml_no_selected_content"));
+                setVisibilityBatch(false);
+                ts.setSelected(false);
+            } else {
+                setVisibilityBatch(vis);
+                if (ts.isSelected()) {
+                    //TODO: read file YAML and get variables
+                    /*try {
+                        final Loader fileYaml = new YamlLoader(new FileReader(this.pathYaml.getText()));
+                    } catch (FileNotFoundException e) {
+                    }*/
+                    final ObservableList<String> vars = FXCollections.observableArrayList();
+                    vars.addAll("var1", "var2", "var3", "var4", "var5", "var6", "var7", "var8", "var9", "var10"); //TODO: change with obtained variables
+                    this.listYaml.setItems(vars);
+                    this.listYaml.setCellFactory(CheckBoxListCell.forListView(new Callback<String, ObservableValue<Boolean>>() {
+                        @Override
+                        public ObservableValue<Boolean> call(final String var) {
+                            final BooleanProperty observable = new SimpleBooleanProperty();
+                            observable.addListener((obs, wasSelected, isNowSelected) -> 
+                                System.out.println("Check box for " + var + " changed from " + wasSelected + " to " + isNowSelected) //TODO: add or remove variables selected into list
+                            );
+                            return observable;
+                        }
+                    }));
+                }
+            }
         }
+    }
+
+    private void setVisibilityBatch(final boolean visibility) {
+        this.batch.setVisible(visibility);
+        this.listYaml.setVisible(visibility);
+        this.spinBatch.setVisible(visibility);
+        this.thread.setVisible(visibility);
     }
 
     /**
@@ -323,7 +357,7 @@ public class CenterLayoutController {
 
     /**
      * 
-     * @return Selected simulation path
+     * @return Selected simulation path.
      */
     public String getSimulation() {
         return this.pathYaml.getText();
@@ -331,10 +365,27 @@ public class CenterLayoutController {
 
     /**
      * 
-     * @return Selected end time
+     * @param path The path of file simulation.
+     */
+    public void setSimulation(final String path) {
+        this.pathYaml.setText(path);
+        setDeleteIcon(this.gridYaml, this.pathYaml);
+    }
+
+    /**
+     * 
+     * @return Selected end time.
      */
     public int getEndTime() {
         return this.spinTime.getValueFactory().getValue();
+    }
+
+    /**
+     * 
+     * @param endT Selected end time.
+     */
+    public void setEndTime(final int endT) {
+        this.spinTime.getValueFactory().setValue(endT);
     }
 
     /**
@@ -347,10 +398,27 @@ public class CenterLayoutController {
 
     /**
      * 
+     * @param path The path of file effect.
+     */
+    public void setEffect(final String path) {
+        this.pathEff.setText(path);
+        setDeleteIcon(this.gridEff, this.pathEff);
+    }
+
+    /**
+     * 
      * @return true if the output switch is selected.
      */
     public boolean isSwitchOutputSelected() {
         return this.tsOut.isSelected();
+    }
+
+    /**
+     * 
+     * @param select true if the output switch is selected.
+     */
+    public void setSwitchOutputSelected(final boolean select) {
+        this.tsOut.setSelected(select);
     }
 
     /**
@@ -363,6 +431,15 @@ public class CenterLayoutController {
 
     /**
      * 
+     * @param path The path of output folder.
+     */
+    public void setOutputFolder(final String path) {
+        this.pathOut.setText(path);
+        setDeleteIcon(this.gridOut, this.pathOut);
+    }
+
+    /**
+     * 
      * @return Base name typed
      */
     public String getBaseName() {
@@ -371,7 +448,15 @@ public class CenterLayoutController {
 
     /**
      * 
-     * @return Selected sampling interval
+     * @param name The name of output file.
+     */
+    public void setBaseName(final String name) {
+        this.bnTextOut.setText(name);
+    }
+
+    /**
+     * 
+     * @return Selected sampling interval.
      */
     public double getSamplInterval() {
         return this.spinOut.getValueFactory().getValue();
@@ -379,20 +464,44 @@ public class CenterLayoutController {
 
     /**
      * 
-     * @return true if the batch mode switch is selected.
+     * @param sampInt Selected sampling interval.
+     */
+    public void setSamplInterval(final double sampInt) {
+        this.spinOut.getValueFactory().setValue(sampInt);
+    }
+
+    /**
+     * 
+     * @return True if the batch mode switch is selected.
      */
     public boolean isSwitchBatchSelected() {
         return this.tsVar.isSelected();
     }
 
-    //TODO: list of variable selected
+    /**
+     * 
+     * @param select True if the batch mode switch is selected.
+     */
+    public void setSwitchBatchSelected(final boolean select) {
+        this.tsVar.setSelected(select);
+    }
+
+    //TODO: get and set list of variable selected
 
     /**
      * 
-     * @return Selected number of threads
+     * @return Selected number of threads.
      */
     public int getNumberThreads() {
         return this.spinBatch.getValueFactory().getValue();
+    }
+
+    /**
+     * 
+     * @param threads Selected number of threads.
+     */
+    public void setNumberThreads(final int threads) {
+        this.spinBatch.getValueFactory().setValue(threads);
     }
 
     /**
@@ -401,6 +510,14 @@ public class CenterLayoutController {
      */
     public ObservableList<String> getClasspath() {
         return this.listClass.getItems();
+    }
+
+    /**
+     * 
+     * @param list The libraries to add to the classpath.
+     */
+    public void setClasspath(final ObservableList<String> list) {
+        this.listClass.setItems(list);
     }
 
     private void manageFile(final String extension, final boolean edit) {

@@ -1,6 +1,9 @@
 package it.unibo.alchemist.controller;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -17,6 +20,8 @@ import it.unibo.alchemist.boundary.l10n.R;
 import it.unibo.alchemist.model.Batch;
 import it.unibo.alchemist.model.Output;
 import it.unibo.alchemist.model.Project;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -40,12 +45,12 @@ public class TopLayoutController {
     private Button btnNew;
     @FXML
     private Button btnOpen;
-    @FXML
-    private Button btnImport;
+    /*@FXML
+    private Button btnImport;*/
     @FXML
     private Button btnSave;
-    @FXML
-    private Button btnSaveAs;
+    /*@FXML
+    private Button btnSaveAs;*/
 
     private CenterLayoutController ctrlCenter;
     private Main main;
@@ -58,9 +63,9 @@ public class TopLayoutController {
     public void initialize() {
         this.btnNew.setText(R.getString("new"));
         this.btnOpen.setText(R.getString("open"));
-        this.btnImport.setText(R.getString("import"));
+        //this.btnImport.setText(R.getString("import"));
         this.btnSave.setText(R.getString("save"));
-        this.btnSaveAs.setText(R.getString("save_as"));
+        //this.btnSaveAs.setText(R.getString("save_as"));
         this.btnSave.setDisable(true);
     }
 
@@ -120,7 +125,7 @@ public class TopLayoutController {
      * 
      */
     @FXML
-    public void clickOpen() { //TODO: read .alchemist_project_descriptor.json and set field
+    public void clickOpen() {
         final DirectoryChooser dirChooser = new DirectoryChooser();
         dirChooser.setTitle(R.getString("select_folder_proj"));
         dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
@@ -137,14 +142,52 @@ public class TopLayoutController {
 
             if (containsFile == 0) {
                 final Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle(R.getString("folder_wrong"));
-                alert.setHeaderText(R.getString("folder_wrong_header"));
-                alert.setContentText(R.getString("folder_wrong_content"));
+                alert.setTitle(R.getString("proj_folder_wrong"));
+                alert.setHeaderText(R.getString("proj_folder_wrong_header"));
+                alert.setContentText(R.getString("proj_folder_wrong_content"));
                 alert.showAndWait();
             } else {
                 this.pathFolder = dir.getAbsolutePath();
                 this.ctrlLeft.setTreeView(dir);
                 this.btnSave.setDisable(false);
+                final Gson gson = new Gson();
+                try {
+                    final BufferedReader br = new BufferedReader(new FileReader(this.pathFolder + File.separator + ".alchemist_project_descriptor.json"));
+                    try {
+                        if (br.ready()) {
+                            final Project proj = gson.fromJson(br, Project.class);
+                            if (!proj.getSimulation().isEmpty()) {
+                                this.ctrlCenter.setSimulation(proj.getSimulation());
+                            }
+                            this.ctrlCenter.setEndTime(proj.getEndTime());
+                            if (!proj.getEffect().isEmpty()) {
+                                this.ctrlCenter.setEffect(proj.getEffect());
+                            }
+                            this.ctrlCenter.setSwitchOutputSelected(proj.getOutput().isSelect());
+                            if (proj.getOutput().isSelect()) {
+                                this.ctrlCenter.setOutputFolder(proj.getOutput().getFolder());
+                                this.ctrlCenter.setBaseName(proj.getOutput().getBaseName());
+                                this.ctrlCenter.setSamplInterval(proj.getOutput().getSamplInterval());
+                            }
+                            this.ctrlCenter.setSwitchBatchSelected(proj.getBatch().isSelect());
+                            if (proj.getBatch().isSelect()) {
+                                //TODO: set variables selected and all variables of yaml file.
+                                this.ctrlCenter.setNumberThreads(proj.getBatch().getThread());
+                            }
+                            if (!proj.getClasspath().isEmpty()) {
+                                final ObservableList<String> list = FXCollections.observableArrayList();
+                                for (final String lib : proj.getClasspath()) {
+                                    list.add(lib);
+                                }
+                                this.ctrlCenter.setClasspath(list);
+                            }
+                        }
+                    } catch (IOException e) {
+                        L.error("I/O error. This is most likely a bug.", e);
+                    }
+                } catch (FileNotFoundException e) {
+                    L.error("Error reading the file. This is most likely a bug.", e);
+                }
             }
         }
     }
@@ -188,34 +231,5 @@ public class TopLayoutController {
             L.error("Error writing the file. This is most likely a bug.", e);
         }
     }
-
-    /**
-     * 
-     */
-    @FXML
-    public void clickImport() {
-        /*final DirectoryChooser dirChooser = new DirectoryChooser();
-        dirChooser.setTitle("Import project folder");
-        dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-        final File dir = dirChooser.showDialog(this.main.getStage());  // eccezione se non si seleziona nulla!
-        System.out.println("base: " + dir.getName());
-        displayDirectoryContent(dir);*/
-    }
-
-    /*private void displayDirectoryContent(final File dir) {
-        try {
-            final File[] files = dir.listFiles();
-            for (final File file: files) {
-                if (file.isDirectory()) {
-                    System.out.println("   directory: " + file.getName());
-                    displayDirectoryContent(file);
-                } else {
-                    System.out.println("      file: " + file.getName());
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }*/
 
 }

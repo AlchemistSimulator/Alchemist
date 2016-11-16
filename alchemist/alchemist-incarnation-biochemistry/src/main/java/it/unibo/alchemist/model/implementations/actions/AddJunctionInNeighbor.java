@@ -12,11 +12,9 @@ import it.unibo.alchemist.model.interfaces.Context;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
-import it.unibo.alchemist.model.implementations.nodes.CellNode;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.ICellNode;
+import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
@@ -33,9 +31,6 @@ public class AddJunctionInNeighbor extends AbstractNeighborAction<Double> {
 
     private final Junction jun;
     private final Environment<Double> env;
-    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All provided RandomGenerator implementations are actually Serializable")
-    private final RandomGenerator rand;
-    private final ICellNode node;
     /**
      * 
      * @param junction the junction
@@ -43,18 +38,20 @@ public class AddJunctionInNeighbor extends AbstractNeighborAction<Double> {
      * @param e the environment
      * @param rg the random generator
      */
-    public AddJunctionInNeighbor(final Junction junction, final ICellNode n, final Environment<Double> e, final RandomGenerator rg) {
+    public AddJunctionInNeighbor(final Environment<Double> e, final Node<Double> n, final Junction junction, final RandomGenerator rg) {
         super(n, e, rg);
-        addModifiedMolecule(junction);
-        jun = junction; 
-        env = e;
-        rand = rg;
-        node = n;
+        if (n instanceof CellNode) {
+            addModifiedMolecule(junction);
+            jun = junction; 
+            env = e;
+        } else {
+            throw new UnsupportedOperationException("This Action can be set only in CellNodes");
+        }
     }
 
     @Override
     public AddJunctionInNeighbor cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
-        return new AddJunctionInNeighbor(jun, (CellNode) n, env, rand);
+        return new AddJunctionInNeighbor(env, n, jun, getRandomGenerator());
     }
 
     /**
@@ -76,12 +73,21 @@ public class AddJunctionInNeighbor extends AbstractNeighborAction<Double> {
      */
     @Override
     public void execute(final Node<Double> targetNode) {
-        ((CellNode) targetNode).addJunction(jun, node);
+        if (targetNode instanceof CellNode) {
+            ((CellNode) targetNode).addJunction(jun, getNode());
+        } else {
+            throw new UnsupportedOperationException("Can't add Junction in a node that it's not a CellNode");
+        }
     }
 
     @Override 
     public String toString() {
         return "add junction " + jun.toString() + " in neighbor";
+    }
+
+    @Override
+    public CellNode getNode() {
+        return (CellNode) super.getNode();
     }
 
 }

@@ -4,7 +4,7 @@ import it.unibo.alchemist.model.implementations.strategies.routing.IgnoreStreets
 import it.unibo.alchemist.model.implementations.strategies.speed.ConstantSpeed;
 import it.unibo.alchemist.model.implementations.strategies.speed.StraightLineTraceDependantSpeed;
 import it.unibo.alchemist.model.implementations.strategies.target.FollowTrace;
-import it.unibo.alchemist.model.interfaces.IMapEnvironment;
+import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
@@ -24,7 +24,7 @@ public class ReproduceGPSTrace<T> extends MoveOnMap<T> {
      *            the reaction. Will be used to compute the distance to walk in
      *            every step, relying on {@link Reaction}'s getRate() method.
      */
-    public ReproduceGPSTrace(final IMapEnvironment<T> environment, final Node<T> node, final Reaction<T> reaction) {
+    public ReproduceGPSTrace(final MapEnvironment<T> environment, final Node<T> node, final Reaction<T> reaction) {
         super(environment, node,
                 new IgnoreStreets<>(),
                 new StraightLineTraceDependantSpeed<>(environment, node, reaction),
@@ -42,7 +42,7 @@ public class ReproduceGPSTrace<T> extends MoveOnMap<T> {
      * @param speed
      *            the average speed
      */
-    public ReproduceGPSTrace(final IMapEnvironment<T> environment, final Node<T> node, final Reaction<T> reaction, final double speed) {
+    public ReproduceGPSTrace(final MapEnvironment<T> environment, final Node<T> node, final Reaction<T> reaction, final double speed) {
         super(environment, node,
                 new IgnoreStreets<>(),
                 new ConstantSpeed<>(reaction, speed),

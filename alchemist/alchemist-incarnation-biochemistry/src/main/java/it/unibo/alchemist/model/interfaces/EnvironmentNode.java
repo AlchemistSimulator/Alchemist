@@ -10,6 +10,6 @@ package it.unibo.alchemist.model.interfaces;
 
 /**
  */
-public interface IEnvironmentNode extends Node<Double> {
-    // TODO
+public interface EnvironmentNode extends Node<Double> {
+
 }

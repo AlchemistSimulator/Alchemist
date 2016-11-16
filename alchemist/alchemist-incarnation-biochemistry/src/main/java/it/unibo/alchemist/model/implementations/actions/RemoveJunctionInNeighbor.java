@@ -14,11 +14,10 @@ import java.util.Map;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.ICellNode;
+import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
@@ -35,9 +34,6 @@ public class RemoveJunctionInNeighbor extends AbstractNeighborAction<Double> {
 
     private final Junction jun;
     private final Environment<Double> env;
-    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All provided RandomGenerator implementations are actually Serializable")
-    private final RandomGenerator rand;
-    private final ICellNode node;
 
     /**
      * 
@@ -46,21 +42,23 @@ public class RemoveJunctionInNeighbor extends AbstractNeighborAction<Double> {
      * @param e 
      * @param rg 
      */
-    public RemoveJunctionInNeighbor(final Junction junction, final ICellNode n, final Environment<Double> e, final RandomGenerator rg) {
+    public RemoveJunctionInNeighbor(final Environment<Double> e, final Node<Double> n, final Junction junction, final RandomGenerator rg) {
         super(n, e, rg);
-        addModifiedMolecule(junction);
-        for (final Map.Entry<Biomolecule, Double> entry : junction.getMoleculesInCurrentNode().entrySet()) {
-            addModifiedMolecule(entry.getKey());
+        if (n instanceof CellNode) {
+            addModifiedMolecule(junction);
+            for (final Map.Entry<Biomolecule, Double> entry : junction.getMoleculesInCurrentNode().entrySet()) {
+                addModifiedMolecule(entry.getKey());
+            }
+            jun = junction;
+            env = e;
+        } else {
+            throw new UnsupportedOperationException("This Action can be set only in CellNodes");
         }
-        jun = junction;
-        node = n;
-        env = e;
-        rand = rg;
     }
 
     @Override
     public RemoveJunctionInNeighbor cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
-        return new RemoveJunctionInNeighbor(jun, (ICellNode) n, env, rand);
+        return new RemoveJunctionInNeighbor(env, n, jun, getRandomGenerator());
     }
 
     /**
@@ -76,12 +74,21 @@ public class RemoveJunctionInNeighbor extends AbstractNeighborAction<Double> {
 
     @Override
     public void execute(final Node<Double> targetNode) {
-        ((ICellNode) targetNode).removeJunction(jun, node);
+        if (targetNode instanceof CellNode) {
+            ((CellNode) targetNode).removeJunction(jun, getNode());
+        } else {
+            throw new UnsupportedOperationException("Can't add Junction in a node that it's not a CellNode");
+        }
     }
 
     @Override 
     public String toString() {
         return "remove junction " + jun.toString() + " in neighbor";
+    }
+
+    @Override
+    public CellNode getNode() {
+        return (CellNode) super.getNode();
     }
 
 }

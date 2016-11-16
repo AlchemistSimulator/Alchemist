@@ -6,6 +6,7 @@ buildscript {
     }
     dependencies {
         classpath "org.danilopianini:build-commons:${buildCommonsVersion}"
+        classpath "org.danilopianini:javadoc.io-linker:${javadocIOLinkerVersion}"
     }
 }
 
@@ -143,6 +144,10 @@ dependencies {
 javadoc {
     dependsOn subprojects.javadoc
     source subprojects.javadoc.source
+}
+
+allprojects {
+    apply plugin: 'org.danilopianini.javadoc.io-linker'
 }
 
 task fatJar(type: Jar, dependsOn: subprojects.assemble) {

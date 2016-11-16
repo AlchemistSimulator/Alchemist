@@ -8,7 +8,7 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import it.unibo.alchemist.model.interfaces.IMapEnvironment;
+import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
@@ -48,7 +48,7 @@ public class MoveOnMap<T> extends AbstractMoveNode<T> {
      * @param tg
      *            {@link TargetSelectionStrategy}
      */
-    public MoveOnMap(final IMapEnvironment<T> environment, final Node<T> node, final RoutingStrategy<T> rt, final SpeedSelectionStrategy<T> sp, final TargetSelectionStrategy<T> tg) {
+    public MoveOnMap(final MapEnvironment<T> environment, final Node<T> node, final RoutingStrategy<T> rt, final SpeedSelectionStrategy<T> sp, final TargetSelectionStrategy<T> tg) {
         super(environment, node, true);
         routeStrategy = rt;
         speedStrategy = sp;
@@ -56,8 +56,8 @@ public class MoveOnMap<T> extends AbstractMoveNode<T> {
     }
 
     @Override
-    public IMapEnvironment<T> getEnvironment() {
-        return (IMapEnvironment<T>) super.getEnvironment();
+    public MapEnvironment<T> getEnvironment() {
+        return (MapEnvironment<T>) super.getEnvironment();
     }
 
     @Override
@@ -68,7 +68,7 @@ public class MoveOnMap<T> extends AbstractMoveNode<T> {
             resetRoute();
         }
         double maxWalk = speedStrategy.getCurrentSpeed(end);
-        final IMapEnvironment<T> env = getEnvironment();
+        final MapEnvironment<T> env = getEnvironment();
         final Node<T> node = getNode();
         Position curPos = env.getPosition(node);
         if (curPos.getDistanceTo(end) <= maxWalk) {

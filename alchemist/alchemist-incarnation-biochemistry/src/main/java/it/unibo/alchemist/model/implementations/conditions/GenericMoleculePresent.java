@@ -34,7 +34,7 @@ public class GenericMoleculePresent<T extends Number> extends
      * @param n the current node
      * @param quantity the amount of molecules which should be present. Must be positive.
      */
-    public GenericMoleculePresent(final Molecule mol, final Node<T> n, final T quantity) {
+    public GenericMoleculePresent(final Node<T> n, final Molecule mol, final T quantity) {
         super(n);
         if (quantity.doubleValue() <= 0d) {
             throw new IllegalArgumentException("The quantity of compound must be a positive number.");
@@ -66,7 +66,7 @@ public class GenericMoleculePresent<T extends Number> extends
 
     @Override
     public GenericMoleculePresent<T> cloneOnNewNode(final Node<T> n) {
-        return new GenericMoleculePresent<T>(molecule, n, qty);
+        return new GenericMoleculePresent<T>(n, molecule, qty);
     }
 
     /**

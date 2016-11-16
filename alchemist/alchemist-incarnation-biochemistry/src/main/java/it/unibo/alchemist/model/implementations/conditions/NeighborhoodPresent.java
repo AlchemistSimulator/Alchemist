@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.implementations.conditions;
 
+import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -29,14 +30,14 @@ public class NeighborhoodPresent<T> extends AbstractCondition<T> {
      * @param node the node
      * @param environment the current environment.
      */
-    public NeighborhoodPresent(final Node<T> node, final Environment<T> environment) {
+    public NeighborhoodPresent(final Environment<T> environment, final Node<T> node) {
         super(node);
         env = environment;
     }
 
     @Override
     public NeighborhoodPresent<T> cloneOnNewNode(final Node<T> n) {
-        return new NeighborhoodPresent<>(n, env);
+        return new NeighborhoodPresent<>(env, n);
     }
 
     @Override
@@ -51,7 +52,11 @@ public class NeighborhoodPresent<T> extends AbstractCondition<T> {
 
     @Override
     public boolean isValid() {
-        return !env.getNeighborhood(getNode()).isEmpty();
+        return env.getNeighborhood(getNode()).getNeighbors().stream()
+                .parallel()
+                .filter(n -> n instanceof CellNode)
+                .findAny()
+                .isPresent();
     }
 
     @Override

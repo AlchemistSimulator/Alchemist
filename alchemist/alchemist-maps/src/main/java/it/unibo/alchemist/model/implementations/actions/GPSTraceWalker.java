@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.implementations.actions;
 import it.unibo.alchemist.model.implementations.strategies.routing.OnStreets;
 import it.unibo.alchemist.model.implementations.strategies.speed.RoutingTraceDependantSpeed;
 import it.unibo.alchemist.model.implementations.strategies.target.FollowTrace;
-import it.unibo.alchemist.model.interfaces.IMapEnvironment;
+import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Vehicle;
@@ -33,7 +33,7 @@ public class GPSTraceWalker<T> extends MoveOnMap<T> {
      * @param reaction
      *            the reaction
      */
-    public GPSTraceWalker(final IMapEnvironment<T> environment, final Node<T> node, final Reaction<T> reaction) {
+    public GPSTraceWalker(final MapEnvironment<T> environment, final Node<T> node, final Reaction<T> reaction) {
         super(environment, node,
                 new OnStreets<>(environment, Vehicle.FOOT),
                 new RoutingTraceDependantSpeed<>(environment, node, reaction, Vehicle.FOOT),

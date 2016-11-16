@@ -166,7 +166,7 @@ public final class Alchemist {
                                 }).findAny().get().run();
                     }
                 } catch (NumberFormatException e) {
-                    L.error("A number was expected.");
+                    L.error("A number was expected. " + e.getMessage());
                 }
             } else {
                 new AlchemistSwingUI().setVisible(true);

@@ -45,7 +45,6 @@
 	<rule ref="rulesets/java/basic.xml/BigIntegerInstantiation" />
 	<rule ref="rulesets/java/naming.xml/BooleanGetMethodName" />
 	<rule ref="rulesets/java/basic.xml/BooleanInstantiation" />
-	<rule ref="rulesets/java/controversial.xml/BooleanInversion" />
 	<rule ref="rulesets/java/basic.xml/BrokenNullCheck" />
 	<rule ref="rulesets/java/migrating.xml/ByteInstantiation" />
 	<rule ref="rulesets/java/android.xml/CallSuperLast" />
@@ -142,11 +141,6 @@
 	<rule ref="rulesets/java/design.xml/MissingStaticMethodInNonInstantiatableClass" />
 	<rule ref="rulesets/xml/basic.xml/MistypedCDATASection" />
 	<rule ref="rulesets/java/logging-java.xml/MoreThanOneLogger" />
-	<rule ref="rulesets/java/codesize.xml/NcssConstructorCount" />
-	<rule ref="rulesets/plsql/codesize.xml/NcssMethodCount" />
-	<rule ref="rulesets/java/codesize.xml/NcssMethodCount" />
-	<rule ref="rulesets/plsql/codesize.xml/NcssObjectCount" />
-	<rule ref="rulesets/java/codesize.xml/NcssTypeCount" />
 	<rule ref="rulesets/jsp/basic.xml/NoClassAttribute" />
 	<rule ref="rulesets/jsp/basic.xml/NoHtmlComments" />
 	<rule ref="rulesets/vm/basic.xml/NoInlineJavaScript" />

@@ -13,26 +13,26 @@ import org.junit.Test;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
-import it.unibo.alchemist.model.implementations.nodes.CellNode;
+import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.ICellNode;
+import it.unibo.alchemist.model.interfaces.CellNode;
 
 /**
  */
 public class TestJunction {
 
-    private ICellNode node1;
-    private ICellNode node2;
-    private ICellNode node3;
+    private CellNode node1;
+    private CellNode node2;
+    private CellNode node3;
 
     /**
      */
     @Before
     public void setUp() {
         final Environment<Double> env = new BioRect2DEnvironment();
-        node1 = new CellNode(env);
-        node2 = new CellNode(env);
-        node3 = new CellNode(env);
+        node1 = new CellNodeImpl(env);
+        node2 = new CellNodeImpl(env);
+        node3 = new CellNodeImpl(env);
     }
 
     /**

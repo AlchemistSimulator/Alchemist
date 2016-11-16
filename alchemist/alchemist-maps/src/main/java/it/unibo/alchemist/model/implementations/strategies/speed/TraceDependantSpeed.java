@@ -2,7 +2,7 @@ package it.unibo.alchemist.model.implementations.strategies.speed;
 
 import it.unibo.alchemist.model.interfaces.IGPSPoint;
 import it.unibo.alchemist.model.interfaces.IGPSTrace;
-import it.unibo.alchemist.model.interfaces.IMapEnvironment;
+import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
@@ -21,7 +21,7 @@ public abstract class TraceDependantSpeed<T> implements SpeedSelectionStrategy<T
     private static final long serialVersionUID = 8021140539083062866L;
     private final IGPSTrace trace;
     private final Reaction<T> reaction;
-    private final IMapEnvironment<T> env;
+    private final MapEnvironment<T> env;
     private final Node<T> node;
 
     /**
@@ -32,7 +32,7 @@ public abstract class TraceDependantSpeed<T> implements SpeedSelectionStrategy<T
      * @param r
      *            the reaction
      */
-    public TraceDependantSpeed(final IMapEnvironment<T> e, final Node<T> n, final Reaction<T> r) {
+    public TraceDependantSpeed(final MapEnvironment<T> e, final Node<T> n, final Reaction<T> r) {
         LangUtils.requireNonNull(e, n, r);
         env = e;
         node = n;
@@ -60,6 +60,6 @@ public abstract class TraceDependantSpeed<T> implements SpeedSelectionStrategy<T
      * @return an estimation of the distance between the node and the target
      *         position
      */
-    protected abstract double computeDistance(IMapEnvironment<T> environment, Node<T> curNode, Position targetPosition);
+    protected abstract double computeDistance(MapEnvironment<T> environment, Node<T> curNode, Position targetPosition);
 
 }

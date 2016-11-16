@@ -28,11 +28,11 @@ import it.unibo.alchemist.SupportedIncarnations;
  *
  */
 public final class EffectSerializationFactory {
-    private EffectSerializationFactory() {
-    }
 
-    // TODO register newly-added-effect subtypes to this factory to
-    // (de)serialize them properly
+    /*
+     * TODO register newly-added-effect subtypes to this factory to
+     * (de)serialize them properly
+     */
     private static final RuntimeTypeAdapterFactory<Effect> RTA = RuntimeTypeAdapterFactory.of(Effect.class)
             .registerSubtype(DrawShape.class, DrawShape.class.toString());
     private static final Gson GSON = new GsonBuilder().registerTypeAdapterFactory(RTA)
@@ -51,6 +51,9 @@ public final class EffectSerializationFactory {
                         }
                     })
             .setPrettyPrinting().create();
+
+    private EffectSerializationFactory() {
+    }
 
     /**
      * Get a list of effects from the specified file. Try to deserialize a JSON

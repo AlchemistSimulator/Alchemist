@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.implementations.strategies.routing.OnStreets;
 import it.unibo.alchemist.model.implementations.strategies.speed.InteractWithOthers;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
-import it.unibo.alchemist.model.interfaces.IMapEnvironment;
+import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
@@ -47,7 +47,7 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<? extends ILsaMolec
      * @param neighPos
      *            the position in the template LSA that contains the next hop
      */
-    public SAPEREWalkerRiseGradient(final IMapEnvironment<List<? extends ILsaMolecule>> environment,
+    public SAPEREWalkerRiseGradient(final MapEnvironment<List<? extends ILsaMolecule>> environment,
             final ILsaNode node, final Reaction<List<? extends ILsaMolecule>> reaction, final double speed,
             final double interaction, final double range, final ILsaMolecule templateLSA, final int neighPos) {
         this(environment, node, reaction, SAPEREWalker.DEFAULT_INTERACTING_TAG, speed, interaction, range, templateLSA,
@@ -74,7 +74,7 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<? extends ILsaMolec
      * @param neighPos
      *            the position in the template LSA that contains the next hop
      */
-    public SAPEREWalkerRiseGradient(final IMapEnvironment<List<? extends ILsaMolecule>> environment,
+    public SAPEREWalkerRiseGradient(final MapEnvironment<List<? extends ILsaMolecule>> environment,
             final ILsaNode node, final Reaction<List<? extends ILsaMolecule>> reaction, final ILsaMolecule tag,
             final double speed, final double interaction, final double range, final ILsaMolecule templateLSA,
             final int neighPos) {
@@ -88,7 +88,7 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<? extends ILsaMolec
          * 
          */
         private static final long serialVersionUID = -618772546563562484L;
-        private final IMapEnvironment<List<? extends ILsaMolecule>> environment;
+        private final MapEnvironment<List<? extends ILsaMolecule>> environment;
         private final Node<List<? extends ILsaMolecule>> node;
         private final ILsaMolecule template;
         private final int argPos;
@@ -96,7 +96,7 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<? extends ILsaMolec
         private Position curPos;
 
         NextTargetStrategy(
-                final IMapEnvironment<List<? extends ILsaMolecule>> env,
+                final MapEnvironment<List<? extends ILsaMolecule>> env,
                 final Node<List<? extends ILsaMolecule>> n,
                 final ILsaMolecule patt,
                 final int pos) {
@@ -110,7 +110,7 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<? extends ILsaMolec
 
         @Override
         public Position getNextTarget() {
-            final IMapEnvironment<List<? extends ILsaMolecule>> env = environment;
+            final MapEnvironment<List<? extends ILsaMolecule>> env = environment;
             final List<? extends ILsaMolecule> matches = node.getConcentration(template);
             /*
              * If there is no gradient and: - there is no goal, or - the goal

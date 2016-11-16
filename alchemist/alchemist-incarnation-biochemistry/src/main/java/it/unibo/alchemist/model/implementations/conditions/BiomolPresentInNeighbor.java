@@ -10,13 +10,14 @@
 package it.unibo.alchemist.model.implementations.conditions;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.math3.util.CombinatoricsUtils;
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
+import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -33,7 +34,7 @@ public class BiomolPresentInNeighbor extends AbstractNeighborCondition<Double> {
     private final Double conc;
     private final Environment<Double> environment;
     private double propensity;
-    private Map<Node<Double>, Double> neigh = new HashMap<>();
+    private Map<Node<Double>, Double> neigh = new LinkedHashMap<>();
 
     /**
      * 
@@ -42,8 +43,8 @@ public class BiomolPresentInNeighbor extends AbstractNeighborCondition<Double> {
      * @param node 
      * @param env 
      */
-    public BiomolPresentInNeighbor(final Biomolecule molecule, final Double concentration, final Node<Double> node, final Environment<Double> env) {
-        super(node, env);
+    public BiomolPresentInNeighbor(final Environment<Double> env, final Node<Double> node, final Biomolecule molecule, final Double concentration) {
+        super(env, node);
         addReadMolecule(molecule);
         mol = molecule;
         conc = concentration;
@@ -61,27 +62,30 @@ public class BiomolPresentInNeighbor extends AbstractNeighborCondition<Double> {
             return false;
         } else {
             final Neighborhood<Double> neighborhood = environment.getNeighborhood(getNode());
-            return neigh.entrySet().stream().allMatch(n -> neighborhood.contains(n.getKey()) && n.getKey().getConcentration(mol) >=  conc);
+            return neigh.entrySet().stream()
+                    .filter(n -> n.getKey() instanceof CellNode)
+                    .allMatch(n -> neighborhood.contains(n.getKey()) 
+                            && n.getKey().getConcentration(mol) >=  conc);
         }
     }
 
     @Override
     public BiomolPresentInNeighbor cloneOnNewNode(final Node<Double> n) {
-        return new BiomolPresentInNeighbor(mol, conc, n, environment);
+        return new BiomolPresentInNeighbor(environment, n, mol, conc);
     }
 
     @Override
     public Map<Node<Double>, Double> getValidNeighbors(final Collection<? extends Node<Double>> neighborhood) {
         propensity = 0;
         neigh = neighborhood.stream()
-                    .filter(n -> n.getConcentration(mol) >= conc)
-                    .collect(Collectors.<Node<Double>, Node<Double>, Double>toMap(
-                                          n -> n,
-                                          n -> CombinatoricsUtils.binomialCoefficientDouble(n.getConcentration(mol).intValue(), conc.intValue())));
+                .filter(n -> n instanceof CellNode && n.getConcentration(mol) >= conc)
+                .collect(Collectors.<Node<Double>, Node<Double>, Double>toMap(
+                        n -> n,
+                        n -> CombinatoricsUtils.binomialCoefficientDouble(n.getConcentration(mol).intValue(), conc.intValue())));
         if (!neigh.isEmpty()) {
             propensity = neigh.values().stream().max((d1, d2) -> d1.compareTo(d2)).get();
         }
-        return new HashMap<>(neigh);
+        return new LinkedHashMap<>(neigh);
     }
 
     @Override

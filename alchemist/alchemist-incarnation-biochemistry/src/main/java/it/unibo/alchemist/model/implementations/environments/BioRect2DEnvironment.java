@@ -16,9 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.model.implementations.molecules.Junction;
-import it.unibo.alchemist.model.implementations.nodes.CellNode;
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
-import it.unibo.alchemist.model.interfaces.ICellNode;
+import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
@@ -61,10 +60,10 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
      * Builds a BioRect2DEnvironment with infinite bounds.
      */
     public BioRect2DEnvironment() {
-        minX = Double.MIN_VALUE;
-        maxX = Double.MAX_VALUE;
-        minY = Double.MIN_VALUE;
-        maxY = Double.MAX_VALUE;
+        minX = Double.NEGATIVE_INFINITY;
+        maxX = Double.POSITIVE_INFINITY;
+        minY = Double.NEGATIVE_INFINITY;
+        maxY = Double.POSITIVE_INFINITY;
     }
 
     @Override
@@ -97,13 +96,14 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
     public void moveNode(final Node<Double> node, final Position direction) {
         if (node instanceof CellNode) {
             super.moveNode(node, direction);
-            final Neighborhood<Double> neigh = getNeighborhood(node);
-            final Map<Junction, Map<ICellNode, Integer>> jun = ((CellNode) node).getJunctions();
+            final CellNode nodeToMove = (CellNode) node;
+            final Neighborhood<Double> neigh = getNeighborhood(nodeToMove);
+            final Map<Junction, Map<CellNode, Integer>> jun = nodeToMove.getJunctions();
             jun.entrySet().stream().forEach(e -> e.getValue().entrySet().forEach(e2 -> {
                 if (!neigh.contains(e2.getKey())) { // there is a junction that links a node which isn't in the neighborhood after the movement
                    for (int i = 0; i < e2.getValue(); i++) {
-                       ((CellNode) node).removeJunction(e.getKey(), e2.getKey());
-                       e2.getKey().removeJunction(e.getKey().reverse(), (ICellNode) node);
+                       nodeToMove.removeJunction(e.getKey(), e2.getKey());
+                       e2.getKey().removeJunction(e.getKey().reverse(), nodeToMove);
                    }
                 }
             }));

@@ -1,9 +1,13 @@
 package it.unibo.alchemist.test;
 
+import java.util.Optional;
+
 import org.danilopianini.lang.FlexibleQuadTree;
 
 import it.unibo.alchemist.model.implementations.environments.AbstractEnvironment;
+import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.LinkingRule;
+import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
@@ -57,5 +61,9 @@ class DummyEnvironment extends AbstractEnvironment<Object> {
     }
     @Override
     protected void nodeRemoved(final Node<Object> node, final Position pos) {
+    }
+    @Override
+    public Optional<Layer<Object>> getLayer(final Molecule m) {
+        throw new UnsupportedOperationException();
     }
 }

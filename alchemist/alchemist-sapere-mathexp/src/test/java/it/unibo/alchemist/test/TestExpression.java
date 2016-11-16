@@ -51,6 +51,9 @@ public class TestExpression {
         }
     }
 
+    /**
+     * 
+     */
     @Test
     public void testBuildConst() {
         for (final String s : CONST) {
@@ -60,6 +63,9 @@ public class TestExpression {
         }
     }
 
+    /**
+     * 
+     */
     @Test
     public void testBuildOperator() {
         for (final String s : OPERATOR) {
@@ -69,6 +75,9 @@ public class TestExpression {
         }
     }
 
+    /**
+     * 
+     */
     @Test
     public void testBuildList() {
         for (final String s : LIST) {
@@ -78,6 +87,9 @@ public class TestExpression {
         }
     }
 
+    /**
+     * 
+     */
     @Test
     public void testBuildComparator() {
         for (final String s : COMPARATOR) {
@@ -87,6 +99,9 @@ public class TestExpression {
         }
     }
 
+    /**
+     * 
+     */
     @Test
     public void testListComparator() {
         final Expression le = new Expression("def: A has [a;]");
@@ -104,6 +119,9 @@ public class TestExpression {
         assertFalse(new Expression("B").matches(le, null));
     }
 
+    /**
+     * 
+     */
     @Test
     public void testList() {
         final Expression empty = new Expression("[]");

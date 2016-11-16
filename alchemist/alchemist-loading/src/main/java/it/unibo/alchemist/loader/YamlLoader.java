@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
@@ -39,6 +40,7 @@ import org.yaml.snakeyaml.Yaml;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 
+
 import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.loader.displacements.Displacement;
 import it.unibo.alchemist.loader.export.Extractor;
@@ -60,6 +62,7 @@ import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
+import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.LinkingRule;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -97,6 +100,8 @@ public class YamlLoader implements Loader, Serializable {
     private static final String FORMULA = SYNTAX.getString("formula");
     private static final String IN = SYNTAX.getString("in");
     private static final String INCARNATION = SYNTAX.getString("incarnation");
+    private static final String LAYERS = SYNTAX.getString("layers");
+    private static final String LAYERS_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "model.implementations.layers.";
     private static final String LINKING_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "model.implementations.linkingrules.";
     private static final String LINKING_RULE = SYNTAX.getString("linking-rule");
     private static final String MIN = SYNTAX.getString("min");
@@ -151,6 +156,7 @@ public class YamlLoader implements Loader, Serializable {
     private final Class<? extends LinkingRule<?>> linkingClass;
     private final List<?> envArgs;
     private final List<?> linkingArgs;
+    private List<?> layersList = new ArrayList<>();
 
     private final List<Map<String, Object>> displacements;
 
@@ -252,6 +258,20 @@ public class YamlLoader implements Loader, Serializable {
             envClass = extractClass(envYaml, ENV_PACKAGE_ROOT, DEFAULT_ENVIRONMENT_CLASS);
             envArgs = extractParams(envYaml);
             L.trace("Environment parameters: {}", envArgs);
+            // if envYaml contains LAYERS key 
+            if (envYaml.containsKey(LAYERS)) {
+                // get its value;
+                final Object layersObj = envYaml.get(LAYERS);
+                // if layersObj is a List
+                if (layersObj instanceof List) {
+                    // extract classes and parameter from the list and put them inside layersMap.
+                    layersList = (List<?>) envYaml.get(LAYERS);
+                } else {
+                    throw new IllegalAlchemistYAMLException(layersObj + " is not a valid layer list");
+                }
+            } else {
+                L.info("\"" + LAYERS + "\" key not found in environment. The " + envClass + " won't contain any layer.");
+            }
         } else {
             missingPart(ENVIRONMENT, DEFAULT_ENVIRONMENT_CLASS.getName());
             envClass = DEFAULT_ENVIRONMENT_CLASS;
@@ -433,6 +453,31 @@ public class YamlLoader implements Loader, Serializable {
         final LinkingRule<T> linking = (LinkingRule<T>) create(linkingClass, linkingArgs, incarnation, actualVars, scenarioRandom, env);
         L.debug("Linking rule is: {}", linking);
         env.setLinkingRule(Objects.requireNonNull(linking, "The linking rule can not be null."));
+        /*
+         * Layers.
+         */
+        if (!layersList.isEmpty()) {
+            for (final Object layerObj: layersList) {
+                if (layerObj instanceof Map) {
+                    final Map<String, Object> layer = (Map<String, Object>) layerObj;
+                    if (layer.containsKey(MOLECULE) && layer.get(MOLECULE) instanceof String) {
+                        final Optional<Class<Layer<T>>> layerDescriptor = extractClassIfDeclared(layer, LAYERS_PACKAGE_ROOT);
+                        if (layerDescriptor.isPresent()) {
+                            final Class<Layer<T>> layerClass = layerDescriptor.get();
+                            final List<?> layArgs = extractParams(layer);
+                            final Molecule molecule = incarnation.createMolecule((String) layer.get(MOLECULE));
+                            env.addLayer(molecule, create(layerClass, layArgs));
+                        } else {
+                            throw new IllegalAlchemistYAMLException(layerObj + " is not a valid layer description: layer class missing or invald layer class name");
+                        }
+                    } else {
+                        throw new IllegalAlchemistYAMLException(layerObj + " is not a valid layer description: molecule missing or invald molecule name");
+                    }
+                } else {
+                    throw new IllegalAlchemistYAMLException(layerObj + " is not a valid layer description");
+                }
+            }
+        }
         final PositionMaker pmaker = new PositionMaker(posClass);
         final Incarnation<T> currIncarnation = (Incarnation<T>) incarnation;
         for (final Map<String, Object> displacement : displacements) {

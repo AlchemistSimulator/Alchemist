@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.implementations.strategies.target.FollowTrace;
 import it.unibo.alchemist.model.interfaces.ILsaAction;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
-import it.unibo.alchemist.model.interfaces.IMapEnvironment;
+import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Vehicle;
@@ -51,7 +51,7 @@ public class SAPEREWalker extends MoveOnMap<List<? extends ILsaMolecule>> implem
      * @param range
      *            the interaction range
      */
-    public SAPEREWalker(final IMapEnvironment<List<? extends ILsaMolecule>> environment, final ILsaNode node, final Reaction<List<? extends ILsaMolecule>> reaction, final double speed, final double interaction, final double range) {
+    public SAPEREWalker(final MapEnvironment<List<? extends ILsaMolecule>> environment, final ILsaNode node, final Reaction<List<? extends ILsaMolecule>> reaction, final double speed, final double interaction, final double range) {
         this(environment, node, reaction, DEFAULT_INTERACTING_TAG, speed, interaction, range);
     }
 
@@ -71,7 +71,7 @@ public class SAPEREWalker extends MoveOnMap<List<? extends ILsaMolecule>> implem
      * @param range
      *            the interaction range
      */
-    public SAPEREWalker(final IMapEnvironment<List<? extends ILsaMolecule>> environment, final ILsaNode node, final Reaction<List<? extends ILsaMolecule>> reaction, final ILsaMolecule tag, final double speed, final double interaction, final double range) {
+    public SAPEREWalker(final MapEnvironment<List<? extends ILsaMolecule>> environment, final ILsaNode node, final Reaction<List<? extends ILsaMolecule>> reaction, final ILsaMolecule tag, final double speed, final double interaction, final double range) {
         super(environment, node,
                 new OnStreets<>(environment, Vehicle.FOOT),
                 new InteractWithOthers<>(environment, node, reaction, tag, speed, range, interaction),

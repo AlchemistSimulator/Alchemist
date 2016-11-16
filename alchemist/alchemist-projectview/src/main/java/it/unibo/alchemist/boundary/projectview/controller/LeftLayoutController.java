@@ -1,24 +1,15 @@
 package it.unibo.alchemist.boundary.projectview.controller;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
-
-import it.unibo.alchemist.AlchemistRunner;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
-import it.unibo.alchemist.boundary.projectview.model.ProjectImpl;
-import it.unibo.alchemist.loader.Loader;
-import it.unibo.alchemist.loader.YamlLoader;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
+import it.unibo.alchemist.boundary.projectview.model.Project;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -47,13 +38,13 @@ public class LeftLayoutController {
 
     private String pathFolder;
     private String selectedFile;
-    private Loader loader;
 
     /**
      * 
      */
     public void initialize() {
         this.run.setText(RESOURCES.getString("run"));
+        this.run.setDisable(true);
     }
 
     /**
@@ -113,10 +104,10 @@ public class LeftLayoutController {
      */
     @FXML
     public void clickRun() {
-        final Gson gson = new Gson();
+        /*final Gson gson = new Gson();
         try {
             final BufferedReader br = new BufferedReader(new FileReader(this.pathFolder + File.separator + ".alchemist_project_descriptor.json"));
-            final ProjectImpl proj = gson.fromJson(br, ProjectImpl.class);
+            final Project proj = gson.fromJson(br, Project.class);
             //AlchemistRunner.Builder runnerBuilder = new AlchemistRunner.Builder(new YamlLoader(getSimulation());
 
             if (proj.getSimulation().isEmpty()) {
@@ -129,36 +120,53 @@ public class LeftLayoutController {
                     effect = proj.getEffect();
                 }
                 final String outputPath;
-                if (!proj.getOutput().isSelect()) {
+                if (!proj.getOutput().isSelected()) {
                     outputPath = "";
                 } else {
                     outputPath = proj.getOutput().getFolder() + File.separator + proj.getOutput().getBaseName();
                 }
                 launchRunner(proj.getSimulation(), (double) proj.getEndTime(), effect, outputPath,
-                        proj.getOutput().getSamplInterval(), proj.getBatch().getThreadCount());
+                        proj.getOutput().getSampleInterval(), proj.getBatch().getThreadCount());
             }
         } catch (FileNotFoundException e) {
             L.error("Error reading the file. This is most likely a bug.", e);
+        }*/
+
+        Project project = ProjectIOUtils.loadFrom(this.pathFolder);
+        try {
+            project.runAlchemistSimulation(false);
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
+    }
+
+    /**
+     * 
+     */
+    public void setEnableRun() {
+        this.run.setDisable(false);
     }
 
     private void displayProjectContent(final File dir, final TreeItem<String> root) {
         final File[] files = dir.listFiles();
-        for (final File file: files) {
-            if (!file.getName().equals(".alchemist_project_descriptor.json")) {
-                final TreeItem<String> singleFile = new TreeItem<>(file.getName());
-                if (file.isDirectory()) {
-                    displayProjectContent(file, singleFile);
-                    root.getChildren().add(singleFile);
-                } else {
-                    root.getChildren().add(singleFile);
+        if (files != null) {
+            for (final File file: files) {
+                if (!file.getName().equals(".alchemist_project_descriptor.json")) {
+                    final TreeItem<String> singleFile = new TreeItem<>(file.getName());
+                    if (file.isDirectory()) {
+                        displayProjectContent(file, singleFile);
+                        root.getChildren().add(singleFile);
+                    } else {
+                        root.getChildren().add(singleFile);
+                    }
+                    root.setExpanded(true);
                 }
-                root.setExpanded(true);
             }
         }
     }
 
-    private void launchRunner(final String sim, final double endTime, final String effect,
+    /*private void launchRunner(final String sim, final double endTime, final String effect,
             final String outputFile, final double sampInt, final int paral) {
         try {
             AlchemistRunner r = new AlchemistRunner.Builder(new YamlLoader(new FileInputStream(sim)))
@@ -173,7 +181,7 @@ public class LeftLayoutController {
         } catch (FileNotFoundException e) {
             L.error("Error reading the file YAML. This is most likely a bug.", e);
         }
-    }
+    }*/
 
     private void setAlert(final String title, final String header, final String content) {
         final Alert alert = new Alert(AlertType.ERROR);

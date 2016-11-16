@@ -3,8 +3,6 @@ package it.unibo.alchemist.boundary.projectview.controller;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.commons.io.FilenameUtils;
@@ -50,10 +48,9 @@ public class CenterLayoutController {
 
     private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
     private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
-    private static final double MIN_SAM = 0.01;
+    private static final double MIN = 0.01;
     private static final double MAX_SAM = 600;
-    private static final double STEP_SAM = 0.01;
-    private static final int MAX_TIME = 18000;
+    private static final double STEP = 0.01;
     private static final int VALUE_TIME = 60;
     private static final String EFF_EXT = RESOURCES.getString("eff_ext");
     private static final String YAML_EXT = RESOURCES.getString("yaml_ext");
@@ -78,6 +75,8 @@ public class CenterLayoutController {
     private Button setOut;
     @FXML
     private Button setYaml;
+    @FXML
+    private GridPane grid;
     @FXML
     private GridPane gridEff;
     @FXML
@@ -121,7 +120,7 @@ public class CenterLayoutController {
     @FXML
     private Spinner<Integer> spinBatch;
     @FXML
-    private Spinner<Integer> spinTime;
+    private Spinner<Double> spinTime;
     @FXML
     private Spinner<Double> spinOut;
     @FXML
@@ -130,8 +129,7 @@ public class CenterLayoutController {
     private LeftLayoutController ctrlLeft;
     private ProjectGUI main;
 
-    private final List<String> varibles = new ArrayList<>();
-    private final ObservableList<String> data = FXCollections.observableArrayList();
+    private ObservableList<String> data = FXCollections.observableArrayList();
     private final ToggleSwitch tsOut = new ToggleSwitch();
     private final ToggleSwitch tsVar = new ToggleSwitch();
 
@@ -139,6 +137,7 @@ public class CenterLayoutController {
      * 
      */
     public void initialize() {
+        this.grid.setDisable(true);
         this.addClass.setText(RESOURCES.getString("add"));
         this.baseNameOut.setText(RESOURCES.getString("base_name"));
         this.batch.setText(RESOURCES.getString("batch_start"));
@@ -166,10 +165,10 @@ public class CenterLayoutController {
                         1));
         this.spinOut.setEditable(true);
         this.spinOut.setValueFactory(
-                new SpinnerValueFactory.DoubleSpinnerValueFactory(MIN_SAM, MAX_SAM, 1, STEP_SAM));
+                new SpinnerValueFactory.DoubleSpinnerValueFactory(MIN, MAX_SAM, 1, STEP));
         this.spinTime.setEditable(true);
         this.spinTime.setValueFactory(
-                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, MAX_TIME, VALUE_TIME, 1));
+                new SpinnerValueFactory.DoubleSpinnerValueFactory(MIN, Double.POSITIVE_INFINITY, VALUE_TIME, STEP));
         this.thread.setText(RESOURCES.getString("n_thread"));
         this.unitOut.setText(RESOURCES.getString("sec"));
         this.unitTime.setText(RESOURCES.getString("sec"));
@@ -338,7 +337,7 @@ public class CenterLayoutController {
                     file = file.getParentFile();
             }
             if (file.getName().equals(RESOURCES.getString("folder_output"))) {
-                this.pathOut.setText(this.ctrlLeft.getSelectedFilePath());
+                this.pathOut.setText(new File(this.ctrlLeft.getPathFolder()).toURI().relativize(new File(this.ctrlLeft.getSelectedFilePath()).toURI()).getPath());
                 setDeleteIcon(this.gridOut, this.pathOut);
             } else {
                 setAlert(RESOURCES.getString("folder_wrong"), RESOURCES.getString("folder_wrong_header"), RESOURCES.getString("folder_wrong_content"));
@@ -354,7 +353,17 @@ public class CenterLayoutController {
         if (this.listClass.getItems().size() == 0) {
             this.removeClass.setDisable(false);
         }
-        manageFile(RESOURCES.getString("jar_ext"), false);
+
+        if (this.ctrlLeft.getSelectedFilePath() == null) {
+            setAlert(RESOURCES.getString("file_no_selected"), RESOURCES.getString("file_no_selected_header"), RESOURCES.getString("file_no_selected_content"));
+        } else { 
+            if (!this.data.contains(this.ctrlLeft.getSelectedFilePath())) {
+                this.data.add(new File(this.ctrlLeft.getPathFolder()).toURI().relativize(new File(this.ctrlLeft.getSelectedFilePath()).toURI()).getPath());
+                this.listClass.setItems(data);
+            } else {
+                setAlert(RESOURCES.getString("file_name_exists"), RESOURCES.getString("file_name_class_header"), RESOURCES.getString("file_name_class_content"));
+            }
+        }
     }
 
     /**
@@ -371,6 +380,13 @@ public class CenterLayoutController {
 
     /**
      * 
+     */
+    public void setEnableGrid() {
+        this.grid.setDisable(false);
+    }
+
+    /**
+     * 
      * @return Selected simulation path.
      */
     public String getSimulationFilePath() {
@@ -381,7 +397,7 @@ public class CenterLayoutController {
      * 
      * @param path The path of file simulation.
      */
-    public void setSimulation(final String path) {
+    public void setSimulationFilePath(final String path) {
         this.pathYaml.setText(path);
         setDeleteIcon(this.gridYaml, this.pathYaml);
     }
@@ -390,7 +406,7 @@ public class CenterLayoutController {
      * 
      * @return Selected end time.
      */
-    public int getEndTime() {
+    public double getEndTime() {
         return this.spinTime.getValueFactory().getValue();
     }
 
@@ -398,7 +414,7 @@ public class CenterLayoutController {
      * 
      * @param endT Selected end time.
      */
-    public void setEndTime(final int endT) {
+    public void setEndTime(final double endT) {
         this.spinTime.getValueFactory().setValue(endT);
     }
 
@@ -531,7 +547,16 @@ public class CenterLayoutController {
      * @param list The libraries to add to the classpath.
      */
     public void setClasspath(final ObservableList<String> list) {
-        this.listClass.setItems(list);
+        this.data = list;
+        this.listClass.setItems(this.data);
+        if (this.listClass.getItems().size() != 0) {
+            this.removeClass.setDisable(false);
+        }
+    }
+    
+    public void setField(final String sim, final double endT) {
+        setSimulationFilePath(sim);
+        setEndTime(endT);
     }
 
     private void manageFile(final String extension, final boolean edit) {
@@ -539,28 +564,19 @@ public class CenterLayoutController {
             setAlert(RESOURCES.getString("file_no_selected"), RESOURCES.getString("file_no_selected_header"), RESOURCES.getString("file_no_selected_content"));
         } else if (this.ctrlLeft.getSelectedFilePath().endsWith(extension)) {
             if (extension.equals(YAML_EXT) && !edit) {
-                this.pathYaml.setText(this.ctrlLeft.getSelectedFilePath());
+                this.pathYaml.setText(new File(this.ctrlLeft.getPathFolder()).toURI().relativize(new File(this.ctrlLeft.getSelectedFilePath()).toURI()).getPath());
                 setDeleteIcon(this.gridYaml, this.pathYaml);
             } else if (extension.equals(EFF_EXT) && !edit) {
-                this.pathEff.setText(this.ctrlLeft.getSelectedFilePath());
+                this.pathEff.setText(new File(this.ctrlLeft.getPathFolder()).toURI().relativize(new File(this.ctrlLeft.getSelectedFilePath()).toURI()).getPath());
                 setDeleteIcon(this.gridEff, this.pathEff);
-            } else if (extension.equals(EFF_EXT) && edit) {
-                editFile();
             } else {
-                if (!this.data.contains(this.ctrlLeft.getSelectedFilePath())) {
-                    this.data.add(this.ctrlLeft.getSelectedFilePath());
-                    this.listClass.setItems(data);
-                } else {
-                    setAlert(RESOURCES.getString("file_name_exists"), RESOURCES.getString("file_name_jar_header"), RESOURCES.getString("file_name_jar_content"));
-                }
+                editFile();
             }
         } else {
             if (extension.equals(YAML_EXT)) {
                 setAlert(RESOURCES.getString("file_wrong"), RESOURCES.getString("file_wrong_yaml_header"), RESOURCES.getString("file_wrong_content"));
-            } else if (extension.equals(EFF_EXT)) {
-                setAlert(RESOURCES.getString("file_wrong"), RESOURCES.getString("file_wrong_effect_header"), RESOURCES.getString("file_wrong_content"));
             } else {
-                setAlert(RESOURCES.getString("file_wrong"), RESOURCES.getString("file_wrong_jar_header"), RESOURCES.getString("file_wrong_content"));
+                setAlert(RESOURCES.getString("file_wrong"), RESOURCES.getString("file_wrong_effect_header"), RESOURCES.getString("file_wrong_content"));
             }
         }
     }

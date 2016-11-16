@@ -8,12 +8,15 @@ import org.slf4j.LoggerFactory;
 import it.unibo.alchemist.boundary.projectview.controller.CenterLayoutController;
 import it.unibo.alchemist.boundary.projectview.controller.LeftLayoutController;
 import it.unibo.alchemist.boundary.projectview.controller.TopLayoutController;
+import it.unibo.alchemist.boundary.projectview.controller.Watcher;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  * Main class to start the application.
@@ -22,10 +25,11 @@ public class ProjectGUI extends Application {
 
     private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
 
-    private Stage primaryStage;
     private BorderPane root;
     private CenterLayoutController controllerCenter;
     private LeftLayoutController controllerLeft;
+    private Stage primaryStage;
+    private Watcher watcher;
 
     /**
      * Returns the primary stage.
@@ -33,6 +37,14 @@ public class ProjectGUI extends Application {
      */
     public Stage getStage() {
         return this.primaryStage;
+    }
+
+    /**
+     * Returns the watcher of file system.
+     * @return a watcher.
+     */
+    public Watcher getWatcher() {
+        return this.watcher;
     }
 
     /**
@@ -48,6 +60,18 @@ public class ProjectGUI extends Application {
         initLayout("LeftLayout");
         initLayout("CenterLayout");
         initLayout("TopLayout");
+
+        this.watcher = new Watcher(this.controllerLeft);
+
+        this.primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+
+            @Override
+            public void handle(final WindowEvent wind) {
+                watcher.terminate();
+                primaryStage.close();
+            }
+        });
+
     }
 
     private void initLayout(final String layoutName) {
@@ -56,7 +80,7 @@ public class ProjectGUI extends Application {
         try {
             if (layoutName.equals("RootLayout")) {
                 this.root = (BorderPane) loader.load();
-                /*TODO: remove pixel values*/
+                //TODO: remove pixel values
                 final Scene scene = new Scene(this.root, 1200, 950);
                 scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
                 this.primaryStage.setScene(scene);

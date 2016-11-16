@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 import it.unibo.alchemist.AlchemistRunner;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
+import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.YamlLoader;
 import it.unibo.alchemist.loader.variables.Variable;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
@@ -46,7 +47,6 @@ public final class Project {
         if (!this.baseDir.exists() || !this.baseDir.isDirectory()) {
             throw new IllegalArgumentException(baseDir + " is not a valid base directory for a project");
         }
-        filterVariables();
     }
 
     /**
@@ -154,17 +154,17 @@ public final class Project {
     }
 
     /**
+     * @throws FileNotFoundException 
      * 
      */
-    public void filterVariables() {
+    public void filterVariables() throws FileNotFoundException {
         /* TODO
          * 1. Create a dry-run
          * 2. Get the variables from file
          * 3. populate the variables (keys from file, values from existing)
          */
-
-        final String simulation = this.baseDir + File.separator + (getSimulation().replace("/", File.separator));
-        final AlchemistRunner runner = new AlchemistRunner.Builder(new YamlLoader(simulation)).build();
+        final Loader loader = new YamlLoader(new FileInputStream(getSimulationPath()));
+        final AlchemistRunner runner = new AlchemistRunner.Builder(loader).build();
         final Map<String, Boolean> vars = Collections.unmodifiableMap(this.batch.getVariables());
         this.batch.setVariables(runner.getVariables().keySet().stream()
                 .collect(Collectors.toMap(
@@ -196,15 +196,14 @@ public final class Project {
          * 3. Extract the variables
          */
 
-        final String simulation = this.baseDir + File.separator + (getSimulation().replace("/", File.separator));
         /* TODO:
          * 1. Try to use resourceloader "/it/unibo/images/pluto.png" getResource() -- getResourceAsStream()
          * 2. If it fails, use file access
          */
-        final AlchemistRunner runner = new AlchemistRunner.Builder(new YamlLoader(new FileInputStream(simulation)))
+        final AlchemistRunner runner = new AlchemistRunner.Builder(new YamlLoader(new FileInputStream(getSimulationPath())))
             .setEndTime(new DoubleTime(getEndTime()))
-            .setEffects(this.baseDir + File.separator + getEffect())
-            .setOutputFile(this.baseDir + File.separator + getOutput().getFolder() + File.separator + getOutput().getBaseName())
+            .setEffects(getEffectPath())
+            .setOutputFile(getFolderPath())
             .setInterval(getOutput().getSampleInterval())
             .setParallelism(getBatch().getThreadCount())
             .setHeadless(false)
@@ -217,7 +216,6 @@ public final class Project {
         if (keys.keySet().containsAll(selectedVariables)) {
             runner.launch(selectedVariables.toArray(new String[selectedVariables.size()]));
         } else {
-            // TODO: display error
             final Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle(RESOURCES.getString("var_key_error"));
             alert.setHeaderText(RESOURCES.getString("var_key_error_header"));
@@ -243,6 +241,29 @@ public final class Project {
 //        } else {
 //            runner.launch();
 //        }
+    }
+
+    //TODO: check if getSimulation returns null
+    private String getSimulationPath() {
+        return this.baseDir + File.separator + (getSimulation().replace("/", File.separator));
+    }
+
+    //TODO: check if getEffect returns null
+    private String getEffectPath() {
+        if (getEffect().equals("")) {
+            return "";
+        } else {
+            return this.baseDir + File.separator + (getEffect().replace("/", File.separator));
+        }
+    }
+
+    //TODO: check if getFolder() and getBaseName() return null
+    private String getFolderPath() {
+        if (this.output.isSelected()) {
+            return this.baseDir + File.separator + getOutput().getFolder() + File.separator + getOutput().getBaseName();
+        } else {
+            return "";
+        }
     }
 
 }

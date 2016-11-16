@@ -1,27 +1,23 @@
 package it.unibo.alchemist.boundary.projectview.controller;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
-import it.unibo.alchemist.boundary.projectview.model.BatchImpl;
-import it.unibo.alchemist.boundary.projectview.model.OutputImpl;
-import it.unibo.alchemist.boundary.projectview.model.ProjectImpl;
+import it.unibo.alchemist.boundary.projectview.model.Batch;
+import it.unibo.alchemist.boundary.projectview.model.Output;
+import it.unibo.alchemist.boundary.projectview.model.Project;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -59,6 +55,7 @@ public class TopLayoutController {
     private ProjectGUI main;
     private LeftLayoutController ctrlLeft;
     private String pathFolder;
+    private Project project;
 
     /**
      * 
@@ -153,44 +150,62 @@ public class TopLayoutController {
                 this.pathFolder = dir.getAbsolutePath();
                 this.ctrlLeft.setTreeView(dir);
                 this.btnSave.setDisable(false);
-                final Gson gson = new Gson();
+                this.project = ProjectIOUtils.loadFrom(this.pathFolder);
                 try {
-                    final BufferedReader br = new BufferedReader(new FileReader(this.pathFolder + File.separator + ".alchemist_project_descriptor.json"));
-                    try {
-                        if (br.ready()) {
-                            final ProjectImpl proj = gson.fromJson(br, ProjectImpl.class);
-                            if (!proj.getSimulation().isEmpty()) {
-                                this.ctrlCenter.setSimulation(proj.getSimulation());
-                            }
-                            this.ctrlCenter.setEndTime(proj.getEndTime());
-                            if (!proj.getEffect().isEmpty()) {
-                                this.ctrlCenter.setEffect(proj.getEffect());
-                            }
-                            this.ctrlCenter.setSwitchOutputSelected(proj.getOutput().isSelect());
-                            if (proj.getOutput().isSelect()) {
-                                this.ctrlCenter.setOutputFolder(proj.getOutput().getFolder());
-                                this.ctrlCenter.setBaseName(proj.getOutput().getBaseName());
-                                this.ctrlCenter.setSamplInterval(proj.getOutput().getSamplInterval());
-                            }
-                            this.ctrlCenter.setSwitchBatchSelected(proj.getBatch().isSelected());
-                            if (proj.getBatch().isSelected()) {
-                                //TODO: set variables selected and all variables of yaml file.
-                                this.ctrlCenter.setNumberThreads(proj.getBatch().getThreadCount());
-                            }
-                            if (!proj.getClasspath().isEmpty()) {
-                                final ObservableList<String> list = FXCollections.observableArrayList();
-                                for (final String lib : proj.getClasspath()) {
-                                    list.add(lib);
-                                }
-                                this.ctrlCenter.setClasspath(list);
-                            }
-                        }
-                    } catch (IOException e) {
-                        L.error("I/O error. This is most likely a bug.", e);
-                    }
+                    project.filterVariables();
                 } catch (FileNotFoundException e) {
-                    L.error("Error reading the file. This is most likely a bug.", e);
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
                 }
+                if (!this.project.getSimulation().isEmpty()) {
+                    if (!new File(this.project.getBaseDirectory() + File.separator + this.project.getSimulation()).exists()) {
+                        setAlert(RESOURCES.getString("file_not_found"), RESOURCES.getString("file_yaml_not_found_header"), RESOURCES.getString("file_not_found_content"));
+                    } else {
+                        this.ctrlCenter.setSimulationFilePath(this.project.getSimulation());
+                    }
+                }
+                this.ctrlCenter.setEndTime(this.project.getEndTime());
+                if (!this.project.getEffect().isEmpty()) {
+                    if (!new File(this.project.getBaseDirectory() + File.separator + this.project.getEffect()).exists()) {
+                        setAlert(RESOURCES.getString("file_not_found"), RESOURCES.getString("file_json_not_found_header"), RESOURCES.getString("file_not_found_content"));
+                    } else {
+                        this.ctrlCenter.setEffect(this.project.getEffect());
+                    }
+                }
+                this.ctrlCenter.setSwitchOutputSelected(this.project.getOutput().isSelected());
+                if (this.project.getOutput().isSelected()) {
+                    if (!this.project.getOutput().getFolder().isEmpty()) {
+                        if (!new File(this.project.getBaseDirectory() + File.separator + this.project.getOutput().getFolder()).exists()) {
+                            setAlert(RESOURCES.getString("folder_not_found"), RESOURCES.getString("folder_not_found_header"), RESOURCES.getString("folder_not_found_content"));
+                            this.ctrlCenter.setSwitchOutputSelected(false);
+                        } else {
+                            this.ctrlCenter.setOutputFolder(this.project.getOutput().getFolder());
+                        }
+                    }
+                    this.ctrlCenter.setBaseName(this.project.getOutput().getBaseName());
+                    this.ctrlCenter.setSamplInterval(this.project.getOutput().getSampleInterval());
+                }
+                this.ctrlCenter.setSwitchBatchSelected(this.project.getBatch().isSelected());
+                if (this.project.getBatch().isSelected()) {
+                    //TODO: set variables selected and all variables of yaml file.
+                    this.ctrlCenter.setNumberThreads(this.project.getBatch().getThreadCount());
+                }
+                if (!this.project.getClasspath().isEmpty()) {
+                    final ObservableList<String> list = FXCollections.observableArrayList();
+                    for (final String lib : this.project.getClasspath()) {
+                        if (!new File(this.project.getBaseDirectory() + File.separator + lib).exists()) {
+                            setAlert(RESOURCES.getString("library_not_found"), lib + " " + RESOURCES.getString("library_not_found_header"), RESOURCES.getString("library_not_found_content"));
+                        } else {
+                            list.add(lib);
+                        }
+                    }
+                    this.ctrlCenter.setClasspath(list);
+                }
+                this.ctrlCenter.setEnableGrid();
+                this.ctrlLeft.setEnableRun();
+
+                this.main.getWatcher().registerPath(this.pathFolder);
+                new Thread(this.main.getWatcher(), "WatcherProjectView").start();
             }
         }
     }
@@ -200,39 +215,34 @@ public class TopLayoutController {
      */
     @FXML
     public void clickSave() {
-        final OutputImpl out = new OutputImpl();
-        out.setSelect(this.ctrlCenter.isSwitchOutputSelected());
+        final Output out = new Output();
+        out.setSelected(this.ctrlCenter.isSwitchOutputSelected());
         out.setFolder(this.ctrlCenter.getOutputFolder());
         out.setBaseName(this.ctrlCenter.getBaseName());
-        out.setSamplInterval(this.ctrlCenter.getSamplInterval());
+        out.setSampleInterval(this.ctrlCenter.getSamplInterval());
+        this.project.setOutput(out);
 
-        final BatchImpl batch = new BatchImpl();
+        final Batch batch = new Batch();
         batch.setSelected(this.ctrlCenter.isSwitchBatchSelected());
-        batch.setVariables(new ArrayList<String>()); // TODO: change
+        batch.setVariables(new HashMap<String, Boolean>()); // TODO: change
         batch.setThreadCount(this.ctrlCenter.getNumberThreads());
+        this.project.setBatch(batch);
 
-        final List<String> classpathList = new ArrayList<>();
-        for (final String s: this.ctrlCenter.getClasspath()) {
-            classpathList.add(s);
-        }
+        this.project.setSimulation(this.ctrlCenter.getSimulationFilePath());
+        this.project.setEffect(this.ctrlCenter.getEffect());
+        this.project.setEndTime(this.ctrlCenter.getEndTime());
+        final List<String> classpathList = Collections.unmodifiableList(ctrlCenter.getClasspath());
+        this.project.setClasspath(classpathList);
 
-        final ProjectImpl proj = new ProjectImpl();
-        proj.setSimulation(this.ctrlCenter.getSimulationFilePath());
-        proj.setEndTime(this.ctrlCenter.getEndTime());
-        proj.setEffect(this.ctrlCenter.getEffect());
-        proj.setOutput(out);
-        proj.setBatch(batch);
-        proj.setClasspath(classpathList);
+        ProjectIOUtils.saveTo(project, pathFolder);
+    }
 
-        final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        final String json = gson.toJson(proj);
-        try {
-            final FileWriter writer = new FileWriter(this.pathFolder + File.separator + ".alchemist_project_descriptor.json");
-            writer.write(json);
-            writer.close();
-        } catch (IOException e) {
-            L.error("Error writing the file. This is most likely a bug.", e);
-        }
+    private void setAlert(final String title, final String header, final String content) {
+        final Alert alert = new Alert(AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
 }

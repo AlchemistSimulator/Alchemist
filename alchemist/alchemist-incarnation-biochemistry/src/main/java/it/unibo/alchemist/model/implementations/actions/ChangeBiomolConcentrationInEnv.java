@@ -37,11 +37,11 @@ public class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<D
 
     /**
      * Initialize a new {@link Action} that change concentration of the given
-     * {@link Biomolecule} of a quantity {@link deltaCon}.
+     * {@link Biomolecule} of a "deltaCon" quantity.
      * 
      * @param node the {@link Node} where this action is located.
      * @param biomol the {@link Biomolecule} which concentration will be changed.
-     * @param deltaCon the quantity to add to actual concentriation of {@link biomol}
+     * @param deltaCon the quantity to add to actual concentration of {@link Biomolecule}
      * @param environment the {@link Environment} where the node is located.
      * @param randomGen 
      */

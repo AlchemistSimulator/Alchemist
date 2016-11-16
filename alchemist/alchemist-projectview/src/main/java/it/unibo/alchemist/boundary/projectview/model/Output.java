@@ -4,54 +4,75 @@ package it.unibo.alchemist.boundary.projectview.model;
  * An entity which is able to produce a structure for Output section of Alchemist project.
  *
  */
-public interface Output {
+public class Output {
+
+    private boolean select;
+    private String folder;
+    private String baseName;
+    private double samplInterval;
 
     /**
      * 
      * @return a base name of output file.
      */
-    String getBaseName();
+    public String getBaseName() {
+        return this.baseName;
+    }
 
     /**
      * 
      * @return a path of output folder.
      */
-    String getFolder();
+    public String getFolder() {
+        return this.folder;
+    }
 
     /**
      * 
      * @return a sampling interval.
      */
-    double getSamplInterval();
+    public double getSampleInterval() {
+        return this.samplInterval;
+    }
 
     /**
      * 
      * @return true if the switch of Output section is selected, otherwise false.
      */
-    boolean isSelect();
+    public boolean isSelected() {
+        return this.select;
+    }
 
     /**
      * 
      * @param baseName a base name for output file.
      */
-    void setBaseName(final String baseName);
+    public void setBaseName(final String baseName) {
+        this.baseName = baseName;
+    }
 
     /**
      * 
      * @param folder a path for output folder.
      */
-    void setFolder(final String folder);
+    public void setFolder(final String folder) {
+        this.folder = folder;
+    }
 
     /**
      * 
      * @param samplInterval a sampling interval.
      */
-    void setSamplInterval(final double samplInterval);
+    public void setSampleInterval(final double samplInterval) {
+        this.samplInterval = samplInterval;
+    }
 
     /**
      * 
      * @param sel true if the switch of Output section must be selected, otherwise false.
      */
-    void setSelect(final boolean sel);
+    public void setSelected(final boolean sel) {
+        this.select = sel;
+    }
 
 }

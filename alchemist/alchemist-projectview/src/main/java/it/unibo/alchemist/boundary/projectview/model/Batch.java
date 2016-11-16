@@ -1,47 +1,63 @@
 package it.unibo.alchemist.boundary.projectview.model;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * An entity which is able to produce a structure for Batch mode section of Alchemist project.
  *
  */
-public interface Batch {
+public class Batch {
+
+    private boolean select;
+    private Map<String, Boolean> variables;
+    private int thread;
 
     /**
      * 
      * @return a number of threads to use.
      */
-    int getThreadCount();
+    public int getThreadCount() {
+        return this.thread;
+    }
 
     /**
      * 
-     * @return a list of selected variables.
+     * @return a map of variables with value true if it is selected.
      */
-    List<String> getVariables();
+    public Map<String, Boolean> getVariables() {
+        return this.variables;
+    }
 
     /**
      * 
      * @return true if the Batch mode section switch is selected, otherwise false.
      */
-    boolean isSelected();
+    public boolean isSelected() {
+        return this.select;
+    }
 
     /**
      * 
      * @param thread a number of threads.
      */
-    void setThreadCount(final int thread);
+    public void setThreadCount(final int thread) {
+        this.thread = thread;
+    }
 
     /**
      * 
-     * @param var a list of variables.
+     * @param var a map of variables.
      */
-    void setVariables(final List<String> var);
+    public void setVariables(final Map<String, Boolean> var) {
+        this.variables = var;
+    }
 
     /**
      * 
      * @param sel true if the Batch mode section switch must be selected, otherwise false.
      */
-    void setSelected(final boolean sel);
+    public void setSelected(final boolean sel) {
+        this.select = sel;
+    }
 
 }

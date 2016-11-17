@@ -89,18 +89,17 @@ public class ProjectGUI extends Application {
                 final AnchorPane pane = (AnchorPane) loader.load();
                 if (layoutName.equals("TopLayout")) {
                     this.root.setTop(pane);
-
                     final TopLayoutController controller = loader.getController();
                     controller.setMain(this);
                     controller.setCtrlLeft(this.controllerLeft);
                     controller.setCtrlCenter(this.controllerCenter);
                 } else if (layoutName.equals("LeftLayout")) {
                     this.root.setLeft(pane);
-
-                    this.controllerLeft = loader.getController();
+                    final LeftLayoutController controller = loader.getController();
+                    controller.setMain(this);
+                    this.controllerLeft = controller;
                 } else {
                     this.root.setCenter(pane);
-
                     final CenterLayoutController controller = loader.getController();
                     controller.setMain(this);
                     controller.setCtrlLeft(this.controllerLeft);

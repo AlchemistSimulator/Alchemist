@@ -17,13 +17,18 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 /**
  * 
@@ -41,6 +46,7 @@ public class LeftLayoutController {
     @FXML
     private TreeView<String> treeView;
 
+    private ProjectGUI main;
     private String pathFolder;
     private String selectedFile;
 
@@ -50,6 +56,14 @@ public class LeftLayoutController {
     public void initialize() {
         this.run.setText(RESOURCES.getString("run"));
         this.run.setDisable(true);
+    }
+
+    /**
+     * 
+     * @param main Main class.
+     */
+    public void setMain(final ProjectGUI main) {
+        this.main = main;
     }
 
     /**
@@ -116,7 +130,7 @@ public class LeftLayoutController {
         newFolder.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(final ActionEvent event) {
-                //TODO: create new folder
+                loadLayout();
             }
         });
         final MenuItem newFile = new MenuItem(RESOURCES.getString("new_file"));
@@ -165,6 +179,28 @@ public class LeftLayoutController {
                     root.setExpanded(true);
                 }
             }
+        }
+    }
+
+    private void loadLayout() {
+        try {
+            final FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(ProjectGUI.class.getResource("view/NewFolderLayout.fxml"));
+            final AnchorPane pane = (AnchorPane) loader.load();
+            final Stage stage = new Stage();
+            stage.setTitle(RESOURCES.getString("folder_name_title"));
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(this.main.getStage());
+            stage.setResizable(false);
+            final Scene scene = new Scene(pane);
+            stage.setScene(scene);
+            final NewFolderLayoutController controller = loader.getController();
+            controller.setSelectedItem(this.selectedFile);
+            controller.setStage(stage);
+            stage.showAndWait();
+        } catch (IOException e) {
+            L.error("Error loading the graphical interface. This is most likely a bug.", e);
+            System.exit(1);
         }
     }
 

@@ -2,7 +2,11 @@ package it.unibo.alchemist.boundary.projectview.controller;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.commons.io.FilenameUtils;
@@ -12,6 +16,9 @@ import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
+import it.unibo.alchemist.boundary.projectview.model.Project;
+import it.unibo.alchemist.loader.Loader;
+import it.unibo.alchemist.loader.YamlLoader;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -51,7 +58,7 @@ public class CenterLayoutController {
     private static final double MIN = 0.01;
     private static final double MAX_SAM = 600;
     private static final double STEP = 0.01;
-    private static final int VALUE_TIME = 60;
+    private static final double VALUE_TIME = 60;
     private static final String EFF_EXT = RESOURCES.getString("eff_ext");
     private static final String YAML_EXT = RESOURCES.getString("yaml_ext");
 
@@ -129,6 +136,7 @@ public class CenterLayoutController {
     private LeftLayoutController ctrlLeft;
     private ProjectGUI main;
 
+    private Map<String, Boolean> variables = new HashMap<>();
     private ObservableList<String> data = FXCollections.observableArrayList();
     private final ToggleSwitch tsOut = new ToggleSwitch();
     private final ToggleSwitch tsVar = new ToggleSwitch();
@@ -235,33 +243,7 @@ public class CenterLayoutController {
             } else {
                 setVisibilityBatch(vis);
                 if (ts.isSelected()) {
-                    //TODO: read file YAML and get variables
-                    /*try {
-                        final Loader fileYaml = new YamlLoader(new FileReader(this.pathYaml.getText()));
-                    } catch (FileNotFoundException e) {
-                    }*/
-                    final ObservableList<String> vars = FXCollections.observableArrayList();
-                    //TODO: change with obtained variables
-                    vars.addAll("var1", "var2", "var3", "var4", "var5", "var6", "var7", "var8", "var9", "var10");
-                    this.listYaml.setItems(vars);
-                    this.listYaml.setCellFactory(CheckBoxListCell.forListView(new Callback<String, ObservableValue<Boolean>>() {
-                        @Override
-                        public ObservableValue<Boolean> call(final String var) {
-                            final BooleanProperty observable = new SimpleBooleanProperty();
-                            observable.addListener((obs, wasSelected, isNowSelected) -> 
-                                {
-                                    //System.out.println("Check box for " + var + " changed from " + wasSelected + " to " + isNowSelected); //TODO: add or remove variables selected into list
-                                    if (wasSelected && !isNowSelected) {
-                                        //TODO: delete from list
-                                    }
-                                    if (!wasSelected && isNowSelected) {
-                                        //TODO: add to list
-                                    }
-                                }
-                            );
-                            return observable;
-                        }
-                    }));
+                    setVariablesList();
                 }
             }
         }
@@ -272,6 +254,45 @@ public class CenterLayoutController {
         this.listYaml.setVisible(visibility);
         this.spinBatch.setVisible(visibility);
         this.thread.setVisible(visibility);
+    }
+
+    private void setVariablesList() {
+        Loader fileYaml = null;
+        try {
+            fileYaml = new YamlLoader(new FileReader(this.ctrlLeft.getPathFolder() + File.separator + this.pathYaml.getText().replace("/", File.separator)));
+        } catch (FileNotFoundException e) {
+            L.error("Error loading simulation file.", e);
+        }
+        if (fileYaml != null) {
+            final ObservableList<String> vars = FXCollections.observableArrayList();
+            vars.addAll(fileYaml.getVariables().keySet());
+            System.out.println(this.variables);
+            if (this.variables.isEmpty()) {
+                for (final String s: vars) {
+                    this.variables.put(s, false);
+                }
+            }
+            this.listYaml.setItems(vars);
+            this.listYaml.setCellFactory(CheckBoxListCell.forListView(new Callback<String, ObservableValue<Boolean>>() {
+                @Override
+                public ObservableValue<Boolean> call(final String var) {
+                    final BooleanProperty observable = new SimpleBooleanProperty();
+                    if (variables.get(var)) {
+                        observable.set(true);
+                    }
+                    observable.addListener((obs, wasSelected, isNowSelected) -> {
+                            if (wasSelected && !isNowSelected) {
+                                variables.put(var, false);
+                            }
+                            if (!wasSelected && isNowSelected) {
+                                variables.put(var, true);
+                            }
+                        }
+                    );
+                    return observable;
+                }
+            }));
+        }
     }
 
     /**
@@ -397,7 +418,7 @@ public class CenterLayoutController {
      * 
      * @param path The path of file simulation.
      */
-    public void setSimulationFilePath(final String path) {
+    private void setSimulationFilePath(final String path) {
         this.pathYaml.setText(path);
         setDeleteIcon(this.gridYaml, this.pathYaml);
     }
@@ -414,7 +435,7 @@ public class CenterLayoutController {
      * 
      * @param endT Selected end time.
      */
-    public void setEndTime(final double endT) {
+    private void setEndTime(final double endT) {
         this.spinTime.getValueFactory().setValue(endT);
     }
 
@@ -430,7 +451,7 @@ public class CenterLayoutController {
      * 
      * @param path The path of file effect.
      */
-    public void setEffect(final String path) {
+    private void setEffect(final String path) {
         this.pathEff.setText(path);
         setDeleteIcon(this.gridEff, this.pathEff);
     }
@@ -447,7 +468,7 @@ public class CenterLayoutController {
      * 
      * @param select true if the output switch is selected.
      */
-    public void setSwitchOutputSelected(final boolean select) {
+    private void setSwitchOutputSelected(final boolean select) {
         this.tsOut.setSelected(select);
     }
 
@@ -463,7 +484,7 @@ public class CenterLayoutController {
      * 
      * @param path The path of output folder.
      */
-    public void setOutputFolder(final String path) {
+    private void setOutputFolder(final String path) {
         this.pathOut.setText(path);
         setDeleteIcon(this.gridOut, this.pathOut);
     }
@@ -480,7 +501,7 @@ public class CenterLayoutController {
      * 
      * @param name The name of output file.
      */
-    public void setBaseName(final String name) {
+    private void setBaseName(final String name) {
         this.bnTextOut.setText(name);
     }
 
@@ -496,7 +517,7 @@ public class CenterLayoutController {
      * 
      * @param sampInt Selected sampling interval.
      */
-    public void setSamplInterval(final double sampInt) {
+    private void setSamplInterval(final double sampInt) {
         this.spinOut.getValueFactory().setValue(sampInt);
     }
 
@@ -512,11 +533,23 @@ public class CenterLayoutController {
      * 
      * @param select True if the batch mode switch is selected.
      */
-    public void setSwitchBatchSelected(final boolean select) {
+    private void setSwitchBatchSelected(final boolean select) {
         this.tsVar.setSelected(select);
     }
 
     //TODO: get and set list of variable selected
+
+    /**
+     * 
+     * @return a map of variables.
+     */
+    public Map<String, Boolean> getVariables() {
+        return this.variables;
+    }
+
+    private void setVariables(final Map<String, Boolean> vars) {
+        this.variables = vars;
+    }
 
     /**
      * 
@@ -530,7 +563,7 @@ public class CenterLayoutController {
      * 
      * @param threads Selected number of threads.
      */
-    public void setNumberThreads(final int threads) {
+    private void setNumberThreads(final int threads) {
         this.spinBatch.getValueFactory().setValue(threads);
     }
 
@@ -546,17 +579,99 @@ public class CenterLayoutController {
      * 
      * @param list The libraries to add to the classpath.
      */
-    public void setClasspath(final ObservableList<String> list) {
+    private void setClasspath(final ObservableList<String> list) {
         this.data = list;
         this.listClass.setItems(this.data);
         if (this.listClass.getItems().size() != 0) {
             this.removeClass.setDisable(false);
         }
     }
-    
-    public void setField(final String sim, final double endT) {
-        setSimulationFilePath(sim);
-        setEndTime(endT);
+
+    /**
+     * 
+     */
+    public Project setField() {
+        final Project project = ProjectIOUtils.loadFrom(this.ctrlLeft.getPathFolder());
+        try {
+            project.filterVariables();
+        } catch (FileNotFoundException e) {
+            L.error("The simulation file does not found.", e);
+        }
+        if (!project.getSimulation().isEmpty()) {
+            if (!new File(project.getBaseDirectory() + File.separator + project.getSimulation()).exists()) {
+                setAlert(RESOURCES.getString("file_not_found"), RESOURCES.getString("file_yaml_not_found_header"), RESOURCES.getString("file_not_found_content"));
+            } else {
+                setSimulationFilePath(project.getSimulation());
+            }
+        }
+        if (project.getEndTime() != 0) {
+            setEndTime(project.getEndTime());
+        } else {
+            setAlert(RESOURCES.getString("end_time_not_found"), RESOURCES.getString("end_time_not_found_header"), RESOURCES.getString("end_time_not_found_content"));
+            setEndTime(VALUE_TIME);
+        }
+        if (!project.getEffect().isEmpty()) {
+            if (!new File(project.getBaseDirectory() + File.separator + project.getEffect()).exists()) {
+                setAlert(RESOURCES.getString("file_not_found"), RESOURCES.getString("file_json_not_found_header"), RESOURCES.getString("file_not_found_content"));
+            } else {
+                setEffect(project.getEffect());
+            }
+        }
+        setSwitchOutputSelected(project.getOutput().isSelected());
+        if (!project.getOutput().getFolder().isEmpty()) {
+            if (!new File(project.getBaseDirectory() + File.separator + project.getOutput().getFolder()).exists()) {
+                if (isSwitchOutputSelected()) {
+                    setAlert(RESOURCES.getString("folder_not_found"), RESOURCES.getString("folder_not_found_header"), RESOURCES.getString("folder_not_found_content"));
+                }
+                setSwitchOutputSelected(false);
+            } else {
+                setOutputFolder(project.getOutput().getFolder());
+            }
+        }
+        if (!project.getOutput().getBaseName().isEmpty()) {
+            setBaseName(project.getOutput().getBaseName());
+        } else {
+            if (isSwitchOutputSelected()) {
+                setAlert(RESOURCES.getString("base_name_not_found"), RESOURCES.getString("base_name_not_found_header"), RESOURCES.getString("base_name_not_found_content"));
+            }
+            setBaseName(RESOURCES.getString("base_name_text"));
+        }
+        if (project.getOutput().getSampleInterval() == 0) {
+            if (isSwitchOutputSelected()) {
+                setAlert(RESOURCES.getString("samp_interval_not_found"), RESOURCES.getString("samp_interval_not_found_header"), RESOURCES.getString("samp_interval_not_found_content"));
+            }
+            setSamplInterval(1);
+        } else {
+            setSamplInterval(project.getOutput().getSampleInterval());
+        }
+        setSwitchBatchSelected(project.getBatch().isSelected());
+        //TODO: set variables
+        System.out.println("project: " + project.getBatch().getVariables());
+        setVariables(project.getBatch().getVariables()); //TODO: control
+        if (project.getBatch().getThreadCount() == 0) {
+            if (isSwitchBatchSelected()) {
+                setAlert(RESOURCES.getString("n_thread_not_found"), RESOURCES.getString("n_thread_not_found_header"), RESOURCES.getString("n_thread_not_found_content"));
+            }
+            setNumberThreads(Runtime.getRuntime().availableProcessors() + 1);
+        } else {
+            setNumberThreads(project.getBatch().getThreadCount());
+        }
+        if (project.getClasspath() != null && !project.getClasspath().isEmpty()) {
+                final ObservableList<String> list = FXCollections.observableArrayList();
+                for (final String lib : project.getClasspath()) {
+                    if (!new File(project.getBaseDirectory() + File.separator + lib).exists()) {
+                        setAlert(RESOURCES.getString("library_not_found"), lib + " " + RESOURCES.getString("library_not_found_header"), RESOURCES.getString("library_not_found_content"));
+                    } else {
+                        list.add(lib);
+                    }
+                }
+                setClasspath(list);
+        }
+        if (this.grid.isDisable()) {
+            setEnableGrid();
+        }
+        this.ctrlLeft.setEnableRun();
+        return project;
     }
 
     private void manageFile(final String extension, final boolean edit) {

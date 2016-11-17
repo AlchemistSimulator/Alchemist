@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -150,7 +151,7 @@ public class TopLayoutController {
                 this.pathFolder = dir.getAbsolutePath();
                 this.ctrlLeft.setTreeView(dir);
                 this.btnSave.setDisable(false);
-                this.project = ProjectIOUtils.loadFrom(this.pathFolder);
+                /*this.project = ProjectIOUtils.loadFrom(this.pathFolder);
                 try {
                     project.filterVariables();
                 } catch (FileNotFoundException e) {
@@ -188,8 +189,10 @@ public class TopLayoutController {
                 this.ctrlCenter.setSwitchBatchSelected(this.project.getBatch().isSelected());
                 if (this.project.getBatch().isSelected()) {
                     //TODO: set variables selected and all variables of yaml file.
+                    //System.out.println("-"+this.project.getBatch().getThreadCount()+"-");
                     this.ctrlCenter.setNumberThreads(this.project.getBatch().getThreadCount());
                 }
+                System.out.println("-"+Arrays.toString(this.project.getClasspath().toArray())+"-");
                 if (!this.project.getClasspath().isEmpty()) {
                     final ObservableList<String> list = FXCollections.observableArrayList();
                     for (final String lib : this.project.getClasspath()) {
@@ -202,7 +205,8 @@ public class TopLayoutController {
                     this.ctrlCenter.setClasspath(list);
                 }
                 this.ctrlCenter.setEnableGrid();
-                this.ctrlLeft.setEnableRun();
+                this.ctrlLeft.setEnableRun();*/
+                this.project = this.ctrlCenter.setField();
 
                 this.main.getWatcher().registerPath(this.pathFolder);
                 new Thread(this.main.getWatcher(), "WatcherProjectView").start();
@@ -224,7 +228,7 @@ public class TopLayoutController {
 
         final Batch batch = new Batch();
         batch.setSelected(this.ctrlCenter.isSwitchBatchSelected());
-        batch.setVariables(new HashMap<String, Boolean>()); // TODO: change
+        batch.setVariables(this.ctrlCenter.getVariables()); // TODO: change
         batch.setThreadCount(this.ctrlCenter.getNumberThreads());
         this.project.setBatch(batch);
 

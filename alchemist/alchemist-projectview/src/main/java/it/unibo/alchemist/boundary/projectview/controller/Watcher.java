@@ -32,6 +32,7 @@ public class Watcher implements Runnable {
     private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
     private static final long TIMEOUT = 10;
     private final LeftLayoutController ctrlLeft;
+    private final CenterLayoutController ctrlCenter;
 
     private WatchService watcher = null;
     private String folderPath;
@@ -42,13 +43,14 @@ public class Watcher implements Runnable {
      * 
      * @param ctrlLeft The controller of LeftLayout.
      */
-    public Watcher(final LeftLayoutController ctrlLeft) {
+    public Watcher(final LeftLayoutController ctrlLeft, final CenterLayoutController ctrlCenter) {
         try {
             this.watcher = FileSystems.getDefault().newWatchService();
         } catch (IOException e) {
             L.error("This system does not support watching file system objects for changes and events.", e);
         }
         this.ctrlLeft = ctrlLeft;
+        this.ctrlCenter = ctrlCenter;
     }
 
     /**
@@ -87,6 +89,7 @@ public class Watcher implements Runnable {
                             if (fileName.toString().equals(".alchemist_project_descriptor.json")) {
                                 //TODO: refresh centerlayout
                                 //System.out.println("Modified .alchemist_project_descriptor.json");
+                                refreshGrid();
                             } else {
                                 refreshTreeView(this.folderPath);
                             }
@@ -164,6 +167,15 @@ public class Watcher implements Runnable {
             @Override
             public void run() {
                 ctrlLeft.setTreeView(new File(path));
+            }
+        });
+    }
+
+    private void refreshGrid() {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                ctrlCenter.setField();
             }
         });
     }

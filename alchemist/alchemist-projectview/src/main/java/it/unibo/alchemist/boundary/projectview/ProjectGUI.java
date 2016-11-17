@@ -61,7 +61,7 @@ public class ProjectGUI extends Application {
         initLayout("CenterLayout");
         initLayout("TopLayout");
 
-        this.watcher = new Watcher(this.controllerLeft);
+        this.watcher = new Watcher(this.controllerLeft, this.controllerCenter);
 
         this.primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 

@@ -266,7 +266,6 @@ public class CenterLayoutController {
         if (fileYaml != null) {
             final ObservableList<String> vars = FXCollections.observableArrayList();
             vars.addAll(fileYaml.getVariables().keySet());
-            System.out.println(this.variables);
             if (this.variables.isEmpty()) {
                 for (final String s: vars) {
                     this.variables.put(s, false);
@@ -537,8 +536,6 @@ public class CenterLayoutController {
         this.tsVar.setSelected(select);
     }
 
-    //TODO: get and set list of variable selected
-
     /**
      * 
      * @return a map of variables.
@@ -589,13 +586,16 @@ public class CenterLayoutController {
 
     /**
      * 
+     * @return The entity project.
      */
     public Project setField() {
         final Project project = ProjectIOUtils.loadFrom(this.ctrlLeft.getPathFolder());
-        try {
-            project.filterVariables();
-        } catch (FileNotFoundException e) {
-            L.error("The simulation file does not found.", e);
+        if (project.getBatch().getVariables() != null) {
+            try {
+                project.filterVariables();
+            } catch (FileNotFoundException e) {
+                L.error("Error loading the simulation file.", e);
+            }
         }
         if (!project.getSimulation().isEmpty()) {
             if (!new File(project.getBaseDirectory() + File.separator + project.getSimulation()).exists()) {
@@ -645,9 +645,12 @@ public class CenterLayoutController {
             setSamplInterval(project.getOutput().getSampleInterval());
         }
         setSwitchBatchSelected(project.getBatch().isSelected());
-        //TODO: set variables
-        System.out.println("project: " + project.getBatch().getVariables());
-        setVariables(project.getBatch().getVariables()); //TODO: control
+        if (project.getBatch().getVariables() != null) {
+            setVariables(project.getBatch().getVariables());
+        } else {
+            setSwitchBatchSelected(false);
+            setAlert(RESOURCES.getString("var_not_found"), RESOURCES.getString("var_not_found_header"), RESOURCES.getString("var_not_found_content"));
+        }
         if (project.getBatch().getThreadCount() == 0) {
             if (isSwitchBatchSelected()) {
                 setAlert(RESOURCES.getString("n_thread_not_found"), RESOURCES.getString("n_thread_not_found_header"), RESOURCES.getString("n_thread_not_found_content"));

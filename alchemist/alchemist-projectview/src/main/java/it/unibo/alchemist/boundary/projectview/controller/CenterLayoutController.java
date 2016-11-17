@@ -410,6 +410,19 @@ public class CenterLayoutController {
     /**
      * 
      */
+    @FXML
+    public void clickBatch() {
+        final Project project = ProjectIOUtils.loadFrom(this.ctrlLeft.getPathFolder());
+        try {
+            project.runAlchemistSimulation(true);
+        } catch (FileNotFoundException e) {
+            L.error("Error loading simulation file.", e);
+        }
+    }
+
+    /**
+     * 
+     */
     public void setEnableGrid() {
         this.grid.setDisable(false);
     }

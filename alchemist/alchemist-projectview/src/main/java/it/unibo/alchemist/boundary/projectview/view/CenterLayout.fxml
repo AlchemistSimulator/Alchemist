@@ -150,7 +150,7 @@
                      <children>
                         <Label fx:id="batchMode" styleClass="title" GridPane.columnIndex="2" GridPane.columnSpan="6" />
                         <ListView fx:id="listYaml" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="8" GridPane.rowIndex="1" GridPane.rowSpan="2" />
-                        <Button fx:id="batch" mnemonicParsing="false" GridPane.columnSpan="8" GridPane.halignment="RIGHT" GridPane.rowIndex="4" />
+                        <Button fx:id="batch" mnemonicParsing="false" GridPane.columnSpan="8" GridPane.halignment="RIGHT" GridPane.rowIndex="4" onAction="#clickBatch"/>
                         <Spinner fx:id="spinBatch" GridPane.columnIndex="4" GridPane.columnSpan="4" GridPane.rowIndex="3" />
                         <Label fx:id="thread" GridPane.columnSpan="4" GridPane.rowIndex="3" />
                      </children>

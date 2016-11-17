@@ -1,7 +1,9 @@
 package it.unibo.alchemist.boundary.projectview.controller;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
@@ -12,10 +14,15 @@ import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import it.unibo.alchemist.boundary.projectview.model.Project;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 
 /**
@@ -90,6 +97,37 @@ public class LeftLayoutController {
             }
 
         });
+        this.treeView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(final MouseEvent mouseEv) {
+                if (mouseEv.getClickCount() == 2 && new File(selectedFile).isFile()) {
+                        final Desktop desk = Desktop.getDesktop();
+                        try {
+                            desk.open(new File(selectedFile));
+                        } catch (IOException e) {
+                            L.error("Error opening file.", e);
+                            System.exit(1);
+                        }
+                }
+            }
+        });
+        final ContextMenu menu = new ContextMenu();
+        final MenuItem newFolder = new MenuItem(RESOURCES.getString("new_folder"));
+        newFolder.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(final ActionEvent event) {
+                //TODO: create new folder
+            }
+        });
+        final MenuItem newFile = new MenuItem(RESOURCES.getString("new_file"));
+        newFile.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(final ActionEvent event) {
+                //TODO: create new file
+            }
+        });
+        menu.getItems().addAll(newFolder, newFile);
+        this.treeView.setContextMenu(menu);
     }
 
     /**

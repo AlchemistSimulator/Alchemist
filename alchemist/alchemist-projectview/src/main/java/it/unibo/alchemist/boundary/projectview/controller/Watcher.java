@@ -42,6 +42,7 @@ public class Watcher implements Runnable {
     /**
      * 
      * @param ctrlLeft The controller of LeftLayout.
+     * @param ctrlCenter The controller of CenterLayout.
      */
     public Watcher(final LeftLayoutController ctrlLeft, final CenterLayoutController ctrlCenter) {
         try {
@@ -84,12 +85,11 @@ public class Watcher implements Runnable {
                     final WatchEvent.Kind<?> kind = event.kind();
                     if (event.context() instanceof Path) {
                         final Path fileName = (Path) event.context();
-                        //TODO: System.out.println(kind + " : " + fileName);
                         if (StandardWatchEventKinds.ENTRY_MODIFY.equals(kind)) {
                             if (fileName.toString().equals(".alchemist_project_descriptor.json")) {
-                                //TODO: refresh centerlayout
-                                //System.out.println("Modified .alchemist_project_descriptor.json");
                                 refreshGrid();
+                            } else if (this.ctrlCenter.getSimulationFilePath().endsWith(fileName.toString())) {
+                                refreshVariables();
                             } else {
                                 refreshTreeView(this.folderPath);
                             }
@@ -97,14 +97,18 @@ public class Watcher implements Runnable {
                             recursiveRegistration(resolvePath(key, fileName));
                         } else if (StandardWatchEventKinds.ENTRY_DELETE.equals(kind)) {
                             WatchKey keyToDelete = null;
+                            final Path path = resolvePath(key, fileName);
                             for (final WatchKey w : keys.keySet()) {
-                                if (keys.get(w).equals(resolvePath(key, fileName))) {
+                                if (keys.get(w).equals(path)) {
                                     keyToDelete = w;
                                 }
                             }
                             if (keyToDelete != null) {
+                                refreshFolder(path);
                                 keys.remove(keyToDelete);
                                 keyToDelete.cancel();
+                            } else {
+                                refreshFile(path);
                             }
                         } else {
                             throw new IllegalStateException("Unexpected event of kind " + kind);
@@ -117,7 +121,6 @@ public class Watcher implements Runnable {
         if (!isAlive) {
             try {
                 this.watcher.close();
-                //TODO: System.out.println("Watch Service closed");
             } catch (IOException e) {
                 L.error("I/O error while closing of watcher.", e);
             }
@@ -139,7 +142,6 @@ public class Watcher implements Runnable {
                                     StandardWatchEventKinds.ENTRY_DELETE, 
                                     StandardWatchEventKinds.ENTRY_MODIFY);
                             keys.put(key, dir);
-                            //TODO: System.out.println("Watch Service has registered: " + dir.getFileName() + " (path: " + dir.toAbsolutePath() + " )");
                         } catch (IOException e) {
                             L.error("Error register the folder path to watcher. This is most likely a bug.", e);
                         }
@@ -176,6 +178,33 @@ public class Watcher implements Runnable {
             @Override
             public void run() {
                 ctrlCenter.setField();
+            }
+        });
+    }
+
+    private void refreshFolder(final Path path) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                ctrlCenter.setFolderAfterDelete(path);
+            }
+        });
+    }
+
+    private void refreshFile(final Path path) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                ctrlCenter.setFileAfterDelete(path);
+            }
+        });
+    }
+
+    private void refreshVariables() {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                ctrlCenter.setVariablesList();
             }
         });
     }

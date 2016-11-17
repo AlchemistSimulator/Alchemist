@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -140,6 +141,10 @@ public class CenterLayoutController {
     private ObservableList<String> data = FXCollections.observableArrayList();
     private final ToggleSwitch tsOut = new ToggleSwitch();
     private final ToggleSwitch tsVar = new ToggleSwitch();
+    private final Image img = new Image(ProjectGUI.class.getResource("/icon/icon-delete.png").toExternalForm());
+    private final ImageView imgViewYaml = new ImageView(img);
+    private final ImageView imgViewEff = new ImageView(img);
+    private final ImageView imgViewOut = new ImageView(img);
 
     /**
      * 
@@ -235,6 +240,7 @@ public class CenterLayoutController {
             this.intOut.setVisible(vis);
             this.unitOut.setVisible(vis);
             this.spinOut.setVisible(vis);
+            this.imgViewOut.setVisible(vis);
         } else {
             if (ts.isSelected() && this.pathYaml.getText().equals("")) {
                 setAlert(RESOURCES.getString("file_no_selected"), RESOURCES.getString("yaml_no_selected_header"), RESOURCES.getString("yaml_no_selected_content"));
@@ -256,7 +262,10 @@ public class CenterLayoutController {
         this.thread.setVisible(visibility);
     }
 
-    private void setVariablesList() {
+    /**
+     * 
+     */
+    public void setVariablesList() {
         Loader fileYaml = null;
         try {
             fileYaml = new YamlLoader(new FileReader(this.ctrlLeft.getPathFolder() + File.separator + this.pathYaml.getText().replace("/", File.separator)));
@@ -358,7 +367,7 @@ public class CenterLayoutController {
             }
             if (file.getName().equals(RESOURCES.getString("folder_output"))) {
                 this.pathOut.setText(new File(this.ctrlLeft.getPathFolder()).toURI().relativize(new File(this.ctrlLeft.getSelectedFilePath()).toURI()).getPath());
-                setDeleteIcon(this.gridOut, this.pathOut);
+                setDeleteIcon(this.gridOut, this.pathOut, this.imgViewOut, false);
             } else {
                 setAlert(RESOURCES.getString("folder_wrong"), RESOURCES.getString("folder_wrong_header"), RESOURCES.getString("folder_wrong_content"));
             }
@@ -419,7 +428,7 @@ public class CenterLayoutController {
      */
     private void setSimulationFilePath(final String path) {
         this.pathYaml.setText(path);
-        setDeleteIcon(this.gridYaml, this.pathYaml);
+        setDeleteIcon(this.gridYaml, this.pathYaml, this.imgViewYaml, true);
     }
 
     /**
@@ -452,7 +461,7 @@ public class CenterLayoutController {
      */
     private void setEffect(final String path) {
         this.pathEff.setText(path);
-        setDeleteIcon(this.gridEff, this.pathEff);
+        setDeleteIcon(this.gridEff, this.pathEff, this.imgViewEff, false);
     }
 
     /**
@@ -485,7 +494,7 @@ public class CenterLayoutController {
      */
     private void setOutputFolder(final String path) {
         this.pathOut.setText(path);
-        setDeleteIcon(this.gridOut, this.pathOut);
+        setDeleteIcon(this.gridOut, this.pathOut, this.imgViewOut, false);
     }
 
     /**
@@ -621,7 +630,7 @@ public class CenterLayoutController {
         if (!project.getOutput().getFolder().isEmpty()) {
             if (!new File(project.getBaseDirectory() + File.separator + project.getOutput().getFolder()).exists()) {
                 if (isSwitchOutputSelected()) {
-                    setAlert(RESOURCES.getString("folder_not_found"), RESOURCES.getString("folder_not_found_header"), RESOURCES.getString("folder_not_found_content"));
+                    setAlert(RESOURCES.getString("folder_not_found"), RESOURCES.getString("folder_out_not_found_header"), RESOURCES.getString("folder_out_not_found_content"));
                 }
                 setSwitchOutputSelected(false);
             } else {
@@ -677,16 +686,66 @@ public class CenterLayoutController {
         return project;
     }
 
+    /**
+     * 
+     * @param path A path of output folder
+     */
+    public void setFolderAfterDelete(final Path path) {
+        if (!getOutputFolder().isEmpty() && getOutputFolder().equals(new File(this.ctrlLeft.getPathFolder()).toURI().relativize(path.toUri()).getPath() + "/")) {
+            setAlert(RESOURCES.getString("folder_not_found"), RESOURCES.getString("folder_out_not_found_header"), RESOURCES.getString("folder_out_not_found_content"));
+            setSwitchOutputSelected(false);
+            this.gridOut.getChildren().remove(this.imgViewOut);
+            this.pathOut.setText("");
+        } else if (!getClasspath().isEmpty()) {
+            final String folder = findItemInList(path);
+            if (!folder.isEmpty()) {
+                setAlert(RESOURCES.getString("library_not_found"), folder + " " + RESOURCES.getString("library_not_found_header"), RESOURCES.getString("library_not_found_content"));
+                this.listClass.getItems().remove(folder);
+            }
+        }
+    }
+
+    /**
+     * 
+     * @param path A path of file
+     */
+    public void setFileAfterDelete(final Path path) {
+        if (!getSimulationFilePath().isEmpty() && getSimulationFilePath().equals(new File(this.ctrlLeft.getPathFolder()).toURI().relativize(path.toUri()).getPath())) {
+            setAlert(RESOURCES.getString("file_not_found"), RESOURCES.getString("file_yaml_not_found_header"), RESOURCES.getString("file_not_found_content"));
+            this.pathYaml.setText("");
+            this.gridYaml.getChildren().remove(this.imgViewYaml);
+        } else if (!getEffect().isEmpty() && getEffect().equals(new File(this.ctrlLeft.getPathFolder()).toURI().relativize(path.toUri()).getPath())) {
+            setAlert(RESOURCES.getString("file_not_found"), RESOURCES.getString("file_json_not_found_header"), RESOURCES.getString("file_not_found_content"));
+            this.pathEff.setText("");
+            this.gridEff.getChildren().remove(this.imgViewEff);
+        } else if (!getClasspath().isEmpty()) {
+            final String folder = findItemInList(path);
+            if (!folder.isEmpty()) {
+                setAlert(RESOURCES.getString("library_not_found"), folder + " " + RESOURCES.getString("library_not_found_header"), RESOURCES.getString("library_not_found_content"));
+                this.listClass.getItems().remove(folder);
+            }
+        }
+    }
+
+    private String findItemInList(final Path path) {
+        for (final String s : getClasspath()) {
+            if (s.equals(new File(this.ctrlLeft.getPathFolder()).toURI().relativize(path.toUri()).getPath())) {
+                return s;
+            }
+        }
+        return "";
+    }
+
     private void manageFile(final String extension, final boolean edit) {
         if (this.ctrlLeft.getSelectedFilePath() == null) {
             setAlert(RESOURCES.getString("file_no_selected"), RESOURCES.getString("file_no_selected_header"), RESOURCES.getString("file_no_selected_content"));
         } else if (this.ctrlLeft.getSelectedFilePath().endsWith(extension)) {
             if (extension.equals(YAML_EXT) && !edit) {
                 this.pathYaml.setText(new File(this.ctrlLeft.getPathFolder()).toURI().relativize(new File(this.ctrlLeft.getSelectedFilePath()).toURI()).getPath());
-                setDeleteIcon(this.gridYaml, this.pathYaml);
+                setDeleteIcon(this.gridYaml, this.pathYaml, this.imgViewYaml, true);
             } else if (extension.equals(EFF_EXT) && !edit) {
                 this.pathEff.setText(new File(this.ctrlLeft.getPathFolder()).toURI().relativize(new File(this.ctrlLeft.getSelectedFilePath()).toURI()).getPath());
-                setDeleteIcon(this.gridEff, this.pathEff);
+                setDeleteIcon(this.gridEff, this.pathEff, this.imgViewEff, false);
             } else {
                 editFile();
             }
@@ -735,17 +794,21 @@ public class CenterLayoutController {
         }
     }
 
-    private void setDeleteIcon(final GridPane grid, final Label label) {
-        final ImageView imgView = new ImageView(new Image(ProjectGUI.class.getResource("/icon/icon-delete.png").toExternalForm()));
+    private void setDeleteIcon(final GridPane grid, final Label label, final ImageView imgView, final boolean isYaml) {
+        //final ImageView imgView = new ImageView(new Image(ProjectGUI.class.getResource("/icon/icon-delete.png").toExternalForm()));
         final Tooltip tooltip = new Tooltip();
         tooltip.setText(RESOURCES.getString("delete"));
         Tooltip.install(imgView, tooltip);
+        grid.getChildren().remove(imgView);
         grid.add(imgView, 0, 2);
         imgView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(final MouseEvent event) {
                 label.setText(""); 
                 grid.getChildren().remove(imgView);
+                if (isYaml) {
+                    setSwitchBatchSelected(false);
+                }
             }
         });
     }

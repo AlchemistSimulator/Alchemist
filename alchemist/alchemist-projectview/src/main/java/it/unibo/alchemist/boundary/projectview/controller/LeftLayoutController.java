@@ -13,11 +13,9 @@ import it.unibo.alchemist.boundary.projectview.model.Project;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.StackPane;
 
 /**
@@ -69,17 +67,12 @@ public class LeftLayoutController {
      */
     public void setTreeView(final File dir) {
         this.pathFolder = dir.getAbsolutePath();
-
         final TreeItem<String> root = new TreeItem<>(dir.getName());
         root.setExpanded(true);
         this.treeView = new TreeView<>(root);
-
         displayProjectContent(dir, root);
-
         this.pane.getChildren().add(this.treeView);
-
         this.treeView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<String>>() {
-
             @Override
             public void changed(final ObservableValue<? extends TreeItem<String>> observable, 
                     final TreeItem<String> oldVal,
@@ -104,40 +97,11 @@ public class LeftLayoutController {
      */
     @FXML
     public void clickRun() {
-        /*final Gson gson = new Gson();
-        try {
-            final BufferedReader br = new BufferedReader(new FileReader(this.pathFolder + File.separator + ".alchemist_project_descriptor.json"));
-            final Project proj = gson.fromJson(br, Project.class);
-            //AlchemistRunner.Builder runnerBuilder = new AlchemistRunner.Builder(new YamlLoader(getSimulation());
-
-            if (proj.getSimulation().isEmpty()) {
-                setAlert(RESOURCES.getString("sim_no_selected"), RESOURCES.getString("sim_no_selected_header"), RESOURCES.getString("sim_no_selected_content"));
-            } else {
-                final String effect;
-                if (proj.getEffect().isEmpty()) {
-                    effect = "";
-                } else {
-                    effect = proj.getEffect();
-                }
-                final String outputPath;
-                if (!proj.getOutput().isSelected()) {
-                    outputPath = "";
-                } else {
-                    outputPath = proj.getOutput().getFolder() + File.separator + proj.getOutput().getBaseName();
-                }
-                launchRunner(proj.getSimulation(), (double) proj.getEndTime(), effect, outputPath,
-                        proj.getOutput().getSampleInterval(), proj.getBatch().getThreadCount());
-            }
-        } catch (FileNotFoundException e) {
-            L.error("Error reading the file. This is most likely a bug.", e);
-        }*/
-
-        Project project = ProjectIOUtils.loadFrom(this.pathFolder);
+        final Project project = ProjectIOUtils.loadFrom(this.pathFolder);
         try {
             project.runAlchemistSimulation(false);
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            L.error("Error loading simulation file.", e);
         }
     }
 
@@ -164,31 +128,6 @@ public class LeftLayoutController {
                 }
             }
         }
-    }
-
-    /*private void launchRunner(final String sim, final double endTime, final String effect,
-            final String outputFile, final double sampInt, final int paral) {
-        try {
-            AlchemistRunner r = new AlchemistRunner.Builder(new YamlLoader(new FileInputStream(sim)))
-            .setEndTime(new DoubleTime(endTime))
-            .setEffects(effect)
-            .setOutputFile(outputFile)
-            .setInterval(sampInt)
-            .setParallelism(paral)
-            .setHeadless(false)
-            .build();
-            r.launch();
-        } catch (FileNotFoundException e) {
-            L.error("Error reading the file YAML. This is most likely a bug.", e);
-        }
-    }*/
-
-    private void setAlert(final String title, final String header, final String content) {
-        final Alert alert = new Alert(AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(header);
-        alert.setContentText(content);
-        alert.showAndWait();
     }
 
 }

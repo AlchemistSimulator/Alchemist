@@ -72,9 +72,18 @@ public class NewProjLayoutFolderController {
      * 
      * @param path Folder path
      */
-    public void setPath(final String path) {
+    public void setFolderPath(final String path) {
         this.path = path;
         this.folderPath.setText(this.path);
+        this.next.setDisable(false);
+    }
+
+    /**
+     * 
+     * @return Folder path of new project.
+     */
+    public String getFolderPath() {
+        return this.path;
     }
 
     /**

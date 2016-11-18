@@ -107,6 +107,7 @@ public class TopLayoutController {
             ctrl.setMain(this.main);
             ctrl.setStage(stage);
             stage.showAndWait();
+            setView(new File(ctrl.getFolderPath()));
         } catch (IOException e) {
             L.error("Error loading the graphical interface. This is most likely a bug.", e);
             System.exit(1);
@@ -136,12 +137,13 @@ public class TopLayoutController {
                 alert.setContentText(RESOURCES.getString("proj_folder_wrong_content"));
                 alert.showAndWait();
             } else {
-                this.pathFolder = dir.getAbsolutePath();
+                /*this.pathFolder = dir.getAbsolutePath();
                 this.ctrlLeft.setTreeView(dir);
                 this.btnSave.setDisable(false);
                 this.project = this.ctrlCenter.setField();
                 this.main.getWatcher().registerPath(this.pathFolder);
-                new Thread(this.main.getWatcher(), "WatcherProjectView").start();
+                new Thread(this.main.getWatcher(), "WatcherProjectView").start();*/
+                setView(dir);
             }
         }
     }
@@ -168,6 +170,15 @@ public class TopLayoutController {
         final List<String> classpathList = Collections.unmodifiableList(ctrlCenter.getClasspath());
         this.project.setClasspath(classpathList);
         ProjectIOUtils.saveTo(project, pathFolder);
+    }
+
+    private void setView(final File dir) {
+        this.pathFolder = dir.getAbsolutePath();
+        this.ctrlLeft.setTreeView(dir);
+        this.btnSave.setDisable(false);
+        this.project = this.ctrlCenter.setField();
+        this.main.getWatcher().registerPath(this.pathFolder);
+        new Thread(this.main.getWatcher(), "WatcherProjectView").start();
     }
 
 }

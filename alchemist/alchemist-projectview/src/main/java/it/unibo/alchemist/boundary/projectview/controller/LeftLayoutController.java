@@ -19,11 +19,13 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
@@ -150,10 +152,18 @@ public class LeftLayoutController {
     @FXML
     public void clickRun() {
         final Project project = ProjectIOUtils.loadFrom(this.pathFolder);
-        try {
-            project.runAlchemistSimulation(false);
-        } catch (FileNotFoundException e) {
-            L.error("Error loading simulation file.", e);
+        if (project != null) {
+            try {
+                project.runAlchemistSimulation(false);
+            } catch (FileNotFoundException e) {
+                L.error("Error loading simulation file.", e);
+            }
+        } else {
+            final Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle(RESOURCES.getString("error_running"));
+            alert.setHeaderText(RESOURCES.getString("error_running_header"));
+            alert.setContentText(RESOURCES.getString("error_running_content"));
+            alert.showAndWait();
         }
     }
 

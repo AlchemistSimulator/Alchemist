@@ -611,86 +611,90 @@ public class CenterLayoutController {
      * @return The entity project.
      */
     public Project setField() {
-        final Project project = ProjectIOUtils.loadFrom(this.ctrlLeft.getPathFolder());
-        if (project.getBatch().getVariables() != null) {
-            try {
+        Project project = ProjectIOUtils.loadFrom(this.ctrlLeft.getPathFolder());
+        if (project != null) {
+            if (project.getBatch() != null && project.getBatch().getVariables() != null) {
                 project.filterVariables();
-            } catch (FileNotFoundException e) {
-                L.error("Error loading the simulation file.", e);
             }
-        }
-        if (!project.getSimulation().isEmpty()) {
-            if (!new File(project.getBaseDirectory() + File.separator + project.getSimulation()).exists()) {
-                setAlert(RESOURCES.getString("file_not_found"), RESOURCES.getString("file_yaml_not_found_header"), RESOURCES.getString("file_not_found_content"));
-            } else {
-                setSimulationFilePath(project.getSimulation());
-            }
-        }
-        if (project.getEndTime() != 0) {
-            setEndTime(project.getEndTime());
-        } else {
-            setAlert(RESOURCES.getString("end_time_not_found"), RESOURCES.getString("end_time_not_found_header"), RESOURCES.getString("end_time_not_found_content"));
-            setEndTime(VALUE_TIME);
-        }
-        if (!project.getEffect().isEmpty()) {
-            if (!new File(project.getBaseDirectory() + File.separator + project.getEffect()).exists()) {
-                setAlert(RESOURCES.getString("file_not_found"), RESOURCES.getString("file_json_not_found_header"), RESOURCES.getString("file_not_found_content"));
-            } else {
-                setEffect(project.getEffect());
-            }
-        }
-        setSwitchOutputSelected(project.getOutput().isSelected());
-        if (!project.getOutput().getFolder().isEmpty()) {
-            if (!new File(project.getBaseDirectory() + File.separator + project.getOutput().getFolder()).exists()) {
-                if (isSwitchOutputSelected()) {
-                    setAlert(RESOURCES.getString("folder_not_found"), RESOURCES.getString("folder_out_not_found_header"), RESOURCES.getString("folder_out_not_found_content"));
+            if (project.getSimulation() != null && !project.getSimulation().isEmpty()) {
+                if (!new File(project.getBaseDirectory() + File.separator + project.getSimulation()).exists()) {
+                    setAlert(RESOURCES.getString("file_not_found"), RESOURCES.getString("file_yaml_not_found_header"), RESOURCES.getString("file_not_found_content"));
+                } else {
+                    setSimulationFilePath(project.getSimulation());
                 }
-                setSwitchOutputSelected(false);
+            }
+            if (project.getEndTime() != 0) {
+                setEndTime(project.getEndTime());
             } else {
-                setOutputFolder(project.getOutput().getFolder());
+                setAlert(RESOURCES.getString("end_time_not_found"), RESOURCES.getString("end_time_not_found_header"), RESOURCES.getString("end_time_not_found_content"));
+                setEndTime(VALUE_TIME);
             }
-        }
-        if (!project.getOutput().getBaseName().isEmpty()) {
-            setBaseName(project.getOutput().getBaseName());
-        } else {
-            if (isSwitchOutputSelected()) {
-                setAlert(RESOURCES.getString("base_name_not_found"), RESOURCES.getString("base_name_not_found_header"), RESOURCES.getString("base_name_not_found_content"));
+            if (project.getEffect() != null && !project.getEffect().isEmpty()) {
+                if (!new File(project.getBaseDirectory() + File.separator + project.getEffect()).exists()) {
+                    setAlert(RESOURCES.getString("file_not_found"), RESOURCES.getString("file_json_not_found_header"), RESOURCES.getString("file_not_found_content"));
+                } else {
+                    setEffect(project.getEffect());
+                }
             }
-            setBaseName(RESOURCES.getString("base_name_text"));
-        }
-        if (project.getOutput().getSampleInterval() == 0) {
-            if (isSwitchOutputSelected()) {
-                setAlert(RESOURCES.getString("samp_interval_not_found"), RESOURCES.getString("samp_interval_not_found_header"), RESOURCES.getString("samp_interval_not_found_content"));
-            }
-            setSamplInterval(1);
-        } else {
-            setSamplInterval(project.getOutput().getSampleInterval());
-        }
-        setSwitchBatchSelected(project.getBatch().isSelected());
-        if (project.getBatch().getVariables() != null) {
-            setVariables(project.getBatch().getVariables());
-        } else {
-            setSwitchBatchSelected(false);
-            setAlert(RESOURCES.getString("var_not_found"), RESOURCES.getString("var_not_found_header"), RESOURCES.getString("var_not_found_content"));
-        }
-        if (project.getBatch().getThreadCount() == 0) {
-            if (isSwitchBatchSelected()) {
-                setAlert(RESOURCES.getString("n_thread_not_found"), RESOURCES.getString("n_thread_not_found_header"), RESOURCES.getString("n_thread_not_found_content"));
-            }
-            setNumberThreads(Runtime.getRuntime().availableProcessors() + 1);
-        } else {
-            setNumberThreads(project.getBatch().getThreadCount());
-        }
-        if (project.getClasspath() != null && !project.getClasspath().isEmpty()) {
-                final ObservableList<String> list = FXCollections.observableArrayList();
-                for (final String lib : project.getClasspath()) {
-                    if (!new File(project.getBaseDirectory() + File.separator + lib).exists()) {
-                        setAlert(RESOURCES.getString("library_not_found"), lib + " " + RESOURCES.getString("library_not_found_header"), RESOURCES.getString("library_not_found_content"));
+            if (project.getOutput() != null) {
+                setSwitchOutputSelected(project.getOutput().isSelected());
+                if (project.getOutput().getFolder() != null && !project.getOutput().getFolder().isEmpty()) {
+                    if (!new File(project.getBaseDirectory() + File.separator + project.getOutput().getFolder()).exists()) {
+                        if (isSwitchOutputSelected()) {
+                            setAlert(RESOURCES.getString("folder_not_found"), RESOURCES.getString("folder_out_not_found_header"), RESOURCES.getString("folder_out_not_found_content"));
+                        }
+                        setSwitchOutputSelected(false);
                     } else {
-                        list.add(lib);
+                        setOutputFolder(project.getOutput().getFolder());
                     }
                 }
-                setClasspath(list);
+                if (project.getOutput().getBaseName() != null && !project.getOutput().getBaseName().isEmpty()) {
+                    setBaseName(project.getOutput().getBaseName());
+                } else {
+                    if (isSwitchOutputSelected()) {
+                        setAlert(RESOURCES.getString("base_name_not_found"), RESOURCES.getString("base_name_not_found_header"), RESOURCES.getString("base_name_not_found_content"));
+                    }
+                    setBaseName(RESOURCES.getString("base_name_text"));
+                }
+                if (project.getOutput().getSampleInterval() == 0) {
+                    if (isSwitchOutputSelected()) {
+                        setAlert(RESOURCES.getString("samp_interval_not_found"), RESOURCES.getString("samp_interval_not_found_header"), RESOURCES.getString("samp_interval_not_found_content"));
+                    }
+                    setSamplInterval(1);
+                } else {
+                    setSamplInterval(project.getOutput().getSampleInterval());
+                }
+            }
+            if (project.getBatch() != null) {
+                setSwitchBatchSelected(project.getBatch().isSelected());
+                if (project.getBatch().getVariables() != null) {
+                    setVariables(project.getBatch().getVariables());
+                } else {
+                    setSwitchBatchSelected(false);
+                    setAlert(RESOURCES.getString("var_not_found"), RESOURCES.getString("var_not_found_header"), RESOURCES.getString("var_not_found_content"));
+                }
+                if (project.getBatch().getThreadCount() == 0) {
+                    if (isSwitchBatchSelected()) {
+                        setAlert(RESOURCES.getString("n_thread_not_found"), RESOURCES.getString("n_thread_not_found_header"), RESOURCES.getString("n_thread_not_found_content"));
+                    }
+                    setNumberThreads(Runtime.getRuntime().availableProcessors() + 1);
+                } else {
+                    setNumberThreads(project.getBatch().getThreadCount());
+                }
+            }
+            if (project.getClasspath() != null && !project.getClasspath().isEmpty()) {
+                    final ObservableList<String> list = FXCollections.observableArrayList();
+                    for (final String lib : project.getClasspath()) {
+                        if (!new File(project.getBaseDirectory() + File.separator + lib).exists()) {
+                            setAlert(RESOURCES.getString("library_not_found"), lib + " " + RESOURCES.getString("library_not_found_header"), RESOURCES.getString("library_not_found_content"));
+                        } else {
+                            list.add(lib);
+                        }
+                    }
+                    setClasspath(list);
+            }
+        } else {
+            project = new Project(new File(this.ctrlLeft.getPathFolder()));
         }
         if (this.grid.isDisable()) {
             setEnableGrid();

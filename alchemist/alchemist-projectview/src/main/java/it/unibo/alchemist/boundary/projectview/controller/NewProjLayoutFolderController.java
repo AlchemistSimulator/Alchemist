@@ -109,8 +109,11 @@ public class NewProjLayoutFolderController {
                         FileUtils.cleanDirectory(dir);
                         setSelectedFolder(dir);
                     } catch (IOException e) {
-                        L.error("Error cleaning is unsuccessfull.", e);
-                        System.exit(1);
+                        final Alert alertCancel = new Alert(AlertType.ERROR);
+                        alertCancel.setTitle(RESOURCES.getString("error_building_project"));
+                        alertCancel.setHeaderText(RESOURCES.getString("error_building_project_header"));
+                        alertCancel.setContentText(RESOURCES.getString("error_building_project_content"));
+                        alertCancel.showAndWait();
                     }
                 } else {
                     final Alert alertCancel = new Alert(AlertType.WARNING);

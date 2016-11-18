@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URLClassLoader;
+import java.nio.file.Paths;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
@@ -204,7 +205,8 @@ public final class Project {
             || getBatch().getThreadCount() == 0) {
             L.error("Error during launch. Probably you have been lost some information in the json file.");
         } else {
-            for (final String lib : getClasspath()) {
+            /*for (final String lib : getClasspath()) {
+                //TODO: Paths.get(lib).toUri().toURL();
                 final File file = new File(this.baseDir + File.separator + lib.replace("/", File.separator));
                 URL url = null;
                 try {
@@ -213,27 +215,32 @@ public final class Project {
                     L.error("Error during the construction of the URL.", e);
                 }
                 if (url != null) {
-                    final URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-                    final Class<?> urlClass = URLClassLoader.class;
-                    try {
-                        final Method method = urlClass.getDeclaredMethod("addURL", new Class[]{URL.class});
-                        method.setAccessible(true);
+                    final ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
+                    if (systemClassLoader instanceof URLClassLoader) {
+                        final URLClassLoader urlClassLoader = (URLClassLoader) systemClassLoader;
+                        final Class<?> urlClass = URLClassLoader.class;
                         try {
-                            method.invoke(urlClassLoader, new Object[]{url});
-                        } catch (IllegalAccessException e) {
-                            L.error("Error because the method is inaccessible.", e);
-                        } catch (IllegalArgumentException e) {
-                            L.error("Error because the objects are not an instance of the method.", e);
-                        } catch (InvocationTargetException e) {
-                            L.error("Error during invoke of method.", e);
+                            final Method method = urlClass.getDeclaredMethod("addURL", new Class[]{URL.class});
+                            method.setAccessible(true);
+                            try {
+                                method.invoke(urlClassLoader, new Object[]{url});
+                            } catch (IllegalAccessException e) {
+                                L.error("Error because the method is inaccessible.", e);
+                            } catch (IllegalArgumentException e) {
+                                L.error("Error because the objects are not an instance of the method.", e);
+                            } catch (InvocationTargetException e) {
+                                L.error("Error during invoke of method.", e);
+                            }
+                        } catch (NoSuchMethodException e) {
+                            L.error("Error because no methods matching with \"addURL\".", e);
+                        } catch (SecurityException e) {
+                            L.error("Error because there is a security manager.", e);
                         }
-                    } catch (NoSuchMethodException e) {
-                        L.error("Error because no methods matching with \"addURL\".", e);
-                    } catch (SecurityException e) {
-                        L.error("Error because there is a security manager.", e);
+                    } else {
+                        // TODO: signal error
                     }
                 }
-            }
+            }*/
             final Loader loader = createLoader();
             if (loader != null) {
                 /* TODO:
@@ -264,6 +271,8 @@ public final class Project {
             }
         }
     }
+    
+//    private static void add
 
     private Loader createLoader() {
         try {

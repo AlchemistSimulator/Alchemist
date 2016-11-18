@@ -130,14 +130,14 @@ public class LeftLayoutController {
         newFolder.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(final ActionEvent event) {
-                loadLayout();
+                loadLayout(true);
             }
         });
         final MenuItem newFile = new MenuItem(RESOURCES.getString("new_file"));
         newFile.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(final ActionEvent event) {
-                //TODO: create new file
+                loadLayout(false);
             }
         });
         menu.getItems().addAll(newFolder, newFile);
@@ -182,19 +182,24 @@ public class LeftLayoutController {
         }
     }
 
-    private void loadLayout() {
+    private void loadLayout(final boolean isFolder) {
         try {
             final FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(ProjectGUI.class.getResource("view/NewFolderLayout.fxml"));
+            loader.setLocation(ProjectGUI.class.getResource("view/NewFolderOrFileDialog.fxml"));
             final AnchorPane pane = (AnchorPane) loader.load();
             final Stage stage = new Stage();
-            stage.setTitle(RESOURCES.getString("folder_name_title"));
+            if (isFolder) {
+                stage.setTitle(RESOURCES.getString("folder_name_title"));
+            } else {
+                stage.setTitle(RESOURCES.getString("file_name_title"));
+            }
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(this.main.getStage());
             stage.setResizable(false);
             final Scene scene = new Scene(pane);
             stage.setScene(scene);
-            final NewFolderLayoutController controller = loader.getController();
+            final NewFolderOrFileDialogController controller = loader.getController();
+            controller.initialize(isFolder);
             controller.setSelectedItem(this.selectedFile);
             controller.setStage(stage);
             stage.showAndWait();

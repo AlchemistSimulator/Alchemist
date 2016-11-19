@@ -25,6 +25,8 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -48,6 +50,8 @@ public class LeftLayoutController {
     @FXML
     private TreeView<String> treeView;
 
+    private final Image folder = new Image(ProjectGUI.class.getResource("/icon/folder.png").toExternalForm());
+    private final Image file = new Image(ProjectGUI.class.getResource("/icon/file.png").toExternalForm());
     private ProjectGUI main;
     private String pathFolder;
     private String selectedFile;
@@ -99,7 +103,7 @@ public class LeftLayoutController {
      */
     public void setTreeView(final File dir) {
         this.pathFolder = dir.getAbsolutePath();
-        final TreeItem<String> root = new TreeItem<>(dir.getName());
+        final TreeItem<String> root = new TreeItem<>(dir.getName(), new ImageView(new Image(ProjectGUI.class.getResource("/icon/project.png").toExternalForm())));
         root.setExpanded(true);
         this.treeView = new TreeView<>(root);
         displayProjectContent(dir, root);
@@ -191,11 +195,13 @@ public class LeftLayoutController {
         if (files != null) {
             for (final File file: files) {
                 if (!file.getName().equals(".alchemist_project_descriptor.json")) {
-                    final TreeItem<String> singleFile = new TreeItem<>(file.getName());
+                    final TreeItem<String> singleFile; 
                     if (file.isDirectory()) {
+                        singleFile = new TreeItem<>(file.getName(), new ImageView(this.folder));
                         displayProjectContent(file, singleFile);
                         root.getChildren().add(singleFile);
                     } else {
+                        singleFile = new TreeItem<>(file.getName(), new ImageView(this.file));
                         root.getChildren().add(singleFile);
                     }
                     root.setExpanded(true);

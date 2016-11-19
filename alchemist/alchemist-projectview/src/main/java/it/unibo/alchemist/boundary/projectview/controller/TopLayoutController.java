@@ -3,8 +3,6 @@ package it.unibo.alchemist.boundary.projectview.controller;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
@@ -12,9 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
-import it.unibo.alchemist.boundary.projectview.model.Batch;
-import it.unibo.alchemist.boundary.projectview.model.Output;
-import it.unibo.alchemist.boundary.projectview.model.Project;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -49,8 +44,6 @@ public class TopLayoutController {
     private CenterLayoutController ctrlCenter;
     private ProjectGUI main;
     private LeftLayoutController ctrlLeft;
-    private String pathFolder;
-    private Project project;
     private Watcher watcher;
 
     /**
@@ -93,7 +86,9 @@ public class TopLayoutController {
      * Terminates the watcher.
      */
     public void terminateWatcher() {
-        this.watcher.terminate();
+        if (this.watcher != null) {
+            this.watcher.terminate();
+        }
     }
 
     /**
@@ -101,6 +96,9 @@ public class TopLayoutController {
      */
     @FXML
     public void clickNew() {
+        if (this.ctrlCenter.getProject() != null) {
+            this.ctrlCenter.checkChanges();
+        }
         final FXMLLoader loader = new FXMLLoader();
         loader.setLocation(ProjectGUI.class.getResource("view/NewProjLayoutFolder.fxml"));
         try {
@@ -129,6 +127,9 @@ public class TopLayoutController {
      */
     @FXML
     public void clickOpen() {
+        if (this.ctrlCenter.getProject() != null) {
+            this.ctrlCenter.checkChanges();
+        }
         final DirectoryChooser dirChooser = new DirectoryChooser();
         dirChooser.setTitle(RESOURCES.getString("select_folder_proj"));
         dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
@@ -157,37 +158,21 @@ public class TopLayoutController {
      */
     @FXML
     public void clickSave() {
-        final Output out = new Output();
-        out.setSelected(this.ctrlCenter.isSwitchOutputSelected());
-        out.setFolder(this.ctrlCenter.getOutputFolder());
-        out.setBaseName(this.ctrlCenter.getBaseName());
-        out.setSampleInterval(this.ctrlCenter.getSamplInterval());
-        this.project.setOutput(out);
-        final Batch batch = new Batch();
-        batch.setSelected(this.ctrlCenter.isSwitchBatchSelected());
-        batch.setVariables(this.ctrlCenter.getVariables());
-        batch.setThreadCount(this.ctrlCenter.getNumberThreads());
-        this.project.setBatch(batch);
-        this.project.setSimulation(this.ctrlCenter.getSimulationFilePath());
-        this.project.setEffect(this.ctrlCenter.getEffect());
-        this.project.setEndTime(this.ctrlCenter.getEndTime());
-        final List<String> classpathList = Collections.unmodifiableList(ctrlCenter.getClasspath());
-        this.project.setClasspath(classpathList);
-        ProjectIOUtils.saveTo(project, pathFolder);
+        this.ctrlCenter.saveProject();
     }
 
     private void setView(final File dir) {
-        this.pathFolder = dir.getAbsolutePath();
+        final String pathFolder = dir.getAbsolutePath();
         this.ctrlLeft.setTreeView(dir);
         this.btnSave.setDisable(false);
-        this.project = this.ctrlCenter.setField();
+        this.ctrlCenter.setField();
         if (this.watcher == null) {
             this.watcher = createWatcher();
-        } else if (this.watcher.isWatcherAlive() && !this.watcher.getFolderPath().equals(this.pathFolder)) {
+        } else if (this.watcher.isWatcherAlive() && !this.watcher.getFolderPath().equals(pathFolder)) {
             terminateWatcher();
             this.watcher = createWatcher();
         }
-        this.watcher.registerPath(this.pathFolder);
+        this.watcher.registerPath(pathFolder);
         new Thread(this.watcher, "WatcherProjectView").start();
     }
 

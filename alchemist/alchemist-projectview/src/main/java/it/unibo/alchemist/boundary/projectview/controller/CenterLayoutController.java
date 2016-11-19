@@ -13,9 +13,11 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Stack;
 
@@ -26,6 +28,8 @@ import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
+import it.unibo.alchemist.boundary.projectview.model.Batch;
+import it.unibo.alchemist.boundary.projectview.model.Output;
 import it.unibo.alchemist.boundary.projectview.model.Project;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.YamlLoader;
@@ -41,6 +45,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
@@ -72,6 +77,8 @@ public class CenterLayoutController {
     private static final double VALUE_TIME = 60;
     private static final String EFF_EXT = RESOURCES.getString("eff_ext");
     private static final String YAML_EXT = RESOURCES.getString("yaml_ext");
+    private static final String FILE_NOT_FOUND = RESOURCES.getString("file_not_found");
+    private static final String FILE_NOT_FOUND_CONTENT = RESOURCES.getString("file_not_found_content");
 
     @FXML
     private Button addClass;
@@ -146,6 +153,7 @@ public class CenterLayoutController {
 
     private LeftLayoutController ctrlLeft;
     private ProjectGUI main;
+    private Project project;
 
     private Map<String, Boolean> variables = new HashMap<>();
     private ObservableList<String> data = FXCollections.observableArrayList();
@@ -315,6 +323,14 @@ public class CenterLayoutController {
 
     /**
      * 
+     * @return A entity of project.
+     */
+    public Project getProject() {
+        return this.project;
+    }
+
+    /**
+     * 
      */
     @FXML
     public void clickSetYaml() {
@@ -438,9 +454,10 @@ public class CenterLayoutController {
      */
     @FXML
     public void clickBatch() {
-        final Project project = ProjectIOUtils.loadFrom(this.ctrlLeft.getPathFolder());
+        checkChanges();
+        this.project = ProjectIOUtils.loadFrom(this.ctrlLeft.getPathFolder());
         try {
-            project.runAlchemistSimulation(true);
+            this.project.runAlchemistSimulation(true);
         } catch (FileNotFoundException e) {
             L.error("Error loading simulation file.", e);
         }
@@ -474,7 +491,7 @@ public class CenterLayoutController {
      * 
      * @return Selected end time.
      */
-    public double getEndTime() {
+    private double getEndTime() {
         return this.spinTime.getValueFactory().getValue();
     }
 
@@ -490,7 +507,7 @@ public class CenterLayoutController {
      * 
      * @return Selected effect path
      */
-    public String getEffect() {
+    private String getEffect() {
         return this.pathEff.getText();
     }
 
@@ -507,7 +524,7 @@ public class CenterLayoutController {
      * 
      * @return true if the output switch is selected.
      */
-    public boolean isSwitchOutputSelected() {
+    private boolean isSwitchOutputSelected() {
         return this.tsOut.isSelected();
     }
 
@@ -523,7 +540,7 @@ public class CenterLayoutController {
      * 
      * @return Selected output folder
      */
-    public String getOutputFolder() {
+    private String getOutputFolder() {
         return this.pathOut.getText();
     }
 
@@ -540,7 +557,7 @@ public class CenterLayoutController {
      * 
      * @return Base name typed
      */
-    public String getBaseName() {
+    private String getBaseName() {
         return this.bnTextOut.getText();
     }
 
@@ -556,7 +573,7 @@ public class CenterLayoutController {
      * 
      * @return Selected sampling interval.
      */
-    public double getSamplInterval() {
+    private double getSamplInterval() {
         return this.spinOut.getValueFactory().getValue();
     }
 
@@ -572,7 +589,7 @@ public class CenterLayoutController {
      * 
      * @return True if the batch mode switch is selected.
      */
-    public boolean isSwitchBatchSelected() {
+    private boolean isSwitchBatchSelected() {
         return this.tsVar.isSelected();
     }
 
@@ -588,7 +605,7 @@ public class CenterLayoutController {
      * 
      * @return a map of variables.
      */
-    public Map<String, Boolean> getVariables() {
+    private Map<String, Boolean> getVariables() {
         return this.variables;
     }
 
@@ -600,7 +617,7 @@ public class CenterLayoutController {
      * 
      * @return Selected number of threads.
      */
-    public int getNumberThreads() {
+    private int getNumberThreads() {
         return this.spinBatch.getValueFactory().getValue();
     }
 
@@ -616,7 +633,7 @@ public class CenterLayoutController {
      * 
      * @return The libraries to add to the classpath.
      */
-    public ObservableList<String> getClasspath() {
+    private ObservableList<String> getClasspath() {
         return this.listClass.getItems();
     }
 
@@ -625,6 +642,7 @@ public class CenterLayoutController {
      * @param list The libraries to add to the classpath.
      */
     private void setClasspath(final ObservableList<String> list) {
+        this.listClass.getItems().clear();
         final List<String> listLibError = new ArrayList<>(); 
         for (final String lib: list) {
             if (!addPath(this.ctrlLeft.getPathFolder() + File.separator + lib.replace("/", File.separator))) {
@@ -655,81 +673,83 @@ public class CenterLayoutController {
      * @return The entity project.
      */
     public Project setField() {
-        Project project = ProjectIOUtils.loadFrom(this.ctrlLeft.getPathFolder());
-        if (project != null) {
-            if (project.getBatch() != null && project.getBatch().getVariables() != null) {
-                project.filterVariables();
+        this.project = ProjectIOUtils.loadFrom(this.ctrlLeft.getPathFolder());
+        if (this.project != null) {
+            if (this.project.getBatch() != null 
+                    && this.project.getBatch().getVariables() != null
+                    && !this.project.getBatch().getVariables().isEmpty()) {
+                this.project.filterVariables();
             }
-            if (project.getSimulation() != null && !project.getSimulation().isEmpty()) {
-                if (!new File(project.getBaseDirectory() + File.separator + project.getSimulation()).exists()) {
-                    setAlert(RESOURCES.getString("file_not_found"), RESOURCES.getString("file_yaml_not_found_header"), RESOURCES.getString("file_not_found_content"));
+            if (this.project.getSimulation() != null && !this.project.getSimulation().isEmpty()) {
+                if (!new File(this.project.getBaseDirectory() + File.separator + this.project.getSimulation()).exists()) {
+                    setAlert(FILE_NOT_FOUND, RESOURCES.getString("file_yaml_not_found_header"), FILE_NOT_FOUND_CONTENT);
                 } else {
-                    setSimulationFilePath(project.getSimulation());
+                    setSimulationFilePath(this.project.getSimulation());
                 }
             }
-            if (project.getEndTime() != 0) {
-                setEndTime(project.getEndTime());
+            if (this.project.getEndTime() != 0) {
+                setEndTime(this.project.getEndTime());
             } else {
                 setAlert(RESOURCES.getString("end_time_not_found"), RESOURCES.getString("end_time_not_found_header"), RESOURCES.getString("end_time_not_found_content"));
                 setEndTime(VALUE_TIME);
             }
-            if (project.getEffect() != null && !project.getEffect().isEmpty()) {
-                if (!new File(project.getBaseDirectory() + File.separator + project.getEffect()).exists()) {
-                    setAlert(RESOURCES.getString("file_not_found"), RESOURCES.getString("file_json_not_found_header"), RESOURCES.getString("file_not_found_content"));
+            if (this.project.getEffect() != null && !this.project.getEffect().isEmpty()) {
+                if (!new File(this.project.getBaseDirectory() + File.separator + this.project.getEffect()).exists()) {
+                    setAlert(FILE_NOT_FOUND, RESOURCES.getString("file_json_not_found_header"), FILE_NOT_FOUND_CONTENT);
                 } else {
-                    setEffect(project.getEffect());
+                    setEffect(this.project.getEffect());
                 }
             }
-            if (project.getOutput() != null) {
-                setSwitchOutputSelected(project.getOutput().isSelected());
-                if (project.getOutput().getFolder() != null && !project.getOutput().getFolder().isEmpty()) {
-                    if (!new File(project.getBaseDirectory() + File.separator + project.getOutput().getFolder()).exists()) {
+            if (this.project.getOutput() != null) {
+                setSwitchOutputSelected(this.project.getOutput().isSelected());
+                if (this.project.getOutput().getFolder() != null && !this.project.getOutput().getFolder().isEmpty()) {
+                    if (!new File(this.project.getBaseDirectory() + File.separator + this.project.getOutput().getFolder()).exists()) {
                         if (isSwitchOutputSelected()) {
                             setAlert(RESOURCES.getString("folder_not_found"), RESOURCES.getString("folder_out_not_found_header"), RESOURCES.getString("folder_out_not_found_content"));
                         }
                         setSwitchOutputSelected(false);
                     } else {
-                        setOutputFolder(project.getOutput().getFolder());
+                        setOutputFolder(this.project.getOutput().getFolder());
                     }
                 }
-                if (project.getOutput().getBaseName() != null && !project.getOutput().getBaseName().isEmpty()) {
-                    setBaseName(project.getOutput().getBaseName());
+                if (this.project.getOutput().getBaseName() != null && !this.project.getOutput().getBaseName().isEmpty()) {
+                    setBaseName(this.project.getOutput().getBaseName());
                 } else {
                     if (isSwitchOutputSelected()) {
                         setAlert(RESOURCES.getString("base_name_not_found"), RESOURCES.getString("base_name_not_found_header"), RESOURCES.getString("base_name_not_found_content"));
                     }
                     setBaseName(RESOURCES.getString("base_name_text"));
                 }
-                if (project.getOutput().getSampleInterval() == 0) {
+                if (this.project.getOutput().getSampleInterval() == 0) {
                     if (isSwitchOutputSelected()) {
                         setAlert(RESOURCES.getString("samp_interval_not_found"), RESOURCES.getString("samp_interval_not_found_header"), RESOURCES.getString("samp_interval_not_found_content"));
                     }
                     setSamplInterval(1);
                 } else {
-                    setSamplInterval(project.getOutput().getSampleInterval());
+                    setSamplInterval(this.project.getOutput().getSampleInterval());
                 }
             }
-            if (project.getBatch() != null) {
-                setSwitchBatchSelected(project.getBatch().isSelected());
-                if (project.getBatch().getVariables() != null) {
-                    setVariables(project.getBatch().getVariables());
+            if (this.project.getBatch() != null) {
+                setSwitchBatchSelected(this.project.getBatch().isSelected());
+                if (this.project.getBatch().getVariables() != null) {
+                    setVariables(this.project.getBatch().getVariables());
                 } else {
                     setSwitchBatchSelected(false);
                     setAlert(RESOURCES.getString("var_not_found"), RESOURCES.getString("var_not_found_header"), RESOURCES.getString("var_not_found_content"));
                 }
-                if (project.getBatch().getThreadCount() == 0) {
+                if (this.project.getBatch().getThreadCount() == 0) {
                     if (isSwitchBatchSelected()) {
                         setAlert(RESOURCES.getString("n_thread_not_found"), RESOURCES.getString("n_thread_not_found_header"), RESOURCES.getString("n_thread_not_found_content"));
                     }
                     setNumberThreads(Runtime.getRuntime().availableProcessors() + 1);
                 } else {
-                    setNumberThreads(project.getBatch().getThreadCount());
+                    setNumberThreads(this.project.getBatch().getThreadCount());
                 }
             }
-            if (project.getClasspath() != null && !project.getClasspath().isEmpty()) {
+            if (this.project.getClasspath() != null && !this.project.getClasspath().isEmpty()) {
                     final ObservableList<String> list = FXCollections.observableArrayList();
-                    for (final String lib : project.getClasspath()) {
-                        if (!new File(project.getBaseDirectory() + File.separator + lib).exists()) {
+                    for (final String lib : this.project.getClasspath()) {
+                        if (!new File(this.project.getBaseDirectory() + File.separator + lib).exists()) {
                             setAlert(RESOURCES.getString("library_not_found"), lib + " " + RESOURCES.getString("library_not_found_header"), RESOURCES.getString("library_not_found_content"));
                         } else {
                             list.add(lib);
@@ -738,13 +758,27 @@ public class CenterLayoutController {
                     setClasspath(list);
             }
         } else {
-            project = new Project(new File(this.ctrlLeft.getPathFolder()));
+            this.project = new Project(new File(this.ctrlLeft.getPathFolder()));
+            this.pathYaml.setText("");
+            this.gridYaml.getChildren().remove(this.imgViewYaml);
+            setEndTime(VALUE_TIME);
+            this.pathEff.setText("");
+            this.gridEff.getChildren().remove(this.imgViewEff);
+            setSwitchOutputSelected(false);
+            this.pathOut.setText("");
+            this.gridOut.getChildren().remove(this.imgViewOut);
+            setBaseName(RESOURCES.getString("base_name_text"));
+            setSamplInterval(1);
+            setSwitchBatchSelected(false);
+            setVariables(new HashMap<String, Boolean>());
+            setNumberThreads(Runtime.getRuntime().availableProcessors() + 1);
+            setClasspath(FXCollections.observableArrayList());
         }
         if (this.grid.isDisable()) {
             setEnableGrid();
         }
         this.ctrlLeft.setEnableRun();
-        return project;
+        return this.project;
     }
 
     /**
@@ -772,11 +806,11 @@ public class CenterLayoutController {
      */
     public void setFileAfterDelete(final Path path) {
         if (!getSimulationFilePath().isEmpty() && getSimulationFilePath().equals(new File(this.ctrlLeft.getPathFolder()).toURI().relativize(path.toUri()).getPath())) {
-            setAlert(RESOURCES.getString("file_not_found"), RESOURCES.getString("file_yaml_not_found_header"), RESOURCES.getString("file_not_found_content"));
+            setAlert(FILE_NOT_FOUND, RESOURCES.getString("file_yaml_not_found_header"), FILE_NOT_FOUND_CONTENT);
             this.pathYaml.setText("");
             this.gridYaml.getChildren().remove(this.imgViewYaml);
         } else if (!getEffect().isEmpty() && getEffect().equals(new File(this.ctrlLeft.getPathFolder()).toURI().relativize(path.toUri()).getPath())) {
-            setAlert(RESOURCES.getString("file_not_found"), RESOURCES.getString("file_json_not_found_header"), RESOURCES.getString("file_not_found_content"));
+            setAlert(FILE_NOT_FOUND, RESOURCES.getString("file_json_not_found_header"), FILE_NOT_FOUND_CONTENT);
             this.pathEff.setText("");
             this.gridEff.getChildren().remove(this.imgViewEff);
         } else if (!getClasspath().isEmpty()) {
@@ -856,7 +890,6 @@ public class CenterLayoutController {
     }
 
     private void setDeleteIcon(final GridPane grid, final Label label, final ImageView imgView, final boolean isYaml) {
-        //final ImageView imgView = new ImageView(new Image(ProjectGUI.class.getResource("/icon/icon-delete.png").toExternalForm()));
         final Tooltip tooltip = new Tooltip();
         tooltip.setText(RESOURCES.getString("delete"));
         Tooltip.install(imgView, tooltip);
@@ -967,6 +1000,68 @@ public class CenterLayoutController {
             }
         }
         return false;
+    }
+
+    /**
+     * 
+     */
+    public void checkChanges() {
+        if (this.project != null 
+                && (this.project.getSimulation() == null
+                        || !this.project.getSimulation().equals(getSimulationFilePath())
+                        || this.project.getEndTime() == 0
+                        || this.project.getEndTime() != getEndTime()
+                        || this.project.getEffect() == null
+                        || !this.project.getEffect().equals(getEffect())
+                        || this.project.getOutput().isSelected() != isSwitchOutputSelected()
+                        || (isSwitchOutputSelected() 
+                                && (this.project.getOutput().getFolder() == null
+                                        || !this.project.getOutput().getFolder().equals(getOutputFolder())
+                                        || this.project.getOutput().getBaseName() == null
+                                        || !this.project.getOutput().getBaseName().equals(getBaseName())
+                                        || this.project.getOutput().getSampleInterval() == 0
+                                        || this.project.getOutput().getSampleInterval() != getSamplInterval()))
+                        || this.project.getBatch().isSelected() != isSwitchBatchSelected()
+                        || (isSwitchBatchSelected()
+                                && (this.project.getBatch().getVariables() == null 
+                                        || !this.project.getBatch().getVariables().equals(getVariables())
+                                        || this.project.getBatch().getThreadCount() == 0
+                                        || this.project.getBatch().getThreadCount() != getNumberThreads()))
+                        || this.project.getClasspath() == null
+                        || !this.project.getClasspath().equals(getClasspath()))) {
+            final Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle(RESOURCES.getString("save"));
+            alert.setHeaderText(RESOURCES.getString("save_changes_header"));
+            alert.setContentText(RESOURCES.getString("save_changes_content"));
+            final Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                saveProject();
+                this.project = ProjectIOUtils.loadFrom(this.ctrlLeft.getPathFolder());
+            }
+        }
+    }
+
+    /**
+     * 
+     */
+    public void saveProject() {
+        final Output out = new Output();
+        out.setSelected(isSwitchOutputSelected());
+        out.setFolder(getOutputFolder());
+        out.setBaseName(getBaseName());
+        out.setSampleInterval(getSamplInterval());
+        this.project.setOutput(out);
+        final Batch batch = new Batch();
+        batch.setSelected(isSwitchBatchSelected());
+        batch.setVariables(getVariables());
+        batch.setThreadCount(getNumberThreads());
+        this.project.setBatch(batch);
+        this.project.setSimulation(getSimulationFilePath());
+        this.project.setEffect(getEffect());
+        this.project.setEndTime(getEndTime());
+        final List<String> classpathList = Collections.unmodifiableList(getClasspath());
+        this.project.setClasspath(classpathList);
+        ProjectIOUtils.saveTo(this.project, this.ctrlLeft.getPathFolder());
     }
 
 }

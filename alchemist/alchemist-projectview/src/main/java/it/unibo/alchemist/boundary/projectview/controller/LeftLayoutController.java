@@ -51,6 +51,7 @@ public class LeftLayoutController {
     private ProjectGUI main;
     private String pathFolder;
     private String selectedFile;
+    private CenterLayoutController ctrlCenter;
 
     /**
      * 
@@ -82,6 +83,14 @@ public class LeftLayoutController {
      */
     public String getSelectedFilePath() {
         return this.selectedFile;
+    }
+
+    /**
+     * 
+     * @param ctrlCenter A controller of CenterLayout
+     */
+    public void setCtrlCenter(final CenterLayoutController ctrlCenter) {
+        this.ctrlCenter = ctrlCenter;
     }
 
     /**
@@ -151,6 +160,9 @@ public class LeftLayoutController {
      */
     @FXML
     public void clickRun() {
+        if (this.ctrlCenter.getProject() != null) {
+            this.ctrlCenter.checkChanges();
+        }
         final Project project = ProjectIOUtils.loadFrom(this.pathFolder);
         if (project != null) {
             try {

@@ -56,6 +56,7 @@ public class ProjectGUI extends Application {
 
             @Override
             public void handle(final WindowEvent wind) {
+                controllerCenter.checkChanges();
                 controllerTop.terminateWatcher();
                 primaryStage.close();
             }
@@ -92,6 +93,7 @@ public class ProjectGUI extends Application {
                     this.controllerCenter.setMain(this);
                     this.controllerCenter.setCtrlLeft(this.controllerLeft);
                 }
+                this.controllerLeft.setCtrlCenter(this.controllerCenter);
             }
         } catch (IOException e) {
             L.error("Error loading the graphical interface. This is most likely a bug.", e);

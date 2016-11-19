@@ -72,7 +72,6 @@ public class CenterLayoutController {
     private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
     private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
     private static final double MIN = 0.01;
-    private static final double MAX_SAM = 600;
     private static final double STEP = 0.01;
     private static final double VALUE_TIME = 60;
     private static final String EFF_EXT = RESOURCES.getString("eff_ext");
@@ -196,10 +195,10 @@ public class CenterLayoutController {
                         1));
         this.spinOut.setEditable(true);
         this.spinOut.setValueFactory(
-                new SpinnerValueFactory.DoubleSpinnerValueFactory(MIN, MAX_SAM, 1, STEP));
+                new SpinnerValueFactory.DoubleSpinnerValueFactory(MIN, Double.MAX_VALUE, 1, STEP));
         this.spinTime.setEditable(true);
         this.spinTime.setValueFactory(
-                new SpinnerValueFactory.DoubleSpinnerValueFactory(MIN, Double.POSITIVE_INFINITY, VALUE_TIME, STEP));
+                new SpinnerValueFactory.DoubleSpinnerValueFactory(MIN, Double.MAX_VALUE, VALUE_TIME, STEP));
         this.thread.setText(RESOURCES.getString("n_thread"));
         this.unitOut.setText(RESOURCES.getString("sec"));
         this.unitTime.setText(RESOURCES.getString("sec"));

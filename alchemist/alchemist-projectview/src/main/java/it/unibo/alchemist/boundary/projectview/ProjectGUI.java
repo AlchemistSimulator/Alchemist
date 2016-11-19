@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import it.unibo.alchemist.boundary.projectview.controller.CenterLayoutController;
 import it.unibo.alchemist.boundary.projectview.controller.LeftLayoutController;
 import it.unibo.alchemist.boundary.projectview.controller.TopLayoutController;
-import it.unibo.alchemist.boundary.projectview.controller.Watcher;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -29,7 +28,7 @@ public class ProjectGUI extends Application {
     private CenterLayoutController controllerCenter;
     private LeftLayoutController controllerLeft;
     private Stage primaryStage;
-    private Watcher watcher;
+    private TopLayoutController controllerTop;
 
     /**
      * Returns the primary stage.
@@ -37,14 +36,6 @@ public class ProjectGUI extends Application {
      */
     public Stage getStage() {
         return this.primaryStage;
-    }
-
-    /**
-     * Returns the watcher of file system.
-     * @return a watcher.
-     */
-    public Watcher getWatcher() {
-        return this.watcher;
     }
 
     /**
@@ -61,13 +52,11 @@ public class ProjectGUI extends Application {
         initLayout("CenterLayout");
         initLayout("TopLayout");
 
-        this.watcher = new Watcher(this.controllerLeft, this.controllerCenter);
-
         this.primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 
             @Override
             public void handle(final WindowEvent wind) {
-                watcher.terminate();
+                controllerTop.terminateWatcher();
                 primaryStage.close();
             }
         });
@@ -89,21 +78,19 @@ public class ProjectGUI extends Application {
                 final AnchorPane pane = (AnchorPane) loader.load();
                 if (layoutName.equals("TopLayout")) {
                     this.root.setTop(pane);
-                    final TopLayoutController controller = loader.getController();
-                    controller.setMain(this);
-                    controller.setCtrlLeft(this.controllerLeft);
-                    controller.setCtrlCenter(this.controllerCenter);
+                    this.controllerTop = loader.getController();
+                    this.controllerTop.setMain(this);
+                    this.controllerTop.setCtrlLeft(this.controllerLeft);
+                    this.controllerTop.setCtrlCenter(this.controllerCenter);
                 } else if (layoutName.equals("LeftLayout")) {
                     this.root.setLeft(pane);
-                    final LeftLayoutController controller = loader.getController();
-                    controller.setMain(this);
-                    this.controllerLeft = controller;
+                    this.controllerLeft = loader.getController();
+                    this.controllerLeft.setMain(this);
                 } else {
                     this.root.setCenter(pane);
-                    final CenterLayoutController controller = loader.getController();
-                    controller.setMain(this);
-                    controller.setCtrlLeft(this.controllerLeft);
-                    this.controllerCenter = controller;
+                    this.controllerCenter = loader.getController();
+                    this.controllerCenter.setMain(this);
+                    this.controllerCenter.setCtrlLeft(this.controllerLeft);
                 }
             }
         } catch (IOException e) {

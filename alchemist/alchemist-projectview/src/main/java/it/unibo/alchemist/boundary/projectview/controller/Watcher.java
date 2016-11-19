@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +35,7 @@ public class Watcher implements Runnable {
     private final LeftLayoutController ctrlLeft;
     private final CenterLayoutController ctrlCenter;
 
-    private WatchService watcher = null;
+    private WatchService watcherServ;
     private String folderPath;
     private boolean isAlive = true;
     private final Map<WatchKey, Path> keys = new HashMap<>();
@@ -46,7 +47,7 @@ public class Watcher implements Runnable {
      */
     public Watcher(final LeftLayoutController ctrlLeft, final CenterLayoutController ctrlCenter) {
         try {
-            this.watcher = FileSystems.getDefault().newWatchService();
+            this.watcherServ = FileSystems.getDefault().newWatchService();
         } catch (IOException e) {
             L.error("This system does not support watching file system objects for changes and events.", e);
         }
@@ -66,6 +67,22 @@ public class Watcher implements Runnable {
 
     /**
      * 
+     * @return True if the watcher is alive, otherwise false.
+     */
+    public boolean isWatcherAlive() {
+        return this.isAlive;
+    }
+
+    /**
+     * 
+     * @return The project folder path.
+     */
+    public String getFolderPath() {
+        return this.folderPath;
+    }
+
+    /**
+     * Set value of isAlive for terminate the watcher.
      */
     public void terminate() {
         this.isAlive = false;
@@ -76,7 +93,7 @@ public class Watcher implements Runnable {
         while (this.isAlive) {
             WatchKey key = null;
             try {
-                key = this.watcher.poll(TIMEOUT, TimeUnit.SECONDS);
+                key = this.watcherServ.poll(TIMEOUT, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 L.error("Error watcher, because it was interrupted. This is most likely a bug.", e);
             }
@@ -95,6 +112,9 @@ public class Watcher implements Runnable {
                             }
                         } else if (StandardWatchEventKinds.ENTRY_CREATE.equals(kind)) {
                             recursiveRegistration(resolvePath(key, fileName));
+                            if (this.folderPath.equals(FilenameUtils.getFullPathNoEndSeparator(resolvePath(key, fileName).toFile().getAbsolutePath()))) {
+                                refreshTreeView(this.folderPath);
+                            }
                         } else if (StandardWatchEventKinds.ENTRY_DELETE.equals(kind)) {
                             WatchKey keyToDelete = null;
                             final Path path = resolvePath(key, fileName);
@@ -110,6 +130,9 @@ public class Watcher implements Runnable {
                             } else {
                                 refreshFile(path);
                             }
+                            if (this.folderPath.equals(FilenameUtils.getFullPathNoEndSeparator(path.toFile().getAbsolutePath()))) {
+                                refreshTreeView(this.folderPath);
+                            }
                         } else {
                             throw new IllegalStateException("Unexpected event of kind " + kind);
                         }
@@ -120,7 +143,7 @@ public class Watcher implements Runnable {
         }
         if (!isAlive) {
             try {
-                this.watcher.close();
+                this.watcherServ.close();
             } catch (IOException e) {
                 L.error("I/O error while closing of watcher.", e);
             }
@@ -137,7 +160,7 @@ public class Watcher implements Runnable {
                     @Override
                     public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) {
                         try {
-                            final WatchKey key = dir.register(watcher, 
+                            final WatchKey key = dir.register(watcherServ, 
                                     StandardWatchEventKinds.ENTRY_CREATE, 
                                     StandardWatchEventKinds.ENTRY_DELETE, 
                                     StandardWatchEventKinds.ENTRY_MODIFY);

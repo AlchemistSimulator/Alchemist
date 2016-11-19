@@ -51,6 +51,7 @@ public class TopLayoutController {
     private LeftLayoutController ctrlLeft;
     private String pathFolder;
     private Project project;
+    private Watcher watcher;
 
     /**
      * 
@@ -89,6 +90,13 @@ public class TopLayoutController {
     }
 
     /**
+     * Terminates the watcher.
+     */
+    public void terminateWatcher() {
+        this.watcher.terminate();
+    }
+
+    /**
      * 
      */
     @FXML
@@ -107,7 +115,9 @@ public class TopLayoutController {
             ctrl.setMain(this.main);
             ctrl.setStage(stage);
             stage.showAndWait();
-            setView(new File(ctrl.getFolderPath()));
+            if (ctrl.getFolderPath() != null) {
+                setView(new File(ctrl.getFolderPath()));
+            }
         } catch (IOException e) {
             L.error("Error loading the graphical interface. This is most likely a bug.", e);
             System.exit(1);
@@ -137,12 +147,6 @@ public class TopLayoutController {
                 alert.setContentText(RESOURCES.getString("proj_folder_wrong_content"));
                 alert.showAndWait();
             } else {
-                /*this.pathFolder = dir.getAbsolutePath();
-                this.ctrlLeft.setTreeView(dir);
-                this.btnSave.setDisable(false);
-                this.project = this.ctrlCenter.setField();
-                this.main.getWatcher().registerPath(this.pathFolder);
-                new Thread(this.main.getWatcher(), "WatcherProjectView").start();*/
                 setView(dir);
             }
         }
@@ -161,7 +165,7 @@ public class TopLayoutController {
         this.project.setOutput(out);
         final Batch batch = new Batch();
         batch.setSelected(this.ctrlCenter.isSwitchBatchSelected());
-        batch.setVariables(this.ctrlCenter.getVariables()); // TODO: change
+        batch.setVariables(this.ctrlCenter.getVariables());
         batch.setThreadCount(this.ctrlCenter.getNumberThreads());
         this.project.setBatch(batch);
         this.project.setSimulation(this.ctrlCenter.getSimulationFilePath());
@@ -177,8 +181,18 @@ public class TopLayoutController {
         this.ctrlLeft.setTreeView(dir);
         this.btnSave.setDisable(false);
         this.project = this.ctrlCenter.setField();
-        this.main.getWatcher().registerPath(this.pathFolder);
-        new Thread(this.main.getWatcher(), "WatcherProjectView").start();
+        if (this.watcher == null) {
+            this.watcher = createWatcher();
+        } else if (this.watcher.isWatcherAlive() && !this.watcher.getFolderPath().equals(this.pathFolder)) {
+            terminateWatcher();
+            this.watcher = createWatcher();
+        }
+        this.watcher.registerPath(this.pathFolder);
+        new Thread(this.watcher, "WatcherProjectView").start();
+    }
+
+    private Watcher createWatcher() {
+        return new Watcher(this.ctrlLeft, this.ctrlCenter);
     }
 
 }

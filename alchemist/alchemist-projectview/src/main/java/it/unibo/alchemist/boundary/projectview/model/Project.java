@@ -3,12 +3,6 @@ package it.unibo.alchemist.boundary.projectview.model;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URLClassLoader;
-import java.nio.file.Paths;
-import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -195,8 +189,8 @@ public final class Project {
          * 2. Configure the builder
          * 3. Extract the variables
          */
-        if (getClasspath() == null 
-            || getSimulationPath() == null
+        if (/*getClasspath() == null 
+            || */getSimulationPath() == null
             || getEndTime() == 0
             || getEffectPath() == null
             || getFolderPath() == null
@@ -271,8 +265,6 @@ public final class Project {
             }
         }
     }
-    
-//    private static void add
 
     private Loader createLoader() {
         try {

@@ -12,7 +12,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Stack;
@@ -623,10 +625,28 @@ public class CenterLayoutController {
      * @param list The libraries to add to the classpath.
      */
     private void setClasspath(final ObservableList<String> list) {
-        this.data = list;
+        final List<String> listLibError = new ArrayList<>(); 
+        for (final String lib: list) {
+            if (!addPath(this.ctrlLeft.getPathFolder() + File.separator + lib.replace("/", File.separator))) {
+                listLibError.add(new File(lib).getName());
+            } else {
+                this.data.add(lib);
+            }
+        }
         this.listClass.setItems(this.data);
         if (this.listClass.getItems().size() != 0) {
             this.removeClass.setDisable(false);
+        }
+        if (!listLibError.isEmpty()) {
+            String content = RESOURCES.getString("error_adding_classpath_content") + System.getProperty("line.separator");
+            for (final String lib : listLibError) {
+                content = content + System.getProperty("line.separator") + "- " + lib;
+            }
+            final Alert alertCancel = new Alert(AlertType.ERROR);
+            alertCancel.setTitle(RESOURCES.getString("error_adding_classpath"));
+            alertCancel.setHeaderText(RESOURCES.getString("error_adding_classpath_header"));
+            alertCancel.setContentText(content);
+            alertCancel.showAndWait();
         }
     }
 

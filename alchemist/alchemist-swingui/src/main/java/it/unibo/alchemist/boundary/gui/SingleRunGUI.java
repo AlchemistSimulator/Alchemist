@@ -86,7 +86,8 @@ public final class SingleRunGUI {
                 e -> L.error("Cannot init the UI.", e));
         if (main instanceof Component) {
             final JFrame frame = new JFrame("Alchemist Simulator");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             final JPanel canvas = new JPanel();
             frame.getContentPane().add(canvas);
             canvas.setLayout(new BorderLayout());

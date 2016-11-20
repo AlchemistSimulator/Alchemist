@@ -169,11 +169,18 @@ public class LeftLayoutController {
         }
         final Project project = ProjectIOUtils.loadFrom(this.pathFolder);
         if (project != null) {
-            try {
-                project.runAlchemistSimulation(false);
-            } catch (FileNotFoundException e) {
-                L.error("Error loading simulation file.", e);
-            }
+           final Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        project.runAlchemistSimulation(false);
+                    } catch (FileNotFoundException e) {
+                        L.error("Error loading simulation file.", e);
+                    }
+                }
+            }, "SingleRunGUI");
+           thread.setDaemon(true);
+           thread.start();
         } else {
             final Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle(RESOURCES.getString("error_running"));

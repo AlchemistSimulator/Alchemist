@@ -455,11 +455,18 @@ public class CenterLayoutController {
     public void clickBatch() {
         checkChanges();
         this.project = ProjectIOUtils.loadFrom(this.ctrlLeft.getPathFolder());
-        try {
-            this.project.runAlchemistSimulation(true);
-        } catch (FileNotFoundException e) {
-            L.error("Error loading simulation file.", e);
-        }
+        final Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    project.runAlchemistSimulation(true);
+                } catch (FileNotFoundException e) {
+                    L.error("Error loading simulation file.", e);
+                }
+            }
+        }, "Batch");
+       thread.setDaemon(true);
+       thread.start();
     }
 
     /**
@@ -917,6 +924,7 @@ public class CenterLayoutController {
     private boolean addPath(final String path) {
         URL url = null;
         try {
+            //TODO: Paths.get(lib).toUri().toURL();
             url = new File(path).toURI().toURL();
         } catch (MalformedURLException e) {
             L.error("Error during the construction of the URL.", e);

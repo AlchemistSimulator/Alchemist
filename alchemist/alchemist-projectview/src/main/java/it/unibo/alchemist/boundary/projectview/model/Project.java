@@ -189,52 +189,16 @@ public final class Project {
          * 2. Configure the builder
          * 3. Extract the variables
          */
-        if (/*getClasspath() == null 
-            || */getSimulationPath() == null
+        if (getSimulationPath() == null
             || getEndTime() == 0
-            || getEffectPath() == null
-            || getFolderPath() == null
+            || getEffect() == null
+            || getOutput().getFolder() == null
+            || getOutput().getBaseName() == null
             || getOutput().getSampleInterval() == 0
             || getBatch() == null
             || getBatch().getThreadCount() == 0) {
             L.error("Error during launch. Probably you have been lost some information in the json file.");
         } else {
-            /*for (final String lib : getClasspath()) {
-                //TODO: Paths.get(lib).toUri().toURL();
-                final File file = new File(this.baseDir + File.separator + lib.replace("/", File.separator));
-                URL url = null;
-                try {
-                    url = file.toURI().toURL();
-                } catch (MalformedURLException e) {
-                    L.error("Error during the construction of the URL.", e);
-                }
-                if (url != null) {
-                    final ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
-                    if (systemClassLoader instanceof URLClassLoader) {
-                        final URLClassLoader urlClassLoader = (URLClassLoader) systemClassLoader;
-                        final Class<?> urlClass = URLClassLoader.class;
-                        try {
-                            final Method method = urlClass.getDeclaredMethod("addURL", new Class[]{URL.class});
-                            method.setAccessible(true);
-                            try {
-                                method.invoke(urlClassLoader, new Object[]{url});
-                            } catch (IllegalAccessException e) {
-                                L.error("Error because the method is inaccessible.", e);
-                            } catch (IllegalArgumentException e) {
-                                L.error("Error because the objects are not an instance of the method.", e);
-                            } catch (InvocationTargetException e) {
-                                L.error("Error during invoke of method.", e);
-                            }
-                        } catch (NoSuchMethodException e) {
-                            L.error("Error because no methods matching with \"addURL\".", e);
-                        } catch (SecurityException e) {
-                            L.error("Error because there is a security manager.", e);
-                        }
-                    } else {
-                        // TODO: signal error
-                    }
-                }
-            }*/
             final Loader loader = createLoader();
             if (loader != null) {
                 /* TODO:
@@ -284,30 +248,21 @@ public final class Project {
     }
 
     private String getEffectPath() {
-        if (getEffect() != null) {
-            if (getEffect().equals("")) {
-                return "";
-            } else {
-                return this.baseDir + File.separator + (getEffect().replace("/", File.separator));
-            }
-        } else {
+        if (getEffect() == null || getEffect().equals("")) {
             return null;
+        } else {
+            return this.baseDir + File.separator + (getEffect().replace("/", File.separator));
         }
     }
 
     private String getFolderPath() {
-        if (this.output != null) {
-            if (this.output.isSelected()) {
-                if (getOutput().getFolder() == null || getOutput().getBaseName() == null) {
-                    return null;
-                } else {
-                    return this.baseDir + File.separator + getOutput().getFolder() + File.separator + getOutput().getBaseName();
-                }
-            } else {
-                return "";
-            }
-        } else {
+        if (this.output == null 
+                || !this.output.isSelected() 
+                || getOutput().getFolder() == null 
+                || getOutput().getBaseName() == null) {
             return null;
+        } else {
+            return this.baseDir + File.separator + getOutput().getFolder() + File.separator + getOutput().getBaseName();
         }
     }
 

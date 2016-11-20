@@ -1,5 +1,7 @@
 package it.unibo.alchemist.boundary.projectview.controller;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
@@ -135,7 +137,10 @@ public class NewProjLayoutFolderController {
         loader.setLocation(ProjectGUI.class.getResource("view/NewProjLayoutSelect.fxml"));
         try {
             final AnchorPane pane = (AnchorPane) loader.load();
-            final Scene scene = new Scene(pane);
+            final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            final double width = screenSize.getWidth() * 20.83 / 100;
+            final double height = screenSize.getHeight() * 13.89 / 100;
+            final Scene scene = new Scene(pane, width, height);
             this.stage.setScene(scene);
 
             final NewProjLayoutSelectController ctrl = loader.getController();

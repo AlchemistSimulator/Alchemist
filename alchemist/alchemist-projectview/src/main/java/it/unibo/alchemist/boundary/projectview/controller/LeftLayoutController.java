@@ -1,6 +1,8 @@
 package it.unibo.alchemist.boundary.projectview.controller;
 
 import java.awt.Desktop;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -231,7 +233,10 @@ public class LeftLayoutController {
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(this.main.getStage());
             stage.setResizable(false);
-            final Scene scene = new Scene(pane);
+            final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            final double width = screenSize.getWidth() * 20.83 / 100;
+            final double height = screenSize.getHeight() * 13.89 / 100;
+            final Scene scene = new Scene(pane, width, height);
             stage.setScene(scene);
             final NewFolderOrFileDialogController controller = loader.getController();
             controller.initialize(isFolder);

@@ -6,20 +6,20 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 
-<AnchorPane prefHeight="100.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unibo.alchemist.boundary.projectview.controller.TopLayoutController">
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unibo.alchemist.boundary.projectview.controller.TopLayoutController">
    <children>
-      <HBox prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <Button fx:id="btnNew" mnemonicParsing="false" styleClass="btnMenu" onAction="#clickNew"/>
             <Button fx:id="btnOpen" mnemonicParsing="false" styleClass="btnMenu" onAction="#clickOpen"/>
-            <Separator orientation="VERTICAL" prefHeight="200.0">
+            <Separator orientation="VERTICAL" prefHeight="100.0">
                <padding>
                   <Insets bottom="10.0" top="10.0" />
                </padding>
             </Separator>
             <Button fx:id="btnSave" mnemonicParsing="false" styleClass="btnMenu" onAction="#clickSave" />
             <!--  <Button fx:id="btnSaveAs" mnemonicParsing="false" styleClass="btnMenu" /> 
-            <Separator orientation="VERTICAL" prefHeight="200.0">
+            <Separator orientation="VERTICAL" prefHeight="100.0">
                <padding>
                   <Insets bottom="10.0" top="10.0" />
                </padding>

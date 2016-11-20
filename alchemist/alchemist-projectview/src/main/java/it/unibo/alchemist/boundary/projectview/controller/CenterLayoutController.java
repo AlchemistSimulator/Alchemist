@@ -1,6 +1,8 @@
 package it.unibo.alchemist.boundary.projectview.controller;
 
 import java.awt.Desktop;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -136,8 +138,6 @@ public class CenterLayoutController {
     @FXML
     private Label unitOut;
     @FXML
-    private Label unitTime;
-    @FXML
     private ListView<String> listClass = new ListView<>();
     @FXML
     private ListView<String> listYaml = new ListView<>();;
@@ -201,7 +201,6 @@ public class CenterLayoutController {
                 new SpinnerValueFactory.DoubleSpinnerValueFactory(MIN, Double.MAX_VALUE, VALUE_TIME, STEP));
         this.thread.setText(RESOURCES.getString("n_thread"));
         this.unitOut.setText(RESOURCES.getString("sec"));
-        this.unitTime.setText(RESOURCES.getString("sec"));
         if (this.listClass.getItems().size() == 0) {
             this.removeClass.setDisable(true);
         }
@@ -870,7 +869,10 @@ public class CenterLayoutController {
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(this.main.getStage());
             stage.setResizable(false);
-            final Scene scene = new Scene(pane);
+            final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            final double width = screenSize.getWidth() * 20.83 / 100;
+            final double height = screenSize.getHeight() * 13.89 / 100;
+            final Scene scene = new Scene(pane, width, height);
             stage.setScene(scene);
 
             final FileNameDialogController controller = loader.getController();

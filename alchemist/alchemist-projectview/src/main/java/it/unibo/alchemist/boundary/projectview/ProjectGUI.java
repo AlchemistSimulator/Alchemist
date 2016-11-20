@@ -1,5 +1,7 @@
 package it.unibo.alchemist.boundary.projectview;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.IOException;
 
 import org.slf4j.Logger;
@@ -70,8 +72,10 @@ public class ProjectGUI extends Application {
         try {
             if (layoutName.equals("RootLayout")) {
                 this.root = (BorderPane) loader.load();
-                //TODO: remove pixel values
-                final Scene scene = new Scene(this.root, 1200, 950);
+                final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                final double width = screenSize.getWidth() * 62.5 / 100;
+                final double height = screenSize.getHeight() * 87.96 / 100;
+                final Scene scene = new Scene(this.root, width, height);
                 scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
                 this.primaryStage.setScene(scene);
                 this.primaryStage.show();

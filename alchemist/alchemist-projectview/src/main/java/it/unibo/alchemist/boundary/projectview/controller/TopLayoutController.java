@@ -1,5 +1,7 @@
 package it.unibo.alchemist.boundary.projectview.controller;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -10,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -20,6 +23,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  * 
@@ -107,11 +111,20 @@ public class TopLayoutController {
             stage.setTitle(RESOURCES.getString("new_proj"));
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(this.main.getStage());
-            final Scene scene = new Scene(pane);
+            final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            final double width = screenSize.getWidth() * 20.83 / 100;
+            final double height = screenSize.getHeight() * 13.89 / 100;
+            final Scene scene = new Scene(pane, width, height);
             stage.setScene(scene);
             final NewProjLayoutFolderController ctrl = loader.getController();
             ctrl.setMain(this.main);
             ctrl.setStage(stage);
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(final WindowEvent event) {
+                    ctrl.setFolderPath(null);
+                }
+            });
             stage.showAndWait();
             if (ctrl.getFolderPath() != null) {
                 setView(new File(ctrl.getFolderPath()));

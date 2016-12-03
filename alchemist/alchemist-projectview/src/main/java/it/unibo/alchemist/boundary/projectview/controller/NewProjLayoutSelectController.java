@@ -32,6 +32,7 @@ public class NewProjLayoutSelectController {
 
     private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
     private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
+    private static final String FILE_DUMMY = "dummy";
 
     @FXML
     private Button backBtn;
@@ -132,10 +133,12 @@ public class NewProjLayoutSelectController {
                 new File(folder + File.separator + f.getName()).mkdir();
                 createFile(folder + File.separator + f.getName(), folderTempl + "/" + f.getName());
             } else {
-                try {
-                    new File(folder + File.separator + f.getName()).createNewFile();
-                } catch (IOException e) {
-                    L.error("I/O error during the creation of new file.", e);
+                if (!f.getName().equals(FILE_DUMMY)) {
+                    try {
+                        new File(folder + File.separator + f.getName()).createNewFile();
+                    } catch (IOException e) {
+                        L.error("I/O error during the creation of new file.", e);
+                    }
                 }
             }
         }

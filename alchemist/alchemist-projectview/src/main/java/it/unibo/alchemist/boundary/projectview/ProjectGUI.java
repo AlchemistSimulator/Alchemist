@@ -11,6 +11,7 @@ import it.unibo.alchemist.boundary.projectview.controller.CenterLayoutController
 import it.unibo.alchemist.boundary.projectview.controller.LeftLayoutController;
 import it.unibo.alchemist.boundary.projectview.controller.TopLayoutController;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -48,22 +49,22 @@ public class ProjectGUI extends Application {
     public void start(final Stage primaryStage) {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Alchemist");
-
         initLayout("RootLayout");
         initLayout("LeftLayout");
         initLayout("CenterLayout");
         initLayout("TopLayout");
-
+        Platform.setImplicitExit(false);
         this.primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-
             @Override
             public void handle(final WindowEvent wind) {
+                wind.consume();
                 controllerCenter.checkChanges();
-                controllerTop.terminateWatcher();
-                primaryStage.close();
+                if (controllerCenter.isCorrectnessSpinTime() && controllerCenter.isCorrectnessSpinOut()) {
+                    controllerTop.terminateWatcher();
+                    Platform.exit();
+                }
             }
         });
-
     }
 
     private void initLayout(final String layoutName) {

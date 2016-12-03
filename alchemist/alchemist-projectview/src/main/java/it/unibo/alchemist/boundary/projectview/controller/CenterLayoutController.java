@@ -64,6 +64,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import javafx.util.StringConverter;
 import sun.misc.URLClassPath;
 
 /**
@@ -150,18 +151,20 @@ public class CenterLayoutController {
     @FXML
     private TextField bnTextOut;
 
-    private LeftLayoutController ctrlLeft;
-    private ProjectGUI main;
-    private Project project;
 
-    private Map<String, Boolean> variables = new HashMap<>();
-    private ObservableList<String> data = FXCollections.observableArrayList();
-    private final ToggleSwitch tsOut = new ToggleSwitch();
-    private final ToggleSwitch tsVar = new ToggleSwitch();
+    private boolean isSpinTimeCorrect = true;
+    private boolean isSpinOutCorrect = true;
     private final Image img = new Image(ProjectGUI.class.getResource("/icon/icon-delete.png").toExternalForm());
     private final ImageView imgViewYaml = new ImageView(img);
     private final ImageView imgViewEff = new ImageView(img);
     private final ImageView imgViewOut = new ImageView(img);
+    private LeftLayoutController ctrlLeft;
+    private Map<String, Boolean> variables = new HashMap<>();
+    private ObservableList<String> data = FXCollections.observableArrayList();
+    private ProjectGUI main;
+    private Project project;
+    private final ToggleSwitch tsOut = new ToggleSwitch();
+    private final ToggleSwitch tsVar = new ToggleSwitch();
 
     /**
      * 
@@ -196,13 +199,77 @@ public class CenterLayoutController {
         this.spinOut.setEditable(true);
         this.spinOut.setValueFactory(
                 new SpinnerValueFactory.DoubleSpinnerValueFactory(MIN, Double.MAX_VALUE, 1, STEP));
+        this.spinOut.focusedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                return;
+            }
+            this.isSpinOutCorrect = checkInputSpinner(this.spinOut);
+        });
         this.spinTime.setEditable(true);
         this.spinTime.setValueFactory(
                 new SpinnerValueFactory.DoubleSpinnerValueFactory(MIN, Double.MAX_VALUE, VALUE_TIME, STEP));
+        this.spinTime.focusedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                return;
+            }
+            this.isSpinTimeCorrect = checkInputSpinner(this.spinTime);
+        });
         this.thread.setText(RESOURCES.getString("n_thread"));
         this.unitOut.setText(RESOURCES.getString("sec"));
         if (this.listClass.getItems().size() == 0) {
             this.removeClass.setDisable(true);
+        }
+    }
+
+    private <T> boolean checkInputSpinner(final Spinner<T> spinner) {
+        final String regex = "[0-9, /,]+";
+        final String text = spinner.getEditor().getText();
+        if (text.matches(regex)) {
+            spinner.setStyle("-fx-focus-color: #0093ff;");
+            final SpinnerValueFactory<T> valueFactory = spinner.getValueFactory();
+            if (valueFactory != null) {
+                final StringConverter<T> converter = valueFactory.getConverter();
+                if (converter != null) {
+                    final T value = converter.fromString(text);
+                    valueFactory.setValue(value);
+                    return true;
+                }
+            }
+        } else {
+            final Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle(RESOURCES.getString("incorrect_value"));
+            alert.setHeaderText(RESOURCES.getString("incorrect_value_header"));
+            alert.setContentText(RESOURCES.getString("incorrect_value_content"));
+            try {
+                alert.showAndWait();
+                spinner.setStyle("-fx-focus-color: #ff0000;");
+                spinner.requestFocus();
+            } catch (IllegalStateException e) {
+                setSamplInterval(1);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 
+     * @return True if the end time spinner is correctly setted, otherwise false. 
+     */
+    public boolean isCorrectnessSpinTime() {
+        return this.isSpinTimeCorrect;
+    }
+
+    /**
+     * 
+     * @return True if the sampling interval spinner is correctly setted or the output 
+     *          section is not selected, otherwise false. 
+     */
+    public boolean isCorrectnessSpinOut() {
+        if (isSwitchOutputSelected()) {
+            return this.isSpinOutCorrect;
+        } else {
+            return true;
         }
     }
 
@@ -1015,6 +1082,7 @@ public class CenterLayoutController {
      * 
      */
     public void checkChanges() {
+        this.grid.requestFocus();
         if (this.project != null 
                 && (this.project.getSimulation() == null
                         || !this.project.getSimulation().equals(getSimulationFilePath())

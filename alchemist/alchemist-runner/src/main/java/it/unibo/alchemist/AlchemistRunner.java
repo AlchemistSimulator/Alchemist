@@ -48,6 +48,7 @@ public final class AlchemistRunner {
     private final double samplingInterval;
     private final int parallelism;
     private final boolean headless;
+    private final int closeOperation;
 
     /**
      * 
@@ -55,6 +56,7 @@ public final class AlchemistRunner {
      */
     public static class Builder {
         private int parallelism = Runtime.getRuntime().availableProcessors() + 1;
+        private int closeOperation;
         private boolean headless;
         private double samplingInt = 1;
         private final Loader loader;
@@ -64,7 +66,8 @@ public final class AlchemistRunner {
 
         /**
          * 
-         * @param loader loader
+         * @param loader
+         *            loader
          */
         public Builder(final Loader loader) {
             this.loader = Objects.requireNonNull(loader, "Loader can't be null.");
@@ -72,7 +75,8 @@ public final class AlchemistRunner {
 
         /**
          * 
-         * @param uri effect uri
+         * @param uri
+         *            effect uri
          * @return builder
          */
         public Builder setEffects(final String uri) {
@@ -82,7 +86,8 @@ public final class AlchemistRunner {
 
         /**
          * 
-         * @param deltaTime time interval
+         * @param deltaTime
+         *            time interval
          * @return builder
          */
         public Builder setInterval(final double deltaTime) {
@@ -96,7 +101,8 @@ public final class AlchemistRunner {
 
         /**
          * 
-         * @param uri output uri
+         * @param uri
+         *            output uri
          * @return builder
          */
         public Builder setOutputFile(final String uri) {
@@ -106,7 +112,8 @@ public final class AlchemistRunner {
 
         /**
          * 
-         * @param t end time
+         * @param t
+         *            end time
          * @return builder
          */
         public Builder setEndTime(final Time t) {
@@ -116,7 +123,8 @@ public final class AlchemistRunner {
 
         /**
          * 
-         * @param headless is headless
+         * @param headless
+         *            is headless
          * @return builder
          */
         public Builder setHeadless(final boolean headless) {
@@ -126,7 +134,8 @@ public final class AlchemistRunner {
 
         /**
          * 
-         * @param threads threads number
+         * @param threads
+         *            threads number
          * @return builder
          */
         public Builder setParallelism(final int threads) {
@@ -136,20 +145,34 @@ public final class AlchemistRunner {
 
         /**
          * 
+         * @param closeOp
+         *            the close operation
+         * @return buider
+         */
+        public Builder setGUICloseOperation(final int closeOp) {
+            if (this.headless) {
+                throw new IllegalArgumentException("The simulation is headless.");
+            }
+            if (closeOp < 0 || closeOp > 3) {
+                throw new IllegalArgumentException("The value of close operation is not valid.");
+            }
+            this.closeOperation = closeOp;
+            return this;
+        }
+
+        /**
+         * 
          * @return AlchemistRunner
          */
         public AlchemistRunner build() {
-            return new AlchemistRunner(this.loader, this.endTime, this.exportFileRoot, this.effectsFile, this.samplingInt, this.parallelism, this.headless);
+            return new AlchemistRunner(this.loader, this.endTime, this.exportFileRoot, this.effectsFile,
+                    this.samplingInt, this.parallelism, this.headless, this.closeOperation);
         }
     }
 
-    private AlchemistRunner(final Loader source, 
-            final Time endTime, 
-            final Optional<String> exportRoot, 
-            final Optional<String> effectsFile, 
-            final double sampling, 
-            final int parallelism, 
-            final boolean headless) {
+    private AlchemistRunner(final Loader source, final Time endTime, final Optional<String> exportRoot,
+            final Optional<String> effectsFile, final double sampling, final int parallelism, final boolean headless,
+            final int closeOperation) {
         this.effectsFile = effectsFile;
         this.endTime = endTime;
         this.exportFileRoot = exportRoot;
@@ -157,6 +180,7 @@ public final class AlchemistRunner {
         this.loader = source;
         this.parallelism = parallelism;
         this.samplingInterval = sampling;
+        this.closeOperation = closeOperation;
     }
 
     /**
@@ -169,7 +193,8 @@ public final class AlchemistRunner {
 
     /**
      * 
-     * @param variables loader variables
+     * @param variables
+     *            loader variables
      */
     public void launch(final String... variables) {
         if (variables != null && variables.length > 0) {
@@ -178,16 +203,13 @@ public final class AlchemistRunner {
              */
             final Map<String, Variable> simVars = getVariables();
             final List<Entry<String, Variable>> varStreams = simVars.entrySet().stream()
-                .filter(e -> ArrayUtils.contains(variables, e.getKey()))
-                .collect(Collectors.toList());
+                    .filter(e -> ArrayUtils.contains(variables, e.getKey())).collect(Collectors.toList());
             final ExecutorService executor = Executors.newFixedThreadPool(parallelism);
-            runWith(Collections.emptyMap(), varStreams, 0, exportFileRoot, loader, samplingInterval, Long.MAX_VALUE, endTime,
-                    sim -> {
-                         sim.addCommand(new StateCommand<>().run().build());
-                         sim.run();
-                    })
-                .parallel()
-                .forEach(executor::submit);
+            runWith(Collections.emptyMap(), varStreams, 0, exportFileRoot, loader, samplingInterval, Long.MAX_VALUE,
+                    endTime, sim -> {
+                        sim.addCommand(new StateCommand<>().run().build());
+                        sim.run();
+                    }).parallel().forEach(executor::submit);
             executor.shutdown();
             try {
                 executor.awaitTermination(Integer.MAX_VALUE, TimeUnit.DAYS);
@@ -207,9 +229,9 @@ public final class AlchemistRunner {
                             sim.addCommand(new StateCommand<>().run().build());
                         } else {
                             if (effectsFile.isPresent()) {
-                                SingleRunGUI.make(sim, effectsFile.get());
+                                SingleRunGUI.make(sim, effectsFile.get(), closeOperation);
                             } else {
-                                SingleRunGUI.make(sim);
+                                SingleRunGUI.make(sim, closeOperation);
                             }
                         }
                         sim.run();
@@ -218,13 +240,8 @@ public final class AlchemistRunner {
     }
 
     private static <T> Stream<Runnable> runWith(final Map<String, Double> baseVarMap,
-            final List<Entry<String, Variable>> varStreams,
-            final int pos,
-            final Optional<String> filebase,
-            final Loader loader,
-            final double sample,
-            final long endStep,
-            final Time endTime,
+            final List<Entry<String, Variable>> varStreams, final int pos, final Optional<String> filebase,
+            final Loader loader, final double sample, final long endStep, final Time endTime,
             final Consumer<Simulation<T>> afterCreation) {
         if (varStreams == null || pos == varStreams.size()) {
             return Stream.of(() -> {
@@ -232,17 +249,17 @@ public final class AlchemistRunner {
                 final Simulation<T> sim = new Engine<>(env, endStep, endTime);
                 if (filebase.isPresent()) {
                     /*
-                     * Make the header: get all the default values and substitute
-                     * those that are different in this run
+                     * Make the header: get all the default values and
+                     * substitute those that are different in this run
                      */
                     final Map<String, Double> vars = loader.getVariables().entrySet().parallelStream()
                             .collect(Collectors.toMap(Entry::getKey, e -> e.getValue().getDefault()));
                     vars.putAll(baseVarMap);
-                    final String header = vars.entrySet().stream()
-                            .map(e -> e.getKey() + " = " + e.getValue())
+                    final String header = vars.entrySet().stream().map(e -> e.getKey() + " = " + e.getValue())
                             .collect(Collectors.joining(", "));
                     try {
-                        final Exporter<T> exp = new Exporter<>(filebase.get() + ".txt", sample, header, loader.getDataExtractors());
+                        final Exporter<T> exp = new Exporter<>(filebase.get() + ".txt", sample, header,
+                                loader.getDataExtractors());
                         sim.addOutputMonitor(exp);
                     } catch (FileNotFoundException e1) {
                         L.error("Could not create " + filebase, e1);
@@ -261,6 +278,5 @@ public final class AlchemistRunner {
             });
         }
     }
-
 
 }

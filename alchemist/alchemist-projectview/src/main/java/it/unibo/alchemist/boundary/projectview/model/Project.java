@@ -13,6 +13,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.swing.JFrame;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -212,6 +214,7 @@ public final class Project {
                         .setInterval(getOutput().getSampleInterval())
                         .setParallelism(getBatch().getThreadCount())
                         .setHeadless(false)
+                        .setGUICloseOperation(JFrame.DISPOSE_ON_CLOSE)
                         .build();
                     final Map<String, Variable> keys = runner.getVariables();
                     final Set<String> selectedVariables = isBatch 

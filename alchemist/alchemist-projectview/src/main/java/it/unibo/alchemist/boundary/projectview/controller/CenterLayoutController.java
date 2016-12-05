@@ -73,10 +73,13 @@ import sun.misc.URLClassPath;
 public class CenterLayoutController {
 
     private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
-    private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
-    private static final double MIN = 0.01;
+    private static final ResourceBundle RESOURCES = LocalizedResourceBundle
+            .get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
+    private static final double MIN = Double.MIN_VALUE;
+    private static final double MAX = Double.MAX_VALUE;
     private static final double STEP = 0.01;
-    private static final double VALUE_TIME = 60;
+    private static final double DEFAULT_VALUE = 1;
+    private static final double TOLERANCE_VALUE = 10e-6;
     private static final String EFF_EXT = RESOURCES.getString("eff_ext");
     private static final String YAML_EXT = RESOURCES.getString("yaml_ext");
     private static final String FILE_NOT_FOUND = RESOURCES.getString("file_not_found");
@@ -151,7 +154,6 @@ public class CenterLayoutController {
     @FXML
     private TextField bnTextOut;
 
-
     private boolean isSpinTimeCorrect = true;
     private boolean isSpinOutCorrect = true;
     private final Image img = new Image(ProjectGUI.class.getResource("/icon/icon-delete.png").toExternalForm());
@@ -191,22 +193,18 @@ public class CenterLayoutController {
         this.setOut.setText(RESOURCES.getString("set_folder"));
         this.setYaml.setText(RESOURCES.getString("set"));
         this.simConf.setText(RESOURCES.getString("sim_pane_title"));
-        this.spinBatch.setValueFactory(
-                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 
-                        Runtime.getRuntime().availableProcessors() + 1,
-                        Runtime.getRuntime().availableProcessors() + 1, 
-                        1));
+        this.spinBatch.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1,
+                Runtime.getRuntime().availableProcessors() + 1, Runtime.getRuntime().availableProcessors() + 1, 1));
         this.spinOut.setEditable(true);
-        this.spinOut.setValueFactory(
-                new SpinnerValueFactory.DoubleSpinnerValueFactory(MIN, Double.MAX_VALUE, 1, STEP));
+        this.spinOut.setValueFactory(new DoubleSpinnerValueFactory(MIN, MAX, DEFAULT_VALUE, STEP, TOLERANCE_VALUE));
         this.spinOut.focusedProperty().addListener((obs, oldValue, newValue) -> {
             if (!newValue) {
                 this.isSpinOutCorrect = checkInputSpinner(this.spinOut);
             }
         });
         this.spinTime.setEditable(true);
-        this.spinTime.setValueFactory(
-                new SpinnerValueFactory.DoubleSpinnerValueFactory(MIN, Double.MAX_VALUE, VALUE_TIME, STEP));
+        this.spinTime
+                .setValueFactory(new DoubleSpinnerValueFactory(MIN, MAX, DEFAULT_VALUE, STEP, TOLERANCE_VALUE));
         this.spinTime.focusedProperty().addListener((obs, oldValue, newValue) -> {
             if (!newValue) {
                 this.isSpinTimeCorrect = checkInputSpinner(this.spinTime);
@@ -220,31 +218,30 @@ public class CenterLayoutController {
     }
 
     private <T> boolean checkInputSpinner(final Spinner<T> spinner) {
-        final String regex = "[0-9, /,]+";
         final String text = spinner.getEditor().getText();
-        if (text.matches(regex)) {
-            spinner.setStyle("-fx-focus-color: #0093ff;");
-            final SpinnerValueFactory<T> valueFactory = spinner.getValueFactory();
-            if (valueFactory != null) {
-                final StringConverter<T> converter = valueFactory.getConverter();
-                if (converter != null) {
+        spinner.setStyle("-fx-focus-color: #0093ff;");
+        final SpinnerValueFactory<T> valueFactory = spinner.getValueFactory();
+        if (valueFactory != null) {
+            final StringConverter<T> converter = valueFactory.getConverter();
+            if (converter != null) {
+                try {
                     final T value = converter.fromString(text);
                     valueFactory.setValue(value);
                     return true;
+                } catch (NumberFormatException ex) {
+                    final Alert alert = new Alert(AlertType.ERROR);
+                    alert.setTitle(RESOURCES.getString("incorrect_value"));
+                    alert.setHeaderText(RESOURCES.getString("incorrect_value_header"));
+                    alert.setContentText(ex.getMessage());
+                    try {
+                        alert.showAndWait();
+                        spinner.setStyle("-fx-focus-color: #ff0000;");
+                        spinner.requestFocus();
+                    } catch (IllegalStateException e) {
+                        this.spinOut.getValueFactory().setValue(1d);
+                        return true;
+                    }
                 }
-            }
-        } else {
-            final Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle(RESOURCES.getString("incorrect_value"));
-            alert.setHeaderText(RESOURCES.getString("incorrect_value_header"));
-            alert.setContentText(RESOURCES.getString("incorrect_value_content"));
-            try {
-                alert.showAndWait();
-                spinner.setStyle("-fx-focus-color: #ff0000;");
-                spinner.requestFocus();
-            } catch (IllegalStateException e) {
-                this.spinOut.getValueFactory().setValue(1d);
-                return true;
             }
         }
         return false;
@@ -252,7 +249,7 @@ public class CenterLayoutController {
 
     /**
      * 
-     * @return True if the end time spinner is correctly setted, otherwise false. 
+     * @return True if the end time spinner is correctly set, otherwise false.
      */
     public boolean isCorrectnessSpinTime() {
         return this.isSpinTimeCorrect;
@@ -260,8 +257,8 @@ public class CenterLayoutController {
 
     /**
      * 
-     * @return True if the sampling interval spinner is correctly setted or the output 
-     *          section is not selected, otherwise false. 
+     * @return True if the sampling interval spinner is correctly set or the
+     *         output section is not selected, otherwise false.
      */
     public boolean isCorrectnessSpinOut() {
         if (isSwitchOutputSelected()) {
@@ -273,7 +270,9 @@ public class CenterLayoutController {
 
     /**
      * Sets the main class and adds toggle switch to view.
-     * @param main main class.
+     * 
+     * @param main
+     *            main class.
      */
     public void setMain(final ProjectGUI main) {
         this.main = main;
@@ -286,7 +285,8 @@ public class CenterLayoutController {
 
     /**
      * 
-     * @param controller LeftLayout controller
+     * @param controller
+     *            LeftLayout controller
      */
     public void setCtrlLeft(final LeftLayoutController controller) {
         this.ctrlLeft = controller;
@@ -301,8 +301,7 @@ public class CenterLayoutController {
 
         ts.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(final ObservableValue<? extends Boolean> ov, 
-                    final Boolean t1, final Boolean t2) {
+            public void changed(final ObservableValue<? extends Boolean> ov, final Boolean t1, final Boolean t2) {
                 if (ts.isSelected()) {
                     setComponentVisible(ts, true);
                 } else {
@@ -324,7 +323,8 @@ public class CenterLayoutController {
             this.imgViewOut.setVisible(vis);
         } else {
             if (ts.isSelected() && this.pathYaml.getText().equals("")) {
-                setAlert(RESOURCES.getString("file_no_selected"), RESOURCES.getString("yaml_no_selected_header"), RESOURCES.getString("yaml_no_selected_content"));
+                setAlert(RESOURCES.getString("file_no_selected"), RESOURCES.getString("yaml_no_selected_header"),
+                        RESOURCES.getString("yaml_no_selected_content"));
                 setVisibilityBatch(false);
                 ts.setSelected(false);
             } else {
@@ -349,7 +349,8 @@ public class CenterLayoutController {
     public void setVariablesList() {
         Loader fileYaml = null;
         try {
-            fileYaml = new YamlLoader(new FileReader(this.ctrlLeft.getPathFolder() + File.separator + this.pathYaml.getText().replace("/", File.separator)));
+            fileYaml = new YamlLoader(new FileReader(this.ctrlLeft.getPathFolder() + File.separator
+                    + this.pathYaml.getText().replace("/", File.separator)));
         } catch (FileNotFoundException e) {
             L.error("Error loading simulation file.", e);
         }
@@ -357,7 +358,7 @@ public class CenterLayoutController {
             final ObservableList<String> vars = FXCollections.observableArrayList();
             vars.addAll(fileYaml.getVariables().keySet());
             if (this.variables.isEmpty()) {
-                for (final String s: vars) {
+                for (final String s : vars) {
                     this.variables.put(s, false);
                 }
             }
@@ -370,14 +371,13 @@ public class CenterLayoutController {
                         observable.set(true);
                     }
                     observable.addListener((obs, wasSelected, isNowSelected) -> {
-                            if (wasSelected && !isNowSelected) {
-                                variables.put(var, false);
-                            }
-                            if (!wasSelected && isNowSelected) {
-                                variables.put(var, true);
-                            }
+                        if (wasSelected && !isNowSelected) {
+                            variables.put(var, false);
                         }
-                    );
+                        if (!wasSelected && isNowSelected) {
+                            variables.put(var, true);
+                        }
+                    });
                     return observable;
                 }
             }));
@@ -446,19 +446,24 @@ public class CenterLayoutController {
     @FXML
     public void clickSetFolderOut() {
         if (this.ctrlLeft.getSelectedFilePath() == null) {
-            setAlert(RESOURCES.getString("folder_no_selected"), RESOURCES.getString("folder_no_selected_header"), RESOURCES.getString("folder_no_selected_content"));
+            setAlert(RESOURCES.getString("folder_no_selected"), RESOURCES.getString("folder_no_selected_header"),
+                    RESOURCES.getString("folder_no_selected_content"));
         } else if (!FilenameUtils.getExtension(this.ctrlLeft.getSelectedFilePath()).isEmpty()) {
-            setAlert(RESOURCES.getString("wrong_selection"), RESOURCES.getString("wrong_selection_header"), RESOURCES.getString("wrong_selection_content"));
+            setAlert(RESOURCES.getString("wrong_selection"), RESOURCES.getString("wrong_selection_header"),
+                    RESOURCES.getString("wrong_selection_content"));
         } else {
             File file = new File(this.ctrlLeft.getSelectedFilePath());
-            while (!file.getName().equals(RESOURCES.getString("folder_output")) && !file.getName().equals(new File(this.ctrlLeft.getPathFolder()).getName())) {
-                    file = file.getParentFile();
+            while (!file.getName().equals(RESOURCES.getString("folder_output"))
+                    && !file.getName().equals(new File(this.ctrlLeft.getPathFolder()).getName())) {
+                file = file.getParentFile();
             }
             if (file.getName().equals(RESOURCES.getString("folder_output"))) {
-                this.pathOut.setText(new File(this.ctrlLeft.getPathFolder()).toURI().relativize(new File(this.ctrlLeft.getSelectedFilePath()).toURI()).getPath());
+                this.pathOut.setText(new File(this.ctrlLeft.getPathFolder()).toURI()
+                        .relativize(new File(this.ctrlLeft.getSelectedFilePath()).toURI()).getPath());
                 setDeleteIcon(this.gridOut, this.pathOut, this.imgViewOut, false);
             } else {
-                setAlert(RESOURCES.getString("folder_wrong"), RESOURCES.getString("folder_wrong_header"), RESOURCES.getString("folder_wrong_content"));
+                setAlert(RESOURCES.getString("folder_wrong"), RESOURCES.getString("folder_wrong_header"),
+                        RESOURCES.getString("folder_wrong_content"));
             }
         }
     }
@@ -473,11 +478,13 @@ public class CenterLayoutController {
         }
 
         if (this.ctrlLeft.getSelectedFilePath() == null) {
-            setAlert(RESOURCES.getString("file_no_selected"), RESOURCES.getString("file_no_selected_header"), RESOURCES.getString("file_no_selected_content"));
-        } else { 
+            setAlert(RESOURCES.getString("file_no_selected"), RESOURCES.getString("file_no_selected_header"),
+                    RESOURCES.getString("file_no_selected_content"));
+        } else {
             if (!this.data.contains(this.ctrlLeft.getSelectedFilePath())) {
                 if (addPath(this.ctrlLeft.getSelectedFilePath())) {
-                    this.data.add(new File(this.ctrlLeft.getPathFolder()).toURI().relativize(new File(this.ctrlLeft.getSelectedFilePath()).toURI()).getPath());
+                    this.data.add(new File(this.ctrlLeft.getPathFolder()).toURI()
+                            .relativize(new File(this.ctrlLeft.getSelectedFilePath()).toURI()).getPath());
                     this.listClass.setItems(data);
                 } else {
                     final Alert alertCancel = new Alert(AlertType.ERROR);
@@ -487,7 +494,8 @@ public class CenterLayoutController {
                     alertCancel.showAndWait();
                 }
             } else {
-                setAlert(RESOURCES.getString("file_name_exists"), RESOURCES.getString("file_name_class_header"), RESOURCES.getString("file_name_class_content"));
+                setAlert(RESOURCES.getString("file_name_exists"), RESOURCES.getString("file_name_class_header"),
+                        RESOURCES.getString("file_name_class_content"));
             }
         }
     }
@@ -529,8 +537,8 @@ public class CenterLayoutController {
                 }
             }
         }, "Batch");
-       thread.setDaemon(true);
-       thread.start();
+        thread.setDaemon(true);
+        thread.start();
     }
 
     /**
@@ -550,7 +558,8 @@ public class CenterLayoutController {
 
     /**
      * 
-     * @param path The path of file simulation.
+     * @param path
+     *            The path of file simulation.
      */
     private void setSimulationFilePath(final String path) {
         this.pathYaml.setText(path);
@@ -567,7 +576,8 @@ public class CenterLayoutController {
 
     /**
      * 
-     * @param endT Selected end time.
+     * @param endT
+     *            Selected end time.
      */
     private void setEndTime(final double endT) {
         this.spinTime.getValueFactory().setValue(endT);
@@ -583,7 +593,8 @@ public class CenterLayoutController {
 
     /**
      * 
-     * @param path The path of file effect.
+     * @param path
+     *            The path of file effect.
      */
     private void setEffect(final String path) {
         this.pathEff.setText(path);
@@ -600,7 +611,8 @@ public class CenterLayoutController {
 
     /**
      * 
-     * @param select true if the output switch is selected.
+     * @param select
+     *            true if the output switch is selected.
      */
     private void setSwitchOutputSelected(final boolean select) {
         this.tsOut.setSelected(select);
@@ -616,7 +628,8 @@ public class CenterLayoutController {
 
     /**
      * 
-     * @param path The path of output folder.
+     * @param path
+     *            The path of output folder.
      */
     private void setOutputFolder(final String path) {
         this.pathOut.setText(path);
@@ -633,7 +646,8 @@ public class CenterLayoutController {
 
     /**
      * 
-     * @param name The name of output file.
+     * @param name
+     *            The name of output file.
      */
     private void setBaseName(final String name) {
         this.bnTextOut.setText(name);
@@ -649,7 +663,8 @@ public class CenterLayoutController {
 
     /**
      * 
-     * @param sampInt Selected sampling interval.
+     * @param sampInt
+     *            Selected sampling interval.
      */
     private void setSamplInterval(final double sampInt) {
         this.spinOut.getValueFactory().setValue(sampInt);
@@ -665,7 +680,8 @@ public class CenterLayoutController {
 
     /**
      * 
-     * @param select True if the batch mode switch is selected.
+     * @param select
+     *            True if the batch mode switch is selected.
      */
     private void setSwitchBatchSelected(final boolean select) {
         this.tsVar.setSelected(select);
@@ -693,7 +709,8 @@ public class CenterLayoutController {
 
     /**
      * 
-     * @param threads Selected number of threads.
+     * @param threads
+     *            Selected number of threads.
      */
     private void setNumberThreads(final int threads) {
         this.spinBatch.getValueFactory().setValue(threads);
@@ -709,12 +726,13 @@ public class CenterLayoutController {
 
     /**
      * 
-     * @param list The libraries to add to the classpath.
+     * @param list
+     *            The libraries to add to the classpath.
      */
     private void setClasspath(final ObservableList<String> list) {
         this.listClass.getItems().clear();
-        final List<String> listLibError = new ArrayList<>(); 
-        for (final String lib: list) {
+        final List<String> listLibError = new ArrayList<>();
+        for (final String lib : list) {
             if (!addPath(this.ctrlLeft.getPathFolder() + File.separator + lib.replace("/", File.separator))) {
                 listLibError.add(new File(lib).getName());
             } else {
@@ -726,7 +744,8 @@ public class CenterLayoutController {
             this.removeClass.setDisable(false);
         }
         if (!listLibError.isEmpty()) {
-            String content = RESOURCES.getString("error_adding_classpath_content") + System.getProperty("line.separator");
+            String content = RESOURCES.getString("error_adding_classpath_content")
+                    + System.getProperty("line.separator");
             for (final String lib : listLibError) {
                 content = content + System.getProperty("line.separator") + "- " + lib;
             }
@@ -745,13 +764,13 @@ public class CenterLayoutController {
     public Project setField() {
         this.project = ProjectIOUtils.loadFrom(this.ctrlLeft.getPathFolder());
         if (this.project != null) {
-            if (this.project.getBatch() != null 
-                    && this.project.getBatch().getVariables() != null
+            if (this.project.getBatch() != null && this.project.getBatch().getVariables() != null
                     && !this.project.getBatch().getVariables().isEmpty()) {
                 this.project.filterVariables();
             }
             if (this.project.getSimulation() != null && !this.project.getSimulation().isEmpty()) {
-                if (!new File(this.project.getBaseDirectory() + File.separator + this.project.getSimulation()).exists()) {
+                if (!new File(this.project.getBaseDirectory() + File.separator + this.project.getSimulation())
+                        .exists()) {
                     setAlert(FILE_NOT_FOUND, RESOURCES.getString("file_yaml_not_found_header"), FILE_NOT_FOUND_CONTENT);
                 } else {
                     setSimulationFilePath(this.project.getSimulation());
@@ -760,8 +779,9 @@ public class CenterLayoutController {
             if (this.project.getEndTime() != 0) {
                 setEndTime(this.project.getEndTime());
             } else {
-                setAlert(RESOURCES.getString("end_time_not_found"), RESOURCES.getString("end_time_not_found_header"), RESOURCES.getString("end_time_not_found_content"));
-                setEndTime(VALUE_TIME);
+                setAlert(RESOURCES.getString("end_time_not_found"), RESOURCES.getString("end_time_not_found_header"),
+                        RESOURCES.getString("end_time_not_found_content"));
+                setEndTime(DEFAULT_VALUE);
             }
             if (this.project.getEffect() != null && !this.project.getEffect().isEmpty()) {
                 if (!new File(this.project.getBaseDirectory() + File.separator + this.project.getEffect()).exists()) {
@@ -773,26 +793,35 @@ public class CenterLayoutController {
             if (this.project.getOutput() != null) {
                 setSwitchOutputSelected(this.project.getOutput().isSelected());
                 if (this.project.getOutput().getFolder() != null && !this.project.getOutput().getFolder().isEmpty()) {
-                    if (!new File(this.project.getBaseDirectory() + File.separator + this.project.getOutput().getFolder()).exists()) {
+                    if (!new File(
+                            this.project.getBaseDirectory() + File.separator + this.project.getOutput().getFolder())
+                                    .exists()) {
                         if (isSwitchOutputSelected()) {
-                            setAlert(RESOURCES.getString("folder_not_found"), RESOURCES.getString("folder_out_not_found_header"), RESOURCES.getString("folder_out_not_found_content"));
+                            setAlert(RESOURCES.getString("folder_not_found"),
+                                    RESOURCES.getString("folder_out_not_found_header"),
+                                    RESOURCES.getString("folder_out_not_found_content"));
                         }
                         setSwitchOutputSelected(false);
                     } else {
                         setOutputFolder(this.project.getOutput().getFolder());
                     }
                 }
-                if (this.project.getOutput().getBaseName() != null && !this.project.getOutput().getBaseName().isEmpty()) {
+                if (this.project.getOutput().getBaseName() != null
+                        && !this.project.getOutput().getBaseName().isEmpty()) {
                     setBaseName(this.project.getOutput().getBaseName());
                 } else {
                     if (isSwitchOutputSelected()) {
-                        setAlert(RESOURCES.getString("base_name_not_found"), RESOURCES.getString("base_name_not_found_header"), RESOURCES.getString("base_name_not_found_content"));
+                        setAlert(RESOURCES.getString("base_name_not_found"),
+                                RESOURCES.getString("base_name_not_found_header"),
+                                RESOURCES.getString("base_name_not_found_content"));
                     }
                     setBaseName(RESOURCES.getString("base_name_text"));
                 }
                 if (this.project.getOutput().getSampleInterval() == 0) {
                     if (isSwitchOutputSelected()) {
-                        setAlert(RESOURCES.getString("samp_interval_not_found"), RESOURCES.getString("samp_interval_not_found_header"), RESOURCES.getString("samp_interval_not_found_content"));
+                        setAlert(RESOURCES.getString("samp_interval_not_found"),
+                                RESOURCES.getString("samp_interval_not_found_header"),
+                                RESOURCES.getString("samp_interval_not_found_content"));
                     }
                     setSamplInterval(1);
                 } else {
@@ -805,11 +834,14 @@ public class CenterLayoutController {
                     setVariables(this.project.getBatch().getVariables());
                 } else {
                     setSwitchBatchSelected(false);
-                    setAlert(RESOURCES.getString("var_not_found"), RESOURCES.getString("var_not_found_header"), RESOURCES.getString("var_not_found_content"));
+                    setAlert(RESOURCES.getString("var_not_found"), RESOURCES.getString("var_not_found_header"),
+                            RESOURCES.getString("var_not_found_content"));
                 }
                 if (this.project.getBatch().getThreadCount() == 0) {
                     if (isSwitchBatchSelected()) {
-                        setAlert(RESOURCES.getString("n_thread_not_found"), RESOURCES.getString("n_thread_not_found_header"), RESOURCES.getString("n_thread_not_found_content"));
+                        setAlert(RESOURCES.getString("n_thread_not_found"),
+                                RESOURCES.getString("n_thread_not_found_header"),
+                                RESOURCES.getString("n_thread_not_found_content"));
                     }
                     setNumberThreads(Runtime.getRuntime().availableProcessors() + 1);
                 } else {
@@ -817,21 +849,23 @@ public class CenterLayoutController {
                 }
             }
             if (this.project.getClasspath() != null && !this.project.getClasspath().isEmpty()) {
-                    final ObservableList<String> list = FXCollections.observableArrayList();
-                    for (final String lib : this.project.getClasspath()) {
-                        if (!new File(this.project.getBaseDirectory() + File.separator + lib).exists()) {
-                            setAlert(RESOURCES.getString("library_not_found"), lib + " " + RESOURCES.getString("library_not_found_header"), RESOURCES.getString("library_not_found_content"));
-                        } else {
-                            list.add(lib);
-                        }
+                final ObservableList<String> list = FXCollections.observableArrayList();
+                for (final String lib : this.project.getClasspath()) {
+                    if (!new File(this.project.getBaseDirectory() + File.separator + lib).exists()) {
+                        setAlert(RESOURCES.getString("library_not_found"),
+                                lib + " " + RESOURCES.getString("library_not_found_header"),
+                                RESOURCES.getString("library_not_found_content"));
+                    } else {
+                        list.add(lib);
                     }
-                    setClasspath(list);
+                }
+                setClasspath(list);
             }
         } else {
             this.project = new Project(new File(this.ctrlLeft.getPathFolder()));
             this.pathYaml.setText("");
             this.gridYaml.getChildren().remove(this.imgViewYaml);
-            setEndTime(VALUE_TIME);
+            setEndTime(DEFAULT_VALUE);
             this.pathEff.setText("");
             this.gridEff.getChildren().remove(this.imgViewEff);
             setSwitchOutputSelected(false);
@@ -853,18 +887,23 @@ public class CenterLayoutController {
 
     /**
      * 
-     * @param path A path of output folder
+     * @param path
+     *            A path of output folder
      */
     public void setFolderAfterDelete(final Path path) {
-        if (!getOutputFolder().isEmpty() && getOutputFolder().equals(new File(this.ctrlLeft.getPathFolder()).toURI().relativize(path.toUri()).getPath() + "/")) {
-            setAlert(RESOURCES.getString("folder_not_found"), RESOURCES.getString("folder_out_not_found_header"), RESOURCES.getString("folder_out_not_found_content"));
+        if (!getOutputFolder().isEmpty() && getOutputFolder()
+                .equals(new File(this.ctrlLeft.getPathFolder()).toURI().relativize(path.toUri()).getPath() + "/")) {
+            setAlert(RESOURCES.getString("folder_not_found"), RESOURCES.getString("folder_out_not_found_header"),
+                    RESOURCES.getString("folder_out_not_found_content"));
             setSwitchOutputSelected(false);
             this.gridOut.getChildren().remove(this.imgViewOut);
             this.pathOut.setText("");
         } else if (!getClasspath().isEmpty()) {
             final String folder = findItemInList(path);
             if (!folder.isEmpty()) {
-                setAlert(RESOURCES.getString("library_not_found"), folder + " " + RESOURCES.getString("library_not_found_header"), RESOURCES.getString("library_not_found_content"));
+                setAlert(RESOURCES.getString("library_not_found"),
+                        folder + " " + RESOURCES.getString("library_not_found_header"),
+                        RESOURCES.getString("library_not_found_content"));
                 this.listClass.getItems().remove(folder);
             }
         }
@@ -872,21 +911,26 @@ public class CenterLayoutController {
 
     /**
      * 
-     * @param path A path of file
+     * @param path
+     *            A path of file
      */
     public void setFileAfterDelete(final Path path) {
-        if (!getSimulationFilePath().isEmpty() && getSimulationFilePath().equals(new File(this.ctrlLeft.getPathFolder()).toURI().relativize(path.toUri()).getPath())) {
+        if (!getSimulationFilePath().isEmpty() && getSimulationFilePath()
+                .equals(new File(this.ctrlLeft.getPathFolder()).toURI().relativize(path.toUri()).getPath())) {
             setAlert(FILE_NOT_FOUND, RESOURCES.getString("file_yaml_not_found_header"), FILE_NOT_FOUND_CONTENT);
             this.pathYaml.setText("");
             this.gridYaml.getChildren().remove(this.imgViewYaml);
-        } else if (!getEffect().isEmpty() && getEffect().equals(new File(this.ctrlLeft.getPathFolder()).toURI().relativize(path.toUri()).getPath())) {
+        } else if (!getEffect().isEmpty() && getEffect()
+                .equals(new File(this.ctrlLeft.getPathFolder()).toURI().relativize(path.toUri()).getPath())) {
             setAlert(FILE_NOT_FOUND, RESOURCES.getString("file_json_not_found_header"), FILE_NOT_FOUND_CONTENT);
             this.pathEff.setText("");
             this.gridEff.getChildren().remove(this.imgViewEff);
         } else if (!getClasspath().isEmpty()) {
             final String folder = findItemInList(path);
             if (!folder.isEmpty()) {
-                setAlert(RESOURCES.getString("library_not_found"), folder + " " + RESOURCES.getString("library_not_found_header"), RESOURCES.getString("library_not_found_content"));
+                setAlert(RESOURCES.getString("library_not_found"),
+                        folder + " " + RESOURCES.getString("library_not_found_header"),
+                        RESOURCES.getString("library_not_found_content"));
                 this.listClass.getItems().remove(folder);
             }
         }
@@ -903,22 +947,27 @@ public class CenterLayoutController {
 
     private void manageFile(final String extension, final boolean edit) {
         if (this.ctrlLeft.getSelectedFilePath() == null) {
-            setAlert(RESOURCES.getString("file_no_selected"), RESOURCES.getString("file_no_selected_header"), RESOURCES.getString("file_no_selected_content"));
+            setAlert(RESOURCES.getString("file_no_selected"), RESOURCES.getString("file_no_selected_header"),
+                    RESOURCES.getString("file_no_selected_content"));
         } else if (this.ctrlLeft.getSelectedFilePath().endsWith(extension)) {
             if (extension.equals(YAML_EXT) && !edit) {
-                this.pathYaml.setText(new File(this.ctrlLeft.getPathFolder()).toURI().relativize(new File(this.ctrlLeft.getSelectedFilePath()).toURI()).getPath());
+                this.pathYaml.setText(new File(this.ctrlLeft.getPathFolder()).toURI()
+                        .relativize(new File(this.ctrlLeft.getSelectedFilePath()).toURI()).getPath());
                 setDeleteIcon(this.gridYaml, this.pathYaml, this.imgViewYaml, true);
             } else if (extension.equals(EFF_EXT) && !edit) {
-                this.pathEff.setText(new File(this.ctrlLeft.getPathFolder()).toURI().relativize(new File(this.ctrlLeft.getSelectedFilePath()).toURI()).getPath());
+                this.pathEff.setText(new File(this.ctrlLeft.getPathFolder()).toURI()
+                        .relativize(new File(this.ctrlLeft.getSelectedFilePath()).toURI()).getPath());
                 setDeleteIcon(this.gridEff, this.pathEff, this.imgViewEff, false);
             } else {
                 editFile();
             }
         } else {
             if (extension.equals(YAML_EXT)) {
-                setAlert(RESOURCES.getString("file_wrong"), RESOURCES.getString("file_wrong_yaml_header"), RESOURCES.getString("file_wrong_content"));
+                setAlert(RESOURCES.getString("file_wrong"), RESOURCES.getString("file_wrong_yaml_header"),
+                        RESOURCES.getString("file_wrong_content"));
             } else {
-                setAlert(RESOURCES.getString("file_wrong"), RESOURCES.getString("file_wrong_effect_header"), RESOURCES.getString("file_wrong_content"));
+                setAlert(RESOURCES.getString("file_wrong"), RESOURCES.getString("file_wrong_effect_header"),
+                        RESOURCES.getString("file_wrong_content"));
             }
         }
     }
@@ -971,7 +1020,7 @@ public class CenterLayoutController {
         imgView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(final MouseEvent event) {
-                label.setText(""); 
+                label.setText("");
                 grid.getChildren().remove(imgView);
                 if (isYaml) {
                     setSwitchBatchSelected(false);
@@ -991,7 +1040,7 @@ public class CenterLayoutController {
     private boolean addPath(final String path) {
         URL url = null;
         try {
-            //TODO: Paths.get(lib).toUri().toURL();
+            // TODO: Paths.get(lib).toUri().toURL();
             url = new File(path).toURI().toURL();
         } catch (MalformedURLException e) {
             L.error("Error during the construction of the URL.", e);
@@ -1003,10 +1052,10 @@ public class CenterLayoutController {
                 final Class<?> urlClass = URLClassLoader.class;
                 final Method method;
                 try {
-                    method = urlClass.getDeclaredMethod("addURL", new Class[]{URL.class});
+                    method = urlClass.getDeclaredMethod("addURL", new Class[] { URL.class });
                     method.setAccessible(true);
                     try {
-                        method.invoke(urlClassLoader, new Object[]{url});
+                        method.invoke(urlClassLoader, new Object[] { url });
                         return true;
                     } catch (IllegalAccessException e) {
                         L.error("Error because the method is inaccessible.", e);
@@ -1033,7 +1082,7 @@ public class CenterLayoutController {
             L.error("Error during the construction of the URL.", e);
         }
         if (url != null) {
-        final ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
+            final ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
             if (systemClassLoader instanceof URLClassLoader) {
                 final URLClassLoader urlClassLoader = (URLClassLoader) systemClassLoader;
                 final Class<?> urlClass = URLClassLoader.class;
@@ -1081,29 +1130,23 @@ public class CenterLayoutController {
      */
     public void checkChanges() {
         this.grid.requestFocus();
-        if (this.project != null 
-                && (this.project.getSimulation() == null
-                        || !this.project.getSimulation().equals(getSimulationFilePath())
-                        || this.project.getEndTime() == 0
-                        || this.project.getEndTime() != getEndTime()
-                        || this.project.getEffect() == null
-                        || !this.project.getEffect().equals(getEffect())
-                        || this.project.getOutput().isSelected() != isSwitchOutputSelected()
-                        || (isSwitchOutputSelected() 
-                                && (this.project.getOutput().getFolder() == null
-                                        || !this.project.getOutput().getFolder().equals(getOutputFolder())
-                                        || this.project.getOutput().getBaseName() == null
-                                        || !this.project.getOutput().getBaseName().equals(getBaseName())
-                                        || this.project.getOutput().getSampleInterval() == 0
-                                        || this.project.getOutput().getSampleInterval() != getSamplInterval()))
-                        || this.project.getBatch().isSelected() != isSwitchBatchSelected()
-                        || (isSwitchBatchSelected()
-                                && (this.project.getBatch().getVariables() == null 
-                                        || !this.project.getBatch().getVariables().equals(getVariables())
-                                        || this.project.getBatch().getThreadCount() == 0
-                                        || this.project.getBatch().getThreadCount() != getNumberThreads()))
-                        || this.project.getClasspath() == null
-                        || !this.project.getClasspath().equals(getClasspath()))) {
+        if (this.project != null && (this.project.getSimulation() == null
+                || !this.project.getSimulation().equals(getSimulationFilePath()) || this.project.getEndTime() == 0
+                || this.project.getEndTime() != getEndTime() || this.project.getEffect() == null
+                || !this.project.getEffect().equals(getEffect())
+                || this.project.getOutput().isSelected() != isSwitchOutputSelected()
+                || (isSwitchOutputSelected() && (this.project.getOutput().getFolder() == null
+                        || !this.project.getOutput().getFolder().equals(getOutputFolder())
+                        || this.project.getOutput().getBaseName() == null
+                        || !this.project.getOutput().getBaseName().equals(getBaseName())
+                        || this.project.getOutput().getSampleInterval() == 0
+                        || this.project.getOutput().getSampleInterval() != getSamplInterval()))
+                || this.project.getBatch().isSelected() != isSwitchBatchSelected()
+                || (isSwitchBatchSelected() && (this.project.getBatch().getVariables() == null
+                        || !this.project.getBatch().getVariables().equals(getVariables())
+                        || this.project.getBatch().getThreadCount() == 0
+                        || this.project.getBatch().getThreadCount() != getNumberThreads()))
+                || this.project.getClasspath() == null || !this.project.getClasspath().equals(getClasspath()))) {
             final Alert alert = new Alert(AlertType.CONFIRMATION);
             alert.setTitle(RESOURCES.getString("save"));
             alert.setHeaderText(RESOURCES.getString("save_changes_header"));

@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ResourceBundle;
+import java.util.prefs.Preferences;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -143,9 +144,15 @@ public class TopLayoutController {
         if (this.ctrlCenter.getProject() != null) {
             this.ctrlCenter.checkChanges();
         }
+        final Preferences pref = Preferences.userRoot();
+        final String path = pref.get("DEFAULT_PATH", "");
         final DirectoryChooser dirChooser = new DirectoryChooser();
         dirChooser.setTitle(RESOURCES.getString("select_folder_proj"));
-        dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        if (path.isEmpty()) {
+            dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        } else {
+            dirChooser.setInitialDirectory(new File(path));
+        }
         final File dir = dirChooser.showDialog(this.main.getStage());
         if (dir != null) {
             final int containsFile =  dir.listFiles(new FilenameFilter() {
@@ -161,6 +168,9 @@ public class TopLayoutController {
                 alert.setContentText(RESOURCES.getString("proj_folder_wrong_content"));
                 alert.showAndWait();
             } else {
+                if (!pref.get("DEFAULT_PATH", "").equals(dir.getAbsolutePath())) {
+                    pref.put("DEFAULT_PATH", dir.getAbsolutePath());
+                }
                 setView(dir);
             }
         }

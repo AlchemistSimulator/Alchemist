@@ -200,19 +200,17 @@ public class CenterLayoutController {
         this.spinOut.setValueFactory(
                 new SpinnerValueFactory.DoubleSpinnerValueFactory(MIN, Double.MAX_VALUE, 1, STEP));
         this.spinOut.focusedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                return;
+            if (!newValue) {
+                this.isSpinOutCorrect = checkInputSpinner(this.spinOut);
             }
-            this.isSpinOutCorrect = checkInputSpinner(this.spinOut);
         });
         this.spinTime.setEditable(true);
         this.spinTime.setValueFactory(
                 new SpinnerValueFactory.DoubleSpinnerValueFactory(MIN, Double.MAX_VALUE, VALUE_TIME, STEP));
         this.spinTime.focusedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                return;
+            if (!newValue) {
+                this.isSpinTimeCorrect = checkInputSpinner(this.spinTime);
             }
-            this.isSpinTimeCorrect = checkInputSpinner(this.spinTime);
         });
         this.thread.setText(RESOURCES.getString("n_thread"));
         this.unitOut.setText(RESOURCES.getString("sec"));
@@ -245,7 +243,7 @@ public class CenterLayoutController {
                 spinner.setStyle("-fx-focus-color: #ff0000;");
                 spinner.requestFocus();
             } catch (IllegalStateException e) {
-                setSamplInterval(1);
+                this.spinOut.getValueFactory().setValue(1d);
                 return true;
             }
         }

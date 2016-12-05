@@ -1,3 +1,4 @@
+package it.unibo.alchemist.boundary.projectview;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -9,7 +10,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- *
+ * Tests the creation of new classpath.
  */
 public class TestClassLoaderChange {
 

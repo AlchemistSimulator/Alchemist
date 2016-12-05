@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -28,6 +29,7 @@ import org.controlsfx.control.ToggleSwitch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.codecentric.centerdevice.javafxsvg.SvgImageLoaderFactory;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import it.unibo.alchemist.boundary.projectview.model.Batch;
@@ -84,6 +86,8 @@ public class CenterLayoutController {
     private static final String YAML_EXT = RESOURCES.getString("yaml_ext");
     private static final String FILE_NOT_FOUND = RESOURCES.getString("file_not_found");
     private static final String FILE_NOT_FOUND_CONTENT = RESOURCES.getString("file_not_found_content");
+    private static final double WIDTH_IMG = 1.04167;
+    private static final double HEIGHT_IMG = 1.85185;
 
     @FXML
     private Button addClass;
@@ -156,10 +160,10 @@ public class CenterLayoutController {
 
     private boolean isSpinTimeCorrect = true;
     private boolean isSpinOutCorrect = true;
-    private final Image img = new Image(ProjectGUI.class.getResource("/icon/icon-delete.png").toExternalForm());
-    private final ImageView imgViewYaml = new ImageView(img);
-    private final ImageView imgViewEff = new ImageView(img);
-    private final ImageView imgViewOut = new ImageView(img);
+    private Image img;
+    private ImageView imgViewYaml = new ImageView(img);
+    private ImageView imgViewEff = new ImageView(img);
+    private ImageView imgViewOut = new ImageView(img);
     private LeftLayoutController ctrlLeft;
     private Map<String, Boolean> variables = new HashMap<>();
     private ObservableList<String> data = FXCollections.observableArrayList();
@@ -172,6 +176,13 @@ public class CenterLayoutController {
      * 
      */
     public void initialize() {
+        SvgImageLoaderFactory.install();
+        final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        final InputStream imgStream = CenterLayoutController.class.getClassLoader().getResourceAsStream("icon/delete.svg");
+        this.img = new Image(imgStream, screenSize.getWidth() * WIDTH_IMG / 100, screenSize.getHeight() * HEIGHT_IMG / 100, true, true);
+        this.imgViewYaml = new ImageView(img);
+        this.imgViewEff = new ImageView(img);
+        this.imgViewOut = new ImageView(img);
         this.grid.setDisable(true);
         this.addClass.setText(RESOURCES.getString("add"));
         this.baseNameOut.setText(RESOURCES.getString("base_name"));
@@ -397,6 +408,9 @@ public class CenterLayoutController {
      */
     @FXML
     public void clickSetYaml() {
+        if (isSwitchBatchSelected()) {
+            setSwitchBatchSelected(false);
+        }
         manageFile(YAML_EXT, false);
     }
 

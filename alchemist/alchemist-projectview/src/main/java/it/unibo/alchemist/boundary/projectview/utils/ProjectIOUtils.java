@@ -1,4 +1,4 @@
-package it.unibo.alchemist.boundary.projectview.controller;
+package it.unibo.alchemist.boundary.projectview.utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;

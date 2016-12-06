@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.boundary.gui.effects.Effect;
 import it.unibo.alchemist.boundary.interfaces.Graphical2DOutputMonitor;
-import it.unibo.alchemist.boundary.l10n.R;
+import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.wormhole.implementation.AngleManagerImpl;
 import it.unibo.alchemist.boundary.wormhole.implementation.ExponentialZoomManager;
 import it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter;
@@ -495,7 +495,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
             sb.append(envMouse);
             if (nearest != null) {
                 sb.append(" -- ");
-                sb.append(R.getString("nearest_node_is"));
+                sb.append(LocalizedResourceBundle.getString("nearest_node_is"));
                 sb.append(": ");
                 sb.append(nearest.getId());
             }

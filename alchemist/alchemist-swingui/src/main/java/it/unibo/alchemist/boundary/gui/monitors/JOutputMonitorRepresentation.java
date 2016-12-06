@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
-import it.unibo.alchemist.boundary.l10n.R;
+import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 
 /**
  * @param <T>
@@ -57,7 +57,7 @@ public class JOutputMonitorRepresentation<T> extends JPanel implements ItemSelec
                     f.setLocation((int) p.getX(), (int) p.getY());
                     f.setVisible(true);
                 } catch (IllegalAccessException e1) {
-                    L.error(R.getString("cannot_access_object"), e1);
+                    L.error(LocalizedResourceBundle.getString("cannot_access_object"), e1);
                 }
             } else {
                 setSelected(false);

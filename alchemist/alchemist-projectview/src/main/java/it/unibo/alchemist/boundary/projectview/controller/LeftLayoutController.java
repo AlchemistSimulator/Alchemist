@@ -56,7 +56,7 @@ public class LeftLayoutController {
     @FXML
     private StackPane pane;
     @FXML
-    private TreeView<String> treeView;
+    private TreeView<String> treeView; // NOPMD: Casadio - JavaFX requires the variable is not local
 
     private Image folder;
     private Image file;

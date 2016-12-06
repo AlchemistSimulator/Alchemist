@@ -149,9 +149,9 @@ public class CenterLayoutController {
     @FXML
     private Label unitOut;
     @FXML
-    private ListView<String> listClass = new ListView<>();
+    private ListView<String> listClass = new ListView<>(); // NOPMD: Casadio - JavaFX requires the field to be non-final
     @FXML
-    private ListView<String> listYaml = new ListView<>();;
+    private ListView<String> listYaml = new ListView<>(); // NOPMD: Casadio - JavaFX requires the field to be non-final
     @FXML
     private Spinner<Integer> spinBatch;
     @FXML

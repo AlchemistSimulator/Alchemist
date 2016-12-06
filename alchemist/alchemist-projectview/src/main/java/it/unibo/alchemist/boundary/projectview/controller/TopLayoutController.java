@@ -2,11 +2,15 @@ package it.unibo.alchemist.boundary.projectview.controller;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ResourceBundle;
-import java.util.prefs.Preferences;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -152,15 +156,30 @@ public class TopLayoutController {
         if (this.ctrlCenter.getProject() != null) {
             this.ctrlCenter.checkChanges();
         }
-        final Preferences pref = Preferences.userRoot();
-        final String path = pref.get("DEFAULT_PATH", "");
+        final String folderPath = System.getProperty("user.home") + File.separator + ".alchemist" + File.separator;
+        if (!new File(folderPath).exists() && !new File(folderPath).mkdirs()) {
+            L.error("Error creating the folder to save the Alchemist settings.");
+        }
+        final String filePath = folderPath + File.separator + "alchemist-settings";
+        String pathLastVisited = "";
+        try {
+            if (!new File(filePath).createNewFile()) {
+                try {
+                    final BufferedReader br = new BufferedReader(new FileReader(filePath));
+                    pathLastVisited = br.readLine();
+                    br.close();
+                } catch (FileNotFoundException e) {
+                    L.error("Error reading settings file. This is most likely a bug.", e);
+                } catch (IOException e) {
+                    L.error("I/O Error while file was read. This is most likely a bug.", e);
+                } 
+            }
+        } catch (IOException e) {
+            L.error("I/O Error while file was create. This is most likely a bug.", e);
+        }
         final DirectoryChooser dirChooser = new DirectoryChooser();
         dirChooser.setTitle(RESOURCES.getString("select_folder_proj"));
-        if (path.isEmpty()) {
-            dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-        } else {
-            dirChooser.setInitialDirectory(new File(path));
-        }
+        dirChooser.setInitialDirectory(new File(pathLastVisited.isEmpty() ? System.getProperty("user.home") : pathLastVisited));
         final File dir = dirChooser.showDialog(this.main.getStage());
         if (dir != null) {
             final int containsFile =  dir.listFiles(new FilenameFilter() {
@@ -176,8 +195,12 @@ public class TopLayoutController {
                 alert.setContentText(RESOURCES.getString("proj_folder_wrong_content"));
                 alert.showAndWait();
             } else {
-                if (!pref.get("DEFAULT_PATH", "").equals(dir.getAbsolutePath())) {
-                    pref.put("DEFAULT_PATH", dir.getAbsolutePath());
+                try {
+                    final BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
+                    bw.write(dir.getAbsolutePath());
+                    bw.close();
+                } catch (IOException e) {
+                    L.error("I/O Error while file was write. This is most likely a bug.", e);
                 }
                 setView(dir);
             }

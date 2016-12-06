@@ -169,7 +169,7 @@ public class CenterLayoutController {
     private ImageView imgViewOut = new ImageView(img);
     private LeftLayoutController ctrlLeft;
     private Map<String, Boolean> variables = new HashMap<>();
-    private ObservableList<String> data = FXCollections.observableArrayList();
+    private final ObservableList<String> data = FXCollections.observableArrayList();
     private ProjectGUI main;
     private Project project;
     private final ToggleSwitch tsOut = new ToggleSwitch();
@@ -1107,7 +1107,7 @@ public class CenterLayoutController {
                     ucpField = urlClass.getDeclaredField("ucp");
                     ucpField.setAccessible(true);
                     try {
-                        URLClassPath field = (URLClassPath) ucpField.get(urlClassLoader);
+                        final URLClassPath field = (URLClassPath) ucpField.get(urlClassLoader);
                         if (field instanceof URLClassPath) {
                             try {
                                 final URLClassPath ucp = field;

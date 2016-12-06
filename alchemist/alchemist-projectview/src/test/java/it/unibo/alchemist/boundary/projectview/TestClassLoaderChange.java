@@ -8,11 +8,15 @@ import java.util.Arrays;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tests the creation of new classpath.
  */
 public class TestClassLoaderChange {
+
+    private static final Logger L = LoggerFactory.getLogger(TestClassLoaderChange.class);
 
     /**
      * 
@@ -21,7 +25,7 @@ public class TestClassLoaderChange {
     public static class Printer implements Runnable {
         @Override
         public void run() {
-            System.out.println(Arrays.toString(((URLClassLoader) Printer.class.getClassLoader()).getURLs()));
+            L.info(Arrays.toString(((URLClassLoader) Printer.class.getClassLoader()).getURLs()));
         }
     }
 
@@ -38,7 +42,7 @@ public class TestClassLoaderChange {
         final URL myNewURL = Paths.get("myTest").toUri().toURL();
         final URL[] urls = ArrayUtils.addAll(new URL[]{myNewURL}, current.getURLs());
         final URLClassLoader newClassLoader = URLClassLoader.newInstance(urls);
-        System.out.println(Arrays.toString(newClassLoader.getURLs()));
+        L.info(Arrays.toString(newClassLoader.getURLs()));
         Assert.assertEquals(myNewURL, newClassLoader.getURLs()[0]);
         final Class<?> clazz = newClassLoader.loadClass(Printer.class.getName());
         new Thread((Runnable) clazz.newInstance()).start();

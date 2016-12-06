@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 import it.unibo.alchemist.model.implementations.neighborhoods.CachedNeighborhood;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.LinkingRule;
-import it.unibo.alchemist.model.interfaces.IMapEnvironment;
+import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 
@@ -39,8 +39,8 @@ public class LinkNodesWithinRoutingRange<T> implements LinkingRule<T> {
 
     @Override
     public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T> env) {
-        if (env instanceof IMapEnvironment<?>) {
-            final IMapEnvironment<T> menv = (IMapEnvironment<T>) env;
+        if (env instanceof MapEnvironment<?>) {
+            final MapEnvironment<T> menv = (MapEnvironment<T>) env;
             final Stream<Node<T>> stream = menv.getNodesWithinRange(center, range).parallelStream();
             final Collection<Node<T>> filtered = stream.filter(node -> menv.computeRoute(center, node).getDistance() < range).collect(Collectors.toList());
             return new CachedNeighborhood<>(center, filtered, menv);

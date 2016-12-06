@@ -7,7 +7,7 @@ import java.util.Collection;
 
 import org.danilopianini.lang.LangUtils;
 
-import it.unibo.alchemist.model.interfaces.IMapEnvironment;
+import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
@@ -24,7 +24,7 @@ public class InteractWithOthers<T> implements SpeedSelectionStrategy<T> {
 
     private static final long serialVersionUID = -1900168887685703120L;
     private static final double MINIMUM_DISTANCE_WALKED = 1;
-    private final IMapEnvironment<T> env;
+    private final MapEnvironment<T> env;
     private final Node<T> node;
     private final Molecule interacting;
     private final double rd, in, sp;
@@ -47,7 +47,7 @@ public class InteractWithOthers<T> implements SpeedSelectionStrategy<T> {
      *            factor dynamically computed, and the speed will be divided by
      *            the number obtained
      */
-    public InteractWithOthers(final IMapEnvironment<T> environment, final Node<T> n, final Reaction<T> reaction,
+    public InteractWithOthers(final MapEnvironment<T> environment, final Node<T> n, final Reaction<T> reaction,
             final Molecule inter, final double speed, final double radius, final double interaction) {
         LangUtils.requireNonNull(environment, n, inter);
         env = environment;

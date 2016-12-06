@@ -1,6 +1,6 @@
 package it.unibo.alchemist.model.implementations.strategies.routing;
 
-import it.unibo.alchemist.model.interfaces.IMapEnvironment;
+import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.IRoute;
 import it.unibo.alchemist.model.interfaces.Vehicle;
@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.interfaces.strategies.RoutingStrategy;
 public class OnStreets<T> implements RoutingStrategy<T> {
 
     private static final long serialVersionUID = 9041363003794088201L;
-    private final IMapEnvironment<T> env;
+    private final MapEnvironment<T> env;
     private final Vehicle vehicle;
 
     /**
@@ -24,7 +24,7 @@ public class OnStreets<T> implements RoutingStrategy<T> {
      * @param v
      *            the {@link Vehicle}
      */
-    public OnStreets(final IMapEnvironment<T> environment, final Vehicle v) {
+    public OnStreets(final MapEnvironment<T> environment, final Vehicle v) {
         env = environment;
         vehicle = v;
     }

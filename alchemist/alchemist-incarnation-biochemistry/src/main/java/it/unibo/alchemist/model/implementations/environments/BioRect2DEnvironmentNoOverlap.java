@@ -114,7 +114,7 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment implemen
         final double xVecToMid1 = xVer * halfDistance;
         final double yVecToMid1 = yVer * halfDistance;
         final Position vecToMid1 = new Continuous2DEuclidean(xVecToMid1, yVecToMid1);
-        final Position midPoint = originalPos.sum(vecToMid1);
+        final Position midPoint = originalPos.add(vecToMid1);
         // compute optimum scanning range
         double range = FastMath.sqrt(FastMath.pow(halfDistance, 2) + FastMath.pow(maxDiameter, 2));
         final double newMaxDiameter = getNodesWithinRange(midPoint, range).stream()
@@ -126,7 +126,7 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment implemen
         final double newDistanceToScan = distanceToReq + nodeToMove.getRadius() + newMaxDiameter / 2;
         final double newHalfDistance = newDistanceToScan / 2;
         final Position vecToMid2 = new Continuous2DEuclidean(xVer * newHalfDistance, yVer * newHalfDistance);
-        final Position newMidPoint = originalPos.sum(vecToMid2);
+        final Position newMidPoint = originalPos.add(vecToMid2);
         range = FastMath.sqrt(FastMath.pow(newHalfDistance, 2) + FastMath.pow(newMaxDiameter, 2));
         return getNodesWithinRange(newMidPoint, range).stream()
                 .parallel()
@@ -213,7 +213,7 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment implemen
         // computes vector representing the practicable movement
         final Position vectorToSum = new Continuous2DEuclidean(distToSum * (versor.getCoordinate(0)), distToSum * (versor.getCoordinate(1)));
         // returns the right position of the cell
-        final Position result = originalPos.sum(vectorToSum);
+        final Position result = originalPos.add(vectorToSum);
         return Optional.of(result);
     }
 

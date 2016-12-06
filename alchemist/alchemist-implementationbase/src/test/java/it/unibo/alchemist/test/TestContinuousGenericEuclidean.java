@@ -24,8 +24,8 @@ public class TestContinuousGenericEuclidean {
         final double[] res = new double[]{a1[0] + a2[0], a1[1] + a2[1], a1[2] + a2[2]};
         final Position p1 = new ContinuousGenericEuclidean(a1);
         final Position p2 = new ContinuousGenericEuclidean(a2);
-        assertArrayEquals(res, p1.sum(p2).getCartesianCoordinates(), 0);
-        assertArrayEquals(res, p2.sum(p1).getCartesianCoordinates(), 0);
+        assertArrayEquals(res, p1.add(p2).getCartesianCoordinates(), 0);
+        assertArrayEquals(res, p2.add(p1).getCartesianCoordinates(), 0);
     }
 
 }

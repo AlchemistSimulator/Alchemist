@@ -125,13 +125,22 @@ public final class Discrete2DManhattan implements Position {
     }
 
     @Override
-    public Position sum(final Position other) {
+    public Position add(final Position other) {
+        final Discrete2DManhattan o = checkAndConvert(other);
+        return new Discrete2DManhattan(xCoord + o.xCoord, yCoord + o.yCoord);
+    }
+
+    @Override
+    public Position subtract(final Position other) {
+        final Discrete2DManhattan o = checkAndConvert(other);
+        return new Discrete2DManhattan(xCoord - o.xCoord, yCoord - o.yCoord);
+    }
+
+    private static Discrete2DManhattan checkAndConvert(final Position other) {
         if (other instanceof Discrete2DManhattan) {
-            final Discrete2DManhattan o = (Discrete2DManhattan) other;
-            return new Discrete2DManhattan(xCoord + o.xCoord, yCoord + o.yCoord);
+            return (Discrete2DManhattan) other;
         }
-        throw new IllegalArgumentException("You can not sum a " + getClass() + " with a " + other.getClass() + ". \n"
-                + this + " can't be summed to " + other);
+        throw new IllegalArgumentException(other + " is not a valid " + Discrete2DManhattan.class.getSimpleName());
     }
 
 }

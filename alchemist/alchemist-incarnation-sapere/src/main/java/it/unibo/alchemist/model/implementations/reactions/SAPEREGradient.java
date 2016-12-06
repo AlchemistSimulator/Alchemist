@@ -35,7 +35,7 @@ import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
-import it.unibo.alchemist.model.interfaces.IMapEnvironment;
+import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
@@ -56,7 +56,7 @@ public class SAPEREGradient extends AReaction<List<? extends ILsaMolecule>> {
 
     private final int argPosition;
     private final Environment<List<? extends ILsaMolecule>> environment;
-    private final IMapEnvironment<List<? extends ILsaMolecule>> mapenvironment;
+    private final MapEnvironment<List<? extends ILsaMolecule>> mapenvironment;
     private final List<Action<List<? extends ILsaMolecule>>> fakeacts = new ArrayList<>(1);
     private final List<Condition<List<? extends ILsaMolecule>>> fakeconds = new ArrayList<>(2);
     private final TIntDoubleMap routecache = new TIntDoubleHashMap(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1, Double.NaN);
@@ -360,8 +360,8 @@ public class SAPEREGradient extends AReaction<List<? extends ILsaMolecule>> {
             addInfluencingMolecule(context);
             fakeconds.add(new SGFakeConditionAction(context));
         }
-        final boolean usesRoutes = environment instanceof IMapEnvironment && (gradientTemplate.toString().contains(LsaMolecule.SYN_ROUTE) || expression.contains(LsaMolecule.SYN_ROUTE));
-        mapenvironment = usesRoutes ? (IMapEnvironment<List<? extends ILsaMolecule>>) environment : null;
+        final boolean usesRoutes = environment instanceof MapEnvironment && (gradientTemplate.toString().contains(LsaMolecule.SYN_ROUTE) || expression.contains(LsaMolecule.SYN_ROUTE));
+        mapenvironment = usesRoutes ? (MapEnvironment<List<? extends ILsaMolecule>>) environment : null;
     }
 
     @Override

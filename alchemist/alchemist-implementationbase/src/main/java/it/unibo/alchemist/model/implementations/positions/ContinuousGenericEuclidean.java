@@ -152,13 +152,13 @@ public class ContinuousGenericEuclidean implements Position {
     }
 
     @Override
-    public Position sum(final Position other) {
-        assert getDimensions() == other.getDimensions();
-        double[] res = other.getCartesianCoordinates();
-        for (int i = 0; i < res.length; i++) {
-            res[i] += c[i];
-        }
-        return new ContinuousGenericEuclidean(false, res);
+    public Position add(final Position other) {
+        return new ContinuousGenericEuclidean(false, MathArrays.ebeAdd(c, other.getCartesianCoordinates()));
+    }
+
+    @Override
+    public Position subtract(final Position other) {
+        return new ContinuousGenericEuclidean(false, MathArrays.ebeSubtract(c, other.getCartesianCoordinates()));
     }
 
 }

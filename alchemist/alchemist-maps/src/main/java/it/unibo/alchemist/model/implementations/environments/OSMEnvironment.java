@@ -13,7 +13,7 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import it.unibo.alchemist.model.implementations.GraphHopperRoute;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.interfaces.IGPSTrace;
-import it.unibo.alchemist.model.interfaces.IMapEnvironment;
+import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.IRoute;
@@ -61,7 +61,7 @@ import com.graphhopper.util.shapes.GHPoint;
  * 
  * @param <T>
  */
-public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements IMapEnvironment<T> {
+public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements MapEnvironment<T> {
 
     /**
      * Default maximum communication range (in meters).

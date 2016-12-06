@@ -4,8 +4,6 @@ language: java
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y graphviz
-  - openssl aes-256-cbc -K $encrypted_9993846e3f84_key -iv $encrypted_9993846e3f84_iv -in prepare_environment.sh.enc -out prepare_environment.sh -d
-  - sh prepare_environment.sh
 env:
   global:
     - secure: "OMDTeFBKjw0acBlmqh4+FZ5nnt/Aj2pF705Tta0qm3Sf61S+k1u503Dzt+nDs+/yY19HyyDFUj3+56a88IssEjd3xUVzPOz7kCW0p/lcqbAQ8jIATmoWpoMM9cOI4Xv9h+JJxOqLR54ODR0MGo/BVa51w93jsdpDnrlLNOoNf08r1bfA2Hifh/iKD/YzMyGqFI+vxvED7HhbDNG48chsr3QSGxsizXDtEZK+u0JZ6/CR2rHZTQzD6bkv3N2Vbq/4tc4pZVdH7zMXWRkrGunhHchwmgEwz90iJeo4fEeMBiWpchWg7Huxr2LUisdRKjzNqf+UjV5DljtK/RDbzyjC8vIAllD2hsmPJW1EfTOrIfIVgT2CoRrKKGIp/Dk5LkOTePMCXloe+M7gYipEWreAXeGYotAOdnxW1IoxhM3Dsbb4yxd6h1h2bFXToj0bzIEMySgivYJ0n0PhvuwWb/KUf2vt8r+ULdWvPVjgqQUDv38fgnqyfMmgMDfABlGpSxQWT2gy5VAinpgQzfNrVeOkDxxGDBLa4vOMy/yQm/bnXJyyUA0NAv5xQBCZhsDqjTOwzKWGFWkdrN0e91JjF7+bvkKnH1JQhz8yuLdLASm5LEj5nZbCZeDu4jbZhags1pkmNxwlPJjWfpzeXiiXwMdAkIn1RrkMefHPfJ5hq+G3y9I="
@@ -13,15 +11,9 @@ env:
     - secure: "AIH65k/wBxQVL1mbgi63at7qxk7YyI5C94K++QS/bmHqbsQAWOqmguvh87p21ZrfN2VeMiMdL3ROd0wnI2PPPGEU3I/q4RfYFZhphM5E82DLkF+rXL9g2LvIEN4ggRoWKb2PXUYxCq+XV/HSqMl1xdMuaBlYlUzZMS8NKD2mWclBqqdUie03h7v8ypFFaLN/n2FojOl289f7KUfMjc+crwxIKUAU7Olr5hp44NkL3ruBY5bWUqEmFPGkX12ZVRgf/K9m29P/tdvQxL1huvK/znlv+/uF5jbsy7VhfJBwt857KehRmkOo9sMhFzfyQkXUrF2NmLG4ZQjHfrn6QDumjb79L94v8Tb3CsxIkEuWzJfh0XPEsnqky3IPM5uM1noxHyzqGiUk6r+QiPlFlH4H09GbTcXKJeLHChG4rw0HqINQ9J9r3jeP6H7wcRZx03DEuu6wZIcsl3aHHRGeTmIv1qwfYciOKC7fvOhL1B9R8/6R7bmAokcazCSrPDMzXjViCPu08as3/sg6y0AX/94NCfkBN5fsmLi1CB8KYgZYANOn6BJEWiOYpyRwUcxaCUpxk1N5y44aJk4XBVlj/NaESQZzT/z1YsJ5MmDuV4gfqid2GISjNXbMPo6Ffwilhx1+86ioRnrkvDOQTciMqCgmtzbdX/WBSWLaGEcAVkebOTM="
     - secure: "G7b+NejZABu2+j1+rrNfhEFiAYMZ9KizzI6AdUx8dh/k7zcjn6TaBnPFRbR5+4QS6121USQABwrvDdi2MAcGuzBfjejNWOm6oH7a+3ko3RPY/T2h0d5/eSyRuhFYx4GJpx4MJyjcSsrjjEUwrAnf7A6olkjHLJn3ROP6qK7Vh9i+Y4WvFypyLSN3sboI1oi6LWHv2JajZJnmceiCp3R5BrzpXqjBI6hiuvYgEbZ67lCFiXGa2poXAUFVplT6mq5mHoTfc+dDvJ9i5gk+14I3ZSdBREtY/Z1zo/mtpJyl1P+GqvhQhOBBZ0qk0S7SdJXLHV7IBezZcyihwVCfhShs3XAi2UuPrhuBtNoJMCaf0ITwp9ZKtGfK9hQ5NecVpjIUOyQpqM93ygrPwiBbHklJJtIfMg7yWP9GIgRAncwslonW/EkefX+LNNuDQmj+kHEtkZVGxpnTBlrO3qCerc83N0+8YH7W0Ur94dIYKYD/LYC+3/4nCJ3DlUuW6lc/SMi8DtkXplmGueUUpY2HWAn0Q2EpERhEIowdcPw+2KxCHbGIQSH7BJqqfsdwrnVeLdl1Fjnx244N5E9KRpNHECgHx3pZQaHqGJNriax0gginr7VAHh1zpNCNctYjpFYiswyxdcjGoGN1gRSOeGrYo/ed8R1kz6ag/HvDiRfDc3vCzOg="
     - secure: "emv/wjP9BXCzoEzxlAruXOCMPaswObCaEESdhKfdikJt8gDFQfKydcu95XrfXPG6Eww4QleoOnxIppTNpphbcMbcZu/aa7N4JH+DV3XPqqlsvosz+CLhVjBr4OVtBoHxzKeTqeP+uE5D0hOdFJrIJK+qvelDO05Bknx3xLLayz1viE/chHdvX2zRMRCEA97GapkwfaQrCfNO0rkViy20v/A4C3HjkoL5yGgu3iqJdq2l89LXSsQgvyfevGV1vkhiqOEsd5FU7UmfgbKphbhUSSL7qV+i4hyMIjQFhFluCeC2+dXZdCr011pjYrNfLcpp0gesHsIhi7om42tQ8hTTNC5WO/QXGkIWcUql1eVgpRaDIAffGmTSXf4CQvKS7LVSfFW7njy01xcDF6fsukoMW9JU3toCUtyhGrmgaDldzE+ZsDl8nnqMNGqBSdeVzwPF1GzjPZUxWIntBNU3XrtXb/vyNldbkXQpzPZ+ah5K3c6989BHleBcL8ynlpE9CBrSyB4oSQ2GpoKJuIUYnKkhTHU0W08jTKx1Ac/O2UbvfTY+hYPiqTUKvO5bfmyKQK6T8qMRlZSq1935QNnahcRRBPyNn9CAXbOcNRdEmMB44PETiEeIMTQG8oLc+gLxXnPKqSrFzJOA84pmH7SRS0QtyB9YOzRfMnxOU7E6V6poXlw="
-
 script:
-  - cd alchemist
-  - "./gradlew check projectReport uploadArchives"
-  - "./gradlew fatJar"
-  - mkdir report
-  - cp --parent */build/reports build/reports report -R
-#  - "./gradlew closeRepository || exit 0"
-
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash travis_build.sh; fi'
+  - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then bash travis_build_pull_request.sh; fi'
 before_deploy: echo Preparing for deploy
 deploy:
   - provider: releases

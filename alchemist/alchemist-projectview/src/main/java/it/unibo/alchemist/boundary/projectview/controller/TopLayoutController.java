@@ -36,8 +36,8 @@ public class TopLayoutController {
 
     private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
     private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
-    private static final double IMG_WIDTH = 2.60;
-    private static final double IMG_HEIGHT = 4.629;
+    private static final double IMG_WIDTH = 2.8646;
+    private static final double IMG_HEIGHT = 5.093;
 
     @FXML
     private Button btnNew;

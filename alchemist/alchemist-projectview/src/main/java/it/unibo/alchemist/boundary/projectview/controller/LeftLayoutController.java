@@ -46,10 +46,10 @@ public class LeftLayoutController {
 
     private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
     private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
-    private static final double RUN_WIDTH = 1.667;
-    private static final double RUN_HEIGHT = 2.96296;
-    private static final double TREE_ICON_WIDTH = 1.04167;
-    private static final double TREE_ICON_HEIGHT = 1.85185;
+    private static final double RUN_WIDTH = 1.875;
+    private static final double RUN_HEIGHT = 3.33;
+    private static final double TREE_ICON_WIDTH = 1.3021;
+    private static final double TREE_ICON_HEIGHT = 2.3148;
 
     @FXML
     private Button run;

@@ -2,6 +2,7 @@ package it.unibo.alchemist.boundary.projectview.utils;
 
 import java.util.function.DoubleBinaryOperator;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.util.converter.DoubleStringConverter;
 
@@ -58,11 +59,13 @@ public final class DoubleSpinnerValueFactory extends SpinnerValueFactory<Double>
         computeVal(steps, (a, b) -> a + b);
     }
 
+    @SuppressFBWarnings(value = "FE_FLOATING_POINT_EQUALITY", justification = "Exact comparison is desired here")
     private void computeVal(final double steps, final DoubleBinaryOperator op) {
         final double newVal = op.applyAsDouble(getValue(), steps * step);
         final double closestOnScaleMul = Math.round(newVal / step) * step;
         final double closestOnScaleDiv = Math.round(newVal / step) / (1 / step);
-        final double closest = closestOnScaleDiv == closestOnScaleMul ? closestOnScaleDiv
+        final double closest = closestOnScaleDiv == closestOnScaleMul
+                ? closestOnScaleDiv
                 : Double.toString(closestOnScaleDiv).length() < Double.toString(closestOnScaleMul).length()
                         ? closestOnScaleDiv : closestOnScaleMul;
         setValue(Math.min(Math.max(Math.abs(newVal - closest) < tolerance ? closest : newVal, min), max));

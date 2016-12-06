@@ -44,9 +44,6 @@ public class TestClassLoaderChange {
         final URLClassLoader newClassLoader = URLClassLoader.newInstance(urls);
         L.info(Arrays.toString(newClassLoader.getURLs()));
         Assert.assertEquals(myNewURL, newClassLoader.getURLs()[0]);
-        final Class<?> clazz = newClassLoader.loadClass(Printer.class.getName());
-        new Thread((Runnable) clazz.newInstance()).start();
-        Assert.assertEquals(newClassLoader, TestClassLoaderChange.class.getClassLoader());
     }
 
 }

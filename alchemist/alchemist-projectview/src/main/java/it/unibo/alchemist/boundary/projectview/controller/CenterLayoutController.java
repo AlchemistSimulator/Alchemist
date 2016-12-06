@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -29,12 +28,14 @@ import org.controlsfx.control.ToggleSwitch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.codecentric.centerdevice.javafxsvg.SvgImageLoaderFactory;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import it.unibo.alchemist.boundary.projectview.model.Batch;
 import it.unibo.alchemist.boundary.projectview.model.Output;
 import it.unibo.alchemist.boundary.projectview.model.Project;
+import it.unibo.alchemist.boundary.projectview.utils.DoubleSpinnerValueFactory;
+import it.unibo.alchemist.boundary.projectview.utils.ProjectIOUtils;
+import it.unibo.alchemist.boundary.projectview.utils.SVGImageUtils;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.YamlLoader;
 import javafx.beans.property.BooleanProperty;
@@ -86,8 +87,10 @@ public class CenterLayoutController {
     private static final String YAML_EXT = RESOURCES.getString("yaml_ext");
     private static final String FILE_NOT_FOUND = RESOURCES.getString("file_not_found");
     private static final String FILE_NOT_FOUND_CONTENT = RESOURCES.getString("file_not_found_content");
-    private static final double WIDTH_IMG = 1.04167;
-    private static final double HEIGHT_IMG = 1.85185;
+    private static final double DELETE_WIDTH = 1.04167;
+    private static final double DELETE_HEIGHT = 1.85185;
+    private static final double BATCH_WIDTH = 1.667;
+    private static final double BATCH_HEIGHT = 2.96296;
 
     @FXML
     private Button addClass;
@@ -176,16 +179,15 @@ public class CenterLayoutController {
      * 
      */
     public void initialize() {
-        SvgImageLoaderFactory.install();
-        final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        final InputStream imgStream = CenterLayoutController.class.getClassLoader().getResourceAsStream("icon/delete.svg");
-        this.img = new Image(imgStream, screenSize.getWidth() * WIDTH_IMG / 100, screenSize.getHeight() * HEIGHT_IMG / 100, true, true);
+        SVGImageUtils.installSvgLoader();
+        this.img = SVGImageUtils.getSvgImage("icon/delete.svg", DELETE_WIDTH, DELETE_HEIGHT);
         this.imgViewYaml = new ImageView(img);
         this.imgViewEff = new ImageView(img);
         this.imgViewOut = new ImageView(img);
         this.grid.setDisable(true);
         this.addClass.setText(RESOURCES.getString("add"));
         this.baseNameOut.setText(RESOURCES.getString("base_name"));
+        this.batch.setGraphic(new ImageView(SVGImageUtils.getSvgImage("icon/batch.svg", BATCH_WIDTH, BATCH_HEIGHT)));
         this.batch.setText(RESOURCES.getString("batch_start"));
         this.batchMode.setText(RESOURCES.getString("batch_pane_title"));
         this.bnTextOut.setPromptText(RESOURCES.getString("enter_base_name"));

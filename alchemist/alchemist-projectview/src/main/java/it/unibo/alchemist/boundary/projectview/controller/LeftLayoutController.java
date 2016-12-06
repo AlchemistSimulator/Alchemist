@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import it.unibo.alchemist.boundary.projectview.model.Project;
+import it.unibo.alchemist.boundary.projectview.utils.ProjectIOUtils;
+import it.unibo.alchemist.boundary.projectview.utils.SVGImageUtils;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -44,6 +46,10 @@ public class LeftLayoutController {
 
     private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
     private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
+    private static final double RUN_WIDTH = 1.667;
+    private static final double RUN_HEIGHT = 2.96296;
+    private static final double TREE_ICON_WIDTH = 1.04167;
+    private static final double TREE_ICON_HEIGHT = 1.85185;
 
     @FXML
     private Button run;
@@ -52,8 +58,8 @@ public class LeftLayoutController {
     @FXML
     private TreeView<String> treeView;
 
-    private final Image folder = new Image(ProjectGUI.class.getResource("/icon/folder.png").toExternalForm());
-    private final Image file = new Image(ProjectGUI.class.getResource("/icon/file.png").toExternalForm());
+    private Image folder;
+    private Image file;
     private ProjectGUI main;
     private String pathFolder;
     private String selectedFile;
@@ -63,8 +69,12 @@ public class LeftLayoutController {
      * 
      */
     public void initialize() {
+        SVGImageUtils.installSvgLoader();
+        this.run.setGraphic(new ImageView(SVGImageUtils.getSvgImage("icon/run.svg", RUN_WIDTH, RUN_HEIGHT)));
         this.run.setText(RESOURCES.getString("run"));
         this.run.setDisable(true);
+        this.folder = SVGImageUtils.getSvgImage("icon/folder.svg", TREE_ICON_WIDTH, TREE_ICON_HEIGHT);
+        this.file = SVGImageUtils.getSvgImage("icon/file.svg", TREE_ICON_WIDTH, TREE_ICON_HEIGHT);
     }
 
     /**
@@ -105,7 +115,7 @@ public class LeftLayoutController {
      */
     public void setTreeView(final File dir) {
         this.pathFolder = dir.getAbsolutePath();
-        final TreeItem<String> root = new TreeItem<>(dir.getName(), new ImageView(new Image(ProjectGUI.class.getResource("/icon/project.png").toExternalForm())));
+        final TreeItem<String> root = new TreeItem<>(dir.getName(), new ImageView(SVGImageUtils.getSvgImage("icon/project.svg", TREE_ICON_WIDTH, TREE_ICON_HEIGHT)));
         root.setExpanded(true);
         this.treeView = new TreeView<>(root);
         displayProjectContent(dir, root);

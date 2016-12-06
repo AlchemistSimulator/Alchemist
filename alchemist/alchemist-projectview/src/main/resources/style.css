@@ -47,7 +47,6 @@
 	-fx-border-color: #000000;
 	-fx-background-color: #444444;
 	-fx-text-fill: #ffffff;
-	-fx-graphic: url('../src/main/resources/icon/icon-batch.png');
 }
 
 #batch:hover {
@@ -60,7 +59,6 @@
 	-fx-border-color: #002699;
 	-fx-border-radius: 0;
 	-fx-background-color: #668cff;
-	-fx-graphic: url('../src/main/resources/icon/icon-run.png');
 }
 
 #run:hover {
@@ -73,26 +71,6 @@
 	-fx-pref-width: 8.125em; /* 130px */
 	-fx-border-insets: 0.625em 0 0.625em 10;
 	-fx-background-insets: 0.625em 0 0.625em 10;
-}
-
-#btnNew {
-	-fx-graphic: url('../src/main/resources/icon/icon-new.png');
-}
-
-#btnOpen {
-	-fx-graphic: url('../src/main/resources/icon/icon-open.png');
-}
-
-#btnSave {
-	-fx-graphic: url('../src/main/resources/icon/icon-save.png');
-}
-
-#btnSaveAs {
-	-fx-graphic: url('../src/main/resources/icon/icon-save-as.png');
-}
-
-#btnImport {
-	-fx-graphic: url('../src/main/resources/icon/icon-import.png');
 }
 
 .separator .line {

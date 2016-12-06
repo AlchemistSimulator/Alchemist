@@ -13,12 +13,14 @@ import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
+import it.unibo.alchemist.boundary.projectview.utils.SVGImageUtils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.image.ImageView;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
@@ -34,6 +36,8 @@ public class TopLayoutController {
 
     private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
     private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
+    private static final double IMG_WIDTH = 2.60;
+    private static final double IMG_HEIGHT = 4.629;
 
     @FXML
     private Button btnNew;
@@ -55,9 +59,13 @@ public class TopLayoutController {
      * 
      */
     public void initialize() {
+        SVGImageUtils.installSvgLoader();
+        this.btnNew.setGraphic(new ImageView(SVGImageUtils.getSvgImage("icon/new.svg", IMG_WIDTH, IMG_HEIGHT)));
         this.btnNew.setText(RESOURCES.getString("new"));
+        this.btnOpen.setGraphic(new ImageView(SVGImageUtils.getSvgImage("icon/open.svg", IMG_WIDTH, IMG_HEIGHT)));
         this.btnOpen.setText(RESOURCES.getString("open"));
         //this.btnImport.setText(RESOURCES.getString("import"));
+        this.btnSave.setGraphic(new ImageView(SVGImageUtils.getSvgImage("icon/save.svg", IMG_WIDTH, IMG_HEIGHT)));
         this.btnSave.setText(RESOURCES.getString("save"));
         //this.btnSaveAs.setText(RESOURCES.getString("save_as"));
         this.btnSave.setDisable(true);
@@ -97,7 +105,7 @@ public class TopLayoutController {
     }
 
     /**
-     * 
+     * Show a view to create new project.
      */
     @FXML
     public void clickNew() {
@@ -137,7 +145,7 @@ public class TopLayoutController {
     }
 
     /**
-     * 
+     * Show a directory chooser to open an existing project.
      */
     @FXML
     public void clickOpen() {
@@ -177,7 +185,7 @@ public class TopLayoutController {
     }
 
     /**
-     * 
+     * Save the project.
      */
     @FXML
     public void clickSave() {

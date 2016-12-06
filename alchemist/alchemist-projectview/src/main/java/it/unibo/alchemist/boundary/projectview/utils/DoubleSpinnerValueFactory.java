@@ -1,4 +1,4 @@
-package it.unibo.alchemist.boundary.projectview.controller;
+package it.unibo.alchemist.boundary.projectview.utils;
 
 import java.util.function.DoubleBinaryOperator;
 
@@ -11,7 +11,7 @@ import javafx.util.converter.DoubleStringConverter;
  */
 public final class DoubleSpinnerValueFactory extends SpinnerValueFactory<Double> {
 
-    private final double min, max, step, def, tolerance;
+    private final double min, max, step, tolerance;
 
     /**
      * Constructor.
@@ -42,7 +42,6 @@ public final class DoubleSpinnerValueFactory extends SpinnerValueFactory<Double>
             throw new IllegalArgumentException("The tolerance value must be positive.");
         }
         setConverter(new DoubleStringConverter());
-        this.def = def;
         this.min = min;
         this.max = max;
         this.step = step;

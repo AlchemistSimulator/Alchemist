@@ -34,8 +34,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Level;
-import it.unibo.alchemist.boundary.gui.AlchemistSwingUI;
 import it.unibo.alchemist.boundary.gui.SingleRunGUI;
+import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import it.unibo.alchemist.cli.CLIMaker;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.implementations.Engine.StateCommand;
@@ -169,7 +169,7 @@ public final class Alchemist {
                     L.error("A number was expected. " + e.getMessage());
                 }
             } else {
-                new AlchemistSwingUI().setVisible(true);
+                javafx.application.Application.launch(ProjectGUI.class);
             }
         } catch (ParseException e) {
             L.error("Your command sequence could not be parsed.", e);

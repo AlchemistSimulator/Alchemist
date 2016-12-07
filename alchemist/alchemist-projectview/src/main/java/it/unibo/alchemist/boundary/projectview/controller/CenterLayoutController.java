@@ -7,12 +7,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,10 +15,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.Stack;
 
 import org.apache.commons.io.FilenameUtils;
 import org.controlsfx.control.ToggleSwitch;
+import org.danilopianini.urlclassloader.URLClassLoaderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +62,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
-import sun.misc.URLClassPath;
 
 /**
  * Controller of CenterLayout view.
@@ -498,17 +491,10 @@ public class CenterLayoutController {
                     RESOURCES.getString("file_no_selected_content"));
         } else {
             if (!this.data.contains(this.ctrlLeft.getSelectedFilePath())) {
-                if (addPath(this.ctrlLeft.getSelectedFilePath())) {
-                    this.data.add(new File(this.ctrlLeft.getPathFolder()).toURI()
-                            .relativize(new File(this.ctrlLeft.getSelectedFilePath()).toURI()).getPath());
-                    this.listClass.setItems(data);
-                } else {
-                    final Alert alertCancel = new Alert(AlertType.ERROR);
-                    alertCancel.setTitle(RESOURCES.getString("error_adding_classpath"));
-                    alertCancel.setHeaderText(RESOURCES.getString("error_adding_classpath_header"));
-                    alertCancel.setContentText(RESOURCES.getString("error_adding_classpath_content"));
-                    alertCancel.showAndWait();
-                }
+                URLClassLoaderUtil.addFirst(this.ctrlLeft.getSelectedFilePath());
+                this.data.add(new File(this.ctrlLeft.getPathFolder()).toURI()
+                        .relativize(new File(this.ctrlLeft.getSelectedFilePath()).toURI()).getPath());
+                this.listClass.setItems(data);
             } else {
                 setAlert(RESOURCES.getString("file_name_exists"), RESOURCES.getString("file_name_class_header"),
                         RESOURCES.getString("file_name_class_content"));
@@ -521,18 +507,16 @@ public class CenterLayoutController {
      */
     @FXML
     public void clickRemoveClass() {
-        final String nameFile = this.listClass.getSelectionModel().getSelectedItem();
-        if (removePath(this.ctrlLeft.getPathFolder() + File.separator + nameFile.replace("/", File.separator))) {
+        if (this.listClass.getSelectionModel().getSelectedItem() == null) {
+            setAlert(RESOURCES.getString("library_no_selected"), RESOURCES.getString("library_no_selected_header"),
+                    RESOURCES.getString("library_no_selected_content"));
+        } else {
+            final String nameFile = this.listClass.getSelectionModel().getSelectedItem();
+            URLClassLoaderUtil.remove(this.ctrlLeft.getPathFolder() + File.separator + nameFile.replace("/", File.separator));
             this.listClass.getItems().remove(nameFile);
             if (this.listClass.getItems().size() == 0) {
                 this.removeClass.setDisable(true);
             }
-        } else {
-            final Alert alertCancel = new Alert(AlertType.ERROR);
-            alertCancel.setTitle(RESOURCES.getString("error_removing_classpath"));
-            alertCancel.setHeaderText(RESOURCES.getString("error_removing_classpath_header"));
-            alertCancel.setContentText(RESOURCES.getString("error_removing_classpath_content"));
-            alertCancel.showAndWait();
         }
     }
 
@@ -749,9 +733,10 @@ public class CenterLayoutController {
         this.listClass.getItems().clear();
         final List<String> listLibError = new ArrayList<>();
         for (final String lib : list) {
-            if (!addPath(this.ctrlLeft.getPathFolder() + File.separator + lib.replace("/", File.separator))) {
+            if (!new File(this.ctrlLeft.getPathFolder() + File.separator + lib.replace("/", File.separator)).exists()) {
                 listLibError.add(new File(lib).getName());
             } else {
+                URLClassLoaderUtil.addFirst(lib);
                 this.data.add(lib);
             }
         }
@@ -1051,94 +1036,6 @@ public class CenterLayoutController {
         alert.setHeaderText(header);
         alert.setContentText(content);
         alert.showAndWait();
-    }
-
-    private boolean addPath(final String path) {
-        URL url = null;
-        try {
-            // TODO: Paths.get(lib).toUri().toURL();
-            url = new File(path).toURI().toURL();
-        } catch (MalformedURLException e) {
-            L.error("Error during the construction of the URL.", e);
-        }
-        if (url != null) {
-            final ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
-            if (systemClassLoader instanceof URLClassLoader) {
-                final URLClassLoader urlClassLoader = (URLClassLoader) systemClassLoader;
-                final Class<?> urlClass = URLClassLoader.class;
-                final Method method;
-                try {
-                    method = urlClass.getDeclaredMethod("addURL", new Class[] { URL.class });
-                    method.setAccessible(true);
-                    try {
-                        method.invoke(urlClassLoader, new Object[] { url });
-                        return true;
-                    } catch (IllegalAccessException e) {
-                        L.error("Error because the method is inaccessible.", e);
-                    } catch (IllegalArgumentException e) {
-                        L.error("Error because the objects are not an instance of the method.", e);
-                    } catch (InvocationTargetException e) {
-                        L.error("Error during invoke of method.", e);
-                    }
-                } catch (NoSuchMethodException e) {
-                    L.error("Error because no methods matching with \"addURL\".", e);
-                } catch (SecurityException e) {
-                    L.error("Error because there is a security manager.", e);
-                }
-            }
-        }
-        return false;
-    }
-
-    private boolean removePath(final String path) {
-        URL url = null;
-        try {
-            url = new File(path).toURI().toURL();
-        } catch (MalformedURLException e) {
-            L.error("Error during the construction of the URL.", e);
-        }
-        if (url != null) {
-            final ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
-            if (systemClassLoader instanceof URLClassLoader) {
-                final URLClassLoader urlClassLoader = (URLClassLoader) systemClassLoader;
-                final Class<?> urlClass = URLClassLoader.class;
-                final Field ucpField;
-                try {
-                    ucpField = urlClass.getDeclaredField("ucp");
-                    ucpField.setAccessible(true);
-                    try {
-                        final URLClassPath field = (URLClassPath) ucpField.get(urlClassLoader);
-                        if (field instanceof URLClassPath) {
-                            try {
-                                final URLClassPath ucp = field;
-                                final Class<?> ucpClass = URLClassPath.class;
-                                final Field urlsField = ucpClass.getDeclaredField("urls");
-                                urlsField.setAccessible(true);
-                                final Stack<?> fieldStack = (Stack<?>) urlsField.get(ucp);
-                                if (fieldStack instanceof Stack) {
-                                    final Stack<?> urls = fieldStack;
-                                    urls.remove(url);
-                                    return true;
-                                }
-                            } catch (IllegalArgumentException e) {
-                                L.error("Error because the objects are not an instance of the field.", e);
-                            } catch (IllegalAccessException e) {
-                                L.error("Error because the method is inaccessible.", e);
-                            }
-                        }
-                    } catch (IllegalArgumentException e1) {
-                        L.error("Error because the objects are not an instance of the field.", e1);
-                    } catch (IllegalAccessException e1) {
-                        L.error("Error because the field is inaccessible.", e1);
-                    }
-                } catch (NoSuchFieldException e) {
-                    L.error("Error because no fields matching with \"ucp\".", e);
-                } catch (SecurityException e) {
-                    L.error("Error because there is a security manager.", e);
-                }
-            }
-        }
-        return false;
     }
 
     /**

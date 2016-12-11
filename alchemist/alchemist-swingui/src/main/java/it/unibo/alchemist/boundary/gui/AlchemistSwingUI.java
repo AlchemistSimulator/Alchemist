@@ -28,7 +28,7 @@ import org.danilopianini.view.GUIUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static it.unibo.alchemist.boundary.l10n.R.getString;
+import static it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle.getString;
 
 /**
  * The main frame for the standard Alchemist GUI.

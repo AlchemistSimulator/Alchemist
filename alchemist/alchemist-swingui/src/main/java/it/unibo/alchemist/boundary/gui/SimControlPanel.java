@@ -24,7 +24,7 @@ import it.unibo.alchemist.boundary.gui.tape.JTapeFeatureStack;
 import it.unibo.alchemist.boundary.gui.tape.JTapeGroup;
 import it.unibo.alchemist.boundary.gui.tape.JTapeMainFeature;
 import it.unibo.alchemist.boundary.gui.tape.JTapeSection;
-import it.unibo.alchemist.boundary.l10n.R;
+import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
 
@@ -155,7 +155,7 @@ public final class SimControlPanel extends JTapeGroup {
      * Builds a new BaseSimControlPanel.
      */
     private SimControlPanel() {
-        super(R.getString("controls"));
+        super(LocalizedResourceBundle.getString("controls"));
         // setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         final JTapeSection mfplay = new JTapeMainFeature();
         final JTapeSection s = new JTapeFeatureStack();

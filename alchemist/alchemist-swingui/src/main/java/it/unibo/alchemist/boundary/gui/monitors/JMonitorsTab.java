@@ -34,7 +34,7 @@ import it.unibo.alchemist.boundary.gui.tape.JTapeSection;
 import it.unibo.alchemist.boundary.gui.tape.JTapeTab;
 import it.unibo.alchemist.boundary.interfaces.GraphicalOutputMonitor;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
-import it.unibo.alchemist.boundary.l10n.R;
+import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.monitors.ExportInspector;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -50,9 +50,9 @@ public class JMonitorsTab<T> extends JTapeTab implements ItemListener {
     private static final long serialVersionUID = -821717582498461584L;
     private static final Reflections REFLECTIONS = new Reflections("it.unibo.alchemist");
     private static final Logger L = LoggerFactory.getLogger(JMonitorsTab.class);
-    private static final String MONITORS = R.getString("monitors");
-    private final JButton btnAddMonitor = new JButton(R.getString("attach_monitor"));
-    private final JButton btnRemMonitor = new JButton(R.getString("detach_monitor"));
+    private static final String MONITORS = LocalizedResourceBundle.getString("monitors");
+    private final JButton btnAddMonitor = new JButton(LocalizedResourceBundle.getString("attach_monitor"));
+    private final JButton btnRemMonitor = new JButton(LocalizedResourceBundle.getString("detach_monitor"));
     private final JComboBox<ClassItem<? extends OutputMonitor<T>>> monitorCombo = new JComboBox<>();
     private final JTapeSection monitorsFS = new JTapeFeatureStack(Type.HORIZONTAL_STACK);
     private final List<JOutputMonitorRepresentation<T>> monitors = new LinkedList<>();
@@ -77,8 +77,8 @@ public class JMonitorsTab<T> extends JTapeTab implements ItemListener {
                 }
             }
         });
-        final JTapeGroup monitorsGroup1 = new JTapeGroup(R.getString("monitors"));
-        final JTapeGroup monitorsGroup2 = new JTapeGroup(R.getString("monitors"));
+        final JTapeGroup monitorsGroup1 = new JTapeGroup(LocalizedResourceBundle.getString("monitors"));
+        final JTapeGroup monitorsGroup2 = new JTapeGroup(LocalizedResourceBundle.getString("monitors"));
         final JTapeSection monFS = new JTapeFeatureStack();
 
         monFS.registerFeature(monitorCombo);

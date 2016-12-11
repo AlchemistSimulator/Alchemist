@@ -1,0 +1,14 @@
+dependencies {
+    compile (
+        project(':alchemist-interfaces'),
+        project(':alchemist-runner'),
+        "org.controlsfx:controlsfx:${controlsFXVersion}",
+        "de.codecentric.centerdevice:javafxsvg:${javaFXSVG}",
+        "org.danilopianini:urlclassloader-util:${urlClassLoaderUtilVersion}"
+    )
+    testRuntime(
+        project(':alchemist-incarnation-protelis'),
+        project(':alchemist-incarnation-sapere'),
+        project(':alchemist-incarnation-biochemistry')
+    )
+}

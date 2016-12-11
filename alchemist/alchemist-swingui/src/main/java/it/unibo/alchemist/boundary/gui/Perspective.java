@@ -46,7 +46,7 @@ import it.unibo.alchemist.loader.YamlLoader;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
 
-import static it.unibo.alchemist.boundary.l10n.R.getString;
+import static it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle.getString;
 
 /**
  * @param <T>

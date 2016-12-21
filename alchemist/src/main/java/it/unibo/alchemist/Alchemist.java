@@ -104,7 +104,7 @@ public final class Alchemist {
             L.info("The simulation will end at {}", endTime);
             Optional<Loader> loader = Optional.empty();
             if (cmd.hasOption(YAML)) {
-                try (final InputStream is = new FileInputStream(new File(cmd.getOptionValue(YAML)))) {
+                try (InputStream is = new FileInputStream(new File(cmd.getOptionValue(YAML)))) {
                     loader = Optional.of(new YamlLoader(is));
                 } catch (IOException e) {
                     L.error("Unable to load the requested file.", e);
@@ -169,7 +169,7 @@ public final class Alchemist {
                     L.error("A number was expected. " + e.getMessage());
                 }
             } else {
-                javafx.application.Application.launch(ProjectGUI.class);
+                ProjectGUI.main();
             }
         } catch (ParseException e) {
             L.error("Your command sequence could not be parsed.", e);

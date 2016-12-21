@@ -110,7 +110,7 @@ public class ProjectGUI extends Application {
      * Method that launches the application.
      * @param args arguments
      */
-    public static void main(final String[] args) {
+    public static void main(final String... args) {
         launch(args);
     }
 

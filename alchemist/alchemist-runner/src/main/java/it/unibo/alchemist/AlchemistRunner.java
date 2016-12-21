@@ -214,10 +214,8 @@ public final class AlchemistRunner {
             try {
                 executor.awaitTermination(Integer.MAX_VALUE, TimeUnit.DAYS);
             } catch (InterruptedException e1) {
-                L.error("Main thread got interrupted.", e1);
-                System.exit(3);
+                throw new IllegalStateException("The batch execution got interrupted.");
             }
-            System.exit(0);
         } else {
             runWith(Collections.emptyMap(), null, 0, exportFileRoot, loader, samplingInterval, Long.MAX_VALUE, endTime,
                     sim -> {

@@ -123,6 +123,17 @@ public final class AlchemistRunner {
 
         /**
          * 
+         * @param t
+         *            end time
+         * @return builder
+         */
+        public Builder setEndTime(final Number t) {
+            this.endTime = new DoubleTime(t.doubleValue());
+            return this;
+        }
+
+        /**
+         * 
          * @param headless
          *            is headless
          * @return builder

@@ -79,7 +79,7 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
      * @param env
      *            the current environment
      */
-    protected abstract void updateStatus(final Time curTime, final boolean executed, double param, final Environment<T> env);
+    protected abstract void updateStatus(Time curTime, boolean executed, double param, Environment<T> env);
 
     @Override
     public abstract AbstractDistribution<T> clone();

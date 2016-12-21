@@ -3,25 +3,19 @@
  */
 package it.unibo.alchemist;
 
-import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
+import javax.swing.JFrame;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -29,24 +23,15 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Level;
-import it.unibo.alchemist.boundary.gui.SingleRunGUI;
+import it.unibo.alchemist.AlchemistRunner.Builder;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import it.unibo.alchemist.cli.CLIMaker;
-import it.unibo.alchemist.core.implementations.Engine;
-import it.unibo.alchemist.core.implementations.Engine.StateCommand;
-import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.YamlLoader;
-import it.unibo.alchemist.loader.export.Exporter;
-import it.unibo.alchemist.loader.variables.Variable;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Time;
 
 /**
  * Starts Alchemist.
@@ -87,7 +72,6 @@ public final class Alchemist {
      */
     public static <T> void main(final String[] args) {
         final Options opts = CLIMaker.getOptions();
-        L.trace("Options loaded: {}", opts);
         final CommandLineParser parser = new DefaultParser();
         try {
             final CommandLine cmd = parser.parse(opts, args);
@@ -97,11 +81,6 @@ public final class Alchemist {
                 formatter.printHelp("java -jar alchemist-redist-{version}.jar", opts);
                 System.exit(0);
             }
-            /*
-             * Logging level selection
-             */
-            final Time endTime = getOpt(cmd, TIME, t -> new DoubleTime(Double.parseDouble(t)), DoubleTime.INFINITE_TIME);
-            L.info("The simulation will end at {}", endTime);
             Optional<Loader> loader = Optional.empty();
             if (cmd.hasOption(YAML)) {
                 try (InputStream is = new FileInputStream(new File(cmd.getOptionValue(YAML)))) {
@@ -111,10 +90,14 @@ public final class Alchemist {
                 }
             }
             if (loader.isPresent()) {
-                final Loader ld = loader.get();
-                final String fileName = getOpt(cmd, EXPORT, Function.identity(), null);
+                final Builder simBuilder = new Builder(loader.get())
+                        .setHeadless(cmd.hasOption(HEADLESS))
+                        .setGUICloseOperation(JFrame.EXIT_ON_CLOSE);
+                ifPresent(cmd, EXPORT, simBuilder::setOutputFile);
+                ifPresent(cmd, GRAPHICS, simBuilder::setEffects);
                 try {
-                    final double interval = getOpt(cmd, INTERVAL, Double::parseDouble, 1d);
+                    ifPresent(cmd, INTERVAL, Double::parseDouble, simBuilder::setInterval);
+                    ifPresent(cmd, TIME, Double::parseDouble, simBuilder::setEndTime);
                     final String[] varsUnderRun = cmd.getOptionValues(VARIABLES);
                     if (cmd.hasOption(BATCH)) {
                         if (varsUnderRun == null) {
@@ -126,47 +109,13 @@ public final class Alchemist {
                             L.info("Alchemist is in batch mode, but no variable is available.");
                             System.exit(2);
                         }
-                        final Map<String, Variable> simVars = ld.getVariables();
-                        final List<Entry<String, Variable>> varStreams = simVars.entrySet().stream()
-                            .filter(e -> ArrayUtils.contains(varsUnderRun, e.getKey()))
-                            .collect(Collectors.toList());
-                        L.info("Variables: {}", varStreams);
-                        final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
-                        runWith(Collections.emptyMap(), varStreams, 0, fileName, ld, interval, Long.MAX_VALUE, endTime,
-                                sim -> {
-                                     sim.addCommand(new StateCommand<>().run().build());
-                                     sim.run();
-                                })
-                            .parallel()
-                            .forEach(executor::submit);
-                        executor.shutdown();
-                        try {
-                            executor.awaitTermination(Integer.MAX_VALUE, TimeUnit.DAYS);
-                        } catch (InterruptedException e1) {
-                            L.error("Main thread got interrupted.", e1);
-                            System.exit(3);
-                        }
-                        System.exit(0);
+                        simBuilder.build().launch(vars);
                     } else {
-                        runWith(Collections.emptyMap(), null, 0, fileName, ld, interval, Long.MAX_VALUE, endTime,
-                                sim -> {
-                                    if (cmd.hasOption(HEADLESS)) {
-                                        sim.addCommand(new StateCommand<>().run().build());
-                                    } else {
-                                        if (GraphicsEnvironment.isHeadless()) {
-                                            L.error("Could not initialize the UI (the graphics environment is headless). Falling back to headless mode.");
-                                            sim.addCommand(new StateCommand<>().run().build());
-                                        } else if (cmd.hasOption(GRAPHICS)) {
-                                            SingleRunGUI.make(sim, cmd.getOptionValue(GRAPHICS));
-                                        } else {
-                                            SingleRunGUI.make(sim);
-                                        }
-                                    }
-                                    sim.run();
-                                }).findAny().get().run();
+                        simBuilder.build().launch();
                     }
                 } catch (NumberFormatException e) {
                     L.error("A number was expected. " + e.getMessage());
+                    System.exit(1);
                 }
             } else {
                 ProjectGUI.main();
@@ -176,49 +125,16 @@ public final class Alchemist {
         }
     }
 
-    private static <R> R getOpt(final CommandLine cmd, final char opt, final Function<String, R> fun, final R def) {
-        return cmd.hasOption(opt) ? fun.apply(cmd.getOptionValue(opt)) : def;
+    private static void ifPresent(final CommandLine cmd, final char opt, final Consumer<String> op) {
+        ifPresent(cmd, opt, Function.identity(), op);
     }
 
-    private static <T> Stream<Runnable> runWith(final Map<String, Double> baseVarMap,
-            final List<Entry<String, Variable>> varStreams, final int pos,
-            final String filebase, final Loader loader,
-            final double sample, final long endStep, final Time endTime,
-            final Consumer<Simulation<T>> afterCreation) {
-        if (varStreams == null || pos == varStreams.size()) {
-            return Stream.of(() -> {
-                final Environment<T> env = loader.getWith(baseVarMap);
-                final Simulation<T> sim = new Engine<>(env, endStep, endTime);
-                if (filebase != null) {
-                    /*
-                     * Make the header: get all the default values and substitute
-                     * those that are different in this run
-                     */
-                    final Map<String, Double> vars = loader.getVariables().entrySet().parallelStream()
-                            .collect(Collectors.toMap(Entry::getKey, e -> e.getValue().getDefault()));
-                    vars.putAll(baseVarMap);
-                    final String header = vars.entrySet().stream()
-                            .map(e -> e.getKey() + " = " + e.getValue())
-                            .collect(Collectors.joining(", "));
-                    try {
-                        final Exporter<T> exp = new Exporter<>(filebase + ".txt", sample, header, loader.getDataExtractors());
-                        sim.addOutputMonitor(exp);
-                    } catch (FileNotFoundException e1) {
-                        L.error("Could not create " + filebase, e1);
-                    }
-                }
-                afterCreation.accept(sim);
-            });
-        } else {
-            final Entry<String, Variable> pair = varStreams.get(pos);
-            final String varName = pair.getKey();
-            return pair.getValue().stream().boxed().parallel().flatMap(v -> {
-                final Map<String, Double> newBase = new LinkedHashMap<>(baseVarMap);
-                newBase.put(varName, v);
-                final String newFile = filebase == null ? null : filebase + "_" + varName + "-" + v;
-                return runWith(newBase, varStreams, pos + 1, newFile, loader, sample, endStep, endTime, afterCreation);
-            });
-        }
+    private static <R> void ifPresent(final CommandLine cmd, final char opt, final Function<String, R> fun, final Consumer<R> op) {
+        getOpt(cmd, opt, fun).ifPresent(op);
+    }
+
+    private static <R> Optional<R> getOpt(final CommandLine cmd, final char opt, final Function<String, R> fun) {
+        return Optional.ofNullable(cmd.hasOption(opt) ? fun.apply(cmd.getOptionValue(opt)) : null);
     }
 
     private static void setVerbosity(final CommandLine cmd) {

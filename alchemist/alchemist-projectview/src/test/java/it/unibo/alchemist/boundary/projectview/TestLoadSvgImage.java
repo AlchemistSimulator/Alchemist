@@ -25,7 +25,7 @@ public class TestLoadSvgImage {
      */
     @Test
     public void testImage() {
-        final InputStream imageData = TestLoadSvgImage.class.getClassLoader().getResourceAsStream("icon/delete.svg");
+        final InputStream imageData = TestLoadSvgImage.class.getClassLoader().getResourceAsStream("icon/testicon.svg");
         Assert.assertNotNull(imageData);
         final Image image = new Image(imageData);
         Assert.assertNotNull(image);

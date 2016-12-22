@@ -6,9 +6,6 @@
  * the GNU General Public License, with a linking exception, as described
  * in the file LICENSE in the Alchemist distribution's top directory.
  */
-/**
- * 
- */
 package it.unibo.alchemist.core.implementations;
 
 import java.util.LinkedHashMap;
@@ -504,7 +501,6 @@ public class Engine<T> implements Simulation<T> {
     private void finalizeConstructor() {
         for (final Node<T> n : env.getNodes()) {
             for (final Reaction<T> r : n.getReactions()) {
-                r.update(r.getTau(), true, env);
                 final DependencyHandler<T> rh = new DependencyHandlerImpl<>(r);
                 ipq.addReaction(r);
                 dg.createDependencies(rh);
@@ -686,7 +682,7 @@ public class Engine<T> implements Simulation<T> {
             mu = root;
             final Time t = mu.getTau();
             if (t.compareTo(currentTime) < 0) {
-                L.error(mu + "\nis scheduled in the past at time " + t + ", current time is " + currentTime
+                throw new IllegalStateException(mu + "\nis scheduled in the past at time " + t + ", current time is " + currentTime
                         + "\nProblem occurred at step " + curStep);
             }
             currentTime = t;
@@ -807,5 +803,4 @@ public class Engine<T> implements Simulation<T> {
             }
         }
     }
-
 }

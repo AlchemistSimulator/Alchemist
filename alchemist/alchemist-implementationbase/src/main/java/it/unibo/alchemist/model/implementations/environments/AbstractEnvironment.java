@@ -88,7 +88,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
      * @param p
      *            the position
      */
-    protected abstract void nodeAdded(final Node<T> node, final Position p);
+    protected abstract void nodeAdded(Node<T> node, Position p);
 
     /**
      * Allows subclasses to determine wether or not a {@link Node} should

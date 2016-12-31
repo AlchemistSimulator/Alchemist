@@ -52,7 +52,7 @@ public interface MapEnvironment<T> extends Environment<T> {
      * @return A {@link IRoute} object describing the path the node should
      *         follow
      */
-    IRoute computeRoute(Position p1, Position p2, final Vehicle vehicle);
+    IRoute computeRoute(Position p1, Position p2, Vehicle vehicle);
 
     /**
      * This method relies on the map data, and computes a route towards some

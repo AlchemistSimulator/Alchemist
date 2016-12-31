@@ -132,7 +132,7 @@ public abstract class AbstractLinkingRuleEnvironment<T> extends AbstractEnvironm
      *            the OLD neighborhood of the node (it is no longer in sync with
      *            the {@link Environment} status)
      */
-    protected abstract void nodeRemoved(final Node<T> node, Neighborhood<T> neighborhood);
+    protected abstract void nodeRemoved(Node<T> node, Neighborhood<T> neighborhood);
 
     @Override
     public void setLinkingRule(final LinkingRule<T> r) {

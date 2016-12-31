@@ -46,7 +46,7 @@ public final class JKUJSONLoader implements Serializable {
      *             if there is an I/O error
      */
     public static <C> List<C> loadJsonObjects(final File f, final Class<C> c) throws IOException {
-        try (final BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(f), Charsets.UTF_8))) {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(f), Charsets.UTF_8))) {
             final List<C> res = new ArrayList<>();
             while (in.ready()) {
                 final C el = GSON.fromJson(in.readLine(), c);

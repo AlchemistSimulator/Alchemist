@@ -38,7 +38,7 @@ public class ProtelisProgram extends RunProtelisProgram {
      */
     public ProtelisProgram(final Environment<Object> env, final ProtelisNode n, final Reaction<Object> r, final RandomGenerator rand,
             final String prog) throws SecurityException, ClassNotFoundException {
-        super(env, n, r, rand, prog);
+        super(env, n, r, rand, prog, r.getRate());
     }
 
 }

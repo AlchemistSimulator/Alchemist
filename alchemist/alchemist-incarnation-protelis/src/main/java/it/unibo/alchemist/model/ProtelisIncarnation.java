@@ -356,7 +356,7 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
                     throw new IllegalStateException("There are too many programs requiring a "
                             + SendToNeighbor.class.getName() + " action: " + pList);
                 }
-                return new SendToNeighbor(pNode, pList.get(0));
+                return new SendToNeighbor(pNode, reaction, pList.get(0));
             } else {
                 try {
                     return new RunProtelisProgram(env, pNode, reaction, rand, param);

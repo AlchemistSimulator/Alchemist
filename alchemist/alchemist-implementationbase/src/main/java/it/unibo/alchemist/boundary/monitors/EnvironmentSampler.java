@@ -25,6 +25,7 @@ import org.danilopianini.view.ExportForGUI;
  * @param <S>
  * @param <T>
  */
+@Deprecated
 public abstract class EnvironmentSampler<S, T> extends EnvironmentInspector<T> {
 
     private static final long serialVersionUID = 4933331976793542L;

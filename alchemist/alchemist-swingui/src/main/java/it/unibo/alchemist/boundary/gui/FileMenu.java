@@ -30,6 +30,7 @@ import static it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle.getString
 
 /**
  */
+@Deprecated
 public class FileMenu extends AbstractMenu {
 
     private static final long serialVersionUID = 5209455686362711386L;

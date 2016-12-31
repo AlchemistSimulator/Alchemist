@@ -16,6 +16,7 @@ import javax.swing.JMenuItem;
 
 /**
  */
+@Deprecated
 public class Menu extends AbstractMenu {
 
     private static final long serialVersionUID = 5209455686362711386L;

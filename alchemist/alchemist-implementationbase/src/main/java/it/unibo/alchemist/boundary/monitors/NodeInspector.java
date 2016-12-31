@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @param <T>
  */
+@Deprecated
 @ExportInspector
 public class NodeInspector<T> extends AbstractNodeInspector<T> {
 

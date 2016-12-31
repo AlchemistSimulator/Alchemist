@@ -12,6 +12,7 @@ import static it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle.getString
 
 /**
  */
+@Deprecated
 public enum SimControlCommand {
 
     /**

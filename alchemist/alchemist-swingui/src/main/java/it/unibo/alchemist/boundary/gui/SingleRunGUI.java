@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.boundary.gui.effects.EffectSerializationFactory;
 import it.unibo.alchemist.boundary.gui.effects.JEffectsTab;
-import it.unibo.alchemist.boundary.gui.monitors.JMonitorsTab;
 import it.unibo.alchemist.boundary.gui.util.GraphicalMonitorFactory;
 import it.unibo.alchemist.boundary.interfaces.GraphicalOutputMonitor;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
@@ -141,12 +140,6 @@ public final class SingleRunGUI {
             final TimeStepMonitor<T> time = new TimeStepMonitor<>();
             sim.addOutputMonitor(time);
             upper.add(time);
-            final JPanel lower = new JPanel();
-            lower.setLayout(new BoxLayout(lower, BoxLayout.Y_AXIS));
-            canvas.add(lower, BorderLayout.SOUTH);
-            final JMonitorsTab<T> monitors = new JMonitorsTab<>();
-            monitors.setSimulation(sim);
-            lower.add(monitors);
             /*
              * Go on screen
              */

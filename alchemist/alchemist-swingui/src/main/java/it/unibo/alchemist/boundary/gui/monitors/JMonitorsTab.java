@@ -43,6 +43,7 @@ import it.unibo.alchemist.core.interfaces.Status;
 /**
  * @param <T>
  */
+@Deprecated
 public class JMonitorsTab<T> extends JTapeTab implements ItemListener {
     /**
      * 

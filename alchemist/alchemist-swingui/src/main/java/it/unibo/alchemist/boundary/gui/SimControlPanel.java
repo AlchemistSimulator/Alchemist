@@ -33,6 +33,7 @@ import it.unibo.alchemist.core.interfaces.Status;
  * ensuring that they are coherently updated.
  * 
  */
+@Deprecated
 public final class SimControlPanel extends JTapeGroup {
 
     private static final long serialVersionUID = 8245609434257107323L;

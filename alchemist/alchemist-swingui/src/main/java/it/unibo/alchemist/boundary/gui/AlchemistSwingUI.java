@@ -35,6 +35,7 @@ import static it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle.getString
  * 
  * 
  */
+@Deprecated
 public final class AlchemistSwingUI extends JFrame {
 
     /**

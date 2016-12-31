@@ -51,6 +51,7 @@ import static it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle.getString
 /**
  * @param <T>
  */
+@Deprecated
 public class Perspective<T> extends JPanel implements ChangeListener, ActionListener {
 
     private static final long serialVersionUID = -6074331788924400019L;

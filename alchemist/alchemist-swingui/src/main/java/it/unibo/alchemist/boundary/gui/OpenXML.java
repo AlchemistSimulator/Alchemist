@@ -14,6 +14,7 @@ import javax.swing.JButton;
 
 /**
  */
+@Deprecated
 public class OpenXML extends JButton {
 
     private static final long serialVersionUID = 20671260008783881L;

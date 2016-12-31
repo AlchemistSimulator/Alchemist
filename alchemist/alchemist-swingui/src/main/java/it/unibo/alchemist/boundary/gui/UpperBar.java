@@ -31,6 +31,7 @@ import it.unibo.alchemist.core.interfaces.Simulation;
 
 /**
  */
+@Deprecated
 public final class UpperBar extends JTape {
 
     /**

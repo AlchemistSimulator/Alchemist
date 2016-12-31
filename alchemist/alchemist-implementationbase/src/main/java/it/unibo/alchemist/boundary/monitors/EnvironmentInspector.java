@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
  * @param <T>
  */
 @ExportInspector
+@Deprecated
 public abstract class EnvironmentInspector<T> implements OutputMonitor<T> {
 
     private static final long serialVersionUID = -6609357608585315L;

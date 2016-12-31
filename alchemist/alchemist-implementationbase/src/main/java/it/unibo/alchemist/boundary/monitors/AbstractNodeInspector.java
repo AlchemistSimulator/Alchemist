@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @param <T>
  */
+@Deprecated
 public abstract class AbstractNodeInspector<T> extends EnvironmentSampler<Node<T>, T> {
 
     private static final long serialVersionUID = 5078169056849107817L;

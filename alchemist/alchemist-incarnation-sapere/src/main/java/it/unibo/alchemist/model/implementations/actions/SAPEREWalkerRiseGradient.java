@@ -12,8 +12,8 @@ import java.util.List;
 
 import org.danilopianini.lang.LangUtils;
 
-import it.unibo.alchemist.model.implementations.strategies.routing.OnStreets;
-import it.unibo.alchemist.model.implementations.strategies.speed.InteractWithOthers;
+import it.unibo.alchemist.model.implementations.movestrategies.routing.OnStreets;
+import it.unibo.alchemist.model.implementations.movestrategies.speed.InteractWithOthers;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;

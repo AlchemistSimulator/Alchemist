@@ -1,4 +1,4 @@
-package it.unibo.alchemist.model.implementations.strategies.speed;
+package it.unibo.alchemist.model.implementations.movestrategies.speed;
 
 import it.unibo.alchemist.model.interfaces.IGPSPoint;
 import it.unibo.alchemist.model.interfaces.IGPSTrace;

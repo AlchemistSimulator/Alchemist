@@ -1,4 +1,4 @@
-package it.unibo.alchemist.model.implementations.strategies.target;
+package it.unibo.alchemist.model.implementations.movestrategies.target;
 
 import static org.danilopianini.lang.RegexUtil.FLOAT_PATTERN;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;

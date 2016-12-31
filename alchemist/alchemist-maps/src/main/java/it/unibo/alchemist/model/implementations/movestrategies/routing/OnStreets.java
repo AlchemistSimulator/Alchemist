@@ -1,4 +1,4 @@
-package it.unibo.alchemist.model.implementations.strategies.routing;
+package it.unibo.alchemist.model.implementations.movestrategies.routing;
 
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Position;

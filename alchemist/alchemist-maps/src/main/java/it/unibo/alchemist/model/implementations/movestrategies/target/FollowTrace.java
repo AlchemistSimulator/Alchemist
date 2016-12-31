@@ -1,4 +1,4 @@
-package it.unibo.alchemist.model.implementations.strategies.target;
+package it.unibo.alchemist.model.implementations.movestrategies.target;
 
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;

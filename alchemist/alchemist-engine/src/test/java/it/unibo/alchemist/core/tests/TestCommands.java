@@ -158,32 +158,26 @@ public class TestCommands {
                 public List<? extends Condition<Object>> getConditions() {
                     return Collections.emptyList();
                 }
-
                 @Override
                 public List<? extends Molecule> getInfluencedMolecules() {
                     return Collections.emptyList();
                 }
-
                 @Override
                 public List<? extends Molecule> getInfluencingMolecules() {
                     return Collections.emptyList();
                 }
-
                 @Override
                 public Context getInputContext() {
                     return Context.LOCAL;
                 }
-
                 @Override
                 public Node<Object> getNode() {
                     return node;
                 }
-
                 @Override
                 public Context getOutputContext() {
                     return Context.LOCAL;
                 }
-
                 @Override
                 public double getRate() {
                     return 1;
@@ -192,24 +186,21 @@ public class TestCommands {
                 public Time getTau() {
                     return tau;
                 }
-
                 @Override
                 public TimeDistribution<Object> getTimeDistribution() {
                     throw new UnsupportedOperationException();
                 }
-
                 @Override
-                public void setActions(final List<? extends Action<Object>> a) {
-                }
-
+                public void setActions(final List<? extends Action<Object>> a) { }
                 @Override
-                public void setConditions(final List<? extends Condition<Object>> c) {
-                }
-
+                public void setConditions(final List<? extends Condition<Object>> c) { }
                 @Override
                 public void update(final Time curTime, final boolean executed, final Environment<Object> env) {
                     tau = tau.sum(new DoubleTime(1));
-                } };
+                }
+                @Override
+                public void initializationComplete(final Time t, final Environment<Object> env) { }
+            };
             @Override
             public Iterator<Reaction<Object>> iterator() {
                 return getReactions().iterator();

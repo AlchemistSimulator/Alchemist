@@ -162,6 +162,9 @@ public abstract class AReaction<T> implements Reaction<T> {
         return hash;
     }
 
+    @Override
+    public void initializationComplete(final Time t, final Environment<T> env) { }
+
     /**
      * Used by sublcasses to set their input context.
      * 

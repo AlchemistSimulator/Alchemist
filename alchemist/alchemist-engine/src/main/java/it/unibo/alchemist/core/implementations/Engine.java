@@ -78,7 +78,7 @@ public class Engine<T> implements Simulation<T> {
 
     private Reaction<T> mu;
     private final long steps;
-    private Time currentTime = new DoubleTime();
+    private Time currentTime = DoubleTime.ZERO_TIME;
     private long curStep;
 
     private final class Updater implements Runnable {
@@ -268,11 +268,7 @@ public class Engine<T> implements Simulation<T> {
         final Engine<T> sim = fromEnvironment(env);
         if (sim != null && sim.status != Status.INIT) {
             for (final Reaction<T> r : node.getReactions()) {
-                final DependencyHandler<T> rh = new DependencyHandlerImpl<>(r);
-                sim.dg.createDependencies(rh);
-                r.update(sim.currentTime, true, sim.env);
-                sim.ipq.addReaction(rh.getReaction());
-                sim.handlers.put(r, rh);
+                sim.scheduleReaction(r);
             }
             updateDependenciesForOperationOnNode(sim, env, env.getNeighborhood(node));
         }
@@ -501,12 +497,17 @@ public class Engine<T> implements Simulation<T> {
     private void finalizeConstructor() {
         for (final Node<T> n : env.getNodes()) {
             for (final Reaction<T> r : n.getReactions()) {
-                final DependencyHandler<T> rh = new DependencyHandlerImpl<>(r);
-                ipq.addReaction(r);
-                dg.createDependencies(rh);
-                handlers.put(r, rh);
+                scheduleReaction(r);
             }
         }
+    }
+
+    private void scheduleReaction(final Reaction<T> r) {
+        final DependencyHandler<T> rh = new DependencyHandlerImpl<>(r);
+        dg.createDependencies(rh);
+        r.initializationComplete(currentTime, env);
+        ipq.addReaction(r);
+        handlers.put(r, rh);
     }
 
     /**

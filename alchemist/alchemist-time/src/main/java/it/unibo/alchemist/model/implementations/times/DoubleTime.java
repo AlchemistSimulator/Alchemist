@@ -23,9 +23,13 @@ public class DoubleTime implements Time {
 
     private static final long serialVersionUID = -6332407580176508417L;
     /**
-     * 
+     * Infinite time.
      */
     public static final DoubleTime INFINITE_TIME = new DoubleTime(Double.POSITIVE_INFINITY);
+    /**
+     * Time zero.
+     */
+    public static final DoubleTime ZERO_TIME = new DoubleTime(0d);
     /**
      * 
      */

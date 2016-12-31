@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  */
-public interface IRoute extends Serializable {
+public interface Route extends Serializable {
 
     /**
      * @return the length of the route

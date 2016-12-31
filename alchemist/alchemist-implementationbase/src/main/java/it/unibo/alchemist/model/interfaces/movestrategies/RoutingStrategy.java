@@ -6,7 +6,7 @@ package it.unibo.alchemist.model.interfaces.movestrategies;
 import java.io.Serializable;
 
 import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.IRoute;
+import it.unibo.alchemist.model.interfaces.Route;
 
 /**
  * Strategy interface describing how the routing between two points happens.
@@ -21,8 +21,8 @@ public interface RoutingStrategy<T> extends Serializable {
      * 
      * @param currentPos starting {@link Position}
      * @param finalPos ending {@link Position}
-     * @return a {@link IRoute} connecting the two points
+     * @return a {@link Route} connecting the two points
      */
-    IRoute computeRoute(Position currentPos, Position finalPos);
+    Route computeRoute(Position currentPos, Position finalPos);
 
 }

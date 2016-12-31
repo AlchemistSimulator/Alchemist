@@ -4,7 +4,7 @@
 package it.unibo.alchemist.model.implementations;
 
 import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.IRoute;
+import it.unibo.alchemist.model.interfaces.Route;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import com.google.common.collect.Lists;
  * Very simple route, the shortest path connecting the two passed points.
  * 
  */
-public class PointToPointRoute implements IRoute {
+public class PointToPointRoute implements Route {
 
     /**
      * 
@@ -82,8 +82,8 @@ public class PointToPointRoute implements IRoute {
 
     @Override
     public boolean equals(final Object obj) {
-        if (obj instanceof IRoute) {
-            final IRoute r = (IRoute) obj;
+        if (obj instanceof Route) {
+            final Route r = (Route) obj;
             return getPoints().equals(r.getPoints());
         }
         return false;

@@ -59,7 +59,7 @@ public class FollowTarget<T> implements TargetSelectionStrategy<T> {
     }
 
     @Override
-    public final Position getNextTarget() {
+    public final Position getTarget() {
         final Optional<T> optt = Optional.ofNullable(node.getConcentration(track));
         if (optt.isPresent()) {
             final T conc = optt.get();

@@ -12,7 +12,7 @@ import java.io.Serializable;
 
 /**
  */
-public interface IGPSTrace extends Serializable {
+public interface GPSTrace extends Serializable {
 
     /**
      * @param time
@@ -20,7 +20,7 @@ public interface IGPSTrace extends Serializable {
      * @return a new trace, which will have all the points of this trace
      *         starting at the passed time
      */
-    IGPSTrace filter(double time);
+    GPSTrace filter(double time);
 
     /**
      * @return the node id
@@ -32,17 +32,17 @@ public interface IGPSTrace extends Serializable {
      *            the time
      * @return the next point
      */
-    IGPSPoint getNextPosition(double time);
+    GPSPoint getNextPosition(double time);
 
     /**
      * @param time
      *            the time
      * @return the previous point
      */
-    IGPSPoint getPreviousPosition(double time);
+    GPSPoint getPreviousPosition(double time);
 
     /**
-     * @return the first time for this {@link IGPSTrace}
+     * @return the first time for this {@link GPSTrace}
      */
     double getStartTime();
 
@@ -53,7 +53,7 @@ public interface IGPSTrace extends Serializable {
      *         a straight line connecting the previous and the next point of
      *         time at constant speed
      */
-    IGPSPoint interpolate(double time);
+    GPSPoint interpolate(double time);
 
     /**
      * @return distance (in meters) of the whole trace
@@ -75,7 +75,7 @@ public interface IGPSTrace extends Serializable {
     void setId(int i);
 
     /**
-     * @return the number of {@link IGPSPoint}s
+     * @return the number of {@link GPSPoint}s
      */
     int size();
 

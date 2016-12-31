@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Charsets;
 import com.google.gson.Gson;
 
-import it.unibo.alchemist.model.interfaces.IGPSTrace;
+import it.unibo.alchemist.model.interfaces.GPSTrace;
 
 /**
  */
@@ -70,10 +70,10 @@ public final class JKUJSONLoader implements Serializable {
         }
         final String source = args[0];
         final String dest = args[1];
-        final List<? extends IGPSTrace> l = loadJsonObjects(new File(source), UserTrace.class);
+        final List<? extends GPSTrace> l = loadJsonObjects(new File(source), UserTrace.class);
         double mintime = Double.MAX_VALUE;
         for (int i = 0; i < l.size(); i++) {
-            final IGPSTrace p = l.get(i);
+            final GPSTrace p = l.get(i);
             p.setId(i);
             final double time = p.getStartTime();
             if (time < mintime) {
@@ -81,7 +81,7 @@ public final class JKUJSONLoader implements Serializable {
             }
         }
         for (int i = 0; i < l.size(); i++) {
-            final IGPSTrace p = l.get(i);
+            final GPSTrace p = l.get(i);
             p.normalizeTimes(mintime);
         }
         FileUtilities.objectToFile((Serializable) l, dest, false);

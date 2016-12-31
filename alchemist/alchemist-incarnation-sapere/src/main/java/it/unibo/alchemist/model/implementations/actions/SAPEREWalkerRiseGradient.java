@@ -109,7 +109,7 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<? extends ILsaMolec
         }
 
         @Override
-        public Position getNextTarget() {
+        public Position getTarget() {
             final MapEnvironment<List<? extends ILsaMolecule>> env = environment;
             final List<? extends ILsaMolecule> matches = node.getConcentration(template);
             /*

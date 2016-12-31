@@ -15,13 +15,12 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy;
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy;
-import it.unibo.alchemist.model.interfaces.IRoute;
 import it.unibo.alchemist.utils.MapUtils;
 
 /**
  * @param <T>
  */
-public class MoveOnMap<T> extends AbstractMoveNode<T> {
+public class MoveOnMap<T> extends AbstractConfigurableMoveNode<T> {
 
     /**
      * Minimum distance to walk per step in meters. Under this value, the
@@ -29,13 +28,7 @@ public class MoveOnMap<T> extends AbstractMoveNode<T> {
      * distance between two points on the surface of the Earth.
      */
     public static final double MINIMUM_DISTANCE_WALKED = 1.0;
-    private static final long serialVersionUID = -2268285113653315764L;
-    private Position end;
-    private IRoute route;
-    private int curStep;
-    private final RoutingStrategy<T> routeStrategy;
-    private final SpeedSelectionStrategy<T> speedStrategy;
-    private final TargetSelectionStrategy<T> targetStrategy;
+    private static final long serialVersionUID = 1L;
 
     /**
      * @param environment
@@ -49,10 +42,7 @@ public class MoveOnMap<T> extends AbstractMoveNode<T> {
      *            {@link TargetSelectionStrategy}
      */
     public MoveOnMap(final MapEnvironment<T> environment, final Node<T> node, final RoutingStrategy<T> rt, final SpeedSelectionStrategy<T> sp, final TargetSelectionStrategy<T> tg) {
-        super(environment, node, true);
-        routeStrategy = rt;
-        speedStrategy = sp;
-        targetStrategy = tg;
+        super(environment, node, rt, tg, sp, true);
     }
 
     @Override
@@ -61,85 +51,16 @@ public class MoveOnMap<T> extends AbstractMoveNode<T> {
     }
 
     @Override
-    public Position getNextPosition() {
-        final Position previousEnd = end;
-        end = targetStrategy.getNextTarget();
-        if (!end.equals(previousEnd)) {
-            resetRoute();
-        }
-        double maxWalk = speedStrategy.getCurrentSpeed(end);
-        final MapEnvironment<T> env = getEnvironment();
-        final Node<T> node = getNode();
-        Position curPos = env.getPosition(node);
-        if (curPos.getDistanceTo(end) <= maxWalk) {
-            final Position destination = end;
-            end = targetStrategy.getNextTarget();
-            resetRoute();
-            return destination;
-        }
-        if (route == null) {
-            route = routeStrategy.computeRoute(curPos, end);
-        }
-        if (route.getPointsNumber() < 1) {
-            resetRoute();
-            return MapUtils.getDestinationLocation(curPos, end, maxWalk);
-        }
-        Position target = null;
-        double toWalk;
-        do {
-            target = route.getPoint(curStep);
-            toWalk = target.getDistanceTo(curPos);
-            if (toWalk > maxWalk) {
-                return MapUtils.getDestinationLocation(curPos, target, maxWalk);
-            }
-            curStep++;
-            maxWalk -= toWalk;
-            curPos = target;
-        } while (curStep != route.getPointsNumber());
-        /*
-         * I've followed the whole route
-         */
-        resetRoute();
-        target = end;
-        return MapUtils.getDestinationLocation(curPos, target, maxWalk);
-    }
-
-    /**
-     * @return the current target
-     */
-    protected final Position getTargetPoint() {
-        return end;
-    }
-
-    /**
-     * Resets the current route, e.g. because the target has been reached
-     */
-    protected final void resetRoute() {
-        route = null;
-        curStep = 0;
-    }
-
-    /**
-     * @param p
-     *            the new target
-     */
-    protected final void setTargetPoint(final Position p) {
-        end = p;
-    }
-
-    /**
-     * @return the current route, or null if no route is currently being followed
-     */
-    protected final IRoute getCurrentRoute() {
-        return route;
-    }
-
-    @Override
     public MoveOnMap<T> cloneOnNewNode(final Node<T> n, final Reaction<T> r) {
         /*
          * Routing strategies can not be cloned at the moment.
          */
         throw new UnsupportedOperationException("Routing strategies can not be cloned.");
+    }
+
+    @Override
+    protected Position getDestination(final Position current, final Position target, final double maxWalk) {
+        return MapUtils.getDestinationLocation(current, target, maxWalk);
     }
 
 }

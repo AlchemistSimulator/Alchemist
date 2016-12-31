@@ -5,10 +5,10 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy;
-import it.unibo.alchemist.model.interfaces.IRoute;
+import it.unibo.alchemist.model.interfaces.Route;
 
 /**
- * This strategy follows a {@link IRoute}.
+ * This strategy follows a {@link Route}.
  * 
  * @param <T>
  */
@@ -34,7 +34,7 @@ public class FollowTrace<T> implements TargetSelectionStrategy<T> {
     }
 
     @Override
-    public final Position getNextTarget() {
+    public final Position getTarget() {
         return environment.getNextPosition(node, reaction.getTau());
     }
 

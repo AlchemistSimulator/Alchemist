@@ -10,11 +10,9 @@ package it.unibo.alchemist.model.interfaces;
 
 import java.io.Serializable;
 
-import at.jku.traces.json.GPSPoint;
-
 /**
  */
-public interface IGPSPoint extends Serializable, Comparable<IGPSPoint> {
+public interface GPSPoint extends Serializable, Comparable<GPSPoint> {
 
     /**
      * @return the latitude

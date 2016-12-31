@@ -19,6 +19,6 @@ public interface TargetSelectionStrategy<T> extends Serializable {
     /**
      * @return the next target where the {@link Node} is directed
      */
-    Position getNextTarget();
+    Position getTarget();
 
 }

@@ -1,7 +1,8 @@
 package it.unibo.alchemist.model.implementations.movestrategies.target;
 
 import static org.danilopianini.lang.RegexUtil.FLOAT_PATTERN;
-import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
+
+import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -13,7 +14,8 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 
 /**
- * This strategy reads the value of a "target" molecule and tries to interpret it as a coordinate.
+ * This strategy reads the value of a "target" molecule and tries to interpret
+ * it as a coordinate.
  * 
  * @param <T>
  */
@@ -38,23 +40,37 @@ public class FollowTarget<T> implements TargetSelectionStrategy<T> {
         track = targetMolecule;
     }
 
-    private Position getCurrentPosition() {
+    /**
+     * @param x
+     *            first coordinate extracted from the target concentration
+     * @param y
+     *            secondo coordinate extracted from the target concentration
+     * @return a {@link Position} built using such parameters
+     */
+    protected Position createPosition(final double x, final double y) {
+        return new Continuous2DEuclidean(x, y);
+    }
+
+    /**
+     * @return the current position
+     */
+    protected final Position getCurrentPosition() {
         return environment.getPosition(node);
     }
 
     @Override
-    public Position getNextTarget() {
+    public final Position getNextTarget() {
         final Optional<T> optt = Optional.ofNullable(node.getConcentration(track));
         if (optt.isPresent()) {
             final T conc = optt.get();
-            if (conc instanceof LatLongPosition) {
-                return (LatLongPosition) conc;
+            if (conc instanceof Position) {
+                return (Position) conc;
             }
-            double lat = Double.NaN;
-            double lon = Double.NaN;
+            double x = Double.NaN;
+            double y = Double.NaN;
             if (conc instanceof Iterable) {
                 final Iterator<?> iterator = ((Iterable<?>) conc).iterator();
-                while (iterator.hasNext() && Double.isNaN(lon)) {
+                while (iterator.hasNext() && Double.isNaN(y)) {
                     final Object elem = iterator.next();
                     double val;
                     if (elem instanceof Number) {
@@ -68,32 +84,31 @@ public class FollowTarget<T> implements TargetSelectionStrategy<T> {
                             return getCurrentPosition();
                         }
                     }
-                    if (Double.isNaN(lat)) {
-                        lat = val;
+                    if (Double.isNaN(x)) {
+                        x = val;
                     } else {
-                        lon = val;
+                        y = val;
                     }
                 }
             } else {
-                final Matcher m = FLOAT_PATTERN.matcher(conc instanceof CharSequence ? (CharSequence) conc : conc.toString());
-                while (Double.isNaN(lon) && m.find()) {
+                final Matcher m = FLOAT_PATTERN
+                        .matcher(conc instanceof CharSequence ? (CharSequence) conc : conc.toString());
+                while (Double.isNaN(y) && m.find()) {
                     final String val = m.group();
                     /*
                      * It can not fail, unless the RegexUtil utility is broken
                      */
-                    if (Double.isNaN(lat)) {
-                        lat = Double.parseDouble(val);
+                    if (Double.isNaN(x)) {
+                        x = Double.parseDouble(val);
                     } else {
-                        lon = Double.parseDouble(val);
+                        y = Double.parseDouble(val);
                     }
                 }
             }
-            if (!Double.isNaN(lon)) {
-                return new LatLongPosition(lat, lon);
+            if (!Double.isNaN(y)) {
+                return createPosition(x, y);
             }
         }
         return getCurrentPosition();
     }
-
-
 }

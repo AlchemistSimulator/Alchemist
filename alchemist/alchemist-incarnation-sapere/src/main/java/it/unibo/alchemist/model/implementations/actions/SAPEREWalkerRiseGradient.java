@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Vehicle;
-import it.unibo.alchemist.model.interfaces.strategies.TargetSelectionStrategy;
+import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy;
 
 /**
  */

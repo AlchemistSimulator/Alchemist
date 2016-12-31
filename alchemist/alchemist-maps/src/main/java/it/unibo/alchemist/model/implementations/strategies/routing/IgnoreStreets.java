@@ -2,8 +2,8 @@ package it.unibo.alchemist.model.implementations.strategies.routing;
 
 import it.unibo.alchemist.model.implementations.PointToPointRoute;
 import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy;
 import it.unibo.alchemist.model.interfaces.IRoute;
-import it.unibo.alchemist.model.interfaces.strategies.RoutingStrategy;
 
 /**
  * This strategy ignores any information about the map, and connects the

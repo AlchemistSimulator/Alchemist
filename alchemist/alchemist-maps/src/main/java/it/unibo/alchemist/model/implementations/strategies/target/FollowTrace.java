@@ -4,8 +4,8 @@ import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy;
 import it.unibo.alchemist.model.interfaces.IRoute;
-import it.unibo.alchemist.model.interfaces.strategies.TargetSelectionStrategy;
 
 /**
  * This strategy follows a {@link IRoute}.

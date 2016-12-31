@@ -12,7 +12,7 @@ import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.strategies.SpeedSelectionStrategy;
+import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
 
 /**
  * This strategy slows down nodes depending on how many "interacting" nodes are

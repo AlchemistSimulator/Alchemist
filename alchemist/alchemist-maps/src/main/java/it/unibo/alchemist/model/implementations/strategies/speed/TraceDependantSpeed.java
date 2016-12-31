@@ -6,7 +6,7 @@ import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.strategies.SpeedSelectionStrategy;
+import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
 
 import org.danilopianini.lang.LangUtils;
 

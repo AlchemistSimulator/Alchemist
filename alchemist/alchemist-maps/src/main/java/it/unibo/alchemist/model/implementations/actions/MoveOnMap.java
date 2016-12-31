@@ -12,10 +12,10 @@ import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy;
+import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
+import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy;
 import it.unibo.alchemist.model.interfaces.IRoute;
-import it.unibo.alchemist.model.interfaces.strategies.RoutingStrategy;
-import it.unibo.alchemist.model.interfaces.strategies.SpeedSelectionStrategy;
-import it.unibo.alchemist.model.interfaces.strategies.TargetSelectionStrategy;
 import it.unibo.alchemist.utils.MapUtils;
 
 /**

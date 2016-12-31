@@ -1,7 +1,7 @@
 /**
  * 
  */
-package it.unibo.alchemist.model.interfaces.strategies;
+package it.unibo.alchemist.model.interfaces.movestrategies;
 
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;

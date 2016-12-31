@@ -6,7 +6,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.strategies.TargetSelectionStrategy;
+import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy;
 
 import java.util.Iterator;
 import java.util.Optional;

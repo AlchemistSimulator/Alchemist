@@ -1,7 +1,7 @@
 /**
  * 
  */
-package it.unibo.alchemist.model.interfaces.strategies;
+package it.unibo.alchemist.model.interfaces.movestrategies;
 
 import java.io.Serializable;
 

@@ -4,7 +4,7 @@ import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.IRoute;
 import it.unibo.alchemist.model.interfaces.Vehicle;
-import it.unibo.alchemist.model.interfaces.strategies.RoutingStrategy;
+import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy;
 
 /**
  * This strategy computes a route along streets allowed for a selected

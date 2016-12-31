@@ -4,7 +4,7 @@ import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
-import it.unibo.alchemist.model.interfaces.strategies.SpeedSelectionStrategy;
+import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
 
 /**
  * This strategy makes the node move at an average constant speed, which is

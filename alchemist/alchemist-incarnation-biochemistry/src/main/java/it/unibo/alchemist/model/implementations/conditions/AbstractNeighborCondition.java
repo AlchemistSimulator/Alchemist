@@ -38,7 +38,7 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
     }
 
     @Override
-    public abstract AbstractNeighborCondition<T> cloneOnNewNode(final Node<T> n);
+    public abstract AbstractNeighborCondition<T> cloneOnNewNode(Node<T> n);
 
     @Override
     public Context getContext() {

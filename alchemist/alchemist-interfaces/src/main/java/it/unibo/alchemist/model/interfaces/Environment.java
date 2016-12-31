@@ -201,7 +201,7 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
      * @param m the {@link Molecule} of the {@link Layer}
      * @param l the {@link Layer}
      */
-    void addLayer(final Molecule m, Layer<T> l);
+    void addLayer(Molecule m, Layer<T> l);
 
     /**
      * Get the layer associate to the given molecule. If no Layer is associated with the given molecule, return an empty optional.

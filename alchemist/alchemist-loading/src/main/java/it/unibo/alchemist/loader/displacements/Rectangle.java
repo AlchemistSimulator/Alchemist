@@ -44,4 +44,32 @@ public class Rectangle extends AbstractRandomDisplacement {
         return makePosition(randomDouble(x, x + width), randomDouble(y, y + height));
     }
 
+    /**
+     * @return start x
+     */
+    protected double getX() {
+        return x;
+    }
+
+    /**
+     * @return start y
+     */
+    protected double getY() {
+        return y;
+    }
+
+    /**
+     * @return width
+     */
+    protected double getWidth() {
+        return width;
+    }
+
+    /**
+     * @return height
+     */
+    protected double getHeight() {
+        return height;
+    }
+
 }

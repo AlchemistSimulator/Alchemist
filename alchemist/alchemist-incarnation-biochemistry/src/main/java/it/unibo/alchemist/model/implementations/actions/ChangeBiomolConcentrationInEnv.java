@@ -71,7 +71,7 @@ public class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<D
     }
 
     @Override
-    public Action<Double> cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
+    public Action<Double> cloneAction(final Node<Double> n, final Reaction<Double> r) {
         return new ChangeBiomolConcentrationInEnv(n, biomolecule, env, getRandomGenerator());
     }
 

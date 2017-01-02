@@ -12,6 +12,7 @@ import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
  */
@@ -33,7 +34,7 @@ public class ComputationalRoundComplete extends AbstractCondition<Object> {
     }
 
     @Override
-    public ComputationalRoundComplete cloneOnNewNode(final Node<Object> n) {
+    public ComputationalRoundComplete cloneCondition(final Node<Object> n, final Reaction<Object> r) {
         return new ComputationalRoundComplete((ProtelisNode) n, program);
     }
 

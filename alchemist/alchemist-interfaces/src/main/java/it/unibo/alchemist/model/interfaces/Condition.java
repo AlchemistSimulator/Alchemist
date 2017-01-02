@@ -28,9 +28,11 @@ public interface Condition<T> extends Serializable {
      * 
      * @param n
      *            The node where to clone this {@link Condition}
+     * @param r
+     *            The {@link Reaction} where to clone this {@link Condition}
      * @return the cloned action
      */
-    Condition<T> cloneOnNewNode(Node<T> n);
+    Condition<T> cloneCondition(Node<T> n, Reaction<T> r);
 
     /**
      * @return The context for this condition.

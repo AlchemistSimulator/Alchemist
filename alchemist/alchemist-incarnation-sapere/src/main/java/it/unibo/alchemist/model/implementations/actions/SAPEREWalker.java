@@ -79,7 +79,7 @@ public class SAPEREWalker extends MoveOnMap<List<? extends ILsaMolecule>> implem
     }
 
     @Override
-    public SAPEREWalker cloneOnNewNode(final Node<List<? extends ILsaMolecule>> n, final Reaction<List<? extends ILsaMolecule>> r) {
+    public SAPEREWalker cloneAction(final Node<List<? extends ILsaMolecule>> n, final Reaction<List<? extends ILsaMolecule>> r) {
         return null;
     }
 

@@ -65,7 +65,7 @@ public class ChemotacticPolarization extends AbstractAction<Double> {
 
 
     @Override
-    public ChemotacticPolarization cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
+    public ChemotacticPolarization cloneAction(final Node<Double> n, final Reaction<Double> r) {
         return new ChemotacticPolarization(env, n, biomol.toString(), ascend ? "up" : "down");
     }
 

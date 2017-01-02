@@ -196,16 +196,6 @@ public class SAPEREGradient extends AReaction<List<? extends ILsaMolecule>> {
         }
 
         @Override
-        public Condition<List<? extends ILsaMolecule>> cloneOnNewNode(final Node<List<? extends ILsaMolecule>> n) {
-            return this;
-        }
-
-        @Override
-        public Action<List<? extends ILsaMolecule>> cloneOnNewNode(final Node<List<? extends ILsaMolecule>> n, final Reaction<List<? extends ILsaMolecule>> r) {
-            return this;
-        }
-
-        @Override
         public void execute() {
         }
 
@@ -243,6 +233,19 @@ public class SAPEREGradient extends AReaction<List<? extends ILsaMolecule>> {
         public String toString() {
             return mol.toString();
         }
+
+        @Override
+        public Condition<List<? extends ILsaMolecule>> cloneCondition(final Node<List<? extends ILsaMolecule>> n,
+                final Reaction<List<? extends ILsaMolecule>> r) {
+            return null;
+        }
+
+        @Override
+        public Action<List<? extends ILsaMolecule>> cloneAction(final Node<List<? extends ILsaMolecule>> n,
+                final Reaction<List<? extends ILsaMolecule>> r) {
+            return null;
+        }
+
     }
 
     /**

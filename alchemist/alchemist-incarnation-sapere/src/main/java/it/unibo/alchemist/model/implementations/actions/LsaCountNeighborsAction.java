@@ -95,7 +95,7 @@ public class LsaCountNeighborsAction extends SAPERELocalAgent {
      * alice.alchemist.model.interfaces.Reaction)
      */
     @Override
-    public LsaCountNeighborsAction cloneOnNewNode(final Node<List<? extends ILsaMolecule>> n, final Reaction<List<? extends ILsaMolecule>> r) {
+    public LsaCountNeighborsAction cloneAction(final Node<List<? extends ILsaMolecule>> n, final Reaction<List<? extends ILsaMolecule>> r) {
         return new LsaCountNeighborsAction(getEnvironment(), (ILsaNode) n, mol, countVarName, rnd);
     }
 

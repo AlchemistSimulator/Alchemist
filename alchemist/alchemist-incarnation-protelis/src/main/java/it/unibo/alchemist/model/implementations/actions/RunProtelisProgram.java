@@ -119,7 +119,7 @@ public class RunProtelisProgram extends SimpleMolecule implements Action<Object>
     }
 
     @Override
-    public RunProtelisProgram cloneOnNewNode(final Node<Object> n, final Reaction<Object> r) {
+    public RunProtelisProgram cloneAction(final Node<Object> n, final Reaction<Object> r) {
         throw new UnsupportedOperationException();
     }
 

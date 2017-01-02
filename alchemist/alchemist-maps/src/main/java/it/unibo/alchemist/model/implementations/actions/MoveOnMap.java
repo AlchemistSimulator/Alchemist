@@ -51,7 +51,7 @@ public class MoveOnMap<T> extends AbstractConfigurableMoveNode<T> {
     }
 
     @Override
-    public MoveOnMap<T> cloneOnNewNode(final Node<T> n, final Reaction<T> r) {
+    public MoveOnMap<T> cloneAction(final Node<T> n, final Reaction<T> r) {
         /*
          * Routing strategies can not be cloned at the moment.
          */

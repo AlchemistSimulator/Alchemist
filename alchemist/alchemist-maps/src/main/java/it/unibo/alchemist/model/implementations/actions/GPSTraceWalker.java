@@ -41,7 +41,7 @@ public class GPSTraceWalker<T> extends MoveOnMap<T> {
     }
 
     @Override
-    public GPSTraceWalker<T> cloneOnNewNode(final Node<T> n, final Reaction<T> r) {
+    public GPSTraceWalker<T> cloneAction(final Node<T> n, final Reaction<T> r) {
         return new GPSTraceWalker<>(getEnvironment(), n, r);
     }
 

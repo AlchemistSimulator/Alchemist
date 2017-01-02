@@ -8,6 +8,7 @@ import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentSupportingDeformableCells;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
  * 
@@ -39,7 +40,7 @@ public class TensionPresent extends AbstractCondition<Double> {
     }
 
     @Override
-    public TensionPresent cloneOnNewNode(final Node<Double> n) {
+    public TensionPresent cloneCondition(final Node<Double> n, final Reaction<Double> r) {
         return new TensionPresent(env, n);
     }
 

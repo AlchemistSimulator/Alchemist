@@ -48,7 +48,7 @@ public class BrownianMove<T> extends AbstractMoveNode<T> {
     }
 
     @Override
-    public Action<T> cloneOnNewNode(final Node<T> n, final Reaction<T> reaction) {
+    public Action<T> cloneAction(final Node<T> n, final Reaction<T> reaction) {
         return new BrownianMove<>(getEnvironment(), n, rng, r);
     }
 

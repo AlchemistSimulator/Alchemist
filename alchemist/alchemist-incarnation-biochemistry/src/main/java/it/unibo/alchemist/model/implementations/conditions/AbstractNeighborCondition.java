@@ -15,6 +15,7 @@ import java.util.Map;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
  * Represents a condition on a neighbor. Formally this conditions is satisfied if at least one neighbor
@@ -38,7 +39,7 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
     }
 
     @Override
-    public abstract AbstractNeighborCondition<T> cloneOnNewNode(Node<T> n);
+    public abstract AbstractNeighborCondition<T> cloneCondition(Node<T> n, Reaction<T> r);
 
     @Override
     public Context getContext() {

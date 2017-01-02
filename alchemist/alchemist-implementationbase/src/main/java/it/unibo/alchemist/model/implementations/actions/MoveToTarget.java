@@ -8,7 +8,6 @@ import it.unibo.alchemist.model.implementations.movestrategies.speed.ConstantSpe
 import it.unibo.alchemist.model.implementations.movestrategies.target.FollowTarget;
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.implementations.routes.StraightRoute;
-import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -53,7 +52,7 @@ public class MoveToTarget<T> extends AbstractConfigurableMoveNode<T> {
     }
 
     @Override
-    public Action<T> cloneOnNewNode(final Node<T> n, final Reaction<T> r) {
+    public MoveToTarget<T> cloneAction(final Node<T> n, final Reaction<T> r) {
         return new MoveToTarget<>(getEnvironment(), n, r, trackMolecule, speed);
     }
 

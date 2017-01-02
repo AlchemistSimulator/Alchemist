@@ -38,7 +38,7 @@ public class SendToNeighbor extends AbstractLocalAction<Object> {
     }
 
     @Override
-    public SendToNeighbor cloneOnNewNode(final Node<Object> n, final Reaction<Object> r) {
+    public SendToNeighbor cloneAction(final Node<Object> n, final Reaction<Object> r) {
         return new SendToNeighbor((ProtelisNode) n, reaction, prog);
     }
 

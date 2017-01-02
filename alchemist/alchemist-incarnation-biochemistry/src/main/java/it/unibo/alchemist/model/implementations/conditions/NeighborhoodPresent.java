@@ -13,6 +13,7 @@ import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
  * A condition is valid if the node has a neighborhood, formally if the node has at least one node 
@@ -36,7 +37,7 @@ public class NeighborhoodPresent<T> extends AbstractCondition<T> {
     }
 
     @Override
-    public NeighborhoodPresent<T> cloneOnNewNode(final Node<T> n) {
+    public NeighborhoodPresent<T> cloneCondition(final Node<T> n, final Reaction<T> r) {
         return new NeighborhoodPresent<>(env, n);
     }
 

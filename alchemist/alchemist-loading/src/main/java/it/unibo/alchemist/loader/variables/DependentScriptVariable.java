@@ -1,10 +1,13 @@
 package it.unibo.alchemist.loader.variables;
 
 import java.util.Map;
+import java.util.stream.Stream;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+
+import org.danilopianini.lang.HashUtils;
 
 /**
  * This variable can be initialized by providing a formula where other variables
@@ -23,12 +26,15 @@ public class DependentScriptVariable implements DependentVariable {
     private static final long serialVersionUID = 1L;
     private static final ScriptEngineManager MANAGER = new ScriptEngineManager();
     private static final ScriptEngine ENGINE = MANAGER.getEngineByName("nashorn");
+    private static final String RANDOM = "RANDOM";
+    private static final String RANDOM_REGEX = "\\$" + RANDOM;
     private final String script;
 
     /**
      * @param formula
      *            a valid Javascript expression, where variable names are
-     *            prefixed with $
+     *            prefixed with $, and where $RANDOM can be used to generate
+     *            controlled random values
      */
     public DependentScriptVariable(final String formula) {
         this.script = formula;
@@ -45,6 +51,11 @@ public class DependentScriptVariable implements DependentVariable {
             .sorted((v1, v2) -> Integer.compare(v2.length(), v1.length()))
             .toArray(i -> new String[i]);
         String formula = script;
+        if (script.contains(RANDOM)) {
+            final Object[] hash = Stream.concat(Stream.of(script), variables.values().stream()).toArray();
+            final double random = Math.abs((double) HashUtils.hash32(hash)) / Integer.MAX_VALUE;
+            formula = script.replaceAll(RANDOM_REGEX, Double.toString(random));
+        }
         for (final String var : keys) {
             formula = formula.replaceAll("\\$" + var, Double.toString(variables.get(var)));
         }

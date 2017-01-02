@@ -101,7 +101,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
      * @return true if the node should be added to this environment, false
      *         otherwise
      */
-    protected abstract boolean nodeShouldBeAdded(final Node<T> node, final Position p);
+    protected abstract boolean nodeShouldBeAdded(Node<T> node, Position p);
 
     /**
      * Allows subclasses to tune the actual position of a node, applying spatial
@@ -113,7 +113,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
      *            the original (requested) position
      * @return the actual position where the node should be located
      */
-    protected abstract Position computeActualInsertionPosition(final Node<T> node, final Position p);
+    protected abstract Position computeActualInsertionPosition(Node<T> node, Position p);
 
     @Override
     public final void addNode(final Node<T> node, final Position p) {

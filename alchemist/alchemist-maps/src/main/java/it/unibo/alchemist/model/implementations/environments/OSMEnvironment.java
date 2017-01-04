@@ -8,18 +8,6 @@
  */
 package it.unibo.alchemist.model.implementations.environments;
 
-import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
-import it.unibo.alchemist.model.implementations.GraphHopperRoute;
-import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
-import it.unibo.alchemist.model.interfaces.GPSTrace;
-import it.unibo.alchemist.model.interfaces.MapEnvironment;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.Route;
-import it.unibo.alchemist.model.interfaces.Time;
-import it.unibo.alchemist.model.interfaces.Vehicle;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -51,6 +39,18 @@ import com.graphhopper.routing.util.EdgeFilter;
 import com.graphhopper.routing.util.EncodingManager;
 import com.graphhopper.storage.index.QueryResult;
 import com.graphhopper.util.shapes.GHPoint;
+
+import gnu.trove.map.TIntObjectMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
+import it.unibo.alchemist.model.implementations.GraphHopperRoute;
+import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
+import it.unibo.alchemist.model.interfaces.GPSTrace;
+import it.unibo.alchemist.model.interfaces.Route;
+import it.unibo.alchemist.model.interfaces.MapEnvironment;
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.model.interfaces.Vehicle;
 
 /**
  * This class serves as template for more specific implementations of
@@ -93,7 +93,6 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      */
     public static final boolean DEFAULT_FORCE_STREETS = true;
     private static final int ENCODING_BASE = 36;
-    private static final int ROUTES_CACHE_SIZE = 10000;
     private static final String MONITOR = "MapDisplay";
     private static final Logger L = LoggerFactory.getLogger(OSMEnvironment.class);
     private static final long serialVersionUID = -8100726226966471621L;
@@ -364,8 +363,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
         if (routecache == null) {
             routecache = CacheBuilder
                 .newBuilder()
-                .maximumSize(ROUTES_CACHE_SIZE)
-                .expireAfterAccess(10, TimeUnit.MINUTES)
+                .expireAfterAccess(10, TimeUnit.SECONDS)
                 .build(new CacheLoader<Triple<Vehicle, Position, Position>, Route>() {
                     @Override
                     public Route load(final Triple<Vehicle, Position, Position> key) {
@@ -427,28 +425,47 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      * @return the minimum latitude
      */
     protected double getMinLatitude() {
-        return getOffset()[1];
+        return super.getOffset()[1];
     }
 
     /**
      * @return the maximum latitude
      */
     protected double getMaxLatitude() {
-        return getOffset()[1] + getSize()[1];
+        return super.getOffset()[1] + super.getSize()[1];
     }
 
     /**
      * @return the minimum longitude
      */
     protected double getMinLongitude() {
-        return getOffset()[0];
+        return super.getOffset()[0];
     }
 
     /**
      * @return the maximum longitude
      */
     protected double getMaxLongitude() {
-        return getOffset()[0] + getSize()[0];
+        return super.getOffset()[0] + super.getSize()[0];
+    }
+
+    @Override
+    public double[] getSizeInDistanceUnits() {
+        final double minlat = getMinLatitude();
+        final double maxlat = getMaxLatitude();
+        final double minlon = getMinLongitude();
+        final double maxlon = getMaxLongitude();
+        final Position minmin = new LatLongPosition(minlat, minlon);
+        final Position minmax = new LatLongPosition(minlat, maxlon);
+        final Position maxmin = new LatLongPosition(maxlat, minlon);
+        final Position maxmax = new LatLongPosition(maxlat, maxlon);
+        /*
+         * Maximum x: maximum distance between the same longitudes
+         * Maximum y: maximum distance between the same latitudes
+         */
+        final double sizex = Math.max(minmin.getDistanceTo(minmax), maxmax.getDistanceTo(maxmin));
+        final double sizey = Math.max(minmin.getDistanceTo(maxmin), maxmax.getDistanceTo(minmax));
+        return new double[]{sizex, sizey};
     }
 
     /**
@@ -523,5 +540,4 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
         s.defaultReadObject();
         initAll(mapResource);
     }
-
 }

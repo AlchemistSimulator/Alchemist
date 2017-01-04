@@ -220,23 +220,19 @@ public class TestCommands {
             public Object getConcentration(final Molecule mol) {
                 throw new UnsupportedOperationException();
             }
-
             @Override
             public Map<Molecule, Object> getContents() {
                 return Collections.emptyMap();
             }
-
             @Override
             public int getId() {
                 return 0;
             }
-
             @SuppressWarnings("unchecked")
             @Override
             public List<Reaction<Object>> getReactions() {
                 return Lists.<Reaction<Object>>newArrayList(reaction);
             }
-
             @Override
             public void removeConcentration(final Molecule mol) {
                 throw new UnsupportedOperationException();
@@ -245,7 +241,6 @@ public class TestCommands {
             public void removeReaction(final Reaction<Object> r) {
                 throw new UnsupportedOperationException();
             }
-
             @Override
             public void setConcentration(final Molecule mol, final Object c) {
                 throw new UnsupportedOperationException();
@@ -262,22 +257,18 @@ public class TestCommands {
         public Iterator<Node<Object>> iterator() {
             return getNodes().iterator();
         }
-
         @Override
         public void addNode(final Node<Object> node, final Position p) {
             throw new UnsupportedOperationException();
         }
-
         @Override
         public int getDimensions() {
             return 0;
         }
-
         @Override
         public double getDistanceBetweenNodes(final Node<Object> n1, final Node<Object> n2) {
             return 0;
         }
-
         @Override
         public Neighborhood<Object> getNeighborhood(final Node<Object> center) {
             return new Neighborhood<Object>() {
@@ -337,87 +328,74 @@ public class TestCommands {
                 }
             };
         }
-
         @Override
         public Node<Object> getNodeByID(final int id) {
             return node;
         }
-
         @SuppressWarnings("unchecked")
         @Override
         public Collection<Node<Object>> getNodes() {
             return Lists.<Node<Object>>newArrayList(node);
         }
-
         @Override
         public int getNodesNumber() {
             return 1;
         }
-
         @Override
         public Set<Node<Object>> getNodesWithinRange(final Node<Object> center, final double range) {
             return Collections.emptySet();
         }
-
         @Override
         public Set<Node<Object>> getNodesWithinRange(final Position center, final double range) {
             return Collections.emptySet();
         }
-
         @Override
         public double[] getOffset() {
             return new double[] {};
         }
-
         @Override
         public Position getPosition(final Node<Object> node) {
             throw new UnsupportedOperationException();
         }
-
         @Override
         public String getPreferredMonitor() {
             throw new UnsupportedOperationException();
         }
-
         @Override
         public double[] getSize() {
             return new double[] {};
         }
-
+        @Override
+        public double[] getSizeInDistanceUnits() {
+            return new double[] {};
+        }
         @Override
         public void moveNode(final Node<Object> node, final Position direction) {
             throw new UnsupportedOperationException();
         }
-
         @Override
         public void moveNodeToPosition(final Node<Object> node, final Position position) {
             throw new UnsupportedOperationException();
         }
-
         @Override
         public void removeNode(final Node<Object> node) {
             throw new UnsupportedOperationException();
         }
-
         @Override
         public void setLinkingRule(final LinkingRule<Object> rule) {
         }
-
         @Override
         public LinkingRule<Object> getLinkingRule() {
             throw new UnsupportedOperationException();
         }
-
         @Override
         public void addLayer(final Molecule m, final Layer<Object> l) {
             throw new UnsupportedOperationException();
         }
-
         @Override
         public Set<Layer<Object>> getLayers() {
             throw new UnsupportedOperationException();
         }
-
         @Override
         public Optional<Layer<Object>> getLayer(final Molecule m) {
             throw new UnsupportedOperationException();

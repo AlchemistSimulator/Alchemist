@@ -167,7 +167,7 @@ public final class CachedNeighborhood<T> implements Neighborhood<T> {
     @Override
     public Iterator<Node<T>> iterator() {
         return new Iterator<Node<T>>() {
-            private int i = 0;
+            private int i = 0; // NOPMD (conflicts with Checkstyle)
             private Node<T> current;
             @Override
             public boolean hasNext() {
@@ -175,7 +175,8 @@ public final class CachedNeighborhood<T> implements Neighborhood<T> {
             }
             @Override
             public Node<T> next() {
-                return current = k.get(i++);
+                current = k.get(i++);
+                return current;
             }
             @Override
             public void remove() {

@@ -9,7 +9,6 @@
 package it.unibo.alchemist.model.implementations.linkingrules;
 
 import it.unibo.alchemist.model.implementations.neighborhoods.CachedNeighborhood;
-import it.unibo.alchemist.model.interfaces.LinkingRule;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -21,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.Node;
  * @param <T>
  *            The type which describes the concentration of a molecule
  */
-public class EuclideanDistance<T> implements LinkingRule<T> {
+public class EuclideanDistance<T> extends AbstractLocallyConsistentLinkingRule<T> {
 
     private static final long serialVersionUID = -405055780667941773L;
     private final double range;

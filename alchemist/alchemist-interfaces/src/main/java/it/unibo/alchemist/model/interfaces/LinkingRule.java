@@ -28,6 +28,21 @@ public interface LinkingRule<T> extends Serializable {
      *            the node's environment
      * @return a neighborhood
      */
-    Neighborhood<T> computeNeighborhood(Node<T> center, Environment<T> env);
+    Neighborhood<T> computeNeighborhood(final Node<T> center, Environment<T> env);
+
+    /**
+     * Some rules may require to be evaluated against multiple nodes until the
+     * situations gets consistent. For instance, a rule that connects the
+     * closest 10 nodes must be evaluated multiple times to get to the correct
+     * result (this is because a change in one neighbor may require a
+     * disconnection from another node to maintain exactly 10 connections).
+     * 
+     * Most rules do not need such machinery (e.g., connecting to nodes within
+     * some statically defined range).
+     * 
+     * @return true if this rule does not need to be recursively re-applied to
+     *         neighbors to ensure global consistency.
+     */
+    boolean isLocallyConsistent();
 
 }

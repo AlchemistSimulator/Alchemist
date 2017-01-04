@@ -11,10 +11,9 @@
  */
 package it.unibo.alchemist.model.implementations.positions;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.apache.commons.math3.util.MathArrays;
 import org.danilopianini.lang.HashUtils;
@@ -54,18 +53,18 @@ public class ContinuousGenericEuclidean implements Position {
 
     @Override
     public List<Position> buildBoundingBox(final double range) {
-        return IntStream.range(0, getDimensions()).parallel()
-            .mapToObj(i -> {
-                final double[] coords = new double[c.length];
-                /*
-                 * Canonical base: always sum the range, but
-                 */
-                for (int j = 0; j < coords.length; j++) {
-                    coords[j] = c[j] + (i == j ? -range : range);
-                }
-                return new ContinuousGenericEuclidean(false, coords);
-            })
-            .collect(Collectors.toList());
+        final List<Position> box = new ArrayList<>(getDimensions());
+        for (int i = 0; i < getDimensions(); i++) {
+            final double[] coords = new double[c.length];
+            /*
+             * Canonical base
+             */
+            for (int j = 0; j < coords.length; j++) {
+                coords[j] = c[j] + (i == j ? -range : range);
+            }
+            box.add(new ContinuousGenericEuclidean(false, coords));
+        }
+        return box;
     }
 
     @Override

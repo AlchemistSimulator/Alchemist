@@ -14,7 +14,6 @@ package it.unibo.alchemist.model.implementations.nodes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -27,6 +26,7 @@ import java.util.function.Consumer;
 import org.danilopianini.concurrency.ThreadLocalIdGenerator;
 
 import com.google.common.collect.MapMaker;
+import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
 
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
@@ -50,7 +50,10 @@ public abstract class GenericNode<T> implements Node<T> {
     private static final AtomicInteger THREAD_UNSAFE = new AtomicInteger();
     private final int id;
     private final List<Reaction<T>> reactions = new ArrayList<>();
-    private final Map<Molecule, T> molecules = new LinkedHashMap<>();
+    private final ConcurrentMap<Molecule, T> molecules = new ConcurrentLinkedHashMap.Builder<Molecule, T>()
+            .maximumWeightedCapacity(Long.MAX_VALUE)
+            .concurrencyLevel(2)
+            .build();
 
     private static int idFromEnv(final Environment<?> env) {
         MUTEX.acquireUninterruptibly();

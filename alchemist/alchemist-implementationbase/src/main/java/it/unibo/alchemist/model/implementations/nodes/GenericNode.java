@@ -14,6 +14,7 @@ package it.unibo.alchemist.model.implementations.nodes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -49,7 +50,7 @@ public abstract class GenericNode<T> implements Node<T> {
     private static final AtomicInteger THREAD_UNSAFE = new AtomicInteger();
     private final int id;
     private final List<Reaction<T>> reactions = new ArrayList<>();
-    private final Map<Molecule, T> molecules = new MapMaker().concurrencyLevel(2).makeMap();
+    private final Map<Molecule, T> molecules = new LinkedHashMap<>();
 
     private static int idFromEnv(final Environment<?> env) {
         MUTEX.acquireUninterruptibly();

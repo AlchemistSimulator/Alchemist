@@ -166,7 +166,30 @@ public final class CachedNeighborhood<T> implements Neighborhood<T> {
 
     @Override
     public Iterator<Node<T>> iterator() {
-        return k.iterator();
+        return new Iterator<Node<T>>() {
+            private int i = 0;
+            private Node<T> current;
+            @Override
+            public boolean hasNext() {
+                return i < k.size();
+            }
+            @Override
+            public Node<T> next() {
+                return current = k.get(i++);
+            }
+            @Override
+            public void remove() {
+                if (i <= 0) {
+                    throw new IllegalStateException("next() must get called beore remove()");
+                }
+                if (current == null) {
+                    throw new IllegalStateException("remove() can't be called twice in a row");
+                }
+                k.remove(--i);
+                kCache.remove(current.getId());
+                current = null;
+            }
+        };
     }
 
     @Override
@@ -193,6 +216,19 @@ public final class CachedNeighborhood<T> implements Neighborhood<T> {
     @Override
     public Spliterator<Node<T>> spliterator() {
         return k.spliterator();
+    }
+
+    /**
+     * @param environment
+     *            the environment
+     * @param center
+     *            the central node
+     * @param <T>
+     *            concentration type
+     * @return an empty {@link Neighborhood}
+     */
+    public static <T> CachedNeighborhood<T> empty(final Environment<T> environment, final Node<T> center) {
+        return new CachedNeighborhood<>(center, Collections.emptyList(), environment);
     }
 
 }

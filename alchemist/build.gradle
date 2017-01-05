@@ -106,6 +106,10 @@ allprojects {
                             name 'Franco Pradelli'
                             email 'franco.pradelli@studio.unibo.it'
                         }
+                        contributor {
+                            name 'Elisa Casadio'
+                            email 'elisa.casadio7@studio.unibo.it'
+                        }
                     }
                 }
             }

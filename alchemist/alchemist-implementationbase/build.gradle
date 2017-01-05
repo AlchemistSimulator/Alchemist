@@ -8,6 +8,8 @@ dependencies {
         "net.sourceforge.streamsupport:streamsupport:$streamsupportVersion",
         "org.danilopianini:javalib:$javalibVersion",
         "org.danilopianini:javalib-java7:$javalib7Version",
+        "org.danilopianini:stream-goodies:$streamgoodiesVersion",
+        "org.jooq:jool:$joolVersion",
         "org.reflections:reflections:$reflectionsVersion"
     )
 }

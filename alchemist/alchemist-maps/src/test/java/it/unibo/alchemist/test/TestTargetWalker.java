@@ -55,7 +55,6 @@ public class TestTargetWalker {
      * @throws ClassNotFoundException if test fails
      * @throws IOException if test fails
      */
-    @SuppressWarnings("unchecked")
     @SuppressFBWarnings(value = {"DMI_HARDCODED_ABSOLUTE_FILENAME", "SIC_INNER_SHOULD_BE_STATIC_ANON"},
         justification = "It is a resource path, not an absolute pathname.")
     @Before

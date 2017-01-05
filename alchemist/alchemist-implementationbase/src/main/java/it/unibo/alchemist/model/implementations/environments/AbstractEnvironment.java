@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
-import org.danilopianini.lang.SpatialIndex;
+import org.danilopianini.util.SpatialIndex;
 
 import com.google.common.collect.Sets;
 

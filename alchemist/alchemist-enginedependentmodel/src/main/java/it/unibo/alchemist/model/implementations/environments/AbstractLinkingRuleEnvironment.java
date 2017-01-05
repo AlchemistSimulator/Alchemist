@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
-import org.danilopianini.lang.SpatialIndex;
+import org.danilopianini.util.SpatialIndex;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.TIntSet;

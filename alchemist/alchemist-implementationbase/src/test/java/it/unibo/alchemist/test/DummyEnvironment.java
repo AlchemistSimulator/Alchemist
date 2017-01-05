@@ -2,7 +2,7 @@ package it.unibo.alchemist.test;
 
 import java.util.Optional;
 
-import org.danilopianini.lang.FlexibleQuadTree;
+import org.danilopianini.util.FlexibleQuadTree;
 
 import it.unibo.alchemist.model.implementations.environments.AbstractEnvironment;
 import it.unibo.alchemist.model.interfaces.Layer;

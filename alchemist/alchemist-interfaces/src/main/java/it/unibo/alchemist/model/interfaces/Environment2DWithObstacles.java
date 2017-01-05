@@ -41,7 +41,7 @@ public interface Environment2DWithObstacles<W extends Obstacle2D, T> extends Env
      *            the range to scan
      * @return the list of Obstacles
      */
-    List<W> getObstaclesInRange(final Double centerx, final Double centery, final Double range);
+    List<W> getObstaclesInRange(double centerx, double centery, double range);
 
     /**
      * @return true if this environment has mobile obstacles obstacles, false if

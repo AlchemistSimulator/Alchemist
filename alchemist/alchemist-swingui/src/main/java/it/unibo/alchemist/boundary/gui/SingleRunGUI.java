@@ -20,10 +20,9 @@ import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.boundary.gui.effects.EffectSerializationFactory;
 import it.unibo.alchemist.boundary.gui.effects.JEffectsTab;
-import it.unibo.alchemist.boundary.gui.monitors.JMonitorsTab;
 import it.unibo.alchemist.boundary.gui.util.GraphicalMonitorFactory;
 import it.unibo.alchemist.boundary.interfaces.GraphicalOutputMonitor;
-import it.unibo.alchemist.boundary.l10n.R;
+import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.monitors.TimeStepMonitor;
 import it.unibo.alchemist.core.interfaces.Simulation;
 
@@ -49,7 +48,20 @@ public final class SingleRunGUI {
      *            concentration type
      */
     public static <T> void make(final Simulation<T> sim) {
-        make(sim, (File) null);
+        make(sim, (File) null, JFrame.EXIT_ON_CLOSE);
+    }
+
+    /**
+     * 
+     * @param sim
+     *            the simulation for this GUI
+     * @param closeOperation
+     *            the type of close operation for this GUI
+     * @param <T>
+     *            concentration type
+     */
+    public static <T> void make(final Simulation<T> sim, final int closeOperation) {
+        make(sim, (File) null, closeOperation);
     }
 
     /**
@@ -61,14 +73,30 @@ public final class SingleRunGUI {
      *            the effects file
      * @param <T>
      *            concentration type
-     * @throws FileNotFoundException 
+     * @throws FileNotFoundException
      */
     public static <T> void make(final Simulation<T> sim, final String effectsFile) {
-        make(sim, new File(effectsFile));
+        make(sim, new File(effectsFile), JFrame.EXIT_ON_CLOSE);
+    }
+
+    /**
+     * Builds a single-use graphical interface.
+     * 
+     * @param sim
+     *            the simulation for this GUI
+     * @param effectsFile
+     *            the effects file
+     * @param closeOperation
+     *            the type of close operation for this GUI
+     * @param <T>
+     *            concentration type
+     */
+    public static <T> void make(final Simulation<T> sim, final String effectsFile, final int closeOperation) {
+        make(sim, new File(effectsFile), closeOperation);
     }
 
     private static void errorLoadingEffects(final Throwable e) {
-        L.error(R.getString("cannot_load_effects"), e);
+        L.error(LocalizedResourceBundle.getString("cannot_load_effects"), e);
     }
 
     /**
@@ -78,15 +106,18 @@ public final class SingleRunGUI {
      *            the simulation for this GUI
      * @param effectsFile
      *            the effects file
+     * @param closeOperation
+     *            the type of close operation for this GUI
      * @param <T>
      *            concentration type
      */
-    public static <T> void make(final Simulation<T> sim, final File effectsFile) {
+    public static <T> void make(final Simulation<T> sim, final File effectsFile, final int closeOperation) {
         final GraphicalOutputMonitor<T> main = GraphicalMonitorFactory.createMonitor(sim,
                 e -> L.error("Cannot init the UI.", e));
         if (main instanceof Component) {
             final JFrame frame = new JFrame("Alchemist Simulator");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            // frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setDefaultCloseOperation(closeOperation);
             final JPanel canvas = new JPanel();
             frame.getContentPane().add(canvas);
             canvas.setLayout(new BorderLayout());
@@ -109,20 +140,14 @@ public final class SingleRunGUI {
             final TimeStepMonitor<T> time = new TimeStepMonitor<>();
             sim.addOutputMonitor(time);
             upper.add(time);
-            final JPanel lower = new JPanel();
-            lower.setLayout(new BoxLayout(lower, BoxLayout.Y_AXIS));
-            canvas.add(lower, BorderLayout.SOUTH);
-            final JMonitorsTab<T> monitors = new JMonitorsTab<>();
-            monitors.setSimulation(sim);
-            lower.add(monitors);
             /*
              * Go on screen
              */
             // frame.pack();
-            final Optional<Dimension> size = Arrays.stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices())
-                .map(GraphicsDevice::getDisplayMode)
-                .map(dm -> new Dimension(dm.getWidth(), dm.getHeight()))
-                .min((d1, d2) -> Double.compare(area(d1), area(d2)));
+            final Optional<Dimension> size = Arrays
+                    .stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices())
+                    .map(GraphicsDevice::getDisplayMode).map(dm -> new Dimension(dm.getWidth(), dm.getHeight()))
+                    .min((d1, d2) -> Double.compare(area(d1), area(d2)));
             size.ifPresent(d -> d.setSize(d.getWidth() * SCALE_FACTOR, d.getHeight() * SCALE_FACTOR));
             frame.setSize(size.orElse(new Dimension(FALLBACK_X_SIZE, FALLBACK_Y_SIZE)));
             frame.setLocationByPlatform(true);

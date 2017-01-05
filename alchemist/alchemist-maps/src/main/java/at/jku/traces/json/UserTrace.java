@@ -8,8 +8,8 @@
  */
 package at.jku.traces.json;
 
-import it.unibo.alchemist.model.interfaces.IGPSPoint;
-import it.unibo.alchemist.model.interfaces.IGPSTrace;
+import it.unibo.alchemist.model.interfaces.GPSPoint;
+import it.unibo.alchemist.model.interfaces.GPSTrace;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.utils.MapUtils;
 
@@ -21,12 +21,12 @@ import org.apache.commons.math3.util.Pair;
 
 /**
  */
-public class UserTrace implements IGPSTrace {
+public class UserTrace implements GPSTrace {
 
     /**
      * If an error occurs, this object is returned.
      */
-    public static final GPSPoint FAILURE = new GPSPoint(Double.NaN, Double.NaN, Double.NaN);
+    public static final GPSPoint FAILURE = new GPSPointImpl(Double.NaN, Double.NaN, Double.NaN);
     private static final long serialVersionUID = -6060550940453129358L;
     private int mi;
     private final GPSPoint[] trace;
@@ -56,11 +56,11 @@ public class UserTrace implements IGPSTrace {
     }
 
     @Override
-    public IGPSTrace filter(final double time) {
+    public GPSTrace filter(final double time) {
         final List<GPSPoint> pts = new ArrayList<>(trace.length);
         for (final GPSPoint tr : trace) {
             if (tr.getTime() >= time) {
-                pts.add(new GPSPoint(tr.getLatitude(), tr.getLongitude(), tr.getTime() - time));
+                pts.add(new GPSPointImpl(tr.getLatitude(), tr.getLongitude(), tr.getTime() - time));
             }
         }
         return new UserTrace(getId(), pts);
@@ -72,7 +72,7 @@ public class UserTrace implements IGPSTrace {
     }
 
     @Override
-    public IGPSPoint getNextPosition(final double time) {
+    public GPSPoint getNextPosition(final double time) {
         if (trace.length == 0) {
             return FAILURE;
         }
@@ -80,7 +80,7 @@ public class UserTrace implements IGPSTrace {
     }
 
     @Override
-    public IGPSPoint getPreviousPosition(final double time) {
+    public GPSPoint getPreviousPosition(final double time) {
         if (trace.length == 0) {
             return FAILURE;
         }
@@ -97,10 +97,10 @@ public class UserTrace implements IGPSTrace {
     }
 
     @Override
-    public IGPSPoint interpolate(final double time) {
-        final Pair<IGPSPoint, IGPSPoint> coords = searchPoint(time);
-        final IGPSPoint prev = coords.getFirst();
-        final IGPSPoint next = coords.getSecond();
+    public GPSPoint interpolate(final double time) {
+        final Pair<GPSPoint, GPSPoint> coords = searchPoint(time);
+        final GPSPoint prev = coords.getFirst();
+        final GPSPoint next = coords.getSecond();
         final double tdtime = next.getTime() - prev.getTime();
         if (tdtime == 0) {
             return next;
@@ -109,7 +109,7 @@ public class UserTrace implements IGPSTrace {
         final Position start = prev.toPosition();
         final Position end = next.toPosition();
         final double dist = MapUtils.getDistance(start, end);
-        return new GPSPoint(MapUtils.getDestinationLocation(start, end, dist * ratio), time);
+        return new GPSPointImpl(MapUtils.getDestinationLocation(start, end, dist * ratio), time);
     }
 
     @Override
@@ -125,12 +125,12 @@ public class UserTrace implements IGPSTrace {
 
     @Override
     public void normalizeTimes(final double initialTime) {
-        for (final IGPSPoint p : trace) {
+        for (final GPSPoint p : trace) {
             p.setTime(p.getTime() - initialTime);
         }
     }
 
-    private Pair<IGPSPoint, IGPSPoint> searchPoint(final double time) {
+    private Pair<GPSPoint, GPSPoint> searchPoint(final double time) {
         if (trace.length < 2 || time < trace[0].getTime()) {
             return new Pair<>(trace[0], trace[0]);
         }

@@ -21,6 +21,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
 import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Reaction;
 /**
  *
  */
@@ -71,7 +72,7 @@ public class BiomolPresentInEnv extends GenericMoleculePresent<Double> {
     }
 
     @Override 
-    public BiomolPresentInEnv cloneOnNewNode(final Node<Double> n) {
+    public BiomolPresentInEnv cloneCondition(final Node<Double> n, final Reaction<Double> r) {
         return new BiomolPresentInEnv(environment, n, getBiomolecule(), getQuantity());
     }
 

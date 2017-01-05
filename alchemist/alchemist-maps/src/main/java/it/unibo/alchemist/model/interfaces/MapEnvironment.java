@@ -28,10 +28,10 @@ public interface MapEnvironment<T> extends Environment<T> {
      *            The start node
      * @param node2
      *            the second node's position will be used as destination
-     * @return A {@link IRoute} object describing the path the node should
+     * @return A {@link Route} object describing the path the node should
      *         follow
      */
-    IRoute computeRoute(Node<T> node, Node<T> node2);
+    Route computeRoute(Node<T> node, Node<T> node2);
 
     /**
      * This method relies on the map data, and computes a route towards some
@@ -49,10 +49,10 @@ public interface MapEnvironment<T> extends Environment<T> {
      *            vehicle to use. Different vehicles may use different paths,
      *            e.g. pedestrians can't go along a highway, but can walk the
      *            parks
-     * @return A {@link IRoute} object describing the path the node should
+     * @return A {@link Route} object describing the path the node should
      *         follow
      */
-    IRoute computeRoute(Position p1, Position p2, final Vehicle vehicle);
+    Route computeRoute(Position p1, Position p2, Vehicle vehicle);
 
     /**
      * This method relies on the map data, and computes a route towards some
@@ -66,10 +66,10 @@ public interface MapEnvironment<T> extends Environment<T> {
      * @param p2
      *            end position The absolute coordinate where this node wants to
      *            move to
-     * @return A {@link IRoute} object describing the path the node should
+     * @return A {@link Route} object describing the path the node should
      *         follow
      */
-    IRoute computeRoute(Position p1, Position p2);
+    Route computeRoute(Position p1, Position p2);
 
     /**
      * This method relies on the map data, and computes a route towards some
@@ -81,10 +81,10 @@ public interface MapEnvironment<T> extends Environment<T> {
      *            The {@link Node} to move
      * @param coord
      *            The absolute coordinate where this node wants to move to
-     * @return A {@link IRoute} object describing the path the node should
+     * @return A {@link Route} object describing the path the node should
      *         follow
      */
-    IRoute computeRoute(Node<T> node, Position coord);
+    Route computeRoute(Node<T> node, Position coord);
 
     /**
      * This method relies on the map data, and computes a route towards some
@@ -98,42 +98,42 @@ public interface MapEnvironment<T> extends Environment<T> {
      *            The absolute coordinate where this node wants to move to
      * @param vehicle
      *            The vehicle tipe for this route
-     * @return A {@link IRoute} object describing the path the node should
+     * @return A {@link Route} object describing the path the node should
      *         follow
      */
-    IRoute computeRoute(Node<T> node, Position coord, Vehicle vehicle);
+    Route computeRoute(Node<T> node, Position coord, Vehicle vehicle);
 
     /**
-     * Works only if the node is associated with a {@link IGPSTrace}.
+     * Works only if the node is associated with a {@link GPSTrace}.
      * 
      * @param node the {@link Node}
      * @param time the time
-     * @return the position immediately after time in the {@link IGPSTrace}
+     * @return the position immediately after time in the {@link GPSTrace}
      */
     Position getNextPosition(Node<T> node, Time time);
 
     /**
-     * Works only if the node is associated with a {@link IGPSTrace}.
+     * Works only if the node is associated with a {@link GPSTrace}.
      * 
      * @param node the {@link Node}
      * @param time the time
-     * @return the position immediately before time in the {@link IGPSTrace}
+     * @return the position immediately before time in the {@link GPSTrace}
      */
     Position getPreviousPosition(Node<T> node, Time time);
 
     /**
-     * Works only if the node is associated with a {@link IGPSTrace}.
+     * Works only if the node is associated with a {@link GPSTrace}.
      * 
      * @param node the {@link Node}
      * @param time the time
-     * @return interpolates the position immediately before and the one immediately after time in the {@link IGPSTrace}
+     * @return interpolates the position immediately before and the one immediately after time in the {@link GPSTrace}
      */
     Position getExpectedPosition(Node<T> node, Time time);
 
     /**
-     * Works only if the node is associated with a {@link IGPSTrace}.
+     * Works only if the node is associated with a {@link GPSTrace}.
      * @param node the {@link Node}
-     * @return the associated {@link IGPSTrace}
+     * @return the associated {@link GPSTrace}
      */
-    IGPSTrace getTrace(Node<T> node);
+    GPSTrace getTrace(Node<T> node);
 }

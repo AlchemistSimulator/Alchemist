@@ -43,6 +43,20 @@ public interface Reaction<T> extends Comparable<Reaction<T>>, Serializable {
     void execute();
 
     /**
+     * This method is called when the environment has completed its
+     * initialization. Can be used by this reaction to compute its next
+     * execution time - in case such computation requires an inspection of the
+     * environment.
+     * 
+     * @param t
+     *            the time at which the initialization of this reaction was
+     *            accomplished
+     * @param env
+     *            the environment
+     */
+    void initializationComplete(Time t, Environment<T> env);
+
+    /**
      * @return The list of {@link Action}s of the {@link Reaction}. There is no
      *         specification if the list will be a copy of the internal list or
      *         a reference. It will depend on implementations. Please be careful

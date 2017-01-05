@@ -16,9 +16,9 @@ import org.danilopianini.lang.util.FasterString;
 
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
-import it.unibo.alchemist.model.implementations.strategies.routing.OnStreets;
-import it.unibo.alchemist.model.implementations.strategies.speed.InteractWithOthers;
-import it.unibo.alchemist.model.implementations.strategies.target.FollowTrace;
+import it.unibo.alchemist.model.implementations.movestrategies.routing.OnStreets;
+import it.unibo.alchemist.model.implementations.movestrategies.speed.InteractWithOthers;
+import it.unibo.alchemist.model.implementations.movestrategies.target.FollowTrace;
 import it.unibo.alchemist.model.interfaces.ILsaAction;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
@@ -79,7 +79,7 @@ public class SAPEREWalker extends MoveOnMap<List<? extends ILsaMolecule>> implem
     }
 
     @Override
-    public SAPEREWalker cloneOnNewNode(final Node<List<? extends ILsaMolecule>> n, final Reaction<List<? extends ILsaMolecule>> r) {
+    public SAPEREWalker cloneAction(final Node<List<? extends ILsaMolecule>> n, final Reaction<List<? extends ILsaMolecule>> r) {
         return null;
     }
 

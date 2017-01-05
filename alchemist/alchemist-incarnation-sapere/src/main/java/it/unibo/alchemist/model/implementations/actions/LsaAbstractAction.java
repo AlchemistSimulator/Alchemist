@@ -176,7 +176,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<? extends IL
     }
 
     @Override
-    public abstract LsaAbstractAction cloneOnNewNode(Node<List<? extends ILsaMolecule>> n, Reaction<List<? extends ILsaMolecule>> r);
+    public abstract LsaAbstractAction cloneAction(Node<List<? extends ILsaMolecule>> n, Reaction<List<? extends ILsaMolecule>> r);
 
     /**
      * This method allows subclasses to access a field of an LSA (supposed to be

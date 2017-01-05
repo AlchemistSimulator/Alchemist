@@ -25,6 +25,7 @@ import org.danilopianini.view.ExportForGUI;
  * @param <S>
  * @param <T>
  */
+@Deprecated
 public abstract class EnvironmentSampler<S, T> extends EnvironmentInspector<T> {
 
     private static final long serialVersionUID = 4933331976793542L;
@@ -89,10 +90,10 @@ public abstract class EnvironmentSampler<S, T> extends EnvironmentInspector<T> {
      * @return an {@link Iterable} along samples
      */
     protected abstract Iterable<S> computeSamples(
-            final Environment<T> env,
-            final Reaction<T> r,
-            final Time time,
-            final long step);
+            Environment<T> env,
+            Reaction<T> r,
+            Time time,
+            long step);
 
     private static void expandList(final List<TDoubleCollection> vpn, final int i) {
         if (i >= vpn.size()) {

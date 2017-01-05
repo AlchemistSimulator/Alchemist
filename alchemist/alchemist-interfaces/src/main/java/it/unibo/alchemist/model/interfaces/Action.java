@@ -32,7 +32,7 @@ public interface Action<T> extends Serializable {
      *            The reaction to which the CURRENT action is assigned
      * @return the cloned action
      */
-    Action<T> cloneOnNewNode(Node<T> n, Reaction<T> r);
+    Action<T> cloneAction(Node<T> n, Reaction<T> r);
 
     /**
      * Effectively executes this action.

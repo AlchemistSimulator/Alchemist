@@ -29,7 +29,6 @@ import java.util.ResourceBundle;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.PrimitiveUtils;
@@ -791,6 +790,17 @@ public class YamlLoader implements Loader, Serializable {
             final PositionMaker pmaker) {
         return create(clazz, newArrayList, incarnation, actualVars, random, env, pmaker, null, null, null);
     }
+    private static int countUndecidableParameters(final Constructor<?> constructor, final Object... parameters) {
+        return (int) Arrays.stream(constructor.getParameterTypes())
+            .filter(requested -> makeClassStream(parameters)
+                    .noneMatch(available -> available != null && requested.isAssignableFrom(available)))
+            .count();
+    }
+    private static Stream<Class<?>> makeClassStream(final Object... objects) {
+        return Arrays.stream(objects)
+            .filter(o -> o != null)
+            .map(Object::getClass);
+    }
     private static <O> O create(
             final Class<O> clazz,
             final List<?> params,
@@ -805,8 +815,8 @@ public class YamlLoader implements Loader, Serializable {
         @SuppressWarnings(UNCHECKED)
         final Optional<O> result = Arrays.stream(clazz.getConstructors())
             .sorted((c1, c2) -> {
-                final int n1 = c1.getParameterCount();
-                final int n2 = c2.getParameterCount();
+                final int n1 = countUndecidableParameters(c1, incarnation, rand, env, posMaker, node, timedist, reaction);
+                final int n2 = countUndecidableParameters(c2, incarnation, rand, env, posMaker, node, timedist, reaction);
                 if (n1 == n2) {
                     /*
                      * Sort using types.
@@ -955,6 +965,15 @@ public class YamlLoader implements Loader, Serializable {
                         return posMaker.makePosition(coordList.stream().map(v -> (Number) v).toArray(i -> new Number[i]));
                     }
                     return null;
+                }
+                /*
+                 * Automatically convert to arrays to lists and vice versa
+                 */
+                if (List.class.isAssignableFrom(expectedClass) && param.getClass().isArray()) {
+                    return Arrays.asList((Object[]) param);
+                }
+                if (expectedClass.isArray() && param instanceof List) {
+                    return ((List<?>) param).toArray();
                 }
             }
             return null;

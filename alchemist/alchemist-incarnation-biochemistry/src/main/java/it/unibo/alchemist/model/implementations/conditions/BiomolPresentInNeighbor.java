@@ -21,6 +21,7 @@ import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
  * 
@@ -70,7 +71,7 @@ public class BiomolPresentInNeighbor extends AbstractNeighborCondition<Double> {
     }
 
     @Override
-    public BiomolPresentInNeighbor cloneOnNewNode(final Node<Double> n) {
+    public BiomolPresentInNeighbor cloneCondition(final Node<Double> n, final Reaction<Double> r) {
         return new BiomolPresentInNeighbor(environment, n, mol, conc);
     }
 

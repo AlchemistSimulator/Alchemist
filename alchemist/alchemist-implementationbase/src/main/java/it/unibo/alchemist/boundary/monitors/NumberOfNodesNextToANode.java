@@ -19,6 +19,7 @@ import it.unibo.alchemist.model.interfaces.Time;
 /**
  * @param <T>
  */
+@Deprecated
 @ExportInspector
 public class NumberOfNodesNextToANode<T> extends EnvironmentInspector<T> {
 

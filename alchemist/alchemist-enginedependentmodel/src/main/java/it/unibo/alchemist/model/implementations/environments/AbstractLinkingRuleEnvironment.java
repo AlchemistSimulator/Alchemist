@@ -8,18 +8,28 @@
  */
 package it.unibo.alchemist.model.implementations.environments;
 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Queue;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
+
+import org.danilopianini.util.SpatialIndex;
+
 import gnu.trove.map.hash.TIntObjectHashMap;
+import gnu.trove.set.TIntSet;
+import gnu.trove.set.hash.TIntHashSet;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.LinkingRule;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-import org.danilopianini.lang.SpatialIndex;
 
 /**
  * An environment that links nodes according to an external rule.
@@ -46,8 +56,7 @@ public abstract class AbstractLinkingRuleEnvironment<T> extends AbstractEnvironm
         /*
          * Neighborhood computation
          */
-        final Neighborhood<T> neigh = computeEnvironment(node);
-        updateNeighbors(neigh);
+        updateNeighborhood(node);
         /*
          * Reaction and dependencies creation on the engine. This must be
          * executed only when the neighborhoods have been correctly computed.
@@ -56,7 +65,7 @@ public abstract class AbstractLinkingRuleEnvironment<T> extends AbstractEnvironm
         /*
          * Call the subclass method.
          */
-        nodeAdded(node, p, neigh);
+        nodeAdded(node, p, getNeighborhood(node));
     }
 
     /**
@@ -68,31 +77,14 @@ public abstract class AbstractLinkingRuleEnvironment<T> extends AbstractEnvironm
      */
     protected abstract void nodeAdded(Node<T> node, Position position, Neighborhood<T> neighborhood);
 
-    /**
-     * Produces a new neighborhood after a node movement operation.
-     * 
-     * @param center
-     *            the node to recompute
-     * @return the new neighborhood
-     */
-    protected Neighborhood<T> computeEnvironment(final Node<T> center) {
-        assert center != null;
-        assert rule != null;
-        final Neighborhood<T> neigh = rule.computeNeighborhood(center, this);
-        updateNeighbors(neigh);
-        neighCache.put(center.getId(), neigh);
-        return neigh;
-    }
-
     @Override
     public LinkingRule<T> getLinkingRule() {
         return rule;
     }
 
     @Override
-    public Neighborhood<T> getNeighborhood(final Node<T> center) {
-        assert center != null;
-        return neighCache.get(center.getId());
+    public Neighborhood<T> getNeighborhood(@Nonnull final Node<T> center) {
+        return neighCache.get(Objects.requireNonNull(center).getId());
     }
 
     /**
@@ -136,7 +128,7 @@ public abstract class AbstractLinkingRuleEnvironment<T> extends AbstractEnvironm
 
     @Override
     public void setLinkingRule(final LinkingRule<T> r) {
-        rule = r;
+        rule = Objects.requireNonNull(r);
     }
 
     /**
@@ -151,52 +143,105 @@ public abstract class AbstractLinkingRuleEnvironment<T> extends AbstractEnvironm
         /*
          * The following optimization allows to define as local the context of
          * reactions which are actually including a move, which should be
-         * normally considered global. This because for each node wich is
+         * normally considered global. This because for each node which is
          * detached, all the dependencies are updated, ensuring the soundness.
          */
-        final Neighborhood<T> oldNeighborhood = neighCache.get(node.getId());
-        final Neighborhood<T> newNeighborhood = computeEnvironment(node);
-        /*
-         * oldclone will contain the neighbors this node still have in the new
-         * neighborhood
-         */
-        final Set<? extends Node<T>> oldclone = new LinkedHashSet<>(oldNeighborhood.getNeighbors());
-        for (final Node<T> n : oldNeighborhood) {
-            if (!newNeighborhood.contains(n)) {
-                /*
-                 * Neighbor lost
-                 */
-                oldclone.remove(n);
-                Engine.neighborRemoved(this, node, n);
-                neighCache.get(n.getId()).removeNeighbor(node);
+        if (Objects.requireNonNull(rule).isLocallyConsistent()) {
+            final Neighborhood<T> newNeighborhood = rule.computeNeighborhood(Objects.requireNonNull(node), this);
+            final Neighborhood<T> oldNeighborhood = neighCache.put(node.getId(), newNeighborhood);
+            if (oldNeighborhood != null) {
+                final Iterator<Node<T>> iter = oldNeighborhood.iterator();
+                while (iter.hasNext()) {
+                    final Node<T> neighbor = iter.next();
+                    if (!newNeighborhood.contains(neighbor)) {
+                        /*
+                         * Neighbor lost
+                         */
+                        iter.remove();
+                        final Neighborhood<T> neighborsNeighborhood = neighCache.get(neighbor.getId());
+                        neighborsNeighborhood.removeNeighbor(node);
+                        Engine.neighborRemoved(this, node, neighbor);
+                    }
+                }
+            }
+            for (final Node<T> n : newNeighborhood) {
+                if (oldNeighborhood == null || !oldNeighborhood.contains(n)) {
+                    /*
+                     * If it's a new neighbor
+                     */
+                    neighCache.get(n.getId()).addNeighbor(node);
+                    Engine.neighborAdded(this, node, n);
+                }
+            }
+        } else {
+            final Queue<Operation> operations = recursiveOperation(node);
+            final TIntSet processed = new TIntHashSet(getNodesNumber());
+            processed.add(node.getId());
+            while (!operations.isEmpty()) {
+                final Operation next = operations.poll();
+                final Node<T> dest = next.destination;
+                final int destId = dest.getId();
+                if (!processed.contains(destId)) {
+                    operations.addAll(recursiveOperation(next.origin, next.destination, next.isAdd));
+                    processed.add(destId);
+                }
             }
         }
-        for (final Node<T> n : newNeighborhood) {
-            if (!oldclone.contains(n)) {
-                /*
-                 * If it's a whole new neighbor
-                 */
-                Engine.neighborAdded(this, node, n);
-            }
-        }
-
     }
 
-    /**
-     * Scans the neighborhood, and for each neighbor ensures that the link is
-     * bidirectional.
-     * 
-     * @param neigh
-     *            the neighborhood to scan
-     */
-    protected void updateNeighbors(final Neighborhood<T> neigh) {
-        final Node<T> node = neigh.getCenter();
-        for (final Node<T> n : neigh) {
-            final Neighborhood<T> list = neighCache.get(n.getId());
-            if (!list.contains(node)) {
-                list.addNeighbor(node);
-            }
-        }
+    private Queue<Operation> recursiveOperation(final Node<T> origin) {
+        final Neighborhood<T> newNeighborhood = rule.computeNeighborhood(Objects.requireNonNull(origin), this);
+        final Neighborhood<T> oldNeighborhood = neighCache.put(origin.getId(), newNeighborhood);
+        return toQueue(origin, oldNeighborhood, newNeighborhood);
     }
 
+    private Queue<Operation> toQueue(final Node<T> center, final Neighborhood<T> oldNeighborhood, final Neighborhood<T> newNeighborhood) {
+        return Stream.concat(
+                lostNeighbors(center, oldNeighborhood, newNeighborhood),
+                foundNeighbors(center, oldNeighborhood, newNeighborhood))
+                .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    private Queue<Operation> recursiveOperation(final Node<T> origin, final Node<T> destination, final boolean isAdd) {
+        if (isAdd) {
+            Engine.neighborAdded(this, origin, destination);
+        } else {
+            Engine.neighborRemoved(this, origin, destination);
+        }
+        final Neighborhood<T> newNeighborhood = rule.computeNeighborhood(Objects.requireNonNull(destination), this);
+        final Neighborhood<T> oldNeighborhood = neighCache.put(destination.getId(), newNeighborhood);
+        return toQueue(destination, oldNeighborhood, newNeighborhood);
+    }
+
+    private Stream<Operation> lostNeighbors(final Node<T> center, final Neighborhood<T> oldNeighborhood, final Neighborhood<T> newNeighborhood) {
+        return Optional.ofNullable(oldNeighborhood)
+        .map(Neighborhood::getNeighbors)
+        .orElse(Collections.emptyList())
+        .stream()
+        .filter(neigh -> !newNeighborhood.contains(neigh))
+        .filter(neigh -> getNeighborhood(neigh).contains(center))
+        .map(n -> new Operation(center, n, false));
+    }
+
+    private Stream<Operation> foundNeighbors(final Node<T> center, final Neighborhood<T> oldNeighborhood, final Neighborhood<T> newNeighborhood) {
+        return newNeighborhood.getNeighbors().stream()
+                .filter(neigh -> oldNeighborhood == null || !oldNeighborhood.contains(neigh))
+                .filter(neigh -> !getNeighborhood(neigh).contains(center))
+                .map(n -> new Operation(center, n, true));
+    }
+
+    private class Operation {
+        private final Node<T> origin;
+        private final Node<T> destination;
+        private final boolean isAdd;
+        Operation(final Node<T> origin, final Node<T> destination, final boolean isAdd) {
+            this.origin = origin;
+            this.destination = destination;
+            this.isAdd = isAdd;
+        }
+        @Override
+        public String toString() {
+            return origin + (isAdd ? " discovered " : " lost ") + destination;
+        }
+    }
 }

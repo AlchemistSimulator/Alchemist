@@ -14,6 +14,7 @@ package it.unibo.alchemist.model.implementations.conditions;
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Reaction;
 import java8.util.Objects;
 
 import java.util.ArrayList;
@@ -52,5 +53,10 @@ public abstract class AbstractCondition<T> implements Condition<T> {
      */
     protected void addReadMolecule(final Molecule m) {
         influencing.add(m);
+    }
+
+    @Override
+    public Condition<T> cloneCondition(final Node<T> n, final Reaction<T> r) {
+        throw new UnsupportedOperationException(getClass().getSimpleName() + " has no support for cloning.");
     }
 }

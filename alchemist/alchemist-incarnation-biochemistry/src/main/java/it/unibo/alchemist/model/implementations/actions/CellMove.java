@@ -51,7 +51,7 @@ public class CellMove extends AbstractMoveNode<Double> {
     }
 
     @Override
-    public CellMove cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
+    public CellMove cloneAction(final Node<Double> n, final Reaction<Double> r) {
         return new CellMove(getEnvironment(), n, inPer, delta);
     }
 

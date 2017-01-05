@@ -64,6 +64,6 @@ public abstract class AbstractNeighborAction<T> extends AbstractRandomizableActi
     }
 
     @Override
-    public abstract AbstractNeighborAction<T> cloneOnNewNode(final Node<T> node, final Reaction<T> reaction);
+    public abstract AbstractNeighborAction<T> cloneAction(Node<T> node, Reaction<T> reaction);
 
 }

@@ -9,8 +9,8 @@
 package it.unibo.alchemist.model.implementations.environments;
 
 import org.apache.commons.math3.util.FastMath;
-import org.danilopianini.lang.FlexibleQuadTree;
-import org.danilopianini.lang.SpatialIndex;
+import org.danilopianini.util.FlexibleQuadTree;
+import org.danilopianini.util.SpatialIndex;
 
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.model.interfaces.Neighborhood;

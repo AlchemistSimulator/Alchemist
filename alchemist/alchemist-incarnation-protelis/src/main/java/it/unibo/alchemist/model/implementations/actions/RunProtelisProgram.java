@@ -66,7 +66,36 @@ public class RunProtelisProgram extends SimpleMolecule implements Action<Object>
             final Reaction<Object> r,
             final RandomGenerator rand,
             final String prog) throws SecurityException, ClassNotFoundException {
-        this(env, n, r, rand, ProtelisLoader.parse(prog));
+        this(env, n, r, rand, ProtelisLoader.parse(prog), Double.NaN);
+    }
+
+    /**
+     * @param env
+     *            the environment
+     * @param n
+     *            the node
+     * @param r
+     *            the reaction
+     * @param rand
+     *            the random engine
+     * @param prog
+     *            the Protelis program
+     * @param retentionTime
+     *            how long the messages will be stored. Pass {@link Double#NaN}
+     *            to mean that they should get eliminated upon node awake.
+     * @throws SecurityException
+     *             if you are not authorized to load required classes
+     * @throws ClassNotFoundException
+     *             if required classes can not be found
+     */
+    public RunProtelisProgram(
+            final Environment<Object> env,
+            final ProtelisNode n,
+            final Reaction<Object> r,
+            final RandomGenerator rand,
+            final String prog,
+            final double retentionTime) throws SecurityException, ClassNotFoundException {
+        this(env, n, r, rand, ProtelisLoader.parse(prog), retentionTime);
     }
 
     private RunProtelisProgram(
@@ -74,7 +103,8 @@ public class RunProtelisProgram extends SimpleMolecule implements Action<Object>
             final ProtelisNode n,
             final Reaction<Object> r,
             final RandomGenerator rand,
-            final org.protelis.vm.ProtelisProgram prog) {
+            final org.protelis.vm.ProtelisProgram prog,
+            final double retentionTime) {
         super(prog.getName());
         LangUtils.requireNonNull(env, r, n, prog, rand);
         program = prog;
@@ -82,19 +112,15 @@ public class RunProtelisProgram extends SimpleMolecule implements Action<Object>
         node = n;
         random = rand;
         reaction = r;
-        final AlchemistNetworkManager netmgr = new AlchemistNetworkManager(environment, node, this);
+        final AlchemistNetworkManager netmgr = new AlchemistNetworkManager(environment, node, reaction, this, retentionTime);
         node.addNetworkManger(this, netmgr);
         final ExecutionContext ctx = new AlchemistExecutionContext(env, n, r, rand, netmgr);
         vm = new ProtelisVM(prog, ctx);
     }
 
     @Override
-    public RunProtelisProgram cloneOnNewNode(final Node<Object> n, final Reaction<Object> r) {
-        if (n instanceof ProtelisNode) {
-            return new RunProtelisProgram(environment, (ProtelisNode) n, r, random, program);
-        }
-        throw new IllegalStateException("Can not load a Protelis program on a " + n.getClass()
-                + ". A " + ProtelisNode.class + " is required.");
+    public RunProtelisProgram cloneAction(final Node<Object> n, final Reaction<Object> r) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -150,7 +176,7 @@ public class RunProtelisProgram extends SimpleMolecule implements Action<Object>
 
     private void readObject(final ObjectInputStream stream) throws ClassNotFoundException, IOException {
         stream.defaultReadObject();
-        final AlchemistNetworkManager netmgr = new AlchemistNetworkManager(environment, node, this);
+        final AlchemistNetworkManager netmgr = new AlchemistNetworkManager(environment, node, reaction, this);
         node.addNetworkManger(this, netmgr);
         vm = new ProtelisVM(program, new AlchemistExecutionContext(environment, node, reaction, random, netmgr));
     }

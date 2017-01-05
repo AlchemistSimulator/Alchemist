@@ -16,6 +16,7 @@ import javax.swing.SwingConstants;
 
 /**
  */
+@Deprecated
 public class StatusBar extends JLabel {
 
     private static final long serialVersionUID = -7528209649098499107L;

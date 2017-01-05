@@ -42,7 +42,7 @@ public class LsaDeleteNodeAction extends RemoveNode<List<? extends ILsaMolecule>
      * @see alice.alchemist.model.implementations.actions.LsaAbstractAction#cloneOnNewNode(alice.alchemist.model.interfaces.Node, alice.alchemist.model.interfaces.Reaction)
      */
     @Override
-    public LsaDeleteNodeAction cloneOnNewNode(final Node<List<? extends ILsaMolecule>> n, final Reaction<List<? extends ILsaMolecule>> r) {
+    public LsaDeleteNodeAction cloneAction(final Node<List<? extends ILsaMolecule>> n, final Reaction<List<? extends ILsaMolecule>> r) {
         return new LsaDeleteNodeAction(getEnvironment(), (ILsaNode) n);
     }
 

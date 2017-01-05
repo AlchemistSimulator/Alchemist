@@ -12,6 +12,7 @@ import javax.swing.JButton;
 
 /**
  */
+@Deprecated
 public class SimControlButton extends JButton {
 
     private static final long serialVersionUID = 5772261651038729446L;

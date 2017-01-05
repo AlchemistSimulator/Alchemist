@@ -25,10 +25,11 @@ import javax.swing.JSlider;
 import javax.swing.JToggleButton;
 import javax.swing.event.ChangeListener;
 
-import static it.unibo.alchemist.boundary.l10n.R.getString;
+import static it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle.getString;
 
 /**
  */
+@Deprecated
 public class ReactivityPanel extends JTapeGroup implements ItemListener {
 
     private static final long serialVersionUID = 6688803192091760332L;

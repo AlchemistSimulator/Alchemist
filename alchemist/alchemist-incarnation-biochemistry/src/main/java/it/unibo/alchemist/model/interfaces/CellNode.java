@@ -27,7 +27,7 @@ public interface CellNode extends Node<Double> {
      * @param j the junction
      * @param neighbor the neighbor node at the other side of the junction
      */
-    void addJunction(final Junction j, final CellNode neighbor);
+    void addJunction(Junction j, CellNode neighbor);
 
     /**
      * Return true if a junction is present in the current node, false otherwise.
@@ -35,21 +35,21 @@ public interface CellNode extends Node<Double> {
      * @param j the junction
      * @return true if the junction is present, false otherwise.
      */
-    boolean containsJunction(final Junction j);
+    boolean containsJunction(Junction j);
 
     /**
      * Remove a junction from this node.
      * @param j the junction to remove
      * @param neighbor the node at the other side of the junction.
      */
-    void removeJunction(final Junction j, final CellNode neighbor);
+    void removeJunction(Junction j, CellNode neighbor);
 
     /**
      * Returns a set of ICellNode which are linked with the current node by a junction of the type j.
      * @param j the junction
      * @return a set of ICellNode which are linked with the current node by a junction of the type j
      */
-    Set<CellNode> getNeighborsLinkWithJunction(final Junction j);
+    Set<CellNode> getNeighborsLinkWithJunction(Junction j);
 
     /**
      * 

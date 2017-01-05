@@ -87,11 +87,11 @@ public abstract class AReaction<T> implements Reaction<T> {
         final Node<T> n = res.getNode();
         final ArrayList<Condition<T>> c = new ArrayList<Condition<T>>(conditions.size());
         for (final Condition<T> cond : conditions) {
-            c.add(cond.cloneOnNewNode(n));
+            c.add(cond.cloneCondition(n, res));
         }
         final ArrayList<Action<T>> a = new ArrayList<Action<T>>(actions.size());
         for (final Action<T> act : actions) {
-            a.add(act.cloneOnNewNode(n, res));
+            a.add(act.cloneAction(n, res));
         }
         res.setActions(a);
         res.setConditions(c);
@@ -161,6 +161,9 @@ public abstract class AReaction<T> implements Reaction<T> {
     public final int hashCode() {
         return hash;
     }
+
+    @Override
+    public void initializationComplete(final Time t, final Environment<T> env) { }
 
     /**
      * Used by sublcasses to set their input context.

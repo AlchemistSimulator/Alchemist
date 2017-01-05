@@ -81,7 +81,7 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
      * 
      * @return All the nodes that exist in current environment
      */
-    Collection<? extends Node<T>> getNodes();
+    Collection<Node<T>> getNodes();
 
     /**
      * @return the number of nodes currently in the environment
@@ -147,11 +147,23 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
 
     /**
      * This method returns the size of the environment as an array of length
-     * getDimensions.
+     * {@link #getDimensions()}. This method must return distance measured with
+     * the same unit used by the positions. No non-euclidean distance metrics
+     * are allowed.
      * 
      * @return the size of this environment
      */
     double[] getSize();
+
+    /**
+     * This method returns the size of the environment as an array of length
+     * {@link #getDimensions()}. This method must return distance measured with
+     * the same unit used for measuring distances. It may or may not return the
+     * same result of {@link #getSize()}
+     * 
+     * @return the size of this environment
+     */
+    double[] getSizeInDistanceUnits();
 
     /**
      * This method moves a node in the environment toward some direction. If

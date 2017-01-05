@@ -50,7 +50,7 @@ public class AddJunctionInCell extends AbstractNeighborAction<Double> {
     }
 
     @Override
-    public AddJunctionInCell cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
+    public AddJunctionInCell cloneAction(final Node<Double> n, final Reaction<Double> r) {
         return new AddJunctionInCell(env, n, jun, getRandomGenerator());
     }
 

@@ -34,7 +34,7 @@ public class ChangeBiomolConcentrationInCell extends AbstractActionOnSingleMolec
     }
 
     @Override
-    public ChangeBiomolConcentrationInCell cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
+    public ChangeBiomolConcentrationInCell cloneAction(final Node<Double> n, final Reaction<Double> r) {
         throw new UnsupportedOperationException("cloneOnNewNode(Node, Reaction) has to be implemented in: " + getClass());
     }
 

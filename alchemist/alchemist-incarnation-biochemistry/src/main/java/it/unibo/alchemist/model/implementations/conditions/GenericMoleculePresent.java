@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.implementations.conditions;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Reaction;
 
 import org.apache.commons.math3.util.CombinatoricsUtils;
 
@@ -65,7 +66,7 @@ public class GenericMoleculePresent<T extends Number> extends
     }
 
     @Override
-    public GenericMoleculePresent<T> cloneOnNewNode(final Node<T> n) {
+    public GenericMoleculePresent<T> cloneCondition(final Node<T> n, final Reaction<T> r) {
         return new GenericMoleculePresent<T>(n, molecule, qty);
     }
 

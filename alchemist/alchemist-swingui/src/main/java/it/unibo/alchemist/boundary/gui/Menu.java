@@ -8,7 +8,7 @@
  */
 package it.unibo.alchemist.boundary.gui;
 
-import it.unibo.alchemist.boundary.l10n.R;
+import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 
 import java.awt.event.ActionEvent;
 
@@ -16,10 +16,11 @@ import javax.swing.JMenuItem;
 
 /**
  */
+@Deprecated
 public class Menu extends AbstractMenu {
 
     private static final long serialVersionUID = 5209455686362711386L;
-    private static final JMenuItem[] ITEMS = { new JMenuItem(R.getString("open_perspective")) };
+    private static final JMenuItem[] ITEMS = { new JMenuItem(LocalizedResourceBundle.getString("open_perspective")) };
     private int n = 1;
 
     /**
@@ -27,7 +28,7 @@ public class Menu extends AbstractMenu {
      * 
      */
     public Menu() {
-        super(R.getString("perspective"), ITEMS);
+        super(LocalizedResourceBundle.getString("perspective"), ITEMS);
     }
 
     @Override

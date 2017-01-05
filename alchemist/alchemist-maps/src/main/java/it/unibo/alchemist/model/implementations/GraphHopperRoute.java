@@ -17,13 +17,13 @@ import com.graphhopper.PathWrapper;
 import com.graphhopper.util.PointList;
 
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
-import it.unibo.alchemist.model.interfaces.IRoute;
+import it.unibo.alchemist.model.interfaces.Route;
 import it.unibo.alchemist.model.interfaces.Position;
 import java.util.stream.Collectors;
 
 /**
  */
-public final class GraphHopperRoute implements IRoute {
+public final class GraphHopperRoute implements Route {
 
     private static final long serialVersionUID = -1455332156736222268L;
     private final int size;

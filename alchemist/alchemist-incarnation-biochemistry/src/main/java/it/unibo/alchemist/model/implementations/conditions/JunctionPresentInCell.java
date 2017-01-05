@@ -18,6 +18,7 @@ import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
  */
@@ -56,7 +57,7 @@ public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
     }
 
     @Override
-    public JunctionPresentInCell cloneOnNewNode(final Node<Double> n) {
+    public JunctionPresentInCell cloneCondition(final Node<Double> n, final Reaction<Double> r) {
         return new JunctionPresentInCell(env, n, j);
     }
 

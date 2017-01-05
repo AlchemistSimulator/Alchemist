@@ -34,7 +34,7 @@ public class MoveForwardAndTeleport<T> extends AbstractMoveNode<T> {
     }
 
     @Override
-    public MoveForwardAndTeleport<T> cloneOnNewNode(final Node<T> n, final Reaction<T> r) {
+    public MoveForwardAndTeleport<T> cloneAction(final Node<T> n, final Reaction<T> r) {
         return new MoveForwardAndTeleport<>(getEnvironment(), n, dx, minx, maxx);
     }
 

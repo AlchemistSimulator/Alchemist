@@ -8,18 +8,6 @@
  */
 package it.unibo.alchemist.model.implementations.environments;
 
-import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
-import it.unibo.alchemist.model.implementations.GraphHopperRoute;
-import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
-import it.unibo.alchemist.model.interfaces.IGPSTrace;
-import it.unibo.alchemist.model.interfaces.MapEnvironment;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.IRoute;
-import it.unibo.alchemist.model.interfaces.Time;
-import it.unibo.alchemist.model.interfaces.Vehicle;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -51,6 +39,18 @@ import com.graphhopper.routing.util.EdgeFilter;
 import com.graphhopper.routing.util.EncodingManager;
 import com.graphhopper.storage.index.QueryResult;
 import com.graphhopper.util.shapes.GHPoint;
+
+import gnu.trove.map.TIntObjectMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
+import it.unibo.alchemist.model.implementations.GraphHopperRoute;
+import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
+import it.unibo.alchemist.model.interfaces.GPSTrace;
+import it.unibo.alchemist.model.interfaces.Route;
+import it.unibo.alchemist.model.interfaces.MapEnvironment;
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.model.interfaces.Vehicle;
 
 /**
  * This class serves as template for more specific implementations of
@@ -93,7 +93,6 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      */
     public static final boolean DEFAULT_FORCE_STREETS = true;
     private static final int ENCODING_BASE = 36;
-    private static final int ROUTES_CACHE_SIZE = 10000;
     private static final String MONITOR = "MapDisplay";
     private static final Logger L = LoggerFactory.getLogger(OSMEnvironment.class);
     private static final long serialVersionUID = -8100726226966471621L;
@@ -107,11 +106,11 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     private static final String PERSISTENTPATH = System.getProperty("user.home") + SLASH + ".alchemist";
 
     private final String mapResource;
-    private final TIntObjectMap<IGPSTrace> traces = new TIntObjectHashMap<>();
+    private final TIntObjectMap<GPSTrace> traces = new TIntObjectHashMap<>();
     private final boolean forceStreets, onlyStreet;
     private transient FastReadWriteLock mapLock;
     private transient Map<Vehicle, GraphHopper> navigators;
-    private transient LoadingCache<Triple<Vehicle, Position, Position>, IRoute> routecache;
+    private transient LoadingCache<Triple<Vehicle, Position, Position>, Route> routecache;
 
     /**
      * Builds a new {@link OSMEnvironment}, with nodes forced on streets,
@@ -125,7 +124,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      *             your hard drive while Alchemist was reading the map
      * @throws ClassNotFoundException
      *             if there is a gigantic bug in the distribution and
-     *             {@link IGPSTrace} or {@link List} cannot be loaded
+     *             {@link GPSTrace} or {@link List} cannot be loaded
      */
     public OSMEnvironment(final String file) throws IOException, ClassNotFoundException {
         this(file, null, 0);
@@ -149,7 +148,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      *             your hard drive while Alchemist was reading the map
      * @throws ClassNotFoundException
      *             if there is a gigantic bug in the distribution and
-     *             {@link IGPSTrace} or {@link List} cannot be loaded
+     *             {@link GPSTrace} or {@link List} cannot be loaded
      */
     public OSMEnvironment(final String file, final boolean onStreets, final boolean onlyOnStreets) throws IOException, ClassNotFoundException {
         this(file, null, 0, onStreets, onlyOnStreets, DEFAULT_USE_TRACES_ID);
@@ -171,7 +170,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      *             your hard drive while Alchemist was reading the map
      * @throws ClassNotFoundException
      *             if there is a gigantic bug in the distribution and
-     *             {@link IGPSTrace} or {@link List} cannot be loaded
+     *             {@link GPSTrace} or {@link List} cannot be loaded
      */
     public OSMEnvironment(final String file, final String tfile, final double ttime) throws IOException, ClassNotFoundException {
         this(file, tfile, ttime, DEFAULT_USE_TRACES_ID);
@@ -197,7 +196,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      *             your hard drive while Alchemist was reading the map
      * @throws ClassNotFoundException
      *             if there is a gigantic bug in the distribution and
-     *             {@link IGPSTrace} or {@link List} cannot be loaded
+     *             {@link GPSTrace} or {@link List} cannot be loaded
      */
     public OSMEnvironment(final String file, final String tfile, final double ttime, final boolean useIds) throws IOException, ClassNotFoundException {
         this(file, tfile, ttime, DEFAULT_ON_STREETS, DEFAULT_FORCE_STREETS, useIds);
@@ -232,7 +231,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      *             your hard drive while Alchemist was reading the map
      * @throws ClassNotFoundException
      *             if there is a gigantic bug in the distribution and
-     *             {@link IGPSTrace} or {@link List} cannot be loaded
+     *             {@link GPSTrace} or {@link List} cannot be loaded
      */
     @SuppressWarnings("unchecked")
     protected OSMEnvironment(final String file, final String tfile, final double ttime, final boolean onStreets, final boolean onlyOnStreets, final boolean useIds) throws IOException, ClassNotFoundException {
@@ -240,12 +239,12 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
         /*
          * Try to load as resource, then try to load a file
          */
-        List<IGPSTrace> trcs = null;
+        List<GPSTrace> trcs = null;
         if (tfile != null) {
-            trcs = (List<IGPSTrace>) FileUtilities.fileToObject(tfile);
+            trcs = (List<GPSTrace>) FileUtilities.fileToObject(tfile);
             int idgen = 0;
-            for (final IGPSTrace gps : trcs) {
-                final IGPSTrace trace = gps.filter(ttime);
+            for (final GPSTrace gps : trcs) {
+                final GPSTrace trace = gps.filter(ttime);
                 if (trace.size() > 0) {
                     if (useIds) {
                         traces.put(trace.getId(), trace);
@@ -350,25 +349,24 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     }
 
     @Override
-    public IRoute computeRoute(final Node<T> node, final Node<T> node2) {
+    public Route computeRoute(final Node<T> node, final Node<T> node2) {
         return computeRoute(node, getPosition(node2));
     }
 
     @Override
-    public IRoute computeRoute(final Position p1, final Position p2) {
+    public Route computeRoute(final Position p1, final Position p2) {
         return computeRoute(p1, p2, DEFAULT_VEHICLE);
     }
 
     @Override
-    public IRoute computeRoute(final Position p1, final Position p2, final Vehicle vehicle) {
+    public Route computeRoute(final Position p1, final Position p2, final Vehicle vehicle) {
         if (routecache == null) {
             routecache = CacheBuilder
                 .newBuilder()
-                .maximumSize(ROUTES_CACHE_SIZE)
-                .expireAfterAccess(10, TimeUnit.MINUTES)
-                .build(new CacheLoader<Triple<Vehicle, Position, Position>, IRoute>() {
+                .expireAfterAccess(10, TimeUnit.SECONDS)
+                .build(new CacheLoader<Triple<Vehicle, Position, Position>, Route>() {
                     @Override
-                    public IRoute load(final Triple<Vehicle, Position, Position> key) {
+                    public Route load(final Triple<Vehicle, Position, Position> key) {
                         final Vehicle vehicle = key.getLeft();
                         final Position p1 = key.getMiddle();
                         final Position p2 = key.getRight();
@@ -396,12 +394,12 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     }
 
     @Override
-    public IRoute computeRoute(final Node<T> node, final Position coord) {
+    public Route computeRoute(final Node<T> node, final Position coord) {
         return computeRoute(node, coord, DEFAULT_VEHICLE);
     }
 
     @Override
-    public IRoute computeRoute(final Node<T> node, final Position coord, final Vehicle vehicle) {
+    public Route computeRoute(final Node<T> node, final Position coord, final Vehicle vehicle) {
         return computeRoute(getPosition(node), coord, vehicle);
     }
 
@@ -427,28 +425,47 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      * @return the minimum latitude
      */
     protected double getMinLatitude() {
-        return getOffset()[1];
+        return super.getOffset()[1];
     }
 
     /**
      * @return the maximum latitude
      */
     protected double getMaxLatitude() {
-        return getOffset()[1] + getSize()[1];
+        return super.getOffset()[1] + super.getSize()[1];
     }
 
     /**
      * @return the minimum longitude
      */
     protected double getMinLongitude() {
-        return getOffset()[0];
+        return super.getOffset()[0];
     }
 
     /**
      * @return the maximum longitude
      */
     protected double getMaxLongitude() {
-        return getOffset()[0] + getSize()[0];
+        return super.getOffset()[0] + super.getSize()[0];
+    }
+
+    @Override
+    public double[] getSizeInDistanceUnits() {
+        final double minlat = getMinLatitude();
+        final double maxlat = getMaxLatitude();
+        final double minlon = getMinLongitude();
+        final double maxlon = getMaxLongitude();
+        final Position minmin = new LatLongPosition(minlat, minlon);
+        final Position minmax = new LatLongPosition(minlat, maxlon);
+        final Position maxmin = new LatLongPosition(maxlat, minlon);
+        final Position maxmax = new LatLongPosition(maxlat, maxlon);
+        /*
+         * Maximum x: maximum distance between the same longitudes
+         * Maximum y: maximum distance between the same latitudes
+         */
+        final double sizex = Math.max(minmin.getDistanceTo(minmax), maxmax.getDistanceTo(maxmin));
+        final double sizey = Math.max(minmin.getDistanceTo(maxmin), maxmax.getDistanceTo(minmax));
+        return new double[]{sizex, sizey};
     }
 
     /**
@@ -466,7 +483,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
 
     @Override
     protected Position computeActualInsertionPosition(final Node<T> node, final Position position) {
-        final IGPSTrace trace = traces.get(node.getId());
+        final GPSTrace trace = traces.get(node.getId());
         if (trace == null) {
             /*
              * No traces available for this node. If it must be located on
@@ -483,7 +500,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
 
     @Override
     public Position getNextPosition(final Node<T> node, final Time time) {
-        final IGPSTrace trace = traces.get(node.getId());
+        final GPSTrace trace = traces.get(node.getId());
         if (trace == null) {
             return getPosition(node);
         }
@@ -493,7 +510,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
 
     @Override
     public Position getPreviousPosition(final Node<T> node, final Time time) {
-        final IGPSTrace trace = traces.get(node.getId());
+        final GPSTrace trace = traces.get(node.getId());
         if (trace == null) {
             return getPosition(node);
         }
@@ -503,7 +520,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
 
     @Override
     public Position getExpectedPosition(final Node<T> node, final Time time) {
-        final IGPSTrace trace = traces.get(node.getId());
+        final GPSTrace trace = traces.get(node.getId());
         if (trace == null) {
             return getPosition(node);
         }
@@ -511,7 +528,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     }
 
     @Override
-    public IGPSTrace getTrace(final Node<T> node) {
+    public GPSTrace getTrace(final Node<T> node) {
         return traces.get(node.getId());
     }
 
@@ -523,5 +540,4 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
         s.defaultReadObject();
         initAll(mapResource);
     }
-
 }

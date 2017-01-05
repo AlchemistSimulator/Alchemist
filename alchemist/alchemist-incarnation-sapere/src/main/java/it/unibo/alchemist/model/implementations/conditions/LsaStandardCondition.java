@@ -14,6 +14,8 @@ import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Reaction;
+
 import org.danilopianini.lang.util.FasterString;
 
 import java.util.ArrayList;
@@ -48,7 +50,7 @@ public class LsaStandardCondition extends LsaAbstractCondition {
     }
 
     @Override
-    public LsaStandardCondition cloneOnNewNode(final Node<List<? extends ILsaMolecule>> n) {
+    public LsaStandardCondition cloneCondition(final Node<List<? extends ILsaMolecule>> n, final Reaction<List<? extends ILsaMolecule>> r) {
         return new LsaStandardCondition(molecule, (ILsaNode) n);
     }
 

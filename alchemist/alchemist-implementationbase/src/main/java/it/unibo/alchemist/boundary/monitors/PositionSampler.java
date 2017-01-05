@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
  * @param <T>
  */
 @ExportInspector
+@Deprecated
 public abstract class PositionSampler<T> extends EnvironmentSampler<Position, T> {
 
     /**

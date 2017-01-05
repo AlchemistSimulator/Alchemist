@@ -27,12 +27,12 @@ public interface ILsaAction extends Action<List<? extends ILsaMolecule>> {
      * @param nodes
      *            the nodes allowed for this action
      */
-    void setExecutionContext(final Map<FasterString, ITreeNode<?>> matches, List<? extends ILsaNode> nodes);
+    void setExecutionContext(Map<FasterString, ITreeNode<?>> matches, List<? extends ILsaNode> nodes);
 
     @Override
     List<? extends ILsaMolecule> getModifiedMolecules();
 
     @Override
-    ILsaAction cloneOnNewNode(Node<List<? extends ILsaMolecule>> n, Reaction<List<? extends ILsaMolecule>> r);
+    ILsaAction cloneAction(Node<List<? extends ILsaMolecule>> n, Reaction<List<? extends ILsaMolecule>> r);
 
 }

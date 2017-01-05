@@ -1,0 +1,84 @@
+/* Application stylesheet.*/
+
+.root {
+	-fx-background-color: #f9f9f9;
+}
+
+.anchorpane {
+	-fx-border-width: 1;
+	-fx-border-color: #cc0000;
+	-fx-border-width: 0.125em;
+	-fx-padding: 0.625em 0.625em 0.625em 0.625em; /* top right buttom left */
+	-fx-border-insets: 0 0 0.313em 0.313em;
+}
+
+.title {
+	-fx-font-size: 1.5em;
+	-fx-text-fill: #cc0000;
+	-fx-font-weight: bold;
+	-fx-padding: 0 0 0.625em 0;
+}
+
+.path {
+	-fx-font-family: "monospace";
+}
+
+.button {
+	-fx-font-size: 1.25em;
+	-fx-border-color: #cc0000;
+	-fx-border-radius: 0.313em;
+	-fx-background-color: #d7d7d7;
+	-fx-background-radius: 0.313em;
+}
+
+.button:hover {
+	-fx-background-color: #ffffcc;
+	-fx-effect: dropshadow(gaussian, #a6a6a6, 0.625em, 0.013em, 0.125em, 0.125em);
+}
+
+.button:pressed {
+	-fx-effect: dropshadow(gaussian, #a6a6a6, 0, 0, 0, 0);
+}
+
+#batch {
+	-fx-border-insets: 0.625em 0 0.313em 0;
+	-fx-background-insets: 0.625em 0 0.313em 0;
+	-fx-border-radius: 0;
+	-fx-border-color: #000000;
+	-fx-background-color: #444444;
+	-fx-text-fill: #ffffff;
+}
+
+#batch:hover {
+	-fx-background-color: #747474;
+}
+
+#run {
+	-fx-font-size: 2em;
+	-fx-font-weight: bold;
+	-fx-border-color: #002699;
+	-fx-border-radius: 0;
+	-fx-background-color: #668cff;
+}
+
+#run:hover {
+	-fx-background-color: #b3c6ff;
+}
+
+.btnMenu {
+	-fx-content-display: top;
+	-fx-border-radius: 0;
+	-fx-pref-width: 8.125em; /* 130px */
+	-fx-border-insets: 0.625em 0 0.625em 10;
+	-fx-background-insets: 0.625em 0 0.625em 10;
+}
+
+.separator .line {
+	-fx-border-insets: 0.625em 0 0.625em 0.938em;
+	-fx-background-insets: 0.625em 0 0.625em 0.938em;
+}
+
+.btnHB {
+	-fx-border-insets: 0 0.625em 0 0;
+	-fx-background-insets: 0 0.625em 0 0;
+}

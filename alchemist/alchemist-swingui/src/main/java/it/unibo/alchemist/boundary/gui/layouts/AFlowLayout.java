@@ -147,7 +147,7 @@ public abstract class AFlowLayout implements LayoutManager, Serializable {
     }
 
     @Override
-    public abstract void layoutContainer(final Container parent);
+    public abstract void layoutContainer(Container parent);
 
     /**
      * Calculates the size dimensions for the specified container, given the components it contains.
@@ -156,7 +156,7 @@ public abstract class AFlowLayout implements LayoutManager, Serializable {
      * @param minimum true if the returned dimension is the minimum one
      * @return a Dimension with the desired size
      */
-    protected abstract Dimension layoutSize(final Container parent, final boolean minimum);
+    protected abstract Dimension layoutSize(Container parent, boolean minimum);
 
     @Override
     public Dimension minimumLayoutSize(final Container parent) {

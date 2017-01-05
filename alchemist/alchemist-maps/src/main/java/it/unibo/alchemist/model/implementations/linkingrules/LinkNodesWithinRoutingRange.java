@@ -16,7 +16,6 @@ import java.util.stream.Stream;
 
 import it.unibo.alchemist.model.implementations.neighborhoods.CachedNeighborhood;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.LinkingRule;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -24,7 +23,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 /**
  * @param <T>
  */
-public class LinkNodesWithinRoutingRange<T> implements LinkingRule<T> {
+public class LinkNodesWithinRoutingRange<T> extends AbstractLocallyConsistentLinkingRule<T> {
 
     private static final long serialVersionUID = 726751817489962367L;
     private final Collection<Node<T>> emptyList = Collections.unmodifiableCollection(new ArrayList<Node<T>>(0));

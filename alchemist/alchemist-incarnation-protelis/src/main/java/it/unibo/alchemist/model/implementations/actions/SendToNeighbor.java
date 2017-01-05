@@ -20,38 +20,39 @@ import java.util.Objects;
 public class SendToNeighbor extends AbstractLocalAction<Object> {
 
     private static final long serialVersionUID = -8826563176323247613L;
-    private final ProtelisNode myNode;
     private final RunProtelisProgram prog;
+    private final Reaction<Object> reaction;
 
     /**
      * @param node
      *            the local node
+     * @param reaction
+     *            the reaction
      * @param program
      *            the reference {@link RunProtelisProgram}
      */
-    public SendToNeighbor(final ProtelisNode node, final RunProtelisProgram program) {
+    public SendToNeighbor(final ProtelisNode node, final Reaction<Object> reaction, final RunProtelisProgram program) {
         super(node);
-        Objects.requireNonNull(program);
-        prog = program;
-        myNode = node;
+        this.reaction = Objects.requireNonNull(reaction);
+        prog = Objects.requireNonNull(program);
     }
 
     @Override
-    public SendToNeighbor cloneOnNewNode(final Node<Object> n, final Reaction<Object> r) {
-        return new SendToNeighbor((ProtelisNode) n, prog);
+    public SendToNeighbor cloneAction(final Node<Object> n, final Reaction<Object> r) {
+        return new SendToNeighbor((ProtelisNode) n, reaction, prog);
     }
 
     @Override
     public void execute() {
-        final AlchemistNetworkManager mgr = myNode.getNetworkManager(prog);
+        final AlchemistNetworkManager mgr = getNode().getNetworkManager(prog);
         Objects.requireNonNull(mgr);
-        mgr.simulateMessageArrival();
+        mgr.simulateMessageArrival(reaction.getTau().toDouble());
         prog.prepareForComputationalCycle();
     }
 
     @Override
     public ProtelisNode getNode() {
-        return myNode;
+        return (ProtelisNode) super.getNode();
     }
 
     /**

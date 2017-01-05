@@ -107,5 +107,5 @@ public interface Simulation<T> extends Runnable {
      * @param comm
      *            the command which will be executed
      */
-    void addCommand(final Command<T> comm);
+    void addCommand(Command<T> comm);
 }

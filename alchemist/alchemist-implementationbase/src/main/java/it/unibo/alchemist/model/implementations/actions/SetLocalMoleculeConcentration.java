@@ -40,7 +40,7 @@ public class SetLocalMoleculeConcentration<T> extends AbstractActionOnSingleMole
     }
 
     @Override
-    public Action<T> cloneOnNewNode(final Node<T> n, final Reaction<T> r) {
+    public Action<T> cloneAction(final Node<T> n, final Reaction<T> r) {
         return new SetLocalMoleculeConcentration<T>(n, getMolecule(), val);
     }
 

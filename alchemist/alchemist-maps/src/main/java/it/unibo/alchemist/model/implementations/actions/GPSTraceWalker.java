@@ -8,9 +8,9 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import it.unibo.alchemist.model.implementations.strategies.routing.OnStreets;
-import it.unibo.alchemist.model.implementations.strategies.speed.RoutingTraceDependantSpeed;
-import it.unibo.alchemist.model.implementations.strategies.target.FollowTrace;
+import it.unibo.alchemist.model.implementations.movestrategies.routing.OnStreets;
+import it.unibo.alchemist.model.implementations.movestrategies.speed.RoutingTraceDependantSpeed;
+import it.unibo.alchemist.model.implementations.movestrategies.target.FollowTrace;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
@@ -41,7 +41,7 @@ public class GPSTraceWalker<T> extends MoveOnMap<T> {
     }
 
     @Override
-    public GPSTraceWalker<T> cloneOnNewNode(final Node<T> n, final Reaction<T> r) {
+    public GPSTraceWalker<T> cloneAction(final Node<T> n, final Reaction<T> r) {
         return new GPSTraceWalker<>(getEnvironment(), n, r);
     }
 

@@ -4,7 +4,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
-import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -66,7 +65,7 @@ public class RandomPolarization extends AbstractRandomizableAction<Double> {
     }
 
     @Override
-    public Action<Double> cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
+    public RandomPolarization cloneAction(final Node<Double> n, final Reaction<Double> r) {
         return new RandomPolarization(n, getRandomGenerator());
     }
 

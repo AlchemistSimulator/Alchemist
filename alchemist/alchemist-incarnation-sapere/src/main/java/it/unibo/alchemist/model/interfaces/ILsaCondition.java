@@ -35,21 +35,9 @@ public interface ILsaCondition extends Condition<List<? extends ILsaMolecule>> {
      */
     boolean filter(List<Map<FasterString, ITreeNode<?>>> matches, List<? extends ILsaNode> validNodes, List<Map<ILsaNode, List<ILsaMolecule>>> retrieved);
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * alice.alchemist.model.interfaces.Condition#cloneOnNewNode(alice.alchemist
-     * .model.interfaces.Node)
-     */
     @Override
-    ILsaCondition cloneOnNewNode(Node<List<? extends ILsaMolecule>> n);
+    ILsaCondition cloneCondition(Node<List<? extends ILsaMolecule>> n, Reaction<List<? extends ILsaMolecule>> r);
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see alice.alchemist.model.interfaces.Condition#getNode()
-     */
     @Override
     ILsaNode getNode();
 

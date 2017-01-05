@@ -283,7 +283,6 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
         return new DiracComb<>(new DoubleTime(rand.nextDouble() / frequency), frequency);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Reaction<Object> createReaction(final RandomGenerator rand, final Environment<Object> env,
             final Node<Object> node, final TimeDistribution<Object> time, final String param) {
@@ -356,7 +355,7 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
                     throw new IllegalStateException("There are too many programs requiring a "
                             + SendToNeighbor.class.getName() + " action: " + pList);
                 }
-                return new SendToNeighbor(pNode, pList.get(0));
+                return new SendToNeighbor(pNode, reaction, pList.get(0));
             } else {
                 try {
                     return new RunProtelisProgram(env, pNode, reaction, rand, param);

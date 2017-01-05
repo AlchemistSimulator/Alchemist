@@ -1,147 +1,65 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertNotNull;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.concurrent.ExecutionException;
-import java.util.function.Consumer;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.Map;
 
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.generator.IGenerator;
-import org.eclipse.xtext.generator.InMemoryFileSystemAccess;
-import org.eclipse.xtext.resource.XtextResource;
-import org.eclipse.xtext.resource.XtextResourceSet;
 import org.junit.Test;
-import org.protelis.lang.datatype.Field;
-import org.xml.sax.SAXException;
 
-import com.google.inject.Injector;
+import com.google.common.collect.Maps;
 
 import it.unibo.alchemist.core.implementations.Engine;
-import it.unibo.alchemist.core.implementations.Engine.StateCommand;
 import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.language.EnvironmentBuilder;
-import it.unibo.alchemist.language.protelis.ProtelisDSLStandaloneSetup;
-import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
+import it.unibo.alchemist.loader.YamlLoader;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Node;
-
 
 /**
+ * A series of tests checking that our Yaml Loader is working as expected.
  */
 public class TestInSimulator {
 
-    private static final XtextResourceSet XTEXT;
-    private static final Injector INJECTOR;
-    private static final int LONG_SIMULATION_FINAL_TIME = 30000;
-
-    static {
-        new org.eclipse.emf.mwe.utils.StandaloneSetup().setPlatformUri(".");
-        INJECTOR = new ProtelisDSLStandaloneSetup().createInjectorAndDoEMFRegistration();
-        XTEXT = INJECTOR.getInstance(XtextResourceSet.class);
-        XTEXT.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
+    /**
+     * Basic loading capabilities.
+     */
+    @Test
+    public void testBase() {
+        testNoVar("/testbase.yml");
     }
 
     /**
-     * @throws Exception in case of failure
+     * Test the ability to load a Protelis module from classpath.
      */
     @Test
-    public void testSimple01() throws Exception { 
-        runSimulation("simple01.psim", 2, checkProgramValueOnAll(v -> assertEquals(1.0, v)));
+    public void testLoadProtelisModule() {
+        testNoVar("/test00.yml");
     }
 
     /**
-     * @throws Exception in case of failure
+     * Test the ability to inject variables.
      */
     @Test
-    public void testNbr01() throws Exception { 
-        runSimulation("nbr01.psim", 2, checkProgramValueOnAll(v -> {
-            assertTrue(v instanceof Field);
-            final Field res = (Field) v;
-            res.valIterator().forEach(fval -> assertEquals(1.0, fval));
-        }));
+    public void testLoadWIthVariable() {
+        final Map<String, Double> map = Maps.newLinkedHashMap();
+        map.put("testVar", 10d);
+        testLoading("/test00.yml", map);
     }
 
-    /**
-     * @throws Exception in case of failure
-     */
-    @Test
-    public void testNbr02() throws Exception { 
-        runSimulation("nbr02.psim", LONG_SIMULATION_FINAL_TIME, env -> {
-            final double val = (Double) env.getNodes().stream()
-                    .flatMap(n -> n.getContents().entrySet().stream())
-                    .filter(e -> e.getKey() instanceof RunProtelisProgram)
-                    .findAny().get().getValue();
-            checkProgramValueOnAll(v -> assertEquals(val, v)).accept(env);
-        });
+    private static void testNoVar(final String resource) {
+        testLoading(resource, Collections.emptyMap());
     }
 
-    /**
-     * @throws Exception in case of failure
-     */
-    @Test
-    public void testDistanceTo() throws Exception { 
-        runSimulation("distanceTo.psim", LONG_SIMULATION_FINAL_TIME);
-    }
-
-    @SafeVarargs
-    private static <T> void runSimulation(final String relativeFilePath, final double finalTime, final Consumer<Environment<Object>>... checkProcedures) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, SAXException, IOException, ParserConfigurationException, InterruptedException, ExecutionException  {
-        final Resource res = XTEXT.getResource(URI.createURI("classpath:/simulations/" + relativeFilePath), true);
-        final IGenerator generator = INJECTOR.getInstance(IGenerator.class);
-        final InMemoryFileSystemAccess fsa = INJECTOR.getInstance(InMemoryFileSystemAccess.class);
-        generator.doGenerate(res, fsa);
-        final Collection<CharSequence> files = fsa.getTextFiles().values();
-        if (files.size() != 1) {
-            fail();
-        }
-        final ByteArrayInputStream strIS = new ByteArrayInputStream(files.stream().findFirst().get().toString().getBytes(StandardCharsets.UTF_8));
-        final Environment<Object> env = EnvironmentBuilder.build(strIS).get().getEnvironment();
-        final Simulation<Object> sim = new Engine<>(env, new DoubleTime(finalTime));
-        sim.addCommand(new StateCommand<>().run().build());
-        /*
-         * Use this thread: intercepts failures.
-         */
+    private static <T> void testLoading(final String resource, final Map<String, Double> vars) {
+        final InputStream res = TestInSimulator.class.getResourceAsStream(resource);
+        assertNotNull("Missing test resource " + resource, res);
+        final Environment<T> env = new YamlLoader(res).getWith(vars);
+        final Simulation<T> sim = new Engine<>(env, 10000);
+        sim.addCommand(new Engine.StateCommand<T>().run().build());
+//        if (!java.awt.GraphicsEnvironment.isHeadless()) {
+//            it.unibo.alchemist.boundary.gui.SingleRunGUI.make(sim);
+//        }
         sim.run();
-        Arrays.stream(checkProcedures).forEachOrdered(p -> p.accept(env));
-    }
-
-    private static <T> Consumer<Environment<T>> checkOnNodes(final Consumer<Node<T>> proc) {
-        return env -> env.forEach(n -> {
-            proc.accept(n);
-        });
-    }
-
-    private static <T> Consumer<Environment<T>> checkProgramValueOnAll(final Consumer<Object> proc) {
-        return checkOnNodes(checkProtelisProgramValue(proc));
-    }
-
-    private static <T> Consumer<Node<T>> checkProtelisProgramValue(final Consumer<Object> check) {
-        return n -> n.forEach(r -> {
-            r.getActions().parallelStream()
-                .filter(a -> a instanceof RunProtelisProgram)
-                .forEach(a -> {
-                    check.accept(n.getConcentration((RunProtelisProgram) a));
-                });
-            });
     }
 
 }

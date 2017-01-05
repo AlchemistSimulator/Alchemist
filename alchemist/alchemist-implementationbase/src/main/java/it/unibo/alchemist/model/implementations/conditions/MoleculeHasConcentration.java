@@ -6,6 +6,7 @@ import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
  * A condition that is valid iff a molecule has exactly the desired concentration.
@@ -34,7 +35,7 @@ public class MoleculeHasConcentration<T> extends AbstractCondition<T> {
     }
 
     @Override
-    public Condition<T> cloneOnNewNode(final Node<T> n) {
+    public Condition<T> cloneCondition(final Node<T> n, final Reaction<T> r) {
         return new MoleculeHasConcentration<>(n, mol, value);
     }
 

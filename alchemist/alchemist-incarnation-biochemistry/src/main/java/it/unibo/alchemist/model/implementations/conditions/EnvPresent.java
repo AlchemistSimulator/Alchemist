@@ -1,10 +1,10 @@
 package it.unibo.alchemist.model.implementations.conditions;
 
-import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
  * 
@@ -29,7 +29,7 @@ public class EnvPresent extends AbstractCondition<Double> {
     }
 
     @Override
-    public Condition<Double> cloneOnNewNode(final Node<Double> n) {
+    public EnvPresent cloneCondition(final Node<Double> n, final Reaction<Double> r) {
         return new EnvPresent(environment, n);
     }
 

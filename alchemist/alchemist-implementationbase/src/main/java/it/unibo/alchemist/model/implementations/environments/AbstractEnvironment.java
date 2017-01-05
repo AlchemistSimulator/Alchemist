@@ -20,12 +20,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
-import org.danilopianini.lang.SpatialIndex;
+import org.danilopianini.util.SpatialIndex;
 
+import com.google.common.collect.Sets;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -88,7 +86,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
      * @param p
      *            the position
      */
-    protected abstract void nodeAdded(final Node<T> node, final Position p);
+    protected abstract void nodeAdded(Node<T> node, Position p);
 
     /**
      * Allows subclasses to determine wether or not a {@link Node} should
@@ -101,7 +99,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
      * @return true if the node should be added to this environment, false
      *         otherwise
      */
-    protected abstract boolean nodeShouldBeAdded(final Node<T> node, final Position p);
+    protected abstract boolean nodeShouldBeAdded(Node<T> node, Position p);
 
     /**
      * Allows subclasses to tune the actual position of a node, applying spatial
@@ -113,7 +111,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
      *            the original (requested) position
      * @return the actual position where the node should be located
      */
-    protected abstract Position computeActualInsertionPosition(final Node<T> node, final Position p);
+    protected abstract Position computeActualInsertionPosition(Node<T> node, Position p);
 
     @Override
     public final void addNode(final Node<T> node, final Position p) {
@@ -122,7 +120,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
             setPosition(node, actualPosition);
             nodes.put(node.getId(), node);
             spatialIndex.insert(node, actualPosition.getCartesianCoordinates());
-            nodeAdded(node, p);
+            nodeAdded(node, actualPosition);
         }
     }
 
@@ -198,18 +196,26 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
         /*
          * Remove the center node
          */
-        return getAllNodesInRange(getPosition(center), range).filter((n) -> !n.equals(center))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+        final Set<Node<T>> res = getAllNodesInRange(getPosition(center), range);
+        res.remove(center);
+        return res;
     }
 
-    private Stream<Node<T>> getAllNodesInRange(final Position center, final double range) {
+    private Set<Node<T>> getAllNodesInRange(final Position center, final double range) {
         final List<Position> boundingBox = center.buildBoundingBox(range);
         assert boundingBox.size() == getDimensions();
         final double[][] queryArea = new double[getDimensions()][];
-        IntStream.range(0, getDimensions()).parallel()
-                .forEach(i -> queryArea[i] = boundingBox.get(i).getCartesianCoordinates());
-        return spatialIndex.query(queryArea).parallelStream()
-                .filter((n) -> getPosition(n).getDistanceTo(center) <= range);
+        for (int i = 0; i < queryArea.length; i++) {
+            queryArea[i] = boundingBox.get(i).getCartesianCoordinates();
+        }
+        final Collection<Node<T>> result = spatialIndex.query(queryArea);
+        final Iterator<Node<T>> it = result.iterator();
+        while (it.hasNext()) {
+            if (getPosition(it.next()).getDistanceTo(center) > range) {
+                it.remove();
+            }
+        }
+        return new LinkedHashSet<>(result);
     }
 
     @Override
@@ -217,7 +223,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
         /*
          * Collect every node in range
          */
-        return getAllNodesInRange(center, range).collect(Collectors.toCollection(LinkedHashSet::new));
+        return getAllNodesInRange(center, range);
     }
 
     @Override
@@ -269,6 +275,12 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
 
     @Override
     public Set<Layer<T>> getLayers() {
-        return layers.values().stream().collect(Collectors.toCollection(LinkedHashSet::new));
+        return Sets.newLinkedHashSet(layers.values());
     }
+
+    @Override
+    public double[] getSizeInDistanceUnits() {
+        return getSize();
+    }
+
 }

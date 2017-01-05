@@ -1,9 +1,9 @@
 package it.unibo.alchemist.model.implementations.actions;
 
-import it.unibo.alchemist.model.implementations.strategies.routing.IgnoreStreets;
-import it.unibo.alchemist.model.implementations.strategies.speed.ConstantSpeed;
-import it.unibo.alchemist.model.implementations.strategies.speed.StraightLineTraceDependantSpeed;
-import it.unibo.alchemist.model.implementations.strategies.target.FollowTrace;
+import it.unibo.alchemist.model.implementations.movestrategies.routing.IgnoreStreets;
+import it.unibo.alchemist.model.implementations.movestrategies.speed.ConstantSpeed;
+import it.unibo.alchemist.model.implementations.movestrategies.speed.StraightLineTraceDependantSpeed;
+import it.unibo.alchemist.model.implementations.movestrategies.target.FollowTrace;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;

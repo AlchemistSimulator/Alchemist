@@ -50,7 +50,7 @@ public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements E
     }
 
     @Override
-    public List<RectObstacle2D> getObstaclesInRange(final Double centerx, final Double centery, final Double range) {
+    public List<RectObstacle2D> getObstaclesInRange(final double centerx, final double centery, final double range) {
         return rtree.search(Geometries.circle(centerx, centery, range)).map(e -> e.value()).toList().toBlocking().single();
     }
 

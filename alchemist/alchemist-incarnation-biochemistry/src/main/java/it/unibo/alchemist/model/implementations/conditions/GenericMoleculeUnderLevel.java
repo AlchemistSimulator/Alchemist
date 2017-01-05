@@ -13,6 +13,7 @@ package it.unibo.alchemist.model.implementations.conditions;
 
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
  * @param <T> the concentration type
@@ -50,7 +51,7 @@ public class GenericMoleculeUnderLevel<T extends Number> extends
      * .model.interfaces.Node)
      */
     @Override
-    public GenericMoleculeUnderLevel<T> cloneOnNewNode(final Node<T> n) {
+    public GenericMoleculeUnderLevel<T> cloneCondition(final Node<T> n, final Reaction<T> r) {
         return new GenericMoleculeUnderLevel<T>(n, getMolecule(), getQuantity());
     }
 

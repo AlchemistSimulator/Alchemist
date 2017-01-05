@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.IRoute;
+import it.unibo.alchemist.model.interfaces.Route;
 
 import java.util.List;
 
@@ -64,7 +64,7 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
     }
 
     @Override
-    public LsaRandomNeighborAction cloneOnNewNode(final Node<List<? extends ILsaMolecule>> n, final Reaction<List<? extends ILsaMolecule>> r) {
+    public LsaRandomNeighborAction cloneAction(final Node<List<? extends ILsaMolecule>> n, final Reaction<List<? extends ILsaMolecule>> r) {
         return new LsaRandomNeighborAction((ILsaNode) n, getMolecule(), getEnvironment(), randomEngine);
     }
 
@@ -134,7 +134,7 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
         }
         if (initRoute) {
             if (mapEnv) {
-                final IRoute route = menv.computeRoute(getNode(), node);
+                final Route route = menv.computeRoute(getNode(), node);
                 if (route != null) {
                     final double dist = route.getDistance();
                     d = Math.max(d, dist);

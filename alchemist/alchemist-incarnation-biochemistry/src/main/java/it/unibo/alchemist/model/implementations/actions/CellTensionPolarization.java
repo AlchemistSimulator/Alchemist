@@ -46,7 +46,7 @@ public class CellTensionPolarization extends AbstractAction<Double> {
     }
 
     @Override
-    public CellTensionPolarization cloneOnNewNode(final Node<Double> n, final Reaction<Double> r) {
+    public CellTensionPolarization cloneAction(final Node<Double> n, final Reaction<Double> r) {
         return new CellTensionPolarization(env, n);
     }
 

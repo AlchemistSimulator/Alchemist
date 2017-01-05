@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
  * @param <T>
  */
 @ExportInspector
+@Deprecated
 public abstract class EnvironmentInspector<T> implements OutputMonitor<T> {
 
     private static final long serialVersionUID = -6609357608585315L;
@@ -252,9 +253,9 @@ public abstract class EnvironmentInspector<T> implements OutputMonitor<T> {
      * @return an array of data values
      */
     protected abstract double[] extractValues(
-            final Environment<T> env,
-            final Reaction<T> r,
-            final Time time,
-            final long step);
+            Environment<T> env,
+            Reaction<T> r,
+            Time time,
+            long step);
 
 }

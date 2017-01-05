@@ -22,8 +22,8 @@ public class StepLayer<T> implements Layer<T> {
 
     /**
      * Initialize a {@link StepLayer}.
-     * @param mx the x value above which the concentration in layer is at {@link maxValue} 
-     * @param my the y value above which the concentration in layer is at {@link maxValue}
+     * @param mx the x value above which the concentration in layer is at its maximum value
+     * @param my the y value above which the concentration in layer is at its maximum value
      * @param minValue the low value of concentration.
      * @param maxValue the high value of concentration.
      */
@@ -35,7 +35,7 @@ public class StepLayer<T> implements Layer<T> {
     }
 
     /**
-     * Initialize a {@link StepLayer} where concentration is at {@link maxValue}
+     * Initialize a {@link StepLayer} where concentration is at its maximum value
      * in first quadrant (for positive values of x and y).
      * @param maxValue minValue the low value of concentration.
      * @param minValue maxValue the high value of concentration.

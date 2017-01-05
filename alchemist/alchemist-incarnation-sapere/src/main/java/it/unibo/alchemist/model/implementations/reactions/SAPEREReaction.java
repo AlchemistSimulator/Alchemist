@@ -120,11 +120,11 @@ public class SAPEREReaction extends AReaction<List<? extends ILsaMolecule>> {
         final SAPEREReaction res = new SAPEREReaction(environment, (ILsaNode) n, rng, timedist.clone());
         final ArrayList<Condition<List<? extends ILsaMolecule>>> c = new ArrayList<>();
         for (final Condition<List<? extends ILsaMolecule>> cond : getConditions()) {
-            c.add(cond.cloneOnNewNode(n));
+            c.add(cond.cloneCondition(n, res));
         }
         final ArrayList<Action<List<? extends ILsaMolecule>>> a = new ArrayList<>();
         for (final Action<List<? extends ILsaMolecule>> act : getActions()) {
-            a.add(act.cloneOnNewNode(n, res));
+            a.add(act.cloneAction(n, res));
         }
         res.setActions(a);
         res.setConditions(c);

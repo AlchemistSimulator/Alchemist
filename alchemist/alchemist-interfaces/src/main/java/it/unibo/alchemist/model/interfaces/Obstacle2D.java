@@ -54,6 +54,6 @@ public interface Obstacle2D extends Serializable, Shape {
      * @return the intersection point between the vector and the rectangle
      *         nearest to the vector's starting point
      */
-    double[] nearestIntersection(final double startx, final double starty, final double endx, final double endy);
+    double[] nearestIntersection(double startx, double starty, double endx, double endy);
 
 }

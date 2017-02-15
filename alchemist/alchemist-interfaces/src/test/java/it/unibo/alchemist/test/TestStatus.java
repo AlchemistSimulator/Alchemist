@@ -25,7 +25,7 @@ public class TestStatus {
     public void test() {
         assertNotNull(Status.PAUSED);
         assertNotNull(Status.RUNNING);
-        assertNotNull(Status.STOPPED);
+        assertNotNull(Status.TERMINATED);
     }
 
 }

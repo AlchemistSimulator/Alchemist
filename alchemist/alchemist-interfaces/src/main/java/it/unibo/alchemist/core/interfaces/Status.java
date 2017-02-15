@@ -42,6 +42,6 @@ public enum Status {
      * The simulation is stopped. It is no longer possible to resume
      * it.
      */
-    STOPPED;
+    TERMINATED;
 
 }

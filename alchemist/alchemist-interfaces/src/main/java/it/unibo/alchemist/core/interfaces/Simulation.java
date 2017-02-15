@@ -8,7 +8,10 @@
  */
 package it.unibo.alchemist.core.interfaces;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+
+import org.jooq.lambda.fi.lang.CheckedRunnable;
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -101,11 +104,51 @@ public interface Simulation<T> extends Runnable {
     Status waitFor(Status s, long timeout, TimeUnit timeunit);
 
     /**
-     * Adds a new {@link Command} to this simulation. There is no warranty about
-     * when this command will effectively be executed.
-     *
-     * @param comm
-     *            the command which will be executed
+     * Sends a play command to the simulation. There is no guarantee on when
+     * this command will be actually processed.
      */
-    void addCommand(Command<T> comm);
+    void play();
+
+    /**
+     * Executes a certain number of steps, then pauses it.
+     * 
+     * @param steps
+     *            the number of steps to execute
+     */
+    void goToStep(long steps);
+
+    /**
+     * Executes the simulation until the target time is reached, then pauses it.
+     * 
+     * @param t
+     *            the target time
+     */
+    void goToTime(Time t);
+
+    /**
+     * Sends a pause command to the simulation. There is no guarantee on when
+     * this command will be actually processed.
+     */
+    void pause();
+
+    /**
+     * Sends a terminate command to the simulation. There is no guarantee on when
+     * this command will be actually processed.
+     */
+    void terminate();
+
+    /**
+     * Schedules a runnable to be executed by the Simulation thread, useful for
+     * synchronization purposes (e.g. make sure that the environment is not
+     * being changed while the requested operation is being executed). An
+     * exception thrown by the passed runnable will make the simulation
+     * terminate.
+     * 
+     * @param r
+     *            the runnable to execute
+     */
+    void schedule(CheckedRunnable r);
+
+    Optional<Throwable> getError();
+
 }

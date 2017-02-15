@@ -26,6 +26,7 @@ import org.danilopianini.util.SpatialIndex;
 import com.google.common.collect.Sets;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
+import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Molecule;
@@ -51,6 +52,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     private String separator = System.getProperty("line.separator");
     private final SpatialIndex<Node<T>> spatialIndex;
     private final Map<Molecule, Layer<T>> layers = new LinkedHashMap<>();
+    private Simulation<T> simulation;
 
     /**
      * @param internalIndex
@@ -281,6 +283,20 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     @Override
     public double[] getSizeInDistanceUnits() {
         return getSize();
+    }
+
+    @Override
+    public final void setSimulation(final Simulation<T> s) {
+        if (simulation == null) {
+            simulation = s;
+        } else {
+            throw new IllegalStateException();
+        }
+    }
+
+    @Override
+    public Simulation<T> getSimulation() {
+        return simulation;
     }
 
 }

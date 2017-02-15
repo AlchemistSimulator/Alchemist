@@ -44,7 +44,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
 /**
  * This class tests some basic Commands, like pause and start.
  */
-public class TestCommands {
+public class TestConcurrency {
 
     private static final Logger L = LoggerFactory.getLogger(Engine.class);
 
@@ -61,7 +61,7 @@ public class TestCommands {
 
         ex.submit(sim);
 
-        ex.submit(() -> sim.addCommand(new Engine.StateCommand<>().pause().build()));
+        ex.submit(() -> sim.pause());
         if (sim.waitFor(Status.RUNNING, 1, TimeUnit.SECONDS) != Status.RUNNING) { // after a second the method must return
             L.info("The status I was waiting for did not arrived! (as predicted)");
         } else {
@@ -69,13 +69,10 @@ public class TestCommands {
         }
         verifyStatus(ex, sim, Status.PAUSED, 1000, 100);
 
-        ex.submit(() -> sim.addCommand((s) -> {
-            L.info("I am a " + s.getClass() + " and my status is " + s.getStatus());
-        }));
         sim.waitFor(Status.PAUSED, 0, TimeUnit.DAYS);
         verifyStatus(ex, sim, Status.PAUSED, 1000, 100);
 
-        ex.submit(() -> sim.addCommand(new Engine.StateCommand<>().run().build()));
+        ex.submit(() -> sim.play());
         sim.waitFor(Status.RUNNING, 1, TimeUnit.SECONDS); // the method must return instantly
 
         /*
@@ -83,7 +80,7 @@ public class TestCommands {
          * instantly, because it takes a very little time to perform 10 steps, since in every step the 
          * simulation executes the fake reaction you can see below, which simply does nothing.
          */
-        verifyStatus(ex, sim, Status.STOPPED, 1000, 100);
+        verifyStatus(ex, sim, Status.TERMINATED, 1000, 100);
 
         /*
          * the method must return immediatly with a message error because is not
@@ -92,7 +89,7 @@ public class TestCommands {
         sim.waitFor(Status.RUNNING, 0, TimeUnit.DAYS);
 
         ex.shutdown();
-        verifyStatus(ex, sim, Status.STOPPED, 1000, 100);
+        verifyStatus(ex, sim, Status.TERMINATED, 1000, 100);
     }
 
     /**
@@ -105,9 +102,9 @@ public class TestCommands {
         final Simulation<Object> sim = new Engine<>(env, 10);
         final ExecutorService ex = Executors.newCachedThreadPool();
         ex.submit(sim);
-        ex.submit(() -> sim.addCommand(new Engine.StateCommand<>().run().build()));
-        sim.waitFor(Status.STOPPED, 1, TimeUnit.SECONDS);
-        verifyStatus(ex, sim, Status.STOPPED, 1000, 100);
+        ex.submit(() -> sim.play());
+        sim.waitFor(Status.TERMINATED, 1, TimeUnit.SECONDS);
+        verifyStatus(ex, sim, Status.TERMINATED, 1000, 100);
     }
 
     private void verifyStatus(final ExecutorService ex, final Simulation<?> sim, final Status s,
@@ -399,6 +396,13 @@ public class TestCommands {
         @Override
         public Optional<Layer<Object>> getLayer(final Molecule m) {
             throw new UnsupportedOperationException();
+        }
+        @Override
+        public Simulation<Object> getSimulation() {
+            return null;
+        }
+        @Override
+        public void setSimulation(final Simulation<Object> s) {
         }
 
     }

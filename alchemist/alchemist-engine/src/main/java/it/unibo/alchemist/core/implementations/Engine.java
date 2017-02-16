@@ -51,42 +51,23 @@ import it.unibo.alchemist.model.interfaces.Time;
 public class Engine<T> implements Simulation<T> {
 
     private static final Logger L = LoggerFactory.getLogger(Engine.class);
-
     private volatile Status status = Status.INIT;
     private final Lock statusLock = new ReentrantLock();
     private final Condition statusCondition = statusLock.newCondition();
-
     private final BlockingQueue<CheckedRunnable> commands = new LinkedBlockingQueue<>();
-
     private final Environment<T> env;
     private final DependencyGraph<T> dg;
     private final Map<Reaction<T>, DependencyHandler<T>> handlers = new LinkedHashMap<>();
     private final ReactionManager<T> ipq;
     private final Time finalTime;
-
     private final FastReadWriteLock monitorLock = new FastReadWriteLock();
     private final List<OutputMonitor<T>> monitors = new LinkedList<OutputMonitor<T>>();
-
-    private Reaction<T> mu;
     private final long steps;
-    private Time currentTime = DoubleTime.ZERO_TIME;
-    private long curStep;
     private Optional<Throwable> error = Optional.empty();
+    private Time currentTime = DoubleTime.ZERO_TIME;
+    private Reaction<T> mu;
+    private long curStep;
 
-    /**
-     * Builds a simulation for a given environment. By default it uses a
-     * DependencyGraph and an IndexedPriorityQueue internally. If you want to
-     * use your own implementations of {@link DependencyGraph} and
-     * {@link ReactionManager} interfaces, don't use this constructor.
-     * 
-     * @param e
-     *            the environment at the initial time
-     * @param t
-     *            the maximum time to reach
-     */
-    public Engine(final Environment<T> e, final Time t) {
-        this(e, Long.MAX_VALUE, t);
-    }
 
     /**
      * Builds a simulation for a given environment. By default it uses a
@@ -125,6 +106,21 @@ public class Engine<T> implements Simulation<T> {
         this.finalTime = t;
     }
 
+    /**
+     * Builds a simulation for a given environment. By default it uses a
+     * DependencyGraph and an IndexedPriorityQueue internally. If you want to
+     * use your own implementations of {@link DependencyGraph} and
+     * {@link ReactionManager} interfaces, don't use this constructor.
+     * 
+     * @param e
+     *            the environment at the initial time
+     * @param t
+     *            the maximum time to reach
+     */
+    public Engine(final Environment<T> e, final Time t) {
+        this(e, Long.MAX_VALUE, t);
+    }
+
     @Override
     public void addOutputMonitor(final OutputMonitor<T> op) {
             monitorLock.write();
@@ -132,14 +128,53 @@ public class Engine<T> implements Simulation<T> {
             monitorLock.release();
     }
 
+    private void checkCaller() {
+        if (!Thread.holdsLock(env)) {
+            throw new IllegalMonitorStateException("This method must get called from the simulation thread.");
+        }
+    }
 
-    @Override
-    public void removeOutputMonitor(final OutputMonitor<T> op) {
-        new Thread(() -> {
-            monitorLock.write();
-            monitors.remove(op);
+    private int compareStatuses(final Status o) {
+        if ((status == Status.RUNNING || status == Status.PAUSED) && (o == Status.RUNNING || o == Status.PAUSED)) {
+            return 0;
+        } else {
+            return status.compareTo(o);
+        }
+    }
+
+    private void doStep() throws InterruptedException, ExecutionException {
+        final Reaction<T> root = ipq.getNext();
+        if (root == null) {
+            this.newStatus(Status.TERMINATED);
+            L.info("No more reactions.");
+        } else {
+            mu = root;
+            final Time t = mu.getTau();
+            if (t.compareTo(currentTime) < 0) {
+                throw new IllegalStateException(mu + "\nis scheduled in the past at time " + t + ", current time is " + currentTime
+                        + "\nProblem occurred at step " + curStep);
+            }
+            currentTime = t;
+            if (mu.canExecute()) {
+                /*
+                 * This must be taken before execution, because the reaction
+                 * might remove itself (or its node) from the environment.
+                 */
+                final List<DependencyHandler<T>> deps = handlers.get(mu).influences();
+                mu.execute();
+                for (final DependencyHandler<T> r : deps) {
+                    updateReaction(r);
+                }
+            }
+            mu.update(currentTime, true, env);
+            ipq.updateReaction(root);
+            monitorLock.read();
+            for (final OutputMonitor<T> m : monitors) {
+                m.stepDone(env, mu, currentTime, curStep);
+            }
             monitorLock.release();
-        }).start();
+        }
+        curStep++;
     }
 
     private void finalizeConstructor() {
@@ -148,14 +183,6 @@ public class Engine<T> implements Simulation<T> {
                 scheduleReaction(r);
             }
         }
-    }
-
-    private void scheduleReaction(final Reaction<T> r) {
-        final DependencyHandler<T> rh = new DependencyHandlerImpl<>(r);
-        dg.createDependencies(rh);
-        r.initializationComplete(currentTime, env);
-        ipq.addReaction(r);
-        handlers.put(r, rh);
     }
 
     /**
@@ -171,6 +198,11 @@ public class Engine<T> implements Simulation<T> {
     }
 
     @Override
+    public Optional<Throwable> getError() {
+        return error;
+    }
+
+    @Override
     public long getFinalStep() {
         return steps;
     }
@@ -179,6 +211,7 @@ public class Engine<T> implements Simulation<T> {
     public Time getFinalTime() {
         return finalTime;
     }
+
 
     /**
      * @return The IPQ
@@ -202,6 +235,48 @@ public class Engine<T> implements Simulation<T> {
         return currentTime;
     }
 
+    @Override
+    public synchronized void goToStep(final long step) {
+        runUntil(() -> getStep() < step);
+    }
+
+    @Override
+    public synchronized void goToTime(final Time t) {
+        runUntil(() -> getTime().compareTo(t) < 0);
+    }
+
+    private void idleProcessSingleCommand() throws Throwable {
+        CheckedRunnable nextCommand = null;
+        // This is for spurious wakeups. Blame Java.
+        while (nextCommand == null) {
+            try {
+                nextCommand = commands.take();
+                nextCommand.run();
+            } catch (InterruptedException e) {
+                L.debug("Look! A spurious wakeup! :-)");
+            }
+        }
+    }
+
+    @Override
+    public void neighborAdded(final Node<T> node, final Node<T> n) {
+        checkCaller();
+        dg.addNeighbor(node, n);
+        updateNeighborhood(node);
+        /*
+         * This is necessary, see bug #43
+         */
+        updateNeighborhood(n);
+    }
+
+    @Override
+    public void neighborRemoved(final Node<T> node, final Node<T> n) {
+        checkCaller();
+        dg.removeNeighbor(node, n);
+        updateNeighborhood(node);
+        updateNeighborhood(n);
+    }
+
     private void newStatus(final Status s) {
         if (this.compareStatuses(s) > 0) {
             L.error("Attempt to enter in an illegal status: " + s);
@@ -219,47 +294,56 @@ public class Engine<T> implements Simulation<T> {
     }
 
     @Override
-    public Status waitFor(final Status s, final long timeout, final TimeUnit tu) {
-        if (this.compareStatuses(s) > 0) {
-            L.error("Attempt to wait for an illegal status: " + s + " (current state is: " + getStatus() + ")");
-        } else {
-            statusLock.lock();
-            try {
-                if (!getStatus().equals(s)) {
-                    boolean exit = false;
-                    while (!exit) {
-                        try {
-                            if (timeout > 0) {
-                                final boolean isOnTime = statusCondition.await(timeout, tu);
-                                if (!isOnTime || getStatus().equals(s)) {
-                                    exit = true;
-                                }
-                            } else {
-                                statusCondition.awaitUninterruptibly();
-                                if (getStatus().equals(s)) {
-                                    exit = true;
-                                }
-                            }
-                        } catch (InterruptedException e) {
-                            exit = false;
-                            L.info("A wild spurious wakeup appears! Go, Catch Block! (wild 8-bit music rushes in background)");
-                        }
-                    }
-                }
-            } finally {
-                statusLock.unlock();
+    public void nodeAdded(final Node<T> node) {
+        checkCaller();
+        if (status != Status.INIT) {
+            for (final Reaction<T> r : node.getReactions()) {
+                scheduleReaction(r);
             }
+            updateDependenciesForOperationOnNode(env.getNeighborhood(node));
         }
-        return getStatus();
     }
 
-
-    private int compareStatuses(final Status o) {
-        if ((status == Status.RUNNING || status == Status.PAUSED) && (o == Status.RUNNING || o == Status.PAUSED)) {
-            return 0;
-        } else {
-            return status.compareTo(o);
+    @Override
+    public void nodeMoved(final Node<T> node) {
+        checkCaller();
+        for (final Reaction<T> r : node.getReactions()) {
+            updateReaction(handlers.get(r));
         }
+    }
+
+    @Override
+    public void nodeRemoved(final Node<T> node, final Neighborhood<T> oldNeighborhood) {
+        checkCaller();
+        for (final Reaction<T> r : node.getReactions()) {
+            removeReaction(r);
+        }
+    }
+
+    @Override
+    public synchronized void pause() {
+        newStatus(Status.PAUSED);
+    }
+
+    @Override
+    public synchronized void play() {
+        newStatus(Status.RUNNING);
+    }
+
+    @Override
+    public void removeOutputMonitor(final OutputMonitor<T> op) {
+        new Thread(() -> {
+            monitorLock.write();
+            monitors.remove(op);
+            monitorLock.release();
+        }).start();
+    }
+
+    private void removeReaction(final Reaction<T> r) {
+        final DependencyHandler<T> rh = Objects.requireNonNull(handlers.get(r), "The reaction was not part of the simulation: " + r);
+        dg.removeDependencies(rh);
+        ipq.removeReaction(r);
+        handlers.remove(r);
     }
 
     @Override
@@ -302,79 +386,6 @@ public class Engine<T> implements Simulation<T> {
         }
     }
 
-    private void idleProcessSingleCommand() throws Throwable {
-        CheckedRunnable nextCommand = null;
-        // This is for spurious wakeups. Blame Java.
-        while (nextCommand == null) {
-            try {
-                nextCommand = commands.take();
-                nextCommand.run();
-            } catch (InterruptedException e) {
-                L.debug("Look! A spurious wakeup! :-)");
-            }
-        }
-    }
-
-    private void doStep() throws InterruptedException, ExecutionException {
-        final Reaction<T> root = ipq.getNext();
-        if (root == null) {
-            this.newStatus(Status.TERMINATED);
-            L.info("No more reactions.");
-        } else {
-            mu = root;
-            final Time t = mu.getTau();
-            if (t.compareTo(currentTime) < 0) {
-                throw new IllegalStateException(mu + "\nis scheduled in the past at time " + t + ", current time is " + currentTime
-                        + "\nProblem occurred at step " + curStep);
-            }
-            currentTime = t;
-            if (mu.canExecute()) {
-                /*
-                 * This must be taken before execution, because the reaction
-                 * might remove itself (or its node) from the environment.
-                 */
-                final List<DependencyHandler<T>> deps = handlers.get(mu).influences();
-                mu.execute();
-                for (final DependencyHandler<T> r : deps) {
-                    updateReaction(r);
-                }
-            }
-            mu.update(currentTime, true, env);
-            ipq.updateReaction(root);
-            monitorLock.read();
-            for (final OutputMonitor<T> m : monitors) {
-                m.stepDone(env, mu, currentTime, curStep);
-            }
-            monitorLock.release();
-        }
-        curStep++;
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + " t: " + getTime() + ", s: " + getStep();
-    }
-
-    @Override
-    public synchronized void play() {
-        newStatus(Status.RUNNING);
-    }
-
-    @Override
-    public synchronized void pause() {
-        newStatus(Status.PAUSED);
-    }
-
-    @Override
-    public synchronized void terminate() {
-        newStatus(Status.TERMINATED);
-    }
-
-    @Override
-    public Optional<Throwable> getError() {
-        return error;
-    }
-
     private void runUntil(final BooleanSupplier condition) {
         play();
         schedule(() -> {
@@ -391,16 +402,6 @@ public class Engine<T> implements Simulation<T> {
     }
 
     @Override
-    public synchronized void goToStep(final long step) {
-        runUntil(() -> getStep() < step);
-    }
-
-    @Override
-    public synchronized void goToTime(final Time t) {
-        runUntil(() -> getTime().compareTo(t) < 0);
-    }
-
-    @Override
     public synchronized void schedule(final CheckedRunnable r) {
         if (getStatus().equals(Status.TERMINATED)) {
             throw new IllegalStateException("This simulation is terminated and can not get resumed.");
@@ -408,151 +409,22 @@ public class Engine<T> implements Simulation<T> {
         commands.add(r);
     }
 
-    /**
-     * @param <T>
-     *            The format of the concentrations
-     * @param env
-     *            The environment to be simulated
-     * @return A simulation ready to be run, the environment structures get
-     *         updated coherently
-     */
-    public static <T> Engine<T> buildSimulation(final Environment<T> env) {
-        return buildSimulation(env, Long.MAX_VALUE);
-    }
-
-    /**
-     * @param <T>
-     *            The format of the concentrations
-     * @param env
-     *            The environment to be simulated
-     * @param t
-     *            The final simulation time to reach
-     * @return A simulation ready to be run, the environment structures get
-     *         updated coherently
-     */
-    public static <T> Engine<T> buildSimulation(final Environment<T> env, final Time t) {
-        return buildSimulation(env, Long.MAX_VALUE, t);
-    }
-
-    /**
-     * @param <T>
-     *            The format of the concentrations
-     * @param env
-     *            The environment to be simulated
-     * @param steps
-     *            The number of steps to run
-     * @return A simulation ready to be run, the environment structures get
-     *         updated coherently
-     */
-    public static <T> Engine<T> buildSimulation(final Environment<T> env, final long steps) {
-        return buildSimulation(env, steps, new DoubleTime(Double.MAX_VALUE));
-    }
-
-    /**
-     * @param env
-     *            The environment to be simulated
-     * @param steps
-     *            The number of steps to run
-     * @param t
-     *            The final simulation time to reach
-     * @param <T>
-     *            The format of the concentrations
-     * @return A simulation ready to be run, the environment structures get
-     *         updated coherently
-     */
-    public static <T> Engine<T> buildSimulation(final Environment<T> env, final long steps, final Time t) {
-        return new Engine<T>(env, steps, t);
-    }
-
-    private void checkCaller() {
-        if (!Thread.holdsLock(env)) {
-            throw new IllegalMonitorStateException("This method must get called from the simulation thread.");
-        }
-    }
-    
-    /**
-     * @param env
-     *            the environment
-     * @param node
-     *            first node
-     * @param n
-     *            second node
-     * @param <T>
-     *            Type for concentrations
-     */
-    @Override
-    public void neighborAdded(final Node<T> node, final Node<T> n) {
-        checkCaller();
-        dg.addNeighbor(node, n);
-        updateNeighborhood(node);
-        /*
-         * This is necessary, see bug #43
-         */
-        updateNeighborhood(n);
-    }
-
-    /**
-     * @param env
-     *            the environment
-     * @param node
-     *            first node
-     * @param n
-     *            second node
-     * @param <T>
-     *            Type for concentrations
-     */
-    @Override
-    public void neighborRemoved(final Node<T> node, final Node<T> n) {
-        checkCaller();
-        dg.removeNeighbor(node, n);
-        updateNeighborhood(node);
-        updateNeighborhood(n);
+    private void scheduleReaction(final Reaction<T> r) {
+        final DependencyHandler<T> rh = new DependencyHandlerImpl<>(r);
+        dg.createDependencies(rh);
+        r.initializationComplete(currentTime, env);
+        ipq.addReaction(r);
+        handlers.put(r, rh);
     }
 
     @Override
-    public void nodeMoved(final Node<T> node) {
-        checkCaller();
-        for (final Reaction<T> r : node.getReactions()) {
-            updateReaction(handlers.get(r));
-        }
+    public synchronized void terminate() {
+        newStatus(Status.TERMINATED);
     }
 
     @Override
-    public void nodeAdded(final Node<T> node) {
-        checkCaller();
-        if (status != Status.INIT) {
-            for (final Reaction<T> r : node.getReactions()) {
-                scheduleReaction(r);
-            }
-            updateDependenciesForOperationOnNode(env.getNeighborhood(node));
-        }
-    }
-
-    /**
-     * This method provide a facility for removing all the reactions of a node
-     * from the current simulation, along with their dependencies. This method
-     * must be called when it is still possible for the environment to
-     * successfully compute the neighborhood for the removed node.
-     * 
-     * @param node
-     *            the freshly removed node
-     * @param oldNeighborhood
-     *            the neighborhood of the node as it was before it was removed
-     *            (used to calculate reverse dependencies)
-     */
-    @Override
-    public void nodeRemoved(final Node<T> node, final Neighborhood<T> oldNeighborhood) {
-        checkCaller();
-        for (final Reaction<T> r : node.getReactions()) {
-            removeReaction(r);
-        }
-    }
-
-    private void removeReaction(final Reaction<T> r) {
-        final DependencyHandler<T> rh = Objects.requireNonNull(handlers.get(r), "The reaction was not part of the simulation: " + r);
-        dg.removeDependencies(rh);
-        ipq.removeReaction(r);
-        handlers.remove(r);
+    public String toString() {
+        return getClass().getSimpleName() + " t: " + getTime() + ", s: " + getStep();
     }
 
     private void updateDependenciesForOperationOnNode(final Neighborhood<T> oldNeighborhood) {
@@ -595,6 +467,41 @@ public class Engine<T> implements Simulation<T> {
         if (!r.getTau().equals(t)) {
             ipq.updateReaction(rh.getReaction());
         }
+    }
+
+    @Override
+    public Status waitFor(final Status s, final long timeout, final TimeUnit tu) {
+        if (this.compareStatuses(s) > 0) {
+            L.error("Attempt to wait for an illegal status: " + s + " (current state is: " + getStatus() + ")");
+        } else {
+            statusLock.lock();
+            try {
+                if (!getStatus().equals(s)) {
+                    boolean exit = false;
+                    while (!exit) {
+                        try {
+                            if (timeout > 0) {
+                                final boolean isOnTime = statusCondition.await(timeout, tu);
+                                if (!isOnTime || getStatus().equals(s)) {
+                                    exit = true;
+                                }
+                            } else {
+                                statusCondition.awaitUninterruptibly();
+                                if (getStatus().equals(s)) {
+                                    exit = true;
+                                }
+                            }
+                        } catch (InterruptedException e) {
+                            exit = false;
+                            L.info("A wild spurious wakeup appears! Go, Catch Block! (wild 8-bit music rushes in background)");
+                        }
+                    }
+                }
+            } finally {
+                statusLock.unlock();
+            }
+        }
+        return getStatus();
     }
 
 }

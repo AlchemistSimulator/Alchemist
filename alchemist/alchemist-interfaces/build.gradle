@@ -1,0 +1,5 @@
+dependencies {
+    compile (
+        "org.jooq:jool:$joolVersion"
+    )
+}

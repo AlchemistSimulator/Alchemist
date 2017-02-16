@@ -36,7 +36,6 @@ import it.unibo.alchemist.boundary.interfaces.GraphicalOutputMonitor;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.monitors.ExportInspector;
-import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
 
@@ -144,7 +143,7 @@ public class JMonitorsTab<T> extends JTapeTab implements ItemListener {
     private void removeOutputMonitor(final JOutputMonitorRepresentation<T> mon) {
         if (mon != null) {
             if (simulation != null) {
-                simulation.addCommand(new Engine.StateCommand<T>().stop().build());
+                simulation.play();
             }
             monitors.remove(mon);
             monitorsFS.remove(mon);
@@ -162,8 +161,8 @@ public class JMonitorsTab<T> extends JTapeTab implements ItemListener {
                 final OutputMonitor<T> mon = jor.getMonitor();
                 simulation.removeOutputMonitor(mon);
             }
-            simulation.addCommand(new Engine.StateCommand<T>().stop().build());
-            simulation.waitFor(Status.STOPPED, 0, TimeUnit.MILLISECONDS);
+            simulation.play();
+            simulation.waitFor(Status.TERMINATED, 0, TimeUnit.MILLISECONDS);
         }
         simulation = (Simulation<T>) sim;
         for (final JOutputMonitorRepresentation<T> jor : monitors) {

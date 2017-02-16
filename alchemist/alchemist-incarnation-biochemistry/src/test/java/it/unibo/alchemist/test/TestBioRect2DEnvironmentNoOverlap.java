@@ -676,7 +676,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
         assertNotNull("Missing test resource " + resource, res);
         final Environment<Double> env = new YamlLoader(res).getWith(vars);
         final Simulation<Double> sim = new Engine<>(env, 10000);
-        sim.addCommand(new Engine.StateCommand<Double>().run().build());
+        sim.play();
         sim.addOutputMonitor(new OutputMonitor<Double>() {
 
             /**
@@ -740,7 +740,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
         assertNotNull("Missing test resource " + resource, res);
         final Environment<Double> env = new YamlLoader(res).getWith(vars);
         final Simulation<Double> sim = new Engine<>(env, 10000);
-        sim.addCommand(new Engine.StateCommand<Double>().run().build());
+        sim.play();
         sim.addOutputMonitor(new OutputMonitor<Double>() {
 
             /**

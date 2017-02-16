@@ -58,7 +58,7 @@ public final class SimControlPanel extends JTapeGroup {
     private static synchronized void checkOldAndRemove() {
         final Set<Simulation<?>> toRemove = new HashSet<>();
         for (final Simulation<?> sim : SIMCONTROLMAP.keySet()) {
-            if (sim.getStatus().equals(Status.STOPPED) || SIMCONTROLMAP.get(sim).isEmpty()) {
+            if (sim.getStatus().equals(Status.TERMINATED) || SIMCONTROLMAP.get(sim).isEmpty()) {
                 toRemove.add(sim);
             }
         }

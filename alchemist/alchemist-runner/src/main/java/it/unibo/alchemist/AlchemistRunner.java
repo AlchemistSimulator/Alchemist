@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.boundary.gui.SingleRunGUI;
 import it.unibo.alchemist.core.implementations.Engine;
-import it.unibo.alchemist.core.implementations.Engine.StateCommand;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.export.Exporter;
@@ -218,7 +217,7 @@ public final class AlchemistRunner {
             final ExecutorService executor = Executors.newFixedThreadPool(parallelism);
             runWith(Collections.emptyMap(), varStreams, 0, exportFileRoot, loader, samplingInterval, Long.MAX_VALUE,
                     endTime, sim -> {
-                        sim.addCommand(new StateCommand<>().run().build());
+                        sim.play();
                         sim.run();
                     }).parallel().forEach(executor::submit);
             executor.shutdown();
@@ -235,7 +234,7 @@ public final class AlchemistRunner {
                             L.error("Could not initialize the UI (the graphics environment is headless). Falling back to headless mode.");
                         }
                         if (headless || onHeadlessEnvironment) {
-                            sim.addCommand(new StateCommand<>().run().build());
+                            sim.play();
                         } else {
                             if (effectsFile.isPresent()) {
                                 SingleRunGUI.make(sim, effectsFile.get(), closeOperation);

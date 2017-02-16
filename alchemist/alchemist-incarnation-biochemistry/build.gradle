@@ -11,7 +11,10 @@ dependencies {
         "org.danilopianini:javalib-java7:$javalib7Version",
         project.sourceSets.antlr.output
     )
-    testCompile(project(':alchemist-loading'))
+    testCompile(
+        project(':alchemist-loading'),
+        project(':alchemist-engine')
+    )
     antlr "org.antlr:antlr4:$antlrVersion"
     antlrCompile "org.antlr:antlr4:$antlrVersion"
 }

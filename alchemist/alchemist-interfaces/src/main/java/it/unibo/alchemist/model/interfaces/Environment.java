@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import it.unibo.alchemist.core.interfaces.Simulation;
+
 /**
  * The type which describes the concentration of a molecule
  * 
@@ -26,6 +28,13 @@ import java.util.Set;
  * @param <T>
  */
 public interface Environment<T> extends Serializable, Iterable<Node<T>> {
+
+    /**
+     * Add a {@link Layer} to the {@link Environment}.
+     * @param m the {@link Molecule} of the {@link Layer}
+     * @param l the {@link Layer}
+     */
+    void addLayer(Molecule m, Layer<T> l);
 
     /**
      * This method allows to add a new node to this environment. The environment
@@ -56,6 +65,24 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
      * @return the distance between the two nodes
      */
     double getDistanceBetweenNodes(Node<T> n1, Node<T> n2);
+
+    /**
+     * Get the layer associate to the given molecule. If no Layer is associated with the given molecule, return an empty optional.
+     * @param m the {@link Molecule}
+     * @return the {@link Optional} containing the {@link Layer} associated with the requested molecule
+     */
+    Optional<Layer<T>> getLayer(Molecule m);
+
+    /**
+     * Return all the Layers in this {@link Environment}.
+     * @return a {@link List} of {@link Layer}.
+     */
+    Set<Layer<T>> getLayers();
+
+    /**
+     * @return the current linking rule
+     */
+    LinkingRule<T> getLinkingRule();
 
     /**
      * Given a node, this method returns its neighborhood.
@@ -146,6 +173,12 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
     String getPreferredMonitor();
 
     /**
+     * @return the current simulation, if present, or throws an
+     *         {@link IllegalStateException} otherwise
+     */
+    Simulation<T> getSimulation();
+
+    /**
      * This method returns the size of the environment as an array of length
      * {@link #getDimensions()}. This method must return distance measured with
      * the same unit used by the positions. No non-euclidean distance metrics
@@ -204,28 +237,8 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
     void setLinkingRule(LinkingRule<T> rule);
 
     /**
-     * @return the current linking rule
+     * @param s the simulation
      */
-    LinkingRule<T> getLinkingRule();
-
-    /**
-     * Add a {@link Layer} to the {@link Environment}.
-     * @param m the {@link Molecule} of the {@link Layer}
-     * @param l the {@link Layer}
-     */
-    void addLayer(final Molecule m, Layer<T> l);
-
-    /**
-     * Get the layer associate to the given molecule. If no Layer is associated with the given molecule, return an empty optional.
-     * @param m the {@link Molecule}
-     * @return the {@link Optional} containing the {@link Layer} associated with the requested molecule
-     */
-    Optional<Layer<T>> getLayer(Molecule m);
-
-    /**
-     * Return all the Layers in this {@link Environment}.
-     * @return a {@link List} of {@link Layer}.
-     */
-    Set<Layer<T>> getLayers();
+    void setSimulation(Simulation<T> s);
 
 }

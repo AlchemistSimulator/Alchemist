@@ -8,10 +8,15 @@
  */
 package it.unibo.alchemist.core.interfaces;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+
+import org.jooq.lambda.fi.lang.CheckedRunnable;
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Neighborhood;
+import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Time;
 
 /**
@@ -32,16 +37,6 @@ public interface Simulation<T> extends Runnable {
     void addOutputMonitor(OutputMonitor<T> op);
 
     /**
-     * Removes an {@link OutputMonitor} to this simulation. If the
-     * {@link OutputMonitor} was not among those already added, this method does
-     * nothing.
-     *
-     * @param op
-     *            the OutputMonitor to add
-     */
-    void removeOutputMonitor(OutputMonitor<T> op);
-
-    /**
      * Allows to access the current environment.
      *
      * @return a reference to the current Environment. The environment is not a
@@ -49,6 +44,13 @@ public interface Simulation<T> extends Runnable {
      *         Manipulate it carefully
      */
     Environment<T> getEnvironment();
+
+    /**
+     * @return an {@link Optional} containing the exception that made the
+     *         simulation fail, or {@link Optional#empty()} in case the
+     *         simulation is ongoing or has terminated successfully.
+     */
+    Optional<Throwable> getError();
 
     /**
      * @return the step at which this simulation will eventually stop.
@@ -84,6 +86,130 @@ public interface Simulation<T> extends Runnable {
     Time getTime();
 
     /**
+     * Executes a certain number of steps, then pauses it.
+     * 
+     * @param steps
+     *            the number of steps to execute
+     */
+    void goToStep(long steps);
+
+    /**
+     * Executes the simulation until the target time is reached, then pauses it.
+     * 
+     * @param t
+     *            the target time
+     */
+    void goToTime(Time t);
+
+    /**
+     * This method must get called in case a a communication link connecting two
+     * nodes gets created during the simulation. This method provides dependency
+     * and scheduling times re-computation for all the reactions interested by
+     * such change.
+     * 
+     * @param node
+     *            the node
+     * @param n
+     *            the second node
+     */
+    void neighborAdded(Node<T> node, Node<T> n);
+
+    /**
+     * This method must get called in case a a communication link connecting two
+     * nodes gets broken during the simulation. This method provides dependency
+     * and scheduling times re-computation for all the reactions interested by
+     * such change.
+     * 
+     * @param node
+     *            the node
+     * @param n
+     *            the second node
+     */
+    void neighborRemoved(Node<T> node, Node<T> n);
+
+    /**
+     * This method must get called in case a node is added to the environment
+     * during the simulation and after its neighborhood has been computed (or
+     * can be consistently computed by the simulated environment). This method
+     * provides dependency computation and is responsible of correctly
+     * scheduling the Node's new reactions.
+     * 
+     * @param node
+     *            the freshly added node
+     * @throws IllegalMonitorStateException
+     *             if the method gets called from a different thread than the
+     *             simulation thread
+     */
+    void nodeAdded(Node<T> node);
+
+    /**
+     * This method must get called in case a node is moved in the environment
+     * during the simulation and after its neighborhood has been computed (or
+     * can be consistently computed by the simulated environment). This method
+     * provides dependency computation and is responsible of correctly
+     * scheduling the Node's reactions.
+     * 
+     * @param node
+     *            the node
+     */
+    void nodeMoved(Node<T> node);
+
+    /**
+     * This method must get called in case a node is removed from the
+     * environment during the simulation and after its neighborhood has been
+     * computed (or can be consistently computed by the simulated environment).
+     * This method provides dependency computation and is responsible of
+     * correctly removing the Node's reactions from the scheduler.
+     * 
+     * @param node
+     *            the freshly removed node
+     * @param oldNeighborhood
+     *            the neighborhood of the node as it was before it was removed
+     *            (used to calculate reverse dependencies)
+     */
+    void nodeRemoved(Node<T> node, Neighborhood<T> oldNeighborhood);
+
+    /**
+     * Sends a pause command to the simulation. There is no guarantee on when
+     * this command will be actually processed.
+     */
+    void pause();
+
+    /**
+     * Sends a play command to the simulation. There is no guarantee on when
+     * this command will be actually processed.
+     */
+    void play();
+
+    /**
+     * Removes an {@link OutputMonitor} to this simulation. If the
+     * {@link OutputMonitor} was not among those already added, this method does
+     * nothing.
+     *
+     * @param op
+     *            the OutputMonitor to add
+     */
+    void removeOutputMonitor(OutputMonitor<T> op);
+
+    /**
+     * Schedules a runnable to be executed by the Simulation thread, useful for
+     * synchronization purposes (e.g. make sure that the environment is not
+     * being changed while the requested operation is being executed). An
+     * exception thrown by the passed runnable will make the simulation
+     * terminate.
+     * 
+     * @param r
+     *            the runnable to execute
+     */
+    void schedule(CheckedRunnable r);
+
+    /**
+     * Sends a terminate command to the simulation. There is no guarantee on when
+     * this command will be actually processed.
+     */
+    void terminate();
+
+    /**
      * Suspends the caller until the simulation reaches the selected
      * {@link Status}.
      *
@@ -100,12 +226,4 @@ public interface Simulation<T> extends Runnable {
      */
     Status waitFor(Status s, long timeout, TimeUnit timeunit);
 
-    /**
-     * Adds a new {@link Command} to this simulation. There is no warranty about
-     * when this command will effectively be executed.
-     *
-     * @param comm
-     *            the command which will be executed
-     */
-    void addCommand(Command<T> comm);
 }

@@ -4,7 +4,6 @@ dependencies {
         project(':alchemist-time'),
         project(':alchemist-engine'),
         project(':alchemist-implementationbase'),
-        "com.github.davidmoten:rtree:$rtreeVersion",
         "com.google.guava:guava:$guavaVersion",
         "org.danilopianini:javalib:$javalibVersion",
         "org.danilopianini:javalib-java7:$javalib7Version",

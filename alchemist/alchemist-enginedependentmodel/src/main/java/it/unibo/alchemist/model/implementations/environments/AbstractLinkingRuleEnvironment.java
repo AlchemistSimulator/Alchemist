@@ -58,9 +58,10 @@ public abstract class AbstractLinkingRuleEnvironment<T> extends AbstractEnvironm
         updateNeighborhood(node);
         /*
          * Reaction and dependencies creation on the engine. This must be
-         * executed only when the neighborhoods have been correctly computed.
+         * executed only when the neighborhoods have been correctly computed,
+         * and only if a simulation engine have actually been attached.
          */
-        getSimulation().nodeAdded(node);
+        Optional.ofNullable(getSimulation()).ifPresent(s -> s.nodeAdded(node));
         /*
          * Call the subclass method.
          */

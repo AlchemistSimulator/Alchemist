@@ -1,5 +1,6 @@
 dependencies {
 	compile(
+            project(':alchemist-implementationbase'),
             project(':alchemist-interfaces'),
             project(':alchemist-time'),
             "org.danilopianini:javalib:$javalibVersion",

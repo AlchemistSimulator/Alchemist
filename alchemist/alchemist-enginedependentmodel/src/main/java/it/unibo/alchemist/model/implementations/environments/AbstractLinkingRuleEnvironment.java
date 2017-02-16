@@ -24,7 +24,6 @@ import org.danilopianini.util.SpatialIndex;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
-import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.LinkingRule;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
@@ -61,7 +60,7 @@ public abstract class AbstractLinkingRuleEnvironment<T> extends AbstractEnvironm
          * Reaction and dependencies creation on the engine. This must be
          * executed only when the neighborhoods have been correctly computed.
          */
-        Engine.nodeAdded(this, node);
+        getSimulation().nodeAdded(node);
         /*
          * Call the subclass method.
          */
@@ -108,7 +107,7 @@ public abstract class AbstractLinkingRuleEnvironment<T> extends AbstractEnvironm
          * Update all the reactions which may have been affected by the node
          * removal
          */
-        Engine.nodeRemoved(this, node, neigh);
+        getSimulation().nodeRemoved(node, neigh);
         /*
          * Call subclass remover
          */
@@ -124,7 +123,7 @@ public abstract class AbstractLinkingRuleEnvironment<T> extends AbstractEnvironm
      *            the OLD neighborhood of the node (it is no longer in sync with
      *            the {@link Environment} status)
      */
-    protected abstract void nodeRemoved(final Node<T> node, Neighborhood<T> neighborhood);
+    protected abstract void nodeRemoved(Node<T> node, Neighborhood<T> neighborhood);
 
     @Override
     public void setLinkingRule(final LinkingRule<T> r) {
@@ -160,7 +159,7 @@ public abstract class AbstractLinkingRuleEnvironment<T> extends AbstractEnvironm
                         iter.remove();
                         final Neighborhood<T> neighborsNeighborhood = neighCache.get(neighbor.getId());
                         neighborsNeighborhood.removeNeighbor(node);
-                        Engine.neighborRemoved(this, node, neighbor);
+                        getSimulation().neighborRemoved(node, neighbor);
                     }
                 }
             }
@@ -170,7 +169,7 @@ public abstract class AbstractLinkingRuleEnvironment<T> extends AbstractEnvironm
                      * If it's a new neighbor
                      */
                     neighCache.get(n.getId()).addNeighbor(node);
-                    Engine.neighborAdded(this, node, n);
+                    getSimulation().neighborAdded(node, n);
                 }
             }
         } else {
@@ -204,9 +203,9 @@ public abstract class AbstractLinkingRuleEnvironment<T> extends AbstractEnvironm
 
     private Queue<Operation> recursiveOperation(final Node<T> origin, final Node<T> destination, final boolean isAdd) {
         if (isAdd) {
-            Engine.neighborAdded(this, origin, destination);
+            getSimulation().neighborAdded(origin, destination);
         } else {
-            Engine.neighborRemoved(this, origin, destination);
+            getSimulation().neighborRemoved(origin, destination);
         }
         final Neighborhood<T> newNeighborhood = rule.computeNeighborhood(Objects.requireNonNull(destination), this);
         final Neighborhood<T> oldNeighborhood = neighCache.put(destination.getId(), newNeighborhood);

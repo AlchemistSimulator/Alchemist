@@ -95,7 +95,7 @@ public class TestYAMLLoader {
         assertNotNull("Missing test resource " + resource, res);
         final Environment<T> env = new YamlLoader(res).getWith(vars);
         final Simulation<T> sim = new Engine<>(env, 10000);
-        sim.addCommand(new Engine.StateCommand<T>().run().build());
+        sim.play();
 //        if (!java.awt.GraphicsEnvironment.isHeadless()) {
 //            it.unibo.alchemist.boundary.gui.SingleRunGUI.make(sim);
 //        }

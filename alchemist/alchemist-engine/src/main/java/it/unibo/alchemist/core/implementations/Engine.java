@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -28,8 +27,6 @@ import org.danilopianini.concurrency.FastReadWriteLock;
 import org.jooq.lambda.fi.lang.CheckedRunnable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.MapMaker;
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.interfaces.DependencyGraph;
@@ -467,6 +464,12 @@ public class Engine<T> implements Simulation<T> {
         return new Engine<T>(env, steps, t);
     }
 
+    private void checkCaller() {
+        if (!Thread.holdsLock(env)) {
+            throw new IllegalMonitorStateException("This method must get called from the simulation thread.");
+        }
+    }
+    
     /**
      * @param env
      *            the environment
@@ -477,7 +480,9 @@ public class Engine<T> implements Simulation<T> {
      * @param <T>
      *            Type for concentrations
      */
+    @Override
     public void neighborAdded(final Node<T> node, final Node<T> n) {
+        checkCaller();
         dg.addNeighbor(node, n);
         updateNeighborhood(node);
         /*
@@ -496,40 +501,25 @@ public class Engine<T> implements Simulation<T> {
      * @param <T>
      *            Type for concentrations
      */
-    public void neighborRemoved(final Environment<T> env, final Node<T> node, final Node<T> n) {
+    @Override
+    public void neighborRemoved(final Node<T> node, final Node<T> n) {
+        checkCaller();
         dg.removeNeighbor(node, n);
         updateNeighborhood(node);
         updateNeighborhood(n);
     }
 
-    /**
-     * @param env
-     *            the environment
-     * @param node
-     *            the node
-     * @param <T>
-     *            Type for concentrations
-     */
-    public void nodeMoved(final Environment<T> env, final Node<T> node) {
+    @Override
+    public void nodeMoved(final Node<T> node) {
+        checkCaller();
         for (final Reaction<T> r : node.getReactions()) {
             updateReaction(handlers.get(r));
         }
     }
 
-    /**
-     * This method provide a facility for adding all the reactions of a node to
-     * the current simulation, creating also the dependencies. This method must
-     * be called only when it is possible for the environment to successfully
-     * compute the neighborhood for the new node.
-     * 
-     * @param env
-     *            the environment
-     * @param node
-     *            the freshly added node
-     * @param <T>
-     *            Type for concentrations
-     */
+    @Override
     public void nodeAdded(final Node<T> node) {
+        checkCaller();
         if (status != Status.INIT) {
             for (final Reaction<T> r : node.getReactions()) {
                 scheduleReaction(r);
@@ -544,17 +534,15 @@ public class Engine<T> implements Simulation<T> {
      * must be called when it is still possible for the environment to
      * successfully compute the neighborhood for the removed node.
      * 
-     * @param env
-     *            the environment
      * @param node
      *            the freshly removed node
      * @param oldNeighborhood
      *            the neighborhood of the node as it was before it was removed
      *            (used to calculate reverse dependencies)
-     * @param <T>
-     *            Type for concentrations
      */
+    @Override
     public void nodeRemoved(final Node<T> node, final Neighborhood<T> oldNeighborhood) {
+        checkCaller();
         for (final Reaction<T> r : node.getReactions()) {
             removeReaction(r);
         }

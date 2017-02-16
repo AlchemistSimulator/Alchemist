@@ -15,6 +15,8 @@ import org.jooq.lambda.fi.lang.CheckedRunnable;
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Neighborhood;
+import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Time;
 
 /**
@@ -150,5 +152,50 @@ public interface Simulation<T> extends Runnable {
     void schedule(CheckedRunnable r);
 
     Optional<Throwable> getError();
+
+    /**
+     * This method must get called in case a node is added to the environment
+     * during the simulation and after its neighborhood has been computed (or
+     * can be consistently computed by the simulated environment). This method
+     * provides dependency computation and is responsible of correctly
+     * scheduling the Node's new reactions.
+     * 
+     * @param node
+     *            the freshly added node
+     * @throws IllegalMonitorStateException
+     *             if the method gets called from a different thread than the
+     *             simulation thread
+     */
+    void nodeAdded(Node<T> node);
+
+    /**
+     * @param node
+     * @param n
+     */
+    void neighborAdded(Node<T> node, Node<T> n);
+
+    /**
+     * @param node
+     * @param n
+     */
+    void neighborRemoved(Node<T> node, Node<T> n);
+
+    /**
+     * This method must get called in case a node is moved in the environment
+     * during the simulation and after its neighborhood has been computed (or
+     * can be consistently computed by the simulated environment). This method
+     * provides dependency computation and is responsible of correctly
+     * scheduling the Node's reactions.
+     * 
+     * @param node
+     *            the node
+     */
+    void nodeMoved(Node<T> node);
+
+    /**
+     * @param node
+     * @param oldNeighborhood
+     */
+    void nodeRemoved(Node<T> node, Neighborhood<T> oldNeighborhood);
 
 }

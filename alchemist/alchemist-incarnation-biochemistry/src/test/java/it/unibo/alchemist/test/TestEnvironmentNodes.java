@@ -56,7 +56,7 @@ public class TestEnvironmentNodes {
         env.addNode(cellNode, new Continuous2DEuclidean(0, 0));
         env.addNode(envNode, new Continuous2DEuclidean(0, 1));
         final Simulation<Double> sim = new Engine<>(env, 10000);
-        sim.addCommand(new Engine.StateCommand<Double>().run().build());
+        sim.play();
         sim.run();
         assertEquals(envNode.getConcentration(a), 1000, PRECISION);
     }
@@ -79,7 +79,7 @@ public class TestEnvironmentNodes {
         env.addNode(envNode1, new Continuous2DEuclidean(0, 0));
         env.addNode(envNode2, new Continuous2DEuclidean(0, 1));
         final Simulation<Double> sim = new Engine<>(env, 10000);
-        sim.addCommand(new Engine.StateCommand<Double>().run().build());
+        sim.play();
         sim.run();
         assertTrue(envNode2.getConcentration(a) == 1000 && envNode1.getConcentration(a) == 0);
     }
@@ -108,7 +108,7 @@ public class TestEnvironmentNodes {
         env.addNode(envNode4, new Continuous2DEuclidean(-1, 0));
         env.addNode(envNode5, new Continuous2DEuclidean(0, -1));
         final Simulation<Double> sim = new Engine<>(env, 10000);
-        sim.addCommand(new Engine.StateCommand<Double>().run().build());
+        sim.play();
         sim.run();
         assertTrue(envNode2.getConcentration(a) != 0 
                 && envNode1.getConcentration(a) == 0 
@@ -141,7 +141,7 @@ public class TestEnvironmentNodes {
         env.addNode(envNode4, new Continuous2DEuclidean(-1, 0));
         env.addNode(envNode5, new Continuous2DEuclidean(0, -1));
         final Simulation<Double> sim = new Engine<>(env, 10000);
-        sim.addCommand(new Engine.StateCommand<Double>().run().build());
+        sim.play();
         sim.run();
         assertTrue(envNode2.getConcentration(a) != 0 
                 && cellNode.getConcentration(a) == 0 
@@ -184,7 +184,7 @@ public class TestEnvironmentNodes {
         env.addNode(envNode3, pos3);
         env.addNode(envNode4, pos4);
         final Simulation<Double> sim = new Engine<>(env, 10000);
-        sim.addCommand(new Engine.StateCommand<Double>().run().build());
+        sim.play();
         sim.run();
         assertTrue(envNode3.getConcentration(a) != 0 && envNode4.getConcentration(a) != 0);
     }
@@ -205,7 +205,7 @@ public class TestEnvironmentNodes {
         env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.EuclideanDistance<>(2));
         env.addNode(cellNode, new Continuous2DEuclidean(0, 0));
         final Simulation<Double> sim = new Engine<>(env, 10000);
-        sim.addCommand(new Engine.StateCommand<Double>().run().build());
+        sim.play();
         sim.run();
         assertEquals(cellNode.getConcentration(a), 1000, PRECISION);
     }
@@ -366,7 +366,7 @@ public class TestEnvironmentNodes {
         assertNotNull("Missing test resource " + resource, res);
         final Environment<T> env = new YamlLoader(res).getWith(vars);
         final Simulation<T> sim = new Engine<>(env, 10000);
-        sim.addCommand(new Engine.StateCommand<T>().run().build());
+        sim.play();
         sim.run();
         return env;
     }

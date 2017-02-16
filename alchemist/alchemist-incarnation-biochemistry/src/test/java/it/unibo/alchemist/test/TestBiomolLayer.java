@@ -60,7 +60,7 @@ public class TestBiomolLayer {
         env.addLayer(b, bLayer);
 
         final Simulation<Double> sim = new Engine<>(env, 3000);
-        sim.addCommand(new Engine.StateCommand<Double>().run().build());
+        sim.play();
         sim.addOutputMonitor(new OutputMonitor<Double>() {
             /**
              * 

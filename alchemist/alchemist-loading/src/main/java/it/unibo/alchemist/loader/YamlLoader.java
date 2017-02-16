@@ -557,7 +557,7 @@ public class YamlLoader implements Loader, Serializable {
                     env.addNode(node, pos);
                 }
             } else {
-                L.error("Cannot instance the required displacement: {}", displacement);
+                throw new IllegalStateException("Cannot instance the required displacement: " + displacement);
             }
         }
         return env;

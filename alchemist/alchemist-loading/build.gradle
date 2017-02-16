@@ -1,12 +1,12 @@
 dependencies {
 	compile(
-            project(':alchemist-enginedependentmodel'),
             project(':alchemist-interfaces'),
             project(':alchemist-time'),
             "org.danilopianini:javalib:$javalibVersion",
             "org.yaml:snakeyaml:$snakeyamlVersion"
         )
         testCompile(
+            project(':alchemist-engine'),
             project(':alchemist-maps')
         )
         testRuntime(

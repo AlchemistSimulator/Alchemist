@@ -16,6 +16,7 @@ import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.util.FlexibleQuadTree;
 import org.danilopianini.util.SpatialIndex;
 
+import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
@@ -116,7 +117,10 @@ public class Continuous2DEnvironment<T> extends AbstractLinkingRuleEnvironment<T
         includeObject(newpos);
         setPosition(node, newpos);
         updateNeighborhood(node);
-        getSimulation().nodeMoved(node);
+        final Simulation<T> sim = getSimulation();
+        if (sim != null) {
+            sim.nodeMoved(node);
+        }
     }
 
     @Override

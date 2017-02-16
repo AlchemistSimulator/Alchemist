@@ -22,10 +22,6 @@ class DummyEnvironment extends AbstractEnvironment<Object> {
         return 0;
     }
     @Override
-    public Neighborhood<Object> getNeighborhood(final Node<Object> center) {
-        return null;
-    }
-    @Override
     public double[] getOffset() {
         return new double[]{};
     }
@@ -45,13 +41,6 @@ class DummyEnvironment extends AbstractEnvironment<Object> {
     }
 
     @Override
-    public LinkingRule<Object> getLinkingRule() {
-        return null;
-    }
-    @Override
-    protected void nodeAdded(final Node<Object> node, final Position p) {
-    }
-    @Override
     protected boolean nodeShouldBeAdded(final Node<Object> node, final Position p) {
         return false;
     }
@@ -60,10 +49,13 @@ class DummyEnvironment extends AbstractEnvironment<Object> {
         return null;
     }
     @Override
-    protected void nodeRemoved(final Node<Object> node, final Position pos) {
-    }
-    @Override
     public Optional<Layer<Object>> getLayer(final Molecule m) {
         throw new UnsupportedOperationException();
+    }
+    @Override
+    protected void nodeAdded(final Node<Object> node, final Position position, final Neighborhood<Object> neighborhood) {
+    }
+    @Override
+    protected void nodeRemoved(final Node<Object> node, final Neighborhood<Object> neighborhood) {
     }
 }

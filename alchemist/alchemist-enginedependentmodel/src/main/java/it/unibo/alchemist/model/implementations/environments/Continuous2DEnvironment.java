@@ -24,7 +24,7 @@ import it.unibo.alchemist.model.interfaces.Position;
 /**
  * @param <T>
  */
-public class Continuous2DEnvironment<T> extends AbstractLinkingRuleEnvironment<T> {
+public class Continuous2DEnvironment<T> extends AbstractEnvironment<T> {
 
 
     private static final long serialVersionUID = 1056357696289385352L;

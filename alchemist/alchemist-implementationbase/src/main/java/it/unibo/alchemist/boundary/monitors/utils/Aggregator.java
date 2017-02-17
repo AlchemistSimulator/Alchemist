@@ -35,6 +35,7 @@ import org.apache.commons.math3.stat.descriptive.summary.SumOfSquares;
 /**
  *
  */
+@Deprecated
 public enum Aggregator {
     /**
      * 

@@ -11,6 +11,7 @@ package it.unibo.alchemist.boundary.monitors.utils;
 /**
  * 
  */
+@Deprecated
 public enum SubNaN {
     /**
      * 

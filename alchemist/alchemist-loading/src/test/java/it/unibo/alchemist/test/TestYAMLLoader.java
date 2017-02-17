@@ -86,6 +86,14 @@ public class TestYAMLLoader {
         assertTrue(env.getLayer(b).get() instanceof StepLayer);
     }
 
+    /**
+     * Test loading layer classes.
+     */
+    @Test
+    public void testLoadVariablesInLists() {
+        assertNotNull(testNoVar("/synthetic/testlist.yml"));
+    }
+
     private static <T> Environment<T> testNoVar(final String resource) {
         return testLoading(resource, Collections.emptyMap());
     }

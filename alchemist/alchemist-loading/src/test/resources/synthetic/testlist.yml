@@ -1,0 +1,16 @@
+incarnation: protelis
+
+variables:
+  myvar: &myvar
+    formula: 1
+  myvar2: &myvar2
+    formula: $myvar * 100
+
+environment:
+  type: Continuous2DEnvironment
+  parameters: []
+  layers:
+    - type: StepLayer
+      parameters: [*myvar, *myvar, *myvar2, *myvar2]
+      molecule: a
+      concentration: [[*myvar, *myvar2], [*myvar, *myvar2]]

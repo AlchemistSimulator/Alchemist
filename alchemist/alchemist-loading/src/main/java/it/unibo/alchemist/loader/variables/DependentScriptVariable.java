@@ -60,7 +60,14 @@ public class DependentScriptVariable implements DependentVariable {
             formula = formula.replaceAll("\\$" + var, Double.toString(variables.get(var)));
         }
         try {
-            return ((Number) ENGINE.eval(formula)).doubleValue();
+            final Object result = ENGINE.eval(formula);
+            if (result instanceof Number) {
+                return ((Number) result).doubleValue();
+            }
+            if (result instanceof Boolean) {
+                return (Boolean) result ? 1 : 0;
+            }
+            throw new IllegalStateException("The script return value (" + result + ": " + result.getClass().getSimpleName() + ") can't get converted to a Java Number");
         } catch (final ScriptException | ClassCastException e) {
             throw new IllegalStateException("The expression engine could not perform the requested operation. " + script
                     + " got transformed in " + formula

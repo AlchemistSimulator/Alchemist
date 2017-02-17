@@ -15,10 +15,13 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -26,6 +29,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -347,7 +351,7 @@ public class YamlLoader implements Loader, Serializable {
                             final Object filterObj = mapObj.getOrDefault(VALUE_FILTER, "NoFilter");
                             final FilteringPolicy filter = filterObj instanceof Map
                                     ? extractClassIfDeclared((Map<String, Object>) filterObj, VALUE_FILTER_PACKAGE_ROOT)
-                                        .map(clazz -> create(clazz, extractParams((Map<String, Object>) filterObj)))
+                                        .map(clazz -> create(clazz, extractParams((Map<String, Object>) filterObj), incarnation, Collections.emptyMap()))
                                         .map(f -> (FilteringPolicy) f)
                                         .orElseThrow(() -> new IllegalAlchemistYAMLException(filterObj + " is not a valid value filter."))
                                     : CommonFilters.fromString(filterObj.toString());
@@ -361,7 +365,7 @@ public class YamlLoader implements Loader, Serializable {
                         final Optional<Class<Extractor>> extrClass = extractClassIfDeclared(mapObj, "it.unibo.alchemist.loader.export.");
                         if (extrClass.isPresent()) {
                             final List<?> params = extractParams(mapObj);
-                            return create(extrClass.get(), params, incarnation);
+                            return create(extrClass.get(), params, incarnation, Collections.emptyMap());
                         }
                     }
                     throw new IllegalAlchemistYAMLException("Could not create an exporter with " + obj);
@@ -465,7 +469,7 @@ public class YamlLoader implements Loader, Serializable {
                             final Class<Layer<T>> layerClass = layerDescriptor.get();
                             final List<?> layArgs = extractParams(layer);
                             final Molecule molecule = incarnation.createMolecule((String) layer.get(MOLECULE));
-                            env.addLayer(molecule, create(layerClass, layArgs));
+                            env.addLayer(molecule, create(layerClass, layArgs, incarnation, actualVars));
                         } else {
                             throw new IllegalAlchemistYAMLException(layerObj + " is not a valid layer description: layer class missing or invald layer class name");
                         }
@@ -585,11 +589,9 @@ public class YamlLoader implements Loader, Serializable {
     }
 
     private Object makePlaceHolderIfNeeded(final Object in) {
-        final Optional<Map<?, Double>> varopt = aVariable(in);
-        if (varopt.isPresent()) {
-            return new PlaceHolder(reverseLookupTable.get(univoqueId(in)));
-        }
-        return in;
+        return aVariable(in)
+                .map(v -> (Object) new PlaceHolder(reverseLookupTable.get(univoqueId(in))))
+                .orElse(in);
     }
 
     private <O> Supplier<O> makeSupplier(
@@ -724,7 +726,8 @@ public class YamlLoader implements Loader, Serializable {
 
     private Object resolveVariable(final Object target, final Map<String, Double> variables) {
         final Object extracted = makePlaceHolderIfNeeded(target);
-        return extracted instanceof PlaceHolder ? resolvePlaceHolder(variables, extracted) : extracted;
+        return recursivelyResolvePlaceHolder(variables, extracted);
+//        return extracted instanceof PlaceHolder ? resolvePlaceHolder(variables, extracted) : extracted;
     }
 
     private void writeObject(final ObjectOutputStream oos) throws IOException {
@@ -752,26 +755,14 @@ public class YamlLoader implements Loader, Serializable {
         return Optional.empty();
     }
 
-    private static <O> O create(
-            final Class<O> clazz,
-            final List<?> newArrayList) {
-        return create(clazz, newArrayList, null);
-    }
-
-    private static <O> O create(
-            final Class<O> clazz,
-            final List<?> newArrayList,
-            final Incarnation<?> incarnation) {
-        return create(clazz, newArrayList, incarnation, null);
-    }
-    private static <O> O create(
+    private <O> O create(
             final Class<O> clazz,
             final List<?> newArrayList,
             final Incarnation<?> incarnation,
             final Map<String, Double> actualVars) {
         return create(clazz, newArrayList, incarnation, actualVars, null, null, null, null, null, null);
     }
-    private static <O> O create(
+    private <O> O create(
             final Class<O> clazz,
             final List<?> newArrayList,
             final Incarnation<?> incarnation,
@@ -780,7 +771,7 @@ public class YamlLoader implements Loader, Serializable {
             final Environment<?> env) {
         return create(clazz, newArrayList, incarnation, actualVars, random, env, null);
     }
-    private static <O> O create(
+    private <O> O create(
             final Class<O> clazz,
             final List<?> newArrayList,
             final Incarnation<?> incarnation,
@@ -790,18 +781,18 @@ public class YamlLoader implements Loader, Serializable {
             final PositionMaker pmaker) {
         return create(clazz, newArrayList, incarnation, actualVars, random, env, pmaker, null, null, null);
     }
-    private static int countUndecidableParameters(final Constructor<?> constructor, final Object... parameters) {
-        return (int) Arrays.stream(constructor.getParameterTypes())
+    private static Class<?>[] undecidableParameters(final Constructor<?> constructor, final Object... parameters) {
+        return Arrays.stream(constructor.getParameterTypes())
             .filter(requested -> makeClassStream(parameters)
                     .noneMatch(available -> available != null && requested.isAssignableFrom(available)))
-            .count();
+            .toArray(i -> new Class<?>[i]);
     }
     private static Stream<Class<?>> makeClassStream(final Object... objects) {
         return Arrays.stream(objects)
             .filter(o -> o != null)
             .map(Object::getClass);
     }
-    private static <O> O create(
+    private <O> O create(
             final Class<O> clazz,
             final List<?> params,
             final Incarnation<?> incarnation,
@@ -815,14 +806,14 @@ public class YamlLoader implements Loader, Serializable {
         @SuppressWarnings(UNCHECKED)
         final Optional<O> result = Arrays.stream(clazz.getConstructors())
             .sorted((c1, c2) -> {
-                final int n1 = countUndecidableParameters(c1, incarnation, rand, env, posMaker, node, timedist, reaction);
-                final int n2 = countUndecidableParameters(c2, incarnation, rand, env, posMaker, node, timedist, reaction);
+                final Class<?>[] paramTypes1 = undecidableParameters(c1, incarnation, rand, env, posMaker, node, timedist, reaction);
+                final Class<?>[] paramTypes2 = undecidableParameters(c2, incarnation, rand, env, posMaker, node, timedist, reaction);
+                final int n1 = paramTypes1.length;
+                final int n2 = paramTypes2.length;
                 if (n1 == n2) {
                     /*
                      * Sort using types.
                      */
-                    final Class<?>[] paramTypes1 = c1.getParameterTypes();
-                    final Class<?>[] paramTypes2 = c2.getParameterTypes();
                     for (int i = 0; i < n1; i++) {
                         final Class<?> p1 = paramTypes1[i];
                         final Class<?> p2 = paramTypes2[i];
@@ -852,8 +843,16 @@ public class YamlLoader implements Loader, Serializable {
                             return p1.getSimpleName().compareTo(p2.getSimpleName());
                         }
                     }
-                    L.warn("There are apparently two identical constructors.");
-                    return 0;
+                    /*
+                     * Same score: prefer the one with more parameters
+                     */
+                    if (c1.getParameterCount() != c2.getParameterCount()) {
+                        return c1.getParameterCount() - c2.getParameterCount();
+                    }
+                    /*
+                     * Same number of parameters: fall back to lexicographic comparison
+                     */
+                    return c1.toString().compareTo(c2.toString());
                 }
                 final int target = params.size();
                 return n1 == target ? -1
@@ -870,10 +869,9 @@ public class YamlLoader implements Loader, Serializable {
         if (result.isPresent()) {
             return result.get();
         }
-        L.error("Unable to create a {} with {}", clazz.getSimpleName(), params);
-        return null;
+        throw new IllegalStateException("Unable to create a " + clazz.getSimpleName() + " with " + params);
     }
-    private static <O> Optional<O> createBestEffort(
+    private <O> Optional<O> createBestEffort(
             final Constructor<O> constructor,
             final List<?> params,
             final Incarnation<?> incarnation,
@@ -909,9 +907,7 @@ public class YamlLoader implements Loader, Serializable {
             }
             while (!paramsLeft.isEmpty()) {
                 Object param = paramsLeft.pop();
-                if (param instanceof PlaceHolder) {
-                    param = resolvePlaceHolder(variables, param);
-                }
+                param = recursivelyResolvePlaceHolder(variables, param);
                 if (param == null) {
                     return null;
                 }
@@ -989,6 +985,19 @@ public class YamlLoader implements Loader, Serializable {
         return Optional.empty();
     }
 
+    private Object recursivelyResolvePlaceHolder(final Map<String, Double> variables, final Object param) {
+        if (param instanceof PlaceHolder) {
+            return resolvePlaceHolder(variables, param);
+        }
+        if (param instanceof Collection) {
+            return ((Collection<?>) param).stream()
+                .map(e -> makePlaceHolderIfNeeded(e))
+                .map(element -> recursivelyResolvePlaceHolder(variables, element))
+                .collect(Collectors.toCollection(param instanceof Set ? LinkedHashSet::new : LinkedList::new));
+        }
+        return param;
+    }
+
     @SuppressWarnings(UNCHECKED)
     private static <T> Class<T> extractClass(final Map<String, Object> yaml, final String root, final Class<T> defaultClass) {
         assert root != null;
@@ -1012,12 +1021,12 @@ public class YamlLoader implements Loader, Serializable {
     }
 
     @SuppressWarnings(UNCHECKED)
-    private static Variable makeVar(final Object varObj) {
+    private Variable makeVar(final Object varObj) {
         final Map<String, Object> var = (Map<String, Object>) varObj;
         var.put(VARIABLE, true);
         final Optional<Class<Variable>> clazz = extractClassIfDeclared(var, "it.unibo.alchemist.loader.variables.");
         if (clazz.isPresent()) {
-            return create(clazz.get(), Optional.ofNullable((List<?>) var.get(PARAMS)).orElse(Collections.emptyList()));
+            return create(clazz.get(), Optional.ofNullable((List<?>) var.get(PARAMS)).orElse(Collections.emptyList()), incarnation, Collections.emptyMap());
         }
         final Object vals = var.get(VALUES);
         if (vals != null) {

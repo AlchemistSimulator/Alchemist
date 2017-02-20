@@ -36,7 +36,7 @@ public class ExponentialTime<T> extends AbstractDistribution<T> {
      *            {@link RandomGenerator} used internally
      */
     public ExponentialTime(final double markovianRate, final RandomGenerator random) {
-        this(markovianRate, new DoubleTime(), random);
+        this(markovianRate, DoubleTime.ZERO_TIME, random);
     }
 
     /**

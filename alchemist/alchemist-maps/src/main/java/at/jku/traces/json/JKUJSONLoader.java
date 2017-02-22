@@ -43,11 +43,19 @@ public final class JKUJSONLoader implements Serializable {
             .registerTypeAdapter(GPSPoint.class, new JsonDeserializer<GPSPoint>() {
                 @Override
                 public GPSPoint deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
-                    final JsonObject obj = json.getAsJsonObject();
-                    final double latitude = obj.get("la").getAsDouble();
-                    final double longitude = obj.get("lo").getAsDouble();
-                    final double time = obj.get("t").getAsDouble();
-                    return new GPSPointImpl(latitude, longitude, time);
+                    if (json.isJsonObject()) {
+                        final JsonObject obj = json.getAsJsonObject();
+                        try {
+                            final double latitude = obj.get("la").getAsDouble();
+                            final double longitude = obj.get("lo").getAsDouble();
+                            final double time = obj.get("t").getAsDouble();
+                            return new GPSPointImpl(latitude, longitude, time); 
+                        } catch (final IllegalStateException | ClassCastException e) {
+                            throw new IllegalStateException("An invalid JSON has been provided: unable to get the double values");
+                        }
+                    } else {
+                        throw new IllegalStateException("An invalid JSON has been provided: unable to get the JSON object to deserialize");
+                    }
                 }
             })
             .create();

@@ -14,6 +14,7 @@ import java.util.stream.IntStream;
 import org.junit.Test;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.implementations.nodes.GenericNode;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -32,7 +33,7 @@ public class TestGenericNode {
     @Test
     @SuppressFBWarnings(value = "SIC_INNER_SHOULD_BE_STATIC_ANON")
     public void testConcurrentAccess() {
-        final Environment<Object> env = new DummyEnvironment();
+        final Environment<Object> env = new Continuous2DEnvironment<>();
         @SuppressWarnings("serial")
         final GenericNode<Object> node = new GenericNode<Object>(env) {
             @Override

@@ -404,6 +404,10 @@ public class TestConcurrency {
         @Override
         public void setSimulation(final Simulation<Object> s) {
         }
+        @Override
+        public Position makePosition(final Number... coordinates) {
+            return null;
+        }
 
     }
 

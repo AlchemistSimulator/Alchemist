@@ -199,6 +199,12 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
     double[] getSizeInDistanceUnits();
 
     /**
+     * @param coordinates the coordinates of the point
+     * @return a {@link Position} compatible with this environment
+     */
+    Position makePosition(Number... coordinates);
+
+    /**
      * This method moves a node in the environment toward some direction. If
      * node move is unsupported, it does nothing.
      * 

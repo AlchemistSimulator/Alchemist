@@ -17,6 +17,7 @@ import org.danilopianini.util.FlexibleQuadTree;
 import org.danilopianini.util.SpatialIndex;
 
 import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
@@ -105,6 +106,14 @@ public class Continuous2DEnvironment<T> extends AbstractEnvironment<T> {
         includeObject(x, x, y, y);
     }
 
+
+    @Override
+    public Position makePosition(final Number... coordinates) {
+        if (coordinates.length != 2) {
+            throw new IllegalArgumentException(getClass().getSimpleName() + " can only get used with 2-dimensional positions.");
+        }
+        return new Continuous2DEuclidean(coordinates[0].doubleValue(), coordinates[1].doubleValue());
+    }
 
     @Override
     public void moveNode(final Node<T> node, final Position direction) {

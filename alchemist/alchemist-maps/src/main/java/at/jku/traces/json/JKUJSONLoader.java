@@ -14,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,14 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Charsets;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 
+import it.unibo.alchemist.model.interfaces.GPSPoint;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
 
 /**
@@ -31,7 +39,28 @@ import it.unibo.alchemist.model.interfaces.GPSTrace;
 public final class JKUJSONLoader implements Serializable {
 
     private static final long serialVersionUID = 7144531714361675479L;
-    private static final Gson GSON = new Gson();
+    private static final Gson GSON = new GsonBuilder()
+            .registerTypeAdapter(GPSPoint.class, new JsonDeserializer<GPSPoint>() {
+                @Override
+                public GPSPoint deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
+                    if (json.isJsonObject()) {
+                        final JsonObject obj = json.getAsJsonObject();
+                        if (obj.get("la") != null && obj.get("lo") != null
+                                && obj.get("t") != null && obj.get("la").isJsonPrimitive()
+                                && obj.get("lo").isJsonPrimitive() && obj.get("t").isJsonPrimitive()) {
+                            final double latitude = obj.get("la").getAsDouble();
+                            final double longitude = obj.get("lo").getAsDouble();
+                            final double time = obj.get("t").getAsDouble();
+                            return new GPSPointImpl(latitude, longitude, time);
+                        } else {
+                            throw new IllegalStateException("An invalid JSON has been provided: unable to get fields from JSON file");
+                        }
+                    } else {
+                        throw new IllegalStateException("An invalid JSON has been provided: unable to get the JSON object to deserialize");
+                    }
+                }
+            })
+            .create();
     private static final Logger L = LoggerFactory.getLogger(JKUJSONLoader.class);
 
     /**

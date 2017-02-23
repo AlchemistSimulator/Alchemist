@@ -133,7 +133,7 @@ public interface MapEnvironment<T> extends Environment<T> {
     /**
      * Works only if the node is associated with a {@link GPSTrace}.
      * @param node the {@link Node}
-     * @return the associated {@link GPSTrace}
+     * @return the associated {@link GPSTrace} or null if the trace does not exist
      */
     GPSTrace getTrace(Node<T> node);
 }

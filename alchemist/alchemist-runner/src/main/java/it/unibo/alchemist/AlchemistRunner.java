@@ -160,9 +160,6 @@ public final class AlchemistRunner {
          * @return buider
          */
         public Builder setGUICloseOperation(final int closeOp) {
-            if (this.headless) {
-                throw new IllegalArgumentException("The simulation is headless.");
-            }
             if (closeOp < 0 || closeOp > 3) {
                 throw new IllegalArgumentException("The value of close operation is not valid.");
             }

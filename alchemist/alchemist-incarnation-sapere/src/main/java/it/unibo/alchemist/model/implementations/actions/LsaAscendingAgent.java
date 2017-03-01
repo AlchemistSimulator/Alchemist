@@ -30,7 +30,7 @@ public class LsaAscendingAgent extends SAPEREMoveNodeAgent {
     private static final double LIMIT = 0.1;
     private static final long serialVersionUID = 228276533881360456L;
     private static final ILsaMolecule ACTIVE = new LsaMolecule("active");
-    private final Reaction<List<? extends ILsaMolecule>> r;
+    private final Reaction<List<ILsaMolecule>> r;
     private final ILsaMolecule template;
     private final int gradDistPos;
 
@@ -51,8 +51,8 @@ public class LsaAscendingAgent extends SAPEREMoveNodeAgent {
      *            the position in the LSA of the value to read for identifying
      *            the new position
      */
-    public LsaAscendingAgent(final Reaction<List<? extends ILsaMolecule>> reaction,
-            final Environment<List<? extends ILsaMolecule>> environment, final ILsaNode node,
+    public LsaAscendingAgent(final Reaction<List<ILsaMolecule>> reaction,
+            final Environment<List<ILsaMolecule>> environment, final ILsaNode node,
             final LsaMolecule molecule, final int pos) {
         super(environment, node);
         this.r = reaction;
@@ -63,10 +63,10 @@ public class LsaAscendingAgent extends SAPEREMoveNodeAgent {
     @Override
     public void execute() {
         double minGrad = Double.MAX_VALUE;
-        final Neighborhood<List<? extends ILsaMolecule>> neigh = getLocalNeighborhood();
+        final Neighborhood<List<ILsaMolecule>> neigh = getLocalNeighborhood();
         Position targetPositions = null;
-        Node<List<? extends ILsaMolecule>> bestNode = null;
-        for (final Node<List<? extends ILsaMolecule>> node : neigh.getNeighbors()) {
+        Node<List<ILsaMolecule>> bestNode = null;
+        for (final Node<List<ILsaMolecule>> node : neigh.getNeighbors()) {
             final ILsaNode n = (ILsaNode) node;
             final List<ILsaMolecule> gradList;
             gradList = n.getConcentration(template);

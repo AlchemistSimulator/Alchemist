@@ -25,7 +25,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
 
 /**
  */
-public class SAPEREWalkerRiseGradient extends MoveOnMap<List<? extends ILsaMolecule>> {
+public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>> {
 
     private static final long serialVersionUID = 2429200360671138611L;
 
@@ -47,8 +47,8 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<? extends ILsaMolec
      * @param neighPos
      *            the position in the template LSA that contains the next hop
      */
-    public SAPEREWalkerRiseGradient(final MapEnvironment<List<? extends ILsaMolecule>> environment,
-            final ILsaNode node, final Reaction<List<? extends ILsaMolecule>> reaction, final double speed,
+    public SAPEREWalkerRiseGradient(final MapEnvironment<List<ILsaMolecule>> environment,
+            final ILsaNode node, final Reaction<List<ILsaMolecule>> reaction, final double speed,
             final double interaction, final double range, final ILsaMolecule templateLSA, final int neighPos) {
         this(environment, node, reaction, SAPEREWalker.DEFAULT_INTERACTING_TAG, speed, interaction, range, templateLSA,
                 neighPos);
@@ -74,8 +74,8 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<? extends ILsaMolec
      * @param neighPos
      *            the position in the template LSA that contains the next hop
      */
-    public SAPEREWalkerRiseGradient(final MapEnvironment<List<? extends ILsaMolecule>> environment,
-            final ILsaNode node, final Reaction<List<? extends ILsaMolecule>> reaction, final ILsaMolecule tag,
+    public SAPEREWalkerRiseGradient(final MapEnvironment<List<ILsaMolecule>> environment,
+            final ILsaNode node, final Reaction<List<ILsaMolecule>> reaction, final ILsaMolecule tag,
             final double speed, final double interaction, final double range, final ILsaMolecule templateLSA,
             final int neighPos) {
         super(environment, node, new OnStreets<>(environment, Vehicle.FOOT),
@@ -83,21 +83,21 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<? extends ILsaMolec
                 new NextTargetStrategy(environment, node, templateLSA, neighPos));
     }
 
-    private static final class NextTargetStrategy implements TargetSelectionStrategy<List<? extends ILsaMolecule>> {
+    private static final class NextTargetStrategy implements TargetSelectionStrategy<List<ILsaMolecule>> {
         /**
          * 
          */
         private static final long serialVersionUID = -618772546563562484L;
-        private final MapEnvironment<List<? extends ILsaMolecule>> environment;
-        private final Node<List<? extends ILsaMolecule>> node;
+        private final MapEnvironment<List<ILsaMolecule>> environment;
+        private final Node<List<ILsaMolecule>> node;
         private final ILsaMolecule template;
         private final int argPos;
-        private Node<List<? extends ILsaMolecule>> curNode;
+        private Node<List<ILsaMolecule>> curNode;
         private Position curPos;
 
         NextTargetStrategy(
-                final MapEnvironment<List<? extends ILsaMolecule>> env,
-                final Node<List<? extends ILsaMolecule>> n,
+                final MapEnvironment<List<ILsaMolecule>> env,
+                final Node<List<ILsaMolecule>> n,
                 final ILsaMolecule patt,
                 final int pos) {
             LangUtils.requireNonNull(env, n, patt, pos);
@@ -110,8 +110,8 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<? extends ILsaMolec
 
         @Override
         public Position getTarget() {
-            final MapEnvironment<List<? extends ILsaMolecule>> env = environment;
-            final List<? extends ILsaMolecule> matches = node.getConcentration(template);
+            final MapEnvironment<List<ILsaMolecule>> env = environment;
+            final List<ILsaMolecule> matches = node.getConcentration(template);
             /*
              * If there is no gradient and: - there is no goal, or - the goal
              * has already been reached

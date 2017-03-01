@@ -41,7 +41,7 @@ public class SAPEREChemotaxis extends SAPERENeighborAgent {
      * @param oPos
      *            the argument number where to search for the node ID
      */
-    public SAPEREChemotaxis(final Environment<List<? extends ILsaMolecule>> env, final ILsaNode node, final ILsaMolecule response, final ILsaMolecule gradient, final int oPos) {
+    public SAPEREChemotaxis(final Environment<List<ILsaMolecule>> env, final ILsaNode node, final ILsaMolecule response, final ILsaMolecule gradient, final int oPos) {
         super(env, node, response);
         /*
          * Thanks Java, for not having unsigned primitives! -.-

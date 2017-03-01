@@ -27,7 +27,7 @@ import it.unibo.alchemist.model.interfaces.Incarnation;
 /**
  */
 @ExportInspector
-public class SAPERENodeInspector extends AbstractNodeInspector<List<? extends ILsaMolecule>> {
+public class SAPERENodeInspector extends AbstractNodeInspector<List<ILsaMolecule>> {
 
     private static final long serialVersionUID = -5664559491928782478L;
     @ExportForGUI(nameToExport = "LSA to track")
@@ -41,7 +41,7 @@ public class SAPERENodeInspector extends AbstractNodeInspector<List<? extends IL
     private String lsaCache;
     private Molecule mol;
     private final List<String> properties = new LinkedList<>();
-    private final Incarnation<List<? extends ILsaMolecule>> sapere = new SAPEREIncarnation();
+    private final Incarnation<List<ILsaMolecule>> sapere = new SAPEREIncarnation();
 
 
     /**
@@ -87,7 +87,7 @@ public class SAPERENodeInspector extends AbstractNodeInspector<List<? extends IL
     }
 
     @Override
-    protected double[] getProperties(final Environment<List<? extends ILsaMolecule>> env, final Node<List<? extends ILsaMolecule>> node, final Reaction<List<? extends ILsaMolecule>> r, final Time time, final long step) {
+    protected double[] getProperties(final Environment<List<ILsaMolecule>> env, final Node<List<ILsaMolecule>> node, final Reaction<List<ILsaMolecule>> r, final Time time, final long step) {
         if (!HashUtils.pointerEquals(propertyCache, property)) {
             propertyCache = property;
             properties.clear();

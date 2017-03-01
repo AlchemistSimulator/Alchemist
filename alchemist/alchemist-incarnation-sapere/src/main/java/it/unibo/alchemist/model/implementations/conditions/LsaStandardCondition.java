@@ -50,14 +50,14 @@ public class LsaStandardCondition extends LsaAbstractCondition {
     }
 
     @Override
-    public LsaStandardCondition cloneCondition(final Node<List<? extends ILsaMolecule>> n, final Reaction<List<? extends ILsaMolecule>> r) {
+    public LsaStandardCondition cloneCondition(final Node<List<ILsaMolecule>> n, final Reaction<List<ILsaMolecule>> r) {
         return new LsaStandardCondition(molecule, (ILsaNode) n);
     }
 
     @Override
     public boolean filter(
             final List<Map<FasterString, ITreeNode<?>>> matchesList,
-            final List<? extends ILsaNode> validNodes,
+            final List<ILsaNode> validNodes,
             final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved) {
         final ILsaNode node = getNode();
         if (matchesList.isEmpty()) {
@@ -98,7 +98,7 @@ public class LsaStandardCondition extends LsaAbstractCondition {
              * 3 - After two, other valid matches are found. In this case, a new
              * entry in matchesList and newSpaces should be created.
              */
-            final List<? extends ILsaMolecule> otherMatches = calculateMatches(partialInstance, dups,
+            final List<ILsaMolecule> otherMatches = calculateMatches(partialInstance, dups,
                     node.getLsaSpace(), alreadyRemovedInThisNode);
             if (otherMatches.isEmpty()) {
                 retrieved.remove(i);

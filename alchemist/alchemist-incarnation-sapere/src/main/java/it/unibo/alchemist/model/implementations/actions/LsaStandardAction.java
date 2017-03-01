@@ -87,7 +87,7 @@ public class LsaStandardAction extends LsaAbstractAction {
     }
 
     @Override
-    public LsaStandardAction cloneAction(final Node<List<? extends ILsaMolecule>> n, final Reaction<List<? extends ILsaMolecule>> r) {
+    public LsaStandardAction cloneAction(final Node<List<ILsaMolecule>> n, final Reaction<List<ILsaMolecule>> r) {
         return new LsaStandardAction(getMolecule(), (ILsaNode) n);
     }
 

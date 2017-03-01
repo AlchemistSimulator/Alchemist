@@ -33,10 +33,10 @@ import com.google.common.collect.Sets;
 /**
  *
  */
-public abstract class LsaAbstractAction extends AbstractAction<List<? extends ILsaMolecule>> implements ILsaAction {
+public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule>> implements ILsaAction {
     private static final long serialVersionUID = 4158296120349274343L;
     private Map<FasterString, ITreeNode<?>> matches;
-    private List<? extends ILsaNode> nodes;
+    private List<ILsaNode> nodes;
 
     /**
      * @param node
@@ -44,7 +44,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<? extends IL
      * @param m
      *            the modified molecule
      */
-    public LsaAbstractAction(final ILsaNode node, final List<? extends ILsaMolecule> m) {
+    public LsaAbstractAction(final ILsaNode node, final List<ILsaMolecule> m) {
         super(node);
         for (final ILsaMolecule mol : m) {
             addModifiedMolecule(mol);
@@ -176,7 +176,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<? extends IL
     }
 
     @Override
-    public abstract LsaAbstractAction cloneAction(Node<List<? extends ILsaMolecule>> n, Reaction<List<? extends ILsaMolecule>> r);
+    public abstract LsaAbstractAction cloneAction(Node<List<ILsaMolecule>> n, Reaction<List<ILsaMolecule>> r);
 
     /**
      * This method allows subclasses to access a field of an LSA (supposed to be
@@ -455,8 +455,8 @@ public abstract class LsaAbstractAction extends AbstractAction<List<? extends IL
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<? extends ILsaMolecule> getModifiedMolecules() {
-        return (List<? extends ILsaMolecule>) super.getModifiedMolecules();
+    public List<ILsaMolecule> getModifiedMolecules() {
+        return (List<ILsaMolecule>) super.getModifiedMolecules();
     }
 
     @Override
@@ -468,7 +468,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<? extends IL
      * @return a list of the nodes in the current execution context. This backs
      *         the internal representation: handle with care.
      */
-    protected final List<? extends ILsaNode> getNodes() {
+    protected final List<ILsaNode> getNodes() {
         return nodes;
     }
 
@@ -496,7 +496,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<? extends IL
     }
 
     @Override
-    public void setExecutionContext(final Map<FasterString, ITreeNode<?>> m, final List<? extends ILsaNode> n) {
+    public void setExecutionContext(final Map<FasterString, ITreeNode<?>> m, final List<ILsaNode> n) {
         matches = m;
         nodes = n;
     }
@@ -564,9 +564,9 @@ public abstract class LsaAbstractAction extends AbstractAction<List<? extends IL
      * @param list
      *            the list of nodes to use
      */
-    protected void setSyntheticNeigh(final Collection<? extends Node<List<? extends ILsaMolecule>>> list) {
+    protected void setSyntheticNeigh(final Collection<Node<List<ILsaMolecule>>> list) {
         final Set<ITreeNode<?>> l = Sets.newHashSetWithExpectedSize(list.size());
-        for (final Node<List<? extends ILsaMolecule>> n : list) {
+        for (final Node<List<ILsaMolecule>> n : list) {
             l.add(new NumTreeNode(n.getId()));
         }
         matches.put(LsaMolecule.SYN_NEIGH, new ListTreeNode(l));

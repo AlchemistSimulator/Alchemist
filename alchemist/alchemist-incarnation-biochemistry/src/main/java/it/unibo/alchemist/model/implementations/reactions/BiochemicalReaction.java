@@ -111,7 +111,7 @@ public class BiochemicalReaction extends ChemicalReaction<Double> {
     }
 
     @Override
-    public void setConditions(final List<? extends Condition<Double>> c) {
+    public void setConditions(final List<Condition<Double>> c) {
         for (final Condition<Double> cond : c) {
             if (cond instanceof AbstractNeighborCondition) {
                 neighborConditionsPresent = true;

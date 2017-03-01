@@ -32,7 +32,7 @@ import it.unibo.alchemist.model.interfaces.Time;
 /**
  */
 @ExportInspector
-public class SAPERENearestNodeSampler extends PositionSampler<List<? extends ILsaMolecule>> {
+public class SAPERENearestNodeSampler extends PositionSampler<List<ILsaMolecule>> {
 
     private static final long serialVersionUID = -5664559491928782478L;
     @ExportForGUI(nameToExport = "Enable support for node mobility")
@@ -49,8 +49,8 @@ public class SAPERENearestNodeSampler extends PositionSampler<List<? extends ILs
     private Molecule mol;
     private final List<String> properties = new LinkedList<>();
     private final SAPEREIncarnation sapere = new SAPEREIncarnation();
-    private final Map<Position, Node<List<? extends ILsaMolecule>>> pnCache = new ConcurrentHashMap<>();
-    private Environment<List<? extends ILsaMolecule>> envCache;
+    private final Map<Position, Node<List<ILsaMolecule>>> pnCache = new ConcurrentHashMap<>();
+    private Environment<List<ILsaMolecule>> envCache;
 
     /**
      * @return lsa
@@ -112,7 +112,7 @@ public class SAPERENearestNodeSampler extends PositionSampler<List<? extends ILs
     }
 
     @Override
-    protected double[] getProperties(final Environment<List<? extends ILsaMolecule>> env, final Position pos, final Reaction<List<? extends ILsaMolecule>> r, final Time time, final long step) {
+    protected double[] getProperties(final Environment<List<ILsaMolecule>> env, final Position pos, final Reaction<List<ILsaMolecule>> r, final Time time, final long step) {
         if (mobility || !HashUtils.pointerEquals(env, envCache)) {
             pnCache.clear();
             envCache = env;
@@ -132,10 +132,10 @@ public class SAPERENearestNodeSampler extends PositionSampler<List<? extends ILs
         if (env.getNodesNumber() > 0 && mol != null) {
             final double[] res = new double[properties.size()];
             int i = 0;
-            Node<List<? extends ILsaMolecule>> node = pnCache.get(pos);
+            Node<List<ILsaMolecule>> node = pnCache.get(pos);
             if (node == null) {
                 double range = Arrays.stream(env.getSize()).reduce(1, (x, y) -> FastMath.max(x, y) / FastMath.sqrt(env.getNodesNumber()));
-                Collection<Node<List<? extends ILsaMolecule>>> neighs = env.getNodesWithinRange(pos, range);
+                Collection<Node<List<ILsaMolecule>>> neighs = env.getNodesWithinRange(pos, range);
                 while (neighs.isEmpty()) {
                     range *= 2;
                     neighs = env.getNodesWithinRange(pos, range);

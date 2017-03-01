@@ -28,8 +28,8 @@ import java.util.List;
  */
 public class LsaRandomNeighborAction extends LsaStandardAction {
     private static final long serialVersionUID = -7128058274012426458L;
-    private final Environment<List<? extends ILsaMolecule>> env;
-    private final MapEnvironment<List<? extends ILsaMolecule>> menv;
+    private final Environment<List<ILsaMolecule>> env;
+    private final MapEnvironment<List< ILsaMolecule>> menv;
     private final boolean initO, initD, initNeigh, initRoute, mapEnv;
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All provided RandomGenerator implementations are actually Serializable")
     private final RandomGenerator randomEngine;
@@ -50,7 +50,7 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
      *            the random engine
      * 
      */
-    public LsaRandomNeighborAction(final ILsaNode node, final ILsaMolecule molecule, final Environment<List<? extends ILsaMolecule>> environment, final RandomGenerator random) {
+    public LsaRandomNeighborAction(final ILsaNode node, final ILsaMolecule molecule, final Environment<List< ILsaMolecule>> environment, final RandomGenerator random) {
         super(molecule, node);
         final String molString = molecule.toString();
         initO = molString.contains(LsaMolecule.SYN_O);
@@ -59,18 +59,18 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
         initRoute = molString.contains(LsaMolecule.SYN_ROUTE);
         env = environment;
         mapEnv = environment instanceof MapEnvironment;
-        menv = mapEnv ? (MapEnvironment<List<? extends ILsaMolecule>>) env : null;
+        menv = mapEnv ? (MapEnvironment<List< ILsaMolecule>>) env : null;
         randomEngine = random;
     }
 
     @Override
-    public LsaRandomNeighborAction cloneAction(final Node<List<? extends ILsaMolecule>> n, final Reaction<List<? extends ILsaMolecule>> r) {
+    public LsaRandomNeighborAction cloneAction(final Node<List< ILsaMolecule>> n, final Reaction<List< ILsaMolecule>> r) {
         return new LsaRandomNeighborAction((ILsaNode) n, getMolecule(), getEnvironment(), randomEngine);
     }
 
     @Override
     public void execute() {
-        final List<? extends ILsaNode> nodes = getNodes();
+        final List<ILsaNode> nodes = getNodes();
         if (!nodes.isEmpty()) {
             final ITreeNode<?> nodeId = getMatches().get(LsaMolecule.SYN_SELECTED);
             if (nodeId == null) {
@@ -106,7 +106,7 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
     /**
      * @return the current environment
      */
-    protected Environment<List<? extends ILsaMolecule>> getEnvironment() {
+    protected Environment<List< ILsaMolecule>> getEnvironment() {
         return env;
     }
 

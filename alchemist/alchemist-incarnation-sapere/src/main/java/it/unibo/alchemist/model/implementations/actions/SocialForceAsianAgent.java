@@ -61,7 +61,7 @@ public class SocialForceAsianAgent extends SocialForceAgent {
      * @param stopAtTarget
      *               flag used to let the user chose to make pedestrians to stop once the target is reached
      */
-    public SocialForceAsianAgent(final Environment<List<? extends ILsaMolecule>> environment, final ILsaNode node, final RandomGenerator random, final LsaMolecule molecule, final int pos, final int group, final boolean stopAtTarget) {
+    public SocialForceAsianAgent(final Environment<List<ILsaMolecule>> environment, final ILsaNode node, final RandomGenerator random, final LsaMolecule molecule, final int pos, final int group, final boolean stopAtTarget) {
         super(environment, node, random, molecule, pos, group, stopAtTarget, VMIN + (random.nextDouble() * 2.0), MY_DIMENSION, DESIRED_SPACE, TURN_RIGHT_PROBABILITY);
     }
 

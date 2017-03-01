@@ -29,7 +29,7 @@ import it.unibo.alchemist.model.interfaces.Vehicle;
 
 /**
  */
-public class SAPEREWalker extends MoveOnMap<List<? extends ILsaMolecule>> implements ILsaAction {
+public class SAPEREWalker extends MoveOnMap<List<ILsaMolecule>> implements ILsaAction {
 
     /**
      * The default molecule that identifies an interacting object.
@@ -51,7 +51,7 @@ public class SAPEREWalker extends MoveOnMap<List<? extends ILsaMolecule>> implem
      * @param range
      *            the interaction range
      */
-    public SAPEREWalker(final MapEnvironment<List<? extends ILsaMolecule>> environment, final ILsaNode node, final Reaction<List<? extends ILsaMolecule>> reaction, final double speed, final double interaction, final double range) {
+    public SAPEREWalker(final MapEnvironment<List<ILsaMolecule>> environment, final ILsaNode node, final Reaction<List<ILsaMolecule>> reaction, final double speed, final double interaction, final double range) {
         this(environment, node, reaction, DEFAULT_INTERACTING_TAG, speed, interaction, range);
     }
 
@@ -71,7 +71,7 @@ public class SAPEREWalker extends MoveOnMap<List<? extends ILsaMolecule>> implem
      * @param range
      *            the interaction range
      */
-    public SAPEREWalker(final MapEnvironment<List<? extends ILsaMolecule>> environment, final ILsaNode node, final Reaction<List<? extends ILsaMolecule>> reaction, final ILsaMolecule tag, final double speed, final double interaction, final double range) {
+    public SAPEREWalker(final MapEnvironment<List<ILsaMolecule>> environment, final ILsaNode node, final Reaction<List<ILsaMolecule>> reaction, final ILsaMolecule tag, final double speed, final double interaction, final double range) {
         super(environment, node,
                 new OnStreets<>(environment, Vehicle.FOOT),
                 new InteractWithOthers<>(environment, node, reaction, tag, speed, range, interaction),
@@ -79,12 +79,12 @@ public class SAPEREWalker extends MoveOnMap<List<? extends ILsaMolecule>> implem
     }
 
     @Override
-    public SAPEREWalker cloneAction(final Node<List<? extends ILsaMolecule>> n, final Reaction<List<? extends ILsaMolecule>> r) {
+    public SAPEREWalker cloneAction(final Node<List<ILsaMolecule>> n, final Reaction<List<ILsaMolecule>> r) {
         return null;
     }
 
     @Override
-    public List<? extends ILsaMolecule> getModifiedMolecules() {
+    public List<ILsaMolecule> getModifiedMolecules() {
         return Collections.emptyList();
     }
 
@@ -94,6 +94,6 @@ public class SAPEREWalker extends MoveOnMap<List<? extends ILsaMolecule>> implem
     }
 
     @Override
-    public void setExecutionContext(final Map<FasterString, ITreeNode<?>> matches, final List<? extends ILsaNode> nodes) {
+    public void setExecutionContext(final Map<FasterString, ITreeNode<?>> matches, final List<ILsaNode> nodes) {
     }
 }

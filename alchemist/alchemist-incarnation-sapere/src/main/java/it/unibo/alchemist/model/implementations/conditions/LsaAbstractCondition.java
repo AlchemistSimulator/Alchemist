@@ -34,7 +34,7 @@ import java.util.Set;
 
 /**
  */
-public abstract class LsaAbstractCondition extends AbstractCondition<List<? extends ILsaMolecule>> implements ILsaCondition {
+public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMolecule>> implements ILsaCondition {
 
     private static final long serialVersionUID = -5633486241371700913L;
 
@@ -44,7 +44,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<? exte
      * @param m
      *            the set of molecules on which this actions act
      */
-    public LsaAbstractCondition(final ILsaNode node, final Set<? extends ILsaMolecule> m) {
+    public LsaAbstractCondition(final ILsaNode node, final Set<ILsaMolecule> m) {
         super(node);
         for (final ILsaMolecule mol : m) {
             addReadMolecule(mol);
@@ -60,7 +60,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<? exte
     }
 
     @Override
-    public abstract LsaAbstractCondition cloneCondition(Node<List<? extends ILsaMolecule>> n, Reaction<List<? extends ILsaMolecule>> r);
+    public abstract LsaAbstractCondition cloneCondition(Node<List<ILsaMolecule>> n, Reaction<List<ILsaMolecule>> r);
 
     /**
      * @param partialInstance
@@ -76,7 +76,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<? exte
      *         partialInstance, excluding all those which have been already
      *         removed.
      */
-    protected static List<? extends ILsaMolecule> calculateMatches(final List<IExpression> partialInstance, final boolean duplicateVariables, final List<? extends ILsaMolecule> lsaSpace, final List<? extends ILsaMolecule> alreadyRemoved) {
+    protected static List<ILsaMolecule> calculateMatches(final List<IExpression> partialInstance, final boolean duplicateVariables, final List<ILsaMolecule> lsaSpace, final List<ILsaMolecule> alreadyRemoved) {
         final List<ILsaMolecule> l = new ArrayList<>(lsaSpace.size() - alreadyRemoved.size());
         for (final ILsaMolecule matched : lsaSpace) {
             if (matched.matches(partialInstance, duplicateVariables) && countElements(lsaSpace, matched) > countElements(alreadyRemoved, matched)) {
@@ -86,7 +86,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<? exte
         return l;
     }
 
-    private static <T> int countElements(final Collection<? extends T> l, final T o) {
+    private static <T> int countElements(final Collection<T> l, final T o) {
         int count = 0;
         for (final T t : l) {
             if (t.equals(o)) {
@@ -110,7 +110,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<? exte
      *            method)
      */
     protected static void createMatches(final ILsaMolecule template, final ILsaNode n, final List<Map<FasterString, ITreeNode<?>>> matchesList, final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved) {
-        final List<? extends ILsaMolecule> lsaSpace = n.getLsaSpace();
+        final List<ILsaMolecule> lsaSpace = n.getLsaSpace();
         for (final ILsaMolecule matched : lsaSpace) {
             if (template.matches(matched)) {
                 /*
@@ -143,7 +143,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<? exte
      * @param template
      *            : LsaMolecule template (contain variable names)
      */
-    protected static void updateMap(final Map<FasterString, ITreeNode<?>> map, final Iterable<? extends IExpression> instance, final ILsaMolecule template) {
+    protected static void updateMap(final Map<FasterString, ITreeNode<?>> map, final Iterable<IExpression> instance, final ILsaMolecule template) {
         /*
          * Iterate over inst
          */
@@ -205,7 +205,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<? exte
      *            the list of all the maps that lists the molecules removed from
      *            each node
      */
-    protected static void incorporateNewMatches(final ILsaNode node, final List<? extends ILsaMolecule> otherMatches, final Map<FasterString, ITreeNode<?>> oldMatches, final ILsaMolecule template, final List<Map<FasterString, ITreeNode<?>>> matchesList, final Map<ILsaNode, List<ILsaMolecule>> alreadyRemoved, final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved) {
+    protected static void incorporateNewMatches(final ILsaNode node, final List<ILsaMolecule> otherMatches, final Map<FasterString, ITreeNode<?>> oldMatches, final ILsaMolecule template, final List<Map<FasterString, ITreeNode<?>>> matchesList, final Map<ILsaNode, List<ILsaMolecule>> alreadyRemoved, final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved) {
         for (int j = 1; j < otherMatches.size(); j++) {
             final ILsaMolecule instance = otherMatches.get(j);
             /*
@@ -262,10 +262,10 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<? exte
      *            the list of all the maps that lists the molecules removed from
      *            each node
      */
-    protected static void incorporateNewMatches(final Map<ILsaNode, List<? extends ILsaMolecule>> otherMatchesMap, final Map<FasterString, ITreeNode<?>> oldMatches, final ILsaMolecule template, final List<Map<FasterString, ITreeNode<?>>> matchesList, final Map<ILsaNode, List<ILsaMolecule>> alreadyRemoved, final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved) {
-        for (final Entry<ILsaNode, List<? extends ILsaMolecule>> e : otherMatchesMap.entrySet()) {
+    protected static void incorporateNewMatches(final Map<ILsaNode, List<ILsaMolecule>> otherMatchesMap, final Map<FasterString, ITreeNode<?>> oldMatches, final ILsaMolecule template, final List<Map<FasterString, ITreeNode<?>>> matchesList, final Map<ILsaNode, List<ILsaMolecule>> alreadyRemoved, final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved) {
+        for (final Entry<ILsaNode, List<ILsaMolecule>> e : otherMatchesMap.entrySet()) {
             final ILsaNode node = e.getKey();
-            final List<? extends ILsaMolecule> otherMatches = e.getValue();
+            final List<ILsaMolecule> otherMatches = e.getValue();
             for (final ILsaMolecule instance : otherMatches) {
                 /*
                  * Make copies of the match under analysis, then populate them

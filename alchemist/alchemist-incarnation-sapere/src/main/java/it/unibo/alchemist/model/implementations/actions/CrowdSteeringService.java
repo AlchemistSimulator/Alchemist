@@ -53,7 +53,7 @@ public class CrowdSteeringService extends SAPEREMoveNodeAgent {
      *               the position in the LSA of the distance value 
      *               to be read for identifying the direction of movement
      */
-    public CrowdSteeringService(final Environment<List<? extends ILsaMolecule>> environment, final ILsaNode node, final LsaMolecule molecule, final int idPos, final int distPos) {
+    public CrowdSteeringService(final Environment<List<ILsaMolecule>> environment, final ILsaNode node, final LsaMolecule molecule, final int idPos, final int distPos) {
         super(environment, node);
         addModifiedMolecule(GRADID);
         addModifiedMolecule(FB);
@@ -68,10 +68,10 @@ public class CrowdSteeringService extends SAPEREMoveNodeAgent {
     public void execute() {
         double minGrad = Double.MAX_VALUE;
         final FasterString idValue = getNode().getConcentration(GRADID).get(0).getArg(1).getAST().toFasterString();
-        final Neighborhood<List<? extends ILsaMolecule>> neigh = getLocalNeighborhood();
+        final Neighborhood<List<ILsaMolecule>> neigh = getLocalNeighborhood();
         Position targetPositions = null;
-        Node<List<? extends ILsaMolecule>> bestNode = null;
-        for (final Node<List<? extends ILsaMolecule>> node : neigh.getNeighbors()) {
+        Node<List<ILsaMolecule>> bestNode = null;
+        for (final Node<List<ILsaMolecule>> node : neigh.getNeighbors()) {
             final ILsaNode n = (ILsaNode) node;
             final List<ILsaMolecule> gradList;
             gradList = n.getConcentration(template);

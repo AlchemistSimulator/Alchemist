@@ -148,19 +148,19 @@ public class TestConcurrency {
                 public void execute() {
                 }
                 @Override
-                public List<? extends Action<Object>> getActions() {
+                public List<Action<Object>> getActions() {
                     return Collections.emptyList();
                 }
                 @Override
-                public List<? extends Condition<Object>> getConditions() {
+                public List<Condition<Object>> getConditions() {
                     return Collections.emptyList();
                 }
                 @Override
-                public List<? extends Molecule> getInfluencedMolecules() {
+                public List<Molecule> getInfluencedMolecules() {
                     return Collections.emptyList();
                 }
                 @Override
-                public List<? extends Molecule> getInfluencingMolecules() {
+                public List<Molecule> getInfluencingMolecules() {
                     return Collections.emptyList();
                 }
                 @Override
@@ -188,9 +188,9 @@ public class TestConcurrency {
                     throw new UnsupportedOperationException();
                 }
                 @Override
-                public void setActions(final List<? extends Action<Object>> a) { }
+                public void setActions(final List<Action<Object>> a) { }
                 @Override
-                public void setConditions(final List<? extends Condition<Object>> c) { }
+                public void setConditions(final List<Condition<Object>> c) { }
                 @Override
                 public void update(final Time curTime, final boolean executed, final Environment<Object> env) {
                     tau = tau.sum(new DoubleTime(1));
@@ -291,7 +291,7 @@ public class TestConcurrency {
                     return false;
                 }
                 @Override
-                public Set<? extends Node<Object>> getBetweenRange(final double min, final double max) {
+                public Set<Node<Object>> getBetweenRange(final double min, final double max) {
                     return Collections.emptySet();
                 }
 
@@ -308,7 +308,7 @@ public class TestConcurrency {
                     throw new UnsupportedOperationException();
                 }
                 @Override
-                public Collection<? extends Node<Object>> getNeighbors() {
+                public Collection<Node<Object>> getNeighbors() {
                     return Collections.emptyList();
                 }
                 @Override

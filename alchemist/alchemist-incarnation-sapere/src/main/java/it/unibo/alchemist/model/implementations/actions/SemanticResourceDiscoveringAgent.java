@@ -37,7 +37,7 @@ public class SemanticResourceDiscoveringAgent extends SAPERENeighborAgent {
      * @param gradient the gradient
      * @param distArgPosition the distance argument position
      */
-    public SemanticResourceDiscoveringAgent(final Environment<List<? extends ILsaMolecule>> env, final ILsaNode node, final ILsaMolecule response, final ILsaMolecule gradient, final int distArgPosition) {
+    public SemanticResourceDiscoveringAgent(final Environment<List<ILsaMolecule>> env, final ILsaNode node, final ILsaMolecule response, final ILsaMolecule gradient, final int distArgPosition) {
         super(env, node, response);
         resp = response;
         grad = gradient;
@@ -47,10 +47,10 @@ public class SemanticResourceDiscoveringAgent extends SAPERENeighborAgent {
     @Override
     public void execute() {
         double minGrad = getLSAArgumentAsDouble(getNode().getConcentration(grad).get(0), graDistPos);
-        final Neighborhood<List<? extends ILsaMolecule>> neigh = getLocalNeighborhood();
+        final Neighborhood<List<ILsaMolecule>> neigh = getLocalNeighborhood();
         final List<LsaNode> targetPositions = new ArrayList<LsaNode>();
 
-        for (final Node<List<? extends ILsaMolecule>> node : neigh.getNeighbors()) {
+        for (final Node<List<ILsaMolecule>> node : neigh.getNeighbors()) {
             final LsaNode n = (LsaNode) node;
             final List<ILsaMolecule> gradList;
             gradList = n.getConcentration(grad);

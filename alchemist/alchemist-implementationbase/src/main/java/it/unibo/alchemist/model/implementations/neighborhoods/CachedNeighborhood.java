@@ -150,7 +150,7 @@ public final class CachedNeighborhood<T> implements Neighborhood<T> {
     }
 
     @Override
-    public List<? extends Node<T>> getNeighbors() {
+    public List<Node<T>> getNeighbors() {
         return Collections.unmodifiableList(k);
     }
 

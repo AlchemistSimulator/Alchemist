@@ -33,13 +33,13 @@ public class LsaAscendingGradientDist extends SAPERENeighborAgent {
     private static final ILsaMolecule MOLGRAD = new LsaMolecule("grad, req, Type, Distance, Time");
     private static final ILsaMolecule MOLRESPONSE = new LsaMolecule("response, Req, Ser, MD, D");
     private static final int POS = 3;
-    private final Environment<List<? extends ILsaMolecule>> env;
+    private final Environment<List<ILsaMolecule>> env;
 
     /**
      * @param environment environment
      * @param node node
      */
-    public LsaAscendingGradientDist(final Environment<List<? extends ILsaMolecule>> environment, final ILsaNode node) {
+    public LsaAscendingGradientDist(final Environment<List<ILsaMolecule>> environment, final ILsaNode node) {
         super(environment, node, MOLRESPONSE);
         this.env = environment;
     }
@@ -47,9 +47,9 @@ public class LsaAscendingGradientDist extends SAPERENeighborAgent {
     @Override
     public void execute() {
         double minGrad = getLSAArgumentAsDouble(getNode().getConcentration(MOLGRAD).get(0), POS);
-        final Neighborhood<List<? extends ILsaMolecule>> neigh = env.getNeighborhood(getNode());
+        final Neighborhood<List<ILsaMolecule>> neigh = env.getNeighborhood(getNode());
         final List<LsaNode> targetPositions = new ArrayList<LsaNode>();
-        for (final Node<List<? extends ILsaMolecule>> node : neigh.getNeighbors()) {
+        for (final Node<List<ILsaMolecule>> node : neigh.getNeighbors()) {
             final LsaNode n = (LsaNode) node;
             final List<ILsaMolecule> gradList;
             gradList = n.getConcentration(MOLGRAD);

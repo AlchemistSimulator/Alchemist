@@ -3,7 +3,9 @@ dependencies {
         project(':alchemist-implementationbase'),
         project(':alchemist-interfaces'),
         project(':alchemist-time'),
-        "org.danilopianini:javalib:$javalibVersion",
+        "org.apache.commons:commons-lang3:${lang3Version}",
+        "org.jgrapht:jgrapht-core:1.0.0",
+        "org.danilopianini:jirf:${jirfVersion}",
         "org.reflections:reflections:$reflectionsVersion",
         "org.yaml:snakeyaml:$snakeyamlVersion"
     )

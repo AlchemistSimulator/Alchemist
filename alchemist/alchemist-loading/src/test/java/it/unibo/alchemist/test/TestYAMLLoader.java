@@ -22,6 +22,7 @@ import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.loader.YamlLoader;
 import it.unibo.alchemist.model.implementations.layers.StepLayer;
+import it.unibo.alchemist.model.implementations.timedistributions.AnyRealDistribution;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Layer;
@@ -51,7 +52,7 @@ public class TestYAMLLoader {
                 .setUrls(ClasspathHelper.forPackage("isac"))
                 .setScanners(new ResourcesScanner()));
         reflections.getResources(Pattern.compile(ISAC_REGEX))
-            .parallelStream()
+            .stream()
             .map(r -> "/" + r)
             .forEach(TestYAMLLoader::testNoVar);
     }
@@ -87,6 +88,27 @@ public class TestYAMLLoader {
     }
 
     /**
+     * Test variables with same structure but different names.
+     */
+    @Test
+    public void testVariableContentClash() {
+        assertNotNull(testNoVar("/synthetic/varcontentclash.yml"));
+    }
+
+    /**
+     * Tests building a custom implementation of time distribution.
+     */
+    @Test
+    public void testAnyRealDistribution() {
+        final Environment<?> env = testNoVar("/synthetic/anyrealdistribution.yml");
+        env.forEach(n -> {
+            n.forEach(r -> {
+                assertTrue(r.getTimeDistribution() instanceof AnyRealDistribution);
+            });
+        });
+    }
+
+    /**
      * Test loading layer classes.
      */
     @Test
@@ -108,6 +130,13 @@ public class TestYAMLLoader {
 //            it.unibo.alchemist.boundary.gui.SingleRunGUI.make(sim);
 //        }
         sim.run();
+        sim.getError().ifPresent(ex -> {
+            try {
+                throw ex;
+            } catch (Throwable e) { // NOPMD
+                throw new IllegalStateException(e);
+            }
+        });
         return env;
     }
 

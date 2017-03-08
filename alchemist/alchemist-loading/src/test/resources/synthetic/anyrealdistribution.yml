@@ -1,0 +1,16 @@
+incarnation: sapere
+
+displacements:
+  - in:
+      type: Point
+      parameters: [0, 0]
+    programs:
+      -
+        - time-distribution:
+            type: AnyRealDistribution
+            parameters: [weibull, [1, 1]]
+          type:
+            Event
+          conditions:
+            - "{a}"
+          actions: []

@@ -9,8 +9,7 @@ variables:
 environment:
   type: Continuous2DEnvironment
   parameters: []
-  layers:
-    - type: StepLayer
-      parameters: [*myvar, *myvar, *myvar2, *myvar2]
-      molecule: a
-      concentration: [[*myvar, *myvar2], [*myvar, *myvar2]]
+
+network-model:
+  type: it.unibo.alchemist.test.util.DummyRule
+  parameters: [[*myvar, *myvar2], [*myvar, *myvar2]]

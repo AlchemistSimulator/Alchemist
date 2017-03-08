@@ -24,6 +24,7 @@ import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+
 import org.danilopianini.lang.util.FasterString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -75,7 +77,7 @@ public class LsaStandardAction extends LsaAbstractAction {
      */
     public LsaStandardAction(final ILsaMolecule m, final ILsaNode n, final RandomGenerator random) {
         super(n, Arrays.asList(new ILsaMolecule[] { m }));
-        mol = m;
+        mol = Objects.requireNonNull(m);
         rand = random;
         final String molString = mol.toString();
         initRand = molString.contains(SYN_RAND);

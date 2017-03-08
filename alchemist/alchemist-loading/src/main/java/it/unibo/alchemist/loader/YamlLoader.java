@@ -85,14 +85,11 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
  */
 public class YamlLoader implements Loader {
 
-    /**
-     * 
-     */
-    private static final String ALCHEMIST_PACKAGE_ROOT = "it.unibo.alchemist.";
-    private static final String SYNTAX_NAME = "YamlSyntax";
-    private static final ResourceBundle SYNTAX = getBundle(YamlLoader.class.getPackage().getName() + '.' + SYNTAX_NAME, Locale.US);
+    private static final Logger L = LoggerFactory.getLogger(YamlLoader.class);
+    private static final ResourceBundle SYNTAX = getBundle(YamlLoader.class.getPackage().getName() + ".YamlSyntax", Locale.US);
     private static final String ACTIONS = SYNTAX.getString("actions");
     private static final String AGGREGATORS = SYNTAX.getString("aggregators");
+    private static final String ALCHEMIST_PACKAGE_ROOT = "it.unibo.alchemist.";
     private static final String CONCENTRATION = SYNTAX.getString("concentration");
     private static final String CONDITIONS = SYNTAX.getString("conditions");
     private static final String CONTENTS = SYNTAX.getString("contents");
@@ -105,14 +102,15 @@ public class YamlLoader implements Loader {
     private static final String INCARNATION = SYNTAX.getString("incarnation");
     private static final String LAYERS = SYNTAX.getString("layers");
     private static final String LINKING_RULE = SYNTAX.getString("linking-rule");
-    private static final String MIN = SYNTAX.getString("min");
     private static final String MAX = SYNTAX.getString("max");
-    private static final String MOLECULE = SYNTAX.getString("molecule");
+    private static final String MIN = SYNTAX.getString("min");
+    private static final String MODEL_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "model.implementations.";
     private static final String NAME = SYNTAX.getString("name");
+    private static final String MOLECULE = SYNTAX.getString("molecule");
     private static final String NODE = SYNTAX.getString("node");
     private static final String NODES = SYNTAX.getString("nodes");
-    private static final String PARAMETER = SYNTAX.getString("parameter");
     private static final String PARAMS = SYNTAX.getString("parameters");
+    private static final String PARAMETER = SYNTAX.getString("parameter");
     private static final String PROGRAMS = SYNTAX.getString("programs");
     private static final String PROPERTY = SYNTAX.getString("property");
     private static final String REACTION = SYNTAX.getString("reaction");
@@ -123,10 +121,40 @@ public class YamlLoader implements Loader {
     private static final String TIME = SYNTAX.getString("time");
     private static final String TIMEDISTRIBUTION = SYNTAX.getString("time-distribution");
     private static final String TYPE = SYNTAX.getString("type");
-    private static final String VALUES = SYNTAX.getString("values");
+    private static final String UNCHECKED = "unchecked";
     private static final String VALUE_FILTER = SYNTAX.getString("value-filter");
+    private static final String VALUES = SYNTAX.getString("values");
     private static final String VARIABLES = SYNTAX.getString("variables");
-    private static final String MODEL_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "model.implementations.";
+    private static final Map<Class<?>, Map<String, Class<?>>> DEFAULT_MANDATORY_PARAMETERS = ImmutableMap.<Class<?>, Map<String, Class<?>>>builder()
+            .put(Layer.class, ImmutableMap.of(TYPE, CharSequence.class, MOLECULE, CharSequence.class))
+            .build();
+    private static final Map<Class<?>, Map<String, Class<?>>> DEFAULT_OPTIONAL_PARAMETERS = ImmutableMap.<Class<?>, Map<String, Class<?>>>builder()
+            .put(Variable.class, ImmutableMap.of(PARAMS, List.class, NAME, CharSequence.class))
+            .put(DependentVariable.class, ImmutableMap.of(PARAMS, List.class, NAME, CharSequence.class))
+            .put(Reaction.class, ImmutableMap.of(PARAMS, List.class, TIMEDISTRIBUTION, Object.class, ACTIONS, List.class, CONDITIONS, List.class))
+            .build();
+    private static final BuilderConfiguration<DependentVariable> DEPENDENT_VAR_CONFIG = new BuilderConfiguration<>(
+            ImmutableMap.of(FORMULA, CharSequence.class), ImmutableMap.of(NAME, CharSequence.class), makeBaseFactory(),
+            m -> new DependentScriptVariable(m.get(FORMULA).toString()));
+    private static final BuilderConfiguration<FilteringPolicy> FILTERING_CONFIG = new BuilderConfiguration<>(
+            ImmutableMap.of(NAME, CharSequence.class), ImmutableMap.of(), makeBaseFactory(), m -> CommonFilters.fromString(m.get(NAME).toString()));
+    private static final TypeToken<List<Number>> LIST_NUMBER = new TypeToken<List<Number>>() {
+        private static final long serialVersionUID = 1L;
+    };
+    private static final TypeToken<Map<String, Object>> MAP_STRING_OBJECT = new TypeToken<Map<String, Object>>() {
+        private static final long serialVersionUID = 1L;
+    };
+    private static final BuilderConfiguration<Extractor> NAMED_EXTRACTOR_CONFIG = new BuilderConfiguration<>(
+            ImmutableMap.of(NAME, CharSequence.class), ImmutableMap.of(), makeBaseFactory(), m -> {
+                final String name = m.get(NAME).toString();
+                if (TIME.equalsIgnoreCase(name)) {
+                    return new it.unibo.alchemist.loader.export.Time();
+                }
+                if (NODES.equalsIgnoreCase(name)) {
+                    return new NumberOfNodes();
+                }
+                throw new IllegalAlchemistYAMLException("Invalid named " + EXPORT + ' ' + name);
+            });
     private static final Map<Class<?>, String> PACKAGE_ROOTS = ImmutableMap.<Class<?>, String>builder()
             .put(Variable.class, ALCHEMIST_PACKAGE_ROOT + "loader.variables.")
             .put(DependentVariable.class, ALCHEMIST_PACKAGE_ROOT + "loader.variables.")
@@ -144,68 +172,14 @@ public class YamlLoader implements Loader {
             .put(Molecule.class, MODEL_PACKAGE_ROOT + "molecules.")
             .put(Concentration.class, MODEL_PACKAGE_ROOT + "concentrations.")
             .build();
-    private static final Map<Class<?>, Map<String, Class<?>>> DEFAULT_MANDATORY_PARAMETERS = ImmutableMap.<Class<?>, Map<String, Class<?>>>builder()
-            .put(Layer.class, ImmutableMap.of(TYPE, CharSequence.class, MOLECULE, CharSequence.class))
-            .build();
-    private static final Map<Class<?>, Map<String, Class<?>>> DEFAULT_OPTIONAL_PARAMETERS = ImmutableMap.<Class<?>, Map<String, Class<?>>>builder()
-            .put(Variable.class, ImmutableMap.of(PARAMS, List.class, NAME, CharSequence.class))
-            .put(DependentVariable.class, ImmutableMap.of(PARAMS, List.class, NAME, CharSequence.class))
-            .put(Reaction.class, ImmutableMap.of(PARAMS, List.class, TIMEDISTRIBUTION, Object.class, ACTIONS, List.class, CONDITIONS, List.class))
-            .build();
-    private static final Logger L = LoggerFactory.getLogger(YamlLoader.class);
-    private static final String UNCHECKED = "unchecked";
-    private static final TypeToken<List<Number>> LIST_NUMBER = new TypeToken<List<Number>>() {
-        private static final long serialVersionUID = 1L;
-    };
-    private static final TypeToken<Map<String, Object>> MAP_STRING_OBJECT = new TypeToken<Map<String, Object>>() {
-        private static final long serialVersionUID = 1L;
-    };
-    private final Map<String, Object> contents;
     private final Map<String, Double> constants;
-    private final Map<Map<String, Object>, String> reverseLookupTable;
-    private final Map<String, Variable> variables;
+    private final Map<String, Object> contents;
     private final Map<String, DependentVariable> depVariables;
     private final List<Extractor> extractors;
-    private static final BuilderConfiguration<DependentVariable> DEPENDENT_VAR_CONFIG = new BuilderConfiguration<>(
-            ImmutableMap.of(FORMULA, CharSequence.class), ImmutableMap.of(NAME, CharSequence.class), makeBaseFactory(),
-            m -> new DependentScriptVariable(m.get(FORMULA).toString()));
-    private static final BuilderConfiguration<FilteringPolicy> FILTERING_CONFIG = new BuilderConfiguration<>(
-            ImmutableMap.of(NAME, CharSequence.class), ImmutableMap.of(), makeBaseFactory(), m -> CommonFilters.fromString(m.get(NAME).toString()));
-    private static final BuilderConfiguration<Extractor> NAMED_EXTRACTOR_CONFIG = new BuilderConfiguration<>(
-            ImmutableMap.of(NAME, CharSequence.class), ImmutableMap.of(), makeBaseFactory(), m -> {
-                final String name = m.get(NAME).toString();
-                if (TIME.equalsIgnoreCase(name)) {
-                    return new it.unibo.alchemist.loader.export.Time();
-                }
-                if (NODES.equalsIgnoreCase(name)) {
-                    return new NumberOfNodes();
-                }
-                throw new IllegalAlchemistYAMLException("Invalid named " + EXPORT + ' ' + name);
-            });
-
-    private static Factory makeBaseFactory() {
-        final Factory factory = new FactoryBuilder()
-                .withNarrowingConversions()
-                .withArrayBooleanIntConversions()
-                .withArrayListConversions(String[].class, Number[].class)
-                .withArrayNarrowingConversions()
-                .build();
-        factory.registerImplicit(Number.class, CharSequence.class, Number::toString);
-        factory.registerImplicit(double.class, Time.class, DoubleTime::new);
-        factory.registerImplicit(List.class, Number[].class, l -> ((List<?>) l).stream().map(e -> factory.convertOrFail(Number.class, e)).toArray(Number[]::new));
-        return factory;
-    }
-
-    private static Factory makeBaseFactory(@Nonnull final Incarnation<?> incarnation) {
-        assert incarnation != null;
-        final Factory factory = makeBaseFactory();
-        factory.registerSingleton(Incarnation.class, incarnation);
-        factory.registerImplicit(CharSequence.class, Molecule.class, s -> incarnation.createMolecule(s.toString()));
-        return factory;
-    }
-
-
     private transient Incarnation<?> incarnation;
+    private final Map<Map<String, Object>, String> reverseLookupTable;
+
+    private final Map<String, Variable> variables;
 
     /**
      * @param source
@@ -214,6 +188,7 @@ public class YamlLoader implements Loader {
     public YamlLoader(final InputStream source) {
         this(new BufferedReader(new InputStreamReader(source, Charsets.UTF_8)));
     }
+
 
     /**
      * @param source
@@ -368,47 +343,6 @@ public class YamlLoader implements Loader {
         return Collections.unmodifiableMap(variables);
     }
 
-    private static Function<Map<String, Object>, RandomGenerator> rngMaker(final Factory factory, final String seed) {
-        return m -> Optional.ofNullable(m.get(seed))
-                .map(o -> factory.build(MersenneTwister.class, o))
-                .orElse(new MersenneTwister(0));
-    }
-
-    private Builder<RandomGenerator> rngBuilder(final Factory factory, final String seed) {
-        final BuilderConfiguration<RandomGenerator> config = new BuilderConfiguration<>(
-                emptyMap(),
-                ImmutableMap.of(SCENARIO_SEED, Number.class, SIMULATION_SEED, Number.class),
-                factory, rngMaker(factory, seed));
-        return new Builder<>(RandomGenerator.class, ImmutableSet.of(config), factory);
-    }
-
-    private static <T> BuilderConfiguration<T> emptyConfig(final Factory factory, final Supplier<T> supplier) {
-        return new BuilderConfiguration<>(emptyMap(), emptyMap(), factory, m -> supplier.get());
-    }
-
-    private static <T> BuilderConfiguration<T> singleParamConfig(final Factory factory, final Function<Object, T> supplier) {
-        return new BuilderConfiguration<>(ImmutableMap.of(PARAMETER, Object.class), emptyMap(), factory, m -> supplier.apply(m.get(PARAMETER)));
-    }
-
-    private static <T> T cast(final Factory factory, final TypeToken<T> clazz, final Object target, final String message) {
-        return cast(factory, clazz.getRawType(), target, message);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T> T cast(final Factory factory, final Class<? super T> clazz, final Object target, final String what) {
-        assert factory != null;
-        assert clazz != null;
-        assert target != null;
-        assert what != null;
-        return (T) factory.convert(clazz, target).orElseThrow(() -> new IllegalAlchemistYAMLException(target + " is not a valid " + what + " descriptor"));
-    }
-
-    private static List<?> listCast(final Factory factory, final Object target, final String what) {
-        assert factory != null;
-        assert what != null;
-        return target == null ? emptyList() : cast(factory, List.class, target, what + " list");
-    }
-
     @Override
     public <T> Environment<T> getWith(final Map<String, Double> values) {
         if (values.size() > variables.size()) {
@@ -458,13 +392,13 @@ public class YamlLoader implements Loader {
         }
         L.debug("Variable bindings: {}", actualVars);
         assert actualVars.size() == constants.size() + reverseLookupTable.size();
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings(UNCHECKED)
         final Map<String, Object> contents = (Map<String, Object>) recursivelyResolveVariables(this.contents, actualVars);
         /*
          * Factory
          */
         final Factory factory = makeBaseFactory(incarnation);
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings(UNCHECKED)
         final Incarnation<T> incarnation = (Incarnation<T>) this.incarnation;
         /*
          * RNG
@@ -617,10 +551,6 @@ public class YamlLoader implements Loader {
         ois.defaultReadObject();
         incarnation = SupportedIncarnations.get(ois.readObject().toString()).get();
     }
-    private void writeObject(final ObjectOutputStream oos) throws IOException {
-        oos.defaultWriteObject();
-        oos.writeObject(incarnation.toString());
-    }
 
     private <T> Object recursivelyResolveVariables(final Object o, final Map<String, Double> variables) {
         if (reverseLookupTable.isEmpty() || variables.isEmpty()) {
@@ -656,15 +586,81 @@ public class YamlLoader implements Loader {
         return o;
     }
 
+    private Builder<RandomGenerator> rngBuilder(final Factory factory, final String seed) {
+        final BuilderConfiguration<RandomGenerator> config = new BuilderConfiguration<>(
+                emptyMap(),
+                ImmutableMap.of(SCENARIO_SEED, Number.class, SIMULATION_SEED, Number.class),
+                factory, rngMaker(factory, seed));
+        return new Builder<>(RandomGenerator.class, ImmutableSet.of(config), factory);
+    }
+
+    private void writeObject(final ObjectOutputStream oos) throws IOException {
+        oos.defaultWriteObject();
+        oos.writeObject(incarnation.toString());
+    }
+
+    @SuppressWarnings(UNCHECKED)
+    private static <T> T cast(final Factory factory, final Class<? super T> clazz, final Object target, final String what) {
+        assert factory != null;
+        assert clazz != null;
+        assert target != null;
+        assert what != null;
+        return (T) factory.convert(clazz, target).orElseThrow(() -> new IllegalAlchemistYAMLException(target + " is not a valid " + what + " descriptor"));
+    }
+
+    private static <T> T cast(final Factory factory, final TypeToken<T> clazz, final Object target, final String message) {
+        return cast(factory, clazz.getRawType(), target, message);
+    }
+
+    private static <T> BuilderConfiguration<T> emptyConfig(final Factory factory, final Supplier<T> supplier) {
+        return new BuilderConfiguration<>(emptyMap(), emptyMap(), factory, m -> supplier.get());
+    }
+
+    private static List<?> listCast(final Factory factory, final Object target, final String what) {
+        assert factory != null;
+        assert what != null;
+        return target == null ? emptyList() : cast(factory, List.class, target, what + " list");
+    }
+
+    private static Factory makeBaseFactory() {
+        final Factory factory = new FactoryBuilder()
+                .withNarrowingConversions()
+                .withArrayBooleanIntConversions()
+                .withArrayListConversions(String[].class, Number[].class)
+                .withArrayNarrowingConversions()
+                .build();
+        factory.registerImplicit(Number.class, CharSequence.class, Number::toString);
+        factory.registerImplicit(double.class, Time.class, DoubleTime::new);
+        factory.registerImplicit(List.class, Number[].class, l -> ((List<?>) l).stream().map(e -> factory.convertOrFail(Number.class, e)).toArray(Number[]::new));
+        return factory;
+    }
+
+    private static Factory makeBaseFactory(@Nonnull final Incarnation<?> incarnation) {
+        assert incarnation != null;
+        final Factory factory = makeBaseFactory();
+        factory.registerSingleton(Incarnation.class, incarnation);
+        factory.registerImplicit(CharSequence.class, Molecule.class, s -> incarnation.createMolecule(s.toString()));
+        return factory;
+    }
+    private static Function<Map<String, Object>, RandomGenerator> rngMaker(final Factory factory, final String seed) {
+        return m -> Optional.ofNullable(m.get(seed))
+                .map(o -> factory.build(MersenneTwister.class, o))
+                .orElse(new MersenneTwister(0));
+    }
+
+    private static <T> BuilderConfiguration<T> singleParamConfig(final Factory factory, final Function<Object, T> supplier) {
+        return new BuilderConfiguration<>(ImmutableMap.of(PARAMETER, Object.class), emptyMap(), factory, m -> supplier.apply(m.get(PARAMETER)));
+    }
+
     private class Builder<T> {
         private final @Nonnull Class<? super T> clazz;
         private final @Nonnull Set<BuilderConfiguration<T>> supportedConfigs;
-        public Builder(@Nonnull final Class<? super T> clazz, @Nonnull final BuilderConfiguration<T> supportedConfig, final Factory factory) {
+        Builder(@Nonnull final Class<? super T> clazz, @Nonnull final BuilderConfiguration<T> supportedConfig, final Factory factory) {
             this(clazz, ImmutableSet.of(supportedConfig), factory);
         }
 
-        @SuppressWarnings("unchecked")
-        public Builder(@Nonnull final Class<? super T> clazz, @Nonnull final Set<BuilderConfiguration<T>> supportedConfigs, final Factory factory) {
+        @SuppressWarnings(UNCHECKED)
+        Builder(@Nonnull final Class<? super T> clazz, @Nonnull final Set<BuilderConfiguration<T>> supportedConfigs, final Factory factory) {
             this.clazz = clazz;
             final String packageRoot = PACKAGE_ROOTS.containsKey(clazz) ? PACKAGE_ROOTS.get(clazz) : "";
             this.supportedConfigs = Sets.newLinkedHashSet(supportedConfigs);
@@ -697,7 +693,7 @@ public class YamlLoader implements Loader {
         }
         public T build(final Object o) {
             final Object realObj = o == null ? emptyMap() : o;
-            Collection<BuilderConfiguration<T>> configs = supportedConfigs.stream()
+            final Collection<BuilderConfiguration<T>> configs = supportedConfigs.stream()
                     .filter(c -> c.matches(realObj)).collect(Collectors.toList());
             if (configs.isEmpty()) {
                 throw new IllegalAlchemistYAMLException("No configuration among " + supportedConfigs + " is applicable for building a " + clazz.getName() + " with " + o);
@@ -710,11 +706,11 @@ public class YamlLoader implements Loader {
     }
 
     private static class BuilderConfiguration<T> {
-        private final @Nonnull Map<String, Class<?>> mandatoryFields;
-        private final @Nonnull Map<String, Class<?>> optionalFields;
         private final @Nonnull Function<Map<String, Object>, T> buildFunction;
         private final @Nonnull Factory factory;
-        public BuilderConfiguration(@Nonnull final Map<String, Class<?>> mandatory,
+        private final @Nonnull Map<String, Class<?>> mandatoryFields;
+        private final @Nonnull Map<String, Class<?>> optionalFields;
+        BuilderConfiguration(@Nonnull final Map<String, Class<?>> mandatory,
                 @Nonnull final Map<String, Class<?>> optional,
                 @Nonnull final Factory factory,
                 @Nonnull final Function<Map<String, Object>, T> converter) {
@@ -722,21 +718,6 @@ public class YamlLoader implements Loader {
             this.optionalFields = optional;
             this.buildFunction = converter;
             this.factory = factory;
-        }
-        public boolean matches(final Object o) {
-            return ifMap(o, m -> 
-                m.keySet().containsAll(mandatoryFields.keySet())
-                && Sets.union(mandatoryFields.keySet(), optionalFields.keySet()).containsAll(m.keySet()),
-                () -> false
-            );
-        }
-        @Override
-        public String toString() {
-            return "{mandatory=" + toString(mandatoryFields) + ", optional=" + toString(optionalFields) + "}";
-        }
-        private static String toString(final Map<String, Class<?>> m) {
-            return '[' + (m.isEmpty() ? "" : m.entrySet().stream()
-                    .map(e -> e.getKey() + ':' + e.getValue().getName()).collect(Collectors.joining(", "))) + ']';
         }
         public T build(@Nonnull final Object o) {
             assert matches(o);
@@ -767,6 +748,21 @@ public class YamlLoader implements Loader {
                 return todo.apply(ImmutableMap.of(PARAMETER, o));
             }
             return otherwise.get();
+        }
+        public boolean matches(final Object o) {
+            return ifMap(o, m -> 
+                m.keySet().containsAll(mandatoryFields.keySet())
+                && Sets.union(mandatoryFields.keySet(), optionalFields.keySet()).containsAll(m.keySet()),
+                () -> false
+            );
+        }
+        @Override
+        public String toString() {
+            return "{mandatory=" + toString(mandatoryFields) + ", optional=" + toString(optionalFields) + "}";
+        }
+        private static String toString(final Map<String, Class<?>> m) {
+            return '[' + (m.isEmpty() ? "" : m.entrySet().stream()
+                    .map(e -> e.getKey() + ':' + e.getValue().getName()).collect(Collectors.joining(", "))) + ']';
         }
     }
 }

@@ -248,7 +248,7 @@ public class YamlLoader implements Loader {
             throw new IllegalAlchemistYAMLException("The " + VARIABLES + " section has an invalid format.");
         }
         final Map<String, Map<String, Object>> originalVars = Optional.ofNullable((Map<String, Map<String, Object>>) varObj).orElse(emptyMap());
-        for (Entry<String, Map<String, Object>> varEntry : originalVars.entrySet()) {
+        for (final Entry<String, Map<String, Object>> varEntry : originalVars.entrySet()) {
             varEntry.getValue().put(NAME, varEntry.getKey());
         }
         L.debug("Variables: {}", originalVars);
@@ -360,7 +360,7 @@ public class YamlLoader implements Loader {
 
     @Override
     public <T> Environment<T> getDefault() {
-        return getWith(Collections.emptyMap());
+        return getWith(emptyMap());
     }
 
     @Override
@@ -374,7 +374,7 @@ public class YamlLoader implements Loader {
                 .orElse(new MersenneTwister(0));
     }
 
-    private Builder<RandomGenerator> rngBuilder(final Factory factory, final String seed, final Map<String, Double> actualVars) {
+    private Builder<RandomGenerator> rngBuilder(final Factory factory, final String seed) {
         final BuilderConfiguration<RandomGenerator> config = new BuilderConfiguration<>(
                 emptyMap(),
                 ImmutableMap.of(SCENARIO_SEED, Number.class, SIMULATION_SEED, Number.class),
@@ -470,8 +470,8 @@ public class YamlLoader implements Loader {
          * RNG
          */
         final Object seedObj = contents.get(SEEDS);
-        final RandomGenerator scenarioRng = rngBuilder(factory, SCENARIO_SEED, actualVars).build(seedObj);
-        final RandomGenerator simRng = rngBuilder(factory, SIMULATION_SEED, actualVars).build(seedObj);
+        final RandomGenerator scenarioRng = rngBuilder(factory, SCENARIO_SEED).build(seedObj);
+        final RandomGenerator simRng = rngBuilder(factory, SIMULATION_SEED).build(seedObj);
         factory.registerSingleton(RandomGenerator.class, scenarioRng);
         /*
          * Environment

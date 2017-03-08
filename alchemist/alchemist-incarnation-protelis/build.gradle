@@ -9,7 +9,6 @@ dependencies {
     testCompile(
         project(':alchemist-engine'),
         project(':alchemist-loading'),
-        "it.unibo.alchemist:alchemist.protelisdsl:$protelisdslVersion"
     )
 }
 

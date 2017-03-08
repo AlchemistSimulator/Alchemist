@@ -4,10 +4,19 @@ import java.util.List;
 
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
 
+/**
+ * @param <T>
+ */
 public class DummyRule<T> extends NoLinks<T> {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * @param param1
+     *            p1
+     * @param param2
+     *            p2
+     */
     public DummyRule(final List<Double> param1, final List<Double> param2) {
         check(param1);
         check(param2);
@@ -21,7 +30,7 @@ public class DummyRule<T> extends NoLinks<T> {
 
     private static void check(final List<Double> l) {
         checkNot(l.isEmpty());
-        for (final Double d: l) {
+        for (final Object d: l) {
             checkNot(!(d instanceof Number));
         }
     }

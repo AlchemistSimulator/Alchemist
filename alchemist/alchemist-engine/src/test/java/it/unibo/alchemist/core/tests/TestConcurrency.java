@@ -225,7 +225,6 @@ public class TestConcurrency {
             public int getId() {
                 return 0;
             }
-            @SuppressWarnings("unchecked")
             @Override
             public List<Reaction<Object>> getReactions() {
                 return Lists.<Reaction<Object>>newArrayList(reaction);
@@ -329,7 +328,6 @@ public class TestConcurrency {
         public Node<Object> getNodeByID(final int id) {
             return node;
         }
-        @SuppressWarnings("unchecked")
         @Override
         public Collection<Node<Object>> getNodes() {
             return Lists.<Node<Object>>newArrayList(node);

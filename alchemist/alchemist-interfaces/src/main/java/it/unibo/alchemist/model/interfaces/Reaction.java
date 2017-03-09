@@ -62,7 +62,7 @@ public interface Reaction<T> extends Comparable<Reaction<T>>, Serializable {
      *         a reference. It will depend on implementations. Please be careful
      *         when you modify this list.
      */
-    List<? extends Action<T>> getActions();
+    List<Action<T>> getActions();
 
     /**
      * @return The list of {@link Condition}s of the {@link Reaction}. There is
@@ -70,7 +70,7 @@ public interface Reaction<T> extends Comparable<Reaction<T>>, Serializable {
      *         or a reference. It will depend on implementations. Please be
      *         careful when you modify this list.
      */
-    List<? extends Condition<T>> getConditions();
+    List<Condition<T>> getConditions();
 
     /**
      * @return The list of molecules whose concentration may change after the
@@ -78,7 +78,7 @@ public interface Reaction<T> extends Comparable<Reaction<T>>, Serializable {
      *         will influence every other reaction with compatible context,
      *         regardless the molecules involved.
      */
-    List<? extends Molecule> getInfluencedMolecules();
+    List<Molecule> getInfluencedMolecules();
 
     /**
      * @return The list of {@link Molecule}s whose concentration may affect the
@@ -86,7 +86,7 @@ public interface Reaction<T> extends Comparable<Reaction<T>>, Serializable {
      *         that it is influenced every other reaction with compatible
      *         context, regardless the molecules involved.
      */
-    List<? extends Molecule> getInfluencingMolecules();
+    List<Molecule> getInfluencingMolecules();
 
     /**
      * @return The widest {@link Context} among {@link Condition}s, namely the
@@ -135,7 +135,7 @@ public interface Reaction<T> extends Comparable<Reaction<T>>, Serializable {
      * @param a
      *            the list of actions for this reaction
      */
-    void setActions(List<? extends Action<T>> a);
+    void setActions(List<Action<T>> a);
 
     /**
      * Sets the {@link Condition}s list. Some implementations may not allow to
@@ -144,7 +144,7 @@ public interface Reaction<T> extends Comparable<Reaction<T>>, Serializable {
      * @param c
      *            the list of conditions for this action
      */
-    void setConditions(List<? extends Condition<T>> c);
+    void setConditions(List<Condition<T>> c);
 
     /**
      * Updates the scheduling of this reaction.

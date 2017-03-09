@@ -14,7 +14,7 @@ import java.util.List;
  * Interface for an LSA Node. Avoids the crappy casts.
  * 
  */
-public interface ILsaNode extends Node<List<? extends ILsaMolecule>> {
+public interface ILsaNode extends Node<List<ILsaMolecule>> {
 
     /**
      * Adds an instance of ILsaMolecule in the node's LsaSpace.

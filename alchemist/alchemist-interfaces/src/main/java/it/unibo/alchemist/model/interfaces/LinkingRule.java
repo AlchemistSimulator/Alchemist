@@ -28,7 +28,7 @@ public interface LinkingRule<T> extends Serializable {
      *            the node's environment
      * @return a neighborhood
      */
-    Neighborhood<T> computeNeighborhood(final Node<T> center, Environment<T> env);
+    Neighborhood<T> computeNeighborhood(Node<T> center, Environment<T> env);
 
     /**
      * Some rules may require to be evaluated against multiple nodes until the

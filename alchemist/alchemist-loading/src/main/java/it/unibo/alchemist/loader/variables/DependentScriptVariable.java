@@ -29,6 +29,7 @@ public class DependentScriptVariable implements DependentVariable {
     private static final String RANDOM = "RANDOM";
     private static final String RANDOM_REGEX = "\\$" + RANDOM;
     private final String script;
+    private final Number result;
 
     /**
      * @param formula
@@ -38,10 +39,28 @@ public class DependentScriptVariable implements DependentVariable {
      */
     public DependentScriptVariable(final String formula) {
         this.script = formula;
+        result = null;
+    }
+
+    /**
+     * Alternative constructor that supports making this variable a simple
+     * wrapper around a numeric value, In this case, no Javascript
+     * interpretation is used, the result is just returned back as double.
+     * 
+     * @param value
+     *            the value
+     */
+    public DependentScriptVariable(final Number value) {
+        this.script = null;
+        result = value;
     }
 
     @Override
     public double getWith(final Map<String, Double> variables) {
+        if (script == null) {
+            assert result != null;
+            return result.doubleValue();
+        }
         /*
          * 1) Sort variable names by decreasing length.
          * 2) Replace each name with with value in the script
@@ -60,7 +79,14 @@ public class DependentScriptVariable implements DependentVariable {
             formula = formula.replaceAll("\\$" + var, Double.toString(variables.get(var)));
         }
         try {
-            return ((Number) ENGINE.eval(formula)).doubleValue();
+            final Object result = ENGINE.eval(formula);
+            if (result instanceof Number) {
+                return ((Number) result).doubleValue();
+            }
+            if (result instanceof Boolean) {
+                return (Boolean) result ? 1 : 0;
+            }
+            throw new IllegalStateException("The script return value (" + result + ": " + result.getClass().getSimpleName() + ") can't get converted to a Java Number");
         } catch (final ScriptException | ClassCastException e) {
             throw new IllegalStateException("The expression engine could not perform the requested operation. " + script
                     + " got transformed in " + formula

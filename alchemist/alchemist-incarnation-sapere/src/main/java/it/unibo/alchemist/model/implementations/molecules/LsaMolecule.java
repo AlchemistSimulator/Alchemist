@@ -166,7 +166,7 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
 
     private LsaMolecule(final List<IExpression> listArgs, final FasterString hash, final boolean dup, final boolean isInstance) {
         super(hash);
-        args = listArgs;
+        args = Collections.unmodifiableList(listArgs);
         duplicateVars = dup;
         instance = isInstance;
     }
@@ -206,7 +206,7 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
      */
     public LsaMolecule(final String argsString, final String description) {
         super(buildString(buildArgsDesc(argsString, description)));
-        args = buildArgsDesc(argsString, description);
+        args = Collections.unmodifiableList(buildArgsDesc(argsString, description));
         duplicateVars = selfVariableUsed(args);
         instance = computeInstance(args);
     }

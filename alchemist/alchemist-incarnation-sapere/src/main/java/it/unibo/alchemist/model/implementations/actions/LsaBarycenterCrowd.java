@@ -48,7 +48,7 @@ public class LsaBarycenterCrowd extends SAPEREMoveNodeAgent {
      * @param p
      *            probability for an agent of follow the right direction
      */
-    public LsaBarycenterCrowd(final Environment<List<? extends ILsaMolecule>> aEnvironment, final ILsaNode node, final RandomGenerator aRandom, final Double p) {
+    public LsaBarycenterCrowd(final Environment<List< ILsaMolecule>> aEnvironment, final ILsaNode node, final RandomGenerator aRandom, final Double p) {
         super(aEnvironment, node);
         random = aRandom;
         probMoving = p;
@@ -61,13 +61,13 @@ public class LsaBarycenterCrowd extends SAPEREMoveNodeAgent {
         final double myy = mypos.getCartesianCoordinates()[1];
         double x = 0;
         double y = 0;
-        final Neighborhood<List<? extends ILsaMolecule>> neigh = getLocalNeighborhood();
+        final Neighborhood<List< ILsaMolecule>> neigh = getLocalNeighborhood();
         final List<Position> poss = new ArrayList<Position>();
         double minBarycenterField = MIN;
-        for (final Node<List<? extends ILsaMolecule>> nodo : neigh.getNeighbors()) {
+        for (final Node<List< ILsaMolecule>> nodo : neigh.getNeighbors()) {
             final ILsaNode n = (ILsaNode) nodo;
             final Position pos = getPosition(n);
-            List<? extends ILsaMolecule> barycenterList;
+            List< ILsaMolecule> barycenterList;
             try {
                 barycenterList = n.getConcentration(new LsaMolecule("barycenter,V,T"));
             } catch (IndexOutOfBoundsException e) {

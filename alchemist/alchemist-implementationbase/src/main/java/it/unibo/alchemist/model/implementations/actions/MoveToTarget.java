@@ -58,10 +58,10 @@ public class MoveToTarget<T> extends AbstractConfigurableMoveNode<T> {
 
     @Override
     protected Position getDestination(final Position current, final Position target, final double maxWalk) {
-        if (current.getDistanceTo(target) < maxWalk) {
-            return target;
-        }
         final Position vector = target.subtract(current);
+        if (current.getDistanceTo(target) < maxWalk) {
+            return vector;
+        }
         final double angle = atan2(vector.getCoordinate(1), vector.getCoordinate(0));
         return new Continuous2DEuclidean(maxWalk * cos(angle), maxWalk * sin(angle));
     }

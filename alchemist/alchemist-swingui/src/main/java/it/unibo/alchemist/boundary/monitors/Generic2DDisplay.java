@@ -24,6 +24,8 @@ import java.awt.event.WindowEvent;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -38,12 +40,14 @@ import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
 
 import org.apache.commons.math3.util.Pair;
+import org.danilopianini.lang.LangUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,8 +63,6 @@ import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D.Mode;
 import it.unibo.alchemist.boundary.wormhole.interfaces.PointerSpeed;
 import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager;
-import it.unibo.alchemist.commands.CommandsFactory;
-import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
@@ -215,20 +217,21 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
             if (status == ViewStatus.SELECTING) {
                 this.status = ViewStatus.DELETING;
                 for (final Node<T> n : selectedNodes) {
-                    Engine.fromEnvironment(currentEnv).addCommand(CommandsFactory.newRemoveNodeCommand(n));
+                    currentEnv.removeNode(n);
                 }
-                Engine.fromEnvironment(currentEnv).addCommand(sim -> update(sim.getEnvironment(), sim.getTime()));
+                final Simulation<T> sim = currentEnv.getSimulation();
+                sim.schedule(() -> update(currentEnv, sim.getTime()));
                 resetStatus();
             }
         });
         bindKey(KeyEvent.VK_M, () -> setMarkCloserNode(!isCloserNodeMarked()));
         bindKey(KeyEvent.VK_L, () -> setDrawLinks(!paintLinks));
-        bindKey(KeyEvent.VK_P, () -> Optional.ofNullable(Engine.fromEnvironment(currentEnv))
+        bindKey(KeyEvent.VK_P, () -> Optional.ofNullable(currentEnv.getSimulation())
                 .ifPresent(sim -> {
                     if (sim.getStatus() == Status.RUNNING) {
-                        sim.addCommand(new Engine.StateCommand<T>().pause().build());
+                        sim.pause();
                     } else {
-                        sim.addCommand(new Engine.StateCommand<T>().run().build());
+                        sim.play();
                     }
                 }));
         bindKey(KeyEvent.VK_R, () -> setRealTime(!isRealTime()));
@@ -603,24 +606,28 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
     }
 
     private void update(final Environment<T> env, final Time time) {
-        if (envHasMobileObstacles(env)) {
-            loadObstacles(env);
-        }
-        lasttime = time.toDouble();
-        currentEnv = env;
-        accessData();
-        positions.clear();
-        neighbors.clear();
-        env.getNodes().parallelStream().forEach(node -> {
-            positions.put(node, env.getPosition(node));
-            try {
-                neighbors.put(node, env.getNeighborhood(node).clone());
-            } catch (Exception e) {
-                L.error("Unable to clone neighborhood for " + node, e);
+        if (Thread.holdsLock(env)) {
+            if (envHasMobileObstacles(env)) {
+                loadObstacles(env);
             }
-        });
-        releaseData();
-        repaint();
+            lasttime = time.toDouble();
+            currentEnv = env;
+            accessData();
+            positions.clear();
+            neighbors.clear();
+            env.getNodes().parallelStream().forEach(node -> {
+                positions.put(node, env.getPosition(node));
+                try {
+                    neighbors.put(node, env.getNeighborhood(node).clone());
+                } catch (Exception e) {
+                    L.error("Unable to clone neighborhood for " + node, e);
+                }
+            });
+            releaseData();
+            repaint();
+        } else {
+            throw new IllegalStateException("Only the simulation thread can dictate GUI updates");
+        }
     }
 
     @Override
@@ -656,7 +663,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
             if (isCloserNodeMarked() && nearest != null && SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
                 final NodeTracker<T> monitor = new NodeTracker<>(nearest);
                 monitor.stepDone(currentEnv, null, new DoubleTime(lasttime), st);
-                final Simulation<T> sim = Engine.fromEnvironment(currentEnv);
+                final Simulation<T> sim = currentEnv.getSimulation();
                 final JFrame frame = makeFrame("Tracker for node " + nearest.getId(), monitor);
                 if (sim != null) {
                     sim.addOutputMonitor(monitor);
@@ -668,12 +675,26 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
                     });
                 }
             } else if (status == ViewStatus.CLONING && SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1) {
-                final Engine<T> engine = Engine.fromEnvironment(currentEnv);
+                final Simulation<T> engine = currentEnv.getSimulation();
                 final Position envEnding = wormhole.getEnvPoint(e.getPoint());
-                for (final Node<T> n : selectedNodes) {
-                    engine.addCommand(CommandsFactory.newCloneNodeCommand(n, envEnding));
-                }
-                engine.addCommand(sim -> update(sim.getEnvironment(), sim.getTime()));
+                engine.schedule(() -> {
+                    final Collection<Node<T>> newNodes = new ArrayList<>(selectedNodes.size());
+                    try {
+                        for (final Node<T> n : selectedNodes) {
+                            newNodes.add(n.cloneNode());
+                        }
+                        for (final Node<T> n: newNodes) {
+                            currentEnv.addNode(n, envEnding);
+                        }
+                        update(currentEnv, engine.getTime());
+                    } catch (RuntimeException exp) {
+                        final String title = "Node cloning error";
+                        final String message = "One or more of your nodes do not support cloning, the debug information is:\n"
+                                + LangUtils.stackTraceToString(exp);
+                        // TODO: switch to JavaFX alerts
+                        JOptionPane.showMessageDialog(Generic2DDisplay.this, message, title, JOptionPane.ERROR_MESSAGE);
+                    }
+                });
                 selectedNodes.clear();
                 resetStatus();
             }
@@ -741,7 +762,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
                 endingPoint = Optional.of(e.getPoint());
                 if (status == ViewStatus.MOVING && originPoint.isPresent() && endingPoint.isPresent()) {
                     if (currentEnv.getDimensions() == 2) {
-                        final Engine<T> engine = Engine.fromEnvironment(currentEnv);
+                        final Simulation<T> engine = currentEnv.getSimulation();
                         if (engine != null) {
                             final Position envEnding = wormhole.getEnvPoint(endingPoint.get());
                             final Position envOrigin = wormhole.getEnvPoint(originPoint.get());
@@ -750,14 +771,17 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
                                 final double finalX = p.getCoordinate(0) + (envEnding.getCoordinate(0) - envOrigin.getCoordinate(0));
                                 final double finalY = p.getCoordinate(1) + (envEnding.getCoordinate(1) - envOrigin.getCoordinate(1));
                                 final Position finalPos = PointAdapter.from(finalX, finalY).toPosition();
-                                engine.addCommand(sim -> sim.getEnvironment().moveNodeToPosition(n, finalPos));
+                                engine.schedule(() -> {
+                                    currentEnv.moveNodeToPosition(n, finalPos);
+                                    update(currentEnv, engine.getTime());
+                                });
                             }
-                            engine.addCommand(sim -> update(sim.getEnvironment(), sim.getTime()));
                         } else {
+                            // TODO: display proper error message
                             L.warn("Can not handle node movement on a finished simulation.");
                         }
                     } else {
-                        L.error("Unable to move nodes: unsupported environment dimension.");
+                        throw new IllegalStateException("Unable to move nodes: unsupported environment dimension.");
                     }
                     selectedNodes.clear();
                     resetStatus();

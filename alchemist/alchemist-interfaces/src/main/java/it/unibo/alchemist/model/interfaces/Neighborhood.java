@@ -106,7 +106,7 @@ public interface Neighborhood<T> extends Serializable, Cloneable, Iterable<Node<
      * 
      * @return the list of the neighbors
      */
-    Collection<? extends Node<T>> getNeighbors();
+    Collection<Node<T>> getNeighbors();
 
     /**
      * @return true if this neighborhood has no neighbors

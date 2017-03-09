@@ -33,7 +33,7 @@ public interface TimeDistribution<T> extends Cloneable, Serializable {
     Time getNextOccurence();
 
     /**
-     * @return how many times per time unit the event will appen on average
+     * @return how many times per time unit the event will happen on average
      */
     double getRate();
 

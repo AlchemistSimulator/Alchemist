@@ -69,7 +69,7 @@ public interface Node<T> extends Serializable, Iterable<Reaction<T>>, Comparable
      * 
      * @return the list of rections belonging to this node
      */
-    List<? extends Reaction<T>> getReactions();
+    List<Reaction<T>> getReactions();
 
     @Override
     int hashCode();

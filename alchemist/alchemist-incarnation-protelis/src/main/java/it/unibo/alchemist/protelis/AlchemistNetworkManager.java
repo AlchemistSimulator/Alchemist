@@ -49,6 +49,24 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
      *            the reacion hosting the {@link NetworkManager}
      * @param program
      *            the {@link RunProtelisProgram}
+     */
+    public AlchemistNetworkManager(
+            final Environment<Object> environment,
+            final ProtelisNode local,
+            final Reaction<Object> executionTime,
+            final RunProtelisProgram program) {
+        this(environment, local, executionTime, program, Double.NaN);
+    }
+
+    /**
+     * @param environment
+     *            the environment
+     * @param local
+     *            the node
+     * @param executionTime
+     *            the reacion hosting the {@link NetworkManager}
+     * @param program
+     *            the {@link RunProtelisProgram}
      * @param retentionTime
      *            how long the messages will be stored. Pass {@link Double#NaN}
      *            to mean that they should get eliminated upon node awake.
@@ -69,22 +87,21 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
         this.retentionTime = retentionTime;
     }
 
-    /**
-     * @param environment
-     *            the environment
-     * @param local
-     *            the node
-     * @param executionTime
-     *            the reacion hosting the {@link NetworkManager}
-     * @param program
-     *            the {@link RunProtelisProgram}
-     */
-    public AlchemistNetworkManager(
-            final Environment<Object> environment,
-            final ProtelisNode local,
-            final Reaction<Object> executionTime,
-            final RunProtelisProgram program) {
-        this(environment, local, executionTime, program, Double.NaN);
+    private Map<DeviceUID, Map<CodePath, Object>> convertMessages(final Predicate<MessageInfo> isValid) {
+        /*
+         * Using streams here doesn't make guarantees on the kind of map returned, and may break the simulator
+         */
+        final LinkedHashMap<DeviceUID, Map<CodePath, Object>> result = new LinkedHashMap<>(msgs.size());
+        final Iterator<MessageInfo> messages = msgs.values().iterator();
+        while (messages.hasNext()) {
+            final MessageInfo msg = messages.next();
+            if (isValid.test(msg)) {
+                result.put(msg.source, msg.payload);
+            } else {
+                messages.remove();
+            }
+        }
+        return result;
     }
 
     @Override
@@ -104,21 +121,16 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
         return convertMessages(m -> currentTime - m.time < retentionTime);
     }
 
-    private Map<DeviceUID, Map<CodePath, Object>> convertMessages(final Predicate<MessageInfo> isValid) {
-        /*
-         * Using streams here doesn't make guarantees on the kind of map returned, and may break the simulator
-         */
-        final LinkedHashMap<DeviceUID, Map<CodePath, Object>> result = new LinkedHashMap<>(msgs.size());
-        final Iterator<MessageInfo> messages = msgs.values().iterator();
-        while (messages.hasNext()) {
-            final MessageInfo msg = messages.next();
-            if (isValid.test(msg)) {
-                result.put(msg.source, msg.payload);
-            } else {
-                messages.remove();
-            }
-        }
-        return result;
+    /**
+     * @return the message retention time, or NaN if all the messages get
+     *         discarded as soon as a computation cycle is concluded.
+     */
+    public double getRetentionTime() {
+        return retentionTime;
+    }
+
+    private void receiveMessage(final MessageInfo msg) {
+        msgs.put(msg.source, msg);
     }
 
     @Override
@@ -154,10 +166,6 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
         toBeSent = null;
     }
 
-    private void receiveMessage(final MessageInfo msg) {
-        msgs.put(msg.source, msg);
-    }
-
     private static class MessageInfo implements Serializable {
         private static final long serialVersionUID = 1L;
         private final double time;
@@ -173,4 +181,5 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
             return source.toString() + '@' + time;
         }
     }
+
 }

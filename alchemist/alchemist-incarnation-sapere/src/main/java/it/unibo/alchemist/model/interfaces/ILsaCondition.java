@@ -18,7 +18,7 @@ import org.danilopianini.lang.util.FasterString;
 
 /**
  */
-public interface ILsaCondition extends Condition<List<? extends ILsaMolecule>> {
+public interface ILsaCondition extends Condition<List<ILsaMolecule>> {
 
     /**
      * When this method is called, the condition must filter the current matches
@@ -33,10 +33,10 @@ public interface ILsaCondition extends Condition<List<? extends ILsaMolecule>> {
      *            possible binding
      * @return true if the condition is valid, false otherwise
      */
-    boolean filter(List<Map<FasterString, ITreeNode<?>>> matches, List<? extends ILsaNode> validNodes, List<Map<ILsaNode, List<ILsaMolecule>>> retrieved);
+    boolean filter(List<Map<FasterString, ITreeNode<?>>> matches, List<ILsaNode> validNodes, List<Map<ILsaNode, List<ILsaMolecule>>> retrieved);
 
     @Override
-    ILsaCondition cloneCondition(Node<List<? extends ILsaMolecule>> n, Reaction<List<? extends ILsaMolecule>> r);
+    ILsaCondition cloneCondition(Node<List<ILsaMolecule>> n, Reaction<List<ILsaMolecule>> r);
 
     @Override
     ILsaNode getNode();

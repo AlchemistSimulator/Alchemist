@@ -21,7 +21,7 @@ import org.danilopianini.lang.util.FasterString;
  * Interface for TimeDistribution that need matches.
  * 
  */
-public interface SAPERETimeDistribution extends TimeDistribution<List<? extends ILsaMolecule>> {
+public interface SAPERETimeDistribution extends TimeDistribution<List<ILsaMolecule>> {
 
     /**
      * @return true if the equation is actually a number

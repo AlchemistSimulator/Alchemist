@@ -8,23 +8,24 @@
  */
 package it.unibo.alchemist.model.implementations.environments;
 
+import static java.lang.Double.NEGATIVE_INFINITY;
+import static java.lang.Double.NaN;
+import static java.lang.Double.POSITIVE_INFINITY;
+
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.util.FlexibleQuadTree;
 import org.danilopianini.util.SpatialIndex;
 
-import it.unibo.alchemist.core.implementations.Engine;
+import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 
-import static java.lang.Double.NaN;
-import static java.lang.Double.POSITIVE_INFINITY;
-import static java.lang.Double.NEGATIVE_INFINITY;
-
 /**
  * @param <T>
  */
-public class Continuous2DEnvironment<T> extends AbstractLinkingRuleEnvironment<T> {
+public class Continuous2DEnvironment<T> extends AbstractEnvironment<T> {
 
 
     private static final long serialVersionUID = 1056357696289385352L;
@@ -107,6 +108,14 @@ public class Continuous2DEnvironment<T> extends AbstractLinkingRuleEnvironment<T
 
 
     @Override
+    public Position makePosition(final Number... coordinates) {
+        if (coordinates.length != 2) {
+            throw new IllegalArgumentException(getClass().getSimpleName() + " can only get used with 2-dimensional positions.");
+        }
+        return new Continuous2DEuclidean(coordinates[0].doubleValue(), coordinates[1].doubleValue());
+    }
+
+    @Override
     public void moveNode(final Node<T> node, final Position direction) {
         final Position oldcoord = getPosition(node);
         moveNodeToPosition(node, oldcoord.add(direction));
@@ -117,7 +126,10 @@ public class Continuous2DEnvironment<T> extends AbstractLinkingRuleEnvironment<T
         includeObject(newpos);
         setPosition(node, newpos);
         updateNeighborhood(node);
-        Engine.nodeMoved(this, node);
+        final Simulation<T> sim = getSimulation();
+        if (sim != null) {
+            sim.nodeMoved(node);
+        }
     }
 
     @Override

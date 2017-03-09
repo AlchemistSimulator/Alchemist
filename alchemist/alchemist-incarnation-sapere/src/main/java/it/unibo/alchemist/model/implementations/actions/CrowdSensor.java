@@ -28,7 +28,7 @@ public class CrowdSensor extends SAPERELocalAgent {
     private static final long serialVersionUID = -647690735880121675L;
     private static final ILsaMolecule PERSON = new LsaMolecule("person");
     private static final ILsaMolecule CROWD = new LsaMolecule("crowd, Level");
-    private final Environment<List<? extends ILsaMolecule>> env;
+    private final Environment<List<ILsaMolecule>> env;
 
     /**
      * @param environment
@@ -36,7 +36,7 @@ public class CrowdSensor extends SAPERELocalAgent {
      * @param node
      *            the current node
      */
-    public CrowdSensor(final Environment<List<? extends ILsaMolecule>> environment, final ILsaNode node) {
+    public CrowdSensor(final Environment<List<ILsaMolecule>> environment, final ILsaNode node) {
         super(node);
         env = environment;
     }
@@ -44,10 +44,10 @@ public class CrowdSensor extends SAPERELocalAgent {
     @Override
     public void execute() {
 
-        final Neighborhood<List<? extends ILsaMolecule>> neigh = env.getNeighborhood(getNode());
+        final Neighborhood<List<ILsaMolecule>> neigh = env.getNeighborhood(getNode());
         int personNumber = 0;
 
-        for (final Node<List<? extends ILsaMolecule>> node : neigh.getNeighbors()) {
+        for (final Node<List<ILsaMolecule>> node : neigh.getNeighbors()) {
             final ILsaNode n = (ILsaNode) node;
             if (n.getConcentration(PERSON).size() != 0) {
                 personNumber++;

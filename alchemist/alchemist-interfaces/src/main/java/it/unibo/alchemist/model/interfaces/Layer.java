@@ -8,6 +8,7 @@ import java.io.Serializable;
  *
  * @param <T> the value that measure the substance in a point.
  */
+@FunctionalInterface
 public interface Layer<T> extends Serializable {
 
     /**

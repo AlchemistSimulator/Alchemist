@@ -11,6 +11,7 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
+import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -99,6 +100,13 @@ public abstract class AbstractMoveNode<T> extends AbstractAction<T> {
      */
     protected final Position getNodePosition(final Node<T> n) {
         return env.getPosition(n);
+    }
+
+    /**
+     * @return true if this {@link Action} is using absolute positions
+     */
+    protected final boolean isAbsolute() {
+        return isAbs;
     }
 
 }

@@ -1,0 +1,85 @@
+incarnation: protelis
+
+variables:
+  time: &time
+    type: Flag
+    parameters: [false]
+  small: &small
+    type: Flag
+    parameters: [false]
+  n: &n
+    formula: 100
+  range: &range
+    formula: 30
+  width: &w
+    formula: 200
+  height: &h
+    formula: 20
+  freq: &freq
+    formula: 1
+  sp:
+    formula: 0.1
+  bp:
+    formula: 0.5
+  retain: &retain
+    formula: 1 / $minfreq
+  fc:
+    formula: "$time ? ($small ? $sp : $bp) : 0" 
+  minfreq: &minfreq
+    formula: "$freq * (1 - $fc)"
+  maxfreq: &maxfreq
+    formula: "$freq * (1 + $fc)"
+  speed: &speed
+    formula: "!$time"
+  seed: &seed
+    min: 0
+    max: 199
+    step: 1
+    default: 0
+
+seeds:
+  scenario: *seed
+  simulation: *seed
+
+network-model:
+  type: EuclideanDistance
+  parameters: [*range]
+
+pools:
+  - pool: &program
+    - time-distribution:
+        type: RandomDiracComb
+        parameters: [*minfreq, *maxfreq]
+      type: Event
+      actions:
+        - type: RunProtelisProgram
+          parameters: ["1", *retain]
+    - time-distribution: null
+      program: send
+  - pool: &program2
+    - time-distribution: 1
+      program: tomacs
+    - time-distribution: null
+      program: send
+  - pool: &move
+    - time-distribution: 10
+      type: Event
+      actions:
+        - type: MoveToTarget
+          parameters: [target, *speed]
+
+displacements:
+  - in:
+      type: Rectangle
+      parameters: [*n, 0, 0, *w, *h]
+    contents:
+      - molecule: time
+        concentration: *time
+      - molecule: speed
+        concentration: *speed
+      - molecule: small
+        concentration: *small
+    programs:
+      - *program
+      - *move
+  

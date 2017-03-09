@@ -23,7 +23,7 @@ import java.util.List;
 public abstract class SAPEREMoveNodeAgent extends SAPERELocalAgent {
 
     private static final long serialVersionUID = 1202282862490424016L;
-    private final Environment<List<? extends ILsaMolecule>> environment;
+    private final Environment<List<ILsaMolecule>> environment;
 
     /**
      * Creates a new SAPERE Local Agent stub. If you use this constructor, you
@@ -35,7 +35,7 @@ public abstract class SAPEREMoveNodeAgent extends SAPERELocalAgent {
      * @param node
      *            The node in which this agent stays
      */
-    public SAPEREMoveNodeAgent(final Environment<List<? extends ILsaMolecule>> env, final ILsaNode node) {
+    public SAPEREMoveNodeAgent(final Environment<List<ILsaMolecule>> env, final ILsaNode node) {
         super(node);
         environment = env;
     }
@@ -51,7 +51,7 @@ public abstract class SAPEREMoveNodeAgent extends SAPERELocalAgent {
      * @param m
      *            The modified molecule template
      */
-    public SAPEREMoveNodeAgent(final Environment<List<? extends ILsaMolecule>> env, final ILsaNode node, final ILsaMolecule m) {
+    public SAPEREMoveNodeAgent(final Environment<List<ILsaMolecule>> env, final ILsaNode node, final ILsaMolecule m) {
         super(node, m);
         environment = env;
     }
@@ -59,7 +59,7 @@ public abstract class SAPEREMoveNodeAgent extends SAPERELocalAgent {
     /**
      * @return the environment
      */
-    protected Environment<List<? extends ILsaMolecule>> getEnvironment() {
+    protected Environment<List<ILsaMolecule>> getEnvironment() {
         return environment;
     }
 
@@ -75,7 +75,7 @@ public abstract class SAPEREMoveNodeAgent extends SAPERELocalAgent {
      *            the node
      * @return the position of node
      */
-    protected final Position getPosition(final Node<List<? extends ILsaMolecule>> node) {
+    protected final Position getPosition(final Node<List<ILsaMolecule>> node) {
         return environment.getPosition(node);
     }
 
@@ -84,14 +84,14 @@ public abstract class SAPEREMoveNodeAgent extends SAPERELocalAgent {
      *            the node
      * @return the position of node
      */
-    protected final Neighborhood<List<? extends ILsaMolecule>> getNeighborhood(final ILsaNode node) {
+    protected final Neighborhood<List<ILsaMolecule>> getNeighborhood(final ILsaNode node) {
         return environment.getNeighborhood(node);
     }
 
     /**
      * @return the position of node
      */
-    protected final Neighborhood<List<? extends ILsaMolecule>> getLocalNeighborhood() {
+    protected final Neighborhood<List<ILsaMolecule>> getLocalNeighborhood() {
         return environment.getNeighborhood(getNode());
     }
 

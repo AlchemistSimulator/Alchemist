@@ -94,7 +94,7 @@ public abstract class AbstractConfigurableMoveNode<T> extends AbstractMoveNode<T
             final Position destination = end;
             end = target.getTarget();
             resetRoute();
-            return destination;
+            return isAbsolute() ? destination : destination.subtract(curPos);
         }
         if (route == null) {
             route = routing.computeRoute(curPos, end);

@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -24,7 +25,6 @@ import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.boundary.gui.SingleRunGUI;
 import it.unibo.alchemist.core.implementations.Engine;
-import it.unibo.alchemist.core.implementations.Engine.StateCommand;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.export.Exporter;
@@ -32,7 +32,6 @@ import it.unibo.alchemist.loader.variables.Variable;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Time;
-import java8.util.Objects;
 
 /**
  * Starts Alchemist.
@@ -161,9 +160,6 @@ public final class AlchemistRunner {
          * @return buider
          */
         public Builder setGUICloseOperation(final int closeOp) {
-            if (this.headless) {
-                throw new IllegalArgumentException("The simulation is headless.");
-            }
             if (closeOp < 0 || closeOp > 3) {
                 throw new IllegalArgumentException("The value of close operation is not valid.");
             }
@@ -218,7 +214,7 @@ public final class AlchemistRunner {
             final ExecutorService executor = Executors.newFixedThreadPool(parallelism);
             runWith(Collections.emptyMap(), varStreams, 0, exportFileRoot, loader, samplingInterval, Long.MAX_VALUE,
                     endTime, sim -> {
-                        sim.addCommand(new StateCommand<>().run().build());
+                        sim.play();
                         sim.run();
                     }).parallel().forEach(executor::submit);
             executor.shutdown();
@@ -235,7 +231,7 @@ public final class AlchemistRunner {
                             L.error("Could not initialize the UI (the graphics environment is headless). Falling back to headless mode.");
                         }
                         if (headless || onHeadlessEnvironment) {
-                            sim.addCommand(new StateCommand<>().run().build());
+                            sim.play();
                         } else {
                             if (effectsFile.isPresent()) {
                                 SingleRunGUI.make(sim, effectsFile.get(), closeOperation);

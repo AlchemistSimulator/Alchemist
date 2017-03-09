@@ -2,14 +2,12 @@ dependencies {
     compile (
         project(':alchemist-interfaces'),
         project(':alchemist-time'),
+        "com.github.davidmoten:rtree:$rtreeVersion",
         "com.google.guava:guava:$guavaVersion",
         "com.googlecode.concurrentlinkedhashmap:concurrentlinkedhashmap-lru:${concurrentlinkedhashmapVersion}",
         "info.debatty:java-string-similarity:$stringSimilarityVersion",
-        "net.sourceforge.streamsupport:streamsupport:$streamsupportVersion",
         "org.danilopianini:java-quadtree:$quadtreeVersion",
-        "org.danilopianini:javalib:$javalibVersion",
-        "org.danilopianini:javalib-java7:$javalib7Version",
-        "org.danilopianini:stream-goodies:$streamgoodiesVersion",
+        "org.danilopianini:boilerplate:$boilerplateVersion",
         "org.jooq:jool:$joolVersion",
         "org.reflections:reflections:$reflectionsVersion"
     )

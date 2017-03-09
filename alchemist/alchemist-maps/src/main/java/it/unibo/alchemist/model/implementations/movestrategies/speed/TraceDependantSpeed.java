@@ -8,6 +8,8 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
 
+import java.util.Objects;
+
 import org.danilopianini.lang.LangUtils;
 
 /**
@@ -37,7 +39,7 @@ public abstract class TraceDependantSpeed<T> implements SpeedSelectionStrategy<T
         env = e;
         node = n;
         reaction = r;
-        trace = env.getTrace(node);
+        trace = Objects.requireNonNull(env.getTrace(node));
     }
 
     @Override

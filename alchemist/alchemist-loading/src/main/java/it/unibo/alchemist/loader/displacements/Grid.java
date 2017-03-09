@@ -4,9 +4,9 @@ import java.util.stream.Stream;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import it.unibo.alchemist.loader.PositionMaker;
 import it.unibo.alchemist.loader.variables.LinearVariable;
 import it.unibo.alchemist.loader.variables.Variable;
+import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 
 /**
@@ -14,14 +14,14 @@ import it.unibo.alchemist.model.interfaces.Position;
  */
 public class Grid implements Displacement {
 
-    private final PositionMaker pm;
+    private final Environment<?> pm;
     private final RandomGenerator rand;
     private final Variable xVar, yVar;
     private final double xrand, yrand;
 
     /**
      * @param pm
-     *            the {@link PositionMaker}
+     *            the {@link Environment}
      * @param rand
      *            the {@link RandomGenerator}
      * @param xstart
@@ -41,7 +41,7 @@ public class Grid implements Displacement {
      * @param yrand
      *            how randomized should be positions along the y axis
      */
-    public Grid(final PositionMaker pm,
+    public Grid(final Environment<?> pm,
             final RandomGenerator rand,
             final double xstart,
             final double ystart,

@@ -1,6 +1,5 @@
 include(
     'alchemist-engine',
-    'alchemist-enginedependentmodel',
     'alchemist-implementationbase',
     'alchemist-incarnation-protelis',
     'alchemist-incarnation-sapere',

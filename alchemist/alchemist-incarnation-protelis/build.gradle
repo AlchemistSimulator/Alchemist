@@ -3,14 +3,11 @@ dependencies {
         project(':alchemist-interfaces'),
         project(':alchemist-maps'),
         "com.google.guava:guava:$guavaVersion",
-        "org.danilopianini:javalib-java7:$javalib7Version",
         "org.protelis:protelis:$protelisVersion"
     )
     testCompile(
         project(':alchemist-engine'),
-        project(':alchemist-enginedependentmodel'),
         project(':alchemist-loading'),
-        "it.unibo.alchemist:alchemist.protelisdsl:$protelisdslVersion"
     )
 }
 

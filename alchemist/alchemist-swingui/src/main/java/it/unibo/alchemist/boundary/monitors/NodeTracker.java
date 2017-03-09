@@ -11,7 +11,7 @@ package it.unibo.alchemist.boundary.monitors;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -21,7 +21,6 @@ import javax.swing.SwingUtilities;
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
@@ -78,12 +77,11 @@ public class NodeTracker<T> extends JPanel implements OutputMonitor<T>, ActionLi
             sb.append("\n\n\n");
             sb.append(CONTENT);
             sb.append('\n');
-            for (final Entry<Molecule, T> e : n.getContents().entrySet()) {
-                sb.append(e.getKey());
-                sb.append(" > ");
-                sb.append(e.getValue());
-                sb.append('\n');
-            }
+            sb.append(n.getContents().entrySet().stream()
+                .map(e -> e.getKey() + " > " + e.getValue() + '\n')
+                .sorted()
+                .collect(Collectors.joining())
+            );
             sb.append("\n\n\n");
             sb.append(PROGRAM);
             sb.append("\n\n");

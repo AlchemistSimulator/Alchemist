@@ -1,0 +1,15 @@
+incarnation: protelis
+
+variables:
+  myvar: &myvar
+    formula: 1
+  myvar2: &myvar2
+    formula: $myvar * 100
+
+environment:
+  type: Continuous2DEnvironment
+  parameters: []
+
+network-model:
+  type: it.unibo.alchemist.test.util.DummyRule
+  parameters: [[*myvar, *myvar2], [*myvar, *myvar2]]

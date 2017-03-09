@@ -34,7 +34,7 @@ import it.unibo.alchemist.model.interfaces.Molecule;
 /**
  * This class realizes a node with LSA concentration.
  */
-public class LsaNode extends GenericNode<List<? extends ILsaMolecule>>implements ILsaNode {
+public class LsaNode extends GenericNode<List<ILsaMolecule>> implements ILsaNode {
     private static final long serialVersionUID = -2167025208984968645L;
     private final List<ILsaMolecule> instances = new ArrayList<>();
     private transient FastReadWriteLock lock = new FastReadWriteLock();
@@ -54,7 +54,7 @@ public class LsaNode extends GenericNode<List<? extends ILsaMolecule>>implements
      * @param env
      *            The environment (used for safe node id computation)
      */
-    public LsaNode(final Environment<List<? extends ILsaMolecule>> env) {
+    public LsaNode(final Environment<List<ILsaMolecule>> env) {
         super(env);
     }
 
@@ -112,8 +112,8 @@ public class LsaNode extends GenericNode<List<? extends ILsaMolecule>>implements
 
     @SuppressWarnings("unchecked")
     @Override
-    public Map<Molecule, List<? extends ILsaMolecule>> getContents() {
-        final Map<Molecule, List<? extends ILsaMolecule>> res = new HashMap<>(instances.size(), 1.0f);
+    public Map<Molecule, List<ILsaMolecule>> getContents() {
+        final Map<Molecule, List<ILsaMolecule>> res = new HashMap<>(instances.size(), 1.0f);
         lock.read();
         for (final ILsaMolecule m : instances) {
             final List<ILsaMolecule> l;
@@ -166,7 +166,7 @@ public class LsaNode extends GenericNode<List<? extends ILsaMolecule>>implements
     }
 
     @Override
-    public void setConcentration(final Molecule mol, final List<? extends ILsaMolecule> c) {
+    public void setConcentration(final Molecule mol, final List<ILsaMolecule> c) {
         if (mol instanceof ILsaMolecule) {
             final ILsaMolecule il = (ILsaMolecule) mol;
             setConcentration(il);

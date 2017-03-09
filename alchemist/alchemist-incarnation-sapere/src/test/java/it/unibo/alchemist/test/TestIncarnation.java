@@ -32,9 +32,9 @@ public final class TestIncarnation {
 
     private static final SAPEREIncarnation INCARNATION = new SAPEREIncarnation();
     private ILsaNode node;
-    private Environment<List<? extends ILsaMolecule>> env;
+    private Environment<List<ILsaMolecule>> env;
     private RandomGenerator rand;
-    private TimeDistribution<List<? extends ILsaMolecule>> time;
+    private TimeDistribution<List<ILsaMolecule>> time;
 
     private static ILsaMolecule mkMol(final String s, final int args, final boolean ground) {
         final ILsaMolecule res = INCARNATION.createMolecule(s);
@@ -72,7 +72,7 @@ public final class TestIncarnation {
     }
 
     private void testTD(final String param, final double rate, final double occurrence) {
-        final TimeDistribution<List<? extends ILsaMolecule>> t0 = INCARNATION.createTimeDistribution(rand, env, node, param);
+        final TimeDistribution<List<ILsaMolecule>> t0 = INCARNATION.createTimeDistribution(rand, env, node, param);
         assertNotNull(t0);
         if (!Double.isNaN(rate)) {
             assertEquals(rate, t0.getRate(), 0d);
@@ -101,7 +101,7 @@ public final class TestIncarnation {
     }
 
     private void testR(final String param, final int ncond, final int nact, final int nneighcond, final int nneighact, final int nallneighact) {
-        final Reaction<List<? extends ILsaMolecule>> r = INCARNATION.createReaction(rand, env, node, time, param);
+        final Reaction<List<ILsaMolecule>> r = INCARNATION.createReaction(rand, env, node, time, param);
         assertNotNull(r);
         assertEquals(ncond, r.getConditions().size());
         assertEquals(nact, r.getActions().size());

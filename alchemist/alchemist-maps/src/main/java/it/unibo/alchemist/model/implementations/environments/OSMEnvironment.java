@@ -16,6 +16,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -526,7 +527,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
         final GraphHopper gh = new GraphHopper().forDesktop();
         gh.setOSMFile(mapFile.getAbsolutePath());
         gh.setGraphHopperLocation(internalWorkdir);
-        gh.setEncodingManager(new EncodingManager(v.toString().toLowerCase()));
+        gh.setEncodingManager(new EncodingManager(v.toString().toLowerCase(Locale.US)));
         try {
             gh.importOrLoad();
         } catch (final IllegalStateException e) {

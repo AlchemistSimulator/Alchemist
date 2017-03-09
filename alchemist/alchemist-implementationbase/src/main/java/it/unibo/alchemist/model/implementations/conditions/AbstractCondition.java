@@ -15,10 +15,10 @@ import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import java8.util.Objects;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 /**

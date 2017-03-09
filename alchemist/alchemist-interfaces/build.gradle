@@ -1,5 +1,5 @@
 dependencies {
     compile (
-        "org.jooq:jool:$joolVersion"
+        "org.jooq:jool:${joolVersion}"
     )
 }

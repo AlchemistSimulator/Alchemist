@@ -2,17 +2,24 @@ package it.unibo.alchemist.boundary.projectview.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.io.FileUtils;
 
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -30,9 +37,7 @@ import javafx.stage.Stage;
  */
 public class NewProjLayoutSelectController {
 
-    private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
     private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
-    private static final String FILE_DUMMY = "dummy";
 
     @FXML
     private Button backBtn;
@@ -47,7 +52,11 @@ public class NewProjLayoutSelectController {
     private String folderPath;
     private String selectedTemplate;
     private Stage stage;
-    private final ObservableList<String> templates = FXCollections.observableArrayList();
+    private static final ObservableList<String> TEMPLATES = FXCollections.observableList(
+        resourcesFrom("/templates", 1)
+            .map(s -> s.substring(0,  s.length() - (s.endsWith("/") ? 1 : 0)))
+            .peek(System.out::println)
+            .collect(Collectors.toList()));
 
     /**
      * 
@@ -57,19 +66,12 @@ public class NewProjLayoutSelectController {
         this.finishBtn.setText(RESOURCES.getString("finish"));
         this.finishBtn.setDisable(true);
         this.select.setText(RESOURCES.getString("select"));
-        final File file = getResourceTemplate("templates/");
-        for (final File f : file.listFiles()) {
-            this.templates.add(Character.toUpperCase(f.getName().charAt(0)) + f.getName().substring(1));
-        }
-        this.choiceTempl.setItems(this.templates);
-        this.choiceTempl.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
-                selectedTemplate = newValue;
-                finishBtn.setDisable(false);
-            }
+        this.choiceTempl.setItems(TEMPLATES);
+        this.choiceTempl.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            selectedTemplate = newValue;
+            finishBtn.setDisable(false);
         });
-    }
+}
 
     /**
      * 
@@ -95,64 +97,70 @@ public class NewProjLayoutSelectController {
         this.folderPath = path;
     }
 
+    private void copyRecursively(final String path) {
+        resourcesFrom(path, Integer.MAX_VALUE)
+        .sorted((s1, s2) -> Integer.compare(s2.length(), s1.length())) // Longest first
+        .forEach(p -> {
+            final InputStream is = NewProjLayoutSelectController.class.getResourceAsStream(path + '/' + p);
+            final File destination = new File(folderPath + '/' + p);
+            if (!destination.exists()) {
+                try {
+                    FileUtils.copyInputStreamToFile(is, destination);
+                } catch (IOException e) {
+                    throw new IllegalStateException("Could not initialize " + destination, e);
+                }
+            }
+        });
+    }
+
     /**
      * 
      */
     @FXML
     public void clickFinish() {
-        createFile(this.folderPath, this.selectedTemplate);
+        copyRecursively("/templates/" + selectedTemplate);
         this.stage.close();
     }
 
     /**
-     * 
+     * @throws IOException
+     *             if the XML can not get loaded
      */
     @FXML
-    public void clickBack() {
+    public void clickBack() throws IOException {
         final FXMLLoader loader = new FXMLLoader();
         loader.setLocation(ProjectGUI.class.getResource("view/NewProjLayoutFolder.fxml"));
-        try {
-            final AnchorPane pane = (AnchorPane) loader.load();
-            final Scene scene = new Scene(pane);
-            this.stage.setScene(scene);
-
-            final NewProjLayoutFolderController ctrl = loader.getController();
-            ctrl.setMain(this.main);
-            ctrl.setStage(this.stage);
-            ctrl.setFolderPath(this.folderPath);
-        } catch (IOException e) {
-            L.error("Error loading the graphical interface. This is most likely a bug.", e);
-            System.exit(1);
-        }
+        final AnchorPane pane = (AnchorPane) loader.load();
+        final Scene scene = new Scene(pane);
+        this.stage.setScene(scene);
+        final NewProjLayoutFolderController ctrl = loader.getController();
+        ctrl.setMain(this.main);
+        ctrl.setStage(this.stage);
+        ctrl.setFolderPath(this.folderPath);
     }
 
-    private void createFile(final String folder, final String folderTempl) {
-        final File file = getResourceTemplate("templates/" + folderTempl + "/");
-        for (final File f : file.listFiles()) {
-            if (f.isDirectory()) {
-                new File(folder + File.separator + f.getName()).mkdir();
-                createFile(folder + File.separator + f.getName(), folderTempl + "/" + f.getName());
-            } else {
-                if (!f.getName().equals(FILE_DUMMY)) {
-                    try {
-                        new File(folder + File.separator + f.getName()).createNewFile();
-                    } catch (IOException e) {
-                        L.error("I/O error during the creation of new file.", e);
-                    }
+    private static Stream<String> resourcesFrom(final String path, final int depth) {
+        try {
+            final URI uri = NewProjLayoutFolderController.class.getResource(path).toURI();
+            Path myPath;
+            if (uri.getScheme().equals("jar")) {
+                FileSystem fileSystem;
+                try {
+                    fileSystem = FileSystems.getFileSystem(uri);
+                } catch (FileSystemNotFoundException e) {
+                    fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
                 }
+                myPath = fileSystem.getPath(path);
+            } else {
+                myPath = Paths.get(uri);
             }
+            return Files.walk(myPath, depth)
+                    .skip(1)
+                    .map(Path::toString)
+                    .map(s -> s.replaceAll(".*?" + path + "/", ""))
+                    .sorted();
+        } catch (URISyntaxException | IOException e) {
+            throw new IllegalStateException(e);
         }
     }
-
-    private File getResourceTemplate(final String folder) {
-        final URL url = ProjectGUI.class.getClassLoader().getResource(folder);
-        File file = null;
-        try {
-            file = new File(url.toURI());
-        } catch (URISyntaxException e) {
-            file = new File(url.getPath());
-        }
-        return file;
-    }
-
 }

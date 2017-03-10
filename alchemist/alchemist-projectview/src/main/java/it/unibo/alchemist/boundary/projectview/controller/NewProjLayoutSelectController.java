@@ -55,7 +55,6 @@ public class NewProjLayoutSelectController {
     private static final ObservableList<String> TEMPLATES = FXCollections.observableList(
         resourcesFrom("/templates", 1)
             .map(s -> s.substring(0,  s.length() - (s.endsWith("/") ? 1 : 0)))
-            .peek(System.out::println)
             .collect(Collectors.toList()));
 
     /**

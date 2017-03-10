@@ -4,17 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ResourceBundle;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
-import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
 /**
@@ -23,7 +19,6 @@ import javafx.stage.Stage;
  */
 public class NewFolderOrFileDialogController {
 
-    private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
     private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
 
     private boolean isFolder;
@@ -68,50 +63,35 @@ public class NewFolderOrFileDialogController {
     }
 
     /**
+     * @throws IOException 
      * 
      */
     @FXML
-    public void clickOk() {
-        if (this.textField.getText().isEmpty() && this.isFolder) {
-            setAlert(RESOURCES.getString("empty_folder_name"), RESOURCES.getString("empty_folder_name_header"), RESOURCES.getString("empty_folder_name_content"));
-        } else if (this.textField.getText().isEmpty() && !this.isFolder) {
-            setAlert(RESOURCES.getString("empty_file_name"), RESOURCES.getString("empty_file_name_header"), RESOURCES.getString("empty_file_name_content"));
-        } else {
-            File newFile;
-            if (new File(this.selectedItem).isDirectory()) {
-                newFile = new File(this.selectedItem + File.separator + this.textField.getText());
+    public void clickOk() throws IOException {
+        final String name = textField.getText();
+        if (name.isEmpty()) {
+            if (isFolder) {
+                setAlert("empty_folder_name", "empty_folder_name_header", "empty_folder_name_content");
             } else {
-                final String fileName = new File(this.selectedItem).getName();
-                newFile = new File(this.selectedItem.replace(fileName, "") + File.separator + this.textField.getText());
+                setAlert("empty_file_name", "empty_file_name_header", "empty_file_name_content");
             }
-            if (this.isFolder) {
-                if (newFile.exists()) {
-                    setAlert(RESOURCES.getString("folder_name_exist"), RESOURCES.getString("folder_name_exist_header"), RESOURCES.getString("folder_name_exist_content"));
+        } else {
+            final File newFile = new File((new File(this.selectedItem).isDirectory()
+                    ? selectedItem
+                    : selectedItem.replaceFirst("\\/([^\\/]+)\\/?$", "")) + File.separator + name);
+            if (newFile.exists()) {
+                if (isFolder) {
+                    setAlert("folder_name_exist", "folder_name_exist_header", "folder_name_exist_content");
                 } else {
-                    newFile.mkdir();
-                    this.stage.close();
+                    setAlert("file_name_exists", "new_file_name_exist_header", "new_file_name_exist_content");
                 }
             } else {
-                final String filename = newFile.getName();
-                final int dot = filename.lastIndexOf('.');
-                String extension = "";
-                if (dot != -1) {
-                    extension = filename.substring(dot);
-                }
-                if (extension.isEmpty()) {
-                    setAlert(RESOURCES.getString("file_wrong"), RESOURCES.getString("not_file_header"), RESOURCES.getString("not_file_content"));
-                } else if (newFile.exists()) {
-                    setAlert(RESOURCES.getString("file_name_exists"), RESOURCES.getString("new_file_name_exist_header"), RESOURCES.getString("new_file_name_exist_content"));
-                } else {
-                    try {
-                        newFile.createNewFile();
-                    } catch (IOException e) {
-                        L.error("I/O error during the creation of new file.", e);
-                    }
-                    this.stage.close();
+                if (isFolder && !newFile.mkdirs() || !newFile.createNewFile()) {
+                    throw new IllegalStateException("Could not create " + newFile);
                 }
             }
         }
+        this.stage.close();
     }
 
     /**
@@ -131,9 +111,9 @@ public class NewFolderOrFileDialogController {
 
     private void setAlert(final String title, final String header, final String content) {
         final Alert alert = new Alert(AlertType.WARNING);
-        alert.setTitle(title);
-        alert.setHeaderText(header);
-        alert.setContentText(content);
+        alert.setTitle(RESOURCES.getString(title));
+        alert.setHeaderText(RESOURCES.getString(header));
+        alert.setContentText(RESOURCES.getString(content));
         alert.showAndWait();
     }
 

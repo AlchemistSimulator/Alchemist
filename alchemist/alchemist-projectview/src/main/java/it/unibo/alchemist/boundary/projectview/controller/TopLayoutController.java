@@ -9,9 +9,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.io.Files;
 
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
@@ -37,22 +34,17 @@ import javafx.stage.WindowEvent;
  */
 public class TopLayoutController {
 
-    private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
     private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
-    private static final double IMG_WIDTH = 2.8646;
-    private static final double IMG_HEIGHT = 5.093;
+    private static final double IMG_WIDTH = 3;
+    private static final double IMG_HEIGHT = 5;
     private static final String USER_HOME = System.getProperty("user.home");
 
     @FXML
     private Button btnNew;
     @FXML
     private Button btnOpen;
-    /*@FXML
-    private Button btnImport;*/
     @FXML
     private Button btnSave;
-    /*@FXML
-    private Button btnSaveAs;*/
 
     private CenterLayoutController ctrlCenter;
     private ProjectGUI main;
@@ -68,10 +60,8 @@ public class TopLayoutController {
         this.btnNew.setText(RESOURCES.getString("new"));
         this.btnOpen.setGraphic(new ImageView(SVGImageUtils.getSvgImage("icon/open.svg", IMG_WIDTH, IMG_HEIGHT)));
         this.btnOpen.setText(RESOURCES.getString("open"));
-        //this.btnImport.setText(RESOURCES.getString("import"));
         this.btnSave.setGraphic(new ImageView(SVGImageUtils.getSvgImage("icon/save.svg", IMG_WIDTH, IMG_HEIGHT)));
         this.btnSave.setText(RESOURCES.getString("save"));
-        //this.btnSaveAs.setText(RESOURCES.getString("save_as"));
         this.btnSave.setDisable(true);
     }
 
@@ -110,41 +100,39 @@ public class TopLayoutController {
 
     /**
      * Show a view to create new project.
+     * 
+     * @throws IOException
+     *             if the FXML can't get loaded
      */
     @FXML
-    public void clickNew() {
+    public void clickNew() throws IOException {
         if (this.ctrlCenter.getProject() != null) {
             this.ctrlCenter.checkChanges();
         }
         final FXMLLoader loader = new FXMLLoader();
         loader.setLocation(ProjectGUI.class.getResource("view/NewProjLayoutFolder.fxml"));
-        try {
-            final AnchorPane pane = (AnchorPane) loader.load();
-            final Stage stage = new Stage();
-            stage.setTitle(RESOURCES.getString("new_proj"));
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(this.main.getStage());
-            final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            final double width = screenSize.getWidth() * 20.83 / 100;
-            final double height = screenSize.getHeight() * 13.89 / 100;
-            final Scene scene = new Scene(pane, width, height);
-            stage.setScene(scene);
-            final NewProjLayoutFolderController ctrl = loader.getController();
-            ctrl.setMain(this.main);
-            ctrl.setStage(stage);
-            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(final WindowEvent event) {
-                    ctrl.setFolderPath(null);
-                }
-            });
-            stage.showAndWait();
-            if (ctrl.getFolderPath() != null) {
-                setView(new File(ctrl.getFolderPath()));
+        final AnchorPane pane = (AnchorPane) loader.load();
+        final Stage stage = new Stage();
+        stage.setTitle(RESOURCES.getString("new_proj"));
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(this.main.getStage());
+        final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        final double width = screenSize.getWidth() * 20.83 / 100;
+        final double height = screenSize.getHeight() * 13.89 / 100;
+        final Scene scene = new Scene(pane, width, height);
+        stage.setScene(scene);
+        final NewProjLayoutFolderController ctrl = loader.getController();
+        ctrl.setMain(this.main);
+        ctrl.setStage(stage);
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(final WindowEvent event) {
+                ctrl.setFolderPath(null);
             }
-        } catch (IOException e) {
-            L.error("Error loading the graphical interface. This is most likely a bug.", e);
-            System.exit(1);
+        });
+        stage.showAndWait();
+        if (ctrl.getFolderPath() != null) {
+            setView(new File(ctrl.getFolderPath()));
         }
     }
 
@@ -160,7 +148,7 @@ public class TopLayoutController {
         }
         final String folderPath = USER_HOME + File.separator + ".alchemist" + File.separator;
         if (!new File(folderPath).exists() && !new File(folderPath).mkdirs()) {
-            L.error("Error creating the folder to save the Alchemist settings.");
+            throw new IllegalStateException("Error creating the folder to save the Alchemist settings.");
         }
         final String settingsPath = folderPath + File.separator + "alchemist-settings";
         final File settingsFile = new File(settingsPath);

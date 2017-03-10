@@ -18,12 +18,11 @@ import it.unibo.alchemist.boundary.projectview.utils.ProjectIOUtils;
 import it.unibo.alchemist.boundary.projectview.utils.SVGImageUtils;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -31,8 +30,6 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
@@ -138,35 +135,22 @@ public class LeftLayoutController {
             }
 
         });
-        this.treeView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(final MouseEvent mouseEv) {
-                if (mouseEv.getClickCount() == 2 && new File(selectedFile).isFile()) {
-                        final Desktop desk = Desktop.getDesktop();
-                        try {
-                            desk.open(new File(selectedFile));
-                        } catch (IOException e) {
-                            L.error("Error opening file.", e);
-                            System.exit(1);
-                        }
+        this.treeView.setOnMouseClicked(mouseEv -> {
+            if (mouseEv.getClickCount() == 2 && new File(selectedFile).isFile()) {
+                final Desktop desk = Desktop.getDesktop();
+                try {
+                    desk.open(new File(selectedFile));
+                } catch (IOException e) {
+                    L.error("Error opening file.", e);
+                    System.exit(1);
                 }
             }
         });
         final ContextMenu menu = new ContextMenu();
         final MenuItem newFolder = new MenuItem(RESOURCES.getString("new_folder"));
-        newFolder.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(final ActionEvent event) {
-                loadLayout(true);
-            }
-        });
+        newFolder.setOnAction(e -> loadLayout(true));
         final MenuItem newFile = new MenuItem(RESOURCES.getString("new_file"));
-        newFile.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(final ActionEvent event) {
-                loadLayout(false);
-            }
-        });
+        newFile.setOnAction(e -> loadLayout(false));
         menu.getItems().addAll(newFolder, newFile);
         this.treeView.setContextMenu(menu);
     }
@@ -230,33 +214,33 @@ public class LeftLayoutController {
     }
 
     private void loadLayout(final boolean isFolder) {
+        final FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(ProjectGUI.class.getResource("view/NewFolderOrFileDialog.fxml"));
+        AnchorPane pane;
         try {
-            final FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(ProjectGUI.class.getResource("view/NewFolderOrFileDialog.fxml"));
-            final AnchorPane pane = (AnchorPane) loader.load();
-            final Stage stage = new Stage();
-            if (isFolder) {
-                stage.setTitle(RESOURCES.getString("folder_name_title"));
-            } else {
-                stage.setTitle(RESOURCES.getString("file_name_title"));
-            }
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(this.main.getStage());
-            stage.setResizable(false);
-            final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            final double width = screenSize.getWidth() * 20.83 / 100;
-            final double height = screenSize.getHeight() * 13.89 / 100;
-            final Scene scene = new Scene(pane, width, height);
-            stage.setScene(scene);
-            final NewFolderOrFileDialogController controller = loader.getController();
-            controller.initialize(isFolder);
-            controller.setSelectedItem(this.selectedFile);
-            controller.setStage(stage);
-            stage.showAndWait();
+            pane = (AnchorPane) loader.load();
         } catch (IOException e) {
-            L.error("Error loading the graphical interface. This is most likely a bug.", e);
-            System.exit(1);
+            throw new IllegalStateException(e);
         }
+        final Stage stage = new Stage();
+        if (isFolder) {
+            stage.setTitle(RESOURCES.getString("folder_name_title"));
+        } else {
+            stage.setTitle(RESOURCES.getString("file_name_title"));
+        }
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(this.main.getStage());
+        stage.setResizable(false);
+        final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        final double width = screenSize.getWidth() * 20.83 / 100;
+        final double height = screenSize.getHeight() * 13.89 / 100;
+        final Scene scene = new Scene(pane, width, height);
+        stage.setScene(scene);
+        final NewFolderOrFileDialogController controller = loader.getController();
+        controller.initialize(isFolder);
+        controller.setSelectedItem(this.selectedFile);
+        controller.setStage(stage);
+        stage.showAndWait();
     }
 
 }

@@ -1,6 +1,7 @@
 package it.unibo.alchemist.boundary.projectview.controller;
 
 import java.awt.Desktop;
+import java.awt.Desktop.Action;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.File;
@@ -136,13 +137,17 @@ public class LeftLayoutController {
 
         });
         this.treeView.setOnMouseClicked(mouseEv -> {
-            if (mouseEv.getClickCount() == 2 && new File(selectedFile).isFile()) {
+            final File target = new File(selectedFile);
+            if (mouseEv.getClickCount() == 2 && target.exists() && target.isFile()) {
                 final Desktop desk = Desktop.getDesktop();
-                try {
-                    desk.open(new File(selectedFile));
-                } catch (IOException e) {
-                    L.error("Error opening file.", e);
-                    System.exit(1);
+                if (desk.isSupported(Action.OPEN)) {
+                    new Thread(() -> {
+                        try {
+                            desk.open(target);
+                        } catch (IOException e) {
+                            L.error("Error opening file.", e);
+                        }
+                    }).start();
                 }
             }
         });

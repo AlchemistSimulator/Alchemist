@@ -98,6 +98,7 @@ public class Engine<T> implements Simulation<T> {
      *            the maximum time to reach
      */
     public Engine(final Environment<T> e, final long maxSteps, final Time t) {
+        L.info("Engine created");
         env = e;
         env.setSimulation(this);
         dg = new MapBasedDependencyGraph<T>(env, handlers);
@@ -348,9 +349,12 @@ public class Engine<T> implements Simulation<T> {
 
     @Override
     public void run() {
+        long[] times = new long[2];
         synchronized (env) {
             finalizeConstructor();
             status = Status.READY;
+            times[0] = System.nanoTime();
+            L.info("Thread " + Thread.currentThread().getId() + " started running.");
             monitorLock.read();
             for (final OutputMonitor<T> m : monitors) {
                 m.initialized(env);
@@ -376,6 +380,10 @@ public class Engine<T> implements Simulation<T> {
                 L.error("The simulation engine crashed.", e);
             } finally {
                 status = Status.TERMINATED;
+                times[1] = System.nanoTime();
+                //CHECKSTYLE:OFF
+                L.info("Thread " + Thread.currentThread().getId() + " execution time: " + Double.toString((times[1] - times[0]) / 1000000000.0));
+                //CHECKSTYLE:ON
                 commands.clear();
                 monitorLock.read();
                 for (final OutputMonitor<T> m : monitors) {

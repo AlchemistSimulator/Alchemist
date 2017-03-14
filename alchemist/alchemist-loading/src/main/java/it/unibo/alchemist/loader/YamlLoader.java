@@ -1,5 +1,8 @@
 package it.unibo.alchemist.loader;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.emptySet;
 import static java.util.ResourceBundle.getBundle;
 
 import java.io.BufferedReader;
@@ -9,19 +12,11 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Reader;
-import java.io.Serializable;
 import java.io.StringReader;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -30,19 +25,30 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
+
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
-import org.danilopianini.lang.PrimitiveUtils;
+import org.danilopianini.jirf.Factory;
+import org.danilopianini.jirf.FactoryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.common.reflect.TypeToken;
 
 import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.loader.displacements.Displacement;
@@ -59,9 +65,9 @@ import it.unibo.alchemist.loader.variables.LinearVariable;
 import it.unibo.alchemist.loader.variables.Variable;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
-import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Action;
+import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
@@ -77,110 +83,103 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
 /**
  * Loads a properly formatted YAML file and provides method for instancing a batch of scenarios.
  */
-public class YamlLoader implements Loader, Serializable {
+public class YamlLoader implements Loader {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -8503453282930319680L;
-    private static final String ALCHEMIST_PACKAGE_ROOT = "it.unibo.alchemist.";
-    private static final String SYNTAX_NAME = "YamlSyntax";
-    private static final ResourceBundle SYNTAX = getBundle(YamlLoader.class.getPackage().getName() + '.' + SYNTAX_NAME, Locale.US);
+    private static final Logger L = LoggerFactory.getLogger(YamlLoader.class);
+    private static final ResourceBundle SYNTAX = getBundle(YamlLoader.class.getPackage().getName() + ".YamlSyntax", Locale.US);
     private static final String ACTIONS = SYNTAX.getString("actions");
-    private static final String ACTIONS_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "model.implementations.actions.";
     private static final String AGGREGATORS = SYNTAX.getString("aggregators");
+    private static final String ALCHEMIST_PACKAGE_ROOT = "it.unibo.alchemist.";
     private static final String CONCENTRATION = SYNTAX.getString("concentration");
-    private static final String CONCENTRATIONS_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "model.implementations.concentrations.";
     private static final String CONDITIONS = SYNTAX.getString("conditions");
-    private static final String CONDITIONS_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "model.implementations.conditions.";
     private static final String CONTENTS = SYNTAX.getString("contents");
     private static final String DEFAULT = SYNTAX.getString("default");
     private static final String DISPLACEMENTS = SYNTAX.getString("displacements");
-    private static final String DISPLACEMENTS_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "loader.displacements.";
-    private static final String ENV_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "model.implementations.environments.";
     private static final String ENVIRONMENT = SYNTAX.getString("environment");
     private static final String EXPORT = SYNTAX.getString("export");
     private static final String FORMULA = SYNTAX.getString("formula");
     private static final String IN = SYNTAX.getString("in");
     private static final String INCARNATION = SYNTAX.getString("incarnation");
     private static final String LAYERS = SYNTAX.getString("layers");
-    private static final String LAYERS_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "model.implementations.layers.";
-    private static final String LINKING_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "model.implementations.linkingrules.";
     private static final String LINKING_RULE = SYNTAX.getString("linking-rule");
-    private static final String MIN = SYNTAX.getString("min");
     private static final String MAX = SYNTAX.getString("max");
+    private static final String MIN = SYNTAX.getString("min");
+    private static final String MODEL_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "model.implementations.";
+    private static final String NAME = SYNTAX.getString("name");
     private static final String MOLECULE = SYNTAX.getString("molecule");
-    private static final String MOLECULES_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "model.implementations.molecules.";
     private static final String NODE = SYNTAX.getString("node");
     private static final String NODES = SYNTAX.getString("nodes");
-    private static final String NODES_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "model.implementations.nodes.";
     private static final String PARAMS = SYNTAX.getString("parameters");
-    private static final String POSITIONS = SYNTAX.getString("positions");
-    private static final String POSITIONS_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "model.implementations.positions.";
+    private static final String PARAMETER = SYNTAX.getString("parameter");
     private static final String PROGRAMS = SYNTAX.getString("programs");
     private static final String PROPERTY = SYNTAX.getString("property");
     private static final String REACTION = SYNTAX.getString("reaction");
-    private static final String REACTIONS_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "model.implementations.reactions.";
     private static final String SCENARIO_SEED = SYNTAX.getString("scenario-seed");
     private static final String SEEDS = SYNTAX.getString("seeds");
-    private static final String SHAPES_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "loader.shapes.";
     private static final String SIMULATION_SEED = SYNTAX.getString("simulation-seed");
     private static final String STEP = SYNTAX.getString("step");
     private static final String TIME = SYNTAX.getString("time");
     private static final String TIMEDISTRIBUTION = SYNTAX.getString("time-distribution");
-    private static final String TIMEDISTRIBUTIONS_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "model.implementations.timedistributions.";
     private static final String TYPE = SYNTAX.getString("type");
-    private static final String VALUES = SYNTAX.getString("values");
-    private static final String VALUE_FILTER = SYNTAX.getString("value-filter");
-    private static final String VALUE_FILTER_PACKAGE_ROOT = ALCHEMIST_PACKAGE_ROOT + "loader.export.filters";
-    private static final String VARIABLES = SYNTAX.getString("variables");
-    private static final String VARIABLE = "is a variable";
-
-    private static final Logger L = LoggerFactory.getLogger(YamlLoader.class);
     private static final String UNCHECKED = "unchecked";
-
-    @SuppressWarnings({ UNCHECKED, "rawtypes" })
-    private static final Class<? extends Environment<?>> DEFAULT_ENVIRONMENT_CLASS =
-        (Class<? extends Environment<?>>) (Class<? extends Environment>) Continuous2DEnvironment.class;
-    @SuppressWarnings({ UNCHECKED, "rawtypes" })
-    private static final Class<? extends LinkingRule<?>> DEFAULT_LINKING_CLASS =
-        (Class<? extends LinkingRule<?>>) (Class<? extends LinkingRule>) NoLinks.class;
-    private static final Class<? extends Position> DEFAULT_POSITION_CLASS = Continuous2DEuclidean.class;
-    private static final Shape IN_ALL = (p) -> true;
-
-    private Object simulationSeed;
-    private Object scenarioSeed;
-    private final Map<Long, String> reverseLookupTable;
-    private final Map<String, Variable> lookupTable;
-    private final Map<String, DependentVariable> computableVariables;
+    private static final String VALUE_FILTER = SYNTAX.getString("value-filter");
+    private static final String VALUES = SYNTAX.getString("values");
+    private static final String VARIABLES = SYNTAX.getString("variables");
+    private static final Map<Class<?>, Map<String, Class<?>>> DEFAULT_MANDATORY_PARAMETERS = ImmutableMap.<Class<?>, Map<String, Class<?>>>builder()
+            .put(Layer.class, ImmutableMap.of(TYPE, CharSequence.class, MOLECULE, CharSequence.class))
+            .build();
+    private static final Map<Class<?>, Map<String, Class<?>>> DEFAULT_OPTIONAL_PARAMETERS = ImmutableMap.<Class<?>, Map<String, Class<?>>>builder()
+            .put(Variable.class, ImmutableMap.of(PARAMS, List.class, NAME, CharSequence.class))
+            .put(DependentVariable.class, ImmutableMap.of(PARAMS, List.class, NAME, CharSequence.class))
+            .put(Reaction.class, ImmutableMap.of(PARAMS, List.class, TIMEDISTRIBUTION, Object.class, ACTIONS, List.class, CONDITIONS, List.class))
+            .build();
+    private static final BuilderConfiguration<DependentVariable> DEPENDENT_VAR_CONFIG = new BuilderConfiguration<>(
+            ImmutableMap.of(FORMULA, CharSequence.class), ImmutableMap.of(NAME, CharSequence.class), makeBaseFactory(),
+            m -> new DependentScriptVariable(m.get(FORMULA).toString()));
+    private static final BuilderConfiguration<FilteringPolicy> FILTERING_CONFIG = new BuilderConfiguration<>(
+            ImmutableMap.of(NAME, CharSequence.class), ImmutableMap.of(), makeBaseFactory(), m -> CommonFilters.fromString(m.get(NAME).toString()));
+    private static final TypeToken<List<Number>> LIST_NUMBER = new TypeToken<List<Number>>() {
+        private static final long serialVersionUID = 1L;
+    };
+    private static final TypeToken<Map<String, Object>> MAP_STRING_OBJECT = new TypeToken<Map<String, Object>>() {
+        private static final long serialVersionUID = 1L;
+    };
+    private static final BuilderConfiguration<Extractor> NAMED_EXTRACTOR_CONFIG = new BuilderConfiguration<>(
+            ImmutableMap.of(NAME, CharSequence.class), ImmutableMap.of(), makeBaseFactory(), m -> {
+                final String name = m.get(NAME).toString();
+                if (TIME.equalsIgnoreCase(name)) {
+                    return new it.unibo.alchemist.loader.export.Time();
+                }
+                if (NODES.equalsIgnoreCase(name)) {
+                    return new NumberOfNodes();
+                }
+                throw new IllegalAlchemistYAMLException("Invalid named " + EXPORT + ' ' + name);
+            });
+    private static final Map<Class<?>, String> PACKAGE_ROOTS = ImmutableMap.<Class<?>, String>builder()
+            .put(Variable.class, ALCHEMIST_PACKAGE_ROOT + "loader.variables.")
+            .put(DependentVariable.class, ALCHEMIST_PACKAGE_ROOT + "loader.variables.")
+            .put(Environment.class, MODEL_PACKAGE_ROOT + "environments.")
+            .put(FilteringPolicy.class, ALCHEMIST_PACKAGE_ROOT + "loader.export.filters")
+            .put(Layer.class, MODEL_PACKAGE_ROOT + "layers.")
+            .put(Displacement.class, ALCHEMIST_PACKAGE_ROOT + "loader.displacements.")
+            .put(Shape.class, ALCHEMIST_PACKAGE_ROOT + "loader.shapes.")
+            .put(LinkingRule.class, MODEL_PACKAGE_ROOT + "linkingrules.")
+            .put(Node.class, MODEL_PACKAGE_ROOT + "nodes.")
+            .put(Reaction.class, MODEL_PACKAGE_ROOT + "reactions.")
+            .put(Condition.class, MODEL_PACKAGE_ROOT + "conditions.")
+            .put(Action.class, MODEL_PACKAGE_ROOT + "actions.")
+            .put(TimeDistribution.class, MODEL_PACKAGE_ROOT + "timedistributions.")
+            .put(Molecule.class, MODEL_PACKAGE_ROOT + "molecules.")
+            .put(Concentration.class, MODEL_PACKAGE_ROOT + "concentrations.")
+            .build();
+    private final Map<String, Double> constants;
+    private final Map<String, Object> contents;
+    private final Map<String, DependentVariable> depVariables;
     private final List<Extractor> extractors;
-    private final Class<? extends Environment<?>> envClass;
-    private final Class<? extends Position> posClass;
-    private final Class<? extends LinkingRule<?>> linkingClass;
-    private final List<?> envArgs;
-    private final List<?> linkingArgs;
-    private List<?> layersList = new ArrayList<>();
-
-    private final List<Map<String, Object>> displacements;
-
     private transient Incarnation<?> incarnation;
+    private final Map<Map<String, Object>, String> reverseLookupTable;
 
-    private class PlaceHolder {
-        private final String str;
-
-        PlaceHolder(final String str) {
-            this.str = str;
-        }
-
-        private String get() {
-            return str;
-        }
-
-        @Override
-        public String toString() {
-            return str + ":" + lookupTable.get(str);
-        }
-    }
+    private final Map<String, Variable> variables;
 
     /**
      * @param source
@@ -189,6 +188,7 @@ public class YamlLoader implements Loader, Serializable {
     public YamlLoader(final InputStream source) {
         this(new BufferedReader(new InputStreamReader(source, Charsets.UTF_8)));
     }
+
 
     /**
      * @param source
@@ -202,33 +202,11 @@ public class YamlLoader implements Loader, Serializable {
         if (!(yamlObj instanceof Map)) {
             throw new IllegalArgumentException("Not a valid Alchemist YAML file.");
         }
-        final Map<String, Object> contents = (Map<String, Object>) yamlObj;
-        /*
-         * Extract variables
-         */
-        final Object varObj = contents.get(VARIABLES);
-        if (varObj != null && !(varObj instanceof Map)) {
-            throw new IllegalAlchemistYAMLException(
-                    "Variables configuration is wrong. A YAML map was expected, instead of " + varObj);
-        }
-        final Map<String, Map<String, Object>> originalVars = Optional
-                .ofNullable((Map<String, Map<String, Object>>) varObj)
-                .orElse(Collections.emptyMap());
-        L.debug("Variables: {}", originalVars);
-        reverseLookupTable = originalVars.entrySet().stream()
-                .collect(Collectors.toMap(e -> univoqueId(e.getValue()), Entry::getKey));
-        L.debug("Reverse lookup table: {}", reverseLookupTable);
-        lookupTable = originalVars.entrySet().stream()
-                .filter(e -> e.getValue() instanceof Map && !((Map<?, ?>) e.getValue()).containsKey(FORMULA))
-                .collect(Collectors.toMap(Entry::getKey, e -> makeVar(e.getValue())));
-        L.debug("Lookup table: {}", lookupTable);
-        computableVariables = originalVars.entrySet().stream()
-                .filter(e -> e.getValue() instanceof Map && ((Map<?, ?>) e.getValue()).containsKey(FORMULA))
-                .collect(Collectors.toMap(Entry::getKey, e -> makeDepVar(e.getValue())));
+        final Map<String, Object> rawContents = Collections.unmodifiableMap((Map<String, Object>) yamlObj);
         /*
          * Incarnation
          */
-        final Object incObj = contents.get(INCARNATION);
+        final Object incObj = rawContents.get(INCARNATION);
         if (incObj == null) {
             throw new IllegalAlchemistYAMLException("You must specify an incarnation.",
                     new IllegalStateException("No incarnation specified in YAML simulation file"));
@@ -238,149 +216,107 @@ public class YamlLoader implements Loader, Serializable {
                         + " is not a valid incarnation. Supported incarnations are: "
                         + SupportedIncarnations.getAvailableIncarnations()));
         /*
-         * RNG
+         * Extract variables
          */
-        final Object seedMapObj = contents.get(SEEDS);
-        if (seedMapObj instanceof Map) {
-            final Map<String, Object> seedMap = (Map<String, Object>) seedMapObj;
-            simulationSeed = Optional.ofNullable(makePlaceHolderIfNeeded(seedMap.get(SIMULATION_SEED))).orElse(0);
-            scenarioSeed = Optional.ofNullable(makePlaceHolderIfNeeded(seedMap.get(SCENARIO_SEED))).orElse(0);
-        } else {
-            missingPart(SEEDS, "0 for all random seeds");
-            simulationSeed = 0;
-            scenarioSeed = 0;
+        final Object varObj = rawContents.get(VARIABLES);
+        if (varObj != null && !(varObj instanceof Map)) {
+            throw new IllegalAlchemistYAMLException("The " + VARIABLES + " section has an invalid format.");
         }
-        L.debug("Simulation seed: {}", simulationSeed);
-        L.debug("Scenario seed: {}", scenarioSeed);
-        /*
-         * Environment
-         */
-        final Object envObj = contents.get(ENVIRONMENT);
-        if (envObj instanceof Map) {
-            final Map<String, Object> envYaml = (Map<String, Object>) envObj;
-            envClass = extractClass(envYaml, ENV_PACKAGE_ROOT, DEFAULT_ENVIRONMENT_CLASS);
-            envArgs = extractParams(envYaml);
-            L.trace("Environment parameters: {}", envArgs);
-            // if envYaml contains LAYERS key 
-            if (envYaml.containsKey(LAYERS)) {
-                // get its value;
-                final Object layersObj = envYaml.get(LAYERS);
-                // if layersObj is a List
-                if (layersObj instanceof List) {
-                    // extract classes and parameter from the list and put them inside layersMap.
-                    layersList = (List<?>) envYaml.get(LAYERS);
-                } else {
-                    throw new IllegalAlchemistYAMLException(layersObj + " is not a valid layer list");
-                }
-            } else {
-                L.info("\"" + LAYERS + "\" key not found in environment. The " + envClass + " won't contain any layer.");
-            }
-        } else {
-            missingPart(ENVIRONMENT, DEFAULT_ENVIRONMENT_CLASS.getName());
-            envClass = DEFAULT_ENVIRONMENT_CLASS;
-            envArgs = Collections.emptyList();
+        final Map<String, Map<String, Object>> originalVars = Optional.ofNullable((Map<String, Map<String, Object>>) varObj).orElse(emptyMap());
+        for (final Entry<String, Map<String, Object>> varEntry : originalVars.entrySet()) {
+            varEntry.getValue().put(NAME, varEntry.getKey());
         }
+        L.debug("Variables: {}", originalVars);
+        reverseLookupTable = originalVars.entrySet().stream().collect(Collectors.toMap(Entry::getValue, Entry::getKey));
+        L.debug("Reverse lookup table: {}", reverseLookupTable);
         /*
-         * Linking rule
+         * Compute constants and dependent variables
          */
-        final Object linkingObj = contents.get(LINKING_RULE);
-        if (linkingObj instanceof Map) {
-            final Map<String, Object> linkingYaml = (Map<String, Object>) linkingObj;
-            L.trace("Linking rule: {}", linkingYaml);
-            linkingClass = extractClass(linkingYaml, LINKING_PACKAGE_ROOT, DEFAULT_LINKING_CLASS);
-            linkingArgs = extractParams(linkingYaml);
-            L.trace("Linking rule args: {}", linkingArgs);
-        } else {
-            missingPart(LINKING_RULE, DEFAULT_LINKING_CLASS.getName());
-            linkingClass = DEFAULT_LINKING_CLASS;
-            linkingArgs = Collections.emptyList();
-        }
-        /*
-         * Positions
-         */
-        final Object posObj = contents.get(POSITIONS);
-        if (posObj instanceof Map) {
-            posClass = extractClass((Map<String, Object>) posObj, POSITIONS_PACKAGE_ROOT, DEFAULT_POSITION_CLASS);
-        } else {
-            missingPart(POSITIONS, DEFAULT_POSITION_CLASS.getName());
-            posClass = DEFAULT_POSITION_CLASS;
-        }
-        /*
-         * Displacements
-         */
-        final Object dispObj = contents.get(DISPLACEMENTS);
-        List<Map<String, Object>> tmpDisp = Collections.emptyList();
-        if (dispObj instanceof List) {
-            final List<?> dispList = (List<?>) dispObj;
-            if (!dispList.isEmpty()) {
-                if (dispList.get(0) instanceof Map) {
-                    tmpDisp = (List<Map<String, Object>>) contents.get(DISPLACEMENTS);
-                } else {
-                    missingPart(DISPLACEMENTS + " inner", "an empty List");
+        constants = Maps.newLinkedHashMapWithExpectedSize(originalVars.size());
+        depVariables = Maps.newLinkedHashMapWithExpectedSize(originalVars.size());
+        final Factory factory = makeBaseFactory(incarnation);
+        final Builder<DependentVariable> depVarBuilder = new Builder<>(DependentVariable.class, ImmutableSet.of(DEPENDENT_VAR_CONFIG), factory);
+        int previousConstants, previousDepVars;
+        final Map<String, Map<String, Object>> originalClone = new LinkedHashMap<>(originalVars);
+        do {
+            previousConstants = constants.size();
+            previousDepVars = depVariables.size();
+            final Iterator<Entry<String, Map<String, Object>>> iter = originalClone.entrySet().iterator();
+            while (iter.hasNext()) {
+                final Entry<String, Map<String, Object>> entry = iter.next();
+                final String name = entry.getKey();
+                try {
+                    final DependentVariable dv = Objects.requireNonNull(depVarBuilder.build(entry.getValue()));
+                    try {
+                        final double value = dv.getWith(constants);
+                        iter.remove();
+                        constants.put(name, value);
+                        depVariables.remove(name);
+                    } catch (IllegalStateException e) {
+                        L.debug("{} value could not be computed: maybe it depends on another, not yet initialized variable.\nReason: {}", name, e);
+                        depVariables.put(name, dv);
+                    }
+                    L.debug("Constant intialized in {}", constants);
+                } catch (IllegalAlchemistYAMLException e) {
+                    L.debug("{} could not be created: its constructor may be requiring an uninitialized variable.\nReason: {}", name, e);
                 }
             }
-        } else {
-            missingPart(DISPLACEMENTS, "an empty list.");
+        } while (previousConstants != constants.size() || previousDepVars != depVariables.size());
+        assert constants.size() + depVariables.size() <= originalVars.size();
+        contents = (Map<String, Object>) recursivelyResolveVariables(rawContents, constants);
+        final Iterator<String> varNames = reverseLookupTable.values().iterator();
+        while (varNames.hasNext() && !constants.isEmpty()) {
+            final String var = varNames.next();
+            if (constants.containsKey(var)) {
+                varNames.remove();
+            }
         }
-        displacements = tmpDisp;
-        if (displacements.isEmpty()) {
-            L.warn("Your {} section is empty. No nodes will be placed in this scenario, making it pretty useless.", DISPLACEMENTS);
-        }
-        L.debug("Displacements: " + displacements);
+        /*
+         * Compute variables
+         */
+        final BiFunction<Map<String, ?>, CharSequence, Double> toDouble = (m, s) -> factory.convertOrFail(Double.class, m.get(s));
+        final BuilderConfiguration<Variable> arbitraryVarConfig = new BuilderConfiguration<>(
+                ImmutableMap.of(VALUES, List.class, DEFAULT, Number.class), ImmutableMap.of(NAME, CharSequence.class), factory,
+                m -> new ArbitraryVariable(toDouble.apply(m, DEFAULT), factory.convertOrFail(List.class, m.get(VALUES))));
+        final BuilderConfiguration<Variable> linearVarConfig = new BuilderConfiguration<>(
+                ImmutableMap.of(DEFAULT, Number.class, MIN, Number.class, MAX, Number.class, STEP, Number.class), ImmutableMap.of(NAME, CharSequence.class), factory,
+                m -> new LinearVariable(toDouble.apply(m, DEFAULT), toDouble.apply(m, MIN), toDouble.apply(m, MAX), toDouble.apply(m, STEP)));
+        final Builder<Variable> varBuilder = new Builder<>(Variable.class, ImmutableSet.of(arbitraryVarConfig, linearVarConfig), factory);
+        variables = originalVars.entrySet().stream()
+                .filter(e -> e.getValue() instanceof Map && !((Map<?, ?>) e.getValue()).containsKey(FORMULA))
+                .collect(Collectors.toMap(Entry::getKey, e -> varBuilder.build(e.getValue())));
+        L.debug("Lookup table: {}", variables);
+        assert depVariables.size() + variables.size() == reverseLookupTable.size();
         /*
          * Extractors
          */
         final Object extrObj = contents.get(EXPORT);
-        if (extrObj instanceof List) {
-            extractors = Collections.unmodifiableList(((List<?>) extrObj).parallelStream()
-                .map(obj -> {
-                    if (obj instanceof String) {
-                        final String strDesc = (String) obj;
-                        if (TIME.equalsIgnoreCase(strDesc)) {
-                            return new it.unibo.alchemist.loader.export.Time();
-                        }
-                        if (NODES.equalsIgnoreCase(strDesc)) {
-                            return new NumberOfNodes();
-                        }
-                    }
-                    if (obj instanceof Map) {
-                        final Map<String, Object> mapObj = (Map<String, Object>) obj;
-                        if (mapObj.containsKey(MOLECULE)) {
-                            final Object aggregatorObj = mapObj.getOrDefault(AGGREGATORS, Collections.emptyList());
-                            final List<String> aggregators = aggregatorObj instanceof List ? (List<String>) aggregatorObj : Collections.emptyList();
-                            final Object filterObj = mapObj.getOrDefault(VALUE_FILTER, "NoFilter");
-                            final FilteringPolicy filter = filterObj instanceof Map
-                                    ? extractClassIfDeclared((Map<String, Object>) filterObj, VALUE_FILTER_PACKAGE_ROOT)
-                                        .map(clazz -> create(clazz, extractParams((Map<String, Object>) filterObj), incarnation, Collections.emptyMap()))
-                                        .map(f -> (FilteringPolicy) f)
-                                        .orElseThrow(() -> new IllegalAlchemistYAMLException(filterObj + " is not a valid value filter."))
-                                    : CommonFilters.fromString(filterObj.toString());
-                            return new MoleculeReader<>(
-                                    mapObj.get(MOLECULE).toString(),
-                                    mapObj.getOrDefault(PROPERTY, "").toString(),
-                                    incarnation,
-                                    filter,
-                                    aggregators);
-                        }
-                        final Optional<Class<Extractor>> extrClass = extractClassIfDeclared(mapObj, "it.unibo.alchemist.loader.export.");
-                        if (extrClass.isPresent()) {
-                            final List<?> params = extractParams(mapObj);
-                            return create(extrClass.get(), params, incarnation, Collections.emptyMap());
-                        }
-                    }
-                    throw new IllegalAlchemistYAMLException("Could not create an exporter with " + obj);
-                })
-                .filter(e -> e != null)
-                .collect(Collectors.toList())
-            );
+        if (extrObj == null) {
+            extractors = emptyList();
+        } else if (extrObj instanceof List) {
+            final Builder<FilteringPolicy> filterBuilder = new Builder<>(FilteringPolicy.class, FILTERING_CONFIG, factory);
+            final Builder<Extractor> extractorBuilder = new Builder<>(Extractor.class,
+                    ImmutableSet.of(
+                            NAMED_EXTRACTOR_CONFIG,
+                            new BuilderConfiguration<>(
+                                ImmutableMap.of(MOLECULE, CharSequence.class),
+                                ImmutableMap.of(PROPERTY, CharSequence.class, AGGREGATORS, List.class, VALUE_FILTER, Object.class),
+                                factory,
+                                m-> {
+                                    final Object filterObj = m.getOrDefault(VALUE_FILTER, "NoFilter");
+                                    final FilteringPolicy filter = filterBuilder.build(filterObj instanceof CharSequence
+                                            ? ImmutableMap.of(NAME, filterObj.toString()) : filterObj);
+                                    final List<String> aggregators = listCast(factory, m.get(AGGREGATORS), "aggregators").stream()
+                                            .map(Object::toString)
+                                            .collect(Collectors.toList());
+                                    return new MoleculeReader<>(m.get(MOLECULE).toString(), m.getOrDefault(PROPERTY, "").toString(), incarnation, filter, aggregators);
+                                })
+                    ), factory);
+            extractors = Collections.unmodifiableList(((List<?>) extrObj).stream()
+                    .map(obj -> extractorBuilder.build(obj instanceof CharSequence ? ImmutableMap.of(NAME, obj.toString()) : obj))
+                    .collect(Collectors.toList()));
         } else {
-            extractors = Collections.emptyList();
-            L.info("{} is not a valid list of exports. No data will be exported.", extrObj);
-        }
-        try {
-            source.close();
-        } catch (IOException e1) {
-            L.error("Could not close {}", source);
+            throw new IllegalAlchemistYAMLException("Exports must be a YAML map.");
         }
     }
 
@@ -392,342 +328,270 @@ public class YamlLoader implements Loader, Serializable {
         this(new StringReader(yaml));
     }
 
-    @SuppressWarnings(UNCHECKED)
-    private Map<String, Object> castOrEmpty(final Object target) {
-        return target instanceof Map ? (Map<String, Object>) target : Collections.emptyMap();
-    }
-
-    private List<?> extractParams(final Map<String, Object> yaml) {
-        return Optional.ofNullable((List<?>) yaml.get(PARAMS))
-                .orElse(Collections.emptyList())
-                .parallelStream()
-                .map(this::makePlaceHolderIfNeeded)
-                .collect(Collectors.toList());
+    @Override
+    public List<Extractor> getDataExtractors() {
+        return Collections.unmodifiableList(extractors);
     }
 
     @Override
     public <T> Environment<T> getDefault() {
-        return getWith(Collections.emptyMap());
+        return getWith(emptyMap());
     }
 
     @Override
     public Map<String, Variable> getVariables() {
-        return Collections.unmodifiableMap(lookupTable);
+        return Collections.unmodifiableMap(variables);
     }
 
-    @SuppressWarnings(UNCHECKED)
     @Override
     public <T> Environment<T> getWith(final Map<String, Double> values) {
-        final Map<String, Double> actualVars = lookupTable.entrySet().stream().collect(Collectors.toMap(
-            Entry::getKey,
-            entry -> Optional.ofNullable(values.get(entry.getKey())).orElse(entry.getValue().getDefault())
-        ));
-        int previousSize = -1;
-        final Map<String, DependentVariable> computableCopy = new LinkedHashMap<>(computableVariables);
-        while (previousSize != actualVars.size()) {
-            previousSize = actualVars.size();
-            final Iterator<Entry<String, DependentVariable>> it = computableCopy.entrySet().iterator();
-            while (it.hasNext()) {
-                final Entry<String, DependentVariable> entry = it.next();
-                final DependentVariable depvar = entry.getValue();
+        if (values.size() > variables.size()) {
+            throw new IllegalArgumentException("Some variables do not exist in the environment, or are not overridable: " + Maps.difference(values, variables).entriesOnlyOnLeft());
+        }
+        final int expectedSize = constants.size() + variables.size() + depVariables.size();
+        final Map<String, Double> actualVars = Maps.newLinkedHashMapWithExpectedSize(expectedSize);
+        actualVars.putAll(values);
+        actualVars.putAll(constants);
+        for (final Entry<String, Variable> entry: variables.entrySet()) {
+            final String var = entry.getKey();
+            final Double varVal = values.get(var);
+            actualVars.put(var, varVal == null ? entry.getValue().getDefault() : varVal); 
+        }
+        /*
+         * Initialize the remaining dependent variables, and add them to the actual Vars
+         */
+        final Map<String, DependentVariable> depClone = new LinkedHashMap<>(depVariables);
+        final List<Exception> issues = Lists.newArrayListWithCapacity(depClone.size());
+        int previousSize;
+        do {
+            issues.clear();
+            previousSize = depClone.size();
+            final Iterator<Entry<String, DependentVariable>> iter = depClone.entrySet().iterator();
+            while (iter.hasNext()) {
+                final Entry<String, DependentVariable> entry = iter.next();
                 final String name = entry.getKey();
+                final DependentVariable dv = entry.getValue();
                 try {
-                    final double value = depvar.getWith(actualVars);
-                    actualVars.putIfAbsent(name, value);
-                    it.remove();
+                    final double value = dv.getWith(actualVars);
+                    iter.remove();
+                    actualVars.put(name, value);
                 } catch (IllegalStateException e) {
-                    L.debug("{} could not be initialized: maybe it depends on another, not yet initialized variable.\nReason: {}", name, e);
+                    issues.add(e);
+                    L.debug("{} value could not be computed: maybe it depends on another, not yet initialized variable.\nReason: {}", name, e);
                 }
             }
-        }
-        if (!computableCopy.isEmpty()) {
-            throw new IllegalStateException("Could not initialize some variables: " + computableCopy);
+        } while (previousSize != depClone.size());
+        if (!depClone.isEmpty()) {
+            final RuntimeException ex = new IllegalAlchemistYAMLException("One or more variables could not be initialized: " + depClone);
+            if (issues.size() == 1) {
+                ex.initCause(issues.get(0));
+            } else {
+                issues.forEach(ex::addSuppressed);
+            }
+            throw ex;
         }
         L.debug("Variable bindings: {}", actualVars);
-        final RandomGenerator simRandom = create(MersenneTwister.class, Lists.newArrayList(simulationSeed), incarnation, actualVars);
-        L.debug("Simulation random engine has been initialized: {}.", simRandom);
-        final RandomGenerator scenarioRandom = create(MersenneTwister.class, Lists.newArrayList(simulationSeed), incarnation, actualVars);
-        L.debug("Scenario random engine has been initialized: {}.", scenarioRandom);
+        assert actualVars.size() == constants.size() + reverseLookupTable.size();
+        @SuppressWarnings(UNCHECKED)
+        final Map<String, Object> contents = (Map<String, Object>) recursivelyResolveVariables(this.contents, actualVars);
+        /*
+         * Factory
+         */
+        final Factory factory = makeBaseFactory(incarnation);
+        @SuppressWarnings(UNCHECKED)
+        final Incarnation<T> incarnation = (Incarnation<T>) this.incarnation;
+        /*
+         * RNG
+         */
+        final Object seedObj = contents.get(SEEDS);
+        final RandomGenerator scenarioRng = rngBuilder(factory, SCENARIO_SEED).build(seedObj);
+        final RandomGenerator simRng = rngBuilder(factory, SIMULATION_SEED).build(seedObj);
+        factory.registerSingleton(RandomGenerator.class, scenarioRng);
         /*
          * Environment
          */
-        final Environment<T> env = (Environment<T>) create(envClass, envArgs, incarnation, actualVars);
-        L.debug("Created environment: {}", Objects.requireNonNull(env, "Could not initialize the requested environment."));
-        final LinkingRule<T> linking = (LinkingRule<T>) create(linkingClass, linkingArgs, incarnation, actualVars, scenarioRandom, env);
-        L.debug("Linking rule is: {}", linking);
-        env.setLinkingRule(Objects.requireNonNull(linking, "The linking rule can not be null."));
+        final BuilderConfiguration<Environment<T>> envDefaultConfig = emptyConfig(factory, Continuous2DEnvironment::new);
+        final Builder<Environment<T>> envBuilder = new Builder<>(Environment.class, ImmutableSet.of(envDefaultConfig), factory);
+        final Environment<T> env = envBuilder.build(contents.get(ENVIRONMENT));
+        factory.registerSingleton(Environment.class, env);
+        factory.registerImplicit(List.class, Position.class, l -> env.makePosition(cast(factory, LIST_NUMBER, l, "position coordinates").toArray(new Number[l.size()])));
+        factory.registerImplicit(Number[].class, Position.class, env::makePosition);
+        final Builder<Molecule> molBuilder = new Builder<>(Molecule.class, singleParamConfig(factory, p -> incarnation.createMolecule(p.toString())), factory);
         /*
-         * Layers.
+         * Layers
          */
-        if (!layersList.isEmpty()) {
-            for (final Object layerObj: layersList) {
-                if (layerObj instanceof Map) {
-                    final Map<String, Object> layer = (Map<String, Object>) layerObj;
-                    if (layer.containsKey(MOLECULE) && layer.get(MOLECULE) instanceof String) {
-                        final Optional<Class<Layer<T>>> layerDescriptor = extractClassIfDeclared(layer, LAYERS_PACKAGE_ROOT);
-                        if (layerDescriptor.isPresent()) {
-                            final Class<Layer<T>> layerClass = layerDescriptor.get();
-                            final List<?> layArgs = extractParams(layer);
-                            final Molecule molecule = incarnation.createMolecule((String) layer.get(MOLECULE));
-                            env.addLayer(molecule, create(layerClass, layArgs, incarnation, actualVars));
-                        } else {
-                            throw new IllegalAlchemistYAMLException(layerObj + " is not a valid layer description: layer class missing or invald layer class name");
+        final List<?> layers = listCast(factory, contents.get(LAYERS), "layers");
+        final Builder<Layer<T>> layerBuilder = new Builder<>(Layer.class, emptySet(), factory);
+        layers.forEach(o -> {
+            final Map<String, Object> layerMap = cast(factory, MAP_STRING_OBJECT, o, "layer");
+            final Layer<T> layer = layerBuilder.build(layerMap);
+            final Molecule molecule = molBuilder.build(layerMap.get(MOLECULE));
+            env.addLayer(molecule, layer);
+        });
+        /*
+         * Linking rule
+         */
+        final BuilderConfiguration<LinkingRule<T>> linkingRuleConfig = emptyConfig(factory, NoLinks::new);
+        final Builder<LinkingRule<T>> linkingBuilder = new Builder<>(LinkingRule.class, ImmutableSet.of(linkingRuleConfig), factory);
+        final LinkingRule<T> linkingRule = linkingBuilder.build(contents.get(LINKING_RULE));
+        env.setLinkingRule(linkingRule);
+        factory.registerSingleton(LinkingRule.class, linkingRule);
+        /*
+         * Displacements
+         */
+        final List<?> dispList = listCast(factory, contents.get(DISPLACEMENTS), "displacements");
+        if (dispList.isEmpty()) {
+            L.warn("Your {} section is empty. No nodes will be placed in this scenario, making it pretty useless.", DISPLACEMENTS);
+        } else {
+            final Builder<Displacement> displacementBuilder = new Builder<>(Displacement.class, emptySet(), factory);
+            final Builder<Node<T>> nodeBuilder = new Builder<Node<T>>(Node.class, ImmutableSet.of(
+                    emptyConfig(factory, () -> incarnation.createNode(simRng, env, null)),
+                    singleParamConfig(factory, o -> incarnation.createNode(simRng, env, o.toString()))),
+                    factory);
+            final Builder<Shape> shapeBuilder = new Builder<>(Shape.class, emptyConfig(factory, () -> p -> true), factory);
+            for (final Object dispObj: dispList) {
+                final Map<String, Object> dispMap = cast(factory, MAP_STRING_OBJECT, dispObj, "displacement");
+                factory.registerSingleton(RandomGenerator.class,  scenarioRng);
+                final Displacement displacement = displacementBuilder.build(dispMap.get(IN));
+                factory.registerSingleton(Displacement.class, displacement);
+                /*
+                 * Contents
+                 */
+                final List<?> contentsList = listCast(factory, dispMap.get(CONTENTS), "contents");
+                final Map<Shape, Entry<Molecule, String>> shapes = Maps.newLinkedHashMapWithExpectedSize(contentsList.size());
+                for (final Object contentObj: contentsList) {
+                    final Map<String, Object> contentMap = cast(factory, MAP_STRING_OBJECT, contentObj, "content");
+                    final Shape shape = shapeBuilder.build(contentMap.get(IN));
+                    final Molecule molecule = molBuilder.build(contentMap.get(MOLECULE));
+                    final Object concObj = contentMap.get(CONCENTRATION);
+                    shapes.put(shape, new ImmutablePair<>(molecule, concObj == null ? "" : concObj.toString()));
+                }
+                /*
+                 * Nodes
+                 */
+                factory.registerSingleton(RandomGenerator.class, simRng);
+                for (final Position position: displacement) {
+                    final Node<T> node = nodeBuilder.build(dispMap.get(NODE));
+                    factory.registerSingleton(Node.class, node);
+                    /*
+                     * Node contents
+                     */
+                    for (final Entry<Shape, Entry<Molecule, String>> entry: shapes.entrySet()) {
+                        if (entry.getKey().contains(position)) {
+                            final Entry<Molecule, String> mc = entry.getValue();
+                            node.setConcentration(mc.getKey(), incarnation.createConcentration(mc.getValue()));
                         }
-                    } else {
-                        throw new IllegalAlchemistYAMLException(layerObj + " is not a valid layer description: molecule missing or invald molecule name");
                     }
-                } else {
-                    throw new IllegalAlchemistYAMLException(layerObj + " is not a valid layer description");
-                }
-            }
-        }
-        final PositionMaker pmaker = new PositionMaker(posClass);
-        final Incarnation<T> currIncarnation = (Incarnation<T>) incarnation;
-        for (final Map<String, Object> displacement : displacements) {
-            final Map<String, Object> displacementShapeMap = (Map<String, Object>) displacement.get(IN);
-            final Class<Displacement> displacementClass = extractClass(displacementShapeMap, DISPLACEMENTS_PACKAGE_ROOT, null);
-            if (displacementClass != null) {
-                final List<?> parameters = extractParams(displacementShapeMap);
-                final Displacement displ = create(displacementClass, parameters, incarnation, actualVars, scenarioRandom, env, pmaker);
-                L.debug("Displacement initialized: {}", displ);
-                final List<Map<String, Object>> contents = Optional
-                        .ofNullable((List<Map<String, Object>>) displacement.get(CONTENTS))
-                        .orElse(Collections.emptyList());
-                for (final Map<String, Object> content: contents) {
-                    final Object shapeObj = content.get(IN);
-                    if (shapeObj instanceof Map) {
-                        final Map<String, Object> shapeMap = (Map<String, Object>) shapeObj;
-                        content.put(IN, makeSupplier(
-                                () -> IN_ALL,
-                                shapeMap, SHAPES_PACKAGE_ROOT, actualVars, simRandom, env, pmaker)
-                            .get());
-                    } else if (!(shapeObj instanceof Shape)) {
-                        content.put(IN, IN_ALL);
-                    }
-                }
-                L.debug("Modified contents: {}", contents);
-                Object programsObj = displacement.get(PROGRAMS);
-                if (!(programsObj instanceof List)) {
-                    missingPart(PROGRAMS, "empty list");
-                    programsObj = Collections.emptyList();
-                }
-                final List<?> programsList = (List<?>) programsObj;
-                if (!programsList.isEmpty()) {
-                    final Object programObj = programsList.get(0);
-                    if (programObj instanceof List) {
-                        final List<?> programList = (List<?>) programObj;
-                        if (!programList.isEmpty()) {
-                            final Object reactionObj = programList.get(0);
-                            if (!(reactionObj instanceof Map)) {
-                                throw new IllegalAlchemistYAMLException("The reaction should be a YAML map. I got a "
-                                        + reactionObj.getClass().getSimpleName() + " instead.");
+                    /*
+                     * Reactions
+                     */
+                    final List<?> poolsList = listCast(factory, dispMap.get(PROGRAMS), "program pools");
+                    final Builder<TimeDistribution<T>> tdBuilder = new Builder<>(TimeDistribution.class, ImmutableSet.of(
+                            emptyConfig(factory, () -> incarnation.createTimeDistribution(simRng, env, node, null)),
+                            singleParamConfig(factory, o -> incarnation.createTimeDistribution(simRng, env, node, o.toString()))),
+                            factory);
+                    for (final Object programsObj: poolsList) {
+                        final List<?> programs = listCast(factory, programsObj, "programs");
+                        for (final Object programObj: programs) {
+                            final Map<String, Object> program = cast(factory, MAP_STRING_OBJECT, programObj, "program");
+                            final TimeDistribution<T> td = tdBuilder.build(program.get(TIMEDISTRIBUTION));
+                            factory.registerSingleton(TimeDistribution.class, td);
+                            final Builder<Reaction<T>> reactionBuilder = new Builder<>(Reaction.class,
+                                    new BuilderConfiguration<>(
+                                            ImmutableMap.of(REACTION, CharSequence.class),
+                                            ImmutableMap.of(TIMEDISTRIBUTION, Object.class, ACTIONS, List.class, CONDITIONS, List.class),
+                                            factory, m -> incarnation.createReaction(simRng, env, node, td, m.get(REACTION).toString())),
+                                    factory);
+                            final Reaction<T> reaction = reactionBuilder.build(program);
+                            factory.registerSingleton(Reaction.class, reaction);
+                            /*
+                             * Actions and conditions
+                             */
+                            final List<?> actionsList = listCast(factory, program.get(ACTIONS), "actions list");
+                            if (!actionsList.isEmpty()) {
+                                final Builder<Action<T>> actionBuilder = new Builder<>(Action.class, 
+                                        singleParamConfig(factory, o -> incarnation.createAction(simRng, env, node, td, reaction, o.toString())), factory);
+                                reaction.setActions(Stream.concat(
+                                        actionsList.stream().map(actionBuilder::build),
+                                        reaction.getActions().stream())
+                                    .collect(Collectors.toList()));
+                            }
+                            /*
+                             * Conditions
+                             */
+                            final List<?> conditionsList = listCast(factory, program.get(CONDITIONS), "conditions list");
+                            if (!conditionsList.isEmpty()) {
+                                final Builder<Condition<T>> conditionBuilder = new Builder<>(Condition.class, 
+                                        singleParamConfig(factory, o -> incarnation.createCondition(simRng, env, node, td, reaction, o.toString())), factory);
+                                reaction.setConditions(Stream.concat(
+                                        conditionsList.stream().map(conditionBuilder::build),
+                                        reaction.getConditions().stream())
+                                    .collect(Collectors.toList()));
+                            }
+                            node.addReaction(reaction);
+                            if (!(factory.deregisterSingleton(reaction) && factory.deregisterSingleton(td))) {
+                                throw new IllegalStateException("This is a bug in " + getClass() + ": singletons are not correctly cleared.");
                             }
                         }
-                    } else {
-                        throw new IllegalAlchemistYAMLException("The program should be a list of reactions. I got a "
-                                + programObj.getClass().getSimpleName() + " instead.");
                     }
+                    if (!factory.deregisterSingleton(node)) {
+                        throw new IllegalStateException("This is a bug in " + getClass() + ": singletons are not correctly cleared.");
+                    }
+                    env.addNode(node, position);
                 }
-                final List<Map<String, Object>> programs = ((List<List<Map<String, Object>>>) programsObj)
-                        .parallelStream()
-                        .flatMap(pool -> pool.stream())
-                        .collect(Collectors.toList());
-                final Object nodeDescriptor = displacement.get(NODE);
-                final Supplier<Node<T>> nodeSupplier = makeSupplier(
-                        () -> currIncarnation.createNode(simRandom, env, stringOrNull(nodeDescriptor)),
-                        nodeDescriptor instanceof Map ? (Map<String, Object>) nodeDescriptor : Collections.emptyMap(),
-                        NODES_PACKAGE_ROOT, actualVars, simRandom, env);
-                for (final Position pos: displ) {
-                    final Node<T> node = nodeSupplier.get();
-                    for (final Map<String, Object> content: contents) {
-                        final Shape shape = (Shape) content.get(IN);
-                        if (shape.contains(pos)) {
-                            final Molecule mol = makeMolecule(content, actualVars, simRandom, currIncarnation, env, node);
-                            node.setConcentration(mol, makeConcentration(content, actualVars, simRandom, currIncarnation, env, node));
-                        }
-                    }
-                    for (final Map<String, Object> program: programs) {
-                        final TimeDistribution<T> td = makeTimeDistribution(program, actualVars, simRandom, currIncarnation, env, node);
-                        L.trace("{}", td);
-                        final Reaction<T> reaction = makeSupplier(
-                                () -> currIncarnation.createReaction(simRandom, env, node, td, stringOrNull(program.get(REACTION))),
-                                program, REACTIONS_PACKAGE_ROOT, actualVars, simRandom, env, node, td)
-                            .get();
-                        node.addReaction(reaction);
-                        populateConditions(actualVars, program, simRandom, currIncarnation, env, pmaker, node, td, reaction);
-                        populateActions(actualVars, program, simRandom, currIncarnation, env, pmaker, node, td, reaction);
-                        L.trace("{}", reaction);
-                    }
-                    env.addNode(node, pos);
+                if (!factory.deregisterSingleton(displacement)) {
+                    throw new IllegalStateException("This is a bug in " + getClass() + ": singletons are not correctly cleared.");
                 }
-            } else {
-                throw new IllegalStateException("Cannot instance the required displacement: " + displacement);
             }
         }
         return env;
     }
 
-    private  <T> T makeConcentration(final Map<String, Object> content,
-            final Map<String, Double> actualVars,
-            final RandomGenerator rand,
-            final Incarnation<T> incarnation,
-            final Environment<T> env,
-            final Node<T> node) {
-        final Object concSource = resolveVariable(content.get(CONCENTRATION), actualVars);
-        return makeSupplier(
-                () -> incarnation.createConcentration(concSource == null ? null : concSource.toString()),
-                castOrEmpty(concSource), CONCENTRATIONS_PACKAGE_ROOT, actualVars, rand, env, node)
-            .get();
+    private void readObject(final ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        incarnation = SupportedIncarnations.get(ois.readObject().toString()).get();
     }
 
-    private <T> Molecule makeMolecule(final Map<String, Object> content, final Map<String, Double> actualVars, final RandomGenerator rand, final Incarnation<T> incarnation, final Environment<T> env, final Node<T> node) {
-        final Object molSource = content.get(MOLECULE);
-        return makeSupplier(
-                () -> incarnation.createMolecule(molSource == null ? null : molSource.toString()),
-                castOrEmpty(molSource), MOLECULES_PACKAGE_ROOT, actualVars, rand, env, node)
-            .get();
-    }
-
-    private Object makePlaceHolderIfNeeded(final Object in) {
-        return aVariable(in)
-                .map(v -> (Object) new PlaceHolder(reverseLookupTable.get(univoqueId(in))))
-                .orElse(in);
-    }
-
-    private <O> Supplier<O> makeSupplier(
-            final Supplier<O> orElse,
-            final Map<String, Object> target,
-            final String pkg,
-            final Map<String, Double> actualVars,
-            final RandomGenerator rand,
-            final Environment<?> env) {
-        assert target != null;
-        assert pkg != null;
-        return makeSupplier(orElse, target, pkg, actualVars, rand, env, null, null);
-    }
-
-    private <O> Supplier<O> makeSupplier(
-            final Supplier<O> orElse,
-            final Map<String, Object> target,
-            final String pkg,
-            final Map<String, Double> actualVars,
-            final RandomGenerator rand,
-            final Environment<?> env,
-            final Node<?> node) {
-        return makeSupplier(orElse, target, pkg, actualVars, rand, env, node, null);
-    }
-
-    private <O> Supplier<O> makeSupplier(
-            final Supplier<O> orElse,
-            final Map<String, Object> target,
-            final String pkg,
-            final Map<String, Double> actualVars,
-            final RandomGenerator rand,
-            final Environment<?> env,
-            final Node<?> node,
-            final TimeDistribution<?> timedist) {
-        return makeSupplier(orElse, target, pkg, actualVars, rand, env, null, node, timedist, null);
-    }
-
-    private <O> Supplier<O> makeSupplier(
-            final Supplier<O> orElse,
-            final Map<String, Object> target,
-            final String pkg,
-            final Map<String, Double> actualVars,
-            final RandomGenerator rand,
-            final Environment<?> env,
-            final PositionMaker posMaker) {
-        assert target != null;
-        return makeSupplier(orElse, target, pkg, actualVars, rand, env, posMaker, null, null, null);
-    }
-
-    private <O> Supplier<O> makeSupplier(
-            final Supplier<O> orElse,
-            final Map<String, Object> target,
-            final String pkg,
-            final Map<String, Double> actualVars,
-            final RandomGenerator rand,
-            final Environment<?> env,
-            final PositionMaker posMaker,
-            final Node<?> node,
-            final TimeDistribution<?> timedist,
-            final Reaction<?> reaction) {
-        assert target != null;
-        assert pkg != null;
-        final Optional<Class<O>> clazz = extractClassIfDeclared(target, pkg);
-        return clazz.isPresent()
-                ? () -> create(clazz.get(), extractParams(target), incarnation, actualVars, rand, env, posMaker, node, timedist, reaction)
-                : orElse;
-    }
-
-    private <T> TimeDistribution<T> makeTimeDistribution(final Map<String, Object> content, final Map<String, Double> actualVars, final RandomGenerator rand, final Incarnation<T> incarnation, final Environment<T> env, final Node<T> node) {
-        final Object tdSource = resolveVariable(content.get(TIMEDISTRIBUTION), actualVars);
-        return makeSupplier(
-                () -> incarnation.createTimeDistribution(rand, env, node, stringOrNull(tdSource)),
-                castOrEmpty(tdSource), TIMEDISTRIBUTIONS_PACKAGE_ROOT, actualVars, rand, env, node)
-            .get();
-    }
-
-    private <T> void populateActions(
-            final Map<String, Double> actualVars,
-            final Map<String, Object> program,
-            final RandomGenerator rand,
-            final Incarnation<T> incarnation,
-            final Environment<T> env,
-            final PositionMaker pMaker,
-            final Node<T> node,
-            final TimeDistribution<T> td,
-            final Reaction<T> reaction) {
-        final List<?> actList = (List<?>) program.get(ACTIONS);
-        if (actList != null) {
-            /*
-             * Merge existing actions and those listed.
-             */
-            final List<Action<T>> actions = Stream.concat(reaction.getActions().stream(), 
-                actList.stream()
-                    .map(actObj -> Optional.ofNullable(
-                        makeSupplier(
-                                () -> incarnation.createAction(rand, env, node, td, reaction, stringOrNull(actObj)),
-                                castOrEmpty(actObj), ACTIONS_PACKAGE_ROOT, actualVars, rand, env, pMaker, node, td, reaction).get())
-                    .orElseThrow(() -> new IllegalAlchemistYAMLException("Can not build an action with " + actObj))))
-                .collect(Collectors.toList());
-            L.trace("actions: {}", actions);
-            reaction.setActions(actions);
+    private <T> Object recursivelyResolveVariables(final Object o, final Map<String, Double> variables) {
+        if (reverseLookupTable.isEmpty() || variables.isEmpty()) {
+            return o;
         }
-    }
-
-    private <T> void populateConditions(
-            final Map<String, Double> actualVars,
-            final Map<String, Object> program,
-            final RandomGenerator rand,
-            final Incarnation<T> incarnation,
-            final Environment<T> env,
-            final PositionMaker pMaker,
-            final Node<T> node,
-            final TimeDistribution<T> td,
-            final Reaction<T> reaction) {
-        final List<?> condList = (List<?>) program.get(CONDITIONS);
-        if (condList != null) {
-            /*
-             * Merge existing conditions and those listed.
-             */
-            final List<Condition<T>> conditions = Stream.concat(reaction.getConditions().stream(), 
-                condList.stream()
-                    .map(condObj -> Optional.ofNullable(
-                        makeSupplier(
-                            () -> incarnation.createCondition(rand, env, node, td, reaction, stringOrNull(condObj)),
-                            castOrEmpty(condObj), CONDITIONS_PACKAGE_ROOT, actualVars, rand, env, pMaker, node, td, reaction).get())
-                    .orElseThrow(() -> new IllegalAlchemistYAMLException("Can not build a condition with " + condObj))))
-                .collect(Collectors.toList());
-            L.trace("conditions: {}", conditions);
-            reaction.setConditions(conditions);
+        if (o instanceof Collection) {
+            final Collection<?> collection = (Collection<?>) o;
+            final int s = collection.size();
+            return collection.stream()
+                .map(e -> recursivelyResolveVariables(e, variables))
+                .collect(Collectors.toCollection(() -> collection instanceof Set
+                        ? Sets.newLinkedHashSetWithExpectedSize(s)
+                        : Lists.newArrayListWithCapacity(s)));
         }
+        if (o instanceof Map) {
+            final String varName = reverseLookupTable.get(o);
+            if (varName != null) {
+                final Double value = variables.get(varName);
+                if (value != null) {
+                    return value;
+                }
+            } else {
+                final Map<?, ?> oMap = (Map<?, ?>) o;
+                return oMap.entrySet().stream()
+                        .collect(() -> Maps.newLinkedHashMapWithExpectedSize(oMap.size()),
+                            (m, p) -> m.put(p.getKey(), recursivelyResolveVariables(p.getValue(), variables)),
+                            (m1, m2) -> {
+                                throw new IllegalStateException();
+                            }
+                        );
+            }
+        }
+        return o;
     }
 
-    private Object resolveVariable(final Object target, final Map<String, Double> variables) {
-        final Object extracted = makePlaceHolderIfNeeded(target);
-        return recursivelyResolvePlaceHolder(variables, extracted);
-//        return extracted instanceof PlaceHolder ? resolvePlaceHolder(variables, extracted) : extracted;
+    private Builder<RandomGenerator> rngBuilder(final Factory factory, final String seed) {
+        final BuilderConfiguration<RandomGenerator> config = new BuilderConfiguration<>(
+                emptyMap(),
+                ImmutableMap.of(SCENARIO_SEED, Number.class, SIMULATION_SEED, Number.class),
+                factory, rngMaker(factory, seed));
+        return new Builder<>(RandomGenerator.class, ImmutableSet.of(config), factory);
     }
 
     private void writeObject(final ObjectOutputStream oos) throws IOException {
@@ -735,348 +599,170 @@ public class YamlLoader implements Loader, Serializable {
         oos.writeObject(incarnation.toString());
     }
 
-    private void readObject(final ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        ois.defaultReadObject();
-        incarnation = SupportedIncarnations.get((String) ois.readObject()).get();
-    }
-
     @SuppressWarnings(UNCHECKED)
-    private static Optional<Map<?, Double>> aVariable(final Object o) {
-        if (o instanceof Map<?, ?>) {
-            final Map<?, ?> var = (Map<?, ?>) o;
-            final Object isVar = var.get(VARIABLE);
-            if (isVar instanceof Boolean) {
-                final boolean isAVar = (boolean) isVar;
-                if (isAVar) {
-                    return Optional.of((Map<?, Double>) var);
-                }
-            }
-        }
-        return Optional.empty();
-    }
-
-    private <O> O create(
-            final Class<O> clazz,
-            final List<?> newArrayList,
-            final Incarnation<?> incarnation,
-            final Map<String, Double> actualVars) {
-        return create(clazz, newArrayList, incarnation, actualVars, null, null, null, null, null, null);
-    }
-    private <O> O create(
-            final Class<O> clazz,
-            final List<?> newArrayList,
-            final Incarnation<?> incarnation,
-            final Map<String, Double> actualVars,
-            final RandomGenerator random,
-            final Environment<?> env) {
-        return create(clazz, newArrayList, incarnation, actualVars, random, env, null);
-    }
-    private <O> O create(
-            final Class<O> clazz,
-            final List<?> newArrayList,
-            final Incarnation<?> incarnation,
-            final Map<String, Double> actualVars,
-            final RandomGenerator random,
-            final Environment<?> env,
-            final PositionMaker pmaker) {
-        return create(clazz, newArrayList, incarnation, actualVars, random, env, pmaker, null, null, null);
-    }
-    private static Class<?>[] undecidableParameters(final Constructor<?> constructor, final Object... parameters) {
-        return Arrays.stream(constructor.getParameterTypes())
-            .filter(requested -> makeClassStream(parameters)
-                    .noneMatch(available -> available != null && requested.isAssignableFrom(available)))
-            .toArray(i -> new Class<?>[i]);
-    }
-    private static Stream<Class<?>> makeClassStream(final Object... objects) {
-        return Arrays.stream(objects)
-            .filter(o -> o != null)
-            .map(Object::getClass);
-    }
-    private <O> O create(
-            final Class<O> clazz,
-            final List<?> params,
-            final Incarnation<?> incarnation,
-            final Map<String, Double> variables,
-            final RandomGenerator rand,
-            final Environment<?> env,
-            final PositionMaker posMaker,
-            final Node<?> node,
-            final TimeDistribution<?> timedist,
-            final Reaction<?> reaction) {
-        @SuppressWarnings(UNCHECKED)
-        final Optional<O> result = Arrays.stream(clazz.getConstructors())
-            .sorted((c1, c2) -> {
-                final Class<?>[] paramTypes1 = undecidableParameters(c1, incarnation, rand, env, posMaker, node, timedist, reaction);
-                final Class<?>[] paramTypes2 = undecidableParameters(c2, incarnation, rand, env, posMaker, node, timedist, reaction);
-                final int n1 = paramTypes1.length;
-                final int n2 = paramTypes2.length;
-                if (n1 == n2) {
-                    /*
-                     * Sort using types.
-                     */
-                    for (int i = 0; i < n1; i++) {
-                        final Class<?> p1 = paramTypes1[i];
-                        final Class<?> p2 = paramTypes2[i];
-                        if (!p1.equals(p2)) {
-                            if (Double.class.isAssignableFrom(p1) || double.class.isAssignableFrom(p1)) {
-                                return -1;
-                            }
-                            if (Double.class.isAssignableFrom(p2) || double.class.isAssignableFrom(p2)) {
-                                return 1;
-                            }
-                            if (Long.class.isAssignableFrom(p1) || long.class.isAssignableFrom(p1)) {
-                                return -1;
-                            }
-                            if (Long.class.isAssignableFrom(p2) || long.class.isAssignableFrom(p2)) {
-                                return 1;
-                            }
-                            if (Integer.class.isAssignableFrom(p1) || int.class.isAssignableFrom(p1)) {
-                                return -1;
-                            }
-                            if (Integer.class.isAssignableFrom(p2) || int.class.isAssignableFrom(p2)) {
-                                return 1;
-                            }
-                            L.trace("Fall back to lexicographic comparison for {} and {}", p1, p2);
-                            if (p1.getSimpleName().equals(p1.getSimpleName())) {
-                                return p1.toString().compareTo(p2.toString());
-                            }
-                            return p1.getSimpleName().compareTo(p2.getSimpleName());
-                        }
-                    }
-                    /*
-                     * Same score: prefer the one with more parameters
-                     */
-                    if (c1.getParameterCount() != c2.getParameterCount()) {
-                        return c1.getParameterCount() - c2.getParameterCount();
-                    }
-                    /*
-                     * Same number of parameters: fall back to lexicographic comparison
-                     */
-                    return c1.toString().compareTo(c2.toString());
-                }
-                final int target = params.size();
-                return n1 == target ? -1
-                        : n2 == target ? 1
-                        : n1 < target ? n2 - n1
-                        : n2 < target ? -1
-                        : n1 - n2;
-            })
-            .map(c -> (Constructor<O>) c)
-            .map(c -> createBestEffort(c, params, incarnation, variables, rand, env, posMaker, node, timedist, reaction))
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .findFirst();
-        if (result.isPresent()) {
-            return result.get();
-        }
-        throw new IllegalStateException("Unable to create a " + clazz.getSimpleName() + " with " + params);
-    }
-    private <O> Optional<O> createBestEffort(
-            final Constructor<O> constructor,
-            final List<?> params,
-            final Incarnation<?> incarnation,
-            final Map<String, Double> variables,
-            final RandomGenerator rand,
-            final Environment<?> env,
-            final PositionMaker posMaker,
-            final Node<?> node,
-            final TimeDistribution<?> timedist,
-            final Reaction<?> reaction) {
-        final Deque<?> paramsLeft = Lists.newLinkedList(params);
-        final Object[] actualArgs = Arrays.stream(constructor.getParameterTypes()).map(expectedClass -> {
-            if (Incarnation.class.isAssignableFrom(expectedClass)) {
-                return incarnation;
-            }
-            if (RandomGenerator.class.isAssignableFrom(expectedClass)) {
-                return rand;
-            }
-            if (Environment.class.isAssignableFrom(expectedClass)) {
-                return env;
-            }
-            if (PositionMaker.class.isAssignableFrom(expectedClass)) {
-                return posMaker;
-            }
-            if (Node.class.isAssignableFrom(expectedClass)) {
-                return node;
-            }
-            if (TimeDistribution.class.isAssignableFrom(expectedClass)) {
-                return timedist;
-            }
-            if (Reaction.class.isAssignableFrom(expectedClass)) {
-                return reaction;
-            }
-            while (!paramsLeft.isEmpty()) {
-                Object param = paramsLeft.pop();
-                param = recursivelyResolvePlaceHolder(variables, param);
-                if (param == null) {
-                    return null;
-                }
-                if (expectedClass.isAssignableFrom(param.getClass())) {
-                    return param;
-                }
-                if (PrimitiveUtils.classIsNumber(expectedClass) && param instanceof Number) {
-                    final Optional<Number> attempt = optional2Optional(PrimitiveUtils.castIfNeeded(expectedClass, (Number) param));
-                    if (attempt.isPresent()) {
-                        return attempt.get();
-                    }
-                }
-                if (PrimitiveUtils.classIsNumber(expectedClass) && param instanceof String) {
-                    try {
-                        final double d = Double.parseDouble((String) param);
-                        final Optional<Number> attempt = optional2Optional(PrimitiveUtils.castIfNeeded(expectedClass, d));
-                        if (attempt.isPresent()) {
-                            return attempt.get();
-                        }
-                    } catch (final NumberFormatException e) {
-                        return null;
-                    }
-                }
-                if (Boolean.class.isAssignableFrom(expectedClass) || boolean.class.isAssignableFrom(expectedClass)) {
-                    if (param instanceof Boolean) {
-                        return param;
-                    }
-                    if (param instanceof String) {
-                        try {
-                            return Boolean.parseBoolean((String) param);
-                        } catch (final NumberFormatException e) {
-                            return null;
-                        }
-                    }
-                }
-                if (CharSequence.class.isAssignableFrom(expectedClass)) {
-                    return param.toString();
-                }
-                if (Time.class.isAssignableFrom(expectedClass)) {
-                    if (param instanceof Number) {
-                        return new DoubleTime(((Number) param).doubleValue());
-                    }
-                    return new DoubleTime();
-                }
-                if (Molecule.class.isAssignableFrom(expectedClass) && param instanceof String) {
-                    return incarnation.createMolecule(param.toString());
-                }
-                if (Position.class.isAssignableFrom(expectedClass) && param instanceof List) {
-                    final List<?> coordList = ((List<?>) param);
-                    if (coordList.stream().allMatch(n -> n instanceof Number)) {
-                        return posMaker.makePosition(coordList.stream().map(v -> (Number) v).toArray(i -> new Number[i]));
-                    }
-                    return null;
-                }
-                /*
-                 * Automatically convert to arrays to lists and vice versa
-                 */
-                if (List.class.isAssignableFrom(expectedClass) && param.getClass().isArray()) {
-                    return Arrays.asList((Object[]) param);
-                }
-                if (expectedClass.isArray() && param instanceof List) {
-                    return ((List<?>) param).toArray();
-                }
-            }
-            return null;
-        }).toArray();
-        try {
-            final O result = constructor.newInstance(actualArgs);
-            L.debug("{} produced {} with arguments {}", constructor, result, actualArgs);
-            return Optional.of(result);
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-                | InvocationTargetException e) {
-            L.debug("No luck with {} and arguments {}", constructor, actualArgs);
-        }
-        return Optional.empty();
-    }
-
-    private Object recursivelyResolvePlaceHolder(final Map<String, Double> variables, final Object param) {
-        if (param instanceof PlaceHolder) {
-            return resolvePlaceHolder(variables, param);
-        }
-        if (param instanceof Collection) {
-            return ((Collection<?>) param).stream()
-                .map(e -> makePlaceHolderIfNeeded(e))
-                .map(element -> recursivelyResolvePlaceHolder(variables, element))
-                .collect(Collectors.toCollection(param instanceof Set ? LinkedHashSet::new : LinkedList::new));
-        }
-        return param;
-    }
-
-    @SuppressWarnings(UNCHECKED)
-    private static <T> Class<T> extractClass(final Map<String, Object> yaml, final String root, final Class<T> defaultClass) {
-        assert root != null;
-        final Object clazz = yaml.get(TYPE);
-        if (clazz != null) {
-            final String className = clazz.toString();
-            try {
-                final String prefix = className.contains(".") ? "" : root;
-                return (Class<T>) Class.forName(prefix + className);
-            } catch (ClassNotFoundException e) {
-                L.debug("Cannot instance {}", className);
-            }
-        }
-        return defaultClass;
-    }
-
-    private static <O> Optional<Class<O>> extractClassIfDeclared(final Map<String, Object> target, final String pkg) {
+    private static <T> T cast(final Factory factory, final Class<? super T> clazz, final Object target, final String what) {
+        assert factory != null;
+        assert clazz != null;
         assert target != null;
-        assert pkg != null;
-        return Optional.ofNullable(extractClass(target, pkg, null));
+        assert what != null;
+        return (T) factory.convert(clazz, target).orElseThrow(() -> new IllegalAlchemistYAMLException(target + " is not a valid " + what + " descriptor"));
     }
 
-    @SuppressWarnings(UNCHECKED)
-    private Variable makeVar(final Object varObj) {
-        final Map<String, Object> var = (Map<String, Object>) varObj;
-        var.put(VARIABLE, true);
-        final Optional<Class<Variable>> clazz = extractClassIfDeclared(var, "it.unibo.alchemist.loader.variables.");
-        if (clazz.isPresent()) {
-            return create(clazz.get(), Optional.ofNullable((List<?>) var.get(PARAMS)).orElse(Collections.emptyList()), incarnation, Collections.emptyMap());
-        }
-        final Object vals = var.get(VALUES);
-        if (vals != null) {
-            if (!(vals instanceof List)) {
-                throw new IllegalArgumentException(
-                        VALUES + " is " + vals + ", but it must be a List of Numbers in " + varObj);
-            }
-            return new ArbitraryVariable(((Number) var.get(DEFAULT)).doubleValue(), (List<? extends Number>) vals);
-        }
-        final double def = ((Number) var.get(DEFAULT)).doubleValue();
-        final double min = ((Number) var.getOrDefault(MIN, def)).doubleValue();
-        final double max = ((Number) var.getOrDefault(MAX, def)).doubleValue();
-        final double step = ((Number) var.getOrDefault(STEP, 1)).doubleValue();
-        return new LinearVariable(def, min, max, step);
+    private static <T> T cast(final Factory factory, final TypeToken<T> clazz, final Object target, final String message) {
+        return cast(factory, clazz.getRawType(), target, message);
     }
 
-    private static DependentVariable makeDepVar(final Object varObj) {
+    private static <T> BuilderConfiguration<T> emptyConfig(final Factory factory, final Supplier<T> supplier) {
+        return new BuilderConfiguration<>(emptyMap(), emptyMap(), factory, m -> supplier.get());
+    }
+
+    private static List<?> listCast(final Factory factory, final Object target, final String what) {
+        assert factory != null;
+        assert what != null;
+        return target == null ? emptyList() : cast(factory, List.class, target, what + " list");
+    }
+
+    private static Factory makeBaseFactory() {
+        final Factory factory = new FactoryBuilder()
+                .withNarrowingConversions()
+                .withArrayBooleanIntConversions()
+                .withArrayListConversions(String[].class, Number[].class)
+                .withArrayNarrowingConversions()
+                .build();
+        factory.registerImplicit(Number.class, CharSequence.class, Number::toString);
+        factory.registerImplicit(double.class, Time.class, DoubleTime::new);
+        factory.registerImplicit(List.class, Number[].class, l -> ((List<?>) l).stream().map(e -> factory.convertOrFail(Number.class, e)).toArray(Number[]::new));
+        return factory;
+    }
+
+    private static Factory makeBaseFactory(@Nonnull final Incarnation<?> incarnation) {
+        assert incarnation != null;
+        final Factory factory = makeBaseFactory();
+        factory.registerSingleton(Incarnation.class, incarnation);
+        factory.registerImplicit(CharSequence.class, Molecule.class, s -> incarnation.createMolecule(s.toString()));
+        return factory;
+    }
+    private static Function<Map<String, Object>, RandomGenerator> rngMaker(final Factory factory, final String seed) {
+        return m -> Optional.ofNullable(m.get(seed))
+                .map(o -> factory.build(MersenneTwister.class, o))
+                .orElse(new MersenneTwister(0));
+    }
+
+    private static <T> BuilderConfiguration<T> singleParamConfig(final Factory factory, final Function<Object, T> supplier) {
+        return new BuilderConfiguration<>(ImmutableMap.of(PARAMETER, Object.class), emptyMap(), factory, m -> supplier.apply(m.get(PARAMETER)));
+    }
+
+    private class Builder<T> {
+        private final @Nonnull Class<? super T> clazz;
+        private final @Nonnull Set<BuilderConfiguration<T>> supportedConfigs;
+        Builder(@Nonnull final Class<? super T> clazz, @Nonnull final BuilderConfiguration<T> supportedConfig, final Factory factory) {
+            this(clazz, ImmutableSet.of(supportedConfig), factory);
+        }
+
         @SuppressWarnings(UNCHECKED)
-        final Map<String, Object> var = (Map<String, Object>) varObj;
-        final Object formula = var.get(FORMULA);
-        var.put(VARIABLE, true);
-        return new DependentScriptVariable(formula.toString());
-    }
-
-    private static void missingPart(final String what, final String fallback) {
-        L.warn("No {} section provided, or wrong type. Falling back to {}", what, fallback);
-    }
-
-    private static Double resolvePlaceHolder(final Map<String, Double> variables, final Object param) {
-        return variables.get(((PlaceHolder) param).get());
-    }
-
-    private static String stringOrNull(final Object target) {
-        return target == null ? null : target.toString();
-    }
-
-    private static long univoqueId(final Object obj) {
-        return System.identityHashCode(obj);
-    }
-
-    @Override
-    public List<Extractor> getDataExtractors() {
-        return extractors;
-    }
-
-    private static <T> Optional<T> optional2Optional(final java8.util.Optional<T> in) {
-        if (in.isPresent()) {
-            return Optional.of(in.get());
+        Builder(@Nonnull final Class<? super T> clazz, @Nonnull final Set<BuilderConfiguration<T>> supportedConfigs, final Factory factory) {
+            this.clazz = clazz;
+            final String packageRoot = PACKAGE_ROOTS.containsKey(clazz) ? PACKAGE_ROOTS.get(clazz) : "";
+            this.supportedConfigs = Sets.newLinkedHashSet(supportedConfigs);
+            this.supportedConfigs.add(new BuilderConfiguration<>(
+                    DEFAULT_MANDATORY_PARAMETERS.getOrDefault(clazz, ImmutableMap.of(TYPE, CharSequence.class)),
+                    DEFAULT_OPTIONAL_PARAMETERS.getOrDefault(clazz, ImmutableMap.of(PARAMS, List.class)),
+                    factory,
+                    m -> {
+                        String type = m.get(TYPE).toString();
+                        assert type != null;
+                        type = (type.contains(".") ? "" : packageRoot) + type;
+                        try {
+                            final Class<?> actualClass = Class.forName(type);
+                            if (clazz.isAssignableFrom(actualClass)) {
+                                final Optional<Object> rawParams = Optional.ofNullable(m.get(PARAMS));
+                                rawParams.ifPresent(l -> {
+                                    if (!(l instanceof List)) {
+                                        throw new IllegalAlchemistYAMLException(l + " is not a valid list of parameters");
+                                    }
+                                });
+                                final List<?> parameters = rawParams.map(l -> (List<?>) l).orElse(emptyList());
+                                return factory.build((Class<T>) actualClass, parameters);
+                            } else {
+                                throw new IllegalAlchemistYAMLException(type + "is not a subclass of " + clazz);
+                            }
+                        } catch (ClassNotFoundException e) {
+                            throw new IllegalAlchemistYAMLException(type + " is not a valid Java class", e);
+                        }
+                    }));
         }
-        return Optional.empty();
+        public T build(final Object o) {
+            final Object realObj = o == null ? emptyMap() : o;
+            final Collection<BuilderConfiguration<T>> configs = supportedConfigs.stream()
+                    .filter(c -> c.matches(realObj)).collect(Collectors.toList());
+            if (configs.isEmpty()) {
+                throw new IllegalAlchemistYAMLException("No configuration among " + supportedConfigs + " is applicable for building a " + clazz.getName() + " with " + o);
+            }
+            if (configs.size() > 1) {
+                throw new IllegalAlchemistYAMLException("Ambiguous specification " + o + " matches all those in " + configs + " for " + clazz.getName());
+            }
+            return configs.iterator().next().build(realObj);
+        }
     }
 
+    private static class BuilderConfiguration<T> {
+        private final @Nonnull Function<Map<String, Object>, T> buildFunction;
+        private final @Nonnull Factory factory;
+        private final @Nonnull Map<String, Class<?>> mandatoryFields;
+        private final @Nonnull Map<String, Class<?>> optionalFields;
+        BuilderConfiguration(@Nonnull final Map<String, Class<?>> mandatory,
+                @Nonnull final Map<String, Class<?>> optional,
+                @Nonnull final Factory factory,
+                @Nonnull final Function<Map<String, Object>, T> converter) {
+            this.mandatoryFields = mandatory;
+            this.optionalFields = optional;
+            this.buildFunction = converter;
+            this.factory = factory;
+        }
+        public T build(@Nonnull final Object o) {
+            assert matches(o);
+            return ifMap(o, m -> {
+                    final Map<String, Object> args = Maps.newLinkedHashMapWithExpectedSize(mandatoryFields.size() + optionalFields.size());
+                    for (final Entry<String, Class<?>> arg: mandatoryFields.entrySet()) {
+                        final String varName = arg.getKey();
+                        assert m.containsKey(varName);
+                        args.put(varName, factory.convertOrFail(arg.getValue(), m.get(varName)));
+                    }
+                    for (final Entry<String, Class<?>> arg: optionalFields.entrySet()) {
+                        final String varName = arg.getKey();
+                        final Object target = m.get(varName);
+                        if (target != null) {
+                            args.put(varName, factory.convertOrFail(arg.getValue(), m.get(varName)));
+                        }
+                    }
+                    return buildFunction.apply(args);
+                },
+                () -> {
+                    throw new IllegalAlchemistYAMLException(o + " is not a valid Alchemist object descriptor.");
+                });
+        }
+        private <R> R ifMap(final Object o, final Function<Map<?, ?>, R> todo, final Supplier<R> otherwise) {
+            if (o instanceof Map) {
+                return todo.apply((Map<?, ?>) o);
+            } else if (o != null) {
+                return todo.apply(ImmutableMap.of(PARAMETER, o));
+            }
+            return otherwise.get();
+        }
+        public boolean matches(final Object o) {
+            return ifMap(o, m -> 
+                m.keySet().containsAll(mandatoryFields.keySet())
+                && Sets.union(mandatoryFields.keySet(), optionalFields.keySet()).containsAll(m.keySet()),
+                () -> false
+            );
+        }
+        @Override
+        public String toString() {
+            return "{mandatory=" + toString(mandatoryFields) + ", optional=" + toString(optionalFields) + "}";
+        }
+        private static String toString(final Map<String, Class<?>> m) {
+            return '[' + (m.isEmpty() ? "" : m.entrySet().stream()
+                    .map(e -> e.getKey() + ':' + e.getValue().getName()).collect(Collectors.joining(", "))) + ']';
+        }
+    }
 }

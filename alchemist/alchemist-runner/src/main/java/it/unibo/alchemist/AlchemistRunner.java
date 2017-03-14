@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -31,7 +32,6 @@ import it.unibo.alchemist.loader.variables.Variable;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Time;
-import java8.util.Objects;
 
 /**
  * Starts Alchemist.
@@ -163,9 +163,6 @@ public final class AlchemistRunner {
          * @return buider
          */
         public Builder setGUICloseOperation(final int closeOp) {
-            if (this.headless) {
-                throw new IllegalArgumentException("The simulation is headless.");
-            }
             if (closeOp < 0 || closeOp > 3) {
                 throw new IllegalArgumentException("The value of close operation is not valid.");
             }

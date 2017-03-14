@@ -54,7 +54,7 @@ public class LsaMASSAgent extends SAPEREMoveNodeAgent {
      * @param p
      *            probability to move
      */
-    public LsaMASSAgent(final Environment<List<? extends ILsaMolecule>> env, final ILsaNode node, final ILsaMolecule field, final ILsaMolecule isSensor, final RandomGenerator random, final Double p) {
+    public LsaMASSAgent(final Environment<List< ILsaMolecule>> env, final ILsaNode node, final ILsaMolecule field, final ILsaMolecule isSensor, final RandomGenerator random, final Double p) {
         super(env, node);
         this.fieldMol = field;
         this.sensor = isSensor;
@@ -75,12 +75,12 @@ public class LsaMASSAgent extends SAPEREMoveNodeAgent {
         final double myy = mypos.getCartesianCoordinates()[1];
         double x = 0;
         double y = 0;
-        final Neighborhood<List<? extends ILsaMolecule>> neigh = getLocalNeighborhood();
+        final Neighborhood<List< ILsaMolecule>> neigh = getLocalNeighborhood();
         boolean up = true, down = true, left = true, right = true;
         final List<Position> poss = new ArrayList<Position>();
         double maxField = -1.0;
 
-        for (final Node<List<? extends ILsaMolecule>> nodo : neigh.getNeighbors()) {
+        for (final Node<List< ILsaMolecule>> nodo : neigh.getNeighbors()) {
             final LsaNode n = (LsaNode) nodo;
             if (up || down || left || right) {
                 if (n.getConcentration(sensor).size() == 0) {

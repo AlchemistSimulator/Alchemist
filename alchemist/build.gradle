@@ -33,15 +33,6 @@ allprojects {
         doclet "org.jboss.apiviz:apiviz:$apivizVersion"
     }
 
-    javadoc {
-        configure(options) {
-            links 'http://docs.oracle.com/javase/8/docs/api/'
-            links 'http://trove4j.sourceforge.net/javadocs/'
-            links 'http://hephaestus.apice.unibo.it/javalib-build/javalib-java7/build/docs/javadoc/'
-            links 'http://hephaestus.apice.unibo.it/javalib-build/javalib/build/docs/javadoc/'
-        }
-    }
-
     uploadArchives {
         repositories {
             mavenDeployer {
@@ -142,7 +133,6 @@ dependencies {
     compile subprojects
     compile (
         "commons-cli:commons-cli:$cliVersion",
-        "net.sourceforge.streamsupport:streamsupport:$streamsupportVersion",
     )
 }
 

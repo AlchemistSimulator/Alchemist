@@ -63,7 +63,7 @@ public class SocialForceOldEuropeanAgent extends SocialForceAgent {
      *            once the target is reached
      */
     public SocialForceOldEuropeanAgent(
-            final Environment<List<? extends ILsaMolecule>> environment,
+            final Environment<List<ILsaMolecule>> environment,
             final ILsaNode node,
             final RandomGenerator random,
             final LsaMolecule molecule,

@@ -136,7 +136,7 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
     /**
      * The next best node.
      */
-    private Node<List<? extends ILsaMolecule>> bestNode;
+    private Node<List<ILsaMolecule>> bestNode;
     /**
      * The proximity deceleration factor.
      */
@@ -168,7 +168,7 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
     /**
      * The environment in which the simulation exists.
      */
-    private final Environment<List<? extends ILsaMolecule>> env;
+    private final Environment<List<ILsaMolecule>> env;
     /**
      * The strength of the pedestrian repulsive force.
      */
@@ -332,7 +332,7 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
      * @param turnrightprobabilityval
      *            - the probability of turn to the right
      */
-    public SocialForceAgent(final Environment<List<? extends ILsaMolecule>> environment, final ILsaNode node, final RandomGenerator random, final LsaMolecule molecule, final int pos, final int group, final boolean stopWhenAtTarget, final double vmaxval, final double mydimensionval, final double desiredspaceval, final double turnrightprobabilityval) {
+    public SocialForceAgent(final Environment<List<ILsaMolecule>> environment, final ILsaNode node, final RandomGenerator random, final LsaMolecule molecule, final int pos, final int group, final boolean stopWhenAtTarget, final double vmaxval, final double mydimensionval, final double desiredspaceval, final double turnrightprobabilityval) {
         this(environment, node, random, molecule, pos, group, stopWhenAtTarget, DELTA_T, vmaxval, MOMENTUM_FACTOR, OLD_W, NEW_W, mydimensionval, desiredspaceval, PROXIMITY_DEC_RANGE, PROXIMITY_TURN_RANGE, DESIRED_FORCE_FACTOR, SOCIAL_FORCE_FACTOR, ETA, DODGE_FORCE_FACTOR, DODGE_FORCE_STRENGTH, turnrightprobabilityval, OBSTACLE_FORCE_FACTOR, OBSTACLE_INTERACTION_RANGE, OBSTACLE_FORCE_STRENGTH, PEJORATIVE_MOVE_PROBABILITY, MIN_PHEROMONE_DISTANCE, DECELERATION_FACTOR, MIN_DISPLACEMENT, MIN_DISP_CYC_TH);
 
     }
@@ -409,7 +409,7 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
      *            - threshold used to stop a pedestrian if he can't move enough
      *            for a certain number of cycles
      */
-    public SocialForceAgent(final Environment<List<? extends ILsaMolecule>> environment, final ILsaNode node, final RandomGenerator random, final LsaMolecule molecule, final int pos, final int group, final boolean stopWhenAtTarget, final double dt, final double vMax, final double momentum, final double oldw, final double neww, final double dimension, final double space, final double decRange, final double turnRange, final double desiredFactor, final double socialFactor, final double etaV, final double dodgeFactor, final double dodgeStrength, final double rightProbability, final double obstacleFactor, final double obstacleRange, final double obstacleStrength, final double detrimentalProbability, final double minpheromoneDist, final double decFactor, final double minDisp, final int minDispCyc) {
+    public SocialForceAgent(final Environment<List<ILsaMolecule>> environment, final ILsaNode node, final RandomGenerator random, final LsaMolecule molecule, final int pos, final int group, final boolean stopWhenAtTarget, final double dt, final double vMax, final double momentum, final double oldw, final double neww, final double dimension, final double space, final double decRange, final double turnRange, final double desiredFactor, final double socialFactor, final double etaV, final double dodgeFactor, final double dodgeStrength, final double rightProbability, final double obstacleFactor, final double obstacleRange, final double obstacleStrength, final double detrimentalProbability, final double minpheromoneDist, final double decFactor, final double minDisp, final int minDispCyc) {
 
         super(environment, node);
 
@@ -484,12 +484,12 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
      *            - the current pedestrian position
      * @return dodgeForce: the desire of the pedestrian to dodge a neighbor
      */
-    private Position computeDodgeForce(final Neighborhood<List<? extends ILsaMolecule>> neigh, final Position desiredForce, final Position mypos) {
+    private Position computeDodgeForce(final Neighborhood<List<ILsaMolecule>> neigh, final Position desiredForce, final Position mypos) {
         double dodgeForceX = 0.0;
         double dodgeForceY = 0.0;
 
         // For each node in the neighborhood
-        for (final Node<List<? extends ILsaMolecule>> node : neigh.getNeighbors()) {
+        for (final Node<List<ILsaMolecule>> node : neigh.getNeighbors()) {
             final ILsaNode n = (ILsaNode) node;
             // If the current node is a person
             if (n.getConcentration(PERSON).size() != 0) {
@@ -502,12 +502,12 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
                      * the rightand the 15% of probability to turn to the
                      * left
                      */
-                    final List<? extends Reaction<List<? extends ILsaMolecule>>> reactions = node.getReactions();
+                    final List<Reaction<List<ILsaMolecule>>> reactions = node.getReactions();
                     if (!reactions.isEmpty()) {
-                        final Reaction<List<? extends ILsaMolecule>> reaction = reactions.get(0);
-                        final List<? extends Action<List<? extends ILsaMolecule>>> actions = reaction.getActions();
+                        final Reaction<List<ILsaMolecule>> reaction = reactions.get(0);
+                        final List<Action<List<ILsaMolecule>>> actions = reaction.getActions();
                         if (!actions.isEmpty()) {
-                            final Action<List<? extends ILsaMolecule>> action = actions.get(0);
+                            final Action<List<ILsaMolecule>> action = actions.get(0);
                             final SocialForceAgent currAgent = (SocialForceAgent) action;
                             if ((vx > 0 && currAgent.getSpeed().getCartesianCoordinates()[0] < 0 && vy > 0 && currAgent.getSpeed().getCartesianCoordinates()[1] < 0) || (vx < 0 && currAgent.getSpeed().getCartesianCoordinates()[0] > 0 && vy < 0 && currAgent.getSpeed().getCartesianCoordinates()[1] > 0)) {
                                 if (rs.nextDouble() >= turnRightProbability) {
@@ -546,9 +546,9 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
         double socialForceX = 0.0;
         double socialForceY = 0.0;
 
-        final Neighborhood<List<? extends ILsaMolecule>> neigh = getLocalNeighborhood();
+        final Neighborhood<List<ILsaMolecule>> neigh = getLocalNeighborhood();
         // For each node in the neighborhood
-        for (final Node<List<? extends ILsaMolecule>> node : neigh.getNeighbors()) {
+        for (final Node<List<ILsaMolecule>> node : neigh.getNeighbors()) {
             final ILsaNode n = (ILsaNode) node;
             final Position pi = getPosition(n);
             // If the current node is a person and if is not me
@@ -565,12 +565,12 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
 
                     // STEP 2
                     double vij = 0.0;
-                    final List<? extends Reaction<List<? extends ILsaMolecule>>> reactions = node.getReactions();
+                    final List<Reaction<List<ILsaMolecule>>> reactions = node.getReactions();
                     if (!reactions.isEmpty()) {
-                        final Reaction<List<? extends ILsaMolecule>> reaction = reactions.get(0);
-                        final List<? extends Action<List<? extends ILsaMolecule>>> actions = reaction.getActions();
+                        final Reaction<List<ILsaMolecule>> reaction = reactions.get(0);
+                        final List<Action<List<ILsaMolecule>>> actions = reaction.getActions();
                         if (!actions.isEmpty()) {
-                            final Action<List<? extends ILsaMolecule>> action = actions.get(0);
+                            final Action<List<ILsaMolecule>> action = actions.get(0);
                             final SocialForceAgent currAgent = (SocialForceAgent) action;
 
                             vij = ((vx - currAgent.getSpeed().getCartesianCoordinates()[0]) * ex) + ((vy - currAgent.getSpeed().getCartesianCoordinates()[1]) * ey);
@@ -624,12 +624,13 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
         Environment2DWithObstacles<?, ?> obstacleEnv = null;
         if (env instanceof Environment2DWithObstacles<?, ?>) {
             obstacleEnv = (Environment2DWithObstacles<?, ?>) env;
-            final List<? extends Obstacle2D> obstacles = obstacleEnv.getObstaclesInRange(myx, myy, obstacleInteractionRange);
+            final List<?> obstacles = obstacleEnv.getObstaclesInRange(myx, myy, obstacleInteractionRange);
 
             Rectangle2D bounds = null;
             double minDist = Double.MAX_VALUE;
             Obstacle2D nearestObstacle = null;
-            for (final Obstacle2D ob : obstacles) {
+            for (final Object obObj : obstacles) {
+                final Obstacle2D ob = (Obstacle2D) obObj;
                 bounds = ob.getBounds();
                 final Continuous2DEuclidean[] edge = getNearestEdge(myx, myy, bounds);
                 Continuous2DEuclidean intersectionPoint = null;
@@ -663,7 +664,7 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
     @Override
     public void execute() {
         // Retrieve the local neighborhood
-        final Neighborhood<List<? extends ILsaMolecule>> neigh = getLocalNeighborhood();
+        final Neighborhood<List<ILsaMolecule>> neigh = getLocalNeighborhood();
         targetPositions = null;
         bestNode = null;
 
@@ -784,7 +785,7 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
 
             // BODY-TO-BODY INTERACION ADJUSTMENT
             // For each node in the neighborhood
-            for (final Node<List<? extends ILsaMolecule>> node : neigh.getNeighbors()) {
+            for (final Node<List<ILsaMolecule>> node : neigh.getNeighbors()) {
                 final ILsaNode n = (ILsaNode) node;
                 // If the current node is a person
                 if (n.getConcentration(PERSON).size() != 0) {
@@ -911,10 +912,10 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
      * @param neigh
      *            the current pedestrian neighborhood
      */
-    private void maximumpheromoneSearch(final Neighborhood<List<? extends ILsaMolecule>> neigh) {
+    private void maximumpheromoneSearch(final Neighborhood<List<ILsaMolecule>> neigh) {
         double maxpheromone = 0.0;
         // For each node in the neighborhood
-        for (final Node<List<? extends ILsaMolecule>> node : neigh.getNeighbors()) {
+        for (final Node<List<ILsaMolecule>> node : neigh.getNeighbors()) {
             final ILsaNode n = (ILsaNode) node;
             List<ILsaMolecule> gradList;
             gradList = n.getConcentration(pheromoneTmpl);
@@ -947,9 +948,9 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
      * @param neigh
      *            - the current pedestrian neighborhood
      */
-    private void minimumGradientSearch(final Neighborhood<List<? extends ILsaMolecule>> neigh) {
+    private void minimumGradientSearch(final Neighborhood<List<ILsaMolecule>> neigh) {
         double minGrad = Double.MAX_VALUE;
-        for (final Node<List<? extends ILsaMolecule>> node : neigh.getNeighbors()) {
+        for (final Node<List<ILsaMolecule>> node : neigh.getNeighbors()) {
             final ILsaNode n = (ILsaNode) node;
             final List<ILsaMolecule> gradList = n.getConcentration(template);
             // Check if the current node has a gradient value

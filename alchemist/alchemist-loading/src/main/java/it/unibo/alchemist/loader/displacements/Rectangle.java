@@ -2,7 +2,7 @@ package it.unibo.alchemist.loader.displacements;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import it.unibo.alchemist.loader.PositionMaker;
+import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 
 /**
@@ -14,7 +14,7 @@ public class Rectangle extends AbstractRandomDisplacement {
 
     /**
      * @param pm
-     *            the {@link PositionMaker}
+     *            the {@link Environment}
      * @param rand
      *            the {@link RandomGenerator}
      * @param nodes
@@ -28,7 +28,7 @@ public class Rectangle extends AbstractRandomDisplacement {
      * @param sizey
      *            y size
      */
-    public Rectangle(final PositionMaker pm, final RandomGenerator rand,
+    public Rectangle(final Environment<?> pm, final RandomGenerator rand,
             final int nodes,
             final double x, final double y,
             final double sizex, final double sizey) {

@@ -33,7 +33,7 @@ public class TestLsaNode {
      */
     @Test
     public void testConcurrentAccess() {
-        final Environment<List<? extends ILsaMolecule>> env = new Continuous2DEnvironment<>();
+        final Environment<List<ILsaMolecule>> env = new Continuous2DEnvironment<>();
         final LsaNode node = new LsaNode(env);
         final CountDownLatch cd = new CountDownLatch(THREADS);
         final Queue<Exception> queue = new ConcurrentLinkedQueue<>();

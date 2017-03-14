@@ -10,7 +10,7 @@ import static org.apache.commons.math3.util.FastMath.sqrt;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import it.unibo.alchemist.loader.PositionMaker;
+import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 
 /**
@@ -22,7 +22,7 @@ public class Circle extends AbstractRandomDisplacement {
 
     /**
      * @param pm
-     *            the {@link PositionMaker}
+     *            the {@link Environment}
      * @param rand
      *            the {@link RandomGenerator}
      * @param nodes
@@ -34,7 +34,7 @@ public class Circle extends AbstractRandomDisplacement {
      * @param radius
      *            the radius of the circle
      */
-    public Circle(final PositionMaker pm,
+    public Circle(final Environment<?> pm,
             final RandomGenerator rand,
             final int nodes,
             final double centerx, final double centery, final double radius) {

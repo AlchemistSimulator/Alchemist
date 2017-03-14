@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import it.unibo.alchemist.loader.PositionMaker;
+import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 
 /**
@@ -13,20 +13,20 @@ import it.unibo.alchemist.model.interfaces.Position;
  */
 public abstract class AbstractRandomDisplacement implements Displacement {
 
-    private final PositionMaker pm;
+    private final Environment<?> env;
     private final RandomGenerator rng;
     private final int nodes;
 
     /**
-     * @param pm
-     *            the {@link PositionMaker}
+     * @param env
+     *            the {@link Environment}
      * @param rng
      *            the {@link RandomGenerator}
      * @param nodes
      *            the number of nodes
      */
-    public AbstractRandomDisplacement(final PositionMaker pm, final RandomGenerator rng, final int nodes) {
-        this.pm = pm;
+    public AbstractRandomDisplacement(final Environment<?> env, final RandomGenerator rng, final int nodes) {
+        this.env = env;
         this.rng = rng;
         this.nodes = nodes;
     }
@@ -37,15 +37,15 @@ public abstract class AbstractRandomDisplacement implements Displacement {
     }
 
     /**
-     * Builds a position, relying on the internal {@link PositionMaker}.
+     * Builds a position, relying on the internal {@link Environment}.
      * 
-     * @see PositionMaker#makePosition(Number...)
+     * @see Environment#makePosition(Number...)
      * 
      * @param coordinates the coordinates
      * @return a position
      */
     protected final Position makePosition(final Number... coordinates) {
-        return pm.makePosition(coordinates);
+        return env.makePosition(coordinates);
     }
 
     /**

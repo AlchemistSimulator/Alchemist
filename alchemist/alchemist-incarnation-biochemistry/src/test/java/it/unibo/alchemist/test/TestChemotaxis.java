@@ -231,10 +231,7 @@ public class TestChemotaxis {
         final Reaction<Double> r2 = inc.createReaction(rand, env, cellNode1, time, CELL_MOVE_REACTION);
         r1.execute();
         r2.execute();
-        assertEquals(CELL_IS_IN_POS + env.getPosition(cellNode1), 
-                new Continuous2DEuclidean(0.5 + FastMath.sqrt(0.5), 0.5 + FastMath.sqrt(0.5)),
-                env.getPosition(cellNode1)
-                );
+        assertEquals(new Continuous2DEuclidean(0.5 + FastMath.sqrt(0.5), 0.5 + FastMath.sqrt(0.5)), env.getPosition(cellNode1));
     }
 
     /**

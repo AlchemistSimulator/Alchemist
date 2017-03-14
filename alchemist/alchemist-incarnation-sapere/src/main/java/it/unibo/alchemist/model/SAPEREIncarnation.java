@@ -45,7 +45,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
 
 /**
  */
-public final class SAPEREIncarnation implements Incarnation<List<? extends ILsaMolecule>>, Serializable {
+public final class SAPEREIncarnation implements Incarnation<List<ILsaMolecule>>, Serializable {
 
     private static final long serialVersionUID = 1L;
     private static final Logger L = LoggerFactory.getLogger(SAPEREIncarnation.class);
@@ -80,7 +80,7 @@ public final class SAPEREIncarnation implements Incarnation<List<? extends ILsaM
     }
 
     @Override
-    public double getProperty(final Node<List<? extends ILsaMolecule>> node, final Molecule mol, final String prop) {
+    public double getProperty(final Node<List<ILsaMolecule>> node, final Molecule mol, final String prop) {
         if (mol instanceof ILsaMolecule && node instanceof ILsaNode && node.contains(mol)) {
             boolean cacheUpdated = false;
             if (!mol.equals(molCache) || !HashUtils.pointerEquals(prop, propCache)) {
@@ -115,7 +115,7 @@ public final class SAPEREIncarnation implements Incarnation<List<? extends ILsaM
         }
         if (saperePropertyNumber >= 0) {
             final ILsaNode inode = (ILsaNode) node;
-            final List<? extends ILsaMolecule> concentration = inode.getConcentration(molecule);
+            final List<ILsaMolecule> concentration = inode.getConcentration(molecule);
             /*
              * Potential concurrency issue: a size check is mandatory
              */
@@ -148,20 +148,20 @@ public final class SAPEREIncarnation implements Incarnation<List<? extends ILsaM
     @Override
     public ILsaNode createNode(
             final RandomGenerator rand,
-            final Environment<List<? extends ILsaMolecule>> env,
+            final Environment<List<ILsaMolecule>> env,
             final String param) {
         return new LsaNode(env);
     }
 
-    private static TimeDistribution<List<? extends ILsaMolecule>> defaultTD(final RandomGenerator rand) {
+    private static TimeDistribution<List<ILsaMolecule>> defaultTD(final RandomGenerator rand) {
         return new SAPEREExponentialTime("Infinity", rand);
     }
 
     @Override
-    public TimeDistribution<List<? extends ILsaMolecule>> createTimeDistribution(
+    public TimeDistribution<List<ILsaMolecule>> createTimeDistribution(
             final RandomGenerator rand,
-            final Environment<List<? extends ILsaMolecule>> env,
-            final Node<List<? extends ILsaMolecule>> node,
+            final Environment<List<ILsaMolecule>> env,
+            final Node<List<ILsaMolecule>> node,
             final String param) {
         if (param == null || param.isEmpty()) {
             return defaultTD(rand);
@@ -180,17 +180,17 @@ public final class SAPEREIncarnation implements Incarnation<List<? extends ILsaM
     }
 
     @Override
-    public Reaction<List<? extends ILsaMolecule>> createReaction(
+    public Reaction<List<ILsaMolecule>> createReaction(
             final RandomGenerator rand,
-            final Environment<List<? extends ILsaMolecule>> env,
-            final Node<List<? extends ILsaMolecule>> node,
-            final TimeDistribution<List<? extends ILsaMolecule>> time,
+            final Environment<List<ILsaMolecule>> env,
+            final Node<List<ILsaMolecule>> node,
+            final TimeDistribution<List<ILsaMolecule>> time,
             final String param) {
         final SAPEREReaction result = new SAPEREReaction(env, (LsaNode) node, rand, time);
         if (param != null && !param.isEmpty()) {
             final Matcher rMatcher = MATCH_REACTION.matcher(param);
             if (rMatcher.matches()) {
-                final List<Condition<List<? extends ILsaMolecule>>> conditions = new LinkedList<>();
+                final List<Condition<List<ILsaMolecule>>> conditions = new LinkedList<>();
                 final String conditionsSpec = rMatcher.group(CONDITIONS_GROUP);
                 if (CONDITIONS_SEQUENCE.matcher(conditionsSpec).matches()) {
                     final Matcher condMatcher = MATCH_CONDITION.matcher(conditionsSpec);
@@ -201,7 +201,7 @@ public final class SAPEREIncarnation implements Incarnation<List<? extends ILsaM
                 } else {
                     illegalSpec("not a sequence of valid conditions (curly bracket enclosed LSAs, with optional '+' prefix)", conditionsSpec);
                 }
-                final List<Action<List<? extends ILsaMolecule>>> actions = new LinkedList<>();
+                final List<Action<List<ILsaMolecule>>> actions = new LinkedList<>();
                 final String actionsSpec = rMatcher.group(ACTIONS_GROUP);
                 if (ACTIONS_SEQUENCE.matcher(actionsSpec).matches()) {
                     final Matcher actMatcher = MATCH_ACTION.matcher(actionsSpec);
@@ -227,9 +227,9 @@ public final class SAPEREIncarnation implements Incarnation<List<? extends ILsaM
     }
 
     @Override
-    public Condition<List<? extends ILsaMolecule>> createCondition(final RandomGenerator rand,
-            final Environment<List<? extends ILsaMolecule>> env, final Node<List<? extends ILsaMolecule>> node,
-            final TimeDistribution<List<? extends ILsaMolecule>> time, final Reaction<List<? extends ILsaMolecule>> reaction,
+    public Condition<List<ILsaMolecule>> createCondition(final RandomGenerator rand,
+            final Environment<List<ILsaMolecule>> env, final Node<List<ILsaMolecule>> node,
+            final TimeDistribution<List<ILsaMolecule>> time, final Reaction<List<ILsaMolecule>> reaction,
             final String param) {
         if (param.startsWith("+")) {
             return new LsaNeighborhoodCondition((LsaNode) node, createMolecule(param.substring(1)), env);
@@ -238,9 +238,9 @@ public final class SAPEREIncarnation implements Incarnation<List<? extends ILsaM
     }
 
     @Override
-    public Action<List<? extends ILsaMolecule>> createAction(final RandomGenerator rand,
-            final Environment<List<? extends ILsaMolecule>> env, final Node<List<? extends ILsaMolecule>> node,
-            final TimeDistribution<List<? extends ILsaMolecule>> time, final Reaction<List<? extends ILsaMolecule>> reaction,
+    public Action<List<ILsaMolecule>> createAction(final RandomGenerator rand,
+            final Environment<List<ILsaMolecule>> env, final Node<List<ILsaMolecule>> node,
+            final TimeDistribution<List<ILsaMolecule>> time, final Reaction<List<ILsaMolecule>> reaction,
             final String param) {
         if (param.startsWith("+")) {
             return new LsaRandomNeighborAction((LsaNode) node, createMolecule(param.substring(1)), env, rand);
@@ -252,7 +252,7 @@ public final class SAPEREIncarnation implements Incarnation<List<? extends ILsaM
     }
 
     @Override
-    public List<? extends ILsaMolecule> createConcentration(final String s) {
+    public List<ILsaMolecule> createConcentration(final String s) {
         return Collections.emptyList();
     }
 

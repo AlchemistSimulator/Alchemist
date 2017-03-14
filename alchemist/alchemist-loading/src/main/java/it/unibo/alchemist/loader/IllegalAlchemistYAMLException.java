@@ -7,12 +7,12 @@ package it.unibo.alchemist.loader;
  * This exception is thrown when the Alchemist YAML does not conform to the
  * specification.
  */
-public class IllegalAlchemistYAMLException extends IllegalArgumentException {
+public class IllegalAlchemistYAMLException extends RuntimeException {
 
     /**
      * 
      */
-    private static final long serialVersionUID = 6424097676920109859L;
+    private static final long serialVersionUID = 0L;
 
     /**
      * @param reason

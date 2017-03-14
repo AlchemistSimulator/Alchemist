@@ -48,17 +48,17 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
  * the NBR construct used in Proto.
  * 
  */
-public class SAPEREGradient extends AReaction<List<? extends ILsaMolecule>> {
+public class SAPEREGradient extends AReaction<List<ILsaMolecule>> {
 
     private static final List<ILsaMolecule> EMPTY_LIST = Collections.unmodifiableList(new ArrayList<ILsaMolecule>(0));
     private static final long serialVersionUID = 8362443887879500016L;
     private static final IExpression ZERO_NODE = new Expression(new NumTreeNode(0d));
 
     private final int argPosition;
-    private final Environment<List<? extends ILsaMolecule>> environment;
-    private final MapEnvironment<List<? extends ILsaMolecule>> mapenvironment;
-    private final List<Action<List<? extends ILsaMolecule>>> fakeacts = new ArrayList<>(1);
-    private final List<Condition<List<? extends ILsaMolecule>>> fakeconds = new ArrayList<>(2);
+    private final Environment<List<ILsaMolecule>> environment;
+    private final MapEnvironment<List<ILsaMolecule>> mapenvironment;
+    private final List<Action<List<ILsaMolecule>>> fakeacts = new ArrayList<>(1);
+    private final List<Condition<List<ILsaMolecule>>> fakeconds = new ArrayList<>(2);
     private final TIntDoubleMap routecache = new TIntDoubleHashMap(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1, Double.NaN);
     private final ILsaNode node;
     private final ILsaMolecule source, gradient, gradientExpr, context;
@@ -186,7 +186,7 @@ public class SAPEREGradient extends AReaction<List<? extends ILsaMolecule>> {
         }
     }
 
-    private static class SGFakeConditionAction implements Action<List<? extends ILsaMolecule>>, Condition<List<? extends ILsaMolecule>> {
+    private static class SGFakeConditionAction implements Action<List<ILsaMolecule>>, Condition<List<ILsaMolecule>> {
         private static final long serialVersionUID = 2202769961348637251L;
         private final Molecule mol;
 
@@ -215,7 +215,7 @@ public class SAPEREGradient extends AReaction<List<? extends ILsaMolecule>> {
         }
 
         @Override
-        public Node<List<? extends ILsaMolecule>> getNode() {
+        public Node<List<ILsaMolecule>> getNode() {
             return null;
         }
 
@@ -235,14 +235,12 @@ public class SAPEREGradient extends AReaction<List<? extends ILsaMolecule>> {
         }
 
         @Override
-        public Condition<List<? extends ILsaMolecule>> cloneCondition(final Node<List<? extends ILsaMolecule>> n,
-                final Reaction<List<? extends ILsaMolecule>> r) {
+        public Condition<List<ILsaMolecule>> cloneCondition(final Node<List<ILsaMolecule>> n, final Reaction<List<ILsaMolecule>> r) {
             return null;
         }
 
         @Override
-        public Action<List<? extends ILsaMolecule>> cloneAction(final Node<List<? extends ILsaMolecule>> n,
-                final Reaction<List<? extends ILsaMolecule>> r) {
+        public Action<List<ILsaMolecule>> cloneAction(final Node<List<ILsaMolecule>> n, final Reaction<List<ILsaMolecule>> r) {
             return null;
         }
 
@@ -284,9 +282,9 @@ public class SAPEREGradient extends AReaction<List<? extends ILsaMolecule>> {
      * @param td
      *            Markovian Rate
      */
-    public SAPEREGradient(final Environment<List<? extends ILsaMolecule>> env,
+    public SAPEREGradient(final Environment<List<ILsaMolecule>> env,
             final ILsaNode n,
-            final TimeDistribution<List<? extends ILsaMolecule>> td,
+            final TimeDistribution<List<ILsaMolecule>> td,
             final String sourceTemplate,
             final String gradientTemplate,
             final int valuePosition,
@@ -338,7 +336,7 @@ public class SAPEREGradient extends AReaction<List<? extends ILsaMolecule>> {
      * @param td
      *            Markovian Rate
      */
-    public SAPEREGradient(final Environment<List<? extends ILsaMolecule>> env, final ILsaNode n, final ILsaMolecule sourceTemplate, final ILsaMolecule gradientTemplate, final int valuePosition, final String expression, final ILsaMolecule contextTemplate, final double gradThreshold, final TimeDistribution<List<? extends ILsaMolecule>> td) {
+    public SAPEREGradient(final Environment<List<ILsaMolecule>> env, final ILsaNode n, final ILsaMolecule sourceTemplate, final ILsaMolecule gradientTemplate, final int valuePosition, final String expression, final ILsaMolecule contextTemplate, final double gradThreshold, final TimeDistribution<List<ILsaMolecule>> td) {
         super(n, td);
         gradient = Objects.requireNonNull(gradientTemplate);
         source = Objects.requireNonNull(sourceTemplate);
@@ -364,7 +362,7 @@ public class SAPEREGradient extends AReaction<List<? extends ILsaMolecule>> {
             fakeconds.add(new SGFakeConditionAction(context));
         }
         final boolean usesRoutes = environment instanceof MapEnvironment && (gradientTemplate.toString().contains(LsaMolecule.SYN_ROUTE) || expression.contains(LsaMolecule.SYN_ROUTE));
-        mapenvironment = usesRoutes ? (MapEnvironment<List<? extends ILsaMolecule>>) environment : null;
+        mapenvironment = usesRoutes ? (MapEnvironment<List<ILsaMolecule>>) environment : null;
     }
 
     @Override
@@ -459,12 +457,12 @@ public class SAPEREGradient extends AReaction<List<? extends ILsaMolecule>> {
     }
 
     @Override
-    public List<Action<List<? extends ILsaMolecule>>> getActions() {
+    public List<Action<List<ILsaMolecule>>> getActions() {
         return fakeacts;
     }
 
     @Override
-    public List<Condition<List<? extends ILsaMolecule>>> getConditions() {
+    public List<Condition<List<ILsaMolecule>>> getConditions() {
         return fakeconds;
     }
 
@@ -484,12 +482,12 @@ public class SAPEREGradient extends AReaction<List<? extends ILsaMolecule>> {
     }
 
     @Override
-    public Reaction<List<? extends ILsaMolecule>> cloneOnNewNode(final Node<List<? extends ILsaMolecule>> n) {
+    public Reaction<List<ILsaMolecule>> cloneOnNewNode(final Node<List<ILsaMolecule>> n) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    protected void updateInternalStatus(final Time curTime, final boolean executed, final Environment<List<? extends ILsaMolecule>> env) {
+    protected void updateInternalStatus(final Time curTime, final boolean executed, final Environment<List<ILsaMolecule>> env) {
         /*
          * It makes sense to reschedule the reaction if:
          * 
@@ -510,7 +508,7 @@ public class SAPEREGradient extends AReaction<List<? extends ILsaMolecule>> {
         final Position curPos = environment.getPosition(node);
         final boolean positionChanged = !curPos.equals(mypos);
         boolean neighPositionChanged = false;
-        for (final Node<List<? extends ILsaMolecule>> n : environment.getNeighborhood(node)) {
+        for (final Node<List<ILsaMolecule>> n : environment.getNeighborhood(node)) {
             final Position p = environment.getPosition(n);
             final int nid = n.getId();
             positionCacheTemp.put(nid, p);

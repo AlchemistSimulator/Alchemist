@@ -17,7 +17,7 @@ import org.danilopianini.lang.util.FasterString;
 
 /**
  */
-public interface ILsaAction extends Action<List<? extends ILsaMolecule>> {
+public interface ILsaAction extends Action<List<ILsaMolecule>> {
 
     /**
      * Sets the context in which this action will execute.
@@ -27,12 +27,12 @@ public interface ILsaAction extends Action<List<? extends ILsaMolecule>> {
      * @param nodes
      *            the nodes allowed for this action
      */
-    void setExecutionContext(Map<FasterString, ITreeNode<?>> matches, List<? extends ILsaNode> nodes);
+    void setExecutionContext(Map<FasterString, ITreeNode<?>> matches, List<ILsaNode> nodes);
 
     @Override
     List<? extends ILsaMolecule> getModifiedMolecules();
 
     @Override
-    ILsaAction cloneAction(Node<List<? extends ILsaMolecule>> n, Reaction<List<? extends ILsaMolecule>> r);
+    ILsaAction cloneAction(Node<List<ILsaMolecule>> n, Reaction<List<ILsaMolecule>> r);
 
 }

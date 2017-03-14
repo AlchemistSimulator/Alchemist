@@ -283,17 +283,17 @@ public abstract class AReaction<T> implements Reaction<T> {
     }
 
     @Override
-    public List<? extends Action<T>> getActions() {
+    public List<Action<T>> getActions() {
         return Collections.unmodifiableList(actions);
     }
 
     @Override
-    public List<? extends Condition<T>> getConditions() {
+    public List<Condition<T>> getConditions() {
         return Collections.unmodifiableList(conditions);
     }
 
     @Override
-    public List<? extends Molecule> getInfluencedMolecules() {
+    public List<Molecule> getInfluencedMolecules() {
         return influenced == null ? null : Collections.unmodifiableList(influenced);
     }
 
@@ -307,7 +307,7 @@ public abstract class AReaction<T> implements Reaction<T> {
     }
 
     @Override
-    public List<? extends Molecule> getInfluencingMolecules() {
+    public List<Molecule> getInfluencingMolecules() {
         return influenced == null ? null : Collections.unmodifiableList(influencing);
     }
 
@@ -334,7 +334,7 @@ public abstract class AReaction<T> implements Reaction<T> {
     }
 
     @Override
-    public void setActions(final List<? extends Action<T>> a) {
+    public void setActions(final List<Action<T>> a) {
         actions = Objects.requireNonNull(a, "The actions list can't be null");
         Context lessStrict = Context.LOCAL;
         influenced = new ArrayList<Molecule>();
@@ -361,7 +361,7 @@ public abstract class AReaction<T> implements Reaction<T> {
     }
 
     @Override
-    public void setConditions(final List<? extends Condition<T>> c) {
+    public void setConditions(final List<Condition<T>> c) {
         conditions = c;
         Context lessStrict = Context.LOCAL;
         influencing = new ArrayList<Molecule>();

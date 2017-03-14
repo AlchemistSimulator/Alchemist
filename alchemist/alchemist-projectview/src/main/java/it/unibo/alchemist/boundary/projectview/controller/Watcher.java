@@ -154,7 +154,7 @@ public class Watcher implements Runnable {
         /*
          * Work around idi0tic Windows file manager behavior by trying multiple times in case of failure.
          */
-        for (int attempts = 0; attempts < 3; attempts++) {
+        for (int attempts = 0; attempts < 3 && Files.exists(root); attempts++) {
             try {
                 Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
                     @Override

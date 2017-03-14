@@ -4,7 +4,7 @@ import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
-import it.unibo.alchemist.loader.PositionMaker;
+import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 
 /**
@@ -21,8 +21,8 @@ public class GeometricGradientRectangle extends Rectangle {
      * Use this constructor to displace multiple groups of devices with
      * exponentially varied density along an axis.
      * 
-     * @param pm
-     *            {@link PositionMaker}
+     * @param env
+     *            {@link Environment}
      * @param rng
      *            {@link RandomGenerator}
      * @param nodes
@@ -48,7 +48,7 @@ public class GeometricGradientRectangle extends Rectangle {
      * @param increasing
      *            true if device density should increase with the desired axis
      */
-    public GeometricGradientRectangle(final PositionMaker pm,
+    public GeometricGradientRectangle(final Environment<?> env,
             final RandomGenerator rng,
             final int nodes,
             final double x, final double y,
@@ -56,15 +56,15 @@ public class GeometricGradientRectangle extends Rectangle {
             final double lambda,
             final int steps,
             final boolean horizontal, final boolean increasing) {
-        this(pm, rng, nodes, x, y, sizex, sizey, lambda, false, steps, horizontal, increasing);
+        this(env, rng, nodes, x, y, sizex, sizey, lambda, false, steps, horizontal, increasing);
     }
 
     /**
      * Use this constructor to displace devices with an exponentially varied
      * density along an axis.
      * 
-     * @param pm
-     *            {@link PositionMaker}
+     * @param env
+     *            {@link Environment}
      * @param rng
      *            {@link RandomGenerator}
      * @param nodes
@@ -86,17 +86,17 @@ public class GeometricGradientRectangle extends Rectangle {
      * @param increasing
      *            true if device density should increase with the desired axis
      */
-    public GeometricGradientRectangle(final PositionMaker pm,
+    public GeometricGradientRectangle(final Environment<?> env,
             final RandomGenerator rng,
             final int nodes,
             final double x, final double y,
             final double sizex, final double sizey,
             final double lambda,
             final boolean horizontal, final boolean increasing) {
-        this(pm, rng, nodes, x, y, sizex, sizey, lambda, true, Integer.MIN_VALUE, horizontal, increasing);
+        this(env, rng, nodes, x, y, sizex, sizey, lambda, true, Integer.MIN_VALUE, horizontal, increasing);
     }
 
-    private GeometricGradientRectangle(final PositionMaker pm,
+    private GeometricGradientRectangle(final Environment<?> env,
             final RandomGenerator rng,
             final int nodes,
             final double x, final double y,
@@ -105,7 +105,7 @@ public class GeometricGradientRectangle extends Rectangle {
             final boolean continuous,
             final int steps,
             final boolean horizontal, final boolean increasing) {
-        super(pm, rng, nodes, x, y, sizex, sizey);
+        super(env, rng, nodes, x, y, sizex, sizey);
         if (lambda <= 0 || lambda > 100) {
             throw new IllegalArgumentException("lambda must be in the (0, 100] interval.");
         }

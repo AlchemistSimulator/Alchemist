@@ -35,7 +35,7 @@ public class LsaAllNeighborsAction extends LsaRandomNeighborAction {
      * @param env
      *            the current environment
      */
-    public LsaAllNeighborsAction(final ILsaNode node, final ILsaMolecule molecule, final Environment<List<? extends ILsaMolecule>> env) {
+    public LsaAllNeighborsAction(final ILsaNode node, final ILsaMolecule molecule, final Environment<List<ILsaMolecule>> env) {
         this(node, molecule, env, null);
     }
 
@@ -49,7 +49,7 @@ public class LsaAllNeighborsAction extends LsaRandomNeighborAction {
      * @param r
      *            unused. Can be null.
      */
-    public LsaAllNeighborsAction(final ILsaNode node, final ILsaMolecule molecule, final Environment<List<? extends ILsaMolecule>> env, final RandomGenerator r) {
+    public LsaAllNeighborsAction(final ILsaNode node, final ILsaMolecule molecule, final Environment<List<ILsaMolecule>> env, final RandomGenerator r) {
         super(node, molecule, env, r);
     }
 

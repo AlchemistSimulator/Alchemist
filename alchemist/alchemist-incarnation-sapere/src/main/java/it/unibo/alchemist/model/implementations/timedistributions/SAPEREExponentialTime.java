@@ -30,7 +30,7 @@ import java.util.Objects;
  * rate equation.
  * 
  */
-public class SAPEREExponentialTime extends ExponentialTime<List<? extends ILsaMolecule>> implements SAPERETimeDistribution {
+public class SAPEREExponentialTime extends ExponentialTime<List<ILsaMolecule>> implements SAPERETimeDistribution {
 
     /**
      * 

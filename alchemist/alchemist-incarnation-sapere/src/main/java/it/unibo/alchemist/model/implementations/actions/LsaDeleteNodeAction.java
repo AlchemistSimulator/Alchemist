@@ -26,7 +26,7 @@ import org.danilopianini.lang.util.FasterString;
 /**
  * 
  */
-public class LsaDeleteNodeAction extends RemoveNode<List<? extends ILsaMolecule>> implements ILsaAction {
+public class LsaDeleteNodeAction extends RemoveNode<List< ILsaMolecule>> implements ILsaAction {
 
     private static final long serialVersionUID = -7128058274012426458L;
 
@@ -34,7 +34,7 @@ public class LsaDeleteNodeAction extends RemoveNode<List<? extends ILsaMolecule>
      * @param environment the current environment
      * @param node the node for this action
      */
-    public LsaDeleteNodeAction(final Environment<List<? extends ILsaMolecule>> environment, final ILsaNode node) {
+    public LsaDeleteNodeAction(final Environment<List< ILsaMolecule>> environment, final ILsaNode node) {
         super(environment, node);
     }
 
@@ -42,7 +42,7 @@ public class LsaDeleteNodeAction extends RemoveNode<List<? extends ILsaMolecule>
      * @see alice.alchemist.model.implementations.actions.LsaAbstractAction#cloneOnNewNode(alice.alchemist.model.interfaces.Node, alice.alchemist.model.interfaces.Reaction)
      */
     @Override
-    public LsaDeleteNodeAction cloneAction(final Node<List<? extends ILsaMolecule>> n, final Reaction<List<? extends ILsaMolecule>> r) {
+    public LsaDeleteNodeAction cloneAction(final Node<List< ILsaMolecule>> n, final Reaction<List< ILsaMolecule>> r) {
         return new LsaDeleteNodeAction(getEnvironment(), (ILsaNode) n);
     }
 
@@ -52,7 +52,7 @@ public class LsaDeleteNodeAction extends RemoveNode<List<? extends ILsaMolecule>
     }
 
     @Override
-    public void setExecutionContext(final Map<FasterString, ITreeNode<?>> matches, final List<? extends ILsaNode> nodes) {
+    public void setExecutionContext(final Map<FasterString, ITreeNode<?>> matches, final List< ILsaNode> nodes) {
         /*
          * This reaction runs regardless the context.
          */

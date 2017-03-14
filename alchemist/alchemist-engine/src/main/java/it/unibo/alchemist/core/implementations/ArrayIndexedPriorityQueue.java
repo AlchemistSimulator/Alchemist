@@ -11,24 +11,18 @@
  */
 package it.unibo.alchemist.core.implementations;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import gnu.trove.impl.Constants;
 import gnu.trove.map.TObjectIntMap;
+import gnu.trove.map.hash.TObjectIntHashMap;
 import it.unibo.alchemist.core.interfaces.ReactionManager;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.danilopianini.concurrency.FastReadWriteLock;
-import org.danilopianini.lang.ObjectIntHashMap;
-
 /**
- *         This class implements the indexed priority queue through an Array.
- *         Should be considerably faster than the old version based on pointers.
- *         Plus, this class i thread-safe and can be accessed by multiple
- *         threads in parallel.
+ * This class implements the indexed priority queue through an Array.
  * 
  * @param <T>
  */
@@ -36,12 +30,8 @@ public class ArrayIndexedPriorityQueue<T> implements ReactionManager<T> {
 
     private static final long serialVersionUID = 8064379974084348391L;
 
-    private final TObjectIntMap<Reaction<T>> indexes = new ObjectIntHashMap<>();
-
-    private transient FastReadWriteLock rwLock = new FastReadWriteLock();
-
+    private final TObjectIntMap<Reaction<T>> indexes = new TObjectIntHashMap<>(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1);
     private final List<Time> times = new ArrayList<>();
-
     private final List<Reaction<T>> tree = new ArrayList<>();
 
     private static int getParent(final int i) {
@@ -53,13 +43,11 @@ public class ArrayIndexedPriorityQueue<T> implements ReactionManager<T> {
 
     @Override
     public void addReaction(final Reaction<T> r) {
-        rwLock.write();
         tree.add(r);
         times.add(r.getTau());
         final int index = tree.size() - 1;
         indexes.put(r, index);
         updateEffectively(r, index);
-        rwLock.release();
     }
 
     private void down(final Reaction<T> r, final int i) {
@@ -92,18 +80,15 @@ public class ArrayIndexedPriorityQueue<T> implements ReactionManager<T> {
 
     @Override
     public Reaction<T> getNext() {
-        rwLock.read();
         Reaction<T> res = null;
         if (!tree.isEmpty()) {
             res = tree.get(0);
         }
-        rwLock.release();
         return res;
     }
 
     @Override
     public void removeReaction(final Reaction<T> r) {
-        rwLock.write();
         final int index = indexes.get(r);
         final int last = tree.size() - 1;
         if (index == last) {
@@ -120,7 +105,6 @@ public class ArrayIndexedPriorityQueue<T> implements ReactionManager<T> {
             indexes.remove(r);
             updateEffectively(swapped, index);
         }
-        rwLock.release();
     }
 
     private void swap(final int i1, final Reaction<T> r1, final int i2, final Reaction<T> r2) {
@@ -138,7 +122,6 @@ public class ArrayIndexedPriorityQueue<T> implements ReactionManager<T> {
         final StringBuilder sb = new StringBuilder();
         int pow = 0;
         int exp = 0;
-        rwLock.read();
         for (int i = 0; i < tree.size(); i++) {
             final int tabulars = (int) (Math.floor(Math.log(tree.size()) / Math.log(2)) - Math.floor(Math.log(i + 1) / Math.log(2))) + 1;
             for (int t = 0; t < tabulars; t++) {
@@ -151,7 +134,6 @@ public class ArrayIndexedPriorityQueue<T> implements ReactionManager<T> {
                 sb.append('\n');
             }
         }
-        rwLock.release();
         return sb.toString();
     }
 
@@ -188,18 +170,11 @@ public class ArrayIndexedPriorityQueue<T> implements ReactionManager<T> {
 
     @Override
     public void updateReaction(final Reaction<T> r) {
-        rwLock.write();
         final int index = indexes.get(r);
         if (index != indexes.getNoEntryValue()) {
             times.set(index, r.getTau());
             updateEffectively(r, index);
         }
-        rwLock.release();
-    }
-
-    private void readObject(final ObjectInputStream s) throws ClassNotFoundException, IOException {
-        s.defaultReadObject();
-        rwLock = new FastReadWriteLock();
     }
 
 }

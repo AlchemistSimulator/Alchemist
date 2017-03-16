@@ -86,8 +86,18 @@ public class NewFolderOrFileDialogController {
                     setAlert("file_name_exists", "new_file_name_exist_header", "new_file_name_exist_content");
                 }
             } else {
-                if (isFolder && !newFile.mkdirs() || !newFile.createNewFile()) {
-                    throw new IllegalStateException("Could not create " + newFile);
+                if (isFolder) {
+                    if (newFile.mkdirs()) {
+                        this.stage.close();
+                    } else {
+                        throw new IllegalStateException("Could not create " + newFile);
+                    }
+                } else {
+                    if (newFile.createNewFile()) {
+                        this.stage.close();
+                    } else {
+                        throw new IllegalStateException("Could not create " + newFile);
+                    }
                 }
             }
         }

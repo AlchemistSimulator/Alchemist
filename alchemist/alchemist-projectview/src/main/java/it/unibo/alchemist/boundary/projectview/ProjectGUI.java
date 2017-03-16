@@ -7,6 +7,7 @@ import java.io.IOException;
 import it.unibo.alchemist.boundary.projectview.controller.CenterLayoutController;
 import it.unibo.alchemist.boundary.projectview.controller.LeftLayoutController;
 import it.unibo.alchemist.boundary.projectview.controller.TopLayoutController;
+import it.unibo.alchemist.boundary.util.FXUtil;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -45,6 +46,7 @@ public class ProjectGUI extends Application {
      */
     @Override
     public void start(final Stage primaryStage) throws IOException {
+        Thread.setDefaultUncaughtExceptionHandler(FXUtil::errorAlert);
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Alchemist");
         initLayout("RootLayout");

@@ -4,12 +4,10 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.IOException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import it.unibo.alchemist.boundary.projectview.controller.CenterLayoutController;
 import it.unibo.alchemist.boundary.projectview.controller.LeftLayoutController;
 import it.unibo.alchemist.boundary.projectview.controller.TopLayoutController;
+import it.unibo.alchemist.boundary.util.FXUtil;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -24,8 +22,6 @@ import javafx.stage.WindowEvent;
  * Main class to start the application.
  */
 public class ProjectGUI extends Application {
-
-    private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
 
     private BorderPane root;
     private CenterLayoutController controllerCenter;
@@ -42,11 +38,15 @@ public class ProjectGUI extends Application {
     }
 
     /**
-     * Method that initializes the scene by loading all needed .fxml files and 
+     * Method that initializes the scene by loading all needed .fxml files and
      * sets the primary stage.
+     * 
+     * @throws IOException
+     *             in case of bugs
      */
     @Override
-    public void start(final Stage primaryStage) {
+    public void start(final Stage primaryStage) throws IOException {
+        Thread.setDefaultUncaughtExceptionHandler(FXUtil::errorAlert);
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Alchemist");
         initLayout("RootLayout");
@@ -67,42 +67,37 @@ public class ProjectGUI extends Application {
         });
     }
 
-    private void initLayout(final String layoutName) {
+    private void initLayout(final String layoutName) throws IOException {
         final FXMLLoader loader = new FXMLLoader();
         loader.setLocation(ProjectGUI.class.getResource("view/" + layoutName + ".fxml"));
-        try {
-            if (layoutName.equals("RootLayout")) {
-                this.root = (BorderPane) loader.load();
-                final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-                final double width = screenSize.getWidth() * 62.5 / 100;
-                final double height = screenSize.getHeight() * 87.96 / 100;
-                final Scene scene = new Scene(this.root, width, height);
-                scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
-                this.primaryStage.setScene(scene);
-                this.primaryStage.show();
+        if (layoutName.equals("RootLayout")) {
+            this.root = (BorderPane) loader.load();
+            final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            final double width = screenSize.getWidth() * 62.5 / 100;
+            final double height = screenSize.getHeight() * 87.96 / 100;
+            final Scene scene = new Scene(this.root, width, height);
+            scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+            this.primaryStage.setScene(scene);
+            this.primaryStage.show();
+        } else {
+            final AnchorPane pane = (AnchorPane) loader.load();
+            if (layoutName.equals("TopLayout")) {
+                this.root.setTop(pane);
+                this.controllerTop = loader.getController();
+                this.controllerTop.setMain(this);
+                this.controllerTop.setCtrlLeft(this.controllerLeft);
+                this.controllerTop.setCtrlCenter(this.controllerCenter);
+            } else if (layoutName.equals("LeftLayout")) {
+                this.root.setLeft(pane);
+                this.controllerLeft = loader.getController();
+                this.controllerLeft.setMain(this);
             } else {
-                final AnchorPane pane = (AnchorPane) loader.load();
-                if (layoutName.equals("TopLayout")) {
-                    this.root.setTop(pane);
-                    this.controllerTop = loader.getController();
-                    this.controllerTop.setMain(this);
-                    this.controllerTop.setCtrlLeft(this.controllerLeft);
-                    this.controllerTop.setCtrlCenter(this.controllerCenter);
-                } else if (layoutName.equals("LeftLayout")) {
-                    this.root.setLeft(pane);
-                    this.controllerLeft = loader.getController();
-                    this.controllerLeft.setMain(this);
-                } else {
-                    this.root.setCenter(pane);
-                    this.controllerCenter = loader.getController();
-                    this.controllerCenter.setMain(this);
-                    this.controllerCenter.setCtrlLeft(this.controllerLeft);
-                }
-                this.controllerLeft.setCtrlCenter(this.controllerCenter);
+                this.root.setCenter(pane);
+                this.controllerCenter = loader.getController();
+                this.controllerCenter.setMain(this);
+                this.controllerCenter.setCtrlLeft(this.controllerLeft);
             }
-        } catch (IOException e) {
-            L.error("Error loading the graphical interface. This is most likely a bug.", e);
-            System.exit(1);
+            this.controllerLeft.setCtrlCenter(this.controllerCenter);
         }
     }
 

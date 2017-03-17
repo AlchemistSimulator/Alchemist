@@ -12,10 +12,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -207,6 +208,7 @@ public final class AlchemistRunner {
      *            loader variables
      */
     public void launch(final String... variables) {
+        final Optional<? extends Throwable> exception;
         if (variables != null && variables.length > 0) {
             /*
              * Batch mode
@@ -215,42 +217,78 @@ public final class AlchemistRunner {
             final List<Entry<String, Variable>> varStreams = simVars.entrySet().stream()
                     .filter(e -> ArrayUtils.contains(variables, e.getKey())).collect(Collectors.toList());
             final ExecutorService executor = Executors.newFixedThreadPool(parallelism);
-            runWith(Collections.emptyMap(), varStreams, 0, exportFileRoot, loader, samplingInterval, Long.MAX_VALUE,
-                    endTime, sim -> {
+             exception = runWith(Collections.emptyMap(),
+                    varStreams, 0, exportFileRoot, loader, samplingInterval, Long.MAX_VALUE, endTime,
+                    sim -> {
                         sim.play();
                         sim.run();
-                    }).parallel().forEach(executor::submit);
+                        return sim.getError();
+                    })
+                .parallel()
+                .map(executor::submit)
+                .map(f -> {
+                    try {
+                        return f.get();
+                    } catch (Exception e) {
+                        return Optional.of(e);
+                    }
+                })
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findAny();
+             /*
+              * findAny does NOT short-circuit the stream due to a known
+              * bug in the JDK: https://bugs.openjdk.java.net/browse/JDK-8075939
+              * Thus, to date, if an exception occurs in a thread
+              * which is running a simulation, that exception will be effectively
+              * thrown outside that thread only when all the threads 
+              * have completed their execution.
+              * Blame Oracle for this.
+              */
             executor.shutdown();
+            if (exception.isPresent()) {
+                executor.shutdownNow();
+            }
             try {
                 executor.awaitTermination(Integer.MAX_VALUE, TimeUnit.DAYS);
             } catch (InterruptedException e1) {
                 throw new IllegalStateException("The batch execution got interrupted.");
             }
         } else {
-            runWith(Collections.emptyMap(), null, 0, exportFileRoot, loader, samplingInterval, Long.MAX_VALUE, endTime,
-                    sim -> {
-                        final boolean onHeadlessEnvironment = GraphicsEnvironment.isHeadless();
-                        if (!headless && onHeadlessEnvironment) {
-                            L.error("Could not initialize the UI (the graphics environment is headless). Falling back to headless mode.");
-                        }
-                        if (headless || onHeadlessEnvironment) {
-                            sim.play();
-                        } else {
-                            if (effectsFile.isPresent()) {
-                                SingleRunGUI.make(sim, effectsFile.get(), closeOperation);
-                            } else {
-                                SingleRunGUI.make(sim, closeOperation);
+            Optional<Throwable> localEx = Optional.empty();
+            try {
+                localEx = runWith(Collections.emptyMap(), null, 0, exportFileRoot, loader, samplingInterval, Long.MAX_VALUE, endTime,
+                        sim -> {
+                            final boolean onHeadlessEnvironment = GraphicsEnvironment.isHeadless();
+                            if (!headless && onHeadlessEnvironment) {
+                                L.error("Could not initialize the UI (the graphics environment is headless). Falling back to headless mode.");
                             }
-                        }
-                        sim.run();
-                    }).findAny().get().run();
+                            if (headless || onHeadlessEnvironment) {
+                                sim.play();
+                            } else {
+                                if (effectsFile.isPresent()) {
+                                    SingleRunGUI.make(sim, effectsFile.get(), closeOperation);
+                                } else {
+                                    SingleRunGUI.make(sim, closeOperation);
+                                }
+                            }
+                            sim.run();
+                            return sim.getError();
+                        }).findAny().get().call();
+            } catch (Exception e) {
+                localEx = Optional.of(e);
+            }
+            exception = localEx;
+        }
+        if (exception.isPresent()) {
+            throw new IllegalStateException(exception.get());
         }
     }
 
-    private static <T> Stream<Runnable> runWith(final Map<String, Double> baseVarMap,
+    private static <T, R> Stream<Callable<R>> runWith(final Map<String, Double> baseVarMap,
             final List<Entry<String, Variable>> varStreams, final int pos, final Optional<String> filebase,
             final Loader loader, final double sample, final long endStep, final Time endTime,
-            final Consumer<Simulation<T>> afterCreation) {
+            final Function<Simulation<T>, R> afterCreation) {
         if (varStreams == null || pos == varStreams.size()) {
             return Stream.of(() -> {
                 final Environment<T> env = loader.getWith(baseVarMap);
@@ -273,7 +311,7 @@ public final class AlchemistRunner {
                         L.error("Could not create " + filebase, e1);
                     }
                 }
-                afterCreation.accept(sim);
+                return afterCreation.apply(sim);
             });
         } else {
             final Entry<String, Variable> pair = varStreams.get(pos);

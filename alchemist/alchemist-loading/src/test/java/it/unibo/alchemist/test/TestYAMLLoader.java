@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
@@ -130,13 +131,7 @@ public class TestYAMLLoader {
 //            it.unibo.alchemist.boundary.gui.SingleRunGUI.make(sim);
 //        }
         sim.run();
-        sim.getError().ifPresent(ex -> {
-            try {
-                throw ex;
-            } catch (Throwable e) { // NOPMD
-                throw new IllegalStateException(e);
-            }
-        });
+        sim.getError().ifPresent(e -> Assert.fail(e.getMessage()));
         return env;
     }
 

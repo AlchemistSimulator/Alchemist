@@ -49,6 +49,7 @@ public final class AlchemistRunner {
     private final int parallelism;
     private final boolean headless;
     private final int closeOperation;
+    private final boolean doBenchmark;
 
     /**
      * 
@@ -63,6 +64,7 @@ public final class AlchemistRunner {
         private Optional<String> exportFileRoot = Optional.empty();
         private Optional<String> effectsFile = Optional.empty();
         private Time endTime = DoubleTime.INFINITE_TIME;
+        private boolean benchmark;
 
         /**
          * 
@@ -172,18 +174,27 @@ public final class AlchemistRunner {
         }
 
         /**
+         * @param benchmark set true if you want to benchmark this run
+         * @return builder
+         */
+        public Builder setBenchmarkMode(final boolean benchmark) {
+            this.benchmark = benchmark;
+            return this;
+        }
+
+        /**
          * 
          * @return AlchemistRunner
          */
         public AlchemistRunner build() {
             return new AlchemistRunner(this.loader, this.endTime, this.exportFileRoot, this.effectsFile,
-                    this.samplingInt, this.parallelism, this.headless, this.closeOperation);
+                    this.samplingInt, this.parallelism, this.headless, this.closeOperation, this.benchmark);
         }
     }
 
     private AlchemistRunner(final Loader source, final Time endTime, final Optional<String> exportRoot,
             final Optional<String> effectsFile, final double sampling, final int parallelism, final boolean headless,
-            final int closeOperation) {
+            final int closeOperation, final boolean benchmark) {
         this.effectsFile = effectsFile;
         this.endTime = endTime;
         this.exportFileRoot = exportRoot;
@@ -192,6 +203,7 @@ public final class AlchemistRunner {
         this.parallelism = parallelism;
         this.samplingInterval = sampling;
         this.closeOperation = closeOperation;
+        this.doBenchmark = benchmark;
     }
 
     /**
@@ -217,6 +229,7 @@ public final class AlchemistRunner {
             final List<Entry<String, Variable>> varStreams = simVars.entrySet().stream()
                     .filter(e -> ArrayUtils.contains(variables, e.getKey())).collect(Collectors.toList());
             final ExecutorService executor = Executors.newFixedThreadPool(parallelism);
+            final Optional<Long> start = Optional.ofNullable(doBenchmark ? System.nanoTime() : null); //NOPMD
              exception = runWith(Collections.emptyMap(),
                     varStreams, 0, exportFileRoot, loader, samplingInterval, Long.MAX_VALUE, endTime,
                     sim -> {
@@ -226,9 +239,10 @@ public final class AlchemistRunner {
                     })
                 .parallel()
                 .map(executor::submit)
-                .map(f -> {
+                .map(future -> {
                     try {
-                        return f.get();
+                        final Optional<Throwable> result = future.get();
+                        return result;
                     } catch (Exception e) {
                         return Optional.of(e);
                     }
@@ -245,6 +259,7 @@ public final class AlchemistRunner {
               * have completed their execution.
               * Blame Oracle for this.
               */
+            start.ifPresent(s -> L.info("Total simulation running time (nanos): " + (System.nanoTime() - s)));
             executor.shutdown();
             if (exception.isPresent()) {
                 executor.shutdownNow();

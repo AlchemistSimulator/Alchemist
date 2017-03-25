@@ -44,6 +44,7 @@ public final class Alchemist {
     private static final String HEADLESS = "hl";
     private static final String VARIABLES = "var";
     private static final String BENCHMARK = "bmk";
+    private static final char PARALLELISM = 'p';
     private static final char BATCH = 'b';
     private static final char EXPORT = 'e';
     private static final char GRAPHICS = 'g';
@@ -101,18 +102,19 @@ public final class Alchemist {
                     ifPresent(cmd, TIME, Double::parseDouble, simBuilder::setEndTime);
                     final String[] varsUnderRun = cmd.getOptionValues(VARIABLES);
                     if (cmd.hasOption(BATCH)) {
-                        if (cmd.hasOption(BENCHMARK)) {
-                            final String bmkOpts = cmd.getOptionValue(BENCHMARK);
-                            if (bmkOpts != null) {
-                                try {
-                                    final int threads = Integer.parseUnsignedInt(bmkOpts);
-                                    simBuilder.setParallelism(threads);
-                                    L.info("Using " + threads + " threads.");
-                                } catch (final NumberFormatException e) {
-                                    simBuilder.setParallelism(1);
-                                    L.info("Invalid option or no option for BENCHMARK parameter, using 1 thread.");
-                                }
+                        if (cmd.hasOption(PARALLELISM)) {
+                            final String bmkOpts = cmd.getOptionValue(PARALLELISM);
+                            try {
+                                final int threads = Integer.parseUnsignedInt(bmkOpts);
+                                simBuilder.setParallelism(threads);
+                                L.info("Using " + threads + " thread(s).");
+                            } catch (final NumberFormatException e) {
+                                simBuilder.setParallelism(1);
+                                L.info("Invalid option for PARALLELISM parameter, using 1 thread.");
                             }
+                        }
+                        if (cmd.hasOption(BENCHMARK)) {
+                            simBuilder.setBenchmarkMode(true);
                         }
                         if (varsUnderRun == null) {
                             L.error("You must specify which variables you want the batch to run on.");

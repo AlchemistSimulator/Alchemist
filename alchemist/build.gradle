@@ -17,7 +17,6 @@ allprojects {
     
     configurations {
         all*.exclude group: 'org.eclipse.xtext', module: 'org.eclipse.xtext.dependencies'
-        all*.exclude group: 'org.antlr', module: 'antlr4'
     }
 
     dependencies {

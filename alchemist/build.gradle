@@ -7,6 +7,7 @@ buildscript {
     dependencies {
         classpath "org.danilopianini:build-commons:${buildCommonsVersion}"
         classpath "org.danilopianini:javadoc.io-linker:${javadocIOLinkerVersion}"
+        classpath "org.xtext:xtext-gradle-plugin:1.0.17"
     }
 }
 
@@ -145,7 +146,7 @@ allprojects {
     apply plugin: 'org.danilopianini.javadoc.io-linker'
 }
 
-task fatJar(type: Jar, dependsOn: subprojects.assemble) {
+task fatJar(type: Jar, dependsOn: subprojects.compileJava) {
     manifest {
         attributes 'Implementation-Title': 'Alchemist',
         'Implementation-Version': rootProject.version,

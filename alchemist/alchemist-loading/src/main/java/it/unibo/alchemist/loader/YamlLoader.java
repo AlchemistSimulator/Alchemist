@@ -33,7 +33,6 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.jirf.Factory;
@@ -43,11 +42,14 @@ import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.collect.Table;
+import com.google.common.collect.Table.Cell;
 import com.google.common.reflect.TypeToken;
 
 import it.unibo.alchemist.SupportedIncarnations;
@@ -458,13 +460,13 @@ public class YamlLoader implements Loader {
                  * Contents
                  */
                 final List<?> contentsList = listCast(factory, dispMap.get(CONTENTS), "contents");
-                final Map<Shape, Entry<Molecule, String>> shapes = Maps.newLinkedHashMapWithExpectedSize(contentsList.size());
+                final Table<Shape, Molecule, String> shapes = HashBasedTable.create(contentsList.size(), contentsList.size());
                 for (final Object contentObj: contentsList) {
                     final Map<String, Object> contentMap = cast(factory, MAP_STRING_OBJECT, contentObj, "content");
                     final Shape shape = shapeBuilder.build(contentMap.get(IN));
                     final Molecule molecule = molBuilder.build(contentMap.get(MOLECULE));
                     final Object concObj = contentMap.get(CONCENTRATION);
-                    shapes.put(shape, new ImmutablePair<>(molecule, concObj == null ? "" : concObj.toString()));
+                    shapes.put(shape, molecule, concObj == null ? "" : concObj.toString());
                 }
                 /*
                  * Nodes
@@ -476,10 +478,12 @@ public class YamlLoader implements Loader {
                     /*
                      * Node contents
                      */
-                    for (final Entry<Shape, Entry<Molecule, String>> entry: shapes.entrySet()) {
-                        if (entry.getKey().contains(position)) {
-                            final Entry<Molecule, String> mc = entry.getValue();
-                            node.setConcentration(mc.getKey(), incarnation.createConcentration(mc.getValue()));
+                    for (final Cell<Shape, Molecule, String> entry: shapes.cellSet()) {
+                        final Shape shape = entry.getRowKey();
+                        if (shape.contains(position)) {
+                            final Molecule mol = entry.getColumnKey();
+                            final String concentration = entry.getValue();
+                            node.setConcentration(mol, incarnation.createConcentration(concentration));
                         }
                     }
                     /*

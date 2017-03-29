@@ -1,10 +1,12 @@
+apply plugin: "org.xtext.xtend"
 dependencies {
     compile (
         project(':alchemist-interfaces'),
         project(':alchemist-runner'),
-        "org.controlsfx:controlsfx:${controlsFXVersion}",
         "de.codecentric.centerdevice:javafxsvg:${javaFXSVG}",
-        "org.danilopianini:urlclassloader-util:${urlClassLoaderUtilVersion}"
+        "org.controlsfx:controlsfx:${controlsFXVersion}",
+        "org.danilopianini:urlclassloader-util:${urlClassLoaderUtilVersion}",
+        "org.eclipse.xtend:org.eclipse.xtend.lib:${xtendLibVersion}"
     )
     testRuntime(
         project(':alchemist-incarnation-protelis'),
@@ -13,10 +15,14 @@ dependencies {
     )
 }
 import org.gradle.plugins.ide.eclipse.model.AccessRule
+
 eclipse.classpath.file {
     whenMerged { classpath ->
         classpath.entries.findAll { entry ->
             entry.kind == 'con' && entry.path.contains('StandardVMType')
         }*.accessRules = [new AccessRule("0", "javafx/**")]
+        classpath.entries = classpath.entries.findAll { entry -> 
+            !entry.path.contains('build/')
+        }
     }
 }

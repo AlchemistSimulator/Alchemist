@@ -109,6 +109,17 @@ public class TestYAMLLoader {
     }
 
     /**
+     * Tests injecting multiple molecules in the same shape.
+     */
+    @Test
+    public void testMultipleMolecules() {
+        final Environment<?> env = testNoVar("/synthetic/multiplemolecule.yml");
+        env.forEach(n -> {
+            assertEquals(4, n.getChemicalSpecies());
+        });
+    }
+
+    /**
      * Test loading layer classes.
      */
     @Test

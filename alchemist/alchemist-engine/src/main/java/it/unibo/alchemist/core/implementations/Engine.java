@@ -381,7 +381,7 @@ public class Engine<T> implements Simulation<T> {
                 L.error("The simulation engine crashed.", e);
             } finally {
                 status = Status.TERMINATED;
-                L.trace("Thread {} execution time: {}", currentThread, Double.toString((System.nanoTime() - startExecutionTime) / NANOS_TO_SEC));
+                L.trace("Thread {} execution time: {}", currentThread, (System.nanoTime() - startExecutionTime) / NANOS_TO_SEC);
                 commands.clear();
                 monitorLock.read();
                 for (final OutputMonitor<T> m : monitors) {

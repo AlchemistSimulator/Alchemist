@@ -153,7 +153,7 @@ public final class AlchemistRunner {
          */
         public Builder setParallelism(final int threads) {
             if (threads <= 0) {
-            throw new IllegalArgumentException("Thread number must be >= 0");
+                throw new IllegalArgumentException("Thread number must be >= 0");
             }
             this.parallelism = threads;
             return this;

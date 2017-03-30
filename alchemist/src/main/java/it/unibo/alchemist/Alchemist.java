@@ -103,14 +103,13 @@ public final class Alchemist {
                     final String[] varsUnderRun = cmd.getOptionValues(VARIABLES);
                     if (cmd.hasOption(BATCH)) {
                         if (cmd.hasOption(PARALLELISM)) {
-                            final String bmkOpts = cmd.getOptionValue(PARALLELISM);
                             try {
-                                final int threads = Integer.parseUnsignedInt(bmkOpts);
+                                final int threads = Integer.parseUnsignedInt(cmd.getOptionValue(PARALLELISM));
                                 simBuilder.setParallelism(threads);
                                 L.info("Using " + threads + " thread(s).");
                             } catch (final NumberFormatException e) {
-                                simBuilder.setParallelism(1);
-                                L.info("Invalid option for PARALLELISM parameter, using 1 thread.");
+                                simBuilder.setParallelism(Runtime.getRuntime().availableProcessors());
+                                L.warn("Invalid option for PARALLELISM parameter, back to default.");
                             }
                         }
                         if (cmd.hasOption(BENCHMARK)) {

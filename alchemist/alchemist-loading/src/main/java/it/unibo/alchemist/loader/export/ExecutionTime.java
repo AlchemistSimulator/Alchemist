@@ -34,9 +34,7 @@ public class ExecutionTime implements Extractor {
             initial = System.nanoTime();
         }
         lastStep = step;
-        final double[] returnValue = new double[1];
-        returnValue[0] = ((System.nanoTime() - initial) / NANOS_TO_SEC);
-        return returnValue;
+        return new double[]{((System.nanoTime() - initial) / NANOS_TO_SEC)};
     }
 
     @Override

@@ -229,37 +229,37 @@ public final class AlchemistRunner {
             final List<Entry<String, Variable>> varStreams = simVars.entrySet().stream()
                     .filter(e -> ArrayUtils.contains(variables, e.getKey())).collect(Collectors.toList());
             final ExecutorService executor = Executors.newFixedThreadPool(parallelism);
-            final Optional<Long> start = Optional.ofNullable(doBenchmark ? System.nanoTime() : null); //NOPMD
-             exception = runWith(Collections.emptyMap(),
+            final Optional<Long> start = Optional.ofNullable(doBenchmark ? System.nanoTime() : null);
+            exception = runWith(Collections.emptyMap(),
                     varStreams, 0, exportFileRoot, loader, samplingInterval, Long.MAX_VALUE, endTime,
                     sim -> {
                         sim.play();
                         sim.run();
                         return sim.getError();
                     })
-                .parallel()
-                .map(executor::submit)
-                .map(future -> {
-                    try {
-                        final Optional<Throwable> result = future.get();
-                        return result;
-                    } catch (Exception e) {
-                        return Optional.of(e);
-                    }
-                })
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .findAny();
-             /*
-              * findAny does NOT short-circuit the stream due to a known
-              * bug in the JDK: https://bugs.openjdk.java.net/browse/JDK-8075939
-              * Thus, to date, if an exception occurs in a thread
-              * which is running a simulation, that exception will be effectively
-              * thrown outside that thread only when all the threads 
-              * have completed their execution.
-              * Blame Oracle for this.
-              */
-            start.ifPresent(s -> L.info("Total simulation running time (nanos): " + (System.nanoTime() - s)));
+                    .parallel()
+                    .map(executor::submit)
+                    .map(future -> {
+                        try {
+                            final Optional<Throwable> result = future.get();
+                            return result;
+                        } catch (Exception e) {
+                            return Optional.of(e);
+                        }
+                    })
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .findAny();
+            /*
+             * findAny does NOT short-circuit the stream due to a known
+             * bug in the JDK: https://bugs.openjdk.java.net/browse/JDK-8075939
+             * Thus, to date, if an exception occurs in a thread
+             * which is running a simulation, that exception will be effectively
+             * thrown outside that thread only when all the threads 
+             * have completed their execution.
+             * Blame Oracle for this.
+             */
+            start.ifPresent(s -> System.out.printf("Total simulation running time (nanos): %d \n", (System.nanoTime() - s))); //NOPMD: I want to show the result in any case
             executor.shutdown();
             if (exception.isPresent()) {
                 executor.shutdownNow();

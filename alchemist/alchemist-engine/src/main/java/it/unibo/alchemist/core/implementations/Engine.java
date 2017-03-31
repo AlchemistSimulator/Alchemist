@@ -51,6 +51,7 @@ import it.unibo.alchemist.model.interfaces.Time;
 public class Engine<T> implements Simulation<T> {
 
     private static final Logger L = LoggerFactory.getLogger(Engine.class);
+    private static final double NANOS_TO_SEC = 1000000000.0;
     private volatile Status status = Status.INIT;
     private final Lock statusLock = new ReentrantLock();
     private final Condition statusCondition = statusLock.newCondition();
@@ -98,6 +99,7 @@ public class Engine<T> implements Simulation<T> {
      *            the maximum time to reach
      */
     public Engine(final Environment<T> e, final long maxSteps, final Time t) {
+        L.trace("Engine created");
         env = e;
         env.setSimulation(this);
         dg = new MapBasedDependencyGraph<T>(env, handlers);
@@ -351,6 +353,9 @@ public class Engine<T> implements Simulation<T> {
         synchronized (env) {
             finalizeConstructor();
             status = Status.READY;
+            final long currentThread = Thread.currentThread().getId();
+            final long startExecutionTime = System.nanoTime();
+            L.trace("Thread {} started running.", currentThread);
             monitorLock.read();
             for (final OutputMonitor<T> m : monitors) {
                 m.initialized(env);
@@ -376,6 +381,7 @@ public class Engine<T> implements Simulation<T> {
                 L.error("The simulation engine crashed.", e);
             } finally {
                 status = Status.TERMINATED;
+                L.trace("Thread {} execution time: {}", currentThread, (System.nanoTime() - startExecutionTime) / NANOS_TO_SEC);
                 commands.clear();
                 monitorLock.read();
                 for (final OutputMonitor<T> m : monitors) {

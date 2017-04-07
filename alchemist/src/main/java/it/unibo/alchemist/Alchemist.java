@@ -43,6 +43,8 @@ public final class Alchemist {
     private static final Map<String, Level> LOGLEVELS;
     private static final String HEADLESS = "hl";
     private static final String VARIABLES = "var";
+    private static final String BENCHMARK = "bmk";
+    private static final char PARALLELISM = 'p';
     private static final char BATCH = 'b';
     private static final char EXPORT = 'e';
     private static final char GRAPHICS = 'g';
@@ -100,6 +102,19 @@ public final class Alchemist {
                     ifPresent(cmd, TIME, Double::parseDouble, simBuilder::setEndTime);
                     final String[] varsUnderRun = cmd.getOptionValues(VARIABLES);
                     if (cmd.hasOption(BATCH)) {
+                        if (cmd.hasOption(PARALLELISM)) {
+                            try {
+                                final int threads = Integer.parseUnsignedInt(cmd.getOptionValue(PARALLELISM));
+                                simBuilder.setParallelism(threads);
+                                L.info("Using " + threads + " thread(s).");
+                            } catch (final NumberFormatException e) {
+                                simBuilder.setParallelism(Runtime.getRuntime().availableProcessors());
+                                L.warn("Invalid option for PARALLELISM parameter, back to default.");
+                            }
+                        }
+                        if (cmd.hasOption(BENCHMARK)) {
+                            simBuilder.setBenchmarkMode(true);
+                        }
                         if (varsUnderRun == null) {
                             L.error("You must specify which variables you want the batch to run on.");
                             System.exit(1);

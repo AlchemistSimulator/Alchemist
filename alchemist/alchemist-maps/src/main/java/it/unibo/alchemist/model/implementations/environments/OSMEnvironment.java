@@ -45,6 +45,7 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import it.unibo.alchemist.model.implementations.GraphHopperRoute;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
+import it.unibo.alchemist.model.interfaces.Benchmarkable;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
 import it.unibo.alchemist.model.interfaces.Route;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
@@ -62,7 +63,7 @@ import it.unibo.alchemist.model.interfaces.Vehicle;
  * 
  * @param <T>
  */
-public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements MapEnvironment<T> {
+public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements MapEnvironment<T>, Benchmarkable {
 
     /**
      * Default maximum communication range (in meters).
@@ -112,6 +113,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     private transient FastReadWriteLock mapLock;
     private transient Map<Vehicle, GraphHopper> navigators;
     private transient LoadingCache<Triple<Vehicle, Position, Position>, Route> routecache;
+    private boolean activateBenchmark;
 
     /**
      * Builds a new {@link OSMEnvironment}, with nodes forced on streets,
@@ -286,6 +288,22 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     }
 
     @Override
+    public void doBenchmark() {
+        this.activateBenchmark = true;
+    }
+
+    @Override
+    public double getBenchmarkResult() {
+        if (activateBenchmark) {
+            if (routecache == null) {
+                return 0;
+            }
+            return routecache.stats().hitRate();
+        }
+        return 0;
+    }
+
+    @Override
     public Route computeRoute(final Node<T> node, final Node<T> node2) {
         return computeRoute(node, getPosition(node2));
     }
@@ -308,8 +326,11 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     @Override
     public Route computeRoute(final Position p1, final Position p2, final Vehicle vehicle) {
         if (routecache == null) {
-            routecache = CacheBuilder
-                .newBuilder()
+            CacheBuilder<Object, Object> builder = CacheBuilder.newBuilder();
+            if (activateBenchmark) {
+                builder = builder.recordStats();
+            }
+            routecache = builder
                 .expireAfterAccess(10, TimeUnit.SECONDS)
                 .build(new CacheLoader<Triple<Vehicle, Position, Position>, Route>() {
                     @Override

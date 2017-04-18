@@ -45,7 +45,6 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import it.unibo.alchemist.model.implementations.GraphHopperRoute;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
-import it.unibo.alchemist.model.interfaces.Benchmarkable;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
 import it.unibo.alchemist.model.interfaces.Route;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
@@ -63,7 +62,7 @@ import it.unibo.alchemist.model.interfaces.Vehicle;
  * 
  * @param <T>
  */
-public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements MapEnvironment<T>, Benchmarkable {
+public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements MapEnvironment<T> {
 
     /**
      * Default maximum communication range (in meters).
@@ -295,12 +294,13 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     @Override
     public double getBenchmarkResult() {
         if (activateBenchmark) {
-            if (routecache == null) {
-                return 0;
+            if (routecache != null) {
+                return routecache.stats().hitRate();
             }
-            return routecache.stats().hitRate();
+            return 0;
+        } else {
+            throw new IllegalStateException("You should call doBenchmark() before.");
         }
-        return 0;
     }
 
     @Override

@@ -33,7 +33,7 @@ import it.unibo.alchemist.loader.export.Exporter;
 import it.unibo.alchemist.loader.export.Extractor;
 import it.unibo.alchemist.loader.variables.Variable;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
-import it.unibo.alchemist.model.interfaces.Benchmarkable;
+import it.unibo.alchemist.model.interfaces.BenchmarkableEnvironment;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Time;
 
@@ -236,10 +236,10 @@ public final class AlchemistRunner {
             exception = runWith(Collections.emptyMap(),
                     varStreams, 0, exportFileRoot, loader, samplingInterval, Long.MAX_VALUE, endTime,
                     sim -> {
-                        if (sim.getEnvironment() instanceof Benchmarkable) {
+                        if (sim.getEnvironment() instanceof BenchmarkableEnvironment) {
                             for (final Extractor e : loader.getDataExtractors()) {
                                 if (e instanceof EnvPerformanceStats) {
-                                    ((Benchmarkable) (sim.getEnvironment())).doBenchmark();
+                                    ((BenchmarkableEnvironment<?>) (sim.getEnvironment())).doBenchmark();
                                 }
                             }
                         }

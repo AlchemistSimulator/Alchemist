@@ -19,6 +19,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -27,6 +28,8 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import it.unibo.alchemist.boundary.gui.SingleRunGUI;
 import it.unibo.alchemist.core.implementations.Engine;
@@ -45,6 +48,9 @@ import it.unibo.alchemist.model.interfaces.Time;
 public final class AlchemistRunner {
 
     private static final Logger L = LoggerFactory.getLogger(AlchemistRunner.class);
+    private static final ThreadFactory THREAD_FACTORY = new ThreadFactoryBuilder()
+            .setNameFormat("alchemist-batch-%d")
+            .build();
     private final Loader loader;
     private final Time endTime;
     private final Optional<String> exportFileRoot;
@@ -232,7 +238,7 @@ public final class AlchemistRunner {
             final Map<String, Variable> simVars = getVariables();
             final List<Entry<String, Variable>> varStreams = simVars.entrySet().stream()
                     .filter(e -> ArrayUtils.contains(variables, e.getKey())).collect(Collectors.toList());
-            final ExecutorService executor = Executors.newFixedThreadPool(parallelism);
+            final ExecutorService executor = Executors.newFixedThreadPool(parallelism, THREAD_FACTORY);
             final Optional<Long> start = Optional.ofNullable(doBenchmark ? System.nanoTime() : null);
             final Stream<Future<Optional<Throwable>>> futureErrors = runWith(Collections.emptyMap(),
                     varStreams, 0, exportFileRoot, loader, samplingInterval, Long.MAX_VALUE, endTime,

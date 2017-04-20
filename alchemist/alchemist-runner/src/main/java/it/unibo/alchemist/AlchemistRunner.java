@@ -239,7 +239,7 @@ public final class AlchemistRunner {
                         if (sim.getEnvironment() instanceof BenchmarkableEnvironment) {
                             for (final Extractor e : loader.getDataExtractors()) {
                                 if (e instanceof EnvPerformanceStats) {
-                                    ((BenchmarkableEnvironment<?>) (sim.getEnvironment())).doBenchmark();
+                                    ((BenchmarkableEnvironment<?>) (sim.getEnvironment())).enableBenchmark();
                                 }
                             }
                         }

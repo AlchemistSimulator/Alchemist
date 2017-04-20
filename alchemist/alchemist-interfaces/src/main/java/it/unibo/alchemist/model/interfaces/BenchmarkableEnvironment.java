@@ -13,7 +13,7 @@ public interface BenchmarkableEnvironment<T> extends Environment<T> {
      * starting using the environment itself.
      * 
      */
-    void doBenchmark();
+    void enableBenchmark();
 
     /**
      * @return a double which is a index of the performances

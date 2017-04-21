@@ -76,7 +76,7 @@ The project has been developed using Eclipse, and can be easily imported in such
   * When restarted, click "Help" -> "Install New Software..."
   * Click "Add..."
   * In "Location" field, enter "https://dl.bintray.com/pmd/pmd-eclipse-plugin/updates/"
-  * The "Name" field is mandatory (suggested: "PMD")
+  * The "Name" field is not mandatory (suggested: "PMD")
   * Click OK.
   * If not already selected, in "Work with:" dropdown menu choose the just added update site
   * Select "PMD for Eclipse 4" and click next

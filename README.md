@@ -64,18 +64,21 @@ The project has been developed using Eclipse, and can be easily imported in such
     ```
 * Install the code quality plugins:
   * In Eclipse, click "Help" -> "Eclipse Marketplace..."
-  * In the search form enter "findbugs", then press Enter
+  * In the search field enter "findbugs", then press Enter
   * One of the retrieved entries should be "FindBugs Eclipse Plugin", click Install
   * Click "< Install More"
-  * In the search form enter "checkstyle", then press Enter
+  * In the search field enter "checkstyle", then press Enter
   * One of the retrieved entries should be "Checkstyle Plug-in" with a written icon whose text is "eclipse-cs", click Install
+  * Click "< Install More"
+  * In the search field enter "xtext", then press Enter
+  * One of the retrieved entries should be "Eclipse Xtext", click Install
   * Click "Install Now >"
   * Wait for Eclipse to resolve all the features
   * Click "Confirm >"
   * Follow the instructions, accept the license, wait for Eclipse to download and install the product, accept the installation and restart the IDE
   * When restarted, click "Help" -> "Install New Software..."
   * Click "Add..."
-  * In "Location" field, enter "https://dl.bintray.com/pmd/pmd-eclipse-plugin/updates/"
+  * In "Location" field, enter `https://dl.bintray.com/pmd/pmd-eclipse-plugin/updates/`
   * The "Name" field is not mandatory (suggested: "PMD")
   * Click OK.
   * If not already selected, in "Work with:" dropdown menu choose the just added update site
@@ -120,6 +123,7 @@ The project has been developed using Eclipse, and can be easily imported in such
   * If you are a Windows user: `gradlew.bat alchemist-incarnation-biochemistry:generateGrammarSource`
 
   Go to Eclipse, right click on `alchemist-incarnation-biochemistry` project -> Refresh
+* If you have errors in `alchemist-projectview` project, make sure Xtend plugin is correctly installed
 
 
 

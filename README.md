@@ -123,7 +123,7 @@ The project has been developed using Eclipse, and can be easily imported in such
   * If you are a Windows user: `gradlew.bat alchemist-incarnation-biochemistry:generateGrammarSource`
 
   Go to Eclipse, right click on `alchemist-incarnation-biochemistry` project -> Refresh
-* If you have errors in `alchemist-projectview` project, make sure Xtend plugin is correctly installed
+* If you have errors in `alchemist-projectview` project, make sure Eclipse Xtext plugin is correctly installed
 
 
 

@@ -287,7 +287,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     }
 
     @Override
-    public void doBenchmark() {
+    public void enableBenchmark() {
         this.activateBenchmark = true;
     }
 

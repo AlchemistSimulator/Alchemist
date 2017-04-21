@@ -3,9 +3,9 @@
  */
 package it.unibo.alchemist.protelis;
 
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.HashUtils;
 import org.protelis.lang.datatype.DatatypeFactory;
@@ -42,6 +42,10 @@ public class AlchemistExecutionContext extends AbstractExecutionContext implemen
      * Put this {@link Molecule} inside nodes that should compute distances using routes. It only makes sense in case the environment is a {@link MapEnvironment}
      */
     public static final Molecule USE_ROUTES_AS_DISTANCES = new SimpleMolecule("ROUTES_AS_DISTANCE");
+    /**
+     * Put this {@link Molecule} inside nodes that should compute distances using routes approximating them. It only makes sense in case the environment is a {@link MapEnvironment}
+     */
+    public static final Molecule APPROXIMATE_NBR_RANGE = new SimpleMolecule("APPROXIMATE_NBR_RANGE");
     private final LoadingCache<Position, Double> cache = CacheBuilder.newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES)
             .maximumSize(100)
@@ -59,6 +63,8 @@ public class AlchemistExecutionContext extends AbstractExecutionContext implemen
     private final Reaction<Object> react;
     private final RandomGenerator rand;
     private int hash;
+    private double nbrRangeTimeout;
+    private Optional<Double> precalcdRoutingDistance = Optional.empty();
 
     /**
      * @param environment
@@ -227,6 +233,19 @@ public class AlchemistExecutionContext extends AbstractExecutionContext implemen
     public Field nbrRange() {
         return buildFieldWithPosition(p -> {
             if (env instanceof MapEnvironment<?> && node.contains(USE_ROUTES_AS_DISTANCES)) {
+                if (node.contains(APPROXIMATE_NBR_RANGE)) {
+                    try {
+                        final double tolerance = (double) node.getConcentration(APPROXIMATE_NBR_RANGE);
+                        final double currTime = env.getSimulation().getTime().toDouble();
+                        if (currTime > nbrRangeTimeout) {
+                            nbrRangeTimeout = currTime + tolerance;
+                            precalcdRoutingDistance = Optional.of(routingDistance(p));
+                        }
+                        return precalcdRoutingDistance.orElse(routingDistance(p));
+                    } catch (final ClassCastException e) {
+                        throw new IllegalStateException(APPROXIMATE_NBR_RANGE + " should be associated with a double concentration", e);
+                    }
+                }
                 return routingDistance(p);
             }
             return getDevicePosition().getDistanceTo(p);

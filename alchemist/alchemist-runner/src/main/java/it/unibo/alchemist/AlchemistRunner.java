@@ -7,14 +7,19 @@ import java.awt.GraphicsEnvironment;
 import java.io.FileNotFoundException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Queue;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -23,6 +28,8 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import it.unibo.alchemist.boundary.gui.SingleRunGUI;
 import it.unibo.alchemist.core.implementations.Engine;
@@ -44,6 +51,9 @@ import it.unibo.alchemist.model.interfaces.Time;
 public final class AlchemistRunner {
 
     private static final Logger L = LoggerFactory.getLogger(AlchemistRunner.class);
+    private static final ThreadFactory THREAD_FACTORY = new ThreadFactoryBuilder()
+            .setNameFormat("alchemist-batch-%d")
+            .build();
     private final Loader loader;
     private final Time endTime;
     private final Optional<String> exportFileRoot;
@@ -223,7 +233,7 @@ public final class AlchemistRunner {
      *            loader variables
      */
     public void launch(final String... variables) {
-        final Optional<? extends Throwable> exception;
+        Optional<? extends Throwable> exception = Optional.empty();
         if (variables != null && variables.length > 0) {
             /*
              * Batch mode
@@ -231,9 +241,9 @@ public final class AlchemistRunner {
             final Map<String, Variable> simVars = getVariables();
             final List<Entry<String, Variable>> varStreams = simVars.entrySet().stream()
                     .filter(e -> ArrayUtils.contains(variables, e.getKey())).collect(Collectors.toList());
-            final ExecutorService executor = Executors.newFixedThreadPool(parallelism);
+            final ExecutorService executor = Executors.newFixedThreadPool(parallelism, THREAD_FACTORY);
             final Optional<Long> start = Optional.ofNullable(doBenchmark ? System.nanoTime() : null);
-            exception = runWith(Collections.emptyMap(),
+            final Stream<Future<Optional<Throwable>>> futureErrors = runWith(Collections.emptyMap(),
                     varStreams, 0, exportFileRoot, loader, samplingInterval, Long.MAX_VALUE, endTime,
                     sim -> {
                         if (sim.getEnvironment() instanceof BenchmarkableEnvironment) {
@@ -247,27 +257,35 @@ public final class AlchemistRunner {
                         sim.run();
                         return sim.getError();
                     })
-                    .parallel()
-                    .map(executor::submit)
-                    .map(future -> {
-                        try {
-                            final Optional<Throwable> result = future.get();
-                            return result;
-                        } catch (Exception e) {
-                            return Optional.of(e);
-                        }
-                    })
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .findAny();
+                    .map(executor::submit);
+            final Queue<Future<Optional<Throwable>>> allErrors = futureErrors.collect(Collectors.toCollection(LinkedList::new));
+            while (!(exception.isPresent() || allErrors.isEmpty())) {
+                try {
+                    exception = allErrors.remove().get();
+                } catch (InterruptedException | ExecutionException e1) {
+                    exception = Optional.of(e1);
+                }
+            }
+//                    futureErrors.parallel()
+//                        .map(future -> {
+//                        try {
+//                            final Optional<Throwable> result = future.get();
+//                            return result;
+//                        } catch (Exception e) {
+//                            return Optional.of(e);
+//                        }
+//                    })
+//                    .filter(Optional::isPresent)
+//                    .map(Optional::get)
+//                    .findAny();
             /*
-             * findAny does NOT short-circuit the stream due to a known
-             * bug in the JDK: https://bugs.openjdk.java.net/browse/JDK-8075939
-             * Thus, to date, if an exception occurs in a thread
-             * which is running a simulation, that exception will be effectively
-             * thrown outside that thread only when all the threads 
-             * have completed their execution.
-             * Blame Oracle for this.
+             * findAny does NOT short-circuit the stream due to a known bug in
+             * the JDK: https://bugs.openjdk.java.net/browse/JDK-8075939
+             * 
+             * Thus, to date, if an exception occurs in a thread which is
+             * running a simulation, that exception will be effectively thrown
+             * outside that thread only when all the threads have completed
+             * their execution. Blame Oracle for this.
              */
             start.ifPresent(s -> System.out.printf("Total simulation running time (nanos): %d \n", (System.nanoTime() - s))); //NOPMD: I want to show the result in any case
             executor.shutdown();

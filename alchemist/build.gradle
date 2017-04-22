@@ -7,7 +7,7 @@ buildscript {
     dependencies {
         classpath "org.danilopianini:build-commons:${buildCommonsVersion}"
         classpath "org.danilopianini:javadoc.io-linker:${javadocIOLinkerVersion}"
-        classpath "org.xtext:xtext-gradle-plugin:1.0.17"
+        classpath "org.xtext:xtext-gradle-plugin:${xtextPluginVersion}"
     }
 }
 

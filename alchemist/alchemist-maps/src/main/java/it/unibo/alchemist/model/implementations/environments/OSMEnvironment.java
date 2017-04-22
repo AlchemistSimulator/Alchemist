@@ -22,7 +22,6 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.danilopianini.concurrency.FastReadWriteLock;
@@ -36,6 +35,8 @@ import com.google.common.cache.LoadingCache;
 import com.graphhopper.GHRequest;
 import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
+import com.graphhopper.GraphHopperAPI;
+import com.graphhopper.reader.osm.GraphHopperOSM;
 import com.graphhopper.routing.util.EdgeFilter;
 import com.graphhopper.routing.util.EncodingManager;
 import com.graphhopper.storage.index.QueryResult;
@@ -46,10 +47,10 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import it.unibo.alchemist.model.implementations.GraphHopperRoute;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
-import it.unibo.alchemist.model.interfaces.Route;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Route;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.Vehicle;
 
@@ -110,7 +111,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     private final TIntObjectMap<GPSTrace> traces = new TIntObjectHashMap<>();
     private final boolean forceStreets, onlyStreet;
     private transient FastReadWriteLock mapLock;
-    private transient Map<Vehicle, GraphHopper> navigators;
+    private transient Map<Vehicle, GraphHopperAPI> navigators;
     private transient LoadingCache<Triple<Vehicle, Position, Position>, Route> routecache;
     private boolean activateBenchmark;
 
@@ -343,7 +344,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
                                 .setVehicle(vehicle.toString())
                                 .setWeighting(ROUTING_STRATEGY);
                         mapLock.read();
-                        final GraphHopper gh = navigators.get(vehicle);
+                        final GraphHopperAPI gh = navigators.get(vehicle);
                         mapLock.release();
                         if (gh != null) {
                             final GHResponse resp = gh.route(req);
@@ -401,9 +402,9 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     private Optional<Position> getNearestStreetPoint(final Position position) {
         assert position != null;
         mapLock.read();
-        final GraphHopper gh = navigators.get(Vehicle.BIKE);
+        final GraphHopperAPI gh = navigators.get(Vehicle.BIKE);
         mapLock.release();
-        final QueryResult qr = gh.getLocationIndex().findClosest(position.getCoordinate(1), position.getCoordinate(0), EdgeFilter.ALL_EDGES);
+        final QueryResult qr = ((GraphHopper) gh).getLocationIndex().findClosest(position.getCoordinate(1), position.getCoordinate(0), EdgeFilter.ALL_EDGES);
         if (qr.isValid()) {
             final GHPoint pt = qr.getSnappedPoint();
             return Optional.of(new LatLongPosition(pt.lat, pt.lon));
@@ -472,27 +473,28 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
         mkdirsIfNeeded(workdir);
         navigators = new EnumMap<>(Vehicle.class);
         mapLock = new FastReadWriteLock();
-        final boolean processOK = Arrays.stream(Vehicle.values())//.parallel()
-            .map((v) -> {
+        final Optional<Exception> error = Arrays.stream(Vehicle.values())
+            .parallel()
+            .<Optional<Exception>>map(v -> {
                 try {
                     final String internalWorkdir = workdir + SLASH + v;
                     final File iwdf = new File(internalWorkdir);
                     if (mkdirsIfNeeded(iwdf)) {
-                        final GraphHopper gh = initNavigationSystem(mapFile, internalWorkdir, v);
+                        final GraphHopperAPI gh = initNavigationSystem(mapFile, internalWorkdir, v);
                         mapLock.write();
                         navigators.put(v, gh);
                         mapLock.release();
-                        return true;
                     }
-                } catch (final Exception e) {
-                    L.warn("", e);
+                    return Optional.empty();
+                } catch (Exception e) {
+                    return Optional.of(e);
                 }
-                L.warn("Unable to initialize navigation data for {}", v);
-                return false;
             })
-            .reduce((a, b) -> a && b).orElse(false);
-        if (!processOK) {
-            L.warn("Initialization completed with errors. Not all the navigation means supported by GraphHopper could be initialized with the map data provided.");
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .findFirst();
+        if (error.isPresent()) {
+            throw new IllegalStateException("A error occurred during initialization.", error.get());
         }
     }
 
@@ -544,23 +546,17 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
         initAll(mapResource);
     }
 
-    private static synchronized GraphHopper initNavigationSystem(final File mapFile, final String internalWorkdir, final Vehicle v) throws IOException {
-        final GraphHopper gh = new GraphHopper().forDesktop();
-        gh.setOSMFile(mapFile.getAbsolutePath());
-        gh.setGraphHopperLocation(internalWorkdir);
-        gh.setEncodingManager(new EncodingManager(v.toString().toLowerCase(Locale.US)));
-        try {
-            gh.importOrLoad();
-        } catch (final IllegalStateException e) {
-            if (e.getMessage().matches("Version of \\w*? unsupported.*")) {
-                L.warn("The map has already been processed with a different version of Alchemist. The previous files will be deleted.");
-                FileUtils.deleteDirectory(new File(internalWorkdir));
-                mkdirsIfNeeded(internalWorkdir);
-                gh.importOrLoad();
-            }
-            throw e;
-        }
-        return gh;
+    private static GraphHopperAPI initNavigationSystem(final File mapFile, final String internalWorkdir, final Vehicle v) throws IOException {
+        return new GraphHopperOSM()
+                .setOSMFile(mapFile.getAbsolutePath())
+                .forDesktop()
+                .setElevation(false)
+                .setEnableInstructions(false)
+                .setEnableCalcPoints(true)
+                .setInMemory()
+                .setGraphHopperLocation(internalWorkdir)
+                .setEncodingManager(new EncodingManager(v.toString().toLowerCase(Locale.US)))
+                .importOrLoad();
     }
 
     private static boolean mkdirsIfNeeded(final File target) {

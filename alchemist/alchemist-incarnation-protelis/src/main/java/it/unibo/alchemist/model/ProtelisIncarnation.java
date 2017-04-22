@@ -19,6 +19,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.LangUtils;
 import org.protelis.lang.ProtelisLoader;
@@ -224,6 +225,9 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
      * modify it.
      */
     public static class DummyContext extends AbstractExecutionContext {
+        private static final int SEED = -241837578;
+        private static final Semaphore MUTEX = new Semaphore(1);
+        private static final RandomGenerator RNG = new MersenneTwister(SEED);
         private final Node<?> node;
         DummyContext(final Node<?> node) {
             super(new ProtectedExecutionEnvironment(node), new NetworkManager() {
@@ -251,7 +255,11 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
         }
         @Override
         public double nextRandomDouble() {
-            return Math.random();
+            final double result;
+            MUTEX.acquireUninterruptibly();
+            result = RNG.nextDouble();
+            MUTEX.release();
+            return result;
         }
         @Override
         protected AbstractExecutionContext instance() {

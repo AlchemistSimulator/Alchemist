@@ -23,9 +23,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.lang3.tuple.MutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.danilopianini.concurrency.FastReadWriteLock;
 import org.danilopianini.io.FileUtilities;
+import org.danilopianini.lang.HashUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,6 +116,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     private transient Map<Vehicle, GraphHopperAPI> navigators;
     private transient LoadingCache<Triple<Vehicle, Position, Position>, Route> routecache;
     private boolean activateBenchmark;
+    private int appr;
 
     /**
      * Builds a new {@link OSMEnvironment}, with nodes forced on streets,
@@ -355,11 +358,73 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
                 });
         }
         try {
-            return routecache.get(new ImmutableTriple<>(vehicle, p1, p2));
+            if (appr == 0) {
+                return routecache.get(new ImmutableTriple<>(vehicle, p1, p2));
+            }
+            return routecache.get(new CachedTriple(vehicle, p1, p2));
         } catch (ExecutionException e) {
             L.error("", e);
             throw new IllegalStateException("The navigator was unable to compute a route from " + p1 + " to " + p2 + " using the navigator " + vehicle + ". This is most likely a bug", e);
         }
+    }
+
+    private class CachedTriple extends MutableTriple<Vehicle, Position, Position> {
+
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 7799119236047763501L;
+        private int hash;
+
+        CachedTriple(final Vehicle v, final Position p1, final Position p2) {
+            super(v, p1, p2);
+        }
+
+        @Override
+        public int hashCode() {
+            if (hash == 0) {
+                final double c1 = getApproximatedValue(getMiddle().getCoordinate(0));
+                final double c2 = getApproximatedValue(getMiddle().getCoordinate(1));
+                final double c3 = getApproximatedValue(getRight().getCoordinate(0));
+                final double c4 = getApproximatedValue(getRight().getCoordinate(1));
+                hash =  HashUtils.hash32(getLeft(), c1, c2, c3, c4);
+            }
+            return hash;
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (obj instanceof Triple<?, ?, ?>) {
+                final Triple<?, ?, ?> triple = (Triple<?, ?, ?>) obj;
+                if (triple.getLeft() instanceof Vehicle && triple.getMiddle() instanceof Position && triple.getRight() instanceof Position) {
+                    final Position middle = (Position) triple.getMiddle();
+                    final Position right = (Position) triple.getRight();
+                    return triple.getLeft().equals(getLeft()) 
+                            && getApproximatedValue(middle.getCoordinate(0)) == getApproximatedValue(getMiddle().getCoordinate(0))
+                            && getApproximatedValue(middle.getCoordinate(1)) == getApproximatedValue(getMiddle().getCoordinate(1))
+                            && getApproximatedValue(right.getCoordinate(0)) == getApproximatedValue(getRight().getCoordinate(0))
+                            && getApproximatedValue(right.getCoordinate(1)) == getApproximatedValue(getRight().getCoordinate(1));
+                }
+            }
+            return false;
+        }
+
+        private double getApproximatedValue(final double value) {
+            if (appr == 0) {
+                return value;
+            }
+            return Double.longBitsToDouble(Double.doubleToLongBits(value) & (0xFFFFFFFFFFFFFFFFL << appr));
+        }
+    }
+
+    /**
+     * @param appr how many ciphers of the coordinates must be ignored when comparing two coordinates.
+     */
+    public void setApproximation(final int appr) {
+        if (appr < 0 || appr > 64) {
+            throw new IllegalArgumentException();
+        }
+        this.appr = appr;
     }
 
     @Override

@@ -121,6 +121,14 @@ public class TestYAMLLoader {
     }
 
     /**
+     * Test loading layer classes.
+     */
+    @Test
+    public void testSingleValuedGeometricVar() {
+        assertNotNull(testNoVar("/synthetic/singleValuedGeometricVar.yml"));
+    }
+
+    /**
      * Test variables with same structure but different names.
      */
     @Test

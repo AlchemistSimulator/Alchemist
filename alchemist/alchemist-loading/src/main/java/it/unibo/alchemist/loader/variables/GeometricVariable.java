@@ -31,7 +31,7 @@ public class GeometricVariable extends PrintableVariable {
      *            number of samples (must be bigger than zero)
      */
     public GeometricVariable(final double def, final double min, final double max, final int samples) {
-        if (min >= max) {
+        if (min > max) {
             throw new IllegalArgumentException("min (" + min + ") can't be bigger than max (" + max + ")");
         }
         if (min <= 0d || max <= 0) {
@@ -39,6 +39,10 @@ public class GeometricVariable extends PrintableVariable {
         }
         if (samples <= 0) {
             throw new IllegalArgumentException("At least one sample is required.");
+        }
+        if (min == max && samples != 1) {
+            throw new IllegalArgumentException("Only a single sample can be produced if min and max are exactly equal. (min="
+                    + min + ", max=" + max + ", samples=" + samples);
         }
         this.def = def;
         this.min = min;
@@ -54,7 +58,7 @@ public class GeometricVariable extends PrintableVariable {
     @Override
     public DoubleStream stream() {
         return IntStream.range(0, maxSamples)
-                .mapToDouble(s -> min * FastMath.pow(max / min, (double) s / (maxSamples - 1)));
+                .mapToDouble(s -> min * FastMath.pow(max / min, (double) s / Math.max(1, maxSamples - 1)));
     }
 
     @Override

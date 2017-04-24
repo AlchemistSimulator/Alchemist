@@ -39,6 +39,18 @@
 		<property name="message" value="Line has trailing spaces." />
 	</module>
 	<module name="RegexpSingleline">
+		<property name="severity" value="error" />
+		<property name="format" value="Math\s*\.\s*random\s*\(\s*\)" />
+		<property name="fileExtensions" value="java,xtend" />
+		<property name="message" value="Don't use Math.random() inside Alchemist. Breaks stuff." />
+	</module>
+	<module name="RegexpSingleline">
+		<property name="severity" value="error" />
+		<property name="format" value="(import\s*(static\s*java\s*\.\s*lang\s*\.\s*Math\s*\.\s*random)|(java\s*\.\s*util\s*\.\s*Random))|(Math\s*\.\s*random\s*\(\s*\))" />
+		<property name="fileExtensions" value="java,xtend" />
+		<property name="message" value="Don't use Math.random() inside Alchemist. Breaks stuff." />
+	</module>
+	<module name="RegexpSingleline">
 		<property name="severity" value="warning" />
 		<property name="format" value="\t" />
 		<property name="fileExtensions" value="java" />

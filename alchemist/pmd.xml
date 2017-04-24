@@ -90,7 +90,6 @@
 	<rule ref="rulesets/java/empty.xml/EmptyWhileStmt" />
 	<rule ref="rulesets/java/design.xml/EqualsNull" />
 	<rule ref="rulesets/java/strictexception.xml/ExceptionAsFlowControl" />
-	<rule ref="rulesets/java/codesize.xml/ExcessivePublicCount" />
 	<rule ref="rulesets/vm/basic.xml/ExcessiveTemplateLength" />
 	<rule ref="rulesets/plsql/codesize.xml/ExcessiveTypeLength" />
 	<rule ref="rulesets/java/basic.xml/ExtendsObject" />

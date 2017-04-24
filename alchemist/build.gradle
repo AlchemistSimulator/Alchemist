@@ -17,6 +17,13 @@ allprojects {
     
     configurations {
         all*.exclude group: 'org.eclipse.xtext', module: 'org.eclipse.xtext.dependencies'
+        all {
+            if(!it.name.contains('antlr')) {
+	            resolutionStrategy {
+	                forcedModules += "org.antlr:antlr-runtime:${antlrRuntimeVersion}"
+	            }
+            }
+        }
     }
 
     dependencies {

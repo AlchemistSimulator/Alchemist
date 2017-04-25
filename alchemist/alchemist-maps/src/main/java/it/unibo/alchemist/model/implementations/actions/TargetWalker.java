@@ -5,6 +5,7 @@ package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.implementations.movestrategies.routing.OnStreets;
+import it.unibo.alchemist.model.implementations.movestrategies.speed.ConstantSpeed;
 import it.unibo.alchemist.model.implementations.movestrategies.speed.InteractWithOthers;
 import it.unibo.alchemist.model.implementations.movestrategies.target.FollowTargetOnMap;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
@@ -68,12 +69,20 @@ public class TargetWalker<T> extends MoveOnMap<T> {
      *            the range in which searching for possible obstacles. Obstacles
      *            slow down the {@link MoveOnMap}
      */
-    public TargetWalker(final MapEnvironment<T> environment, final Node<T> node, final Reaction<T> reaction,
-            final Molecule trackMolecule, final Molecule interactingMolecule, final double speed, final double interaction,
+    public TargetWalker(
+            final MapEnvironment<T> environment,
+            final Node<T> node,
+            final Reaction<T> reaction,
+            final Molecule trackMolecule,
+            final Molecule interactingMolecule,
+            final double speed,
+            final double interaction,
             final double range) {
         super(environment, node,
                 new OnStreets<>(environment, Vehicle.FOOT),
-                new InteractWithOthers<>(environment, node, reaction, interactingMolecule, speed, range, interaction),
+                interaction <= 0 || interactingMolecule == null
+                    ? new ConstantSpeed<>(reaction, speed)
+                    : new InteractWithOthers<>(environment, node, reaction, interactingMolecule, speed, range, interaction),
                 new FollowTargetOnMap<>(environment, node, trackMolecule));
     }
 
@@ -105,8 +114,13 @@ public class TargetWalker<T> extends MoveOnMap<T> {
      *            the speed at which this {@link MoveOnMap} will move
      *            when obstacles are found
      */
-    public TargetWalker(final MapEnvironment<T> environment, final Node<T> node, final Reaction<T> reaction,
-            final Molecule trackMolecule, final Molecule interactingMolecule, final double speed) {
+    public TargetWalker(
+            final MapEnvironment<T> environment,
+            final Node<T> node,
+            final Reaction<T> reaction,
+            final Molecule trackMolecule,
+            final Molecule interactingMolecule,
+            final double speed) {
         this(environment, node, reaction, trackMolecule, interactingMolecule, speed, DEFAULT_INTERACTION, DEFAULT_RANGE);
     }
 
@@ -135,8 +149,12 @@ public class TargetWalker<T> extends MoveOnMap<T> {
      *            "interacting" if such molecule is present, regardless its
      *            value.
      */
-    public TargetWalker(final MapEnvironment<T> environment, final Node<T> node, final Reaction<T> reaction,
-            final Molecule trackMolecule, final Molecule interactingMolecule) {
+    public TargetWalker(
+            final MapEnvironment<T> environment,
+            final Node<T> node,
+            final Reaction<T> reaction,
+            final Molecule trackMolecule,
+            final Molecule interactingMolecule) {
         this(environment, node, reaction, trackMolecule, interactingMolecule, DEFAULT_SPEED);
     }
 
@@ -173,8 +191,14 @@ public class TargetWalker<T> extends MoveOnMap<T> {
      *            the range in which searching for possible obstacles. Obstacles
      *            slow down the {@link MoveOnMap}
      */
-    public TargetWalker(final MapEnvironment<T> environment, final Node<T> node, final Reaction<T> reaction,
-            final String trackMolecule, final String interactingMolecule, final double speed, final double interaction,
+    public TargetWalker(
+            final MapEnvironment<T> environment,
+            final Node<T> node,
+            final Reaction<T> reaction,
+            final String trackMolecule,
+            final String interactingMolecule,
+            final double speed,
+            final double interaction,
             final double range) {
         this(environment, node, reaction, new SimpleMolecule(trackMolecule), new SimpleMolecule(interactingMolecule), speed, interaction, range);
     }
@@ -197,18 +221,16 @@ public class TargetWalker<T> extends MoveOnMap<T> {
      *            to this {@link Molecule} will be converted to a String, and
      *            the String will be parsed using the float regular expression
      *            matcher in Javalib.
-     * @param interactingMolecule
-     *            the molecule that decides wether or not a node is physically
-     *            interacting with the node in which this action is executed,
-     *            slowing this node down. The node will be considered
-     *            "interacting" if such molecule is present, regardless its
-     *            value.
      * @param speed
      *            the speed at which this {@link MoveOnMap} will move
      */
-    public TargetWalker(final MapEnvironment<T> environment, final Node<T> node, final Reaction<T> reaction,
-            final String trackMolecule, final String interactingMolecule, final double speed) {
-        this(environment, node, reaction, trackMolecule, interactingMolecule, speed, DEFAULT_INTERACTION, DEFAULT_RANGE);
+    public TargetWalker(
+            final MapEnvironment<T> environment,
+            final Node<T> node,
+            final Reaction<T> reaction,
+            final String trackMolecule,
+            final double speed) {
+        this(environment, node, reaction, trackMolecule, null, speed, DEFAULT_INTERACTION, DEFAULT_RANGE);
     }
 
     /**
@@ -229,16 +251,13 @@ public class TargetWalker<T> extends MoveOnMap<T> {
      *            to this {@link Molecule} will be converted to a String, and
      *            the String will be parsed using the float regular expression
      *            matcher in Javalib.
-     * @param interactingMolecule
-     *            the molecule that decides wether or not a node is physically
-     *            interacting with the node in which this action is executed,
-     *            slowing this node down. The node will be considered
-     *            "interacting" if such molecule is present, regardless its
-     *            value.
      */
-    public TargetWalker(final MapEnvironment<T> environment, final Node<T> node, final Reaction<T> reaction,
-            final String trackMolecule, final String interactingMolecule) { 
-        this(environment, node, reaction, trackMolecule, interactingMolecule, DEFAULT_SPEED);
+    public TargetWalker(
+            final MapEnvironment<T> environment,
+            final Node<T> node,
+            final Reaction<T> reaction,
+            final String trackMolecule) { 
+        this(environment, node, reaction, trackMolecule, DEFAULT_SPEED);
     }
 
 }

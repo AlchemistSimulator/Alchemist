@@ -1,0 +1,6 @@
+incarnation: sapere
+
+variables:
+  var0:
+    type: GeometricVariable
+    parameters: [0.5, 1, 1, 1]

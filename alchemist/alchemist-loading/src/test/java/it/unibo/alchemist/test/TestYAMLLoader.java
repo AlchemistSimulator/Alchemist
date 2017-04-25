@@ -42,6 +42,30 @@ public class TestYAMLLoader {
     private static final String ISAC_REGEX = "\\d{2}-.*\\.yml";
 
     /**
+     * Tests building a custom implementation of time distribution.
+     */
+    @Test
+    public void testAnyRealDistribution() {
+        final Environment<?> env = testNoVar("/synthetic/anyrealdistribution.yml");
+        env.forEach(n -> {
+            n.forEach(r -> {
+                assertTrue(r.getTimeDistribution() instanceof AnyRealDistribution);
+            });
+        });
+    }
+
+    /**
+     * Test loading a custom node class.
+     */
+    @Test
+    public void testCustomNodes() {
+        testNoVar("/synthetic/customnode.yml")
+        .forEach(n -> assertTrue(
+                "Node are not instances of " + TestNode.class.getName() + " as expected, but " + n.getClass().getName() + " instead",
+                n instanceof TestNode));
+    }
+
+    /**
      * Tests the whole laboratory lesson of the UniBo course
      * "Engineering of Adaptive Software Systems".
      * 
@@ -56,17 +80,6 @@ public class TestYAMLLoader {
             .stream()
             .map(r -> "/" + r)
             .forEach(TestYAMLLoader::testNoVar);
-    }
-
-    /**
-     * Test loading a custom node class.
-     */
-    @Test
-    public void testCustomNodes() {
-        testNoVar("/synthetic/customnode.yml")
-        .forEach(n -> assertTrue(
-                "Node are not instances of " + TestNode.class.getName() + " as expected, but " + n.getClass().getName() + " instead",
-                n instanceof TestNode));
     }
 
     /**
@@ -89,24 +102,11 @@ public class TestYAMLLoader {
     }
 
     /**
-     * Test variables with same structure but different names.
+     * Test loading layer classes.
      */
     @Test
-    public void testVariableContentClash() {
-        assertNotNull(testNoVar("/synthetic/varcontentclash.yml"));
-    }
-
-    /**
-     * Tests building a custom implementation of time distribution.
-     */
-    @Test
-    public void testAnyRealDistribution() {
-        final Environment<?> env = testNoVar("/synthetic/anyrealdistribution.yml");
-        env.forEach(n -> {
-            n.forEach(r -> {
-                assertTrue(r.getTimeDistribution() instanceof AnyRealDistribution);
-            });
-        });
+    public void testLoadVariablesInLists() {
+        assertNotNull(testNoVar("/synthetic/testlist.yml"));
     }
 
     /**
@@ -124,12 +124,16 @@ public class TestYAMLLoader {
      * Test loading layer classes.
      */
     @Test
-    public void testLoadVariablesInLists() {
-        assertNotNull(testNoVar("/synthetic/testlist.yml"));
+    public void testSingleValuedGeometricVar() {
+        assertNotNull(testNoVar("/synthetic/singleValuedGeometricVar.yml"));
     }
 
-    private static <T> Environment<T> testNoVar(final String resource) {
-        return testLoading(resource, Collections.emptyMap());
+    /**
+     * Test variables with same structure but different names.
+     */
+    @Test
+    public void testVariableContentClash() {
+        assertNotNull(testNoVar("/synthetic/varcontentclash.yml"));
     }
 
     private static <T> Environment<T> testLoading(final String resource, final Map<String, Double> vars) {
@@ -144,6 +148,10 @@ public class TestYAMLLoader {
         sim.run();
         sim.getError().ifPresent(e -> Assert.fail(e.getMessage()));
         return env;
+    }
+
+    private static <T> Environment<T> testNoVar(final String resource) {
+        return testLoading(resource, Collections.emptyMap());
     }
 
 }

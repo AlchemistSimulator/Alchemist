@@ -1,6 +1,7 @@
 package it.unibo.alchemist.loader.export.filters;
 
 import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.DoubleStream;
 
 import it.unibo.alchemist.loader.export.FilteringPolicy;
@@ -45,7 +46,7 @@ public enum CommonFilters {
      * @return the corresponding {@link FilteringPolicy}
      */
     public static FilteringPolicy fromString(final String input) {
-        return valueOf(input.toUpperCase(Locale.ENGLISH)).getFilteringPolicy();
+        return valueOf(Objects.requireNonNull(input).toUpperCase(Locale.ENGLISH)).getFilteringPolicy();
     }
 
 }

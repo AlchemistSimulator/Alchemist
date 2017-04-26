@@ -389,7 +389,8 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
                             ProtelisLoader.parse(key.property.replace(VALUE_TOKEN, baseProgram)),
                             new DummyContext(key.node.get()));
                 } catch (RuntimeException ex) {
-                    L.warn("Ignored program \n" + key.property + "\n, since it is not a valid Protelis program.", ex);
+                    L.warn("Program ignored as invalid: \n" + key.property);
+                    L.debug("Debug information", ex);
                 }
             }
             vm = Optional.ofNullable(myVM);
@@ -397,7 +398,7 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
         public Object runCycle() {
             final Node<Object> node = key.node.get();
             if (node == null) {
-                throw new IllegalStateException("The node should never get null");
+                throw new IllegalStateException("The node should never be null");
             }
             if (vm.isPresent()) {
                 final ProtelisVM myVM = vm.get();
@@ -405,6 +406,9 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
                 myVM.runCycle();
                 mutex.release();
                 return myVM.getCurrentValue();
+            }
+            if (node instanceof NoNode) {
+                return key.property;
             }
             return node.getConcentration(key.molecule);
         }

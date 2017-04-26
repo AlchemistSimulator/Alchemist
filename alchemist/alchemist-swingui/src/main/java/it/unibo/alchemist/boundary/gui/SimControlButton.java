@@ -28,7 +28,7 @@ public class SimControlButton extends JButton {
      *            the tooltip message
      */
     public SimControlButton(final String imagePath, final Enum<?> command, final String tooltip) {
-        super(AlchemistSwingUI.loadScaledImage(imagePath));
+        super(AlchemistScene.loadScaledImage(imagePath));
         setActionCommand(command.toString());
         setToolTipText(tooltip);
         // TODO find a better way to do this

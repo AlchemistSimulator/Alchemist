@@ -8,16 +8,14 @@
  */
 package it.unibo.alchemist.boundary.gui;
 
-import java.awt.event.ActionListener;
-
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 
 /**
  */
-public abstract class AbstractMenu extends JMenu implements ActionListener {
-
-    private static final long serialVersionUID = 5209455686362711386L;
+public abstract class AbstractMenu extends Menu implements EventHandler<ActionEvent> {
 
     /**
      * @param title
@@ -25,12 +23,11 @@ public abstract class AbstractMenu extends JMenu implements ActionListener {
      * @param items
      *            the items for this menu
      */
-    public AbstractMenu(final String title, final JMenuItem[] items) {
+    public AbstractMenu(final String title, final MenuItem[] items) {
         super(title);
-        for (final JMenuItem i : items) {
-            add(i);
-            i.setActionCommand(i.getText());
-            i.addActionListener(this);
+        for (final MenuItem i : items) {
+            getItems().add(i);
+            i.setOnAction(this);
         }
     }
 

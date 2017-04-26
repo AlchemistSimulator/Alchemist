@@ -86,7 +86,7 @@ public class MoleculeReader<T> implements Extractor {
                 Arrays.fill(result, Double.NaN);
                 return result;
             }
-            return aggregators.parallelStream()
+            return aggregators.stream()
                     .mapToDouble(a -> a.evaluate(input))
                     .toArray();
         }

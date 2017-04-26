@@ -63,11 +63,11 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
  */
 public final class ProtelisIncarnation implements Incarnation<Object> {
 
+    private static final Logger L = LoggerFactory.getLogger(ProtelisIncarnation.class);
     /**
      * The name that can be used in a property to refer to the extracted value.
      */
     public static final String VALUE_TOKEN = "<value>";
-    private static final Logger L = LoggerFactory.getLogger(ProtelisIncarnation.class);
     private final LoadingCache<CacheKey, SynchronizedVM> cache = CacheBuilder
             .newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES)
@@ -77,267 +77,6 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
                     return new SynchronizedVM(key);
                 }
             });
-
-    private static final class CacheKey {
-        private final WeakReference<Node<Object>> node;
-        private final Molecule molecule;
-        private final String property;
-        private CacheKey(final Node<Object> node, final Molecule mol, final String prop) {
-            this.node = new WeakReference<>(node);
-            molecule = mol;
-            property = prop;
-        }
-        @Override
-        public int hashCode() {
-            final Node<Object> n = node.get();
-            return molecule.hashCode() ^ property.hashCode() ^ (n == null ? 0 : n.hashCode());
-        }
-        @Override
-        public boolean equals(final Object obj) {
-            return obj instanceof CacheKey
-                    && ((CacheKey) obj).node.get() == node.get()
-                    && ((CacheKey) obj).molecule.equals(molecule)
-                    && ((CacheKey) obj).property.equals(property);
-        }
-    }
-
-    private static final class SynchronizedVM {
-        private final Optional<ProtelisVM> vm;
-        private final Semaphore mutex = new Semaphore(1);
-        private final CacheKey key;
-        private SynchronizedVM(final CacheKey key) {
-            this.key = key;
-            ProtelisVM myVM = null;
-            if (key.property != null && !key.property.trim().isEmpty()) {
-                try {
-                    final String baseProgram = "env.get(\"" + ((SimpleMolecule) key.molecule).toFasterString() + "\")";
-                    myVM = new ProtelisVM(
-                            ProtelisLoader.parse(key.property.replace(VALUE_TOKEN, baseProgram)),
-                            new DummyContext(key.node.get()));
-                } catch (RuntimeException ex) {
-                    L.warn("Ignored program \n" + key.property + "\n, since it is not a valid Protelis program.", ex);
-                }
-            }
-            vm = Optional.ofNullable(myVM);
-        }
-        public Object runCycle() {
-            final Node<Object> node = key.node.get();
-            if (node == null) {
-                throw new IllegalStateException("The node should never get null");
-            }
-            if (vm.isPresent()) {
-                final ProtelisVM myVM = vm.get();
-                mutex.acquireUninterruptibly();
-                myVM.runCycle();
-                mutex.release();
-                return myVM.getCurrentValue();
-            }
-            return node.getConcentration(key.molecule);
-        }
-    }
-
-    @Override
-    public double getProperty(final Node<Object> node, final Molecule mol, final String prop) {
-        try {
-            final SynchronizedVM vm = cache.get(new CacheKey(node, mol, prop));
-            final Object val = vm.runCycle();
-            if (val instanceof Number) {
-                return ((Number) val).doubleValue();
-            } else if (val instanceof String) {
-                try {
-                    return Double.parseDouble(val.toString());
-                } catch (final NumberFormatException e) {
-                    if (val.equals(prop)) {
-                        return 1;
-                    }
-                    return 0;
-                }
-            } else if (val instanceof Boolean) {
-                final Boolean cond = (Boolean) val;
-                if (cond) {
-                    return 1d;
-                } else {
-                    return 0d;
-                }
-            }
-        } catch (ExecutionException e) {
-            L.error("Bug in " + getClass().getName() + ": getProperty should never fail.", e);
-        }
-        return Double.NaN;
-    }
-
-    @Override
-    public Molecule createMolecule(final String s) {
-        return new SimpleMolecule(s);
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName();
-    }
-
-    /**
-     * An {@link ExecutionEnvironment} that can read and shadow the content of a
-     * {@link Node}, but cannot modify it. This is used to prevent badly written
-     * properties to interact with the simulation flow.
-     */
-    public static class ProtectedExecutionEnvironment implements ExecutionEnvironment {
-        private final ExecutionEnvironment shadow = new SimpleExecutionEnvironment();
-        private final Node<?> node;
-
-        /**
-         * @param node the {@link Node}
-         */
-        public ProtectedExecutionEnvironment(final Node<?> node) {
-            this.node = node;
-        }
-
-        @Override
-        public void setup() {
-        }
-        @Override
-        public Object remove(final String id) {
-            return shadow.remove(id);
-        }
-        @Override
-        public boolean put(final String id, final Object v) {
-            return shadow.put(id, v);
-        }
-        @Override
-        public boolean has(final String id) {
-            return shadow.has(id) || node.contains(new SimpleMolecule(id));
-        }
-        @Override
-        public Object get(final String id, final Object defaultValue) {
-            return Optional.<Object>ofNullable(get(id)).orElse(defaultValue);
-        }
-        @Override
-        public Object get(final String id) {
-            return shadow.get(id, node.getConcentration(new SimpleMolecule(id)));
-        }
-        @Override
-        public void commit() {
-        }
-    }
-
-    /**
-     * An {@link ExecutionContext} that operates over a node, but does not
-     * modify it.
-     */
-    public static class DummyContext extends AbstractExecutionContext {
-        private static final int SEED = -241837578;
-        private static final Semaphore MUTEX = new Semaphore(1);
-        private static final RandomGenerator RNG = new MersenneTwister(SEED);
-        private final Node<?> node;
-        DummyContext(final Node<?> node) {
-            super(new ProtectedExecutionEnvironment(node), new NetworkManager() {
-                @Override
-                public void shareState(final Map<CodePath, Object> toSend) {
-                }
-                @Override
-                public Map<DeviceUID, Map<CodePath, Object>> getNeighborState() {
-                    return Collections.emptyMap();
-                }
-            });
-            this.node = node;
-        }
-
-        @Override
-        public DeviceUID getDeviceUID() {
-            if (node instanceof ProtelisNode) {
-                return (ProtelisNode) node;
-            }
-            throw new IllegalStateException("You tried to compute a Protelis device UID, on a non-Protelis node");
-        }
-        @Override
-        public Number getCurrentTime() {
-            return 0;
-        }
-        @Override
-        public double nextRandomDouble() {
-            final double result;
-            MUTEX.acquireUninterruptibly();
-            result = RNG.nextDouble();
-            MUTEX.release();
-            return result;
-        }
-        @Override
-        protected AbstractExecutionContext instance() {
-            return this;
-        }
-
-    }
-
-    @Override
-    public Node<Object> createNode(final RandomGenerator rand, final Environment<Object> env, final String param) {
-        return new ProtelisNode(env);
-    }
-
-    @Override
-    public TimeDistribution<Object> createTimeDistribution(
-            final RandomGenerator rand,
-            final Environment<Object> env,
-            final Node<Object> node,
-            final String param) {
-        if (param == null) {
-            return new ExponentialTime<>(Double.POSITIVE_INFINITY, rand);
-        }
-        double frequency;
-        try {
-            frequency = Double.parseDouble(param);
-        } catch (final NumberFormatException e) {
-            frequency = 1;
-        }
-        return new DiracComb<>(new DoubleTime(rand.nextDouble() / frequency), frequency);
-    }
-
-    @Override
-    public Reaction<Object> createReaction(final RandomGenerator rand, final Environment<Object> env,
-            final Node<Object> node, final TimeDistribution<Object> time, final String param) {
-        LangUtils.requireNonNull(node, time);
-        final boolean isSend = "send".equalsIgnoreCase(param);
-        final Reaction<Object> result = isSend ? new ChemicalReaction<>(node, time) : new Event<>(node, time);
-        if (param != null) {
-            result.setActions(Lists.newArrayList(createAction(rand, env, node, time, result, param)));
-        }
-        if (isSend) {
-            result.setConditions(Lists.newArrayList(createCondition(rand, env, node, time, result, null)));
-        }
-        return result;
-    }
-
-    @Override
-    public Condition<Object> createCondition(final RandomGenerator rand, final Environment<Object> env,
-            final Node<Object> node, final TimeDistribution<Object> time, final Reaction<Object> reaction,
-            final String param) {
-        if (node instanceof ProtelisNode) {
-            final ProtelisNode pNode = (ProtelisNode) node;
-            /*
-             * The list of ProtelisPrograms that have already been completed with a ComputationalRoundComplete condition
-             */
-            final List<RunProtelisProgram> alreadyDone = pNode.getReactions()
-                .parallelStream()
-                .flatMap(r -> r.getConditions().parallelStream())
-                .filter(c -> c instanceof ComputationalRoundComplete)
-                .map(c -> (ComputationalRoundComplete) c)
-                .flatMap(crc -> crc.getInfluencingMolecules().parallelStream())
-                .filter(mol -> mol instanceof RunProtelisProgram)
-                .map(mol -> (RunProtelisProgram) mol)
-                .collect(Collectors.toList());
-            final List<RunProtelisProgram> pList = getIncomplete(pNode, alreadyDone);
-            if (pList.isEmpty()) {
-                throw new IllegalStateException("There is no program requiring a "
-                        + ComputationalRoundComplete.class.getSimpleName() + " condition");
-            }
-            if (pList.size() > 1) {
-                throw new IllegalStateException("There are too many programs requiring a "
-                        + ComputationalRoundComplete.class.getName() + " condition: " + pList);
-            }
-            return new ComputationalRoundComplete(pNode, pList.get(0));
-        }
-        throw new IllegalArgumentException("The node must be an instance of " + ProtelisNode.class.getSimpleName()
-                + ", it is a " + node.getClass().getName() + " instead");
-    }
 
     @Override
     public Action<Object> createAction(final RandomGenerator rand, final Environment<Object> env,
@@ -376,6 +115,133 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
                 + ", it is a " + node.getClass().getName() + " instead");
     }
 
+    @Override
+    public Object createConcentration(final String s) {
+        try {
+            final ProtelisProgram program = ProtelisLoader
+                    .parse(Objects.requireNonNull(s, "The concentration can not be null."));
+            final ProtelisVM vm = new ProtelisVM(program, new DummyContext(null));
+            vm.runCycle();
+            return vm.getCurrentValue();
+        } catch (IllegalArgumentException e) {
+            /*
+             * Not a valid program: inject the String itself
+             */
+            return s;
+        }
+    }
+
+    @Override
+    public Condition<Object> createCondition(final RandomGenerator rand, final Environment<Object> env,
+            final Node<Object> node, final TimeDistribution<Object> time, final Reaction<Object> reaction,
+            final String param) {
+        if (node instanceof ProtelisNode) {
+            final ProtelisNode pNode = (ProtelisNode) node;
+            /*
+             * The list of ProtelisPrograms that have already been completed with a ComputationalRoundComplete condition
+             */
+            final List<RunProtelisProgram> alreadyDone = pNode.getReactions()
+                .parallelStream()
+                .flatMap(r -> r.getConditions().parallelStream())
+                .filter(c -> c instanceof ComputationalRoundComplete)
+                .map(c -> (ComputationalRoundComplete) c)
+                .flatMap(crc -> crc.getInfluencingMolecules().parallelStream())
+                .filter(mol -> mol instanceof RunProtelisProgram)
+                .map(mol -> (RunProtelisProgram) mol)
+                .collect(Collectors.toList());
+            final List<RunProtelisProgram> pList = getIncomplete(pNode, alreadyDone);
+            if (pList.isEmpty()) {
+                throw new IllegalStateException("There is no program requiring a "
+                        + ComputationalRoundComplete.class.getSimpleName() + " condition");
+            }
+            if (pList.size() > 1) {
+                throw new IllegalStateException("There are too many programs requiring a "
+                        + ComputationalRoundComplete.class.getName() + " condition: " + pList);
+            }
+            return new ComputationalRoundComplete(pNode, pList.get(0));
+        }
+        throw new IllegalArgumentException("The node must be an instance of " + ProtelisNode.class.getSimpleName()
+                + ", it is a " + node.getClass().getName() + " instead");
+    }
+
+    @Override
+    public Molecule createMolecule(final String s) {
+        return new SimpleMolecule(s);
+    }
+
+    @Override
+    public Node<Object> createNode(final RandomGenerator rand, final Environment<Object> env, final String param) {
+        return new ProtelisNode(env);
+    }
+
+    @Override
+    public Reaction<Object> createReaction(final RandomGenerator rand, final Environment<Object> env,
+            final Node<Object> node, final TimeDistribution<Object> time, final String param) {
+        LangUtils.requireNonNull(node, time);
+        final boolean isSend = "send".equalsIgnoreCase(param);
+        final Reaction<Object> result = isSend ? new ChemicalReaction<>(node, time) : new Event<>(node, time);
+        if (param != null) {
+            result.setActions(Lists.newArrayList(createAction(rand, env, node, time, result, param)));
+        }
+        if (isSend) {
+            result.setConditions(Lists.newArrayList(createCondition(rand, env, node, time, result, null)));
+        }
+        return result;
+    }
+
+    @Override
+    public TimeDistribution<Object> createTimeDistribution(
+            final RandomGenerator rand,
+            final Environment<Object> env,
+            final Node<Object> node,
+            final String param) {
+        if (param == null) {
+            return new ExponentialTime<>(Double.POSITIVE_INFINITY, rand);
+        }
+        double frequency;
+        try {
+            frequency = Double.parseDouble(param);
+        } catch (final NumberFormatException e) {
+            frequency = 1;
+        }
+        return new DiracComb<>(new DoubleTime(rand.nextDouble() / frequency), frequency);
+    }
+
+    @Override
+    public double getProperty(final Node<Object> node, final Molecule mol, final String prop) {
+        try {
+            final SynchronizedVM vm = cache.get(new CacheKey(node, mol, prop));
+            final Object val = vm.runCycle();
+            if (val instanceof Number) {
+                return ((Number) val).doubleValue();
+            } else if (val instanceof String) {
+                try {
+                    return Double.parseDouble(val.toString());
+                } catch (final NumberFormatException e) {
+                    if (val.equals(prop)) {
+                        return 1;
+                    }
+                    return 0;
+                }
+            } else if (val instanceof Boolean) {
+                final Boolean cond = (Boolean) val;
+                if (cond) {
+                    return 1d;
+                } else {
+                    return 0d;
+                }
+            }
+        } catch (ExecutionException e) {
+            L.error("Bug in " + getClass().getName() + ": getProperty should never fail.", e);
+        }
+        return Double.NaN;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
+
     private static List<RunProtelisProgram> getIncomplete(final ProtelisNode pNode, final List<RunProtelisProgram> alreadyDone) {
         return pNode.getReactions().parallelStream()
                 /*
@@ -396,19 +262,153 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public Object createConcentration(final String s) {
-        try {
-            final ProtelisProgram program = ProtelisLoader
-                    .parse(Objects.requireNonNull(s, "The concentration can not be null."));
-            final ProtelisVM vm = new ProtelisVM(program, new DummyContext(null));
-            vm.runCycle();
-            return vm.getCurrentValue();
-        } catch (IllegalArgumentException e) {
-            /*
-             * Not a valid program: inject the String itself
-             */
-            return s;
+    private static final class CacheKey {
+        private final Molecule molecule;
+        private final WeakReference<Node<Object>> node;
+        private final String property;
+        private CacheKey(final Node<Object> node, final Molecule mol, final String prop) {
+            this.node = new WeakReference<>(node);
+            molecule = mol;
+            property = prop;
+        }
+        @Override
+        public boolean equals(final Object obj) {
+            return obj instanceof CacheKey
+                    && ((CacheKey) obj).node.get() == node.get()
+                    && ((CacheKey) obj).molecule.equals(molecule)
+                    && ((CacheKey) obj).property.equals(property);
+        }
+        @Override
+        public int hashCode() {
+            final Node<Object> n = node.get();
+            return molecule.hashCode() ^ property.hashCode() ^ (n == null ? 0 : n.hashCode());
+        }
+    }
+
+    /**
+     * An {@link ExecutionContext} that operates over a node, but does not
+     * modify it.
+     */
+    public static class DummyContext extends AbstractExecutionContext {
+        private static final Semaphore MUTEX = new Semaphore(1);
+        private static final int SEED = -241837578;
+        private static final RandomGenerator RNG = new MersenneTwister(SEED);
+        private final Node<?> node;
+        DummyContext(final Node<?> node) {
+            super(new ProtectedExecutionEnvironment(node), new NetworkManager() {
+                @Override
+                public Map<DeviceUID, Map<CodePath, Object>> getNeighborState() {
+                    return Collections.emptyMap();
+                }
+                @Override
+                public void shareState(final Map<CodePath, Object> toSend) {
+                }
+            });
+            this.node = node;
+        }
+
+        @Override
+        public Number getCurrentTime() {
+            return 0;
+        }
+        @Override
+        public DeviceUID getDeviceUID() {
+            if (node instanceof ProtelisNode) {
+                return (ProtelisNode) node;
+            }
+            throw new IllegalStateException("You tried to compute a Protelis device UID, on a non-Protelis node");
+        }
+        @Override
+        protected AbstractExecutionContext instance() {
+            return this;
+        }
+        @Override
+        public double nextRandomDouble() {
+            final double result;
+            MUTEX.acquireUninterruptibly();
+            result = RNG.nextDouble();
+            MUTEX.release();
+            return result;
+        }
+
+    }
+
+    /**
+     * An {@link ExecutionEnvironment} that can read and shadow the content of a
+     * {@link Node}, but cannot modify it. This is used to prevent badly written
+     * properties to interact with the simulation flow.
+     */
+    public static class ProtectedExecutionEnvironment implements ExecutionEnvironment {
+        private final Node<?> node;
+        private final ExecutionEnvironment shadow = new SimpleExecutionEnvironment();
+
+        /**
+         * @param node the {@link Node}
+         */
+        public ProtectedExecutionEnvironment(final Node<?> node) {
+            this.node = node;
+        }
+
+        @Override
+        public void commit() {
+        }
+        @Override
+        public Object get(final String id) {
+            return shadow.get(id, node.getConcentration(new SimpleMolecule(id)));
+        }
+        @Override
+        public Object get(final String id, final Object defaultValue) {
+            return Optional.<Object>ofNullable(get(id)).orElse(defaultValue);
+        }
+        @Override
+        public boolean has(final String id) {
+            return shadow.has(id) || node.contains(new SimpleMolecule(id));
+        }
+        @Override
+        public boolean put(final String id, final Object v) {
+            return shadow.put(id, v);
+        }
+        @Override
+        public Object remove(final String id) {
+            return shadow.remove(id);
+        }
+        @Override
+        public void setup() {
+        }
+    }
+
+    private static final class SynchronizedVM {
+        private final CacheKey key;
+        private final Semaphore mutex = new Semaphore(1);
+        private final Optional<ProtelisVM> vm;
+        private SynchronizedVM(final CacheKey key) {
+            this.key = key;
+            ProtelisVM myVM = null;
+            if (key.property != null && !key.property.trim().isEmpty()) {
+                try {
+                    final String baseProgram = "env.get(\"" + ((SimpleMolecule) key.molecule).toFasterString() + "\")";
+                    myVM = new ProtelisVM(
+                            ProtelisLoader.parse(key.property.replace(VALUE_TOKEN, baseProgram)),
+                            new DummyContext(key.node.get()));
+                } catch (RuntimeException ex) {
+                    L.warn("Ignored program \n" + key.property + "\n, since it is not a valid Protelis program.", ex);
+                }
+            }
+            vm = Optional.ofNullable(myVM);
+        }
+        public Object runCycle() {
+            final Node<Object> node = key.node.get();
+            if (node == null) {
+                throw new IllegalStateException("The node should never get null");
+            }
+            if (vm.isPresent()) {
+                final ProtelisVM myVM = vm.get();
+                mutex.acquireUninterruptibly();
+                myVM.runCycle();
+                mutex.release();
+                return myVM.getCurrentValue();
+            }
+            return node.getConcentration(key.molecule);
         }
     }
 

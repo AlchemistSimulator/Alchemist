@@ -8,8 +8,8 @@
  */
 package it.unibo.alchemist.boundary.monitors;
 
-import static it.unibo.alchemist.boundary.gui.AlchemistScene.DEFAULT_ICON_SIZE;
-import static it.unibo.alchemist.boundary.gui.AlchemistScene.loadScaledImage;
+import static it.unibo.alchemist.boundary.gui.AlchemistSwingUI.DEFAULT_ICON_SIZE;
+import static it.unibo.alchemist.boundary.gui.AlchemistSwingUI.loadScaledImage;
 
 import java.awt.Color;
 import java.awt.Dimension;

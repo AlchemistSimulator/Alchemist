@@ -7,7 +7,9 @@ dependencies {
         project(':alchemist-maps'),
         "com.miglayout:miglayout-swing:$miglayoutVersion",
         "org.mapsforge:mapsforge-map-awt:$mapsforgeVersion",
-        "org.danilopianini:gson-extras:$gsonExtrasVersion"
+        "org.danilopianini:gson-extras:$gsonExtrasVersion",
+        "org.controlsfx:controlsfx:$controlsFXVersion",
+        "com.jfoenix:jfoenix:$jFoenixVersion"
     )
     testRuntime(project(':alchemist-incarnation-protelis'))
 }

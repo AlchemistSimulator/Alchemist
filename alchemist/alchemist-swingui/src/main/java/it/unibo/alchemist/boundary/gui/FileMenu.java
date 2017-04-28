@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import javafx.scene.control.MenuItem;
 
 import static it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle.getString;
 
@@ -35,9 +34,9 @@ import static it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle.getString
 public class FileMenu extends AbstractMenu {
 
     private static final long serialVersionUID = 5209455686362711386L;
-    private static final MenuItem[] ITEMS = {
-            new MenuItem(getString("quit")),
-            new MenuItem(getString("load_jar_file")),
+    private static final JMenuItem[] ITEMS = {
+            new JMenuItem(getString("quit")),
+            new JMenuItem(getString("load_jar_file")),
     };
     private static final Logger L = LoggerFactory.getLogger(FileMenu.class);
 
@@ -85,12 +84,6 @@ public class FileMenu extends AbstractMenu {
                 }
             }
         }
-    }
-
-    @Override
-    public void handle(javafx.event.ActionEvent event) {
-        // TODO Auto-generated method stub
-        
     }
 
 }

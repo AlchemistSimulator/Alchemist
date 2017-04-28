@@ -8,7 +8,7 @@
  */
 package it.unibo.alchemist.boundary.gui;
 
-import static it.unibo.alchemist.boundary.gui.AlchemistScene.loadScaledImage;
+import static it.unibo.alchemist.boundary.gui.AlchemistSwingUI.loadScaledImage;
 import it.unibo.alchemist.boundary.gui.tape.JTapeFeatureStack;
 import it.unibo.alchemist.boundary.gui.tape.JTapeGroup;
 import it.unibo.alchemist.boundary.gui.tape.JTapeMainFeature;

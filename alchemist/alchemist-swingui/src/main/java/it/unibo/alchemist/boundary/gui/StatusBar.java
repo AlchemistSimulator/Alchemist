@@ -8,7 +8,7 @@
  */
 package it.unibo.alchemist.boundary.gui;
 
-import static it.unibo.alchemist.boundary.gui.AlchemistScene.loadScaledImage;
+import static it.unibo.alchemist.boundary.gui.AlchemistSwingUI.loadScaledImage;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;

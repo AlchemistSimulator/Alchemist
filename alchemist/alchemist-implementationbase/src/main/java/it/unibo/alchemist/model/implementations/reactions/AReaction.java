@@ -28,6 +28,8 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.google.common.base.Supplier;
+
 /**
  * The type which describes the concentration of a molecule
  * 
@@ -83,18 +85,20 @@ public abstract class AReaction<T> implements Reaction<T> {
      * @param <T>
      *            The type which describes the concentration of a molecule
      */
-    protected static <T> void cloneConditionsAndActions(final List<? extends Condition<T>> conditions, final List<? extends Action<T>> actions, final Reaction<T> res) {
+    protected <R extends Reaction<T>> R makeClone(final Supplier<R> builder) {
+        final R res = builder.get();
         final Node<T> n = res.getNode();
         final ArrayList<Condition<T>> c = new ArrayList<Condition<T>>(conditions.size());
-        for (final Condition<T> cond : conditions) {
+        for (final Condition<T> cond : getConditions()) {
             c.add(cond.cloneCondition(n, res));
         }
         final ArrayList<Action<T>> a = new ArrayList<Action<T>>(actions.size());
-        for (final Action<T> act : actions) {
+        for (final Action<T> act : getActions()) {
             a.add(act.cloneAction(n, res));
         }
         res.setActions(a);
         res.setConditions(c);
+        return res;
     }
 
     /**

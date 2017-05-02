@@ -174,13 +174,12 @@ public class YamlLoader implements Loader {
             .put(Molecule.class, MODEL_PACKAGE_ROOT + "molecules.")
             .put(Concentration.class, MODEL_PACKAGE_ROOT + "concentrations.")
             .build();
-    private final Map<String, Double> constants;
-    private final Map<String, Object> contents;
-    private final Map<String, DependentVariable> depVariables;
+    private final ImmutableMap<String, Double> constants;
+    private final ImmutableMap<String, Object> contents;
+    private final ImmutableMap<String, DependentVariable> depVariables;
     private final List<Extractor> extractors;
     private transient Incarnation<?> incarnation;
-    private final Map<Map<String, Object>, String> reverseLookupTable;
-
+    private final ImmutableMap<Map<String, Object>, String> reverseLookupTable;
     private final ImmutableMap<String, Variable> variables;
 
     /**
@@ -229,13 +228,13 @@ public class YamlLoader implements Loader {
             varEntry.getValue().put(NAME, varEntry.getKey());
         }
         L.debug("Variables: {}", originalVars);
-        reverseLookupTable = originalVars.entrySet().stream().collect(Collectors.toMap(Entry::getValue, Entry::getKey));
+        reverseLookupTable = originalVars.entrySet().stream().collect(ImmutableMap.toImmutableMap(Entry::getValue, Entry::getKey));
         L.debug("Reverse lookup table: {}", reverseLookupTable);
         /*
          * Compute constants and dependent variables
          */
-        constants = Maps.newLinkedHashMapWithExpectedSize(originalVars.size());
-        depVariables = Maps.newLinkedHashMapWithExpectedSize(originalVars.size());
+        final Map<String, Double> constants = Maps.newLinkedHashMapWithExpectedSize(originalVars.size());
+        final Map<String, DependentVariable> depVariables = Maps.newLinkedHashMapWithExpectedSize(originalVars.size());
         final Factory factory = makeBaseFactory(incarnation);
         final Builder<DependentVariable> depVarBuilder = new Builder<>(DependentVariable.class, ImmutableSet.of(DEPENDENT_VAR_CONFIG), factory);
         int previousConstants, previousDepVars;
@@ -265,7 +264,9 @@ public class YamlLoader implements Loader {
             }
         } while (previousConstants != constants.size() || previousDepVars != depVariables.size());
         assert constants.size() + depVariables.size() <= originalVars.size();
-        contents = (Map<String, Object>) recursivelyResolveVariables(rawContents, constants);
+        this.constants = ImmutableMap.copyOf(constants);
+        this.contents = ImmutableMap.copyOf((Map<String, Object>) recursivelyResolveVariables(rawContents, this.constants));
+        this.depVariables = ImmutableMap.copyOf(depVariables);
         final Iterator<String> varNames = reverseLookupTable.values().iterator();
         while (varNames.hasNext() && !constants.isEmpty()) {
             final String var = varNames.next();
@@ -284,10 +285,9 @@ public class YamlLoader implements Loader {
                 ImmutableMap.of(DEFAULT, Number.class, MIN, Number.class, MAX, Number.class, STEP, Number.class), ImmutableMap.of(NAME, CharSequence.class), factory,
                 m -> new LinearVariable(toDouble.apply(m, DEFAULT), toDouble.apply(m, MIN), toDouble.apply(m, MAX), toDouble.apply(m, STEP)));
         final Builder<Variable> varBuilder = new Builder<>(Variable.class, ImmutableSet.of(arbitraryVarConfig, linearVarConfig), factory);
-        variables = ImmutableMap.copyOf(
-                originalVars.entrySet().stream()
+        variables = originalVars.entrySet().stream()
                 .filter(e -> e.getValue() instanceof Map && !((Map<?, ?>) e.getValue()).containsKey(FORMULA))
-                .collect(Collectors.toMap(Entry::getKey, e -> varBuilder.build(e.getValue()))));
+                .collect(ImmutableMap.toImmutableMap(Entry::getKey, e -> varBuilder.build(e.getValue())));
         L.debug("Lookup table: {}", variables);
         assert depVariables.size() + variables.size() == reverseLookupTable.size();
         /*

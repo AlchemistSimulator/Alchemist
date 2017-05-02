@@ -8,6 +8,9 @@
  */
 package it.unibo.alchemist.model.implementations.conditions;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.interfaces.Context;
@@ -35,7 +38,16 @@ public class ComputationalRoundComplete extends AbstractCondition<Object> {
 
     @Override
     public ComputationalRoundComplete cloneCondition(final Node<Object> n, final Reaction<Object> r) {
-        return new ComputationalRoundComplete((ProtelisNode) n, program);
+        final List<RunProtelisProgram> possibleRefs = n.getReactions().stream()
+                .map(Reaction::getActions)
+                .flatMap(List::stream)
+                .filter(a -> a instanceof RunProtelisProgram)
+                .map(a -> (RunProtelisProgram) a)
+                .collect(Collectors.toList());
+        if (possibleRefs.size() == 1) {
+            return new ComputationalRoundComplete((ProtelisNode) n, possibleRefs.get(0));
+        }
+        throw new IllegalStateException("There must be one and one only unconfigured " + RunProtelisProgram.class.getSimpleName());
     }
 
     @Override

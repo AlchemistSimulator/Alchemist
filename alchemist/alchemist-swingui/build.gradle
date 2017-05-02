@@ -9,7 +9,10 @@ dependencies {
         "org.mapsforge:mapsforge-map-awt:$mapsforgeVersion",
         "org.danilopianini:gson-extras:$gsonExtrasVersion",
         "org.controlsfx:controlsfx:$controlsFXVersion",
-        "com.jfoenix:jfoenix:$jFoenixVersion"
+        "com.jfoenix:jfoenix:$jFoenixVersion",
+        "com.github.jiconfont:jiconfont-javafx:$jIconFontJavaFXVersion",
+        "com.github.jiconfont:jiconfont-google_material_design_icons:$jIconFontGoogleMaterialVersion"
+        
     )
     testRuntime(project(':alchemist-incarnation-protelis'))
 }

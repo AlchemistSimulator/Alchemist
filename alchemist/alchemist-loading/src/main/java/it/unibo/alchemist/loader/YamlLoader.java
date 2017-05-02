@@ -181,7 +181,7 @@ public class YamlLoader implements Loader {
     private transient Incarnation<?> incarnation;
     private final Map<Map<String, Object>, String> reverseLookupTable;
 
-    private final Map<String, Variable> variables;
+    private final ImmutableMap<String, Variable> variables;
 
     /**
      * @param source
@@ -284,9 +284,10 @@ public class YamlLoader implements Loader {
                 ImmutableMap.of(DEFAULT, Number.class, MIN, Number.class, MAX, Number.class, STEP, Number.class), ImmutableMap.of(NAME, CharSequence.class), factory,
                 m -> new LinearVariable(toDouble.apply(m, DEFAULT), toDouble.apply(m, MIN), toDouble.apply(m, MAX), toDouble.apply(m, STEP)));
         final Builder<Variable> varBuilder = new Builder<>(Variable.class, ImmutableSet.of(arbitraryVarConfig, linearVarConfig), factory);
-        variables = originalVars.entrySet().stream()
+        variables = ImmutableMap.copyOf(
+                originalVars.entrySet().stream()
                 .filter(e -> e.getValue() instanceof Map && !((Map<?, ?>) e.getValue()).containsKey(FORMULA))
-                .collect(Collectors.toMap(Entry::getKey, e -> varBuilder.build(e.getValue())));
+                .collect(Collectors.toMap(Entry::getKey, e -> varBuilder.build(e.getValue()))));
         L.debug("Lookup table: {}", variables);
         assert depVariables.size() + variables.size() == reverseLookupTable.size();
         /*

@@ -228,7 +228,7 @@ public class YamlLoader implements Loader {
             varEntry.getValue().put(NAME, varEntry.getKey());
         }
         L.debug("Variables: {}", originalVars);
-        reverseLookupTable = originalVars.entrySet().stream().collect(ImmutableMap.toImmutableMap(Entry::getValue, Entry::getKey));
+        final Map<Map<String, Object>, String> reverseLookupTable = originalVars.entrySet().stream().collect(Collectors.toMap(Entry::getValue, Entry::getKey));
         L.debug("Reverse lookup table: {}", reverseLookupTable);
         /*
          * Compute constants and dependent variables
@@ -265,8 +265,8 @@ public class YamlLoader implements Loader {
         } while (previousConstants != constants.size() || previousDepVars != depVariables.size());
         assert constants.size() + depVariables.size() <= originalVars.size();
         this.constants = ImmutableMap.copyOf(constants);
-        this.contents = ImmutableMap.copyOf((Map<String, Object>) recursivelyResolveVariables(rawContents, this.constants));
         this.depVariables = ImmutableMap.copyOf(depVariables);
+        this.contents = ImmutableMap.copyOf((Map<String, Object>) recursivelyResolveVariables(rawContents, reverseLookupTable, this.constants));
         final Iterator<String> varNames = reverseLookupTable.values().iterator();
         while (varNames.hasNext() && !constants.isEmpty()) {
             final String var = varNames.next();
@@ -274,6 +274,7 @@ public class YamlLoader implements Loader {
                 varNames.remove();
             }
         }
+        this.reverseLookupTable = ImmutableMap.copyOf(reverseLookupTable);
         /*
          * Compute variables
          */
@@ -396,7 +397,7 @@ public class YamlLoader implements Loader {
         L.debug("Variable bindings: {}", actualVars);
         assert actualVars.size() == constants.size() + reverseLookupTable.size();
         @SuppressWarnings(UNCHECKED)
-        final Map<String, Object> contents = (Map<String, Object>) recursivelyResolveVariables(this.contents, actualVars);
+        final Map<String, Object> contents = (Map<String, Object>) recursivelyResolveVariables(this.contents, reverseLookupTable, actualVars);
         /*
          * Factory
          */
@@ -557,40 +558,6 @@ public class YamlLoader implements Loader {
         incarnation = SupportedIncarnations.get(ois.readObject().toString()).get();
     }
 
-    private <T> Object recursivelyResolveVariables(final Object o, final Map<String, Double> variables) {
-        if (reverseLookupTable.isEmpty() || variables.isEmpty()) {
-            return o;
-        }
-        if (o instanceof Collection) {
-            final Collection<?> collection = (Collection<?>) o;
-            final int s = collection.size();
-            return collection.stream()
-                .map(e -> recursivelyResolveVariables(e, variables))
-                .collect(Collectors.toCollection(() -> collection instanceof Set
-                        ? Sets.newLinkedHashSetWithExpectedSize(s)
-                        : Lists.newArrayListWithCapacity(s)));
-        }
-        if (o instanceof Map) {
-            final String varName = reverseLookupTable.get(o);
-            if (varName != null) {
-                final Double value = variables.get(varName);
-                if (value != null) {
-                    return value;
-                }
-            } else {
-                final Map<?, ?> oMap = (Map<?, ?>) o;
-                return oMap.entrySet().stream()
-                        .collect(() -> Maps.newLinkedHashMapWithExpectedSize(oMap.size()),
-                            (m, p) -> m.put(p.getKey(), recursivelyResolveVariables(p.getValue(), variables)),
-                            (m1, m2) -> {
-                                throw new IllegalStateException();
-                            }
-                        );
-            }
-        }
-        return o;
-    }
-
     private Builder<RandomGenerator> rngBuilder(final Factory factory, final String seed) {
         final BuilderConfiguration<RandomGenerator> config = new BuilderConfiguration<>(
                 emptyMap(),
@@ -646,6 +613,40 @@ public class YamlLoader implements Loader {
         factory.registerSingleton(Incarnation.class, incarnation);
         factory.registerImplicit(CharSequence.class, Molecule.class, s -> incarnation.createMolecule(s.toString()));
         return factory;
+    }
+
+    private static <T> Object recursivelyResolveVariables(final Object o, final Map<Map<String, Object>, String> reverseLookupTable, final Map<String, Double> variables) {
+        if (reverseLookupTable.isEmpty() || variables.isEmpty()) {
+            return o;
+        }
+        if (o instanceof Collection) {
+            final Collection<?> collection = (Collection<?>) o;
+            final int s = collection.size();
+            return collection.stream()
+                .map(e -> recursivelyResolveVariables(e, reverseLookupTable, variables))
+                .collect(Collectors.toCollection(() -> collection instanceof Set
+                        ? Sets.newLinkedHashSetWithExpectedSize(s)
+                        : Lists.newArrayListWithCapacity(s)));
+        }
+        if (o instanceof Map) {
+            final String varName = reverseLookupTable.get(o);
+            if (varName != null) {
+                final Double value = variables.get(varName);
+                if (value != null) {
+                    return value;
+                }
+            } else {
+                final Map<?, ?> oMap = (Map<?, ?>) o;
+                return oMap.entrySet().stream()
+                        .collect(() -> Maps.newLinkedHashMapWithExpectedSize(oMap.size()),
+                            (m, p) -> m.put(p.getKey(), recursivelyResolveVariables(p.getValue(), reverseLookupTable, variables)),
+                            (m1, m2) -> {
+                                throw new IllegalStateException();
+                            }
+                        );
+            }
+        }
+        return o;
     }
     private static Function<Map<String, Object>, RandomGenerator> rngMaker(final Factory factory, final String seed) {
         return m -> Optional.ofNullable(m.get(seed))

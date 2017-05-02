@@ -1,11 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXSlider?>
 <?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 
-
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111">
-   <center>
-      <Canvas height="200.0" width="200.0" BorderPane.alignment="CENTER" />
-   </center>
-</BorderPane>
+<AnchorPane id="root" fx:id="root" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <StackPane id="stack" fx:id="stack" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Canvas id="simulationCanvas" fx:id="canvas" />
+            <BorderPane>
+               <bottom>
+                  <ButtonBar id="controlBar" opacity="0.45" prefHeight="40.0" style="-fx-padding: 0;" stylesheets="@RootLayout.css" BorderPane.alignment="CENTER">
+                     <buttons>
+                        <JFXButton ButtonBar.buttonData="LEFT" id="startStopButton" fx:id="playButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="40.0" stylesheets="@RootLayout.css" text="Play" textAlignment="CENTER" textFill="WHITE" wrapText="true" />
+                        <HBox ButtonBar.buttonData="LEFT" id="progressBox" prefHeight="40.0" prefWidth="200.0">
+                           <children>
+                              <Label id="timeLabel" alignment="CENTER" contentDisplay="CENTER" minWidth="58.0" prefHeight="40.0" text="0.00000" textAlignment="CENTER" textFill="WHITE" wrapText="true" />
+                              <Label id="stepLabel" alignment="CENTER" contentDisplay="CENTER" minWidth="58.0" prefHeight="40.0" text="0" textAlignment="CENTER" textFill="WHITE" wrapText="true" />
+                              <JFXSlider id="speedSlider" prefHeight="40.0" />
+                           </children>
+                        </HBox>
+                        <JFXButton ButtonBar.buttonData="LEFT" id="controlType" fx:id="playButton1" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="40.0" stylesheets="@RootLayout.css" text="Pan" textAlignment="CENTER" textFill="WHITE" wrapText="true" />
+                        <JFXButton ButtonBar.buttonData="RIGHT" id="fullscreenToggle" fx:id="playButton11" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="40.0" stylesheets="@RootLayout.css" text="Fullscreen" textAlignment="CENTER" textFill="WHITE" wrapText="true" />
+                     </buttons>
+                  </ButtonBar>
+               </bottom>
+            </BorderPane>
+         </children>
+      </StackPane>
+   </children>
+</AnchorPane>

@@ -1,0 +1,21 @@
+
+ButtonBar {
+    -fx-background-color: rgb(0, 0, 0);
+    -fx-padding: 0;
+}
+
+JFXButton {
+    -fx-background-color:transparent;
+    -fx-padding:0;
+    -fx-background-size:0;
+}
+
+/*
+Button {
+    -fx-shadow-highlight-color: transparent;
+    -fx-outer-border: transparent; 
+    -fx-inner-border: transparent;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+*/

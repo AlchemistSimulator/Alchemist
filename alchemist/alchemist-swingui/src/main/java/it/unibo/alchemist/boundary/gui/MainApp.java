@@ -2,7 +2,10 @@ package it.unibo.alchemist.boundary.gui;
 
 import java.io.IOException;
 
+import com.jfoenix.controls.JFXButton;
+
 import javafx.application.Application;
+import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -12,6 +15,7 @@ import javafx.stage.Stage;
  * Main class to start an empty simulator visualization.
  */
 public class MainApp extends Application {
+
     private Stage primaryStage;
     private FXResourceLoader loader;
     private Pane rootLayout;

@@ -123,5 +123,14 @@ public class FXResourceLoader {
     public String getLayoutName() throws NoLayoutSpecifiedException {
         return this.layoutName.orElseThrow(NoLayoutSpecifiedException::new);
     }
+    
+    public static String getInjectionErrorMessage(final String nodeName, final String layoutFileName) {
+        return new StringBuilder("fx:id=\"")
+                .append(nodeName)
+                .append("\" was not injected: check your FXML file '")
+                .append(layoutFileName)
+                .append("'").toString();
+
+    }
 
 }

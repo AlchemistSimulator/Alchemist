@@ -7,20 +7,32 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
 
 public class FXResourceLoader {
-    public static enum DefaultLayout  {
+
+    /**
+     * Enumeration for default JavaFX layouts used for this module.
+     */
+    public enum DefaultLayout {
+        /**
+         * The root layout.
+         */
         ROOT_LAYOUT("RootLayout");
-        
+
         private String defaultLayoutName;
-        
-        private DefaultLayout(final String name) {
+
+        DefaultLayout(final String name) {
             this.defaultLayoutName = name;
         }
-        
+
+        /**
+         * Getter method for default layout name.
+         * 
+         * @return the default layout name
+         */
         public String getName() {
             return this.defaultLayoutName;
         }
     }
-    
+
     private static final String XML_RESOURCE_PATH = "/it/unibo/alchemist/gui/view/";
     private static final String EXTENSION = ".fxml";
 
@@ -35,10 +47,12 @@ public class FXResourceLoader {
     }
 
     /**
-     * The same as call the default constructor and {@link #setLayoutName(String)}.
+     * The same as call the default constructor and
+     * {@link #setLayoutName(String)}.
      * 
      * @param layoutName
-     *            the layout name; if null or empty String, the parameter will be unset.
+     *            the layout name; if null or empty String, the parameter will
+     *            be unset.
      */
     public FXResourceLoader(final String layoutName) {
         this.loader = new FXMLLoader();
@@ -55,9 +69,12 @@ public class FXResourceLoader {
      *             if no layout was specified
      * @throws IOException
      *             if it can't find the .fxml layout file
+     * @param <T>
+     *            the type of Pane to get
      */
-    @SuppressWarnings("unchecked") // Calling this specifying wrong class type would be stupid
-    public <T extends Pane> T getLayout(Class<T> paneInstance) throws NoLayoutSpecifiedException, IOException {
+    @SuppressWarnings("unchecked") // Calling this specifying wrong class type
+                                   // would be stupid
+    public <T extends Pane> T getLayout(final Class<T> paneInstance) throws NoLayoutSpecifiedException, IOException {
         loader.setLocation(this.getClass().getResource(
                 new StringBuilder(XML_RESOURCE_PATH).append(getLayoutName()).append(EXTENSION).toString()));
 
@@ -74,10 +91,12 @@ public class FXResourceLoader {
     }
 
     /**
-     * This method sets the current layout name. If already set, it will be overwritten.
+     * This method sets the current layout name. If already set, it will be
+     * overwritten.
      * 
      * @param layoutName
-     *            the layout name; if null or empty String, the paramether will be unset
+     *            the layout name; if null or empty String, the paramether will
+     *            be unset
      */
     public void setLayoutName(final String layoutName) {
         if (layoutName == null || layoutName.equals("")) {

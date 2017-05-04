@@ -5,6 +5,9 @@ import java.util.Optional;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import jiconfont.IconCode;
+import jiconfont.javafx.IconNode;
 
 public class FXResourceLoader {
 
@@ -15,7 +18,15 @@ public class FXResourceLoader {
         /**
          * The root layout.
          */
-        ROOT_LAYOUT("RootLayout");
+        ROOT_LAYOUT("RootLayout"),
+        /**
+         * The layout of the control bar on the bottom.
+         */
+        BUTTONS_BAR_LAYOUT("ButtonsBarLayout"),
+        /**
+         * The layout of the popover that make the user choose the control type.
+         */
+        CONTROL_TYPE_POPOVER_LAYOUT("ControlTypePopoverLayout");
 
         private String defaultLayoutName;
 
@@ -64,20 +75,22 @@ public class FXResourceLoader {
      * 
      * @param paneInstance
      *            the specific instance of the layout
+     * @param <T>
+     *            the type of Pane to get
+     * @param controller
+     *            the controller class for the specified layout
      * @return the layout
      * @throws NoLayoutSpecifiedException
      *             if no layout was specified
      * @throws IOException
      *             if it can't find the .fxml layout file
-     * @param <T>
-     *            the type of Pane to get
      */
-    @SuppressWarnings("unchecked") // Calling this specifying wrong class type
-                                   // would be stupid
-    public <T extends Pane> T getLayout(final Class<T> paneInstance) throws NoLayoutSpecifiedException, IOException {
-        loader.setLocation(this.getClass().getResource(
-                new StringBuilder(XML_RESOURCE_PATH).append(getLayoutName()).append(EXTENSION).toString()));
-
+    @SuppressWarnings("unchecked") // Calling this specifying wrong class type would be stupid
+    public <T extends Pane> T getLayout(final Class<T> paneInstance, final Object controller)
+            throws NoLayoutSpecifiedException, IOException {
+        loader.setLocation(
+                this.getClass().getResource(new StringBuilder(XML_RESOURCE_PATH).append(getLayoutName()).append(EXTENSION).toString()));
+        loader.setController(controller);
         return (T) loader.load();
     }
 
@@ -95,7 +108,7 @@ public class FXResourceLoader {
      * overwritten.
      * 
      * @param layoutName
-     *            the layout name; if null or empty String, the paramether will
+     *            the layout name; if null or empty String, the parameter will
      *            be unset
      */
     public void setLayoutName(final String layoutName) {
@@ -123,14 +136,17 @@ public class FXResourceLoader {
     public String getLayoutName() throws NoLayoutSpecifiedException {
         return this.layoutName.orElseThrow(NoLayoutSpecifiedException::new);
     }
-    
+
     public static String getInjectionErrorMessage(final String nodeName, final String layoutFileName) {
-        return new StringBuilder("fx:id=\"")
-                .append(nodeName)
-                .append("\" was not injected: check your FXML file '")
-                .append(layoutFileName)
+        return new StringBuilder("fx:id=\"").append(nodeName).append("\" was not injected: check your FXML file '").append(layoutFileName)
                 .append("'").toString();
 
+    }
+
+    public static IconNode getWhiteIcon(final IconCode iconCode) {
+        IconNode icon = new IconNode(iconCode);
+        icon.setFill(Color.WHITE);
+        return icon;
     }
 
 }

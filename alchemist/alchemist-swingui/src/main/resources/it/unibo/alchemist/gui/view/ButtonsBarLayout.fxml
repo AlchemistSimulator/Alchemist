@@ -2,25 +2,25 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXSlider?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
 
 <BorderPane id="controlPane" fx:id="controlPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unibo.alchemist.boundary.gui.controller.ButtonsBarController">
          <bottom>
-            <ButtonBar id="controlBar" fx:id="controlBar" opacity="0.45" prefHeight="40.0" stylesheets="@ButtonsBarLayout.css" BorderPane.alignment="CENTER">
+            <ButtonBar id="controlBar" fx:id="controlBar" buttonMinWidth="40.0" opacity="0.45" stylesheets="@ButtonsBarLayout.css" BorderPane.alignment="CENTER">
                <buttons>
-                  <JFXButton id="startStopButton" fx:id="startStopButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="40.0" text="Play" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT" />
-                  <HBox id="progressBox" fx:id="progressBox" prefHeight="40.0" prefWidth="200.0" ButtonBar.buttonData="LEFT">
-                     <children>
-                        <Label id="timeLabel" fx:id="timeLabel" alignment="CENTER" contentDisplay="CENTER" minWidth="58.0" prefHeight="40.0" text="0.00000" textAlignment="CENTER" textFill="WHITE" wrapText="true" />
-                        <Label id="stepLabel" fx:id="stepLabel" alignment="CENTER" contentDisplay="CENTER" minWidth="58.0" prefHeight="40.0" text="0" textAlignment="CENTER" textFill="WHITE" wrapText="true" />
-                        <JFXSlider id="speedSlider" fx:id="speedSlider" prefHeight="40.0" />
-                     </children>
-                  </HBox>
-                  <JFXButton id="controlType" fx:id="controlType" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="40.0" stylesheets="" text="Pan" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT" />
-                  <JFXButton id="fullscreenToggle" fx:id="fullscreenToggle" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="40.0" stylesheets="" text="Fullscreen" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="RIGHT" />
+                  <JFXButton id="startStopButton" fx:id="startStopButton" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" minWidth="40.0" mnemonicParsing="false" prefHeight="40.0" ripplerFill="WHITE" text="Play" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT" />
+                  <Label id="timeLabel" fx:id="timeLabel" alignment="CENTER" contentDisplay="CENTER" minWidth="60.0" prefHeight="40.0" text="0.00000" textAlignment="CENTER" textFill="WHITE" wrapText="true" />
+                  <Label id="stepLabel" fx:id="stepLabel" alignment="CENTER" contentDisplay="CENTER" minWidth="60.0" prefHeight="40.0" text="0" textAlignment="CENTER" textFill="WHITE" wrapText="true" />
+                  <JFXSlider id="speedSlider" fx:id="speedSlider" minWidth="100.0" prefHeight="40.0">
+               <cursor>
+                  <Cursor fx:constant="DEFAULT" />
+               </cursor>
+            </JFXSlider>
+                  <JFXButton id="controlType" fx:id="controlType" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" minWidth="40.0" mnemonicParsing="false" prefHeight="40.0" ripplerFill="WHITE" stylesheets="" text="Pan" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT" />
+                  <JFXButton id="fullscreenToggle" fx:id="fullscreenToggle" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" minWidth="40.0" mnemonicParsing="false" prefHeight="40.0" ripplerFill="WHITE" stylesheets="" text="Fullscreen" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="RIGHT" />
                </buttons>
             </ButtonBar>
          </bottom>

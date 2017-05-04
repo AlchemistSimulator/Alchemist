@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" opacity="0.45" stylesheets="@ButtonsBarLayout.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ButtonBar buttonMinWidth="0.0" prefHeight="40.0">
+         <buttons>
+            <JFXButton id="panButton" fx:id="panButton" prefHeight="40.0" prefWidth="44.0" text="Pan" textAlignment="CENTER" textFill="WHITE" ButtonBar.buttonData="LEFT" />
+            <JFXButton id="selectButton" fx:id="selectButton" prefHeight="40.0" text="Select" textAlignment="CENTER" textFill="WHITE" ButtonBar.buttonData="RIGHT" />
+         </buttons>
+      </ButtonBar>
+   </children>
+</AnchorPane>

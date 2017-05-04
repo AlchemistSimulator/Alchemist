@@ -2,10 +2,7 @@ package it.unibo.alchemist.boundary.gui;
 
 import java.io.IOException;
 
-import com.jfoenix.controls.JFXButton;
-
 import javafx.application.Application;
-import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -36,7 +33,7 @@ public class MainApp extends Application {
         }
 
         this.loader.setLayoutName(FXResourceLoader.DefaultLayout.ROOT_LAYOUT.getName());
-        this.rootLayout = this.loader.getLayout(AnchorPane.class);
+        this.rootLayout = this.loader.getLayout(AnchorPane.class, null);
     }
 
     /**

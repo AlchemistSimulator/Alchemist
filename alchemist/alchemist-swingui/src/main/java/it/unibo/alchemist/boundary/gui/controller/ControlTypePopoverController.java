@@ -25,13 +25,9 @@ public class ControlTypePopoverController implements Initializable {
     private EventHandler<? super MouseEvent> panButtonHandler;
     private EventHandler<? super MouseEvent> selectButtonHandler;
 
-    public ControlTypePopoverController() {
-        super();
-    }
-
     public ControlTypePopoverController(final EventHandler<? super MouseEvent> panButtonHandler,
             final EventHandler<? super MouseEvent> selectButtonHandler) {
-        this();
+        super();
         this.panButtonHandler = panButtonHandler;
         this.selectButtonHandler = selectButtonHandler;
     }

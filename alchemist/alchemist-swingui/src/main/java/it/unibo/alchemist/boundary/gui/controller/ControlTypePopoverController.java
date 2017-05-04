@@ -25,6 +25,12 @@ public class ControlTypePopoverController implements Initializable {
     private EventHandler<? super MouseEvent> panButtonHandler;
     private EventHandler<? super MouseEvent> selectButtonHandler;
 
+    /**
+     * Default constructor. It initializes the two buttons with the provided handlers.
+     * 
+     * @param panButtonHandler the handler for the mouse click on the pan button
+     * @param selectButtonHandler the handler for the mouse click on the select button
+     */
     public ControlTypePopoverController(final EventHandler<? super MouseEvent> panButtonHandler,
             final EventHandler<? super MouseEvent> selectButtonHandler) {
         super();

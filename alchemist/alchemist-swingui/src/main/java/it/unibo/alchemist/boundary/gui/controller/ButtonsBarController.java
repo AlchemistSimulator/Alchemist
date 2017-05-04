@@ -13,7 +13,6 @@ import com.jfoenix.controls.JFXSlider;
 import it.unibo.alchemist.boundary.gui.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.NoLayoutSpecifiedException;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -24,6 +23,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import jiconfont.icons.GoogleMaterialDesignIcons;
 import jiconfont.javafx.IconFontFX;
+import jiconfont.javafx.IconNode;
 
 public class ButtonsBarController implements Initializable {
     private static final String BUTTONS_BAR_LAYOUT = "ButtonsBarLayout.fxml";
@@ -48,15 +48,29 @@ public class ButtonsBarController implements Initializable {
     @FXML
     private JFXButton fullscreenToggle; // Value injected by FXMLLoader
 
+    // Icons
+    private final IconNode play;
+    private final IconNode pause;
+    private final IconNode pan;
+    private final IconNode select;
+    private final IconNode fullscreen;
+
     private PopOver controlTypePopOver;
     private ControlTypePopoverController controlTypePopoverController;
-    private JFXButton panButton;
-    private JFXButton selectButton;
+
+    public ButtonsBarController() {
+        super();
+        IconFontFX.register(GoogleMaterialDesignIcons.getIconFont());
+
+        play = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.PLAY_ARROW);
+        pause = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.PAUSE);
+        pan = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.PAN_TOOL);
+        select = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.TAB_UNSELECTED);
+        fullscreen = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.FULLSCREEN);
+    }
 
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
-        IconFontFX.register(GoogleMaterialDesignIcons.getIconFont());
-
         assert controlPane != null : FXResourceLoader.getInjectionErrorMessage("controlPane", BUTTONS_BAR_LAYOUT);
         assert controlBar != null : FXResourceLoader.getInjectionErrorMessage("controlBar", BUTTONS_BAR_LAYOUT);
         assert startStopButton != null : FXResourceLoader.getInjectionErrorMessage("startStopButton", BUTTONS_BAR_LAYOUT);
@@ -67,35 +81,42 @@ public class ButtonsBarController implements Initializable {
         assert fullscreenToggle != null : FXResourceLoader.getInjectionErrorMessage("fullscreenToggle", BUTTONS_BAR_LAYOUT);
 
         startStopButton.setText("");
-        startStopButton.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.PLAY_ARROW));
+        startStopButton.setGraphic(play);
+        startStopButton.setOnMouseClicked(e -> {
+            if (startStopButton.getGraphic().equals(play)) {
+                startStopButton.setGraphic(pause);
+                // TODO start the simulation
+            } else {
+                startStopButton.setGraphic(play);
+                // TODO stop the simulation
+            }
+        });
 
         fullscreenToggle.setText("");
-        fullscreenToggle.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.FULLSCREEN));
+        fullscreenToggle.setGraphic(fullscreen);
 
         controlType.setText("");
-        controlType.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.PAN_TOOL));
+        controlType.setGraphic(pan);
 
         controlTypePopoverController = new ControlTypePopoverController(e -> {
             getControlTypePopOver().hide();
-            getControlTypeButton().setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.PAN_TOOL));
+            getControlTypeButton().setGraphic(pan);
             // TODO change control type to pan mode
         }, e -> {
             getControlTypePopOver().hide();
-            getControlTypeButton().setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.TAB_UNSELECTED));
+            getControlTypeButton().setGraphic(select);
             // TODO change control type to select mode
         });
-        ButtonsBarController.this.panButton = controlTypePopoverController.getPanButton();
-        ButtonsBarController.this.selectButton = controlTypePopoverController.getSelectButton();
 
         try {
             controlTypePopOver = new PopOver(new FXResourceLoader(FXResourceLoader.DefaultLayout.CONTROL_TYPE_POPOVER_LAYOUT.getName())
                     .getLayout(AnchorPane.class, controlTypePopoverController));
-            controlTypePopOver.setArrowLocation(ArrowLocation.BOTTOM_CENTER);
-        } catch (NoLayoutSpecifiedException | IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace(); // TODO at the time, I can't throw up the
-                                 // exception
+        } catch (NoLayoutSpecifiedException e1) {
+            // TODO This should not happen
+        } catch (IOException e1) {
+            // TODO I can't throw up the exception from here
         }
+        controlTypePopOver.setArrowLocation(ArrowLocation.BOTTOM_CENTER);
 
         controlType.setOnAction(new EventHandler<ActionEvent>() {
 

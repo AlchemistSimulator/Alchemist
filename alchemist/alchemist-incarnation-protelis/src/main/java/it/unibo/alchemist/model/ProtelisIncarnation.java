@@ -10,6 +10,7 @@ package it.unibo.alchemist.model;
 
 import java.lang.ref.WeakReference;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -27,7 +28,6 @@ import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.vm.ExecutionContext;
 import org.protelis.vm.ExecutionEnvironment;
 import org.protelis.vm.NetworkManager;
-import org.protelis.vm.ProtelisProgram;
 import org.protelis.vm.ProtelisVM;
 import org.protelis.vm.impl.AbstractExecutionContext;
 import org.protelis.vm.impl.SimpleExecutionEnvironment;
@@ -118,11 +118,8 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
     @Override
     public Object createConcentration(final String s) {
         try {
-            final ProtelisProgram program = ProtelisLoader
-                    .parse(Objects.requireNonNull(s, "The concentration can not be null."));
-            final ProtelisVM vm = new ProtelisVM(program, new DummyContext(null));
-            vm.runCycle();
-            return vm.getCurrentValue();
+            final SynchronizedVM vm = new SynchronizedVM(new CacheKey(NoNode.INSTANCE, createMolecule(s), s));
+            return vm.runCycle();
         } catch (IllegalArgumentException e) {
             /*
              * Not a valid program: inject the String itself
@@ -166,7 +163,7 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
 
     @Override
     public Molecule createMolecule(final String s) {
-        return new SimpleMolecule(s);
+        return new SimpleMolecule(Objects.requireNonNull(s));
     }
 
     @Override
@@ -210,7 +207,7 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
     @Override
     public double getProperty(final Node<Object> node, final Molecule mol, final String prop) {
         try {
-            final SynchronizedVM vm = cache.get(new CacheKey(node, mol, prop));
+            final SynchronizedVM vm = cache.get(new CacheKey(Objects.requireNonNull(node), Objects.requireNonNull(mol), Objects.requireNonNull(prop)));
             final Object val = vm.runCycle();
             if (val instanceof Number) {
                 return ((Number) val).doubleValue();
@@ -266,10 +263,12 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
         private final Molecule molecule;
         private final WeakReference<Node<Object>> node;
         private final String property;
+        private final int hash;
         private CacheKey(final Node<Object> node, final Molecule mol, final String prop) {
             this.node = new WeakReference<>(node);
             molecule = mol;
             property = prop;
+            hash = molecule.hashCode() ^ property.hashCode() ^ (node == null ? 0 : node.hashCode());
         }
         @Override
         public boolean equals(final Object obj) {
@@ -280,8 +279,7 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
         }
         @Override
         public int hashCode() {
-            final Node<Object> n = node.get();
-            return molecule.hashCode() ^ property.hashCode() ^ (n == null ? 0 : n.hashCode());
+            return hash;
         }
     }
 
@@ -391,7 +389,8 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
                             ProtelisLoader.parse(key.property.replace(VALUE_TOKEN, baseProgram)),
                             new DummyContext(key.node.get()));
                 } catch (RuntimeException ex) {
-                    L.warn("Ignored program \n" + key.property + "\n, since it is not a valid Protelis program.", ex);
+                    L.warn("Program ignored as invalid: \n" + key.property);
+                    L.debug("Debug information", ex);
                 }
             }
             vm = Optional.ofNullable(myVM);
@@ -399,7 +398,7 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
         public Object runCycle() {
             final Node<Object> node = key.node.get();
             if (node == null) {
-                throw new IllegalStateException("The node should never get null");
+                throw new IllegalStateException("The node should never be null");
             }
             if (vm.isPresent()) {
                 final ProtelisVM myVM = vm.get();
@@ -408,7 +407,80 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
                 mutex.release();
                 return myVM.getCurrentValue();
             }
+            if (node instanceof NoNode) {
+                return key.property;
+            }
             return node.getConcentration(key.molecule);
+        }
+    }
+
+    private static final class NoNode implements Node<Object> {
+        private static final long serialVersionUID = 1L;
+        public static final NoNode INSTANCE = new NoNode();
+        private NoNode() {
+        }
+        private <A> A notImplemented() {
+            throw new UnsupportedOperationException("Method can't be invoked in this context.");
+        }
+        @Override
+        public Iterator<Reaction<Object>> iterator() {
+            return notImplemented();
+        }
+        @Override
+        public int compareTo(final Node<Object> o) {
+            return notImplemented();
+        }
+        @Override
+        public void addReaction(final Reaction<Object> r) {
+            notImplemented();
+        }
+        @Override
+        public boolean contains(final Molecule mol) {
+            return notImplemented();
+        }
+        @Override
+        public int getChemicalSpecies() {
+            return notImplemented();
+        }
+        @Override
+        public Object getConcentration(final Molecule mol) {
+            return notImplemented();
+        }
+        @Override
+        public Map<Molecule, Object> getContents() {
+            return notImplemented();
+        }
+        @Override
+        public int getId() {
+            return notImplemented();
+        }
+        @Override
+        public List<Reaction<Object>> getReactions() {
+            return null;
+        }
+        @Override
+        public void removeConcentration(final Molecule mol) {
+            notImplemented();
+        }
+        @Override
+        public void removeReaction(final Reaction<Object> r) {
+            notImplemented();
+        }
+        @Override
+        public void setConcentration(final Molecule mol, final Object c) {
+            notImplemented();
+        }
+        @Override
+        public Node<Object> cloneNode() {
+            return notImplemented();
+        }
+        @Override
+        public boolean equals(final Object obj) {
+            return obj instanceof NoNode;
+        }
+        @Override
+        public int hashCode() {
+            return -1;
         }
     }
 

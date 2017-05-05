@@ -16,11 +16,16 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 import jiconfont.icons.GoogleMaterialDesignIcons;
 import jiconfont.javafx.IconFontFX;
 import jiconfont.javafx.IconNode;
@@ -109,34 +114,39 @@ public class ButtonsBarController implements Initializable {
         });
 
         try {
-            controlTypePopOver = new PopOver(new FXResourceLoader(FXResourceLoader.DefaultLayout.CONTROL_TYPE_POPOVER_LAYOUT.getName())
+            controlTypePopOver = new PopOver();
+            controlTypePopOver.setDetachable(false);
+            controlTypePopOver.setDetached(false);
+            controlTypePopOver.setHeaderAlwaysVisible(false);
+            controlTypePopOver.setContentNode(new FXResourceLoader(FXResourceLoader.DefaultLayout.CONTROL_TYPE_POPOVER_LAYOUT.getName())
                     .getLayout(AnchorPane.class, controlTypePopoverController));
+            // controlTypePopOver.setCornerRadius(0);
+            controlTypePopOver.setArrowLocation(ArrowLocation.BOTTOM_CENTER);
+            controlType.setOnAction(new EventHandler<ActionEvent>() {
+
+                @Override
+                public void handle(final ActionEvent event) {
+
+                    if (controlTypePopOver.isShowing()) {
+                        controlTypePopOver.hide();
+                    } else {
+                        controlTypePopOver.show(controlType);
+                    }
+                }
+            });
+
         } catch (NoLayoutSpecifiedException e1) {
             // TODO This should not happen
         } catch (IOException e1) {
-            // TODO I can't throw up the exception from here
+            // TODO I can't throw up the exception from here, but I should
         }
-        controlTypePopOver.setArrowLocation(ArrowLocation.BOTTOM_CENTER);
-
-        controlType.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(final ActionEvent event) {
-
-                if (controlTypePopOver.isShowing()) {
-                    controlTypePopOver.hide();
-                } else {
-                    controlTypePopOver.show(controlType);
-                }
-            }
-        });
     }
 
-    public JFXButton getControlTypeButton() {
+    private JFXButton getControlTypeButton() { // TODO Maybe the getter should be public
         return this.controlType;
     }
 
-    public PopOver getControlTypePopOver() {
+    private PopOver getControlTypePopOver() { // TODO Maybe the getter should be public
         return this.controlTypePopOver;
     }
 

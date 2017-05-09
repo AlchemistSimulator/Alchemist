@@ -172,7 +172,7 @@ We use a three levels numbering:
 	* Example: switch from 1.2.3 to 2.0.0
 
 
-[Alchemist]: http://alchemist-simulator.github.io/
+[Alchemist]: http://alchemistsimulator.github.io/
 [Javadoc]: http://alchemist-doc.surge.sh/
 [Javadoc-unstable]: http://alchemist-unstable-doc.surge.sh/
 [reports-unstable]: http://alchemist-unstable-reports.surge.sh/build/reports/buildDashboard/

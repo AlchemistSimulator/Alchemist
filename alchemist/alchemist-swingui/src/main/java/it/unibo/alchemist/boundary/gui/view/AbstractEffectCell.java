@@ -4,7 +4,6 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXToggleButton;
 
 import it.unibo.alchemist.boundary.gui.FXResourceLoader;
-import it.unibo.alchemist.boundary.gui.effects.Effect;
 import javafx.scene.Node;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.GridPane;
@@ -13,7 +12,7 @@ import javafx.scene.layout.VBox;
 import jiconfont.icons.GoogleMaterialDesignIcons;
 import jiconfont.javafx.IconFontFX;
 
-public abstract class AbstractEffectCell extends ListCell<Effect> {
+public abstract class AbstractEffectCell<T> extends ListCell<T> {
     public static final int DEFAULT_OFFSET = 1;
     private VBox priorityButtons;
     private JFXButton priorityUp;

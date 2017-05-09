@@ -1,10 +1,11 @@
 package it.unibo.alchemist.boundary.gui.view;
 
+import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import javafx.scene.control.Label;
 
-public class EffectGroupCell extends AbstractEffectCell {
+public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
 
-    public class EffectCell extends AbstractEffectCell {
+    public class EffectCell extends AbstractEffectCell<EffectGroup> {
         private Label effectName;
 
         public EffectCell() {

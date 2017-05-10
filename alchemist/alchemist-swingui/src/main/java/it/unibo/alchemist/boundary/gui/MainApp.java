@@ -12,9 +12,9 @@ import javafx.stage.Stage;
  * Main class to start an empty simulator visualization.
  */
 public class MainApp extends Application {
+    private static final String ROOT_LAYOUT = "RootLayout";
 
     private Stage primaryStage;
-    private FXResourceLoader loader;
     private Pane rootLayout;
 
     @Override
@@ -27,18 +27,15 @@ public class MainApp extends Application {
         this.primaryStage.show();
     }
 
-    private void initRootLayout() throws IOException, NoLayoutSpecifiedException {
-        if (this.loader == null) {
-            this.loader = new FXResourceLoader();
-        }
-
-        this.loader.setLayoutName(FXResourceLoader.DefaultLayout.ROOT_LAYOUT.getName());
-        this.rootLayout = this.loader.getLayout(AnchorPane.class, null);
+    private void initRootLayout() throws IOException {
+        this.rootLayout = FXResourceLoader.getLayout(AnchorPane.class, this, ROOT_LAYOUT);
     }
 
     /**
      * Method that launches the application.
-     * @param args arguments
+     * 
+     * @param args
+     *            arguments
      */
     public static void main(final String[] args) {
         launch(args);

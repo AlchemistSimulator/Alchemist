@@ -11,7 +11,6 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXSlider;
 
 import it.unibo.alchemist.boundary.gui.FXResourceLoader;
-import it.unibo.alchemist.boundary.gui.NoLayoutSpecifiedException;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -26,7 +25,7 @@ import jiconfont.javafx.IconFontFX;
 import jiconfont.javafx.IconNode;
 
 public class ButtonsBarController implements Initializable {
-    private static final String BUTTONS_BAR_LAYOUT = "ButtonsBarLayout.fxml";
+    private static final String BUTTONS_BAR_LAYOUT = "ButtonsBarLayout";
 
     // FXML components
     @FXML
@@ -108,13 +107,17 @@ public class ButtonsBarController implements Initializable {
             // TODO change control type to select mode
         });
 
-        try {
+
             controlTypePopOver = new PopOver();
             controlTypePopOver.setDetachable(false);
             controlTypePopOver.setDetached(false);
             controlTypePopOver.setHeaderAlwaysVisible(false);
-            controlTypePopOver.setContentNode(new FXResourceLoader(FXResourceLoader.DefaultLayout.CONTROL_TYPE_POPOVER_LAYOUT.getName())
-                    .getLayout(AnchorPane.class, controlTypePopoverController));
+            try {
+                controlTypePopOver.setContentNode(FXResourceLoader.getLayout(AnchorPane.class, controlTypePopoverController, BUTTONS_BAR_LAYOUT));
+            } catch (IOException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
             // controlTypePopOver.setCornerRadius(0);
             controlTypePopOver.setArrowLocation(ArrowLocation.BOTTOM_CENTER);
             controlType.setOnAction(new EventHandler<ActionEvent>() {
@@ -129,12 +132,6 @@ public class ButtonsBarController implements Initializable {
                     }
                 }
             });
-
-        } catch (NoLayoutSpecifiedException e1) {
-            // TODO This should not happen
-        } catch (IOException e1) {
-            // TODO I can't throw up the exception from here, but I should
-        }
     }
 
     private JFXButton getControlTypeButton() { // TODO Maybe the getter should be public

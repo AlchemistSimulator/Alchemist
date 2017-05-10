@@ -1,7 +1,6 @@
 package it.unibo.alchemist.boundary.gui;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
@@ -9,52 +8,14 @@ import javafx.scene.paint.Color;
 import jiconfont.IconCode;
 import jiconfont.javafx.IconNode;
 
-public class FXResourceLoader {
-
-    /**
-     * Enumeration for default JavaFX layouts used for this module.
-     */
-    public enum DefaultLayout {
-        /**
-         * The root layout.
-         */
-        ROOT_LAYOUT("RootLayout"),
-        /**
-         * The layout of the control bar on the bottom.
-         */
-        BUTTONS_BAR_LAYOUT("ButtonsBarLayout"),
-        /**
-         * The layout of the popover that make the user choose the control type.
-         */
-        CONTROL_TYPE_POPOVER_LAYOUT("ControlTypePopoverLayout");
-
-        private String defaultLayoutName;
-
-        DefaultLayout(final String name) {
-            this.defaultLayoutName = name;
-        }
-
-        /**
-         * Getter method for default layout name.
-         * 
-         * @return the default layout name
-         */
-        public String getName() {
-            return this.defaultLayoutName;
-        }
-    }
-
+public final class FXResourceLoader {
     private static final String XML_RESOURCE_PATH = "/it/unibo/alchemist/gui/view/";
     private static final String EXTENSION = ".fxml";
 
-    private final FXMLLoader loader;
-    private Optional<String> layoutName;
-
     /**
-     * Default constructor.
+     * Private, empty, constructor.
      */
-    public FXResourceLoader() {
-        this("");
+    private FXResourceLoader() {
     }
 
     /**
@@ -64,77 +25,15 @@ public class FXResourceLoader {
      * @param layoutName
      *            the layout name; if null or empty String, the parameter will
      *            be unset.
-     */
-    public FXResourceLoader(final String layoutName) {
-        this.loader = new FXMLLoader();
-        this.setLayoutName(layoutName);
-    }
-
-    /**
-     * This method returns the layout previously specified.
-     * 
-     * @param paneInstance
-     *            the specific instance of the layout
-     * @param <T>
-     *            the type of Pane to get
-     * @param controller
-     *            the controller class for the specified layout
-     * @return the layout
-     * @throws NoLayoutSpecifiedException
-     *             if no layout was specified
      * @throws IOException
-     *             if it can't find the .fxml layout file
      */
-    @SuppressWarnings("unchecked") // Calling this specifying wrong class type would be stupid
-    public <T extends Pane> T getLayout(final Class<T> paneInstance, final Object controller)
-            throws NoLayoutSpecifiedException, IOException {
-        loader.setLocation(
-                this.getClass().getResource(new StringBuilder(XML_RESOURCE_PATH).append(getLayoutName()).append(EXTENSION).toString()));
+    public static <T extends Pane> T getLayout(final Class<T> paneInstance, final Object controller, final String layoutName)
+            throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        // this.setLayoutName(layoutName);
+        loader.setLocation(FXResourceLoader.class.getResource(XML_RESOURCE_PATH + layoutName + EXTENSION));
         loader.setController(controller);
         return (T) loader.load();
-    }
-
-    /**
-     * This method returns the default FXMLLoader.
-     * 
-     * @return the FXMLLoader instance
-     */
-    public FXMLLoader getLoader() {
-        return this.loader;
-    }
-
-    /**
-     * This method sets the current layout name. If already set, it will be
-     * overwritten.
-     * 
-     * @param layoutName
-     *            the layout name; if null or empty String, the parameter will
-     *            be unset
-     */
-    public void setLayoutName(final String layoutName) {
-        if (layoutName == null || layoutName.equals("")) {
-            this.unsetLayoutName();
-        } else {
-            this.layoutName = Optional.of(layoutName);
-        }
-    }
-
-    /**
-     * This method unsets the current layout.
-     */
-    public void unsetLayoutName() {
-        this.layoutName = Optional.empty();
-    }
-
-    /**
-     * This method returns the current layout, if any.
-     * 
-     * @return the layout, if any
-     * @throws NoLayoutSpecifiedException
-     *             if no layout was previously specified
-     */
-    public String getLayoutName() throws NoLayoutSpecifiedException {
-        return this.layoutName.orElseThrow(NoLayoutSpecifiedException::new);
     }
 
     public static String getInjectionErrorMessage(final String nodeName, final String layoutFileName) {

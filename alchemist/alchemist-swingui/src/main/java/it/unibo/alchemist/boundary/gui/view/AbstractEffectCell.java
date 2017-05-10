@@ -6,6 +6,9 @@ import com.jfoenix.controls.JFXToggleButton;
 import it.unibo.alchemist.boundary.gui.FXResourceLoader;
 import javafx.scene.Node;
 import javafx.scene.control.ListCell;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -14,10 +17,10 @@ import jiconfont.javafx.IconFontFX;
 
 public abstract class AbstractEffectCell<T> extends ListCell<T> {
     public static final int DEFAULT_OFFSET = 1;
-    private VBox priorityButtons;
-    private JFXButton priorityUp;
-    private JFXButton priorityDown;
-    private JFXToggleButton visibilityToggle;
+    private final VBox priorityButtons;
+    private final JFXButton priorityUp;
+    private final JFXButton priorityDown;
+    private final JFXToggleButton visibilityToggle;
     private GridPane pane;
 
     public AbstractEffectCell(final Node... nodes) {
@@ -38,17 +41,65 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
         pane.add(priorityButtons, 0, 0);
 
         int i = DEFAULT_OFFSET;
-        for (Node node : nodes) {
+        for (final Node node : nodes) {
             pane.add(node, i, 0);
             i++;
         }
 
         visibilityToggle = new JFXToggleButton();
         pane.add(visibilityToggle, i, 0);
+
+        setOnDragDetected(event -> {
+            if (getItem() == null) {
+                return;
+            }
+
+            // TODO
+
+            event.consume();
+        });
+
+        setOnDragOver(event -> {
+            // TODO
+
+            event.consume();
+        });
+
+        setOnDragEntered(event -> {
+            // TODO
+        });
+
+        setOnDragExited(event -> {
+            // TODO
+        });
+
+        setOnDragDropped(event -> {
+            if (getItem() == null) {
+                return;
+            }
+
+            final Dragboard db = event.getDragboard();
+            boolean success = false;
+
+            // TODO
+
+            event.setDropCompleted(success);
+
+            event.consume();
+        });
+
+        setOnDragDone(DragEvent::consume);
     }
 
-    public Node getNodeAt(final int position) {
+    protected Node getNodeAt(final int position) {
+        if (position < 0) {
+            throw new IllegalArgumentException("Only positive position index are allowed");
+        }
         return this.pane.getChildren().get(position);
+    }
+
+    protected Node getInjectedNode(final int position) {
+        return getNodeAt(DEFAULT_OFFSET + position);
     }
 
     public JFXButton getPriorityUp() {
@@ -66,4 +117,6 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
     public Pane getPane() {
         return this.pane;
     }
+
+    public abstract DataFormat getDataFormat();
 }

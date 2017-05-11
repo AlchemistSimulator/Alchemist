@@ -1,44 +1,46 @@
 package it.unibo.alchemist.boundary.gui.view;
 
-import com.jfoenix.controls.JFXButton;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.jfoenix.controls.JFXToggleButton;
 
-import it.unibo.alchemist.boundary.gui.FXResourceLoader;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import jiconfont.icons.GoogleMaterialDesignIcons;
 import jiconfont.javafx.IconFontFX;
+import jiconfont.javafx.IconNode;
 
 public abstract class AbstractEffectCell<T> extends ListCell<T> {
-    public static final int DEFAULT_OFFSET = 1;
-    private final VBox priorityButtons;
-    private final JFXButton priorityUp;
-    private final JFXButton priorityDown;
-    private final JFXToggleButton visibilityToggle;
-    private GridPane pane;
+    private static final double DRAG_N_DROP_TARGET_OPACITY = 0.3;
 
+    /**
+     * Default offset of the first injected node.
+     */
+    public static final int DEFAULT_OFFSET = 1;
+    private final JFXToggleButton visibilityToggle;
+    private final GridPane pane;
+
+    @SuppressWarnings("unchecked") // The item from the dragboard should be of
+                                   // specified class
     public AbstractEffectCell(final Node... nodes) {
         super();
         IconFontFX.register(GoogleMaterialDesignIcons.getIconFont());
-        pane = new GridPane();
-        priorityButtons = new VBox();
-
-        priorityUp = new JFXButton();
-        priorityUp.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.KEYBOARD_ARROW_UP));
-        priorityButtons.getChildren().add(priorityUp);
-
-        priorityDown = new JFXButton();
-        priorityDown.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.KEYBOARD_ARROW_DOWN));
-        priorityButtons.getChildren().add(priorityDown);
 
         pane = new GridPane();
-        pane.add(priorityButtons, 0, 0);
+
+        final Label handle = new Label();
+        handle.setGraphic(new IconNode(GoogleMaterialDesignIcons.DRAG_HANDLE));
+        pane.add(handle, 0, 0);
 
         int i = DEFAULT_OFFSET;
         for (final Node node : nodes) {
@@ -49,28 +51,38 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
         visibilityToggle = new JFXToggleButton();
         pane.add(visibilityToggle, i, 0);
 
-        setOnDragDetected(event -> {
+        handle.setOnDragDetected(event -> {
             if (getItem() == null) {
                 return;
             }
 
-            // TODO
+            final Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
+            final ClipboardContent content = new ClipboardContent();
+            content.put(getDataFormat(), getItem());
+            dragboard.setDragView(this.snapshot(null, null));
+            dragboard.setContent(content);
 
             event.consume();
         });
 
         setOnDragOver(event -> {
-            // TODO
+            if (event.getGestureSource() != this && event.getDragboard().hasContent(getDataFormat())) {
+                event.acceptTransferModes(TransferMode.MOVE);
+            }
 
             event.consume();
         });
 
         setOnDragEntered(event -> {
-            // TODO
+            if (event.getGestureSource() != this && event.getDragboard().hasContent(getDataFormat())) {
+                setOpacity(DRAG_N_DROP_TARGET_OPACITY);
+            }
         });
 
         setOnDragExited(event -> {
-            // TODO
+            if (event.getGestureSource() != this && event.getDragboard().hasContent(getDataFormat())) {
+                setOpacity(1);
+            }
         });
 
         setOnDragDropped(event -> {
@@ -81,8 +93,22 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
             final Dragboard db = event.getDragboard();
             boolean success = false;
 
-            // TODO
+            if (db.hasContent(getDataFormat())) {
+                final ObservableList<T> items = getListView().getItems();
+                final Object content = db.getContent(getDataFormat());
+                final int draggedIndex = items.indexOf(content);
+                final int thisIndex = items.indexOf(getItem());
 
+                // TODO
+
+                items.set(draggedIndex, getItem());
+                items.set(thisIndex, (T) db.getContent(getDataFormat()));
+
+                final List<T> itemsCopy = new ArrayList<>(getListView().getItems());
+                getListView().getItems().setAll(itemsCopy);
+
+                success = true;
+            }
             event.setDropCompleted(success);
 
             event.consume();
@@ -102,14 +128,6 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
         return getNodeAt(DEFAULT_OFFSET + position);
     }
 
-    public JFXButton getPriorityUp() {
-        return priorityUp;
-    }
-
-    public JFXButton getPriorityDown() {
-        return priorityDown;
-    }
-
     public JFXToggleButton getVisibilityToggle() {
         return visibilityToggle;
     }
@@ -118,5 +136,5 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
         return this.pane;
     }
 
-    public abstract DataFormat getDataFormat();
+    protected abstract DataFormat getDataFormat();
 }

@@ -23,7 +23,8 @@ import jiconfont.icons.GoogleMaterialDesignIcons;
  * This class models a JavaFX controller for EffectsGroupBar.fxml.
  */
 public class EffectsGroupBarController implements Initializable {
-    private static final String EFFECT_BAR_LAYOUT = "EffectsGroupBar.fxml";
+    /** Layout path. */
+    public static final String EFFECT_GROUP_BAR_LAYOUT = "EffectsGroupBar.fxml";
 
     @FXML
     private JFXButton save;
@@ -38,10 +39,10 @@ public class EffectsGroupBarController implements Initializable {
 
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
-        assert save != null : FXResourceLoader.getInjectionErrorMessage("save", EFFECT_BAR_LAYOUT);
-        assert load != null : FXResourceLoader.getInjectionErrorMessage("load", EFFECT_BAR_LAYOUT);
-        assert add != null : FXResourceLoader.getInjectionErrorMessage("add", EFFECT_BAR_LAYOUT);
-        assert effectGroupsList != null : FXResourceLoader.getInjectionErrorMessage("effectGroupsList", EFFECT_BAR_LAYOUT);
+        assert save != null : FXResourceLoader.getInjectionErrorMessage("save", EFFECT_GROUP_BAR_LAYOUT);
+        assert load != null : FXResourceLoader.getInjectionErrorMessage("load", EFFECT_GROUP_BAR_LAYOUT);
+        assert add != null : FXResourceLoader.getInjectionErrorMessage("add", EFFECT_GROUP_BAR_LAYOUT);
+        assert effectGroupsList != null : FXResourceLoader.getInjectionErrorMessage("effectGroupsList", EFFECT_GROUP_BAR_LAYOUT);
 
         this.save.setText("");
         this.save.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.SAVE));

@@ -17,7 +17,8 @@ import jiconfont.javafx.IconFontFX;
  * This class models a JavaFX controller for ControlTypePopoverLayout.fxml.
  */
 public class ControlTypePopoverController implements Initializable {
-    private static final String CONTROL_TYPE_POPOVER_LAYOUT = "ControlTypePopoverLayout.fxml";
+    /** Layout path. */
+    public static final String CONTROL_TYPE_POPOVER_LAYOUT = "ControlTypePopoverLayout";
 
     // FXML components
     @FXML

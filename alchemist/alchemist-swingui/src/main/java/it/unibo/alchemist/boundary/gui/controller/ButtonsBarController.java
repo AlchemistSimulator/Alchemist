@@ -27,13 +27,16 @@ import jiconfont.javafx.IconNode;
  * This class models a JavaFX controller for ButtonsBarLayout.fxml.
  */
 public class ButtonsBarController implements Initializable {
-    private static final String BUTTONS_BAR_LAYOUT = "ButtonsBarLayout";
+    /** Layout path. */
+    public static final String BUTTONS_BAR_LAYOUT = "ButtonsBarLayout";
 
     // FXML components
     @FXML
     private BorderPane controlPane; // Value injected by FXMLLoader
     @FXML
     private ButtonBar controlBar; // Value injected by FXMLLoader
+    @FXML
+    private JFXButton effectsButton; // Value injected by FXMLLoader
     @FXML
     private JFXButton startStopButton; // Value injected by FXMLLoader
     @FXML
@@ -76,6 +79,7 @@ public class ButtonsBarController implements Initializable {
     public void initialize(final URL location, final ResourceBundle resources) {
         assert controlPane != null : FXResourceLoader.getInjectionErrorMessage("controlPane", BUTTONS_BAR_LAYOUT);
         assert controlBar != null : FXResourceLoader.getInjectionErrorMessage("controlBar", BUTTONS_BAR_LAYOUT);
+        assert effectsButton != null : FXResourceLoader.getInjectionErrorMessage("effectsButton", BUTTONS_BAR_LAYOUT);
         assert startStopButton != null : FXResourceLoader.getInjectionErrorMessage("startStopButton", BUTTONS_BAR_LAYOUT);
         assert timeLabel != null : FXResourceLoader.getInjectionErrorMessage("timeLabel", BUTTONS_BAR_LAYOUT);
         assert stepLabel != null : FXResourceLoader.getInjectionErrorMessage("stepLabel", BUTTONS_BAR_LAYOUT);
@@ -85,7 +89,7 @@ public class ButtonsBarController implements Initializable {
 
         startStopButton.setText("");
         startStopButton.setGraphic(play);
-        startStopButton.setOnMouseClicked(e -> {
+        startStopButton.setOnAction(e -> {
             if (startStopButton.getGraphic().equals(play)) {
                 startStopButton.setGraphic(pause);
                 // TODO start the simulation
@@ -93,6 +97,10 @@ public class ButtonsBarController implements Initializable {
                 startStopButton.setGraphic(play);
                 // TODO stop the simulation
             }
+        });
+
+        effectsButton.setOnAction(e -> {
+            // TODO show effects popup
         });
 
         fullscreenToggle.setText("");
@@ -116,8 +124,8 @@ public class ButtonsBarController implements Initializable {
         controlTypePopOver.setDetached(false);
         controlTypePopOver.setHeaderAlwaysVisible(false);
         try {
-            controlTypePopOver
-                    .setContentNode(FXResourceLoader.getLayout(AnchorPane.class, controlTypePopoverController, BUTTONS_BAR_LAYOUT));
+            controlTypePopOver.setContentNode(FXResourceLoader.getLayout(AnchorPane.class, controlTypePopoverController,
+                    ControlTypePopoverController.CONTROL_TYPE_POPOVER_LAYOUT));
         } catch (IOException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();

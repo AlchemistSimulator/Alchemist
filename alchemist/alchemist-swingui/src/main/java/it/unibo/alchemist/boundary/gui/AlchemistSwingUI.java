@@ -8,27 +8,10 @@
  */
 package it.unibo.alchemist.boundary.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.event.ActionListener;
-
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
-import org.danilopianini.view.ButtonTabComponent;
 import org.danilopianini.view.GUIUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle.getString;
 
 /**
  * The main frame for the standard Alchemist GUI.

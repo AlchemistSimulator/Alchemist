@@ -8,11 +8,11 @@
  */
 package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.model.interfaces.Node;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.io.Serializable;
+
+import it.unibo.alchemist.model.interfaces.Node;
 
 /**
  */
@@ -21,20 +21,37 @@ public interface Effect extends Serializable {
     /**
      * Applies the effect.
      * 
-     * @param g
+     * @param graphic
      *            Graphics2D to use
-     * @param n
+     * @param node
      *            the node to draw
      * @param x
      *            x screen position
      * @param y
      *            y screen position
      */
-    void apply(Graphics2D g, Node<?> n, int x, int y);
+    void apply(Graphics2D graphic, Node<?> node, int x, int y);
+
+    /**
+     * Applies the effect.
+     * 
+     * @param graphic
+     *            Graphics2D to use
+     * @param environment
+     *            the node to draw
+     * @param wormhole
+     *            the position
+     */
+    // void apply(Graphics2D graphic, Environment<?> environment, IWormhole2D wormhole);
 
     /**
      * @return a color which resembles the color of this effect
      */
     Color getColorSummary();
 
+    @Override // Should override hashCode() method
+    int hashCode();
+
+    @Override // Should override equals() method
+    boolean equals(Object obj);
 }

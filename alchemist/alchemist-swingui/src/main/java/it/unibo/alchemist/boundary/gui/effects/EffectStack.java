@@ -13,10 +13,13 @@ public class EffectStack extends Stack<Effect> implements EffectGroup {
     private static final long serialVersionUID = 5721145068915147074L;
     /** Default IllegalArgumentException message */
     private static final String CANNOT_FIND_EFFECT = "Cannot find the effect in the stack";
+    /** Default effect group name */
+    private static final String DEFAULT_NAME = "New group";
 
     private final List<Effect> effects;
     private final List<Boolean> visibilities;
     private int topIndex;
+    private String name;
 
     /**
      * Default constructor. It creates an empty stack of effects.
@@ -25,6 +28,17 @@ public class EffectStack extends Stack<Effect> implements EffectGroup {
         this.effects = new ArrayList<>();
         this.visibilities = new ArrayList<>();
         this.topIndex = 0;
+        this.name = DEFAULT_NAME;
+    }
+
+    @Override
+    public String getName() {
+        return this.name;
+    }
+
+    @Override
+    public void setName(final String name) {
+        this.name = name;
     }
 
     @Override

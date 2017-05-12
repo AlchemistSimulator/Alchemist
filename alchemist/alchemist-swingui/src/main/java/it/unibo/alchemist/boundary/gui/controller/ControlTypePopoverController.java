@@ -6,13 +6,16 @@ import java.util.ResourceBundle;
 import com.jfoenix.controls.JFXButton;
 
 import it.unibo.alchemist.boundary.gui.FXResourceLoader;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.input.MouseEvent;
 import jiconfont.icons.GoogleMaterialDesignIcons;
 import jiconfont.javafx.IconFontFX;
 
+/**
+ * This class models a JavaFX controller for ControlTypePopoverLayout.fxml.
+ */
 public class ControlTypePopoverController implements Initializable {
     private static final String CONTROL_TYPE_POPOVER_LAYOUT = "ControlTypePopoverLayout.fxml";
 
@@ -22,17 +25,20 @@ public class ControlTypePopoverController implements Initializable {
     @FXML
     private JFXButton selectButton; // Value injected by FXMLLoader
 
-    private EventHandler<? super MouseEvent> panButtonHandler;
-    private EventHandler<? super MouseEvent> selectButtonHandler;
+    private final EventHandler<ActionEvent> panButtonHandler;
+    private final EventHandler<ActionEvent> selectButtonHandler;
 
     /**
-     * Default constructor. It initializes the two buttons with the provided handlers.
+     * Default constructor. It initializes the two buttons with the provided
+     * handlers.
      * 
-     * @param panButtonHandler the handler for the mouse click on the pan button
-     * @param selectButtonHandler the handler for the mouse click on the select button
+     * @param panButtonHandler
+     *            the handler for the mouse click on the pan button
+     * @param selectButtonHandler
+     *            the handler for the mouse click on the select button
      */
-    public ControlTypePopoverController(final EventHandler<? super MouseEvent> panButtonHandler,
-            final EventHandler<? super MouseEvent> selectButtonHandler) {
+    public ControlTypePopoverController(final EventHandler<ActionEvent> panButtonHandler,
+            final EventHandler<ActionEvent> selectButtonHandler) {
         super();
         this.panButtonHandler = panButtonHandler;
         this.selectButtonHandler = selectButtonHandler;
@@ -48,13 +54,13 @@ public class ControlTypePopoverController implements Initializable {
         panButton.setText("");
         panButton.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.PAN_TOOL));
         if (panButtonHandler != null) {
-            panButton.setOnMouseClicked(panButtonHandler);
+            panButton.setOnAction(panButtonHandler);
         }
 
         selectButton.setText("");
         selectButton.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.TAB_UNSELECTED));
         if (selectButtonHandler != null) {
-            selectButton.setOnMouseClicked(selectButtonHandler);
+            selectButton.setOnAction(selectButtonHandler);
         }
     }
 

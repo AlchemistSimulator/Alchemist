@@ -21,9 +21,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import jiconfont.icons.GoogleMaterialDesignIcons;
-import jiconfont.javafx.IconFontFX;
 import jiconfont.javafx.IconNode;
 
+/**
+ * This class models a JavaFX controller for ButtonsBarLayout.fxml.
+ */
 public class ButtonsBarController implements Initializable {
     private static final String BUTTONS_BAR_LAYOUT = "ButtonsBarLayout";
 
@@ -57,9 +59,11 @@ public class ButtonsBarController implements Initializable {
     private PopOver controlTypePopOver;
     private ControlTypePopoverController controlTypePopoverController;
 
+    /**
+     * Default constructor.
+     */
     public ButtonsBarController() {
         super();
-        IconFontFX.register(GoogleMaterialDesignIcons.getIconFont());
 
         play = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.PLAY_ARROW);
         pause = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.PAUSE);
@@ -98,48 +102,40 @@ public class ButtonsBarController implements Initializable {
         controlType.setGraphic(pan);
 
         controlTypePopoverController = new ControlTypePopoverController(e -> {
-            getControlTypePopOver().hide();
-            getControlTypeButton().setGraphic(pan);
+            this.controlTypePopOver.hide();
+            this.controlType.setGraphic(pan);
             // TODO change control type to pan mode
         }, e -> {
-            getControlTypePopOver().hide();
-            getControlTypeButton().setGraphic(select);
+            this.controlTypePopOver.hide();
+            this.controlType.setGraphic(select);
             // TODO change control type to select mode
         });
 
+        controlTypePopOver = new PopOver();
+        controlTypePopOver.setDetachable(false);
+        controlTypePopOver.setDetached(false);
+        controlTypePopOver.setHeaderAlwaysVisible(false);
+        try {
+            controlTypePopOver
+                    .setContentNode(FXResourceLoader.getLayout(AnchorPane.class, controlTypePopoverController, BUTTONS_BAR_LAYOUT));
+        } catch (IOException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+        // controlTypePopOver.setCornerRadius(0);
+        controlTypePopOver.setArrowLocation(ArrowLocation.BOTTOM_CENTER);
+        controlType.setOnAction(new EventHandler<ActionEvent>() {
 
-            controlTypePopOver = new PopOver();
-            controlTypePopOver.setDetachable(false);
-            controlTypePopOver.setDetached(false);
-            controlTypePopOver.setHeaderAlwaysVisible(false);
-            try {
-                controlTypePopOver.setContentNode(FXResourceLoader.getLayout(AnchorPane.class, controlTypePopoverController, BUTTONS_BAR_LAYOUT));
-            } catch (IOException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
-            // controlTypePopOver.setCornerRadius(0);
-            controlTypePopOver.setArrowLocation(ArrowLocation.BOTTOM_CENTER);
-            controlType.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(final ActionEvent event) {
 
-                @Override
-                public void handle(final ActionEvent event) {
-
-                    if (controlTypePopOver.isShowing()) {
-                        controlTypePopOver.hide();
-                    } else {
-                        controlTypePopOver.show(controlType);
-                    }
+                if (controlTypePopOver.isShowing()) {
+                    controlTypePopOver.hide();
+                } else {
+                    controlTypePopOver.show(controlType);
                 }
-            });
-    }
-
-    private JFXButton getControlTypeButton() { // TODO Maybe the getter should be public
-        return this.controlType;
-    }
-
-    private PopOver getControlTypePopOver() { // TODO Maybe the getter should be public
-        return this.controlTypePopOver;
+            }
+        });
     }
 
 }

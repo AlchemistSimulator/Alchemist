@@ -9,6 +9,21 @@ import java.io.Serializable;
 public interface EffectGroup extends Serializable {
 
     /**
+     * Gets the name of the group.
+     * 
+     * @return the name of the group
+     */
+    String getName();
+
+    /**
+     * Sets the name of the group.
+     * 
+     * @param name
+     *            the name of the group
+     */
+    void setName(String name);
+
+    /**
      * Puts the effects in the group, giving it the maximum priority.
      * 
      * @param effect

@@ -7,6 +7,7 @@
 
 <VBox xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <children>
+      <ListView id="effectGroupsList" fx:id="effectGroupsList" prefHeight="200.0" prefWidth="200.0" />
       <ButtonBar id="groupControlBar" fx:id="groupControlBar" buttonMinWidth="0.0" opacity="0.45" stylesheets="@ButtonsBarLayout.css">
          <buttons>
             <JFXButton id="save" fx:id="save" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" prefHeight="40.0" ripplerFill="WHITE" text="Save" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT" />

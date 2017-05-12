@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.jfoenix.controls.JFXToggleButton;
 
+import it.unibo.alchemist.boundary.gui.FXResourceLoader;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -15,31 +16,42 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import jiconfont.icons.GoogleMaterialDesignIcons;
-import jiconfont.javafx.IconFontFX;
-import jiconfont.javafx.IconNode;
 
+/**
+ * Abstract class that models a ListView Cell to represent {@link Effect}s or
+ * {@link EffectGroup}s.
+ * 
+ * @param <T>
+ *            the generic class that will be inside the cell; it should be
+ *            {@link Effect} or {@link EffectGroup}
+ */
 public abstract class AbstractEffectCell<T> extends ListCell<T> {
     private static final double DRAG_N_DROP_TARGET_OPACITY = 0.3;
 
     /**
      * Default offset of the first injected node.
      */
-    public static final int DEFAULT_OFFSET = 1;
-    private final JFXToggleButton visibilityToggle;
+    protected static final int DEFAULT_OFFSET = 1;
     private final GridPane pane;
+    private final int injectedNodes;
 
-    @SuppressWarnings("unchecked") // The item from the dragboard should be of
-                                   // specified class
+    /**
+     * Default constructor. The class accepts many nodes that will be injected
+     * between the {@link Label} that acts as an handle for Drag'n'Drop and the
+     * visibility toggle.
+     * 
+     * @param nodes
+     *            the nodes to inject
+     */
+    @SuppressWarnings("unchecked") // The item from the dragboard should be of specified class
     public AbstractEffectCell(final Node... nodes) {
         super();
-        IconFontFX.register(GoogleMaterialDesignIcons.getIconFont());
 
         pane = new GridPane();
 
         final Label handle = new Label();
-        handle.setGraphic(new IconNode(GoogleMaterialDesignIcons.DRAG_HANDLE));
+        handle.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.DRAG_HANDLE));
         pane.add(handle, 0, 0);
 
         int i = DEFAULT_OFFSET;
@@ -47,8 +59,9 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
             pane.add(node, i, 0);
             i++;
         }
+        this.injectedNodes = i - DEFAULT_OFFSET;
 
-        visibilityToggle = new JFXToggleButton();
+        final JFXToggleButton visibilityToggle = new JFXToggleButton();
         pane.add(visibilityToggle, i, 0);
 
         handle.setOnDragDetected(event -> {
@@ -99,7 +112,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
                 final int draggedIndex = items.indexOf(content);
                 final int thisIndex = items.indexOf(getItem());
 
-                // TODO
+                // TODO check
 
                 items.set(draggedIndex, getItem());
                 items.set(thisIndex, (T) db.getContent(getDataFormat()));
@@ -117,24 +130,45 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
         setOnDragDone(DragEvent::consume);
     }
 
+    /**
+     * Returns a node in the root of the cell. It considers all the nodes.
+     * 
+     * @param position
+     *            the position of the node considering representation in layout
+     * @return the specified node
+     * @throws IllegalArgumentException
+     *             if a wrong position is specified
+     */
     protected Node getNodeAt(final int position) {
-        if (position < 0) {
-            throw new IllegalArgumentException("Only positive position index are allowed");
+        try {
+            return this.pane.getChildren().get(position);
+        } catch (final IndexOutOfBoundsException e) {
+            throw new IllegalArgumentException("Wrong position specified", e);
         }
-        return this.pane.getChildren().get(position);
     }
 
-    protected Node getInjectedNode(final int position) {
-        return getNodeAt(DEFAULT_OFFSET + position);
+    /**
+     * Returns a node in the root of the cell. The position is calculated
+     * ignoring nodes not injected with constructor
+     * 
+     * @param position
+     *            the position of the node considering order in constructor
+     * @return the specified node
+     * @throws IllegalArgumentException
+     *             if a wrong position is specified
+     */
+    protected Node getInjectedNodeAt(final int position) {
+        if (position > 0 && position < injectedNodes) {
+            return getNodeAt(DEFAULT_OFFSET + position);
+        } else {
+            throw new IllegalArgumentException("Wrong position specified; consider using getNodeAt() method instead");
+        }
     }
 
-    public JFXToggleButton getVisibilityToggle() {
-        return visibilityToggle;
-    }
-
-    public Pane getPane() {
-        return this.pane;
-    }
-
+    /**
+     * Returns the {@link DataFormat} of the object contained in the cell.
+     * 
+     * @return the DataFormat
+     */
     protected abstract DataFormat getDataFormat();
 }

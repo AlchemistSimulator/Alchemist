@@ -18,13 +18,12 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.apache.commons.lang3.tuple.MutableTriple;
-import org.apache.commons.lang3.tuple.Triple;
+
 import org.danilopianini.concurrency.FastReadWriteLock;
 import org.danilopianini.io.FileUtilities;
 import org.danilopianini.lang.HashUtils;
@@ -113,10 +112,12 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     private final TIntObjectMap<GPSTrace> traces = new TIntObjectHashMap<>();
     private final boolean forceStreets, onlyStreet;
     private transient FastReadWriteLock mapLock;
+
     private transient Map<Vehicle, GraphHopperAPI> navigators;
-    private transient LoadingCache<Triple<Vehicle, Position, Position>, Route> routecache;
+    private transient LoadingCache<CacheEntry, Route> routecache;
     private boolean activateBenchmark;
     private int appr;
+
 
     /**
      * Builds a new {@link OSMEnvironment}, with nodes forced on streets,
@@ -157,7 +158,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      *             {@link GPSTrace} or {@link List} cannot be loaded
      */
     public OSMEnvironment(final String file, final boolean onStreets, final boolean onlyOnStreets) throws IOException, ClassNotFoundException {
-        this(file, null, 0, onStreets, onlyOnStreets, DEFAULT_USE_TRACES_ID);
+        this(file, null, 0, 0, onStreets, onlyOnStreets, DEFAULT_USE_TRACES_ID);
     }
 
     /**
@@ -192,6 +193,35 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      *            Alchemist's AGT traces. Can be null.
      * @param ttime
      *            the minimum time to consider when using the trace
+     * @param approximation
+     *            the amount of ciphers of the IEEE 754 encoded
+     *            position that may be discarded when comparing two positions, 
+     *            allowing a quicker retrieval of the route between two position, 
+     *            since the cache may already contain a similar route  which 
+     *            can be considered to be the same route, according to 
+     *            the level of precision determined by this value
+     * @throws IOException
+     *             if the map file is not found, or it's not readable, or
+     *             accessible, or a file system error occurred, or you kicked
+     *             your hard drive while Alchemist was reading the map
+     * @throws ClassNotFoundException
+     *             if there is a gigantic bug in the distribution and
+     *             {@link GPSTrace} or {@link List} cannot be loaded
+     */
+    public OSMEnvironment(final String file, final String tfile, final double ttime, final int approximation) throws IOException, ClassNotFoundException {
+        this(file, tfile, ttime, approximation, DEFAULT_ON_STREETS, DEFAULT_FORCE_STREETS, DEFAULT_USE_TRACES_ID);
+    }
+
+    /**
+     * @param file
+     *            the file path where the map data is stored. Accepts OSM maps
+     *            of any format (xml, osm, pbf). The map will be processed,
+     *            optimized and stored for future use.
+     * @param tfile
+     *            the file path where the traces are stored. Supports only
+     *            Alchemist's AGT traces. Can be null.
+     * @param ttime
+     *            the minimum time to consider when using the trace
      * @param useIds
      *            true if you want the association node - trace to be made with
      *            respect to the ids stored in the traces. Otherwise, ids are
@@ -205,7 +235,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      *             {@link GPSTrace} or {@link List} cannot be loaded
      */
     public OSMEnvironment(final String file, final String tfile, final double ttime, final boolean useIds) throws IOException, ClassNotFoundException {
-        this(file, tfile, ttime, DEFAULT_ON_STREETS, DEFAULT_FORCE_STREETS, useIds);
+        this(file, tfile, ttime, 0, DEFAULT_ON_STREETS, DEFAULT_FORCE_STREETS, useIds);
     }
 
     /**
@@ -218,6 +248,13 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      *            Alchemist's AGT traces. Can be null.
      * @param ttime
      *            the minimum time to consider when using the trace
+     * @param approximation
+     *            the amount of ciphers of the IEEE 754 encoded
+     *            position that may be discarded when comparing two positions, 
+     *            allowing a quicker retrieval of the route between two position, 
+     *            since the cache may already contain a similar route  which 
+     *            can be considered to be the same route, according to 
+     *            the level of precision determined by this value
      * @param onStreets
      *            if true, the nodes will be placed on the street nearest to the
      *            desired {@link Position}. This setting is automatically
@@ -240,7 +277,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      *             {@link GPSTrace} or {@link List} cannot be loaded
      */
     @SuppressWarnings("unchecked")
-    protected OSMEnvironment(final String file, final String tfile, final double ttime, final boolean onStreets, final boolean onlyOnStreets, final boolean useIds) throws IOException, ClassNotFoundException {
+    protected OSMEnvironment(final String file, final String tfile, final double ttime, final int approximation, final boolean onStreets, final boolean onlyOnStreets, final boolean useIds) throws IOException, ClassNotFoundException {
         super();
         /*
          * Try to load as resource, then try to load a file
@@ -266,6 +303,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
         forceStreets = onStreets;
         onlyStreet = onlyOnStreets;
         mapResource = file;
+        setApproximation(approximation);
         initAll(file);
     }
 
@@ -336,12 +374,12 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
             }
             routecache = builder
                 .expireAfterAccess(10, TimeUnit.SECONDS)
-                .build(new CacheLoader<Triple<Vehicle, Position, Position>, Route>() {
+                .build(new CacheLoader<CacheEntry, Route>() {
                     @Override
-                    public Route load(final Triple<Vehicle, Position, Position> key) {
-                        final Vehicle vehicle = key.getLeft();
-                        final Position p1 = key.getMiddle();
-                        final Position p2 = key.getRight();
+                    public Route load(final CacheEntry key) {
+                        final Vehicle vehicle = key.v;
+                        final Position p1 = key.start;
+                        final Position p2 = key.end;
                         final GHRequest req = new GHRequest(p1.getCoordinate(1), p1.getCoordinate(0), p2.getCoordinate(1), p2.getCoordinate(0))
                                 .setAlgorithm(DEFAULT_ALGORITHM)
                                 .setVehicle(vehicle.toString())
@@ -353,66 +391,61 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
                             final GHResponse resp = gh.route(req);
                             return new GraphHopperRoute(resp);
                         }
-                        return null;
+                        throw new IllegalStateException("Something went wrong while evaluating a route.");
                     }
                 });
         }
         try {
-            if (appr == 0) {
-                return routecache.get(new ImmutableTriple<>(vehicle, p1, p2));
-            }
-            return routecache.get(new CachedTriple(vehicle, p1, p2));
+            return routecache.get(new CacheEntry(vehicle, p1, p2));
         } catch (ExecutionException e) {
             L.error("", e);
             throw new IllegalStateException("The navigator was unable to compute a route from " + p1 + " to " + p2 + " using the navigator " + vehicle + ". This is most likely a bug", e);
         }
     }
 
-    private class CachedTriple extends MutableTriple<Vehicle, Position, Position> {
 
-        /**
-         * 
-         */
-        private static final long serialVersionUID = 7799119236047763501L;
+    private class CacheEntry {
+
+        private final Vehicle v;
+        private final Position start;
+        private final Position end;
+        private final Position apprStart;
+        private final Position apprEnd;
         private int hash;
 
-        CachedTriple(final Vehicle v, final Position p1, final Position p2) {
-            super(v, p1, p2);
+        CacheEntry(final Vehicle v, final Position p1, final Position p2) {
+            this.v = Objects.requireNonNull(v);
+            this.start = Objects.requireNonNull(p1);
+            this.end = Objects.requireNonNull(p2);
+            this.apprStart = approximate(start);
+            this.apprEnd = approximate(end);
         }
 
         @Override
         public int hashCode() {
             if (hash == 0) {
-                final double c1 = getApproximatedValue(getMiddle().getCoordinate(0));
-                final double c2 = getApproximatedValue(getMiddle().getCoordinate(1));
-                final double c3 = getApproximatedValue(getRight().getCoordinate(0));
-                final double c4 = getApproximatedValue(getRight().getCoordinate(1));
-                hash =  HashUtils.hash32(getLeft(), c1, c2, c3, c4);
+                hash =  HashUtils.hash32(v, apprStart, apprEnd);
             }
             return hash;
         }
 
         @Override
         public boolean equals(final Object obj) {
-            if (obj instanceof Triple<?, ?, ?>) {
-                final Triple<?, ?, ?> triple = (Triple<?, ?, ?>) obj;
-                if (triple.getLeft() instanceof Vehicle && triple.getMiddle() instanceof Position && triple.getRight() instanceof Position) {
-                    final Position middle = (Position) triple.getMiddle();
-                    final Position right = (Position) triple.getRight();
-                    return triple.getLeft().equals(getLeft()) 
-                            && getApproximatedValue(middle.getCoordinate(0)) == getApproximatedValue(getMiddle().getCoordinate(0))
-                            && getApproximatedValue(middle.getCoordinate(1)) == getApproximatedValue(getMiddle().getCoordinate(1))
-                            && getApproximatedValue(right.getCoordinate(0)) == getApproximatedValue(getRight().getCoordinate(0))
-                            && getApproximatedValue(right.getCoordinate(1)) == getApproximatedValue(getRight().getCoordinate(1));
-                }
+            if (obj instanceof OSMEnvironment.CacheEntry) {
+                final OSMEnvironment<?>.CacheEntry other = (OSMEnvironment<?>.CacheEntry) obj;
+                return v.equals(other.v) && apprStart.equals(other.apprStart) && apprEnd.equals(other.apprEnd);
             }
             return false;
         }
 
-        private double getApproximatedValue(final double value) {
+        private Position approximate(final Position p) {
             if (appr == 0) {
-                return value;
+                return p;
             }
+            return makePosition(approximate(p.getCoordinate(0)), approximate(p.getCoordinate(1)));
+        }
+
+        private double approximate(final double value) {
             return Double.longBitsToDouble(Double.doubleToLongBits(value) & (0xFFFFFFFFFFFFFFFFL << appr));
         }
     }

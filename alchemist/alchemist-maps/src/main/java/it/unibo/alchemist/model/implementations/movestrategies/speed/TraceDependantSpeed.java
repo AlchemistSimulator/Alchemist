@@ -47,6 +47,9 @@ public abstract class TraceDependantSpeed<T> implements SpeedSelectionStrategy<T
         final double curTime = reaction.getTau().toDouble();
         final GPSPoint next = trace.getNextPosition(curTime);
         final double expArrival = next.getTime();
+        if (curTime >= expArrival) {
+            return Double.POSITIVE_INFINITY;
+        }
         final double frequency = reaction.getRate();
         final double steps = (expArrival - curTime) * frequency;
         return computeDistance(env, node, target) / steps;

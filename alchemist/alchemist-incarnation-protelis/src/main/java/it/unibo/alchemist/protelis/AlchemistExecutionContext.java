@@ -68,7 +68,7 @@ public class AlchemistExecutionContext extends AbstractExecutionContext implemen
     private final Environment<Object> env;
     private int hash;
     private double nbrRangeTimeout;
-    private Optional<Double> precalcdRoutingDistance = Optional.empty();
+    private double precalcdRoutingDistance = Double.NaN;
     private final ProtelisNode node;
     private final RandomGenerator rand;
     private final Reaction<Object> react;
@@ -306,17 +306,19 @@ public class AlchemistExecutionContext extends AbstractExecutionContext implemen
 
     @Override
     public Field nbrRange() {
+        final boolean useRoutesAsDistances = env instanceof MapEnvironment<?> && node.contains(USE_ROUTES_AS_DISTANCES);
         return buildFieldWithPosition(p -> {
-            if (env instanceof MapEnvironment<?> && node.contains(USE_ROUTES_AS_DISTANCES)) {
+            if (useRoutesAsDistances) {
                 if (node.contains(APPROXIMATE_NBR_RANGE)) {
                     try {
                         final double tolerance = (double) node.getConcentration(APPROXIMATE_NBR_RANGE);
                         final double currTime = env.getSimulation().getTime().toDouble();
                         if (currTime > nbrRangeTimeout) {
                             nbrRangeTimeout = currTime + tolerance;
-                            precalcdRoutingDistance = Optional.of(routingDistance(p));
+                            precalcdRoutingDistance = routingDistance(p);
                         }
-                        return precalcdRoutingDistance.orElse(routingDistance(p));
+                        assert !Double.isNaN(precalcdRoutingDistance);
+                        return precalcdRoutingDistance;
                     } catch (final ClassCastException e) {
                         throw new IllegalStateException(APPROXIMATE_NBR_RANGE + " should be associated with a double concentration", e);
                     }

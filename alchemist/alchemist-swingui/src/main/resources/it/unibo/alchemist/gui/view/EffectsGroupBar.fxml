@@ -7,8 +7,8 @@
 
 <VBox xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <ListView id="effectGroupsList" fx:id="effectGroupsList" prefHeight="200.0" prefWidth="200.0" />
-      <ButtonBar id="groupControlBar" fx:id="groupControlBar" buttonMinWidth="0.0" opacity="0.45" stylesheets="@ButtonsBarLayout.css">
+      <ListView id="effectGroupsList" fx:id="effectGroupsList" />
+      <ButtonBar id="groupControlBar" fx:id="groupControlBar" buttonMinWidth="40.0" opacity="0.45" stylesheets="@ButtonsBarLayout.css">
          <buttons>
             <JFXButton id="save" fx:id="save" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" prefHeight="40.0" ripplerFill="WHITE" text="Save" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT" />
             <JFXButton id="load" fx:id="load" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" minWidth="40.0" mnemonicParsing="false" prefHeight="40.0" ripplerFill="WHITE" stylesheets="" text="Load" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT" />

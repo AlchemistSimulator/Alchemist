@@ -8,6 +8,7 @@ import org.controlsfx.control.PopOver;
 import org.controlsfx.control.PopOver.ArrowLocation;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXSlider;
 
 import it.unibo.alchemist.boundary.gui.FXResourceLoader;
@@ -51,6 +52,8 @@ public class ButtonsBarController implements Initializable {
     private JFXButton controlType; // Value injected by FXMLLoader
     @FXML
     private JFXButton fullscreenToggle; // Value injected by FXMLLoader
+    @FXML
+    private JFXDrawer effectsDrawer; // Value injected by FXMLLoader
 
     // Icons
     private final IconNode play;
@@ -61,6 +64,8 @@ public class ButtonsBarController implements Initializable {
 
     private PopOver controlTypePopOver;
     private ControlTypePopoverController controlTypePopoverController;
+
+    private EffectsGroupBarController effectsPopOverController;
 
     /**
      * Default constructor.
@@ -86,6 +91,7 @@ public class ButtonsBarController implements Initializable {
         assert speedSlider != null : FXResourceLoader.getInjectionErrorMessage("speedSlider", BUTTONS_BAR_LAYOUT);
         assert controlType != null : FXResourceLoader.getInjectionErrorMessage("controlType", BUTTONS_BAR_LAYOUT);
         assert fullscreenToggle != null : FXResourceLoader.getInjectionErrorMessage("fullscreenToggle", BUTTONS_BAR_LAYOUT);
+        assert effectsDrawer != null : FXResourceLoader.getInjectionErrorMessage("effectsDrawer", BUTTONS_BAR_LAYOUT);
 
         startStopButton.setText("");
         startStopButton.setGraphic(play);
@@ -99,8 +105,31 @@ public class ButtonsBarController implements Initializable {
             }
         });
 
+        this.effectsPopOverController = new EffectsGroupBarController();
+        // this.effectsPopOver = new PopOver();
+        // this.effectsPopOver.setTitle("Effects groups");
+        // this.effectsPopOver.setDetachable(true);
+        // this.effectsPopOver.setDetached(true);
+        // this.effectsPopOver.setHeaderAlwaysVisible(true);
+        // this.effectsPopOver.setArrowLocation(ArrowLocation.BOTTOM_CENTER);
+        // this.effectsPopOver.hide();
+        // effectsDrawer = new JFXDrawer();
+        try {
+            // this.effectsPopOver.setContentNode(FXResourceLoader.getLayout(BorderPane.class,
+            // this.effectsPopOverController,
+            // EffectsGroupBarController.EFFECT_GROUP_BAR_LAYOUT));
+            this.effectsDrawer.setContent(FXResourceLoader.getLayout(BorderPane.class, this.effectsPopOverController,
+                    EffectsGroupBarController.EFFECT_GROUP_BAR_LAYOUT));
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         effectsButton.setOnAction(e -> {
-            // TODO show effects popup
+            if (this.effectsDrawer.isShowing()) {
+                this.effectsDrawer.open();
+            } else {
+                this.effectsDrawer.close();
+            }
         });
 
         fullscreenToggle.setText("");
@@ -126,9 +155,9 @@ public class ButtonsBarController implements Initializable {
         try {
             controlTypePopOver.setContentNode(FXResourceLoader.getLayout(AnchorPane.class, controlTypePopoverController,
                     ControlTypePopoverController.CONTROL_TYPE_POPOVER_LAYOUT));
-        } catch (IOException e1) {
+        } catch (IOException e) {
             // TODO Auto-generated catch block
-            e1.printStackTrace();
+            e.printStackTrace();
         }
         // controlTypePopOver.setCornerRadius(0);
         controlTypePopOver.setArrowLocation(ArrowLocation.BOTTOM_CENTER);

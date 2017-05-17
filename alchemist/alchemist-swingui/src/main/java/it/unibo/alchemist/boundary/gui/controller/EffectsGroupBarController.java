@@ -24,14 +24,14 @@ import jiconfont.icons.GoogleMaterialDesignIcons;
  */
 public class EffectsGroupBarController implements Initializable {
     /** Layout path. */
-    public static final String EFFECT_GROUP_BAR_LAYOUT = "EffectsGroupBar.fxml";
+    public static final String EFFECT_GROUP_BAR_LAYOUT = "EffectsGroupBar";
 
     @FXML
     private JFXButton save;
     @FXML
     private JFXButton load;
     @FXML
-    private JFXButton add;
+    private JFXButton addGroup;
     @FXML
     private ListView<EffectGroup> effectGroupsList;
 
@@ -41,7 +41,7 @@ public class EffectsGroupBarController implements Initializable {
     public void initialize(final URL location, final ResourceBundle resources) {
         assert save != null : FXResourceLoader.getInjectionErrorMessage("save", EFFECT_GROUP_BAR_LAYOUT);
         assert load != null : FXResourceLoader.getInjectionErrorMessage("load", EFFECT_GROUP_BAR_LAYOUT);
-        assert add != null : FXResourceLoader.getInjectionErrorMessage("add", EFFECT_GROUP_BAR_LAYOUT);
+        assert addGroup != null : FXResourceLoader.getInjectionErrorMessage("add", EFFECT_GROUP_BAR_LAYOUT);
         assert effectGroupsList != null : FXResourceLoader.getInjectionErrorMessage("effectGroupsList", EFFECT_GROUP_BAR_LAYOUT);
 
         this.save.setText("");
@@ -50,10 +50,10 @@ public class EffectsGroupBarController implements Initializable {
         this.load.setText("");
         this.load.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.FOLDER_OPEN));
 
-        this.add.setText("");
-        this.add.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.ADD));
+        this.addGroup.setText("");
+        this.addGroup.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.ADD));
 
-        this.add.setOnAction(e -> {
+        this.addGroup.setOnAction(e -> {
             final TextInputDialog dialog = new TextInputDialog();
             dialog.initModality(Modality.WINDOW_MODAL); // TODO check
             dialog.setTitle("Effect group name");

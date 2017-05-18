@@ -16,6 +16,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextInputDialog;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import jiconfont.icons.GoogleMaterialDesignIcons;
 
@@ -46,18 +47,32 @@ public class EffectsGroupBarController implements Initializable {
 
         this.save.setText("");
         this.save.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.SAVE));
+        this.save.setOnAction(e -> {
+            final FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save effect");
+            fileChooser.showSaveDialog(this.save.getScene().getWindow());
+            // TODO Save the file
+        });
 
         this.load.setText("");
         this.load.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.FOLDER_OPEN));
+        this.load.setOnAction(e -> {
+            final FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Load effect");
+            fileChooser.showOpenDialog(this.load.getScene().getWindow());
+            // TODO Do something with the loaded file
+        });
 
         this.addGroup.setText("");
         this.addGroup.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.ADD));
 
         this.addGroup.setOnAction(e -> {
-            final TextInputDialog dialog = new TextInputDialog();
+            final TextInputDialog dialog = new TextInputDialog("Effect");
+            dialog.initOwner(this.addGroup.getScene().getWindow());
             dialog.initModality(Modality.WINDOW_MODAL); // TODO check
             dialog.setTitle("Effect group name");
-            dialog.setContentText("Choose a name for the group of effects:");
+            dialog.setHeaderText("Choose a name for the group of effects:");
+            dialog.setContentText("");
 
             // Traditional way to get the response value.
             final Optional<String> result = dialog.showAndWait();

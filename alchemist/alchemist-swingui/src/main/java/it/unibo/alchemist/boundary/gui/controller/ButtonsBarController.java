@@ -21,7 +21,7 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
+import javafx.stage.Screen;
 import jiconfont.icons.GoogleMaterialDesignIcons;
 import jiconfont.javafx.IconNode;
 
@@ -31,6 +31,7 @@ import jiconfont.javafx.IconNode;
 public class ButtonsBarController implements Initializable {
     /** Layout path. */
     public static final String BUTTONS_BAR_LAYOUT = "ButtonsBarLayout";
+    private static final double DEFAULT_DRAWER_SIZE = Screen.getPrimary().getVisualBounds().getWidth() / 5;
 
     // FXML components
     @FXML
@@ -41,8 +42,6 @@ public class ButtonsBarController implements Initializable {
     private JFXButton effectsButton; // Value injected by FXMLLoader
     @FXML
     private JFXButton startStopButton; // Value injected by FXMLLoader
-    @FXML
-    private HBox progressBox; // Value injected by FXMLLoader
     @FXML
     private Label timeLabel; // Value injected by FXMLLoader
     @FXML
@@ -62,11 +61,6 @@ public class ButtonsBarController implements Initializable {
     private final IconNode pan;
     private final IconNode select;
     private final IconNode fullscreen;
-
-    private PopOver controlTypePopOver;
-    private ControlTypePopoverController controlTypePopoverController;
-
-    private EffectsGroupBarController effectsGroupBarController;
 
     /**
      * Default constructor.
@@ -106,12 +100,12 @@ public class ButtonsBarController implements Initializable {
             }
         });
 
-        this.effectsGroupBarController = new EffectsGroupBarController();
+        final EffectsGroupBarController effectsGroupBarController = new EffectsGroupBarController();
         final JFXDrawer effectsDrawer = new JFXDrawer();
-        effectsDrawer.setDefaultDrawerSize(200); // TODO for now I can't do any better
+        effectsDrawer.setDefaultDrawerSize(DEFAULT_DRAWER_SIZE);
         effectsDrawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
         try {
-            effectsDrawer.setSidePane(FXResourceLoader.getLayout(BorderPane.class, this.effectsGroupBarController,
+            effectsDrawer.setSidePane(FXResourceLoader.getLayout(BorderPane.class, effectsGroupBarController,
                     EffectsGroupBarController.EFFECT_GROUP_BAR_LAYOUT));
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -130,20 +124,19 @@ public class ButtonsBarController implements Initializable {
         controlType.setText("");
         controlType.setGraphic(pan);
 
-        controlTypePopoverController = new ControlTypePopoverController(e -> {
-            this.controlTypePopOver.hide();
-            this.controlType.setGraphic(pan);
-            // TODO change control type to pan mode
-        }, e -> {
-            this.controlTypePopOver.hide();
-            this.controlType.setGraphic(select);
-            // TODO change control type to select mode
-        });
-
-        controlTypePopOver = new PopOver();
+        final PopOver controlTypePopOver = new PopOver();
         controlTypePopOver.setDetachable(false);
         controlTypePopOver.setDetached(false);
         controlTypePopOver.setHeaderAlwaysVisible(false);
+        final ControlTypePopoverController controlTypePopoverController = new ControlTypePopoverController(e -> {
+            controlTypePopOver.hide();
+            this.controlType.setGraphic(pan);
+            // TODO change control type to pan mode
+        }, e -> {
+            controlTypePopOver.hide();
+            this.controlType.setGraphic(select);
+            // TODO change control type to select mode
+        });
         try {
             controlTypePopOver.setContentNode(FXResourceLoader.getLayout(AnchorPane.class, controlTypePopoverController,
                     ControlTypePopoverController.CONTROL_TYPE_POPOVER_LAYOUT));

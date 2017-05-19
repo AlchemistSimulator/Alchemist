@@ -17,8 +17,6 @@ import javafx.scene.input.DataFormat;
  * group is composed of.
  */
 public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
-    // private Label groupName;
-
     /**
      * 
      */
@@ -34,12 +32,11 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
      */
     public EffectGroupCell(final String groupName) {
         super(new Label(Objects.requireNonNull(groupName)), new JFXSlider(0, 100, 100));
-        // this.groupName = (Label) super.getInjectedNodeAt(0);
     }
 
     @Override
     public DataFormat getDataFormat() {
-        return new DataFormat(EffectGroup.class.getName());
+        return getItem().getDataFormat();
     }
 
     @Override

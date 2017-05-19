@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import javafx.scene.input.DataFormat;
+
 /**
  * The class models a group of effects, stored as a stack. It can manage
  * priority of visualization and visibility of each effect inside it.
@@ -15,6 +17,7 @@ public class EffectStack extends Stack<Effect> implements EffectGroup {
     private static final String CANNOT_FIND_EFFECT = "Cannot find the effect in the stack";
     /** Default effect group name */
     private static final String DEFAULT_NAME = "New group";
+    private static final DataFormat DATA_FORMAT = new DataFormat(EffectStack.class.getName());
 
     private final List<Effect> effects;
     private final List<Boolean> visibilities;
@@ -188,5 +191,10 @@ public class EffectStack extends Stack<Effect> implements EffectGroup {
         } else {
             throw new IllegalArgumentException("Invalid transparency value");
         }
+    }
+
+    @Override
+    public DataFormat getDataFormat() {
+        return EffectStack.DATA_FORMAT;
     }
 }

@@ -2,6 +2,8 @@ package it.unibo.alchemist.boundary.gui.effects;
 
 import java.io.Serializable;
 
+import javafx.scene.input.DataFormat;
+
 /**
  * Models a group of effects. Each effect has a different priority of
  * visualization.
@@ -129,6 +131,14 @@ public interface EffectGroup extends Serializable {
      *             if can't find the effect
      */
     void changePriority(Effect effect, int offset);
+
+    /**
+     * Returns the dataformat of the group. Useful for drag'n'drop in JavaFX
+     * GUIs.
+     * 
+     * @return the dataformat
+     */
+    DataFormat getDataFormat();
 
     @Override // Should override hashCode() method
     int hashCode();

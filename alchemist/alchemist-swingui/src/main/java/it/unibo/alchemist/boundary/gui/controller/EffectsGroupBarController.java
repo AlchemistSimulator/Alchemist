@@ -1,7 +1,6 @@
 package it.unibo.alchemist.boundary.gui.controller;
 
 import java.net.URL;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
@@ -15,9 +14,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
 import jiconfont.icons.GoogleMaterialDesignIcons;
 
 /**

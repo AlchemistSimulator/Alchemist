@@ -21,7 +21,6 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Screen;
 import jiconfont.icons.GoogleMaterialDesignIcons;
 import jiconfont.javafx.IconNode;
 
@@ -31,7 +30,7 @@ import jiconfont.javafx.IconNode;
 public class ButtonsBarController implements Initializable {
     /** Layout path. */
     public static final String BUTTONS_BAR_LAYOUT = "ButtonsBarLayout";
-    private static final double DEFAULT_DRAWER_SIZE = Screen.getPrimary().getVisualBounds().getWidth() / 5;
+    private static final double DEFAULT_DRAWER_FRACTION = 5;
 
     // FXML components
     @FXML
@@ -102,7 +101,6 @@ public class ButtonsBarController implements Initializable {
 
         final EffectsGroupBarController effectsGroupBarController = new EffectsGroupBarController();
         final JFXDrawer effectsDrawer = new JFXDrawer();
-        effectsDrawer.setDefaultDrawerSize(DEFAULT_DRAWER_SIZE);
         effectsDrawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
         try {
             effectsDrawer.setSidePane(FXResourceLoader.getLayout(BorderPane.class, effectsGroupBarController,
@@ -115,6 +113,7 @@ public class ButtonsBarController implements Initializable {
         effectsDrawer.setResizableOnDrag(false);
 
         effectsButton.setOnAction(e -> {
+            effectsDrawer.setDefaultDrawerSize(controlPane.getWidth() / DEFAULT_DRAWER_FRACTION);
             this.drawerStack.toggle(effectsDrawer);
         });
 

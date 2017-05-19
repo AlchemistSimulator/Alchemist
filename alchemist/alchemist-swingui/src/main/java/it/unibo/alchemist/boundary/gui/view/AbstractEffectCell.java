@@ -6,6 +6,7 @@ import java.util.List;
 import com.jfoenix.controls.JFXToggleButton;
 
 import it.unibo.alchemist.boundary.gui.FXResourceLoader;
+import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -16,6 +17,7 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import jiconfont.icons.GoogleMaterialDesignIcons;
 
 /**
@@ -44,14 +46,15 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
      * @param nodes
      *            the nodes to inject
      */
-    @SuppressWarnings("unchecked") // The item from the dragboard should be of specified class
+    @SuppressWarnings("unchecked") // The item from the dragboard should be of
+                                   // specified class
     public AbstractEffectCell(final Node... nodes) {
         super();
 
         pane = new GridPane();
 
         final Label handle = new Label();
-        handle.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.DRAG_HANDLE));
+        handle.setGraphic(FXResourceLoader.getColoredIcon(GoogleMaterialDesignIcons.DRAG_HANDLE, Color.BLACK));
         pane.add(handle, 0, 0);
 
         int i = DEFAULT_OFFSET;
@@ -158,7 +161,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
      *             if a wrong position is specified
      */
     protected Node getInjectedNodeAt(final int position) {
-        if (position > 0 && position < injectedNodes) {
+        if (position >= 0 && position < injectedNodes) {
             return getNodeAt(DEFAULT_OFFSET + position);
         } else {
             throw new IllegalArgumentException("Wrong position specified; consider using getNodeAt() method instead");
@@ -171,4 +174,15 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
      * @return the DataFormat
      */
     protected abstract DataFormat getDataFormat();
+
+    @Override
+    protected void updateItem(final T item, final boolean empty) {
+        super.updateItem(item, empty);
+
+        if (empty || item == null) {
+            setGraphic(null);
+        } else {
+            setGraphic(pane);
+        }
+    }
 }

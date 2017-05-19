@@ -14,10 +14,8 @@ JFXButton {
     -fx-background-size: 0;
     -fx-min-height: 3.08em;
     -fx-pref-height: 3.08em;
-    -fx-max-height: 6.15em;
     -fx-min-width: 3.08em;
     -fx-pref-width: 3.08em;
-    -fx-max-width: 6.15em;
 }
 
 ListView {

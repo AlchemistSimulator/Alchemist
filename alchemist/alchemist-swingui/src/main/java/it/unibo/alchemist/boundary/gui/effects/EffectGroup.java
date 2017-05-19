@@ -63,6 +63,21 @@ public interface EffectGroup extends Serializable {
     int search(Effect effect);
 
     /**
+     * Returns the visibility of the group.
+     * 
+     * @return the visibility
+     */
+    boolean isVisible();
+
+    /**
+     * Sets the visibility of the group.
+     * 
+     * @param visibility
+     *            the visibility
+     */
+    void setVisibility(boolean visibility);
+
+    /**
      * Returns the visibility of the specified effect.
      * 
      * @param effect
@@ -84,6 +99,24 @@ public interface EffectGroup extends Serializable {
      *             if can't find the effect
      */
     void setVisibilityOf(Effect effect, boolean visibility);
+
+    /**
+     * Returns the transparency of the group.
+     * 
+     * @return the transparency in percentage
+     */
+    int getTransparency();
+
+    /**
+     * Sets the transparency of the group.
+     * 
+     * @param transparency
+     *            the transparency in percentage
+     * @throws IllegalArgumentException
+     *             if the transparency is > 100 (fully visible) or < than 0
+     *             (fully transparent)
+     */
+    void setTransparency(int transparency);
 
     /**
      * Changes the specified offset priority of the specified offset.

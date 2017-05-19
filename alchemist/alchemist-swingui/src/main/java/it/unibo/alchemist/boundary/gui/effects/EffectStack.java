@@ -20,6 +20,8 @@ public class EffectStack extends Stack<Effect> implements EffectGroup {
     private final List<Boolean> visibilities;
     private int topIndex;
     private String name;
+    private boolean visibility;
+    private int transparency;
 
     /**
      * Default constructor. It creates an empty stack of effects.
@@ -29,6 +31,8 @@ public class EffectStack extends Stack<Effect> implements EffectGroup {
         this.visibilities = new ArrayList<>();
         this.topIndex = 0;
         this.name = DEFAULT_NAME;
+        this.visibility = true;
+        this.transparency = 100;
     }
 
     @Override
@@ -160,5 +164,29 @@ public class EffectStack extends Stack<Effect> implements EffectGroup {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public boolean isVisible() {
+        return this.visibility;
+    }
+
+    @Override
+    public void setVisibility(final boolean visibility) {
+        this.visibility = visibility;
+    }
+
+    @Override
+    public int getTransparency() {
+        return this.transparency;
+    }
+
+    @Override
+    public void setTransparency(final int transparency) {
+        if (transparency >= 0 && transparency <= 100) {
+            this.transparency = transparency;
+        } else {
+            throw new IllegalArgumentException("Invalid transparency value");
+        }
     }
 }

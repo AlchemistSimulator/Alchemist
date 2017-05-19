@@ -66,14 +66,27 @@ public final class FXResourceLoader {
      * Loads an icon from Google Material Design Icons filled in white.
      * 
      * @param iconCode
-     *            the IconCode (from {@link GoogleMaterialDesignIcons}
+     *            the IconCode (from {@link GoogleMaterialDesignIcons})
      * @return the IconNode with the specified icon
      */
     public static IconNode getWhiteIcon(final IconCode iconCode) {
+        return getColoredIcon(iconCode, Color.WHITE);
+    }
+
+    /**
+     * Loads an icon from Google Material Design Icons.
+     * 
+     * @param iconCode
+     *            the IconCode (from {@link GoogleMaterialDesignIcons})
+     * @param color
+     *            the color to fill the icon with
+     * @return the IconNode with the specified icon
+     */
+    public static IconNode getColoredIcon(final IconCode iconCode, final Color color) {
         IconFontFX.register(GoogleMaterialDesignIcons.getIconFont());
 
         final IconNode icon = new IconNode(iconCode);
-        icon.setFill(Color.WHITE);
+        icon.setFill(color);
         return icon;
     }
 

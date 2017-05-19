@@ -16,6 +16,6 @@
       </ButtonBar>
    </bottom>
    <center>
-      <ListView id="effectGroupsList" fx:id="effectGroupsList" BorderPane.alignment="CENTER" />
+      <ListView id="effectGroupsList" fx:id="effectGroupsList" stylesheets="@ListCell.css" BorderPane.alignment="CENTER" />
    </center>
 </BorderPane>

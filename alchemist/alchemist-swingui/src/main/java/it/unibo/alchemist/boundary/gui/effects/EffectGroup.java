@@ -2,6 +2,7 @@ package it.unibo.alchemist.boundary.gui.effects;
 
 import java.io.Serializable;
 
+import javafx.beans.value.ChangeListener;
 import javafx.scene.input.DataFormat;
 
 /**
@@ -9,6 +10,8 @@ import javafx.scene.input.DataFormat;
  * visualization.
  */
 public interface EffectGroup extends Serializable {
+    /** Default DataFormat. */
+    DataFormat DATA_FORMAT = new DataFormat(EffectGroup.class.getName());
 
     /**
      * Gets the name of the group.
@@ -131,6 +134,30 @@ public interface EffectGroup extends Serializable {
      *             if can't find the effect
      */
     void changePriority(Effect effect, int offset);
+
+    /**
+     * Returns a lazy initialized ChangeListener that updates the transparency
+     * when a graphical component (e.g. a slider) is updated.
+     * 
+     * @return the listener
+     */
+    ChangeListener<Number> getTransparencyUpdater();
+
+    /**
+     * Returns a lazy initialized ChangeListener that updates the visibility
+     * when a graphical component (e.g. a toggle) is updated.
+     * 
+     * @return the listener
+     */
+    ChangeListener<Boolean> getVisibilityUpdater();
+
+    /**
+     * Returns a lazy initialized ChangeListener that updates the name when a
+     * graphical component (e.g. a label) is updated.
+     * 
+     * @return the listener
+     */
+    ChangeListener<String> getNameUpdater();
 
     /**
      * Returns the dataformat of the group. Useful for drag'n'drop in JavaFX

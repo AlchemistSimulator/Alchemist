@@ -3,18 +3,18 @@ package it.unibo.alchemist.boundary.gui.view;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.jfoenix.controls.JFXToggleButton;
-
 import it.unibo.alchemist.boundary.gui.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.effect.Effect;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -30,11 +30,12 @@ import jiconfont.icons.GoogleMaterialDesignIcons;
  */
 public abstract class AbstractEffectCell<T> extends ListCell<T> {
     private static final double DRAG_N_DROP_TARGET_OPACITY = 0.3;
+    private static final String WRONG_POS = "Wrong position specified";
 
     /**
      * Default offset of the first injected node.
      */
-    protected static final int DEFAULT_OFFSET = 1;
+    protected static final int DEFAULT_OFFSET = 2;
     private final GridPane pane;
     private final int injectedNodes;
 
@@ -46,91 +47,135 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
      * @param nodes
      *            the nodes to inject
      */
-    @SuppressWarnings("unchecked") // The item from the dragboard should be of
-                                   // specified class
     public AbstractEffectCell(final Node... nodes) {
         super();
 
         pane = new GridPane();
 
+        // Initializing drag'n'drop handle
         final Label handle = new Label();
         handle.setGraphic(FXResourceLoader.getColoredIcon(GoogleMaterialDesignIcons.DRAG_HANDLE, Color.BLACK));
         pane.add(handle, 0, 0);
 
+        // Drag'n'Drop configurations
+        handle.setOnDragDetected(this::startDragNDrop); // NOPMD - override must
+                                                        // be possible and is
+                                                        // documented in JavaDoc
+        setOnDragOver(this::dragNDropOver);
+        setOnDragEntered(this::dragNDropEntered);
+        setOnDragExited(this::dragNDropExited);
+        setOnDragDropped(this::dropDragNDrop); // NOPMD - override must be
+                                               // possible and is documented in
+                                               // JavaDoc
+        setOnDragDone(DragEvent::consume);
+
+        // Adding other nodes
         int i = DEFAULT_OFFSET;
         for (final Node node : nodes) {
-            pane.add(node, i, 0);
+            pane.add(node, DEFAULT_OFFSET, i);
             i++;
         }
+        GridPane.setRowSpan(handle, i);
         this.injectedNodes = i - DEFAULT_OFFSET;
+    }
 
-        final JFXToggleButton visibilityToggle = new JFXToggleButton();
-        pane.add(visibilityToggle, i, 0);
+    /**
+     * This method configures the environment to start drag'n'drop. <br/>
+     * This should not be overridden unless you want to change Drag'n'Drop
+     * behavior and you now what you are doing.
+     * 
+     * @param event
+     *            the MouseEvent related to long-press on a Node
+     */
+    protected void startDragNDrop(final MouseEvent event) {
+        if (getItem() == null) {
+            return;
+        }
 
-        handle.setOnDragDetected(event -> {
-            if (getItem() == null) {
-                return;
-            }
+        final Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
+        final ClipboardContent content = new ClipboardContent();
+        content.put(getDataFormat(), getItem());
+        dragboard.setDragView(this.snapshot(null, null));
+        dragboard.setContent(content);
 
-            final Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
-            final ClipboardContent content = new ClipboardContent();
-            content.put(getDataFormat(), getItem());
-            dragboard.setDragView(this.snapshot(null, null));
-            dragboard.setContent(content);
+        event.consume();
+    }
 
-            event.consume();
-        });
+    /**
+     * This method models the behavior on drag over.
+     * 
+     * @param event
+     *            the drag over DragEvent
+     */
+    private void dragNDropOver(final DragEvent event) {
+        if (event.getGestureSource() != this && event.getDragboard().hasContent(getDataFormat())) {
+            event.acceptTransferModes(TransferMode.MOVE);
+        }
 
-        setOnDragOver(event -> {
-            if (event.getGestureSource() != this && event.getDragboard().hasContent(getDataFormat())) {
-                event.acceptTransferModes(TransferMode.MOVE);
-            }
+        event.consume();
+    }
 
-            event.consume();
-        });
+    /**
+     * This method models the behavior on drag entered.
+     * 
+     * @param event
+     *            the drag entered event
+     */
+    private void dragNDropEntered(final DragEvent event) {
+        if (event.getGestureSource() != this && event.getDragboard().hasContent(getDataFormat())) {
+            setOpacity(DRAG_N_DROP_TARGET_OPACITY);
+        }
+    }
 
-        setOnDragEntered(event -> {
-            if (event.getGestureSource() != this && event.getDragboard().hasContent(getDataFormat())) {
-                setOpacity(DRAG_N_DROP_TARGET_OPACITY);
-            }
-        });
+    /**
+     * This method models the behavior on drag exited.
+     * 
+     * @param event
+     *            the drag exited event
+     */
+    private void dragNDropExited(final DragEvent event) {
+        if (event.getGestureSource() != this && event.getDragboard().hasContent(getDataFormat())) {
+            setOpacity(1);
+        }
+    }
 
-        setOnDragExited(event -> {
-            if (event.getGestureSource() != this && event.getDragboard().hasContent(getDataFormat())) {
-                setOpacity(1);
-            }
-        });
+    /**
+     * This method ends the drag'n'drop action. <br/>
+     * This should not be overridden unless you want to change Drag'n'Drop
+     * behavior and you now what you are doing.
+     * 
+     * @param event
+     *            the drag'n'drop drop event
+     */
+    @SuppressWarnings("unchecked") // The item from the dragboard should be of
+                                   // specified class
+    protected void dropDragNDrop(final DragEvent event) {
+        if (getItem() == null) {
+            return;
+        }
 
-        setOnDragDropped(event -> {
-            if (getItem() == null) {
-                return;
-            }
+        final Dragboard db = event.getDragboard();
+        boolean success = false;
 
-            final Dragboard db = event.getDragboard();
-            boolean success = false;
+        if (db.hasContent(getDataFormat())) {
+            final ObservableList<T> items = getListView().getItems();
+            final Object content = db.getContent(getDataFormat());
+            final int draggedIndex = items.indexOf(content);
+            final int thisIndex = items.indexOf(getItem());
 
-            if (db.hasContent(getDataFormat())) {
-                final ObservableList<T> items = getListView().getItems();
-                final Object content = db.getContent(getDataFormat());
-                final int draggedIndex = items.indexOf(content);
-                final int thisIndex = items.indexOf(getItem());
+            // TODO check
 
-                // TODO check
+            items.set(draggedIndex, getItem());
+            items.set(thisIndex, (T) db.getContent(getDataFormat()));
 
-                items.set(draggedIndex, getItem());
-                items.set(thisIndex, (T) db.getContent(getDataFormat()));
+            final List<T> itemsCopy = new ArrayList<>(getListView().getItems());
+            getListView().getItems().setAll(itemsCopy);
 
-                final List<T> itemsCopy = new ArrayList<>(getListView().getItems());
-                getListView().getItems().setAll(itemsCopy);
+            success = true;
+        }
+        event.setDropCompleted(success);
 
-                success = true;
-            }
-            event.setDropCompleted(success);
-
-            event.consume();
-        });
-
-        setOnDragDone(DragEvent::consume);
+        event.consume();
     }
 
     /**
@@ -143,10 +188,28 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
      *             if a wrong position is specified
      */
     protected Node getNodeAt(final int position) {
+        if (position < 0) {
+            throw new IllegalArgumentException(WRONG_POS);
+        }
+
         try {
-            return this.pane.getChildren().get(position);
+            final int col, row;
+            if (position == 0) {
+                col = 0;
+                row = 0;
+            } else {
+                col = DEFAULT_OFFSET;
+                row = position;
+            }
+
+            for (final Node node : this.pane.getChildren()) {
+                if (GridPane.getColumnIndex(node) == col && GridPane.getRowIndex(node) == row) {
+                    return node;
+                }
+            }
+            throw new IllegalArgumentException(WRONG_POS);
         } catch (final IndexOutOfBoundsException e) {
-            throw new IllegalArgumentException("Wrong position specified", e);
+            throw new IllegalArgumentException(WRONG_POS, e);
         }
     }
 
@@ -164,7 +227,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
         if (position >= 0 && position < injectedNodes) {
             return getNodeAt(DEFAULT_OFFSET + position);
         } else {
-            throw new IllegalArgumentException("Wrong position specified; consider using getNodeAt() method instead");
+            throw new IllegalArgumentException(WRONG_POS + "; consider using getNodeAt() method instead");
         }
     }
 

@@ -5,10 +5,12 @@ import com.jfoenix.controls.JFXToggleButton;
 
 import it.unibo.alchemist.boundary.gui.effects.Effect;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
-import java8.util.Objects;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.input.DataFormat;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.TextAlignment;
 
 /**
  * This ListView cell implements the {@link AbstractEffectCell} for containing
@@ -17,39 +19,35 @@ import javafx.scene.input.DataFormat;
  * group is composed of.
  */
 public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
-    /**
-     * 
-     */
-    public EffectGroupCell() {
-        this("Effect group without name");
-    }
+    private static final String DEFAULT_NAME = "Effect group without name";
 
     /**
      * Default constructor.
+     */
+    public EffectGroupCell() {
+        this(DEFAULT_NAME);
+    }
+
+    /**
+     * Constructor.
      * 
      * @param groupName
      *            the name of the EffectGroup
      */
     public EffectGroupCell(final String groupName) {
-        super(new Label(Objects.requireNonNull(groupName)), new JFXSlider(0, 100, 100));
-    }
+        super(new Label(groupName), new JFXToggleButton(), new JFXSlider(0, 100, 100));
+        this.getLabel().setTextAlignment(TextAlignment.CENTER);
+        this.getLabel().setFont(Font.font(this.getLabel().getFont().getFamily(), FontWeight.BOLD, this.getLabel().getFont().getSize()));
 
-    @Override
-    public DataFormat getDataFormat() {
-        return getItem().getDataFormat();
-    }
-
-    @Override
-    protected void updateItem(final EffectGroup item, final boolean empty) {
-        super.updateItem(item, empty);
-
-        if (empty || item == null) {
-            setGraphic(null);
-        } else {
-            this.getLabel().setText(item.getName());
-            this.getSlider().setValue(item.getTransparency());
-            this.getToggle().setSelected(item.isVisible());
-        }
+        this.getLabel().textProperty().addListener((observable, oldValue, newValue) -> {
+            this.getItem().setName(newValue);
+        });
+        this.getSlider().valueProperty().addListener((observable, oldValue, newValue) -> {
+            this.getItem().setTransparency(newValue.intValue());
+        });
+        this.getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> {
+            this.getItem().setVisibility(newValue);
+        });
     }
 
     /**
@@ -67,7 +65,7 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
      * @return the slider
      */
     protected JFXSlider getSlider() {
-        return (JFXSlider) super.getInjectedNodeAt(1);
+        return (JFXSlider) super.getInjectedNodeAt(2);
     }
 
     /**
@@ -76,6 +74,30 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
      * @return the toggle
      */
     protected JFXToggleButton getToggle() {
-        return (JFXToggleButton) super.getNodeAt(DEFAULT_OFFSET + 2);
+        return (JFXToggleButton) super.getInjectedNodeAt(1);
+    }
+
+    @Override
+    public DataFormat getDataFormat() {
+        final EffectGroup item = this.getItem();
+
+        if (item == null) {
+            return EffectGroup.DATA_FORMAT;
+        } else {
+            return item.getDataFormat();
+        }
+    }
+
+    @Override
+    protected void updateItem(final EffectGroup item, final boolean empty) {
+        super.updateItem(item, empty);
+
+        if (empty || item == null) {
+            setGraphic(null);
+        } else {
+            this.getLabel().setText(item.getName());
+            this.getSlider().setValue(item.getTransparency());
+            this.getToggle().setSelected(item.isVisible());
+        }
     }
 }

@@ -1,9 +1,11 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import javafx.beans.value.ChangeListener;
 import javafx.scene.input.DataFormat;
 
 /**
@@ -25,6 +27,10 @@ public class EffectStack extends Stack<Effect> implements EffectGroup {
     private String name;
     private boolean visibility;
     private int transparency;
+
+    private ChangeListener<Number> transparencyUpdater;
+    private ChangeListener<Boolean> visibilityUpdater;
+    private ChangeListener<String> nameUpdater;
 
     /**
      * Default constructor. It creates an empty stack of effects.
@@ -128,6 +134,65 @@ public class EffectStack extends Stack<Effect> implements EffectGroup {
     }
 
     @Override
+    public boolean isVisible() {
+        return this.visibility;
+    }
+
+    @Override
+    public void setVisibility(final boolean visibility) {
+        this.visibility = visibility;
+    }
+
+    @Override
+    public int getTransparency() {
+        return this.transparency;
+    }
+
+    @Override
+    public void setTransparency(final int transparency) {
+        if (transparency >= 0 && transparency <= 100) {
+            this.transparency = transparency;
+        } else {
+            throw new IllegalArgumentException("Invalid transparency value");
+        }
+    }
+
+    @Override
+    public ChangeListener<Number> getTransparencyUpdater() {
+        if (transparencyUpdater == null) {
+            this.transparencyUpdater = (ChangeListener<Number> & Serializable) (observable, oldValue, newValue) -> {
+                this.setTransparency(newValue.intValue());
+            };
+        }
+        return transparencyUpdater;
+    }
+
+    @Override
+    public ChangeListener<Boolean> getVisibilityUpdater() {
+        if (this.visibilityUpdater == null) {
+            this.visibilityUpdater = (ChangeListener<Boolean> & Serializable) (observable, oldValue, newValue) -> {
+                this.setVisibility(newValue);
+            };
+        }
+        return visibilityUpdater;
+    }
+
+    @Override
+    public ChangeListener<String> getNameUpdater() {
+        if (this.nameUpdater == null) {
+            this.nameUpdater = (ChangeListener<String> & Serializable) (observable, oldValue, newValue) -> {
+                this.setName(newValue);
+            };
+        }
+        return nameUpdater;
+    }
+
+    @Override
+    public DataFormat getDataFormat() {
+        return EffectStack.DATA_FORMAT;
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
@@ -167,34 +232,5 @@ public class EffectStack extends Stack<Effect> implements EffectGroup {
             return false;
         }
         return true;
-    }
-
-    @Override
-    public boolean isVisible() {
-        return this.visibility;
-    }
-
-    @Override
-    public void setVisibility(final boolean visibility) {
-        this.visibility = visibility;
-    }
-
-    @Override
-    public int getTransparency() {
-        return this.transparency;
-    }
-
-    @Override
-    public void setTransparency(final int transparency) {
-        if (transparency >= 0 && transparency <= 100) {
-            this.transparency = transparency;
-        } else {
-            throw new IllegalArgumentException("Invalid transparency value");
-        }
-    }
-
-    @Override
-    public DataFormat getDataFormat() {
-        return EffectStack.DATA_FORMAT;
     }
 }

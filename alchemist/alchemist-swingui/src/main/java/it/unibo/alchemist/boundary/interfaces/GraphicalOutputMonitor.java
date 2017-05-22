@@ -8,9 +8,9 @@
  */
 package it.unibo.alchemist.boundary.interfaces;
 
-import it.unibo.alchemist.boundary.gui.effects.Effect;
-
 import java.util.List;
+
+import it.unibo.alchemist.boundary.gui.effects.Effect;
 
 /**
  * @param <T>

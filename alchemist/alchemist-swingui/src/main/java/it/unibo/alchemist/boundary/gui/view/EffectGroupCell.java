@@ -48,6 +48,12 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
         this.getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> {
             this.getItem().setVisibility(newValue);
         });
+        /*
+         * this.getLabel().setOnMouseClicked(click -> { if
+         * (click.getClickCount() == 2) {
+         * 
+         * } });
+         */
     }
 
     /**

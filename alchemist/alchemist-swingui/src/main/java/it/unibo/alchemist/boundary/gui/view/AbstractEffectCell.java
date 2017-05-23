@@ -58,15 +58,11 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
         pane.add(handle, 0, 0);
 
         // Drag'n'Drop configurations
-        handle.setOnDragDetected(this::startDragNDrop); // NOPMD - override must
-                                                        // be possible and is
-                                                        // documented in JavaDoc
+        handle.setOnDragDetected(this::startDragNDrop);
         setOnDragOver(this::dragNDropOver);
         setOnDragEntered(this::dragNDropEntered);
         setOnDragExited(this::dragNDropExited);
-        setOnDragDropped(this::dropDragNDrop); // NOPMD - override must be
-                                               // possible and is documented in
-                                               // JavaDoc
+        setOnDragDropped(this::dropDragNDrop);
         setOnDragDone(DragEvent::consume);
 
         // Adding other nodes
@@ -89,7 +85,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
      */
     protected void startDragNDrop(final MouseEvent event) {
         if (getItem() == null) {
-            return;
+            throw new IllegalStateException("Empty cell: no item found");
         }
 
         final Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
@@ -151,7 +147,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
                                    // specified class
     protected void dropDragNDrop(final DragEvent event) {
         if (getItem() == null) {
-            return;
+            throw new IllegalStateException("Empty cell: no item found");
         }
 
         final Dragboard db = event.getDragboard();
@@ -160,18 +156,23 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
         if (db.hasContent(getDataFormat())) {
             final ObservableList<T> items = getListView().getItems();
             final Object content = db.getContent(getDataFormat());
-            final int draggedIndex = items.indexOf(content);
+
+            final int draggedIndex = items.indexOf((T) content);
             final int thisIndex = items.indexOf(getItem());
 
-            // TODO check
+            if (draggedIndex < 0 || thisIndex < 0) {
+                throw new IllegalStateException("No matching between DragBoard content and ListView contents");
+            }
 
             items.set(draggedIndex, getItem());
             items.set(thisIndex, (T) db.getContent(getDataFormat()));
 
             final List<T> itemsCopy = new ArrayList<>(getListView().getItems());
             getListView().getItems().setAll(itemsCopy);
-
             success = true;
+
+        } else {
+            throw new IllegalStateException("No content found in DragBoard");
         }
         event.setDropCompleted(success);
 

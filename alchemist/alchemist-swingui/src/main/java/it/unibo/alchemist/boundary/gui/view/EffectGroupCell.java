@@ -7,6 +7,7 @@ import it.unibo.alchemist.boundary.gui.effects.Effect;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.DataFormat;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -48,12 +49,30 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
         this.getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> {
             this.getItem().setVisibility(newValue);
         });
-        /*
-         * this.getLabel().setOnMouseClicked(click -> { if
-         * (click.getClickCount() == 2) {
-         * 
-         * } });
-         */
+
+        this.getLabel().setOnMouseClicked(click -> {
+            if (click.getClickCount() == 2) {
+                final Object source = click.getSource();
+                final Label label;
+
+                if (source instanceof Label) {
+                    label = (Label) source;
+                } else {
+                    throw new IllegalStateException("EventHandler for label rename not associated to a label");
+                }
+
+                final TextInputDialog dialog = new TextInputDialog(label.getText());
+                dialog.setTitle("Rename the EffectGroup");
+                dialog.setHeaderText("Please enter new name:");
+                dialog.setContentText(null);
+
+                dialog.showAndWait().ifPresent(name -> {
+                    label.setText(name);
+                    // this.getItem().setName(name); 
+                    // TODO ^ Should be unnecessary, check
+                });
+            }
+        });
     }
 
     /**

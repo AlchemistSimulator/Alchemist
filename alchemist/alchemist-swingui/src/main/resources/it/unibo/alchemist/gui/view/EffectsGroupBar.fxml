@@ -7,11 +7,11 @@
 
 <BorderPane id="effectsGroupPane" fx:id="effectsGroupPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <bottom>
-      <ButtonBar id="groupControlBar" fx:id="groupControlBar" buttonMinWidth="40.0" opacity="0.45" stylesheets="@ButtonsBarLayout.css" BorderPane.alignment="CENTER">
+      <ButtonBar id="groupControlBar" fx:id="groupControlBar" stylesheets="@ButtonsBarLayout.css" BorderPane.alignment="CENTER">
          <buttons>
-            <JFXButton id="save" fx:id="save" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" prefHeight="40.0" ripplerFill="WHITE" text="Save" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT" />
-            <JFXButton id="load" fx:id="load" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" prefHeight="40.0" ripplerFill="WHITE" stylesheets="" text="Load" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT" />
-            <JFXButton id="addGroup" fx:id="addGroup" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" prefHeight="40.0" ripplerFill="WHITE" stylesheets="" text="Add" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="RIGHT" />
+            <JFXButton id="save" fx:id="save" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" ripplerFill="WHITE" text="Save" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT" />
+            <JFXButton id="load" fx:id="load" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" ripplerFill="WHITE" stylesheets="" text="Load" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT" />
+            <JFXButton id="addGroup" fx:id="addGroup" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" ripplerFill="WHITE" stylesheets="" text="Add" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="RIGHT" />
          </buttons>
       </ButtonBar>
    </bottom>

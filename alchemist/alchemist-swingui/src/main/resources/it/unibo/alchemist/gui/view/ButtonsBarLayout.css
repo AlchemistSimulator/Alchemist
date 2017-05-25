@@ -1,7 +1,7 @@
 
 ButtonBar {
-    -fx-background-color: rgb(0, 0, 0);
-    -fx-padding: 0;
+    -fx-background-color: rgb(0.0, 0.0, 0.0);
+    -fx-padding: 0.0;
     -fx-min-height: 3.08em;
     -fx-pref-height: 3.08em;
     -fx-max-height: 6.15em;
@@ -10,12 +10,13 @@ ButtonBar {
 
 JFXButton {
     -fx-background-color: transparent;
-    -fx-padding: 0;
-    -fx-background-size: 0;
+    -fx-padding: 0.0;
+    -fx-background-size: 0.0;
     -fx-min-height: 3.08em;
     -fx-pref-height: 3.08em;
     -fx-min-width: 3.08em;
     -fx-pref-width: 3.08em;
+    -fx-graphic-text-gap: 0.0;
 }
 
 ListView {

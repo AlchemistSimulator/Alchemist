@@ -3,8 +3,8 @@ package it.unibo.alchemist.boundary.gui.view;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.unibo.alchemist.boundary.gui.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
+import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Label;

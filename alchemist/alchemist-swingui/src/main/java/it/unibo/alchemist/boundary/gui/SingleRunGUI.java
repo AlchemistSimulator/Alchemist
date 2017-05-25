@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.boundary.gui.effects.EffectSerializationFactory;
 import it.unibo.alchemist.boundary.gui.effects.JEffectsTab;
-import it.unibo.alchemist.boundary.gui.util.GraphicalMonitorFactory;
+import it.unibo.alchemist.boundary.gui.utility.GraphicalMonitorFactory;
 import it.unibo.alchemist.boundary.interfaces.GraphicalOutputMonitor;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.monitors.TimeStepMonitor;

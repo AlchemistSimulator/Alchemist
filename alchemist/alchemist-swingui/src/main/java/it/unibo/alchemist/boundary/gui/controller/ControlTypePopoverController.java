@@ -5,7 +5,7 @@ import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
 
-import it.unibo.alchemist.boundary.gui.FXResourceLoader;
+import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;

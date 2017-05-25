@@ -1,4 +1,4 @@
-package it.unibo.alchemist.boundary.gui;
+package it.unibo.alchemist.boundary.gui.utility;
 
 import java.io.IOException;
 
@@ -43,7 +43,7 @@ public final class FXResourceLoader {
     public static <T extends Pane> T getLayout(final Class<T> paneInstance, final Object controller, final String layoutName)
             throws IOException {
         final FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(FXResourceLoader.class.getResource(XML_RESOURCE_PATH + layoutName + EXTENSION));
+        loader.setLocation(ResourceLoader.loadURL(XML_RESOURCE_PATH + layoutName + EXTENSION));
         loader.setController(controller);
         return (T) loader.load();
     }

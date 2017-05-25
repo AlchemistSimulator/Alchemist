@@ -2,6 +2,7 @@ package it.unibo.alchemist.boundary.gui;
 
 import java.io.IOException;
 
+import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;

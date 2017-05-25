@@ -5,9 +5,9 @@ import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
 
-import it.unibo.alchemist.boundary.gui.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.effects.EffectStack;
+import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.EffectGroupCell;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -44,28 +44,16 @@ public class EffectsGroupBarController implements Initializable {
 
         this.save.setText("");
         this.save.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.SAVE));
-        this.save.setOnAction(e -> {
-            final FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Save effect");
-            fileChooser.showSaveDialog(this.save.getScene().getWindow());
-            // TODO Save the file
-        });
+        this.save.setOnAction(e -> this.saveToFile());
 
         this.load.setText("");
         this.load.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.FOLDER_OPEN));
-        this.load.setOnAction(e -> {
-            final FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Load effect");
-            fileChooser.showOpenDialog(this.load.getScene().getWindow());
-            // TODO Do something with the loaded file
-        });
+        this.load.setOnAction(e -> this.loadFromFile());
 
         this.addGroup.setText("");
         this.addGroup.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.ADD));
 
-        this.addGroup.setOnAction(e -> {
-            addGroupToList("Effect group " + (getObservableList().size() + 1));
-        });
+        this.addGroup.setOnAction(e -> addGroupToList("Effect group " + (getObservableList().size() + 1)));
     }
 
     private void addGroupToList(final String name) {
@@ -84,4 +72,17 @@ public class EffectsGroupBarController implements Initializable {
         return this.observableList;
     }
 
+    private void saveToFile() {
+        final FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save effect");
+        fileChooser.showSaveDialog(this.save.getScene().getWindow());
+        // TODO Save the file
+    }
+
+    private void loadFromFile() {
+        final FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Load effect");
+        fileChooser.showOpenDialog(this.load.getScene().getWindow());
+        // TODO Do something with the loaded file
+    }
 }

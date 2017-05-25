@@ -12,7 +12,7 @@ import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
 import com.jfoenix.controls.JFXSlider;
 
-import it.unibo.alchemist.boundary.gui.FXResourceLoader;
+import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ButtonBar;

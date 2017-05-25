@@ -1,4 +1,4 @@
-package it.unibo.alchemist.boundary.gui.util;
+package it.unibo.alchemist.boundary.gui.utility;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.function.Consumer;

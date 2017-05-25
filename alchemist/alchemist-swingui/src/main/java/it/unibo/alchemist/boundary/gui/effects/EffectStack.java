@@ -1,25 +1,24 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
-import javafx.beans.value.ChangeListener;
 import javafx.scene.input.DataFormat;
 
 /**
  * The class models a group of effects, stored as a stack. It can manage
  * priority of visualization and visibility of each effect inside it.
  */
-public class EffectStack extends Stack<Effect> implements EffectGroup {
+public class EffectStack implements EffectGroup {
     /** Default generated serial version UID. */
     private static final long serialVersionUID = 5721145068915147074L;
-    /** Default IllegalArgumentException message */
+    /** Default IllegalArgumentException message. */
     private static final String CANNOT_FIND_EFFECT = "Cannot find the effect in the stack";
-    /** Default effect group name */
-    private static final String DEFAULT_NAME = "New group";
+    /** Default effect group name. */
+    public static final String DEFAULT_NAME = "New group";
     private static final DataFormat DATA_FORMAT = new DataFormat(EffectStack.class.getName());
+    private static final int FIRST_HASHCODE_CONSTANT = 1231;
+    private static final int SECOND_HASHCODE_CONSTANT = 1237;
 
     private final List<Effect> effects;
     private final List<Boolean> visibilities;
@@ -28,18 +27,25 @@ public class EffectStack extends Stack<Effect> implements EffectGroup {
     private boolean visibility;
     private int transparency;
 
-    private ChangeListener<Number> transparencyUpdater;
-    private ChangeListener<Boolean> visibilityUpdater;
-    private ChangeListener<String> nameUpdater;
-
     /**
-     * Default constructor. It creates an empty stack of effects.
+     * Constructor that creates an empty stack of effects with default name.
      */
     public EffectStack() {
+        this(DEFAULT_NAME);
+    }
+
+    /**
+     * Default constructor. It creates an empty stack of effects with a given
+     * name.
+     * 
+     * @param name
+     *            the name of the group
+     */
+    public EffectStack(final String name) {
         this.effects = new ArrayList<>();
         this.visibilities = new ArrayList<>();
         this.topIndex = 0;
-        this.name = DEFAULT_NAME;
+        this.name = name;
         this.visibility = true;
         this.transparency = 100;
     }
@@ -79,15 +85,6 @@ public class EffectStack extends Stack<Effect> implements EffectGroup {
     @Override
     public boolean empty() {
         return effects.isEmpty();
-    }
-
-    @Override
-    public int search(final Object o) {
-        if (o instanceof Effect) {
-            return this.search((Effect) o);
-        } else {
-            return -1;
-        }
     }
 
     @Override
@@ -134,6 +131,11 @@ public class EffectStack extends Stack<Effect> implements EffectGroup {
     }
 
     @Override
+    public List<Effect> getAllEffects() {
+        return new ArrayList<>(this.effects);
+    }
+
+    @Override
     public boolean isVisible() {
         return this.visibility;
     }
@@ -158,36 +160,6 @@ public class EffectStack extends Stack<Effect> implements EffectGroup {
     }
 
     @Override
-    public ChangeListener<Number> getTransparencyUpdater() {
-        if (transparencyUpdater == null) {
-            this.transparencyUpdater = (ChangeListener<Number> & Serializable) (observable, oldValue, newValue) -> {
-                this.setTransparency(newValue.intValue());
-            };
-        }
-        return transparencyUpdater;
-    }
-
-    @Override
-    public ChangeListener<Boolean> getVisibilityUpdater() {
-        if (this.visibilityUpdater == null) {
-            this.visibilityUpdater = (ChangeListener<Boolean> & Serializable) (observable, oldValue, newValue) -> {
-                this.setVisibility(newValue);
-            };
-        }
-        return visibilityUpdater;
-    }
-
-    @Override
-    public ChangeListener<String> getNameUpdater() {
-        if (this.nameUpdater == null) {
-            this.nameUpdater = (ChangeListener<String> & Serializable) (observable, oldValue, newValue) -> {
-                this.setName(newValue);
-            };
-        }
-        return nameUpdater;
-    }
-
-    @Override
     public DataFormat getDataFormat() {
         return EffectStack.DATA_FORMAT;
     }
@@ -195,10 +167,13 @@ public class EffectStack extends Stack<Effect> implements EffectGroup {
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = super.hashCode();
+        int result = 1;
         result = prime * result + ((effects == null) ? 0 : effects.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + topIndex;
+        result = prime * result + transparency;
         result = prime * result + ((visibilities == null) ? 0 : visibilities.hashCode());
+        result = prime * result + (visibility ? FIRST_HASHCODE_CONSTANT : SECOND_HASHCODE_CONSTANT);
         return result;
     }
 
@@ -207,21 +182,34 @@ public class EffectStack extends Stack<Effect> implements EffectGroup {
         if (this == obj) {
             return true;
         }
-        if (!super.equals(obj)) {
+        if (obj == null) {
             return false;
         }
         if (getClass() != obj.getClass()) {
             return false;
         }
         final EffectStack other = (EffectStack) obj;
+        if (name == null) {
+            if (other.name != null) {
+                return false;
+            }
+        } else if (!name.equals(other.name)) {
+            return false;
+        }
+        if (topIndex != other.topIndex) {
+            return false;
+        }
+        if (visibility != other.visibility) {
+            return false;
+        }
+        if (transparency != other.transparency) {
+            return false;
+        }
         if (effects == null) {
             if (other.effects != null) {
                 return false;
             }
         } else if (!effects.equals(other.effects)) {
-            return false;
-        }
-        if (topIndex != other.topIndex) {
             return false;
         }
         if (visibilities == null) {

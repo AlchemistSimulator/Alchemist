@@ -14,17 +14,20 @@ import javafx.stage.Stage;
 public class MainApp extends Application {
     private static final String ROOT_LAYOUT = "RootLayout";
 
-    private Stage primaryStage;
     private Pane rootLayout;
 
     @Override
-    public void start(final Stage primaryStage) throws Exception {
-        this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("Alchemist Simulator base UI");
+    public void start(final Stage primaryStage) {
+        final Stage stage = primaryStage;
+        stage.setTitle("Alchemist Simulator base UI");
 
-        this.initRootLayout();
-        this.primaryStage.setScene(new Scene(this.rootLayout));
-        this.primaryStage.show();
+        try {
+            initRootLayout();
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not initialize RootLayout", e);
+        }
+        stage.setScene(new Scene(this.rootLayout));
+        stage.show();
     }
 
     private void initRootLayout() throws IOException {

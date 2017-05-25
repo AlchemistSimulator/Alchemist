@@ -64,30 +64,24 @@ public class EffectsGroupBarController implements Initializable {
         this.addGroup.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.ADD));
 
         this.addGroup.setOnAction(e -> {
-            // final TextInputDialog dialog = new TextInputDialog("Effect");
-            // dialog.initOwner(this.addGroup.getScene().getWindow());
-            // dialog.initModality(Modality.WINDOW_MODAL); // TODO check
-            // dialog.setTitle("Effect group name");
-            // dialog.setHeaderText("Choose a name for the group of effects:");
-            // dialog.setContentText("");
-
-            // final Optional<String> result = dialog.showAndWait();
-
-            // result.ifPresent(name -> addGroupToList(name));
-            addGroupToList("Effect group");
+            addGroupToList("Effect group " + (getObservableList().size() + 1));
         });
     }
 
     private void addGroupToList(final String name) {
+        this.getObservableList().add(new EffectStack());
+        this.getObservableList().get(this.getObservableList().size() - 1).setName(name);
+        this.effectGroupsList.refresh();
+    }
+
+    private ObservableList<EffectGroup> getObservableList() {
         if (this.observableList == null) {
             this.observableList = FXCollections.observableArrayList();
             this.effectGroupsList.setItems(observableList);
             this.effectGroupsList.setCellFactory(lv -> new EffectGroupCell());
             // TODO check
         }
-        this.observableList.add(new EffectStack());
-        this.observableList.get(this.observableList.size() - 1).setName(name);
-        this.effectGroupsList.refresh();
+        return this.observableList;
     }
 
 }

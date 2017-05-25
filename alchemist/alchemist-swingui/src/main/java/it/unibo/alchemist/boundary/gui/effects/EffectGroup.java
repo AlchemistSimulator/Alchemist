@@ -1,8 +1,8 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
 import java.io.Serializable;
+import java.util.List;
 
-import javafx.beans.value.ChangeListener;
 import javafx.scene.input.DataFormat;
 
 /**
@@ -136,28 +136,11 @@ public interface EffectGroup extends Serializable {
     void changePriority(Effect effect, int offset);
 
     /**
-     * Returns a lazy initialized ChangeListener that updates the transparency
-     * when a graphical component (e.g. a slider) is updated.
+     * Returns all the effects in the group.
      * 
-     * @return the listener
+     * @return the effects
      */
-    ChangeListener<Number> getTransparencyUpdater();
-
-    /**
-     * Returns a lazy initialized ChangeListener that updates the visibility
-     * when a graphical component (e.g. a toggle) is updated.
-     * 
-     * @return the listener
-     */
-    ChangeListener<Boolean> getVisibilityUpdater();
-
-    /**
-     * Returns a lazy initialized ChangeListener that updates the name when a
-     * graphical component (e.g. a label) is updated.
-     * 
-     * @return the listener
-     */
-    ChangeListener<String> getNameUpdater();
+    List<Effect> getAllEffects();
 
     /**
      * Returns the dataformat of the group. Useful for drag'n'drop in JavaFX

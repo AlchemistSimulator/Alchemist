@@ -13,8 +13,6 @@ import com.jfoenix.controls.JFXDrawersStack;
 import com.jfoenix.controls.JFXSlider;
 
 import it.unibo.alchemist.boundary.gui.FXResourceLoader;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ButtonBar;
@@ -106,8 +104,7 @@ public class ButtonsBarController implements Initializable {
             effectsDrawer.setSidePane(FXResourceLoader.getLayout(BorderPane.class, effectsGroupBarController,
                     EffectsGroupBarController.EFFECT_GROUP_BAR_LAYOUT));
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new IllegalStateException("Could not initialize side pane for effects", e);
         }
         effectsDrawer.setOverLayVisible(false);
         effectsDrawer.setResizableOnDrag(false);
@@ -140,20 +137,14 @@ public class ButtonsBarController implements Initializable {
             controlTypePopOver.setContentNode(FXResourceLoader.getLayout(AnchorPane.class, controlTypePopoverController,
                     ControlTypePopoverController.CONTROL_TYPE_POPOVER_LAYOUT));
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new IllegalStateException("Could not initialize popover for control type change", e);
         }
         controlTypePopOver.setArrowLocation(ArrowLocation.BOTTOM_CENTER);
-        controlType.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(final ActionEvent event) {
-
-                if (controlTypePopOver.isShowing()) {
-                    controlTypePopOver.hide();
-                } else {
-                    controlTypePopOver.show(controlType);
-                }
+        controlType.setOnAction(event -> {
+            if (controlTypePopOver.isShowing()) {
+                controlTypePopOver.hide();
+            } else {
+                controlTypePopOver.show(controlType);
             }
         });
     }

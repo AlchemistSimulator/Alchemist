@@ -4,7 +4,9 @@ dependencies {
     compile (
         "it.unibo.apice.scafiteam:scafi-core_2.11:${scafiVersion}",
         "org.scala-lang:scala-library:${scalaVersion}",
+        "org.scala-lang.modules:scala-java8-compat_2.12:${scalaj8compatVersion}",
         project(':alchemist-interfaces'),
+        project(':alchemist-implementationbase'),
     )
     testCompile(
         project(':alchemist-engine'),

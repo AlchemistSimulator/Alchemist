@@ -1,10 +1,12 @@
-package it.unibo.alchemist.boundary.gui.effects;
+package it.unibo.alchemist.boundary.gui.utility;
 
 import java.util.Collection;
 import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 
 /**
  * This class models a clean boundary between Google Gson library and the needs

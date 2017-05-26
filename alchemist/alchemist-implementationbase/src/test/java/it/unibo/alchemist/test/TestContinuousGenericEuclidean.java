@@ -1,10 +1,12 @@
 package it.unibo.alchemist.test;
 
 import static org.junit.Assert.assertArrayEquals;
+
+import org.apache.commons.math3.random.MersenneTwister;
+import org.apache.commons.math3.random.RandomGenerator;
+
 import it.unibo.alchemist.model.implementations.positions.ContinuousGenericEuclidean;
 import it.unibo.alchemist.model.interfaces.Position;
-
-import java.util.Random;
 
 import org.junit.Test;
 
@@ -12,7 +14,7 @@ import org.junit.Test;
  */
 public class TestContinuousGenericEuclidean {
 
-    private static final Random RNG = new Random(0);
+    private static final RandomGenerator RNG = new MersenneTwister(1);
 
     /**
      * 

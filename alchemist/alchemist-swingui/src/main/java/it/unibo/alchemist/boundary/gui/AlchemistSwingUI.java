@@ -22,6 +22,11 @@ import org.danilopianini.view.GUIUtilities;
 public final class AlchemistSwingUI extends JFrame {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = -1447042371954686755L;
+
+    /**
      * The default icon size.
      */
     public static final byte DEFAULT_ICON_SIZE = 16;

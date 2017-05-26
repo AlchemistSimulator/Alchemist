@@ -29,12 +29,12 @@ import javax.swing.SwingConstants;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import it.unibo.alchemist.boundary.gui.AlchemistSwingUI;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 
 /**
  */
+@SuppressWarnings("deprecation") // TODO remove
 public class EffectBuilder extends JFrame implements ActionListener {
 
     private static final Reflections REFLECTIONS = new Reflections("it.unibo.alchemist");

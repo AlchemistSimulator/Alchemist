@@ -1,14 +1,21 @@
 package it.unibo.alchemist.boundary.gui.view;
 
+import java.io.IOException;
+
+import org.controlsfx.control.PopOver;
+
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXToggleButton;
 
+import it.unibo.alchemist.boundary.gui.controller.EffectBarController;
 import it.unibo.alchemist.boundary.gui.effects.Effect;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
+import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.DataFormat;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
@@ -20,7 +27,7 @@ import javafx.scene.text.TextAlignment;
  * group is composed of.
  */
 public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
-    private static final String DEFAULT_NAME = "Effect group without name";
+    private static final String DEFAULT_NAME = "Unnamed effect group";
 
     /**
      * Default constructor.
@@ -68,9 +75,30 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
 
                 dialog.showAndWait().ifPresent(name -> {
                     label.setText(name);
-                    // this.getItem().setName(name); 
+                    // this.getItem().setName(name);
                     // TODO ^ Should be unnecessary, check
                 });
+            }
+        });
+
+        final PopOver effectPopOver = new PopOver();
+        effectPopOver.setDetachable(/*false*/ true); // TODO check
+        effectPopOver.setHeaderAlwaysVisible(true);
+        effectPopOver.titleProperty().bindBidirectional(this.getLabel().textProperty());
+        final EffectBarController effectPopoverController = new EffectBarController();
+        try {
+            effectPopOver.setContentNode(FXResourceLoader.getLayout(BorderPane.class, effectPopoverController,
+                    EffectBarController.EFFECT_BAR_LAYOUT));
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not initialize popover for effect " + getItem().getName(), e);
+        }
+        // effectPopOver.setArrowLocation(ArrowLocation.LEFT_TOP); // TODO check
+        this.setOnMouseClicked(event -> {
+            if (effectPopOver.isShowing()) {
+                effectPopOver.hide();
+            } else {
+                effectPopOver.show(EffectGroupCell.this);
+                effectPopOver.setDetached(/*false*/ true); // TODO check
             }
         });
     }

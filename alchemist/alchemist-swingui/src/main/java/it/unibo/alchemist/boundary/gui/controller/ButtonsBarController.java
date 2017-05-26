@@ -110,7 +110,10 @@ public class ButtonsBarController implements Initializable {
         effectsDrawer.setResizableOnDrag(false);
 
         effectsButton.setOnAction(e -> {
-            effectsDrawer.setDefaultDrawerSize(controlPane.getWidth() / DEFAULT_DRAWER_FRACTION);
+            // Drawer size is modified every time it's opened
+            if (effectsDrawer.isHidden()) {
+                effectsDrawer.setDefaultDrawerSize(controlPane.getWidth() / DEFAULT_DRAWER_FRACTION);
+            }
             this.drawerStack.toggle(effectsDrawer);
         });
 

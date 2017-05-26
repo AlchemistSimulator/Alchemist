@@ -10,7 +10,7 @@ import javafx.scene.input.DataFormat;
  * should open another view to edit effect-specific parameters.
  */
 public class EffectCell extends AbstractEffectCell<Effect> {
-    // private Label effectName;
+    private static final String DEFAULT_NAME = "Unnamed effect";
 
     /**
      * Default constructor.
@@ -21,6 +21,13 @@ public class EffectCell extends AbstractEffectCell<Effect> {
     public EffectCell(final String effectName) {
         super(new Label(effectName));
         // this.effectName = (Label) super.getInjectedNodeAt(0);
+    }
+
+    /**
+     * Constructor. Creates a cell with a default name.
+     */
+    public EffectCell() {
+        this(DEFAULT_NAME);
     }
 
     @Override

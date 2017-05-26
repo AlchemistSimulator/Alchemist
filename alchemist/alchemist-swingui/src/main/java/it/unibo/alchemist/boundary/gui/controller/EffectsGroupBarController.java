@@ -44,15 +44,14 @@ public class EffectsGroupBarController implements Initializable {
 
         this.save.setText("");
         this.save.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.SAVE));
-        this.save.setOnAction(e -> this.saveToFile());
+        this.save.setOnAction(e -> this.saveToFile()); // TODO
 
         this.load.setText("");
         this.load.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.FOLDER_OPEN));
-        this.load.setOnAction(e -> this.loadFromFile());
+        this.load.setOnAction(e -> this.loadFromFile()); // TODO
 
         this.addGroup.setText("");
         this.addGroup.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.ADD));
-
         this.addGroup.setOnAction(e -> addGroupToList("Effect group " + (getObservableList().size() + 1)));
     }
 

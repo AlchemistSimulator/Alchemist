@@ -3,7 +3,7 @@ package it.unibo.alchemist.boundary.gui.utility;
 import java.io.IOException;
 
 import javafx.fxml.FXMLLoader;
-import javafx.scene.layout.Pane;
+import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import jiconfont.IconCode;
 import jiconfont.icons.GoogleMaterialDesignIcons;
@@ -40,7 +40,7 @@ public final class FXResourceLoader {
      *             if it cannot load the file for some reason
      */
     @SuppressWarnings("unchecked") // Passing a wrong class would be stupid
-    public static <T extends Pane> T getLayout(final Class<T> paneInstance, final Object controller, final String layoutName)
+    public static <T extends Node> T getLayout(final Class<T> paneInstance, final Object controller, final String layoutName)
             throws IOException {
         final FXMLLoader loader = new FXMLLoader();
         loader.setLocation(ResourceLoader.loadURL(XML_RESOURCE_PATH + layoutName + EXTENSION));

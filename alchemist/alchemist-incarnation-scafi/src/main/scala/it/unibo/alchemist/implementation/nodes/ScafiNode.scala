@@ -5,8 +5,6 @@ import it.unibo.alchemist.model.interfaces.Environment
 
 class ScafiNode(env: Environment[Any]) extends GenericNode[Any](env) {
 
-  
-  
   override def createT = new {}
 
 }

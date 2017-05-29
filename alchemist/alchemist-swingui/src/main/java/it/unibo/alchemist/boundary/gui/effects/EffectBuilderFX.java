@@ -15,13 +15,15 @@ import javafx.scene.control.ChoiceDialog;
 public class EffectBuilderFX {
     private static final Reflections REFLECTIONS = new Reflections("it.unibo.alchemist");
     private static final Set<Class<? extends Effect>> EFFECTS = REFLECTIONS.getSubTypesOf(Effect.class);
+
+    private final List<Class<? extends Effect>> effects;
     private final ChoiceDialog<Class<? extends Effect>> dialog;
 
     /**
      * Default constructor.
      */
     public EffectBuilderFX() {
-        final List<Class<? extends Effect>> effects = new ArrayList<>(EFFECTS);
+        effects = new ArrayList<>(EFFECTS);
 
         dialog = new ChoiceDialog<>(effects.get(0), effects);
         dialog.setTitle("Add an effect");
@@ -34,9 +36,8 @@ public class EffectBuilderFX {
      * 
      * @return the class of the effect
      */
-    public Class<? extends Effect> getResult() {
-        final Optional<Class<? extends Effect>> result = dialog.showAndWait();
-        return result.orElseGet(null);
+    public Optional<Class<? extends Effect>> getResult() {
+        return dialog.showAndWait();
     }
 
     /**
@@ -61,9 +62,14 @@ public class EffectBuilderFX {
      * Call this method is the same as calling
      * {@link EffectBuilderFX#getResult()} and {@link #chooseAndLoad()}.
      * 
-     * @return the effect chosen
+     * @return the effect chosen, or null if no effect was chosen
      */
     public Effect chooseAndLoad() {
-        return this.instantiateEffect(getResult());
+        final Optional<Class<? extends Effect>> result = getResult();
+        if (result.isPresent()) {
+            return this.instantiateEffect(result.get());
+        } else {
+            return null;
+        }
     }
 }

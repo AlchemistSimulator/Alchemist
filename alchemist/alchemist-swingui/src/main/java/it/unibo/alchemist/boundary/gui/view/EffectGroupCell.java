@@ -47,15 +47,10 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
         this.getLabel().setTextAlignment(TextAlignment.CENTER);
         this.getLabel().setFont(Font.font(this.getLabel().getFont().getFamily(), FontWeight.BOLD, this.getLabel().getFont().getSize()));
 
-        this.getLabel().textProperty().addListener((observable, oldValue, newValue) -> {
-            this.getItem().setName(newValue);
-        });
-        this.getSlider().valueProperty().addListener((observable, oldValue, newValue) -> {
-            this.getItem().setTransparency(newValue.intValue());
-        });
-        this.getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> {
-            this.getItem().setVisibility(newValue);
-        });
+        this.getLabel().textProperty().addListener((observable, oldValue, newValue) -> this.getItem().setName(newValue));
+        this.getSlider().valueProperty()
+                .addListener((observable, oldValue, newValue) -> this.getItem().setTransparency(newValue.intValue()));
+        this.getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> this.getItem().setVisibility(newValue));
 
         this.getLabel().setOnMouseClicked(click -> {
             if (click.getClickCount() == 2) {
@@ -73,32 +68,27 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
                 dialog.setHeaderText("Please enter new name:");
                 dialog.setContentText(null);
 
-                dialog.showAndWait().ifPresent(name -> {
-                    label.setText(name);
-                    // this.getItem().setName(name);
-                    // TODO ^ Should be unnecessary, check
-                });
+                dialog.showAndWait().ifPresent(name -> label.setText(name));
             }
         });
 
         final PopOver effectPopOver = new PopOver();
-        effectPopOver.setDetachable(/*false*/ true); // TODO check
+        effectPopOver.setDetachable(true);
         effectPopOver.setHeaderAlwaysVisible(true);
         effectPopOver.titleProperty().bindBidirectional(this.getLabel().textProperty());
         final EffectBarController effectPopoverController = new EffectBarController();
         try {
-            effectPopOver.setContentNode(FXResourceLoader.getLayout(BorderPane.class, effectPopoverController,
-                    EffectBarController.EFFECT_BAR_LAYOUT));
+            effectPopOver.setContentNode(
+                    FXResourceLoader.getLayout(BorderPane.class, effectPopoverController, EffectBarController.EFFECT_BAR_LAYOUT));
         } catch (IOException e) {
             throw new IllegalStateException("Could not initialize popover for effect " + getItem().getName(), e);
         }
-        // effectPopOver.setArrowLocation(ArrowLocation.LEFT_TOP); // TODO check
         this.setOnMouseClicked(event -> {
             if (effectPopOver.isShowing()) {
                 effectPopOver.hide();
             } else {
                 effectPopOver.show(EffectGroupCell.this);
-                effectPopOver.setDetached(/*false*/ true); // TODO check
+                effectPopOver.setDetached(true);
             }
         });
     }

@@ -13,6 +13,7 @@ import it.unibo.alchemist.boundary.gui.ColorChannel;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
+import javafx.scene.input.DataFormat;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -32,6 +33,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  */
 public class DrawShape implements Effect {
+    /** Default DataFormat. */
+    public static final DataFormat DATA_FORMAT = new DataFormat(DrawShape.class.getName());
 
     /**
      * Enum that models the mode to use the DrawShape.
@@ -470,6 +473,11 @@ public class DrawShape implements Effect {
      */
     protected void setWritingPropertyValue(final boolean writingPropertyValue) {
         this.writingPropertyValue = writingPropertyValue;
+    }
+
+    @Override
+    public DataFormat getDataFormat() {
+        return DATA_FORMAT;
     }
 
 }

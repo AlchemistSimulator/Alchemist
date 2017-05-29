@@ -13,10 +13,13 @@ import java.awt.Graphics2D;
 import java.io.Serializable;
 
 import it.unibo.alchemist.model.interfaces.Node;
+import javafx.scene.input.DataFormat;
 
 /**
  */
 public interface Effect extends Serializable {
+    /** Default DataFormat. */
+    DataFormat DATA_FORMAT = new DataFormat(Effect.class.getName());
 
     /**
      * Applies the effect.
@@ -48,6 +51,14 @@ public interface Effect extends Serializable {
      * @return a color which resembles the color of this effect
      */
     Color getColorSummary();
+
+    /**
+     * Returns the dataformat of the group. Useful for drag'n'drop in JavaFX
+     * GUIs.
+     * 
+     * @return the dataformat
+     */
+    DataFormat getDataFormat();
 
     @Override // Should override hashCode() method
     int hashCode();

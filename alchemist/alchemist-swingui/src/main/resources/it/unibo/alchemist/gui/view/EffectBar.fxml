@@ -5,7 +5,6 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.BorderPane?>
 
-
 <BorderPane id="effectsPane" fx:id="effectsPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <bottom>
       <ButtonBar id="effectsControlBar" fx:id="effectsControlBar" stylesheets="@ButtonsBarLayout.css" BorderPane.alignment="CENTER">

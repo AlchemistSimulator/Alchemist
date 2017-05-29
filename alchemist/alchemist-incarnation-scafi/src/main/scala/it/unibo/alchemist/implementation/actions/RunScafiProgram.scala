@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.scafi.PimpMyAlchemist._
 import org.apache.commons.math3.util.FastMath
 
-object ScafiIncarnationForAlchemist  extends BasicAbstractIncarnation
+object ScafiIncarnationForAlchemist extends BasicAbstractIncarnation
 import ScafiIncarnationForAlchemist.AggregateProgram
 import ScafiIncarnationForAlchemist.ContextImpl
 import ScafiIncarnationForAlchemist.ID
@@ -21,6 +21,7 @@ import ScafiIncarnationForAlchemist.EXPORT
 import ScafiIncarnationForAlchemist.factory
 import ScafiIncarnationForAlchemist.AggregateProgram
 import java.util.function.Consumer
+
 
 sealed class RunScafiProgram(
     environment: Environment[Any],
@@ -45,7 +46,11 @@ sealed class RunScafiProgram(
       node.getId -> new NBRData(factory.emptyExport(), environment.getPosition(node), Double.NaN)
   )
   addModifiedMolecule(programName)
-  
+
+  override def cloneAction(n: Node[Any], r: Reaction[Any]) {
+    new RunScafiProgram(environment, n, r, rng, programName, retentionTime)
+  }
+
   override def execute() {
     import collection.JavaConverters.mapAsScalaMapConverter
     val position = environment.getPosition(node)
@@ -89,9 +94,9 @@ sealed class RunScafiProgram(
   }
 
   private def sendExport(id: ID, export: NBRData) { nbrData += id -> export } 
-  
+
 }
-  
+
 object RunScafiProgram {
   private case class NBRData(export: EXPORT, position: Position, executionTime: Time)
 }

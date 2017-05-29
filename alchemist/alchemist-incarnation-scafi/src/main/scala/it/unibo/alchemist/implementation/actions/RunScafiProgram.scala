@@ -12,15 +12,9 @@ import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.scafi.PimpMyAlchemist._
 import org.apache.commons.math3.util.FastMath
-
-object ScafiIncarnationForAlchemist  extends BasicAbstractIncarnation
-import ScafiIncarnationForAlchemist.AggregateProgram
-import ScafiIncarnationForAlchemist.ContextImpl
-import ScafiIncarnationForAlchemist.ID
-import ScafiIncarnationForAlchemist.EXPORT
-import ScafiIncarnationForAlchemist.factory
-import ScafiIncarnationForAlchemist.AggregateProgram
 import java.util.function.Consumer
+
+import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist
 
 sealed class RunScafiProgram(
     environment: Environment[Any],
@@ -88,8 +82,8 @@ sealed class RunScafiProgram(
     }
   }
 
-  private def sendExport(id: ID, export: NBRData) { nbrData += id -> export } 
-  
+  private def sendExport(id: ID, export: NBRData) { nbrData += id -> export }
+
 }
   
 object RunScafiProgram {

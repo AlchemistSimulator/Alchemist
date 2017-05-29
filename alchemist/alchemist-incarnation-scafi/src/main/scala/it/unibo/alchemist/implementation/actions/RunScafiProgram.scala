@@ -33,7 +33,7 @@ sealed class RunScafiProgram(
     node: Node[Any],
     reaction: Reaction[Any],
     rng: RandomGenerator,
-    programName: String) {
+    programName: String) = {
     this(environment, node, reaction, rng, programName, FastMath.nextUp(reaction.getTimeDistribution.getRate))
   }
 
@@ -44,7 +44,7 @@ sealed class RunScafiProgram(
   )
   addModifiedMolecule(programName)
 
-  override def cloneAction(n: Node[Any], r: Reaction[Any]) {
+  override def cloneAction(n: Node[Any], r: Reaction[Any]) = {
     new RunScafiProgram(environment, n, r, rng, programName, retentionTime)
   }
 

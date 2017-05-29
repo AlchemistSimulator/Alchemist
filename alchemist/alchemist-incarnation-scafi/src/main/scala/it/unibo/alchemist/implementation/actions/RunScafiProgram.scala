@@ -20,6 +20,7 @@ import ScafiIncarnationForAlchemist.ID
 import ScafiIncarnationForAlchemist.EXPORT
 import ScafiIncarnationForAlchemist.factory
 import ScafiIncarnationForAlchemist.AggregateProgram
+import java.util.function.Consumer
 
 sealed class RunScafiProgram(
     environment: Environment[Any],
@@ -38,7 +39,8 @@ sealed class RunScafiProgram(
     this(environment, node, reaction, rng, programName, FastMath.nextUp(reaction.getTimeDistribution.getRate))
   }
 
-  private[this] val program = Class.forName(programName).newInstance().asInstanceOf[AggregateProgram]
+  import RunScafiProgram.NBRData
+  private val program = Class.forName(programName).newInstance().asInstanceOf[AggregateProgram]
   private[this] var nbrData: Map[ID, NBRData] = Map(
       node.getId -> new NBRData(factory.emptyExport(), environment.getPosition(node), Double.NaN)
   )
@@ -76,12 +78,20 @@ sealed class RunScafiProgram(
     node.setConcentration(programName, computed)
     val toSend = NBRData(computed, position, currentTime)
     nbrData = nbrData + (node.getId -> toSend)
-    import scala.compat.java8.FunctionConverters._
-//    environment.getNeighborhood(node).forEach { node: Node[Any] => 
-//      print(node)
-//    }
+    import collection.JavaConverters._
+    import it.unibo.alchemist.model.interfaces.Action
+    for (node: Node[Any] <- environment.getNeighborhood(node).asScala;
+        reaction: Reaction[Any] <- node.getReactions().asScala;
+        action: Action[Any] <- reaction.getActions().asScala;
+        if action.isInstanceOf[RunScafiProgram] && action.asInstanceOf[RunScafiProgram].program == program) {
+      action.asInstanceOf[RunScafiProgram].sendExport(node.getId, toSend)
+    }
   }
 
-  private[this] case class NBRData(export: EXPORT, position: Position, executionTime: Time)
-
+  private def sendExport(id: ID, export: NBRData) { nbrData += id -> export } 
+  
+}
+  
+object RunScafiProgram {
+  private case class NBRData(export: EXPORT, position: Position, executionTime: Time)
 }

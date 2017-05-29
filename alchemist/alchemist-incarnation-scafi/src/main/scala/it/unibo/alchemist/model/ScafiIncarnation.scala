@@ -32,34 +32,40 @@ sealed class ScafiIncarnation extends Incarnation[Any]{
     case _ => Double.NaN
   }
 
-  override def createAction(rand: RandomGenerator, env: Environment[Any] , node: Node[Any], time: TimeDistribution[Any], reaction: Reaction[Any], param: String) {
+  override def createAction(
+      rand: RandomGenerator,
+      env: Environment[Any],
+      node: Node[Any],
+      time: TimeDistribution[Any],
+      reaction: Reaction[Any],
+      param: String) = {
     new RunScafiProgram(notNull(env), notNull(node), notNull(reaction), notNull(rand), notNull(param))
   }
 
-  override def createConcentration(v: String) {
+  override def createConcentration(v: String) = {
     /*
      * TODO: support double-try parse in case of strings (to avoid "\"string\"" in the YAML file)
      */
     ScafiIncarnation(v)
   }
 
-  override def createCondition(rand: RandomGenerator, env: Environment[Any] , node: Node[Any], time: TimeDistribution[Any], reaction: Reaction[Any], param: String) {
+  override def createCondition(rand: RandomGenerator, env: Environment[Any] , node: Node[Any], time: TimeDistribution[Any], reaction: Reaction[Any], param: String) = {
     throw new UnsupportedOperationException("Use the type/parameters syntax to initialize conditions.")
   }
 
-  override def createMolecule(s: String ) {
+  override def createMolecule(s: String ): SimpleMolecule = {
       new SimpleMolecule(notNull(s));
   }
 
-  override def createNode(rand: RandomGenerator, env: Environment[Any], param: String) {
+  override def createNode(rand: RandomGenerator, env: Environment[Any], param: String) = {
         new ScafiNode(env)
   }
 
-  override def createReaction(rand: RandomGenerator, env: Environment[Any], node: Node[Any], time: TimeDistribution[Any], param: String) {
+  override def createReaction(rand: RandomGenerator, env: Environment[Any], node: Node[Any], time: TimeDistribution[Any], param: String) = {
     new Event(node, time)
   }
 
-  override def createTimeDistribution(rand: RandomGenerator, env: Environment[Any], node: Node[Any], param: String) {
+  override def createTimeDistribution(rand: RandomGenerator, env: Environment[Any], node: Node[Any], param: String) = {
     val frequency = toDouble(param)
     if (frequency.isNaN()) {
       throw new IllegalArgumentException(param + " is not a valid number, the time distribution could not be created.")

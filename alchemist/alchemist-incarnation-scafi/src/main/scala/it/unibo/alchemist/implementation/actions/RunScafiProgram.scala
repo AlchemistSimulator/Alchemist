@@ -3,18 +3,22 @@ package it.unibo.alchemist.implementation.actions
 import it.unibo.alchemist.model.implementations.actions.AbstractLocalAction
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.scafi.incarnations.BasicAbstractIncarnation
-import com.google.common.collect.Tables
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.model.interfaces.Environment
 import org.apache.commons.math3.random.RandomGenerator
 import it.unibo.alchemist.model.interfaces.Reaction
-import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.scafi.PimpMyAlchemist._
 import org.apache.commons.math3.util.FastMath
-import java.util.function.Consumer
 
+import java.util.function.Consumer
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist
+import ScafiIncarnationForAlchemist.AggregateProgram
+import ScafiIncarnationForAlchemist.ContextImpl
+import ScafiIncarnationForAlchemist.ID
+import ScafiIncarnationForAlchemist.EXPORT
+import ScafiIncarnationForAlchemist.factory
+
 
 sealed class RunScafiProgram(
     environment: Environment[Any],
@@ -39,7 +43,11 @@ sealed class RunScafiProgram(
       node.getId -> new NBRData(factory.emptyExport(), environment.getPosition(node), Double.NaN)
   )
   addModifiedMolecule(programName)
-  
+
+  override def cloneAction(n: Node[Any], r: Reaction[Any]) {
+    new RunScafiProgram(environment, n, r, rng, programName, retentionTime)
+  }
+
   override def execute() {
     import collection.JavaConverters.mapAsScalaMapConverter
     val position = environment.getPosition(node)
@@ -83,9 +91,8 @@ sealed class RunScafiProgram(
   }
 
   private def sendExport(id: ID, export: NBRData) { nbrData += id -> export }
-
 }
-  
+
 object RunScafiProgram {
   private case class NBRData(export: EXPORT, position: Position, executionTime: Time)
 }

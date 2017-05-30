@@ -89,9 +89,11 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
 
         final JFXDrawer effectDrawer = new JFXDrawer();
         effectDrawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
+        final EffectBarController effectBarController = new EffectBarController(this.stack, effectDrawer);
+
         try {
-            effectDrawer.setSidePane(FXResourceLoader.getLayout(BorderPane.class, new EffectBarController(this.stack, effectDrawer),
-                    EffectBarController.EFFECT_BAR_LAYOUT));
+            effectDrawer
+                    .setSidePane(FXResourceLoader.getLayout(BorderPane.class, effectBarController, EffectBarController.EFFECT_BAR_LAYOUT));
         } catch (IOException e) {
             throw new IllegalStateException("Could not initialize side pane for effects", e);
         }

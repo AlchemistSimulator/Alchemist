@@ -3,26 +3,19 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
 
 <BorderPane id="effectsPane" fx:id="effectsPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
-   <bottom>
-      <ButtonBar id="effectsControlBar" fx:id="effectsControlBar" stylesheets="@ButtonsBarLayout.css" BorderPane.alignment="CENTER">
-         <buttons>
-            <JFXButton id="addEffect" fx:id="addEffect" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" ripplerFill="WHITE" stylesheets="" text="Add" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="RIGHT" />
-         </buttons>
-      </ButtonBar>
-   </bottom>
-   <center>
-      <ListView id="effectsList" fx:id="effectsList" stylesheets="@ListCell.css" BorderPane.alignment="CENTER" />
-   </center>
    <top>
       <ButtonBar id="topBar" fx:id="topBar" stylesheets="@ButtonsBarLayout.css" BorderPane.alignment="CENTER">
          <buttons>
             <JFXButton id="backToGroups" fx:id="backToGroups" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" ripplerFill="WHITE" stylesheets="" text="Back" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT" />
-            <Label id="groupName" fx:id="groupName" text="Group name" ButtonBar.buttonData="RIGHT" />
+            <Label id="effectName" fx:id="effectName" text="Effect name" ButtonBar.buttonData="RIGHT" />
          </buttons>
       </ButtonBar>
    </top>
+   <center>
+      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
+   </center>
 </BorderPane>

@@ -1,7 +1,7 @@
 package it.unibo.alchemist.boundary.gui.view;
 
-import org.controlsfx.control.PopOver;
-
+import com.jfoenix.controls.JFXDrawer;
+import com.jfoenix.controls.JFXDrawersStack;
 import com.jfoenix.controls.JFXToggleButton;
 
 import it.unibo.alchemist.boundary.gui.effects.Effect;
@@ -19,6 +19,8 @@ import javafx.scene.text.TextAlignment;
  */
 public class EffectCell extends AbstractEffectCell<Effect> {
     private static final String DEFAULT_NAME = "Unnamed effect";
+    private final JFXDrawersStack stack;
+    private final JFXDrawer thisDrawer;
 
     /**
      * Default constructor.
@@ -26,15 +28,20 @@ public class EffectCell extends AbstractEffectCell<Effect> {
      * @param effectName
      *            the name of the effect
      */
-    public EffectCell(final String effectName) {
+    public EffectCell(final String effectName, final JFXDrawersStack stack, final JFXDrawer thisDrawer) {
         super(new Label(effectName), new JFXToggleButton());
+
+        this.stack = stack;
+        this.thisDrawer = thisDrawer;
 
         this.getLabel().setTextAlignment(TextAlignment.CENTER);
         this.getLabel().setFont(Font.font(this.getLabel().getFont().getFamily(), FontWeight.BOLD, this.getLabel().getFont().getSize()));
 
-        // this.getLabel().textProperty().addListener((observable, oldValue, newValue) -> this.getItem().setName(newValue));
+        // this.getLabel().textProperty().addListener((observable, oldValue,
+        // newValue) -> this.getItem().setName(newValue));
         // TODO add setName to Effect
-        // this.getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> this.getItem().setVisibility(newValue));
+        // this.getToggle().selectedProperty().addListener((observable,
+        // oldValue, newValue) -> this.getItem().setVisibility(newValue));
         // TODO add setVisibility to Effect
 
         this.getLabel().setOnMouseClicked(click -> {
@@ -57,18 +64,20 @@ public class EffectCell extends AbstractEffectCell<Effect> {
             }
         });
 
-        final PopOver propertiesPopOver = new PopOver();
-        propertiesPopOver.setDetachable(true);
-        propertiesPopOver.setHeaderAlwaysVisible(true);
-        propertiesPopOver.titleProperty().bindBidirectional(this.getLabel().textProperty());
+        final JFXDrawer propertiesDrawer = new JFXDrawer();
 
-
-        this.setOnMouseClicked(event -> {
-            if (propertiesPopOver.isShowing()) {
-                propertiesPopOver.hide();
-            } else {
-                propertiesPopOver.show(EffectCell.this);
-                propertiesPopOver.setDetached(true);
+        this.getPane().setOnMouseClicked(event -> {
+            // To not interfere with label double-click action
+            if (event.getClickCount() != 2) {
+                // Drawer size is modified every time it's opened
+                if (propertiesDrawer.isHidden() || propertiesDrawer.isHidding()) {
+                    propertiesDrawer.setDefaultDrawerSize(stack.getWidth());
+                    this.stack.toggle(propertiesDrawer, true);
+                } else if (propertiesDrawer.isShown() || propertiesDrawer.isShowing()) {
+                    this.stack.getChildren().forEach(drawer -> this.stack.toggle((JFXDrawer) drawer, false));
+                } else {
+                    throw new IllegalStateException("Drawer disappeared");
+                }
             }
         });
     }
@@ -76,8 +85,8 @@ public class EffectCell extends AbstractEffectCell<Effect> {
     /**
      * Constructor. Creates a cell with a default name.
      */
-    public EffectCell() {
-        this(DEFAULT_NAME);
+    public EffectCell(final JFXDrawersStack stack, final JFXDrawer thisDrawer) {
+        this(DEFAULT_NAME, stack, thisDrawer);
     }
 
     /**
@@ -107,6 +116,11 @@ public class EffectCell extends AbstractEffectCell<Effect> {
         } else {
             return item.getDataFormat();
         }
+    }
+
+    private JFXDrawer buildDrawer(final Effect effect) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

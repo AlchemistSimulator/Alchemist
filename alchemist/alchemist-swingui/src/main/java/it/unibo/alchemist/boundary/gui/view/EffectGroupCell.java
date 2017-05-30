@@ -2,8 +2,8 @@ package it.unibo.alchemist.boundary.gui.view;
 
 import java.io.IOException;
 
-import org.controlsfx.control.PopOver;
-
+import com.jfoenix.controls.JFXDrawer;
+import com.jfoenix.controls.JFXDrawersStack;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXToggleButton;
 
@@ -28,12 +28,19 @@ import javafx.scene.text.TextAlignment;
  */
 public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
     private static final String DEFAULT_NAME = "Unnamed effect group";
+    private final JFXDrawersStack stack;
 
     /**
      * Default constructor.
+     * 
+     * @param stack
+     *            the stack where to open the effects lists
+     * @param thisDrawer
+     *            the drawer the {@link ListView} this cell is part of is loaded
+     *            into
      */
-    public EffectGroupCell() {
-        this(DEFAULT_NAME);
+    public EffectGroupCell(final JFXDrawersStack stack, final JFXDrawer thisDrawer) {
+        this(DEFAULT_NAME, stack, thisDrawer);
     }
 
     /**
@@ -41,9 +48,17 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
      * 
      * @param groupName
      *            the name of the EffectGroup
+     * @param stack
+     *            the stack where to open the effects lists
+     * @param thisDrawer
+     *            the drawer the {@link ListView} this cell is part of is loaded
+     *            into
      */
-    public EffectGroupCell(final String groupName) {
+    public EffectGroupCell(final String groupName, final JFXDrawersStack stack, final JFXDrawer thisDrawer) {
         super(new Label(groupName), new JFXToggleButton(), new JFXSlider(0, 100, 100));
+
+        this.stack = stack;
+
         this.getLabel().setTextAlignment(TextAlignment.CENTER);
         this.getLabel().setFont(Font.font(this.getLabel().getFont().getFamily(), FontWeight.BOLD, this.getLabel().getFont().getSize()));
 
@@ -72,23 +87,29 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
             }
         });
 
-        final PopOver effectPopOver = new PopOver();
-        effectPopOver.setDetachable(true);
-        effectPopOver.setHeaderAlwaysVisible(true);
-        effectPopOver.titleProperty().bindBidirectional(this.getLabel().textProperty());
-        final EffectBarController effectPopoverController = new EffectBarController();
+        final JFXDrawer effectDrawer = new JFXDrawer();
+        effectDrawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
         try {
-            effectPopOver.setContentNode(
-                    FXResourceLoader.getLayout(BorderPane.class, effectPopoverController, EffectBarController.EFFECT_BAR_LAYOUT));
+            effectDrawer.setSidePane(FXResourceLoader.getLayout(BorderPane.class, new EffectBarController(this.stack, effectDrawer),
+                    EffectBarController.EFFECT_BAR_LAYOUT));
         } catch (IOException e) {
-            throw new IllegalStateException("Could not initialize popover for effect " + getItem().getName(), e);
+            throw new IllegalStateException("Could not initialize side pane for effects", e);
         }
-        this.setOnMouseClicked(event -> {
-            if (effectPopOver.isShowing()) {
-                effectPopOver.hide();
-            } else {
-                effectPopOver.show(EffectGroupCell.this);
-                effectPopOver.setDetached(true);
+        effectDrawer.setOverLayVisible(false);
+        effectDrawer.setResizableOnDrag(false);
+
+        this.getPane().setOnMouseClicked(event -> {
+            // To not interfere with label double-click action
+            if (event.getClickCount() != 2) {
+                // Drawer size is modified every time it's opened
+                if (effectDrawer.isHidden() || effectDrawer.isHidding()) {
+                    effectDrawer.setDefaultDrawerSize(stack.getWidth());
+                    this.stack.toggle(effectDrawer, true);
+                } else if (effectDrawer.isShown() || effectDrawer.isShowing()) {
+                    this.stack.getChildren().forEach(drawer -> this.stack.toggle((JFXDrawer) drawer, false));
+                } else {
+                    throw new IllegalStateException("Drawer disappeared");
+                }
             }
         });
     }

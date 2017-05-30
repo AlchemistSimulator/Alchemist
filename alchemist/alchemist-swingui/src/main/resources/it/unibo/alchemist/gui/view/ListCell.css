@@ -1,6 +1,3 @@
 .list-cell {
-    -fx-min-height: /*3.08em;*/ 10em;
-    /* -fx-pref-height: 3.08em; */
     -fx-min-width: /*3.08em;*/ 10em;
-    /* -fx-pref-width: 3.08em; */
 }

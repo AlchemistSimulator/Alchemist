@@ -8,7 +8,7 @@ ButtonBar {
     -fx-opacity: 0.45;
 }
 
-JFXButton {
+JFXButton, Label {
     -fx-background-color: transparent;
     -fx-padding: 0.0;
     -fx-background-size: 0.0;

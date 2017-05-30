@@ -2,6 +2,7 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.BorderPane?>
 
@@ -14,6 +15,14 @@
       </ButtonBar>
    </bottom>
    <center>
-      <ListView id="effectsList" fx:id="effectsList" BorderPane.alignment="CENTER" />
+      <ListView id="effectsList" fx:id="effectsList" stylesheets="@ListCell.css" BorderPane.alignment="CENTER" />
    </center>
+   <top>
+      <ButtonBar id="topBar" fx:id="topBar" stylesheets="@ButtonsBarLayout.css" BorderPane.alignment="CENTER">
+         <buttons>
+            <JFXButton id="backToGroups" fx:id="backToGroups" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" ripplerFill="WHITE" stylesheets="" text="Back" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT" />
+            <Label id="groupName" fx:id="groupoName" text="Group name" ButtonBar.buttonData="RIGHT"/>
+         </buttons>
+      </ButtonBar>
+   </top>
 </BorderPane>

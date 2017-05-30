@@ -4,6 +4,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDrawer;
+import com.jfoenix.controls.JFXDrawersStack;
 
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.effects.EffectStack;
@@ -35,6 +37,23 @@ public class EffectsGroupBarController implements Initializable {
 
     private ObservableList<EffectGroup> observableList;
 
+    private final JFXDrawersStack stack;
+    private JFXDrawer thisDrawer;
+
+    /**
+     * Default constructor.
+     * 
+     * @param stack
+     *            the stack where to open the effects lists
+     * @param thisDrawer
+     *            the drawer the layout this controller is assigned to is loaded
+     *            into
+     */
+    public EffectsGroupBarController(final JFXDrawersStack stack, final JFXDrawer thisDrawer) {
+        this.stack = stack;
+        this.thisDrawer = thisDrawer;
+    }
+
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
         assert save != null : FXResourceLoader.getInjectionErrorMessage("save", EFFECT_GROUP_BAR_LAYOUT);
@@ -65,7 +84,7 @@ public class EffectsGroupBarController implements Initializable {
         if (this.observableList == null) {
             this.observableList = FXCollections.observableArrayList();
             this.effectGroupsList.setItems(observableList);
-            this.effectGroupsList.setCellFactory(lv -> new EffectGroupCell());
+            this.effectGroupsList.setCellFactory(lv -> new EffectGroupCell(this.stack, this.thisDrawer));
             // TODO check
         }
         return this.observableList;

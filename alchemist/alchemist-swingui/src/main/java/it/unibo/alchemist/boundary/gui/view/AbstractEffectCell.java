@@ -17,6 +17,7 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import jiconfont.icons.GoogleMaterialDesignIcons;
 
@@ -230,6 +231,15 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
         } else {
             throw new IllegalArgumentException(WRONG_POS + "; consider using getNodeAt() method instead");
         }
+    }
+
+    /**
+     * Getter method for the root {@link Pane} of the cell.
+     * 
+     * @return the root pane
+     */
+    protected Pane getPane() {
+        return this.pane;
     }
 
     /**

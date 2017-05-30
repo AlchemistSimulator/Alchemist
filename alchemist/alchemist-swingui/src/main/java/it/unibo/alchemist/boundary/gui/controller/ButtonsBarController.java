@@ -28,7 +28,7 @@ import jiconfont.javafx.IconNode;
 public class ButtonsBarController implements Initializable {
     /** Layout path. */
     public static final String BUTTONS_BAR_LAYOUT = "ButtonsBarLayout";
-    private static final double DEFAULT_DRAWER_FRACTION = 5;
+    private static final double DEFAULT_DRAWER_FRACTION = 4;
 
     // FXML components
     @FXML
@@ -97,24 +97,34 @@ public class ButtonsBarController implements Initializable {
             }
         });
 
-        final EffectsGroupBarController effectsGroupBarController = new EffectsGroupBarController();
-        final JFXDrawer effectsDrawer = new JFXDrawer();
-        effectsDrawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
+        final JFXDrawer effectGroupsDrawer = new JFXDrawer();
+        final EffectsGroupBarController effectsGroupBarController = new EffectsGroupBarController(this.drawerStack, effectGroupsDrawer);
+        effectGroupsDrawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
         try {
-            effectsDrawer.setSidePane(FXResourceLoader.getLayout(BorderPane.class, effectsGroupBarController,
+            effectGroupsDrawer.setSidePane(FXResourceLoader.getLayout(BorderPane.class, effectsGroupBarController,
                     EffectsGroupBarController.EFFECT_GROUP_BAR_LAYOUT));
         } catch (IOException e) {
             throw new IllegalStateException("Could not initialize side pane for effects", e);
         }
-        effectsDrawer.setOverLayVisible(false);
-        effectsDrawer.setResizableOnDrag(false);
+        effectGroupsDrawer.setOverLayVisible(false);
+        effectGroupsDrawer.setResizableOnDrag(false);
+
+        // Without that, the stack will break at the second level of drawers
+        this.drawerStack.setContent(new JFXDrawer());
 
         effectsButton.setOnAction(e -> {
             // Drawer size is modified every time it's opened
-            if (effectsDrawer.isHidden()) {
-                effectsDrawer.setDefaultDrawerSize(controlPane.getWidth() / DEFAULT_DRAWER_FRACTION);
+            if (effectGroupsDrawer.isHidden() || effectGroupsDrawer.isHidding()) {
+                effectGroupsDrawer.setDefaultDrawerSize(controlPane.getWidth() / DEFAULT_DRAWER_FRACTION);
+                this.drawerStack.toggle(effectGroupsDrawer, true);
+
+            } else if (effectGroupsDrawer.isShown() || effectGroupsDrawer.isShowing()) {
+                this.drawerStack.getChildren().forEach(drawer -> this.drawerStack.toggle((JFXDrawer) drawer, false));
+                effectGroupsDrawer.close();
+            } else {
+                throw new IllegalStateException("Drawer disappeared");
             }
-            this.drawerStack.toggle(effectsDrawer);
+
         });
 
         fullscreenToggle.setText("");

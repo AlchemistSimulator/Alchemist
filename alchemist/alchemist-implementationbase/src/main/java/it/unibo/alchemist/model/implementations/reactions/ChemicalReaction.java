@@ -36,7 +36,7 @@ public class ChemicalReaction<T> extends AReaction<T> {
 
     @Override
     public ChemicalReaction<T> cloneOnNewNode(final Node<T> n) {
-        return new ChemicalReaction<>(n, getTimeDistribution().clone());
+        return makeClone(() -> new ChemicalReaction<>(n, getTimeDistribution().clone()));
     }
 
     @Override

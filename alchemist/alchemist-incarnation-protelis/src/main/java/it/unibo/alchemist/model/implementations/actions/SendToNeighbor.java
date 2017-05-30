@@ -8,12 +8,14 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
-
-import java.util.Objects;
 
 /**
  */
@@ -39,7 +41,16 @@ public class SendToNeighbor extends AbstractLocalAction<Object> {
 
     @Override
     public SendToNeighbor cloneAction(final Node<Object> n, final Reaction<Object> r) {
-        return new SendToNeighbor((ProtelisNode) n, reaction, prog);
+        final List<RunProtelisProgram> possibleRefs = n.getReactions().stream()
+                .map(Reaction::getActions)
+                .flatMap(List::stream)
+                .filter(a -> a instanceof RunProtelisProgram)
+                .map(a -> (RunProtelisProgram) a)
+                .collect(Collectors.toList());
+        if (possibleRefs.size() == 1) {
+            return new SendToNeighbor((ProtelisNode) n, reaction, possibleRefs.get(0));
+        }
+        throw new IllegalStateException("There must be one and one only unconfigured " + RunProtelisProgram.class.getSimpleName());
     }
 
     @Override

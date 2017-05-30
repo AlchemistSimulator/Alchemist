@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.implementations.actions;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.List;
+
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.LangUtils;
 import org.protelis.lang.ProtelisLoader;
@@ -43,6 +44,8 @@ public class RunProtelisProgram extends SimpleMolecule implements Action<Object>
     private final RandomGenerator random;
     private transient ProtelisVM vm;
     private boolean computationalCycleComplete;
+    private String originalProgram = "unknown";
+    private final double retentionTime;
 
     /**
      * @param env
@@ -66,7 +69,7 @@ public class RunProtelisProgram extends SimpleMolecule implements Action<Object>
             final Reaction<Object> r,
             final RandomGenerator rand,
             final String prog) throws SecurityException, ClassNotFoundException {
-        this(env, n, r, rand, ProtelisLoader.parse(prog), Double.NaN);
+        this(env, n, r, rand, prog, Double.NaN);
     }
 
     /**
@@ -96,6 +99,7 @@ public class RunProtelisProgram extends SimpleMolecule implements Action<Object>
             final String prog,
             final double retentionTime) throws SecurityException, ClassNotFoundException {
         this(env, n, r, rand, ProtelisLoader.parse(prog), retentionTime);
+        originalProgram = prog;
     }
 
     private RunProtelisProgram(
@@ -116,11 +120,19 @@ public class RunProtelisProgram extends SimpleMolecule implements Action<Object>
         node.addNetworkManger(this, netmgr);
         final ExecutionContext ctx = new AlchemistExecutionContext(env, n, r, rand, netmgr);
         vm = new ProtelisVM(prog, ctx);
+        this.retentionTime = retentionTime;
     }
 
     @Override
     public RunProtelisProgram cloneAction(final Node<Object> n, final Reaction<Object> r) {
-        throw new UnsupportedOperationException();
+        if (n instanceof ProtelisNode) {
+            try {
+                return new RunProtelisProgram(getEnvironment(), (ProtelisNode) n, r, getRandomGenerator(), originalProgram, getRetentionTime());
+            } catch (SecurityException | ClassNotFoundException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+        throw new IllegalArgumentException("The node must be a " + ProtelisNode.class.getSimpleName());
     }
 
     @Override
@@ -179,6 +191,20 @@ public class RunProtelisProgram extends SimpleMolecule implements Action<Object>
         final AlchemistNetworkManager netmgr = new AlchemistNetworkManager(environment, node, reaction, this);
         node.addNetworkManger(this, netmgr);
         vm = new ProtelisVM(program, new AlchemistExecutionContext(environment, node, reaction, random, netmgr));
+    }
+
+    /**
+     * @return the internal {@link RandomGenerator}
+     */
+    protected RandomGenerator getRandomGenerator() {
+        return random;
+    }
+
+    /**
+     * @return the retention time
+     */
+    protected double getRetentionTime() {
+        return retentionTime;
     }
 
 }

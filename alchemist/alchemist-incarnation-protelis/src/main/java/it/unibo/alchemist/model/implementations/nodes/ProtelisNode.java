@@ -30,6 +30,7 @@ public class ProtelisNode extends GenericNode<Object> implements DeviceUID, Exec
 
     private static final long serialVersionUID = 7411790948884770553L;
     private final Map<RunProtelisProgram, AlchemistNetworkManager> netmgrs = new ConcurrentHashMap<>();
+    private final Environment<?> environment;
 
     /**
      * Builds a new {@link ProtelisNode}.
@@ -39,17 +40,7 @@ public class ProtelisNode extends GenericNode<Object> implements DeviceUID, Exec
      */
     public ProtelisNode(final Environment<?> env) {
         super(env);
-    }
-
-    /**
-     * This constructor exists only for backward compatibility purposes, and
-     * should never be used.
-     * 
-     * @deprecated Scheduled to be dropped.
-     */
-    @Deprecated
-    public ProtelisNode() {
-        super(true);
+        this.environment = env;
     }
 
     @Override
@@ -136,6 +127,16 @@ public class ProtelisNode extends GenericNode<Object> implements DeviceUID, Exec
 
     @Override
     public void setup() {
+    }
+
+    @Override
+    public ProtelisNode cloneNode() {
+        final ProtelisNode result = new ProtelisNode(environment);
+        getContents().forEach((mol, conc) -> {
+            result.setConcentration(mol, conc);
+        });
+        getReactions().forEach(r -> result.addReaction(r.cloneOnNewNode(result)));
+        return result;
     }
 
 }

@@ -1,0 +1,48 @@
+import java.io.InputStream
+
+import it.unibo.alchemist.core.implementations.Engine
+import it.unibo.alchemist.loader.YamlLoader
+import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
+import it.unibo.alchemist.model.interfaces.Environment
+import org.scalatest.{FunSuite, Matchers}
+import org.slf4j.event.Level
+import org.slf4j.{Logger, LoggerFactory}
+
+import scala.collection.JavaConverters._
+
+/**
+  * @author Roberto Casadei
+  *
+  */
+
+class TestInSimulator extends FunSuite with Matchers {
+  test("Basic test"){
+    testNoVar("/plain_vanilla.yml")
+  }
+
+  test("Gradient"){
+    val env = testNoVar[Any]("/test_gradient.yml")
+    env.getNodes.asScala.foreach(node => {
+      val contents = node.getContents.asScala
+      println(node.getId + " --- " + node.getContents)
+      (contents.get(new SimpleMolecule("test.scafiprograms.ScafiGradientProgram")).get.asInstanceOf[Double]) should (be >= 0.0 and be <= 100.0)
+    })
+  }
+
+  private def testNoVar[T](resource: String, maxSteps: Long = 1000): Environment[T] = {
+    testLoading(resource, Map(), maxSteps)
+  }
+
+  private def testLoading[T](resource: String, vars: Map[String, java.lang.Double], maxSteps: Long = 1000): Environment[T] = {
+    import scala.collection.JavaConverters._
+    import ch.qos.logback.classic.{Logger,Level}
+    LoggerFactory.getLogger("ROOT").asInstanceOf[Logger].setLevel(Level.ERROR)
+    val res: InputStream = classOf[TestInSimulator].getResourceAsStream(resource)
+    res shouldNot be(null)
+    val env: Environment[T] = new YamlLoader(res).getWith(vars.asJava)
+    val sim = new Engine[T](env, maxSteps)
+    sim.play()
+    sim.run()
+    env
+  }
+}

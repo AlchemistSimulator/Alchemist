@@ -1,8 +1,10 @@
 apply plugin: 'scala'
 
+def scalaVersion ="${scalaBinaryVersion}.${scalaMinorVersion}"
+
 dependencies {
     compile (
-        "it.unibo.apice.scafiteam:scafi-core_2.11:${scafiVersion}",
+        "it.unibo.apice.scafiteam:scafi-core_${scalaBinaryVersion}:${scafiVersion}",
         "org.scala-lang:scala-compiler:${scalaVersion}",
         "org.scala-lang:scala-library:${scalaVersion}",
         project(':alchemist-interfaces'),
@@ -11,5 +13,7 @@ dependencies {
     testCompile(
         project(':alchemist-engine'),
         project(':alchemist-loading'),
+        "it.unibo.apice.scafiteam:scafi-core_${scalaBinaryVersion}:${scafiVersion}",
+        "org.scalatest:scalatest_${scalaBinaryVersion}:${scalatestVersion}"
     )
 }

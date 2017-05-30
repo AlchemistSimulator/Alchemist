@@ -9,4 +9,6 @@ gradle.prefs
 version.info
 prepare_environment.sh
 *.cache-main
-
+.idea
+out/
+.DS_Store

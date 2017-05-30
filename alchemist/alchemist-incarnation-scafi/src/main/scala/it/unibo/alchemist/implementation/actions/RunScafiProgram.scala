@@ -1,8 +1,6 @@
-package it.unibo.alchemist.implementation.actions
+package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.actions.AbstractLocalAction
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.scafi.incarnations.BasicAbstractIncarnation
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.model.interfaces.Environment
@@ -11,14 +9,12 @@ import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.scafi.PimpMyAlchemist._
 import org.apache.commons.math3.util.FastMath
 
-import java.util.function.Consumer
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist
 import ScafiIncarnationForAlchemist.AggregateProgram
 import ScafiIncarnationForAlchemist.ContextImpl
 import ScafiIncarnationForAlchemist.ID
 import ScafiIncarnationForAlchemist.EXPORT
 import ScafiIncarnationForAlchemist.factory
-
 
 sealed class RunScafiProgram(
     environment: Environment[Any],
@@ -39,9 +35,7 @@ sealed class RunScafiProgram(
 
   import RunScafiProgram.NBRData
   private val program = Class.forName(programName).newInstance().asInstanceOf[AggregateProgram]
-  private[this] var nbrData: Map[ID, NBRData] = Map(
-      node.getId -> new NBRData(factory.emptyExport(), environment.getPosition(node), Double.NaN)
-  )
+  private[this] var nbrData: Map[ID, NBRData] = Map()
   addModifiedMolecule(programName)
 
   override def cloneAction(n: Node[Any], r: Reaction[Any]) = {
@@ -52,10 +46,11 @@ sealed class RunScafiProgram(
     import collection.JavaConverters.mapAsScalaMapConverter
     val position = environment.getPosition(node)
     val currentTime = reaction.getTau
-    nbrData = nbrData.filter(_._2.executionTime >= currentTime - retentionTime)
+    if(nbrData.isEmpty) nbrData += node.getId -> new NBRData(factory.emptyExport(), environment.getPosition(node), Double.NaN)
+    nbrData = nbrData.filter { case (id,data) => id==node.getId || data.executionTime >= currentTime - retentionTime }
     val deltaTime = currentTime.subtract(nbrData.get(node.getId).map( _.executionTime).getOrElse(Double.NaN))
     val localSensors = node.getContents().asScala.map({
-      case (k, v) => k.toString -> v
+      case (k, v) => k.getName -> v
     }) ++ Map(
         "coordinates" -> position.getCartesianCoordinates,
         "dt" -> deltaTime,
@@ -70,14 +65,14 @@ sealed class RunScafiProgram(
          * is negligibly different between devices.
          */
         "nbrDelay" -> nbrData.mapValues[Double](nbr => nbr.executionTime + deltaTime - currentTime),
-        "nbrRange" -> nbrData.mapValues(_.position.getDistanceTo(position)),
-        "nbrVector" -> nbrData.mapValues(position - _.position)
+        "nbrRange" -> nbrData.mapValues[Double](_.position.getDistanceTo(position)),
+        "nbrVector" -> nbrData.mapValues[Position](position - _.position)
     )
     val nbrRange = nbrData.mapValues { _.position }
     val exports = nbrData.mapValues { _.export }
     val ctx = new ContextImpl(node.getId, exports, localSensors, nbrSensors)
     val computed = program.round(ctx)
-    node.setConcentration(programName, computed)
+    node.setConcentration(programName, computed.root[Any]())
     val toSend = NBRData(computed, position, currentTime)
     nbrData = nbrData + (node.getId -> toSend)
     import collection.JavaConverters._
@@ -85,7 +80,7 @@ sealed class RunScafiProgram(
     for (node: Node[Any] <- environment.getNeighborhood(node).asScala;
         reaction: Reaction[Any] <- node.getReactions().asScala;
         action: Action[Any] <- reaction.getActions().asScala;
-        if action.isInstanceOf[RunScafiProgram] && action.asInstanceOf[RunScafiProgram].program == program) {
+        if action.isInstanceOf[RunScafiProgram] && action.asInstanceOf[RunScafiProgram].program.getClass == program.getClass) {
       action.asInstanceOf[RunScafiProgram].sendExport(node.getId, toSend)
     }
   }

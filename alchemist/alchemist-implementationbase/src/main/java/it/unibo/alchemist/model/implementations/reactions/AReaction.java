@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 /**
  * The type which describes the concentration of a molecule
@@ -67,34 +68,31 @@ public abstract class AReaction<T> implements Reaction<T> {
     private final Node<T> node;
 
     /**
-     * This method provides facility to clone reactions. Given a new reaction
-     * where to clone and two sets of actions and conditions, it initializes the
-     * given reaction. The current time of occurrence and the target node are
-     * asserted by retrieving them from the passed reaction, so initialize it
-     * carefully. It is useful in the implementation of the cloneOnNewNode
-     * method.
+     * This method provides facility to clone reactions. Given a constructor in
+     * form of a {@link Supplier}, it populates the actions and conditions with
+     * cloned version of the ones registered in this reaction.
      * 
-     * @param conditions
-     *            the list of conditions to clone on the passed reaction
-     * @param actions
-     *            the list of actions to clone on the passed reaction
-     * @param res
-     *            the target reaction
-     * @param <T>
-     *            The type which describes the concentration of a molecule
+     * @param builder
+     *            the supplier
+     * 
+     * @param <R>
+     *            The reaction type
+     * @return the populated cloned reaction
      */
-    protected static <T> void cloneConditionsAndActions(final List<? extends Condition<T>> conditions, final List<? extends Action<T>> actions, final Reaction<T> res) {
+    protected <R extends Reaction<T>> R makeClone(final Supplier<R> builder) {
+        final R res = builder.get();
         final Node<T> n = res.getNode();
         final ArrayList<Condition<T>> c = new ArrayList<Condition<T>>(conditions.size());
-        for (final Condition<T> cond : conditions) {
+        for (final Condition<T> cond : getConditions()) {
             c.add(cond.cloneCondition(n, res));
         }
         final ArrayList<Action<T>> a = new ArrayList<Action<T>>(actions.size());
-        for (final Action<T> act : actions) {
+        for (final Action<T> act : getActions()) {
             a.add(act.cloneAction(n, res));
         }
         res.setActions(a);
         res.setConditions(c);
+        return res;
     }
 
     /**

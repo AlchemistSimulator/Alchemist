@@ -110,7 +110,6 @@ public class LsaNode extends GenericNode<List<ILsaMolecule>> implements ILsaNode
         return listMol;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Map<Molecule, List<ILsaMolecule>> getContents() {
         final Map<Molecule, List<ILsaMolecule>> res = new HashMap<>(instances.size(), 1.0f);

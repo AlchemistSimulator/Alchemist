@@ -37,9 +37,7 @@ public final class SVGImageUtils {
     public static Image getSvgImage(final String path, final double width, final double height) {
         final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         final InputStream imageStream = SVGImageUtils.class.getClassLoader().getResourceAsStream(path);
-        final Image image = new Image(imageStream, screenSize.getWidth() * width / 100,
-                screenSize.getHeight() * height / 100, true, true);
-        return image;
+        return new Image(imageStream, screenSize.getWidth() * width / 100, screenSize.getHeight() * height / 100, true, true);
     }
 
 }

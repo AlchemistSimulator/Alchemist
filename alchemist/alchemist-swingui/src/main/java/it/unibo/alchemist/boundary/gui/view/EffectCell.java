@@ -1,5 +1,7 @@
 package it.unibo.alchemist.boundary.gui.view;
 
+import org.controlsfx.control.PopOver;
+
 import com.jfoenix.controls.JFXToggleButton;
 
 import it.unibo.alchemist.boundary.gui.effects.Effect;
@@ -52,6 +54,21 @@ public class EffectCell extends AbstractEffectCell<Effect> {
                 dialog.setContentText(null);
 
                 dialog.showAndWait().ifPresent(name -> label.setText(name));
+            }
+        });
+
+        final PopOver propertiesPopOver = new PopOver();
+        propertiesPopOver.setDetachable(true);
+        propertiesPopOver.setHeaderAlwaysVisible(true);
+        propertiesPopOver.titleProperty().bindBidirectional(this.getLabel().textProperty());
+
+
+        this.setOnMouseClicked(event -> {
+            if (propertiesPopOver.isShowing()) {
+                propertiesPopOver.hide();
+            } else {
+                propertiesPopOver.show(EffectCell.this);
+                propertiesPopOver.setDetached(true);
             }
         });
     }

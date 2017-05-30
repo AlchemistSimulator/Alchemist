@@ -67,8 +67,7 @@ public class EffectBarController implements Initializable {
         final Optional<Class<? extends Effect>> clazz = this.effectBuilder.getResult();
         if (clazz.isPresent()) {
             this.getObservableList().add(this.effectBuilder.instantiateEffect(clazz.get()));
-            // this.getObservableList().get(this.getObservableList().size()
-            // -1).setName(name);
+            // this.getObservableList().get(this.getObservableList().size() - 1).setName(name);
             // TODO add setName to effect
             this.effectsList.refresh();
         }

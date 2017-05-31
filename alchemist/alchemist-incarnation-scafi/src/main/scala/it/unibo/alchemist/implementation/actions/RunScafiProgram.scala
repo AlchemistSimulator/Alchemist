@@ -46,7 +46,7 @@ sealed class RunScafiProgram(
     import collection.JavaConverters.mapAsScalaMapConverter
     val position = environment.getPosition(node)
     val currentTime = reaction.getTau
-    if(nbrData.isEmpty) nbrData += node.getId -> new NBRData(factory.emptyExport(), environment.getPosition(node), Double.NaN)
+    if(!nbrData.contains(node.getId)) nbrData += node.getId -> new NBRData(factory.emptyExport(), environment.getPosition(node), Double.NaN)
     nbrData = nbrData.filter { case (id,data) => id==node.getId || data.executionTime >= currentTime - retentionTime }
     val deltaTime = currentTime.subtract(nbrData.get(node.getId).map( _.executionTime).getOrElse(Double.NaN))
     val localSensors = node.getContents().asScala.map({
@@ -78,8 +78,8 @@ sealed class RunScafiProgram(
     nbrData = nbrData + (node.getId -> toSend)
     import collection.JavaConverters._
     import it.unibo.alchemist.model.interfaces.Action
-    for (node: Node[Any] <- environment.getNeighborhood(node).asScala;
-        reaction: Reaction[Any] <- node.getReactions().asScala;
+    for (nbr: Node[Any] <- environment.getNeighborhood(node).asScala;
+        reaction: Reaction[Any] <- nbr.getReactions().asScala;
         action: Action[Any] <- reaction.getActions().asScala;
         if action.isInstanceOf[RunScafiProgram] && action.asInstanceOf[RunScafiProgram].program.getClass == program.getClass) {
       action.asInstanceOf[RunScafiProgram].sendExport(node.getId, toSend)

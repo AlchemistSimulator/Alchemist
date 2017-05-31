@@ -8,13 +8,13 @@ import org.apache.commons.math3.random.RandomGenerator
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.scafi.PimpMyAlchemist._
 import org.apache.commons.math3.util.FastMath
-
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist
 import ScafiIncarnationForAlchemist.AggregateProgram
 import ScafiIncarnationForAlchemist.ContextImpl
 import ScafiIncarnationForAlchemist.ID
 import ScafiIncarnationForAlchemist.EXPORT
 import ScafiIncarnationForAlchemist.factory
+import it.unibo.alchemist.implementation.nodes.SimpleNodeManager
 
 sealed class RunScafiProgram(
     environment: Environment[Any],
@@ -56,7 +56,8 @@ sealed class RunScafiProgram(
         "dt" -> deltaTime,
         "position" -> position,
         "random" -> {() => rng.nextDouble},
-        "time" -> currentTime
+        "time" -> currentTime,
+        "manager" -> new SimpleNodeManager(node)
     )
     val nbrSensors = Map(
         "nbrLag" -> nbrData.mapValues[Double](currentTime - _.executionTime),

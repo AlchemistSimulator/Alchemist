@@ -24,8 +24,23 @@ class TestInSimulator extends FunSuite with Matchers {
     val env = testNoVar[Any]("/test_gradient.yml")
     env.getNodes.asScala.foreach(node => {
       val contents = node.getContents.asScala
-      println(node.getId + " --- " + node.getContents)
       (contents.get(new SimpleMolecule("test.scafiprograms.ScafiGradientProgram")).get.asInstanceOf[Double]) should (be >= 0.0 and be <= 100.0)
+    })
+  }
+
+  test("Environment"){
+    val env = testNoVar[Any]("/test_env.yml")
+    env.getNodes.asScala.foreach(node => {
+      val contents = node.getContents.asScala
+      def inputMolecule = (contents.get(new SimpleMolecule("number")).get.asInstanceOf[Int])
+      def outputMolecule = (contents.get(new SimpleMolecule("number2")).get.asInstanceOf[Int])
+      if(node.getId==0) {
+        inputMolecule shouldBe (77)
+        outputMolecule shouldBe (177)
+      } else {
+        inputMolecule shouldBe (-500)
+        outputMolecule shouldBe (-400)
+      }
     })
   }
 

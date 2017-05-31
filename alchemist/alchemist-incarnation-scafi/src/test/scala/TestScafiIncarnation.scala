@@ -24,11 +24,6 @@ class TestScafiIncarnation extends FunSuite with Matchers {
     val node = INC.createNode(rng, env, null)
     assertNotNull(node)
 
-    val immediately = INC.createTimeDistribution(rng, env, node, null)
-    assertNotNull(immediately)
-    assertTrue(java.lang.Double.isInfinite(immediately.getRate))
-    assertTrue(immediately.getRate > 0)
-
     val standard = INC.createTimeDistribution(rng, env, node, "3")
     assertNotNull(standard)
     standard.getRate shouldEqual 3d
@@ -36,25 +31,6 @@ class TestScafiIncarnation extends FunSuite with Matchers {
     val generic = INC.createReaction(rng, env, node, standard, null)
     assertNotNull(generic)
     assertTrue(generic.isInstanceOf[Event[_]])
-
-    //val program = INC.createReaction(rng, env, node, standard, "nbr(1)")
-    //testIsScafiProgram(program)
-
-    //val program2 = INC.createReaction(rng, env, node, standard, "testprotelis:test")
-    //testIsScafiProgram(program2)
-
-    //intercept[IllegalStateException] { INC.createReaction(rng, env, node, standard, "send") }
-
-    //node.addReaction(program)
-    //node.addReaction(program2)
-
-    //intercept[IllegalStateException]{ INC.createReaction(rng, env, node, standard, "send") }
-
-    //node.removeReaction(program2)
-
-    val send: Reaction[Any] = INC.createReaction(rng, env, node, standard, "send")
-
-    testIsSendToNeighbor(send)
   }
 
   private def testIsScafiProgram(program: Reaction[Any]) {
@@ -67,24 +43,6 @@ class TestScafiIncarnation extends FunSuite with Matchers {
     val prog = program.getActions.get(0)
     assertNotNull(prog)
     assertTrue(prog.isInstanceOf[RunScafiProgram])
-  }
-
-  private def testIsSendToNeighbor(program: Reaction[Any]) {
-    assertNotNull(program)
-    //assertTrue(program.isInstanceOf[ChemicalReaction[Any]])
-    //assertFalse(program.getConditions.isEmpty)
-    //assertEquals(1, program.getConditions.size)
-
-    //val check = program.getConditions.get(0)
-    //assertNotNull(check)
-    //assertTrue(check.isInstanceOf[ComputationalRoundComplete])
-
-    //assertFalse(program.getActions.isEmpty)
-    //assertEquals(1, program.getActions.size)
-
-    //val prog = program.getActions.get(0)
-    //assertNotNull(prog)
-    //assertTrue(prog.isInstanceOf[SendToNeighbor])
   }
 
   /**

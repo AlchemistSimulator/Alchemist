@@ -98,7 +98,7 @@ public class ButtonsBarController implements Initializable {
         });
 
         final JFXDrawer effectGroupsDrawer = new JFXDrawer();
-        final EffectsGroupBarController effectsGroupBarController = new EffectsGroupBarController(this.drawerStack, effectGroupsDrawer);
+        final EffectsGroupBarController effectsGroupBarController = new EffectsGroupBarController(this.drawerStack);
         effectGroupsDrawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
         try {
             effectGroupsDrawer.setSidePane(FXResourceLoader.getLayout(BorderPane.class, effectsGroupBarController,
@@ -109,22 +109,15 @@ public class ButtonsBarController implements Initializable {
         effectGroupsDrawer.setOverLayVisible(false);
         effectGroupsDrawer.setResizableOnDrag(false);
 
-        // Without that, the stack will break at the second level of drawers
-        this.drawerStack.setContent(new JFXDrawer());
-
         effectsButton.setOnAction(e -> {
             // Drawer size is modified every time it's opened
             if (effectGroupsDrawer.isHidden() || effectGroupsDrawer.isHidding()) {
                 effectGroupsDrawer.setDefaultDrawerSize(controlPane.getWidth() / DEFAULT_DRAWER_FRACTION);
-                this.drawerStack.toggle(effectGroupsDrawer, true);
-
-            } else if (effectGroupsDrawer.isShown() || effectGroupsDrawer.isShowing()) {
-                this.drawerStack.getChildren().forEach(drawer -> this.drawerStack.toggle((JFXDrawer) drawer, false));
-                effectGroupsDrawer.close();
-            } else {
-                throw new IllegalStateException("Drawer disappeared");
             }
-
+            this.drawerStack.toggle(effectGroupsDrawer);
+            if (effectGroupsDrawer.isShown() || effectGroupsDrawer.isShowing()) {
+                this.drawerStack.setContent(new JFXDrawer());
+            }
         });
 
         fullscreenToggle.setText("");

@@ -7,6 +7,8 @@ dependencies {
         "it.unibo.apice.scafiteam:scafi-core_${scalaBinaryVersion}:${scafiVersion}",
         "org.scala-lang:scala-compiler:${scalaVersion}",
         "org.scala-lang:scala-library:${scalaVersion}",
+        "com.github.cb372:scalacache-core_${scalaBinaryVersion}:${scalaCacheVersion}",
+        "com.github.cb372:scalacache-guava_${scalaBinaryVersion}:${scalaCacheVersion}",
         project(':alchemist-interfaces'),
         project(':alchemist-implementationbase'),
     )

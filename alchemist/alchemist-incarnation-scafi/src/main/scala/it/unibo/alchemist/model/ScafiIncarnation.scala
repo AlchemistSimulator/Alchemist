@@ -15,6 +15,7 @@ import it.unibo.alchemist.implementation.nodes.ScafiNode
 import it.unibo.alchemist.model.implementations.reactions.Event
 import it.unibo.alchemist.model.implementations.timedistributions.{DiracComb, ExponentialTime}
 import it.unibo.alchemist.model.implementations.times.DoubleTime
+import com.google.common.cache.CacheBuilder
 
 sealed class ScafiIncarnation extends Incarnation[Any]{
 
@@ -43,11 +44,15 @@ sealed class ScafiIncarnation extends Incarnation[Any]{
     new RunScafiProgram(notNull(env), notNull(node), notNull(reaction), notNull(rand), notNull(param))
   }
 
+  /**
+   * NOTE: String v may be prefixed by "_" symbol to avoid caching the value resulting from its interpretation
+   */
   override def createConcentration(v: String) = {
     /*
      * TODO: support double-try parse in case of strings (to avoid "\"string\"" in the YAML file)
      */
-    ScafiIncarnation[Any](v)
+    val doCacheValue = !v.startsWith("_");
+    ScafiIncarnation[AnyRef](if(doCacheValue) v else v.tail, doCacheValue)
   }
 
   override def createCondition(rand: RandomGenerator, env: Environment[Any] , node: Node[Any], time: TimeDistribution[Any], reaction: Reaction[Any], param: String) = {
@@ -87,15 +92,22 @@ sealed class ScafiIncarnation extends Incarnation[Any]{
 }
 
 object ScafiIncarnation {
-
   import scala.reflect.runtime.currentMirror
   import scala.tools.reflect.ToolBox
-  import java.io.File
+  import java.util.concurrent.Callable
 
-  def apply[A](string: String): A = {
-    val toolbox = currentMirror.mkToolBox()
-    val tree = toolbox.parse(string)
-    toolbox.eval(tree).asInstanceOf[A]
-  }
+  private val t = currentMirror.mkToolBox()
+  import scalacache._
+  import guava._
+  import com.google.common.cache.CacheBuilder
+  private val underlyingGuavaCache = CacheBuilder.newBuilder().maximumSize(100L).build[String, Object]
+  private implicit val scalaCache = ScalaCache(GuavaCache(underlyingGuavaCache))
 
+  /**
+   * Evaluates str using Scala reflection.
+   * When doCacheValue is true, the result of the evaluation is cached.
+   * When doCacheValue is false, only the result of parsing is cached.
+   */
+  def apply[A <: AnyRef](str: String, doCacheValue: Boolean = true): A =
+    (if(doCacheValue) sync.caching("//VAL"+str)(t.eval(t.parse(str))) else t.eval(sync.caching("//PARS"+str){t.parse(str)})).asInstanceOf[A]
 }

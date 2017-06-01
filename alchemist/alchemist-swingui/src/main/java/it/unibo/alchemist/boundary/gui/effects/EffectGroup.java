@@ -1,17 +1,13 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
 import java.io.Serializable;
-import java.util.List;
-
-import javafx.scene.input.DataFormat;
+import java.util.Queue;
 
 /**
  * Models a group of effects. Each effect has a different priority of
  * visualization.
  */
-public interface EffectGroup extends Serializable {
-    /** Default DataFormat. */
-    DataFormat DATA_FORMAT = new DataFormat(EffectGroup.class.getName());
+public interface EffectGroup extends Serializable, Queue<Effect> {
 
     /**
      * Gets the name of the group.
@@ -27,36 +23,6 @@ public interface EffectGroup extends Serializable {
      *            the name of the group
      */
     void setName(String name);
-
-    /**
-     * Puts the effects in the group, giving it the maximum priority.
-     * 
-     * @param effect
-     *            the effect
-     * @return the effect pushed
-     */
-    Effect push(Effect effect);
-
-    /**
-     * Removes the effect with maximum priority and returns it.
-     * 
-     * @return the effect with maximum priority
-     */
-    Effect pop();
-
-    /**
-     * Returns the effect with maximum priority, without removing it.
-     * 
-     * @return the effect with maximum priority
-     */
-    Effect peek();
-
-    /**
-     * Checks if the group contains effects.
-     * 
-     * @return true if there are effects, false otherwise
-     */
-    boolean empty();
 
     /**
      * Checks if an effect is present in the group.
@@ -135,24 +101,16 @@ public interface EffectGroup extends Serializable {
      */
     void changePriority(Effect effect, int offset);
 
-    /**
-     * Returns all the effects in the group.
-     * 
-     * @return the effects
-     */
-    List<Effect> getAllEffects();
-
-    /**
-     * Returns the dataformat of the group. Useful for drag'n'drop in JavaFX
-     * GUIs.
-     * 
-     * @return the dataformat
-     */
-    DataFormat getDataFormat();
-
     @Override // Should override hashCode() method
     int hashCode();
 
+    /**
+     * Compares the {@link Effect Effects} contained in this collection one by one. The
+     * result is true if and only the argument is not {@code null} and every
+     * {@link Effect} is not {@code null}, {@link Effect#equals(Object) equal}
+     * to the corresponding in the comparing {@code EffectGroup} (order is
+     * important!) and has the same visibility.
+     */
     @Override // Should override equals() method
     boolean equals(Object obj);
 }

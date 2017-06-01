@@ -33,8 +33,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  */
 public class DrawShape implements Effect {
-    /** Default DataFormat. */
-    public static final DataFormat DATA_FORMAT = new DataFormat(DrawShape.class.getName());
 
     /**
      * Enum that models the mode to use the DrawShape.
@@ -473,11 +471,6 @@ public class DrawShape implements Effect {
      */
     protected void setWritingPropertyValue(final boolean writingPropertyValue) {
         this.writingPropertyValue = writingPropertyValue;
-    }
-
-    @Override
-    public DataFormat getDataFormat() {
-        return DATA_FORMAT;
     }
 
 }

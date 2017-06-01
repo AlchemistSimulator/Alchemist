@@ -65,14 +65,15 @@ public class EffectBarController implements Initializable {
         this.addEffect.setText("");
         this.addEffect.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.ADD));
 
+        this.backToGroups.setText("");
+        this.backToGroups.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.ARROW_BACK));
+
         this.effectBuilder = new EffectBuilderFX();
 
-        this.addEffect.setOnAction(e -> {
-            addEffectToList();
-        });
+        this.addEffect.setOnAction(e -> addEffectToList());
 
         this.backToGroups.setOnAction(e -> {
-            this.stack.toggle(thisDrawer, false);
+            this.stack.toggle(thisDrawer);
         });
 
     }

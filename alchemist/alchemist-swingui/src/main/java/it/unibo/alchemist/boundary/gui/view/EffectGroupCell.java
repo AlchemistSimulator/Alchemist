@@ -10,6 +10,7 @@ import com.jfoenix.controls.JFXToggleButton;
 import it.unibo.alchemist.boundary.gui.controller.EffectBarController;
 import it.unibo.alchemist.boundary.gui.effects.Effect;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
+import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -35,12 +36,9 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
      * 
      * @param stack
      *            the stack where to open the effects lists
-     * @param thisDrawer
-     *            the drawer the {@link ListView} this cell is part of is loaded
-     *            into
      */
-    public EffectGroupCell(final JFXDrawersStack stack, final JFXDrawer thisDrawer) {
-        this(DEFAULT_NAME, stack, thisDrawer);
+    public EffectGroupCell(final JFXDrawersStack stack) {
+        this(DEFAULT_NAME, stack);
     }
 
     /**
@@ -50,11 +48,8 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
      *            the name of the EffectGroup
      * @param stack
      *            the stack where to open the effects lists
-     * @param thisDrawer
-     *            the drawer the {@link ListView} this cell is part of is loaded
-     *            into
      */
-    public EffectGroupCell(final String groupName, final JFXDrawersStack stack, final JFXDrawer thisDrawer) {
+    public EffectGroupCell(final String groupName, final JFXDrawersStack stack) {
         super(new Label(groupName), new JFXToggleButton(), new JFXSlider(0, 100, 100));
 
         this.stack = stack;
@@ -106,11 +101,10 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
                 // Drawer size is modified every time it's opened
                 if (effectDrawer.isHidden() || effectDrawer.isHidding()) {
                     effectDrawer.setDefaultDrawerSize(stack.getWidth());
-                    this.stack.toggle(effectDrawer, true);
-                } else if (effectDrawer.isShown() || effectDrawer.isShowing()) {
-                    this.stack.getChildren().forEach(drawer -> this.stack.toggle((JFXDrawer) drawer, false));
-                } else {
-                    throw new IllegalStateException("Drawer disappeared");
+                }
+                this.stack.toggle(effectDrawer);
+                if (effectDrawer.isShown() || effectDrawer.isShowing()) {
+                    this.stack.setContent(new JFXDrawer());
                 }
             }
         });
@@ -148,9 +142,9 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
         final EffectGroup item = this.getItem();
 
         if (item == null) {
-            return EffectGroup.DATA_FORMAT;
+            return DataFormatFactory.getDataFormat(EffectGroup.class);
         } else {
-            return item.getDataFormat();
+            return DataFormatFactory.getDataFormat(item);
         }
     }
 

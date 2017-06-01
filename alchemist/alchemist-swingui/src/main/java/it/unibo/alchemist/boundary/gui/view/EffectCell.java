@@ -5,7 +5,9 @@ import com.jfoenix.controls.JFXDrawersStack;
 import com.jfoenix.controls.JFXToggleButton;
 
 import it.unibo.alchemist.boundary.gui.effects.Effect;
+import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.DataFormat;
 import javafx.scene.text.Font;
@@ -27,6 +29,11 @@ public class EffectCell extends AbstractEffectCell<Effect> {
      * 
      * @param effectName
      *            the name of the effect
+     * @param stack
+     *            the stack where to open the effect properties
+     * @param thisDrawer
+     *            the drawer where the {@link ListView} this cell is part of is
+     *            into
      */
     public EffectCell(final String effectName, final JFXDrawersStack stack, final JFXDrawer thisDrawer) {
         super(new Label(effectName), new JFXToggleButton());
@@ -72,18 +79,20 @@ public class EffectCell extends AbstractEffectCell<Effect> {
                 // Drawer size is modified every time it's opened
                 if (propertiesDrawer.isHidden() || propertiesDrawer.isHidding()) {
                     propertiesDrawer.setDefaultDrawerSize(stack.getWidth());
-                    this.stack.toggle(propertiesDrawer, true);
-                } else if (propertiesDrawer.isShown() || propertiesDrawer.isShowing()) {
-                    this.stack.getChildren().forEach(drawer -> this.stack.toggle((JFXDrawer) drawer, false));
-                } else {
-                    throw new IllegalStateException("Drawer disappeared");
                 }
+                this.stack.toggle(propertiesDrawer);
             }
         });
     }
 
     /**
      * Constructor. Creates a cell with a default name.
+     * 
+     * @param stack
+     *            the stack where to open the effect properties
+     * @param thisDrawer
+     *            the drawer where the {@link ListView} this cell is part of is
+     *            into
      */
     public EffectCell(final JFXDrawersStack stack, final JFXDrawer thisDrawer) {
         this(DEFAULT_NAME, stack, thisDrawer);
@@ -112,15 +121,10 @@ public class EffectCell extends AbstractEffectCell<Effect> {
         final Effect item = this.getItem();
 
         if (item == null) {
-            return Effect.DATA_FORMAT;
+            return DataFormatFactory.getDataFormat(Effect.class);
         } else {
-            return item.getDataFormat();
+            return DataFormatFactory.getDataFormat(item);
         }
-    }
-
-    private JFXDrawer buildDrawer(final Effect effect) {
-        // TODO Auto-generated method stub
-        return null;
     }
 
 }

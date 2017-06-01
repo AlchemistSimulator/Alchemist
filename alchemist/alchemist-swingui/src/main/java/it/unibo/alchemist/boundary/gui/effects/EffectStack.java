@@ -1,9 +1,14 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Queue;
 
-import javafx.scene.input.DataFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The class models a group of effects, stored as a stack. It can manage
@@ -15,10 +20,11 @@ public class EffectStack implements EffectGroup {
     /** Default IllegalArgumentException message. */
     private static final String CANNOT_FIND_EFFECT = "Cannot find the effect in the stack";
     /** Default effect group name. */
-    public static final String DEFAULT_NAME = "New group";
-    private static final DataFormat DATA_FORMAT = new DataFormat(EffectStack.class.getName());
+    public static final String DEFAULT_NAME = "Unnamed group";
     private static final int FIRST_HASHCODE_CONSTANT = 1231;
     private static final int SECOND_HASHCODE_CONSTANT = 1237;
+    /** Default logger. */
+    private static final Logger L = LoggerFactory.getLogger(EffectStack.class);
 
     private final List<Effect> effects;
     private final List<Boolean> visibilities;
@@ -60,7 +66,27 @@ public class EffectStack implements EffectGroup {
         this.name = name;
     }
 
-    @Override
+    /**
+     * Puts the effects in the group, giving it the maximum priority.
+     * <p>
+     * Acts nearly the same than using {@link #add(Effect)} or
+     * {@link #offer(Effect)}.
+     * 
+     * @param effect
+     *            the effect
+     * @return the effect pushed
+     * @throws UnsupportedOperationException
+     *             if the add operation is not supported by this list
+     * @throws ClassCastException
+     *             if the class of the specified element prevents it from being
+     *             added to this list
+     * @throws NullPointerException
+     *             if the specified element is null and this list does not
+     *             permit null elements
+     * @throws IllegalArgumentException
+     *             if some property of this element prevents it from being added
+     *             to this list
+     */
     public Effect push(final Effect effect) {
         this.effects.add(effect);
         this.visibilities.add(true);
@@ -68,23 +94,19 @@ public class EffectStack implements EffectGroup {
         return effect;
     }
 
-    @Override
+    /**
+     * Removes the effect with maximum priority and returns it.
+     * <p>
+     * Acts nearly the same than using {@link #remove()} or {@link #poll()}.
+     * 
+     * @return the effect with maximum priority
+     */
     public Effect pop() {
         final Effect e = this.effects.get(topIndex);
         this.effects.remove(topIndex);
         this.visibilities.remove(topIndex);
         this.topIndex--;
         return e;
-    }
-
-    @Override
-    public Effect peek() {
-        return this.effects.get(topIndex);
-    }
-
-    @Override
-    public boolean empty() {
-        return effects.isEmpty();
     }
 
     @Override
@@ -131,11 +153,6 @@ public class EffectStack implements EffectGroup {
     }
 
     @Override
-    public List<Effect> getAllEffects() {
-        return new ArrayList<>(this.effects);
-    }
-
-    @Override
     public boolean isVisible() {
         return this.visibility;
     }
@@ -160,8 +177,161 @@ public class EffectStack implements EffectGroup {
     }
 
     @Override
-    public DataFormat getDataFormat() {
-        return EffectStack.DATA_FORMAT;
+    public Iterator<Effect> iterator() {
+        return effects.iterator();
+    }
+
+    @Override
+    public int size() {
+        return this.effects.size();
+    }
+
+    @Override
+    public boolean contains(final Object o) {
+        return this.effects.contains(o);
+    }
+
+    @Override
+    public Object[] toArray() {
+        return this.effects.toArray();
+    }
+
+    @Override
+    public <T> T[] toArray(final T[] a) {
+        return this.effects.toArray(a);
+    }
+
+    @Override
+    public boolean add(final Effect e) {
+        if (e == null || this.contains(e)) {
+            return false;
+        } else {
+            try {
+                return this.push(e) != null;
+            } catch (UnsupportedOperationException | ClassCastException | IllegalArgumentException ex) {
+                L.debug(ex.toString());
+                return false;
+            }
+        }
+    }
+
+    @Override
+    public boolean remove(final Object o) {
+        if (o instanceof Effect) {
+            final Effect effect = (Effect) o;
+            final int index = this.search(effect);
+            if (index == -1) {
+                return false;
+            } else {
+                try {
+                    this.visibilities.remove(index);
+                    this.topIndex--;
+                    return this.effects.remove(effect);
+                } catch (UnsupportedOperationException | IndexOutOfBoundsException ex) {
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean containsAll(final Collection<?> c) {
+        return this.effects.containsAll(c);
+    }
+
+    @Override
+    public boolean addAll(final Collection<? extends Effect> c) {
+        try {
+            c.forEach(e -> {
+                if (this.push(e) == null) {
+                    throw new IllegalArgumentException();
+                }
+            });
+            return true;
+        } catch (UnsupportedOperationException | ClassCastException | IllegalArgumentException ex) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean removeAll(final Collection<?> c) {
+        boolean b = false;
+        for (final Object e : c) {
+            if (this.remove(e)) {
+                b = true;
+            }
+        }
+        return b;
+    }
+
+    @Override
+    public boolean retainAll(final Collection<?> c) {
+        boolean b = false;
+
+        for (final Effect effect : this.effects) {
+            if (!c.contains(effect)) {
+                this.remove(effect);
+                b = true;
+            }
+        }
+
+        return b;
+    }
+
+    @Override
+    public void clear() {
+        this.effects.forEach(effect -> this.remove(effect));
+    }
+
+    @Override
+    public boolean offer(final Effect e) {
+        try {
+            return this.add(e);
+        } catch (final Exception ex) {
+            return false;
+        }
+    }
+
+    @Override
+    public Effect remove() {
+        if (this.isEmpty()) {
+            throw new NoSuchElementException("The stack is empty");
+        } else {
+            return this.pop();
+        }
+    }
+
+    @Override
+    public Effect poll() {
+        return this.pop();
+    }
+
+    /**
+     * Returns the effect with maximum priority, without removing it.
+     * <p>
+     * See {@link Queue#peek()}.
+     * 
+     * @return the effect with maximum priority
+     */
+    @Override
+    public Effect peek() {
+        return this.effects.get(topIndex);
+    }
+
+    @Override
+    public Effect element() {
+        if (this.isEmpty()) {
+            throw new NoSuchElementException("The stack is empty");
+        } else {
+            return this.peek();
+        }
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return effects.isEmpty();
     }
 
     @Override

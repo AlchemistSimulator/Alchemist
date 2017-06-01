@@ -5,4 +5,5 @@ dependencies {
         "net.sf.trove4j:trove4j:$troveVersion",
         "org.danilopianini:boilerplate:$boilerplateVersion"
     )
+    testCompile project(':alchemist-implementationbase')
 }

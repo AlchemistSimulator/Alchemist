@@ -88,7 +88,7 @@ public class DrawShapeFX implements EffectFX {
             "Tune colors using a molecule property", false);
     private final SerializableStringProperty property = new SerializableStringProperty(null, "Molecule property");
     private final SerializableBooleanProperty writingPropertyValue = new SerializableBooleanProperty(null, "Write the value", false);
-    private final EnumProperty<ColorChannel> c = new EnumProperty<ColorChannel>(null, "Channel to use", ColorChannel.Alpha);
+    private final EnumProperty<ColorChannel> colorChannel = new EnumProperty<ColorChannel>(null, "Channel to use", ColorChannel.Alpha);
     private final SerializableBooleanProperty reverse = new SerializableBooleanProperty(null, "Reverse effect", false);
     private final RangedDoubleProperty propoom = new RangedDoubleProperty(null, "Property order of magnitude", 0, -PROPERTY_SCALE,
             PROPERTY_SCALE);
@@ -100,7 +100,7 @@ public class DrawShapeFX implements EffectFX {
     private Color colorCache = DEFAULT_COLOR;
     private transient Molecule molecule;
     private transient Object molStringCached;
-    private final SerializableStringProperty curIncarnation = new SerializableStringProperty();
+    private final SerializableStringProperty currentIncarnation = new SerializableStringProperty();
     private transient SerializableStringProperty prevIncarnation;
     private transient Incarnation<?> incarnation;
 
@@ -118,8 +118,8 @@ public class DrawShapeFX implements EffectFX {
         return this.alpha.get();
     }
 
-    protected void setAlpha(final double a) {
-        this.alpha.set(a);
+    protected void setAlpha(final double alpha) {
+        this.alpha.set(alpha);
     }
 
     protected DoubleProperty blueProperty() {
@@ -130,20 +130,20 @@ public class DrawShapeFX implements EffectFX {
         return this.blue.get();
     }
 
-    protected void setBlue(final double b) {
-        this.blue.set(b);
+    protected void setBlue(final double blue) {
+        this.blue.set(blue);
     }
 
     protected EnumProperty<ColorChannel> colorChannelProperty() {
-        return this.c;
+        return this.colorChannel;
     }
 
     protected ColorChannel getColorChannel() {
-        return this.c.get();
+        return this.colorChannel.get();
     }
 
     protected void setColorChannel(final ColorChannel colorChannel) {
-        this.c.set(colorChannel);
+        this.colorChannel.set(colorChannel);
     }
 
     protected DoubleProperty greenProperty() {
@@ -154,20 +154,20 @@ public class DrawShapeFX implements EffectFX {
         return this.green.get();
     }
 
-    protected void setGreen(final double g) {
-        this.green.set(g);
+    protected void setGreen(final double green) {
+        this.green.set(green);
     }
 
     protected StringProperty currentIncarnationProperty() {
-        return this.curIncarnation;
+        return this.currentIncarnation;
     }
 
     protected String getCurrentIncarnation() {
-        return this.curIncarnation.get();
+        return this.currentIncarnation.get();
     }
 
-    protected void getCurrentIncarnation(final String element) {
-        this.curIncarnation.set(element);
+    protected void getCurrentIncarnation(final String currentIncarnation) {
+        this.currentIncarnation.set(currentIncarnation);
     }
 
     protected DoubleProperty maxpropProperty() {

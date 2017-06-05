@@ -14,6 +14,7 @@ buildscript {
 allprojects {
     
     apply plugin: 'org.danilopianini.build-commons'
+    apply plugin: "org.xtext.xtend"
     
     configurations {
         all*.exclude group: 'org.eclipse.xtext', module: 'org.eclipse.xtext.dependencies'
@@ -29,6 +30,7 @@ allprojects {
     dependencies {
         compile "com.google.code.findbugs:findbugs:$findBugsVersion"
         compile "org.apache.commons:commons-math3:$math3Version"
+        compile "org.eclipse.xtend:org.eclipse.xtend.lib:${xtendLibVersion}"
         compile "org.slf4j:slf4j-api:$slf4jVersion"
 
         runtime "ch.qos.logback:logback-classic:$logbackVersion"

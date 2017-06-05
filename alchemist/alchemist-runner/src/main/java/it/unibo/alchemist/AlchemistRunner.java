@@ -53,176 +53,16 @@ public final class AlchemistRunner {
     private static final ThreadFactory THREAD_FACTORY = new ThreadFactoryBuilder()
             .setNameFormat("alchemist-batch-%d")
             .build();
-    private final Loader loader;
-    private final Time endTime;
-    private final long endStep;
-    private final Optional<String> exportFileRoot;
-    private final Optional<String> effectsFile;
-    private final double samplingInterval;
-    private final int parallelism;
-    private final boolean headless;
     private final int closeOperation;
     private final boolean doBenchmark;
-
-    /**
-     * 
-     *
-     */
-    public static class Builder {
-        private int parallelism = Runtime.getRuntime().availableProcessors() + 1;
-        private int closeOperation;
-        private boolean headless;
-        private double samplingInt = 1;
-        private final Loader loader;
-        private Optional<String> exportFileRoot = Optional.empty();
-        private Optional<String> effectsFile = Optional.empty();
-        private Time endTime = DoubleTime.INFINITE_TIME;
-        private long endStep = Long.MAX_VALUE;
-        private boolean benchmark;
-
-        /**
-         * 
-         * @param loader
-         *            loader
-         */
-        public Builder(final Loader loader) {
-            this.loader = Objects.requireNonNull(loader, "Loader can't be null.");
-        }
-
-        /**
-         * 
-         * @param uri
-         *            effect uri
-         * @return builder
-         */
-        public Builder setEffects(final String uri) {
-            this.effectsFile = Optional.ofNullable(uri);
-            return this;
-        }
-
-        /**
-         * 
-         * @param deltaTime
-         *            time interval
-         * @return builder
-         */
-        public Builder setInterval(final double deltaTime) {
-            if (deltaTime > 0) {
-                this.samplingInt = deltaTime;
-            } else {
-                throw new IllegalArgumentException("A sampling interval negative makes no sense.");
-            }
-            return this;
-        }
-
-        /**
-         * 
-         * @param uri
-         *            output uri
-         * @return builder
-         */
-        public Builder setOutputFile(final String uri) {
-            this.exportFileRoot = Optional.ofNullable(uri);
-            return this;
-        }
-
-        /**
-         * 
-         * @param t
-         *            end time
-         * @return builder
-         */
-        public Builder setEndTime(final Time t) {
-            this.endTime = t;
-            return this;
-        }
-
-        /**
-         * 
-         * @param steps
-         *            end step
-         * @return builder
-         */
-        public Builder setEndStep(final long steps) {
-            if (steps < 0) {
-                throw new IllegalArgumentException("The number of steps (" + steps + ") must be zero or positive");
-            }
-            this.endStep = steps;
-            return this;
-        }
-
-        /**
-         * 
-         * @param t
-         *            end time
-         * @return builder
-         */
-        public Builder setEndTime(final Number t) {
-            final double dt = t.doubleValue();
-            if (dt < 0) {
-                throw new IllegalArgumentException("The end time (" + dt + ") must be zero or positive");
-            }
-            this.endTime = new DoubleTime(t.doubleValue());
-            return this;
-        }
-
-        /**
-         * 
-         * @param headless
-         *            is headless
-         * @return builder
-         */
-        public Builder setHeadless(final boolean headless) {
-            this.headless = headless;
-            return this;
-        }
-
-        /**
-         * 
-         * @param threads
-         *            threads number
-         * @return builder
-         */
-        public Builder setParallelism(final int threads) {
-            if (threads <= 0) {
-                throw new IllegalArgumentException("Thread number must be >= 0");
-            }
-            this.parallelism = threads;
-            return this;
-        }
-
-        /**
-         * 
-         * @param closeOp
-         *            the close operation
-         * @return buider
-         */
-        public Builder setGUICloseOperation(final int closeOp) {
-            if (closeOp < 0 || closeOp > 3) {
-                throw new IllegalArgumentException("The value of close operation is not valid.");
-            }
-            this.closeOperation = closeOp;
-            return this;
-        }
-
-        /**
-         * @param benchmark set true if you want to benchmark this run
-         * @return builder
-         */
-        public Builder setBenchmarkMode(final boolean benchmark) {
-            this.benchmark = benchmark;
-            return this;
-        }
-
-        /**
-         * 
-         * @return AlchemistRunner
-         */
-        public AlchemistRunner build() {
-            return new AlchemistRunner(this.loader, this.endTime, this.endStep, this.exportFileRoot, this.effectsFile,
-                    this.samplingInt, this.parallelism, this.headless, this.closeOperation, this.benchmark);
-        }
-    }
+    private final Optional<String> effectsFile;
+    private final long endStep;
+    private final Time endTime;
+    private final Optional<String> exportFileRoot;
+    private final boolean headless;
+    private final Loader loader;
+    private final int parallelism;
+    private final double samplingInterval;
 
     private AlchemistRunner(final Loader source,
             final Time endTime,
@@ -376,5 +216,165 @@ public final class AlchemistRunner {
                 return finalizer.apply(sim);
             });
         }
+
+    /**
+     * 
+     *
+     */
+    public static class Builder {
+        private boolean benchmark;
+        private int closeOperation;
+        private Optional<String> effectsFile = Optional.empty();
+        private long endStep = Long.MAX_VALUE;
+        private Time endTime = DoubleTime.INFINITE_TIME;
+        private Optional<String> exportFileRoot = Optional.empty();
+        private boolean headless;
+        private final Loader loader;
+        private int parallelism = Runtime.getRuntime().availableProcessors() + 1;
+        private double samplingInt = 1;
+
+        /**
+         * 
+         * @param loader
+         *            loader
+         */
+        public Builder(final Loader loader) {
+            this.loader = Objects.requireNonNull(loader, "Loader can't be null.");
+        }
+
+        /**
+         * 
+         * @return AlchemistRunner
+         */
+        public AlchemistRunner build() {
+            return new AlchemistRunner(this.loader, this.endTime, this.endStep, this.exportFileRoot, this.effectsFile,
+                    this.samplingInt, this.parallelism, this.headless, this.closeOperation, this.benchmark);
+        }
+
+        /**
+         * @param benchmark set true if you want to benchmark this run
+         * @return builder
+         */
+        public Builder setBenchmarkMode(final boolean benchmark) {
+            this.benchmark = benchmark;
+            return this;
+        }
+
+        /**
+         * 
+         * @param uri
+         *            effect uri
+         * @return builder
+         */
+        public Builder setEffects(final String uri) {
+            this.effectsFile = Optional.ofNullable(uri);
+            return this;
+        }
+
+        /**
+         * 
+         * @param steps
+         *            end step
+         * @return builder
+         */
+        public Builder setEndStep(final long steps) {
+            if (steps < 0) {
+                throw new IllegalArgumentException("The number of steps (" + steps + ") must be zero or positive");
+            }
+            this.endStep = steps;
+            return this;
+        }
+
+        /**
+         * 
+         * @param t
+         *            end time
+         * @return builder
+         */
+        public Builder setEndTime(final Number t) {
+            final double dt = t.doubleValue();
+            if (dt < 0) {
+                throw new IllegalArgumentException("The end time (" + dt + ") must be zero or positive");
+            }
+            this.endTime = new DoubleTime(t.doubleValue());
+            return this;
+        }
+
+        /**
+         * 
+         * @param t
+         *            end time
+         * @return builder
+         */
+        public Builder setEndTime(final Time t) {
+            this.endTime = t;
+            return this;
+        }
+
+        /**
+         * 
+         * @param closeOp
+         *            the close operation
+         * @return buider
+         */
+        public Builder setGUICloseOperation(final int closeOp) {
+            if (closeOp < 0 || closeOp > 3) {
+                throw new IllegalArgumentException("The value of close operation is not valid.");
+            }
+            this.closeOperation = closeOp;
+            return this;
+        }
+
+        /**
+         * 
+         * @param headless
+         *            is headless
+         * @return builder
+         */
+        public Builder setHeadless(final boolean headless) {
+            this.headless = headless;
+            return this;
+        }
+
+        /**
+         * 
+         * @param deltaTime
+         *            time interval
+         * @return builder
+         */
+        public Builder setInterval(final double deltaTime) {
+            if (deltaTime > 0) {
+                this.samplingInt = deltaTime;
+            } else {
+                throw new IllegalArgumentException("A sampling interval negative makes no sense.");
+            }
+            return this;
+        }
+
+        /**
+         * 
+         * @param uri
+         *            output uri
+         * @return builder
+         */
+        public Builder setOutputFile(final String uri) {
+            this.exportFileRoot = Optional.ofNullable(uri);
+            return this;
+        }
+
+        /**
+         * 
+         * @param threads
+         *            threads number
+         * @return builder
+         */
+        public Builder setParallelism(final int threads) {
+            if (threads <= 0) {
+                throw new IllegalArgumentException("Thread number must be >= 0");
+            }
+            this.parallelism = threads;
+            return this;
+        }
+    }
 
 }

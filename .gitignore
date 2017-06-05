@@ -9,4 +9,4 @@ gradle.prefs
 version.info
 prepare_environment.sh
 **/*-gen/
-
+**/*generated*/

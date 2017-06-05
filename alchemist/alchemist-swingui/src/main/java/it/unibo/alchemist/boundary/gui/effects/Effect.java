@@ -13,7 +13,6 @@ import java.awt.Graphics2D;
 import java.io.Serializable;
 
 import it.unibo.alchemist.model.interfaces.Node;
-import javafx.scene.input.DataFormat;
 
 /**
  */

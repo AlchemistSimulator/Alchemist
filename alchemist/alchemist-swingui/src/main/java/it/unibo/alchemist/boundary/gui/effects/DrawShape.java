@@ -8,13 +8,6 @@
  */
 package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.SupportedIncarnations;
-import it.unibo.alchemist.boundary.gui.ColorChannel;
-import it.unibo.alchemist.model.interfaces.Incarnation;
-import it.unibo.alchemist.model.interfaces.Molecule;
-import it.unibo.alchemist.model.interfaces.Node;
-import javafx.scene.input.DataFormat;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Set;
@@ -29,6 +22,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.SupportedIncarnations;
+import it.unibo.alchemist.boundary.gui.ColorChannel;
+import it.unibo.alchemist.model.interfaces.Incarnation;
+import it.unibo.alchemist.model.interfaces.Molecule;
+import it.unibo.alchemist.model.interfaces.Node;
 
 /**
  */

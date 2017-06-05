@@ -1,9 +1,11 @@
+apply plugin: "org.xtext.xtend"
 dependencies {
     compile(
         project(':alchemist-implementationbase'),
         project(':alchemist-interfaces'),
         project(':alchemist-time'),
         "org.apache.commons:commons-lang3:${lang3Version}",
+        "org.eclipse.xtend:org.eclipse.xtend.lib:${xtendLibVersion}",
         "org.jgrapht:jgrapht-core:1.0.0",
         "org.danilopianini:jirf:${jirfVersion}",
         "org.reflections:reflections:$reflectionsVersion",

@@ -410,12 +410,12 @@ public class YamlLoader implements Loader {
         final Object seedObj = contents.get(SEEDS);
         final RandomGenerator scenarioRng = rngBuilder(factory, SCENARIO_SEED).build(seedObj);
         final RandomGenerator simRng = rngBuilder(factory, SIMULATION_SEED).build(seedObj);
-        factory.registerSingleton(RandomGenerator.class, scenarioRng);
         /*
          * Environment
          */
         final BuilderConfiguration<Environment<T>> envDefaultConfig = emptyConfig(factory, Continuous2DEnvironment::new);
         final Builder<Environment<T>> envBuilder = new Builder<>(Environment.class, ImmutableSet.of(envDefaultConfig), factory);
+        factory.registerSingleton(RandomGenerator.class, simRng);
         final Environment<T> env = envBuilder.build(contents.get(ENVIRONMENT));
         factory.registerSingleton(Environment.class, env);
         factory.registerImplicit(List.class, Position.class, l -> env.makePosition(cast(factory, LIST_NUMBER, l, "position coordinates").toArray(new Number[l.size()])));
@@ -457,6 +457,7 @@ public class YamlLoader implements Loader {
                 final Map<String, Object> dispMap = cast(factory, MAP_STRING_OBJECT, dispObj, "displacement");
                 factory.registerSingleton(RandomGenerator.class,  scenarioRng);
                 final Displacement displacement = displacementBuilder.build(dispMap.get(IN));
+                factory.registerSingleton(RandomGenerator.class,  simRng);
                 factory.registerSingleton(Displacement.class, displacement);
                 /*
                  * Contents

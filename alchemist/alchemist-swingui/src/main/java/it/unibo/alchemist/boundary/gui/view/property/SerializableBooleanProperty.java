@@ -9,7 +9,51 @@ import javafx.beans.property.SimpleBooleanProperty;
  */
 public class SerializableBooleanProperty extends SimpleBooleanProperty implements Serializable {
     /** Generated Serial Version UID. */
-    private static final long serialVersionUID = 1060046956682935476L;
+    private static final long serialVersionUID = 6329602438787540499L;
+
+    /**
+     * The constructor of {@code SimpleBooleanProperty}.
+     */
+    public SerializableBooleanProperty() {
+        super();
+    }
+
+    /**
+     * The constructor of {@code SimpleBooleanProperty}.
+     *
+     * @param initialValue
+     *            the initial value of the wrapped value
+     */
+    public SerializableBooleanProperty(final boolean initialValue) {
+        super(initialValue);
+    }
+
+    /**
+     * The constructor of {@code SimpleBooleanProperty}.
+     *
+     * @param bean
+     *            the bean of this {@code SimpleBooleanProperty}
+     * @param name
+     *            the name of this {@code SimpleBooleanProperty}
+     */
+    public SerializableBooleanProperty(final Object bean, final String name) {
+        super(bean, name);
+    }
+
+    /**
+     * The constructor of {@code SimpleBooleanProperty}.
+     *
+     * @param bean
+     *            the bean of this {@code SimpleBooleanProperty}
+     * @param name
+     *            the name of this {@code SimpleBooleanProperty}
+     * @param initialValue
+     *            the initial value of the wrapped value
+     */
+    public SerializableBooleanProperty(final Object bean, final String name, final boolean initialValue) {
+        super(bean, name, initialValue);
+    }
+
     // @Override
     // public int hashCode() {
     // final int prime = 31;

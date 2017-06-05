@@ -9,7 +9,50 @@ import javafx.beans.property.SimpleStringProperty;
  */
 public class SerializableStringProperty extends SimpleStringProperty implements Serializable {
     /** Generated Serial Version UID. */
-    private static final long serialVersionUID = -5784471079162714675L;
+    private static final long serialVersionUID = -3684192876864701055L;
+
+    /**
+     * The constructor of {@code SimpleStringProperty}.
+     */
+    public SerializableStringProperty() {
+        super();
+    }
+
+    /**
+     * The constructor of {@code SimpleStringProperty}.
+     *
+     * @param initialValue
+     *            the initial value of the wrapped value
+     */
+    public SerializableStringProperty(final String initialValue) {
+        super(initialValue);
+    }
+
+    /**
+     * The constructor of {@code SimpleStringProperty}.
+     *
+     * @param bean
+     *            the bean of this {@code SimpleStringProperty}
+     * @param name
+     *            the name of this {@code SimpleStringProperty}
+     */
+    public SerializableStringProperty(final Object bean, final String name) {
+        super(bean, name);
+    }
+
+    /**
+     * The constructor of {@code SimpleStringProperty}.
+     *
+     * @param bean
+     *            the bean of this {@code SimpleStringProperty}
+     * @param name
+     *            the name of this {@code SimpleStringProperty}
+     * @param initialValue
+     *            the initial value of the wrapped value
+     */
+    public SerializableStringProperty(final Object bean, final String name, final String initialValue) {
+        super(bean, name, initialValue);
+    }
 
 //    @Override
 //    public int hashCode() {

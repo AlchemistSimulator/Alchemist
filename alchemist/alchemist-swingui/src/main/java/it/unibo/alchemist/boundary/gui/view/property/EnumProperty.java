@@ -15,7 +15,50 @@ import javafx.beans.property.SimpleObjectProperty;
  */
 public class EnumProperty<T extends Enum<?>> extends SimpleObjectProperty<T> implements Serializable {
     /** Generated Serial Version UID. */
-    private static final long serialVersionUID = 1511564747464877877L;
+    private static final long serialVersionUID = -954058739144566791L;
+
+    /**
+     * The constructor of {@code SimpleObjectProperty}.
+     */
+    public EnumProperty() {
+        super();
+    }
+
+    /**
+     * The constructor of {@code SimpleObjectProperty}.
+     *
+     * @param initialValue
+     *            the initial value of the wrapped value
+     */
+    public EnumProperty(final T initialValue) {
+        super(initialValue);
+    }
+
+    /**
+     * The constructor of {@code SimpleObjectProperty}.
+     *
+     * @param bean
+     *            the bean of this {@code SimpleObjectProperty}
+     * @param name
+     *            the name of this {@code SimpleObjectProperty}
+     */
+    public EnumProperty(final Object bean, final String name) {
+        super(bean, name);
+    }
+
+    /**
+     * The constructor of {@code SimpleObjectProperty}.
+     *
+     * @param bean
+     *            the bean of this {@code SimpleObjectProperty}
+     * @param name
+     *            the name of this {@code SimpleObjectProperty}
+     * @param initialValue
+     *            the initial value of the wrapped value
+     */
+    public EnumProperty(final Object bean, final String name, final T initialValue) {
+        super(bean, name, initialValue);
+    }
 
     // @Override
     // public int hashCode() {

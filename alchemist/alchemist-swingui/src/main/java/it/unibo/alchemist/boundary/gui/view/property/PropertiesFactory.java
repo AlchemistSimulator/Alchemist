@@ -1,12 +1,18 @@
 package it.unibo.alchemist.boundary.gui.view.property;
 
+import it.unibo.alchemist.SupportedIncarnations;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SetProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleSetProperty;
+import javafx.collections.FXCollections;
 
 /**
- * Factory for {@code DoubleProperties} with a standard range.
+ * Factory for custom {@code Property}.
  */
-public final class RangedPropertiesFactory {
+public final class PropertiesFactory {
 
     /**
      * Returns a new {@link RangedDoubleProperty} with range between 255 and 0
@@ -61,9 +67,27 @@ public final class RangedPropertiesFactory {
     }
 
     /**
+     * Returns a new {@link ListProperty} with all available incarnations of Alchemist found via reflection.
+     * @param name the name to give to the property
+     * @return the {@code ListProperty}
+     */
+    public static ListProperty<String> getIncarnationsListProperty(final String name) {
+        return new SimpleListProperty<>(null, name, FXCollections.observableArrayList(SupportedIncarnations.getAvailableIncarnations()));
+    }
+
+    /**
+     * Returns a new {@link SetProperty} with all available incarnations of Alchemist found via reflection.
+     * @param name the name to give to the property
+     * @return the {@code SetProperty}
+     */
+    public static SetProperty<String> getIncarnationsSetProperty(final String name) {
+        return new SimpleSetProperty<>(null, name, FXCollections.observableSet(SupportedIncarnations.getAvailableIncarnations()));
+    }
+
+    /**
      * Default, empty, constructor, as this is an utility class.
      */
-    private RangedPropertiesFactory() {
+    private PropertiesFactory() {
         // Empty constructor
     }
 
@@ -105,15 +129,15 @@ public final class RangedPropertiesFactory {
             super(null, name, DEFAULT_MIN_VALUE, DEFAULT_MAX_VALUE);
         }
 
-//        @Override
-//        public int hashCode() {
-//            return super.hashCode();
-//        }
-//
-//        @Override
-//        public boolean equals(final Object obj) {
-//            return super.equals(obj);
-//        }
+        // @Override
+        // public int hashCode() {
+        // return super.hashCode();
+        // }
+        //
+        // @Override
+        // public boolean equals(final Object obj) {
+        // return super.equals(obj);
+        // }
     }
 
     /**
@@ -154,14 +178,14 @@ public final class RangedPropertiesFactory {
             super(null, name, DEFAULT_MIN_VALUE, DEFAULT_MAX_VALUE);
         }
 
-//        @Override
-//        public int hashCode() {
-//            return super.hashCode();
-//        }
-//
-//        @Override
-//        public boolean equals(final Object obj) {
-//            return super.equals(obj);
-//        }
+        // @Override
+        // public int hashCode() {
+        // return super.hashCode();
+        // }
+        //
+        // @Override
+        // public boolean equals(final Object obj) {
+        // return super.equals(obj);
+        // }
     }
 }

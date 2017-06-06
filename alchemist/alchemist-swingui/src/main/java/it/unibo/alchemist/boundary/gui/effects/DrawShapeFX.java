@@ -3,15 +3,12 @@ package it.unibo.alchemist.boundary.gui.effects;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import org.danilopianini.lang.CollectionWithCurrentElement;
-import org.danilopianini.lang.RangedInteger;
-import org.danilopianini.view.ExportForGUI;
+import org.apache.commons.math3.util.FastMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.boundary.gui.ColorChannel;
-import it.unibo.alchemist.boundary.gui.effects.DrawShape.Mode;
 import it.unibo.alchemist.boundary.gui.view.property.EnumProperty;
 import it.unibo.alchemist.boundary.gui.view.property.PropertiesFactory;
 import it.unibo.alchemist.boundary.gui.view.property.RangedDoubleProperty;
@@ -21,18 +18,30 @@ import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
+import it.unibo.alchemist.model.interfaces.Node;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
+/**
+ * Simple effect that draws all molecules as simple shapes.
+ */
 public class DrawShapeFX implements EffectFX {
     /**
-     * Enumeration that models the mode to use the DrawShape.
+     * Enumeration that models the mode to use the {@link DrawShapeFX}.
      */
     public enum ModeFX {
-        /***/
-        DrawEllipse, DrawRectangle, FillEllipse, FillRectangle;
+        /** Node as an empty ellipse. */
+        DrawEllipse,
+        /** Node as an empty rectangle. */
+        DrawRectangle,
+        /** Node as a filled ellipse. */
+        FillEllipse,
+        /** Node as a filled rectangle. */
+        FillRectangle;
 
         @Override
         public String toString() {
@@ -54,8 +63,6 @@ public class DrawShapeFX implements EffectFX {
 
     /** */
     private static final double DEFAULT_SIZE = 5;
-    /** Max value for a color scale. */
-    private static final double MAX_COLOUR_VALUE = 255;
     /** Maximum value of the scale. */
     private static final double MAX_SCALE = 100;
     /** Minimum value of the scale. */
@@ -68,12 +75,13 @@ public class DrawShapeFX implements EffectFX {
     private static final double SCALE_INITIAL = (SCALE_DIFF) / 2 + MIN_SCALE;
     /** Default {@code Color} */
     private static final Color DEFAULT_COLOR = Color.BLACK;
-    /** Default logger. */
+    // TODO maybe should switch to JavaFX Color class
+    /** Default {@code Logger}. */
     private static final Logger L = LoggerFactory.getLogger(DrawShapeFX.class);
     /** Default generated Serial Version UID. */
     private static final long serialVersionUID = 8133306058339338028L;
 
-    private final transient ListProperty<String> incarnations = PropertiesFactory.getIncarnationsListProperty("Incarnation to use");
+    private final transient ListProperty<String> incarnations;
     private final EnumProperty<ModeFX> mode = new EnumProperty<ModeFX>(null, "Mode", ModeFX.FillEllipse);
     private final RangedDoubleProperty red = PropertiesFactory.getColorChannelProperty("R");
     private final RangedDoubleProperty green = PropertiesFactory.getColorChannelProperty("G");
@@ -81,33 +89,153 @@ public class DrawShapeFX implements EffectFX {
     private final RangedDoubleProperty alpha = PropertiesFactory.getColorChannelProperty("A");
     private final RangedDoubleProperty scaleFactor = new RangedDoubleProperty(null, "Scale Factor", SCALE_INITIAL, MIN_SCALE, MAX_SCALE);
     private final RangedDoubleProperty size = PropertiesFactory.getPercentageRangedProperty("Size", DEFAULT_SIZE);
-    private final SerializableBooleanProperty molFilter = new SerializableBooleanProperty(null, "Draw only nodes containing a molecule",
-            false);
-    private final SerializableStringProperty molString = new SerializableStringProperty(null, "Molecule");
-    private final SerializableBooleanProperty molPropertyFilter = new SerializableBooleanProperty(null,
+    private final SerializableBooleanProperty moleculeFilter = new SerializableBooleanProperty(null,
+            "Draw only nodes containing a molecule", false);
+    private final SerializableStringProperty moleculeName = new SerializableStringProperty(null, "Molecule");
+    private final SerializableBooleanProperty useMoleculeProperty = new SerializableBooleanProperty(null,
             "Tune colors using a molecule property", false);
-    private final SerializableStringProperty property = new SerializableStringProperty(null, "Molecule property");
-    private final SerializableBooleanProperty writingPropertyValue = new SerializableBooleanProperty(null, "Write the value", false);
+    private final SerializableStringProperty moleculePropertyName = new SerializableStringProperty(null, "Molecule property");
+    private final SerializableBooleanProperty writePropertyValue = new SerializableBooleanProperty(null, "Write the value", false);
     private final EnumProperty<ColorChannel> colorChannel = new EnumProperty<ColorChannel>(null, "Channel to use", ColorChannel.Alpha);
+    // TODO maybe should switch to JavaFX Color class
     private final SerializableBooleanProperty reverse = new SerializableBooleanProperty(null, "Reverse effect", false);
-    private final RangedDoubleProperty propoom = new RangedDoubleProperty(null, "Property order of magnitude", 0, -PROPERTY_SCALE,
+
+    private final RangedDoubleProperty orderOfMagnitude = new RangedDoubleProperty(null, "Property order of magnitude", 0, -PROPERTY_SCALE,
             PROPERTY_SCALE);
     private final RangedDoubleProperty minprop = new RangedDoubleProperty(null, "Minimum property value", 0, -PROPERTY_SCALE,
             PROPERTY_SCALE);
-    private RangedDoubleProperty maxprop = new RangedDoubleProperty(null, "Maximum property value", PROPERTY_SCALE, -PROPERTY_SCALE,
+    private final RangedDoubleProperty maxprop = new RangedDoubleProperty(null, "Maximum property value", PROPERTY_SCALE, -PROPERTY_SCALE,
             PROPERTY_SCALE);
 
     private Color colorCache = DEFAULT_COLOR;
-    private transient Molecule molecule;
-    private transient Object molStringCached;
+    // TODO maybe should switch to JavaFX Color class
+    private transient Molecule moleculeObject;
+    private transient String moleculeNameCached;
     private final SerializableStringProperty currentIncarnation = new SerializableStringProperty();
-    private transient SerializableStringProperty prevIncarnation;
+    private transient String previousIncarnation;
     private transient Incarnation<?> incarnation;
+
+    /**
+     * Default constructor. Builds a new {@code DrawShapeFX} effect.
+     * 
+     * @throws IllegalStateException
+     *             if no {@link Incarnation} is available
+     */
+    public DrawShapeFX() {
+        if (SupportedIncarnations.getAvailableIncarnations().isEmpty()) {
+            throw new IllegalStateException(getClass().getSimpleName() + " can't work if no incarnation is available.");
+        } else {
+            incarnations = PropertiesFactory.getIncarnationsListProperty("Incarnation to use");
+        }
+
+        moleculeName.addListener(this::updateMoleculeCachedName);
+        currentIncarnation.addListener(this::updateIncarnations);
+    }
+
+    /**
+     * Method meant to be used in a {@link ChangeListener} to update the
+     * {@code Molecule} name cached whenever the property is updated.
+     * 
+     * @see ChangeListener#changed(ObservableValue, Object, Object)
+     * 
+     * @param observable
+     *            the ObservableValue which value changed
+     * @param oldValue
+     *            the old name
+     * @param newValue
+     *            the new name
+     */
+    private void updateMoleculeCachedName(final ObservableValue<? extends String> observable, final String oldValue, // NOPMD
+            final String newValue) {
+        // - unused parameters are needed to be compatible with ChangeListener
+        this.moleculeNameCached = newValue;
+        instanziateMolecule();
+    }
+
+    /**
+     * Method meant to be used in a {@link ChangeListener} to update the
+     * incarnation whenever the respective property is updated.
+     * 
+     * @see ChangeListener#changed(ObservableValue, Object, Object)
+     * 
+     * @param observable
+     *            the ObservableValue which value changed
+     * @param oldValue
+     *            the old incarnation name
+     * @param newValue
+     *            the new incarnation name
+     */
+    private void updateIncarnations(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) { // NOPMD
+        // - unused parameters are needed to be compatible with ChangeListener
+        this.previousIncarnation = oldValue; // TODO what's for ?
+        incarnation = SupportedIncarnations.get(newValue).get();
+        instanziateMolecule();
+    }
+
+    private void instanziateMolecule() {
+        // Process in a separate thread: if it fails, does not kill EDT.
+        final Thread createMolecule = new Thread(() -> moleculeObject = incarnation.createMolecule(moleculeName.get()));
+        createMolecule.start();
+        try {
+            createMolecule.join();
+        } catch (final InterruptedException e) {
+            L.error("Bug: ", e);
+        }
+    }
 
     @Override
     public void apply(final Graphics2D graphic, final Environment<?> environment, final IWormhole2D wormhole) {
-        // TODO Auto-generated method stub
+        environment.forEach(node -> {
+            if (!moleculeFilter.get() || (moleculeObject != null && node.contains(moleculeObject))) {
+                final double ks = (scaleFactor.get() - MIN_SCALE) * 2 / SCALE_DIFF;
+                final double sizex = size.get();
+                final double startx = wormhole.getViewPosition().getX() - sizex / 2;
+                final double sizey = FastMath.ceil(sizex * ks);
+                final double starty = wormhole.getViewPosition().getY() - sizey / 2;
+                final Color toRestore = graphic.getColor();
+                colorCache = new Color(red.getValue().intValue(), green.getValue().intValue(), blue.getValue().intValue(),
+                        alpha.getValue().intValue());
+                // TODO maybe should switch to JavaFX Color class
+                Color newcolor = colorCache;
+                if (useMoleculeProperty.get() && moleculeObject != null) {
+                    final int minV = (int) (minprop.get() * FastMath.pow(PROPERTY_SCALE, orderOfMagnitude.get()));
+                    final int maxV = (int) (maxprop.get() * FastMath.pow(PROPERTY_SCALE, orderOfMagnitude.get()));
+                    if (minV < maxV) {
+                        @SuppressWarnings({ "rawtypes", "unchecked" })
+                        double propval = incarnation.getProperty((Node) node, moleculeObject, moleculePropertyName.get());
+                        if (isWritingPropertyValue()) {
+                            graphic.setColor(colorCache);
+                            graphic.drawString(Double.toString(propval), (int) (startx + sizex), (int) (starty + sizey));
+                        }
+                        propval = FastMath.min(FastMath.max(propval, minV), maxV);
+                        propval = (propval - minV) / (maxV - minV);
+                        if (reverse.get()) {
+                            propval = 1f - propval;
+                        }
+                        newcolor = colorChannel.get().alter(newcolor, (float) propval);
+                    }
+                }
+                graphic.setColor(newcolor);
+                switch (mode.get()) {
+                case FillEllipse:
+                    graphic.fillOval((int) startx, (int) starty, (int) sizex, (int) sizey);
+                    break;
+                case DrawEllipse:
+                    graphic.drawOval((int) startx, (int) starty, (int) sizex, (int) sizey);
+                    break;
+                case DrawRectangle:
+                    graphic.drawRect((int) startx, (int) starty, (int) sizex, (int) sizey);
+                    break;
+                case FillRectangle:
+                    graphic.fillRect((int) startx, (int) starty, (int) sizex, (int) sizey);
+                    break;
+                default:
+                    graphic.fillOval((int) startx, (int) starty, (int) sizex, (int) sizey);
+                }
+                graphic.setColor(toRestore);
+            }
 
+        });
     }
 
     protected DoubleProperty alphaProperty() {
@@ -166,7 +294,7 @@ public class DrawShapeFX implements EffectFX {
         return this.currentIncarnation.get();
     }
 
-    protected void getCurrentIncarnation(final String currentIncarnation) {
+    protected void setCurrentIncarnation(final String currentIncarnation) {
         this.currentIncarnation.set(currentIncarnation);
     }
 
@@ -178,8 +306,8 @@ public class DrawShapeFX implements EffectFX {
         return this.maxprop.get();
     }
 
-    protected void setMaxprop(final double mp) {
-        this.maxprop.set(mp);
+    protected void setMaxprop(final double maxprop) {
+        this.maxprop.set(maxprop);
     }
 
     protected DoubleProperty minpropProperty() {
@@ -190,8 +318,8 @@ public class DrawShapeFX implements EffectFX {
         return this.minprop.get();
     }
 
-    protected void setMinprop(final double mp) {
-        this.minprop.set(mp);
+    protected void setMinprop(final double minprop) {
+        this.minprop.set(minprop);
     }
 
     protected EnumProperty<ModeFX> modeProperty() {
@@ -202,48 +330,48 @@ public class DrawShapeFX implements EffectFX {
         return this.mode.get();
     }
 
-    protected void setMode(final ModeFX m) {
-        this.mode.set(m);
+    protected void setMode(final ModeFX mode) {
+        this.mode.set(mode);
     }
 
-    protected Molecule getMolecule() {
-        return this.molecule;
+    protected Molecule getMoleculeObject() {
+        return this.moleculeObject;
     }
 
-    protected StringProperty molStringProperty() {
-        return this.molString;
+    protected StringProperty moleculeNameProperty() {
+        return this.moleculeName;
     }
 
-    protected String getMolString() {
-        return this.molString.get();
+    protected String getMoleculeName() {
+        return this.moleculeName.get();
     }
 
-    protected void setMolString(final String mols) {
-        this.molString.set(mols);
+    protected void setMoleculeName(final String moleculeName) {
+        this.moleculeName.set(moleculeName);
     }
 
-    protected StringProperty molPropertyProperty() {
-        return this.property;
+    protected StringProperty moleculePropertyNameProperty() {
+        return this.moleculePropertyName;
     }
 
-    protected String getMolProperty() {
-        return this.property.get();
+    protected String getMoleculePropertyName() {
+        return this.moleculePropertyName.get();
     }
 
-    protected void setMolProperty(final String pr) {
-        this.property.set(pr);
+    protected void setMoleculePropertyName(final String moleculePropertyName) {
+        this.moleculePropertyName.set(moleculePropertyName);
     }
 
-    protected DoubleProperty propoomProperty() {
-        return this.propoom;
+    protected DoubleProperty orderOfMagnitudeProperty() {
+        return this.orderOfMagnitude;
     }
 
-    protected double getPropoom() {
-        return this.propoom.get();
+    protected double getOrderOfMagnitude() {
+        return this.orderOfMagnitude.get();
     }
 
-    protected void setPropoom(final double oom) {
-        this.propoom.set(oom);
+    protected void setOrderOfMagnitude(final double orderOfMagnitude) {
+        this.orderOfMagnitude.set(orderOfMagnitude);
     }
 
     protected DoubleProperty redProperty() {
@@ -254,8 +382,8 @@ public class DrawShapeFX implements EffectFX {
         return this.red.get();
     }
 
-    protected void setRed(final double r) {
-        this.red.set(r);
+    protected void setRed(final double red) {
+        this.red.set(red);
     }
 
     protected DoubleProperty scaleFactorProperty() {
@@ -266,8 +394,8 @@ public class DrawShapeFX implements EffectFX {
         return this.scaleFactor.get();
     }
 
-    protected void setScaleFactor(final double sf) {
-        this.scaleFactor.set(sf);
+    protected void setScaleFactor(final double scaleFactor) {
+        this.scaleFactor.set(scaleFactor);
     }
 
     protected DoubleProperty sizeProperty() {
@@ -278,32 +406,32 @@ public class DrawShapeFX implements EffectFX {
         return this.size.get();
     }
 
-    protected void setSize(final double s) {
-        this.size.set(s);
+    protected void setSize(final double size) {
+        this.size.set(size);
     }
 
-    protected BooleanProperty molFilterProperty() {
-        return this.molFilter;
+    protected BooleanProperty moleculeFilterProperty() {
+        return this.moleculeFilter;
     }
 
-    protected boolean isMolFilter() {
-        return this.molFilter.get();
+    protected boolean isMoleculeFilter() {
+        return this.moleculeFilter.get();
     }
 
-    protected void setMolFilter(final boolean mol) {
-        this.molFilter.set(mol);
+    protected void setMoleculeFilter(final boolean moleculeFilter) {
+        this.moleculeFilter.set(moleculeFilter);
     }
 
-    protected BooleanProperty molPropertyFilterProperty() {
-        return this.molPropertyFilter;
+    protected BooleanProperty useMoleculePropertyProperty() {
+        return this.useMoleculeProperty;
     }
 
-    protected boolean isMolPropertyFilter() {
-        return this.molPropertyFilter.get();
+    protected boolean isUseMoleculeProperty() {
+        return this.useMoleculeProperty.get();
     }
 
-    protected void setMolPropertyFilter(final boolean molpf) {
-        this.molPropertyFilter.set(molpf);
+    protected void setUseMoleculeProperty(final boolean useMoleculeProperty) {
+        this.useMoleculeProperty.set(useMoleculeProperty);
     }
 
     protected BooleanProperty reverseProperty() {
@@ -314,20 +442,20 @@ public class DrawShapeFX implements EffectFX {
         return this.reverse.get();
     }
 
-    protected void setReverse(final boolean r) {
-        this.reverse.set(r);
+    protected void setReverse(final boolean reverse) {
+        this.reverse.set(reverse);
     }
 
     protected BooleanProperty writingPropertyValuePropery() {
-        return this.writingPropertyValue;
+        return this.writePropertyValue;
     }
 
     protected boolean isWritingPropertyValue() {
-        return this.writingPropertyValue.get();
+        return this.writePropertyValue.get();
     }
 
     protected void setWritingPropertyValue(final boolean writingPropertyValue) {
-        this.writingPropertyValue.set(writingPropertyValue);
+        this.writePropertyValue.set(writingPropertyValue);
     }
 
 }

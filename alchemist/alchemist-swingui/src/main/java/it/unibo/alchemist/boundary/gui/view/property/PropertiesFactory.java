@@ -106,7 +106,9 @@ public final class PropertiesFactory {
         /**
          * The constructor of {@link SimpleDoubleProperty}.
          * <p>
-         * Range is set between 100 and 0; {@code bean} is set to null.
+         * Range is set between 100 and 0.
+         * <p>
+         * {@code Bean} is set to null.
          *
          * @param name
          *            the name of this {@code DoubleProperty}
@@ -120,7 +122,9 @@ public final class PropertiesFactory {
         /**
          * The constructor of {@code DoubleProperty}.
          * <p>
-         * Range is set between 100 and 0; {@code bean} is set to null.
+         * Range is set between 100 and 0.
+         * <p>
+         * {@code Bean} is set to null.
          * 
          * @param name
          *            the name of this {@code DoubleProperty}
@@ -155,7 +159,9 @@ public final class PropertiesFactory {
         /**
          * The constructor of {@link SimpleDoubleProperty}.
          * <p>
-         * Range is set between 100 and 0; {@code bean} is set to null.
+         * Range is set between 100 and 0.
+         * <p>
+         * {@code Bean} is set to null.
          *
          * @param name
          *            the name of this {@code DoubleProperty}
@@ -169,7 +175,9 @@ public final class PropertiesFactory {
         /**
          * The constructor of {@code DoubleProperty}.
          * <p>
-         * Range is set between 100 and 0; {@code bean} is set to null.
+         * Range is set between 100 and 0.
+         * <p>
+         * {@code Bean} is set to null.
          *
          * @param name
          *            the name of this {@code DoubleProperty}

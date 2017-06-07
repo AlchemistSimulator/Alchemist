@@ -61,19 +61,19 @@ public class DrawShapeFX implements EffectFX {
         }
     }
 
-    /** */
+    /** Default size of the shape. */
     private static final double DEFAULT_SIZE = 5;
-    /** Maximum value of the scale. */
+    /** Maximum value for the scale factor. */
     private static final double MAX_SCALE = 100;
-    /** Minimum value of the scale. */
+    /** Minimum value for the scale factor. */
     private static final double MIN_SCALE = 0;
     /** */
     private static final double PROPERTY_SCALE = 10;
-    /** Range of the scale. */
+    /** Range for the scale factor. */
     private static final double SCALE_DIFF = MAX_SCALE - MIN_SCALE;
-    /** Initial value of the scale. */
+    /** Initial value of the scale factor. */
     private static final double SCALE_INITIAL = (SCALE_DIFF) / 2 + MIN_SCALE;
-    /** Default {@code Color} */
+    /** Default {@code Color}. */
     private static final Color DEFAULT_COLOR = Color.BLACK;
     // TODO maybe should switch to JavaFX Color class
     /** Default {@code Logger}. */
@@ -132,19 +132,6 @@ public class DrawShapeFX implements EffectFX {
         currentIncarnation.addListener(this.updateIncarnations());
     }
 
-    /**
-     * Method meant to be used in a {@link ChangeListener} to update the
-     * {@code Molecule} name cached whenever the property is updated.
-     * 
-     * @see ChangeListener#changed(ObservableValue, Object, Object)
-     * 
-     * @param observable
-     *            the ObservableValue which value changed
-     * @param oldValue
-     *            the old name
-     * @param newValue
-     *            the new name
-     */
     private ChangeListener<String> updateMoleculeCachedName() {
         return (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
             this.moleculeNameCached = newValue;
@@ -153,19 +140,6 @@ public class DrawShapeFX implements EffectFX {
 
     }
 
-    /**
-     * Method meant to be used in a {@link ChangeListener} to update the
-     * incarnation whenever the respective property is updated.
-     * 
-     * @see ChangeListener#changed(ObservableValue, Object, Object)
-     * 
-     * @param observable
-     *            the ObservableValue which value changed
-     * @param oldValue
-     *            the old incarnation name
-     * @param newValue
-     *            the new incarnation name
-     */
     private ChangeListener<String> updateIncarnations() {
         return (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
             this.previousIncarnation = oldValue; // TODO what's for ?
@@ -204,7 +178,8 @@ public class DrawShapeFX implements EffectFX {
                     final double minV = minprop.get() * FastMath.pow(PROPERTY_SCALE, orderOfMagnitude.get());
                     final double maxV = maxprop.get() * FastMath.pow(PROPERTY_SCALE, orderOfMagnitude.get());
                     if (minV < maxV) {
-                        // TODO not so good to use unchecked Node, but for now it's ok
+                        // TODO not so good to use unchecked Node, but for now
+                        // it's ok
                         double propval = incarnation.getProperty((Node) node, moleculeObject, moleculePropertyName.get());
                         if (writePropertyValue.get()) {
                             graphic.setColor(colorCache);

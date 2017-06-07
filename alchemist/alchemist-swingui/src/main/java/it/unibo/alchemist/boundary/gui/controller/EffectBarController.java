@@ -7,8 +7,8 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
 
-import it.unibo.alchemist.boundary.gui.effects.Effect;
 import it.unibo.alchemist.boundary.gui.effects.EffectBuilderFX;
+import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.EffectCell;
 import javafx.collections.FXCollections;
@@ -29,13 +29,13 @@ public class EffectBarController implements Initializable {
     @FXML
     private JFXButton addEffect;
     @FXML
-    private ListView<Effect> effectsList;
+    private ListView<EffectFX> effectsList;
     @FXML
     private Label groupName;
     @FXML
     private JFXButton backToGroups;
 
-    private ObservableList<Effect> observableList;
+    private ObservableList<EffectFX> observableList;
     private EffectBuilderFX effectBuilder;
 
     private final JFXDrawersStack stack;
@@ -79,7 +79,7 @@ public class EffectBarController implements Initializable {
     }
 
     private void addEffectToList() {
-        final Effect choice = effectBuilder.chooseAndLoad();
+        final EffectFX choice = effectBuilder.chooseAndLoad();
         if (choice != null) {
             // final String name = choice.getName() + " " +
             // this.getObservableList().size();
@@ -92,7 +92,7 @@ public class EffectBarController implements Initializable {
         }
     }
 
-    private ObservableList<Effect> getObservableList() {
+    private ObservableList<EffectFX> getObservableList() {
         if (this.observableList == null) {
             this.observableList = FXCollections.observableArrayList();
             this.effectsList.setItems(observableList);

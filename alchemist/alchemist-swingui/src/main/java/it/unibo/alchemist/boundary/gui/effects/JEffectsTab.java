@@ -48,6 +48,7 @@ import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
  * @param <T>
  *            is the type for the concentration
  */
+@Deprecated
 public class JEffectsTab<T> extends JTapeTab implements ItemListener {
 
     /**

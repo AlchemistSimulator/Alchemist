@@ -7,7 +7,7 @@ import java.util.Queue;
  * Models a group of effects. Each effect has a different priority of
  * visualization.
  */
-public interface EffectGroup extends Serializable, Queue<Effect> {
+public interface EffectGroup extends Serializable, Queue<EffectFX> {
 
     /**
      * Gets the name of the group.
@@ -31,7 +31,7 @@ public interface EffectGroup extends Serializable, Queue<Effect> {
      *            the effect to search
      * @return the position, or -1 if not present
      */
-    int search(Effect effect);
+    int search(EffectFX effect);
 
     /**
      * Returns the visibility of the group.
@@ -57,7 +57,7 @@ public interface EffectGroup extends Serializable, Queue<Effect> {
      * @throws IllegalArgumentException
      *             if can't find the effect
      */
-    boolean getVisibilityOf(Effect effect);
+    boolean getVisibilityOf(EffectFX effect);
 
     /**
      * Sets the visibility of the specified effect.
@@ -69,7 +69,7 @@ public interface EffectGroup extends Serializable, Queue<Effect> {
      * @throws IllegalArgumentException
      *             if can't find the effect
      */
-    void setVisibilityOf(Effect effect, boolean visibility);
+    void setVisibilityOf(EffectFX effect, boolean visibility);
 
     /**
      * Returns the transparency of the group.
@@ -99,7 +99,7 @@ public interface EffectGroup extends Serializable, Queue<Effect> {
      * @throws IllegalArgumentException
      *             if can't find the effect
      */
-    void changePriority(Effect effect, int offset);
+    void changePriority(EffectFX effect, int offset);
 
     @Override // Should override hashCode() method
     int hashCode();

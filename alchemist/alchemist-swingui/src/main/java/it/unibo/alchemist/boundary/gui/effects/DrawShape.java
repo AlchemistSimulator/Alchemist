@@ -30,6 +30,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 
 /**
  */
+@Deprecated
 public class DrawShape implements Effect {
 
     /**

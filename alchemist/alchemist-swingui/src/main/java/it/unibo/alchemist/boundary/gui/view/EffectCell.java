@@ -4,7 +4,7 @@ import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
 import com.jfoenix.controls.JFXToggleButton;
 
-import it.unibo.alchemist.boundary.gui.effects.Effect;
+import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -16,10 +16,10 @@ import javafx.scene.text.TextAlignment;
 
 /**
  * This ListView cell implements the {@link AbstractEffectCell} for containing
- * an {@link Effect}. It has a name that identifies the Effect and when clicked
+ * an {@link EffectFX}. It has a name that identifies the Effect and when clicked
  * should open another view to edit effect-specific parameters.
  */
-public class EffectCell extends AbstractEffectCell<Effect> {
+public class EffectCell extends AbstractEffectCell<EffectFX> {
     private static final String DEFAULT_NAME = "Unnamed effect";
     private final JFXDrawersStack stack;
     private final JFXDrawer thisDrawer;
@@ -118,10 +118,10 @@ public class EffectCell extends AbstractEffectCell<Effect> {
 
     @Override
     public DataFormat getDataFormat() {
-        final Effect item = this.getItem();
+        final EffectFX item = this.getItem();
 
         if (item == null) {
-            return DataFormatFactory.getDataFormat(Effect.class);
+            return DataFormatFactory.getDataFormat(EffectFX.class);
         } else {
             return DataFormatFactory.getDataFormat(item);
         }

@@ -27,15 +27,16 @@ import it.unibo.alchemist.SupportedIncarnations;
  * Serialize Alchemist effects from/to file in human readable format.
  *
  */
-@Deprecated
-public final class EffectSerializationFactory {
+public final class EffectSerializer {
 
     /*
      * TODO register newly-added-effect subtypes to this factory to
      * (de)serialize them properly
      */
-    private static final RuntimeTypeAdapterFactory<Effect> RTA = RuntimeTypeAdapterFactory.of(Effect.class)
-            .registerSubtype(DrawShape.class, DrawShape.class.toString());
+    private static final RuntimeTypeAdapterFactory<EffectFX> RTA = RuntimeTypeAdapterFactory.of(EffectFX.class)
+            .registerSubtype(DrawShapeFX.class, DrawShapeFX.class.toString())
+            .registerSubtype(DrawDot.class, DrawDot.class.toString())
+            .registerSubtype(DrawColoredDot.class, DrawColoredDot.class.toString());
     private static final Gson GSON = new GsonBuilder().registerTypeAdapterFactory(RTA)
             .registerTypeHierarchyAdapter(CollectionWithCurrentElement.class,
                     new TypeAdapter<ImmutableCollectionWithCurrentElement<?>>() {
@@ -53,7 +54,7 @@ public final class EffectSerializationFactory {
                     })
             .setPrettyPrinting().create();
 
-    private EffectSerializationFactory() {
+    private EffectSerializer() {
     }
 
     /**
@@ -70,24 +71,24 @@ public final class EffectSerializationFactory {
      *             In case the serialized binary object is not an effect
      */
     @SuppressWarnings("unchecked")
-    public static List<Effect> effectsFromFile(final File effectFile) throws IOException, ClassNotFoundException {
+    public static List<EffectFX> effectsFromFile(final File effectFile) throws IOException, ClassNotFoundException {
         // Try to deserialize a JSON file at first
         final Reader fr = new FileReader(effectFile);
         try {
-            final List<Effect> effects = GSON.fromJson(fr, new TypeToken<List<Effect>>() {
+            final List<EffectFX> effects = GSON.fromJson(fr, new TypeToken<List<EffectFX>>() {
             }.getType());
             fr.close();
             return effects;
         } catch (Exception e) {
             fr.close();
             final Object res = FileUtilities.fileToObject(effectFile);
-            if (res instanceof Effect) {
-                final List<Effect> effects = new ArrayList<Effect>();
-                effects.add((Effect) res);
+            if (res instanceof EffectFX) {
+                final List<EffectFX> effects = new ArrayList<>();
+                effects.add((EffectFX) res);
                 return effects;
             }
             // Backward compatibility: try to deserialize a binary file
-            return (List<Effect>) FileUtilities.fileToObject(effectFile);
+            return (List<EffectFX>) FileUtilities.fileToObject(effectFile);
         }
     }
 
@@ -101,8 +102,8 @@ public final class EffectSerializationFactory {
      * @throws IOException
      *             Exception in handling the file
      */
-    public static void effectToFile(final File effectFile, final Effect effect) throws IOException {
-        final List<Effect> effects = new ArrayList<Effect>();
+    public static void effectToFile(final File effectFile, final EffectFX effect) throws IOException {
+        final List<EffectFX> effects = new ArrayList<>();
         effects.add(effect);
         effectsToFile(effectFile, effects);
     }
@@ -117,9 +118,9 @@ public final class EffectSerializationFactory {
      * @throws IOException
      *             Exception in handling the file
      */
-    public static void effectsToFile(final File effectFile, final List<Effect> effects) throws IOException {
+    public static void effectsToFile(final File effectFile, final List<EffectFX> effects) throws IOException {
         final Writer fw = new FileWriter(effectFile);
-        GSON.toJson(effects, new TypeToken<List<Effect>>() {
+        GSON.toJson(effects, new TypeToken<List<EffectFX>>() {
         }.getType(), fw);
         fw.close();
     }

@@ -5,6 +5,7 @@ import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
 
+import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -13,6 +14,13 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
+/**
+ * This class models a JavaFX controller for EffectProperties.fxml.
+ * <p>
+ * Using the FXML design it builds the basic components, then using reflection
+ * on the effect specified in {@link #EffectPropertiesController(EffectFX)
+ * constructor} it builds up the other effect-specific controls.
+ */
 public class EffectPropertiesController implements Initializable {
     private static final String EFFECT_PROPERTIES_LAYOUT = "EffectProperties";
 
@@ -35,6 +43,16 @@ public class EffectPropertiesController implements Initializable {
         assert effectName != null : FXResourceLoader.getInjectionErrorMessage("effectName", EFFECT_PROPERTIES_LAYOUT);
         assert mainBox != null : FXResourceLoader.getInjectionErrorMessage("mainBox", EFFECT_PROPERTIES_LAYOUT);
 
+    }
+
+    /**
+     * Default constructor.
+     * 
+     * @param effect
+     *            to tune with this GUI component
+     */
+    public EffectPropertiesController(final EffectFX effect) {
+        // TODO
     }
 
 }

@@ -21,11 +21,13 @@ public interface EffectFX extends Serializable {
      * Applies the effect.
      * 
      * @param graphic
-     *            Graphics2D to use
+     *            the {@code Graphics2D} to use
      * @param environment
-     *            the node to draw
+     *            the {@code Environment} containing the nodes to draw
      * @param wormhole
-     *            the position
+     *            the {@code Wormhole2D} object to calculate positions
+     * @param <T>
+     *            the {@link Environment} type
      */
     <T> void apply(Graphics2D graphic, Environment<T> environment, IWormhole2D wormhole);
 

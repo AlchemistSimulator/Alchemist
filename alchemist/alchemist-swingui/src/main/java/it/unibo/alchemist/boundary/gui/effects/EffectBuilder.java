@@ -34,7 +34,7 @@ import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 
 /**
  */
-@SuppressWarnings("deprecation") // TODO remove
+@Deprecated
 public class EffectBuilder extends JFrame implements ActionListener {
 
     private static final Reflections REFLECTIONS = new Reflections("it.unibo.alchemist");

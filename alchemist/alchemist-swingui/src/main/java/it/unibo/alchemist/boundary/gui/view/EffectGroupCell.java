@@ -8,7 +8,7 @@ import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXToggleButton;
 
 import it.unibo.alchemist.boundary.gui.controller.EffectBarController;
-import it.unibo.alchemist.boundary.gui.effects.Effect;
+import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
@@ -24,7 +24,7 @@ import javafx.scene.text.TextAlignment;
 /**
  * This ListView cell implements the {@link AbstractEffectCell} for containing
  * an {@link EffectGroup}. It has a name that identifies the EffectGroup and
- * when clicked should open a {@link ListView} to show the {@link Effect}s the
+ * when clicked should open a {@link ListView} to show the {@link EffectFX effects} the
  * group is composed of.
  */
 public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {

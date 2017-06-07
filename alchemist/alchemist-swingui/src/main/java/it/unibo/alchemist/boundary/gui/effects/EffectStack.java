@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  */
 public class EffectStack implements EffectGroup {
     /** Default generated serial version UID. */
-    private static final long serialVersionUID = 5721145068915147074L;
+    private static final long serialVersionUID = -3606828966321303483L;
     /** Default IllegalArgumentException message. */
     private static final String CANNOT_FIND_EFFECT = "Cannot find the effect in the stack";
     /** Default effect group name. */
@@ -26,7 +26,7 @@ public class EffectStack implements EffectGroup {
     /** Default logger. */
     private static final Logger L = LoggerFactory.getLogger(EffectStack.class);
 
-    private final List<Effect> effects;
+    private final List<EffectFX> effects;
     private final List<Boolean> visibilities;
     private int topIndex;
     private String name;
@@ -87,7 +87,7 @@ public class EffectStack implements EffectGroup {
      *             if some property of this element prevents it from being added
      *             to this list
      */
-    public Effect push(final Effect effect) {
+    public EffectFX push(final EffectFX effect) {
         this.effects.add(effect);
         this.visibilities.add(true);
         this.topIndex++;
@@ -101,8 +101,8 @@ public class EffectStack implements EffectGroup {
      * 
      * @return the effect with maximum priority
      */
-    public Effect pop() {
-        final Effect e = this.effects.get(topIndex);
+    public EffectFX pop() {
+        final EffectFX e = this.effects.get(topIndex);
         this.effects.remove(topIndex);
         this.visibilities.remove(topIndex);
         this.topIndex--;
@@ -110,7 +110,7 @@ public class EffectStack implements EffectGroup {
     }
 
     @Override
-    public int search(final Effect effect) {
+    public int search(final EffectFX effect) {
         for (int i = topIndex; i >= 0; i--) {
             if (this.effects.get(i).equals(effect)) {
                 return i;
@@ -120,7 +120,7 @@ public class EffectStack implements EffectGroup {
     }
 
     @Override
-    public boolean getVisibilityOf(final Effect effect) {
+    public boolean getVisibilityOf(final EffectFX effect) {
         try {
             return this.visibilities.get(this.search(effect));
         } catch (final IndexOutOfBoundsException e) {
@@ -129,7 +129,7 @@ public class EffectStack implements EffectGroup {
     }
 
     @Override
-    public void setVisibilityOf(final Effect effect, final boolean visibility) {
+    public void setVisibilityOf(final EffectFX effect, final boolean visibility) {
         try {
             this.visibilities.set(this.search(effect), visibility);
         } catch (final IndexOutOfBoundsException e) {
@@ -138,10 +138,10 @@ public class EffectStack implements EffectGroup {
     }
 
     @Override
-    public void changePriority(final Effect effect, final int offset) {
+    public void changePriority(final EffectFX effect, final int offset) {
         final int currentPos = this.search(effect);
         final int newPos = currentPos + offset;
-        final Effect temp = this.effects.get(newPos);
+        final EffectFX temp = this.effects.get(newPos);
         final boolean tmp = this.visibilities.get(newPos);
 
         this.visibilities.set(newPos, getVisibilityOf(effect));
@@ -177,7 +177,7 @@ public class EffectStack implements EffectGroup {
     }
 
     @Override
-    public Iterator<Effect> iterator() {
+    public Iterator<EffectFX> iterator() {
         return effects.iterator();
     }
 
@@ -202,7 +202,7 @@ public class EffectStack implements EffectGroup {
     }
 
     @Override
-    public boolean add(final Effect e) {
+    public boolean add(final EffectFX e) {
         if (e == null || this.contains(e)) {
             return false;
         } else {
@@ -217,8 +217,8 @@ public class EffectStack implements EffectGroup {
 
     @Override
     public boolean remove(final Object o) {
-        if (o instanceof Effect) {
-            final Effect effect = (Effect) o;
+        if (o instanceof EffectFX) {
+            final EffectFX effect = (EffectFX) o;
             final int index = this.search(effect);
             if (index == -1) {
                 return false;
@@ -242,7 +242,7 @@ public class EffectStack implements EffectGroup {
     }
 
     @Override
-    public boolean addAll(final Collection<? extends Effect> c) {
+    public boolean addAll(final Collection<? extends EffectFX> c) {
         try {
             c.forEach(e -> {
                 if (this.push(e) == null) {
@@ -270,7 +270,7 @@ public class EffectStack implements EffectGroup {
     public boolean retainAll(final Collection<?> c) {
         boolean b = false;
 
-        for (final Effect effect : this.effects) {
+        for (final EffectFX effect : this.effects) {
             if (!c.contains(effect)) {
                 this.remove(effect);
                 b = true;
@@ -286,7 +286,7 @@ public class EffectStack implements EffectGroup {
     }
 
     @Override
-    public boolean offer(final Effect e) {
+    public boolean offer(final EffectFX e) {
         try {
             return this.add(e);
         } catch (final Exception ex) {
@@ -295,7 +295,7 @@ public class EffectStack implements EffectGroup {
     }
 
     @Override
-    public Effect remove() {
+    public EffectFX remove() {
         if (this.isEmpty()) {
             throw new NoSuchElementException("The stack is empty");
         } else {
@@ -304,7 +304,7 @@ public class EffectStack implements EffectGroup {
     }
 
     @Override
-    public Effect poll() {
+    public EffectFX poll() {
         return this.pop();
     }
 
@@ -316,12 +316,12 @@ public class EffectStack implements EffectGroup {
      * @return the effect with maximum priority
      */
     @Override
-    public Effect peek() {
+    public EffectFX peek() {
         return this.effects.get(topIndex);
     }
 
     @Override
-    public Effect element() {
+    public EffectFX element() {
         if (this.isEmpty()) {
             throw new NoSuchElementException("The stack is empty");
         } else {

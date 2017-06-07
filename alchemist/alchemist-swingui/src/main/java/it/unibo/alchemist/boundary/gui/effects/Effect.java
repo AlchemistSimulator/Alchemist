@@ -16,6 +16,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 
 /**
  */
+@Deprecated
 public interface Effect extends Serializable {
 
     /**

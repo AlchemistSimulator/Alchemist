@@ -27,7 +27,7 @@ public interface EffectFX extends Serializable {
      * @param wormhole
      *            the position
      */
-    void apply(Graphics2D graphic, Environment<?> environment, IWormhole2D wormhole);
+    <T> void apply(Graphics2D graphic, Environment<T> environment, IWormhole2D wormhole);
 
     @Override // Should override hashCode() method
     int hashCode();

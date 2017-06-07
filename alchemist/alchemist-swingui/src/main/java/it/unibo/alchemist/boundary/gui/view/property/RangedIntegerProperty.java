@@ -2,34 +2,35 @@ package it.unibo.alchemist.boundary.gui.view.property;
 
 import java.io.Serializable;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 
 /**
- * This {@link DoubleProperty} is designed to have a range for the wrapped value
- * and to be serializable.
+ * This {@link IntegerProperty} is designed to have a range for the wrapped
+ * value and to be serializable.
  */
-public class RangedDoubleProperty extends SimpleDoubleProperty implements Serializable {
+public class RangedIntegerProperty extends SimpleIntegerProperty implements Serializable {
     /** Generated Serial Version UID. */
-    private static final long serialVersionUID = -8459149578353859712L;
-    private static final Double DEFAULT_MAX_VALUE = Double.MAX_VALUE;
-    private static final Double DEFAULT_MIN_VALUE = -Double.MAX_VALUE;
+    private static final long serialVersionUID = -897269650389301324L;
+
+    private static final Integer DEFAULT_MAX_VALUE = Integer.MAX_VALUE;
+    private static final Integer DEFAULT_MIN_VALUE = Integer.MIN_VALUE;
     /** Error for exceeding upper bound. */
     protected static final String TOO_BIG_MESSAGE = "Provided value is bigger than the upper bound";
     /** Error for exceeding lower bound. */
     protected static final String TOO_SMALL_MESSAGE = "Provided value is smaller than the lower bound";
 
-    private Double lowerBound;
-    private Double upperBound;
+    private Integer lowerBound;
+    private Integer upperBound;
 
     /**
-     * Based on constructor of {@link SimpleDoubleProperty}, adds the specified
+     * Based on constructor of {@link SimpleIntegerProperty}, adds the specified
      * bounds.
      *
      * @param bean
-     *            the bean of this {@code DoubleProperty}
+     *            the bean of this {@code IntegerProperty}
      * @param name
-     *            the name of this {@code DoubleProperty}
+     *            the name of this {@code IntegerProperty}
      * @param initialValue
      *            the initial value of the wrapped value
      * @param lowerBound
@@ -39,23 +40,23 @@ public class RangedDoubleProperty extends SimpleDoubleProperty implements Serial
      *            the upper bound for the wrapped value to be considered
      *            acceptable
      */
-    public RangedDoubleProperty(final Object bean, final String name, final double initialValue, final Double lowerBound,
-            final Double upperBound) {
+    public RangedIntegerProperty(final Object bean, final String name, final int initialValue, final Integer lowerBound,
+            final Integer upperBound) {
         super(bean, name, initialValue);
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
     }
 
     /**
-     * Based on constructor of {@link SimpleDoubleProperty}, adds the specified
+     * Based on constructor of {@link SimpleIntegerProperty}, adds the specified
      * bounds.
      * <p>
      * Initial value is set as the half of the specified range.
      *
      * @param bean
-     *            the bean of this {@code DoubleProperty}
+     *            the bean of this {@code IntegerProperty}
      * @param name
-     *            the name of this {@code DoubleProperty}
+     *            the name of this {@code IntegerProperty}
      * @param lowerBound
      *            the lower bound for the wrapped value to be considered
      *            acceptable
@@ -63,12 +64,12 @@ public class RangedDoubleProperty extends SimpleDoubleProperty implements Serial
      *            the upper bound for the wrapped value to be considered
      *            acceptable
      */
-    public RangedDoubleProperty(final Object bean, final String name, final Double lowerBound, final Double upperBound) {
+    public RangedIntegerProperty(final Object bean, final String name, final Integer lowerBound, final Integer upperBound) {
         this(bean, name, (upperBound - lowerBound) / 2, lowerBound, upperBound);
     }
 
     /**
-     * Based on constructor of {@link SimpleDoubleProperty}, adds the specified
+     * Based on constructor of {@link SimpleIntegerProperty}, adds the specified
      * bounds.
      *
      * @param initialValue
@@ -80,14 +81,14 @@ public class RangedDoubleProperty extends SimpleDoubleProperty implements Serial
      *            the upper bound for the wrapped value to be considered
      *            acceptable
      */
-    public RangedDoubleProperty(final double initialValue, final Double lowerBound, final Double upperBound) {
+    public RangedIntegerProperty(final int initialValue, final Integer lowerBound, final Integer upperBound) {
         super(initialValue);
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
     }
 
     /**
-     * Based on constructor of {@link SimpleDoubleProperty}, adds the specified
+     * Based on constructor of {@link SimpleIntegerProperty}, adds the specified
      * bounds.
      * <p>
      * Initial value is set as the half of the specified range.
@@ -99,62 +100,66 @@ public class RangedDoubleProperty extends SimpleDoubleProperty implements Serial
      *            the upper bound for the wrapped value to be considered
      *            acceptable
      */
-    public RangedDoubleProperty(final Double lowerBound, final Double upperBound) {
+    public RangedIntegerProperty(final Integer lowerBound, final Integer upperBound) {
         this((upperBound - lowerBound) / 2, lowerBound, upperBound);
     }
 
     /**
-     * The constructor of {@link SimpleDoubleProperty}.
+     * The constructor of {@link SimpleIntegerProperty}.
      * <p>
-     * Bounds are set to {@link Double#MAX_VALUE} and -{@link Double#MAX_VALUE}.
+     * Bounds are set to {@link Integer#MAX_VALUE} and
+     * {@link Integer#MIN_VALUE}.
      *
      * @param bean
-     *            the bean of this {@code DoubleProperty}
+     *            the bean of this {@code IntegerProperty}
      * @param name
-     *            the name of this {@code DoubleProperty}
+     *            the name of this {@code IntegerProperty}
      * @param initialValue
      *            the initial value of the wrapped value
      */
-    public RangedDoubleProperty(final Object bean, final String name, final double initialValue) {
+    public RangedIntegerProperty(final Object bean, final String name, final int initialValue) {
         this(bean, name, initialValue, DEFAULT_MIN_VALUE, DEFAULT_MAX_VALUE);
     }
 
     /**
-     * The constructor of {@link SimpleDoubleProperty}.
+     * The constructor of {@link SimpleIntegerProperty}.
      * <p>
      * Initial value is set as the half of the specified range.
      * <p>
-     * Bounds are set to {@link Double#MAX_VALUE} and -{@link Double#MAX_VALUE}.
+     * Bounds are set to {@link Integer#MAX_VALUE} and
+     * {@link Integer#MIN_VALUE}.
      *
      * @param bean
-     *            the bean of this {@code DoubleProperty}
+     *            the bean of this {@code IntegerProperty}
      * @param name
-     *            the name of this {@code DoubleProperty}
+     *            the name of this {@code IntegerProperty}
      */
-    public RangedDoubleProperty(final Object bean, final String name) {
+    public RangedIntegerProperty(final Object bean, final String name) {
         this(bean, name, DEFAULT_MIN_VALUE, DEFAULT_MAX_VALUE);
     }
 
     /**
-     * The constructor of {@link SimpleDoubleProperty}.
+     * The constructor of {@link SimpleIntegerProperty}.
      * <p>
-     * Bounds are set to {@link Double#MAX_VALUE} and -{@link Double#MAX_VALUE}.
+     * Bounds are set to {@link Integer#MAX_VALUE} and
+     * -{@link Integer#MIN_VALUE}.
      *
      * @param initialValue
      *            the initial value of the wrapped value
      */
-    public RangedDoubleProperty(final double initialValue) {
+    public RangedIntegerProperty(final int initialValue) {
         this(initialValue, DEFAULT_MIN_VALUE, DEFAULT_MAX_VALUE);
     }
 
     /**
-     * The constructor of {@link SimpleDoubleProperty}.
+     * The constructor of {@link SimpleIntegerProperty}.
      * <p>
      * Initial value is set as the half of the specified range.
      * <p>
-     * Bounds are set to {@link Double#MAX_VALUE} and -{@link Double#MAX_VALUE}.
+     * Bounds are set to {@link Integer#MAX_VALUE} and
+     * -{@link Integer#MIN_VALUE}.
      */
-    public RangedDoubleProperty() {
+    public RangedIntegerProperty() {
         this(DEFAULT_MIN_VALUE, DEFAULT_MAX_VALUE);
     }
 
@@ -165,7 +170,7 @@ public class RangedDoubleProperty extends SimpleDoubleProperty implements Serial
      *             if the provided value is out of the specified range
      */
     @Override
-    public void set(final double value) {
+    public void set(final int value) {
         if (value < lowerBound) {
             throw new IllegalArgumentException(TOO_SMALL_MESSAGE);
         }
@@ -186,10 +191,10 @@ public class RangedDoubleProperty extends SimpleDoubleProperty implements Serial
         if (value == null) {
             throw new IllegalArgumentException("Can't set null value");
         } else {
-            if (value.doubleValue() < lowerBound) {
+            if (value.intValue() < lowerBound) {
                 throw new IllegalArgumentException(TOO_SMALL_MESSAGE);
             }
-            if (value.doubleValue() > upperBound) {
+            if (value.intValue() > upperBound) {
                 throw new IllegalArgumentException(TOO_BIG_MESSAGE);
             }
             super.setValue(value);
@@ -201,7 +206,7 @@ public class RangedDoubleProperty extends SimpleDoubleProperty implements Serial
      * 
      * @return the lower bound
      */
-    public Double getLowerBound() {
+    public Integer getLowerBound() {
         return lowerBound;
     }
 
@@ -211,7 +216,7 @@ public class RangedDoubleProperty extends SimpleDoubleProperty implements Serial
      * @param lowerBound
      *            the lower bound
      */
-    public void setLowerBound(final Double lowerBound) {
+    public void setLowerBound(final Integer lowerBound) {
         this.lowerBound = lowerBound;
     }
 
@@ -220,7 +225,7 @@ public class RangedDoubleProperty extends SimpleDoubleProperty implements Serial
      * 
      * @return the upper bound
      */
-    public Double getUpperBound() {
+    public Integer getUpperBound() {
         return upperBound;
     }
 
@@ -230,7 +235,7 @@ public class RangedDoubleProperty extends SimpleDoubleProperty implements Serial
      * @param upperBound
      *            the upper bound
      */
-    public void setUpperBound(final Double upperBound) {
+    public void setUpperBound(final Integer upperBound) {
         this.upperBound = upperBound;
     }
 
@@ -262,7 +267,7 @@ public class RangedDoubleProperty extends SimpleDoubleProperty implements Serial
     // if (getClass() != obj.getClass()) {
     // return false;
     // }
-    // final RangedDoubleProperty other = (RangedDoubleProperty) obj;
+    // final RangedIntegerProperty other = (RangedIntegerProperty) obj;
     // if (getBean() == null) {
     // if (other.getBean() != null) {
     // return false;

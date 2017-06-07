@@ -128,8 +128,8 @@ public class DrawShapeFX implements EffectFX {
             incarnations = PropertiesFactory.getIncarnationsListProperty("Incarnation to use");
         }
 
-        moleculeName.addListener(this::updateMoleculeCachedName);
-        currentIncarnation.addListener(this::updateIncarnations);
+        moleculeName.addListener(this.updateMoleculeCachedName());
+        currentIncarnation.addListener(this.updateIncarnations());
     }
 
     /**
@@ -145,11 +145,12 @@ public class DrawShapeFX implements EffectFX {
      * @param newValue
      *            the new name
      */
-    private void updateMoleculeCachedName(final ObservableValue<? extends String> observable, final String oldValue, // NOPMD
-            final String newValue) {
-        // - unused parameters are needed to be compatible with ChangeListener
-        this.moleculeNameCached = newValue;
-        instanziateMolecule();
+    private ChangeListener<String> updateMoleculeCachedName() {
+        return (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+            this.moleculeNameCached = newValue;
+            DrawShapeFX.this.instanziateMolecule();
+        };
+
     }
 
     /**
@@ -165,11 +166,13 @@ public class DrawShapeFX implements EffectFX {
      * @param newValue
      *            the new incarnation name
      */
-    private void updateIncarnations(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) { // NOPMD
-        // - unused parameters are needed to be compatible with ChangeListener
-        this.previousIncarnation = oldValue; // TODO what's for ?
-        incarnation = SupportedIncarnations.get(newValue).get();
-        instanziateMolecule();
+    private ChangeListener<String> updateIncarnations() {
+        return (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+            this.previousIncarnation = oldValue; // TODO what's for ?
+            incarnation = SupportedIncarnations.get(newValue).get();
+            instanziateMolecule();
+        };
+
     }
 
     private void instanziateMolecule() {
@@ -184,26 +187,26 @@ public class DrawShapeFX implements EffectFX {
     }
 
     @Override
-    public void apply(final Graphics2D graphic, final Environment<?> environment, final IWormhole2D wormhole) {
-        environment.forEach(node -> {
+    public <T> void apply(final Graphics2D graphic, final Environment<T> environment, final IWormhole2D wormhole) {
+        environment.forEach((Node<T> node) -> {
             if (!moleculeFilter.get() || (moleculeObject != null && node.contains(moleculeObject))) {
                 final double ks = (scaleFactor.get() - MIN_SCALE) * 2 / SCALE_DIFF;
                 final double sizex = size.get();
-                final double startx = wormhole.getViewPosition().getX() - sizex / 2;
+                final double startx = wormhole.getViewPoint(environment.getPosition(node)).getX() - sizex / 2;
                 final double sizey = FastMath.ceil(sizex * ks);
-                final double starty = wormhole.getViewPosition().getY() - sizey / 2;
+                final double starty = wormhole.getViewPoint(environment.getPosition(node)).getY() - sizey / 2;
                 final Color toRestore = graphic.getColor();
                 colorCache = new Color(red.getValue().intValue(), green.getValue().intValue(), blue.getValue().intValue(),
                         alpha.getValue().intValue());
                 // TODO maybe should switch to JavaFX Color class
                 Color newcolor = colorCache;
                 if (useMoleculeProperty.get() && moleculeObject != null) {
-                    final int minV = (int) (minprop.get() * FastMath.pow(PROPERTY_SCALE, orderOfMagnitude.get()));
-                    final int maxV = (int) (maxprop.get() * FastMath.pow(PROPERTY_SCALE, orderOfMagnitude.get()));
+                    final double minV = minprop.get() * FastMath.pow(PROPERTY_SCALE, orderOfMagnitude.get());
+                    final double maxV = maxprop.get() * FastMath.pow(PROPERTY_SCALE, orderOfMagnitude.get());
                     if (minV < maxV) {
-                        @SuppressWarnings({ "rawtypes", "unchecked" })
+                        // TODO not so good to use unchecked Node, but for now it's ok
                         double propval = incarnation.getProperty((Node) node, moleculeObject, moleculePropertyName.get());
-                        if (isWritingPropertyValue()) {
+                        if (writePropertyValue.get()) {
                             graphic.setColor(colorCache);
                             graphic.drawString(Double.toString(propval), (int) (startx + sizex), (int) (starty + sizey));
                         }
@@ -446,16 +449,16 @@ public class DrawShapeFX implements EffectFX {
         this.reverse.set(reverse);
     }
 
-    protected BooleanProperty writingPropertyValuePropery() {
+    protected BooleanProperty writePropertyValuePropery() {
         return this.writePropertyValue;
     }
 
-    protected boolean isWritingPropertyValue() {
+    protected boolean isWritePropertyValue() {
         return this.writePropertyValue.get();
     }
 
-    protected void setWritingPropertyValue(final boolean writingPropertyValue) {
-        this.writePropertyValue.set(writingPropertyValue);
+    protected void setWritePropertyValue(final boolean writePropertyValue) {
+        this.writePropertyValue.set(writePropertyValue);
     }
 
 }

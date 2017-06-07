@@ -22,6 +22,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,6 +30,7 @@ import javax.annotation.Nonnull;
 
 import org.danilopianini.util.SpatialIndex;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -51,20 +53,21 @@ import it.unibo.alchemist.model.interfaces.Position;
  */
 public abstract class AbstractEnvironment<T> implements Environment<T> {
 
-    private static final long serialVersionUID = 0L;
     /**
      * The default monitor that will be loaded. If null, the GUI must default to
      * a compatible monitor.
      */
     protected static final String DEFAULT_MONITOR = null;
-    private final TIntObjectHashMap<Position> nodeToPos = new TIntObjectHashMap<>();
-    private final TIntObjectHashMap<Node<T>> nodes = new TIntObjectHashMap<Node<T>>();
-    private final SpatialIndex<Node<T>> spatialIndex;
+    private static final long serialVersionUID = 0L;
     private final Map<Molecule, Layer<T>> layers = new LinkedHashMap<>();
     private final TIntObjectHashMap<Neighborhood<T>> neighCache = new TIntObjectHashMap<>();
+    private final TIntObjectHashMap<Node<T>> nodes = new TIntObjectHashMap<Node<T>>();
+    private final TIntObjectHashMap<Position> nodeToPos = new TIntObjectHashMap<>();
     private LinkingRule<T> rule;
-
     private Simulation<T> simulation;
+    private final SpatialIndex<Node<T>> spatialIndex;
+
+    private Predicate<Environment<T>> terminator = Predicates.alwaysFalse();
 
     /**
      * @param internalIndex
@@ -104,6 +107,11 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
              */
             nodeAdded(node, p, getNeighborhood(node));
         }
+    }
+
+    @Override
+    public final void addTerminator(final Predicate<Environment<T>> terminator) {
+        this.terminator = this.terminator.or(terminator);
     }
 
     /**
@@ -164,11 +172,11 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
         return Sets.newLinkedHashSet(layers.values());
     }
 
+
     @Override
     public final LinkingRule<T> getLinkingRule() {
         return rule;
     }
-
 
     @Override
     public final Neighborhood<T> getNeighborhood(@Nonnull final Node<T> center) {
@@ -237,6 +245,11 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
 
     private void ifEngineAvailable(final Consumer<Simulation<T>> r) {
         Optional.ofNullable(getSimulation()).ifPresent(r);
+    }
+
+    @Override
+    public final boolean isTerminated() {
+        return terminator.test(this);
     }
 
     @Override
@@ -433,9 +446,9 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     }
 
     private class Operation {
-        private final Node<T> origin;
         private final Node<T> destination;
         private final boolean isAdd;
+        private final Node<T> origin;
         Operation(final Node<T> origin, final Node<T> destination, final boolean isAdd) {
             this.origin = origin;
             this.destination = destination;

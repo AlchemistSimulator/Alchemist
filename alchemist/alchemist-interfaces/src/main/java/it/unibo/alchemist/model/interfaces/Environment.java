@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import it.unibo.alchemist.core.interfaces.Simulation;
 
@@ -31,8 +32,11 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
 
     /**
      * Add a {@link Layer} to the {@link Environment}.
-     * @param m the {@link Molecule} of the {@link Layer}
-     * @param l the {@link Layer}
+     * 
+     * @param m
+     *            the {@link Molecule} of the {@link Layer}
+     * @param l
+     *            the {@link Layer}
      */
     void addLayer(Molecule m, Layer<T> l);
 
@@ -47,6 +51,13 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
      *            The position where to place it
      */
     void addNode(Node<T> node, Position p);
+
+    /**
+     * @param terminator
+     *            a {@link Predicate} indicating whether the simulation should
+     *            be considered finished
+     */
+    void addTerminator(Predicate<Environment<T>> terminator);
 
     /**
      * The number of dimensions of this environment.
@@ -67,14 +78,19 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
     double getDistanceBetweenNodes(Node<T> n1, Node<T> n2);
 
     /**
-     * Get the layer associate to the given molecule. If no Layer is associated with the given molecule, return an empty optional.
-     * @param m the {@link Molecule}
-     * @return the {@link Optional} containing the {@link Layer} associated with the requested molecule
+     * Get the layer associate to the given molecule. If no Layer is associated
+     * with the given molecule, return an empty optional.
+     * 
+     * @param m
+     *            the {@link Molecule}
+     * @return the {@link Optional} containing the {@link Layer} associated with
+     *         the requested molecule
      */
     Optional<Layer<T>> getLayer(Molecule m);
 
     /**
      * Return all the Layers in this {@link Environment}.
+     * 
      * @return a {@link List} of {@link Layer}.
      */
     Set<Layer<T>> getLayers();
@@ -199,7 +215,13 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
     double[] getSizeInDistanceUnits();
 
     /**
-     * @param coordinates the coordinates of the point
+     * @return true if all the terminators are true
+     */
+    boolean isTerminated();
+
+    /**
+     * @param coordinates
+     *            the coordinates of the point
      * @return a {@link Position} compatible with this environment
      */
     Position makePosition(Number... coordinates);
@@ -243,7 +265,8 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
     void setLinkingRule(LinkingRule<T> rule);
 
     /**
-     * @param s the simulation
+     * @param s
+     *            the simulation
      */
     void setSimulation(Simulation<T> s);
 

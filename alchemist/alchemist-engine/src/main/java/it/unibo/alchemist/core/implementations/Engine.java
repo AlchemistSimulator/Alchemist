@@ -176,6 +176,10 @@ public class Engine<T> implements Simulation<T> {
             }
             monitorLock.release();
         }
+        if (env.isTerminated()) {
+            newStatus(Status.TERMINATED);
+            L.info("Termination condition reached.");
+        }
         curStep++;
     }
 

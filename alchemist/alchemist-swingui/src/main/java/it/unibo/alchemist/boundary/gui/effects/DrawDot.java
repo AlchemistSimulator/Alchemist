@@ -13,9 +13,9 @@ import it.unibo.alchemist.model.interfaces.Node;
 import javafx.beans.property.DoubleProperty;
 
 /**
- * Simple effect that draws a {@link Color#BLACK black} dot for each node.
+ * Simple effect that draws a {@link Color#BLACK black} dot for each {@link Node}.
  * <p>
- * It's possible to set the size of the dot.
+ * It's possible to set the size of the dots.
  */
 public class DrawDot implements EffectFX {
     /** Default generated Serial Version UID. */
@@ -30,32 +30,33 @@ public class DrawDot implements EffectFX {
     private static final double MIN_SCALE = 0;
     /** Range for the scale factor. */
     private static final double SCALE_DIFF = MAX_SCALE - MIN_SCALE;
-    /** Initial value of the scale factor. */
-    private static final double SCALE_INITIAL = (SCALE_DIFF) / 2 + MIN_SCALE;
+    /** Default value of the scale factor. */
+    private static final double DEFAULT_SCALE = (SCALE_DIFF) / 2 + MIN_SCALE;
 
     /** Default {@code Color}. */
     private static final Color DEFAULT_COLOR = Color.BLACK;
     // TODO maybe should switch to JavaFX Color class
 
     private final RangedDoubleProperty size = PropertiesFactory.getPercentageRangedProperty("Size", DEFAULT_SIZE);
+    private Color color = DEFAULT_COLOR;
 
     @Override
     public <T> void apply(final Graphics2D graphic, final Environment<T> environment, final IWormhole2D wormhole) {
         environment.forEach((Node<T> node) -> {
-            final double ks = SCALE_INITIAL;
+            final double ks = DEFAULT_SCALE;
             final double sizex = size.get();
             final double startx = wormhole.getViewPoint(environment.getPosition(node)).getX() - sizex / 2;
             final double sizey = FastMath.ceil(sizex * ks);
             final double starty = wormhole.getViewPoint(environment.getPosition(node)).getY() - sizey / 2;
 
             graphic.fillOval((int) startx, (int) starty, (int) sizex, (int) sizey);
-            graphic.setColor(DEFAULT_COLOR);
+            graphic.setColor(color);
 
         });
     }
 
     /**
-     * The size of the dot representing each {@link Node} in the
+     * The size of the dots representing each {@link Node} in the
      * {@link Environment} specified when calling
      * {@link #apply(Graphics2D, Environment, IWormhole2D) apply} in percentage.
      * 
@@ -68,7 +69,7 @@ public class DrawDot implements EffectFX {
     /**
      * Gets the value of the property {@code sizeProperty}.
      * 
-     * @return the size of the dot
+     * @return the size of the dots
      */
     protected Double getSize() {
         return this.size.get();
@@ -84,6 +85,27 @@ public class DrawDot implements EffectFX {
      */
     protected void setSize(final Double size) {
         this.size.set(size);
+    }
+
+    /**
+     * Gets the color of the dots.
+     * <p>
+     * Default color should be {@link Color#BLACK black}.
+     * 
+     * @return the color of the dots
+     */
+    protected Color getColor() {
+        return this.color;
+    }
+
+    /**
+     * Sets the color of the dots.
+     * 
+     * @param color
+     *            the color to set
+     */
+    protected void setColor(final Color color) {
+        this.color = color;
     }
 
 }

@@ -20,6 +20,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.LangUtils;
@@ -382,7 +383,7 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
         private SynchronizedVM(final CacheKey key) {
             this.key = key;
             ProtelisVM myVM = null;
-            if (key.property != null && !key.property.trim().isEmpty()) {
+            if (!StringUtils.isBlank(key.property)) {
                 try {
                     final String baseProgram = "env.get(\"" + ((SimpleMolecule) key.molecule).toFasterString() + "\")";
                     myVM = new ProtelisVM(

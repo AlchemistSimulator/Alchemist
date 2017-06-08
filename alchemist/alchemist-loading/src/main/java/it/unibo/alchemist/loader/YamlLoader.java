@@ -135,7 +135,7 @@ public class YamlLoader implements Loader {
             .put(DependentVariable.class, ImmutableMap.of(PARAMS, List.class, NAME, CharSequence.class))
             .put(Reaction.class, ImmutableMap.of(PARAMS, List.class, TIMEDISTRIBUTION, Object.class, ACTIONS, List.class, CONDITIONS, List.class))
             .build();
-    private static final BuilderConfiguration<DependentVariable> DEPENDENT_VAR_CONFIG = new BuilderConfiguration<>(
+    private static final BuilderConfiguration<DependentVariable<?>> DEPENDENT_VAR_CONFIG = new BuilderConfiguration<>(
             ImmutableMap.of(FORMULA, CharSequence.class), ImmutableMap.of(NAME, CharSequence.class), makeBaseFactory(),
             m -> new DependentScriptVariable(m.get(FORMULA).toString()));
     private static final BuilderConfiguration<FilteringPolicy> FILTERING_CONFIG = new BuilderConfiguration<>(
@@ -174,13 +174,13 @@ public class YamlLoader implements Loader {
             .put(Molecule.class, MODEL_PACKAGE_ROOT + "molecules.")
             .put(Concentration.class, MODEL_PACKAGE_ROOT + "concentrations.")
             .build();
-    private final ImmutableMap<String, Double> constants;
+    private final ImmutableMap<String, Object> constants;
     private final ImmutableMap<String, Object> contents;
-    private final ImmutableMap<String, DependentVariable> depVariables;
+    private final ImmutableMap<String, DependentVariable<?>> depVariables;
     private final List<Extractor> extractors;
     private transient Incarnation<?> incarnation;
     private final ImmutableMap<Map<String, Object>, String> reverseLookupTable;
-    private final ImmutableMap<String, Variable> variables;
+    private final ImmutableMap<String, Variable<?>> variables;
 
     /**
      * @param source
@@ -233,10 +233,10 @@ public class YamlLoader implements Loader {
         /*
          * Compute constants and dependent variables
          */
-        final Map<String, Double> constants = Maps.newLinkedHashMapWithExpectedSize(originalVars.size());
-        final Map<String, DependentVariable> depVariables = Maps.newLinkedHashMapWithExpectedSize(originalVars.size());
+        final Map<String, Object> constants = Maps.newLinkedHashMapWithExpectedSize(originalVars.size());
+        final Map<String, DependentVariable<?>> depVariables = Maps.newLinkedHashMapWithExpectedSize(originalVars.size());
         final Factory factory = makeBaseFactory(incarnation);
-        final Builder<DependentVariable> depVarBuilder = new Builder<>(DependentVariable.class, ImmutableSet.of(DEPENDENT_VAR_CONFIG), factory);
+        final Builder<DependentVariable<?>> depVarBuilder = new Builder<>(DependentVariable.class, ImmutableSet.of(DEPENDENT_VAR_CONFIG), factory);
         int previousConstants, previousDepVars;
         final Map<String, Map<String, Object>> originalClone = new LinkedHashMap<>(originalVars);
         do {
@@ -247,9 +247,9 @@ public class YamlLoader implements Loader {
                 final Entry<String, Map<String, Object>> entry = iter.next();
                 final String name = entry.getKey();
                 try {
-                    final DependentVariable dv = Objects.requireNonNull(depVarBuilder.build(entry.getValue()));
+                    final DependentVariable<?> dv = Objects.requireNonNull(depVarBuilder.build(entry.getValue()));
                     try {
-                        final double value = dv.getWith(constants);
+                        final Object value = dv.getWith(constants);
                         iter.remove();
                         constants.put(name, value);
                         depVariables.remove(name);
@@ -279,13 +279,13 @@ public class YamlLoader implements Loader {
          * Compute variables
          */
         final BiFunction<Map<String, ?>, CharSequence, Double> toDouble = (m, s) -> factory.convertOrFail(Double.class, m.get(s));
-        final BuilderConfiguration<Variable> arbitraryVarConfig = new BuilderConfiguration<>(
+        final BuilderConfiguration<Variable<?>> arbitraryVarConfig = new BuilderConfiguration<>(
                 ImmutableMap.of(VALUES, List.class, DEFAULT, Number.class), ImmutableMap.of(NAME, CharSequence.class), factory,
                 m -> new ArbitraryVariable(toDouble.apply(m, DEFAULT), factory.convertOrFail(List.class, m.get(VALUES))));
-        final BuilderConfiguration<Variable> linearVarConfig = new BuilderConfiguration<>(
+        final BuilderConfiguration<Variable<?>> linearVarConfig = new BuilderConfiguration<>(
                 ImmutableMap.of(DEFAULT, Number.class, MIN, Number.class, MAX, Number.class, STEP, Number.class), ImmutableMap.of(NAME, CharSequence.class), factory,
                 m -> new LinearVariable(toDouble.apply(m, DEFAULT), toDouble.apply(m, MIN), toDouble.apply(m, MAX), toDouble.apply(m, STEP)));
-        final Builder<Variable> varBuilder = new Builder<>(Variable.class, ImmutableSet.of(arbitraryVarConfig, linearVarConfig), factory);
+        final Builder<Variable<?>> varBuilder = new Builder<>(Variable.class, ImmutableSet.of(arbitraryVarConfig, linearVarConfig), factory);
         variables = originalVars.entrySet().stream()
                 .filter(e -> e.getValue() instanceof Map && !((Map<?, ?>) e.getValue()).containsKey(FORMULA))
                 .collect(ImmutableMap.toImmutableMap(Entry::getKey, e -> varBuilder.build(e.getValue())));
@@ -343,40 +343,40 @@ public class YamlLoader implements Loader {
     }
 
     @Override
-    public Map<String, Variable> getVariables() {
+    public Map<String, Variable<?>> getVariables() {
         return Collections.unmodifiableMap(variables);
     }
 
     @Override
-    public <T> Environment<T> getWith(final Map<String, Double> values) {
+    public <T> Environment<T> getWith(final Map<String, ?> values) {
         if (values.size() > variables.size()) {
             throw new IllegalArgumentException("Some variables do not exist in the environment, or are not overridable: " + Maps.difference(values, variables).entriesOnlyOnLeft());
         }
         final int expectedSize = constants.size() + variables.size() + depVariables.size();
-        final Map<String, Double> actualVars = Maps.newLinkedHashMapWithExpectedSize(expectedSize);
+        final Map<String, Object> actualVars = Maps.newLinkedHashMapWithExpectedSize(expectedSize);
         actualVars.putAll(values);
         actualVars.putAll(constants);
-        for (final Entry<String, Variable> entry: variables.entrySet()) {
+        for (final Entry<String, Variable<?>> entry: variables.entrySet()) {
             final String var = entry.getKey();
-            final Double varVal = values.get(var);
+            final Object varVal = values.get(var);
             actualVars.put(var, varVal == null ? entry.getValue().getDefault() : varVal); 
         }
         /*
          * Initialize the remaining dependent variables, and add them to the actual Vars
          */
-        final Map<String, DependentVariable> depClone = new LinkedHashMap<>(depVariables);
+        final Map<String, DependentVariable<?>> depClone = new LinkedHashMap<>(depVariables);
         final List<Exception> issues = Lists.newArrayListWithCapacity(depClone.size());
         int previousSize;
         do {
             issues.clear();
             previousSize = depClone.size();
-            final Iterator<Entry<String, DependentVariable>> iter = depClone.entrySet().iterator();
+            final Iterator<Entry<String, DependentVariable<?>>> iter = depClone.entrySet().iterator();
             while (iter.hasNext()) {
-                final Entry<String, DependentVariable> entry = iter.next();
+                final Entry<String, DependentVariable<?>> entry = iter.next();
                 final String name = entry.getKey();
-                final DependentVariable dv = entry.getValue();
+                final DependentVariable<?> dv = entry.getValue();
                 try {
-                    final double value = dv.getWith(actualVars);
+                    final Object value = dv.getWith(actualVars);
                     iter.remove();
                     actualVars.put(name, value);
                 } catch (IllegalStateException e) {
@@ -617,7 +617,7 @@ public class YamlLoader implements Loader {
         return factory;
     }
 
-    private static <T> Object recursivelyResolveVariables(final Object o, final Map<Map<String, Object>, String> reverseLookupTable, final Map<String, Double> variables) {
+    private static <T> Object recursivelyResolveVariables(final Object o, final Map<Map<String, Object>, String> reverseLookupTable, final Map<String, Object> variables) {
         if (reverseLookupTable.isEmpty() || variables.isEmpty()) {
             return o;
         }
@@ -633,7 +633,7 @@ public class YamlLoader implements Loader {
         if (o instanceof Map) {
             final String varName = reverseLookupTable.get(o);
             if (varName != null) {
-                final Double value = variables.get(varName);
+                final Object value = variables.get(varName);
                 if (value != null) {
                     return value;
                 }

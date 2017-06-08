@@ -6,9 +6,11 @@ import java.util.Map;
 /**
  * A dependent variable, namely a variable whose value can be obtained given the
  * values of other variables.
+ *
+ * @param <V>
  */
 @FunctionalInterface
-public interface DependentVariable extends Serializable {
+public interface DependentVariable<V> extends Serializable {
 
     /**
      * Given the current controlled variables, computes the current values for
@@ -21,6 +23,6 @@ public interface DependentVariable extends Serializable {
      *             if the value can not be computed, e.g. because there are
      *             unassigned required variables
      */
-    double getWith(Map<String, Double> variables);
+    V getWith(Map<String, Object> variables);
 
 }

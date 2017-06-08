@@ -1,6 +1,7 @@
 package it.unibo.alchemist.loader.variables;
 
 import java.util.stream.DoubleStream;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +10,7 @@ import org.slf4j.LoggerFactory;
  * This class represents a linear variable, namely a variable whose values span
  * linearly between minimum and maximum.
  */
-public class LinearVariable extends PrintableVariable {
+public class LinearVariable extends PrintableVariable<Double> {
 
     private static final long serialVersionUID = 2462199794377640948L;
     private static final Logger L = LoggerFactory.getLogger(LinearVariable.class);
@@ -35,7 +36,7 @@ public class LinearVariable extends PrintableVariable {
     }
 
     @Override
-    public double getDefault() {
+    public Double getDefault() {
         return def;
     }
 
@@ -49,8 +50,8 @@ public class LinearVariable extends PrintableVariable {
     }
 
     @Override
-    public DoubleStream stream() {
-        return DoubleStream.iterate(min, x -> x + step).limit(steps());
+    public Stream<Double> stream() {
+        return DoubleStream.iterate(min, x -> x + step).limit(steps()).boxed();
     }
 
 }

@@ -417,6 +417,7 @@ public class YamlLoader implements Loader {
         final Builder<Environment<T>> envBuilder = new Builder<>(Environment.class, ImmutableSet.of(envDefaultConfig), factory);
         factory.registerSingleton(RandomGenerator.class, simRng);
         final Environment<T> env = envBuilder.build(contents.get(ENVIRONMENT));
+        env.setIncarnation(incarnation);
         factory.registerSingleton(Environment.class, env);
         factory.registerImplicit(List.class, Position.class, l -> env.makePosition(cast(factory, LIST_NUMBER, l, "position coordinates").toArray(new Number[l.size()])));
         factory.registerImplicit(Number[].class, Position.class, env::makePosition);

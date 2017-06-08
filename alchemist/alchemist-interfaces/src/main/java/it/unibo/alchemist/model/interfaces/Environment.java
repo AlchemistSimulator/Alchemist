@@ -78,6 +78,11 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
     double getDistanceBetweenNodes(Node<T> n1, Node<T> n2);
 
     /**
+     * @return the {@link Incarnation} used to initialize the entities of this {@link Environment}, if it has been set.
+     */
+    Optional<Incarnation<T>> getIncarnation();
+
+    /**
      * Get the layer associate to the given molecule. If no Layer is associated
      * with the given molecule, return an empty optional.
      * 
@@ -257,6 +262,13 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
      *            the node to remove
      */
     void removeNode(Node<T> node);
+
+    /**
+     * @param incarnation
+     *            the {@link Incarnation} that will be used for creating the
+     *            entities of this environment
+     */
+    void setIncarnation(Incarnation<T> incarnation);
 
     /**
      * @param rule

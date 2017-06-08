@@ -1,4 +1,4 @@
-package it.unibo.alchemist.boundary.gui.view;
+package it.unibo.alchemist.boundary.gui.view.cells;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -13,7 +13,7 @@ import javafx.beans.property.SimpleObjectProperty;
  * @param <T>
  *            the enumeration wrapped
  */
-public class EnumProperty<T extends Enum<?>> extends SimpleObjectProperty<T> implements Serializable {
+public class EnumProperty<T extends Enum<T>> extends SimpleObjectProperty<T> implements Serializable {
     /** Generated Serial Version UID. */
     private static final long serialVersionUID = -954058739144566791L;
 

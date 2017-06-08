@@ -9,7 +9,7 @@ import com.jfoenix.controls.JFXDrawersStack;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.effects.EffectStack;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
-import it.unibo.alchemist.boundary.gui.view.EffectGroupCell;
+import it.unibo.alchemist.boundary.gui.view.cells.EffectGroupCell;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;

@@ -1,4 +1,4 @@
-package it.unibo.alchemist.boundary.gui.view;
+package it.unibo.alchemist.boundary.gui.view.cells;
 
 import java.io.IOException;
 
@@ -24,8 +24,8 @@ import javafx.scene.text.TextAlignment;
 /**
  * This ListView cell implements the {@link AbstractEffectCell} for containing
  * an {@link EffectGroup}. It has a name that identifies the EffectGroup and
- * when clicked should open a {@link ListView} to show the {@link EffectFX effects} the
- * group is composed of.
+ * when clicked should open a {@link ListView} to show the {@link EffectFX
+ * effects} the group is composed of.
  */
 public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
     private static final String DEFAULT_NAME = "Unnamed effect group";
@@ -92,6 +92,9 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
         } catch (IOException e) {
             throw new IllegalStateException("Could not initialize side pane for effects", e);
         }
+
+        effectBarController.groupNameProperty().bind(this.getLabel().textProperty());
+
         effectDrawer.setOverLayVisible(false);
         effectDrawer.setResizableOnDrag(false);
 

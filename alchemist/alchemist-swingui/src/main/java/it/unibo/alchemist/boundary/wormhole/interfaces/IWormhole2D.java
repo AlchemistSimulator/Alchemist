@@ -39,7 +39,6 @@ import it.unibo.alchemist.model.interfaces.Position;
  * to (16; 48) in order to see the "beginning" of the map on the left-bottom
  * corner of the view.<br>
  * 
-
  */
 public interface IWormhole2D {
 

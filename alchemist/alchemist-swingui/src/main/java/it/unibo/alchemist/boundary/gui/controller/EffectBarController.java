@@ -10,11 +10,13 @@ import com.jfoenix.controls.JFXDrawersStack;
 import it.unibo.alchemist.boundary.gui.effects.EffectBuilderFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
-import it.unibo.alchemist.boundary.gui.view.EffectCell;
+import it.unibo.alchemist.boundary.gui.view.cells.EffectCell;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import jiconfont.icons.GoogleMaterialDesignIcons;
@@ -78,27 +80,40 @@ public class EffectBarController implements Initializable {
 
     }
 
+    /**
+     * Opens a {@link Dialog}, and when user choose an {@link EffectFX effect},
+     * adds it to the {@link ObservableList list}.
+     */
     private void addEffectToList() {
         final EffectFX choice = effectBuilder.chooseAndLoad();
         if (choice != null) {
-            // final String name = choice.getName() + " " +
-            // this.getObservableList().size();
-            // TODO add setName to effect
             this.getObservableList().add(choice);
-            // this.getObservableList().get(this.getObservableList().size() -
-            // 1).setName(name);
-            // TODO add setName to effect
             this.effectsList.refresh();
         }
     }
 
+    /**
+     * Returns the {@link ObservableList} of all {@link EffectFX effects}
+     * contained in this group.
+     * 
+     * @return the {@code ObservableList} of all effects
+     */
     private ObservableList<EffectFX> getObservableList() {
         if (this.observableList == null) {
             this.observableList = FXCollections.observableArrayList();
             this.effectsList.setItems(observableList);
-            this.effectsList.setCellFactory(lv -> new EffectCell(stack, thisDrawer));
+            this.effectsList.setCellFactory(lv -> new EffectCell(stack));
             // TODO check
         }
         return this.observableList;
+    }
+
+    /**
+     * The name property of this representation of the group.
+     * 
+     * @return the name property
+     */
+    public StringProperty groupNameProperty() {
+        return this.groupName.textProperty();
     }
 }

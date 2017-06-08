@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.IOException;
 
+import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.projectview.controller.CenterLayoutController;
 import it.unibo.alchemist.boundary.projectview.controller.LeftLayoutController;
 import it.unibo.alchemist.boundary.projectview.controller.TopLayoutController;
@@ -13,6 +14,7 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -49,6 +51,7 @@ public class ProjectGUI extends Application {
         Thread.setDefaultUncaughtExceptionHandler(FXUtil::errorAlert);
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Alchemist");
+        this.primaryStage.getIcons().add(new Image(ResourceLoader.load("/icon/icon.png")));
         initLayout("RootLayout");
         initLayout("LeftLayout");
         initLayout("CenterLayout");

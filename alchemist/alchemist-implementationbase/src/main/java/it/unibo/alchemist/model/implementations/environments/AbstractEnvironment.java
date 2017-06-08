@@ -236,11 +236,6 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     }
 
     @Override
-    public String getPreferredMonitor() {
-        return DEFAULT_MONITOR;
-    }
-
-    @Override
     public Simulation<T> getSimulation() {
         return simulation;
     }

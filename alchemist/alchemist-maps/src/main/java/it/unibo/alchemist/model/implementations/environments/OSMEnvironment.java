@@ -95,7 +95,6 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      */
     public static final boolean DEFAULT_FORCE_STREETS = true;
     private static final int ENCODING_BASE = 36;
-    private static final String MONITOR = "MapDisplay";
     private static final Logger L = LoggerFactory.getLogger(OSMEnvironment.class);
     private static final long serialVersionUID = -8100726226966471621L;
     /**
@@ -399,11 +398,6 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
         }
         assert trace.getNextPosition(time.toDouble()) != null;
         return trace.getNextPosition(time.toDouble()).toPosition();
-    }
-
-    @Override
-    public String getPreferredMonitor() {
-        return MONITOR;
     }
 
     @Override

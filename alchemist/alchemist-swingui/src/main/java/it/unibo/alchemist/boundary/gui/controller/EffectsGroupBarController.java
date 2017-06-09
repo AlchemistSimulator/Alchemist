@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawersStack;
@@ -26,6 +27,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
@@ -87,12 +89,25 @@ public class EffectsGroupBarController implements Initializable {
         this.addGroup.setOnAction(e -> addGroupToList("Effect group " + (getObservableList().size() + 1)));
     }
 
+    /**
+     * Adds a new {@link EffectGroup} to the {@link ListView}.
+     * 
+     * @param name
+     *            the name to give to the {@code EffectGroup}
+     */
     private void addGroupToList(final String name) {
         this.getObservableList().add(new EffectStack());
         this.getObservableList().get(this.getObservableList().size() - 1).setName(name);
         this.effectGroupsList.refresh();
     }
 
+    /**
+     * Getter method and lazy initializer for the internal
+     * {@link ObservableList}.
+     * 
+     * @return the {@code ObservableList} associated to the controlled
+     *         {@link ListView}
+     */
     private ObservableList<EffectGroup> getObservableList() {
         if (this.observableList == null) {
             this.observableList = FXCollections.observableArrayList();
@@ -103,6 +118,9 @@ public class EffectsGroupBarController implements Initializable {
         return this.observableList;
     }
 
+    /**
+     * Saves the {@link EffectGroup}s to file using {@link Gson}.
+     */
     private void saveToFile() {
         final FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save effect");
@@ -119,6 +137,9 @@ public class EffectsGroupBarController implements Initializable {
         }
     }
 
+    /**
+     * Loads the {@link EffectGroup}s from file using {@link Gson}.
+     */
     private void loadFromFile() {
         final FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Load effect");
@@ -137,6 +158,16 @@ public class EffectsGroupBarController implements Initializable {
         }
     }
 
+    /**
+     * Opens up a {@link Dialog} showing the exception that caused it
+     * 
+     * @param title
+     *            the title of the {@code Dialog}
+     * @param header
+     *            the header of the {@code Dialog}
+     * @param cause
+     *            the {@link Exception} that caused the error
+     */
     private void errorDialog(final String title, final String header, final Exception cause) {
         final Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle(title);

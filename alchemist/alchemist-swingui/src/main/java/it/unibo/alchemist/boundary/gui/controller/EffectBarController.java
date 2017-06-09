@@ -72,7 +72,7 @@ public class EffectBarController implements Initializable {
 
         this.effectBuilder = new EffectBuilderFX();
 
-        this.addEffect.setOnAction(e -> addEffectToList());
+        this.addEffect.setOnAction(e -> addEffectToList("Effect " + (getObservableList().size() + 1)));
 
         this.backToGroups.setOnAction(e -> {
             this.stack.toggle(thisDrawer);
@@ -84,7 +84,7 @@ public class EffectBarController implements Initializable {
      * Opens a {@link Dialog}, and when user choose an {@link EffectFX effect},
      * adds it to the {@link ObservableList list}.
      */
-    private void addEffectToList() {
+    private void addEffectToList(final String name) {
         final EffectFX choice = effectBuilder.chooseAndLoad();
         if (choice != null) {
             this.getObservableList().add(choice);
@@ -93,10 +93,11 @@ public class EffectBarController implements Initializable {
     }
 
     /**
-     * Returns the {@link ObservableList} of all {@link EffectFX effects}
-     * contained in this group.
+     * Getter method and lazy initializer for the internal
+     * {@link ObservableList}.
      * 
-     * @return the {@code ObservableList} of all effects
+     * @return the {@code ObservableList} associated to the controlled
+     *         {@link ListView}
      */
     private ObservableList<EffectFX> getObservableList() {
         if (this.observableList == null) {

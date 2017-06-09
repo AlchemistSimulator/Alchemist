@@ -13,7 +13,8 @@ import it.unibo.alchemist.model.interfaces.Node;
 import javafx.beans.property.DoubleProperty;
 
 /**
- * Simple effect that draws a {@link Color#BLACK black} dot for each {@link Node}.
+ * Simple effect that draws a {@link Color#BLACK black} dot for each
+ * {@link Node}.
  * <p>
  * It's possible to set the size of the dots.
  */
@@ -39,6 +40,8 @@ public class DrawDot implements EffectFX {
 
     private final RangedDoubleProperty size = PropertiesFactory.getPercentageRangedProperty("Size", DEFAULT_SIZE);
     private Color color = DEFAULT_COLOR;
+
+    private String name;
 
     @Override
     public <T> void apply(final Graphics2D graphic, final Environment<T> environment, final IWormhole2D wormhole) {
@@ -106,6 +109,16 @@ public class DrawDot implements EffectFX {
      */
     protected void setColor(final Color color) {
         this.color = color;
+    }
+
+    @Override
+    public String getName() {
+        return this.name;
+    }
+
+    @Override
+    public void setName(final String name) {
+        this.name = name;
     }
 
 }

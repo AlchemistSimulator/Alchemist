@@ -114,6 +114,7 @@ public class DrawShapeFX implements EffectFX {
     private final SerializableStringProperty currentIncarnation = new SerializableStringProperty();
     private transient String previousIncarnation;
     private transient Incarnation<?> incarnation;
+    private String name;
 
     /**
      * Default constructor. Builds a new {@code DrawShapeFX} effect.
@@ -434,6 +435,16 @@ public class DrawShapeFX implements EffectFX {
 
     protected void setWritePropertyValue(final boolean writePropertyValue) {
         this.writePropertyValue.set(writePropertyValue);
+    }
+
+    @Override
+    public String getName() {
+        return this.name;
+    }
+
+    @Override
+    public void setName(final String name) {
+        this.name = name;
     }
 
 }

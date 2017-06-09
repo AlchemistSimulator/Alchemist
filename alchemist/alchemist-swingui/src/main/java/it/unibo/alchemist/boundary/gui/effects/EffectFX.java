@@ -9,10 +9,7 @@ import javafx.scene.input.DataFormat;
 
 /**
  * Graphical visualization of something happening in the environment.
- * <p>
- * It is implemented as a {@link FunctionalInterface}.
  */
-@FunctionalInterface
 public interface EffectFX extends Serializable {
     /** Default DataFormat. */
     DataFormat DATA_FORMAT = new DataFormat(EffectFX.class.getName());
@@ -30,6 +27,21 @@ public interface EffectFX extends Serializable {
      *            the {@link Environment} type
      */
     <T> void apply(Graphics2D graphic, Environment<T> environment, IWormhole2D wormhole);
+
+    /**
+     * Gets the name of the effect.
+     * 
+     * @return the name of the effect
+     */
+    String getName();
+
+    /**
+     * Sets the name of the effect.
+     * 
+     * @param name
+     *            the name of the effect
+     */
+    void setName(String name);
 
     @Override // Should override hashCode() method
     int hashCode();

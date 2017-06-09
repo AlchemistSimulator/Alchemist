@@ -216,7 +216,7 @@ public final class Project {
                         .setHeadless(false)
                         .setGUICloseOperation(JFrame.DISPOSE_ON_CLOSE)
                         .build();
-                    final Map<String, Variable> keys = runner.getVariables();
+                    final Map<String, Variable<?>> keys = runner.getVariables();
                     final Set<String> selectedVariables = isBatch 
                             ? this.batch.getVariables().entrySet().stream().filter(Entry::getValue).map(Entry::getKey).collect(Collectors.toSet())
                             : Collections.emptySet();

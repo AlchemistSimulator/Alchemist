@@ -78,6 +78,11 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
     double getDistanceBetweenNodes(Node<T> n1, Node<T> n2);
 
     /**
+     * @return the {@link Incarnation} used to initialize the entities of this {@link Environment}, if it has been set.
+     */
+    Optional<Incarnation<T>> getIncarnation();
+
+    /**
      * Get the layer associate to the given molecule. If no Layer is associated
      * with the given molecule, return an empty optional.
      * 
@@ -179,16 +184,6 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
     Position getPosition(Node<T> node);
 
     /**
-     * @return the class name of the monitor that should preferably used for
-     *         displaying the contents of this environment. Full class names are
-     *         recommended: it's up to the graphical interface to decide how to
-     *         deal with simple class names (whether or not to prefix a standard
-     *         package). In case of null return or inexistent class, the default
-     *         monitor will be used.
-     */
-    String getPreferredMonitor();
-
-    /**
      * @return the current simulation, if present, or throws an
      *         {@link IllegalStateException} otherwise
      */
@@ -257,6 +252,13 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
      *            the node to remove
      */
     void removeNode(Node<T> node);
+
+    /**
+     * @param incarnation
+     *            the {@link Incarnation} that will be used for creating the
+     *            entities of this environment
+     */
+    void setIncarnation(Incarnation<T> incarnation);
 
     /**
      * @param rule

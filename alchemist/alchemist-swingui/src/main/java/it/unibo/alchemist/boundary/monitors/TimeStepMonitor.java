@@ -34,6 +34,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  * @param <T>
  *            Concentration type
  */
+@Deprecated
 public class TimeStepMonitor<T> extends JPanel implements OutputMonitor<T> {
 
     private static final long serialVersionUID = 5818408644038869442L;

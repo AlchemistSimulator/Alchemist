@@ -4,14 +4,16 @@ import java.util.stream.Collectors;
 
 /**
  * A variable stub, with a default {@link #toString()} method.
+ *
+ * @param <V>
  */
-public abstract class PrintableVariable implements Variable {
+public abstract class PrintableVariable<V> implements Variable<V> {
 
-    private static final long serialVersionUID = 0L;
+    private static final long serialVersionUID = 1L;
 
     @Override
     public String toString() {
-        return '[' + stream().mapToObj(Double::toString).collect(Collectors.joining(",")) + ']';
+        return '[' + stream().map(Object::toString).collect(Collectors.joining(",")) + ']';
     }
 
 }

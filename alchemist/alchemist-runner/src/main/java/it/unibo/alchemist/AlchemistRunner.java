@@ -98,7 +98,7 @@ public final class AlchemistRunner<T> {
      * 
      * @return loader variables
      */
-    public Map<String, Variable> getVariables() {
+    public Map<String, Variable<?>> getVariables() {
         return loader.getVariables();
     }
 
@@ -113,7 +113,7 @@ public final class AlchemistRunner<T> {
             /*
              * Batch mode
              */
-            final Map<String, Variable> simVars = getVariables();
+            final Map<String, Variable<?>> simVars = getVariables();
             for (final String s: variables) {
                 if (!simVars.containsKey(s)) {
                     throw new IllegalArgumentException("Variable " + s + " is not allowed. Valid variables are: " + simVars.keySet());
@@ -185,9 +185,9 @@ public final class AlchemistRunner<T> {
     }
 
     private <R> Stream<Callable<R>> prepareSimulations(final Function<Simulation<T>, R> finalizer, final String... variables) {
-        final List<List<? extends Entry<String, Double>>> varStreams = Arrays.stream(variables)
+        final List<List<? extends Entry<String, ?>>> varStreams = Arrays.stream(variables)
                 .map(it -> getVariables().get(it).stream()
-                        .mapToObj(val -> new ImmutablePair<>(it, val))
+                        .map(val -> new ImmutablePair<>(it, val))
                         .collect(Collectors.toList()))
                 .collect(Collectors.toList());
         return (varStreams.isEmpty()
@@ -207,7 +207,7 @@ public final class AlchemistRunner<T> {
                      * Make the header: get all the default values and
                      * substitute those that are different in this run
                      */
-                    final Map<String, Double> defaultVars = loader.getVariables().entrySet().stream()
+                    final Map<String, Object> defaultVars = loader.getVariables().entrySet().stream()
                             .collect(Collectors.toMap(Entry::getKey, e -> e.getValue().getDefault()));
                     defaultVars.putAll(vars);
                     final String header = vars.entrySet().stream()

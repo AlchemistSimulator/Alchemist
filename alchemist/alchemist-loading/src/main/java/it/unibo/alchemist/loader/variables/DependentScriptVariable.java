@@ -18,7 +18,7 @@ import org.danilopianini.lang.HashUtils;
  * simple regular expression, and then the resulting {@link String} is fed to
  * the Javascript interpereter.
  */
-public class DependentScriptVariable implements DependentVariable {
+public class DependentScriptVariable implements DependentVariable<Double> {
 
     /**
      * 
@@ -56,7 +56,7 @@ public class DependentScriptVariable implements DependentVariable {
     }
 
     @Override
-    public double getWith(final Map<String, Double> variables) {
+    public Double getWith(final Map<String, Object> variables) {
         if (script == null) {
             assert result != null;
             return result.doubleValue();
@@ -76,7 +76,7 @@ public class DependentScriptVariable implements DependentVariable {
             formula = script.replaceAll(RANDOM_REGEX, Double.toString(random));
         }
         for (final String var : keys) {
-            formula = formula.replaceAll("\\$" + var, Double.toString(variables.get(var)));
+            formula = formula.replaceAll("\\$" + var, variables.get(var).toString());
         }
         try {
             final Object result = ENGINE.eval(formula);
@@ -84,13 +84,13 @@ public class DependentScriptVariable implements DependentVariable {
                 return ((Number) result).doubleValue();
             }
             if (result instanceof Boolean) {
-                return (Boolean) result ? 1 : 0;
+                return (Boolean) result ? 1d : 0d;
             }
             throw new IllegalStateException("The script return value (" + result + ": " + result.getClass().getSimpleName() + ") can't get converted to a Java Number");
         } catch (final ScriptException | ClassCastException e) {
             throw new IllegalStateException("The expression engine could not perform the requested operation. " + script
                     + " got transformed in " + formula
-                    + ", but this is either not a valid script, or its return type is not compatible with a Java Number", e);
+                    + ", but this is either not a valid script, or its return type is not compatible with a Java Object", e);
         }
     }
 

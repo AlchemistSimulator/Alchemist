@@ -38,6 +38,7 @@ import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.LinkingRule;
 import it.unibo.alchemist.model.interfaces.Molecule;
@@ -59,6 +60,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
      */
     protected static final String DEFAULT_MONITOR = null;
     private static final long serialVersionUID = 0L;
+    private Incarnation<T> incarnation;
     private final Map<Molecule, Layer<T>> layers = new LinkedHashMap<>();
     private final TIntObjectHashMap<Neighborhood<T>> neighCache = new TIntObjectHashMap<>();
     private final TIntObjectHashMap<Node<T>> nodes = new TIntObjectHashMap<Node<T>>();
@@ -163,15 +165,20 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     }
 
     @Override
+    public Optional<Incarnation<T>> getIncarnation() {
+        return Optional.ofNullable(incarnation);
+    }
+
+    @Override
     public Optional<Layer<T>> getLayer(final Molecule m) {
         return Optional.ofNullable(layers.get(m));
     }
+
 
     @Override
     public Set<Layer<T>> getLayers() {
         return Sets.newLinkedHashSet(layers.values());
     }
-
 
     @Override
     public final LinkingRule<T> getLinkingRule() {
@@ -226,11 +233,6 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     @Override
     public final Position getPosition(final Node<T> node) {
         return nodeToPos.get(node.getId());
-    }
-
-    @Override
-    public String getPreferredMonitor() {
-        return DEFAULT_MONITOR;
     }
 
     @Override
@@ -338,6 +340,15 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
          * Call subclass remover
          */
         nodeRemoved(node, neigh);
+    }
+
+    @Override
+    public final void setIncarnation(final Incarnation<T> incarnation) {
+        if (this.incarnation == null) {
+            this.incarnation = Objects.requireNonNull(incarnation);
+        } else {
+            throw new IllegalStateException("The Environment has already been equipeed with an incarnation: " + this.incarnation);
+        }
     }
 
     @Override

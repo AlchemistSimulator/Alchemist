@@ -33,6 +33,7 @@ import javax.swing.filechooser.FileFilter;
 
 import org.danilopianini.view.GUIUtilities;
 
+import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializationFactory;
 import it.unibo.alchemist.boundary.gui.tape.JTapeFeatureStack;
 import it.unibo.alchemist.boundary.gui.tape.JTapeFeatureStack.Type;
 import it.unibo.alchemist.boundary.gui.tape.JTapeGroup;

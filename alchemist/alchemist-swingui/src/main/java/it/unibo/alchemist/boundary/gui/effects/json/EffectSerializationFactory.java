@@ -1,4 +1,4 @@
-package it.unibo.alchemist.boundary.gui.effects;
+package it.unibo.alchemist.boundary.gui.effects.json;
 
 import java.io.File;
 import java.io.FileReader;
@@ -22,6 +22,8 @@ import com.google.gson.stream.JsonWriter;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 
 import it.unibo.alchemist.SupportedIncarnations;
+import it.unibo.alchemist.boundary.gui.effects.DrawShape;
+import it.unibo.alchemist.boundary.gui.effects.Effect;
 
 /**
  * Serialize Alchemist effects from/to file in human readable format.

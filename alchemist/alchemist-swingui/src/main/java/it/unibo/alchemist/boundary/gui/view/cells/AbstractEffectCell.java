@@ -137,7 +137,8 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
     }
 
     /**
-     * This method ends the drag'n'drop action. <br/>
+     * This method ends the drag'n'drop action. 
+     * <br/>
      * This should not be overridden unless you want to change Drag'n'Drop
      * behavior and you now what you are doing.
      * 

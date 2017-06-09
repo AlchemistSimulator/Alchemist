@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import it.unibo.alchemist.boundary.gui.effects.Effect;
 import it.unibo.alchemist.boundary.gui.effects.EffectFactory;
-import it.unibo.alchemist.boundary.gui.effects.EffectSerializationFactory;
+import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializationFactory;
 import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D;
 
 /**

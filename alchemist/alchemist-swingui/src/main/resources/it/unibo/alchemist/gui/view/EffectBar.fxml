@@ -11,6 +11,7 @@
       <ButtonBar id="effectsControlBar" fx:id="effectsControlBar" stylesheets="@ButtonsBarLayout.css" BorderPane.alignment="CENTER">
          <buttons>
             <JFXButton id="addEffect" fx:id="addEffect" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" ripplerFill="WHITE" stylesheets="" text="Add" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="RIGHT" />
+            <JFXButton id="backToGroups" fx:id="backToGroups" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" ripplerFill="WHITE" stylesheets="" text="Back" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT" />
          </buttons>
       </ButtonBar>
    </bottom>
@@ -20,8 +21,7 @@
    <top>
       <ButtonBar id="topBar" fx:id="topBar" stylesheets="@ButtonsBarLayout.css" BorderPane.alignment="CENTER">
          <buttons>
-            <JFXButton id="backToGroups" fx:id="backToGroups" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" ripplerFill="WHITE" stylesheets="" text="Back" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT" />
-            <Label id="groupName" fx:id="groupName" text="Group name" ButtonBar.buttonData="RIGHT" />
+            <Label id="groupName" fx:id="groupName" text="Group name" ButtonBar.buttonData="LEFT"/>
          </buttons>
       </ButtonBar>
    </top>

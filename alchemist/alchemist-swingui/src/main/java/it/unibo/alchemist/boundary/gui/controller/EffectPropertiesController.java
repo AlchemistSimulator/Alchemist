@@ -26,12 +26,15 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -85,18 +88,16 @@ public class EffectPropertiesController implements Initializable {
             this.parseEnumFields(properties);
 
             if (!this.dynamicNodes.isEmpty()) {
-                this.dynamicNodes.entrySet().forEach(e -> this.mainBox.getChildren().add(new HBox(e.getKey(), e.getValue())));
+                this.dynamicNodes.entrySet().forEach(e -> {
+                    final HBox row = new HBox(e.getKey(), e.getValue());
+                    row.setAlignment(Pos.CENTER);
+                    this.mainBox.getChildren().add(row);
+                });
             } else {
-                L.debug("Effect " + effect.toString() + " has now representable properties");
-                final Label nothingHere = new Label("Nothing tunable here");
-                nothingHere.setTextAlignment(TextAlignment.CENTER);
-                mainBox.getChildren().add(nothingHere);
+                this.showNothing();
             }
         } else {
-            L.debug("Effect " + effect.toString() + " has now representable properties");
-            final Label nothingHere = new Label("Nothing tunable here");
-            nothingHere.setTextAlignment(TextAlignment.CENTER);
-            mainBox.getChildren().add(nothingHere);
+            this.showNothing();
         }
 
         this.backToEffects.setText("");
@@ -209,8 +210,13 @@ public class EffectPropertiesController implements Initializable {
      *            the model of the spinner
      */
     private void buildSpinner(final RangedDoubleProperty doubleProperty) {
-
-        final Spinner<Double> spinner = new Spinner<>(doubleProperty.getLowerBound(), doubleProperty.getUpperBound(), doubleProperty.get());
+        final SpinnerValueFactory<Double> factory = new SpinnerValueFactory.DoubleSpinnerValueFactory(doubleProperty.getLowerBound(),
+                doubleProperty.getUpperBound(), doubleProperty.get(), 0.01);
+        final Spinner<Double> spinner = new Spinner<>(factory);
+        spinner.setEditable(true);
+        final TextFormatter<Double> formatter = new TextFormatter<Double>(factory.getConverter(), factory.getValue());
+        spinner.getEditor().setTextFormatter(formatter);
+        factory.valueProperty().bindBidirectional(formatter.valueProperty());
         spinner.valueProperty().addListener((observable, oldValue, newValue) -> doubleProperty.set(newValue));
 
         this.dynamicNodes.put(new Label(doubleProperty.getName()), spinner);
@@ -252,6 +258,13 @@ public class EffectPropertiesController implements Initializable {
         comboBox.valueProperty().addListener((observable, oldValue, newValue) -> enumProperty.setValue(newValue));
 
         this.dynamicNodes.put(new Label(enumProperty.getName()), comboBox);
+    }
+
+    private void showNothing() {
+        L.debug("Effect " + effect.toString() + " does not have tunable properties");
+        final Label nothingHere = new Label("Nothing tunable here");
+        nothingHere.setTextAlignment(TextAlignment.CENTER);
+        mainBox.getChildren().add(nothingHere);
     }
 
 }

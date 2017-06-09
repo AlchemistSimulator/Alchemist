@@ -17,7 +17,7 @@ public final class EffectFactoryFX {
      * @return the effect which is inserted by default
      */
     public static EffectFX buildDefaultEffect() {
-        return new DrawShapeFX();
+        return new DrawDot();
     }
 
     /**

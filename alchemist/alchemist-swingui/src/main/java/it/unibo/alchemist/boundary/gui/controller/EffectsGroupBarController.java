@@ -24,7 +24,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
@@ -112,7 +111,7 @@ public class EffectsGroupBarController implements Initializable {
         if (selectedFile != null) {
             try {
                 EffectSerializer.effectGroupsToFile(selectedFile,
-                        Arrays.asList(observableList.toArray(new EffectGroup[observableList.size()])));
+                        Arrays.asList(getObservableList().toArray(new EffectGroup[getObservableList().size()])));
             } catch (final IOException | JsonParseException e) {
                 L.error("Can't save Effect Groups to file: " + e.getMessage());
                 this.errorDialog("Exception during save", "Can't save Effect Groups to file", e);
@@ -130,7 +129,7 @@ public class EffectsGroupBarController implements Initializable {
 
         if (selectedFile != null) {
             try {
-                this.observableList.addAll(EffectSerializer.effectGroupsFromFile(selectedFile));
+                this.getObservableList().addAll(EffectSerializer.effectGroupsFromFile(selectedFile));
             } catch (final IOException | JsonParseException e) {
                 L.error("Can't load Effect Groups from file: " + e.getMessage());
                 this.errorDialog("Exception during load", "Can't load Effect Groups from file", e);

@@ -27,7 +27,7 @@ import it.unibo.alchemist.boundary.monitors.MapDisplay;
 import it.unibo.alchemist.boundary.monitors.TimeStepMonitor;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
-import java8.util.Objects;
+import java.util.Objects;
 
 /**
  * Utility class for quickly creating non-reusable graphical interfaces.
@@ -120,7 +120,6 @@ public final class SingleRunGUI {
                 : new Generic2DDisplay<>();
         if (main instanceof Component) {
             final JFrame frame = new JFrame("Alchemist Simulator");
-            // frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setDefaultCloseOperation(closeOperation);
             final JPanel canvas = new JPanel();
             frame.getContentPane().add(canvas);

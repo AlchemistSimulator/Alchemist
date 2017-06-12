@@ -167,7 +167,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
             final int thisIndex = items.indexOf(getItem());
 
             if (thisIndex < 0) {
-                throw new IllegalStateException("Can't find the the item of this cell in the ListView");
+                throw new IllegalStateException("Can't find the item of this cell in the ListView");
             }
 
             items.set(draggedIndex, getItem());

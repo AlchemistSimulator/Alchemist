@@ -137,8 +137,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
     }
 
     /**
-     * This method ends the drag'n'drop action. 
-     * <br/>
+     * This method ends the drag'n'drop action. <br/>
      * This should not be overridden unless you want to change Drag'n'Drop
      * behavior and you now what you are doing.
      * 
@@ -159,11 +158,16 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
             final ObservableList<T> items = getListView().getItems();
             final Object content = db.getContent(getDataFormat());
 
-            final int draggedIndex = items.indexOf((T) content);
+            final int draggedIndex = items.indexOf(content);
+
+            if (draggedIndex < 0) {
+                throw new IllegalStateException("Can't find the dragged item in the ListView");
+            }
+
             final int thisIndex = items.indexOf(getItem());
 
-            if (draggedIndex < 0 || thisIndex < 0) {
-                throw new IllegalStateException("No matching between DragBoard content and ListView contents");
+            if (thisIndex < 0) {
+                throw new IllegalStateException("Can't find the the item of this cell in the ListView");
             }
 
             items.set(draggedIndex, getItem());

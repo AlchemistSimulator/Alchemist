@@ -126,10 +126,10 @@ public class EffectCell extends AbstractEffectCell<EffectFX> {
     public DataFormat getDataFormat() {
         final EffectFX item = this.getItem();
 
-        if (item == null) {
-            return DataFormatFactory.getDataFormat(EffectFX.class);
+        if (item == null || !EffectFX.class.isAssignableFrom(item.getClass())) {
+            return DataFormatFactory.getDataFormat(this.getClass());
         } else {
-            return DataFormatFactory.getDataFormat(item);
+            return DataFormatFactory.getDataFormat(EffectFX.class);
         }
     }
 

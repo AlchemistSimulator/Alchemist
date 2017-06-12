@@ -43,6 +43,12 @@ public class DrawDot implements EffectFX {
 
     private String name;
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * For each {@link Node} in the specified {@link Environment}, it will draw a
+     * {@link Color#BLACK black} dot.
+     */
     @Override
     public <T> void apply(final Graphics2D graphic, final Environment<T> environment, final IWormhole2D wormhole) {
         environment.forEach((Node<T> node) -> {

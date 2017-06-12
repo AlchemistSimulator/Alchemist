@@ -46,6 +46,9 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
 
     /**
      * {@inheritDoc}
+     * <p>
+     * For each {@link Node} in the specified {@link Environment}, it will draw
+     * a dot of a specified {@link Color} (default: {@link Color#BLACK black}).
      */
     @Override
     public <T> void apply(final Graphics2D graphic, final Environment<T> environment, final IWormhole2D wormhole) {

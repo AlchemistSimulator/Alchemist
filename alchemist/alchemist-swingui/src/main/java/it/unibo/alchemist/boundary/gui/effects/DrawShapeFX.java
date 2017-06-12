@@ -158,8 +158,8 @@ public class DrawShapeFX implements EffectFX {
      * {@inheritDoc}
      * <p>
      * For each {@link Node} in the specified {@link Environment}, it will draw
-     * a dot of a specified {@link Color} (default: {@link Color#BLACK black}).
-     * Is it possible to tune the shape's scale factor and to change dot color
+     * a shape of a specified {@link Color} (default: {@link Color#BLACK black}).
+     * Is it possible to tune the shape's scale factor and to change shape color
      * according to a {@link Molecule} property.
      * 
      * @throws IllegalStateException
@@ -228,7 +228,7 @@ public class DrawShapeFX implements EffectFX {
     }
 
     /**
-     * The alpha channel of the color of the dots, representing each
+     * The alpha channel of the color of the shapes, representing each
      * {@link Node} in the {@link Environment} specified when calling
      * {@link #apply(Graphics2D, Environment, IWormhole2D) apply} in percentage.
      * 
@@ -241,7 +241,7 @@ public class DrawShapeFX implements EffectFX {
     /**
      * Gets the value of {@code alphaProperty}.
      * 
-     * @return the alpha channel of the color of the dots
+     * @return the alpha channel of the color of the shapes
      */
     protected double getAlpha() {
         return this.alpha.get();
@@ -258,7 +258,7 @@ public class DrawShapeFX implements EffectFX {
     }
 
     /**
-     * The blue channel of the color of the dots, representing each {@link Node}
+     * The blue channel of the color of the shapes, representing each {@link Node}
      * in the {@link Environment} specified when calling
      * {@link #apply(Graphics2D, Environment, IWormhole2D) apply} in percentage.
      * 
@@ -271,7 +271,7 @@ public class DrawShapeFX implements EffectFX {
     /**
      * Gets the value of {@code blueProperty}.
      * 
-     * @return the blue channel of the color of the dots
+     * @return the blue channel of the color of the shapes
      */
     protected double getBlue() {
         return this.blue.get();
@@ -288,7 +288,7 @@ public class DrawShapeFX implements EffectFX {
     }
 
     /**
-     * The color channel of the dots, representing which {@link Color color}
+     * The color channel of the shapes, representing which {@link Color color}
      * channel would be tuned according to {@link Molecule} property value.
      * 
      * @return the color channel property
@@ -317,7 +317,7 @@ public class DrawShapeFX implements EffectFX {
     }
 
     /**
-     * The green channel of the color of the dots, representing each
+     * The green channel of the color of the shapes, representing each
      * {@link Node} in the {@link Environment} specified when calling
      * {@link #apply(Graphics2D, Environment, IWormhole2D) apply} in percentage.
      * 
@@ -330,7 +330,7 @@ public class DrawShapeFX implements EffectFX {
     /**
      * Gets the value of {@code greenProperty}.
      * 
-     * @return the green channel of the color of the dots
+     * @return the green channel of the color of the shapes
      */
     protected double getGreen() {
         return this.green.get();
@@ -523,7 +523,7 @@ public class DrawShapeFX implements EffectFX {
     }
 
     /**
-     * The red channel of the color of the dots, representing each {@link Node}
+     * The red channel of the color of the shapes, representing each {@link Node}
      * in the {@link Environment} specified when calling
      * {@link #apply(Graphics2D, Environment, IWormhole2D) apply} in percentage.
      * 
@@ -536,7 +536,7 @@ public class DrawShapeFX implements EffectFX {
     /**
      * Gets the value of {@code redProperty}.
      * 
-     * @return the red channel of the color of the dots
+     * @return the red channel of the color of the shapes
      */
     protected double getRed() {
         return this.red.get();
@@ -583,7 +583,7 @@ public class DrawShapeFX implements EffectFX {
     }
 
     /**
-     * The size of the dots, representing each {@link Node} in the
+     * The size of the shapes, representing each {@link Node} in the
      * {@link Environment} specified when calling
      * {@link #apply(Graphics2D, Environment, IWormhole2D) apply} in percentage.
      * 
@@ -596,7 +596,7 @@ public class DrawShapeFX implements EffectFX {
     /**
      * Gets the value of the property {@code sizeProperty}.
      * 
-     * @return the size of the dots
+     * @return the size of the shapes
      */
     protected Double getSize() {
         return this.size.get();

@@ -28,6 +28,13 @@ import javafx.beans.value.ObservableValue;
  * Simple effect that draws all molecules as simple shapes.
  */
 public class DrawShapeFX implements EffectFX {
+    /** Default generated Serial Version UID. */
+    private static final long serialVersionUID = 8133306058339338028L;
+    /** Magic number used by auto-generated {@link #hashCode()} method. */
+    private static final int HASHCODE_NUMBER_1 = 1231;
+    /** Magic number used by auto-generated {@link #hashCode()} method. */
+    private static final int HASHCODE_NUMBER_2 = 1237;
+
     /**
      * Enumeration that models the mode to use the {@link DrawShapeFX}.
      */
@@ -76,8 +83,8 @@ public class DrawShapeFX implements EffectFX {
     // TODO maybe should switch to JavaFX Color class
     /** Default {@code Logger}. */
     private static final Logger L = LoggerFactory.getLogger(DrawShapeFX.class);
-    /** Default generated Serial Version UID. */
-    private static final long serialVersionUID = 8133306058339338028L;
+    /** Default name */
+    private static final String DEFAULT_NAME = "Unnamed DrawShape";
 
     private final EnumProperty<ModeFX> mode = new EnumProperty<ModeFX>(null, "Mode", ModeFX.FillEllipse);
     private final RangedDoubleProperty red = PropertiesFactory.getColorChannelProperty("R");
@@ -109,12 +116,15 @@ public class DrawShapeFX implements EffectFX {
     private transient Molecule moleculeObject;
     private transient String moleculeNameCached;
     private String name;
+    private boolean visibility;
 
     /**
      * Default constructor.
      */
     public DrawShapeFX() {
         moleculeName.addListener(this.updateMoleculeCachedName());
+        this.name = DEFAULT_NAME;
+        this.visibility = true;
     }
 
     /**
@@ -158,9 +168,9 @@ public class DrawShapeFX implements EffectFX {
      * {@inheritDoc}
      * <p>
      * For each {@link Node} in the specified {@link Environment}, it will draw
-     * a shape of a specified {@link Color} (default: {@link Color#BLACK black}).
-     * Is it possible to tune the shape's scale factor and to change shape color
-     * according to a {@link Molecule} property.
+     * a shape of a specified {@link Color} (default: {@link Color#BLACK
+     * black}). Is it possible to tune the shape's scale factor and to change
+     * shape color according to a {@link Molecule} property.
      * 
      * @throws IllegalStateException
      *             if no {@link Incarnation} is available
@@ -258,8 +268,8 @@ public class DrawShapeFX implements EffectFX {
     }
 
     /**
-     * The blue channel of the color of the shapes, representing each {@link Node}
-     * in the {@link Environment} specified when calling
+     * The blue channel of the color of the shapes, representing each
+     * {@link Node} in the {@link Environment} specified when calling
      * {@link #apply(Graphics2D, Environment, IWormhole2D) apply} in percentage.
      * 
      * @return the blue channel property
@@ -523,8 +533,8 @@ public class DrawShapeFX implements EffectFX {
     }
 
     /**
-     * The red channel of the color of the shapes, representing each {@link Node}
-     * in the {@link Environment} specified when calling
+     * The red channel of the color of the shapes, representing each
+     * {@link Node} in the {@link Environment} specified when calling
      * {@link #apply(Graphics2D, Environment, IWormhole2D) apply} in percentage.
      * 
      * @return the red channel property
@@ -746,6 +756,186 @@ public class DrawShapeFX implements EffectFX {
      */
     protected Molecule getMoleculeObject() {
         return this.moleculeObject;
+    }
+
+    @Override
+    public boolean isVisibile() {
+        return this.visibility;
+    }
+
+    @Override
+    public void setVisibility(final boolean vilibility) {
+        this.visibility = vilibility;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((alpha == null) ? 0 : alpha.hashCode());
+        result = prime * result + ((blue == null) ? 0 : blue.hashCode());
+        result = prime * result + ((colorChannel == null) ? 0 : colorChannel.hashCode());
+        result = prime * result + ((green == null) ? 0 : green.hashCode());
+        result = prime * result + ((maxprop == null) ? 0 : maxprop.hashCode());
+        result = prime * result + ((minprop == null) ? 0 : minprop.hashCode());
+        result = prime * result + ((mode == null) ? 0 : mode.hashCode());
+        result = prime * result + ((moleculeFilter == null) ? 0 : moleculeFilter.hashCode());
+        result = prime * result + ((moleculeName == null) ? 0 : moleculeName.hashCode());
+        result = prime * result + ((moleculePropertyName == null) ? 0 : moleculePropertyName.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((orderOfMagnitude == null) ? 0 : orderOfMagnitude.hashCode());
+        result = prime * result + ((red == null) ? 0 : red.hashCode());
+        result = prime * result + ((reverse == null) ? 0 : reverse.hashCode());
+        result = prime * result + ((scaleFactor == null) ? 0 : scaleFactor.hashCode());
+        result = prime * result + ((size == null) ? 0 : size.hashCode());
+        result = prime * result + ((useMoleculeProperty == null) ? 0 : useMoleculeProperty.hashCode());
+        result = prime * result + (visibility ? HASHCODE_NUMBER_1 : HASHCODE_NUMBER_2);
+        result = prime * result + ((writePropertyValue == null) ? 0 : writePropertyValue.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DrawShapeFX other = (DrawShapeFX) obj;
+        if (alpha == null) {
+            if (other.alpha != null) {
+                return false;
+            }
+        } else if (!alpha.equals(other.alpha)) {
+            return false;
+        }
+        if (blue == null) {
+            if (other.blue != null) {
+                return false;
+            }
+        } else if (!blue.equals(other.blue)) {
+            return false;
+        }
+        if (colorChannel == null) {
+            if (other.colorChannel != null) {
+                return false;
+            }
+        } else if (!colorChannel.equals(other.colorChannel)) {
+            return false;
+        }
+        if (green == null) {
+            if (other.green != null) {
+                return false;
+            }
+        } else if (!green.equals(other.green)) {
+            return false;
+        }
+        if (maxprop == null) {
+            if (other.maxprop != null) {
+                return false;
+            }
+        } else if (!maxprop.equals(other.maxprop)) {
+            return false;
+        }
+        if (minprop == null) {
+            if (other.minprop != null) {
+                return false;
+            }
+        } else if (!minprop.equals(other.minprop)) {
+            return false;
+        }
+        if (mode == null) {
+            if (other.mode != null) {
+                return false;
+            }
+        } else if (!mode.equals(other.mode)) {
+            return false;
+        }
+        if (moleculeFilter == null) {
+            if (other.moleculeFilter != null) {
+                return false;
+            }
+        } else if (!moleculeFilter.equals(other.moleculeFilter)) {
+            return false;
+        }
+        if (moleculeName == null) {
+            if (other.moleculeName != null) {
+                return false;
+            }
+        } else if (!moleculeName.equals(other.moleculeName)) {
+            return false;
+        }
+        if (moleculePropertyName == null) {
+            if (other.moleculePropertyName != null) {
+                return false;
+            }
+        } else if (!moleculePropertyName.equals(other.moleculePropertyName)) {
+            return false;
+        }
+        if (name == null) {
+            if (other.name != null) {
+                return false;
+            }
+        } else if (!name.equals(other.name)) {
+            return false;
+        }
+        if (orderOfMagnitude == null) {
+            if (other.orderOfMagnitude != null) {
+                return false;
+            }
+        } else if (!orderOfMagnitude.equals(other.orderOfMagnitude)) {
+            return false;
+        }
+        if (red == null) {
+            if (other.red != null) {
+                return false;
+            }
+        } else if (!red.equals(other.red)) {
+            return false;
+        }
+        if (reverse == null) {
+            if (other.reverse != null) {
+                return false;
+            }
+        } else if (!reverse.equals(other.reverse)) {
+            return false;
+        }
+        if (scaleFactor == null) {
+            if (other.scaleFactor != null) {
+                return false;
+            }
+        } else if (!scaleFactor.equals(other.scaleFactor)) {
+            return false;
+        }
+        if (size == null) {
+            if (other.size != null) {
+                return false;
+            }
+        } else if (!size.equals(other.size)) {
+            return false;
+        }
+        if (useMoleculeProperty == null) {
+            if (other.useMoleculeProperty != null) {
+                return false;
+            }
+        } else if (!useMoleculeProperty.equals(other.useMoleculeProperty)) {
+            return false;
+        }
+        if (visibility != other.visibility) {
+            return false;
+        }
+        if (writePropertyValue == null) {
+            if (other.writePropertyValue != null) {
+                return false;
+            }
+        } else if (!writePropertyValue.equals(other.writePropertyValue)) {
+            return false;
+        }
+        return true;
     }
 
 }

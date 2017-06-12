@@ -234,70 +234,65 @@ public class RangedDoubleProperty extends SimpleDoubleProperty implements Serial
         this.upperBound = upperBound;
     }
 
-    // @Override
-    // public int hashCode() {
-    // final int prime = 31;
-    // int result = 1;
-    // result = prime * result + ((getBean() == null) ? 0 :
-    // getBean().hashCode());
-    // result = prime * result + ((getLowerBound() == null) ? 0 :
-    // getLowerBound().hashCode());
-    // result = prime * result + ((getUpperBound() == null) ? 0 :
-    // getUpperBound().hashCode());
-    // result = prime * result + ((getValue() == null) ? 0 :
-    // getValue().hashCode());
-    // result = prime * result + ((getName() == null) ? 0 :
-    // getName().hashCode());
-    // return result;
-    // }
-    //
-    // @Override
-    // public boolean equals(final Object obj) {
-    // if (this == obj) {
-    // return true;
-    // }
-    // if (obj == null) {
-    // return false;
-    // }
-    // if (getClass() != obj.getClass()) {
-    // return false;
-    // }
-    // final RangedDoubleProperty other = (RangedDoubleProperty) obj;
-    // if (getBean() == null) {
-    // if (other.getBean() != null) {
-    // return false;
-    // }
-    // } else if (!getBean().equals(other.getBean())) {
-    // return false;
-    // }
-    // if (getLowerBound() == null) {
-    // if (other.getLowerBound() != null) {
-    // return false;
-    // }
-    // } else if (!getLowerBound().equals(other.getLowerBound())) {
-    // return false;
-    // }
-    // if (getUpperBound() == null) {
-    // if (other.getUpperBound() != null) {
-    // return false;
-    // }
-    // } else if (!getUpperBound().equals(other.getUpperBound())) {
-    // return false;
-    // }
-    // if (getValue() == null) {
-    // if (other.getValue() != null) {
-    // return false;
-    // }
-    // } else if (!getValue().equals(other.getValue())) {
-    // return false;
-    // }
-    // if (getName() == null) {
-    // if (other.getName() != null) {
-    // return false;
-    // }
-    // } else if (!getName().equals(other.getName())) {
-    // return false;
-    // }
-    // return true;
-    // }
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((getBean() == null) ? 0 : getBean().hashCode());
+        result = prime * result + ((getLowerBound() == null) ? 0 : getLowerBound().hashCode());
+        result = prime * result + ((getUpperBound() == null) ? 0 : getUpperBound().hashCode());
+        result = prime * result + ((getValue() == null) ? 0 : getValue().hashCode());
+        result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final RangedDoubleProperty other = (RangedDoubleProperty) obj;
+        if (getBean() == null) {
+            if (other.getBean() != null) {
+                return false;
+            }
+        } else if (!getBean().equals(other.getBean())) {
+            return false;
+        }
+        if (getLowerBound() == null) {
+            if (other.getLowerBound() != null) {
+                return false;
+            }
+        } else if (!getLowerBound().equals(other.getLowerBound())) {
+            return false;
+        }
+        if (getUpperBound() == null) {
+            if (other.getUpperBound() != null) {
+                return false;
+            }
+        } else if (!getUpperBound().equals(other.getUpperBound())) {
+            return false;
+        }
+        if (getValue() == null) {
+            if (other.getValue() != null) {
+                return false;
+            }
+        } else if (!getValue().equals(other.getValue())) {
+            return false;
+        }
+        if (getName() == null) {
+            if (other.getName() != null) {
+                return false;
+            }
+        } else if (!getName().equals(other.getName())) {
+            return false;
+        }
+        return true;
+    }
 }

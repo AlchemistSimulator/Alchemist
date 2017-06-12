@@ -39,9 +39,24 @@ public interface EffectFX extends Serializable {
      * Sets the name of the effect.
      * 
      * @param name
-     *            the name of the effect
+     *            the name of the effect to set
      */
     void setName(String name);
+
+    /**
+     * Gets the visibility of the effect.
+     * 
+     * @return the visibility of the effect
+     */
+    boolean isVisibile();
+
+    /**
+     * Sets the visibility of the effect.
+     * 
+     * @param vilibility
+     *            the visibility of the effect to set
+     */
+    void setVisibility(boolean vilibility);
 
     @Override // Should override hashCode() method
     int hashCode();

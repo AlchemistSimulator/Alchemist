@@ -56,8 +56,8 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
 
         this.getLabel().setTextAlignment(TextAlignment.CENTER);
         this.getLabel().setFont(Font.font(this.getLabel().getFont().getFamily(), FontWeight.BOLD, this.getLabel().getFont().getSize()));
-
         this.getLabel().textProperty().addListener((observable, oldValue, newValue) -> this.getItem().setName(newValue));
+
         this.getSlider().valueProperty()
                 .addListener((observable, oldValue, newValue) -> this.getItem().setTransparency(newValue.intValue()));
         this.getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> this.getItem().setVisibility(newValue));

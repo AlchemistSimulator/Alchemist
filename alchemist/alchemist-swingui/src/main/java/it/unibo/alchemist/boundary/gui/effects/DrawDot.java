@@ -19,8 +19,16 @@ import javafx.beans.property.DoubleProperty;
  * It's possible to set the size of the dots.
  */
 public class DrawDot implements EffectFX {
+    /** Magic number used by auto-generated {@link #hashCode()} method. */
+    private static final int HASHCODE_NUMBER_1 = 1231;
+    /** Magic number used by auto-generated {@link #hashCode()} method. */
+    private static final int HASHCODE_NUMBER_2 = 1237;
+
     /** Default generated Serial Version UID. */
     private static final long serialVersionUID = -6098041600645663870L;
+
+    /** Default effect name. */
+    private static final String DEFAULT_NAME = "Unnamed DrawDot";
 
     /** Default dot size. */
     private static final double DEFAULT_SIZE = 5;
@@ -43,11 +51,37 @@ public class DrawDot implements EffectFX {
 
     private String name;
 
+    private boolean visibility;
+
+    /**
+     * Empty constructor.
+     * <p>
+     * Name is set to default name.
+     * <p>
+     * Default visibility is true.
+     */
+    public DrawDot() {
+        this(DEFAULT_NAME);
+    }
+
+    /**
+     * Default constructor.
+     * <p>
+     * Default visibility is true.
+     * 
+     * @param name
+     *            the name of the effect.
+     */
+    public DrawDot(final String name) {
+        this.name = name;
+        this.visibility = true;
+    }
+
     /**
      * {@inheritDoc}
      * <p>
-     * For each {@link Node} in the specified {@link Environment}, it will draw a
-     * {@link Color#BLACK black} dot.
+     * For each {@link Node} in the specified {@link Environment}, it will draw
+     * a {@link Color#BLACK black} dot.
      */
     @Override
     public <T> void apply(final Graphics2D graphic, final Environment<T> environment, final IWormhole2D wormhole) {
@@ -127,4 +161,63 @@ public class DrawDot implements EffectFX {
         this.name = name;
     }
 
+    @Override
+    public boolean isVisibile() {
+        return this.visibility;
+    }
+
+    @Override
+    public void setVisibility(final boolean vilibility) {
+        this.visibility = vilibility;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((color == null) ? 0 : color.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((size == null) ? 0 : size.hashCode());
+        result = prime * result + (visibility ? HASHCODE_NUMBER_1 : HASHCODE_NUMBER_2);
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DrawDot other = (DrawDot) obj;
+        if (isVisibile() != other.isVisibile()) {
+            return false;
+        }
+        if (getColor() == null) {
+            if (other.getColor() != null) {
+                return false;
+            }
+        } else if (!getColor().equals(other.getColor())) {
+            return false;
+        }
+        if (getName() == null) {
+            if (other.getName() != null) {
+                return false;
+            }
+        } else if (!getName().equals(other.getName())) {
+            return false;
+        }
+        if (getSize() == null) {
+            if (other.getSize() != null) {
+                return false;
+            }
+        } else if (!getSize().equals(other.getSize())) {
+            return false;
+        }
+        return true;
+    }
 }

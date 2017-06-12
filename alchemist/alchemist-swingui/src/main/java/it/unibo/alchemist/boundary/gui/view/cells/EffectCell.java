@@ -42,13 +42,9 @@ public class EffectCell extends AbstractEffectCell<EffectFX> {
 
         this.getLabel().setTextAlignment(TextAlignment.CENTER);
         this.getLabel().setFont(Font.font(this.getLabel().getFont().getFamily(), FontWeight.BOLD, this.getLabel().getFont().getSize()));
+        this.getLabel().textProperty().addListener((observable, oldValue, newValue) -> this.getItem().setName(newValue));
 
-        // this.getLabel().textProperty().addListener((observable, oldValue,
-        // newValue) -> this.getItem().setName(newValue));
-        // TODO add setName to Effect
-        // this.getToggle().selectedProperty().addListener((observable,
-        // oldValue, newValue) -> this.getItem().setVisibility(newValue));
-        // TODO add setVisibility to Effect
+        this.getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> this.getItem().setVisibility(newValue));
 
         this.getLabel().setOnMouseClicked(click -> {
             if (click.getClickCount() == 2) {
@@ -75,20 +71,6 @@ public class EffectCell extends AbstractEffectCell<EffectFX> {
 
         propertiesDrawer.setOverLayVisible(false);
         propertiesDrawer.setResizableOnDrag(false);
-
-        // this.getPane().setOnMouseClicked(event -> {
-        // // To not interfere with label double-click action
-        // if (event.getClickCount() != 2) {
-        // // Drawer size is modified every time it's opened
-        // if (effectDrawer.isHidden() || effectDrawer.isHidding()) {
-        // effectDrawer.setDefaultDrawerSize(stack.getWidth());
-        // }
-        // this.stack.toggle(effectDrawer);
-        // if (effectDrawer.isShown() || effectDrawer.isShowing()) {
-        // this.stack.setContent(new JFXDrawer());
-        // }
-        // }
-        // });
 
         this.getPane().setOnMouseClicked(event -> {
             final EffectPropertiesController propertiesController = new EffectPropertiesController(this.getItem(), this.stack,
@@ -148,6 +130,21 @@ public class EffectCell extends AbstractEffectCell<EffectFX> {
             return DataFormatFactory.getDataFormat(EffectFX.class);
         } else {
             return DataFormatFactory.getDataFormat(item);
+        }
+    }
+
+    @Override
+    protected void updateItem(final EffectFX item, final boolean empty) {
+        super.updateItem(item, empty);
+
+        if (empty || item == null) {
+            setGraphic(null);
+        } else {
+            this.getLabel().setText(item.getName());
+            this.getToggle().setSelected(item.isVisibile());
+
+            // TODO change priority of the Effect
+            // ^ maybe not, if it's all managed by ObservableList
         }
     }
 

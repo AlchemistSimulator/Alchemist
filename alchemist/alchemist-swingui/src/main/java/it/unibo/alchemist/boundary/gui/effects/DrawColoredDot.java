@@ -18,8 +18,15 @@ import javafx.beans.value.ObservableValue;
  * It's possible to set the size and the color of the dots.
  */
 public class DrawColoredDot extends DrawDot implements EffectFX {
+    /** Magic number used by auto-generated {@link #hashCode()} method. */
+    private static final int HASHCODE_NUMBER_1 = 1231;
+    /** Magic number used by auto-generated {@link #hashCode()} method. */
+    private static final int HASHCODE_NUMBER_2 = 1237;
+
     /** Default generated Serial Version UID. */
     private static final long serialVersionUID = -2329825220099191395L;
+    /** Default effect name */
+    private static final String DEFAULT_NAME = "Unnamed DrawColoredDot";
     private final RangedDoubleProperty red;
     private final RangedDoubleProperty green;
     private final RangedDoubleProperty blue;
@@ -29,7 +36,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
      * Default constructor.
      */
     public DrawColoredDot() {
-        super();
+        super(DEFAULT_NAME);
 
         // Set properties to default color of DrawDot
         red = PropertiesFactory.getColorChannelProperty("R", (double) super.getColor().getRed());
@@ -185,5 +192,79 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
      */
     protected void setRed(final double red) {
         this.red.set(red);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((alphaProperty() == null) ? 0 : alphaProperty().hashCode());
+        result = prime * result + ((blueProperty() == null) ? 0 : blueProperty().hashCode());
+        result = prime * result + ((greenProperty() == null) ? 0 : greenProperty().hashCode());
+        result = prime * result + ((super.getName() == null) ? 0 : super.getName().hashCode());
+        result = prime * result + ((redProperty() == null) ? 0 : redProperty().hashCode());
+        result = prime * result + ((super.getSize() == null) ? 0 : super.getSize().hashCode());
+        result = prime * result + (super.isVisibile() ? HASHCODE_NUMBER_1 : HASHCODE_NUMBER_2);
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DrawColoredDot other = (DrawColoredDot) obj;
+        if (super.isVisibile() != other.isVisibile()) {
+            return false;
+        }
+        if (alphaProperty() == null) {
+            if (other.alphaProperty() != null) {
+                return false;
+            }
+        } else if (!alphaProperty().equals(other.alphaProperty())) {
+            return false;
+        }
+        if (blueProperty() == null) {
+            if (other.blueProperty() != null) {
+                return false;
+            }
+        } else if (!blueProperty().equals(other.blueProperty())) {
+            return false;
+        }
+        if (greenProperty() == null) {
+            if (other.greenProperty() != null) {
+                return false;
+            }
+        } else if (!greenProperty().equals(other.greenProperty())) {
+            return false;
+        }
+        if (super.getName() == null) {
+            if (other.getName() != null) {
+                return false;
+            }
+        } else if (!super.getName().equals(other.getName())) {
+            return false;
+        }
+        if (redProperty() == null) {
+            if (other.redProperty() != null) {
+                return false;
+            }
+        } else if (!redProperty().equals(other.redProperty())) {
+            return false;
+        }
+        if (super.getSize() == null) {
+            if (other.getSize() != null) {
+                return false;
+            }
+        } else if (!super.getSize().equals(other.getSize())) {
+            return false;
+        }
+        return true;
     }
 }

@@ -27,7 +27,6 @@ public class EffectStack implements EffectGroup {
     private static final Logger L = LoggerFactory.getLogger(EffectStack.class);
 
     private final List<EffectFX> effects;
-    private final List<Boolean> visibilities;
     private int topIndex;
     private String name;
     private boolean visibility;
@@ -49,7 +48,6 @@ public class EffectStack implements EffectGroup {
      */
     public EffectStack(final String name) {
         this.effects = new ArrayList<>();
-        this.visibilities = new ArrayList<>();
         this.topIndex = 0;
         this.name = name;
         this.visibility = true;
@@ -89,7 +87,6 @@ public class EffectStack implements EffectGroup {
      */
     public EffectFX push(final EffectFX effect) {
         this.effects.add(effect);
-        this.visibilities.add(true);
         this.topIndex++;
         return effect;
     }
@@ -104,7 +101,6 @@ public class EffectStack implements EffectGroup {
     public EffectFX pop() {
         final EffectFX e = this.effects.get(topIndex);
         this.effects.remove(topIndex);
-        this.visibilities.remove(topIndex);
         this.topIndex--;
         return e;
     }
@@ -122,7 +118,7 @@ public class EffectStack implements EffectGroup {
     @Override
     public boolean getVisibilityOf(final EffectFX effect) {
         try {
-            return this.visibilities.get(this.search(effect));
+            return this.effects.get(this.search(effect)).isVisibile();
         } catch (final IndexOutOfBoundsException e) {
             throw new IllegalArgumentException(CANNOT_FIND_EFFECT);
         }
@@ -131,7 +127,7 @@ public class EffectStack implements EffectGroup {
     @Override
     public void setVisibilityOf(final EffectFX effect, final boolean visibility) {
         try {
-            this.visibilities.set(this.search(effect), visibility);
+            this.effects.get(this.search(effect)).setVisibility(visibility);
         } catch (final IndexOutOfBoundsException e) {
             throw new IllegalArgumentException(CANNOT_FIND_EFFECT);
         }
@@ -142,14 +138,10 @@ public class EffectStack implements EffectGroup {
         final int currentPos = this.search(effect);
         final int newPos = currentPos + offset;
         final EffectFX temp = this.effects.get(newPos);
-        final boolean tmp = this.visibilities.get(newPos);
 
-        this.visibilities.set(newPos, getVisibilityOf(effect));
         this.effects.set(newPos, effect);
 
-        this.visibilities.set(currentPos, tmp);
         this.effects.set(currentPos, temp);
-
     }
 
     @Override
@@ -224,7 +216,6 @@ public class EffectStack implements EffectGroup {
                 return false;
             } else {
                 try {
-                    this.visibilities.remove(index);
                     this.topIndex--;
                     return this.effects.remove(effect);
                 } catch (UnsupportedOperationException | IndexOutOfBoundsException ex) {
@@ -342,7 +333,6 @@ public class EffectStack implements EffectGroup {
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + topIndex;
         result = prime * result + transparency;
-        result = prime * result + ((visibilities == null) ? 0 : visibilities.hashCode());
         result = prime * result + (visibility ? FIRST_HASHCODE_CONSTANT : SECOND_HASHCODE_CONSTANT);
         return result;
     }
@@ -380,13 +370,6 @@ public class EffectStack implements EffectGroup {
                 return false;
             }
         } else if (!effects.equals(other.effects)) {
-            return false;
-        }
-        if (visibilities == null) {
-            if (other.visibilities != null) {
-                return false;
-            }
-        } else if (!visibilities.equals(other.visibilities)) {
             return false;
         }
         return true;

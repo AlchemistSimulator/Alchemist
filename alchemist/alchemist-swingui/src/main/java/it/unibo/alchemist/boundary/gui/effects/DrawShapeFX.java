@@ -7,7 +7,6 @@ import org.apache.commons.math3.util.FastMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.boundary.gui.ColorChannel;
 import it.unibo.alchemist.boundary.gui.view.property.EnumProperty;
 import it.unibo.alchemist.boundary.gui.view.property.PropertiesFactory;
@@ -21,7 +20,6 @@ import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ListProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -81,7 +79,6 @@ public class DrawShapeFX implements EffectFX {
     /** Default generated Serial Version UID. */
     private static final long serialVersionUID = 8133306058339338028L;
 
-    private final transient ListProperty<String> incarnations;
     private final EnumProperty<ModeFX> mode = new EnumProperty<ModeFX>(null, "Mode", ModeFX.FillEllipse);
     private final RangedDoubleProperty red = PropertiesFactory.getColorChannelProperty("R");
     private final RangedDoubleProperty green = PropertiesFactory.getColorChannelProperty("G");
@@ -111,48 +108,44 @@ public class DrawShapeFX implements EffectFX {
     // TODO maybe should switch to JavaFX Color class
     private transient Molecule moleculeObject;
     private transient String moleculeNameCached;
-    private final SerializableStringProperty currentIncarnation = new SerializableStringProperty();
-    private transient String previousIncarnation;
-    private transient Incarnation<?> incarnation;
     private String name;
 
     /**
-     * Default constructor. Builds a new {@code DrawShapeFX} effect.
-     * 
-     * @throws IllegalStateException
-     *             if no {@link Incarnation} is available
+     * Default constructor.
      */
     public DrawShapeFX() {
-        if (SupportedIncarnations.getAvailableIncarnations().isEmpty()) {
-            throw new IllegalStateException(getClass().getSimpleName() + " can't work if no incarnation is available.");
-        } else {
-            incarnations = PropertiesFactory.getIncarnationsListProperty("Incarnation to use");
-        }
-
         moleculeName.addListener(this.updateMoleculeCachedName());
-        currentIncarnation.addListener(this.updateIncarnations());
     }
 
+    /**
+     * This method returns a {@link ChangeListener} for {@link Molecule} name
+     * update.
+     * 
+     * @return a {@code ChangeListener} for {@code Molecule} name update
+     */
     private ChangeListener<String> updateMoleculeCachedName() {
         return (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
             this.moleculeNameCached = newValue;
-            DrawShapeFX.this.instanziateMolecule();
         };
 
     }
 
-    private ChangeListener<String> updateIncarnations() {
-        return (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-            this.previousIncarnation = oldValue; // TODO what's for ?
-            incarnation = SupportedIncarnations.get(newValue).get();
-            instanziateMolecule();
-        };
-
-    }
-
-    private void instanziateMolecule() {
+    /**
+     * This method updates current internal instance of molecule with a new
+     * instance.
+     * <p>
+     * The process of instantiation runs in a separate thread: if it fails, it
+     * will not kill EDT.
+     * 
+     * @param <T>
+     *            the {@link Environment} type
+     * @param incarnation
+     *            the incarnation that will parse the molecule name cached
+     * @see Incarnation#createMolecule(String)
+     */
+    private <T> void instanziateMolecule(final Incarnation<T> incarnation) {
         // Process in a separate thread: if it fails, does not kill EDT.
-        final Thread createMolecule = new Thread(() -> moleculeObject = incarnation.createMolecule(moleculeName.get()));
+        final Thread createMolecule = new Thread(() -> moleculeObject = incarnation.createMolecule(moleculeNameCached));
         createMolecule.start();
         try {
             createMolecule.join();
@@ -161,8 +154,25 @@ public class DrawShapeFX implements EffectFX {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * For each {@link Node} in the specified {@link Environment}, it will draw
+     * a dot of a specified {@link Color} (default: {@link Color#BLACK black}).
+     * Is it possible to tune the shape's scale factor and to change dot color
+     * according to a {@link Molecule} property.
+     * 
+     * @throws IllegalStateException
+     *             if no {@link Incarnation} is available
+     */
     @Override
     public <T> void apply(final Graphics2D graphic, final Environment<T> environment, final IWormhole2D wormhole) {
+        final Incarnation<T> incarnation = environment.getIncarnation()
+                .orElseThrow(() -> new IllegalStateException("The specified Environment does not specify any Incarnation"));
+        if (!this.moleculeName.get().equals(moleculeNameCached)) {
+            instanziateMolecule(incarnation);
+        }
+
         environment.forEach((Node<T> node) -> {
             if (!moleculeFilter.get() || (moleculeObject != null && node.contains(moleculeObject))) {
                 final double ks = (scaleFactor.get() - MIN_SCALE) * 2 / SCALE_DIFF;
@@ -181,7 +191,7 @@ public class DrawShapeFX implements EffectFX {
                     if (minV < maxV) {
                         // TODO not so good to use unchecked Node, but for now
                         // it's ok
-                        double propval = incarnation.getProperty((Node) node, moleculeObject, moleculePropertyName.get());
+                        double propval = incarnation.getProperty(node, moleculeObject, moleculePropertyName.get());
                         if (writePropertyValue.get()) {
                             graphic.setColor(colorCache);
                             graphic.drawString(Double.toString(propval), (int) (startx + sizex), (int) (starty + sizey));
@@ -217,222 +227,504 @@ public class DrawShapeFX implements EffectFX {
         });
     }
 
+    /**
+     * The alpha channel of the color of the dots, representing each
+     * {@link Node} in the {@link Environment} specified when calling
+     * {@link #apply(Graphics2D, Environment, IWormhole2D) apply} in percentage.
+     * 
+     * @return the alpha channel property
+     */
     protected DoubleProperty alphaProperty() {
         return this.alpha;
     }
 
+    /**
+     * Gets the value of {@code alphaProperty}.
+     * 
+     * @return the alpha channel of the color of the dots
+     */
     protected double getAlpha() {
         return this.alpha.get();
     }
 
+    /**
+     * Sets the value of {@code alphaProperty}.
+     * 
+     * @param alpha
+     *            the alpha channel to set
+     */
     protected void setAlpha(final double alpha) {
         this.alpha.set(alpha);
     }
 
+    /**
+     * The blue channel of the color of the dots, representing each {@link Node}
+     * in the {@link Environment} specified when calling
+     * {@link #apply(Graphics2D, Environment, IWormhole2D) apply} in percentage.
+     * 
+     * @return the blue channel property
+     */
     protected DoubleProperty blueProperty() {
         return this.blue;
     }
 
+    /**
+     * Gets the value of {@code blueProperty}.
+     * 
+     * @return the blue channel of the color of the dots
+     */
     protected double getBlue() {
         return this.blue.get();
     }
 
+    /**
+     * Sets the value of {@code blueProperty}.
+     * 
+     * @param blue
+     *            the blue channel to set
+     */
     protected void setBlue(final double blue) {
         this.blue.set(blue);
     }
 
+    /**
+     * The color channel of the dots, representing which {@link Color color}
+     * channel would be tuned according to {@link Molecule} property value.
+     * 
+     * @return the color channel property
+     */
     protected EnumProperty<ColorChannel> colorChannelProperty() {
         return this.colorChannel;
     }
 
+    /**
+     * Gets the value of {@code colorChannelProperty}.
+     * 
+     * @return the color channel
+     */
     protected ColorChannel getColorChannel() {
         return this.colorChannel.get();
     }
 
+    /**
+     * Sets the value of {@code colorChannelProperty}.
+     * 
+     * @param colorChannel
+     *            the color channel to set
+     */
     protected void setColorChannel(final ColorChannel colorChannel) {
         this.colorChannel.set(colorChannel);
     }
 
+    /**
+     * The green channel of the color of the dots, representing each
+     * {@link Node} in the {@link Environment} specified when calling
+     * {@link #apply(Graphics2D, Environment, IWormhole2D) apply} in percentage.
+     * 
+     * @return the green channel property
+     */
     protected DoubleProperty greenProperty() {
         return this.green;
     }
 
+    /**
+     * Gets the value of {@code greenProperty}.
+     * 
+     * @return the green channel of the color of the dots
+     */
     protected double getGreen() {
         return this.green.get();
     }
 
+    /**
+     * Sets the value of {@code greenProperty}.
+     * 
+     * @param green
+     *            the green channel to set
+     */
     protected void setGreen(final double green) {
         this.green.set(green);
     }
 
-    protected StringProperty currentIncarnationProperty() {
-        return this.currentIncarnation;
-    }
-
-    protected String getCurrentIncarnation() {
-        return this.currentIncarnation.get();
-    }
-
-    protected void setCurrentIncarnation(final String currentIncarnation) {
-        this.currentIncarnation.set(currentIncarnation);
-    }
-
+    /**
+     * The maximum value of the molecule property.
+     * 
+     * @return the maxpropProperty
+     */
     protected DoubleProperty maxpropProperty() {
         return this.maxprop;
     }
 
+    /**
+     * Gets the value of {@code maxpropProperty}.
+     * 
+     * @return the value of {@code maxpropProperty}
+     */
     protected double getMaxprop() {
         return this.maxprop.get();
     }
 
+    /**
+     * Sets the value of {@code maxpropProperty}.
+     * 
+     * @param maxprop
+     *            the value of {@code maxpropProperty} to set
+     */
     protected void setMaxprop(final double maxprop) {
         this.maxprop.set(maxprop);
     }
 
+    /**
+     * The minimum value of the molecule property.
+     * 
+     * @return the minpropProperty
+     */
     protected DoubleProperty minpropProperty() {
         return this.minprop;
     }
 
+    /**
+     * Gets the value of {@code minpropProperty}.
+     * 
+     * @return the value of {@code minpropProperty}
+     */
     protected double getMinprop() {
         return this.minprop.get();
     }
 
+    /**
+     * Sets the value of {@code minpropProperty}.
+     * 
+     * @param minprop
+     *            the value of {@code minpropProperty} to set
+     */
     protected void setMinprop(final double minprop) {
         this.minprop.set(minprop);
     }
 
+    /**
+     * The {@link ModeFX} of this effect, representing which type of shape
+     * ({@link Graphics2D#fillOval(int, int, int, int) oval} or
+     * {@link Graphics2D#fillRect(int, int, int, int) rectangle}, full or empty)
+     * each {@link Node} in the {@link Environment} would be drawn with.
+     * 
+     * @return the mode property
+     */
     protected EnumProperty<ModeFX> modeProperty() {
         return this.mode;
     }
 
+    /**
+     * Gets the value of {@code modeProperty}.
+     * 
+     * @return the value of {@code modeProperty}
+     */
     protected ModeFX getMode() {
         return this.mode.get();
     }
 
+    /**
+     * Sets the value of {@code modeProperty}.
+     * 
+     * @param mode
+     *            the value of {@code modeProperty} to set
+     */
     protected void setMode(final ModeFX mode) {
         this.mode.set(mode);
     }
 
-    protected Molecule getMoleculeObject() {
-        return this.moleculeObject;
-    }
-
+    /**
+     * The name of the {@link Molecule} that will be represented.
+     * <p>
+     * A new instance of the {@code Molecule} is created every time the value of
+     * this property changes.
+     * 
+     * @return the molecule name property
+     */
     protected StringProperty moleculeNameProperty() {
         return this.moleculeName;
     }
 
+    /**
+     * Gets the value of {@code moleculeNameProperty}.
+     * 
+     * @return the value of {@code moleculeNameProperty}
+     */
     protected String getMoleculeName() {
         return this.moleculeName.get();
     }
 
+    /**
+     * Sets the value of {@code moleculeNameProperty}.
+     * 
+     * @param moleculeName
+     *            the value of {@code moleculeNameProperty} to set
+     */
     protected void setMoleculeName(final String moleculeName) {
         this.moleculeName.set(moleculeName);
     }
 
+    /**
+     * The name of the {@link Molecule} property which value will be used to
+     * tune shape color.
+     * 
+     * @return the molecule property name
+     */
     protected StringProperty moleculePropertyNameProperty() {
         return this.moleculePropertyName;
     }
 
+    /**
+     * Gets the value of {@code moleculePropertyNameProperty}.
+     * 
+     * @return the value of {@code moleculePropertyNameProperty}
+     */
     protected String getMoleculePropertyName() {
         return this.moleculePropertyName.get();
     }
 
+    /**
+     * Sets the value of {@code moleculePropertyNameProperty}.
+     * 
+     * @param moleculePropertyName
+     *            the value of {@code moleculePropertyNameProperty} to set
+     */
     protected void setMoleculePropertyName(final String moleculePropertyName) {
         this.moleculePropertyName.set(moleculePropertyName);
     }
 
+    /**
+     * The order of magnitude the {@link Molecule} property value will influence
+     * the color variations of the shapes.
+     * 
+     * @return the order of magnitude property
+     */
     protected DoubleProperty orderOfMagnitudeProperty() {
         return this.orderOfMagnitude;
     }
 
+    /**
+     * Gets the value of {@code orderOfMagnitudeProperty}.
+     * 
+     * @return the value of {@code orderOfMagnitudeProperty}
+     */
     protected double getOrderOfMagnitude() {
         return this.orderOfMagnitude.get();
     }
 
+    /**
+     * Sets the value of {@code orderOfMagnitudeProperty}.
+     * 
+     * @param orderOfMagnitude
+     *            the value of {@code orderOfMagnitudeProperty} to set
+     */
     protected void setOrderOfMagnitude(final double orderOfMagnitude) {
         this.orderOfMagnitude.set(orderOfMagnitude);
     }
 
+    /**
+     * The red channel of the color of the dots, representing each {@link Node}
+     * in the {@link Environment} specified when calling
+     * {@link #apply(Graphics2D, Environment, IWormhole2D) apply} in percentage.
+     * 
+     * @return the red channel property
+     */
     protected DoubleProperty redProperty() {
         return this.red;
     }
 
+    /**
+     * Gets the value of {@code redProperty}.
+     * 
+     * @return the red channel of the color of the dots
+     */
     protected double getRed() {
         return this.red.get();
     }
 
+    /**
+     * Sets the value of {@code redProperty}.
+     * 
+     * @param red
+     *            the red channel to set
+     */
     protected void setRed(final double red) {
         this.red.set(red);
     }
 
+    /**
+     * The scale factor used when representing the shapes; tuning it will modify
+     * the regularity of the shape.
+     * 
+     * @return the scale factor property
+     * @see Graphics2D
+     */
     protected DoubleProperty scaleFactorProperty() {
         return this.scaleFactor;
     }
 
+    /**
+     * Gets the value of {@code scaleFactorProperty}.
+     * 
+     * @return the value of {@code scaleFactorProperty}
+     */
     protected double getScaleFactor() {
         return this.scaleFactor.get();
     }
 
+    /**
+     * Sets the value of {@code scaleFactorProperty}.
+     * 
+     * @param scaleFactor
+     *            the value of {@code scaleFactorProperty} to set
+     */
     protected void setScaleFactor(final double scaleFactor) {
         this.scaleFactor.set(scaleFactor);
     }
 
+    /**
+     * The size of the dots, representing each {@link Node} in the
+     * {@link Environment} specified when calling
+     * {@link #apply(Graphics2D, Environment, IWormhole2D) apply} in percentage.
+     * 
+     * @return the size property
+     */
     protected DoubleProperty sizeProperty() {
         return this.size;
     }
 
-    protected double getSize() {
+    /**
+     * Gets the value of the property {@code sizeProperty}.
+     * 
+     * @return the size of the dots
+     */
+    protected Double getSize() {
         return this.size.get();
     }
 
-    protected void setSize(final double size) {
+    /**
+     * Sets the value of the property {@code sizeProperty}.
+     * 
+     * @param size
+     *            the size to set
+     * @throws IllegalArgumentException
+     *             if the provided value is not a valid percentage
+     */
+    protected void setSize(final Double size) {
         this.size.set(size);
     }
 
+    /**
+     * If true, only the {@link Node}s containing a {@link Molecule} will be
+     * drawn.
+     * 
+     * @return the property for this filter
+     */
     protected BooleanProperty moleculeFilterProperty() {
         return this.moleculeFilter;
     }
 
+    /**
+     * Gets the value of {@code moleculeFilterProperty}.
+     * 
+     * @return the value of {@code moleculeFilterProperty}
+     */
     protected boolean isMoleculeFilter() {
         return this.moleculeFilter.get();
     }
 
+    /**
+     * Sets the value of {@code moleculeFilterProperty}.
+     * 
+     * @param moleculeFilter
+     *            the value of {@code moleculeFilterProperty} to set
+     */
     protected void setMoleculeFilter(final boolean moleculeFilter) {
         this.moleculeFilter.set(moleculeFilter);
     }
 
+    /**
+     * If true, the value of the specified {@link Molecule} property will
+     * influence the color of the shape.
+     * 
+     * @return the property for this filter
+     */
     protected BooleanProperty useMoleculePropertyProperty() {
         return this.useMoleculeProperty;
     }
 
+    /**
+     * Gets the value of {@code useMoleculePropertyProperty}.
+     * 
+     * @return the value of {@code useMoleculePropertyProperty}
+     */
     protected boolean isUseMoleculeProperty() {
         return this.useMoleculeProperty.get();
     }
 
+    /**
+     * Sets the value of {@code useMoleculePropertyProperty}.
+     * 
+     * @param useMoleculeProperty
+     *            the value of {@code useMoleculePropertyProperty} to set
+     */
     protected void setUseMoleculeProperty(final boolean useMoleculeProperty) {
         this.useMoleculeProperty.set(useMoleculeProperty);
     }
 
+    /**
+     * If true, it will reverse the effects of color variations.
+     * 
+     * @return the reverse property
+     */
     protected BooleanProperty reverseProperty() {
         return this.reverse;
     }
 
+    /**
+     * Gets the value of {@code reverseProperty}.
+     * 
+     * @return the value of {@code reverseProperty}
+     */
     protected boolean isReverse() {
         return this.reverse.get();
     }
 
+    /**
+     * Sets the value of {@code reverseProperty}.
+     * 
+     * @param reverse
+     *            the value of {@code reverseProperty} to set
+     */
     protected void setReverse(final boolean reverse) {
         this.reverse.set(reverse);
     }
 
+    /**
+     * If true, the value of the specified {@link Molecule} property will be
+     * written near the related shape.
+     * 
+     * @return the write property value property
+     */
     protected BooleanProperty writePropertyValuePropery() {
         return this.writePropertyValue;
     }
 
+    /**
+     * Gets the value of {@code writePropertyValuePropery}.
+     * 
+     * @return the value of {@code writePropertyValuePropery}
+     */
     protected boolean isWritePropertyValue() {
         return this.writePropertyValue.get();
     }
 
+    /**
+     * Sets the value of {@code writePropertyValuePropery}.
+     * 
+     * @param writePropertyValue
+     *            the value of {@code writePropertyValuePropery} to set
+     */
     protected void setWritePropertyValue(final boolean writePropertyValue) {
         this.writePropertyValue.set(writePropertyValue);
     }
@@ -445,6 +737,15 @@ public class DrawShapeFX implements EffectFX {
     @Override
     public void setName(final String name) {
         this.name = name;
+    }
+
+    /**
+     * Returns the internal {@link Molecule} instance used for references.
+     * 
+     * @return the internal {@code Molecule} object
+     */
+    protected Molecule getMoleculeObject() {
+        return this.moleculeObject;
     }
 
 }

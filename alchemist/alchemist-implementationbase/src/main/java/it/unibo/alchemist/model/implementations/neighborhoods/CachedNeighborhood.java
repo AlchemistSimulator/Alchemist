@@ -58,7 +58,7 @@ public final class CachedNeighborhood<T> implements Neighborhood<T> {
      * @param environment
      *            the environment
      */
-    public CachedNeighborhood(final Node<T> center, final Collection<? extends Node<T>> nodes, final Environment<T> environment) {
+    CachedNeighborhood(final Node<T> center, final Collection<? extends Node<T>> nodes, final Environment<T> environment) {
         this.c = center;
         this.env = environment;
         kCache = new TIntArrayList(nodes.size());
@@ -101,7 +101,7 @@ public final class CachedNeighborhood<T> implements Neighborhood<T> {
     }
 
     @Override
-    public CachedNeighborhood<T> clone() throws CloneNotSupportedException {
+    public CachedNeighborhood<T> clone() {
         return new CachedNeighborhood<T>(c, new TIntArrayList(kCache), new ArrayListSet<>(k), env);
     }
 

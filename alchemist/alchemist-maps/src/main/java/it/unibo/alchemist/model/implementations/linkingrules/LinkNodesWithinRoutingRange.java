@@ -8,13 +8,11 @@
  */
 package it.unibo.alchemist.model.implementations.linkingrules;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import it.unibo.alchemist.model.implementations.neighborhoods.CachedNeighborhood;
+import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
@@ -26,7 +24,6 @@ import it.unibo.alchemist.model.interfaces.Node;
 public class LinkNodesWithinRoutingRange<T> extends AbstractLocallyConsistentLinkingRule<T> {
 
     private static final long serialVersionUID = 726751817489962367L;
-    private final Collection<Node<T>> emptyList = Collections.unmodifiableCollection(new ArrayList<Node<T>>(0));
     private final double range;
 
     /**
@@ -41,10 +38,10 @@ public class LinkNodesWithinRoutingRange<T> extends AbstractLocallyConsistentLin
         if (env instanceof MapEnvironment<?>) {
             final MapEnvironment<T> menv = (MapEnvironment<T>) env;
             final Stream<Node<T>> stream = menv.getNodesWithinRange(center, range).parallelStream();
-            final Collection<Node<T>> filtered = stream.filter(node -> menv.computeRoute(center, node).getDistance() < range).collect(Collectors.toList());
-            return new CachedNeighborhood<>(center, filtered, menv);
+            final List<Node<T>> filtered = stream.filter(node -> menv.computeRoute(center, node).getDistance() < range).collect(Collectors.toList());
+            return Neighborhoods.make(menv, center, filtered);
         }
-        return new CachedNeighborhood<>(center, emptyList, env);
+        return Neighborhoods.make(env, center);
     }
 
 }

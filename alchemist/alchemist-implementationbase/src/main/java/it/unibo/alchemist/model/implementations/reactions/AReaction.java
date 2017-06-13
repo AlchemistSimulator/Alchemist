@@ -29,6 +29,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
+import org.danilopianini.util.LinkedListSet;
+import org.danilopianini.util.ListSet;
+import org.danilopianini.util.ListSets;
+
 /**
  * The type which describes the concentration of a molecule
  * 
@@ -59,7 +63,7 @@ public abstract class AReaction<T> implements Reaction<T> {
 
     private List<? extends Action<T>> actions = new ArrayList<Action<T>>(0);
     private List<? extends Condition<T>> conditions = new ArrayList<Condition<T>>(0);
-    private List<Molecule> influencing = new ArrayList<Molecule>(), influenced = new ArrayList<Molecule>();
+    private ListSet<Molecule> influencing = new LinkedListSet<>(), influenced = new LinkedListSet<>();
 
     private final int hash;
     private Context incontext = Context.LOCAL, outcontext = Context.LOCAL;
@@ -291,8 +295,8 @@ public abstract class AReaction<T> implements Reaction<T> {
     }
 
     @Override
-    public List<Molecule> getInfluencedMolecules() {
-        return influenced == null ? null : Collections.unmodifiableList(influenced);
+    public ListSet<Molecule> getInfluencedMolecules() {
+        return influenced == null ? null : ListSets.unmodifiableListSet(influenced);
     }
 
     /**
@@ -300,13 +304,13 @@ public abstract class AReaction<T> implements Reaction<T> {
      *            the new influenced molecules. Can be null.
      */
     @SuppressWarnings("unchecked")
-    protected void setInfluencedMolecules(final List<? extends Molecule> influenced) {
-        this.influenced = (List<Molecule>) influenced;
+    protected void setInfluencedMolecules(final ListSet<? extends Molecule> influenced) {
+        this.influenced = (ListSet<Molecule>) influenced;
     }
 
     @Override
-    public List<Molecule> getInfluencingMolecules() {
-        return influenced == null ? null : Collections.unmodifiableList(influencing);
+    public ListSet<Molecule> getInfluencingMolecules() {
+        return influenced == null ? null : ListSets.unmodifiableListSet(influencing);
     }
 
     /**
@@ -314,8 +318,8 @@ public abstract class AReaction<T> implements Reaction<T> {
      *            the new influencing molecules. Can be null.
      */
     @SuppressWarnings("unchecked")
-    protected void setInfluencingMolecules(final List<? extends Molecule> influencing) {
-        this.influencing = (List<Molecule>) influencing;
+    protected void setInfluencingMolecules(final ListSet<? extends Molecule> influencing) {
+        this.influencing = (ListSet<Molecule>) influencing;
     }
 
 
@@ -335,10 +339,9 @@ public abstract class AReaction<T> implements Reaction<T> {
     public void setActions(final List<Action<T>> a) {
         actions = Objects.requireNonNull(a, "The actions list can't be null");
         Context lessStrict = Context.LOCAL;
-        influenced = new ArrayList<Molecule>();
+        influenced = new LinkedListSet<Molecule>();
         for (final Action<T> act : actions) {
-            final Context condcontext = Objects.requireNonNull(act, "Actions can't be null")
-                    .getContext();
+            final Context condcontext = Objects.requireNonNull(act, "Actions can't be null").getContext();
             lessStrict = lessStrict.isMoreStrict(condcontext) ? condcontext : lessStrict;
             final List<? extends Molecule> mod = act.getModifiedMolecules();
             /*
@@ -362,11 +365,11 @@ public abstract class AReaction<T> implements Reaction<T> {
     public void setConditions(final List<Condition<T>> c) {
         conditions = c;
         Context lessStrict = Context.LOCAL;
-        influencing = new ArrayList<Molecule>();
+        influencing = new LinkedListSet<Molecule>();
         for (final Condition<T> cond : conditions) {
             final Context condcontext = cond.getContext();
             lessStrict = lessStrict.isMoreStrict(condcontext) ? condcontext : lessStrict;
-            final List<? extends Molecule> mod = cond.getInfluencingMolecules();
+            final ListSet<? extends Molecule> mod = cond.getInfluencingMolecules();
             /*
              * This check is needed because of the meaning of a null list of
              * modified molecules: it means that the reaction will influence

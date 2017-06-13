@@ -9,7 +9,8 @@
 package it.unibo.alchemist.model.interfaces;
 
 import java.io.Serializable;
-import java.util.List;
+
+import org.danilopianini.util.ListSet;
 
 /**
  * @param <T>
@@ -43,7 +44,7 @@ public interface Condition<T> extends Serializable {
      * @return The list of molecules whose concentration may influence the truth
      *         value of this condition
      */
-    List<? extends Molecule> getInfluencingMolecules();
+    ListSet<? extends Molecule> getInfluencingMolecules();
 
     /**
      * @return the node this Condition belongs to

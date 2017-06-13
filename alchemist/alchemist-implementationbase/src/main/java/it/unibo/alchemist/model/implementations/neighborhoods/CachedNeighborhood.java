@@ -11,15 +11,18 @@
  */
 package it.unibo.alchemist.model.implementations.neighborhoods;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.Spliterator;
 import java.util.function.Consumer;
+
+import org.danilopianini.util.ArrayListSet;
+import org.danilopianini.util.ListBackedSet;
+import org.danilopianini.util.ListSet;
+import org.danilopianini.util.ListSets;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gnu.trove.list.TIntList;
@@ -42,7 +45,7 @@ public final class CachedNeighborhood<T> implements Neighborhood<T> {
     private final Environment<T> env;
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "False positive, TIntList implements Externalizable that Implements Serializable")
     private final TIntList kCache;
-    private final List<Node<T>> k;
+    private final ListSet<Node<T>> k;
 
     /**
      * Builds a new neighborhood given a central node, its neighbors and the
@@ -59,7 +62,7 @@ public final class CachedNeighborhood<T> implements Neighborhood<T> {
         this.c = center;
         this.env = environment;
         kCache = new TIntArrayList(nodes.size());
-        k = new ArrayList<>(nodes.size());
+        k = new ArrayListSet<>(nodes.size());
         for (final Node<T> n : nodes) {
             kCache.add(n.getId());
             k.add(n);
@@ -68,7 +71,7 @@ public final class CachedNeighborhood<T> implements Neighborhood<T> {
         kCache.sort();
     }
 
-    private CachedNeighborhood(final Node<T> center, final TIntList map, final List<Node<T>> l, final Environment<T> environment) {
+    private CachedNeighborhood(final Node<T> center, final TIntList map, final ListSet<Node<T>> l, final Environment<T> environment) {
         this.c = center;
         this.env = environment;
         kCache = map;
@@ -99,7 +102,7 @@ public final class CachedNeighborhood<T> implements Neighborhood<T> {
 
     @Override
     public CachedNeighborhood<T> clone() throws CloneNotSupportedException {
-        return new CachedNeighborhood<T>(c, new TIntArrayList(kCache), new ArrayList<>(k), env);
+        return new CachedNeighborhood<T>(c, new TIntArrayList(kCache), new ArrayListSet<>(k), env);
     }
 
     @Override
@@ -122,8 +125,8 @@ public final class CachedNeighborhood<T> implements Neighborhood<T> {
     }
 
     @Override
-    public Set<Node<T>> getBetweenRange(final double min, final double max) {
-        final Set<Node<T>> res = new LinkedHashSet<>(k.size() + 1, 1f);
+    public ListSet<Node<T>> getBetweenRange(final double min, final double max) {
+        final List<Node<T>> res = new LinkedList<>();
         final Position centerposition = env.getPosition(c);
         for (final Node<T> n : k) {
             final double dist = centerposition.getDistanceTo(env.getPosition(n));
@@ -131,7 +134,7 @@ public final class CachedNeighborhood<T> implements Neighborhood<T> {
                 res.add(n);
             }
         }
-        return res;
+        return new ListBackedSet<>(res);
     }
 
     @Override
@@ -150,8 +153,8 @@ public final class CachedNeighborhood<T> implements Neighborhood<T> {
     }
 
     @Override
-    public List<Node<T>> getNeighbors() {
-        return Collections.unmodifiableList(k);
+    public ListSet<Node<T>> getNeighbors() {
+        return ListSets.unmodifiableListSet(k);
     }
 
     @Override

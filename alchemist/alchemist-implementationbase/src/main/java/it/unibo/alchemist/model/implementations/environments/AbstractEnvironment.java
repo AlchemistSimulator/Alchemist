@@ -8,18 +8,15 @@
  */
 package it.unibo.alchemist.model.implementations.environments;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
-import java.util.Set;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -28,10 +25,13 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
+import org.danilopianini.util.ArrayListSet;
+import org.danilopianini.util.LinkedListSet;
+import org.danilopianini.util.ListSet;
+import org.danilopianini.util.ListSets;
 import org.danilopianini.util.SpatialIndex;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.Sets;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.TIntSet;
@@ -92,7 +92,9 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
         if (nodeShouldBeAdded(node, p)) {
             final Position actualPosition = computeActualInsertionPosition(node, p);
             setPosition(node, actualPosition);
-            nodes.put(node.getId(), node);
+            if (nodes.put(node.getId(), node) != null) {
+                throw new IllegalArgumentException("Node with id " + node.getId() + " was already existing in this environment.");
+            }
             spatialIndex.insert(node, actualPosition.getCartesianCoordinates());
             /*
              * Neighborhood computation
@@ -140,21 +142,21 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
                 .map(n -> new Operation(center, n, true));
     }
 
-    private Set<Node<T>> getAllNodesInRange(final Position center, final double range) {
+    private List<Node<T>> getAllNodesInRange(final Position center, final double range) {
         final List<Position> boundingBox = center.buildBoundingBox(range);
         assert boundingBox.size() == getDimensions();
         final double[][] queryArea = new double[getDimensions()][];
         for (int i = 0; i < queryArea.length; i++) {
             queryArea[i] = boundingBox.get(i).getCartesianCoordinates();
         }
-        final Collection<Node<T>> result = spatialIndex.query(queryArea);
+        final List<Node<T>> result = spatialIndex.query(queryArea);
         final Iterator<Node<T>> it = result.iterator();
         while (it.hasNext()) {
             if (getPosition(it.next()).getDistanceTo(center) > range) {
                 it.remove();
             }
         }
-        return new LinkedHashSet<>(result);
+        return result;
     }
 
     @Override
@@ -176,8 +178,8 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
 
 
     @Override
-    public Set<Layer<T>> getLayers() {
-        return Sets.newLinkedHashSet(layers.values());
+    public ListSet<Layer<T>> getLayers() {
+        return new ArrayListSet<>(layers.values());
     }
 
     @Override
@@ -203,8 +205,8 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     }
 
     @Override
-    public Collection<Node<T>> getNodes() {
-        return Collections.unmodifiableCollection(nodes.valueCollection());
+    public ListSet<Node<T>> getNodes() {
+        return new ArrayListSet<>(nodes.valueCollection());
     }
 
     @Override
@@ -213,21 +215,27 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     }
 
     @Override
-    public Set<Node<T>> getNodesWithinRange(final Node<T> center, final double range) {
+    public ListSet<Node<T>> getNodesWithinRange(final Node<T> center, final double range) {
         /*
          * Remove the center node
          */
-        final Set<Node<T>> res = getAllNodesInRange(getPosition(center), range);
-        res.remove(center);
+        final Position centerPosition = getPosition(center);
+        if (centerPosition == null) {
+            throw new IllegalArgumentException("Node " + center + " was not part of this environment");
+        }
+        final ListSet<Node<T>> res = new LinkedListSet<>(getAllNodesInRange(centerPosition, range));
+        if (!res.remove(center)) {
+            throw new IllegalStateException("The environment is an inconsistent state.");
+        }
         return res;
     }
 
     @Override
-    public Set<Node<T>> getNodesWithinRange(final Position center, final double range) {
+    public ListSet<Node<T>> getNodesWithinRange(final Position center, final double range) {
         /*
          * Collect every node in range
          */
-        return getAllNodesInRange(center, range);
+        return new ArrayListSet<>(getAllNodesInRange(center, range));
     }
 
     @Override
@@ -256,17 +264,17 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
 
     @Override
     public Iterator<Node<T>> iterator() {
-        return getNodes().iterator();
+        return Collections.unmodifiableCollection(nodes.valueCollection()).iterator();
     }
 
     private Stream<Operation> lostNeighbors(final Node<T> center, final Neighborhood<T> oldNeighborhood, final Neighborhood<T> newNeighborhood) {
         return Optional.ofNullable(oldNeighborhood)
-        .map(Neighborhood::getNeighbors)
-        .orElse(Collections.emptyList())
-        .stream()
-        .filter(neigh -> !newNeighborhood.contains(neigh))
-        .filter(neigh -> getNeighborhood(neigh).contains(center))
-        .map(n -> new Operation(center, n, false));
+            .map(Neighborhood::getNeighbors)
+            .orElse(ListSets.emptyListSet())
+            .stream()
+            .filter(neigh -> !newNeighborhood.contains(neigh))
+            .filter(neigh -> getNeighborhood(neigh).contains(center))
+            .map(n -> new Operation(center, n, false));
     }
 
     /**

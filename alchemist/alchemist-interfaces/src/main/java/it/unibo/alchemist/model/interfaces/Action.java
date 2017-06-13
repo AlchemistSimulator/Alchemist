@@ -9,7 +9,8 @@
 package it.unibo.alchemist.model.interfaces;
 
 import java.io.Serializable;
-import java.util.List;
+
+import org.danilopianini.util.ListSet;
 
 /**
  * @param <T>
@@ -48,6 +49,6 @@ public interface Action<T> extends Serializable {
      * @return The list of the molecules whose concentration may be modified by
      *         the execution of this action.
      */
-    List<? extends Molecule> getModifiedMolecules();
+    ListSet<? extends Molecule> getModifiedMolecules();
 
 }

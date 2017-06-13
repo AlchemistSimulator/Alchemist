@@ -8,7 +8,7 @@ import static org.apache.commons.math3.util.FastMath.exp
 import java.io.Serializable
 
 @Data
-@Accessors(#[PROTECTED_GETTER, PROTECTED_SETTER])
+@Accessors(PROTECTED_GETTER, PROTECTED_SETTER)
 class BidimensionalGaussian implements BivariateFunction, Serializable {
 	
 	val double amplitude

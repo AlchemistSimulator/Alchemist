@@ -22,6 +22,7 @@ import org.danilopianini.urlclassloader.URLClassLoaderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import it.unibo.alchemist.boundary.projectview.model.Batch;
@@ -29,7 +30,6 @@ import it.unibo.alchemist.boundary.projectview.model.Output;
 import it.unibo.alchemist.boundary.projectview.model.Project;
 import it.unibo.alchemist.boundary.projectview.utils.DoubleSpinnerValueFactory;
 import it.unibo.alchemist.boundary.projectview.utils.ProjectIOUtils;
-import it.unibo.alchemist.boundary.projectview.utils.SVGImageUtils;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.YamlLoader;
 import javafx.beans.property.BooleanProperty;

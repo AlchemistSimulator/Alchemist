@@ -12,11 +12,11 @@ import java.util.ResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import it.unibo.alchemist.boundary.projectview.model.Project;
 import it.unibo.alchemist.boundary.projectview.utils.ProjectIOUtils;
-import it.unibo.alchemist.boundary.projectview.utils.SVGImageUtils;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;

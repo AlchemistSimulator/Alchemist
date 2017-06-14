@@ -1,4 +1,4 @@
-package it.unibo.alchemist.boundary.projectview.utils;
+package it.unibo.alchemist.boundary.gui.utility;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -36,8 +36,20 @@ public final class SVGImageUtils {
      */
     public static Image getSvgImage(final String path, final double width, final double height) {
         final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        final InputStream imageStream = SVGImageUtils.class.getClassLoader().getResourceAsStream(path);
+        final InputStream imageStream = ResourceLoader.load(path);
         return new Image(imageStream, screenSize.getWidth() * width / 100, screenSize.getHeight() * height / 100, true, true);
+    }
+
+    /**
+     * Returns the Image of a SVG image.
+     * 
+     * @param path
+     *            The SVG image position
+     * @return The image
+     */
+    public static Image getSvgImage(final String path) {
+        final InputStream imageStream = ResourceLoader.load(path);
+        return new Image(imageStream);
     }
 
 }

@@ -3,10 +3,9 @@ package it.unibo.alchemist.boundary.gui;
 import java.io.IOException;
 
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
-import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
+import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -29,7 +28,9 @@ public class MainApp extends Application {
         } catch (IOException e) {
             throw new IllegalStateException("Could not initialize RootLayout", e);
         }
-        stage.getIcons().add(new Image(ResourceLoader.load("/icon/icon.png")));
+
+        SVGImageUtils.installSvgLoader();
+        stage.getIcons().add(SVGImageUtils.getSvgImage("/icon/icon.svg"));
         stage.setScene(new Scene(this.rootLayout));
         stage.show();
     }

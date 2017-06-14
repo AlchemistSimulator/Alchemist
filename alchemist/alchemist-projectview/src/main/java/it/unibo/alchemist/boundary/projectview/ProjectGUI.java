@@ -4,7 +4,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.IOException;
 
-import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
+import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.projectview.controller.CenterLayoutController;
 import it.unibo.alchemist.boundary.projectview.controller.LeftLayoutController;
 import it.unibo.alchemist.boundary.projectview.controller.TopLayoutController;
@@ -14,7 +14,6 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -33,6 +32,7 @@ public class ProjectGUI extends Application {
 
     /**
      * Returns the primary stage.
+     * 
      * @return primary stage
      */
     public Stage getStage() {
@@ -49,9 +49,10 @@ public class ProjectGUI extends Application {
     @Override
     public void start(final Stage primaryStage) throws IOException {
         Thread.setDefaultUncaughtExceptionHandler(FXUtil::errorAlert);
+        SVGImageUtils.installSvgLoader();
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Alchemist");
-        this.primaryStage.getIcons().add(new Image(ResourceLoader.load("/icon/icon.png")));
+        this.primaryStage.getIcons().add(SVGImageUtils.getSvgImage("/icon/icon.svg"));
         initLayout("RootLayout");
         initLayout("LeftLayout");
         initLayout("CenterLayout");
@@ -106,7 +107,9 @@ public class ProjectGUI extends Application {
 
     /**
      * Method that launches the application.
-     * @param args arguments
+     * 
+     * @param args
+     *            arguments
      */
     public static void main(final String... args) {
         launch(args);

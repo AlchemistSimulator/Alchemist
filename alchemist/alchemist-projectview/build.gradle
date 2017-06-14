@@ -2,7 +2,6 @@ dependencies {
     compile (
         project(':alchemist-interfaces'),
         project(':alchemist-runner'),
-        "de.codecentric.centerdevice:javafxsvg:${javaFXSVG}",
         "org.controlsfx:controlsfx:${controlsFXVersion}",
         "org.danilopianini:urlclassloader-util:${urlClassLoaderUtilVersion}"
     )

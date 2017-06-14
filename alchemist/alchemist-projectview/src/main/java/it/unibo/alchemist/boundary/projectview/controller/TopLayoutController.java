@@ -11,9 +11,9 @@ import java.util.ResourceBundle;
 
 import com.google.common.io.Files;
 
+import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
-import it.unibo.alchemist.boundary.projectview.utils.SVGImageUtils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

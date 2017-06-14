@@ -15,6 +15,8 @@ public final class ResourceLoader {
     /**
      * Static method that wraps class.getResourceAsStream() method to return an
      * input stream form a specified path.
+     * <p>
+     * It also tries to fix wrongly specified paths.
      * 
      * @param path
      *            the path to the file
@@ -22,12 +24,20 @@ public final class ResourceLoader {
      *         name is found
      */
     public static InputStream load(final String path) {
-        return ResourceLoader.class.getResourceAsStream(path);
+        String newPath = path;
+
+        if (path.toCharArray()[0] != '/') {
+            newPath = "/" + newPath;
+        }
+
+        return ResourceLoader.class.getResourceAsStream(newPath);
     }
 
     /**
      * Static method that wraps class.getResource() method to return an URL from
      * a specified path.
+     * <p>
+     * It also tries to fix wrongly specified paths.
      * 
      * @param path
      *            the path to the file
@@ -35,6 +45,12 @@ public final class ResourceLoader {
      *         found
      */
     public static URL loadURL(final String path) {
-        return ResourceLoader.class.getResource(path);
+        String newPath = path;
+
+        if (path.toCharArray()[0] != '/') {
+            newPath = "/" + newPath;
+        }
+
+        return ResourceLoader.class.getResource(newPath);
     }
 }

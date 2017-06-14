@@ -5,6 +5,7 @@ dependencies {
         project(':alchemist-interfaces'),
         project(':alchemist-loading'),
         project(':alchemist-maps'),
+        "de.codecentric.centerdevice:javafxsvg:${javaFXSVG}",
         "com.miglayout:miglayout-swing:$miglayoutVersion",
         "org.mapsforge:mapsforge-map-awt:$mapsforgeVersion",
         "org.danilopianini:gson-extras:$gsonExtrasVersion",

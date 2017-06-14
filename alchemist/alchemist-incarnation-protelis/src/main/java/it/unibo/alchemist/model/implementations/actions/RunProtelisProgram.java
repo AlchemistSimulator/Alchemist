@@ -35,16 +35,37 @@ import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 public class RunProtelisProgram extends SimpleMolecule implements Action<Object> {
 
     private static final long serialVersionUID = 2207914086772704332L;
+    private boolean computationalCycleComplete;
     private final Environment<Object> environment;
     private final ProtelisNode node;
-    private final Reaction<Object> reaction;
+    private String originalProgram = "unknown";
     private final org.protelis.vm.ProtelisProgram program;
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All the random engines provided by Apache are Serializable")
     private final RandomGenerator random;
-    private transient ProtelisVM vm;
-    private boolean computationalCycleComplete;
-    private String originalProgram = "unknown";
+    private final Reaction<Object> reaction;
     private final double retentionTime;
+    private transient ProtelisVM vm;
+
+    private RunProtelisProgram(
+            final Environment<Object> env,
+            final ProtelisNode n,
+            final Reaction<Object> r,
+            final RandomGenerator rand,
+            final org.protelis.vm.ProtelisProgram prog,
+            final double retentionTime) {
+        super(prog.getName());
+        LangUtils.requireNonNull(env, r, n, prog, rand);
+        program = prog;
+        environment = env;
+        node = n;
+        random = rand;
+        reaction = r;
+        final AlchemistNetworkManager netmgr = new AlchemistNetworkManager(environment, node, reaction, this, retentionTime);
+        node.addNetworkManger(this, netmgr);
+        final ExecutionContext ctx = new AlchemistExecutionContext(env, n, r, rand, netmgr);
+        vm = new ProtelisVM(prog, ctx);
+        this.retentionTime = retentionTime;
+    }
 
     /**
      * @param env
@@ -101,27 +122,6 @@ public class RunProtelisProgram extends SimpleMolecule implements Action<Object>
         originalProgram = prog;
     }
 
-    private RunProtelisProgram(
-            final Environment<Object> env,
-            final ProtelisNode n,
-            final Reaction<Object> r,
-            final RandomGenerator rand,
-            final org.protelis.vm.ProtelisProgram prog,
-            final double retentionTime) {
-        super(prog.getName());
-        LangUtils.requireNonNull(env, r, n, prog, rand);
-        program = prog;
-        environment = env;
-        node = n;
-        random = rand;
-        reaction = r;
-        final AlchemistNetworkManager netmgr = new AlchemistNetworkManager(environment, node, reaction, this, retentionTime);
-        node.addNetworkManger(this, netmgr);
-        final ExecutionContext ctx = new AlchemistExecutionContext(env, n, r, rand, netmgr);
-        vm = new ProtelisVM(prog, ctx);
-        this.retentionTime = retentionTime;
-    }
-
     @Override
     public RunProtelisProgram cloneAction(final Node<Object> n, final Reaction<Object> r) {
         if (n instanceof ProtelisNode) {
@@ -141,18 +141,19 @@ public class RunProtelisProgram extends SimpleMolecule implements Action<Object>
         computationalCycleComplete = true;
     }
 
+    @Override
+    public Context getContext() {
+        /*
+         * A Protelis program never writes in other nodes
+         */
+        return Context.LOCAL;
+    }
+
     /**
      * @return the environment
      */
     protected final Environment<Object> getEnvironment() {
         return environment;
-    }
-
-    /**
-     * @return the node
-     */
-    protected final ProtelisNode getNode() {
-        return node;
     }
 
     @Override
@@ -163,12 +164,25 @@ public class RunProtelisProgram extends SimpleMolecule implements Action<Object>
         return null;
     }
 
-    @Override
-    public Context getContext() {
-        /*
-         * A Protelis program never writes in other nodes
-         */
-        return Context.LOCAL;
+    /**
+     * @return the node
+     */
+    protected final ProtelisNode getNode() {
+        return node;
+    }
+
+    /**
+     * @return the internal {@link RandomGenerator}
+     */
+    protected RandomGenerator getRandomGenerator() {
+        return random;
+    }
+
+    /**
+     * @return the retention time
+     */
+    protected double getRetentionTime() {
+        return retentionTime;
     }
 
     /**
@@ -192,18 +206,9 @@ public class RunProtelisProgram extends SimpleMolecule implements Action<Object>
         vm = new ProtelisVM(program, new AlchemistExecutionContext(environment, node, reaction, random, netmgr));
     }
 
-    /**
-     * @return the internal {@link RandomGenerator}
-     */
-    protected RandomGenerator getRandomGenerator() {
-        return random;
-    }
-
-    /**
-     * @return the retention time
-     */
-    protected double getRetentionTime() {
-        return retentionTime;
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "@" + node.getId();
     }
 
 }

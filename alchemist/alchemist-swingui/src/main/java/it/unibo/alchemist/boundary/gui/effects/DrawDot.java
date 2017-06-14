@@ -105,7 +105,7 @@ public class DrawDot implements EffectFX {
      * 
      * @return the size property
      */
-    protected DoubleProperty sizeProperty() {
+    public DoubleProperty sizeProperty() {
         return this.size;
     }
 
@@ -114,7 +114,7 @@ public class DrawDot implements EffectFX {
      * 
      * @return the size of the dots
      */
-    protected Double getSize() {
+    public Double getSize() {
         return this.size.get();
     }
 
@@ -126,7 +126,7 @@ public class DrawDot implements EffectFX {
      * @throws IllegalArgumentException
      *             if the provided value is not a valid percentage
      */
-    protected void setSize(final Double size) {
+    public void setSize(final Double size) {
         this.size.set(size);
     }
 

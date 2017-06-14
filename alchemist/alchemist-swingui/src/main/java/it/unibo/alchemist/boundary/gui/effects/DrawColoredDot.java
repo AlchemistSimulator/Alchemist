@@ -51,6 +51,23 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
         alpha.addListener(this.updateColor());
     }
 
+    @Override
+    public Color getColor() { // NOPMD - Only widening method visibility
+        // super.setColor(
+        // new Color(red.getValue().intValue(), green.getValue().intValue(),
+        // blue.getValue().intValue(), alpha.getValue().intValue()));
+        return super.getColor();
+    }
+
+    @Override
+    public void setColor(final Color color) {
+        this.setAlpha(color.getAlpha());
+        this.setBlue(color.getBlue());
+        this.setGreen(color.getGreen());
+        this.setRed(color.getRed());
+        super.setColor(color);
+    }
+
     /**
      * {@inheritDoc}
      * <p>
@@ -81,7 +98,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
      * 
      * @return the alpha channel property
      */
-    protected DoubleProperty alphaProperty() {
+    public DoubleProperty alphaProperty() {
         return this.alpha;
     }
 
@@ -90,7 +107,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
      * 
      * @return the alpha channel of the color of the dots
      */
-    protected double getAlpha() {
+    public double getAlpha() {
         return this.alpha.get();
     }
 
@@ -100,7 +117,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
      * @param alpha
      *            the alpha channel to set
      */
-    protected void setAlpha(final double alpha) {
+    public void setAlpha(final double alpha) {
         this.alpha.set(alpha);
     }
 
@@ -111,7 +128,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
      * 
      * @return the blue channel property
      */
-    protected DoubleProperty blueProperty() {
+    public DoubleProperty blueProperty() {
         return this.blue;
     }
 
@@ -120,7 +137,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
      * 
      * @return the blue channel of the color of the dots
      */
-    protected double getBlue() {
+    public double getBlue() {
         return this.blue.get();
     }
 
@@ -130,7 +147,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
      * @param blue
      *            the blue channel to set
      */
-    protected void setBlue(final double blue) {
+    public void setBlue(final double blue) {
         this.blue.set(blue);
     }
 
@@ -141,7 +158,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
      * 
      * @return the green channel property
      */
-    protected DoubleProperty greenProperty() {
+    public DoubleProperty greenProperty() {
         return this.green;
     }
 
@@ -150,7 +167,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
      * 
      * @return the green channel of the color of the dots
      */
-    protected double getGreen() {
+    public double getGreen() {
         return this.green.get();
     }
 
@@ -160,7 +177,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
      * @param green
      *            the green channel to set
      */
-    protected void setGreen(final double green) {
+    public void setGreen(final double green) {
         this.green.set(green);
     }
 
@@ -171,7 +188,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
      * 
      * @return the red channel property
      */
-    protected DoubleProperty redProperty() {
+    public DoubleProperty redProperty() {
         return this.red;
     }
 
@@ -180,7 +197,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
      * 
      * @return the red channel of the color of the dots
      */
-    protected double getRed() {
+    public double getRed() {
         return this.red.get();
     }
 
@@ -190,7 +207,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
      * @param red
      *            the red channel to set
      */
-    protected void setRed(final double red) {
+    public void setRed(final double red) {
         this.red.set(red);
     }
 

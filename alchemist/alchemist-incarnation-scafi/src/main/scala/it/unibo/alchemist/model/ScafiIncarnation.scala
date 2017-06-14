@@ -14,6 +14,7 @@ import it.unibo.alchemist.implementation.nodes.ScafiNode
 import it.unibo.alchemist.model.implementations.reactions.Event
 import it.unibo.alchemist.model.implementations.timedistributions.DiracComb
 import it.unibo.alchemist.model.implementations.times.DoubleTime
+import it.unibo.alchemist.scala.ScalaInterpreter
 
 sealed class ScafiIncarnation extends Incarnation[Any]{
 
@@ -46,7 +47,7 @@ sealed class ScafiIncarnation extends Incarnation[Any]{
     /*
      * TODO: support double-try parse in case of strings (to avoid "\"string\"" in the YAML file)
      */
-    ScafiIncarnation(v)
+    ScalaInterpreter(v)
   }
 
   override def createCondition(rand: RandomGenerator, env: Environment[Any] , node: Node[Any], time: TimeDistribution[Any], reaction: Reaction[Any], param: String) = {
@@ -78,22 +79,7 @@ sealed class ScafiIncarnation extends Incarnation[Any]{
     if (propertyName == null || propertyName.trim.isEmpty) {
       toDouble(target)
     } else {
-      toDouble(ScafiIncarnation("val value = " + target + ";" + propertyName))
+      toDouble(ScalaInterpreter("val value = " + target + ";" + propertyName))
     }
   }
-
-}
-
-object ScafiIncarnation {
-
-  import scala.reflect.runtime.currentMirror
-  import scala.tools.reflect.ToolBox
-  import java.io.File
-
-  def apply[A](string: String): A = {
-    val toolbox = currentMirror.mkToolBox()
-    val tree = toolbox.parse(string)
-    toolbox.eval(tree).asInstanceOf[A]
-  }
-
 }

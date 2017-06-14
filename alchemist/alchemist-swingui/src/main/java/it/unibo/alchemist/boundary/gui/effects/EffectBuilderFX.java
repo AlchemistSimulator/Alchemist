@@ -14,7 +14,9 @@ import javafx.scene.control.ChoiceDialog;
  * Class that lets the user choose the effect from all it can find.
  */
 public class EffectBuilderFX {
+    /** Reflection object for main Alchemist package. */
     private static final Reflections REFLECTIONS = new Reflections("it.unibo.alchemist");
+    /** Set of available {@link EffectFX effect}s found by reflection. */
     private static final Set<Class<? extends EffectFX>> EFFECTS = REFLECTIONS.getSubTypesOf(EffectFX.class);
 
     private final List<Class<? extends EffectFX>> effects;

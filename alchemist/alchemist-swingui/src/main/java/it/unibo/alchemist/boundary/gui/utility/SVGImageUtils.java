@@ -8,8 +8,8 @@ import de.codecentric.centerdevice.javafxsvg.SvgImageLoaderFactory;
 import javafx.scene.image.Image;
 
 /**
- * A class with static methods that install a SVG loader and return a SVG image.
- *
+ * Utility class that install that wraps {@link SvgImageLoaderFactory}, letting
+ * install a SVG loader and return a SVG image.
  */
 public final class SVGImageUtils {
 
@@ -17,7 +17,7 @@ public final class SVGImageUtils {
     }
 
     /**
-     * Install the SVG loader.
+     * Install the SVG loader. Should be called before load SVGs.
      */
     public static void installSvgLoader() {
         SvgImageLoaderFactory.install();
@@ -25,6 +25,8 @@ public final class SVGImageUtils {
 
     /**
      * Returns the Image of a SVG image.
+     * <p>
+     * Should have called {@link #installSvgLoader()} first.
      * 
      * @param path
      *            The SVG image position
@@ -42,6 +44,8 @@ public final class SVGImageUtils {
 
     /**
      * Returns the Image of a SVG image.
+     * <p>
+     * Should have called {@link #installSvgLoader()} first.
      * 
      * @param path
      *            The SVG image position

@@ -17,6 +17,7 @@ import java.util.Objects;
 
 import org.danilopianini.lang.ExactHashObjectMap;
 import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.util.ListSet;
 
 import gnu.trove.impl.Constants;
 import gnu.trove.map.TIntDoubleMap;
@@ -205,12 +206,12 @@ public class SAPEREGradient extends AReaction<List<ILsaMolecule>> {
         }
 
         @Override
-        public List<? extends Molecule> getInfluencingMolecules() {
+        public ListSet<? extends Molecule> getInfluencingMolecules() {
             return null;
         }
 
         @Override
-        public List<? extends Molecule> getModifiedMolecules() {
+        public ListSet<? extends Molecule> getModifiedMolecules() {
             return null;
         }
 

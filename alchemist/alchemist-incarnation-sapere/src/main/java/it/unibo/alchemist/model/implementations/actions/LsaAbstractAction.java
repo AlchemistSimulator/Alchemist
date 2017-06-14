@@ -21,6 +21,7 @@ import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.util.ListSet;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -455,8 +456,8 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<ILsaMolecule> getModifiedMolecules() {
-        return (List<ILsaMolecule>) super.getModifiedMolecules();
+    public ListSet<ILsaMolecule> getModifiedMolecules() {
+        return (ListSet<ILsaMolecule>) super.getModifiedMolecules();
     }
 
     @Override

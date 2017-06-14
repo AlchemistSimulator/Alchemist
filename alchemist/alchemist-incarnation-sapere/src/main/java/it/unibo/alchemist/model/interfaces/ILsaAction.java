@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.util.ListSet;
 
 /**
  */
@@ -30,7 +31,7 @@ public interface ILsaAction extends Action<List<ILsaMolecule>> {
     void setExecutionContext(Map<FasterString, ITreeNode<?>> matches, List<ILsaNode> nodes);
 
     @Override
-    List<? extends ILsaMolecule> getModifiedMolecules();
+    ListSet<? extends ILsaMolecule> getModifiedMolecules();
 
     @Override
     ILsaAction cloneAction(Node<List<ILsaMolecule>> n, Reaction<List<ILsaMolecule>> r);

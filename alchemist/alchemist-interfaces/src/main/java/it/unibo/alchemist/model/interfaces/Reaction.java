@@ -11,6 +11,8 @@ package it.unibo.alchemist.model.interfaces;
 import java.io.Serializable;
 import java.util.List;
 
+import org.danilopianini.util.ListSet;
+
 /**
  * @param <T>
  *            The type which describes the concentration of a molecule
@@ -78,7 +80,7 @@ public interface Reaction<T> extends Comparable<Reaction<T>>, Serializable {
      *         will influence every other reaction with compatible context,
      *         regardless the molecules involved.
      */
-    List<Molecule> getInfluencedMolecules();
+    ListSet<Molecule> getInfluencedMolecules();
 
     /**
      * @return The list of {@link Molecule}s whose concentration may affect the
@@ -86,7 +88,7 @@ public interface Reaction<T> extends Comparable<Reaction<T>>, Serializable {
      *         that it is influenced every other reaction with compatible
      *         context, regardless the molecules involved.
      */
-    List<Molecule> getInfluencingMolecules();
+    ListSet<Molecule> getInfluencingMolecules();
 
     /**
      * @return The widest {@link Context} among {@link Condition}s, namely the

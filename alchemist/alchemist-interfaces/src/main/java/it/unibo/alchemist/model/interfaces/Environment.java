@@ -12,11 +12,11 @@
 package it.unibo.alchemist.model.interfaces;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Predicate;
+
+import org.danilopianini.util.ListSet;
 
 import it.unibo.alchemist.core.interfaces.Simulation;
 
@@ -98,7 +98,7 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
      * 
      * @return a {@link List} of {@link Layer}.
      */
-    Set<Layer<T>> getLayers();
+    ListSet<Layer<T>> getLayers();
 
     /**
      * @return the current linking rule
@@ -129,7 +129,7 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
      * 
      * @return All the nodes that exist in current environment
      */
-    Collection<Node<T>> getNodes();
+    ListSet<Node<T>> getNodes();
 
     /**
      * @return the number of nodes currently in the environment
@@ -150,7 +150,7 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
      *            the exploration range
      * @return the list of nodes within the range
      */
-    Set<Node<T>> getNodesWithinRange(Node<T> center, double range);
+    ListSet<Node<T>> getNodesWithinRange(Node<T> center, double range);
 
     /**
      * Given a {@link Position}(center) this method returns a list of all the
@@ -163,7 +163,7 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
      *            the exploration range
      * @return the list of nodes within the range
      */
-    Set<Node<T>> getNodesWithinRange(Position center, double range);
+    ListSet<Node<T>> getNodesWithinRange(Position center, double range);
 
     /**
      * This method allows to know which are the smallest coordinates

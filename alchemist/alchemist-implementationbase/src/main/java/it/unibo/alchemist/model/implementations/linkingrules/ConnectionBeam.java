@@ -14,12 +14,6 @@ import static org.apache.commons.math3.util.FastMath.cos;
 import static org.apache.commons.math3.util.FastMath.nextAfter;
 import static org.apache.commons.math3.util.FastMath.nextUp;
 import static org.apache.commons.math3.util.FastMath.sin;
-import it.unibo.alchemist.model.implementations.neighborhoods.CachedNeighborhood;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
-import it.unibo.alchemist.model.interfaces.Neighborhood;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
 
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;
@@ -31,6 +25,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.danilopianini.lang.HashUtils;
+
+import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
+import it.unibo.alchemist.model.interfaces.Neighborhood;
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * Connects two nodes if, throwing a beam from one to the other, there exists at
@@ -88,7 +89,7 @@ public class ConnectionBeam<T> extends EuclideanDistance<T> {
                     return !oenv.intersectsObstacle(cp, np) || projectedBeamOvercomesObstacle(cp, np);
                 })
                 .collect(ArrayList::new, (l, el) -> l.add(el), (l1, l2) -> l1.addAll(l2));
-            return new CachedNeighborhood<>(center, neighs, env);
+            return Neighborhoods.make(env, center, neighs);
         }
         return normal;
     }

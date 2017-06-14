@@ -29,6 +29,8 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.util.ArrayListSet;
+import org.danilopianini.util.ListSet;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -357,8 +359,8 @@ public class SAPEREReaction extends AReaction<List<ILsaMolecule>> {
          * locally. Otherwise there is no control on where the modified
          * molecules will end up.
          */
-        final List<Molecule> influencing = new ArrayList<>(getInfluencingMolecules());
-        final List<Molecule> influenced = new ArrayList<>(getInfluencedMolecules());
+        final ListSet<Molecule> influencing = new ArrayListSet<>(getInfluencingMolecules());
+        final ListSet<Molecule> influenced = new ArrayListSet<>(getInfluencedMolecules());
         if (getInputContext() == Context.LOCAL && modifiesOnlyLocally) {
             /*
              * Moreover, since there is no control over the personalised agents,

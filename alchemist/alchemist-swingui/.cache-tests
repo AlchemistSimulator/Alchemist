@@ -1,0 +1,79 @@
+format version: 5
+output mode:
+1 items
+0 -> multiple
+output directories:
+1 items
+/home/danysk/Dropbox/Workspaces/Alchemist/alchemist/alchemist-swingui/src/test/java -> /home/danysk/Dropbox/Workspaces/Alchemist/alchemist/alchemist-swingui/bin
+compile options:
+8 items
+0 -> -javabootclasspath
+1 -> /usr/lib/jvm/java-8-openjdk/jre/lib/resources.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jsse.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/charsets.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/ext/nashorn.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/ext/sunjce_provider.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/ext/jaccess.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/ext/sunpkcs11.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/ext/localedata.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/ext/cldrdata.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/ext/jfxrt.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/ext/dnsns.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/ext/sunec.jar:/usr/lib/jvm/java-8-openjdk/jre/lib/ext/zipfs.jar
+2 -> -javaextdirs
+3 ->  
+4 -> -bootclasspath
+5 -> /home/danysk/.eclipse/org.eclipse.platform_4.6.3_155965261_linux_gtk_x86_64/plugins/org.scala-lang.scala-library_2.11.8.v20160304-115712-1706a37eb8.jar
+6 -> -encoding
+7 -> UTF-8
+javac options:
+0 items
+compiler version:
+1 items
+0 -> 2.11.8
+compile order:
+1 items
+0 -> Mixed
+name hashing:
+1 items
+0 -> false
+products:
+0 items
+binary dependencies:
+0 items
+direct source dependencies:
+0 items
+direct external dependencies:
+0 items
+public inherited source dependencies:
+0 items
+public inherited external dependencies:
+0 items
+member reference internal dependencies:
+0 items
+member reference external dependencies:
+0 items
+inheritance internal dependencies:
+0 items
+inheritance external dependencies:
+0 items
+class names:
+0 items
+used names:
+0 items
+product stamps:
+0 items
+source stamps:
+2 items
+/home/danysk/Dropbox/Workspaces/Alchemist/alchemist/alchemist-swingui/src/test/java/it/unibo/alchemist/test/TestEffectSerialization.java -> hash(57c052e831f1b6ce68790c0a67be525c42e6a20e)
+/home/danysk/Dropbox/Workspaces/Alchemist/alchemist/alchemist-swingui/src/test/java/it/unibo/alchemist/test/TestWormhole2D.java -> hash(3f22360e64aa2a3e1c37ad34f1fd0b67020dcbc6)
+binary stamps:
+0 items
+class names:
+0 items
+internal apis:
+2 items
+/home/danysk/Dropbox/Workspaces/Alchemist/alchemist/alchemist-swingui/src/test/java/it/unibo/alchemist/test/TestEffectSerialization.java -> 
+rO0ABXNyABB4c2J0aS5hcGkuU291cmNlFlpwRASfbtoCAAZJAAdhcGlIYXNoWgAIaGFzTWFjcm9MABhfaW50ZXJuYWxPbmx5X25hbWVIYXNoZXN0ACRMeHNidGkvYXBpL19pbnRlcm5hbE9ubHlfTmFtZUhhc2hlcztMAANhcGl0ABVMeHNidGkvYXBpL1NvdXJjZUFQSTtMAAtjb21waWxhdGlvbnQAF0x4c2J0aS9hcGkvQ29tcGlsYXRpb247WwAEaGFzaHQAAltCeHC4IVHqAHNyACJ4c2J0aS5hcGkuX2ludGVybmFsT25seV9OYW1lSGFzaGVzVNq+mfrU7EwCAAJbAA9pbXBsaWNpdE1lbWJlcnN0ACNbTHhzYnRpL2FwaS9faW50ZXJuYWxPbmx5X05hbWVIYXNoO1sADnJlZ3VsYXJNZW1iZXJzcQB+AAd4cHVyACNbTHhzYnRpLmFwaS5faW50ZXJuYWxPbmx5X05hbWVIYXNoO0lagLbdlov0AgAAeHAAAAAAdXEAfgAJAAAAAHNyABN4c2J0aS5hcGkuU291cmNlQVBJuV6n+SkjOKQCAAJbAAtkZWZpbml0aW9uc3QAF1tMeHNidGkvYXBpL0RlZmluaXRpb247WwAIcGFja2FnZXN0ABRbTHhzYnRpL2FwaS9QYWNrYWdlO3hwdXIAF1tMeHNidGkuYXBpLkRlZmluaXRpb247iMlc57TjXg4CAAB4cAAAAAB1cgAUW0x4c2J0aS5hcGkuUGFja2FnZTtbExk3cKcnoQIAAHhwAAAAAHNyABV4c2J0aS5hcGkuQ29tcGlsYXRpb27t+uDDauigQgIAAkoACXN0YXJ0VGltZVsAB291dHB1dHN0ABpbTHhzYnRpL2FwaS9PdXRwdXRTZXR0aW5nO3hwAAABXKcSFWZ1cgAaW0x4c2J0aS5hcGkuT3V0cHV0U2V0dGluZzt/asLzp4elQgIAAHhwAAAAAXNyABd4c2J0aS5hcGkuT3V0cHV0U2V0dGluZ3rZmkd0+x17AgACTAAPb3V0cHV0RGlyZWN0b3J5dAASTGphdmEvbGFuZy9TdHJpbmc7TAAPc291cmNlRGlyZWN0b3J5cQB+ABp4cHQASS9ob21lL2Rhbnlzay9Ecm9wYm94L1dvcmtzcGFjZXMvQWxjaGVtaXN0L2FsY2hlbWlzdC9hbGNoZW1pc3Qtc3dpbmd1aS9iaW50AFMvaG9tZS9kYW55c2svRHJvcGJveC9Xb3Jrc3BhY2VzL0FsY2hlbWlzdC9hbGNoZW1pc3QvYWxjaGVtaXN0LXN3aW5ndWkvc3JjL3Rlc3QvamF2YXVyAAJbQqzzF/gGCFTgAgAAeHAAAAAUV8BS6DHxts5oeQwKZ75SXELmog4=
+/home/danysk/Dropbox/Workspaces/Alchemist/alchemist/alchemist-swingui/src/test/java/it/unibo/alchemist/test/TestWormhole2D.java -> 
+rO0ABXNyABB4c2J0aS5hcGkuU291cmNlFlpwRASfbtoCAAZJAAdhcGlIYXNoWgAIaGFzTWFjcm9MABhfaW50ZXJuYWxPbmx5X25hbWVIYXNoZXN0ACRMeHNidGkvYXBpL19pbnRlcm5hbE9ubHlfTmFtZUhhc2hlcztMAANhcGl0ABVMeHNidGkvYXBpL1NvdXJjZUFQSTtMAAtjb21waWxhdGlvbnQAF0x4c2J0aS9hcGkvQ29tcGlsYXRpb247WwAEaGFzaHQAAltCeHC4IVHqAHNyACJ4c2J0aS5hcGkuX2ludGVybmFsT25seV9OYW1lSGFzaGVzVNq+mfrU7EwCAAJbAA9pbXBsaWNpdE1lbWJlcnN0ACNbTHhzYnRpL2FwaS9faW50ZXJuYWxPbmx5X05hbWVIYXNoO1sADnJlZ3VsYXJNZW1iZXJzcQB+AAd4cHVyACNbTHhzYnRpLmFwaS5faW50ZXJuYWxPbmx5X05hbWVIYXNoO0lagLbdlov0AgAAeHAAAAAAdXEAfgAJAAAAAHNyABN4c2J0aS5hcGkuU291cmNlQVBJuV6n+SkjOKQCAAJbAAtkZWZpbml0aW9uc3QAF1tMeHNidGkvYXBpL0RlZmluaXRpb247WwAIcGFja2FnZXN0ABRbTHhzYnRpL2FwaS9QYWNrYWdlO3hwdXIAF1tMeHNidGkuYXBpLkRlZmluaXRpb247iMlc57TjXg4CAAB4cAAAAAB1cgAUW0x4c2J0aS5hcGkuUGFja2FnZTtbExk3cKcnoQIAAHhwAAAAAHNyABV4c2J0aS5hcGkuQ29tcGlsYXRpb27t+uDDauigQgIAAkoACXN0YXJ0VGltZVsAB291dHB1dHN0ABpbTHhzYnRpL2FwaS9PdXRwdXRTZXR0aW5nO3hwAAABXKcSFWZ1cgAaW0x4c2J0aS5hcGkuT3V0cHV0U2V0dGluZzt/asLzp4elQgIAAHhwAAAAAXNyABd4c2J0aS5hcGkuT3V0cHV0U2V0dGluZ3rZmkd0+x17AgACTAAPb3V0cHV0RGlyZWN0b3J5dAASTGphdmEvbGFuZy9TdHJpbmc7TAAPc291cmNlRGlyZWN0b3J5cQB+ABp4cHQASS9ob21lL2Rhbnlzay9Ecm9wYm94L1dvcmtzcGFjZXMvQWxjaGVtaXN0L2FsY2hlbWlzdC9hbGNoZW1pc3Qtc3dpbmd1aS9iaW50AFMvaG9tZS9kYW55c2svRHJvcGJveC9Xb3Jrc3BhY2VzL0FsY2hlbWlzdC9hbGNoZW1pc3QvYWxjaGVtaXN0LXN3aW5ndWkvc3JjL3Rlc3QvamF2YXVyAAJbQqzzF/gGCFTgAgAAeHAAAAAUPyI2DmSqKj4cN6008f0LZwINy8Y=
+external apis:
+0 items
+source infos:
+2 items
+/home/danysk/Dropbox/Workspaces/Alchemist/alchemist/alchemist-swingui/src/test/java/it/unibo/alchemist/test/TestEffectSerialization.java -> 
+AAAAAAAAAAA=
+/home/danysk/Dropbox/Workspaces/Alchemist/alchemist/alchemist-swingui/src/test/java/it/unibo/alchemist/test/TestWormhole2D.java -> 
+AAAAAAAAAAA=
+compilations:
+1 items
+0 -> rO0ABXNyABV4c2J0aS5hcGkuQ29tcGlsYXRpb27t+uDDauigQgIAAkoACXN0YXJ0VGltZVsAB291dHB1dHN0ABpbTHhzYnRpL2FwaS9PdXRwdXRTZXR0aW5nO3hwAAABXKcSFWZ1cgAaW0x4c2J0aS5hcGkuT3V0cHV0U2V0dGluZzt/asLzp4elQgIAAHhwAAAAAXNyABd4c2J0aS5hcGkuT3V0cHV0U2V0dGluZ3rZmkd0+x17AgACTAAPb3V0cHV0RGlyZWN0b3J5dAASTGphdmEvbGFuZy9TdHJpbmc7TAAPc291cmNlRGlyZWN0b3J5cQB+AAZ4cHQASS9ob21lL2Rhbnlzay9Ecm9wYm94L1dvcmtzcGFjZXMvQWxjaGVtaXN0L2FsY2hlbWlzdC9hbGNoZW1pc3Qtc3dpbmd1aS9iaW50AFMvaG9tZS9kYW55c2svRHJvcGJveC9Xb3Jrc3BhY2VzL0FsY2hlbWlzdC9hbGNoZW1pc3QvYWxjaGVtaXN0LXN3aW5ndWkvc3JjL3Rlc3QvamF2YQ==

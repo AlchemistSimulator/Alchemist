@@ -1,0 +1,27 @@
+module distanceTo
+
+def myPosition() {
+	self.getDevicePosition()
+}
+
+def nbrRange() {
+    nbr(myPosition()).getDistanceTo(myPosition())
+}
+
+def distanceTo(source) {
+	rep (d <- Infinity) {
+		mux (source) {
+			0
+		} else {
+            minHood(nbr(d) + nbrRange())
+		}
+	}
+}
+
+def distanceToWithEnable(source, enabled) {
+   if (enabled) { distanceTo(source) } else { Infinity }
+}
+
+let d = distanceToWithEnable(env.get("source"), env.get("enabled"));
+env.put("data", d);
+d

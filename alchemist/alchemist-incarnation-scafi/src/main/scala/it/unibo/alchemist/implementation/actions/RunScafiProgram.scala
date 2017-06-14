@@ -10,7 +10,7 @@ import it.unibo.alchemist.model.interfaces.Environment
 import org.apache.commons.math3.random.RandomGenerator
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.implementations.times.DoubleTime
-import it.unibo.alchemist.model.scafi.PimpMyAlchemist._
+import it.unibo.alchemist.scala.PimpMyAlchemist._
 import org.apache.commons.math3.util.FastMath
 
 object ScafiIncarnationForAlchemist extends BasicAbstractIncarnation

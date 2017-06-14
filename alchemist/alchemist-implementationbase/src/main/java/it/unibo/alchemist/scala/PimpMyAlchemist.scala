@@ -1,4 +1,4 @@
-package it.unibo.alchemist.model.scafi
+package it.unibo.alchemist.scala
 
 import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.model.implementations.times.DoubleTime

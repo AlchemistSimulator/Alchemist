@@ -483,7 +483,7 @@ public class SAPEREGradient extends AReaction<List<ILsaMolecule>> {
     }
 
     @Override
-    public Reaction<List<ILsaMolecule>> cloneOnNewNode(final Node<List<ILsaMolecule>> n) {
+    public Reaction<List<ILsaMolecule>> cloneOnNewNode(final Node<List<ILsaMolecule>> n, final Time currentTime) {
         throw new UnsupportedOperationException();
     }
 

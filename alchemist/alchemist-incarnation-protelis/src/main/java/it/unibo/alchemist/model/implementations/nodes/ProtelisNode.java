@@ -22,6 +22,7 @@ import it.unibo.alchemist.model.ProtelisIncarnation;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
+import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 
 /**
@@ -130,12 +131,12 @@ public class ProtelisNode extends GenericNode<Object> implements DeviceUID, Exec
     }
 
     @Override
-    public ProtelisNode cloneNode() {
+    public ProtelisNode cloneNode(final Time currentTime) {
         final ProtelisNode result = new ProtelisNode(environment);
         getContents().forEach((mol, conc) -> {
             result.setConcentration(mol, conc);
         });
-        getReactions().forEach(r -> result.addReaction(r.cloneOnNewNode(result)));
+        getReactions().forEach(r -> result.addReaction(r.cloneOnNewNode(result, currentTime)));
         return result;
     }
 

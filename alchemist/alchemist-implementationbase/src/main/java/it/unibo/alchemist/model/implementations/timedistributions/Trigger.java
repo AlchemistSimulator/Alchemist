@@ -3,7 +3,6 @@
  */
 package it.unibo.alchemist.model.implementations.timedistributions;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Time;
@@ -39,8 +38,7 @@ public class Trigger<T> extends AbstractDistribution<T> {
     }
 
     @Override
-    @SuppressFBWarnings("CN_IDIOM_NO_SUPER_CALL")
-    public Trigger<T> clone() {
+    public Trigger<T> clone(final Time currentTime) {
         return new Trigger<>(getNextOccurence());
     }
 

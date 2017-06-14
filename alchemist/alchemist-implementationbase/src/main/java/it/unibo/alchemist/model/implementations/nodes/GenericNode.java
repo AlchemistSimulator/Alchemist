@@ -32,6 +32,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.Time;
 
 
 /**
@@ -102,7 +103,7 @@ public abstract class GenericNode<T> implements Node<T> {
     }
 
     @Override
-    public GenericNode<T> cloneNode() {
+    public GenericNode<T> cloneNode(final Time currentTime) {
         throw new UnsupportedOperationException();
     }
 

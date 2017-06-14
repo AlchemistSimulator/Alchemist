@@ -15,6 +15,7 @@ import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.loader.YamlLoader;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
+import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -24,7 +25,7 @@ import it.unibo.alchemist.model.interfaces.Time;
 /***
  * TODO.
  */
-public class TestGradient {
+public class TestNodeCloning {
 
     private static final Molecule SOURCEMOL = new SimpleMolecule("source");
     private static final Molecule ENABLEDMOL = new SimpleMolecule("enabled");
@@ -41,13 +42,13 @@ public class TestGradient {
     @Before
     public void setUp() {
         final String pathYaml = "/gradient.yml";
-        final YamlLoader loader = new YamlLoader(TestGradient.class.getResourceAsStream(pathYaml));
+        final YamlLoader loader = new YamlLoader(TestNodeCloning.class.getResourceAsStream(pathYaml));
         env = loader.getWith(Collections.emptyMap());
         sim = new Engine<Object>(env, SIMULATED_STEPS);
     }
 
     private void makeNode(final double x, final double y, final boolean enabled, final boolean source) {
-        final Node<Object> node1 = env.getNodeByID(0).cloneNode();
+        final Node<Object> node1 = env.getNodeByID(0).cloneNode(DoubleTime.ZERO_TIME);
         node1.setConcentration(SOURCEMOL, source);
         node1.setConcentration(ENABLEDMOL, enabled);
         env.addNode(node1, env.makePosition(x, y));

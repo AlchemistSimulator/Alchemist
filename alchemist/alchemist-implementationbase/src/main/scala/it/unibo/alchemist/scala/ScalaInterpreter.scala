@@ -1,5 +1,8 @@
 package it.unibo.alchemist.scala
 
+import scala.reflect.runtime.currentMirror
+import scala.tools.reflect.ToolBox
+
 object ScalaInterpreter {
   import scala.reflect.runtime.currentMirror
   import scala.tools.reflect.ToolBox

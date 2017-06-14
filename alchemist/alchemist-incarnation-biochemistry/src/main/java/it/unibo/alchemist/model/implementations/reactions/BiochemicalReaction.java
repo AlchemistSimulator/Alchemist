@@ -72,7 +72,7 @@ public class BiochemicalReaction extends ChemicalReaction<Double> {
 
     @Override
     public BiochemicalReaction cloneOnNewNode(final Node<Double> node) {
-        return new BiochemicalReaction(node, getTimeDistribution(), environment);
+        return new BiochemicalReaction(node, getTimeDistribution().clone(), environment);
     }
 
     @Override 

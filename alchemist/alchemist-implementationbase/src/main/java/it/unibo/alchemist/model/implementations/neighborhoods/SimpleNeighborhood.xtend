@@ -62,6 +62,10 @@ class SimpleNeighborhood<T> implements Neighborhood<T> {
 	override size() { neighbors.size }
 
 	override iterator() { neighbors.iterator }
+	
+	override toString() {
+		'''«center» links: «neighbors»'''
+	}
 
 
 }

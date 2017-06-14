@@ -1,10 +1,6 @@
-apply plugin: 'scala'
-
 dependencies {
     compile (
-        "it.unibo.apice.scafiteam:scafi-core_2.11:${scafiVersion}",
-        "org.scala-lang:scala-compiler:${scalaVersion}",
-        "org.scala-lang:scala-library:${scalaVersion}",
+        "it.unibo.apice.scafiteam:scafi-core_${scalaMajorVersion}:${scafiVersion}",
         project(':alchemist-interfaces'),
         project(':alchemist-implementationbase'),
     )

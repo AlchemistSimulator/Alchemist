@@ -61,9 +61,10 @@ import it.unibo.alchemist.loader.export.NumberOfNodes;
 import it.unibo.alchemist.loader.export.filters.CommonFilters;
 import it.unibo.alchemist.loader.shapes.Shape;
 import it.unibo.alchemist.loader.variables.ArbitraryVariable;
-import it.unibo.alchemist.loader.variables.DependentScriptVariable;
 import it.unibo.alchemist.loader.variables.DependentVariable;
+import it.unibo.alchemist.loader.variables.JavascriptVariable;
 import it.unibo.alchemist.loader.variables.LinearVariable;
+import it.unibo.alchemist.loader.variables.ScalaVariable;
 import it.unibo.alchemist.loader.variables.Variable;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
@@ -102,6 +103,7 @@ public class YamlLoader implements Loader {
     private static final String FORMULA = SYNTAX.getString("formula");
     private static final String IN = SYNTAX.getString("in");
     private static final String INCARNATION = SYNTAX.getString("incarnation");
+    private static final String LANGUAGE = SYNTAX.getString("language");
     private static final String LAYERS = SYNTAX.getString("layers");
     private static final String LINKING_RULE = SYNTAX.getString("linking-rule");
     private static final String MAX = SYNTAX.getString("max");
@@ -136,8 +138,12 @@ public class YamlLoader implements Loader {
             .put(Reaction.class, ImmutableMap.of(PARAMS, List.class, TIMEDISTRIBUTION, Object.class, ACTIONS, List.class, CONDITIONS, List.class))
             .build();
     private static final BuilderConfiguration<DependentVariable<?>> DEPENDENT_VAR_CONFIG = new BuilderConfiguration<>(
-            ImmutableMap.of(FORMULA, CharSequence.class), ImmutableMap.of(NAME, CharSequence.class), makeBaseFactory(),
-            m -> new DependentScriptVariable(m.get(FORMULA).toString()));
+            ImmutableMap.of(FORMULA, CharSequence.class),
+            ImmutableMap.of(NAME, CharSequence.class, LANGUAGE, CharSequence.class),
+            makeBaseFactory(),
+            m -> m.getOrDefault(LANGUAGE, "").toString().equalsIgnoreCase("scala")
+                ? new ScalaVariable<>(m.get(FORMULA).toString())
+                : new JavascriptVariable(m.get(FORMULA).toString()));
     private static final BuilderConfiguration<FilteringPolicy> FILTERING_CONFIG = new BuilderConfiguration<>(
             ImmutableMap.of(NAME, CharSequence.class), ImmutableMap.of(), makeBaseFactory(), m -> CommonFilters.fromString(m.get(NAME).toString()));
     private static final TypeToken<List<Number>> LIST_NUMBER = new TypeToken<List<Number>>() {

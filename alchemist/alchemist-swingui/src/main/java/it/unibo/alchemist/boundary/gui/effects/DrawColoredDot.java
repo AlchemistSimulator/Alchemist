@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 import it.unibo.alchemist.boundary.gui.view.property.PropertiesFactory;
-import it.unibo.alchemist.boundary.gui.view.property.RangedDoubleProperty;
+import it.unibo.alchemist.boundary.gui.view.property.RangedDoublePropertyOld;
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -27,10 +27,10 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
     private static final long serialVersionUID = -2329825220099191395L;
     /** Default effect name */
     private static final String DEFAULT_NAME = "Unnamed DrawColoredDot";
-    private final RangedDoubleProperty red;
-    private final RangedDoubleProperty green;
-    private final RangedDoubleProperty blue;
-    private final RangedDoubleProperty alpha;
+    private final RangedDoublePropertyOld red;
+    private final RangedDoublePropertyOld green;
+    private final RangedDoublePropertyOld blue;
+    private final RangedDoublePropertyOld alpha;
 
     /**
      * Default constructor.

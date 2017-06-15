@@ -9,7 +9,7 @@ import javafx.beans.property.SimpleDoubleProperty;
  * This {@link DoubleProperty} is designed to have a range for the wrapped value
  * and to be serializable.
  */
-public class RangedDoubleProperty extends SimpleDoubleProperty implements /*Externalizable*/ Serializable {
+public class RangedDoublePropertyOld extends SimpleDoubleProperty implements /*Externalizable*/ Serializable {
     /** Generated Serial Version UID. */
     private static final long serialVersionUID = -8459149578353859712L;
     private static final Double DEFAULT_MAX_VALUE = Double.MAX_VALUE;
@@ -39,7 +39,7 @@ public class RangedDoubleProperty extends SimpleDoubleProperty implements /*Exte
      *            the upper bound for the wrapped value to be considered
      *            acceptable
      */
-    public RangedDoubleProperty(final Object bean, final String name, final double initialValue, final Double lowerBound,
+    public RangedDoublePropertyOld(final Object bean, final String name, final double initialValue, final Double lowerBound,
             final Double upperBound) {
         super(bean, name, initialValue);
         this.lowerBound = lowerBound;
@@ -63,7 +63,7 @@ public class RangedDoubleProperty extends SimpleDoubleProperty implements /*Exte
      *            the upper bound for the wrapped value to be considered
      *            acceptable
      */
-    public RangedDoubleProperty(final Object bean, final String name, final Double lowerBound, final Double upperBound) {
+    public RangedDoublePropertyOld(final Object bean, final String name, final Double lowerBound, final Double upperBound) {
         this(bean, name, 0, lowerBound, upperBound);
     }
 
@@ -80,7 +80,7 @@ public class RangedDoubleProperty extends SimpleDoubleProperty implements /*Exte
      *            the upper bound for the wrapped value to be considered
      *            acceptable
      */
-    public RangedDoubleProperty(final double initialValue, final Double lowerBound, final Double upperBound) {
+    public RangedDoublePropertyOld(final double initialValue, final Double lowerBound, final Double upperBound) {
         super(initialValue);
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
@@ -99,7 +99,7 @@ public class RangedDoubleProperty extends SimpleDoubleProperty implements /*Exte
      *            the upper bound for the wrapped value to be considered
      *            acceptable
      */
-    public RangedDoubleProperty(final Double lowerBound, final Double upperBound) {
+    public RangedDoublePropertyOld(final Double lowerBound, final Double upperBound) {
         this((upperBound - lowerBound) / 2, lowerBound, upperBound);
     }
 
@@ -115,7 +115,7 @@ public class RangedDoubleProperty extends SimpleDoubleProperty implements /*Exte
      * @param initialValue
      *            the initial value of the wrapped value
      */
-    public RangedDoubleProperty(final Object bean, final String name, final double initialValue) {
+    public RangedDoublePropertyOld(final Object bean, final String name, final double initialValue) {
         this(bean, name, initialValue, DEFAULT_MIN_VALUE, DEFAULT_MAX_VALUE);
     }
 
@@ -131,7 +131,7 @@ public class RangedDoubleProperty extends SimpleDoubleProperty implements /*Exte
      * @param name
      *            the name of this {@code DoubleProperty}
      */
-    public RangedDoubleProperty(final Object bean, final String name) {
+    public RangedDoublePropertyOld(final Object bean, final String name) {
         this(bean, name, DEFAULT_MIN_VALUE, DEFAULT_MAX_VALUE);
     }
 
@@ -143,7 +143,7 @@ public class RangedDoubleProperty extends SimpleDoubleProperty implements /*Exte
      * @param initialValue
      *            the initial value of the wrapped value
      */
-    public RangedDoubleProperty(final double initialValue) {
+    public RangedDoublePropertyOld(final double initialValue) {
         this(initialValue, DEFAULT_MIN_VALUE, DEFAULT_MAX_VALUE);
     }
 
@@ -154,7 +154,7 @@ public class RangedDoubleProperty extends SimpleDoubleProperty implements /*Exte
      * <p>
      * Bounds are set to {@link Double#MAX_VALUE} and -{@link Double#MAX_VALUE}.
      */
-    public RangedDoubleProperty() {
+    public RangedDoublePropertyOld() {
         this(DEFAULT_MIN_VALUE, DEFAULT_MAX_VALUE);
     }
 
@@ -257,7 +257,7 @@ public class RangedDoubleProperty extends SimpleDoubleProperty implements /*Exte
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final RangedDoubleProperty other = (RangedDoubleProperty) obj;
+        final RangedDoublePropertyOld other = (RangedDoublePropertyOld) obj;
         if (getBean() == null) {
             if (other.getBean() != null) {
                 return false;

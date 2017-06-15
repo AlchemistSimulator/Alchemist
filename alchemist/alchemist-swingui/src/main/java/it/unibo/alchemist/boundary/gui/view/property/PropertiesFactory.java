@@ -15,19 +15,19 @@ import javafx.collections.FXCollections;
 public final class PropertiesFactory {
 
     /**
-     * Returns a new {@link RangedDoubleProperty} with range between 255 and 0
+     * Returns a new {@link RangedDoublePropertyOld} with range between 255 and 0
      * and a name that identifies the color channel.
      * 
      * @param channel
      *            the name to give to the {@code Property}
      * @return the {@link DoubleProperty}
      */
-    public static RangedDoubleProperty getColorChannelProperty(final String channel) {
+    public static RangedDoublePropertyOld getColorChannelProperty(final String channel) {
         return new ColorChannelDoubleProperty(channel);
     }
 
     /**
-     * Returns a new {@link RangedDoubleProperty} with range between 255 and 0
+     * Returns a new {@link RangedDoublePropertyOld} with range between 255 and 0
      * and a name that identifies the color channel.
      * 
      * @param channel
@@ -36,24 +36,24 @@ public final class PropertiesFactory {
      *            the initial value to give to the {@code Property}
      * @return the {@link DoubleProperty}
      */
-    public static RangedDoubleProperty getColorChannelProperty(final String channel, final Double value) {
+    public static RangedDoublePropertyOld getColorChannelProperty(final String channel, final Double value) {
         return new ColorChannelDoubleProperty(channel, value);
     }
 
     /**
-     * Returns a new {@link RangedDoubleProperty} with range between 100 and 0
+     * Returns a new {@link RangedDoublePropertyOld} with range between 100 and 0
      * and a name that identifies the {@code Property}.
      * 
      * @param name
      *            the name to give to the {@code Property}
      * @return the {@link DoubleProperty}
      */
-    public static RangedDoubleProperty getPercentageRangedProperty(final String name) {
+    public static RangedDoublePropertyOld getPercentageRangedProperty(final String name) {
         return new PercentageDoubleProperty(name);
     }
 
     /**
-     * Returns a new {@link RangedDoubleProperty} with range between 100 and 0
+     * Returns a new {@link RangedDoublePropertyOld} with range between 100 and 0
      * and a name that identifies the {@code Property}.
      * 
      * @param name
@@ -62,7 +62,7 @@ public final class PropertiesFactory {
      *            the initial value to give to the {@code Property}
      * @return the {@link DoubleProperty}
      */
-    public static RangedDoubleProperty getPercentageRangedProperty(final String name, final Double value) {
+    public static RangedDoublePropertyOld getPercentageRangedProperty(final String name, final Double value) {
         return new PercentageDoubleProperty(name, value);
     }
 
@@ -92,12 +92,12 @@ public final class PropertiesFactory {
     }
 
     /**
-     * Instance of {@link RangedDoubleProperty} aimed to color channel
+     * Instance of {@link RangedDoublePropertyOld} aimed to color channel
      * representation.
      * <p>
      * Default bounds are set between 255 and 0.
      */
-    private static class ColorChannelDoubleProperty extends RangedDoubleProperty {
+    private static class ColorChannelDoubleProperty extends RangedDoublePropertyOld {
         /** Default generated Serial Version UID. */
         private static final long serialVersionUID = 5055891206764667192L;
         private static final Double DEFAULT_MAX_VALUE = 255.0;
@@ -145,12 +145,12 @@ public final class PropertiesFactory {
     }
 
     /**
-     * Instance of {@link RangedDoubleProperty} aimed to color channel
+     * Instance of {@link RangedDoublePropertyOld} aimed to color channel
      * representation.
      * <p>
      * Default bounds are set between 100 and 0.
      */
-    private static class PercentageDoubleProperty extends RangedDoubleProperty {
+    private static class PercentageDoubleProperty extends RangedDoublePropertyOld {
         /** Default generated Serial Version UID. */
         private static final long serialVersionUID = 4427700087280058938L;
         private static final Double DEFAULT_MAX_VALUE = 100.0;

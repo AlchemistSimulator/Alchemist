@@ -1,4 +1,4 @@
-package it.unibo.alchemist.test;
+package it.unibo.alchemist.boundary.gui.view.property;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,21 +8,17 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
-import it.unibo.alchemist.boundary.gui.view.property.RangedDoubleProperty;
+import javafx.beans.property.Property;
 
-public class CustomPropertySerializationTest {
-    /**
-     * Temporary folder created before each test method, and deleted after each.
-     */
-    @Rule
-    public final TemporaryFolder folder = new TemporaryFolder();
+/**
+ * JUint test for custom {@link Property} serialization.
+ */
+public class RangedDoublePropertySerializationTest extends AbstractPropertySerializationTest {
 
     /**
-     * Tests if the {@link RangedDoubleProperty} is serialized correctly.
+     * Tests if the {@link RangedDoublePropertyOld} is serialized correctly.
      * 
      * @throws IOException
      *             if I/O problems occur
@@ -30,13 +26,14 @@ public class CustomPropertySerializationTest {
      *             if a problem occurs during deserialization
      */
     @Test
-    public void testRangedDoubleProperty() throws IOException, ClassNotFoundException {
+    @Override
+    public void test() throws IOException, ClassNotFoundException {
         final File file = folder.newFile();
 
         final FileOutputStream fout = new FileOutputStream(file);
         final ObjectOutputStream oos = new ObjectOutputStream(fout);
 
-        final RangedDoubleProperty rangedDoubleProperty = new RangedDoubleProperty(null, "Pippo", 5.0, 0.0, 100.0);
+        final RangedDoubleProperty rangedDoubleProperty = new RangedDoubleProperty("Pippo", 5.0, 0.0, 100.0);
 
         oos.writeObject(rangedDoubleProperty);
 
@@ -45,8 +42,7 @@ public class CustomPropertySerializationTest {
 
         final RangedDoubleProperty deserialized = (RangedDoubleProperty) ois.readObject();
 
-        Assert.assertTrue(rangedDoubleProperty.getName() + ": " + rangedDoubleProperty.get() + " is different from "
-                + deserialized.getName() + ": " + deserialized.get(), rangedDoubleProperty.equals(deserialized));
+        Assert.assertTrue(getMessage(rangedDoubleProperty, deserialized), rangedDoubleProperty.equals(deserialized));
 
         oos.close();
         ois.close();

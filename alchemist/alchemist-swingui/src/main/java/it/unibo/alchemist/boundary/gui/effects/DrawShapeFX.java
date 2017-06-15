@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import it.unibo.alchemist.boundary.gui.ColorChannel;
 import it.unibo.alchemist.boundary.gui.view.property.EnumProperty;
 import it.unibo.alchemist.boundary.gui.view.property.PropertiesFactory;
-import it.unibo.alchemist.boundary.gui.view.property.RangedDoubleProperty;
+import it.unibo.alchemist.boundary.gui.view.property.RangedDoublePropertyOld;
 import it.unibo.alchemist.boundary.gui.view.property.SerializableBooleanProperty;
 import it.unibo.alchemist.boundary.gui.view.property.SerializableStringProperty;
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
@@ -87,12 +87,12 @@ public class DrawShapeFX implements EffectFX {
     private static final String DEFAULT_NAME = "Unnamed DrawShape";
 
     private final EnumProperty<ModeFX> mode = new EnumProperty<ModeFX>(null, "Mode", ModeFX.FillEllipse);
-    private final RangedDoubleProperty red = PropertiesFactory.getColorChannelProperty("R");
-    private final RangedDoubleProperty green = PropertiesFactory.getColorChannelProperty("G");
-    private final RangedDoubleProperty blue = PropertiesFactory.getColorChannelProperty("B");
-    private final RangedDoubleProperty alpha = PropertiesFactory.getColorChannelProperty("A");
-    private final RangedDoubleProperty scaleFactor = new RangedDoubleProperty(null, "Scale Factor", SCALE_INITIAL, MIN_SCALE, MAX_SCALE);
-    private final RangedDoubleProperty size = PropertiesFactory.getPercentageRangedProperty("Size", DEFAULT_SIZE);
+    private final RangedDoublePropertyOld red = PropertiesFactory.getColorChannelProperty("R");
+    private final RangedDoublePropertyOld green = PropertiesFactory.getColorChannelProperty("G");
+    private final RangedDoublePropertyOld blue = PropertiesFactory.getColorChannelProperty("B");
+    private final RangedDoublePropertyOld alpha = PropertiesFactory.getColorChannelProperty("A");
+    private final RangedDoublePropertyOld scaleFactor = new RangedDoublePropertyOld(null, "Scale Factor", SCALE_INITIAL, MIN_SCALE, MAX_SCALE);
+    private final RangedDoublePropertyOld size = PropertiesFactory.getPercentageRangedProperty("Size", DEFAULT_SIZE);
     private final SerializableBooleanProperty moleculeFilter = new SerializableBooleanProperty(null,
             "Draw only nodes containing a molecule", false);
     private final SerializableStringProperty moleculeName = new SerializableStringProperty(null, "Molecule");
@@ -104,11 +104,11 @@ public class DrawShapeFX implements EffectFX {
     // TODO maybe should switch to JavaFX Color class
     private final SerializableBooleanProperty reverse = new SerializableBooleanProperty(null, "Reverse effect", false);
 
-    private final RangedDoubleProperty orderOfMagnitude = new RangedDoubleProperty(null, "Property order of magnitude", 0, -PROPERTY_SCALE,
+    private final RangedDoublePropertyOld orderOfMagnitude = new RangedDoublePropertyOld(null, "Property order of magnitude", 0, -PROPERTY_SCALE,
             PROPERTY_SCALE);
-    private final RangedDoubleProperty minprop = new RangedDoubleProperty(null, "Minimum property value", 0, -PROPERTY_SCALE,
+    private final RangedDoublePropertyOld minprop = new RangedDoublePropertyOld(null, "Minimum property value", 0, -PROPERTY_SCALE,
             PROPERTY_SCALE);
-    private final RangedDoubleProperty maxprop = new RangedDoubleProperty(null, "Maximum property value", PROPERTY_SCALE, -PROPERTY_SCALE,
+    private final RangedDoublePropertyOld maxprop = new RangedDoublePropertyOld(null, "Maximum property value", PROPERTY_SCALE, -PROPERTY_SCALE,
             PROPERTY_SCALE);
 
     private Color colorCache = DEFAULT_COLOR;

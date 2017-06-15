@@ -58,6 +58,7 @@ import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 
 /**
@@ -472,7 +473,7 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
             notImplemented();
         }
         @Override
-        public Node<Object> cloneNode() {
+        public Node<Object> cloneNode(final Time t) {
             return notImplemented();
         }
         @Override

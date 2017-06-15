@@ -35,9 +35,11 @@ public interface Reaction<T> extends Comparable<Reaction<T>>, Serializable {
      * 
      * @param n
      *            The node where to clone this Reaction
+     * @param currentTime
+     *            the time at which the clone is created (required to correctly clone the {@link TimeDistribution}s)
      * @return the cloned action
      */
-    Reaction<T> cloneOnNewNode(Node<T> n);
+    Reaction<T> cloneOnNewNode(Node<T> n, Time currentTime);
 
     /**
      * Executes the reactions.

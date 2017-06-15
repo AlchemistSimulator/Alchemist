@@ -1,0 +1,11 @@
+dependencies {
+    compile (
+        "it.unibo.apice.scafiteam:scafi-core_${scalaMajorVersion}:${scafiVersion}",
+        project(':alchemist-interfaces'),
+        project(':alchemist-implementationbase'),
+    )
+    testCompile(
+        project(':alchemist-engine'),
+        project(':alchemist-loading'),
+    )
+}

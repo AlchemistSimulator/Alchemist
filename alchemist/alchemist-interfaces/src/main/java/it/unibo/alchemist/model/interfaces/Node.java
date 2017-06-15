@@ -29,6 +29,21 @@ public interface Node<T> extends Serializable, Iterable<Reaction<T>>, Comparable
     void addReaction(Reaction<T> r);
 
     /**
+     * Creates a new Node which is a clone of the current Node. The new Node
+     * will have all the current Node's properties, such as reactions and
+     * molecules, but it will also have a different ID.
+     * 
+     * @param currentTime
+     *            the time at which the cloning operation happens
+     * 
+     * @return A new Node which is a clone of the current one.
+     * 
+     * @throws UnsupportedOperationException
+     *             if the implementation does not support node cloning.
+     */
+    Node<T> cloneNode(Time currentTime);
+
+    /**
      * Tests whether a node contains a {@link Molecule}.
      * 
      * @param mol
@@ -96,16 +111,5 @@ public interface Node<T> extends Serializable, Iterable<Reaction<T>>, Comparable
      *            the concentration you want for mol
      */
     void setConcentration(Molecule mol, T c);
-
-    /**
-     * Creates a new Node which is a clone of the current Node. The new Node
-     * will have all the current Node's properties, such as reactions and molecules, 
-     * but it will also have a different ID.
-     * 
-     * @return A new Node which is a clone of the current one.
-     * 
-     * @throws UnsupportedOperationException if the implementation does not support node cloning.
-     */
-    Node<T> cloneNode();
 
 }

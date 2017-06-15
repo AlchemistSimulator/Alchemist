@@ -117,8 +117,8 @@ public class SAPEREReaction extends AReaction<List<ILsaMolecule>> {
     }
 
     @Override
-    public Reaction<List<ILsaMolecule>> cloneOnNewNode(final Node<List<ILsaMolecule>> n) {
-        final SAPEREReaction res = new SAPEREReaction(environment, (ILsaNode) n, rng, timedist.clone());
+    public Reaction<List<ILsaMolecule>> cloneOnNewNode(final Node<List<ILsaMolecule>> n, final Time currentTime) {
+        final SAPEREReaction res = new SAPEREReaction(environment, (ILsaNode) n, rng, timedist.clone(currentTime));
         final ArrayList<Condition<List<ILsaMolecule>>> c = new ArrayList<>();
         for (final Condition<List<ILsaMolecule>> cond : getConditions()) {
             c.add(cond.cloneCondition(n, res));

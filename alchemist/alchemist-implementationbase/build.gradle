@@ -5,7 +5,6 @@ dependencies {
         "com.github.davidmoten:rtree:$rtreeVersion",
         "com.google.guava:guava:$guavaVersion",
         "com.googlecode.concurrentlinkedhashmap:concurrentlinkedhashmap-lru:${concurrentlinkedhashmapVersion}",
-        "info.debatty:java-string-similarity:$stringSimilarityVersion",
         "org.danilopianini:java-quadtree:$quadtreeVersion",
         "org.danilopianini:boilerplate:$boilerplateVersion",
         "org.jooq:jool:$joolVersion",

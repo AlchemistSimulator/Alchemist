@@ -41,34 +41,11 @@ public class LsaNode extends GenericNode<List<ILsaMolecule>> implements ILsaNode
     private static final ILsaMolecule ZEROMOL = new LsaMolecule("0");
 
     /**
-     * Builds a new node, with thread-local id generator.
-     * 
-     * @deprecated This method uses a deprecated, usafe API, and is scheduled
-     *             for removal
-     */
-    public LsaNode() {
-        this(true);
-    }
-
-    /**
      * @param env
      *            The environment (used for safe node id computation)
      */
     public LsaNode(final Environment<List<ILsaMolecule>> env) {
         super(env);
-    }
-
-    /**
-     * Builds a new node, allowing to specify whether to use a thread-local
-     * id-generator.
-     * 
-     * @param threadLocal
-     *            true if the id should be generated thread-local
-     * @deprecated This method uses a deprecated, usafe API, and is scheduled
-     *             for removal
-     */
-    public LsaNode(final boolean threadLocal) {
-        super(threadLocal);
     }
 
     @Override

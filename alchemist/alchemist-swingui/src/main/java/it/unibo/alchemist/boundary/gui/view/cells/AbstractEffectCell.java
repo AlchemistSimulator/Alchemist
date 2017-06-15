@@ -120,6 +120,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
      */
     private void dragNDropEntered(final DragEvent event) {
         if (event.getGestureSource() != this && event.getDragboard().hasContent(getDataFormat())) {
+            final Dragboard dragboard = event.getDragboard();
             setOpacity(DRAG_N_DROP_TARGET_OPACITY);
         }
     }
@@ -151,12 +152,12 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
             throw new IllegalStateException("Empty cell: no item found");
         }
 
-        final Dragboard db = event.getDragboard();
+        final Dragboard dragboard = event.getDragboard();
         boolean success = false;
 
-        if (db.hasContent(getDataFormat())) {
+        if (dragboard.hasContent(getDataFormat())) {
             final ObservableList<T> items = getListView().getItems();
-            final Object content = db.getContent(getDataFormat());
+            final T content = (T) dragboard.getContent(getDataFormat());
 
             final int draggedIndex = items.indexOf(content);
 
@@ -171,7 +172,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
             }
 
             items.set(draggedIndex, getItem());
-            items.set(thisIndex, (T) db.getContent(getDataFormat()));
+            items.set(thisIndex, content);
 
             final List<T> itemsCopy = new ArrayList<>(getListView().getItems());
             getListView().getItems().setAll(itemsCopy);

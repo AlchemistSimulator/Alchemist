@@ -11,6 +11,7 @@ import it.unibo.alchemist.boundary.gui.effects.EffectBuilderFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.cells.EffectCell;
+import it.unibo.alchemist.boundary.gui.view.cells.EffectGroupCell;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -42,19 +43,24 @@ public class EffectBarController implements Initializable {
 
     private final JFXDrawersStack stack;
     private final JFXDrawer thisDrawer;
+    private final EffectGroupCell parentCell;
 
     /**
      * Default constructor.
      * 
+     * @param parentCell
+     *            the cell that {@link EffectGroupCell} that will open this
+     *            drawer
      * @param stack
      *            the stack where to open the effect properties
      * @param thisDrawer
      *            the drawer the layout this controller is assigned to is loaded
      *            into
      */
-    public EffectBarController(final JFXDrawersStack stack, final JFXDrawer thisDrawer) {
+    public EffectBarController(final EffectGroupCell parentCell, final JFXDrawersStack stack, final JFXDrawer thisDrawer) {
         this.stack = stack;
         this.thisDrawer = thisDrawer;
+        this.parentCell = parentCell;
     }
 
     @Override

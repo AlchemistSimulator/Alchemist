@@ -84,7 +84,7 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
 
         final JFXDrawer effectDrawer = new JFXDrawer();
         effectDrawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
-        final EffectBarController effectBarController = new EffectBarController(this.stack, effectDrawer);
+        final EffectBarController effectBarController = new EffectBarController(this, this.stack, effectDrawer);
 
         try {
             effectDrawer

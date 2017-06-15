@@ -9,7 +9,7 @@ import javafx.beans.property.SimpleDoubleProperty;
  * This {@link DoubleProperty} is designed to have a range for the wrapped value
  * and to be serializable.
  */
-public class RangedDoubleProperty extends SimpleDoubleProperty implements Serializable {
+public class RangedDoubleProperty extends SimpleDoubleProperty implements /*Externalizable*/ Serializable {
     /** Generated Serial Version UID. */
     private static final long serialVersionUID = -8459149578353859712L;
     private static final Double DEFAULT_MAX_VALUE = Double.MAX_VALUE;
@@ -50,7 +50,7 @@ public class RangedDoubleProperty extends SimpleDoubleProperty implements Serial
      * Based on constructor of {@link SimpleDoubleProperty}, adds the specified
      * bounds.
      * <p>
-     * Initial value is set as the half of the specified range.
+     * Initial value is set to 0.
      *
      * @param bean
      *            the bean of this {@code DoubleProperty}
@@ -64,7 +64,7 @@ public class RangedDoubleProperty extends SimpleDoubleProperty implements Serial
      *            acceptable
      */
     public RangedDoubleProperty(final Object bean, final String name, final Double lowerBound, final Double upperBound) {
-        this(bean, name, (upperBound - lowerBound) / 2, lowerBound, upperBound);
+        this(bean, name, 0, lowerBound, upperBound);
     }
 
     /**
@@ -90,7 +90,7 @@ public class RangedDoubleProperty extends SimpleDoubleProperty implements Serial
      * Based on constructor of {@link SimpleDoubleProperty}, adds the specified
      * bounds.
      * <p>
-     * Initial value is set as the half of the specified range.
+     * Initial value is set to 0.
      * 
      * @param lowerBound
      *            the lower bound for the wrapped value to be considered
@@ -122,7 +122,7 @@ public class RangedDoubleProperty extends SimpleDoubleProperty implements Serial
     /**
      * The constructor of {@link SimpleDoubleProperty}.
      * <p>
-     * Initial value is set as the half of the specified range.
+     * Initial value is set to 0.
      * <p>
      * Bounds are set to {@link Double#MAX_VALUE} and -{@link Double#MAX_VALUE}.
      *
@@ -150,7 +150,7 @@ public class RangedDoubleProperty extends SimpleDoubleProperty implements Serial
     /**
      * The constructor of {@link SimpleDoubleProperty}.
      * <p>
-     * Initial value is set as the half of the specified range.
+     * Initial value is set to 0.
      * <p>
      * Bounds are set to {@link Double#MAX_VALUE} and -{@link Double#MAX_VALUE}.
      */
@@ -295,4 +295,18 @@ public class RangedDoubleProperty extends SimpleDoubleProperty implements Serial
         }
         return true;
     }
+
+//    @Override
+//    public void writeExternal(ObjectOutput out) throws IOException {
+//        out.writeObject(this.getBean());
+//        out.writeDouble(this.getLowerBound());
+//        out.writeDouble(this.getUpperBound());
+//        out.writeDouble(this.getValue());
+//        out.writeChars(this.getName());
+//    }
+//
+//    @Override
+//    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+//
+//    }
 }

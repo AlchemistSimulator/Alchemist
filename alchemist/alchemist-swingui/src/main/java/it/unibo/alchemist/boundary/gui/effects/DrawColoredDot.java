@@ -53,9 +53,6 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
 
     @Override
     public Color getColor() { // NOPMD - Only widening method visibility
-        // super.setColor(
-        // new Color(red.getValue().intValue(), green.getValue().intValue(),
-        // blue.getValue().intValue(), alpha.getValue().intValue()));
         return super.getColor();
     }
 

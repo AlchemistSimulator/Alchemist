@@ -22,7 +22,6 @@ import ScafiIncarnationForAlchemist.factory
 import ScafiIncarnationForAlchemist.AggregateProgram
 import java.util.function.Consumer
 
-
 sealed class RunScafiProgram(
     environment: Environment[Any],
     node: Node[Any],

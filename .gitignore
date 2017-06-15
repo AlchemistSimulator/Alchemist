@@ -11,3 +11,6 @@ prepare_environment.sh
 **/*-gen/
 **/*generated*/
 *.cache-main
+.idea
+out/
+.DS_Store

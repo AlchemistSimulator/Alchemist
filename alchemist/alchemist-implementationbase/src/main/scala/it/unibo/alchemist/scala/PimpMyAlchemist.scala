@@ -5,6 +5,7 @@ import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
+import com.google.common.cache.CacheLoader
 
 object PimpMyAlchemist {
   /**
@@ -20,4 +21,5 @@ object PimpMyAlchemist {
   implicit def double2Time(time: Double): Time = new DoubleTime(time)
   implicit def molecule2String(molecule: Molecule): String = molecule.toString
   implicit def string2Molecule(str: String): Molecule = new SimpleMolecule(str)
+  implicit def function2CacheLoader[F, T](f: F => T) = { new CacheLoader[F, T] { def load(key: F) = f(key) } }
 }

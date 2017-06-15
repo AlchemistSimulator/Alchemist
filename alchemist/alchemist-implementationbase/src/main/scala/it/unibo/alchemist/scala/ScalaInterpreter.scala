@@ -8,9 +8,8 @@ object ScalaInterpreter {
   import scala.tools.reflect.ToolBox
   import java.io.File
 
-  def apply[A](string: String): A = {
-    val toolbox = currentMirror.mkToolBox()
-    val tree = toolbox.parse(string)
-    toolbox.eval(tree).asInstanceOf[A]
-  }
+  private[this] val toolbox = currentMirror.mkToolBox()
+
+  def apply[A](string: String): A = toolbox.eval(toolbox.parse(string)).asInstanceOf[A]
+
 }

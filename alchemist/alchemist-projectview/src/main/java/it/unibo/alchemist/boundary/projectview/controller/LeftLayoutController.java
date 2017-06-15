@@ -67,7 +67,6 @@ public class LeftLayoutController {
      * 
      */
     public void initialize() {
-        SVGImageUtils.installSvgLoader();
         this.run.setGraphic(new ImageView(SVGImageUtils.getSvgImage("icon/run.svg", RUN_WIDTH, RUN_HEIGHT)));
         this.run.setText(RESOURCES.getString("run"));
         this.run.setDisable(true);

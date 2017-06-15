@@ -29,7 +29,6 @@ public class MainApp extends Application {
             throw new IllegalStateException("Could not initialize RootLayout", e);
         }
 
-        SVGImageUtils.installSvgLoader();
         stage.getIcons().add(SVGImageUtils.getSvgImage("/icon/icon.svg"));
         stage.setScene(new Scene(this.rootLayout));
         stage.show();

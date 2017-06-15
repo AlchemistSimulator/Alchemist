@@ -54,7 +54,7 @@ public final class DataFormatFactory {
     }
 
     /**
-     * Default, empty, constructor, as this is an utility class.
+     * Private, empty, constructor, as this is an utility class.
      */
     private DataFormatFactory() {
         // Empty constructor

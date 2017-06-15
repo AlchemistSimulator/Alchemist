@@ -1,10 +1,11 @@
 package it.unibo.alchemist.boundary.projectview;
+
 import java.io.InputStream;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.codecentric.centerdevice.javafxsvg.SvgImageLoaderFactory;
+import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import javafx.scene.image.Image;
 
 /**
@@ -16,19 +17,24 @@ public class TestLoadSvgImage {
     /**
      * 
      */
-    public static void installSvgLoader() {
-        SvgImageLoaderFactory.install();
-    }
-
-    /**
-     * 
-     */
     @Test
     public void testImage() {
         final InputStream imageData = TestLoadSvgImage.class.getClassLoader().getResourceAsStream("icon/testicon.svg");
         Assert.assertNotNull(imageData);
         final Image image = new Image(imageData);
         Assert.assertNotNull(image);
+    }
+
+    /**
+     * 
+     */
+    @Test
+    public void testUtilityClass() {
+        final Image image1 = SVGImageUtils.getSvgImage("icon/testicon.svg");
+        Assert.assertNotNull(image1);
+
+        final Image image2 = SVGImageUtils.getSvgImage("icon/testicon.svg", 1.0, 1.0);
+        Assert.assertNotNull(image2);
     }
 
 }

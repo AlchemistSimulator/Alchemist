@@ -49,7 +49,6 @@ public class ProjectGUI extends Application {
     @Override
     public void start(final Stage primaryStage) throws IOException {
         Thread.setDefaultUncaughtExceptionHandler(FXUtil::errorAlert);
-        SVGImageUtils.installSvgLoader();
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Alchemist");
         this.primaryStage.getIcons().add(SVGImageUtils.getSvgImage("/icon/icon.svg"));

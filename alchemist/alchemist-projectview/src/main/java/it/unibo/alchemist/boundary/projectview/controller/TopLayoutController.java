@@ -55,7 +55,6 @@ public class TopLayoutController {
      * 
      */
     public void initialize() {
-        SVGImageUtils.installSvgLoader();
         this.btnNew.setGraphic(new ImageView(SVGImageUtils.getSvgImage("icon/new.svg", IMG_WIDTH, IMG_HEIGHT)));
         this.btnNew.setText(RESOURCES.getString("new"));
         this.btnOpen.setGraphic(new ImageView(SVGImageUtils.getSvgImage("icon/open.svg", IMG_WIDTH, IMG_HEIGHT)));

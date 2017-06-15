@@ -172,7 +172,6 @@ public class CenterLayoutController {
      * 
      */
     public void initialize() {
-        SVGImageUtils.installSvgLoader();
         this.img = SVGImageUtils.getSvgImage("icon/delete.svg", DELETE_WIDTH, DELETE_HEIGHT);
         this.imgViewYaml = new ImageView(img);
         this.imgViewEff = new ImageView(img);

@@ -13,14 +13,11 @@ import javafx.scene.image.Image;
  */
 public final class SVGImageUtils {
 
-    private SVGImageUtils() {
-    }
-
     /**
-     * Install the SVG loader. Should be called before load SVGs.
+     * Private, empty, constructor, as this is an utility class.
      */
-    public static void installSvgLoader() {
-        SvgImageLoaderFactory.install();
+    private SVGImageUtils() {
+        // Empty constructor
     }
 
     /**
@@ -37,6 +34,8 @@ public final class SVGImageUtils {
      * @return The image
      */
     public static Image getSvgImage(final String path, final double width, final double height) {
+        SvgImageLoaderFactory.install();
+
         final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         final InputStream imageStream = ResourceLoader.load(path);
         return new Image(imageStream, screenSize.getWidth() * width / 100, screenSize.getHeight() * height / 100, true, true);
@@ -52,6 +51,8 @@ public final class SVGImageUtils {
      * @return The image
      */
     public static Image getSvgImage(final String path) {
+        SvgImageLoaderFactory.install();
+
         final InputStream imageStream = ResourceLoader.load(path);
         return new Image(imageStream);
     }

@@ -57,9 +57,11 @@ public final class SupportedIncarnations {
      * @return an {@link Optional} containing the incarnation, if one with a
      *         matching name exists
      */
+    @SuppressWarnings("rawtypes")
     public static <T> Optional<Incarnation<T>> get(final String s) {
         final String cmp = preprocess(s);
-        return Optional.ofNullable(INCARNATIONS.get(cmp)).map(Unchecked.function(Class::newInstance));
+        return Optional.ofNullable(INCARNATIONS.get(cmp))
+                .map(Unchecked.<Class< ? extends Incarnation>, Incarnation<T>>function(Class::newInstance));
     }
 
     private static String preprocess(final String s) {

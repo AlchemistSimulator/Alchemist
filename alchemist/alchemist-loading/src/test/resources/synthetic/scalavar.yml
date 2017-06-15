@@ -1,0 +1,15 @@
+incarnation: sapere
+
+variables:
+  var: &var
+    language: scala
+    formula: List(5, 3, 4).min
+  var2: &var2
+    language: scala
+    formula: List(10, 3, 4).max
+
+
+displacements:
+  - in:
+      type: Point
+      parameters: [*var, *var2]

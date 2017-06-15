@@ -75,7 +75,7 @@ public class TestTargetWalker {
             node.addReaction(reaction);
             env.addNode(node, STARTPOSITION);
         } catch (IllegalStateException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // NOPMD
             fail(e.getMessage());
         }
     }

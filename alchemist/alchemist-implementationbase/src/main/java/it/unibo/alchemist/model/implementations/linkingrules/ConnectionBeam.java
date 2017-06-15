@@ -24,8 +24,6 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.danilopianini.lang.HashUtils;
-
 import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
@@ -63,7 +61,7 @@ public class ConnectionBeam<T> extends EuclideanDistance<T> {
     @Override
     public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T> env) {
         final Neighborhood<T> normal = super.computeNeighborhood(center, env);
-        if (!HashUtils.pointerEquals(env, oenv)) {
+        if (oenv == null) {
             if (!(env instanceof Environment2DWithObstacles<?, ?>)) {
                 return normal;
             }

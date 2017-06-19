@@ -6,7 +6,6 @@ dependencies {
         "com.google.guava:guava:$guavaVersion",
         "com.googlecode.concurrentlinkedhashmap:concurrentlinkedhashmap-lru:${concurrentlinkedhashmapVersion}",
         "net.sf.trove4j:trove4j:${troveVersion}",
-        "org.danilopianini:javalib:$javalibVersion",
         "org.danilopianini:java-quadtree:$quadtreeVersion",
         "org.danilopianini:boilerplate:$boilerplateVersion",
         "org.jooq:jool:$joolVersion",

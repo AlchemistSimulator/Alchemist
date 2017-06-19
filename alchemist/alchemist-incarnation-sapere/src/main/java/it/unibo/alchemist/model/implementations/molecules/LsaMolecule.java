@@ -79,68 +79,7 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
 
     private final List<IExpression> args;
     private final boolean duplicateVars, instance;
-
-    private static FasterString buildString(final List<IExpression> expList) {
-        StringBuilder output = new StringBuilder(OPEN_SYMBOL);
-        for (int i = 0; i < expList.size(); i++) {
-            output = output.append(expList.get(i).toString());
-            if (i < expList.size() - 1) {
-                output.append(SEPARATOR);
-            }
-        }
-        output.append(CLOSE_SYMBOL);
-        return new FasterString(output.toString());
-    }
-
-    private static boolean computeInstance(final List<IExpression> e) {
-        for (final IExpression exp : e) {
-            final Type t = exp.getRootNodeType();
-            if (isVarType(t)) {
-                return false;
-            } else if (t == Type.LIST) {
-                for (final ITreeNode<?> ln : ((ListTreeNode) exp.getRootNode()).getData()) {
-                    if (isVarType(ln.getType())) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
-    private static boolean containVars(final ITreeNode<?> e, final List<FasterString> l) {
-        if (e.getType() == Type.VAR) {
-            final FasterString fs = e.toFasterString();
-            if (l.contains(fs)) {
-                return true;
-            } else {
-                l.add(e.toFasterString());
-                return false;
-            }
-        } else if (e.getLeftChild() != null) {
-            if (e.getRightChild() != null) {
-                return containVars(e.getRightChild(), l) || containVars(e.getLeftChild(), l);
-            }
-            return containVars(e.getLeftChild(), l);
-        }
-        return false;
-    }
-
-    private static boolean isVarType(final Type t) {
-        return t == Type.VAR || t == Type.COMPARATOR || t == Type.LISTCOMPARATOR || t == Type.OPERATOR;
-    }
-
-    private static boolean selfVariableUsed(final List<IExpression> expList) {
-        final List<FasterString> foundVars = new ArrayList<>(expList.size());
-        boolean count = false;
-        for (final IExpression e : expList) {
-            count = containVars(e.getRootNode(), foundVars);
-            if (count) {
-                return count;
-            }
-        }
-        return false;
-    }
+    private FasterString repr;
 
     /**
      * Empty molecule, no arguments.
@@ -166,6 +105,7 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
 
     private LsaMolecule(final List<IExpression> listArgs, final FasterString hash, final boolean dup, final boolean isInstance) {
         super(hash);
+        this.repr = hash;
         args = Collections.unmodifiableList(listArgs);
         duplicateVars = dup;
         instance = isInstance;
@@ -209,19 +149,6 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
         args = Collections.unmodifiableList(buildArgsDesc(argsString, description));
         duplicateVars = selfVariableUsed(args);
         instance = computeInstance(args);
-    }
-
-    private static List<IExpression> buildArgsDesc(final String argsString, final String description) {
-        final String[] listArgs = argsString.split(",");
-        final boolean hasDescription = description != null && description.length() > 0;
-        final List<IExpression> args = new ArrayList<IExpression>(listArgs.length + (hasDescription ? 1 : 0));
-        for (int i = 0; i < listArgs.length; i++) {
-            args.add(new Expression(listArgs[i]));
-        }
-        if (hasDescription) {
-            args.add(ExpressionFactory.buildComplexGroundExpression(description));
-        }
-        return args;
     }
 
     @Override
@@ -273,8 +200,8 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
     }
 
     @Override
-    public int hashCode() {
-        return super.hashCode() ^ -1;
+    public void forEach(final Consumer<? super IExpression> action) {
+        args.forEach(action);
     }
 
     @Override
@@ -313,6 +240,11 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
     @Override
     public boolean hasDuplicateVariables() {
         return duplicateVars;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode() ^ -1;
     }
 
     @Override
@@ -406,18 +338,96 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
     }
 
     @Override
+    public Spliterator<IExpression> spliterator() {
+        return args.spliterator();
+    }
+
+    @Override
+    public FasterString toFasterString() {
+        if (repr == null) {
+            repr = buildString(args);
+        }
+        return repr;
+    }
+
+    @Override
     public String toString() {
         return toFasterString().toString();
     }
 
-    @Override
-    public void forEach(final Consumer<? super IExpression> action) {
-        args.forEach(action);
+    private static List<IExpression> buildArgsDesc(final String argsString, final String description) {
+        final String[] listArgs = argsString.split(",");
+        final boolean hasDescription = description != null && description.length() > 0;
+        final List<IExpression> args = new ArrayList<IExpression>(listArgs.length + (hasDescription ? 1 : 0));
+        for (int i = 0; i < listArgs.length; i++) {
+            args.add(new Expression(listArgs[i]));
+        }
+        if (hasDescription) {
+            args.add(ExpressionFactory.buildComplexGroundExpression(description));
+        }
+        return args;
     }
 
-    @Override
-    public Spliterator<IExpression> spliterator() {
-        return args.spliterator();
+    private static FasterString buildString(final List<IExpression> expList) {
+        StringBuilder output = new StringBuilder(OPEN_SYMBOL);
+        for (int i = 0; i < expList.size(); i++) {
+            output = output.append(expList.get(i).toString());
+            if (i < expList.size() - 1) {
+                output.append(SEPARATOR);
+            }
+        }
+        output.append(CLOSE_SYMBOL);
+        return new FasterString(output.toString());
+    }
+
+    private static boolean computeInstance(final List<IExpression> e) {
+        for (final IExpression exp : e) {
+            final Type t = exp.getRootNodeType();
+            if (isVarType(t)) {
+                return false;
+            } else if (t == Type.LIST) {
+                for (final ITreeNode<?> ln : ((ListTreeNode) exp.getRootNode()).getData()) {
+                    if (isVarType(ln.getType())) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean containVars(final ITreeNode<?> e, final List<FasterString> l) {
+        if (e.getType() == Type.VAR) {
+            final FasterString fs = e.toFasterString();
+            if (l.contains(fs)) {
+                return true;
+            } else {
+                l.add(e.toFasterString());
+                return false;
+            }
+        } else if (e.getLeftChild() != null) {
+            if (e.getRightChild() != null) {
+                return containVars(e.getRightChild(), l) || containVars(e.getLeftChild(), l);
+            }
+            return containVars(e.getLeftChild(), l);
+        }
+        return false;
+    }
+
+    private static boolean isVarType(final Type t) {
+        return t == Type.VAR || t == Type.COMPARATOR || t == Type.LISTCOMPARATOR || t == Type.OPERATOR;
+    }
+
+    private static boolean selfVariableUsed(final List<IExpression> expList) {
+        final List<FasterString> foundVars = new ArrayList<>(expList.size());
+        boolean count = false;
+        for (final IExpression e : expList) {
+            count = containVars(e.getRootNode(), foundVars);
+            if (count) {
+                return count;
+            }
+        }
+        return false;
     }
 
 }

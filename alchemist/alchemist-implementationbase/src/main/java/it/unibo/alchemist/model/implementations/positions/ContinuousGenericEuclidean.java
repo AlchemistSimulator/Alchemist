@@ -104,7 +104,7 @@ public class ContinuousGenericEuclidean implements Position {
     @Override
     public double getCoordinate(final int dim) {
         if (dim < 0 || dim >= c.length) {
-            throw new IllegalArgumentException(dim + "is not an allowed dimension, only values between 0 and " + c.length + "are allowed.");
+            throw new IllegalArgumentException(dim + "is not an allowed dimension, only values between 0 and " + (c.length - 1) + "are allowed.");
         }
         return c[dim];
     }

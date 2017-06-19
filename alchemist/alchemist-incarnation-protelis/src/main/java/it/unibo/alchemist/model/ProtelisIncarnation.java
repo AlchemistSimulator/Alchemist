@@ -386,7 +386,7 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
             ProtelisVM myVM = null;
             if (!StringUtils.isBlank(key.property)) {
                 try {
-                    final String baseProgram = "env.get(\"" + ((SimpleMolecule) key.molecule).toFasterString() + "\")";
+                    final String baseProgram = "env.get(\"" + key.molecule.getName() + "\")";
                     myVM = new ProtelisVM(
                             ProtelisLoader.parse(key.property.replace(VALUE_TOKEN, baseProgram)),
                             new DummyContext(key.node.get()));

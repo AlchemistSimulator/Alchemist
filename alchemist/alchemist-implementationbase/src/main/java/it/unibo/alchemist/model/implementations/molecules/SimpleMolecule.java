@@ -11,7 +11,11 @@
  */
 package it.unibo.alchemist.model.implementations.molecules;
 
-import org.danilopianini.lang.util.FasterString;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+
+import com.google.common.hash.HashCode;
+import com.google.common.hash.Hashing;
 
 import it.unibo.alchemist.model.interfaces.Molecule;
 
@@ -23,23 +27,18 @@ import it.unibo.alchemist.model.interfaces.Molecule;
  */
 public class SimpleMolecule implements Molecule {
 
-    private static final long serialVersionUID = 2727376723102146271L;
+    private static final long serialVersionUID = 1L;
 
-    private final FasterString n;
-
-    /**
-     * @param name
-     *            the molecule name
-     */
-    public SimpleMolecule(final String name) {
-        this(new FasterString(name));
-    }
+    private byte[] hash;
+    private int hash32;
+    private long hash64;
+    private final CharSequence n;
 
     /**
      * @param name
      *            the molecule name
      */
-    public SimpleMolecule(final FasterString name) {
+    public SimpleMolecule(final CharSequence name) {
         this.n = name;
     }
 
@@ -50,36 +49,47 @@ public class SimpleMolecule implements Molecule {
 
     @Override
     public boolean equals(final Object obj) {
-        if (obj instanceof SimpleMolecule) {
-            return ((SimpleMolecule) obj).n.equals(n);
+        if (obj == this) {
+            return true;
+        }
+        if (obj != null && getClass() == obj.getClass()) {
+            final SimpleMolecule other = (SimpleMolecule) obj;
+            if (n == other.n) {
+                return true;
+            }
+            return hashCode() == other.hashCode() && getId() == other.getId() && Arrays.equals(hash, other.hash);
         }
         return false;
     }
 
     @Override
     public long getId() {
-        return n.hash64();
-    }
-
-    @Override
-    public int hashCode() {
-        return n.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return n + "[ID: " + n.hashToString() + "]";
-    }
-
-    /**
-     * @return a {@link FasterString} version of this {@link SimpleMolecule}
-     */
-    public final FasterString toFasterString() {
-        return n;
+        initHash();
+        return hash64;
     }
 
     @Override
     public final String getName() {
+        return n.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        initHash();
+        return hash32;
+    }
+
+    private void initHash() {
+        if (hash == null) {
+            final HashCode hashCode = Hashing.murmur3_128().hashString(n, StandardCharsets.UTF_8);
+            hash32 = hashCode.asInt();
+            hash64 = hashCode.asLong();
+            hash = hashCode.asBytes();
+        }
+    }
+
+    @Override
+    public String toString() {
         return n.toString();
     }
 

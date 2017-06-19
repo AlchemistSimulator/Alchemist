@@ -8,8 +8,6 @@
  */
 package it.unibo.alchemist.model.implementations.molecules;
 
-import org.danilopianini.lang.util.FasterString;
-
 /**
  *
  */
@@ -22,16 +20,8 @@ public class Biomolecule extends SimpleMolecule {
      * Create a new biomolecule.
      * @param name 
      */
-    public Biomolecule(final FasterString name) {
+    public Biomolecule(final CharSequence name) {
         super(name);
-    }
-
-    /**
-     * Create a new biomolecule.
-     * @param name 
-     */
-    public Biomolecule(final String name) {
-        this(new FasterString(name));
     }
 
 }

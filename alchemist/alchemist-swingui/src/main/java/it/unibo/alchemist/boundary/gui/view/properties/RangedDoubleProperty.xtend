@@ -1,4 +1,4 @@
-package it.unibo.alchemist.boundary.gui.view.property
+package it.unibo.alchemist.boundary.gui.view.properties
 
 import java.io.IOException
 import java.io.ObjectInputStream
@@ -7,6 +7,7 @@ import java.io.Serializable
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.DoublePropertyBase
 import org.eclipse.xtend.lib.annotations.Accessors
+import org.junit.experimental.theories.suppliers.TestedOn
 
 /** 
  * This {@link DoubleProperty} is designed to have a range for the wrapped value

@@ -8,4 +8,4 @@
  * {@link it.unibo.alchemist.boundary.gui.controller.EffectPropertiesController
  * effect tuner} drawer) much more easy.
  */
-package it.unibo.alchemist.boundary.gui.view.property;
+package it.unibo.alchemist.boundary.gui.view.properties;

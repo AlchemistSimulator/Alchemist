@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 import org.junit.Assert;
 import org.junit.Test;
 
+import it.unibo.alchemist.boundary.gui.view.properties.SerializableStringProperty;
 import javafx.beans.property.Property;
 
 /**

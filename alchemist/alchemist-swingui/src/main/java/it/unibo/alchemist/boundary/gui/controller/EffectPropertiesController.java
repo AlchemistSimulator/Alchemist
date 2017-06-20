@@ -18,8 +18,8 @@ import com.jfoenix.controls.JFXDrawersStack;
 
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
-import it.unibo.alchemist.boundary.gui.view.property.EnumProperty;
-import it.unibo.alchemist.boundary.gui.view.property.RangedDoublePropertyOld;
+import it.unibo.alchemist.boundary.gui.view.properties.EnumProperty;
+import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -136,18 +136,18 @@ public class EffectPropertiesController implements Initializable {
     }
 
     /**
-     * Checks every property in the list for {@link RangedDoublePropertyOld} and
+     * Checks every property in the list for {@link RangedDoubleProperty} and
      * creates a new {@link Spinner} for each one.
      * 
      * @param fields
      *            the list of fields
      */
     private void parseRangedDoubleFields(final List<Field> fields) {
-        fields.stream().filter(f -> RangedDoublePropertyOld.class.isAssignableFrom(f.getType())).forEach(f -> {
+        fields.stream().filter(f -> RangedDoubleProperty.class.isAssignableFrom(f.getType())).forEach(f -> {
             final boolean isAccessible = f.isAccessible();
             try {
                 f.setAccessible(true);
-                EffectPropertiesController.this.buildSpinner((RangedDoublePropertyOld) f.get(this.effect));
+                EffectPropertiesController.this.buildSpinner((RangedDoubleProperty) f.get(this.effect));
             } catch (final IllegalArgumentException | IllegalAccessException e) {
                 L.error(e.getMessage());
             } finally {
@@ -202,14 +202,14 @@ public class EffectPropertiesController implements Initializable {
     }
 
     /**
-     * Builds a new {@link Spinner} from a {@link RangedDoublePropertyOld}, binds
+     * Builds a new {@link Spinner} from a {@link RangedDoubleProperty}, binds
      * its {@link Spinner#valueProperty() valueProperty} to the
      * {@code RangedDoubleProperty} and adds it to internal list of nodes.
      * 
      * @param doubleProperty
      *            the model of the spinner
      */
-    private void buildSpinner(final RangedDoublePropertyOld doubleProperty) {
+    private void buildSpinner(final RangedDoubleProperty doubleProperty) {
         final SpinnerValueFactory<Double> factory = new SpinnerValueFactory.DoubleSpinnerValueFactory(doubleProperty.getLowerBound(),
                 doubleProperty.getUpperBound(), doubleProperty.get(), 0.01);
         final Spinner<Double> spinner = new Spinner<>(factory);

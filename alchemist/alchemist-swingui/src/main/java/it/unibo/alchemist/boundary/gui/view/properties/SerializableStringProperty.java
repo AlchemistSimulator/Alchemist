@@ -1,4 +1,4 @@
-package it.unibo.alchemist.boundary.gui.view.property;
+package it.unibo.alchemist.boundary.gui.view.properties;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

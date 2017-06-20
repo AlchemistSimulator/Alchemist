@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 import org.junit.Assert;
 import org.junit.Test;
 
+import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
 import javafx.beans.property.Property;
 
 /**
@@ -18,7 +19,7 @@ import javafx.beans.property.Property;
 public class RangedDoublePropertySerializationTest extends AbstractPropertySerializationTest {
 
     /**
-     * Tests if the {@link RangedDoublePropertyOld} is serialized correctly.
+     * Tests if the {@link RangedDoubleProperty} is serialized correctly.
      * 
      * @throws IOException
      *             if I/O problems occur

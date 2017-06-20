@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.boundary.gui.ColorChannel;
-import it.unibo.alchemist.boundary.gui.view.properties.EnumProperty;
+import it.unibo.alchemist.boundary.gui.view.properties.SerializableEnumProperty;
 import it.unibo.alchemist.boundary.gui.view.properties.PropertiesFactory;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
 import it.unibo.alchemist.boundary.gui.view.properties.SerializableBooleanProperty;
@@ -86,28 +86,28 @@ public class DrawShapeFX implements EffectFX {
     /** Default name */
     private static final String DEFAULT_NAME = "Unnamed DrawShape";
 
-    private final EnumProperty<ModeFX> mode = new EnumProperty<ModeFX>(null, "Mode", ModeFX.FillEllipse);
+    private final SerializableEnumProperty<ModeFX> mode = new SerializableEnumProperty<ModeFX>("Mode", ModeFX.FillEllipse);
     private final RangedDoubleProperty red = PropertiesFactory.getColorChannelProperty("R");
     private final RangedDoubleProperty green = PropertiesFactory.getColorChannelProperty("G");
     private final RangedDoubleProperty blue = PropertiesFactory.getColorChannelProperty("B");
     private final RangedDoubleProperty alpha = PropertiesFactory.getColorChannelProperty("A");
     private final RangedDoubleProperty scaleFactor = new RangedDoubleProperty("Scale Factor", SCALE_INITIAL, MIN_SCALE, MAX_SCALE);
     private final RangedDoubleProperty size = PropertiesFactory.getPercentageRangedProperty("Size", DEFAULT_SIZE);
-    private final SerializableBooleanProperty moleculeFilter = new SerializableBooleanProperty(null,
-            "Draw only nodes containing a molecule", false);
-    private final SerializableStringProperty moleculeName = new SerializableStringProperty(null, "Molecule");
-    private final SerializableBooleanProperty useMoleculeProperty = new SerializableBooleanProperty(null,
-            "Tune colors using a molecule property", false);
-    private final SerializableStringProperty moleculePropertyName = new SerializableStringProperty(null, "Molecule property");
-    private final SerializableBooleanProperty writePropertyValue = new SerializableBooleanProperty(null, "Write the value", false);
-    private final EnumProperty<ColorChannel> colorChannel = new EnumProperty<ColorChannel>(null, "Channel to use", ColorChannel.Alpha);
+    private final SerializableBooleanProperty moleculeFilter = new SerializableBooleanProperty("Draw only nodes containing a molecule",
+            false);
+    private final SerializableStringProperty moleculeName = new SerializableStringProperty("Molecule", "");
+    private final SerializableBooleanProperty useMoleculeProperty = new SerializableBooleanProperty("Tune colors using a molecule property",
+            false);
+    private final SerializableStringProperty moleculePropertyName = new SerializableStringProperty("Molecule property", "");
+    private final SerializableBooleanProperty writePropertyValue = new SerializableBooleanProperty("Write the value", false);
+    private final SerializableEnumProperty<ColorChannel> colorChannel = new SerializableEnumProperty<ColorChannel>("Channel to use",
+            ColorChannel.Alpha);
     // TODO maybe should switch to JavaFX Color class
-    private final SerializableBooleanProperty reverse = new SerializableBooleanProperty(null, "Reverse effect", false);
+    private final SerializableBooleanProperty reverse = new SerializableBooleanProperty("Reverse effect", false);
 
     private final RangedDoubleProperty orderOfMagnitude = new RangedDoubleProperty("Property order of magnitude", 0, -PROPERTY_SCALE,
             PROPERTY_SCALE);
-    private final RangedDoubleProperty minprop = new RangedDoubleProperty("Minimum property value", 0, -PROPERTY_SCALE,
-            PROPERTY_SCALE);
+    private final RangedDoubleProperty minprop = new RangedDoubleProperty("Minimum property value", 0, -PROPERTY_SCALE, PROPERTY_SCALE);
     private final RangedDoubleProperty maxprop = new RangedDoubleProperty("Maximum property value", PROPERTY_SCALE, -PROPERTY_SCALE,
             PROPERTY_SCALE);
 
@@ -303,7 +303,7 @@ public class DrawShapeFX implements EffectFX {
      * 
      * @return the color channel property
      */
-    protected EnumProperty<ColorChannel> colorChannelProperty() {
+    protected SerializableEnumProperty<ColorChannel> colorChannelProperty() {
         return this.colorChannel;
     }
 
@@ -420,7 +420,7 @@ public class DrawShapeFX implements EffectFX {
      * 
      * @return the mode property
      */
-    protected EnumProperty<ModeFX> modeProperty() {
+    protected SerializableEnumProperty<ModeFX> modeProperty() {
         return this.mode;
     }
 

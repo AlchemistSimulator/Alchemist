@@ -5,56 +5,60 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import javafx.beans.property.BooleanPropertyBase;
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.ObjectPropertyBase;
+import javafx.beans.property.Property;
 
 /**
- * {@link SimpleBooleanProperty} that implements also {@link Serializable}.
+ * {@link Property} designed to wrap an {@link Enum enum}.
+ * <p>
+ * It is based on {@code ObjectPropertyBase} and is {@code Serializable}.
+ * 
+ * @param <T>
+ *            the enumeration wrapped
  */
-public class SerializableBooleanProperty extends BooleanPropertyBase implements Serializable {
+public class SerializableEnumProperty<T extends Enum<T>> extends ObjectPropertyBase<T> implements Serializable {
     /** Generated Serial Version UID. */
-    private static final long serialVersionUID = 6329602438787540499L;
-
+    private static final long serialVersionUID = -954058739144566791L;
     private String name;
 
     /**
-     * The constructor of {@code SimpleBooleanProperty}.
+     * The constructor of {@code ObjectPropertyBase}.
      */
-    public SerializableBooleanProperty() {
+    public SerializableEnumProperty() {
         super();
     }
 
     /**
-     * The constructor of {@code SimpleBooleanProperty}.
+     * The constructor of {@code ObjectPropertyBase}.
      *
      * @param initialValue
      *            the initial value of the wrapped value
      */
-    public SerializableBooleanProperty(final boolean initialValue) {
+    public SerializableEnumProperty(final T initialValue) {
         super(initialValue);
     }
 
     /**
-     * The constructor of {@code SimpleBooleanProperty}.
+     * The constructor of {@code ObjectPropertyBase}.
      *
      * @param name
-     *            the name of this {@code SimpleBooleanProperty}
+     *            the name of this {@code SimpleObjectProperty}
      */
-    public SerializableBooleanProperty(final String name) {
-        super();
+    public SerializableEnumProperty(final String name) {
+        this();
         this.name = name;
     }
 
     /**
-     * The constructor of {@code SimpleBooleanProperty}.
+     * The constructor of {@code ObjectPropertyBase}.
      *
      * @param name
-     *            the name of this {@code SimpleBooleanProperty}
+     *            the name of this {@code SimpleObjectProperty}
      * @param initialValue
      *            the initial value of the wrapped value
      */
-    public SerializableBooleanProperty(final String name, final boolean initialValue) {
-        super(initialValue);
+    public SerializableEnumProperty(final String name, final T initialValue) {
+        this(initialValue);
         this.name = name;
     }
 
@@ -89,6 +93,22 @@ public class SerializableBooleanProperty extends BooleanPropertyBase implements 
     }
 
     /**
+     * Returns the elements of the enum class wrapped by this {@link Property}.
+     * 
+     * @return the elements of the enum class
+     * @throws IllegalStateException
+     *             If this {@link Property} is not wrapping any enum
+     */
+    public T[] values() {
+        final T enumeration = this.getValue();
+        if (enumeration != null) {
+            return enumeration.getDeclaringClass().getEnumConstants();
+        } else {
+            throw new IllegalStateException("This Property is not wrapping any enum");
+        }
+    }
+
+    /**
      * Method needed for well working serialization.
      * <p>
      * From {@link Serializable}: <blockquote>The {@code writeObject} method is
@@ -107,7 +127,7 @@ public class SerializableBooleanProperty extends BooleanPropertyBase implements 
      */
     private void writeObject(final ObjectOutputStream out) throws IOException {
         out.writeUTF(this.getName());
-        out.writeBoolean(this.getValue());
+        out.writeObject(this.getValue());
     }
 
     /**
@@ -129,17 +149,18 @@ public class SerializableBooleanProperty extends BooleanPropertyBase implements 
      * @param in
      *            the input stream
      */
+    @SuppressWarnings("unchecked") // Should be of the right class
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         this.setName(in.readUTF());
-        this.setValue(in.readBoolean());
+        this.setValue((T) in.readObject());
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((getValue() == null) ? 0 : getValue().hashCode());
-        result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
+        result = prime * result + ((this.getValue() == null) ? 0 : this.getValue().hashCode());
+        result = prime * result + ((this.getName() == null) ? 0 : this.getName().hashCode());
         return result;
     }
 
@@ -154,15 +175,15 @@ public class SerializableBooleanProperty extends BooleanPropertyBase implements 
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final SerializableBooleanProperty other = (SerializableBooleanProperty) obj;
-        if (getValue() == null) {
+        final SerializableEnumProperty<?> other = (SerializableEnumProperty<?>) obj;
+        if (this.getValue() == null) {
             if (other.getValue() != null) {
                 return false;
             }
-        } else if (!getValue().equals(other.getValue())) {
+        } else if (!this.getValue().equals(other.getValue())) {
             return false;
         }
-        if (getName() == null) {
+        if (this.getName() == null) {
             if (other.getName() != null) {
                 return false;
             }

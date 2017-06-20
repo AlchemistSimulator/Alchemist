@@ -18,7 +18,7 @@ import com.jfoenix.controls.JFXDrawersStack;
 
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
-import it.unibo.alchemist.boundary.gui.view.properties.EnumProperty;
+import it.unibo.alchemist.boundary.gui.view.properties.SerializableEnumProperty;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.StringProperty;
@@ -178,20 +178,20 @@ public class EffectPropertiesController implements Initializable {
     }
 
     /**
-     * Checks every property in the list for {@link EnumProperty} and creates a
+     * Checks every property in the list for {@link SerializableEnumProperty} and creates a
      * new {@link ComboBox} for each one.
      * 
      * @param fields
      *            the list of fields
      */
     private void parseEnumFields(final List<Field> fields) {
-        fields.stream().filter(f -> EnumProperty.class.isAssignableFrom(f.getType())).forEach(f -> {
+        fields.stream().filter(f -> SerializableEnumProperty.class.isAssignableFrom(f.getType())).forEach(f -> {
             final boolean isAccessible = f.isAccessible();
             try {
                 f.setAccessible(true);
                 final Object enumProperty = f.get(this.effect);
                 if (enumProperty.getClass().isEnum()) {
-                    EffectPropertiesController.this.buildComboBox((EnumProperty<?>) enumProperty);
+                    EffectPropertiesController.this.buildComboBox((SerializableEnumProperty<?>) enumProperty);
                 }
             } catch (final IllegalArgumentException | IllegalAccessException e) {
                 L.error(e.getMessage());
@@ -238,7 +238,7 @@ public class EffectPropertiesController implements Initializable {
     }
 
     /**
-     * Builds a new {@link ComboBox} from a {@link EnumProperty}, binds its
+     * Builds a new {@link ComboBox} from a {@link SerializableEnumProperty}, binds its
      * {@link ComboBox#valueProperty() valueProperty} to the
      * {@code EnumProperty} and adds it to internal list of nodes.
      * 
@@ -247,10 +247,8 @@ public class EffectPropertiesController implements Initializable {
      * @param <T>
      *            the enum type wrapped by the enumProperty
      */
-    private <T extends Enum<T>> void buildComboBox(final EnumProperty<T> enumProperty) {
-        @SuppressWarnings("unchecked") // the class *should* be that one
-        final Class<T> enumClass = (Class<T>) enumProperty.get().getClass();
-        final ObservableList<T> list = FXCollections.observableArrayList(enumClass.getEnumConstants());
+    private <T extends Enum<T>> void buildComboBox(final SerializableEnumProperty<T> enumProperty) {
+        final ObservableList<T> list = FXCollections.observableArrayList(enumProperty.values());
 
         final ComboBox<T> comboBox = new ComboBox<>(list);
         comboBox.setValue(list.get(0));

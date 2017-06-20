@@ -7,7 +7,6 @@ import java.io.Serializable
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.DoublePropertyBase
 import org.eclipse.xtend.lib.annotations.Accessors
-import org.junit.experimental.theories.suppliers.TestedOn
 
 /** 
  * This {@link DoubleProperty} is designed to have a range for the wrapped value
@@ -167,10 +166,44 @@ class RangedDoubleProperty extends DoublePropertyBase implements Serializable {
         super.setValue(value)
     }
 
+    /**
+     * Getter method for unused field bean.
+     * 
+     * @return null
+     */
     override Object getBean() { null }
 
+    /**
+     * Getter method for name.
+     * 
+     * @return the name of the property
+     */
     override String getName() { this.name }
 
+    /**
+     * Setter method for name.
+     * 
+     * @param name the name to set
+     */
+    def public String setName(String name) { this.name = name }
+
+    /**
+     * Method needed for well working serialization.
+     * <p>
+     * From {@link Serializable}: <blockquote>The {@code writeObject} method is
+     * responsible for writing the state of the object for its particular class
+     * so that the corresponding readObject method can restore it. The default
+     * mechanism for saving the Object's fields can be invoked by calling
+     * {@code out.defaultWriteObject}. The method does not need to concern
+     * itself with the state belonging to its superclasses or subclasses. State
+     * is saved by writing the 3 individual fields to the
+     * {@code ObjectOutputStream} using the {@code writeObject} method or by
+     * using the methods for primitive data types supported by
+     * {@code DataOutput}. </blockquote>
+     * 
+     * @param out
+     *            the output stream
+     */
     def private writeObject(ObjectOutputStream out) throws IOException {
         out.writeUTF(this.getName)
         out.writeDouble(this.getLowerBound)
@@ -178,6 +211,25 @@ class RangedDoubleProperty extends DoublePropertyBase implements Serializable {
         out.writeDouble(this.getValue)
     }
 
+    /**
+     * Method needed for well working serialization.
+     * <p>
+     * From {@link Serializable}: <blockquote>The {@code readObject} method is
+     * responsible for reading from the stream and restoring the classes fields.
+     * It may call {@code in.defaultReadObject} to invoke the default mechanism
+     * for restoring the object's non-static and non-transient fields. The
+     * {@code defaultReadObject} method uses information in the stream to assign
+     * the fields of the object saved in the stream with the correspondingly
+     * named fields in the current object. This handles the case when the class
+     * has evolved to add new fields. The method does not need to concern itself
+     * with the state belonging to its superclasses or subclasses. State is
+     * saved by writing the individual fields to the {@code ObjectOutputStream}
+     * using the {@code writeObject} method or by using the methods for
+     * primitive data types supported by {@code DataOutput}. </blockquote>
+     * 
+     * @param in
+     *            the input stream
+     */
     def private readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         this.setName(in.readUTF)
         this.setLowerBound(in.readDouble)

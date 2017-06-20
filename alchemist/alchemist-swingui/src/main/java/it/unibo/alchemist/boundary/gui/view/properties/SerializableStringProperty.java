@@ -50,6 +50,82 @@ public class SerializableStringProperty extends StringPropertyBase implements Se
         this.setValue(initialValue);
     }
 
+    /**
+     * Getter method for unused field bean.
+     * 
+     * @return null
+     */
+    @Override
+    public Object getBean() {
+        return null;
+    }
+
+    /**
+     * Getter method for the name.
+     * 
+     * @return the name to give to the property
+     */
+    @Override
+    public String getName() {
+        return this.name;
+    }
+
+    /**
+     * Setter method for the name.
+     * 
+     * @param name
+     *            the name to give to the property
+     */
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    /**
+     * Method needed for well working serialization.
+     * <p>
+     * From {@link Serializable}: <blockquote>The {@code writeObject} method is
+     * responsible for writing the state of the object for its particular class
+     * so that the corresponding readObject method can restore it. The default
+     * mechanism for saving the Object's fields can be invoked by calling
+     * {@code out.defaultWriteObject}. The method does not need to concern
+     * itself with the state belonging to its superclasses or subclasses. State
+     * is saved by writing the 3 individual fields to the
+     * {@code ObjectOutputStream} using the {@code writeObject} method or by
+     * using the methods for primitive data types supported by
+     * {@code DataOutput}. </blockquote>
+     * 
+     * @param out
+     *            the output stream
+     */
+    private void writeObject(final ObjectOutputStream out) throws IOException {
+        out.writeUTF(this.getName());
+        out.writeUTF(this.getValue());
+    }
+
+    /**
+     * Method needed for well working serialization.
+     * <p>
+     * From {@link Serializable}: <blockquote>The {@code readObject} method is
+     * responsible for reading from the stream and restoring the classes fields.
+     * It may call {@code in.defaultReadObject} to invoke the default mechanism
+     * for restoring the object's non-static and non-transient fields. The
+     * {@code defaultReadObject} method uses information in the stream to assign
+     * the fields of the object saved in the stream with the correspondingly
+     * named fields in the current object. This handles the case when the class
+     * has evolved to add new fields. The method does not need to concern itself
+     * with the state belonging to its superclasses or subclasses. State is
+     * saved by writing the individual fields to the {@code ObjectOutputStream}
+     * using the {@code writeObject} method or by using the methods for
+     * primitive data types supported by {@code DataOutput}. </blockquote>
+     * 
+     * @param in
+     *            the input stream
+     */
+    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
+        this.setName(in.readUTF());
+        this.setValue(in.readUTF());
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -86,41 +162,6 @@ public class SerializableStringProperty extends StringPropertyBase implements Se
             return false;
         }
         return true;
-    }
-
-    @Override
-    public Object getBean() {
-        return null;
-    }
-
-    /**
-     * Getter method for the name.
-     * 
-     * @return the name to give to the property
-     */
-    @Override
-    public String getName() {
-        return this.name;
-    }
-
-    /**
-     * Setter method for the name.
-     * 
-     * @param name
-     *            the name to give to the property
-     */
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    private void writeObject(final ObjectOutputStream out) throws IOException {
-        out.writeUTF(this.getName());
-        out.writeUTF(this.getName());
-    }
-
-    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
-        this.setName(in.readUTF());
-        this.setValue(in.readUTF());
     }
 
 }

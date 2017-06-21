@@ -14,6 +14,7 @@ import org.reflections.Reflections;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.InstanceCreator;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
@@ -33,6 +34,7 @@ import it.unibo.alchemist.boundary.gui.effects.EffectStack;
  * 
  * @see Gson
  */
+// @SuppressWarnings("restriction") // for class com.sun.javafx.binding.ExpressionHelper
 public final class EffectSerializer {
     /** Reflection object for main Alchemist package. */
     private static final Reflections REFLECTIONS = new Reflections("it.unibo.alchemist");
@@ -54,14 +56,18 @@ public final class EffectSerializer {
 
     static {
         // EffectFX subtypes are registered dynamically
-        EFFECTS.forEach(effect -> RTA.registerSubtype(effect));
+        EFFECTS.forEach(RTA::registerSubtype);
     }
 
     /**
      * Google gson object that concretely serializes and deserializes objects.
      */
-    private static final Gson GSON = new GsonBuilder().registerTypeAdapterFactory(RTA).registerTypeAdapterFactory(RTA_GROUP)
+    private static final Gson GSON = new GsonBuilder()
+            .registerTypeAdapterFactory(RTA)
+            .registerTypeAdapterFactory(RTA_GROUP)
             .registerTypeAdapter(EffectGroup.class, new EffectGroupAdapter())
+            // .registerTypeAdapter(new TypeToken<ExpressionHelper<Number>>() { }.getType(), initToNull())
+            // .registerTypeAdapter(new TypeToken<ObservableValue<Number>>() { }.getType(), initToNull())
             .setPrettyPrinting()
             .enableComplexMapKeySerialization()
             .create();
@@ -71,6 +77,52 @@ public final class EffectSerializer {
      */
     private EffectSerializer() {
         // Empty constructor
+    }
+
+    /**
+     * Get an {@link EffectFX Effect} from the specified file. It tries to
+     * deserialize a JSON file.
+     * 
+     * @param effectFile
+     *            Source file
+     * @return Effect loaded from the file
+     * @throws FileNotFoundException
+     *             If the file does not exist, is a directory rather than a
+     *             regular file, or for some other reason cannot be opened for
+     *             reading
+     * @throws JsonIOException
+     *             If there was a problem reading from the Reader
+     * @throws JsonSyntaxException
+     *             If JSON is not a valid representation for an object of type
+     * @throws IOException
+     *             If some other I/O error occurs
+     */
+    public static EffectFX effectFromFile(final File effectFile) throws IOException {
+        // Try to deserialize a JSON file at first
+        final Reader reader = new FileReader(effectFile);
+        final EffectFX effect = GSON.fromJson(reader, new TypeToken<EffectFX>() { }.getType());
+        reader.close();
+        return effect;
+    }
+
+    /**
+     * Write the given {@link EffectFX} to the destination file.
+     * 
+     * @param effectFile
+     *            Destination file
+     * @param effect
+     *            Effect
+     * @throws JsonIOException
+     *             If there was a problem writing to the writer
+     * @throws IOException
+     *             If the file exists but is a directory rather than a regular
+     *             file, does not exist but cannot be created, cannot be opened
+     *             for any other reason, or another I/O error occurs
+     */
+    public static void effectToFile(final File effectFile, final EffectFX effect) throws IOException {
+        final Writer writer = new FileWriter(effectFile);
+        GSON.toJson(effect, new TypeToken<EffectFX>() { }.getType(), writer);
+        writer.close();
     }
 
     /**
@@ -115,7 +167,7 @@ public final class EffectSerializer {
      */
     public static void effectsToFile(final File effectFile, final EffectGroup effects) throws IOException {
         final Writer writer = new FileWriter(effectFile);
-        GSON.toJson(effects, new TypeToken<List<EffectFX>>() { }.getType(), writer);
+        GSON.toJson(effects, new TypeToken<EffectGroup>() { }.getType(), writer);
         writer.close();
     }
 
@@ -162,5 +214,13 @@ public final class EffectSerializer {
         final Writer writer = new FileWriter(effectFile);
         GSON.toJson(effects, new TypeToken<List<EffectGroup>>() { }.getType(), writer);
         writer.close();
+    }
+
+    /**
+     * @param <T> a generic type
+     * @return an {@link InstanceCreator} that will serialize the object as null
+     */
+    private static <T> InstanceCreator<T> initToNull() {
+        return (InstanceCreator<T>) a -> null;
     }
 }

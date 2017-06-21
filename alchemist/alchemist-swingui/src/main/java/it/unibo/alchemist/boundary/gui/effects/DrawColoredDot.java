@@ -3,7 +3,7 @@ package it.unibo.alchemist.boundary.gui.effects;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import it.unibo.alchemist.boundary.gui.view.properties.PropertiesFactory;
+import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -33,16 +33,20 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
     private final RangedDoubleProperty alpha;
 
     /**
-     * Default constructor.
+     * Empty constructor.
+     * <p>
+     * Name is set to default name.
+     * <p>
+     * Default visibility is true.
      */
     public DrawColoredDot() {
         super(DEFAULT_NAME);
 
         // Set properties to default color of DrawDot
-        red = PropertiesFactory.getColorChannelProperty("R", (double) super.getColor().getRed());
-        green = PropertiesFactory.getColorChannelProperty("G", (double) super.getColor().getGreen());
-        blue = PropertiesFactory.getColorChannelProperty("B", (double) super.getColor().getBlue());
-        alpha = PropertiesFactory.getColorChannelProperty("A", (double) super.getColor().getAlpha());
+        red = PropertyFactory.getColorChannelProperty("R", (double) super.getColor().getRed());
+        green = PropertyFactory.getColorChannelProperty("G", (double) super.getColor().getGreen());
+        blue = PropertyFactory.getColorChannelProperty("B", (double) super.getColor().getBlue());
+        alpha = PropertyFactory.getColorChannelProperty("A", (double) super.getColor().getAlpha());
 
         // Update the color at each change
         red.addListener(this.updateColor());
@@ -51,13 +55,32 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
         alpha.addListener(this.updateColor());
     }
 
+    /**
+     * Default constructor.
+     * <p>
+     * Default visibility is true.
+     * 
+     * @param name
+     *            the name of the effect.
+     */
+    public DrawColoredDot(final String name) {
+        this();
+        this.setName(name);
+    }
+
     @Override
     public Color getColor() { // NOPMD - Only widening method visibility
         return super.getColor();
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Updates also all color-related properties.
+     */
     @Override
     public void setColor(final Color color) {
+        // Also widens method visibility from parent 
         this.setAlpha(color.getAlpha());
         this.setBlue(color.getBlue());
         this.setGreen(color.getGreen());

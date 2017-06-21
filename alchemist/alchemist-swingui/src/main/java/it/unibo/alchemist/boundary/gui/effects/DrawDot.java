@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 
 import org.apache.commons.math3.util.FastMath;
 
-import it.unibo.alchemist.boundary.gui.view.properties.PropertiesFactory;
+import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -46,7 +46,7 @@ public class DrawDot implements EffectFX {
     private static final Color DEFAULT_COLOR = Color.BLACK;
     // TODO maybe should switch to JavaFX Color class
 
-    private final RangedDoubleProperty size = PropertiesFactory.getPercentageRangedProperty("Size", DEFAULT_SIZE);
+    private final RangedDoubleProperty size = PropertyFactory.getPercentageRangedProperty("Size", DEFAULT_SIZE);
     private Color color = DEFAULT_COLOR;
 
     private String name;

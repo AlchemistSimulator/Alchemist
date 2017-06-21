@@ -1,9 +1,14 @@
 package it.unibo.alchemist.boundary.gui.view.property;
 
+import java.lang.reflect.Type;
+
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import javafx.beans.property.Property;
 
@@ -18,21 +23,33 @@ public abstract class AbstractPropertySerializationTest {
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
 
+    /** The {@link Gson} object used for serialization. */
+    protected static final Gson GSON = new GsonBuilder().setPrettyPrinting().enableComplexMapKeySerialization().create();
+
     /**
-     * Main test.
+     * Tests (de)serialization with default Java serialization engine.
      * 
      * @throws Exception
      *             if something goes wrong
      */
     @Test
-    public abstract void test() throws Exception;
+    public abstract void testJavaSerialization() throws Exception;
+
+    /**
+     * Tests (de)serialization with Google Gson serialization engine.
+     * 
+     * @throws Exception
+     *             if something goes wrong
+     */
+    @Test
+    public abstract void testGsonSerialization() throws Exception;
 
     /**
      * Method that generate {@link Assert#assertTrue(boolean) assertTrue()}
      * messages.
      * 
      * @param <T>
-     *            the generic type that the property wraps
+     *            the class wrapped by this property
      * 
      * @param origin
      *            the original {@link Property}
@@ -44,5 +61,12 @@ public abstract class AbstractPropertySerializationTest {
         return "Property \"" + origin.getName() + ": " + origin.getValue() + "\" is different from property \"" + deserialized.getName()
                 + ": " + deserialized.getValue() + "\"";
     }
+
+    /**
+     * Returns the {@link Gson} {@link Type}.
+     * 
+     * @return the Gson type for the tested class
+     */
+    protected abstract Type getGsonType();
 
 }

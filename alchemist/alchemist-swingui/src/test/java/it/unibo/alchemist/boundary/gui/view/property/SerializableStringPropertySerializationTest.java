@@ -3,12 +3,19 @@ package it.unibo.alchemist.boundary.gui.view.property;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Reader;
+import java.io.Writer;
+import java.lang.reflect.Type;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.google.gson.reflect.TypeToken;
 
 import it.unibo.alchemist.boundary.gui.view.properties.SerializableStringProperty;
 import javafx.beans.property.Property;
@@ -18,16 +25,9 @@ import javafx.beans.property.Property;
  */
 public class SerializableStringPropertySerializationTest extends AbstractPropertySerializationTest {
 
-    /**
-     * Tests if the {@link SerializableStringProperty} is serialized correctly.
-     * @throws IOException
-     *             if I/O problems occur
-     * @throws ClassNotFoundException
-     *             if a problem occurs during deserialization
-     */
     @Test
     @Override
-    public void test() throws IOException, ClassNotFoundException {
+    public void testJavaSerialization() throws IOException, ClassNotFoundException {
         final File file = folder.newFile();
 
         final FileOutputStream fout = new FileOutputStream(file);
@@ -46,6 +46,29 @@ public class SerializableStringPropertySerializationTest extends AbstractPropert
 
         oos.close();
         ois.close();
+    }
+
+    @Test
+    @Override
+    public void testGsonSerialization() throws Exception {
+        final File file = folder.newFile();
+
+        final SerializableStringProperty serializableStringProperty = new SerializableStringProperty("Pippo", "Test string");
+
+        final Writer writer = new FileWriter(file);
+        GSON.toJson(serializableStringProperty, this.getGsonType(), writer);
+        writer.close();
+
+        final Reader reader = new FileReader(file);
+        final SerializableStringProperty deserialized = GSON.fromJson(reader, this.getGsonType());
+        reader.close();
+
+        Assert.assertTrue(getMessage(serializableStringProperty, deserialized), serializableStringProperty.equals(deserialized));
+    }
+
+    @Override
+    protected Type getGsonType() {
+        return new TypeToken<SerializableStringProperty>() { }.getType();
     }
 
 }

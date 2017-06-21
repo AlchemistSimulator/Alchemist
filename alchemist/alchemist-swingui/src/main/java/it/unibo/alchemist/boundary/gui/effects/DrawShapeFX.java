@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.boundary.gui.ColorChannel;
 import it.unibo.alchemist.boundary.gui.view.properties.SerializableEnumProperty;
-import it.unibo.alchemist.boundary.gui.view.properties.PropertiesFactory;
+import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
 import it.unibo.alchemist.boundary.gui.view.properties.SerializableBooleanProperty;
 import it.unibo.alchemist.boundary.gui.view.properties.SerializableStringProperty;
@@ -87,12 +87,12 @@ public class DrawShapeFX implements EffectFX {
     private static final String DEFAULT_NAME = "Unnamed DrawShape";
 
     private final SerializableEnumProperty<ModeFX> mode = new SerializableEnumProperty<ModeFX>("Mode", ModeFX.FillEllipse);
-    private final RangedDoubleProperty red = PropertiesFactory.getColorChannelProperty("R");
-    private final RangedDoubleProperty green = PropertiesFactory.getColorChannelProperty("G");
-    private final RangedDoubleProperty blue = PropertiesFactory.getColorChannelProperty("B");
-    private final RangedDoubleProperty alpha = PropertiesFactory.getColorChannelProperty("A");
+    private final RangedDoubleProperty red = PropertyFactory.getColorChannelProperty("R");
+    private final RangedDoubleProperty green = PropertyFactory.getColorChannelProperty("G");
+    private final RangedDoubleProperty blue = PropertyFactory.getColorChannelProperty("B");
+    private final RangedDoubleProperty alpha = PropertyFactory.getColorChannelProperty("A");
     private final RangedDoubleProperty scaleFactor = new RangedDoubleProperty("Scale Factor", SCALE_INITIAL, MIN_SCALE, MAX_SCALE);
-    private final RangedDoubleProperty size = PropertiesFactory.getPercentageRangedProperty("Size", DEFAULT_SIZE);
+    private final RangedDoubleProperty size = PropertyFactory.getPercentageRangedProperty("Size", DEFAULT_SIZE);
     private final SerializableBooleanProperty moleculeFilter = new SerializableBooleanProperty("Draw only nodes containing a molecule",
             false);
     private final SerializableStringProperty moleculeName = new SerializableStringProperty("Molecule", "");
@@ -122,8 +122,18 @@ public class DrawShapeFX implements EffectFX {
      * Default constructor.
      */
     public DrawShapeFX() {
+        this(DEFAULT_NAME);
+    }
+
+    /**
+     * Default constructor.
+     * 
+     * @param name
+     *            the name of the effect
+     */
+    public DrawShapeFX(final String name) {
         moleculeName.addListener(this.updateMoleculeCachedName());
-        this.name = DEFAULT_NAME;
+        this.name = name;
         this.visibility = true;
     }
 

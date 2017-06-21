@@ -120,7 +120,6 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
      */
     private void dragNDropEntered(final DragEvent event) {
         if (event.getGestureSource() != this && event.getDragboard().hasContent(getDataFormat())) {
-            final Dragboard dragboard = event.getDragboard();
             setOpacity(DRAG_N_DROP_TARGET_OPACITY);
         }
     }

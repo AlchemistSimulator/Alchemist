@@ -23,8 +23,8 @@ public class RangedIntegerProperty extends IntegerPropertyBase implements Serial
     /** Error for exceeding lower bound. */
     protected static final String TOO_SMALL_MESSAGE = "Provided value is smaller than the lower bound";
 
-    private Integer lowerBound;
-    private Integer upperBound;
+    private int lowerBound;
+    private int upperBound;
 
     private String name;
 
@@ -43,7 +43,7 @@ public class RangedIntegerProperty extends IntegerPropertyBase implements Serial
      *            the upper bound for the wrapped value to be considered
      *            acceptable
      */
-    public RangedIntegerProperty(final String name, final int initialValue, final Integer lowerBound, final Integer upperBound) {
+    public RangedIntegerProperty(final String name, final int initialValue, final int lowerBound, final int upperBound) {
         super(initialValue);
         this.name = name;
         this.lowerBound = lowerBound;
@@ -65,7 +65,7 @@ public class RangedIntegerProperty extends IntegerPropertyBase implements Serial
      *            the upper bound for the wrapped value to be considered
      *            acceptable
      */
-    public RangedIntegerProperty(final String name, final Integer lowerBound, final Integer upperBound) {
+    public RangedIntegerProperty(final String name, final int lowerBound, final int upperBound) {
         this(name, 0, lowerBound, upperBound);
     }
 
@@ -82,7 +82,7 @@ public class RangedIntegerProperty extends IntegerPropertyBase implements Serial
      *            the upper bound for the wrapped value to be considered
      *            acceptable
      */
-    public RangedIntegerProperty(final int initialValue, final Integer lowerBound, final Integer upperBound) {
+    public RangedIntegerProperty(final int initialValue, final int lowerBound, final int upperBound) {
         this("", initialValue, lowerBound, upperBound);
     }
 
@@ -99,7 +99,7 @@ public class RangedIntegerProperty extends IntegerPropertyBase implements Serial
      *            the upper bound for the wrapped value to be considered
      *            acceptable
      */
-    public RangedIntegerProperty(final Integer lowerBound, final Integer upperBound) {
+    public RangedIntegerProperty(final int lowerBound, final int upperBound) {
         this(0, lowerBound, upperBound);
     }
 
@@ -231,7 +231,7 @@ public class RangedIntegerProperty extends IntegerPropertyBase implements Serial
      * 
      * @return the lower bound
      */
-    public Integer getLowerBound() {
+    public int getLowerBound() {
         return lowerBound;
     }
 
@@ -241,7 +241,7 @@ public class RangedIntegerProperty extends IntegerPropertyBase implements Serial
      * @param lowerBound
      *            the lower bound
      */
-    public void setLowerBound(final Integer lowerBound) {
+    public void setLowerBound(final int lowerBound) {
         this.lowerBound = lowerBound;
     }
 
@@ -250,7 +250,7 @@ public class RangedIntegerProperty extends IntegerPropertyBase implements Serial
      * 
      * @return the upper bound
      */
-    public Integer getUpperBound() {
+    public int getUpperBound() {
         return upperBound;
     }
 
@@ -260,7 +260,7 @@ public class RangedIntegerProperty extends IntegerPropertyBase implements Serial
      * @param upperBound
      *            the upper bound
      */
-    public void setUpperBound(final Integer upperBound) {
+    public void setUpperBound(final int upperBound) {
         this.upperBound = upperBound;
     }
 
@@ -318,8 +318,8 @@ public class RangedIntegerProperty extends IntegerPropertyBase implements Serial
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((getLowerBound() == null) ? 0 : getLowerBound().hashCode());
-        result = prime * result + ((getUpperBound() == null) ? 0 : getUpperBound().hashCode());
+        result = prime * result + Integer.valueOf(getLowerBound()).hashCode();
+        result = prime * result + Integer.valueOf(getUpperBound()).hashCode();
         result = prime * result + ((getValue() == null) ? 0 : getValue().hashCode());
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
         return result;
@@ -337,18 +337,10 @@ public class RangedIntegerProperty extends IntegerPropertyBase implements Serial
             return false;
         }
         final RangedIntegerProperty other = (RangedIntegerProperty) obj;
-        if (getLowerBound() == null) {
-            if (other.getLowerBound() != null) {
-                return false;
-            }
-        } else if (!getLowerBound().equals(other.getLowerBound())) {
+        if (getLowerBound() != other.getLowerBound()) {
             return false;
         }
-        if (getUpperBound() == null) {
-            if (other.getUpperBound() != null) {
-                return false;
-            }
-        } else if (!getUpperBound().equals(other.getUpperBound())) {
+        if (getUpperBound() != other.getUpperBound()) {
             return false;
         }
         if (getValue() == null) {

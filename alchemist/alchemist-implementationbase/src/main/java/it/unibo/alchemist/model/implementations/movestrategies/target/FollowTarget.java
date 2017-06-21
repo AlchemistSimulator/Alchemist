@@ -1,6 +1,6 @@
 package it.unibo.alchemist.model.implementations.movestrategies.target;
 
-import static org.danilopianini.lang.RegexUtil.FLOAT_PATTERN;
+import static org.danilopianini.util.regex.Patterns.FLOAT_PATTERN;
 
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.interfaces.Environment;

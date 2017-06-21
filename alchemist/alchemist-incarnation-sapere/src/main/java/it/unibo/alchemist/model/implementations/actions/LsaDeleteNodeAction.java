@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.implementations.actions;
 import java.util.List;
 import java.util.Map;
 
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 import org.danilopianini.util.ListSet;
 import org.danilopianini.util.ListSets;
 
@@ -53,7 +53,7 @@ public class LsaDeleteNodeAction extends RemoveNode<List< ILsaMolecule>> impleme
     }
 
     @Override
-    public void setExecutionContext(final Map<FasterString, ITreeNode<?>> matches, final List< ILsaNode> nodes) {
+    public void setExecutionContext(final Map<HashString, ITreeNode<?>> matches, final List< ILsaNode> nodes) {
         /*
          * This reaction runs regardless the context.
          */

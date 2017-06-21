@@ -28,7 +28,7 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 import org.danilopianini.util.ArrayListSet;
 import org.danilopianini.util.ListSet;
 
@@ -57,7 +57,7 @@ public class SAPEREReaction extends AReaction<List<ILsaMolecule>> {
 
     private boolean emptyExecution;
     private boolean modifiesOnlyLocally = true;
-    private List<Map<FasterString, ITreeNode<?>>> possibleMatches = new ArrayList<>(0);
+    private List<Map<HashString, ITreeNode<?>>> possibleMatches = new ArrayList<>(0);
     private List<Map<ILsaNode, List<ILsaMolecule>>> possibleRemove = new ArrayList<>(0);
     private List<Double> propensities = new ArrayList<>(0);
     private double totalPropensity;
@@ -157,7 +157,7 @@ public class SAPEREReaction extends AReaction<List<ILsaMolecule>> {
         }
         final Position nodePosCache = modifiesOnlyLocally ? environment.getPosition(getNode()) : null;
         final List<? extends ILsaMolecule> localContentCache = modifiesOnlyLocally ? new ArrayList<>(getNode().getLsaSpace()) : null;
-        Map<FasterString, ITreeNode<?>> matches = null;
+        Map<HashString, ITreeNode<?>> matches = null;
         Map<ILsaNode, List<ILsaMolecule>> toRemove = null;
         /*
          * If there is infinite propensity, the last match added is the one to
@@ -239,7 +239,7 @@ public class SAPEREReaction extends AReaction<List<ILsaMolecule>> {
     /**
      * @return the list of all possible matches
      */
-    protected List<Map<FasterString, ITreeNode<?>>> getPossibleMatches() {
+    protected List<Map<HashString, ITreeNode<?>>> getPossibleMatches() {
         return possibleMatches;
     }
 
@@ -297,7 +297,7 @@ public class SAPEREReaction extends AReaction<List<ILsaMolecule>> {
                     /*
                      * For each possible match, compute the propensity
                      */
-                    for (final Map<FasterString, ITreeNode<?>> match : possibleMatches) {
+                    for (final Map<HashString, ITreeNode<?>> match : possibleMatches) {
                         timedist.setMatches(match);
                         final double p = timedist.getRate();
                         propensities.add(p);
@@ -404,7 +404,7 @@ public class SAPEREReaction extends AReaction<List<ILsaMolecule>> {
      * @param pm
      *            the list of all possible matches
      */
-    protected void setPossibleMatches(final List<Map<FasterString, ITreeNode<?>>> pm) {
+    protected void setPossibleMatches(final List<Map<HashString, ITreeNode<?>>> pm) {
         this.possibleMatches = pm;
     }
 

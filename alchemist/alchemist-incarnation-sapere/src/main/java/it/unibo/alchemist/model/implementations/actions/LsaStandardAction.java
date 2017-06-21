@@ -25,7 +25,7 @@ import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,7 +85,7 @@ public class LsaStandardAction extends LsaAbstractAction {
         if (initRand && random == null) {
             L.warn(SYN_RAND + " is used in " + m + ", but the RandomGenerator has not been initialized. You know this WILL lead to problems, don't you?");
         }
-        nodeId = initNode ? new ConstTreeNode(new FasterString("node" + n.getId())) : null;
+        nodeId = initNode ? new ConstTreeNode(new HashString("node" + n.getId())) : null;
     }
 
     @Override

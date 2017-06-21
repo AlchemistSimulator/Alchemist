@@ -13,7 +13,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -27,11 +27,11 @@ import java.util.List;
 public class LsaChangeArgument extends SAPERELocalAgent {
 
     private static final long serialVersionUID = -7128058274012426458L;
-    private static final FasterString OLD = new FasterString("OldType");
+    private static final HashString OLD = new HashString("OldType");
     private final Environment<List< ILsaMolecule>> env;
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All provided RandomGenerator implementations are actually Serializable")
     private final RandomGenerator rnd;
-    private final FasterString newTargetVar;
+    private final HashString newTargetVar;
     private final String[] listT;
 
     /**
@@ -57,7 +57,7 @@ public class LsaChangeArgument extends SAPERELocalAgent {
         super(node);
         rnd = random;
         env = environment;
-        newTargetVar = new FasterString(targetVariab);
+        newTargetVar = new HashString(targetVariab);
         listT = Arrays.copyOf(listTarget, listTarget.length);
     }
 
@@ -73,7 +73,7 @@ public class LsaChangeArgument extends SAPERELocalAgent {
         }
         if (!listTarg.isEmpty()) {
             final String newTarg = listTarg.get((int) (listTarg.size() * rnd.nextDouble()));
-            addMatch(newTargetVar, new ConstTreeNode(new FasterString(newTarg)));
+            addMatch(newTargetVar, new ConstTreeNode(new HashString(newTarg)));
         }
     }
 

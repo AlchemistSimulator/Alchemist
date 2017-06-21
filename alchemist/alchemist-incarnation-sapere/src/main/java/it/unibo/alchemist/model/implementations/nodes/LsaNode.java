@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.danilopianini.concurrency.FastReadWriteLock;
+import org.danilopianini.util.concurrent.FastReadWriteLock;
 
 import it.unibo.alchemist.expressions.implementations.Expression;
 import it.unibo.alchemist.expressions.implementations.NumTreeNode;

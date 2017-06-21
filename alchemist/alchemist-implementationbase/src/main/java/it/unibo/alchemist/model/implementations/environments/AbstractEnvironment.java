@@ -25,12 +25,15 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.danilopianini.util.ArrayListSet;
 import org.danilopianini.util.LinkedListSet;
 import org.danilopianini.util.ListSet;
 import org.danilopianini.util.ListSets;
 import org.danilopianini.util.SpatialIndex;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.google.common.base.Predicates;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -60,13 +63,14 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
      */
     protected static final String DEFAULT_MONITOR = null;
     private static final long serialVersionUID = 0L;
+    private transient LoadingCache<ImmutablePair<Position, Double>, ListSet<Node<T>>> cache;
     private Incarnation<T> incarnation;
     private final Map<Molecule, Layer<T>> layers = new LinkedHashMap<>();
     private final TIntObjectHashMap<Neighborhood<T>> neighCache = new TIntObjectHashMap<>();
     private final TIntObjectHashMap<Node<T>> nodes = new TIntObjectHashMap<Node<T>>();
     private final TIntObjectHashMap<Position> nodeToPos = new TIntObjectHashMap<>();
     private LinkingRule<T> rule;
-    private Simulation<T> simulation;
+    private transient Simulation<T> simulation;
     private final SpatialIndex<Node<T>> spatialIndex;
 
     private Predicate<Environment<T>> terminator = Predicates.alwaysFalse();
@@ -142,21 +146,13 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
                 .map(n -> new Operation(center, n, true));
     }
 
-    private List<Node<T>> getAllNodesInRange(final Position center, final double range) {
-        final List<Position> boundingBox = center.buildBoundingBox(range);
-        assert boundingBox.size() == getDimensions();
-        final double[][] queryArea = new double[getDimensions()][];
-        for (int i = 0; i < queryArea.length; i++) {
-            queryArea[i] = boundingBox.get(i).getCartesianCoordinates();
+    private ListSet<Node<T>> getAllNodesInRange(final Position center, final double range) {
+        if (cache == null) {
+            cache = Caffeine.newBuilder()
+                .maximumSize(1000)
+                .build(pair -> runQuery(pair.left, pair.right));
         }
-        final List<Node<T>> result = spatialIndex.query(queryArea);
-        final Iterator<Node<T>> it = result.iterator();
-        while (it.hasNext()) {
-            if (getPosition(it.next()).getDistanceTo(center) > range) {
-                it.remove();
-            }
-        }
-        return result;
+        return cache.get(new ImmutablePair<>(center, range));
     }
 
     @Override
@@ -176,7 +172,6 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
         return Optional.ofNullable(layers.get(m));
     }
 
-
     @Override
     public ListSet<Layer<T>> getLayers() {
         return new ArrayListSet<>(layers.values());
@@ -186,6 +181,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     public final LinkingRule<T> getLinkingRule() {
         return rule;
     }
+
 
     @Override
     public final Neighborhood<T> getNeighborhood(@Nonnull final Node<T> center) {
@@ -235,7 +231,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
         /*
          * Collect every node in range
          */
-        return new ArrayListSet<>(getAllNodesInRange(center, range));
+        return getAllNodesInRange(center, range);
     }
 
     @Override
@@ -255,6 +251,12 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
 
     private void ifEngineAvailable(final Consumer<Simulation<T>> r) {
         Optional.ofNullable(getSimulation()).ifPresent(r);
+    }
+
+    private void invalidateCache() {
+        if (cache != null) {
+            cache.invalidateAll();
+        }
     }
 
     @Override
@@ -329,6 +331,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
 
     @Override
     public final void removeNode(@Nonnull final Node<T> node) {
+        invalidateCache();
         nodes.remove(Objects.requireNonNull(node).getId());
         final Position pos = nodeToPos.remove(node.getId());
         spatialIndex.remove(node, pos.getCartesianCoordinates());
@@ -348,6 +351,16 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
          * Call subclass remover
          */
         nodeRemoved(node, neigh);
+    }
+
+    private ListSet<Node<T>> runQuery(final Position center, final double range) {
+        final List<Node<T>> result = spatialIndex.query(center.buildBoundingBox(range).stream()
+                .map(Position::getCartesianCoordinates)
+                .toArray(i -> new double[i][]));
+        final int size = result.size();
+        return ListSets.unmodifiableListSet(result.stream()
+            .filter(it -> getPosition(it).getDistanceTo(center) <= range)
+            .collect(Collectors.toCollection(() -> new ArrayListSet<>(size))));
     }
 
     @Override
@@ -373,7 +386,10 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
      *            its new position
      */
     protected final void setPosition(final Node<T> n, final Position p) {
-        final Position pos = nodeToPos.put(n.getId(), p);
+        final Position pos = nodeToPos.put(Objects.requireNonNull(n).getId(), Objects.requireNonNull(p));
+        if (!p.equals(pos)) {
+            invalidateCache();
+        }
         if (pos != null && !spatialIndex.move(n, pos.getCartesianCoordinates(), p.getCartesianCoordinates())) {
             throw new IllegalArgumentException("Tried to move a node not previously present in the environment: \n"
                     + "Node: " + n + "\n" + "Requested position" + p);

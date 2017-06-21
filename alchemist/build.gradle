@@ -11,10 +11,10 @@ buildscript {
     }
 }
 
-def scalaVersion = "${scalaMajorVersion}.${scalaMinorVersion}"
-
 allprojects {
-    
+
+    scalaVersion = "${scalaMajorVersion}.${scalaMinorVersion}"
+
     apply plugin: 'org.danilopianini.build-commons'
     apply plugin: "org.xtext.xtend"
     apply plugin: 'scala'

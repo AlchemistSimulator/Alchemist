@@ -16,6 +16,7 @@ import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D;
 /**
  * Test for bugs in {@link Wormhole2D}.
  */
+@Deprecated
 public class TestEffectSerialization {
 
     private static final String FILEPATH = "test.aes";

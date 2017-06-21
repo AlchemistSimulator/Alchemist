@@ -19,10 +19,12 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
+import com.sun.javafx.binding.ExpressionHelper;
 
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.effects.EffectStack;
+import javafx.beans.value.ObservableValue;
 
 /**
  * Serialize Alchemist {@link EffectGroup effect groups} from/to file in human
@@ -34,7 +36,7 @@ import it.unibo.alchemist.boundary.gui.effects.EffectStack;
  * 
  * @see Gson
  */
-// @SuppressWarnings("restriction") // for class com.sun.javafx.binding.ExpressionHelper
+@SuppressWarnings("restriction") // for class com.sun.javafx.binding.ExpressionHelper
 public final class EffectSerializer {
     /** Reflection object for main Alchemist package. */
     private static final Reflections REFLECTIONS = new Reflections("it.unibo.alchemist");
@@ -66,8 +68,10 @@ public final class EffectSerializer {
             .registerTypeAdapterFactory(RTA)
             .registerTypeAdapterFactory(RTA_GROUP)
             .registerTypeAdapter(EffectGroup.class, new EffectGroupAdapter())
-            // .registerTypeAdapter(new TypeToken<ExpressionHelper<Number>>() { }.getType(), initToNull())
-            // .registerTypeAdapter(new TypeToken<ObservableValue<Number>>() { }.getType(), initToNull())
+            .registerTypeAdapter(new TypeToken<ExpressionHelper<Number>>() { }.getType(), initToNull())
+            .registerTypeAdapter(new TypeToken<ObservableValue<Number>>() { }.getType(), initToNull())
+            .registerTypeAdapter(new TypeToken<ExpressionHelper<String>>() { }.getType(), initToNull())
+            .registerTypeAdapter(new TypeToken<ObservableValue<String>>() { }.getType(), initToNull())
             .setPrettyPrinting()
             .enableComplexMapKeySerialization()
             .create();

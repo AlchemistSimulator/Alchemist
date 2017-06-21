@@ -14,6 +14,7 @@ import it.unibo.alchemist.boundary.gui.view.cells.EffectCell;
 import it.unibo.alchemist.boundary.gui.view.cells.EffectGroupCell;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -83,6 +84,14 @@ public class EffectBarController implements Initializable {
         this.backToGroups.setOnAction(e -> {
             this.stack.toggle(thisDrawer);
         });
+        
+//        effectsList.getItems().addListener(new ListChangeListener<EffectFX>() {
+//
+//            @Override
+//            public void onChanged(Change<? extends EffectFX> c) {
+//                // TODO
+//            }
+//        });
 
     }
 

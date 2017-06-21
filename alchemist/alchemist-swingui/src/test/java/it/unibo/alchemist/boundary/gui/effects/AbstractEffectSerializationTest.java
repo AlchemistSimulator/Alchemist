@@ -1,13 +1,9 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import java.lang.reflect.Type;
-
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import com.google.gson.Gson;
 
 /**
  * Abstract class that provides a common base of methods for effects

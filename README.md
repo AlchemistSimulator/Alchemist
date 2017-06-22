@@ -54,7 +54,7 @@ The project has been developed using Eclipse, and can be easily imported in such
 
 #### Recommended configuration
 * Download [the latest Eclipse for Java][eclipse]. For a smooth import, Gradle Buildship is needed (starting from Eclipse Mars.1, it is included by default)
-  * Arch Linux users can use the package extra/eclipse-java
+  * Arch Linux users can use the package `eclipse-java`
   * Ubuntu-based Linux users can install it using [ubuntu-make](https://wiki.ubuntu.com/ubuntu-make): 
     ```bash
     sudo apt-add-repository ppa:ubuntu-desktop/ubuntu-make
@@ -62,7 +62,15 @@ The project has been developed using Eclipse, and can be easily imported in such
     sudo apt-get install ubuntu-make
     umake ide eclipse 
     ```
-* Install the code quality plugins:
+* Install the Scala interpreter:
+  * Arch Linux users can use the package `scala`
+  * Ubuntu-based Linux users can use the package scala:
+    ```bash
+    sudo apt-get update
+    sudo apt-get install scala
+    ```
+  * Users of other OS can follow the [official installation guide](https://www.scala-lang.org/download/install.html)
+* Install the required eclipse plugins:
   * In Eclipse, click "Help" -> "Eclipse Marketplace..."
   * In the search field enter "findbugs", then press Enter
   * One of the retrieved entries should be "FindBugs Eclipse Plugin", click Install
@@ -72,6 +80,9 @@ The project has been developed using Eclipse, and can be easily imported in such
   * Click "< Install More"
   * In the search field enter "xtext", then press Enter
   * One of the retrieved entries should be "Eclipse Xtext", click Install
+  * Click "< Install More"
+  * In the search field enter "scala", then press Enter
+  * One of the retrieved entries should be "Scala IDE 4.2.x", click Install
   * Click "Install Now >"
   * Wait for Eclipse to resolve all the features
   * Click "Confirm >"

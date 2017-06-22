@@ -3,12 +3,12 @@ package it.unibo.alchemist.loader.export;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
 import org.apache.commons.math3.stat.descriptive.UnivariateStatistic;
-import org.danilopianini.lang.LangUtils;
 
 import com.google.common.collect.Lists;
 
@@ -51,12 +51,11 @@ public class MoleculeReader<T> implements Extractor {
                           final Incarnation<T> incarnation,
                           final FilteringPolicy filter,
                           final List<String> aggregators) {
-        LangUtils.requireNonNull(incarnation, aggregators, filter);
-        this.incarnation = incarnation;
+        this.incarnation = Objects.requireNonNull(incarnation);
         this.property = property;
         this.mol = incarnation.createMolecule(molecule);
-        this.filter = filter;
-        this.aggregators = aggregators.parallelStream()
+        this.filter = Objects.requireNonNull(filter);
+        this.aggregators = Objects.requireNonNull(aggregators).parallelStream()
                 .map(StatUtil::makeUnivariateStatistic)
                 .filter(Optional::isPresent)
                 .map(Optional::get)

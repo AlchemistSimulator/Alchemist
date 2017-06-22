@@ -9,6 +9,7 @@
 package it.unibo.alchemist.model.implementations.environments;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -24,8 +25,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
-import org.danilopianini.concurrency.FastReadWriteLock;
-import org.danilopianini.io.FileUtilities;
+import org.danilopianini.util.Hashes;
+import org.danilopianini.util.concurrent.FastReadWriteLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -242,20 +243,22 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
          */
         List<GPSTrace> trcs = null;
         if (tfile != null) {
-            trcs = (List<GPSTrace>) FileUtilities.fileToObject(tfile);
-            int idgen = 0;
-            for (final GPSTrace gps : trcs) {
-                final GPSTrace trace = gps.filter(ttime);
-                if (trace.size() > 0) {
-                    if (useIds) {
-                        traces.put(trace.getId(), trace);
-                    } else {
-                        traces.put(idgen++, trace);
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(tfile))) {
+                trcs = (List<GPSTrace>) ois.readObject();
+                int idgen = 0;
+                for (final GPSTrace gps : trcs) {
+                    final GPSTrace trace = gps.filter(ttime);
+                    if (trace.size() > 0) {
+                        if (useIds) {
+                            traces.put(trace.getId(), trace);
+                        } else {
+                            traces.put(idgen++, trace);
+                        }
                     }
                 }
-            }
-            if (!useIds) {
-                L.info("Traces available for " + idgen + " nodes.");
+                if (!useIds) {
+                    L.info("Traces available for " + idgen + " nodes.");
+                }
             }
         }
         forceStreets = onStreets;
@@ -472,7 +475,9 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     }
 
     private String initDir(final File mapfile) throws IOException {
-        final String code = Long.toString(FileUtilities.fileCRC32sum(mapfile), ENCODING_BASE);
+        final String code = Long.toString(Hashes.hashResource(mapfile, e -> {
+                throw new IllegalStateException(e);
+            }).asLong(), ENCODING_BASE);
         final String append = SLASH + mapfile.getName() + code;
         final String[] prefixes = new String[] {
                 PERSISTENTPATH,

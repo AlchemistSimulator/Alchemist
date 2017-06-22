@@ -13,7 +13,7 @@ dependencies {
         "com.jfoenix:jfoenix:$jFoenixVersion",
         "com.github.jiconfont:jiconfont-javafx:$jIconFontJavaFXVersion",
         "com.github.jiconfont:jiconfont-google_material_design_icons:$jIconFontGoogleMaterialVersion"
-        
+        "org.danilopianini:javalib-java7:0.6.1"
     )
     testRuntime(project(':alchemist-incarnation-protelis'))
 }

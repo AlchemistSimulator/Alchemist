@@ -21,7 +21,7 @@ import static org.apache.commons.math3.util.FastMath.toRadians;
 import java.util.List;
 import java.util.function.BinaryOperator;
 
-import org.danilopianini.lang.HashUtils;
+import org.danilopianini.util.Hashes;
 
 import it.unibo.alchemist.exceptions.UncomparableDistancesException;
 import it.unibo.alchemist.model.interfaces.Position;
@@ -314,7 +314,7 @@ public final class LatLongPosition implements Position {
     @Override
     public int hashCode() {
         if (hash == 0) {
-            hash = HashUtils.hash32(getLatitude(), getLongitude());
+            hash = Hashes.hash32(getLatitude(), getLongitude());
         }
         return hash;
     }

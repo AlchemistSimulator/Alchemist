@@ -1,5 +1,7 @@
 package it.unibo.alchemist.model.implementations.movestrategies.speed;
 
+import static java.util.Objects.requireNonNull;
+
 import it.unibo.alchemist.model.interfaces.GPSPoint;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
@@ -7,10 +9,6 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
-
-import java.util.Objects;
-
-import org.danilopianini.lang.LangUtils;
 
 /**
  * This strategy dynamically tries to move the node adjusting its speed to
@@ -35,11 +33,10 @@ public abstract class TraceDependantSpeed<T> implements SpeedSelectionStrategy<T
      *            the reaction
      */
     public TraceDependantSpeed(final MapEnvironment<T> e, final Node<T> n, final Reaction<T> r) {
-        LangUtils.requireNonNull(e, n, r);
-        env = e;
-        node = n;
-        reaction = r;
-        trace = Objects.requireNonNull(env.getTrace(node));
+        env = requireNonNull(e);
+        node = requireNonNull(n);
+        reaction = requireNonNull(r);
+        trace = requireNonNull(env.getTrace(node));
     }
 
     @Override

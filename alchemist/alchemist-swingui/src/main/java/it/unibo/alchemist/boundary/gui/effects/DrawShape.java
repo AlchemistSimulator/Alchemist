@@ -14,7 +14,6 @@ import java.util.Set;
 
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.lang.CollectionWithCurrentElement;
-import org.danilopianini.lang.HashUtils;
 import org.danilopianini.lang.ImmutableCollectionWithCurrentElement;
 import org.danilopianini.lang.RangedInteger;
 import org.danilopianini.view.ExportForGUI;
@@ -124,10 +123,12 @@ public class DrawShape implements Effect {
         curIncarnation = new ImmutableCollectionWithCurrentElement<>(availableIncarnations, availableIncarnations.stream().findAny().get());
     }
 
+    @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
     public void apply(final Graphics2D g, final Node<?> n, final int x, final int y) {
-        if (!HashUtils.pointerEquals(molString, molStringCached) || incarnation == null
-                || !HashUtils.pointerEquals(curIncarnation, prevIncarnation)) {
+        if (molString != molStringCached // NOPMD: pointer comparison is wanted here
+                || incarnation == null
+                || curIncarnation != prevIncarnation) { // NOPMD: pointer comparison is wanted here
             molStringCached = molString;
             prevIncarnation = curIncarnation;
             incarnation = SupportedIncarnations.get(curIncarnation.getCurrent()).get();

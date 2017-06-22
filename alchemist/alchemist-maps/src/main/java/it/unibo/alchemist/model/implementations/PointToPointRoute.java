@@ -7,9 +7,9 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Route;
 
 import java.util.List;
+import java.util.Objects;
 
-import org.danilopianini.lang.HashUtils;
-import org.danilopianini.lang.LangUtils;
+import org.danilopianini.util.Hashes;
 
 import com.google.common.collect.Lists;
 
@@ -36,9 +36,8 @@ public class PointToPointRoute implements Route {
      *            end position
      */
     public PointToPointRoute(final Position start, final Position end) {
-        LangUtils.requireNonNull(start, end);
-        s = start;
-        e = end;
+        s = Objects.requireNonNull(start);
+        e = Objects.requireNonNull(end);
     }
 
     @Override
@@ -91,7 +90,7 @@ public class PointToPointRoute implements Route {
 
     @Override
     public int hashCode() {
-        return HashUtils.hash32(getPoints());
+        return Hashes.hash32(getPoints());
     }
 
 }

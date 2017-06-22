@@ -15,7 +15,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,13 +25,13 @@ public class AST implements ITree {
     private static final long serialVersionUID = 5276224537064582492L;
     private static final Logger L = LoggerFactory.getLogger(AST.class);
 
-    private final FasterString fs;
+    private final HashString fs;
     private final ITreeNode<?> rootElement;
 
-    private static ITreeNode<?> assign(final ITreeNode<?> node, final Map<FasterString, ITreeNode<?>> matches) {
+    private static ITreeNode<?> assign(final ITreeNode<?> node, final Map<HashString, ITreeNode<?>> matches) {
         if (node.getNumberOfChildren() == 0) {
             final Type t = node.getType();
-            final ITreeNode<?> e = matches.get(node.toFasterString());
+            final ITreeNode<?> e = matches.get(node.toHashString());
             if (t.equals(Type.VAR) && e != null) {
                 switch (e.getType()) {
                 case LIST:
@@ -95,7 +95,7 @@ public class AST implements ITree {
             final ITreeNode<?> right = assign(node.getRightChild(), matches);
             switch (node.getType()) {
             case COMPARATOR:
-                root = new ComparatorTreeNode((FasterString) node.getData(), left, right);
+                root = new ComparatorTreeNode((HashString) node.getData(), left, right);
                 break;
             case LISTCOMPARATOR:
                 root = new ListComparatorTreeNode(((ListComparatorTreeNode) node).getData(), left, right);
@@ -129,7 +129,7 @@ public class AST implements ITree {
         return node;
     }
 
-    private static void unwrapLists(final Set<ITreeNode<?>> l, final ListTreeNode node, final Map<FasterString, ITreeNode<?>> matches) {
+    private static void unwrapLists(final Set<ITreeNode<?>> l, final ListTreeNode node, final Map<HashString, ITreeNode<?>> matches) {
         for (final ITreeNode<?> tree : node.getData()) {
             final ITreeNode<?> instance = assign(tree, matches);
             if (instance.getType().equals(Type.LIST)) {
@@ -151,7 +151,7 @@ public class AST implements ITree {
      */
     public AST(final ITreeNode<?> root) {
         rootElement = root;
-        fs = root.toFasterString();
+        fs = root.toHashString();
     }
 
     /*
@@ -162,7 +162,7 @@ public class AST implements ITree {
      * .Map)
      */
     @Override
-    public AST assignVarValue(final Map<FasterString, ITreeNode<?>> matches) {
+    public AST assignVarValue(final Map<HashString, ITreeNode<?>> matches) {
         return new AST(assign(rootElement, matches));
     }
 
@@ -177,7 +177,7 @@ public class AST implements ITree {
      *         expression can't be computed, an exception is thrown.
      */
     @Override
-    public double evaluation(final Map<FasterString, ITreeNode<?>> matches) {
+    public double evaluation(final Map<HashString, ITreeNode<?>> matches) {
         final Object res = getRoot().getValue(matches);
         if (res instanceof Double) {
             return (Double) res;
@@ -197,7 +197,7 @@ public class AST implements ITree {
     }
 
     @Override
-    public FasterString toFasterString() {
+    public HashString toHashString() {
         return fs;
     }
 

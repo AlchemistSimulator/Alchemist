@@ -8,7 +8,6 @@
  */
 package it.unibo.alchemist.model.implementations.timedistributions;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Time;
@@ -60,9 +59,8 @@ public class DiracComb<T> extends AbstractDistribution<T> {
     }
 
     @Override
-    @SuppressFBWarnings("CN_IDIOM_NO_SUPER_CALL")
-    public DiracComb<T> clone() {
-        return new DiracComb<>(getNextOccurence(), 1 / timeInterval);
+    public DiracComb<T> clone(final Time currentTime) {
+        return new DiracComb<>(currentTime, 1 / timeInterval);
     }
 
     @Override

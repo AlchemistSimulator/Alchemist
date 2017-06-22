@@ -102,9 +102,8 @@ public class ExponentialTime<T> extends AbstractDistribution<T> {
     }
 
     @Override
-    @SuppressFBWarnings("CN_IDIOM_NO_SUPER_CALL")
-    public ExponentialTime<T> clone() {
-        return new ExponentialTime<>(rate, getNextOccurence(), rand);
+    public ExponentialTime<T> clone(final Time currentTime) {
+        return new ExponentialTime<>(rate, DoubleTime.ZERO_TIME, rand);
     }
 
     @Override

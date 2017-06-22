@@ -11,14 +11,15 @@
  */
 package it.unibo.alchemist.model.implementations.conditions;
 
+import java.util.Objects;
+
+import org.danilopianini.util.LinkedListSet;
+import org.danilopianini.util.ListSet;
+
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 
 /**
@@ -28,7 +29,7 @@ import java.util.Objects;
 public abstract class AbstractCondition<T> implements Condition<T> {
 
     private static final long serialVersionUID = -1610947908159507754L;
-    private final List<Molecule> influencing = new ArrayList<Molecule>(1);
+    private final ListSet<Molecule> influencing = new LinkedListSet<>();
     private final Node<T> n;
 
     /**
@@ -39,7 +40,7 @@ public abstract class AbstractCondition<T> implements Condition<T> {
     }
 
     @Override
-    public List<? extends Molecule> getInfluencingMolecules() {
+    public ListSet<? extends Molecule> getInfluencingMolecules() {
         return influencing;
     }
 

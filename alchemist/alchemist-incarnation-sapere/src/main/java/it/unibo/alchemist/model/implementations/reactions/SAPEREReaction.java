@@ -28,7 +28,9 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
+import org.danilopianini.util.ArrayListSet;
+import org.danilopianini.util.ListSet;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -55,7 +57,7 @@ public class SAPEREReaction extends AReaction<List<ILsaMolecule>> {
 
     private boolean emptyExecution;
     private boolean modifiesOnlyLocally = true;
-    private List<Map<FasterString, ITreeNode<?>>> possibleMatches = new ArrayList<>(0);
+    private List<Map<HashString, ITreeNode<?>>> possibleMatches = new ArrayList<>(0);
     private List<Map<ILsaNode, List<ILsaMolecule>>> possibleRemove = new ArrayList<>(0);
     private List<Double> propensities = new ArrayList<>(0);
     private double totalPropensity;
@@ -115,8 +117,8 @@ public class SAPEREReaction extends AReaction<List<ILsaMolecule>> {
     }
 
     @Override
-    public Reaction<List<ILsaMolecule>> cloneOnNewNode(final Node<List<ILsaMolecule>> n) {
-        final SAPEREReaction res = new SAPEREReaction(environment, (ILsaNode) n, rng, timedist.clone());
+    public Reaction<List<ILsaMolecule>> cloneOnNewNode(final Node<List<ILsaMolecule>> n, final Time currentTime) {
+        final SAPEREReaction res = new SAPEREReaction(environment, (ILsaNode) n, rng, timedist.clone(currentTime));
         final ArrayList<Condition<List<ILsaMolecule>>> c = new ArrayList<>();
         for (final Condition<List<ILsaMolecule>> cond : getConditions()) {
             c.add(cond.cloneCondition(n, res));
@@ -155,7 +157,7 @@ public class SAPEREReaction extends AReaction<List<ILsaMolecule>> {
         }
         final Position nodePosCache = modifiesOnlyLocally ? environment.getPosition(getNode()) : null;
         final List<? extends ILsaMolecule> localContentCache = modifiesOnlyLocally ? new ArrayList<>(getNode().getLsaSpace()) : null;
-        Map<FasterString, ITreeNode<?>> matches = null;
+        Map<HashString, ITreeNode<?>> matches = null;
         Map<ILsaNode, List<ILsaMolecule>> toRemove = null;
         /*
          * If there is infinite propensity, the last match added is the one to
@@ -237,7 +239,7 @@ public class SAPEREReaction extends AReaction<List<ILsaMolecule>> {
     /**
      * @return the list of all possible matches
      */
-    protected List<Map<FasterString, ITreeNode<?>>> getPossibleMatches() {
+    protected List<Map<HashString, ITreeNode<?>>> getPossibleMatches() {
         return possibleMatches;
     }
 
@@ -295,7 +297,7 @@ public class SAPEREReaction extends AReaction<List<ILsaMolecule>> {
                     /*
                      * For each possible match, compute the propensity
                      */
-                    for (final Map<FasterString, ITreeNode<?>> match : possibleMatches) {
+                    for (final Map<HashString, ITreeNode<?>> match : possibleMatches) {
                         timedist.setMatches(match);
                         final double p = timedist.getRate();
                         propensities.add(p);
@@ -357,8 +359,8 @@ public class SAPEREReaction extends AReaction<List<ILsaMolecule>> {
          * locally. Otherwise there is no control on where the modified
          * molecules will end up.
          */
-        final List<Molecule> influencing = new ArrayList<>(getInfluencingMolecules());
-        final List<Molecule> influenced = new ArrayList<>(getInfluencedMolecules());
+        final ListSet<Molecule> influencing = new ArrayListSet<>(getInfluencingMolecules());
+        final ListSet<Molecule> influenced = new ArrayListSet<>(getInfluencedMolecules());
         if (getInputContext() == Context.LOCAL && modifiesOnlyLocally) {
             /*
              * Moreover, since there is no control over the personalised agents,
@@ -402,7 +404,7 @@ public class SAPEREReaction extends AReaction<List<ILsaMolecule>> {
      * @param pm
      *            the list of all possible matches
      */
-    protected void setPossibleMatches(final List<Map<FasterString, ITreeNode<?>>> pm) {
+    protected void setPossibleMatches(final List<Map<HashString, ITreeNode<?>>> pm) {
         this.possibleMatches = pm;
     }
 

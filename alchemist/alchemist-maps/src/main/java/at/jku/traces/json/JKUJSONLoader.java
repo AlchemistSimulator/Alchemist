@@ -11,14 +11,15 @@ package at.jku.traces.json;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.danilopianini.io.FileUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,7 +114,9 @@ public final class JKUJSONLoader implements Serializable {
             final GPSTrace p = l.get(i);
             p.normalizeTimes(mintime);
         }
-        FileUtilities.objectToFile((Serializable) l, dest, false);
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(dest))) {
+            oos.writeObject(l);
+        }
     }
 
     /**

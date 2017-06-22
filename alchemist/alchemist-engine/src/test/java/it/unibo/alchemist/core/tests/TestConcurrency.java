@@ -5,40 +5,27 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
-import it.unibo.alchemist.model.interfaces.Action;
-import it.unibo.alchemist.model.interfaces.Condition;
-import it.unibo.alchemist.model.interfaces.Context;
+import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
+import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
+import it.unibo.alchemist.model.implementations.nodes.GenericNode;
+import it.unibo.alchemist.model.implementations.reactions.Event;
+import it.unibo.alchemist.model.implementations.timedistributions.DiracComb;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Layer;
-import it.unibo.alchemist.model.interfaces.LinkingRule;
-import it.unibo.alchemist.model.interfaces.Molecule;
-import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 
 /**
@@ -48,6 +35,28 @@ public class TestConcurrency {
 
     private static final Logger L = LoggerFactory.getLogger(Engine.class);
 
+    private Environment<Object> env;
+
+    /**
+     * Setup phase.
+     */
+    @Before
+    public void setUp() {
+        env = new Continuous2DEnvironment<>();
+        final Node<Object> n = new GenericNode<Object>(env) {
+            private static final long serialVersionUID = 1L;
+            @Override
+            protected Object createT() {
+                return "";
+            }
+        };
+        env.setLinkingRule(new NoLinks<>());
+        final TimeDistribution<Object> td = new DiracComb<>(1);
+        final Reaction<Object> r = new Event<>(n, td);
+        n.addReaction(r);
+        env.addNode(n, env.makePosition(0, 0));
+    }
+
     /**
      * Test if the status of a {@link Engine} changes accordingly to the methods
      * provided by {@link Engine.StateCommand}.
@@ -56,7 +65,7 @@ public class TestConcurrency {
     @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", justification = "We don't need the status of the Runnable")
     public void newNewTest1() {
 
-        final Simulation<Object> sim = new Engine<>(new DummyEnvironment(), 10);
+        final Simulation<Object> sim = new Engine<>(env, 10);
         final ExecutorService ex = Executors.newCachedThreadPool();
 
         ex.submit(sim);
@@ -98,7 +107,6 @@ public class TestConcurrency {
     @Test
     @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", justification = "We don't need the status of the Runnable")
     public void newTest2() {
-        final Environment<Object> env = new DummyEnvironment();
         final Simulation<Object> sim = new Engine<>(env, 10);
         final ExecutorService ex = Executors.newCachedThreadPool();
         ex.submit(sim);
@@ -122,291 +130,6 @@ public class TestConcurrency {
         } catch (InterruptedException e) {
             fail(e.getMessage());
         }
-    }
-
-    @SuppressFBWarnings(value = "EQ_COMPARETO_USE_OBJECT_EQUALS", justification = "We don't need equals nor compareTo")
-    private static class DummyEnvironment implements Environment<Object> {
-        private static final long serialVersionUID = 4097966732041667486L;
-        private final Node<Object> node = new Node<Object>() {
-            private static final long serialVersionUID = 1L;
-            private final Reaction<Object> reaction = new Reaction<Object>() {
-                private static final long serialVersionUID = 1L;
-                private Time tau = new DoubleTime();
-                @Override
-                public int compareTo(final Reaction<Object> o) {
-                    return 0;
-                }
-                @Override
-                public boolean canExecute() {
-                    return true;
-                }
-                @Override
-                public Reaction<Object> cloneOnNewNode(final Node<Object> n) {
-                    throw new UnsupportedOperationException();
-                }
-                @Override
-                public void execute() {
-                }
-                @Override
-                public List<Action<Object>> getActions() {
-                    return Collections.emptyList();
-                }
-                @Override
-                public List<Condition<Object>> getConditions() {
-                    return Collections.emptyList();
-                }
-                @Override
-                public List<Molecule> getInfluencedMolecules() {
-                    return Collections.emptyList();
-                }
-                @Override
-                public List<Molecule> getInfluencingMolecules() {
-                    return Collections.emptyList();
-                }
-                @Override
-                public Context getInputContext() {
-                    return Context.LOCAL;
-                }
-                @Override
-                public Node<Object> getNode() {
-                    return node;
-                }
-                @Override
-                public Context getOutputContext() {
-                    return Context.LOCAL;
-                }
-                @Override
-                public double getRate() {
-                    return 1;
-                }
-                @Override
-                public Time getTau() {
-                    return tau;
-                }
-                @Override
-                public TimeDistribution<Object> getTimeDistribution() {
-                    throw new UnsupportedOperationException();
-                }
-                @Override
-                public void setActions(final List<Action<Object>> a) { }
-                @Override
-                public void setConditions(final List<Condition<Object>> c) { }
-                @Override
-                public void update(final Time curTime, final boolean executed, final Environment<Object> env) {
-                    tau = tau.sum(new DoubleTime(1));
-                }
-                @Override
-                public void initializationComplete(final Time t, final Environment<Object> env) { }
-            };
-            @Override
-            public Iterator<Reaction<Object>> iterator() {
-                return getReactions().iterator();
-            }
-            @Override
-            public void addReaction(final Reaction<Object> r) {
-            }
-            @Override
-            public boolean contains(final Molecule mol) {
-                return false;
-            }
-            @Override
-            public int getChemicalSpecies() {
-                return 0;
-            }
-            @Override
-            public Object getConcentration(final Molecule mol) {
-                throw new UnsupportedOperationException();
-            }
-            @Override
-            public Map<Molecule, Object> getContents() {
-                return Collections.emptyMap();
-            }
-            @Override
-            public int getId() {
-                return 0;
-            }
-            @Override
-            public List<Reaction<Object>> getReactions() {
-                return Lists.<Reaction<Object>>newArrayList(reaction);
-            }
-            @Override
-            public void removeConcentration(final Molecule mol) {
-                throw new UnsupportedOperationException();
-            }
-            @Override
-            public void removeReaction(final Reaction<Object> r) {
-                throw new UnsupportedOperationException();
-            }
-            @Override
-            public void setConcentration(final Molecule mol, final Object c) {
-                throw new UnsupportedOperationException();
-            }
-            @Override
-            public Node<Object> cloneNode() {
-                throw new UnsupportedOperationException();
-            }
-            @Override
-            public int compareTo(final Node<Object> o) {
-                return 0;
-            } };
-        @Override
-        public Iterator<Node<Object>> iterator() {
-            return getNodes().iterator();
-        }
-        @Override
-        public void addNode(final Node<Object> node, final Position p) {
-            throw new UnsupportedOperationException();
-        }
-        @Override
-        public int getDimensions() {
-            return 0;
-        }
-        @Override
-        public double getDistanceBetweenNodes(final Node<Object> n1, final Node<Object> n2) {
-            return 0;
-        }
-        @Override
-        public Neighborhood<Object> getNeighborhood(final Node<Object> center) {
-            return new Neighborhood<Object>() {
-                private static final long serialVersionUID = 1L;
-                @Override
-                public Iterator<Node<Object>> iterator() {
-                    return Collections.emptyIterator();
-                }
-                @Override
-                public void addNeighbor(final Node<Object> neigh) {
-                    throw new UnsupportedOperationException();
-                }
-                @Override
-                public Neighborhood<Object> clone() throws CloneNotSupportedException {
-                    throw new UnsupportedOperationException();
-                }
-                @Override
-                public boolean contains(final Node<Object> n) {
-                    return false;
-                }
-                @Override
-                public boolean contains(final int n) {
-                    return false;
-                }
-                @Override
-                public Set<Node<Object>> getBetweenRange(final double min, final double max) {
-                    return Collections.emptySet();
-                }
-
-                @Override
-                public Node<Object> getCenter() {
-                    return node;
-                }
-                @Override
-                public Node<Object> getNeighborById(final int id) {
-                    throw new UnsupportedOperationException();
-                }
-                @Override
-                public Node<Object> getNeighborByNumber(final int num) {
-                    throw new UnsupportedOperationException();
-                }
-                @Override
-                public Collection<Node<Object>> getNeighbors() {
-                    return Collections.emptyList();
-                }
-                @Override
-                public boolean isEmpty() {
-                    return true;
-                }
-                @Override
-                public void removeNeighbor(final Node<Object> neighbor) {
-                    throw new UnsupportedOperationException();
-                }
-                @Override
-                public int size() {
-                    return 0;
-                }
-            };
-        }
-        @Override
-        public Node<Object> getNodeByID(final int id) {
-            return node;
-        }
-        @Override
-        public Collection<Node<Object>> getNodes() {
-            return Lists.<Node<Object>>newArrayList(node);
-        }
-        @Override
-        public int getNodesNumber() {
-            return 1;
-        }
-        @Override
-        public Set<Node<Object>> getNodesWithinRange(final Node<Object> center, final double range) {
-            return Collections.emptySet();
-        }
-        @Override
-        public Set<Node<Object>> getNodesWithinRange(final Position center, final double range) {
-            return Collections.emptySet();
-        }
-        @Override
-        public double[] getOffset() {
-            return new double[] {};
-        }
-        @Override
-        public Position getPosition(final Node<Object> node) {
-            throw new UnsupportedOperationException();
-        }
-        @Override
-        public String getPreferredMonitor() {
-            throw new UnsupportedOperationException();
-        }
-        @Override
-        public double[] getSize() {
-            return new double[] {};
-        }
-        @Override
-        public double[] getSizeInDistanceUnits() {
-            return new double[] {};
-        }
-        @Override
-        public void moveNode(final Node<Object> node, final Position direction) {
-            throw new UnsupportedOperationException();
-        }
-        @Override
-        public void moveNodeToPosition(final Node<Object> node, final Position position) {
-            throw new UnsupportedOperationException();
-        }
-        @Override
-        public void removeNode(final Node<Object> node) {
-            throw new UnsupportedOperationException();
-        }
-        @Override
-        public void setLinkingRule(final LinkingRule<Object> rule) {
-        }
-        @Override
-        public LinkingRule<Object> getLinkingRule() {
-            throw new UnsupportedOperationException();
-        }
-        @Override
-        public void addLayer(final Molecule m, final Layer<Object> l) {
-            throw new UnsupportedOperationException();
-        }
-        @Override
-        public Set<Layer<Object>> getLayers() {
-            throw new UnsupportedOperationException();
-        }
-        @Override
-        public Optional<Layer<Object>> getLayer(final Molecule m) {
-            throw new UnsupportedOperationException();
-        }
-        @Override
-        public Simulation<Object> getSimulation() {
-            return null;
-        }
-        @Override
-        public void setSimulation(final Simulation<Object> s) {
-        }
-        @Override
-        public Position makePosition(final Number... coordinates) {
-            return null;
-        }
-
     }
 
 }

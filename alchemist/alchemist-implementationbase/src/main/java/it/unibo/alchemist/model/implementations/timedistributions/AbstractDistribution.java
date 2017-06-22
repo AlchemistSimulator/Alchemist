@@ -82,6 +82,6 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
     protected abstract void updateStatus(Time curTime, boolean executed, double param, Environment<T> env);
 
     @Override
-    public abstract AbstractDistribution<T> clone();
+    public abstract AbstractDistribution<T> clone(Time currentTime);
 
 }

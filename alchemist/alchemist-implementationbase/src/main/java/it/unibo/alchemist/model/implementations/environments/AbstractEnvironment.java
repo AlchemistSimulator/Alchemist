@@ -8,34 +8,40 @@
  */
 package it.unibo.alchemist.model.implementations.environments;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
-import java.util.Set;
 import java.util.Spliterator;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.danilopianini.util.ArrayListSet;
+import org.danilopianini.util.LinkedListSet;
+import org.danilopianini.util.ListSet;
+import org.danilopianini.util.ListSets;
 import org.danilopianini.util.SpatialIndex;
 
-import com.google.common.collect.Sets;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.google.common.base.Predicates;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.LinkingRule;
 import it.unibo.alchemist.model.interfaces.Molecule;
@@ -51,20 +57,23 @@ import it.unibo.alchemist.model.interfaces.Position;
  */
 public abstract class AbstractEnvironment<T> implements Environment<T> {
 
-    private static final long serialVersionUID = 0L;
     /**
      * The default monitor that will be loaded. If null, the GUI must default to
      * a compatible monitor.
      */
     protected static final String DEFAULT_MONITOR = null;
-    private final TIntObjectHashMap<Position> nodeToPos = new TIntObjectHashMap<>();
-    private final TIntObjectHashMap<Node<T>> nodes = new TIntObjectHashMap<Node<T>>();
-    private final SpatialIndex<Node<T>> spatialIndex;
+    private static final long serialVersionUID = 0L;
+    private transient LoadingCache<ImmutablePair<Position, Double>, ListSet<Node<T>>> cache;
+    private Incarnation<T> incarnation;
     private final Map<Molecule, Layer<T>> layers = new LinkedHashMap<>();
     private final TIntObjectHashMap<Neighborhood<T>> neighCache = new TIntObjectHashMap<>();
+    private final TIntObjectHashMap<Node<T>> nodes = new TIntObjectHashMap<Node<T>>();
+    private final TIntObjectHashMap<Position> nodeToPos = new TIntObjectHashMap<>();
     private LinkingRule<T> rule;
+    private transient Simulation<T> simulation;
+    private final SpatialIndex<Node<T>> spatialIndex;
 
-    private Simulation<T> simulation;
+    private Predicate<Environment<T>> terminator = Predicates.alwaysFalse();
 
     /**
      * @param internalIndex
@@ -87,7 +96,9 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
         if (nodeShouldBeAdded(node, p)) {
             final Position actualPosition = computeActualInsertionPosition(node, p);
             setPosition(node, actualPosition);
-            nodes.put(node.getId(), node);
+            if (nodes.put(node.getId(), node) != null) {
+                throw new IllegalArgumentException("Node with id " + node.getId() + " was already existing in this environment.");
+            }
             spatialIndex.insert(node, actualPosition.getCartesianCoordinates());
             /*
              * Neighborhood computation
@@ -104,6 +115,11 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
              */
             nodeAdded(node, p, getNeighborhood(node));
         }
+    }
+
+    @Override
+    public final void addTerminator(final Predicate<Environment<T>> terminator) {
+        this.terminator = this.terminator.or(terminator);
     }
 
     /**
@@ -130,21 +146,13 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
                 .map(n -> new Operation(center, n, true));
     }
 
-    private Set<Node<T>> getAllNodesInRange(final Position center, final double range) {
-        final List<Position> boundingBox = center.buildBoundingBox(range);
-        assert boundingBox.size() == getDimensions();
-        final double[][] queryArea = new double[getDimensions()][];
-        for (int i = 0; i < queryArea.length; i++) {
-            queryArea[i] = boundingBox.get(i).getCartesianCoordinates();
+    private ListSet<Node<T>> getAllNodesInRange(final Position center, final double range) {
+        if (cache == null) {
+            cache = Caffeine.newBuilder()
+                .maximumSize(1000)
+                .build(pair -> runQuery(pair.left, pair.right));
         }
-        final Collection<Node<T>> result = spatialIndex.query(queryArea);
-        final Iterator<Node<T>> it = result.iterator();
-        while (it.hasNext()) {
-            if (getPosition(it.next()).getDistanceTo(center) > range) {
-                it.remove();
-            }
-        }
-        return new LinkedHashSet<>(result);
+        return cache.get(new ImmutablePair<>(center, range));
     }
 
     @Override
@@ -155,13 +163,18 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     }
 
     @Override
+    public Optional<Incarnation<T>> getIncarnation() {
+        return Optional.ofNullable(incarnation);
+    }
+
+    @Override
     public Optional<Layer<T>> getLayer(final Molecule m) {
         return Optional.ofNullable(layers.get(m));
     }
 
     @Override
-    public Set<Layer<T>> getLayers() {
-        return Sets.newLinkedHashSet(layers.values());
+    public ListSet<Layer<T>> getLayers() {
+        return new ArrayListSet<>(layers.values());
     }
 
     @Override
@@ -188,8 +201,8 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     }
 
     @Override
-    public Collection<Node<T>> getNodes() {
-        return Collections.unmodifiableCollection(nodes.valueCollection());
+    public ListSet<Node<T>> getNodes() {
+        return new ArrayListSet<>(nodes.valueCollection());
     }
 
     @Override
@@ -198,17 +211,23 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     }
 
     @Override
-    public Set<Node<T>> getNodesWithinRange(final Node<T> center, final double range) {
+    public ListSet<Node<T>> getNodesWithinRange(final Node<T> center, final double range) {
         /*
          * Remove the center node
          */
-        final Set<Node<T>> res = getAllNodesInRange(getPosition(center), range);
-        res.remove(center);
+        final Position centerPosition = getPosition(center);
+        if (centerPosition == null) {
+            throw new IllegalArgumentException("Node " + center + " was not part of this environment");
+        }
+        final ListSet<Node<T>> res = new LinkedListSet<>(getAllNodesInRange(centerPosition, range));
+        if (!res.remove(center)) {
+            throw new IllegalStateException("The environment is an inconsistent state.");
+        }
         return res;
     }
 
     @Override
-    public Set<Node<T>> getNodesWithinRange(final Position center, final double range) {
+    public ListSet<Node<T>> getNodesWithinRange(final Position center, final double range) {
         /*
          * Collect every node in range
          */
@@ -218,11 +237,6 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     @Override
     public final Position getPosition(final Node<T> node) {
         return nodeToPos.get(node.getId());
-    }
-
-    @Override
-    public String getPreferredMonitor() {
-        return DEFAULT_MONITOR;
     }
 
     @Override
@@ -239,19 +253,30 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
         Optional.ofNullable(getSimulation()).ifPresent(r);
     }
 
+    private void invalidateCache() {
+        if (cache != null) {
+            cache.invalidateAll();
+        }
+    }
+
+    @Override
+    public final boolean isTerminated() {
+        return terminator.test(this);
+    }
+
     @Override
     public Iterator<Node<T>> iterator() {
-        return getNodes().iterator();
+        return Collections.unmodifiableCollection(nodes.valueCollection()).iterator();
     }
 
     private Stream<Operation> lostNeighbors(final Node<T> center, final Neighborhood<T> oldNeighborhood, final Neighborhood<T> newNeighborhood) {
         return Optional.ofNullable(oldNeighborhood)
-        .map(Neighborhood::getNeighbors)
-        .orElse(Collections.emptyList())
-        .stream()
-        .filter(neigh -> !newNeighborhood.contains(neigh))
-        .filter(neigh -> getNeighborhood(neigh).contains(center))
-        .map(n -> new Operation(center, n, false));
+            .map(Neighborhood::getNeighbors)
+            .orElse(ListSets.emptyListSet())
+            .stream()
+            .filter(neigh -> !newNeighborhood.contains(neigh))
+            .filter(neigh -> getNeighborhood(neigh).contains(center))
+            .map(n -> new Operation(center, n, false));
     }
 
     /**
@@ -306,6 +331,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
 
     @Override
     public final void removeNode(@Nonnull final Node<T> node) {
+        invalidateCache();
         nodes.remove(Objects.requireNonNull(node).getId());
         final Position pos = nodeToPos.remove(node.getId());
         spatialIndex.remove(node, pos.getCartesianCoordinates());
@@ -327,6 +353,25 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
         nodeRemoved(node, neigh);
     }
 
+    private ListSet<Node<T>> runQuery(final Position center, final double range) {
+        final List<Node<T>> result = spatialIndex.query(center.buildBoundingBox(range).stream()
+                .map(Position::getCartesianCoordinates)
+                .toArray(i -> new double[i][]));
+        final int size = result.size();
+        return ListSets.unmodifiableListSet(result.stream()
+            .filter(it -> getPosition(it).getDistanceTo(center) <= range)
+            .collect(Collectors.toCollection(() -> new ArrayListSet<>(size))));
+    }
+
+    @Override
+    public final void setIncarnation(final Incarnation<T> incarnation) {
+        if (this.incarnation == null) {
+            this.incarnation = Objects.requireNonNull(incarnation);
+        } else {
+            throw new IllegalStateException("The Environment has already been equipeed with an incarnation: " + this.incarnation);
+        }
+    }
+
     @Override
     public void setLinkingRule(final LinkingRule<T> r) {
         rule = Objects.requireNonNull(r);
@@ -341,7 +386,10 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
      *            its new position
      */
     protected final void setPosition(final Node<T> n, final Position p) {
-        final Position pos = nodeToPos.put(n.getId(), p);
+        final Position pos = nodeToPos.put(Objects.requireNonNull(n).getId(), Objects.requireNonNull(p));
+        if (!p.equals(pos)) {
+            invalidateCache();
+        }
         if (pos != null && !spatialIndex.move(n, pos.getCartesianCoordinates(), p.getCartesianCoordinates())) {
             throw new IllegalArgumentException("Tried to move a node not previously present in the environment: \n"
                     + "Node: " + n + "\n" + "Requested position" + p);
@@ -433,9 +481,9 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     }
 
     private class Operation {
-        private final Node<T> origin;
         private final Node<T> destination;
         private final boolean isAdd;
+        private final Node<T> origin;
         Operation(final Node<T> origin, final Node<T> destination, final boolean isAdd) {
             this.origin = origin;
             this.destination = destination;

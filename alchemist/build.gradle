@@ -7,21 +7,35 @@ buildscript {
     dependencies {
         classpath "org.danilopianini:build-commons:${buildCommonsVersion}"
         classpath "org.danilopianini:javadoc.io-linker:${javadocIOLinkerVersion}"
-        classpath "org.xtext:xtext-gradle-plugin:1.0.17"
+        classpath "org.xtext:xtext-gradle-plugin:${xtextPluginVersion}"
     }
 }
 
 allprojects {
-    
+
+    scalaVersion = "${scalaMajorVersion}.${scalaMinorVersion}"
+
     apply plugin: 'org.danilopianini.build-commons'
-    
+    apply plugin: "org.xtext.xtend"
+    apply plugin: 'scala'
+
     configurations {
         all*.exclude group: 'org.eclipse.xtext', module: 'org.eclipse.xtext.dependencies'
+        all {
+            if(!it.name.contains('antlr')) {
+	            resolutionStrategy {
+	                forcedModules += "org.antlr:antlr-runtime:${antlrRuntimeVersion}"
+	            }
+            }
+        }
     }
 
     dependencies {
         compile "com.google.code.findbugs:findbugs:$findBugsVersion"
         compile "org.apache.commons:commons-math3:$math3Version"
+        compile "org.eclipse.xtend:org.eclipse.xtend.lib:${xtendLibVersion}"
+        compile "org.scala-lang:scala-compiler:${scalaVersion}"
+        compile "org.scala-lang:scala-library:${scalaVersion}"
         compile "org.slf4j:slf4j-api:$slf4jVersion"
 
         runtime "ch.qos.logback:logback-classic:$logbackVersion"

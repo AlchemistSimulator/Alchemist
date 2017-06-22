@@ -681,7 +681,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
                     final Collection<Node<T>> newNodes = new ArrayList<>(selectedNodes.size());
                     try {
                         for (final Node<T> n : selectedNodes) {
-                            newNodes.add(n.cloneNode());
+                            newNodes.add(n.cloneNode(engine.getTime()));
                         }
                         for (final Node<T> n: newNodes) {
                             currentEnv.addNode(n, envEnding);

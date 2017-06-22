@@ -9,22 +9,22 @@
 package it.unibo.alchemist.expressions.implementations;
 
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 
 import java.util.Map;
 
 
 /**
  */
-public class ConstTreeNode extends ATreeNode<FasterString> {
+public class ConstTreeNode extends ATreeNode<HashString> {
 
     private static final long serialVersionUID = 8358898580537639569L;
 
     /**
      * @param data
-     *            a FasterString representation of the constant
+     *            a HashString representation of the constant
      */
-    public ConstTreeNode(final FasterString data) {
+    public ConstTreeNode(final HashString data) {
         super(data, null, null);
     }
 
@@ -46,7 +46,7 @@ public class ConstTreeNode extends ATreeNode<FasterString> {
      * .Map)
      */
     @Override
-    public FasterString getValue(final Map<FasterString, ITreeNode<?>> mp) {
+    public HashString getValue(final Map<HashString, ITreeNode<?>> mp) {
         return getData();
     }
 

@@ -9,7 +9,7 @@
 package it.unibo.alchemist.expressions.implementations;
 
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 
 import java.util.Map;
 
@@ -40,7 +40,7 @@ public class NumTreeNode extends ATreeNode<Double> {
     }
 
     @Override
-    public Double getValue(final Map<FasterString, ITreeNode<?>> mp) {
+    public Double getValue(final Map<HashString, ITreeNode<?>> mp) {
         return getData();
     }
 

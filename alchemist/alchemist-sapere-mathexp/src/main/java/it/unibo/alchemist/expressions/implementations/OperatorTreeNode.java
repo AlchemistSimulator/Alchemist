@@ -10,7 +10,7 @@ package it.unibo.alchemist.expressions.implementations;
 
 import java.util.Map;
 
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +64,7 @@ public class OperatorTreeNode extends ATreeNode<Double> {
      * .Map)
      */
     @Override
-    public Double getValue(final Map<FasterString, ITreeNode<?>> matches) {
+    public Double getValue(final Map<HashString, ITreeNode<?>> matches) {
         final ITreeNode<?> child = getLeftChild();
         /*
          * Operation on Lists
@@ -136,7 +136,7 @@ public class OperatorTreeNode extends ATreeNode<Double> {
         }
     }
 
-    private static Double computeVal(final ITreeNode<?> child, final Map<FasterString, ITreeNode<?>> matches) {
+    private static Double computeVal(final ITreeNode<?> child, final Map<HashString, ITreeNode<?>> matches) {
         switch (child.getType()) {
         case VAR:
             return (Double) ((ITreeNode<?>) child.getValue(matches)).getData();

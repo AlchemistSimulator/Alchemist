@@ -25,7 +25,7 @@ import it.unibo.alchemist.expressions.interfaces.ITreeNode;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -160,10 +160,10 @@ public class Exp implements ExpConstants {
         return t.image;
     }
 
-    public final ITreeNode<FasterString> Cost() throws ParseException {
+    public final ITreeNode<HashString> Cost() throws ParseException {
         Token t;
         t = jj_consume_token(LIT);
-        return new ConstTreeNode(new FasterString(t.image));
+        return new ConstTreeNode(new HashString(t.image));
     }
 
     /** Disable tracing. */
@@ -184,7 +184,7 @@ public class Exp implements ExpConstants {
             case COMP:
                 cmp = Comparator();
                 s2 = Expr();
-                op = new ComparatorTreeNode(new FasterString(cmp), s1, s2);
+                op = new ComparatorTreeNode(new HashString(cmp), s1, s2);
                 break;
             case LISTCOMP:
                 cmp = listComparator();
@@ -622,7 +622,7 @@ public class Exp implements ExpConstants {
     public final ITreeNode<?> Var() throws ParseException {
         Token t;
         t = jj_consume_token(VAR);
-        return new VarTreeNode(new FasterString(t.image));
+        return new VarTreeNode(new HashString(t.image));
     }
 
 }

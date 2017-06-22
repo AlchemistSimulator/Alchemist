@@ -1,0 +1,27 @@
+incarnation: protelis
+
+network-model:
+  type: EuclideanDistance
+  parameters: [7]
+
+gradient: &gradient
+  - time-distribution: 1
+    type: Event
+    actions:
+      - type: RunProtelisProgram
+        parameters: [distanceTo, 1.01]
+  - program: send
+
+displacements:
+  - in:
+      type: Point
+      parameters: [0,0]      
+    contents:
+        - molecule: source
+          concentration: false
+        - molecule: enabled
+          concentration: true
+        - molecule: data
+          concentration: Infinity
+    programs:
+      - *gradient

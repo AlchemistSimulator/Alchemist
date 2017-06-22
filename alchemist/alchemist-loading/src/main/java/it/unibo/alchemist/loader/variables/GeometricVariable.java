@@ -1,8 +1,8 @@
 package it.unibo.alchemist.loader.variables;
 
 import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.apache.commons.math3.util.FastMath;
 
@@ -13,7 +13,7 @@ import org.apache.commons.math3.util.FastMath;
  * 
  * Both min and max must be strictly bigger than 0.
  */
-public class GeometricVariable extends PrintableVariable {
+public class GeometricVariable extends PrintableVariable<Double> {
 
     private static final long serialVersionUID = 1L;
     private final double def;
@@ -31,7 +31,7 @@ public class GeometricVariable extends PrintableVariable {
      *            number of samples (must be bigger than zero)
      */
     public GeometricVariable(final double def, final double min, final double max, final int samples) {
-        if (min >= max) {
+        if (min > max) {
             throw new IllegalArgumentException("min (" + min + ") can't be bigger than max (" + max + ")");
         }
         if (min <= 0d || max <= 0) {
@@ -40,6 +40,10 @@ public class GeometricVariable extends PrintableVariable {
         if (samples <= 0) {
             throw new IllegalArgumentException("At least one sample is required.");
         }
+        if (min == max && samples != 1) {
+            throw new IllegalArgumentException("Only a single sample can be produced if min and max are exactly equal. (min="
+                    + min + ", max=" + max + ", samples=" + samples);
+        }
         this.def = def;
         this.min = min;
         this.max = max;
@@ -47,19 +51,20 @@ public class GeometricVariable extends PrintableVariable {
     }
 
     @Override
-    public double getDefault() {
+    public Double getDefault() {
         return def;
     }
 
     @Override
-    public DoubleStream stream() {
+    public Stream<Double> stream() {
         return IntStream.range(0, maxSamples)
-                .mapToDouble(s -> min * FastMath.pow(max / min, (double) s / (maxSamples - 1)));
+                .mapToDouble(s -> min * FastMath.pow(max / min, (double) s / Math.max(1, maxSamples - 1)))
+                .boxed();
     }
 
     @Override
     public String toString() {
-        return '[' + stream().mapToObj(Double::toString).collect(Collectors.joining(",")) + ']';
+        return '[' + stream().map(Object::toString).collect(Collectors.joining(",")) + ']';
     }
 
 }

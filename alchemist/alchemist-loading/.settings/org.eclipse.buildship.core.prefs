@@ -1,14 +1,14 @@
 GRADLE_BUILD_COMMANDS=org.eclipse.jdt.core.javabuilder
 GRADLE_FILTERS=1.0-projectRelativePath-matches-false-false-build,1.0-projectRelativePath-matches-false-false-.gradle
 GRADLE_NATURES=org.eclipse.jdt.core.javanature
-build.commands=org.eclipse.jdt.core.javabuilder
+build.commands=org.scala-ide.sdt.core.scalabuilder,org.eclipse.xtext.ui.shared.xtextBuilder
 connection.arguments=
 connection.gradle.distribution=GRADLE_DISTRIBUTION(WRAPPER)
 connection.java.home=null
 connection.jvm.arguments=
 connection.project.dir=..
-containers=org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8/
+containers=org.scala-ide.sdt.launching.SCALA_CONTAINER,org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8/
 derived.resources=.gradle,build
 eclipse.preferences.version=1
-natures=org.eclipse.jdt.core.javanature
+natures=org.scala-ide.sdt.core.scalanature,org.eclipse.jdt.core.javanature,org.eclipse.xtext.ui.shared.xtextNature
 project.path=\:alchemist-loading

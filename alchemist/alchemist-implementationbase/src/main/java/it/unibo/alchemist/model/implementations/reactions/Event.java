@@ -45,8 +45,8 @@ public class Event<T> extends AReaction<T> {
     }
 
     @Override
-    public Event<T> cloneOnNewNode(final Node<T> n) {
-        return new Event<>(n, getTimeDistribution().clone());
+    public Event<T> cloneOnNewNode(final Node<T> n, final Time currentTime) {
+        return makeClone(() -> new Event<>(n, getTimeDistribution().clone(currentTime)));
     }
 
 

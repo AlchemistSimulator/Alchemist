@@ -92,9 +92,8 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
     }
 
     @Override
-    @SuppressFBWarnings(value = "CN_IDIOM_NO_SUPER_CALL", justification = "Cloneable should not get used anyway")
-    public AbstractDistribution<T> clone() {
-        return new AnyRealDistribution<>(getNextOccurence(), distribution);
+    public AbstractDistribution<T> clone(final Time currentTime) {
+        return new AnyRealDistribution<>(currentTime, distribution);
     }
 
 }

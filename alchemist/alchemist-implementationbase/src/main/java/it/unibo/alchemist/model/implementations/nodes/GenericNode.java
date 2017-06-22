@@ -23,8 +23,6 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-import org.danilopianini.concurrency.ThreadLocalIdGenerator;
-
 import com.google.common.collect.MapMaker;
 import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
 
@@ -32,6 +30,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.Time;
 
 
 /**
@@ -46,8 +45,6 @@ public abstract class GenericNode<T> implements Node<T> {
     private static final ConcurrentMap<Environment<?>, AtomicInteger> IDGENERATOR = new MapMaker()
             .weakKeys().makeMap();
     private static final Semaphore MUTEX = new Semaphore(1);
-    private static final ThreadLocalIdGenerator SINGLETON = new ThreadLocalIdGenerator();
-    private static final AtomicInteger THREAD_UNSAFE = new AtomicInteger();
     private final int id;
     private final List<Reaction<T>> reactions = new ArrayList<>();
     private final ConcurrentMap<Molecule, T> molecules = new ConcurrentLinkedHashMap.Builder<Molecule, T>()
@@ -64,23 +61,6 @@ public abstract class GenericNode<T> implements Node<T> {
         }
         MUTEX.release();
         return idgen.getAndIncrement();
-    }
-
-    /**
-     * Basically, builds the node and just caches the hash code.
-     * 
-     * @param threadLocal
-     *            true if the id should be local to the current thread. In order
-     *            to keep the node ids along multiple simulations, pass true and
-     *            use different threads to instance the nodes.
-     * @deprecated this constructor can not generate ids correctly in case
-     *             batches of simulation are executed by the same thread, and as
-     *             such it has been deprecated and is scheduled for removal at
-     *             the next major release.
-     */
-    @Deprecated
-    protected GenericNode(final boolean threadLocal) {
-        this(threadLocal ? SINGLETON.genId() : THREAD_UNSAFE.getAndIncrement());
     }
 
     /**
@@ -102,7 +82,7 @@ public abstract class GenericNode<T> implements Node<T> {
     }
 
     @Override
-    public GenericNode<T> cloneNode() {
+    public GenericNode<T> cloneNode(final Time currentTime) {
         throw new UnsupportedOperationException();
     }
 

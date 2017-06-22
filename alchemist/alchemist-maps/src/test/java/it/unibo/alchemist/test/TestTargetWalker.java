@@ -1,5 +1,6 @@
 package it.unibo.alchemist.test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -74,6 +75,7 @@ public class TestTargetWalker {
             node.addReaction(reaction);
             env.addNode(node, STARTPOSITION);
         } catch (IllegalStateException e) {
+            e.printStackTrace(); // NOPMD
             fail(e.getMessage());
         }
     }
@@ -144,6 +146,7 @@ public class TestTargetWalker {
     @Test
     public void testIterableStrings() {
         final Position start = env.getPosition(node);
+        assertNotNull(start);
         /*
          * Should not be more than 10 meters afar the suggested start
          */

@@ -8,6 +8,13 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
+import java.util.List;
+import java.util.Map;
+
+import org.danilopianini.lang.HashString;
+import org.danilopianini.util.ListSet;
+import org.danilopianini.util.ListSets;
+
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaAction;
@@ -15,12 +22,6 @@ import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import org.danilopianini.lang.util.FasterString;
 
 
 /**
@@ -47,12 +48,12 @@ public class LsaDeleteNodeAction extends RemoveNode<List< ILsaMolecule>> impleme
     }
 
     @Override
-    public List<ILsaMolecule> getModifiedMolecules() {
-        return Collections.emptyList();
+    public ListSet<ILsaMolecule> getModifiedMolecules() {
+        return ListSets.emptyListSet();
     }
 
     @Override
-    public void setExecutionContext(final Map<FasterString, ITreeNode<?>> matches, final List< ILsaNode> nodes) {
+    public void setExecutionContext(final Map<HashString, ITreeNode<?>> matches, final List< ILsaNode> nodes) {
         /*
          * This reaction runs regardless the context.
          */

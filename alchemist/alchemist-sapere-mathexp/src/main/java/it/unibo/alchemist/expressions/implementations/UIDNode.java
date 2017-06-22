@@ -9,7 +9,7 @@
 package it.unibo.alchemist.expressions.implementations;
 
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 
 import java.util.Map;
 
@@ -23,42 +23,42 @@ public class UIDNode extends ConstTreeNode {
      * 
      */
     private static final long serialVersionUID = -2166926230641043532L;
-    private FasterString cache;
-    private final FasterString original;
+    private HashString cache;
+    private final HashString original;
 
     /**
      * Builds a new UUID node.
      * 
      * @param fs
-     *            the FasterString representation of the object this UID refers
+     *            the HashString representation of the object this UID refers
      *            to
      */
-    public UIDNode(final FasterString fs) {
+    public UIDNode(final HashString fs) {
         super(fs);
         original = fs;
     }
 
     @Override
-    public FasterString getValue(final Map<FasterString, ITreeNode<?>> mp) {
+    public HashString getValue(final Map<HashString, ITreeNode<?>> mp) {
         return original;
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see alice.alchemist.expressions.interfaces.ITreeNode#toFasterString()
+     * @see alice.alchemist.expressions.interfaces.ITreeNode#toHashString()
      */
     @Override
-    public FasterString toFasterString() {
+    public HashString toHashString() {
         if (cache == null) {
-            cache = new FasterString(PREFIX + original.hashToString());
+            cache = new HashString(PREFIX + original.hashToString());
         }
         return cache;
     }
 
     @Override
     public String toString() {
-        return toFasterString().toString();
+        return toHashString().toString();
     }
 
 }

@@ -9,8 +9,8 @@
 package it.unibo.alchemist.model.interfaces;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Set;
+
+import org.danilopianini.util.ListSet;
 
 /**
  * The type which describes the concentration of a molecule
@@ -74,7 +74,7 @@ public interface Neighborhood<T> extends Serializable, Cloneable, Iterable<Node<
      * @return the list of nodes whose distance from the center node is between
      *         min and max.
      */
-    Set<? extends Node<T>> getBetweenRange(double min, double max);
+    ListSet<? extends Node<T>> getBetweenRange(double min, double max);
 
     /**
      * Allows to access the central node.
@@ -106,7 +106,7 @@ public interface Neighborhood<T> extends Serializable, Cloneable, Iterable<Node<
      * 
      * @return the list of the neighbors
      */
-    Collection<Node<T>> getNeighbors();
+    ListSet<Node<T>> getNeighbors();
 
     /**
      * @return true if this neighborhood has no neighbors

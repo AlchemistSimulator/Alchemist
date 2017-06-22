@@ -10,9 +10,9 @@ package it.unibo.alchemist.model.implementations.actions;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.List;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.LangUtils;
+import org.danilopianini.util.ListSet;
 import org.protelis.lang.ProtelisLoader;
 import org.protelis.vm.ExecutionContext;
 import org.protelis.vm.ProtelisVM;
@@ -35,14 +35,37 @@ import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 public class RunProtelisProgram extends SimpleMolecule implements Action<Object> {
 
     private static final long serialVersionUID = 2207914086772704332L;
+    private boolean computationalCycleComplete;
     private final Environment<Object> environment;
     private final ProtelisNode node;
-    private final Reaction<Object> reaction;
+    private String originalProgram = "unknown";
     private final org.protelis.vm.ProtelisProgram program;
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All the random engines provided by Apache are Serializable")
     private final RandomGenerator random;
+    private final Reaction<Object> reaction;
+    private final double retentionTime;
     private transient ProtelisVM vm;
-    private boolean computationalCycleComplete;
+
+    private RunProtelisProgram(
+            final Environment<Object> env,
+            final ProtelisNode n,
+            final Reaction<Object> r,
+            final RandomGenerator rand,
+            final org.protelis.vm.ProtelisProgram prog,
+            final double retentionTime) {
+        super(prog.getName());
+        LangUtils.requireNonNull(env, r, n, prog, rand);
+        program = prog;
+        environment = env;
+        node = n;
+        random = rand;
+        reaction = r;
+        final AlchemistNetworkManager netmgr = new AlchemistNetworkManager(environment, node, reaction, this, retentionTime);
+        node.addNetworkManger(this, netmgr);
+        final ExecutionContext ctx = new AlchemistExecutionContext(env, n, r, rand, netmgr);
+        vm = new ProtelisVM(prog, ctx);
+        this.retentionTime = retentionTime;
+    }
 
     /**
      * @param env
@@ -66,7 +89,7 @@ public class RunProtelisProgram extends SimpleMolecule implements Action<Object>
             final Reaction<Object> r,
             final RandomGenerator rand,
             final String prog) throws SecurityException, ClassNotFoundException {
-        this(env, n, r, rand, ProtelisLoader.parse(prog), Double.NaN);
+        this(env, n, r, rand, prog, Double.NaN);
     }
 
     /**
@@ -96,31 +119,19 @@ public class RunProtelisProgram extends SimpleMolecule implements Action<Object>
             final String prog,
             final double retentionTime) throws SecurityException, ClassNotFoundException {
         this(env, n, r, rand, ProtelisLoader.parse(prog), retentionTime);
-    }
-
-    private RunProtelisProgram(
-            final Environment<Object> env,
-            final ProtelisNode n,
-            final Reaction<Object> r,
-            final RandomGenerator rand,
-            final org.protelis.vm.ProtelisProgram prog,
-            final double retentionTime) {
-        super(prog.getName());
-        LangUtils.requireNonNull(env, r, n, prog, rand);
-        program = prog;
-        environment = env;
-        node = n;
-        random = rand;
-        reaction = r;
-        final AlchemistNetworkManager netmgr = new AlchemistNetworkManager(environment, node, reaction, this, retentionTime);
-        node.addNetworkManger(this, netmgr);
-        final ExecutionContext ctx = new AlchemistExecutionContext(env, n, r, rand, netmgr);
-        vm = new ProtelisVM(prog, ctx);
+        originalProgram = prog;
     }
 
     @Override
     public RunProtelisProgram cloneAction(final Node<Object> n, final Reaction<Object> r) {
-        throw new UnsupportedOperationException();
+        if (n instanceof ProtelisNode) {
+            try {
+                return new RunProtelisProgram(getEnvironment(), (ProtelisNode) n, r, getRandomGenerator(), originalProgram, getRetentionTime());
+            } catch (SecurityException | ClassNotFoundException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+        throw new IllegalArgumentException("The node must be a " + ProtelisNode.class.getSimpleName());
     }
 
     @Override
@@ -130,11 +141,27 @@ public class RunProtelisProgram extends SimpleMolecule implements Action<Object>
         computationalCycleComplete = true;
     }
 
+    @Override
+    public Context getContext() {
+        /*
+         * A Protelis program never writes in other nodes
+         */
+        return Context.LOCAL;
+    }
+
     /**
      * @return the environment
      */
     protected final Environment<Object> getEnvironment() {
         return environment;
+    }
+
+    @Override
+    public ListSet<? extends Molecule> getModifiedMolecules() {
+        /*
+         * A Protelis program may modify any molecule (global variable)
+         */
+        return null;
     }
 
     /**
@@ -144,20 +171,18 @@ public class RunProtelisProgram extends SimpleMolecule implements Action<Object>
         return node;
     }
 
-    @Override
-    public List<? extends Molecule> getModifiedMolecules() {
-        /*
-         * A Protelis program may modify any molecule (global variable)
-         */
-        return null;
+    /**
+     * @return the internal {@link RandomGenerator}
+     */
+    protected RandomGenerator getRandomGenerator() {
+        return random;
     }
 
-    @Override
-    public Context getContext() {
-        /*
-         * A Protelis program never writes in other nodes
-         */
-        return Context.LOCAL;
+    /**
+     * @return the retention time
+     */
+    protected double getRetentionTime() {
+        return retentionTime;
     }
 
     /**
@@ -179,6 +204,11 @@ public class RunProtelisProgram extends SimpleMolecule implements Action<Object>
         final AlchemistNetworkManager netmgr = new AlchemistNetworkManager(environment, node, reaction, this);
         node.addNetworkManger(this, netmgr);
         vm = new ProtelisVM(program, new AlchemistExecutionContext(environment, node, reaction, random, netmgr));
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "@" + node.getId();
     }
 
 }

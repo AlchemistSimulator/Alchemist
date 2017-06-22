@@ -10,7 +10,7 @@ package it.unibo.alchemist.expressions.implementations;
 
 import java.util.Map;
 
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +28,7 @@ public class VarTreeNode extends ATreeNode<Object> {
      * @param data
      *            variable name
      */
-    public VarTreeNode(final FasterString data) {
+    public VarTreeNode(final HashString data) {
         super(data, null, null);
     }
 
@@ -50,7 +50,7 @@ public class VarTreeNode extends ATreeNode<Object> {
      * .Map)
      */
     @Override
-    public ITreeNode<?> getValue(final Map<FasterString, ITreeNode<?>> matches) {
+    public ITreeNode<?> getValue(final Map<HashString, ITreeNode<?>> matches) {
         final ITreeNode<?> res = matches.get(getData());
         if (res == null) {
             L.error("Uninstanced variable: " + getData());

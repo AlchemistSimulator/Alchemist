@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.math3.util.MathArrays;
-import org.danilopianini.lang.HashUtils;
+import org.danilopianini.util.Hashes;
 
 import it.unibo.alchemist.exceptions.UncomparableDistancesException;
 import it.unibo.alchemist.model.interfaces.Position;
@@ -104,7 +104,7 @@ public class ContinuousGenericEuclidean implements Position {
     @Override
     public double getCoordinate(final int dim) {
         if (dim < 0 || dim >= c.length) {
-            throw new IllegalArgumentException(dim + "is not an allowed dimension, only values between 0 and " + c.length + "are allowed.");
+            throw new IllegalArgumentException(dim + "is not an allowed dimension, only values between 0 and " + (c.length - 1) + "are allowed.");
         }
         return c[dim];
     }
@@ -127,7 +127,7 @@ public class ContinuousGenericEuclidean implements Position {
     @Override
     public int hashCode() {
         if (hash == 0) {
-            hash = HashUtils.hash32(c);
+            hash = Hashes.hash32(c);
         }
         return hash;
     }

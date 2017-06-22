@@ -11,14 +11,15 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
+import java.util.Objects;
+import java.util.Optional;
+
+import org.danilopianini.util.LinkedListSet;
+import org.danilopianini.util.ListSet;
+
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 
 /**
@@ -28,8 +29,8 @@ import java.util.Optional;
  */
 public abstract class AbstractAction<T> implements Action<T> {
 
-    private static final long serialVersionUID = 1858501940105283451L;
-    private final List<Molecule> influenced = new ArrayList<Molecule>(1);
+    private static final long serialVersionUID = 1L;
+    private final ListSet<Molecule> influenced = new LinkedListSet<>();
     private final Node<T> n;
 
     /**
@@ -68,7 +69,7 @@ public abstract class AbstractAction<T> implements Action<T> {
     }
 
     @Override
-    public List<? extends Molecule> getModifiedMolecules() {
+    public ListSet<? extends Molecule> getModifiedMolecules() {
         return influenced;
     }
 

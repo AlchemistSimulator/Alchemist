@@ -2,10 +2,12 @@ dependencies {
     compile (
         project(':alchemist-interfaces'),
         project(':alchemist-time'),
+        "com.github.ben-manes.caffeine:caffeine:${caffeineVersion}",
         "com.github.davidmoten:rtree:$rtreeVersion",
         "com.google.guava:guava:$guavaVersion",
         "com.googlecode.concurrentlinkedhashmap:concurrentlinkedhashmap-lru:${concurrentlinkedhashmapVersion}",
-        "info.debatty:java-string-similarity:$stringSimilarityVersion",
+        "net.sf.trove4j:trove4j:${troveVersion}",
+        "org.apache.commons:commons-lang3:${lang3Version}",
         "org.danilopianini:java-quadtree:$quadtreeVersion",
         "org.danilopianini:boilerplate:$boilerplateVersion",
         "org.jooq:jool:$joolVersion",

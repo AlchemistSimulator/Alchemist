@@ -8,7 +8,7 @@
  */
 package it.unibo.alchemist.model.implementations.linkingrules;
 
-import it.unibo.alchemist.model.implementations.neighborhoods.CachedNeighborhood;
+import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -35,7 +35,7 @@ public class EuclideanDistance<T> extends AbstractLocallyConsistentLinkingRule<T
 
     @Override
     public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T> env) {
-        return new CachedNeighborhood<>(center, env.getNodesWithinRange(center, range), env);
+        return Neighborhoods.make(env, center, env.getNodesWithinRange(center, range));
     }
 
     /**

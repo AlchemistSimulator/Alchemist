@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 import org.danilopianini.util.ListSet;
 
 import java.util.Collection;
@@ -36,7 +36,7 @@ import com.google.common.collect.Sets;
  */
 public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule>> implements ILsaAction {
     private static final long serialVersionUID = 4158296120349274343L;
-    private Map<FasterString, ITreeNode<?>> matches;
+    private Map<HashString, ITreeNode<?>> matches;
     private List<ILsaNode> nodes;
 
     /**
@@ -60,7 +60,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
      * @param value
      *            the associated value
      */
-    protected final void addMatch(final FasterString key, final double value) {
+    protected final void addMatch(final HashString key, final double value) {
         addMatch(key, new NumTreeNode(value));
     }
 
@@ -83,7 +83,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
         case VAR:
             throw new IllegalArgumentException("Only instanced elements can be used as values when inserting matches.");
         default:
-            addMatch(key.toFasterString(), value);
+            addMatch(key.toHashString(), value);
         }
     }
 
@@ -119,7 +119,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
      * @param value
      *            the associated value
      */
-    protected final void addMatch(final FasterString key, final ITreeNode<?> value) {
+    protected final void addMatch(final HashString key, final ITreeNode<?> value) {
         if (matches == null) {
             matches = new HashMap<>();
         }
@@ -135,7 +135,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
      *            the associated value
      */
     protected final void addMatch(final String key, final double value) {
-        addMatch(new FasterString(key), new NumTreeNode(value));
+        addMatch(new HashString(key), new NumTreeNode(value));
     }
 
     /**
@@ -147,7 +147,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
      *            the associated value
      */
     protected final void addMatch(final String key, final ITreeNode<?> value) {
-        addMatch(new FasterString(key), value);
+        addMatch(new HashString(key), value);
     }
 
     /**
@@ -384,7 +384,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
      *            the variable
      * @return the value associated to the variable
      */
-    protected ITreeNode<?> getMatch(final FasterString var) {
+    protected ITreeNode<?> getMatch(final HashString var) {
         return matches.get(var);
     }
 
@@ -396,7 +396,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
      * @return the value associated to the variable
      */
     protected ITreeNode<?> getMatch(final String s) {
-        return getMatch(new FasterString(s));
+        return getMatch(new HashString(s));
     }
 
     /**
@@ -408,7 +408,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
      *            the variable
      * @return the double value associated to the variable
      */
-    protected double getMatchAsDouble(final FasterString s) {
+    protected double getMatchAsDouble(final HashString s) {
         return ((NumTreeNode) getMatch(s)).getData();
     }
 
@@ -432,7 +432,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
      *            the variable
      * @return its String representation
      */
-    protected String getMatchAsString(final FasterString s) {
+    protected String getMatchAsString(final HashString s) {
         return getMatch(s).toString();
     }
 
@@ -450,7 +450,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
     /**
      * @return the map containing the variable / value associations
      */
-    protected final Map<FasterString, ITreeNode<?>> getMatches() {
+    protected final Map<HashString, ITreeNode<?>> getMatches() {
         return matches;
     }
 
@@ -497,7 +497,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
     }
 
     @Override
-    public void setExecutionContext(final Map<FasterString, ITreeNode<?>> m, final List<ILsaNode> n) {
+    public void setExecutionContext(final Map<HashString, ITreeNode<?>> m, final List<ILsaNode> n) {
         matches = m;
         nodes = n;
     }

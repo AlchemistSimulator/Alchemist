@@ -13,7 +13,7 @@ import java.util.Set;
 
 import it.unibo.alchemist.expressions.interfaces.IExpression;
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 
 /**
  * This utility class provides methods to ease the building and usage of
@@ -34,7 +34,7 @@ public final class ExpressionFactory {
         if (s.length() == 0) {
             throw new RuntimeException("The given String can't be empty.");
         }
-        return new Expression(new ConstTreeNode(new FasterString(s)));
+        return new Expression(new ConstTreeNode(new HashString(s)));
     }
 
     /**
@@ -56,7 +56,7 @@ public final class ExpressionFactory {
      *            MUST BE A SINGLE LITERAL
      * @return a new expression
      */
-    public static IExpression buildExpression(final FasterString s) {
+    public static IExpression buildExpression(final HashString s) {
         return new Expression(buildLiteralNode(s));
     }
 
@@ -69,7 +69,7 @@ public final class ExpressionFactory {
      * @return a new expression
      */
     public static IExpression buildExpression(final String s) {
-        return buildExpression(new FasterString(s));
+        return buildExpression(new HashString(s));
     }
 
     /**
@@ -80,7 +80,7 @@ public final class ExpressionFactory {
      *            MUST BE A SINGLE LITERAL
      * @return a new {@link ITreeNode}
      */
-    public static ITreeNode<?> buildLiteralNode(final FasterString s) {
+    public static ITreeNode<?> buildLiteralNode(final HashString s) {
         if (s.length() == 0) {
             throw new RuntimeException();
         }
@@ -102,14 +102,14 @@ public final class ExpressionFactory {
     }
 
     /**
-     * Given a {@link FasterString}, creates the corresponding {@link ITreeNode}
+     * Given a {@link HashString}, creates the corresponding {@link ITreeNode}
      * and wraps it into a {@link ListTreeNode}.
      * 
      * @param s
      *            the node to wrap
      * @return an IExpression containing the passed element in a set
      */
-    public static IExpression wrap(final FasterString s) {
+    public static IExpression wrap(final HashString s) {
         final Set<ITreeNode<?>> content = new LinkedHashSet<>();
         content.add(buildLiteralNode(s));
         return new Expression(new ListTreeNode(content));

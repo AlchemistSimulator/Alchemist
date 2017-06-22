@@ -11,7 +11,7 @@ package it.unibo.alchemist.expressions.interfaces;
 import java.io.Serializable;
 import java.util.Map;
 
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 
 
 /**
@@ -34,7 +34,7 @@ public interface ITree extends Serializable {
      *            the map with variable values already assigned.
      * @return a new ITree containing the instantiated variable
      */
-    ITree assignVarValue(Map<FasterString, ITreeNode<?>> matches);
+    ITree assignVarValue(Map<HashString, ITreeNode<?>> matches);
 
     /**
      * This evaluates the expression. If the matches map contains values which
@@ -46,7 +46,7 @@ public interface ITree extends Serializable {
      * @return A number representing the value for this expression. If the
      *         expression can't be computed, NaN is returned.
      */
-    double evaluation(Map<FasterString, ITreeNode<?>> matches);
+    double evaluation(Map<HashString, ITreeNode<?>> matches);
 
     /**
      * Return the root Node of the tree.
@@ -56,9 +56,9 @@ public interface ITree extends Serializable {
     ITreeNode<?> getRoot();
 
     /**
-     * Similar to toString(), but returns a FasterString.
+     * Similar to toString(), but returns a HashString.
      * 
-     * @return a FasterString representation of this Object
+     * @return a HashString representation of this Object
      */
-    FasterString toFasterString();
+    HashString toHashString();
 }

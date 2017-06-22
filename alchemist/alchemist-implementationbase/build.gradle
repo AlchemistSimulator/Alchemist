@@ -9,7 +9,6 @@ dependencies {
         "net.sf.trove4j:trove4j:${troveVersion}",
         "org.apache.commons:commons-lang3:${lang3Version}",
         "org.danilopianini:java-quadtree:$quadtreeVersion",
-        "org.danilopianini:javalib-java7:${javalib7Version}",
         "org.danilopianini:boilerplate:$boilerplateVersion",
         "org.jooq:jool:$joolVersion",
         "org.reflections:reflections:$reflectionsVersion"

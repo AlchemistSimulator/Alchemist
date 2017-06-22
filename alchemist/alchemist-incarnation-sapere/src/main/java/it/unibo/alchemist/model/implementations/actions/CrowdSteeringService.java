@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 
 import java.util.List;
 
@@ -67,7 +67,7 @@ public class CrowdSteeringService extends SAPEREMoveNodeAgent {
     @Override
     public void execute() {
         double minGrad = Double.MAX_VALUE;
-        final FasterString idValue = getNode().getConcentration(GRADID).get(0).getArg(1).getAST().toFasterString();
+        final HashString idValue = getNode().getConcentration(GRADID).get(0).getArg(1).getAST().toHashString();
         final Neighborhood<List<ILsaMolecule>> neigh = getLocalNeighborhood();
         Position targetPositions = null;
         Node<List<ILsaMolecule>> bestNode = null;
@@ -77,7 +77,7 @@ public class CrowdSteeringService extends SAPEREMoveNodeAgent {
             gradList = n.getConcentration(template);
             if (!gradList.isEmpty() && !n.contains(new LsaMolecule("person"))) {
                 for (int i = 0; i < gradList.size(); i++) {
-                    if (gradList.get(i).getArg(gradIdPos).getAST().toFasterString().equals(idValue)) {
+                    if (gradList.get(i).getArg(gradIdPos).getAST().toHashString().equals(idValue)) {
                         final double valueGrad = getLSAArgumentAsDouble(gradList.get(i), gradDistPos);
                         if (valueGrad <= minGrad) {
                             minGrad = valueGrad;

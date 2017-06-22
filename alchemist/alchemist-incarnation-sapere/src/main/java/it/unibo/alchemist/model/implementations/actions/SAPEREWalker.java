@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.implementations.actions;
 import java.util.List;
 import java.util.Map;
 
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 import org.danilopianini.util.ListSet;
 import org.danilopianini.util.ListSets;
 
@@ -95,6 +95,6 @@ public class SAPEREWalker extends MoveOnMap<List<ILsaMolecule>> implements ILsaA
     }
 
     @Override
-    public void setExecutionContext(final Map<FasterString, ITreeNode<?>> matches, final List<ILsaNode> nodes) {
+    public void setExecutionContext(final Map<HashString, ITreeNode<?>> matches, final List<ILsaNode> nodes) {
     }
 }

@@ -13,7 +13,7 @@ import it.unibo.alchemist.expressions.implementations.Type;
 import java.io.Serializable;
 import java.util.Map;
 
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 
 
 /**
@@ -27,7 +27,7 @@ public interface IExpression extends Serializable, Cloneable {
      *            required, null values are accepted.
      * @return The evaluation of the expression
      */
-    ITreeNode<?> calculate(Map<FasterString, ITreeNode<?>> map);
+    ITreeNode<?> calculate(Map<HashString, ITreeNode<?>> map);
 
     /**
      * @return the ast representing the IExpression
@@ -74,7 +74,7 @@ public interface IExpression extends Serializable, Cloneable {
      *            the matches map
      * @return true if this expression can "match" with expr.
      */
-    boolean matches(IExpression expr, Map<FasterString, ITreeNode<?>> map);
+    boolean matches(IExpression expr, Map<HashString, ITreeNode<?>> map);
 
     /**
      * This match method test whether or not two expressions might match. It can
@@ -98,13 +98,13 @@ public interface IExpression extends Serializable, Cloneable {
      */
     boolean syntacticMatch(IExpression e);
 
-    // void setVarMap(Map<FasterString, IExpression> map);
+    // void setVarMap(Map<HashString, IExpression> map);
 
     /**
      * @param map
      *            the matches map
      * @return the new ast with variable instantiated.
      */
-    ITree updateMatchedVar(Map<FasterString, ITreeNode<?>> map);
+    ITree updateMatchedVar(Map<HashString, ITreeNode<?>> map);
 
 }

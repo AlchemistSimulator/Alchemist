@@ -9,7 +9,7 @@
 package it.unibo.alchemist.expressions.implementations;
 
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +50,7 @@ public class ListComparatorTreeNode extends ATreeNode<ListComparator> {
      * .Map)
      */
     @Override
-    public ListComparator getValue(final Map<FasterString, ITreeNode<?>> mp) {
+    public ListComparator getValue(final Map<HashString, ITreeNode<?>> mp) {
         L.error("It makes no sense to evaluate a Comparator.");
         return null;
     }

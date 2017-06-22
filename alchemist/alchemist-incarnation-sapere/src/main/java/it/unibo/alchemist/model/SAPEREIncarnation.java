@@ -16,10 +16,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.math3.random.RandomGenerator;
-import org.danilopianini.lang.HashUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.expressions.implementations.Type;
 import it.unibo.alchemist.expressions.interfaces.IExpression;
 import it.unibo.alchemist.model.implementations.actions.LsaAllNeighborsAction;
@@ -79,11 +79,12 @@ public final class SAPEREIncarnation implements Incarnation<List<ILsaMolecule>>,
         MATCH_REACTION = Pattern.compile(REACTION_REGEX);
     }
 
+    @SuppressFBWarnings(value = "ES_COMPARING_PARAMETER_STRING_WITH_EQ", justification = "Pointer comparison is intentional")
     @Override
     public double getProperty(final Node<List<ILsaMolecule>> node, final Molecule mol, final String prop) {
         if (mol instanceof ILsaMolecule && node instanceof ILsaNode && node.contains(mol)) {
             boolean cacheUpdated = false;
-            if (!mol.equals(molCache) || !HashUtils.pointerEquals(prop, propCache)) {
+            if (!mol.equals(molCache) || prop != propCache) { // NOPMD: reference comparison is intentional
                 molCache = mol;
                 propCache = prop;
                 cacheUpdated = true;

@@ -10,7 +10,7 @@ package it.unibo.alchemist.expressions.implementations;
 
 import java.util.Map;
 
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +19,7 @@ import it.unibo.alchemist.expressions.interfaces.ITreeNode;
 
 /**
  */
-public class ComparatorTreeNode extends ATreeNode<FasterString> {
+public class ComparatorTreeNode extends ATreeNode<HashString> {
 
     private static final long serialVersionUID = 8646190301867856844L;
     private static final Logger L = LoggerFactory.getLogger(ComparatorTreeNode.class);
@@ -28,14 +28,14 @@ public class ComparatorTreeNode extends ATreeNode<FasterString> {
      * Builds a ComparatorTreeNode.
      * 
      * @param c
-     *            FasterString representation of the comparator (operator of the
+     *            HashString representation of the comparator (operator of the
      *            comparison)
      * @param left
      *            the left child (a variable)
      * @param right
      *            the right child (an expression)
      */
-    public ComparatorTreeNode(final FasterString c, final ITreeNode<?> left, final ITreeNode<?> right) {
+    public ComparatorTreeNode(final HashString c, final ITreeNode<?> left, final ITreeNode<?> right) {
         super(c, left, right);
     }
 
@@ -45,7 +45,7 @@ public class ComparatorTreeNode extends ATreeNode<FasterString> {
     }
 
     @Override
-    public FasterString getValue(final Map<FasterString, ITreeNode<?>> mp) {
+    public HashString getValue(final Map<HashString, ITreeNode<?>> mp) {
         L.error("It makes no sense to evaluate a Comparator.");
         return null;
     }

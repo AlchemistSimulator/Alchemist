@@ -9,7 +9,7 @@
 package it.unibo.alchemist.expressions.implementations;
 
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 
 import java.util.Map;
 
@@ -22,7 +22,7 @@ public abstract class ATreeNode<T> implements ITreeNode<T> {
     private static final long serialVersionUID = -3565369437007735315L;
 
     private final T data;
-    private FasterString fsCache;
+    private HashString fsCache;
     private final ITreeNode<?> left;
     private final ITreeNode<?> right;
 
@@ -50,7 +50,7 @@ public abstract class ATreeNode<T> implements ITreeNode<T> {
     @Override
     public boolean equals(final Object t) {
         if (t instanceof ITreeNode<?>) {
-            return toFasterString().equals(((ITreeNode<?>) t).toFasterString());
+            return toHashString().equals(((ITreeNode<?>) t).toHashString());
         }
         return false;
     }
@@ -103,7 +103,7 @@ public abstract class ATreeNode<T> implements ITreeNode<T> {
      * alice.alchemist.expressions.interfaces.ITreeNode#getValue(java.util.Map)
      */
     @Override
-    public abstract T getValue(Map<FasterString, ITreeNode<?>> mp);
+    public abstract T getValue(Map<HashString, ITreeNode<?>> mp);
 
     /*
      * (non-Javadoc)
@@ -113,7 +113,7 @@ public abstract class ATreeNode<T> implements ITreeNode<T> {
     @Override
     public int hashCode() {
         if (fsCache == null) {
-            fsCache = new FasterString(toString());
+            fsCache = new HashString(toString());
         }
         return fsCache.hashCode();
     }
@@ -121,12 +121,12 @@ public abstract class ATreeNode<T> implements ITreeNode<T> {
     /*
      * (non-Javadoc)
      * 
-     * @see alice.alchemist.expressions.interfaces.ITreeNode#toFasterString()
+     * @see alice.alchemist.expressions.interfaces.ITreeNode#toHashString()
      */
     @Override
-    public FasterString toFasterString() {
+    public HashString toHashString() {
         if (fsCache == null) {
-            fsCache = new FasterString(toString());
+            fsCache = new HashString(toString());
         }
         return fsCache;
     }

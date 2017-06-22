@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 
 import java.util.AbstractSet;
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class LsaNeighborhoodCondition extends LsaStandardCondition {
     }
 
     @Override
-    public boolean filter(final List<Map<FasterString, ITreeNode<?>>> matchesList, final List<ILsaNode> validNodes, final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved) {
+    public boolean filter(final List<Map<HashString, ITreeNode<?>>> matchesList, final List<ILsaNode> validNodes, final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved) {
         if (validNodes.isEmpty()) {
             return false;
         }
@@ -100,7 +100,7 @@ public class LsaNeighborhoodCondition extends LsaStandardCondition {
         final AbstractSet<ILsaNode> newValidNodes = new LinkedHashSet<>(validNodes.size());
         for (int i = matchesList.size() - 1; i >= 0; i--) {
             final Map<ILsaNode, List<ILsaMolecule>> alreadyRemovedMap = retrieved.get(i);
-            final Map<FasterString, ITreeNode<?>> matches = matchesList.get(i);
+            final Map<HashString, ITreeNode<?>> matches = matchesList.get(i);
             final List<IExpression> partialInstance = getMolecule().allocateVar(matches);
             final boolean dups = getMolecule().hasDuplicateVariables();
             /*

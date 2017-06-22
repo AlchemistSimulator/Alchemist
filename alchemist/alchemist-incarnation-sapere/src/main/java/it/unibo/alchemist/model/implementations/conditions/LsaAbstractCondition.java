@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -109,7 +109,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
      *            (theoretically, it should always be empty when calling this
      *            method)
      */
-    protected static void createMatches(final ILsaMolecule template, final ILsaNode n, final List<Map<FasterString, ITreeNode<?>>> matchesList, final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved) {
+    protected static void createMatches(final ILsaMolecule template, final ILsaNode n, final List<Map<HashString, ITreeNode<?>>> matchesList, final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved) {
         final List<ILsaMolecule> lsaSpace = n.getLsaSpace();
         for (final ILsaMolecule matched : lsaSpace) {
             if (template.matches(matched)) {
@@ -119,8 +119,8 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
                  * map must be created, the map should be added to the possible
                  * matches list, and the index must not be increased.
                  */
-                final Map<FasterString, ITreeNode<?>> matches = new HashMap<>(matched.argsNumber() * 2 + 1, 1f);
-                matches.put(LsaMolecule.SYN_MOL_ID, new UIDNode(matched.toFasterString()));
+                final Map<HashString, ITreeNode<?>> matches = new HashMap<>(matched.argsNumber() * 2 + 1, 1f);
+                matches.put(LsaMolecule.SYN_MOL_ID, new UIDNode(matched.toHashString()));
                 updateMap(matches, matched, template);
                 matchesList.add(matches);
                 final List<ILsaMolecule> modifiedSpace = new ArrayList<>(lsaSpace.size());
@@ -143,7 +143,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
      * @param template
      *            : LsaMolecule template (contain variable names)
      */
-    protected static void updateMap(final Map<FasterString, ITreeNode<?>> map, final Iterable<IExpression> instance, final ILsaMolecule template) {
+    protected static void updateMap(final Map<HashString, ITreeNode<?>> map, final Iterable<IExpression> instance, final ILsaMolecule template) {
         /*
          * Iterate over inst
          */
@@ -154,18 +154,18 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
                 /*
                  * If it's a variable
                  */
-                map.put((FasterString) molarg.getRootNodeData(), instarg.getRootNode());
+                map.put((HashString) molarg.getRootNodeData(), instarg.getRootNode());
             } else {
                 /*
                  * If it's a comparator
                  */
                 if (molarg.getRootNodeType() == Type.COMPARATOR) {
                     if (molarg.getAST().getRoot().getLeftChild().getType() == Type.VAR) {
-                        map.put(molarg.getLeftChildren().toFasterString(), instarg.getRootNode());
+                        map.put(molarg.getLeftChildren().toHashString(), instarg.getRootNode());
                     }
                 } else if (molarg.getRootNodeType() == Type.LISTCOMPARATOR) {
                     if (molarg.getAST().getRoot().getLeftChild().getType() == Type.VAR && instarg.getRootNodeData() instanceof Set<?>) {
-                        map.put(molarg.getLeftChildren().toFasterString(), instarg.getRootNode());
+                        map.put(molarg.getLeftChildren().toHashString(), instarg.getRootNode());
 
                     }
                 } else if (molarg.getRootNodeType() == Type.LIST) {
@@ -176,7 +176,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
                     final Iterator<ITreeNode<?>> instList = ((ListTreeNode) instarg.getAST().getRoot()).getData().iterator();
                     for (final ITreeNode<?> var : molList) {
                         if (var.getType() == Type.VAR) {
-                            map.put(var.toFasterString(), instList.next());
+                            map.put(var.toHashString(), instList.next());
                         }
                     }
                 }
@@ -205,14 +205,14 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
      *            the list of all the maps that lists the molecules removed from
      *            each node
      */
-    protected static void incorporateNewMatches(final ILsaNode node, final List<ILsaMolecule> otherMatches, final Map<FasterString, ITreeNode<?>> oldMatches, final ILsaMolecule template, final List<Map<FasterString, ITreeNode<?>>> matchesList, final Map<ILsaNode, List<ILsaMolecule>> alreadyRemoved, final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved) {
+    protected static void incorporateNewMatches(final ILsaNode node, final List<ILsaMolecule> otherMatches, final Map<HashString, ITreeNode<?>> oldMatches, final ILsaMolecule template, final List<Map<HashString, ITreeNode<?>>> matchesList, final Map<ILsaNode, List<ILsaMolecule>> alreadyRemoved, final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved) {
         for (int j = 1; j < otherMatches.size(); j++) {
             final ILsaMolecule instance = otherMatches.get(j);
             /*
              * Make copies of the match under analysis, then populate them with
              * the new matches
              */
-            final Map<FasterString, ITreeNode<?>> newMap = new HashMap<>(oldMatches);
+            final Map<HashString, ITreeNode<?>> newMap = new HashMap<>(oldMatches);
             updateMap(newMap, instance, template);
             matchesList.add(newMap);
 
@@ -262,7 +262,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
      *            the list of all the maps that lists the molecules removed from
      *            each node
      */
-    protected static void incorporateNewMatches(final Map<ILsaNode, List<ILsaMolecule>> otherMatchesMap, final Map<FasterString, ITreeNode<?>> oldMatches, final ILsaMolecule template, final List<Map<FasterString, ITreeNode<?>>> matchesList, final Map<ILsaNode, List<ILsaMolecule>> alreadyRemoved, final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved) {
+    protected static void incorporateNewMatches(final Map<ILsaNode, List<ILsaMolecule>> otherMatchesMap, final Map<HashString, ITreeNode<?>> oldMatches, final ILsaMolecule template, final List<Map<HashString, ITreeNode<?>>> matchesList, final Map<ILsaNode, List<ILsaMolecule>> alreadyRemoved, final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved) {
         for (final Entry<ILsaNode, List<ILsaMolecule>> e : otherMatchesMap.entrySet()) {
             final ILsaNode node = e.getKey();
             final List<ILsaMolecule> otherMatches = e.getValue();
@@ -271,7 +271,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
                  * Make copies of the match under analysis, then populate them
                  * with the new matches
                  */
-                final Map<FasterString, ITreeNode<?>> newMap = new HashMap<>(oldMatches);
+                final Map<HashString, ITreeNode<?>> newMap = new HashMap<>(oldMatches);
                 updateMap(newMap, instance, template);
                 newMap.put(LsaMolecule.SYN_SELECTED, new NumTreeNode(node.getId()));
                 matchesList.add(newMap);

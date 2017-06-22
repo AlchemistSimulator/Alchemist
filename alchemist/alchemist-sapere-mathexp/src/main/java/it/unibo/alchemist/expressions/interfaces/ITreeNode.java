@@ -13,7 +13,7 @@ import it.unibo.alchemist.expressions.implementations.Type;
 import java.io.Serializable;
 import java.util.Map;
 
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 
 
 /**
@@ -59,14 +59,14 @@ public interface ITreeNode<T> extends Serializable {
      *         expression.
      * 
      */
-    T getValue(Map<FasterString, ITreeNode<?>> mp);
+    T getValue(Map<HashString, ITreeNode<?>> mp);
 
     /**
-     * Similar to toString(), but returns a FasterString.
+     * Similar to toString(), but returns a HashString.
      * 
-     * @return a FasterString representation of this Object
+     * @return a HashString representation of this Object
      */
-    FasterString toFasterString();
+    HashString toHashString();
 
     /**
      * @return a String representation of this Object

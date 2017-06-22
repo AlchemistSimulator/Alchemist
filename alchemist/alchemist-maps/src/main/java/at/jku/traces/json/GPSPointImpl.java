@@ -8,7 +8,7 @@
  */
 package at.jku.traces.json;
 
-import org.danilopianini.lang.HashUtils;
+import org.danilopianini.util.Hashes;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
@@ -95,7 +95,7 @@ public class GPSPointImpl implements GPSPoint {
 
     @Override
     public int hashCode() {
-        return HashUtils.hash32(la, lo, t);
+        return Hashes.hash32(la, lo, t);
     }
 
 }

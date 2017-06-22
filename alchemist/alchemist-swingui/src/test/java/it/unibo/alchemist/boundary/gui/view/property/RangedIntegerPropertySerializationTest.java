@@ -63,7 +63,7 @@ public class RangedIntegerPropertySerializationTest extends AbstractPropertySeri
         final RangedIntegerProperty deserialized = GSON.fromJson(reader, this.getGsonType());
         reader.close();
 
-        Assert.assertTrue(rangedIntegerProperty.equals(deserialized));
+        Assert.assertTrue(getMessage(rangedIntegerProperty, deserialized), rangedIntegerProperty.equals(deserialized));
     }
 
     @Override
@@ -71,4 +71,16 @@ public class RangedIntegerPropertySerializationTest extends AbstractPropertySeri
         return new TypeToken<RangedIntegerProperty>() { }.getType();
     }
 
+    @Override
+    protected <T> String getMessage(final Property<T> origin, final Property<T> deserialized) {
+        if (origin == null || deserialized == null) {
+            return super.getMessage(origin, deserialized);
+        }
+
+        return super.getMessage(origin, deserialized)
+                + System.lineSeparator() + "Origin range: (" + ((RangedIntegerProperty) origin).getLowerBound()
+                + ", " + ((RangedIntegerProperty) origin).getUpperBound() + ")"
+                + System.lineSeparator() + "Deserialized range: (" + ((RangedIntegerProperty) deserialized).getLowerBound()
+                + ", " + ((RangedIntegerProperty) deserialized).getUpperBound() + ")";
+    }
 }

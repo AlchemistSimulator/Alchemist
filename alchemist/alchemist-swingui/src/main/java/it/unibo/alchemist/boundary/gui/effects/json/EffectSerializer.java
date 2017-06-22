@@ -7,24 +7,28 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.InstanceCreator;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
-import com.sun.javafx.binding.ExpressionHelper;
 
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.effects.EffectStack;
-import javafx.beans.value.ObservableValue;
+import it.unibo.alchemist.boundary.gui.view.properties.PropertyTypeAdapter;
+import javafx.beans.property.Property;
 
 /**
  * Serialize Alchemist {@link EffectGroup effect groups} from/to file in human
@@ -33,48 +37,68 @@ import javafx.beans.value.ObservableValue;
  * This class can be considered a clean boundary between Google Gson library and
  * the needs of this project, providing methods to serialize and deserialize
  * from JSON files instances of EffectGroup.
+ * <p>
+ * The {@link Gson GSON} object used for serialization is statically updated at
+ * runtime with all available {@code TypeAdapters} and
+ * {@code RuntimeTypeAdapter}.
  * 
  * @see Gson
  */
-@SuppressWarnings("restriction") // for class com.sun.javafx.binding.ExpressionHelper
+// @SuppressWarnings("restriction") // for class com.sun.javafx.binding.ExpressionHelper
 public final class EffectSerializer {
+    /** Default {@code Logger}. */
+    private static final Logger L = LoggerFactory.getLogger(EffectSerializer.class);
+
     /** Reflection object for main Alchemist package. */
     private static final Reflections REFLECTIONS = new Reflections("it.unibo.alchemist");
     /** Set of available {@link EffectFX effect}s found by reflection. */
     private static final Set<Class<? extends EffectFX>> EFFECTS = REFLECTIONS.getSubTypesOf(EffectFX.class);
 
-    /**
-     * {@link RuntimeTypeAdapterFactory} to serialize and deserialize
-     * {@link EffectFX effects} properly.
-     */
-    private static final RuntimeTypeAdapterFactory<EffectFX> RTA = RuntimeTypeAdapterFactory.of(EffectFX.class);
+    /** Map of all avalilable {@link PropertyTypeAdapter}. */
+    private static final Map<Class<?>, PropertyTypeAdapter<?>> PTA = new HashMap<>();
 
-    /**
-     * {@link RuntimeTypeAdapterFactory} to serialize and deserialize
-     * {@link EffectGroup effect groups} properly.
-     */
+    /** {@link RuntimeTypeAdapterFactory} to serialize and deserialize {@link EffectFX effects} properly. */
+    private static final RuntimeTypeAdapterFactory<EffectFX> RTA_EFFECT = RuntimeTypeAdapterFactory.of(EffectFX.class);
+
+    /** {@link RuntimeTypeAdapterFactory} to serialize and deserialize {@link EffectGroup effect groups} properly. */
     private static final RuntimeTypeAdapterFactory<EffectGroup> RTA_GROUP = RuntimeTypeAdapterFactory.of(EffectGroup.class)
             .registerSubtype(EffectStack.class);
-
-    static {
-        // EffectFX subtypes are registered dynamically
-        EFFECTS.forEach(RTA::registerSubtype);
-    }
 
     /**
      * Google gson object that concretely serializes and deserializes objects.
      */
-    private static final Gson GSON = new GsonBuilder()
-            .registerTypeAdapterFactory(RTA)
-            .registerTypeAdapterFactory(RTA_GROUP)
-            .registerTypeAdapter(EffectGroup.class, new EffectGroupAdapter())
-            .registerTypeAdapter(new TypeToken<ExpressionHelper<Number>>() { }.getType(), initToNull())
-            .registerTypeAdapter(new TypeToken<ObservableValue<Number>>() { }.getType(), initToNull())
-            .registerTypeAdapter(new TypeToken<ExpressionHelper<String>>() { }.getType(), initToNull())
-            .registerTypeAdapter(new TypeToken<ObservableValue<String>>() { }.getType(), initToNull())
-            .setPrettyPrinting()
-            .enableComplexMapKeySerialization()
-            .create();
+    private static final Gson GSON;
+
+    static {
+        // EffectFX subtypes are registered dynamically
+        EFFECTS.forEach(RTA_EFFECT::registerSubtype);
+
+        REFLECTIONS.getSubTypesOf(Property.class).forEach(c -> {
+            try {
+                PTA.put(c, (PropertyTypeAdapter<?>) c.getMethod("getPropertyTypeAdapter").invoke(null));
+            } catch (final NoSuchMethodException e) { // NOPMD - explained below
+                // Do nothing, the method could not exist, it's not a problem
+            } catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException e) {
+                L.error(e.getMessage());
+            }
+        });
+
+        final GsonBuilder builder = new GsonBuilder();
+
+        PTA.forEach((c, pta) -> builder.registerTypeAdapter(c, pta));
+
+        GSON = builder
+                .registerTypeAdapterFactory(RTA_EFFECT)
+//              .registerTypeAdapter(new TypeToken<ExpressionHelper<Number>>() { }.getType(), initToNull())
+//              .registerTypeAdapter(new TypeToken<ObservableValue<Number>>() { }.getType(), initToNull())
+//              .registerTypeAdapter(new TypeToken<ExpressionHelper<String>>() { }.getType(), initToNull())
+//              .registerTypeAdapter(new TypeToken<ObservableValue<String>>() { }.getType(), initToNull())
+                .registerTypeAdapterFactory(RTA_GROUP)
+                .registerTypeAdapter(EffectGroup.class, new EffectGroupAdapter())
+                .setPrettyPrinting()
+                .enableComplexMapKeySerialization()
+                .create();
+    }
 
     /**
      * Default private, empty constructor, as it's an utility class.
@@ -220,11 +244,11 @@ public final class EffectSerializer {
         writer.close();
     }
 
-    /**
-     * @param <T> a generic type
-     * @return an {@link InstanceCreator} that will serialize the object as null
-     */
-    private static <T> InstanceCreator<T> initToNull() {
-        return (InstanceCreator<T>) a -> null;
-    }
+//    /**
+//     * @param <T> a generic type
+//     * @return an {@link InstanceCreator} that will serialize the object as null
+//     */
+//    private static <T> InstanceCreator<T> initToNull() {
+//        return (InstanceCreator<T>) a -> null;
+//    }
 }

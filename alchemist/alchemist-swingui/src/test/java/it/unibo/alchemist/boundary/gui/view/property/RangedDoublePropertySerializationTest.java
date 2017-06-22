@@ -79,7 +79,7 @@ public class RangedDoublePropertySerializationTest extends AbstractPropertySeria
 
         final Writer writer = new FileWriter(file);
         GSON.toJson(rangedDoubleProperty, this.getGsonType(), writer);
-
+        writer.flush();
         final Reader reader = new FileReader(file);
         RangedDoubleProperty deserialized = GSON.fromJson(reader, this.getGsonType());
 
@@ -89,6 +89,7 @@ public class RangedDoublePropertySerializationTest extends AbstractPropertySeria
         rangedDoubleProperty = PropertyFactory.getColorChannelProperty("RED", 250.0);
         // CHECKSTYLE:ON
         GSON.toJson(rangedDoubleProperty, this.getGsonType(), writer);
+        writer.flush();
         deserialized = GSON.fromJson(reader, this.getGsonType());
 
         Assert.assertTrue(getMessage(rangedDoubleProperty, deserialized), rangedDoubleProperty.equals(deserialized));
@@ -97,17 +98,28 @@ public class RangedDoublePropertySerializationTest extends AbstractPropertySeria
         rangedDoubleProperty = PropertyFactory.getPercentageRangedProperty("Percent test", 33.0);
         // CHECKSTYLE:ON
         GSON.toJson(rangedDoubleProperty, this.getGsonType(), writer);
-        deserialized = GSON.fromJson(reader, this.getGsonType());
-
-        Assert.assertTrue(getMessage(rangedDoubleProperty, deserialized), rangedDoubleProperty.equals(deserialized));
-
         writer.close();
+        deserialized = GSON.fromJson(reader, this.getGsonType());
         reader.close();
+        Assert.assertTrue(getMessage(rangedDoubleProperty, deserialized), rangedDoubleProperty.equals(deserialized));
     }
 
     @Override
     protected Type getGsonType() {
         return new TypeToken<RangedDoubleProperty>() { }.getType();
+    }
+
+    @Override
+    protected <T> String getMessage(final Property<T> origin, final Property<T> deserialized) {
+        if (origin == null || deserialized == null) {
+            return super.getMessage(origin, deserialized);
+        }
+
+        return super.getMessage(origin, deserialized)
+                + System.lineSeparator() + "Origin range: (" + ((RangedDoubleProperty) origin).getLowerBound()
+                + ", " + ((RangedDoubleProperty) origin).getUpperBound() + ")"
+                + System.lineSeparator() + "Deserialized range: (" + ((RangedDoubleProperty) deserialized).getLowerBound()
+                + ", " + ((RangedDoubleProperty) deserialized).getUpperBound() + ")";
     }
 
 }

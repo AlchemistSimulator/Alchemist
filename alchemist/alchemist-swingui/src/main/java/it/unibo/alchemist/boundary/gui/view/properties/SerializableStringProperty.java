@@ -4,6 +4,14 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.reflect.Type;
+
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringPropertyBase;
@@ -162,6 +170,43 @@ public class SerializableStringProperty extends StringPropertyBase implements Se
             return false;
         }
         return true;
+    }
+
+    /**
+     * Returns a {@link JsonSerializer} and {@link JsonDeserializer} combo class
+     * to be used as a {@code TypeAdapter} for this
+     * {@code SerializableStringProperty}.
+     * 
+     * @return the {@code TypeAdapter} for this class
+     */
+    public static PropertyTypeAdapter<SerializableStringProperty> getPropertyTypeAdapter() {
+        return new PropertyTypeAdapter<SerializableStringProperty>() {
+
+            @Override
+            public SerializableStringProperty deserialize(final JsonElement json, final Type typeOfT,
+                    final JsonDeserializationContext context) {
+                final JsonObject jObj = (JsonObject) json;
+
+                final String name = jObj.get(NAME).getAsString();
+                final String value = jObj.get(VALUE).getAsString();
+
+                return new SerializableStringProperty(name, value);
+            }
+
+            @Override
+            public JsonElement serialize(final SerializableStringProperty src, final Type typeOfSrc,
+                    final JsonSerializationContext context) {
+                final JsonObject jObj = new JsonObject();
+
+                final String name = src.getName();
+                jObj.addProperty(NAME, name);
+                final String value = src.getValue();
+                jObj.addProperty(VALUE, value);
+
+                return jObj;
+            }
+
+        };
     }
 
 }

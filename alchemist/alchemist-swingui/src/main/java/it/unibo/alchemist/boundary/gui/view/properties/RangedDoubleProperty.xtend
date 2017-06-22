@@ -7,6 +7,14 @@ import java.io.Serializable
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.DoublePropertyBase
 import org.eclipse.xtend.lib.annotations.Accessors
+import com.google.gson.JsonSerializer
+import com.google.gson.JsonDeserializer
+import it.unibo.alchemist.boundary.gui.view.properties.PropertyTypeAdapter
+import com.google.gson.JsonElement
+import java.lang.reflect.Type
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonSerializationContext
+import com.google.gson.JsonObject
 
 /** 
  * This {@link DoubleProperty} is designed to have a range for the wrapped value
@@ -54,7 +62,9 @@ class RangedDoubleProperty extends DoublePropertyBase implements Serializable {
      * acceptable
      */
     new(double initialValue, double lowerBound, double upperBound) {
-        super(initialValue)
+        super(if (initialValue >= lowerBound && initialValue <= upperBound) initialValue 
+            else throw new IllegalArgumentException("Value must be between bounds")
+        ) 
         this.lowerBound = lowerBound
         this.upperBound = upperBound
     }
@@ -238,14 +248,10 @@ class RangedDoubleProperty extends DoublePropertyBase implements Serializable {
     }
 
     override int hashCode() {
-        val prime = 31
-        var result = 1
-
-        result = prime * result + this.getLowerBound.hashCode
-        result = prime * result + this.getUpperBound.hashCode
-        result = prime * result + this.getValue.hashCode
-        result = prime * result + if(getName === null) 0 else getName.hashCode
-        return result;
+        this.getLowerBound.hashCode
+            .bitwiseXor(this.getUpperBound.hashCode)
+            .bitwiseXor(this.getValue.hashCode)
+            .bitwiseXor(if(getName === null) 0 else getName.hashCode)
     }
 
     override boolean equals(Object obj) {
@@ -262,6 +268,47 @@ class RangedDoubleProperty extends DoublePropertyBase implements Serializable {
         if(this.getName != other.getName) return false
 
         return true
+    }
+
+    /**
+     * Returns a {@link JsonSerializer} and {@link JsonDeserializer} combo class
+     * to be used as a {@code TypeAdapter} for this
+     * {@code RangedDoubleProperty}.
+     * 
+     * @return the {@code TypeAdapter} for this class
+     */
+    def static PropertyTypeAdapter<RangedDoubleProperty> getPropertyTypeAdapter() {
+        new PropertyTypeAdapter<RangedDoubleProperty>() {
+            static val String LOWER_BOUND = "lower bound"
+            static val String UPPER_BOUND = "upper bound"
+
+            override deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+                val jObj = json as JsonObject
+
+                val name = jObj.get(NAME).asString
+                val value = jObj.get(VALUE).asDouble
+                val lowerBound = jObj.get(LOWER_BOUND).asDouble
+                val upperBound = jObj.get(UPPER_BOUND).asDouble
+
+                new RangedDoubleProperty(name, value, lowerBound, upperBound)
+            }
+
+            override serialize(RangedDoubleProperty src, Type typeOfSrc, JsonSerializationContext context) {
+                val jObj = new JsonObject
+
+                val name = src.getName
+                jObj.addProperty(NAME, name)
+                val value = src.getValue
+                jObj.addProperty(VALUE, value)
+                val lowerBound = src.getLowerBound
+                jObj.addProperty(LOWER_BOUND, lowerBound)
+                val upperBound = src.getUpperBound
+                jObj.addProperty(UPPER_BOUND, upperBound)
+
+                jObj
+            }
+
+        }
     }
 
 }

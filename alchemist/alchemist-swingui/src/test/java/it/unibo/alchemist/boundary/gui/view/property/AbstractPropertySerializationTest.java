@@ -1,22 +1,28 @@
 package it.unibo.alchemist.boundary.gui.view.property;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.reflections.Reflections;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import javafx.beans.property.Property;
+import javassist.Modifier;
 
 /**
  * Abstract class that provides a common base of methods for properties
  * serialization test.
  */
 public abstract class AbstractPropertySerializationTest {
+    /** Default {@code Logger}. */
+    private static final String TARGET_METHOD_NAME = "getPropertyTypeAdapter";
     /**
      * Temporary folder created before each test method, and deleted after each.
      */
@@ -24,7 +30,27 @@ public abstract class AbstractPropertySerializationTest {
     public final TemporaryFolder folder = new TemporaryFolder();
 
     /** The {@link Gson} object used for serialization. */
-    protected static final Gson GSON = new GsonBuilder().setPrettyPrinting().enableComplexMapKeySerialization().create();
+    protected static final Gson GSON;
+
+    static {
+        final GsonBuilder builder = new GsonBuilder().setPrettyPrinting().enableComplexMapKeySerialization();
+
+        new Reflections("it.unibo.alchemist").getSubTypesOf(Property.class)
+            .stream()
+            .filter(c -> Arrays.stream(c.getMethods())
+                    .filter(m -> Modifier.isStatic(m.getModifiers()))
+                    .anyMatch(m -> m.getName().equals(TARGET_METHOD_NAME)))
+            .forEach(c -> {
+                try {
+                    builder.registerTypeAdapter(c, c.getMethod(TARGET_METHOD_NAME).invoke(null));
+                } catch (final NoSuchMethodException e) { // NOPMD - explained below
+                    // Do nothing, the method could not exist, it's not a problem
+                } catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException e) {
+                    throw new IllegalStateException(e);
+                }
+            });
+        GSON = builder.create();
+    }
 
     /**
      * Tests (de)serialization with default Java serialization engine.
@@ -58,6 +84,14 @@ public abstract class AbstractPropertySerializationTest {
      * @return the message of test fail
      */
     protected <T> String getMessage(final Property<T> origin, final Property<T> deserialized) {
+        if (origin == null) {
+            return "Original property is null";
+        }
+
+        if (deserialized == null) {
+            return "Deserialized property is null";
+        }
+
         return "Property \"" + origin.getName() + ": " + origin.getValue() + "\" is different from property \"" + deserialized.getName()
                 + ": " + deserialized.getValue() + "\"";
     }

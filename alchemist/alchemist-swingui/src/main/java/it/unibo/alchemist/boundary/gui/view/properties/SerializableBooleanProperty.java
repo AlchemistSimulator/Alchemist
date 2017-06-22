@@ -4,6 +4,14 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.reflect.Type;
+
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 import javafx.beans.property.BooleanPropertyBase;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -13,7 +21,7 @@ import javafx.beans.property.SimpleBooleanProperty;
  */
 public class SerializableBooleanProperty extends BooleanPropertyBase implements Serializable {
     /** Generated Serial Version UID. */
-    private static final long serialVersionUID = 6329602438787540499L;
+    private static final long serialVersionUID = 7930437208132213199L;
 
     private String name;
 
@@ -170,5 +178,42 @@ public class SerializableBooleanProperty extends BooleanPropertyBase implements 
             return false;
         }
         return true;
+    }
+
+    /**
+     * Returns a {@link JsonSerializer} and {@link JsonDeserializer} combo class
+     * to be used as a {@code TypeAdapter} for this
+     * {@code SerializableBooleanProperty}.
+     * 
+     * @return the {@code TypeAdapter} for this class
+     */
+    public static PropertyTypeAdapter<SerializableBooleanProperty> getPropertyTypeAdapter() {
+        return new PropertyTypeAdapter<SerializableBooleanProperty>() {
+
+            @Override
+            public SerializableBooleanProperty deserialize(final JsonElement json, final Type typeOfT,
+                    final JsonDeserializationContext context) {
+                final JsonObject jObj = (JsonObject) json;
+
+                final String name = jObj.get(NAME).getAsString();
+                final boolean value = jObj.get(VALUE).getAsBoolean();
+
+                return new SerializableBooleanProperty(name, value);
+            }
+
+            @Override
+            public JsonElement serialize(final SerializableBooleanProperty src, final Type typeOfSrc,
+                    final JsonSerializationContext context) {
+                final JsonObject jObj = new JsonObject();
+
+                final String name = src.getName();
+                jObj.addProperty(NAME, name);
+                final boolean value = src.getValue();
+                jObj.addProperty(VALUE, value);
+
+                return jObj;
+            }
+
+        };
     }
 }

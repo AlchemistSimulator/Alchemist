@@ -82,5 +82,4 @@ public class SerializableBooleanPropertySerializationTest extends AbstractProper
     protected Type getGsonType() {
         return new TypeToken<SerializableBooleanProperty>() { }.getType();
     }
-
 }

@@ -47,6 +47,13 @@ import javassist.Modifier;
  * @see Gson
  */
 public final class EffectSerializer {
+    /** {@code Type} of an {@code EffectFX}. */
+    private static final Type EFFECT_TYPE = new TypeToken<EffectFX>() { }.getType();
+    /** {@code Type} of an {@code EffectGroup}. */
+    private static final Type EFFECT_GROUP_TYPE = new TypeToken<EffectGroup>() { }.getType();
+    /** @code Type} of a {@code List} of {@code EffectGroup}. */
+    private static final Type EFFECT_GROUP_LIST_TYPE = new TypeToken<List<EffectGroup>>() { }.getType();
+
     /** Reflection object for main Alchemist package. */
     private static final Reflections REFLECTIONS = new Reflections("it.unibo.alchemist");
     /** Set of available {@link EffectFX effect}s found by reflection. */
@@ -120,7 +127,7 @@ public final class EffectSerializer {
      */
     public static EffectFX effectFromFile(final File effectFile) throws IOException {
         final Reader reader = new FileReader(effectFile);
-        final EffectFX effect = GSON.fromJson(reader, getEffectType());
+        final EffectFX effect = GSON.fromJson(reader, EFFECT_TYPE);
         reader.close();
         return effect;
     }
@@ -141,7 +148,7 @@ public final class EffectSerializer {
      */
     public static void effectToFile(final File effectFile, final EffectFX effect) throws IOException {
         final Writer writer = new FileWriter(effectFile);
-        GSON.toJson(effect, getEffectType(), writer);
+        GSON.toJson(effect, EFFECT_TYPE, writer);
         writer.close();
     }
 
@@ -165,7 +172,7 @@ public final class EffectSerializer {
      */
     public static EffectGroup effectsFromFile(final File effectFile) throws IOException {
         final Reader reader = new FileReader(effectFile);
-        final EffectGroup effects = GSON.fromJson(reader, getEffectGroupType());
+        final EffectGroup effects = GSON.fromJson(reader, EFFECT_GROUP_TYPE);
         reader.close();
         return effects;
     }
@@ -186,7 +193,7 @@ public final class EffectSerializer {
      */
     public static void effectsToFile(final File effectFile, final EffectGroup effects) throws IOException {
         final Writer writer = new FileWriter(effectFile);
-        GSON.toJson(effects, getEffectGroupType(), writer);
+        GSON.toJson(effects, EFFECT_GROUP_TYPE, writer);
         writer.close();
     }
 
@@ -210,7 +217,7 @@ public final class EffectSerializer {
      */
     public static List<EffectGroup> effectGroupsFromFile(final File effectFile) throws IOException {
         final Reader reader = new FileReader(effectFile);
-        final List<EffectGroup> effectGroups = GSON.fromJson(reader, getEffectGroupListType());
+        final List<EffectGroup> effectGroups = GSON.fromJson(reader, EFFECT_GROUP_LIST_TYPE);
         reader.close();
         return effectGroups;
     }
@@ -231,7 +238,7 @@ public final class EffectSerializer {
      */
     public static void effectGroupsToFile(final File effectFile, final List<EffectGroup> effects) throws IOException {
         final Writer writer = new FileWriter(effectFile);
-        GSON.toJson(effects, getEffectGroupListType(), writer);
+        GSON.toJson(effects, EFFECT_GROUP_LIST_TYPE, writer);
         writer.close();
     }
 
@@ -246,32 +253,5 @@ public final class EffectSerializer {
      */
     public static Gson getGSON() {
         return GSON;
-    }
-
-    /**
-     * Returns {@link Type} of an {@link EffectFX Effect}.
-     * 
-     * @return {@code Type} of an {@code EffectFX Effect}
-     */
-    private static Type getEffectType() {
-        return new TypeToken<EffectFX>() { }.getType();
-    }
-
-    /**
-     * Returns {@link Type} of an {@link EffectGroup}.
-     * 
-     * @return {@code Type} of an {@code EffectGroup}
-     */
-    private static Type getEffectGroupType() {
-        return new TypeToken<EffectGroup>() { }.getType();
-    }
-
-    /**
-     * Returns {@link Type} of a {@link List} of {@link EffectGroup}.
-     * 
-     * @return {@code Type} of a {@code List} of {@code EffectGroup}
-     */
-    private static Type getEffectGroupListType() {
-        return new TypeToken<List<EffectGroup>>() { }.getType();
     }
 }

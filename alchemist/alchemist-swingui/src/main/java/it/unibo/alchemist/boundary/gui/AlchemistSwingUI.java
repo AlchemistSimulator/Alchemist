@@ -36,6 +36,11 @@ public final class AlchemistSwingUI extends JFrame {
      */
     public static final int DEFAULT_WINDOW_HEIGHT = 960, DEFAULT_WINDOW_WIDTH = 1280;
 
+    /** Private constructor. */
+    private AlchemistSwingUI() {
+        super();
+    }
+
     /**
      * Loads an image and scales it to the default Alchemist's icon size.
      * 

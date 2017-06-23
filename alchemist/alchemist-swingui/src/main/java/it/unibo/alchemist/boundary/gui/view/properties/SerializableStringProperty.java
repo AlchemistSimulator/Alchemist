@@ -179,7 +179,7 @@ public class SerializableStringProperty extends StringPropertyBase implements Se
      * 
      * @return the {@code TypeAdapter} for this class
      */
-    public static PropertyTypeAdapter<SerializableStringProperty> getPropertyTypeAdapter() {
+    public static PropertyTypeAdapter<SerializableStringProperty> getTypeAdapter() {
         return new PropertyTypeAdapter<SerializableStringProperty>() {
 
             @Override

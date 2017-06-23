@@ -375,7 +375,7 @@ public class RangedIntegerProperty extends IntegerPropertyBase implements Serial
      * 
      * @return the {@code TypeAdapter} for this class
      */
-    public static PropertyTypeAdapter<RangedIntegerProperty> getPropertyTypeAdapter() {
+    public static PropertyTypeAdapter<RangedIntegerProperty> getTypeAdapter() {
         return new PropertyTypeAdapter<RangedIntegerProperty>() {
             private static final String LOWER_BOUND = "lower bound";
             private static final String UPPER_BOUND = "upper bound";

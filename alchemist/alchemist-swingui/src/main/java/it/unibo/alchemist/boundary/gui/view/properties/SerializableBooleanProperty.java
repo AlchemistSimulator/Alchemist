@@ -187,7 +187,7 @@ public class SerializableBooleanProperty extends BooleanPropertyBase implements 
      * 
      * @return the {@code TypeAdapter} for this class
      */
-    public static PropertyTypeAdapter<SerializableBooleanProperty> getPropertyTypeAdapter() {
+    public static PropertyTypeAdapter<SerializableBooleanProperty> getTypeAdapter() {
         return new PropertyTypeAdapter<SerializableBooleanProperty>() {
 
             @Override

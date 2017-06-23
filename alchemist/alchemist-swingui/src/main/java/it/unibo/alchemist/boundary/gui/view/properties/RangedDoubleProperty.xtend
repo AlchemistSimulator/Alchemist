@@ -277,7 +277,7 @@ class RangedDoubleProperty extends DoublePropertyBase implements Serializable {
      * 
      * @return the {@code TypeAdapter} for this class
      */
-    def static PropertyTypeAdapter<RangedDoubleProperty> getPropertyTypeAdapter() {
+    def static PropertyTypeAdapter<RangedDoubleProperty> getTypeAdapter() {
         new PropertyTypeAdapter<RangedDoubleProperty>() {
             static val String LOWER_BOUND = "lower bound"
             static val String UPPER_BOUND = "upper bound"

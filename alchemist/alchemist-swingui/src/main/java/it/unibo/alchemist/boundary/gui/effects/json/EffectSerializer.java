@@ -27,7 +27,6 @@ import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
-import it.unibo.alchemist.boundary.gui.effects.EffectStack;
 import it.unibo.alchemist.boundary.gui.view.properties.PropertyTypeAdapter;
 import javafx.beans.property.Property;
 import javassist.Modifier;
@@ -58,14 +57,19 @@ public final class EffectSerializer {
     private static final Reflections REFLECTIONS = new Reflections("it.unibo.alchemist");
     /** Set of available {@link EffectFX effect}s found by reflection. */
     private static final Set<Class<? extends EffectFX>> EFFECTS = REFLECTIONS.getSubTypesOf(EffectFX.class);
-    /** Map of all avalilable {@link PropertyTypeAdapter}. */
-    private static final Map<Class<?>, PropertyTypeAdapter<?>> PTA = new HashMap<>();
+    /** Set of available {@link EffectGroup group}s found by reflection. */
+    private static final Set<Class<? extends EffectGroup>> GROUPS = REFLECTIONS.getSubTypesOf(EffectGroup.class);
+    /** Set of available {@link Property Properties} found by reflection. */
+    @SuppressWarnings("rawtypes") // Needed to let the compiler accept the constant
+    private static final Set<Class<? extends Property>> PROPERTIES = REFLECTIONS.getSubTypesOf(Property.class);
+    /** Map of all available {@link PropertyTypeAdapter}. */
+    private static final Map<Class<?>, PropertyTypeAdapter<?>> PROPERTY_TYPE_ADAPTER = new HashMap<>();
     /** {@link RuntimeTypeAdapterFactory} to serialize and deserialize {@link EffectFX effects} properly. */
     private static final RuntimeTypeAdapterFactory<EffectFX> RTA_EFFECT = RuntimeTypeAdapterFactory.of(EffectFX.class);
     /** {@link RuntimeTypeAdapterFactory} to serialize and deserialize {@link EffectGroup effect groups} properly. */
     private static final RuntimeTypeAdapterFactory<EffectGroup> RTA_GROUP = RuntimeTypeAdapterFactory.of(EffectGroup.class);
     /** Target method that will return the {@code TypeAdapter} for the property. */
-    private static final String TARGET_METHOD_NAME = "getPropertyTypeAdapter";
+    private static final String TARGET_METHOD_NAME = "getTypeAdapter";
 
     /** Google GSON object that concretely serializes and deserializes objects. */
     private static final Gson GSON;
@@ -73,30 +77,42 @@ public final class EffectSerializer {
     /* Dynamically load TypeAdapters in GSON object */
     static {
         EFFECTS.forEach(RTA_EFFECT::registerSubtype);
-        RTA_GROUP.registerSubtype(EffectStack.class);
+        GROUPS.forEach(RTA_GROUP::registerSubtype);
 
         final GsonBuilder builder = new GsonBuilder();
 
-        REFLECTIONS.getSubTypesOf(Property.class)
-                .stream()
-                .filter(c -> Arrays.stream(c.getMethods())
+        PROPERTIES.stream()
+            .filter(c -> Arrays.stream(c.getMethods())
                 .filter(m -> Modifier.isStatic(m.getModifiers()))
                 .anyMatch(m -> m.getName().equals(TARGET_METHOD_NAME)))
-                .forEach(c -> {
-                    try {
-                        builder.registerTypeAdapter(c, c.getMethod(TARGET_METHOD_NAME).invoke(null));
-                    } catch (final NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                            | SecurityException e) {
-                        throw new IllegalStateException(e);
-                    }
-                });
+            .forEach(c -> {
+                try {
+                    builder.registerTypeAdapter(c, c.getMethod(TARGET_METHOD_NAME).invoke(null));
+                } catch (final NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                        | SecurityException e) {
+                    throw new IllegalStateException(e);
+                }
+            });
 
-        PTA.forEach((c, pta) -> builder.registerTypeAdapter(c, pta));
+        GROUPS.stream()
+        .filter(c -> Arrays.stream(c.getMethods())
+                .filter(m -> Modifier.isStatic(m.getModifiers()))
+                .anyMatch(m -> m.getName().equals(TARGET_METHOD_NAME)))
+            .forEach(c -> {
+                try {
+                    builder.registerTypeAdapter(c, c.getMethod(TARGET_METHOD_NAME).invoke(null));
+                } catch (final NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                        | SecurityException e) {
+                    throw new IllegalStateException(e);
+                }
+            });
+
+        PROPERTY_TYPE_ADAPTER.forEach((c, pta) -> builder.registerTypeAdapter(c, pta));
 
         GSON = builder
                 .registerTypeAdapterFactory(RTA_EFFECT)
                 .registerTypeAdapterFactory(RTA_GROUP)
-                .registerTypeAdapter(EffectGroup.class, new EffectGroupAdapter())
+                .registerTypeAdapter(EFFECT_GROUP_TYPE, new EffectGroupAdapter())
                 .setPrettyPrinting()
                 .enableComplexMapKeySerialization()
                 .create();

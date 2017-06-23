@@ -14,9 +14,7 @@ import org.junit.rules.TemporaryFolder;
  */
 public abstract class AbstractEffectSerializationTest<T extends EffectFX> {
 
-    /**
-     * Temporary folder created before each test method, and deleted after each.
-     */
+    /** Temporary folder created before each test method, and deleted after each. */
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
 
@@ -49,6 +47,14 @@ public abstract class AbstractEffectSerializationTest<T extends EffectFX> {
      * @return the message of test fail
      */
     protected String getMessage(final T origin, final T deserialized) {
-        return "Effect \"" + origin.getName() + "\" is different from property \"" + deserialized.getName() + "\"";
+        if (origin == null) {
+            return "Original Effect is null";
+        }
+
+        if (deserialized == null) {
+            return "Deserialized Effect is null";
+        }
+
+        return "Effect \"" + origin.getName() + "\" is different from effect \"" + deserialized.getName() + "\"";
     }
 }

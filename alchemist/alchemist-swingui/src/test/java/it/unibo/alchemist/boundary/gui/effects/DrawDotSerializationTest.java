@@ -56,6 +56,10 @@ public class DrawDotSerializationTest extends AbstractEffectSerializationTest<Dr
 
     @Override
     protected String getMessage(final DrawDot origin, final DrawDot deserialized) {
+        if (origin == null || deserialized == null) {
+            return super.getMessage(origin, deserialized);
+        }
+
         return super.getMessage(origin, deserialized) 
                 + System.lineSeparator() + "Origin size: " + origin.getSize()
                 + System.lineSeparator() + "Deserialized size: " + deserialized.getSize();

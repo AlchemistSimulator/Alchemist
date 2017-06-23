@@ -84,7 +84,7 @@ public class EffectBarController implements Initializable {
         this.backToGroups.setOnAction(e -> {
             this.stack.toggle(thisDrawer);
         });
-        
+
 //        effectsList.getItems().addListener(new ListChangeListener<EffectFX>() {
 //
 //            @Override

@@ -56,6 +56,10 @@ public class DrawColoredDotSerializationTest extends AbstractEffectSerialization
 
     @Override
     protected String getMessage(final DrawColoredDot origin, final DrawColoredDot deserialized) {
+        if (origin == null || deserialized == null) {
+            return super.getMessage(origin, deserialized);
+        }
+
         return super.getMessage(origin, deserialized) 
                 + System.lineSeparator() + "Origin size: " + origin.getSize()
                 + System.lineSeparator() + "Deserialized size: " + deserialized.getSize()

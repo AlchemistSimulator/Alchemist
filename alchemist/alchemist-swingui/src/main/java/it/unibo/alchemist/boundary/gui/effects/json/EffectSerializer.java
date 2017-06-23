@@ -8,19 +8,20 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 
@@ -29,6 +30,7 @@ import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.effects.EffectStack;
 import it.unibo.alchemist.boundary.gui.view.properties.PropertyTypeAdapter;
 import javafx.beans.property.Property;
+import javassist.Modifier;
 
 /**
  * Serialize Alchemist {@link EffectGroup effect groups} from/to file in human
@@ -44,55 +46,48 @@ import javafx.beans.property.Property;
  * 
  * @see Gson
  */
-// @SuppressWarnings("restriction") // for class com.sun.javafx.binding.ExpressionHelper
 public final class EffectSerializer {
-    /** Default {@code Logger}. */
-    private static final Logger L = LoggerFactory.getLogger(EffectSerializer.class);
-
     /** Reflection object for main Alchemist package. */
     private static final Reflections REFLECTIONS = new Reflections("it.unibo.alchemist");
     /** Set of available {@link EffectFX effect}s found by reflection. */
     private static final Set<Class<? extends EffectFX>> EFFECTS = REFLECTIONS.getSubTypesOf(EffectFX.class);
-
     /** Map of all avalilable {@link PropertyTypeAdapter}. */
     private static final Map<Class<?>, PropertyTypeAdapter<?>> PTA = new HashMap<>();
-
     /** {@link RuntimeTypeAdapterFactory} to serialize and deserialize {@link EffectFX effects} properly. */
     private static final RuntimeTypeAdapterFactory<EffectFX> RTA_EFFECT = RuntimeTypeAdapterFactory.of(EffectFX.class);
-
     /** {@link RuntimeTypeAdapterFactory} to serialize and deserialize {@link EffectGroup effect groups} properly. */
-    private static final RuntimeTypeAdapterFactory<EffectGroup> RTA_GROUP = RuntimeTypeAdapterFactory.of(EffectGroup.class)
-            .registerSubtype(EffectStack.class);
+    private static final RuntimeTypeAdapterFactory<EffectGroup> RTA_GROUP = RuntimeTypeAdapterFactory.of(EffectGroup.class);
+    /** Target method that will return the {@code TypeAdapter} for the property. */
+    private static final String TARGET_METHOD_NAME = "getPropertyTypeAdapter";
 
-    /**
-     * Google gson object that concretely serializes and deserializes objects.
-     */
+    /** Google GSON object that concretely serializes and deserializes objects. */
     private static final Gson GSON;
 
+    /* Dynamically load TypeAdapters in GSON object */
     static {
-        // EffectFX subtypes are registered dynamically
         EFFECTS.forEach(RTA_EFFECT::registerSubtype);
-
-        REFLECTIONS.getSubTypesOf(Property.class).forEach(c -> {
-            try {
-                PTA.put(c, (PropertyTypeAdapter<?>) c.getMethod("getPropertyTypeAdapter").invoke(null));
-            } catch (final NoSuchMethodException e) { // NOPMD - explained below
-                // Do nothing, the method could not exist, it's not a problem
-            } catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException e) {
-                L.error(e.getMessage());
-            }
-        });
+        RTA_GROUP.registerSubtype(EffectStack.class);
 
         final GsonBuilder builder = new GsonBuilder();
+
+        REFLECTIONS.getSubTypesOf(Property.class)
+                .stream()
+                .filter(c -> Arrays.stream(c.getMethods())
+                .filter(m -> Modifier.isStatic(m.getModifiers()))
+                .anyMatch(m -> m.getName().equals(TARGET_METHOD_NAME)))
+                .forEach(c -> {
+                    try {
+                        builder.registerTypeAdapter(c, c.getMethod(TARGET_METHOD_NAME).invoke(null));
+                    } catch (final NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                            | SecurityException e) {
+                        throw new IllegalStateException(e);
+                    }
+                });
 
         PTA.forEach((c, pta) -> builder.registerTypeAdapter(c, pta));
 
         GSON = builder
                 .registerTypeAdapterFactory(RTA_EFFECT)
-//              .registerTypeAdapter(new TypeToken<ExpressionHelper<Number>>() { }.getType(), initToNull())
-//              .registerTypeAdapter(new TypeToken<ObservableValue<Number>>() { }.getType(), initToNull())
-//              .registerTypeAdapter(new TypeToken<ExpressionHelper<String>>() { }.getType(), initToNull())
-//              .registerTypeAdapter(new TypeToken<ObservableValue<String>>() { }.getType(), initToNull())
                 .registerTypeAdapterFactory(RTA_GROUP)
                 .registerTypeAdapter(EffectGroup.class, new EffectGroupAdapter())
                 .setPrettyPrinting()
@@ -100,9 +95,7 @@ public final class EffectSerializer {
                 .create();
     }
 
-    /**
-     * Default private, empty constructor, as it's an utility class.
-     */
+    /** Default private, empty constructor, as this is an utility class. */
     private EffectSerializer() {
         // Empty constructor
     }
@@ -126,9 +119,8 @@ public final class EffectSerializer {
      *             If some other I/O error occurs
      */
     public static EffectFX effectFromFile(final File effectFile) throws IOException {
-        // Try to deserialize a JSON file at first
         final Reader reader = new FileReader(effectFile);
-        final EffectFX effect = GSON.fromJson(reader, new TypeToken<EffectFX>() { }.getType());
+        final EffectFX effect = GSON.fromJson(reader, getEffectType());
         reader.close();
         return effect;
     }
@@ -149,7 +141,7 @@ public final class EffectSerializer {
      */
     public static void effectToFile(final File effectFile, final EffectFX effect) throws IOException {
         final Writer writer = new FileWriter(effectFile);
-        GSON.toJson(effect, new TypeToken<EffectFX>() { }.getType(), writer);
+        GSON.toJson(effect, getEffectType(), writer);
         writer.close();
     }
 
@@ -172,9 +164,8 @@ public final class EffectSerializer {
      *             If some other I/O error occurs
      */
     public static EffectGroup effectsFromFile(final File effectFile) throws IOException {
-        // Try to deserialize a JSON file at first
         final Reader reader = new FileReader(effectFile);
-        final EffectGroup effects = GSON.fromJson(reader, new TypeToken<EffectGroup>() { }.getType());
+        final EffectGroup effects = GSON.fromJson(reader, getEffectGroupType());
         reader.close();
         return effects;
     }
@@ -195,7 +186,7 @@ public final class EffectSerializer {
      */
     public static void effectsToFile(final File effectFile, final EffectGroup effects) throws IOException {
         final Writer writer = new FileWriter(effectFile);
-        GSON.toJson(effects, new TypeToken<EffectGroup>() { }.getType(), writer);
+        GSON.toJson(effects, getEffectGroupType(), writer);
         writer.close();
     }
 
@@ -219,7 +210,7 @@ public final class EffectSerializer {
      */
     public static List<EffectGroup> effectGroupsFromFile(final File effectFile) throws IOException {
         final Reader reader = new FileReader(effectFile);
-        final List<EffectGroup> effectGroups = GSON.fromJson(reader, new TypeToken<EffectGroup[]>() { }.getType());
+        final List<EffectGroup> effectGroups = GSON.fromJson(reader, getEffectGroupListType());
         reader.close();
         return effectGroups;
     }
@@ -240,15 +231,47 @@ public final class EffectSerializer {
      */
     public static void effectGroupsToFile(final File effectFile, final List<EffectGroup> effects) throws IOException {
         final Writer writer = new FileWriter(effectFile);
-        GSON.toJson(effects, new TypeToken<List<EffectGroup>>() { }.getType(), writer);
+        GSON.toJson(effects, getEffectGroupListType(), writer);
         writer.close();
     }
 
-//    /**
-//     * @param <T> a generic type
-//     * @return an {@link InstanceCreator} that will serialize the object as null
-//     */
-//    private static <T> InstanceCreator<T> initToNull() {
-//        return (InstanceCreator<T>) a -> null;
-//    }
+    /**
+     * Returns the internal static instance of {@link Gson} object used for
+     * serialization. It includes all needed {@link TypeAdapter}s for
+     * {@link EffectFX Effects} and {@link Property Properties} serialization.
+     * <p>
+     * Useful for serialize related objects not directly managed by this class.
+     * 
+     * @return the {@code Gson} object for serialization
+     */
+    public static Gson getGSON() {
+        return GSON;
+    }
+
+    /**
+     * Returns {@link Type} of an {@link EffectFX Effect}.
+     * 
+     * @return {@code Type} of an {@code EffectFX Effect}
+     */
+    private static Type getEffectType() {
+        return new TypeToken<EffectFX>() { }.getType();
+    }
+
+    /**
+     * Returns {@link Type} of an {@link EffectGroup}.
+     * 
+     * @return {@code Type} of an {@code EffectGroup}
+     */
+    private static Type getEffectGroupType() {
+        return new TypeToken<EffectGroup>() { }.getType();
+    }
+
+    /**
+     * Returns {@link Type} of a {@link List} of {@link EffectGroup}.
+     * 
+     * @return {@code Type} of a {@code List} of {@code EffectGroup}
+     */
+    private static Type getEffectGroupListType() {
+        return new TypeToken<List<EffectGroup>>() { }.getType();
+    }
 }

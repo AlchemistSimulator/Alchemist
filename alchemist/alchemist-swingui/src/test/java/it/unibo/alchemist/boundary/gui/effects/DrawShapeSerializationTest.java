@@ -55,6 +55,10 @@ public class DrawShapeSerializationTest extends AbstractEffectSerializationTest<
 
     @Override
     protected String getMessage(final DrawShapeFX origin, final DrawShapeFX deserialized) {
+        if (origin == null || deserialized == null) {
+            return super.getMessage(origin, deserialized);
+        }
+
         return super.getMessage(origin, deserialized)
                 + System.lineSeparator() + "Origin mode: " + origin.getMode()
                 + System.lineSeparator() + "Deserialized mode: " + deserialized.getMode()

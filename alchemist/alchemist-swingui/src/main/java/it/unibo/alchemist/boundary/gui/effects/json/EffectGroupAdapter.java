@@ -1,10 +1,9 @@
 package it.unibo.alchemist.boundary.gui.effects.json;
 
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.google.common.reflect.TypeToken;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -12,6 +11,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.google.gson.reflect.TypeToken;
 
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
@@ -26,25 +26,21 @@ public class EffectGroupAdapter implements JsonSerializer<EffectGroup>, JsonDese
     private static final String VISIBILITY = "visibility";
     private static final String TRANSPARENCY = "transparency";
     private static final String EFFECTS = "effects";
-    private static final Type EFFECTS_MAP_TYPE = new TypeToken<Map<EffectFX, Boolean>>() {
-        private static final long serialVersionUID = 4134289956171773132L;
-    }.getType();
+    private static final Type EFFECTS_LIST_TYPE = new TypeToken<List<EffectFX>>() { }.getType();
 
     @Override
     public EffectGroup deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context)
             throws JsonParseException {
         final JsonObject jObj = (JsonObject) json;
 
-        final EffectGroup group = new EffectStack(jObj.get(NAME).getAsString());
-        group.setVisibility(jObj.get(VISIBILITY).getAsBoolean());
-        group.setTransparency(jObj.get(TRANSPARENCY).getAsInt());
-
-        final Map<EffectFX, Boolean> effects = context.deserialize(jObj.get(EFFECTS), EFFECTS_MAP_TYPE);
-
-        effects.entrySet().forEach(e -> {
-            group.add(e.getKey());
-            group.setVisibilityOf(e.getKey(), e.getValue());
-        });
+        final String name = jObj.get(NAME).getAsString();
+        final EffectGroup group = new EffectStack(name);
+        final boolean visility = jObj.get(VISIBILITY).getAsBoolean();
+        group.setVisibility(visility);
+        final int transparency = jObj.get(TRANSPARENCY).getAsInt();
+        group.setTransparency(transparency);
+        final List<EffectFX> effects = context.deserialize(jObj.get(EFFECTS), EFFECTS_LIST_TYPE);
+        group.addAll(effects);
 
         return group;
     }
@@ -56,11 +52,9 @@ public class EffectGroupAdapter implements JsonSerializer<EffectGroup>, JsonDese
         jObj.addProperty(NAME, src.getName());
         jObj.addProperty(VISIBILITY, src.isVisible());
         jObj.addProperty(TRANSPARENCY, src.getTransparency());
-
-        final Map<EffectFX, Boolean> effectsMap = new HashMap<>();
-        src.forEach(e -> effectsMap.put(e, src.getVisibilityOf(e)));
-        final JsonElement effects = context.serialize(effectsMap, EFFECTS_MAP_TYPE);
-
+        final List<EffectFX> list = new ArrayList<>();
+        src.forEach(e -> list.add(e));
+        final JsonElement effects = context.serialize(list, EFFECTS_LIST_TYPE);
         jObj.add(EFFECTS, effects);
 
         return jObj;

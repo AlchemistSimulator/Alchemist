@@ -26,6 +26,9 @@ public class DrawDotSerializationTest extends AbstractEffectSerializationTest<Dr
         final ObjectOutputStream oos = new ObjectOutputStream(fout);
 
         final DrawDot effect = new DrawDot("TestDot");
+        // CHECKSTYLE:OFF
+        effect.setSize(22.0);
+        // CHECKSTYLE:ON
 
         oos.writeObject(effect);
 
@@ -46,6 +49,9 @@ public class DrawDotSerializationTest extends AbstractEffectSerializationTest<Dr
         final File file = folder.newFile();
 
         final DrawDot effect = new DrawDot("TestDot");
+        // CHECKSTYLE:OFF
+        effect.setSize(22.0);
+        // CHECKSTYLE:ON
 
         EffectSerializer.effectToFile(file, effect);
 

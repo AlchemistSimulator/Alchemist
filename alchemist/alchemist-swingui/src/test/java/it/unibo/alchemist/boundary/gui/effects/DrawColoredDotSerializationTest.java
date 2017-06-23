@@ -1,5 +1,6 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -26,6 +27,10 @@ public class DrawColoredDotSerializationTest extends AbstractEffectSerialization
         final ObjectOutputStream oos = new ObjectOutputStream(fout);
 
         final DrawColoredDot effect = new DrawColoredDot("TestDot");
+        // CHECKSTYLE:OFF
+        effect.setSize(25.0);
+        // CHECKSTYLE:ON
+        effect.setColor(Color.cyan);
 
         oos.writeObject(effect);
 
@@ -46,6 +51,10 @@ public class DrawColoredDotSerializationTest extends AbstractEffectSerialization
         final File file = folder.newFile();
 
         final DrawColoredDot effect = new DrawColoredDot("TestDot");
+        // CHECKSTYLE:OFF
+        effect.setSize(25.0);
+        // CHECKSTYLE:ON
+        effect.setColor(Color.cyan);
 
         EffectSerializer.effectToFile(file, effect);
 

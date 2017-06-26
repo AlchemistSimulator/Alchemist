@@ -10,6 +10,7 @@ import it.unibo.alchemist.boundary.gui.controller.EffectPropertiesController;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
+import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.DataFormat;
@@ -58,8 +59,8 @@ public class EffectCell extends AbstractEffectCell<EffectFX> {
                 }
 
                 final TextInputDialog dialog = new TextInputDialog(label.getText());
-                dialog.setTitle("Rename the Effect");
-                dialog.setHeaderText("Please enter new name:");
+                dialog.setTitle(ResourceLoader.getStringRes("rename_effect_dialog_title"));
+                dialog.setHeaderText(ResourceLoader.getStringRes("rename_effect_dialog_msg"));
                 dialog.setContentText(null);
 
                 dialog.showAndWait().ifPresent(name -> label.setText(name));
@@ -143,8 +144,7 @@ public class EffectCell extends AbstractEffectCell<EffectFX> {
             this.getLabel().setText(item.getName());
             this.getToggle().setSelected(item.isVisibile());
 
-            // TODO change priority of the Effect
-            // ^ maybe not, if it's all managed by ObservableList
+            // TODO check priority
         }
     }
 

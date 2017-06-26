@@ -12,6 +12,7 @@ import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
+import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextInputDialog;
@@ -76,8 +77,8 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
                 }
 
                 final TextInputDialog dialog = new TextInputDialog(label.getText());
-                dialog.setTitle("Rename the EffectGroup");
-                dialog.setHeaderText("Please enter new name:");
+                dialog.setTitle(ResourceLoader.getStringRes("rename_group_dialog_title"));
+                dialog.setHeaderText(ResourceLoader.getStringRes("rename_group_dialog_msg"));
                 dialog.setContentText(null);
 
                 dialog.showAndWait().ifPresent(name -> label.setText(name));
@@ -101,6 +102,11 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
         });
     }
 
+    /**
+     * Initializes a new side {@link JFXDrawer drawer} that represents the
+     * {@link EffectGroup} contained in this {@code Cell} and let the user edit
+     * it.
+     */
     private void initDrawer() {
         effectDrawer = new JFXDrawer();
         effectDrawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
@@ -158,6 +164,11 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * The side drawer opened by this cell is also rebuilt.
+     */
     @Override
     protected void updateItem(final EffectGroup item, final boolean empty) {
         super.updateItem(item, empty);

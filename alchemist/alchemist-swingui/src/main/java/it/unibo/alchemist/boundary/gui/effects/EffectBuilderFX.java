@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.reflections.Reflections;
 
+import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import javafx.scene.control.ChoiceDialog;
 
 /**
@@ -29,8 +30,8 @@ public class EffectBuilderFX {
         effects = new ArrayList<>(EFFECTS);
 
         dialog = new ChoiceDialog<>(effects.get(0), effects);
-        dialog.setTitle("Add an effect");
-        dialog.setHeaderText("Choose an effect to load");
+        dialog.setTitle(ResourceLoader.getStringRes("add_effect_dialog_title"));
+        dialog.setHeaderText(ResourceLoader.getStringRes("add_effect_dialog_msg"));
         dialog.setContentText(null);
     }
 

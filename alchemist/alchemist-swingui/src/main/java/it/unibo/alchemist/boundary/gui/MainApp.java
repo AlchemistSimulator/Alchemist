@@ -3,6 +3,7 @@ package it.unibo.alchemist.boundary.gui;
 import java.io.IOException;
 
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
+import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -21,11 +22,11 @@ public class MainApp extends Application {
     @Override
     public void start(final Stage primaryStage) {
         final Stage stage = primaryStage;
-        stage.setTitle("Alchemist Simulator base UI");
+        stage.setTitle(ResourceLoader.getStringRes("main_title"));
 
         try {
             initRootLayout();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new IllegalStateException("Could not initialize RootLayout", e);
         }
 

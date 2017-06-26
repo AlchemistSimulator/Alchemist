@@ -14,6 +14,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonSerializer;
 
 import it.unibo.alchemist.boundary.gui.effects.json.EffectGroupAdapter;
+import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 
 /**
  * The class models a group of effects, stored as a stack. It can manage
@@ -25,7 +26,7 @@ public class EffectStack implements EffectGroup {
     /** Default IllegalArgumentException message. */
     private static final String CANNOT_FIND_EFFECT = "Cannot find the effect in the stack";
     /** Default effect group name. */
-    public static final String DEFAULT_NAME = "Unnamed group";
+    public static final String DEFAULT_NAME = ResourceLoader.getStringRes("effect_stack_default_name");
     private static final int FIRST_HASHCODE_CONSTANT = 1231;
     private static final int SECOND_HASHCODE_CONSTANT = 1237;
     /** Default logger. */

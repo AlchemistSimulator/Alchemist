@@ -144,8 +144,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
      * @param event
      *            the drag'n'drop drop event
      */
-    @SuppressWarnings("unchecked") // The item from the dragboard should be of
-                                   // specified class
+    @SuppressWarnings("unchecked") // The item from the dragboard should be of specified class
     protected void dropDragNDrop(final DragEvent event) {
         if (getItem() == null) {
             throw new IllegalStateException("Empty cell: no item found");

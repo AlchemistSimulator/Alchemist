@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.boundary.gui.ColorChannel;
+import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.properties.SerializableEnumProperty;
 import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
@@ -84,23 +85,23 @@ public class DrawShapeFX implements EffectFX {
     /** Default {@code Logger}. */
     private static final Logger L = LoggerFactory.getLogger(DrawShapeFX.class);
     /** Default name */
-    private static final String DEFAULT_NAME = "DrawShape";
+    private static final String DEFAULT_NAME = ResourceLoader.getStringRes("drawshape_default_name");
 
-    private final SerializableEnumProperty<ModeFX> mode = new SerializableEnumProperty<ModeFX>("Mode", ModeFX.FillEllipse);
-    private final RangedDoubleProperty red = PropertyFactory.getColorChannelProperty("R");
-    private final RangedDoubleProperty green = PropertyFactory.getColorChannelProperty("G");
-    private final RangedDoubleProperty blue = PropertyFactory.getColorChannelProperty("B");
-    private final RangedDoubleProperty alpha = PropertyFactory.getColorChannelProperty("A");
-    private final RangedDoubleProperty scaleFactor = new RangedDoubleProperty("Scale Factor", SCALE_INITIAL, MIN_SCALE, MAX_SCALE);
-    private final RangedDoubleProperty size = PropertyFactory.getPercentageRangedProperty("Size", DEFAULT_SIZE);
-    private final SerializableBooleanProperty moleculeFilter = new SerializableBooleanProperty("Draw only nodes containing a molecule",
+    private final SerializableEnumProperty<ModeFX> mode = new SerializableEnumProperty<ModeFX>(ResourceLoader.getStringRes("drawshape_mode"), ModeFX.FillEllipse);
+    private final RangedDoubleProperty red = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawshape_red"));
+    private final RangedDoubleProperty green = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawshape_green"));
+    private final RangedDoubleProperty blue = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawshape_blue"));
+    private final RangedDoubleProperty alpha = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawshape_alpha"));
+    private final RangedDoubleProperty scaleFactor = new RangedDoubleProperty(ResourceLoader.getStringRes("drawshape_scale_factor"), SCALE_INITIAL, MIN_SCALE, MAX_SCALE);
+    private final RangedDoubleProperty size = PropertyFactory.getPercentageRangedProperty(ResourceLoader.getStringRes("drawshape_size"), DEFAULT_SIZE);
+    private final SerializableBooleanProperty moleculeFilter = new SerializableBooleanProperty(ResourceLoader.getStringRes("drawshape_molecule_filter"),
             false);
-    private final SerializableStringProperty moleculeName = new SerializableStringProperty("Molecule", "");
-    private final SerializableBooleanProperty useMoleculeProperty = new SerializableBooleanProperty("Tune colors using a molecule property",
+    private final SerializableStringProperty moleculeName = new SerializableStringProperty(ResourceLoader.getStringRes("drawshape_molecule_name"), "");
+    private final SerializableBooleanProperty useMoleculeProperty = new SerializableBooleanProperty(ResourceLoader.getStringRes("drawshape_use_molecule_property"),
             false);
-    private final SerializableStringProperty moleculePropertyName = new SerializableStringProperty("Molecule property", "");
-    private final SerializableBooleanProperty writePropertyValue = new SerializableBooleanProperty("Write the value", false);
-    private final SerializableEnumProperty<ColorChannel> colorChannel = new SerializableEnumProperty<ColorChannel>("Channel to use",
+    private final SerializableStringProperty moleculePropertyName = new SerializableStringProperty(ResourceLoader.getStringRes("drawshape_molecule_property_name"), "");
+    private final SerializableBooleanProperty writePropertyValue = new SerializableBooleanProperty(ResourceLoader.getStringRes("drawshape_write_property_value"), false);
+    private final SerializableEnumProperty<ColorChannel> colorChannel = new SerializableEnumProperty<ColorChannel>(ResourceLoader.getStringRes("drawshape_color_channel"),
             ColorChannel.Alpha);
     // TODO maybe should switch to JavaFX Color class
     private final SerializableBooleanProperty reverse = new SerializableBooleanProperty("Reverse effect", false);

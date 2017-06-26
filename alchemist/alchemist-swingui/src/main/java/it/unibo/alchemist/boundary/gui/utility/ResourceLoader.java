@@ -2,12 +2,17 @@ package it.unibo.alchemist.boundary.gui.utility;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ResourceBundle;
 
 /**
  * This utility class provides a working file loading everywhere in the project,
  * and both in source running and jar running.
  */
 public final class ResourceLoader {
+    /** Resource bundle. */
+    private static final String RESOURCE_BUNDLE = "it.unibo.alchemist.l10n.FXUIStrings";
+
+    /** Empty, private, constructor, as this is an utility class. */
     private ResourceLoader() {
         // Empty private constructor
     }
@@ -52,5 +57,16 @@ public final class ResourceLoader {
         }
 
         return ResourceLoader.class.getResource(newPath);
+    }
+
+    /**
+     * Looks up on the property files and returns the correct String.
+     * 
+     * @param key
+     *            the key
+     * @return the String
+     */
+    public static String getStringRes(final String key) {
+        return ResourceBundle.getBundle(RESOURCE_BUNDLE).getString(key);
     }
 }

@@ -21,6 +21,7 @@ public final class FXResourceLoader {
      * Private, empty, constructor.
      */
     private FXResourceLoader() {
+        // Empty constructor
     }
 
     /**

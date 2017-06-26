@@ -143,17 +143,20 @@ public class EffectPropertiesController implements Initializable {
      *            the list of fields
      */
     private void parseRangedDoubleFields(final List<Field> fields) {
-        fields.stream().filter(f -> RangedDoubleProperty.class.isAssignableFrom(f.getType())).forEach(f -> {
-            final boolean isAccessible = f.isAccessible();
-            try {
-                f.setAccessible(true);
-                EffectPropertiesController.this.buildSpinner((RangedDoubleProperty) f.get(this.effect));
-            } catch (final IllegalArgumentException | IllegalAccessException e) {
-                L.error(e.getMessage());
-            } finally {
-                f.setAccessible(isAccessible);
-            }
-        });
+        fields
+            .stream()
+            .filter(f -> RangedDoubleProperty.class.isAssignableFrom(f.getType()))
+            .forEach(f -> {
+                final boolean isAccessible = f.isAccessible();
+                try {
+                    f.setAccessible(true);
+                    EffectPropertiesController.this.buildSpinner((RangedDoubleProperty) f.get(this.effect));
+                } catch (final IllegalArgumentException | IllegalAccessException e) {
+                    L.error(e.getMessage());
+                } finally {
+                    f.setAccessible(isAccessible);
+                }
+            });
     }
 
     /**
@@ -164,17 +167,20 @@ public class EffectPropertiesController implements Initializable {
      *            the list of fields
      */
     private void parseStringFields(final List<Field> fields) {
-        fields.stream().filter(f -> StringProperty.class.isAssignableFrom(f.getType())).forEach(f -> {
-            final boolean isAccessible = f.isAccessible();
-            try {
-                f.setAccessible(true);
-                EffectPropertiesController.this.buildTextField((StringProperty) f.get(this.effect));
-            } catch (final IllegalArgumentException | IllegalAccessException e) {
-                L.error(e.getMessage());
-            } finally {
-                f.setAccessible(isAccessible);
-            }
-        });
+        fields
+            .stream()
+            .filter(f -> StringProperty.class.isAssignableFrom(f.getType()))
+            .forEach(f -> {
+                final boolean isAccessible = f.isAccessible();
+                try {
+                    f.setAccessible(true);
+                    EffectPropertiesController.this.buildTextField((StringProperty) f.get(this.effect));
+                } catch (final IllegalArgumentException | IllegalAccessException e) {
+                    L.error(e.getMessage());
+                } finally {
+                    f.setAccessible(isAccessible);
+                }
+            });
     }
 
     /**
@@ -185,20 +191,23 @@ public class EffectPropertiesController implements Initializable {
      *            the list of fields
      */
     private void parseEnumFields(final List<Field> fields) {
-        fields.stream().filter(f -> SerializableEnumProperty.class.isAssignableFrom(f.getType())).forEach(f -> {
-            final boolean isAccessible = f.isAccessible();
-            try {
-                f.setAccessible(true);
-                final Object enumProperty = f.get(this.effect);
-                if (enumProperty.getClass().isEnum()) {
-                    EffectPropertiesController.this.buildComboBox((SerializableEnumProperty<?>) enumProperty);
+        fields
+            .stream()
+            .filter(f -> SerializableEnumProperty.class.isAssignableFrom(f.getType()))
+            .forEach(f -> {
+                final boolean isAccessible = f.isAccessible();
+                try {
+                    f.setAccessible(true);
+                    final SerializableEnumProperty<?> enumProperty = (SerializableEnumProperty<?>) f.get(this.effect);
+                    if (enumProperty.get().getClass().isEnum()) {
+                        EffectPropertiesController.this.buildComboBox(enumProperty);
+                    }
+                } catch (final IllegalArgumentException | IllegalAccessException e) {
+                    L.error(e.getMessage());
+                } finally {
+                    f.setAccessible(isAccessible);
                 }
-            } catch (final IllegalArgumentException | IllegalAccessException e) {
-                L.error(e.getMessage());
-            } finally {
-                f.setAccessible(isAccessible);
-            }
-        });
+            });
     }
 
     /**

@@ -30,6 +30,8 @@ import javafx.scene.text.TextAlignment;
 public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
     private static final String DEFAULT_NAME = "Unnamed effect group";
     private final JFXDrawersStack stack;
+    private JFXDrawer effectDrawer;
+    private EffectBarController effectBarController;
 
     /**
      * Default constructor.
@@ -82,21 +84,7 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
             }
         });
 
-        final JFXDrawer effectDrawer = new JFXDrawer();
-        effectDrawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
-        final EffectBarController effectBarController = new EffectBarController(this, this.stack, effectDrawer);
-
-        try {
-            effectDrawer
-                    .setSidePane(FXResourceLoader.getLayout(BorderPane.class, effectBarController, EffectBarController.EFFECT_BAR_LAYOUT));
-        } catch (IOException e) {
-            throw new IllegalStateException("Could not initialize side pane for effects", e);
-        }
-
-        effectBarController.groupNameProperty().bind(this.getLabel().textProperty());
-
-        effectDrawer.setOverLayVisible(false);
-        effectDrawer.setResizableOnDrag(false);
+        initDrawer();
 
         this.getPane().setOnMouseClicked(event -> {
             // To not interfere with label double-click action
@@ -111,6 +99,25 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
                 }
             }
         });
+    }
+
+    private void initDrawer() {
+        effectDrawer = new JFXDrawer();
+        effectDrawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
+
+        effectBarController = new EffectBarController(this, this.stack, effectDrawer);
+
+        try {
+            effectDrawer
+                    .setSidePane(FXResourceLoader.getLayout(BorderPane.class, effectBarController, EffectBarController.EFFECT_BAR_LAYOUT));
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not initialize side pane for effects", e);
+        }
+
+        effectBarController.groupNameProperty().bind(this.getLabel().textProperty());
+
+        effectDrawer.setOverLayVisible(false);
+        effectDrawer.setResizableOnDrag(false);
     }
 
     /**
@@ -161,6 +168,8 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
             this.getLabel().setText(item.getName());
             this.getSlider().setValue(item.getTransparency());
             this.getToggle().setSelected(item.isVisible());
+            initDrawer();
+            item.forEach(e -> effectBarController.addEffect(e));
         }
     }
 }

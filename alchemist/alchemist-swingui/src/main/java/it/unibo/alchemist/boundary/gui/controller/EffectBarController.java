@@ -9,12 +9,12 @@ import com.jfoenix.controls.JFXDrawersStack;
 
 import it.unibo.alchemist.boundary.gui.effects.EffectBuilderFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
+import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.cells.EffectCell;
 import it.unibo.alchemist.boundary.gui.view.cells.EffectGroupCell;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -96,15 +96,24 @@ public class EffectBarController implements Initializable {
     }
 
     /**
+     * Add the {@link EffectFX Effect} to the {@link ListView} controlled by this class and to the {@link EffectGroup} that the GUI controlled by this claass is representation of.
+     * @param effect the effect to add
+     */
+    public void addEffect(final EffectFX effect) {
+        this.getObservableList().add(effect);
+        this.parentCell.getItem().add(effect);
+        this.effectsList.refresh();
+    }
+
+    /**
      * Opens a {@link Dialog}, and when user choose an {@link EffectFX effect},
      * adds it to the {@link ObservableList list}.
      */
     private void addEffectToList() {
         final EffectFX choice = effectBuilder.chooseAndLoad();
         if (choice != null) {
-            this.getObservableList().add(choice);
+            this.addEffect(choice);
             this.getObservableList().get(this.getObservableList().size() - 1).setName(choice.getName() + " " + getObservableList().size());
-            this.effectsList.refresh();
         }
     }
 

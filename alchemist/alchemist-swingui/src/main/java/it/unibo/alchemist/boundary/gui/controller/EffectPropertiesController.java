@@ -15,11 +15,16 @@ import org.slf4j.LoggerFactory;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
+import com.jfoenix.controls.JFXSlider;
 
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.properties.SerializableEnumProperty;
+import it.unibo.alchemist.boundary.gui.view.properties.SerializableStringProperty;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
+import it.unibo.alchemist.boundary.gui.view.properties.RangedIntegerProperty;
+import it.unibo.alchemist.boundary.gui.view.properties.SerializableBooleanProperty;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -29,6 +34,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonBar;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
@@ -83,9 +89,7 @@ public class EffectPropertiesController implements Initializable {
                 .filter(f -> Property.class.isAssignableFrom(f.getType())).collect(Collectors.toList());
 
         if (!properties.isEmpty()) {
-            this.parseRangedDoubleFields(properties);
-            this.parseStringFields(properties);
-            this.parseEnumFields(properties);
+            this.parseProperties(properties);
 
             if (!this.dynamicNodes.isEmpty()) {
                 this.dynamicNodes.entrySet().forEach(e -> {
@@ -136,78 +140,94 @@ public class EffectPropertiesController implements Initializable {
     }
 
     /**
-     * Checks every property in the list for {@link RangedDoubleProperty} and
-     * creates a new {@link Spinner} for each one.
+     * Checks every field in the list for compatible {@link Property Properties} and
+     * creates a new GUI component for each one.
      * 
      * @param fields
      *            the list of fields
      */
-    private void parseRangedDoubleFields(final List<Field> fields) {
-        fields
-            .stream()
-            .filter(f -> RangedDoubleProperty.class.isAssignableFrom(f.getType()))
-            .forEach(f -> {
-                final boolean isAccessible = f.isAccessible();
-                try {
-                    f.setAccessible(true);
-                    EffectPropertiesController.this.buildSpinner((RangedDoubleProperty) f.get(this.effect));
-                } catch (final IllegalArgumentException | IllegalAccessException e) {
-                    L.error(e.getMessage());
-                } finally {
-                    f.setAccessible(isAccessible);
-                }
-            });
-    }
+    private void parseProperties(final List<Field> fields) {
+        for (final Field f : fields) {
+            final boolean isAccessible = f.isAccessible();
+            try {
+                f.setAccessible(true);
 
-    /**
-     * Checks every property in the list for {@link StringProperty} and creates
-     * a new {@link TextField} for each one.
-     * 
-     * @param fields
-     *            the list of fields
-     */
-    private void parseStringFields(final List<Field> fields) {
-        fields
-            .stream()
-            .filter(f -> StringProperty.class.isAssignableFrom(f.getType()))
-            .forEach(f -> {
-                final boolean isAccessible = f.isAccessible();
-                try {
-                    f.setAccessible(true);
-                    EffectPropertiesController.this.buildTextField((StringProperty) f.get(this.effect));
-                } catch (final IllegalArgumentException | IllegalAccessException e) {
-                    L.error(e.getMessage());
-                } finally {
-                    f.setAccessible(isAccessible);
-                }
-            });
-    }
-
-    /**
-     * Checks every property in the list for {@link SerializableEnumProperty} and creates a
-     * new {@link ComboBox} for each one.
-     * 
-     * @param fields
-     *            the list of fields
-     */
-    private void parseEnumFields(final List<Field> fields) {
-        fields
-            .stream()
-            .filter(f -> SerializableEnumProperty.class.isAssignableFrom(f.getType()))
-            .forEach(f -> {
-                final boolean isAccessible = f.isAccessible();
-                try {
-                    f.setAccessible(true);
+                if (RangedDoubleProperty.class.isAssignableFrom(f.getType())) {
+                    buildSpinner((RangedDoubleProperty) f.get(this.effect));
+                } else if (RangedIntegerProperty.class.isAssignableFrom(f.getType())) {
+                    buildSlider((RangedIntegerProperty) f.get(this.effect));
+                } else if (SerializableStringProperty.class.isAssignableFrom(f.getType())) {
+                    buildTextField((StringProperty) f.get(this.effect));
+                } else if (SerializableBooleanProperty.class.isAssignableFrom(f.getType())) {
+                    buildCheckBox((BooleanProperty) f.get(this.effect));
+                } else if (SerializableEnumProperty.class.isAssignableFrom(f.getType())) {
                     final SerializableEnumProperty<?> enumProperty = (SerializableEnumProperty<?>) f.get(this.effect);
                     if (enumProperty.get().getClass().isEnum()) {
                         EffectPropertiesController.this.buildComboBox(enumProperty);
                     }
-                } catch (final IllegalArgumentException | IllegalAccessException e) {
-                    L.error(e.getMessage());
-                } finally {
-                    f.setAccessible(isAccessible);
                 }
-            });
+
+            } catch (final IllegalArgumentException | IllegalAccessException e) {
+                L.error(e.getMessage());
+            } finally {
+                f.setAccessible(isAccessible);
+            }
+        }
+    }
+
+    /**
+     * Builds a new {@link ComboBox} from a {@link SerializableEnumProperty}, binds its
+     * {@link ComboBox#valueProperty() valueProperty} to the
+     * {@code EnumProperty} and adds it to internal list of nodes.
+     * 
+     * @param enumProperty
+     *            the model of the spinner
+     * @param <T>
+     *            the enum type wrapped by the enumProperty
+     */
+    private <T extends Enum<T>> void buildComboBox(final SerializableEnumProperty<T> enumProperty) {
+        final ObservableList<T> list = FXCollections.observableArrayList(enumProperty.values());
+
+        final ComboBox<T> comboBox = new ComboBox<>(list);
+        comboBox.setValue(list.get(0));
+
+        comboBox.valueProperty().addListener((observable, oldValue, newValue) -> enumProperty.setValue(newValue));
+
+        this.dynamicNodes.put(new Label(enumProperty.getName()), comboBox);
+    }
+
+    /**
+     * Builds a new {@link CheckBox} from a {@link BooleanProperty}, binds its
+     * {@link CheckBox#selectedProperty() selectedProperty} to the
+     * {@code BooleanProperty} and adds it to internal list of nodes.
+     * 
+     * @param booleanProperty
+     *            the model of the checkbox
+     */
+    private void buildCheckBox(final BooleanProperty booleanProperty) {
+        final CheckBox checkBox = new CheckBox();
+        checkBox.setSelected(booleanProperty.get());
+        checkBox.selectedProperty().bindBidirectional(booleanProperty);
+
+        this.dynamicNodes.put(new Label(booleanProperty.getName()), checkBox);
+    }
+
+    /**
+     * Builds a new {@link Slider} from a {@link RangedIntegerProperty}, binds
+     * its {@link Slider#valueProperty() valueProperty} to the
+     * {@code RangedIntegerProperty} and adds it to internal list of nodes.
+     * 
+     * @param doubleProperty
+     *            the model of the spinner
+     */
+    private void buildSlider(final RangedIntegerProperty integerProperty) {
+        final JFXSlider slider = new JFXSlider();
+        slider.setValue(integerProperty.get());
+        slider.setMin(integerProperty.getLowerBound());
+        slider.setMax(integerProperty.getUpperBound());
+        slider.valueProperty().bindBidirectional(integerProperty);
+
+        this.dynamicNodes.put(new Label(integerProperty.getName()), slider);
     }
 
     /**
@@ -244,27 +264,6 @@ public class EffectPropertiesController implements Initializable {
         textField.textProperty().bindBidirectional(stringProperty);
 
         this.dynamicNodes.put(new Label(stringProperty.getName()), textField);
-    }
-
-    /**
-     * Builds a new {@link ComboBox} from a {@link SerializableEnumProperty}, binds its
-     * {@link ComboBox#valueProperty() valueProperty} to the
-     * {@code EnumProperty} and adds it to internal list of nodes.
-     * 
-     * @param enumProperty
-     *            the model of the spinner
-     * @param <T>
-     *            the enum type wrapped by the enumProperty
-     */
-    private <T extends Enum<T>> void buildComboBox(final SerializableEnumProperty<T> enumProperty) {
-        final ObservableList<T> list = FXCollections.observableArrayList(enumProperty.values());
-
-        final ComboBox<T> comboBox = new ComboBox<>(list);
-        comboBox.setValue(list.get(0));
-
-        comboBox.valueProperty().addListener((observable, oldValue, newValue) -> enumProperty.setValue(newValue));
-
-        this.dynamicNodes.put(new Label(enumProperty.getName()), comboBox);
     }
 
     private void showNothing() {

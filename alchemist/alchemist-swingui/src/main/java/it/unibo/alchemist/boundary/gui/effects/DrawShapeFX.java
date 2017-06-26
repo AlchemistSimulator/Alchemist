@@ -84,7 +84,7 @@ public class DrawShapeFX implements EffectFX {
     /** Default {@code Logger}. */
     private static final Logger L = LoggerFactory.getLogger(DrawShapeFX.class);
     /** Default name */
-    private static final String DEFAULT_NAME = "Unnamed DrawShape";
+    private static final String DEFAULT_NAME = "DrawShape";
 
     private final SerializableEnumProperty<ModeFX> mode = new SerializableEnumProperty<ModeFX>("Mode", ModeFX.FillEllipse);
     private final RangedDoubleProperty red = PropertyFactory.getColorChannelProperty("R");

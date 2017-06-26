@@ -169,7 +169,7 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
             this.getSlider().setValue(item.getTransparency());
             this.getToggle().setSelected(item.isVisible());
             initDrawer();
-            item.forEach(e -> effectBarController.addEffect(e));
+            item.forEach(e -> effectBarController.addEffectToGroup(e));
         }
     }
 }

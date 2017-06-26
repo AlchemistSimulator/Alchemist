@@ -99,7 +99,7 @@ public class EffectBarController implements Initializable {
      * Add the {@link EffectFX Effect} to the {@link ListView} controlled by this class and to the {@link EffectGroup} that the GUI controlled by this claass is representation of.
      * @param effect the effect to add
      */
-    public void addEffect(final EffectFX effect) {
+    public void addEffectToGroup(final EffectFX effect) {
         this.getObservableList().add(effect);
         this.parentCell.getItem().add(effect);
         this.effectsList.refresh();
@@ -112,7 +112,7 @@ public class EffectBarController implements Initializable {
     private void addEffectToList() {
         final EffectFX choice = effectBuilder.chooseAndLoad();
         if (choice != null) {
-            this.addEffect(choice);
+            this.addEffectToGroup(choice);
             this.getObservableList().get(this.getObservableList().size() - 1).setName(choice.getName() + " " + getObservableList().size());
         }
     }
@@ -129,7 +129,6 @@ public class EffectBarController implements Initializable {
             this.observableList = FXCollections.observableArrayList();
             this.effectsList.setItems(observableList);
             this.effectsList.setCellFactory(lv -> new EffectCell(stack));
-            // TODO check
         }
         return this.observableList;
     }

@@ -26,7 +26,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
     /** Default generated Serial Version UID. */
     private static final long serialVersionUID = -2329825220099191395L;
     /** Default effect name */
-    private static final String DEFAULT_NAME = "Unnamed DrawColoredDot";
+    private static final String DEFAULT_NAME = "DrawColoredDot";
     private final RangedDoubleProperty red;
     private final RangedDoubleProperty green;
     private final RangedDoubleProperty blue;

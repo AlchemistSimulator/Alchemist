@@ -28,7 +28,7 @@ public class DrawDot implements EffectFX {
     private static final long serialVersionUID = -6098041600645663870L;
 
     /** Default effect name. */
-    private static final String DEFAULT_NAME = "Unnamed DrawDot";
+    private static final String DEFAULT_NAME = "DrawDot";
 
     /** Default dot size. */
     private static final double DEFAULT_SIZE = 5;

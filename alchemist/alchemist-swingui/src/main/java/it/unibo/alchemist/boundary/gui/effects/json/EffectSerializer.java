@@ -46,6 +46,9 @@ import javassist.Modifier;
  * @see Gson
  */
 public final class EffectSerializer {
+    /** Default extension of serialized groups of effects. */
+    public static final String DEFAULT_EXTENSION = ".json";
+
     /** {@code Type} of an {@code EffectFX}. */
     private static final Type EFFECT_TYPE = new TypeToken<EffectFX>() { }.getType();
     /** {@code Type} of an {@code EffectGroup}. */

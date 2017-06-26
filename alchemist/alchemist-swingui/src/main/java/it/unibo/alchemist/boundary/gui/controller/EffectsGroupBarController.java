@@ -6,8 +6,10 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +61,8 @@ public class EffectsGroupBarController implements Initializable {
 
     private final JFXDrawersStack stack;
 
+    private Optional<String> lastPath;
+
     /**
      * Default constructor.
      * 
@@ -67,6 +71,7 @@ public class EffectsGroupBarController implements Initializable {
      */
     public EffectsGroupBarController(final JFXDrawersStack stack) {
         this.stack = stack;
+        this.lastPath = Optional.empty();
     }
 
     @Override
@@ -124,9 +129,22 @@ public class EffectsGroupBarController implements Initializable {
     private void saveToFile() {
         final FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save effect");
-        final File selectedFile = fileChooser.showSaveDialog(this.save.getScene().getWindow());
+        final ExtensionFilter json = new ExtensionFilter("JSON serialized effects", "*" + EffectSerializer.DEFAULT_EXTENSION);
+        fileChooser.getExtensionFilters().addAll(
+                json,
+                new ExtensionFilter("All Files", "*.*"));
+        lastPath.ifPresent(path -> fileChooser.setInitialDirectory(new File(path)));
+        fileChooser.setInitialFileName("Effects" + EffectSerializer.DEFAULT_EXTENSION);
+        fileChooser.setSelectedExtensionFilter(json);
+
+        File selectedFile = fileChooser.showSaveDialog(this.save.getScene().getWindow());
 
         if (selectedFile != null) {
+            if (FilenameUtils.getExtension(selectedFile.getAbsolutePath()).equals("")) {
+                selectedFile = new File(selectedFile.getAbsolutePath() + EffectSerializer.DEFAULT_EXTENSION);
+            }
+            this.lastPath = Optional.ofNullable(selectedFile.getParent());
+
             try {
                 EffectSerializer.effectGroupsToFile(selectedFile,
                         Arrays.asList(getObservableList().toArray(new EffectGroup[getObservableList().size()])));
@@ -143,12 +161,16 @@ public class EffectsGroupBarController implements Initializable {
     private void loadFromFile() {
         final FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Load effect");
-        fileChooser.getExtensionFilters().addAll(new ExtensionFilter("Text Files", "*.txt", "*.json"),
+        lastPath.ifPresent(path -> fileChooser.setInitialDirectory(new File(path)));
+        fileChooser.getExtensionFilters().addAll(
+                new ExtensionFilter("JSON serialized effects", "*" + EffectSerializer.DEFAULT_EXTENSION),
                 new ExtensionFilter("All Files", "*.*"));
 
         final File selectedFile = fileChooser.showOpenDialog(this.load.getScene().getWindow());
 
         if (selectedFile != null) {
+            this.lastPath = Optional.ofNullable(selectedFile.getParent());
+
             try {
                 this.getObservableList().addAll(EffectSerializer.effectGroupsFromFile(selectedFile));
             } catch (final IOException | JsonParseException e) {

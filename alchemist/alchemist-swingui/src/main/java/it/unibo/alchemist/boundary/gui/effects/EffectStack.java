@@ -1,6 +1,5 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -11,16 +10,10 @@ import java.util.Queue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 import it.unibo.alchemist.boundary.gui.effects.json.EffectGroupAdapter;
-import it.unibo.alchemist.boundary.gui.view.properties.PropertyTypeAdapter;
-import it.unibo.alchemist.boundary.gui.view.properties.SerializableStringProperty;
 
 /**
  * The class models a group of effects, stored as a stack. It can manage

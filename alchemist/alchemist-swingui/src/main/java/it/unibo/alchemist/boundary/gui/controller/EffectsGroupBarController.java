@@ -133,7 +133,12 @@ public class EffectsGroupBarController implements Initializable {
         fileChooser.getExtensionFilters().addAll(
                 json,
                 new ExtensionFilter("All Files", "*.*"));
-        lastPath.ifPresent(path -> fileChooser.setInitialDirectory(new File(path)));
+        lastPath.ifPresent(path -> {
+            final File folder = new File(path);
+            if (folder.isDirectory()) {
+                fileChooser.setInitialDirectory(folder);
+            }
+        });
         fileChooser.setInitialFileName("Effects" + EffectSerializer.DEFAULT_EXTENSION);
         fileChooser.setSelectedExtensionFilter(json);
 
@@ -161,7 +166,12 @@ public class EffectsGroupBarController implements Initializable {
     private void loadFromFile() {
         final FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Load effect");
-        lastPath.ifPresent(path -> fileChooser.setInitialDirectory(new File(path)));
+        lastPath.ifPresent(path -> {
+            final File folder = new File(path);
+            if (folder.isDirectory()) {
+                fileChooser.setInitialDirectory(folder);
+            }
+        });
         fileChooser.getExtensionFilters().addAll(
                 new ExtensionFilter("JSON serialized effects", "*" + EffectSerializer.DEFAULT_EXTENSION),
                 new ExtensionFilter("All Files", "*.*"));

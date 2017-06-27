@@ -105,11 +105,13 @@ public interface EffectGroup extends Serializable, Queue<EffectFX> {
     int hashCode();
 
     /**
-     * Compares the {@link Effect Effects} contained in this collection one by
-     * one. The result is true if and only the argument is not {@code null} and
-     * every {@link Effect} is not {@code null}, {@link Effect#equals(Object)
-     * equal} to the corresponding in the comparing {@code EffectGroup} (order
-     * is important!) and has the same visibility.
+     * Compares the {@link EffectGroup EffectGroup}s. The result is true if and
+     * only if the argument is not {@code null} and every {@link Effect}
+     * contained is not {@code null} and {@link Effect#equals(Object) equal} to
+     * the corresponding in the comparing {@code EffectGroup} (order is
+     * important!) and the group has the same name, visibility and transparency.
+     * 
+     * @see Object#equals(Object)
      */
     @Override // Should override equals() method
     boolean equals(Object obj);

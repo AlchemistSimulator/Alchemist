@@ -103,7 +103,7 @@ public class ButtonsBarController implements Initializable {
         try {
             effectGroupsDrawer.setSidePane(FXResourceLoader.getLayout(BorderPane.class, effectsGroupBarController,
                     EffectsGroupBarController.EFFECT_GROUP_BAR_LAYOUT));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new IllegalStateException("Could not initialize side pane for effects", e);
         }
         effectGroupsDrawer.setOverLayVisible(false);
@@ -122,6 +122,9 @@ public class ButtonsBarController implements Initializable {
 
         fullscreenToggle.setText("");
         fullscreenToggle.setGraphic(fullscreen);
+//        fullscreenToggle.setOnAction(e -> {
+//            // TODO toggle fullscreen
+//        });
 
         controlType.setText("");
         controlType.setGraphic(pan);

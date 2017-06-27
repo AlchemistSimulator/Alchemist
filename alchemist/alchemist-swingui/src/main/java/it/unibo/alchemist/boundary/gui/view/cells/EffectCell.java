@@ -25,7 +25,7 @@ import javafx.scene.text.TextAlignment;
  * clicked should open another view to edit effect-specific parameters.
  */
 public class EffectCell extends AbstractEffectCell<EffectFX> {
-    private static final String DEFAULT_NAME = "Unnamed effect";
+    private static final String DEFAULT_NAME = ResourceLoader.getStringRes("effect_default_name");
     private final JFXDrawersStack stack;
 
     /**

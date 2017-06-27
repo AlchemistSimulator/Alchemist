@@ -104,12 +104,12 @@ public class DrawShapeFX implements EffectFX {
     private final SerializableEnumProperty<ColorChannel> colorChannel = new SerializableEnumProperty<ColorChannel>(ResourceLoader.getStringRes("drawshape_color_channel"),
             ColorChannel.Alpha);
     // TODO maybe should switch to JavaFX Color class
-    private final SerializableBooleanProperty reverse = new SerializableBooleanProperty("Reverse effect", false);
+    private final SerializableBooleanProperty reverse = new SerializableBooleanProperty(ResourceLoader.getStringRes("drawshape_reverse"), false);
 
-    private final RangedDoubleProperty orderOfMagnitude = new RangedDoubleProperty("Property order of magnitude", 0, -PROPERTY_SCALE,
+    private final RangedDoubleProperty orderOfMagnitude = new RangedDoubleProperty(ResourceLoader.getStringRes("drawshape_oom"), 0, -PROPERTY_SCALE,
             PROPERTY_SCALE);
-    private final RangedDoubleProperty minprop = new RangedDoubleProperty("Minimum property value", 0, -PROPERTY_SCALE, PROPERTY_SCALE);
-    private final RangedDoubleProperty maxprop = new RangedDoubleProperty("Maximum property value", PROPERTY_SCALE, -PROPERTY_SCALE,
+    private final RangedDoubleProperty minprop = new RangedDoubleProperty(ResourceLoader.getStringRes("drawshape_minprop"), 0, -PROPERTY_SCALE, PROPERTY_SCALE);
+    private final RangedDoubleProperty maxprop = new RangedDoubleProperty(ResourceLoader.getStringRes("drawshape_maxprop"), PROPERTY_SCALE, -PROPERTY_SCALE,
             PROPERTY_SCALE);
 
     private Color colorCache = DEFAULT_COLOR;

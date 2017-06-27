@@ -3,6 +3,7 @@ package it.unibo.alchemist.boundary.gui.effects;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
+import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
@@ -26,7 +27,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
     /** Default generated Serial Version UID. */
     private static final long serialVersionUID = -2329825220099191395L;
     /** Default effect name */
-    private static final String DEFAULT_NAME = "DrawColoredDot";
+    private static final String DEFAULT_NAME = ResourceLoader.getStringRes("drawcoloreddot_default_name");
     private final RangedDoubleProperty red;
     private final RangedDoubleProperty green;
     private final RangedDoubleProperty blue;
@@ -43,10 +44,10 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
         super(DEFAULT_NAME);
 
         // Set properties to default color of DrawDot
-        red = PropertyFactory.getColorChannelProperty("R", (double) super.getColor().getRed());
-        green = PropertyFactory.getColorChannelProperty("G", (double) super.getColor().getGreen());
-        blue = PropertyFactory.getColorChannelProperty("B", (double) super.getColor().getBlue());
-        alpha = PropertyFactory.getColorChannelProperty("A", (double) super.getColor().getAlpha());
+        red = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_red"), (double) super.getColor().getRed());
+        green = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_green"), (double) super.getColor().getGreen());
+        blue = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_blue"), (double) super.getColor().getBlue());
+        alpha = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_alpha"), (double) super.getColor().getAlpha());
 
         // Update the color at each change
         red.addListener(this.updateColor());

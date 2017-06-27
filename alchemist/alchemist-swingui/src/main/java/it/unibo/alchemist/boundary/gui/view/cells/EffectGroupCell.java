@@ -29,7 +29,7 @@ import javafx.scene.text.TextAlignment;
  * effects} the group is composed of.
  */
 public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
-    private static final String DEFAULT_NAME = "Unnamed effect group";
+    private static final String DEFAULT_NAME = ResourceLoader.getStringRes("effect_group_default_name");
     private final JFXDrawersStack stack;
     private JFXDrawer effectDrawer;
     private EffectBarController effectBarController;

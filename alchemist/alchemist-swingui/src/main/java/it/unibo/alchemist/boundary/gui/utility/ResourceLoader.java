@@ -2,6 +2,7 @@ package it.unibo.alchemist.boundary.gui.utility;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
@@ -64,9 +65,36 @@ public final class ResourceLoader {
      * 
      * @param key
      *            the key
-     * @return the String
+     * @return the string
+     * @throws NullPointerException
+     *             if key is null
+     * @throws MissingResourceException
+     *             if no object for the given key or no resource bundle can be
+     *             found
+     * @throws ClassCastException
+     *             if the object found for the given key is not a string
      */
     public static String getStringRes(final String key) {
         return ResourceBundle.getBundle(RESOURCE_BUNDLE).getString(key);
+    }
+
+    /**
+     * Looks up on the property files and returns the correct String.
+     * 
+     * @param key
+     *            the key
+     * @param locale
+     *            the locale
+     * @return the string
+     * @throws NullPointerException
+     *             if key or locale is null
+     * @throws MissingResourceException
+     *             if no object for the given key or no resource bundle can be
+     *             found
+     * @throws ClassCastException
+     *             if the object found for the given key is not a string
+     */
+    public static String getStringRes(final String key, final Locale locale) {
+        return ResourceBundle.getBundle(RESOURCE_BUNDLE, locale).getString(key);
     }
 }

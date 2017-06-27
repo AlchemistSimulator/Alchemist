@@ -22,6 +22,7 @@ import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.effects.EffectStack;
 import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
+import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.cells.EffectGroupCell;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -49,13 +50,13 @@ public class EffectsGroupBarController implements Initializable {
     private static final Logger L = LoggerFactory.getLogger(EffectsGroupBarController.class);
 
     @FXML
-    private JFXButton save;
+    private JFXButton save; // Value injected by FXMLLoader
     @FXML
-    private JFXButton load;
+    private JFXButton load; // Value injected by FXMLLoader
     @FXML
-    private JFXButton addGroup;
+    private JFXButton addGroup; // Value injected by FXMLLoader
     @FXML
-    private ListView<EffectGroup> effectGroupsList;
+    private ListView<EffectGroup> effectGroupsList; // Value injected by FXMLLoader
 
     private ObservableList<EffectGroup> observableList;
 
@@ -83,15 +84,15 @@ public class EffectsGroupBarController implements Initializable {
 
         this.save.setText("");
         this.save.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.SAVE));
-        this.save.setOnAction(e -> this.saveToFile()); // TODO
+        this.save.setOnAction(e -> this.saveToFile());
 
         this.load.setText("");
         this.load.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.FOLDER_OPEN));
-        this.load.setOnAction(e -> this.loadFromFile()); // TODO
+        this.load.setOnAction(e -> this.loadFromFile());
 
         this.addGroup.setText("");
         this.addGroup.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.ADD));
-        this.addGroup.setOnAction(e -> addGroupToList("Effect group " + (getObservableList().size() + 1)));
+        this.addGroup.setOnAction(e -> addGroupToList(ResourceLoader.getStringRes("effect_group_default_name") + " " + (getObservableList().size() + 1)));
     }
 
     /**
@@ -118,7 +119,6 @@ public class EffectsGroupBarController implements Initializable {
             this.observableList = FXCollections.observableArrayList();
             this.effectGroupsList.setItems(observableList);
             this.effectGroupsList.setCellFactory(lv -> new EffectGroupCell(this.stack));
-            // TODO check
         }
         return this.observableList;
     }
@@ -128,11 +128,11 @@ public class EffectsGroupBarController implements Initializable {
      */
     private void saveToFile() {
         final FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save effect");
-        final ExtensionFilter json = new ExtensionFilter("JSON serialized effects", "*" + EffectSerializer.DEFAULT_EXTENSION);
+        fileChooser.setTitle(ResourceLoader.getStringRes("save_effect_groups_dialog_title"));
+        final ExtensionFilter json = new ExtensionFilter(ResourceLoader.getStringRes("json_extension_filter_description"), "*" + EffectSerializer.DEFAULT_EXTENSION);
         fileChooser.getExtensionFilters().addAll(
                 json,
-                new ExtensionFilter("All Files", "*.*"));
+                new ExtensionFilter(ResourceLoader.getStringRes("all_files_extension_filter_description"), "*.*"));
         lastPath.ifPresent(path -> {
             final File folder = new File(path);
             if (folder.isDirectory()) {
@@ -155,7 +155,7 @@ public class EffectsGroupBarController implements Initializable {
                         Arrays.asList(getObservableList().toArray(new EffectGroup[getObservableList().size()])));
             } catch (final IOException | JsonParseException e) {
                 L.error("Can't save Effect Groups to file: " + e.getMessage());
-                this.errorDialog("Exception during save", "Can't save Effect Groups to file", e);
+                this.errorDialog(ResourceLoader.getStringRes("save_effect_groups_error_dialog_title"), ResourceLoader.getStringRes("save_effect_groups_error_dialog_msg"), e);
             }
         }
     }
@@ -165,7 +165,7 @@ public class EffectsGroupBarController implements Initializable {
      */
     private void loadFromFile() {
         final FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Load effect");
+        fileChooser.setTitle(ResourceLoader.getStringRes("load_effect_groups_dialog_title"));
         lastPath.ifPresent(path -> {
             final File folder = new File(path);
             if (folder.isDirectory()) {
@@ -173,8 +173,8 @@ public class EffectsGroupBarController implements Initializable {
             }
         });
         fileChooser.getExtensionFilters().addAll(
-                new ExtensionFilter("JSON serialized effects", "*" + EffectSerializer.DEFAULT_EXTENSION),
-                new ExtensionFilter("All Files", "*.*"));
+                new ExtensionFilter(ResourceLoader.getStringRes("json_extension_filter_description"), "*" + EffectSerializer.DEFAULT_EXTENSION),
+                new ExtensionFilter(ResourceLoader.getStringRes("all_files_extension_filter_description"), "*.*"));
 
         final File selectedFile = fileChooser.showOpenDialog(this.load.getScene().getWindow());
 
@@ -185,7 +185,7 @@ public class EffectsGroupBarController implements Initializable {
                 this.getObservableList().addAll(EffectSerializer.effectGroupsFromFile(selectedFile));
             } catch (final IOException | JsonParseException e) {
                 L.error("Can't load Effect Groups from file: " + e.getMessage());
-                this.errorDialog("Exception during load", "Can't load Effect Groups from file", e);
+                this.errorDialog(ResourceLoader.getStringRes("load_effect_groups_error_dialog_title"), ResourceLoader.getStringRes("load_effect_groups_error_dialog_msg"), e);
             }
         }
     }
@@ -211,7 +211,7 @@ public class EffectsGroupBarController implements Initializable {
         cause.printStackTrace(pw);
         final String exceptionText = sw.toString();
 
-        final Label label = new Label("The exception stacktrace was: ");
+        final Label label = new Label(ResourceLoader.getStringRes("exception_error_dialog_msg"));
 
         final TextArea textArea = new TextArea(exceptionText);
         textArea.setEditable(false);

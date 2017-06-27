@@ -63,7 +63,7 @@ public final class EffectSerializer {
     /** Set of available {@link EffectGroup group}s found by reflection. */
     private static final Set<Class<? extends EffectGroup>> GROUPS = REFLECTIONS.getSubTypesOf(EffectGroup.class);
     /** Set of available {@link Property Properties} found by reflection. */
-    @SuppressWarnings("rawtypes") // Needed to let the compiler accept the constant
+    @SuppressWarnings("rawtypes") // Needed to make the compiler accept the constant
     private static final Set<Class<? extends Property>> PROPERTIES = REFLECTIONS.getSubTypesOf(Property.class);
     /** Map of all available {@link PropertyTypeAdapter}. */
     private static final Map<Class<?>, PropertyTypeAdapter<?>> PROPERTY_TYPE_ADAPTER = new HashMap<>();

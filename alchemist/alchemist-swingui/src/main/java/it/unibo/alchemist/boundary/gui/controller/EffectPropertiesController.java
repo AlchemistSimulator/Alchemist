@@ -19,6 +19,7 @@ import com.jfoenix.controls.JFXSlider;
 
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
+import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.properties.SerializableEnumProperty;
 import it.unibo.alchemist.boundary.gui.view.properties.SerializableStringProperty;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
@@ -61,15 +62,15 @@ public class EffectPropertiesController implements Initializable {
     private static final Logger L = LoggerFactory.getLogger(EffectPropertiesController.class);
 
     @FXML
-    private BorderPane effectsPane;
+    private BorderPane effectsPane; // Value injected by FXMLLoader
     @FXML
-    private ButtonBar topBar;
+    private ButtonBar topBar; // Value injected by FXMLLoader
     @FXML
-    private JFXButton backToEffects;
+    private JFXButton backToEffects; // Value injected by FXMLLoader
     @FXML
-    private Label effectName;
+    private Label effectName; // Value injected by FXMLLoader
     @FXML
-    private VBox mainBox;
+    private VBox mainBox; // Value injected by FXMLLoader
 
     private final EffectFX effect;
 
@@ -202,7 +203,7 @@ public class EffectPropertiesController implements Initializable {
      * {@code BooleanProperty} and adds it to internal list of nodes.
      * 
      * @param booleanProperty
-     *            the model of the checkbox
+     *            the model of the checkBox
      */
     private void buildCheckBox(final BooleanProperty booleanProperty) {
         final CheckBox checkBox = new CheckBox();
@@ -266,9 +267,12 @@ public class EffectPropertiesController implements Initializable {
         this.dynamicNodes.put(new Label(stringProperty.getName()), textField);
     }
 
+    /**
+     * Shows a {@link Label} that tell the user that there is nothing to tune in that effect.
+     */
     private void showNothing() {
         L.debug("Effect " + effect.toString() + " does not have tunable properties");
-        final Label nothingHere = new Label("Nothing tunable here");
+        final Label nothingHere = new Label(ResourceLoader.getStringRes("nothing_to_tune"));
         nothingHere.setTextAlignment(TextAlignment.CENTER);
         mainBox.getChildren().add(nothingHere);
     }

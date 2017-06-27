@@ -10,7 +10,6 @@ import java.util.ResourceBundle;
 /**
  * Shorthand for getting resources.
  */
-@Deprecated
 public final class LocalizedResourceBundle {
 
     private LocalizedResourceBundle() {

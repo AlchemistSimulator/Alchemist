@@ -5,14 +5,11 @@ import java.io.Serializable;
 
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
 import it.unibo.alchemist.model.interfaces.Environment;
-import javafx.scene.input.DataFormat;
 
 /**
  * Graphical visualization of something happening in the environment.
  */
 public interface EffectFX extends Serializable {
-    /** Default DataFormat. */
-    DataFormat DATA_FORMAT = new DataFormat(EffectFX.class.getName());
 
     /**
      * Applies the effect.

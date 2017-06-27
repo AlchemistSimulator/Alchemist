@@ -9,7 +9,7 @@ dependencies {
         "com.miglayout:miglayout-swing:$miglayoutVersion",
         "org.mapsforge:mapsforge-map-awt:$mapsforgeVersion",
         "org.danilopianini:gson-extras:$gsonExtrasVersion",
-        "org.danilopianini:javalib-java7:0.6.1",
+        "org.danilopianini:javalib-java7:$javalib7Version",
         "org.controlsfx:controlsfx:$controlsFXVersion",
         "com.jfoenix:jfoenix:$jFoenixVersion",
         "com.github.jiconfont:jiconfont-javafx:$jIconFontJavaFXVersion",

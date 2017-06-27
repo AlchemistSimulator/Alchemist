@@ -51,7 +51,7 @@ public class ProjectGUI extends Application {
         Thread.setDefaultUncaughtExceptionHandler(FXUtil::errorAlert);
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Alchemist");
-        this.primaryStage.getIcons().add(SVGImageUtils.getSvgImage("/icon/icon.svg"));
+        this.primaryStage.getIcons().add(SVGImageUtils.getSvgImage("icon/icon.svg"));
         initLayout("RootLayout");
         initLayout("LeftLayout");
         initLayout("CenterLayout");

@@ -20,10 +20,12 @@ public final class SVGImageUtils {
         // Empty constructor
     }
 
+    static {
+        SvgImageLoaderFactory.install();
+    }
+
     /**
      * Returns the Image of a SVG image.
-     * <p>
-     * Should have called {@link #installSvgLoader()} first.
      * 
      * @param path
      *            The SVG image position
@@ -34,8 +36,6 @@ public final class SVGImageUtils {
      * @return The image
      */
     public static Image getSvgImage(final String path, final double width, final double height) {
-        SvgImageLoaderFactory.install();
-
         final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         final InputStream imageStream = ResourceLoader.load(path);
         return new Image(imageStream, screenSize.getWidth() * width / 100, screenSize.getHeight() * height / 100, true, true);
@@ -43,16 +43,12 @@ public final class SVGImageUtils {
 
     /**
      * Returns the Image of a SVG image.
-     * <p>
-     * Should have called {@link #installSvgLoader()} first.
      * 
      * @param path
      *            The SVG image position
      * @return The image
      */
     public static Image getSvgImage(final String path) {
-        SvgImageLoaderFactory.install();
-
         final InputStream imageStream = ResourceLoader.load(path);
         return new Image(imageStream);
     }

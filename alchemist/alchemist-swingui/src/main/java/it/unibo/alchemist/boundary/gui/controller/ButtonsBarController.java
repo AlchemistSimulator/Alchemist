@@ -111,7 +111,7 @@ public class ButtonsBarController implements Initializable {
 
         effectsButton.setOnAction(e -> {
             // Drawer size is modified every time it's opened
-            if (effectGroupsDrawer.isHidden() || effectGroupsDrawer.isHidding()) {
+            if (effectGroupsDrawer.isHidden() || effectGroupsDrawer.isHiding()) {
                 effectGroupsDrawer.setDefaultDrawerSize(controlPane.getWidth() / DEFAULT_DRAWER_FRACTION);
             }
             this.drawerStack.toggle(effectGroupsDrawer);

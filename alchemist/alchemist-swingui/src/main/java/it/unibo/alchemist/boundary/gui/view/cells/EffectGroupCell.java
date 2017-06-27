@@ -91,7 +91,7 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
             // To not interfere with label double-click action
             if (event.getClickCount() != 2) {
                 // Drawer size is modified every time it's opened
-                if (effectDrawer.isHidden() || effectDrawer.isHidding()) {
+                if (effectDrawer.isHidden() || effectDrawer.isHiding()) {
                     effectDrawer.setDefaultDrawerSize(stack.getWidth());
                 }
                 this.stack.toggle(effectDrawer);

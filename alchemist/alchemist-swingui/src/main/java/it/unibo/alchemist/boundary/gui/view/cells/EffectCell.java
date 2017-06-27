@@ -87,7 +87,7 @@ public class EffectCell extends AbstractEffectCell<EffectFX> {
             // To not interfere with label double-click action
             if (event.getClickCount() != 2) {
                 // Drawer size is modified every time it's opened
-                if (propertiesDrawer.isHidden() || propertiesDrawer.isHidding()) {
+                if (propertiesDrawer.isHidden() || propertiesDrawer.isHiding()) {
                     propertiesDrawer.setDefaultDrawerSize(stack.getWidth());
                 }
                 this.stack.toggle(propertiesDrawer);

@@ -6,6 +6,7 @@ package it.unibo.alchemist.protelis;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.HashUtils;
 import org.protelis.lang.datatype.DatatypeFactory;
@@ -124,7 +125,7 @@ public class AlchemistExecutionContext extends AbstractExecutionContext implemen
 
     @Override
     public Tuple getCoordinates() {
-        return DatatypeFactory.createTuple(getDevicePosition().getCartesianCoordinates());
+        return DatatypeFactory.createTuple((Object[]) ArrayUtils.toObject(getDevicePosition().getCartesianCoordinates()));
     }
 
     @Override

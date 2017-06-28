@@ -24,7 +24,7 @@ final class FXUtil {
 	def static void errorAlert(Thread thread, Throwable ex) {
 		val alert = new Alert(AlertType.ERROR)
 		val messages = Streams::flatten(ex, [if (it.cause === null) Stream.empty() else Stream.of(it.cause)])
-			.map([it.message])
+			.map[it.message]
 			.filter([it !== null])
 			.collect(Collectors::joining('\n'))
 		val sw = new StringWriter()

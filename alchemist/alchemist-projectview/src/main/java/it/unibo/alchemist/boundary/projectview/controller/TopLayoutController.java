@@ -11,9 +11,9 @@ import java.util.ResourceBundle;
 
 import com.google.common.io.Files;
 
+import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
-import it.unibo.alchemist.boundary.projectview.utils.SVGImageUtils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -55,7 +55,6 @@ public class TopLayoutController {
      * 
      */
     public void initialize() {
-        SVGImageUtils.installSvgLoader();
         this.btnNew.setGraphic(new ImageView(SVGImageUtils.getSvgImage("icon/new.svg", IMG_WIDTH, IMG_HEIGHT)));
         this.btnNew.setText(RESOURCES.getString("new"));
         this.btnOpen.setGraphic(new ImageView(SVGImageUtils.getSvgImage("icon/open.svg", IMG_WIDTH, IMG_HEIGHT)));

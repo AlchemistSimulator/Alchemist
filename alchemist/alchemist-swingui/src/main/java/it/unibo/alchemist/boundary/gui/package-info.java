@@ -1,5 +1,5 @@
 /**
- * This package contains the Alchemist Swing GUI implementation.
+ * This package contains the Alchemist GUI implementation.
  */
 package it.unibo.alchemist.boundary.gui;
 

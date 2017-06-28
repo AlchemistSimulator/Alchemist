@@ -10,6 +10,7 @@ package it.unibo.alchemist.boundary.gui.effects;
 
 /**
  */
+@Deprecated
 public final class EffectFactory {
 
     /**

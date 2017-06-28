@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.swing.BoxLayout;
@@ -18,8 +19,8 @@ import javax.swing.JPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.unibo.alchemist.boundary.gui.effects.EffectSerializationFactory;
 import it.unibo.alchemist.boundary.gui.effects.JEffectsTab;
+import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializationFactory;
 import it.unibo.alchemist.boundary.interfaces.GraphicalOutputMonitor;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.monitors.Generic2DDisplay;
@@ -27,11 +28,11 @@ import it.unibo.alchemist.boundary.monitors.MapDisplay;
 import it.unibo.alchemist.boundary.monitors.TimeStepMonitor;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
-import java.util.Objects;
 
 /**
  * Utility class for quickly creating non-reusable graphical interfaces.
  */
+@Deprecated
 public final class SingleRunGUI {
 
     private static final Logger L = LoggerFactory.getLogger(SingleRunGUI.class);

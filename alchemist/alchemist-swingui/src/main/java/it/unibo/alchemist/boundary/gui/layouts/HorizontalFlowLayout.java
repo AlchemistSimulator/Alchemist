@@ -33,7 +33,6 @@ import java.awt.Insets;
  *         Homepage:www.kagi.com/equitysoft - Based on 'FlexLayout' in Java
  *         class libraries Vol 2 Chan/Lee Addison-Wesley 1998
  */
-
 public class HorizontalFlowLayout extends AFlowLayout {
 
     /**

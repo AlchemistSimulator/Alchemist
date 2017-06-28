@@ -11,6 +11,7 @@ package it.unibo.alchemist.boundary.gui;
 import java.awt.Color;
 
 /**
+ * Enumeration that models all the possible channels of a color.
  */
 public enum ColorChannel {
 

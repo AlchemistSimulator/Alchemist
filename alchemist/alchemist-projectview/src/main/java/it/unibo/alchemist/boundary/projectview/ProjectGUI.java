@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.IOException;
 
+import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.projectview.controller.CenterLayoutController;
 import it.unibo.alchemist.boundary.projectview.controller.LeftLayoutController;
 import it.unibo.alchemist.boundary.projectview.controller.TopLayoutController;
@@ -31,6 +32,7 @@ public class ProjectGUI extends Application {
 
     /**
      * Returns the primary stage.
+     * 
      * @return primary stage
      */
     public Stage getStage() {
@@ -49,6 +51,7 @@ public class ProjectGUI extends Application {
         Thread.setDefaultUncaughtExceptionHandler(FXUtil::errorAlert);
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Alchemist");
+        this.primaryStage.getIcons().add(SVGImageUtils.getSvgImage("icon/icon.svg"));
         initLayout("RootLayout");
         initLayout("LeftLayout");
         initLayout("CenterLayout");
@@ -103,7 +106,9 @@ public class ProjectGUI extends Application {
 
     /**
      * Method that launches the application.
-     * @param args arguments
+     * 
+     * @param args
+     *            arguments
      */
     public static void main(final String... args) {
         launch(args);

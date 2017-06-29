@@ -8,6 +8,7 @@ buildscript {
         classpath "org.danilopianini:build-commons:${buildCommonsVersion}"
         classpath "org.danilopianini:javadoc.io-linker:${javadocIOLinkerVersion}"
         classpath "org.xtext:xtext-gradle-plugin:${xtextPluginVersion}"
+        classpath "gradle.plugin.com.github.maiflai:gradle-scalatest:0.16"
     }
 }
 
@@ -18,6 +19,7 @@ allprojects {
     apply plugin: 'org.danilopianini.build-commons'
     apply plugin: "org.xtext.xtend"
     apply plugin: 'scala'
+    apply plugin: 'com.github.maiflai.scalatest'
 
     configurations {
         all*.exclude group: 'org.eclipse.xtext', module: 'org.eclipse.xtext.dependencies'
@@ -43,6 +45,9 @@ allprojects {
         testCompile "junit:junit:$junitVersion"
 
         testRuntime "ch.qos.logback:logback-classic:$logbackVersion"
+        
+        testCompile "org.scalatest:scalatest_${scalaMajorVersion}:3.0.1"
+        testRuntime "org.pegdown:pegdown:1.6.0"
 
         doclet "org.jboss.apiviz:apiviz:$apivizVersion"
     }

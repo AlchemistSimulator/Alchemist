@@ -259,6 +259,9 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
                 if (!useIds) {
                     L.info("Traces available for " + idgen + " nodes.");
                 }
+            } catch (Exception e) {
+                L.error("Could not load traces", e);
+                throw e;
             }
         }
         forceStreets = onStreets;

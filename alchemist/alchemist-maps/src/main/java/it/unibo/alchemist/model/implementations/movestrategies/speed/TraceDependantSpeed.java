@@ -36,7 +36,7 @@ public abstract class TraceDependantSpeed<T> implements SpeedSelectionStrategy<T
         env = requireNonNull(e);
         node = requireNonNull(n);
         reaction = requireNonNull(r);
-        trace = requireNonNull(env.getTrace(node));
+        trace = requireNonNull(env.getTrace(node), "Are you sure you have load the traces?");
     }
 
     @Override

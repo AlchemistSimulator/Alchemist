@@ -47,7 +47,9 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import it.unibo.alchemist.model.implementations.GraphHopperRoute;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
+import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
@@ -112,18 +114,18 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     private final boolean forceStreets, onlyStreet;
     private transient FastReadWriteLock mapLock;
     private transient Map<Vehicle, GraphHopperAPI> navigators;
-    private transient LoadingCache<Triple<Vehicle, Position, Position>, Route> routecache;
+    private transient LoadingCache<Triple<Vehicle, Position, Position>, Route<GeoPosition>> routecache;
 
     /**
-     * Builds a new {@link OSMEnvironment}, with nodes forced on streets,
-     * discarding nodes too far off the map, and loading no GPS traces.
+     * Builds a new {@link OSMEnvironment}, with nodes forced on streets, discarding
+     * nodes too far off the map, and loading no GPS traces.
      * 
      * @param file
      *            the file path where the map data is stored
      * @throws IOException
      *             if the map file is not found, or it's not readable, or
-     *             accessible, or a file system error occurred, or you kicked
-     *             your hard drive while Alchemist was reading the map
+     *             accessible, or a file system error occurred, or you kicked your
+     *             hard drive while Alchemist was reading the map
      * @throws ClassNotFoundException
      *             if there is a gigantic bug in the distribution and
      *             {@link GPSTrace} or {@link List} cannot be loaded
@@ -137,30 +139,31 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      *            the file path where the map data is stored
      * @param onStreets
      *            if true, the nodes will be placed on the street nearest to the
-     *            desired {@link Position}. This setting is automatically
-     *            overridden if GPS traces are used, and a matching trace id is
-     *            available for the node.
+     *            desired {@link Position}. This setting is automatically overridden
+     *            if GPS traces are used, and a matching trace id is available for
+     *            the node.
      * @param onlyOnStreets
-     *            if true, the nodes which are too far from a street will be
-     *            simply discarded. If false, they will be placed anyway, in the
-     *            original position.
+     *            if true, the nodes which are too far from a street will be simply
+     *            discarded. If false, they will be placed anyway, in the original
+     *            position.
      * @throws IOException
      *             if the map file is not found, or it's not readable, or
-     *             accessible, or a file system error occurred, or you kicked
-     *             your hard drive while Alchemist was reading the map
+     *             accessible, or a file system error occurred, or you kicked your
+     *             hard drive while Alchemist was reading the map
      * @throws ClassNotFoundException
      *             if there is a gigantic bug in the distribution and
      *             {@link GPSTrace} or {@link List} cannot be loaded
      */
-    public OSMEnvironment(final String file, final boolean onStreets, final boolean onlyOnStreets) throws IOException, ClassNotFoundException {
+    public OSMEnvironment(final String file, final boolean onStreets, final boolean onlyOnStreets)
+            throws IOException, ClassNotFoundException {
         this(file, null, 0, onStreets, onlyOnStreets, DEFAULT_USE_TRACES_ID);
     }
 
     /**
      * @param file
-     *            the file path where the map data is stored. Accepts OSM maps
-     *            of any format (xml, osm, pbf). The map will be processed,
-     *            optimized and stored for future use.
+     *            the file path where the map data is stored. Accepts OSM maps of
+     *            any format (xml, osm, pbf). The map will be processed, optimized
+     *            and stored for future use.
      * @param tfile
      *            the file path where the traces are stored. Supports only
      *            Alchemist's AGT traces. Can be null.
@@ -168,21 +171,22 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      *            the minimum time to consider when using the trace
      * @throws IOException
      *             if the map file is not found, or it's not readable, or
-     *             accessible, or a file system error occurred, or you kicked
-     *             your hard drive while Alchemist was reading the map
+     *             accessible, or a file system error occurred, or you kicked your
+     *             hard drive while Alchemist was reading the map
      * @throws ClassNotFoundException
      *             if there is a gigantic bug in the distribution and
      *             {@link GPSTrace} or {@link List} cannot be loaded
      */
-    public OSMEnvironment(final String file, final String tfile, final double ttime) throws IOException, ClassNotFoundException {
+    public OSMEnvironment(final String file, final String tfile, final double ttime)
+            throws IOException, ClassNotFoundException {
         this(file, tfile, ttime, DEFAULT_USE_TRACES_ID);
     }
 
     /**
      * @param file
-     *            the file path where the map data is stored. Accepts OSM maps
-     *            of any format (xml, osm, pbf). The map will be processed,
-     *            optimized and stored for future use.
+     *            the file path where the map data is stored. Accepts OSM maps of
+     *            any format (xml, osm, pbf). The map will be processed, optimized
+     *            and stored for future use.
      * @param tfile
      *            the file path where the traces are stored. Supports only
      *            Alchemist's AGT traces. Can be null.
@@ -194,21 +198,22 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      *            generated starting from 0.
      * @throws IOException
      *             if the map file is not found, or it's not readable, or
-     *             accessible, or a file system error occurred, or you kicked
-     *             your hard drive while Alchemist was reading the map
+     *             accessible, or a file system error occurred, or you kicked your
+     *             hard drive while Alchemist was reading the map
      * @throws ClassNotFoundException
      *             if there is a gigantic bug in the distribution and
      *             {@link GPSTrace} or {@link List} cannot be loaded
      */
-    public OSMEnvironment(final String file, final String tfile, final double ttime, final boolean useIds) throws IOException, ClassNotFoundException {
+    public OSMEnvironment(final String file, final String tfile, final double ttime, final boolean useIds)
+            throws IOException, ClassNotFoundException {
         this(file, tfile, ttime, DEFAULT_ON_STREETS, DEFAULT_FORCE_STREETS, useIds);
     }
 
     /**
      * @param file
-     *            the file path where the map data is stored. Accepts OSM maps
-     *            of any format (xml, osm, pbf). The map will be processed,
-     *            optimized and stored for future use.
+     *            the file path where the map data is stored. Accepts OSM maps of
+     *            any format (xml, osm, pbf). The map will be processed, optimized
+     *            and stored for future use.
      * @param tfile
      *            the file path where the traces are stored. Supports only
      *            Alchemist's AGT traces. Can be null.
@@ -216,27 +221,28 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      *            the minimum time to consider when using the trace
      * @param onStreets
      *            if true, the nodes will be placed on the street nearest to the
-     *            desired {@link Position}. This setting is automatically
-     *            overridden if GPS traces are used, and a matching trace id is
-     *            available for the node.
+     *            desired {@link Position}. This setting is automatically overridden
+     *            if GPS traces are used, and a matching trace id is available for
+     *            the node.
      * @param onlyOnStreets
-     *            if true, the nodes which are too far from a street will be
-     *            simply discarded. If false, they will be placed anyway, in the
-     *            original position.
+     *            if true, the nodes which are too far from a street will be simply
+     *            discarded. If false, they will be placed anyway, in the original
+     *            position.
      * @param useIds
      *            true if you want the association node - trace to be made with
      *            respect to the ids stored in the traces. Otherwise, ids are
      *            generated starting from 0.
      * @throws IOException
      *             if the map file is not found, or it's not readable, or
-     *             accessible, or a file system error occurred, or you kicked
-     *             your hard drive while Alchemist was reading the map
+     *             accessible, or a file system error occurred, or you kicked your
+     *             hard drive while Alchemist was reading the map
      * @throws ClassNotFoundException
      *             if there is a gigantic bug in the distribution and
      *             {@link GPSTrace} or {@link List} cannot be loaded
      */
     @SuppressWarnings("unchecked")
-    protected OSMEnvironment(final String file, final String tfile, final double ttime, final boolean onStreets, final boolean onlyOnStreets, final boolean useIds) throws IOException, ClassNotFoundException {
+    protected OSMEnvironment(final String file, final String tfile, final double ttime, final boolean onStreets,
+            final boolean onlyOnStreets, final boolean useIds) throws IOException, ClassNotFoundException {
         super();
         /*
          * Try to load as resource, then try to load a file
@@ -247,13 +253,9 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
                 trcs = (List<GPSTrace>) ois.readObject();
                 int idgen = 0;
                 for (final GPSTrace gps : trcs) {
-                    final GPSTrace trace = gps.filter(ttime);
+                    final GPSTrace trace = gps.startAt(new DoubleTime(ttime));
                     if (trace.size() > 0) {
-                        if (useIds) {
-                            traces.put(trace.getId(), trace);
-                        } else {
-                            traces.put(idgen++, trace);
-                        }
+                        traces.put(idgen++, trace);
                     }
                 }
                 if (!useIds) {
@@ -279,80 +281,83 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
         final GPSTrace trace = traces.get(node.getId());
         if (trace == null) {
             /*
-             * No traces available for this node. If it must be located on
-             * streets, query the navigation engine for a street point.
-             * Otherwise, put it where it is declared.
+             * No traces available for this node. If it must be located on streets, query
+             * the navigation engine for a street point. Otherwise, put it where it is
+             * declared.
              */
             assert position != null;
             return forceStreets ? getNearestStreetPoint(position).orElse(position) : position;
         }
-        assert trace.getPreviousPosition(0) != null;
-        assert trace.getPreviousPosition(0).toPosition() != null;
-        return trace.getPreviousPosition(0).toPosition();
+        assert trace.getPreviousPosition(new DoubleTime(0)) != null;
+        assert trace.getPreviousPosition(new DoubleTime(0)) != null;
+        return trace.getPreviousPosition(new DoubleTime(0));
     }
 
     @Override
-    public Route computeRoute(final Node<T> node, final Node<T> node2) {
+    public Route<GeoPosition> computeRoute(final Node<T> node, final Node<T> node2) {
         return computeRoute(node, getPosition(node2));
     }
 
     @Override
-    public Route computeRoute(final Node<T> node, final Position coord) {
+    public Route<GeoPosition> computeRoute(final Node<T> node, final Position coord) {
         return computeRoute(node, coord, DEFAULT_VEHICLE);
     }
 
     @Override
-    public Route computeRoute(final Node<T> node, final Position coord, final Vehicle vehicle) {
+    public Route<GeoPosition> computeRoute(final Node<T> node, final Position coord, final Vehicle vehicle) {
         return computeRoute(getPosition(node), coord, vehicle);
     }
 
     @Override
-    public Route computeRoute(final Position p1, final Position p2) {
+    public Route<GeoPosition> computeRoute(final Position p1, final Position p2) {
         return computeRoute(p1, p2, DEFAULT_VEHICLE);
     }
 
     @Override
-    public Route computeRoute(final Position p1, final Position p2, final Vehicle vehicle) {
+    public Route<GeoPosition> computeRoute(final Position p1, final Position p2, final Vehicle vehicle) {
         if (routecache == null) {
-            routecache = CacheBuilder
-                .newBuilder()
-                .expireAfterAccess(10, TimeUnit.SECONDS)
-                .build(new CacheLoader<Triple<Vehicle, Position, Position>, Route>() {
-                    @Override
-                    public Route load(final Triple<Vehicle, Position, Position> key) {
-                        final Vehicle vehicle = key.getLeft();
-                        final Position p1 = key.getMiddle();
-                        final Position p2 = key.getRight();
-                        final GHRequest req = new GHRequest(p1.getCoordinate(1), p1.getCoordinate(0), p2.getCoordinate(1), p2.getCoordinate(0))
+            routecache = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.SECONDS)
+                    .build(new CacheLoader<Triple<Vehicle, Position, Position>, Route<GeoPosition>>() {
+                        @Override
+                        public Route<GeoPosition> load(final Triple<Vehicle, Position, Position> key) {
+                            final Vehicle vehicle = key.getLeft();
+                            final Position p1 = key.getMiddle();
+                            final Position p2 = key.getRight();
+                            final GHRequest req = new GHRequest(
+                                    p1.getCoordinate(1),
+                                    p1.getCoordinate(0),
+                                    p2.getCoordinate(1),
+                                    p2.getCoordinate(0))
                                 .setAlgorithm(DEFAULT_ALGORITHM)
                                 .setVehicle(vehicle.toString())
                                 .setWeighting(ROUTING_STRATEGY);
-                        mapLock.read();
-                        final GraphHopperAPI gh = navigators.get(vehicle);
-                        mapLock.release();
-                        if (gh != null) {
-                            final GHResponse resp = gh.route(req);
-                            return new GraphHopperRoute(resp);
+                            mapLock.read();
+                            final GraphHopperAPI gh = navigators.get(vehicle);
+                            mapLock.release();
+                            if (gh != null) {
+                                final GHResponse resp = gh.route(req);
+                                return new GraphHopperRoute(resp);
+                            }
+                            return null;
                         }
-                        return null;
-                    }
-                });
+                    });
         }
         try {
             return routecache.get(new ImmutableTriple<>(vehicle, p1, p2));
         } catch (ExecutionException e) {
             L.error("", e);
-            throw new IllegalStateException("The navigator was unable to compute a route from " + p1 + " to " + p2 + " using the navigator " + vehicle + ". This is most likely a bug", e);
+            throw new IllegalStateException("The navigator was unable to compute a route from " + p1 + " to " + p2
+                    + " using the navigator " + vehicle + ". This is most likely a bug", e);
         }
     }
 
     @Override
-    public Position getExpectedPosition(final Node<T> node, final Time time) {
+    public GeoPosition getExpectedPosition(final Node<T> node, final Time time) {
         final GPSTrace trace = traces.get(node.getId());
         if (trace == null) {
             return getPosition(node);
         }
-        return trace.interpolate(time.toDouble()).toPosition();
+        return trace.interpolate(time);
     }
 
     /**
@@ -388,7 +393,8 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
         mapLock.read();
         final GraphHopperAPI gh = navigators.get(Vehicle.BIKE);
         mapLock.release();
-        final QueryResult qr = ((GraphHopper) gh).getLocationIndex().findClosest(position.getCoordinate(1), position.getCoordinate(0), EdgeFilter.ALL_EDGES);
+        final QueryResult qr = ((GraphHopper) gh).getLocationIndex().findClosest(position.getCoordinate(1),
+                position.getCoordinate(0), EdgeFilter.ALL_EDGES);
         if (qr.isValid()) {
             final GHPoint pt = qr.getSnappedPoint();
             return Optional.of(new LatLongPosition(pt.lat, pt.lon));
@@ -397,23 +403,31 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     }
 
     @Override
-    public Position getNextPosition(final Node<T> node, final Time time) {
+    public GeoPosition getNextPosition(final Node<T> node, final Time time) {
         final GPSTrace trace = traces.get(node.getId());
         if (trace == null) {
             return getPosition(node);
         }
-        assert trace.getNextPosition(time.toDouble()) != null;
-        return trace.getNextPosition(time.toDouble()).toPosition();
+        assert trace.getNextPosition(time) != null;
+        return trace.getNextPosition(time);
     }
 
     @Override
-    public Position getPreviousPosition(final Node<T> node, final Time time) {
+    public GeoPosition getPosition(final Node<T> node) {
+        if (super.getPosition(node) instanceof GeoPosition) {
+            return (GeoPosition) super.getPosition(node);
+        }
+        throw new IllegalStateException("the position isn't a GeoPosition");
+    }
+
+    @Override
+    public GeoPosition getPreviousPosition(final Node<T> node, final Time time) {
         final GPSTrace trace = traces.get(node.getId());
         if (trace == null) {
             return getPosition(node);
         }
-        assert trace.getPreviousPosition(time.toDouble()) != null;
-        return trace.getPreviousPosition(time.toDouble()).toPosition();
+        assert trace.getPreviousPosition(time) != null;
+        return trace.getPreviousPosition(time);
     }
 
     @Override
@@ -427,12 +441,12 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
         final Position maxmin = new LatLongPosition(maxlat, minlon);
         final Position maxmax = new LatLongPosition(maxlat, maxlon);
         /*
-         * Maximum x: maximum distance between the same longitudes
-         * Maximum y: maximum distance between the same latitudes
+         * Maximum x: maximum distance between the same longitudes Maximum y: maximum
+         * distance between the same latitudes
          */
         final double sizex = Math.max(minmin.getDistanceTo(minmax), maxmax.getDistanceTo(maxmin));
         final double sizey = Math.max(minmin.getDistanceTo(maxmin), maxmax.getDistanceTo(minmax));
-        return new double[]{sizex, sizey};
+        return new double[] { sizex, sizey };
     }
 
     @Override
@@ -452,26 +466,21 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
         mkdirsIfNeeded(workdir);
         navigators = new EnumMap<>(Vehicle.class);
         mapLock = new FastReadWriteLock();
-        final Optional<Exception> error = Arrays.stream(Vehicle.values())
-            .parallel()
-            .<Optional<Exception>>map(v -> {
-                try {
-                    final String internalWorkdir = workdir + SLASH + v;
-                    final File iwdf = new File(internalWorkdir);
-                    if (mkdirsIfNeeded(iwdf)) {
-                        final GraphHopperAPI gh = initNavigationSystem(mapFile, internalWorkdir, v);
-                        mapLock.write();
-                        navigators.put(v, gh);
-                        mapLock.release();
-                    }
-                    return Optional.empty();
-                } catch (Exception e) {
-                    return Optional.of(e);
+        final Optional<Exception> error = Arrays.stream(Vehicle.values()).parallel().<Optional<Exception>>map(v -> {
+            try {
+                final String internalWorkdir = workdir + SLASH + v;
+                final File iwdf = new File(internalWorkdir);
+                if (mkdirsIfNeeded(iwdf)) {
+                    final GraphHopperAPI gh = initNavigationSystem(mapFile, internalWorkdir, v);
+                    mapLock.write();
+                    navigators.put(v, gh);
+                    mapLock.release();
                 }
-            })
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .findFirst();
+                return Optional.empty();
+            } catch (Exception e) {
+                return Optional.of(e);
+            }
+        }).filter(Optional::isPresent).map(Optional::get).findFirst();
         if (error.isPresent()) {
             throw new IllegalStateException("A error occurred during initialization.", error.get());
         }
@@ -479,14 +488,11 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
 
     private String initDir(final File mapfile) throws IOException {
         final String code = Long.toString(Hashes.hashResource(mapfile, e -> {
-                throw new IllegalStateException(e);
-            }).asLong(), ENCODING_BASE);
+            throw new IllegalStateException(e);
+        }).asLong(), ENCODING_BASE);
         final String append = SLASH + mapfile.getName() + code;
-        final String[] prefixes = new String[] {
-                PERSISTENTPATH,
-                System.getProperty("java.io.tmpdir"),
-                System.getProperty("user.dir"),
-                "."};
+        final String[] prefixes = new String[] { PERSISTENTPATH, System.getProperty("java.io.tmpdir"),
+                System.getProperty("user.dir"), "." };
         String dir = prefixes[0] + append;
         for (int i = 1; (!mkdirsIfNeeded(dir) || !canWriteOnDir(dir)) && i < prefixes.length; i++) {
             L.warn("Can not write on " + dir + ", trying " + prefixes[i]);
@@ -496,30 +502,30 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
             /*
              * Give up.
              */
-            throw new IOException("None of: " + Arrays.toString(prefixes) + " is writeable. I can not initialize GraphHopper cache.");
+            throw new IOException(
+                    "None of: " + Arrays.toString(prefixes) + " is writeable. I can not initialize GraphHopper cache.");
         }
         return dir;
     }
 
     @Override
-    public Position makePosition(final Number... coordinates) {
+    public GeoPosition makePosition(final Number... coordinates) {
         if (coordinates.length != 2) {
-            throw new IllegalArgumentException(getClass().getSimpleName() + " only supports bi-dimensional coordinates (latitude, longitude)");
+            throw new IllegalArgumentException(
+                    getClass().getSimpleName() + " only supports bi-dimensional coordinates (latitude, longitude)");
         }
         return new LatLongPosition(coordinates[0].doubleValue(), coordinates[1].doubleValue());
     }
 
     /**
-     * There is a single case in which nodes are discarded: if there are no
-     * traces for this node and nodes are required to lay on streets, but the
-     * navigation engine can not resolve any such position.
+     * There is a single case in which nodes are discarded: if there are no traces
+     * for this node and nodes are required to lay on streets, but the navigation
+     * engine can not resolve any such position.
      */
     @Override
     protected boolean nodeShouldBeAdded(final Node<T> node, final Position position) {
         assert node != null;
-        return traces.containsKey(node.getId())
-                || !onlyStreet
-                || getNearestStreetPoint(position).isPresent();
+        return traces.containsKey(node.getId()) || !onlyStreet || getNearestStreetPoint(position).isPresent();
     }
 
     private void readObject(final ObjectInputStream s) throws IOException, ClassNotFoundException {
@@ -527,17 +533,12 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
         initAll(mapResource);
     }
 
-    private static GraphHopperAPI initNavigationSystem(final File mapFile, final String internalWorkdir, final Vehicle v) throws IOException {
-        return new GraphHopperOSM()
-                .setOSMFile(mapFile.getAbsolutePath())
-                .forDesktop()
-                .setElevation(false)
-                .setEnableInstructions(false)
-                .setEnableCalcPoints(true)
-                .setInMemory()
+    private static GraphHopperAPI initNavigationSystem(final File mapFile, final String internalWorkdir,
+            final Vehicle v) throws IOException {
+        return new GraphHopperOSM().setOSMFile(mapFile.getAbsolutePath()).forDesktop().setElevation(false)
+                .setEnableInstructions(false).setEnableCalcPoints(true).setInMemory()
                 .setGraphHopperLocation(internalWorkdir)
-                .setEncodingManager(new EncodingManager(v.toString().toLowerCase(Locale.US)))
-                .importOrLoad();
+                .setEncodingManager(new EncodingManager(v.toString().toLowerCase(Locale.US))).importOrLoad();
     }
 
     private static boolean mkdirsIfNeeded(final File target) {

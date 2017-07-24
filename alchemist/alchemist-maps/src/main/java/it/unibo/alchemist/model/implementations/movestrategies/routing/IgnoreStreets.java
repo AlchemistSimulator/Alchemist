@@ -17,7 +17,7 @@ public class IgnoreStreets<T> implements RoutingStrategy<T> {
     private static final long serialVersionUID = 2678088737744440021L;
 
     @Override
-    public Route computeRoute(final Position currentPos, final Position finalPos) {
+    public Route<Position> computeRoute(final Position currentPos, final Position finalPos) {
         return new PointToPointRoute(currentPos, finalPos);
     }
 

@@ -9,6 +9,9 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
 
+/**
+ * 
+ */
 public class LoadGPSTraceMapping implements LoadGPSTraceMappingStrategy {
 
     private TIntObjectMap<MappingTrace> mappingPath;
@@ -16,6 +19,11 @@ public class LoadGPSTraceMapping implements LoadGPSTraceMappingStrategy {
     private final LoadGPSTraceStrategy readTrace;
     private String directoryPath;
 
+    /**
+     * 
+     * @param readMapping strategy to load map node->track 
+     * @param readTrace strategy to read the track from file
+     */
     public LoadGPSTraceMapping(final LoadGPSMappingStrategy readMapping, final LoadGPSTraceStrategy readTrace) {
         this.readMapping = Objects.requireNonNull(readMapping, "define a strategy for load mapping configuration");
         this.readTrace = Objects.requireNonNull(readTrace, "define a strategy for load traces");
@@ -31,7 +39,7 @@ public class LoadGPSTraceMapping implements LoadGPSTraceMappingStrategy {
         for (final int key : mappingPath.keys()) {
             mappingTrace.put(key, this.loadGPSTrace(key));
         }
-        return null;
+        return mappingTrace;
     }
 
     private GPSTrace loadGPSTrace(final int idNode) throws IOException {
@@ -42,7 +50,7 @@ public class LoadGPSTraceMapping implements LoadGPSTraceMappingStrategy {
             return this.readTrace.readTrace(this.toInputStream(map.getPathFile()));
         }
     }
-    
+
     private InputStream toInputStream(final String resource) {
         Objects.requireNonNull(resource, "non-existing resource " + resource);
         return LoadGPSTraceMapping.class.getResourceAsStream(directoryPath + "/" + resource);

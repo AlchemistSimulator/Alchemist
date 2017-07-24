@@ -6,8 +6,10 @@ package it.unibo.alchemist.model.implementations;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Route;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import org.danilopianini.util.Hashes;
 
@@ -17,7 +19,7 @@ import com.google.common.collect.Lists;
  * Very simple route, the shortest path connecting the two passed points.
  * 
  */
-public class PointToPointRoute implements Route {
+public class PointToPointRoute implements Route<Position> {
 
     /**
      * 
@@ -41,7 +43,7 @@ public class PointToPointRoute implements Route {
     }
 
     @Override
-    public double getDistance() {
+    public double length() {
         if (Double.isNaN(dist)) {
             dist = s.getDistanceTo(e);
         }
@@ -62,7 +64,7 @@ public class PointToPointRoute implements Route {
     }
 
     @Override
-    public int getPointsNumber() {
+    public int size() {
         return 2;
     }
 
@@ -82,7 +84,7 @@ public class PointToPointRoute implements Route {
     @Override
     public boolean equals(final Object obj) {
         if (obj instanceof Route) {
-            final Route r = (Route) obj;
+            final Route<Position> r = (Route<Position>) obj;
             return getPoints().equals(r.getPoints());
         }
         return false;
@@ -93,4 +95,13 @@ public class PointToPointRoute implements Route {
         return Hashes.hash32(getPoints());
     }
 
+    @Override
+    public Iterator<Position> iterator() {
+        return getPoints().iterator();
+    }
+
+    @Override
+    public Stream<Position> stream() {
+        return getPoints().stream();
+    }
 }

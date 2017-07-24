@@ -10,6 +10,7 @@ package it.unibo.alchemist.model.implementations;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import com.graphhopper.GHResponse;
@@ -20,10 +21,11 @@ import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.interfaces.Route;
 import it.unibo.alchemist.model.interfaces.Position;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  */
-public final class GraphHopperRoute implements Route {
+public final class GraphHopperRoute implements Route<Position> {
 
     private static final long serialVersionUID = -1455332156736222268L;
     private final int size;
@@ -54,7 +56,7 @@ public final class GraphHopperRoute implements Route {
     }
 
     @Override
-    public double getDistance() {
+    public double length() {
         return distance;
     }
 
@@ -69,13 +71,23 @@ public final class GraphHopperRoute implements Route {
     }
 
     @Override
-    public int getPointsNumber() {
-        return size;
+    public double getTime() {
+        return time;
     }
 
     @Override
-    public double getTime() {
-        return time;
+    public Iterator<Position> iterator() {
+        return points.iterator();
+    }
+
+    @Override
+    public Stream<Position> stream() {
+        return points.stream();
+    }
+
+    @Override
+    public int size() {
+        return size;
     }
 
 }

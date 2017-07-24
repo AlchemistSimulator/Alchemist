@@ -3,6 +3,7 @@ package it.unibo.alchemist.model.implementations.routes;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 
 import com.google.common.collect.Lists;
 
@@ -12,7 +13,7 @@ import it.unibo.alchemist.model.interfaces.Route;
 /**
  * Abstract route implementation.
  */
-public class StraightRoute implements Route {
+public class StraightRoute implements Route<Position> {
 
     private static final long serialVersionUID = 1L;
     private final List<Position> positions;
@@ -26,8 +27,8 @@ public class StraightRoute implements Route {
     }
 
     @Override
-    public double getDistance() {
-        if (Double.isNaN(distance) && getPointsNumber() > 0) {
+    public double length() {
+        if (Double.isNaN(distance) && size() > 0) {
             distance = 0;
             final Iterator<Position> iter = positions.iterator();
             for (Position cur = iter.next(); iter.hasNext();) {
@@ -52,10 +53,10 @@ public class StraightRoute implements Route {
 
     @Override
     public Position getPoint(final int step) {
-        if (step < getPointsNumber()) {
+        if (step < size()) {
             return positions.get(step);
         }
-        throw new IllegalArgumentException(step + " is not a valid point number for this route (lenght " + getPointsNumber() + ')');
+        throw new IllegalArgumentException(step + " is not a valid point number for this route (lenght " + size() + ')');
     }
 
     @Override
@@ -64,7 +65,7 @@ public class StraightRoute implements Route {
     }
 
     @Override
-    public int getPointsNumber() {
+    public int size() {
         return positions.size();
     }
 
@@ -72,4 +73,16 @@ public class StraightRoute implements Route {
     public double getTime() {
         return 0;
     }
+
+    @Override
+    public Iterator<Position> iterator() {
+        return positions.iterator();
+    }
+
+    @Override
+    public Stream<Position> stream() {
+        return positions.stream();
+    }
+
+    
 }

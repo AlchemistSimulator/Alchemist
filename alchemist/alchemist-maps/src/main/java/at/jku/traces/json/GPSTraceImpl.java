@@ -49,9 +49,9 @@ public class GPSTraceImpl implements GPSTrace {
     }
 
     @Override
-    public GPSTrace filter(final Time time) {
+    public GPSTrace startAt(final Time time) {
         return new GPSTraceImpl(trace.stream()
-            .filter(pt -> pt.getTime().toDouble() > time.toDouble())
+            .filter(pt -> pt.getTime().toDouble() >= time.toDouble())
             .map(p -> new GPSPointImpl(p.getLatitude(), p.getLongitude(), p.getTime().subtract(time)))
             .toArray(GPSPoint[]::new));
     }
@@ -75,9 +75,9 @@ public class GPSTraceImpl implements GPSTrace {
     }
 
     @Override
-    public double getStartTime() {
+    public Time getStartTime() {
         checkNotEmpty();
-        return trace.get(0).getTime().toDouble();
+        return trace.get(0).getTime();
     }
 
     @Override

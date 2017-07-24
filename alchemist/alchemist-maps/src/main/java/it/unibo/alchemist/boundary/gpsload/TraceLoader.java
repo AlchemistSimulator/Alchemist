@@ -32,14 +32,27 @@ public class TraceLoader {
             throws FileNotFoundException, IOException {
 
         Objects.requireNonNull(readStrategy, "define a strategy for load traces");
+        Objects.requireNonNull(timeStartegy, "define a strategy to normalize time");
         this.directoryPath = directoryPath;
-        final InputStream resource = toInputStream("");
+        InputStream resource = toInputStream("");
         Objects.requireNonNull(resource, "the resource path for the directory don't exist");
 
-        /* check if directoryPath is a directory not empty*/
-        final BufferedReader in = new BufferedReader(new InputStreamReader(resource));
+        /* 
+         * check if directoryPath is a directory not empty
+         */
+        BufferedReader in = new BufferedReader(new InputStreamReader(resource));
         final boolean isDirectory = in.lines().allMatch(line -> resourceExists(line));
-        final boolean isEmpty = in.lines().findAny().isPresent();
+        /*
+         * stream consumed, close it 
+         */
+        in.close();
+        resource.close();
+        /*
+         *  re-open stream to verify if the resource is empty 
+         */
+        resource = toInputStream("");
+        in = new BufferedReader(new InputStreamReader(resource));
+        final boolean isEmpty = !in.lines().findAny().isPresent();
         in.close();
         resource.close();
         if (!isDirectory) {
@@ -48,7 +61,9 @@ public class TraceLoader {
         if (isEmpty) {
             throw new IllegalArgumentException("the directory path is empty"); 
         }
-        /*load GPSTrace mapped for idNode*/
+        /*
+         * load GPSTrace mapped for idNode
+         */
         this.mappingTrace = timeStartegy.normalizeTime(readStrategy.getGPSTraceMapping(directoryPath));
     }
 
@@ -58,7 +73,7 @@ public class TraceLoader {
     }
 
     private boolean resourceExists(final String resource) {
-        return TraceLoader.class.getResource(resource) != null;
+        return TraceLoader.class.getResource(this.directoryPath + "/" + resource) != null;
     }
 
     /**

@@ -2,6 +2,7 @@ package it.unibo.alchemist.model.implementations.movestrategies.speed;
 
 import static java.util.Objects.requireNonNull;
 
+import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.GPSPoint;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
@@ -42,8 +43,8 @@ public abstract class TraceDependantSpeed<T> implements SpeedSelectionStrategy<T
     @Override
     public final double getCurrentSpeed(final Position target) {
         final double curTime = reaction.getTau().toDouble();
-        final GPSPoint next = trace.getNextPosition(curTime);
-        final double expArrival = next.getTime();
+        final GPSPoint next = trace.getNextPosition(new DoubleTime(curTime));
+        final double expArrival = next.getTime().toDouble();
         final double frequency = reaction.getRate();
         final double steps = (expArrival - curTime) * frequency;
         return computeDistance(env, node, target) / steps;

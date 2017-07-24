@@ -14,8 +14,8 @@ public interface LoadGPSTraceStrategy {
      * 
      * @param stream file with the trace request
      * @return GPSTrace readed
-     * @throws IllegalStateException if the trace or a segment's trace not contain GPSPoint
-     * @throws FileFormatException
+     * @throws IllegalStateException trace or segment's trace not contain GPSPoint
+     * @throws FileFormatException file format not valid
      * @throws IOException 
      */
     GPSTrace readTrace(InputStream stream) throws FileFormatException, IllegalStateException, IOException;
@@ -24,8 +24,8 @@ public interface LoadGPSTraceStrategy {
      * @param stream file with the trace request
      * @param traceName name of GPSTrace request
      * @return GPSTrace readed
-     * @throws IllegalStateException if the trace or a segment's trace not contain GPSPoint
-     * @throws FileFormatException
+     * @throws IllegalStateException trace or segment's trace not contain GPSPoint
+     * @throws FileFormatException file format not valid
      * @throws IOException 
      */
     GPSTrace readTrace(InputStream stream, String traceName) throws FileFormatException, IllegalStateException, IOException;

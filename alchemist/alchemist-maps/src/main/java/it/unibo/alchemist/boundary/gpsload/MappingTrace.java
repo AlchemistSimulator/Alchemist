@@ -12,9 +12,9 @@ public class MappingTrace {
     private final Optional<String> traceName;
     /**
      * 
-     * @param idNode
-     * @param gpxPathFile
-     * @param gpxTraceName
+     * @param idNode id of the node
+     * @param pathFile path of the file with the track
+     * @param traceName name of the track if present or Optional.empty
      */
     public MappingTrace(final int idNode, final String pathFile, final Optional<String> traceName) {
         this.idNode = idNode;
@@ -23,29 +23,29 @@ public class MappingTrace {
     }
     /**
      * 
-     * @param idNode
-     * @param gpxPathFile
+     * @param idNode id of the node
+     * @param pathFile path of the file with the track
      */
-    public MappingTrace(final int idNode, final String gpxPathFile) {
-        this(idNode, gpxPathFile, Optional.empty());
+    public MappingTrace(final int idNode, final String pathFile) {
+        this(idNode, pathFile, Optional.empty());
     }
     /**
      * 
-     * @return
+     * @return the id of the node
      */
     public int getIdNode() {
         return this.idNode;
     }
     /**
      * 
-     * @return
+     * @return path of the file with the track
      */
     public String getPathFile() {
         return this.pathFile;
     }
     /**
      * 
-     * @return
+     * @return name of the track if present or Optional.empty
      */
     public Optional<String> getTraceName() {
         return this.traceName;

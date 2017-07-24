@@ -6,7 +6,7 @@ import java.io.IOException;
 import gnu.trove.map.TIntObjectMap;
 
 /**
- * 
+ * strategy to define how to map node->track. 
  */
 public interface LoadGPSMappingStrategy {
 

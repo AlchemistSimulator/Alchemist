@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.GPSPoint;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
 
 /**
- * 
+ * Class that reads GPS tracks from gpx files. 
  */
 public class LoadGPSTraceGPX implements LoadGPSTraceStrategy {
 
@@ -46,7 +46,9 @@ public class LoadGPSTraceGPX implements LoadGPSTraceStrategy {
     }
 
     private GPSTrace getTrace(final Track track) throws IllegalStateException {
-        /*verifico che la traccia gps esista*/
+        /*
+         * check if track exist
+         */
         Objects.requireNonNull(track, "request GPS track not found");
         final List<TrackSegment> segments = track.getSegments();
         /*
@@ -84,37 +86,5 @@ public class LoadGPSTraceGPX implements LoadGPSTraceStrategy {
                         new DoubleTime(wp.getTime().get().toInstant().toEpochMilli())))
             .collect(Collectors.toList());
         return new GPSTraceImpl(points);
-//        final List<GPSPoint> trace = new LinkedList<>();
-//        final List<List<GPSPoint>> segments = new LinkedList<>();
-//        /*estraggo la lista dei punti gps della traccia*/
-//        track.segments()
-//             .forEach(segment -> segments.add(segment.points()
-//                 .map(gpxPoint -> {
-//                     final double lat = gpxPoint.getLatitude().doubleValue();
-//                     final double longitude = gpxPoint.getLongitude().doubleValue();
-//                     final ZonedDateTime time;
-//                     if (gpxPoint.getTime().isPresent()) {
-//                         time = gpxPoint.getTime().get();
-//                     } else {
-//                         throw new IllegalArgumentException("point whit element time not present");
-//                     }
-//                     return new GPSPointImpl(lat, longitude, time.toInstant().toEpochMilli());                                                     })
-//                 .collect(Collectors.toList())));
-//        /*check if all segments have at last one point*/
-//        if (segments.stream().allMatch(segment -> segment.size() > 0)) {
-//            segments.stream().forEach(segment -> trace.addAll(segment));
-//        } else {
-//            throw new IllegalStateException("Trace contains segment with no points");
-//        }
-//        /*
-//         * check if the trace is not empty
-//         */
-//        if (trace.isEmpty()) {
-//            throw new IllegalStateException("Trace contains no points");
-//        }
-//        /*creo il tracciato e normailizzo i tempi in base a quello di partenza*/
-//        final GPSTrace gpstrace = new UserTrace(ID, trace);
-//        gpstrace.normalizeTimes(gpstrace.getStartTime());
-//        return gpstrace;
     }
 }

@@ -68,26 +68,6 @@ public class ContinuousGenericEuclidean implements Position {
     }
 
     @Override
-    public int compareTo(final Position o) {
-        if (c.length < o.getDimensions()) {
-            return -1;
-        }
-        if (c.length > o.getDimensions()) {
-            return 1;
-        }
-        final double[] pos = o.getCartesianCoordinates();
-        for (int i = 0; i < c.length; i++) {
-            if (c[i] < pos[i]) {
-                return -1;
-            }
-            if (c[i] > pos[i]) {
-                return 1;
-            }
-        }
-        return 0;
-    }
-
-    @Override
     public boolean equals(final Object o) {
         if (o instanceof Position) {
             return samePosition((Position) o);

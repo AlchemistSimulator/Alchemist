@@ -15,7 +15,7 @@ import java.util.List;
  * An interface to represent a generic coordinates system.
  * 
  */
-public interface Position extends Serializable, Comparable<Position> {
+public interface Position extends Serializable {
 
     /**
      * Given a range, produces N coordinates, representing the N opposite

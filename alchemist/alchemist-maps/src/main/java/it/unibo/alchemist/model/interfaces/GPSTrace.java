@@ -8,11 +8,9 @@
  */
 package it.unibo.alchemist.model.interfaces;
 
-import java.io.Serializable;
-
 /**
  */
-public interface GPSTrace extends Serializable {
+public interface GPSTrace extends Route<GPSPoint> {
 
     /**
      * @param time
@@ -20,26 +18,21 @@ public interface GPSTrace extends Serializable {
      * @return a new trace, which will have all the points of this trace
      *         starting at the passed time
      */
-    GPSTrace filter(double time);
-
-    /**
-     * @return the node id
-     */
-    int getId();
+    GPSTrace filter(Time time);
 
     /**
      * @param time
      *            the time
      * @return the next point
      */
-    GPSPoint getNextPosition(double time);
+    GPSPoint getNextPosition(Time time);
 
     /**
      * @param time
      *            the time
      * @return the previous point
      */
-    GPSPoint getPreviousPosition(double time);
+    GPSPoint getPreviousPosition(Time time);
 
     /**
      * @return the first time for this {@link GPSTrace}
@@ -53,35 +46,5 @@ public interface GPSTrace extends Serializable {
      *         a straight line connecting the previous and the next point of
      *         time at constant speed
      */
-    GPSPoint interpolate(double time);
-
-    /**
-     * @return distance (in meters) of the whole trace
-     */
-    double length();
-
-    /**
-     * Modifies all the times of this trace, shifting them back of initialTime.
-     * 
-     * @param initialTime
-     *            the initial time
-     */
-    void normalizeTimes(double initialTime);
-
-    /**
-     * @param i
-     *            the id
-     */
-    void setId(int i);
-
-    /**
-     * @return the number of {@link GPSPoint}s
-     */
-    int size();
-
-    /**
-     * orders the trace by time.
-     */
-    void sort();
-
+    GPSPoint interpolate(Time time);
 }

@@ -122,4 +122,14 @@ public class GPSPointImpl implements GPSPoint {
     public Position subtract(final Position other) {
         return repr.subtract(other);
     }
+
+    @Override
+    public GPSPoint subtractTime(final Time t) {
+        return new GPSPointImpl(repr, this.t.subtract(t));
+    }
+
+    @Override
+    public GPSPoint addTime(final Time t) {
+        return new GPSPointImpl(repr, this.t.sum(t));
+    }
 }

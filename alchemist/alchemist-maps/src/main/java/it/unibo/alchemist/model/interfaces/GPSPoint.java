@@ -17,4 +17,17 @@ public interface GPSPoint extends GeoPosition, Comparable<GPSPoint> {
      */
     Time getTime();
 
+    /**
+     * 
+     * @param t time to subtract to the point's time
+     * @return new GPSPoint with the new time
+     */
+    GPSPoint subtractTime(Time t);
+
+    /**
+     * 
+     * @param t time to add to the point's time
+     * @return new GPSPoint with the new time
+     */
+    GPSPoint addTime(Time t);
 }

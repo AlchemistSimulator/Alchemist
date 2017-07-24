@@ -19,18 +19,18 @@ import com.graphhopper.util.PointList;
 
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.interfaces.Route;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
  */
-public final class GraphHopperRoute implements Route<Position> {
+public final class GraphHopperRoute implements Route<GeoPosition> {
 
     private static final long serialVersionUID = -1455332156736222268L;
     private final int size;
     private final double distance, time;
-    private final List<Position> points;
+    private final List<GeoPosition> points;
 
     /**
      * @param response
@@ -44,7 +44,7 @@ public final class GraphHopperRoute implements Route<Position> {
             distance = resp.getDistance();
             final PointList pts = resp.getPoints();
             size = pts.getSize();
-            final List<Position> temp = new ArrayList<>(size);
+            final List<GeoPosition> temp = new ArrayList<>(size);
             for (int i = 0; i < pts.getSize(); i++) {
                 temp.add(new LatLongPosition(pts.getLatitude(i), pts.getLongitude(i)));
             }
@@ -61,12 +61,12 @@ public final class GraphHopperRoute implements Route<Position> {
     }
 
     @Override
-    public Position getPoint(final int step) {
+    public GeoPosition getPoint(final int step) {
         return points.get(step);
     }
 
     @Override
-    public List<Position> getPoints() {
+    public List<GeoPosition> getPoints() {
         return points;
     }
 
@@ -76,12 +76,12 @@ public final class GraphHopperRoute implements Route<Position> {
     }
 
     @Override
-    public Iterator<Position> iterator() {
+    public Iterator<GeoPosition> iterator() {
         return points.iterator();
     }
 
     @Override
-    public Stream<Position> stream() {
+    public Stream<GeoPosition> stream() {
         return points.stream();
     }
 

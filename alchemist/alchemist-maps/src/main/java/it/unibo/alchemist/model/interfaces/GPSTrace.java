@@ -18,7 +18,7 @@ public interface GPSTrace extends Route<GPSPoint> {
      * @return a new trace, which will have all the points of this trace
      *         starting at the passed time
      */
-    GPSTrace filter(Time time);
+    GPSTrace startAt(Time time);
 
     /**
      * @param time
@@ -37,7 +37,7 @@ public interface GPSTrace extends Route<GPSPoint> {
     /**
      * @return the first time for this {@link GPSTrace}
      */
-    double getStartTime();
+    Time getStartTime();
 
     /**
      * @param time

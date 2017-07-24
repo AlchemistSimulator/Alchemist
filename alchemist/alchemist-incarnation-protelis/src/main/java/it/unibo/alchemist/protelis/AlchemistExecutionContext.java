@@ -50,7 +50,7 @@ public class AlchemistExecutionContext extends AbstractExecutionContext implemen
                 @Override
                 public Double load(final Position dest) {
                     if (env instanceof MapEnvironment<?>) {
-                        return ((MapEnvironment<Object>) env).computeRoute(node, dest).getDistance();
+                        return ((MapEnvironment<Object>) env).computeRoute(node, dest).length();
                     }
                     return getDevicePosition().getDistanceTo(dest);
                 }

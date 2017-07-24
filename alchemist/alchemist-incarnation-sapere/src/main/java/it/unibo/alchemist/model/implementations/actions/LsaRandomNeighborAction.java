@@ -15,6 +15,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
@@ -134,9 +135,9 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
         }
         if (initRoute) {
             if (mapEnv) {
-                final Route route = menv.computeRoute(getNode(), node);
+                final Route<GeoPosition> route = menv.computeRoute(getNode(), node);
                 if (route != null) {
-                    final double dist = route.getDistance();
+                    final double dist = route.length();
                     d = Math.max(d, dist);
                 }
             }

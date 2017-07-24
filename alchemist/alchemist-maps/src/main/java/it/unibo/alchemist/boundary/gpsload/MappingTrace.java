@@ -1,21 +1,22 @@
 package it.unibo.alchemist.boundary.gpsload;
 
+import java.util.Optional;
+
 /**
  * 
  */
 public class MappingTrace {
 
-    private static final String DEFAULT_TRACE_NAME = null;
     private final int idNode;
     private final String pathFile;
-    private final String traceName;
+    private final Optional<String> traceName;
     /**
      * 
      * @param idNode
      * @param gpxPathFile
      * @param gpxTraceName
      */
-    public MappingTrace(final int idNode, final String pathFile, final String traceName) {
+    public MappingTrace(final int idNode, final String pathFile, final Optional<String> traceName) {
         this.idNode = idNode;
         this.pathFile = pathFile;
         this.traceName = traceName;
@@ -26,7 +27,7 @@ public class MappingTrace {
      * @param gpxPathFile
      */
     public MappingTrace(final int idNode, final String gpxPathFile) {
-        this(idNode, gpxPathFile, DEFAULT_TRACE_NAME);
+        this(idNode, gpxPathFile, Optional.empty());
     }
     /**
      * 
@@ -46,7 +47,7 @@ public class MappingTrace {
      * 
      * @return
      */
-    public String getTraceName() {
+    public Optional<String> getTraceName() {
         return this.traceName;
     }
 }

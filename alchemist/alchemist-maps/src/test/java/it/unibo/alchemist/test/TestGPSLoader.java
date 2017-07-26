@@ -16,7 +16,7 @@ import it.unibo.alchemist.boundary.gpsload.LoadGPSTraceMappingStrategy;
 import it.unibo.alchemist.boundary.gpsload.LoadGPSTraceStrategy;
 import it.unibo.alchemist.boundary.gpsload.LoadGPSTraceMapping;
 import it.unibo.alchemist.boundary.gpsload.NormalizeTimeStrategy;
-import it.unibo.alchemist.boundary.gpsload.NormalizeTimeWithFirstOfTheTrace;
+import it.unibo.alchemist.boundary.gpsload.NormalizeTimeWithFirstOfAll;
 import it.unibo.alchemist.boundary.gpsload.TraceLoader;
 
 /**
@@ -42,7 +42,7 @@ public class TestGPSLoader {
     private final LoadGPSTraceStrategy strategyTrace = new LoadGPSTraceGPX();
     private final LoadGPSMappingStrategy strategyMapping = new LoadGPSMappingJson();
     private final LoadGPSTraceMappingStrategy strategyLoad = new LoadGPSTraceMapping(strategyMapping, strategyTrace);
-    private final NormalizeTimeStrategy timeStrategy = new NormalizeTimeWithFirstOfTheTrace();
+    private final NormalizeTimeStrategy timeStrategy = new NormalizeTimeWithFirstOfAll();
     private TraceLoader loaderGpx;
     /*
      * number of GPSPoint relative GPSTrece of node with id = 3 (file 2454858.gpx)

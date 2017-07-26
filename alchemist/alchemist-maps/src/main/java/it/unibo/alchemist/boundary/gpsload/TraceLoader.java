@@ -38,7 +38,7 @@ public class TraceLoader {
         Objects.requireNonNull(resource, "the resource path for the directory don't exist");
 
         /* 
-         * check if directoryPath is a directory not empty
+         * check if directoryPath is a directory
          */
         BufferedReader in = new BufferedReader(new InputStreamReader(resource));
         final boolean isDirectory = in.lines().allMatch(line -> resourceExists(line));
@@ -47,17 +47,17 @@ public class TraceLoader {
          */
         in.close();
         resource.close();
+        if (!isDirectory) {
+            throw new IllegalArgumentException("the directory path isn't a directory");
+        }
         /*
-         *  re-open stream to verify if the resource is empty 
+         *  re-open stream to verify if the resource is not empty 
          */
         resource = toInputStream("");
         in = new BufferedReader(new InputStreamReader(resource));
         final boolean isEmpty = !in.lines().findAny().isPresent();
         in.close();
         resource.close();
-        if (!isDirectory) {
-            throw new IllegalArgumentException("the directory path isn't a directory");
-        }
         if (isEmpty) {
             throw new IllegalArgumentException("the directory path is empty"); 
         }

@@ -1,13 +1,14 @@
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import org.junit.Test;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.junit.Test;
 import org.openstreetmap.osmosis.osmbinary.file.FileFormatException;
-
 import it.unibo.alchemist.boundary.gpsload.LoadGPSMappingJson;
 import it.unibo.alchemist.boundary.gpsload.LoadGPSMappingStrategy;
 import it.unibo.alchemist.boundary.gpsload.LoadGPSTraceGPX;
@@ -108,7 +109,7 @@ public class TestGPSLoader {
         } catch (IllegalArgumentException | IOException e) {
             fail("Unexpected exception type");
         }
-        
+
         try {
             this.loaderGpx = new TraceLoader(DIRECTORY_OK, this.strategyLoad, null);
             fail("not exception for null strategy");

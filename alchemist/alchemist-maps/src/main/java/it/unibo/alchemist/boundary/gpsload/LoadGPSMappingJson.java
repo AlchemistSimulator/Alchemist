@@ -46,7 +46,7 @@ public class LoadGPSMappingJson implements LoadGPSMappingStrategy {
     private MappingTrace readMapping(final JsonReader reader) throws IOException {
         Integer idNode = null;
         String pathFile = null;
-        String tarceName = null;
+        String traceName = null;
 
         reader.beginObject();
         while (reader.hasNext()) {
@@ -63,11 +63,11 @@ public class LoadGPSMappingJson implements LoadGPSMappingStrategy {
                 } catch (IllegalStateException e) {
                     throw new IllegalArgumentException("the value of pathFile token must be a String not null");
                 }
-            } else if (nameField.equals("tarceName")) {
+            } else if (nameField.equals("traceName")) {
                 try {
-                    tarceName = reader.nextString();
+                    traceName = reader.nextString();
                 } catch (IllegalStateException e) {
-                    throw new IllegalArgumentException("the value of tarceName token, if present, must be a String not null");
+                    throw new IllegalArgumentException("the value of traceName token, if present, must be a String not null");
                 }
             } else {
                 reader.skipValue();
@@ -76,7 +76,7 @@ public class LoadGPSMappingJson implements LoadGPSMappingStrategy {
         reader.endObject();
         return new MappingTrace(Objects.requireNonNull(idNode, "node id mustn't is null"), 
                                 Objects.requireNonNull(pathFile, "file path mustn't is null"),
-                                Optional.ofNullable(tarceName));
+                                Optional.ofNullable(traceName));
 
     }
 

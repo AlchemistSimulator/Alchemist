@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
 /**
  * This strategy dynamically tries to move the node adjusting its speed to
  * synchronize the reaction rate and the traces data.
- * 
+ *
  * @param <T>
  */
 public abstract class TraceDependantSpeed<T> implements SpeedSelectionStrategy<T> {
@@ -45,6 +45,9 @@ public abstract class TraceDependantSpeed<T> implements SpeedSelectionStrategy<T
         final double curTime = reaction.getTau().toDouble();
         final GPSPoint next = trace.getNextPosition(new DoubleTime(curTime));
         final double expArrival = next.getTime().toDouble();
+        if (curTime >= expArrival) {
+            return Double.POSITIVE_INFINITY;
+        }
         final double frequency = reaction.getRate();
         final double steps = (expArrival - curTime) * frequency;
         return computeDistance(env, node, target) / steps;

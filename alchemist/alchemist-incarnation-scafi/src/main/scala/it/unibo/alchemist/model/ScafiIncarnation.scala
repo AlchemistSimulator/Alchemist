@@ -110,7 +110,7 @@ object CachedInterpreter {
    */
   def apply[A <: AnyRef](str: String, doCacheValue: Boolean = true): A =
     (if(doCacheValue) {
-      sync.caching("//VAL"+str)(ScalaInterpreter(str))
+      sync.caching("//VAL"+str)(ScalaInterpreter[A](str))
     } else {
       ScalaInterpreter(str)
     }).asInstanceOf[A]

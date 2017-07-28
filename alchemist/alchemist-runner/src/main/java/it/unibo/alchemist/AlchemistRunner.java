@@ -41,9 +41,12 @@ import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.loader.Loader;
+import it.unibo.alchemist.loader.export.EnvPerformanceStats;
 import it.unibo.alchemist.loader.export.Exporter;
+import it.unibo.alchemist.loader.export.Extractor;
 import it.unibo.alchemist.loader.variables.Variable;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
+import it.unibo.alchemist.model.interfaces.BenchmarkableEnvironment;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Time;
 
@@ -122,6 +125,13 @@ public final class AlchemistRunner<T> {
             final ExecutorService executor = Executors.newFixedThreadPool(parallelism, THREAD_FACTORY);
             final Optional<Long> start = Optional.ofNullable(doBenchmark ? System.nanoTime() : null);
             final Stream<Future<Optional<Throwable>>> futureErrors = prepareSimulations(sim -> {
+                        if (sim.getEnvironment() instanceof BenchmarkableEnvironment) {
+                            for (final Extractor e : loader.getDataExtractors()) {
+                                if (e instanceof EnvPerformanceStats) {
+                                    ((BenchmarkableEnvironment<?>) (sim.getEnvironment())).enableBenchmark();
+                                }
+                            }
+                        }
                         sim.play();
                         sim.run();
                         return sim.getError();

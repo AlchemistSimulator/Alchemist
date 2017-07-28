@@ -29,6 +29,8 @@ allprojects {
         }
     }
 
+	test { testLogging { events "passed", "skipped", "failed", "standardError" } }
+
     dependencies {
         compile "com.google.code.findbugs:findbugs:$findBugsVersion"
         compile "org.apache.commons:commons-math3:$math3Version"
@@ -55,6 +57,11 @@ allprojects {
                             name 'Danilo Pianini'
                             email 'danilo.pianini@unibo.it'
                             url 'http://www.danilopianini.org'
+                        }
+                        developer {
+                            name 'Roberto Casadei'
+                            email 'roby.casadei@unibo.it'
+                            url 'https://www.unibo.it/sitoweb/roby.casadei'
                         }
                     }
                     contributors {

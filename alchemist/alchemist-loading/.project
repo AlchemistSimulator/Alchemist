@@ -11,12 +11,20 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
+<<<<<<< HEAD
 			<name>org.eclipse.xtext.ui.shared.xtextBuilder</name>
+=======
+			<name>org.eclipse.jdt.core.javabuilder</name>
+>>>>>>> mainline/develop
 			<arguments>
 			</arguments>
 		</buildCommand>
 		<buildCommand>
+<<<<<<< HEAD
 			<name>org.eclipse.buildship.core.gradleprojectbuilder</name>
+=======
+			<name>net.sourceforge.pmd.eclipse.plugin.pmdBuilder</name>
+>>>>>>> mainline/develop
 			<arguments>
 			</arguments>
 		</buildCommand>

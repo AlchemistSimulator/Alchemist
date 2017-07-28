@@ -1,9 +1,9 @@
-package it.unibo.alchemist.boundary.gpsload.impl;
+package it.unibo.alchemist.boundary.gpsload.api;
 
 import java.util.Comparator;
 import java.util.List;
 import com.google.common.collect.ImmutableList;
-import it.unibo.alchemist.boundary.gpsload.api.GPSTimeNormalizer;
+
 import it.unibo.alchemist.model.interfaces.GPSTrace;
 import it.unibo.alchemist.model.interfaces.Time;
 

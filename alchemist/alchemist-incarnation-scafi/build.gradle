@@ -1,3 +1,5 @@
+apply plugin: 'scala'
+
 dependencies {
     compile (
         "com.github.cb372:scalacache-core_${scalaMajorVersion}:${scalaCacheVersion}",

@@ -17,7 +17,6 @@ allprojects {
 
     apply plugin: 'org.danilopianini.build-commons'
     apply plugin: "org.xtext.xtend"
-    apply plugin: 'scala'
 
     configurations {
         all*.exclude group: 'org.eclipse.xtext', module: 'org.eclipse.xtext.dependencies'

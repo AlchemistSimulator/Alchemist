@@ -47,7 +47,7 @@ public class LoadGPSTraceGPX implements GPSFileLoader {
         }
     }
 
-    private GPSTrace getTrace(final Track track) throws IllegalStateException {
+    private GPSTrace getTrace(final Track track) {
         /*
          * check if track exist
          */

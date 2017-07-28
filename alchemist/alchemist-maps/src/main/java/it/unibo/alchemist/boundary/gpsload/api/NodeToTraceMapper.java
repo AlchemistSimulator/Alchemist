@@ -1,4 +1,4 @@
-package it.unibo.alchemist.boundary.gpsload;
+package it.unibo.alchemist.boundary.gpsload.api;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -8,7 +8,8 @@ import gnu.trove.map.TIntObjectMap;
 /**
  * strategy to define how to map node->track. 
  */
-public interface LoadGPSMappingStrategy {
+@FunctionalInterface
+public interface NodeToTraceMapper {
 
     /**
      * 
@@ -17,5 +18,5 @@ public interface LoadGPSMappingStrategy {
      * @throws IOException 
      * @throws FileNotFoundException 
      */
-    TIntObjectMap<MappingTrace> loadMapping(String resource) throws FileNotFoundException, IOException;
+    TIntObjectMap<TraceRef> loadMapping(String resource) throws FileNotFoundException, IOException;
 }

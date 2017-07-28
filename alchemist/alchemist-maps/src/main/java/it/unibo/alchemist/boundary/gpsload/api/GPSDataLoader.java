@@ -1,4 +1,4 @@
-package it.unibo.alchemist.boundary.gpsload;
+package it.unibo.alchemist.boundary.gpsload.api;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -9,14 +9,15 @@ import it.unibo.alchemist.model.interfaces.GPSTrace;
 /**
  * strategy to define how map node->GPSTrace from a directory path.
  */
-public interface LoadGPSTraceMappingStrategy {
+@FunctionalInterface
+public interface GPSDataLoader {
 
     /**
      * 
-     * @param directoryPath that contains mapping file and file with track
+     * @param path that contains mapping file and file with track
      * @return map node->GPSTrace
      * @throws FileNotFoundException if at least a file not found
      * @throws IOException error during read operation
      */
-    TIntObjectMap<GPSTrace> getGPSTraceMapping(String directoryPath) throws FileNotFoundException, IOException;
+    TIntObjectMap<GPSTrace> getGPSTraceMapping(String path) throws FileNotFoundException, IOException;
 }

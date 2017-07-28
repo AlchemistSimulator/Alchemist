@@ -1,4 +1,4 @@
-package it.unibo.alchemist.boundary.gpsload;
+package it.unibo.alchemist.boundary.gpsload.api;
 
 import gnu.trove.map.TIntObjectMap;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
@@ -6,7 +6,8 @@ import it.unibo.alchemist.model.interfaces.GPSTrace;
 /**
  * Strategy to define how normalize the time of all trace.
  */
-public interface NormalizeTimeStrategy {
+@FunctionalInterface
+public interface GPSTimeNormalizer {
 
     /**
      * 
@@ -14,4 +15,5 @@ public interface NormalizeTimeStrategy {
      * @return map trace with normalized time
      */
     TIntObjectMap<GPSTrace> normalizeTime(TIntObjectMap<GPSTrace> mapTrace);
+
 }

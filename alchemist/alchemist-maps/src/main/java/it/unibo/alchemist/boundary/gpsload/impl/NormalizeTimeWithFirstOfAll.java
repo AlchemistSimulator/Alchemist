@@ -1,15 +1,16 @@
-package it.unibo.alchemist.boundary.gpsload;
+package it.unibo.alchemist.boundary.gpsload.impl;
 
 import java.util.Comparator;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
+import it.unibo.alchemist.boundary.gpsload.api.GPSTimeNormalizer;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
 import it.unibo.alchemist.model.interfaces.Time;
 
 /**
  * 
  */
-public class NormalizeTimeWithFirstOfTheTrace implements NormalizeTimeStrategy {
+public class NormalizeTimeWithFirstOfAll implements GPSTimeNormalizer {
 
     @Override
     public TIntObjectMap<GPSTrace> normalizeTime(final TIntObjectMap<GPSTrace> mapTrace) {

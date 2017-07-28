@@ -1,4 +1,4 @@
-package it.unibo.alchemist.boundary.gpsload;
+package it.unibo.alchemist.boundary.gpsload.impl;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 import java.util.Objects;
 
 import gnu.trove.map.TIntObjectMap;
+import it.unibo.alchemist.boundary.gpsload.api.GPSDataLoader;
+import it.unibo.alchemist.boundary.gpsload.api.GPSTimeNormalizer;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
 
 /**
@@ -22,17 +24,17 @@ public class TraceLoader {
      * 
      * @param directoryPath directory with all file trace and mapping node-trace
      * @param readStrategy strategy to define how read gps trace and associate to the node
-     * @param timeStartegy strategy to define how normalize time of all gps trace
+     * @param timeStrategy strategy to define how normalize time of all gps trace
      * @throws FileNotFoundException if a file is not found
      * @throws IOException error while reading a file
      */
     public TraceLoader(final String directoryPath,
-            final LoadGPSTraceMappingStrategy readStrategy,
-            final NormalizeTimeStrategy timeStartegy)
+            final GPSDataLoader readStrategy,
+            final GPSTimeNormalizer timeStrategy)
             throws FileNotFoundException, IOException {
 
         Objects.requireNonNull(readStrategy, "define a strategy for load traces");
-        Objects.requireNonNull(timeStartegy, "define a strategy to normalize time");
+        Objects.requireNonNull(timeStrategy, "define a strategy to normalize time");
         this.directoryPath = directoryPath;
         InputStream resource = toInputStream("");
         Objects.requireNonNull(resource, "the resource path for the directory don't exist");
@@ -64,7 +66,7 @@ public class TraceLoader {
         /*
          * load GPSTrace mapped for idNode
          */
-        this.mappingTrace = timeStartegy.normalizeTime(readStrategy.getGPSTraceMapping(directoryPath));
+        this.mappingTrace = timeStrategy.normalizeTime(readStrategy.getGPSTraceMapping(directoryPath));
     }
 
     private InputStream toInputStream(final String resource) {

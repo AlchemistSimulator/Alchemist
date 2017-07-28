@@ -1,4 +1,4 @@
-package it.unibo.alchemist.boundary.gpsload;
+package it.unibo.alchemist.boundary.gpsload.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +12,7 @@ import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.WayPoint;
+import it.unibo.alchemist.boundary.gpsload.api.GPSFileLoader;
 import it.unibo.alchemist.model.implementations.positions.GPSPointImpl;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.GPSPoint;
@@ -20,7 +21,7 @@ import it.unibo.alchemist.model.interfaces.GPSTrace;
 /**
  * Class that reads GPS tracks from gpx files. 
  */
-public class LoadGPSTraceGPX implements LoadGPSTraceStrategy {
+public class LoadGPSTraceGPX implements GPSFileLoader {
 
     @Override
     public GPSTrace readTrace(final InputStream stream) throws IOException {
@@ -29,6 +30,7 @@ public class LoadGPSTraceGPX implements LoadGPSTraceStrategy {
 
     @Override
     public GPSTrace readTrace(final InputStream stream, final String traceName) throws IOException {
+        Objects.requireNonNull(traceName);
         final GPX gpxFile = this.getGPX(stream);
         return this.getTrace(gpxFile.tracks()
             .filter(track -> track.getName().isPresent() && track.getName().get().equals(traceName))
@@ -37,7 +39,7 @@ public class LoadGPSTraceGPX implements LoadGPSTraceStrategy {
     }
 
     private GPX getGPX(final InputStream stream) throws IOException {
-        Objects.requireNonNull(stream, "input stream is null!!!");
+        Objects.requireNonNull(stream, "Input stream can't be null");
         try {
             return GPX.read(stream);
         } catch (IOException e) {

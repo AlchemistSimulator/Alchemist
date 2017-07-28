@@ -1,4 +1,4 @@
-package it.unibo.alchemist.boundary.gpsload;
+package it.unibo.alchemist.boundary.gpsload.api;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,7 +8,7 @@ import it.unibo.alchemist.model.interfaces.GPSTrace;
 /**
  * Strategy to read GPSTrace from file.
  */
-public interface LoadGPSTraceStrategy {
+public interface GPSFileLoader {
 
     /**
      * 

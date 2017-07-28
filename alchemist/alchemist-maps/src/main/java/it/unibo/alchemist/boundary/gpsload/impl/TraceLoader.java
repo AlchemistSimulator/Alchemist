@@ -3,7 +3,6 @@ package it.unibo.alchemist.boundary.gpsload.impl;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -156,20 +155,15 @@ public class TraceLoader implements Iterable<GPSTrace> {
                     throw new IllegalArgumentException("no loader defined for file with extension: " 
                                                         + extensionFile + " (file: " + path + ")");
                 }
-                final String fullNameLoader = GPSFileLoader.class.getPackage().getName() + "." + LOADER.get(extensionFile);
+                fileLoader = LOADER.get(extensionFile);
                 try {
-                    fileLoader = (GPSFileLoader) Class.forName(fullNameLoader).getConstructor().newInstance();
                     /*
                      * invoke the loader to load all trake in the file
                      */
                     return fileLoader.readTrace(TraceLoader.class.getResource(path));
-                } catch (ClassNotFoundException e) {
-                    throw new IllegalStateException("Can't load the loader: " + fullNameLoader + " for the file: " + path, e);
-                } catch (FileFormatException e) {
-                    throw new IllegalStateException("the loader: " + fullNameLoader + " can't load the file: " + path + ", sure is a " + extensionFile + "file?", e);
-                } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException  | NoSuchMethodException | SecurityException e) {
-                    throw new IllegalStateException("Cannot instance or use the GPS file loader", e);
-                }
+                }  catch (FileFormatException e) {
+                    throw new IllegalStateException("the loader: " + LOADER.get(extensionFile).getClass().getSimpleName() + " can't load the file: " + path + ", sure is a " + extensionFile + "file?", e);
+                } 
             }
         } catch (IOException e) {
             throw new IOException("error reading lines of: " + path);

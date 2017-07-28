@@ -145,7 +145,7 @@ public class TraceLoader implements Iterable<GPSTrace> {
                         .map(CheckedFunction.unchecked(this::loadTraces))
                         .flatMap(List::stream)
                         .collect(ImmutableList.toImmutableList());
-                } else {
+            } else {
                 /*
                  * If the path is a file, pick its loader by file extension
                  */

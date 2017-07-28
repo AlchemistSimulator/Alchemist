@@ -32,8 +32,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
+import it.unibo.alchemist.model.implementations.positions.GPSPointImpl;
+import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.GPSPoint;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
+import it.unibo.alchemist.model.interfaces.Time;
 
 /**
  */
@@ -52,7 +56,7 @@ public final class JKUJSONLoader implements Serializable {
                             final double latitude = obj.get("la").getAsDouble();
                             final double longitude = obj.get("lo").getAsDouble();
                             final double time = obj.get("t").getAsDouble();
-                            return new GPSPointImpl(latitude, longitude, time);
+                            return new GPSPointImpl(latitude, longitude, new DoubleTime(time));
                         } else {
                             throw new IllegalStateException("An invalid JSON has been provided: unable to get fields from JSON file");
                         }
@@ -100,19 +104,20 @@ public final class JKUJSONLoader implements Serializable {
         }
         final String source = args[0];
         final String dest = args[1];
-        final List<? extends GPSTrace> l = loadJsonObjects(new File(source), UserTrace.class);
+        final List<? extends GPSTrace> l = loadJsonObjects(new File(source), GPSTraceImpl.class);
+
+        /*search min time*/
         double mintime = Double.MAX_VALUE;
         for (int i = 0; i < l.size(); i++) {
             final GPSTrace p = l.get(i);
-            p.setId(i);
-            final double time = p.getStartTime();
-            if (time < mintime) {
-                mintime = time;
+            final Time time = p.getStartTime();
+            if (time.toDouble() < mintime) {
+                mintime = time.toDouble();
             }
         }
         for (int i = 0; i < l.size(); i++) {
             final GPSTrace p = l.get(i);
-            p.normalizeTimes(mintime);
+//            p.normalizeTimes(new DoubleTime(mintime));
         }
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(dest))) {
             oos.writeObject(l);

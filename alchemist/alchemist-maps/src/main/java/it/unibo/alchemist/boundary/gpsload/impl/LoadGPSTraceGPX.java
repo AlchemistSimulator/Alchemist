@@ -51,12 +51,12 @@ public class LoadGPSTraceGPX implements GPSFileLoader {
         return extensions;
     }
 
-    private GPX getGPX(final InputStream stream) throws IOException {
+    private GPX getGPX(final InputStream stream) throws FileFormatException {
         Objects.requireNonNull(stream, "Input stream can't be null");
         try {
             return GPX.read(stream);
         } catch (IOException e) {
-            throw new IOException("the gpx file can't be read...sure is a gpx file valid??");
+            throw new FileFormatException("the gpx file can't be read...sure is a gpx file valid?");
         }
     }
 

@@ -2,31 +2,19 @@ package it.unibo.alchemist.loader.variables;
 
 import java.io.Serializable;
 import java.util.Iterator;
-import java.util.stream.DoubleStream;
+import java.util.stream.Stream;
 
 /**
  * A variable simulation value, that provides a range of values for batches, and
  * a default value for single-shot runs.
+ *
+ * @param <V>
  */
-public interface Variable extends Serializable, Iterable<Double> {
+public interface Variable<V> extends Serializable, Iterable<V> {
 
     @Override
-    default Iterator<Double> iterator() {
+    default Iterator<V> iterator() {
         return stream().iterator();
-    }
-
-    /**
-     * @return the minimum value
-     */
-    default double min() {
-        return stream().min().getAsDouble();
-    }
-
-    /**
-     * @return the maximum value
-     */
-    default double max() {
-        return stream().max().getAsDouble();
     }
 
     /**
@@ -39,11 +27,11 @@ public interface Variable extends Serializable, Iterable<Double> {
     /**
      * @return the default value for this {@link Variable}
      */
-    double getDefault();
+    V getDefault();
 
     /**
-     * @return a view of the values of this variable as {@link DoubleStream}.
+     * @return a view of the values of this variable as {@link Stream}.
      */
-    DoubleStream stream();
+    Stream<V> stream();
 
 }

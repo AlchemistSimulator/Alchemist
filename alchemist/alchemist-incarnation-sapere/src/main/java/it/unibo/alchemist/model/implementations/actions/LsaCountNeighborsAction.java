@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -30,7 +30,7 @@ import java.util.List;
 public class LsaCountNeighborsAction extends SAPERELocalAgent {
 
     private static final long serialVersionUID = -7128058274012426458L;
-    private final FasterString countVarName;
+    private final HashString countVarName;
     private final Environment<List< ILsaMolecule>> env;
     private final ILsaMolecule mol;
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All implementations are actually serializable")
@@ -55,11 +55,11 @@ public class LsaCountNeighborsAction extends SAPERELocalAgent {
      * @param rand
      *            Random engine
      */
-    public LsaCountNeighborsAction(final Environment<List< ILsaMolecule>> environment, final ILsaNode node, final ILsaMolecule molToCount, final FasterString countVar, final RandomGenerator rand) {
+    public LsaCountNeighborsAction(final Environment<List< ILsaMolecule>> environment, final ILsaNode node, final ILsaMolecule molToCount, final HashString countVar, final RandomGenerator rand) {
         super(node);
         rnd = rand;
         env = environment;
-        countVarName = new FasterString(countVar);
+        countVarName = new HashString(countVar);
         mol = molToCount;
     }
 
@@ -83,7 +83,7 @@ public class LsaCountNeighborsAction extends SAPERELocalAgent {
      *            Random engine
      */
     public LsaCountNeighborsAction(final Environment<List< ILsaMolecule>> environment, final ILsaNode node, final ILsaMolecule molToCount, final String countVar, final RandomGenerator rand) {
-        this(environment, node, molToCount, new FasterString(countVar), rand);
+        this(environment, node, molToCount, new HashString(countVar), rand);
     }
 
     /*

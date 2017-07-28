@@ -12,10 +12,11 @@
 package it.unibo.alchemist.model.interfaces;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
+import java.util.function.Predicate;
+
+import org.danilopianini.util.ListSet;
 
 import it.unibo.alchemist.core.interfaces.Simulation;
 
@@ -31,8 +32,11 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
 
     /**
      * Add a {@link Layer} to the {@link Environment}.
-     * @param m the {@link Molecule} of the {@link Layer}
-     * @param l the {@link Layer}
+     * 
+     * @param m
+     *            the {@link Molecule} of the {@link Layer}
+     * @param l
+     *            the {@link Layer}
      */
     void addLayer(Molecule m, Layer<T> l);
 
@@ -47,6 +51,13 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
      *            The position where to place it
      */
     void addNode(Node<T> node, Position p);
+
+    /**
+     * @param terminator
+     *            a {@link Predicate} indicating whether the simulation should
+     *            be considered finished
+     */
+    void addTerminator(Predicate<Environment<T>> terminator);
 
     /**
      * The number of dimensions of this environment.
@@ -67,17 +78,27 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
     double getDistanceBetweenNodes(Node<T> n1, Node<T> n2);
 
     /**
-     * Get the layer associate to the given molecule. If no Layer is associated with the given molecule, return an empty optional.
-     * @param m the {@link Molecule}
-     * @return the {@link Optional} containing the {@link Layer} associated with the requested molecule
+     * @return the {@link Incarnation} used to initialize the entities of this {@link Environment}, if it has been set.
+     */
+    Optional<Incarnation<T>> getIncarnation();
+
+    /**
+     * Get the layer associate to the given molecule. If no Layer is associated
+     * with the given molecule, return an empty optional.
+     * 
+     * @param m
+     *            the {@link Molecule}
+     * @return the {@link Optional} containing the {@link Layer} associated with
+     *         the requested molecule
      */
     Optional<Layer<T>> getLayer(Molecule m);
 
     /**
      * Return all the Layers in this {@link Environment}.
+     * 
      * @return a {@link List} of {@link Layer}.
      */
-    Set<Layer<T>> getLayers();
+    ListSet<Layer<T>> getLayers();
 
     /**
      * @return the current linking rule
@@ -108,7 +129,7 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
      * 
      * @return All the nodes that exist in current environment
      */
-    Collection<Node<T>> getNodes();
+    ListSet<Node<T>> getNodes();
 
     /**
      * @return the number of nodes currently in the environment
@@ -129,7 +150,7 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
      *            the exploration range
      * @return the list of nodes within the range
      */
-    Set<Node<T>> getNodesWithinRange(Node<T> center, double range);
+    ListSet<Node<T>> getNodesWithinRange(Node<T> center, double range);
 
     /**
      * Given a {@link Position}(center) this method returns a list of all the
@@ -142,7 +163,7 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
      *            the exploration range
      * @return the list of nodes within the range
      */
-    Set<Node<T>> getNodesWithinRange(Position center, double range);
+    ListSet<Node<T>> getNodesWithinRange(Position center, double range);
 
     /**
      * This method allows to know which are the smallest coordinates
@@ -161,16 +182,6 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
      * @return The position
      */
     Position getPosition(Node<T> node);
-
-    /**
-     * @return the class name of the monitor that should preferably used for
-     *         displaying the contents of this environment. Full class names are
-     *         recommended: it's up to the graphical interface to decide how to
-     *         deal with simple class names (whether or not to prefix a standard
-     *         package). In case of null return or inexistent class, the default
-     *         monitor will be used.
-     */
-    String getPreferredMonitor();
 
     /**
      * @return the current simulation, if present, or throws an
@@ -199,7 +210,13 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
     double[] getSizeInDistanceUnits();
 
     /**
-     * @param coordinates the coordinates of the point
+     * @return true if all the terminators are true
+     */
+    boolean isTerminated();
+
+    /**
+     * @param coordinates
+     *            the coordinates of the point
      * @return a {@link Position} compatible with this environment
      */
     Position makePosition(Number... coordinates);
@@ -237,13 +254,21 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
     void removeNode(Node<T> node);
 
     /**
+     * @param incarnation
+     *            the {@link Incarnation} that will be used for creating the
+     *            entities of this environment
+     */
+    void setIncarnation(Incarnation<T> incarnation);
+
+    /**
      * @param rule
      *            the rule to set
      */
     void setLinkingRule(LinkingRule<T> rule);
 
     /**
-     * @param s the simulation
+     * @param s
+     *            the simulation
      */
     void setSimulation(Simulation<T> s);
 

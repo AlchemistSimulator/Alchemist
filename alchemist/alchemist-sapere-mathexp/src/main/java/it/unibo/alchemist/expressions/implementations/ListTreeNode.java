@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +45,7 @@ public class ListTreeNode extends ATreeNode<Set<ITreeNode<?>>> implements Iterab
     }
 
     @Override
-    public Set<ITreeNode<?>> getValue(final Map<FasterString, ITreeNode<?>> mp) {
+    public Set<ITreeNode<?>> getValue(final Map<HashString, ITreeNode<?>> mp) {
         L.error("It makes no sense to evaluate lists (" + getData() + ").");
         return null;
     }

@@ -25,7 +25,7 @@ public interface Loader {
      * @return a {@link Map} between variable names and their actual
      *         representation
      */
-    Map<String, Variable> getVariables();
+    Map<String, Variable<?>> getVariables();
 
     /**
      * @param values
@@ -37,7 +37,7 @@ public interface Loader {
      *         specified values. If the value is unspecified, the default is
      *         used instead
      */
-    <T> Environment<T> getWith(Map<String, Double> values);
+    <T> Environment<T> getWith(Map<String, ?> values);
 
     /**
      * @return The data extractors

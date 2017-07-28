@@ -30,7 +30,8 @@ variables:
   maxfreq: &maxfreq
     formula: "$freq * (1 + $fc)"
   speed: &speed
-    formula: "!$time"
+    language: scala
+    formula: "if ($time) 0 else 1"
   seed: &seed
     min: 0
     max: 199

@@ -2,7 +2,6 @@ dependencies {
     compile (
         project(':alchemist-maps'),
         project(':alchemist-sapere-mathexp'),
-        "com.google.guava:guava:$guavaVersion",
-        "org.danilopianini:javalib-java7:$javalib7Version",
+        "com.google.guava:guava:$guavaVersion"
     )
 }

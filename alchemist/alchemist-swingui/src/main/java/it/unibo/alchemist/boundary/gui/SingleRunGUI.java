@@ -20,11 +20,14 @@ import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.boundary.gui.effects.EffectSerializationFactory;
 import it.unibo.alchemist.boundary.gui.effects.JEffectsTab;
-import it.unibo.alchemist.boundary.gui.util.GraphicalMonitorFactory;
 import it.unibo.alchemist.boundary.interfaces.GraphicalOutputMonitor;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
+import it.unibo.alchemist.boundary.monitors.Generic2DDisplay;
+import it.unibo.alchemist.boundary.monitors.MapDisplay;
 import it.unibo.alchemist.boundary.monitors.TimeStepMonitor;
 import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
+import java.util.Objects;
 
 /**
  * Utility class for quickly creating non-reusable graphical interfaces.
@@ -112,11 +115,11 @@ public final class SingleRunGUI {
      *            concentration type
      */
     public static <T> void make(final Simulation<T> sim, final File effectsFile, final int closeOperation) {
-        final GraphicalOutputMonitor<T> main = GraphicalMonitorFactory.createMonitor(sim,
-                e -> L.error("Cannot init the UI.", e));
+        final GraphicalOutputMonitor<T> main = Objects.requireNonNull(sim).getEnvironment() instanceof OSMEnvironment
+                ? new MapDisplay<>()
+                : new Generic2DDisplay<>();
         if (main instanceof Component) {
             final JFrame frame = new JFrame("Alchemist Simulator");
-            // frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setDefaultCloseOperation(closeOperation);
             final JPanel canvas = new JPanel();
             frame.getContentPane().add(canvas);

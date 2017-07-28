@@ -9,6 +9,7 @@
 package it.unibo.alchemist.model.implementations.environments;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -22,11 +23,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-
-
-import org.danilopianini.concurrency.FastReadWriteLock;
-import org.danilopianini.io.FileUtilities;
-import org.danilopianini.lang.HashUtils;
+import org.danilopianini.util.Hashes;
+import org.danilopianini.util.concurrent.FastReadWriteLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +94,6 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      */
     public static final boolean DEFAULT_FORCE_STREETS = true;
     private static final int ENCODING_BASE = 36;
-    private static final String MONITOR = "MapDisplay";
     private static final Logger L = LoggerFactory.getLogger(OSMEnvironment.class);
     private static final long serialVersionUID = -8100726226966471621L;
     /**
@@ -109,7 +106,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     private static final String PERSISTENTPATH = System.getProperty("user.home") + SLASH + ".alchemist";
 
     private final String mapResource;
-    private final TIntObjectMap<GPSTrace> traces = new TIntObjectHashMap<>();
+    private final transient TIntObjectMap<GPSTrace> traces = new TIntObjectHashMap<>();
     private final boolean forceStreets, onlyStreet;
     private transient FastReadWriteLock mapLock;
 
@@ -284,20 +281,22 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
          */
         List<GPSTrace> trcs = null;
         if (tfile != null) {
-            trcs = (List<GPSTrace>) FileUtilities.fileToObject(tfile);
-            int idgen = 0;
-            for (final GPSTrace gps : trcs) {
-                final GPSTrace trace = gps.filter(ttime);
-                if (trace.size() > 0) {
-                    if (useIds) {
-                        traces.put(trace.getId(), trace);
-                    } else {
-                        traces.put(idgen++, trace);
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(tfile))) {
+                trcs = (List<GPSTrace>) ois.readObject();
+                int idgen = 0;
+                for (final GPSTrace gps : trcs) {
+                    final GPSTrace trace = gps.filter(ttime);
+                    if (trace.size() > 0) {
+                        if (useIds) {
+                            traces.put(trace.getId(), trace);
+                        } else {
+                            traces.put(idgen++, trace);
+                        }
                     }
                 }
-            }
-            if (!useIds) {
-                L.info("Traces available for " + idgen + " nodes.");
+                if (!useIds) {
+                    L.info("Traces available for " + idgen + " nodes.");
+                }
             }
         }
         forceStreets = onStreets;
@@ -424,7 +423,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
         @Override
         public int hashCode() {
             if (hash == 0) {
-                hash =  HashUtils.hash32(v, apprStart, apprEnd);
+                hash =  Hashes.hash32(v, apprStart, apprEnd);
             }
             return hash;
         }
@@ -521,11 +520,6 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     }
 
     @Override
-    public String getPreferredMonitor() {
-        return MONITOR;
-    }
-
-    @Override
     public Position getPreviousPosition(final Node<T> node, final Time time) {
         final GPSTrace trace = traces.get(node.getId());
         if (trace == null) {
@@ -597,7 +591,9 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     }
 
     private String initDir(final File mapfile) throws IOException {
-        final String code = Long.toString(FileUtilities.fileCRC32sum(mapfile), ENCODING_BASE);
+        final String code = Long.toString(Hashes.hashResource(mapfile, e -> {
+                throw new IllegalStateException(e);
+            }).asLong(), ENCODING_BASE);
         final String append = SLASH + mapfile.getName() + code;
         final String[] prefixes = new String[] {
                 PERSISTENTPATH,

@@ -53,21 +53,47 @@ If you need to access the documentation for any older stable version, [javadoc.i
 The project has been developed using Eclipse, and can be easily imported in such IDE.
 
 #### Recommended configuration
-* Download [the latest Eclipse for Java SE developers][eclipse]. Arch Linux users can use the package extra/eclipse-java, which is rather up-to-date.
-  * The minimum version required for a smooth import is Eclipse Mars.1, which integrates Gradle Buildship
-  * Previous Eclipse versions are okay, provided that the Gradle Buildship plugin is installed
-* Install the code quality plugins:
-  * In Eclipse, click Help -> Eclipse Marketplace...
-  * In the search form enter "findbugs", then press Enter
+* Download [the latest Eclipse for Java][eclipse]. For a smooth import, Gradle Buildship is needed (starting from Eclipse Mars.1, it is included by default)
+  * Arch Linux users can use the package `eclipse-java`
+  * Ubuntu-based Linux users can install it using [ubuntu-make](https://wiki.ubuntu.com/ubuntu-make): 
+    ```bash
+    sudo apt-add-repository ppa:ubuntu-desktop/ubuntu-make
+    sudo apt-get update
+    sudo apt-get install ubuntu-make
+    umake ide eclipse 
+    ```
+* Install the Scala interpreter:
+  * Arch Linux users can use the package `scala`
+  * Ubuntu-based Linux users can use the package scala:
+    ```bash
+    sudo apt-get update
+    sudo apt-get install scala
+    ```
+  * Users of other OS can follow the [official installation guide](https://www.scala-lang.org/download/install.html)
+* Install the required eclipse plugins:
+  * In Eclipse, click "Help" -> "Eclipse Marketplace..."
+  * In the search field enter "findbugs", then press Enter
   * One of the retrieved entries should be "FindBugs Eclipse Plugin", click Install
   * Click "< Install More"
-  * In the search form enter "pmd", then press Enter
-  * One of the retrieved entries should be "pmd-eclipse-plugin". **Do not** confuse it with eclipse-pmd. click Install
-  * In the search form enter "checkstyle", then press Enter
+  * In the search field enter "checkstyle", then press Enter
   * One of the retrieved entries should be "Checkstyle Plug-in" with a written icon whose text is "eclipse-cs", click Install
+  * Click "< Install More"
+  * In the search field enter "xtext", then press Enter
+  * One of the retrieved entries should be "Eclipse Xtext", click Install
+  * Click "< Install More"
+  * In the search field enter "scala", then press Enter
+  * One of the retrieved entries should be "Scala IDE 4.2.x", click Install
   * Click "Install Now >"
   * Wait for Eclipse to resolve all the features
   * Click "Confirm >"
+  * Follow the instructions, accept the license, wait for Eclipse to download and install the product, accept the installation and restart the IDE
+  * When restarted, click "Help" -> "Install New Software..."
+  * Click "Add..."
+  * In "Location" field, enter `https://dl.bintray.com/pmd/pmd-eclipse-plugin/updates/`
+  * The "Name" field is not mandatory (suggested: "PMD")
+  * Click OK.
+  * If not already selected, in "Work with:" dropdown menu choose the just added update site
+  * Select "PMD for Eclipse 4" and click next
   * Follow the instructions, accept the license, wait for Eclipse to download and install the product, accept the installation and restart the IDE.
 * Set the line delimiter to LF (only for Windows users)
   * In Eclipse, click window -> preferences
@@ -108,6 +134,7 @@ The project has been developed using Eclipse, and can be easily imported in such
   * If you are a Windows user: `gradlew.bat alchemist-incarnation-biochemistry:generateGrammarSource`
 
   Go to Eclipse, right click on `alchemist-incarnation-biochemistry` project -> Refresh
+* If you have errors in `alchemist-projectview` project, make sure Eclipse Xtext plugin is correctly installed
 
 
 
@@ -156,7 +183,7 @@ We use a three levels numbering:
 	* Example: switch from 1.2.3 to 2.0.0
 
 
-[Alchemist]: http://alchemist-simulator.github.io/
+[Alchemist]: http://alchemistsimulator.github.io/
 [Javadoc]: http://alchemist-doc.surge.sh/
 [Javadoc-unstable]: http://alchemist-unstable-doc.surge.sh/
 [reports-unstable]: http://alchemist-unstable-reports.surge.sh/build/reports/buildDashboard/

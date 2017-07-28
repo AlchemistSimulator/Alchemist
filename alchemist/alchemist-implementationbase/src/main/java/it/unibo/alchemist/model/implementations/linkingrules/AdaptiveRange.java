@@ -10,7 +10,7 @@ package it.unibo.alchemist.model.implementations.linkingrules;
 
 import gnu.trove.map.TIntDoubleMap;
 import gnu.trove.map.hash.TIntDoubleHashMap;
-import it.unibo.alchemist.model.implementations.neighborhoods.CachedNeighborhood;
+import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -156,7 +156,7 @@ public class AdaptiveRange<T> extends EuclideanDistance<T> {
             ranges.put(center.getId(), getRange());
         }
         final double curRange = ranges.get(center.getId());
-        final Neighborhood<T> neigh = new CachedNeighborhood<>(center, env.getNodesWithinRange(center, curRange), env);
+        final Neighborhood<T> neigh = Neighborhoods.make(env, center, env.getNodesWithinRange(center, curRange));
         for (int i = 0; i < neigh.size();) {
             final Node<T> neighbor = neigh.getNeighborByNumber(i);
             final double neighrange = ranges.get(neighbor.getId());

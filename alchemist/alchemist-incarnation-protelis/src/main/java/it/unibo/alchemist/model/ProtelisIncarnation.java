@@ -20,6 +20,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.LangUtils;
@@ -57,6 +58,7 @@ import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 
 /**
@@ -382,9 +384,9 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
         private SynchronizedVM(final CacheKey key) {
             this.key = key;
             ProtelisVM myVM = null;
-            if (key.property != null && !key.property.trim().isEmpty()) {
+            if (!StringUtils.isBlank(key.property)) {
                 try {
-                    final String baseProgram = "env.get(\"" + ((SimpleMolecule) key.molecule).toFasterString() + "\")";
+                    final String baseProgram = "env.get(\"" + key.molecule.getName() + "\")";
                     myVM = new ProtelisVM(
                             ProtelisLoader.parse(key.property.replace(VALUE_TOKEN, baseProgram)),
                             new DummyContext(key.node.get()));
@@ -471,7 +473,7 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
             notImplemented();
         }
         @Override
-        public Node<Object> cloneNode() {
+        public Node<Object> cloneNode(final Time t) {
             return notImplemented();
         }
         @Override

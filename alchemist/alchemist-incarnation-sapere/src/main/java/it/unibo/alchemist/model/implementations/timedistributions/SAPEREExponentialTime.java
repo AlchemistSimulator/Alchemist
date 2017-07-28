@@ -16,7 +16,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.Time;
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -42,7 +42,7 @@ public class SAPEREExponentialTime extends ExponentialTime<List<ILsaMolecule>> i
     private final IExpression exp;
     private final double staticRate;
     private final boolean numericRate;
-    private Map<FasterString, ITreeNode<?>> matches;
+    private Map<HashString, ITreeNode<?>> matches;
 
     /**
      * @param rateEquation
@@ -95,7 +95,7 @@ public class SAPEREExponentialTime extends ExponentialTime<List<ILsaMolecule>> i
     }
 
     @Override
-    public void setMatches(final Map<FasterString, ITreeNode<?>> match) {
+    public void setMatches(final Map<HashString, ITreeNode<?>> match) {
         if (!numericRate) {
             matches = match;
         }

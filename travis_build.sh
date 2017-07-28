@@ -5,5 +5,5 @@ sh prepare_environment.sh
 cd alchemist
 ./gradlew check projectReport uploadArchives
 ./gradlew fatJar
-mkdir report
+mkdir -p report
 cp --parent */build/reports build/reports report -R

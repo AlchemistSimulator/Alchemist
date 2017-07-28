@@ -38,8 +38,10 @@ public interface TimeDistribution<T> extends Cloneable, Serializable {
     double getRate();
 
     /**
+     * @param currentTime
+     *            the time at which the cloning operation happened
      * @return an exact copy of this {@link TimeDistribution}
      */
-    TimeDistribution<T> clone();
+    TimeDistribution<T> clone(Time currentTime);
 
 }

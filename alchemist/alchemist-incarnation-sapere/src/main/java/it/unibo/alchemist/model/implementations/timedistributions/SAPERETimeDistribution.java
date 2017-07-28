@@ -15,7 +15,7 @@ import it.unibo.alchemist.expressions.interfaces.IExpression;
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 
 /**
  * Interface for TimeDistribution that need matches.
@@ -31,7 +31,7 @@ public interface SAPERETimeDistribution extends TimeDistribution<List<ILsaMolecu
     /**
      * @param match the map of matches
      */
-    void setMatches(Map<FasterString, ITreeNode<?>> match);
+    void setMatches(Map<HashString, ITreeNode<?>> match);
 
     /**
      * @return the rate equation

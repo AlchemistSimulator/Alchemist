@@ -136,6 +136,16 @@ public class TestYAMLLoader {
         assertNotNull(testNoVar("/synthetic/varcontentclash.yml"));
     }
 
+    /**
+     * Test variables with same structure but different names.
+     */
+    @Test
+    public void testScalaVar() {
+        final Environment<Object> env = testNoVar("/synthetic/scalavar.yml");
+        assertNotNull(env);
+        assertEquals(env.makePosition(3, 10), env.getPosition(env.getNodeByID(0)));
+    }
+
     private static <T> Environment<T> testLoading(final String resource, final Map<String, Double> vars) {
         final InputStream res = TestYAMLLoader.class.getResourceAsStream(resource);
         assertNotNull("Missing test resource " + resource, res);

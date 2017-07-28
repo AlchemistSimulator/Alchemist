@@ -10,17 +10,14 @@ package it.unibo.alchemist;
 
 import java.util.Collections;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.apache.commons.math3.util.Pair;
+import org.jooq.lambda.Unchecked;
 import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import info.debatty.java.stringsimilarity.Levenshtein;
-import info.debatty.java.stringsimilarity.interfaces.StringDistance;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 
@@ -32,13 +29,12 @@ import it.unibo.alchemist.model.interfaces.Incarnation;
 public final class SupportedIncarnations {
 
     @SuppressWarnings("rawtypes")
-    private static final Set<Class< ? extends Incarnation>> INCARNATIONS;
-    private static final Logger L = LoggerFactory.getLogger(SupportedIncarnations.class);
-    private static final StringDistance METRIC = new Levenshtein();
+    private static final Map<String, Class< ? extends Incarnation>> INCARNATIONS;
 
     static {
         final Reflections reflections = new Reflections();
-        INCARNATIONS = Collections.unmodifiableSet(reflections.getSubTypesOf(Incarnation.class));
+        INCARNATIONS = reflections.getSubTypesOf(Incarnation.class).stream()
+                .collect(Collectors.toMap(c -> preprocess(c.getSimpleName()), Function.identity()));
     }
 
     private SupportedIncarnations() {
@@ -48,10 +44,7 @@ public final class SupportedIncarnations {
      * @return The set of incarnations currently available.
      */
     public static Set<String> getAvailableIncarnations() {
-        return INCARNATIONS.stream()
-                .map(Class::getSimpleName)
-                .map(SupportedIncarnations::preprocess)
-                .collect(Collectors.toSet());
+        return Collections.unmodifiableSet(INCARNATIONS.keySet());
     }
 
     /**
@@ -64,21 +57,11 @@ public final class SupportedIncarnations {
      * @return an {@link Optional} containing the incarnation, if one with a
      *         matching name exists
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public static <T> Optional<Incarnation<T>> get(final String s) {
         final String cmp = preprocess(s);
-        return INCARNATIONS.stream()
-                .map(clazz -> new Pair<>(METRIC.distance(preprocess(clazz.getSimpleName()), cmp), clazz))
-                .min((p1, p2) -> Double.compare(p1.getFirst(), p2.getFirst()))
-                .map(Pair::getSecond)
-                .flatMap(clazz -> {
-                    try {
-                        return Optional.of(clazz.newInstance());
-                    } catch (Exception e) {
-                        L.error("Unable to instance incarnation " + clazz + " (closest match to " + s + " among " + INCARNATIONS + ")", e);
-                        return Optional.empty();
-                    }
-                });
+        return Optional.ofNullable(INCARNATIONS.get(cmp))
+                .map(Unchecked.<Class< ? extends Incarnation>, Incarnation<T>>function(Class::newInstance));
     }
 
     private static String preprocess(final String s) {

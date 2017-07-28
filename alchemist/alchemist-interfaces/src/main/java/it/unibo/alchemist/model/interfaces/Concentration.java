@@ -18,6 +18,7 @@ import java.io.Serializable;
  * 
  * @param <T> 
  */
+@FunctionalInterface
 public interface Concentration<T> extends Serializable {
 
     /**

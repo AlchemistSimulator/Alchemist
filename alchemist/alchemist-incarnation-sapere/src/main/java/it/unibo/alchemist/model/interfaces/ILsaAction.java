@@ -13,7 +13,8 @@ import it.unibo.alchemist.expressions.interfaces.ITreeNode;
 import java.util.List;
 import java.util.Map;
 
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
+import org.danilopianini.util.ListSet;
 
 /**
  */
@@ -27,10 +28,10 @@ public interface ILsaAction extends Action<List<ILsaMolecule>> {
      * @param nodes
      *            the nodes allowed for this action
      */
-    void setExecutionContext(Map<FasterString, ITreeNode<?>> matches, List<ILsaNode> nodes);
+    void setExecutionContext(Map<HashString, ITreeNode<?>> matches, List<ILsaNode> nodes);
 
     @Override
-    List<? extends ILsaMolecule> getModifiedMolecules();
+    ListSet<? extends ILsaMolecule> getModifiedMolecules();
 
     @Override
     ILsaAction cloneAction(Node<List<ILsaMolecule>> n, Reaction<List<ILsaMolecule>> r);

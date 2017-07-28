@@ -15,7 +15,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,16 +31,16 @@ public class Expression implements IExpression {
 
     private static final long serialVersionUID = 3443642011985784643L;
 
-    private static final FasterString EQUALS = new FasterString("="), NOT_EQUALS = new FasterString("!="), GREATER = new FasterString(">"), GREATER_EQUALS = new FasterString(">="), SMALLER = new FasterString("<"), SMALLER_EQUALS = new FasterString("<=");
+    private static final HashString EQUALS = new HashString("="), NOT_EQUALS = new HashString("!="), GREATER = new HashString(">"), GREATER_EQUALS = new HashString(">="), SMALLER = new HashString("<"), SMALLER_EQUALS = new HashString("<=");
     private static final Logger L = LoggerFactory.getLogger(Expression.class);
 
     private final ITree ast;
     private final Object astData;
     private final Type astType;
     private final ITreeNode<?> rootNode;
-    private final FasterString syntactic;
+    private final HashString syntactic;
 
-    private static boolean comparatorVsConst(final IExpression comparator, final IExpression constant, final Map<FasterString, ITreeNode<?>> matches) {
+    private static boolean comparatorVsConst(final IExpression comparator, final IExpression constant, final Map<HashString, ITreeNode<?>> matches) {
         if (comparator.getRootNodeData().equals(EQUALS)) {
             return constant.getRootNodeData().equals(comparator.getRightChildren().getValue(matches));
         }
@@ -197,7 +197,7 @@ public class Expression implements IExpression {
         return false;
     }
 
-    private static boolean numVsComparator(final IExpression num, final IExpression comp, final Map<FasterString, ITreeNode<?>> matches) {
+    private static boolean numVsComparator(final IExpression num, final IExpression comp, final Map<HashString, ITreeNode<?>> matches) {
         final Object d = comp.getRootNodeData();
         final Object valObj = comp.getRightChildren().getValue(matches);
         final Double val;
@@ -235,7 +235,7 @@ public class Expression implements IExpression {
         return false;
     }
 
-    private static boolean numVsOperator(final IExpression num, final IExpression op, final Map<FasterString, ITreeNode<?>> matches) {
+    private static boolean numVsOperator(final IExpression num, final IExpression op, final Map<HashString, ITreeNode<?>> matches) {
         return num.getRootNodeData().equals(op.getAST().evaluation(matches));
     }
 
@@ -295,7 +295,7 @@ public class Expression implements IExpression {
         rootNode = ast.getRoot();
         astType = rootNode.getType();
         astData = rootNode.getData();
-        syntactic = ast.toFasterString();
+        syntactic = ast.toHashString();
     }
 
     /**
@@ -321,11 +321,11 @@ public class Expression implements IExpression {
         rootNode = ast.getRoot();
         astType = rootNode.getType();
         astData = rootNode.getData();
-        syntactic = ast.toFasterString();
+        syntactic = ast.toHashString();
     }
 
     @Override
-    public ITreeNode<?> calculate(final Map<FasterString, ITreeNode<?>> map) {
+    public ITreeNode<?> calculate(final Map<HashString, ITreeNode<?>> map) {
         final Double val = ast.evaluation(map);
         if (val.equals(Double.NaN)) {
             return ast.assignVarValue(map).getRoot();
@@ -367,7 +367,7 @@ public class Expression implements IExpression {
 
     @Override
     @SuppressFBWarnings(justification = "I need exact equality")
-    public boolean matches(final IExpression expr, final Map<FasterString, ITreeNode<?>> matches) {
+    public boolean matches(final IExpression expr, final Map<HashString, ITreeNode<?>> matches) {
         switch (getRootNodeType()) {
         case VAR:
             switch (expr.getRootNodeType()) {
@@ -537,7 +537,7 @@ public class Expression implements IExpression {
     }
 
     @Override
-    public ITree updateMatchedVar(final Map<FasterString, ITreeNode<?>> matches) {
+    public ITree updateMatchedVar(final Map<HashString, ITreeNode<?>> matches) {
         switch (astType) {
         case CONST:
         case NUM:

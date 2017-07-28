@@ -14,7 +14,7 @@ import it.unibo.alchemist.expressions.interfaces.ITreeNode;
 import java.util.List;
 import java.util.Map;
 
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
 
 
 /**
@@ -26,7 +26,7 @@ public interface ILsaMolecule extends Molecule, Iterable<IExpression>, Comparabl
      *            the map with the variable / value bindings
      * @return the list of the arguments updated
      */
-    List<IExpression> allocateVar(Map<FasterString, ITreeNode<?>> matches);
+    List<IExpression> allocateVar(Map<HashString, ITreeNode<?>> matches);
 
     /**
      * @return the arguments number of the LSA structure.
@@ -105,7 +105,7 @@ public interface ILsaMolecule extends Molecule, Iterable<IExpression>, Comparabl
     /**
      * @return the string representing the molecule, in a faster implementation.
      */
-    FasterString toFasterString();
+    HashString toHashString();
 
     /**
      * @return the string representing the molecule.

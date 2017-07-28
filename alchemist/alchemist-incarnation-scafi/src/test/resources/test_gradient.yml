@@ -1,0 +1,34 @@
+network-model:
+  type: EuclideanDistance
+  parameters: [5]
+  
+incarnation: scafi
+
+pools:
+  - pool: &program
+    - time-distribution: 2
+      type: Event
+      actions:
+        - type: RunScafiProgram
+          parameters: [test.scafiprograms.ScafiGradientProgram]
+      
+positions:
+  type: Continuous2DEuclidean
+  
+displacements:
+  - in:
+      type: Rectangle 
+      parameters: [20, 0, 0, 10, 10]
+    programs: 
+      - *program
+    contents:
+      - molecule: source
+        concentration: false
+  - in:
+      type: Point
+      parameters: [2, 2]
+    programs: 
+      - *program
+    contents:
+      - molecule: source
+        concentration: true

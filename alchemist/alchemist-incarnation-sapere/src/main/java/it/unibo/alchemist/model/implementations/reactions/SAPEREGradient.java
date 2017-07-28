@@ -15,13 +15,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.danilopianini.lang.ExactHashObjectMap;
-import org.danilopianini.lang.util.FasterString;
+import org.danilopianini.lang.HashString;
+import org.danilopianini.util.ListSet;
 
 import gnu.trove.impl.Constants;
 import gnu.trove.map.TIntDoubleMap;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntDoubleHashMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.procedure.TIntObjectProcedure;
 import it.unibo.alchemist.expressions.implementations.Expression;
 import it.unibo.alchemist.expressions.implementations.NumTreeNode;
@@ -66,9 +67,9 @@ public class SAPEREGradient extends AReaction<List<ILsaMolecule>> {
 
     private boolean canRun = true;
     private List<? extends ILsaMolecule> contextCache;
-    private TIntObjectMap<List<? extends ILsaMolecule>> gradCache = new ExactHashObjectMap<>();
+    private TIntObjectMap<List<? extends ILsaMolecule>> gradCache = new TIntObjectHashMap<>();
     private Position mypos;
-    private TIntObjectMap<Position> positionCache = new ExactHashObjectMap<>();
+    private TIntObjectMap<Position> positionCache = new TIntObjectHashMap<>();
     private List<? extends ILsaMolecule> sourceCache;
 
     private class Cleaner implements TIntObjectProcedure<List<? extends ILsaMolecule>> {
@@ -111,9 +112,9 @@ public class SAPEREGradient extends AReaction<List<ILsaMolecule>> {
 
     private class GradientSearch implements TIntObjectProcedure<List<? extends ILsaMolecule>> {
         private final List<ILsaMolecule> gradientsFound;
-        private final Map<FasterString, ITreeNode<?>> matches;
+        private final Map<HashString, ITreeNode<?>> matches;
 
-        GradientSearch(final List<ILsaMolecule> gf, final Map<FasterString, ITreeNode<?>> m) {
+        GradientSearch(final List<ILsaMolecule> gf, final Map<HashString, ITreeNode<?>> m) {
             gradientsFound = gf;
             matches = m;
         }
@@ -128,7 +129,7 @@ public class SAPEREGradient extends AReaction<List<ILsaMolecule>> {
                 if (mapenvironment != null) {
                     matches.put(LsaMolecule.SYN_ROUTE, new NumTreeNode(routecache.get(a)));
                 }
-                final Map<FasterString, ITreeNode<?>> localMatches = mgnList.size() > 1 ? new HashMap<>(matches) : matches;
+                final Map<HashString, ITreeNode<?>> localMatches = mgnList.size() > 1 ? new HashMap<>(matches) : matches;
                 for (final ILsaMolecule mgn : mgnList) {
                     /*
                      * Instance all the variables but synthetics.
@@ -136,7 +137,7 @@ public class SAPEREGradient extends AReaction<List<ILsaMolecule>> {
                     for (int i = 0; i < gradient.size(); i++) {
                         final ITreeNode<?> uninstancedArg = gradient.getArg(i).getRootNode();
                         if (uninstancedArg.getType().equals(Type.VAR)) {
-                            final FasterString varName = uninstancedArg.toFasterString();
+                            final HashString varName = uninstancedArg.toHashString();
                             if (!varName.toString().startsWith("#")) {
                                 final ITreeNode<?> localVal = mgn.getArg(i).getRootNode();
                                 localMatches.put(varName, localVal);
@@ -205,12 +206,12 @@ public class SAPEREGradient extends AReaction<List<ILsaMolecule>> {
         }
 
         @Override
-        public List<? extends Molecule> getInfluencingMolecules() {
+        public ListSet<? extends Molecule> getInfluencingMolecules() {
             return null;
         }
 
         @Override
-        public List<? extends Molecule> getModifiedMolecules() {
+        public ListSet<? extends Molecule> getModifiedMolecules() {
             return null;
         }
 
@@ -374,7 +375,7 @@ public class SAPEREGradient extends AReaction<List<ILsaMolecule>> {
      * Clean up existing gradients. The new values will be computed upon
      * neighbors'
      */
-    private List<ILsaMolecule> cleanUpExistingAndRecomputeFromSource(final Map<FasterString, ITreeNode<?>> matches) {
+    private List<ILsaMolecule> cleanUpExistingAndRecomputeFromSource(final Map<HashString, ITreeNode<?>> matches) {
         for (final ILsaMolecule g : node.getConcentration(gradient)) {
             node.removeConcentration(g);
         }
@@ -385,7 +386,7 @@ public class SAPEREGradient extends AReaction<List<ILsaMolecule>> {
                 for (int i = 0; i < source.size(); i++) {
                     final ITreeNode<?> uninstancedArg = source.getArg(i).getRootNode();
                     if (uninstancedArg.getType().equals(Type.VAR)) {
-                        matches.put(uninstancedArg.toFasterString(), s.getArg(i).getRootNode());
+                        matches.put(uninstancedArg.toHashString(), s.getArg(i).getRootNode());
                     }
                 }
                 final List<IExpression> gl = gradient.allocateVar(matches);
@@ -400,7 +401,7 @@ public class SAPEREGradient extends AReaction<List<ILsaMolecule>> {
     @Override
     public void execute() {
         canRun = false;
-        final Map<FasterString, ITreeNode<?>> matches = new HashMap<>();
+        final Map<HashString, ITreeNode<?>> matches = new HashMap<>();
         matches.put(LsaMolecule.SYN_T, new NumTreeNode(getTau().toDouble()));
         final List<ILsaMolecule> createdFromSource = cleanUpExistingAndRecomputeFromSource(matches); //NOPMD: there is a side effect
         /*
@@ -413,7 +414,7 @@ public class SAPEREGradient extends AReaction<List<ILsaMolecule>> {
             for (int i = 0; i < context.argsNumber(); i++) {
                 final ITreeNode<?> uninstancedArg = context.getArg(i).getRootNode();
                 if (uninstancedArg.getType().equals(Type.VAR)) {
-                    final FasterString varName = uninstancedArg.toFasterString();
+                    final HashString varName = uninstancedArg.toHashString();
                     final ITreeNode<?> matched = matches.get(varName);
                     final ITreeNode<?> localVal = contextInstance.getArg(i).getRootNode();
                     if (matched == null || matched.equals(localVal)) {
@@ -427,7 +428,7 @@ public class SAPEREGradient extends AReaction<List<ILsaMolecule>> {
             for (int i = 0; i < context.argsNumber(); i++) {
                 final ITreeNode<?> uninstancedArg = context.getArg(i).getRootNode();
                 if (uninstancedArg.getType().equals(Type.VAR)) {
-                    final FasterString varName = uninstancedArg.toFasterString();
+                    final HashString varName = uninstancedArg.toHashString();
                     final ITreeNode<?> matched = matches.get(varName);
                     if (matched == null) {
                         matches.put(varName, ZERO_NODE.getRootNode());
@@ -443,7 +444,7 @@ public class SAPEREGradient extends AReaction<List<ILsaMolecule>> {
         if (createdFromSource.isEmpty()) {
             filteredGradCache = gradCache;
         } else {
-            filteredGradCache = new ExactHashObjectMap<>(gradCache.size());
+            filteredGradCache = new TIntObjectHashMap<>(gradCache.size());
             gradCache.forEachEntry(new Cleaner(createdFromSource, filteredGradCache));
         }
         /*
@@ -482,7 +483,7 @@ public class SAPEREGradient extends AReaction<List<ILsaMolecule>> {
     }
 
     @Override
-    public Reaction<List<ILsaMolecule>> cloneOnNewNode(final Node<List<ILsaMolecule>> n) {
+    public Reaction<List<ILsaMolecule>> cloneOnNewNode(final Node<List<ILsaMolecule>> n, final Time currentTime) {
         throw new UnsupportedOperationException();
     }
 
@@ -503,8 +504,8 @@ public class SAPEREGradient extends AReaction<List<ILsaMolecule>> {
          */
         final List<? extends ILsaMolecule> sourceCacheTemp = node.getConcentration(source);
         final List<? extends ILsaMolecule> contextCacheTemp = context == null ? EMPTY_LIST : node.getConcentration(context);
-        final TIntObjectMap<Position> positionCacheTemp = new ExactHashObjectMap<>(positionCache.size());
-        final TIntObjectMap<List<? extends ILsaMolecule>> gradCacheTemp = new ExactHashObjectMap<>(gradCache.size());
+        final TIntObjectMap<Position> positionCacheTemp = new TIntObjectHashMap<>(positionCache.size());
+        final TIntObjectMap<List<? extends ILsaMolecule>> gradCacheTemp = new TIntObjectHashMap<>(gradCache.size());
         final Position curPos = environment.getPosition(node);
         final boolean positionChanged = !curPos.equals(mypos);
         boolean neighPositionChanged = false;

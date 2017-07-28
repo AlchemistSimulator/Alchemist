@@ -12,9 +12,13 @@ buildscript {
 }
 
 allprojects {
-    
+
+    scalaVersion = "${scalaMajorVersion}.${scalaMinorVersion}"
+
     apply plugin: 'org.danilopianini.build-commons'
-    
+    apply plugin: "org.xtext.xtend"
+    apply plugin: 'scala'
+
     configurations {
         all*.exclude group: 'org.eclipse.xtext', module: 'org.eclipse.xtext.dependencies'
         all {
@@ -26,9 +30,14 @@ allprojects {
         }
     }
 
+	test { testLogging { events "passed", "skipped", "failed", "standardError" } }
+
     dependencies {
         compile "com.google.code.findbugs:findbugs:$findBugsVersion"
         compile "org.apache.commons:commons-math3:$math3Version"
+        compile "org.eclipse.xtend:org.eclipse.xtend.lib:${xtendLibVersion}"
+        compile "org.scala-lang:scala-compiler:${scalaVersion}"
+        compile "org.scala-lang:scala-library:${scalaVersion}"
         compile "org.slf4j:slf4j-api:$slf4jVersion"
 
         runtime "ch.qos.logback:logback-classic:$logbackVersion"
@@ -49,6 +58,11 @@ allprojects {
                             name 'Danilo Pianini'
                             email 'danilo.pianini@unibo.it'
                             url 'http://www.danilopianini.org'
+                        }
+                        developer {
+                            name 'Roberto Casadei'
+                            email 'roby.casadei@unibo.it'
+                            url 'https://www.unibo.it/sitoweb/roby.casadei'
                         }
                     }
                     contributors {

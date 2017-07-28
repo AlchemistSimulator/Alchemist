@@ -5,9 +5,10 @@ dependencies {
         project(':alchemist-interfaces'),
         project(':alchemist-loading'),
         project(':alchemist-maps'),
-        "com.miglayout:miglayout-swing:$miglayoutVersion",
-        "org.mapsforge:mapsforge-map-awt:$mapsforgeVersion",
-        "org.danilopianini:gson-extras:$gsonExtrasVersion"
+        "com.miglayout:miglayout-swing:${miglayoutVersion}",
+        "org.mapsforge:mapsforge-map-awt:${mapsforgeVersion}",
+        "org.danilopianini:gson-extras:${gsonExtrasVersion}",
+        'org.danilopianini:javalib-java7:0.6.1'
     )
     testRuntime(project(':alchemist-incarnation-protelis'))
 }

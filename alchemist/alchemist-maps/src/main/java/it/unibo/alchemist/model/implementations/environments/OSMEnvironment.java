@@ -114,7 +114,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
 
     private transient Map<Vehicle, GraphHopperAPI> navigators;
 
-    private transient LoadingCache<CacheEntry, Route> routecache;
+    private transient LoadingCache<CacheEntry, Route<GeoPosition>> routecache;
     private boolean activateBenchmark;
     private int appr;
 
@@ -398,9 +398,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
                                 final GHResponse resp = gh.route(req);
                                 return new GraphHopperRoute(resp);
                             }
-                            return null;
-                        }
-                        throw new IllegalStateException("Something went wrong while evaluating a route.");
+                            throw new IllegalStateException("Something went wrong while evaluating a route.");
                     }
                 });
         }

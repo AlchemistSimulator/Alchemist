@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 public final class GraphHopperRoute implements Route<GeoPosition> {
 
     private static final long serialVersionUID = -1455332156736222268L;
-    private final int size;
+    private final int numPoints;
     private final double distance, time;
     private final List<GeoPosition> points;
 
@@ -43,8 +43,8 @@ public final class GraphHopperRoute implements Route<GeoPosition> {
             time = resp.getTime() / 1000d;
             distance = resp.getDistance();
             final PointList pts = resp.getPoints();
-            size = pts.getSize();
-            final List<GeoPosition> temp = new ArrayList<>(size);
+            numPoints = pts.getSize();
+            final List<GeoPosition> temp = new ArrayList<>(numPoints);
             for (int i = 0; i < pts.getSize(); i++) {
                 temp.add(new LatLongPosition(pts.getLatitude(i), pts.getLongitude(i)));
             }
@@ -87,7 +87,7 @@ public final class GraphHopperRoute implements Route<GeoPosition> {
 
     @Override
     public int size() {
-        return size;
+        return numPoints;
     }
 
 }

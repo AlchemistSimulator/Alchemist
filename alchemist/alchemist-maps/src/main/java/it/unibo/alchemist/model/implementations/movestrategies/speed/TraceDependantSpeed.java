@@ -1,14 +1,15 @@
 package it.unibo.alchemist.model.implementations.movestrategies.speed;
 
-import static java.util.Objects.requireNonNull;
+import java.util.Objects;
 
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.GPSPoint;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.StrategyWithGPS;
+import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
 
 /**
@@ -17,13 +18,13 @@ import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
  *
  * @param <T>
  */
-public abstract class TraceDependantSpeed<T> implements SpeedSelectionStrategy<T> {
+public abstract class TraceDependantSpeed<T> implements SpeedSelectionStrategy<T>, StrategyWithGPS {
 
     private static final long serialVersionUID = 8021140539083062866L;
-    private final GPSTrace trace;
     private final Reaction<T> reaction;
     private final MapEnvironment<T> env;
     private final Node<T> node;
+    private GPSTrace trace;
 
     /**
      * @param e
@@ -34,16 +35,16 @@ public abstract class TraceDependantSpeed<T> implements SpeedSelectionStrategy<T
      *            the reaction
      */
     public TraceDependantSpeed(final MapEnvironment<T> e, final Node<T> n, final Reaction<T> r) {
-        env = requireNonNull(e);
-        node = requireNonNull(n);
-        reaction = requireNonNull(r);
-        trace = requireNonNull(env.getTrace(node), "Are you sure you have load the traces?");
+        env = Objects.requireNonNull(e);
+        node = Objects.requireNonNull(n);
+        reaction = Objects.requireNonNull(r);
     }
 
     @Override
     public final double getCurrentSpeed(final Position target) {
-        final double curTime = reaction.getTau().toDouble();
-        final GPSPoint next = trace.getNextPosition(new DoubleTime(curTime));
+        final Time currentTime = reaction.getTau();
+        final double curTime = currentTime.toDouble();
+        final GPSPoint next = trace.getNextPosition(currentTime);
         final double expArrival = next.getTime().toDouble();
         if (curTime >= expArrival) {
             return Double.POSITIVE_INFINITY;
@@ -64,5 +65,14 @@ public abstract class TraceDependantSpeed<T> implements SpeedSelectionStrategy<T
      *         position
      */
     protected abstract double computeDistance(MapEnvironment<T> environment, Node<T> curNode, Position targetPosition);
+
+    @Override
+    public void setTrace(final GPSTrace trace) {
+        if (this.trace == null) {
+            this.trace = Objects.requireNonNull(trace);
+        } else {
+            throw new IllegalStateException("The GPS trace can be set only once");
+        }
+    }
 
 }

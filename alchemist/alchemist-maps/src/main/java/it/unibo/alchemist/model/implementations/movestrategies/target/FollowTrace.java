@@ -1,23 +1,29 @@
 package it.unibo.alchemist.model.implementations.movestrategies.target;
 
+import java.util.Objects;
+
+import it.unibo.alchemist.model.interfaces.GPSTrace;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy;
 import it.unibo.alchemist.model.interfaces.Route;
+import it.unibo.alchemist.model.interfaces.StrategyWithGPS;
+import it.unibo.alchemist.model.interfaces.Time;
 
 /**
  * This strategy follows a {@link Route}.
  * 
  * @param <T>
  */
-public class FollowTrace<T> implements TargetSelectionStrategy<T> {
+public class FollowTrace<T> implements TargetSelectionStrategy<T>, StrategyWithGPS {
 
     private static final long serialVersionUID = -446053307821810437L;
     private final MapEnvironment<T> environment;
     private final Node<T> node;
     private final Reaction<T> reaction;
+    private GPSTrace trace;
 
     /**
      * @param env
@@ -35,7 +41,18 @@ public class FollowTrace<T> implements TargetSelectionStrategy<T> {
 
     @Override
     public final Position getTarget() {
-        return environment.getNextPosition(node, reaction.getTau());
+        Time time = reaction.getTau();
+        assert trace.getNextPosition(time) != null;
+        return trace.getNextPosition(time);
+    }
+
+    @Override
+    public void setTrace(final GPSTrace trace) {
+        if (this.trace == null) {
+            this.trace = Objects.requireNonNull(trace);
+        } else {
+            throw new IllegalStateException("The GPS trace can be set only once");
+        }
     }
 
 }

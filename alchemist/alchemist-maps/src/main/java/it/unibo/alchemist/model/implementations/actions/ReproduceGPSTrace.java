@@ -11,7 +11,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 /**
  * @param <T>
  */
-public class ReproduceGPSTrace<T> extends MoveOnMap<T> {
+public class ReproduceGPSTrace<T> extends MoveOnMapWithGPS<T> {
 
     private static final long serialVersionUID = -2291955689914046763L;
 
@@ -23,12 +23,23 @@ public class ReproduceGPSTrace<T> extends MoveOnMap<T> {
      * @param reaction
      *            the reaction. Will be used to compute the distance to walk in
      *            every step, relying on {@link Reaction}'s getRate() method.
+     * @param path
+     *            resource(file, directory, ...) with GPS trace
+     * @param cycle
+     *            true if the traces have to be distributed cyclically
+     * @param normalizer
+     *            name of the class that implement the strategy to normalize the
+     *            time
+     * @param normalizerArgs
+     *            Args to build normalize
      */
-    public ReproduceGPSTrace(final MapEnvironment<T> environment, final Node<T> node, final Reaction<T> reaction) {
+    public ReproduceGPSTrace(final MapEnvironment<T> environment, final Node<T> node, final Reaction<T> reaction,
+            final String path, final boolean cycle, final String normalizer, final Object... normalizerArgs) {
         super(environment, node,
                 new IgnoreStreets<>(),
                 new StraightLineTraceDependantSpeed<>(environment, node, reaction),
-                new FollowTrace<>(environment, node, reaction));
+                new FollowTrace<>(environment, node, reaction),
+                path, cycle, normalizer, normalizerArgs);
     }
 
     /**
@@ -41,12 +52,23 @@ public class ReproduceGPSTrace<T> extends MoveOnMap<T> {
      *            every step, relying on {@link Reaction}'s getRate() method.
      * @param speed
      *            the average speed
+     * @param path
+     *            resource(file, directory, ...) with GPS trace
+     * @param cycle
+     *            true if the traces have to be distributed cyclically
+     * @param normalizer
+     *            name of the class that implement the strategy to normalize the
+     *            time
+     * @param normalizerArgs
+     *            Args to build normalize
      */
-    public ReproduceGPSTrace(final MapEnvironment<T> environment, final Node<T> node, final Reaction<T> reaction, final double speed) {
+    public ReproduceGPSTrace(final MapEnvironment<T> environment, final Node<T> node, final Reaction<T> reaction, final double speed,
+            final String path, final boolean cycle, final String normalizer, final Object... normalizerArgs) {
         super(environment, node,
                 new IgnoreStreets<>(),
                 new ConstantSpeed<>(reaction, speed),
-                new FollowTrace<>(environment, node, reaction));
+                new FollowTrace<>(environment, node, reaction),
+                path, cycle, normalizer, normalizerArgs);
     }
 
 }

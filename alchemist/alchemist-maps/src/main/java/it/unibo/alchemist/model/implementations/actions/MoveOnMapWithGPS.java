@@ -2,6 +2,7 @@ package it.unibo.alchemist.model.implementations.actions;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import org.danilopianini.util.Hashes;
@@ -13,6 +14,7 @@ import it.unibo.alchemist.boundary.gpsload.impl.TraceLoader;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.StrategyWithGPS;
 import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy;
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy;
@@ -24,54 +26,124 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
 public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
 
     private static final long serialVersionUID = 1L;
-//    private static final Map<Environment, >
-    private static LoadingCache<TraceRef, TraceLoader> TRACE_LOADER_CACHE = Caffeine.newBuilder()
+    private static final LoadingCache<TraceRef, TraceLoader> TRACE_LOADER_CACHE = Caffeine.newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES)
             .build(key -> new TraceLoader(key.path, key.cycle, key.normalizer, key.args));
-    private static LoadingCache<MapEnvironment<?>, LoadingCache<TraceRef, Iterator<GPSTrace>>> LOADER = Caffeine.newBuilder()
+    private static final LoadingCache<MapEnvironment<?>, LoadingCache<TraceRef, Iterator<GPSTrace>>> LOADER = Caffeine.newBuilder()
             .weakKeys()
             .build(e -> Caffeine.newBuilder().build(key -> TRACE_LOADER_CACHE.get(key).iterator()));
     private final GPSTrace trace;
 
     /**
      * 
-     * @param environment the environment
-     * @param node the node
-     * @param rt the {@link RoutingStrategy}
-     * @param sp the {@link SpeedSelectionStrategy}
-     * @param tg {@link TargetSelectionStrategy}
-     * @param trace the {@link GPSTrace} followed
+     * @param environment
+     *            the environment
+     * @param node
+     *            the node
+     * @param rt
+     *            the {@link RoutingStrategy}
+     * @param sp
+     *            the {@link SpeedSelectionStrategy}
+     * @param tg
+     *            {@link TargetSelectionStrategy}
+     * @param path
+     *            resource(file, directory, ...) with GPS trace
+     * @param cycle
+     *            true if the traces have to be distributed cyclically
+     * @param normalizer
+     *            name of the class that implement the strategy to normalize the
+     *            time
+     * @param normalizerArgs
+     *            Args to build normalize
      */
     public MoveOnMapWithGPS(final MapEnvironment<T> environment, final Node<T> node, 
             final RoutingStrategy<T> rt, final SpeedSelectionStrategy<T> sp, 
             final TargetSelectionStrategy<T> tg,
             final String path, final boolean cycle, final String normalizer, final Object... normalizerArgs) {
+        this(environment, node, rt, sp, tg, traceFor(environment, path, cycle, normalizer, normalizerArgs));
+    }
+
+    /**
+     * 
+     * @param environment
+     *            the environment
+     * @param node
+     *            the node
+     * @param rt
+     *            the {@link RoutingStrategy}
+     * @param sp
+     *            the {@link SpeedSelectionStrategy}
+     * @param tg
+     *            {@link TargetSelectionStrategy}
+     * @param trace
+     *            {@link GPSTrace to follow}
+     */
+    public MoveOnMapWithGPS(final MapEnvironment<T> environment, final Node<T> node, 
+            final RoutingStrategy<T> rt, final SpeedSelectionStrategy<T> sp, 
+            final TargetSelectionStrategy<T> tg,
+            final GPSTrace trace) {
         super(environment, node, rt, sp, tg);
+        this.trace = Objects.requireNonNull(trace);
+        if (rt instanceof StrategyWithGPS) {
+            ((StrategyWithGPS) rt).setTrace(trace);
+        }
+        if (sp instanceof StrategyWithGPS) {
+            ((StrategyWithGPS) sp).setTrace(trace);
+        }
+        if (tg instanceof StrategyWithGPS) {
+            ((StrategyWithGPS) tg).setTrace(trace);
+        }
+    }
+
+    /**
+     * 
+     * @param environment
+     *            the environment
+     * @param path
+     *            resource(file, directory, ...) with GPS trace
+     * @param cycle
+     *            true if the traces have to be distributed cyclically
+     * @param normalizer
+     *            name of the class that implement the strategy to normalize the
+     *            time
+     * @param normalizerArgs
+     *            Args to build normalize
+     * @return the GPSTrace
+     */
+    public static GPSTrace traceFor(final MapEnvironment<?> environment, final String path, final boolean cycle, final String normalizer, final Object... normalizerArgs) {
         final TraceRef key = new TraceRef(path, cycle, normalizer, normalizerArgs);
         final Iterator<GPSTrace> iter = LOADER.get(environment).get(key);
         synchronized (iter) {
             if (iter.hasNext()) {
-                this.trace = iter.next();
+                return iter.next();
             } else {
                 throw new IllegalStateException("All traces for " + key + " have been consumed.");
             }
         }
     }
 
+    /**
+     * 
+     * @return {@link GPSTrace} followed by this action
+     */
+    protected GPSTrace getTrace() {
+        return trace;
+    }
+
     private static class TraceRef {
 
-        final String path, normalizer;
-        final boolean cycle;
-        final Object[] args;
-        int hash;
-        
+        private final String path, normalizer;
+        private final boolean cycle;
+        private final Object[] args;
+        private int hash;
+
         TraceRef(final String path, final boolean cycle, final String normalizer, final Object... args) {
             this.path = path;
             this.cycle = cycle;
             this.normalizer = normalizer;
             this.args = args;
         }
-        
+
         @Override
         public int hashCode() {
             if (hash == 0) {
@@ -100,13 +172,5 @@ public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
                     + "(" + Arrays.toString(args) + ")]";
         }
 
-    }
-
-    /**
-     * 
-     * @return {@link GPSTrace} followed by this action
-     */
-    protected GPSTrace getTrace() {
-        return trace;
     }
 }

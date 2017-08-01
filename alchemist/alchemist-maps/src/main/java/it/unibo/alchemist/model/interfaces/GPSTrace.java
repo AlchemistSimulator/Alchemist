@@ -14,14 +14,6 @@ public interface GPSTrace extends Route<GPSPoint> {
 
     /**
      * @param time
-     *            the time at which the new trace should start
-     * @return a new trace, which will have all the points of this trace
-     *         starting at the passed time
-     */
-    GPSTrace startAt(Time time);
-
-    /**
-     * @param time
      *            the time
      * @return the next point
      */
@@ -47,4 +39,24 @@ public interface GPSTrace extends Route<GPSPoint> {
      *         time at constant speed
      */
     GPSPoint interpolate(Time time);
+
+    /**
+     * @param time
+     *            the time at which the new trace should start
+     * @return a new trace, which will have all the points of this trace
+     *         starting at the passed time
+     */
+    GPSTrace startAt(Time time);
+
+    /**
+     * 
+     * @return The initial position of the trace
+     */
+    GPSPoint getInitialPosition();
+
+    /**
+     * 
+     * @return The final position of the trace
+     */
+    GPSPoint getFinalPosition();
 }

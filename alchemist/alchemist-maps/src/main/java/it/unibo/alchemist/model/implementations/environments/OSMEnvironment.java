@@ -9,14 +9,12 @@
 package it.unibo.alchemist.model.implementations.environments;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -41,18 +39,13 @@ import com.graphhopper.routing.util.EncodingManager;
 import com.graphhopper.storage.index.QueryResult;
 import com.graphhopper.util.shapes.GHPoint;
 
-import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
 import it.unibo.alchemist.model.implementations.GraphHopperRoute;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
-import it.unibo.alchemist.model.interfaces.GPSTrace;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Route;
-import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.Vehicle;
 
 /**
@@ -72,11 +65,6 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     public static final double DEFAULT_MAX_RANGE = 100;
 
     /**
-     * Default value for id loading from traces.
-     */
-    public static final boolean DEFAULT_USE_TRACES_ID = false;
-
-    /**
      * The default routing algorithm.
      */
     public static final String DEFAULT_ALGORITHM = "dijkstrabi";
@@ -87,6 +75,11 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     public static final String ROUTING_STRATEGY = "fastest";
 
     /**
+     * The default value for approximating the positions comparison. 
+     */
+    public static final int DEFAULT_APPROXIMATION = 0;
+
+    /**
      * The default value for the force nodes on streets option.
      */
     public static final boolean DEFAULT_ON_STREETS = true;
@@ -94,7 +87,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     /**
      * The default value for the discard of nodes too far from streets option.
      */
-    public static final boolean DEFAULT_FORCE_STREETS = true;
+    public static final boolean DEFAULT_FORCE_STREETS = false;
     private static final int ENCODING_BASE = 36;
     private static final Logger L = LoggerFactory.getLogger(OSMEnvironment.class);
     private static final long serialVersionUID = -8100726226966471621L;
@@ -108,7 +101,6 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     private static final String PERSISTENTPATH = System.getProperty("user.home") + SLASH + ".alchemist";
 
     private final String mapResource;
-    private final transient TIntObjectMap<GPSTrace> traces = new TIntObjectHashMap<>();
     private final boolean forceStreets, onlyStreet;
     private transient FastReadWriteLock mapLock;
 
@@ -121,8 +113,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
 
 
     /**
-     * Builds a new {@link OSMEnvironment}, with nodes forced on streets, discarding
-     * nodes too far off the map, and loading no GPS traces.
+     * Builds a new {@link OSMEnvironment}, with nodes forced on streets.
      *
      * @param file
      *            the file path where the map data is stored
@@ -130,22 +121,33 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      *             if the map file is not found, or it's not readable, or
      *             accessible, or a file system error occurred, or you kicked your
      *             hard drive while Alchemist was reading the map
-     * @throws ClassNotFoundException
-     *             if there is a gigantic bug in the distribution and
-     *             {@link GPSTrace} or {@link List} cannot be loaded
      */
-    public OSMEnvironment(final String file) throws IOException, ClassNotFoundException {
-        this(file, null, 0);
+    public OSMEnvironment(final String file) throws IOException {
+        this(file, DEFAULT_ON_STREETS);
     }
+
+   /**
+    * @param file
+    *            the file path where the map data is stored
+    * @param onStreets
+    *            if true, the nodes will be placed on the street nearest to the
+    *            desired {@link Position}. 
+    * @throws IOException
+    *             if the map file is not found, or it's not readable, or
+    *             accessible, or a file system error occurred, or you kicked your
+    *             hard drive while Alchemist was reading the map
+    */
+   public OSMEnvironment(final String file, final boolean onStreets) throws IOException {
+       this(file, onStreets, DEFAULT_FORCE_STREETS);
+
+   }
 
     /**
      * @param file
      *            the file path where the map data is stored
      * @param onStreets
      *            if true, the nodes will be placed on the street nearest to the
-     *            desired {@link Position}. This setting is automatically overridden
-     *            if GPS traces are used, and a matching trace id is available for
-     *            the node.
+     *            desired {@link Position}. 
      * @param onlyOnStreets
      *            if true, the nodes which are too far from a street will be simply
      *            discarded. If false, they will be placed anyway, in the original
@@ -154,13 +156,9 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      *             if the map file is not found, or it's not readable, or
      *             accessible, or a file system error occurred, or you kicked your
      *             hard drive while Alchemist was reading the map
-     * @throws ClassNotFoundException
-     *             if there is a gigantic bug in the distribution and
-     *             {@link GPSTrace} or {@link List} cannot be loaded
      */
-
-    public OSMEnvironment(final String file, final boolean onStreets, final boolean onlyOnStreets) throws IOException, ClassNotFoundException {
-        this(file, null, 0, 0, onStreets, onlyOnStreets, DEFAULT_USE_TRACES_ID);
+    public OSMEnvironment(final String file, final boolean onStreets, final boolean onlyOnStreets) throws IOException {
+        this(file, DEFAULT_APPROXIMATION, onStreets, onlyOnStreets);
 
     }
 
@@ -169,34 +167,6 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      *            the file path where the map data is stored. Accepts OSM maps of
      *            any format (xml, osm, pbf). The map will be processed, optimized
      *            and stored for future use.
-     * @param tfile
-     *            the file path where the traces are stored. Supports only
-     *            Alchemist's AGT traces. Can be null.
-     * @param ttime
-     *            the minimum time to consider when using the trace
-     * @throws IOException
-     *             if the map file is not found, or it's not readable, or
-     *             accessible, or a file system error occurred, or you kicked your
-     *             hard drive while Alchemist was reading the map
-     * @throws ClassNotFoundException
-     *             if there is a gigantic bug in the distribution and
-     *             {@link GPSTrace} or {@link List} cannot be loaded
-     */
-    public OSMEnvironment(final String file, final String tfile, final double ttime)
-            throws IOException, ClassNotFoundException {
-        this(file, tfile, ttime, DEFAULT_USE_TRACES_ID);
-    }
-
-    /**
-     * @param file
-     *            the file path where the map data is stored. Accepts OSM maps of
-     *            any format (xml, osm, pbf). The map will be processed, optimized
-     *            and stored for future use.
-     * @param tfile
-     *            the file path where the traces are stored. Supports only
-     *            Alchemist's AGT traces. Can be null.
-     * @param ttime
-     *            the minimum time to consider when using the trace
      * @param approximation
      *            the amount of ciphers of the IEEE 754 encoded
      *            position that may be discarded when comparing two positions,
@@ -208,39 +178,9 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      *             if the map file is not found, or it's not readable, or
      *             accessible, or a file system error occurred, or you kicked
      *             your hard drive while Alchemist was reading the map
-     * @throws ClassNotFoundException
-     *             if there is a gigantic bug in the distribution and
-     *             {@link GPSTrace} or {@link List} cannot be loaded
      */
-    public OSMEnvironment(final String file, final String tfile, final double ttime, final int approximation) throws IOException, ClassNotFoundException {
-        this(file, tfile, ttime, approximation, DEFAULT_ON_STREETS, DEFAULT_FORCE_STREETS, DEFAULT_USE_TRACES_ID);
-    }
-
-    /**
-     * @param file
-     *            the file path where the map data is stored. Accepts OSM maps
-     *            of any format (xml, osm, pbf). The map will be processed,
-     *            optimized and stored for future use.
-     * @param tfile
-     *            the file path where the traces are stored. Supports only
-     *            Alchemist's AGT traces. Can be null.
-     * @param ttime
-     *            the minimum time to consider when using the trace
-     * @param useIds
-     *            true if you want the association node - trace to be made with
-     *            respect to the ids stored in the traces. Otherwise, ids are
-     *            generated starting from 0.
-     * @throws IOException
-     *             if the map file is not found, or it's not readable, or
-     *             accessible, or a file system error occurred, or you kicked your
-     *             hard drive while Alchemist was reading the map
-     * @throws ClassNotFoundException
-     *             if there is a gigantic bug in the distribution and
-     *             {@link GPSTrace} or {@link List} cannot be loaded
-     */
-
-    public OSMEnvironment(final String file, final String tfile, final double ttime, final boolean useIds) throws IOException, ClassNotFoundException {
-        this(file, tfile, ttime, 0, DEFAULT_ON_STREETS, DEFAULT_FORCE_STREETS, useIds);
+    public OSMEnvironment(final String file, final int approximation) throws IOException {
+        this(file, approximation, DEFAULT_ON_STREETS, DEFAULT_FORCE_STREETS);
     }
 
     /**
@@ -248,11 +188,6 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      *            the file path where the map data is stored. Accepts OSM maps of
      *            any format (xml, osm, pbf). The map will be processed, optimized
      *            and stored for future use.
-     * @param tfile
-     *            the file path where the traces are stored. Supports only
-     *            Alchemist's AGT traces. Can be null.
-     * @param ttime
-     *            the minimum time to consider when using the trace
      * @param approximation
      *            the amount of ciphers of the IEEE 754 encoded
      *            position that may be discarded when comparing two positions,
@@ -262,51 +197,18 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      *            the level of precision determined by this value
      * @param onStreets
      *            if true, the nodes will be placed on the street nearest to the
-     *            desired {@link Position}. This setting is automatically overridden
-     *            if GPS traces are used, and a matching trace id is available for
-     *            the node.
+     *            desired {@link Position}.
      * @param onlyOnStreets
      *            if true, the nodes which are too far from a street will be simply
      *            discarded. If false, they will be placed anyway, in the original
      *            position.
-     * @param useIds
-     *            true if you want the association node - trace to be made with
-     *            respect to the ids stored in the traces. Otherwise, ids are
-     *            generated starting from 0.
      * @throws IOException
      *             if the map file is not found, or it's not readable, or
      *             accessible, or a file system error occurred, or you kicked your
      *             hard drive while Alchemist was reading the map
-     * @throws ClassNotFoundException
-     *             if there is a gigantic bug in the distribution and
-     *             {@link GPSTrace} or {@link List} cannot be loaded
      */
-    @SuppressWarnings("unchecked")
-
-    protected OSMEnvironment(final String file, final String tfile, final double ttime, final int approximation, final boolean onStreets, final boolean onlyOnStreets, final boolean useIds) throws IOException, ClassNotFoundException {
+    public OSMEnvironment(final String file, final int approximation, final boolean onStreets, final boolean onlyOnStreets) throws IOException {
         super();
-        /*
-         * Try to load as resource, then try to load a file
-         */
-        List<GPSTrace> trcs = null;
-        if (tfile != null) {
-            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(tfile))) {
-                trcs = (List<GPSTrace>) ois.readObject();
-                int idgen = 0;
-                for (final GPSTrace gps : trcs) {
-                    final GPSTrace trace = gps.startAt(new DoubleTime(ttime));
-                    if (trace.size() > 0) {
-                        traces.put(idgen++, trace);
-                    }
-                }
-                if (!useIds) {
-                    L.info("Traces available for " + idgen + " nodes.");
-                }
-            } catch (Exception e) {
-                L.error("Could not load traces", e);
-                throw e;
-            }
-        }
         forceStreets = onStreets;
         onlyStreet = onlyOnStreets;
         mapResource = file;
@@ -320,19 +222,14 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
 
     @Override
     protected Position computeActualInsertionPosition(final Node<T> node, final Position position) {
-        final GPSTrace trace = traces.get(node.getId());
-        if (trace == null) {
-            /*
-             * No traces available for this node. If it must be located on streets, query
-             * the navigation engine for a street point. Otherwise, put it where it is
-             * declared.
-             */
-            assert position != null;
-            return forceStreets ? getNearestStreetPoint(position).orElse(position) : position;
-        }
-        assert trace.getPreviousPosition(new DoubleTime(0)) != null;
-        assert trace.getPreviousPosition(new DoubleTime(0)) != null;
-        return trace.getPreviousPosition(new DoubleTime(0));
+
+        /*
+         * If it must be located on streets, query the navigation engine for a street
+         * point. Otherwise, put it where it is declared.
+         */
+        assert position != null;
+        return forceStreets ? getNearestStreetPoint(position).orElse(position) : position;
+
     }
 
     @Override
@@ -468,15 +365,6 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
         this.appr = appr;
     }
 
-    @Override
-    public GeoPosition getExpectedPosition(final Node<T> node, final Time time) {
-        final GPSTrace trace = traces.get(node.getId());
-        if (trace == null) {
-            return getPosition(node);
-        }
-        return trace.interpolate(time);
-    }
-
     /**
      * @return the maximum latitude
      */
@@ -520,31 +408,11 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     }
 
     @Override
-    public GeoPosition getNextPosition(final Node<T> node, final Time time) {
-        final GPSTrace trace = traces.get(node.getId());
-        if (trace == null) {
-            return getPosition(node);
-        }
-        assert trace.getNextPosition(time) != null;
-        return trace.getNextPosition(time);
-    }
-
-    @Override
     public GeoPosition getPosition(final Node<T> node) {
         if (super.getPosition(node) instanceof GeoPosition) {
             return (GeoPosition) super.getPosition(node);
         }
         throw new IllegalStateException("the position isn't a GeoPosition");
-    }
-
-    @Override
-    public GeoPosition getPreviousPosition(final Node<T> node, final Time time) {
-        final GPSTrace trace = traces.get(node.getId());
-        if (trace == null) {
-            return getPosition(node);
-        }
-        assert trace.getPreviousPosition(time) != null;
-        return trace.getPreviousPosition(time);
     }
 
     @Override
@@ -564,11 +432,6 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
         final double sizex = Math.max(minmin.getDistanceTo(minmax), maxmax.getDistanceTo(maxmin));
         final double sizey = Math.max(minmin.getDistanceTo(maxmin), maxmax.getDistanceTo(minmax));
         return new double[] { sizex, sizey };
-    }
-
-    @Override
-    public GPSTrace getTrace(final Node<T> node) {
-        return traces.get(node.getId());
     }
 
     private void initAll(final String file) throws IOException {
@@ -642,7 +505,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     @Override
     protected boolean nodeShouldBeAdded(final Node<T> node, final Position position) {
         assert node != null;
-        return traces.containsKey(node.getId()) || !onlyStreet || getNearestStreetPoint(position).isPresent();
+        return !onlyStreet || getNearestStreetPoint(position).isPresent();
     }
 
     private void readObject(final ObjectInputStream s) throws IOException, ClassNotFoundException {

@@ -103,42 +103,8 @@ public interface MapEnvironment<T> extends BenchmarkableEnvironment<T> {
      */
     Route<GeoPosition> computeRoute(Position p1, Position p2, Vehicle vehicle);
 
-    /**
-     * Works only if the node is associated with a {@link GPSTrace}.
-     * 
-     * @param node the {@link Node}
-     * @param time the time
-     * @return interpolates the position immediately before and the one immediately after time in the {@link GPSTrace}
-     */
-    GeoPosition getExpectedPosition(Node<T> node, Time time);
-
-    /**
-     * Works only if the node is associated with a {@link GPSTrace}.
-     * 
-     * @param node the {@link Node}
-     * @param time the time
-     * @return the position immediately after time in the {@link GPSTrace}
-     */
-    GeoPosition getNextPosition(Node<T> node, Time time);
-
     @Override
     GeoPosition getPosition(Node<T> node);
-
-    /**
-     * Works only if the node is associated with a {@link GPSTrace}.
-     * 
-     * @param node the {@link Node}
-     * @param time the time
-     * @return the position immediately before time in the {@link GPSTrace}
-     */
-    GeoPosition getPreviousPosition(Node<T> node, Time time);
-
-    /**
-     * Works only if the node is associated with a {@link GPSTrace}.
-     * @param node the {@link Node}
-     * @return the associated {@link GPSTrace} or null if the trace does not exist
-     */
-    GPSTrace getTrace(Node<T> node);
 
     @Override
     GeoPosition makePosition(Number... coordinates);

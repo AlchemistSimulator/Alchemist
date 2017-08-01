@@ -165,4 +165,14 @@ public class GPSTraceImpl implements GPSTrace {
         return getPoints().iterator();
     }
 
+    @Override
+    public GPSPoint getInitialPosition() {
+        return trace.get(0);
+    }
+
+    @Override
+    public GPSPoint getFinalPosition() {
+        return trace.get(trace.size() - 1);
+    }
+
 }

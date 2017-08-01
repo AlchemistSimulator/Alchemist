@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.Map;
 
+import org.jooq.lambda.Unchecked;
 import org.junit.Test;
 
 import com.google.common.collect.Maps;
@@ -60,6 +61,9 @@ public class TestInSimulator {
 //            it.unibo.alchemist.boundary.gui.SingleRunGUI.make(sim);
 //        }
         sim.run();
+        sim.getError().ifPresent(Unchecked.consumer(e ->  {
+            throw e;
+        }));
     }
 
 }

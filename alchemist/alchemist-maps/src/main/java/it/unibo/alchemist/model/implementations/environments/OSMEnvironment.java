@@ -107,8 +107,8 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     private transient Map<Vehicle, GraphHopperAPI> navigators;
 
     private transient LoadingCache<CacheEntry, Route<GeoPosition>> routecache;
-    private boolean activateBenchmark;
-    private int appr;
+    private boolean benchmarking;
+    private final int approximation;
 
 
 
@@ -209,10 +209,13 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      */
     public OSMEnvironment(final String file, final int approximation, final boolean onStreets, final boolean onlyOnStreets) throws IOException {
         super();
+        if (approximation < 0 || approximation > 64) {
+            throw new IllegalArgumentException();
+        }
         forceStreets = onStreets;
         onlyStreet = onlyOnStreets;
         mapResource = file;
-        setApproximation(approximation);
+        this.approximation = approximation;
         initAll(file);
     }
 
@@ -234,12 +237,12 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
 
     @Override
     public void enableBenchmark() {
-        this.activateBenchmark = true;
+        this.benchmarking = true;
     }
 
     @Override
     public double getBenchmarkResult() {
-        if (activateBenchmark) {
+        if (benchmarking) {
             if (routecache != null) {
                 return routecache.stats().hitRate();
             }
@@ -273,7 +276,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     public Route<GeoPosition> computeRoute(final Position p1, final Position p2, final Vehicle vehicle) {
         if (routecache == null) {
             CacheBuilder<Object, Object> builder = CacheBuilder.newBuilder();
-            if (activateBenchmark) {
+            if (benchmarking) {
                 builder = builder.recordStats();
             }
             routecache = builder
@@ -344,25 +347,15 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
         }
 
         private Position approximate(final Position p) {
-            if (appr == 0) {
+            if (approximation == 0) {
                 return p;
             }
             return makePosition(approximate(p.getCoordinate(0)), approximate(p.getCoordinate(1)));
         }
 
         private double approximate(final double value) {
-            return Double.longBitsToDouble(Double.doubleToLongBits(value) & (0xFFFFFFFFFFFFFFFFL << appr));
+            return Double.longBitsToDouble(Double.doubleToLongBits(value) & (0xFFFFFFFFFFFFFFFFL << approximation));
         }
-    }
-
-    /**
-     * @param appr how many ciphers of the coordinates must be ignored when comparing two coordinates.
-     */
-    public void setApproximation(final int appr) {
-        if (appr < 0 || appr > 64) {
-            throw new IllegalArgumentException();
-        }
-        this.appr = appr;
     }
 
     /**

@@ -38,7 +38,7 @@ public class ReproduceGPSTrace<T> extends MoveOnMapWithGPS<T> {
         super(environment, node,
                 new IgnoreStreets<>(),
                 new StraightLineTraceDependantSpeed<>(environment, node, reaction),
-                new FollowTrace<>(environment, node, reaction),
+                new FollowTrace<>(reaction),
                 path, cycle, normalizer, normalizerArgs);
     }
 
@@ -67,7 +67,7 @@ public class ReproduceGPSTrace<T> extends MoveOnMapWithGPS<T> {
         super(environment, node,
                 new IgnoreStreets<>(),
                 new ConstantSpeed<>(reaction, speed),
-                new FollowTrace<>(environment, node, reaction),
+                new FollowTrace<>(reaction),
                 path, cycle, normalizer, normalizerArgs);
     }
 

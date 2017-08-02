@@ -3,8 +3,6 @@ package it.unibo.alchemist.model.implementations.movestrategies.target;
 import java.util.Objects;
 
 import it.unibo.alchemist.model.interfaces.GPSTrace;
-import it.unibo.alchemist.model.interfaces.MapEnvironment;
-import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy;
@@ -20,28 +18,20 @@ import it.unibo.alchemist.model.interfaces.Time;
 public class FollowTrace<T> implements TargetSelectionStrategy<T>, StrategyWithGPS {
 
     private static final long serialVersionUID = -446053307821810437L;
-    private final MapEnvironment<T> environment;
-    private final Node<T> node;
     private final Reaction<T> reaction;
     private GPSTrace trace;
 
     /**
-     * @param env
-     *            the environment
-     * @param n
-     *            the node
      * @param r
      *            the reaction
      */
-    public FollowTrace(final MapEnvironment<T> env, final Node<T> n, final Reaction<T> r) {
-        environment = env;
-        node = n;
+    public FollowTrace(final Reaction<T> r) {
         reaction = r;
     }
 
     @Override
     public final Position getTarget() {
-        Time time = reaction.getTau();
+        final Time time = reaction.getTau();
         assert trace.getNextPosition(time) != null;
         return trace.getNextPosition(time);
     }

@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.interfaces.Position;
 public class GPSTraceDisplacement implements Displacement {
 
     private final Iterable<GPSTrace> traces;
+    private final int numNode;
 
     /**
      * 
@@ -27,13 +28,15 @@ public class GPSTraceDisplacement implements Displacement {
      *            args to use to create GPSTimeNormalizer
      * @throws IOException 
      */
-    public GPSTraceDisplacement(final String path, final boolean cycle, final String normalizer, final Object... args) throws IOException {
+    public GPSTraceDisplacement(final int numNode, final String path, final boolean cycle, final String normalizer, final Object... args) throws IOException {
         traces = new TraceLoader(path, cycle, normalizer, args);
+        this.numNode = numNode;
     }
 
     @Override
     public Stream<Position> stream() {
         return StreamSupport.stream(traces.spliterator(), false)
+                .limit(numNode)
                 .map(trace -> trace.getInitialPosition());
     }
 

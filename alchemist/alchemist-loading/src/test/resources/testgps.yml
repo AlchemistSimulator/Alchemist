@@ -1,0 +1,43 @@
+variables:
+  random: &random
+    min: 0
+    max: 9
+    step: 1
+    default: 0
+
+environment:
+  type: OSMEnvironment
+  parameters: ["/media/placu/DATI/Placu/Tesi/vcm.pbf", false]
+
+network-model:
+  type: NoLinks
+  # parameters: [100]
+
+incarnation: sapere
+
+pools:
+  - pool: &program
+    - time-distribution: 1
+      program: 1
+    - time-distribution: null
+      program: send
+  - pool: &move
+    - time-distribution: 0.1
+      type: Event
+      actions:
+        - type: ReproduceGPSTrace
+          parameters: ["/gpsTrace", true, "NormalizeTimeSingleTrace"]
+
+
+seeds:
+  scenario: *random
+  simulation: *random
+
+displacements:
+  - in:
+      type: GPSTraceDisplacement
+      parameters: [7,"/gpsTrace", true, "NormalizeTimeSingleTrace"]
+    programs:
+      # - *program
+      - *move
+    contents: []

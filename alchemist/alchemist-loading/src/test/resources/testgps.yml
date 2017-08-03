@@ -7,7 +7,7 @@ variables:
 
 environment:
   type: OSMEnvironment
-  parameters: ["/media/placu/DATI/Placu/Tesi/vcm.pbf", false]
+  parameters: ["/vcm.pbf", false]
 
 network-model:
   type: NoLinks

@@ -11,13 +11,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.openstreetmap.osmosis.osmbinary.file.FileFormatException;
-import at.jku.traces.json.GPSTraceImpl;
+
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.WayPoint;
 import it.unibo.alchemist.boundary.gpsload.api.GPSFileLoader;
 import it.unibo.alchemist.model.implementations.positions.GPSPointImpl;
+import it.unibo.alchemist.model.implementations.routes.GPSTraceImpl;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.GPSPoint;
 import it.unibo.alchemist.model.interfaces.GPSTrace;

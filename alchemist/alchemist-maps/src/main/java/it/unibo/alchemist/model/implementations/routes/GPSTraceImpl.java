@@ -6,7 +6,7 @@
  * the GNU General Public License, with a linking exception, as described
  * in the file LICENSE in the Alchemist distribution's top directory.
  */
-package at.jku.traces.json;
+package it.unibo.alchemist.model.implementations.routes;
 
 import it.unibo.alchemist.model.implementations.positions.GPSPointImpl;
 import it.unibo.alchemist.model.interfaces.GPSPoint;

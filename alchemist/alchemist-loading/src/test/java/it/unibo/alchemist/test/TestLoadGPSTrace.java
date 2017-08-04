@@ -30,23 +30,23 @@ import it.unibo.alchemist.model.interfaces.Time;
  */
 public class TestLoadGPSTrace {
 
-    private final static Map<GeoPosition, GeoPosition> START_ARRIVE_POSITION = new HashMap<>();
-    private final static Map<Node<?>, GeoPosition> NODE_START_POSITION = new HashMap<>();
-    
-    private final static GeoPosition START_1 = new LatLongPosition(48.176559999999995, 16.36939);
-    private final static GeoPosition ARRIVE_1 = new LatLongPosition(48.176567, 16.369469);
-    
-    private final static GeoPosition START_2 = new LatLongPosition(48.200253, 16.366229);
-    private final static GeoPosition ARRIVE_2 = new LatLongPosition(48.219395, 16.389551);
-    
-    private final static GeoPosition START_3 = new LatLongPosition(48.250569999999996, 16.341894);
-    private final static GeoPosition ARRIVE_3 = new LatLongPosition(48.19978, 16.353043);
-    
-    private final static GeoPosition START_4 = new LatLongPosition(48.20625, 16.364506);
-    private final static GeoPosition ARRIVE_4 = new LatLongPosition(48.206326, 16.364582);
-    
-    private final static GeoPosition START_5 = new LatLongPosition(48.233093, 16.418);
-    private final static GeoPosition ARRIVE_5 = new LatLongPosition(48.207733, 16.36331);
+    private static final Map<GeoPosition, GeoPosition> START_ARRIVE_POSITION = new HashMap<>();
+    private static final Map<Node<?>, GeoPosition> NODE_START_POSITION = new HashMap<>();
+
+    private static final GeoPosition START_1 = new LatLongPosition(48.176559999999995, 16.36939);
+    private static final GeoPosition ARRIVE_1 = new LatLongPosition(48.176567, 16.369469);
+
+    private static final GeoPosition START_2 = new LatLongPosition(48.200253, 16.366229);
+    private static final GeoPosition ARRIVE_2 = new LatLongPosition(48.219395, 16.389551);
+
+    private static final GeoPosition START_3 = new LatLongPosition(48.250569999999996, 16.341894);
+    private static final GeoPosition ARRIVE_3 = new LatLongPosition(48.19978, 16.353043);
+
+    private static final GeoPosition START_4 = new LatLongPosition(48.20625, 16.364506);
+    private static final GeoPosition ARRIVE_4 = new LatLongPosition(48.206326, 16.364582);
+
+    private static final GeoPosition START_5 = new LatLongPosition(48.233093, 16.418);
+    private static final GeoPosition ARRIVE_5 = new LatLongPosition(48.207733, 16.36331);
     static {
         START_ARRIVE_POSITION.put(START_1, ARRIVE_1);
         START_ARRIVE_POSITION.put(START_2, ARRIVE_2);
@@ -54,6 +54,9 @@ public class TestLoadGPSTrace {
         START_ARRIVE_POSITION.put(START_4, ARRIVE_4);
         START_ARRIVE_POSITION.put(START_5, ARRIVE_5);
     }
+
+    private static final double DELTA = 0.1;
+
     /**
      * Test the ability to inject variables.
      */
@@ -73,26 +76,26 @@ public class TestLoadGPSTrace {
         sim.addOutputMonitor(new OutputMonitor<T>() {
 
             @Override
-            public void finished(Environment<T> env, Time time, long step) {
-                for (Node<T> node : env.getNodes()) {
-                    GeoPosition start = Objects.requireNonNull(NODE_START_POSITION.get(node));
-                    GeoPosition idealArrive = Objects.requireNonNull(START_ARRIVE_POSITION.get(start));
-                    Position realArrive = Objects.requireNonNull(env.getPosition(node));
-                    assertEquals(0.0, idealArrive.getDistanceTo(realArrive), 0.1);
+            public void finished(final Environment<T> env, final Time time, final long step) {
+                for (final Node<T> node : env.getNodes()) {
+                    final GeoPosition start = Objects.requireNonNull(NODE_START_POSITION.get(node));
+                    final GeoPosition idealArrive = Objects.requireNonNull(START_ARRIVE_POSITION.get(start));
+                    final Position realArrive = Objects.requireNonNull(env.getPosition(node));
+                    assertEquals(0.0, idealArrive.getDistanceTo(realArrive), DELTA);
                 }
             }
 
             @Override
-            public void initialized(Environment<T> env) {
-                for (Node<T> node : env.getNodes()) {
-                    Position p = env.getPosition(node);
+            public void initialized(final Environment<T> env) {
+                for (final Node<T> node : env.getNodes()) {
+                    final Position p = env.getPosition(node);
                     NODE_START_POSITION.put(node, new LatLongPosition(p.getCoordinate(1), p.getCoordinate(0)));
                 }
             }
 
             @Override
-            public void stepDone(Environment<T> env, Reaction<T> r, Time time, long step) {
-                
+            public void stepDone(final Environment<T> env, final Reaction<T> r, final Time time, final long step) {
+
             }
         });
         sim.play();

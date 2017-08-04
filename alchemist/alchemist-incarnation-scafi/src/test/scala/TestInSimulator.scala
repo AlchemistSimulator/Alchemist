@@ -10,7 +10,9 @@ import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.collection.JavaConverters.mapAsScalaMapConverter
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 
+@SuppressFBWarnings(value = Array("SE_BAD_FIELD"), justification="We are not going to Serialize test classes")
 class TestInSimulator extends FunSuite with Matchers {
   test("Basic test"){
     testNoVar("/plain_vanilla.yml")

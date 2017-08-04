@@ -12,7 +12,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.RandomAccessFile;
+import java.net.URI;
 import java.net.URL;
+import java.nio.channels.FileLock;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Locale;
@@ -21,8 +25,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.codec.binary.Hex;
 import org.danilopianini.util.Hashes;
 import org.danilopianini.util.concurrent.FastReadWriteLock;
+import org.jooq.lambda.Unchecked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,9 +95,8 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      * The default value for the discard of nodes too far from streets option.
      */
     public static final boolean DEFAULT_FORCE_STREETS = false;
-    private static final int ENCODING_BASE = 36;
     private static final Logger L = LoggerFactory.getLogger(OSMEnvironment.class);
-    private static final long serialVersionUID = -8100726226966471621L;
+    private static final long serialVersionUID = 1L;
     /**
      * System file separator.
      */
@@ -99,6 +105,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      * Alchemist's temp dir.
      */
     private static final String PERSISTENTPATH = System.getProperty("user.home") + SLASH + ".alchemist";
+    private static final String MAPNAME = "map";
 
     private final String mapResource;
     private final boolean forceStreets, onlyStreet;
@@ -427,16 +434,27 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
         return new double[] { sizex, sizey };
     }
 
-    private void initAll(final String file) throws IOException {
-        final URL resource = OSMEnvironment.class.getResource(file);
-        final String resFile = resource == null ? "" : resource.getPath();
-        final File mapFile = resFile.isEmpty() ? new File(file) : new File(resFile);
-        if (!mapFile.exists()) {
-            throw new FileNotFoundException(file);
-        }
-        final String dir = initDir(mapFile);
+    private void initAll(final String fileName) throws IOException {
+        Objects.requireNonNull(fileName, "define the file with the map: " + fileName);
+        final Optional<URL> file = Optional.of(new File(fileName))
+                .filter(File::exists)
+                .map(File::toURI)
+                .map(Unchecked.function(URI::toURL));
+        final URL resource = Optional.ofNullable(OSMEnvironment.class.getResource(fileName))
+                    .orElseGet(Unchecked.supplier(() -> file
+                            .orElseThrow(() -> new FileNotFoundException("No file or resource with name " + fileName))));
+        final String dir = initDir(resource).intern();
         final File workdir = new File(dir);
         mkdirsIfNeeded(workdir);
+        final File mapFile = new File(dir + SLASH + MAPNAME);
+        
+        try (RandomAccessFile fileAccess = new RandomAccessFile(workdir + SLASH + "lock", "rw")) {
+            try (FileLock lock = fileAccess.getChannel().lock()) {
+                if (!mapFile.exists()) {
+                    Files.copy(resource.openStream(), mapFile.toPath());
+                }
+            }
+        }
         navigators = new EnumMap<>(Vehicle.class);
         mapLock = new FastReadWriteLock();
         final Optional<Exception> error = Arrays.stream(Vehicle.values()).parallel().<Optional<Exception>>map(v -> {
@@ -459,11 +477,11 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
         }
     }
 
-    private String initDir(final File mapfile) throws IOException {
-        final String code = Long.toString(Hashes.hashResource(mapfile, e -> {
+    private String initDir(final URL mapfile) throws IOException {
+        final String code = Hex.encodeHexString(Hashes.hashResource(mapfile, e -> {
             throw new IllegalStateException(e);
-        }).asLong(), ENCODING_BASE);
-        final String append = SLASH + mapfile.getName() + code;
+        }).asBytes());
+        final String append = SLASH + code;
         final String[] prefixes = new String[] { PERSISTENTPATH, System.getProperty("java.io.tmpdir"),
                 System.getProperty("user.dir"), "." };
         String dir = prefixes[0] + append;

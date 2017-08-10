@@ -1,12 +1,12 @@
 dependencies {
     compile (
-    	project(':alchemist-interfaces'),
-        project(':alchemist-implementationbase'),
         "com.github.cb372:scalacache-core_${scalaMajorVersion}:${scalaCacheVersion}",
         "com.github.cb372:scalacache-guava_${scalaMajorVersion}:${scalaCacheVersion}",
         "it.unibo.apice.scafiteam:scafi-core_${scalaMajorVersion}:${scafiVersion}",
         "org.scala-lang:scala-compiler:${scalaVersion}",
-        "org.scala-lang:scala-library:${scalaVersion}"
+        "org.scala-lang:scala-library:${scalaVersion}",
+        project(':alchemist-interfaces'),
+        project(':alchemist-implementationbase'),
     )
     testCompile(
         project(':alchemist-engine'),

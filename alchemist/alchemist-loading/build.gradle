@@ -4,8 +4,6 @@ dependencies {
         project(':alchemist-interfaces'),
         project(':alchemist-time'),
         "org.apache.commons:commons-lang3:${lang3Version}",
-        "org.scala-lang:scala-compiler:${scalaVersion}",
-        "org.scala-lang:scala-library:${scalaVersion}",
         "org.danilopianini:jirf:${jirfVersion}",
         "org.reflections:reflections:$reflectionsVersion",
         "org.yaml:snakeyaml:$snakeyamlVersion"

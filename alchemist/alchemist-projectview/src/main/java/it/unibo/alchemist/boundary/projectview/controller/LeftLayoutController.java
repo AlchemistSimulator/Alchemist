@@ -7,6 +7,7 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -40,7 +42,7 @@ import javafx.stage.Stage;
  * 
  *
  */
-public class LeftLayoutController {
+public class LeftLayoutController implements Initializable {
 
     private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
     private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
@@ -63,10 +65,8 @@ public class LeftLayoutController {
     private String selectedFile;
     private CenterLayoutController ctrlCenter;
 
-    /**
-     * 
-     */
-    public void initialize() {
+    @Override
+    public void initialize(final URL location, final ResourceBundle resources) {
         this.run.setGraphic(new ImageView(SVGImageUtils.getSvgImage("icon/run.svg", RUN_WIDTH, RUN_HEIGHT)));
         this.run.setText(RESOURCES.getString("run"));
         this.run.setDisable(true);

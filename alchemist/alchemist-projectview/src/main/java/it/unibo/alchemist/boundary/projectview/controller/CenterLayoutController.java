@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,6 +42,7 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -66,7 +68,7 @@ import javafx.util.StringConverter;
 /**
  * Controller of CenterLayout view.
  */
-public class CenterLayoutController {
+public class CenterLayoutController implements Initializable {
 
     private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
     private static final ResourceBundle RESOURCES = LocalizedResourceBundle
@@ -168,10 +170,8 @@ public class CenterLayoutController {
     private final ToggleSwitch tsOut = new ToggleSwitch();
     private final ToggleSwitch tsVar = new ToggleSwitch();
 
-    /**
-     * 
-     */
-    public void initialize() {
+    @Override
+    public void initialize(final URL location, final ResourceBundle resources) {
         this.img = SVGImageUtils.getSvgImage("icon/delete.svg", DELETE_WIDTH, DELETE_HEIGHT);
         this.imgViewYaml = new ImageView(img);
         this.imgViewEff = new ImageView(img);

@@ -5,6 +5,7 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -17,6 +18,7 @@ import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -29,10 +31,9 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 /**
- * 
- *
+ * This class models a JavaFX controller for TopLayout.fxml.
  */
-public class TopLayoutController {
+public class TopLayoutController implements Initializable {
 
     private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
     private static final double IMG_WIDTH = 3;
@@ -51,10 +52,8 @@ public class TopLayoutController {
     private LeftLayoutController ctrlLeft;
     private Watcher watcher;
 
-    /**
-     * 
-     */
-    public void initialize() {
+    @Override
+    public void initialize(final URL location, final ResourceBundle resources) {
         this.btnNew.setGraphic(new ImageView(SVGImageUtils.getSvgImage("icon/new.svg", IMG_WIDTH, IMG_HEIGHT)));
         this.btnNew.setText(RESOURCES.getString("new"));
         this.btnOpen.setGraphic(new ImageView(SVGImageUtils.getSvgImage("icon/open.svg", IMG_WIDTH, IMG_HEIGHT)));
@@ -66,7 +65,9 @@ public class TopLayoutController {
 
     /**
      * Sets the main class.
-     * @param main main class
+     * 
+     * @param main
+     *            main class
      */
     public void setMain(final ProjectGUI main) {
         this.main = main;
@@ -74,7 +75,8 @@ public class TopLayoutController {
 
     /**
      * 
-     * @param controller LeftLayout controller
+     * @param controller
+     *            LeftLayout controller
      */
     public void setCtrlLeft(final LeftLayoutController controller) {
         this.ctrlLeft = controller;
@@ -82,7 +84,8 @@ public class TopLayoutController {
 
     /**
      * 
-     * @param controller CenterLayout controller
+     * @param controller
+     *            CenterLayout controller
      */
     public void setCtrlCenter(final CenterLayoutController controller) {
         this.ctrlCenter = controller;
@@ -137,8 +140,9 @@ public class TopLayoutController {
 
     /**
      * Show a directory chooser to open an existing project.
-     * @throws IOException 
-     * @throws FileNotFoundException 
+     * 
+     * @throws IOException
+     * @throws FileNotFoundException
      */
     @FXML
     public void clickOpen() throws FileNotFoundException, IOException {
@@ -161,7 +165,8 @@ public class TopLayoutController {
         dirChooser.setTitle(RESOURCES.getString("select_folder_proj"));
         final File dir = dirChooser.showDialog(this.main.getStage());
         if (dir != null) {
-            final boolean containsFile = dir.listFiles(file -> file.getName().endsWith(".alchemist_project_descriptor.json")).length > 0;
+            final boolean containsFile = dir
+                    .listFiles(file -> file.getName().endsWith(".alchemist_project_descriptor.json")).length > 0;
             if (containsFile) {
                 final Alert alert = new Alert(AlertType.ERROR);
                 alert.setTitle(RESOURCES.getString("proj_folder_wrong"));

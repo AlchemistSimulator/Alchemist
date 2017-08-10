@@ -1,6 +1,3 @@
-/**
- * 
- */
 package it.unibo.alchemist;
 
 import java.awt.GraphicsEnvironment;
@@ -73,16 +70,26 @@ public final class AlchemistRunner<T> {
     private final int parallelism;
     private final double samplingInterval;
 
-    private AlchemistRunner(final Loader source,
-            final Time endTime,
-            final long endStep,
-            final Optional<String> exportRoot,
-            final Optional<String> effectsFile,
-            final double sampling,
-            final int parallelism,
-            final boolean headless,
-            final int closeOperation,
-            final boolean benchmark,
+    /**
+     * Default private constructor.
+     * 
+     * @param source
+     * @param endTime
+     * @param endStep
+     * @param exportRoot
+     * @param effectsFile
+     * @param sampling
+     * @param parallelism
+     * @param headless
+     * @param closeOperation
+     * @param benchmark
+     * @param outputMonitors
+     * 
+     * @see {@link AlchemistRunner.Builder}
+     */
+    private AlchemistRunner(final Loader source, final Time endTime, final long endStep,
+            final Optional<String> exportRoot, final Optional<String> effectsFile, final double sampling,
+            final int parallelism, final boolean headless, final int closeOperation, final boolean benchmark,
             final ImmutableCollection<Supplier<OutputMonitor<T>>> outputMonitors) {
         this.effectsFile = effectsFile;
         this.endTime = endTime;

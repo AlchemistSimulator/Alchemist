@@ -18,13 +18,16 @@ import it.unibo.alchemist.boundary.projectview.model.Project;
 
 /**
  * A class with static methods that load or save data in a json file.
- *
  */
 public final class ProjectIOUtils {
 
     private static final String PROJECT_FILE = File.separator + ".alchemist_project_descriptor.json";
 
+    /**
+     * Private, static constructor, as this is an utility class.
+     */
     private ProjectIOUtils() {
+        // Private, static constructor, as this is an utility class.
     }
 
     /**

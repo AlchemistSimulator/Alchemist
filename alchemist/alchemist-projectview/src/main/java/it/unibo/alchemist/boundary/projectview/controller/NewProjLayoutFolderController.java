@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -15,6 +16,7 @@ import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -26,10 +28,9 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 /**
- * 
- *
+ * This class models a JavaFX controller for NewProjLayoutFolder.fxml.
  */
-public class NewProjLayoutFolderController {
+public class NewProjLayoutFolderController implements Initializable {
 
     private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
     private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
@@ -45,10 +46,8 @@ public class NewProjLayoutFolderController {
     private Stage stage;
     private String path;
 
-    /**
-     * 
-     */
-    public void initialize() {
+    @Override
+    public void initialize(final URL location, final ResourceBundle resources) {
         this.next.setText(RESOURCES.getString("next"));
         this.next.setDisable(true);
         this.selectFolder.setText(RESOURCES.getString("select_folder"));
@@ -56,7 +55,8 @@ public class NewProjLayoutFolderController {
 
     /**
      * 
-     * @param main main
+     * @param main
+     *            main
      */
     public void setMain(final ProjectGUI main) {
         this.main = main;
@@ -64,7 +64,8 @@ public class NewProjLayoutFolderController {
 
     /**
      * 
-     * @param stage stage
+     * @param stage
+     *            stage
      */
     public void setStage(final Stage stage) {
         this.stage = stage;
@@ -72,7 +73,8 @@ public class NewProjLayoutFolderController {
 
     /**
      * 
-     * @param path Folder path
+     * @param path
+     *            Folder path
      */
     public void setFolderPath(final String path) {
         this.path = path;

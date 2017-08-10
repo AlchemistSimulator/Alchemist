@@ -40,7 +40,11 @@ public final class SingleRunGUI {
     private static final int FALLBACK_X_SIZE = 800;
     private static final int FALLBACK_Y_SIZE = 600;
 
+    /**
+     * Private static constructor, as this is an utility class.
+     */
     private SingleRunGUI() {
+        // Private static constructor, as this is an utility class.
     }
 
     /**

@@ -1,20 +1,19 @@
 package it.unibo.alchemist.boundary.gui.view.properties
 
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
+import com.google.gson.JsonSerializationContext
+import com.google.gson.JsonSerializer
 import java.io.IOException
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
+import java.lang.reflect.Type
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.DoublePropertyBase
 import org.eclipse.xtend.lib.annotations.Accessors
-import com.google.gson.JsonSerializer
-import com.google.gson.JsonDeserializer
-import it.unibo.alchemist.boundary.gui.view.properties.PropertyTypeAdapter
-import com.google.gson.JsonElement
-import java.lang.reflect.Type
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonSerializationContext
-import com.google.gson.JsonObject
 
 /** 
  * This {@link DoubleProperty} is designed to have a range for the wrapped value

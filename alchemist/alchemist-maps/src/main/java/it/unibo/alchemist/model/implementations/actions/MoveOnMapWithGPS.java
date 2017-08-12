@@ -112,7 +112,7 @@ public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
      */
     public static GPSTrace traceFor(final MapEnvironment<?> environment, final String path, final boolean cycle, final String normalizer, final Object... normalizerArgs) {
         final TraceRef key = new TraceRef(path, cycle, normalizer, normalizerArgs);
-        final Iterator<GPSTrace> iter = LOADER.get(environment).get(key);
+        final Iterator<GPSTrace> iter = Objects.requireNonNull(LOADER.get(environment).get(key));
         synchronized (iter) {
             if (iter.hasNext()) {
                 return iter.next();

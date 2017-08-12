@@ -447,7 +447,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
         final File workdir = new File(dir);
         mkdirsIfNeeded(workdir);
         final File mapFile = new File(dir + SLASH + MAPNAME);
-        
+
         try (RandomAccessFile fileAccess = new RandomAccessFile(workdir + SLASH + "lock", "rw")) {
             try (FileLock lock = fileAccess.getChannel().lock()) {
                 if (!mapFile.exists()) {

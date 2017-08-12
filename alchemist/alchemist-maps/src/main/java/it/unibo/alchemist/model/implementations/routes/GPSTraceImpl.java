@@ -175,4 +175,9 @@ public class GPSTraceImpl implements GPSTrace {
         return trace.get(trace.size() - 1);
     }
 
+    @Override
+    public Time getFinalTime() {
+        return trace.get(trace.size() - 1).getTime();
+    }
+
 }

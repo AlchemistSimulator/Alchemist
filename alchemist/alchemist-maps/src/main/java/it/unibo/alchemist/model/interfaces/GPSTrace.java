@@ -32,6 +32,11 @@ public interface GPSTrace extends Route<GPSPoint> {
     Time getStartTime();
 
     /**
+     * @return the final time for this {@link GPSTrace}
+     */
+    Time getFinalTime();
+
+    /**
      * @param time
      *            the time
      * @return the position at which the node would have been if it has moved in

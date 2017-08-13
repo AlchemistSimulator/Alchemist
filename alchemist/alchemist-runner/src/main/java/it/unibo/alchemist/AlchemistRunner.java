@@ -1,39 +1,12 @@
 package it.unibo.alchemist;
 
-import java.awt.GraphicsEnvironment;
-import java.io.FileNotFoundException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Queue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-
 import it.unibo.alchemist.boundary.gui.SingleRunGUI;
+import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -46,6 +19,21 @@ import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.BenchmarkableEnvironment;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Time;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.awt.*;
+import java.io.FileNotFoundException;
+import java.util.*;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Queue;
+import java.util.concurrent.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Starts Alchemist.
@@ -72,25 +60,24 @@ public final class AlchemistRunner<T> {
 
     /**
      * Default private constructor.
-     * 
-     * @param source
-     * @param endTime
-     * @param endStep
-     * @param exportRoot
-     * @param effectsFile
-     * @param sampling
-     * @param parallelism
-     * @param headless
-     * @param closeOperation
-     * @param benchmark
-     * @param outputMonitors
-     * 
-     * @see {@link AlchemistRunner.Builder}
+     *
+     * @param source         the entity that produces the {@link Environment}
+     * @param endTime        the time to reach; it could be {@link DoubleTime#INFINITE_TIME infinite}
+     * @param endStep        the step to reach; it could be {@link Long#MAX_VALUE infinite}
+     * @param exportRoot     the file name to export to
+     * @param effectsFile    the file to load {@link EffectFX effects} from
+     * @param sampling       the sampling interval
+     * @param parallelism    the number of threads in the pool of the {@link Executor}
+     * @param headless       if the simulation should run headless or with a GUI
+     * @param closeOperation the close operation for the GUI
+     * @param benchmark      if you want to benchmark this run
+     * @param outputMonitors the {@link Collection} of {@link OutputMonitor} to add to the simulation
+     * @see AlchemistRunner.Builder
      */
     private AlchemistRunner(final Loader source, final Time endTime, final long endStep,
-            final Optional<String> exportRoot, final Optional<String> effectsFile, final double sampling,
-            final int parallelism, final boolean headless, final int closeOperation, final boolean benchmark,
-            final ImmutableCollection<Supplier<OutputMonitor<T>>> outputMonitors) {
+                            final Optional<String> exportRoot, final Optional<String> effectsFile, final double sampling,
+                            final int parallelism, final boolean headless, final int closeOperation, final boolean benchmark,
+                            final ImmutableCollection<Supplier<OutputMonitor<T>>> outputMonitors) {
         this.effectsFile = effectsFile;
         this.endTime = endTime;
         this.endStep = endStep;
@@ -105,7 +92,8 @@ public final class AlchemistRunner<T> {
     }
 
     /**
-     * 
+     * Getter method for the loader variables.
+     *
      * @return loader variables
      */
     public Map<String, Variable<?>> getVariables() {
@@ -113,9 +101,9 @@ public final class AlchemistRunner<T> {
     }
 
     /**
-     * 
-     * @param variables
-     *            loader variables
+     * The method launches the simulation.
+     *
+     * @param variables loader variables
      */
     public void launch(final String... variables) {
         Optional<? extends Throwable> exception = Optional.empty();
@@ -191,7 +179,7 @@ public final class AlchemistRunner<T> {
                             sim.run();
                             return sim.getError();
                         }, variables).findAny().get().call();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 localEx = Optional.of(e);
             }
             exception = localEx;
@@ -201,6 +189,14 @@ public final class AlchemistRunner<T> {
         }
     }
 
+    /**
+     * The method initializes the simulation.
+     *
+     * @param finalizer
+     * @param variables
+     * @param <R>
+     * @return
+     */
     private <R> Stream<Callable<R>> prepareSimulations(final Function<Simulation<T>, R> finalizer, final String... variables) {
         final List<List<? extends Entry<String, ?>>> varStreams = Arrays.stream(variables)
                 .map(it -> getVariables().get(it).stream()
@@ -242,6 +238,7 @@ public final class AlchemistRunner<T> {
         }
 
     /**
+     * Builder class for {@link AlchemistRunner} instances.
      *
      * @param <T> concentration type
      */
@@ -259,16 +256,18 @@ public final class AlchemistRunner<T> {
         private double samplingInt = 1;
 
         /**
-         * 
-         * @param loader
-         *            loader
+         * Default constructor for the builder class.
+         *
+         * @param loader the loader
          */
         public Builder(final Loader loader) {
             this.loader = Objects.requireNonNull(loader, "Loader can't be null.");
         }
 
         /**
-         * @param provider the function providing the required {@link OutputMonitor}
+         * Add an {@link OutputMonitor} through a {@code Supplier} function.
+         *
+         * @param provider the function providing the required {@code OutputMonitor}
          * @return this builder
          */
         public Builder<T> addOutputMonitorSupplier(final Supplier<OutputMonitor<T>> provider) {
@@ -277,8 +276,9 @@ public final class AlchemistRunner<T> {
         }
 
         /**
-         * 
-         * @return AlchemistRunner
+         * The method builds the {@link AlchemistRunner}.
+         *
+         * @return {@code AlchemistRunner}
          */
         public AlchemistRunner<T> build() {
             return new AlchemistRunner<>(this.loader, this.endTime, this.endStep, this.exportFileRoot, this.effectsFile,
@@ -287,8 +287,10 @@ public final class AlchemistRunner<T> {
         }
 
         /**
+         * Sets the benchkmark mode for the simulation.
+         *
          * @param benchmark set true if you want to benchmark this run
-         * @return builder
+         * @return this builder
          */
         public Builder<T> setBenchmarkMode(final boolean benchmark) {
             this.benchmark = benchmark;
@@ -296,10 +298,10 @@ public final class AlchemistRunner<T> {
         }
 
         /**
-         * 
-         * @param uri
-         *            effect uri
-         * @return builder
+         * Sets the uri of the file containing all the {@link EffectFX effects} to apply to the simulation on start.
+         *
+         * @param uri the uri of the effects file
+         * @return this builder
          */
         public Builder<T> setEffects(final String uri) {
             this.effectsFile = Optional.ofNullable(uri);
@@ -307,10 +309,12 @@ public final class AlchemistRunner<T> {
         }
 
         /**
-         * 
-         * @param steps
-         *            end step
-         * @return builder
+         * Sets the step to reach.
+         * <p>
+         * Default is {@link Long#MAX_VALUE infinite}.
+         *
+         * @param steps the end step
+         * @return this builder
          */
         public Builder<T> setEndStep(final long steps) {
             if (steps < 0) {
@@ -321,36 +325,39 @@ public final class AlchemistRunner<T> {
         }
 
         /**
-         * 
-         * @param t
-         *            end time
-         * @return builder
+         * Sets the time to reach as a number.
+         *
+         * @param time the end time
+         * @return this builder
+         * @see #setEndTime(Time)
          */
-        public Builder<T> setEndTime(final Number t) {
-            final double dt = t.doubleValue();
+        public Builder<T> setEndTime(final Number time) {
+            final double dt = time.doubleValue();
             if (dt < 0) {
                 throw new IllegalArgumentException("The end time (" + dt + ") must be zero or positive");
             }
-            this.endTime = new DoubleTime(t.doubleValue());
+            this.endTime = new DoubleTime(dt);
             return this;
         }
 
         /**
-         * 
-         * @param t
-         *            end time
-         * @return builder
+         * Sets the time to reach.
+         * <p>
+         * Default is {@link DoubleTime#INFINITE_TIME infinite}.
+         *
+         * @param time the end time
+         * @return this builder
          */
-        public Builder<T> setEndTime(final Time t) {
-            this.endTime = t;
+        public Builder<T> setEndTime(final Time time) {
+            this.endTime = time;
             return this;
         }
 
         /**
-         * 
-         * @param closeOp
-         *            the close operation
-         * @return buider
+         * Sets the GUI default close operation.
+         *
+         * @param closeOp the close operation
+         * @return this builder
          */
         public Builder<T> setGUICloseOperation(final int closeOp) {
             if (closeOp < 0 || closeOp > 3) {
@@ -361,10 +368,10 @@ public final class AlchemistRunner<T> {
         }
 
         /**
-         * 
-         * @param headless
-         *            is headless
-         * @return builder
+         * Sets whether the simulation will run in headless mode or not.
+         *
+         * @param headless is headless
+         * @return this builder
          */
         public Builder<T> setHeadless(final boolean headless) {
             this.headless = headless;
@@ -372,10 +379,10 @@ public final class AlchemistRunner<T> {
         }
 
         /**
-         * 
-         * @param deltaTime
-         *            time interval
-         * @return builder
+         * Sets the sampling interval.
+         *
+         * @param deltaTime the time interval
+         * @return this builder
          */
         public Builder<T> setInterval(final double deltaTime) {
             if (deltaTime > 0) {
@@ -387,10 +394,10 @@ public final class AlchemistRunner<T> {
         }
 
         /**
-         * 
-         * @param uri
-         *            output uri
-         * @return builder
+         * Sets the file where the output will be saved to.
+         *
+         * @param uri the uri of the output file
+         * @return this builder
          */
         public Builder<T> setOutputFile(final String uri) {
             this.exportFileRoot = Optional.ofNullable(uri);
@@ -398,10 +405,10 @@ public final class AlchemistRunner<T> {
         }
 
         /**
-         * 
-         * @param threads
-         *            threads number
-         * @return builder
+         * Sets the number of threads in the pool of an {@link Executor} the simulation will use.
+         *
+         * @param threads the threads number
+         * @return this builder
          */
         public Builder<T> setParallelism(final int threads) {
             if (threads <= 0) {

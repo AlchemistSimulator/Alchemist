@@ -8,12 +8,15 @@
  */
 package it.unibo.alchemist.boundary.interfaces;
 
+import it.unibo.alchemist.boundary.gui.effects.Effect;
+import it.unibo.alchemist.model.interfaces.Concentration;
+
 import java.util.List;
 
-import it.unibo.alchemist.boundary.gui.effects.Effect;
-
 /**
- * @param <T>
+ * {@code OutputMonitor} that handles the graphical part of the simulation.
+ *
+ * @param <T> the {@link Concentration} type
  */
 public interface GraphicalOutputMonitor<T> extends OutputMonitor<T> {
 

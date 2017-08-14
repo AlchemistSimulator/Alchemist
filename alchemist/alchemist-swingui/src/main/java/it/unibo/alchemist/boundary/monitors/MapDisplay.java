@@ -8,13 +8,11 @@
  */
 package it.unibo.alchemist.boundary.monitors;
 
-import java.awt.BorderLayout;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.io.File;
-import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicInteger;
-
+import it.unibo.alchemist.boundary.wormhole.implementation.LinearZoomManager;
+import it.unibo.alchemist.boundary.wormhole.implementation.MapWormhole;
+import it.unibo.alchemist.model.interfaces.Concentration;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Time;
 import org.mapsforge.core.graphics.GraphicFactory;
 import org.mapsforge.map.awt.graphics.AwtGraphicFactory;
 import org.mapsforge.map.awt.view.MapView;
@@ -27,14 +25,15 @@ import org.mapsforge.map.layer.download.tilesource.OpenStreetMapMapnik;
 import org.mapsforge.map.layer.download.tilesource.TileSource;
 import org.mapsforge.map.model.Model;
 
-import it.unibo.alchemist.boundary.wormhole.implementation.LinearZoomManager;
-import it.unibo.alchemist.boundary.wormhole.implementation.MapWormhole;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Time;
+import java.awt.*;
+import java.io.File;
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * 
- * @param <T>
+ * Graphical 2D display of an environments that uses a map.
+ *
+ * @param <T> the {@link Concentration} type
  */
 public class MapDisplay<T> extends Generic2DDisplay<T> {
     private static final long serialVersionUID = 8593507198560560646L;
@@ -45,7 +44,7 @@ public class MapDisplay<T> extends Generic2DDisplay<T> {
     private final MapView mapView = new MapView();
 
     /**
-     * 
+     * Default constructor.
      */
     public MapDisplay() {
         super();

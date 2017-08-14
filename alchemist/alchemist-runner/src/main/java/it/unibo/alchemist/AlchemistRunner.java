@@ -229,7 +229,7 @@ public final class AlchemistRunner<T> {
                     try {
                         final Exporter<T> exp = new Exporter<>(filename, samplingInterval, header, loader.getDataExtractors());
                         sim.addOutputMonitor(exp);
-                    } catch (FileNotFoundException e) {
+                    } catch (final FileNotFoundException e) {
                         throw new IllegalStateException(e);
                     }
                 }

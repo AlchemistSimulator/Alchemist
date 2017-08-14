@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -16,6 +17,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +83,6 @@ public final class SingleRunGUI {
      *            the effects file
      * @param <T>
      *            concentration type
-     * @throws FileNotFoundException
      */
     public static <T> void make(final Simulation<T> sim, final String effectsFile) {
         make(sim, new File(effectsFile), JFrame.EXIT_ON_CLOSE);
@@ -140,7 +141,7 @@ public final class SingleRunGUI {
             if (effectsFile != null) {
                 try {
                     effects.setEffects(EffectSerializationFactory.effectsFromFile(effectsFile));
-                } catch (IOException | ClassNotFoundException ex) {
+                } catch (final IOException | ClassNotFoundException ex) {
                     errorLoadingEffects(ex);
                 }
             }
@@ -154,8 +155,9 @@ public final class SingleRunGUI {
             // frame.pack();
             final Optional<Dimension> size = Arrays
                     .stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices())
-                    .map(GraphicsDevice::getDisplayMode).map(dm -> new Dimension(dm.getWidth(), dm.getHeight()))
-                    .min((d1, d2) -> Double.compare(area(d1), area(d2)));
+                    .map(GraphicsDevice::getDisplayMode)
+                    .map(dm -> new Dimension(dm.getWidth(), dm.getHeight()))
+                    .min(Comparator.comparingDouble(SingleRunGUI::area));
             size.ifPresent(d -> d.setSize(d.getWidth() * SCALE_FACTOR, d.getHeight() * SCALE_FACTOR));
             frame.setSize(size.orElse(new Dimension(FALLBACK_X_SIZE, FALLBACK_Y_SIZE)));
             frame.setLocationByPlatform(true);

@@ -5,7 +5,7 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane id="effectsGroupPane" fx:id="effectsGroupPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane id="effectsGroupPane" fx:id="effectsGroupPane" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
    <bottom>
       <ButtonBar id="groupControlBar" fx:id="groupControlBar" stylesheets="@ButtonsBarLayout.css" BorderPane.alignment="CENTER">
          <buttons>

@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane id="effectsPane" fx:id="effectsPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane id="effectsPane" fx:id="effectsPane" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
 	<top>
 		<ButtonBar id="topBar" fx:id="topBar" stylesheets="@ButtonsBarLayout.css" BorderPane.alignment="CENTER">
 			<buttons>

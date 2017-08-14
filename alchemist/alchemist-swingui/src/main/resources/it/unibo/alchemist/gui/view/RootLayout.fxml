@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.canvas.Canvas?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.StackPane?>
-
+<?import javafx.scene.layout.*?>
 <AnchorPane id="root" fx:id="root" stylesheets="@RootLayout.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
-      <children>
-         <StackPane id="stack" fx:id="stack" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <children>
+        <StackPane id="stack" fx:id="stack" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <Canvas id="simulationCanvas" fx:id="canvas" />
-            <fx:include source="ButtonsBarLayout.fxml" />
-           </children>
-       </StackPane>
-   </children>
+                <Canvas id="simulationCanvas" fx:id="canvas"/>
+                <fx:include source="ButtonsBarLayout.fxml"/>
+            </children>
+        </StackPane>
+    </children>
 </AnchorPane>

@@ -206,7 +206,7 @@ public final class AlchemistRunner<T> {
         return (varStreams.isEmpty()
                 ? ImmutableList.of(ImmutableList.<Entry<String, Double>>of())
                 : Lists.cartesianProduct(varStreams)).stream()
-            .map(ImmutableMap::copyOf)
+            .map(vars -> ImmutableMap.copyOf(vars))
             .map(vars -> () -> {
                 final Environment<T> env = loader.getWith(vars);
                 final Simulation<T> sim = new Engine<>(env, endStep, endTime);

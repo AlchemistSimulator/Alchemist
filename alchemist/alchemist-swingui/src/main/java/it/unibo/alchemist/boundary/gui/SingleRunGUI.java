@@ -1,26 +1,5 @@
 package it.unibo.alchemist.boundary.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Objects;
-import java.util.Optional;
-
-import javax.swing.BoxLayout;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
-import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import it.unibo.alchemist.boundary.gui.effects.JEffectsTab;
 import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializationFactory;
 import it.unibo.alchemist.boundary.interfaces.GraphicalOutputMonitor;
@@ -30,6 +9,17 @@ import it.unibo.alchemist.boundary.monitors.MapDisplay;
 import it.unibo.alchemist.boundary.monitors.TimeStepMonitor;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Utility class for quickly creating non-reusable graphical interfaces.
@@ -104,6 +94,11 @@ public final class SingleRunGUI {
         make(sim, new File(effectsFile), closeOperation);
     }
 
+    /**
+     * Logs an error during effect loading.
+     *
+     * @param e thrown exception
+     */
     private static void errorLoadingEffects(final Throwable e) {
         L.error(LocalizedResourceBundle.getString("cannot_load_effects"), e);
     }

@@ -26,6 +26,7 @@ import org.danilopianini.lang.LangUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
@@ -38,6 +39,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Semaphore;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -60,10 +62,10 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
      */
     public static final byte DEFAULT_FRAME_RATE = 25;
 
-    private static final double TIME_STEP = 1d / DEFAULT_FRAME_RATE;
-    private static final double FREEDOM_RADIUS = 1d;
+    protected static final double TIME_STEP = 1d / DEFAULT_FRAME_RATE;
+    protected static final double FREEDOM_RADIUS = 1d;
     private static final Logger L = LoggerFactory.getLogger(Generic2DDisplay.class);
-    private static final int MS_PER_SECOND = 1000;
+    protected static final int MS_PER_SECOND = 1000;
 
     /**
      * 
@@ -72,7 +74,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
     /**
      * How big (in pixels) the selected node should appear.
      */
-    private static final byte SELECTED_NODE_DRAWING_SIZE = 16, SELECTED_NODE_INTERNAL_SIZE = 10;
+    protected static final byte SELECTED_NODE_DRAWING_SIZE = 16, SELECTED_NODE_INTERNAL_SIZE = 10;
     private static final long serialVersionUID = 511631766719686842L;
 
     private transient AngleManagerImpl angleManager;
@@ -178,15 +180,18 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
         bindKey(KeyEvent.VK_E, () -> {
             if (status == ViewStatus.SELECTING) {
                 this.status = ViewStatus.MOLECULING;
-                final JFrame mol = Generic2DDisplay.makeFrame("Moleculing", new MoleculeInjectorGUI<>(selectedNodes));
-                mol.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                mol.addWindowListener(new WindowAdapter() {
-                    @Override
-                    public void windowClosed(final WindowEvent e) {
-                        selectedNodes.clear();
-                        resetStatus();
-                    }
+                Generic2DDisplay.makeFrame("Moleculing", new MoleculeInjectorGUI<>(selectedNodes), jf -> {
+                    final JFrame mol = (JFrame) jf;
+                    mol.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    mol.addWindowListener(new WindowAdapter() {
+                        @Override
+                        public void windowClosed(final WindowEvent e) {
+                            selectedNodes.clear();
+                            resetStatus();
+                        }
+                    });
                 });
+
             } 
         });
         bindKey(KeyEvent.VK_D, () -> {
@@ -254,7 +259,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
      * @param g
      *            {@link Graphics2D} object responsible for drawing
      */
-    protected final void drawEnvOnView(final Graphics2D g) {
+    protected void drawEnvOnView(final Graphics2D g) {
         if (wormhole == null || !isVisible() || !isEnabled()) {
             return;
         }
@@ -329,9 +334,9 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
                     });
             if (closest.isPresent()) {
                 nearest = closest.get().getKey();
-                final int nearestx = closest.get().getValue().x;
-                final int nearesty = closest.get().getValue().y;
-                drawFriedEgg(g, nearestx, nearesty, Color.RED, Color.YELLOW);
+                final int nearestX = closest.get().getValue().x;
+                final int nearestY = closest.get().getValue().y;
+                drawFriedEgg(g, nearestX, nearestY, Color.RED, Color.YELLOW);
             }
         } else {
             nearest = null;
@@ -548,7 +553,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
     }
 
     @Override
-    public void stepDone(final Environment<T> environment, final Reaction<T> r, final Time time, final long step) {
+    public void stepDone(final Environment<T> environment, final Reaction<T> reaction, final Time time, final long step) {
         if (firstTime) {
             synchronized (this) {
                 if (firstTime) {
@@ -584,7 +589,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
         }
     }
 
-    private void update(final Environment<T> env, final Time time) {
+    protected void update(final Environment<T> env, final Time time) {
         if (Thread.holdsLock(env)) {
             if (envHasMobileObstacles(env)) {
                 loadObstacles(env);
@@ -638,7 +643,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
     /**
      * Custom listener for {@link MouseEvent}s.
      */
-    private class MouseManager implements MouseInputListener, MouseWheelListener, MouseMotionListener {
+    protected class MouseManager implements MouseInputListener, MouseWheelListener, MouseMotionListener {
         @Override
         public void mouseClicked(final MouseEvent e) {
             setDist(e.getX(), e.getY());
@@ -646,16 +651,19 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
                 final NodeTracker<T> monitor = new NodeTracker<>(nearest);
                 monitor.stepDone(currentEnv, null, new DoubleTime(lastTime), st);
                 final Simulation<T> sim = currentEnv.getSimulation();
-                final JFrame frame = makeFrame("Tracker for node " + nearest.getId(), monitor);
-                if (sim != null) {
-                    sim.addOutputMonitor(monitor);
-                    frame.addWindowListener(new WindowAdapter() {
-                        @Override
-                        public void windowClosing(final WindowEvent e) {
-                            sim.removeOutputMonitor(monitor);
-                        }
-                    });
-                }
+                makeFrame("Tracker for node " + nearest.getId(), monitor, jf -> {
+                    final JFrame frame = (JFrame) jf;
+                    if (sim != null) {
+                        sim.addOutputMonitor(monitor);
+                        frame.addWindowListener(new WindowAdapter() {
+                            @Override
+                            public void windowClosing(final WindowEvent e) {
+                                sim.removeOutputMonitor(monitor);
+                            }
+                        });
+                    }
+                });
+
             } else if (status == ViewStatus.CLONING && SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1) {
                 final Simulation<T> engine = currentEnv.getSimulation();
                 final Position envEnding = wormhole.getEnvPoint(e.getPoint());
@@ -798,13 +806,20 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
         }
     }
 
-    private static JFrame makeFrame(final String title, final JPanel content) {
+    /**
+     * Builds a frame. After building a {@link JFrame}, it performs the given operation on it, if any.
+     *
+     * @param title       the title of the frame
+     * @param content     the content of the frame
+     * @param frameEditor the operation to perform on the built {@code JFrame}
+     */
+    protected static void makeFrame(final String title, final JPanel content, final @Nullable Consumer<Object> frameEditor) {
         final JFrame frame = new JFrame(title);
         frame.getContentPane().add(content);
         frame.setLocationByPlatform(true);
         frame.pack();
         frame.setVisible(true);
-        return frame;
+        frameEditor.accept(frame);
     }
 
     private void bindKey(final int key, final Runnable fun) {
@@ -825,8 +840,10 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
         return x >= rx && x <= rx + width && y >= ry && y <= ry + height;
     }
 
-    private enum ViewStatus {
-
+    /**
+     * This enum models the status of the {@link Generic2DDisplay}.
+     */
+    protected enum ViewStatus {
         VIEW_ONLY,
 
         MARK_CLOSER,

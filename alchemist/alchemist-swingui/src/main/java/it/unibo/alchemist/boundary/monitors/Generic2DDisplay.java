@@ -57,11 +57,9 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
         System.setProperty("sun.java2d.opengl", "true");
     }
 
-    /**
-     * The default frame rate.
-     */
+    /** The default frame rate. */
     public static final byte DEFAULT_FRAME_RATE = 25;
-
+    /** The default time per frame. */
     protected static final double TIME_STEP = 1d / DEFAULT_FRAME_RATE;
     protected static final double FREEDOM_RADIUS = 1d;
     private static final Logger L = LoggerFactory.getLogger(Generic2DDisplay.class);

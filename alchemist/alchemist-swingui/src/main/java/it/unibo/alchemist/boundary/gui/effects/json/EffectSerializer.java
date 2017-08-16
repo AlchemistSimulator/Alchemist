@@ -110,7 +110,7 @@ public final class EffectSerializer {
                 }
             });
 
-        PROPERTY_TYPE_ADAPTER.forEach((c, pta) -> builder.registerTypeAdapter(c, pta));
+        PROPERTY_TYPE_ADAPTER.forEach(builder::registerTypeAdapter);
 
         GSON = builder
                 .registerTypeAdapterFactory(RTA_EFFECT)

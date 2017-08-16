@@ -11,8 +11,7 @@ package it.unibo.alchemist.boundary.wormhole.interfaces;
 /**
  * <code>ISlideInputManager</code> is the base type for any class whose aim is
  * to handle the the sliding of any physical/virtual device/control.
- * 
-
+ *
  */
 public interface ISlideInputManager {
     /**

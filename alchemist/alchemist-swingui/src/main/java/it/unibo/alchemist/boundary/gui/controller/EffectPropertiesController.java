@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+import javafx.scene.control.*;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,14 +35,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -52,8 +45,8 @@ import jiconfont.icons.GoogleMaterialDesignIcons;
  * This class models a JavaFX controller for EffectProperties.fxml.
  * <p>
  * Using the FXML design it builds the basic components, then using reflection
- * on the effect specified in {@link #EffectPropertiesController(EffectFX)
- * constructor} it builds up the other effect-specific controls.
+ * on the effect specified in {@link #EffectPropertiesController(EffectFX, JFXDrawersStack, JFXDrawer) constructor}
+ * it builds up the other effect-specific controls.
  */
 public class EffectPropertiesController implements Initializable {
     /** Layout path. */
@@ -218,7 +211,7 @@ public class EffectPropertiesController implements Initializable {
      * its {@link Slider#valueProperty() valueProperty} to the
      * {@code RangedIntegerProperty} and adds it to internal list of nodes.
      * 
-     * @param doubleProperty
+     * @param integerProperty
      *            the model of the spinner
      */
     private void buildSlider(final RangedIntegerProperty integerProperty) {
@@ -257,7 +250,7 @@ public class EffectPropertiesController implements Initializable {
      * {@link TextField#textProperty() textProperty} to the
      * {@code StringProperty} and adds it to internal list of nodes.
      * 
-     * @param doubleProperty
+     * @param stringProperty
      *            the model of the spinner
      */
     private void buildTextField(final StringProperty stringProperty) {

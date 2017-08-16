@@ -22,8 +22,10 @@ import java.io.IOException;
  * Main class to start an empty simulator visualization.
  */
 public class MainApp extends Application {
-    private static final String ROOT_LAYOUT = "RootLayout"; // TODO choose
-    private static final String ROOT_LAYOUT2 = "RootLayout2"; // TODO choose
+    /** Main layout with nested layouts. No control over controller classes of this nested layouts. */
+    public static final String ROOT_LAYOUT = "RootLayout"; // TODO choose
+    /** Main layout without nested layouts. Must inject eventual nested layouts. */
+    public static final String ROOT_LAYOUT2 = "RootLayout2"; // TODO choose
 
     private Pane rootLayout;
 
@@ -66,7 +68,7 @@ public class MainApp extends Application {
      *
      * @throws IOException if it cannot find default layout file
      */
-    public void initFXRootLayout(final Node canvas) throws IOException {
+    public void initFXRootLayout(final Node canvas) throws IOException { // TODO choose
         initRootLayout(canvas);
     }
 
@@ -75,7 +77,7 @@ public class MainApp extends Application {
      *
      * @throws IOException if it cannot find default layout file
      */
-    public void initSwingRootLayout(final JComponent canvas) throws IOException {
+    public void initSwingRootLayout(final JComponent canvas) throws IOException { // TODO choose
         initRootLayout(canvas);
     }
 
@@ -91,12 +93,7 @@ public class MainApp extends Application {
             jfxCanvas = (Node) canvas;
         } else if (canvas instanceof JComponent) {
             jfxCanvas = new SwingNode();
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    ((SwingNode) jfxCanvas).setContent((JComponent) canvas);
-                }
-            });
+            SwingUtilities.invokeLater(() -> ((SwingNode) jfxCanvas).setContent((JComponent) canvas));
         } else {
             throw new IllegalArgumentException();
         }

@@ -146,6 +146,7 @@ class RangedDoubleProperty extends DoublePropertyBase implements Serializable {
 
     /** 
      * {@inheritDoc}
+     *
      * @throws IllegalArgumentException if the provided value is out of the specified range
      */
     override void set(double value) {
@@ -160,6 +161,7 @@ class RangedDoubleProperty extends DoublePropertyBase implements Serializable {
 
     /** 
      * {@inheritDoc}
+     *
      * @throws IllegalArgumentException if the provided value is out of the specified range
      */
     override void setValue(Number value) {

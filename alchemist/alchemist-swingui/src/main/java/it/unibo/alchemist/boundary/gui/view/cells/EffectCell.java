@@ -63,7 +63,7 @@ public class EffectCell extends AbstractEffectCell<EffectFX> {
                 dialog.setHeaderText(ResourceLoader.getStringRes("rename_effect_dialog_msg"));
                 dialog.setContentText(null);
 
-                dialog.showAndWait().ifPresent(name -> label.setText(name));
+                dialog.showAndWait().ifPresent(label::setText);
             }
         });
 

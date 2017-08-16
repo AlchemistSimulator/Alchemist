@@ -31,7 +31,7 @@ public interface GraphicalOutputMonitor<T> extends OutputMonitor<T> {
     boolean isRealTime();
 
     /**
-     * 
+     * Repaints the GUI.
      */
     void repaint();
 

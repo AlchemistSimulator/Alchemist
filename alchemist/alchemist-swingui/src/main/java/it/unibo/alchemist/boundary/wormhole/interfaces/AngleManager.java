@@ -12,8 +12,7 @@ package it.unibo.alchemist.boundary.wormhole.interfaces;
  * A class that implements the <code>IAngleManager</code> interface is able to
  * convert the sliding of any physical/virtual device/control into a positive
  * <code>double</code> value that represents an angle.
- * 
-
+ *
  */
 public interface AngleManager extends ISlideInputManager {
     /**

@@ -24,8 +24,7 @@ import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * Wormhole used for maps rendering.
- * 
-
+ *
  */
 public final class MapWormhole extends Wormhole2D {
     private final MapViewPosition mapModel;

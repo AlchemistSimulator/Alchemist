@@ -58,7 +58,7 @@ public class EffectsGroupBarController implements Initializable {
     @FXML
     private ListView<EffectGroup> effectGroupsList; // Value injected by FXMLLoader
 
-    private ObservableList<EffectGroup> observableList;
+    private ObservableList<EffectGroup> observableEffectsList;
 
     private final JFXDrawersStack stack;
 
@@ -92,7 +92,7 @@ public class EffectsGroupBarController implements Initializable {
 
         this.addGroup.setText("");
         this.addGroup.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.ADD));
-        this.addGroup.setOnAction(e -> addGroupToList(ResourceLoader.getStringRes("effect_group_default_name") + " " + (getObservableList().size() + 1)));
+        this.addGroup.setOnAction(e -> addGroupToList(ResourceLoader.getStringRes("effect_group_default_name") + " " + (getObservableEffectsList().size() + 1)));
     }
 
     /**
@@ -102,8 +102,8 @@ public class EffectsGroupBarController implements Initializable {
      *            the name to give to the {@code EffectGroup}
      */
     private void addGroupToList(final String name) {
-        this.getObservableList().add(new EffectStack());
-        this.getObservableList().get(this.getObservableList().size() - 1).setName(name);
+        this.getObservableEffectsList().add(new EffectStack());
+        this.getObservableEffectsList().get(this.getObservableEffectsList().size() - 1).setName(name);
         this.effectGroupsList.refresh();
     }
 
@@ -114,13 +114,13 @@ public class EffectsGroupBarController implements Initializable {
      * @return the {@code ObservableList} associated to the controlled
      *         {@link ListView}
      */
-    private ObservableList<EffectGroup> getObservableList() {
-        if (this.observableList == null) {
-            this.observableList = FXCollections.observableArrayList();
-            this.effectGroupsList.setItems(observableList);
+    public ObservableList<EffectGroup> getObservableEffectsList() {
+        if (this.observableEffectsList == null) {
+            this.observableEffectsList = FXCollections.observableArrayList();
+            this.effectGroupsList.setItems(observableEffectsList);
             this.effectGroupsList.setCellFactory(lv -> new EffectGroupCell(this.stack));
         }
-        return this.observableList;
+        return this.observableEffectsList;
     }
 
     /**
@@ -152,7 +152,7 @@ public class EffectsGroupBarController implements Initializable {
 
             try {
                 EffectSerializer.effectGroupsToFile(selectedFile,
-                        Arrays.asList(getObservableList().toArray(new EffectGroup[getObservableList().size()])));
+                        Arrays.asList(getObservableEffectsList().toArray(new EffectGroup[getObservableEffectsList().size()])));
             } catch (final IOException | JsonParseException e) {
                 L.error("Can't save Effect Groups to file: " + e.getMessage());
                 this.errorDialog(ResourceLoader.getStringRes("save_effect_groups_error_dialog_title"), ResourceLoader.getStringRes("save_effect_groups_error_dialog_msg"), e);
@@ -182,7 +182,7 @@ public class EffectsGroupBarController implements Initializable {
             this.lastPath = Optional.ofNullable(selectedFile.getParent());
 
             try {
-                this.getObservableList().addAll(EffectSerializer.effectGroupsFromFile(selectedFile));
+                this.getObservableEffectsList().addAll(EffectSerializer.effectGroupsFromFile(selectedFile));
             } catch (final IOException | JsonParseException e) {
                 L.error("Can't load Effect Groups from file: " + e.getMessage());
                 this.errorDialog(ResourceLoader.getStringRes("load_effect_groups_error_dialog_title"), ResourceLoader.getStringRes("load_effect_groups_error_dialog_msg"), e);

@@ -1,5 +1,6 @@
 package it.unibo.alchemist.boundary.gui;
 
+import it.unibo.alchemist.boundary.gui.controller.ButtonsBarController;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
@@ -14,20 +15,21 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import java.io.IOException;
 
 /**
  * Main class to start an empty simulator visualization.
  */
 public class MainApp extends Application {
-    /** Main layout with nested layouts. No control over controller classes of this nested layouts. */
-    public static final String ROOT_LAYOUT = "RootLayout"; // TODO choose
-    /** Main layout without nested layouts. Must inject eventual nested layouts. */
-    public static final String ROOT_LAYOUT2 = "RootLayout2"; // TODO choose
+    /**
+     * Main layout without nested layouts. Must inject eventual other nested layouts.
+     */
+    private static final String ROOT_LAYOUT = "RootLayout";
 
     private Pane rootLayout;
+    private ButtonsBarController buttonsBarController;
+    private Object canvas;
 
     /**
      * Method that launches the application.
@@ -43,7 +45,7 @@ public class MainApp extends Application {
         primaryStage.setTitle(ResourceLoader.getStringRes("main_title"));
 
         try {
-            initRootLayout();
+            initFXRootLayout(new Canvas());
         } catch (final IOException e) {
             throw new IllegalStateException("Could not initialize RootLayout", e);
         }
@@ -54,21 +56,11 @@ public class MainApp extends Application {
     }
 
     /**
-     * Initializes application layout.
-     *
-     * @throws IOException if it cannot find default layout file
-     */
-    public void initRootLayout() throws IOException {
-        this.rootLayout = FXResourceLoader.getLayout(AnchorPane.class, this, ROOT_LAYOUT);
-        final StackPane main = (StackPane) this.rootLayout.getChildren().get(0);
-    }
-
-    /**
      * Initializes application layout using a specified JavaFX {@link Node} used as a {@link Canvas}.
      *
      * @throws IOException if it cannot find default layout file
      */
-    public void initFXRootLayout(final Node canvas) throws IOException { // TODO choose
+    public void initFXRootLayout(final Node canvas) throws IOException {
         initRootLayout(canvas);
     }
 
@@ -77,7 +69,7 @@ public class MainApp extends Application {
      *
      * @throws IOException if it cannot find default layout file
      */
-    public void initSwingRootLayout(final JComponent canvas) throws IOException { // TODO choose
+    public void initSwingRootLayout(final JComponent canvas) throws IOException {
         initRootLayout(canvas);
     }
 
@@ -97,9 +89,11 @@ public class MainApp extends Application {
         } else {
             throw new IllegalArgumentException();
         }
-        this.rootLayout = FXResourceLoader.getLayout(AnchorPane.class, this, ROOT_LAYOUT2);
+        this.canvas = canvas;
+        this.rootLayout = FXResourceLoader.getLayout(AnchorPane.class, this, ROOT_LAYOUT);
         final StackPane main = (StackPane) this.rootLayout.getChildren().get(0);
         main.getChildren().add(jfxCanvas);
-        main.getChildren().add(FXResourceLoader.getLayout(BorderPane.class, "ButtonsBarLayout"));
+        buttonsBarController = new ButtonsBarController();
+        main.getChildren().add(FXResourceLoader.getLayout(BorderPane.class, buttonsBarController, "ButtonsBarLayout"));
     }
 }

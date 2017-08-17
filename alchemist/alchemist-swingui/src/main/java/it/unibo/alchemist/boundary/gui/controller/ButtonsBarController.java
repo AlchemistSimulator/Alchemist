@@ -1,35 +1,44 @@
 package it.unibo.alchemist.boundary.gui.controller;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import org.controlsfx.control.PopOver;
-import org.controlsfx.control.PopOver.ArrowLocation;
-
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
 import com.jfoenix.controls.JFXSlider;
-
+import it.unibo.alchemist.boundary.gui.effects.EffectFX;
+import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import jiconfont.icons.GoogleMaterialDesignIcons;
 import jiconfont.javafx.IconNode;
+import org.controlsfx.control.PopOver;
+import org.controlsfx.control.PopOver.ArrowLocation;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 /**
  * This class models a JavaFX controller for ButtonsBarLayout.fxml.
  */
 public class ButtonsBarController implements Initializable {
-    /** Layout path. */
+    /**
+     * Layout path.
+     */
     public static final String BUTTONS_BAR_LAYOUT = "ButtonsBarLayout";
     private static final double DEFAULT_DRAWER_FRACTION = 4;
-
+    // Icons
+    private final IconNode play;
+    private final IconNode pause;
+    private final IconNode pan;
+    private final IconNode select;
+    private final IconNode fullscreen;
     // FXML components
     @FXML
     private BorderPane controlPane; // Value injected by FXMLLoader
@@ -51,13 +60,8 @@ public class ButtonsBarController implements Initializable {
     private JFXButton fullscreenToggle; // Value injected by FXMLLoader
     @FXML
     private JFXDrawersStack drawerStack; // Value injected by FXMLLoader
-
-    // Icons
-    private final IconNode play;
-    private final IconNode pause;
-    private final IconNode pan;
-    private final IconNode select;
-    private final IconNode fullscreen;
+    // Other
+    private EffectsGroupBarController effectsGroupBarController;
 
     /**
      * Default constructor.
@@ -98,7 +102,7 @@ public class ButtonsBarController implements Initializable {
         });
 
         final JFXDrawer effectGroupsDrawer = new JFXDrawer();
-        final EffectsGroupBarController effectsGroupBarController = new EffectsGroupBarController(this.drawerStack);
+        effectsGroupBarController = new EffectsGroupBarController(this.drawerStack);
         effectGroupsDrawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
         try {
             effectGroupsDrawer.setSidePane(FXResourceLoader.getLayout(BorderPane.class, effectsGroupBarController,
@@ -156,6 +160,24 @@ public class ButtonsBarController implements Initializable {
                 controlTypePopOver.show(controlType);
             }
         });
+    }
+
+    /**
+     * Getter method for the button that should start and stop the simulation.
+     *
+     * @return the start/stop button
+     */
+    public Button getStartStopButton() {
+        return this.startStopButton;
+    }
+
+    /**
+     * Getter method for the {@code List} of groups of {@link EffectFX effects} in the side drawer.
+     *
+     * @return an {@code ObservableList} of {@code EffectGroup}
+     */
+    public ObservableList<EffectGroup> getObservableEffectsList() {
+        return this.effectsGroupBarController.getObservableEffectsList();
     }
 
 }

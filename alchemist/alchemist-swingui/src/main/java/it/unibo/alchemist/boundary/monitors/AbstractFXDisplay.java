@@ -3,15 +3,15 @@ package it.unibo.alchemist.boundary.monitors;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
-import it.unibo.alchemist.boundary.wormhole.implementation.AngleManagerImpl;
-import it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter;
-import it.unibo.alchemist.boundary.wormhole.implementation.PointerSpeedImpl;
+import it.unibo.alchemist.boundary.wormhole.implementation.*;
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
 import it.unibo.alchemist.boundary.wormhole.interfaces.PointerSpeed;
 import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager;
 import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.core.interfaces.Status;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.*;
+import javafx.event.EventHandler;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
@@ -50,11 +50,15 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     /**
      * The default time per frame.
      */
-    public static final /* TODO float */ double TIME_STEP = 1 / DEFAULT_FRAME_RATE;
+    public static final double TIME_STEP = 1 / DEFAULT_FRAME_RATE;
+    /**
+     * Threshold of pause detection.
+     */
+    public static final long PAUSE_DETECTION_THRESHOLD = 200;
     /**
      * The default radius of freedom of representation.
      */
-    protected static final /* TODO byte */ double FREEDOM_RADIUS = 1;
+    protected static final double FREEDOM_RADIUS = 1;
     /**
      * Default number of steps.
      */
@@ -67,7 +71,6 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      * Default logger for this class.
      */
     private static final Logger L = LoggerFactory.getLogger(AbstractFXDisplay.class);
-    // TODO
 
     static {
         System.setProperty("sun.java2d.opengl", "true");
@@ -94,6 +97,10 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     private transient Optional<Point> endingPoint;
     private transient AngleManagerImpl angleManager;
     private transient ZoomManager zoomManager;
+    private boolean realTime;
+    private Collection<EffectFX> effectStack;
+    private boolean firstTime;
+    private long timeInit;
 
     /**
      * Default constructor. The number of steps is set to default ({@value #DEFAULT_NUMBER_OF_STEPS}).
@@ -123,6 +130,8 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         mouseMovement = new PointerSpeedImpl();
         originPoint = Optional.empty();
         endingPoint = Optional.empty();
+        realTime = false;
+        firstTime = true;
     }
 
     /**
@@ -162,16 +171,125 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         return new Point((int) x, (int) y);
     }
 
-    private void setkeyboardListener() {
-        // TODO
+    /**
+     * The method maps the keyboard events to action on the GUI.
+     * <p>
+     * <b>C</b>: from {@link ViewStatus#SELECTING Select mode} to {@link ViewStatus#CLONING Clone mode}
+     * <br/>
+     * <b>D</b>: from {@link ViewStatus#SELECTING Select mode} to {@link ViewStatus#DELETING Delete mode}
+     * <br/>
+     * <b>E</b>: from {@link ViewStatus#SELECTING Select mode} to {@link ViewStatus#MOLECULING Moleculing mode}
+     * <br/>
+     * <b>M</b>: {@link #setMarkCloserNode(boolean) mark/unmark} closer node
+     * <br/>
+     * <b>O</b>: from {@link ViewStatus#SELECTING Select mode} to {@link ViewStatus#MOVING Move mode}
+     * <br/>
+     * <b>P</b>: {@link Simulation#play() play}/{@link Simulation#pause() pause} the {@code Simulation}
+     * <br/>
+     * <b>R</b>: {@link #setRealTime(boolean) set/unset} Real-Time mode
+     * <br/>
+     * <b>S</b>: to {@link ViewStatus#SELECTING Select mode} if not, or else {@link #resetStatus()}
+     * <br/>
+     * <b>LEFT</b>: {@link #setStep(int) decrease step}
+     * <br/>
+     * <b>RIGHT</b>: {@link #setStep(int) increase step}
+     *
+     * @see #setOnKeyPressed(EventHandler)
+     */
+    protected void setkeyboardListener() {
+        setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case C:
+                    if (status == ViewStatus.SELECTING) {
+                        status = ViewStatus.CLONING;
+                    }
+                    break;
+                case D:
+                    if (status == ViewStatus.SELECTING) {
+                        this.status = ViewStatus.DELETING;
+                        selectedNodes.forEach(currentEnv::removeNode);
+                        final Simulation<T> sim = currentEnv.getSimulation();
+                        sim.schedule(() -> update(currentEnv, sim.getTime()));
+                        resetStatus();
+                    }
+                    break;
+                case E:
+                    if (status == ViewStatus.SELECTING) {
+                        status = ViewStatus.MOLECULING;
+                        // TODO display Moleculing interface v
+//                        Generic2DDisplay.makeFrame("Moleculing", new MoleculeInjectorGUI<>(selectedNodes), jf -> {
+//                            final JFrame mol = (JFrame) jf;
+//                            mol.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//                            mol.addWindowListener(new WindowAdapter() {
+//                                @Override
+//                                public void windowClosed(final WindowEvent e) {
+//                                    selectedNodes.clear();
+//                                    resetStatus();
+//                                }
+//                            });
+//                        });
+                        // TODO display Moleculing interface ^
+                    }
+                    break;
+                case L:
+                    // Now the link drawing is an effect
+                    break;
+                case M:
+                    setMarkCloserNode(status != ViewStatus.MARK_CLOSER);
+                    break;
+                case O:
+                    if (status == ViewStatus.SELECTING) {
+                        status = ViewStatus.MOVING;
+                    }
+                    break;
+                case P:
+                    Optional.ofNullable(currentEnv.getSimulation()).ifPresent(sim -> {
+                        if (sim.getStatus() == Status.RUNNING) {
+                            sim.pause();
+                        } else {
+                            sim.play();
+                        }
+                    });
+                    break;
+                case R:
+                    setRealTime(!isRealTime());
+                    break;
+                case S:
+                    if (status == ViewStatus.SELECTING) {
+                        resetStatus();
+                        selectedNodes.clear();
+                    } else if (!isInteracting()) {
+                        status = ViewStatus.SELECTING;
+                    }
+                    repaint();
+                    break;
+                case LEFT:
+                    setStep(Math.max(1, step - Math.max(step / 10, 1)));
+                    break;
+                case RIGHT:
+                    setStep(Math.max(step, step + Math.max(step / 10, 1)));
+                    break;
+            }
+        });
     }
 
+    /**
+     * The method maps the mouse events to action on the GUI.
+     *
+     * @see #setOnMouseClicked(EventHandler)
+     * @see #setOnMouseDragged(EventHandler)
+     * @see #setOnMouseEntered(EventHandler)
+     * @see #setOnMouseExited(EventHandler)
+     * @see #setOnMouseMoved(EventHandler)
+     * @see #setOnMousePressed(EventHandler)
+     * @see #setOnMouseReleased(EventHandler)
+     * @see #setOnScroll(EventHandler)
+     */
     protected void setMouseListener() {
-
         // On mouse clicked
         setOnMouseClicked(event -> {
             setDist(event.getX(), event.getY());
-            if (status == ViewStatus.MARK_CLOSER && nearest != null && event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+            if (isMarkCloserNode() && nearest != null && event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                 final NodeTracker<T> monitor = new NodeTracker<>(nearest);
                 monitor.stepDone(currentEnv, null, new DoubleTime(lastTime), step);
                 final Simulation<T> simulation = currentEnv.getSimulation();
@@ -350,7 +468,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      */
     private void updateMouse(final double x, final double y) {
         setDist(x, y);
-        if (status == ViewStatus.MARK_CLOSER) {
+        if (isMarkCloserNode()) {
             repaint();
         }
     }
@@ -416,10 +534,16 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         }
     }
 
+    /**
+     * The method releases the mutex on the data.
+     */
     private void releaseData() {
         mapConsistencyMutex.release();
     }
 
+    /**
+     * The method requests the mutex on the data.
+     */
     private void accessData() {
         mapConsistencyMutex.acquireUninterruptibly();
     }
@@ -465,8 +589,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
 
     @Override
     public int getStep() {
-        // TODO
-        return 0;
+        return this.step;
     }
 
     /**
@@ -484,24 +607,26 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
 
     @Override
     public boolean isMarkCloserNode() {
-        // TODO
-        return false;
+        return status == ViewStatus.MARK_CLOSER;
     }
 
     @Override
     public void setMarkCloserNode(final boolean mark) {
-        // TODO
+        if (!isInteracting()) {
+            status = mark ? ViewStatus.MARK_CLOSER : ViewStatus.VIEW_ONLY;
+            isPreviousStateMarking = mark;
+            repaint();
+        }
     }
 
     @Override
     public boolean isRealTime() {
-        // TODO
-        return false;
+        return this.realTime;
     }
 
     @Override
     public void setRealTime(final boolean realTime) {
-        // TODO
+        this.realTime = realTime;
     }
 
     @Override
@@ -511,22 +636,71 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
 
     @Override
     public void setEffectStack(final Collection<EffectFX> effects) {
-        // TODO
+        this.effectStack = effects;
     }
 
     @Override
     public void finished(final Environment<T> environment, final Time time, final long step) {
-        // TODO
+        update(environment, time);
+        firstTime = true;
     }
 
     @Override
     public void initialized(final Environment<T> environment) {
-        // TODO
+        stepDone(environment, null, new DoubleTime(), 0);
     }
 
     @Override
     public void stepDone(final Environment<T> environment, final Reaction<T> reaction, final Time time, final long step) {
-        // TODO
+        if (firstTime) {
+            synchronized (this) {
+                if (firstTime) {
+                    initAll(environment);
+                    firstTime = false;
+                    lastTime = -TIME_STEP;
+                    timeInit = System.currentTimeMillis();
+                    update(environment, time);
+                }
+            }
+        } else if (this.step < 1 || step % this.step == 0) {
+            if (isRealTime()) {
+                if (lastTime + TIME_STEP > time.toDouble()) {
+                    return;
+                }
+                final long timeSimulated = (long) (time.toDouble() * 1000);
+                if (timeSimulated == 0) {
+                    timeInit = System.currentTimeMillis();
+                }
+                final long timePassed = System.currentTimeMillis() - timeInit;
+                if (timePassed - timeSimulated > PAUSE_DETECTION_THRESHOLD) {
+                    timeInit = timeInit + timePassed - timeSimulated;
+                }
+                if (timeSimulated > timePassed) {
+                    try {
+                        Thread.sleep(Math.min(timeSimulated - timePassed, 1000 / DEFAULT_FRAME_RATE));
+                    } catch (final InterruptedException e) {
+                        L.warn("Spurious wakeup"); // TODO load from ResourceBundle with ResourceLoader
+                    }
+                }
+            }
+            update(environment, time);
+        }
+    }
+
+    /**
+     * Initializes all the internal data.
+     */
+    private void initAll(final Environment<T> environment) {
+        // wormhole = new Wormhole2D(environment, this); // TODO this is NOT a Swing Component
+        wormhole.center();
+        wormhole.optimalZoom();
+        angleManager = new AngleManagerImpl(AngleManagerImpl.DEF_DEG_PER_PIXEL);
+        zoomManager = new ExponentialZoomManager(wormhole.getZoom(), ExponentialZoomManager.DEF_BASE);
+        if (environment instanceof Environment2DWithObstacles) {
+            loadObstacles(environment);
+        } else {
+            obstacles = null;
+        }
     }
 
     private enum ViewStatus {

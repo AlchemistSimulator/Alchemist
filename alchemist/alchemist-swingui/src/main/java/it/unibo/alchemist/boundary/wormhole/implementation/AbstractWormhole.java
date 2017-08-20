@@ -58,6 +58,19 @@ public abstract class AbstractWormhole<T> implements IWormhole2D {
         return mode;
     }
 
+    /**
+     * Allows child-classes to modify the {@link #mode} field.
+     *
+     * @param mode is the new {@link #mode}
+     */
+    protected void setMode(final Mode mode) {
+        this.mode = mode;
+        if (mode == Mode.ADAPT_TO_VIEW) {
+            vRate = getNIVerticalRatio();
+            hRate = getNIHorizontalRatio();
+        }
+    }
+
     @Override
     public Point getViewPoint(final Position envPoint) {
         return viewPointFromEnv(from(envPoint)).toPoint();
@@ -105,7 +118,10 @@ public abstract class AbstractWormhole<T> implements IWormhole2D {
 
     @Override
     public boolean isInsideView(final Point viewPoint) {
-        return false;
+        final double x = viewPoint.getX();
+        final double y = viewPoint.getY();
+        final Dimension2D vs = getViewSize();
+        return x >= 0 && x <= vs.getWidth() && y >= 0 && y <= vs.getHeight();
     }
 
     @Override
@@ -119,10 +135,10 @@ public abstract class AbstractWormhole<T> implements IWormhole2D {
     /**
      * The method changes the point referred ad 'position'.
      *
-     * @param orig is a {@link Point2D} into the env-space
+     * @param envPoint is a {@link Point2D} into the env-space
      */
-    private void setEnvPositionWithoutMoving(final PointAdapter orig) {
-        setViewPositionWithoutMoving(viewPointFromEnv(orig));
+    private void setEnvPositionWithoutMoving(final PointAdapter envPoint) {
+        setViewPositionWithoutMoving(viewPointFromEnv(envPoint));
     }
 
     /**
@@ -242,7 +258,7 @@ public abstract class AbstractWormhole<T> implements IWormhole2D {
      * @see #setRotation(double)
      */
     protected double getRotation() {
-        return rotation;
+        return this.rotation;
     }
 
     @Override
@@ -292,4 +308,40 @@ public abstract class AbstractWormhole<T> implements IWormhole2D {
      * @return the dimensions ratio
      */
     protected abstract double getViewRatio();
+
+    /**
+     * Gets the viewWidth / envWidth ratio.
+     * <br/>
+     * NI = Not Isometric.
+     *
+     * @return a {@code double} value representing the horizontal ratio for
+     * Not Isometric mode
+     */
+    protected double getNIHorizontalRatio() {
+        if (mode == Mode.ISOMETRIC) {
+            return 1d;
+        } else if (mode == Mode.ADAPT_TO_VIEW) {
+            return getViewSize().getWidth() / environment.getSize()[0];
+        } else {
+            return hRate;
+        }
+    }
+
+    /**
+     * Gets the viewHeight / envHeight ratio.
+     * <br/>
+     * NI = Not Isometric.
+     *
+     * @return a <code>double</code> value representing the vertical ratio for
+     * Not Isometric mode
+     */
+    protected double getNIVerticalRatio() {
+        if (mode == Mode.ISOMETRIC) {
+            return 1d;
+        } else if (mode == Mode.ADAPT_TO_VIEW) {
+            return getViewSize().getHeight() / environment.getSize()[1];
+        } else {
+            return vRate;
+        }
+    }
 }

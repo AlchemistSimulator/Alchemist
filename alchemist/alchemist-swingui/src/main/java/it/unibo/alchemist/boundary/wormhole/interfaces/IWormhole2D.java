@@ -62,8 +62,8 @@ public interface IWormhole2D {
         /**
          * Uses spherical coordinates, no stretch allowed
          */
-        MAP;
-    };
+        MAP
+    }
 
     /**
      * Converts a point from the view-space to the env-space.

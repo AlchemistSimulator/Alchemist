@@ -67,10 +67,6 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      * Default status of the view.
      */
     private static final ViewStatus DEFAULT_VIEW_STATUS = ViewStatus.MARK_CLOSER;
-    /**
-     * Default logger for this class.
-     */
-    private static final Logger L = LoggerFactory.getLogger(AbstractFXDisplay.class);
 
     static {
         System.setProperty("sun.java2d.opengl", "true");
@@ -117,6 +113,9 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      */
     public AbstractFXDisplay(final int step) {
         super();
+        if (!"true".equals(System.getProperty("sun.java2d.opengl"))) {
+            getLogger().warn("OpenGL acceleration appears to be disabled on this system. This may impact performance negatively. Please enable it with -Dsun.java2d.opengl=true");
+        }
         setStyle("-fx-background-color: #FFF;");
         setMouseListener();
         setkeyboardListener();
@@ -425,7 +424,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
                                 });
                             });
                         } else {
-                            L.warn("Can not handle node movement on a finished simulation."); // TODO: display proper error message
+                            getLogger().warn("Can not handle node movement on a finished simulation."); // TODO: display proper error message
                         }
                     } else {
                         throw new IllegalStateException("Unable to move nodes: unsupported environment dimension.");
@@ -524,7 +523,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
                 try {
                     neighbors.put(node, environment.getNeighborhood(node).clone());
                 } catch (final CloneNotSupportedException e) {
-                    L.error("Unable to clone neighborhood for " + node, e);
+                    getLogger().error("Unable to clone neighborhood for " + node, e);
                 }
             });
             releaseData();
@@ -679,7 +678,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
                     try {
                         Thread.sleep(Math.min(timeSimulated - timePassed, 1000 / DEFAULT_FRAME_RATE));
                     } catch (final InterruptedException e) {
-                        L.warn("Spurious wakeup"); // TODO load from ResourceBundle with ResourceLoader
+                        getLogger().warn("Spurious wakeup"); // TODO load from ResourceBundle with ResourceLoader
                     }
                 }
             }
@@ -691,7 +690,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      * Initializes all the internal data.
      */
     private void initAll(final Environment<T> environment) {
-        // wormhole = new Wormhole2D(environment, this); // TODO this is NOT a Swing Component
+        wormhole = new WormholeFX(environment, this);
         wormhole.center();
         wormhole.optimalZoom();
         angleManager = new AngleManagerImpl(AngleManagerImpl.DEF_DEG_PER_PIXEL);
@@ -717,5 +716,16 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         DELETING,
 
         MOLECULING;
+    }
+
+    /**
+     * Getter method for the {@link Logger} of this class.
+     *
+     * @return the {@code Logger}
+     */
+    protected abstract Logger getLogger();
+
+    protected IWormhole2D getWormhole() {
+        return this.wormhole;
     }
 }

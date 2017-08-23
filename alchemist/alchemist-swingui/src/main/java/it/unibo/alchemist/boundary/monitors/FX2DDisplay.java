@@ -5,16 +5,16 @@ import it.unibo.alchemist.model.interfaces.Position;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FXDisplay<T> extends AbstractFXDisplay<T> implements FX2DOutputMonitor<T> {
+public class FX2DDisplay<T> extends AbstractFXDisplay<T> implements FX2DOutputMonitor<T> {
     /**
      * Default logger for this class. It hides {@link AbstractFXDisplay}'s one.
      */
-    private static final Logger L = LoggerFactory.getLogger(FXDisplay.class);
+    private static final Logger L = LoggerFactory.getLogger(FX2DDisplay.class);
 
     /**
      * Default constructor. The number of steps is set to default ({@value #DEFAULT_NUMBER_OF_STEPS}).
      */
-    public FXDisplay() {
+    public FX2DDisplay() {
         super();
     }
 
@@ -24,7 +24,7 @@ public class FXDisplay<T> extends AbstractFXDisplay<T> implements FX2DOutputMoni
      * @param step the number of steps
      * @see #setStep(int)
      */
-    public FXDisplay(final int step) {
+    public FX2DDisplay(final int step) {
         super(step);
     }
 
@@ -36,6 +36,6 @@ public class FXDisplay<T> extends AbstractFXDisplay<T> implements FX2DOutputMoni
 
     @Override
     protected Logger getLogger() {
-        return FXDisplay.L;
+        return FX2DDisplay.L;
     }
 }

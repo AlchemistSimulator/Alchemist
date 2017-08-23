@@ -28,6 +28,7 @@ import it.unibo.alchemist.model.interfaces.Time;
 /**
  * @param <T>
  */
+@Deprecated
 public class NodeTracker<T> extends JPanel implements OutputMonitor<T>, ActionListener {
     private static final byte MARGIN = 100;
     private static final String PROGRAM = " = Program =", CONTENT = " = Content =", POSITION = " = POSITION = ";

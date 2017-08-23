@@ -23,7 +23,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import org.danilopianini.lang.LangUtils;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.util.*;
@@ -35,7 +34,7 @@ import java.util.concurrent.Semaphore;
 import static it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D.Mode;
 
 /**
- * Base-class for each display able a graphically represent a 2D space
+ * Base-class for each display able to graphically represent a 2D space
  * and simulation.
  * <p>
  * Tries to use OpenGL acceleration when possible.
@@ -289,8 +288,8 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         setOnMouseClicked(event -> {
             setDist(event.getX(), event.getY());
             if (isMarkCloserNode() && nearest != null && event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-                final NodeTracker<T> monitor = new NodeTracker<>(nearest);
-                monitor.stepDone(currentEnv, null, new DoubleTime(lastTime), step);
+                final FXNodeTracker<T> monitor = new FXNodeTracker<>(nearest);
+                monitor.stepDone(currentEnv, null, new DoubleTime(lastTime), step); // TODO check
                 final Simulation<T> simulation = currentEnv.getSimulation();
                 // TODO open a drawer to the right of MainApp v
 //                makeFrame("Tracker for node " + nearest.getId(), monitor, jf -> {
@@ -702,6 +701,17 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         }
     }
 
+    /**
+     * Getter method for the {@link Logger} of this class.
+     *
+     * @return the {@code Logger}
+     */
+    protected abstract Logger getLogger();
+
+    protected IWormhole2D getWormhole() {
+        return this.wormhole;
+    }
+
     private enum ViewStatus {
         VIEW_ONLY,
 
@@ -716,16 +726,5 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         DELETING,
 
         MOLECULING;
-    }
-
-    /**
-     * Getter method for the {@link Logger} of this class.
-     *
-     * @return the {@code Logger}
-     */
-    protected abstract Logger getLogger();
-
-    protected IWormhole2D getWormhole() {
-        return this.wormhole;
     }
 }

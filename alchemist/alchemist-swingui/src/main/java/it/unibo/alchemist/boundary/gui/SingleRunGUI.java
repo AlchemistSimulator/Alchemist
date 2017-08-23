@@ -4,11 +4,11 @@ import it.unibo.alchemist.boundary.gui.effects.JEffectsTab;
 import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializationFactory;
 import it.unibo.alchemist.boundary.interfaces.GraphicalOutputMonitor;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
-import it.unibo.alchemist.boundary.monitors.Generic2DDisplay;
-import it.unibo.alchemist.boundary.monitors.MapDisplay;
-import it.unibo.alchemist.boundary.monitors.TimeStepMonitor;
+import it.unibo.alchemist.boundary.monitors.*;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
+import javafx.scene.Node;
+import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,24 +41,18 @@ public final class SingleRunGUI {
 
     /**
      * Builds a single-use graphical interface.
-     * 
-     * @param sim
-     *            the simulation for this GUI
-     * @param <T>
-     *            concentration type
+     *
+     * @param sim the simulation for this GUI
+     * @param <T> concentration type
      */
     public static <T> void make(final Simulation<T> sim) {
         make(sim, (File) null, JFrame.EXIT_ON_CLOSE);
     }
 
     /**
-     * 
-     * @param sim
-     *            the simulation for this GUI
-     * @param closeOperation
-     *            the type of close operation for this GUI
-     * @param <T>
-     *            concentration type
+     * @param sim            the simulation for this GUI
+     * @param closeOperation the type of close operation for this GUI
+     * @param <T>            concentration type
      */
     public static <T> void make(final Simulation<T> sim, final int closeOperation) {
         make(sim, (File) null, closeOperation);
@@ -66,13 +60,10 @@ public final class SingleRunGUI {
 
     /**
      * Builds a single-use graphical interface.
-     * 
-     * @param sim
-     *            the simulation for this GUI
-     * @param effectsFile
-     *            the effects file
-     * @param <T>
-     *            concentration type
+     *
+     * @param sim         the simulation for this GUI
+     * @param effectsFile the effects file
+     * @param <T>         concentration type
      */
     public static <T> void make(final Simulation<T> sim, final String effectsFile) {
         make(sim, new File(effectsFile), JFrame.EXIT_ON_CLOSE);
@@ -80,15 +71,11 @@ public final class SingleRunGUI {
 
     /**
      * Builds a single-use graphical interface.
-     * 
-     * @param sim
-     *            the simulation for this GUI
-     * @param effectsFile
-     *            the effects file
-     * @param closeOperation
-     *            the type of close operation for this GUI
-     * @param <T>
-     *            concentration type
+     *
+     * @param sim            the simulation for this GUI
+     * @param effectsFile    the effects file
+     * @param closeOperation the type of close operation for this GUI
+     * @param <T>            concentration type
      */
     public static <T> void make(final Simulation<T> sim, final String effectsFile, final int closeOperation) {
         make(sim, new File(effectsFile), closeOperation);
@@ -105,21 +92,18 @@ public final class SingleRunGUI {
 
     /**
      * Builds a single-use graphical interface.
-     * 
-     * @param sim
-     *            the simulation for this GUI
-     * @param effectsFile
-     *            the effects file
-     * @param closeOperation
-     *            the type of close operation for this GUI
-     * @param <T>
-     *            concentration type
+     *
+     * @param sim            the simulation for this GUI
+     * @param effectsFile    the effects file
+     * @param closeOperation the type of close operation for this GUI
+     * @param <T>            concentration type
      */
     public static <T> void make(final Simulation<T> sim, final File effectsFile, final int closeOperation) {
         final GraphicalOutputMonitor<T> main = Objects.requireNonNull(sim).getEnvironment() instanceof OSMEnvironment
                 ? new MapDisplay<>()
                 : new Generic2DDisplay<>();
         if (main instanceof Component) {
+            // TODO this part will be removed ///////////////////////////////////////////////////////////////////////
             final JFrame frame = new JFrame("Alchemist Simulator");
             frame.setDefaultCloseOperation(closeOperation);
             final JPanel canvas = new JPanel();
@@ -161,6 +145,14 @@ public final class SingleRunGUI {
              * OutputMonitor's add to the sim must be done as the last operation
              */
             sim.addOutputMonitor(main);
+            // TODO this part will be removed ///////////////////////////////////////////////////////////////////////
+        } else if (main instanceof Node) {
+            // TODO
+            final MainApp app = new MainApp();
+            app.initMonitor(new FX2DDisplay<>(), new FXTimeMonitor<>(), new FXStepMonitor<>());
+            // TODO
+            app.start(new Stage());
+            // TODO
         } else {
             L.error("The default monitor of {} is not compatible with Java Swing.", sim);
         }

@@ -2,14 +2,16 @@ package it.unibo.alchemist.boundary.monitors;
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
-import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
 
-public class FXStepMonitor<T> extends Label implements OutputMonitor<T> {
+public class FXNodeTracker<T> extends BorderPane implements OutputMonitor<T> {
     // TODO
 
-    public FXStepMonitor() {
+    public FXNodeTracker(final Node<T> node) {
+        super();
         // TODO
     }
 

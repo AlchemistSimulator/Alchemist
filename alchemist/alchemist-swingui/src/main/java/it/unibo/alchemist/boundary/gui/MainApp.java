@@ -4,6 +4,9 @@ import it.unibo.alchemist.boundary.gui.controller.ButtonsBarController;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
+import it.unibo.alchemist.boundary.interfaces.FX2DOutputMonitor;
+import it.unibo.alchemist.boundary.monitors.FXStepMonitor;
+import it.unibo.alchemist.boundary.monitors.FXTimeMonitor;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -64,5 +67,12 @@ public class MainApp extends Application {
         main.getChildren().add(canvas);
         buttonsBarController = new ButtonsBarController();
         main.getChildren().add(FXResourceLoader.getLayout(BorderPane.class, buttonsBarController, "ButtonsBarLayout"));
+    }
+
+    /**
+     * TODO
+     */
+    public <T> void initMonitor(final FX2DOutputMonitor<T> displayMonitor, final FXTimeMonitor<T> timeMonitor, final FXStepMonitor<T> stepMonitor) {
+        // TODO
     }
 }

@@ -1,10 +1,5 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-
-import org.apache.commons.math3.util.FastMath;
-
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
@@ -12,6 +7,10 @@ import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import javafx.beans.property.DoubleProperty;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import org.apache.commons.math3.util.FastMath;
+
 
 /**
  * Simple effect that draws a {@link Color#BLACK black} dot for each
@@ -20,32 +19,51 @@ import javafx.beans.property.DoubleProperty;
  * It's possible to set the size of the dots.
  */
 public class DrawDot implements EffectFX {
-    /** Magic number used by auto-generated {@link #hashCode()} method. */
+    /**
+     * Magic number used by auto-generated {@link #hashCode()} method.
+     */
     private static final int HASHCODE_NUMBER_1 = 1231;
-    /** Magic number used by auto-generated {@link #hashCode()} method. */
+    /**
+     * Magic number used by auto-generated {@link #hashCode()} method.
+     */
     private static final int HASHCODE_NUMBER_2 = 1237;
 
-    /** Default generated Serial Version UID. */
+    /**
+     * Default generated Serial Version UID.
+     */
     private static final long serialVersionUID = -6098041600645663870L;
 
-    /** Default effect name. */
+    /**
+     * Default effect name.
+     */
     private static final String DEFAULT_NAME = ResourceLoader.getStringRes("drawdot_default_name");
 
-    /** Default dot size. */
+    /**
+     * Default dot size.
+     */
     private static final double DEFAULT_SIZE = 5;
 
-    /** Maximum value for the scale factor. */
+    /**
+     * Maximum value for the scale factor.
+     */
     private static final double MAX_SCALE = 100;
-    /** Minimum value for the scale factor. */
+    /**
+     * Minimum value for the scale factor.
+     */
     private static final double MIN_SCALE = 0;
-    /** Range for the scale factor. */
+    /**
+     * Range for the scale factor.
+     */
     private static final double SCALE_DIFF = MAX_SCALE - MIN_SCALE;
-    /** Default value of the scale factor. */
+    /**
+     * Default value of the scale factor.
+     */
     private static final double DEFAULT_SCALE = (SCALE_DIFF) / 2 + MIN_SCALE;
 
-    /** Default {@code Color}. */
+    /**
+     * Default {@code Color}.
+     */
     private static final Color DEFAULT_COLOR = Color.BLACK;
-    // TODO maybe should switch to JavaFX Color class
 
     private final RangedDoubleProperty size = PropertyFactory.getPercentageRangedProperty(ResourceLoader.getStringRes("drawdot_size"), DEFAULT_SIZE);
     private Color color = DEFAULT_COLOR;
@@ -69,9 +87,8 @@ public class DrawDot implements EffectFX {
      * Default constructor.
      * <p>
      * Default visibility is true.
-     * 
-     * @param name
-     *            the name of the effect.
+     *
+     * @param name the name of the effect.
      */
     public DrawDot(final String name) {
         this.name = name;
@@ -85,7 +102,7 @@ public class DrawDot implements EffectFX {
      * a {@link Color#BLACK black} dot.
      */
     @Override
-    public <T> void apply(final Graphics2D graphic, final Environment<T> environment, final IWormhole2D wormhole) {
+    public <T> void apply(final GraphicsContext graphic, final Environment<T> environment, final IWormhole2D wormhole) {
         environment.forEach(node -> {
             final double ks = DEFAULT_SCALE;
             final double sizeX = size.get();
@@ -93,16 +110,16 @@ public class DrawDot implements EffectFX {
             final double sizeY = FastMath.ceil(sizeX * ks);
             final double startY = wormhole.getViewPoint(environment.getPosition(node)).getY() - sizeY / 2;
 
+            graphic.setFill(color);
             graphic.fillOval((int) startX, (int) startY, (int) sizeX, (int) sizeY);
-            graphic.setColor(color);
         });
     }
 
     /**
      * The size of the dots representing each {@link Node} in the
      * {@link Environment} specified when calling
-     * {@link #apply(Graphics2D, Environment, IWormhole2D) apply} in percentage.
-     * 
+     * {@link #apply(GraphicsContext, Environment, IWormhole2D) apply} in percentage.
+     *
      * @return the size property
      */
     public DoubleProperty sizeProperty() {
@@ -111,7 +128,7 @@ public class DrawDot implements EffectFX {
 
     /**
      * Gets the value of the property {@code sizeProperty}.
-     * 
+     *
      * @return the size of the dots
      */
     public Double getSize() {
@@ -120,11 +137,9 @@ public class DrawDot implements EffectFX {
 
     /**
      * Sets the value of the property {@code sizeProperty}.
-     * 
-     * @param size
-     *            the size to set
-     * @throws IllegalArgumentException
-     *             if the provided value is not a valid percentage
+     *
+     * @param size the size to set
+     * @throws IllegalArgumentException if the provided value is not a valid percentage
      */
     public void setSize(final Double size) {
         this.size.set(size);
@@ -134,7 +149,7 @@ public class DrawDot implements EffectFX {
      * Gets the color of the dots.
      * <p>
      * Default color should be {@link Color#BLACK black}.
-     * 
+     *
      * @return the color of the dots
      */
     protected Color getColor() {
@@ -143,9 +158,8 @@ public class DrawDot implements EffectFX {
 
     /**
      * Sets the color of the dots.
-     * 
-     * @param color
-     *            the color to set
+     *
+     * @param color the color to set
      */
     protected void setColor(final Color color) {
         this.color = color;

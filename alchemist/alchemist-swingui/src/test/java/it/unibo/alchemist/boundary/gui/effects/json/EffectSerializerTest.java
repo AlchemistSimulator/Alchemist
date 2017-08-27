@@ -1,29 +1,17 @@
 package it.unibo.alchemist.boundary.gui.effects.json;
 
-import java.awt.Color;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.gson.reflect.TypeToken;
+import it.unibo.alchemist.boundary.gui.effects.*;
+import javafx.scene.paint.Color;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import com.google.gson.reflect.TypeToken;
-
-import it.unibo.alchemist.boundary.gui.effects.DrawColoredDot;
-import it.unibo.alchemist.boundary.gui.effects.DrawDot;
-import it.unibo.alchemist.boundary.gui.effects.DrawShapeFX;
-import it.unibo.alchemist.boundary.gui.effects.EffectFX;
-import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
-import it.unibo.alchemist.boundary.gui.effects.EffectStack;
+import java.io.*;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * JUnit test for EffectSerializer class.
@@ -39,9 +27,8 @@ public class EffectSerializerTest {
     /**
      * Tests methods {@link EffectSerializer#effectGroupsFromFile(File)} and
      * {@link EffectSerializer#effectGroupsToFile(File, List)}.
-     * 
-     * @throws IOException
-     *             if something goes wrong
+     *
+     * @throws IOException if something goes wrong
      */
     @Test
     public void testMultipleEffectGroupsSerialization() throws IOException {
@@ -58,14 +45,14 @@ public class EffectSerializerTest {
 
     /**
      * Tests serialization of a list of {@link EffectFX effect}s.
-     * 
-     * @throws IOException
-     *             if something goes wrong
+     *
+     * @throws IOException if something goes wrong
      */
     @Test
     public void testListOfEffectSerialization() throws IOException {
         final File file = folder.newFile();
-        final Type type = new TypeToken<List<EffectFX>>() { }.getType();
+        final Type type = new TypeToken<List<EffectFX>>() {
+        }.getType();
 
         final List<EffectFX> effects = new ArrayList<>();
         effects.add(new DrawDot());
@@ -85,7 +72,7 @@ public class EffectSerializerTest {
 
     /**
      * Initializes and returns a list of {@link EffectGroup}s.
-     * 
+     *
      * @return a list of {@code EffectGroups}
      */
     private List<EffectGroup> initList() {

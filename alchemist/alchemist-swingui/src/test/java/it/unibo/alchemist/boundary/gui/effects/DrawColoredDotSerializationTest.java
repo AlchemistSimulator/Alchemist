@@ -1,17 +1,13 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import java.awt.Color;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
+import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
+import javafx.scene.paint.Color;
 import org.junit.Assert;
 import org.junit.Test;
 
-import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
+import java.io.*;
+
+;
 
 /**
  * JUint test for {@link EffectFX effect} serialization.
@@ -30,7 +26,7 @@ public class DrawColoredDotSerializationTest extends AbstractEffectSerialization
         // CHECKSTYLE:OFF
         effect.setSize(25.0);
         // CHECKSTYLE:ON
-        effect.setColor(Color.cyan);
+        effect.setColor(Color.CYAN);
 
         oos.writeObject(effect);
 
@@ -54,7 +50,7 @@ public class DrawColoredDotSerializationTest extends AbstractEffectSerialization
         // CHECKSTYLE:OFF
         effect.setSize(25.0);
         // CHECKSTYLE:ON
-        effect.setColor(Color.cyan);
+        effect.setColor(Color.CYAN);
 
         EffectSerializer.effectToFile(file, effect);
 
@@ -69,7 +65,7 @@ public class DrawColoredDotSerializationTest extends AbstractEffectSerialization
             return super.getMessage(origin, deserialized);
         }
 
-        return super.getMessage(origin, deserialized) 
+        return super.getMessage(origin, deserialized)
                 + System.lineSeparator() + "Origin size: " + origin.getSize()
                 + System.lineSeparator() + "Deserialized size: " + deserialized.getSize()
                 + System.lineSeparator() + "Origin alpha: " + origin.getAlpha()

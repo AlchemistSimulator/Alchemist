@@ -1,12 +1,12 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import javafx.scene.paint.Color;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -108,7 +108,7 @@ public class EffectGroupSerializationTest {
         // CHECKSTYLE:OFF
         coloredDot.setSize(25.0);
         // CHECKSTYLE:ON
-        coloredDot.setColor(Color.cyan);
+        coloredDot.setColor(Color.CYAN);
         effects.add(coloredDot);
         effects.add(new DrawShapeFX());
         return effects;

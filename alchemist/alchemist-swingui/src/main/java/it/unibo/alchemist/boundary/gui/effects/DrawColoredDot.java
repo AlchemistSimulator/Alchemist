@@ -1,8 +1,5 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
@@ -12,6 +9,8 @@ import it.unibo.alchemist.model.interfaces.Node;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 /**
  * Simple effect that draws a colored dot for each {@link Node}.
@@ -19,14 +18,22 @@ import javafx.beans.value.ObservableValue;
  * It's possible to set the size and the color of the dots.
  */
 public class DrawColoredDot extends DrawDot implements EffectFX {
-    /** Magic number used by auto-generated {@link #hashCode()} method. */
+    /**
+     * Magic number used by auto-generated {@link #hashCode()} method.
+     */
     private static final int HASHCODE_NUMBER_1 = 1231;
-    /** Magic number used by auto-generated {@link #hashCode()} method. */
+    /**
+     * Magic number used by auto-generated {@link #hashCode()} method.
+     */
     private static final int HASHCODE_NUMBER_2 = 1237;
 
-    /** Default generated Serial Version UID. */
+    /**
+     * Default generated Serial Version UID.
+     */
     private static final long serialVersionUID = -2329825220099191395L;
-    /** Default effect name */
+    /**
+     * Default effect name
+     */
     private static final String DEFAULT_NAME = ResourceLoader.getStringRes("drawcoloreddot_default_name");
     private final RangedDoubleProperty red;
     private final RangedDoubleProperty green;
@@ -44,10 +51,10 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
         super(DEFAULT_NAME);
 
         // Set properties to default color of DrawDot
-        red = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_red"), (double) super.getColor().getRed());
-        green = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_green"), (double) super.getColor().getGreen());
-        blue = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_blue"), (double) super.getColor().getBlue());
-        alpha = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_alpha"), (double) super.getColor().getAlpha());
+        red = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_red"), super.getColor().getRed());
+        green = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_green"), super.getColor().getGreen());
+        blue = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_blue"), super.getColor().getBlue());
+        alpha = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_alpha"), super.getColor().getOpacity());
 
         // Update the color at each change
         red.addListener(this.updateColor());
@@ -60,9 +67,8 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
      * Default constructor.
      * <p>
      * Default visibility is true.
-     * 
-     * @param name
-     *            the name of the effect.
+     *
+     * @param name the name of the effect.
      */
     public DrawColoredDot(final String name) {
         this();
@@ -82,7 +88,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
     @Override
     public void setColor(final Color color) {
         // Also widens method visibility from parent 
-        this.setAlpha(color.getAlpha());
+        this.setAlpha(color.getOpacity());
         this.setBlue(color.getBlue());
         this.setGreen(color.getGreen());
         this.setRed(color.getRed());
@@ -96,27 +102,30 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
      * a dot of a specified {@link Color} (default: {@link Color#BLACK black}).
      */
     @Override
-    public <T> void apply(final Graphics2D graphic, final Environment<T> environment, final IWormhole2D wormhole) {
+    public <T> void apply(final GraphicsContext graphic, final Environment<T> environment, final IWormhole2D wormhole) {
         super.apply(graphic, environment, wormhole);
     }
 
     /**
      * Returns a {@link ChangeListener} that updates the color of the dots.
-     * 
+     *
      * @return the {@code ChangeListener}
      */
     private ChangeListener<Number> updateColor() {
         return (final ObservableValue<? extends Number> observable, final Number oldValue, final Number newValue) -> {
-            super.setColor(new Color(red.getValue().intValue(), green.getValue().intValue(), blue.getValue().intValue(),
-                    alpha.getValue().intValue()));
+            super.setColor(Color.rgb(
+                    red.getValue().intValue(),
+                    green.getValue().intValue(),
+                    blue.getValue().intValue(),
+                    alpha.getValue()));
         };
     }
 
     /**
      * The alpha channel of the color of the dots representing each {@link Node}
      * in the {@link Environment} specified when calling
-     * {@link #apply(Graphics2D, Environment, IWormhole2D) apply} in percentage.
-     * 
+     * {@link #apply(GraphicsContext, Environment, IWormhole2D) apply} in percentage.
+     *
      * @return the alpha channel property
      */
     public DoubleProperty alphaProperty() {
@@ -125,7 +134,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
 
     /**
      * Gets the value of {@code alphaProperty}.
-     * 
+     *
      * @return the alpha channel of the color of the dots
      */
     public double getAlpha() {
@@ -134,9 +143,8 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
 
     /**
      * Sets the value of {@code alphaProperty}.
-     * 
-     * @param alpha
-     *            the alpha channel to set
+     *
+     * @param alpha the alpha channel to set
      */
     public void setAlpha(final double alpha) {
         this.alpha.set(alpha);
@@ -145,8 +153,8 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
     /**
      * The blue channel of the color of the dots representing each {@link Node}
      * in the {@link Environment} specified when calling
-     * {@link #apply(Graphics2D, Environment, IWormhole2D) apply} in percentage.
-     * 
+     * {@link #apply(GraphicsContext, Environment, IWormhole2D) apply} in percentage.
+     *
      * @return the blue channel property
      */
     public DoubleProperty blueProperty() {
@@ -155,7 +163,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
 
     /**
      * Gets the value of {@code blueProperty}.
-     * 
+     *
      * @return the blue channel of the color of the dots
      */
     public double getBlue() {
@@ -164,9 +172,8 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
 
     /**
      * Sets the value of {@code blueProperty}.
-     * 
-     * @param blue
-     *            the blue channel to set
+     *
+     * @param blue the blue channel to set
      */
     public void setBlue(final double blue) {
         this.blue.set(blue);
@@ -175,8 +182,8 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
     /**
      * The green channel of the color of the dots representing each {@link Node}
      * in the {@link Environment} specified when calling
-     * {@link #apply(Graphics2D, Environment, IWormhole2D) apply} in percentage.
-     * 
+     * {@link #apply(GraphicsContext, Environment, IWormhole2D) apply} in percentage.
+     *
      * @return the green channel property
      */
     public DoubleProperty greenProperty() {
@@ -185,7 +192,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
 
     /**
      * Gets the value of {@code greenProperty}.
-     * 
+     *
      * @return the green channel of the color of the dots
      */
     public double getGreen() {
@@ -194,9 +201,8 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
 
     /**
      * Sets the value of {@code greenProperty}.
-     * 
-     * @param green
-     *            the green channel to set
+     *
+     * @param green the green channel to set
      */
     public void setGreen(final double green) {
         this.green.set(green);
@@ -205,8 +211,8 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
     /**
      * The red channel of the color of the dots representing each {@link Node}
      * in the {@link Environment} specified when calling
-     * {@link #apply(Graphics2D, Environment, IWormhole2D) apply} in percentage.
-     * 
+     * {@link #apply(GraphicsContext, Environment, IWormhole2D) apply} in percentage.
+     *
      * @return the red channel property
      */
     public DoubleProperty redProperty() {
@@ -215,7 +221,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
 
     /**
      * Gets the value of {@code redProperty}.
-     * 
+     *
      * @return the red channel of the color of the dots
      */
     public double getRed() {
@@ -224,9 +230,8 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
 
     /**
      * Sets the value of {@code redProperty}.
-     * 
-     * @param red
-     *            the red channel to set
+     *
+     * @param red the red channel to set
      */
     public void setRed(final double red) {
         this.red.set(red);

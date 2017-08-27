@@ -1,19 +1,9 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-
-import org.apache.commons.math3.util.FastMath;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import it.unibo.alchemist.boundary.gui.ColorChannel;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
-import it.unibo.alchemist.boundary.gui.view.properties.SerializableEnumProperty;
-import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
+import it.unibo.alchemist.boundary.gui.view.properties.*;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
-import it.unibo.alchemist.boundary.gui.view.properties.SerializableBooleanProperty;
-import it.unibo.alchemist.boundary.gui.view.properties.SerializableStringProperty;
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
@@ -24,69 +14,63 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import org.apache.commons.math3.util.FastMath;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Simple effect that draws all molecules as simple shapes.
  */
 public class DrawShapeFX implements EffectFX {
-    /** Default generated Serial Version UID. */
-    private static final long serialVersionUID = 8133306058339338028L;
-    /** Magic number used by auto-generated {@link #hashCode()} method. */
-    private static final int HASHCODE_NUMBER_1 = 1231;
-    /** Magic number used by auto-generated {@link #hashCode()} method. */
-    private static final int HASHCODE_NUMBER_2 = 1237;
-
     /**
-     * Enumeration that models the mode to use the {@link DrawShapeFX}.
+     * Default generated Serial Version UID.
      */
-    public enum ModeFX {
-        /** Node as an empty ellipse. */
-        DrawEllipse,
-        /** Node as an empty rectangle. */
-        DrawRectangle,
-        /** Node as a filled ellipse. */
-        FillEllipse,
-        /** Node as a filled rectangle. */
-        FillRectangle;
-
-        @Override
-        public String toString() {
-            final String sup = super.toString();
-            final StringBuilder sb = new StringBuilder(2 * sup.length());
-            if (!sup.isEmpty()) {
-                sb.append(sup.charAt(0));
-            }
-            for (int i = 1; i < sup.length(); i++) {
-                final char curChar = sup.charAt(i);
-                if (Character.isUpperCase(curChar)) {
-                    sb.append(' ');
-                }
-                sb.append(curChar);
-            }
-            return sb.toString();
-        }
-    }
-
-    /** Default size of the shape. */
+    private static final long serialVersionUID = 8133306058339338028L;
+    /**
+     * Magic number used by auto-generated {@link #hashCode()} method.
+     */
+    private static final int HASHCODE_NUMBER_1 = 1231;
+    /**
+     * Magic number used by auto-generated {@link #hashCode()} method.
+     */
+    private static final int HASHCODE_NUMBER_2 = 1237;
+    /**
+     * Default size of the shape.
+     */
     private static final double DEFAULT_SIZE = 5;
-    /** Maximum value for the scale factor. */
+    /**
+     * Maximum value for the scale factor.
+     */
     private static final double MAX_SCALE = 100;
-    /** Minimum value for the scale factor. */
+    /**
+     * Minimum value for the scale factor.
+     */
     private static final double MIN_SCALE = 0;
     /** */
     private static final double PROPERTY_SCALE = 10;
-    /** Range for the scale factor. */
+    /**
+     * Range for the scale factor.
+     */
     private static final double SCALE_DIFF = MAX_SCALE - MIN_SCALE;
-    /** Initial value of the scale factor. */
+    /**
+     * Initial value of the scale factor.
+     */
     private static final double SCALE_INITIAL = (SCALE_DIFF) / 2 + MIN_SCALE;
-    /** Default {@code Color}. */
+    /**
+     * Default {@code Color}.
+     */
     private static final Color DEFAULT_COLOR = Color.BLACK;
-    // TODO maybe should switch to JavaFX Color class
-    /** Default {@code Logger}. */
+    /**
+     * Default {@code Logger}.
+     */
     private static final Logger L = LoggerFactory.getLogger(DrawShapeFX.class);
-    /** Default name */
+    /**
+     * Default name
+     */
     private static final String DEFAULT_NAME = ResourceLoader.getStringRes("drawshape_default_name");
-
     private final SerializableEnumProperty<ModeFX> mode = new SerializableEnumProperty<ModeFX>(ResourceLoader.getStringRes("drawshape_mode"), ModeFX.FillEllipse);
     private final RangedDoubleProperty red = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawshape_red"));
     private final RangedDoubleProperty green = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawshape_green"));
@@ -94,31 +78,21 @@ public class DrawShapeFX implements EffectFX {
     private final RangedDoubleProperty alpha = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawshape_alpha"));
     private final RangedDoubleProperty scaleFactor = new RangedDoubleProperty(ResourceLoader.getStringRes("drawshape_scale_factor"), SCALE_INITIAL, MIN_SCALE, MAX_SCALE);
     private final RangedDoubleProperty size = PropertyFactory.getPercentageRangedProperty(ResourceLoader.getStringRes("drawshape_size"), DEFAULT_SIZE);
-    private final SerializableBooleanProperty moleculeFilter = new SerializableBooleanProperty(ResourceLoader.getStringRes("drawshape_molecule_filter"),
-            false);
+    private final SerializableBooleanProperty moleculeFilter = new SerializableBooleanProperty(ResourceLoader.getStringRes("drawshape_molecule_filter"), false);
     private final SerializableStringProperty moleculeName = new SerializableStringProperty(ResourceLoader.getStringRes("drawshape_molecule_name"), "");
-    private final SerializableBooleanProperty useMoleculeProperty = new SerializableBooleanProperty(ResourceLoader.getStringRes("drawshape_use_molecule_property"),
-            false);
+    private final SerializableBooleanProperty useMoleculeProperty = new SerializableBooleanProperty(ResourceLoader.getStringRes("drawshape_use_molecule_property"), false);
     private final SerializableStringProperty moleculePropertyName = new SerializableStringProperty(ResourceLoader.getStringRes("drawshape_molecule_property_name"), "");
     private final SerializableBooleanProperty writePropertyValue = new SerializableBooleanProperty(ResourceLoader.getStringRes("drawshape_write_property_value"), false);
-    private final SerializableEnumProperty<ColorChannel> colorChannel = new SerializableEnumProperty<ColorChannel>(ResourceLoader.getStringRes("drawshape_color_channel"),
-            ColorChannel.Alpha);
-    // TODO maybe should switch to JavaFX Color class
+    private final SerializableEnumProperty<ColorChannel> colorChannel = new SerializableEnumProperty<>(ResourceLoader.getStringRes("drawshape_color_channel"), ColorChannel.Alpha);
     private final SerializableBooleanProperty reverse = new SerializableBooleanProperty(ResourceLoader.getStringRes("drawshape_reverse"), false);
-
-    private final RangedDoubleProperty orderOfMagnitude = new RangedDoubleProperty(ResourceLoader.getStringRes("drawshape_oom"), 0, -PROPERTY_SCALE,
-            PROPERTY_SCALE);
+    private final RangedDoubleProperty orderOfMagnitude = new RangedDoubleProperty(ResourceLoader.getStringRes("drawshape_oom"), 0, -PROPERTY_SCALE, PROPERTY_SCALE);
     private final RangedDoubleProperty minprop = new RangedDoubleProperty(ResourceLoader.getStringRes("drawshape_minprop"), 0, -PROPERTY_SCALE, PROPERTY_SCALE);
-    private final RangedDoubleProperty maxprop = new RangedDoubleProperty(ResourceLoader.getStringRes("drawshape_maxprop"), PROPERTY_SCALE, -PROPERTY_SCALE,
-            PROPERTY_SCALE);
-
+    private final RangedDoubleProperty maxprop = new RangedDoubleProperty(ResourceLoader.getStringRes("drawshape_maxprop"), PROPERTY_SCALE, -PROPERTY_SCALE, PROPERTY_SCALE);
     private Color colorCache = DEFAULT_COLOR;
-    // TODO maybe should switch to JavaFX Color class
     private transient Molecule moleculeObject;
     private transient String moleculeNameCached;
     private String name;
     private boolean visibility;
-
     /**
      * Default constructor.
      */
@@ -128,9 +102,8 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Default constructor.
-     * 
-     * @param name
-     *            the name of the effect
+     *
+     * @param name the name of the effect
      */
     public DrawShapeFX(final String name) {
         moleculeName.addListener(this.updateMoleculeCachedName());
@@ -141,7 +114,7 @@ public class DrawShapeFX implements EffectFX {
     /**
      * This method returns a {@link ChangeListener} for {@link Molecule} name
      * update.
-     * 
+     *
      * @return a {@code ChangeListener} for {@code Molecule} name update
      */
     private ChangeListener<String> updateMoleculeCachedName() {
@@ -157,11 +130,9 @@ public class DrawShapeFX implements EffectFX {
      * <p>
      * The process of instantiation runs in a separate thread: if it fails, it
      * will not kill EDT.
-     * 
-     * @param <T>
-     *            the {@link Environment} type
-     * @param incarnation
-     *            the incarnation that will parse the molecule name cached
+     *
+     * @param <T>         the {@link Environment} type
+     * @param incarnation the incarnation that will parse the molecule name cached
      * @see Incarnation#createMolecule(String)
      */
     private <T> void instanziateMolecule(final Incarnation<T> incarnation) {
@@ -182,12 +153,11 @@ public class DrawShapeFX implements EffectFX {
      * a shape of a specified {@link Color} (default: {@link Color#BLACK
      * black}). Is it possible to tune the shape's scale factor and to change
      * shape color according to a {@link Molecule} property.
-     * 
-     * @throws IllegalStateException
-     *             if no {@link Incarnation} is available
+     *
+     * @throws IllegalStateException if no {@link Incarnation} is available
      */
     @Override
-    public <T> void apply(final Graphics2D graphic, final Environment<T> environment, final IWormhole2D wormhole) {
+    public <T> void apply(final GraphicsContext graphic, final Environment<T> environment, final IWormhole2D wormhole) {
         final Incarnation<T> incarnation = environment.getIncarnation()
                 .orElseThrow(() -> new IllegalStateException("The specified Environment does not specify any Incarnation"));
         if (!this.moleculeName.get().equals(moleculeNameCached)) {
@@ -201,21 +171,17 @@ public class DrawShapeFX implements EffectFX {
                 final double startx = wormhole.getViewPoint(environment.getPosition(node)).getX() - sizex / 2;
                 final double sizey = FastMath.ceil(sizex * ks);
                 final double starty = wormhole.getViewPoint(environment.getPosition(node)).getY() - sizey / 2;
-                final Color toRestore = graphic.getColor();
-                colorCache = new Color(red.getValue().intValue(), green.getValue().intValue(), blue.getValue().intValue(),
-                        alpha.getValue().intValue());
-                // TODO maybe should switch to JavaFX Color class
+                final Paint toRestore = graphic.getFill();
+                colorCache = Color.rgb(red.getValue().intValue(), green.getValue().intValue(), blue.getValue().intValue(), alpha.getValue());
                 Color newcolor = colorCache;
                 if (useMoleculeProperty.get() && moleculeObject != null) {
                     final double minV = minprop.get() * FastMath.pow(PROPERTY_SCALE, orderOfMagnitude.get());
                     final double maxV = maxprop.get() * FastMath.pow(PROPERTY_SCALE, orderOfMagnitude.get());
                     if (minV < maxV) {
-                        // TODO not so good to use unchecked Node, but for now
-                        // it's ok
                         double propval = incarnation.getProperty(node, moleculeObject, moleculePropertyName.get());
                         if (writePropertyValue.get()) {
-                            graphic.setColor(colorCache);
-                            graphic.drawString(Double.toString(propval), (int) (startx + sizex), (int) (starty + sizey));
+                            graphic.setFill(colorCache);
+                            graphic.strokeText(Double.toString(propval), startx + sizex, starty + sizey);
                         }
                         propval = FastMath.min(FastMath.max(propval, minV), maxV);
                         propval = (propval - minV) / (maxV - minV);
@@ -225,24 +191,24 @@ public class DrawShapeFX implements EffectFX {
                         newcolor = colorChannel.get().alter(newcolor, (float) propval);
                     }
                 }
-                graphic.setColor(newcolor);
+                graphic.setFill(newcolor);
                 switch (mode.get()) {
-                case FillEllipse:
-                    graphic.fillOval((int) startx, (int) starty, (int) sizex, (int) sizey);
-                    break;
-                case DrawEllipse:
-                    graphic.drawOval((int) startx, (int) starty, (int) sizex, (int) sizey);
-                    break;
-                case DrawRectangle:
-                    graphic.drawRect((int) startx, (int) starty, (int) sizex, (int) sizey);
-                    break;
-                case FillRectangle:
-                    graphic.fillRect((int) startx, (int) starty, (int) sizex, (int) sizey);
-                    break;
-                default:
-                    graphic.fillOval((int) startx, (int) starty, (int) sizex, (int) sizey);
+                    case FillEllipse:
+                        graphic.fillOval(startx, starty, sizex, sizey);
+                        break;
+                    case DrawEllipse:
+                        graphic.strokeOval(startx, starty, sizex, sizey);
+                        break;
+                    case DrawRectangle:
+                        graphic.strokeRect(startx, starty, sizex, sizey);
+                        break;
+                    case FillRectangle:
+                        graphic.fillRect(startx, starty, sizex, sizey);
+                        break;
+                    default:
+                        graphic.fillOval(startx, starty, sizex, sizey);
                 }
-                graphic.setColor(toRestore);
+                graphic.setFill(toRestore);
             }
 
         });
@@ -251,8 +217,8 @@ public class DrawShapeFX implements EffectFX {
     /**
      * The alpha channel of the color of the shapes, representing each
      * {@link Node} in the {@link Environment} specified when calling
-     * {@link #apply(Graphics2D, Environment, IWormhole2D) apply} in percentage.
-     * 
+     * {@link #apply(GraphicsContext, Environment, IWormhole2D) apply} in percentage.
+     *
      * @return the alpha channel property
      */
     protected DoubleProperty alphaProperty() {
@@ -261,7 +227,7 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Gets the value of {@code alphaProperty}.
-     * 
+     *
      * @return the alpha channel of the color of the shapes
      */
     protected double getAlpha() {
@@ -270,9 +236,8 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Sets the value of {@code alphaProperty}.
-     * 
-     * @param alpha
-     *            the alpha channel to set
+     *
+     * @param alpha the alpha channel to set
      */
     protected void setAlpha(final double alpha) {
         this.alpha.set(alpha);
@@ -281,8 +246,8 @@ public class DrawShapeFX implements EffectFX {
     /**
      * The blue channel of the color of the shapes, representing each
      * {@link Node} in the {@link Environment} specified when calling
-     * {@link #apply(Graphics2D, Environment, IWormhole2D) apply} in percentage.
-     * 
+     * {@link #apply(GraphicsContext, Environment, IWormhole2D) apply} in percentage.
+     *
      * @return the blue channel property
      */
     protected DoubleProperty blueProperty() {
@@ -291,7 +256,7 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Gets the value of {@code blueProperty}.
-     * 
+     *
      * @return the blue channel of the color of the shapes
      */
     protected double getBlue() {
@@ -300,9 +265,8 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Sets the value of {@code blueProperty}.
-     * 
-     * @param blue
-     *            the blue channel to set
+     *
+     * @param blue the blue channel to set
      */
     protected void setBlue(final double blue) {
         this.blue.set(blue);
@@ -311,7 +275,7 @@ public class DrawShapeFX implements EffectFX {
     /**
      * The color channel of the shapes, representing which {@link Color color}
      * channel would be tuned according to {@link Molecule} property value.
-     * 
+     *
      * @return the color channel property
      */
     protected SerializableEnumProperty<ColorChannel> colorChannelProperty() {
@@ -320,7 +284,7 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Gets the value of {@code colorChannelProperty}.
-     * 
+     *
      * @return the color channel
      */
     protected ColorChannel getColorChannel() {
@@ -329,9 +293,8 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Sets the value of {@code colorChannelProperty}.
-     * 
-     * @param colorChannel
-     *            the color channel to set
+     *
+     * @param colorChannel the color channel to set
      */
     protected void setColorChannel(final ColorChannel colorChannel) {
         this.colorChannel.set(colorChannel);
@@ -340,8 +303,8 @@ public class DrawShapeFX implements EffectFX {
     /**
      * The green channel of the color of the shapes, representing each
      * {@link Node} in the {@link Environment} specified when calling
-     * {@link #apply(Graphics2D, Environment, IWormhole2D) apply} in percentage.
-     * 
+     * {@link #apply(GraphicsContext, Environment, IWormhole2D) apply} in percentage.
+     *
      * @return the green channel property
      */
     protected DoubleProperty greenProperty() {
@@ -350,7 +313,7 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Gets the value of {@code greenProperty}.
-     * 
+     *
      * @return the green channel of the color of the shapes
      */
     protected double getGreen() {
@@ -359,9 +322,8 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Sets the value of {@code greenProperty}.
-     * 
-     * @param green
-     *            the green channel to set
+     *
+     * @param green the green channel to set
      */
     protected void setGreen(final double green) {
         this.green.set(green);
@@ -369,7 +331,7 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * The maximum value of the molecule property.
-     * 
+     *
      * @return the maxpropProperty
      */
     protected DoubleProperty maxpropProperty() {
@@ -378,7 +340,7 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Gets the value of {@code maxpropProperty}.
-     * 
+     *
      * @return the value of {@code maxpropProperty}
      */
     protected double getMaxprop() {
@@ -387,9 +349,8 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Sets the value of {@code maxpropProperty}.
-     * 
-     * @param maxprop
-     *            the value of {@code maxpropProperty} to set
+     *
+     * @param maxprop the value of {@code maxpropProperty} to set
      */
     protected void setMaxprop(final double maxprop) {
         this.maxprop.set(maxprop);
@@ -397,7 +358,7 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * The minimum value of the molecule property.
-     * 
+     *
      * @return the minpropProperty
      */
     protected DoubleProperty minpropProperty() {
@@ -406,7 +367,7 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Gets the value of {@code minpropProperty}.
-     * 
+     *
      * @return the value of {@code minpropProperty}
      */
     protected double getMinprop() {
@@ -415,9 +376,8 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Sets the value of {@code minpropProperty}.
-     * 
-     * @param minprop
-     *            the value of {@code minpropProperty} to set
+     *
+     * @param minprop the value of {@code minpropProperty} to set
      */
     protected void setMinprop(final double minprop) {
         this.minprop.set(minprop);
@@ -425,10 +385,10 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * The {@link ModeFX} of this effect, representing which type of shape
-     * ({@link Graphics2D#fillOval(int, int, int, int) oval} or
-     * {@link Graphics2D#fillRect(int, int, int, int) rectangle}, full or empty)
+     * ({@link GraphicsContext#fillOval(double, double, double, double) oval} or
+     * {@link GraphicsContext#fillRect(double, double, double, double) rectangle}, full or empty)
      * each {@link Node} in the {@link Environment} would be drawn with.
-     * 
+     *
      * @return the mode property
      */
     protected SerializableEnumProperty<ModeFX> modeProperty() {
@@ -437,7 +397,7 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Gets the value of {@code modeProperty}.
-     * 
+     *
      * @return the value of {@code modeProperty}
      */
     protected ModeFX getMode() {
@@ -446,9 +406,8 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Sets the value of {@code modeProperty}.
-     * 
-     * @param mode
-     *            the value of {@code modeProperty} to set
+     *
+     * @param mode the value of {@code modeProperty} to set
      */
     protected void setMode(final ModeFX mode) {
         this.mode.set(mode);
@@ -459,7 +418,7 @@ public class DrawShapeFX implements EffectFX {
      * <p>
      * A new instance of the {@code Molecule} is created every time the value of
      * this property changes.
-     * 
+     *
      * @return the molecule name property
      */
     protected StringProperty moleculeNameProperty() {
@@ -468,7 +427,7 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Gets the value of {@code moleculeNameProperty}.
-     * 
+     *
      * @return the value of {@code moleculeNameProperty}
      */
     protected String getMoleculeName() {
@@ -477,9 +436,8 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Sets the value of {@code moleculeNameProperty}.
-     * 
-     * @param moleculeName
-     *            the value of {@code moleculeNameProperty} to set
+     *
+     * @param moleculeName the value of {@code moleculeNameProperty} to set
      */
     protected void setMoleculeName(final String moleculeName) {
         this.moleculeName.set(moleculeName);
@@ -488,7 +446,7 @@ public class DrawShapeFX implements EffectFX {
     /**
      * The name of the {@link Molecule} property which value will be used to
      * tune shape color.
-     * 
+     *
      * @return the molecule property name
      */
     protected StringProperty moleculePropertyNameProperty() {
@@ -497,7 +455,7 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Gets the value of {@code moleculePropertyNameProperty}.
-     * 
+     *
      * @return the value of {@code moleculePropertyNameProperty}
      */
     protected String getMoleculePropertyName() {
@@ -506,9 +464,8 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Sets the value of {@code moleculePropertyNameProperty}.
-     * 
-     * @param moleculePropertyName
-     *            the value of {@code moleculePropertyNameProperty} to set
+     *
+     * @param moleculePropertyName the value of {@code moleculePropertyNameProperty} to set
      */
     protected void setMoleculePropertyName(final String moleculePropertyName) {
         this.moleculePropertyName.set(moleculePropertyName);
@@ -517,7 +474,7 @@ public class DrawShapeFX implements EffectFX {
     /**
      * The order of magnitude the {@link Molecule} property value will influence
      * the color variations of the shapes.
-     * 
+     *
      * @return the order of magnitude property
      */
     protected DoubleProperty orderOfMagnitudeProperty() {
@@ -526,7 +483,7 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Gets the value of {@code orderOfMagnitudeProperty}.
-     * 
+     *
      * @return the value of {@code orderOfMagnitudeProperty}
      */
     protected double getOrderOfMagnitude() {
@@ -535,9 +492,8 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Sets the value of {@code orderOfMagnitudeProperty}.
-     * 
-     * @param orderOfMagnitude
-     *            the value of {@code orderOfMagnitudeProperty} to set
+     *
+     * @param orderOfMagnitude the value of {@code orderOfMagnitudeProperty} to set
      */
     protected void setOrderOfMagnitude(final double orderOfMagnitude) {
         this.orderOfMagnitude.set(orderOfMagnitude);
@@ -546,8 +502,8 @@ public class DrawShapeFX implements EffectFX {
     /**
      * The red channel of the color of the shapes, representing each
      * {@link Node} in the {@link Environment} specified when calling
-     * {@link #apply(Graphics2D, Environment, IWormhole2D) apply} in percentage.
-     * 
+     * {@link #apply(GraphicsContext, Environment, IWormhole2D) apply} in percentage.
+     *
      * @return the red channel property
      */
     protected DoubleProperty redProperty() {
@@ -556,7 +512,7 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Gets the value of {@code redProperty}.
-     * 
+     *
      * @return the red channel of the color of the shapes
      */
     protected double getRed() {
@@ -565,9 +521,8 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Sets the value of {@code redProperty}.
-     * 
-     * @param red
-     *            the red channel to set
+     *
+     * @param red the red channel to set
      */
     protected void setRed(final double red) {
         this.red.set(red);
@@ -576,9 +531,9 @@ public class DrawShapeFX implements EffectFX {
     /**
      * The scale factor used when representing the shapes; tuning it will modify
      * the regularity of the shape.
-     * 
+     *
      * @return the scale factor property
-     * @see Graphics2D
+     * @see GraphicsContext
      */
     protected DoubleProperty scaleFactorProperty() {
         return this.scaleFactor;
@@ -586,7 +541,7 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Gets the value of {@code scaleFactorProperty}.
-     * 
+     *
      * @return the value of {@code scaleFactorProperty}
      */
     protected double getScaleFactor() {
@@ -595,9 +550,8 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Sets the value of {@code scaleFactorProperty}.
-     * 
-     * @param scaleFactor
-     *            the value of {@code scaleFactorProperty} to set
+     *
+     * @param scaleFactor the value of {@code scaleFactorProperty} to set
      */
     protected void setScaleFactor(final double scaleFactor) {
         this.scaleFactor.set(scaleFactor);
@@ -606,8 +560,8 @@ public class DrawShapeFX implements EffectFX {
     /**
      * The size of the shapes, representing each {@link Node} in the
      * {@link Environment} specified when calling
-     * {@link #apply(Graphics2D, Environment, IWormhole2D) apply} in percentage.
-     * 
+     * {@link #apply(GraphicsContext, Environment, IWormhole2D) apply} in percentage.
+     *
      * @return the size property
      */
     protected DoubleProperty sizeProperty() {
@@ -616,7 +570,7 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Gets the value of the property {@code sizeProperty}.
-     * 
+     *
      * @return the size of the shapes
      */
     protected Double getSize() {
@@ -625,11 +579,9 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Sets the value of the property {@code sizeProperty}.
-     * 
-     * @param size
-     *            the size to set
-     * @throws IllegalArgumentException
-     *             if the provided value is not a valid percentage
+     *
+     * @param size the size to set
+     * @throws IllegalArgumentException if the provided value is not a valid percentage
      */
     protected void setSize(final Double size) {
         this.size.set(size);
@@ -638,7 +590,7 @@ public class DrawShapeFX implements EffectFX {
     /**
      * If true, only the {@link Node}s containing a {@link Molecule} will be
      * drawn.
-     * 
+     *
      * @return the property for this filter
      */
     protected BooleanProperty moleculeFilterProperty() {
@@ -647,7 +599,7 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Gets the value of {@code moleculeFilterProperty}.
-     * 
+     *
      * @return the value of {@code moleculeFilterProperty}
      */
     protected boolean isMoleculeFilter() {
@@ -656,9 +608,8 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Sets the value of {@code moleculeFilterProperty}.
-     * 
-     * @param moleculeFilter
-     *            the value of {@code moleculeFilterProperty} to set
+     *
+     * @param moleculeFilter the value of {@code moleculeFilterProperty} to set
      */
     protected void setMoleculeFilter(final boolean moleculeFilter) {
         this.moleculeFilter.set(moleculeFilter);
@@ -667,7 +618,7 @@ public class DrawShapeFX implements EffectFX {
     /**
      * If true, the value of the specified {@link Molecule} property will
      * influence the color of the shape.
-     * 
+     *
      * @return the property for this filter
      */
     protected BooleanProperty useMoleculePropertyProperty() {
@@ -676,7 +627,7 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Gets the value of {@code useMoleculePropertyProperty}.
-     * 
+     *
      * @return the value of {@code useMoleculePropertyProperty}
      */
     protected boolean isUseMoleculeProperty() {
@@ -685,9 +636,8 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Sets the value of {@code useMoleculePropertyProperty}.
-     * 
-     * @param useMoleculeProperty
-     *            the value of {@code useMoleculePropertyProperty} to set
+     *
+     * @param useMoleculeProperty the value of {@code useMoleculePropertyProperty} to set
      */
     protected void setUseMoleculeProperty(final boolean useMoleculeProperty) {
         this.useMoleculeProperty.set(useMoleculeProperty);
@@ -695,7 +645,7 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * If true, it will reverse the effects of color variations.
-     * 
+     *
      * @return the reverse property
      */
     protected BooleanProperty reverseProperty() {
@@ -704,7 +654,7 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Gets the value of {@code reverseProperty}.
-     * 
+     *
      * @return the value of {@code reverseProperty}
      */
     protected boolean isReverse() {
@@ -713,9 +663,8 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Sets the value of {@code reverseProperty}.
-     * 
-     * @param reverse
-     *            the value of {@code reverseProperty} to set
+     *
+     * @param reverse the value of {@code reverseProperty} to set
      */
     protected void setReverse(final boolean reverse) {
         this.reverse.set(reverse);
@@ -724,7 +673,7 @@ public class DrawShapeFX implements EffectFX {
     /**
      * If true, the value of the specified {@link Molecule} property will be
      * written near the related shape.
-     * 
+     *
      * @return the write property value property
      */
     protected BooleanProperty writePropertyValuePropery() {
@@ -733,7 +682,7 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Gets the value of {@code writePropertyValuePropery}.
-     * 
+     *
      * @return the value of {@code writePropertyValuePropery}
      */
     protected boolean isWritePropertyValue() {
@@ -742,9 +691,8 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Sets the value of {@code writePropertyValuePropery}.
-     * 
-     * @param writePropertyValue
-     *            the value of {@code writePropertyValuePropery} to set
+     *
+     * @param writePropertyValue the value of {@code writePropertyValuePropery} to set
      */
     protected void setWritePropertyValue(final boolean writePropertyValue) {
         this.writePropertyValue.set(writePropertyValue);
@@ -762,7 +710,7 @@ public class DrawShapeFX implements EffectFX {
 
     /**
      * Returns the internal {@link Molecule} instance used for references.
-     * 
+     *
      * @return the internal {@code Molecule} object
      */
     protected Molecule getMoleculeObject() {
@@ -947,6 +895,45 @@ public class DrawShapeFX implements EffectFX {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Enumeration that models the mode to use the {@link DrawShapeFX}.
+     */
+    public enum ModeFX {
+        /**
+         * Node as an empty ellipse.
+         */
+        DrawEllipse,
+        /**
+         * Node as an empty rectangle.
+         */
+        DrawRectangle,
+        /**
+         * Node as a filled ellipse.
+         */
+        FillEllipse,
+        /**
+         * Node as a filled rectangle.
+         */
+        FillRectangle;
+
+        @Override
+        public String toString() {
+            final String sup = super.toString();
+            final StringBuilder sb = new StringBuilder(2 * sup.length());
+            if (!sup.isEmpty()) {
+                sb.append(sup.charAt(0));
+            }
+            for (int i = 1; i < sup.length(); i++) {
+                final char curChar = sup.charAt(i);
+                if (Character.isUpperCase(curChar)) {
+                    sb.append(' ');
+                }
+                sb.append(curChar);
+            }
+            return sb.toString();
+        }
     }
 
 }

@@ -78,7 +78,7 @@ public enum ColorChannel {
      * @return the modified color
      */
     public javafx.scene.paint.Color alter(final javafx.scene.paint.Color c, final float q) {
-        final java.awt.Color color = alter(new java.awt.Color((int) c.getRed(), (int) c.getGreen(), (int) c.getBlue(), (int) c.getOpacity()), q);
+        final java.awt.Color color = alter(new java.awt.Color((float) c.getRed(), (float) c.getGreen(), (float) c.getBlue(), (float) c.getOpacity()), q);
         return javafx.scene.paint.Color.rgb(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
     }
 }

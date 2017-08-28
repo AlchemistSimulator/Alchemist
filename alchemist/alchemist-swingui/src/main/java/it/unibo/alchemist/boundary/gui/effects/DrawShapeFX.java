@@ -21,6 +21,11 @@ import org.apache.commons.math3.util.FastMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
 /**
  * Simple effect that draws all molecules as simple shapes.
  */
@@ -71,28 +76,30 @@ public class DrawShapeFX implements EffectFX {
      * Default name
      */
     private static final String DEFAULT_NAME = ResourceLoader.getStringRes("drawshape_default_name");
-    private final SerializableEnumProperty<ModeFX> mode = new SerializableEnumProperty<ModeFX>(ResourceLoader.getStringRes("drawshape_mode"), ModeFX.FillEllipse);
-    private final RangedDoubleProperty red = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawshape_red"));
-    private final RangedDoubleProperty green = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawshape_green"));
-    private final RangedDoubleProperty blue = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawshape_blue"));
-    private final RangedDoubleProperty alpha = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawshape_alpha"));
-    private final RangedDoubleProperty scaleFactor = new RangedDoubleProperty(ResourceLoader.getStringRes("drawshape_scale_factor"), SCALE_INITIAL, MIN_SCALE, MAX_SCALE);
-    private final RangedDoubleProperty size = PropertyFactory.getPercentageRangedProperty(ResourceLoader.getStringRes("drawshape_size"), DEFAULT_SIZE);
-    private final SerializableBooleanProperty moleculeFilter = new SerializableBooleanProperty(ResourceLoader.getStringRes("drawshape_molecule_filter"), false);
-    private final SerializableStringProperty moleculeName = new SerializableStringProperty(ResourceLoader.getStringRes("drawshape_molecule_name"), "");
-    private final SerializableBooleanProperty useMoleculeProperty = new SerializableBooleanProperty(ResourceLoader.getStringRes("drawshape_use_molecule_property"), false);
-    private final SerializableStringProperty moleculePropertyName = new SerializableStringProperty(ResourceLoader.getStringRes("drawshape_molecule_property_name"), "");
-    private final SerializableBooleanProperty writePropertyValue = new SerializableBooleanProperty(ResourceLoader.getStringRes("drawshape_write_property_value"), false);
-    private final SerializableEnumProperty<ColorChannel> colorChannel = new SerializableEnumProperty<>(ResourceLoader.getStringRes("drawshape_color_channel"), ColorChannel.Alpha);
-    private final SerializableBooleanProperty reverse = new SerializableBooleanProperty(ResourceLoader.getStringRes("drawshape_reverse"), false);
-    private final RangedDoubleProperty orderOfMagnitude = new RangedDoubleProperty(ResourceLoader.getStringRes("drawshape_oom"), 0, -PROPERTY_SCALE, PROPERTY_SCALE);
-    private final RangedDoubleProperty minprop = new RangedDoubleProperty(ResourceLoader.getStringRes("drawshape_minprop"), 0, -PROPERTY_SCALE, PROPERTY_SCALE);
-    private final RangedDoubleProperty maxprop = new RangedDoubleProperty(ResourceLoader.getStringRes("drawshape_maxprop"), PROPERTY_SCALE, -PROPERTY_SCALE, PROPERTY_SCALE);
+
+    private SerializableEnumProperty<ModeFX> mode = new SerializableEnumProperty<>(ResourceLoader.getStringRes("drawshape_mode"), ModeFX.FillEllipse);
+    private RangedDoubleProperty red = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawshape_red"));
+    private RangedDoubleProperty green = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawshape_green"));
+    private RangedDoubleProperty blue = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawshape_blue"));
+    private RangedDoubleProperty alpha = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawshape_alpha"));
+    private RangedDoubleProperty scaleFactor = new RangedDoubleProperty(ResourceLoader.getStringRes("drawshape_scale_factor"), SCALE_INITIAL, MIN_SCALE, MAX_SCALE);
+    private RangedDoubleProperty size = PropertyFactory.getPercentageRangedProperty(ResourceLoader.getStringRes("drawshape_size"), DEFAULT_SIZE);
+    private SerializableBooleanProperty moleculeFilter = new SerializableBooleanProperty(ResourceLoader.getStringRes("drawshape_molecule_filter"), false);
+    private SerializableStringProperty moleculeName = new SerializableStringProperty(ResourceLoader.getStringRes("drawshape_molecule_name"), "");
+    private SerializableBooleanProperty useMoleculeProperty = new SerializableBooleanProperty(ResourceLoader.getStringRes("drawshape_use_molecule_property"), false);
+    private SerializableStringProperty moleculePropertyName = new SerializableStringProperty(ResourceLoader.getStringRes("drawshape_molecule_property_name"), "");
+    private SerializableBooleanProperty writePropertyValue = new SerializableBooleanProperty(ResourceLoader.getStringRes("drawshape_write_property_value"), false);
+    private SerializableEnumProperty<ColorChannel> colorChannel = new SerializableEnumProperty<>(ResourceLoader.getStringRes("drawshape_color_channel"), ColorChannel.Alpha);
+    private SerializableBooleanProperty reverse = new SerializableBooleanProperty(ResourceLoader.getStringRes("drawshape_reverse"), false);
+    private RangedDoubleProperty orderOfMagnitude = new RangedDoubleProperty(ResourceLoader.getStringRes("drawshape_oom"), 0, -PROPERTY_SCALE, PROPERTY_SCALE);
+    private RangedDoubleProperty minprop = new RangedDoubleProperty(ResourceLoader.getStringRes("drawshape_minprop"), 0, -PROPERTY_SCALE, PROPERTY_SCALE);
+    private RangedDoubleProperty maxprop = new RangedDoubleProperty(ResourceLoader.getStringRes("drawshape_maxprop"), PROPERTY_SCALE, -PROPERTY_SCALE, PROPERTY_SCALE);
     private Color colorCache = DEFAULT_COLOR;
     private transient Molecule moleculeObject;
     private transient String moleculeNameCached;
     private String name;
     private boolean visibility;
+
     /**
      * Default constructor.
      */
@@ -725,6 +732,89 @@ public class DrawShapeFX implements EffectFX {
     @Override
     public void setVisibility(final boolean vilibility) {
         this.visibility = vilibility;
+    }
+
+    /**
+     * Method needed for well working serialization.
+     * <p>
+     * From {@link Serializable}: <blockquote>The {@code writeObject} method is
+     * responsible for writing the state of the object for its particular class
+     * so that the corresponding readObject method can restore it. The default
+     * mechanism for saving the Object's fields can be invoked by calling
+     * {@code out.defaultWriteObject}. The method does not need to concern
+     * itself with the state belonging to its superclasses or subclasses. State
+     * is saved by writing the 3 individual fields to the
+     * {@code ObjectOutputStream} using the {@code writeObject} method or by
+     * using the methods for primitive data types supported by
+     * {@code DataOutput}. </blockquote>
+     *
+     * @param stream the output stream
+     */
+    private void writeObject(final ObjectOutputStream stream) throws IOException {
+        stream.writeObject(mode);
+        stream.writeObject(red);
+        stream.writeObject(green);
+        stream.writeObject(blue);
+        stream.writeObject(alpha);
+        stream.writeObject(scaleFactor);
+        stream.writeObject(size);
+        stream.writeObject(moleculeFilter);
+        stream.writeObject(moleculeName);
+        stream.writeObject(useMoleculeProperty);
+        stream.writeObject(moleculePropertyName);
+        stream.writeObject(writePropertyValue);
+        stream.writeObject(colorChannel);
+        stream.writeObject(reverse);
+        stream.writeObject(orderOfMagnitude);
+        stream.writeObject(minprop);
+        stream.writeObject(maxprop);
+        stream.writeDouble(colorCache.getRed());
+        stream.writeDouble(colorCache.getGreen());
+        stream.writeDouble(colorCache.getBlue());
+        stream.writeDouble(colorCache.getOpacity());
+        stream.writeUTF(name);
+        stream.writeBoolean(visibility);
+    }
+
+    /**
+     * Method needed for well working serialization.
+     * <p>
+     * From {@link Serializable}: <blockquote>The {@code readObject} method is
+     * responsible for reading from the stream and restoring the classes fields.
+     * It may call {@code in.defaultReadObject} to invoke the default mechanism
+     * for restoring the object's non-static and non-transient fields. The
+     * {@code defaultReadObject} method uses information in the stream to assign
+     * the fields of the object saved in the stream with the correspondingly
+     * named fields in the current object. This handles the case when the class
+     * has evolved to add new fields. The method does not need to concern itself
+     * with the state belonging to its superclasses or subclasses. State is
+     * saved by writing the individual fields to the {@code ObjectOutputStream}
+     * using the {@code writeObject} method or by using the methods for
+     * primitive data types supported by {@code DataOutput}. </blockquote>
+     *
+     * @param stream the input stream
+     */
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        mode = (SerializableEnumProperty<ModeFX>) stream.readObject();
+        red = (RangedDoubleProperty) stream.readObject();
+        green = (RangedDoubleProperty) stream.readObject();
+        blue = (RangedDoubleProperty) stream.readObject();
+        alpha = (RangedDoubleProperty) stream.readObject();
+        scaleFactor = (RangedDoubleProperty) stream.readObject();
+        size = (RangedDoubleProperty) stream.readObject();
+        moleculeFilter = (SerializableBooleanProperty) stream.readObject();
+        moleculeName = (SerializableStringProperty) stream.readObject();
+        useMoleculeProperty = (SerializableBooleanProperty) stream.readObject();
+        moleculePropertyName = (SerializableStringProperty) stream.readObject();
+        writePropertyValue = (SerializableBooleanProperty) stream.readObject();
+        colorChannel = (SerializableEnumProperty<ColorChannel>) stream.readObject();
+        reverse = (SerializableBooleanProperty) stream.readObject();
+        orderOfMagnitude = (RangedDoubleProperty) stream.readObject();
+        minprop = (RangedDoubleProperty) stream.readObject();
+        maxprop = (RangedDoubleProperty) stream.readObject();
+        colorCache = new Color(stream.readDouble(), stream.readDouble(), stream.readDouble(), stream.readDouble());
+        name = stream.readUTF();
+        visibility = stream.readBoolean();
     }
 
     @Override

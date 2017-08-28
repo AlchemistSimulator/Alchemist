@@ -256,10 +256,9 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
      * using the methods for primitive data types supported by
      * {@code DataOutput}. </blockquote>
      *
-     * @param stream
-     *            the output stream
+     * @param stream the output stream
      */
-    private void writeObject(ObjectOutputStream stream) throws IOException {
+    private void writeObject(final ObjectOutputStream stream) throws IOException {
         stream.writeObject(red);
         stream.writeObject(green);
         stream.writeObject(blue);
@@ -282,10 +281,9 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
      * using the {@code writeObject} method or by using the methods for
      * primitive data types supported by {@code DataOutput}. </blockquote>
      *
-     * @param stream
-     *            the input stream
+     * @param stream the input stream
      */
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         red = (RangedDoubleProperty) stream.readObject();
         green = (RangedDoubleProperty) stream.readObject();
         blue = (RangedDoubleProperty) stream.readObject();

@@ -11,6 +11,11 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import org.apache.commons.math3.util.FastMath;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
 
 /**
  * Simple effect that draws a {@link Color#BLACK black} dot for each
@@ -65,11 +70,9 @@ public class DrawDot implements EffectFX {
      */
     private static final Color DEFAULT_COLOR = Color.BLACK;
 
-    private final RangedDoubleProperty size = PropertyFactory.getPercentageRangedProperty(ResourceLoader.getStringRes("drawdot_size"), DEFAULT_SIZE);
+    private RangedDoubleProperty size = PropertyFactory.getPercentageRangedProperty(ResourceLoader.getStringRes("drawdot_size"), DEFAULT_SIZE);
     private Color color = DEFAULT_COLOR;
-
     private String name;
-
     private boolean visibility;
 
     /**
@@ -183,6 +186,59 @@ public class DrawDot implements EffectFX {
     @Override
     public void setVisibility(final boolean vilibility) {
         this.visibility = vilibility;
+    }
+
+    /**
+     * Method needed for well working serialization.
+     * <p>
+     * From {@link Serializable}: <blockquote>The {@code writeObject} method is
+     * responsible for writing the state of the object for its particular class
+     * so that the corresponding readObject method can restore it. The default
+     * mechanism for saving the Object's fields can be invoked by calling
+     * {@code out.defaultWriteObject}. The method does not need to concern
+     * itself with the state belonging to its superclasses or subclasses. State
+     * is saved by writing the 3 individual fields to the
+     * {@code ObjectOutputStream} using the {@code writeObject} method or by
+     * using the methods for primitive data types supported by
+     * {@code DataOutput}. </blockquote>
+     *
+     * @param stream
+     *            the output stream
+     */
+    private void writeObject(ObjectOutputStream stream) throws IOException {
+        stream.writeObject(size);
+        stream.writeDouble(color.getRed());
+        stream.writeDouble(color.getGreen());
+        stream.writeDouble(color.getBlue());
+        stream.writeDouble(color.getOpacity());
+        stream.writeUTF(name);
+        stream.writeBoolean(visibility);
+    }
+
+    /**
+     * Method needed for well working serialization.
+     * <p>
+     * From {@link Serializable}: <blockquote>The {@code readObject} method is
+     * responsible for reading from the stream and restoring the classes fields.
+     * It may call {@code in.defaultReadObject} to invoke the default mechanism
+     * for restoring the object's non-static and non-transient fields. The
+     * {@code defaultReadObject} method uses information in the stream to assign
+     * the fields of the object saved in the stream with the correspondingly
+     * named fields in the current object. This handles the case when the class
+     * has evolved to add new fields. The method does not need to concern itself
+     * with the state belonging to its superclasses or subclasses. State is
+     * saved by writing the individual fields to the {@code ObjectOutputStream}
+     * using the {@code writeObject} method or by using the methods for
+     * primitive data types supported by {@code DataOutput}. </blockquote>
+     *
+     * @param stream
+     *            the input stream
+     */
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        size = (RangedDoubleProperty) stream.readObject();
+        color = new Color(stream.readDouble(), stream.readDouble(), stream.readDouble(), stream.readDouble());
+        name = stream.readUTF();
+        visibility = stream.readBoolean();
     }
 
     @Override

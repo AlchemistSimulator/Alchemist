@@ -17,7 +17,8 @@ public class GPSTraceDisplacement implements Displacement {
     private final int numNode;
 
     /**
-     * 
+     * @param numNode
+     *            number of node request
      * @param path
      *            path with the gps tracks
      * @param cycle

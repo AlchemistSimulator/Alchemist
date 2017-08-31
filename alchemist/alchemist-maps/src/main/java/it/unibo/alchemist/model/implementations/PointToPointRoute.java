@@ -84,7 +84,7 @@ public class PointToPointRoute implements Route<Position> {
     @Override
     public boolean equals(final Object obj) {
         if (obj instanceof Route) {
-            final Route<Position> r = (Route<Position>) obj;
+            final Route<?> r = (Route<?>) obj;
             return getPoints().equals(r.getPoints());
         }
         return false;

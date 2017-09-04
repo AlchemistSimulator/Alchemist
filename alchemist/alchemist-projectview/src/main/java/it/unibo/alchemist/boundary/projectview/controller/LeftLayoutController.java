@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ResourceBundle;
 
+import org.jooq.lambda.Unchecked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -170,16 +171,7 @@ public class LeftLayoutController {
         }
         final Project project = ProjectIOUtils.loadFrom(this.pathFolder);
         if (project != null) {
-           final Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        project.runAlchemistSimulation(false);
-                    } catch (FileNotFoundException e) {
-                        L.error("Error loading simulation file.", e);
-                    }
-                }
-            }, "SingleRunGUI");
+           final Thread thread = new Thread(Unchecked.runnable(() -> project.runAlchemistSimulation(false)), "SingleRunGUI");
            thread.setDaemon(true);
            thread.start();
         } else {

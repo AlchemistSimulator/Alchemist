@@ -22,7 +22,6 @@ final class FXUtil {
 	private new(){ }
 
 	def static void errorAlert(Thread thread, Throwable ex) {
-		val alert = new Alert(AlertType.ERROR)
 		val messages = Streams::flatten(ex, [if (it.cause === null) Stream.empty() else Stream.of(it.cause)])
 			.map([it.message])
 			.filter([it !== null])
@@ -34,6 +33,7 @@ final class FXUtil {
 		val textArea = new TextArea(exceptionText)
 		val expContent = new GridPane()
 		Platform::runLater[
+            val alert = new Alert(AlertType.ERROR)
 			alert.setTitle(RESOURCES.getString("error_occurred"))
 			alert.setHeaderText(RESOURCES.getString("error_follows"))
 			alert.setContentText(messages)

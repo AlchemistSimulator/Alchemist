@@ -6,10 +6,11 @@ dependencies {
         "com.google.guava:guava:$guavaVersion",
         "com.javadocmd:simplelatlng:$latlngVersion",
         "com.graphhopper:graphhopper-core:$graphhopperVersion",
-        "org.apache.commons:commons-lang3:$lang3Version",
         "commons-codec:commons-codec:$codecVersion",
+        "commons-io:commons-io:${commonsIOVersion}",
+        "io.jenetics:jpx:$gpxVersion",
         "net.sf.trove4j:trove4j:$troveVersion",
-        "io.jenetics:jpx:$gpxVersion"
+        "org.apache.commons:commons-lang3:$lang3Version"
     )
     compile("com.graphhopper:graphhopper-reader-osm:$graphhopperVersion"){
         exclude module: "slf4j-log4j12"

@@ -32,7 +32,11 @@ public interface Route<P extends Position> extends Iterable<P>, Serializable {
      * @return the route as list of {@link Position}
      */
     List<P> getPoints();
-    
+
+    /**
+     * 
+     * @return the route as stream of {@link Position}
+     */
     Stream<P> stream();
 
     /**

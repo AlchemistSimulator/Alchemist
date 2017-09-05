@@ -2,7 +2,6 @@ package it.unibo.alchemist.model.implementations.actions;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import org.danilopianini.util.Hashes;
@@ -18,6 +17,8 @@ import it.unibo.alchemist.model.interfaces.StrategyWithGPS;
 import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy;
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * basic action that follow a {@link GPSTrace}.
@@ -83,7 +84,7 @@ public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
             final TargetSelectionStrategy<T> tg,
             final GPSTrace trace) {
         super(environment, node, rt, sp, tg);
-        this.trace = Objects.requireNonNull(trace);
+        this.trace = requireNonNull(trace);
         if (rt instanceof StrategyWithGPS) {
             ((StrategyWithGPS) rt).setTrace(trace);
         }
@@ -111,8 +112,15 @@ public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
      * @return the GPSTrace
      */
     public static GPSTrace traceFor(final MapEnvironment<?> environment, final String path, final boolean cycle, final String normalizer, final Object... normalizerArgs) {
-        final TraceRef key = new TraceRef(path, cycle, normalizer, normalizerArgs);
-        final Iterator<GPSTrace> iter = Objects.requireNonNull(LOADER.get(environment).get(key));
+        final LoadingCache<TraceRef, Iterator<GPSTrace>> gpsTraceLoader = LOADER.get(requireNonNull(environment));
+        if (gpsTraceLoader == null) {
+            throw new IllegalStateException("Unable to load a GPS Trace mapping for: " + environment + " (null was returned)");
+        }
+        final TraceRef key = new TraceRef(requireNonNull(path), cycle, normalizer, requireNonNull(normalizerArgs));
+        final Iterator<GPSTrace> iter = gpsTraceLoader.get(key);
+        if (iter == null) {
+            throw new IllegalStateException("Unable to load a GPS Trace iterator for: " + key);
+        }
         synchronized (iter) {
             if (iter.hasNext()) {
                 return iter.next();

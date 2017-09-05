@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /**
+ * @param <P> type of Position followed by {@link Route} 
  */
 public interface Route<P extends Position> extends Iterable<P>, Serializable {
 

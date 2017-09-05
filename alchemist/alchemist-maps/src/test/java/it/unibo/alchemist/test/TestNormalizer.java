@@ -64,15 +64,9 @@ public class TestNormalizer {
         assertEquals(TRACE_1_POINT_1.getTime().toDouble(), traces.get(0).getStartTime().toDouble(), DELTA);
         assertEquals(TRACE_2_POINT_1.getTime().toDouble(), traces.get(1).getStartTime().toDouble(), DELTA);
         assertEquals(TRACE_3_POINT_1.getTime().toDouble(), traces.get(2).getStartTime().toDouble(), DELTA);
-        /*
-         * Test the time required to walk the trace
-         */
-        assertEquals(TRACE_1_POINT_3.getTime().toDouble() - TRACE_1_POINT_1.getTime().toDouble(),
-                traces.get(0).getTime(), DELTA);
-        assertEquals(TRACE_2_POINT_3.getTime().toDouble() - TRACE_2_POINT_1.getTime().toDouble(),
-                traces.get(1).getTime(), DELTA);
-        assertEquals(TRACE_3_POINT_3.getTime().toDouble() - TRACE_3_POINT_1.getTime().toDouble(),
-                traces.get(2).getTime(), DELTA);
+
+        testRequiredWalkTime(traces);
+
         /*
          * Test final time 
          */
@@ -96,15 +90,9 @@ public class TestNormalizer {
                 traces.get(1).getStartTime().toDouble(), DELTA);
         assertEquals(TRACE_3_POINT_1.getTime().toDouble() - TRACE_2_POINT_1.getTime().toDouble(),
                 traces.get(2).getStartTime().toDouble(), DELTA);
-        /*
-         * Test the time required to walk the trace
-         */
-        assertEquals(TRACE_1_POINT_3.getTime().toDouble() - TRACE_1_POINT_1.getTime().toDouble(),
-                traces.get(0).getTime(), DELTA);
-        assertEquals(TRACE_2_POINT_3.getTime().toDouble() - TRACE_2_POINT_1.getTime().toDouble(),
-                traces.get(1).getTime(), DELTA);
-        assertEquals(TRACE_3_POINT_3.getTime().toDouble() - TRACE_3_POINT_1.getTime().toDouble(),
-                traces.get(2).getTime(), DELTA);
+
+        testRequiredWalkTime(traces);
+
         /*
          * Test final time 
          */
@@ -128,15 +116,9 @@ public class TestNormalizer {
         assertEquals(0.0, traces.get(0).getStartTime().toDouble(), DELTA);
         assertEquals(0.0, traces.get(1).getStartTime().toDouble(), DELTA);
         assertEquals(0.0, traces.get(2).getStartTime().toDouble(), DELTA);
-        /*
-         * Test the time required to walk the trace
-         */
-        assertEquals(TRACE_1_POINT_3.getTime().toDouble() - TRACE_1_POINT_1.getTime().toDouble(),
-                traces.get(0).getTime(), DELTA);
-        assertEquals(TRACE_2_POINT_3.getTime().toDouble() - TRACE_2_POINT_1.getTime().toDouble(),
-                traces.get(1).getTime(), DELTA);
-        assertEquals(TRACE_3_POINT_3.getTime().toDouble() - TRACE_3_POINT_1.getTime().toDouble(),
-                traces.get(2).getTime(), DELTA);
+
+        testRequiredWalkTime(traces);
+
         /*
          * Test final time 
          */
@@ -186,5 +168,17 @@ public class TestNormalizer {
 
     private Time findNextTime(final GPSTrace trace, final Time time) {
         return trace.getNextPosition(time).getTime();
+    }
+
+    private void testRequiredWalkTime(final ImmutableList<GPSTrace> traces) {
+        /*
+         * Test the time required to walk the trace
+         */
+        assertEquals(TRACE_1_POINT_3.getTime().toDouble() - TRACE_1_POINT_1.getTime().toDouble(),
+                traces.get(0).getTime(), DELTA);
+        assertEquals(TRACE_2_POINT_3.getTime().toDouble() - TRACE_2_POINT_1.getTime().toDouble(),
+                traces.get(1).getTime(), DELTA);
+        assertEquals(TRACE_3_POINT_3.getTime().toDouble() - TRACE_3_POINT_1.getTime().toDouble(),
+                traces.get(2).getTime(), DELTA);
     }
 }

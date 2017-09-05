@@ -66,11 +66,10 @@ public class LoadGPSTraceGPX implements GPSFileLoader {
          * check if track exist
          */
         Objects.requireNonNull(track, "request GPS track not found");
-        final List<TrackSegment> segments = track.getSegments();
         /*
          * No segments
          */
-        if (segments.isEmpty()) {
+        if (track.getSegments().isEmpty()) {
             throw new IllegalStateException("Track " + track + " contains no segment");
         }
         /*
@@ -79,7 +78,7 @@ public class LoadGPSTraceGPX implements GPSFileLoader {
         if (track.segments()
                 .map(TrackSegment::getPoints)
                 .mapToInt(List::size)
-                .anyMatch(s -> s < 0)) {
+                .anyMatch(s -> s <= 0)) {
             throw new IllegalStateException("Track " + track + " contains at least a segment with no points");
         }
         /*

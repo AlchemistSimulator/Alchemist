@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gpx version="1.1" creator="JPX - https://jenetics.github.io/jpx" xmlns="http://www.topografix.com/GPX/1/1">
-    <trk>
-    </trk>
+    
     <trk>
         <trkseg>
             <trkpt lat="48.233093" lon="16.418">
@@ -101,6 +100,11 @@
                 <time>1970-01-16T19:25:32.47Z</time>
             </trkpt>
         </trkseg>
+		<trkseg>
+		</trkseg>
+	</trk>
+	<trk>
+		<trkseg>
+		</trkseg>
     </trk>
-
 </gpx>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="JPX - https://jenetics.github.io/jpx" xmlns="http://www.topografix.com/GPX/1/1">
+    <trk>
+    </trk>
+    <trk>
+        <trkseg>
+            <trkpt lat="48.233093" lon="16.418">
+                <time>1970-01-16T19:25:22.885Z</time>
+            </trkpt>
+            <trkpt lat="48.232548" lon="16.417158">
+                <time>1970-01-16T19:25:22.945Z</time>
+            </trkpt>
+            <trkpt lat="48.232234999999996" lon="16.417158">
+                <time>1970-01-16T19:25:23.008Z</time>
+            </trkpt>
+            <trkpt lat="48.232226999999995" lon="16.417514999999998">
+                <time>1970-01-16T19:25:23.075Z</time>
+            </trkpt>
+            <trkpt lat="48.232166" lon="16.417514999999998">
+                <time>1970-01-16T19:25:23.126Z</time>
+            </trkpt>
+            <trkpt lat="48.232124" lon="16.417053">
+                <time>1970-01-16T19:25:23.187Z</time>
+            </trkpt>
+            <trkpt lat="48.232048" lon="16.416632">
+                <time>1970-01-16T19:25:23.247Z</time>
+            </trkpt>
+            <trkpt lat="48.231967999999995" lon="16.41611">
+                <time>1970-01-16T19:25:23.306Z</time>
+            </trkpt>
+            <trkpt lat="48.231426" lon="16.415271999999998">
+                <time>1970-01-16T19:25:23.368Z</time>
+            </trkpt>
+            <trkpt lat="48.202557" lon="16.364079999999998">
+                <time>1970-01-16T19:25:27.749Z</time>
+            </trkpt>
+            <trkpt lat="48.202557" lon="16.361576">
+                <time>1970-01-16T19:25:27.927Z</time>
+            </trkpt>
+            <trkpt lat="48.202686" lon="16.361352999999998">
+                <time>1970-01-16T19:25:27.989Z</time>
+            </trkpt>
+            <trkpt lat="48.202686" lon="16.361352999999998">
+                <time>1970-01-16T19:25:28.048Z</time>
+            </trkpt>
+            <trkpt lat="48.202686" lon="16.361632999999998">
+                <time>1970-01-16T19:25:28.109Z</time>
+            </trkpt>
+            <trkpt lat="48.202799999999996" lon="16.361954">
+                <time>1970-01-16T19:25:28.169Z</time>
+            </trkpt>
+            <trkpt lat="48.204299999999996" lon="16.363304">
+                <time>1970-01-16T19:25:28.467Z</time>
+            </trkpt>
+            <trkpt lat="48.206849999999996" lon="16.364359999999998">
+                <time>1970-01-16T19:25:28.83Z</time>
+            </trkpt>
+            <trkpt lat="48.206882" lon="16.364359999999998">
+                <time>1970-01-16T19:25:28.888Z</time>
+            </trkpt>
+            <trkpt lat="48.207679999999996" lon="16.363422">
+                <time>1970-01-16T19:25:31.567Z</time>
+            </trkpt>
+            <trkpt lat="48.207755999999996" lon="16.363343999999998">
+                <time>1970-01-16T19:25:31.628Z</time>
+            </trkpt>
+            <trkpt lat="48.207679999999996" lon="16.363322999999998">
+                <time>1970-01-16T19:25:31.686Z</time>
+            </trkpt>
+            <trkpt lat="48.207539999999995" lon="16.362917">
+                <time>1970-01-16T19:25:31.747Z</time>
+            </trkpt>
+            <trkpt lat="48.207153" lon="16.362917">
+                <time>1970-01-16T19:25:31.869Z</time>
+            </trkpt>
+            <trkpt lat="48.207077" lon="16.363049">
+                <time>1970-01-16T19:25:31.93Z</time>
+            </trkpt>
+            <trkpt lat="48.206962999999995" lon="16.363194999999997">
+                <time>1970-01-16T19:25:31.986Z</time>
+            </trkpt>
+            <trkpt lat="48.206497" lon="16.363440999999998">
+                <time>1970-01-16T19:25:32.051Z</time>
+            </trkpt>
+            <trkpt lat="48.206497" lon="16.363625">
+                <time>1970-01-16T19:25:32.11Z</time>
+            </trkpt>
+            <trkpt lat="48.2067" lon="16.363751999999998">
+                <time>1970-01-16T19:25:32.227Z</time>
+            </trkpt>
+            <trkpt lat="48.206936" lon="16.363751999999998">
+                <time>1970-01-16T19:25:32.291Z</time>
+            </trkpt>
+            <trkpt lat="48.207077" lon="16.363516">
+                <time>1970-01-16T19:25:32.348Z</time>
+            </trkpt>
+            <trkpt lat="48.207363" lon="16.36331">
+                <time>1970-01-16T19:25:32.411Z</time>
+            </trkpt>
+            <trkpt lat="48.207733" lon="16.36331">
+                <time>1970-01-16T19:25:32.47Z</time>
+            </trkpt>
+        </trkseg>
+    </trk>
+
+</gpx>

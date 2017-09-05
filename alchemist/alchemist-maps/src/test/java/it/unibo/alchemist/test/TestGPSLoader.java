@@ -27,8 +27,11 @@ public class TestGPSLoader {
     private static final String BASE_NOT_OK_TEST = BASE_DIR + "no_ok/";
     private static final String DIRECTORY_WITH_FILES = BASE_OK_TEST + "sub1/";
     private static final String DIRECTORY_WITH_SUBDIRECTORIES = BASE_OK_TEST;
-    private static final String WRONG_EXTENSION = BASE_NOT_OK_TEST + "/wrong_extension/";
+    private static final String WRONG_EXTENSION = BASE_NOT_OK_TEST + "wrong_extension/";
     private static final String UNRECOGNIZED_EXTENSION = BASE_NOT_OK_TEST + "unrecognized_extension/";
+    private static final String NO_SEGMENTS = BASE_NOT_OK_TEST + "no_segments/";
+    private static final String EMPTY_SEGMENT = BASE_NOT_OK_TEST + "empty_segments/";
+    private static final String POINT_WITHOUT_TIME = BASE_NOT_OK_TEST + "point_without_time/";
     private static final String CLASS_TIME_NORMALIZER_ALL = "NormalizeTimeWithFirstOfAll";
     private static final String CLASS_TIME_NORMALIZER_SINGLE = "NormalizeTimeSingleTrace";
     private static final String CLASS_TIME_NORMALIZER_WITH_TIME = "NormalizeWithTime";
@@ -112,6 +115,45 @@ public class TestGPSLoader {
     @Test
     public void testError() {
 
+        /*
+         * Test track without segment.
+         */
+        try {
+            this.loaderGpx = new TraceLoader(NO_SEGMENTS, CLASS_TIME_NORMALIZER_ALL);
+            fail("not exception for no segments");
+        } catch (IllegalStateException e) {
+            assertFalse(e.getMessage().isEmpty());
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        /*
+         * Test track with empty segment.
+         */
+        try {
+            this.loaderGpx = new TraceLoader(EMPTY_SEGMENT, CLASS_TIME_NORMALIZER_ALL);
+            fail("not exception for empty segment");
+        } catch (IllegalStateException e) {
+            assertFalse(e.getMessage().isEmpty());
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        /*
+         * Test track with any point without time.
+         */
+        try {
+            this.loaderGpx = new TraceLoader(POINT_WITHOUT_TIME, CLASS_TIME_NORMALIZER_ALL);
+            fail("not exception for point without time");
+        } catch (IllegalStateException e) {
+            assertFalse(e.getMessage().isEmpty());
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        /*
+         * Test file with wrong extension
+         */
         try {
             this.loaderGpx = new TraceLoader(WRONG_EXTENSION, CLASS_TIME_NORMALIZER_ALL);
             fail("not exception for wrong extension");
@@ -121,6 +163,9 @@ public class TestGPSLoader {
             fail(e.getMessage());
         } 
 
+        /*
+         * Test file with unrecognized extension
+         */
         try {
             this.loaderGpx = new TraceLoader(UNRECOGNIZED_EXTENSION, NORMALIZER);
             fail("not exception for unrecognized extension");

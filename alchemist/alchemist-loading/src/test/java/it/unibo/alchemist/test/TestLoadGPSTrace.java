@@ -54,8 +54,10 @@ public class TestLoadGPSTrace {
         START_ARRIVE_POSITION.put(START_4, ARRIVE_4);
         START_ARRIVE_POSITION.put(START_5, ARRIVE_5);
     }
-
-    private static final double DELTA = 0.1;
+    /*
+     * max distance allowed between real and ideal arrive (1cm)
+     */
+    private static final double DELTA = 1e-2;
 
     /**
      * Test the ability to inject variables.

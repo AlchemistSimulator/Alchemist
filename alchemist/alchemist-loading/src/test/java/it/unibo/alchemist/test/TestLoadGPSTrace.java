@@ -58,7 +58,7 @@ public class TestLoadGPSTrace {
      * max distance allowed between real and ideal arrive (1cm)
      */
     private static final double DELTA = 1e-2;
-
+    private static final int TIME_TO_REACH = 30550;
     /**
      * Test the ability to inject variables.
      */
@@ -74,7 +74,7 @@ public class TestLoadGPSTrace {
         final InputStream res = TestLoadGPSTrace.class.getResourceAsStream(resource);
         assertNotNull("Missing test resource " + resource, res);
         final Environment<T> env = new YamlLoader(res).getWith(vars);
-        final Simulation<T> sim = new Engine<>(env, new DoubleTime(30550));
+        final Simulation<T> sim = new Engine<>(env, new DoubleTime(TIME_TO_REACH));
         sim.addOutputMonitor(new OutputMonitor<T>() {
 
             @Override

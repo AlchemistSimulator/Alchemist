@@ -14,6 +14,7 @@ import org.danilopianini.util.Hashes;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.GPSPoint;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Time;
 
@@ -22,7 +23,7 @@ import it.unibo.alchemist.model.interfaces.Time;
 public class GPSPointImpl implements GPSPoint {
 
     private static final long serialVersionUID = -6060550940453129358L;
-    private final LatLongPosition repr;
+    private final GeoPosition repr;
     private final Time t;
 
     /**
@@ -43,7 +44,7 @@ public class GPSPointImpl implements GPSPoint {
      * @param time
      *            time
      */
-    public GPSPointImpl(final LatLongPosition latlong, final Time time) {
+    public GPSPointImpl(final GeoPosition latlong, final Time time) {
         this.repr = latlong;
         this.t = time;
     }

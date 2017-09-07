@@ -8,8 +8,9 @@
  */
 package it.unibo.alchemist.boundary.wormhole.implementation;
 
-import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
+import it.unibo.alchemist.boundary.wormhole.implementation.adapter.ComponentViewType;
 import it.unibo.alchemist.model.interfaces.Environment;
+import org.jooq.lambda.tuple.Tuple2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,11 +20,11 @@ import java.awt.geom.Dimension2D;
 import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
 
 /**
- * Partial implementation for the interface {@link IWormhole2D}.<br>
+ * Partial implementation for the interface {@link it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D}.<br>
  * I am considering the particular case of the view as an entity into the
  * screen-space: the y-axis grows on the bottom side of the screen.
  */
-public class Wormhole2D extends AbstractWormhole<Component> {
+public class Wormhole2D extends AbstractWormhole {
     /**
      * Default logger.
      */
@@ -39,7 +40,7 @@ public class Wormhole2D extends AbstractWormhole<Component> {
     public Wormhole2D(final Environment<?> env, final Component comp) {
         super(
                 env,
-                comp,
+                new ComponentViewType(comp),
                 from(comp.getWidth() / 2, comp.getHeight() / 2)
         );
     }
@@ -50,8 +51,8 @@ public class Wormhole2D extends AbstractWormhole<Component> {
      * @see Component#getSize()
      */
     @Override
-    public Dimension2D getViewSize() {
-        return getView().getSize();
+    public Tuple2<Double, Double> getViewSize() {
+        return new Tuple2<>(getView().getWidth(), getView().getHeight());
     }
 
     @Override
@@ -65,7 +66,7 @@ public class Wormhole2D extends AbstractWormhole<Component> {
 
     @Override
     protected Logger getLogger() {
-        return Wormhole2D.L;
+        return it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D.L;
     }
 
     /**
@@ -75,7 +76,7 @@ public class Wormhole2D extends AbstractWormhole<Component> {
      */
     @Override
     protected double getViewRatio() {
-        final Dimension2D size = getViewSize();
-        return Math.max(1, size.getWidth()) / Math.max(1, size.getHeight());
+        final Tuple2<Double, Double> size = getViewSize();
+        return Math.max(1, size.v1()) / Math.max(1, size.v2());
     }
 }

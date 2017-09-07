@@ -16,3 +16,13 @@ dependencies {
         project(':alchemist-incarnation-sapere')
     )
 }
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.xtext:xtext-gradle-plugin:1.0.2'
+    }
+}
+apply plugin: 'org.xtext.xtend'

@@ -3,7 +3,7 @@ package it.unibo.alchemist.boundary.gui.effects;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
-import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import javafx.beans.property.DoubleProperty;
@@ -105,7 +105,7 @@ public class DrawDot implements EffectFX {
      * a {@link Color#BLACK black} dot.
      */
     @Override
-    public <T> void apply(final GraphicsContext graphic, final Environment<T> environment, final IWormhole2D wormhole) {
+    public <T> void apply(final GraphicsContext graphic, final Environment<T> environment, final Wormhole2D wormhole) {
         environment.forEach(node -> {
             final double ks = DEFAULT_SCALE;
             final double sizeX = size.get();
@@ -121,7 +121,7 @@ public class DrawDot implements EffectFX {
     /**
      * The size of the dots representing each {@link Node} in the
      * {@link Environment} specified when calling
-     * {@link #apply(GraphicsContext, Environment, IWormhole2D) apply} in percentage.
+     * {@link #apply(GraphicsContext, Environment, Wormhole2D) apply} in percentage.
      *
      * @return the size property
      */

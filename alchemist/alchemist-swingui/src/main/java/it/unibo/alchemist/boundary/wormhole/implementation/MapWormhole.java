@@ -106,7 +106,7 @@ public final class MapWormhole extends Wormhole2D {
 
     @Override
     public Point getViewPosition() {
-        return from(getViewSize().getWidth() / 2, getViewSize().getHeight() / 2).toPoint();
+        return from(getViewSize().v1() / 2, getViewSize().v2() / 2).toPoint();
     }
 
     @Override

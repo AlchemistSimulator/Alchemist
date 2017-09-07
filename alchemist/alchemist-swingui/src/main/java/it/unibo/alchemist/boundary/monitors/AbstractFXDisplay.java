@@ -4,7 +4,7 @@ import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
 import it.unibo.alchemist.boundary.wormhole.implementation.*;
-import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
 import it.unibo.alchemist.boundary.wormhole.interfaces.PointerSpeed;
 import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Semaphore;
 
-import static it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D.Mode;
+import static it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D.Mode;
 
 /**
  * Base-class for each display able to graphically represent a 2D space
@@ -74,7 +74,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     private final ConcurrentMap<Node<T>, Position> positions;
     private final ConcurrentMap<Node<T>, Neighborhood<T>> neighbors;
     private int step;
-    private IWormhole2D wormhole;
+    private Wormhole2D wormhole;
     private double mouseX;
     private double mouseY;
     private Node<T> nearest;
@@ -708,7 +708,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      */
     protected abstract Logger getLogger();
 
-    protected IWormhole2D getWormhole() {
+    protected Wormhole2D getWormhole() {
         return this.wormhole;
     }
 

@@ -1,29 +1,28 @@
 package it.unibo.alchemist.boundary.wormhole.implementation;
 
-import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
+import it.unibo.alchemist.boundary.wormhole.interfaces.ViewType;
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
+import org.jooq.lambda.tuple.Tuple2;
 import org.slf4j.Logger;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Dimension2D;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 
 import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
 
 /**
- * Partial, abstract, implementation for the interface {@link IWormhole2D}.
+ * Partial, abstract, implementation for the interface {@link Wormhole2D}.
  * <br/>
  * This implementation considers the particular case of the view as an entity into the
  * sceern-space: the y-axis grows on the bottom side of the screen.
- *
- * @param <T> the view component type
  */
-public abstract class AbstractWormhole<T> implements IWormhole2D {
+public abstract class AbstractWormhole implements Wormhole2D {
     private final Environment<?> environment;
-    private final T view;
+    private final ViewType view;
     private PointAdapter position;
     private double zoom = 1d;
     private double hRate = 1d;
@@ -42,7 +41,7 @@ public abstract class AbstractWormhole<T> implements IWormhole2D {
      * @param view        the controlled view
      * @param position    the position
      */
-    public AbstractWormhole(final Environment<?> environment, final T view, final PointAdapter position) {
+    public AbstractWormhole(final Environment<?> environment, final ViewType view, final PointAdapter position) {
         this.environment = environment;
         this.view = view;
         this.position = position;
@@ -101,7 +100,7 @@ public abstract class AbstractWormhole<T> implements IWormhole2D {
     }
 
     @Override
-    public abstract Dimension2D getViewSize();
+    public abstract Tuple2<Double, Double> getViewSize();
 
     @Override
     public double getZoom() {
@@ -120,8 +119,8 @@ public abstract class AbstractWormhole<T> implements IWormhole2D {
     public boolean isInsideView(final Point viewPoint) {
         final double x = viewPoint.getX();
         final double y = viewPoint.getY();
-        final Dimension2D vs = getViewSize();
-        return x >= 0 && x <= vs.getWidth() && y >= 0 && y <= vs.getHeight();
+        final Tuple2<Double, Double> vs = getViewSize();
+        return x >= 0 && x <= vs.v1() && y >= 0 && y <= vs.v2();
     }
 
     @Override
@@ -192,7 +191,7 @@ public abstract class AbstractWormhole<T> implements IWormhole2D {
      *
      * @return the controlled View
      */
-    protected final T getView() {
+    protected final ViewType getView() {
         return this.view;
     }
 
@@ -321,7 +320,7 @@ public abstract class AbstractWormhole<T> implements IWormhole2D {
         if (mode == Mode.ISOMETRIC) {
             return 1d;
         } else if (mode == Mode.ADAPT_TO_VIEW) {
-            return getViewSize().getWidth() / environment.getSize()[0];
+            return getViewSize().v1() / environment.getSize()[0];
         } else {
             return hRate;
         }
@@ -339,7 +338,7 @@ public abstract class AbstractWormhole<T> implements IWormhole2D {
         if (mode == Mode.ISOMETRIC) {
             return 1d;
         } else if (mode == Mode.ADAPT_TO_VIEW) {
-            return getViewSize().getHeight() / environment.getSize()[1];
+            return getViewSize().v2() / environment.getSize()[1];
         } else {
             return vRate;
         }

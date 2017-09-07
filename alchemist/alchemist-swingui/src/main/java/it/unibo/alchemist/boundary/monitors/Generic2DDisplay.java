@@ -12,8 +12,8 @@ import it.unibo.alchemist.boundary.gui.effects.Effect;
 import it.unibo.alchemist.boundary.interfaces.Graphical2DOutputMonitor;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.wormhole.implementation.*;
-import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
-import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D.Mode;
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D.Mode;
 import it.unibo.alchemist.boundary.wormhole.interfaces.PointerSpeed;
 import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -95,7 +95,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
 
     private long timeInit = System.currentTimeMillis();
 
-    private transient IWormhole2D wormhole;
+    private transient it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D wormhole;
 
     private transient ZoomManager zoomManager;
 
@@ -388,9 +388,9 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
     /**
      * Lets child-classes access the wormhole.
      * 
-     * @return an {@link IWormhole2D}
+     * @return an {@link it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D}
      */
-    protected final IWormhole2D getWormhole() {
+    protected final it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D getWormhole() {
         return wormhole;
     }
 
@@ -407,7 +407,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
      * Initializes all the internal data.
      */
     private void initAll(final Environment<T> env) {
-        wormhole = new Wormhole2D(env, this);
+        wormhole = new it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D(env, this);
         wormhole.center();
         wormhole.optimalZoom();
         angleManager = new AngleManagerImpl(AngleManagerImpl.DEF_DEG_PER_PIXEL);
@@ -532,9 +532,9 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
      * Lets child-classes change the wormhole.
      * 
      * @param w
-     *            an {@link IWormhole2D}
+     *            an {@link Wormhole2D}
      */
-    protected void setWormhole(final IWormhole2D w) {
+    protected void setWormhole(final it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D w) {
         Objects.requireNonNull(w);
         wormhole = w;
     }

@@ -16,3 +16,12 @@ configurations {
         exclude group: 'org.protelis', module: 'protelis-test'
     } 
 }
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.xtext:xtext-gradle-plugin:1.0.2'
+    }
+}
+apply plugin: 'org.xtext.xtend'

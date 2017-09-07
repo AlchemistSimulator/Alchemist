@@ -9,15 +9,15 @@
 package it.unibo.alchemist.boundary.wormhole.interfaces;
 
 import java.awt.Point;
-import java.awt.geom.Dimension2D;
 
 import it.unibo.alchemist.model.interfaces.Position;
+import org.jooq.lambda.tuple.Tuple2;
 
 /**
  * A Wormhole (in this context) is an entity that "connects" two worlds: the
  * "environment" and the "view". Above all it provides services to convert
  * coordinates from the "environment-space" to the "view-space".
- * <code>IWormhole2D</code> is the type of a wormhole whose both environment and
+ * <code>Wormhole2D</code> is the type of a wormhole whose both environment and
  * view are bi-dimensional spaces. <br>
  * <br>
  * <strong>Terminology:</strong> <br>
@@ -40,7 +40,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  * corner of the view.<br>
  * 
  */
-public interface IWormhole2D {
+public interface Wormhole2D {
 
     /**
      * Wormhole mode.
@@ -78,7 +78,7 @@ public interface IWormhole2D {
     /**
      * Gets the rendering mode.
      * 
-     * @return a {@link IWormhole2D.Mode} value
+     * @return a {@link Wormhole2D.Mode} value
      */
     Mode getMode();
 
@@ -101,11 +101,11 @@ public interface IWormhole2D {
 
     /**
      * Gets the view's size.
-     * 
-     * @return a {@link Dimension2D} object containing the view's width and
+     *
+     * @return a tuple containing the view's width and
      *         height
      */
-    Dimension2D getViewSize();
+    Tuple2<Double, Double> getViewSize();
 
     /**
      * Gets the zoom factor.

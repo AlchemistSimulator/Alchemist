@@ -18,8 +18,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -162,17 +160,8 @@ public class TopLayoutController {
         dirChooser.setTitle(RESOURCES.getString("select_folder_proj"));
         final File dir = dirChooser.showDialog(this.main.getStage());
         if (dir != null) {
-            final boolean containsFile = dir.listFiles(file -> file.getName().endsWith(".alchemist_project_descriptor.json")).length > 0;
-            if (containsFile) {
-                final Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle(RESOURCES.getString("proj_folder_wrong"));
-                alert.setHeaderText(RESOURCES.getString("proj_folder_wrong_header"));
-                alert.setContentText(RESOURCES.getString("proj_folder_wrong_content"));
-                alert.showAndWait();
-            } else {
-                Files.write(dir.getPath(), settingsFile, StandardCharsets.UTF_8);
-                setView(dir);
-            }
+            Files.write(dir.getPath(), settingsFile, StandardCharsets.UTF_8);
+            setView(dir);
         }
     }
 

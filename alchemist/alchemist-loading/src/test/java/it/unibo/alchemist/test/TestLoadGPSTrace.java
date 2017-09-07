@@ -97,7 +97,6 @@ public class TestLoadGPSTrace {
 
             @Override
             public void stepDone(final Environment<T> env, final Reaction<T> r, final Time time, final long step) {
-
             }
         });
         sim.play();

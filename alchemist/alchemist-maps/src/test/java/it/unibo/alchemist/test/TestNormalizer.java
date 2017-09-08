@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 import com.google.common.collect.ImmutableList;
 
 import it.unibo.alchemist.boundary.gpsload.api.NoAlignment;
-import it.unibo.alchemist.boundary.gpsload.api.NormalizeTimeWithFirstOfAll;
+import it.unibo.alchemist.boundary.gpsload.api.AlignToFirstTrace;
 import it.unibo.alchemist.boundary.gpsload.api.AlignToSimulationTime;
 import it.unibo.alchemist.boundary.gpsload.api.NormalizeWithTime;
 import it.unibo.alchemist.model.implementations.positions.GPSPointImpl;
@@ -80,7 +80,7 @@ public class TestNormalizer {
      */
     @Test
     public void testNormalizeTimeWithFirstOfAll() {
-        final ImmutableList<GPSTrace> traces = new NormalizeTimeWithFirstOfAll().alignTime(TRACES);
+        final ImmutableList<GPSTrace> traces = new AlignToFirstTrace().alignTime(TRACES);
         /*
          * Test start time
          */

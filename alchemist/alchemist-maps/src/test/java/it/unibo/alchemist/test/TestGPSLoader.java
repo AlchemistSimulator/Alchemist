@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import it.unibo.alchemist.boundary.gpsload.api.GPSTimeAlignment;
-import it.unibo.alchemist.boundary.gpsload.api.NormalizeTimeWithFirstOfAll;
+import it.unibo.alchemist.boundary.gpsload.api.AlignToFirstTrace;
 import it.unibo.alchemist.boundary.gpsload.impl.TraceLoader;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
 
@@ -37,7 +37,7 @@ public class TestGPSLoader {
     private static final String CLASS_TIME_NORMALIZER_WITH_TIME = "NormalizeWithTime";
     private static final String CLASS_TIME_NORMALIZER_NO = "NoNormalize";
     private static final Set<String> CLASS_NORMALIZER_NO_ARG = new HashSet<>();
-    private static final GPSTimeAlignment NORMALIZER = new NormalizeTimeWithFirstOfAll();
+    private static final GPSTimeAlignment NORMALIZER = new AlignToFirstTrace();
 
     private TraceLoader loaderGpx;
     private static final int NUM_MAX_TRACES = 6;

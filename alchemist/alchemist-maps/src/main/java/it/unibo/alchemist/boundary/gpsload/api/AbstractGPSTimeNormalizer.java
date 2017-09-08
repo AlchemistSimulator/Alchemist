@@ -10,10 +10,10 @@ import it.unibo.alchemist.model.interfaces.Time;
 /**
  * 
  */
-public abstract class AbstractGPSTimeNormalizer implements GPSTimeNormalizer {
+public abstract class AbstractGPSTimeNormalizer implements GPSTimeAlignment {
 
     @Override
-    public ImmutableList<GPSTrace> normalizeTime(final List<GPSTrace> traces) {
+    public ImmutableList<GPSTrace> alignTime(final List<GPSTrace> traces) {
         return traces.stream()
                 .map(trace -> trace.startAt(computeStartTime(traces, trace)))
                 .collect(ImmutableList.toImmutableList());

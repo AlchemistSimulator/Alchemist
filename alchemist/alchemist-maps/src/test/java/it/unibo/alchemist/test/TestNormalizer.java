@@ -57,7 +57,7 @@ public class TestNormalizer {
      */
     @Test
     public void testNoNormalize() {
-        final ImmutableList<GPSTrace> traces = new NoNormalize().normalizeTime(TRACES);
+        final ImmutableList<GPSTrace> traces = new NoNormalize().alignTime(TRACES);
         /*
          * Test start time
          */
@@ -80,7 +80,7 @@ public class TestNormalizer {
      */
     @Test
     public void testNormalizeTimeWithFirstOfAll() {
-        final ImmutableList<GPSTrace> traces = new NormalizeTimeWithFirstOfAll().normalizeTime(TRACES);
+        final ImmutableList<GPSTrace> traces = new NormalizeTimeWithFirstOfAll().alignTime(TRACES);
         /*
          * Test start time
          */
@@ -109,7 +109,7 @@ public class TestNormalizer {
      */
     @Test
     public void testNormalizeTimeSingleTrace() {
-        final ImmutableList<GPSTrace> traces = new NormalizeTimeSingleTrace().normalizeTime(TRACES);
+        final ImmutableList<GPSTrace> traces = new NormalizeTimeSingleTrace().alignTime(TRACES);
         /*
          * Test start time
          */
@@ -136,7 +136,7 @@ public class TestNormalizer {
     @Test
     public void testNormalizeWithTime() {
         final Time time = new DoubleTime(2.0);
-        final ImmutableList<GPSTrace> traces = new NormalizeWithTime(time).normalizeTime(TRACES);
+        final ImmutableList<GPSTrace> traces = new NormalizeWithTime(time).alignTime(TRACES);
         /*
          * Test start time
          */

@@ -23,7 +23,7 @@ import org.reflections.Reflections;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import it.unibo.alchemist.boundary.gpsload.api.GPSFileLoader;
-import it.unibo.alchemist.boundary.gpsload.api.GPSTimeNormalizer;
+import it.unibo.alchemist.boundary.gpsload.api.GPSTimeAlignment;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
 
 /**
@@ -66,7 +66,7 @@ public class TraceLoader implements Iterable<GPSTrace> {
      *            normalizer to use for normalize time
      * @throws IOException 
      */
-    public TraceLoader(final String path, final GPSTimeNormalizer normalizer) throws IOException  {
+    public TraceLoader(final String path, final GPSTimeAlignment normalizer) throws IOException  {
         this(path, false, normalizer);
     }
 
@@ -80,20 +80,20 @@ public class TraceLoader implements Iterable<GPSTrace> {
      *            normalizer to use for normalize time
      * @throws IOException 
      */
-    public TraceLoader(final String path, final boolean cycle, final GPSTimeNormalizer normalizer) throws IOException {
+    public TraceLoader(final String path, final boolean cycle, final GPSTimeAlignment normalizer) throws IOException {
         this.cyclic = cycle;
-        traces = normalizer.normalizeTime(loadTraces(path));
+        traces = normalizer.alignTime(loadTraces(path));
     }
 
-    private static GPSTimeNormalizer makeNormalizer(final String clazzName, final Object... args) {
-        final String fullName = clazzName.contains(".") ? clazzName : GPSTimeNormalizer.class.getPackage().getName() + "." + clazzName;
+    private static GPSTimeAlignment makeNormalizer(final String clazzName, final Object... args) {
+        final String fullName = clazzName.contains(".") ? clazzName : GPSTimeAlignment.class.getPackage().getName() + "." + clazzName;
         try {
             return Arrays.stream(Class.forName(fullName).getConstructors())
                 .map(c -> {
                     try {
-                        return Optional.of((GPSTimeNormalizer) c.newInstance(args));
+                        return Optional.of((GPSTimeAlignment) c.newInstance(args));
                     } catch (Exception e) {
-                        return Optional.<GPSTimeNormalizer>empty();
+                        return Optional.<GPSTimeAlignment>empty();
                     }
                 })
                 .filter(Optional::isPresent)

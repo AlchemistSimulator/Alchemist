@@ -45,9 +45,4 @@ public interface Route<P extends Position> extends Iterable<P>, Serializable {
      */
     int size();
 
-    /**
-     * @return the time required to walk the route
-     */
-    double getTime();
-
 }

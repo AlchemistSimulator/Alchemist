@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -39,7 +40,7 @@ import javafx.stage.Stage;
 public class NewProjLayoutSelectController {
 
     private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
-    private static final boolean ON_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
+    private static final boolean ON_WINDOWS = System.getProperty("os.name").toLowerCase(Locale.US).contains("windows");
 
     @FXML
     private Button backBtn;

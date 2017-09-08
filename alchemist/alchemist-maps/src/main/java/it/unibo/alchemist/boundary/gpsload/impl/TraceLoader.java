@@ -128,8 +128,7 @@ public class TraceLoader implements Iterable<GPSTrace> {
         /*
          * check if path is a directory or a file
          */
-        final boolean isDirectory = runOnPathsStream(path, s -> s
-                .allMatch(line -> TraceLoader.class.getResource(line) != null));
+        final boolean isDirectory = runOnPathsStream(path, s -> s.allMatch(line -> TraceLoader.class.getResource(line) != null));
 
         if (isDirectory) {
             /*
@@ -146,8 +145,7 @@ public class TraceLoader implements Iterable<GPSTrace> {
             final String[] pathSplit = path.split("\\.");
             final String extensionFile = pathSplit[pathSplit.length - 1].toLowerCase(Locale.US);
             if (!LOADER.containsKey(extensionFile)) {
-                throw new IllegalArgumentException("no loader defined for file with extension: " 
-                                                    + extensionFile + " (file: " + path + ")");
+                throw new IllegalArgumentException("no loader defined for file with extension: " + extensionFile + " (file: " + path + ")");
             }
             final GPSFileLoader fileLoader = LOADER.get(extensionFile);
             try {

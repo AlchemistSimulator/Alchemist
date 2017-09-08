@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableList;
 
 import it.unibo.alchemist.boundary.gpsload.api.NoNormalize;
 import it.unibo.alchemist.boundary.gpsload.api.NormalizeTimeWithFirstOfAll;
-import it.unibo.alchemist.boundary.gpsload.api.NormalizeTimeSingleTrace;
+import it.unibo.alchemist.boundary.gpsload.api.AlignToSimulationTime;
 import it.unibo.alchemist.boundary.gpsload.api.NormalizeWithTime;
 import it.unibo.alchemist.model.implementations.positions.GPSPointImpl;
 import it.unibo.alchemist.model.implementations.routes.GPSTraceImpl;
@@ -109,7 +109,7 @@ public class TestNormalizer {
      */
     @Test
     public void testNormalizeTimeSingleTrace() {
-        final ImmutableList<GPSTrace> traces = new NormalizeTimeSingleTrace().alignTime(TRACES);
+        final ImmutableList<GPSTrace> traces = new AlignToSimulationTime().alignTime(TRACES);
         /*
          * Test start time
          */

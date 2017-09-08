@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.openstreetmap.osmosis.osmbinary.file.FileFormatException;
@@ -23,6 +22,8 @@ import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.GPSPoint;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Class that reads GPS tracks from gpx files. 
  */
@@ -33,7 +34,10 @@ public class GPXLoader implements GPSFileLoader {
     @Override
     public List<GPSTrace> readTrace(final URL url) throws IOException {
         final InputStream stream = url.openStream();
-        final List<GPSTrace> ret = getGPX(stream).tracks().map(this::getTrace).collect(Collectors.toList()); 
+        final List<GPSTrace> ret = getGPX(requireNonNull(stream, "Input stream can't be null"))
+                                        .tracks()
+                                        .map(track -> getTrace(requireNonNull(track, "request GPS track not found")))
+                                        .collect(Collectors.toList()); 
         stream.close();
         return ret;
     }
@@ -44,7 +48,6 @@ public class GPXLoader implements GPSFileLoader {
     }
 
     private GPX getGPX(final InputStream stream) throws FileFormatException {
-        Objects.requireNonNull(stream, "Input stream can't be null");
         try {
             return GPX.read(stream);
         } catch (IOException e) {
@@ -53,10 +56,6 @@ public class GPXLoader implements GPSFileLoader {
     }
 
     private GPSTrace getTrace(final Track track) {
-        /*
-         * check if track exist
-         */
-        Objects.requireNonNull(track, "request GPS track not found");
         /*
          * No segments
          */

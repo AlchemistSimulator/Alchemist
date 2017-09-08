@@ -9,7 +9,7 @@ import it.unibo.alchemist.model.interfaces.Time;
 /**
  * 
  */
-public class NormalizeWithTime extends AbstractGPSTimeNormalizer {
+public class NormalizeWithTime extends AbstractGPSTimeAlignment {
 
     private final Time time;
 

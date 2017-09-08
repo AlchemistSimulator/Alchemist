@@ -9,7 +9,7 @@ import it.unibo.alchemist.model.interfaces.Time;
 /**
  * no normalize time, return the identical list of {@link GPSTrace} but immutable.
  */
-public class NoNormalize extends AbstractGPSTimeNormalizer {
+public class NoNormalize extends AbstractGPSTimeAlignment {
 
     @Override
     protected Time computeStartTime(final List<GPSTrace> allTraces, final GPSTrace currentTrace) {

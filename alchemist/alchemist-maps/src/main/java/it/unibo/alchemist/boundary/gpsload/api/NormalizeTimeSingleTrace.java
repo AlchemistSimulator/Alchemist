@@ -8,7 +8,7 @@ import it.unibo.alchemist.model.interfaces.Time;
 /**
  * 
  */
-public class NormalizeTimeSingleTrace extends AbstractGPSTimeNormalizer {
+public class NormalizeTimeSingleTrace extends AbstractGPSTimeAlignment {
 
     @Override
     protected Time computeStartTime(final List<GPSTrace> allTraces, final GPSTrace currentTrace) {

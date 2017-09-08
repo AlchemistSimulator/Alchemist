@@ -10,7 +10,7 @@ import it.unibo.alchemist.model.interfaces.Time;
 /**
  * 
  */
-public abstract class AbstractGPSTimeNormalizer implements GPSTimeAlignment {
+public abstract class AbstractGPSTimeAlignment implements GPSTimeAlignment {
 
     @Override
     public ImmutableList<GPSTrace> alignTime(final List<GPSTrace> traces) {

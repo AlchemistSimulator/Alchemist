@@ -32,7 +32,6 @@ public class GPXLoader implements GPSFileLoader {
 
     @Override
     public List<GPSTrace> readTrace(final URL url) throws IOException {
-
         final InputStream stream = url.openStream();
         final List<GPSTrace> ret = getGPX(stream).tracks().map(this::getTrace).collect(Collectors.toList()); 
         stream.close();
@@ -49,7 +48,7 @@ public class GPXLoader implements GPSFileLoader {
         try {
             return GPX.read(stream);
         } catch (IOException e) {
-            throw new FileFormatException("the gpx file can't be read...sure is a gpx file valid?");
+            throw new FileFormatException("Cannot read the GPX file. Please make sure it is a valid GPX file.");
         }
     }
 

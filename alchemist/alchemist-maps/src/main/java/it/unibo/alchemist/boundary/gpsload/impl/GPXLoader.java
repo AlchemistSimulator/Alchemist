@@ -31,7 +31,7 @@ public class GPXLoader implements GPSFileLoader {
     private static final ImmutableSet<String> EXTENSION = ImmutableSet.of("gpx");
 
     @Override
-    public List<GPSTrace> readTrace(final URL url) throws FileFormatException, IOException {
+    public List<GPSTrace> readTrace(final URL url) throws IOException {
 
         final InputStream stream = url.openStream();
         final List<GPSTrace> ret = getGPX(stream).tracks().map(this::getTrace).collect(Collectors.toList()); 

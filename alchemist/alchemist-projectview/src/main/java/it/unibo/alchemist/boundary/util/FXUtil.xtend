@@ -33,7 +33,7 @@ final class FXUtil {
 		val textArea = new TextArea(exceptionText)
 		val expContent = new GridPane()
 		Platform::runLater[
-            val alert = new Alert(AlertType.ERROR)
+			val alert = new Alert(AlertType.ERROR)
 			alert.setTitle(RESOURCES.getString("error_occurred"))
 			alert.setHeaderText(RESOURCES.getString("error_follows"))
 			alert.setContentText(messages)

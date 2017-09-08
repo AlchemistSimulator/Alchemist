@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * This interface implements an Adapter pattern between a generic view element and the needs of a {@link Wormhole2D}.
  */
-public interface ViewType extends Serializable {
+public interface ViewType {
 
     /**
      * Getter method for the width of the adapted view.

@@ -31,8 +31,8 @@ import it.unibo.alchemist.model.interfaces.GPSTrace;
  */
 public class TraceLoader implements Iterable<GPSTrace> {
 
-    private static final int MAX_WORD_READ = (Byte.MAX_VALUE * 2 - 1);
-    private static final int MAX_BYTE_READ = MAX_WORD_READ * 4;
+    private static final int MAX_FILE_NAME_LENGTH = (Byte.MAX_VALUE * 2 - 1);
+    private static final int MAX_BYTES_PER_CHAR = MAX_FILE_NAME_LENGTH * 4;
     private final ImmutableList<GPSTrace> traces;
     private final boolean cyclic;
     private static final Map<String, GPSFileLoader> LOADER = new Reflections()
@@ -163,7 +163,7 @@ public class TraceLoader implements Iterable<GPSTrace> {
 
     private static <R> R runOnPathsStream(final String path, final Function<Stream<String>, R> op) {
         final InputStream resourceStream = TraceLoader.class.getResourceAsStream(path);
-        final InputStream limitedResourceView = new BoundedInputStream(resourceStream,  MAX_BYTE_READ);
+        final InputStream limitedResourceView = new BoundedInputStream(resourceStream,  MAX_BYTES_PER_CHAR);
         try (BufferedReader in = new BufferedReader(new InputStreamReader(limitedResourceView))) {
             return op.apply(in.lines().map(line -> path + "/" + line));
         } catch (IOException e) {

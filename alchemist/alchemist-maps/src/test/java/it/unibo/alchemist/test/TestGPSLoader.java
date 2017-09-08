@@ -32,12 +32,12 @@ public class TestGPSLoader {
     private static final String NO_SEGMENTS = BASE_NOT_OK_TEST + "no_segments/";
     private static final String EMPTY_SEGMENT = BASE_NOT_OK_TEST + "empty_segments/";
     private static final String POINT_WITHOUT_TIME = BASE_NOT_OK_TEST + "point_without_time/";
-    private static final String CLASS_TIME_NORMALIZER_ALL = "NormalizeTimeWithFirstOfAll";
-    private static final String CLASS_TIME_NORMALIZER_SINGLE = "NormalizeTimeSingleTrace";
-    private static final String CLASS_TIME_NORMALIZER_WITH_TIME = "NormalizeWithTime";
-    private static final String CLASS_TIME_NORMALIZER_NO = "NoNormalize";
-    private static final Set<String> CLASS_NORMALIZER_NO_ARG = new HashSet<>();
-    private static final GPSTimeAlignment NORMALIZER = new AlignToFirstTrace();
+    private static final String CLASS_TIME_ALIGNMENT_TO_FIRST_TRACE = "AlignToFirstTrace";
+    private static final String CLASS_TIME_ALIGNMENT_TO_SIMULATION_TIME = "AlignToSimulationTime";
+    private static final String CLASS_TIME_ALIGNMENT_TO_TIME = "AlignToTime";
+    private static final String CLASS_TIME_NO_ALIGNMENT = "NoAlignment";
+    private static final Set<String> CLASS_ALIGNMENT_NO_ARG = new HashSet<>();
+    private static final GPSTimeAlignment ALIGNMENT = new AlignToFirstTrace();
 
     private TraceLoader loaderGpx;
     private static final int NUM_MAX_TRACES = 6;
@@ -48,9 +48,9 @@ public class TestGPSLoader {
      */
     @Before
     public void setUp() {
-        CLASS_NORMALIZER_NO_ARG.add(CLASS_TIME_NORMALIZER_ALL);
-        CLASS_NORMALIZER_NO_ARG.add(CLASS_TIME_NORMALIZER_SINGLE);
-        CLASS_NORMALIZER_NO_ARG.add(CLASS_TIME_NORMALIZER_NO);
+        CLASS_ALIGNMENT_NO_ARG.add(CLASS_TIME_ALIGNMENT_TO_FIRST_TRACE);
+        CLASS_ALIGNMENT_NO_ARG.add(CLASS_TIME_ALIGNMENT_TO_SIMULATION_TIME);
+        CLASS_ALIGNMENT_NO_ARG.add(CLASS_TIME_NO_ALIGNMENT);
     }
     /**
      * 
@@ -58,7 +58,7 @@ public class TestGPSLoader {
     @Test
     public void testOk() {
 
-        for (final String normalizer : CLASS_NORMALIZER_NO_ARG) {
+        for (final String normalizer : CLASS_ALIGNMENT_NO_ARG) {
             try {
                 this.loaderGpx = new TraceLoader(DIRECTORY_WITH_FILES, normalizer);
                 final Iterator<GPSTrace> trace = this.loaderGpx.iterator();
@@ -76,7 +76,7 @@ public class TestGPSLoader {
         }
 
         try {
-            this.loaderGpx = new TraceLoader(DIRECTORY_WITH_FILES, CLASS_TIME_NORMALIZER_WITH_TIME, 0.0);
+            this.loaderGpx = new TraceLoader(DIRECTORY_WITH_FILES, CLASS_TIME_ALIGNMENT_TO_TIME, 0.0);
             final Iterator<GPSTrace> trace = this.loaderGpx.iterator();
             for (int i = 0; i < 3; i++) {
                 if (trace.hasNext()) {
@@ -91,7 +91,7 @@ public class TestGPSLoader {
         }
 
         try {
-            this.loaderGpx = new TraceLoader(DIRECTORY_WITH_SUBDIRECTORIES, true,  NORMALIZER);
+            this.loaderGpx = new TraceLoader(DIRECTORY_WITH_SUBDIRECTORIES, true,  ALIGNMENT);
             final Iterator<GPSTrace> trace = this.loaderGpx.iterator();
             int points = 0;
             for (int i = 0; i < NUM_MAX_TRACES; i++) {
@@ -119,7 +119,7 @@ public class TestGPSLoader {
          * Test track without segment.
          */
         try {
-            this.loaderGpx = new TraceLoader(NO_SEGMENTS, CLASS_TIME_NORMALIZER_ALL);
+            this.loaderGpx = new TraceLoader(NO_SEGMENTS, CLASS_TIME_ALIGNMENT_TO_FIRST_TRACE);
             fail("not exception for no segments");
         } catch (IllegalStateException e) {
             assertFalse(e.getMessage().isEmpty());
@@ -131,7 +131,7 @@ public class TestGPSLoader {
          * Test track with empty segment.
          */
         try {
-            this.loaderGpx = new TraceLoader(EMPTY_SEGMENT, CLASS_TIME_NORMALIZER_ALL);
+            this.loaderGpx = new TraceLoader(EMPTY_SEGMENT, CLASS_TIME_ALIGNMENT_TO_FIRST_TRACE);
             fail("not exception for empty segment");
         } catch (IllegalStateException e) {
             assertFalse(e.getMessage().isEmpty());
@@ -143,7 +143,7 @@ public class TestGPSLoader {
          * Test track with any point without time.
          */
         try {
-            this.loaderGpx = new TraceLoader(POINT_WITHOUT_TIME, CLASS_TIME_NORMALIZER_ALL);
+            this.loaderGpx = new TraceLoader(POINT_WITHOUT_TIME, CLASS_TIME_ALIGNMENT_TO_FIRST_TRACE);
             fail("not exception for point without time");
         } catch (IllegalStateException e) {
             assertFalse(e.getMessage().isEmpty());
@@ -155,7 +155,7 @@ public class TestGPSLoader {
          * Test file with wrong extension
          */
         try {
-            this.loaderGpx = new TraceLoader(WRONG_EXTENSION, CLASS_TIME_NORMALIZER_ALL);
+            this.loaderGpx = new TraceLoader(WRONG_EXTENSION, CLASS_TIME_ALIGNMENT_TO_FIRST_TRACE);
             fail("not exception for wrong extension");
         } catch (IllegalStateException e) {
             assertFalse(e.getMessage().isEmpty());
@@ -167,7 +167,7 @@ public class TestGPSLoader {
          * Test file with unrecognized extension
          */
         try {
-            this.loaderGpx = new TraceLoader(UNRECOGNIZED_EXTENSION, NORMALIZER);
+            this.loaderGpx = new TraceLoader(UNRECOGNIZED_EXTENSION, ALIGNMENT);
             fail("not exception for unrecognized extension");
         } catch (IllegalArgumentException e) {
             assertFalse(e.getMessage().isEmpty());

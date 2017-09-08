@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import org.openstreetmap.osmosis.osmbinary.file.FileFormatException;
+
+import com.google.common.collect.ImmutableSet;
 
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Track;
@@ -26,17 +26,9 @@ import it.unibo.alchemist.model.interfaces.GPSTrace;
 /**
  * Class that reads GPS tracks from gpx files. 
  */
-public class LoadGPSTraceGPX implements GPSFileLoader {
+public class GPXLoader implements GPSFileLoader {
 
-    private final Set<String> extensions;
-
-    /**
-     * 
-     */
-    public LoadGPSTraceGPX() {
-        extensions = new HashSet<>();
-        extensions.add("gpx");
-    }
+    private static final ImmutableSet<String> EXTENSION = ImmutableSet.of("gpx");
 
     @Override
     public List<GPSTrace> readTrace(final URL url) throws FileFormatException, IOException {
@@ -49,7 +41,7 @@ public class LoadGPSTraceGPX implements GPSFileLoader {
 
     @Override
     public Collection<String> supportedExtensions() {
-        return extensions;
+        return EXTENSION;
     }
 
     private GPX getGPX(final InputStream stream) throws FileFormatException {

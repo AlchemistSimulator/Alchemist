@@ -1,38 +1,39 @@
 package it.unibo.alchemist.model.implementations.routes;
 
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.stream.Stream;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Route;
 
 /**
  * Abstract route implementation.
+ * 
+ * @param <P> the type of position that the route is composed
  */
-public class StraightRoute implements Route<Position> {
+public class StraightRoute<P extends Position> implements Route<P> {
 
     private static final long serialVersionUID = 1L;
-    private final List<Position> positions;
+    private final ImmutableList<P> positions;
     private double distance = Double.NaN;
 
     /**
      * @param positions the positions this route traverses
      */
-    public StraightRoute(final Position... positions) {
-        this.positions = Collections.unmodifiableList(Lists.newArrayList(positions));
+    @SafeVarargs
+    public StraightRoute(final P... positions) {
+        this.positions = ImmutableList.copyOf(positions);
     }
 
     @Override
     public double length() {
         if (Double.isNaN(distance) && size() > 0) {
             distance = 0;
-            final Iterator<Position> iter = positions.iterator();
-            for (Position cur = iter.next(); iter.hasNext();) {
-                final Position next = iter.next();
+            final Iterator<P> iter = positions.iterator();
+            for (P cur = iter.next(); iter.hasNext();) {
+                final P next = iter.next();
                 distance += computeDistance(cur, next);
                 cur = next;
             }
@@ -47,12 +48,12 @@ public class StraightRoute implements Route<Position> {
      *            second position
      * @return the distance between p1 and p2
      */
-    protected double computeDistance(final Position p1, final Position p2) {
+    protected double computeDistance(final P p1, final P p2) {
         return p1.getDistanceTo(p2);
     }
 
     @Override
-    public Position getPoint(final int step) {
+    public P getPoint(final int step) {
         if (step < size()) {
             return positions.get(step);
         }
@@ -60,7 +61,7 @@ public class StraightRoute implements Route<Position> {
     }
 
     @Override
-    public List<Position> getPoints() {
+    public ImmutableList<P> getPoints() {
         return positions;
     }
 
@@ -75,12 +76,12 @@ public class StraightRoute implements Route<Position> {
     }
 
     @Override
-    public Iterator<Position> iterator() {
+    public Iterator<P> iterator() {
         return positions.iterator();
     }
 
     @Override
-    public Stream<Position> stream() {
+    public Stream<P> stream() {
         return positions.stream();
     }
 }

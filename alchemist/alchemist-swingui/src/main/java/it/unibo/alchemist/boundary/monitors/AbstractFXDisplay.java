@@ -4,7 +4,7 @@ import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
 import it.unibo.alchemist.boundary.wormhole.implementation.*;
-import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
+import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.boundary.wormhole.interfaces.PointerSpeed;
 import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Semaphore;
 
-import static it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D.Mode;
+import static it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole.Mode;
 
 /**
  * Base-class for each display able to graphically represent a 2D space
@@ -74,7 +74,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     private final ConcurrentMap<Node<T>, Position> positions;
     private final ConcurrentMap<Node<T>, Neighborhood<T>> neighbors;
     private int step;
-    private Wormhole2D wormhole;
+    private BidimensionalWormhole wormhole;
     private double mouseX;
     private double mouseY;
     private Node<T> nearest;
@@ -291,7 +291,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
                 final FXNodeTracker<T> monitor = new FXNodeTracker<>(nearest);
                 monitor.stepDone(currentEnv, null, new DoubleTime(lastTime), step); // TODO check
                 final Simulation<T> simulation = currentEnv.getSimulation();
-                // TODO open a drawer to the right of MainApp v
+                // TODO open a drawer to the right of SingleRunView v
 //                makeFrame("Tracker for node " + nearest.getId(), monitor, jf -> {
 //                    final JFrame frame = (JFrame) jf;
 //                    if (sim != null) {
@@ -304,7 +304,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
 //                        });
 //                    }
 //                });
-                // TODO open a drawer to the right of MainApp ^
+                // TODO open a drawer to the right of SingleRunView ^
             } else if (status == ViewStatus.CLONING && event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
                 final Simulation<T> engine = currentEnv.getSimulation();
                 final Position envEnding = wormhole.getEnvPoint(getPoint(event));
@@ -689,7 +689,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      * Initializes all the internal data.
      */
     private void initAll(final Environment<T> environment) {
-        wormhole = new WormholeFX(environment, this);
+        wormhole = new Wormhole2D(environment, this);
         wormhole.center();
         wormhole.optimalZoom();
         angleManager = new AngleManagerImpl(AngleManagerImpl.DEF_DEG_PER_PIXEL);
@@ -708,7 +708,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      */
     protected abstract Logger getLogger();
 
-    protected Wormhole2D getWormhole() {
+    protected BidimensionalWormhole getWormhole() {
         return this.wormhole;
     }
 

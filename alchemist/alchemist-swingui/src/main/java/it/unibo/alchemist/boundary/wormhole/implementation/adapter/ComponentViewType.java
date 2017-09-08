@@ -1,6 +1,5 @@
 package it.unibo.alchemist.boundary.wormhole.implementation.adapter;
 
-import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D;
 import it.unibo.alchemist.boundary.wormhole.interfaces.ViewType;
 
 import java.awt.*;

@@ -1,7 +1,7 @@
 package it.unibo.alchemist.boundary.wormhole.implementation;
 
+import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.boundary.wormhole.interfaces.ViewType;
-import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 import org.jooq.lambda.tuple.Tuple2;
@@ -15,12 +15,14 @@ import java.awt.geom.Point2D;
 import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
 
 /**
- * Partial, abstract, implementation for the interface {@link Wormhole2D}.
+ * Partial, abstract, implementation for the interface {@link BidimensionalWormhole}.
  * <br/>
  * This implementation considers the particular case of the view as an entity into the
  * sceern-space: the y-axis grows on the bottom side of the screen.
+ * <br/>
+ * This abstract class is independent from the 2D graphical component wrapped.
  */
-public abstract class AbstractWormhole implements Wormhole2D {
+public abstract class AbstractWormhole2D implements BidimensionalWormhole {
     private final Environment<?> environment;
     private final ViewType view;
     private PointAdapter position;
@@ -41,7 +43,7 @@ public abstract class AbstractWormhole implements Wormhole2D {
      * @param view        the controlled view
      * @param position    the position
      */
-    public AbstractWormhole(final Environment<?> environment, final ViewType view, final PointAdapter position) {
+    public AbstractWormhole2D(final Environment<?> environment, final ViewType view, final PointAdapter position) {
         this.environment = environment;
         this.view = view;
         this.position = position;

@@ -1,6 +1,6 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
+import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.model.interfaces.Environment;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -16,10 +16,10 @@ public interface EffectFX extends Serializable {
      *
      * @param graphic     the {@code Graphics2D} to use
      * @param environment the {@code Environment} containing the nodes to draw
-     * @param wormhole    the {@code Wormhole2D} object to calculate positions
+     * @param wormhole    the {@code BidimensionalWormhole} object to calculate positions
      * @param <T>         the {@link Environment} type
      */
-    <T> void apply(GraphicsContext graphic, Environment<T> environment, Wormhole2D wormhole);
+    <T> void apply(GraphicsContext graphic, Environment<T> environment, BidimensionalWormhole wormhole);
 
     /**
      * Gets the name of the effect.

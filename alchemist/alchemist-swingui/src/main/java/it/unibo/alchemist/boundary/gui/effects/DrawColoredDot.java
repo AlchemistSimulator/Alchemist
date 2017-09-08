@@ -3,7 +3,7 @@ package it.unibo.alchemist.boundary.gui.effects;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
-import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
+import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import javafx.beans.property.DoubleProperty;
@@ -107,7 +107,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
      * a dot of a specified {@link Color} (default: {@link Color#BLACK black}).
      */
     @Override
-    public <T> void apply(final GraphicsContext graphic, final Environment<T> environment, final Wormhole2D wormhole) {
+    public <T> void apply(final GraphicsContext graphic, final Environment<T> environment, final BidimensionalWormhole wormhole) {
         super.apply(graphic, environment, wormhole);
     }
 
@@ -129,7 +129,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
     /**
      * The alpha channel of the color of the dots representing each {@link Node}
      * in the {@link Environment} specified when calling
-     * {@link #apply(GraphicsContext, Environment, Wormhole2D) apply} in percentage.
+     * {@link #apply(GraphicsContext, Environment, BidimensionalWormhole) apply} in percentage.
      *
      * @return the alpha channel property
      */
@@ -158,7 +158,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
     /**
      * The blue channel of the color of the dots representing each {@link Node}
      * in the {@link Environment} specified when calling
-     * {@link #apply(GraphicsContext, Environment, Wormhole2D) apply} in percentage.
+     * {@link #apply(GraphicsContext, Environment, BidimensionalWormhole) apply} in percentage.
      *
      * @return the blue channel property
      */
@@ -187,7 +187,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
     /**
      * The green channel of the color of the dots representing each {@link Node}
      * in the {@link Environment} specified when calling
-     * {@link #apply(GraphicsContext, Environment, Wormhole2D) apply} in percentage.
+     * {@link #apply(GraphicsContext, Environment, BidimensionalWormhole) apply} in percentage.
      *
      * @return the green channel property
      */
@@ -216,7 +216,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
     /**
      * The red channel of the color of the dots representing each {@link Node}
      * in the {@link Environment} specified when calling
-     * {@link #apply(GraphicsContext, Environment, Wormhole2D) apply} in percentage.
+     * {@link #apply(GraphicsContext, Environment, BidimensionalWormhole) apply} in percentage.
      *
      * @return the red channel property
      */

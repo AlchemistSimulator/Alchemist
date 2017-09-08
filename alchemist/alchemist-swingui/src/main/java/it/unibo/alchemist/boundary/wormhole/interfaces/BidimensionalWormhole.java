@@ -17,7 +17,7 @@ import org.jooq.lambda.tuple.Tuple2;
  * A Wormhole (in this context) is an entity that "connects" two worlds: the
  * "environment" and the "view". Above all it provides services to convert
  * coordinates from the "environment-space" to the "view-space".
- * <code>Wormhole2D</code> is the type of a wormhole whose both environment and
+ * <code>BidimensionalWormhole</code> is the type of a wormhole whose both environment and
  * view are bi-dimensional spaces. <br>
  * <br>
  * <strong>Terminology:</strong> <br>
@@ -40,7 +40,7 @@ import org.jooq.lambda.tuple.Tuple2;
  * corner of the view.<br>
  * 
  */
-public interface Wormhole2D {
+public interface BidimensionalWormhole {
 
     /**
      * Wormhole mode.
@@ -78,7 +78,7 @@ public interface Wormhole2D {
     /**
      * Gets the rendering mode.
      * 
-     * @return a {@link Wormhole2D.Mode} value
+     * @return a {@link BidimensionalWormhole.Mode} value
      */
     Mode getMode();
 

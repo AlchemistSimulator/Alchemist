@@ -12,8 +12,8 @@ import it.unibo.alchemist.boundary.gui.effects.Effect;
 import it.unibo.alchemist.boundary.interfaces.Graphical2DOutputMonitor;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.wormhole.implementation.*;
-import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
-import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D.Mode;
+import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
+import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole.Mode;
 import it.unibo.alchemist.boundary.wormhole.interfaces.PointerSpeed;
 import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -95,7 +95,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
 
     private long timeInit = System.currentTimeMillis();
 
-    private transient it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D wormhole;
+    private transient BidimensionalWormhole wormhole;
 
     private transient ZoomManager zoomManager;
 
@@ -388,9 +388,9 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
     /**
      * Lets child-classes access the wormhole.
      * 
-     * @return an {@link it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D}
+     * @return an {@link BidimensionalWormhole}
      */
-    protected final it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D getWormhole() {
+    protected final BidimensionalWormhole getWormhole() {
         return wormhole;
     }
 
@@ -532,9 +532,9 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
      * Lets child-classes change the wormhole.
      * 
      * @param w
-     *            an {@link Wormhole2D}
+     *            an {@link BidimensionalWormhole}
      */
-    protected void setWormhole(final it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D w) {
+    protected void setWormhole(final BidimensionalWormhole w) {
         Objects.requireNonNull(w);
         wormhole = w;
     }

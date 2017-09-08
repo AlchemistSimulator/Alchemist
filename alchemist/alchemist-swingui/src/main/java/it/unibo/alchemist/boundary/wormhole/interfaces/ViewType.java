@@ -1,9 +1,5 @@
 package it.unibo.alchemist.boundary.wormhole.interfaces;
 
-import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D;
-
-import java.io.Serializable;
-
 /**
  * This interface implements an Adapter pattern between a generic view element and the needs of a {@link Wormhole2D}.
  */

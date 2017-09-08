@@ -4,7 +4,7 @@ import it.unibo.alchemist.boundary.gui.ColorChannel;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.properties.*;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
-import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
+import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
@@ -164,7 +164,7 @@ public class DrawShapeFX implements EffectFX {
      * @throws IllegalStateException if no {@link Incarnation} is available
      */
     @Override
-    public <T> void apply(final GraphicsContext graphic, final Environment<T> environment, final Wormhole2D wormhole) {
+    public <T> void apply(final GraphicsContext graphic, final Environment<T> environment, final BidimensionalWormhole wormhole) {
         final Incarnation<T> incarnation = environment.getIncarnation()
                 .orElseThrow(() -> new IllegalStateException("The specified Environment does not specify any Incarnation"));
         if (!this.moleculeName.get().equals(moleculeNameCached)) {
@@ -224,7 +224,7 @@ public class DrawShapeFX implements EffectFX {
     /**
      * The alpha channel of the color of the shapes, representing each
      * {@link Node} in the {@link Environment} specified when calling
-     * {@link #apply(GraphicsContext, Environment, Wormhole2D) apply} in percentage.
+     * {@link #apply(GraphicsContext, Environment, BidimensionalWormhole) apply} in percentage.
      *
      * @return the alpha channel property
      */
@@ -253,7 +253,7 @@ public class DrawShapeFX implements EffectFX {
     /**
      * The blue channel of the color of the shapes, representing each
      * {@link Node} in the {@link Environment} specified when calling
-     * {@link #apply(GraphicsContext, Environment, Wormhole2D) apply} in percentage.
+     * {@link #apply(GraphicsContext, Environment, BidimensionalWormhole) apply} in percentage.
      *
      * @return the blue channel property
      */
@@ -310,7 +310,7 @@ public class DrawShapeFX implements EffectFX {
     /**
      * The green channel of the color of the shapes, representing each
      * {@link Node} in the {@link Environment} specified when calling
-     * {@link #apply(GraphicsContext, Environment, Wormhole2D) apply} in percentage.
+     * {@link #apply(GraphicsContext, Environment, BidimensionalWormhole) apply} in percentage.
      *
      * @return the green channel property
      */
@@ -509,7 +509,7 @@ public class DrawShapeFX implements EffectFX {
     /**
      * The red channel of the color of the shapes, representing each
      * {@link Node} in the {@link Environment} specified when calling
-     * {@link #apply(GraphicsContext, Environment, Wormhole2D) apply} in percentage.
+     * {@link #apply(GraphicsContext, Environment, BidimensionalWormhole) apply} in percentage.
      *
      * @return the red channel property
      */
@@ -567,7 +567,7 @@ public class DrawShapeFX implements EffectFX {
     /**
      * The size of the shapes, representing each {@link Node} in the
      * {@link Environment} specified when calling
-     * {@link #apply(GraphicsContext, Environment, Wormhole2D) apply} in percentage.
+     * {@link #apply(GraphicsContext, Environment, BidimensionalWormhole) apply} in percentage.
      *
      * @return the size property
      */

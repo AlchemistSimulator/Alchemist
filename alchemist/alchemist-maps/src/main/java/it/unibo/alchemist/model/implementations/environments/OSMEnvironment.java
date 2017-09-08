@@ -524,8 +524,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
         initAll(mapResource);
     }
 
-    private static GraphHopperAPI initNavigationSystem(final File mapFile, final String internalWorkdir,
-            final Vehicle v) throws IOException {
+    private static GraphHopperAPI initNavigationSystem(final File mapFile, final String internalWorkdir, final Vehicle v) throws IOException {
         return new GraphHopperOSM().setOSMFile(mapFile.getAbsolutePath()).forDesktop().setElevation(false)
                 .setEnableInstructions(false).setEnableCalcPoints(true).setInMemory()
                 .setGraphHopperLocation(internalWorkdir)

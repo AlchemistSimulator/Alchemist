@@ -298,14 +298,14 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
                                 .setAlgorithm(DEFAULT_ALGORITHM)
                                 .setVehicle(vehicle.toString())
                                 .setWeighting(ROUTING_STRATEGY);
-                            mapLock.read();
-                            final GraphHopperAPI gh = navigators.get(vehicle);
-                            mapLock.release();
-                            if (gh != null) {
-                                final GHResponse resp = gh.route(req);
-                                return new GraphHopperRoute(resp);
-                            }
-                            throw new IllegalStateException("Something went wrong while evaluating a route.");
+                        mapLock.read();
+                        final GraphHopperAPI gh = navigators.get(vehicle);
+                        mapLock.release();
+                        if (gh != null) {
+                            final GHResponse resp = gh.route(req);
+                            return new GraphHopperRoute(resp);
+                        }
+                        throw new IllegalStateException("Something went wrong while evaluating a route.");
                     }
                 });
         }

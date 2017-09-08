@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
+import org.jooq.lambda.Unchecked;
 
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
@@ -38,6 +39,7 @@ import javafx.stage.Stage;
 public class NewProjLayoutSelectController {
 
     private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
+    private static final boolean ON_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
 
     @FXML
     private Button backBtn;
@@ -98,18 +100,15 @@ public class NewProjLayoutSelectController {
 
     private void copyRecursively(final String path) {
         resourcesFrom(path, Integer.MAX_VALUE)
-        .sorted((s1, s2) -> Integer.compare(s2.length(), s1.length())) // Longest first
-        .forEach(p -> {
-            final InputStream is = NewProjLayoutSelectController.class.getResourceAsStream(path + '/' + p);
-            final File destination = new File(folderPath + '/' + p);
-            if (!destination.exists()) {
-                try {
-                    FileUtils.copyInputStreamToFile(is, destination);
-                } catch (IOException e) {
-                    throw new IllegalStateException("Could not initialize " + destination, e);
+            .sorted((s1, s2) -> Integer.compare(s2.length(), s1.length())) // Longest first
+            .forEach(Unchecked.consumer(p -> {
+                try (InputStream is = NewProjLayoutSelectController.class.getResourceAsStream(path + '/' + p)) {
+                    final File destination = new File(folderPath + '/' + p);
+                    if (!destination.exists()) {
+                        FileUtils.copyInputStreamToFile(is, destination);
+                    }
                 }
-            }
-        });
+            }));
     }
 
     /**
@@ -153,10 +152,15 @@ public class NewProjLayoutSelectController {
             } else {
                 myPath = Paths.get(uri);
             }
-            return Files.walk(myPath, depth)
+            Stream<String> resourcesStream = Files.walk(myPath, depth)
                     .skip(1)
-                    .map(Path::toString)
-                    .map(s -> s.replaceAll(".*?" + path + "/", ""))
+                    .map(Path::toString);
+            if (ON_WINDOWS) {
+                resourcesStream = resourcesStream.map(s -> s.replaceAll("\\\\", "/"));
+            }
+            final String regex = ".*\\" + path + "\\/";
+            return resourcesStream
+                    .map(s -> s.replaceFirst(regex, ""))
                     .sorted();
         } catch (URISyntaxException | IOException e) {
             throw new IllegalStateException(e);

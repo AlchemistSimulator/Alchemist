@@ -10,11 +10,11 @@ pools:
       type: Event
       actions:
         - type: ReproduceGPSTrace
-          parameters: ["/gpsTrace", true, "NormalizeTimeSingleTrace"]
+          parameters: ["/gpsTrace", true, "AlignToSimulationTime"]
 
 displacements:
   - in:
       type: GPSTraceDisplacement
-      parameters: [7, "/gpsTrace", true, "NormalizeTimeSingleTrace"]
+      parameters: [7, "/gpsTrace", true, "AlignToSimulationTime"]
     programs:
       - *move

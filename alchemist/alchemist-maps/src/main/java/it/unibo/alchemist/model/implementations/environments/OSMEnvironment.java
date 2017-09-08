@@ -528,7 +528,8 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
         return new GraphHopperOSM().setOSMFile(mapFile.getAbsolutePath()).forDesktop().setElevation(false)
                 .setEnableInstructions(false).setEnableCalcPoints(true).setInMemory()
                 .setGraphHopperLocation(internalWorkdir)
-                .setEncodingManager(new EncodingManager(v.toString().toLowerCase(Locale.US))).importOrLoad();
+                .setEncodingManager(new EncodingManager(v.toString().toLowerCase(Locale.US)))
+                .importOrLoad();
     }
 
     private static boolean mkdirsIfNeeded(final File target) {

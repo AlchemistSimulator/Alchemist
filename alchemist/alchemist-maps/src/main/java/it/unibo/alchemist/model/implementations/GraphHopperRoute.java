@@ -12,20 +12,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.graphhopper.GHResponse;
 import com.graphhopper.PathWrapper;
 import com.graphhopper.util.PointList;
 
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
-import it.unibo.alchemist.model.interfaces.Route;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import it.unibo.alchemist.model.interfaces.TimedRoute;
 
 /**
  */
-public final class GraphHopperRoute implements Route<GeoPosition> {
+public final class GraphHopperRoute implements TimedRoute<GeoPosition> {
 
     private static final long serialVersionUID = -1455332156736222268L;
     private final int numPoints;
@@ -71,7 +71,7 @@ public final class GraphHopperRoute implements Route<GeoPosition> {
     }
 
     @Override
-    public double getTime() {
+    public double getTripTime() {
         return time;
     }
 

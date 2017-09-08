@@ -10,7 +10,7 @@ package it.unibo.alchemist.model.interfaces;
 
 /**
  */
-public interface GPSTrace extends Route<GPSPoint> {
+public interface GPSTrace extends TimedRoute<GPSPoint> {
 
     /**
      * @param time

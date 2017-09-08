@@ -10,8 +10,6 @@ import java.util.Objects;
 import org.jooq.lambda.Unchecked;
 import org.junit.Test;
 
-import com.google.common.collect.Maps;
-
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -63,17 +61,15 @@ public class TestLoadGPSTrace {
      * Test the ability to inject variables.
      */
     @Test
-    public void testLoadWIthVariable() {
-        final Map<String, Double> map = Maps.newLinkedHashMap();
-        map.put("random", 1d);
-        testLoading("/testgps.yml", map);
+    public void testLoadGPSTrace() {
+        testLoading("/testgps.yml");
     }
 
     @SuppressWarnings("serial")
-    private static <T> void testLoading(final String resource, final Map<String, Double> vars) {
+    private static <T> void testLoading(final String resource) {
         final InputStream res = TestLoadGPSTrace.class.getResourceAsStream(resource);
         assertNotNull("Missing test resource " + resource, res);
-        final Environment<T> env = new YamlLoader(res).getWith(vars);
+        final Environment<T> env = new YamlLoader(res).getDefault();
         final Simulation<T> sim = new Engine<>(env, new DoubleTime(TIME_TO_REACH));
         sim.addOutputMonitor(new OutputMonitor<T>() {
 

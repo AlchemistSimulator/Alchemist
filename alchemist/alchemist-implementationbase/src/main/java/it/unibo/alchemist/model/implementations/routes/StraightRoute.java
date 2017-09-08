@@ -71,7 +71,7 @@ public class StraightRoute implements Route<Position> {
 
     @Override
     public double getTime() {
-        return 0;
+        return Double.NaN;
     }
 
     @Override
@@ -83,6 +83,4 @@ public class StraightRoute implements Route<Position> {
     public Stream<Position> stream() {
         return positions.stream();
     }
-
-    
 }

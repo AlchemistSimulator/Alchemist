@@ -7,9 +7,13 @@ import it.unibo.alchemist.model.interfaces.GPSTrace;
 import it.unibo.alchemist.model.interfaces.Time;
 
 /**
- * 
+ * Alings the traces with the given time in milliseconds from Epoch.
+ * All points before such time will be discarded. 
+ * All points after the provided time will be shifted back. 
+ * Summarizing, the time that is provided represents in
+ * the real world the time zero of the simulation.
  */
-public class NormalizeWithTime extends AbstractGPSTimeAlignment {
+public class AlignToTime extends AbstractGPSTimeAlignment {
 
     private final Time time;
 
@@ -23,7 +27,7 @@ public class NormalizeWithTime extends AbstractGPSTimeAlignment {
      *            shifted back. Summarizing, the time that is provided represents in
      *            the real world the time zero of the simulation.
      */
-    public NormalizeWithTime(final Time time) {
+    public AlignToTime(final Time time) {
         if (Objects.requireNonNull(time).toDouble() < 0) {
             throw new IllegalArgumentException("the time can't be negative");
         }
@@ -40,7 +44,7 @@ public class NormalizeWithTime extends AbstractGPSTimeAlignment {
      *            shifted back. Summarizing, the time that is provided represents in
      *            the real world the time zero of the simulation.
      */
-    public NormalizeWithTime(final double time) {
+    public AlignToTime(final double time) {
         this(new DoubleTime(time));
     }
 

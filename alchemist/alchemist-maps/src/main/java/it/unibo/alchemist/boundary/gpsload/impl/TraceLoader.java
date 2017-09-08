@@ -33,14 +33,14 @@ public class TraceLoader implements Iterable<GPSTrace> {
 
     private static final int MAX_FILE_NAME_LENGTH = (Byte.MAX_VALUE * 2 - 1);
     private static final int MAX_BYTES_PER_CHAR = MAX_FILE_NAME_LENGTH * 4;
-    private final ImmutableList<GPSTrace> traces;
-    private final boolean cyclic;
     private static final Map<String, GPSFileLoader> LOADER = new Reflections()
             .getSubTypesOf(GPSFileLoader.class).stream()
             .map(Unchecked.function(Class::newInstance))
             .flatMap(l -> l.supportedExtensions().stream()
                     .map(ext -> new Tuple2<>(ext.toLowerCase(Locale.US), l)))
             .collect(Collectors.toMap(Tuple2::v1, Tuple2::v2));
+    private final ImmutableList<GPSTrace> traces;
+    private final boolean cyclic;
 
     /**
      * 

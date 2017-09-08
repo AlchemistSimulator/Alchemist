@@ -1,7 +1,10 @@
 package it.unibo.alchemist.model.implementations.routes;
 
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.stream.Stream;
+
+import org.danilopianini.util.Hashes;
 
 import com.google.common.collect.ImmutableList;
 
@@ -18,12 +21,16 @@ public class StraightRoute<P extends Position> implements Route<P> {
     private static final long serialVersionUID = 1L;
     private final ImmutableList<P> positions;
     private double distance = Double.NaN;
+    private int hash;
 
     /**
      * @param positions the positions this route traverses
      */
     @SafeVarargs
     public StraightRoute(final P... positions) {
+        if (Objects.requireNonNull(positions).length == 0) {
+            throw new IllegalArgumentException("At least one point is required for creating a Route");
+        }
         this.positions = ImmutableList.copyOf(positions);
     }
 
@@ -57,7 +64,7 @@ public class StraightRoute<P extends Position> implements Route<P> {
         if (step < size()) {
             return positions.get(step);
         }
-        throw new IllegalArgumentException(step + " is not a valid point number for this route (lenght " + size() + ')');
+        throw new IllegalArgumentException(step + " is not a valid point number for this route (length " + size() + ')');
     }
 
     @Override
@@ -71,11 +78,6 @@ public class StraightRoute<P extends Position> implements Route<P> {
     }
 
     @Override
-    public double getTime() {
-        return Double.NaN;
-    }
-
-    @Override
     public Iterator<P> iterator() {
         return positions.iterator();
     }
@@ -83,5 +85,21 @@ public class StraightRoute<P extends Position> implements Route<P> {
     @Override
     public Stream<P> stream() {
         return positions.stream();
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (other == null) {
+            return false;
+        }
+        return other.getClass().equals(getClass()) && positions.equals(((StraightRoute<?>) other).positions);
+    }
+
+    @Override
+    public int hashCode() {
+        if (hash == 0) {
+            hash = Hashes.hash32(positions);
+        }
+        return hash;
     }
 }

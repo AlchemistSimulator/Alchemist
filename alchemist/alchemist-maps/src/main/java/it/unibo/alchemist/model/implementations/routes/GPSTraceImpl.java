@@ -156,7 +156,7 @@ public class GPSTraceImpl implements GPSTrace {
     }
 
     @Override
-    public double getTime() {
+    public double getTripTime() {
         return trace.get(trace.size() - 1).getTime().toDouble() - trace.get(0).getTime().toDouble();
     }
 

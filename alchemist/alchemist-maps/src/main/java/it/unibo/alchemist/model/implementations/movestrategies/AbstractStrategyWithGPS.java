@@ -3,12 +3,12 @@ package it.unibo.alchemist.model.implementations.movestrategies;
 import java.util.Objects;
 
 import it.unibo.alchemist.model.interfaces.GPSTrace;
-import it.unibo.alchemist.model.interfaces.StrategyWithGPS;
+import it.unibo.alchemist.model.interfaces.ObjectWithGPS;
 
 /**
  * basic move strategy that use a {@link GPSTrace}.
  */
-public abstract class AbstractStrategyWithGPS implements StrategyWithGPS {
+public abstract class AbstractStrategyWithGPS implements ObjectWithGPS {
 
     private GPSTrace trace;
 

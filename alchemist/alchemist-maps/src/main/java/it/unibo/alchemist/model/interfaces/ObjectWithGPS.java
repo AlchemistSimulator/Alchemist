@@ -3,7 +3,7 @@ package it.unibo.alchemist.model.interfaces;
 /**
  *
  */
-public interface StrategyWithGPS {
+public interface ObjectWithGPS {
 
     /**
      * 

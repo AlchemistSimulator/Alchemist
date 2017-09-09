@@ -13,7 +13,7 @@ import it.unibo.alchemist.boundary.gpsload.impl.TraceLoader;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.StrategyWithGPS;
+import it.unibo.alchemist.model.interfaces.ObjectWithGPS;
 import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy;
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy;
@@ -85,14 +85,14 @@ public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
             final GPSTrace trace) {
         super(environment, node, rt, sp, tg);
         this.trace = requireNonNull(trace);
-        if (rt instanceof StrategyWithGPS) {
-            ((StrategyWithGPS) rt).setTrace(trace);
+        if (rt instanceof ObjectWithGPS) {
+            ((ObjectWithGPS) rt).setTrace(trace);
         }
-        if (sp instanceof StrategyWithGPS) {
-            ((StrategyWithGPS) sp).setTrace(trace);
+        if (sp instanceof ObjectWithGPS) {
+            ((ObjectWithGPS) sp).setTrace(trace);
         }
-        if (tg instanceof StrategyWithGPS) {
-            ((StrategyWithGPS) tg).setTrace(trace);
+        if (tg instanceof ObjectWithGPS) {
+            ((ObjectWithGPS) tg).setTrace(trace);
         }
     }
 

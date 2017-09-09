@@ -2,6 +2,7 @@ package it.unibo.alchemist.boundary.gui;
 
 import it.unibo.alchemist.boundary.gui.effects.JEffectsTab;
 import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializationFactory;
+import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.interfaces.GraphicalOutputMonitor;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.monitors.*;
@@ -26,7 +27,6 @@ import java.util.Optional;
  */
 @Deprecated
 public final class SingleRunGUI {
-
     private static final Logger L = LoggerFactory.getLogger(SingleRunGUI.class);
     private static final float SCALE_FACTOR = 0.8f;
     private static final int FALLBACK_X_SIZE = 800;
@@ -147,12 +147,16 @@ public final class SingleRunGUI {
             sim.addOutputMonitor(main);
             // TODO this part will be removed ///////////////////////////////////////////////////////////////////////
         } else if (main instanceof Node) {
-            // TODO
-            final MainApp app = new MainApp();
-            app.initMonitor(new FX2DDisplay<>(), new FXTimeMonitor<>(), new FXStepMonitor<>());
-            // TODO
-            app.start(new Stage());
-            // TODO
+            final SingleRunView.Builder builder = new SingleRunView.Builder<T>(sim)
+                    .setDefaultOnCloseOperation(closeOperation)
+                    .setEffectGroups(effectsFile)
+                    .setIcon(SVGImageUtils.DEFAULT_ALCHEMIST_ICON_PATH);
+            if (main instanceof AbstractFXDisplay) {
+                builder.setDisplayMonitor((AbstractFXDisplay) main);
+            } else {
+                builder.setDefaultDisplayMonitor();
+            }
+            builder.build();
         } else {
             L.error("The default monitor of {} is not compatible with Java Swing.", sim);
         }

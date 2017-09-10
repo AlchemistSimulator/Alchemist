@@ -29,20 +29,30 @@ import javafx.stage.WindowEvent;
 import org.jooq.lambda.fi.lang.CheckedRunnable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.tools.jline_embedded.internal.Log;
 
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Main class to start an empty simulator visualization.
  */
 public class SingleRunView<T> {
+    public static final String USE_SPECIFIED_DISPLAY_MONITOR_PARAMETER_NAME = "use-display-monitor";
+    public static final String USE_DEFAULT_DISPLAY_MONITOR_FOR_ENVIRONMENT_CLASS_PARAMETER_NAME = "use-default-display-monitor-for-environment";
+    public static final String USE_FX_2D_DISPLAY_PARAMETER_NAME = "use-FX2DDisplay-monitor";
+    public static final String USE_FX_MAP_DISPLAY_PARAMETER_NAME = "use-FXMapDisplay-monitor";
+    public static final String USE_TIME_MONITOR_PARAMETER_NAME = "use-time-monitor";
+    public static final String USE_STEP_MONITOR_PARAMETER_NAME = "use-step-monitor";
+
+    private static final String PARAMETER_NAME_START = "--";
+    private static final String PARAMETER_NAME_END = "=";
+
     private static final Logger L = LoggerFactory.getLogger(SingleRunView.class);
     /**
      * Main layout without nested layouts. Must inject eventual other nested layouts.
@@ -492,9 +502,9 @@ public class SingleRunView<T> {
     private class SingleRunApp extends Application {
         private final Simulation<T> simulation;
         private final Collection<EffectGroup> effectGroups;
-        private final Optional<AbstractFXDisplay<T>> displayMonitor;
-        private final Optional<FXTimeMonitor<T>> timeMonitor;
-        private final Optional<FXStepMonitor<T>> stepMonitor;
+        private Optional<AbstractFXDisplay<T>> displayMonitor;
+        private Optional<FXTimeMonitor<T>> timeMonitor;
+        private Optional<FXStepMonitor<T>> stepMonitor;
         private Stage stage;
         private Pane rootLayout;
         private ButtonsBarController buttonsBarController;
@@ -515,8 +525,70 @@ public class SingleRunView<T> {
             return stage;
         }
 
-        public void setStage(Stage stage) {
+        public void setStage(final Stage stage) {
             this.stage = stage;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public void init() throws Exception {
+            super.init();
+
+            final Map<String, String> parameters = getParameters().getNamed();
+            parameters.forEach((key, value) -> {
+                switch (key) {
+                    case USE_SPECIFIED_DISPLAY_MONITOR_PARAMETER_NAME:
+                        try {
+                            initDisplayMonitor(value);
+                        } catch (final Exception exception) {
+                            L.error("Display monitor not valid");
+                            throw exception;
+                        }
+                        break;
+                    case USE_DEFAULT_DISPLAY_MONITOR_FOR_ENVIRONMENT_CLASS_PARAMETER_NAME:
+                        if (!displayMonitor.isPresent()) {
+                            if (value == null || value.equals("")) {
+                                displayMonitor = Optional.empty();
+                                L.error("Display monitor not valid");
+                                throw new IllegalArgumentException();
+                            }
+
+                            final Class<? extends Environment<?>> clazz;
+
+                            try {
+                                clazz = (Class<? extends Environment<?>>) Class.forName(value);
+                            } catch (final ClassCastException | ClassNotFoundException exception) {
+                                displayMonitor = Optional.empty();
+                                L.error("Display monitor not valid");
+                                throw new IllegalArgumentException(exception);
+                            }
+
+
+                            initDisplayMonitor(
+                                    clazz.isAssignableFrom(OSMEnvironment.class)
+                                            ? FX2DDisplay.class.getName()
+                                            : FXMapDisplay.class.getName()
+                            );
+                        } else {
+                            L.warn("Display monitor already initialized to " + displayMonitor.get().getClass().getName());
+                        }
+                        break;
+                    case USE_FX_2D_DISPLAY_PARAMETER_NAME:
+                        initDisplayMonitor(FX2DDisplay.class.getName());
+                        break;
+                    case USE_FX_MAP_DISPLAY_PARAMETER_NAME:
+                        initDisplayMonitor(FXMapDisplay.class.getName());
+                        break;
+                    case USE_TIME_MONITOR_PARAMETER_NAME:
+                        timeMonitor = Optional.of(new FXTimeMonitor<>());
+                        break;
+                    case USE_STEP_MONITOR_PARAMETER_NAME:
+                        stepMonitor = Optional.of(new FXStepMonitor<>());
+                        break;
+                    default:
+                        Log.warn("Unexpected argument " + PARAMETER_NAME_START + key + PARAMETER_NAME_END + value);
+                }
+            });
         }
 
         @Override
@@ -537,6 +609,64 @@ public class SingleRunView<T> {
             }
 
             this.stage.show();
+        }
+
+        /**
+         * Initializes a new {@link AbstractFXDisplay} for the specified {@link Class#getName()}.
+         * <p>
+         * If not valid, the displayMonitor is initialized to {@link Optional#EMPTY null}.
+         * <p>
+         * If {@link #displayMonitor} is already initialized, it does nothing.
+         *
+         * @param className the name of the {@code AbstractFXDisplay} {@link OutputMonitor} to be inizialized
+         * @throws IllegalArgumentException if the class name is null, empty or not an {@link AbstractFXDisplay},
+         *                                  or the {@link AbstractFXDisplay} does not have a 0 arguments constructor
+         * @see Class#forName(String)
+         */
+        @SuppressWarnings("unchecked")
+        private void initDisplayMonitor(final String className) {
+            if (!displayMonitor.isPresent()) {
+                if (className == null || className.equals("")) {
+                    displayMonitor = Optional.empty();
+                    throw new IllegalArgumentException();
+                }
+
+                final Class<? extends AbstractFXDisplay> clazz;
+
+                try {
+                    clazz = (Class<? extends AbstractFXDisplay>) Class.forName(className);
+                } catch (final ClassCastException | ClassNotFoundException exception) {
+                    displayMonitor = Optional.empty();
+                    throw new IllegalArgumentException(exception);
+                }
+
+                final Constructor[] constructors = clazz.getDeclaredConstructors();
+                Constructor constructor = null;
+                for (final Constructor c : constructors) {
+                    if (c.getGenericParameterTypes().length == 0) {
+                        constructor = c;
+                        break;
+                    }
+                }
+
+                if (constructor == null) {
+                    displayMonitor = Optional.empty();
+                    throw new IllegalArgumentException();
+                } else {
+                    try {
+                        displayMonitor = Optional.of((AbstractFXDisplay<T>) constructor.newInstance());
+                    } catch (final IllegalAccessException
+                            | IllegalArgumentException
+                            | InstantiationException
+                            | InvocationTargetException
+                            | ExceptionInInitializerError exception) {
+                        displayMonitor = Optional.empty();
+                        throw new IllegalArgumentException(exception);
+                    }
+                }
+            } else {
+                L.warn("Display monitor already initialized to " + displayMonitor.get().getClass().getName());
+            }
         }
     }
 }

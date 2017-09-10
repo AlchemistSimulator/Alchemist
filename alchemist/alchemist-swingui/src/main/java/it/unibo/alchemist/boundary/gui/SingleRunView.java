@@ -1,18 +1,21 @@
 package it.unibo.alchemist.boundary.gui;
 
+import com.sun.javafx.application.PlatformImpl;
 import it.unibo.alchemist.boundary.gui.controller.ButtonsBarController;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
+import it.unibo.alchemist.boundary.interfaces.FX2DOutputMonitor;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.boundary.monitors.*;
 import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.core.interfaces.Status;
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
-import it.unibo.alchemist.model.interfaces.Concentration;
+import it.unibo.alchemist.model.interfaces.*;
 import javafx.application.Application;
-import javafx.embed.swing.JFXPanel;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
@@ -23,6 +26,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import org.jooq.lambda.fi.lang.CheckedRunnable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,52 +37,33 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Main class to start an empty simulator visualization.
  */
-public class SingleRunView {
+public class SingleRunView<T> {
     private static final Logger L = LoggerFactory.getLogger(SingleRunView.class);
     /**
      * Main layout without nested layouts. Must inject eventual other nested layouts.
      */
     private static final String ROOT_LAYOUT = "RootLayout";
-
+    private final SingleRunApp app;
     private final Stage stage;
-    private final Pane rootLayout;
-    private final ButtonsBarController buttonsBarController;
-    private final Collection<EffectGroup> effectGroups;
-    private final Canvas displayMonitor;
-    private final Label timeMonitor;
-    private final Label stepMonitor;
 
     /**
      * Builds a single-use graphical interface.
      *
-     * @param sim            the simulation for this GUI
-     * @param effectsFile    the effects file
-     * @param closeOperation the type of close operation for this GUI
-     * @param <T>            concentration type
+     * @param simulation     the simulation to view
+     * @param stage          the stage where the view will be shown
+     * @param monitorDisplay true if the view should use a {@link FX2DOutputMonitor}, false if it should use a generic {@link Canvas}
+     * @param effectGroups   the group of effects to load on first start
+     * @param monitorTime    true if the view should use a {@link FXTimeMonitor}, false if it should use a generic {@link Label}
+     * @param monitorSteps   true if the view should use a {@link FXStepMonitor}, false if it should use a generic {@link Label}
      */
-    private SingleRunView(final Collection<EffectGroup> effects, final Canvas canvas, final Label time, final Label step, final Stage stage) {
-        this.effectGroups = effects;
-        this.displayMonitor = canvas;
-        this.timeMonitor = time;
-        this.stepMonitor = step;
+    private SingleRunView(final Simulation simulation, final Stage stage, final boolean monitorDisplay, final Collection<EffectGroup> effectGroups, final boolean monitorTime, final boolean monitorSteps) {
+        this.app = new SingleRunApp(simulation, monitorDisplay, effectGroups, monitorTime, monitorSteps);
         this.stage = stage;
-
-        try {
-            this.rootLayout = FXResourceLoader.getLayout(AnchorPane.class, this, ROOT_LAYOUT);
-            final StackPane main = (StackPane) rootLayout.getChildren().get(0);
-            main.getChildren().add(canvas);
-            this.buttonsBarController = new ButtonsBarController();
-            main.getChildren().add(FXResourceLoader.getLayout(BorderPane.class, buttonsBarController, "ButtonsBarLayout"));
-        } catch (final IOException e) {
-            L.error("I/O Exception loading FXML layout files", e);
-            throw new IllegalStateException(e);
-        }
-
     }
 
     /**
@@ -87,22 +72,130 @@ public class SingleRunView {
      * @param args arguments
      */
     public static void main(final String[] args) throws InterruptedException {
-        new SingleRunView(
+        PlatformImpl.startup(() -> {
+        });
+        Platform.runLater(() -> new SingleRunView(
+                new Simulation() {
+                    @Override
+                    public void addOutputMonitor(OutputMonitor op) {
+
+                    }
+
+                    @Override
+                    public Environment getEnvironment() {
+                        return null;
+                    }
+
+                    @Override
+                    public Optional<Throwable> getError() {
+                        return null;
+                    }
+
+                    @Override
+                    public long getFinalStep() {
+                        return 0;
+                    }
+
+                    @Override
+                    public Time getFinalTime() {
+                        return null;
+                    }
+
+                    @Override
+                    public Status getStatus() {
+                        return null;
+                    }
+
+                    @Override
+                    public long getStep() {
+                        return 0;
+                    }
+
+                    @Override
+                    public Time getTime() {
+                        return null;
+                    }
+
+                    @Override
+                    public void goToStep(long steps) {
+
+                    }
+
+                    @Override
+                    public void goToTime(Time t) {
+
+                    }
+
+                    @Override
+                    public void neighborAdded(Node node, Node n) {
+
+                    }
+
+                    @Override
+                    public void neighborRemoved(Node node, Node n) {
+
+                    }
+
+                    @Override
+                    public void nodeAdded(Node node) {
+
+                    }
+
+                    @Override
+                    public void nodeMoved(Node node) {
+
+                    }
+
+                    @Override
+                    public void nodeRemoved(Node node, Neighborhood oldNeighborhood) {
+
+                    }
+
+                    @Override
+                    public void pause() {
+
+                    }
+
+                    @Override
+                    public void play() {
+
+                    }
+
+                    @Override
+                    public void removeOutputMonitor(OutputMonitor op) {
+
+                    }
+
+                    @Override
+                    public void schedule(CheckedRunnable r) {
+
+                    }
+
+                    @Override
+                    public void terminate() {
+
+                    }
+
+                    @Override
+                    public Status waitFor(Status s, long timeout, TimeUnit timeunit) {
+                        return null;
+                    }
+
+                    @Override
+                    public void run() {
+
+                    }
+                },
+                new Stage(),
+                false,
                 new ArrayList<>(),
-                new Canvas(),
-                new Label("0.000"),
-                new Label("0"),
-                new Stage()
-        ).buildApp();
+                false,
+                false
+        ).showApp());
     }
 
-    /**
-     * Getter method for the built {@code Stage}.
-     *
-     * @return the {@code Stage}
-     */
-    public Stage getStage() {
-        return stage;
+    public void showApp() {
+        app.start(stage);
     }
 
     /**
@@ -111,13 +204,8 @@ public class SingleRunView {
      * @see Application
      * @see Builder
      */
-    public void buildApp() {
-        new Application() {
-            @Override
-            public void start(final Stage primaryStage) {
-                primaryStage.show();
-            }
-        }.start(stage);
+    public void runApp() {
+        app.setStage(stage);
     }
 
     /**
@@ -127,9 +215,9 @@ public class SingleRunView {
      */
     public static class Builder<T> {
         private final Simulation<T> simulation;
-        private Optional<Canvas> displayMonitor;
-        private Optional<Label> timeMonitor;
-        private Optional<Label> stepMonitor;
+        private boolean monitorDisplay;
+        private boolean monitorTime;
+        private boolean monitorSteps;
         private Optional<String> title;
         private Optional<Image> icon;
         private Optional<Integer> jFrameCloseOperation;
@@ -143,57 +231,47 @@ public class SingleRunView {
          */
         public Builder(final Simulation<T> simulation) {
             this.simulation = simulation;
-            jFrameCloseOperation = Optional.empty();
-            defaultOnCloseOperation = Optional.empty();
+            this.monitorDisplay = false;
+            this.monitorTime = false;
+            this.monitorSteps = false;
+            this.jFrameCloseOperation = Optional.empty();
+            this.defaultOnCloseOperation = Optional.empty();
             this.effectGroups = new ArrayList<>();
         }
 
         /**
-         * Set the default {@link OutputMonitor} that will graphically show the simulation using {@link EffectFX effects}.
-         * <p>
-         * It will automatically use the best {@link AbstractFXDisplay OutputMonitor} to use.
+         * Specify if the GUI should initialize an {@link OutputMonitor} that will graphically show the simulation using {@link EffectFX effects}.
          *
+         * @param monitorDisplay true if the GUI should initialize the {@link OutputMonitor} as a {@link Canvas}
          * @return this builder
-         * @see #setDisplayMonitor(AbstractFXDisplay)
+         * @see FX2DDisplay
+         * @see FXMapDisplay
          */
-        public Builder setDefaultDisplayMonitor() {
-            return setDisplayMonitor(
-                    Objects.requireNonNull(simulation).getEnvironment() instanceof OSMEnvironment
-                            ? new FX2DDisplay<>()
-                            : new FXMapDisplay<>()
-            );
-        }
-
-        /**
-         * Set the default {@link OutputMonitor} that will graphically show the simulation using {@link EffectFX effects}.
-         *
-         * @param displayMonitor the {@code FX2DOutputMonitor}
-         * @return this builder
-         */
-        public Builder setDisplayMonitor(final AbstractFXDisplay<T> displayMonitor) {
-            this.displayMonitor = Optional.of(displayMonitor);
+        public Builder monitorDisplay(final boolean monitorDisplay) {
+            this.monitorDisplay = monitorDisplay;
             return this;
         }
 
         /**
-         * Set the default {@link OutputMonitor} that will graphically show the step progress.
+         * Specify if the GUI should initialize an {@link OutputMonitor} that will graphically show the step progress.
          *
-         * @param stepMonitor the {@code FXStepMonitor}
+         * @param monitorSteps true if the GUI should initialize the {@link OutputMonitor} as a {@link Label}
          * @return this builder
+         * @see FXStepMonitor
          */
-        public Builder setStepMonitor(final FXStepMonitor<T> stepMonitor) {
-            this.stepMonitor = Optional.of(stepMonitor);
+        public Builder monitorSteps(final boolean monitorSteps) {
+            this.monitorSteps = monitorSteps;
             return this;
         }
 
         /**
          * Set the default {@link OutputMonitor} that will graphically show the time progress.
          *
-         * @param timeMonitor the {@code FXTimeMonitor}
+         * @param monitorTime
          * @return this builder
          */
-        public Builder setTimeMonitor(final FXTimeMonitor<T> timeMonitor) {
-            this.timeMonitor = Optional.of(timeMonitor);
+        public Builder monitorTime(final boolean monitorTime) {
+            this.monitorTime = monitorTime;
             return this;
         }
 
@@ -380,6 +458,7 @@ public class SingleRunView {
                     case JFrame.EXIT_ON_CLOSE:
                         handler = event -> {
                             stage.close();
+                            // Platform.exit(); // TODO check
                             System.exit(0);
                         };
                         defaultOnCloseOperation = Optional.empty();
@@ -400,12 +479,64 @@ public class SingleRunView {
             icon.ifPresent(stage.getIcons()::add);
 
             return new SingleRunView(
+                    simulation,
+                    stage,
+                    monitorDisplay,
                     effectGroups,
-                    displayMonitor.orElse(new Canvas()),
-                    timeMonitor.orElse(new Label("0.000")),
-                    stepMonitor.orElse(new Label("0")),
-                    stage
+                    monitorTime,
+                    monitorSteps
             );
+        }
+    }
+
+    private class SingleRunApp extends Application {
+        private final Simulation<T> simulation;
+        private final Collection<EffectGroup> effectGroups;
+        private final Optional<AbstractFXDisplay<T>> displayMonitor;
+        private final Optional<FXTimeMonitor<T>> timeMonitor;
+        private final Optional<FXStepMonitor<T>> stepMonitor;
+        private Stage stage;
+        private Pane rootLayout;
+        private ButtonsBarController buttonsBarController;
+
+        private SingleRunApp(final Simulation<T> simulation, final boolean displayMonitor, final Collection<EffectGroup> effectGroups, final boolean timeMonitor, final boolean stepMonitor) {
+            this.effectGroups = effectGroups;
+            this.simulation = simulation;
+            final AbstractFXDisplay<T> monitor = Objects.requireNonNull(simulation).getEnvironment() instanceof OSMEnvironment
+                    ? new FX2DDisplay<>()
+                    : new FXMapDisplay<>();
+            this.displayMonitor = displayMonitor ? Optional.of(monitor) : Optional.empty();
+            this.timeMonitor = timeMonitor ? Optional.of(new FXTimeMonitor<T>()) : Optional.empty();
+            this.stepMonitor = stepMonitor ? Optional.of(new FXStepMonitor<T>()) : Optional.empty();
+            this.stage = null;
+        }
+
+        public Stage getStage() {
+            return stage;
+        }
+
+        public void setStage(Stage stage) {
+            this.stage = stage;
+        }
+
+        @Override
+        public void start(final Stage primaryStage) {
+            if (this.stage == null) {
+                this.stage = primaryStage;
+            }
+
+            try {
+                this.rootLayout = FXResourceLoader.getLayout(AnchorPane.class, this, ROOT_LAYOUT);
+                final StackPane main = (StackPane) rootLayout.getChildren().get(0);
+                main.getChildren().add(displayMonitor.isPresent() ? this.displayMonitor.get() : new Canvas());
+                this.buttonsBarController = new ButtonsBarController();
+                main.getChildren().add(FXResourceLoader.getLayout(BorderPane.class, buttonsBarController, "ButtonsBarLayout"));
+            } catch (final IOException e) {
+                L.error("I/O Exception loading FXML layout files", e);
+                throw new IllegalStateException(e);
+            }
+
+            this.stage.show();
         }
     }
 }

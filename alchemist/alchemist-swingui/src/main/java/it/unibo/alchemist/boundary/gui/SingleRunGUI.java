@@ -9,7 +9,6 @@ import it.unibo.alchemist.boundary.monitors.*;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
 import javafx.scene.Node;
-import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -147,16 +146,12 @@ public final class SingleRunGUI {
             sim.addOutputMonitor(main);
             // TODO this part will be removed ///////////////////////////////////////////////////////////////////////
         } else if (main instanceof Node) {
-            final SingleRunView.Builder builder = new SingleRunView.Builder<T>(sim)
+            final SingleRunView view = new SingleRunView.Builder<T>(sim)
                     .setDefaultOnCloseOperation(closeOperation)
                     .setEffectGroups(effectsFile)
-                    .setIcon(SVGImageUtils.DEFAULT_ALCHEMIST_ICON_PATH);
-            if (main instanceof AbstractFXDisplay) {
-                builder.setDisplayMonitor((AbstractFXDisplay) main);
-            } else {
-                builder.setDefaultDisplayMonitor();
-            }
-            builder.build();
+                    .setIcon(SVGImageUtils.DEFAULT_ALCHEMIST_ICON_PATH)
+                    .build();
+            view.runApp();
         } else {
             L.error("The default monitor of {} is not compatible with Java Swing.", sim);
         }

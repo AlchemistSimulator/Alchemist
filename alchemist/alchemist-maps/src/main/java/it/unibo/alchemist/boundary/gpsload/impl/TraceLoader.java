@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -162,7 +163,7 @@ public class TraceLoader implements Iterable<GPSTrace> {
     private static <R> R runOnPathsStream(final String path, final Function<Stream<String>, R> op) {
         final InputStream resourceStream = TraceLoader.class.getResourceAsStream(path);
         final InputStream limitedResourceView = new BoundedInputStream(resourceStream,  MAX_BYTES_PER_CHAR);
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(limitedResourceView))) {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(limitedResourceView, StandardCharsets.UTF_8))) {
             return op.apply(in.lines().map(line -> path + "/" + line));
         } catch (IOException e) {
             throw new IllegalArgumentException("error reading lines of: " + path, e);

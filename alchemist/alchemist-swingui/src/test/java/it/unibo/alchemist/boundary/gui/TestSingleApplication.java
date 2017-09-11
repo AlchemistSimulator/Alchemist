@@ -42,14 +42,17 @@ public class TestSingleApplication extends Application {
     public void start(final Stage primaryStage) {
         final Parameters parameters = getParameters();
 
-        final StringBuilder rawParamsBuilder = new StringBuilder("Parameters: ").append('\n');
-
-        parameters.getRaw().forEach(p -> {
-            rawParamsBuilder.append(p);
-            rawParamsBuilder.append('\n');
-        });
-
+        final StringBuilder rawParamsBuilder = new StringBuilder("Raw parameters: ").append('\n');
+        parameters.getRaw().forEach(p -> rawParamsBuilder.append(p).append('\n'));
         L.debug(rawParamsBuilder.toString());
+
+        final StringBuilder namedParamsBuilder = new StringBuilder("Named parameters: ").append('\n');
+        parameters.getNamed().forEach((n, p) -> namedParamsBuilder.append(n).append(": ").append(p).append('\n'));
+        L.debug(namedParamsBuilder.toString());
+
+        final StringBuilder unnamedParamsBuilder = new StringBuilder("Unnamed parameters: ").append('\n');
+        parameters.getUnnamed().forEach(p -> unnamedParamsBuilder.append(p).append('\n'));
+        L.debug(unnamedParamsBuilder.toString());
 
         primaryStage.setTitle(ResourceLoader.getStringRes("main_title"));
 

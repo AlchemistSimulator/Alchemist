@@ -36,8 +36,8 @@ class SingleRunApp<T> extends Application {
     public static final String USE_STEP_MONITOR_PARAMETER_NAME = "use-step-monitor";
     public static final String USE_EFFECT_GROUPS_FROM_FILE = "use-effect-groups-from-file";
 
-    private static final String PARAMETER_NAME_START = "--";
-    private static final String PARAMETER_NAME_END = "=";
+    public static final String PARAMETER_NAME_START = "--";
+    public static final String PARAMETER_NAME_END = "=";
 
     private static final Logger L = LoggerFactory.getLogger(SingleRunApp.class);
     /**

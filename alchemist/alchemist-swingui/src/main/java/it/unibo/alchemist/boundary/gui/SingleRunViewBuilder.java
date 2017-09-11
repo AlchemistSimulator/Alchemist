@@ -35,6 +35,10 @@ public class SingleRunViewBuilder<T> {
     private Optional<EventHandler<WindowEvent>> defaultOnCloseOperation;
     private Collection<EffectGroup> effectGroups;
 
+    public static void main(final String... args) {
+        Application.launch(SingleRunApp.class);
+    }
+
     /**
      * Default constructor of the builder.
      *

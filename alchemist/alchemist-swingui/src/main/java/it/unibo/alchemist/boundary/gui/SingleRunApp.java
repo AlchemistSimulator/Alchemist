@@ -53,10 +53,6 @@ class SingleRunApp<T> extends Application {
     private Pane rootLayout;
     private ButtonsBarController buttonsBarController;
 
-    public static void main(String... args) {
-        Application.launch();
-    }
-
     @Override
     @SuppressWarnings("unchecked")
     public void start(final Stage primaryStage) {

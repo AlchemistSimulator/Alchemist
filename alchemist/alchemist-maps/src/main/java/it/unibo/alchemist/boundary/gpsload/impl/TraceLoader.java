@@ -32,44 +32,16 @@ import it.unibo.alchemist.model.interfaces.GPSTrace;
  */
 public class TraceLoader implements Iterable<GPSTrace> {
 
-    private static final int MAX_FILE_NAME_LENGTH = (Byte.MAX_VALUE * 2 - 1);
-    private static final int MAX_BYTES_PER_CHAR = MAX_FILE_NAME_LENGTH * 4;
     private static final Map<String, GPSFileLoader> LOADER = new Reflections()
             .getSubTypesOf(GPSFileLoader.class).stream()
             .map(Unchecked.function(Class::newInstance))
             .flatMap(l -> l.supportedExtensions().stream()
                     .map(ext -> new Tuple2<>(ext.toLowerCase(Locale.US), l)))
             .collect(Collectors.toMap(Tuple2::v1, Tuple2::v2));
-    private final ImmutableList<GPSTrace> traces;
+    private static final int MAX_FILE_NAME_LENGTH = (Byte.MAX_VALUE * 2 - 1);
+    private static final int MAX_BYTES_PER_CHAR = MAX_FILE_NAME_LENGTH * 4;
     private final boolean cyclic;
-
-    /**
-     * 
-     * @param path
-     *            path with the gps tracks
-     * @param timeNormalizerClass
-     *            class to use to normalize time
-     * @param normalizerArgs
-     *            args to use to create GPSTimeNormalizer
-     * @throws IOException 
-     */
-    public TraceLoader(final String path,
-            final String timeNormalizerClass,
-            final Object... normalizerArgs) throws IOException {
-        this(path, false, timeNormalizerClass, normalizerArgs);
-    }
-
-    /**
-     * 
-     * @param path
-     *            path with the gps tracks
-     * @param normalizer
-     *            normalizer to use for normalize time
-     * @throws IOException 
-     */
-    public TraceLoader(final String path, final GPSTimeAlignment normalizer) throws IOException  {
-        this(path, false, normalizer);
-    }
+    private final ImmutableList<GPSTrace> traces;
 
     /**
      * 
@@ -84,26 +56,6 @@ public class TraceLoader implements Iterable<GPSTrace> {
     public TraceLoader(final String path, final boolean cycle, final GPSTimeAlignment normalizer) throws IOException {
         this.cyclic = cycle;
         traces = normalizer.alignTime(loadTraces(path));
-    }
-
-    private static GPSTimeAlignment makeNormalizer(final String clazzName, final Object... args) {
-        final String fullName = clazzName.contains(".") ? clazzName : GPSTimeAlignment.class.getPackage().getName() + "." + clazzName;
-        try {
-            return Arrays.stream(Class.forName(fullName).getConstructors())
-                .map(c -> {
-                    try {
-                        return Optional.of((GPSTimeAlignment) c.newInstance(args));
-                    } catch (Exception e) {
-                        return Optional.<GPSTimeAlignment>empty();
-                    }
-                })
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Can't instance " + fullName + "(from " + clazzName + ") using " + Arrays.toString(args)));
-        } catch (IllegalArgumentException | SecurityException | ClassNotFoundException e) {
-            throw new IllegalStateException("Cannot instance or use the GPS time normalizer", e);
-        }
     }
 
     /**
@@ -123,6 +75,39 @@ public class TraceLoader implements Iterable<GPSTrace> {
             final String timeNormalizerClass,
             final Object... normalizerArgs) throws IOException {
         this(path, cycle, makeNormalizer(timeNormalizerClass, normalizerArgs));
+    }
+
+    /**
+     * 
+     * @param path
+     *            path with the gps tracks
+     * @param normalizer
+     *            normalizer to use for normalize time
+     * @throws IOException 
+     */
+    public TraceLoader(final String path, final GPSTimeAlignment normalizer) throws IOException  {
+        this(path, false, normalizer);
+    }
+
+    /**
+     * 
+     * @param path
+     *            path with the gps tracks
+     * @param timeNormalizerClass
+     *            class to use to normalize time
+     * @param normalizerArgs
+     *            args to use to create GPSTimeNormalizer
+     * @throws IOException 
+     */
+    public TraceLoader(final String path,
+            final String timeNormalizerClass,
+            final Object... normalizerArgs) throws IOException {
+        this(path, false, timeNormalizerClass, normalizerArgs);
+    }
+
+    @Override
+    public Iterator<GPSTrace> iterator() {
+        return cyclic ? Iterators.cycle(traces) : traces.iterator();
     }
 
     private List<GPSTrace> loadTraces(final String path) throws IOException {
@@ -160,6 +145,30 @@ public class TraceLoader implements Iterable<GPSTrace> {
         }
     }
 
+    public Optional<Integer> size() {
+        return Optional.ofNullable(cyclic ? null : traces.size());
+    }
+    
+    private static GPSTimeAlignment makeNormalizer(final String clazzName, final Object... args) {
+        final String fullName = clazzName.contains(".") ? clazzName : GPSTimeAlignment.class.getPackage().getName() + "." + clazzName;
+        try {
+            return Arrays.stream(Class.forName(fullName).getConstructors())
+                .map(c -> {
+                    try {
+                        return Optional.of((GPSTimeAlignment) c.newInstance(args));
+                    } catch (Exception e) {
+                        return Optional.<GPSTimeAlignment>empty();
+                    }
+                })
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Can't instance " + fullName + "(from " + clazzName + ") using " + Arrays.toString(args)));
+        } catch (IllegalArgumentException | SecurityException | ClassNotFoundException e) {
+            throw new IllegalStateException("Cannot instance or use the GPS time normalizer", e);
+        }
+    }
+
     private static <R> R runOnPathsStream(final String path, final Function<Stream<String>, R> op) {
         final InputStream resourceStream = TraceLoader.class.getResourceAsStream(path);
         final InputStream limitedResourceView = new BoundedInputStream(resourceStream,  MAX_BYTES_PER_CHAR);
@@ -168,11 +177,6 @@ public class TraceLoader implements Iterable<GPSTrace> {
         } catch (IOException e) {
             throw new IllegalArgumentException("error reading lines of: " + path, e);
         }
-    }
-
-    @Override
-    public Iterator<GPSTrace> iterator() {
-        return cyclic ? Iterators.cycle(traces) : traces.iterator();
     }
 
 }

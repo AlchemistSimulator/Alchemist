@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  */
 public class GPSTraceDisplacement implements Displacement {
 
-    private final Iterable<GPSTrace> traces;
+    private final TraceLoader traces;
     private final int numNode;
 
     /**
@@ -31,6 +31,9 @@ public class GPSTraceDisplacement implements Displacement {
      */
     public GPSTraceDisplacement(final int numNode, final String path, final boolean cycle, final String normalizer, final Object... args) throws IOException {
         traces = new TraceLoader(path, cycle, normalizer, args);
+        if (traces.size().map(size -> size < numNode).orElse(false)) {
+            throw new IllegalArgumentException(numNode + "traces required, " + traces.size().get() + " traces available");
+        }
         this.numNode = numNode;
     }
 

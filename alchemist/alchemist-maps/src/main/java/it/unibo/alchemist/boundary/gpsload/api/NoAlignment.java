@@ -16,6 +16,13 @@ import it.unibo.alchemist.model.interfaces.Time;
  */
 public class NoAlignment extends AbstractGPSTimeAlignment {
 
+    private static final SinglePointBehavior POLICY = SinglePointBehavior.RETAIN_SINGLE_POINTS;
+
+    public NoAlignment() {
+        super(POLICY);
+    }
+
+
     @Override
     protected Time computeStartTime(final List<GPSTrace> allTraces, final GPSTrace currentTrace) {
         return new DoubleTime(0.0);

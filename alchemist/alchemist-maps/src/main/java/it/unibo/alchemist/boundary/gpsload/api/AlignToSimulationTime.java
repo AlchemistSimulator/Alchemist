@@ -2,6 +2,7 @@ package it.unibo.alchemist.boundary.gpsload.api;
 
 import java.util.List;
 
+import it.unibo.alchemist.boundary.gpsload.api.AbstractGPSTimeAlignment.SinglePointBehavior;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
 import it.unibo.alchemist.model.interfaces.Time;
 
@@ -14,6 +15,12 @@ import it.unibo.alchemist.model.interfaces.Time;
  * - second trace start with time = 0 and second point with time = 2
  */
 public class AlignToSimulationTime extends AbstractGPSTimeAlignment {
+
+    private static final SinglePointBehavior POLICY = SinglePointBehavior.RETAIN_SINGLE_POINTS;
+
+    public AlignToSimulationTime() {
+        super(POLICY);
+    }
 
     @Override
     protected Time computeStartTime(final List<GPSTrace> allTraces, final GPSTrace currentTrace) {

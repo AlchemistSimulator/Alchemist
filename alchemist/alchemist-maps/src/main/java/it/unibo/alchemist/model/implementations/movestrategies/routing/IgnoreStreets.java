@@ -1,6 +1,6 @@
 package it.unibo.alchemist.model.implementations.movestrategies.routing;
 
-import it.unibo.alchemist.model.implementations.routes.StraightRoute;
+import it.unibo.alchemist.model.implementations.routes.PolygonalChain;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy;
 import it.unibo.alchemist.model.interfaces.Route;
@@ -8,7 +8,7 @@ import it.unibo.alchemist.model.interfaces.Route;
 /**
  * This strategy ignores any information about the map, and connects the
  * starting and ending point with a straight line using
- * {@link StraightRoute}.
+ * {@link PolygonalChain}.
  * 
  * @param <T>
  */
@@ -18,7 +18,7 @@ public class IgnoreStreets<T> implements RoutingStrategy<T> {
 
     @Override
     public Route<Position> computeRoute(final Position currentPos, final Position finalPos) {
-        return new StraightRoute<>(currentPos, finalPos);
+        return new PolygonalChain<>(currentPos, finalPos);
     }
 
 }

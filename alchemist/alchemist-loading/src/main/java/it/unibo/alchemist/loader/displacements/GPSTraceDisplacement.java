@@ -41,7 +41,6 @@ public class GPSTraceDisplacement implements Displacement {
     public Stream<Position> stream() {
         return StreamSupport.stream(traces.spliterator(), false)
                 .limit(numNode)
-                .filter(trace -> trace.size() > 0)
                 .map(trace -> trace.getInitialPosition());
     }
 

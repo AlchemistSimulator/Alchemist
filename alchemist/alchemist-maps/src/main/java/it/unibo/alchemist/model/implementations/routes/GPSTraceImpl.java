@@ -8,28 +8,21 @@
  */
 package it.unibo.alchemist.model.implementations.routes;
 
+import java.util.List;
+
+import org.apache.commons.math3.util.Pair;
+
 import it.unibo.alchemist.model.implementations.positions.GPSPointImpl;
 import it.unibo.alchemist.model.interfaces.GPSPoint;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.utils.MapUtils;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Stream;
-
-import org.apache.commons.math3.util.Pair;
-
-import com.google.common.collect.ImmutableList;
-
 /**
  */
-public class GPSTraceImpl implements GPSTrace {
+public class GPSTraceImpl extends PolygonalChain<GPSPoint> implements GPSTrace {
 
     private static final long serialVersionUID = 1L;
-    private final ImmutableList<GPSPoint> trace;
-    private double len = Double.NaN;
 
     /**
      * 
@@ -37,7 +30,7 @@ public class GPSTraceImpl implements GPSTrace {
      *            GPS points
      */
     public GPSTraceImpl(final GPSPoint... tr) {
-        this(Arrays.asList(tr));
+       super(tr);
     }
 
     /**
@@ -45,39 +38,31 @@ public class GPSTraceImpl implements GPSTrace {
      *            GPS points
      */
     public GPSTraceImpl(final List<GPSPoint> tr) {
-        trace = ImmutableList.sortedCopyOf(tr);
+        this(tr.stream().sorted().toArray(GPSPoint[]::new));
     }
 
     @Override
     public GPSTrace startAt(final Time time) {
-        return new GPSTraceImpl(trace.stream()
+        final GPSPoint[] filtered = stream()
             .filter(pt -> pt.getTime().toDouble() >= time.toDouble())
             .map(p -> new GPSPointImpl(p.getLatitude(), p.getLongitude(), p.getTime().subtract(time)))
-            .toArray(GPSPoint[]::new));
+            .toArray(GPSPoint[]::new);
+        return new GPSTraceImpl(filtered.length == 0 ? new GPSPoint[] { getFinalPosition() } : filtered);
     }
 
     @Override
     public GPSPoint getNextPosition(final Time time) {
-        checkNotEmpty();
         return searchPoint(time).getSecond();
-    }
-
-    private void checkNotEmpty() {
-        if (trace.isEmpty()) {
-            throw new IllegalStateException("The trace has no points.");
-        }
     }
 
     @Override
     public GPSPoint getPreviousPosition(final Time time) {
-        checkNotEmpty();
         return searchPoint(time).getFirst();
     }
 
     @Override
     public Time getStartTime() {
-        checkNotEmpty();
-        return trace.get(0).getTime();
+        return getPoints().get(0).getTime();
     }
 
     @Override
@@ -94,90 +79,46 @@ public class GPSTraceImpl implements GPSTrace {
         return new GPSPointImpl(MapUtils.getDestinationLocation(prev, next, dist * ratio), time);
     }
 
-    @Override
-    public double length() {
-        if (Double.isNaN(len)) {
-            len = 0;
-            for (int i = 0; i < trace.size() - 1; i++) {
-                len += trace.get(i).getDistanceTo(trace.get(i + 1));
-            }
-        }
-        return len;
-    }
-
     private Pair<GPSPoint, GPSPoint> searchPoint(final Time time) {
-        if (trace.size() < 2 || time.toDouble() < trace.get(0).getTime().toDouble()) {
-            return new Pair<>(trace.get(0), trace.get(0));
+        if (size() < 2 || time.toDouble() < getPoint(0).getTime().toDouble()) {
+            return new Pair<>(getPoint(0), getPoint(0));
         }
-        if (trace.size() < 3) {
-            return new Pair<>(trace.get(0), trace.get(1));
+        if (size() < 3) {
+            return new Pair<>(getPoint(0), getPoint(1));
         }
-        if (time.toDouble() > trace.get(trace.size() - 1).getTime().toDouble()) {
-            return new Pair<>(trace.get(trace.size() - 1), trace.get(trace.size() - 1));
+        if (time.toDouble() > getPoint(size() - 1).getTime().toDouble()) {
+            return new Pair<>(getPoint(size() - 1), getPoint(size() - 1));
         }
         int low = 0;
-        int high = trace.size() - 1;
-        for (int i = trace.size() / 2; high - low > 1; i = low + (high - low) / 2) {
-            if (trace.get(i).getTime().toDouble() < time.toDouble()) {
+        int high = size() - 1;
+        for (int i = size() / 2; high - low > 1; i = low + (high - low) / 2) {
+            if (getPoint(i).getTime().toDouble() < time.toDouble()) {
                 low = i;
             } else {
                 high = i;
             }
         }
-        return new Pair<>(trace.get(low), trace.get(high));
-    }
-
-    @Override
-    public int size() {
-        return trace.size();
-    }
-
-    @Override
-    public String toString() {
-        return trace.toString();
-    }
-
-    @Override
-    public GPSPoint getPoint(final int step) {
-        if (step < size()) {
-            return trace.get(step);
-        }
-        throw new IllegalArgumentException(step + " is not a valid point number for this route (lenght " + size() + ')');
-    }
-
-    @Override
-    public List<GPSPoint> getPoints() {
-        return trace;
-    }
-
-    @Override
-    public Stream<GPSPoint> stream() {
-        return trace.stream();
+        return new Pair<>(getPoint(low), getPoint(high));
     }
 
     @Override
     public double getTripTime() {
-        return trace.get(trace.size() - 1).getTime().toDouble() - trace.get(0).getTime().toDouble();
-    }
-
-    @Override
-    public Iterator<GPSPoint> iterator() {
-        return getPoints().iterator();
+        return getPoint(size() - 1).getTime().toDouble() - getPoint(0).getTime().toDouble();
     }
 
     @Override
     public GPSPoint getInitialPosition() {
-        return trace.get(0);
+        return getPoint(0);
     }
 
     @Override
     public GPSPoint getFinalPosition() {
-        return trace.get(trace.size() - 1);
+        return getPoint(size() - 1);
     }
 
     @Override
     public Time getFinalTime() {
-        return trace.get(trace.size() - 1).getTime();
+        return getPoint(size() - 1).getTime();
     }
 
 }

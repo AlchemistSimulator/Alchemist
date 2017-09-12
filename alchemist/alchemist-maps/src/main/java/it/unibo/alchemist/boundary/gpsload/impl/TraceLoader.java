@@ -145,10 +145,14 @@ public class TraceLoader implements Iterable<GPSTrace> {
         }
     }
 
+    /**
+     * 
+     * @return the number of traces loaded, null is trace is infinity (they are considered cycles)
+     */
     public Optional<Integer> size() {
         return Optional.ofNullable(cyclic ? null : traces.size());
     }
-    
+
     private static GPSTimeAlignment makeNormalizer(final String clazzName, final Object... args) {
         final String fullName = clazzName.contains(".") ? clazzName : GPSTimeAlignment.class.getPackage().getName() + "." + clazzName;
         try {

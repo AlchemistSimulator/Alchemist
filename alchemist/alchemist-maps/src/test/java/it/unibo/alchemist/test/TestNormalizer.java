@@ -136,7 +136,7 @@ public class TestNormalizer {
     @Test
     public void testNormalizeWithTime() {
         final Time time = new DoubleTime(2.0);
-        final ImmutableList<GPSTrace> traces = new AlignToTime(time).alignTime(TRACES);
+        final ImmutableList<GPSTrace> traces = new AlignToTime(time, false, false).alignTime(TRACES);
         /*
          * Test start time
          */

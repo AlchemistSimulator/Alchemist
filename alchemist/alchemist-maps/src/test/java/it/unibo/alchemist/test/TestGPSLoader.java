@@ -76,7 +76,7 @@ public class TestGPSLoader {
         }
 
         try {
-            this.loaderGpx = new TraceLoader(DIRECTORY_WITH_FILES, CLASS_TIME_ALIGNMENT_TO_TIME, 0.0);
+            this.loaderGpx = new TraceLoader(DIRECTORY_WITH_FILES, CLASS_TIME_ALIGNMENT_TO_TIME, 0.0, false, false);
             final Iterator<GPSTrace> trace = this.loaderGpx.iterator();
             for (int i = 0; i < 3; i++) {
                 if (trace.hasNext()) {

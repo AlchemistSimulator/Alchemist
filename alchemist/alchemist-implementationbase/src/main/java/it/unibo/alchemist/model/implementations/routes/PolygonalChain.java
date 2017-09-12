@@ -16,36 +16,22 @@ import it.unibo.alchemist.model.interfaces.Route;
  * 
  * @param <P> the type of position that the route is composed
  */
-public class StraightRoute<P extends Position> implements Route<P> {
+public class PolygonalChain<P extends Position> implements Route<P> {
 
     private static final long serialVersionUID = 1L;
-    private final ImmutableList<P> positions;
     private double distance = Double.NaN;
     private int hash;
+    private final ImmutableList<P> positions;
 
     /**
      * @param positions the positions this route traverses
      */
     @SafeVarargs
-    public StraightRoute(final P... positions) {
+    public PolygonalChain(final P... positions) {
         if (Objects.requireNonNull(positions).length == 0) {
             throw new IllegalArgumentException("At least one point is required for creating a Route");
         }
         this.positions = ImmutableList.copyOf(positions);
-    }
-
-    @Override
-    public double length() {
-        if (Double.isNaN(distance) && size() > 0) {
-            distance = 0;
-            final Iterator<P> iter = positions.iterator();
-            for (P cur = iter.next(); iter.hasNext();) {
-                final P next = iter.next();
-                distance += computeDistance(cur, next);
-                cur = next;
-            }
-        }
-        return distance;
     }
 
     /**
@@ -57,6 +43,14 @@ public class StraightRoute<P extends Position> implements Route<P> {
      */
     protected double computeDistance(final P p1, final P p2) {
         return p1.getDistanceTo(p2);
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (other == null) {
+            return false;
+        }
+        return other.getClass().equals(getClass()) && positions.equals(((PolygonalChain<?>) other).positions);
     }
 
     @Override
@@ -73,8 +67,11 @@ public class StraightRoute<P extends Position> implements Route<P> {
     }
 
     @Override
-    public int size() {
-        return positions.size();
+    public int hashCode() {
+        if (hash == 0) {
+            hash = Hashes.hash32(positions);
+        }
+        return hash;
     }
 
     @Override
@@ -83,23 +80,31 @@ public class StraightRoute<P extends Position> implements Route<P> {
     }
 
     @Override
+    public double length() {
+        if (Double.isNaN(distance) && size() > 0) {
+            distance = 0;
+            final Iterator<P> iter = positions.iterator();
+            for (P cur = iter.next(); iter.hasNext();) {
+                final P next = iter.next();
+                distance += computeDistance(cur, next);
+                cur = next;
+            }
+        }
+        return distance;
+    }
+
+    @Override
+    public int size() {
+        return positions.size();
+    }
+
+    @Override
     public Stream<P> stream() {
         return positions.stream();
     }
-
+    
     @Override
-    public boolean equals(final Object other) {
-        if (other == null) {
-            return false;
-        }
-        return other.getClass().equals(getClass()) && positions.equals(((StraightRoute<?>) other).positions);
-    }
-
-    @Override
-    public int hashCode() {
-        if (hash == 0) {
-            hash = Hashes.hash32(positions);
-        }
-        return hash;
+    public String toString() {
+        return getClass().getSimpleName() + positions;
     }
 }

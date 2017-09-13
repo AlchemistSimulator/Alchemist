@@ -16,19 +16,19 @@ public abstract class AbstractGPSTimeAlignment implements GPSTimeAlignment {
 
     private final SinglePointBehavior policy;
     /**
-     * 
+     * Define the behavior for trace with single point.
      */
     protected enum SinglePointBehavior {
         /**
-         * 
+         * retain trace with single point.
          */
         RETAIN_SINGLE_POINTS,
         /**
-         * 
+         * discard trace with single point.
          */
         DISCARD_SINGLE_POINTS,
         /**
-         * 
+         * throw exception for trace trace with single point.
          */
         THROW_EXCEPTION_ON_SINGLE_POINTS
     }
@@ -45,7 +45,7 @@ public abstract class AbstractGPSTimeAlignment implements GPSTimeAlignment {
     public ImmutableList<GPSTrace> alignTime(final List<GPSTrace> traces) {
         Stream<GPSTrace> stream = traces.stream().map(trace -> trace.startAt(computeStartTime(traces, trace)));
         if (policy == SinglePointBehavior.DISCARD_SINGLE_POINTS) {
-            stream = stream.filter(trace -> trace.size() <= 1);
+            stream = stream.filter(trace -> trace.size() > 1);
         }
         if (policy == SinglePointBehavior.THROW_EXCEPTION_ON_SINGLE_POINTS) {
             final ImmutableList<GPSTrace> reified = stream.collect(ImmutableList.toImmutableList());

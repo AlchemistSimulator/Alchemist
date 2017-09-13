@@ -15,7 +15,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.MinMaxPriorityQueue;
 import com.google.common.primitives.Doubles;
 
-import it.unibo.alchemist.model.implementations.neighborhoods.CachedNeighborhood;
 import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.LinkingRule;
@@ -78,7 +77,7 @@ public class ClosestN<T> implements LinkingRule<T> {
     @Override
     public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T> env) {
         if (env.getNodesNumber() < expectedNodes || !nodeIsEnabled(center)) {
-            return CachedNeighborhood.empty(env, center);
+            return Neighborhoods.make(env, center);
         }
         return Neighborhoods.make(env, center,
                 Stream.concat(

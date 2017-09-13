@@ -93,7 +93,7 @@ public class TestNodeCloning {
                     sim.schedule(() -> env.getNodeByID(3).setConcentration(ENABLEDMOL, true));
                 }
                 if (step > ENABLE_CHECKS) {
-                    expectations.forEach((node, expected) -> assertEquals(expectations.get(node), node.getConcentration(DATAMOL)));
+                    expectations.forEach((node, expected) -> assertEquals(expected, node.getConcentration(DATAMOL)));
                 }
             }
             @Override

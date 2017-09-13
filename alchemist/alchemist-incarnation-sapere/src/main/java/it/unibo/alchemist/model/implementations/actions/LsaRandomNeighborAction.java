@@ -134,9 +134,9 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
         }
         if (initRoute) {
             if (mapEnv) {
-                final Route route = menv.computeRoute(getNode(), node);
+                final Route<?> route = menv.computeRoute(getNode(), node);
                 if (route != null) {
-                    final double dist = route.getDistance();
+                    final double dist = route.length();
                     d = Math.max(d, dist);
                 }
             }

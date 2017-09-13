@@ -5,7 +5,6 @@ package it.unibo.alchemist.protelis;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.HashUtils;
@@ -43,6 +42,10 @@ public class AlchemistExecutionContext extends AbstractExecutionContext implemen
      * Put this {@link Molecule} inside nodes that should compute distances using routes. It only makes sense in case the environment is a {@link MapEnvironment}
      */
     public static final Molecule USE_ROUTES_AS_DISTANCES = new SimpleMolecule("ROUTES_AS_DISTANCE");
+    /**
+     * Put this {@link Molecule} inside nodes that should compute distances using routes approximating them. It only makes sense in case the environment is a {@link MapEnvironment}
+     */
+    public static final Molecule APPROXIMATE_NBR_RANGE = new SimpleMolecule("APPROXIMATE_NBR_RANGE");
     private final LoadingCache<Position, Double> cache = CacheBuilder.newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES)
             .maximumSize(100)
@@ -50,13 +53,15 @@ public class AlchemistExecutionContext extends AbstractExecutionContext implemen
                 @Override
                 public Double load(final Position dest) {
                     if (env instanceof MapEnvironment<?>) {
-                        return ((MapEnvironment<Object>) env).computeRoute(node, dest).getDistance();
+                        return ((MapEnvironment<Object>) env).computeRoute(node, dest).length();
                     }
                     return getDevicePosition().getDistanceTo(dest);
                 }
             });
     private final Environment<Object> env;
     private int hash;
+    private double nbrRangeTimeout;
+    private double precalcdRoutingDistance = Double.NaN;
     private final ProtelisNode node;
     private final RandomGenerator rand;
     private final Reaction<Object> react;
@@ -184,8 +189,23 @@ public class AlchemistExecutionContext extends AbstractExecutionContext implemen
 
     @Override
     public Field nbrRange() {
+        final boolean useRoutesAsDistances = env instanceof MapEnvironment<?> && node.contains(USE_ROUTES_AS_DISTANCES);
         return buildFieldWithPosition(p -> {
-            if (env instanceof MapEnvironment<?> && node.contains(USE_ROUTES_AS_DISTANCES)) {
+            if (useRoutesAsDistances) {
+                if (node.contains(APPROXIMATE_NBR_RANGE)) {
+                    try {
+                        final double tolerance = (double) node.getConcentration(APPROXIMATE_NBR_RANGE);
+                        final double currTime = env.getSimulation().getTime().toDouble();
+                        if (currTime > nbrRangeTimeout) {
+                            nbrRangeTimeout = currTime + tolerance;
+                            precalcdRoutingDistance = routingDistance(p);
+                        }
+                        assert !Double.isNaN(precalcdRoutingDistance);
+                        return precalcdRoutingDistance;
+                    } catch (final ClassCastException e) {
+                        throw new IllegalStateException(APPROXIMATE_NBR_RANGE + " should be associated with a double concentration", e);
+                    }
+                }
                 return routingDistance(p);
             }
             return getDevicePosition().getDistanceTo(p);

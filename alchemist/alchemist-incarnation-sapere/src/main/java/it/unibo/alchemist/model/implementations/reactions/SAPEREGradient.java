@@ -522,7 +522,7 @@ public class SAPEREGradient extends AReaction<List<ILsaMolecule>> {
              * TODO: may need to cleanup old values for routes and positions
              */
             if (mapenvironment != null && (!pConstant || positionChanged)) {
-                routecache.put(nid, mapenvironment.computeRoute(n, curPos).getDistance());
+                routecache.put(nid, mapenvironment.computeRoute(n, curPos).length());
             }
         }
         if (!sourceCacheTemp.equals(sourceCache) || !contextCacheTemp.equals(contextCache) || neighPositionChanged || !gradCacheTemp.equals(gradCache) || positionChanged) {

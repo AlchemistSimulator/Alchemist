@@ -10,36 +10,39 @@ package it.unibo.alchemist.model.interfaces;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
+ * @param <P> type of Position followed by {@link Route} 
  */
-public interface Route extends Serializable {
+public interface Route<P extends Position> extends Iterable<P>, Serializable {
 
     /**
      * @return the length of the route
      */
-    double getDistance();
+    double length();
 
     /**
      * @param step
      *            the step
      * @return the step-th {@link Position} in the route
      */
-    Position getPoint(int step);
+    P getPoint(int step);
 
     /**
      * @return the route as list of {@link Position}
      */
-    List<Position> getPoints();
+    List<P> getPoints();
+
+    /**
+     * 
+     * @return the route as stream of {@link Position}
+     */
+    Stream<P> stream();
 
     /**
      * @return the number of points this route is made of
      */
-    int getPointsNumber();
-
-    /**
-     * @return the time required to walk the route
-     */
-    double getTime();
+    int size();
 
 }

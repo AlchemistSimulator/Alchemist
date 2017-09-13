@@ -8,43 +8,33 @@
  */
 package it.unibo.alchemist.model.interfaces;
 
-import java.io.Serializable;
-
 /**
  */
-public interface GPSTrace extends Serializable {
-
-    /**
-     * @param time
-     *            the time at which the new trace should start
-     * @return a new trace, which will have all the points of this trace
-     *         starting at the passed time
-     */
-    GPSTrace filter(double time);
-
-    /**
-     * @return the node id
-     */
-    int getId();
+public interface GPSTrace extends TimedRoute<GPSPoint> {
 
     /**
      * @param time
      *            the time
      * @return the next point
      */
-    GPSPoint getNextPosition(double time);
+    GPSPoint getNextPosition(Time time);
 
     /**
      * @param time
      *            the time
      * @return the previous point
      */
-    GPSPoint getPreviousPosition(double time);
+    GPSPoint getPreviousPosition(Time time);
 
     /**
      * @return the first time for this {@link GPSTrace}
      */
-    double getStartTime();
+    Time getStartTime();
+
+    /**
+     * @return the final time for this {@link GPSTrace}
+     */
+    Time getFinalTime();
 
     /**
      * @param time
@@ -53,35 +43,25 @@ public interface GPSTrace extends Serializable {
      *         a straight line connecting the previous and the next point of
      *         time at constant speed
      */
-    GPSPoint interpolate(double time);
+    GPSPoint interpolate(Time time);
 
     /**
-     * @return distance (in meters) of the whole trace
+     * @param time
+     *            the time at which the new trace should start
+     * @return a new trace, which will have all the points of this trace
+     *         starting at the passed time
      */
-    double length();
+    GPSTrace startAt(Time time);
 
     /**
-     * Modifies all the times of this trace, shifting them back of initialTime.
      * 
-     * @param initialTime
-     *            the initial time
+     * @return The initial position of the trace
      */
-    void normalizeTimes(double initialTime);
+    GPSPoint getInitialPosition();
 
     /**
-     * @param i
-     *            the id
+     * 
+     * @return The final position of the trace
      */
-    void setId(int i);
-
-    /**
-     * @return the number of {@link GPSPoint}s
-     */
-    int size();
-
-    /**
-     * orders the trace by time.
-     */
-    void sort();
-
+    GPSPoint getFinalPosition();
 }

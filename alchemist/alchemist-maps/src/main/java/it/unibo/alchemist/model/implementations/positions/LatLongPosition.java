@@ -24,6 +24,7 @@ import java.util.function.BinaryOperator;
 import org.danilopianini.util.Hashes;
 
 import it.unibo.alchemist.exceptions.UncomparableDistancesException;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.Position;
 
 import com.google.common.collect.Lists;
@@ -37,7 +38,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * {@link Position} interface.
  * 
  */
-public final class LatLongPosition implements Position {
+public final class LatLongPosition implements GeoPosition {
 
     /**
      * The default distance formula.
@@ -233,27 +234,6 @@ public final class LatLongPosition implements Position {
     }
 
     @Override
-    public int compareTo(final Position o) {
-        if (getDimensions() < o.getDimensions()) {
-            return -1;
-        }
-        if (getDimensions() > o.getDimensions()) {
-            return 1;
-        }
-        final double[] pos = o.getCartesianCoordinates();
-        final double[] c = getCartesianCoordinates();
-        for (int i = 0; i < c.length; i++) {
-            if (c[i] < pos[i]) {
-                return -1;
-            }
-            if (c[i] > pos[i]) {
-                return 1;
-            }
-        }
-        return 0;
-    }
-
-    @Override
     public double[] getCartesianCoordinates() {
         return new double[] { getLongitude(), getLatitude() };
     }
@@ -325,12 +305,12 @@ public final class LatLongPosition implements Position {
     }
 
     @Override
-    public Position add(final Position other) {
+    public GeoPosition add(final Position other) {
         return ebeOperation((self, b) -> self + b, other);
     }
 
     @Override
-    public Position subtract(final Position other) {
+    public GeoPosition subtract(final Position other) {
         return ebeOperation((self, o) -> self - o, other);
     }
 

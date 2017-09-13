@@ -99,7 +99,7 @@ public abstract class AbstractConfigurableMoveNode<T> extends AbstractMoveNode<T
         if (route == null) {
             route = routing.computeRoute(curPos, end);
         }
-        if (route.getPointsNumber() < 1) {
+        if (route.size() < 1) {
             resetRoute();
             return getDestination(curPos, end, maxWalk);
         }
@@ -114,7 +114,7 @@ public abstract class AbstractConfigurableMoveNode<T> extends AbstractMoveNode<T
             curStep++;
             maxWalk -= toWalk;
             curPos = target;
-        } while (curStep != route.getPointsNumber());
+        } while (curStep != route.size());
         /*
          * I've followed the whole route
          */

@@ -10,25 +10,27 @@ package it.unibo.alchemist.model.implementations;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.graphhopper.GHResponse;
 import com.graphhopper.PathWrapper;
 import com.graphhopper.util.PointList;
 
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
-import it.unibo.alchemist.model.interfaces.Route;
-import it.unibo.alchemist.model.interfaces.Position;
-import java.util.stream.Collectors;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
+import it.unibo.alchemist.model.interfaces.TimedRoute;
 
 /**
  */
-public final class GraphHopperRoute implements Route {
+public final class GraphHopperRoute implements TimedRoute<GeoPosition> {
 
     private static final long serialVersionUID = -1455332156736222268L;
-    private final int size;
+    private final int numPoints;
     private final double distance, time;
-    private final List<Position> points;
+    private final List<GeoPosition> points;
 
     /**
      * @param response
@@ -41,8 +43,8 @@ public final class GraphHopperRoute implements Route {
             time = resp.getTime() / 1000d;
             distance = resp.getDistance();
             final PointList pts = resp.getPoints();
-            size = pts.getSize();
-            final List<Position> temp = new ArrayList<>(size);
+            numPoints = pts.getSize();
+            final List<GeoPosition> temp = new ArrayList<>(numPoints);
             for (int i = 0; i < pts.getSize(); i++) {
                 temp.add(new LatLongPosition(pts.getLatitude(i), pts.getLongitude(i)));
             }
@@ -54,28 +56,38 @@ public final class GraphHopperRoute implements Route {
     }
 
     @Override
-    public double getDistance() {
+    public double length() {
         return distance;
     }
 
     @Override
-    public Position getPoint(final int step) {
+    public GeoPosition getPoint(final int step) {
         return points.get(step);
     }
 
     @Override
-    public List<Position> getPoints() {
+    public List<GeoPosition> getPoints() {
         return points;
     }
 
     @Override
-    public int getPointsNumber() {
-        return size;
+    public double getTripTime() {
+        return time;
     }
 
     @Override
-    public double getTime() {
-        return time;
+    public Iterator<GeoPosition> iterator() {
+        return points.iterator();
+    }
+
+    @Override
+    public Stream<GeoPosition> stream() {
+        return points.stream();
+    }
+
+    @Override
+    public int size() {
+        return numPoints;
     }
 
 }

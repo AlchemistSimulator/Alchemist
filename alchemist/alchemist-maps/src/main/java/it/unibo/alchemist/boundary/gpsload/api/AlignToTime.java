@@ -68,7 +68,10 @@ public class AlignToTime extends AbstractGPSTimeAlignment {
         if (filterEmpty) {
             return SinglePointBehavior.DISCARD_SINGLE_POINTS;
         }
-        if (!filterEmpty && !exceptionForEmpty) {
+        /*
+         * if you get here filterEmpty is false.
+         */
+        if (!exceptionForEmpty) {
             return SinglePointBehavior.RETAIN_SINGLE_POINTS;
         }
         throw new IllegalArgumentException("Invalid combination of parameter filterEmpty: " + filterEmpty

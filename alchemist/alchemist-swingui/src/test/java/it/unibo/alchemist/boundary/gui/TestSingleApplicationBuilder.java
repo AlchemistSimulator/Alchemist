@@ -22,14 +22,14 @@ public class TestSingleApplicationBuilder {
     }
 
     public static void main(final String... args) {
-        Application.launch(TestSingleApplication.class, getParams(TEST_PARAMETERS));
+        Application.launch(SingleRunApp.class, getParams(TEST_PARAMETERS));
     }
 
     private static String getParam(final Map.Entry<String, String> valueNameEntry) {
         return (valueNameEntry.getValue().equals("") ? "" : SingleRunApp.PARAMETER_NAME_START + valueNameEntry.getKey() + SingleRunApp.PARAMETER_NAME_END) + valueNameEntry.getValue();
     }
 
-    private static String[] getParams(final Map<String, String> valueNameParamsMap) {
+    public static String[] getParams(final Map<String, String> valueNameParamsMap) {
         return valueNameParamsMap
                 .entrySet()
                 .stream()

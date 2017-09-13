@@ -36,7 +36,7 @@ public class SingleRunViewBuilder<T> {
     private Collection<EffectGroup> effectGroups;
 
     public static void main(final String... args) {
-        Application.launch(SingleRunApp.class);
+        Application.launch(SingleRunApp.class, new String[0]);
     }
 
     /**

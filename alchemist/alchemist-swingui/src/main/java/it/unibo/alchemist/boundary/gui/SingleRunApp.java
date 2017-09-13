@@ -27,7 +27,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
-class SingleRunApp<T> extends Application {
+public class SingleRunApp<T> extends Application {
     public static final String USE_SPECIFIED_DISPLAY_MONITOR_PARAMETER_NAME = "use-display-monitor";
     public static final String USE_DEFAULT_DISPLAY_MONITOR_FOR_ENVIRONMENT_CLASS_PARAMETER_NAME = "use-default-display-monitor-for-environment";
     public static final String USE_FX_2D_DISPLAY_PARAMETER_NAME = "use-FX2DDisplay-monitor";
@@ -46,9 +46,9 @@ class SingleRunApp<T> extends Application {
     private static final String ROOT_LAYOUT = "RootLayout";
 
     private Collection<EffectGroup> effectGroups;
-    private Optional<AbstractFXDisplay<T>> displayMonitor;
-    private Optional<FXTimeMonitor<T>> timeMonitor;
-    private Optional<FXStepMonitor<T>> stepMonitor;
+    private Optional<AbstractFXDisplay<T>> displayMonitor = Optional.empty();
+    private Optional<FXTimeMonitor<T>> timeMonitor = Optional.empty();
+    private Optional<FXStepMonitor<T>> stepMonitor = Optional.empty();
     private Stage stage;
     private Pane rootLayout;
     private ButtonsBarController buttonsBarController;

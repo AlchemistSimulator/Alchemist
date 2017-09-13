@@ -18,6 +18,10 @@ public class NoAlignment extends AbstractGPSTimeAlignment {
 
     private static final SinglePointBehavior POLICY = SinglePointBehavior.RETAIN_SINGLE_POINTS;
 
+    /**
+     * Default empty constructor, builds a NoAlignment with RETAIN_SINGLE_POINTS
+     * behavior for trace with single point.
+     */
     public NoAlignment() {
         super(POLICY);
     }

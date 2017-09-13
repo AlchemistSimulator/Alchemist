@@ -7,11 +7,10 @@ import it.unibo.alchemist.model.interfaces.GPSTrace;
 import it.unibo.alchemist.model.interfaces.Time;
 
 /**
- * Alings the traces with the given time in seconds from Epoch.
- * All points before such time will be discarded. 
- * All points after the provided time will be shifted back. 
- * Summarizing, the time that is provided represents in
- * the real world the time zero of the simulation.
+ * Alings the traces with the given time in seconds from Epoch. All points
+ * before such time will be discarded. All points after the provided time will
+ * be shifted back. Summarizing, the time that is provided represents in the
+ * real world the time zero of the simulation.
  */
 public class AlignToTime extends AbstractGPSTimeAlignment {
 
@@ -22,12 +21,32 @@ public class AlignToTime extends AbstractGPSTimeAlignment {
      * @param time
      *            the time from which the traces should begin. E.g., if you want all
      *            traces to begin at 2017-08-01 at 14:45:42 GMT, you should enter
-     *            1501598742 (seconds from Epoch). All points before such
-     *            time will be discarded. All points after the provided time will be
-     *            shifted back. Summarizing, the time that is provided represents in
-     *            the real world the time zero of the simulation.
+     *            1501598742 (seconds from Epoch). All points before such time will
+     *            be discarded. All points after the provided time will be shifted
+     *            back. Summarizing, the time that is provided represents in the
+     *            real world the time zero of the simulation.
+     * @param filterEmpty
+     *            if true filter empty traces
      * @param exceptionForEmpty
-     *            if true throw exception for empty traces, otherwise discard them
+     *            if true throw exception for empty traces
+     */
+    public AlignToTime(final double time, final boolean filterEmpty, final boolean exceptionForEmpty) {
+        this(new DoubleTime(time), filterEmpty, exceptionForEmpty);
+    }
+
+    /**
+     * 
+     * @param time
+     *            the time from which the traces should begin. E.g., if you want all
+     *            traces to begin at 2017-08-01 at 14:45:42 GMT, you should enter
+     *            1501598742 (seconds from Epoch). All points before such time will
+     *            be discarded. All points after the provided time will be shifted
+     *            back. Summarizing, the time that is provided represents in the
+     *            real world the time zero of the simulation.
+     * @param filterEmpty
+     *            if true filter empty traces
+     * @param exceptionForEmpty
+     *            if true throw exception for empty traces
      */
     public AlignToTime(final Time time, final boolean filterEmpty, final boolean exceptionForEmpty) {
         super(getPolicy(filterEmpty, exceptionForEmpty));
@@ -35,6 +54,11 @@ public class AlignToTime extends AbstractGPSTimeAlignment {
             throw new IllegalArgumentException("the time can't be negative");
         }
         this.time = time;
+    }
+
+    @Override
+    protected Time computeStartTime(final List<GPSTrace> allTraces, final GPSTrace currentTrace) {
+        return time;
     }
 
     private static SinglePointBehavior getPolicy(final boolean filterEmpty, final boolean exceptionForEmpty) {
@@ -49,27 +73,6 @@ public class AlignToTime extends AbstractGPSTimeAlignment {
         }
         throw new IllegalArgumentException("Invalid combination of parameter filterEmpty: " + filterEmpty
                 + " exceptionForEmpty: " + exceptionForEmpty);
-    }
-
-    /**
-     * 
-     * @param time
-     *            the time from which the traces should begin. E.g., if you want all
-     *            traces to begin at 2017-08-01 at 14:45:42 GMT, you should enter
-     *            1501598742 (seconds from Epoch). All points before such
-     *            time will be discarded. All points after the provided time will be
-     *            shifted back. Summarizing, the time that is provided represents in
-     *            the real world the time zero of the simulation.
-     * @param exceptionForEmpty
-     *            if true throw exception for empty traces, otherwise discard them
-     */
-    public AlignToTime(final double time, final boolean filterEmpty, final boolean exceptionForEmpty) {
-        this(new DoubleTime(time), filterEmpty, exceptionForEmpty);
-    }
-
-    @Override
-    protected Time computeStartTime(final List<GPSTrace> allTraces, final GPSTrace currentTrace) {
-        return time;
     }
 
 }

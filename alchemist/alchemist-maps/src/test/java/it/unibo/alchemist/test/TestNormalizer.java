@@ -215,6 +215,38 @@ public class TestNormalizer {
         }
     }
 
+    /**
+     * 
+     */
+    @Test
+    public void testAlignToTimeNegativeTime() {
+        final Time time = new DoubleTime(-4.0);
+        try {
+            new AlignToTime(time, true, true);
+            fail("not throw exception");
+        } catch (IllegalArgumentException e) {
+            assertFalse(e.getMessage().isEmpty());
+        } catch (Exception e) {
+            fail("throw wrong exception");
+        }
+    }
+
+    /**
+     * 
+     */
+    @Test
+    public void testAlignToTimeWrongPolicy() {
+        final Time time = new DoubleTime(4.0);
+        try {
+            new AlignToTime(time, false, true).alignTime(TRACES);
+            fail("not throw exception");
+        } catch (IllegalArgumentException e) {
+            assertFalse(e.getMessage().isEmpty());
+        } catch (Exception e) {
+            fail("throw wrong exception");
+        }
+    }
+
     private Time findNextTime(final GPSTrace trace, final Time time) {
         return trace.getNextPosition(time).getTime();
     }

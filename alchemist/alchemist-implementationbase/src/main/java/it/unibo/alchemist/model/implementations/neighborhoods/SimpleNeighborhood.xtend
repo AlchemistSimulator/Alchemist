@@ -7,6 +7,7 @@ import org.danilopianini.util.ListBackedSet
 import org.danilopianini.util.ListSet
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.danilopianini.util.ListSets
+import java.util.ArrayList
 
 @Accessors(PROTECTED_GETTER, PROTECTED_SETTER)
 class SimpleNeighborhood<T> implements Neighborhood<T> {
@@ -30,7 +31,7 @@ class SimpleNeighborhood<T> implements Neighborhood<T> {
 	}
 
 	override clone() {
-		new SimpleNeighborhood(env, center, neighbors)
+		new SimpleNeighborhood(env, center, new ArrayList(neighbors))
 	}
 
 	override contains(Node<T> n) { neighbors.contains(n) }

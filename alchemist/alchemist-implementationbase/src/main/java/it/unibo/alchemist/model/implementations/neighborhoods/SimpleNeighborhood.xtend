@@ -7,6 +7,7 @@ import org.danilopianini.util.ListBackedSet
 import org.danilopianini.util.ListSet
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.danilopianini.util.ListSets
+import java.util.ArrayList
 
 @Accessors(PROTECTED_GETTER, PROTECTED_SETTER)
 class SimpleNeighborhood<T> implements Neighborhood<T> {
@@ -15,14 +16,10 @@ class SimpleNeighborhood<T> implements Neighborhood<T> {
 	val ListSet<Node<T>> neighbors
 	val Node<T> center
 
-	protected new(Environment<T> env, Node<T> center, Node<T>... neighbors) {
-		this(env, center, neighbors.toList)
-	}
-
-	protected new(Environment<T> env, Node<T> center, Iterable<Node<T>> neighbors) {
+	protected new(Environment<T> env, Node<T> center, Iterable<? extends Node<T>> neighbors) {
 		this.env = env
 		this.center = center
-		this.neighbors = new ListBackedSet(neighbors.toList)
+		this.neighbors = new ListBackedSet(new ArrayList(neighbors.toList))
 	}
 
 	override addNeighbor(Node<T> neigh) {

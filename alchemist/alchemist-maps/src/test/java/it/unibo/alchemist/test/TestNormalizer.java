@@ -1,18 +1,20 @@
 package it.unibo.alchemist.test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
+
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
 
 import com.google.common.collect.ImmutableList;
 
-import it.unibo.alchemist.boundary.gpsload.api.NoAlignment;
 import it.unibo.alchemist.boundary.gpsload.api.AlignToFirstTrace;
 import it.unibo.alchemist.boundary.gpsload.api.AlignToSimulationTime;
 import it.unibo.alchemist.boundary.gpsload.api.AlignToTime;
+import it.unibo.alchemist.boundary.gpsload.api.NoAlignment;
 import it.unibo.alchemist.model.implementations.positions.GPSPointImpl;
 import it.unibo.alchemist.model.implementations.routes.GPSTraceImpl;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
@@ -42,11 +44,7 @@ public class TestNormalizer {
     private static final List<GPSTrace> TRACES = new LinkedList<>();
     private static final Double DELTA = 0.0;
 
-    /**
-     * 
-     */
-    @Before
-    public void setUp() {
+    static {
         TRACES.add(TRACE_1);
         TRACES.add(TRACE_2);
         TRACES.add(TRACE_3);
@@ -56,7 +54,7 @@ public class TestNormalizer {
      * 
      */
     @Test
-    public void testNoNormalize() {
+    public void testNoAlignment() {
         final ImmutableList<GPSTrace> traces = new NoAlignment().alignTime(TRACES);
         /*
          * Test start time
@@ -79,7 +77,7 @@ public class TestNormalizer {
      * 
      */
     @Test
-    public void testNormalizeTimeWithFirstOfAll() {
+    public void testAlignToFirstTrace() {
         final ImmutableList<GPSTrace> traces = new AlignToFirstTrace().alignTime(TRACES);
         /*
          * Test start time
@@ -108,7 +106,7 @@ public class TestNormalizer {
      * 
      */
     @Test
-    public void testNormalizeTimeSingleTrace() {
+    public void testAlignToSimulationTime() {
         final ImmutableList<GPSTrace> traces = new AlignToSimulationTime().alignTime(TRACES);
         /*
          * Test start time
@@ -134,7 +132,7 @@ public class TestNormalizer {
      * 
      */
     @Test
-    public void testNormalizeWithTime() {
+    public void testAlignToTimeRetainSinglePoint() {
         final Time time = new DoubleTime(2.0);
         final ImmutableList<GPSTrace> traces = new AlignToTime(time, false, false).alignTime(TRACES);
         /*
@@ -164,6 +162,57 @@ public class TestNormalizer {
                 traces.get(1).getFinalTime().toDouble(), DELTA);
         assertEquals(TRACE_3_POINT_3.getTime().toDouble() - time.toDouble(),
                 traces.get(2).getFinalTime().toDouble(), DELTA);
+    }
+
+    /**
+     * 
+     */
+    @Test
+    public void testAlignToTimeDiscardSinglePoint() {
+        final Time time = new DoubleTime(4.0);
+        final ImmutableList<GPSTrace> traces = new AlignToTime(time, true, false).alignTime(TRACES);
+        /*
+         * Test number of trace
+         */
+        assertEquals(2, traces.size());
+        /*
+         * Test start time
+         */
+        assertEquals(findNextTime(TRACE_1, time).toDouble() - time.toDouble(), 
+                traces.get(0).getStartTime().toDouble(), DELTA);
+        assertEquals(findNextTime(TRACE_3, time).toDouble() - time.toDouble(), 
+                traces.get(1).getStartTime().toDouble(), DELTA);
+
+        /*
+         * Test the time required to walk the trace
+         */
+        assertEquals(TRACE_1_POINT_3.getTime().toDouble() - findNextTime(TRACE_1, time).toDouble(),
+                traces.get(0).getTripTime(), DELTA);
+        assertEquals(TRACE_3_POINT_3.getTime().toDouble() - findNextTime(TRACE_3, time).toDouble(),
+                traces.get(1).getTripTime(), DELTA);
+        /*
+         * Test final time 
+         */
+        assertEquals(TRACE_1_POINT_3.getTime().toDouble() - time.toDouble(),
+                traces.get(0).getFinalTime().toDouble(), DELTA);
+        assertEquals(TRACE_3_POINT_3.getTime().toDouble() - time.toDouble(),
+                traces.get(1).getFinalTime().toDouble(), DELTA);
+    }
+
+    /**
+     * 
+     */
+    @Test
+    public void testAlignToTimeThrowExceptionOnSinglePoint() {
+        final Time time = new DoubleTime(4.0);
+        try {
+            new AlignToTime(time, true, true).alignTime(TRACES);
+            fail("not throw exception");
+        } catch (IllegalStateException e) {
+            assertFalse(e.getMessage().isEmpty());
+        } catch (Exception e) {
+            fail("throw wrong exception");
+        }
     }
 
     private Time findNextTime(final GPSTrace trace, final Time time) {

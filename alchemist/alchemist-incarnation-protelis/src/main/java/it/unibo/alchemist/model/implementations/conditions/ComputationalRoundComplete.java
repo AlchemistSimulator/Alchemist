@@ -33,7 +33,7 @@ public class ComputationalRoundComplete extends AbstractCondition<Object> {
     public ComputationalRoundComplete(final ProtelisNode node, final RunProtelisProgram prog) {
         super(node);
         program = prog;
-        addReadMolecule(program);
+        addReadMolecule(program.asMolecule());
     }
 
     @Override

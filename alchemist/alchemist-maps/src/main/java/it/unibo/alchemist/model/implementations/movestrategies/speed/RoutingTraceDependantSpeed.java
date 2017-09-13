@@ -37,7 +37,7 @@ public class RoutingTraceDependantSpeed<T> extends TraceDependantSpeed<T> {
 
     @Override
     protected double computeDistance(final MapEnvironment<T> environment, final Node<T> curNode, final Position targetPosition) {
-        return environment.computeRoute(curNode, targetPosition, v).getDistance();
+        return environment.computeRoute(curNode, targetPosition, v).length();
     }
 
 }

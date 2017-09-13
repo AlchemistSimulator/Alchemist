@@ -24,7 +24,7 @@ public class ScalaVariable<R> extends ScriptVariable<R> {
         try {
             return ScalaInterpreter.apply(s);
         } catch (Throwable t) { // NOPMD
-            throw new IllegalStateException('«' + s + "» is not a valid Scala script.", t);
+            throw new IllegalStateException("«" + s + "» is not a valid Scala script.", t);
         }
     }
 

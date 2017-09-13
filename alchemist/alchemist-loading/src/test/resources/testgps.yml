@@ -1,0 +1,20 @@
+environment:
+  type: OSMEnvironment
+  parameters: ["/vcm.pbf", false]
+
+incarnation: sapere
+
+pools:
+  - pool: &move
+    - time-distribution: 0.1
+      type: Event
+      actions:
+        - type: ReproduceGPSTrace
+          parameters: ["/gpsTrace", true, "AlignToSimulationTime"]
+
+displacements:
+  - in:
+      type: FromGPSTrace
+      parameters: [7, "/gpsTrace", true, "AlignToSimulationTime"]
+    programs:
+      - *move

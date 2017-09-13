@@ -8,36 +8,26 @@
  */
 package it.unibo.alchemist.model.interfaces;
 
-import java.io.Serializable;
-
 /**
  */
-public interface GPSPoint extends Serializable, Comparable<GPSPoint> {
-
-    /**
-     * @return the latitude
-     */
-    double getLatitude();
-
-    /**
-     * @return the longitude
-     */
-    double getLongitude();
+public interface GPSPoint extends GeoPosition, Comparable<GPSPoint> {
 
     /**
      * @return the time
      */
-    double getTime();
+    Time getTime();
 
     /**
-     * @param t
-     *            time to set
+     * 
+     * @param t time to subtract to the point's time
+     * @return new GPSPoint with the new time
      */
-    void setTime(double t);
+    GPSPoint subtractTime(Time t);
 
     /**
-     * @return a new {@link Position} representation of this {@link GPSPoint}
+     * 
+     * @param t time to add to the point's time
+     * @return new GPSPoint with the new time
      */
-    Position toPosition();
-
+    GPSPoint addTime(Time t);
 }

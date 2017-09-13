@@ -79,7 +79,7 @@ public class NodeTracker<T> extends JPanel implements OutputMonitor<T>, ActionLi
             sb.append(CONTENT);
             sb.append('\n');
             sb.append(n.getContents().entrySet().stream()
-                .map(e -> e.getKey() + " > " + e.getValue() + '\n')
+                .map(e -> e.getKey().getName() + " > " + e.getValue() + '\n')
                 .sorted()
                 .collect(Collectors.joining())
             );

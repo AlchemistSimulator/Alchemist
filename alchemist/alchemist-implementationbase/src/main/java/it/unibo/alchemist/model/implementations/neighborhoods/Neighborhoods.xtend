@@ -13,7 +13,7 @@ final class Neighborhoods {
 		make(env, center, Collections.emptyList)
 	}
 
-	def public static <T> Neighborhood<T> make(Environment<T> env, Node<T> center, Iterable<Node<T>> neighbors) {
+	def public static <T> Neighborhood<T> make(Environment<T> env, Node<T> center, Iterable<? extends Node<T>> neighbors) {
 		new SimpleNeighborhood(env, center, neighbors)
 	}
 

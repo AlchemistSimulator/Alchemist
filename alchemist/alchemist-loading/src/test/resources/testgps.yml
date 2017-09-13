@@ -14,7 +14,7 @@ pools:
 
 displacements:
   - in:
-      type: GPSTraceDisplacement
+      type: FromGPSTrace
       parameters: [7, "/gpsTrace", true, "AlignToSimulationTime"]
     programs:
       - *move

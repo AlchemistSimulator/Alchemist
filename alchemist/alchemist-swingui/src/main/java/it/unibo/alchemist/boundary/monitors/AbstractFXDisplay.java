@@ -45,7 +45,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     /**
      * The default frame rate.
      */
-    public static final byte DEFAULT_FRAME_RATE = 25;
+    public static final byte DEFAULT_FRAME_RATE = 60;
     /**
      * The default time per frame.
      */
@@ -67,9 +67,9 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      */
     private static final ViewStatus DEFAULT_VIEW_STATUS = ViewStatus.MARK_CLOSER;
 
-    static {
-        System.setProperty("sun.java2d.opengl", "true");
-    }
+//    static {
+//        System.setProperty("sun.java2d.opengl", "true");
+//    }
 
     private final ConcurrentMap<Node<T>, Position> positions;
     private final ConcurrentMap<Node<T>, Neighborhood<T>> neighbors;

@@ -29,7 +29,7 @@ public class JavascriptVariable extends ScriptVariable<Object> {
         try {
             return ENGINE.eval(s);
         } catch (final ScriptException e) {
-            throw new IllegalStateException('«' + s + "» is not a valid Javascript fragment", e);
+            throw new IllegalStateException("«" + s + "» is not a valid Javascript fragment", e);
         }
     }
 

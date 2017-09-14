@@ -235,7 +235,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     }
 
     @Override
-    public final Position getPosition(final Node<T> node) {
+    public Position getPosition(final Node<T> node) {
         return nodeToPos.get(node.getId());
     }
 

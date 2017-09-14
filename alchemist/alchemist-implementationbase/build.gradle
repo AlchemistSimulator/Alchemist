@@ -1,3 +1,5 @@
+apply plugin: 'scala'
+
 dependencies {
     compile (
         project(':alchemist-interfaces'),

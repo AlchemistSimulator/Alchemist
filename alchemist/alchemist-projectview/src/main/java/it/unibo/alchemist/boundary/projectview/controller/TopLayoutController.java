@@ -15,6 +15,7 @@ import com.google.common.io.Files;
 import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
+import it.unibo.alchemist.boundary.projectview.utils.SVGImageUtils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -65,9 +66,7 @@ public class TopLayoutController implements Initializable {
 
     /**
      * Sets the main class.
-     * 
-     * @param main
-     *            main class
+     * @param main main class
      */
     public void setMain(final ProjectGUI main) {
         this.main = main;
@@ -75,8 +74,7 @@ public class TopLayoutController implements Initializable {
 
     /**
      * 
-     * @param controller
-     *            LeftLayout controller
+     * @param controller LeftLayout controller
      */
     public void setCtrlLeft(final LeftLayoutController controller) {
         this.ctrlLeft = controller;
@@ -84,8 +82,7 @@ public class TopLayoutController implements Initializable {
 
     /**
      * 
-     * @param controller
-     *            CenterLayout controller
+     * @param controller CenterLayout controller
      */
     public void setCtrlCenter(final CenterLayoutController controller) {
         this.ctrlCenter = controller;
@@ -140,7 +137,7 @@ public class TopLayoutController implements Initializable {
 
     /**
      * Show a directory chooser to open an existing project.
-     * 
+     *
      * @throws IOException
      * @throws FileNotFoundException
      */
@@ -165,18 +162,8 @@ public class TopLayoutController implements Initializable {
         dirChooser.setTitle(RESOURCES.getString("select_folder_proj"));
         final File dir = dirChooser.showDialog(this.main.getStage());
         if (dir != null) {
-            final boolean containsFile = dir
-                    .listFiles(file -> file.getName().endsWith(".alchemist_project_descriptor.json")).length > 0;
-            if (containsFile) {
-                final Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle(RESOURCES.getString("proj_folder_wrong"));
-                alert.setHeaderText(RESOURCES.getString("proj_folder_wrong_header"));
-                alert.setContentText(RESOURCES.getString("proj_folder_wrong_content"));
-                alert.showAndWait();
-            } else {
-                Files.write(dir.getPath(), settingsFile, StandardCharsets.UTF_8);
-                setView(dir);
-            }
+            Files.write(dir.getPath(), settingsFile, StandardCharsets.UTF_8);
+            setView(dir);
         }
     }
 

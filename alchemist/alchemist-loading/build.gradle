@@ -3,6 +3,7 @@ dependencies {
         project(':alchemist-implementationbase'),
         project(':alchemist-interfaces'),
         project(':alchemist-time'),
+        project(':alchemist-maps'),
         "org.apache.commons:commons-lang3:${lang3Version}",
         "org.danilopianini:jirf:${jirfVersion}",
         "org.reflections:reflections:$reflectionsVersion",

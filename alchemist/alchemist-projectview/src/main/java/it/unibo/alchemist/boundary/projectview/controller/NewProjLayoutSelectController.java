@@ -13,11 +13,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
+import org.jooq.lambda.Unchecked;
 
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
@@ -39,6 +41,7 @@ import javafx.stage.Stage;
 public class NewProjLayoutSelectController implements Initializable {
 
     private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
+    private static final boolean ON_WINDOWS = System.getProperty("os.name").toLowerCase(Locale.US).contains("windows");
 
     @FXML
     private Button backBtn;
@@ -88,7 +91,6 @@ public class NewProjLayoutSelectController implements Initializable {
      */
     public void setStage(final Stage stage) {
         this.stage = stage;
-
     }
 
     /**
@@ -101,19 +103,16 @@ public class NewProjLayoutSelectController implements Initializable {
     }
 
     private void copyRecursively(final String path) {
-        resourcesFrom(path, Integer.MAX_VALUE).sorted((s1, s2) -> Integer.compare(s2.length(), s1.length())) // Longest
-                                                                                                             // first
-                .forEach(p -> {
-                    final InputStream is = NewProjLayoutSelectController.class.getResourceAsStream(path + '/' + p);
+        resourcesFrom(path, Integer.MAX_VALUE)
+            .sorted((s1, s2) -> Integer.compare(s2.length(), s1.length())) // Longest first
+            .forEach(Unchecked.consumer(p -> {
+                try (InputStream is = NewProjLayoutSelectController.class.getResourceAsStream(path + '/' + p)) {
                     final File destination = new File(folderPath + '/' + p);
                     if (!destination.exists()) {
-                        try {
-                            FileUtils.copyInputStreamToFile(is, destination);
-                        } catch (IOException e) {
-                            throw new IllegalStateException("Could not initialize " + destination, e);
-                        }
+                        FileUtils.copyInputStreamToFile(is, destination);
                     }
-                });
+                }
+            }));
     }
 
     /**
@@ -157,7 +156,15 @@ public class NewProjLayoutSelectController implements Initializable {
             } else {
                 myPath = Paths.get(uri);
             }
-            return Files.walk(myPath, depth).skip(1).map(Path::toString).map(s -> s.replaceAll(".*?" + path + "/", ""))
+            Stream<String> resourcesStream = Files.walk(myPath, depth)
+                    .skip(1)
+                    .map(Path::toString);
+            if (ON_WINDOWS) {
+                resourcesStream = resourcesStream.map(s -> s.replaceAll("\\\\", "/"));
+            }
+            final String regex = ".*\\" + path + "\\/";
+            return resourcesStream
+                    .map(s -> s.replaceFirst(regex, ""))
                     .sorted();
         } catch (URISyntaxException | IOException e) {
             throw new IllegalStateException(e);

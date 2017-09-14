@@ -11,7 +11,7 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>net.sf.eclipsecs.core.CheckstyleBuilder</name>
+			<name>org.eclipse.xtext.ui.shared.xtextBuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
@@ -26,6 +26,11 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
+			<name>net.sf.eclipsecs.core.CheckstyleBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
 			<name>edu.umd.cs.findbugs.plugin.eclipse.findbugsBuilder</name>
 			<arguments>
 			</arguments>
@@ -33,9 +38,10 @@
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
-		<nature>net.sf.eclipsecs.core.CheckstyleNature</nature>
+		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>
 		<nature>org.eclipse.buildship.core.gradleprojectnature</nature>
 		<nature>net.sourceforge.pmd.eclipse.plugin.pmdNature</nature>
+		<nature>net.sf.eclipsecs.core.CheckstyleNature</nature>
 		<nature>edu.umd.cs.findbugs.plugin.eclipse.findbugsNature</nature>
 	</natures>
 	<filteredResources>

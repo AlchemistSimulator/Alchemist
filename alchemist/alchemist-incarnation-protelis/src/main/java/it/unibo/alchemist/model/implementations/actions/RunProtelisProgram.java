@@ -32,11 +32,12 @@ import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 /**
  */
 @SuppressFBWarnings(value = "EQ_DOESNT_OVERRIDE_EQUALS", justification = "This is desired.")
-public class RunProtelisProgram extends SimpleMolecule implements Action<Object> {
+public class RunProtelisProgram implements Action<Object> {
 
     private static final long serialVersionUID = 2207914086772704332L;
     private boolean computationalCycleComplete;
     private final Environment<Object> environment;
+    private final Molecule name;
     private final ProtelisNode node;
     private String originalProgram = "unknown";
     private final org.protelis.vm.ProtelisProgram program;
@@ -53,7 +54,8 @@ public class RunProtelisProgram extends SimpleMolecule implements Action<Object>
             final RandomGenerator rand,
             final org.protelis.vm.ProtelisProgram prog,
             final double retentionTime) {
-        super(prog.getName());
+//        super(prog.getName());
+        name = new SimpleMolecule(prog.getName());
         LangUtils.requireNonNull(env, r, n, prog, rand);
         program = prog;
         environment = env;
@@ -122,6 +124,13 @@ public class RunProtelisProgram extends SimpleMolecule implements Action<Object>
         originalProgram = prog;
     }
 
+    /**
+     * @return the molecule associated with the execution of this program
+     */
+    public final Molecule asMolecule() {
+        return name;
+    }
+
     @Override
     public RunProtelisProgram cloneAction(final Node<Object> n, final Reaction<Object> r) {
         if (n instanceof ProtelisNode) {
@@ -135,9 +144,20 @@ public class RunProtelisProgram extends SimpleMolecule implements Action<Object>
     }
 
     @Override
+    public boolean equals(final Object other) {
+        if (other == this) {
+            return true;
+        }
+        if (other != null && other.getClass() == getClass()) {
+            return name.equals(((RunProtelisProgram) other).name);
+        }
+        return false;
+    }
+
+    @Override
     public void execute() {
         vm.runCycle();
-        node.setConcentration(this, vm.getCurrentValue());
+        node.setConcentration(name, vm.getCurrentValue());
         computationalCycleComplete = true;
     }
 
@@ -185,6 +205,11 @@ public class RunProtelisProgram extends SimpleMolecule implements Action<Object>
         return retentionTime;
     }
 
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
     /**
      * @return true if the Program has finished its last computation, and is ready to send a new message (used for dependency management)
      */
@@ -208,7 +233,7 @@ public class RunProtelisProgram extends SimpleMolecule implements Action<Object>
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "@" + node.getId();
+        return name + "@" + node.getId();
     }
 
 }

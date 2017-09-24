@@ -112,9 +112,10 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      */
     public AbstractFXDisplay(final int step) {
         super();
-        if (!"true".equals(System.getProperty("sun.java2d.opengl"))) {
-            getLogger().warn("OpenGL acceleration appears to be disabled on this system. This may impact performance negatively. Please enable it with -Dsun.java2d.opengl=true");
-        }
+        // TODO check
+//        if (!"true".equals(System.getProperty("sun.java2d.opengl"))) {
+//            getLogger().warn("OpenGL acceleration appears to be disabled on this system. This may impact performance negatively. Please enable it with -Dsun.java2d.opengl=true");
+//        }
         setStyle("-fx-background-color: #FFF;");
         setMouseListener();
         setkeyboardListener();

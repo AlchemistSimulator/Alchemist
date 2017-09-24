@@ -4,9 +4,9 @@ import it.unibo.alchemist.boundary.gui.controller.ButtonsBarController;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
-import it.unibo.alchemist.boundary.monitors.*;
-import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
-import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.boundary.monitors.AbstractFXDisplay;
+import it.unibo.alchemist.boundary.monitors.FXStepMonitor;
+import it.unibo.alchemist.boundary.monitors.FXTimeMonitor;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -33,7 +33,6 @@ public class TestSingleApplication extends Application {
 
     private Pane rootLayout;
     private ButtonsBarController buttonsBarController;
-    private Canvas canvas;
     private Optional<AbstractFXDisplay<?>> displayMonitor = Optional.empty();
     private Optional<FXTimeMonitor<?>> timeMonitor = Optional.empty();
     private Optional<FXStepMonitor<?>> stepMonitor = Optional.empty();
@@ -48,99 +47,87 @@ public class TestSingleApplication extends Application {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public void start(final Stage primaryStage) {
-        final Parameters parameters = getParameters();
-
-        logParams(parameters);
-
-        parameters.getNamed().forEach((key, value) -> {
-            switch (key) {
-                case SingleRunApp.USE_SPECIFIED_DISPLAY_MONITOR_PARAMETER_NAME:
-                    try {
-                        initDisplayMonitor(value);
-                    } catch (final Exception exception) {
-                        L.error("Display monitor not valid");
-                        throw exception;
-                    }
-                    break;
-                case SingleRunApp.USE_DEFAULT_DISPLAY_MONITOR_FOR_ENVIRONMENT_CLASS_PARAMETER_NAME:
-                    if (!displayMonitor.isPresent()) {
-                        if (value == null || value.equals("")) {
-                            displayMonitor = Optional.empty();
-                            L.error("Display monitor not valid");
-                            throw new IllegalArgumentException();
-                        }
-
-                        final Class<? extends Environment<?>> clazz;
-
-                        try {
-                            clazz = (Class<? extends Environment<?>>) Class.forName(value);
-                        } catch (final ClassCastException | ClassNotFoundException exception) {
-                            displayMonitor = Optional.empty();
-                            L.error("Display monitor not valid");
-                            throw new IllegalArgumentException(exception);
-                        }
-
-                        initDisplayMonitor(
-                                clazz.isAssignableFrom(OSMEnvironment.class)
-                                        ? FX2DDisplay.class.getName()
-                                        : FXMapDisplay.class.getName()
-                        );
-                    } else {
-                        L.warn("Display monitor already initialized to " + displayMonitor.get().getClass().getName());
-                    }
-                    break;
-                case SingleRunApp.USE_FX_2D_DISPLAY_PARAMETER_NAME:
-                    if (value == null || Boolean.valueOf(value) || value.equals("")) {
-                        initDisplayMonitor(FX2DDisplay.class.getName());
-                    }
-                    break;
-                case SingleRunApp.USE_FX_MAP_DISPLAY_PARAMETER_NAME:
-                    if (value == null || Boolean.valueOf(value) || value.equals("")) {
-                        initDisplayMonitor(FXMapDisplay.class.getName());
-                    }
-                    break;
-                case SingleRunApp.USE_TIME_MONITOR_PARAMETER_NAME:
-                    if (value == null || Boolean.valueOf(value) || value.equals("")) {
-                        timeMonitor = Optional.of(new FXTimeMonitor<>());
-                    }
-                    break;
-                case SingleRunApp.USE_STEP_MONITOR_PARAMETER_NAME:
-                    if (value == null || Boolean.valueOf(value) || value.equals("")) {
-                        stepMonitor = Optional.of(new FXStepMonitor<>());
-                    }
-                    break;
-                default:
-                    L.warn("Unexpected argument " + SingleRunApp.PARAMETER_NAME_START + key + SingleRunApp.PARAMETER_NAME_END + value);
-            }
-        });
+    @SuppressWarnings("unchecked, Duplicates")
+    public void start(final Stage primaryStage) throws IOException {
+//        final Parameters parameters = getParameters();
+//
+//        logParams(parameters);
+//
+//        parameters.getNamed().forEach((key, value) -> {
+//            switch (key) {
+//                case SingleRunApp.USE_SPECIFIED_DISPLAY_MONITOR_PARAMETER_NAME:
+//                    try {
+//                        initDisplayMonitor(value);
+//                    } catch (final Exception exception) {
+//                        L.error("Display monitor not valid");
+//                        throw exception;
+//                    }
+//                    break;
+//                case SingleRunApp.USE_DEFAULT_DISPLAY_MONITOR_FOR_ENVIRONMENT_CLASS_PARAMETER_NAME:
+//                    if (!displayMonitor.isPresent()) {
+//                        if (value == null || value.equals("")) {
+//                            displayMonitor = Optional.empty();
+//                            L.error("Display monitor not valid");
+//                            throw new IllegalArgumentException();
+//                        }
+//
+//                        final Class<? extends Environment<?>> clazz;
+//
+//                        try {
+//                            clazz = (Class<? extends Environment<?>>) Class.forName(value);
+//                        } catch (final ClassCastException | ClassNotFoundException exception) {
+//                            displayMonitor = Optional.empty();
+//                            L.error("Display monitor not valid");
+//                            throw new IllegalArgumentException(exception);
+//                        }
+//
+//                        initDisplayMonitor(
+//                                clazz.isAssignableFrom(OSMEnvironment.class)
+//                                        ? FX2DDisplay.class.getName()
+//                                        : FXMapDisplay.class.getName()
+//                        );
+//                    } else {
+//                        L.warn("Display monitor already initialized to " + displayMonitor.get().getClass().getName());
+//                    }
+//                    break;
+//                case SingleRunApp.USE_FX_2D_DISPLAY_PARAMETER_NAME:
+//                    if (value == null || Boolean.valueOf(value) || value.equals("")) {
+//                        initDisplayMonitor(FX2DDisplay.class.getName());
+//                    }
+//                    break;
+//                case SingleRunApp.USE_FX_MAP_DISPLAY_PARAMETER_NAME:
+//                    if (value == null || Boolean.valueOf(value) || value.equals("")) {
+//                        initDisplayMonitor(FXMapDisplay.class.getName());
+//                    }
+//                    break;
+//                case SingleRunApp.USE_TIME_MONITOR_PARAMETER_NAME:
+//                    if (value == null || Boolean.valueOf(value) || value.equals("")) {
+//                        timeMonitor = Optional.of(new FXTimeMonitor<>());
+//                    }
+//                    break;
+//                case SingleRunApp.USE_STEP_MONITOR_PARAMETER_NAME:
+//                    if (value == null || Boolean.valueOf(value) || value.equals("")) {
+//                        stepMonitor = Optional.of(new FXStepMonitor<>());
+//                    }
+//                    break;
+//                default:
+//                    L.warn("Unexpected argument " + SingleRunApp.PARAMETER_NAME_START + key + SingleRunApp.PARAMETER_NAME_END + value);
+//            }
+//        });
 
         primaryStage.setTitle(ResourceLoader.getStringRes("main_title"));
 
-        try {
-            initRootLayout(new Canvas());
-        } catch (final IOException e) {
-            throw new IllegalStateException("Could not initialize RootLayout", e);
-        }
+        this.rootLayout = FXResourceLoader.getLayout(AnchorPane.class, this, ROOT_LAYOUT);
+        final StackPane main = (StackPane) this.rootLayout.getChildren().get(0);
+        main.getChildren().add(new Canvas());
+        buttonsBarController = new ButtonsBarController();
+        main.getChildren().add(FXResourceLoader.getLayout(BorderPane.class, buttonsBarController, "ButtonsBarLayout"));
 
         primaryStage.getIcons().add(SVGImageUtils.getSvgImage("/icon/icon.svg"));
         primaryStage.setScene(new Scene(this.rootLayout));
-        primaryStage.show();
-    }
 
-    /**
-     * Initializes application layout using a specified canvas.
-     *
-     * @throws IOException if it cannot find default layout file
-     */
-    private void initRootLayout(final Canvas canvas) throws IOException, IllegalArgumentException {
-        this.canvas = canvas;
-        this.rootLayout = FXResourceLoader.getLayout(AnchorPane.class, this, ROOT_LAYOUT);
-        final StackPane main = (StackPane) this.rootLayout.getChildren().get(0);
-        main.getChildren().add(canvas);
-        buttonsBarController = new ButtonsBarController();
-        main.getChildren().add(FXResourceLoader.getLayout(BorderPane.class, buttonsBarController, "ButtonsBarLayout"));
+        L.debug("Initialization completed");
+        primaryStage.show();
     }
 
     private void logParams(final Parameters params) {

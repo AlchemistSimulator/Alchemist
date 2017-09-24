@@ -1,7 +1,5 @@
 package it.unibo.alchemist.boundary.gui;
 
-import it.unibo.alchemist.boundary.monitors.FX2DDisplay;
-import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
 import javafx.application.Application;
 
 import java.util.HashMap;
@@ -16,13 +14,14 @@ public class TestSingleApplicationBuilder {
         TEST_PARAMETERS.put(SingleRunApp.USE_STEP_MONITOR_PARAMETER_NAME, "true");
         TEST_PARAMETERS.put(SingleRunApp.USE_TIME_MONITOR_PARAMETER_NAME, "true");
         TEST_PARAMETERS.put(SingleRunApp.USE_FX_2D_DISPLAY_PARAMETER_NAME, "true");
-        TEST_PARAMETERS.put(SingleRunApp.USE_FX_MAP_DISPLAY_PARAMETER_NAME, "true");
-        TEST_PARAMETERS.put(SingleRunApp.USE_DEFAULT_DISPLAY_MONITOR_FOR_ENVIRONMENT_CLASS_PARAMETER_NAME, OSMEnvironment.class.getName());
-        TEST_PARAMETERS.put(SingleRunApp.USE_SPECIFIED_DISPLAY_MONITOR_PARAMETER_NAME, FX2DDisplay.class.getName());
+//        TEST_PARAMETERS.put(SingleRunApp.USE_FX_MAP_DISPLAY_PARAMETER_NAME, "true");
+//        TEST_PARAMETERS.put(SingleRunApp.USE_DEFAULT_DISPLAY_MONITOR_FOR_ENVIRONMENT_CLASS_PARAMETER_NAME, OSMEnvironment.class.getName());
+//        TEST_PARAMETERS.put(SingleRunApp.USE_SPECIFIED_DISPLAY_MONITOR_PARAMETER_NAME, FX2DDisplay.class.getName());
     }
 
     public static void main(final String... args) {
-        Application.launch(SingleRunApp.class, getParams(TEST_PARAMETERS));
+//        Application.launch(SingleRunApp.class, getParams(TEST_PARAMETERS));
+        Application.launch(SingleRunApp.class);
     }
 
     private static String getParam(final Map.Entry<String, String> valueNameEntry) {

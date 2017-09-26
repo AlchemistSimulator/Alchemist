@@ -4,11 +4,13 @@ import it.unibo.alchemist.boundary.gui.controller.ButtonsBarController;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
+import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.boundary.monitors.*;
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
 import it.unibo.alchemist.model.interfaces.Environment;
 import javafx.application.Application;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -49,14 +51,23 @@ public class SingleRunApp<T> extends Application {
     private Optional<AbstractFXDisplay<T>> displayMonitor = Optional.empty();
     private Optional<FXTimeMonitor<T>> timeMonitor = Optional.empty();
     private Optional<FXStepMonitor<T>> stepMonitor = Optional.empty();
-    private Stage stage;
     private Pane rootLayout;
     private ButtonsBarController buttonsBarController;
+
+    /**
+     * Method that launches the application.
+     *
+     * @param args arguments
+     */
+    public static void main(final String[] args) {
+        Application.launch(args);
+    }
 
     @Override
     @SuppressWarnings("unchecked")
     public void start(final Stage primaryStage) {
         final Map<String, String> parameters = getParameters().getNamed();
+
         parameters.forEach((key, value) -> {
             switch (key) {
                 case USE_SPECIFIED_DISPLAY_MONITOR_PARAMETER_NAME:
@@ -127,10 +138,6 @@ public class SingleRunApp<T> extends Application {
             }
         });
 
-        if (this.stage == null) {
-            this.stage = primaryStage;
-        }
-
         try {
             this.rootLayout = FXResourceLoader.getLayout(AnchorPane.class, this, ROOT_LAYOUT);
             final StackPane main = (StackPane) rootLayout.getChildren().get(0);
@@ -142,7 +149,11 @@ public class SingleRunApp<T> extends Application {
             throw new IllegalStateException(e);
         }
 
-        this.stage.show();
+        primaryStage.getIcons().add(SVGImageUtils.getSvgImage("/icon/icon.svg"));
+        primaryStage.setScene(new Scene(this.rootLayout));
+
+        L.debug("Initialization completed");
+        primaryStage.show();
     }
 
     /**

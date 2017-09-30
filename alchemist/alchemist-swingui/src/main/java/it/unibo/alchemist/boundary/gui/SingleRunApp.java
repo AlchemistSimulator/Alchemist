@@ -8,6 +8,7 @@ import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.boundary.monitors.*;
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
+import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -24,11 +25,13 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
+/**
+ * The class models a non-reusable GUI for simulation display.
+ *
+ * @param <T> the {@link Concentration} type
+ */
 public class SingleRunApp<T> extends Application {
     public static final String USE_SPECIFIED_DISPLAY_MONITOR_PARAMETER_NAME = "use-display-monitor";
     public static final String USE_DEFAULT_DISPLAY_MONITOR_FOR_ENVIRONMENT_CLASS_PARAMETER_NAME = "use-default-display-monitor-for-environment";
@@ -42,6 +45,7 @@ public class SingleRunApp<T> extends Application {
     public static final String PARAMETER_NAME_END = "=";
 
     private static final Logger L = LoggerFactory.getLogger(SingleRunApp.class);
+
     /**
      * Main layout without nested layouts. Must inject eventual other nested layouts.
      */
@@ -64,18 +68,46 @@ public class SingleRunApp<T> extends Application {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void start(final Stage primaryStage) {
-        final Map<String, String> parameters = getParameters().getNamed();
+        final Parameters parameters = getParameters();
+        parseNamedParams(parameters.getNamed());
+        parseUnnamedParams(parameters.getUnnamed());
 
-        parameters.forEach((key, value) -> {
+        try {
+            this.rootLayout = FXResourceLoader.getLayout(AnchorPane.class, this, ROOT_LAYOUT);
+            final StackPane main = (StackPane) rootLayout.getChildren().get(0);
+            main.getChildren().add(displayMonitor.isPresent() ? this.displayMonitor.get() : new Canvas());
+            this.buttonsBarController = new ButtonsBarController();
+            main.getChildren().add(FXResourceLoader.getLayout(BorderPane.class, buttonsBarController, "ButtonsBarLayout"));
+        } catch (final IOException e) {
+            L.error("I/O Exception loading FXML layout files", e);
+            throw new IllegalStateException(e);
+        }
+
+        primaryStage.getIcons().add(SVGImageUtils.getSvgImage("/icon/icon.svg"));
+        primaryStage.setScene(new Scene(this.rootLayout));
+
+        L.debug("Initialization completed");
+        primaryStage.show();
+    }
+
+    /**
+     * The method parses the given parameters from a key-value map.
+     *
+     * @param params the map of parameters name and respective values
+     * @throws IllegalArgumentException if the value is not valid for the parameter
+     * @see Parameters#getNamed()
+     */
+    @SuppressWarnings("unchecked")
+    private void parseNamedParams(final Map<String, String> params) {
+        params.forEach((key, value) -> {
             switch (key) {
                 case USE_SPECIFIED_DISPLAY_MONITOR_PARAMETER_NAME:
                     try {
                         initDisplayMonitor(value);
                     } catch (final Exception exception) {
                         L.error("Display monitor not valid");
-                        throw exception;
+                        throw new IllegalArgumentException(exception);
                     }
                     break;
                 case USE_DEFAULT_DISPLAY_MONITOR_FOR_ENVIRONMENT_CLASS_PARAMETER_NAME:
@@ -105,26 +137,6 @@ public class SingleRunApp<T> extends Application {
                         L.warn("Display monitor already initialized to " + displayMonitor.get().getClass().getName());
                     }
                     break;
-                case USE_FX_2D_DISPLAY_PARAMETER_NAME:
-                    if (value == null || Boolean.valueOf(value) || value.equals("")) {
-                        initDisplayMonitor(FX2DDisplay.class.getName());
-                    }
-                    break;
-                case USE_FX_MAP_DISPLAY_PARAMETER_NAME:
-                    if (value == null || Boolean.valueOf(value) || value.equals("")) {
-                        initDisplayMonitor(FXMapDisplay.class.getName());
-                    }
-                    break;
-                case USE_TIME_MONITOR_PARAMETER_NAME:
-                    if (value == null || Boolean.valueOf(value) || value.equals("")) {
-                        timeMonitor = Optional.of(new FXTimeMonitor<>());
-                    }
-                    break;
-                case USE_STEP_MONITOR_PARAMETER_NAME:
-                    if (value == null || Boolean.valueOf(value) || value.equals("")) {
-                        stepMonitor = Optional.of(new FXStepMonitor<>());
-                    }
-                    break;
                 case USE_EFFECT_GROUPS_FROM_FILE:
                     try {
                         effectGroups = EffectSerializer.effectGroupsFromFile(new File(value));
@@ -137,23 +149,33 @@ public class SingleRunApp<T> extends Application {
                     L.warn("Unexpected argument " + PARAMETER_NAME_START + key + PARAMETER_NAME_END + value);
             }
         });
+    }
 
-        try {
-            this.rootLayout = FXResourceLoader.getLayout(AnchorPane.class, this, ROOT_LAYOUT);
-            final StackPane main = (StackPane) rootLayout.getChildren().get(0);
-            main.getChildren().add(displayMonitor.isPresent() ? this.displayMonitor.get() : new Canvas());
-            this.buttonsBarController = new ButtonsBarController();
-            main.getChildren().add(FXResourceLoader.getLayout(BorderPane.class, buttonsBarController, "ButtonsBarLayout"));
-        } catch (final IOException e) {
-            L.error("I/O Exception loading FXML layout files", e);
-            throw new IllegalStateException(e);
-        }
-
-        primaryStage.getIcons().add(SVGImageUtils.getSvgImage("/icon/icon.svg"));
-        primaryStage.setScene(new Scene(this.rootLayout));
-
-        L.debug("Initialization completed");
-        primaryStage.show();
+    /**
+     * The method parses the given parameters from a list.
+     *
+     * @param params the list of parameters
+     * @see Parameters#getUnnamed()
+     */
+    private void parseUnnamedParams(final List<String> params) {
+        params.forEach(param -> {
+            switch (param) {
+                case USE_FX_2D_DISPLAY_PARAMETER_NAME:
+                    initDisplayMonitor(FX2DDisplay.class.getName());
+                    break;
+                case USE_FX_MAP_DISPLAY_PARAMETER_NAME:
+                    initDisplayMonitor(FXMapDisplay.class.getName());
+                    break;
+                case USE_TIME_MONITOR_PARAMETER_NAME:
+                    timeMonitor = Optional.of(new FXTimeMonitor<>());
+                    break;
+                case USE_STEP_MONITOR_PARAMETER_NAME:
+                    stepMonitor = Optional.of(new FXStepMonitor<>());
+                    break;
+                default:
+                    L.warn("Unexpected argument " + PARAMETER_NAME_START + param);
+            }
+        });
     }
 
     /**

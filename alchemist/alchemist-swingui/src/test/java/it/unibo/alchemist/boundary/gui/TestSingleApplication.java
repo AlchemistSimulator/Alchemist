@@ -1,6 +1,7 @@
 package it.unibo.alchemist.boundary.gui;
 
 import javafx.application.Application;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,27 +12,24 @@ public class TestSingleApplication {
 
     static {
         TEST_PARAMETERS = new HashMap<>();
-        TEST_PARAMETERS.put(SingleRunApp.USE_STEP_MONITOR_PARAMETER_NAME, "");
-        TEST_PARAMETERS.put(SingleRunApp.USE_TIME_MONITOR_PARAMETER_NAME, "");
-        TEST_PARAMETERS.put(SingleRunApp.USE_FX_2D_DISPLAY_PARAMETER_NAME, "");
-//        TEST_PARAMETERS.put(SingleRunApp.USE_FX_MAP_DISPLAY_PARAMETER_NAME, "");
-//        TEST_PARAMETERS.put(SingleRunApp.USE_DEFAULT_DISPLAY_MONITOR_FOR_ENVIRONMENT_CLASS_PARAMETER_NAME, OSMEnvironment.class.getName());
-//        TEST_PARAMETERS.put(SingleRunApp.USE_SPECIFIED_DISPLAY_MONITOR_PARAMETER_NAME, FX2DDisplay.class.getName());
+        TEST_PARAMETERS.put(SingleRunApp.Parameter.USE_STEP_MONITOR.getName(), "");
+        TEST_PARAMETERS.put(SingleRunApp.Parameter.USE_TIME_MONITOR.getName(), "");
+        TEST_PARAMETERS.put(SingleRunApp.Parameter.USE_FX_2D_DISPLAY.getName(), "");
+//        TEST_PARAMETERS.put(SingleRunApp.Parameter.USE_FX_MAP_DISPLAY.getName(), "");
+//        TEST_PARAMETERS.put(SingleRunApp.Parameter.USE_DEFAULT_DISPLAY_MONITOR_FOR_ENVIRONMENT_CLASS.getName(), OSMEnvironment.class.getName());
+//        TEST_PARAMETERS.put(SingleRunApp.Parameter.USE_SPECIFIED_DISPLAY_MONITOR.getName(), FX2DDisplay.class.getName());
     }
 
     public static void main(final String... args) {
         Application.launch(SingleRunApp.class, getParams(TEST_PARAMETERS));
     }
 
-    private static String getParam(final Map.Entry<String, String> valueNameEntry) {
-        return (valueNameEntry.getValue().equals("") ? "" : SingleRunApp.PARAMETER_NAME_START + valueNameEntry.getKey() + SingleRunApp.PARAMETER_NAME_END) + valueNameEntry.getValue();
-    }
-
     public static String[] getParams(final Map<String, String> valueNameParamsMap) {
         return valueNameParamsMap
                 .entrySet()
                 .stream()
-                .map(TestSingleApplication::getParam)
+                .map(e -> new Tuple2<>(e.getKey(), e.getValue()))
+                .map(SingleRunViewBuilder::getParam)
                 .collect(Collectors.toList())
                 .toArray(new String[]{});
     }

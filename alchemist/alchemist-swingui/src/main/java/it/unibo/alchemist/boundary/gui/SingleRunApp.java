@@ -11,6 +11,7 @@ import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.AnchorPane;
@@ -18,14 +19,20 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static it.unibo.alchemist.boundary.gui.SingleRunApp.Parameter.PARAMETER_NAME_END;
+import static it.unibo.alchemist.boundary.gui.SingleRunApp.Parameter.PARAMETER_NAME_START;
 
 /**
  * The class models a non-reusable GUI for simulation display.
@@ -33,17 +40,9 @@ import java.util.*;
  * @param <T> the {@link Concentration} type
  */
 public class SingleRunApp<T> extends Application {
-    public static final String USE_SPECIFIED_DISPLAY_MONITOR_PARAMETER_NAME = "use-display-monitor";
-    public static final String USE_DEFAULT_DISPLAY_MONITOR_FOR_ENVIRONMENT_CLASS_PARAMETER_NAME = "use-default-display-monitor-for-environment";
-    public static final String USE_FX_2D_DISPLAY_PARAMETER_NAME = "use-FX2DDisplay-monitor";
-    public static final String USE_FX_MAP_DISPLAY_PARAMETER_NAME = "use-FXMapDisplay-monitor";
-    public static final String USE_TIME_MONITOR_PARAMETER_NAME = "use-time-monitor";
-    public static final String USE_STEP_MONITOR_PARAMETER_NAME = "use-step-monitor";
-    public static final String USE_EFFECT_GROUPS_FROM_FILE = "use-effect-groups-from-file";
-
-    public static final String PARAMETER_NAME_START = "--";
-    public static final String PARAMETER_NAME_END = "=";
-
+    /**
+     * Default logger for the class.
+     */
     private static final Logger L = LoggerFactory.getLogger(SingleRunApp.class);
 
     /**
@@ -55,6 +54,7 @@ public class SingleRunApp<T> extends Application {
     private Optional<AbstractFXDisplay<T>> displayMonitor = Optional.empty();
     private Optional<FXTimeMonitor<T>> timeMonitor = Optional.empty();
     private Optional<FXStepMonitor<T>> stepMonitor = Optional.empty();
+    private Optional<Integer> closeOperation = Optional.empty();
     private Pane rootLayout;
     private ButtonsBarController buttonsBarController;
 
@@ -84,6 +84,28 @@ public class SingleRunApp<T> extends Application {
             throw new IllegalStateException(e);
         }
 
+        closeOperation.ifPresent(jfco -> {
+            final EventHandler<WindowEvent> handler;
+            switch (jfco) {
+                case JFrame.HIDE_ON_CLOSE:
+                    handler = event -> primaryStage.hide();
+                    break;
+                case JFrame.DISPOSE_ON_CLOSE:
+                    handler = event -> primaryStage.close();
+                    break;
+                case JFrame.EXIT_ON_CLOSE:
+                    handler = event -> {
+                        primaryStage.close();
+                        // Platform.exit(); // TODO check
+                        System.exit(0);
+                    };
+                    break;
+                case JFrame.DO_NOTHING_ON_CLOSE:
+                default:
+                    handler = event -> { /* Do nothing */ };
+            }
+            primaryStage.setOnCloseRequest(handler);
+        });
         primaryStage.getIcons().add(SVGImageUtils.getSvgImage("/icon/icon.svg"));
         primaryStage.setScene(new Scene(this.rootLayout));
 
@@ -101,8 +123,8 @@ public class SingleRunApp<T> extends Application {
     @SuppressWarnings("unchecked")
     private void parseNamedParams(final Map<String, String> params) {
         params.forEach((key, value) -> {
-            switch (key) {
-                case USE_SPECIFIED_DISPLAY_MONITOR_PARAMETER_NAME:
+            switch (Parameter.getParamFromName(key)) {
+                case USE_SPECIFIED_DISPLAY_MONITOR:
                     try {
                         initDisplayMonitor(value);
                     } catch (final Exception exception) {
@@ -110,7 +132,7 @@ public class SingleRunApp<T> extends Application {
                         throw new IllegalArgumentException(exception);
                     }
                     break;
-                case USE_DEFAULT_DISPLAY_MONITOR_FOR_ENVIRONMENT_CLASS_PARAMETER_NAME:
+                case USE_DEFAULT_DISPLAY_MONITOR_FOR_ENVIRONMENT_CLASS:
                     if (!displayMonitor.isPresent()) {
                         if (value == null || value.equals("")) {
                             displayMonitor = Optional.empty();
@@ -145,6 +167,17 @@ public class SingleRunApp<T> extends Application {
                         effectGroups = new ArrayList<>(0);
                     }
                     break;
+                case USE_CLOSE_OPERATION:
+                    final int intValue = Integer.valueOf(value);
+                    if (intValue == JFrame.DISPOSE_ON_CLOSE
+                            || intValue == JFrame.HIDE_ON_CLOSE
+                            || intValue == JFrame.DO_NOTHING_ON_CLOSE
+                            || intValue == JFrame.EXIT_ON_CLOSE) {
+                        this.closeOperation = Optional.of(intValue);
+                    } else {
+                        L.error("Close operation " + value + "is not valid");
+                        throw new IllegalArgumentException();
+                    }
                 default:
                     L.warn("Unexpected argument " + PARAMETER_NAME_START + key + PARAMETER_NAME_END + value);
             }
@@ -159,17 +192,21 @@ public class SingleRunApp<T> extends Application {
      */
     private void parseUnnamedParams(final List<String> params) {
         params.forEach(param -> {
-            switch (param) {
-                case USE_FX_2D_DISPLAY_PARAMETER_NAME:
+            L.debug("The given unnamed param is: " + param);
+            switch (Parameter.getParamFromName(
+                    param.startsWith(PARAMETER_NAME_START)
+                            ? param.substring(PARAMETER_NAME_START.length())
+                            : param)) {
+                case USE_FX_2D_DISPLAY:
                     initDisplayMonitor(FX2DDisplay.class.getName());
                     break;
-                case USE_FX_MAP_DISPLAY_PARAMETER_NAME:
+                case USE_FX_MAP_DISPLAY:
                     initDisplayMonitor(FXMapDisplay.class.getName());
                     break;
-                case USE_TIME_MONITOR_PARAMETER_NAME:
+                case USE_TIME_MONITOR:
                     timeMonitor = Optional.of(new FXTimeMonitor<>());
                     break;
-                case USE_STEP_MONITOR_PARAMETER_NAME:
+                case USE_STEP_MONITOR:
                     stepMonitor = Optional.of(new FXStepMonitor<>());
                     break;
                 default:
@@ -233,6 +270,114 @@ public class SingleRunApp<T> extends Application {
             }
         } else {
             L.warn("Display monitor already initialized to " + displayMonitor.get().getClass().getName());
+        }
+    }
+
+    /**
+     * An enum representation of the parameters supported by {@link SingleRunApp} application class.
+     *
+     * @see Application#getParameters()
+     * @see Parameters
+     */
+    public enum Parameter {
+        USE_SPECIFIED_DISPLAY_MONITOR("use-display-monitor", true),
+        USE_DEFAULT_DISPLAY_MONITOR_FOR_ENVIRONMENT_CLASS("use-default-display-monitor-for-environment", true),
+        USE_FX_2D_DISPLAY("use-FX2DDisplay-monitor", false),
+        USE_FX_MAP_DISPLAY("use-FXMapDisplay-monitor", false),
+        USE_TIME_MONITOR("use-time-monitor", false),
+        USE_STEP_MONITOR("use-step-monitor", false),
+        USE_EFFECT_GROUPS_FROM_FILE("use-effect-groups-from-file", true),
+        USE_CLOSE_OPERATION("use-close-operation", true);
+
+        public static final String PARAMETER_NAME_START = "--";
+        public static final String PARAMETER_NAME_END = "=";
+
+        private final String name;
+        private final boolean isNamed;
+
+        /**
+         * Default constructor.
+         *
+         * @param name    the name of the param
+         * @param isNamed the named property of the param
+         */
+        Parameter(final String name, final boolean isNamed) {
+            this.name = name;
+            this.isNamed = isNamed;
+        }
+
+        /**
+         * Utility method to get a param from its name.
+         *
+         * @param name the name of the param to get
+         * @return the param with given name
+         */
+        public static Parameter getParamFromName(final String name) {
+            for (final Parameter p : values()) {
+                if (name.equals(p.name)) {
+                    return p;
+                }
+            }
+            throw new IllegalArgumentException();
+        }
+
+        /**
+         * Returns all the named params.
+         *
+         * @return the named params
+         * @see Parameters#getNamed()
+         */
+        public static List<Parameter> getNamedParams() {
+            return Arrays.stream(values())
+                    .filter(Parameter::isNamed)
+                    .collect(Collectors.toList());
+        }
+
+        /**
+         * Returns all the unnamed params.
+         *
+         * @return the unnamed params
+         * @see Parameters#getUnnamed()
+         */
+        public static List<Parameter> getUnnamedParams() {
+            return Arrays.stream(values())
+                    .filter(p -> !p.isNamed())
+                    .collect(Collectors.toList());
+        }
+
+        /**
+         * The method returns a list of Strings containing all the params in an easy printable way; named and unnamed params are distinguishable.
+         *
+         * @return a list of Strings containing each param
+         */
+        public static List<String> getPrintableParamsList() {
+            return Arrays.stream(values())
+                    .map(p -> {
+                        String name = PARAMETER_NAME_START + p.getName();
+                        if (p.isNamed) {
+                            name += PARAMETER_NAME_END + " ... ";
+                        }
+                        return name;
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        /**
+         * Getter method for the name with the param is called and interpreted with.
+         *
+         * @return the name of the param
+         */
+        public final String getName() {
+            return this.name;
+        }
+
+        /**
+         * Getter method for the named property of the param.
+         *
+         * @return the named property of the param
+         */
+        public boolean isNamed() {
+            return isNamed;
         }
     }
 }

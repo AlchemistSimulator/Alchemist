@@ -3,23 +3,30 @@ package it.unibo.alchemist.boundary.gui;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
-import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
-import it.unibo.alchemist.boundary.monitors.*;
+import it.unibo.alchemist.boundary.monitors.FX2DDisplay;
+import it.unibo.alchemist.boundary.monitors.FXMapDisplay;
+import it.unibo.alchemist.boundary.monitors.FXStepMonitor;
 import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.model.interfaces.*;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import org.jooq.lambda.tuple.Tuple2;
 
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
+import static it.unibo.alchemist.boundary.gui.SingleRunApp.Parameter.PARAMETER_NAME_END;
+import static it.unibo.alchemist.boundary.gui.SingleRunApp.Parameter.PARAMETER_NAME_START;
 
 /**
  * Main class to start an empty simulator visualization.
@@ -29,15 +36,9 @@ public class SingleRunViewBuilder<T> {
     private boolean monitorDisplay;
     private boolean monitorTime;
     private boolean monitorSteps;
-    private Optional<String> title;
-    private Optional<Image> icon;
     private Optional<Integer> jFrameCloseOperation;
     private Optional<EventHandler<WindowEvent>> defaultOnCloseOperation;
     private Collection<EffectGroup> effectGroups;
-
-    public static void main(final String... args) {
-        Application.launch(SingleRunApp.class, new String[0]);
-    }
 
     /**
      * Default constructor of the builder.
@@ -52,6 +53,14 @@ public class SingleRunViewBuilder<T> {
         this.jFrameCloseOperation = Optional.empty();
         this.defaultOnCloseOperation = Optional.empty();
         this.effectGroups = new ArrayList<>();
+    }
+
+    public static void main(final String... args) {
+        Application.launch(SingleRunApp.class, new String[0]);
+    }
+
+    public static String getParam(final Tuple2<String, String> valueNameCouple) {
+        return (valueNameCouple.v2().equals("") ? "" : PARAMETER_NAME_START + valueNameCouple.v1() + PARAMETER_NAME_END) + valueNameCouple.v2();
     }
 
     /**
@@ -91,40 +100,6 @@ public class SingleRunViewBuilder<T> {
     }
 
     /**
-     * Set the title for the {@link Stage}.
-     *
-     * @param title the title
-     * @return this builder
-     */
-    public SingleRunViewBuilder setTitle(final String title) {
-        this.title = Optional.of(title);
-        return this;
-    }
-
-    /**
-     * Set the default icon for the {@link Stage} loading from a SVG {@code File} at a given path.
-     *
-     * @param path the path of the icon to set
-     * @return this builder
-     * @see #setIcon(Image)
-     * @see SVGImageUtils#getSvgImage(String)
-     */
-    public SingleRunViewBuilder setIcon(final String path) {
-        return setIcon(SVGImageUtils.getSvgImage(path));
-    }
-
-    /**
-     * Set the default icon for the {@link Stage}.
-     *
-     * @param icon the icon to set
-     * @return this builder
-     */
-    public SingleRunViewBuilder setIcon(final Image icon) {
-        this.icon = Optional.of(icon);
-        return this;
-    }
-
-    /**
      * Set the {@link Stage#setOnCloseRequest(EventHandler) default close operation} to a standard handler, identified by {@link JFrame} default close operations.
      * <p>
      * It clears a previously set {@link #setDefaultOnCloseOperation(EventHandler) default close operation}.
@@ -137,7 +112,7 @@ public class SingleRunViewBuilder<T> {
      * @see JFrame#DISPOSE_ON_CLOSE
      * @see JFrame#EXIT_ON_CLOSE
      */
-    public SingleRunViewBuilder setDefaultOnCloseOperation(final int jFrameCloseOperation) throws IllegalArgumentException {
+    public SingleRunViewBuilder setDefaultOnCloseOperation(final int jFrameCloseOperation) {
         if (jFrameCloseOperation == JFrame.DO_NOTHING_ON_CLOSE
                 || jFrameCloseOperation == JFrame.HIDE_ON_CLOSE
                 || jFrameCloseOperation == JFrame.DISPOSE_ON_CLOSE
@@ -247,53 +222,40 @@ public class SingleRunViewBuilder<T> {
         return addEffectGroup(new File(path));
     }
 
-    /**
-     * Build a new {@link Stage} with the parameters specified to this builder.
-     * <p>
-     * You should call {@link Stage#show() show()} method of the returned {@code Stage}
-     * or pass this to an {@link Application} to see the built GUI.
-     *
-     * @return {@code Stage} with the parameters specified to this builder
-     */
-    public SingleRunApp build() {
-        final Stage stage = new Stage();
+    public void buildAndRun() {
+        Application.launch(SingleRunApp.class, buildParams());
+    }
 
-        // Set close operation
-        jFrameCloseOperation.ifPresent(jfco -> {
-            final EventHandler<WindowEvent> handler;
-            switch (jfco) {
-                case JFrame.HIDE_ON_CLOSE:
-                    handler = event -> stage.hide();
-                    defaultOnCloseOperation = Optional.empty();
-                    break;
-                case JFrame.DISPOSE_ON_CLOSE:
-                    handler = event -> stage.close();
-                    defaultOnCloseOperation = Optional.empty();
-                    break;
-                case JFrame.EXIT_ON_CLOSE:
-                    handler = event -> {
-                        stage.close();
-                        // Platform.exit(); // TODO check
-                        System.exit(0);
-                    };
-                    defaultOnCloseOperation = Optional.empty();
-                    break;
-                case JFrame.DO_NOTHING_ON_CLOSE:
-                    defaultOnCloseOperation = Optional.empty();
-                default:
-                    handler = event -> { /* Do nothing */ };
+    public void buildAndStart() {
+        Platform.runLater(new Runnable() {
+            public void run() {
+                final SingleRunApp<T> app = new SingleRunApp<>();
+                // TODO app.setParams(buildParams());
+                app.start(new Stage());
             }
-            stage.setOnCloseRequest(handler);
         });
-        defaultOnCloseOperation.ifPresent(stage::setOnCloseRequest);
+    }
 
-        // Set stage title
-        stage.setTitle(title.orElse("Alchemist Simulation"));
+    public String[] buildParams() {
+        final List<String> params = new ArrayList<>();
 
-        // Set stage icon
-        icon.ifPresent(stage.getIcons()::add);
+        if (monitorDisplay) {
+            params.add(getParam(new Tuple2<String, String>(
+                    SingleRunApp.Parameter.USE_DEFAULT_DISPLAY_MONITOR_FOR_ENVIRONMENT_CLASS.getName(),
+                    simulation.getEnvironment().getClass().getName())));
+        }
 
-        return new SingleRunApp(); // TODO not working like so
+        if (monitorSteps) {
+            params.add(getParam(new Tuple2<String, String>(SingleRunApp.Parameter.USE_STEP_MONITOR.getName(), "")));
+        }
+
+        if (monitorTime) {
+            params.add(getParam(new Tuple2<String, String>(SingleRunApp.Parameter.USE_TIME_MONITOR.getName(), "")));
+        }
+
+        // TODO
+
+        return params.toArray(new String[]{});
     }
 }
 

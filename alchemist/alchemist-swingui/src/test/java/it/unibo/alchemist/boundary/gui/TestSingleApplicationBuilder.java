@@ -11,12 +11,12 @@ public class TestSingleApplicationBuilder {
 
     static {
         TEST_PARAMETERS = new HashMap<>();
-        TEST_PARAMETERS.put(SingleRunApp.USE_STEP_MONITOR_PARAMETER_NAME, "true");
-        TEST_PARAMETERS.put(SingleRunApp.USE_TIME_MONITOR_PARAMETER_NAME, "true");
-        TEST_PARAMETERS.put(SingleRunApp.USE_FX_2D_DISPLAY_PARAMETER_NAME, "true");
-//        TEST_PARAMETERS.put(SingleRunApp.USE_FX_MAP_DISPLAY_PARAMETER_NAME, "true");
-//        TEST_PARAMETERS.put(SingleRunApp.USE_DEFAULT_DISPLAY_MONITOR_FOR_ENVIRONMENT_CLASS_PARAMETER_NAME, OSMEnvironment.class.getName());
-//        TEST_PARAMETERS.put(SingleRunApp.USE_SPECIFIED_DISPLAY_MONITOR_PARAMETER_NAME, FX2DDisplay.class.getName());
+        TEST_PARAMETERS.put(SingleRunApp.USE_STEP_MONITOR, "true");
+        TEST_PARAMETERS.put(SingleRunApp.USE_TIME_MONITOR, "true");
+        TEST_PARAMETERS.put(SingleRunApp.USE_FX_2D_DISPLAY, "true");
+//        TEST_PARAMETERS.put(SingleRunApp.USE_FX_MAP_DISPLAY, "true");
+//        TEST_PARAMETERS.put(SingleRunApp.USE_DEFAULT_DISPLAY_MONITOR_FOR_ENVIRONMENT_CLASS, OSMEnvironment.class.getName());
+//        TEST_PARAMETERS.put(SingleRunApp.USE_SPECIFIED_DISPLAY_MONITOR, FX2DDisplay.class.getName());
     }
 
     public static void main(final String... args) {

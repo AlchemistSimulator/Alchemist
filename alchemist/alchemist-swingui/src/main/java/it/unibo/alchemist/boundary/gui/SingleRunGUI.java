@@ -146,11 +146,11 @@ public final class SingleRunGUI {
             sim.addOutputMonitor(main);
             // TODO this part will be removed ///////////////////////////////////////////////////////////////////////
         } else if (main instanceof Node) {
-            final SingleRunApp view = new SingleRunViewBuilder<>(sim)
-                    .setDefaultOnCloseOperation(closeOperation)
-                    .setEffectGroups(effectsFile)
-                    .setIcon(SVGImageUtils.DEFAULT_ALCHEMIST_ICON_PATH)
-                    .build();
+//            final SingleRunApp view = new SingleRunViewBuilder<>(sim)
+//                    .setDefaultOnCloseOperation(closeOperation)
+//                    .setEffectGroups(effectsFile)
+//                    .setIcon(SVGImageUtils.DEFAULT_ALCHEMIST_ICON_PATH)
+//                    .build();
 //            view.runApp();
         } else {
             L.error("The default monitor of {} is not compatible with Java Swing.", sim);

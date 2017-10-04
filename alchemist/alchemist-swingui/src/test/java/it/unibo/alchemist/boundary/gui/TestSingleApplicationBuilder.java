@@ -6,17 +6,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static it.unibo.alchemist.boundary.gui.SingleRunApp.Parameter.*;
+
 public class TestSingleApplicationBuilder {
     public static final Map<String, String> TEST_PARAMETERS;
 
     static {
         TEST_PARAMETERS = new HashMap<>();
-        TEST_PARAMETERS.put(SingleRunApp.USE_STEP_MONITOR, "true");
-        TEST_PARAMETERS.put(SingleRunApp.USE_TIME_MONITOR, "true");
-        TEST_PARAMETERS.put(SingleRunApp.USE_FX_2D_DISPLAY, "true");
-//        TEST_PARAMETERS.put(SingleRunApp.USE_FX_MAP_DISPLAY, "true");
-//        TEST_PARAMETERS.put(SingleRunApp.USE_DEFAULT_DISPLAY_MONITOR_FOR_ENVIRONMENT_CLASS, OSMEnvironment.class.getName());
-//        TEST_PARAMETERS.put(SingleRunApp.USE_SPECIFIED_DISPLAY_MONITOR, FX2DDisplay.class.getName());
+        TEST_PARAMETERS.put(USE_STEP_MONITOR.getName(), "true");
+        TEST_PARAMETERS.put(USE_TIME_MONITOR.getName(), "true");
+        TEST_PARAMETERS.put(USE_FX_2D_DISPLAY.getName(), "true");
+//        TEST_PARAMETERS.put(USE_FX_MAP_DISPLAY.getName(), "true");
+//        TEST_PARAMETERS.put(USE_DEFAULT_DISPLAY_MONITOR_FOR_ENVIRONMENT_CLASS.getName(), OSMEnvironment.class.getName());
+//        TEST_PARAMETERS.put(USE_SPECIFIED_DISPLAY_MONITOR.getName(), FX2DDisplay.class.getName());
     }
 
     public static void main(final String... args) {
@@ -25,7 +27,7 @@ public class TestSingleApplicationBuilder {
     }
 
     private static String getParam(final Map.Entry<String, String> valueNameEntry) {
-        return (valueNameEntry.getValue().equals("") ? "" : SingleRunApp.PARAMETER_NAME_START + valueNameEntry.getKey() + SingleRunApp.PARAMETER_NAME_END) + valueNameEntry.getValue();
+        return (valueNameEntry.getValue().equals("") ? "" : PARAMETER_NAME_START + valueNameEntry.getKey() + PARAMETER_NAME_END) + valueNameEntry.getValue();
     }
 
     public static String[] getParams(final Map<String, String> valueNameParamsMap) {

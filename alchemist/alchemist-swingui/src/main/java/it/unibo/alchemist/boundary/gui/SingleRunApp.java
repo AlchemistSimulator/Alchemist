@@ -192,25 +192,28 @@ public class SingleRunApp<T> extends Application {
      */
     private void parseUnnamedParams(final List<String> params) {
         params.forEach(param -> {
-            L.debug("The given unnamed param is: " + param);
-            switch (Parameter.getParamFromName(
-                    param.startsWith(PARAMETER_NAME_START)
-                            ? param.substring(PARAMETER_NAME_START.length())
-                            : param)) {
-                case USE_FX_2D_DISPLAY:
-                    initDisplayMonitor(FX2DDisplay.class.getName());
-                    break;
-                case USE_FX_MAP_DISPLAY:
-                    initDisplayMonitor(FXMapDisplay.class.getName());
-                    break;
-                case USE_TIME_MONITOR:
-                    timeMonitor = Optional.of(new FXTimeMonitor<>());
-                    break;
-                case USE_STEP_MONITOR:
-                    stepMonitor = Optional.of(new FXStepMonitor<>());
-                    break;
-                default:
-                    L.warn("Unexpected argument " + PARAMETER_NAME_START + param);
+            try {
+                switch (Parameter.getParamFromName(
+                        param.startsWith(PARAMETER_NAME_START)
+                                ? param.substring(PARAMETER_NAME_START.length())
+                                : param)) {
+                    case USE_FX_2D_DISPLAY:
+                        initDisplayMonitor(FX2DDisplay.class.getName());
+                        break;
+                    case USE_FX_MAP_DISPLAY:
+                        initDisplayMonitor(FXMapDisplay.class.getName());
+                        break;
+                    case USE_TIME_MONITOR:
+                        timeMonitor = Optional.of(new FXTimeMonitor<>());
+                        break;
+                    case USE_STEP_MONITOR:
+                        stepMonitor = Optional.of(new FXStepMonitor<>());
+                        break;
+                    default:
+                        L.warn("Unexpected argument " + PARAMETER_NAME_START + param);
+                }
+            } catch (final IllegalArgumentException e) {
+                L.warn("Invalid argument: " + param, e);
             }
         });
     }
@@ -377,7 +380,7 @@ public class SingleRunApp<T> extends Application {
          * @return the named property of the param
          */
         public boolean isNamed() {
-            return isNamed;
+            return this.isNamed;
         }
     }
 }

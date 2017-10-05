@@ -21,7 +21,7 @@ public class TestSingleApplication {
     }
 
     public static void main(final String... args) {
-        Application.launch(SingleRunApp.class, getParams(TEST_PARAMETERS));
+        Application.launch(TestApplication.class);
     }
 
     public static String[] getParams(final Map<String, String> valueNameParamsMap) {

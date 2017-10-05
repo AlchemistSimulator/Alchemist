@@ -41,15 +41,13 @@ import static it.unibo.alchemist.boundary.gui.SingleRunApp.Parameter.PARAMETER_N
  */
 public class SingleRunApp<T> extends Application {
     /**
+     * Main layout without nested layouts. Must inject eventual other nested layouts.
+     */
+    public static final String ROOT_LAYOUT = "RootLayout";
+    /**
      * Default logger for the class.
      */
     private static final Logger L = LoggerFactory.getLogger(SingleRunApp.class);
-
-    /**
-     * Main layout without nested layouts. Must inject eventual other nested layouts.
-     */
-    private static final String ROOT_LAYOUT = "RootLayout";
-
     private Collection<EffectGroup> effectGroups;
     private Optional<AbstractFXDisplay<T>> displayMonitor = Optional.empty();
     private Optional<FXTimeMonitor<T>> timeMonitor = Optional.empty();
@@ -70,8 +68,10 @@ public class SingleRunApp<T> extends Application {
     @Override
     public void start(final Stage primaryStage) {
         final Parameters parameters = getParameters();
-        parseNamedParams(parameters.getNamed());
-        parseUnnamedParams(parameters.getUnnamed());
+        if (parameters != null) {
+            parseNamedParams(parameters.getNamed());
+            parseUnnamedParams(parameters.getUnnamed());
+        }
 
         try {
             this.rootLayout = FXResourceLoader.getLayout(AnchorPane.class, this, ROOT_LAYOUT);

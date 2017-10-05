@@ -227,12 +227,10 @@ public class SingleRunViewBuilder<T> {
     }
 
     public void buildAndStart() {
-        Platform.runLater(new Runnable() {
-            public void run() {
-                final SingleRunApp<T> app = new SingleRunApp<>();
-                // TODO app.setParams(buildParams());
-                app.start(new Stage());
-            }
+        Platform.runLater(() -> {
+            final SingleRunApp<T> app = new SingleRunApp<>();
+            // TODO app.setParams(buildParams());
+            app.start(new Stage());
         });
     }
 

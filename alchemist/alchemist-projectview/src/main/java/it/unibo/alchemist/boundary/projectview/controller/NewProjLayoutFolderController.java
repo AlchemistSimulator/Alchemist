@@ -1,17 +1,5 @@
 package it.unibo.alchemist.boundary.projectview.controller;
 
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Optional;
-import java.util.ResourceBundle;
-
-import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import javafx.fxml.FXML;
@@ -19,13 +7,22 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 /**
  * This class models a JavaFX controller for NewProjLayoutFolder.fxml.
@@ -54,27 +51,28 @@ public class NewProjLayoutFolderController implements Initializable {
     }
 
     /**
-     * 
-     * @param main
-     *            main
+     * @param main main
      */
     public void setMain(final ProjectGUI main) {
         this.main = main;
     }
 
     /**
-     * 
-     * @param stage
-     *            stage
+     * @param stage stage
      */
     public void setStage(final Stage stage) {
         this.stage = stage;
     }
 
     /**
-     * 
-     * @param path
-     *            Folder path
+     * @return Folder path of new project.
+     */
+    public String getFolderPath() {
+        return this.path;
+    }
+
+    /**
+     * @param path Folder path
      */
     public void setFolderPath(final String path) {
         this.path = path;
@@ -83,15 +81,7 @@ public class NewProjLayoutFolderController implements Initializable {
     }
 
     /**
-     * 
-     * @return Folder path of new project.
-     */
-    public String getFolderPath() {
-        return this.path;
-    }
-
-    /**
-     * 
+     *
      */
     @FXML
     public void clickSelect() {
@@ -107,31 +97,32 @@ public class NewProjLayoutFolderController implements Initializable {
                 alert.setTitle(RESOURCES.getString("select_folder_full"));
                 alert.setHeaderText(RESOURCES.getString("select_folder_full_header"));
                 alert.setContentText(RESOURCES.getString("select_folder_full_content"));
-                final Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == ButtonType.OK) {
-                    try {
-                        FileUtils.cleanDirectory(dir);
-                        setSelectedFolder(dir);
-                    } catch (IOException e) {
-                        final Alert alertCancel = new Alert(AlertType.ERROR);
-                        alertCancel.setTitle(RESOURCES.getString("error_building_project"));
-                        alertCancel.setHeaderText(RESOURCES.getString("error_building_project_header"));
-                        alertCancel.setContentText(RESOURCES.getString("error_building_project_content"));
+                alert.showAndWait().ifPresent(buttonType -> {
+                    if (buttonType == ButtonType.OK) {
+                        try {
+                            FileUtils.cleanDirectory(dir);
+                            setSelectedFolder(dir);
+                        } catch (final IOException e) {
+                            final Alert alertCancel = new Alert(AlertType.ERROR);
+                            alertCancel.setTitle(RESOURCES.getString("error_building_project"));
+                            alertCancel.setHeaderText(RESOURCES.getString("error_building_project_header"));
+                            alertCancel.setContentText(RESOURCES.getString("error_building_project_content"));
+                            alertCancel.showAndWait();
+                        }
+                    } else {
+                        final Alert alertCancel = new Alert(AlertType.WARNING);
+                        alertCancel.setTitle(RESOURCES.getString("select_folder_full_cancel"));
+                        alertCancel.setHeaderText(RESOURCES.getString("select_folder_full_cancel_header"));
+                        alertCancel.setContentText(RESOURCES.getString("select_folder_full_cancel_content"));
                         alertCancel.showAndWait();
                     }
-                } else {
-                    final Alert alertCancel = new Alert(AlertType.WARNING);
-                    alertCancel.setTitle(RESOURCES.getString("select_folder_full_cancel"));
-                    alertCancel.setHeaderText(RESOURCES.getString("select_folder_full_cancel_header"));
-                    alertCancel.setContentText(RESOURCES.getString("select_folder_full_cancel_content"));
-                    alertCancel.showAndWait();
-                }
+                });
             }
         }
     }
 
     /**
-     * 
+     *
      */
     @FXML
     public void clickNext() {

@@ -117,23 +117,17 @@ public class LeftLayoutController implements Initializable {
         this.treeView = new TreeView<>(root);
         displayProjectContent(dir, root);
         this.pane.getChildren().add(this.treeView);
-        this.treeView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<String>>() {
-            @Override
-            public void changed(final ObservableValue<? extends TreeItem<String>> observable, 
-                    final TreeItem<String> oldVal,
-                    final TreeItem<String> newVal) {
-                final TreeItem<String> selectedItem = (TreeItem<String>) newVal;
-                TreeItem<String> parent = selectedItem.getParent();
-                String path = File.separator + selectedItem.getValue();
-                while (parent != null)  {
-                    if (parent.getParent() != null) {
-                        path = File.separator + parent.getValue() + path;
-                    }
-                    parent = parent.getParent();
+        this.treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldVal, newVal) -> {
+            final TreeItem<String> selectedItem = (TreeItem<String>) newVal;
+            TreeItem<String> parent = selectedItem.getParent();
+            String path = File.separator + selectedItem.getValue();
+            while (parent != null)  {
+                if (parent.getParent() != null) {
+                    path = File.separator + parent.getValue() + path;
                 }
-                selectedFile = pathFolder + path;
+                parent = parent.getParent();
             }
-
+            selectedFile = pathFolder + path;
         });
         this.treeView.setOnMouseClicked(mouseEv -> {
             final File target = new File(selectedFile);
@@ -213,7 +207,7 @@ public class LeftLayoutController implements Initializable {
         loader.setLocation(ProjectGUI.class.getResource("view/NewFolderOrFileDialog.fxml"));
         AnchorPane pane;
         try {
-            pane = (AnchorPane) loader.load();
+            pane = loader.load();
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }

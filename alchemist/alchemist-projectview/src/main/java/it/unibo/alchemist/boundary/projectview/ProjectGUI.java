@@ -1,10 +1,5 @@
 package it.unibo.alchemist.boundary.projectview;
 
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.io.IOException;
-
-import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.projectview.controller.CenterLayoutController;
 import it.unibo.alchemist.boundary.projectview.controller.LeftLayoutController;
@@ -20,6 +15,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+import java.awt.*;
+import java.io.IOException;
+
 /**
  * Main class to start the application.
  */
@@ -32,8 +30,17 @@ public class ProjectGUI extends Application {
     private TopLayoutController controllerTop;
 
     /**
+     * Method that launches the application.
+     *
+     * @param args arguments
+     */
+    public static void main(final String... args) {
+        launch(args);
+    }
+
+    /**
      * Returns the primary stage.
-     * 
+     *
      * @return primary stage
      */
     public Stage getStage() {
@@ -43,9 +50,8 @@ public class ProjectGUI extends Application {
     /**
      * Method that initializes the scene by loading all needed .fxml files and
      * sets the primary stage.
-     * 
-     * @throws IOException
-     *             in case of bugs
+     *
+     * @throws IOException in case of bugs
      */
     @Override
     public void start(final Stage primaryStage) throws IOException {
@@ -58,15 +64,12 @@ public class ProjectGUI extends Application {
         initLayout("CenterLayout");
         initLayout("TopLayout");
         Platform.setImplicitExit(false);
-        this.primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(final WindowEvent wind) {
-                wind.consume();
-                controllerCenter.checkChanges();
-                if (controllerCenter.isCorrectnessSpinTime() && controllerCenter.isCorrectnessSpinOut()) {
-                    controllerTop.terminateWatcher();
-                    Platform.exit();
-                }
+        this.primaryStage.setOnCloseRequest(wind -> {
+            wind.consume();
+            controllerCenter.checkChanges();
+            if (controllerCenter.isCorrectnessSpinTime() && controllerCenter.isCorrectnessSpinOut()) {
+                controllerTop.terminateWatcher();
+                Platform.exit();
             }
         });
     }
@@ -75,7 +78,7 @@ public class ProjectGUI extends Application {
         final FXMLLoader loader = new FXMLLoader();
         loader.setLocation(ProjectGUI.class.getResource("view/" + layoutName + ".fxml"));
         if (layoutName.equals("RootLayout")) {
-            this.root = (BorderPane) loader.load();
+            this.root = loader.load();
             final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
             final double width = screenSize.getWidth() * 62.5 / 100;
             final double height = screenSize.getHeight() * 87.96 / 100;
@@ -84,7 +87,7 @@ public class ProjectGUI extends Application {
             this.primaryStage.setScene(scene);
             this.primaryStage.show();
         } else {
-            final AnchorPane pane = (AnchorPane) loader.load();
+            final AnchorPane pane = loader.load();
             if (layoutName.equals("TopLayout")) {
                 this.root.setTop(pane);
                 this.controllerTop = loader.getController();
@@ -103,16 +106,6 @@ public class ProjectGUI extends Application {
             }
             this.controllerLeft.setCtrlCenter(this.controllerCenter);
         }
-    }
-
-    /**
-     * Method that launches the application.
-     * 
-     * @param args
-     *            arguments
-     */
-    public static void main(final String... args) {
-        launch(args);
     }
 
 }

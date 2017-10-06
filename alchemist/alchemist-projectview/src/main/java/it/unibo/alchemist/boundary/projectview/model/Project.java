@@ -1,23 +1,5 @@
 package it.unibo.alchemist.boundary.projectview.model;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import javax.swing.JFrame;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import it.unibo.alchemist.AlchemistRunner;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
@@ -27,10 +9,20 @@ import it.unibo.alchemist.loader.variables.Variable;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * An entity which is able to produce a structure for an Alchemist project to go through a Json reader or writer.
- *
  */
 public final class Project {
 
@@ -46,7 +38,6 @@ public final class Project {
     private List<String> classpath;
 
     /**
-     * 
      * @param baseDir a base directory of project.
      */
     public Project(final File baseDir) {
@@ -57,7 +48,6 @@ public final class Project {
     }
 
     /**
-     * 
      * @return an entity of Batch mode.
      */
     public Batch getBatch() {
@@ -65,47 +55,6 @@ public final class Project {
     }
 
     /**
-     * 
-     * @return a list of the libraries to add to the classpath.
-     */
-    public List<String> getClasspath() {
-        return this.classpath;
-    }
-
-    /**
-     * 
-     * @return a end time of simulation.
-     */
-    public double getEndTime() {
-        return this.endTime;
-    }
-
-    /**
-     * 
-     * @return a path of effect file.
-     */
-    public String getEffect() {
-        return this.effect;
-    }
-
-    /**
-     * 
-     * @return an entity of the Output.
-     */
-    public Output getOutput() {
-        return this.output;
-    }
-
-    /**
-     * 
-     * @return a path of simulation file.
-     */
-    public String getSimulation() {
-        return this.simulation;
-    }
-
-    /**
-     * 
      * @param batch a entity of Batch mode.
      */
     public void setBatch(final Batch batch) {
@@ -113,7 +62,13 @@ public final class Project {
     }
 
     /**
-     * 
+     * @return a list of the libraries to add to the classpath.
+     */
+    public List<String> getClasspath() {
+        return this.classpath;
+    }
+
+    /**
      * @param classpath a list of libraries.
      */
     public void setClasspath(final List<String> classpath) {
@@ -121,7 +76,13 @@ public final class Project {
     }
 
     /**
-     * 
+     * @return a end time of simulation.
+     */
+    public double getEndTime() {
+        return this.endTime;
+    }
+
+    /**
      * @param endTime an end time.
      */
     public void setEndTime(final double endTime) {
@@ -129,7 +90,13 @@ public final class Project {
     }
 
     /**
-     * 
+     * @return a path of effect file.
+     */
+    public String getEffect() {
+        return this.effect;
+    }
+
+    /**
      * @param eff a path of a effect file.
      */
     public void setEffect(final String eff) {
@@ -137,7 +104,13 @@ public final class Project {
     }
 
     /**
-     * 
+     * @return an entity of the Output.
+     */
+    public Output getOutput() {
+        return this.output;
+    }
+
+    /**
      * @param out an entity of Output.
      */
     public void setOutput(final Output out) {
@@ -145,7 +118,13 @@ public final class Project {
     }
 
     /**
-     * 
+     * @return a path of simulation file.
+     */
+    public String getSimulation() {
+        return this.simulation;
+    }
+
+    /**
      * @param sim a path of a simulation file.
      */
     public void setSimulation(final String sim) {
@@ -153,7 +132,6 @@ public final class Project {
     }
 
     /**
-     * 
      * @return the base directory of project.
      */
     public File getBaseDirectory() {
@@ -161,7 +139,7 @@ public final class Project {
     }
 
     /**
-     * 
+     *
      */
     public void filterVariables() {
         /* TODO
@@ -181,7 +159,6 @@ public final class Project {
     }
 
     /**
-     * 
      * @param isBatch A boolean that represent if it is in batch mode.
      * @throws FileNotFoundException When the selected files are not found.
      */
@@ -192,13 +169,13 @@ public final class Project {
          * 3. Extract the variables
          */
         if (getSimulationPath() == null
-            || getEndTime() == 0
-            || getEffect() == null
-            || getOutput().getFolder() == null
-            || getOutput().getBaseName() == null
-            || getOutput().getSampleInterval() == 0
-            || getBatch() == null
-            || getBatch().getThreadCount() == 0) {
+                || getEndTime() == 0
+                || getEffect() == null
+                || getOutput().getFolder() == null
+                || getOutput().getBaseName() == null
+                || getOutput().getSampleInterval() == 0
+                || getBatch() == null
+                || getBatch().getThreadCount() == 0) {
             throw new IllegalStateException("Error during launch. The project file might be corrupt.");
         } else {
             final Loader loader = createLoader();
@@ -216,27 +193,31 @@ public final class Project {
                         .setHeadless(false)
                         .setGUICloseOperation(JFrame.DISPOSE_ON_CLOSE)
                         .build();
-                    final Map<String, Variable<?>> keys = runner.getVariables();
-                    final Set<String> selectedVariables = isBatch 
-                            ? this.batch.getVariables().entrySet().stream().filter(Entry::getValue).map(Entry::getKey).collect(Collectors.toSet())
-                            : Collections.emptySet();
-                    if (keys.keySet().containsAll(selectedVariables)) {
-                        runner.launch(selectedVariables.toArray(new String[selectedVariables.size()]));
-                    } else {
-                        final Alert alert = new Alert(AlertType.ERROR);
-                        alert.setTitle(RESOURCES.getString("var_key_error"));
-                        alert.setHeaderText(RESOURCES.getString("var_key_error_header"));
-                        alert.setContentText(RESOURCES.getString("var_key_error_content"));
-                        alert.showAndWait();
-                    }
+                final Map<String, Variable<?>> keys = runner.getVariables();
+                final Set<String> selectedVariables = isBatch
+                        ? this.batch.getVariables().entrySet().stream().filter(Entry::getValue).map(Entry::getKey).collect(Collectors.toSet())
+                        : Collections.emptySet();
+                if (keys.keySet().containsAll(selectedVariables)) {
+                    runner.launch(selectedVariables.toArray(new String[selectedVariables.size()]));
+                } else {
+                    final Alert alert = new Alert(AlertType.ERROR);
+                    alert.setTitle(RESOURCES.getString("var_key_error"));
+                    alert.setHeaderText(RESOURCES.getString("var_key_error_header"));
+                    alert.setContentText(RESOURCES.getString("var_key_error_content"));
+                    alert.showAndWait();
+                }
             }
         }
     }
 
     private Loader createLoader() {
         try {
-            return new YamlLoader(new FileInputStream(getSimulationPath()));
-        } catch (FileNotFoundException e) {
+            final String simulationPath = getSimulationPath();
+            if (simulationPath == null) {
+                throw new FileNotFoundException();
+            }
+            return new YamlLoader(new FileInputStream(simulationPath));
+        } catch (final FileNotFoundException e) {
             L.error("Error loading simulation file.", e);
             return null;
         }
@@ -259,9 +240,9 @@ public final class Project {
     }
 
     private String getFolderPath() {
-        if (this.output == null 
-                || !this.output.isSelected() 
-                || getOutput().getFolder() == null 
+        if (this.output == null
+                || !this.output.isSelected()
+                || getOutput().getFolder() == null
                 || getOutput().getBaseName() == null) {
             return null;
         } else {

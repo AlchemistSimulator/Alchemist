@@ -37,12 +37,7 @@ public final class ProjectIOUtils {
      */
     public static Project loadFrom(final String directory) {
         final Gson gson = new GsonBuilder()
-                .registerTypeAdapter(Project.class, new InstanceCreator<Project>() {
-                    @Override
-                    public Project createInstance(final Type type) {
-                        return new Project(new File(directory));
-                    }
-                })
+                .registerTypeAdapter(Project.class, (InstanceCreator<Project>) type -> new Project(new File(directory)))
                 .setPrettyPrinting()
                 .create();
         final String actualPath = directory + PROJECT_FILE;
@@ -70,8 +65,9 @@ public final class ProjectIOUtils {
         if (new File(directory).exists() && new File(directory).isDirectory()) {
             try {
                 final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                Files.write(gson.toJson(project), new File(directory + PROJECT_FILE), StandardCharsets.UTF_8);
-            } catch (IOException e) {
+                Files.asCharSink(new File(directory + PROJECT_FILE), StandardCharsets.UTF_8)
+                        .write(gson.toJson(project));
+            } catch (final IOException e) {
                 throw new IllegalStateException(e);
             }
         }

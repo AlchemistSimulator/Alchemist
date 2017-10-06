@@ -132,7 +132,7 @@ public class NewProjLayoutSelectController implements Initializable {
     public void clickBack() throws IOException {
         final FXMLLoader loader = new FXMLLoader();
         loader.setLocation(ProjectGUI.class.getResource("view/NewProjLayoutFolder.fxml"));
-        final AnchorPane pane = (AnchorPane) loader.load();
+        final AnchorPane pane = loader.load();
         final Scene scene = new Scene(pane);
         this.stage.setScene(scene);
         final NewProjLayoutFolderController ctrl = loader.getController();

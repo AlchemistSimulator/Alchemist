@@ -1,7 +1,21 @@
 package it.unibo.alchemist.boundary.projectview.controller;
 
-import java.awt.Dimension;
-import java.awt.Toolkit;
+import com.google.common.io.Files;
+import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
+import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
+import it.unibo.alchemist.boundary.projectview.ProjectGUI;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -9,27 +23,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.ResourceBundle;
-
-import com.google.common.io.Files;
-
-import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
-import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
-import it.unibo.alchemist.boundary.projectview.ProjectGUI;
-import it.unibo.alchemist.boundary.projectview.utils.SVGImageUtils;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 /**
  * This class models a JavaFX controller for TopLayout.fxml.
@@ -66,6 +59,7 @@ public class TopLayoutController implements Initializable {
 
     /**
      * Sets the main class.
+     *
      * @param main main class
      */
     public void setMain(final ProjectGUI main) {
@@ -73,7 +67,6 @@ public class TopLayoutController implements Initializable {
     }
 
     /**
-     * 
      * @param controller LeftLayout controller
      */
     public void setCtrlLeft(final LeftLayoutController controller) {
@@ -81,7 +74,6 @@ public class TopLayoutController implements Initializable {
     }
 
     /**
-     * 
      * @param controller CenterLayout controller
      */
     public void setCtrlCenter(final CenterLayoutController controller) {
@@ -99,9 +91,8 @@ public class TopLayoutController implements Initializable {
 
     /**
      * Show a view to create new project.
-     * 
-     * @throws IOException
-     *             if the FXML can't get loaded
+     *
+     * @throws IOException if the FXML can't get loaded
      */
     @FXML
     public void clickNew() throws IOException {
@@ -110,7 +101,7 @@ public class TopLayoutController implements Initializable {
         }
         final FXMLLoader loader = new FXMLLoader();
         loader.setLocation(ProjectGUI.class.getResource("view/NewProjLayoutFolder.fxml"));
-        final AnchorPane pane = (AnchorPane) loader.load();
+        final AnchorPane pane = loader.load();
         final Stage stage = new Stage();
         stage.setTitle(RESOURCES.getString("new_proj"));
         stage.initModality(Modality.WINDOW_MODAL);
@@ -123,12 +114,7 @@ public class TopLayoutController implements Initializable {
         final NewProjLayoutFolderController ctrl = loader.getController();
         ctrl.setMain(this.main);
         ctrl.setStage(stage);
-        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(final WindowEvent event) {
-                ctrl.setFolderPath(null);
-            }
-        });
+        stage.setOnCloseRequest(event -> ctrl.setFolderPath(null));
         stage.showAndWait();
         if (ctrl.getFolderPath() != null) {
             setView(new File(ctrl.getFolderPath()));

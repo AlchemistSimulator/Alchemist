@@ -35,11 +35,8 @@ import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.YamlLoader;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -62,7 +59,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import javafx.util.StringConverter;
 
 /**
@@ -71,8 +67,7 @@ import javafx.util.StringConverter;
 public class CenterLayoutController implements Initializable {
 
     private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
-    private static final ResourceBundle RESOURCES = LocalizedResourceBundle
-            .get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
+    private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
     private static final double MIN = Double.MIN_VALUE;
     private static final double MAX = Double.MAX_VALUE;
     private static final double STEP = 0.01;
@@ -253,7 +248,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      * @return True if the end time spinner is correctly set, otherwise false.
      */
     public boolean isCorrectnessSpinTime() {
@@ -261,7 +256,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      * @return True if the sampling interval spinner is correctly set or the
      *         output section is not selected, otherwise false.
      */
@@ -275,7 +270,7 @@ public class CenterLayoutController implements Initializable {
 
     /**
      * Sets the main class and adds toggle switch to view.
-     * 
+     *
      * @param main
      *            main class.
      */
@@ -289,7 +284,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      * @param controller
      *            LeftLayout controller
      */
@@ -304,14 +299,11 @@ public class CenterLayoutController implements Initializable {
             setComponentVisible(ts, false);
         }
 
-        ts.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(final ObservableValue<? extends Boolean> ov, final Boolean t1, final Boolean t2) {
-                if (ts.isSelected()) {
-                    setComponentVisible(ts, true);
-                } else {
-                    setComponentVisible(ts, false);
-                }
+        ts.selectedProperty().addListener((ov, t1, t2) -> {
+            if (ts.isSelected()) {
+                setComponentVisible(ts, true);
+            } else {
+                setComponentVisible(ts, false);
             }
         });
     }
@@ -349,7 +341,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      */
     public void setVariablesList() {
         Loader fileYaml = null;
@@ -368,29 +360,26 @@ public class CenterLayoutController implements Initializable {
                 }
             }
             this.listYaml.setItems(vars);
-            this.listYaml.setCellFactory(CheckBoxListCell.forListView(new Callback<String, ObservableValue<Boolean>>() {
-                @Override
-                public ObservableValue<Boolean> call(final String var) {
-                    final BooleanProperty observable = new SimpleBooleanProperty();
-                    if (variables.get(var)) {
-                        observable.set(true);
-                    }
-                    observable.addListener((obs, wasSelected, isNowSelected) -> {
-                        if (wasSelected && !isNowSelected) {
-                            variables.put(var, false);
-                        }
-                        if (!wasSelected && isNowSelected) {
-                            variables.put(var, true);
-                        }
-                    });
-                    return observable;
+            this.listYaml.setCellFactory(CheckBoxListCell.forListView(var -> {
+                final BooleanProperty observable = new SimpleBooleanProperty();
+                if (variables.get(var)) {
+                    observable.set(true);
                 }
+                observable.addListener((obs, wasSelected, isNowSelected) -> {
+                    if (wasSelected && !isNowSelected) {
+                        variables.put(var, false);
+                    }
+                    if (!wasSelected && isNowSelected) {
+                        variables.put(var, true);
+                    }
+                });
+                return observable;
             }));
         }
     }
 
     /**
-     * 
+     *
      * @return A entity of project.
      */
     public Project getProject() {
@@ -398,7 +387,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      */
     @FXML
     public void clickSetYaml() {
@@ -417,7 +406,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      */
     @FXML
     public void clickEditYaml() {
@@ -425,7 +414,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      */
     @FXML
     public void clickSetEffect() {
@@ -441,7 +430,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      */
     @FXML
     public void clickEditEffect() {
@@ -449,7 +438,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      */
     @FXML
     public void clickSetFolderOut() {
@@ -477,7 +466,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      */
     @FXML
     public void clickAddClass() {
@@ -502,7 +491,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      */
     @FXML
     public void clickRemoveClass() {
@@ -520,20 +509,17 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      */
     @FXML
     public void clickBatch() {
         checkChanges();
         this.project = ProjectIOUtils.loadFrom(this.ctrlLeft.getPathFolder());
-        final Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    project.runAlchemistSimulation(true);
-                } catch (FileNotFoundException e) {
-                    L.error("Error loading simulation file.", e);
-                }
+        final Thread thread = new Thread(() -> {
+            try {
+                project.runAlchemistSimulation(true);
+            } catch (FileNotFoundException e) {
+                L.error("Error loading simulation file.", e);
             }
         }, "Batch");
         thread.setDaemon(true);
@@ -541,14 +527,14 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      */
     public void setEnableGrid() {
         this.grid.setDisable(false);
     }
 
     /**
-     * 
+     *
      * @return Selected simulation path.
      */
     public String getSimulationFilePath() {
@@ -556,7 +542,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      * @param path
      *            The path of file simulation.
      */
@@ -566,7 +552,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      * @return Selected end time.
      */
     private double getEndTime() {
@@ -574,7 +560,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      * @param endT
      *            Selected end time.
      */
@@ -583,7 +569,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      * @return Selected effect path
      */
     private String getEffect() {
@@ -591,7 +577,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      * @param path
      *            The path of file effect.
      */
@@ -601,7 +587,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      * @return true if the output switch is selected.
      */
     private boolean isSwitchOutputSelected() {
@@ -609,7 +595,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      * @param select
      *            true if the output switch is selected.
      */
@@ -618,7 +604,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      * @return Selected output folder
      */
     private String getOutputFolder() {
@@ -626,7 +612,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      * @param path
      *            The path of output folder.
      */
@@ -636,7 +622,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      * @return Base name typed
      */
     private String getBaseName() {
@@ -644,7 +630,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      * @param name
      *            The name of output file.
      */
@@ -653,7 +639,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      * @return Selected sampling interval.
      */
     private double getSamplInterval() {
@@ -661,7 +647,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      * @param sampInt
      *            Selected sampling interval.
      */
@@ -670,7 +656,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      * @return True if the batch mode switch is selected.
      */
     private boolean isSwitchBatchSelected() {
@@ -678,7 +664,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      * @param select
      *            True if the batch mode switch is selected.
      */
@@ -687,7 +673,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      * @return a map of variables.
      */
     private Map<String, Boolean> getVariables() {
@@ -699,7 +685,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      * @return Selected number of threads.
      */
     private int getNumberThreads() {
@@ -707,7 +693,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      * @param threads
      *            Selected number of threads.
      */
@@ -716,7 +702,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      * @return The libraries to add to the classpath.
      */
     private ObservableList<String> getClasspath() {
@@ -724,7 +710,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      * @param list
      *            The libraries to add to the classpath.
      */
@@ -758,7 +744,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      * @return The entity project.
      */
     public Project setField() {
@@ -874,7 +860,7 @@ public class CenterLayoutController implements Initializable {
             setBaseName(RESOURCES.getString("base_name_text"));
             setSamplInterval(1);
             setSwitchBatchSelected(false);
-            setVariables(new HashMap<String, Boolean>());
+            setVariables(new HashMap<>());
             setNumberThreads(Runtime.getRuntime().availableProcessors() + 1);
             setClasspath(FXCollections.observableArrayList());
         }
@@ -886,7 +872,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      * @param path
      *            A path of output folder
      */
@@ -910,7 +896,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      * @param path
      *            A path of file
      */
@@ -976,7 +962,7 @@ public class CenterLayoutController implements Initializable {
         try {
             final FXMLLoader loader = new FXMLLoader();
             loader.setLocation(ProjectGUI.class.getResource("view/FileNameDialog.fxml"));
-            final AnchorPane pane = (AnchorPane) loader.load();
+            final AnchorPane pane = loader.load();
 
             final Stage stage = new Stage();
             stage.setTitle(RESOURCES.getString("file_name_title"));
@@ -1017,14 +1003,11 @@ public class CenterLayoutController implements Initializable {
         Tooltip.install(imgView, tooltip);
         grid.getChildren().remove(imgView);
         grid.add(imgView, 0, 2);
-        imgView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(final MouseEvent event) {
-                label.setText("");
-                grid.getChildren().remove(imgView);
-                if (isYaml) {
-                    setSwitchBatchSelected(false);
-                }
+        imgView.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            label.setText("");
+            grid.getChildren().remove(imgView);
+            if (isYaml) {
+                setSwitchBatchSelected(false);
             }
         });
     }
@@ -1038,7 +1021,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      */
     public void checkChanges() {
         this.grid.requestFocus();
@@ -1072,7 +1055,7 @@ public class CenterLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      */
     public void saveProject() {
         final Output out = new Output();

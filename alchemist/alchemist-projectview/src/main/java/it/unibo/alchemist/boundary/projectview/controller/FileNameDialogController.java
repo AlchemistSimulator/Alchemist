@@ -1,29 +1,27 @@
 package it.unibo.alchemist.boundary.projectview.controller;
 
-import java.awt.Desktop;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Optional;
-import java.util.ResourceBundle;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 /**
- * 
+ *
  *
  */
 public class FileNameDialogController implements Initializable {
@@ -56,6 +54,7 @@ public class FileNameDialogController implements Initializable {
 
     /**
      * Sets the stage.
+     *
      * @param dialog dialog stage
      */
     public void setDialogStage(final Stage dialog) {
@@ -64,6 +63,7 @@ public class FileNameDialogController implements Initializable {
 
     /**
      * Sets the extension of the file.
+     *
      * @param extension File extension
      */
     public void setExtension(final String extension) {
@@ -72,7 +72,6 @@ public class FileNameDialogController implements Initializable {
     }
 
     /**
-     * 
      * @param ctrl Left Layout controller
      */
     public void setCtrlLeftLayout(final LeftLayoutController ctrl) {
@@ -80,7 +79,7 @@ public class FileNameDialogController implements Initializable {
     }
 
     /**
-     * 
+     *
      */
     @FXML
     protected void clickOK() {
@@ -95,8 +94,7 @@ public class FileNameDialogController implements Initializable {
             }
             final Desktop desk = Desktop.getDesktop();
             try {
-                if (!file.exists()) {
-                    file.createNewFile();
+                if (!file.exists() && file.createNewFile()) {
                     this.dialogStage.close();
                     this.ctrlLeft.setTreeView(new File(projPath));
                     desk.open(file);
@@ -105,11 +103,18 @@ public class FileNameDialogController implements Initializable {
                     alert.setTitle(RESOURCES.getString("file_name_exists"));
                     alert.setHeaderText(RESOURCES.getString("file_name_exists_header"));
                     alert.setContentText(RESOURCES.getString("file_name_exists_content"));
-                    final Optional<ButtonType> result = alert.showAndWait();
-                    if (result.get() == ButtonType.OK) {
-                        this.dialogStage.close();
-                        desk.open(file);
-                    }
+                    alert.showAndWait()
+                            .ifPresent(buttonType -> {
+                                if (buttonType == ButtonType.OK) {
+                                    this.dialogStage.close();
+                                    try {
+                                        desk.open(file);
+                                    } catch (final IOException e) {
+                                        L.warn(e.getMessage(), e);
+                                        throw new UncheckedIOException(e);
+                                    }
+                                }
+                            });
                 }
             } catch (IOException e) {
                 L.error("Error creation new file.", e);
@@ -125,7 +130,7 @@ public class FileNameDialogController implements Initializable {
     }
 
     /**
-     * 
+     *
      */
     @FXML
     protected void clickCancel() {

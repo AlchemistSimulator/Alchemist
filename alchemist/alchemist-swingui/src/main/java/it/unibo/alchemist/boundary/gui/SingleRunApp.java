@@ -7,6 +7,7 @@ import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.boundary.monitors.*;
+import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -48,7 +49,11 @@ public class SingleRunApp<T> extends Application {
      * Default logger for the class.
      */
     private static final Logger L = LoggerFactory.getLogger(SingleRunApp.class);
+    private final Map<String, String> namedParams = new HashMap<>();
+    private final List<String> unnamedParams = new ArrayList<>();
+    private final boolean initialized = false;
     private Collection<EffectGroup> effectGroups;
+    private Optional<Simulation<T>> simulation = Optional.empty();
     private Optional<AbstractFXDisplay<T>> displayMonitor = Optional.empty();
     private Optional<FXTimeMonitor<T>> timeMonitor = Optional.empty();
     private Optional<FXStepMonitor<T>> stepMonitor = Optional.empty();
@@ -59,19 +64,128 @@ public class SingleRunApp<T> extends Application {
     /**
      * Method that launches the application.
      *
-     * @param args arguments
+     * @param args {@link Parameter parameters} for the application
      */
     public static void main(final String[] args) {
         Application.launch(args);
     }
 
+    /**
+     * Getter method for the unnamed parameters.
+     *
+     * @return the unnamed params
+     * @see Parameters#getUnnamed()
+     */
+    protected List<String> getUnnamedParams() {
+        if (unnamedParams.isEmpty()) {
+            Optional.of(getParameters()).ifPresent(p -> unnamedParams.addAll(p.getUnnamed()));
+        }
+        return this.unnamedParams;
+    }
+
+    /**
+     * Getter method for the named parameters.
+     *
+     * @return the named params
+     */
+    protected Map<String, String> getNamedParams() {
+        if (namedParams.isEmpty()) {
+            Optional.of(getParameters()).ifPresent(p -> namedParams.putAll(p.getNamed()));
+        }
+        return this.namedParams;
+    }
+
+    /**
+     * The method adds a new named parameter.
+     *
+     * @param key   the param name
+     * @param value the param value
+     * @throws IllegalArgumentException if the parameter is not valid, or if {@link Parameter#isNamed() it's not named}
+     * @see Parameters#getNamed()
+     * @see Parameter
+     * @see #addNamedParam(Parameter, String)
+     */
+    public void addNamedParam(final String key, final String value) {
+        // Calling Parameter.getParamFromName makes sure that param is valid
+        addNamedParam(Parameter.getParamFromName(key), value);
+    }
+
+    /**
+     * The method adds a new named parameter.
+     *
+     * @param param the param
+     * @param value the param value
+     * @throws IllegalArgumentException if {@link Parameter#isNamed() it's not named}
+     * @see Parameters#getNamed()
+     */
+    public void addNamedParam(final Parameter param, final String value) {
+        if (!param.isNamed()) {
+            throw new IllegalArgumentException("The given param is not named");
+        }
+        namedParams.put(param.getName(), value);
+    }
+
+    /**
+     * The method adds a new named parameter.
+     *
+     * @param param the param name
+     * @throws IllegalArgumentException if the parameter is not valid, or if {@link Parameter#isNamed() it's named}
+     * @see Parameters#getUnnamed()
+     * @see Parameter
+     * @see #addUnnamedParam(Parameter)
+     */
+    public void addUnnamedParam(final String param) {
+        // Calling Parameter.getParamFromName makes sure that param is valid
+        addUnnamedParam(Parameter.getParamFromName(
+                param.startsWith(PARAMETER_NAME_START)
+                        ? param.substring(PARAMETER_NAME_START.length())
+                        : param));
+    }
+
+    /**
+     * The method adds a new named parameter.
+     *
+     * @param param the param
+     * @throws IllegalArgumentException if {@link Parameter#isNamed() it's not named}
+     * @see Parameters#getUnnamed()
+     */
+    public void addUnnamedParam(final Parameter param) {
+        if (param.isNamed()) {
+            throw new IllegalArgumentException("The given param is named");
+        }
+        unnamedParams.add(param.getName());
+    }
+
+    /**
+     * The method sets the parameters. All previously add params will be removed.
+     *
+     * @param params the params
+     * @see Application#getParameters()
+     */
+    public void setParams(final String[] params) {
+        namedParams.clear();
+        unnamedParams.clear();
+
+        Arrays.stream(params)
+                .forEach(p -> {
+                    if (p.startsWith(PARAMETER_NAME_START)) {
+                        final String param = p.substring(PARAMETER_NAME_START.length());
+                        if (param.contains(PARAMETER_NAME_END)) {
+                            final int splitterIntex = param.lastIndexOf(PARAMETER_NAME_END);
+                            addNamedParam(param.substring(0, splitterIntex), param.substring(splitterIntex));
+                        } else {
+                            addUnnamedParam(param);
+                        }
+                    } else {
+                        throw new IllegalArgumentException("The parameter " + p + " is not valid");
+                    }
+                });
+    }
+
     @Override
     public void start(final Stage primaryStage) {
-        final Parameters parameters = getParameters();
-        if (parameters != null) {
-            parseNamedParams(parameters.getNamed());
-            parseUnnamedParams(parameters.getUnnamed());
-        }
+        parseNamedParams(getNamedParams());
+        parseUnnamedParams(getUnnamedParams());
 
         try {
             this.rootLayout = FXResourceLoader.getLayout(AnchorPane.class, this, ROOT_LAYOUT);

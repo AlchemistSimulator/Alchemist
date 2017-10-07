@@ -238,17 +238,17 @@ public class SingleRunViewBuilder<T> {
         final List<String> params = new ArrayList<>();
 
         if (monitorDisplay) {
-            params.add(getParam(new Tuple2<String, String>(
+            params.add(getParam(new Tuple2<>(
                     SingleRunApp.Parameter.USE_DEFAULT_DISPLAY_MONITOR_FOR_ENVIRONMENT_CLASS.getName(),
                     simulation.getEnvironment().getClass().getName())));
         }
 
         if (monitorSteps) {
-            params.add(getParam(new Tuple2<String, String>(SingleRunApp.Parameter.USE_STEP_MONITOR.getName(), "")));
+            params.add(getParam(new Tuple2<>(SingleRunApp.Parameter.USE_STEP_MONITOR.getName(), "")));
         }
 
         if (monitorTime) {
-            params.add(getParam(new Tuple2<String, String>(SingleRunApp.Parameter.USE_TIME_MONITOR.getName(), "")));
+            params.add(getParam(new Tuple2<>(SingleRunApp.Parameter.USE_TIME_MONITOR.getName(), "")));
         }
 
         // TODO
@@ -256,4 +256,3 @@ public class SingleRunViewBuilder<T> {
         return params.toArray(new String[]{});
     }
 }
-

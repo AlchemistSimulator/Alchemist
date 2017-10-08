@@ -1,4 +1,4 @@
-package it.unibo.alchemist.boundary.gui;
+package it.unibo.alchemist.boundary.gui.view;
 
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
@@ -25,8 +25,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import static it.unibo.alchemist.boundary.gui.SingleRunApp.Parameter.PARAMETER_NAME_END;
-import static it.unibo.alchemist.boundary.gui.SingleRunApp.Parameter.PARAMETER_NAME_START;
+import static it.unibo.alchemist.boundary.gui.view.SingleRunApp.Parameter.PARAMETER_NAME_END;
+import static it.unibo.alchemist.boundary.gui.view.SingleRunApp.Parameter.PARAMETER_NAME_START;
 
 /**
  * Main class to start an empty simulator visualization.
@@ -234,6 +234,12 @@ public class SingleRunViewBuilder<T> {
         });
     }
 
+    /**
+     * Builds an array with the set of params specified to this builder.
+     * <p>
+     * Only
+     * @return
+     */
     public String[] buildParams() {
         final List<String> params = new ArrayList<>();
 

@@ -1,4 +1,4 @@
-package it.unibo.alchemist.boundary.gui;
+package it.unibo.alchemist.boundary.gui.view;
 
 import it.unibo.alchemist.boundary.gui.controller.ButtonsBarController;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
@@ -32,8 +32,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static it.unibo.alchemist.boundary.gui.SingleRunApp.Parameter.PARAMETER_NAME_END;
-import static it.unibo.alchemist.boundary.gui.SingleRunApp.Parameter.PARAMETER_NAME_START;
+import static it.unibo.alchemist.boundary.gui.view.SingleRunApp.Parameter.PARAMETER_NAME_END;
+import static it.unibo.alchemist.boundary.gui.view.SingleRunApp.Parameter.PARAMETER_NAME_START;
 
 /**
  * The class models a non-reusable GUI for simulation display.

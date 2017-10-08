@@ -1,5 +1,7 @@
-package it.unibo.alchemist.boundary.gui;
+package it.unibo.alchemist.boundary.gui.view;
 
+import it.unibo.alchemist.boundary.gui.view.SingleRunApp;
+import it.unibo.alchemist.boundary.gui.view.SingleRunViewBuilder;
 import javafx.application.Application;
 import org.jooq.lambda.tuple.Tuple2;
 

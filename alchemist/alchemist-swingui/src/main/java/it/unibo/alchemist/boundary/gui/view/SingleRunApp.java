@@ -1,6 +1,7 @@
 package it.unibo.alchemist.boundary.gui.view;
 
 import it.unibo.alchemist.boundary.gui.controller.ButtonsBarController;
+import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
@@ -15,12 +16,14 @@ import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import org.jooq.lambda.tuple.Tuple2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -424,6 +427,16 @@ public class SingleRunApp<T> extends Application {
         }
 
         /**
+         * The method builds a parameter from a tuple of strings.
+         *
+         * @param valueNameCouple the key-value tuple of the param
+         * @return the correctly formatted param
+         */
+        public static String getParam(final Tuple2<String, String> valueNameCouple) {
+            return (valueNameCouple.v2().equals("") ? "" : PARAMETER_NAME_START + valueNameCouple.v1() + PARAMETER_NAME_END) + valueNameCouple.v2();
+        }
+
+        /**
          * Utility method to get a param from its name.
          *
          * @param name the name of the param to get
@@ -495,6 +508,148 @@ public class SingleRunApp<T> extends Application {
          */
         public boolean isNamed() {
             return this.isNamed;
+        }
+    }
+
+    /**
+     * Main class to start an empty simulator visualization.
+     */
+    public abstract static class AbstractBuilder<T> {
+        private final Simulation<T> simulation;
+        private boolean monitorDisplay;
+        private boolean monitorTime;
+        private boolean monitorSteps;
+
+        /**
+         * Default constructor of the builder.
+         *
+         * @param simulation the simulation to build the view for
+         */
+        public AbstractBuilder(final Simulation<T> simulation) {
+            this.simulation = simulation;
+            this.monitorDisplay = false;
+            this.monitorTime = false;
+            this.monitorSteps = false;
+        }
+
+        /**
+         * Specify if the GUI should initialize an {@link OutputMonitor} that will graphically show the simulation using {@link EffectFX effects}.
+         *
+         * @param monitorDisplay true if the GUI should initialize the {@link OutputMonitor} as a {@link Canvas}
+         * @return this builder
+         * @see FX2DDisplay
+         * @see FXMapDisplay
+         */
+        public AbstractBuilder<T> monitorDisplay(final boolean monitorDisplay) {
+            this.monitorDisplay = monitorDisplay;
+            return this;
+        }
+
+        /**
+         * Specify if the GUI should initialize an {@link OutputMonitor} that will graphically show the step progress.
+         *
+         * @param monitorSteps true if the GUI should initialize the {@link OutputMonitor} as a {@link Label}
+         * @return this builder
+         * @see FXStepMonitor
+         */
+        public AbstractBuilder<T> monitorSteps(final boolean monitorSteps) {
+            this.monitorSteps = monitorSteps;
+            return this;
+        }
+
+        /**
+         * Set the default {@link OutputMonitor} that will graphically show the time progress.
+         *
+         * @param monitorTime
+         * @return this builder
+         */
+        public AbstractBuilder<T> monitorTime(final boolean monitorTime) {
+            this.monitorTime = monitorTime;
+            return this;
+        }
+
+        /**
+         * Set a {@link Collection} of {@link EffectGroup}s to the effects to show at first start loading it from a {@link File} at a given path.
+         * <p>
+         * Removes all previously added {@code EffectGroups}.
+         *
+         * @param file the {@code File} containing the {@code EffectGroups} to set
+         * @return this builder
+         */
+        public abstract AbstractBuilder<T> setEffectGroups(final File file);
+
+        /**
+         * Set a {@link Collection} of {@link EffectGroup}s to the effects to show at first start loading it from a {@link File} at a given path.
+         * <p>
+         * Removes all previously added {@code EffectGroups}.
+         *
+         * @param path the path of the {@code File} containing the {@code EffectGroups} to set
+         * @return this builder
+         * @see #setEffectGroups(File)
+         */
+        public AbstractBuilder<T> setEffectGroups(final String path) {
+            return setEffectGroups(new File(path));
+        }
+
+        /**
+         * Add an {@link EffectGroup} to the effects to show at first start loading it from a given {@code File}.
+         *
+         * @param file the file containing the {@link EffectGroup} to add
+         * @return this builder
+         * @see EffectSerializer#effectsFromFile(File)
+         */
+        public abstract AbstractBuilder<T> addEffectGroup(final File file);
+
+        /**
+         * Add an {@link EffectGroup} to the effects to show at first start loading it from a {@link File} at a given path.
+         *
+         * @param path the path of the {@code File} containing the {@link EffectGroup} to add
+         * @return this builder
+         * @see #addEffectGroup(File)
+         */
+        public AbstractBuilder<T> addEffectGroup(final String path) {
+            return addEffectGroup(new File(path));
+        }
+
+        /**
+         * Builds a new {@link SingleRunApp}.
+         */
+        public abstract void build();
+
+        /**
+         * Getter method for monitor display property.
+         *
+         * @return the monitor display property
+         */
+        protected boolean isMonitorDisplay() {
+            return monitorDisplay;
+        }
+
+        /**
+         * Getter method for monitor display property.
+         *
+         * @return the monitor time property
+         */
+        protected boolean isMonitorTime() {
+            return monitorTime;
+        }
+
+        /**
+         * Getter method for monitor display property.
+         *
+         * @return the monitor steps property
+         */
+        protected boolean isMonitorSteps() {
+            return monitorSteps;
+        }
+
+        /**
+         * Getter method for the simulation to display.
+         *
+         * @return the simulation
+         */
+        protected Simulation<T> getSimulation() {
+            return simulation;
         }
     }
 }

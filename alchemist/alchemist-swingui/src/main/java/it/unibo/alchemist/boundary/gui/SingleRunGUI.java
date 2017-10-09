@@ -146,7 +146,7 @@ public final class SingleRunGUI {
             sim.addOutputMonitor(main);
             // TODO this part will be removed ///////////////////////////////////////////////////////////////////////
         } else if (main instanceof Node) {
-//            final SingleRunApp view = new SingleRunViewBuilder<>(sim)
+//            final SingleRunApp view = new AbstractBuilder<>(sim)
 //                    .setDefaultOnCloseOperation(closeOperation)
 //                    .setEffectGroups(effectsFile)
 //                    .setIcon(SVGImageUtils.DEFAULT_ALCHEMIST_ICON_PATH)

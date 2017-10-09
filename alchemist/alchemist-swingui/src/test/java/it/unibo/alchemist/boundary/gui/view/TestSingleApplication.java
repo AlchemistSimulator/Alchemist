@@ -29,7 +29,7 @@ public class TestSingleApplication {
                 .entrySet()
                 .stream()
                 .map(e -> new Tuple2<>(e.getKey(), e.getValue()))
-                .map(SingleRunViewBuilder::getParam)
+                .map(SingleRunApp.Parameter::getParam)
                 .collect(Collectors.toList())
                 .toArray(new String[]{});
     }

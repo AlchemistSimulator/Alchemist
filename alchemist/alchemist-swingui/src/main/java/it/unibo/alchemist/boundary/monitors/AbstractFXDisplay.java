@@ -292,7 +292,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
                 final FXNodeTracker<T> monitor = new FXNodeTracker<>(nearest);
                 monitor.stepDone(currentEnv, null, new DoubleTime(lastTime), step); // TODO check
                 final Simulation<T> simulation = currentEnv.getSimulation();
-                // TODO open a drawer to the right of SingleRunViewBuilder v
+                // TODO open a drawer to the right of AbstractBuilder v
 //                makeFrame("Tracker for node " + nearest.getId(), monitor, jf -> {
 //                    final JFrame frame = (JFrame) jf;
 //                    if (sim != null) {
@@ -305,7 +305,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
 //                        });
 //                    }
 //                });
-                // TODO open a drawer to the right of SingleRunViewBuilder ^
+                // TODO open a drawer to the right of AbstractBuilder ^
             } else if (status == ViewStatus.CLONING && event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
                 final Simulation<T> engine = currentEnv.getSimulation();
                 final Position envEnding = wormhole.getEnvPoint(getPoint(event));

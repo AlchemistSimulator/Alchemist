@@ -54,7 +54,7 @@ public class SingleRunApp<T> extends Application {
     private static final Logger L = LoggerFactory.getLogger(SingleRunApp.class);
     private final Map<String, String> namedParams = new HashMap<>();
     private final List<String> unnamedParams = new ArrayList<>();
-    private final boolean initialized = false;
+    private boolean initialized = false;
     private Collection<EffectGroup> effectGroups;
     private Optional<Simulation<T>> simulation = Optional.empty();
     private Optional<AbstractFXDisplay<T>> displayMonitor = Optional.empty();
@@ -139,6 +139,7 @@ public class SingleRunApp<T> extends Application {
      * @param key   the param name
      * @param value the param value
      * @throws IllegalArgumentException if the parameter is not valid, or if {@link Parameter#isNamed() it's not named}
+     * @throws IllegalStateException    if the application is already started
      * @see Parameters#getNamed()
      * @see Parameter
      * @see #addNamedParam(Parameter, String)
@@ -154,9 +155,13 @@ public class SingleRunApp<T> extends Application {
      * @param param the param
      * @param value the param value
      * @throws IllegalArgumentException if {@link Parameter#isNamed() it's not named}
+     * @throws IllegalStateException    if the application is already started
      * @see Parameters#getNamed()
      */
     public void addNamedParam(final Parameter param, final String value) {
+        if (initialized) {
+            throw new IllegalStateException("Application is already initialized");
+        }
         if (!param.isNamed()) {
             throw new IllegalArgumentException("The given param is not named");
         }
@@ -168,6 +173,7 @@ public class SingleRunApp<T> extends Application {
      *
      * @param param the param name
      * @throws IllegalArgumentException if the parameter is not valid, or if {@link Parameter#isNamed() it's named}
+     * @throws IllegalStateException    if the application is already started
      * @see Parameters#getUnnamed()
      * @see Parameter
      * @see #addUnnamedParam(Parameter)
@@ -185,9 +191,13 @@ public class SingleRunApp<T> extends Application {
      *
      * @param param the param
      * @throws IllegalArgumentException if {@link Parameter#isNamed() it's not named}
+     * @throws IllegalStateException    if the application is already started
      * @see Parameters#getUnnamed()
      */
     public void addUnnamedParam(final Parameter param) {
+        if (initialized) {
+            throw new IllegalStateException("Application is already initialized");
+        }
         if (param.isNamed()) {
             throw new IllegalArgumentException("The given param is named");
         }
@@ -198,9 +208,14 @@ public class SingleRunApp<T> extends Application {
      * The method sets the parameters. All previously add params will be removed.
      *
      * @param params the params
+     * @throws IllegalStateException if the application is already started
      * @see Application#getParameters()
      */
     public void setParams(final String[] params) {
+        if (initialized) {
+            throw new IllegalStateException("Application is already initialized");
+        }
+
         namedParams.clear();
         unnamedParams.clear();
 
@@ -240,7 +255,7 @@ public class SingleRunApp<T> extends Application {
         primaryStage.getIcons().add(SVGImageUtils.getSvgImage("/icon/icon.svg"));
         primaryStage.setScene(new Scene(this.rootLayout));
 
-        L.debug("Initialization completed");
+        initialized = true;
         primaryStage.show();
     }
 
@@ -411,9 +426,27 @@ public class SingleRunApp<T> extends Application {
      * Setter method for the collection of groups of effects.
      *
      * @param effectGroups the groups of effects
+     * @throws IllegalStateException if the application is already started
      */
-    public void setEffectGroups(Collection<EffectGroup> effectGroups) {
+    public void setEffectGroups(final Collection<EffectGroup> effectGroups) {
+        if (initialized) {
+            throw new IllegalStateException("Application is already initialized");
+        }
+
         this.effectGroups = effectGroups;
+    }
+
+    /**
+     * Setter method for simulation.
+     *
+     * @param simulation the simulation this {@link Application} will display
+     * @throws IllegalStateException if the application is already started
+     */
+    public void setSimulation(final Simulation<T> simulation) {
+        if (initialized) {
+            throw new IllegalStateException("Application is already initialized");
+        }
+        this.simulation = Optional.of(simulation);
     }
 
     /**

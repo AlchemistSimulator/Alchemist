@@ -139,5 +139,7 @@ public class SingleRunAppBuilder<T> extends SingleRunApp.AbstractBuilder<T> {
     @Override
     public void build() {
         launch(SingleRunApp.class, buildParams());
+
+        // how TODO simulation ?
     }
 }

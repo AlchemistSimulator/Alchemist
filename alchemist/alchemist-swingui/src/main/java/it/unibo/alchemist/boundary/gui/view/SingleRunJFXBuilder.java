@@ -190,8 +190,34 @@ public class SingleRunJFXBuilder<T> extends SingleRunApp.AbstractBuilder<T> {
     public void build() {
         Platform.runLater(() -> {
             final SingleRunApp<T> app = new SingleRunApp<>();
-            // TODO set params
-            app.start(new Stage());
+
+            if (isMonitorDisplay()) {
+                app.addNamedParam(
+                        SingleRunApp.Parameter.USE_DEFAULT_DISPLAY_MONITOR_FOR_ENVIRONMENT_CLASS,
+                        getSimulation().getEnvironment().getClass().getName());
+            }
+
+            if (isMonitorSteps()) {
+                app.addUnnamedParam(SingleRunApp.Parameter.USE_STEP_MONITOR);
+            }
+
+            if (isMonitorTime()) {
+                app.addUnnamedParam(SingleRunApp.Parameter.USE_TIME_MONITOR);
+            }
+
+            if (!effectGroups.isEmpty()) {
+                app.setEffectGroups(effectGroups);
+            }
+
+            final Stage stage = new Stage();
+
+            if (jFrameCloseOperation.isPresent()) {
+                app.addNamedParam(SingleRunApp.Parameter.USE_CLOSE_OPERATION, String.valueOf(jFrameCloseOperation.getAsInt()));
+            } else {
+                defaultOnCloseOperation.ifPresent(stage::setOnCloseRequest);
+            }
+
+            app.start(stage);
         });
     }
 }

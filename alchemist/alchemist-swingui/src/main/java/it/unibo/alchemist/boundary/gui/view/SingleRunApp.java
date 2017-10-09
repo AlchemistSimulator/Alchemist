@@ -35,6 +35,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static it.unibo.alchemist.boundary.gui.controller.ButtonsBarController.BUTTONS_BAR_LAYOUT;
 import static it.unibo.alchemist.boundary.gui.view.SingleRunApp.Parameter.PARAMETER_NAME_END;
 import static it.unibo.alchemist.boundary.gui.view.SingleRunApp.Parameter.PARAMETER_NAME_START;
 
@@ -243,9 +244,9 @@ public class SingleRunApp<T> extends Application {
         try {
             this.rootLayout = FXResourceLoader.getLayout(AnchorPane.class, this, ROOT_LAYOUT);
             final StackPane main = (StackPane) rootLayout.getChildren().get(0);
-            main.getChildren().add(displayMonitor.isPresent() ? this.displayMonitor.get() : new Canvas());
+            displayMonitor.ifPresent(main.getChildren()::add);
             this.buttonsBarController = new ButtonsBarController();
-            main.getChildren().add(FXResourceLoader.getLayout(BorderPane.class, buttonsBarController, "ButtonsBarLayout"));
+            main.getChildren().add(FXResourceLoader.getLayout(BorderPane.class, buttonsBarController, BUTTONS_BAR_LAYOUT));
         } catch (final IOException e) {
             L.error("I/O Exception loading FXML layout files", e);
             throw new IllegalStateException(e);
@@ -408,6 +409,7 @@ public class SingleRunApp<T> extends Application {
             } else {
                 try {
                     displayMonitor = Optional.of((AbstractFXDisplay<T>) constructor.newInstance());
+                    // TODO set simulation
                 } catch (final IllegalAccessException
                         | IllegalArgumentException
                         | InstantiationException

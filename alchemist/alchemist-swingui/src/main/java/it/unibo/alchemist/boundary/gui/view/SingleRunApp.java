@@ -116,7 +116,7 @@ public class SingleRunApp<T> extends Application {
      */
     protected List<String> getUnnamedParams() {
         if (unnamedParams.isEmpty()) {
-            Optional.of(getParameters()).ifPresent(p -> unnamedParams.addAll(p.getUnnamed()));
+            Optional.ofNullable(getParameters()).ifPresent(p -> unnamedParams.addAll(p.getUnnamed()));
         }
         return this.unnamedParams;
     }
@@ -128,7 +128,7 @@ public class SingleRunApp<T> extends Application {
      */
     protected Map<String, String> getNamedParams() {
         if (namedParams.isEmpty()) {
-            Optional.of(getParameters()).ifPresent(p -> namedParams.putAll(p.getNamed()));
+            Optional.ofNullable(getParameters()).ifPresent(p -> namedParams.putAll(p.getNamed()));
         }
         return this.namedParams;
     }

@@ -489,7 +489,7 @@ public class SingleRunApp<T> extends Application {
          * @return the correctly formatted param
          */
         public static String getParam(final Tuple2<String, String> valueNameCouple) {
-            return (valueNameCouple.v2().equals("") ? "" : PARAMETER_NAME_START + valueNameCouple.v1() + PARAMETER_NAME_END) + valueNameCouple.v2();
+            return PARAMETER_NAME_START + valueNameCouple.v1() + (valueNameCouple.v2().equals("") ? "" : (PARAMETER_NAME_END + valueNameCouple.v2()));
         }
 
         /**
@@ -504,7 +504,7 @@ public class SingleRunApp<T> extends Application {
                     return p;
                 }
             }
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Cannot find any parameter with name: \"" + name + "\"");
         }
 
         /**

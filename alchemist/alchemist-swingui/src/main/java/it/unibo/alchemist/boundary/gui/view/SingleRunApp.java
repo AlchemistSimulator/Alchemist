@@ -74,6 +74,41 @@ public class SingleRunApp<T> extends Application {
     }
 
     /**
+     * Converts a {@link JFrame} closeOperation to an {@link EventHandler} to use in a JavaFX {@link Stage}.
+     *
+     * @param jfco  the JFrame close operation
+     * @param stage the stage to manage
+     * @return the {@code EventHandler} that should be set to the provided stage
+     * @throws IllegalArgumentException if jfco is not a valid JFrame close operation, or if stage is null
+     */
+    protected static EventHandler<WindowEvent> parseJFrameCloseOperation(final int jfco, final Stage stage) {
+        if (stage == null) {
+            throw new IllegalArgumentException();
+        }
+
+        final EventHandler<WindowEvent> handler;
+        switch (jfco) {
+            case JFrame.HIDE_ON_CLOSE:
+                handler = event -> stage.hide();
+                break;
+            case JFrame.DISPOSE_ON_CLOSE:
+                handler = event -> stage.close();
+                break;
+            case JFrame.EXIT_ON_CLOSE:
+                handler = event -> {
+                    stage.close();
+                    // Platform.exit(); // TODO check
+                    System.exit(0);
+                };
+                break;
+            case JFrame.DO_NOTHING_ON_CLOSE:
+            default:
+                throw new IllegalArgumentException();
+        }
+        return handler;
+    }
+
+    /**
      * Getter method for the unnamed parameters.
      *
      * @return the unnamed params
@@ -201,28 +236,7 @@ public class SingleRunApp<T> extends Application {
             throw new IllegalStateException(e);
         }
 
-        closeOperation.ifPresent(jfco -> {
-            final EventHandler<WindowEvent> handler;
-            switch (jfco) {
-                case JFrame.HIDE_ON_CLOSE:
-                    handler = event -> primaryStage.hide();
-                    break;
-                case JFrame.DISPOSE_ON_CLOSE:
-                    handler = event -> primaryStage.close();
-                    break;
-                case JFrame.EXIT_ON_CLOSE:
-                    handler = event -> {
-                        primaryStage.close();
-                        // Platform.exit(); // TODO check
-                        System.exit(0);
-                    };
-                    break;
-                case JFrame.DO_NOTHING_ON_CLOSE:
-                default:
-                    handler = event -> { /* Do nothing */ };
-            }
-            primaryStage.setOnCloseRequest(handler);
-        });
+        closeOperation.ifPresent(jfco -> primaryStage.setOnCloseRequest(parseJFrameCloseOperation(jfco, primaryStage)));
         primaryStage.getIcons().add(SVGImageUtils.getSvgImage("/icon/icon.svg"));
         primaryStage.setScene(new Scene(this.rootLayout));
 

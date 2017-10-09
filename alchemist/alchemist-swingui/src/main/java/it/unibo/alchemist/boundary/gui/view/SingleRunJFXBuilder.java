@@ -9,15 +9,19 @@ import javafx.event.EventHandler;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 import static javafx.application.Application.launch;
 
 public class SingleRunJFXBuilder<T> extends SingleRunApp.AbstractBuilder<T> {
     private Optional<EventHandler<WindowEvent>> defaultOnCloseOperation;
+    private OptionalInt jFrameCloseOperation;
     private Collection<EffectGroup> effectGroups;
 
     /**
@@ -27,6 +31,9 @@ public class SingleRunJFXBuilder<T> extends SingleRunApp.AbstractBuilder<T> {
      */
     public SingleRunJFXBuilder(final Simulation<T> simulation) {
         super(simulation);
+        this.defaultOnCloseOperation = Optional.empty();
+        this.jFrameCloseOperation = OptionalInt.empty();
+        this.effectGroups = new ArrayList<>();
     }
 
     /**
@@ -61,6 +68,31 @@ public class SingleRunJFXBuilder<T> extends SingleRunApp.AbstractBuilder<T> {
      */
     public SingleRunJFXBuilder<T> setDefaultOnCloseOperation(final EventHandler<WindowEvent> eventHandler) {
         this.defaultOnCloseOperation = Optional.of(eventHandler);
+        this.jFrameCloseOperation = OptionalInt.empty();
+        return this;
+    }
+
+    /**
+     * Set the {@link Stage#setOnCloseRequest(EventHandler) default close operation} to a standard handler, identified by {@link JFrame} default close operations.
+     *
+     * @param jFrameCloseOperation the identifier of a standard handler to call when close operation is requested to the {@link Stage}
+     * @return this builder
+     * @throws IllegalArgumentException if specified operation is not a valid {@link JFrame} close operation
+     * @see JFrame#DO_NOTHING_ON_CLOSE
+     * @see JFrame#HIDE_ON_CLOSE
+     * @see JFrame#DISPOSE_ON_CLOSE
+     * @see JFrame#EXIT_ON_CLOSE
+     */
+    public SingleRunJFXBuilder<T> setDefaultOnCloseOperation(final int jFrameCloseOperation) {
+        if (jFrameCloseOperation == JFrame.DO_NOTHING_ON_CLOSE
+                || jFrameCloseOperation == JFrame.HIDE_ON_CLOSE
+                || jFrameCloseOperation == JFrame.DISPOSE_ON_CLOSE
+                || jFrameCloseOperation == JFrame.EXIT_ON_CLOSE) {
+            this.jFrameCloseOperation = OptionalInt.of(jFrameCloseOperation);
+            this.defaultOnCloseOperation = Optional.empty();
+        } else {
+            throw new IllegalArgumentException();
+        }
         return this;
     }
 

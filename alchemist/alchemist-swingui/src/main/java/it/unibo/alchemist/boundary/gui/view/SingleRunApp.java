@@ -408,6 +408,15 @@ public class SingleRunApp<T> extends Application {
     }
 
     /**
+     * Setter method for the collection of groups of effects.
+     *
+     * @param effectGroups the groups of effects
+     */
+    public void setEffectGroups(Collection<EffectGroup> effectGroups) {
+        this.effectGroups = effectGroups;
+    }
+
+    /**
      * An enum representation of the parameters supported by {@link SingleRunApp} application class.
      *
      * @see Application#getParameters()
@@ -585,7 +594,7 @@ public class SingleRunApp<T> extends Application {
         /**
          * Set a {@link Collection} of {@link EffectGroup}s to the effects to show at first start loading it from a {@link File} at a given path.
          * <p>
-         * Removes all previously added {@code EffectGroups}.
+         * Replaces all previously added {@code EffectGroups}.
          *
          * @param file the {@code File} containing the {@code EffectGroups} to set
          * @return this builder
@@ -595,7 +604,7 @@ public class SingleRunApp<T> extends Application {
         /**
          * Set a {@link Collection} of {@link EffectGroup}s to the effects to show at first start loading it from a {@link File} at a given path.
          * <p>
-         * Removes all previously added {@code EffectGroups}.
+         * Replaces all previously added {@code EffectGroups}.
          *
          * @param path the path of the {@code File} containing the {@code EffectGroups} to set
          * @return this builder
@@ -603,26 +612,6 @@ public class SingleRunApp<T> extends Application {
          */
         public AbstractBuilder<T> setEffectGroups(final String path) {
             return setEffectGroups(new File(path));
-        }
-
-        /**
-         * Add an {@link EffectGroup} to the effects to show at first start loading it from a given {@code File}.
-         *
-         * @param file the file containing the {@link EffectGroup} to add
-         * @return this builder
-         * @see EffectSerializer#effectsFromFile(File)
-         */
-        public abstract AbstractBuilder<T> addEffectGroup(final File file);
-
-        /**
-         * Add an {@link EffectGroup} to the effects to show at first start loading it from a {@link File} at a given path.
-         *
-         * @param path the path of the {@code File} containing the {@link EffectGroup} to add
-         * @return this builder
-         * @see #addEffectGroup(File)
-         */
-        public AbstractBuilder<T> addEffectGroup(final String path) {
-            return addEffectGroup(new File(path));
         }
 
         /**

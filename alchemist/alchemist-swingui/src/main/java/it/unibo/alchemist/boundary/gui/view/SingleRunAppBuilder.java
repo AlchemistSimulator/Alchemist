@@ -22,7 +22,6 @@ import static javafx.application.Application.launch;
  * @param <T> the concentration type
  */
 public class SingleRunAppBuilder<T> extends SingleRunApp.AbstractBuilder<T> {
-    private final List<String> effectsGroups;
     private OptionalInt jFrameCloseOperation;
     private Optional<String> effectsGroupFile;
 
@@ -35,7 +34,6 @@ public class SingleRunAppBuilder<T> extends SingleRunApp.AbstractBuilder<T> {
         super(simulation);
         this.jFrameCloseOperation = OptionalInt.empty();
         this.effectsGroupFile = Optional.empty();
-        this.effectsGroups = new ArrayList<>();
     }
 
     /**
@@ -64,14 +62,7 @@ public class SingleRunAppBuilder<T> extends SingleRunApp.AbstractBuilder<T> {
 
     @Override
     public SingleRunAppBuilder<T> setEffectGroups(final File file) {
-        this.effectsGroups.clear();
         this.effectsGroupFile = Optional.of(file.getAbsolutePath());
-        return this;
-    }
-
-    @Override
-    public SingleRunAppBuilder<T> addEffectGroup(final File file) {
-        this.effectsGroups.add(file.getAbsolutePath());
         return this;
     }
 
@@ -108,21 +99,30 @@ public class SingleRunAppBuilder<T> extends SingleRunApp.AbstractBuilder<T> {
     public String[] buildParams() {
         final List<String> params = new ArrayList<>();
 
+        // Close operation
+        params.add(getParam(new Tuple2<>(
+                SingleRunApp.Parameter.USE_CLOSE_OPERATION.getName(),
+                String.valueOf(jFrameCloseOperation.orElse(JFrame.EXIT_ON_CLOSE)))));
+
+        // DisplayMonitor
         if (isMonitorDisplay()) {
             params.add(getParam(new Tuple2<>(
                     SingleRunApp.Parameter.USE_DEFAULT_DISPLAY_MONITOR_FOR_ENVIRONMENT_CLASS.getName(),
                     getSimulation().getEnvironment().getClass().getName())));
         }
 
+        // StepMonitor
         if (isMonitorSteps()) {
             params.add(getParam(new Tuple2<>(SingleRunApp.Parameter.USE_STEP_MONITOR.getName(), "")));
         }
 
+        // TimeMonitor
         if (isMonitorTime()) {
             params.add(getParam(new Tuple2<>(SingleRunApp.Parameter.USE_TIME_MONITOR.getName(), "")));
         }
 
-        // TODO effects
+        // Effects
+        effectsGroupFile.ifPresent(egf -> params.add(getParam(new Tuple2<>(SingleRunApp.Parameter.USE_EFFECT_GROUPS_FROM_FILE.getName(), egf))));
 
         // how TODO simulation ?
 

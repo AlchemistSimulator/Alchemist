@@ -1,7 +1,6 @@
 package it.unibo.alchemist.boundary.gui.view;
 
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
-import it.unibo.alchemist.boundary.gui.view.SingleRunApp;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -30,24 +29,16 @@ public class TestApplication extends Application {
         final AnchorPane rootLayout = FXResourceLoader.getLayout(AnchorPane.class, this, ROOT_LAYOUT);
         final StackPane main = (StackPane) rootLayout.getChildren().get(0);
         final Button button = new Button("Open from another thread");
-        button.setOnAction(event -> {
-            new Thread(() -> {
-                Platform.runLater(() -> {
-                    final SingleRunApp<?> app = new SingleRunApp<>();
-                    // TODO app.setParams(buildParams());
-                    app.start(new Stage());
-                });
-            }).start();
-        });
+        button.setOnAction(event -> new Thread(() -> Platform.runLater(() -> {
+            final SingleRunApp<?> app = new SingleRunApp<>();
+            // TODO app.setParams(buildParams());
+            app.start(new Stage());
+        })).start());
         final Button button2 = new Button("Open from JFX thread");
         button2.setOnAction(event -> {
-            new Thread(() -> {
-                Platform.runLater(() -> {
-                    final SingleRunApp<?> app = new SingleRunApp<>();
-                    // TODO app.setParams(buildParams());
-                    app.start(new Stage());
-                });
-            }).start();
+            final SingleRunApp<?> app = new SingleRunApp<>();
+            // TODO app.setParams(buildParams());
+            app.start(new Stage());
         });
         main.getChildren().add(new HBox(button, button2));
         primaryStage.setScene(new Scene(rootLayout));

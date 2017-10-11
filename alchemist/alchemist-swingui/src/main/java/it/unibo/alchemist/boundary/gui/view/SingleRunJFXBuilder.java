@@ -1,5 +1,6 @@
 package it.unibo.alchemist.boundary.gui.view;
 
+import com.sun.javafx.application.PlatformImpl;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -17,6 +18,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.OptionalInt;
 
+import static it.unibo.alchemist.boundary.gui.view.SingleRunApp.Parameter.*;
 import static javafx.application.Application.launch;
 
 /**
@@ -185,6 +187,21 @@ public class SingleRunJFXBuilder<T> extends SingleRunApp.AbstractBuilder<T> {
     }
 
     /**
+     * Starts the JavaFX Thread, if necessary.
+     *
+     * @return true if it was already running, false otherwise
+     */
+    private boolean startJFXThread() {
+        try {
+            // Starts JavaFX thread, if necessary
+            PlatformImpl.startup(() -> { });
+            return false;
+        } catch (final IllegalStateException e) {
+            return true;
+        }
+    }
+
+    /**
      * {@inheritDoc}
      * <br>
      * The new Application is run on JFX Event Thread.
@@ -193,21 +210,21 @@ public class SingleRunJFXBuilder<T> extends SingleRunApp.AbstractBuilder<T> {
      */
     @Override
     public void build() {
-        Platform.runLater(() -> {
+        final Runnable lambda = () -> {
             final SingleRunApp<T> app = new SingleRunApp<>();
 
             if (isMonitorDisplay()) {
                 app.addNamedParam(
-                        SingleRunApp.Parameter.USE_DEFAULT_DISPLAY_MONITOR_FOR_ENVIRONMENT_CLASS,
+                        USE_DEFAULT_DISPLAY_MONITOR_FOR_ENVIRONMENT_CLASS,
                         getSimulation().getEnvironment().getClass().getName());
             }
 
             if (isMonitorSteps()) {
-                app.addUnnamedParam(SingleRunApp.Parameter.USE_STEP_MONITOR);
+                app.addUnnamedParam(USE_STEP_MONITOR);
             }
 
             if (isMonitorTime()) {
-                app.addUnnamedParam(SingleRunApp.Parameter.USE_TIME_MONITOR);
+                app.addUnnamedParam(USE_TIME_MONITOR);
             }
 
             if (!effectGroups.isEmpty()) {
@@ -217,12 +234,18 @@ public class SingleRunJFXBuilder<T> extends SingleRunApp.AbstractBuilder<T> {
             final Stage stage = new Stage();
 
             if (jFrameCloseOperation.isPresent()) {
-                app.addNamedParam(SingleRunApp.Parameter.USE_CLOSE_OPERATION, String.valueOf(jFrameCloseOperation.getAsInt()));
+                app.addNamedParam(USE_CLOSE_OPERATION, String.valueOf(jFrameCloseOperation.getAsInt()));
             } else {
                 defaultOnCloseOperation.ifPresent(stage::setOnCloseRequest);
             }
 
             app.start(stage);
-        });
+        };
+
+        if (startJFXThread() && Platform.isFxApplicationThread()) {
+            lambda.run();
+        } else {
+            Platform.runLater(lambda);
+        }
     }
 }

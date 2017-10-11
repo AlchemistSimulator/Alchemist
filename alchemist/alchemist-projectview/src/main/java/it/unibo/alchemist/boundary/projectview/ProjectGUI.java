@@ -18,6 +18,8 @@ import javafx.stage.WindowEvent;
 import java.awt.*;
 import java.io.IOException;
 
+import static it.unibo.alchemist.boundary.gui.utility.SVGImageUtils.DEFAULT_ALCHEMIST_ICON_PATH;
+
 /**
  * Main class to start the application.
  */
@@ -58,7 +60,7 @@ public class ProjectGUI extends Application {
         Thread.setDefaultUncaughtExceptionHandler(FXUtil::errorAlert);
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Alchemist");
-        this.primaryStage.getIcons().add(SVGImageUtils.getSvgImage(SVGImageUtils.DEFAULT_ALCHEMIST_ICON_PATH));
+        this.primaryStage.getIcons().add(SVGImageUtils.getSvgImage(DEFAULT_ALCHEMIST_ICON_PATH));
         initLayout("RootLayout");
         initLayout("LeftLayout");
         initLayout("CenterLayout");

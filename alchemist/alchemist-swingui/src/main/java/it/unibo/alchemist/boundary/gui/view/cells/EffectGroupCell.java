@@ -22,6 +22,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 
+import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRes;
+
 /**
  * This ListView cell implements the {@link AbstractEffectCell} for containing
  * an {@link EffectGroup}. It has a name that identifies the EffectGroup and
@@ -29,7 +31,7 @@ import javafx.scene.text.TextAlignment;
  * effects} the group is composed of.
  */
 public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
-    private static final String DEFAULT_NAME = ResourceLoader.getStringRes("effect_group_default_name");
+    private static final String DEFAULT_NAME = getStringRes("effect_group_default_name");
     private final JFXDrawersStack stack;
     private JFXDrawer effectDrawer;
     private EffectBarController effectBarController;
@@ -77,11 +79,11 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
                 }
 
                 final TextInputDialog dialog = new TextInputDialog(label.getText());
-                dialog.setTitle(ResourceLoader.getStringRes("rename_group_dialog_title"));
-                dialog.setHeaderText(ResourceLoader.getStringRes("rename_group_dialog_msg"));
+                dialog.setTitle(getStringRes("rename_group_dialog_title"));
+                dialog.setHeaderText(getStringRes("rename_group_dialog_msg"));
                 dialog.setContentText(null);
 
-                dialog.showAndWait().ifPresent(name -> label.setText(name));
+                dialog.showAndWait().ifPresent(label::setText);
             }
         });
 
@@ -116,7 +118,7 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
         try {
             effectDrawer
                     .setSidePane(FXResourceLoader.getLayout(BorderPane.class, effectBarController, EffectBarController.EFFECT_BAR_LAYOUT));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new IllegalStateException("Could not initialize side pane for effects", e);
         }
 
@@ -180,7 +182,7 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
             this.getSlider().setValue(item.getTransparency());
             this.getToggle().setSelected(item.isVisible());
             initDrawer();
-            item.forEach(e -> effectBarController.addEffectToGroup(e));
+            item.forEach(effectBarController::addEffectToGroup);
         }
     }
 }

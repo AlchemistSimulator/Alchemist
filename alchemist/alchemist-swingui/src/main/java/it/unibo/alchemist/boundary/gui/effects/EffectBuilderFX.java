@@ -54,7 +54,7 @@ public class EffectBuilderFX {
     public EffectFX instantiateEffect(final Class<? extends EffectFX> clazz) {
         try {
             return clazz.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (final InstantiationException | IllegalAccessException e) {
             throw new IllegalStateException("Could not instantiate the effect", e);
         }
     }

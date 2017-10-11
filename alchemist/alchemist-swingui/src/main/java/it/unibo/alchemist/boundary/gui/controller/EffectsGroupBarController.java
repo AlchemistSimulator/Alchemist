@@ -40,6 +40,13 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import jiconfont.icons.GoogleMaterialDesignIcons;
 
+import static it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer.DEFAULT_EXTENSION;
+import static it.unibo.alchemist.boundary.gui.utility.FXResourceLoader.getWhiteIcon;
+import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRes;
+import static jiconfont.icons.GoogleMaterialDesignIcons.ADD;
+import static jiconfont.icons.GoogleMaterialDesignIcons.FOLDER_OPEN;
+import static jiconfont.icons.GoogleMaterialDesignIcons.SAVE;
+
 /**
  * This class models a JavaFX controller for EffectsGroupBar.fxml.
  */
@@ -83,16 +90,16 @@ public class EffectsGroupBarController implements Initializable {
         assert effectGroupsList != null : FXResourceLoader.getInjectionErrorMessage("effectGroupsList", EFFECT_GROUP_BAR_LAYOUT);
 
         this.save.setText("");
-        this.save.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.SAVE));
+        this.save.setGraphic(getWhiteIcon(SAVE));
         this.save.setOnAction(e -> this.saveToFile());
 
         this.load.setText("");
-        this.load.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.FOLDER_OPEN));
+        this.load.setGraphic(getWhiteIcon(FOLDER_OPEN));
         this.load.setOnAction(e -> this.loadFromFile());
 
         this.addGroup.setText("");
-        this.addGroup.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.ADD));
-        this.addGroup.setOnAction(e -> addGroupToList(ResourceLoader.getStringRes("effect_group_default_name") + " " + (getObservableEffectsList().size() + 1)));
+        this.addGroup.setGraphic(getWhiteIcon(ADD));
+        this.addGroup.setOnAction(e -> addGroupToList(getStringRes("effect_group_default_name") + " " + (getObservableEffectsList().size() + 1)));
     }
 
     /**
@@ -102,8 +109,9 @@ public class EffectsGroupBarController implements Initializable {
      *            the name to give to the {@code EffectGroup}
      */
     private void addGroupToList(final String name) {
-        this.getObservableEffectsList().add(new EffectStack());
-        this.getObservableEffectsList().get(this.getObservableEffectsList().size() - 1).setName(name);
+        final EffectGroup newGroup = new EffectStack();
+        newGroup.setName(name);
+        this.getObservableEffectsList().add(newGroup);
         this.effectGroupsList.refresh();
     }
 
@@ -128,25 +136,25 @@ public class EffectsGroupBarController implements Initializable {
      */
     private void saveToFile() {
         final FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle(ResourceLoader.getStringRes("save_effect_groups_dialog_title"));
-        final ExtensionFilter json = new ExtensionFilter(ResourceLoader.getStringRes("json_extension_filter_description"), "*" + EffectSerializer.DEFAULT_EXTENSION);
+        fileChooser.setTitle(getStringRes("save_effect_groups_dialog_title"));
+        final ExtensionFilter json = new ExtensionFilter(getStringRes("json_extension_filter_description"), "*" + DEFAULT_EXTENSION);
         fileChooser.getExtensionFilters().addAll(
                 json,
-                new ExtensionFilter(ResourceLoader.getStringRes("all_files_extension_filter_description"), "*.*"));
+                new ExtensionFilter(getStringRes("all_files_extension_filter_description"), "*.*"));
         lastPath.ifPresent(path -> {
             final File folder = new File(path);
             if (folder.isDirectory()) {
                 fileChooser.setInitialDirectory(folder);
             }
         });
-        fileChooser.setInitialFileName("Effects" + EffectSerializer.DEFAULT_EXTENSION);
+        fileChooser.setInitialFileName("Effects" + DEFAULT_EXTENSION);
         fileChooser.setSelectedExtensionFilter(json);
 
         File selectedFile = fileChooser.showSaveDialog(this.save.getScene().getWindow());
 
         if (selectedFile != null) {
             if (FilenameUtils.getExtension(selectedFile.getAbsolutePath()).equals("")) {
-                selectedFile = new File(selectedFile.getAbsolutePath() + EffectSerializer.DEFAULT_EXTENSION);
+                selectedFile = new File(selectedFile.getAbsolutePath() + DEFAULT_EXTENSION);
             }
             this.lastPath = Optional.ofNullable(selectedFile.getParent());
 
@@ -155,7 +163,7 @@ public class EffectsGroupBarController implements Initializable {
                         Arrays.asList(getObservableEffectsList().toArray(new EffectGroup[getObservableEffectsList().size()])));
             } catch (final IOException | JsonParseException e) {
                 L.error("Can't save Effect Groups to file: " + e.getMessage());
-                this.errorDialog(ResourceLoader.getStringRes("save_effect_groups_error_dialog_title"), ResourceLoader.getStringRes("save_effect_groups_error_dialog_msg"), e);
+                this.errorDialog(getStringRes("save_effect_groups_error_dialog_title"), getStringRes("save_effect_groups_error_dialog_msg"), e);
             }
         }
     }
@@ -165,7 +173,7 @@ public class EffectsGroupBarController implements Initializable {
      */
     private void loadFromFile() {
         final FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle(ResourceLoader.getStringRes("load_effect_groups_dialog_title"));
+        fileChooser.setTitle(getStringRes("load_effect_groups_dialog_title"));
         lastPath.ifPresent(path -> {
             final File folder = new File(path);
             if (folder.isDirectory()) {
@@ -173,8 +181,8 @@ public class EffectsGroupBarController implements Initializable {
             }
         });
         fileChooser.getExtensionFilters().addAll(
-                new ExtensionFilter(ResourceLoader.getStringRes("json_extension_filter_description"), "*" + EffectSerializer.DEFAULT_EXTENSION),
-                new ExtensionFilter(ResourceLoader.getStringRes("all_files_extension_filter_description"), "*.*"));
+                new ExtensionFilter(getStringRes("json_extension_filter_description"), "*" + DEFAULT_EXTENSION),
+                new ExtensionFilter(getStringRes("all_files_extension_filter_description"), "*.*"));
 
         final File selectedFile = fileChooser.showOpenDialog(this.load.getScene().getWindow());
 
@@ -185,7 +193,7 @@ public class EffectsGroupBarController implements Initializable {
                 this.getObservableEffectsList().addAll(EffectSerializer.effectGroupsFromFile(selectedFile));
             } catch (final IOException | JsonParseException e) {
                 L.error("Can't load Effect Groups from file: " + e.getMessage());
-                this.errorDialog(ResourceLoader.getStringRes("load_effect_groups_error_dialog_title"), ResourceLoader.getStringRes("load_effect_groups_error_dialog_msg"), e);
+                this.errorDialog(getStringRes("load_effect_groups_error_dialog_title"), getStringRes("load_effect_groups_error_dialog_msg"), e);
             }
         }
     }
@@ -211,7 +219,7 @@ public class EffectsGroupBarController implements Initializable {
         cause.printStackTrace(pw);
         final String exceptionText = sw.toString();
 
-        final Label label = new Label(ResourceLoader.getStringRes("exception_error_dialog_msg"));
+        final Label label = new Label(getStringRes("exception_error_dialog_msg"));
 
         final TextArea textArea = new TextArea(exceptionText);
         textArea.setEditable(false);

@@ -73,8 +73,8 @@ public class EffectStack implements EffectGroup {
     /**
      * Puts the effects in the group, giving it the maximum priority.
      * <p>
-     * Acts nearly the same than using {@link #add(Effect)} or
-     * {@link #offer(Effect)}.
+     * Acts nearly the same than using {@link #add(EffectFX)} or
+     * {@link #offer(EffectFX)}.
      * 
      * @param effect
      *            the effect
@@ -279,7 +279,7 @@ public class EffectStack implements EffectGroup {
 
     @Override
     public void clear() {
-        this.effects.forEach(effect -> this.remove(effect));
+        this.effects.forEach(this::remove);
     }
 
     @Override

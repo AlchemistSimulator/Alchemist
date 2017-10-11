@@ -1,35 +1,19 @@
 package it.unibo.alchemist.boundary.gui.effects.json;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.reflections.Reflections;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.TypeAdapter;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
-
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.view.properties.PropertyTypeAdapter;
 import javafx.beans.property.Property;
 import javassist.Modifier;
+import org.reflections.Reflections;
+
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Type;
+import java.util.*;
 
 /**
  * Serialize Alchemist {@link EffectGroup effect groups} from/to file in human
@@ -42,7 +26,7 @@ import javassist.Modifier;
  * The {@link Gson GSON} object used for serialization is statically updated at
  * runtime with all available {@code TypeAdapters} and
  * {@code RuntimeTypeAdapter}.
- * 
+ *
  * @see Gson
  */
 public final class EffectSerializer {
@@ -85,30 +69,30 @@ public final class EffectSerializer {
         final GsonBuilder builder = new GsonBuilder();
 
         PROPERTIES.stream()
-            .filter(c -> Arrays.stream(c.getMethods())
-                .filter(m -> Modifier.isStatic(m.getModifiers()))
-                .anyMatch(m -> m.getName().equals(TARGET_METHOD_NAME)))
-            .forEach(c -> {
-                try {
-                    builder.registerTypeAdapter(c, c.getMethod(TARGET_METHOD_NAME).invoke(null));
-                } catch (final NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                        | SecurityException e) {
-                    throw new IllegalStateException(e);
-                }
-            });
+                .filter(c -> Arrays.stream(c.getMethods())
+                        .filter(m -> Modifier.isStatic(m.getModifiers()))
+                        .anyMatch(m -> m.getName().equals(TARGET_METHOD_NAME)))
+                .forEach(c -> {
+                    try {
+                        builder.registerTypeAdapter(c, c.getMethod(TARGET_METHOD_NAME).invoke(null));
+                    } catch (final NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                            | SecurityException e) {
+                        throw new IllegalStateException(e);
+                    }
+                });
 
         GROUPS.stream()
-        .filter(c -> Arrays.stream(c.getMethods())
-                .filter(m -> Modifier.isStatic(m.getModifiers()))
-                .anyMatch(m -> m.getName().equals(TARGET_METHOD_NAME)))
-            .forEach(c -> {
-                try {
-                    builder.registerTypeAdapter(c, c.getMethod(TARGET_METHOD_NAME).invoke(null));
-                } catch (final NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                        | SecurityException e) {
-                    throw new IllegalStateException(e);
-                }
-            });
+                .filter(c -> Arrays.stream(c.getMethods())
+                        .filter(m -> Modifier.isStatic(m.getModifiers()))
+                        .anyMatch(m -> m.getName().equals(TARGET_METHOD_NAME)))
+                .forEach(c -> {
+                    try {
+                        builder.registerTypeAdapter(c, c.getMethod(TARGET_METHOD_NAME).invoke(null));
+                    } catch (final NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                            | SecurityException e) {
+                        throw new IllegalStateException(e);
+                    }
+                });
 
         PROPERTY_TYPE_ADAPTER.forEach(builder::registerTypeAdapter);
 
@@ -129,7 +113,7 @@ public final class EffectSerializer {
     /**
      * Get an {@link EffectFX Effect} from the specified file. It tries to
      * deserialize a JSON file.
-     * 
+     *
      * @param effectFile
      *            Source file
      * @return Effect loaded from the file
@@ -153,7 +137,7 @@ public final class EffectSerializer {
 
     /**
      * Write the given {@link EffectFX} to the destination file.
-     * 
+     *
      * @param effectFile
      *            Destination file
      * @param effect
@@ -174,7 +158,7 @@ public final class EffectSerializer {
     /**
      * Get an {@link EffectGroup} from the specified file. It tries to
      * deserialize a JSON file.
-     * 
+     *
      * @param effectFile
      *            Source file
      * @return Group of effects collected from the file
@@ -198,7 +182,7 @@ public final class EffectSerializer {
 
     /**
      * Write the given {@link EffectGroup} to the destination file.
-     * 
+     *
      * @param effectFile
      *            Destination file
      * @param effects
@@ -219,7 +203,7 @@ public final class EffectSerializer {
     /**
      * Get a list of {@link EffectGroup} from the specified file. It tries to
      * deserialize a JSON file.
-     * 
+     *
      * @param effectFile
      *            Source file
      * @return List of the effect groups collected from the file
@@ -243,7 +227,7 @@ public final class EffectSerializer {
 
     /**
      * Write the given list of {@link EffectGroup}s to the destination file.
-     * 
+     *
      * @param effectFile
      *            Destination file
      * @param effects
@@ -267,7 +251,7 @@ public final class EffectSerializer {
      * {@link EffectFX Effects} and {@link Property Properties} serialization.
      * <p>
      * Useful for serialize related objects not directly managed by this class.
-     * 
+     *
      * @return the {@code Gson} object for serialization
      */
     public static Gson getGSON() {

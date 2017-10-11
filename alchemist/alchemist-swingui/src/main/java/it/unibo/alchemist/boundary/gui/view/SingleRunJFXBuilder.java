@@ -19,6 +19,11 @@ import java.util.OptionalInt;
 
 import static javafx.application.Application.launch;
 
+/**
+ * Builder class for {@link SingleRunApp}, meant to be used to build and run the single run gui along with another (alreay started) JavaFX {@link Application}.
+ *
+ * @param <T> the concentration type
+ */
 public class SingleRunJFXBuilder<T> extends SingleRunApp.AbstractBuilder<T> {
     private Optional<EventHandler<WindowEvent>> defaultOnCloseOperation;
     private OptionalInt jFrameCloseOperation;

@@ -1,6 +1,6 @@
 package it.unibo.alchemist.boundary.monitors;
 
-import it.unibo.alchemist.boundary.gui.effects.EffectFX;
+import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
 import it.unibo.alchemist.boundary.wormhole.implementation.*;
@@ -93,7 +93,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     private transient AngleManagerImpl angleManager;
     private transient ZoomManager zoomManager;
     private boolean realTime;
-    private Collection<EffectFX> effectStack;
+    private Collection<EffectGroup> effectStack;
     private boolean firstTime;
     private long timeInit;
 
@@ -631,10 +631,11 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     @Override
     public void repaint() {
         getGraphicsContext2D().clearRect(0, 0, getWidth(), getHeight());
+        // TODO draw effects
     }
 
     @Override
-    public void setEffectStack(final Collection<EffectFX> effects) {
+    public void setEffects(final Collection<EffectGroup> effects) {
         this.effectStack = effects;
     }
 
@@ -715,17 +716,11 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
 
     private enum ViewStatus {
         VIEW_ONLY,
-
         MARK_CLOSER,
-
         SELECTING,
-
         MOVING,
-
         CLONING,
-
         DELETING,
-
         MOLECULING;
     }
 }

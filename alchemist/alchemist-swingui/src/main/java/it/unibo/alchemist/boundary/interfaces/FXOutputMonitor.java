@@ -1,6 +1,6 @@
 package it.unibo.alchemist.boundary.interfaces;
 
-import it.unibo.alchemist.boundary.gui.effects.EffectFX;
+import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.model.interfaces.Concentration;
 
 import java.util.Collection;
@@ -57,5 +57,5 @@ public interface FXOutputMonitor<T> extends OutputMonitor<T> {
     /**
      * @param effects the Effect stack to use
      */
-    void setEffectStack(Collection<EffectFX> effects);
+    void setEffects(Collection<EffectGroup> effects);
 }

@@ -251,6 +251,7 @@ public class SingleRunApp<T> extends Application {
                     this.timeMonitor.ifPresent(s::addOutputMonitor);
                     this.stepMonitor.ifPresent(s::addOutputMonitor);
                 });
+                d.setEffects(effectGroups);
             });
             // TODO add effects to DisplayMonitor
             this.buttonsBarController = new ButtonsBarController();
@@ -418,12 +419,8 @@ public class SingleRunApp<T> extends Application {
             } else {
                 try {
                     displayMonitor = Optional.of((AbstractFXDisplay<T>) constructor.newInstance());
-                    // TODO set simulation
-                } catch (final IllegalAccessException
-                        | IllegalArgumentException
-                        | InstantiationException
-                        | InvocationTargetException
-                        | ExceptionInInitializerError exception) {
+                } catch (final IllegalAccessException | IllegalArgumentException | InstantiationException
+                        | InvocationTargetException | ExceptionInInitializerError exception) {
                     displayMonitor = Optional.empty();
                     throw new IllegalArgumentException(exception);
                 }

@@ -1,30 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
-<?import javafx.scene.control.ButtonBar?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
-
-<BorderPane id="effectsPane" fx:id="effectsPane" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
-	<top>
-		<ButtonBar id="topBar" fx:id="topBar" stylesheets="@ButtonsBarLayout.css" BorderPane.alignment="CENTER">
-			<buttons>
-				<Label id="effectName" fx:id="effectName" text="Effect name" ButtonBar.buttonData="LEFT" />
-			</buttons>
-		</ButtonBar>
-	</top>
-	<center>
-		<VBox id="mainBox" fx:id="mainBox" alignment="CENTER" BorderPane.alignment="CENTER">
-			<children>
-			</children>
-		</VBox>
-	</center>
-   <bottom>
-      <ButtonBar id="bottomBar" fx:id="bottomBar" stylesheets="@ButtonsBarLayout.css" BorderPane.alignment="CENTER">
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns:fx="http://javafx.com/fxml" id="effectsPane" fx:id="effectsPane" xmlns="http://javafx.com/javafx">
+    <top>
+        <ButtonBar id="topBar" fx:id="topBar" stylesheets="@ButtonsBarLayout.css" BorderPane.alignment="CENTER">
             <buttons>
-				<JFXButton id="backToEffects" fx:id="backToEffects" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" ripplerFill="WHITE" stylesheets="" text="Back" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT" />
-         </buttons>
-      </ButtonBar>
-   </bottom>
+                <Label id="effectName" fx:id="effectName" text="Effect name" ButtonBar.buttonData="LEFT"/>
+            </buttons>
+        </ButtonBar>
+    </top>
+    <center>
+        <VBox id="mainBox" fx:id="mainBox" alignment="CENTER" BorderPane.alignment="CENTER">
+            <children>
+            </children>
+        </VBox>
+    </center>
+    <bottom>
+        <ButtonBar id="bottomBar" fx:id="bottomBar" stylesheets="@ButtonsBarLayout.css" BorderPane.alignment="CENTER">
+            <buttons>
+                <JFXButton id="backToEffects" fx:id="backToEffects" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" ripplerFill="WHITE" stylesheets="" text="Back" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT"/>
+            </buttons>
+        </ButtonBar>
+    </bottom>
 </BorderPane>

@@ -253,9 +253,8 @@ public class SingleRunApp<T> extends Application {
                 });
                 d.setEffects(effectGroups);
             });
-            // TODO add effects to DisplayMonitor
             this.buttonsBarController = new ButtonsBarController();
-            // TODO pass simulation to ButtonsBarController
+            simulation.ifPresent(s -> this.buttonsBarController.getStartStopButton().setOnAction(e -> /* TODO if s.isRunning ? s.play() : s.pause() */ s.play()));
             main.getChildren().add(FXResourceLoader.getLayout(BorderPane.class, buttonsBarController, BUTTONS_BAR_LAYOUT));
         } catch (final IOException e) {
             L.error("I/O Exception loading FXML layout files", e);

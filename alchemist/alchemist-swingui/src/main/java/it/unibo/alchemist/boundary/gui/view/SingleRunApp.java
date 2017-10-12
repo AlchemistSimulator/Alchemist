@@ -244,8 +244,17 @@ public class SingleRunApp<T> extends Application {
         try {
             this.rootLayout = FXResourceLoader.getLayout(AnchorPane.class, this, ROOT_LAYOUT);
             final StackPane main = (StackPane) rootLayout.getChildren().get(0);
-            displayMonitor.ifPresent(main.getChildren()::add);
+            this.displayMonitor.ifPresent(d -> {
+                main.getChildren().add(d);
+                simulation.ifPresent(s -> {
+                    s.addOutputMonitor(d);
+                    this.timeMonitor.ifPresent(s::addOutputMonitor);
+                    this.stepMonitor.ifPresent(s::addOutputMonitor);
+                });
+            });
+            // TODO add effects to DisplayMonitor
             this.buttonsBarController = new ButtonsBarController();
+            // TODO pass simulation to ButtonsBarController
             main.getChildren().add(FXResourceLoader.getLayout(BorderPane.class, buttonsBarController, BUTTONS_BAR_LAYOUT));
         } catch (final IOException e) {
             L.error("I/O Exception loading FXML layout files", e);
@@ -311,7 +320,7 @@ public class SingleRunApp<T> extends Application {
                         effectGroups = EffectSerializer.effectGroupsFromFile(new File(value));
                     } catch (final IOException e) {
                         L.warn(e.getMessage());
-                        effectGroups = new ArrayList<>(0);
+                        effectGroups = new ArrayList<>(0); // TODO check if necessary
                     }
                     break;
                 case USE_CLOSE_OPERATION:

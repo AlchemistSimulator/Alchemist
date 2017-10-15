@@ -9,6 +9,7 @@
 package it.unibo.alchemist.boundary.interfaces;
 
 import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
@@ -16,10 +17,9 @@ import it.unibo.alchemist.model.interfaces.Time;
 import java.io.Serializable;
 
 /**
- * 
- *          An interface for the visualization of the simulation.
- * @param <T>
- *            The type which describes the concentration of a molecule
+ * An interface for the visualization of the simulation.
+ *
+ * @param <T> The type which describes the {@link Concentration} of a molecule
  */
 public interface OutputMonitor<T> extends Serializable {
 
@@ -30,13 +30,10 @@ public interface OutputMonitor<T> extends Serializable {
      * the control flow which will execute this method. A new thread could have
      * been spawned or the same flow of the simulation may execute this method.
      * This depends on the specific {@link Simulation} implementation.
-     * 
-     * @param env
-     *            The current environment
-     * @param time
-     *            The time at which the simulation ended
-     * @param step
-     *            The last step number
+     *
+     * @param env  The current environment
+     * @param time The time at which the simulation ended
+     * @param step The last step number
      */
     void finished(Environment<T> env, Time time, long step);
 
@@ -47,9 +44,8 @@ public interface OutputMonitor<T> extends Serializable {
      * thread could have been spawned or the same flow of the simulation may
      * execute this method. This depends on the specific {@link Simulation}
      * implementation.
-     * 
-     * @param env
-     *            the environment
+     *
+     * @param env the environment
      */
     void initialized(Environment<T> env);
 
@@ -59,15 +55,11 @@ public interface OutputMonitor<T> extends Serializable {
      * control flow which will execute this method. A new thread could have been
      * spawned or the same flow of the simulation may execute this method. This
      * depends on the specific {@link Simulation} implementation.
-     * 
-     * @param env
-     *            The current environment
-     * @param r
-     *            The last reaction executed
-     * @param time
-     *            The time at this simulation point
-     * @param step
-     *            The current simulation step
+     *
+     * @param env  The current environment
+     * @param r    The last reaction executed
+     * @param time The time at this simulation point
+     * @param step The current simulation step
      */
     void stepDone(Environment<T> env, Reaction<T> r, Time time, long step);
 

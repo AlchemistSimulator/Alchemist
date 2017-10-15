@@ -2,6 +2,7 @@ package it.unibo.alchemist.boundary.interfaces;
 
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.model.interfaces.Concentration;
+import it.unibo.alchemist.model.interfaces.Environment;
 
 import java.util.Collection;
 
@@ -51,8 +52,10 @@ public interface FXOutputMonitor<T> extends OutputMonitor<T> {
 
     /**
      * Repaints the GUI.
+     *
+     * @param environment the {@link Environment} to repaint
      */
-    void repaint();
+    void repaintEnvironment(Environment<T> environment);
 
     /**
      * @param effects the Effect stack to use

@@ -9,10 +9,12 @@ import it.unibo.alchemist.boundary.wormhole.interfaces.PointerSpeed;
 import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
+import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.*;
 import javafx.event.EventHandler;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -21,16 +23,22 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.*;
+import org.apache.commons.math3.util.Pair;
 import org.danilopianini.lang.LangUtils;
 import org.slf4j.Logger;
 
-import java.awt.*;
+import java.awt.Point;
+import java.awt.geom.Rectangle2D;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Semaphore;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import static it.unibo.alchemist.boundary.monitors.AbstractFXDisplay.ViewStatus.*;
 import static it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole.Mode;
 
 /**
@@ -65,11 +73,9 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     /**
      * Default status of the view.
      */
-    private static final ViewStatus DEFAULT_VIEW_STATUS = ViewStatus.MARK_CLOSER;
-
-//    static {
-//        System.setProperty("sun.java2d.opengl", "true");
-//    }
+    private static final ViewStatus DEFAULT_VIEW_STATUS = MARK_CLOSER;
+    private static final byte SELECTED_NODE_DRAWING_SIZE = 16;
+    private static final byte SELECTED_NODE_INTERNAL_SIZE = 10;
 
     private final ConcurrentMap<Node<T>, Position> positions;
     private final ConcurrentMap<Node<T>, Neighborhood<T>> neighbors;
@@ -96,6 +102,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     private Collection<EffectGroup> effectStack;
     private boolean firstTime;
     private long timeInit;
+    private boolean paintLinks;
 
     /**
      * Default constructor. The number of steps is set to default ({@value #DEFAULT_NUMBER_OF_STEPS}).
@@ -112,10 +119,6 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      */
     public AbstractFXDisplay(final int step) {
         super();
-        // TODO check
-//        if (!"true".equals(System.getProperty("sun.java2d.opengl"))) {
-//            getLogger().warn("OpenGL acceleration appears to be disabled on this system. This may impact performance negatively. Please enable it with -Dsun.java2d.opengl=true");
-//        }
         setStyle("-fx-background-color: #FFF;");
         setMouseListener();
         setkeyboardListener();
@@ -131,6 +134,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         endingPoint = Optional.empty();
         realTime = false;
         firstTime = true;
+        paintLinks = false;
     }
 
     /**
@@ -170,6 +174,16 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         return new Point((int) x, (int) y);
     }
 
+    private static <I, O> Pair<O, O> mapPair(final Pair<? extends I, ? extends I> pair, final Function<? super I, ? extends O> converter) {
+        return new Pair<>(converter.apply(pair.getFirst()), converter.apply(pair.getSecond()));
+    }
+
+    private static boolean isInsideRectangle(final Point viewPoint, final int rx, final int ry, final int width, final int height) {
+        final double x = viewPoint.getX();
+        final double y = viewPoint.getY();
+        return x >= rx && x <= rx + width && y >= ry && y <= ry + height;
+    }
+
     /**
      * The method maps the keyboard events to action on the GUI.
      * <p>
@@ -199,13 +213,13 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         setOnKeyPressed(event -> {
             switch (event.getCode()) {
                 case C:
-                    if (status == ViewStatus.SELECTING) {
-                        status = ViewStatus.CLONING;
+                    if (status == SELECTING) {
+                        status = CLONING;
                     }
                     break;
                 case D:
-                    if (status == ViewStatus.SELECTING) {
-                        this.status = ViewStatus.DELETING;
+                    if (status == SELECTING) {
+                        this.status = DELETING;
                         selectedNodes.forEach(currentEnv::removeNode);
                         final Simulation<T> sim = currentEnv.getSimulation();
                         sim.schedule(() -> update(currentEnv, sim.getTime()));
@@ -213,7 +227,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
                     }
                     break;
                 case E:
-                    if (status == ViewStatus.SELECTING) {
+                    if (status == SELECTING) {
                         status = ViewStatus.MOLECULING;
                         // TODO display Moleculing interface v
 //                        Generic2DDisplay.makeFrame("Moleculing", new MoleculeInjectorGUI<>(selectedNodes), jf -> {
@@ -234,11 +248,11 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
                     // Now the link drawing is an effect
                     break;
                 case M:
-                    setMarkCloserNode(status != ViewStatus.MARK_CLOSER);
+                    setMarkCloserNode(status != MARK_CLOSER);
                     break;
                 case O:
-                    if (status == ViewStatus.SELECTING) {
-                        status = ViewStatus.MOVING;
+                    if (status == SELECTING) {
+                        status = MOVING;
                     }
                     break;
                 case P:
@@ -254,13 +268,13 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
                     setRealTime(!isRealTime());
                     break;
                 case S:
-                    if (status == ViewStatus.SELECTING) {
+                    if (status == SELECTING) {
                         resetStatus();
                         selectedNodes.clear();
                     } else if (!isInteracting()) {
-                        status = ViewStatus.SELECTING;
+                        status = SELECTING;
                     }
-                    repaint();
+                    repaintEnvironment(null); // TODO implement a way to have access to Environment here !!!!!!!!!!!!!!!
                     break;
                 case LEFT:
                     setStep(Math.max(1, step - Math.max(step / 10, 1)));
@@ -306,7 +320,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
 //                    }
 //                });
                 // TODO open a drawer to the right of AbstractBuilder ^
-            } else if (status == ViewStatus.CLONING && event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
+            } else if (status == CLONING && event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
                 final Simulation<T> engine = currentEnv.getSimulation();
                 final Position envEnding = wormhole.getEnvPoint(getPoint(event));
                 engine.schedule(() -> {
@@ -347,7 +361,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
             if (nearest != null && MouseButton.MIDDLE == event.getButton()) {
                 hooked = hooked.isPresent() ? Optional.empty() : Optional.of(nearest);
             }
-            repaint();
+            repaintEnvironment(null); // TODO implement a way to have access to Environment here !!!!!!!!!!!!!!!!!!!!!!!
         });
 
         // On mouse dragged
@@ -375,7 +389,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
                         break;
                 }
                 mouseMovement.setCurrentPosition(getPoint(event));
-                repaint();
+                repaintEnvironment(null); // TODO implement a way to have access to Environment here !!!!!!!!!!!!!!!!!!!
             }
         });
 
@@ -395,11 +409,11 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
 
         // On mouse pressed
         setOnMousePressed(event -> {
-            if (event.getButton() == MouseButton.PRIMARY && (status == ViewStatus.MOVING || status == ViewStatus.SELECTING)) {
+            if (event.getButton() == MouseButton.PRIMARY && (status == MOVING || status == SELECTING)) {
                 isDraggingMouse = true;
                 originPoint = Optional.of(getPoint(event));
                 endingPoint = Optional.of(getPoint(event));
-                repaint();
+                repaintEnvironment(null); // TODO implement a way to have access to Environment here !!!!!!!!!!!!!!!!!!!
             }
         });
 
@@ -407,7 +421,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         setOnMouseReleased(event -> {
             if (event.getButton() == MouseButton.PRIMARY && isDraggingMouse) {
                 endingPoint = Optional.of(getPoint(event));
-                if (status == ViewStatus.MOVING && originPoint.isPresent()) {
+                if (status == MOVING && originPoint.isPresent()) {
                     if (currentEnv.getDimensions() == 2) {
                         final Simulation<T> engine = currentEnv.getSimulation();
                         if (engine != null) {
@@ -435,7 +449,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
                 isDraggingMouse = false;
                 originPoint = Optional.empty();
                 endingPoint = Optional.empty();
-                repaint();
+                repaintEnvironment(null); // TODO implement a way to have access to Environment here !!!!!!!!!!!!!!!!!!!
             }
         });
 
@@ -468,7 +482,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     private void updateMouse(final double x, final double y) {
         setDist(x, y);
         if (isMarkCloserNode()) {
-            repaint();
+            repaintEnvironment(null); // TODO implement a way to have access to Environment here !!!!!!!!!!!!!!!!!!!!!!!
         }
     }
 
@@ -487,7 +501,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      * @return true if it's not automatically marking the closer node and it's not in view-only mode
      */
     private boolean isInteracting() {
-        return status != ViewStatus.MARK_CLOSER && status != ViewStatus.VIEW_ONLY;
+        return status != MARK_CLOSER && status != ViewStatus.VIEW_ONLY;
     }
 
     /**
@@ -495,7 +509,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      */
     private void resetStatus() {
         if (isPreviousStateMarking) {
-            this.status = ViewStatus.MARK_CLOSER;
+            this.status = MARK_CLOSER;
         } else {
             this.status = ViewStatus.VIEW_ONLY;
         }
@@ -527,7 +541,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
                 }
             });
             releaseData();
-            repaint();
+            repaintEnvironment(environment); // TODO implement a better way to have access to Environment
         } else {
             throw new IllegalStateException("Only the simulation thread can dictate GUI updates");
         }
@@ -606,15 +620,15 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
 
     @Override
     public boolean isMarkCloserNode() {
-        return status == ViewStatus.MARK_CLOSER;
+        return status == MARK_CLOSER;
     }
 
     @Override
     public void setMarkCloserNode(final boolean mark) {
         if (!isInteracting()) {
-            status = mark ? ViewStatus.MARK_CLOSER : ViewStatus.VIEW_ONLY;
+            status = mark ? MARK_CLOSER : ViewStatus.VIEW_ONLY;
             isPreviousStateMarking = mark;
-            repaint();
+            repaintEnvironment(null); // TODO implement a way to have access to Environment here !!!!!!!!!!!!!!!!!!!!!!!
         }
     }
 
@@ -629,9 +643,188 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     }
 
     @Override
-    public void repaint() {
-        getGraphicsContext2D().clearRect(0, 0, getWidth(), getHeight());
-        // TODO draw effects
+    public void repaintEnvironment(final Environment<T> environment) {
+        final GraphicsContext g = getGraphicsContext2D();
+        g.clearRect(0, 0, getWidth(), getHeight());
+        drawBackground(g);
+        drawEnvOnView(environment, g);
+    }
+
+    /**
+     * This method is meant to be overridden by subclasses that want to display
+     * a more sophisticated background than a simple color.
+     *
+     * @param g the {@link GraphicsContext} to draw in
+     * @see #repaintEnvironment(Environment)
+     */
+    protected void drawBackground(@SuppressWarnings("unused") final GraphicsContext g) {
+        // By default, it does nothing
+    }
+
+    /**
+     * Actually draws the environment on the view.
+     *
+     * @param g the {@link GraphicsContext} to draw in
+     * @see #repaintEnvironment(Environment)
+     */
+    protected void drawEnvOnView(final Environment<T> environment, final GraphicsContext g) {
+        if (wormhole == null || !isVisible() || isDisabled()) {
+            return;
+        }
+
+        accessData();
+
+        hooked.ifPresent(h -> {
+            final Position hcoor = positions.get(h);
+            final Point hp = wormhole.getViewPoint(hcoor);
+            if (hp.distance(getCenter()) > FREEDOM_RADIUS) {
+                wormhole.setViewPosition(hp);
+            }
+        });
+
+        /*
+         * Compute nodes in sight and their screen position
+         */
+        final Map<Node<T>, Point> onView = positions.entrySet()
+                .parallelStream()
+                .map(pair -> new Pair<>(pair.getKey(), wormhole.getViewPoint(pair.getValue())))
+                .filter(p -> wormhole.isInsideView(p.getSecond()))
+                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+        g.setFill(Color.BLACK);
+
+        if (obstacles != null) {
+            obstacles.parallelStream()
+                    .map(this::convertObstacle)
+                    .forEachOrdered(shape -> {
+                        g.setFill(shape.getFill());
+                        g.fill();
+                    });
+        }
+
+        // TODO better use an EffectFX to draw links
+//        if (paintLinks) {
+//            g.setFill(Color.GRAY);
+//            onView.keySet().parallelStream()
+//                    .map(neighbors::get)
+//                    .flatMap(neigh -> neigh.getNeighbors()
+//                            .parallelStream()
+//                            .map(node -> node.compareTo(neigh.getCenter()) > 0
+//                                    ? new Pair<>(neigh.getCenter(), node)
+//                                    : new Pair<>(node, neigh.getCenter())))
+//                    .distinct()
+//                    .map(pair -> mapPair(pair, node ->
+//                            Optional.ofNullable(onView.get(node))
+//                                    .orElse(wormhole.getViewPoint(positions.get(node)))))
+//                    .forEachOrdered(line -> {
+//                        final Point p1 = line.getFirst();
+//                        final Point p2 = line.getSecond();
+//                        g.strokeLine(p1.x, p1.y, p2.x, p2.y);
+//                    });
+//        }
+
+        releaseData();
+
+        if (isDraggingMouse && status == MOVING && originPoint.isPresent() && endingPoint.isPresent()) {
+            selectedNodes.forEach(n -> {
+                if (onView.containsKey(n)) {
+                    onView.put(n, new Point(onView.get(n).x + (endingPoint.get().x - originPoint.get().x),
+                            onView.get(n).y + (endingPoint.get().y - originPoint.get().y)));
+                }
+            });
+        }
+
+        g.setFill(Color.GREEN);
+
+        // TODO implement a way to draw only Effects for visible Nodes, or remove onView variable
+        Optional.ofNullable(effectStack)
+                .ifPresent(stack ->
+                        stack.forEach(effectGroup
+                                -> effectGroup.forEach(effectFX
+                                -> effectFX.apply(g, environment, getWormhole()))));
+
+        if (isMarkCloserNode()) {
+            final Optional<Map.Entry<Node<T>, Point>> closest = onView.entrySet()
+                    .parallelStream()
+                    .min((pair1, pair2) -> {
+                        final Point p1 = pair1.getValue();
+                        final Point p2 = pair2.getValue();
+                        final double d1 = Math.hypot(p1.x - mouseX, p1.y - mouseY);
+                        final double d2 = Math.hypot(p2.x - mouseX, p2.y - mouseY);
+                        return Double.compare(d1, d2);
+                    });
+
+            closest.ifPresent(c -> {
+                nearest = c.getKey();
+                final int nearestX = c.getValue().x;
+                final int nearestY = c.getValue().y;
+                drawFriedEgg(g, nearestX, nearestY, Color.RED, Color.YELLOW);
+            });
+        } else {
+            nearest = null;
+        }
+
+        if (isDraggingMouse && status == SELECTING && originPoint.isPresent() && endingPoint.isPresent()) {
+            g.setFill(Color.BLACK);
+            final int x = originPoint.get().x < endingPoint.get().x ? originPoint.get().x : endingPoint.get().x;
+            final int y = originPoint.get().y < endingPoint.get().y ? originPoint.get().y : endingPoint.get().y;
+            final int width = Math.abs(endingPoint.get().x - originPoint.get().x);
+            final int height = Math.abs(endingPoint.get().y - originPoint.get().y);
+            g.fillRect(x, y, width, height);
+            selectedNodes = onView.entrySet().parallelStream()
+                    .filter(nodes -> isInsideRectangle(nodes.getValue(), x, y, width, height))
+                    .map(Map.Entry::getKey)
+                    .collect(Collectors.toSet());
+        }
+        selectedNodes.parallelStream()
+                .map(e -> Optional.ofNullable(onView.get(e)))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .forEachOrdered(p -> drawFriedEgg(g, p.x, p.y, Color.BLUE, Color.CYAN));
+    }
+
+    /**
+     * Converts an {@code Obstacle2D} in a JavaFX {@link Shape}.
+     *
+     * @param obstacle the obstacle to convert
+     * @return the {@code Shape} as a {@link Path}
+     */
+    private Shape convertObstacle(final Obstacle2D obstacle) {
+        final Rectangle2D bounds = obstacle.getBounds2D();
+        final Rectangle rectangle = new Rectangle(bounds.getWidth(), bounds.getHeight());
+        final double rX = rectangle.getX();
+        final double rY = rectangle.getY();
+        final double rWidth = rectangle.getWidth();
+        final double rHeight = rectangle.getHeight();
+
+        final Position[] points = new Position[]{
+                new Continuous2DEuclidean(rX, rY),
+                new Continuous2DEuclidean(rX + rWidth, rY),
+                new Continuous2DEuclidean(rX + rWidth, rY + rHeight),
+                new Continuous2DEuclidean(rX, rY + rHeight)};
+
+        final Path path = new Path();
+
+        for (int i = 0; i < points.length; i++) {
+            final Point pt = wormhole.getViewPoint(points[i]);
+            final PathElement to;
+            if (i == 0) {
+                to = new MoveTo(pt.getX(), pt.getY());
+            } else {
+                to = new LineTo(pt.getX(), pt.getY());
+            }
+            path.getElements().add(to);
+        }
+
+        path.getElements().add(new ClosePath());
+
+        return path;
+    }
+
+    private void drawFriedEgg(final GraphicsContext g, final int x, final int y, final Color c1, final Color c2) {
+        g.setFill(c1);
+        g.fillOval(x - SELECTED_NODE_DRAWING_SIZE / 2, y - SELECTED_NODE_DRAWING_SIZE / 2, SELECTED_NODE_DRAWING_SIZE, SELECTED_NODE_DRAWING_SIZE);
+        g.setFill(c2);
+        g.fillOval(x - SELECTED_NODE_INTERNAL_SIZE / 2, y - SELECTED_NODE_INTERNAL_SIZE / 2, SELECTED_NODE_INTERNAL_SIZE, SELECTED_NODE_INTERNAL_SIZE);
     }
 
     @Override
@@ -714,7 +907,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         return this.wormhole;
     }
 
-    private enum ViewStatus {
+    protected enum ViewStatus {
         VIEW_ONLY,
         MARK_CLOSER,
         SELECTING,

@@ -6,7 +6,7 @@
  * the GNU General Public License, with a linking exception, as described
  * in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.boundary.gui.monitors;
+package it.unibo.alchemist.boundary.monitors;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -35,6 +35,7 @@ import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 /**
  * @param <T>
  */
+@Deprecated
 public class JOutputMonitorRepresentation<T> extends JPanel implements ItemSelectable {
     /**
      * 

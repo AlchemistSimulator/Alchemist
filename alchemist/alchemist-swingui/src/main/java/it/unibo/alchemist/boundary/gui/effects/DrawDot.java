@@ -107,10 +107,9 @@ public class DrawDot implements EffectFX {
     @Override
     public <T> void apply(final GraphicsContext graphic, final Environment<T> environment, final BidimensionalWormhole wormhole) {
         environment.forEach(node -> {
-            final double ks = DEFAULT_SCALE;
             final double sizeX = size.get();
             final double startX = wormhole.getViewPoint(environment.getPosition(node)).getX() - sizeX / 2;
-            final double sizeY = FastMath.ceil(sizeX * ks);
+            final double sizeY = FastMath.ceil(sizeX * DEFAULT_SCALE);
             final double startY = wormhole.getViewPoint(environment.getPosition(node)).getY() - sizeY / 2;
 
             graphic.setFill(color);

@@ -1,4 +1,4 @@
-package it.unibo.alchemist.boundary.gui.monitors;
+package it.unibo.alchemist.boundary.gui;
 
 import java.io.Serializable;
 
@@ -7,6 +7,7 @@ import java.io.Serializable;
  *
  * @param <E>
  */
+@Deprecated
 public final class ClassItem<E> implements Serializable {
 
     private static final long serialVersionUID = 3274105941480613159L;

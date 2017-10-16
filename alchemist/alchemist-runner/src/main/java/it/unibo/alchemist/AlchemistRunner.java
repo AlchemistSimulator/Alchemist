@@ -5,10 +5,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import it.unibo.alchemist.boundary.gui.SingleRunGUI;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.view.SingleRunAppBuilder;
-import it.unibo.alchemist.boundary.gui.view.SingleRunJFXBuilder;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -179,7 +177,7 @@ public final class AlchemistRunner<T> {
 //                                }
 
                                 // TODO check
-                                final SingleRunJFXBuilder builder = new SingleRunJFXBuilder<>(sim).setDefaultOnCloseOperation(closeOperation);
+                                final SingleRunAppBuilder builder = new SingleRunAppBuilder<>(sim).setDefaultOnCloseOperation(closeOperation);
                                 effectsFile.ifPresent(builder::addEffectGroup);
                                 builder.build();
                             }

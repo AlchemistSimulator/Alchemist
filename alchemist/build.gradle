@@ -17,6 +17,7 @@ allprojects {
 
     apply plugin: 'org.danilopianini.build-commons'
     apply plugin: "org.xtext.xtend"
+    apply plugin: 'idea'
 
     configurations {
         all*.exclude group: 'org.eclipse.xtext', module: 'org.eclipse.xtext.dependencies'
@@ -32,6 +33,7 @@ allprojects {
 	test { testLogging { events "passed", "skipped", "failed", "standardError" } }
 
     dependencies {
+        compile "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
         compile "com.google.code.findbugs:findbugs:$findBugsVersion"
         compile "org.apache.commons:commons-math3:$math3Version"
         compile "org.eclipse.xtend:org.eclipse.xtend.lib:${xtendLibVersion}"

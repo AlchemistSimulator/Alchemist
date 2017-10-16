@@ -1,29 +1,40 @@
 package it.unibo.alchemist.boundary.gui.view;
 
+import com.sun.javafx.application.PlatformImpl;
+import it.unibo.alchemist.boundary.gui.effects.EffectFX;
+import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
+import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
+import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
+import it.unibo.alchemist.boundary.monitors.FX2DDisplay;
+import it.unibo.alchemist.boundary.monitors.FXMapDisplay;
+import it.unibo.alchemist.boundary.monitors.FXStepMonitor;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
-import org.jooq.lambda.tuple.Tuple2;
+import javafx.stage.WindowEvent;
 
 import javax.swing.*;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.OptionalInt;
+import java.io.IOException;
+import java.util.*;
 
-import static it.unibo.alchemist.boundary.gui.view.SingleRunApp.Parameter.getParam;
 import static javafx.application.Application.launch;
 
 /**
- * Builder class for {@link SingleRunApp}, meant to be used to build and run the single run gui as the only JavaFX Application of the software.
+ * Builder class for {@link SingleRunApp}, meant to be used to build and run the single run gui along with another (alreay started) JavaFX {@link Application}.
  *
  * @param <T> the concentration type
  */
-public class SingleRunAppBuilder<T> extends SingleRunApp.AbstractBuilder<T> {
-    private OptionalInt jFrameCloseOperation;
-    private Optional<String> effectsGroupFile;
+public class SingleRunAppBuilder<T> {
+    private final Simulation<T> simulation;
+    private boolean monitorDisplay;
+    private boolean monitorTime;
+    private boolean monitorSteps;
+    private Collection<EffectGroup> effectGroups;
 
     /**
      * Default constructor of the builder.
@@ -31,115 +42,137 @@ public class SingleRunAppBuilder<T> extends SingleRunApp.AbstractBuilder<T> {
      * @param simulation the simulation to build the view for
      */
     public SingleRunAppBuilder(final Simulation<T> simulation) {
-        super(simulation);
-        this.jFrameCloseOperation = OptionalInt.empty();
-        this.effectsGroupFile = Optional.empty();
+        this.simulation = Objects.requireNonNull(simulation);
+        this.monitorDisplay = false;
+        this.monitorTime = false;
+        this.monitorSteps = false;
+        this.effectGroups = new ArrayList<>();
     }
 
     /**
-     * Simply runs the {@link SingleRunApp Application} with given params.
-     *
-     * @param args params for the {@link Application}
-     */
-    public static void main(final String... args) {
-        launch(SingleRunApp.class, args);
-    }
-
-    @Override
-    public SingleRunAppBuilder<T> monitorDisplay(final boolean monitorDisplay) {
-        return (SingleRunAppBuilder<T>) super.monitorDisplay(monitorDisplay);
-    }
-
-    @Override
-    public SingleRunAppBuilder<T> monitorSteps(final boolean monitorSteps) {
-        return (SingleRunAppBuilder<T>) super.monitorSteps(monitorSteps);
-    }
-
-    @Override
-    public SingleRunAppBuilder<T> monitorTime(final boolean monitorTime) {
-        return (SingleRunAppBuilder<T>) super.monitorTime(monitorTime);
-    }
-
-    @Override
-    public SingleRunAppBuilder<T> setEffectGroups(final File file) {
-        this.effectsGroupFile = Optional.of(file.getAbsolutePath());
-        return this;
-    }
-
-    /**
-     * Set the {@link Stage#setOnCloseRequest(EventHandler) default close operation} to a standard handler, identified by {@link JFrame} default close operations.
-     *
-     * @param jFrameCloseOperation the identifier of a standard handler to call when close operation is requested to the {@link Stage}
-     * @return this builder
-     * @throws IllegalArgumentException if specified operation is not a valid {@link JFrame} close operation
-     * @see JFrame#DO_NOTHING_ON_CLOSE
-     * @see JFrame#HIDE_ON_CLOSE
-     * @see JFrame#DISPOSE_ON_CLOSE
-     * @see JFrame#EXIT_ON_CLOSE
-     */
-    public SingleRunAppBuilder<T> setDefaultOnCloseOperation(final int jFrameCloseOperation) {
-        if (jFrameCloseOperation == JFrame.DO_NOTHING_ON_CLOSE
-                || jFrameCloseOperation == JFrame.HIDE_ON_CLOSE
-                || jFrameCloseOperation == JFrame.DISPOSE_ON_CLOSE
-                || jFrameCloseOperation == JFrame.EXIT_ON_CLOSE) {
-            this.jFrameCloseOperation = OptionalInt.of(jFrameCloseOperation);
-        } else {
-            throw new IllegalArgumentException();
-        }
-        return this;
-    }
-
-    /**
-     * Builds an array with the set of params specified to this builder.
+     * Set a {@link Collection} of {@link EffectGroup}s to the effects to show at first start loading it from a {@link File} at a given path.
      * <p>
-     * Only
+     * Removes all previously added {@code EffectGroups}.
      *
-     * @return
+     * @param effectGroups the {@code EffectGroups} to set
+     * @return this builder
      */
-    public String[] buildParams() {
-        final List<String> params = new ArrayList<>();
+    public SingleRunAppBuilder<T> setEffectGroups(final Collection<EffectGroup> effectGroups) {
+        this.effectGroups.clear();
+        this.effectGroups.addAll(effectGroups);
+        return this;
+    }
 
-        // Close operation
-        params.add(getParam(new Tuple2<>(
-                SingleRunApp.Parameter.USE_CLOSE_OPERATION.getName(),
-                String.valueOf(jFrameCloseOperation.orElse(JFrame.EXIT_ON_CLOSE)))));
-
-        // DisplayMonitor
-        if (isMonitorDisplay()) {
-            params.add(getParam(new Tuple2<>(
-                    SingleRunApp.Parameter.USE_DEFAULT_DISPLAY_MONITOR_FOR_ENVIRONMENT_CLASS.getName(),
-                    getSimulation().getEnvironment().getClass().getName())));
+    /**
+     * Set a {@link Collection} of {@link EffectGroup}s to the effects to show at first start loading it from a {@link File} at a given path.
+     * <p>
+     * Removes all previously added {@code EffectGroups}.
+     *
+     * @param file the {@code File} containing the {@code EffectGroups} to set
+     * @return this builder
+     * @see #setEffectGroups(Collection)
+     * @see EffectSerializer#effectGroupsFromFile(File)
+     */
+    public SingleRunAppBuilder<T> setEffectGroups(final File file) {
+        try {
+            return setEffectGroups(EffectSerializer.effectGroupsFromFile(file));
+        } catch (final IOException e) {
+            throw new IllegalArgumentException(e);
         }
+    }
 
-        // StepMonitor
-        if (isMonitorSteps()) {
-            params.add(getParam(new Tuple2<>(SingleRunApp.Parameter.USE_STEP_MONITOR.getName(), "")));
+    /**
+     * Set a {@link Collection} of {@link EffectGroup}s to the effects to show at first start loading it from a {@link File} at a given path.
+     * <p>
+     * Removes all previously added {@code EffectGroups}.
+     *
+     * @param path the path of the {@code File} containing the {@code EffectGroups} to set
+     * @return this builder
+     * @see #setEffectGroups(File)
+     */
+    public SingleRunAppBuilder<T> setEffectGroups(final String path) {
+        return setEffectGroups(new File(path));
+    }
+
+    /**
+     * Add an {@code EffectGroup} to the effects to show at first start.
+     *
+     * @param effects the {@code EffectGroup} to add
+     * @return this builder
+     */
+    public SingleRunAppBuilder<T> addEffectGroup(final EffectGroup effects) {
+        this.effectGroups.add(effects);
+        return this;
+    }
+
+    /**
+     * Add an {@link EffectGroup} to the effects to show at first start loading it from a given {@code File}.
+     *
+     * @param file the file containing the {@link EffectGroup} to add
+     * @return this builder
+     * @see #addEffectGroup(EffectGroup)
+     * @see EffectSerializer#effectsFromFile(File)
+     */
+    public SingleRunAppBuilder<T> addEffectGroup(final File file) {
+        try {
+            return addEffectGroup(EffectSerializer.effectsFromFile(file));
+        } catch (final IOException e) {
+            throw new IllegalArgumentException(e);
         }
+    }
 
-        // TimeMonitor
-        if (isMonitorTime()) {
-            params.add(getParam(new Tuple2<>(SingleRunApp.Parameter.USE_TIME_MONITOR.getName(), "")));
+    /**
+     * Add an {@link EffectGroup} to the effects to show at first start loading it from a {@link File} at a given path.
+     *
+     * @param path the path of the {@code File} containing the {@link EffectGroup} to add
+     * @return this builder
+     * @see #addEffectGroup(File)
+     */
+    public SingleRunAppBuilder<T> addEffectGroup(final String path) {
+        return addEffectGroup(new File(path));
+    }
+
+    /**
+     * Starts the JavaFX Thread, if necessary.
+     *
+     * @return true if it was already running, false otherwise
+     */
+    private boolean startJFXThread() {
+        try {
+            // Starts JavaFX thread, if necessary
+            PlatformImpl.startup(() -> { });
+            return false;
+        } catch (final IllegalStateException e) {
+            return true;
         }
-
-        // Effects
-        effectsGroupFile.ifPresent(egf -> params.add(getParam(new Tuple2<>(SingleRunApp.Parameter.USE_EFFECT_GROUPS_FROM_FILE.getName(), egf))));
-
-        // how TODO simulation ?
-
-        return params.toArray(new String[]{});
     }
 
     /**
      * {@inheritDoc}
      * <br>
-     * The new Application is started automatically.
+     * The new Application is run on JFX Event Thread.
      *
-     * @see Application#launch(String...)
+     * @see Platform#runLater(Runnable)
      */
-    @Override
     public void build() {
-        launch(SingleRunApp.class, buildParams());
+        final Runnable lambda = () -> {
+            final SingleRunApp<T> app = new SingleRunApp<>();
 
-        // how TODO simulation ?
+            if (!effectGroups.isEmpty()) {
+                app.setEffectGroups(effectGroups);
+            }
+
+            app.setSimulation(simulation);
+
+            final Stage stage = new Stage();
+
+            app.start(stage);
+        };
+
+        if (startJFXThread() && Platform.isFxApplicationThread()) {
+            lambda.run();
+        } else {
+            Platform.runLater(lambda);
+        }
     }
 }

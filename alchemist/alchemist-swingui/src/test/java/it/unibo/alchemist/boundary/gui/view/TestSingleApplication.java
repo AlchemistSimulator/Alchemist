@@ -1,5 +1,6 @@
 package it.unibo.alchemist.boundary.gui.view;
 
+import it.unibo.alchemist.boundary.gui.view.params.Parameter;
 import javafx.application.Application;
 import org.jooq.lambda.tuple.Tuple2;
 
@@ -12,9 +13,9 @@ public class TestSingleApplication {
 
     static {
         TEST_PARAMETERS = new HashMap<>();
-        TEST_PARAMETERS.put(SingleRunApp.Parameter.USE_STEP_MONITOR.getName(), "");
-        TEST_PARAMETERS.put(SingleRunApp.Parameter.USE_TIME_MONITOR.getName(), "");
-        TEST_PARAMETERS.put(SingleRunApp.Parameter.USE_FX_2D_DISPLAY.getName(), "");
+        TEST_PARAMETERS.put(Parameter.USE_STEP_MONITOR.getName(), "");
+        TEST_PARAMETERS.put(Parameter.USE_TIME_MONITOR.getName(), "");
+        TEST_PARAMETERS.put(Parameter.USE_FX_2D_DISPLAY.getName(), "");
 //        TEST_PARAMETERS.put(SingleRunApp.Parameter.USE_FX_MAP_DISPLAY.getName(), "");
 //        TEST_PARAMETERS.put(SingleRunApp.Parameter.USE_DEFAULT_DISPLAY_MONITOR_FOR_ENVIRONMENT_CLASS.getName(), OSMEnvironment.class.getName());
 //        TEST_PARAMETERS.put(SingleRunApp.Parameter.USE_SPECIFIED_DISPLAY_MONITOR.getName(), FX2DDisplay.class.getName());
@@ -29,7 +30,7 @@ public class TestSingleApplication {
                 .entrySet()
                 .stream()
                 .map(e -> new Tuple2<>(e.getKey(), e.getValue()))
-                .map(SingleRunApp.Parameter::getParam)
+                .map(Parameter::getParam)
                 .collect(Collectors.toList())
                 .toArray(new String[]{});
     }

@@ -22,6 +22,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import jiconfont.icons.GoogleMaterialDesignIcons;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * This class models a JavaFX controller for EffectBar.fxml.
@@ -31,12 +32,16 @@ public class EffectBarController implements Initializable {
     public static final String EFFECT_BAR_LAYOUT = "EffectBar";
 
     @FXML
+    @Nullable
     private JFXButton addEffect;
     @FXML
+    @Nullable
     private ListView<EffectFX> effectsList;
     @FXML
+    @Nullable
     private Label groupName;
     @FXML
+    @Nullable
     private JFXButton backToGroups;
 
     private ObservableList<EffectFX> observableList;

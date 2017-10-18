@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import jiconfont.icons.GoogleMaterialDesignIcons;
 import jiconfont.javafx.IconFontFX;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * This class models a JavaFX controller for ControlTypePopoverLayout.fxml.
@@ -22,8 +23,10 @@ public class ControlTypePopoverController implements Initializable {
 
     // FXML components
     @FXML
+    @Nullable
     private JFXButton panButton; // Value injected by FXMLLoader
     @FXML
+    @Nullable
     private JFXButton selectButton; // Value injected by FXMLLoader
 
     private final EventHandler<ActionEvent> panButtonHandler;
@@ -70,6 +73,7 @@ public class ControlTypePopoverController implements Initializable {
      * 
      * @return the pan button
      */
+    @Nullable
     public JFXButton getPanButton() {
         return this.panButton;
     }
@@ -79,6 +83,7 @@ public class ControlTypePopoverController implements Initializable {
      * 
      * @return the select button
      */
+    @Nullable
     public JFXButton getSelectButton() {
         return this.selectButton;
     }

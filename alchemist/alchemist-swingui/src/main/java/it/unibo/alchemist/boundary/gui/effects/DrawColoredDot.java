@@ -23,6 +23,7 @@ import java.io.Serializable;
  * It's possible to set the size and the color of the dots.
  */
 public class DrawColoredDot extends DrawDot implements EffectFX {
+
     /**
      * Magic number used by auto-generated {@link #hashCode()} method.
      */

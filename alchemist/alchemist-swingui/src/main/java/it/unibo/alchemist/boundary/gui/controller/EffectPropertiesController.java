@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import javafx.scene.control.*;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,14 +56,19 @@ public class EffectPropertiesController implements Initializable {
     private static final Logger L = LoggerFactory.getLogger(EffectPropertiesController.class);
 
     @FXML
+    @Nullable
     private BorderPane effectsPane; // Value injected by FXMLLoader
     @FXML
+    @Nullable
     private ButtonBar topBar; // Value injected by FXMLLoader
     @FXML
+    @Nullable
     private JFXButton backToEffects; // Value injected by FXMLLoader
     @FXML
+    @Nullable
     private Label effectName; // Value injected by FXMLLoader
     @FXML
+    @Nullable
     private VBox mainBox; // Value injected by FXMLLoader
 
     private final EffectFX effect;

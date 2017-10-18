@@ -24,6 +24,7 @@ import java.io.Serializable;
  * It's possible to set the size of the dots.
  */
 public class DrawDot implements EffectFX {
+
     /**
      * Magic number used by auto-generated {@link #hashCode()} method.
      */

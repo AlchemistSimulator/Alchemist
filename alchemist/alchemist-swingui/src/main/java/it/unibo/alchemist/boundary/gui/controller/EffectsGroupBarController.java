@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.apache.commons.io.FilenameUtils;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,12 +58,16 @@ public class EffectsGroupBarController implements Initializable {
     private static final Logger L = LoggerFactory.getLogger(EffectsGroupBarController.class);
 
     @FXML
+    @Nullable
     private JFXButton save; // Value injected by FXMLLoader
     @FXML
+    @Nullable
     private JFXButton load; // Value injected by FXMLLoader
     @FXML
+    @Nullable
     private JFXButton addGroup; // Value injected by FXMLLoader
     @FXML
+    @Nullable
     private ListView<EffectGroup> effectGroupsList; // Value injected by FXMLLoader
 
     private ObservableList<EffectGroup> observableEffectsList;

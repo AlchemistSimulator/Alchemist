@@ -39,9 +39,4 @@ public class FXMapDisplay<T> extends AbstractFXDisplay<T> implements FX2DOutputM
         assert center.getDimensions() == 2;
         getWormhole().zoomOnPoint(getWormhole().getViewPoint(center), zoomLevel);
     }
-
-    @Override
-    protected Logger getLogger() {
-        return FXMapDisplay.L;
-    }
 }

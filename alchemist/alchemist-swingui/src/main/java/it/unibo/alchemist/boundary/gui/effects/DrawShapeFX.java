@@ -794,6 +794,7 @@ public class DrawShapeFX implements EffectFX {
      *
      * @param stream the input stream
      */
+    @SuppressWarnings("unchecked")
     private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         mode = (SerializableEnumProperty<ModeFX>) stream.readObject();
         red = (RangedDoubleProperty) stream.readObject();

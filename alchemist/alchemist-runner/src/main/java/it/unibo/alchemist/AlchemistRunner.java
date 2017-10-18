@@ -5,7 +5,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import it.unibo.alchemist.boundary.gui.effects.DrawDot;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
+import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
+import it.unibo.alchemist.boundary.gui.effects.EffectStack;
 import it.unibo.alchemist.boundary.gui.view.SingleRunAppBuilder;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
@@ -37,7 +40,7 @@ import java.util.stream.Stream;
 
 /**
  * Starts Alchemist.
- * 
+ *
  * @param <T> the concentration type
  */
 public final class AlchemistRunner<T> {
@@ -112,7 +115,7 @@ public final class AlchemistRunner<T> {
              * Batch mode
              */
             final Map<String, Variable<?>> simVars = getVariables();
-            for (final String s: variables) {
+            for (final String s : variables) {
                 if (!simVars.containsKey(s)) {
                     throw new IllegalArgumentException("Variable " + s + " is not allowed. Valid variables are: " + simVars.keySet());
                 }
@@ -120,17 +123,17 @@ public final class AlchemistRunner<T> {
             final ExecutorService executor = Executors.newFixedThreadPool(parallelism, THREAD_FACTORY);
             final Optional<Long> start = Optional.ofNullable(doBenchmark ? System.nanoTime() : null);
             final Stream<Future<Optional<Throwable>>> futureErrors = prepareSimulations(sim -> {
-                        if (sim.getEnvironment() instanceof BenchmarkableEnvironment) {
-                            for (final Extractor e : loader.getDataExtractors()) {
-                                if (e instanceof EnvPerformanceStats) {
-                                    ((BenchmarkableEnvironment<?>) (sim.getEnvironment())).enableBenchmark();
-                                }
-                            }
+                if (sim.getEnvironment() instanceof BenchmarkableEnvironment) {
+                    for (final Extractor e : loader.getDataExtractors()) {
+                        if (e instanceof EnvPerformanceStats) {
+                            ((BenchmarkableEnvironment<?>) (sim.getEnvironment())).enableBenchmark();
                         }
-                        sim.play();
-                        sim.run();
-                        return sim.getError();
-                    }, variables)
+                    }
+                }
+                sim.play();
+                sim.run();
+                return sim.getError();
+            }, variables)
                     .map(executor::submit);
             final Queue<Future<Optional<Throwable>>> allErrors = futureErrors.collect(Collectors.toCollection(LinkedList::new));
             while (!(exception.isPresent() || allErrors.isEmpty())) {
@@ -163,27 +166,30 @@ public final class AlchemistRunner<T> {
             Optional<Throwable> localEx = Optional.empty();
             try {
                 localEx = prepareSimulations(sim -> {
-                            final boolean onHeadlessEnvironment = GraphicsEnvironment.isHeadless();
-                            if (!headless && onHeadlessEnvironment) {
-                                L.error("Could not initialize the UI (the graphics environment is headless). Falling back to headless mode.");
-                            }
-                            if (headless || onHeadlessEnvironment) {
-                                sim.play();
-                            } else {
+                    final boolean onHeadlessEnvironment = GraphicsEnvironment.isHeadless();
+                    if (!headless && onHeadlessEnvironment) {
+                        L.error("Could not initialize the UI (the graphics environment is headless). Falling back to headless mode.");
+                    }
+                    if (headless || onHeadlessEnvironment) {
+                        sim.play();
+                    } else {
 //                                if (effectsFile.isPresent()) {
 //                                    SingleRunGUI.make(sim, effectsFile.get(), closeOperation);
 //                                } else {
 //                                    SingleRunGUI.make(sim, closeOperation);
 //                                }
 
-                                // TODO check
-                                final SingleRunAppBuilder builder = new SingleRunAppBuilder<>(sim).setDefaultOnCloseOperation(closeOperation);
-                                effectsFile.ifPresent(builder::addEffectGroup);
-                                builder.build();
-                            }
-                            sim.run();
-                            return sim.getError();
-                        }, variables).findAny().get().call();
+                        // TODO check
+                        final SingleRunAppBuilder builder = new SingleRunAppBuilder<>(sim);
+                        effectsFile.ifPresent(builder::addEffectGroup);
+                        final EffectGroup defaultEffects = new EffectStack("Default effects");
+                        defaultEffects.add(new DrawDot());
+                        builder.addEffectGroup(defaultEffects);
+                        builder.build();
+                    }
+                    sim.run();
+                    return sim.getError();
+                }, variables).findAny().get().call();
             } catch (final Exception e) {
                 localEx = Optional.of(e);
             }
@@ -211,36 +217,36 @@ public final class AlchemistRunner<T> {
         return (varStreams.isEmpty()
                 ? ImmutableList.of(ImmutableList.<Entry<String, Double>>of())
                 : Lists.cartesianProduct(varStreams)).stream()
-            .map(vars -> ImmutableMap.copyOf(vars))
-            .map(vars -> () -> {
-                final Environment<T> env = loader.getWith(vars);
-                final Simulation<T> sim = new Engine<>(env, endStep, endTime);
-                outputMonitors.stream().map(Supplier::get).forEach(sim::addOutputMonitor);
-                if (exportFileRoot.isPresent()) {
-                    final String filename = exportFileRoot.get() + (vars.isEmpty() ? "" : "_" + vars.entrySet().stream()
+                .map(vars -> ImmutableMap.copyOf(vars))
+                .map(vars -> () -> {
+                    final Environment<T> env = loader.getWith(vars);
+                    final Simulation<T> sim = new Engine<>(env, endStep, endTime);
+                    outputMonitors.stream().map(Supplier::get).forEach(sim::addOutputMonitor);
+                    if (exportFileRoot.isPresent()) {
+                        final String filename = exportFileRoot.get() + (vars.isEmpty() ? "" : "_" + vars.entrySet().stream()
                                 .map(e -> e.getKey() + '-' + e.getValue())
                                 .collect(Collectors.joining("_")))
-                            + ".txt";
+                                + ".txt";
                     /*
                      * Make the header: get all the default values and
                      * substitute those that are different in this run
                      */
-                    final Map<String, Object> defaultVars = loader.getVariables().entrySet().stream()
-                            .collect(Collectors.toMap(Entry::getKey, e -> e.getValue().getDefault()));
-                    defaultVars.putAll(vars);
-                    final String header = vars.entrySet().stream()
-                            .map(e -> e.getKey() + " = " + e.getValue())
-                            .collect(Collectors.joining(", "));
-                    try {
-                        final Exporter<T> exp = new Exporter<>(filename, samplingInterval, header, loader.getDataExtractors());
-                        sim.addOutputMonitor(exp);
-                    } catch (final FileNotFoundException e) {
-                        throw new IllegalStateException(e);
+                        final Map<String, Object> defaultVars = loader.getVariables().entrySet().stream()
+                                .collect(Collectors.toMap(Entry::getKey, e -> e.getValue().getDefault()));
+                        defaultVars.putAll(vars);
+                        final String header = vars.entrySet().stream()
+                                .map(e -> e.getKey() + " = " + e.getValue())
+                                .collect(Collectors.joining(", "));
+                        try {
+                            final Exporter<T> exp = new Exporter<>(filename, samplingInterval, header, loader.getDataExtractors());
+                            sim.addOutputMonitor(exp);
+                        } catch (final FileNotFoundException e) {
+                            throw new IllegalStateException(e);
+                        }
                     }
-                }
-                return finalizer.apply(sim);
-            });
-        }
+                    return finalizer.apply(sim);
+                });
+    }
 
     /**
      * Builder class for {@link AlchemistRunner} instances.
@@ -248,6 +254,8 @@ public final class AlchemistRunner<T> {
      * @param <T> concentration type
      */
     public static class Builder<T> {
+        private final Loader loader;
+        private final Collection<Supplier<OutputMonitor<T>>> outputMonitors = new LinkedList<>();
         private boolean benchmark;
         private int closeOperation;
         private Optional<String> effectsFile = Optional.empty();
@@ -255,8 +263,6 @@ public final class AlchemistRunner<T> {
         private Time endTime = DoubleTime.INFINITE_TIME;
         private Optional<String> exportFileRoot = Optional.empty();
         private boolean headless;
-        private final Loader loader;
-        private final Collection<Supplier<OutputMonitor<T>>> outputMonitors = new LinkedList<>();
         private int parallelism = Runtime.getRuntime().availableProcessors() + 1;
         private double samplingInt = 1;
 

@@ -1,0 +1,16 @@
+incarnation: protelis
+network-model:
+  type: EuclideanDistance
+  parameters: [10]
+displacements:
+  - in:
+      type: Circle
+      parameters: [500, 0, 0, 50]
+    programs: 
+      - # This list of lists seems useless, it actually makes sense when you use YAML anchors
+        # Round frequency (advanced distributions can be used with the time/parameters syntax)
+        - time-distribution: 1
+          # This is the program we want to execute locally
+          program: 0 
+          # This tells the simulator to share the results of the last computation. No time distribution has ``as soon as possible'' semantics (Markovian event with inifinite rate). The separation is useful in case the user wants to simulate a delay between the computation and the delivery of messages, e.g. to simulate network delays, or a battery saving policy on the wireless modules.
+        - program: send

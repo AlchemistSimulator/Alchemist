@@ -216,7 +216,7 @@ public class SingleRunApp<T> extends Application {
             optDisplayMonitor.ifPresent(d -> d.setEffects(effectGroups));
             this.buttonsBarController = new ButtonsBarController();
 
-            optSim.ifPresent(s -> this.buttonsBarController.getStartStopButton().setOnAction(e -> {
+            optSim.ifPresent(s -> this.buttonsBarController.setStartStopButton(e -> {
                 if (s.getStatus().equals(Status.RUNNING)) {
                     s.pause();
                 } else {

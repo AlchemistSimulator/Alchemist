@@ -8,9 +8,10 @@ import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
@@ -19,9 +20,11 @@ import jiconfont.icons.GoogleMaterialDesignIcons;
 import jiconfont.javafx.IconNode;
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.PopOver.ArrowLocation;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
@@ -39,29 +42,44 @@ public class ButtonsBarController implements Initializable {
     private final IconNode pan;
     private final IconNode select;
     private final IconNode fullscreen;
+
     // FXML components
     @FXML
+    @Nullable
     private BorderPane controlPane; // Value injected by FXMLLoader
     @FXML
+    @Nullable
     private ButtonBar controlBar; // Value injected by FXMLLoader
     @FXML
+    @Nullable
     private JFXButton effectsButton; // Value injected by FXMLLoader
     @FXML
+    @Nullable
     private JFXButton startStopButton; // Value injected by FXMLLoader
     @FXML
+    @Nullable
     private Label timeLabel; // Value injected by FXMLLoader
     @FXML
+    @Nullable
     private Label stepLabel; // Value injected by FXMLLoader
     @FXML
+    @Nullable
     private JFXSlider speedSlider; // Value injected by FXMLLoader
     @FXML
+    @Nullable
     private JFXButton controlType; // Value injected by FXMLLoader
     @FXML
+    @Nullable
     private JFXButton fullscreenToggle; // Value injected by FXMLLoader
     @FXML
+    @Nullable
     private JFXDrawersStack drawerStack; // Value injected by FXMLLoader
     // Other
     private EffectsGroupBarController effectsGroupBarController;
+
+    // Handlers
+    @Nullable
+    private EventHandler<ActionEvent> startStopHandler;
 
     /**
      * Default constructor.
@@ -100,6 +118,7 @@ public class ButtonsBarController implements Initializable {
                 // TODO stop the simulation
             }
         });
+        Optional.ofNullable(startStopHandler).ifPresent(startStopButton::setOnAction);
 
         final JFXDrawer effectGroupsDrawer = new JFXDrawer();
         effectsGroupBarController = new EffectsGroupBarController(this.drawerStack);
@@ -149,7 +168,7 @@ public class ButtonsBarController implements Initializable {
         try {
             controlTypePopOver.setContentNode(FXResourceLoader.getLayout(AnchorPane.class, controlTypePopoverController,
                     ControlTypePopoverController.CONTROL_TYPE_POPOVER_LAYOUT));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new IllegalStateException("Could not initialize popover for control type change", e);
         }
         controlTypePopOver.setArrowLocation(ArrowLocation.BOTTOM_CENTER);
@@ -162,13 +181,9 @@ public class ButtonsBarController implements Initializable {
         });
     }
 
-    /**
-     * Getter method for the button that should start and stop the simulation.
-     *
-     * @return the start/stop button
-     */
-    public Button getStartStopButton() {
-        return this.startStopButton;
+    public void setStartStopButton(final EventHandler<ActionEvent> handler) {
+        this.startStopHandler = handler;
+        Optional.ofNullable(startStopButton).ifPresent(b -> b.setOnAction(handler));
     }
 
     /**

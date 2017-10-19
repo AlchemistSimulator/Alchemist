@@ -1,4 +1,4 @@
-package it.unibo.alchemist.boundary.monitors;
+package it.unibo.alchemist.boundary.monitor;
 
 import it.unibo.alchemist.boundary.interfaces.FX2DOutputMonitor;
 import it.unibo.alchemist.model.interfaces.Concentration;

@@ -51,6 +51,7 @@ import java.util.stream.Collectors;
  *
  * @param <T> the {@link Concentration} type
  */
+@Deprecated
 public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMonitor<T> {
 
     /**

@@ -10,6 +10,7 @@ dependencies {
         project(':alchemist-incarnation-sapere'),
         project(':alchemist-incarnation-biochemistry')
     )
+    compile 'org.eclipse.xtend:org.eclipse.xtend.lib:2.10.0'
 }
 import org.gradle.plugins.ide.eclipse.model.AccessRule
 

@@ -1,4 +1,4 @@
-package it.unibo.alchemist.boundary.monitors;
+package it.unibo.alchemist.boundary.monitor;
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -6,10 +6,10 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import javafx.scene.control.Label;
 
-public class FXStepMonitor<T> extends Label implements OutputMonitor<T> {
+public class FXTimeMonitor<T> extends Label implements OutputMonitor<T> {
     // TODO
 
-    public FXStepMonitor() {
+    public FXTimeMonitor() {
         // TODO
     }
 

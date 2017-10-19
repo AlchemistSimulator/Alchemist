@@ -6,6 +6,7 @@ import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
+import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -110,12 +111,13 @@ public class DrawDot implements EffectFX {
         environment.forEach(node -> {
             final double sizeX = size.get();
             final double startX = wormhole.getViewPoint(environment.getPosition(node)).getX() - sizeX / 2;
-            final double sizeY = FastMath.ceil(sizeX * DEFAULT_SCALE);
+            final double sizeY = /*FastMath.ceil(sizeX * DEFAULT_SCALE)*/ size.get();
             final double startY = wormhole.getViewPoint(environment.getPosition(node)).getY() - sizeY / 2;
 
-            graphic.setFill(color);
-            graphic.fillOval((int) startX, (int) startY, (int) sizeX, (int) sizeY);
-//            graphic.fill();
+            Platform.runLater(() ->{
+                graphic.setFill(color);
+                graphic.fillOval((int) startX, (int) startY, (int) sizeX, (int) sizeY);
+            });
         });
     }
 

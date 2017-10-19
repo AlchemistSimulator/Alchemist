@@ -35,6 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @param <T> the {@link Concentration} type
  */
+@Deprecated
 public class MapDisplay<T> extends Generic2DDisplay<T> {
     private static final long serialVersionUID = 8593507198560560646L;
     private static final GraphicFactory GRAPHIC_FACTORY = AwtGraphicFactory.INSTANCE;

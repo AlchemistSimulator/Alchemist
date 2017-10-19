@@ -1,6 +1,7 @@
-package it.unibo.alchemist.boundary.monitors;
+package it.unibo.alchemist.boundary.monitor;
 
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
+import it.unibo.alchemist.boundary.gui.view.ResizableCanvas;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
 import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D;
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;

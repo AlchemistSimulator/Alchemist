@@ -1,23 +1,13 @@
 package it.unibo.alchemist.boundary.gui.view;
 
 import com.sun.javafx.application.PlatformImpl;
-import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
-import it.unibo.alchemist.boundary.monitors.FX2DDisplay;
-import it.unibo.alchemist.boundary.monitors.FXMapDisplay;
-import it.unibo.alchemist.boundary.monitors.FXStepMonitor;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Label;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;

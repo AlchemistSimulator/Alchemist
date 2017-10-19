@@ -6,7 +6,7 @@ import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
-import it.unibo.alchemist.boundary.monitors.*;
+import it.unibo.alchemist.boundary.monitor.*;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
 import it.unibo.alchemist.model.interfaces.Concentration;
@@ -203,7 +203,11 @@ public class SingleRunApp<T> extends Application {
         try {
             rootLayout = FXResourceLoader.getLayout(AnchorPane.class, this, ROOT_LAYOUT);
             final StackPane main = (StackPane) rootLayout.getChildren().get(0);
-            optDisplayMonitor.ifPresent(main.getChildren()::add);
+            optDisplayMonitor.ifPresent(dm -> {
+                dm.widthProperty().bind(main.widthProperty());
+                dm.heightProperty().bind(main.heightProperty());
+                main.getChildren().add(dm);
+            });
             this.stepMonitor = new FXStepMonitor<>();
             main.getChildren().add(this.stepMonitor);
             this.timeMonitor = new FXTimeMonitor<>();

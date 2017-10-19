@@ -185,8 +185,6 @@ public class SingleRunApp<T> extends Application {
         parseUnnamedParams(getUnnamedParams());
 
         final Optional<Simulation<T>> optSim = Optional.ofNullable(this.simulation);
-        final Optional<AbstractFXDisplay> optDisplayMonitor = Optional.ofNullable(this.displayMonitor);
-
         optSim.ifPresent(sim -> {
             try {
                 initDisplayMonitor(
@@ -199,6 +197,7 @@ public class SingleRunApp<T> extends Application {
                 throw new IllegalArgumentException(exception);
             }
         });
+        final Optional<AbstractFXDisplay> optDisplayMonitor = Optional.ofNullable(this.displayMonitor);
 
         final Pane rootLayout;
         try {

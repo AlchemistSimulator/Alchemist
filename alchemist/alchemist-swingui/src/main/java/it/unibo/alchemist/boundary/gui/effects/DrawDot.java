@@ -115,6 +115,7 @@ public class DrawDot implements EffectFX {
 
             graphic.setFill(color);
             graphic.fillOval((int) startX, (int) startY, (int) sizeX, (int) sizeY);
+//            graphic.fill();
         });
     }
 

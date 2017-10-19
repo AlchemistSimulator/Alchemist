@@ -69,7 +69,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      */
     public AbstractFXDisplay(final int steps) {
         super();
-        this.firstTime = false;
+        this.firstTime = true;
         this.realTime = false;
         this.effectStack = new ArrayList<>();
         setStyle("-fx-background-color: #FFF;");

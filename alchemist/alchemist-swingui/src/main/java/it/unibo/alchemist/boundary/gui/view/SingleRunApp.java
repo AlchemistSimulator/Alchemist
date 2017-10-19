@@ -12,6 +12,7 @@ import it.unibo.alchemist.core.interfaces.Status;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -190,8 +191,8 @@ public class SingleRunApp<T> extends Application {
             try {
                 initDisplayMonitor(
                         MapEnvironment.class.isAssignableFrom(Class.forName(sim.getEnvironment().getClass().getName()))
-                                ? FX2DDisplay.class.getName()
-                                : FXMapDisplay.class.getName()
+                                ? FXMapDisplay.class.getName()
+                                : FX2DDisplay.class.getName()
                 );
             } catch (final ClassCastException | ClassNotFoundException exception) {
                 L.error("Display monitor not valid");
@@ -225,6 +226,11 @@ public class SingleRunApp<T> extends Application {
             }));
             main.getChildren().add(FXResourceLoader.getLayout(BorderPane.class, buttonsBarController, BUTTONS_BAR_LAYOUT));
 
+            primaryStage.setTitle("Alchemist Simulation");
+            primaryStage.setOnCloseRequest(e -> {
+                Platform.exit();
+                System.exit(0);
+            });
             primaryStage.getIcons().add(SVGImageUtils.getSvgImage("/icon/icon.svg"));
             primaryStage.setScene(new Scene(rootLayout));
 

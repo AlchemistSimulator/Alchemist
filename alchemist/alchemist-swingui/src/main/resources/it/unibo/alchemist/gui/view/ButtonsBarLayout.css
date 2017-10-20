@@ -10,6 +10,13 @@ ButtonBar {
 
 JFXButton, Label {
     -fx-background-color: transparent;
+    -fx-alignment: center;
+    -fx-content-display: center;
+    -fx-text-alignment: center;
+    -fx-mnemonic-parsing: false;
+    -fx-wrap-text: true;
+    -fx-rippler-fill: white;
+    -fx-text-fill: white;
     -fx-padding: 0.0;
     -fx-background-size: 0.0;
     -fx-min-height: 3.08em;

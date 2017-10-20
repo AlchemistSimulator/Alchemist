@@ -8,6 +8,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
+import javafx.scene.paint.Color;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
@@ -36,6 +37,7 @@ public class FXStepMonitor<T> extends Label implements OutputMonitor<T> {
      */
     public FXStepMonitor(final @Nullable Simulation<T> simulation) {
         setSimulation(simulation);
+        setTextFill(Color.WHITE);
         setShownText();
     }
 

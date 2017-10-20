@@ -8,6 +8,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
+import javafx.scene.paint.Color;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
@@ -73,6 +74,7 @@ public class FXTimeMonitor<T> extends Label implements OutputMonitor<T> {
     @Override
     public void stepDone(final Environment<T> env, final Reaction<T> r, final Time time, final long step) {
         setSimulation(env.getSimulation());
+        setTextFill(Color.WHITE);
         setShownText(time.toDouble());
     }
 

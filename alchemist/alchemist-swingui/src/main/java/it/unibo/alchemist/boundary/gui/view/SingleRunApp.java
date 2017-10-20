@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -71,7 +72,7 @@ public class SingleRunApp<T> extends Application {
     @Nullable
     private AbstractFXDisplay<T> displayMonitor;
 
-    private StatusMonitor<T> statusMonitor;
+    private PlayPauseMonitor<T> playPauseMonitor;
     private FXTimeMonitor<T> timeMonitor;
     private FXStepMonitor<T> stepMonitor;
     private ButtonsBarController buttonsBarController;
@@ -212,22 +213,25 @@ public class SingleRunApp<T> extends Application {
             });
             this.timeMonitor = new FXTimeMonitor<>(simulation);
             this.stepMonitor = new FXStepMonitor<>(simulation);
-            this.statusMonitor = new StatusMonitor<>(simulation);
+            this.playPauseMonitor = new PlayPauseMonitor<>(simulation);
 
             optSim.ifPresent(s -> {
                 optDisplayMonitor.ifPresent(s::addOutputMonitor);
-                s.addOutputMonitor(this.statusMonitor);
+                s.addOutputMonitor(this.playPauseMonitor);
                 s.addOutputMonitor(this.timeMonitor);
                 s.addOutputMonitor(this.stepMonitor);
             });
             optDisplayMonitor.ifPresent(d -> d.setEffects(effectGroups));
             this.buttonsBarController = new ButtonsBarController();
 
-            buttonsBarController.setStartStopButton(statusMonitor);
+            buttonsBarController.setStartStopButton(playPauseMonitor);
             buttonsBarController.setTimeMonitor(timeMonitor);
             buttonsBarController.setStepMonitor(stepMonitor);
 
-            main.getChildren().add(FXResourceLoader.getLayout(BorderPane.class, buttonsBarController, BUTTONS_BAR_LAYOUT));
+            final BorderPane bar = FXResourceLoader.getLayout(BorderPane.class, buttonsBarController, BUTTONS_BAR_LAYOUT);
+            main.widthProperty().addListener((observable, oldValue, newValue) -> bar.setPrefWidth(newValue.doubleValue()));
+
+            main.getChildren().add(bar);
 
             primaryStage.setTitle("Alchemist Simulation");
             primaryStage.setOnCloseRequest(e -> {
@@ -241,7 +245,7 @@ public class SingleRunApp<T> extends Application {
             primaryStage.show();
         } catch (final IOException e) {
             L.error("I/O Exception loading FXML layout files", e);
-            throw new IllegalStateException(e);
+            throw new UncheckedIOException(e);
         }
     }
 

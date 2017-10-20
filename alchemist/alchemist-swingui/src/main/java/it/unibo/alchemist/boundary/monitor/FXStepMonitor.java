@@ -2,6 +2,7 @@ package it.unibo.alchemist.boundary.monitor;
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
@@ -11,6 +12,11 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.Optional;
 
+/**
+ * {@code OutputMonitor} that monitors the current {@link Simulation#getStep() steps} of the {@code Simulation}.
+ *
+ * @param <T> the {@link Concentration} type
+ */
 public class FXStepMonitor<T> extends Label implements OutputMonitor<T> {
     private static final long DEFAULT_STEP = 0;
     private WeakReference<Simulation<T>> simulation;

@@ -4,6 +4,7 @@ import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
+import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
@@ -15,8 +16,21 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.Optional;
 
+/**
+ * {@code OutputMonitor} that monitors the current {@link Status status} of the {@code Simulation}, acting as a toggle to
+ * {@link Simulation#play() play} and {@link Simulation#pause() pause} the {@code Simulation}.
+ *
+ * @param <T> the {@link Concentration} type
+ */
 public class StatusMonitor<T> extends Button implements OutputMonitor<T> {
+    /**
+     * Default {@link Status#READY ready} or {@link Status#PAUSED paused} icon.
+     */
     private static final IconNode PLAY_ICON = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.PLAY_ARROW);
+
+    /**
+     * Default {@link Status#RUNNING running} icon.
+     */
     private static final IconNode PAUSE_ICON = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.PAUSE);
 
     private WeakReference<Simulation<T>> simulation;
@@ -46,10 +60,10 @@ public class StatusMonitor<T> extends Button implements OutputMonitor<T> {
      */
     private void playPause(final Simulation<T> simulation) {
         Optional.ofNullable(getSimulation()).ifPresent(s -> {
-            if (s.getStatus() == Status.PAUSED) {
-                s.play();
-            } else {
+            if (s.getStatus() == Status.RUNNING) {
                 s.pause();
+            } else {
+                s.play();
             }
             setIcon();
         });
@@ -104,7 +118,7 @@ public class StatusMonitor<T> extends Button implements OutputMonitor<T> {
         final Optional<Simulation<T>> sim = Optional.ofNullable(simulation.get());
 
         if (sim.isPresent()) {
-            setGraphic(sim.get().getStatus() == Status.PAUSED ? PAUSE_ICON : PLAY_ICON);
+            setGraphic(sim.get().getStatus() == Status.RUNNING ? PLAY_ICON : PAUSE_ICON);
         } else {
             setGraphic(PLAY_ICON);
         }

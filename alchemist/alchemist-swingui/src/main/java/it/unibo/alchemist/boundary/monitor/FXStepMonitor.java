@@ -6,6 +6,7 @@ import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+import javafx.application.Platform;
 import javafx.scene.control.Label;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,7 +82,7 @@ public class FXStepMonitor<T> extends Label implements OutputMonitor<T> {
      * @param step the simulation step to show
      */
     private void setShownText(final long step) {
-        setText(String.valueOf(step));
+        Platform.runLater(() -> setText(String.valueOf(step)));
     }
 
     /**

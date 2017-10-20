@@ -9,6 +9,7 @@ import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+import javafx.application.Platform;
 import javafx.scene.control.Button;
 import jiconfont.icons.GoogleMaterialDesignIcons;
 import jiconfont.javafx.IconNode;
@@ -119,10 +120,12 @@ public class StatusMonitor<T> extends JFXButton implements OutputMonitor<T> {
     private void setIcon() {
         final Optional<Simulation<T>> sim = Optional.ofNullable(simulation.get());
 
-        if (sim.isPresent()) {
-            setGraphic(sim.get().getStatus() == Status.RUNNING ? PLAY_ICON : PAUSE_ICON);
-        } else {
-            setGraphic(PLAY_ICON);
-        }
+        Platform.runLater(() -> {
+            if (sim.isPresent()) {
+                setGraphic(sim.get().getStatus() == Status.RUNNING ? PLAY_ICON : PAUSE_ICON);
+            } else {
+                setGraphic(PLAY_ICON);
+            }
+        });
     }
 }

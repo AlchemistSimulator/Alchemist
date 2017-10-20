@@ -6,6 +6,7 @@ import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+import javafx.application.Platform;
 import javafx.scene.control.Label;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,7 +82,7 @@ public class FXTimeMonitor<T> extends Label implements OutputMonitor<T> {
      * @param time the simulation time to show
      */
     private void setShownText(final double time) {
-        setText(String.valueOf(time));
+        Platform.runLater(() -> setText(String.valueOf(time)));
     }
 
     /**

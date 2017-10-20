@@ -8,7 +8,6 @@ import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.boundary.monitor.*;
 import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.core.interfaces.Status;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import javafx.application.Application;
@@ -19,6 +18,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +37,7 @@ import static it.unibo.alchemist.boundary.gui.controller.ButtonsBarController.BU
  * @param <T> the {@link Concentration} type
  */
 public class SingleRunApp<T> extends Application {
+
     /**
      * Main layout without nested layouts. Must inject eventual other nested layouts.
      */
@@ -70,6 +71,7 @@ public class SingleRunApp<T> extends Application {
     @Nullable
     private AbstractFXDisplay<T> displayMonitor;
 
+    private StatusMonitor<T> statusMonitor;
     private FXTimeMonitor<T> timeMonitor;
     private FXStepMonitor<T> stepMonitor;
     private ButtonsBarController buttonsBarController;
@@ -208,25 +210,23 @@ public class SingleRunApp<T> extends Application {
                 dm.heightProperty().bind(main.heightProperty());
                 main.getChildren().add(dm);
             });
-            this.stepMonitor = new FXStepMonitor<>();
-            main.getChildren().add(this.stepMonitor);
-            this.timeMonitor = new FXTimeMonitor<>();
-            main.getChildren().add(this.timeMonitor);
+            this.timeMonitor = new FXTimeMonitor<>(simulation);
+            this.stepMonitor = new FXStepMonitor<>(simulation);
+            this.statusMonitor = new StatusMonitor<>(simulation);
+
             optSim.ifPresent(s -> {
                 optDisplayMonitor.ifPresent(s::addOutputMonitor);
+                s.addOutputMonitor(this.statusMonitor);
                 s.addOutputMonitor(this.timeMonitor);
                 s.addOutputMonitor(this.stepMonitor);
             });
             optDisplayMonitor.ifPresent(d -> d.setEffects(effectGroups));
             this.buttonsBarController = new ButtonsBarController();
 
-            optSim.ifPresent(s -> this.buttonsBarController.setStartStopButton(e -> {
-                if (s.getStatus().equals(Status.RUNNING)) {
-                    s.pause();
-                } else {
-                    s.play();
-                }
-            }));
+            buttonsBarController.setStartStopButton(statusMonitor);
+            buttonsBarController.setTimeMonitor(timeMonitor);
+            buttonsBarController.setStepMonitor(stepMonitor);
+
             main.getChildren().add(FXResourceLoader.getLayout(BorderPane.class, buttonsBarController, BUTTONS_BAR_LAYOUT));
 
             primaryStage.setTitle("Alchemist Simulation");
@@ -299,6 +299,7 @@ public class SingleRunApp<T> extends Application {
      *                                  or the {@link AbstractFXDisplay} does not have a 0 arguments constructor
      * @see Class#forName(String)
      */
+    @Contract("null -> fail")
     @SuppressWarnings("unchecked")
     private void initDisplayMonitor(final String className) {
         if (className == null || className.equals("")) {

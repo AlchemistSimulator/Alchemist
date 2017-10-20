@@ -8,10 +8,10 @@ import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
@@ -24,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
@@ -37,8 +36,6 @@ public class ButtonsBarController implements Initializable {
     public static final String BUTTONS_BAR_LAYOUT = "ButtonsBarLayout";
     private static final double DEFAULT_DRAWER_FRACTION = 4;
     // Icons
-    private final IconNode play;
-    private final IconNode pause;
     private final IconNode pan;
     private final IconNode select;
     private final IconNode fullscreen;
@@ -55,15 +52,6 @@ public class ButtonsBarController implements Initializable {
     private JFXButton effectsButton; // Value injected by FXMLLoader
     @FXML
     @Nullable
-    private JFXButton startStopButton; // Value injected by FXMLLoader
-    @FXML
-    @Nullable
-    private Label timeLabel; // Value injected by FXMLLoader
-    @FXML
-    @Nullable
-    private Label stepLabel; // Value injected by FXMLLoader
-    @FXML
-    @Nullable
     private JFXSlider speedSlider; // Value injected by FXMLLoader
     @FXML
     @Nullable
@@ -74,12 +62,16 @@ public class ButtonsBarController implements Initializable {
     @FXML
     @Nullable
     private JFXDrawersStack drawerStack; // Value injected by FXMLLoader
-    // Other
-    private EffectsGroupBarController effectsGroupBarController;
 
-    // Handlers
+    // Other
     @Nullable
-    private EventHandler<ActionEvent> startStopHandler;
+    private Button startStopButton;
+    @Nullable
+    private Label timeLabel;
+    @Nullable
+    private Label stepLabel;
+
+    private EffectsGroupBarController effectsGroupBarController;
 
     /**
      * Default constructor.
@@ -87,8 +79,6 @@ public class ButtonsBarController implements Initializable {
     public ButtonsBarController() {
         super();
 
-        play = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.PLAY_ARROW);
-        pause = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.PAUSE);
         pan = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.PAN_TOOL);
         select = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.TAB_UNSELECTED);
         fullscreen = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.FULLSCREEN);
@@ -99,26 +89,12 @@ public class ButtonsBarController implements Initializable {
         assert controlPane != null : FXResourceLoader.getInjectionErrorMessage("controlPane", BUTTONS_BAR_LAYOUT);
         assert controlBar != null : FXResourceLoader.getInjectionErrorMessage("controlBar", BUTTONS_BAR_LAYOUT);
         assert effectsButton != null : FXResourceLoader.getInjectionErrorMessage("effectsButton", BUTTONS_BAR_LAYOUT);
-        assert startStopButton != null : FXResourceLoader.getInjectionErrorMessage("startStopButton", BUTTONS_BAR_LAYOUT);
-        assert timeLabel != null : FXResourceLoader.getInjectionErrorMessage("timeLabel", BUTTONS_BAR_LAYOUT);
-        assert stepLabel != null : FXResourceLoader.getInjectionErrorMessage("stepLabel", BUTTONS_BAR_LAYOUT);
         assert speedSlider != null : FXResourceLoader.getInjectionErrorMessage("speedSlider", BUTTONS_BAR_LAYOUT);
         assert controlType != null : FXResourceLoader.getInjectionErrorMessage("controlType", BUTTONS_BAR_LAYOUT);
         assert fullscreenToggle != null : FXResourceLoader.getInjectionErrorMessage("fullscreenToggle", BUTTONS_BAR_LAYOUT);
         assert drawerStack != null : FXResourceLoader.getInjectionErrorMessage("drawerStack", BUTTONS_BAR_LAYOUT);
 
-        startStopButton.setText("");
-        startStopButton.setGraphic(play);
-        startStopButton.setOnAction(e -> {
-            if (startStopButton.getGraphic().equals(play)) {
-                startStopButton.setGraphic(pause);
-                // TODO start the simulation
-            } else {
-                startStopButton.setGraphic(play);
-                // TODO stop the simulation
-            }
-        });
-        Optional.ofNullable(startStopHandler).ifPresent(startStopButton::setOnAction);
+        addMonitors();
 
         final JFXDrawer effectGroupsDrawer = new JFXDrawer();
         effectsGroupBarController = new EffectsGroupBarController(this.drawerStack);
@@ -181,9 +157,61 @@ public class ButtonsBarController implements Initializable {
         });
     }
 
-    public void setStartStopButton(final EventHandler<ActionEvent> handler) {
-        this.startStopHandler = handler;
-        Optional.ofNullable(startStopButton).ifPresent(b -> b.setOnAction(handler));
+    /**
+     * Sets the play/pause toggle.
+     *
+     * @param button the play/pause toggle button
+     */
+    public void setStartStopButton(final Button button) {
+        this.startStopButton = button;
+
+        if (this.controlBar != null && this.startStopButton != null) {
+            addMonitors();
+        }
+    }
+
+    /**
+     * Sets the time monitor label.
+     *
+     * @param timeMonitor the time monitor label
+     */
+    public void setTimeMonitor(final Label timeMonitor) {
+        this.timeLabel = timeMonitor;
+        addMonitors();
+    }
+
+    /**
+     * Adds all the monitors to the {@link ButtonBar}.
+     */
+    private void addMonitors() {
+        if (this.controlBar != null) {
+            final ObservableList<Node> buttons = this.controlBar.getButtons();
+
+            if (startStopButton != null && !buttons.contains(startStopButton)) {
+                ButtonBar.setButtonData(startStopButton, ButtonBar.ButtonData.LEFT);
+                buttons.add(startStopButton);
+            }
+
+            if (timeLabel != null && !buttons.contains(timeLabel)) {
+                ButtonBar.setButtonData(timeLabel, ButtonBar.ButtonData.LEFT);
+                buttons.add(timeLabel);
+            }
+
+            if (stepLabel != null && !buttons.contains(stepLabel)) {
+                ButtonBar.setButtonData(stepLabel, ButtonBar.ButtonData.LEFT);
+                buttons.add(stepLabel);
+            }
+        }
+    }
+
+    /**
+     * Sets the step monitor label.
+     *
+     * @param stepMonitor the step monitor label
+     */
+    public void setStepMonitor(final Label stepMonitor) {
+        this.stepLabel = stepMonitor;
+        addMonitors();
     }
 
     /**

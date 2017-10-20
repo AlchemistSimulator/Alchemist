@@ -1,5 +1,6 @@
 package it.unibo.alchemist.boundary.monitor;
 
+import com.jfoenix.controls.JFXButton;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -22,7 +23,8 @@ import java.util.Optional;
  *
  * @param <T> the {@link Concentration} type
  */
-public class StatusMonitor<T> extends Button implements OutputMonitor<T> {
+public class StatusMonitor<T> extends JFXButton implements OutputMonitor<T> {
+
     /**
      * Default {@link Status#READY ready} or {@link Status#PAUSED paused} icon.
      */

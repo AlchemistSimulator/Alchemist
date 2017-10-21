@@ -62,20 +62,36 @@ public class FXStepMonitor<T> extends Label implements OutputMonitor<T> {
 
     @Override
     public void finished(final Environment<T> env, final Time time, final long step) {
-        setSimulation(env.getSimulation());
-        setShownText(step);
+        update(env, step);
     }
 
     @Override
     public void initialized(final Environment<T> env) {
-        setSimulation(env.getSimulation());
-        setShownText();
+        update(env, null);
     }
 
     @Override
     public void stepDone(final Environment<T> env, final Reaction<T> r, final Time time, final long step) {
-        setSimulation(env.getSimulation());
-        setShownText(step);
+        update(env, step);
+    }
+
+    /**
+     * Updates the GUI.
+     *
+     * @param environment the {@code Environment} that provides data
+     * @param step        the current step; if null, it calls {@link #setShownText()}
+     */
+    private void update(final Environment<T> environment, final @Nullable Long step) {
+        final Simulation<T> sim = environment.getSimulation();
+        if (!sim.equals(getSimulation())) {
+            setSimulation(sim);
+        }
+
+        if (step == null) {
+            setShownText();
+        } else {
+            setShownText(step);
+        }
     }
 
     /**

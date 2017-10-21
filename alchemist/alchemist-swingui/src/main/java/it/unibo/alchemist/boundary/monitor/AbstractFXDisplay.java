@@ -242,8 +242,8 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
                     update(environment, time);
                 }
             }
-        } else if (this.step < 1 || step % this.step == 0) {
-            if (isRealTime()) {
+        } else /*if (this.step < 1 || step % this.step == 0)*/ {
+            /*if (isRealTime()) {
                 if (lastTime + TIME_STEP > time.toDouble()) {
                     return;
                 }
@@ -262,7 +262,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
 //                        getLogger().warn("Spurious wakeup"); // TODO load from ResourceBundle with ResourceLoader
                     }
                 }
-            }
+            }*/
             update(environment, time);
         }
 

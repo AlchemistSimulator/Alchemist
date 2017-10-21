@@ -37,6 +37,7 @@ public class FXTimeMonitor<T> extends Label implements OutputMonitor<T> {
      */
     public FXTimeMonitor(final @Nullable Simulation<T> simulation) {
         setSimulation(simulation);
+        setTextFill(Color.WHITE);
         setShownText();
     }
 
@@ -61,21 +62,36 @@ public class FXTimeMonitor<T> extends Label implements OutputMonitor<T> {
 
     @Override
     public void finished(final Environment<T> env, final Time time, final long step) {
-        setSimulation(env.getSimulation());
-        setShownText(step);
+        update(env, time);
     }
 
     @Override
     public void initialized(final Environment<T> env) {
-        setSimulation(env.getSimulation());
-        setShownText();
+        update(env, null);
     }
 
     @Override
     public void stepDone(final Environment<T> env, final Reaction<T> r, final Time time, final long step) {
-        setSimulation(env.getSimulation());
-        setTextFill(Color.WHITE);
-        setShownText(time.toDouble());
+        update(env, time);
+    }
+
+    /**
+     * Updates the GUI.
+     *
+     * @param environment the {@code Environment} that provides data
+     * @param time        the current time; if null, it calls {@link #setShownText()}
+     */
+    private void update(final Environment<T> environment, final @Nullable Time time) {
+        final Simulation<T> sim = environment.getSimulation();
+        if (!sim.equals(getSimulation())) {
+            setSimulation(sim);
+        }
+
+        if (time == null) {
+            setShownText();
+        } else {
+            setShownText(time.toDouble());
+        }
     }
 
     /**
@@ -94,7 +110,7 @@ public class FXTimeMonitor<T> extends Label implements OutputMonitor<T> {
         final Optional<Simulation<T>> sim = Optional.ofNullable(simulation.get());
 
         if (sim.isPresent()) {
-            setShownText(sim.get().getTime().toDouble());
+            setShownText(sim.get().getTime().toDouble() * 1000);
         } else {
             setShownText(DEFAULT_TIME);
         }

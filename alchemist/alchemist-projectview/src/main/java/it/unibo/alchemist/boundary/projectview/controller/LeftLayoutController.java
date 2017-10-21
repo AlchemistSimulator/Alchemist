@@ -67,11 +67,11 @@ public class LeftLayoutController implements Initializable {
 
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
-        this.run.setGraphic(new ImageView(SVGImageUtils.getSvgImage("icon/run.svg", RUN_WIDTH, RUN_HEIGHT)));
+        this.run.setGraphic(new ImageView(SVGImageUtils.getSvgImage("/icon/run.svg", RUN_WIDTH, RUN_HEIGHT)));
         this.run.setText(RESOURCES.getString("run"));
         this.run.setDisable(true);
-        this.folder = SVGImageUtils.getSvgImage("icon/folder.svg", TREE_ICON_WIDTH, TREE_ICON_HEIGHT);
-        this.file = SVGImageUtils.getSvgImage("icon/file.svg", TREE_ICON_WIDTH, TREE_ICON_HEIGHT);
+        this.folder = SVGImageUtils.getSvgImage("/icon/folder.svg", TREE_ICON_WIDTH, TREE_ICON_HEIGHT);
+        this.file = SVGImageUtils.getSvgImage("/icon/file.svg", TREE_ICON_WIDTH, TREE_ICON_HEIGHT);
     }
 
     /**
@@ -112,7 +112,7 @@ public class LeftLayoutController implements Initializable {
      */
     public void setTreeView(final File dir) {
         this.pathFolder = dir.getAbsolutePath();
-        final TreeItem<String> root = new TreeItem<>(dir.getName(), new ImageView(SVGImageUtils.getSvgImage("icon/project.svg", TREE_ICON_WIDTH, TREE_ICON_HEIGHT)));
+        final TreeItem<String> root = new TreeItem<>(dir.getName(), new ImageView(SVGImageUtils.getSvgImage("/icon/project.svg", TREE_ICON_WIDTH, TREE_ICON_HEIGHT)));
         root.setExpanded(true);
         this.treeView = new TreeView<>(root);
         displayProjectContent(dir, root);

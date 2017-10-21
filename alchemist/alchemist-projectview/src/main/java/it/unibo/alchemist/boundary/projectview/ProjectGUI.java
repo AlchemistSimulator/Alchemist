@@ -90,21 +90,25 @@ public class ProjectGUI extends Application {
             this.primaryStage.show();
         } else {
             final AnchorPane pane = loader.load();
-            if (layoutName.equals("TopLayout")) {
-                this.root.setTop(pane);
-                this.controllerTop = loader.getController();
-                this.controllerTop.setMain(this);
-                this.controllerTop.setCtrlLeft(this.controllerLeft);
-                this.controllerTop.setCtrlCenter(this.controllerCenter);
-            } else if (layoutName.equals("LeftLayout")) {
-                this.root.setLeft(pane);
-                this.controllerLeft = loader.getController();
-                this.controllerLeft.setMain(this);
-            } else {
-                this.root.setCenter(pane);
-                this.controllerCenter = loader.getController();
-                this.controllerCenter.setMain(this);
-                this.controllerCenter.setCtrlLeft(this.controllerLeft);
+            switch (layoutName) {
+                case "TopLayout":
+                    this.root.setTop(pane);
+                    this.controllerTop = loader.getController();
+                    this.controllerTop.setMain(this);
+                    this.controllerTop.setCtrlLeft(this.controllerLeft);
+                    this.controllerTop.setCtrlCenter(this.controllerCenter);
+                    break;
+                case "LeftLayout":
+                    this.root.setLeft(pane);
+                    this.controllerLeft = loader.getController();
+                    this.controllerLeft.setMain(this);
+                    break;
+                default:
+                    this.root.setCenter(pane);
+                    this.controllerCenter = loader.getController();
+                    this.controllerCenter.setMain(this);
+                    this.controllerCenter.setCtrlLeft(this.controllerLeft);
+                    break;
             }
             this.controllerLeft.setCtrlCenter(this.controllerCenter);
         }

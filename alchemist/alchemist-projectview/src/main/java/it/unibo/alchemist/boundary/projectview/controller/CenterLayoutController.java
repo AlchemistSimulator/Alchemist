@@ -167,14 +167,14 @@ public class CenterLayoutController implements Initializable {
 
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
-        this.img = SVGImageUtils.getSvgImage("icon/delete.svg", DELETE_WIDTH, DELETE_HEIGHT);
+        this.img = SVGImageUtils.getSvgImage("/icon/delete.svg", DELETE_WIDTH, DELETE_HEIGHT);
         this.imgViewYaml = new ImageView(img);
         this.imgViewEff = new ImageView(img);
         this.imgViewOut = new ImageView(img);
         this.grid.setDisable(true);
         this.addClass.setText(RESOURCES.getString("add"));
         this.baseNameOut.setText(RESOURCES.getString("base_name"));
-        this.batch.setGraphic(new ImageView(SVGImageUtils.getSvgImage("icon/batch.svg", BATCH_WIDTH, BATCH_HEIGHT)));
+        this.batch.setGraphic(new ImageView(SVGImageUtils.getSvgImage("/icon/batch.svg", BATCH_WIDTH, BATCH_HEIGHT)));
         this.batch.setText(RESOURCES.getString("batch_start"));
         this.batchMode.setText(RESOURCES.getString("batch_pane_title"));
         this.bnTextOut.setPromptText(RESOURCES.getString("enter_base_name"));

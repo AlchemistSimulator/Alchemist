@@ -48,11 +48,11 @@ public class TopLayoutController implements Initializable {
 
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
-        this.btnNew.setGraphic(new ImageView(SVGImageUtils.getSvgImage("icon/new.svg", IMG_WIDTH, IMG_HEIGHT)));
+        this.btnNew.setGraphic(new ImageView(SVGImageUtils.getSvgImage("/icon/new.svg", IMG_WIDTH, IMG_HEIGHT)));
         this.btnNew.setText(RESOURCES.getString("new"));
-        this.btnOpen.setGraphic(new ImageView(SVGImageUtils.getSvgImage("icon/open.svg", IMG_WIDTH, IMG_HEIGHT)));
+        this.btnOpen.setGraphic(new ImageView(SVGImageUtils.getSvgImage("/icon/open.svg", IMG_WIDTH, IMG_HEIGHT)));
         this.btnOpen.setText(RESOURCES.getString("open"));
-        this.btnSave.setGraphic(new ImageView(SVGImageUtils.getSvgImage("icon/save.svg", IMG_WIDTH, IMG_HEIGHT)));
+        this.btnSave.setGraphic(new ImageView(SVGImageUtils.getSvgImage("/icon/save.svg", IMG_WIDTH, IMG_HEIGHT)));
         this.btnSave.setText(RESOURCES.getString("save"));
         this.btnSave.setDisable(true);
     }

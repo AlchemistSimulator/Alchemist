@@ -1,5 +1,29 @@
 package it.unibo.alchemist.boundary.gui.controller;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDrawersStack;
+import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
+import it.unibo.alchemist.boundary.gui.effects.EffectStack;
+import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
+import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
+import it.unibo.alchemist.boundary.gui.view.cells.EffectGroupCell;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
+import org.apache.commons.io.FilenameUtils;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -9,54 +33,24 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import org.apache.commons.io.FilenameUtils;
-import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonParseException;
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXDrawersStack;
-
-import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
-import it.unibo.alchemist.boundary.gui.effects.EffectStack;
-import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
-import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
-import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
-import it.unibo.alchemist.boundary.gui.view.cells.EffectGroupCell;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
-import jiconfont.icons.GoogleMaterialDesignIcons;
-
 import static it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer.DEFAULT_EXTENSION;
 import static it.unibo.alchemist.boundary.gui.utility.FXResourceLoader.getWhiteIcon;
 import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRes;
-import static jiconfont.icons.GoogleMaterialDesignIcons.ADD;
-import static jiconfont.icons.GoogleMaterialDesignIcons.FOLDER_OPEN;
-import static jiconfont.icons.GoogleMaterialDesignIcons.SAVE;
+import static jiconfont.icons.GoogleMaterialDesignIcons.*;
 
 /**
  * This class models a JavaFX controller for EffectsGroupBar.fxml.
  */
 public class EffectsGroupBarController implements Initializable {
-    /** Layout path. */
+    /**
+     * Layout path.
+     */
     public static final String EFFECT_GROUP_BAR_LAYOUT = "EffectsGroupBar";
-    /** Default {@code Logger}. */
+    /**
+     * Default {@code Logger}.
+     */
     private static final Logger L = LoggerFactory.getLogger(EffectsGroupBarController.class);
-
+    private final JFXDrawersStack stack;
     @FXML
     @Nullable
     private JFXButton save; // Value injected by FXMLLoader
@@ -69,18 +63,13 @@ public class EffectsGroupBarController implements Initializable {
     @FXML
     @Nullable
     private ListView<EffectGroup> effectGroupsList; // Value injected by FXMLLoader
-
     private ObservableList<EffectGroup> observableEffectsList;
-
-    private final JFXDrawersStack stack;
-
     private Optional<String> lastPath;
 
     /**
      * Default constructor.
-     * 
-     * @param stack
-     *            the stack where to open the effects lists
+     *
+     * @param stack the stack where to open the effects lists
      */
     public EffectsGroupBarController(final JFXDrawersStack stack) {
         this.stack = stack;
@@ -109,9 +98,8 @@ public class EffectsGroupBarController implements Initializable {
 
     /**
      * Adds a new {@link EffectGroup} to the {@link ListView}.
-     * 
-     * @param name
-     *            the name to give to the {@code EffectGroup}
+     *
+     * @param name the name to give to the {@code EffectGroup}
      */
     private void addGroupToList(final String name) {
         final EffectGroup newGroup = new EffectStack();
@@ -123,9 +111,9 @@ public class EffectsGroupBarController implements Initializable {
     /**
      * Getter method and lazy initializer for the internal
      * {@link ObservableList}.
-     * 
+     *
      * @return the {@code ObservableList} associated to the controlled
-     *         {@link ListView}
+     * {@link ListView}
      */
     public ObservableList<EffectGroup> getObservableEffectsList() {
         if (this.observableEffectsList == null) {
@@ -196,7 +184,7 @@ public class EffectsGroupBarController implements Initializable {
 
             try {
                 this.getObservableEffectsList().addAll(EffectSerializer.effectGroupsFromFile(selectedFile));
-            } catch (final IOException | JsonParseException e) {
+            } catch (final NullPointerException | IOException | JsonParseException e) {
                 L.error("Can't load Effect Groups from file: " + e.getMessage());
                 this.errorDialog(getStringRes("load_effect_groups_error_dialog_title"), getStringRes("load_effect_groups_error_dialog_msg"), e);
             }
@@ -205,13 +193,10 @@ public class EffectsGroupBarController implements Initializable {
 
     /**
      * Opens up a {@link Dialog} showing the exception that caused it
-     * 
-     * @param title
-     *            the title of the {@code Dialog}
-     * @param header
-     *            the header of the {@code Dialog}
-     * @param cause
-     *            the {@link Exception} that caused the error
+     *
+     * @param title  the title of the {@code Dialog}
+     * @param header the header of the {@code Dialog}
+     * @param cause  the {@link Exception} that caused the error
      */
     private void errorDialog(final String title, final String header, final Exception cause) {
         final Alert alert = new Alert(AlertType.ERROR);

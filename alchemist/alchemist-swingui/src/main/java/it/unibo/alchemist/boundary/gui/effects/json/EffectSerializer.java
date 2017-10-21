@@ -49,8 +49,6 @@ public final class EffectSerializer {
     /** Set of available {@link Property Properties} found by reflection. */
     @SuppressWarnings("rawtypes") // Needed to make the compiler accept the constant
     private static final Set<Class<? extends Property>> PROPERTIES = REFLECTIONS.getSubTypesOf(Property.class);
-    /** Map of all available {@link PropertyTypeAdapter}. */
-    private static final Map<Class<?>, PropertyTypeAdapter<?>> PROPERTY_TYPE_ADAPTER = new HashMap<>();
     /** {@link RuntimeTypeAdapterFactory} to serialize and deserialize {@link EffectFX effects} properly. */
     private static final RuntimeTypeAdapterFactory<EffectFX> RTA_EFFECT = RuntimeTypeAdapterFactory.of(EffectFX.class);
     /** {@link RuntimeTypeAdapterFactory} to serialize and deserialize {@link EffectGroup effect groups} properly. */
@@ -93,8 +91,6 @@ public final class EffectSerializer {
                         throw new IllegalStateException(e);
                     }
                 });
-
-        PROPERTY_TYPE_ADAPTER.forEach(builder::registerTypeAdapter);
 
         GSON = builder
                 .registerTypeAdapterFactory(RTA_EFFECT)

@@ -116,8 +116,7 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
         effectBarController = new EffectBarController(this, this.stack, effectDrawer);
 
         try {
-            effectDrawer
-                    .setSidePane(FXResourceLoader.getLayout(BorderPane.class, effectBarController, EffectBarController.EFFECT_BAR_LAYOUT));
+            effectDrawer.setSidePane(FXResourceLoader.getLayout(BorderPane.class, effectBarController, EffectBarController.EFFECT_BAR_LAYOUT));
         } catch (final IOException e) {
             throw new IllegalStateException("Could not initialize side pane for effects", e);
         }

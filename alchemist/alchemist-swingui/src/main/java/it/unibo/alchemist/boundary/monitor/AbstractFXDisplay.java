@@ -18,6 +18,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.concurrent.Semaphore;
 
 /**
  * Base abstract class for each display able to graphically represent a 2D space and simulation.
@@ -54,6 +55,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     private boolean realTime;
     private long timeInit;
     private double lastTime;
+    private final Semaphore mutex = new Semaphore(1);
 
     /**
      * Default constructor. The number of steps is set to default ({@value #DEFAULT_NUMBER_OF_STEPS}).
@@ -137,10 +139,12 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         final GraphicsContext gc = this.getGraphicsContext2D();
         gc.clearRect(0, 0, getWidth(), getHeight());
 
+        mutex.acquireUninterruptibly();
         getCurrentEnvironment().ifPresent(environment -> {
             drawBackground(gc, environment);
             drawEffects(gc, environment);
         });
+        mutex.release();
     }
 
     /**
@@ -279,10 +283,13 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      * @param time        the current {@code Time} of simulation
      */
     private void update(final Environment<T> environment, final Time time) {
-        // TODO
-        lastTime = time.toDouble();
-        setCurrentEnvironment(environment);
-        repaint();
+        if (Thread.holdsLock(environment)) {
+            lastTime = time.toDouble();
+            setCurrentEnvironment(environment);
+            repaint();
+        } else {
+            throw new IllegalStateException("Only the simulation thread can dictate GUI updates");
+        }
     }
 
 

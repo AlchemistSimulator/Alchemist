@@ -38,7 +38,7 @@ public class ButtonsBarController implements Initializable {
     // Icons
     private final IconNode pan;
     private final IconNode select;
-    private final IconNode fullscreen;
+//    private final IconNode fullscreen;
 
     // FXML components
     @FXML
@@ -56,9 +56,9 @@ public class ButtonsBarController implements Initializable {
     @FXML
     @Nullable
     private JFXButton controlType; // Value injected by FXMLLoader
-    @FXML
-    @Nullable
-    private JFXButton fullscreenToggle; // Value injected by FXMLLoader
+//    @FXML
+//    @Nullable
+//    private JFXButton fullscreenToggle; // Value injected by FXMLLoader
     @FXML
     @Nullable
     private JFXDrawersStack drawerStack; // Value injected by FXMLLoader
@@ -81,7 +81,7 @@ public class ButtonsBarController implements Initializable {
 
         pan = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.PAN_TOOL);
         select = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.TAB_UNSELECTED);
-        fullscreen = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.FULLSCREEN);
+//        fullscreen = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.FULLSCREEN);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class ButtonsBarController implements Initializable {
         assert effectsButton != null : FXResourceLoader.getInjectionErrorMessage("effectsButton", BUTTONS_BAR_LAYOUT);
         assert speedSlider != null : FXResourceLoader.getInjectionErrorMessage("speedSlider", BUTTONS_BAR_LAYOUT);
         assert controlType != null : FXResourceLoader.getInjectionErrorMessage("controlType", BUTTONS_BAR_LAYOUT);
-        assert fullscreenToggle != null : FXResourceLoader.getInjectionErrorMessage("fullscreenToggle", BUTTONS_BAR_LAYOUT);
+//        assert fullscreenToggle != null : FXResourceLoader.getInjectionErrorMessage("fullscreenToggle", BUTTONS_BAR_LAYOUT);
         assert drawerStack != null : FXResourceLoader.getInjectionErrorMessage("drawerStack", BUTTONS_BAR_LAYOUT);
 
         addMonitors();
@@ -119,11 +119,11 @@ public class ButtonsBarController implements Initializable {
             }
         });
 
-        fullscreenToggle.setText("");
-        fullscreenToggle.setGraphic(fullscreen);
-//        fullscreenToggle.setOnAction(e -> {
-//            // TODO toggle fullscreen
-//        });
+//        fullscreenToggle.setText("");
+//        fullscreenToggle.setGraphic(fullscreen);
+////        fullscreenToggle.setOnAction(e -> {
+////            // TODO toggle fullscreen
+////        });
 
         controlType.setText("");
         controlType.setGraphic(pan);

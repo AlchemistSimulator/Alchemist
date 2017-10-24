@@ -106,7 +106,11 @@ public class NewProjLayoutFolderController {
                 alert.setTitle(RESOURCES.getString("select_folder_full"));
                 alert.setHeaderText(RESOURCES.getString("select_folder_full_header"));
                 alert.setContentText(RESOURCES.getString("select_folder_full_content"));
-                /*final Optional<ButtonType> result = */alert.showAndWait();
+                alert.showAndWait();
+                //TODO
+                //Create a new project also in folders when there is a file with a warning message like "Alchemist could override
+                // some file"
+                /*final Optional<ButtonType> result = */
 //                if (result.get() == ButtonType.OK) {
 //                    try {
 //                        FileUtils.cleanDirectory(dir);

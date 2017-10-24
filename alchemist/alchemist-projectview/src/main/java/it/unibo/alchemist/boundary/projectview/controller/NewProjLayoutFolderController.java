@@ -4,13 +4,9 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
-import java.util.Optional;
 import java.util.ResourceBundle;
-
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import javafx.fxml.FXML;
@@ -18,7 +14,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
@@ -98,33 +93,20 @@ public class NewProjLayoutFolderController {
         dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         final File dir = dirChooser.showDialog(this.main.getStage());
         if (dir != null) {
-            if (dir.listFiles().length == 0) {
-                setSelectedFolder(dir);
-            } else {
+            if (dir.listFiles().length != 0) {
                 final Alert alert = new Alert(AlertType.CONFIRMATION);
                 alert.setTitle(RESOURCES.getString("select_folder_full"));
                 alert.setHeaderText(RESOURCES.getString("select_folder_full_header"));
                 alert.setContentText(RESOURCES.getString("select_folder_full_content"));
-                final Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == ButtonType.OK) {
-                    try {
-                        FileUtils.cleanDirectory(dir);
-                        setSelectedFolder(dir);
-                    } catch (IOException e) {
-                        final Alert alertCancel = new Alert(AlertType.ERROR);
-                        alertCancel.setTitle(RESOURCES.getString("error_building_project"));
-                        alertCancel.setHeaderText(RESOURCES.getString("error_building_project_header"));
-                        alertCancel.setContentText(RESOURCES.getString("error_building_project_content"));
-                        alertCancel.showAndWait();
-                    }
-                } else {
-                    final Alert alertCancel = new Alert(AlertType.WARNING);
-                    alertCancel.setTitle(RESOURCES.getString("select_folder_full_cancel"));
-                    alertCancel.setHeaderText(RESOURCES.getString("select_folder_full_cancel_header"));
-                    alertCancel.setContentText(RESOURCES.getString("select_folder_full_cancel_content"));
-                    alertCancel.showAndWait();
-                }
+                alert.showAndWait();
             }
+            setSelectedFolder(dir);
+        } else {
+            final Alert alertCancel = new Alert(AlertType.ERROR);
+            alertCancel.setTitle(RESOURCES.getString("error_building_project"));
+            alertCancel.setHeaderText(RESOURCES.getString("error_building_project_header"));
+            alertCancel.setContentText(RESOURCES.getString("error_building_project_content"));
+            alertCancel.showAndWait();
         }
     }
 

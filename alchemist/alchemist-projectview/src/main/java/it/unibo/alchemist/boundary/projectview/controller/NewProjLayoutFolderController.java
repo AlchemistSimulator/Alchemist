@@ -101,15 +101,12 @@ public class NewProjLayoutFolderController {
                 alert.showAndWait();
             }
             setSelectedFolder(dir);
-<<<<<<< HEAD
-=======
         } else {
             final Alert alertCancel = new Alert(AlertType.ERROR);
             alertCancel.setTitle(RESOURCES.getString("error_building_project"));
             alertCancel.setHeaderText(RESOURCES.getString("error_building_project_header"));
             alertCancel.setContentText(RESOURCES.getString("error_building_project_content"));
             alertCancel.showAndWait();
->>>>>>> fixbranch
         }
     }
 

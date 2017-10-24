@@ -1,14 +1,15 @@
-GRADLE_BUILD_COMMANDS=org.eclipse.jdt.core.javabuilder
+#Mon Oct 23 17:20:39 CEST 2017
 GRADLE_FILTERS=1.0-projectRelativePath-matches-false-false-build,1.0-projectRelativePath-matches-false-false-.gradle
+connection.arguments=
+containers=org.scala-ide.sdt.launching.SCALA_CONTAINER,org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8/
+connection.jvm.arguments=
 GRADLE_NATURES=org.eclipse.jdt.core.javanature
 build.commands=org.scala-ide.sdt.core.scalabuilder,org.eclipse.xtext.ui.shared.xtextBuilder
-connection.arguments=
-connection.gradle.distribution=GRADLE_DISTRIBUTION(WRAPPER)
-connection.java.home=null
-connection.jvm.arguments=
 connection.project.dir=..
-containers=org.scala-ide.sdt.launching.SCALA_CONTAINER,org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8/
-derived.resources=.gradle,build
-eclipse.preferences.version=1
 natures=org.scala-ide.sdt.core.scalanature,org.eclipse.jdt.core.javanature,org.eclipse.xtext.ui.shared.xtextNature
+GRADLE_BUILD_COMMANDS=org.eclipse.jdt.core.javabuilder
+eclipse.preferences.version=1
+connection.java.home=null
+derived.resources=.gradle,build
 project.path=\:alchemist-incarnation-scafi
+connection.gradle.distribution=GRADLE_DISTRIBUTION(WRAPPER)

@@ -130,7 +130,7 @@ public class SingleRunAppBuilder<T> {
     private boolean startJFXThread() {
         try {
             // Starts JavaFX thread, if necessary
-            PlatformImpl.startup(() -> { });
+            PlatformImpl.startup(() -> { }); // TODO check if could avoid internal APIs
             return false;
         } catch (final IllegalStateException e) {
             return true;

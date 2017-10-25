@@ -14,6 +14,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import jiconfont.icons.GoogleMaterialDesignIcons;
@@ -52,13 +53,10 @@ public class ButtonsBarController implements Initializable {
     private JFXButton effectsButton; // Value injected by FXMLLoader
     @FXML
     @Nullable
-    private JFXSlider speedSlider; // Value injected by FXMLLoader
+    private Spinner<Integer> framerate; // Value injected by FXMLLoader
     @FXML
     @Nullable
     private JFXButton controlType; // Value injected by FXMLLoader
-//    @FXML
-//    @Nullable
-//    private JFXButton fullscreenToggle; // Value injected by FXMLLoader
     @FXML
     @Nullable
     private JFXDrawersStack drawerStack; // Value injected by FXMLLoader
@@ -89,9 +87,8 @@ public class ButtonsBarController implements Initializable {
         assert controlPane != null : FXResourceLoader.getInjectionErrorMessage("controlPane", BUTTONS_BAR_LAYOUT);
         assert controlBar != null : FXResourceLoader.getInjectionErrorMessage("controlBar", BUTTONS_BAR_LAYOUT);
         assert effectsButton != null : FXResourceLoader.getInjectionErrorMessage("effectsButton", BUTTONS_BAR_LAYOUT);
-        assert speedSlider != null : FXResourceLoader.getInjectionErrorMessage("speedSlider", BUTTONS_BAR_LAYOUT);
+        assert framerate != null : FXResourceLoader.getInjectionErrorMessage("speedSlider", BUTTONS_BAR_LAYOUT);
         assert controlType != null : FXResourceLoader.getInjectionErrorMessage("controlType", BUTTONS_BAR_LAYOUT);
-//        assert fullscreenToggle != null : FXResourceLoader.getInjectionErrorMessage("fullscreenToggle", BUTTONS_BAR_LAYOUT);
         assert drawerStack != null : FXResourceLoader.getInjectionErrorMessage("drawerStack", BUTTONS_BAR_LAYOUT);
 
         addMonitors();

@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.*?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXDrawersStack?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.Cursor?>
 <?import javafx.scene.layout.BorderPane?>
-<BorderPane xmlns:fx="http://javafx.com/fxml" id="controlPane" fx:id="controlPane" xmlns="http://javafx.com/javafx">
+<?import java.lang.Integer?>
+<BorderPane id="controlPane" fx:id="controlPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
     <bottom>
         <ButtonBar id="controlBar" fx:id="controlBar" stylesheets="@ButtonsBarLayout.css" BorderPane.alignment="CENTER">
             <buttons>
-                <JFXButton id="effectsButton" fx:id="effectsButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" ripplerFill="WHITE" text="Effects" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT"/>
-                <JFXSlider id="speedSlider" fx:id="speedSlider" ButtonBar.buttonData="LEFT">
-                    <cursor>
-                        <Cursor fx:constant="DEFAULT"/>
-                    </cursor>
-                </JFXSlider>
-                <JFXButton id="controlType" fx:id="controlType" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" ripplerFill="WHITE" stylesheets="" text="Pan" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT"/>
-                <!--<JFXButton id="fullscreenToggle" fx:id="fullscreenToggle" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" ripplerFill="WHITE" stylesheets="" text="Fullscreen" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="RIGHT"/>-->
+                <JFXButton id="effectsButton" fx:id="effectsButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" ripplerFill="WHITE" text="Effects" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT" />
+                <fx:define>
+                    <Integer fx:id="max" fx:value="200"/>
+                </fx:define>
+                <Spinner id="framerate" fx:id="framerate" min="0" max="500" initialValue="60" amountToStepBy="1" ButtonBar.buttonData="LEFT">
+                    <editable>true</editable>
+                </Spinner>
+                <JFXButton id="controlType" fx:id="controlType" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" ripplerFill="WHITE" stylesheets="" text="Pan" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT" />
             </buttons>
         </ButtonBar>
     </bottom>
     <left>
-        <JFXDrawersStack id="drawerStack" fx:id="drawerStack" BorderPane.alignment="CENTER"/>
+        <JFXDrawersStack id="drawerStack" fx:id="drawerStack" BorderPane.alignment="CENTER" />
     </left>
     <right>
-        <JFXDrawersStack id="moleculingStack" fx:id="moleculingStack" BorderPane.alignment="CENTER"/>
+        <JFXDrawersStack id="moleculingStack" fx:id="moleculingStack" BorderPane.alignment="CENTER" />
     </right>
 </BorderPane>

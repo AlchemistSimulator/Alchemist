@@ -1,5 +1,6 @@
 
 ButtonBar {
+    -fx-text-fill: white;
     -fx-background-color: rgb(0.0, 0.0, 0.0);
     -fx-padding: 0.0;
     -fx-min-height: 3.08em;

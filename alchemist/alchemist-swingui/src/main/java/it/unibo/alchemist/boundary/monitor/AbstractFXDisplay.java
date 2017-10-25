@@ -1,7 +1,7 @@
 package it.unibo.alchemist.boundary.monitor;
 
+import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
-import it.unibo.alchemist.boundary.gui.view.ResizableCanvas;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
 import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D;
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
@@ -10,6 +10,7 @@ import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import org.jetbrains.annotations.Nullable;
@@ -17,8 +18,11 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 /**
  * Base abstract class for each display able to graphically represent a 2D space and simulation.
@@ -38,16 +42,13 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     public static final double TIME_STEP = 1 / DEFAULT_FRAME_RATE;
 
     /**
-     * Threshold of pause detection.
-     */
-    public static final long PAUSE_DETECTION_THRESHOLD = 200;
-
-    /**
      * Default number of steps.
      */
     private static final int DEFAULT_NUMBER_OF_STEPS = 1;
 
     private final Collection<EffectGroup> effectStack;
+    private final Semaphore mutex = new Semaphore(1);
+    private final AtomicBoolean mayRender = new AtomicBoolean(true);
     private WeakReference currentEnvironment = new WeakReference<>(null);
     private int step;
     private BidimensionalWormhole wormhole;
@@ -55,7 +56,6 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     private boolean realTime;
     private long timeInit;
     private double lastTime;
-    private final Semaphore mutex = new Semaphore(1);
 
     /**
      * Default constructor. The number of steps is set to default ({@value #DEFAULT_NUMBER_OF_STEPS}).
@@ -137,11 +137,8 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     @Override
     public final void repaint() {
         final GraphicsContext gc = this.getGraphicsContext2D();
-        gc.clearRect(0, 0, getWidth(), getHeight());
-
         mutex.acquireUninterruptibly();
         getCurrentEnvironment().ifPresent(environment -> {
-            drawBackground(gc, environment);
             drawEffects(gc, environment);
         });
         mutex.release();
@@ -156,7 +153,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      */
     @SuppressWarnings("unused")
     protected void drawBackground(final GraphicsContext graphicsContext, final Environment<T> environment) {
-        // By default, it draws nothing
+        graphicsContext.clearRect(0, 0, getWidth(), getHeight());
     }
 
     /**
@@ -166,9 +163,20 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      * @param environment     the {@code Environment} that contains the data to pass to {@code Effects}
      * @see #repaint()
      */
-    protected void drawEffects(final GraphicsContext graphicsContext, final Environment<T> environment) {
-        if (getWormhole() != null && isVisible() && !isDisabled()) {
-            getEffects().forEach(eg -> eg.forEach(e -> e.apply(graphicsContext, environment, getWormhole())));
+    protected final void drawEffects(final GraphicsContext graphicsContext, final Environment<T> environment) {
+        if (mayRender.get() && getWormhole() != null && isVisible() && !isDisabled()) {
+            mayRender.set(false);
+            final List<Runnable> commandQueue = getEffects().stream()
+                    .filter(EffectGroup::isVisible)
+                    .flatMap(EffectGroup::stream)
+                    .filter(EffectFX::isVisibile)
+                    .map(e -> e.apply(graphicsContext, environment, getWormhole()))
+                    .collect(Collectors.toList());
+            Platform.runLater(() -> {
+                drawBackground(graphicsContext, environment);
+                commandQueue.forEach(Runnable::run);
+                mayRender.set(true);
+            });
         }
     }
 
@@ -188,6 +196,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      */
     @SuppressWarnings("unchecked")
     protected Optional<Environment<T>> getCurrentEnvironment() {
+
         return Optional.ofNullable((Environment<T>) currentEnvironment.get());
     }
 
@@ -242,27 +251,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
                     update(environment, time);
                 }
             }
-        } else /*if (this.step < 1 || step % this.step == 0)*/ {
-            /*if (isRealTime()) {
-                if (lastTime + TIME_STEP > time.toDouble()) {
-                    return;
-                }
-                final long timeSimulated = (long) (time.toDouble() * 1000);
-                if (timeSimulated == 0) {
-                    timeInit = System.currentTimeMillis();
-                }
-                final long timePassed = System.currentTimeMillis() - timeInit;
-                if (timePassed - timeSimulated > PAUSE_DETECTION_THRESHOLD) {
-                    timeInit = timeInit + timePassed - timeSimulated;
-                }
-                if (timeSimulated > timePassed) {
-                    try {
-                        Thread.sleep(Math.min(timeSimulated - timePassed, 1000 / DEFAULT_FRAME_RATE));
-                    } catch (final InterruptedException e) {
-//                        getLogger().warn("Spurious wakeup"); // TODO load from ResourceBundle with ResourceLoader
-                    }
-                }
-            }*/
+        } else {
             update(environment, time);
         }
 

@@ -6,16 +6,16 @@ import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
-import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import org.apache.commons.math3.util.FastMath;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.Queue;
 
 
 /**
@@ -107,18 +107,19 @@ public class DrawDot implements EffectFX {
      * a {@link Color#BLACK black} dot.
      */
     @Override
-    public <T> void apply(final GraphicsContext graphic, final Environment<T> environment, final BidimensionalWormhole wormhole) {
+    public <T> Runnable apply(final GraphicsContext graphic, final Environment<T> environment, final BidimensionalWormhole wormhole) {
+        final Queue<Runnable> commandQueue = new LinkedList<>();
         environment.forEach(node -> {
             final double sizeX = size.get();
             final double startX = wormhole.getViewPoint(environment.getPosition(node)).getX() - sizeX / 2;
             final double sizeY = /*FastMath.ceil(sizeX * DEFAULT_SCALE)*/ size.get();
             final double startY = wormhole.getViewPoint(environment.getPosition(node)).getY() - sizeY / 2;
-
-            Platform.runLater(() ->{
+            commandQueue.add(() -> {
                 graphic.setFill(color);
                 graphic.fillOval((int) startX, (int) startY, (int) sizeX, (int) sizeY);
             });
         });
+        return () -> commandQueue.forEach(Runnable::run);
     }
 
     /**

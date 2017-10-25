@@ -43,7 +43,6 @@ public class SingleRunApp<T> extends Application {
      * Main layout without nested layouts. Must inject eventual other nested layouts.
      */
     public static final String ROOT_LAYOUT = "RootLayout";
-
     /**
      * Effect pass param name.
      */
@@ -56,7 +55,6 @@ public class SingleRunApp<T> extends Application {
      * Default parameter end string.
      */
     public static final String PARAMETER_NAME_END = "=";
-
     /**
      * Default logger for the class.
      */
@@ -65,13 +63,10 @@ public class SingleRunApp<T> extends Application {
     private final List<String> unnamedParams = new ArrayList<>();
     private boolean initialized = false;
     private Collection<EffectGroup> effectGroups;
-
     @Nullable
     private Simulation<T> simulation;
-
     @Nullable
     private AbstractFXDisplay<T> displayMonitor;
-
     private PlayPauseMonitor<T> playPauseMonitor;
     private FXTimeMonitor<T> timeMonitor;
     private FXStepMonitor<T> stepMonitor;
@@ -161,10 +156,8 @@ public class SingleRunApp<T> extends Application {
         if (initialized) {
             throw new IllegalStateException("Application is already initialized");
         }
-
         namedParams.clear();
         unnamedParams.clear();
-
         Arrays.stream(params)
                 .forEach(p -> {
                     if (p.startsWith(PARAMETER_NAME_START)) {
@@ -186,7 +179,6 @@ public class SingleRunApp<T> extends Application {
     public void start(final Stage primaryStage) {
         parseNamedParams(getNamedParams());
         parseUnnamedParams(getUnnamedParams());
-
         final Optional<Simulation<T>> optSim = Optional.ofNullable(this.simulation);
         optSim.ifPresent(sim -> {
             try {
@@ -201,7 +193,6 @@ public class SingleRunApp<T> extends Application {
             }
         });
         final Optional<AbstractFXDisplay> optDisplayMonitor = Optional.ofNullable(this.displayMonitor);
-
         final Pane rootLayout;
         try {
             rootLayout = FXResourceLoader.getLayout(AnchorPane.class, this, ROOT_LAYOUT);
@@ -211,8 +202,8 @@ public class SingleRunApp<T> extends Application {
                 dm.heightProperty().bind(main.heightProperty());
                 main.getChildren().add(dm);
             });
-            this.timeMonitor = new FXTimeMonitor<>(simulation);
-            this.stepMonitor = new FXStepMonitor<>(simulation);
+            this.timeMonitor = new FXTimeMonitor<>();
+            this.stepMonitor = new FXStepMonitor<>();
             this.playPauseMonitor = new PlayPauseMonitor<>(simulation);
 
             optSim.ifPresent(s -> {

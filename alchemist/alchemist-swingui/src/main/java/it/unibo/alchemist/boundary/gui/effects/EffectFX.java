@@ -19,7 +19,7 @@ public interface EffectFX extends Serializable {
      * @param wormhole    the {@code BidimensionalWormhole} object to calculate positions
      * @param <T>         the {@link Environment} type
      */
-    <T> void apply(GraphicsContext graphic, Environment<T> environment, BidimensionalWormhole wormhole);
+    <T> Runnable apply(GraphicsContext graphic, Environment<T> environment, BidimensionalWormhole wormhole);
 
     /**
      * Gets the name of the effect.

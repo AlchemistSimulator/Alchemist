@@ -164,7 +164,7 @@ public class DrawShapeFX implements EffectFX {
      * @throws IllegalStateException if no {@link Incarnation} is available
      */
     @Override
-    public <T> void apply(final GraphicsContext graphic, final Environment<T> environment, final BidimensionalWormhole wormhole) {
+    public <T> Runnable apply(final GraphicsContext graphic, final Environment<T> environment, final BidimensionalWormhole wormhole) {
         final Incarnation<T> incarnation = environment.getIncarnation()
                 .orElseThrow(() -> new IllegalStateException("The specified Environment does not specify any Incarnation"));
         if (!this.moleculeName.get().equals(moleculeNameCached)) {
@@ -219,6 +219,8 @@ public class DrawShapeFX implements EffectFX {
             }
 
         });
+        // TODO
+        return null;
     }
 
     /**

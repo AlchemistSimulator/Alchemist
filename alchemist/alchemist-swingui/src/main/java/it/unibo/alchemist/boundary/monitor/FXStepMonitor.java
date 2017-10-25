@@ -1,118 +1,34 @@
 package it.unibo.alchemist.boundary.monitor;
 
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
-import javafx.application.Platform;
-import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
-import org.jetbrains.annotations.Nullable;
-
-import java.lang.ref.WeakReference;
-import java.util.Optional;
 
 /**
  * {@code OutputMonitor} that monitors the current {@link Simulation#getStep() steps} of the {@code Simulation}.
  *
  * @param <T> the {@link Concentration} type
  */
-public class FXStepMonitor<T> extends Label implements OutputMonitor<T> {
-    private static final long DEFAULT_STEP = 0;
-    private WeakReference<Simulation<T>> simulation;
+public class FXStepMonitor<T> extends NumericLabelMonitor<Long, T> {
+    private volatile boolean mayRender = true;
 
     /**
      * Default constructor.
      */
     public FXStepMonitor() {
-        this(null);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param simulation the simulation to control
-     */
-    public FXStepMonitor(final @Nullable Simulation<T> simulation) {
-        setSimulation(simulation);
-        setTextFill(Color.WHITE);
-        setShownText();
-    }
-
-    /**
-     * Getter method for the current simulation.
-     *
-     * @return the current simulation
-     */
-    @Nullable
-    public Simulation<T> getSimulation() {
-        return simulation.get();
-    }
-
-    /**
-     * Setter method for the simulation.
-     *
-     * @param simulation the simulation to set
-     */
-    public void setSimulation(final @Nullable Simulation<T> simulation) {
-        this.simulation = new WeakReference<>(simulation);
+        super(0L);
     }
 
     @Override
     public void finished(final Environment<T> env, final Time time, final long step) {
-        update(env, step);
-    }
-
-    @Override
-    public void initialized(final Environment<T> env) {
-        update(env, null);
+        update(step);
     }
 
     @Override
     public void stepDone(final Environment<T> env, final Reaction<T> r, final Time time, final long step) {
-        update(env, step);
+        update(step);
     }
 
-    /**
-     * Updates the GUI.
-     *
-     * @param environment the {@code Environment} that provides data
-     * @param step        the current step; if null, it calls {@link #setShownText()}
-     */
-    private void update(final Environment<T> environment, final @Nullable Long step) {
-        final Simulation<T> sim = environment.getSimulation();
-        if (!sim.equals(getSimulation())) {
-            setSimulation(sim);
-        }
-
-        if (step == null) {
-            setShownText();
-        } else {
-            setShownText(step);
-        }
-    }
-
-    /**
-     * Sets the given step.
-     *
-     * @param step the simulation step to show
-     */
-    private void setShownText(final long step) {
-        Platform.runLater(() -> setText(String.valueOf(step)));
-    }
-
-    /**
-     * Sets the current simulation step.
-     */
-    private void setShownText() {
-        final Optional<Simulation<T>> sim = Optional.ofNullable(simulation.get());
-
-        if (sim.isPresent()) {
-            setShownText(sim.get().getStep());
-        } else {
-            setShownText(DEFAULT_STEP);
-        }
-    }
 }

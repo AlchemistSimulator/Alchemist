@@ -108,8 +108,8 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
      * a dot of a specified {@link Color} (default: {@link Color#BLACK black}).
      */
     @Override
-    public <T> void apply(final GraphicsContext graphic, final Environment<T> environment, final BidimensionalWormhole wormhole) {
-        super.apply(graphic, environment, wormhole);
+    public <T> Runnable apply(final GraphicsContext graphic, final Environment<T> environment, final BidimensionalWormhole wormhole) {
+        return super.apply(graphic, environment, wormhole);
     }
 
     /**

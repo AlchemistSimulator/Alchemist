@@ -5,9 +5,11 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import javafx.scene.canvas.GraphicsContext;
 
 public class DrawObstacles implements EffectFX {
+
     @Override
-    public <T> void apply(GraphicsContext graphic, Environment<T> environment, BidimensionalWormhole wormhole) {
+    public <T> Runnable apply(final GraphicsContext graphic, final Environment<T> environment, final BidimensionalWormhole wormhole) {
         // TODO
+        return null;
     }
 
     @Override
@@ -17,7 +19,7 @@ public class DrawObstacles implements EffectFX {
     }
 
     @Override
-    public void setName(String name) {
+    public void setName(final String name) {
         // TODO
     }
 
@@ -28,7 +30,7 @@ public class DrawObstacles implements EffectFX {
     }
 
     @Override
-    public void setVisibility(boolean vilibility) {
+    public void setVisibility(final boolean vilibility) {
         // TODO
     }
 }

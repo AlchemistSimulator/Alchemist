@@ -47,6 +47,7 @@ public final class Alchemist {
     private static final char PARALLELISM = 'p';
     private static final char BATCH = 'b';
     private static final char EXPORT = 'e';
+    private static final char DISTRIBUTED = 'd';
     private static final char GRAPHICS = 'g';
     private static final char HELP = 'h';
     private static final char INTERVAL = 'i';
@@ -123,6 +124,10 @@ public final class Alchemist {
                         if (vars.length == 0) {
                             L.info("Alchemist is in batch mode, but no variable is available.");
                             System.exit(2);
+                        }
+
+                        if (cmd.hasOption(DISTRIBUTED)) {
+                            ifPresent(cmd, DISTRIBUTED, simBuilder::setRemoteConfig);
                         }
                         simBuilder.build().launch(vars);
                     } else {

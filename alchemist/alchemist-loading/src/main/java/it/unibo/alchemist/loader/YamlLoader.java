@@ -43,6 +43,8 @@ import org.yaml.snakeyaml.Yaml;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -119,6 +121,7 @@ public class YamlLoader implements Loader {
     private static final String PROGRAMS = SYNTAX.getString("programs");
     private static final String PROPERTY = SYNTAX.getString("property");
     private static final String REACTION = SYNTAX.getString("reaction");
+    private static final String REMOTE_DEPENDENCIES = SYNTAX.getString("remote-dependencies");
     private static final String SCENARIO_SEED = SYNTAX.getString("scenario-seed");
     private static final String SEEDS = SYNTAX.getString("seeds");
     private static final String SIMULATION_SEED = SYNTAX.getString("simulation-seed");
@@ -194,6 +197,7 @@ public class YamlLoader implements Loader {
     private transient Incarnation<?> incarnation;
     private final ImmutableMap<Map<String, Object>, String> reverseLookupTable;
     private final ImmutableMap<String, Variable<?>> variables;
+    private final ImmutableList<String> dependencies;
 
     /**
      * @param source
@@ -335,6 +339,12 @@ public class YamlLoader implements Loader {
         } else {
             throw new IllegalAlchemistYAMLException("Exports must be a YAML map.");
         }
+        Object dependencies = rawContents.get(REMOTE_DEPENDENCIES);
+        if (dependencies == null) {
+            this.dependencies = ImmutableList.copyOf((List<String>)dependencies);
+        } else {
+            this.dependencies = ImmutableList.of();
+        }
     }
 
     /**
@@ -358,6 +368,11 @@ public class YamlLoader implements Loader {
     @Override
     public Map<String, Variable<?>> getVariables() {
         return Collections.unmodifiableMap(variables);
+    }
+    
+    @Override
+    public List<String> getRemoteDependencies() {
+        return this.dependencies;
     }
 
     @Override

@@ -43,4 +43,6 @@ public interface Loader {
      * @return The data extractors
      */
     List<Extractor> getDataExtractors();
+
+    List<String> getRemoteDependencies();
 }

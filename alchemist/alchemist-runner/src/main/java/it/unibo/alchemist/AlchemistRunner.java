@@ -72,6 +72,7 @@ public final class AlchemistRunner<T> {
     private final ImmutableCollection<Supplier<OutputMonitor<T>>> outputMonitors;
     private final int parallelism;
     private final double samplingInterval;
+    private final Optional<String> gridConfigFile;
 
     private AlchemistRunner(final Loader source,
             final Time endTime,
@@ -83,7 +84,8 @@ public final class AlchemistRunner<T> {
             final boolean headless,
             final int closeOperation,
             final boolean benchmark,
-            final ImmutableCollection<Supplier<OutputMonitor<T>>> outputMonitors) {
+            final ImmutableCollection<Supplier<OutputMonitor<T>>> outputMonitors,
+            final Optional<String> gridConfigFile) {
         this.effectsFile = effectsFile;
         this.endTime = endTime;
         this.endStep = endStep;
@@ -95,6 +97,7 @@ public final class AlchemistRunner<T> {
         this.closeOperation = closeOperation;
         this.doBenchmark = benchmark;
         this.outputMonitors = outputMonitors;
+        this.gridConfigFile = gridConfigFile;
     }
 
     /**
@@ -122,47 +125,10 @@ public final class AlchemistRunner<T> {
                     throw new IllegalArgumentException("Variable " + s + " is not allowed. Valid variables are: " + simVars.keySet());
                 }
             }
-            final ExecutorService executor = Executors.newFixedThreadPool(parallelism, THREAD_FACTORY);
-            final Optional<Long> start = Optional.ofNullable(doBenchmark ? System.nanoTime() : null);
-            final Stream<Future<Optional<Throwable>>> futureErrors = prepareSimulations(sim -> {
-                        if (sim.getEnvironment() instanceof BenchmarkableEnvironment) {
-                            for (final Extractor e : loader.getDataExtractors()) {
-                                if (e instanceof EnvPerformanceStats) {
-                                    ((BenchmarkableEnvironment<?>) (sim.getEnvironment())).enableBenchmark();
-                                }
-                            }
-                        }
-                        sim.play();
-                        sim.run();
-                        return sim.getError();
-                    }, variables)
-                    .map(executor::submit);
-            final Queue<Future<Optional<Throwable>>> allErrors = futureErrors.collect(Collectors.toCollection(LinkedList::new));
-            while (!(exception.isPresent() || allErrors.isEmpty())) {
-                try {
-                    exception = allErrors.remove().get();
-                } catch (InterruptedException | ExecutionException e1) {
-                    exception = Optional.of(e1);
-                }
-            }
-            /*
-             * findAny does NOT short-circuit the stream due to a known bug in
-             * the JDK: https://bugs.openjdk.java.net/browse/JDK-8075939
-             * 
-             * Thus, to date, if an exception occurs in a thread which is
-             * running a simulation, that exception will be effectively thrown
-             * outside that thread only when all the threads have completed
-             * their execution. Blame Oracle for this.
-             */
-            start.ifPresent(s -> System.out.printf("Total simulation running time (nanos): %d \n", (System.nanoTime() - s))); //NOPMD: I want to show the result in any case
-            executor.shutdown();
-            if (exception.isPresent()) {
-                executor.shutdownNow();
-            }
-            try {
-                executor.awaitTermination(Integer.MAX_VALUE, TimeUnit.DAYS);
-            } catch (InterruptedException e1) {
-                throw new IllegalStateException("The batch execution got interrupted.");
+            if (this.gridConfigFile.isPresent()) {
+                exception = launchRemote(variables);
+            } else {
+                exception = launchLocal(variables);
             }
         } else {
             Optional<Throwable> localEx = Optional.empty();
@@ -194,15 +160,74 @@ public final class AlchemistRunner<T> {
         }
     }
 
-    private <R> Stream<Callable<R>> prepareSimulations(final Function<Simulation<T>, R> finalizer, final String... variables) {
+    private Optional<? extends Throwable> launchLocal(final String... variables) {
+        Optional<? extends Throwable> exception = Optional.empty();
+        /*
+         * Local batch mode
+         */
+        final ExecutorService executor = Executors.newFixedThreadPool(parallelism, THREAD_FACTORY);
+        final Optional<Long> start = Optional.ofNullable(doBenchmark ? System.nanoTime() : null);
+        final Stream<Future<Optional<Throwable>>> futureErrors = prepareSimulations(sim -> {
+                    if (sim.getEnvironment() instanceof BenchmarkableEnvironment) {
+                        for (final Extractor e : loader.getDataExtractors()) {
+                            if (e instanceof EnvPerformanceStats) {
+                                ((BenchmarkableEnvironment<?>) (sim.getEnvironment())).enableBenchmark();
+                            }
+                        }
+                    }
+                    sim.play();
+                    sim.run();
+                    return sim.getError();
+                }, variables)
+                .map(executor::submit);
+        final Queue<Future<Optional<Throwable>>> allErrors = futureErrors.collect(Collectors.toCollection(LinkedList::new));
+        while (!(exception.isPresent() || allErrors.isEmpty())) {
+            try {
+                exception = allErrors.remove().get();
+            } catch (InterruptedException | ExecutionException e1) {
+                exception = Optional.of(e1);
+            }
+        }
+        /*
+         * findAny does NOT short-circuit the stream due to a known bug in
+         * the JDK: https://bugs.openjdk.java.net/browse/JDK-8075939
+         * 
+         * Thus, to date, if an exception occurs in a thread which is
+         * running a simulation, that exception will be effectively thrown
+         * outside that thread only when all the threads have completed
+         * their execution. Blame Oracle for this.
+         */
+        start.ifPresent(s -> System.out.printf("Total simulation running time (nanos): %d \n", (System.nanoTime() - s))); //NOPMD: I want to show the result in any case
+        executor.shutdown();
+        if (exception.isPresent()) {
+            executor.shutdownNow();
+        }
+        try {
+            executor.awaitTermination(Integer.MAX_VALUE, TimeUnit.DAYS);
+        } catch (InterruptedException e1) {
+            throw new IllegalStateException("The batch execution got interrupted.");
+        }
+        return exception;
+    }
+
+    private Optional<? extends Throwable> launchRemote(final String... variables) {
+        System.out.println("hello");
+        return Optional.empty();
+    }
+    
+    private List<List<Entry<String, ?>>> getVariablesCartesianProduct(final String... variables) {
         final List<List<? extends Entry<String, ?>>> varStreams = Arrays.stream(variables)
                 .map(it -> getVariables().get(it).stream()
                         .map(val -> new ImmutablePair<>(it, val))
                         .collect(Collectors.toList()))
                 .collect(Collectors.toList());
-        return (varStreams.isEmpty()
-                ? ImmutableList.of(ImmutableList.<Entry<String, Double>>of())
-                : Lists.cartesianProduct(varStreams)).stream()
+        //TODO ci saranno problemi?
+        return varStreams.isEmpty() ? ImmutableList.of(ImmutableList.<Entry<String, ?>>of())
+        : Lists.cartesianProduct(varStreams);
+    }
+
+    private <R> Stream<Callable<R>> prepareSimulations(final Function<Simulation<T>, R> finalizer, final String... variables) {
+        return getVariablesCartesianProduct(variables).stream()
             .map(ImmutableMap::copyOf)
             .map(vars -> () -> {
                 final Environment<T> env = loader.getWith(vars);
@@ -250,6 +275,7 @@ public final class AlchemistRunner<T> {
         private final Collection<Supplier<OutputMonitor<T>>> outputMonitors = new LinkedList<>();
         private int parallelism = Runtime.getRuntime().availableProcessors() + 1;
         private double samplingInt = 1;
+        private Optional<String> gridConfigFile = Optional.empty();
 
         /**
          * 
@@ -276,7 +302,7 @@ public final class AlchemistRunner<T> {
         public AlchemistRunner<T> build() {
             return new AlchemistRunner<>(this.loader, this.endTime, this.endStep, this.exportFileRoot, this.effectsFile,
                     this.samplingInt, this.parallelism, this.headless, this.closeOperation, this.benchmark,
-                    ImmutableList.copyOf(outputMonitors));
+                    ImmutableList.copyOf(outputMonitors), this.gridConfigFile);
         }
 
         /**
@@ -401,6 +427,11 @@ public final class AlchemistRunner<T> {
                 throw new IllegalArgumentException("Thread number must be >= 0");
             }
             this.parallelism = threads;
+            return this;
+        }
+
+        public Builder<T> setRemoteConfig(final String path) {
+            this.gridConfigFile = Optional.ofNullable(path);
             return this;
         }
     }

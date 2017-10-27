@@ -57,7 +57,7 @@ public final class DataFormatFactory {
      * Private, empty, constructor, as this is an utility class.
      */
     private DataFormatFactory() {
-        // Empty constructor
+        throw new AssertionError("Suppress default constructor for noninstantiability");
     }
 
 }

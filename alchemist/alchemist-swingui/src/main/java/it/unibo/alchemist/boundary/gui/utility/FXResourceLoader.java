@@ -21,7 +21,7 @@ public final class FXResourceLoader {
      * Private, empty, constructor.
      */
     private FXResourceLoader() {
-        // Empty constructor
+        throw new AssertionError("Suppress default constructor for noninstantiability");
     }
 
     /**

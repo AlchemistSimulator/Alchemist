@@ -18,7 +18,7 @@ public final class SVGImageUtils {
      * Private, empty, constructor, as this is an utility class.
      */
     private SVGImageUtils() {
-        // Empty constructor
+        throw new AssertionError("Suppress default constructor for noninstantiability");
     }
 
     static {

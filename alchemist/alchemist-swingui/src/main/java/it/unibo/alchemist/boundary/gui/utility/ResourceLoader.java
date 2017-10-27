@@ -20,7 +20,7 @@ public final class ResourceLoader {
      * Empty, private, constructor, as this is an utility class.
      */
     private ResourceLoader() {
-        // Empty private constructor
+        throw new AssertionError("Suppress default constructor for noninstantiability");
     }
 
     /**
@@ -34,13 +34,7 @@ public final class ResourceLoader {
      * name is found
      */
     public static InputStream load(final String path) {
-        String newPath = path;
-
-        if (path.toCharArray()[0] != '/') {
-            newPath = "/" + newPath;
-        }
-
-        return ResourceLoader.class.getResourceAsStream(newPath);
+        return ResourceLoader.class.getResourceAsStream(path);
     }
 
     /**

@@ -1,6 +1,7 @@
 package it.unibo.alchemist.boundary.gui.view;
 
 import com.sun.javafx.application.PlatformImpl;
+import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -10,9 +11,9 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
-
-import static javafx.application.Application.launch;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Builder class for {@link SingleRunApp}, meant to be used to build and run the single run gui along with another (alreay started) JavaFX {@link Application}.
@@ -20,11 +21,10 @@ import static javafx.application.Application.launch;
  * @param <T> the concentration type
  */
 public class SingleRunAppBuilder<T> {
+    private static final String DEFAULT_EFFECTS = ""/*TODO*/;
     private final Simulation<T> simulation;
-    private boolean monitorDisplay;
-    private boolean monitorTime;
-    private boolean monitorSteps;
     private Collection<EffectGroup> effectGroups;
+    private boolean shouldUseDefaultEffects;
 
     /**
      * Default constructor of the builder.
@@ -33,10 +33,21 @@ public class SingleRunAppBuilder<T> {
      */
     public SingleRunAppBuilder(final Simulation<T> simulation) {
         this.simulation = Objects.requireNonNull(simulation);
-        this.monitorDisplay = false;
-        this.monitorTime = false;
-        this.monitorSteps = false;
         this.effectGroups = new ArrayList<>();
+        this.shouldUseDefaultEffects = true;
+    }
+
+    /**
+     * Set if should load default effects while building the {@link SingleRunApp}.
+     * <p>
+     * By default, it is true.
+     *
+     * @param shouldUse if should load default {@link EffectFX effects}
+     * @return this builder
+     */
+    public SingleRunAppBuilder<T> useDefaultEffects(final boolean shouldUse) {
+        this.shouldUseDefaultEffects = shouldUse;
+        return this;
     }
 
     /**
@@ -130,7 +141,8 @@ public class SingleRunAppBuilder<T> {
     private boolean startJFXThread() {
         try {
             // Starts JavaFX thread, if necessary
-            PlatformImpl.startup(() -> { }); // TODO check if could avoid internal APIs
+            PlatformImpl.startup(() -> {
+            }); // TODO check if could avoid internal APIs
             return false;
         } catch (final IllegalStateException e) {
             return true;
@@ -147,6 +159,14 @@ public class SingleRunAppBuilder<T> {
     public void build() {
         final Runnable lambda = () -> {
             final SingleRunApp<T> app = new SingleRunApp<>();
+
+            if (shouldUseDefaultEffects /*TODO*/&& !DEFAULT_EFFECTS.equals("")/*TODO*/) {
+                try {
+                    effectGroups.add(EffectSerializer.effectsFromResources(DEFAULT_EFFECTS));
+                } catch (final IOException e) {
+                    throw new IllegalStateException(e);
+                }
+            }
 
             if (!effectGroups.isEmpty()) {
                 app.setEffectGroups(effectGroups);

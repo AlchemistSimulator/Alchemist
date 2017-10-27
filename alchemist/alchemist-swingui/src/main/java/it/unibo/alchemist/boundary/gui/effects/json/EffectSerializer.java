@@ -5,7 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
-import it.unibo.alchemist.boundary.gui.view.properties.PropertyTypeAdapter;
+import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import javafx.beans.property.Property;
 import javassist.Modifier;
 import org.reflections.Reflections;
@@ -13,7 +13,9 @@ import org.reflections.Reflections;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Serialize Alchemist {@link EffectGroup effect groups} from/to file in human
@@ -30,33 +32,60 @@ import java.util.*;
  * @see Gson
  */
 public final class EffectSerializer {
-    /** Default extension of serialized groups of effects. */
+    /**
+     * Default extension of serialized groups of effects.
+     */
     public static final String DEFAULT_EXTENSION = ".json";
 
-    /** {@code Type} of an {@code EffectFX}. */
-    private static final Type EFFECT_TYPE = new TypeToken<EffectFX>() { }.getType();
-    /** {@code Type} of an {@code EffectGroup}. */
-    private static final Type EFFECT_GROUP_TYPE = new TypeToken<EffectGroup>() { }.getType();
-    /** @code Type} of a {@code List} of {@code EffectGroup}. */
-    private static final Type EFFECT_GROUP_LIST_TYPE = new TypeToken<List<EffectGroup>>() { }.getType();
+    /**
+     * {@code Type} of an {@code EffectFX}.
+     */
+    private static final Type EFFECT_TYPE = new TypeToken<EffectFX>() {
+    }.getType();
+    /**
+     * {@code Type} of an {@code EffectGroup}.
+     */
+    private static final Type EFFECT_GROUP_TYPE = new TypeToken<EffectGroup>() {
+    }.getType();
+    /**
+     * @code Type} of a {@code List} of {@code EffectGroup}.
+     */
+    private static final Type EFFECT_GROUP_LIST_TYPE = new TypeToken<List<EffectGroup>>() {
+    }.getType();
 
-    /** Reflection object for main Alchemist package. */
+    /**
+     * Reflection object for main Alchemist package.
+     */
     private static final Reflections REFLECTIONS = new Reflections("it.unibo.alchemist");
-    /** Set of available {@link EffectFX effect}s found by reflection. */
+    /**
+     * Set of available {@link EffectFX effect}s found by reflection.
+     */
     private static final Set<Class<? extends EffectFX>> EFFECTS = REFLECTIONS.getSubTypesOf(EffectFX.class);
-    /** Set of available {@link EffectGroup group}s found by reflection. */
+    /**
+     * Set of available {@link EffectGroup group}s found by reflection.
+     */
     private static final Set<Class<? extends EffectGroup>> GROUPS = REFLECTIONS.getSubTypesOf(EffectGroup.class);
-    /** Set of available {@link Property Properties} found by reflection. */
+    /**
+     * Set of available {@link Property Properties} found by reflection.
+     */
     @SuppressWarnings("rawtypes") // Needed to make the compiler accept the constant
     private static final Set<Class<? extends Property>> PROPERTIES = REFLECTIONS.getSubTypesOf(Property.class);
-    /** {@link RuntimeTypeAdapterFactory} to serialize and deserialize {@link EffectFX effects} properly. */
+    /**
+     * {@link RuntimeTypeAdapterFactory} to serialize and deserialize {@link EffectFX effects} properly.
+     */
     private static final RuntimeTypeAdapterFactory<EffectFX> RTA_EFFECT = RuntimeTypeAdapterFactory.of(EffectFX.class);
-    /** {@link RuntimeTypeAdapterFactory} to serialize and deserialize {@link EffectGroup effect groups} properly. */
+    /**
+     * {@link RuntimeTypeAdapterFactory} to serialize and deserialize {@link EffectGroup effect groups} properly.
+     */
     private static final RuntimeTypeAdapterFactory<EffectGroup> RTA_GROUP = RuntimeTypeAdapterFactory.of(EffectGroup.class);
-    /** Target method that will return the {@code TypeAdapter} for the property. */
+    /**
+     * Target method that will return the {@code TypeAdapter} for the property.
+     */
     private static final String TARGET_METHOD_NAME = "getTypeAdapter";
 
-    /** Google GSON object that concretely serializes and deserializes objects. */
+    /**
+     * Google GSON object that concretely serializes and deserializes objects.
+     */
     private static final Gson GSON;
 
     /* Dynamically load TypeAdapters in GSON object */
@@ -101,28 +130,25 @@ public final class EffectSerializer {
                 .create();
     }
 
-    /** Default private, empty constructor, as this is an utility class. */
+    /**
+     * Default private, empty constructor, as this is an utility class.
+     */
     private EffectSerializer() {
-        // Empty constructor
+        throw new AssertionError("Suppress default constructor for noninstantiability");
     }
 
     /**
      * Get an {@link EffectFX Effect} from the specified file. It tries to
      * deserialize a JSON file.
      *
-     * @param effectFile
-     *            Source file
+     * @param effectFile Source file
      * @return Effect loaded from the file
-     * @throws FileNotFoundException
-     *             If the file does not exist, is a directory rather than a
-     *             regular file, or for some other reason cannot be opened for
-     *             reading
-     * @throws JsonIOException
-     *             If there was a problem reading from the Reader
-     * @throws JsonSyntaxException
-     *             If JSON is not a valid representation for an object of type
-     * @throws IOException
-     *             If some other I/O error occurs
+     * @throws FileNotFoundException If the file does not exist, is a directory rather than a
+     *                               regular file, or for some other reason cannot be opened for
+     *                               reading
+     * @throws JsonIOException       If there was a problem reading from the Reader
+     * @throws JsonSyntaxException   If JSON is not a valid representation for an object of type
+     * @throws IOException           If some other I/O error occurs
      */
     public static EffectFX effectFromFile(final File effectFile) throws IOException {
         final Reader reader = new FileReader(effectFile);
@@ -132,18 +158,31 @@ public final class EffectSerializer {
     }
 
     /**
+     * Get an {@link EffectFX Effect} from the specified resource file. It tries to
+     * deserialize a JSON file.
+     *
+     * @param resource resource file
+     * @return Effect loaded from the resource file
+     * @throws FileNotFoundException If the file does not exist, is a directory rather than a
+     *                               regular file, or for some other reason cannot be opened for
+     *                               reading
+     * @throws JsonIOException       If there was a problem reading from the Reader
+     * @throws JsonSyntaxException   If JSON is not a valid representation for an object of type
+     * @throws IOException           If some other I/O error occurs
+     */
+    public static EffectFX effectFromResources(final String resource) throws IOException {
+        return effectFromFile(loadResource(resource));
+    }
+
+    /**
      * Write the given {@link EffectFX} to the destination file.
      *
-     * @param effectFile
-     *            Destination file
-     * @param effect
-     *            Effect
-     * @throws JsonIOException
-     *             If there was a problem writing to the writer
-     * @throws IOException
-     *             If the file exists but is a directory rather than a regular
-     *             file, does not exist but cannot be created, cannot be opened
-     *             for any other reason, or another I/O error occurs
+     * @param effectFile Destination file
+     * @param effect     Effect
+     * @throws JsonIOException If there was a problem writing to the writer
+     * @throws IOException     If the file exists but is a directory rather than a regular
+     *                         file, does not exist but cannot be created, cannot be opened
+     *                         for any other reason, or another I/O error occurs
      */
     public static void effectToFile(final File effectFile, final EffectFX effect) throws IOException {
         final Writer writer = new FileWriter(effectFile);
@@ -155,19 +194,14 @@ public final class EffectSerializer {
      * Get an {@link EffectGroup} from the specified file. It tries to
      * deserialize a JSON file.
      *
-     * @param effectFile
-     *            Source file
+     * @param effectFile Source file
      * @return Group of effects collected from the file
-     * @throws FileNotFoundException
-     *             If the file does not exist, is a directory rather than a
-     *             regular file, or for some other reason cannot be opened for
-     *             reading
-     * @throws JsonIOException
-     *             If there was a problem reading from the Reader
-     * @throws JsonSyntaxException
-     *             If JSON is not a valid representation for an object of type
-     * @throws IOException
-     *             If some other I/O error occurs
+     * @throws FileNotFoundException If the file does not exist, is a directory rather than a
+     *                               regular file, or for some other reason cannot be opened for
+     *                               reading
+     * @throws JsonIOException       If there was a problem reading from the Reader
+     * @throws JsonSyntaxException   If JSON is not a valid representation for an object of type
+     * @throws IOException           If some other I/O error occurs
      */
     public static EffectGroup effectsFromFile(final File effectFile) throws IOException {
         final Reader reader = new FileReader(effectFile);
@@ -177,18 +211,31 @@ public final class EffectSerializer {
     }
 
     /**
+     * Get an {@link EffectGroup} from the specified resource file. It tries to
+     * deserialize a JSON file.
+     *
+     * @param resource resource file
+     * @return Group of effects collected from the file
+     * @throws FileNotFoundException If the file does not exist, is a directory rather than a
+     *                               regular file, or for some other reason cannot be opened for
+     *                               reading
+     * @throws JsonIOException       If there was a problem reading from the Reader
+     * @throws JsonSyntaxException   If JSON is not a valid representation for an object of type
+     * @throws IOException           If some other I/O error occurs
+     */
+    public static EffectGroup effectsFromResources(final String resource) throws IOException {
+        return effectsFromFile(loadResource(resource));
+    }
+
+    /**
      * Write the given {@link EffectGroup} to the destination file.
      *
-     * @param effectFile
-     *            Destination file
-     * @param effects
-     *            Group of effects
-     * @throws JsonIOException
-     *             If there was a problem writing to the writer
-     * @throws IOException
-     *             If the file exists but is a directory rather than a regular
-     *             file, does not exist but cannot be created, cannot be opened
-     *             for any other reason, or another I/O error occurs
+     * @param effectFile Destination file
+     * @param effects    Group of effects
+     * @throws JsonIOException If there was a problem writing to the writer
+     * @throws IOException     If the file exists but is a directory rather than a regular
+     *                         file, does not exist but cannot be created, cannot be opened
+     *                         for any other reason, or another I/O error occurs
      */
     public static void effectsToFile(final File effectFile, final EffectGroup effects) throws IOException {
         final Writer writer = new FileWriter(effectFile);
@@ -200,19 +247,14 @@ public final class EffectSerializer {
      * Get a list of {@link EffectGroup} from the specified file. It tries to
      * deserialize a JSON file.
      *
-     * @param effectFile
-     *            Source file
+     * @param effectFile Source file
      * @return List of the effect groups collected from the file
-     * @throws FileNotFoundException
-     *             If the file does not exist, is a directory rather than a
-     *             regular file, or for some other reason cannot be opened for
-     *             reading
-     * @throws JsonIOException
-     *             If there was a problem reading from the Reader
-     * @throws JsonSyntaxException
-     *             If JSON is not a valid representation for an object of type
-     * @throws IOException
-     *             If some other I/O error occurs
+     * @throws FileNotFoundException If the file does not exist, is a directory rather than a
+     *                               regular file, or for some other reason cannot be opened for
+     *                               reading
+     * @throws JsonIOException       If there was a problem reading from the Reader
+     * @throws JsonSyntaxException   If JSON is not a valid representation for an object of type
+     * @throws IOException           If some other I/O error occurs
      */
     public static List<EffectGroup> effectGroupsFromFile(final File effectFile) throws IOException {
         final Reader reader = new FileReader(effectFile);
@@ -222,18 +264,31 @@ public final class EffectSerializer {
     }
 
     /**
+     * Get a list of {@link EffectGroup} from the specified resource file. It tries to
+     * deserialize a JSON file.
+     *
+     * @param resource resource file
+     * @return List of the effect groups collected from the file
+     * @throws FileNotFoundException If the file does not exist, is a directory rather than a
+     *                               regular file, or for some other reason cannot be opened for
+     *                               reading
+     * @throws JsonIOException       If there was a problem reading from the Reader
+     * @throws JsonSyntaxException   If JSON is not a valid representation for an object of type
+     * @throws IOException           If some other I/O error occurs
+     */
+    public static List<EffectGroup> effectGroupsFromResources(final String resource) throws IOException {
+        return effectGroupsFromFile(loadResource(resource));
+    }
+
+    /**
      * Write the given list of {@link EffectGroup}s to the destination file.
      *
-     * @param effectFile
-     *            Destination file
-     * @param effects
-     *            List of group of effects
-     * @throws JsonIOException
-     *             If there was a problem writing to the writer
-     * @throws IOException
-     *             If the file exists but is a directory rather than a regular
-     *             file, does not exist but cannot be created, cannot be opened
-     *             for any other reason, or another I/O error occurs
+     * @param effectFile Destination file
+     * @param effects    List of group of effects
+     * @throws JsonIOException If there was a problem writing to the writer
+     * @throws IOException     If the file exists but is a directory rather than a regular
+     *                         file, does not exist but cannot be created, cannot be opened
+     *                         for any other reason, or another I/O error occurs
      */
     public static void effectGroupsToFile(final File effectFile, final List<EffectGroup> effects) throws IOException {
         final Writer writer = new FileWriter(effectFile);
@@ -252,5 +307,27 @@ public final class EffectSerializer {
      */
     public static Gson getGSON() {
         return GSON;
+    }
+
+    /**
+     * Loads the resource file.
+     * <p>
+     * Used to load effects from resources.
+     *
+     * @param resource the resource file path
+     * @return the {@code File} object of the resource
+     * @throws IOException If some other I/O error occurs
+     */
+    private static File loadResource(final String resource) throws IOException {
+        try {
+            return new File(ResourceLoader.loadURL(resource).getFile());
+        } catch (final NullPointerException e) {
+            if (resource == null) {
+                throw e;
+            } else {
+                throw new IOException(e);
+            }
+        }
+
     }
 }

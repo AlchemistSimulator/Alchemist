@@ -11,12 +11,13 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -46,7 +47,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      */
     private static final int DEFAULT_NUMBER_OF_STEPS = 1;
 
-    private final Collection<EffectGroup> effectStack;
+    private final ObservableList<EffectGroup> effectStack;
     private final Semaphore mutex = new Semaphore(1);
     private final AtomicBoolean mayRender = new AtomicBoolean(true);
     private WeakReference currentEnvironment = new WeakReference<>(null);
@@ -74,7 +75,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         super();
         this.firstTime = true;
         this.realTime = false;
-        this.effectStack = new ArrayList<>();
+        this.effectStack = FXCollections.observableArrayList();
         setStyle("-fx-background-color: #FFF;");
         setStep(steps);
         initMouseListener();
@@ -138,9 +139,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     public final void repaint() {
         final GraphicsContext gc = this.getGraphicsContext2D();
         mutex.acquireUninterruptibly();
-        getCurrentEnvironment().ifPresent(environment -> {
-            drawEffects(gc, environment);
-        });
+        getCurrentEnvironment().ifPresent(environment -> drawEffects(gc, environment));
         mutex.release();
     }
 

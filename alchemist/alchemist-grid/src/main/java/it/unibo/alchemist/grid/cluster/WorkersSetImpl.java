@@ -8,6 +8,9 @@ import java.util.stream.Collectors;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCompute;
 import org.apache.ignite.cluster.ClusterGroup;
+
+import it.unibo.alchemist.grid.config.GeneralSimulationConfig;
+import it.unibo.alchemist.grid.config.RemoteGeneralSimulationConfig;
 import it.unibo.alchemist.grid.simulation.RemoteResult;
 import it.unibo.alchemist.grid.simulation.RemoteSimulation;
 import it.unibo.alchemist.grid.simulation.RemoteSimulationImpl;
@@ -27,7 +30,10 @@ public class WorkersSetImpl implements WorkersSet {
     @Override
     public Set<RemoteResult> distributeSimulations(SimulationsSet simulationsSet) {
         IgniteCompute compute = this.ignite.compute(this.grp);
-        List<RemoteSimulation> jobs = simulationsSet.getSimulationConfigs().stream().map(e -> new RemoteSimulationImpl(simulationsSet.getGeneralSimulationConfig(), e)).collect(Collectors.toList());
+        GeneralSimulationConfig gc = new RemoteGeneralSimulationConfig(simulationsSet.getGeneralSimulationConfig(), this.ignite);
+        List<RemoteSimulation> jobs = simulationsSet.getSimulationConfigs().stream()
+                .map(e -> new RemoteSimulationImpl(gc, e))
+                .collect(Collectors.toList());
         //TODO ricorda hash nella classe
         return new HashSet<>(compute.call(jobs));
     }

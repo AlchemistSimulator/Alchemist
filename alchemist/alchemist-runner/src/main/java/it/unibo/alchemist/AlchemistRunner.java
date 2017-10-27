@@ -5,6 +5,8 @@ package it.unibo.alchemist;
 
 import java.awt.GraphicsEnvironment;
 import java.io.FileNotFoundException;
+import java.io.Serializable;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -40,6 +42,14 @@ import it.unibo.alchemist.boundary.gui.SingleRunGUI;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.grid.cluster.Cluster;
+import it.unibo.alchemist.grid.cluster.ClusterImpl;
+import it.unibo.alchemist.grid.config.GeneralSimulationConfig;
+import it.unibo.alchemist.grid.config.LocalGeneralSimulationConfig;
+import it.unibo.alchemist.grid.config.SimulationConfig;
+import it.unibo.alchemist.grid.config.SimulationConfigImpl;
+import it.unibo.alchemist.grid.simulation.SimulationsSet;
+import it.unibo.alchemist.grid.simulation.SimulationsSetImpl;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.export.EnvPerformanceStats;
 import it.unibo.alchemist.loader.export.Exporter;
@@ -211,18 +221,28 @@ public final class AlchemistRunner<T> {
     }
 
     private Optional<? extends Throwable> launchRemote(final String... variables) {
-        System.out.println("hello");
+        GeneralSimulationConfig gsc = new LocalGeneralSimulationConfig(this.loader);
+        System.out.println(gsc.getYamlDependencies());
+
+        List<SimulationConfig> simConfigs = getVariablesCartesianProduct(variables).stream()
+                .map(e -> new SimulationConfigImpl(e)).collect(Collectors.toList());
+        System.out.println(simConfigs.get(0).getVariables());
+
+        SimulationsSet set = new SimulationsSetImpl(gsc, simConfigs);
+
+        //TODO or else throw
+        Cluster cluster = new ClusterImpl(Paths.get(this.gridConfigFile.get()));
+        cluster.getWorkersSet(set.computeComplexity()).distributeSimulations(set);
         return Optional.empty();
     }
-    
-    private List<List<Entry<String, ?>>> getVariablesCartesianProduct(final String... variables) {
-        final List<List<? extends Entry<String, ?>>> varStreams = Arrays.stream(variables)
+
+    private List<List<Entry<String, ? extends Serializable>>> getVariablesCartesianProduct(final String... variables) {
+        final List<List<? extends Entry<String, ? extends Serializable>>> varStreams = Arrays.stream(variables)
                 .map(it -> getVariables().get(it).stream()
                         .map(val -> new ImmutablePair<>(it, val))
                         .collect(Collectors.toList()))
                 .collect(Collectors.toList());
-        //TODO ci saranno problemi?
-        return varStreams.isEmpty() ? ImmutableList.of(ImmutableList.<Entry<String, ?>>of())
+        return varStreams.isEmpty() ? ImmutableList.of(ImmutableList.<Entry<String, ? extends Serializable>>of())
         : Lists.cartesianProduct(varStreams);
     }
 

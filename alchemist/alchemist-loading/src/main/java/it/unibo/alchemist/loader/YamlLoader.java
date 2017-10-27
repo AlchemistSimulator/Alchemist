@@ -52,6 +52,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
+import com.google.common.io.CharStreams;
 import com.google.common.reflect.TypeToken;
 
 import it.unibo.alchemist.SupportedIncarnations;
@@ -198,6 +199,7 @@ public class YamlLoader implements Loader {
     private final ImmutableMap<Map<String, Object>, String> reverseLookupTable;
     private final ImmutableMap<String, Variable<?>> variables;
     private final ImmutableList<String> dependencies;
+    private final String yamlString;
 
     /**
      * @param source
@@ -214,8 +216,13 @@ public class YamlLoader implements Loader {
      */
     @SuppressWarnings(UNCHECKED)
     public YamlLoader(final Reader source) {
+        try {
+            this.yamlString = CharStreams.toString(source);
+        } catch (IOException e1) {
+            throw new IllegalArgumentException("Not a valid Alchemist YAML file.");
+        }
         final Yaml yaml = new Yaml();
-        final Object yamlObj = yaml.load(source);
+        final Object yamlObj = yaml.load(new StringReader(yamlString));
         L.debug("Parsed yaml: {}", yamlObj);
         if (!(yamlObj instanceof Map)) {
             throw new IllegalArgumentException("Not a valid Alchemist YAML file.");
@@ -341,9 +348,9 @@ public class YamlLoader implements Loader {
         }
         Object dependencies = rawContents.get(REMOTE_DEPENDENCIES);
         if (dependencies == null) {
-            this.dependencies = ImmutableList.copyOf((List<String>)dependencies);
-        } else {
             this.dependencies = ImmutableList.of();
+        } else {
+            this.dependencies = ImmutableList.copyOf((List<String>)dependencies);
         }
     }
 
@@ -371,8 +378,13 @@ public class YamlLoader implements Loader {
     }
     
     @Override
-    public List<String> getRemoteDependencies() {
+    public List<String> getDependencies() {
         return this.dependencies;
+    }
+    
+    @Override
+    public String getYamlAsString() {
+        return this.yamlString;
     }
 
     @Override

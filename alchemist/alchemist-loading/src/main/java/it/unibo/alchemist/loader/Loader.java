@@ -44,5 +44,7 @@ public interface Loader {
      */
     List<Extractor> getDataExtractors();
 
-    List<String> getRemoteDependencies();
+    List<String> getDependencies();
+
+    String getYamlAsString();
 }

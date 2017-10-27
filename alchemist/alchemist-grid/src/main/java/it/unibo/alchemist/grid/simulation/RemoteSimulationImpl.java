@@ -17,7 +17,7 @@ public class RemoteSimulationImpl implements RemoteSimulation {
 
     @Override
     public RemoteResult call() throws Exception {
-        // TODO Auto-generated method stub
+        System.out.println(this.generalConfig.getYaml());
         return null;
     }
 

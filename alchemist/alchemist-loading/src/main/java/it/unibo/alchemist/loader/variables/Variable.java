@@ -10,7 +10,7 @@ import java.util.stream.Stream;
  *
  * @param <V>
  */
-public interface Variable<V> extends Serializable, Iterable<V> {
+public interface Variable<V extends Serializable> extends Serializable, Iterable<V> {
 
     @Override
     default Iterator<V> iterator() {

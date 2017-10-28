@@ -1,21 +1,31 @@
 package it.unibo.alchemist.boundary.gui.effects.json;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
-import javafx.beans.property.Property;
-import javassist.Modifier;
-import org.reflections.Reflections;
-
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import javafx.beans.property.Property;
+import javassist.Modifier;
+import org.jetbrains.annotations.Contract;
+import org.reflections.Reflections;
 
 /**
  * Serialize Alchemist {@link EffectGroup effect groups} from/to file in human
@@ -36,22 +46,26 @@ public final class EffectSerializer {
      * Default extension of serialized groups of effects.
      */
     public static final String DEFAULT_EXTENSION = ".json";
+    /**
+     * Default charset of serialized groups of effects.
+     */
+    public static final String DEFAULT_CHARSET = "UTF-8";
 
     /**
      * {@code Type} of an {@code EffectFX}.
      */
-    private static final Type EFFECT_TYPE = new TypeToken<EffectFX>() {
-    }.getType();
+    private static final TypeToken<EffectFX> EFFECT_TYPE = new TypeToken<EffectFX>() {
+    };
     /**
      * {@code Type} of an {@code EffectGroup}.
      */
-    private static final Type EFFECT_GROUP_TYPE = new TypeToken<EffectGroup>() {
-    }.getType();
+    private static final TypeToken<EffectGroup> EFFECT_GROUP_TYPE = new TypeToken<EffectGroup>() {
+    };
     /**
      * @code Type} of a {@code List} of {@code EffectGroup}.
      */
-    private static final Type EFFECT_GROUP_LIST_TYPE = new TypeToken<List<EffectGroup>>() {
-    }.getType();
+    private static final TypeToken<List<EffectGroup>> EFFECT_GROUP_LIST_TYPE = new TypeToken<List<EffectGroup>>() {
+    };
 
     /**
      * Reflection object for main Alchemist package.
@@ -124,7 +138,7 @@ public final class EffectSerializer {
         GSON = builder
                 .registerTypeAdapterFactory(RTA_EFFECT)
                 .registerTypeAdapterFactory(RTA_GROUP)
-                .registerTypeAdapter(EFFECT_GROUP_TYPE, new EffectGroupAdapter())
+                .registerTypeAdapter(EFFECT_GROUP_TYPE.getType(), new EffectGroupAdapter())
                 .setPrettyPrinting()
                 .enableComplexMapKeySerialization()
                 .create();
@@ -135,6 +149,38 @@ public final class EffectSerializer {
      */
     private EffectSerializer() {
         throw new AssertionError("Suppress default constructor for noninstantiability");
+    }
+
+    /**
+     * Loads a generic file from a generic reader and closes that reader.
+     *
+     * @param reader a specified reader to use
+     * @param type   a specified type token to get right type from
+     * @param <T>    the generic type of object to load
+     * @return the serialized JSON object
+     * @throws JsonIOException     If there was a problem reading from the Reader
+     * @throws JsonSyntaxException If JSON is not a valid representation for an object of type
+     * @throws IOException         If some other I/O error occurs
+     */
+    private static <T> T load(final Reader reader, final TypeToken<T> type) throws IOException {
+        final T deserialized = GSON.fromJson(reader, type.getType());
+        reader.close();
+        return deserialized;
+    }
+
+    /**
+     * Saves a generic file with a generic writer and closes that writer.
+     *
+     * @param writer a specified writer to use
+     * @param object the object to serialize
+     * @param type   a specified type token to get right type from
+     * @param <T>    the generic type of object to save
+     * @throws JsonIOException If there was a problem writing to the writer
+     * @throws IOException     If some other I/O error occurs
+     */
+    private static <T> void save(final Writer writer, final T object, final TypeToken<T> type) throws IOException {
+        GSON.toJson(object, type.getType(), writer);
+        writer.close();
     }
 
     /**
@@ -151,10 +197,7 @@ public final class EffectSerializer {
      * @throws IOException           If some other I/O error occurs
      */
     public static EffectFX effectFromFile(final File effectFile) throws IOException {
-        final Reader reader = new FileReader(effectFile);
-        final EffectFX effect = GSON.fromJson(reader, EFFECT_TYPE);
-        reader.close();
-        return effect;
+        return load(new FileReader(effectFile), EFFECT_TYPE);
     }
 
     /**
@@ -171,7 +214,7 @@ public final class EffectSerializer {
      * @throws IOException           If some other I/O error occurs
      */
     public static EffectFX effectFromResources(final String resource) throws IOException {
-        return effectFromFile(loadResource(resource));
+        return load(new InputStreamReader(ResourceLoader.load(resource), DEFAULT_CHARSET), EFFECT_TYPE);
     }
 
     /**
@@ -185,9 +228,7 @@ public final class EffectSerializer {
      *                         for any other reason, or another I/O error occurs
      */
     public static void effectToFile(final File effectFile, final EffectFX effect) throws IOException {
-        final Writer writer = new FileWriter(effectFile);
-        GSON.toJson(effect, EFFECT_TYPE, writer);
-        writer.close();
+        save(new FileWriter(effectFile), effect, EFFECT_TYPE);
     }
 
     /**
@@ -204,10 +245,7 @@ public final class EffectSerializer {
      * @throws IOException           If some other I/O error occurs
      */
     public static EffectGroup effectsFromFile(final File effectFile) throws IOException {
-        final Reader reader = new FileReader(effectFile);
-        final EffectGroup effects = GSON.fromJson(reader, EFFECT_GROUP_TYPE);
-        reader.close();
-        return effects;
+        return load(new FileReader(effectFile), EFFECT_GROUP_TYPE);
     }
 
     /**
@@ -224,7 +262,7 @@ public final class EffectSerializer {
      * @throws IOException           If some other I/O error occurs
      */
     public static EffectGroup effectsFromResources(final String resource) throws IOException {
-        return effectsFromFile(loadResource(resource));
+        return load(new InputStreamReader(ResourceLoader.load(resource), DEFAULT_CHARSET), EFFECT_GROUP_TYPE);
     }
 
     /**
@@ -238,9 +276,7 @@ public final class EffectSerializer {
      *                         for any other reason, or another I/O error occurs
      */
     public static void effectsToFile(final File effectFile, final EffectGroup effects) throws IOException {
-        final Writer writer = new FileWriter(effectFile);
-        GSON.toJson(effects, EFFECT_GROUP_TYPE, writer);
-        writer.close();
+        save(new FileWriter(effectFile), effects, EFFECT_GROUP_TYPE);
     }
 
     /**
@@ -257,10 +293,7 @@ public final class EffectSerializer {
      * @throws IOException           If some other I/O error occurs
      */
     public static List<EffectGroup> effectGroupsFromFile(final File effectFile) throws IOException {
-        final Reader reader = new FileReader(effectFile);
-        final List<EffectGroup> effectGroups = GSON.fromJson(reader, EFFECT_GROUP_LIST_TYPE);
-        reader.close();
-        return effectGroups;
+        return load(new FileReader(effectFile), EFFECT_GROUP_LIST_TYPE);
     }
 
     /**
@@ -277,7 +310,7 @@ public final class EffectSerializer {
      * @throws IOException           If some other I/O error occurs
      */
     public static List<EffectGroup> effectGroupsFromResources(final String resource) throws IOException {
-        return effectGroupsFromFile(loadResource(resource));
+        return load(new InputStreamReader(ResourceLoader.load(resource), DEFAULT_CHARSET), EFFECT_GROUP_LIST_TYPE);
     }
 
     /**
@@ -291,9 +324,7 @@ public final class EffectSerializer {
      *                         for any other reason, or another I/O error occurs
      */
     public static void effectGroupsToFile(final File effectFile, final List<EffectGroup> effects) throws IOException {
-        final Writer writer = new FileWriter(effectFile);
-        GSON.toJson(effects, EFFECT_GROUP_LIST_TYPE, writer);
-        writer.close();
+        save(new FileWriter(effectFile), effects, EFFECT_GROUP_LIST_TYPE);
     }
 
     /**
@@ -305,29 +336,8 @@ public final class EffectSerializer {
      *
      * @return the {@code Gson} object for serialization
      */
-    public static Gson getGSON() {
+    @Contract(pure = true)
+    protected static Gson getGSON() {
         return GSON;
-    }
-
-    /**
-     * Loads the resource file.
-     * <p>
-     * Used to load effects from resources.
-     *
-     * @param resource the resource file path
-     * @return the {@code File} object of the resource
-     * @throws IOException If some other I/O error occurs
-     */
-    private static File loadResource(final String resource) throws IOException {
-        try {
-            return new File(ResourceLoader.loadURL(resource).getFile());
-        } catch (final NullPointerException e) {
-            if (resource == null) {
-                throw e;
-            } else {
-                throw new IOException(e);
-            }
-        }
-
     }
 }

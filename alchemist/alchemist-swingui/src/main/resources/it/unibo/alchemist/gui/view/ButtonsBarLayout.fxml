@@ -5,7 +5,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.BorderPane?>
 <?import java.lang.Integer?>
-<BorderPane id="controlPane" fx:id="controlPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane id="controlPane" fx:id="controlPane" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
     <bottom>
         <ButtonBar id="controlBar" fx:id="controlBar" stylesheets="@ButtonsBarLayout.css" BorderPane.alignment="CENTER">
             <buttons>

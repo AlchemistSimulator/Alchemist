@@ -44,7 +44,15 @@ public interface Loader {
      */
     List<Extractor> getDataExtractors();
 
+    /**
+     * 
+     * @return dependencies files
+     */
     List<String> getDependencies();
 
+    /**
+     * 
+     * @return yaml file content
+     */
     String getYamlAsString();
 }

@@ -7,7 +7,7 @@ public class RemoteSimulationImpl implements RemoteSimulation {
 
     private final GeneralSimulationConfig generalConfig;
     private final SimulationConfig config;
-    
+
     public RemoteSimulationImpl(GeneralSimulationConfig generalConfig, SimulationConfig config) {
         this.generalConfig = generalConfig;
         this.config = config;
@@ -17,7 +17,7 @@ public class RemoteSimulationImpl implements RemoteSimulation {
 
     @Override
     public RemoteResult call() throws Exception {
-        System.out.println(this.generalConfig.getYaml());
+        System.out.println(this.config.getVariables());
         return null;
     }
 

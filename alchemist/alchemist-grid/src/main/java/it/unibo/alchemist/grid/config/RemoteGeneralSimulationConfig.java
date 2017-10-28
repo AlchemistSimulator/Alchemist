@@ -10,7 +10,7 @@ import org.apache.ignite.Ignition;
 import org.apache.ignite.cache.CacheMode;
 import org.apache.ignite.configuration.CacheConfiguration;
 
-public class RemoteGeneralSimulationConfig implements GeneralSimulationConfig {
+public class RemoteGeneralSimulationConfig implements GeneralSimulationConfig, AutoCloseable {
     
     private final String cacheName;
     private final Set<String> keys;
@@ -26,7 +26,7 @@ public class RemoteGeneralSimulationConfig implements GeneralSimulationConfig {
         cacheCfg.setCacheMode(CacheMode.REPLICATED);
         IgniteCache<String, String> cache = ignite.getOrCreateCache(cacheCfg);
         cache.putAll(sc.getYamlDependencies());
-        cache.put(YAML_KEY, cacheName);
+        cache.put(YAML_KEY, sc.getYaml());
     }
 
     @Override
@@ -40,6 +40,12 @@ public class RemoteGeneralSimulationConfig implements GeneralSimulationConfig {
     public Map<String, String> getYamlDependencies() {
         IgniteCache<String, String> cache = Ignition.ignite().cache(this.cacheName);
         return cache.getAll(this.keys);
+    }
+
+    @Override
+    public void close() {
+        Ignition.ignite().cache(this.cacheName).clear();
+        Ignition.ignite().cache(this.cacheName).destroy();
     }
 
 }

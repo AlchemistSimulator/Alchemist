@@ -1,10 +1,10 @@
 package it.unibo.alchemist.grid.simulation;
 
 public class ComplexityImpl implements Complexity {
-    
+
     private final double ram;
     private final double cpu;
-    
+
     public ComplexityImpl(double ram, double cpu) {
         this.ram = ram;
         this.cpu = cpu;

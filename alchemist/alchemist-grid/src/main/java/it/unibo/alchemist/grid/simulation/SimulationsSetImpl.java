@@ -1,13 +1,12 @@
 package it.unibo.alchemist.grid.simulation;
 
 import java.util.List;
-import java.util.Set;
 
 import it.unibo.alchemist.grid.config.GeneralSimulationConfig;
 import it.unibo.alchemist.grid.config.SimulationConfig;
 
 public class SimulationsSetImpl implements SimulationsSet {
-    
+
     private final GeneralSimulationConfig genSimConfig;
     private final List<SimulationConfig> simulationConfigs;
     

@@ -221,18 +221,16 @@ public final class AlchemistRunner<T> {
     }
 
     private Optional<? extends Throwable> launchRemote(final String... variables) {
-        GeneralSimulationConfig gsc = new LocalGeneralSimulationConfig(this.loader);
-        System.out.println(gsc.getYamlDependencies());
+        final GeneralSimulationConfig gsc = new LocalGeneralSimulationConfig(this.loader);
 
-        List<SimulationConfig> simConfigs = getVariablesCartesianProduct(variables).stream()
+        final List<SimulationConfig> simConfigs = getVariablesCartesianProduct(variables).stream()
                 .map(e -> new SimulationConfigImpl(e)).collect(Collectors.toList());
-        System.out.println(simConfigs.get(0).getVariables());
 
-        SimulationsSet set = new SimulationsSetImpl(gsc, simConfigs);
+        final SimulationsSet set = new SimulationsSetImpl(gsc, simConfigs);
 
-        //TODO or else throw
-        Cluster cluster = new ClusterImpl(Paths.get(this.gridConfigFile.get()));
-        cluster.getWorkersSet(set.computeComplexity()).distributeSimulations(set);
+        try (Cluster cluster = new ClusterImpl(Paths.get(this.gridConfigFile.orElseThrow(() -> new IllegalStateException("No remote configuration file"))))) {
+            cluster.getWorkersSet(set.computeComplexity()).distributeSimulations(set);
+        }
         return Optional.empty();
     }
 
@@ -450,6 +448,11 @@ public final class AlchemistRunner<T> {
             return this;
         }
 
+        /**
+         * 
+         * @param path Ignite's setting file path
+         * @return builder
+         */
         public Builder<T> setRemoteConfig(final String path) {
             this.gridConfigFile = Optional.ofNullable(path);
             return this;

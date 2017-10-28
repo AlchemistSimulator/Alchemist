@@ -1,5 +1,6 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
+import it.unibo.alchemist.boundary.gui.effects.json.AbstractEffectSerializationTest;
 import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
 import javafx.scene.paint.Color;
 import org.junit.Assert;

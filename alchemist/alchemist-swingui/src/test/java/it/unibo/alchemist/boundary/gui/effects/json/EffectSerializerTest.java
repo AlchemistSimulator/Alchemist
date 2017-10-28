@@ -17,6 +17,7 @@ import java.util.List;
  * JUnit test for EffectSerializer class.
  */
 public class EffectSerializerTest {
+    private static final String TEST_EFFECTS = "/it/unibo/alchemist/gui/effects/json/TestEffects.json";
 
     /**
      * Temporary folder created before each test method, and deleted after each.
@@ -78,11 +79,8 @@ public class EffectSerializerTest {
     private List<EffectGroup> initList() {
         final List<EffectGroup> groups = new ArrayList<>();
 
-        final EffectGroup group1 = new EffectStack();
-        groups.add(group1);
-
-        final EffectGroup group2 = new EffectStack("Group 2");
-        groups.add(group2);
+        groups.add(new EffectStack());
+        groups.add(new EffectStack("Group 2"));
 
         final EffectGroup group3 = new EffectStack("Group 3");
         group3.setVisibility(false);
@@ -113,4 +111,16 @@ public class EffectSerializerTest {
         return groups;
     }
 
+    @Test
+    public void testResourceSerialization() throws IOException {
+        final EffectGroup group = new EffectStack("Default Effects");
+        final EffectFX effect = new DrawDot("Draw dots");
+        group.add(effect);
+
+        final EffectGroup deserialized = EffectSerializer.effectsFromResources(TEST_EFFECTS);
+        Assert.assertTrue(group.equals(deserialized));
+        final File file = folder.newFile();
+        EffectSerializer.effectsToFile(file, group);
+        Assert.assertTrue(EffectSerializer.effectsFromFile(file).equals(deserialized));
+    }
 }

@@ -12,6 +12,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Type;
 
+import it.unibo.alchemist.boundary.gui.effects.json.AbstractPropertySerializationTest;
 import org.junit.Assert;
 import org.junit.Test;
 

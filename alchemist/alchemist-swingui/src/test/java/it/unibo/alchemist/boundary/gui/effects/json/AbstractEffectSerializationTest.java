@@ -1,5 +1,6 @@
-package it.unibo.alchemist.boundary.gui.effects;
+package it.unibo.alchemist.boundary.gui.effects.json;
 
+import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;

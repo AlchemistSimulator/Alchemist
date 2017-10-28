@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import it.unibo.alchemist.boundary.gui.effects.json.AbstractEffectSerializationTest;
 import org.junit.Assert;
 import org.junit.Test;
 

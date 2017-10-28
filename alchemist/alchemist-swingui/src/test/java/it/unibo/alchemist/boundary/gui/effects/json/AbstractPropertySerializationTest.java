@@ -1,4 +1,4 @@
-package it.unibo.alchemist.boundary.gui.view.property;
+package it.unibo.alchemist.boundary.gui.effects.json;
 
 import java.lang.reflect.Type;
 

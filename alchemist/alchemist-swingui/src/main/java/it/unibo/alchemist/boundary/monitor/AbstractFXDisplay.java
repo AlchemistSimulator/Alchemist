@@ -163,15 +163,12 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     protected final void drawEffects(final GraphicsContext graphicsContext, final Environment<T> environment) {
         if (mayRender.get() && getWormhole() != null && isVisible() && !isDisabled()) {
             mayRender.set(false);
-            final List<Runnable> commandQueue = getEffects().stream()
-                    .filter(EffectGroup::isVisible)
-                    .flatMap(EffectGroup::stream)
-                    .filter(EffectFX::isVisibile)
-                    .map(e -> e.apply(graphicsContext, environment, getWormhole()))
-                    .collect(Collectors.toList());
             Platform.runLater(() -> {
                 drawBackground(graphicsContext, environment);
-                commandQueue.forEach(Runnable::run);
+                getEffects().stream()
+                        .map(group -> group.applyAll(graphicsContext, environment, getWormhole()))
+                        .flatMap(Collection::stream)
+                        .forEach(Runnable::run);
                 mayRender.set(true);
             });
         }

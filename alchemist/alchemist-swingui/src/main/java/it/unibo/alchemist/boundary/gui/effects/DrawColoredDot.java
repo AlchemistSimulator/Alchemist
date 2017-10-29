@@ -22,6 +22,7 @@ import java.io.Serializable;
  * <p>
  * It's possible to set the size and the color of the dots.
  */
+/* Interface redundant specification is needed for correct javadoc inheritance */
 public class DrawColoredDot extends DrawDot implements EffectFX {
 
     /**
@@ -54,7 +55,18 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
      * Default visibility is true.
      */
     public DrawColoredDot() {
-        super(DEFAULT_NAME);
+        this(DEFAULT_NAME);
+    }
+
+    /**
+     * Default constructor.
+     * <p>
+     * Default visibility is true.
+     *
+     * @param name the name of the effect.
+     */
+    public DrawColoredDot(final String name) {
+        super(name);
 
         // Set properties to default color of DrawDot
         red = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_red"), super.getColor().getRed());
@@ -67,18 +79,6 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
         green.addListener(this.updateColor());
         blue.addListener(this.updateColor());
         alpha.addListener(this.updateColor());
-    }
-
-    /**
-     * Default constructor.
-     * <p>
-     * Default visibility is true.
-     *
-     * @param name the name of the effect.
-     */
-    public DrawColoredDot(final String name) {
-        this();
-        this.setName(name);
     }
 
     @Override

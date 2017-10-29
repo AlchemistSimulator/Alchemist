@@ -185,13 +185,13 @@ public final class AlchemistRunner<T> {
                         final SingleRunAppBuilder builder = new SingleRunAppBuilder<>(sim);
                         effectsFile.ifPresent(builder::addEffectGroup);
 
-                        // TODO test //////////////////////////////////////
+                        // TODO check //////////////////////////////////////
                         final EffectGroup defaultGroup = new EffectStack();
                         defaultGroup.add(new DrawDot("Draw dots"));
                         builder.addEffectGroup(defaultGroup);
                         builder.useDefaultEffects(false);
 //                        builder.useDefaultEffects(true);
-                        // TODO test //////////////////////////////////////
+                        // TODO check //////////////////////////////////////
 
                         builder.build();
                     }

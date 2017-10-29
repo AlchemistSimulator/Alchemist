@@ -224,7 +224,6 @@ public class SingleRunApp<T> extends Application {
                 s.addOutputMonitor(this.timeMonitor);
                 s.addOutputMonitor(this.stepMonitor);
             });
-            optDisplayMonitor.ifPresent(d -> d.setEffects(effectGroups));
             final ButtonsBarController buttonsBarController = new ButtonsBarController(playPauseMonitor, timeMonitor, stepMonitor);
 
             final BorderPane bar = FXResourceLoader.getLayout(BorderPane.class, buttonsBarController, BUTTONS_BAR_LAYOUT);
@@ -234,6 +233,7 @@ public class SingleRunApp<T> extends Application {
 
             buttonsBarController.getObservableEffectsList().addAll(this.effectGroups);
             effectGroups = buttonsBarController.getObservableEffectsList();
+            optDisplayMonitor.ifPresent(d -> d.setEffects(buttonsBarController.getObservableEffectsList()));
 
             primaryStage.setTitle("Alchemist Simulation");
             primaryStage.setOnCloseRequest(e -> {

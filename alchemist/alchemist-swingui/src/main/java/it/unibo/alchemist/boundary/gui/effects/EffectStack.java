@@ -1,5 +1,8 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
+import it.unibo.alchemist.boundary.CommandQueueBuilder;
+import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
+import it.unibo.alchemist.model.interfaces.Environment;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -7,6 +10,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 
+import javafx.scene.canvas.GraphicsContext;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +31,7 @@ public class EffectStack implements EffectGroup {
     /** Default IllegalArgumentException message. */
     private static final String CANNOT_FIND_EFFECT = "Cannot find the effect in the stack";
     /** Default effect group name. */
-    public static final String DEFAULT_NAME = ResourceLoader.getStringRes("effect_stack_default_name");
+    private static final String DEFAULT_NAME = ResourceLoader.getStringRes("effect_stack_default_name");
     private static final int FIRST_HASHCODE_CONSTANT = 1231;
     private static final int SECOND_HASHCODE_CONSTANT = 1237;
     /** Default logger. */
@@ -58,6 +63,20 @@ public class EffectStack implements EffectGroup {
         this.name = name;
         this.visibility = true;
         this.transparency = 100;
+    }
+
+    @Override
+    public <T> Queue<Runnable> applyAll(final GraphicsContext graphic, final Environment<T> environment, final BidimensionalWormhole wormhole) {
+        final CommandQueueBuilder builder = new CommandQueueBuilder();
+        if (isVisible()) {
+            this.stream()
+                    .filter(EffectFX::isVisibile)
+                    .map(effectFX -> effectFX.apply(graphic, environment, wormhole))
+                    .forEach(builder::addCommand);
+        } else {
+            builder.addCommand(() -> {});
+        }
+        return builder.buildCommandQueue();
     }
 
     @Override
@@ -189,11 +208,13 @@ public class EffectStack implements EffectGroup {
         return this.effects.contains(o);
     }
 
+    @NotNull
     @Override
     public Object[] toArray() {
         return this.effects.toArray();
     }
 
+    @NotNull
     @Override
     public <T> T[] toArray(final T[] a) {
         return this.effects.toArray(a);
@@ -388,6 +409,7 @@ public class EffectStack implements EffectGroup {
      * 
      * @return the {@code TypeAdapter} for this class
      */
+    @NotNull
     public static EffectGroupAdapter getTypeAdapter() {
         return new EffectGroupAdapter();
     }

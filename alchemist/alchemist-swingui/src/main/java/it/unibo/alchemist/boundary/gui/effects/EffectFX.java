@@ -2,9 +2,8 @@ package it.unibo.alchemist.boundary.gui.effects;
 
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.model.interfaces.Environment;
-import javafx.scene.canvas.GraphicsContext;
-
 import java.io.Serializable;
+import javafx.scene.canvas.GraphicsContext;
 
 /**
  * Graphical visualization of something happening in the environment.
@@ -18,6 +17,7 @@ public interface EffectFX extends Serializable {
      * @param environment the {@code Environment} containing the nodes to draw
      * @param wormhole    the {@code BidimensionalWormhole} object to calculate positions
      * @param <T>         the {@link Environment} type
+     * @return the Runnable that should be run on JavaFX thread
      */
     <T> Runnable apply(GraphicsContext graphic, Environment<T> environment, BidimensionalWormhole wormhole);
 
@@ -49,9 +49,11 @@ public interface EffectFX extends Serializable {
      */
     void setVisibility(boolean vilibility);
 
-    @Override // Should override hashCode() method
+    @Override
+        // Should override hashCode() method
     int hashCode();
 
-    @Override // Should override equals() method
+    @Override
+        // Should override equals() method
     boolean equals(Object obj);
 }

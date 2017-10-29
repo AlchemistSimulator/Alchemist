@@ -1,13 +1,26 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
+import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
+import it.unibo.alchemist.model.interfaces.Environment;
 import java.io.Serializable;
 import java.util.Queue;
+import javafx.scene.canvas.GraphicsContext;
 
 /**
  * Models a group of effects. Each effect has a different priority of
  * visualization.
  */
 public interface EffectGroup extends Serializable, Queue<EffectFX> {
+
+    /**
+     * Applies all the visible effects of the group.
+     * @param <T>         the {@link Environment} type
+     * @param graphic     the {@code Graphics2D} to use
+     * @param environment the {@code Environment} containing the nodes to draw
+     * @param wormhole    the {@code BidimensionalWormhole} object to calculate positions
+     * @return the Runnable that should be run on JavaFX thread
+     */
+    <T> Queue<Runnable> applyAll(GraphicsContext graphic, Environment<T> environment, BidimensionalWormhole wormhole);
 
     /**
      * Gets the name of the group.

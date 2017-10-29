@@ -1,5 +1,6 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
+import it.unibo.alchemist.boundary.CommandQueueBuilder;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
@@ -10,7 +11,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.LinkedList;
 import java.util.Queue;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.canvas.GraphicsContext;
@@ -23,7 +23,7 @@ import javafx.scene.paint.Color;
  * <p>
  * It's possible to set the size of the dots.
  */
-public class DrawDot implements EffectFX {
+public class DrawDot extends AbstractEffect {
 
     /**
      * Magic number used by auto-generated {@link #hashCode()} method.
@@ -50,31 +50,12 @@ public class DrawDot implements EffectFX {
     private static final double DEFAULT_SIZE = 5;
 
     /**
-     * Maximum value for the scale factor.
-     */
-    private static final double MAX_SCALE = 100;
-    /**
-     * Minimum value for the scale factor.
-     */
-    private static final double MIN_SCALE = 0;
-    /**
-     * Range for the scale factor.
-     */
-    private static final double SCALE_DIFF = MAX_SCALE - MIN_SCALE;
-    /**
-     * Default value of the scale factor.
-     */
-    private static final double DEFAULT_SCALE = (SCALE_DIFF) / 2 + MIN_SCALE;
-
-    /**
      * Default {@code Color}.
      */
     private static final Color DEFAULT_COLOR = Color.BLACK;
 
     private RangedDoubleProperty size = PropertyFactory.getPercentageRangedProperty(ResourceLoader.getStringRes("drawdot_size"), DEFAULT_SIZE);
     private Color color = DEFAULT_COLOR;
-    private String name;
-    private boolean visibility;
 
     /**
      * Empty constructor.
@@ -84,7 +65,7 @@ public class DrawDot implements EffectFX {
      * Default visibility is true.
      */
     public DrawDot() {
-        this(DEFAULT_NAME);
+        super(DEFAULT_NAME, DEFAULT_VISIBILITY);
     }
 
     /**
@@ -95,8 +76,7 @@ public class DrawDot implements EffectFX {
      * @param name the name of the effect.
      */
     public DrawDot(final String name) {
-        this.name = name;
-        this.visibility = true;
+        super(name, DEFAULT_VISIBILITY);
     }
 
     /**
@@ -107,18 +87,24 @@ public class DrawDot implements EffectFX {
      */
     @Override
     public <T> Runnable apply(final GraphicsContext graphic, final Environment<T> environment, final BidimensionalWormhole wormhole) {
-        final Queue<Runnable> commandQueue = new LinkedList<>();
+        return super.apply(graphic, environment, wormhole);
+    }
+
+    @Override
+    protected <T> Queue<Runnable> getCommandQueue(final GraphicsContext graphic, final Environment<T> environment, final BidimensionalWormhole wormhole) {
+        final CommandQueueBuilder builder = new CommandQueueBuilder();
+
         environment.forEach(node -> {
-            final double sizeX = size.get();
-            final double startX = wormhole.getViewPoint(environment.getPosition(node)).getX() - sizeX / 2;
-            final double sizeY = /*FastMath.ceil(sizeX * DEFAULT_SCALE)*/ size.get();
-            final double startY = wormhole.getViewPoint(environment.getPosition(node)).getY() - sizeY / 2;
-            commandQueue.add(() -> {
+            final double size = getSize();
+            final double startX = wormhole.getViewPoint(environment.getPosition(node)).getX() - size / 2;
+            final double startY = wormhole.getViewPoint(environment.getPosition(node)).getY() - size / 2;
+            builder.addCommand(() -> {
                 graphic.setFill(color);
-                graphic.fillOval((int) startX, (int) startY, (int) sizeX, (int) sizeY);
+                graphic.fillOval((int) startX, (int) startY, (int) size, (int) size);
             });
         });
-        return () -> commandQueue.forEach(Runnable::run);
+
+        return builder.buildCommandQueue();
     }
 
     /**
@@ -127,6 +113,8 @@ public class DrawDot implements EffectFX {
      * {@link #apply(GraphicsContext, Environment, BidimensionalWormhole) apply} in percentage.
      *
      * @return the size property
+     * @see #setSize(Double)
+     * @see #getSize()
      */
     public DoubleProperty sizeProperty() {
         return this.size;
@@ -136,6 +124,7 @@ public class DrawDot implements EffectFX {
      * Gets the value of the property {@code sizeProperty}.
      *
      * @return the size of the dots
+     * @see #sizeProperty()
      */
     public Double getSize() {
         return this.size.get();
@@ -146,6 +135,7 @@ public class DrawDot implements EffectFX {
      *
      * @param size the size to set
      * @throws IllegalArgumentException if the provided value is not a valid percentage
+     * @see #sizeProperty()
      */
     public void setSize(final Double size) {
         this.size.set(size);
@@ -171,26 +161,6 @@ public class DrawDot implements EffectFX {
         this.color = color;
     }
 
-    @Override
-    public String getName() {
-        return this.name;
-    }
-
-    @Override
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    @Override
-    public boolean isVisibile() {
-        return this.visibility;
-    }
-
-    @Override
-    public void setVisibility(final boolean vilibility) {
-        this.visibility = vilibility;
-    }
-
     /**
      * Method needed for well working serialization.
      * <p>
@@ -213,8 +183,6 @@ public class DrawDot implements EffectFX {
         stream.writeDouble(color.getGreen());
         stream.writeDouble(color.getBlue());
         stream.writeDouble(color.getOpacity());
-        stream.writeUTF(name);
-        stream.writeBoolean(visibility);
     }
 
     /**
@@ -238,18 +206,16 @@ public class DrawDot implements EffectFX {
     private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         size = (RangedDoubleProperty) stream.readObject();
         color = new Color(stream.readDouble(), stream.readDouble(), stream.readDouble(), stream.readDouble());
-        name = stream.readUTF();
-        visibility = stream.readBoolean();
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((color == null) ? 0 : color.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((size == null) ? 0 : size.hashCode());
-        result = prime * result + (visibility ? HASHCODE_NUMBER_1 : HASHCODE_NUMBER_2);
+        result = prime * result + ((getColor() == null) ? 0 : getColor().hashCode());
+        result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
+        result = prime * result + ((getSize() == null) ? 0 : getSize().hashCode());
+        result = prime * result + (isVisibile() ? HASHCODE_NUMBER_1 : HASHCODE_NUMBER_2);
         return result;
     }
 

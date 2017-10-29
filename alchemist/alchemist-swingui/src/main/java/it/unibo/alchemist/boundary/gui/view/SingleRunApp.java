@@ -6,10 +6,27 @@ import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
-import it.unibo.alchemist.boundary.monitor.*;
+import it.unibo.alchemist.boundary.monitor.AbstractFXDisplay;
+import it.unibo.alchemist.boundary.monitor.FX2DDisplay;
+import it.unibo.alchemist.boundary.monitor.FXMapDisplay;
+import it.unibo.alchemist.boundary.monitor.FXStepMonitor;
+import it.unibo.alchemist.boundary.monitor.FXTimeMonitor;
+import it.unibo.alchemist.boundary.monitor.PlayPauseMonitor;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -23,13 +40,6 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-
 import static it.unibo.alchemist.boundary.gui.controller.ButtonsBarController.BUTTONS_BAR_LAYOUT;
 
 /**
@@ -38,7 +48,6 @@ import static it.unibo.alchemist.boundary.gui.controller.ButtonsBarController.BU
  * @param <T> the {@link Concentration} type
  */
 public class SingleRunApp<T> extends Application {
-
     /**
      * Main layout without nested layouts. Must inject eventual other nested layouts.
      */
@@ -59,10 +68,12 @@ public class SingleRunApp<T> extends Application {
      * Default logger for the class.
      */
     private static final Logger L = LoggerFactory.getLogger(SingleRunApp.class);
+
     private final Map<String, String> namedParams = new HashMap<>();
     private final List<String> unnamedParams = new ArrayList<>();
     private boolean initialized = false;
-    private Collection<EffectGroup> effectGroups;
+    //    private ObservableList<EffectGroup> effectGroups = FXCollections.observableArrayList();
+    private Collection<EffectGroup> effectGroups = new ArrayList<>();
     @Nullable
     private Simulation<T> simulation;
     @Nullable
@@ -253,10 +264,10 @@ public class SingleRunApp<T> extends Application {
             switch (key) {
                 case USE_EFFECT_GROUPS_FROM_FILE:
                     try {
-                        effectGroups = EffectSerializer.effectGroupsFromFile(new File(value));
+                        effectGroups.addAll(EffectSerializer.effectGroupsFromFile(new File(value)));
                     } catch (final IOException e) {
                         L.warn(e.getMessage());
-                        effectGroups = new ArrayList<>(0); // TODO check if necessary
+                        effectGroups.clear(); // TODO check if necessary
                     }
                     break;
                 default:
@@ -340,7 +351,36 @@ public class SingleRunApp<T> extends Application {
             throw new IllegalStateException("Application is already initialized");
         }
 
-        this.effectGroups = effectGroups;
+        this.effectGroups.clear();
+        this.effectGroups.addAll(effectGroups);
+    }
+
+    /**
+     * Adds the effects to the current effects.
+     *
+     * @param effectGroups the group of effects to add
+     * @throws IllegalStateException if the application is already started
+     */
+    public void addEffectGroups(final Collection<EffectGroup> effectGroups) {
+        if (initialized) {
+            throw new IllegalStateException("Application is already initialized");
+        }
+
+        this.effectGroups.addAll(effectGroups);
+    }
+
+    /**
+     * Adds effect from a file.
+     *
+     * @param path the path of the collection of EffectGroups.
+     * @throws IllegalStateException if the application is already started
+     */
+    public void addEffectGroups(final String path) {
+        if (initialized) {
+            throw new IllegalStateException("Application is already initialized");
+        }
+
+        addNamedParam(USE_EFFECT_GROUPS_FROM_FILE, path);
     }
 
     /**

@@ -22,21 +22,32 @@ import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.BenchmarkableEnvironment;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Time;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.awt.*;
+import java.awt.GraphicsEnvironment;
 import java.io.FileNotFoundException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Queue;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Starts Alchemist.
@@ -49,7 +60,6 @@ public final class AlchemistRunner<T> {
     private static final ThreadFactory THREAD_FACTORY = new ThreadFactoryBuilder()
             .setNameFormat("alchemist-batch-%d")
             .build();
-    private final int closeOperation;
     private final boolean doBenchmark;
     private final Optional<String> effectsFile;
     private final long endStep;
@@ -89,7 +99,6 @@ public final class AlchemistRunner<T> {
         this.loader = source;
         this.parallelism = parallelism;
         this.samplingInterval = sampling;
-        this.closeOperation = closeOperation;
         this.doBenchmark = benchmark;
         this.outputMonitors = outputMonitors;
     }
@@ -139,7 +148,7 @@ public final class AlchemistRunner<T> {
             while (!(exception.isPresent() || allErrors.isEmpty())) {
                 try {
                     exception = allErrors.remove().get();
-                } catch (InterruptedException | ExecutionException e1) {
+                } catch (final InterruptedException | ExecutionException e1) {
                     exception = Optional.of(e1);
                 }
             }
@@ -159,7 +168,7 @@ public final class AlchemistRunner<T> {
             }
             try {
                 executor.awaitTermination(Integer.MAX_VALUE, TimeUnit.DAYS);
-            } catch (InterruptedException e1) {
+            } catch (final InterruptedException e1) {
                 throw new IllegalStateException("The batch execution got interrupted.");
             }
         } else {
@@ -173,18 +182,17 @@ public final class AlchemistRunner<T> {
                     if (headless || onHeadlessEnvironment) {
                         sim.play();
                     } else {
-//                                if (effectsFile.isPresent()) {
-//                                    SingleRunGUI.make(sim, effectsFile.get(), closeOperation);
-//                                } else {
-//                                    SingleRunGUI.make(sim, closeOperation);
-//                                }
-
-                        // TODO check
                         final SingleRunAppBuilder builder = new SingleRunAppBuilder<>(sim);
                         effectsFile.ifPresent(builder::addEffectGroup);
-                        final EffectGroup defaultEffects = new EffectStack("Default effects");
-                        defaultEffects.add(new DrawDot());
-                        builder.addEffectGroup(defaultEffects);
+
+                        // TODO test //////////////////////////////////////
+                        final EffectGroup defaultGroup = new EffectStack();
+                        defaultGroup.add(new DrawDot("Draw dots"));
+                        builder.addEffectGroup(defaultGroup);
+                        builder.useDefaultEffects(false);
+//                        builder.useDefaultEffects(true);
+                        // TODO test //////////////////////////////////////
+
                         builder.build();
                     }
                     sim.run();

@@ -10,6 +10,7 @@ import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+import java.util.ArrayList;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -47,7 +48,8 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      */
     private static final int DEFAULT_NUMBER_OF_STEPS = 1;
 
-    private final ObservableList<EffectGroup> effectStack;
+//    private final ObservableList<EffectGroup> effectStack;
+    private final Collection<EffectGroup> effectStack;
     private final Semaphore mutex = new Semaphore(1);
     private final AtomicBoolean mayRender = new AtomicBoolean(true);
     private WeakReference currentEnvironment = new WeakReference<>(null);
@@ -75,7 +77,8 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         super();
         this.firstTime = true;
         this.realTime = false;
-        this.effectStack = FXCollections.observableArrayList();
+//        this.effectStack = FXCollections.observableArrayList();
+        this.effectStack = new ArrayList<>();
         setStyle("-fx-background-color: #FFF;");
         setStep(steps);
         initMouseListener();
@@ -150,7 +153,6 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      * @param environment     the {@code Environment} that contains the data to pass to {@code Effects}
      * @see #repaint()
      */
-    @SuppressWarnings("unused")
     protected void drawBackground(final GraphicsContext graphicsContext, final Environment<T> environment) {
         graphicsContext.clearRect(0, 0, getWidth(), getHeight());
     }

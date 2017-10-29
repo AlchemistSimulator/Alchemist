@@ -21,10 +21,10 @@ import java.util.Objects;
  * @param <T> the concentration type
  */
 public class SingleRunAppBuilder<T> {
-    private static final String DEFAULT_EFFECTS = ""/*TODO*/;
+    private static final String DEFAULT_EFFECTS = "/it/unibo/alchemist/gui/effects/json/DefaultEffects.json";
     private final Simulation<T> simulation;
     private Collection<EffectGroup> effectGroups;
-    private boolean shouldUseDefaultEffects;
+    private volatile boolean shouldUseDefaultEffects;
 
     /**
      * Default constructor of the builder.
@@ -160,7 +160,7 @@ public class SingleRunAppBuilder<T> {
         final Runnable lambda = () -> {
             final SingleRunApp<T> app = new SingleRunApp<>();
 
-            if (shouldUseDefaultEffects /*TODO*/&& !DEFAULT_EFFECTS.equals("")/*TODO*/) {
+            if (shouldUseDefaultEffects) {
                 try {
                     effectGroups.add(EffectSerializer.effectsFromResources(DEFAULT_EFFECTS));
                 } catch (final IOException e) {

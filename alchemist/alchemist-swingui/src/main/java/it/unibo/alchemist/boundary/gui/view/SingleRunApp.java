@@ -30,6 +30,7 @@ import java.util.Optional;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
@@ -73,7 +74,7 @@ public class SingleRunApp<T> extends Application {
 
     private final Map<String, String> namedParams = new HashMap<>();
     private final List<String> unnamedParams = new ArrayList<>();
-    private final ObservableList<EffectGroup> effectGroups = FXCollections.observableArrayList();
+    private ObservableList<EffectGroup> effectGroups = FXCollections.observableArrayList();
     private boolean initialized = false;
     @Nullable
     private Simulation<T> simulation;
@@ -224,16 +225,15 @@ public class SingleRunApp<T> extends Application {
                 s.addOutputMonitor(this.stepMonitor);
             });
             optDisplayMonitor.ifPresent(d -> d.setEffects(effectGroups));
-            final ButtonsBarController buttonsBarController = new ButtonsBarController();
-
-            buttonsBarController.setStartStopButton(playPauseMonitor);
-            buttonsBarController.setTimeMonitor(timeMonitor);
-            buttonsBarController.setStepMonitor(stepMonitor);
+            final ButtonsBarController buttonsBarController = new ButtonsBarController(playPauseMonitor, timeMonitor, stepMonitor);
 
             final BorderPane bar = FXResourceLoader.getLayout(BorderPane.class, buttonsBarController, BUTTONS_BAR_LAYOUT);
             main.widthProperty().addListener((observable, oldValue, newValue) -> bar.setPrefWidth(newValue.doubleValue()));
 
             main.getChildren().add(bar);
+
+            buttonsBarController.getObservableEffectsList().addAll(this.effectGroups);
+            effectGroups = buttonsBarController.getObservableEffectsList();
 
             primaryStage.setTitle("Alchemist Simulation");
             primaryStage.setOnCloseRequest(e -> {

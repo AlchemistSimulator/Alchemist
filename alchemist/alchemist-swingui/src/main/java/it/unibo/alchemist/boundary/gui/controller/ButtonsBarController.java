@@ -78,6 +78,13 @@ public class ButtonsBarController implements Initializable {
         select = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.TAB_UNSELECTED);
     }
 
+    public ButtonsBarController(final Button playPauseButton, final Label timeLabel, final Label stepLabel) {
+        this();
+        setStartStopButton(playPauseButton);
+        setTimeMonitor(timeLabel);
+        setStepMonitor(stepLabel);
+    }
+
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
         assert controlPane != null : FXResourceLoader.getInjectionErrorMessage("controlPane", BUTTONS_BAR_LAYOUT);
@@ -111,12 +118,6 @@ public class ButtonsBarController implements Initializable {
                 this.drawerStack.setContent(new JFXDrawer());
             }
         });
-
-//        fullscreenToggle.setText("");
-//        fullscreenToggle.setGraphic(fullscreen);
-////        fullscreenToggle.setOnAction(e -> {
-////            // TODO toggle fullscreen
-////        });
 
         controlType.setText("");
         controlType.setGraphic(pan);
@@ -157,10 +158,7 @@ public class ButtonsBarController implements Initializable {
      */
     public void setStartStopButton(final Button button) {
         this.startStopButton = button;
-
-        if (this.controlBar != null && this.startStopButton != null) {
-            addMonitors();
-        }
+        addMonitors();
     }
 
     /**
@@ -215,5 +213,4 @@ public class ButtonsBarController implements Initializable {
     public ObservableList<EffectGroup> getObservableEffectsList() {
         return this.effectsGroupBarController.getObservableEffectsList();
     }
-
 }

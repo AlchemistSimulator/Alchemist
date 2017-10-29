@@ -19,8 +19,7 @@ public class FXTimeMonitor<T> extends NumericLabelMonitor<Time, T> {
      * Default constructor.
      */
     public FXTimeMonitor() {
-        super(DoubleTime.ZERO_TIME);
-        setName("Time: ");
+        super(DoubleTime.ZERO_TIME,"Time: ");
     }
 
     @Override

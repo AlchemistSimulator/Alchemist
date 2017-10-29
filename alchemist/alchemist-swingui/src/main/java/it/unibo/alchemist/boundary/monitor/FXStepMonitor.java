@@ -18,8 +18,7 @@ public class FXStepMonitor<T> extends NumericLabelMonitor<Long, T> {
      * Default constructor.
      */
     public FXStepMonitor() {
-        super(0L);
-        setName("Step: ");
+        super(0L,"Step: ");
     }
 
     @Override

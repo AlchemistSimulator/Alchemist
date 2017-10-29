@@ -35,6 +35,17 @@ public abstract class NumericLabelMonitor<N, T> extends Label implements OutputM
         setText(init.toString());
     }
 
+    /**
+     * Constructor.
+     *
+     * @param init the initial {@link N} class value
+     * @param name the name tag
+     */
+    public NumericLabelMonitor(final @NotNull N init, final @NotNull String name) {
+        this(init);
+        setName(name);
+    }
+
     @Override
     public void initialized(final Environment<T> env) {
         update(init);

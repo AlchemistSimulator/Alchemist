@@ -5,15 +5,14 @@ import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
 import it.unibo.alchemist.core.interfaces.Simulation;
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.stage.Stage;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.stage.Stage;
 
 /**
  * Builder class for {@link SingleRunApp}, meant to be used to build and run the single run gui along with another (alreay started) JavaFX {@link Application}.
@@ -23,7 +22,7 @@ import java.util.Objects;
 public class SingleRunAppBuilder<T> {
     private static final String DEFAULT_EFFECTS = "/it/unibo/alchemist/gui/effects/json/DefaultEffects.json";
     private final Simulation<T> simulation;
-    private Collection<EffectGroup> effectGroups;
+    private final Collection<EffectGroup> effectGroups;
     private volatile boolean shouldUseDefaultEffects;
 
     /**

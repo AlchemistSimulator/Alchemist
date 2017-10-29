@@ -7,6 +7,9 @@ import com.jfoenix.controls.JFXSlider;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -14,7 +17,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
-import javafx.scene.control.Spinner;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import jiconfont.icons.GoogleMaterialDesignIcons;
@@ -22,10 +24,6 @@ import jiconfont.javafx.IconNode;
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.PopOver.ArrowLocation;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
 
 /**
  * This class models a JavaFX controller for ButtonsBarLayout.fxml.
@@ -196,8 +194,6 @@ public class ButtonsBarController implements Initializable {
                 ButtonBar.setButtonData(startStopButton, ButtonBar.ButtonData.RIGHT);
                 buttons.add(startStopButton);
             }
-
-
         }
     }
 

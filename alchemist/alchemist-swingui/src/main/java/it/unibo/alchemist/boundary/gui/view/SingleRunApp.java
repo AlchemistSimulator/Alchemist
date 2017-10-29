@@ -29,6 +29,8 @@ import java.util.Map;
 import java.util.Optional;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -71,9 +73,8 @@ public class SingleRunApp<T> extends Application {
 
     private final Map<String, String> namedParams = new HashMap<>();
     private final List<String> unnamedParams = new ArrayList<>();
+    private final ObservableList<EffectGroup> effectGroups = FXCollections.observableArrayList();
     private boolean initialized = false;
-    //    private ObservableList<EffectGroup> effectGroups = FXCollections.observableArrayList();
-    private Collection<EffectGroup> effectGroups = new ArrayList<>();
     @Nullable
     private Simulation<T> simulation;
     @Nullable
@@ -81,7 +82,6 @@ public class SingleRunApp<T> extends Application {
     private PlayPauseMonitor<T> playPauseMonitor;
     private FXTimeMonitor<T> timeMonitor;
     private FXStepMonitor<T> stepMonitor;
-    private ButtonsBarController buttonsBarController;
 
     /**
      * Method that launches the application.
@@ -224,7 +224,7 @@ public class SingleRunApp<T> extends Application {
                 s.addOutputMonitor(this.stepMonitor);
             });
             optDisplayMonitor.ifPresent(d -> d.setEffects(effectGroups));
-            this.buttonsBarController = new ButtonsBarController();
+            final ButtonsBarController buttonsBarController = new ButtonsBarController();
 
             buttonsBarController.setStartStopButton(playPauseMonitor);
             buttonsBarController.setTimeMonitor(timeMonitor);

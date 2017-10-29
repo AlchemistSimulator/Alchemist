@@ -53,7 +53,7 @@ public class ButtonsBarController implements Initializable {
     private JFXButton effectsButton; // Value injected by FXMLLoader
     @FXML
     @Nullable
-    private Spinner<Integer> framerate; // Value injected by FXMLLoader
+    private JFXSlider framerate; // Value injected by FXMLLoader
     @FXML
     @Nullable
     private JFXButton controlType; // Value injected by FXMLLoader

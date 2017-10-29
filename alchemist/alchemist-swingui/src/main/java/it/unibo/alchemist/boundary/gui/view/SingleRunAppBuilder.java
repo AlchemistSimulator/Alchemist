@@ -157,16 +157,16 @@ public class SingleRunAppBuilder<T> {
      * @see Platform#runLater(Runnable)
      */
     public void build() {
+        if (shouldUseDefaultEffects) {
+            try {
+                effectGroups.add(EffectSerializer.effectsFromResources(DEFAULT_EFFECTS));
+            } catch (final IOException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+
         final Runnable lambda = () -> {
             final SingleRunApp<T> app = new SingleRunApp<>();
-
-            if (shouldUseDefaultEffects) {
-                try {
-                    effectGroups.add(EffectSerializer.effectsFromResources(DEFAULT_EFFECTS));
-                } catch (final IOException e) {
-                    throw new IllegalStateException(e);
-                }
-            }
 
             if (!effectGroups.isEmpty()) {
                 app.setEffectGroups(effectGroups);

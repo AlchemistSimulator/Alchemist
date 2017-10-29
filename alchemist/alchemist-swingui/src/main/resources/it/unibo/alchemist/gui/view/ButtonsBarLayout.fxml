@@ -4,18 +4,18 @@
 <?import com.jfoenix.controls.JFXDrawersStack?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.BorderPane?>
-<?import java.lang.Integer?>
+<?import com.jfoenix.controls.JFXSlider?>
+<?import javafx.scene.Cursor?>
 <BorderPane id="controlPane" fx:id="controlPane" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
     <bottom>
         <ButtonBar id="controlBar" fx:id="controlBar" stylesheets="@ButtonsBarLayout.css" BorderPane.alignment="CENTER">
             <buttons>
                 <JFXButton id="effectsButton" fx:id="effectsButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" ripplerFill="WHITE" text="Effects" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT" />
-                <fx:define>
-                    <Integer fx:id="max" fx:value="200"/>
-                </fx:define>
-                <Spinner id="framerate" fx:id="framerate" min="0" max="500" initialValue="60" amountToStepBy="1" ButtonBar.buttonData="LEFT">
-                    <editable>true</editable>
-                </Spinner>
+                <JFXSlider id="framerateSlider" fx:id="framerateSlider" min="0" max="240" value="60"  ButtonBar.buttonData="LEFT">
+                    <cursor>
+                        <Cursor fx:constant="DEFAULT"/>
+                    </cursor>
+                </JFXSlider>
                 <JFXButton id="controlType" fx:id="controlType" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" ripplerFill="WHITE" stylesheets="" text="Pan" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT" />
             </buttons>
         </ButtonBar>

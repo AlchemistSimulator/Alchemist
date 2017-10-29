@@ -30,6 +30,7 @@ import ch.qos.logback.classic.Level;
 import it.unibo.alchemist.AlchemistRunner.Builder;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import it.unibo.alchemist.cli.CLIMaker;
+import it.unibo.alchemist.grid.node.CommandLineStartup;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.YamlLoader;
 
@@ -44,13 +45,14 @@ public final class Alchemist {
     private static final String HEADLESS = "hl";
     private static final String VARIABLES = "var";
     private static final String BENCHMARK = "bmk";
-    private static final char PARALLELISM = 'p';
     private static final char BATCH = 'b';
     private static final char EXPORT = 'e';
     private static final char DISTRIBUTED = 'd';
     private static final char GRAPHICS = 'g';
     private static final char HELP = 'h';
     private static final char INTERVAL = 'i';
+    private static final char NODE = 'n';
+    private static final char PARALLELISM = 'p';
     private static final char TIME = 't';
     private static final char YAML = 'y';
 
@@ -79,6 +81,7 @@ public final class Alchemist {
         try {
             final CommandLine cmd = parser.parse(opts, args);
             setVerbosity(cmd);
+            ifPresent(cmd, NODE, CommandLineStartup::runNode);
             if (cmd.hasOption(HELP)) {
                 final HelpFormatter formatter = new HelpFormatter();
                 formatter.printHelp("java -jar alchemist-redist-{version}.jar", opts);

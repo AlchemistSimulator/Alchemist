@@ -9,13 +9,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import it.unibo.alchemist.loader.Loader;
+import it.unibo.alchemist.model.interfaces.Time;
 
-public class LocalGeneralSimulationConfig implements GeneralSimulationConfig {
+public class LocalGeneralSimulationConfig<T> extends LightInfoGeneralSimulationConfig<T> {
 
     private final String yaml;
     private final Map<String, String> dependencies;
 
-    public LocalGeneralSimulationConfig(Loader loader) {
+    public LocalGeneralSimulationConfig(Loader loader, long endStep, Time endTime) {
+        super(endStep, endTime);
+
         this.yaml = loader.getYamlAsString();
         this.dependencies = new HashMap<>();
         for (final String file : loader.getDependencies()) {

@@ -6,8 +6,8 @@ import java.util.List;
 
 import it.unibo.alchemist.grid.config.SimulationConfig;
 
-public interface SimulationsSet {
+public interface SimulationsSet<T> {
     public Complexity computeComplexity();
-    public GeneralSimulationConfig getGeneralSimulationConfig();
+    public GeneralSimulationConfig<?> getGeneralSimulationConfig();
     public List<SimulationConfig> getSimulationConfigs();
 }

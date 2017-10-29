@@ -5,12 +5,12 @@ import java.util.List;
 import it.unibo.alchemist.grid.config.GeneralSimulationConfig;
 import it.unibo.alchemist.grid.config.SimulationConfig;
 
-public class SimulationsSetImpl implements SimulationsSet {
+public class SimulationsSetImpl<T> implements SimulationsSet<T> {
 
-    private final GeneralSimulationConfig genSimConfig;
+    private final GeneralSimulationConfig<T> genSimConfig;
     private final List<SimulationConfig> simulationConfigs;
-    
-    public SimulationsSetImpl(GeneralSimulationConfig genSimConfig, List<SimulationConfig> simulationConfigs) {
+
+    public SimulationsSetImpl(GeneralSimulationConfig<T> genSimConfig, List<SimulationConfig> simulationConfigs) {
         super();
         this.genSimConfig = genSimConfig;
         this.simulationConfigs = simulationConfigs;
@@ -23,7 +23,7 @@ public class SimulationsSetImpl implements SimulationsSet {
     }
 
     @Override
-    public GeneralSimulationConfig getGeneralSimulationConfig() {
+    public GeneralSimulationConfig<?> getGeneralSimulationConfig() {
         return this.genSimConfig;
     }
 

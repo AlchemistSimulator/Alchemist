@@ -221,7 +221,7 @@ public final class AlchemistRunner<T> {
     }
 
     private Optional<? extends Throwable> launchRemote(final String... variables) {
-        final GeneralSimulationConfig gsc = new LocalGeneralSimulationConfig(this.loader);
+        final GeneralSimulationConfig<T> gsc = new LocalGeneralSimulationConfig<>(this.loader, this.endStep, this.endTime);
 
         final List<SimulationConfig> simConfigs = getVariablesCartesianProduct(variables).stream()
                 .map(e -> new SimulationConfigImpl(e)).collect(Collectors.toList());

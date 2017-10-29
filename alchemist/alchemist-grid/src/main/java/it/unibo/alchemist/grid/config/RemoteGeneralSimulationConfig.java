@@ -10,13 +10,18 @@ import org.apache.ignite.Ignition;
 import org.apache.ignite.cache.CacheMode;
 import org.apache.ignite.configuration.CacheConfiguration;
 
-public class RemoteGeneralSimulationConfig implements GeneralSimulationConfig, AutoCloseable {
-    
+public class RemoteGeneralSimulationConfig<T> extends LightInfoGeneralSimulationConfig<T> implements AutoCloseable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6793498536768599629L;
     private final String cacheName;
     private final Set<String> keys;
     private static final String YAML_KEY = "yaml";
 
-    public RemoteGeneralSimulationConfig(GeneralSimulationConfig sc, Ignite ignite) {
+    public RemoteGeneralSimulationConfig(GeneralSimulationConfig<T> sc, Ignite ignite) {
+        super(sc.getEndStep(), sc.getEndTime());
         //TODO mettere nome simulazione sulla GeneralSimulationConfig
         this.cacheName = "prova";
 

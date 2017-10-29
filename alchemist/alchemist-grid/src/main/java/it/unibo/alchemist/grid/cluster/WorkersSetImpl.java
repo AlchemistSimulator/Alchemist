@@ -15,6 +15,10 @@ import it.unibo.alchemist.grid.simulation.RemoteSimulation;
 import it.unibo.alchemist.grid.simulation.RemoteSimulationImpl;
 import it.unibo.alchemist.grid.simulation.SimulationsSet;
 
+/**
+ * Implementation of {@link WorkersSet} which uses Apache Ignite.
+ *
+ */
 public class WorkersSetImpl implements WorkersSet {
 
     private final ClusterGroup grp;

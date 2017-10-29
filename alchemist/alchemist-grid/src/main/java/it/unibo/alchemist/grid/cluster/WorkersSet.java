@@ -5,6 +5,10 @@ import java.util.Set;
 import it.unibo.alchemist.grid.simulation.RemoteResult;
 import it.unibo.alchemist.grid.simulation.SimulationsSet;
 
+/**
+ * Set of remote nodes that can run simulations.
+ *
+ */
 public interface WorkersSet {
 
     /**

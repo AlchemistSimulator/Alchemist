@@ -1,6 +1,5 @@
 package it.unibo.alchemist.grid.config;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,6 +9,11 @@ import org.apache.ignite.Ignition;
 import org.apache.ignite.cache.CacheMode;
 import org.apache.ignite.configuration.CacheConfiguration;
 
+/**
+ * Remote {@link GeneralSimulationConfig} that stores big informations in Ignite's cache.
+ *
+ * @param <T> the concentration type
+ */
 public class RemoteGeneralSimulationConfig<T> extends LightInfoGeneralSimulationConfig<T> implements AutoCloseable {
 
     /**
@@ -20,7 +24,12 @@ public class RemoteGeneralSimulationConfig<T> extends LightInfoGeneralSimulation
     private final Set<String> keys;
     private static final String YAML_KEY = "yaml";
 
-    public RemoteGeneralSimulationConfig(GeneralSimulationConfig<T> sc, Ignite ignite) {
+    /**
+     * 
+     * @param sc A general simulation config to clone
+     * @param ignite An Ignite instance for cache creation
+     */
+    public RemoteGeneralSimulationConfig(final GeneralSimulationConfig<T> sc, final Ignite ignite) {
         super(sc.getEndStep(), sc.getEndTime());
         //TODO mettere nome simulazione sulla GeneralSimulationConfig
         this.cacheName = "prova";

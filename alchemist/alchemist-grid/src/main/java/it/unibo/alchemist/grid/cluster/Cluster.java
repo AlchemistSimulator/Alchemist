@@ -2,6 +2,10 @@ package it.unibo.alchemist.grid.cluster;
 
 import it.unibo.alchemist.grid.simulation.Complexity;
 
+/**
+ * The entity that represent the joined cluster.
+ *
+ */
 public interface Cluster extends AutoCloseable {
 
     /**

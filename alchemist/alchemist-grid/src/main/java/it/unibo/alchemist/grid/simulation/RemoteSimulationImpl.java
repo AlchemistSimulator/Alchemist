@@ -14,6 +14,11 @@ import it.unibo.alchemist.loader.YamlLoader;
 import it.unibo.alchemist.loader.export.Exporter;
 import it.unibo.alchemist.model.interfaces.Environment;
 
+/**
+ * {@link RemoteSimulation} implementation for Apache Ignite.
+ *
+ * @param <T>
+ */
 public class RemoteSimulationImpl<T> implements RemoteSimulation<T> {
 
     /**
@@ -22,8 +27,12 @@ public class RemoteSimulationImpl<T> implements RemoteSimulation<T> {
     private static final long serialVersionUID = 8206545835842309336L;
     private final GeneralSimulationConfig<T> generalConfig;
     private final SimulationConfig config;
-
-    public RemoteSimulationImpl(GeneralSimulationConfig<T> generalConfig, SimulationConfig config) {
+    /**
+     * 
+     * @param generalConfig General simulation config
+     * @param config Simulation's specific configs
+     */
+    public RemoteSimulationImpl(final GeneralSimulationConfig<T> generalConfig, final SimulationConfig config) {
         this.generalConfig = generalConfig;
         this.config = config;
     }
@@ -51,8 +60,8 @@ public class RemoteSimulationImpl<T> implements RemoteSimulation<T> {
         } catch (FileNotFoundException e) {
             throw new IllegalStateException(e);
         }
-        //sim.play();
-        //sim.run();
+        sim.play();
+        sim.run();
         //sim.getError();
 
         System.out.println(this.config.getVariables());

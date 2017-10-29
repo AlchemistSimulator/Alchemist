@@ -11,12 +11,27 @@ import java.util.Map;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.model.interfaces.Time;
 
+/**
+ * Local {@link GeneralSimulationConfig} that contains all informations in local memory.
+ *
+ * @param <T> the concentration type
+ */
 public class LocalGeneralSimulationConfig<T> extends LightInfoGeneralSimulationConfig<T> {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3974035069237901864L;
     private final String yaml;
     private final Map<String, String> dependencies;
 
-    public LocalGeneralSimulationConfig(Loader loader, long endStep, Time endTime) {
+    /**
+     * 
+     * @param loader Simulation's loader
+     * @param endStep Simulation's end step
+     * @param endTime Simulation's end time
+     */
+    public LocalGeneralSimulationConfig(final Loader loader, final long endStep, final Time endTime) {
         super(endStep, endTime);
 
         this.yaml = loader.getYamlAsString();

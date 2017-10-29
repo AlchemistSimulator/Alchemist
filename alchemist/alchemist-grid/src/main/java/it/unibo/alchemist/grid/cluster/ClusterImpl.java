@@ -7,8 +7,13 @@ import org.apache.ignite.Ignition;
 
 import it.unibo.alchemist.grid.simulation.Complexity;
 
+/**
+ * An implementation of {@link Cluster}  uses Apache Ignite. 
+ *
+ */
 public class ClusterImpl implements Cluster {
 
+    private static final int IGNITE_RAM_MULT_FACTOR = 1000000000;
     private final Ignite ignite;
 
     /**
@@ -22,7 +27,7 @@ public class ClusterImpl implements Cluster {
 
     @Override
     public WorkersSet getWorkersSet(final Complexity complexity) {
-        return new WorkersSetImpl(ignite, ignite.cluster().forPredicate((node) -> node.metrics().getHeapMemoryTotal() >= complexity.getRamUsage()*1000000000));
+        return new WorkersSetImpl(ignite, ignite.cluster().forPredicate((node) -> node.metrics().getHeapMemoryTotal() >= complexity.getRamUsage() * IGNITE_RAM_MULT_FACTOR));
     }
 
     @Override

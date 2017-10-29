@@ -39,7 +39,6 @@ public class ButtonsBarController implements Initializable {
     // Icons
     private final IconNode pan;
     private final IconNode select;
-//    private final IconNode fullscreen;
 
     // FXML components
     @FXML
@@ -79,7 +78,6 @@ public class ButtonsBarController implements Initializable {
 
         pan = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.PAN_TOOL);
         select = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.TAB_UNSELECTED);
-//        fullscreen = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.FULLSCREEN);
     }
 
     @Override
@@ -184,20 +182,22 @@ public class ButtonsBarController implements Initializable {
         if (this.controlBar != null) {
             final ObservableList<Node> buttons = this.controlBar.getButtons();
 
-            if (startStopButton != null && !buttons.contains(startStopButton)) {
-                ButtonBar.setButtonData(startStopButton, ButtonBar.ButtonData.LEFT);
-                buttons.add(startStopButton);
+            if (stepLabel != null && !buttons.contains(stepLabel)) {
+                ButtonBar.setButtonData(stepLabel, ButtonBar.ButtonData.RIGHT);
+                buttons.add(stepLabel);
             }
 
             if (timeLabel != null && !buttons.contains(timeLabel)) {
-                ButtonBar.setButtonData(timeLabel, ButtonBar.ButtonData.LEFT);
+                ButtonBar.setButtonData(timeLabel, ButtonBar.ButtonData.RIGHT);
                 buttons.add(timeLabel);
             }
 
-            if (stepLabel != null && !buttons.contains(stepLabel)) {
-                ButtonBar.setButtonData(stepLabel, ButtonBar.ButtonData.LEFT);
-                buttons.add(stepLabel);
+            if (startStopButton != null && !buttons.contains(startStopButton)) {
+                ButtonBar.setButtonData(startStopButton, ButtonBar.ButtonData.RIGHT);
+                buttons.add(startStopButton);
             }
+
+
         }
     }
 

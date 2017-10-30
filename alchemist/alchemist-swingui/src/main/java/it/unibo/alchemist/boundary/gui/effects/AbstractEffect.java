@@ -1,6 +1,7 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
 import it.unibo.alchemist.boundary.CommandQueueBuilder;
+import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.model.interfaces.Environment;
 import java.io.IOException;
@@ -11,7 +12,7 @@ import java.util.Queue;
 import javafx.scene.canvas.GraphicsContext;
 
 public abstract class AbstractEffect implements EffectFX {
-    protected static final String DEFAULT_NAME = "Effect"; // TODO load it from ResourceBundle
+    protected static final String DEFAULT_NAME = ResourceLoader.getStringRes("effect_dafault_name");
     protected static final boolean DEFAULT_VISIBILITY = true;
 
     private String name;

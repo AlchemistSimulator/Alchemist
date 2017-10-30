@@ -3,7 +3,10 @@ package it.unibo.alchemist.grid.simulation;
 import java.io.FileNotFoundException;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.stream.Collectors;
+
+import org.apache.ignite.Ignition;
 
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -27,14 +30,17 @@ public class RemoteSimulationImpl<T> implements RemoteSimulation<T> {
     private static final long serialVersionUID = 8206545835842309336L;
     private final GeneralSimulationConfig<T> generalConfig;
     private final SimulationConfig config;
+    private final UUID masterNodeId;
     /**
      * 
      * @param generalConfig General simulation config
      * @param config Simulation's specific configs
+     * @param masterNodeId The node that started the computation
      */
-    public RemoteSimulationImpl(final GeneralSimulationConfig<T> generalConfig, final SimulationConfig config) {
+    public RemoteSimulationImpl(final GeneralSimulationConfig<T> generalConfig, final SimulationConfig config, final UUID masterNodeId) {
         this.generalConfig = generalConfig;
         this.config = config;
+        this.masterNodeId = masterNodeId;
     }
 
 
@@ -51,7 +57,7 @@ public class RemoteSimulationImpl<T> implements RemoteSimulation<T> {
         final String header = this.config.getVariables().entrySet().stream()
                 .map(e -> e.getKey() + " = " + e.getValue())
                 .collect(Collectors.joining(", "));
-        final String filename = "test" + "_" + this.config.getVariables().entrySet().stream()
+        final String filename = this.masterNodeId.toString() + "_" + this.config.getVariables().entrySet().stream()
                 .map(e -> e.getKey() + '-' + e.getValue())
                 .collect(Collectors.joining("_")) + ".txt";
         try {
@@ -62,10 +68,8 @@ public class RemoteSimulationImpl<T> implements RemoteSimulation<T> {
         }
         sim.play();
         sim.run();
-        //sim.getError();
 
-        System.out.println(this.config.getVariables());
-        return null;
+        return new RemoteResultImpl(null, Ignition.ignite().cluster().localNode().id(), sim.getError(), config);
     }
 
 }

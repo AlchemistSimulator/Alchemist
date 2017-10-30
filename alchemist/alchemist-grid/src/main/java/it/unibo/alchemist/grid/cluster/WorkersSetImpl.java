@@ -40,7 +40,7 @@ public class WorkersSetImpl implements WorkersSet {
         final IgniteCompute compute = this.ignite.compute(this.grp);
         try (RemoteGeneralSimulationConfig<?> gc = new RemoteGeneralSimulationConfig<>(simulationsSet.getGeneralSimulationConfig(), this.ignite)) {
             final List<RemoteSimulation<?>> jobs = simulationsSet.getSimulationConfigs().stream()
-                    .map(e -> new RemoteSimulationImpl<>(gc, e))
+                    .map(e -> new RemoteSimulationImpl<>(gc, e, ignite.cluster().localNode().id()))//TODO l'id lo metto come campo e me lo passa il cluster???
                     .collect(Collectors.toList());
             //TODO ricorda hash nella classe
             return new HashSet<>(compute.call(jobs));

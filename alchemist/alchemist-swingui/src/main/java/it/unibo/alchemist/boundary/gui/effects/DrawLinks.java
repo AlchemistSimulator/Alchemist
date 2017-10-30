@@ -11,6 +11,7 @@ import it.unibo.alchemist.model.interfaces.Position;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import org.danilopianini.util.ListSet;
 import org.jooq.lambda.tuple.Tuple2;
 
 import java.io.IOException;
@@ -19,6 +20,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
@@ -40,7 +42,7 @@ public class DrawLinks extends AbstractEffect {
     /**
      * Default dot size.
      */
-    private static final double DEFAULT_SIZE = 5;
+    private static final double DEFAULT_SIZE = 1;
 
     /**
      * Default {@code Color}.
@@ -57,7 +59,7 @@ public class DrawLinks extends AbstractEffect {
      * <p>
      * Default visibility is true.
      */
-    public DrawLinks()  {
+    public DrawLinks() {
         super(DEFAULT_NAME, DEFAULT_VISIBILITY);
     }
 
@@ -74,6 +76,38 @@ public class DrawLinks extends AbstractEffect {
 
     @Override
     protected <T> Queue<Runnable> getCommandQueue(final GraphicsContext graphic, final Environment<T> environment, final BidimensionalWormhole wormhole) {
+//        final ConcurrentMap<Node<T>, Position> positions = new ConcurrentHashMap<>();
+//        environment.getNodes().forEach(node -> positions.putIfAbsent(node, environment.getPosition(node)));
+//
+//        final ConcurrentMap<Node<T>, ListSet<Node<T>>> neighbors = new ConcurrentHashMap<>();
+//        positions.keySet().forEach(node -> neighbors.putIfAbsent(node, environment.getNeighborhood(node).getNeighbors()));
+//
+//        final CommandQueueBuilder builder = new CommandQueueBuilder();
+//        neighbors.entrySet()
+//                .stream()
+//                .collect(Collectors.toMap(
+//                        e -> positions.get(e.getKey()),
+//                        e -> e.getValue()
+//                                .stream()
+//                                .map(positions::get)
+//                                .collect(Collectors.toList())))
+//                .forEach((pos, listOfPos) -> {
+//                    final double size = getSize();
+//                    final double startX = wormhole.getViewPoint(pos).getX();
+//                    final double startY = wormhole.getViewPoint(pos).getY();
+//
+//                    listOfPos.forEach(p -> {
+//                        final double endX = wormhole.getViewPoint(p).getX();
+//                        final double endY = wormhole.getViewPoint(p).getY();
+//                        builder.addCommand(() -> {
+//                            graphic.setStroke(getColor());
+//                            graphic.setLineWidth(size);
+//                            graphic.strokeLine(startX, startY, endX, endY);
+//                        });
+//                    });
+//                });
+//        return builder.buildCommandQueue();
+
         List<Tuple2<Position, List<Position>>> neighbors = environment.getNodes()
                 .stream()
                 .map(node -> new Tuple2<>(node, environment.getNeighborhood(node).getNeighbors()))

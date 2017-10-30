@@ -51,7 +51,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
-import com.google.common.io.CharStreams;
 import com.google.common.reflect.TypeToken;
 
 import it.unibo.alchemist.SupportedIncarnations;
@@ -91,6 +90,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
  */
 public class YamlLoader implements Loader {
 
+    private static final long serialVersionUID = 1L;
     private static final Logger L = LoggerFactory.getLogger(YamlLoader.class);
     private static final ResourceBundle SYNTAX = getBundle(YamlLoader.class.getPackage().getName() + ".YamlSyntax", Locale.US);
     private static final String ACTIONS = SYNTAX.getString("actions");
@@ -198,7 +198,6 @@ public class YamlLoader implements Loader {
     private final ImmutableMap<Map<String, Object>, String> reverseLookupTable;
     private final ImmutableMap<String, Variable<?>> variables;
     private final ImmutableList<String> dependencies;
-    private final String yamlString;
 
     /**
      * @param source
@@ -215,13 +214,8 @@ public class YamlLoader implements Loader {
      */
     @SuppressWarnings(UNCHECKED)
     public YamlLoader(final Reader source) {
-        try {
-            this.yamlString = CharStreams.toString(source);
-        } catch (IOException e1) {
-            throw new IllegalArgumentException("Not a valid Alchemist YAML file.");
-        }
         final Yaml yaml = new Yaml();
-        final Object yamlObj = yaml.load(new StringReader(yamlString));
+        final Object yamlObj = yaml.load(source);
         L.debug("Parsed yaml: {}", yamlObj);
         if (!(yamlObj instanceof Map)) {
             throw new IllegalArgumentException("Not a valid Alchemist YAML file.");
@@ -381,11 +375,6 @@ public class YamlLoader implements Loader {
         return this.dependencies;
     }
     
-    @Override
-    public String getYamlAsString() {
-        return this.yamlString;
-    }
-
     @Override
     public <T> Environment<T> getWith(final Map<String, ?> values) {
         if (values.size() > variables.size()) {

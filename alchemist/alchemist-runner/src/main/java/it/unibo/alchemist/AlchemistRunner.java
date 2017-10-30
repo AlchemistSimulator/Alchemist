@@ -222,12 +222,10 @@ public final class AlchemistRunner<T> {
 
     private Optional<? extends Throwable> launchRemote(final String... variables) {
         final GeneralSimulationConfig<T> gsc = new LocalGeneralSimulationConfig<>(this.loader, this.endStep, this.endTime);
-
         final List<SimulationConfig> simConfigs = getVariablesCartesianProduct(variables).stream()
-                .map(e -> new SimulationConfigImpl(e)).collect(Collectors.toList());
-
+                .map(e -> new SimulationConfigImpl(e))
+                .collect(Collectors.toList());
         final SimulationsSet<T> set = new SimulationsSetImpl<>(gsc, simConfigs);
-
         try (Cluster cluster = new ClusterImpl(Paths.get(this.gridConfigFile.orElseThrow(() -> new IllegalStateException("No remote configuration file"))))) {
             cluster.getWorkersSet(set.computeComplexity()).distributeSimulations(set);
         }

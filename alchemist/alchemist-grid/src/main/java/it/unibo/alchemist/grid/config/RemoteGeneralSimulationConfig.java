@@ -22,7 +22,6 @@ public class RemoteGeneralSimulationConfig<T> extends LightInfoGeneralSimulation
     private static final long serialVersionUID = 6793498536768599629L;
     private final String cacheName;
     private final Set<String> keys;
-    private static final String YAML_KEY = "yaml";
 
     /**
      * 
@@ -30,29 +29,21 @@ public class RemoteGeneralSimulationConfig<T> extends LightInfoGeneralSimulation
      * @param ignite An Ignite instance for cache creation
      */
     public RemoteGeneralSimulationConfig(final GeneralSimulationConfig<T> sc, final Ignite ignite) {
-        super(sc.getEndStep(), sc.getEndTime());
-        //TODO mettere nome simulazione sulla GeneralSimulationConfig
+        super(sc.getLoader(), sc.getEndStep(), sc.getEndTime());
+        //TODO mettere nome simulazione sulla GeneralSimulationConfig, NODE_ID!!!
         this.cacheName = "prova";
 
-        this.keys = sc.getYamlDependencies().keySet();
+        this.keys = sc.getDependencies().keySet();
 
-        CacheConfiguration<String, String> cacheCfg = new CacheConfiguration<>("prova");
+        final CacheConfiguration<String, String> cacheCfg = new CacheConfiguration<>("prova");
         cacheCfg.setCacheMode(CacheMode.REPLICATED);
-        IgniteCache<String, String> cache = ignite.getOrCreateCache(cacheCfg);
-        cache.putAll(sc.getYamlDependencies());
-        cache.put(YAML_KEY, sc.getYaml());
+        final IgniteCache<String, String> cache = ignite.getOrCreateCache(cacheCfg);
+        cache.putAll(sc.getDependencies());
     }
 
     @Override
-    public String getYaml() {
-        //TODO annotazioni ignite per evitare Ignition.something???
-        IgniteCache<String, String> cache = Ignition.ignite().cache(this.cacheName);
-        return cache.get(YAML_KEY);
-    }
-
-    @Override
-    public Map<String, String> getYamlDependencies() {
-        IgniteCache<String, String> cache = Ignition.ignite().cache(this.cacheName);
+    public Map<String, String> getDependencies() {
+        final IgniteCache<String, String> cache = Ignition.ignite().cache(this.cacheName);
         return cache.getAll(this.keys);
     }
 

@@ -13,7 +13,8 @@ public interface RemoteResult {
      * Save simulation's result in a local file.
      * @param targetFile Local file
      * @throws FileNotFoundException 
-     * @throws RemoteSimulationException
+     * @throws RemoteSimulationException 
+     * 
      */
     void saveLocally(String targetFile) throws FileNotFoundException, RemoteSimulationException;
 }

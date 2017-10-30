@@ -29,7 +29,7 @@ public class SimulationsSetImpl<T> implements SimulationsSet<T> {
     @Override
     public Complexity computeComplexity() {
         // TODO vera complessità
-        return new ComplexityImpl(1, 0);
+        return new ComplexityImpl(0.3, 0);
     }
 
     @Override

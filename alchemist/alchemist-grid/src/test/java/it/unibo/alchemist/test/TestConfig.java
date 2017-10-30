@@ -32,10 +32,9 @@ public class TestConfig {
         final Loader l = this.getLoader(yaml);
         //TODO aggiungi test per endTime e endStep???
         final GeneralSimulationConfig<?> gsc = new LocalGeneralSimulationConfig<>(l, 0, null);
-        assertEquals(gsc.getYamlDependencies().size(), 2);
+        assertEquals(gsc.getDependencies().size(), 2);
         try {
-            assertEquals(gsc.getYamlDependencies().get(DEPENDENCY_FILE), new String(Files.readAllBytes(Paths.get(TestConfig.class.getResource(DEPENDENCY_FILE).toURI()))));
-            assertEquals(gsc.getYaml(), new String(Files.readAllBytes(Paths.get(TestConfig.class.getResource(resource).toURI()))));
+            assertEquals(gsc.getDependencies().get(DEPENDENCY_FILE), new String(Files.readAllBytes(Paths.get(TestConfig.class.getResource(DEPENDENCY_FILE).toURI()))));
         } catch (Exception e) {
             fail(e.getMessage());
         }

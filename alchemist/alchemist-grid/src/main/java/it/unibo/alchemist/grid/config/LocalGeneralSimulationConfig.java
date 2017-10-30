@@ -22,7 +22,6 @@ public class LocalGeneralSimulationConfig<T> extends LightInfoGeneralSimulationC
      * 
      */
     private static final long serialVersionUID = 3974035069237901864L;
-    private final String yaml;
     private final Map<String, String> dependencies;
 
     /**
@@ -32,9 +31,8 @@ public class LocalGeneralSimulationConfig<T> extends LightInfoGeneralSimulationC
      * @param endTime Simulation's end time
      */
     public LocalGeneralSimulationConfig(final Loader loader, final long endStep, final Time endTime) {
-        super(endStep, endTime);
+        super(loader, endStep, endTime);
 
-        this.yaml = loader.getYamlAsString();
         this.dependencies = new HashMap<>();
         for (final String file : loader.getDependencies()) {
             try {
@@ -54,12 +52,7 @@ public class LocalGeneralSimulationConfig<T> extends LightInfoGeneralSimulationC
     }
 
     @Override
-    public String getYaml() {
-        return this.yaml;
-    }
-
-    @Override
-    public Map<String, String> getYamlDependencies() {
+    public Map<String, String> getDependencies() {
         return this.dependencies;
     }
 

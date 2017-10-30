@@ -13,7 +13,6 @@ import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.grid.config.GeneralSimulationConfig;
 import it.unibo.alchemist.grid.config.SimulationConfig;
 import it.unibo.alchemist.loader.Loader;
-import it.unibo.alchemist.loader.YamlLoader;
 import it.unibo.alchemist.loader.export.Exporter;
 import it.unibo.alchemist.model.interfaces.Environment;
 
@@ -46,11 +45,10 @@ public class RemoteSimulationImpl<T> implements RemoteSimulation<T> {
 
 
     @Override
-    public RemoteResult call() throws Exception {
-        Loader loader = new YamlLoader(this.generalConfig.getYaml());
+    public RemoteResult call() {
+        final Loader loader = this.generalConfig.getLoader();
         final Environment<T> env = loader.getWith(this.config.getVariables());
         final Simulation<T> sim = new Engine<>(env, this.generalConfig.getEndStep(), this.generalConfig.getEndTime());
-
         final Map<String, Object> defaultVars = loader.getVariables().entrySet().stream()
                 .collect(Collectors.toMap(Entry::getKey, e -> e.getValue().getDefault()));
         defaultVars.putAll(this.config.getVariables());
@@ -68,8 +66,6 @@ public class RemoteSimulationImpl<T> implements RemoteSimulation<T> {
         }
         sim.play();
         sim.run();
-
         return new RemoteResultImpl(null, Ignition.ignite().cluster().localNode().id(), sim.getError(), config);
     }
-
 }

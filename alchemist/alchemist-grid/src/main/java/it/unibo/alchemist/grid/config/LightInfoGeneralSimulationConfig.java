@@ -2,6 +2,7 @@ package it.unibo.alchemist.grid.config;
 
 import java.util.Map;
 
+import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.model.interfaces.Time;
 
 /**
@@ -17,22 +18,27 @@ public abstract class LightInfoGeneralSimulationConfig<T> implements GeneralSimu
     private static final long serialVersionUID = -3109924486818903310L;
     private final long endStep;
     private final Time endTime;
+    private final Loader loader;
 
     /**
      * 
      * @param endStep Simulation's end step
      * @param endTime Simulation's end time
+     * @param loader Simulation's loader
      */
-    public LightInfoGeneralSimulationConfig(final long endStep, final Time endTime) {
+    public LightInfoGeneralSimulationConfig(final Loader loader, final long endStep, final Time endTime) {
         this.endStep = endStep;
         this.endTime = endTime;
+        this.loader = loader;
     }
 
     @Override
-    public abstract String getYaml();
+    public Loader getLoader() {
+        return this.loader;
+    }
 
     @Override
-    public abstract Map<String, String> getYamlDependencies();
+    public abstract Map<String, String> getDependencies();
     @Override
     public long getEndStep() {
         return endStep;

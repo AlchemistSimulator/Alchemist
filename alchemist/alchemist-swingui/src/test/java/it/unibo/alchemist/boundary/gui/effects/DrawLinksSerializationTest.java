@@ -8,11 +8,11 @@ import org.junit.Test;
 import java.io.*;
 
 /**
- * JUint test for {@link DrawDot} effect serialization.
+ * JUint test for {@link DrawLinks} effect serialization.
  */
-public class DrawDotSerializationTest extends AbstractEffectSerializationTest<DrawDot> {
-    private static final String TEST_NAME = "TestDot";
-    private static final double TEST_SIZE = 22.0;
+public class DrawLinksSerializationTest extends AbstractEffectSerializationTest<DrawLinks> {
+    private static final String TEST_NAME = "TestLinks";
+    private static final double TEST_SIZE = 12.0;
 
     @Test
     @Override
@@ -22,14 +22,14 @@ public class DrawDotSerializationTest extends AbstractEffectSerializationTest<Dr
         final FileOutputStream fout = new FileOutputStream(file);
         final ObjectOutputStream oos = new ObjectOutputStream(fout);
 
-        final DrawDot effect = new DrawDot(TEST_NAME);
+        final DrawLinks effect = new DrawLinks(TEST_NAME);
         effect.setSize(TEST_SIZE);
         oos.writeObject(effect);
 
         final FileInputStream fin = new FileInputStream(file);
         final ObjectInputStream ois = new ObjectInputStream(fin);
 
-        final DrawDot deserialized = (DrawDot) ois.readObject();
+        final DrawLinks deserialized = (DrawLinks) ois.readObject();
 
         Assert.assertTrue(getMessage(effect, deserialized), effect.equals(deserialized));
 
@@ -42,17 +42,17 @@ public class DrawDotSerializationTest extends AbstractEffectSerializationTest<Dr
     public void testGsonSerialization() throws IOException {
         final File file = folder.newFile();
 
-        final DrawDot effect = new DrawDot(TEST_NAME);
+        final DrawLinks effect = new DrawLinks(TEST_NAME);
         effect.setSize(TEST_SIZE);
         EffectSerializer.effectToFile(file, effect);
 
-        final DrawDot deserialized = (DrawDot) EffectSerializer.effectFromFile(file);
+        final DrawLinks deserialized = (DrawLinks) EffectSerializer.effectFromFile(file);
 
         Assert.assertTrue(getMessage(effect, deserialized), effect.equals(deserialized));
     }
 
     @Override
-    protected String getMessage(final DrawDot origin, final DrawDot deserialized) {
+    protected String getMessage(final DrawLinks origin, final DrawLinks deserialized) {
         if (origin == null || deserialized == null) {
             return super.getMessage(origin, deserialized);
         }
@@ -61,5 +61,4 @@ public class DrawDotSerializationTest extends AbstractEffectSerializationTest<Dr
                 + System.lineSeparator() + "Origin size: " + origin.getSize()
                 + System.lineSeparator() + "Deserialized size: " + deserialized.getSize();
     }
-
 }

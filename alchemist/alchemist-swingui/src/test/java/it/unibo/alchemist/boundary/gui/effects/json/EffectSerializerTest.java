@@ -54,20 +54,15 @@ public class EffectSerializerTest {
         final File file = folder.newFile();
         final Type type = new TypeToken<List<EffectFX>>() {
         }.getType();
-
         final List<EffectFX> effects = new ArrayList<>();
         effects.add(new DrawDot());
-        effects.add(new DrawShapeFX());
         effects.add(new DrawColoredDot("Test"));
-
         final Writer writer = new FileWriter(file);
         EffectSerializer.getGSON().toJson(effects, type, writer);
         writer.close();
-
         final Reader reader = new FileReader(file);
         final List<EffectFX> deserialized = EffectSerializer.getGSON().fromJson(reader, type);
         reader.close();
-
         Assert.assertTrue(effects.equals(deserialized));
     }
 
@@ -92,7 +87,6 @@ public class EffectSerializerTest {
         final EffectGroup group4 = new EffectStack();
         group4.add(new DrawDot());
         group4.add(new DrawDot("TestDot"));
-        group4.add(new DrawShapeFX("TestShape"));
         groups.add(group4);
 
         final EffectGroup group5 = new EffectStack("Group 5");
@@ -114,13 +108,13 @@ public class EffectSerializerTest {
     @Test
     public void testResourceSerialization() throws IOException {
         final EffectGroup group = new EffectStack("Default Effects");
-        final EffectFX effect = new DrawDot("Draw dots");
+        final DrawDot effect = new DrawDot("Draw the dots");
+        effect.setSize(6.0);
         group.add(effect);
-
         final EffectGroup deserialized = EffectSerializer.effectsFromResources(TEST_EFFECTS);
-        Assert.assertTrue(group.equals(deserialized));
+        Assert.assertEquals(group, deserialized);
         final File file = folder.newFile();
         EffectSerializer.effectsToFile(file, group);
-        Assert.assertTrue(EffectSerializer.effectsFromFile(file).equals(deserialized));
+        Assert.assertEquals(deserialized, EffectSerializer.effectsFromFile(file));
     }
 }

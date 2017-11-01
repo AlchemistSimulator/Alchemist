@@ -12,22 +12,29 @@
         "upper bound": 100.0
       },
       "color": {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "opacity": 1.0,
-        "platformPaint": {
-          "argb": -16777216,
-          "r": 0.0,
-          "g": 0.0,
-          "b": 0.0,
-          "a": 1.0,
-          "type": "COLOR",
-          "proportional": false,
-          "isMutable": false
-        }
+        "Red": 0.0,
+        "Green": 0.0,
+        "Blue": 0.0,
+        "Alpha": 1.0
       },
-      "name": "Draw dots",
+      "name": "Draw the dots",
+      "visibility": true
+    },
+    {
+      "type": "DrawLinks",
+      "size": {
+        "name": "Size",
+        "value": 1.0,
+        "lower bound": 0.0,
+        "upper bound": 100.0
+      },
+      "color": {
+        "Red": 0.0,
+        "Green": 0.0,
+        "Blue": 0.0,
+        "Alpha": 1.0
+      },
+      "name": "Draw the links",
       "visibility": true
     }
   ]

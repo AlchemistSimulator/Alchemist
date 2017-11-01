@@ -11,9 +11,12 @@ import java.io.*;
 ;
 
 /**
- * JUint test for {@link EffectFX effect} serialization.
+ * JUint test for {@link DrawColoredDot} effect serialization.
  */
 public class DrawColoredDotSerializationTest extends AbstractEffectSerializationTest<DrawColoredDot> {
+    private static final String TEST_NAME = "TestDot";
+    private static final double TEST_SIZE = 25.0;
+    private static final Color TEST_COLOR = Color.CYAN;
 
     @Test
     @Override
@@ -23,11 +26,9 @@ public class DrawColoredDotSerializationTest extends AbstractEffectSerialization
         final FileOutputStream fout = new FileOutputStream(file);
         final ObjectOutputStream oos = new ObjectOutputStream(fout);
 
-        final DrawColoredDot effect = new DrawColoredDot("TestDot");
-        // CHECKSTYLE:OFF
-        effect.setSize(25.0);
-        // CHECKSTYLE:ON
-        effect.setColor(Color.CYAN);
+        final DrawColoredDot effect = new DrawColoredDot(TEST_NAME);
+        effect.setSize(TEST_SIZE);
+        effect.setColor(TEST_COLOR);
 
         oos.writeObject(effect);
 
@@ -47,11 +48,9 @@ public class DrawColoredDotSerializationTest extends AbstractEffectSerialization
     public void testGsonSerialization() throws IOException {
         final File file = folder.newFile();
 
-        final DrawColoredDot effect = new DrawColoredDot("TestDot");
-        // CHECKSTYLE:OFF
-        effect.setSize(25.0);
-        // CHECKSTYLE:ON
-        effect.setColor(Color.CYAN);
+        final DrawColoredDot effect = new DrawColoredDot(TEST_NAME);
+        effect.setSize(TEST_SIZE);
+        effect.setColor(TEST_COLOR);
 
         EffectSerializer.effectToFile(file, effect);
 

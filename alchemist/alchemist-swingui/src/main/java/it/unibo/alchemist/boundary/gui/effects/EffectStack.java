@@ -1,7 +1,7 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
 import it.unibo.alchemist.boundary.CommandQueueBuilder;
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
+import it.unibo.alchemist.boundary.DrawCommand;
 import it.unibo.alchemist.model.interfaces.Environment;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 
-import javafx.scene.canvas.GraphicsContext;
+import org.danilopianini.util.Hashes;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +32,6 @@ public class EffectStack implements EffectGroup {
     private static final String CANNOT_FIND_EFFECT = "Cannot find the effect in the stack";
     /** Default effect group name. */
     private static final String DEFAULT_NAME = ResourceLoader.getStringRes("effect_stack_default_name");
-    private static final int FIRST_HASHCODE_CONSTANT = 1231;
-    private static final int SECOND_HASHCODE_CONSTANT = 1237;
     /** Default logger. */
     private static final Logger L = LoggerFactory.getLogger(EffectStack.class);
 
@@ -66,15 +64,15 @@ public class EffectStack implements EffectGroup {
     }
 
     @Override
-    public <T> Queue<Runnable> applyAll(final GraphicsContext graphic, final Environment<T> environment, final BidimensionalWormhole wormhole) {
+    public <T> Queue<DrawCommand> computeDrawCommands(Environment<T> environment) {
         final CommandQueueBuilder builder = new CommandQueueBuilder();
+
         if (isVisible()) {
             this.stream()
-                    .filter(EffectFX::isVisibile)
-                    .map(effectFX -> effectFX.apply(graphic, environment, wormhole))
+                    .map(effectFX -> effectFX.computeDrawCommands(environment))
+                    .flatMap(Collection::stream)
+                    .map(command -> command.wrap(this::isVisible))
                     .forEach(builder::addCommand);
-        } else {
-            builder.addCommand(() -> {});
         }
         return builder.buildCommandQueue();
     }
@@ -143,7 +141,7 @@ public class EffectStack implements EffectGroup {
     @Override
     public boolean getVisibilityOf(final EffectFX effect) {
         try {
-            return this.effects.get(this.search(effect)).isVisibile();
+            return this.effects.get(this.search(effect)).isVisible();
         } catch (final IndexOutOfBoundsException e) {
             throw new IllegalArgumentException(CANNOT_FIND_EFFECT);
         }
@@ -354,14 +352,7 @@ public class EffectStack implements EffectGroup {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((effects == null) ? 0 : effects.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + topIndex;
-        result = prime * result + transparency;
-        result = prime * result + (visibility ? FIRST_HASHCODE_CONSTANT : SECOND_HASHCODE_CONSTANT);
-        return result;
+        return Hashes.hash32(effects, name, topIndex, transparency, visibility);
     }
 
     @Override

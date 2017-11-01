@@ -140,8 +140,7 @@ public class SingleRunAppBuilder<T> {
     private boolean startJFXThread() {
         try {
             // Starts JavaFX thread, if necessary
-            PlatformImpl.startup(() -> {
-            }); // TODO check if could avoid internal APIs
+            PlatformImpl.startup(() -> { }); // TODO check if could avoid internal APIs
             return false;
         } catch (final IllegalStateException e) {
             return true;
@@ -163,18 +162,13 @@ public class SingleRunAppBuilder<T> {
                 throw new IllegalStateException(e);
             }
         }
-
         final Runnable lambda = () -> {
             final SingleRunApp<T> app = new SingleRunApp<>();
-
             if (!effectGroups.isEmpty()) {
                 app.setEffectGroups(effectGroups);
             }
-
             app.setSimulation(simulation);
-
             final Stage stage = new Stage();
-
             app.start(stage);
         };
 

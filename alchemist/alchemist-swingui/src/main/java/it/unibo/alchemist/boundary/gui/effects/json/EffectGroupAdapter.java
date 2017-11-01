@@ -1,5 +1,6 @@
 package it.unibo.alchemist.boundary.gui.effects.json;
 
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class should be registered in a {@link com.google.gson.GsonBuilder} to
+ * This class should be registered in a {@link GsonBuilder} to
  * serialize and deserialize a {@link EffectGroup} compatible class.
  */
 public class EffectGroupAdapter implements JsonSerializer<EffectGroup>, JsonDeserializer<EffectGroup> {

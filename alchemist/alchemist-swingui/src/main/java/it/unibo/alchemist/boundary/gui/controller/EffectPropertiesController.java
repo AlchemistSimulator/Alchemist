@@ -276,4 +276,7 @@ public class EffectPropertiesController implements Initializable {
         mainBox.getChildren().add(nothingHere);
     }
 
+    public StringProperty effectNameProperty(){
+        return this.effectName.textProperty();
+    }
 }

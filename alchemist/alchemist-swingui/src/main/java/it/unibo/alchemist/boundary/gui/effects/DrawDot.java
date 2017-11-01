@@ -1,21 +1,23 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
 import it.unibo.alchemist.boundary.CommandQueueBuilder;
+import it.unibo.alchemist.boundary.DrawCommand;
+import it.unibo.alchemist.boundary.gui.effects.json.ColorSerializationAdapter;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 import javafx.beans.property.DoubleProperty;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import org.danilopianini.util.Hashes;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.awt.*;
+import java.io.*;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Collectors;
 
 
 /**
@@ -27,34 +29,22 @@ import java.util.Queue;
 public class DrawDot extends AbstractEffect {
 
     /**
-     * Magic number used by auto-generated {@link #hashCode()} method.
-     */
-    private static final int HASHCODE_NUMBER_1 = 1231;
-    /**
-     * Magic number used by auto-generated {@link #hashCode()} method.
-     */
-    private static final int HASHCODE_NUMBER_2 = 1237;
-
-    /**
      * Default generated Serial Version UID.
      */
     private static final long serialVersionUID = -6098041600645663870L;
-
     /**
      * Default effect name.
      */
     private static final String DEFAULT_NAME = ResourceLoader.getStringRes("drawdot_default_name");
-
     /**
      * Default dot size.
      */
     private static final double DEFAULT_SIZE = 5;
-
     /**
      * Default {@code Color}.
      */
     private static final Color DEFAULT_COLOR = Color.BLACK;
-
+    private final transient ConcurrentLinkedQueue<Position> positions;
     private RangedDoubleProperty size = PropertyFactory.getPercentageRangedProperty(ResourceLoader.getStringRes("drawdot_size"), DEFAULT_SIZE);
     private Color color = DEFAULT_COLOR;
 
@@ -66,7 +56,7 @@ public class DrawDot extends AbstractEffect {
      * Default visibility is true.
      */
     public DrawDot() {
-        super(DEFAULT_NAME, DEFAULT_VISIBILITY);
+        this(DEFAULT_NAME);
     }
 
     /**
@@ -78,40 +68,43 @@ public class DrawDot extends AbstractEffect {
      */
     public DrawDot(final String name) {
         super(name, DEFAULT_VISIBILITY);
-    }
-
-    /**
-     * {@inheritDoc}
-     * <p>
-     * For each {@link Node} in the specified {@link Environment}, it will draw
-     * a {@link Color#BLACK black} dot.
-     */
-    @Override
-    public <T> Runnable apply(final GraphicsContext graphic, final Environment<T> environment, final BidimensionalWormhole wormhole) {
-        return super.apply(graphic, environment, wormhole);
+        positions = new ConcurrentLinkedQueue<>();
     }
 
     @Override
-    protected <T> Queue<Runnable> getCommandQueue(final GraphicsContext graphic, final Environment<T> environment, final BidimensionalWormhole wormhole) {
+    protected Queue<DrawCommand> consumeData() {
         final CommandQueueBuilder builder = new CommandQueueBuilder();
-
-        environment.forEach(node -> {
-            final double size = getSize();
-            final double startX = wormhole.getViewPoint(environment.getPosition(node)).getX() - size / 2;
-            final double startY = wormhole.getViewPoint(environment.getPosition(node)).getY() - size / 2;
-            builder.addCommand(() -> {
-                graphic.setFill(getColor());
-                graphic.fillOval((int) startX, (int) startY, (int) size, (int) size);
-            });
-        });
+        final double size = getSize();
+        positions.forEach(position -> builder.addCommand((graphic, wormhole) -> {
+            final Point viewPoint = wormhole.getViewPoint(position);
+            final double startX = viewPoint.getX() - size / 2;
+            final double startY = viewPoint.getY() - size / 2;
+            graphic.setFill(getColor());
+            graphic.fillOval((int) startX, (int) startY, (int) size, (int) size);
+        }));
 
         return builder.buildCommandQueue();
     }
 
     /**
+     * The method extracts {@link Position}s of each {@link Node} from the {@code Environment}.
+     *
+     * @param environment {@inheritDoc}
+     * @param <T>         {@inheritDoc}
+     */
+    @Override
+    protected <T> void getData(final Environment<T> environment) {
+        positions.clear();
+        positions.addAll(environment
+                .getNodes()
+                .stream()
+                .map(environment::getPosition)
+                .collect(Collectors.toList()));
+    }
+
+    /**
      * The size of the dots representing each {@link Node} in the
-     * {@link Environment} specified when calling
-     * {@link #apply(GraphicsContext, Environment, BidimensionalWormhole) apply} in percentage.
+     * {@link Environment} specified when drawing.
      *
      * @return the size property
      * @see #setSize(Double)
@@ -174,16 +167,16 @@ public class DrawDot extends AbstractEffect {
      * is saved by writing the 3 individual fields to the
      * {@code ObjectOutputStream} using the {@code writeObject} method or by
      * using the methods for primitive data types supported by
-     * {@code DataOutput}. </blockquote>
+     * {@code DataOutput}.</blockquote>
      *
      * @param stream the output stream
+     * @throws InvalidClassException    if something is wrong with a class used by serialization
+     * @throws NotSerializableException if some object to be serialized does not implement the java.io.Serializable interface
+     * @throws IOException              if I/O errors occur while writing to the underlying stream
      */
     private void writeObject(final ObjectOutputStream stream) throws IOException {
-        stream.writeObject(size);
-        stream.writeDouble(color.getRed());
-        stream.writeDouble(color.getGreen());
-        stream.writeDouble(color.getBlue());
-        stream.writeDouble(color.getOpacity());
+        stream.writeObject(sizeProperty());
+        ColorSerializationAdapter.writeColor(stream, getColor());
     }
 
     /**
@@ -200,24 +193,25 @@ public class DrawDot extends AbstractEffect {
      * with the state belonging to its superclasses or subclasses. State is
      * saved by writing the individual fields to the {@code ObjectOutputStream}
      * using the {@code writeObject} method or by using the methods for
-     * primitive data types supported by {@code DataOutput}. </blockquote>
+     * primitive data types supported by {@code DataOutput}.</blockquote>
      *
      * @param stream the input stream
+     * @throws ClassNotFoundException   if class of a serialized object cannot be found
+     * @throws InvalidClassException    if something is wrong with a class used by serialization
+     * @throws StreamCorruptedException if control information in the stream is inconsistent
+     * @throws OptionalDataException    if primitive data was found in the stream instead of objects
+     * @throws EOFException             if the end of file is reached
+     * @throws ClassNotFoundException   if cannot find the class
+     * @throws IOException              if other I/O error has occurred
      */
     private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         size = (RangedDoubleProperty) stream.readObject();
-        color = new Color(stream.readDouble(), stream.readDouble(), stream.readDouble(), stream.readDouble());
+        color = ColorSerializationAdapter.readColor(stream);
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getColor() == null) ? 0 : getColor().hashCode());
-        result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
-        result = prime * result + ((getSize() == null) ? 0 : getSize().hashCode());
-        result = prime * result + (isVisibile() ? HASHCODE_NUMBER_1 : HASHCODE_NUMBER_2);
-        return result;
+        return Hashes.hash32(getColor(), getName(), getSize(), isVisible());
     }
 
     @Override
@@ -232,7 +226,7 @@ public class DrawDot extends AbstractEffect {
             return false;
         }
         final DrawDot other = (DrawDot) obj;
-        if (isVisibile() != other.isVisibile()) {
+        if (isVisible() != other.isVisible()) {
             return false;
         }
         if (getColor() == null) {

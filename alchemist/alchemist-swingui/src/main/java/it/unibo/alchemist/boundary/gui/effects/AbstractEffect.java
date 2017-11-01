@@ -1,25 +1,40 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.boundary.CommandQueueBuilder;
+import it.unibo.alchemist.boundary.DrawCommand;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
+import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.Queue;
-import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
+import java.io.*;
+import java.util.LinkedList;
+import java.util.Queue;
+
+/**
+ * It models an abstract implementation of the {@link EffectFX effect} interface, implementing default name and visibility properties.
+ * <p>
+ * The effect behavior can be implemented via {@link #computeDrawCommands(Environment)} template method.
+ */
 public abstract class AbstractEffect implements EffectFX {
-    protected static final String DEFAULT_NAME = ResourceLoader.getStringRes("effect_dafault_name");
+    /**
+     * Default name of the effect.
+     */
+    protected static final String DEFAULT_NAME = ResourceLoader.getStringRes("effect_default_name");
+
+    /**
+     * Default visibility of an effect.
+     */
     protected static final boolean DEFAULT_VISIBILITY = true;
 
     private String name;
     private boolean visibility;
+//    private transient CommandQueueBuilder commandQueueBuilder;
 
     /**
      * No parameters constructor.
+     * <p>
+     * Default visibility is {@value DEFAULT_VISIBILITY}.
      */
     protected AbstractEffect() {
         this(DEFAULT_NAME, DEFAULT_VISIBILITY);
@@ -27,6 +42,8 @@ public abstract class AbstractEffect implements EffectFX {
 
     /**
      * Constructor that lets set the name of the effect.
+     * <p>
+     * Default visibility is {@value DEFAULT_VISIBILITY}.
      *
      * @param name the name of the effect
      */
@@ -52,54 +69,53 @@ public abstract class AbstractEffect implements EffectFX {
     protected AbstractEffect(final String name, final boolean isVisible) {
         this.name = name;
         this.visibility = isVisible;
+//        this.commandQueueBuilder = new CommandQueueBuilder();
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return {@inheritDoc}, or an empty runnable if the effect is not visible
-     */
     @Override
-    public <T> Runnable apply(final GraphicsContext graphic, final Environment<T> environment, final BidimensionalWormhole wormhole) {
-        if (!isVisibile()) {
-            return () -> {
-            };
+    public <T> Queue<DrawCommand> computeDrawCommands(final Environment<T> environment) {
+        getData(environment);
+        if (isVisible()) {
+            return consumeData();
         } else {
-            final Queue<Runnable> commandQueue = getCommandQueue(graphic, environment, wormhole);
-            return () -> commandQueue.forEach(Runnable::run);
+            return new LinkedList<>(); // TODO: default empty queue
         }
     }
 
     /**
-     * It parses data on current thread and builds a queue of commands to be executed on JavaFX thread by {@link #apply(GraphicsContext, Environment, BidimensionalWormhole) apply()} method.
+     * The method is called to consume the data extrapolated from {@link Environment} by {@link #getData(Environment)} method.
      *
-     * @param graphic     the {@code Graphics2D} to use
-     * @param environment the {@code Environment} containing the nodes to draw
-     * @param wormhole    the {@code BidimensionalWormhole} object to calculate positions
-     * @param <T>         the {@link Environment} type
-     * @return the queue of commands to be executed on JavaFX thread
-     * @see #apply(GraphicsContext, Environment, BidimensionalWormhole)
-     * @see CommandQueueBuilder
+     * @return the queue of command to be executed on JavaFX thread
      */
-    protected abstract <T> Queue<Runnable> getCommandQueue(final GraphicsContext graphic, final Environment<T> environment, final BidimensionalWormhole wormhole);
+    protected abstract Queue<DrawCommand> consumeData();
+
+    /**
+     * The method extrapolates data from environment.
+     * <p>
+     * It is strongly recommended not to keep any reference to {@link Environment}- or {@link Simulation}-specific objects.
+     *
+     * @param environment the {@link Environment} to extrapolate data from
+     * @param <T>         the {@link Concentration} type
+     */
+    protected abstract <T> void getData(final Environment<T> environment);
 
     @Override
-    public String getName() {
+    public final String getName() {
         return this.name;
     }
 
     @Override
-    public void setName(final String name) {
+    public final void setName(final String name) {
         this.name = name;
     }
 
     @Override
-    public boolean isVisibile() {
+    public final boolean isVisible() {
         return this.visibility;
     }
 
     @Override
-    public void setVisibility(boolean vilibility) {
+    public final void setVisibility(boolean visibility) {
         this.visibility = visibility;
     }
 
@@ -115,9 +131,10 @@ public abstract class AbstractEffect implements EffectFX {
      * is saved by writing the 3 individual fields to the
      * {@code ObjectOutputStream} using the {@code writeObject} method or by
      * using the methods for primitive data types supported by
-     * {@code DataOutput}. </blockquote>
+     * {@code DataOutput}.</blockquote>
      *
      * @param stream the output stream
+     * @throws IOException if I/O errors occur while writing to the underlying stream
      */
     private void writeObject(final ObjectOutputStream stream) throws IOException {
         stream.writeUTF(name);
@@ -138,9 +155,13 @@ public abstract class AbstractEffect implements EffectFX {
      * with the state belonging to its superclasses or subclasses. State is
      * saved by writing the individual fields to the {@code ObjectOutputStream}
      * using the {@code writeObject} method or by using the methods for
-     * primitive data types supported by {@code DataOutput}. </blockquote>
+     * primitive data types supported by {@code DataOutput}.</blockquote>
      *
      * @param stream the input stream
+     * @throws UTFDataFormatException if read bytes do not represent a valid modified UTF-8 encoding of a string
+     * @throws EOFException           if the end of file is reached
+     * @throws ClassNotFoundException if cannot find the class
+     * @throws IOException            if other I/O error has occurred
      */
     private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         name = stream.readUTF();
@@ -152,5 +173,4 @@ public abstract class AbstractEffect implements EffectFX {
 
     @Override
     public abstract boolean equals(final Object obj);
-
 }

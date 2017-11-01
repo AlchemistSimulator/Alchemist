@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import javafx.beans.property.Property;
+import javafx.scene.paint.Color;
 import javassist.Modifier;
 import org.jetbrains.annotations.Contract;
 import org.reflections.Reflections;
@@ -106,9 +107,8 @@ public final class EffectSerializer {
     static {
         EFFECTS.forEach(RTA_EFFECT::registerSubtype);
         GROUPS.forEach(RTA_GROUP::registerSubtype);
-
         final GsonBuilder builder = new GsonBuilder();
-
+        builder.registerTypeAdapter(new TypeToken<Color>(){}.getType(), new ColorSerializationAdapter());
         PROPERTIES.stream()
                 .filter(c -> Arrays.stream(c.getMethods())
                         .filter(m -> Modifier.isStatic(m.getModifiers()))
@@ -121,7 +121,6 @@ public final class EffectSerializer {
                         throw new IllegalStateException(e);
                     }
                 });
-
         GROUPS.stream()
                 .filter(c -> Arrays.stream(c.getMethods())
                         .filter(m -> Modifier.isStatic(m.getModifiers()))
@@ -134,7 +133,6 @@ public final class EffectSerializer {
                         throw new IllegalStateException(e);
                     }
                 });
-
         GSON = builder
                 .registerTypeAdapterFactory(RTA_EFFECT)
                 .registerTypeAdapterFactory(RTA_GROUP)

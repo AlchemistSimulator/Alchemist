@@ -79,6 +79,7 @@ public class EffectCell extends AbstractEffectCell<EffectFX> {
             try {
                 propertiesDrawer.setSidePane(FXResourceLoader.getLayout(BorderPane.class, propertiesController,
                         EffectPropertiesController.EFFECT_PROPERTIES_LAYOUT));
+                propertiesController.effectNameProperty().bind(this.getLabel().textProperty());
             } catch (IOException e) {
                 throw new IllegalStateException(
                         "Could not initialize side pane for properties of effect " + this.getItem().toString() + ": ", e);
@@ -142,7 +143,7 @@ public class EffectCell extends AbstractEffectCell<EffectFX> {
             setGraphic(null);
         } else {
             this.getLabel().setText(item.getName());
-            this.getToggle().setSelected(item.isVisibile());
+            this.getToggle().setSelected(item.isVisible());
 
             // TODO check priority
         }

@@ -3,27 +3,21 @@ package it.unibo.alchemist.boundary.gui.effects;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import org.danilopianini.util.Hashes;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
 
 /**
  * Simple effect that draws a colored dot for each {@link Node}.
  * <p>
  * It's possible to set the size and the color of the dots.
  */
-/* Interface redundant specification is needed for correct javadoc inheritance */
-public class DrawColoredDot extends DrawDot implements EffectFX {
+public class DrawColoredDot extends DrawDot {
 
     /**
      * Magic number used by auto-generated {@link #hashCode()} method.
@@ -102,35 +96,21 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
-     * For each {@link Node} in the specified {@link Environment}, it will draw
-     * a dot of a specified {@link Color} (default: {@link Color#BLACK black}).
-     */
-    @Override
-    public <T> Runnable apply(final GraphicsContext graphic, final Environment<T> environment, final BidimensionalWormhole wormhole) {
-        return super.apply(graphic, environment, wormhole);
-    }
-
-    /**
      * Returns a {@link ChangeListener} that updates the color of the dots.
      *
      * @return the {@code ChangeListener}
      */
     private ChangeListener<Number> updateColor() {
-        return (final ObservableValue<? extends Number> observable, final Number oldValue, final Number newValue) -> {
-            super.setColor(Color.rgb(
-                    red.getValue().intValue(),
-                    green.getValue().intValue(),
-                    blue.getValue().intValue(),
-                    alpha.getValue()));
-        };
+        return (observable, oldValue, newValue) -> super.setColor(Color.rgb(
+                red.getValue().intValue(),
+                green.getValue().intValue(),
+                blue.getValue().intValue(),
+                alpha.getValue()));
     }
 
     /**
      * The alpha channel of the color of the dots representing each {@link Node}
-     * in the {@link Environment} specified when calling
-     * {@link #apply(GraphicsContext, Environment, BidimensionalWormhole) apply} in percentage.
+     * in the {@link Environment} specified when drawing.
      *
      * @return the alpha channel property
      */
@@ -158,8 +138,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
 
     /**
      * The blue channel of the color of the dots representing each {@link Node}
-     * in the {@link Environment} specified when calling
-     * {@link #apply(GraphicsContext, Environment, BidimensionalWormhole) apply} in percentage.
+     * in the {@link Environment} specified when drawing.
      *
      * @return the blue channel property
      */
@@ -187,8 +166,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
 
     /**
      * The green channel of the color of the dots representing each {@link Node}
-     * in the {@link Environment} specified when calling
-     * {@link #apply(GraphicsContext, Environment, BidimensionalWormhole) apply} in percentage.
+     * in the {@link Environment} specified when drawing.
      *
      * @return the green channel property
      */
@@ -216,8 +194,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
 
     /**
      * The red channel of the color of the dots representing each {@link Node}
-     * in the {@link Environment} specified when calling
-     * {@link #apply(GraphicsContext, Environment, BidimensionalWormhole) apply} in percentage.
+     * in the {@link Environment} specified when drawing.
      *
      * @return the red channel property
      */
@@ -255,9 +232,12 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
      * is saved by writing the 3 individual fields to the
      * {@code ObjectOutputStream} using the {@code writeObject} method or by
      * using the methods for primitive data types supported by
-     * {@code DataOutput}. </blockquote>
+     * {@code DataOutput}.</blockquote>
      *
      * @param stream the output stream
+     * @throws InvalidClassException    if something is wrong with a class used by serialization.
+     * @throws NotSerializableException if some object to be serialized does not implement the java.io.Serializable interface.
+     * @throws IOException              if any exception thrown by the underlying OutputStream.
      */
     private void writeObject(final ObjectOutputStream stream) throws IOException {
         stream.writeObject(red);
@@ -280,30 +260,25 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
      * with the state belonging to its superclasses or subclasses. State is
      * saved by writing the individual fields to the {@code ObjectOutputStream}
      * using the {@code writeObject} method or by using the methods for
-     * primitive data types supported by {@code DataOutput}. </blockquote>
+     * primitive data types supported by {@code DataOutput}.</blockquote>
      *
      * @param stream the input stream
+     * @throws ClassNotFoundException   if class of a serialized object cannot be found.
+     * @throws InvalidClassException    if something is wrong with a class used by serialization.
+     * @throws StreamCorruptedException if control information in the stream is inconsistent.
+     * @throws OptionalDataException    if primitive data was found in the stream instead of objects.
+     * @throws IOException              if any of the usual Input/Output related exceptions.
      */
     private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         red = (RangedDoubleProperty) stream.readObject();
         green = (RangedDoubleProperty) stream.readObject();
         blue = (RangedDoubleProperty) stream.readObject();
         alpha = (RangedDoubleProperty) stream.readObject();
-
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((alphaProperty() == null) ? 0 : alphaProperty().hashCode());
-        result = prime * result + ((blueProperty() == null) ? 0 : blueProperty().hashCode());
-        result = prime * result + ((greenProperty() == null) ? 0 : greenProperty().hashCode());
-        result = prime * result + ((super.getName() == null) ? 0 : super.getName().hashCode());
-        result = prime * result + ((redProperty() == null) ? 0 : redProperty().hashCode());
-        result = prime * result + ((super.getSize() == null) ? 0 : super.getSize().hashCode());
-        result = prime * result + (super.isVisibile() ? HASHCODE_NUMBER_1 : HASHCODE_NUMBER_2);
-        return result;
+        return Hashes.hash32(alphaProperty(), blueProperty(), greenProperty(), getName(), redProperty(), getSize(), isVisible());
     }
 
     @Override
@@ -318,7 +293,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
             return false;
         }
         final DrawColoredDot other = (DrawColoredDot) obj;
-        if (super.isVisibile() != other.isVisibile()) {
+        if (super.isVisible() != other.isVisible()) {
             return false;
         }
         if (alphaProperty() == null) {

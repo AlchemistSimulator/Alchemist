@@ -4,10 +4,10 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 /**
- * Builder class that eases the building of a command queue.
+ * Builder class that eases the building of a queue of {@link DrawCommand}s.
  */
 public final class CommandQueueBuilder {
-    private final Queue<Runnable> commandQueue = new LinkedList<>();
+    private final Queue<DrawCommand> commandQueue = new LinkedList<>();
 
     /**
      * Adds a Runnable to the queue to be executed on the JavaFX thread.
@@ -15,7 +15,7 @@ public final class CommandQueueBuilder {
      * @param doOnJFXThread the action to do
      * @return this builder
      */
-    public CommandQueueBuilder addCommand(final Runnable doOnJFXThread) {
+    public CommandQueueBuilder addCommand(final DrawCommand doOnJFXThread) {
         commandQueue.add(doOnJFXThread);
         return this;
     }
@@ -35,7 +35,7 @@ public final class CommandQueueBuilder {
      *
      * @return the queue of commands
      */
-    public Queue<Runnable> buildCommandQueue() {
+    public Queue<DrawCommand> buildCommandQueue() {
         return commandQueue;
     }
 }

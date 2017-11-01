@@ -1,9 +1,11 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
+import it.unibo.alchemist.boundary.DrawCommand;
+import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
+
 import java.io.Serializable;
-import javafx.scene.canvas.GraphicsContext;
+import java.util.Queue;
 
 /**
  * Graphical visualization of something happening in the environment.
@@ -11,15 +13,13 @@ import javafx.scene.canvas.GraphicsContext;
 public interface EffectFX extends Serializable {
 
     /**
-     * Applies the effect.
+     * Computes a queue of commands to Draw something.
      *
-     * @param graphic     the {@code Graphics2D} to use
-     * @param environment the {@code Environment} containing the nodes to draw
-     * @param wormhole    the {@code BidimensionalWormhole} object to calculate positions
-     * @param <T>         the {@link Environment} type
-     * @return the Runnable that should be run on JavaFX thread
+     * @param environment the environment to gather data from
+     * @param <T>         the {@link Concentration} type
+     * @return the queue of commands that should be run to draw the effect
      */
-    <T> Runnable apply(GraphicsContext graphic, Environment<T> environment, BidimensionalWormhole wormhole);
+    <T> Queue<DrawCommand> computeDrawCommands(Environment<T> environment);
 
     /**
      * Gets the name of the effect.
@@ -40,20 +40,13 @@ public interface EffectFX extends Serializable {
      *
      * @return the visibility of the effect
      */
-    boolean isVisibile();
+    boolean isVisible();
 
     /**
      * Sets the visibility of the effect.
      *
-     * @param vilibility the visibility of the effect to set
+     * @param visibility the visibility of the effect to set
      */
-    void setVisibility(boolean vilibility);
+    void setVisibility(boolean visibility);
 
-    @Override
-        // Should override hashCode() method
-    int hashCode();
-
-    @Override
-        // Should override equals() method
-    boolean equals(Object obj);
 }

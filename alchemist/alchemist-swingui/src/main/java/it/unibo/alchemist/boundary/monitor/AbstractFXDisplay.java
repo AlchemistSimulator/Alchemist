@@ -1,6 +1,5 @@
 package it.unibo.alchemist.boundary.monitor;
 
-import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
 import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D;
@@ -10,19 +9,21 @@ import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
-import java.lang.ref.WeakReference;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Base abstract class for each display able to graphically represent a 2D space and simulation.
@@ -49,13 +50,13 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     private final ObservableList<EffectGroup> effectStack;
     private final Semaphore mutex = new Semaphore(1);
     private final AtomicBoolean mayRender = new AtomicBoolean(true);
-    private WeakReference currentEnvironment = new WeakReference<>(null);
     private int step;
     private BidimensionalWormhole wormhole;
     private boolean firstTime;
     private boolean realTime;
     private long timeInit;
     private double lastTime;
+    private volatile ConcurrentLinkedQueue<Runnable> commandQueue;
 
     /**
      * Default constructor. The number of steps is set to default ({@value #DEFAULT_NUMBER_OF_STEPS}).
@@ -79,6 +80,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         setStep(steps);
         initMouseListener();
         initKeybindings();
+        commandQueue = new ConcurrentLinkedQueue<>();
     }
 
     /**
@@ -98,7 +100,6 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     protected void initKeybindings() {
         // TODO
     }
-
 
     @Override
     public int getStep() {
@@ -128,17 +129,16 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         this.realTime = realTime;
     }
 
-    /**
-     * {@inheritDoc}
-     * <p>
-     * It calls {@link #drawBackground(GraphicsContext, Environment)} and
-     * {@link #drawEffects(GraphicsContext, Environment)} to repaint the {@code Canvas}.
-     */
     @Override
     public final void repaint() {
-        final GraphicsContext gc = this.getGraphicsContext2D();
         mutex.acquireUninterruptibly();
-        getCurrentEnvironment().ifPresent(environment -> drawEffects(gc, environment));
+        if (mayRender.get() && getWormhole() != null && isVisible() && !isDisabled()) {
+            mayRender.set(false);
+            Platform.runLater(() -> {
+                commandQueue.forEach(Runnable::run);
+                mayRender.set(true);
+            });
+        }
         mutex.release();
     }
 
@@ -149,29 +149,8 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      * @param environment     the {@code Environment} that contains the data to pass to {@code Effects}
      * @see #repaint()
      */
-    protected void drawBackground(final GraphicsContext graphicsContext, final Environment<T> environment) {
-        graphicsContext.clearRect(0, 0, getWidth(), getHeight());
-    }
-
-    /**
-     * Draws each effect on the specified {@code GraphicsContext}.
-     *
-     * @param graphicsContext the graphic component to draw on
-     * @param environment     the {@code Environment} that contains the data to pass to {@code Effects}
-     * @see #repaint()
-     */
-    protected final void drawEffects(final GraphicsContext graphicsContext, final Environment<T> environment) {
-        if (mayRender.get() && getWormhole() != null && isVisible() && !isDisabled()) {
-            mayRender.set(false);
-            Platform.runLater(() -> {
-                drawBackground(graphicsContext, environment);
-                getEffects().stream()
-                        .map(group -> group.applyAll(graphicsContext, environment, getWormhole()))
-                        .flatMap(Collection::stream)
-                        .forEach(Runnable::run);
-                mayRender.set(true);
-            });
-        }
+    protected Runnable drawBackground(final GraphicsContext graphicsContext, final Environment<T> environment) {
+        return () -> graphicsContext.clearRect(0, 0, getWidth(), getHeight());
     }
 
     /**
@@ -181,26 +160,6 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      */
     protected BidimensionalWormhole getWormhole() {
         return this.wormhole;
-    }
-
-    /**
-     * Getter method for the {@link WeakReference weakly referenced} current {@link Environment}.
-     *
-     * @return the optional current {@code Environment}
-     */
-    @SuppressWarnings("unchecked")
-    protected Optional<Environment<T>> getCurrentEnvironment() {
-
-        return Optional.ofNullable((Environment<T>) currentEnvironment.get());
-    }
-
-    /**
-     * Setter method for the current {@link Environment}.
-     *
-     * @param environment the current {@code Environment}; it could be null
-     */
-    protected void setCurrentEnvironment(final @Nullable Environment<T> environment) {
-        this.currentEnvironment = new WeakReference<>(environment);
     }
 
     @Override
@@ -253,10 +212,9 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     }
 
     @Override
-    public void finished(final Environment<T> env, final Time time, final long step) {
-        // TODO
-        // update(environment, time);
-        // firstTime = true;
+    public void finished(final Environment<T> environment, final Time time, final long step) {
+        update(environment, time);
+        firstTime = true;
     }
 
     /**
@@ -268,13 +226,21 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     private void update(final Environment<T> environment, final Time time) {
         if (Thread.holdsLock(environment)) {
             lastTime = time.toDouble();
-            setCurrentEnvironment(environment);
+            final GraphicsContext graphicsContext = this.getGraphicsContext2D();
+            final Stream<Runnable> background = Stream.of(drawBackground(graphicsContext, environment));
+            final Stream<Runnable> effects = getEffects()
+                    .stream()
+                    .map(group -> group.computeDrawCommands(environment))
+                    .flatMap(Collection::stream)
+                    .map(cmd -> () -> cmd.accept(graphicsContext, getWormhole()));
+            commandQueue.clear();
+            final List<Runnable> allCommands = Stream.concat(background, effects).collect(Collectors.toList());
+            commandQueue.addAll(allCommands);
             repaint();
         } else {
             throw new IllegalStateException("Only the simulation thread can dictate GUI updates");
         }
     }
-
 
     /**
      * The enum models the status of the view.

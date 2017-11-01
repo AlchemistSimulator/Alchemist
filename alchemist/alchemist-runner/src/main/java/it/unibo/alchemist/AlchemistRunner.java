@@ -19,6 +19,7 @@ import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.BenchmarkableEnvironment;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Time;
+
 import java.awt.GraphicsEnvironment;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
@@ -42,6 +43,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -181,18 +183,7 @@ public final class AlchemistRunner<T> {
                     } else {
                         final SingleRunAppBuilder builder = new SingleRunAppBuilder<>(sim);
                         effectsFile.ifPresent(builder::addEffectGroup);
-
-                        // TODO check //////////////////////////////////////
-                        final EffectGroup defaultGroup = new EffectStack("Default effects");
-                        defaultGroup.add(new DrawDot("Draw all the dots"));
-                        /* final EffectGroup drawlinks = new EffectStack("Draw all the links");
-                        drawlinks.add(new DrawLinks("Draw all the links")); */
-                        builder.addEffectGroup(defaultGroup);
-                        /* builder.addEffectGroup(drawlinks); */
-                        builder.useDefaultEffects(false);
-//                        builder.useDefaultEffects(true);
-                        // TODO check //////////////////////////////////////
-
+                        builder.useDefaultEffects(true);
                         builder.build();
                     }
                     sim.run();

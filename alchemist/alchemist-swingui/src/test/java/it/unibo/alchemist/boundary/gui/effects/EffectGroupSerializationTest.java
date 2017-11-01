@@ -110,7 +110,7 @@ public class EffectGroupSerializationTest {
         // CHECKSTYLE:ON
         coloredDot.setColor(Color.CYAN);
         effects.add(coloredDot);
-        effects.add(new DrawShapeFX());
+//        effects.add(new DrawShapeFX());
         return effects;
     }
 

@@ -1,38 +1,28 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
 import it.unibo.alchemist.boundary.CommandQueueBuilder;
+import it.unibo.alchemist.boundary.DrawCommand;
+import it.unibo.alchemist.boundary.gui.effects.json.ColorSerializationAdapter;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import javafx.beans.property.DoubleProperty;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import org.danilopianini.util.ListSet;
-import org.jooq.lambda.tuple.Tuple2;
+import org.danilopianini.util.Hashes;
 
+import java.awt.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.stream.Collectors;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class DrawLinks extends AbstractEffect {
-    /**
-     * Magic number used by auto-generated {@link #hashCode()} method.
-     */
-    private static final int HASHCODE_NUMBER_1 = 1231;
-    /**
-     * Magic number used by auto-generated {@link #hashCode()} method.
-     */
-    private static final int HASHCODE_NUMBER_2 = 1237;
 
     /**
      * Default effect name.
@@ -48,7 +38,7 @@ public class DrawLinks extends AbstractEffect {
      * Default {@code Color}.
      */
     private static final Color DEFAULT_COLOR = Color.BLACK;
-
+    private final transient ConcurrentHashMap<Position, ConcurrentLinkedQueue<Position>> positions;
     private RangedDoubleProperty size = PropertyFactory.getPercentageRangedProperty(ResourceLoader.getStringRes("drawdot_size"), DEFAULT_SIZE);
     private Color color = DEFAULT_COLOR;
 
@@ -60,7 +50,7 @@ public class DrawLinks extends AbstractEffect {
      * Default visibility is true.
      */
     public DrawLinks() {
-        super(DEFAULT_NAME, DEFAULT_VISIBILITY);
+        this(DEFAULT_NAME);
     }
 
     /**
@@ -72,78 +62,53 @@ public class DrawLinks extends AbstractEffect {
      */
     public DrawLinks(final String name) {
         super(name, DEFAULT_VISIBILITY);
+        positions = new ConcurrentHashMap<>();
     }
 
     @Override
-    protected <T> Queue<Runnable> getCommandQueue(final GraphicsContext graphic, final Environment<T> environment, final BidimensionalWormhole wormhole) {
-//        final ConcurrentMap<Node<T>, Position> positions = new ConcurrentHashMap<>();
-//        environment.getNodes().forEach(node -> positions.putIfAbsent(node, environment.getPosition(node)));
-//
-//        final ConcurrentMap<Node<T>, ListSet<Node<T>>> neighbors = new ConcurrentHashMap<>();
-//        positions.keySet().forEach(node -> neighbors.putIfAbsent(node, environment.getNeighborhood(node).getNeighbors()));
-//
-//        final CommandQueueBuilder builder = new CommandQueueBuilder();
-//        neighbors.entrySet()
-//                .stream()
-//                .collect(Collectors.toMap(
-//                        e -> positions.get(e.getKey()),
-//                        e -> e.getValue()
-//                                .stream()
-//                                .map(positions::get)
-//                                .collect(Collectors.toList())))
-//                .forEach((pos, listOfPos) -> {
-//                    final double size = getSize();
-//                    final double startX = wormhole.getViewPoint(pos).getX();
-//                    final double startY = wormhole.getViewPoint(pos).getY();
-//
-//                    listOfPos.forEach(p -> {
-//                        final double endX = wormhole.getViewPoint(p).getX();
-//                        final double endY = wormhole.getViewPoint(p).getY();
-//                        builder.addCommand(() -> {
-//                            graphic.setStroke(getColor());
-//                            graphic.setLineWidth(size);
-//                            graphic.strokeLine(startX, startY, endX, endY);
-//                        });
-//                    });
-//                });
-//        return builder.buildCommandQueue();
-
-        List<Tuple2<Position, List<Position>>> neighbors = environment.getNodes()
-                .stream()
-                .map(node -> new Tuple2<>(node, environment.getNeighborhood(node).getNeighbors()))
-                .map(tuple -> new Tuple2<>(
-                        environment.getPosition(tuple.v1()),
-                        tuple.v2().stream().map(environment::getPosition).collect(Collectors.toList())
-                )).collect(Collectors.toList());
+    protected Queue<DrawCommand> consumeData() {
         final CommandQueueBuilder builder = new CommandQueueBuilder();
-        neighbors.forEach(tuple -> {
+        positions.forEach((position, neighbors) -> {
             final double size = getSize();
-            final double startX = wormhole.getViewPoint(tuple.v1()).getX();
-            final double startY = wormhole.getViewPoint(tuple.v1()).getY();
-
-            tuple.v2().forEach(p -> {
-                final double endX = wormhole.getViewPoint(p).getX();
-                final double endY = wormhole.getViewPoint(p).getY();
-                builder.addCommand(() -> {
+            builder.addCommand((graphic, wormhole) -> {
+                final Point viewPoint = wormhole.getViewPoint(position);
+                final double startX = viewPoint.getX() - size / 2;
+                final double startY = viewPoint.getY() - size / 2;
+                neighbors.forEach(p -> {
+                    final double endX = wormhole.getViewPoint(p).getX();
+                    final double endY = wormhole.getViewPoint(p).getY();
                     graphic.setStroke(getColor());
                     graphic.setLineWidth(size);
                     graphic.strokeLine(startX, startY, endX, endY);
                 });
             });
         });
-
         return builder.buildCommandQueue();
+    }
+
+    @Override
+    protected <T> void getData(final Environment<T> environment) {
+        positions.clear();
+        environment.forEach(node -> {
+            final ConcurrentLinkedQueue<Position> neighbors = new ConcurrentLinkedQueue<>();
+            environment.getNeighborhood(node)
+                    .getNeighbors()
+                    .stream()
+                    .map(environment::getPosition)
+                    .forEach(neighbors::add);
+            positions.putIfAbsent(environment.getPosition(node), neighbors);
+        });
     }
 
     /**
      * The size of the dots representing each {@link Node} in the
-     * {@link Environment} specified when calling
-     * {@link #apply(GraphicsContext, Environment, BidimensionalWormhole) apply} in percentage.
+     * {@link Environment} specified when drawing.
      *
      * @return the size property
      * @see #setSize(Double)
      * @see #getSize()
      */
+
     public DoubleProperty sizeProperty() {
         return this.size;
     }
@@ -191,13 +156,7 @@ public class DrawLinks extends AbstractEffect {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getColor() == null) ? 0 : getColor().hashCode());
-        result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
-        result = prime * result + ((getSize() == null) ? 0 : getSize().hashCode());
-        result = prime * result + (isVisibile() ? HASHCODE_NUMBER_1 : HASHCODE_NUMBER_2);
-        return result;
+        return Hashes.hash32(getColor(), getName(), getSize(), isVisible());
     }
 
     @Override
@@ -212,7 +171,7 @@ public class DrawLinks extends AbstractEffect {
             return false;
         }
         final DrawLinks other = (DrawLinks) obj;
-        if (isVisibile() != other.isVisibile()) {
+        if (isVisible() != other.isVisible()) {
             return false;
         }
         if (getColor() == null) {
@@ -257,10 +216,7 @@ public class DrawLinks extends AbstractEffect {
      */
     private void writeObject(final ObjectOutputStream stream) throws IOException {
         stream.writeObject(size);
-        stream.writeDouble(color.getRed());
-        stream.writeDouble(color.getGreen());
-        stream.writeDouble(color.getBlue());
-        stream.writeDouble(color.getOpacity());
+        ColorSerializationAdapter.writeColor(stream, getColor());
     }
 
     /**
@@ -283,6 +239,6 @@ public class DrawLinks extends AbstractEffect {
      */
     private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         size = (RangedDoubleProperty) stream.readObject();
-        color = new Color(stream.readDouble(), stream.readDouble(), stream.readDouble(), stream.readDouble());
+        color = ColorSerializationAdapter.readColor(stream);
     }
 }

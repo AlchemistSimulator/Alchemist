@@ -1,6 +1,8 @@
 package it.unibo.alchemist.grid.simulation;
 
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
@@ -12,6 +14,7 @@ import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.grid.config.GeneralSimulationConfig;
 import it.unibo.alchemist.grid.config.SimulationConfig;
+import it.unibo.alchemist.grid.util.WorkingDirectory;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.export.Exporter;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -46,26 +49,35 @@ public class RemoteSimulationImpl<T> implements RemoteSimulation<T> {
 
     @Override
     public RemoteResult call() {
-        final Loader loader = this.generalConfig.getLoader();
-        final Environment<T> env = loader.getWith(this.config.getVariables());
-        final Simulation<T> sim = new Engine<>(env, this.generalConfig.getEndStep(), this.generalConfig.getEndTime());
-        final Map<String, Object> defaultVars = loader.getVariables().entrySet().stream()
-                .collect(Collectors.toMap(Entry::getKey, e -> e.getValue().getDefault()));
-        defaultVars.putAll(this.config.getVariables());
-        final String header = this.config.getVariables().entrySet().stream()
-                .map(e -> e.getKey() + " = " + e.getValue())
-                .collect(Collectors.joining(", "));
-        final String filename = this.masterNodeId.toString() + "_" + this.config.getVariables().entrySet().stream()
-                .map(e -> e.getKey() + '-' + e.getValue())
-                .collect(Collectors.joining("_")) + ".txt";
-        try {
-            final Exporter<T> exp = new Exporter<>(filename, 1, header, loader.getDataExtractors());
+        try (WorkingDirectory wd = new WorkingDirectory()) {
+            wd.addToClasspath();
+            ClassLoader cl = ClassLoader.getSystemClassLoader();
+
+            URL[] urls = ((URLClassLoader)cl).getURLs();
+
+            for(URL url: urls){
+                System.out.println(url.getFile());
+            }
+            wd.writeFiles(this.generalConfig.getDependencies());
+            final Loader loader = this.generalConfig.getLoader();
+            final Environment<T> env = loader.getWith(this.config.getVariables());
+            final Simulation<T> sim = new Engine<>(env, this.generalConfig.getEndStep(), this.generalConfig.getEndTime());
+            final Map<String, Object> defaultVars = loader.getVariables().entrySet().stream()
+                    .collect(Collectors.toMap(Entry::getKey, e -> e.getValue().getDefault()));
+            defaultVars.putAll(this.config.getVariables());
+            final String header = this.config.getVariables().entrySet().stream()
+                    .map(e -> e.getKey() + " = " + e.getValue())
+                    .collect(Collectors.joining(", "));
+            final String filename = this.masterNodeId.toString() + "_" + this.config.getVariables().entrySet().stream()
+                    .map(e -> e.getKey() + '-' + e.getValue())
+                    .collect(Collectors.joining("_")) + ".txt";
+            final Exporter<T> exp = new Exporter<>(wd.getFileAbsolutePath(filename), 1, header, loader.getDataExtractors());
             sim.addOutputMonitor(exp);
-        } catch (FileNotFoundException e) {
-            throw new IllegalStateException(e);
+            sim.play();
+            sim.run();
+            return new RemoteResultImpl(wd.getFileContent(filename), Ignition.ignite().cluster().localNode().id(), sim.getError(), config);
+        } catch (SecurityException | IllegalArgumentException | ReflectiveOperationException | IOException e1) {
+            throw new IllegalStateException(e1);
         }
-        sim.play();
-        sim.run();
-        return new RemoteResultImpl(null, Ignition.ignite().cluster().localNode().id(), sim.getError(), config);
     }
 }

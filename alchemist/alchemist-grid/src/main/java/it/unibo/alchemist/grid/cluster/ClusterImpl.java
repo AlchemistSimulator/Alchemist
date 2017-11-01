@@ -4,6 +4,7 @@ import java.nio.file.Path;
 
 import org.apache.ignite.Ignite;
 import org.apache.ignite.Ignition;
+import org.apache.ignite.spi.deployment.local.LocalDeploymentSpi;
 
 import it.unibo.alchemist.grid.simulation.Complexity;
 

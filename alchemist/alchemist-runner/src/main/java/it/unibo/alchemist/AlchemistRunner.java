@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -48,6 +49,7 @@ import it.unibo.alchemist.grid.config.GeneralSimulationConfig;
 import it.unibo.alchemist.grid.config.LocalGeneralSimulationConfig;
 import it.unibo.alchemist.grid.config.SimulationConfig;
 import it.unibo.alchemist.grid.config.SimulationConfigImpl;
+import it.unibo.alchemist.grid.simulation.RemoteResult;
 import it.unibo.alchemist.grid.simulation.SimulationsSet;
 import it.unibo.alchemist.grid.simulation.SimulationsSetImpl;
 import it.unibo.alchemist.loader.Loader;
@@ -227,7 +229,13 @@ public final class AlchemistRunner<T> {
                 .collect(Collectors.toList());
         final SimulationsSet<T> set = new SimulationsSetImpl<>(gsc, simConfigs);
         try (Cluster cluster = new ClusterImpl(Paths.get(this.gridConfigFile.orElseThrow(() -> new IllegalStateException("No remote configuration file"))))) {
-            cluster.getWorkersSet(set.computeComplexity()).distributeSimulations(set);
+            final Set<RemoteResult> resSet = cluster.getWorkersSet(set.computeComplexity()).distributeSimulations(set);
+            for (final RemoteResult res: resSet) {
+                res.saveLocally(this.exportFileRoot.get());
+            }
+        } catch (Exception e) {
+            //TODO capisci semantica delle eccezioni di ritorno
+            throw new IllegalStateException(e);
         }
         return Optional.empty();
     }

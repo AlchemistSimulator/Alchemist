@@ -1,12 +1,14 @@
 package it.unibo.alchemist.grid.config;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.commons.io.FileUtils;
 
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.model.interfaces.Time;
@@ -32,13 +34,13 @@ public class LocalGeneralSimulationConfig<T> extends LightInfoGeneralSimulationC
      */
     public LocalGeneralSimulationConfig(final Loader loader, final long endStep, final Time endTime) {
         super(loader, endStep, endTime);
-
+        //TODO assicurati file in classpath, chiedi conferme
         this.dependencies = new HashMap<>();
         for (final String file : loader.getDependencies()) {
             try {
                 final URL dependency = LocalGeneralSimulationConfig.class.getResource(file);
                 if (dependency != null) {
-                    dependencies.put(file, new String(Files.readAllBytes(Paths.get(dependency.toURI()))));
+                    dependencies.put(file, FileUtils.readFileToString(new File(dependency.toURI()), StandardCharsets.UTF_8));
                 } else {
                     throw new IllegalArgumentException("Dependency non exixts: " + file);
                 }

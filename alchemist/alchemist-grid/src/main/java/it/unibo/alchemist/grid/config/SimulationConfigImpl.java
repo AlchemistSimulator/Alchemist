@@ -30,4 +30,28 @@ public class SimulationConfigImpl implements SimulationConfig {
         return this.variables;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((variables == null) ? 0 : variables.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        SimulationConfigImpl other = (SimulationConfigImpl) obj;
+        if (variables == null) {
+            if (other.variables != null)
+                return false;
+        } else if (!variables.equals(other.variables))
+            return false;
+        return true;
+    }
 }

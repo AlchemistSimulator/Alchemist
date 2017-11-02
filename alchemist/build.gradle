@@ -29,7 +29,7 @@ allprojects {
         }
     }
 
-	test { testLogging { events "passed", "skipped", "failed", "standardError" } }
+    test { testLogging { events "passed", "skipped", "failed", "standardError" } }
 
     dependencies {
         compile "com.google.code.findbugs:findbugs:$findBugsVersion"

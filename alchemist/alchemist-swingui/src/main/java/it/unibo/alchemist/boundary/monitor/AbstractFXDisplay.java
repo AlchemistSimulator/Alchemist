@@ -4,26 +4,27 @@ import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
 import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D;
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
+import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-
+import java.lang.ref.WeakReference;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Base abstract class for each display able to graphically represent a 2D space and simulation.
@@ -57,6 +58,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     private long timeInit;
     private double lastTime;
     private volatile ConcurrentLinkedQueue<Runnable> commandQueue;
+    private WeakReference<Simulation<T>> simulation;
 
     /**
      * Default constructor. The number of steps is set to default ({@value #DEFAULT_NUMBER_OF_STEPS}).
@@ -79,7 +81,6 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         setStyle("-fx-background-color: #FFF;");
         setStep(steps);
         initMouseListener();
-        initKeybindings();
         commandQueue = new ConcurrentLinkedQueue<>();
     }
 
@@ -89,15 +90,6 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      * Should be overridden to implement mouse interaction with the GUI.
      */
     protected void initMouseListener() {
-        // TODO
-    }
-
-    /**
-     * Initializes the key bindings.
-     * <p>
-     * Should be overridden to implement keyboard interaction with the GUI.
-     */
-    protected void initKeybindings() {
         // TODO
     }
 
@@ -192,6 +184,8 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     public void stepDone(final Environment<T> environment, final Reaction<T> reaction, final Time time, final long step) {
         // TODO
 
+        setSimulation(environment.getSimulation());
+
         if (firstTime) {
             synchronized (this) {
                 if (firstTime) {
@@ -240,6 +234,25 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         } else {
             throw new IllegalStateException("Only the simulation thread can dictate GUI updates");
         }
+    }
+
+    /**
+     * Getter method for the current simulation.
+     *
+     * @return the current simulation
+     */
+    @Nullable
+    public Simulation<T> getSimulation() {
+        return simulation.get();
+    }
+
+    /**
+     * Setter method for the simulation.
+     *
+     * @param simulation the simulation to set
+     */
+    public void setSimulation(final @Nullable Simulation<T> simulation) {
+        this.simulation = new WeakReference<>(simulation);
     }
 
     /**

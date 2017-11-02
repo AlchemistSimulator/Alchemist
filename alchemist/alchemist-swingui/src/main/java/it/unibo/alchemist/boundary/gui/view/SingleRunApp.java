@@ -13,6 +13,7 @@ import it.unibo.alchemist.boundary.monitor.FXStepMonitor;
 import it.unibo.alchemist.boundary.monitor.FXTimeMonitor;
 import it.unibo.alchemist.boundary.monitor.PlayPauseMonitor;
 import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.core.interfaces.Status;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import java.io.File;
@@ -30,7 +31,6 @@ import java.util.Optional;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
@@ -241,7 +241,9 @@ public class SingleRunApp<T> extends Application {
                 System.exit(0);
             });
             primaryStage.getIcons().add(SVGImageUtils.getSvgImage("/icon/icon.svg"));
-            primaryStage.setScene(new Scene(rootLayout));
+            final Scene scene = new Scene(rootLayout);
+            initKeybindings(scene);
+            primaryStage.setScene(scene);
 
             initialized = true;
             primaryStage.show();
@@ -249,6 +251,27 @@ public class SingleRunApp<T> extends Application {
             L.error("I/O Exception loading FXML layout files", e);
             throw new UncheckedIOException(e);
         }
+    }
+
+    /**
+     * Initializes the key bindings.
+     * <p>
+     * Should be overridden to implement keyboard interaction with the GUI.
+     */
+    protected void initKeybindings(final Scene scene) {
+        scene.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case P:
+                    getSimulation().ifPresent(s -> {
+                        if (s.getStatus().equals(Status.RUNNING)) {
+                            s.pause();
+                        } else {
+                            s.play();
+                        }
+                    });
+                    break;
+            }
+        });
     }
 
     /**
@@ -381,6 +404,15 @@ public class SingleRunApp<T> extends Application {
         }
 
         addNamedParam(USE_EFFECT_GROUPS_FROM_FILE, path);
+    }
+
+    /**
+     * Getter method for the simulation object.
+     *
+     * @return the optional simulation
+     */
+    private Optional<Simulation<T>> getSimulation() {
+        return Optional.ofNullable(simulation);
     }
 
     /**

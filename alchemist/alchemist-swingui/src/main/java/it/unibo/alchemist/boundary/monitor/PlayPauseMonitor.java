@@ -9,13 +9,13 @@ import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+import java.lang.ref.WeakReference;
+import java.util.Optional;
 import javafx.application.Platform;
+import javafx.scene.Node;
 import jiconfont.icons.GoogleMaterialDesignIcons;
 import jiconfont.javafx.IconNode;
 import org.jetbrains.annotations.Nullable;
-
-import java.lang.ref.WeakReference;
-import java.util.Optional;
 
 /**
  * {@code OutputMonitor} that monitors the current {@link Status status} of the {@code Simulation}, acting as a toggle to
@@ -36,6 +36,7 @@ public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
     private static final IconNode PAUSE_ICON = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.PAUSE);
 
     private WeakReference<Simulation<T>> simulation;
+    private Status currentStatus;
 
     /**
      * Default constructor.
@@ -50,8 +51,7 @@ public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
      * @param simulation the simulation to control
      */
     public PlayPauseMonitor(final @Nullable Simulation<T> simulation) {
-        setSimulation(simulation);
-        setIcon();
+        update(simulation);
         setOnAction(e -> Optional.ofNullable(getSimulation()).ifPresent(this::playPause));
     }
 
@@ -61,32 +61,36 @@ public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
      * @param simulation the simulation to take status from
      */
     private void playPause(final Simulation<T> simulation) {
-        Optional.ofNullable(getSimulation()).ifPresent(s -> {
-            if (s.getStatus() == Status.RUNNING) {
-                s.pause();
-            } else {
-                s.play();
-            }
-            setIcon();
-        });
-    }
-
-
-    @Override
-    public void finished(final Environment<T> env, final Time time, final long step) {
-        setSimulation(env.getSimulation());
+        switch (simulation.getStatus()) {
+            case INIT:
+            case READY:
+            case PAUSED:
+                simulation.play();
+                break;
+            case RUNNING:
+                simulation.pause();
+                break;
+            case TERMINATED:
+            default:
+                // Do nothing
+        }
         setIcon();
     }
 
+
     @Override
-    public void initialized(final Environment<T> env) {
-        setSimulation(env.getSimulation());
-        setIcon();
+    public void finished(final Environment<T> environment, final Time time, final long step) {
+        update(environment.getSimulation());
     }
 
     @Override
-    public void stepDone(final Environment<T> env, final Reaction<T> r, final Time time, final long step) {
-        // Do nothing
+    public void initialized(final Environment<T> environment) {
+        update(environment.getSimulation());
+    }
+
+    @Override
+    public void stepDone(final Environment<T> environment, final Reaction<T> reaction, final Time time, final long step) {
+        update(environment.getSimulation());
     }
 
     /**
@@ -109,6 +113,24 @@ public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
     }
 
     /**
+     * Updates internal status of the simulation.
+     *
+     * @param simulation the simulation
+     */
+    private void update(final Simulation<T> simulation) {
+        setSimulation(simulation);
+        final @Nullable Status previousStatus = this.currentStatus;
+        if (simulation != null) {
+            this.currentStatus = simulation.getStatus();
+        } else {
+            this.currentStatus = Status.TERMINATED;
+        }
+        if (!currentStatus.equals(previousStatus)) {
+            setIcon();
+        }
+    }
+
+    /**
      * Sets the icon of the {@code Button} from the current {@link #simulation} {@link Status}.
      * <p>
      * If no {@link Simulation} is set, it will simply set {@link #PLAY_ICON}.
@@ -117,14 +139,7 @@ public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
      * @see #PAUSE_ICON
      */
     private void setIcon() {
-        final Optional<Simulation<T>> sim = Optional.ofNullable(simulation.get());
-
-        Platform.runLater(() -> {
-            if (sim.isPresent()) {
-                setGraphic(sim.get().getStatus() == Status.RUNNING ? PAUSE_ICON : PLAY_ICON);
-            } else {
-                setGraphic(PLAY_ICON);
-            }
-        });
+        final Node icon = getSimulation() != null && currentStatus == Status.RUNNING ? PAUSE_ICON : PLAY_ICON;
+        Platform.runLater(() -> setGraphic(icon));
     }
 }

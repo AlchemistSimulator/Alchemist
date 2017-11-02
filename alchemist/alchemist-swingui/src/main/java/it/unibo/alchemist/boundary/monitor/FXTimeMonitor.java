@@ -1,5 +1,6 @@
 package it.unibo.alchemist.boundary.monitor;
 
+import it.unibo.alchemist.boundary.monitor.generic.NumericLabelMonitor;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Concentration;
@@ -10,26 +11,24 @@ import it.unibo.alchemist.model.interfaces.Time;
 /**
  * {@code OutputMonitor} that monitors the current {@link Simulation#getStep() steps} of the {@code Simulation}.
  *
- * @param <T> the {@link Concentration} type
+ * @param <T> The type which describes the {@link Concentration} of a molecule
  */
 public class FXTimeMonitor<T> extends NumericLabelMonitor<Time, T> {
-    private volatile boolean mayRender = true;
 
     /**
      * Default constructor.
      */
     public FXTimeMonitor() {
-        super(DoubleTime.ZERO_TIME,"Time: ");
+        super(DoubleTime.ZERO_TIME, "Time: ");
     }
 
     @Override
-    public void finished(final Environment<T> env, final Time time, final long step) {
+    public void finished(final Environment<T> environment, final Time time, final long step) {
         update(time);
     }
 
     @Override
-    public void stepDone(final Environment<T> env, final Reaction<T> r, final Time time, final long step) {
+    public void stepDone(final Environment<T> environment, final Reaction<T> reaction, final Time time, final long step) {
         update(time);
     }
-
 }

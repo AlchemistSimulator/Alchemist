@@ -1,13 +1,14 @@
 package it.unibo.alchemist.boundary.monitor;
 
 import it.unibo.alchemist.boundary.interfaces.FX2DOutputMonitor;
+import it.unibo.alchemist.boundary.monitor.generic.AbstractFXDisplay;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * Simple implementation of a monitor that graphically represents a 2D space and simulation.
  *
- * @param <T> the {@link Concentration} type
+ * @param <T> The type which describes the {@link Concentration} of a molecule
  */
 public class FX2DDisplay<T> extends AbstractFXDisplay<T> implements FX2DOutputMonitor<T> {
 

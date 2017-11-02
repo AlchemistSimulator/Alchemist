@@ -78,7 +78,7 @@ public class TestNodeCloning {
         sim.addOutputMonitor(new OutputMonitor<Object>() {
             private static final long serialVersionUID = 1L;
             @Override
-            public void stepDone(final Environment<Object> env, final Reaction<Object> r, final Time time, final long step) {
+            public void stepDone(final Environment<Object> environment, final Reaction<Object> reaction, final Time time, final long step) {
                 final ImmutableMap<Node<Object>, Double> expectations = ImmutableMap.of(
                         nid.apply(2), 0d,
                         nid.apply(1), dist.apply(2, 1),
@@ -90,16 +90,16 @@ public class TestNodeCloning {
 //                    System.out.println(n + ": " + n.getConcentration(DATAMOL));
 //                }
                 if (step == ENABLE_STEP) {
-                    sim.schedule(() -> env.getNodeByID(3).setConcentration(ENABLEDMOL, true));
+                    sim.schedule(() -> environment.getNodeByID(3).setConcentration(ENABLEDMOL, true));
                 }
                 if (step > ENABLE_CHECKS) {
                     expectations.forEach((node, expected) -> assertEquals(expected, node.getConcentration(DATAMOL)));
                 }
             }
             @Override
-            public void initialized(final Environment<Object> env) { }
+            public void initialized(final Environment<Object> environment) { }
             @Override
-            public void finished(final Environment<Object> env, final Time time, final long step) { }
+            public void finished(final Environment<Object> environment, final Time time, final long step) { }
         });
         sim.play();
         sim.run();

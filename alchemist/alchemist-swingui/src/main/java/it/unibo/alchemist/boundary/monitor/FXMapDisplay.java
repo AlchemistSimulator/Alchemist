@@ -1,10 +1,17 @@
 package it.unibo.alchemist.boundary.monitor;
 
 import it.unibo.alchemist.boundary.interfaces.FX2DOutputMonitor;
+import it.unibo.alchemist.boundary.monitor.generic.AbstractFXDisplay;
+import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Position;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Simple implementation of a monitor that graphically represents a simulation on a 2D map.
+ *
+ * @param <T> The type which describes the {@link Concentration} of a molecule
+ */
 public class FXMapDisplay<T> extends AbstractFXDisplay<T> implements FX2DOutputMonitor<T> {
     /**
      * Default logger for this class. It hides {@link AbstractFXDisplay}'s one.

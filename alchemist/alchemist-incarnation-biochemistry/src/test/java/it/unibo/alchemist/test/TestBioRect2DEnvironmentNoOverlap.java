@@ -685,18 +685,18 @@ public class TestBioRect2DEnvironmentNoOverlap {
             private static final long serialVersionUID = -6746841308070417583L;
 
             @Override
-            public void stepDone(final Environment<Double> env, final Reaction<Double> r, final Time time, final long step) {
-                assertTrue("Fail at time: " + time, thereIsOverlap(env));
+            public void stepDone(final Environment<Double> environment, final Reaction<Double> reaction, final Time time, final long step) {
+                assertTrue("Fail at time: " + time, thereIsOverlap(environment));
             }
 
             @Override
-            public void initialized(final Environment<Double> env) {
-                assertTrue(thereIsOverlap(env));
+            public void initialized(final Environment<Double> environment) {
+                assertTrue(thereIsOverlap(environment));
             }
 
             @Override
-            public void finished(final Environment<Double> env, final Time time, final long step) {
-                assertTrue(thereIsOverlap(env));
+            public void finished(final Environment<Double> environment, final Time time, final long step) {
+                assertTrue(thereIsOverlap(environment));
             }
 
             private boolean thereIsOverlap(final Environment<Double> env) {
@@ -749,18 +749,18 @@ public class TestBioRect2DEnvironmentNoOverlap {
             private static final long serialVersionUID = -6746841308070417583L;
 
             @Override
-            public void stepDone(final Environment<Double> env, final Reaction<Double> r, final Time time, final long step) {
-                assertTrue("Fail at time: " + time, thereIsOverlap(env));
+            public void stepDone(final Environment<Double> environment, final Reaction<Double> reaction, final Time time, final long step) {
+                assertTrue("Fail at time: " + time, thereIsOverlap(environment));
             }
 
             @Override
-            public void initialized(final Environment<Double> env) {
-                assertTrue(thereIsOverlap(env));
+            public void initialized(final Environment<Double> environment) {
+                assertTrue(thereIsOverlap(environment));
             }
 
             @Override
-            public void finished(final Environment<Double> env, final Time time, final long step) {
-                assertTrue(thereIsOverlap(env));
+            public void finished(final Environment<Double> environment, final Time time, final long step) {
+                assertTrue(thereIsOverlap(environment));
             }
 
             private boolean thereIsOverlap(final Environment<Double> env) {

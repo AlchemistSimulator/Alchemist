@@ -71,16 +71,16 @@ public class MapDisplay<T> extends Generic2DDisplay<T> {
     };
 
     @Override
-    public void initialized(final Environment<T> env) {
-        super.initialized(env);
+    public void initialized(final Environment<T> environment) {
+        super.initialized(environment);
         Arrays.stream(getMouseListeners()).forEach(mapView::addMouseListener);
         Arrays.stream(getMouseMotionListeners()).forEach(mapView::addMouseMotionListener);
-        setWormhole(new MapWormhole(env, this, mapView.getModel().mapViewPosition));
+        setWormhole(new MapWormhole(environment, this, mapView.getModel().mapViewPosition));
         setZoomManager(new LinearZoomManager(1, 1, 2, MapWormhole.MAX_ZOOM));
         getWormhole().center();
         getWormhole().optimalZoom();
         getZoomManager().setZoom(getWormhole().getZoom());
-        super.initialized(env);
+        super.initialized(environment);
     }
 
     private static TileCache createTileCache() {
@@ -112,12 +112,12 @@ public class MapDisplay<T> extends Generic2DDisplay<T> {
     }
 
     @Override
-    public void finished(final Environment<T> env, final Time time, final long step) {
+    public void finished(final Environment<T> environment, final Time time, final long step) {
         /*
          * Shut down the download threads, preventing memory leaks
          */
         mapView.getLayerManager().interrupt();
-        super.finished(env, time, step);
+        super.finished(environment, time, step);
     }
 
 }

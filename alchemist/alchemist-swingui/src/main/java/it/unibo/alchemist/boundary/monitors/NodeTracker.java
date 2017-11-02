@@ -59,22 +59,22 @@ public class NodeTracker<T> extends JPanel implements OutputMonitor<T>, ActionLi
     }
 
     @Override
-    public void finished(final Environment<T> env, final Time time, final long step) {
-        stepDone(env, null, time, step);
+    public void finished(final Environment<T> environment, final Time time, final long step) {
+        stepDone(environment, null, time, step);
     }
 
     @Override
-    public void initialized(final Environment<T> env) {
-        stepDone(env, null, null, 0L);
+    public void initialized(final Environment<T> environment) {
+        stepDone(environment, null, null, 0L);
     }
 
     @Override
-    public void stepDone(final Environment<T> env, final Reaction<T> exec, final Time time, final long step) {
-        if (exec == null || exec.getNode().equals(n)) {
+    public void stepDone(final Environment<T> environment, final Reaction<T> reaction, final Time time, final long step) {
+        if (reaction == null || reaction.getNode().equals(n)) {
             final StringBuilder sb = new StringBuilder(stringLength);
             sb.append(POSITION);
             sb.append('\n');
-            sb.append(env.getPosition(n));
+            sb.append(environment.getPosition(n));
             sb.append("\n\n\n");
             sb.append(CONTENT);
             sb.append('\n');

@@ -1,4 +1,4 @@
-package it.unibo.alchemist.boundary.monitor;
+package it.unibo.alchemist.boundary.monitor.generic;
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -15,7 +15,8 @@ import org.jetbrains.annotations.Nullable;
 /**
  * {@code OutputMonitor} that monitors the current {@link Simulation#getStep() steps} of the {@code Simulation}.
  *
- * @param <T> the {@link Concentration} type
+ * @param <T> The type which describes the {@link Concentration} of a molecule
+ * @param <N> the numeric type
  */
 public abstract class NumericLabelMonitor<N, T> extends Label implements OutputMonitor<T> {
     private final N init;
@@ -47,7 +48,7 @@ public abstract class NumericLabelMonitor<N, T> extends Label implements OutputM
     }
 
     @Override
-    public void initialized(final Environment<T> env) {
+    public void initialized(final Environment<T> environment) {
         update(init);
     }
 
@@ -84,5 +85,4 @@ public abstract class NumericLabelMonitor<N, T> extends Label implements OutputM
     protected void setName(final @Nullable String name) {
         this.name = Optional.ofNullable(name);
     }
-
 }

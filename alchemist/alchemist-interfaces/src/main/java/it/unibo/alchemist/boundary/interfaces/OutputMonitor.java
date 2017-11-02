@@ -31,11 +31,11 @@ public interface OutputMonitor<T> extends Serializable {
      * been spawned or the same flow of the simulation may execute this method.
      * This depends on the specific {@link Simulation} implementation.
      *
-     * @param env  The current environment
+     * @param environment  The current environment
      * @param time The time at which the simulation ended
      * @param step The last step number
      */
-    void finished(Environment<T> env, Time time, long step);
+    void finished(Environment<T> environment, Time time, long step);
 
     /**
      * This method will be called by the simulation as soon as the
@@ -45,9 +45,9 @@ public interface OutputMonitor<T> extends Serializable {
      * execute this method. This depends on the specific {@link Simulation}
      * implementation.
      *
-     * @param env the environment
+     * @param environment the environment
      */
-    void initialized(Environment<T> env);
+    void initialized(Environment<T> environment);
 
     /**
      * This method will be called by the simulation every time a simulation step
@@ -56,11 +56,11 @@ public interface OutputMonitor<T> extends Serializable {
      * spawned or the same flow of the simulation may execute this method. This
      * depends on the specific {@link Simulation} implementation.
      *
-     * @param env  The current environment
-     * @param r    The last reaction executed
+     * @param environment  The current environment
+     * @param reaction    The last reaction executed
      * @param time The time at this simulation point
      * @param step The current simulation step
      */
-    void stepDone(Environment<T> env, Reaction<T> r, Time time, long step);
+    void stepDone(Environment<T> environment, Reaction<T> reaction, Time time, long step);
 
 }

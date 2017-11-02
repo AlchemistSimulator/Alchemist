@@ -74,25 +74,25 @@ public class TestLoadGPSTrace {
         sim.addOutputMonitor(new OutputMonitor<T>() {
 
             @Override
-            public void finished(final Environment<T> env, final Time time, final long step) {
-                for (final Node<T> node : env.getNodes()) {
+            public void finished(final Environment<T> environment, final Time time, final long step) {
+                for (final Node<T> node : environment.getNodes()) {
                     final GeoPosition start = Objects.requireNonNull(NODE_START_POSITION.get(node));
                     final GeoPosition idealArrive = Objects.requireNonNull(START_ARRIVE_POSITION.get(start));
-                    final Position realArrive = Objects.requireNonNull(env.getPosition(node));
+                    final Position realArrive = Objects.requireNonNull(environment.getPosition(node));
                     assertEquals(0.0, idealArrive.getDistanceTo(realArrive), DELTA);
                 }
             }
 
             @Override
-            public void initialized(final Environment<T> env) {
-                for (final Node<T> node : env.getNodes()) {
-                    final Position p = env.getPosition(node);
+            public void initialized(final Environment<T> environment) {
+                for (final Node<T> node : environment.getNodes()) {
+                    final Position p = environment.getPosition(node);
                     NODE_START_POSITION.put(node, new LatLongPosition(p.getCoordinate(1), p.getCoordinate(0)));
                 }
             }
 
             @Override
-            public void stepDone(final Environment<T> env, final Reaction<T> r, final Time time, final long step) {
+            public void stepDone(final Environment<T> environment, final Reaction<T> reaction, final Time time, final long step) {
             }
         });
         sim.play();

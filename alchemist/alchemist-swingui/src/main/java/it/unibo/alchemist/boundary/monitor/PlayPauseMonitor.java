@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
  * {@code OutputMonitor} that monitors the current {@link Status status} of the {@code Simulation}, acting as a toggle to
  * {@link Simulation#play() play} and {@link Simulation#pause() pause} the {@code Simulation}.
  *
- * @param <T> the {@link Concentration} type
+ * @param <T> The type which describes the {@link Concentration} of a molecule
  */
 public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
 
@@ -73,6 +73,7 @@ public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
             case TERMINATED:
             default:
                 // Do nothing
+                break;
         }
         setIcon();
     }

@@ -1,4 +1,4 @@
-package it.unibo.alchemist.boundary.monitor;
+package it.unibo.alchemist.boundary.monitor.generic;
 
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
@@ -13,7 +13,6 @@ import it.unibo.alchemist.model.interfaces.Time;
 import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -29,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Base abstract class for each display able to graphically represent a 2D space and simulation.
  *
- * @param <T> the {@link Concentration} type
+ * @param <T> The type which describes the {@link Concentration} of a molecule
  */
 public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMonitor<T> {
 

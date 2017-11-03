@@ -49,8 +49,8 @@ public class EffectGroupAdapter implements JsonSerializer<EffectGroup>, JsonDese
 
         final String name = jObj.get(NAME).getAsString();
         final EffectGroup group = new EffectStack(name);
-        final boolean visility = jObj.get(VISIBILITY).getAsBoolean();
-        group.setVisibility(visility);
+        final boolean visibility = jObj.get(VISIBILITY).getAsBoolean();
+        group.setVisibility(visibility);
         final int transparency = jObj.get(TRANSPARENCY).getAsInt();
         group.setTransparency(transparency);
         final List<EffectFX> effects = context.deserialize(jObj.get(EFFECTS), EFFECTS_LIST_TYPE);

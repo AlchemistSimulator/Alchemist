@@ -23,6 +23,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.MouseEvent;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -45,7 +46,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     /**
      * Default number of steps.
      */
-    private static final int DEFAULT_NUMBER_OF_STEPS = 1;
+    protected static final int DEFAULT_NUMBER_OF_STEPS = 1;
 
     private final ObservableList<EffectGroup> effectStack;
     private final Semaphore mutex = new Semaphore(1);
@@ -77,6 +78,8 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         this.firstTime = true;
         this.realTime = false;
         this.effectStack = FXCollections.observableArrayList();
+        setFocusTraversable(true);
+        requestFocus();
         setStyle("-fx-background-color: #FFF;");
         setStep(steps);
         initMouseListener();
@@ -149,6 +152,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      *
      * @return the wormhole object
      */
+    @Nullable
     protected BidimensionalWormhole getWormhole() {
         return this.wormhole;
     }
@@ -188,12 +192,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         if (firstTime) {
             synchronized (this) {
                 if (firstTime) {
-                    wormhole = new Wormhole2D(environment, this);
-                    wormhole.center();
-                    wormhole.optimalZoom();
-                    firstTime = false;
-                    lastTime = -TIME_STEP;
-                    timeInit = System.currentTimeMillis();
+                    init(environment);
                     update(environment, time);
                 }
             }
@@ -202,6 +201,18 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         }
 
         // TODO
+    }
+
+    /**
+     * The method initializes everything is not initializable before first step.
+     */
+    protected void init(final Environment<T> environment) {
+        wormhole = new Wormhole2D(environment, this);
+        wormhole.center();
+        wormhole.optimalZoom();
+        firstTime = false;
+        lastTime = -TIME_STEP;
+        timeInit = System.currentTimeMillis();
     }
 
     @Override

@@ -48,7 +48,7 @@ public class RangedDoublePropertySerializationTest extends AbstractPropertySeria
         Assert.assertTrue(getMessage(rangedDoubleProperty, deserialized), rangedDoubleProperty.equals(deserialized));
 
         // CHECKSTYLE:OFF
-        rangedDoubleProperty = PropertyFactory.getColorChannelProperty("RED", 250.0);
+        rangedDoubleProperty = PropertyFactory.getFXColorChannelProperty("RED", 0.5);
         // CHECKSTYLE:ON
         oos.writeObject(rangedDoubleProperty);
 
@@ -87,7 +87,7 @@ public class RangedDoublePropertySerializationTest extends AbstractPropertySeria
         Assert.assertTrue(getMessage(rangedDoubleProperty, deserialized), rangedDoubleProperty.equals(deserialized));
 
         // CHECKSTYLE:OFF
-        rangedDoubleProperty = PropertyFactory.getColorChannelProperty("RED", 250.0);
+        rangedDoubleProperty = PropertyFactory.getFXColorChannelProperty("RED", 0.5);
         // CHECKSTYLE:ON
         GSON.toJson(rangedDoubleProperty, this.getGsonType(), writer);
         writer.flush();

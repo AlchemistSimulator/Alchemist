@@ -1,11 +1,14 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
+import it.unibo.alchemist.boundary.gui.ColorChannel;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
+import it.unibo.alchemist.boundary.gui.view.properties.RangedIntegerProperty;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.paint.Color;
 import org.danilopianini.util.Hashes;
@@ -20,15 +23,6 @@ import java.io.*;
 public class DrawColoredDot extends DrawDot {
 
     /**
-     * Magic number used by auto-generated {@link #hashCode()} method.
-     */
-    private static final int HASHCODE_NUMBER_1 = 1231;
-    /**
-     * Magic number used by auto-generated {@link #hashCode()} method.
-     */
-    private static final int HASHCODE_NUMBER_2 = 1237;
-
-    /**
      * Default generated Serial Version UID.
      */
     private static final long serialVersionUID = -2329825220099191395L;
@@ -36,9 +30,9 @@ public class DrawColoredDot extends DrawDot {
      * Default effect name
      */
     private static final String DEFAULT_NAME = ResourceLoader.getStringRes("drawcoloreddot_default_name");
-    private RangedDoubleProperty red;
-    private RangedDoubleProperty green;
-    private RangedDoubleProperty blue;
+    private RangedIntegerProperty red;
+    private RangedIntegerProperty green;
+    private RangedIntegerProperty blue;
     private RangedDoubleProperty alpha;
 
     /**
@@ -62,17 +56,27 @@ public class DrawColoredDot extends DrawDot {
     public DrawColoredDot(final String name) {
         super(name);
 
+        final java.awt.Color awtColor = convertColor(super.getColor());
+
         // Set properties to default color of DrawDot
-        red = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_red"), super.getColor().getRed());
-        green = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_green"), super.getColor().getGreen());
-        blue = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_blue"), super.getColor().getBlue());
-        alpha = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_alpha"), super.getColor().getOpacity());
+        red = PropertyFactory.getAWTColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_red"), awtColor.getRed());
+        green = PropertyFactory.getAWTColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_green"), awtColor.getGreen());
+        blue = PropertyFactory.getAWTColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_blue"), awtColor.getBlue());
+        alpha = PropertyFactory.getFXColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_alpha"), super.getColor().getOpacity());
 
         // Update the color at each change
         red.addListener(this.updateColor());
         green.addListener(this.updateColor());
         blue.addListener(this.updateColor());
         alpha.addListener(this.updateColor());
+    }
+
+    protected static java.awt.Color convertColor(final Color fxColor) {
+        return new java.awt.Color(
+                (float) fxColor.getRed(),
+                (float) fxColor.getGreen(),
+                (float) fxColor.getBlue(),
+                (float) fxColor.getOpacity());
     }
 
     @Override
@@ -87,11 +91,12 @@ public class DrawColoredDot extends DrawDot {
      */
     @Override
     public void setColor(final Color color) {
-        // Also widens method visibility from parent 
+        // Also widens method visibility from parent
         this.setAlpha(color.getOpacity());
-        this.setBlue(color.getBlue());
-        this.setGreen(color.getGreen());
-        this.setRed(color.getRed());
+        final java.awt.Color awtColor = convertColor(color);
+        this.setBlue(awtColor.getBlue());
+        this.setGreen(awtColor.getGreen());
+        this.setRed(awtColor.getRed());
         super.setColor(color);
     }
 
@@ -101,11 +106,12 @@ public class DrawColoredDot extends DrawDot {
      * @return the {@code ChangeListener}
      */
     private ChangeListener<Number> updateColor() {
-        return (observable, oldValue, newValue) -> super.setColor(Color.rgb(
-                red.getValue().intValue(),
-                green.getValue().intValue(),
-                blue.getValue().intValue(),
-                alpha.getValue()));
+        return (observable, oldValue, newValue) -> super.setColor(
+                Color.rgb(
+                        red.getValue(),
+                        green.getValue(),
+                        blue.getValue(),
+                        alpha.getValue()));
     }
 
     /**
@@ -130,7 +136,7 @@ public class DrawColoredDot extends DrawDot {
     /**
      * Sets the value of {@code alphaProperty}.
      *
-     * @param alpha the alpha channel to set
+     * @param alpha the alpha channel to set, in range 0.0-1.0
      */
     public void setAlpha(final double alpha) {
         this.alpha.set(alpha);
@@ -142,25 +148,25 @@ public class DrawColoredDot extends DrawDot {
      *
      * @return the blue channel property
      */
-    public DoubleProperty blueProperty() {
+    public IntegerProperty blueProperty() {
         return this.blue;
     }
 
     /**
      * Gets the value of {@code blueProperty}.
      *
-     * @return the blue channel of the color of the dots
+     * @return the blue channel of the color of the dots, in range 0-255
      */
-    public double getBlue() {
+    public int getBlue() {
         return this.blue.get();
     }
 
     /**
      * Sets the value of {@code blueProperty}.
      *
-     * @param blue the blue channel to set
+     * @param blue the blue channel to set, in range 0-255
      */
-    public void setBlue(final double blue) {
+    public void setBlue(final int blue) {
         this.blue.set(blue);
     }
 
@@ -170,25 +176,25 @@ public class DrawColoredDot extends DrawDot {
      *
      * @return the green channel property
      */
-    public DoubleProperty greenProperty() {
+    public IntegerProperty greenProperty() {
         return this.green;
     }
 
     /**
      * Gets the value of {@code greenProperty}.
      *
-     * @return the green channel of the color of the dots
+     * @return the green channel of the color of the dots, in range 0-255
      */
-    public double getGreen() {
+    public int getGreen() {
         return this.green.get();
     }
 
     /**
      * Sets the value of {@code greenProperty}.
      *
-     * @param green the green channel to set
+     * @param green the green channel to set, in range 0-255
      */
-    public void setGreen(final double green) {
+    public void setGreen(final int green) {
         this.green.set(green);
     }
 
@@ -198,25 +204,25 @@ public class DrawColoredDot extends DrawDot {
      *
      * @return the red channel property
      */
-    public DoubleProperty redProperty() {
+    public IntegerProperty redProperty() {
         return this.red;
     }
 
     /**
      * Gets the value of {@code redProperty}.
      *
-     * @return the red channel of the color of the dots
+     * @return the red channel of the color of the dots, in range 0-255
      */
-    public double getRed() {
+    public int getRed() {
         return this.red.get();
     }
 
     /**
      * Sets the value of {@code redProperty}.
      *
-     * @param red the red channel to set
+     * @param red the red channel to set, in range 0-255
      */
-    public void setRed(final double red) {
+    public void setRed(final int red) {
         this.red.set(red);
     }
 
@@ -270,9 +276,9 @@ public class DrawColoredDot extends DrawDot {
      * @throws IOException              if any of the usual Input/Output related exceptions.
      */
     private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        red = (RangedDoubleProperty) stream.readObject();
-        green = (RangedDoubleProperty) stream.readObject();
-        blue = (RangedDoubleProperty) stream.readObject();
+        red = (RangedIntegerProperty) stream.readObject();
+        green = (RangedIntegerProperty) stream.readObject();
+        blue = (RangedIntegerProperty) stream.readObject();
         alpha = (RangedDoubleProperty) stream.readObject();
     }
 

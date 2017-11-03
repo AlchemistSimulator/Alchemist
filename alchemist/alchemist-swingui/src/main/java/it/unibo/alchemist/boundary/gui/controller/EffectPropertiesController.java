@@ -243,7 +243,7 @@ public class EffectPropertiesController implements Initializable {
                 doubleProperty.getUpperBound(), doubleProperty.get(), 0.01);
         final Spinner<Double> spinner = new Spinner<>(factory);
         spinner.setEditable(true);
-        final TextFormatter<Double> formatter = new TextFormatter<Double>(factory.getConverter(), factory.getValue());
+        final TextFormatter<Double> formatter = new TextFormatter<>(factory.getConverter(), factory.getValue());
         spinner.getEditor().setTextFormatter(formatter);
         factory.valueProperty().bindBidirectional(formatter.valueProperty());
         spinner.valueProperty().addListener((observable, oldValue, newValue) -> doubleProperty.set(newValue));

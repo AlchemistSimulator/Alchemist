@@ -14,8 +14,10 @@ import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty; // 
  * Factory for custom {@code Property}.
  */
 public final class PropertyFactory {
-    private static final double COLOR_MAX_VALUE = 255.0;
-    private static final double COLOR_MIN_VALUE = 0.0;
+    private static final int INT_COLOR_MAX_VALUE = 255;
+    private static final int INT_COLOR_MIN_VALUE = 0;
+    private static final double DOUBLE_COLOR_MAX_VALUE = 1.0;
+    private static final double DOUBLE_COLOR_MIN_VALUE = 0.0;
     private static final double PERCENTAGE_MAX_VALUE = 100.0;
     private static final double PERCENTAGE_MIN_VALUE = 0.0;
 
@@ -23,41 +25,60 @@ public final class PropertyFactory {
      * Default, empty, constructor, as this is an utility class.
      */
     private PropertyFactory() {
-        // Empty constructor
+        throw new AssertionError("Suppress default constructor for noninstantiability");
     }
 
     /**
-     * Returns a new {@link RangedDoubleProperty} with range between 255 and 0
+     * Returns a new {@link RangedIntegerProperty} with range between 255 and 0
      * and a name that identifies the color channel.
-     * 
-     * @param channel
-     *            the name to give to the {@code Property}
+     *
+     * @param channel the name to give to the {@code Property}
      * @return the {@link DoubleProperty}
      */
-    public static RangedDoubleProperty getColorChannelProperty(final String channel) {
-        return new RangedDoubleProperty(channel, COLOR_MIN_VALUE, COLOR_MAX_VALUE);
+    public static RangedIntegerProperty getAWTColorChannelProperty(final String channel) {
+        return new RangedIntegerProperty(channel, INT_COLOR_MIN_VALUE, INT_COLOR_MAX_VALUE);
     }
 
     /**
-     * Returns a new {@link RangedDoubleProperty} with range between 255 and 0
+     * Returns a new {@link RangedIntegerProperty} with range between 255 and 0
      * and a name that identifies the color channel.
-     * 
-     * @param channel
-     *            the name to give to the {@code Property}
-     * @param value
-     *            the initial value to give to the {@code Property}
+     *
+     * @param channel the name to give to the {@code Property}
+     * @param value   the initial value to give to the {@code Property}
+     * @return the {@link javafx.beans.property.IntegerProperty}
+     */
+    public static RangedIntegerProperty getAWTColorChannelProperty(final String channel, final int value) {
+        return new RangedIntegerProperty(channel, value, INT_COLOR_MIN_VALUE, INT_COLOR_MAX_VALUE);
+    }
+
+    /**
+     * Returns a new {@link RangedDoubleProperty} with range between 1.0 and 0.0
+     * and a name that identifies the color channel.
+     *
+     * @param channel the name to give to the {@code Property}
      * @return the {@link DoubleProperty}
      */
-    public static RangedDoubleProperty getColorChannelProperty(final String channel, final double value) {
-        return new RangedDoubleProperty(channel, value, COLOR_MIN_VALUE, COLOR_MAX_VALUE);
+    public static RangedDoubleProperty getFXColorChannelProperty(final String channel) {
+        return new RangedDoubleProperty(channel, DOUBLE_COLOR_MIN_VALUE, DOUBLE_COLOR_MAX_VALUE);
+    }
+
+    /**
+     * Returns a new {@link RangedDoubleProperty} with range between 1.0 and 0.0
+     * and a name that identifies the color channel.
+     *
+     * @param channel the name to give to the {@code Property}
+     * @param value   the initial value to give to the {@code Property}
+     * @return the {@link DoubleProperty}
+     */
+    public static RangedDoubleProperty getFXColorChannelProperty(final String channel, final double value) {
+        return new RangedDoubleProperty(channel, value, DOUBLE_COLOR_MIN_VALUE, DOUBLE_COLOR_MAX_VALUE);
     }
 
     /**
      * Returns a new {@link RangedDoubleProperty} with range between 100 and 0
      * and a name that identifies the {@code Property}.
-     * 
-     * @param name
-     *            the name to give to the {@code Property}
+     *
+     * @param name the name to give to the {@code Property}
      * @return the {@link DoubleProperty}
      */
     public static RangedDoubleProperty getPercentageRangedProperty(final String name) {
@@ -67,11 +88,9 @@ public final class PropertyFactory {
     /**
      * Returns a new {@link RangedDoubleProperty} with range between 100 and 0
      * and a name that identifies the {@code Property}.
-     * 
-     * @param name
-     *            the name to give to the {@code Property}
-     * @param value
-     *            the initial value to give to the {@code Property}
+     *
+     * @param name  the name to give to the {@code Property}
+     * @param value the initial value to give to the {@code Property}
      * @return the {@link DoubleProperty}
      */
     public static RangedDoubleProperty getPercentageRangedProperty(final String name, final double value) {
@@ -81,9 +100,8 @@ public final class PropertyFactory {
     /**
      * Returns a new {@link ListProperty} with all available incarnations of
      * Alchemist found via reflection.
-     * 
-     * @param name
-     *            the name to give to the property
+     *
+     * @param name the name to give to the property
      * @return the {@code ListProperty}
      */
     public static ListProperty<String> getIncarnationsListProperty(final String name) {
@@ -93,9 +111,8 @@ public final class PropertyFactory {
     /**
      * Returns a new {@link SetProperty} with all available incarnations of
      * Alchemist found via reflection.
-     * 
-     * @param name
-     *            the name to give to the property
+     *
+     * @param name the name to give to the property
      * @return the {@code SetProperty}
      */
     public static SetProperty<String> getIncarnationsSetProperty(final String name) {

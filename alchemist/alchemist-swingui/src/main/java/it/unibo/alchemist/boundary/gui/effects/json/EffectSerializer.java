@@ -10,6 +10,7 @@ import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -22,10 +23,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+
 import javafx.beans.property.Property;
 import javafx.scene.paint.Color;
 import javassist.Modifier;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.TestOnly;
 import org.reflections.Reflections;
 
 /**
@@ -55,18 +58,15 @@ public final class EffectSerializer {
     /**
      * {@code Type} of an {@code EffectFX}.
      */
-    private static final TypeToken<EffectFX> EFFECT_TYPE = new TypeToken<EffectFX>() {
-    };
+    private static final TypeToken<EffectFX> EFFECT_TYPE = new TypeToken<EffectFX>() { };
     /**
      * {@code Type} of an {@code EffectGroup}.
      */
-    private static final TypeToken<EffectGroup> EFFECT_GROUP_TYPE = new TypeToken<EffectGroup>() {
-    };
+    private static final TypeToken<EffectGroup> EFFECT_GROUP_TYPE = new TypeToken<EffectGroup>() { };
     /**
      * @code Type} of a {@code List} of {@code EffectGroup}.
      */
-    private static final TypeToken<List<EffectGroup>> EFFECT_GROUP_LIST_TYPE = new TypeToken<List<EffectGroup>>() {
-    };
+    private static final TypeToken<List<EffectGroup>> EFFECT_GROUP_LIST_TYPE = new TypeToken<List<EffectGroup>>() { };
 
     /**
      * Reflection object for main Alchemist package.
@@ -108,7 +108,8 @@ public final class EffectSerializer {
         EFFECTS.forEach(RTA_EFFECT::registerSubtype);
         GROUPS.forEach(RTA_GROUP::registerSubtype);
         final GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(new TypeToken<Color>(){}.getType(), new ColorSerializationAdapter());
+        builder.registerTypeAdapter(new TypeToken<Color>() {
+        }.getType(), new ColorSerializationAdapter());
         PROPERTIES.stream()
                 .filter(c -> Arrays.stream(c.getMethods())
                         .filter(m -> Modifier.isStatic(m.getModifiers()))
@@ -335,6 +336,7 @@ public final class EffectSerializer {
      * @return the {@code Gson} object for serialization
      */
     @Contract(pure = true)
+    @TestOnly
     protected static Gson getGSON() {
         return GSON;
     }

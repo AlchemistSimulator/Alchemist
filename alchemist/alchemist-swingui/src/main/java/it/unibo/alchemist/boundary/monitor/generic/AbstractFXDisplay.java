@@ -58,7 +58,6 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     private long timeInit;
     private double lastTime;
     private volatile ConcurrentLinkedQueue<Runnable> commandQueue;
-    private WeakReference<Simulation<T>> simulation;
 
     /**
      * Default constructor. The number of steps is set to default ({@value #DEFAULT_NUMBER_OF_STEPS}).
@@ -185,10 +184,6 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
 
     @Override
     public void stepDone(final Environment<T> environment, final Reaction<T> reaction, final Time time, final long step) {
-        // TODO
-
-        setSimulation(environment.getSimulation());
-
         if (firstTime) {
             synchronized (this) {
                 if (firstTime) {
@@ -199,8 +194,6 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         } else {
             update(environment, time);
         }
-
-        // TODO
     }
 
     /**
@@ -238,31 +231,11 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
                     .flatMap(Collection::stream)
                     .map(cmd -> () -> cmd.accept(graphicsContext, getWormhole()));
             commandQueue.clear();
-            final List<Runnable> allCommands = Stream.concat(background, effects).collect(Collectors.toList());
-            commandQueue.addAll(allCommands);
+            Stream.concat(background, effects).forEach(commandQueue::add);
             repaint();
         } else {
             throw new IllegalStateException("Only the simulation thread can dictate GUI updates");
         }
-    }
-
-    /**
-     * Getter method for the current simulation.
-     *
-     * @return the current simulation
-     */
-    @Nullable
-    public Simulation<T> getSimulation() {
-        return simulation.get();
-    }
-
-    /**
-     * Setter method for the simulation.
-     *
-     * @param simulation the simulation to set
-     */
-    public void setSimulation(final @Nullable Simulation<T> simulation) {
-        this.simulation = new WeakReference<>(simulation);
     }
 
     /**

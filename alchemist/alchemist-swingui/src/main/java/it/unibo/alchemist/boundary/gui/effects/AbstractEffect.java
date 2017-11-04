@@ -1,14 +1,13 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
+import it.unibo.alchemist.boundary.CommandQueueBuilder;
 import it.unibo.alchemist.boundary.DrawCommand;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
-import javafx.scene.paint.Color;
 
 import java.io.*;
-import java.util.LinkedList;
 import java.util.Queue;
 
 /**
@@ -29,7 +28,6 @@ public abstract class AbstractEffect implements EffectFX {
 
     private String name;
     private boolean visibility;
-//    private transient CommandQueueBuilder commandQueueBuilder;
 
     /**
      * No parameters constructor.
@@ -69,17 +67,16 @@ public abstract class AbstractEffect implements EffectFX {
     protected AbstractEffect(final String name, final boolean isVisible) {
         this.name = name;
         this.visibility = isVisible;
-//        this.commandQueueBuilder = new CommandQueueBuilder();
     }
 
     @Override
     public <T> Queue<DrawCommand> computeDrawCommands(final Environment<T> environment) {
         getData(environment);
-        if (isVisible()) {
-            return consumeData();
-        } else {
-            return new LinkedList<>(); // TODO: default empty queue
-        }
+        final CommandQueueBuilder builder = new CommandQueueBuilder();
+        consumeData().stream()
+                .map(cmd -> cmd.wrap(this::isVisible))
+                .forEach(builder::addCommand);
+        return builder.buildCommandQueue();
     }
 
     /**

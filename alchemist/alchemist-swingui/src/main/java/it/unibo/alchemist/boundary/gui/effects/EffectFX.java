@@ -48,5 +48,4 @@ public interface EffectFX extends Serializable {
      * @param visibility the visibility of the effect to set
      */
     void setVisibility(boolean visibility);
-
 }

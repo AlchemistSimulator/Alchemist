@@ -3,6 +3,9 @@ package it.unibo.alchemist.grid.simulation;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -50,24 +53,33 @@ public class RemoteSimulationImpl<T> implements RemoteSimulation<T> {
         try (WorkingDirectory wd = new WorkingDirectory()) {
             wd.addToClasspath();
             wd.writeFiles(this.generalConfig.getDependencies());
-            final Loader loader = this.generalConfig.getLoader();
-            final Environment<T> env = loader.getWith(this.config.getVariables());
-            final Simulation<T> sim = new Engine<>(env, this.generalConfig.getEndStep(), this.generalConfig.getEndTime());
-            final Map<String, Object> defaultVars = loader.getVariables().entrySet().stream()
-                    .collect(Collectors.toMap(Entry::getKey, e -> e.getValue().getDefault()));
-            defaultVars.putAll(this.config.getVariables());
-            final String header = this.config.getVariables().entrySet().stream()
-                    .map(e -> e.getKey() + " = " + e.getValue())
-                    .collect(Collectors.joining(", "));
-            final String filename = this.masterNodeId.toString() + "_" + this.config.getVariables().entrySet().stream()
-                    .map(e -> e.getKey() + '-' + e.getValue())
-                    .collect(Collectors.joining("_")) + ".txt";
-            final Exporter<T> exp = new Exporter<>(wd.getFileAbsolutePath(filename), 1, header, loader.getDataExtractors());
-            sim.addOutputMonitor(exp);
-            sim.play();
-            sim.run();
-            return new RemoteResultImpl(wd.getFileContent(filename), Ignition.ignite().cluster().localNode().id(), sim.getError(), config);
-        } catch (SecurityException | IllegalArgumentException | ReflectiveOperationException | IOException e1) {
+            final Callable<RemoteResultImpl> callable = new Callable<RemoteResultImpl>() {
+                @Override
+                public RemoteResultImpl call() throws Exception {
+                    final Loader loader = generalConfig.getLoader();
+                    final Environment<T> env = loader.getWith(config.getVariables());
+                    final Simulation<T> sim = new Engine<>(env, generalConfig.getEndStep(), generalConfig.getEndTime());
+                    final Map<String, Object> defaultVars = loader.getVariables().entrySet().stream()
+                            .collect(Collectors.toMap(Entry::getKey, e -> e.getValue().getDefault()));
+                    defaultVars.putAll(config.getVariables());
+                    final String header = config.getVariables().entrySet().stream()
+                            .map(e -> e.getKey() + " = " + e.getValue())
+                            .collect(Collectors.joining(", "));
+                    final String filename = masterNodeId.toString() + "_" + config.getVariables().entrySet().stream()
+                            .map(e -> e.getKey() + '-' + e.getValue())
+                            .collect(Collectors.joining("_")) + ".txt";
+                    final Exporter<T> exp = new Exporter<>(wd.getFileAbsolutePath(filename), 1, header, loader.getDataExtractors());
+                    sim.addOutputMonitor(exp);
+                    sim.play();
+                    sim.run();
+                    return new RemoteResultImpl(wd.getFileContent(filename), Ignition.ignite().cluster().localNode().id(), sim.getError(), config);
+                }
+            };
+            final FutureTask<RemoteResultImpl> futureTask = new FutureTask<>(callable);
+            final Thread t = new Thread(futureTask);
+            t.start();
+            return futureTask.get();
+        } catch (SecurityException | IllegalArgumentException | ReflectiveOperationException | IOException | InterruptedException | ExecutionException e1) {
             throw new IllegalStateException(e1);
         }
     }

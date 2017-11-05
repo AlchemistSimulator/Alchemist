@@ -19,7 +19,7 @@ public class SimulationConfigImpl implements SimulationConfig {
 
     /**
      * 
-     * @param variables Simulation's inizializzation variables
+     * @param variables Simulation's initialization variables
      */
     public SimulationConfigImpl(final List<Entry<String, ? extends Serializable>> variables) {
         this.variables = variables.stream().collect(Collectors.toMap(e -> e.getKey(), e-> e.getValue()));
@@ -39,19 +39,24 @@ public class SimulationConfigImpl implements SimulationConfig {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
-        SimulationConfigImpl other = (SimulationConfigImpl) obj;
+        }
+        final SimulationConfigImpl other = (SimulationConfigImpl) obj;
         if (variables == null) {
-            if (other.variables != null)
+            if (other.variables != null) {
                 return false;
-        } else if (!variables.equals(other.variables))
+            }
+        } else if (!variables.equals(other.variables)) {
             return false;
+        }
         return true;
     }
 }

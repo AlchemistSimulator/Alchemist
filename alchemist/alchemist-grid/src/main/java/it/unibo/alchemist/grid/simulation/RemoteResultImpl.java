@@ -63,24 +63,31 @@ public class RemoteResultImpl implements RemoteResult {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
-        RemoteResultImpl other = (RemoteResultImpl) obj;
+        }
+        final RemoteResultImpl other = (RemoteResultImpl) obj;
         if (config == null) {
-            if (other.config != null)
+            if (other.config != null) {
                 return false;
-        } else if (!config.equals(other.config))
+            }
+        } else if (!config.equals(other.config)) {
             return false;
+        }
         if (result == null) {
-            if (other.result != null)
+            if (other.result != null) {
                 return false;
-        } else if (!result.equals(other.result))
+            }
+        } else if (!result.equals(other.result)) {
             return false;
+        }
         return true;
     }
 

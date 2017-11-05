@@ -9,8 +9,10 @@ import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+
 import java.lang.ref.WeakReference;
 import java.util.Optional;
+
 import javafx.application.Platform;
 import javafx.scene.Node;
 import jiconfont.icons.GoogleMaterialDesignIcons;
@@ -39,20 +41,20 @@ public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
     private Status currentStatus;
 
     /**
-     * Default constructor.
+     * No arguments constructor. Current {@link Simulation} is not set.
      */
     public PlayPauseMonitor() {
         this(null);
     }
 
     /**
-     * Constructor.
+     * Default constructor.
      *
      * @param simulation the simulation to control
      */
     public PlayPauseMonitor(final @Nullable Simulation<T> simulation) {
+        setOnAction(e -> getSimulation().ifPresent(this::playPause));
         update(simulation);
-        setOnAction(e -> Optional.ofNullable(getSimulation()).ifPresent(this::playPause));
     }
 
     /**
@@ -99,9 +101,8 @@ public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
      *
      * @return the current simulation
      */
-    @Nullable
-    public Simulation<T> getSimulation() {
-        return simulation.get();
+    public Optional<Simulation<T>> getSimulation() {
+        return Optional.ofNullable(simulation.get());
     }
 
     /**
@@ -140,7 +141,7 @@ public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
      * @see #PAUSE_ICON
      */
     private void setIcon() {
-        final Node icon = getSimulation() != null && currentStatus == Status.RUNNING ? PAUSE_ICON : PLAY_ICON;
+        final Node icon = getSimulation().isPresent() && currentStatus == Status.RUNNING ? PAUSE_ICON : PLAY_ICON;
         Platform.runLater(() -> setGraphic(icon));
     }
 }

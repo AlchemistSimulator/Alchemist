@@ -4,7 +4,6 @@ import java.nio.file.Path;
 
 import org.apache.ignite.Ignite;
 import org.apache.ignite.Ignition;
-import org.apache.ignite.spi.deployment.local.LocalDeploymentSpi;
 
 import it.unibo.alchemist.grid.simulation.Complexity;
 
@@ -28,7 +27,7 @@ public class ClusterImpl implements Cluster {
 
     @Override
     public WorkersSet getWorkersSet(final Complexity complexity) {
-        return new WorkersSetImpl(ignite, ignite.cluster().forPredicate((node) -> node.metrics().getHeapMemoryTotal() >= complexity.getRamUsage() * IGNITE_RAM_MULT_FACTOR));
+        return new WorkersSetImpl(ignite, ignite.cluster().forServers().forPredicate((node) -> node.metrics().getHeapMemoryTotal() >= complexity.getRamUsage() * IGNITE_RAM_MULT_FACTOR));
     }
 
     @Override

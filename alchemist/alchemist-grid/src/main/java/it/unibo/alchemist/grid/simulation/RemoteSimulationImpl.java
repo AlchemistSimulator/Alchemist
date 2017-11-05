@@ -1,8 +1,6 @@
 package it.unibo.alchemist.grid.simulation;
 
 import java.io.IOException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
@@ -51,13 +49,6 @@ public class RemoteSimulationImpl<T> implements RemoteSimulation<T> {
     public RemoteResult call() {
         try (WorkingDirectory wd = new WorkingDirectory()) {
             wd.addToClasspath();
-            ClassLoader cl = ClassLoader.getSystemClassLoader();
-
-            URL[] urls = ((URLClassLoader)cl).getURLs();
-
-            for(URL url: urls){
-                System.out.println(url.getFile());
-            }
             wd.writeFiles(this.generalConfig.getDependencies());
             final Loader loader = this.generalConfig.getLoader();
             final Environment<T> env = loader.getWith(this.config.getVariables());

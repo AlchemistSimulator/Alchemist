@@ -13,7 +13,6 @@ public interface SimulationConfig extends Serializable {
      * @return Simulation's inizialization variables
      */
     Map<String, ? extends Serializable> getVariables();
-    
     @Override
     boolean equals(Object obj);
     @Override

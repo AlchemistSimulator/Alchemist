@@ -82,11 +82,11 @@ public final class CommandLineStartup {
             quiteStr = quiteStr.trim();
 
             if (!quiteStr.isEmpty()) {
-                if ("false".equalsIgnoreCase(quiteStr))
+                if ("false".equalsIgnoreCase(quiteStr)) {
                     quite = false;
-                else if (!"true".equalsIgnoreCase(quiteStr)) {
-                    System.err.println("Invalid value for '" + IgniteSystemProperties.IGNITE_QUIET +
-                        "' VM parameter (must be {true|false}): " + quiteStr);
+                } else if (!"true".equalsIgnoreCase(quiteStr)) {
+                    System.err.println("Invalid value for '" + IgniteSystemProperties.IGNITE_QUIET 
+                            + "' VM parameter (must be {true|false}): " + quiteStr);
 
                     quite = false;
                 }
@@ -99,30 +99,30 @@ public final class CommandLineStartup {
         try {
             releaseDate = new SimpleDateFormat("ddMMyyyy", Locale.US).parse(RELEASE_DATE_STR);
 
-            Class<?> appCls = Class.forName("com.apple.eawt.Application");
+            final Class<?> appCls = Class.forName("com.apple.eawt.Application");
 
-            Object osxApp = appCls.getDeclaredMethod("getApplication").invoke(null);
+            final Object osxApp = appCls.getDeclaredMethod("getApplication").invoke(null);
 
-            String icoPath = "logo_ignite_128x128.png";
+            final String icoPath = "logo_ignite_128x128.png";
 
-            URL url = CommandLineStartup.class.getResource(icoPath);
+            final URL url = CommandLineStartup.class.getResource(icoPath);
 
             assert url != null : "Unknown icon path: " + icoPath;
 
-            ImageIcon ico = new ImageIcon(url);
+            final ImageIcon ico = new ImageIcon(url);
 
             appCls.getDeclaredMethod("setDockIconImage", Image.class).invoke(osxApp, ico.getImage());
 
             // Setting Up about dialog
-            Class<?> aboutHndCls = Class.forName("com.apple.eawt.AboutHandler");
+            final Class<?> aboutHndCls = Class.forName("com.apple.eawt.AboutHandler");
 
             final URL bannerUrl = CommandLineStartup.class.getResource("logo_ignite_48x48.png");
 
-            Object aboutHndProxy = Proxy.newProxyInstance(
+            final Object aboutHndProxy = Proxy.newProxyInstance(
                 appCls.getClassLoader(),
                 new Class<?>[] {aboutHndCls},
                 new InvocationHandler() {
-                    @Override public Object invoke(Object proxy, Method mtd, Object[] args) throws Throwable {
+                    @Override public Object invoke(final Object proxy, final Method mtd, final Object[] args) throws Throwable {
                         AboutDialog.centerShow("Ignite Node", bannerUrl.toExternalForm(), VER_STR,
                             releaseDate, COPYRIGHT);
 
@@ -132,8 +132,7 @@ public final class CommandLineStartup {
             );
 
             appCls.getDeclaredMethod("setAboutHandler", aboutHndCls).invoke(osxApp, aboutHndProxy);
-        }
-        catch (Exception ignore) {
+        } catch (Exception ignore) {
             // Ignore.
         }
     }
@@ -152,18 +151,19 @@ public final class CommandLineStartup {
      * @param showUsage Whether or not to show usage information.
      * @param exitCode Exit code.
      */
-    private static void exit(@Nullable String errMsg, boolean showUsage, int exitCode) {
-        if (errMsg != null)
+    private static void exit(@Nullable final String errMsg, final boolean showUsage, final int exitCode) {
+        if (errMsg != null) {
             X.error(errMsg);
+        }
 
         String runner = System.getProperty(IGNITE_PROG_NAME, "ignite.{sh|bat}");
 
-        int space = runner.indexOf(' ');
+        final int space = runner.indexOf(' ');
 
         runner = runner.substring(0, space == -1 ? runner.length() : space);
 
         if (showUsage) {
-            boolean ignite = runner.contains("ignite.");
+            final boolean ignite = runner.contains("ignite.");
 
             X.error(
                 "Usage:",
@@ -190,101 +190,36 @@ public final class CommandLineStartup {
     }
 
     /**
-     * Tests whether argument is help argument.
-     *
-     * @param arg Command line argument.
-     * @return {@code true} if given argument is a help argument, {@code false} otherwise.
-     */
-    @SuppressWarnings({"IfMayBeConditional"})
-    private static boolean isHelp(String arg) {
-        String s;
-
-        if (arg.startsWith("--"))
-            s = arg.substring(2);
-        else if (arg.startsWith("-") || arg.startsWith("/") || arg.startsWith("\\"))
-            s = arg.substring(1);
-        else
-            s = arg;
-
-        return "?".equals(s) || "help".equalsIgnoreCase(s) || "h".equalsIgnoreCase(s);
-    }
-
-    /**
-     * Interactively asks for configuration file path.
-     *
-     * @return Configuration file path. {@code null} if operation  was cancelled.
-     * @throws IOException In case of error.
-     */
-    @Nullable private static String askConfigFile() throws IOException {
-        List<GridTuple3<String, Long, File>> files = GridConfigurationFinder.getConfigFiles();
-
-        String title = "Available configuration files:";
-
-        X.println(title);
-        X.println(U.dash(title.length()));
-
-        for (int i = 0; i < files.size(); i++)
-            System.out.println(i + ":\t" + files.get(i).get1());
-
-        X.print("\nChoose configuration file ('c' to cancel) [0]: ");
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
-        String line = reader.readLine();
-
-        if ("c".equalsIgnoreCase(line)) {
-            System.out.println("\nOperation cancelled.");
-
-            return null;
-        }
-
-        if (line != null && line.isEmpty())
-            line = "0";
-
-        try {
-            GridTuple3<String, Long, File> file = files.get(Integer.valueOf(line));
-
-            X.println("\nUsing configuration: " + file.get1() + "\n");
-
-            return file.get3().getAbsolutePath();
-        }
-        catch (Exception ignored) {
-            X.error("\nInvalid selection: " + line);
-
-            return null;
-        }
-    }
-
-    /**
      * Main entry point.
      *
-     * @param args Command line arguments.
+     * @param configFile Ignite config file's path
      */
-    public static void runNode(String configFile) {
-        
+    public static void runNode(final String configFile) {
+
             X.println("Ignite Command Line Startup, ver. " + ACK_VER_STR);
             X.println(COPYRIGHT);
             X.println();
-        
-        String cfg = configFile;
+
+        final String cfg = configFile;
         // Name of the grid loaded from the command line (unique in JVM).
         final String igniteInstanceName;
 
         try {
             igniteInstanceName = G.start(cfg).name();
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             e.printStackTrace();
 
             String note = "";
 
-            if (X.hasCause(e, ClassNotFoundException.class))
+            if (X.hasCause(e, ClassNotFoundException.class)) {
                 note = "\nNote! You may use 'USER_LIBS' environment variable to specify your classpath.";
+            }
 
             exit("Failed to start grid: " + e.getMessage() + note, false, -1);
 
-            if (e instanceof Error)
+            if (e instanceof Error) {
                 throw e;
+            }
 
             return;
         }
@@ -293,33 +228,34 @@ public final class CommandLineStartup {
         final CountDownLatch latch = new CountDownLatch(1);
 
         G.addListener(new IgnitionListener() {
-            @Override public void onStateChange(String name, IgniteState state) {
+            @Override public void onStateChange(final String name, final IgniteState state) {
                 // Skip all grids except loaded from the command line.
-                if (!F.eq(igniteInstanceName, name))
+                if (!F.eq(igniteInstanceName, name)) {
                     return;
+                }
 
-                if (state == STOPPED || state == STOPPED_ON_SEGMENTATION)
+                if (state == STOPPED || state == STOPPED_ON_SEGMENTATION) {
                     latch.countDown();
+                }
             }
         });
 
         try {
             latch.await();
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             X.error("Start was interrupted (exiting): " + e.getMessage());
         }
 
-        String code = System.getProperty(IGNITE_RESTART_CODE);
+        final String code = System.getProperty(IGNITE_RESTART_CODE);
 
-        if (code != null)
+        if (code != null) {
             try {
                 System.exit(Integer.parseInt(code));
-            }
-            catch (NumberFormatException ignore) {
+            } catch (NumberFormatException ignore) {
                 System.exit(0);
             }
-        else
+        } else {
             System.exit(0);
+        }
     }
 }

@@ -13,8 +13,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import javax.annotation.concurrent.ThreadSafe;
-
 import org.junit.Test;
 
 import it.unibo.alchemist.grid.config.GeneralSimulationConfig;
@@ -70,7 +68,7 @@ public class TestConfig {
             test = new File(wd.getFileAbsolutePath("nothing")).getParentFile();
             assertTrue(test.exists());
             wd.writeFiles(gsc.getDependencies());
-            File newFile = new File(wd.getFileAbsolutePath("test.txt"));
+            final File newFile = new File(wd.getFileAbsolutePath("test.txt"));
             newFile.createNewFile();
             wd.addToClasspath();
             assertNotNull(Thread.currentThread().getContextClassLoader().getResource("test.txt"));

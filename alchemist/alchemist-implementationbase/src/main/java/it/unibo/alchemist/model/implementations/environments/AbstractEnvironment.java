@@ -147,6 +147,9 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     }
 
     private ListSet<Node<T>> getAllNodesInRange(final Position center, final double range) {
+        if (range <= 0) {
+            throw new IllegalArgumentException("Range query must be positive (provided: " + range + ")");
+        }
         if (cache == null) {
             cache = Caffeine.newBuilder()
                 .maximumSize(1000)
@@ -221,7 +224,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
         }
         final ListSet<Node<T>> res = new LinkedListSet<>(getAllNodesInRange(centerPosition, range));
         if (!res.remove(center)) {
-            throw new IllegalStateException("The environment is an inconsistent state.");
+            throw new IllegalStateException("Either the provided range (" + range + ") is too small for queries to work without losses of precision, or the environment is an inconsistent state.");
         }
         return res;
     }

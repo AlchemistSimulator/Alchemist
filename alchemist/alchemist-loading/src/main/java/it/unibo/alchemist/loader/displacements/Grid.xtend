@@ -150,9 +150,11 @@ class Grid implements Displacement {
 	override stream() {
 		val xsteps = steps(xStart, xEnd, xStep);
 		val ysteps = steps(yStart, yEnd, yStep);
-		val positions = (0 .. ysteps).map [ yn |
+		println(xsteps)
+		println(ysteps)
+		val positions = (1 ..< ysteps).map [ yn |
 			val y = yStart + yStep * yn;
-			(0 .. xsteps).map [ xn |
+			(1 ..< xsteps).map [ xn |
 				val x = xStart + xStep * xn
 				val dx = xRand * (rand.nextDouble - 0.5) + yn * xShift % xStep
 				val dy = yRand * (rand.nextDouble - 0.5) + xn * yShift % yStep
@@ -163,12 +165,14 @@ class Grid implements Displacement {
 	}
 
 	private static def int steps(double min, double max, double step) {
-		val res = Math.ceil((max - min) / step) as int
-		if (min + step * res <= max) {
+		val res = Math.ceil(Math.abs((max - min) / step)) as int
+//		res
+		if (step * res <= Math.abs(max - min)) {
 			res + 1
 		} else {
 			res
 		}
+//		((max - min) / step) as int
 	}
 
 }

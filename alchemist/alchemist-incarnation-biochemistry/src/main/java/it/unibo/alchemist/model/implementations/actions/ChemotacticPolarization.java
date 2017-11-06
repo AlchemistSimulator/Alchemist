@@ -1,6 +1,7 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.math3.util.FastMath;
@@ -38,8 +39,8 @@ public class ChemotacticPolarization extends AbstractAction<Double> {
     public ChemotacticPolarization(final Environment<Double> environment, final Node<Double> node, final Biomolecule biomol, final String ascendGrad) {
         super(node);
         if (node instanceof CellNode) {
-            this.env = environment;
-            this.biomol = biomol;
+            this.env = Objects.requireNonNull(environment);
+            this.biomol = Objects.requireNonNull(biomol);
             if (ascendGrad.equalsIgnoreCase("up")) {
                 this.ascend = true;
             } else if (ascendGrad.equalsIgnoreCase("down")) {

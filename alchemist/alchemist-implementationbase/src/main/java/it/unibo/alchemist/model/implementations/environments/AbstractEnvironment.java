@@ -188,7 +188,14 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
 
     @Override
     public final Neighborhood<T> getNeighborhood(@Nonnull final Node<T> center) {
-        return neighCache.get(Objects.requireNonNull(center).getId());
+        final Neighborhood<T> result = neighCache.get(Objects.requireNonNull(center).getId());
+        if (result == null) {
+            if (getNodes().contains(center)) {
+                throw new IllegalStateException("The environment state is inconsistent. " + center + " is among the nodes, but apparently has no position.");
+            }
+            throw new IllegalArgumentException(center + " is not part of the environment.");
+        }
+        return result;
     }
 
     /**

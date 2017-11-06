@@ -175,7 +175,6 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
             final List<T> itemsCopy = new ArrayList<>(getListView().getItems());
             getListView().getItems().setAll(itemsCopy);
             success = true;
-
         } else {
             throw new IllegalStateException("No content found in DragBoard");
         }

@@ -32,6 +32,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -130,9 +131,7 @@ public class SingleRunApp<T> extends Application {
      * @see Parameters#getNamed()
      */
     public void addNamedParam(final String name, final String value) {
-        if (initialized) {
-            throw new IllegalStateException("Application is already initialized");
-        }
+        checkIfInitialized();
         if (value == null || value.equals("")) {
             throw new IllegalArgumentException("The given param is not named");
         }
@@ -148,9 +147,7 @@ public class SingleRunApp<T> extends Application {
      * @see Parameters#getUnnamed()
      */
     public void addUnnamedParam(final String param) {
-        if (initialized) {
-            throw new IllegalStateException("Application is already initialized");
-        }
+        checkIfInitialized();
         if (param == null || param.equals("")) {
             throw new IllegalArgumentException("The given param is not valid");
         }
@@ -195,11 +192,11 @@ public class SingleRunApp<T> extends Application {
         optSim.ifPresent(sim -> {
             try {
                 initDisplayMonitor(
-                        MapEnvironment.class.isAssignableFrom(Class.forName(sim.getEnvironment().getClass().getName()))
+                        MapEnvironment.class.isAssignableFrom(sim.getEnvironment().getClass())
                                 ? FXMapDisplay.class.getName()
                                 : FX2DDisplay.class.getName()
                 );
-            } catch (final ClassCastException | ClassNotFoundException exception) {
+            } catch (final ClassCastException exception) {
                 L.error("Display monitor not valid");
                 throw new IllegalArgumentException(exception);
             }
@@ -209,6 +206,7 @@ public class SingleRunApp<T> extends Application {
         try {
             rootLayout = FXResourceLoader.getLayout(AnchorPane.class, this, ROOT_LAYOUT);
             final StackPane main = (StackPane) rootLayout.getChildren().get(0);
+//            main.setPickOnBounds(false);
             optDisplayMonitor.ifPresent(dm -> {
                 dm.widthProperty().bind(main.widthProperty());
                 dm.heightProperty().bind(main.heightProperty());
@@ -217,16 +215,30 @@ public class SingleRunApp<T> extends Application {
             this.timeMonitor = new FXTimeMonitor<>();
             this.stepMonitor = new FXStepMonitor<>();
             this.playPauseMonitor = new PlayPauseMonitor<>(simulation);
-
             optSim.ifPresent(s -> {
                 optDisplayMonitor.ifPresent(s::addOutputMonitor);
                 s.addOutputMonitor(this.playPauseMonitor);
                 s.addOutputMonitor(this.timeMonitor);
                 s.addOutputMonitor(this.stepMonitor);
+//                optDisplayMonitor.ifPresent(s::addOutputMonitor);
+//                s.addOutputMonitor(this.playPauseMonitor);
+//                s.addOutputMonitor(this.timeMonitor);
+//                s.addOutputMonitor(this.stepMonitor);
+//                if (s.getStatus() != Status.INIT) {
+//                    s.schedule(() -> {
+//                        final Environment<T> env = s.getEnvironment();
+//                        playPauseMonitor.initialized(env);
+//                        optDisplayMonitor.ifPresent(d -> d.initialized(env));
+//                        timeMonitor.initialized(env);
+//                        stepMonitor.initialized(env);
+//                    });
+//                }
+//            });
             });
             final ButtonsBarController buttonsBarController = new ButtonsBarController(playPauseMonitor, timeMonitor, stepMonitor);
 
             final BorderPane bar = FXResourceLoader.getLayout(BorderPane.class, buttonsBarController, BUTTONS_BAR_LAYOUT);
+            bar.setPickOnBounds(false);
             main.widthProperty().addListener((observable, oldValue, newValue) -> bar.setPrefWidth(newValue.doubleValue()));
 
             main.getChildren().add(bar);
@@ -234,6 +246,8 @@ public class SingleRunApp<T> extends Application {
             buttonsBarController.getObservableEffectsList().addAll(this.effectGroups);
             effectGroups = buttonsBarController.getObservableEffectsList();
             optDisplayMonitor.ifPresent(d -> d.setEffects(buttonsBarController.getObservableEffectsList()));
+//            optDisplayMonitor.ifPresent(d -> optSim.ifPresent(s -> s.schedule(() -> d.stepDone(s.getEnvironment(), null, s.getTime(), s.getStep()))));
+            // TODO draw environment first time
 
             primaryStage.setTitle("Alchemist Simulation");
             primaryStage.setOnCloseRequest(e -> {
@@ -257,6 +271,8 @@ public class SingleRunApp<T> extends Application {
      * Initializes the key bindings.
      * <p>
      * Should be overridden to implement keyboard interaction with the GUI.
+     *
+     * @param scene the Scene that receives the {@link Event}s
      */
     protected void initKeybindings(final Scene scene) {
         scene.setOnKeyPressed(event -> {
@@ -370,10 +386,7 @@ public class SingleRunApp<T> extends Application {
      * @throws IllegalStateException if the application is already started
      */
     public void setEffectGroups(final Collection<EffectGroup> effectGroups) {
-        if (initialized) {
-            throw new IllegalStateException("Application is already initialized");
-        }
-
+        checkIfInitialized();
         this.effectGroups.clear();
         this.effectGroups.addAll(effectGroups);
     }
@@ -385,10 +398,7 @@ public class SingleRunApp<T> extends Application {
      * @throws IllegalStateException if the application is already started
      */
     public void addEffectGroups(final Collection<EffectGroup> effectGroups) {
-        if (initialized) {
-            throw new IllegalStateException("Application is already initialized");
-        }
-
+        checkIfInitialized();
         this.effectGroups.addAll(effectGroups);
     }
 
@@ -399,10 +409,7 @@ public class SingleRunApp<T> extends Application {
      * @throws IllegalStateException if the application is already started
      */
     public void addEffectGroups(final String path) {
-        if (initialized) {
-            throw new IllegalStateException("Application is already initialized");
-        }
-
+        checkIfInitialized();
         addNamedParam(USE_EFFECT_GROUPS_FROM_FILE, path);
     }
 
@@ -422,9 +429,18 @@ public class SingleRunApp<T> extends Application {
      * @throws IllegalStateException if the application is already started
      */
     public void setSimulation(final Simulation<T> simulation) {
+        checkIfInitialized();
+        this.simulation = simulation;
+    }
+
+    /**
+     * Checks if the {@link Application} is already {@link #initialized}.
+     *
+     * @throws IllegalStateException if the application is initialized
+     */
+    private void checkIfInitialized() throws IllegalStateException {
         if (initialized) {
             throw new IllegalStateException("Application is already initialized");
         }
-        this.simulation = simulation;
     }
 }

@@ -1,30 +1,31 @@
 package it.unibo.alchemist.boundary.monitor.generic;
 
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
+import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
 import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D;
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
-import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
-import it.unibo.alchemist.model.interfaces.Concentration;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.Time;
-import java.lang.ref.WeakReference;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import it.unibo.alchemist.model.interfaces.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import org.jetbrains.annotations.Nullable;
+
+import java.awt.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Base abstract class for each display able to graphically represent a 2D space and simulation.
@@ -37,27 +38,35 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      * The default frame rate.
      */
     public static final byte DEFAULT_FRAME_RATE = 60;
-
     /**
      * The default time per frame.
      */
     public static final double TIME_STEP = 1 / DEFAULT_FRAME_RATE;
-
     /**
      * Default number of steps.
      */
     protected static final int DEFAULT_NUMBER_OF_STEPS = 1;
-
+    /**
+     * Position {@code DataFormat}.
+     */
+    protected static final DataFormat POSITION_DATA_FORMAT = DataFormatFactory.getDataFormat(Position.class);
+    /**
+     * The default view status.
+     */
+    private static final ViewStatus DEFAULT_VIEW_STATUS = ViewStatus.PAN;
+    private static final String GET_X_METHOD_NAME = "getX";
+    private static final String GET_Y_METHOD_NAME = "getY";
     private final ObservableList<EffectGroup> effectStack;
     private final Semaphore mutex = new Semaphore(1);
     private final AtomicBoolean mayRender = new AtomicBoolean(true);
     private int step;
     private BidimensionalWormhole wormhole;
-    private boolean firstTime;
+    private volatile boolean firstTime;
     private boolean realTime;
     private long timeInit;
     private double lastTime;
     private volatile ConcurrentLinkedQueue<Runnable> commandQueue;
+    private ViewStatus viewStatus;
 
     /**
      * Default constructor. The number of steps is set to default ({@value #DEFAULT_NUMBER_OF_STEPS}).
@@ -77,12 +86,20 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         this.firstTime = true;
         this.realTime = false;
         this.effectStack = FXCollections.observableArrayList();
-        setFocusTraversable(true);
-        requestFocus();
-        setStyle("-fx-background-color: #FFF;");
         setStep(steps);
+        this.commandQueue = new ConcurrentLinkedQueue<>();
+        enableEventReceiving();
+        setStyle("-fx-background-color: #FFF;");
         initMouseListener();
-        commandQueue = new ConcurrentLinkedQueue<>();
+        setViewStatus(DEFAULT_VIEW_STATUS);
+    }
+
+    /**
+     * Enables {@link MouseEvent} receiving by enabling Focus and requesting it.
+     */
+    private void enableEventReceiving() {
+        setFocusTraversable(true);
+        setFocused(true);
     }
 
     /**
@@ -91,6 +108,133 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      * Should be overridden to implement mouse interaction with the GUI.
      */
     protected void initMouseListener() {
+        // TODO
+        setOnMouseClicked(event -> {
+            switch (event.getButton()) {
+                case PRIMARY:
+                    // TODO Handle primary button
+                    break;
+                case SECONDARY:
+                    // TODO Handle secondary button
+                    break;
+                default:
+                    // Do nothing
+                    break;
+            }
+        });
+
+        setOnDragDetected(event -> {
+            switch (getViewStatus()) {
+                case PAN:
+                    startEnvironmentDragNDrop(event);
+                    break;
+                case MOVING:
+                    startNodeDragNDrop(event);
+                    break;
+                // TODO
+                default:
+                    break;
+            }
+        });
+
+        setOnDragEntered(event -> {
+            switch (getViewStatus()) {
+                case PAN:
+                    onEnvironmentDragEntered(event);
+                    break;
+                case MOVING:
+                    onNodeDragEntered(event);
+                    break;
+                // TODO
+                default:
+                    break;
+            }
+        });
+    }
+
+    /**
+     * Getter method for the current view status.
+     *
+     * @return the current {@code ViewStatus}
+     */
+    protected ViewStatus getViewStatus() {
+        return this.viewStatus;
+    }
+
+    /**
+     * Setter method for the current view status.
+     *
+     * @param viewStatus the {@code ViewStatus} to set
+     */
+    protected void setViewStatus(final ViewStatus viewStatus) {
+        this.viewStatus = viewStatus;
+    }
+
+    /**
+     * The method returns the {@link Position} in the {@link Environment} of the given {@code Event}, if any.
+     *
+     * @param event the event to check
+     * @return the position, if any
+     */
+    protected final Optional<Position> getEventPosition(final InputEvent event) {
+        final BidimensionalWormhole wormhole = getWormhole();
+        final Method[] methods = event.getClass().getMethods();
+        Optional<Method> getX = Optional.empty();
+        Optional<Method> getY = Optional.empty();
+
+        for (final Method method : methods) {
+            final int modifier = method.getModifiers();
+            if (Modifier.isPublic(modifier) && !Modifier.isAbstract(modifier)) {
+                final String name = method.getName();
+                if (name.equals(GET_X_METHOD_NAME)) {
+                    getX = Optional.of(method);
+                } else if (name.equals(GET_Y_METHOD_NAME)) {
+                    getY = Optional.of(method);
+                }
+                if (getX.isPresent() && getY.isPresent()) {
+                    break;
+                }
+            }
+        }
+
+        if (wormhole != null && getX.isPresent() && getY.isPresent()) {
+            try {
+                final Number x = (Number) getX.get().invoke(event);
+                final Number y = (Number) getY.get().invoke(event);
+                return Optional.of(wormhole.getEnvPoint(new Point(x.intValue(), y.intValue())));
+            } catch (final IllegalAccessException | InvocationTargetException e) {
+                return Optional.empty();
+            }
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    protected void startNodeDragNDrop(final MouseEvent event) {
+        // TODO
+    }
+
+    protected void startEnvironmentDragNDrop(final MouseEvent event) {
+        final Optional<Position> position = getEventPosition(event);
+        position.ifPresent(p -> {
+            final Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
+            final ClipboardContent content = new ClipboardContent();
+            content.put(POSITION_DATA_FORMAT, p);
+            dragboard.setContent(content);
+        });
+
+        event.consume();
+    }
+
+    protected void onEnvironmentDragEntered(final DragEvent event) {
+        final BidimensionalWormhole wormhole = getWormhole();
+        if (wormhole != null) {
+            final Position previousMousePos = (Position) event.getDragboard().getContent(POSITION_DATA_FORMAT);
+            repaint();
+        }
+    }
+
+    protected void onNodeDragEntered(final DragEvent event) {
         // TODO
     }
 
@@ -230,8 +374,9 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
                     .map(group -> group.computeDrawCommands(environment))
                     .flatMap(Collection::stream)
                     .map(cmd -> () -> cmd.accept(graphicsContext, getWormhole()));
-            commandQueue.clear();
-            Stream.concat(background, effects).forEach(commandQueue::add);
+            commandQueue = Stream
+                    .concat(background, effects)
+                    .collect(Collectors.toCollection(ConcurrentLinkedQueue::new));
             repaint();
         } else {
             throw new IllegalStateException("Only the simulation thread can dictate GUI updates");
@@ -242,12 +387,11 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      * The enum models the status of the view.
      */
     protected enum ViewStatus {
-        VIEW_ONLY,
-        MARK_CLOSER,
         SELECTING,
         MOVING,
         CLONING,
         DELETING,
-        MOLECULING;
+        EDITING,
+        PAN
     }
 }

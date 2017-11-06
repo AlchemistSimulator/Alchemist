@@ -30,8 +30,7 @@ public class RemoteGeneralSimulationConfig<T> extends LightInfoGeneralSimulation
      */
     public RemoteGeneralSimulationConfig(final GeneralSimulationConfig<T> sc, final Ignite ignite) {
         super(sc.getLoader(), sc.getEndStep(), sc.getEndTime());
-        //TODO mettere nome simulazione sulla GeneralSimulationConfig, NODE_ID!!!
-        this.cacheName = "prova";
+        this.cacheName = ignite.cluster().localNode().id().toString();
 
         this.keys = sc.getDependencies().keySet();
 

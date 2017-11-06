@@ -74,7 +74,6 @@ public class ChemotacticPolarization extends AbstractAction<Double> {
         // declaring a variable for the node where this action is set, to have faster access
         final CellNode thisNode = getNode();
         final List<Node<Double>> l = env.getNeighborhood(thisNode).getNeighbors().stream()
-                .parallel()
                 .filter(n -> n instanceof EnvironmentNode && n.contains(biomol))
                 .collect(Collectors.toList());
         if (l.isEmpty()) {

@@ -30,6 +30,7 @@ import it.unibo.alchemist.expressions.implementations.Type;
 import it.unibo.alchemist.expressions.interfaces.IExpression;
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
+import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Context;
@@ -230,6 +231,12 @@ public class SAPEREGradient extends AReaction<List<ILsaMolecule>> {
 
     @Override
     public void execute() {
+        if (sourceCache == null) {
+            /*
+             * First run
+             */
+            updateInternalStatus(DoubleTime.ZERO_TIME, true, environment);
+        }
         canRun = false;
         final Map<HashString, ITreeNode<?>> matches = new HashMap<>();
         matches.put(LsaMolecule.SYN_T, new NumTreeNode(getTau().toDouble()));

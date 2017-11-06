@@ -48,7 +48,7 @@ public class ChemotacticPolarization extends AbstractAction<Double> {
                 throw new IllegalArgumentException("Possible imput string are only up or down");
             }
         } else {
-            throw  new UnsupportedOperationException("Polarization can happen only in cells.");
+            throw new UnsupportedOperationException("Polarization can happen only in cells.");
         }
     }
 

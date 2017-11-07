@@ -16,7 +16,7 @@ dependencies {
         "com.github.jiconfont:jiconfont-google_material_design_icons:$jIconFontGoogleMaterialVersion"
     )
     testRuntime(project(':alchemist-incarnation-protelis'))
-    compile 'org.eclipse.xtend:org.eclipse.xtend.lib:2.10.0'
+    compile "org.eclipse.xtend:org.eclipse.xtend.lib:$xtendLibVersion"
 }
 
 buildscript {
@@ -24,7 +24,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'org.xtext:xtext-gradle-plugin:1.0.2'
+        classpath "org.xtext:xtext-gradle-plugin:$xtextPluginVersion"
     }
 }
 apply plugin: 'org.xtext.xtend'

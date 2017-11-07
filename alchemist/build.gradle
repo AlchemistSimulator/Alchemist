@@ -162,7 +162,11 @@ javadoc {
 }
 
 allprojects {
-    apply plugin: 'org.danilopianini.javadoc.io-linker'
+    def jdocTasks = ['javadoc', 'uploadArchives', 'projectReport', 'buildDashboard', 'javadocJar']
+    def selectedTasks = gradle.startParameter.taskNames ?: defaultTasks
+    if (!selectedTasks.disjoint(jdocTasks)) {
+        apply plugin: 'org.danilopianini.javadoc.io-linker'
+    }
 }
 
 task fatJar(type: Jar, dependsOn: subprojects.compileJava) {

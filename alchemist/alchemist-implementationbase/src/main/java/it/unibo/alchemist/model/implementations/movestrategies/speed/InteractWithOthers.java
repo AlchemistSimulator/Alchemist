@@ -4,6 +4,7 @@
 package it.unibo.alchemist.model.implementations.movestrategies.speed;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -51,8 +52,11 @@ public class InteractWithOthers<T> implements SpeedSelectionStrategy<T> {
         env = Objects.requireNonNull(environment);
         node = Objects.requireNonNull(n);
         interacting = Objects.requireNonNull(inter);
-        sp = speed / reaction.getRate();
+        if (radius < 0) {
+            throw new IllegalArgumentException("The radius must be positive (provided: " + radius + ")");
+        }
         rd = radius;
+        sp = speed / reaction.getRate();
         in = interaction;
 
     }
@@ -60,7 +64,7 @@ public class InteractWithOthers<T> implements SpeedSelectionStrategy<T> {
     @Override
     public double getCurrentSpeed(final Position target) {
         double crowd = 0;
-        final Collection<? extends Node<T>> neighs = env.getNodesWithinRange(node, rd);
+        final Collection<? extends Node<T>> neighs = rd > 0 ? env.getNodesWithinRange(node, rd) : Collections.emptyList();
         if (neighs.size() > 1 / in) {
             for (final Node<T> neigh : neighs) {
                 if (neigh.contains(interacting)) {

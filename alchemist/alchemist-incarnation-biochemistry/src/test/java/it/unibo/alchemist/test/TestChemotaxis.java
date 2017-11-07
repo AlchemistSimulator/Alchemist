@@ -33,6 +33,7 @@ public class TestChemotaxis {
     private static final double CONCENTRATION2 = 10;
     private static final double CONCENTRATION3 = 1;
     private static final String CHEMIOTACTIC_POLARIZATION_REACTION = "[] --> [ChemotacticPolarization(A, up)]";
+    private static final int EXPECTED_NODES = 5;
     private static final String POLARIZATION_IS = "the polarization is = ";
     private static final String CELL_IS_IN_POS = "the cell is in pos = ";
     private static final double PRECISION = 0.000000000000001;
@@ -224,6 +225,7 @@ public class TestChemotaxis {
         env.addNode(envNode3, p3);
         env.addNode(envNode4, p4);
         env.addNode(cellNode1, p5);
+        assertEquals(EXPECTED_NODES, env.getNodesNumber());
         envNode4.setConcentration(biomolA, CONCENTRATION2);
         envNode2.setConcentration(biomolA, CONCENTRATION1);
         envNode3.setConcentration(biomolA, CONCENTRATION1);
@@ -249,6 +251,7 @@ public class TestChemotaxis {
         env.addNode(envNode3, p3);
         env.addNode(envNode4, p4);
         env.addNode(cellNode1, p5);
+        assertEquals(EXPECTED_NODES, env.getNodesNumber());
         envNode4.setConcentration(biomolA, CONCENTRATION2);
         envNode2.setConcentration(biomolA, CONCENTRATION1);
         envNode3.setConcentration(biomolA, CONCENTRATION1);
@@ -283,6 +286,7 @@ public class TestChemotaxis {
         env.addNode(envNode3, p3);
         env.addNode(envNode4, p4);
         env.addNode(cellNode1, p5);
+        assertEquals(EXPECTED_NODES, env.getNodesNumber());
         envNode4.setConcentration(biomolA, CONCENTRATION2);
         envNode2.setConcentration(biomolA, CONCENTRATION2);
         envNode3.setConcentration(biomolA, CONCENTRATION2);

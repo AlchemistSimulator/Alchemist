@@ -1,19 +1,9 @@
 dependencies {
-    compile project(':alchemist-engine')
-    compile project(':alchemist-grid')
     compile project(':alchemist-implementationbase')
     compile project(':alchemist-interfaces')
     compile project(':alchemist-loading')
-    compile project(':alchemist-swingui')
-    compile project(':alchemist-incarnation-sapere')
-    compile project(':alchemist-incarnation-protelis')
+    compile project(':alchemist-engine')
 	compile group: 'org.apache.ignite', name: 'ignite-core', version: '2.2.0'
     compile group: 'org.apache.ignite', name: 'ignite-spring', version: '2.2.0'
-    compile group: 'org.apache.ignite', name: 'ignite-indexing', version: '2.2.0'
-    testCompile(
-        project(':alchemist-engine')
-    )
-    testRuntime(
-        project(':alchemist-incarnation-sapere')
-    )
+    compile group: 'org.apache.ignite', name: 'ignite-indexing', version: '2.2.0'    
 }

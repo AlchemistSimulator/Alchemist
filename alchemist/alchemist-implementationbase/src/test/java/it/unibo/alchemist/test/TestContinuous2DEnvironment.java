@@ -1,7 +1,12 @@
 package it.unibo.alchemist.test;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
+
+import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -38,6 +43,7 @@ public final class TestContinuous2DEnvironment {
      */
     @Test
     public void testEnvironmentSize() {
+        assertEquals(0, env.getNodesNumber());
         assertArrayEquals(ZEROS, env.getSize(), TOLERANCE);
         env.addNode(dummyNode(), new Continuous2DEuclidean(P2_3));
         assertArrayEquals(ZEROS, env.getSize(), TOLERANCE);
@@ -52,6 +58,7 @@ public final class TestContinuous2DEnvironment {
      */
     @Test
     public void testEnvironmentOffset() {
+        assertEquals(0, env.getNodesNumber());
         assertTrue(Double.isNaN(env.getOffset()[0]));
         assertTrue(Double.isNaN(env.getOffset()[1]));
         env.addNode(dummyNode(), new Continuous2DEuclidean(P2_3));
@@ -60,6 +67,36 @@ public final class TestContinuous2DEnvironment {
         assertArrayEquals(P2_2, env.getOffset(), TOLERANCE);
         env.addNode(dummyNode(), new Continuous2DEuclidean(ZEROS));
         assertArrayEquals(ZEROS, env.getOffset(), TOLERANCE);
+    }
+
+    /**
+     * Test failure on wrong queries.
+     */
+    @Test
+    public void testNegativeRangeQuery() {
+        assertEquals(0, env.getNodesNumber());
+        final Node<Object> dummy = dummyNode();
+        env.addNode(dummy, new Continuous2DEuclidean(ZEROS));
+        try {
+            env.getNodesWithinRange(dummy, -1);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertFalse(e.getMessage().isEmpty());
+        }
+    }
+
+    /**
+     * Test failure on wrong queries.
+     */
+    @Test
+    public void testZeroRangeQuery() {
+        assertEquals(0, env.getNodesNumber());
+        final Node<Object> dummy = dummyNode();
+        final Node<Object> dummy2 = dummyNode();
+        env.addNode(dummy, new Continuous2DEuclidean(ZEROS));
+        env.addNode(dummy2, new Continuous2DEuclidean(ZEROS));
+        assertEquals(2, env.getNodesNumber());
+        assertEquals(Arrays.asList(dummy2), env.getNodesWithinRange(dummy, Math.nextUp(0)));
     }
 
     private Node<Object> dummyNode() {

@@ -1,6 +1,7 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.math3.util.FastMath;
@@ -38,8 +39,8 @@ public class ChemotacticPolarization extends AbstractAction<Double> {
     public ChemotacticPolarization(final Environment<Double> environment, final Node<Double> node, final Biomolecule biomol, final String ascendGrad) {
         super(node);
         if (node instanceof CellNode) {
-            this.env = environment;
-            this.biomol = biomol;
+            this.env = Objects.requireNonNull(environment);
+            this.biomol = Objects.requireNonNull(biomol);
             if (ascendGrad.equalsIgnoreCase("up")) {
                 this.ascend = true;
             } else if (ascendGrad.equalsIgnoreCase("down")) {
@@ -48,7 +49,7 @@ public class ChemotacticPolarization extends AbstractAction<Double> {
                 throw new IllegalArgumentException("Possible imput string are only up or down");
             }
         } else {
-            throw  new UnsupportedOperationException("Polarization can happen only in cells.");
+            throw new UnsupportedOperationException("Polarization can happen only in cells.");
         }
     }
 
@@ -74,7 +75,6 @@ public class ChemotacticPolarization extends AbstractAction<Double> {
         // declaring a variable for the node where this action is set, to have faster access
         final CellNode thisNode = getNode();
         final List<Node<Double>> l = env.getNeighborhood(thisNode).getNeighbors().stream()
-                .parallel()
                 .filter(n -> n instanceof EnvironmentNode && n.contains(biomol))
                 .collect(Collectors.toList());
         if (l.isEmpty()) {

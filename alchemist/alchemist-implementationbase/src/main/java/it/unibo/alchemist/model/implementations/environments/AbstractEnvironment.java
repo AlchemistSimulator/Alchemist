@@ -147,6 +147,9 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     }
 
     private ListSet<Node<T>> getAllNodesInRange(final Position center, final double range) {
+        if (range <= 0) {
+            throw new IllegalArgumentException("Range query must be positive (provided: " + range + ")");
+        }
         if (cache == null) {
             cache = Caffeine.newBuilder()
                 .maximumSize(1000)
@@ -185,7 +188,14 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
 
     @Override
     public final Neighborhood<T> getNeighborhood(@Nonnull final Node<T> center) {
-        return neighCache.get(Objects.requireNonNull(center).getId());
+        final Neighborhood<T> result = neighCache.get(Objects.requireNonNull(center).getId());
+        if (result == null) {
+            if (getNodes().contains(center)) {
+                throw new IllegalStateException("The environment state is inconsistent. " + center + " is among the nodes, but apparently has no position.");
+            }
+            throw new IllegalArgumentException(center + " is not part of the environment.");
+        }
+        return result;
     }
 
     /**
@@ -221,7 +231,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
         }
         final ListSet<Node<T>> res = new LinkedListSet<>(getAllNodesInRange(centerPosition, range));
         if (!res.remove(center)) {
-            throw new IllegalStateException("The environment is an inconsistent state.");
+            throw new IllegalStateException("Either the provided range (" + range + ") is too small for queries to work without losses of precision, or the environment is an inconsistent state.");
         }
         return res;
     }
@@ -236,7 +246,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
 
     @Override
     public Position getPosition(final Node<T> node) {
-        return nodeToPos.get(node.getId());
+        return nodeToPos.get(Objects.requireNonNull(node).getId());
     }
 
     @Override

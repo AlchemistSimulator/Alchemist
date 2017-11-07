@@ -122,6 +122,10 @@ allprojects {
                             name 'Elisa Casadio'
                             email 'elisa.casadio7@studio.unibo.it'
                         }
+                        contributor {
+                            name 'Matteo Francia'
+                            email 'm.francia@unibo.it'
+                        }
                     }
                 }
             }

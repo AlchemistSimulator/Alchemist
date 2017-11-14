@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.codec.binary.Hex;
@@ -106,18 +107,14 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      */
     private static final String PERSISTENTPATH = System.getProperty("user.home") + SLASH + ".alchemist";
     private static final String MAPNAME = "map";
-
+    private static final Semaphore LOCK_FILE = new Semaphore(1);
     private final String mapResource;
     private final boolean forceStreets, onlyStreet;
     private transient FastReadWriteLock mapLock;
-
     private transient Map<Vehicle, GraphHopperAPI> navigators;
-
     private transient LoadingCache<CacheEntry, Route<GeoPosition>> routecache;
     private boolean benchmarking;
     private final int approximation;
-
-
 
     /**
      * Builds a new {@link OSMEnvironment}, with nodes forced on streets.
@@ -447,13 +444,15 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
         final File workdir = new File(dir);
         mkdirsIfNeeded(workdir);
         final File mapFile = new File(dir + SLASH + MAPNAME);
-
+        LOCK_FILE.acquireUninterruptibly();
         try (RandomAccessFile fileAccess = new RandomAccessFile(workdir + SLASH + "lock", "rw")) {
             try (FileLock lock = fileAccess.getChannel().lock()) {
                 if (!mapFile.exists()) {
                     Files.copy(resource.openStream(), mapFile.toPath());
                 }
             }
+        } finally {
+            LOCK_FILE.release();
         }
         navigators = new EnumMap<>(Vehicle.class);
         mapLock = new FastReadWriteLock();
@@ -524,9 +523,12 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
         initAll(mapResource);
     }
 
-    private static GraphHopperAPI initNavigationSystem(final File mapFile, final String internalWorkdir, final Vehicle v) throws IOException {
-        return new GraphHopperOSM().setOSMFile(mapFile.getAbsolutePath()).forDesktop().setElevation(false)
-                .setEnableInstructions(false).setEnableCalcPoints(true).setInMemory()
+    private static synchronized GraphHopperAPI initNavigationSystem(final File mapFile, final String internalWorkdir, final Vehicle v) throws IOException {
+        return new GraphHopperOSM().setOSMFile(mapFile.getAbsolutePath()).forDesktop()
+                .setElevation(false)
+                .setEnableInstructions(false)
+                .setEnableCalcPoints(true)
+                .setInMemory()
                 .setGraphHopperLocation(internalWorkdir)
                 .setEncodingManager(new EncodingManager(v.toString().toLowerCase(Locale.US)))
                 .importOrLoad();

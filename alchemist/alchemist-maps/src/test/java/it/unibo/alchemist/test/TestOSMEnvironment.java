@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
 /**
  *
  */
-public class TestConcurrentOSMEnvironmentInit {
+public class TestOSMEnvironment {
 
     /**
      * Tests for parallel creation of {@link OSMEnvironment}.

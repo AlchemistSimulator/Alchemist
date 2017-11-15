@@ -39,7 +39,6 @@ public class EffectStack implements EffectGroup {
     private int topIndex;
     private String name;
     private boolean visibility;
-    private int transparency;
 
     /**
      * Constructor that creates an empty stack of effects with default name.
@@ -60,11 +59,10 @@ public class EffectStack implements EffectGroup {
         this.topIndex = 0;
         this.name = name;
         this.visibility = true;
-        this.transparency = 100;
     }
 
     @Override
-    public <T> Queue<DrawCommand> computeDrawCommands(Environment<T> environment) {
+    public <T> Queue<DrawCommand> computeDrawCommands(final Environment<T> environment) {
         final CommandQueueBuilder builder = new CommandQueueBuilder();
 
         if (isVisible()) {
@@ -175,20 +173,6 @@ public class EffectStack implements EffectGroup {
     @Override
     public void setVisibility(final boolean visibility) {
         this.visibility = visibility;
-    }
-
-    @Override
-    public int getTransparency() {
-        return this.transparency;
-    }
-
-    @Override
-    public void setTransparency(final int transparency) {
-        if (transparency >= 0 && transparency <= 100) {
-            this.transparency = transparency;
-        } else {
-            throw new IllegalArgumentException("Invalid transparency value");
-        }
     }
 
     @Override
@@ -352,7 +336,7 @@ public class EffectStack implements EffectGroup {
 
     @Override
     public int hashCode() {
-        return Hashes.hash32(effects, name, topIndex, transparency, visibility);
+        return Hashes.hash32(effects, name, topIndex, visibility);
     }
 
     @Override
@@ -378,9 +362,6 @@ public class EffectStack implements EffectGroup {
             return false;
         }
         if (visibility != other.visibility) {
-            return false;
-        }
-        if (transparency != other.transparency) {
             return false;
         }
         if (effects == null) {

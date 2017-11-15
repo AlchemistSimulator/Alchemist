@@ -80,22 +80,6 @@ public interface EffectGroup extends Serializable, Queue<EffectFX> {
     void setVisibilityOf(EffectFX effect, boolean visibility);
 
     /**
-     * Returns the transparency of the group.
-     *
-     * @return the transparency in percentage
-     */
-    int getTransparency();
-
-    /**
-     * Sets the transparency of the group.
-     *
-     * @param transparency the transparency in percentage
-     * @throws IllegalArgumentException if the transparency is > 100 (fully visible) or < than 0
-     *                                  (fully transparent)
-     */
-    void setTransparency(int transparency);
-
-    /**
      * Changes the specified offset priority of the specified offset.
      *
      * @param effect the effect

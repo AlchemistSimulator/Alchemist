@@ -12,7 +12,6 @@ import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
-import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextInputDialog;
@@ -55,7 +54,7 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
      *            the stack where to open the effects lists
      */
     public EffectGroupCell(final String groupName, final JFXDrawersStack stack) {
-        super(new Label(groupName), new JFXToggleButton(), new JFXSlider(0, 100, 100));
+        super(new Label(groupName), new JFXToggleButton());
 
         this.stack = stack;
 
@@ -63,8 +62,6 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
         this.getLabel().setFont(Font.font(this.getLabel().getFont().getFamily(), FontWeight.BOLD, this.getLabel().getFont().getSize()));
         this.getLabel().textProperty().addListener((observable, oldValue, newValue) -> this.getItem().setName(newValue));
 
-        this.getSlider().valueProperty()
-                .addListener((observable, oldValue, newValue) -> this.getItem().setTransparency(newValue.intValue()));
         this.getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> this.getItem().setVisibility(newValue));
 
         this.getLabel().setOnMouseClicked(click -> {
@@ -137,15 +134,6 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
     }
 
     /**
-     * Returns the slider of the transparency.
-     * 
-     * @return the slider
-     */
-    protected JFXSlider getSlider() {
-        return (JFXSlider) super.getInjectedNodeAt(2);
-    }
-
-    /**
      * Returns the toggle of the visibility.
      * 
      * @return the toggle
@@ -178,7 +166,6 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
             setGraphic(null);
         } else {
             this.getLabel().setText(item.getName());
-            this.getSlider().setValue(item.getTransparency());
             this.getToggle().setSelected(item.isVisible());
             initDrawer();
             item.forEach(effectBarController::addEffectToGroup);

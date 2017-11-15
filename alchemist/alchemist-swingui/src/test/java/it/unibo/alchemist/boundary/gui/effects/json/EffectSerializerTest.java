@@ -79,9 +79,6 @@ public class EffectSerializerTest {
 
         final EffectGroup group3 = new EffectStack("Group 3");
         group3.setVisibility(false);
-        // CHECKSTYLE:OFF
-        group3.setTransparency(32);
-        // CHECKSTYLE:On
         groups.add(group3);
 
         final EffectGroup group4 = new EffectStack();

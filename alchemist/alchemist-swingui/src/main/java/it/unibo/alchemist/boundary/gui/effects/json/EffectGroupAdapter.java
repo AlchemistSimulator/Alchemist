@@ -30,10 +30,6 @@ public class EffectGroupAdapter implements JsonSerializer<EffectGroup>, JsonDese
      */
     private static final String VISIBILITY = "visibility";
     /**
-     * Name given to {@code transparency} field in JSON file.
-     */
-    private static final String TRANSPARENCY = "transparency";
-    /**
      * Name given to {@code effects} list field in JSON file.
      */
     private static final String EFFECTS = "effects";
@@ -51,8 +47,6 @@ public class EffectGroupAdapter implements JsonSerializer<EffectGroup>, JsonDese
         final EffectGroup group = new EffectStack(name);
         final boolean visibility = jObj.get(VISIBILITY).getAsBoolean();
         group.setVisibility(visibility);
-        final int transparency = jObj.get(TRANSPARENCY).getAsInt();
-        group.setTransparency(transparency);
         final List<EffectFX> effects = context.deserialize(jObj.get(EFFECTS), EFFECTS_LIST_TYPE);
         group.addAll(effects);
 
@@ -65,7 +59,6 @@ public class EffectGroupAdapter implements JsonSerializer<EffectGroup>, JsonDese
 
         jObj.addProperty(NAME, src.getName());
         jObj.addProperty(VISIBILITY, src.isVisible());
-        jObj.addProperty(TRANSPARENCY, src.getTransparency());
         final List<EffectFX> list = new ArrayList<>();
         list.addAll(src);
         final JsonElement effects = context.serialize(list, EFFECTS_LIST_TYPE);

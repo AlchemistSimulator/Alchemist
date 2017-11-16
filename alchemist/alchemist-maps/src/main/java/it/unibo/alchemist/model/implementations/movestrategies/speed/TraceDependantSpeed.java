@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
  *
  * @param <T>
  */
-public abstract class TraceDependantSpeed<T> extends AbstractStrategyWithGPS implements SpeedSelectionStrategy<T> {
+public abstract class TraceDependantSpeed<T> extends AbstractStrategyWithGPS implements SpeedSelectionStrategy {
 
     private static final long serialVersionUID = 8021140539083062866L;
     private final Reaction<T> reaction;

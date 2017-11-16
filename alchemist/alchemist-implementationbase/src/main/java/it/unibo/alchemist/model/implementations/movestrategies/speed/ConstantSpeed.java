@@ -13,9 +13,8 @@ import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
  * rate, but if the {@link TimeDistribution} has a high variance, the movements
  * on the map will inherit this tract.
  * 
- * @param <T>
  */
-public class ConstantSpeed<T> implements SpeedSelectionStrategy<T> {
+public class ConstantSpeed implements SpeedSelectionStrategy {
 
     private static final long serialVersionUID = 1746429998480123049L;
     private final double sp;
@@ -26,7 +25,7 @@ public class ConstantSpeed<T> implements SpeedSelectionStrategy<T> {
      * @param speed
      *            the speed, in meters/second
      */
-    public ConstantSpeed(final Reaction<T> reaction, final double speed) {
+    public ConstantSpeed(final Reaction<?> reaction, final double speed) {
         assert speed > 0 : "Speed must be positive.";
         sp = speed / reaction.getRate();
     }

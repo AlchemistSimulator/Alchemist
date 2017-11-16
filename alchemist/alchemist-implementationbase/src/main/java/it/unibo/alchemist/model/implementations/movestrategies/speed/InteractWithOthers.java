@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
  * 
  * @param <T>
  */
-public class InteractWithOthers<T> implements SpeedSelectionStrategy<T> {
+public class InteractWithOthers<T> implements SpeedSelectionStrategy {
 
     private static final long serialVersionUID = -1900168887685703120L;
     private static final double MINIMUM_DISTANCE_WALKED = 1;

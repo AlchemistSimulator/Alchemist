@@ -10,18 +10,17 @@ import it.unibo.alchemist.model.interfaces.Time;
 /**
  * This strategy follows a {@link Route}.
  * 
- * @param <T>
  */
-public class FollowTrace<T> extends AbstractStrategyWithGPS implements TargetSelectionStrategy<T> {
+public class FollowTrace extends AbstractStrategyWithGPS implements TargetSelectionStrategy {
 
     private static final long serialVersionUID = -446053307821810437L;
-    private final Reaction<T> reaction;
+    private final Reaction<?> reaction;
 
     /**
      * @param r
      *            the reaction
      */
-    public FollowTrace(final Reaction<T> r) {
+    public FollowTrace(final Reaction<?> r) {
         reaction = r;
     }
 

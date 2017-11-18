@@ -140,7 +140,8 @@ public class TopLayoutController implements Initializable {
         final File settingsFile = new File(settingsPath);
         final DirectoryChooser dirChooser = new DirectoryChooser();
         if (settingsFile.exists()) {
-            final String lastUsed = Optional.ofNullable(Files.readFirstLine(settingsFile, StandardCharsets.UTF_8))
+            final String lastUsed = Optional.ofNullable(Files.asCharSource(settingsFile, StandardCharsets.UTF_8)
+                    .readFirstLine())
                     .orElse(USER_HOME);
             final File lastUsedDir = new File(lastUsed);
             dirChooser.setInitialDirectory(lastUsedDir.exists() ? lastUsedDir : new File(USER_HOME));
@@ -148,7 +149,7 @@ public class TopLayoutController implements Initializable {
         dirChooser.setTitle(RESOURCES.getString("select_folder_proj"));
         final File dir = dirChooser.showDialog(this.main.getStage());
         if (dir != null) {
-            Files.write(dir.getPath(), settingsFile, StandardCharsets.UTF_8);
+            Files.asCharSink(settingsFile, StandardCharsets.UTF_8).write(dir.getPath());
             setView(dir);
         }
     }

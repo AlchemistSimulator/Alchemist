@@ -65,9 +65,8 @@ public final class ProjectIOUtils {
         if (new File(directory).exists() && new File(directory).isDirectory()) {
             try {
                 final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                Files.asCharSink(new File(directory + PROJECT_FILE), StandardCharsets.UTF_8)
-                        .write(gson.toJson(project));
-            } catch (final IOException e) {
+                Files.asCharSink(new File(directory + PROJECT_FILE), StandardCharsets.UTF_8).write(gson.toJson(project));
+            } catch (IOException e) {
                 throw new IllegalStateException(e);
             }
         }

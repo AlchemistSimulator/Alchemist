@@ -95,7 +95,7 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>> {
                 new NextTargetStrategy(environment, node, templateLSA, neighPos));
     }
 
-    private static final class NextTargetStrategy implements TargetSelectionStrategy<List<ILsaMolecule>> {
+    private static final class NextTargetStrategy implements TargetSelectionStrategy {
         /**
          * 
          */

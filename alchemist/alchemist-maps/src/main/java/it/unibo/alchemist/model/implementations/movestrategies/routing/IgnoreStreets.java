@@ -10,9 +10,8 @@ import it.unibo.alchemist.model.interfaces.Route;
  * starting and ending point with a straight line using
  * {@link PolygonalChain}.
  * 
- * @param <T>
  */
-public class IgnoreStreets<T> implements RoutingStrategy<T> {
+public class IgnoreStreets implements RoutingStrategy {
 
     private static final long serialVersionUID = 2678088737744440021L;
 

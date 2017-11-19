@@ -1,4 +1,4 @@
 incarnation: sapere
 remote-dependencies:
-  - /config/dependencies_test.txt
-  - /config/dependencies_test1.txt
+  - config/dependencies_test.txt
+  - config/dependencies_test1.txt

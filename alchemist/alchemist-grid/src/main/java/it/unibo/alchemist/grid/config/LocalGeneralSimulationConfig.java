@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.kaikikm.threadresloader.ResourceLoader;
 
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.model.interfaces.Time;
@@ -38,7 +39,7 @@ public class LocalGeneralSimulationConfig<T> extends LightInfoGeneralSimulationC
         this.dependencies = new HashMap<>();
         for (final String file : loader.getDependencies()) {
             try {
-                final URL dependency = LocalGeneralSimulationConfig.class.getResource(file);
+                final URL dependency = ResourceLoader.getResource(file);
                 if (dependency != null) {
                     dependencies.put(file, FileUtils.readFileToString(new File(dependency.toURI()), StandardCharsets.UTF_8));
                 } else {

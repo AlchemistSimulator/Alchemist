@@ -3,6 +3,7 @@ dependencies {
     compile project(':alchemist-interfaces')
     compile project(':alchemist-loading')
     compile project(':alchemist-engine')
+    testCompile project(':alchemist-incarnation-sapere')
 	compile group: 'org.apache.ignite', name: 'ignite-core', version: '2.2.0'
     compile group: 'org.apache.ignite', name: 'ignite-spring', version: '2.2.0'
     compile group: 'org.apache.ignite', name: 'ignite-indexing', version: '2.2.0'    

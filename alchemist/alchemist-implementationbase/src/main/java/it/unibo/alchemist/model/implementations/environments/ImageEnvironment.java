@@ -18,6 +18,8 @@ import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
+import org.kaikikm.threadresloader.ResourceLoader;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
@@ -105,7 +107,8 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
      */
     public ImageEnvironment(final int obs, final String path, final double zoom, final double dx, final double dy) throws IOException {
         super();
-        final InputStream resource = ImageEnvironment.class.getResourceAsStream(path);
+        //final InputStream resource = ImageEnvironment.class.getResourceAsStream(path);
+        final InputStream resource = ResourceLoader.getResourceAsStream(path);
         final BufferedImage img = resource == null 
                 ? ImageIO.read(new File(path))
                 : ImageIO.read(resource);

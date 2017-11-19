@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import org.junit.Test;
+import org.kaikikm.threadresloader.ResourceLoader;
 
 import it.unibo.alchemist.grid.config.GeneralSimulationConfig;
 import it.unibo.alchemist.grid.config.LocalGeneralSimulationConfig;
@@ -24,7 +25,7 @@ import it.unibo.alchemist.loader.YamlLoader;
 /**
  */
 public class TestConfig {
-    private static final String DEPENDENCY_FILE = "/config/dependencies_test.txt";
+    private static final String DEPENDENCY_FILE = "config/dependencies_test.txt";
 
 
     /**
@@ -32,15 +33,15 @@ public class TestConfig {
      */
     @Test
     public void testGeneralSimulationConfig() {
-        final String resource = "/config/00-dependencies.yml";
-        final InputStream yaml = TestConfig.class.getResourceAsStream(resource);
+        final String resource = "config/00-dependencies.yml";
+        final InputStream yaml = ResourceLoader.getResourceAsStream(resource);
         assertNotNull(yaml);
         final Loader l = this.getLoader(yaml);
         //TODO aggiungi test per endTime e endStep???
         final GeneralSimulationConfig<?> gsc = new LocalGeneralSimulationConfig<>(l, 0, null);
         assertEquals(gsc.getDependencies().size(), 2);
         try {
-            assertEquals(gsc.getDependencies().get(DEPENDENCY_FILE), new String(Files.readAllBytes(Paths.get(TestConfig.class.getResource(DEPENDENCY_FILE).toURI()))));
+            assertEquals(gsc.getDependencies().get(DEPENDENCY_FILE), new String(Files.readAllBytes(Paths.get(ResourceLoader.getResource(DEPENDENCY_FILE).toURI()))));
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -57,8 +58,8 @@ public class TestConfig {
      */
     @Test
     public void testWorkingDirectory() throws IOException, NoSuchMethodException, SecurityException, IllegalArgumentException, InvocationTargetException, ReflectiveOperationException {
-        final String resource = "/config/00-dependencies.yml";
-        final InputStream yaml = TestConfig.class.getResourceAsStream(resource);
+        final String resource = "config/00-dependencies.yml";
+        final InputStream yaml = ResourceLoader.getResourceAsStream(resource);
         assertNotNull(yaml);
         final Loader l = this.getLoader(yaml);
         final GeneralSimulationConfig<?> gsc = new LocalGeneralSimulationConfig<>(l, 0, null);

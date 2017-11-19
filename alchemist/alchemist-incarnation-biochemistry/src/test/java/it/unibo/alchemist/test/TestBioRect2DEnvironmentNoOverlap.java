@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.Before;
 import org.junit.Test;
+import org.kaikikm.threadresloader.ResourceLoader;
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;

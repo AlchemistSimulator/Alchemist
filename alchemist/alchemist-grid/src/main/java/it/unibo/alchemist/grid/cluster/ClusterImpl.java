@@ -26,8 +26,8 @@ public class ClusterImpl implements Cluster {
     }
 
     @Override
-    public WorkersSet getWorkersSet(final Complexity complexity) {
-        return new WorkersSetImpl(ignite, ignite.cluster().forServers().forPredicate((node) -> node.metrics().getHeapMemoryTotal() >= complexity.getRamUsage() * IGNITE_RAM_MULT_FACTOR));
+    public WorkerSet getWorkersSet(final Complexity complexity) {
+        return new WorkerSetImpl(ignite, ignite.cluster().forServers().forPredicate((node) -> node.metrics().getHeapMemoryTotal() >= complexity.getRamUsage() * IGNITE_RAM_MULT_FACTOR));
     }
 
     @Override

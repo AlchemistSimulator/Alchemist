@@ -50,8 +50,8 @@ import it.unibo.alchemist.grid.config.LocalGeneralSimulationConfig;
 import it.unibo.alchemist.grid.config.SimulationConfig;
 import it.unibo.alchemist.grid.config.SimulationConfigImpl;
 import it.unibo.alchemist.grid.simulation.RemoteResult;
-import it.unibo.alchemist.grid.simulation.SimulationsSet;
-import it.unibo.alchemist.grid.simulation.SimulationsSetImpl;
+import it.unibo.alchemist.grid.simulation.SimulationSet;
+import it.unibo.alchemist.grid.simulation.SimulationSetImpl;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.export.EnvPerformanceStats;
 import it.unibo.alchemist.loader.export.Exporter;
@@ -227,7 +227,7 @@ public final class AlchemistRunner<T> {
         final List<SimulationConfig> simConfigs = getVariablesCartesianProduct(variables).stream()
                 .map(e -> new SimulationConfigImpl(e))
                 .collect(Collectors.toList());
-        final SimulationsSet<T> set = new SimulationsSetImpl<>(gsc, simConfigs);
+        final SimulationSet<T> set = new SimulationSetImpl<>(gsc, simConfigs);
         try (Cluster cluster = new ClusterImpl(Paths.get(this.gridConfigFile.orElseThrow(() -> new IllegalStateException("No remote configuration file"))))) {
             final Set<RemoteResult> resSet = cluster.getWorkersSet(set.computeComplexity()).distributeSimulations(set);
             for (final RemoteResult res: resSet) {

@@ -6,11 +6,11 @@ import it.unibo.alchemist.grid.config.GeneralSimulationConfig;
 import it.unibo.alchemist.grid.config.SimulationConfig;
 
 /**
- * {@link SimulationsSet} implementation.
+ * {@link SimulationSet} implementation.
  *
  * @param <T>
  */
-public class SimulationsSetImpl<T> implements SimulationsSet<T> {
+public class SimulationSetImpl<T> implements SimulationSet<T> {
 
     private static final float DEFAULT_RAM = 0;
     private static final float DEFAULT_CPU = 0;
@@ -23,7 +23,7 @@ public class SimulationsSetImpl<T> implements SimulationsSet<T> {
      * @param genSimConfig Config's shared by all simulations of set
      * @param simulationConfigs List of configs that differentiate set's simulations
      */
-    public SimulationsSetImpl(final GeneralSimulationConfig<T> genSimConfig, final List<SimulationConfig> simulationConfigs) {
+    public SimulationSetImpl(final GeneralSimulationConfig<T> genSimConfig, final List<SimulationConfig> simulationConfigs) {
         super();
         this.genSimConfig = genSimConfig;
         this.simulationConfigs = simulationConfigs;

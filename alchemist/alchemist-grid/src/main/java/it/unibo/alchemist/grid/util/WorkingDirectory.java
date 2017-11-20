@@ -2,12 +2,8 @@ package it.unibo.alchemist.grid.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -32,21 +28,12 @@ public class WorkingDirectory implements AutoCloseable {
     }
 
     /**
-     * Add temp directory to classpath.
-     * @throws NoSuchMethodException 
-     * @throws SecurityException 
-     * @throws ReflectiveOperationException 
-     * @throws IllegalArgumentException 
-     * @throws InvocationTargetException 
+     * 
+     * @return Temp directory URL
      * @throws MalformedURLException 
      */
-    public void addToClasspath() throws NoSuchMethodException, SecurityException, ReflectiveOperationException, IllegalArgumentException, InvocationTargetException, MalformedURLException {
-        final URI u = directory.toURI();
-        final URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-        final Class<URLClassLoader> urlClass = URLClassLoader.class;
-        final Method method = urlClass.getDeclaredMethod("addURL", new Class[]{URL.class});
-        method.setAccessible(true);
-        method.invoke(urlClassLoader, new Object[]{u.toURL()});
+    public URL getDirectoryUrl() throws MalformedURLException {
+        return this.directory.toURI().toURL();
     }
 
     /**

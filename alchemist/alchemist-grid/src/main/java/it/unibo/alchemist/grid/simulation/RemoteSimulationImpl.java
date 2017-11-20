@@ -10,6 +10,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.ignite.Ignition;
+import org.kaikikm.threadresloader.ResourceLoader;
 
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -51,11 +52,11 @@ public class RemoteSimulationImpl<T> implements RemoteSimulation<T> {
     @Override
     public RemoteResult call() {
         try (WorkingDirectory wd = new WorkingDirectory()) {
-            wd.addToClasspath();
             wd.writeFiles(this.generalConfig.getDependencies());
             final Callable<RemoteResultImpl> callable = new Callable<RemoteResultImpl>() {
                 @Override
                 public RemoteResultImpl call() throws Exception {
+                    ResourceLoader.injectURLs(wd.getDirectoryUrl());
                     final Loader loader = generalConfig.getLoader();
                     final Environment<T> env = loader.getWith(config.getVariables());
                     final Simulation<T> sim = new Engine<>(env, generalConfig.getEndStep(), generalConfig.getEndTime());
@@ -79,7 +80,7 @@ public class RemoteSimulationImpl<T> implements RemoteSimulation<T> {
             final Thread t = new Thread(futureTask);
             t.start();
             return futureTask.get();
-        } catch (SecurityException | IllegalArgumentException | ReflectiveOperationException | IOException | InterruptedException | ExecutionException e1) {
+        } catch (SecurityException | IllegalArgumentException | IOException | InterruptedException | ExecutionException e1) {
             throw new IllegalStateException(e1);
         }
     }

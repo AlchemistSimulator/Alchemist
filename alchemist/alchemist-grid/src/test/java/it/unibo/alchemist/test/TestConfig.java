@@ -71,8 +71,8 @@ public class TestConfig {
             wd.writeFiles(gsc.getDependencies());
             final File newFile = new File(wd.getFileAbsolutePath("test.txt"));
             newFile.createNewFile();
-            wd.addToClasspath();
-            assertNotNull(Thread.currentThread().getContextClassLoader().getResource("test.txt"));
+            ResourceLoader.addURL(wd.getDirectoryUrl());
+            assertNotNull(ResourceLoader.getResource("test.txt"));
         }
         assertFalse(test.exists());
     }

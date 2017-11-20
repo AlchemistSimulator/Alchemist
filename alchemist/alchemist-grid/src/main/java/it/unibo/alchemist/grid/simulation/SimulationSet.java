@@ -11,7 +11,7 @@ import it.unibo.alchemist.grid.config.SimulationConfig;
  *
  * @param <T>
  */
-public interface SimulationsSet<T> {
+public interface SimulationSet<T> {
     /**
      * 
      * @return complexity of one simulation

@@ -134,15 +134,16 @@ public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
      * @see #PLAY_ICON
      * @see #PAUSE_ICON
      */
-    private void setIcon(Status nextStatus) {
+    private void setIcon(final Status nextStatus) {
         getSimulation().ifPresent(s -> {
             long t = System.currentTimeMillis();
-//            System.out.println("Waiting for " + nextStatus);
-            s.waitFor(nextStatus, 1, TimeUnit.SECONDS);
-            // TODO if status != nextStatus --> show error
-//            System.out.print("Got " + s.getStatus() + " in ");
-//            System.out.println(System.currentTimeMillis() - t);
-            final Node icon = nextStatus == Status.RUNNING ? PAUSE_ICON : PLAY_ICON;
+            if (nextStatus != Status.INIT && nextStatus != Status.READY) {
+                s.waitFor(nextStatus, 1, TimeUnit.SECONDS);
+                if (s.getStatus() != nextStatus) {
+                    throw new IllegalStateException("Invalid status");
+                }
+            }
+            final Node icon = nextStatus == Status.RUNNING || nextStatus == Status.READY ? PAUSE_ICON : PLAY_ICON;
             Platform.runLater(() -> setGraphic(icon));
         });
     }

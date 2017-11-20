@@ -339,11 +339,11 @@ public class YamlLoader implements Loader {
         } else {
             throw new IllegalAlchemistYAMLException("Exports must be a YAML map.");
         }
-        Object dependencies = rawContents.get(REMOTE_DEPENDENCIES);
+        final Object dependencies = rawContents.get(REMOTE_DEPENDENCIES);
         if (dependencies == null) {
             this.dependencies = ImmutableList.of();
         } else {
-            this.dependencies = ImmutableList.copyOf((List<String>)dependencies);
+            this.dependencies = ImmutableList.copyOf((List<String>) dependencies);
         }
     }
 

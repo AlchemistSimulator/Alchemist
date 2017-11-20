@@ -149,14 +149,14 @@ public class TestYAMLLoader {
     }
     
     /**
-     * Test dependencies section
+     * Test dependencies section.
      */
     @Test
     public void testDependencies() {
-        InputStream is = TestYAMLLoader.class.getResourceAsStream("/isac/16-dependencies.yaml");
+        final InputStream is = TestYAMLLoader.class.getResourceAsStream("/isac/16-dependencies.yaml");
         assertNotNull(is);
-        Loader loader = new YamlLoader(is);
-        List<String> dependencies = loader.getDependencies();
+        final Loader loader = new YamlLoader(is);
+        final List<String> dependencies = loader.getDependencies();
         assertEquals(dependencies.size(), 2);
         assertEquals(dependencies.get(0), "dependencies_test.txt");
     }

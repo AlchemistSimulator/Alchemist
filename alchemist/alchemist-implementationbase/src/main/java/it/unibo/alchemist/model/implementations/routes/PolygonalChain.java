@@ -102,7 +102,7 @@ public class PolygonalChain<P extends Position> implements Route<P> {
     public Stream<P> stream() {
         return positions.stream();
     }
-    
+
     @Override
     public String toString() {
         return getClass().getSimpleName() + positions;

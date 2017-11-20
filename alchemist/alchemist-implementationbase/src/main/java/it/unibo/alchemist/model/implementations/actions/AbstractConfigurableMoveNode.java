@@ -20,10 +20,10 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
 public abstract class AbstractConfigurableMoveNode<T> extends AbstractMoveNode<T> {
 
     private static final long serialVersionUID = 1L;
-    private final TargetSelectionStrategy<T> target;
-    private final SpeedSelectionStrategy<T> speed;
-    private final RoutingStrategy<T> routing;
-    private Route route;
+    private final TargetSelectionStrategy target;
+    private final SpeedSelectionStrategy speed;
+    private final RoutingStrategy routing;
+    private Route<?> route;
     private Position end;
     private int curStep;
 
@@ -43,9 +43,9 @@ public abstract class AbstractConfigurableMoveNode<T> extends AbstractMoveNode<T
      */
     protected AbstractConfigurableMoveNode(final Environment<T> environment,
             final Node<T> node,
-            final RoutingStrategy<T> routing,
-            final TargetSelectionStrategy<T> target,
-            final SpeedSelectionStrategy<T> speed) {
+            final RoutingStrategy routing,
+            final TargetSelectionStrategy target,
+            final SpeedSelectionStrategy speed) {
         this(environment, node, routing, target, speed, false);
     }
 
@@ -69,9 +69,9 @@ public abstract class AbstractConfigurableMoveNode<T> extends AbstractMoveNode<T
      */
     protected AbstractConfigurableMoveNode(final Environment<T> environment,
             final Node<T> node,
-            final RoutingStrategy<T> routing,
-            final TargetSelectionStrategy<T> target,
-            final SpeedSelectionStrategy<T> speed,
+            final RoutingStrategy routing,
+            final TargetSelectionStrategy target,
+            final SpeedSelectionStrategy speed,
             final boolean isAbsolute) {
         super(environment, node, isAbsolute);
         this.speed = Objects.requireNonNull(speed);
@@ -157,7 +157,7 @@ public abstract class AbstractConfigurableMoveNode<T> extends AbstractMoveNode<T
     /**
      * @return the current route, or null if no route is currently being followed
      */
-    protected final Route getCurrentRoute() {
+    protected final Route<?> getCurrentRoute() {
         return route;
     }
 }

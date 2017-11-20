@@ -41,7 +41,7 @@ public class MoveOnMap<T> extends AbstractConfigurableMoveNode<T> {
      * @param tg
      *            {@link TargetSelectionStrategy}
      */
-    public MoveOnMap(final MapEnvironment<T> environment, final Node<T> node, final RoutingStrategy<T> rt, final SpeedSelectionStrategy<T> sp, final TargetSelectionStrategy<T> tg) {
+    public MoveOnMap(final MapEnvironment<T> environment, final Node<T> node, final RoutingStrategy rt, final SpeedSelectionStrategy sp, final TargetSelectionStrategy tg) {
         super(environment, node, rt, tg, sp, true);
     }
 

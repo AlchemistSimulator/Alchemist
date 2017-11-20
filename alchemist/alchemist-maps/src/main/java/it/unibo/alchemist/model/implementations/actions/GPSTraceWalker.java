@@ -49,7 +49,7 @@ public class GPSTraceWalker<T> extends MoveOnMapWithGPS<T> {
         super(environment, node,
                 new OnStreets<>(environment, Vehicle.FOOT),
                 new RoutingTraceDependantSpeed<>(environment, node, reaction, Vehicle.FOOT),
-                new FollowTrace<>(reaction),
+                new FollowTrace(reaction),
                 path, cycle, normalizer, normalizerArgs);
     }
 
@@ -58,7 +58,7 @@ public class GPSTraceWalker<T> extends MoveOnMapWithGPS<T> {
         super(environment, node,
                 new OnStreets<>(environment, Vehicle.FOOT),
                 new RoutingTraceDependantSpeed<>(environment, node, reaction, Vehicle.FOOT),
-                new FollowTrace<>(reaction),
+                new FollowTrace(reaction),
                 trace);
     }
 

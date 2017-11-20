@@ -9,6 +9,7 @@ import org.danilopianini.util.Hashes;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.gpsload.impl.TraceLoader;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
@@ -24,6 +25,7 @@ import static java.util.Objects.requireNonNull;
  * basic action that follow a {@link GPSTrace}.
  * @param <T>
  */
+@SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE", justification = "SpotBugs is reporting false positives")
 public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
 
     private static final long serialVersionUID = 1L;
@@ -58,8 +60,8 @@ public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
      *            Args to build normalize
      */
     public MoveOnMapWithGPS(final MapEnvironment<T> environment, final Node<T> node, 
-            final RoutingStrategy<T> rt, final SpeedSelectionStrategy<T> sp, 
-            final TargetSelectionStrategy<T> tg,
+            final RoutingStrategy rt, final SpeedSelectionStrategy sp, 
+            final TargetSelectionStrategy tg,
             final String path, final boolean cycle, final String normalizer, final Object... normalizerArgs) {
         this(environment, node, rt, sp, tg, traceFor(environment, path, cycle, normalizer, normalizerArgs));
     }
@@ -79,9 +81,12 @@ public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
      * @param trace
      *            {@link GPSTrace to follow}
      */
-    public MoveOnMapWithGPS(final MapEnvironment<T> environment, final Node<T> node, 
-            final RoutingStrategy<T> rt, final SpeedSelectionStrategy<T> sp, 
-            final TargetSelectionStrategy<T> tg,
+    public MoveOnMapWithGPS(
+            final MapEnvironment<T> environment,
+            final Node<T> node, 
+            final RoutingStrategy rt,
+            final SpeedSelectionStrategy sp, 
+            final TargetSelectionStrategy tg,
             final GPSTrace trace) {
         super(environment, node, rt, sp, tg);
         this.trace = requireNonNull(trace);

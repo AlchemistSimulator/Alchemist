@@ -41,4 +41,4 @@ public enum Type {
      * 
      */
     LISTCOMPARATOR
-};
+}

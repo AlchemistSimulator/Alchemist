@@ -46,7 +46,7 @@ public class MoveToTarget<T> extends AbstractConfigurableMoveNode<T> {
         super(environment, node,
                 PolygonalChain::new,
                 new FollowTarget<>(environment, node, trackMolecule),
-                new ConstantSpeed<>(reaction, speed));
+                new ConstantSpeed(reaction, speed));
         this.trackMolecule = trackMolecule;
         this.speed = speed;
     }

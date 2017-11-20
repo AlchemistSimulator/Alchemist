@@ -10,9 +10,12 @@ package it.unibo.alchemist.model.implementations.actions;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.net.URISyntaxException;
+
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.LangUtils;
 import org.danilopianini.util.ListSet;
+import org.kaikikm.threadresloader.ResourceLoader;
 import org.protelis.lang.ProtelisLoader;
 import org.protelis.vm.ExecutionContext;
 import org.protelis.vm.ProtelisVM;
@@ -120,8 +123,19 @@ public class RunProtelisProgram implements Action<Object> {
             final RandomGenerator rand,
             final String prog,
             final double retentionTime) throws SecurityException, ClassNotFoundException {
-        this(env, n, r, rand, ProtelisLoader.parse(prog), retentionTime);
+        this(env, n, r, rand, ProtelisLoader.parse(convertURI(prog)), retentionTime);
         originalProgram = prog;
+    }
+
+    private static String convertURI(final String s) {
+        String parsedParam = s.replace(':', '/');
+        parsedParam += ".pt";
+        try {
+            return ResourceLoader.getResource(parsedParam).toURI().toString();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**

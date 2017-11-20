@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.interfaces.GPSTrace;
  */
 public class TestGPSLoader {
 
-    private static final String BASE_DIR = "/trace/";
+    private static final String BASE_DIR = "trace/";
     private static final String BASE_OK_TEST = BASE_DIR + "ok/";
     private static final String BASE_NOT_OK_TEST = BASE_DIR + "no_ok/";
     private static final String DIRECTORY_WITH_FILES = BASE_OK_TEST + "sub1/";

@@ -24,7 +24,7 @@
       "type": "DrawLinks",
       "size": {
         "name": "Size",
-        "value": 1.0,
+        "value": 0.15,
         "lower bound": 0.0,
         "upper bound": 100.0
       },

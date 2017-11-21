@@ -11,6 +11,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import javafx.application.Platform;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import jiconfont.icons.GoogleMaterialDesignIcons;
 import jiconfont.javafx.IconNode;
 import org.jetbrains.annotations.Nullable;
@@ -139,8 +140,16 @@ public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
             long t = System.currentTimeMillis();
             if (nextStatus != Status.INIT && nextStatus != Status.READY) {
                 s.waitFor(nextStatus, 1, TimeUnit.SECONDS);
-                if (s.getStatus() != nextStatus) {
-                    throw new IllegalStateException("Invalid status");
+                final Status currentStatus = s.getStatus();
+                if (currentStatus != nextStatus) {
+                    final Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Expected simulation status error");
+                    alert.setContentText("The expected status was "
+                            + nextStatus + ", but, after waiting"
+                            + (System.currentTimeMillis() - t)
+                            + "ms, current simulation status is "
+                            + currentStatus);
+                    alert.show();
                 }
             }
             final Node icon = nextStatus == Status.RUNNING || nextStatus == Status.READY ? PAUSE_ICON : PLAY_ICON;

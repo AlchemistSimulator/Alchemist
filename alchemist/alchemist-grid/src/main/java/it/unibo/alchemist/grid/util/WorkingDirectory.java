@@ -52,11 +52,11 @@ public class WorkingDirectory implements AutoCloseable {
      * @param files A map with relative paths + files names as kay and files content as value.
      * @throws IOException 
      */
-    public void writeFiles(final Map<String, String> files) throws IOException {
-        for (final Entry<String, String> e : files.entrySet()) {
+    public void writeFiles(final Map<String, byte[]> files) throws IOException {
+        for (final Entry<String, byte[]> e : files.entrySet()) {
             final File f = new File(this.directory.getAbsolutePath() + File.separator + e.getKey());
             f.getParentFile().mkdirs();
-            FileUtils.writeStringToFile(f, e.getValue(), StandardCharsets.UTF_8);
+            FileUtils.writeByteArrayToFile(f, e.getValue());
         }
     }
 

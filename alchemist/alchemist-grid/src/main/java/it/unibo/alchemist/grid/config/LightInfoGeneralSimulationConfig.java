@@ -38,7 +38,7 @@ public abstract class LightInfoGeneralSimulationConfig<T> implements GeneralSimu
     }
 
     @Override
-    public abstract Map<String, String> getDependencies();
+    public abstract Map<String, byte[]> getDependencies();
     @Override
     public long getEndStep() {
         return endStep;

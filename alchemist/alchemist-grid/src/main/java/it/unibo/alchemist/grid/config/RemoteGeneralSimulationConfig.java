@@ -34,15 +34,15 @@ public class RemoteGeneralSimulationConfig<T> extends LightInfoGeneralSimulation
 
         this.keys = sc.getDependencies().keySet();
 
-        final CacheConfiguration<String, String> cacheCfg = new CacheConfiguration<>(this.cacheName);
+        final CacheConfiguration<String, byte[]> cacheCfg = new CacheConfiguration<>(this.cacheName);
         cacheCfg.setCacheMode(CacheMode.REPLICATED);
-        final IgniteCache<String, String> cache = ignite.getOrCreateCache(cacheCfg);
+        final IgniteCache<String, byte[]> cache = ignite.getOrCreateCache(cacheCfg);
         cache.putAll(sc.getDependencies());
     }
 
     @Override
-    public Map<String, String> getDependencies() {
-        final IgniteCache<String, String> cache = Ignition.ignite().cache(this.cacheName);
+    public Map<String, byte[]> getDependencies() {
+        final IgniteCache<String, byte[]> cache = Ignition.ignite().cache(this.cacheName);
         return cache.getAll(this.keys);
     }
 

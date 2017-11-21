@@ -1,14 +1,13 @@
 package it.unibo.alchemist.grid.config;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import it.unibo.alchemist.loader.Loader;
@@ -25,7 +24,7 @@ public class LocalGeneralSimulationConfig<T> extends LightInfoGeneralSimulationC
      * 
      */
     private static final long serialVersionUID = 3974035069237901864L;
-    private final Map<String, String> dependencies;
+    private final Map<String, byte[]> dependencies;
 
     /**
      * 
@@ -41,7 +40,7 @@ public class LocalGeneralSimulationConfig<T> extends LightInfoGeneralSimulationC
             try {
                 final URL dependency = ResourceLoader.getResource(file);
                 if (dependency != null) {
-                    dependencies.put(file, FileUtils.readFileToString(new File(dependency.toURI()), StandardCharsets.UTF_8));
+                    dependencies.put(file, Files.readAllBytes(Paths.get(dependency.toURI())));
                 } else {
                     throw new IllegalArgumentException("Dependency non exixts: " + file);
                 }
@@ -55,7 +54,7 @@ public class LocalGeneralSimulationConfig<T> extends LightInfoGeneralSimulationC
     }
 
     @Override
-    public Map<String, String> getDependencies() {
+    public Map<String, byte[]> getDependencies() {
         return this.dependencies;
     }
 

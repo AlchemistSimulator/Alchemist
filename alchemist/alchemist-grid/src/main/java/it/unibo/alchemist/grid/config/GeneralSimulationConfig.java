@@ -20,7 +20,7 @@ public interface GeneralSimulationConfig<T> extends Serializable {
      * 
      * @return Map with dependencies files path as key and their content as value
      */
-    Map<String, String> getDependencies();
+    Map<String, byte[]> getDependencies();
     /**
      * 
      * @return Simulation's end step

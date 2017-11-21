@@ -223,7 +223,6 @@ public final class AlchemistRunner<T> {
     }
 
     private Optional<? extends Throwable> launchRemote(final String... variables) {
-        final Optional<Long> start = Optional.ofNullable(doBenchmark ? System.nanoTime() : null);
         final GeneralSimulationConfig<T> gsc = new LocalGeneralSimulationConfig<>(this.loader, this.endStep, this.endTime);
         final List<SimulationConfig> simConfigs = getVariablesCartesianProduct(variables).stream()
                 .map(e -> new SimulationConfigImpl(e))
@@ -234,8 +233,8 @@ public final class AlchemistRunner<T> {
             for (final RemoteResult res: resSet) {
                 res.saveLocally(this.exportFileRoot.get());
             }
-            start.ifPresent(s -> System.out.printf("Total simulation running time (nanos): %d \n", (System.nanoTime() - s)));
         } catch (Exception e) {
+            //TODO capisci semantica delle eccezioni di ritorno
             throw new IllegalStateException(e);
         }
         return Optional.empty();

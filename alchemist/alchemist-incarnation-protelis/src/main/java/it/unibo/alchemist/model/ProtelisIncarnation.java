@@ -24,7 +24,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.LangUtils;
-import org.kaikikm.threadresloader.ResourceLoader;
 import org.protelis.lang.ProtelisLoader;
 import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.vm.ExecutionContext;
@@ -108,7 +107,6 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
                 return new SendToNeighbor(pNode, reaction, pList.get(0));
             } else {
                 try {
-                    //advanced:convergence
                     return new RunProtelisProgram(env, pNode, reaction, rand, param);
                 } catch (ClassNotFoundException | RuntimeException e) {
                     throw new IllegalArgumentException("Could not create the requested Protelis program: " + param, e);

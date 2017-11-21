@@ -38,7 +38,7 @@ allprojects {
         compile "org.scala-lang:scala-compiler:${scalaVersion}"
         compile "org.scala-lang:scala-library:${scalaVersion}"
         compile "org.slf4j:slf4j-api:$slf4jVersion"
-        compile "org.danilopianini:thread-inheritable-resource-loader:0.1.0"
+        compile "org.danilopianini:thread-inheritable-resource-loader:0.2.0"
 
         runtime "ch.qos.logback:logback-classic:$logbackVersion"
 

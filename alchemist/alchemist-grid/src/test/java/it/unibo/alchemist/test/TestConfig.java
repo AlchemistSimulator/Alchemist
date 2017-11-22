@@ -1,11 +1,5 @@
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
@@ -35,15 +30,15 @@ public class TestConfig {
     public void testGeneralSimulationConfig() {
         final String resource = "config/00-dependencies.yml";
         final InputStream yaml = ResourceLoader.getResourceAsStream(resource);
-        assertNotNull(yaml);
+        Assert.assertNotNull(yaml);
         final Loader l = this.getLoader(yaml);
         //TODO aggiungi test per endTime e endStep???
         final GeneralSimulationConfig<?> gsc = new LocalGeneralSimulationConfig<>(l, 0, null);
-        assertEquals(gsc.getDependencies().size(), 2);
+        Assert.assertEquals(gsc.getDependencies().size(), 2);
         try {
-            assertEquals(gsc.getDependencies().get(DEPENDENCY_FILE), new String(Files.readAllBytes(Paths.get(ResourceLoader.getResource(DEPENDENCY_FILE).toURI()))));
+            Assert.assertArrayEquals(gsc.getDependencies().get(DEPENDENCY_FILE), Files.readAllBytes(Paths.get(ResourceLoader.getResource(DEPENDENCY_FILE).toURI())));
         } catch (Exception e) {
-            fail(e.getMessage());
+            Assert.fail(e.getMessage());
         }
     }
 
@@ -60,21 +55,21 @@ public class TestConfig {
     public void testWorkingDirectory() throws IOException, NoSuchMethodException, SecurityException, IllegalArgumentException, InvocationTargetException, ReflectiveOperationException {
         final String resource = "config/00-dependencies.yml";
         final InputStream yaml = ResourceLoader.getResourceAsStream(resource);
-        assertNotNull(yaml);
+        Assert.assertNotNull(yaml);
         final Loader l = this.getLoader(yaml);
         final GeneralSimulationConfig<?> gsc = new LocalGeneralSimulationConfig<>(l, 0, null);
-        assertEquals(gsc.getDependencies().size(), 2);
+        Assert.assertEquals(gsc.getDependencies().size(), 2);
         File test = null;
         try (WorkingDirectory wd = new WorkingDirectory()) {
             test = new File(wd.getFileAbsolutePath("nothing")).getParentFile();
-            assertTrue(test.exists());
+            Assert.assertTrue(test.exists());
             wd.writeFiles(gsc.getDependencies());
             final File newFile = new File(wd.getFileAbsolutePath("test.txt"));
             newFile.createNewFile();
             ResourceLoader.addURL(wd.getDirectoryUrl());
-            assertNotNull(ResourceLoader.getResource("test.txt"));
+            Assert.assertNotNull(ResourceLoader.getResource("test.txt"));
         }
-        assertFalse(test.exists());
+        Assert.assertFalse(test.exists());
     }
 
 

@@ -59,7 +59,6 @@ public class RemoteSimulationImpl<T> implements RemoteSimulation<T> {
                 @Override
                 public RemoteResultImpl call() throws Exception {
                     ResourceLoader.injectURLs(wd.getDirectoryUrl());
-                    Thread.currentThread().setContextClassLoader(ResourceLoader.getClassLoader());
                     final Loader loader = generalConfig.getLoader();
                     final Environment<T> env = loader.getWith(config.getVariables());
                     final Simulation<T> sim = new Engine<>(env, generalConfig.getEndStep(), generalConfig.getEndTime());
@@ -81,7 +80,7 @@ public class RemoteSimulationImpl<T> implements RemoteSimulation<T> {
             };
             final FutureTask<RemoteResultImpl> futureTask = new FutureTask<>(callable);
             final Thread t = new Thread(futureTask);
-            URLClassLoader cl = new URLClassLoader(new URL[]{wd.getDirectoryUrl()}, ResourceLoader.getClassLoader());
+            final URLClassLoader cl = new URLClassLoader(new URL[]{wd.getDirectoryUrl()}, ResourceLoader.getClassLoader());
             t.setContextClassLoader(cl);
             t.start();
             return futureTask.get();

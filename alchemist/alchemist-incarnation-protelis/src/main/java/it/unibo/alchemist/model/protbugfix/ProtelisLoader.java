@@ -129,12 +129,22 @@ public final class ProtelisLoader {
     private static final Pattern REGEX_PROTELIS_MODULE = Pattern.compile("(?:\\w+:)*\\w+");
     private static final Pattern REGEX_PROTELIS_IMPORT = Pattern.compile("import\\s+((?:\\w+:)*\\w+)\\s+",
             Pattern.DOTALL);
-    private static final PathMatchingResourcePatternResolver RESOLVER = new PathMatchingResourcePatternResolver();
+    private static final ThreadLocal<PathMatchingResourcePatternResolver> RESOLVER = new ThreadLocal<PathMatchingResourcePatternResolver>() {
+        @Override
+        protected PathMatchingResourcePatternResolver initialValue() {
+            return new PathMatchingResourcePatternResolver();
+        }
+    };
     private static final String PROTELIS_FILE_EXTENSION = "pt";
     private static final String HOOD_END = "Hood";
-    private static final Cache<String, Resource> LOADED_RESOURCES = CacheBuilder.newBuilder()
-            .expireAfterAccess(1, TimeUnit.SECONDS)
-            .build();
+    private static final ThreadLocal<Cache<String, Resource>> LOADED_RESOURCES = new ThreadLocal<Cache<String, Resource>>() {
+        @Override
+        protected Cache<String, Resource> initialValue() {
+            return CacheBuilder.newBuilder()
+                    .expireAfterAccess(1, TimeUnit.SECONDS)
+                    .build();
+        }
+    };
     private static final LoadingCache<Object, Reference> REFERENCES = CacheBuilder.newBuilder()
             .expireAfterAccess(1, TimeUnit.SECONDS)
             .build(new CacheLoader<Object, Reference>() {
@@ -247,10 +257,10 @@ public final class ProtelisLoader {
             final String programURI,
             final Set<String> alreadyInQueue) throws IOException {
         final String realURI = (programURI.startsWith("/") ? "classpath:" : "") + programURI;
-        if (LOADED_RESOURCES.getIfPresent(realURI) == null && !alreadyInQueue.contains(realURI)) {
+        if (LOADED_RESOURCES.get().getIfPresent(realURI) == null && !alreadyInQueue.contains(realURI)) {
             alreadyInQueue.add(realURI);
             final URI uri = URI.createURI(realURI);
-            final org.springframework.core.io.Resource protelisFile = RESOLVER.getResource(realURI);
+            final org.springframework.core.io.Resource protelisFile = RESOLVER.get().getResource(realURI);
             final InputStream is = protelisFile.getInputStream();
             final String ss = IOUtils.toString(is, "UTF-8");
             is.close();
@@ -262,7 +272,7 @@ public final class ProtelisLoader {
                 final String classpathResource = "classpath:/" + imp.replace(":", "/") + "." + PROTELIS_FILE_EXTENSION;
                 loadResourcesRecursively(target, classpathResource, alreadyInQueue);
             }
-            LOADED_RESOURCES.put(realURI, target.getResource(uri, true));
+            LOADED_RESOURCES.get().put(realURI, target.getResource(uri, true));
         }
     }
 

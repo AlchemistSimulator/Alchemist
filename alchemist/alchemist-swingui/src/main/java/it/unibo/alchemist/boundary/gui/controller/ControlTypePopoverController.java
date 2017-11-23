@@ -29,25 +29,6 @@ public class ControlTypePopoverController implements Initializable {
     @Nullable
     private JFXButton selectButton; // Value injected by FXMLLoader
 
-    private final EventHandler<ActionEvent> panButtonHandler;
-    private final EventHandler<ActionEvent> selectButtonHandler;
-
-    /**
-     * Default constructor. It initializes the two buttons with the provided
-     * handlers.
-     * 
-     * @param panButtonHandler
-     *            the handler for the mouse click on the pan button
-     * @param selectButtonHandler
-     *            the handler for the mouse click on the select button
-     */
-    public ControlTypePopoverController(final EventHandler<ActionEvent> panButtonHandler,
-            final EventHandler<ActionEvent> selectButtonHandler) {
-        super();
-        this.panButtonHandler = panButtonHandler;
-        this.selectButtonHandler = selectButtonHandler;
-    }
-
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
         IconFontFX.register(GoogleMaterialDesignIcons.getIconFont());
@@ -57,15 +38,9 @@ public class ControlTypePopoverController implements Initializable {
 
         panButton.setText("");
         panButton.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.PAN_TOOL));
-        if (panButtonHandler != null) {
-            panButton.setOnAction(panButtonHandler);
-        }
 
         selectButton.setText("");
         selectButton.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.TAB_UNSELECTED));
-        if (selectButtonHandler != null) {
-            selectButton.setOnAction(selectButtonHandler);
-        }
     }
 
     /**

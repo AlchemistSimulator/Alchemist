@@ -9,6 +9,7 @@ import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -67,6 +68,7 @@ public class ButtonsBarController implements Initializable {
     private Label stepLabel;
 
     private EffectsGroupBarController effectsGroupBarController;
+    private Optional<PopOver> controlTypePopOver = Optional.empty();
 
     /**
      * Default constructor.
@@ -122,33 +124,36 @@ public class ButtonsBarController implements Initializable {
         controlType.setText("");
         controlType.setGraphic(pan);
 
-        final PopOver controlTypePopOver = new PopOver();
-        controlTypePopOver.setDetachable(false);
-        controlTypePopOver.setDetached(false);
-        controlTypePopOver.setHeaderAlwaysVisible(false);
-        final ControlTypePopoverController controlTypePopoverController = new ControlTypePopoverController(e -> {
-            controlTypePopOver.hide();
-            this.controlType.setGraphic(pan);
-            // TODO change control type to pan mode
-        }, e -> {
-            controlTypePopOver.hide();
-            this.controlType.setGraphic(select);
-            // TODO change control type to select mode
-        });
-        try {
-            controlTypePopOver.setContentNode(FXResourceLoader.getLayout(AnchorPane.class, controlTypePopoverController,
-                    ControlTypePopoverController.CONTROL_TYPE_POPOVER_LAYOUT));
-        } catch (final IOException e) {
-            throw new IllegalStateException("Could not initialize popover for control type change", e);
-        }
-        controlTypePopOver.setArrowLocation(ArrowLocation.BOTTOM_CENTER);
-        controlType.setOnAction(event -> {
-            if (controlTypePopOver.isShowing()) {
-                controlTypePopOver.hide();
-            } else {
-                controlTypePopOver.show(controlType);
+        controlType.setOnAction(event -> togglePopover());
+    }
+
+    private void togglePopover() {
+        if (controlTypePopOver.isPresent() && controlTypePopOver.get().isShowing()) {
+            controlTypePopOver.get().hide();
+        } else {
+            assert controlType != null;
+
+            final ControlTypePopoverController controlTypePopoverController = new ControlTypePopoverController();
+
+            final Node popoverContent;
+            try {
+                popoverContent = FXResourceLoader.getLayout(AnchorPane.class, controlTypePopoverController,
+                        ControlTypePopoverController.CONTROL_TYPE_POPOVER_LAYOUT);
+            } catch (final IOException e) {
+                throw new IllegalStateException("Could not initialize popover for control type change", e);
             }
-        });
+
+            final PopOver pop = new PopOver(popoverContent);
+
+            pop.setAutoHide(true);
+            pop.setDetachable(false);
+            pop.setDetached(false);
+            pop.setHeaderAlwaysVisible(false);
+            pop.getRoot().getStylesheets().add(FXResourceLoader.getStyle("popover"));
+            pop.setArrowLocation(ArrowLocation.BOTTOM_CENTER);
+            controlTypePopOver = Optional.of(pop);
+            controlTypePopOver.get().show(controlType);
+        }
     }
 
     /**

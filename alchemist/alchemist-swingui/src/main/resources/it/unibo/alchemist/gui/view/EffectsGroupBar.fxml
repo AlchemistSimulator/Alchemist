@@ -3,6 +3,7 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.BorderPane?>
+
 <BorderPane xmlns:fx="http://javafx.com/fxml" id="effectsGroupPane" fx:id="effectsGroupPane" xmlns="http://javafx.com/javafx">
     <bottom>
         <ButtonBar id="groupControlBar" fx:id="groupControlBar" stylesheets="@ButtonsBarLayout.css" BorderPane.alignment="CENTER">

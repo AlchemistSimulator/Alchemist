@@ -4,7 +4,12 @@
 package it.unibo.alchemist;
 
 import java.awt.GraphicsEnvironment;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -209,7 +214,7 @@ public final class AlchemistRunner<T> {
          * outside that thread only when all the threads have completed
          * their execution. Blame Oracle for this.
          */
-        start.ifPresent(s -> System.out.printf("Total simulation running time (nanos): %d \n", (System.nanoTime() - s))); //NOPMD: I want to show the result in any case
+        start.ifPresent(e -> printBenchmarkResult(System.nanoTime() - e, false));
         executor.shutdown();
         if (exception.isPresent()) {
             executor.shutdownNow();
@@ -234,7 +239,7 @@ public final class AlchemistRunner<T> {
             for (final RemoteResult res: resSet) {
                 res.saveLocally(this.exportFileRoot.get());
             }
-            start.ifPresent(s -> System.out.printf("Total simulation running time (nanos): %d \n", (System.nanoTime() - s))); //NOPMD: I want to show the result in any case
+            start.ifPresent(e -> printBenchmarkResult(System.nanoTime() - e, true));
         } catch (Exception e) {
             //TODO capisci semantica delle eccezioni di ritorno
             throw new IllegalStateException(e);
@@ -250,6 +255,19 @@ public final class AlchemistRunner<T> {
                 .collect(Collectors.toList());
         return varStreams.isEmpty() ? ImmutableList.of(ImmutableList.<Entry<String, ? extends Serializable>>of())
         : Lists.cartesianProduct(varStreams);
+    }
+
+    private void printBenchmarkResult(final Long value, final boolean distributed) {
+        System.out.printf("Total simulation running time (nanos): %d \n", value); //NOPMD: I want to show the result in any case
+        final File f = new File("." + File.separator + "benchmark");
+        try {
+            f.createNewFile();
+            try (PrintWriter w = new PrintWriter(new BufferedWriter(new FileWriter(f, true)))) {
+                w.println(distributed ? "Distributed exc time:" + value.toString() : "Serial exc time:" + value.toString());
+            }
+        } catch (IOException e) {
+            L.error(e.getMessage());
+        }
     }
 
     private <R> Stream<Callable<R>> prepareSimulations(final Function<Simulation<T>, R> finalizer, final String... variables) {

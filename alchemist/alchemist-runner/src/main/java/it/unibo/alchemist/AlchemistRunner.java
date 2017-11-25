@@ -259,7 +259,7 @@ public final class AlchemistRunner<T> {
 
     private void printBenchmarkResult(final Long value, final boolean distributed) {
         System.out.printf("Total simulation running time (nanos): %d \n", value); //NOPMD: I want to show the result in any case
-        final File f = new File("." + File.separator + "benchmark");
+        final File f = new File("benchmark");
         try {
             f.createNewFile();
             try (PrintWriter w = new PrintWriter(new BufferedWriter(new FileWriter(f, true)))) {

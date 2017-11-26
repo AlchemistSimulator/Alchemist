@@ -1,5 +1,7 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
+import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
+import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,11 +9,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.reflections.Reflections;
-
-import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import javafx.scene.control.ChoiceDialog;
+import javafx.stage.Stage;
+import org.reflections.Reflections;
 
 /**
  * Class that lets the user choose the effect from all it can find.
@@ -38,6 +38,11 @@ public class EffectBuilderFX {
         effects = new ArrayList<>(EFFECTS);
 
         dialog = new ChoiceDialog<>(effects.get(0), effects);
+        ((Stage) dialog.getDialogPane()
+                .getScene()
+                .getWindow())
+                .getIcons()
+                .add(SVGImageUtils.getSvgImage("/icon/icon.svg"));
         dialog.setTitle(ResourceLoader.getStringRes("add_effect_dialog_title"));
         dialog.setHeaderText(ResourceLoader.getStringRes("add_effect_dialog_msg"));
         dialog.setContentText(null);

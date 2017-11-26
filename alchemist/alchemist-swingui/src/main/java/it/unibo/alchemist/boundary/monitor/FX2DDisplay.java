@@ -4,6 +4,7 @@ import it.unibo.alchemist.boundary.interfaces.FX2DOutputMonitor;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.monitor.generic.AbstractFXDisplay;
 import it.unibo.alchemist.boundary.wormhole.implementation.ExponentialZoomManager;
+import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -16,6 +17,10 @@ import java.awt.Point;
  * @param <T> The type which describes the {@link Concentration} of a molecule
  */
 public class FX2DDisplay<T> extends AbstractFXDisplay<T> implements FX2DOutputMonitor<T> {
+    /**
+     * Empiric zoom scale value.
+     */
+    private static final double ZOOM_SCALE = 40.0;
     private ZoomManager zoomManager;
 
     /**
@@ -57,19 +62,24 @@ public class FX2DDisplay<T> extends AbstractFXDisplay<T> implements FX2DOutputMo
     @Override
     public void zoomTo(final Position center, final double zoomLevel) {
         assert center.getDimensions() == 2;
-        getWormhole().zoomOnPoint(getWormhole().getViewPoint(center), zoomLevel);
+        final BidimensionalWormhole wh = getWormhole();
+        if (wh != null) {
+            wh.zoomOnPoint(wh.getViewPoint(center), zoomLevel);
+        }
     }
 
     @Override
     protected void initMouseListener() {
         super.initMouseListener();
         setOnScroll(event -> {
-            if (getWormhole() != null && zoomManager != null) {
-                zoomManager.inc(event.getDeltaY());
+            final BidimensionalWormhole wh = getWormhole();
+            if (wh != null && zoomManager != null) {
+                zoomManager.inc(event.getDeltaY() / ZOOM_SCALE);
                 final int mouseX = (int) event.getX();
                 final int mouseY = (int) event.getY();
-                getWormhole().zoomOnPoint(new Point(mouseX, mouseY), zoomManager.getZoom());
+                wh.zoomOnPoint(new Point(mouseX, mouseY), zoomManager.getZoom());
             }
+            repaint();
             event.consume();
         });
     }

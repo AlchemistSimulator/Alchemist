@@ -127,6 +127,9 @@ public class ButtonsBarController implements Initializable {
         controlType.setOnAction(event -> togglePopover());
     }
 
+    /**
+     * Toggles the {@link PopOver} to change mouse interaction type.
+     */
     private void togglePopover() {
         if (controlTypePopOver.isPresent() && controlTypePopOver.get().isShowing()) {
             controlTypePopOver.get().hide();

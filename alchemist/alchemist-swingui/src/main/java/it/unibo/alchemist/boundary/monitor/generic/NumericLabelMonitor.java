@@ -30,10 +30,7 @@ public abstract class NumericLabelMonitor<N, T> extends Label implements OutputM
      * @param init the initial {@link N} class value
      */
     public NumericLabelMonitor(final @NotNull N init) {
-        this.name = Optional.empty();
-        this.init = Objects.requireNonNull(init);
-        setTextFill(Color.WHITE);
-        setText(init.toString());
+        this(init, null);
     }
 
     /**
@@ -42,9 +39,11 @@ public abstract class NumericLabelMonitor<N, T> extends Label implements OutputM
      * @param init the initial {@link N} class value
      * @param name the name tag
      */
-    public NumericLabelMonitor(final @NotNull N init, final @NotNull String name) {
-        this(init);
+    public NumericLabelMonitor(final @NotNull N init, final @Nullable String name) {
+        this.init = Objects.requireNonNull(init);
         setName(name);
+        setTextFill(Color.WHITE);
+        update(init);
     }
 
     @Override

@@ -1,10 +1,12 @@
 package it.unibo.alchemist.boundary.gui.view.cells;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
+import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
+import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -20,33 +22,32 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import jiconfont.icons.GoogleMaterialDesignIcons;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Abstract class that models a ListView Cell to represent {@link Effect}s or
  * {@link EffectGroup}s.
- * 
- * @param <T>
- *            the generic class that will be inside the cell; it should be
+ *
+ * @param <T> the generic class that will be inside the cell; it should be
  *            {@link Effect} or {@link EffectGroup}
  */
 public abstract class AbstractEffectCell<T> extends ListCell<T> {
-    private static final double DRAG_N_DROP_TARGET_OPACITY = 0.3;
-    private static final String WRONG_POS = "Wrong position specified";
-
     /**
      * Default offset of the first injected node.
      */
     protected static final int DEFAULT_OFFSET = 2;
+    private static final double DRAG_N_DROP_TARGET_OPACITY = 0.3;
+    private static final String WRONG_POS = "Wrong position specified";
     private final GridPane pane;
     private final int injectedNodes;
+    private Optional<FXOutputMonitor> displayMonitor = Optional.empty();
 
     /**
      * Default constructor. The class accepts many nodes that will be injected
      * between the {@link Label} that acts as an handle for Drag'n'Drop and the
      * visibility toggle.
-     * 
-     * @param nodes
-     *            the nodes to inject
+     *
+     * @param nodes the nodes to inject
      */
     public AbstractEffectCell(final Node... nodes) {
         super();
@@ -77,12 +78,29 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
     }
 
     /**
+     * Getter method for the graphical {@link OutputMonitor}.
+     *
+     * @return the graphical {@link OutputMonitor}, if any
+     */
+    protected Optional<FXOutputMonitor> getDisplayMonitor() {
+        return displayMonitor;
+    }
+
+    /**
+     * Setter method for the graphical {@link OutputMonitor}.
+     *
+     * @param displayMonitor the graphical {@link OutputMonitor} to set; if null, it will be {@link Optional#empty() unset}
+     */
+    protected void setDisplayMonitor(final @Nullable FXOutputMonitor displayMonitor) {
+        this.displayMonitor = Optional.ofNullable(displayMonitor);
+    }
+
+    /**
      * This method configures the environment to start drag'n'drop. <br/>
      * This should not be overridden unless you want to change Drag'n'Drop
      * behavior and you now what you are doing.
-     * 
-     * @param event
-     *            the MouseEvent related to long-press on a Node
+     *
+     * @param event the MouseEvent related to long-press on a Node
      */
     protected void startDragNDrop(final MouseEvent event) {
         if (getItem() == null) {
@@ -100,9 +118,8 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
 
     /**
      * This method models the behavior on drag over.
-     * 
-     * @param event
-     *            the drag over DragEvent
+     *
+     * @param event the drag over DragEvent
      */
     private void dragNDropOver(final DragEvent event) {
         if (event.getGestureSource() != this && event.getDragboard().hasContent(getDataFormat())) {
@@ -114,9 +131,8 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
 
     /**
      * This method models the behavior on drag entered.
-     * 
-     * @param event
-     *            the drag entered event
+     *
+     * @param event the drag entered event
      */
     private void dragNDropEntered(final DragEvent event) {
         if (event.getGestureSource() != this && event.getDragboard().hasContent(getDataFormat())) {
@@ -126,9 +142,8 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
 
     /**
      * This method models the behavior on drag exited.
-     * 
-     * @param event
-     *            the drag exited event
+     *
+     * @param event the drag exited event
      */
     private void dragNDropExited(final DragEvent event) {
         if (event.getGestureSource() != this && event.getDragboard().hasContent(getDataFormat())) {
@@ -140,9 +155,8 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
      * This method ends the drag'n'drop action. <br/>
      * This should not be overridden unless you want to change Drag'n'Drop
      * behavior and you now what you are doing.
-     * 
-     * @param event
-     *            the drag'n'drop drop event
+     *
+     * @param event the drag'n'drop drop event
      */
     @SuppressWarnings("unchecked") // The item from the dragboard should be of specified class
     protected void dropDragNDrop(final DragEvent event) {
@@ -151,7 +165,6 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
         }
 
         final Dragboard dragboard = event.getDragboard();
-        boolean success = false;
 
         if (dragboard.hasContent(getDataFormat())) {
             final ObservableList<T> items = getListView().getItems();
@@ -174,23 +187,20 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
 
             final List<T> itemsCopy = new ArrayList<>(getListView().getItems());
             getListView().getItems().setAll(itemsCopy);
-            success = true;
+            event.setDropCompleted(true);
         } else {
             throw new IllegalStateException("No content found in DragBoard");
         }
-        event.setDropCompleted(success);
 
         event.consume();
     }
 
     /**
      * Returns a node in the root of the cell. It considers all the nodes.
-     * 
-     * @param position
-     *            the position of the node considering representation in layout
+     *
+     * @param position the position of the node considering representation in layout
      * @return the specified node
-     * @throws IllegalArgumentException
-     *             if a wrong position is specified
+     * @throws IllegalArgumentException if a wrong position is specified
      */
     protected Node getNodeAt(final int position) {
         if (position < 0) {
@@ -221,12 +231,10 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
     /**
      * Returns a node in the root of the cell. The position is calculated
      * ignoring nodes not injected with constructor
-     * 
-     * @param position
-     *            the position of the node considering order in constructor
+     *
+     * @param position the position of the node considering order in constructor
      * @return the specified node
-     * @throws IllegalArgumentException
-     *             if a wrong position is specified
+     * @throws IllegalArgumentException if a wrong position is specified
      */
     protected Node getInjectedNodeAt(final int position) {
         if (position >= 0 && position < injectedNodes) {
@@ -238,7 +246,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
 
     /**
      * Getter method for the root {@link Pane} of the cell.
-     * 
+     *
      * @return the root pane
      */
     protected Pane getPane() {
@@ -247,7 +255,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
 
     /**
      * Returns the {@link DataFormat} of the object contained in the cell.
-     * 
+     *
      * @return the DataFormat
      */
     protected abstract DataFormat getDataFormat();

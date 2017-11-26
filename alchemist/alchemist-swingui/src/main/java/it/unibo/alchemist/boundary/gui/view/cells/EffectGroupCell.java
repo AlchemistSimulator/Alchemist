@@ -1,25 +1,23 @@
 package it.unibo.alchemist.boundary.gui.view.cells;
 
-import java.io.IOException;
-
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
-import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXToggleButton;
-
 import it.unibo.alchemist.boundary.gui.controller.EffectBarController;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
+import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
+import java.io.IOException;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.DataFormat;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
+import org.jetbrains.annotations.Nullable;
 
 import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRes;
 
@@ -37,21 +35,32 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
 
     /**
      * Default constructor.
-     * 
-     * @param stack
-     *            the stack where to open the effects lists
+     *
+     * @param stack the stack where to open the effects lists
      */
     public EffectGroupCell(final JFXDrawersStack stack) {
         this(DEFAULT_NAME, stack);
     }
 
+    public EffectGroupCell(final @Nullable FXOutputMonitor monitor, final JFXDrawersStack stack) {
+        this(stack);
+        setupDisplayMonitor(monitor);
+    }
+
+    private void setupDisplayMonitor(final @Nullable FXOutputMonitor monitor) {
+        setDisplayMonitor(monitor);
+        getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> this.getDisplayMonitor().ifPresent(d -> {
+            if (!oldValue.equals(newValue)) {
+                d.repaint();
+            }
+        }));
+    }
+
     /**
      * Constructor.
-     * 
-     * @param groupName
-     *            the name of the EffectGroup
-     * @param stack
-     *            the stack where to open the effects lists
+     *
+     * @param groupName the name of the EffectGroup
+     * @param stack     the stack where to open the effects lists
      */
     public EffectGroupCell(final String groupName, final JFXDrawersStack stack) {
         super(new Label(groupName), new JFXToggleButton());
@@ -64,25 +73,26 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
 
         this.getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> this.getItem().setVisibility(newValue));
 
-        this.getLabel().setOnMouseClicked(click -> {
-            if (click.getClickCount() == 2) {
-                final Object source = click.getSource();
-                final Label label;
-
-                if (source instanceof Label) {
-                    label = (Label) source;
-                } else {
-                    throw new IllegalStateException("EventHandler for label rename not associated to a label");
-                }
-
-                final TextInputDialog dialog = new TextInputDialog(label.getText());
-                dialog.setTitle(getStringRes("rename_group_dialog_title"));
-                dialog.setHeaderText(getStringRes("rename_group_dialog_msg"));
-                dialog.setContentText(null);
-
-                dialog.showAndWait().ifPresent(label::setText);
-            }
-        });
+// TODO move away frome here
+//        this.getLabel().setOnMouseClicked(click -> {
+//            if (click.getClickCount() == 2) {
+//                final Object source = click.getSource();
+//                final Label label;
+//
+//                if (source instanceof Label) {
+//                    label = (Label) source;
+//                } else {
+//                    throw new IllegalStateException("EventHandler for label rename not associated to a label");
+//                }
+//
+//                final TextInputDialog dialog = new TextInputDialog(label.getText());
+//                dialog.setTitle(getStringRes("rename_group_dialog_title"));
+//                dialog.setHeaderText(getStringRes("rename_group_dialog_msg"));
+//                dialog.setContentText(null);
+//
+//                dialog.showAndWait().ifPresent(label::setText);
+//            }
+//        });
 
         initDrawer();
 
@@ -101,6 +111,11 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
         });
     }
 
+    public EffectGroupCell(final @Nullable FXOutputMonitor monitor, final String groupName, final JFXDrawersStack stack) {
+        this(groupName, stack);
+        setupDisplayMonitor(monitor);
+    }
+
     /**
      * Initializes a new side {@link JFXDrawer drawer} that represents the
      * {@link EffectGroup} contained in this {@code Cell} and let the user edit
@@ -110,7 +125,11 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
         effectDrawer = new JFXDrawer();
         effectDrawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
 
-        effectBarController = new EffectBarController(this, this.stack, effectDrawer);
+        if (getDisplayMonitor().isPresent()) {
+            effectBarController = new EffectBarController(getDisplayMonitor().get(), this, this.stack, this.effectDrawer);
+        } else {
+            effectBarController = new EffectBarController(this, this.stack, this.effectDrawer);
+        }
 
         try {
             effectDrawer.setSidePane(FXResourceLoader.getLayout(BorderPane.class, effectBarController, EffectBarController.EFFECT_BAR_LAYOUT));
@@ -126,7 +145,7 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
 
     /**
      * Returns the label with the effect name.
-     * 
+     *
      * @return the label
      */
     protected Label getLabel() {
@@ -135,7 +154,7 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
 
     /**
      * Returns the toggle of the visibility.
-     * 
+     *
      * @return the toggle
      */
     protected JFXToggleButton getToggle() {

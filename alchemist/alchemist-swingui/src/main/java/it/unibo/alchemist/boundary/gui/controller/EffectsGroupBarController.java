@@ -9,12 +9,26 @@ import it.unibo.alchemist.boundary.gui.effects.EffectStack;
 import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.cells.EffectGroupCell;
+import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
+import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.FileChooser;
@@ -24,19 +38,12 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.ResourceBundle;
-
 import static it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer.DEFAULT_EXTENSION;
 import static it.unibo.alchemist.boundary.gui.utility.FXResourceLoader.getWhiteIcon;
 import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRes;
-import static jiconfont.icons.GoogleMaterialDesignIcons.*;
+import static jiconfont.icons.GoogleMaterialDesignIcons.ADD;
+import static jiconfont.icons.GoogleMaterialDesignIcons.FOLDER_OPEN;
+import static jiconfont.icons.GoogleMaterialDesignIcons.SAVE;
 
 /**
  * This class models a JavaFX controller for EffectsGroupBar.fxml.
@@ -65,6 +72,7 @@ public class EffectsGroupBarController implements Initializable {
     private ListView<EffectGroup> effectGroupsList; // Value injected by FXMLLoader
     private ObservableList<EffectGroup> observableEffectsList;
     private Optional<String> lastPath;
+    private Optional<FXOutputMonitor> displayMonitor = Optional.empty();
 
     /**
      * Default constructor.
@@ -74,6 +82,29 @@ public class EffectsGroupBarController implements Initializable {
     public EffectsGroupBarController(final JFXDrawersStack stack) {
         this.stack = stack;
         this.lastPath = Optional.empty();
+    }
+
+    public EffectsGroupBarController(final @Nullable FXOutputMonitor displayMonitor, final JFXDrawersStack stack) {
+        this(stack);
+        setDisplayMonitor(displayMonitor);
+    }
+
+    /**
+     * Getter method for the graphical {@link OutputMonitor}.
+     *
+     * @return the graphical {@link OutputMonitor}, if any
+     */
+    public Optional<FXOutputMonitor> getDisplayMonitor() {
+        return displayMonitor;
+    }
+
+    /**
+     * Setter method for the graphical {@link OutputMonitor}.
+     *
+     * @param displayMonitor the graphical {@link OutputMonitor} to set; if null, it will be {@link Optional#empty() unset}
+     */
+    public void setDisplayMonitor(final @Nullable FXOutputMonitor displayMonitor) {
+        this.displayMonitor = Optional.ofNullable(displayMonitor);
     }
 
     @Override
@@ -119,7 +150,13 @@ public class EffectsGroupBarController implements Initializable {
         if (this.observableEffectsList == null) {
             this.observableEffectsList = FXCollections.observableArrayList();
             this.effectGroupsList.setItems(observableEffectsList);
-            this.effectGroupsList.setCellFactory(lv -> new EffectGroupCell(this.stack));
+            this.effectGroupsList.setCellFactory(lv -> {
+                if (getDisplayMonitor().isPresent()) {
+                    return new EffectGroupCell(getDisplayMonitor().get(), this.stack);
+                } else {
+                    return new EffectGroupCell(this.stack);
+                }
+            });
         }
         return this.observableEffectsList;
     }

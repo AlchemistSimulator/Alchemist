@@ -7,6 +7,10 @@ import com.jfoenix.controls.JFXSlider;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
+import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
+import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
+import it.unibo.alchemist.boundary.monitor.PlayPauseMonitor;
+import it.unibo.alchemist.boundary.monitor.generic.NumericLabelMonitor;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
@@ -69,6 +73,7 @@ public class ButtonsBarController implements Initializable {
 
     private EffectsGroupBarController effectsGroupBarController;
     private Optional<PopOver> controlTypePopOver = Optional.empty();
+    private Optional<FXOutputMonitor> displayMonitor = Optional.empty();
 
     /**
      * Default constructor.
@@ -80,11 +85,63 @@ public class ButtonsBarController implements Initializable {
         select = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.TAB_UNSELECTED);
     }
 
+    /**
+     * Same as {@link #ButtonsBarController() default constructor}, but lets specify an {@link OutputMonitor} to display the effects.
+     * <p>
+     * Useful to pass to {@link EffectsGroupBarController}, {@link EffectBarController} and {@link EffectPropertiesController}.
+     *
+     * @param displayMonitor the graphical {@code OutputMonitor}
+     */
+    public ButtonsBarController(final @Nullable FXOutputMonitor displayMonitor) {
+        this();
+        setDisplayMonitor(displayMonitor);
+    }
+
+    /**
+     * Same as {@link #ButtonsBarController() default constructor}, but lets specify the play/pause {@link Button}, a {@link Label} for the steps and a {@link Label} for the time.
+     *
+     * @param playPauseButton the play/pause {@code Button}; should probably be a {@link PlayPauseMonitor}
+     * @param timeLabel       the {@code Label} for the steps; should probably be a {@link NumericLabelMonitor}
+     * @param stepLabel       the {@code Label} for the time; should probably be a {@link NumericLabelMonitor}
+     */
     public ButtonsBarController(final Button playPauseButton, final Label timeLabel, final Label stepLabel) {
         this();
         setStartStopButton(playPauseButton);
         setTimeMonitor(timeLabel);
         setStepMonitor(stepLabel);
+    }
+
+    /**
+     * Same as {@link #ButtonsBarController() default constructor}, but lets specify an {@link OutputMonitor} to display the effects, the play/pause {@link Button}, a {@link Label} for the steps and a {@link Label} for the time.
+     * <p>
+     * Useful to pass to {@link EffectsGroupBarController}, {@link EffectBarController} and {@link EffectPropertiesController}.
+     *
+     * @param displayMonitor  the graphical {@link OutputMonitor}
+     * @param playPauseButton the play/pause {@code Button}; should probably be a {@link PlayPauseMonitor}
+     * @param timeLabel       the {@code Label} for the steps; should probably be a {@link NumericLabelMonitor}
+     * @param stepLabel       the {@code Label} for the time; should probably be a {@link NumericLabelMonitor}
+     */
+    public ButtonsBarController(final @Nullable FXOutputMonitor displayMonitor, final Button playPauseButton, final Label timeLabel, final Label stepLabel) {
+        this(playPauseButton, timeLabel, stepLabel);
+        setDisplayMonitor(displayMonitor);
+    }
+
+    /**
+     * Getter method for the graphical {@link OutputMonitor}.
+     *
+     * @return the graphical {@link OutputMonitor}, if any
+     */
+    public Optional<FXOutputMonitor> getDisplayMonitor() {
+        return displayMonitor;
+    }
+
+    /**
+     * Setter method for the graphical {@link OutputMonitor}.
+     *
+     * @param displayMonitor the graphical {@link OutputMonitor} to set; if null, it will be {@link Optional#empty() unset}
+     */
+    public void setDisplayMonitor(final @Nullable FXOutputMonitor displayMonitor) {
+        this.displayMonitor = Optional.ofNullable(displayMonitor);
     }
 
     @Override
@@ -99,7 +156,7 @@ public class ButtonsBarController implements Initializable {
         addMonitors();
 
         final JFXDrawer effectGroupsDrawer = new JFXDrawer();
-        effectsGroupBarController = new EffectsGroupBarController(this.drawerStack);
+        effectsGroupBarController = new EffectsGroupBarController(getDisplayMonitor().get(), this.drawerStack);
         effectGroupsDrawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
         try {
             effectGroupsDrawer.setSidePane(FXResourceLoader.getLayout(BorderPane.class, effectsGroupBarController,

@@ -13,7 +13,6 @@ import it.unibo.alchemist.boundary.monitor.FXTimeMonitor;
 import it.unibo.alchemist.boundary.monitor.PlayPauseMonitor;
 import it.unibo.alchemist.boundary.monitor.generic.AbstractFXDisplay;
 import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.core.interfaces.Status;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import java.io.File;
@@ -236,7 +235,7 @@ public class SingleRunApp<T> extends Application {
 //                }
 //            });
             });
-            final ButtonsBarController buttonsBarController = new ButtonsBarController(playPauseMonitor, timeMonitor, stepMonitor);
+            final ButtonsBarController buttonsBarController = new ButtonsBarController(displayMonitor, playPauseMonitor, timeMonitor, stepMonitor);
 
             final BorderPane bar = FXResourceLoader.getLayout(BorderPane.class, buttonsBarController, BUTTONS_BAR_LAYOUT);
             bar.setPickOnBounds(false);

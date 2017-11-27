@@ -12,6 +12,9 @@ import javafx.scene.image.Image;
  * install a SVG loader and return a SVG image.
  */
 public final class SVGImageUtils {
+    /**
+     * Default Alchemist icon path.
+     */
     public static final String DEFAULT_ALCHEMIST_ICON_PATH = "/icon/icon.svg";
 
     /**

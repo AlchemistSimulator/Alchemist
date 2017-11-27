@@ -42,7 +42,7 @@ public class EffectBuilderFX {
                 .getScene()
                 .getWindow())
                 .getIcons()
-                .add(SVGImageUtils.getSvgImage("/icon/icon.svg"));
+                .add(SVGImageUtils.getSvgImage(SVGImageUtils.DEFAULT_ALCHEMIST_ICON_PATH));
         dialog.setTitle(ResourceLoader.getStringRes("add_effect_dialog_title"));
         dialog.setHeaderText(ResourceLoader.getStringRes("add_effect_dialog_msg"));
         dialog.setContentText(null);

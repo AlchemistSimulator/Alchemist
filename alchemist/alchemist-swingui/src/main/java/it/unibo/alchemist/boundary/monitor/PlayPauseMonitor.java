@@ -2,6 +2,7 @@ package it.unibo.alchemist.boundary.monitor;
 
 import com.jfoenix.controls.JFXButton;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
+import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
@@ -9,16 +10,18 @@ import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
-import javafx.application.Platform;
-import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import jiconfont.icons.GoogleMaterialDesignIcons;
-import jiconfont.javafx.IconNode;
-import org.jetbrains.annotations.Nullable;
-
 import java.lang.ref.WeakReference;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import javafx.application.Platform;
+import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.DialogPane;
+import javafx.scene.layout.Region;
+import javafx.stage.Stage;
+import jiconfont.icons.GoogleMaterialDesignIcons;
+import jiconfont.javafx.IconNode;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * {@code OutputMonitor} that monitors the current {@link Status status} of the {@code Simulation}, acting as a toggle to
@@ -149,6 +152,13 @@ public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
                             + (System.currentTimeMillis() - t)
                             + "ms, current simulation status is "
                             + currentStatus);
+                    final DialogPane dialogPane = alert.getDialogPane();
+                    dialogPane.setMinHeight(Region.USE_PREF_SIZE);
+                    ((Stage) dialogPane
+                            .getScene()
+                            .getWindow())
+                            .getIcons()
+                            .add(SVGImageUtils.getSvgImage(SVGImageUtils.DEFAULT_ALCHEMIST_ICON_PATH));
                     alert.show();
                 }
             }

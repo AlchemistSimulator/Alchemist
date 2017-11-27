@@ -144,7 +144,7 @@ public class EffectBarController implements Initializable {
                         .getScene()
                         .getWindow())
                         .getIcons()
-                        .add(SVGImageUtils.getSvgImage("/icon/icon.svg"));
+                        .add(SVGImageUtils.getSvgImage(SVGImageUtils.DEFAULT_ALCHEMIST_ICON_PATH));
 
                 dialog.showAndWait().ifPresent(s -> Platform.runLater(() -> label.setText(s)));
             }

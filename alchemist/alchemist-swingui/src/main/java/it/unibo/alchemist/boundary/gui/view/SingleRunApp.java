@@ -254,7 +254,7 @@ public class SingleRunApp<T> extends Application {
                 Platform.exit();
                 System.exit(0);
             });
-            primaryStage.getIcons().add(SVGImageUtils.getSvgImage("/icon/icon.svg"));
+            primaryStage.getIcons().add(SVGImageUtils.getSvgImage(SVGImageUtils.DEFAULT_ALCHEMIST_ICON_PATH));
             final Scene scene = new Scene(rootLayout);
             initKeybindings(scene);
             primaryStage.setScene(scene);

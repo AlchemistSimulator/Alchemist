@@ -9,6 +9,7 @@ import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
+import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import java.io.IOException;
 import javafx.scene.control.Label;
 import javafx.scene.input.DataFormat;
@@ -44,27 +45,6 @@ public class EffectCell extends AbstractEffectCell<EffectFX> {
 
         this.getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> this.getItem().setVisibility(newValue));
 
-// TODO move away frome here
-//        this.getLabel().setOnMouseClicked(click -> {
-//            if (click.getClickCount() == 2) {
-//                final Object source = click.getSource();
-//                final Label label;
-//
-//                if (source instanceof Label) {
-//                    label = (Label) source;
-//                } else {
-//                    throw new IllegalStateException("EventHandler for label rename not associated to a label");
-//                }
-//
-//                final TextInputDialog dialog = new TextInputDialog(label.getText());
-//                dialog.setTitle(ResourceLoader.getStringRes("rename_effect_dialog_title"));
-//                dialog.setHeaderText(ResourceLoader.getStringRes("rename_effect_dialog_msg"));
-//                dialog.setContentText(null);
-//
-//                dialog.showAndWait().ifPresent(label::setText);
-//            }
-//        });
-
         final JFXDrawer propertiesDrawer = new JFXDrawer();
         propertiesDrawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
 
@@ -77,7 +57,7 @@ public class EffectCell extends AbstractEffectCell<EffectFX> {
             try {
                 propertiesDrawer.setSidePane(FXResourceLoader.getLayout(BorderPane.class, propertiesController,
                         EffectPropertiesController.EFFECT_PROPERTIES_LAYOUT));
-                propertiesController.effectNameProperty().bind(this.getLabel().textProperty());
+                propertiesController.effectNameProperty().bindBidirectional(this.getLabel().textProperty());
             } catch (IOException e) {
                 throw new IllegalStateException(
                         "Could not initialize side pane for properties of effect " + this.getItem().toString() + ": ", e);
@@ -94,11 +74,24 @@ public class EffectCell extends AbstractEffectCell<EffectFX> {
         });
     }
 
+    /**
+     * Constructor.
+     *
+     * @param monitor the graphical {@link OutputMonitor}
+     * @param stack   the stack where to open the effect properties
+     */
     public EffectCell(final @Nullable FXOutputMonitor monitor, final JFXDrawersStack stack) {
         this(stack);
         setupDisplayMonitor(monitor);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param monitor    the graphical {@link OutputMonitor}
+     * @param effectName the name of the effect
+     * @param stack      the stack where to open the effect properties
+     */
     public EffectCell(final @Nullable FXOutputMonitor monitor, final String effectName, final JFXDrawersStack stack) {
         this(effectName, stack);
         setupDisplayMonitor(monitor);
@@ -113,6 +106,11 @@ public class EffectCell extends AbstractEffectCell<EffectFX> {
         this(DEFAULT_NAME, stack);
     }
 
+    /**
+     * Configures the graphical {@link OutputMonitor}.
+     *
+     * @param monitor the graphical {@link OutputMonitor}
+     */
     private void setupDisplayMonitor(final @Nullable FXOutputMonitor monitor) {
         setDisplayMonitor(monitor);
         getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> this.getDisplayMonitor().ifPresent(d -> {
@@ -160,8 +158,6 @@ public class EffectCell extends AbstractEffectCell<EffectFX> {
         } else {
             this.getLabel().setText(item.getName());
             this.getToggle().setSelected(item.isVisible());
-
-            // TODO check priority
         }
     }
 

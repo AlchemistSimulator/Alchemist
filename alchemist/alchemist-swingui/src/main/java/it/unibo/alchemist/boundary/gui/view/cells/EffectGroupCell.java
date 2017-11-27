@@ -9,6 +9,7 @@ import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
+import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import java.io.IOException;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -42,18 +43,15 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
         this(DEFAULT_NAME, stack);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param monitor the graphical {@link OutputMonitor}
+     * @param stack   the stack where to open the effects lists
+     */
     public EffectGroupCell(final @Nullable FXOutputMonitor monitor, final JFXDrawersStack stack) {
         this(stack);
         setupDisplayMonitor(monitor);
-    }
-
-    private void setupDisplayMonitor(final @Nullable FXOutputMonitor monitor) {
-        setDisplayMonitor(monitor);
-        getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> this.getDisplayMonitor().ifPresent(d -> {
-            if (!oldValue.equals(newValue)) {
-                d.repaint();
-            }
-        }));
     }
 
     /**
@@ -73,27 +71,6 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
 
         this.getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> this.getItem().setVisibility(newValue));
 
-// TODO move away frome here
-//        this.getLabel().setOnMouseClicked(click -> {
-//            if (click.getClickCount() == 2) {
-//                final Object source = click.getSource();
-//                final Label label;
-//
-//                if (source instanceof Label) {
-//                    label = (Label) source;
-//                } else {
-//                    throw new IllegalStateException("EventHandler for label rename not associated to a label");
-//                }
-//
-//                final TextInputDialog dialog = new TextInputDialog(label.getText());
-//                dialog.setTitle(getStringRes("rename_group_dialog_title"));
-//                dialog.setHeaderText(getStringRes("rename_group_dialog_msg"));
-//                dialog.setContentText(null);
-//
-//                dialog.showAndWait().ifPresent(label::setText);
-//            }
-//        });
-
         initDrawer();
 
         this.getPane().setOnMouseClicked(event -> {
@@ -111,9 +88,30 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
         });
     }
 
+    /**
+     * Constructor.
+     *
+     * @param monitor   the graphical {@link OutputMonitor}
+     * @param groupName the name of the EffectGroup
+     * @param stack     the stack where to open the effects lists
+     */
     public EffectGroupCell(final @Nullable FXOutputMonitor monitor, final String groupName, final JFXDrawersStack stack) {
         this(groupName, stack);
         setupDisplayMonitor(monitor);
+    }
+
+    /**
+     * Configures the graphical {@link OutputMonitor}.
+     *
+     * @param monitor the graphical {@link OutputMonitor}
+     */
+    private void setupDisplayMonitor(final @Nullable FXOutputMonitor monitor) {
+        setDisplayMonitor(monitor);
+        getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> this.getDisplayMonitor().ifPresent(d -> {
+            if (!oldValue.equals(newValue)) {
+                d.repaint();
+            }
+        }));
     }
 
     /**
@@ -137,7 +135,7 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
             throw new IllegalStateException("Could not initialize side pane for effects", e);
         }
 
-        effectBarController.groupNameProperty().bind(this.getLabel().textProperty());
+        effectBarController.groupNameProperty().bindBidirectional(this.getLabel().textProperty());
 
         effectDrawer.setOverLayVisible(false);
         effectDrawer.setResizableOnDrag(false);

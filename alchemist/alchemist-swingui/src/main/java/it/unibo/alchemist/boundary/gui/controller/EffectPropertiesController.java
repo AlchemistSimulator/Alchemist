@@ -7,6 +7,7 @@ import com.jfoenix.controls.JFXSlider;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
+import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedIntegerProperty;
 import it.unibo.alchemist.boundary.gui.view.properties.SerializableBooleanProperty;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.StringProperty;
@@ -28,18 +30,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
 import jiconfont.icons.GoogleMaterialDesignIcons;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.jetbrains.annotations.Nullable;
@@ -137,6 +132,31 @@ public class EffectPropertiesController implements Initializable {
         this.backToEffects.setText("");
         this.backToEffects.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.ARROW_BACK));
         this.backToEffects.setOnAction(e -> this.stack.toggle(thisDrawer));
+
+        this.effectName.setOnMouseClicked(click -> {
+            if (click.getClickCount() == 2) {
+                final Object source = click.getSource();
+                final Label label;
+
+                if (source instanceof Label) {
+                    label = (Label) source;
+                } else {
+                    throw new IllegalStateException("EventHandler for label rename not associated to a label");
+                }
+
+                final TextInputDialog dialog = new TextInputDialog(label.getText());
+                dialog.setTitle(ResourceLoader.getStringRes("rename_effect_dialog_title"));
+                dialog.setHeaderText(ResourceLoader.getStringRes("rename_effect_dialog_msg"));
+                dialog.setContentText(null);
+                ((Stage) dialog.getDialogPane()
+                        .getScene()
+                        .getWindow())
+                        .getIcons()
+                        .add(SVGImageUtils.getSvgImage("/icon/icon.svg"));
+
+                dialog.showAndWait().ifPresent(s -> Platform.runLater(() -> label.setText(s)));
+            }
+        });
     }
 
     /**

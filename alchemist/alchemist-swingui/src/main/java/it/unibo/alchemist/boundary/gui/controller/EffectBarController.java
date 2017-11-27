@@ -7,6 +7,7 @@ import it.unibo.alchemist.boundary.gui.effects.EffectBuilderFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
+import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.gui.view.cells.EffectCell;
 import it.unibo.alchemist.boundary.gui.view.cells.EffectGroupCell;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
@@ -14,6 +15,7 @@ import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -22,8 +24,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextInputDialog;
+import javafx.stage.Stage;
 import jiconfont.icons.GoogleMaterialDesignIcons;
 import org.jetbrains.annotations.Nullable;
+
+import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRes;
 
 /**
  * This class models a JavaFX controller for EffectBar.fxml.
@@ -67,6 +73,16 @@ public class EffectBarController implements Initializable {
         this.parentCell = parentCell;
     }
 
+    /**
+     * Constructor.
+     *
+     * @param displayMonitor the graphical {@link OutputMonitor}
+     * @param parentCell     the cell that {@link EffectGroupCell} that will open this
+     *                       drawer
+     * @param stack          the stack where to open the effect properties
+     * @param thisDrawer     the drawer the layout this controller is assigned to is loaded
+     *                       into
+     */
     public EffectBarController(final @Nullable FXOutputMonitor displayMonitor, final EffectGroupCell parentCell, final JFXDrawersStack stack, final JFXDrawer thisDrawer) {
         this(parentCell, stack, thisDrawer);
         setDisplayMonitor(displayMonitor);
@@ -108,6 +124,31 @@ public class EffectBarController implements Initializable {
         this.addEffect.setOnAction(e -> addEffectToList());
 
         this.backToGroups.setOnAction(e -> this.stack.toggle(thisDrawer));
+
+        this.groupName.setOnMouseClicked(click -> {
+            if (click.getClickCount() == 2) {
+                final Object source = click.getSource();
+                final Label label;
+
+                if (source instanceof Label) {
+                    label = (Label) source;
+                } else {
+                    throw new IllegalStateException("EventHandler for label rename not associated to a label");
+                }
+
+                final TextInputDialog dialog = new TextInputDialog(label.getText());
+                dialog.setTitle(getStringRes("rename_group_dialog_title"));
+                dialog.setHeaderText(getStringRes("rename_group_dialog_msg"));
+                dialog.setContentText(null);
+                ((Stage) dialog.getDialogPane()
+                        .getScene()
+                        .getWindow())
+                        .getIcons()
+                        .add(SVGImageUtils.getSvgImage("/icon/icon.svg"));
+
+                dialog.showAndWait().ifPresent(s -> Platform.runLater(() -> label.setText(s)));
+            }
+        });
     }
 
     /**

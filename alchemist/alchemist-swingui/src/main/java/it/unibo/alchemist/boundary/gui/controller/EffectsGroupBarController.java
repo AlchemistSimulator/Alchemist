@@ -84,6 +84,12 @@ public class EffectsGroupBarController implements Initializable {
         this.lastPath = Optional.empty();
     }
 
+    /**
+     * Constructor.
+     *
+     * @param displayMonitor the graphical {@link OutputMonitor}
+     * @param stack          the stack where to open the effects lists
+     */
     public EffectsGroupBarController(final @Nullable FXOutputMonitor displayMonitor, final JFXDrawersStack stack) {
         this(stack);
         setDisplayMonitor(displayMonitor);

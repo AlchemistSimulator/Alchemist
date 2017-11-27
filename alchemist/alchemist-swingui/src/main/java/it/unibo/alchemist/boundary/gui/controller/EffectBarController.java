@@ -21,6 +21,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -42,6 +43,9 @@ public class EffectBarController implements Initializable {
     private final JFXDrawersStack stack;
     private final JFXDrawer thisDrawer;
     private final EffectGroupCell parentCell;
+    @FXML
+    @Nullable
+    private ButtonBar topBar; // Value injected by FXMLLoader
     @FXML
     @Nullable
     private JFXButton addEffect;
@@ -108,6 +112,7 @@ public class EffectBarController implements Initializable {
 
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
+        assert topBar != null : FXResourceLoader.getInjectionErrorMessage("topBar", EFFECT_BAR_LAYOUT);
         assert addEffect != null : FXResourceLoader.getInjectionErrorMessage("add", EFFECT_BAR_LAYOUT);
         assert effectsList != null : FXResourceLoader.getInjectionErrorMessage("effectsList", EFFECT_BAR_LAYOUT);
         assert groupName != null : FXResourceLoader.getInjectionErrorMessage("groupName", EFFECT_BAR_LAYOUT);
@@ -149,6 +154,8 @@ public class EffectBarController implements Initializable {
                 dialog.showAndWait().ifPresent(s -> Platform.runLater(() -> label.setText(s)));
             }
         });
+
+        this.topBar.widthProperty().addListener((observable, oldValue, newValue) -> this.groupName.setPrefWidth(newValue.doubleValue()));
     }
 
     /**

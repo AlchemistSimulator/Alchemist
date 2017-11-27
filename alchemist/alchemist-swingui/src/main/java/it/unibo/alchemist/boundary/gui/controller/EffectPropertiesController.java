@@ -157,6 +157,7 @@ public class EffectPropertiesController implements Initializable {
                 dialog.showAndWait().ifPresent(s -> Platform.runLater(() -> label.setText(s)));
             }
         });
+        this.topBar.widthProperty().addListener((observable, oldValue, newValue) -> this.effectName.setPrefWidth(newValue.doubleValue()));
     }
 
     /**

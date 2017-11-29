@@ -32,7 +32,7 @@ public class DrawLinks extends AbstractEffect {
     /**
      * Default dot size.
      */
-    private static final double DEFAULT_SIZE = 1;
+    private static final double DEFAULT_SIZE = 0.15;
 
     /**
      * Default {@code Color}.

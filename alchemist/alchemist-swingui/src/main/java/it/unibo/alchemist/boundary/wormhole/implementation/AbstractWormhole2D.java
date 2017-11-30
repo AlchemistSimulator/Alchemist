@@ -1,18 +1,19 @@
 package it.unibo.alchemist.boundary.wormhole.implementation;
 
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
-import it.unibo.alchemist.boundary.wormhole.interfaces.ViewType;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position;
-import org.jooq.lambda.tuple.Tuple2;
-import org.slf4j.Logger;
+import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
 
-import java.awt.*;
+import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 
-import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
+import org.jooq.lambda.tuple.Tuple2;
+import org.slf4j.Logger;
+
+import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
+import it.unibo.alchemist.boundary.wormhole.interfaces.ViewType;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * Partial, abstract, implementation for the interface {@link BidimensionalWormhole}.

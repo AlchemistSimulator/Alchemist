@@ -14,7 +14,7 @@ package it.unibo.alchemist.boundary.wormhole.interfaces;
  * <code>double</code> value that represents an angle.
  *
  */
-public interface AngleManager extends ISlideInputManager {
+public interface AngleManager extends SlideInputManager {
     /**
      * Gets the angle.
      * 

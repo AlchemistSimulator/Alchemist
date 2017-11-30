@@ -1,17 +1,18 @@
 package it.unibo.alchemist.boundary.gui.view;
 
-import com.sun.javafx.application.PlatformImpl;
-import it.unibo.alchemist.boundary.gui.effects.EffectFX;
-import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
-import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
-import it.unibo.alchemist.core.interfaces.Simulation;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
+
+import it.unibo.alchemist.boundary.gui.effects.EffectFX;
+import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
+import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
+import it.unibo.alchemist.core.interfaces.Simulation;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
 import javafx.stage.Stage;
 
 /**
@@ -140,7 +141,8 @@ public class SingleRunAppBuilder<T> {
     private boolean startJFXThread() {
         try {
             // Starts JavaFX thread, if necessary
-            PlatformImpl.startup(() -> { }); // TODO check if could avoid internal APIs
+            // PlatformImpl.startup(() -> { });
+            new JFXPanel(); // To avoid internal APIs in line above, use this to start JavaFX thread
             return false;
         } catch (final IllegalStateException e) {
             return true;

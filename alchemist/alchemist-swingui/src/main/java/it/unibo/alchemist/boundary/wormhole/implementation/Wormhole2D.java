@@ -1,17 +1,18 @@
 package it.unibo.alchemist.boundary.wormhole.implementation;
 
+import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
+
+import java.awt.Component;
+
+import org.jooq.lambda.tuple.Tuple2;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import it.unibo.alchemist.boundary.wormhole.implementation.adapter.ComponentViewType;
 import it.unibo.alchemist.boundary.wormhole.implementation.adapter.NodeViewType;
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.model.interfaces.Environment;
 import javafx.scene.Node;
-import org.jooq.lambda.tuple.Tuple2;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.awt.*;
-
-import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
 
 /**
  * Partial implementation for the interface {@link BidimensionalWormhole} for a {@link Node JavaFX view}.

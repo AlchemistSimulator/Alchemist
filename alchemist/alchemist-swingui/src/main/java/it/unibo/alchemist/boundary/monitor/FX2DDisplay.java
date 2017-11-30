@@ -1,7 +1,6 @@
 package it.unibo.alchemist.boundary.monitor;
 
 import it.unibo.alchemist.boundary.interfaces.FX2DOutputMonitor;
-import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.monitor.generic.AbstractFXDisplay;
 import it.unibo.alchemist.boundary.wormhole.implementation.ExponentialZoomManager;
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
@@ -18,10 +17,14 @@ import java.awt.Point;
  */
 public class FX2DDisplay<T> extends AbstractFXDisplay<T> implements FX2DOutputMonitor<T> {
     /**
+     * Default serial version UID.
+     */
+    private static final long serialVersionUID = 1L;
+    /**
      * Empiric zoom scale value.
      */
     private static final double ZOOM_SCALE = 40.0;
-    private ZoomManager zoomManager;
+    private transient ZoomManager zoomManager;
 
     /**
      * Default constructor. The number of steps is set to default ({@value #DEFAULT_NUMBER_OF_STEPS}).
@@ -56,7 +59,10 @@ public class FX2DDisplay<T> extends AbstractFXDisplay<T> implements FX2DOutputMo
      */
     protected void setZoomManager(final ZoomManager zoomManager) {
         this.zoomManager = zoomManager;
-        getWormhole().setZoom(zoomManager.getZoom());
+        final BidimensionalWormhole wh = getWormhole();
+        if (wh != null) {
+            wh.setZoom(zoomManager.getZoom());
+        }
     }
 
     @Override

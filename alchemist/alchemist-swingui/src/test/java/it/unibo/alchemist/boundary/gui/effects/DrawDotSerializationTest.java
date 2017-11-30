@@ -1,11 +1,17 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.boundary.gui.effects.json.AbstractEffectSerializationTest;
-import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.*;
+import it.unibo.alchemist.boundary.gui.effects.json.AbstractEffectSerializationTest;
+import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
 
 /**
  * JUint test for {@link DrawDot} effect serialization.

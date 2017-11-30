@@ -1,9 +1,23 @@
 package it.unibo.alchemist.boundary.gui.controller;
 
+import java.lang.reflect.Field;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
 import com.jfoenix.controls.JFXSlider;
+
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
@@ -13,13 +27,6 @@ import it.unibo.alchemist.boundary.gui.view.properties.RangedIntegerProperty;
 import it.unibo.alchemist.boundary.gui.view.properties.SerializableBooleanProperty;
 import it.unibo.alchemist.boundary.gui.view.properties.SerializableEnumProperty;
 import it.unibo.alchemist.boundary.gui.view.properties.SerializableStringProperty;
-import java.lang.reflect.Field;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.Property;
@@ -30,16 +37,21 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import jiconfont.icons.GoogleMaterialDesignIcons;
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class models a JavaFX controller for EffectProperties.fxml.
@@ -300,7 +312,7 @@ public class EffectPropertiesController implements Initializable {
      * @return the {@code Label} with the name
      * @see #buildLabel(String)
      */
-    private Label buildLabel(final Property namedProperty) {
+    private Label buildLabel(final Property<?> namedProperty) {
         return buildLabel(namedProperty.getName());
     }
 
@@ -308,6 +320,7 @@ public class EffectPropertiesController implements Initializable {
      * Shows a {@link Label} that tell the user that there is nothing to tune in that effect.
      */
     private void showNothing() {
+        assert mainBox != null;
         L.debug("Effect " + effect.toString() + " does not have tunable properties");
         final Label nothingHere = new Label(ResourceLoader.getStringRes("nothing_to_tune"));
         nothingHere.setTextAlignment(TextAlignment.CENTER);

@@ -1,5 +1,21 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
+import java.awt.Point;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InvalidClassException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OptionalDataException;
+import java.io.Serializable;
+import java.io.StreamCorruptedException;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Collectors;
+
+import org.danilopianini.util.Hashes;
+
 import it.unibo.alchemist.boundary.CommandQueueBuilder;
 import it.unibo.alchemist.boundary.DrawCommand;
 import it.unibo.alchemist.boundary.gui.effects.json.ColorSerializationAdapter;
@@ -11,13 +27,6 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.paint.Color;
-import org.danilopianini.util.Hashes;
-
-import java.awt.*;
-import java.io.*;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.stream.Collectors;
 
 
 /**

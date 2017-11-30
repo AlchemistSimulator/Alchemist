@@ -75,7 +75,7 @@ public interface FXOutputMonitor<T> extends OutputMonitor<T> {
      * @param effects the {@link EffectGroup}s to draw
      * @see Collection#addAll(Collection)
      */
-    void addEffects(final Collection<EffectGroup> effects);
+    void addEffects(Collection<EffectGroup> effects);
 
     /**
      * Add the {@link EffectGroup} in the collection to the {@link EffectFX Effects} to draw.
@@ -83,5 +83,37 @@ public interface FXOutputMonitor<T> extends OutputMonitor<T> {
      * @param effects the {@link EffectGroup} to draw
      * @see Collection#add(Object)
      */
-    void addEffectGroup(final EffectGroup effects);
+    void addEffectGroup(EffectGroup effects);
+
+    /**
+     * Getter method for the current view status.
+     *
+     * @return the current {@code ViewStatus}
+     */
+    ViewStatus getViewStatus();
+
+    /**
+     * Setter method for the current view status.
+     *
+     * @param viewStatus the {@code ViewStatus} to set
+     */
+    void setViewStatus(ViewStatus viewStatus);
+
+    /**
+     * The enum models the status of the view.
+     */
+    enum ViewStatus {
+        /** In this status, click and drag to select nodes. */
+        SELECTING,
+        /** In this status, click and drag to move selected nodes. */
+        MOVING,
+        /** In this status, click to clone nodes. */
+        CLONING,
+        /** In this status, click to delete nodes. */
+        DELETING,
+        /** In this status, click to open editor to modify node properties. */
+        EDITING,
+        /** In this status, click and drag to move the view. */
+        PAN
+    }
 }

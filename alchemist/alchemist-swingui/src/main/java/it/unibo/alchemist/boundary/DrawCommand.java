@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 public interface DrawCommand extends BiConsumer<GraphicsContext, BidimensionalWormhole> {
 
     /**
-     * The method consumes a graphic and a wormhole to draw something
+     * The method consumes a graphic and a wormhole to draw something.
      *
      * @param graphic  the {@link GraphicsContext} of a JavaFX {@link Canvas}
      * @param wormhole the {@link BidimensionalWormhole Wormhole} that maps {@link Environment} {@link Position positions} to GUI positions

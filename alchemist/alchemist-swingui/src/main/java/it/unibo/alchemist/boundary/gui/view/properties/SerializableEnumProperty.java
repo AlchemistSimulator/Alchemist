@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+import org.danilopianini.util.Hashes;
+
 import javafx.beans.property.ObjectPropertyBase;
 import javafx.beans.property.Property;
 
@@ -17,8 +19,8 @@ import javafx.beans.property.Property;
  *            the enumeration wrapped
  */
 public class SerializableEnumProperty<T extends Enum<T>> extends ObjectPropertyBase<T> implements Serializable {
-    /** Generated Serial Version UID. */
-    private static final long serialVersionUID = -954058739144566791L;
+    /** Default Serial Version UID. */
+    private static final long serialVersionUID = 1L;
     private String name;
 
     /**
@@ -157,11 +159,7 @@ public class SerializableEnumProperty<T extends Enum<T>> extends ObjectPropertyB
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((this.getValue() == null) ? 0 : this.getValue().hashCode());
-        result = prime * result + ((this.getName() == null) ? 0 : this.getName().hashCode());
-        return result;
+        return Hashes.hash32(getValue(), getName());
     }
 
     @Override

@@ -1,19 +1,6 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.boundary.CommandQueueBuilder;
-import it.unibo.alchemist.boundary.DrawCommand;
-import it.unibo.alchemist.boundary.gui.effects.json.ColorSerializationAdapter;
-import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
-import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
-import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
-import javafx.beans.property.DoubleProperty;
-import javafx.scene.paint.Color;
-import org.danilopianini.util.Hashes;
-
-import java.awt.*;
+import java.awt.Point;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -22,7 +9,32 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import org.danilopianini.util.Hashes;
+
+import it.unibo.alchemist.boundary.CommandQueueBuilder;
+import it.unibo.alchemist.boundary.DrawCommand;
+import it.unibo.alchemist.boundary.gui.effects.json.ColorSerializationAdapter;
+import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
+import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
+import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Neighborhood;
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
+import javafx.beans.property.DoubleProperty;
+import javafx.scene.paint.Color;
+
+/**
+ * Simple effect that draws a {@link Color#BLACK black} line for each
+ * {@link Node} in a {@link Neighborhood}.
+ * <p>
+ * It's possible to set the size of the dots.
+ */
 public class DrawLinks extends AbstractEffect {
+    /**
+     * Default serial version UID.
+     */
+    private static final long serialVersionUID = 1L;
 
     /**
      * Default effect name.

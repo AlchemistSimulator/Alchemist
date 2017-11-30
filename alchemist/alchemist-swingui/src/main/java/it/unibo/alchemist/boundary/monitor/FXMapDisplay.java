@@ -2,10 +2,9 @@ package it.unibo.alchemist.boundary.monitor;
 
 import it.unibo.alchemist.boundary.interfaces.FX2DOutputMonitor;
 import it.unibo.alchemist.boundary.monitor.generic.AbstractFXDisplay;
+import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Position;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Simple implementation of a monitor that graphically represents a simulation on a 2D map.
@@ -14,9 +13,10 @@ import org.slf4j.LoggerFactory;
  */
 public class FXMapDisplay<T> extends AbstractFXDisplay<T> implements FX2DOutputMonitor<T> {
     /**
-     * Default logger for this class. It hides {@link AbstractFXDisplay}'s one.
+     * Default serial version UID.
      */
-    private static final Logger L = LoggerFactory.getLogger(FXMapDisplay.class);
+    private static final long serialVersionUID = 1L;
+
     // TODO
     // TODO
     // TODO
@@ -44,6 +44,9 @@ public class FXMapDisplay<T> extends AbstractFXDisplay<T> implements FX2DOutputM
     @Override
     public void zoomTo(final Position center, final double zoomLevel) {
         assert center.getDimensions() == 2;
-        getWormhole().zoomOnPoint(getWormhole().getViewPoint(center), zoomLevel);
+        final BidimensionalWormhole wh = getWormhole();
+        if (wh != null) {
+            wh.zoomOnPoint(wh.getViewPoint(center), zoomLevel);
+        }
     }
 }

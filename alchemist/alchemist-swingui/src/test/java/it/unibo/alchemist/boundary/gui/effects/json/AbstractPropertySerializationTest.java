@@ -9,7 +9,6 @@ import org.junit.rules.TemporaryFolder;
 
 import com.google.gson.Gson;
 
-import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
 import javafx.beans.property.Property;
 
 /**

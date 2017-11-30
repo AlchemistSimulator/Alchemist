@@ -1,14 +1,23 @@
 package it.unibo.alchemist.boundary.gui.effects.json;
 
-import com.google.gson.*;
-import javafx.scene.paint.Color;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Type;
+
+import org.jetbrains.annotations.NotNull;
+
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+
+import javafx.scene.paint.Color;
 
 /**
  * This class should be registered in a {@link GsonBuilder} to

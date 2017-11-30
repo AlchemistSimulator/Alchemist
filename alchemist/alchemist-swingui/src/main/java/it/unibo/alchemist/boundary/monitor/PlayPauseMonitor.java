@@ -30,7 +30,10 @@ import org.jetbrains.annotations.Nullable;
  * @param <T> The type which describes the {@link Concentration} of a molecule
  */
 public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
-
+    /**
+     * Default serial version UID.
+     */
+    private static final long serialVersionUID = 1L;
     /**
      * Default {@link Status#READY ready} or {@link Status#PAUSED paused} icon.
      */
@@ -39,7 +42,7 @@ public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
      * Default {@link Status#RUNNING running} icon.
      */
     private static final IconNode PAUSE_ICON = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.PAUSE);
-    private WeakReference<Simulation<T>> simulation;
+    private transient WeakReference<Simulation<T>> simulation;
     private Status currentStatus = Status.INIT;
 
     /**
@@ -104,7 +107,7 @@ public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
      *
      * @return the current simulation
      */
-    public Optional<Simulation<T>> getSimulation() {
+    public final Optional<Simulation<T>> getSimulation() {
         return Optional.ofNullable(simulation.get());
     }
 
@@ -113,7 +116,7 @@ public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
      *
      * @param simulation the simulation to set
      */
-    public void setSimulation(final @Nullable Simulation<T> simulation) {
+    public final void setSimulation(final @Nullable Simulation<T> simulation) {
         this.simulation = new WeakReference<>(simulation);
     }
 
@@ -122,11 +125,13 @@ public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
      *
      * @param simulation the simulation
      */
-    private void update(final Simulation<T> simulation) {
+    private void update(final @Nullable Simulation<T> simulation) {
         setSimulation(simulation);
-        if (simulation.getStatus() != currentStatus) {
+        if (simulation != null && simulation.getStatus() != currentStatus) {
             setIcon(currentStatus);
             currentStatus = simulation.getStatus();
+        } else {
+            setIcon(Status.TERMINATED);
         }
     }
 
@@ -140,11 +145,11 @@ public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
      */
     private void setIcon(final Status nextStatus) {
         getSimulation().ifPresent(s -> {
-            long t = System.currentTimeMillis();
-            if (nextStatus != Status.INIT && nextStatus != Status.READY) {
+            final long t = System.currentTimeMillis();
+            if (nextStatus != Status.INIT && nextStatus != Status.READY && nextStatus != Status.TERMINATED) {
                 s.waitFor(nextStatus, 1, TimeUnit.SECONDS);
                 final Status currentStatus = s.getStatus();
-                if (currentStatus != nextStatus) {
+                if (!currentStatus.equals(nextStatus)) {
                     final Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Expected simulation status error");
                     alert.setContentText("The expected status was "

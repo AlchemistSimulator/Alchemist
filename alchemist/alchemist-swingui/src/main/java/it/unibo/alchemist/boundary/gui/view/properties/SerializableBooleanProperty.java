@@ -6,6 +6,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 
+import org.danilopianini.util.Hashes;
+
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -20,8 +22,8 @@ import javafx.beans.property.SimpleBooleanProperty;
  * {@link SimpleBooleanProperty} that implements also {@link Serializable}.
  */
 public class SerializableBooleanProperty extends BooleanPropertyBase implements Serializable {
-    /** Generated Serial Version UID. */
-    private static final long serialVersionUID = 7930437208132213199L;
+    /** Default Serial Version UID. */
+    private static final long serialVersionUID = 1L;
 
     private String name;
 
@@ -144,11 +146,7 @@ public class SerializableBooleanProperty extends BooleanPropertyBase implements 
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getValue() == null) ? 0 : getValue().hashCode());
-        result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
-        return result;
+        return Hashes.hash32(getValue(), getName());
     }
 
     @Override

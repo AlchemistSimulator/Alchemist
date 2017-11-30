@@ -76,7 +76,7 @@ public class SingleRunApp<T> extends Application {
     private final Map<String, String> namedParams = new HashMap<>();
     private final List<String> unnamedParams = new ArrayList<>();
     private ObservableList<EffectGroup> effectGroups = FXCollections.observableArrayList();
-    private boolean initialized = false;
+    private boolean initialized;
     @Nullable
     private Simulation<T> simulation;
     @Nullable
@@ -184,11 +184,10 @@ public class SingleRunApp<T> extends Application {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void start(final Stage primaryStage) {
         parseNamedParams(getNamedParams());
         parseUnnamedParams(getUnnamedParams());
-        final Optional<Simulation<T>> optSim = Optional.ofNullable(this.simulation);
+        final Optional<Simulation<T>> optSim = getSimulation();
         optSim.ifPresent(sim -> {
             try {
                 initDisplayMonitor(
@@ -201,7 +200,7 @@ public class SingleRunApp<T> extends Application {
                 throw new IllegalArgumentException(exception);
             }
         });
-        final Optional<AbstractFXDisplay> optDisplayMonitor = Optional.ofNullable(this.displayMonitor);
+        final Optional<AbstractFXDisplay<T>> optDisplayMonitor = Optional.ofNullable(this.displayMonitor);
         final Pane rootLayout;
         try {
             rootLayout = FXResourceLoader.getLayout(AnchorPane.class, this, ROOT_LAYOUT);
@@ -280,6 +279,8 @@ public class SingleRunApp<T> extends Application {
                 case P:
                     playPauseMonitor.fireEvent(new ActionEvent(event.getSource(), playPauseMonitor));
                     break;
+                default:
+                    break;
             }
         });
     }
@@ -291,7 +292,6 @@ public class SingleRunApp<T> extends Application {
      * @throws IllegalArgumentException if the value is not valid for the parameter
      * @see Parameters#getNamed()
      */
-    @SuppressWarnings("unchecked")
     private void parseNamedParams(final Map<String, String> params) {
         params.forEach((key, value) -> {
             switch (key) {
@@ -346,12 +346,12 @@ public class SingleRunApp<T> extends Application {
         }
 
         try {
-            final Class<? extends AbstractFXDisplay> clazz;
-            clazz = (Class<? extends AbstractFXDisplay>) Class.forName(className);
+            final Class<? extends AbstractFXDisplay<T>> clazz;
+            clazz = (Class<? extends AbstractFXDisplay<T>>) Class.forName(className);
 
-            final Constructor[] constructors = clazz.getDeclaredConstructors();
-            Constructor constructor = null;
-            for (final Constructor c : constructors) {
+            final Constructor<?>[] constructors = clazz.getDeclaredConstructors();
+            Constructor<?> constructor = null;
+            for (final Constructor<?> c : constructors) {
                 if (c.getGenericParameterTypes().length == 0) {
                     constructor = c;
                     break;
@@ -365,10 +365,12 @@ public class SingleRunApp<T> extends Application {
                     displayMonitor = (AbstractFXDisplay<T>) constructor.newInstance();
                 } catch (final IllegalAccessException | IllegalArgumentException | InstantiationException
                         | InvocationTargetException | ExceptionInInitializerError exception) {
+                    L.warn("No valid constructor found");
                     throw new IllegalArgumentException(exception);
                 }
             }
         } catch (final ClassCastException | ClassNotFoundException exception) {
+            L.warn(className + " is not a valid DisplayMonitor class");
             throw new IllegalArgumentException(exception);
         }
     }

@@ -13,6 +13,10 @@ import it.unibo.alchemist.model.interfaces.Time;
  * @param <T> The type which describes the {@link Concentration} of a molecule
  */
 public class FXStepMonitor<T> extends NumericLabelMonitor<Long, T> {
+    /**
+     * Default serial version UID.
+     */
+    private static final long serialVersionUID = 1L;
 
     /**
      * Default constructor.

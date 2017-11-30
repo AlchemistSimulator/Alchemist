@@ -18,6 +18,7 @@ import java.util.List;
  *
  * @param <T> the {@link Concentration} type
  */
+@Deprecated
 public interface GraphicalOutputMonitor<T> extends OutputMonitor<T> {
 
     /**

@@ -1,5 +1,13 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.io.UTFDataFormatException;
+import java.util.Queue;
+
 import it.unibo.alchemist.boundary.CommandQueueBuilder;
 import it.unibo.alchemist.boundary.DrawCommand;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
@@ -7,15 +15,17 @@ import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 
-import java.io.*;
-import java.util.Queue;
-
 /**
  * It models an abstract implementation of the {@link EffectFX effect} interface, implementing default name and visibility properties.
  * <p>
  * The effect behavior can be implemented via {@link #computeDrawCommands(Environment)} template method.
  */
 public abstract class AbstractEffect implements EffectFX {
+    /**
+     * Default serial version UID.
+     */
+    private static final long serialVersionUID = 1L;
+
     /**
      * Default name of the effect.
      */
@@ -94,7 +104,7 @@ public abstract class AbstractEffect implements EffectFX {
      * @param environment the {@link Environment} to extrapolate data from
      * @param <T>         the {@link Concentration} type
      */
-    protected abstract <T> void getData(final Environment<T> environment);
+    protected abstract <T> void getData(Environment<T> environment);
 
     @Override
     public final String getName() {
@@ -112,7 +122,7 @@ public abstract class AbstractEffect implements EffectFX {
     }
 
     @Override
-    public final void setVisibility(boolean visibility) {
+    public final void setVisibility(final boolean visibility) {
         this.visibility = visibility;
     }
 
@@ -169,5 +179,5 @@ public abstract class AbstractEffect implements EffectFX {
     public abstract int hashCode();
 
     @Override
-    public abstract boolean equals(final Object obj);
+    public abstract boolean equals(Object obj);
 }

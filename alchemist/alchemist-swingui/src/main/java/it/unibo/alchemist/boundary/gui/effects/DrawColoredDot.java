@@ -1,6 +1,16 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.boundary.gui.ColorChannel;
+import java.io.IOException;
+import java.io.InvalidClassException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OptionalDataException;
+import java.io.Serializable;
+import java.io.StreamCorruptedException;
+
+import org.danilopianini.util.Hashes;
+
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
@@ -11,9 +21,6 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.paint.Color;
-import org.danilopianini.util.Hashes;
-
-import java.io.*;
 
 /**
  * Simple effect that draws a colored dot for each {@link Node}.
@@ -25,7 +32,7 @@ public class DrawColoredDot extends DrawDot {
     /**
      * Default generated Serial Version UID.
      */
-    private static final long serialVersionUID = -2329825220099191395L;
+    private static final long serialVersionUID = 1L;
     /**
      * Default effect name
      */
@@ -71,7 +78,12 @@ public class DrawColoredDot extends DrawDot {
         alpha.addListener(this.updateColor());
     }
 
-    protected static java.awt.Color convertColor(final Color fxColor) {
+    /**
+     * Convert a {@link Color JavaFX color} to an {@link java.awt.Color AWT color}. 
+     * @param fxColor the JavaFX color
+     * @return the AWT color
+     */
+    protected static final java.awt.Color convertColor(final Color fxColor) {
         return new java.awt.Color(
                 (float) fxColor.getRed(),
                 (float) fxColor.getGreen(),
@@ -80,7 +92,7 @@ public class DrawColoredDot extends DrawDot {
     }
 
     @Override
-    public Color getColor() { // NOPMD - Only widening method visibility
+    public final Color getColor() { // NOPMD - Only widening method visibility
         return super.getColor();
     }
 
@@ -90,7 +102,7 @@ public class DrawColoredDot extends DrawDot {
      * Updates also all color-related properties.
      */
     @Override
-    public void setColor(final Color color) {
+    public final void setColor(final Color color) {
         // Also widens method visibility from parent
         this.setAlpha(color.getOpacity());
         final java.awt.Color awtColor = convertColor(color);

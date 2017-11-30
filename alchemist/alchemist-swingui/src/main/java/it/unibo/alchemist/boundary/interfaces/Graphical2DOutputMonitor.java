@@ -7,6 +7,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  *
  * @param <T>
  */
+@Deprecated
 public interface Graphical2DOutputMonitor<T> extends GraphicalOutputMonitor<T> {
 
     /**

@@ -13,7 +13,7 @@ package it.unibo.alchemist.boundary.wormhole.interfaces;
  * to handle the the sliding of any physical/virtual device/control.
  *
  */
-public interface ISlideInputManager {
+public interface SlideInputManager {
     /**
      * Decreases the total amount of slides.
      * 

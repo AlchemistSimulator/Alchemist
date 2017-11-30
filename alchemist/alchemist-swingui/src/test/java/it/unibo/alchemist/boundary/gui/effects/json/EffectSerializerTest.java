@@ -1,23 +1,35 @@
 package it.unibo.alchemist.boundary.gui.effects.json;
 
-import com.google.gson.reflect.TypeToken;
-import it.unibo.alchemist.boundary.gui.effects.*;
-import javafx.scene.paint.Color;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import java.io.*;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gson.reflect.TypeToken;
+
+import it.unibo.alchemist.boundary.gui.effects.DrawColoredDot;
+import it.unibo.alchemist.boundary.gui.effects.DrawDot;
+import it.unibo.alchemist.boundary.gui.effects.EffectFX;
+import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
+import it.unibo.alchemist.boundary.gui.effects.EffectStack;
+import javafx.scene.paint.Color;
 
 /**
  * JUnit test for EffectSerializer class.
  */
 public class EffectSerializerTest {
     private static final String TEST_EFFECTS = "/it/unibo/alchemist/gui/effects/json/TestEffects.json";
+    private static final double TEST_SIZE = 6.0;
 
     /**
      * Temporary folder created before each test method, and deleted after each.
@@ -102,11 +114,15 @@ public class EffectSerializerTest {
         return groups;
     }
 
+    /**
+     * Tests loading effects from resources.
+     * @throws IOException if something goes wrong
+     */
     @Test
     public void testResourceSerialization() throws IOException {
         final EffectGroup group = new EffectStack("Default Effects");
         final DrawDot effect = new DrawDot("Draw the dots");
-        effect.setSize(6.0);
+        effect.setSize(TEST_SIZE);
         group.add(effect);
         final EffectGroup deserialized = EffectSerializer.effectsFromResources(TEST_EFFECTS);
         Assert.assertEquals(group, deserialized);

@@ -1,8 +1,11 @@
 package it.unibo.alchemist.boundary.wormhole.implementation.adapter;
 
-import it.unibo.alchemist.boundary.wormhole.interfaces.ViewType;
+import java.awt.Component;
 
-import java.awt.*;
+import org.danilopianini.util.Hashes;
+
+import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D;
+import it.unibo.alchemist.boundary.wormhole.interfaces.ViewType;
 
 /**
  * Adapter class that adapts the AWT {@link Component} class to a generic View Type for usage in {@link Wormhole2D}.
@@ -61,10 +64,6 @@ public class ComponentViewType implements ViewType {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Double.valueOf(getWidth()).hashCode();
-        result = prime * result + Double.valueOf(getHeight()).hashCode();
-        return result;
+        return Hashes.hash32(getWidth(), getHeight());
     }
 }

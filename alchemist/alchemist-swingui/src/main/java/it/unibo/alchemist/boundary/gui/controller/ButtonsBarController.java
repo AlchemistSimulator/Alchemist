@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
+
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -73,7 +75,7 @@ public class ButtonsBarController implements Initializable {
 
     private EffectsGroupBarController effectsGroupBarController;
     private Optional<PopOver> controlTypePopOver = Optional.empty();
-    private Optional<FXOutputMonitor> displayMonitor = Optional.empty();
+    private Optional<FXOutputMonitor<?>> displayMonitor = Optional.empty();
 
     /**
      * Default constructor.
@@ -92,7 +94,7 @@ public class ButtonsBarController implements Initializable {
      *
      * @param displayMonitor the graphical {@code OutputMonitor}
      */
-    public ButtonsBarController(final @Nullable FXOutputMonitor displayMonitor) {
+    public ButtonsBarController(final @Nullable FXOutputMonitor<?> displayMonitor) {
         this();
         setDisplayMonitor(displayMonitor);
     }
@@ -121,7 +123,7 @@ public class ButtonsBarController implements Initializable {
      * @param timeLabel       the {@code Label} for the steps; should probably be a {@link NumericLabelMonitor}
      * @param stepLabel       the {@code Label} for the time; should probably be a {@link NumericLabelMonitor}
      */
-    public ButtonsBarController(final @Nullable FXOutputMonitor displayMonitor, final Button playPauseButton, final Label timeLabel, final Label stepLabel) {
+    public ButtonsBarController(final @Nullable FXOutputMonitor<?> displayMonitor, final Button playPauseButton, final Label timeLabel, final Label stepLabel) {
         this(playPauseButton, timeLabel, stepLabel);
         setDisplayMonitor(displayMonitor);
     }
@@ -131,7 +133,7 @@ public class ButtonsBarController implements Initializable {
      *
      * @return the graphical {@link OutputMonitor}, if any
      */
-    public Optional<FXOutputMonitor> getDisplayMonitor() {
+    public final Optional<FXOutputMonitor<?>> getDisplayMonitor() {
         return displayMonitor;
     }
 
@@ -140,7 +142,7 @@ public class ButtonsBarController implements Initializable {
      *
      * @param displayMonitor the graphical {@link OutputMonitor} to set; if null, it will be {@link Optional#empty() unset}
      */
-    public void setDisplayMonitor(final @Nullable FXOutputMonitor displayMonitor) {
+    public final void setDisplayMonitor(final @Nullable FXOutputMonitor<?> displayMonitor) {
         this.displayMonitor = Optional.ofNullable(displayMonitor);
     }
 
@@ -211,6 +213,18 @@ public class ButtonsBarController implements Initializable {
             pop.setHeaderAlwaysVisible(false);
             pop.getRoot().getStylesheets().add(FXResourceLoader.getStyle("popover"));
             pop.setArrowLocation(ArrowLocation.BOTTOM_CENTER);
+            Optional.ofNullable(controlTypePopoverController.getSelectButton()).ifPresent(b -> b.setOnAction(e -> {
+                Platform.runLater(() -> this.controlType.setGraphic(select));
+                this.displayMonitor.ifPresent(d -> {
+                    d.setViewStatus(FXOutputMonitor.ViewStatus.SELECTING);
+                });
+            }));
+            Optional.ofNullable(controlTypePopoverController.getPanButton()).ifPresent(b -> b.setOnAction(e -> {
+                Platform.runLater(() -> this.controlType.setGraphic(pan));
+                this.displayMonitor.ifPresent(d -> {
+                    d.setViewStatus(FXOutputMonitor.ViewStatus.PAN);
+                });
+            }));
             controlTypePopOver = Optional.of(pop);
             controlTypePopOver.get().show(controlType);
         }
@@ -221,7 +235,7 @@ public class ButtonsBarController implements Initializable {
      *
      * @param button the play/pause toggle button
      */
-    public void setStartStopButton(final Button button) {
+    public final void setStartStopButton(final Button button) {
         this.startStopButton = button;
         addMonitors();
     }
@@ -231,7 +245,7 @@ public class ButtonsBarController implements Initializable {
      *
      * @param timeMonitor the time monitor label
      */
-    public void setTimeMonitor(final Label timeMonitor) {
+    public final void setTimeMonitor(final Label timeMonitor) {
         this.timeLabel = timeMonitor;
         addMonitors();
     }
@@ -265,7 +279,7 @@ public class ButtonsBarController implements Initializable {
      *
      * @param stepMonitor the step monitor label
      */
-    public void setStepMonitor(final Label stepMonitor) {
+    public final void setStepMonitor(final Label stepMonitor) {
         this.stepLabel = stepMonitor;
         addMonitors();
     }

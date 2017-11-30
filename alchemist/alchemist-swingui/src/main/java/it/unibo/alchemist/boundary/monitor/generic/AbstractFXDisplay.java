@@ -1,21 +1,6 @@
 package it.unibo.alchemist.boundary.monitor.generic;
 
-import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
-import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
-import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
-import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D;
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
-import it.unibo.alchemist.model.interfaces.*;
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.*;
-import org.jetbrains.annotations.Nullable;
-
-import java.awt.*;
+import java.awt.Point;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -27,13 +12,42 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jetbrains.annotations.Nullable;
+
+import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
+import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
+import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
+import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D;
+import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
+import it.unibo.alchemist.model.implementations.times.DoubleTime;
+import it.unibo.alchemist.model.interfaces.Concentration;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.Time;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.InputEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
+
 /**
  * Base abstract class for each display able to graphically represent a 2D space and simulation.
  *
  * @param <T> The type which describes the {@link Concentration} of a molecule
  */
 public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMonitor<T> {
-
+    /**
+     * Default serial version UID.
+     */
+    private static final long serialVersionUID = 1L;
     /**
      * The default frame rate.
      */
@@ -53,7 +67,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     /**
      * The default view status.
      */
-    private static final ViewStatus DEFAULT_VIEW_STATUS = ViewStatus.PAN;
+    private static final FXOutputMonitor.ViewStatus DEFAULT_VIEW_STATUS = FXOutputMonitor.ViewStatus.PAN;
     private static final String GET_X_METHOD_NAME = "getX";
     private static final String GET_Y_METHOD_NAME = "getY";
     private final ObservableList<EffectGroup> effectStack;
@@ -63,10 +77,8 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     private BidimensionalWormhole wormhole;
     private volatile boolean firstTime;
     private boolean realTime;
-    private long timeInit;
-    private double lastTime;
     private volatile ConcurrentLinkedQueue<Runnable> commandQueue;
-    private ViewStatus viewStatus;
+    private FXOutputMonitor.ViewStatus viewStatus;
 
     /**
      * Default constructor. The number of steps is set to default ({@value #DEFAULT_NUMBER_OF_STEPS}).
@@ -89,9 +101,9 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         setStep(steps);
         this.commandQueue = new ConcurrentLinkedQueue<>();
         enableEventReceiving();
-        setStyle("-fx-background-color: #FFF;");
-        initMouseListener();
-        setViewStatus(DEFAULT_VIEW_STATUS);
+        setStyle("-fx-background-color: #FFF;"); 
+        initMouseListener(); // NOPMD - the method is meant to be overridable
+        setViewStatus(DEFAULT_VIEW_STATUS); // NOPMD - the method is meant to be overridable
     }
 
     /**
@@ -152,21 +164,13 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         });
     }
 
-    /**
-     * Getter method for the current view status.
-     *
-     * @return the current {@code ViewStatus}
-     */
-    protected ViewStatus getViewStatus() {
+    @Override
+    public final ViewStatus getViewStatus() {
         return this.viewStatus;
     }
 
-    /**
-     * Setter method for the current view status.
-     *
-     * @param viewStatus the {@code ViewStatus} to set
-     */
-    protected void setViewStatus(final ViewStatus viewStatus) {
+    @Override
+    public final void setViewStatus(final ViewStatus viewStatus) {
         this.viewStatus = viewStatus;
     }
 
@@ -285,6 +289,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      * @param graphicsContext the graphic component to draw on
      * @param environment     the {@code Environment} that contains the data to pass to {@code Effects}
      * @see #repaint()
+     * @return a function of what to do to draw the background
      */
     protected Runnable drawBackground(final GraphicsContext graphicsContext, final Environment<T> environment) {
         return () -> graphicsContext.clearRect(0, 0, getWidth(), getHeight());
@@ -342,14 +347,14 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
 
     /**
      * The method initializes everything is not initializable before first step.
+     * @param environment the {@code Environment}
      */
     protected void init(final Environment<T> environment) {
         wormhole = new Wormhole2D(environment, this);
         wormhole.center();
         wormhole.optimalZoom();
         firstTime = false;
-        lastTime = -TIME_STEP;
-        timeInit = System.currentTimeMillis();
+        System.currentTimeMillis();
     }
 
     @Override
@@ -366,7 +371,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      */
     private void update(final Environment<T> environment, final Time time) {
         if (Thread.holdsLock(environment)) {
-            lastTime = time.toDouble();
+            time.toDouble();
             final GraphicsContext graphicsContext = this.getGraphicsContext2D();
             final Stream<Runnable> background = Stream.of(drawBackground(graphicsContext, environment));
             final Stream<Runnable> effects = getEffects()
@@ -381,17 +386,5 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         } else {
             throw new IllegalStateException("Only the simulation thread can dictate GUI updates");
         }
-    }
-
-    /**
-     * The enum models the status of the view.
-     */
-    protected enum ViewStatus {
-        SELECTING,
-        MOVING,
-        CLONING,
-        DELETING,
-        EDITING,
-        PAN
     }
 }

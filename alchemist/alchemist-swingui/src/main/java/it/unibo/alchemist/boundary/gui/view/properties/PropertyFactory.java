@@ -8,8 +8,6 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleSetProperty;
 import javafx.collections.FXCollections;
 
-import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty; // needed by Intellij IDEA to parse Xtend class
-
 /**
  * Factory for custom {@code Property}.
  */

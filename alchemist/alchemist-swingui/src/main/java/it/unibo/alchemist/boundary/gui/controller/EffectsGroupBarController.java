@@ -72,7 +72,7 @@ public class EffectsGroupBarController implements Initializable {
     private ListView<EffectGroup> effectGroupsList; // Value injected by FXMLLoader
     private ObservableList<EffectGroup> observableEffectsList;
     private Optional<String> lastPath;
-    private Optional<FXOutputMonitor> displayMonitor = Optional.empty();
+    private Optional<FXOutputMonitor<?>> displayMonitor = Optional.empty();
 
     /**
      * Default constructor.
@@ -90,7 +90,7 @@ public class EffectsGroupBarController implements Initializable {
      * @param displayMonitor the graphical {@link OutputMonitor}
      * @param stack          the stack where to open the effects lists
      */
-    public EffectsGroupBarController(final @Nullable FXOutputMonitor displayMonitor, final JFXDrawersStack stack) {
+    public EffectsGroupBarController(final @Nullable FXOutputMonitor<?> displayMonitor, final JFXDrawersStack stack) {
         this(stack);
         setDisplayMonitor(displayMonitor);
     }
@@ -100,7 +100,7 @@ public class EffectsGroupBarController implements Initializable {
      *
      * @return the graphical {@link OutputMonitor}, if any
      */
-    public Optional<FXOutputMonitor> getDisplayMonitor() {
+    public final Optional<FXOutputMonitor<?>> getDisplayMonitor() {
         return displayMonitor;
     }
 
@@ -109,7 +109,7 @@ public class EffectsGroupBarController implements Initializable {
      *
      * @param displayMonitor the graphical {@link OutputMonitor} to set; if null, it will be {@link Optional#empty() unset}
      */
-    public void setDisplayMonitor(final @Nullable FXOutputMonitor displayMonitor) {
+    public final void setDisplayMonitor(final @Nullable FXOutputMonitor<?> displayMonitor) {
         this.displayMonitor = Optional.ofNullable(displayMonitor);
     }
 
@@ -142,7 +142,9 @@ public class EffectsGroupBarController implements Initializable {
         final EffectGroup newGroup = new EffectStack();
         newGroup.setName(name);
         this.getObservableEffectsList().add(newGroup);
-        this.effectGroupsList.refresh();
+        if (this.effectGroupsList != null) {
+            this.effectGroupsList.refresh();
+        }
     }
 
     /**
@@ -155,14 +157,16 @@ public class EffectsGroupBarController implements Initializable {
     public ObservableList<EffectGroup> getObservableEffectsList() {
         if (this.observableEffectsList == null) {
             this.observableEffectsList = FXCollections.observableArrayList();
-            this.effectGroupsList.setItems(observableEffectsList);
-            this.effectGroupsList.setCellFactory(lv -> {
-                if (getDisplayMonitor().isPresent()) {
-                    return new EffectGroupCell(getDisplayMonitor().get(), this.stack);
-                } else {
-                    return new EffectGroupCell(this.stack);
-                }
-            });
+            if (this.effectGroupsList != null) {
+                this.effectGroupsList.setItems(observableEffectsList);
+                this.effectGroupsList.setCellFactory(lv -> {
+                    if (getDisplayMonitor().isPresent()) {
+                        return new EffectGroupCell(getDisplayMonitor().get(), this.stack);
+                    } else {
+                        return new EffectGroupCell(this.stack);
+                    }
+                });
+            }
         }
         return this.observableEffectsList;
     }
@@ -185,6 +189,8 @@ public class EffectsGroupBarController implements Initializable {
         });
         fileChooser.setInitialFileName("Effects" + DEFAULT_EXTENSION);
         fileChooser.setSelectedExtensionFilter(json);
+
+        assert this.save != null;
 
         File selectedFile = fileChooser.showSaveDialog(this.save.getScene().getWindow());
 
@@ -219,6 +225,8 @@ public class EffectsGroupBarController implements Initializable {
         fileChooser.getExtensionFilters().addAll(
                 new ExtensionFilter(getStringRes("json_extension_filter_description"), "*" + DEFAULT_EXTENSION),
                 new ExtensionFilter(getStringRes("all_files_extension_filter_description"), "*.*"));
+
+        assert this.load != null;
 
         final File selectedFile = fileChooser.showOpenDialog(this.load.getScene().getWindow());
 

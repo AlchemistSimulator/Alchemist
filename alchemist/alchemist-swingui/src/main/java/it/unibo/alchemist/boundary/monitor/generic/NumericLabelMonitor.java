@@ -19,6 +19,10 @@ import org.jetbrains.annotations.Nullable;
  * @param <N> the numeric type
  */
 public abstract class NumericLabelMonitor<N, T> extends Label implements OutputMonitor<T> {
+    /**
+     * Default serial version UID.
+     */
+    private static final long serialVersionUID = 1L;
     private final N init;
     private volatile boolean mayRender = true;
     private volatile N current;
@@ -72,7 +76,7 @@ public abstract class NumericLabelMonitor<N, T> extends Label implements OutputM
      *
      * @return the current name tag
      */
-    protected Optional<String> getName() {
+    protected final Optional<String> getName() {
         return this.name;
     }
 
@@ -81,7 +85,7 @@ public abstract class NumericLabelMonitor<N, T> extends Label implements OutputM
      *
      * @param name the name tag
      */
-    protected void setName(final @Nullable String name) {
+    protected final void setName(final @Nullable String name) {
         this.name = Optional.ofNullable(name);
     }
 }

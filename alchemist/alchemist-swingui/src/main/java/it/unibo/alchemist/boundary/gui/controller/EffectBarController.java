@@ -60,7 +60,7 @@ public class EffectBarController implements Initializable {
     private JFXButton backToGroups;
     private ObservableList<EffectFX> observableList;
     private EffectBuilderFX effectBuilder;
-    private Optional<FXOutputMonitor> displayMonitor = Optional.empty();
+    private Optional<FXOutputMonitor<?>> displayMonitor = Optional.empty();
 
     /**
      * Default constructor.
@@ -87,7 +87,7 @@ public class EffectBarController implements Initializable {
      * @param thisDrawer     the drawer the layout this controller is assigned to is loaded
      *                       into
      */
-    public EffectBarController(final @Nullable FXOutputMonitor displayMonitor, final EffectGroupCell parentCell, final JFXDrawersStack stack, final JFXDrawer thisDrawer) {
+    public EffectBarController(final @Nullable FXOutputMonitor<?> displayMonitor, final EffectGroupCell parentCell, final JFXDrawersStack stack, final JFXDrawer thisDrawer) {
         this(parentCell, stack, thisDrawer);
         setDisplayMonitor(displayMonitor);
     }
@@ -97,7 +97,7 @@ public class EffectBarController implements Initializable {
      *
      * @return the graphical {@link OutputMonitor}, if any
      */
-    public Optional<FXOutputMonitor> getDisplayMonitor() {
+    public final Optional<FXOutputMonitor<?>> getDisplayMonitor() {
         return displayMonitor;
     }
 
@@ -106,7 +106,7 @@ public class EffectBarController implements Initializable {
      *
      * @param displayMonitor the graphical {@link OutputMonitor} to set; if null, it will be {@link Optional#empty() unset}
      */
-    public void setDisplayMonitor(final @Nullable FXOutputMonitor displayMonitor) {
+    public final void setDisplayMonitor(final @Nullable FXOutputMonitor<?> displayMonitor) {
         this.displayMonitor = Optional.ofNullable(displayMonitor);
     }
 
@@ -166,7 +166,9 @@ public class EffectBarController implements Initializable {
     public void addEffectToGroup(final EffectFX effect) {
         this.getObservableList().add(effect);
         this.parentCell.getItem().add(effect);
-        this.effectsList.refresh();
+        if (this.effectsList != null) {
+            this.effectsList.refresh();
+        }
     }
 
     /**
@@ -191,15 +193,16 @@ public class EffectBarController implements Initializable {
     private ObservableList<EffectFX> getObservableList() {
         if (this.observableList == null) {
             this.observableList = FXCollections.observableArrayList();
+            if (this.effectsList != null) {
             this.effectsList.setItems(observableList);
-            this.effectsList.setCellFactory(lv -> {
-                if (getDisplayMonitor().isPresent()) {
-                    return new EffectCell(getDisplayMonitor().get(), this.stack);
-                } else {
-                    return new EffectCell(this.stack);
-                }
-
-            });
+                this.effectsList.setCellFactory(lv -> {
+                    if (getDisplayMonitor().isPresent()) {
+                        return new EffectCell(getDisplayMonitor().get(), this.stack);
+                    } else {
+                        return new EffectCell(this.stack);
+                    }
+                });
+            }
         }
         return this.observableList;
     }
@@ -210,6 +213,7 @@ public class EffectBarController implements Initializable {
      * @return the name property
      */
     public StringProperty groupNameProperty() {
+        assert this.groupName != null;
         return this.groupName.textProperty();
     }
 }

@@ -14,6 +14,7 @@ public final class CommandQueueBuilder {
      * Wraps a {@code DrawCommand} around to the queue to be executed on the JavaFX thread.
      *
      * @param doOnJFXThread the action to do
+     * @param supplier the boolean supplier that will check if the command should be executed
      * @return this builder
      */
     public CommandQueueBuilder wrapAndAdd(final Supplier<Boolean> supplier, final DrawCommand doOnJFXThread) {

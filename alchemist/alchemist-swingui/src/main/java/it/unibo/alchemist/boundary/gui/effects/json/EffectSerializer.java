@@ -337,7 +337,7 @@ public final class EffectSerializer {
      */
     @Contract(pure = true)
     @TestOnly
-    protected static Gson getGSON() {
+    public static Gson getGSON() {
         return GSON;
     }
 }

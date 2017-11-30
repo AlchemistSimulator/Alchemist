@@ -1,7 +1,7 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.boundary.CommandQueueBuilder;
-import it.unibo.alchemist.boundary.DrawCommand;
+import it.unibo.alchemist.boundary.gui.CommandQueueBuilder;
+import it.unibo.alchemist.boundary.interfaces.DrawCommand;
 import it.unibo.alchemist.model.interfaces.Environment;
 import java.util.ArrayList;
 import java.util.Collection;

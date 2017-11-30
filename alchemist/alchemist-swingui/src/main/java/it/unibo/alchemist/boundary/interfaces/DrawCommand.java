@@ -1,4 +1,4 @@
-package it.unibo.alchemist.boundary;
+package it.unibo.alchemist.boundary.interfaces;
 
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.model.interfaces.Environment;

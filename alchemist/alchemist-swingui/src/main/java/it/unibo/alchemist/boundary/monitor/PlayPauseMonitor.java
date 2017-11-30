@@ -44,6 +44,7 @@ public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
     private static final IconNode PAUSE_ICON = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.PAUSE);
     private transient WeakReference<Simulation<T>> simulation;
     private Status currentStatus = Status.INIT;
+    private volatile boolean isError;
 
     /**
      * No arguments constructor. Current {@link Simulation} is not set.
@@ -127,11 +128,13 @@ public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
      */
     private void update(final @Nullable Simulation<T> simulation) {
         setSimulation(simulation);
-        if (simulation != null && simulation.getStatus() != currentStatus) {
-            setIcon(currentStatus);
-            currentStatus = simulation.getStatus();
+        if (!isError) {
+            if (simulation != null && simulation.getStatus() != currentStatus) {
+                setIcon(currentStatus);
+                currentStatus = simulation.getStatus();
+            }
         } else {
-            setIcon(Status.TERMINATED);
+            getSimulation().ifPresent(Simulation::terminate);
         }
     }
 
@@ -146,25 +149,31 @@ public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
     private void setIcon(final Status nextStatus) {
         getSimulation().ifPresent(s -> {
             final long t = System.currentTimeMillis();
-            if (nextStatus != Status.INIT && nextStatus != Status.READY && nextStatus != Status.TERMINATED) {
+            if (nextStatus == Status.RUNNING || nextStatus == Status.PAUSED) {
                 s.waitFor(nextStatus, 1, TimeUnit.SECONDS);
                 final Status currentStatus = s.getStatus();
                 if (!currentStatus.equals(nextStatus)) {
-                    final Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Expected simulation status error");
-                    alert.setContentText("The expected status was "
-                            + nextStatus + ", but, after waiting"
-                            + (System.currentTimeMillis() - t)
-                            + "ms, current simulation status is "
-                            + currentStatus);
-                    final DialogPane dialogPane = alert.getDialogPane();
-                    dialogPane.setMinHeight(Region.USE_PREF_SIZE);
-                    ((Stage) dialogPane
-                            .getScene()
-                            .getWindow())
-                            .getIcons()
-                            .add(SVGImageUtils.getSvgImage(SVGImageUtils.DEFAULT_ALCHEMIST_ICON_PATH));
-                    alert.show();
+                    isError = true;
+                    Platform.runLater(() -> {
+                        final Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Expected simulation status error");
+                        alert.setContentText("The expected status was "
+                                + nextStatus + ", but, after waiting "
+                                + (System.currentTimeMillis() - t)
+                                + "ms, current simulation status is "
+                                + currentStatus);
+                        final DialogPane dialogPane = alert.getDialogPane();
+                        dialogPane.setMinHeight(Region.USE_PREF_SIZE);
+                        ((Stage) dialogPane
+                                .getScene()
+                                .getWindow())
+                                .getIcons()
+                                .add(SVGImageUtils.getSvgImage(SVGImageUtils.DEFAULT_ALCHEMIST_ICON_PATH));
+                        alert.showAndWait().ifPresent(result -> {
+                            Platform.exit();
+                            System.exit(1);
+                        });
+                    });
                 }
             }
             final Node icon = nextStatus == Status.RUNNING || nextStatus == Status.READY ? PAUSE_ICON : PLAY_ICON;

@@ -8,8 +8,8 @@ import java.io.Serializable;
 import java.io.UTFDataFormatException;
 import java.util.Queue;
 
-import it.unibo.alchemist.boundary.CommandQueueBuilder;
-import it.unibo.alchemist.boundary.DrawCommand;
+import it.unibo.alchemist.boundary.gui.CommandQueueBuilder;
+import it.unibo.alchemist.boundary.interfaces.DrawCommand;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.interfaces.Concentration;

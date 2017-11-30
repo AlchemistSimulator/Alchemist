@@ -1,6 +1,6 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.boundary.DrawCommand;
+import it.unibo.alchemist.boundary.interfaces.DrawCommand;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 

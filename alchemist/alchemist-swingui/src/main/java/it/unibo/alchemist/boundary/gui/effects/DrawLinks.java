@@ -11,8 +11,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.danilopianini.util.Hashes;
 
-import it.unibo.alchemist.boundary.CommandQueueBuilder;
-import it.unibo.alchemist.boundary.DrawCommand;
+import it.unibo.alchemist.boundary.gui.CommandQueueBuilder;
+import it.unibo.alchemist.boundary.interfaces.DrawCommand;
 import it.unibo.alchemist.boundary.gui.effects.json.ColorSerializationAdapter;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;

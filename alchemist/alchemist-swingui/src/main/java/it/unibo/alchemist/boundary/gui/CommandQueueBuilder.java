@@ -1,5 +1,6 @@
-package it.unibo.alchemist.boundary;
+package it.unibo.alchemist.boundary.gui;
 
+import it.unibo.alchemist.boundary.interfaces.DrawCommand;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.function.Supplier;

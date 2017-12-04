@@ -28,13 +28,15 @@ import java.util.Locale;
 import java.util.concurrent.CountDownLatch;
 import javax.swing.ImageIcon;
 import org.apache.ignite.IgniteState;
-import org.apache.ignite.IgniteSystemProperties;
 import org.apache.ignite.IgnitionListener;
 import org.apache.ignite.internal.util.typedef.F;
 import org.apache.ignite.internal.util.typedef.G;
 import org.apache.ignite.internal.util.typedef.X;
 import org.apache.ignite.startup.cmdline.AboutDialog;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static org.apache.ignite.IgniteState.STOPPED;
 import static org.apache.ignite.IgniteState.STOPPED_ON_SEGMENTATION;
@@ -56,36 +58,16 @@ import static org.apache.ignite.internal.IgniteVersionUtils.VER_STR;
  * this startup and you can use them as an example.
  */
 public final class CommandLineStartup {
-    /** Quite log flag. */
-    private static final boolean QUITE;
 
     /** Build date. */
     private static Date releaseDate;
+
+    private static final Logger L = LoggerFactory.getLogger(CommandLineStartup.class);
 
     /**
      * Static initializer.
      */
     static {
-        String quiteStr = System.getProperty(IgniteSystemProperties.IGNITE_QUIET);
-
-        boolean quite = true;
-
-        if (quiteStr != null) {
-            quiteStr = quiteStr.trim();
-
-            if (!quiteStr.isEmpty()) {
-                if ("false".equalsIgnoreCase(quiteStr)) {
-                    quite = false;
-                } else if (!"true".equalsIgnoreCase(quiteStr)) {
-                    System.err.println("Invalid value for '" + IgniteSystemProperties.IGNITE_QUIET 
-                            + "' VM parameter (must be {true|false}): " + quiteStr);
-
-                    quite = false;
-                }
-            }
-        }
-
-        QUITE = quite;
 
         // Mac OS specific customizations: app icon and about dialog.
         try {
@@ -125,7 +107,7 @@ public final class CommandLineStartup {
 
             appCls.getDeclaredMethod("setAboutHandler", aboutHndCls).invoke(osxApp, aboutHndProxy);
         } catch (Exception ignore) {
-            // Ignore.
+            L.error(ignore.toString());
         }
     }
 
@@ -198,8 +180,8 @@ public final class CommandLineStartup {
 
         try {
             igniteInstanceName = G.start(cfg).name();
-        } catch (Throwable e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            L.error(e.toString());
 
             String note = "";
 
@@ -208,10 +190,6 @@ public final class CommandLineStartup {
             }
 
             exit("Failed to start grid: " + e.getMessage() + note, false, -1);
-
-            if (e instanceof Error) {
-                throw e;
-            }
 
             return;
         }

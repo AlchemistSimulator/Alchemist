@@ -33,7 +33,7 @@ public class RemoteSimulationImpl<T> implements RemoteSimulation<T> {
     /**
      * 
      */
-    private static final long serialVersionUID = 8206545835842309336L;
+    private static final long serialVersionUID = 1L;
     private final GeneralSimulationConfig<T> generalConfig;
     private final SimulationConfig config;
     private final UUID masterNodeId;

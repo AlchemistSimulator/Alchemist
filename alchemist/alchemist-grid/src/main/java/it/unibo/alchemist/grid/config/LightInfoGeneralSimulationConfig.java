@@ -15,7 +15,7 @@ public abstract class LightInfoGeneralSimulationConfig<T> implements GeneralSimu
     /**
      * 
      */
-    private static final long serialVersionUID = -3109924486818903310L;
+    private static final long serialVersionUID = 1L;
     private final long endStep;
     private final Time endTime;
     private final Loader loader;

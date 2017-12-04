@@ -23,7 +23,7 @@ public class LocalGeneralSimulationConfig<T> extends LightInfoGeneralSimulationC
     /**
      * 
      */
-    private static final long serialVersionUID = 3974035069237901864L;
+    private static final long serialVersionUID = 1L;
     private final Map<String, byte[]> dependencies;
 
     /**

@@ -19,7 +19,7 @@ public class RemoteGeneralSimulationConfig<T> extends LightInfoGeneralSimulation
     /**
      * 
      */
-    private static final long serialVersionUID = 6793498536768599629L;
+    private static final long serialVersionUID = 1L;
     private final String cacheName;
     private final Set<String> keys;
 

@@ -14,7 +14,7 @@ public class RemoteSimulationException extends RuntimeException {
     /**
      * 
      */
-    private static final long serialVersionUID = 1773696971154326454L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * 

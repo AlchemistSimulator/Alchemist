@@ -14,7 +14,7 @@ public class SimulationConfigImpl implements SimulationConfig {
     /**
      * 
      */
-    private static final long serialVersionUID = 3086808700926081922L;
+    private static final long serialVersionUID = 1L;
     private final Map<String, ? extends Serializable> variables;
 
     /**

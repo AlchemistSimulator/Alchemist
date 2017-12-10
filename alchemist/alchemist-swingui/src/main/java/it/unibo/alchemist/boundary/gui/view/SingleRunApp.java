@@ -14,6 +14,7 @@ import it.unibo.alchemist.boundary.monitor.PlayPauseMonitor;
 import it.unibo.alchemist.boundary.monitor.generic.AbstractFXDisplay;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.interfaces.Concentration;
+import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +41,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jooq.lambda.fi.lang.CheckedRunnable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -219,35 +222,16 @@ public class SingleRunApp<T> extends Application {
                 s.addOutputMonitor(this.playPauseMonitor);
                 s.addOutputMonitor(this.timeMonitor);
                 s.addOutputMonitor(this.stepMonitor);
-//                optDisplayMonitor.ifPresent(s::addOutputMonitor);
-//                s.addOutputMonitor(this.playPauseMonitor);
-//                s.addOutputMonitor(this.timeMonitor);
-//                s.addOutputMonitor(this.stepMonitor);
-//                if (s.getStatus() != Status.INIT) {
-//                    s.schedule(() -> {
-//                        final Environment<T> env = s.getEnvironment();
-//                        playPauseMonitor.initialized(env);
-//                        optDisplayMonitor.ifPresent(d -> d.initialized(env));
-//                        timeMonitor.initialized(env);
-//                        stepMonitor.initialized(env);
-//                    });
-//                }
-//            });
             });
             final ButtonsBarController buttonsBarController = new ButtonsBarController(displayMonitor, playPauseMonitor, timeMonitor, stepMonitor);
 
             final BorderPane bar = FXResourceLoader.getLayout(BorderPane.class, buttonsBarController, BUTTONS_BAR_LAYOUT);
             bar.setPickOnBounds(false);
             main.widthProperty().addListener((observable, oldValue, newValue) -> bar.setPrefWidth(newValue.doubleValue()));
-
             main.getChildren().add(bar);
-
             buttonsBarController.getObservableEffectsList().addAll(this.effectGroups);
             effectGroups = buttonsBarController.getObservableEffectsList();
             optDisplayMonitor.ifPresent(d -> d.setEffects(buttonsBarController.getObservableEffectsList()));
-//            optDisplayMonitor.ifPresent(d -> optSim.ifPresent(s -> s.schedule(() -> d.stepDone(s.getEnvironment(), null, s.getTime(), s.getStep()))));
-            // TODO draw environment first time
-
             primaryStage.setTitle("Alchemist Simulation");
             primaryStage.setOnCloseRequest(e -> {
                 Platform.exit();
@@ -257,12 +241,32 @@ public class SingleRunApp<T> extends Application {
             final Scene scene = new Scene(rootLayout);
             initKeybindings(scene);
             primaryStage.setScene(scene);
-
             initialized = true;
             primaryStage.show();
+            // The initialization of the monitors MUST be done AFTER the Stage is shown
+            optSim.ifPresent(s -> initMonitors(s, optDisplayMonitor.orElse(null), stepMonitor, timeMonitor, playPauseMonitor));
         } catch (final IOException e) {
             L.error("I/O Exception loading FXML layout files", e);
             throw new UncheckedIOException(e);
+        }
+    }
+
+    /**
+     * The method schedules on the {@link Simulation} thread the initialization of given {@link OutputMonitor OutputMonitors}.
+     *
+     * @param simulation the simulation to {@link Simulation#schedule(CheckedRunnable) schedule} initialization to and to take {@link Environment} from
+     * @param monitors   the {@code OutputMonitors} to {@link OutputMonitor#initialized(Environment) initialize}
+     * @see Simulation#schedule(CheckedRunnable)
+     * @see OutputMonitor#initialized(Environment)
+     */
+    @SafeVarargs
+    private final void initMonitors(final @NotNull Simulation<T> simulation, final @Nullable OutputMonitor<T>... monitors) {
+        if (monitors != null) {
+            for (final OutputMonitor<T> m : monitors) {
+                if (m != null) {
+                    simulation.schedule(() -> m.initialized(simulation.getEnvironment()));
+                }
+            }
         }
     }
 

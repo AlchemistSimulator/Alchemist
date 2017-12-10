@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -212,6 +213,16 @@ public class SingleRunApp<T> extends Application {
             optDisplayMonitor.ifPresent(dm -> {
                 dm.widthProperty().bind(main.widthProperty());
                 dm.heightProperty().bind(main.heightProperty());
+                dm.widthProperty().addListener((observable, oldValue, newValue) -> {
+                    if (!Objects.equals(oldValue, newValue)) {
+                        dm.repaint();
+                    }
+                });
+                dm.heightProperty().addListener((observable, oldValue, newValue) -> {
+                    if (!Objects.equals(oldValue, newValue)) {
+                        dm.repaint();
+                    }
+                });
                 main.getChildren().add(dm);
             });
             this.timeMonitor = new FXTimeMonitor<>();

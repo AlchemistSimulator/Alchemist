@@ -8,16 +8,24 @@ import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
+import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
+import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import java.io.IOException;
+import javafx.application.Platform;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.DataFormat;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
 import org.jetbrains.annotations.Nullable;
 
 import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRes;
@@ -74,8 +82,7 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
         initDrawer();
 
         this.getPane().setOnMouseClicked(event -> {
-            // To not interfere with label double-click action
-            if (event.getClickCount() != 2) {
+            if (event.getButton() == MouseButton.PRIMARY) {
                 // Drawer size is modified every time it's opened
                 if (effectDrawer.isHidden() || effectDrawer.isHiding()) {
                     effectDrawer.setDefaultDrawerSize(stack.getWidth());
@@ -86,6 +93,22 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
                 }
             }
         });
+
+        final ContextMenu menu = new ContextMenu();
+        final MenuItem rename = new MenuItem(getStringRes("menu_item_rename"));
+        rename.setOnAction(event -> {
+            if (getItem() != null) {
+                rename(getStringRes("rename_group_dialog_title"), getStringRes("rename_group_dialog_msg"), null, getLabel().textProperty());
+            }
+            event.consume();
+        });
+        final MenuItem delete = new MenuItem(getStringRes("menu_item_delete"));
+        delete.setOnAction(event -> {
+            removeItself();
+            event.consume();
+        });
+        menu.getItems().addAll(rename, delete);
+        this.setContextMenu(menu);
     }
 
     /**

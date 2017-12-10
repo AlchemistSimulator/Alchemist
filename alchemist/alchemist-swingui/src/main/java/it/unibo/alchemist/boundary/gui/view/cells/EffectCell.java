@@ -8,16 +8,25 @@ import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
+import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import java.io.IOException;
+import javafx.application.Platform;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.DataFormat;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
 import org.jetbrains.annotations.Nullable;
+
+import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRes;
 
 /**
  * This ListView cell implements the {@link AbstractEffectCell} for containing
@@ -52,26 +61,45 @@ public class EffectCell extends AbstractEffectCell<EffectFX> {
         propertiesDrawer.setResizableOnDrag(false);
 
         this.getPane().setOnMouseClicked(event -> {
-            final EffectPropertiesController propertiesController = new EffectPropertiesController(this.getItem(), this.stack,
-                    propertiesDrawer);
-            try {
-                propertiesDrawer.setSidePane(FXResourceLoader.getLayout(BorderPane.class, propertiesController,
-                        EffectPropertiesController.EFFECT_PROPERTIES_LAYOUT));
-                propertiesController.effectNameProperty().bindBidirectional(this.getLabel().textProperty());
-            } catch (IOException e) {
-                throw new IllegalStateException(
-                        "Could not initialize side pane for properties of effect " + this.getItem().toString() + ": ", e);
-            }
+            if (event.getButton() == MouseButton.PRIMARY) {
+                final EffectPropertiesController propertiesController = new EffectPropertiesController(this.getItem(), this.stack,
+                        propertiesDrawer);
+                try {
+                    propertiesDrawer.setSidePane(FXResourceLoader.getLayout(BorderPane.class, propertiesController,
+                            EffectPropertiesController.EFFECT_PROPERTIES_LAYOUT));
+                    propertiesController.effectNameProperty().bindBidirectional(this.getLabel().textProperty());
+                } catch (IOException e) {
+                    throw new IllegalStateException(
+                            "Could not initialize side pane for properties of effect " + this.getItem().toString() + ": ", e);
+                }
 
-            // To not interfere with label double-click action
-            if (event.getClickCount() != 2) {
                 // Drawer size is modified every time it's opened
                 if (propertiesDrawer.isHidden() || propertiesDrawer.isHiding()) {
                     propertiesDrawer.setDefaultDrawerSize(stack.getWidth());
                 }
                 this.stack.toggle(propertiesDrawer);
+
             }
         });
+
+        final ContextMenu menu = new ContextMenu();
+
+        final MenuItem rename = new MenuItem(getStringRes("menu_item_rename"));
+        rename.setOnAction(event -> {
+            if (getItem() != null) {
+                rename(getStringRes("rename_effect_dialog_title"), getStringRes("rename_effect_dialog_msg"), null, getLabel().textProperty());
+            }
+            event.consume();
+        });
+
+        final MenuItem delete = new MenuItem(getStringRes("menu_item_delete"));
+        delete.setOnAction(event -> {
+            removeItself();
+            event.consume();
+        });
+
+        menu.getItems().addAll(rename, delete);
+        this.setContextMenu(menu);
     }
 
     /**

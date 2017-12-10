@@ -2,15 +2,20 @@ package it.unibo.alchemist.boundary.gui.view.cells;
 
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
+import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javafx.application.Platform;
+import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.effect.Effect;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
@@ -21,7 +26,9 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import jiconfont.icons.GoogleMaterialDesignIcons;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -67,6 +74,16 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
         setOnDragDropped(this::dropDragNDrop);
         setOnDragDone(DragEvent::consume);
 
+        // Not show context menu in empty cells
+        this.setOnContextMenuRequested(event -> {
+            if (getItem() == null) {
+                getContextMenu().hide();
+            } /* else { // Not needed as it show context menu autonomously
+                getContextMenu().show(this, event.getScreenX(), event.getScreenY());
+            } */
+            event.consume();
+        });
+
         // Adding other nodes
         int i = DEFAULT_OFFSET;
         for (final Node node : nodes) {
@@ -75,6 +92,43 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
         }
         GridPane.setRowSpan(handle, i);
         this.injectedNodes = i - DEFAULT_OFFSET;
+    }
+
+    /**
+     * Renames some {@code Property} opening a dialog.
+     *
+     * @param dialogTitle   the {@link TextInputDialog#titleProperty()}  dialog} title
+     * @param dialogMessage the {@link TextInputDialog#headerTextProperty()}  dialog} message
+     * @param dialogContent the {@link TextInputDialog#contentTextProperty()}  dialog} content
+     * @param toRename      the {@code Property} to rename
+     * @see TextInputDialog
+     */
+    protected static void rename(final @Nullable String dialogTitle, final @Nullable String dialogMessage, final @Nullable String dialogContent, final @NotNull StringProperty toRename) {
+        final TextInputDialog dialog = new TextInputDialog(toRename.get());
+        dialog.setTitle(dialogTitle);
+        dialog.setHeaderText(dialogMessage);
+        dialog.setContentText(dialogContent);
+        ((Stage) dialog.getDialogPane()
+                .getScene()
+                .getWindow())
+                .getIcons()
+                .add(SVGImageUtils.getSvgImage(SVGImageUtils.DEFAULT_ALCHEMIST_ICON_PATH));
+
+        dialog.showAndWait().ifPresent(s -> Platform.runLater(() -> toRename.set(s)));
+    }
+
+    /**
+     * Removes the item of this cell from the items of the {@link ListView} that contains this cell, if any.
+     */
+    protected final void removeItself() {
+        final T item = getItem();
+        if (item != null) {
+            final ListView<T> listView = getListView();
+            if (listView != null) {
+                listView.getItems().remove(getItem());
+                getDisplayMonitor().ifPresent(FXOutputMonitor::repaint); // TODO should also recalculate?
+            }
+        }
     }
 
     /**

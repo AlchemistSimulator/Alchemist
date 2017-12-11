@@ -18,6 +18,8 @@ import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
  * JUnit test for {@link EffectGroup} and {@link EffectStack} serialization.
  */
 public class EffectGroupSerializationTest {
+    private static final double TEST_DOT_SIZE = 22.0;
+    private static final double TEST_COLORED_DOT_SIZE = 25.0;
     /** Temporary folder created before each test method, and deleted after each. */
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
@@ -100,17 +102,12 @@ public class EffectGroupSerializationTest {
         final EffectGroup effects = new EffectStack("TestGroup");
         effects.add(new DrawDot("TestDot"));
         final DrawDot dot = new DrawDot();
-        // CHECKSTYLE:OFF
-        dot.setSize(22.0);
-        // CHECKSTYLE:ON
+        dot.setSize(TEST_DOT_SIZE);
         effects.add(dot);
         final DrawColoredDot coloredDot = new DrawColoredDot("Colored Dot");
-        // CHECKSTYLE:OFF
-        coloredDot.setSize(25.0);
-        // CHECKSTYLE:ON
+        coloredDot.setSize(TEST_COLORED_DOT_SIZE);
         coloredDot.setColor(Color.CYAN);
         effects.add(coloredDot);
-//        effects.add(new DrawShapeFX());
         return effects;
     }
 

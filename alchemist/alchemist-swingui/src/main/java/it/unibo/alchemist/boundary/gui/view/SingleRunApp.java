@@ -36,6 +36,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -271,7 +272,7 @@ public class SingleRunApp<T> extends Application {
      * @see OutputMonitor#initialized(Environment)
      */
     @SafeVarargs
-    private final void initMonitors(final @NotNull Simulation<T> simulation, final @Nullable OutputMonitor<T>... monitors) {
+    private final void initMonitors(final @NotNull Simulation<T> simulation, final @Nullable OutputMonitor<T>... monitors) { // NOPMD - UnnecessaryFinalModifier - necessary to @SafeVarargs tag
         if (monitors != null) {
             for (final OutputMonitor<T> m : monitors) {
                 if (m != null) {
@@ -290,13 +291,19 @@ public class SingleRunApp<T> extends Application {
      */
     protected void initKeybindings(final Scene scene) {
         scene.setOnKeyPressed(event -> {
-            switch (event.getCode()) {
-                case P:
-                    playPauseMonitor.fireEvent(new ActionEvent(event.getSource(), playPauseMonitor));
-                    break;
-                default:
-                    break;
+//            switch (event.getCode()) {
+//                case P:
+//                    playPauseMonitor.fireEvent(new ActionEvent(event.getSource(), playPauseMonitor));
+//                    break;
+//                default:
+//                    break;
+//            }
+            // TODO remove if and use switch (like comment above) for new key bindings
+            if (event.getCode().equals(KeyCode.P)) {
+                playPauseMonitor.fireEvent(new ActionEvent(event.getSource(), playPauseMonitor));
             }
+
+            event.consume();
         });
     }
 
@@ -309,17 +316,29 @@ public class SingleRunApp<T> extends Application {
      */
     private void parseNamedParams(final Map<String, String> params) {
         params.forEach((key, value) -> {
-            switch (key) {
-                case USE_EFFECT_GROUPS_FROM_FILE:
-                    try {
-                        effectGroups.addAll(EffectSerializer.effectGroupsFromFile(new File(value)));
-                    } catch (final IOException e) {
-                        L.warn(e.getMessage());
-                        effectGroups.clear(); // TODO check if necessary
-                    }
-                    break;
-                default:
-                    L.warn("Unexpected argument " + PARAMETER_NAME_START + key + PARAMETER_NAME_END + value);
+//            switch (key) {
+//                case USE_EFFECT_GROUPS_FROM_FILE:
+//                    try {
+//                        effectGroups.addAll(EffectSerializer.effectGroupsFromFile(new File(value)));
+//                    } catch (final IOException e) {
+//                        L.warn(e.getMessage());
+//                        effectGroups.clear(); // TODO check if necessary
+//                    }
+//                    break;
+//                default:
+//                    L.warn("Unexpected argument " + PARAMETER_NAME_START + key + PARAMETER_NAME_END + value);
+//                    break;
+//            }
+            // TODO remove if and use switch (like comment above) for new named parameters
+            if (key.equals(USE_EFFECT_GROUPS_FROM_FILE)) {
+                try {
+                    effectGroups.addAll(EffectSerializer.effectGroupsFromFile(new File(value)));
+                } catch (final IOException e) {
+                    L.warn(e.getMessage());
+                    effectGroups.clear(); // TODO check if necessary
+                }
+            } else {
+                L.warn("Unexpected argument " + PARAMETER_NAME_START + key + PARAMETER_NAME_END + value);
             }
         });
     }
@@ -332,16 +351,20 @@ public class SingleRunApp<T> extends Application {
      */
     private void parseUnnamedParams(final List<String> params) {
         params.forEach(param -> {
-            try {
-                switch (param.startsWith(PARAMETER_NAME_START)
-                        ? param.substring(PARAMETER_NAME_START.length())
-                        : param) {
-                    default:
-                        L.warn("Unexpected argument " + PARAMETER_NAME_START + param);
-                }
-            } catch (final IllegalArgumentException e) {
-                L.warn("Invalid argument: " + param, e);
-            }
+//            try {
+//                switch (param.startsWith(PARAMETER_NAME_START)
+//                        ? param.substring(PARAMETER_NAME_START.length())
+//                        : param) {
+//                    default:
+//                        L.warn("Unexpected argument " + PARAMETER_NAME_START + param);
+//                }
+//            } catch (final IllegalArgumentException e) {
+//                L.warn("Invalid argument: " + param, e);
+//            }
+            // TODO remove if and use the code commented above for new named parameters
+            L.warn("Unexpected argument " + PARAMETER_NAME_START + (param.startsWith(PARAMETER_NAME_START)
+                    ? param.substring(PARAMETER_NAME_START.length())
+                    : param));
         });
     }
 

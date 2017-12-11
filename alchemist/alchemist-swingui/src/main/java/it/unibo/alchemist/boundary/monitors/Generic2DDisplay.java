@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2010-2015, Danilo Pianini and contributors
  * listed in the project's pom.xml file.
- * 
+ *
  * This file is part of Alchemist, and is distributed under the terms of
  * the GNU General Public License, with a linking exception, as described
  * in the file LICENSE in the Alchemist distribution's top directory.
@@ -98,7 +98,13 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
      * The default time per frame.
      */
     protected static final double TIME_STEP = 1d / DEFAULT_FRAME_RATE;
+    /**
+     *
+     */
     protected static final double FREEDOM_RADIUS = 1d;
+    /**
+     *
+     */
     protected static final int MS_PER_SECOND = 1000;
     /**
      * How big (in pixels) the selected node should appear.
@@ -121,7 +127,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
     private volatile boolean firstTime = true;
     private boolean paintLinks;
     private transient Optional<Node<T>> hooked = Optional.empty();
-    private boolean initialized;
+    private boolean init;
     private double lastTime;
     private int mouseX, mouseY;
     private Node<T> nearest;
@@ -161,7 +167,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
         }
         setStep(step);
         setBackground(Color.WHITE);
-        initialized = false;
+        init = false;
         final MouseManager mgr = new MouseManager();
         addMouseListener(mgr);
         addMouseMotionListener(mgr);
@@ -539,7 +545,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
      * @return a <code>boolean</code> value
      */
     protected boolean isInitilized() {
-        return initialized;
+        return init;
     }
 
     /**
@@ -657,6 +663,12 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
         }
     }
 
+    /**
+     * Updates parameter for correct {@code Environment} representation.
+     *
+     * @param env  the {@code Environment}
+     * @param time the current {@code Time} of simulation
+     */
     protected void update(final Environment<T> env, final Time time) {
         if (Thread.holdsLock(env)) {
             if (envHasMobileObstacles(env)) {
@@ -705,18 +717,33 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
      * This enum models the status of the {@link Generic2DDisplay}.
      */
     protected enum ViewStatus {
+        /**
+         *
+         */
         VIEW_ONLY,
-
+        /**
+         *
+         */
         MARK_CLOSER,
-
+        /**
+         *
+         */
         SELECTING,
-
+        /**
+         *
+         */
         MOVING,
-
+        /**
+         *
+         */
         CLONING,
-
+        /**
+         *
+         */
         DELETING,
-
+        /**
+         *
+         */
         MOLECULING;
     }
 

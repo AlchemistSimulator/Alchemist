@@ -82,7 +82,7 @@ public final class Alchemist {
             }
             Optional<Loader> loader = Optional.empty();
             if (cmd.hasOption(YAML)) {
-                try (final InputStream is = new FileInputStream(new File(cmd.getOptionValue(YAML)))) {
+                try (InputStream is = new FileInputStream(new File(cmd.getOptionValue(YAML)))) {
                     loader = Optional.of(new YamlLoader(is));
                 } catch (final IOException e) {
                     L.error("Unable to load the requested file.", e);

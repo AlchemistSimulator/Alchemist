@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import it.unibo.alchemist.boundary.gui.effects.*;
+import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.view.SingleRunAppBuilder;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
@@ -19,7 +19,6 @@ import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.BenchmarkableEnvironment;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Time;
-
 import java.awt.GraphicsEnvironment;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
@@ -43,7 +42,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,14 +79,13 @@ public final class AlchemistRunner<T> {
      * @param sampling       the sampling interval
      * @param parallelism    the number of threads in the pool of the {@link Executor}
      * @param headless       if the simulation should run headless or with a GUI
-     * @param closeOperation the close operation for the GUI
      * @param benchmark      if you want to benchmark this run
      * @param outputMonitors the {@link Collection} of {@link OutputMonitor} to add to the simulation
      * @see AlchemistRunner.Builder
      */
     private AlchemistRunner(final Loader source, final Time endTime, final long endStep,
                             final Optional<String> exportRoot, final Optional<String> effectsFile, final double sampling,
-                            final int parallelism, final boolean headless, final int closeOperation, final boolean benchmark,
+                            final int parallelism, final boolean headless, final boolean benchmark,
                             final ImmutableCollection<Supplier<OutputMonitor<T>>> outputMonitors) {
         this.effectsFile = effectsFile;
         this.endTime = endTime;
@@ -154,7 +151,7 @@ public final class AlchemistRunner<T> {
             /*
              * findAny does NOT short-circuit the stream due to a known bug in
              * the JDK: https://bugs.openjdk.java.net/browse/JDK-8075939
-             * 
+             *
              * Thus, to date, if an exception occurs in a thread which is
              * running a simulation, that exception will be effectively thrown
              * outside that thread only when all the threads have completed
@@ -226,10 +223,10 @@ public final class AlchemistRunner<T> {
                                 .map(e -> e.getKey() + '-' + e.getValue())
                                 .collect(Collectors.joining("_")))
                                 + ".txt";
-                    /*
-                     * Make the header: get all the default values and
-                     * substitute those that are different in this run
-                     */
+                        /*
+                         * Make the header: get all the default values and
+                         * substitute those that are different in this run
+                         */
                         final Map<String, Object> defaultVars = loader.getVariables().entrySet().stream()
                                 .collect(Collectors.toMap(Entry::getKey, e -> e.getValue().getDefault()));
                         defaultVars.putAll(vars);
@@ -292,7 +289,7 @@ public final class AlchemistRunner<T> {
          */
         public AlchemistRunner<T> build() {
             return new AlchemistRunner<>(this.loader, this.endTime, this.endStep, this.exportFileRoot, this.effectsFile,
-                    this.samplingInt, this.parallelism, this.headless, this.closeOperation, this.benchmark,
+                    this.samplingInt, this.parallelism, this.headless, this.benchmark,
                     ImmutableList.copyOf(outputMonitors));
         }
 

@@ -1,5 +1,17 @@
 package it.unibo.alchemist.boundary.monitor.generic;
 
+import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
+import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
+import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
+import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D;
+import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
+import it.unibo.alchemist.model.implementations.times.DoubleTime;
+import it.unibo.alchemist.model.interfaces.Concentration;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.Time;
 import java.awt.Point;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -11,20 +23,6 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.jetbrains.annotations.Nullable;
-
-import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
-import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
-import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
-import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D;
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
-import it.unibo.alchemist.model.interfaces.Concentration;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.Time;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -37,6 +35,7 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Base abstract class for each display able to graphically represent a 2D space and simulation.
@@ -44,10 +43,6 @@ import javafx.scene.input.TransferMode;
  * @param <T> The type which describes the {@link Concentration} of a molecule
  */
 public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMonitor<T> {
-    /**
-     * Default serial version UID.
-     */
-    private static final long serialVersionUID = 1L;
     /**
      * The default frame rate.
      */
@@ -64,6 +59,10 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      * Position {@code DataFormat}.
      */
     protected static final DataFormat POSITION_DATA_FORMAT = DataFormatFactory.getDataFormat(Position.class);
+    /**
+     * Default serial version UID.
+     */
+    private static final long serialVersionUID = 1L;
     /**
      * The default view status.
      */
@@ -101,7 +100,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         setStep(steps);
         this.commandQueue = new ConcurrentLinkedQueue<>();
         enableEventReceiving();
-        setStyle("-fx-background-color: #FFF;"); 
+        setStyle("-fx-background-color: #FFF;");
         initMouseListener(); // NOPMD - the method is meant to be overridable
         setViewStatus(DEFAULT_VIEW_STATUS); // NOPMD - the method is meant to be overridable
     }
@@ -214,10 +213,20 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         }
     }
 
+    /**
+     * The method is meant to handle what should the monitor do when a drag'n'drop of a {@link Node} starts.
+     *
+     * @param event the event
+     */
     protected void startNodeDragNDrop(final MouseEvent event) {
         // TODO
     }
 
+    /**
+     * The method is meant to handle what should the monitor do when a pan gesture in the {@link Environment} starts.
+     *
+     * @param event the event
+     */
     protected void startEnvironmentDragNDrop(final MouseEvent event) {
         final Optional<Position> position = getEventPosition(event);
         position.ifPresent(p -> {
@@ -230,14 +239,25 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
         event.consume();
     }
 
+    /**
+     * The method is meant to handle what should the monitor do when the mouse enters in a valid position during a pan gesture in the {@link Environment}.
+     *
+     * @param event the event
+     */
     protected void onEnvironmentDragEntered(final DragEvent event) {
-        final BidimensionalWormhole wormhole = getWormhole();
-        if (wormhole != null) {
-            final Position previousMousePos = (Position) event.getDragboard().getContent(POSITION_DATA_FORMAT);
-            repaint();
-        }
+//        final BidimensionalWormhole wormhole = getWormhole();
+//        if (wormhole != null) {
+//            final Position previousMousePos = (Position) event.getDragboard().getContent(POSITION_DATA_FORMAT);
+//            repaint();
+//        }
+        // TODO
     }
 
+    /**
+     * The method is meant to handle what should the monitor do when the mouse enters in a valid position during a drag'n'drop gesture of a {@link Node}.
+     *
+     * @param event the event
+     */
     protected void onNodeDragEntered(final DragEvent event) {
         // TODO
     }
@@ -288,8 +308,8 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      *
      * @param graphicsContext the graphic component to draw on
      * @param environment     the {@code Environment} that contains the data to pass to {@code Effects}
-     * @see #repaint()
      * @return a function of what to do to draw the background
+     * @see #repaint()
      */
     protected Runnable drawBackground(final GraphicsContext graphicsContext, final Environment<T> environment) {
         return () -> graphicsContext.clearRect(0, 0, getWidth(), getHeight());
@@ -347,6 +367,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
 
     /**
      * The method initializes everything is not initializable before first step.
+     *
      * @param environment the {@code Environment}
      */
     protected void init(final Environment<T> environment) {

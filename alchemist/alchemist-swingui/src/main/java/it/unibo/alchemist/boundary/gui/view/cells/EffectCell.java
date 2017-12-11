@@ -8,22 +8,18 @@ import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
-import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import java.io.IOException;
-import javafx.application.Platform;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Stage;
 import org.jetbrains.annotations.Nullable;
 
 import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRes;
@@ -34,7 +30,7 @@ import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRe
  * clicked should open another view to edit effect-specific parameters.
  */
 public class EffectCell extends AbstractEffectCell<EffectFX> {
-    private static final String DEFAULT_NAME = ResourceLoader.getStringRes("effect_default_name");
+    private static final String DEFAULT_NAME = getStringRes("effect_default_name");
     private final JFXDrawersStack stack;
 
     /**

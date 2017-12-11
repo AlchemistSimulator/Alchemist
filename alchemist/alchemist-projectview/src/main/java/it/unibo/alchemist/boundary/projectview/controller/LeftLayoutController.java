@@ -1,5 +1,10 @@
 package it.unibo.alchemist.boundary.projectview.controller;
 
+import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
+import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
+import it.unibo.alchemist.boundary.projectview.ProjectGUI;
+import it.unibo.alchemist.boundary.projectview.model.Project;
+import it.unibo.alchemist.boundary.projectview.utils.ProjectIOUtils;
 import java.awt.Desktop;
 import java.awt.Desktop.Action;
 import java.awt.Dimension;
@@ -8,18 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-
-import org.jooq.lambda.Unchecked;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
-import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
-import it.unibo.alchemist.boundary.projectview.ProjectGUI;
-import it.unibo.alchemist.boundary.projectview.model.Project;
-import it.unibo.alchemist.boundary.projectview.utils.ProjectIOUtils;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -37,9 +30,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.jooq.lambda.Unchecked;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  *
  */
 public class LeftLayoutController implements Initializable {
@@ -75,7 +71,6 @@ public class LeftLayoutController implements Initializable {
     }
 
     /**
-     * 
      * @param main Main class.
      */
     public void setMain(final ProjectGUI main) {
@@ -83,7 +78,6 @@ public class LeftLayoutController implements Initializable {
     }
 
     /**
-     * 
      * @return path of project folder
      */
     public String getPathFolder() {
@@ -91,7 +85,6 @@ public class LeftLayoutController implements Initializable {
     }
 
     /**
-     * 
      * @return path of selected file
      */
     public String getSelectedFilePath() {
@@ -99,7 +92,6 @@ public class LeftLayoutController implements Initializable {
     }
 
     /**
-     * 
      * @param ctrlCenter A controller of CenterLayout
      */
     public void setCtrlCenter(final CenterLayoutController ctrlCenter) {
@@ -107,7 +99,6 @@ public class LeftLayoutController implements Initializable {
     }
 
     /**
-     * 
      * @param dir Selected directory
      */
     public void setTreeView(final File dir) {
@@ -121,7 +112,7 @@ public class LeftLayoutController implements Initializable {
             final TreeItem<String> selectedItem = (TreeItem<String>) newVal;
             TreeItem<String> parent = selectedItem.getParent();
             String path = File.separator + selectedItem.getValue();
-            while (parent != null)  {
+            while (parent != null) {
                 if (parent.getParent() != null) {
                     path = File.separator + parent.getValue() + path;
                 }
@@ -154,7 +145,7 @@ public class LeftLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      */
     @FXML
     public void clickRun() {
@@ -163,9 +154,9 @@ public class LeftLayoutController implements Initializable {
         }
         final Project project = ProjectIOUtils.loadFrom(this.pathFolder);
         if (project != null) {
-           final Thread thread = new Thread(Unchecked.runnable(() -> project.runAlchemistSimulation(false)), "SingleRunGUI");
-           thread.setDaemon(true);
-           thread.start();
+            final Thread thread = new Thread(Unchecked.runnable(() -> project.runAlchemistSimulation(false)), "SingleRunGUI");
+            thread.setDaemon(true);
+            thread.start();
         } else {
             final Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle(RESOURCES.getString("error_running"));
@@ -176,7 +167,7 @@ public class LeftLayoutController implements Initializable {
     }
 
     /**
-     * 
+     *
      */
     public void setEnableRun() {
         this.run.setDisable(false);
@@ -185,9 +176,9 @@ public class LeftLayoutController implements Initializable {
     private void displayProjectContent(final File dir, final TreeItem<String> root) {
         final File[] files = dir.listFiles();
         if (files != null) {
-            for (final File file: files) {
+            for (final File file : files) {
                 if (!file.getName().equals(".alchemist_project_descriptor.json")) {
-                    final TreeItem<String> singleFile; 
+                    final TreeItem<String> singleFile;
                     if (file.isDirectory()) {
                         singleFile = new TreeItem<>(file.getName(), new ImageView(this.folder));
                         displayProjectContent(file, singleFile);

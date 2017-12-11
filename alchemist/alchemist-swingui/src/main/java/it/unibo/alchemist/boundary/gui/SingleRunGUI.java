@@ -2,24 +2,32 @@ package it.unibo.alchemist.boundary.gui;
 
 import it.unibo.alchemist.boundary.gui.effects.JEffectsTab;
 import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializationFactory;
-import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
+import it.unibo.alchemist.boundary.gui.view.SingleRunApp;
+import it.unibo.alchemist.boundary.gui.view.SingleRunAppBuilder;
 import it.unibo.alchemist.boundary.interfaces.GraphicalOutputMonitor;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
-import it.unibo.alchemist.boundary.monitors.*;
+import it.unibo.alchemist.boundary.monitors.Generic2DDisplay;
+import it.unibo.alchemist.boundary.monitors.MapDisplay;
+import it.unibo.alchemist.boundary.monitors.TimeStepMonitor;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
-import javafx.scene.Node;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.Optional;
+import javafx.scene.Node;
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class for quickly creating non-reusable graphical interfaces.
@@ -146,12 +154,7 @@ public final class SingleRunGUI {
             sim.addOutputMonitor(main);
             // TODO this part will be removed ///////////////////////////////////////////////////////////////////////
         } else if (main instanceof Node) {
-//            final SingleRunApp view = new AbstractBuilder<>(sim)
-//                    .setDefaultOnCloseOperation(closeOperation)
-//                    .setEffectGroups(effectsFile)
-//                    .setIcon(SVGImageUtils.DEFAULT_ALCHEMIST_ICON_PATH)
-//                    .build();
-//            view.runApp();
+            new SingleRunAppBuilder<>(sim).setEffectGroups(effectsFile).build();
         } else {
             L.error("The default monitor of {} is not compatible with Java Swing.", sim);
         }

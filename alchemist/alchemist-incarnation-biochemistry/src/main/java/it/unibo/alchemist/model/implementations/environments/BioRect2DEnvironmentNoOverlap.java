@@ -2,7 +2,6 @@ package it.unibo.alchemist.model.implementations.environments;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collections;
 import java.util.stream.Stream;
 
 import org.apache.bcel.classfile.ClassFormatException;

@@ -12,13 +12,16 @@ import it.unibo.alchemist.model.implementations.environments.Continuous2DEnviron
  *
  */
 public class TestGrid {
+    private static final double[] X = {1, 10, 0, 1, 10, -10};
+    private static final double[] Y = {9.9, 1, 0, 1, 10, -10};
+    private static final long[] EXPECTED = {9, 10, 0, 1, 100, 100};
 
     /**
      * 
      */
     @Test
     public void testVerticalLine() {
-        test(9, 1, 9.9);
+        test(EXPECTED[0], X[0], Y[0]);
         assertEquals(10L, new Grid(new Continuous2DEnvironment<>(), new MersenneTwister(), 0, 0, 1, 10, 1, 1, 0, 0).stream().count());
     }
 
@@ -27,7 +30,7 @@ public class TestGrid {
      */
     @Test
     public void testHorizontalLine() {
-        test(10, 10, 1);
+        test(EXPECTED[1], X[1], Y[1]);
     }
 
     /**
@@ -35,7 +38,7 @@ public class TestGrid {
      */
     @Test
     public void testEmpty() {
-        test(0, 0, 0);
+        test(EXPECTED[2], X[2], Y[2]);
     }
 
     /**
@@ -43,7 +46,7 @@ public class TestGrid {
      */
     @Test
     public void test1x1() {
-        test(1, 1, 1);
+        test(EXPECTED[3], X[3], Y[3]);
     }
 
     /**
@@ -51,7 +54,7 @@ public class TestGrid {
      */
     @Test
     public void test10x10() {
-        test(100, 10, 10);
+        test(EXPECTED[4], X[4], Y[4]);
     }
 
     /**
@@ -59,7 +62,7 @@ public class TestGrid {
      */
     @Test
     public void test10x10negative() {
-        test(100, -10, -10);
+        test(EXPECTED[5], X[5], Y[5]);
     }
     
     private void test(long expected, double x, double y) {

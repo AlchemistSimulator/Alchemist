@@ -5,18 +5,16 @@ import it.unibo.alchemist.boundary.projectview.controller.CenterLayoutController
 import it.unibo.alchemist.boundary.projectview.controller.LeftLayoutController;
 import it.unibo.alchemist.boundary.projectview.controller.TopLayoutController;
 import it.unibo.alchemist.boundary.util.FXUtil;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.io.IOException;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
-
-import java.awt.*;
-import java.io.IOException;
 
 import static it.unibo.alchemist.boundary.gui.utility.SVGImageUtils.DEFAULT_ALCHEMIST_ICON_PATH;
 

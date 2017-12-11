@@ -27,6 +27,11 @@ import javafx.beans.property.Property;
  */
 public class RangedDoublePropertySerializationTest extends AbstractPropertySerializationTest {
 
+    private static final double TEST_INITIAL_VALUE = 5.0;
+    private static final double TEST_LOWER_BOUND = 0.0;
+    private static final double TEST_UPPER_BOUND = 100.0;
+    private static final double TEST_PERCENT = 33.0;
+
     @Test
     @Override
     public void testJavaSerialization() throws IOException, ClassNotFoundException {
@@ -35,9 +40,7 @@ public class RangedDoublePropertySerializationTest extends AbstractPropertySeria
         final FileOutputStream fout = new FileOutputStream(file);
         final ObjectOutputStream oos = new ObjectOutputStream(fout);
 
-        // CHECKSTYLE:OFF
-        RangedDoubleProperty rangedDoubleProperty = new RangedDoubleProperty("Pippo", 5.0, 0.0, 100.0);
-        // CHECKSTYLE:ON
+        RangedDoubleProperty rangedDoubleProperty = new RangedDoubleProperty("Pippo", TEST_INITIAL_VALUE, TEST_LOWER_BOUND, TEST_UPPER_BOUND);
         oos.writeObject(rangedDoubleProperty);
 
         final FileInputStream fin = new FileInputStream(file);
@@ -56,9 +59,8 @@ public class RangedDoublePropertySerializationTest extends AbstractPropertySeria
 
         Assert.assertTrue(getMessage(rangedDoubleProperty, deserialized), rangedDoubleProperty.equals(deserialized));
 
-        // CHECKSTYLE:OFF
-        rangedDoubleProperty = PropertyFactory.getPercentageRangedProperty("Percent test", 33.0);
-        // CHECKSTYLE:ON
+        rangedDoubleProperty = PropertyFactory.getPercentageRangedProperty("Percent test", TEST_PERCENT);
+
         oos.writeObject(rangedDoubleProperty);
 
         deserialized = (RangedDoubleProperty) ois.readObject();

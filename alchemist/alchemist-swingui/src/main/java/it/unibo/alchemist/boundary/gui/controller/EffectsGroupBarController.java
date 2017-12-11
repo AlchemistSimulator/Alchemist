@@ -235,7 +235,7 @@ public class EffectsGroupBarController implements Initializable {
 
             try {
                 this.getObservableEffectsList().addAll(EffectSerializer.effectGroupsFromFile(selectedFile));
-            } catch (final NullPointerException | IOException | JsonParseException e) {
+            } catch (final IOException | JsonParseException e) {
                 L.error("Can't load Effect Groups from file: " + e.getMessage());
                 this.errorDialog(getStringRes("load_effect_groups_error_dialog_title"), getStringRes("load_effect_groups_error_dialog_msg"), e);
             }

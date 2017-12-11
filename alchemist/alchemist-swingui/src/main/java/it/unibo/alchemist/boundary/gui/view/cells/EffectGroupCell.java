@@ -18,9 +18,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.TextAlignment;
 import org.jetbrains.annotations.Nullable;
 
 import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRes;
@@ -68,11 +65,8 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
 
         this.stack = stack;
 
-        this.getLabel().setTextAlignment(TextAlignment.CENTER);
-        this.getLabel().setFont(Font.font(this.getLabel().getFont().getFamily(), FontWeight.BOLD, this.getLabel().getFont().getSize()));
-        this.getLabel().textProperty().addListener((observable, oldValue, newValue) -> this.getItem().setName(newValue));
-
-        this.getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> this.getItem().setVisibility(newValue));
+        setupLabel(getLabel(), (observable, oldValue, newValue) -> this.getItem().setName(newValue));
+        setupToggle(getToggle(), (observable, oldValue, newValue) -> this.getItem().setVisibility(newValue));
 
         initDrawer();
 

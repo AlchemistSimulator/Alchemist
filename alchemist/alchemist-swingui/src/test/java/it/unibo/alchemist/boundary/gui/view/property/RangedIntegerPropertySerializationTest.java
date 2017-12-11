@@ -1,5 +1,8 @@
 package it.unibo.alchemist.boundary.gui.view.property;
 
+import com.google.gson.reflect.TypeToken;
+import it.unibo.alchemist.boundary.gui.effects.json.AbstractPropertySerializationTest;
+import it.unibo.alchemist.boundary.gui.view.properties.RangedIntegerProperty;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,20 +14,18 @@ import java.io.ObjectOutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Type;
-
-import it.unibo.alchemist.boundary.gui.effects.json.AbstractPropertySerializationTest;
+import javafx.beans.property.Property;
 import org.junit.Assert;
 import org.junit.Test;
-
-import com.google.gson.reflect.TypeToken;
-
-import it.unibo.alchemist.boundary.gui.view.properties.RangedIntegerProperty;
-import javafx.beans.property.Property;
 
 /**
  * JUint test for custom {@link Property} serialization.
  */
 public class RangedIntegerPropertySerializationTest extends AbstractPropertySerializationTest {
+    private static final String TEST_NAME = "Pippo";
+    private static final int TEST_INITIAL_VALUE = 5;
+    private static final int TEST_LOWER_BOUND = 0;
+    private static final int TEST_UPPER_BOUND = 100;
 
     @Test
     @Override
@@ -34,7 +35,7 @@ public class RangedIntegerPropertySerializationTest extends AbstractPropertySeri
         final FileOutputStream fout = new FileOutputStream(file);
         final ObjectOutputStream oos = new ObjectOutputStream(fout);
 
-        final RangedIntegerProperty rangedIntegerProperty = new RangedIntegerProperty("Pippo", 5, 0, 100);
+        final RangedIntegerProperty rangedIntegerProperty = new RangedIntegerProperty(TEST_NAME, TEST_INITIAL_VALUE, TEST_LOWER_BOUND, TEST_UPPER_BOUND);
 
         oos.writeObject(rangedIntegerProperty);
 
@@ -54,7 +55,7 @@ public class RangedIntegerPropertySerializationTest extends AbstractPropertySeri
     public void testGsonSerialization() throws Exception {
         final File file = folder.newFile();
 
-        final RangedIntegerProperty rangedIntegerProperty = new RangedIntegerProperty("Pippo", 5, 0, 100);
+        final RangedIntegerProperty rangedIntegerProperty = new RangedIntegerProperty(TEST_NAME, TEST_INITIAL_VALUE, TEST_LOWER_BOUND, TEST_UPPER_BOUND);
 
         final Writer writer = new FileWriter(file);
         GSON.toJson(rangedIntegerProperty, this.getGsonType(), writer);

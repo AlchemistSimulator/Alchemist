@@ -77,8 +77,6 @@ public class MapDisplay<T> extends Generic2DDisplay<T> {
         return tdl;
     }
 
-    ;
-
     @Override
     protected void drawBackground(final Graphics2D g) {
     }

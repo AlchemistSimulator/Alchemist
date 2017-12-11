@@ -7,7 +7,6 @@ import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -124,11 +123,10 @@ public class TopLayoutController implements Initializable {
     /**
      * Show a directory chooser to open an existing project.
      *
-     * @throws IOException
-     * @throws FileNotFoundException
+     * @throws IOException if something goes wrong
      */
     @FXML
-    public void clickOpen() throws FileNotFoundException, IOException {
+    public void clickOpen() throws IOException {
         if (this.ctrlCenter.getProject() != null) {
             this.ctrlCenter.checkChanges();
         }

@@ -1,5 +1,6 @@
 package it.unibo.alchemist.boundary.gui.view.cells;
 
+import com.jfoenix.controls.JFXToggleButton;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -26,6 +28,9 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import jiconfont.icons.GoogleMaterialDesignIcons;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +47,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
     /**
      * Default offset of the first injected node.
      */
-    protected static final int DEFAULT_OFFSET = 2;
+    private static final int DEFAULT_OFFSET = 2;
     private static final double DRAG_N_DROP_TARGET_OPACITY = 0.3;
     private static final String WRONG_POS = "Wrong position specified";
     private final GridPane pane;
@@ -115,6 +120,28 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
                 .add(SVGImageUtils.getSvgImage(SVGImageUtils.DEFAULT_ALCHEMIST_ICON_PATH));
 
         dialog.showAndWait().ifPresent(s -> Platform.runLater(() -> toRename.set(s)));
+    }
+
+    /**
+     * Configures the label that would probably show the element name and adds an optional listener to the {@link Label#textProperty() text property}
+     *
+     * @param label    the label to setup
+     * @param listener the optional listener to add to the label
+     */
+    protected static void setupLabel(final @NotNull Label label, final @Nullable ChangeListener<String> listener) {
+        label.setTextAlignment(TextAlignment.CENTER);
+        label.setFont(Font.font(label.getFont().getFamily(), FontWeight.BOLD, label.getFont().getSize()));
+        Optional.ofNullable(listener).ifPresent(label.textProperty()::addListener);
+    }
+
+    /**
+     * Configures a toggle and adds an optional listener to the {@link JFXToggleButton#selectedProperty()}.
+     *
+     * @param toggle   the toggle to setup
+     * @param listener the optional listener to add to the toggle
+     */
+    protected static void setupToggle(final @NotNull JFXToggleButton toggle, final @Nullable ChangeListener<Boolean> listener) {
+        Optional.ofNullable(listener).ifPresent(toggle.selectedProperty()::addListener);
     }
 
     /**

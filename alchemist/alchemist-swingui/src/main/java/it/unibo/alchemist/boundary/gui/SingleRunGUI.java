@@ -2,7 +2,6 @@ package it.unibo.alchemist.boundary.gui;
 
 import it.unibo.alchemist.boundary.gui.effects.JEffectsTab;
 import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializationFactory;
-import it.unibo.alchemist.boundary.gui.view.SingleRunApp;
 import it.unibo.alchemist.boundary.gui.view.SingleRunAppBuilder;
 import it.unibo.alchemist.boundary.interfaces.GraphicalOutputMonitor;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
@@ -110,7 +109,6 @@ public final class SingleRunGUI {
                 ? new MapDisplay<>()
                 : new Generic2DDisplay<>();
         if (main instanceof Component) {
-            // TODO this part will be removed ///////////////////////////////////////////////////////////////////////
             final JFrame frame = new JFrame("Alchemist Simulator");
             frame.setDefaultCloseOperation(closeOperation);
             final JPanel canvas = new JPanel();
@@ -152,7 +150,6 @@ public final class SingleRunGUI {
              * OutputMonitor's add to the sim must be done as the last operation
              */
             sim.addOutputMonitor(main);
-            // TODO this part will be removed ///////////////////////////////////////////////////////////////////////
         } else if (main instanceof Node) {
             new SingleRunAppBuilder<>(sim).setEffectGroups(effectsFile).build();
         } else {

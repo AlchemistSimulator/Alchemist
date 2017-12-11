@@ -7,7 +7,6 @@ import it.unibo.alchemist.boundary.gui.controller.EffectPropertiesController;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
-import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import java.io.IOException;
@@ -17,9 +16,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.TextAlignment;
 import org.jetbrains.annotations.Nullable;
 
 import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRes;
@@ -44,11 +40,8 @@ public class EffectCell extends AbstractEffectCell<EffectFX> {
 
         this.stack = stack;
 
-        this.getLabel().setTextAlignment(TextAlignment.CENTER);
-        this.getLabel().setFont(Font.font(this.getLabel().getFont().getFamily(), FontWeight.BOLD, this.getLabel().getFont().getSize()));
-        this.getLabel().textProperty().addListener((observable, oldValue, newValue) -> this.getItem().setName(newValue));
-
-        this.getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> this.getItem().setVisibility(newValue));
+        setupLabel(getLabel(), (observable, oldValue, newValue) -> this.getItem().setName(newValue));
+        setupToggle(getToggle(), (observable, oldValue, newValue) -> this.getItem().setVisibility(newValue));
 
         final JFXDrawer propertiesDrawer = new JFXDrawer();
         propertiesDrawer.setDirection(JFXDrawer.DrawerDirection.LEFT);

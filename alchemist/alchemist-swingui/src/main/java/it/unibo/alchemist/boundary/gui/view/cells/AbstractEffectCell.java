@@ -123,7 +123,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
     }
 
     /**
-     * Configures the label that would probably show the element name and adds an optional listener to the {@link Label#textProperty() text property}
+     * Configures the label that would probably show the element name and adds an optional listener to the {@link Label#textProperty() text property}.
      *
      * @param label    the label to setup
      * @param listener the optional listener to add to the label

@@ -1,5 +1,11 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
+import it.unibo.alchemist.boundary.gui.CommandQueueBuilder;
+import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
+import it.unibo.alchemist.boundary.interfaces.DrawCommand;
+import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.model.interfaces.Concentration;
+import it.unibo.alchemist.model.interfaces.Environment;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -7,13 +13,9 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.UTFDataFormatException;
 import java.util.Queue;
-
-import it.unibo.alchemist.boundary.gui.CommandQueueBuilder;
-import it.unibo.alchemist.boundary.interfaces.DrawCommand;
-import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
-import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.model.interfaces.Concentration;
-import it.unibo.alchemist.model.interfaces.Environment;
+import javafx.beans.property.Property;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * It models an abstract implementation of the {@link EffectFX effect} interface, implementing default name and visibility properties.
@@ -22,20 +24,17 @@ import it.unibo.alchemist.model.interfaces.Environment;
  */
 public abstract class AbstractEffect implements EffectFX {
     /**
-     * Default serial version UID.
-     */
-    private static final long serialVersionUID = 1L;
-
-    /**
      * Default name of the effect.
      */
     protected static final String DEFAULT_NAME = ResourceLoader.getStringRes("effect_default_name");
-
     /**
      * Default visibility of an effect.
      */
     protected static final boolean DEFAULT_VISIBILITY = true;
-
+    /**
+     * Default serial version UID.
+     */
+    private static final long serialVersionUID = 1L;
     private String name;
     private boolean visibility;
 
@@ -77,6 +76,57 @@ public abstract class AbstractEffect implements EffectFX {
     protected AbstractEffect(final String name, final boolean isVisible) {
         this.name = name;
         this.visibility = isVisible;
+    }
+
+    /**
+     * The method is useful to implement comparisons of properties in {@link #equals(Object)} method.
+     *
+     * @param prop1 the comparing object
+     * @param prop2 the other object
+     * @param <T>   the object type
+     * @return true if the objects are both null or equal, false otherwise
+     */
+    @Contract("null, !null -> false")
+    protected static <T, P extends Property<T>> boolean checkEqualsProperties(final @Nullable P prop1, final @Nullable P prop2) {
+        if (prop1 == null) {
+            return prop2 == null;
+        } else {
+            return prop2 != null && prop1.getValue().equals(prop2.getValue());
+        }
+    }
+
+    /**
+     * The method compares two {@link AbstractEffect Effects} to check basic properties of visibility, name and class.
+     *
+     * @param anEffect    the first effect to check
+     * @param otherEffect the other effect to check
+     * @param <T>         the type of Effect
+     * @return true if the Effects have the same name and visibility and are assignable from same class or are both null, false otherwise
+     */
+    @Contract("null, null -> true; null, !null -> false; !null, null -> false")
+    @SuppressWarnings("unchecked")
+    protected static <T extends AbstractEffect> boolean checkBasicProperties(final @Nullable T anEffect, final @Nullable Object otherEffect) {
+        if (anEffect == null) {
+            return otherEffect == null;
+        } else if (otherEffect != null) {
+            if (anEffect == otherEffect) {
+                return true;
+            }
+            if (!anEffect.getClass().isInstance(otherEffect)) {
+                return false;
+            }
+            final T other = (T) otherEffect;
+            if (anEffect.isVisible() != other.isVisible()) {
+                return false;
+            }
+            if (anEffect.getName() == null) {
+                return other.getName() == null;
+            } else {
+                return anEffect.getName().equals(other.getName());
+            }
+        } else {
+            return false;
+        }
     }
 
     @Override

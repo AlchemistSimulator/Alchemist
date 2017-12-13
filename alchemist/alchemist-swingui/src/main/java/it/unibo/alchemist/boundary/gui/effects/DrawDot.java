@@ -1,5 +1,14 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
+import it.unibo.alchemist.boundary.gui.CommandQueueBuilder;
+import it.unibo.alchemist.boundary.gui.effects.json.ColorSerializationAdapter;
+import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
+import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
+import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
+import it.unibo.alchemist.boundary.interfaces.DrawCommand;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 import java.awt.Point;
 import java.io.EOFException;
 import java.io.IOException;
@@ -13,20 +22,9 @@ import java.io.StreamCorruptedException;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
-
-import org.danilopianini.util.Hashes;
-
-import it.unibo.alchemist.boundary.gui.CommandQueueBuilder;
-import it.unibo.alchemist.boundary.interfaces.DrawCommand;
-import it.unibo.alchemist.boundary.gui.effects.json.ColorSerializationAdapter;
-import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
-import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
-import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.paint.Color;
+import org.danilopianini.util.Hashes;
 
 
 /**
@@ -225,40 +223,20 @@ public class DrawDot extends AbstractEffect {
 
     @Override
     public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+        if (this.getClass() != obj.getClass()) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        final boolean check = checkBasicProperties(this, obj);
+        if (check) {
+            final DrawDot other = (DrawDot) obj;
+
+            final Color thisColor = getColor();
+            final Color otherColor = other.getColor();
+
+            return checkEqualsProperties(sizeProperty(), other.sizeProperty())
+                    && thisColor == null ? otherColor == null : thisColor.equals(otherColor);
+        } else {
             return false;
         }
-        final DrawDot other = (DrawDot) obj;
-        if (isVisible() != other.isVisible()) {
-            return false;
-        }
-        if (getColor() == null) {
-            if (other.getColor() != null) {
-                return false;
-            }
-        } else if (!getColor().equals(other.getColor())) {
-            return false;
-        }
-        if (getName() == null) {
-            if (other.getName() != null) {
-                return false;
-            }
-        } else if (!getName().equals(other.getName())) {
-            return false;
-        }
-        if (getSize() == null) {
-            if (other.getSize() != null) {
-                return false;
-            }
-        } else if (!getSize().equals(other.getSize())) {
-            return false;
-        }
-        return true;
     }
 }

@@ -1,5 +1,11 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
+import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
+import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
+import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
+import it.unibo.alchemist.boundary.gui.view.properties.RangedIntegerProperty;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Node;
 import java.io.IOException;
 import java.io.InvalidClassException;
 import java.io.NotSerializableException;
@@ -8,19 +14,11 @@ import java.io.ObjectOutputStream;
 import java.io.OptionalDataException;
 import java.io.Serializable;
 import java.io.StreamCorruptedException;
-
-import org.danilopianini.util.Hashes;
-
-import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
-import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
-import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
-import it.unibo.alchemist.boundary.gui.view.properties.RangedIntegerProperty;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Node;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.paint.Color;
+import org.danilopianini.util.Hashes;
 
 /**
  * Simple effect that draws a colored dot for each {@link Node}.
@@ -79,7 +77,8 @@ public class DrawColoredDot extends DrawDot {
     }
 
     /**
-     * Convert a {@link Color JavaFX color} to an {@link java.awt.Color AWT color}. 
+     * Convert a {@link Color JavaFX color} to an {@link java.awt.Color AWT color}.
+     *
      * @param fxColor the JavaFX color
      * @return the AWT color
      */
@@ -301,61 +300,14 @@ public class DrawColoredDot extends DrawDot {
 
     @Override
     public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (this.getClass() != obj.getClass()) {
             return false;
         }
         final DrawColoredDot other = (DrawColoredDot) obj;
-        if (super.isVisible() != other.isVisible()) {
-            return false;
-        }
-        if (alphaProperty() == null) {
-            if (other.alphaProperty() != null) {
-                return false;
-            }
-        } else if (!alphaProperty().equals(other.alphaProperty())) {
-            return false;
-        }
-        if (blueProperty() == null) {
-            if (other.blueProperty() != null) {
-                return false;
-            }
-        } else if (!blueProperty().equals(other.blueProperty())) {
-            return false;
-        }
-        if (greenProperty() == null) {
-            if (other.greenProperty() != null) {
-                return false;
-            }
-        } else if (!greenProperty().equals(other.greenProperty())) {
-            return false;
-        }
-        if (super.getName() == null) {
-            if (other.getName() != null) {
-                return false;
-            }
-        } else if (!super.getName().equals(other.getName())) {
-            return false;
-        }
-        if (redProperty() == null) {
-            if (other.redProperty() != null) {
-                return false;
-            }
-        } else if (!redProperty().equals(other.redProperty())) {
-            return false;
-        }
-        if (super.getSize() == null) {
-            if (other.getSize() != null) {
-                return false;
-            }
-        } else if (!super.getSize().equals(other.getSize())) {
-            return false;
-        }
-        return true;
+        return super.equals(obj)
+                && checkEqualsProperties(blueProperty(), other.blueProperty())
+                && checkEqualsProperties(redProperty(), other.redProperty())
+                && checkEqualsProperties(greenProperty(), other.greenProperty())
+                && checkEqualsProperties(alphaProperty(), other.alphaProperty());
     }
 }

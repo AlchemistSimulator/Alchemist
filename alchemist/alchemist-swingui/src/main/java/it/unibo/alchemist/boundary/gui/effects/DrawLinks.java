@@ -1,5 +1,15 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
+import it.unibo.alchemist.boundary.gui.CommandQueueBuilder;
+import it.unibo.alchemist.boundary.gui.effects.json.ColorSerializationAdapter;
+import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
+import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
+import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
+import it.unibo.alchemist.boundary.interfaces.DrawCommand;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Neighborhood;
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 import java.awt.Point;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -8,21 +18,9 @@ import java.io.Serializable;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
-import org.danilopianini.util.Hashes;
-
-import it.unibo.alchemist.boundary.gui.CommandQueueBuilder;
-import it.unibo.alchemist.boundary.interfaces.DrawCommand;
-import it.unibo.alchemist.boundary.gui.effects.json.ColorSerializationAdapter;
-import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
-import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
-import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Neighborhood;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.paint.Color;
+import org.danilopianini.util.Hashes;
 
 /**
  * Simple effect that draws a {@link Color#BLACK black} line for each
@@ -173,41 +171,19 @@ public class DrawLinks extends AbstractEffect {
 
     @Override
     public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+        if (this.getClass() != obj.getClass()) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        final boolean check = checkBasicProperties(this, obj);
+        if (check) {
+            final DrawLinks other = (DrawLinks) obj;
+            final Color otherColor = other.getColor();
+            final Color thisColor = getColor();
+            return checkEqualsProperties(sizeProperty(), other.sizeProperty())
+                    && thisColor == null ? otherColor == null : thisColor.equals(otherColor);
+        } else {
             return false;
         }
-        final DrawLinks other = (DrawLinks) obj;
-        if (isVisible() != other.isVisible()) {
-            return false;
-        }
-        if (getColor() == null) {
-            if (other.getColor() != null) {
-                return false;
-            }
-        } else if (!getColor().equals(other.getColor())) {
-            return false;
-        }
-        if (getName() == null) {
-            if (other.getName() != null) {
-                return false;
-            }
-        } else if (!getName().equals(other.getName())) {
-            return false;
-        }
-        if (getSize() == null) {
-            if (other.getSize() != null) {
-                return false;
-            }
-        } else if (!getSize().equals(other.getSize())) {
-            return false;
-        }
-        return true;
     }
 
     /**

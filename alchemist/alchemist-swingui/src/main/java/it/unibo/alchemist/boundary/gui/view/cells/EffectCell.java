@@ -142,7 +142,7 @@ public class EffectCell extends AbstractEffectCell<EffectFX> {
      *
      * @return the label
      */
-    protected Label getLabel() {
+    protected final Label getLabel() {
         return (Label) super.getInjectedNodeAt(0);
     }
 
@@ -151,7 +151,7 @@ public class EffectCell extends AbstractEffectCell<EffectFX> {
      *
      * @return the toggle
      */
-    protected JFXToggleButton getToggle() {
+    protected final JFXToggleButton getToggle() {
         return (JFXToggleButton) super.getInjectedNodeAt(1);
     }
 

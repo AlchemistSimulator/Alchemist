@@ -10,7 +10,6 @@ import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -21,9 +20,9 @@ import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-
 import javafx.beans.property.Property;
 import javafx.scene.paint.Color;
 import javassist.Modifier;
@@ -58,16 +57,15 @@ public final class EffectSerializer {
     /**
      * {@code Type} of an {@code EffectFX}.
      */
-    private static final TypeToken<EffectFX> EFFECT_TYPE = new TypeToken<EffectFX>() { };
+    private static final TypeToken<EffectFX> EFFECT_TYPE = new TypeToken<EffectFX>() {};
     /**
      * {@code Type} of an {@code EffectGroup}.
      */
-    private static final TypeToken<EffectGroup> EFFECT_GROUP_TYPE = new TypeToken<EffectGroup>() { };
+    private static final TypeToken<EffectGroup> EFFECT_GROUP_TYPE = new TypeToken<EffectGroup>() {};
     /**
      * @code Type} of a {@code List} of {@code EffectGroup}.
      */
-    private static final TypeToken<List<EffectGroup>> EFFECT_GROUP_LIST_TYPE = new TypeToken<List<EffectGroup>>() { };
-
+    private static final TypeToken<List<EffectGroup>> EFFECT_GROUP_LIST_TYPE = new TypeToken<List<EffectGroup>>() {};
     /**
      * Reflection object for main Alchemist package.
      */
@@ -110,30 +108,8 @@ public final class EffectSerializer {
         final GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(new TypeToken<Color>() {
         }.getType(), new ColorSerializationAdapter());
-        PROPERTIES.stream()
-                .filter(c -> Arrays.stream(c.getMethods())
-                        .filter(m -> Modifier.isStatic(m.getModifiers()))
-                        .anyMatch(m -> m.getName().equals(TARGET_METHOD_NAME)))
-                .forEach(c -> {
-                    try {
-                        builder.registerTypeAdapter(c, c.getMethod(TARGET_METHOD_NAME).invoke(null));
-                    } catch (final NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                            | SecurityException e) {
-                        throw new IllegalStateException(e);
-                    }
-                });
-        GROUPS.stream()
-                .filter(c -> Arrays.stream(c.getMethods())
-                        .filter(m -> Modifier.isStatic(m.getModifiers()))
-                        .anyMatch(m -> m.getName().equals(TARGET_METHOD_NAME)))
-                .forEach(c -> {
-                    try {
-                        builder.registerTypeAdapter(c, c.getMethod(TARGET_METHOD_NAME).invoke(null));
-                    } catch (final NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                            | SecurityException e) {
-                        throw new IllegalStateException(e);
-                    }
-                });
+        registerTypeAdaptersFor(builder, PROPERTIES);
+        registerTypeAdaptersFor(builder, GROUPS);
         GSON = builder
                 .registerTypeAdapterFactory(RTA_EFFECT)
                 .registerTypeAdapterFactory(RTA_GROUP)
@@ -148,6 +124,21 @@ public final class EffectSerializer {
      */
     private EffectSerializer() {
         throw new AssertionError("Suppress default constructor for noninstantiability");
+    }
+
+    private static final <T> void registerTypeAdaptersFor(final GsonBuilder builder, final Collection<Class<? extends T>> classes) {
+        classes.stream()
+                .filter(c -> Arrays.stream(c.getMethods())
+                        .filter(m -> Modifier.isStatic(m.getModifiers()))
+                        .anyMatch(m -> m.getName().equals(TARGET_METHOD_NAME)))
+                .forEach(c -> {
+                    try {
+                        builder.registerTypeAdapter(c, c.getMethod(TARGET_METHOD_NAME).invoke(null));
+                    } catch (final NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                            | SecurityException e) {
+                        throw new IllegalStateException(e);
+                    }
+                });
     }
 
     /**

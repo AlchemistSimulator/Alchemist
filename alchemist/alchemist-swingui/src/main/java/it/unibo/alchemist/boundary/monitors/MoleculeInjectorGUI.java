@@ -1,5 +1,7 @@
 package it.unibo.alchemist.boundary.monitors;
 
+import it.unibo.alchemist.model.interfaces.Incarnation;
+import it.unibo.alchemist.model.interfaces.Node;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -12,7 +14,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -21,15 +22,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.plaf.basic.BasicBorders;
-
 import org.danilopianini.lang.CollectionWithCurrentElement;
 import org.danilopianini.lang.ImmutableCollectionWithCurrentElement;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import it.unibo.alchemist.model.interfaces.Incarnation;
-import it.unibo.alchemist.model.interfaces.Node;
 
 /**
  * This class raises a new JPanel which allows to graphically inject a new molecule
@@ -37,20 +34,13 @@ import it.unibo.alchemist.model.interfaces.Node;
  *
  * @param <T>
  */
+@Deprecated
 public class MoleculeInjectorGUI<T> extends JPanel {
 
     private static final long serialVersionUID = -375286112397911525L;
 
     private static final Logger L = LoggerFactory.getLogger(MoleculeInjectorGUI.class);
     private static final List<Incarnation<?>> INCARNATIONS = new LinkedList<>();
-
-    private final transient CollectionWithCurrentElement<Incarnation<T>> incarnation = makeIncarnation();
-    private final Set<Node<T>> affectedNodes = new HashSet<>();
-    private final List<JLabel> nodesLabels;
-    private final JTextArea concentration;
-    private final JTextArea molecule;
-    private final JComboBox<Incarnation<?>> selectedIncr;
-    private final JButton apply = new JButton("Apply");
 
     static {
         final Reflections reflections = new Reflections("it.unibo.alchemist");
@@ -63,12 +53,13 @@ public class MoleculeInjectorGUI<T> extends JPanel {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private CollectionWithCurrentElement<Incarnation<T>> makeIncarnation() {
-        return new ImmutableCollectionWithCurrentElement<>(
-                INCARNATIONS.stream().map(i -> (Incarnation<T>) i).collect(Collectors.toList()),
-                (Incarnation<T>) INCARNATIONS.get(0));
-    }
+    private final transient CollectionWithCurrentElement<Incarnation<T>> incarnation = makeIncarnation();
+    private final Set<Node<T>> affectedNodes = new HashSet<>();
+    private final List<JLabel> nodesLabels;
+    private final JTextArea concentration;
+    private final JTextArea molecule;
+    private final JComboBox<Incarnation<?>> selectedIncr;
+    private final JButton apply = new JButton("Apply");
 
     /**
      * @param nodes The nodes which will be affected by the molecule injection.
@@ -86,6 +77,13 @@ public class MoleculeInjectorGUI<T> extends JPanel {
             }
             buildView();
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private CollectionWithCurrentElement<Incarnation<T>> makeIncarnation() {
+        return new ImmutableCollectionWithCurrentElement<>(
+                INCARNATIONS.stream().map(i -> (Incarnation<T>) i).collect(Collectors.toList()),
+                (Incarnation<T>) INCARNATIONS.get(0));
     }
 
     private void buildView() {

@@ -1,23 +1,24 @@
 package it.unibo.alchemist.boundary.gui.view.cells;
 
-import java.io.IOException;
-
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
 import com.jfoenix.controls.JFXToggleButton;
-
 import it.unibo.alchemist.boundary.gui.controller.EffectPropertiesController;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
-import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
+import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
+import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
+import java.io.IOException;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.DataFormat;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.TextAlignment;
+import org.jetbrains.annotations.Nullable;
+
+import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRes;
 
 /**
  * This ListView cell implements the {@link AbstractEffectCell} for containing
@@ -25,47 +26,22 @@ import javafx.scene.text.TextAlignment;
  * clicked should open another view to edit effect-specific parameters.
  */
 public class EffectCell extends AbstractEffectCell<EffectFX> {
-    private static final String DEFAULT_NAME = ResourceLoader.getStringRes("effect_default_name");
+    private static final String DEFAULT_NAME = getStringRes("effect_default_name");
     private final JFXDrawersStack stack;
 
     /**
      * Default constructor.
-     * 
-     * @param effectName
-     *            the name of the effect
-     * @param stack
-     *            the stack where to open the effect properties
+     *
+     * @param effectName the name of the effect
+     * @param stack      the stack where to open the effect properties
      */
     public EffectCell(final String effectName, final JFXDrawersStack stack) {
         super(new Label(effectName), new JFXToggleButton());
 
         this.stack = stack;
 
-        this.getLabel().setTextAlignment(TextAlignment.CENTER);
-        this.getLabel().setFont(Font.font(this.getLabel().getFont().getFamily(), FontWeight.BOLD, this.getLabel().getFont().getSize()));
-        this.getLabel().textProperty().addListener((observable, oldValue, newValue) -> this.getItem().setName(newValue));
-
-        this.getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> this.getItem().setVisibility(newValue));
-
-        this.getLabel().setOnMouseClicked(click -> {
-            if (click.getClickCount() == 2) {
-                final Object source = click.getSource();
-                final Label label;
-
-                if (source instanceof Label) {
-                    label = (Label) source;
-                } else {
-                    throw new IllegalStateException("EventHandler for label rename not associated to a label");
-                }
-
-                final TextInputDialog dialog = new TextInputDialog(label.getText());
-                dialog.setTitle(ResourceLoader.getStringRes("rename_effect_dialog_title"));
-                dialog.setHeaderText(ResourceLoader.getStringRes("rename_effect_dialog_msg"));
-                dialog.setContentText(null);
-
-                dialog.showAndWait().ifPresent(name -> label.setText(name));
-            }
-        });
+        setupLabel(getLabel(), (observable, oldValue, newValue) -> this.getItem().setName(newValue));
+        setupToggle(getToggle(), (observable, oldValue, newValue) -> this.getItem().setVisibility(newValue));
 
         final JFXDrawer propertiesDrawer = new JFXDrawer();
         propertiesDrawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
@@ -74,52 +50,108 @@ public class EffectCell extends AbstractEffectCell<EffectFX> {
         propertiesDrawer.setResizableOnDrag(false);
 
         this.getPane().setOnMouseClicked(event -> {
-            final EffectPropertiesController propertiesController = new EffectPropertiesController(this.getItem(), this.stack,
-                    propertiesDrawer);
-            try {
-                propertiesDrawer.setSidePane(FXResourceLoader.getLayout(BorderPane.class, propertiesController,
-                        EffectPropertiesController.EFFECT_PROPERTIES_LAYOUT));
-            } catch (IOException e) {
-                throw new IllegalStateException(
-                        "Could not initialize side pane for properties of effect " + this.getItem().toString() + ": ", e);
-            }
+            if (event.getButton() == MouseButton.PRIMARY) {
+                final EffectPropertiesController propertiesController = new EffectPropertiesController(this.getItem(), this.stack,
+                        propertiesDrawer);
+                try {
+                    propertiesDrawer.setSidePane(FXResourceLoader.getLayout(BorderPane.class, propertiesController,
+                            EffectPropertiesController.EFFECT_PROPERTIES_LAYOUT));
+                    propertiesController.effectNameProperty().bindBidirectional(this.getLabel().textProperty());
+                } catch (IOException e) {
+                    throw new IllegalStateException(
+                            "Could not initialize side pane for properties of effect " + this.getItem().toString() + ": ", e);
+                }
 
-            // To not interfere with label double-click action
-            if (event.getClickCount() != 2) {
                 // Drawer size is modified every time it's opened
                 if (propertiesDrawer.isHidden() || propertiesDrawer.isHiding()) {
                     propertiesDrawer.setDefaultDrawerSize(stack.getWidth());
                 }
                 this.stack.toggle(propertiesDrawer);
+
             }
         });
+
+        final ContextMenu menu = new ContextMenu();
+
+        final MenuItem rename = new MenuItem(getStringRes("menu_item_rename"));
+        rename.setOnAction(event -> {
+            if (getItem() != null) {
+                rename(getStringRes("rename_effect_dialog_title"), getStringRes("rename_effect_dialog_msg"), null, getLabel().textProperty());
+            }
+            event.consume();
+        });
+
+        final MenuItem delete = new MenuItem(getStringRes("menu_item_delete"));
+        delete.setOnAction(event -> {
+            removeItself();
+            event.consume();
+        });
+
+        menu.getItems().addAll(rename, delete);
+        this.setContextMenu(menu);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param monitor the graphical {@link OutputMonitor}
+     * @param stack   the stack where to open the effect properties
+     */
+    public EffectCell(final @Nullable FXOutputMonitor<?> monitor, final JFXDrawersStack stack) {
+        this(stack);
+        setupDisplayMonitor(monitor);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param monitor    the graphical {@link OutputMonitor}
+     * @param effectName the name of the effect
+     * @param stack      the stack where to open the effect properties
+     */
+    public EffectCell(final @Nullable FXOutputMonitor<?> monitor, final String effectName, final JFXDrawersStack stack) {
+        this(effectName, stack);
+        setupDisplayMonitor(monitor);
     }
 
     /**
      * Constructor. Creates a cell with a default name.
-     * 
-     * @param stack
-     *            the stack where to open the effect properties
+     *
+     * @param stack the stack where to open the effect properties
      */
     public EffectCell(final JFXDrawersStack stack) {
         this(DEFAULT_NAME, stack);
     }
 
     /**
+     * Configures the graphical {@link OutputMonitor}.
+     *
+     * @param monitor the graphical {@link OutputMonitor}
+     */
+    private void setupDisplayMonitor(final @Nullable FXOutputMonitor<?> monitor) {
+        setDisplayMonitor(monitor);
+        getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> this.getDisplayMonitor().ifPresent(d -> {
+            if (!oldValue.equals(newValue)) {
+                d.repaint();
+            }
+        }));
+    }
+
+    /**
      * Returns the label with the effect name.
-     * 
+     *
      * @return the label
      */
-    protected Label getLabel() {
+    protected final Label getLabel() {
         return (Label) super.getInjectedNodeAt(0);
     }
 
     /**
      * Returns the toggle of the visibility.
-     * 
+     *
      * @return the toggle
      */
-    protected JFXToggleButton getToggle() {
+    protected final JFXToggleButton getToggle() {
         return (JFXToggleButton) super.getInjectedNodeAt(1);
     }
 
@@ -142,9 +174,7 @@ public class EffectCell extends AbstractEffectCell<EffectFX> {
             setGraphic(null);
         } else {
             this.getLabel().setText(item.getName());
-            this.getToggle().setSelected(item.isVisibile());
-
-            // TODO check priority
+            this.getToggle().setSelected(item.isVisible());
         }
     }
 

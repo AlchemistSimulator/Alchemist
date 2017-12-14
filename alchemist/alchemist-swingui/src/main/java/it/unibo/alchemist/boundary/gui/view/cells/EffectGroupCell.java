@@ -1,26 +1,26 @@
 package it.unibo.alchemist.boundary.gui.view.cells;
 
-import java.io.IOException;
-
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
-import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXToggleButton;
-
 import it.unibo.alchemist.boundary.gui.controller.EffectBarController;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
-import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
+import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
+import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
+import java.io.IOException;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.DataFormat;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.TextAlignment;
+import org.jetbrains.annotations.Nullable;
+
+import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRes;
 
 /**
  * This ListView cell implements the {@link AbstractEffectCell} for containing
@@ -29,16 +29,15 @@ import javafx.scene.text.TextAlignment;
  * effects} the group is composed of.
  */
 public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
-    private static final String DEFAULT_NAME = ResourceLoader.getStringRes("effect_group_default_name");
+    private static final String DEFAULT_NAME = getStringRes("effect_group_default_name");
     private final JFXDrawersStack stack;
     private JFXDrawer effectDrawer;
     private EffectBarController effectBarController;
 
     /**
      * Default constructor.
-     * 
-     * @param stack
-     *            the stack where to open the effects lists
+     *
+     * @param stack the stack where to open the effects lists
      */
     public EffectGroupCell(final JFXDrawersStack stack) {
         this(DEFAULT_NAME, stack);
@@ -46,50 +45,33 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
 
     /**
      * Constructor.
-     * 
-     * @param groupName
-     *            the name of the EffectGroup
-     * @param stack
-     *            the stack where to open the effects lists
+     *
+     * @param monitor the graphical {@link OutputMonitor}
+     * @param stack   the stack where to open the effects lists
+     */
+    public EffectGroupCell(final @Nullable FXOutputMonitor<?> monitor, final JFXDrawersStack stack) {
+        this(stack);
+        setupDisplayMonitor(monitor);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param groupName the name of the EffectGroup
+     * @param stack     the stack where to open the effects lists
      */
     public EffectGroupCell(final String groupName, final JFXDrawersStack stack) {
-        super(new Label(groupName), new JFXToggleButton(), new JFXSlider(0, 100, 100));
+        super(new Label(groupName), new JFXToggleButton());
 
         this.stack = stack;
 
-        this.getLabel().setTextAlignment(TextAlignment.CENTER);
-        this.getLabel().setFont(Font.font(this.getLabel().getFont().getFamily(), FontWeight.BOLD, this.getLabel().getFont().getSize()));
-        this.getLabel().textProperty().addListener((observable, oldValue, newValue) -> this.getItem().setName(newValue));
-
-        this.getSlider().valueProperty()
-                .addListener((observable, oldValue, newValue) -> this.getItem().setTransparency(newValue.intValue()));
-        this.getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> this.getItem().setVisibility(newValue));
-
-        this.getLabel().setOnMouseClicked(click -> {
-            if (click.getClickCount() == 2) {
-                final Object source = click.getSource();
-                final Label label;
-
-                if (source instanceof Label) {
-                    label = (Label) source;
-                } else {
-                    throw new IllegalStateException("EventHandler for label rename not associated to a label");
-                }
-
-                final TextInputDialog dialog = new TextInputDialog(label.getText());
-                dialog.setTitle(ResourceLoader.getStringRes("rename_group_dialog_title"));
-                dialog.setHeaderText(ResourceLoader.getStringRes("rename_group_dialog_msg"));
-                dialog.setContentText(null);
-
-                dialog.showAndWait().ifPresent(name -> label.setText(name));
-            }
-        });
+        setupLabel(getLabel(), (observable, oldValue, newValue) -> this.getItem().setName(newValue));
+        setupToggle(getToggle(), (observable, oldValue, newValue) -> this.getItem().setVisibility(newValue));
 
         initDrawer();
 
         this.getPane().setOnMouseClicked(event -> {
-            // To not interfere with label double-click action
-            if (event.getClickCount() != 2) {
+            if (event.getButton() == MouseButton.PRIMARY) {
                 // Drawer size is modified every time it's opened
                 if (effectDrawer.isHidden() || effectDrawer.isHiding()) {
                     effectDrawer.setDefaultDrawerSize(stack.getWidth());
@@ -100,6 +82,48 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
                 }
             }
         });
+
+        final ContextMenu menu = new ContextMenu();
+        final MenuItem rename = new MenuItem(getStringRes("menu_item_rename"));
+        rename.setOnAction(event -> {
+            if (getItem() != null) {
+                rename(getStringRes("rename_group_dialog_title"), getStringRes("rename_group_dialog_msg"), null, getLabel().textProperty());
+            }
+            event.consume();
+        });
+        final MenuItem delete = new MenuItem(getStringRes("menu_item_delete"));
+        delete.setOnAction(event -> {
+            removeItself();
+            event.consume();
+        });
+        menu.getItems().addAll(rename, delete);
+        this.setContextMenu(menu);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param monitor   the graphical {@link OutputMonitor}
+     * @param groupName the name of the EffectGroup
+     * @param stack     the stack where to open the effects lists
+     */
+    public EffectGroupCell(final @Nullable FXOutputMonitor<?> monitor, final String groupName, final JFXDrawersStack stack) {
+        this(groupName, stack);
+        setupDisplayMonitor(monitor);
+    }
+
+    /**
+     * Configures the graphical {@link OutputMonitor}.
+     *
+     * @param monitor the graphical {@link OutputMonitor}
+     */
+    private void setupDisplayMonitor(final @Nullable FXOutputMonitor<?> monitor) {
+        setDisplayMonitor(monitor);
+        getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> this.getDisplayMonitor().ifPresent(d -> {
+            if (!oldValue.equals(newValue)) {
+                d.repaint();
+            }
+        }));
     }
 
     /**
@@ -111,16 +135,19 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
         effectDrawer = new JFXDrawer();
         effectDrawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
 
-        effectBarController = new EffectBarController(this, this.stack, effectDrawer);
+        if (getDisplayMonitor().isPresent()) {
+            effectBarController = new EffectBarController(getDisplayMonitor().get(), this, this.stack, this.effectDrawer);
+        } else {
+            effectBarController = new EffectBarController(this, this.stack, this.effectDrawer);
+        }
 
         try {
-            effectDrawer
-                    .setSidePane(FXResourceLoader.getLayout(BorderPane.class, effectBarController, EffectBarController.EFFECT_BAR_LAYOUT));
-        } catch (IOException e) {
+            effectDrawer.setSidePane(FXResourceLoader.getLayout(BorderPane.class, effectBarController, EffectBarController.EFFECT_BAR_LAYOUT));
+        } catch (final IOException e) {
             throw new IllegalStateException("Could not initialize side pane for effects", e);
         }
 
-        effectBarController.groupNameProperty().bind(this.getLabel().textProperty());
+        effectBarController.groupNameProperty().bindBidirectional(this.getLabel().textProperty());
 
         effectDrawer.setOverLayVisible(false);
         effectDrawer.setResizableOnDrag(false);
@@ -128,28 +155,19 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
 
     /**
      * Returns the label with the effect name.
-     * 
+     *
      * @return the label
      */
-    protected Label getLabel() {
+    protected final Label getLabel() {
         return (Label) super.getInjectedNodeAt(0);
     }
 
     /**
-     * Returns the slider of the transparency.
-     * 
-     * @return the slider
-     */
-    protected JFXSlider getSlider() {
-        return (JFXSlider) super.getInjectedNodeAt(2);
-    }
-
-    /**
      * Returns the toggle of the visibility.
-     * 
+     *
      * @return the toggle
      */
-    protected JFXToggleButton getToggle() {
+    protected final JFXToggleButton getToggle() {
         return (JFXToggleButton) super.getInjectedNodeAt(1);
     }
 
@@ -177,10 +195,9 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
             setGraphic(null);
         } else {
             this.getLabel().setText(item.getName());
-            this.getSlider().setValue(item.getTransparency());
             this.getToggle().setSelected(item.isVisible());
             initDrawer();
-            item.forEach(e -> effectBarController.addEffectToGroup(e));
+            item.forEach(effectBarController::addEffectToGroup);
         }
     }
 }

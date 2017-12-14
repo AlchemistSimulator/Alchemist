@@ -76,7 +76,7 @@ public class SAPEREWalker extends MoveOnMap<List<ILsaMolecule>> implements ILsaA
         super(environment, node,
                 new OnStreets<>(environment, Vehicle.FOOT),
                 new InteractWithOthers<>(environment, node, reaction, tag, speed, range, interaction),
-                new FollowTrace<>(environment, node, reaction));
+                new FollowTrace(reaction));
     }
 
     @Override

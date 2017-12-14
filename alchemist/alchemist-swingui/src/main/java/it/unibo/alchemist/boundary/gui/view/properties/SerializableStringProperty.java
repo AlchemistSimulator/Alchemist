@@ -1,27 +1,28 @@
 package it.unibo.alchemist.boundary.gui.view.properties;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.lang.reflect.Type;
-
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.lang.reflect.Type;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringPropertyBase;
+import org.danilopianini.util.Hashes;
 
 /**
  * {@link SimpleStringProperty} that implements also {@link Serializable}.
  */
 public class SerializableStringProperty extends StringPropertyBase implements Serializable {
-    /** Generated Serial Version UID. */
-    private static final long serialVersionUID = -3684192876864701055L;
+    /**
+     * Default Serial Version UID.
+     */
+    private static final long serialVersionUID = 1L;
 
     private String name;
 
@@ -29,38 +30,70 @@ public class SerializableStringProperty extends StringPropertyBase implements Se
      * The constructor of {@code SimpleStringProperty}.
      */
     public SerializableStringProperty() {
-        super();
-        this.name = "";
+        this("", "");
     }
 
     /**
      * The constructor of {@code SimpleStringProperty}.
      *
-     * @param initialValue
-     *            the initial value of the wrapped value
+     * @param initialValue the initial value of the wrapped value
      */
     public SerializableStringProperty(final String initialValue) {
-        this();
-        this.setValue(initialValue);
+        this("", initialValue);
     }
 
     /**
      * The constructor of {@code SimpleStringProperty}.
      *
-     * @param name
-     *            the name of this {@code SimpleStringProperty}
-     * @param initialValue
-     *            the initial value of the wrapped value
+     * @param name         the name of this {@code SimpleStringProperty}
+     * @param initialValue the initial value of the wrapped value
      */
     public SerializableStringProperty(final String name, final String initialValue) {
-        this();
+        super();
         this.name = name;
         this.setValue(initialValue);
     }
 
     /**
+     * Returns a {@link JsonSerializer} and {@link JsonDeserializer} combo class
+     * to be used as a {@code TypeAdapter} for this
+     * {@code SerializableStringProperty}.
+     *
+     * @return the {@code TypeAdapter} for this class
+     */
+    public static PropertyTypeAdapter<SerializableStringProperty> getTypeAdapter() {
+        return new PropertyTypeAdapter<SerializableStringProperty>() {
+
+            @Override
+            public SerializableStringProperty deserialize(final JsonElement json, final Type typeOfT,
+                                                          final JsonDeserializationContext context) {
+                final JsonObject jObj = (JsonObject) json;
+
+                final String name = jObj.get(NAME).getAsString();
+                final String value = jObj.get(VALUE).getAsString();
+
+                return new SerializableStringProperty(name, value);
+            }
+
+            @Override
+            public JsonElement serialize(final SerializableStringProperty src, final Type typeOfSrc,
+                                         final JsonSerializationContext context) {
+                final JsonObject jObj = new JsonObject();
+
+                final String name = src.getName();
+                jObj.addProperty(NAME, name);
+                final String value = src.getValue();
+                jObj.addProperty(VALUE, value);
+
+                return jObj;
+            }
+
+        };
+    }
+
+    /**
      * Getter method for unused field bean.
-     * 
+     *
      * @return null
      */
     @Override
@@ -70,7 +103,7 @@ public class SerializableStringProperty extends StringPropertyBase implements Se
 
     /**
      * Getter method for the name.
-     * 
+     *
      * @return the name to give to the property
      */
     @Override
@@ -80,9 +113,8 @@ public class SerializableStringProperty extends StringPropertyBase implements Se
 
     /**
      * Setter method for the name.
-     * 
-     * @param name
-     *            the name to give to the property
+     *
+     * @param name the name to give to the property
      */
     public void setName(final String name) {
         this.name = name;
@@ -101,9 +133,8 @@ public class SerializableStringProperty extends StringPropertyBase implements Se
      * {@code ObjectOutputStream} using the {@code writeObject} method or by
      * using the methods for primitive data types supported by
      * {@code DataOutput}. </blockquote>
-     * 
-     * @param out
-     *            the output stream
+     *
+     * @param out the output stream
      */
     private void writeObject(final ObjectOutputStream out) throws IOException {
         out.writeUTF(this.getName());
@@ -125,9 +156,8 @@ public class SerializableStringProperty extends StringPropertyBase implements Se
      * saved by writing the individual fields to the {@code ObjectOutputStream}
      * using the {@code writeObject} method or by using the methods for
      * primitive data types supported by {@code DataOutput}. </blockquote>
-     * 
-     * @param in
-     *            the input stream
+     *
+     * @param in the input stream
      */
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         this.setName(in.readUTF());
@@ -136,11 +166,7 @@ public class SerializableStringProperty extends StringPropertyBase implements Se
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getValue() == null) ? 0 : getValue().hashCode());
-        result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
-        return result;
+        return Hashes.hash32(getValue(), getName());
     }
 
     @Override
@@ -170,43 +196,6 @@ public class SerializableStringProperty extends StringPropertyBase implements Se
             return false;
         }
         return true;
-    }
-
-    /**
-     * Returns a {@link JsonSerializer} and {@link JsonDeserializer} combo class
-     * to be used as a {@code TypeAdapter} for this
-     * {@code SerializableStringProperty}.
-     * 
-     * @return the {@code TypeAdapter} for this class
-     */
-    public static PropertyTypeAdapter<SerializableStringProperty> getTypeAdapter() {
-        return new PropertyTypeAdapter<SerializableStringProperty>() {
-
-            @Override
-            public SerializableStringProperty deserialize(final JsonElement json, final Type typeOfT,
-                    final JsonDeserializationContext context) {
-                final JsonObject jObj = (JsonObject) json;
-
-                final String name = jObj.get(NAME).getAsString();
-                final String value = jObj.get(VALUE).getAsString();
-
-                return new SerializableStringProperty(name, value);
-            }
-
-            @Override
-            public JsonElement serialize(final SerializableStringProperty src, final Type typeOfSrc,
-                    final JsonSerializationContext context) {
-                final JsonObject jObj = new JsonObject();
-
-                final String name = src.getName();
-                jObj.addProperty(NAME, name);
-                final String value = src.getValue();
-                jObj.addProperty(VALUE, value);
-
-                return jObj;
-            }
-
-        };
     }
 
 }

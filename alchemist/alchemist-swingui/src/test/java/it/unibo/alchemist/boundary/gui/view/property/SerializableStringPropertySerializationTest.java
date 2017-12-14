@@ -1,5 +1,8 @@
 package it.unibo.alchemist.boundary.gui.view.property;
 
+import com.google.gson.reflect.TypeToken;
+import it.unibo.alchemist.boundary.gui.effects.json.AbstractPropertySerializationTest;
+import it.unibo.alchemist.boundary.gui.view.properties.SerializableStringProperty;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,14 +14,9 @@ import java.io.ObjectOutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Type;
-
+import javafx.beans.property.Property;
 import org.junit.Assert;
 import org.junit.Test;
-
-import com.google.gson.reflect.TypeToken;
-
-import it.unibo.alchemist.boundary.gui.view.properties.SerializableStringProperty;
-import javafx.beans.property.Property;
 
 /**
  * JUint test for custom {@link Property} serialization.

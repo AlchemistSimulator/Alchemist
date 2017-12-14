@@ -1,6 +1,3 @@
-/**
- * 
- */
 package it.unibo.alchemist;
 
 import java.io.File;
@@ -35,7 +32,6 @@ import it.unibo.alchemist.loader.YamlLoader;
 
 /**
  * Starts Alchemist.
- * 
  */
 public final class Alchemist {
 
@@ -63,16 +59,17 @@ public final class Alchemist {
         LOGLEVELS = Collections.unmodifiableMap(levels);
     }
 
+    /**
+     * Private, empty constructor.
+     */
     private Alchemist() {
+        throw new AssertionError("Suppress default constructor for noninstantiability");
     }
 
     /**
-     * @param args
-     *            the argument for the program
-     * @param <T>
-     *            concentration type
+     * @param args the argument for the program
      */
-    public static <T> void main(final String[] args) {
+    public static void main(final String[] args) {
         final Options opts = CLIMaker.getOptions();
         final CommandLineParser parser = new DefaultParser();
         try {
@@ -87,7 +84,7 @@ public final class Alchemist {
             if (cmd.hasOption(YAML)) {
                 try (InputStream is = new FileInputStream(new File(cmd.getOptionValue(YAML)))) {
                     loader = Optional.of(new YamlLoader(is));
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     L.error("Unable to load the requested file.", e);
                 }
             }
@@ -128,14 +125,14 @@ public final class Alchemist {
                     } else {
                         simBuilder.build().launch();
                     }
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     L.error("A number was expected. " + e.getMessage());
                     System.exit(1);
                 }
             } else {
                 ProjectGUI.main();
             }
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
             L.error("Your command sequence could not be parsed.", e);
         }
     }
@@ -154,7 +151,7 @@ public final class Alchemist {
 
     private static void setVerbosity(final CommandLine cmd) {
         boolean oneFound = false;
-        for (final Entry<String, Level> entry: LOGLEVELS.entrySet()) {
+        for (final Entry<String, Level> entry : LOGLEVELS.entrySet()) {
             if (cmd.hasOption(entry.getKey())) {
                 if (oneFound) {
                     /*

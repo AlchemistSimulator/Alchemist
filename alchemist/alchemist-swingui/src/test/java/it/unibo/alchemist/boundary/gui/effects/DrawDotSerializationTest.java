@@ -10,12 +10,15 @@ import java.io.ObjectOutputStream;
 import org.junit.Assert;
 import org.junit.Test;
 
+import it.unibo.alchemist.boundary.gui.effects.json.AbstractEffectSerializationTest;
 import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
 
 /**
- * JUint test for {@link EffectFX effect} serialization.
+ * JUint test for {@link DrawDot} effect serialization.
  */
 public class DrawDotSerializationTest extends AbstractEffectSerializationTest<DrawDot> {
+    private static final String TEST_NAME = "TestDot";
+    private static final double TEST_SIZE = 22.0;
 
     @Test
     @Override
@@ -25,11 +28,8 @@ public class DrawDotSerializationTest extends AbstractEffectSerializationTest<Dr
         final FileOutputStream fout = new FileOutputStream(file);
         final ObjectOutputStream oos = new ObjectOutputStream(fout);
 
-        final DrawDot effect = new DrawDot("TestDot");
-        // CHECKSTYLE:OFF
-        effect.setSize(22.0);
-        // CHECKSTYLE:ON
-
+        final DrawDot effect = new DrawDot(TEST_NAME);
+        effect.setSize(TEST_SIZE);
         oos.writeObject(effect);
 
         final FileInputStream fin = new FileInputStream(file);
@@ -48,11 +48,8 @@ public class DrawDotSerializationTest extends AbstractEffectSerializationTest<Dr
     public void testGsonSerialization() throws IOException {
         final File file = folder.newFile();
 
-        final DrawDot effect = new DrawDot("TestDot");
-        // CHECKSTYLE:OFF
-        effect.setSize(22.0);
-        // CHECKSTYLE:ON
-
+        final DrawDot effect = new DrawDot(TEST_NAME);
+        effect.setSize(TEST_SIZE);
         EffectSerializer.effectToFile(file, effect);
 
         final DrawDot deserialized = (DrawDot) EffectSerializer.effectFromFile(file);
@@ -66,7 +63,7 @@ public class DrawDotSerializationTest extends AbstractEffectSerializationTest<Dr
             return super.getMessage(origin, deserialized);
         }
 
-        return super.getMessage(origin, deserialized) 
+        return super.getMessage(origin, deserialized)
                 + System.lineSeparator() + "Origin size: " + origin.getSize()
                 + System.lineSeparator() + "Deserialized size: " + deserialized.getSize();
     }

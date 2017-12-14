@@ -1,37 +1,44 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
-import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
+import it.unibo.alchemist.boundary.gui.view.properties.RangedIntegerProperty;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
+import java.io.IOException;
+import java.io.InvalidClassException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OptionalDataException;
+import java.io.Serializable;
+import java.io.StreamCorruptedException;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.scene.paint.Color;
+import org.danilopianini.util.Hashes;
 
 /**
  * Simple effect that draws a colored dot for each {@link Node}.
  * <p>
  * It's possible to set the size and the color of the dots.
  */
-public class DrawColoredDot extends DrawDot implements EffectFX {
-    /** Magic number used by auto-generated {@link #hashCode()} method. */
-    private static final int HASHCODE_NUMBER_1 = 1231;
-    /** Magic number used by auto-generated {@link #hashCode()} method. */
-    private static final int HASHCODE_NUMBER_2 = 1237;
+public class DrawColoredDot extends DrawDot {
 
-    /** Default generated Serial Version UID. */
-    private static final long serialVersionUID = -2329825220099191395L;
-    /** Default effect name */
+    /**
+     * Default generated Serial Version UID.
+     */
+    private static final long serialVersionUID = 1L;
+    /**
+     * Default effect name
+     */
     private static final String DEFAULT_NAME = ResourceLoader.getStringRes("drawcoloreddot_default_name");
-    private final RangedDoubleProperty red;
-    private final RangedDoubleProperty green;
-    private final RangedDoubleProperty blue;
-    private final RangedDoubleProperty alpha;
+    private RangedIntegerProperty red;
+    private RangedIntegerProperty green;
+    private RangedIntegerProperty blue;
+    private RangedDoubleProperty alpha;
 
     /**
      * Empty constructor.
@@ -41,13 +48,26 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
      * Default visibility is true.
      */
     public DrawColoredDot() {
-        super(DEFAULT_NAME);
+        this(DEFAULT_NAME);
+    }
+
+    /**
+     * Default constructor.
+     * <p>
+     * Default visibility is true.
+     *
+     * @param name the name of the effect.
+     */
+    public DrawColoredDot(final String name) {
+        super(name);
+
+        final java.awt.Color awtColor = convertColor(super.getColor());
 
         // Set properties to default color of DrawDot
-        red = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_red"), (double) super.getColor().getRed());
-        green = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_green"), (double) super.getColor().getGreen());
-        blue = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_blue"), (double) super.getColor().getBlue());
-        alpha = PropertyFactory.getColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_alpha"), (double) super.getColor().getAlpha());
+        red = PropertyFactory.getAWTColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_red"), awtColor.getRed());
+        green = PropertyFactory.getAWTColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_green"), awtColor.getGreen());
+        blue = PropertyFactory.getAWTColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_blue"), awtColor.getBlue());
+        alpha = PropertyFactory.getFXColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_alpha"), super.getColor().getOpacity());
 
         // Update the color at each change
         red.addListener(this.updateColor());
@@ -57,20 +77,21 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
     }
 
     /**
-     * Default constructor.
-     * <p>
-     * Default visibility is true.
-     * 
-     * @param name
-     *            the name of the effect.
+     * Convert a {@link Color JavaFX color} to an {@link java.awt.Color AWT color}.
+     *
+     * @param fxColor the JavaFX color
+     * @return the AWT color
      */
-    public DrawColoredDot(final String name) {
-        this();
-        this.setName(name);
+    protected static final java.awt.Color convertColor(final Color fxColor) {
+        return new java.awt.Color(
+                (float) fxColor.getRed(),
+                (float) fxColor.getGreen(),
+                (float) fxColor.getBlue(),
+                (float) fxColor.getOpacity());
     }
 
     @Override
-    public Color getColor() { // NOPMD - Only widening method visibility
+    public final Color getColor() { // NOPMD - Only widening method visibility
         return super.getColor();
     }
 
@@ -80,43 +101,34 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
      * Updates also all color-related properties.
      */
     @Override
-    public void setColor(final Color color) {
-        // Also widens method visibility from parent 
-        this.setAlpha(color.getAlpha());
-        this.setBlue(color.getBlue());
-        this.setGreen(color.getGreen());
-        this.setRed(color.getRed());
+    public final void setColor(final Color color) {
+        // Also widens method visibility from parent
+        this.setAlpha(color.getOpacity());
+        final java.awt.Color awtColor = convertColor(color);
+        this.setBlue(awtColor.getBlue());
+        this.setGreen(awtColor.getGreen());
+        this.setRed(awtColor.getRed());
         super.setColor(color);
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
-     * For each {@link Node} in the specified {@link Environment}, it will draw
-     * a dot of a specified {@link Color} (default: {@link Color#BLACK black}).
-     */
-    @Override
-    public <T> void apply(final Graphics2D graphic, final Environment<T> environment, final IWormhole2D wormhole) {
-        super.apply(graphic, environment, wormhole);
-    }
-
-    /**
      * Returns a {@link ChangeListener} that updates the color of the dots.
-     * 
+     *
      * @return the {@code ChangeListener}
      */
     private ChangeListener<Number> updateColor() {
-        return (final ObservableValue<? extends Number> observable, final Number oldValue, final Number newValue) -> {
-            super.setColor(new Color(red.getValue().intValue(), green.getValue().intValue(), blue.getValue().intValue(),
-                    alpha.getValue().intValue()));
-        };
+        return (observable, oldValue, newValue) -> super.setColor(
+                Color.rgb(
+                        red.getValue(),
+                        green.getValue(),
+                        blue.getValue(),
+                        alpha.getValue()));
     }
 
     /**
      * The alpha channel of the color of the dots representing each {@link Node}
-     * in the {@link Environment} specified when calling
-     * {@link #apply(Graphics2D, Environment, IWormhole2D) apply} in percentage.
-     * 
+     * in the {@link Environment} specified when drawing.
+     *
      * @return the alpha channel property
      */
     public DoubleProperty alphaProperty() {
@@ -125,7 +137,7 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
 
     /**
      * Gets the value of {@code alphaProperty}.
-     * 
+     *
      * @return the alpha channel of the color of the dots
      */
     public double getAlpha() {
@@ -134,9 +146,8 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
 
     /**
      * Sets the value of {@code alphaProperty}.
-     * 
-     * @param alpha
-     *            the alpha channel to set
+     *
+     * @param alpha the alpha channel to set, in range 0.0-1.0
      */
     public void setAlpha(final double alpha) {
         this.alpha.set(alpha);
@@ -144,165 +155,159 @@ public class DrawColoredDot extends DrawDot implements EffectFX {
 
     /**
      * The blue channel of the color of the dots representing each {@link Node}
-     * in the {@link Environment} specified when calling
-     * {@link #apply(Graphics2D, Environment, IWormhole2D) apply} in percentage.
-     * 
+     * in the {@link Environment} specified when drawing.
+     *
      * @return the blue channel property
      */
-    public DoubleProperty blueProperty() {
+    public IntegerProperty blueProperty() {
         return this.blue;
     }
 
     /**
      * Gets the value of {@code blueProperty}.
-     * 
-     * @return the blue channel of the color of the dots
+     *
+     * @return the blue channel of the color of the dots, in range 0-255
      */
-    public double getBlue() {
+    public int getBlue() {
         return this.blue.get();
     }
 
     /**
      * Sets the value of {@code blueProperty}.
-     * 
-     * @param blue
-     *            the blue channel to set
+     *
+     * @param blue the blue channel to set, in range 0-255
      */
-    public void setBlue(final double blue) {
+    public void setBlue(final int blue) {
         this.blue.set(blue);
     }
 
     /**
      * The green channel of the color of the dots representing each {@link Node}
-     * in the {@link Environment} specified when calling
-     * {@link #apply(Graphics2D, Environment, IWormhole2D) apply} in percentage.
-     * 
+     * in the {@link Environment} specified when drawing.
+     *
      * @return the green channel property
      */
-    public DoubleProperty greenProperty() {
+    public IntegerProperty greenProperty() {
         return this.green;
     }
 
     /**
      * Gets the value of {@code greenProperty}.
-     * 
-     * @return the green channel of the color of the dots
+     *
+     * @return the green channel of the color of the dots, in range 0-255
      */
-    public double getGreen() {
+    public int getGreen() {
         return this.green.get();
     }
 
     /**
      * Sets the value of {@code greenProperty}.
-     * 
-     * @param green
-     *            the green channel to set
+     *
+     * @param green the green channel to set, in range 0-255
      */
-    public void setGreen(final double green) {
+    public void setGreen(final int green) {
         this.green.set(green);
     }
 
     /**
      * The red channel of the color of the dots representing each {@link Node}
-     * in the {@link Environment} specified when calling
-     * {@link #apply(Graphics2D, Environment, IWormhole2D) apply} in percentage.
-     * 
+     * in the {@link Environment} specified when drawing.
+     *
      * @return the red channel property
      */
-    public DoubleProperty redProperty() {
+    public IntegerProperty redProperty() {
         return this.red;
     }
 
     /**
      * Gets the value of {@code redProperty}.
-     * 
-     * @return the red channel of the color of the dots
+     *
+     * @return the red channel of the color of the dots, in range 0-255
      */
-    public double getRed() {
+    public int getRed() {
         return this.red.get();
     }
 
     /**
      * Sets the value of {@code redProperty}.
-     * 
-     * @param red
-     *            the red channel to set
+     *
+     * @param red the red channel to set, in range 0-255
      */
-    public void setRed(final double red) {
+    public void setRed(final int red) {
         this.red.set(red);
+    }
+
+    /**
+     * Method needed for well working serialization.
+     * <p>
+     * From {@link Serializable}: <blockquote>The {@code writeObject} method is
+     * responsible for writing the state of the object for its particular class
+     * so that the corresponding readObject method can restore it. The default
+     * mechanism for saving the Object's fields can be invoked by calling
+     * {@code out.defaultWriteObject}. The method does not need to concern
+     * itself with the state belonging to its superclasses or subclasses. State
+     * is saved by writing the 3 individual fields to the
+     * {@code ObjectOutputStream} using the {@code writeObject} method or by
+     * using the methods for primitive data types supported by
+     * {@code DataOutput}.</blockquote>
+     *
+     * @param stream the output stream
+     * @throws InvalidClassException    if something is wrong with a class used by serialization.
+     * @throws NotSerializableException if some object to be serialized does not implement the java.io.Serializable interface.
+     * @throws IOException              if any exception thrown by the underlying OutputStream.
+     */
+    private void writeObject(final ObjectOutputStream stream) throws IOException {
+        stream.writeObject(red);
+        stream.writeObject(green);
+        stream.writeObject(blue);
+        stream.writeObject(alpha);
+    }
+
+    /**
+     * Method needed for well working serialization.
+     * <p>
+     * From {@link Serializable}: <blockquote>The {@code readObject} method is
+     * responsible for reading from the stream and restoring the classes fields.
+     * It may call {@code in.defaultReadObject} to invoke the default mechanism
+     * for restoring the object's non-static and non-transient fields. The
+     * {@code defaultReadObject} method uses information in the stream to assign
+     * the fields of the object saved in the stream with the correspondingly
+     * named fields in the current object. This handles the case when the class
+     * has evolved to add new fields. The method does not need to concern itself
+     * with the state belonging to its superclasses or subclasses. State is
+     * saved by writing the individual fields to the {@code ObjectOutputStream}
+     * using the {@code writeObject} method or by using the methods for
+     * primitive data types supported by {@code DataOutput}.</blockquote>
+     *
+     * @param stream the input stream
+     * @throws ClassNotFoundException   if class of a serialized object cannot be found.
+     * @throws InvalidClassException    if something is wrong with a class used by serialization.
+     * @throws StreamCorruptedException if control information in the stream is inconsistent.
+     * @throws OptionalDataException    if primitive data was found in the stream instead of objects.
+     * @throws IOException              if any of the usual Input/Output related exceptions.
+     */
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        red = (RangedIntegerProperty) stream.readObject();
+        green = (RangedIntegerProperty) stream.readObject();
+        blue = (RangedIntegerProperty) stream.readObject();
+        alpha = (RangedDoubleProperty) stream.readObject();
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((alphaProperty() == null) ? 0 : alphaProperty().hashCode());
-        result = prime * result + ((blueProperty() == null) ? 0 : blueProperty().hashCode());
-        result = prime * result + ((greenProperty() == null) ? 0 : greenProperty().hashCode());
-        result = prime * result + ((super.getName() == null) ? 0 : super.getName().hashCode());
-        result = prime * result + ((redProperty() == null) ? 0 : redProperty().hashCode());
-        result = prime * result + ((super.getSize() == null) ? 0 : super.getSize().hashCode());
-        result = prime * result + (super.isVisibile() ? HASHCODE_NUMBER_1 : HASHCODE_NUMBER_2);
-        return result;
+        return Hashes.hash32(alphaProperty(), blueProperty(), greenProperty(), getName(), redProperty(), getSize(), isVisible());
     }
 
     @Override
     public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (this.getClass() != obj.getClass()) {
             return false;
         }
         final DrawColoredDot other = (DrawColoredDot) obj;
-        if (super.isVisibile() != other.isVisibile()) {
-            return false;
-        }
-        if (alphaProperty() == null) {
-            if (other.alphaProperty() != null) {
-                return false;
-            }
-        } else if (!alphaProperty().equals(other.alphaProperty())) {
-            return false;
-        }
-        if (blueProperty() == null) {
-            if (other.blueProperty() != null) {
-                return false;
-            }
-        } else if (!blueProperty().equals(other.blueProperty())) {
-            return false;
-        }
-        if (greenProperty() == null) {
-            if (other.greenProperty() != null) {
-                return false;
-            }
-        } else if (!greenProperty().equals(other.greenProperty())) {
-            return false;
-        }
-        if (super.getName() == null) {
-            if (other.getName() != null) {
-                return false;
-            }
-        } else if (!super.getName().equals(other.getName())) {
-            return false;
-        }
-        if (redProperty() == null) {
-            if (other.redProperty() != null) {
-                return false;
-            }
-        } else if (!redProperty().equals(other.redProperty())) {
-            return false;
-        }
-        if (super.getSize() == null) {
-            if (other.getSize() != null) {
-                return false;
-            }
-        } else if (!super.getSize().equals(other.getSize())) {
-            return false;
-        }
-        return true;
+        return super.equals(obj)
+                && checkEqualsProperties(blueProperty(), other.blueProperty())
+                && checkEqualsProperties(redProperty(), other.redProperty())
+                && checkEqualsProperties(greenProperty(), other.greenProperty())
+                && checkEqualsProperties(alphaProperty(), other.alphaProperty());
     }
 }

@@ -6,6 +6,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 
+import org.danilopianini.util.Hashes;
+
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -21,8 +23,8 @@ import javafx.beans.property.IntegerPropertyBase;
  * value and to be serializable.
  */
 public class RangedIntegerProperty extends IntegerPropertyBase implements Serializable {
-    /** Generated Serial Version UID. */
-    private static final long serialVersionUID = -897269650389301324L;
+    /** Default Serial Version UID. */
+    private static final long serialVersionUID = 1L;
 
     private static final Integer DEFAULT_MAX_VALUE = Integer.MAX_VALUE;
     private static final Integer DEFAULT_MIN_VALUE = Integer.MIN_VALUE;
@@ -324,13 +326,7 @@ public class RangedIntegerProperty extends IntegerPropertyBase implements Serial
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Integer.valueOf(getLowerBound()).hashCode();
-        result = prime * result + Integer.valueOf(getUpperBound()).hashCode();
-        result = prime * result + ((getValue() == null) ? 0 : getValue().hashCode());
-        result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
-        return result;
+        return Hashes.hash32(getLowerBound(), getUpperBound(), getValue(), getName());
     }
 
     @Override

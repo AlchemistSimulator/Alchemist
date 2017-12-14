@@ -43,7 +43,7 @@ class TestGetPosition {
             override finished(Environment<Object> env, Time time, long step) { }
             override initialized(Environment<Object> env) { }
             override stepDone(Environment<Object> env, Reaction<Object> r, Time time, long step) {
-                Assert.assertEquals(DatatypeFactory.createTuple(1.0, 1.0), node.getConcentration(action))
+                Assert.assertEquals(DatatypeFactory.createTuple(1.0, 1.0), node.getConcentration(action.asMolecule))
             }
         })
         sim.play

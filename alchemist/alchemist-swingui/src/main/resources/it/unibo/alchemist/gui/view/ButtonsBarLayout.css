@@ -1,15 +1,23 @@
 
 ButtonBar {
-    -fx-background-color: rgb(0.0, 0.0, 0.0);
+    -fx-text-fill: white;
+    -fx-background-color: #757575;
     -fx-padding: 0.0;
     -fx-min-height: 3.08em;
     -fx-pref-height: 3.08em;
     -fx-max-height: 6.15em;
-    -fx-opacity: 0.45;
+    -fx-opacity: 1.0;
 }
 
 JFXButton, Label {
     -fx-background-color: transparent;
+    -fx-alignment: center;
+    -fx-content-display: center;
+    -fx-text-alignment: center;
+    -fx-mnemonic-parsing: false;
+    -fx-wrap-text: true;
+    -fx-rippler-fill: white;
+    -fx-text-fill: white;
     -fx-padding: 0.0;
     -fx-background-size: 0.0;
     -fx-min-height: 3.08em;
@@ -20,5 +28,9 @@ JFXButton, Label {
 }
 
 ListView {
-    -fx-opacity: 0.45;
+    -fx-opacity: 1.0;
+}
+
+.jfx-slider .thumb {
+    -fx-background-color: #90a4ae;
 }

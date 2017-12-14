@@ -1,5 +1,8 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
+import it.unibo.alchemist.boundary.gui.CommandQueueBuilder;
+import it.unibo.alchemist.boundary.interfaces.DrawCommand;
+import it.unibo.alchemist.model.interfaces.Environment;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -7,6 +10,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 
+import org.danilopianini.util.Hashes;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,9 +31,7 @@ public class EffectStack implements EffectGroup {
     /** Default IllegalArgumentException message. */
     private static final String CANNOT_FIND_EFFECT = "Cannot find the effect in the stack";
     /** Default effect group name. */
-    public static final String DEFAULT_NAME = ResourceLoader.getStringRes("effect_stack_default_name");
-    private static final int FIRST_HASHCODE_CONSTANT = 1231;
-    private static final int SECOND_HASHCODE_CONSTANT = 1237;
+    private static final String DEFAULT_NAME = ResourceLoader.getStringRes("effect_stack_default_name");
     /** Default logger. */
     private static final Logger L = LoggerFactory.getLogger(EffectStack.class);
 
@@ -36,7 +39,6 @@ public class EffectStack implements EffectGroup {
     private int topIndex;
     private String name;
     private boolean visibility;
-    private int transparency;
 
     /**
      * Constructor that creates an empty stack of effects with default name.
@@ -57,7 +59,20 @@ public class EffectStack implements EffectGroup {
         this.topIndex = 0;
         this.name = name;
         this.visibility = true;
-        this.transparency = 100;
+    }
+
+    @Override
+    public <T> Queue<DrawCommand> computeDrawCommands(final Environment<T> environment) {
+        final CommandQueueBuilder builder = new CommandQueueBuilder();
+
+        if (isVisible()) {
+            this.stream()
+                    .map(effectFX -> effectFX.computeDrawCommands(environment))
+                    .flatMap(Collection::stream)
+                    .map(command -> command.wrap(this::isVisible))
+                    .forEach(builder::addCommand);
+        }
+        return builder.buildCommandQueue();
     }
 
     @Override
@@ -73,8 +88,8 @@ public class EffectStack implements EffectGroup {
     /**
      * Puts the effects in the group, giving it the maximum priority.
      * <p>
-     * Acts nearly the same than using {@link #add(Effect)} or
-     * {@link #offer(Effect)}.
+     * Acts nearly the same than using {@link #add(EffectFX)} or
+     * {@link #offer(EffectFX)}.
      * 
      * @param effect
      *            the effect
@@ -124,7 +139,7 @@ public class EffectStack implements EffectGroup {
     @Override
     public boolean getVisibilityOf(final EffectFX effect) {
         try {
-            return this.effects.get(this.search(effect)).isVisibile();
+            return this.effects.get(this.search(effect)).isVisible();
         } catch (final IndexOutOfBoundsException e) {
             throw new IllegalArgumentException(CANNOT_FIND_EFFECT);
         }
@@ -161,20 +176,6 @@ public class EffectStack implements EffectGroup {
     }
 
     @Override
-    public int getTransparency() {
-        return this.transparency;
-    }
-
-    @Override
-    public void setTransparency(final int transparency) {
-        if (transparency >= 0 && transparency <= 100) {
-            this.transparency = transparency;
-        } else {
-            throw new IllegalArgumentException("Invalid transparency value");
-        }
-    }
-
-    @Override
     public Iterator<EffectFX> iterator() {
         return effects.iterator();
     }
@@ -189,11 +190,13 @@ public class EffectStack implements EffectGroup {
         return this.effects.contains(o);
     }
 
+    @NotNull
     @Override
     public Object[] toArray() {
         return this.effects.toArray();
     }
 
+    @NotNull
     @Override
     public <T> T[] toArray(final T[] a) {
         return this.effects.toArray(a);
@@ -279,7 +282,7 @@ public class EffectStack implements EffectGroup {
 
     @Override
     public void clear() {
-        this.effects.forEach(effect -> this.remove(effect));
+        this.effects.forEach(this::remove);
     }
 
     @Override
@@ -333,14 +336,7 @@ public class EffectStack implements EffectGroup {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((effects == null) ? 0 : effects.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + topIndex;
-        result = prime * result + transparency;
-        result = prime * result + (visibility ? FIRST_HASHCODE_CONSTANT : SECOND_HASHCODE_CONSTANT);
-        return result;
+        return Hashes.hash32(effects, name, topIndex, visibility);
     }
 
     @Override
@@ -368,9 +364,6 @@ public class EffectStack implements EffectGroup {
         if (visibility != other.visibility) {
             return false;
         }
-        if (transparency != other.transparency) {
-            return false;
-        }
         if (effects == null) {
             if (other.effects != null) {
                 return false;
@@ -388,6 +381,7 @@ public class EffectStack implements EffectGroup {
      * 
      * @return the {@code TypeAdapter} for this class
      */
+    @NotNull
     public static EffectGroupAdapter getTypeAdapter() {
         return new EffectGroupAdapter();
     }

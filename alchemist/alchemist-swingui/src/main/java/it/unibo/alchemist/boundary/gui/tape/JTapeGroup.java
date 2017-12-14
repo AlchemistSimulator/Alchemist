@@ -22,6 +22,7 @@ import net.miginfocom.swing.MigLayout;
  * description.
  * 
  */
+@Deprecated
 public class JTapeGroup extends JPanel {
     /**
      * 

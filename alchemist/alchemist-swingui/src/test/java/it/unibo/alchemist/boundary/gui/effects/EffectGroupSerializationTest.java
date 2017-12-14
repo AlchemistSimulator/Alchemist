@@ -1,12 +1,12 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import javafx.scene.paint.Color;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -18,6 +18,8 @@ import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
  * JUnit test for {@link EffectGroup} and {@link EffectStack} serialization.
  */
 public class EffectGroupSerializationTest {
+    private static final double TEST_DOT_SIZE = 22.0;
+    private static final double TEST_COLORED_DOT_SIZE = 25.0;
     /** Temporary folder created before each test method, and deleted after each. */
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
@@ -100,17 +102,12 @@ public class EffectGroupSerializationTest {
         final EffectGroup effects = new EffectStack("TestGroup");
         effects.add(new DrawDot("TestDot"));
         final DrawDot dot = new DrawDot();
-        // CHECKSTYLE:OFF
-        dot.setSize(22.0);
-        // CHECKSTYLE:ON
+        dot.setSize(TEST_DOT_SIZE);
         effects.add(dot);
         final DrawColoredDot coloredDot = new DrawColoredDot("Colored Dot");
-        // CHECKSTYLE:OFF
-        coloredDot.setSize(25.0);
-        // CHECKSTYLE:ON
-        coloredDot.setColor(Color.cyan);
+        coloredDot.setSize(TEST_COLORED_DOT_SIZE);
+        coloredDot.setColor(Color.CYAN);
         effects.add(coloredDot);
-        effects.add(new DrawShapeFX());
         return effects;
     }
 

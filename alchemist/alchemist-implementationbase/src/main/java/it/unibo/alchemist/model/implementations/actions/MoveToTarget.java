@@ -7,7 +7,7 @@ import static org.apache.commons.math3.util.FastMath.atan2;
 import it.unibo.alchemist.model.implementations.movestrategies.speed.ConstantSpeed;
 import it.unibo.alchemist.model.implementations.movestrategies.target.FollowTarget;
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
-import it.unibo.alchemist.model.implementations.routes.StraightRoute;
+import it.unibo.alchemist.model.implementations.routes.PolygonalChain;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -44,9 +44,9 @@ public class MoveToTarget<T> extends AbstractConfigurableMoveNode<T> {
             final Molecule trackMolecule,
             final double speed) {
         super(environment, node,
-                StraightRoute::new,
+                PolygonalChain::new,
                 new FollowTarget<>(environment, node, trackMolecule),
-                new ConstantSpeed<>(reaction, speed));
+                new ConstantSpeed(reaction, speed));
         this.trackMolecule = trackMolecule;
         this.speed = speed;
     }

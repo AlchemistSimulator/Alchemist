@@ -5,6 +5,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 import javafx.scene.input.DataFormat;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Simple factory that returns the {@link DataFormat} for the specified class.
@@ -19,6 +20,7 @@ import javafx.scene.input.DataFormat;
  * 
  */
 public final class DataFormatFactory {
+
     /**
      * Static {@link LoadingCache} for a single {@link DataFormat} per class
      * loaded.
@@ -26,7 +28,7 @@ public final class DataFormatFactory {
     private static final LoadingCache<Class<?>, DataFormat> DATA_FORMATS = CacheBuilder.newBuilder()
             .build(new CacheLoader<Class<?>, DataFormat>() {
                 @Override
-                public DataFormat load(final Class<?> key) {
+                public DataFormat load(final @NotNull Class<?> key) {
                     return new DataFormat(key.getName());
                 }
             });
@@ -57,7 +59,7 @@ public final class DataFormatFactory {
      * Private, empty, constructor, as this is an utility class.
      */
     private DataFormatFactory() {
-        // Empty constructor
+        throw new AssertionError("Suppress default constructor for noninstantiability");
     }
 
 }

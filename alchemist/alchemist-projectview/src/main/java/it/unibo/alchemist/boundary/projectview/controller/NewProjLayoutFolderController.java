@@ -1,35 +1,31 @@
 package it.unibo.alchemist.boundary.projectview.controller;
 
+import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
+import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
-import java.util.Optional;
+import java.net.URL;
 import java.util.ResourceBundle;
-
-import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
-import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * 
- *
+ * This class models a JavaFX controller for NewProjLayoutFolder.fxml.
  */
-public class NewProjLayoutFolderController {
+public class NewProjLayoutFolderController implements Initializable {
 
     private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
     private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
@@ -45,17 +41,14 @@ public class NewProjLayoutFolderController {
     private Stage stage;
     private String path;
 
-    /**
-     * 
-     */
-    public void initialize() {
+    @Override
+    public void initialize(final URL location, final ResourceBundle resources) {
         this.next.setText(RESOURCES.getString("next"));
         this.next.setDisable(true);
         this.selectFolder.setText(RESOURCES.getString("select_folder"));
     }
 
     /**
-     * 
      * @param main main
      */
     public void setMain(final ProjectGUI main) {
@@ -63,7 +56,6 @@ public class NewProjLayoutFolderController {
     }
 
     /**
-     * 
      * @param stage stage
      */
     public void setStage(final Stage stage) {
@@ -71,7 +63,13 @@ public class NewProjLayoutFolderController {
     }
 
     /**
-     * 
+     * @return Folder path of new project.
+     */
+    public String getFolderPath() {
+        return this.path;
+    }
+
+    /**
      * @param path Folder path
      */
     public void setFolderPath(final String path) {
@@ -81,15 +79,7 @@ public class NewProjLayoutFolderController {
     }
 
     /**
-     * 
-     * @return Folder path of new project.
-     */
-    public String getFolderPath() {
-        return this.path;
-    }
-
-    /**
-     * 
+     *
      */
     @FXML
     public void clickSelect() {
@@ -98,38 +88,25 @@ public class NewProjLayoutFolderController {
         dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         final File dir = dirChooser.showDialog(this.main.getStage());
         if (dir != null) {
-            if (dir.listFiles().length == 0) {
-                setSelectedFolder(dir);
-            } else {
+            if (dir.listFiles().length != 0) {
                 final Alert alert = new Alert(AlertType.CONFIRMATION);
                 alert.setTitle(RESOURCES.getString("select_folder_full"));
                 alert.setHeaderText(RESOURCES.getString("select_folder_full_header"));
                 alert.setContentText(RESOURCES.getString("select_folder_full_content"));
-                final Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == ButtonType.OK) {
-                    try {
-                        FileUtils.cleanDirectory(dir);
-                        setSelectedFolder(dir);
-                    } catch (IOException e) {
-                        final Alert alertCancel = new Alert(AlertType.ERROR);
-                        alertCancel.setTitle(RESOURCES.getString("error_building_project"));
-                        alertCancel.setHeaderText(RESOURCES.getString("error_building_project_header"));
-                        alertCancel.setContentText(RESOURCES.getString("error_building_project_content"));
-                        alertCancel.showAndWait();
-                    }
-                } else {
-                    final Alert alertCancel = new Alert(AlertType.WARNING);
-                    alertCancel.setTitle(RESOURCES.getString("select_folder_full_cancel"));
-                    alertCancel.setHeaderText(RESOURCES.getString("select_folder_full_cancel_header"));
-                    alertCancel.setContentText(RESOURCES.getString("select_folder_full_cancel_content"));
-                    alertCancel.showAndWait();
-                }
+                alert.showAndWait();
             }
+            setSelectedFolder(dir);
+        } else {
+            final Alert alertCancel = new Alert(AlertType.ERROR);
+            alertCancel.setTitle(RESOURCES.getString("error_building_project"));
+            alertCancel.setHeaderText(RESOURCES.getString("error_building_project_header"));
+            alertCancel.setContentText(RESOURCES.getString("error_building_project_content"));
+            alertCancel.showAndWait();
         }
     }
 
     /**
-     * 
+     *
      */
     @FXML
     public void clickNext() {

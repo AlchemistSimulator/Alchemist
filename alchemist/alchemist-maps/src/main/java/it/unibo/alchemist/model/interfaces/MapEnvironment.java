@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.interfaces;
 /**
  * @param <T>
  */
-public interface MapEnvironment<T> extends Environment<T> {
+public interface MapEnvironment<T> extends BenchmarkableEnvironment<T> {
 
     /**
      * The default vehicle.
@@ -31,7 +31,56 @@ public interface MapEnvironment<T> extends Environment<T> {
      * @return A {@link Route} object describing the path the node should
      *         follow
      */
-    Route computeRoute(Node<T> node, Node<T> node2);
+    Route<GeoPosition> computeRoute(Node<T> node, Node<T> node2);
+
+    /**
+     * This method relies on the map data, and computes a route towards some
+     * absolute coordinate solving a TSP problem. It's up to the specific
+     * {@link Action} calling this method to effectively move nodes along the
+     * path.
+     * 
+     * @param node
+     *            The {@link Node} to move
+     * @param coord
+     *            The absolute coordinate where this node wants to move to
+     * @return A {@link Route} object describing the path the node should
+     *         follow
+     */
+    Route<GeoPosition> computeRoute(Node<T> node, Position coord);
+
+    /**
+     * This method relies on the map data, and computes a route towards some
+     * absolute coordinate solving a TSP problem. It's up to the specific
+     * {@link Action} calling this method to effectively move nodes along the
+     * path.
+     * 
+     * @param node
+     *            The {@link Node} to move
+     * @param coord
+     *            The absolute coordinate where this node wants to move to
+     * @param vehicle
+     *            The vehicle tipe for this route
+     * @return A {@link Route} object describing the path the node should
+     *         follow
+     */
+    Route<GeoPosition> computeRoute(Node<T> node, Position coord, Vehicle vehicle);
+
+    /**
+     * This method relies on the map data, and computes a route towards some
+     * absolute coordinate solving a TSP problem. It's up to the specific
+     * {@link Action} calling this method to effectively move nodes along the
+     * path.
+     * 
+     * @param p1
+     *            start position
+     * 
+     * @param p2
+     *            end position The absolute coordinate where this node wants to
+     *            move to
+     * @return A {@link Route} object describing the path the node should
+     *         follow
+     */
+    Route<GeoPosition> computeRoute(Position p1, Position p2);
 
     /**
      * This method relies on the map data, and computes a route towards some
@@ -52,88 +101,11 @@ public interface MapEnvironment<T> extends Environment<T> {
      * @return A {@link Route} object describing the path the node should
      *         follow
      */
-    Route computeRoute(Position p1, Position p2, Vehicle vehicle);
+    Route<GeoPosition> computeRoute(Position p1, Position p2, Vehicle vehicle);
 
-    /**
-     * This method relies on the map data, and computes a route towards some
-     * absolute coordinate solving a TSP problem. It's up to the specific
-     * {@link Action} calling this method to effectively move nodes along the
-     * path.
-     * 
-     * @param p1
-     *            start position
-     * 
-     * @param p2
-     *            end position The absolute coordinate where this node wants to
-     *            move to
-     * @return A {@link Route} object describing the path the node should
-     *         follow
-     */
-    Route computeRoute(Position p1, Position p2);
+    @Override
+    GeoPosition getPosition(Node<T> node);
 
-    /**
-     * This method relies on the map data, and computes a route towards some
-     * absolute coordinate solving a TSP problem. It's up to the specific
-     * {@link Action} calling this method to effectively move nodes along the
-     * path.
-     * 
-     * @param node
-     *            The {@link Node} to move
-     * @param coord
-     *            The absolute coordinate where this node wants to move to
-     * @return A {@link Route} object describing the path the node should
-     *         follow
-     */
-    Route computeRoute(Node<T> node, Position coord);
-
-    /**
-     * This method relies on the map data, and computes a route towards some
-     * absolute coordinate solving a TSP problem. It's up to the specific
-     * {@link Action} calling this method to effectively move nodes along the
-     * path.
-     * 
-     * @param node
-     *            The {@link Node} to move
-     * @param coord
-     *            The absolute coordinate where this node wants to move to
-     * @param vehicle
-     *            The vehicle tipe for this route
-     * @return A {@link Route} object describing the path the node should
-     *         follow
-     */
-    Route computeRoute(Node<T> node, Position coord, Vehicle vehicle);
-
-    /**
-     * Works only if the node is associated with a {@link GPSTrace}.
-     * 
-     * @param node the {@link Node}
-     * @param time the time
-     * @return the position immediately after time in the {@link GPSTrace}
-     */
-    Position getNextPosition(Node<T> node, Time time);
-
-    /**
-     * Works only if the node is associated with a {@link GPSTrace}.
-     * 
-     * @param node the {@link Node}
-     * @param time the time
-     * @return the position immediately before time in the {@link GPSTrace}
-     */
-    Position getPreviousPosition(Node<T> node, Time time);
-
-    /**
-     * Works only if the node is associated with a {@link GPSTrace}.
-     * 
-     * @param node the {@link Node}
-     * @param time the time
-     * @return interpolates the position immediately before and the one immediately after time in the {@link GPSTrace}
-     */
-    Position getExpectedPosition(Node<T> node, Time time);
-
-    /**
-     * Works only if the node is associated with a {@link GPSTrace}.
-     * @param node the {@link Node}
-     * @return the associated {@link GPSTrace} or null if the trace does not exist
-     */
-    GPSTrace getTrace(Node<T> node);
+    @Override
+    GeoPosition makePosition(Number... coordinates);
 }

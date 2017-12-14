@@ -13,8 +13,7 @@ import java.awt.geom.Dimension2D;
 /**
  * Implementation of the {@link Dimension2D} abstract class with double
  * precision.
- * 
-
+ *
  */
 public class DoubleDimension extends Dimension2D {
 

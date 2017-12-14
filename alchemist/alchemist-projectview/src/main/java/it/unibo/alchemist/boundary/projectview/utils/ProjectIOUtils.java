@@ -1,30 +1,30 @@
 package it.unibo.alchemist.boundary.projectview.utils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
-
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.InstanceCreator;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
-
 import it.unibo.alchemist.boundary.projectview.model.Project;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * A class with static methods that load or save data in a json file.
- *
  */
 public final class ProjectIOUtils {
 
     private static final String PROJECT_FILE = File.separator + ".alchemist_project_descriptor.json";
 
+    /**
+     * Private, static constructor, as this is an utility class.
+     */
     private ProjectIOUtils() {
+        // Private, static constructor, as this is an utility class.
     }
 
     /**
@@ -34,12 +34,7 @@ public final class ProjectIOUtils {
      */
     public static Project loadFrom(final String directory) {
         final Gson gson = new GsonBuilder()
-                .registerTypeAdapter(Project.class, new InstanceCreator<Project>() {
-                    @Override
-                    public Project createInstance(final Type type) {
-                        return new Project(new File(directory));
-                    }
-                })
+                .registerTypeAdapter(Project.class, (InstanceCreator<Project>) type -> new Project(new File(directory)))
                 .setPrettyPrinting()
                 .create();
         final String actualPath = directory + PROJECT_FILE;
@@ -67,7 +62,7 @@ public final class ProjectIOUtils {
         if (new File(directory).exists() && new File(directory).isDirectory()) {
             try {
                 final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                Files.write(gson.toJson(project), new File(directory + PROJECT_FILE), StandardCharsets.UTF_8);
+                Files.asCharSink(new File(directory + PROJECT_FILE), StandardCharsets.UTF_8).write(gson.toJson(project));
             } catch (IOException e) {
                 throw new IllegalStateException(e);
             }

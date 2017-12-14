@@ -38,7 +38,7 @@ public class LinkNodesWithinRoutingRange<T> extends AbstractLocallyConsistentLin
         if (env instanceof MapEnvironment<?>) {
             final MapEnvironment<T> menv = (MapEnvironment<T>) env;
             final Stream<Node<T>> stream = menv.getNodesWithinRange(center, range).parallelStream();
-            final List<Node<T>> filtered = stream.filter(node -> menv.computeRoute(center, node).getDistance() < range).collect(Collectors.toList());
+            final List<Node<T>> filtered = stream.filter(node -> menv.computeRoute(center, node).length() < range).collect(Collectors.toList());
             return Neighborhoods.make(menv, center, filtered);
         }
         return Neighborhoods.make(env, center);

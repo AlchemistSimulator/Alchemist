@@ -1,5 +1,9 @@
 package it.unibo.alchemist.boundary.gui.view.property;
 
+import com.google.gson.reflect.TypeToken;
+import it.unibo.alchemist.boundary.gui.effects.json.AbstractPropertySerializationTest;
+import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
+import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,20 +15,22 @@ import java.io.ObjectOutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Type;
-
+import javafx.beans.property.Property;
 import org.junit.Assert;
 import org.junit.Test;
-
-import com.google.gson.reflect.TypeToken;
-
-import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
-import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
-import javafx.beans.property.Property;
 
 /**
  * JUint test for custom {@link Property} serialization.
  */
 public class RangedDoublePropertySerializationTest extends AbstractPropertySerializationTest {
+    private static final String TEST_NAME = "Pippo";
+    private static final double TEST_INITIAL_VALUE = 5.0;
+    private static final double TEST_LOWER_BOUND = 0.0;
+    private static final double TEST_UPPER_BOUND = 100.0;
+    private static final String TEST_PERCENT_NAME = "Percent test";
+    private static final double TEST_PERCENT_INITIAL_VALUE = 33.0;
+    private static final String TEST_COLOR_NAME = "RED";
+    private static final double TEST_COLOR_INITIAL_VALUE = 0.5;
 
     @Test
     @Override
@@ -34,9 +40,7 @@ public class RangedDoublePropertySerializationTest extends AbstractPropertySeria
         final FileOutputStream fout = new FileOutputStream(file);
         final ObjectOutputStream oos = new ObjectOutputStream(fout);
 
-        // CHECKSTYLE:OFF
-        RangedDoubleProperty rangedDoubleProperty = new RangedDoubleProperty("Pippo", 5.0, 0.0, 100.0);
-        // CHECKSTYLE:ON
+        RangedDoubleProperty rangedDoubleProperty = new RangedDoubleProperty(TEST_NAME, TEST_INITIAL_VALUE, TEST_LOWER_BOUND, TEST_UPPER_BOUND);
         oos.writeObject(rangedDoubleProperty);
 
         final FileInputStream fin = new FileInputStream(file);
@@ -46,18 +50,15 @@ public class RangedDoublePropertySerializationTest extends AbstractPropertySeria
 
         Assert.assertTrue(getMessage(rangedDoubleProperty, deserialized), rangedDoubleProperty.equals(deserialized));
 
-        // CHECKSTYLE:OFF
-        rangedDoubleProperty = PropertyFactory.getColorChannelProperty("RED", 250.0);
-        // CHECKSTYLE:ON
+        rangedDoubleProperty = PropertyFactory.getFXColorChannelProperty(TEST_COLOR_NAME, TEST_COLOR_INITIAL_VALUE);
         oos.writeObject(rangedDoubleProperty);
 
         deserialized = (RangedDoubleProperty) ois.readObject();
 
         Assert.assertTrue(getMessage(rangedDoubleProperty, deserialized), rangedDoubleProperty.equals(deserialized));
 
-        // CHECKSTYLE:OFF
-        rangedDoubleProperty = PropertyFactory.getPercentageRangedProperty("Percent test", 33.0);
-        // CHECKSTYLE:ON
+        rangedDoubleProperty = PropertyFactory.getPercentageRangedProperty(TEST_PERCENT_NAME, TEST_PERCENT_INITIAL_VALUE);
+
         oos.writeObject(rangedDoubleProperty);
 
         deserialized = (RangedDoubleProperty) ois.readObject();
@@ -73,9 +74,7 @@ public class RangedDoublePropertySerializationTest extends AbstractPropertySeria
     public void testGsonSerialization() throws Exception {
         final File file = folder.newFile();
 
-        // CHECKSTYLE:OFF
-        RangedDoubleProperty rangedDoubleProperty = new RangedDoubleProperty("Pippo", 5.0, 0.0, 100.0);
-        // CHECKSTYLE:ON
+        RangedDoubleProperty rangedDoubleProperty = new RangedDoubleProperty(TEST_NAME, TEST_INITIAL_VALUE, TEST_LOWER_BOUND, TEST_UPPER_BOUND);
 
         final Writer writer = new FileWriter(file);
         GSON.toJson(rangedDoubleProperty, this.getGsonType(), writer);
@@ -85,18 +84,14 @@ public class RangedDoublePropertySerializationTest extends AbstractPropertySeria
 
         Assert.assertTrue(getMessage(rangedDoubleProperty, deserialized), rangedDoubleProperty.equals(deserialized));
 
-        // CHECKSTYLE:OFF
-        rangedDoubleProperty = PropertyFactory.getColorChannelProperty("RED", 250.0);
-        // CHECKSTYLE:ON
+        rangedDoubleProperty = PropertyFactory.getFXColorChannelProperty(TEST_COLOR_NAME, TEST_COLOR_INITIAL_VALUE);
         GSON.toJson(rangedDoubleProperty, this.getGsonType(), writer);
         writer.flush();
         deserialized = GSON.fromJson(reader, this.getGsonType());
 
         Assert.assertTrue(getMessage(rangedDoubleProperty, deserialized), rangedDoubleProperty.equals(deserialized));
 
-        // CHECKSTYLE:OFF
-        rangedDoubleProperty = PropertyFactory.getPercentageRangedProperty("Percent test", 33.0);
-        // CHECKSTYLE:ON
+        rangedDoubleProperty = PropertyFactory.getPercentageRangedProperty(TEST_PERCENT_NAME, TEST_PERCENT_INITIAL_VALUE);
         GSON.toJson(rangedDoubleProperty, this.getGsonType(), writer);
         writer.close();
         deserialized = GSON.fromJson(reader, this.getGsonType());

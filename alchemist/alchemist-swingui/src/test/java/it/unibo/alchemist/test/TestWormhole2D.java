@@ -1,4 +1,5 @@
 package it.unibo.alchemist.test;
+
 import java.awt.Component;
 
 import org.junit.Test;
@@ -24,5 +25,4 @@ public class TestWormhole2D {
         });
         worm.center();
     }
-
 }

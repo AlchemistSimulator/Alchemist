@@ -68,8 +68,8 @@ public class TestBiomolLayer {
             private static final long serialVersionUID = -8801751097767369325L;
 
             @Override
-            public void stepDone(final Environment<Double> env, final Reaction<Double> r, final Time time, final long step) {
-                final Position curPos = env.getPosition(env.getNodes().stream().findAny().get());
+            public void stepDone(final Environment<Double> environment, final Reaction<Double> reaction, final Time time, final long step) {
+                final Position curPos = environment.getPosition(environment.getNodes().stream().findAny().get());
                 if (curPos.getCoordinate(0) >= 0 && curPos.getCoordinate(1) >= 0) {
                     schedulability(true);
                 } else {
@@ -78,12 +78,12 @@ public class TestBiomolLayer {
             }
 
             @Override
-            public void initialized(final Environment<Double> env) {
+            public void initialized(final Environment<Double> environment) {
                 schedulability(false);
             }
 
             @Override
-            public void finished(final Environment<Double> env, final Time time, final long step) {
+            public void finished(final Environment<Double> environment, final Time time, final long step) {
             }
 
             private void schedulability(final boolean val) {

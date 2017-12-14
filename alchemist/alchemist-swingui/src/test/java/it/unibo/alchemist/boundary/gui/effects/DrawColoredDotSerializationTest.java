@@ -1,6 +1,5 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,12 +10,17 @@ import java.io.ObjectOutputStream;
 import org.junit.Assert;
 import org.junit.Test;
 
+import it.unibo.alchemist.boundary.gui.effects.json.AbstractEffectSerializationTest;
 import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
+import javafx.scene.paint.Color;
 
 /**
- * JUint test for {@link EffectFX effect} serialization.
+ * JUint test for {@link DrawColoredDot} effect serialization.
  */
 public class DrawColoredDotSerializationTest extends AbstractEffectSerializationTest<DrawColoredDot> {
+    private static final String TEST_NAME = "TestDot";
+    private static final double TEST_SIZE = 25.0;
+    private static final Color TEST_COLOR = Color.CYAN;
 
     @Test
     @Override
@@ -26,11 +30,9 @@ public class DrawColoredDotSerializationTest extends AbstractEffectSerialization
         final FileOutputStream fout = new FileOutputStream(file);
         final ObjectOutputStream oos = new ObjectOutputStream(fout);
 
-        final DrawColoredDot effect = new DrawColoredDot("TestDot");
-        // CHECKSTYLE:OFF
-        effect.setSize(25.0);
-        // CHECKSTYLE:ON
-        effect.setColor(Color.cyan);
+        final DrawColoredDot effect = new DrawColoredDot(TEST_NAME);
+        effect.setSize(TEST_SIZE);
+        effect.setColor(TEST_COLOR);
 
         oos.writeObject(effect);
 
@@ -50,11 +52,9 @@ public class DrawColoredDotSerializationTest extends AbstractEffectSerialization
     public void testGsonSerialization() throws IOException {
         final File file = folder.newFile();
 
-        final DrawColoredDot effect = new DrawColoredDot("TestDot");
-        // CHECKSTYLE:OFF
-        effect.setSize(25.0);
-        // CHECKSTYLE:ON
-        effect.setColor(Color.cyan);
+        final DrawColoredDot effect = new DrawColoredDot(TEST_NAME);
+        effect.setSize(TEST_SIZE);
+        effect.setColor(TEST_COLOR);
 
         EffectSerializer.effectToFile(file, effect);
 
@@ -69,7 +69,7 @@ public class DrawColoredDotSerializationTest extends AbstractEffectSerialization
             return super.getMessage(origin, deserialized);
         }
 
-        return super.getMessage(origin, deserialized) 
+        return super.getMessage(origin, deserialized)
                 + System.lineSeparator() + "Origin size: " + origin.getSize()
                 + System.lineSeparator() + "Deserialized size: " + deserialized.getSize()
                 + System.lineSeparator() + "Origin alpha: " + origin.getAlpha()

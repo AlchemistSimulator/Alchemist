@@ -1,8 +1,24 @@
-/**
- * 
- */
 package it.unibo.alchemist;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import it.unibo.alchemist.boundary.gui.effects.EffectFX;
+import it.unibo.alchemist.boundary.gui.view.SingleRunAppBuilder;
+import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
+import it.unibo.alchemist.core.implementations.Engine;
+import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.loader.Loader;
+import it.unibo.alchemist.loader.export.EnvPerformanceStats;
+import it.unibo.alchemist.loader.export.Exporter;
+import it.unibo.alchemist.loader.export.Extractor;
+import it.unibo.alchemist.loader.variables.Variable;
+import it.unibo.alchemist.model.implementations.times.DoubleTime;
+import it.unibo.alchemist.model.interfaces.BenchmarkableEnvironment;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Time;
 import java.awt.GraphicsEnvironment;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
@@ -16,6 +32,7 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -25,31 +42,13 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-
-import it.unibo.alchemist.boundary.gui.SingleRunGUI;
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
-import it.unibo.alchemist.core.implementations.Engine;
-import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.loader.Loader;
-import it.unibo.alchemist.loader.export.Exporter;
-import it.unibo.alchemist.loader.variables.Variable;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Time;
-
 /**
  * Starts Alchemist.
- * 
+ *
  * @param <T> the concentration type
  */
 public final class AlchemistRunner<T> {
@@ -58,7 +57,6 @@ public final class AlchemistRunner<T> {
     private static final ThreadFactory THREAD_FACTORY = new ThreadFactoryBuilder()
             .setNameFormat("alchemist-batch-%d")
             .build();
-    private final int closeOperation;
     private final boolean doBenchmark;
     private final Optional<String> effectsFile;
     private final long endStep;
@@ -70,17 +68,25 @@ public final class AlchemistRunner<T> {
     private final int parallelism;
     private final double samplingInterval;
 
-    private AlchemistRunner(final Loader source,
-            final Time endTime,
-            final long endStep,
-            final Optional<String> exportRoot,
-            final Optional<String> effectsFile,
-            final double sampling,
-            final int parallelism,
-            final boolean headless,
-            final int closeOperation,
-            final boolean benchmark,
-            final ImmutableCollection<Supplier<OutputMonitor<T>>> outputMonitors) {
+    /**
+     * Default private constructor.
+     *
+     * @param source         the entity that produces the {@link Environment}
+     * @param endTime        the time to reach; it could be {@link DoubleTime#INFINITE_TIME infinite}
+     * @param endStep        the step to reach; it could be {@link Long#MAX_VALUE infinite}
+     * @param exportRoot     the file name to export to
+     * @param effectsFile    the file to load {@link EffectFX effects} from
+     * @param sampling       the sampling interval
+     * @param parallelism    the number of threads in the pool of the {@link Executor}
+     * @param headless       if the simulation should run headless or with a GUI
+     * @param benchmark      if you want to benchmark this run
+     * @param outputMonitors the {@link Collection} of {@link OutputMonitor} to add to the simulation
+     * @see AlchemistRunner.Builder
+     */
+    private AlchemistRunner(final Loader source, final Time endTime, final long endStep,
+                            final Optional<String> exportRoot, final Optional<String> effectsFile, final double sampling,
+                            final int parallelism, final boolean headless, final boolean benchmark,
+                            final ImmutableCollection<Supplier<OutputMonitor<T>>> outputMonitors) {
         this.effectsFile = effectsFile;
         this.endTime = endTime;
         this.endStep = endStep;
@@ -89,13 +95,13 @@ public final class AlchemistRunner<T> {
         this.loader = source;
         this.parallelism = parallelism;
         this.samplingInterval = sampling;
-        this.closeOperation = closeOperation;
         this.doBenchmark = benchmark;
         this.outputMonitors = outputMonitors;
     }
 
     /**
-     * 
+     * Getter method for the loader variables.
+     *
      * @return loader variables
      */
     public Map<String, Variable<?>> getVariables() {
@@ -103,9 +109,9 @@ public final class AlchemistRunner<T> {
     }
 
     /**
-     * 
-     * @param variables
-     *            loader variables
+     * The method launches the simulation.
+     *
+     * @param variables loader variables
      */
     public void launch(final String... variables) {
         Optional<? extends Throwable> exception = Optional.empty();
@@ -114,7 +120,7 @@ public final class AlchemistRunner<T> {
              * Batch mode
              */
             final Map<String, Variable<?>> simVars = getVariables();
-            for (final String s: variables) {
+            for (final String s : variables) {
                 if (!simVars.containsKey(s)) {
                     throw new IllegalArgumentException("Variable " + s + " is not allowed. Valid variables are: " + simVars.keySet());
                 }
@@ -122,23 +128,30 @@ public final class AlchemistRunner<T> {
             final ExecutorService executor = Executors.newFixedThreadPool(parallelism, THREAD_FACTORY);
             final Optional<Long> start = Optional.ofNullable(doBenchmark ? System.nanoTime() : null);
             final Stream<Future<Optional<Throwable>>> futureErrors = prepareSimulations(sim -> {
-                        sim.play();
-                        sim.run();
-                        return sim.getError();
-                    }, variables)
+                if (sim.getEnvironment() instanceof BenchmarkableEnvironment) {
+                    for (final Extractor e : loader.getDataExtractors()) {
+                        if (e instanceof EnvPerformanceStats) {
+                            ((BenchmarkableEnvironment<?>) (sim.getEnvironment())).enableBenchmark();
+                        }
+                    }
+                }
+                sim.play();
+                sim.run();
+                return sim.getError();
+            }, variables)
                     .map(executor::submit);
             final Queue<Future<Optional<Throwable>>> allErrors = futureErrors.collect(Collectors.toCollection(LinkedList::new));
             while (!(exception.isPresent() || allErrors.isEmpty())) {
                 try {
                     exception = allErrors.remove().get();
-                } catch (InterruptedException | ExecutionException e1) {
+                } catch (final InterruptedException | ExecutionException e1) {
                     exception = Optional.of(e1);
                 }
             }
             /*
              * findAny does NOT short-circuit the stream due to a known bug in
              * the JDK: https://bugs.openjdk.java.net/browse/JDK-8075939
-             * 
+             *
              * Thus, to date, if an exception occurs in a thread which is
              * running a simulation, that exception will be effectively thrown
              * outside that thread only when all the threads have completed
@@ -151,30 +164,29 @@ public final class AlchemistRunner<T> {
             }
             try {
                 executor.awaitTermination(Integer.MAX_VALUE, TimeUnit.DAYS);
-            } catch (InterruptedException e1) {
+            } catch (final InterruptedException e1) {
                 throw new IllegalStateException("The batch execution got interrupted.");
             }
         } else {
             Optional<Throwable> localEx = Optional.empty();
             try {
                 localEx = prepareSimulations(sim -> {
-                            final boolean onHeadlessEnvironment = GraphicsEnvironment.isHeadless();
-                            if (!headless && onHeadlessEnvironment) {
-                                L.error("Could not initialize the UI (the graphics environment is headless). Falling back to headless mode.");
-                            }
-                            if (headless || onHeadlessEnvironment) {
-                                sim.play();
-                            } else {
-                                if (effectsFile.isPresent()) {
-                                    SingleRunGUI.make(sim, effectsFile.get(), closeOperation);
-                                } else {
-                                    SingleRunGUI.make(sim, closeOperation);
-                                }
-                            }
-                            sim.run();
-                            return sim.getError();
-                        }, variables).findAny().get().call();
-            } catch (Exception e) {
+                    final boolean onHeadlessEnvironment = GraphicsEnvironment.isHeadless();
+                    if (!headless && onHeadlessEnvironment) {
+                        L.error("Could not initialize the UI (the graphics environment is headless). Falling back to headless mode.");
+                    }
+                    if (headless || onHeadlessEnvironment) {
+                        sim.play();
+                    } else {
+                        final SingleRunAppBuilder builder = new SingleRunAppBuilder<>(sim);
+                        effectsFile.ifPresent(builder::addEffectGroup);
+                        builder.useDefaultEffects(true);
+                        builder.build();
+                    }
+                    sim.run();
+                    return sim.getError();
+                }, variables).findAny().get().call();
+            } catch (final Exception e) {
                 localEx = Optional.of(e);
             }
             exception = localEx;
@@ -184,6 +196,14 @@ public final class AlchemistRunner<T> {
         }
     }
 
+    /**
+     * The method initializes the simulation.
+     *
+     * @param finalizer
+     * @param variables
+     * @param <R>
+     * @return
+     */
     private <R> Stream<Callable<R>> prepareSimulations(final Function<Simulation<T>, R> finalizer, final String... variables) {
         final List<List<? extends Entry<String, ?>>> varStreams = Arrays.stream(variables)
                 .map(it -> getVariables().get(it).stream()
@@ -193,42 +213,45 @@ public final class AlchemistRunner<T> {
         return (varStreams.isEmpty()
                 ? ImmutableList.of(ImmutableList.<Entry<String, Double>>of())
                 : Lists.cartesianProduct(varStreams)).stream()
-            .map(ImmutableMap::copyOf)
-            .map(vars -> () -> {
-                final Environment<T> env = loader.getWith(vars);
-                final Simulation<T> sim = new Engine<>(env, endStep, endTime);
-                outputMonitors.stream().map(Supplier::get).forEach(sim::addOutputMonitor);
-                if (exportFileRoot.isPresent()) {
-                    final String filename = exportFileRoot.get() + (vars.isEmpty() ? "" : "_" + vars.entrySet().stream()
+                .map(vars -> ImmutableMap.copyOf(vars))
+                .map(vars -> () -> {
+                    final Environment<T> env = loader.getWith(vars);
+                    final Simulation<T> sim = new Engine<>(env, endStep, endTime);
+                    outputMonitors.stream().map(Supplier::get).forEach(sim::addOutputMonitor);
+                    if (exportFileRoot.isPresent()) {
+                        final String filename = exportFileRoot.get() + (vars.isEmpty() ? "" : "_" + vars.entrySet().stream()
                                 .map(e -> e.getKey() + '-' + e.getValue())
                                 .collect(Collectors.joining("_")))
-                            + ".txt";
-                    /*
-                     * Make the header: get all the default values and
-                     * substitute those that are different in this run
-                     */
-                    final Map<String, Object> defaultVars = loader.getVariables().entrySet().stream()
-                            .collect(Collectors.toMap(Entry::getKey, e -> e.getValue().getDefault()));
-                    defaultVars.putAll(vars);
-                    final String header = vars.entrySet().stream()
-                            .map(e -> e.getKey() + " = " + e.getValue())
-                            .collect(Collectors.joining(", "));
-                    try {
-                        final Exporter<T> exp = new Exporter<>(filename, samplingInterval, header, loader.getDataExtractors());
-                        sim.addOutputMonitor(exp);
-                    } catch (FileNotFoundException e) {
-                        throw new IllegalStateException(e);
+                                + ".txt";
+                        /*
+                         * Make the header: get all the default values and
+                         * substitute those that are different in this run
+                         */
+                        final Map<String, Object> defaultVars = loader.getVariables().entrySet().stream()
+                                .collect(Collectors.toMap(Entry::getKey, e -> e.getValue().getDefault()));
+                        defaultVars.putAll(vars);
+                        final String header = vars.entrySet().stream()
+                                .map(e -> e.getKey() + " = " + e.getValue())
+                                .collect(Collectors.joining(", "));
+                        try {
+                            final Exporter<T> exp = new Exporter<>(filename, samplingInterval, header, loader.getDataExtractors());
+                            sim.addOutputMonitor(exp);
+                        } catch (final FileNotFoundException e) {
+                            throw new IllegalStateException(e);
+                        }
                     }
-                }
-                return finalizer.apply(sim);
-            });
-        }
+                    return finalizer.apply(sim);
+                });
+    }
 
     /**
+     * Builder class for {@link AlchemistRunner} instances.
      *
      * @param <T> concentration type
      */
     public static class Builder<T> {
+        private final Loader loader;
+        private final Collection<Supplier<OutputMonitor<T>>> outputMonitors = new LinkedList<>();
         private boolean benchmark;
         private int closeOperation;
         private Optional<String> effectsFile = Optional.empty();
@@ -236,22 +259,22 @@ public final class AlchemistRunner<T> {
         private Time endTime = DoubleTime.INFINITE_TIME;
         private Optional<String> exportFileRoot = Optional.empty();
         private boolean headless;
-        private final Loader loader;
-        private final Collection<Supplier<OutputMonitor<T>>> outputMonitors = new LinkedList<>();
         private int parallelism = Runtime.getRuntime().availableProcessors() + 1;
         private double samplingInt = 1;
 
         /**
-         * 
-         * @param loader
-         *            loader
+         * Default constructor for the builder class.
+         *
+         * @param loader the loader
          */
         public Builder(final Loader loader) {
             this.loader = Objects.requireNonNull(loader, "Loader can't be null.");
         }
 
         /**
-         * @param provider the function providing the required {@link OutputMonitor}
+         * Add an {@link OutputMonitor} through a {@code Supplier} function.
+         *
+         * @param provider the function providing the required {@code OutputMonitor}
          * @return this builder
          */
         public Builder<T> addOutputMonitorSupplier(final Supplier<OutputMonitor<T>> provider) {
@@ -260,18 +283,21 @@ public final class AlchemistRunner<T> {
         }
 
         /**
-         * 
-         * @return AlchemistRunner
+         * The method builds the {@link AlchemistRunner}.
+         *
+         * @return {@code AlchemistRunner}
          */
         public AlchemistRunner<T> build() {
             return new AlchemistRunner<>(this.loader, this.endTime, this.endStep, this.exportFileRoot, this.effectsFile,
-                    this.samplingInt, this.parallelism, this.headless, this.closeOperation, this.benchmark,
+                    this.samplingInt, this.parallelism, this.headless, this.benchmark,
                     ImmutableList.copyOf(outputMonitors));
         }
 
         /**
+         * Sets the benchkmark mode for the simulation.
+         *
          * @param benchmark set true if you want to benchmark this run
-         * @return builder
+         * @return this builder
          */
         public Builder<T> setBenchmarkMode(final boolean benchmark) {
             this.benchmark = benchmark;
@@ -279,10 +305,10 @@ public final class AlchemistRunner<T> {
         }
 
         /**
-         * 
-         * @param uri
-         *            effect uri
-         * @return builder
+         * Sets the uri of the file containing all the {@link EffectFX effects} to apply to the simulation on start.
+         *
+         * @param uri the uri of the effects file
+         * @return this builder
          */
         public Builder<T> setEffects(final String uri) {
             this.effectsFile = Optional.ofNullable(uri);
@@ -290,10 +316,12 @@ public final class AlchemistRunner<T> {
         }
 
         /**
-         * 
-         * @param steps
-         *            end step
-         * @return builder
+         * Sets the step to reach.
+         * <p>
+         * Default is {@link Long#MAX_VALUE infinite}.
+         *
+         * @param steps the end step
+         * @return this builder
          */
         public Builder<T> setEndStep(final long steps) {
             if (steps < 0) {
@@ -304,36 +332,39 @@ public final class AlchemistRunner<T> {
         }
 
         /**
-         * 
-         * @param t
-         *            end time
-         * @return builder
+         * Sets the time to reach as a number.
+         *
+         * @param time the end time
+         * @return this builder
+         * @see #setEndTime(Time)
          */
-        public Builder<T> setEndTime(final Number t) {
-            final double dt = t.doubleValue();
+        public Builder<T> setEndTime(final Number time) {
+            final double dt = time.doubleValue();
             if (dt < 0) {
                 throw new IllegalArgumentException("The end time (" + dt + ") must be zero or positive");
             }
-            this.endTime = new DoubleTime(t.doubleValue());
+            this.endTime = new DoubleTime(dt);
             return this;
         }
 
         /**
-         * 
-         * @param t
-         *            end time
-         * @return builder
+         * Sets the time to reach.
+         * <p>
+         * Default is {@link DoubleTime#INFINITE_TIME infinite}.
+         *
+         * @param time the end time
+         * @return this builder
          */
-        public Builder<T> setEndTime(final Time t) {
-            this.endTime = t;
+        public Builder<T> setEndTime(final Time time) {
+            this.endTime = time;
             return this;
         }
 
         /**
-         * 
-         * @param closeOp
-         *            the close operation
-         * @return buider
+         * Sets the GUI default close operation.
+         *
+         * @param closeOp the close operation
+         * @return this builder
          */
         public Builder<T> setGUICloseOperation(final int closeOp) {
             if (closeOp < 0 || closeOp > 3) {
@@ -344,10 +375,10 @@ public final class AlchemistRunner<T> {
         }
 
         /**
-         * 
-         * @param headless
-         *            is headless
-         * @return builder
+         * Sets whether the simulation will run in headless mode or not.
+         *
+         * @param headless is headless
+         * @return this builder
          */
         public Builder<T> setHeadless(final boolean headless) {
             this.headless = headless;
@@ -355,10 +386,10 @@ public final class AlchemistRunner<T> {
         }
 
         /**
-         * 
-         * @param deltaTime
-         *            time interval
-         * @return builder
+         * Sets the sampling interval.
+         *
+         * @param deltaTime the time interval
+         * @return this builder
          */
         public Builder<T> setInterval(final double deltaTime) {
             if (deltaTime > 0) {
@@ -370,10 +401,10 @@ public final class AlchemistRunner<T> {
         }
 
         /**
-         * 
-         * @param uri
-         *            output uri
-         * @return builder
+         * Sets the file where the output will be saved to.
+         *
+         * @param uri the uri of the output file
+         * @return this builder
          */
         public Builder<T> setOutputFile(final String uri) {
             this.exportFileRoot = Optional.ofNullable(uri);
@@ -381,10 +412,10 @@ public final class AlchemistRunner<T> {
         }
 
         /**
-         * 
-         * @param threads
-         *            threads number
-         * @return builder
+         * Sets the number of threads in the pool of an {@link Executor} the simulation will use.
+         *
+         * @param threads the threads number
+         * @return this builder
          */
         public Builder<T> setParallelism(final int threads) {
             if (threads <= 0) {

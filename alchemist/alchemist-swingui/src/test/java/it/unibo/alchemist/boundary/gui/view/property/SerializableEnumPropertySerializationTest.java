@@ -1,5 +1,8 @@
 package it.unibo.alchemist.boundary.gui.view.property;
 
+import com.google.gson.reflect.TypeToken;
+import it.unibo.alchemist.boundary.gui.effects.json.AbstractPropertySerializationTest;
+import it.unibo.alchemist.boundary.gui.view.properties.SerializableEnumProperty;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,39 +14,32 @@ import java.io.ObjectOutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Type;
-
+import javafx.beans.property.Property;
 import org.junit.Assert;
 import org.junit.Test;
-
-import com.google.gson.reflect.TypeToken;
-
-import it.unibo.alchemist.boundary.gui.effects.DrawShapeFX.ModeFX;
-import it.unibo.alchemist.boundary.gui.view.properties.SerializableEnumProperty;
-import javafx.beans.property.Property;
 
 /**
  * JUint test for custom {@link Property} serialization.
  */
 public class SerializableEnumPropertySerializationTest extends AbstractPropertySerializationTest {
-
     /**
      * Tests if {@link SerializableEnumProperty#values()} method works
      * correctly.
      */
     @Test
     public void testValues() {
-        final SerializableEnumProperty<ModeFX> serializableEnumProperty = new SerializableEnumProperty<>("Test", ModeFX.DrawEllipse);
+        final SerializableEnumProperty<TestEnum> serializableEnumProperty = new SerializableEnumProperty<>("Test", TestEnum.FOO);
 
-        Assert.assertArrayEquals(serializableEnumProperty.values(), ModeFX.values());
+        Assert.assertArrayEquals(serializableEnumProperty.values(), TestEnum.values());
 
-        final SerializableEnumProperty<ModeFX> enumProperty2 = new SerializableEnumProperty<>();
+        final SerializableEnumProperty<TestEnum> enumProperty2 = new SerializableEnumProperty<>();
 
         try {
-            Assert.assertArrayEquals(enumProperty2.values(), ModeFX.values());
+            Assert.assertArrayEquals(enumProperty2.values(), TestEnum.values());
             Assert.fail("Exception not thrown");
         } catch (final IllegalStateException e) {
-            enumProperty2.setValue(ModeFX.FillRectangle);
-            Assert.assertArrayEquals(enumProperty2.values(), ModeFX.values());
+            enumProperty2.setValue(TestEnum.BAR);
+            Assert.assertArrayEquals(enumProperty2.values(), TestEnum.values());
         }
     }
 
@@ -55,7 +51,7 @@ public class SerializableEnumPropertySerializationTest extends AbstractPropertyS
         final FileOutputStream fout = new FileOutputStream(file);
         final ObjectOutputStream oos = new ObjectOutputStream(fout);
 
-        final SerializableEnumProperty<ModeFX> serializableEnumProperty = new SerializableEnumProperty<>("Test", ModeFX.DrawEllipse);
+        final SerializableEnumProperty<TestEnum> serializableEnumProperty = new SerializableEnumProperty<>("Test", TestEnum.TEST);
 
         oos.writeObject(serializableEnumProperty);
 
@@ -63,7 +59,7 @@ public class SerializableEnumPropertySerializationTest extends AbstractPropertyS
         final ObjectInputStream ois = new ObjectInputStream(fin);
 
         @SuppressWarnings("unchecked") // If something goes wrong, the test will fail
-        final SerializableEnumProperty<ModeFX> deserialized = (SerializableEnumProperty<ModeFX>) ois.readObject();
+        final SerializableEnumProperty<TestEnum> deserialized = (SerializableEnumProperty<TestEnum>) ois.readObject();
 
         Assert.assertTrue(getMessage(serializableEnumProperty, deserialized), serializableEnumProperty.equals(deserialized));
 
@@ -76,14 +72,14 @@ public class SerializableEnumPropertySerializationTest extends AbstractPropertyS
     public void testGsonSerialization() throws Exception {
         final File file = folder.newFile();
 
-        final SerializableEnumProperty<ModeFX> serializableEnumProperty = new SerializableEnumProperty<>("Test", ModeFX.DrawRectangle);
+        final SerializableEnumProperty<TestEnum> serializableEnumProperty = new SerializableEnumProperty<>("Test", TestEnum.FOO);
 
         final Writer writer = new FileWriter(file);
         GSON.toJson(serializableEnumProperty, this.getGsonType(), writer);
         writer.close();
 
         final Reader reader = new FileReader(file);
-        final SerializableEnumProperty<ModeFX> deserialized = GSON.fromJson(reader, this.getGsonType());
+        final SerializableEnumProperty<TestEnum> deserialized = GSON.fromJson(reader, this.getGsonType());
         reader.close();
 
         Assert.assertTrue(getMessage(serializableEnumProperty, deserialized), serializableEnumProperty.equals(deserialized));
@@ -91,13 +87,22 @@ public class SerializableEnumPropertySerializationTest extends AbstractPropertyS
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @return a {@link Type} for
-     *         {@link SerializableEnumProperty}<{@link ModeFX}>
+     * {@link SerializableEnumProperty}<{@link TestEnum}>
      */
     @Override
     protected Type getGsonType() {
-        return new TypeToken<SerializableEnumProperty<ModeFX>>() { }.getType();
+        return new TypeToken<SerializableEnumProperty<TestEnum>>() { }.getType();
+    }
+
+    /**
+     * Enum with the only purpose of test {@link SerializableEnumProperty}.
+     */
+    private enum TestEnum {
+        FOO,
+        BAR,
+        TEST
     }
 
 }

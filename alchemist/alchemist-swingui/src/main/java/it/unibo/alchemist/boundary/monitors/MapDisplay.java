@@ -1,20 +1,24 @@
 /*
  * Copyright (C) 2010-2014, Danilo Pianini and contributors
  * listed in the project's pom.xml file.
- * 
+ *
  * This file is part of Alchemist, and is distributed under the terms of
  * the GNU General Public License, with a linking exception, as described
  * in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.boundary.monitors;
 
+import it.unibo.alchemist.boundary.wormhole.implementation.LinearZoomManager;
+import it.unibo.alchemist.boundary.wormhole.implementation.MapWormhole;
+import it.unibo.alchemist.model.interfaces.Concentration;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Time;
 import java.awt.BorderLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.io.File;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import org.mapsforge.core.graphics.GraphicFactory;
 import org.mapsforge.map.awt.graphics.AwtGraphicFactory;
 import org.mapsforge.map.awt.view.MapView;
@@ -27,15 +31,12 @@ import org.mapsforge.map.layer.download.tilesource.OpenStreetMapMapnik;
 import org.mapsforge.map.layer.download.tilesource.TileSource;
 import org.mapsforge.map.model.Model;
 
-import it.unibo.alchemist.boundary.wormhole.implementation.LinearZoomManager;
-import it.unibo.alchemist.boundary.wormhole.implementation.MapWormhole;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Time;
-
 /**
- * 
- * @param <T>
+ * Graphical 2D display of an environments that uses a map.
+ *
+ * @param <T> the {@link Concentration} type
  */
+@Deprecated
 public class MapDisplay<T> extends Generic2DDisplay<T> {
     private static final long serialVersionUID = 8593507198560560646L;
     private static final GraphicFactory GRAPHIC_FACTORY = AwtGraphicFactory.INSTANCE;
@@ -45,7 +46,7 @@ public class MapDisplay<T> extends Generic2DDisplay<T> {
     private final MapView mapView = new MapView();
 
     /**
-     * 
+     * Default constructor.
      */
     public MapDisplay() {
         super();
@@ -55,32 +56,6 @@ public class MapDisplay<T> extends Generic2DDisplay<T> {
         tdl.start();
         mapView.getMapScaleBar().setVisible(true);
         add(mapView);
-    }
-
-    @Override
-    protected void drawBackground(final Graphics2D g) {
-    }
-
-    @Override
-    public void paint(final Graphics g) {
-        super.paint(g);
-        if (mapView != null) {
-            mapView.paint(g);
-        }
-        drawEnvOnView((Graphics2D) g);
-    };
-
-    @Override
-    public void initialized(final Environment<T> env) {
-        super.initialized(env);
-        Arrays.stream(getMouseListeners()).forEach(mapView::addMouseListener);
-        Arrays.stream(getMouseMotionListeners()).forEach(mapView::addMouseMotionListener);
-        setWormhole(new MapWormhole(env, this, mapView.getModel().mapViewPosition));
-        setZoomManager(new LinearZoomManager(1, 1, 2, MapWormhole.MAX_ZOOM));
-        getWormhole().center();
-        getWormhole().optimalZoom();
-        getZoomManager().setZoom(getWormhole().getZoom());
-        super.initialized(env);
     }
 
     private static TileCache createTileCache() {
@@ -103,6 +78,32 @@ public class MapDisplay<T> extends Generic2DDisplay<T> {
     }
 
     @Override
+    protected void drawBackground(final Graphics2D g) {
+    }
+
+    @Override
+    public void paint(final Graphics g) {
+        super.paint(g);
+        if (mapView != null) {
+            mapView.paint(g);
+        }
+        drawEnvOnView((Graphics2D) g);
+    }
+
+    @Override
+    public void initialized(final Environment<T> environment) {
+        super.initialized(environment);
+        Arrays.stream(getMouseListeners()).forEach(mapView::addMouseListener);
+        Arrays.stream(getMouseMotionListeners()).forEach(mapView::addMouseMotionListener);
+        setWormhole(new MapWormhole(environment, this, mapView.getModel().mapViewPosition));
+        setZoomManager(new LinearZoomManager(1, 1, 2, MapWormhole.MAX_ZOOM));
+        getWormhole().center();
+        getWormhole().optimalZoom();
+        getZoomManager().setZoom(getWormhole().getZoom());
+        super.initialized(environment);
+    }
+
+    @Override
     protected void setDist(final int x, final int y) {
         try {
             super.setDist(x, y);
@@ -112,12 +113,12 @@ public class MapDisplay<T> extends Generic2DDisplay<T> {
     }
 
     @Override
-    public void finished(final Environment<T> env, final Time time, final long step) {
+    public void finished(final Environment<T> environment, final Time time, final long step) {
         /*
          * Shut down the download threads, preventing memory leaks
          */
         mapView.getLayerManager().interrupt();
-        super.finished(env, time, step);
+        super.finished(environment, time, step);
     }
 
 }

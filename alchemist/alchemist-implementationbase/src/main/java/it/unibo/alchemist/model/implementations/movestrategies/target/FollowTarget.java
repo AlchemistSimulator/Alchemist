@@ -18,8 +18,9 @@ import java.util.regex.Matcher;
  * it as a coordinate.
  * 
  * @param <T>
+ *            Concentration type
  */
-public class FollowTarget<T> implements TargetSelectionStrategy<T> {
+public class FollowTarget<T> implements TargetSelectionStrategy {
 
     private static final long serialVersionUID = -446053307821810437L;
     private final Environment<T> environment;

@@ -12,12 +12,16 @@ import javafx.scene.image.Image;
  * install a SVG loader and return a SVG image.
  */
 public final class SVGImageUtils {
+    /**
+     * Default Alchemist icon path.
+     */
+    public static final String DEFAULT_ALCHEMIST_ICON_PATH = "/icon/icon.svg";
 
     /**
      * Private, empty, constructor, as this is an utility class.
      */
     private SVGImageUtils() {
-        // Empty constructor
+        throw new AssertionError("Suppress default constructor for noninstantiability");
     }
 
     static {

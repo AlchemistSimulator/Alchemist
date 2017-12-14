@@ -88,22 +88,22 @@ public class TimeStepMonitor<T> extends JPanel implements OutputMonitor<T> {
     }
 
     @Override
-    public void finished(final Environment<T> env, final Time tt, final long cs) {
+    public void finished(final Environment<T> environment, final Time tt, final long cs) {
         isFinished = true;
-        stepDone(env, null, tt, cs);
+        stepDone(environment, null, tt, cs);
         updater.stop();
         updater.update();
         updater = null;
     }
 
     @Override
-    public void initialized(final Environment<T> env) {
+    public void initialized(final Environment<T> environment) {
         isFinished = false;
-        stepDone(env, null, new DoubleTime(), 0);
+        stepDone(environment, null, new DoubleTime(), 0);
     }
 
     @Override
-    public void stepDone(final Environment<T> env, final Reaction<T> r, final Time curTime, final long curStep) {
+    public void stepDone(final Environment<T> environment, final Reaction<T> reaction, final Time curTime, final long curStep) {
         if (updater == null) {
             updater = new Updater();
             new Thread(updater, TimeStepMonitor.class.getSimpleName() + " updater thread").start();

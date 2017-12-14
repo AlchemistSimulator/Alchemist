@@ -15,6 +15,7 @@ import it.unibo.alchemist.model.implementations.movestrategies.speed.InteractWit
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
+import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
@@ -47,11 +48,16 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>> {
      * @param neighPos
      *            the position in the template LSA that contains the next hop
      */
-    public SAPEREWalkerRiseGradient(final MapEnvironment<List<ILsaMolecule>> environment,
-            final ILsaNode node, final Reaction<List<ILsaMolecule>> reaction, final double speed,
-            final double interaction, final double range, final ILsaMolecule templateLSA, final int neighPos) {
-        this(environment, node, reaction, SAPEREWalker.DEFAULT_INTERACTING_TAG, speed, interaction, range, templateLSA,
-                neighPos);
+    public SAPEREWalkerRiseGradient(
+            final MapEnvironment<List<ILsaMolecule>> environment,
+            final ILsaNode node,
+            final Reaction<List<ILsaMolecule>> reaction,
+            final double speed,
+            final double interaction,
+            final double range,
+            final Molecule templateLSA,
+            final int neighPos) {
+        this(environment, node, reaction, SAPEREWalker.DEFAULT_INTERACTING_TAG, speed, interaction, range, templateLSA, neighPos);
     }
 
     /**
@@ -75,15 +81,21 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>> {
      *            the position in the template LSA that contains the next hop
      */
     public SAPEREWalkerRiseGradient(final MapEnvironment<List<ILsaMolecule>> environment,
-            final ILsaNode node, final Reaction<List<ILsaMolecule>> reaction, final ILsaMolecule tag,
-            final double speed, final double interaction, final double range, final ILsaMolecule templateLSA,
+            final ILsaNode node,
+            final Reaction<List<ILsaMolecule>> reaction,
+            final Molecule tag,
+            final double speed,
+            final double interaction,
+            final double range,
+            final Molecule templateLSA,
             final int neighPos) {
-        super(environment, node, new OnStreets<>(environment, Vehicle.FOOT),
+        super(environment, node,
+                new OnStreets<>(environment, Vehicle.FOOT),
                 new InteractWithOthers<>(environment, node, reaction, tag, speed, range, interaction),
                 new NextTargetStrategy(environment, node, templateLSA, neighPos));
     }
 
-    private static final class NextTargetStrategy implements TargetSelectionStrategy<List<ILsaMolecule>> {
+    private static final class NextTargetStrategy implements TargetSelectionStrategy {
         /**
          * 
          */
@@ -98,12 +110,12 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>> {
         NextTargetStrategy(
                 final MapEnvironment<List<ILsaMolecule>> env,
                 final Node<List<ILsaMolecule>> n,
-                final ILsaMolecule patt,
+                final Molecule patt,
                 final int pos) {
             environment = requireNonNull(env);
             node = requireNonNull(n);
             curNode = n;
-            template = requireNonNull(patt);
+            template = requireNonNull(ensureIsSAPERE(patt));
             argPos = requireNonNull(pos);
         }
 
@@ -141,7 +153,13 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>> {
             }
             return curPos;
         }
+    }
 
+    private static ILsaMolecule ensureIsSAPERE(final Molecule m) {
+        if (m instanceof ILsaMolecule) {
+            return (ILsaMolecule) m;
+        }
+        throw new IllegalArgumentException(m + " is not a valid SAPERE LSA");
     }
 
 }

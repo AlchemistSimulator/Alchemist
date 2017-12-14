@@ -8,10 +8,10 @@
  */
 package it.unibo.alchemist.model.implementations.nodes;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.lang.datatype.Field;
@@ -30,7 +30,7 @@ import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 public class ProtelisNode extends GenericNode<Object> implements DeviceUID, ExecutionEnvironment {
 
     private static final long serialVersionUID = 7411790948884770553L;
-    private final Map<RunProtelisProgram, AlchemistNetworkManager> netmgrs = new ConcurrentHashMap<>();
+    private final Map<RunProtelisProgram, AlchemistNetworkManager> netmgrs = new LinkedHashMap<>();
     private final Environment<?> environment;
 
     /**

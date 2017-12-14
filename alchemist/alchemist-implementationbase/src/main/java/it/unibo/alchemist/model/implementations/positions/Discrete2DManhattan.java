@@ -51,30 +51,6 @@ public final class Discrete2DManhattan implements Position {
     }
 
     @Override
-    public int compareTo(final Position o) {
-        if (o.getDimensions() > 2) {
-            return -1;
-        }
-        if (o.getDimensions() < 2) {
-            return 1;
-        }
-        final double[] pos = o.getCartesianCoordinates();
-        if (xCoord < pos[0]) {
-            return -1;
-        }
-        if (xCoord > pos[0]) {
-            return 1;
-        }
-        if (yCoord < pos[1]) {
-            return -1;
-        }
-        if (yCoord > pos[1]) {
-            return 1;
-        }
-        return 0;
-    }
-
-    @Override
     public boolean equals(final Object o) {
         if (o instanceof Discrete2DManhattan) {
             final Discrete2DManhattan d = (Discrete2DManhattan) o;

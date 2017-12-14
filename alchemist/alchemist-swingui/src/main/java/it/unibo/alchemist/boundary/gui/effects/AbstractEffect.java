@@ -83,7 +83,8 @@ public abstract class AbstractEffect implements EffectFX {
      *
      * @param prop1 the comparing object
      * @param prop2 the other object
-     * @param <T>   the object type
+     * @param <T>   the object type wrapped by the JavaFX {@link Property}
+     * @param <P>   the JavaFX {@link Property}
      * @return true if the objects are both null or equal, false otherwise
      */
     @Contract("null, !null -> false")
@@ -109,7 +110,7 @@ public abstract class AbstractEffect implements EffectFX {
         if (anEffect == null) {
             return otherEffect == null;
         } else if (otherEffect != null) {
-            if (anEffect == otherEffect) {
+            if (anEffect == otherEffect) { // NOPMD - the comparison wants to check if the variables point to the same object
                 return true;
             }
             if (!anEffect.getClass().isInstance(otherEffect)) {

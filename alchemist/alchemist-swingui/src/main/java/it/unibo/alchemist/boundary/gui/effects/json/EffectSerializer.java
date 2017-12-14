@@ -19,6 +19,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -57,15 +58,18 @@ public final class EffectSerializer {
     /**
      * {@code Type} of an {@code EffectFX}.
      */
-    private static final TypeToken<EffectFX> EFFECT_TYPE = new TypeToken<EffectFX>() {};
+    private static final TypeToken<EffectFX> EFFECT_TYPE = new TypeToken<EffectFX>() {
+    };
     /**
      * {@code Type} of an {@code EffectGroup}.
      */
-    private static final TypeToken<EffectGroup> EFFECT_GROUP_TYPE = new TypeToken<EffectGroup>() {};
+    private static final TypeToken<EffectGroup> EFFECT_GROUP_TYPE = new TypeToken<EffectGroup>() {
+    };
     /**
      * @code Type} of a {@code List} of {@code EffectGroup}.
      */
-    private static final TypeToken<List<EffectGroup>> EFFECT_GROUP_LIST_TYPE = new TypeToken<List<EffectGroup>>() {};
+    private static final TypeToken<List<EffectGroup>> EFFECT_GROUP_LIST_TYPE = new TypeToken<List<EffectGroup>>() {
+    };
     /**
      * Reflection object for main Alchemist package.
      */
@@ -126,7 +130,16 @@ public final class EffectSerializer {
         throw new AssertionError("Suppress default constructor for noninstantiability");
     }
 
-    private static final <T> void registerTypeAdaptersFor(final GsonBuilder builder, final Collection<Class<? extends T>> classes) {
+    /**
+     * The method registers a {@link TypeAdapter} for given {@link Class classes}.
+     * <p>
+     * The class must have a method called {@value #TARGET_METHOD_NAME}.
+     *
+     * @param builder the {@code GsonBuilder} to {@link GsonBuilder#registerTypeAdapter(Type, Object) register TypeAdapter} to
+     * @param classes the class to {@link GsonBuilder#registerTypeAdapter(Type, Object) register TypeAdapter} for
+     * @param <T>     the type of class
+     */
+    private static <T> void registerTypeAdaptersFor(final GsonBuilder builder, final Collection<Class<? extends T>> classes) {
         classes.stream()
                 .filter(c -> Arrays.stream(c.getMethods())
                         .filter(m -> Modifier.isStatic(m.getModifiers()))

@@ -10,7 +10,6 @@ dependencies {
         project(':alchemist-incarnation-sapere'),
         project(':alchemist-incarnation-biochemistry')
     )
-    compile 'org.eclipse.xtend:org.eclipse.xtend.lib:2.10.0'
 }
 import org.gradle.plugins.ide.eclipse.model.AccessRule
 
@@ -24,13 +23,3 @@ eclipse.classpath.file {
         }
     }
 }
-
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'org.xtext:xtext-gradle-plugin:1.0.2'
-    }
-}
-apply plugin: 'org.xtext.xtend'

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.jooq.lambda.Unchecked;
 import org.junit.Test;
+import org.kaikikm.threadresloader.ResourceLoader;
 
 import com.google.common.collect.Maps;
 
@@ -26,7 +27,7 @@ public class TestInSimulator {
      */
     @Test
     public void testBase() {
-        testNoVar("/testbase.yml");
+        testNoVar("testbase.yml");
     }
 
     /**
@@ -34,7 +35,7 @@ public class TestInSimulator {
      */
     @Test
     public void testLoadProtelisModule() {
-        testNoVar("/test00.yml");
+        testNoVar("test00.yml");
     }
 
     /**
@@ -44,7 +45,7 @@ public class TestInSimulator {
     public void testLoadWIthVariable() {
         final Map<String, Double> map = Maps.newLinkedHashMap();
         map.put("testVar", 10d);
-        testLoading("/test00.yml", map);
+        testLoading("test00.yml", map);
     }
 
     private static void testNoVar(final String resource) {
@@ -52,7 +53,7 @@ public class TestInSimulator {
     }
 
     private static <T> void testLoading(final String resource, final Map<String, Double> vars) {
-        final InputStream res = TestInSimulator.class.getResourceAsStream(resource);
+        final InputStream res = ResourceLoader.getResourceAsStream(resource);
         assertNotNull("Missing test resource " + resource, res);
         final Environment<T> env = new YamlLoader(res).getWith(vars);
         final Simulation<T> sim = new Engine<>(env, 10000);

@@ -8,6 +8,7 @@ import java.util.function.Function;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.kaikikm.threadresloader.ResourceLoader;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -41,8 +42,8 @@ public class TestNodeCloning {
      */
     @Before
     public void setUp() {
-        final String pathYaml = "/gradient.yml";
-        final YamlLoader loader = new YamlLoader(TestNodeCloning.class.getResourceAsStream(pathYaml));
+        final String pathYaml = "gradient.yml";
+        final YamlLoader loader = new YamlLoader(ResourceLoader.getResourceAsStream(pathYaml));
         env = loader.getWith(Collections.emptyMap());
         sim = new Engine<Object>(env, SIMULATED_STEPS);
     }

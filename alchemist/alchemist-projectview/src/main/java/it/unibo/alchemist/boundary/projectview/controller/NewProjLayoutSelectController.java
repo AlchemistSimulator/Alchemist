@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 import org.jooq.lambda.Unchecked;
+import org.kaikikm.threadresloader.ResourceLoader;
 
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
@@ -56,7 +57,7 @@ public class NewProjLayoutSelectController {
     private String selectedTemplate;
     private Stage stage;
     private static final ObservableList<String> TEMPLATES = FXCollections.observableList(
-        resourcesFrom("/templates", 1)
+        resourcesFrom("templates", 1)
             .map(s -> s.substring(0,  s.length() - (s.endsWith("/") ? 1 : 0)))
             .collect(Collectors.toList()));
 
@@ -103,7 +104,7 @@ public class NewProjLayoutSelectController {
         resourcesFrom(path, Integer.MAX_VALUE)
             .sorted((s1, s2) -> Integer.compare(s2.length(), s1.length())) // Longest first
             .forEach(Unchecked.consumer(p -> {
-                try (InputStream is = NewProjLayoutSelectController.class.getResourceAsStream(path + '/' + p)) {
+                try (InputStream is = ResourceLoader.getResourceAsStream(path + '/' + p)) {
                     final File destination = new File(folderPath + '/' + p);
                     if (!destination.exists()) {
                         FileUtils.copyInputStreamToFile(is, destination);
@@ -117,7 +118,7 @@ public class NewProjLayoutSelectController {
      */
     @FXML
     public void clickFinish() {
-        copyRecursively("/templates/" + selectedTemplate);
+        copyRecursively("templates/" + selectedTemplate);
         this.stage.close();
     }
 
@@ -128,7 +129,7 @@ public class NewProjLayoutSelectController {
     @FXML
     public void clickBack() throws IOException {
         final FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(ProjectGUI.class.getResource("view/NewProjLayoutFolder.fxml"));
+        loader.setLocation(ResourceLoader.getResource(ProjectGUI.RESOURCE_LOCATION + "/view/NewProjLayoutFolder.fxml"));
         final AnchorPane pane = (AnchorPane) loader.load();
         final Scene scene = new Scene(pane);
         this.stage.setScene(scene);
@@ -140,7 +141,7 @@ public class NewProjLayoutSelectController {
 
     private static Stream<String> resourcesFrom(final String path, final int depth) {
         try {
-            final URI uri = NewProjLayoutFolderController.class.getResource(path).toURI();
+            final URI uri = ResourceLoader.getResource(path).toURI();
             Path myPath;
             if (uri.getScheme().equals("jar")) {
                 FileSystem fileSystem;

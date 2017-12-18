@@ -115,7 +115,6 @@ public class TraceLoader implements Iterable<GPSTrace> {
         /*
          * check if path is a directory or a file
          */
-        //final boolean isDirectory = runOnPathsStream(path, s -> s.allMatch(line -> TraceLoader.class.getResource(line) != null));
         final boolean isDirectory = runOnPathsStream(path, s -> s.allMatch(line -> ResourceLoader.getResource(line) != null));
 
         if (isDirectory) {
@@ -141,7 +140,6 @@ public class TraceLoader implements Iterable<GPSTrace> {
                  * invoke the loader to load all trake in the file
                  */
                 return fileLoader.readTrace(ResourceLoader.getResource(path));
-                //return fileLoader.readTrace(TraceLoader.class.getResource(path));
             }  catch (FileFormatException e) {
                 throw new IllegalStateException("the loader: " + LOADER.get(extensionFile).getClass().getSimpleName() + " can't load the file: " + path + ", sure is a " + extensionFile + "file?", e);
             } 
@@ -177,7 +175,6 @@ public class TraceLoader implements Iterable<GPSTrace> {
     }
 
     private static <R> R runOnPathsStream(final String path, final Function<Stream<String>, R> op) {
-        //final InputStream resourceStream = TraceLoader.class.getResourceAsStream(path);
         final InputStream resourceStream = ResourceLoader.getResourceAsStream(path);
         final InputStream limitedResourceView = new BoundedInputStream(resourceStream,  MAX_BYTES_PER_CHAR);
         try (BufferedReader in = new BufferedReader(new InputStreamReader(limitedResourceView, StandardCharsets.UTF_8))) {

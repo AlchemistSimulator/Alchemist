@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.apache.commons.math3.random.MersenneTwister;
 import org.junit.Test;
+import org.kaikikm.threadresloader.ResourceLoader;
 
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -216,7 +217,7 @@ public class TestEnvironmentNodes {
      */
     @Test
     public void testEnv1() {
-        final double conA = (double) testNoVar("/testEnv1.yml").getNodes().stream()
+        final double conA = (double) testNoVar("testEnv1.yml").getNodes().stream()
                 .parallel()
                 .filter(n -> n.getClass().equals(EnvironmentNodeImpl.class))
                 .findFirst()
@@ -230,7 +231,7 @@ public class TestEnvironmentNodes {
      */
     @Test
     public void testEnv2() {
-        final Environment<Double> env = testNoVar("/testEnv2.yml");
+        final Environment<Double> env = testNoVar("testEnv2.yml");
         final Node<Double> center = env.getNodes().stream()
                 .parallel()
                 .filter(n -> n instanceof CellNode)
@@ -253,13 +254,13 @@ public class TestEnvironmentNodes {
      */
     @Test
     public void testEnv3() {
-        final double conAInCell = (double) testNoVar("/testEnv3.yml").getNodes().stream()
+        final double conAInCell = (double) testNoVar("testEnv3.yml").getNodes().stream()
                 .parallel()
                 .filter(n -> n.getClass().equals(CellNodeImpl.class))
                 .findAny()
                 .get()
                 .getConcentration(new Biomolecule("A"));
-        final double conAInEnv = (double) testNoVar("/testEnv3.yml").getNodes().stream()
+        final double conAInEnv = (double) testNoVar("testEnv3.yml").getNodes().stream()
                 .parallel()
                 .filter(n -> n.getClass().equals(EnvironmentNodeImpl.class))
                 .findAny()
@@ -275,13 +276,13 @@ public class TestEnvironmentNodes {
      */
     @Test
     public void testEnv4() {
-        final double conAInCell = (double) testNoVar("/testEnv4.yml").getNodes().stream()
+        final double conAInCell = (double) testNoVar("testEnv4.yml").getNodes().stream()
                 .parallel()
                 .filter(n -> n.getClass().equals(CellNodeImpl.class))
                 .findAny()
                 .get()
                 .getConcentration(new Biomolecule("A"));
-        final double conAInEnv = (double) testNoVar("/testEnv4.yml").getNodes().stream()
+        final double conAInEnv = (double) testNoVar("testEnv4.yml").getNodes().stream()
                 .parallel()
                 .filter(n -> n.getClass().equals(EnvironmentNodeImpl.class))
                 .findAny()
@@ -295,7 +296,7 @@ public class TestEnvironmentNodes {
      */
     @Test
     public void testEnv5() {
-        final Environment<Double> env = testNoVar("/testEnv5.yml");
+        final Environment<Double> env = testNoVar("testEnv5.yml");
         final double conAInEnv1 = (double) env.getNodes().stream()
                 .parallel()
                 .filter(n -> env.getPosition(n).equals(new Continuous2DEuclidean(0, 0)))
@@ -317,7 +318,7 @@ public class TestEnvironmentNodes {
      */
     @Test (expected = UnsupportedOperationException.class)
     public void testEnv6() {
-        testNoVar("/testEnv6.yml");
+        testNoVar("testEnv6.yml");
     }
 
     /**
@@ -325,7 +326,7 @@ public class TestEnvironmentNodes {
      */
     @Test
     public void testEnv7() {
-        final Environment<Double> env = testNoVar("/testEnv7.yml");
+        final Environment<Double> env = testNoVar("testEnv7.yml");
         final double conAInCell = (double) env.getNodes().stream()
                 .parallel()
                 .filter(n -> n instanceof CellNode)
@@ -347,7 +348,7 @@ public class TestEnvironmentNodes {
      */
     @Test
     public void testEnv8() {
-        final Environment<Double> env = testNoVar("/testEnv8.yml");
+        final Environment<Double> env = testNoVar("testEnv8.yml");
         final double conAInCell = (double) env.getNodes().stream()
                 .parallel()
                 .filter(n -> n instanceof CellNode)
@@ -362,7 +363,7 @@ public class TestEnvironmentNodes {
     }
 
     private static <T> Environment<T> testLoading(final String resource, final Map<String, Double> vars) {
-        final InputStream res = TestEnvironmentNodes.class.getResourceAsStream(resource);
+        final InputStream res = ResourceLoader.getResourceAsStream(resource);
         assertNotNull("Missing test resource " + resource, res);
         final Environment<T> env = new YamlLoader(res).getWith(vars);
         final Simulation<T> sim = new Engine<>(env, 10000);

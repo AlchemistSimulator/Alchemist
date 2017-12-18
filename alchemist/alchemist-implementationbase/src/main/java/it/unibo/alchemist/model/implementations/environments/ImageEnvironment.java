@@ -107,7 +107,6 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
      */
     public ImageEnvironment(final int obs, final String path, final double zoom, final double dx, final double dy) throws IOException {
         super();
-        //final InputStream resource = ImageEnvironment.class.getResourceAsStream(path);
         final InputStream resource = ResourceLoader.getResourceAsStream(path);
         final BufferedImage img = resource == null 
                 ? ImageIO.read(new File(path))

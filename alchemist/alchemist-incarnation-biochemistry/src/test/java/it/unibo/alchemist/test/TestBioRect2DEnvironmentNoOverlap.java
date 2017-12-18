@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.Before;
 import org.junit.Test;
+import org.kaikikm.threadresloader.ResourceLoader;
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
@@ -656,7 +657,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      */
     @Test
     public void testNoOverlapInSimulation1() {
-        testNoVar("/provaBCReaction.yml");
+        testNoVar("provaBCReaction.yml");
     }
 
     /**
@@ -664,7 +665,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      */
     @Test
     public void testNoOverlapInSimulation2() {
-        testNoVar2("/provaBCReaction2.yml");
+        testNoVar2("provaBCReaction2.yml");
     }
 
     private static void testNoVar(final String resource) {
@@ -672,7 +673,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
     }
 
     private static void testLoading(final String resource, final Map<String, Double> vars) {
-        final InputStream res = YamlLoader.class.getResourceAsStream(resource);
+        final InputStream res = ResourceLoader.getResourceAsStream(resource);
         assertNotNull("Missing test resource " + resource, res);
         final Environment<Double> env = new YamlLoader(res).getWith(vars);
         final Simulation<Double> sim = new Engine<>(env, 10000);
@@ -736,7 +737,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
     }
 
     private static void testLoading2(final String resource, final Map<String, Double> vars) {
-        final InputStream res = YamlLoader.class.getResourceAsStream(resource);
+        final InputStream res = ResourceLoader.getResourceAsStream(resource);
         assertNotNull("Missing test resource " + resource, res);
         final Environment<Double> env = new YamlLoader(res).getWith(vars);
         final Simulation<Double> sim = new Engine<>(env, 10000);

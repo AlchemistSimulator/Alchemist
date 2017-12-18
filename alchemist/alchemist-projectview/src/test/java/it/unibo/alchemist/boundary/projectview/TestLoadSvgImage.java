@@ -3,6 +3,7 @@ import java.io.InputStream;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.kaikikm.threadresloader.ResourceLoader;
 
 import de.codecentric.centerdevice.javafxsvg.SvgImageLoaderFactory;
 import javafx.scene.image.Image;
@@ -25,7 +26,7 @@ public class TestLoadSvgImage {
      */
     @Test
     public void testImage() {
-        final InputStream imageData = TestLoadSvgImage.class.getClassLoader().getResourceAsStream("icon/testicon.svg");
+        final InputStream imageData = ResourceLoader.getResourceAsStream("icon/testicon.svg");
         Assert.assertNotNull(imageData);
         final Image image = new Image(imageData);
         Assert.assertNotNull(image);

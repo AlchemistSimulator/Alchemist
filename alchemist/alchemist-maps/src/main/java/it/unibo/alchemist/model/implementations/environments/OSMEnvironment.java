@@ -438,7 +438,6 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
                 .filter(File::exists)
                 .map(File::toURI)
                 .map(Unchecked.function(URI::toURL));
-        //final URL resource = Optional.ofNullable(OSMEnvironment.class.getResource(fileName))
         final URL resource = Optional.ofNullable(ResourceLoader.getResource(fileName))
                     .orElseGet(Unchecked.supplier(() -> file
                             .orElseThrow(() -> new FileNotFoundException("No file or resource with name " + fileName))));

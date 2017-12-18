@@ -19,6 +19,7 @@ import java.util.ResourceBundle;
 import org.apache.commons.io.FilenameUtils;
 import org.controlsfx.control.ToggleSwitch;
 import org.danilopianini.urlclassloader.URLClassLoaderUtil;
+import org.kaikikm.threadresloader.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -976,7 +977,7 @@ public class CenterLayoutController {
     private void newFile(final String extension) {
         try {
             final FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(ProjectGUI.class.getResource("view/FileNameDialog.fxml"));
+            loader.setLocation(ResourceLoader.getResource(ProjectGUI.RESOURCE_LOCATION + "/view/FileNameDialog.fxml"));
             final AnchorPane pane = (AnchorPane) loader.load();
 
             final Stage stage = new Stage();

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ResourceBundle;
 
 import org.jooq.lambda.Unchecked;
+import org.kaikikm.threadresloader.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -211,7 +212,7 @@ public class LeftLayoutController {
 
     private void loadLayout(final boolean isFolder) {
         final FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(ProjectGUI.class.getResource("view/NewFolderOrFileDialog.fxml"));
+        loader.setLocation(ResourceLoader.getResource(ProjectGUI.RESOURCE_LOCATION + "/view/NewFolderOrFileDialog.fxml"));
         AnchorPane pane;
         try {
             pane = (AnchorPane) loader.load();

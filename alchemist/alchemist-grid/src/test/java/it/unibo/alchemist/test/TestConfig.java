@@ -32,7 +32,6 @@ public class TestConfig {
         final InputStream yaml = ResourceLoader.getResourceAsStream(resource);
         Assert.assertNotNull(yaml);
         final Loader l = this.getLoader(yaml);
-        //TODO aggiungi test per endTime e endStep???
         final GeneralSimulationConfig<?> gsc = new LocalGeneralSimulationConfig<>(l, 0, null);
         Assert.assertEquals(gsc.getDependencies().size(), 2);
         try {

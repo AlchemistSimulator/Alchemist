@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 
 import org.apache.ignite.Ignition;
 import org.kaikikm.threadresloader.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -34,6 +36,7 @@ public class RemoteSimulationImpl<T> implements RemoteSimulation<T> {
      * 
      */
     private static final long serialVersionUID = 1L;
+    private static final Logger L = LoggerFactory.getLogger(RemoteSimulationImpl.class);
     private final GeneralSimulationConfig<T> generalConfig;
     private final SimulationConfig config;
     private final UUID masterNodeId;
@@ -53,6 +56,7 @@ public class RemoteSimulationImpl<T> implements RemoteSimulation<T> {
 
     @Override
     public RemoteResult call() {
+        L.debug("Executing simulation for variables: " + config.getVariables());
         try (WorkingDirectory wd = new WorkingDirectory()) {
             wd.writeFiles(this.generalConfig.getDependencies());
             final Callable<RemoteResultImpl> callable = new Callable<RemoteResultImpl>() {

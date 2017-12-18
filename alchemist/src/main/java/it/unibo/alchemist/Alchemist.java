@@ -23,6 +23,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.ignite.startup.cmdline.CommandLineStartup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +31,6 @@ import ch.qos.logback.classic.Level;
 import it.unibo.alchemist.AlchemistRunner.Builder;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import it.unibo.alchemist.cli.CLIMaker;
-import it.unibo.alchemist.grid.node.CommandLineStartup;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.YamlLoader;
 
@@ -81,7 +81,9 @@ public final class Alchemist {
         try {
             final CommandLine cmd = parser.parse(opts, args);
             setVerbosity(cmd);
-            ifPresent(cmd, NODE, CommandLineStartup::runNode);
+            if (cmd.hasOption(NODE)) {
+                CommandLineStartup.main(new String[] {cmd.getOptionValue(NODE)});
+            }
             if (cmd.hasOption(HELP)) {
                 final HelpFormatter formatter = new HelpFormatter();
                 formatter.printHelp("java -jar alchemist-redist-{version}.jar", opts);

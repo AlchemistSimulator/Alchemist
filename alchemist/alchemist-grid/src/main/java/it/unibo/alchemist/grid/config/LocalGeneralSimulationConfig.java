@@ -34,7 +34,6 @@ public class LocalGeneralSimulationConfig<T> extends LightInfoGeneralSimulationC
      */
     public LocalGeneralSimulationConfig(final Loader loader, final long endStep, final Time endTime) {
         super(loader, endStep, endTime);
-        //TODO assicurati file in classpath, chiedi conferme
         this.dependencies = new HashMap<>();
         for (final String file : loader.getDependencies()) {
             try {
@@ -45,7 +44,6 @@ public class LocalGeneralSimulationConfig<T> extends LightInfoGeneralSimulationC
                     throw new IllegalArgumentException("Dependency non exixts: " + file);
                 }
             } catch (IOException e) {
-                //TODO pre controllo nel loader per l'esistenza???
                 throw new IllegalArgumentException("Dependency non exixts: " + file);
             } catch (URISyntaxException e) {
                 throw new IllegalStateException("Failed to get resource URI: " + file);

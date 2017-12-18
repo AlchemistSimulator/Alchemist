@@ -51,7 +51,7 @@ public final class Alchemist {
     private static final char GRAPHICS = 'g';
     private static final char HELP = 'h';
     private static final char INTERVAL = 'i';
-    private static final char NODE = 'n';
+    private static final char NODE = 's';
     private static final char PARALLELISM = 'p';
     private static final char TIME = 't';
     private static final char YAML = 'y';
@@ -117,7 +117,7 @@ public final class Alchemist {
                             }
                         }
                         if (cmd.hasOption(BENCHMARK)) {
-                            simBuilder.setBenchmarkMode(true);
+                            simBuilder.setBenchmarkOutputFile(cmd.getOptionValue(BENCHMARK));
                         }
                         if (varsUnderRun == null) {
                             L.error("You must specify which variables you want the batch to run on.");

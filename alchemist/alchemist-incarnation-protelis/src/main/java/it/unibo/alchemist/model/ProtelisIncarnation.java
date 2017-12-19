@@ -41,6 +41,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.actions.SendToNeighbor;
@@ -379,8 +380,7 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
 
         @Override
         public Set<String> keySet() {
-            // TODO Auto-generated method stub
-            return null;
+            return Sets.union(node.getContents().keySet().stream().map(Molecule::getName).collect(Collectors.toSet()), shadow.keySet());
         }
     }
 

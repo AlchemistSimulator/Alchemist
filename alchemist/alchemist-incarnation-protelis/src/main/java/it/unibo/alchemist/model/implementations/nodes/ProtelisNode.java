@@ -19,6 +19,8 @@ import org.protelis.lang.datatype.Field;
 import org.protelis.vm.ExecutionEnvironment;
 import org.protelis.vm.NetworkManager;
 
+import com.google.common.collect.ImmutableSet;
+
 import it.unibo.alchemist.model.ProtelisIncarnation;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -143,8 +145,9 @@ public class ProtelisNode extends GenericNode<Object> implements DeviceUID, Exec
 
     @Override
     public Set<String> keySet() {
-        // TODO Auto-generated method stub
-        return null;
+        return getContents().keySet().stream()
+                .map(Molecule::getName)
+                .collect(ImmutableSet.toImmutableSet());
     }
 
 }

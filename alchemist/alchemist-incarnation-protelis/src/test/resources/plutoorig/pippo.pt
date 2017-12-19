@@ -1,0 +1,4 @@
+module pluto:pippo
+public def foo() {
+  1
+}

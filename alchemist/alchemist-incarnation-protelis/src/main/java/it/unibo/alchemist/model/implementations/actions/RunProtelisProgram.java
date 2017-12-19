@@ -10,9 +10,11 @@ package it.unibo.alchemist.model.implementations.actions;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.LangUtils;
 import org.danilopianini.util.ListSet;
+import org.protelis.lang.ProtelisLoader;
 import org.protelis.vm.ExecutionContext;
 import org.protelis.vm.ProtelisVM;
 
@@ -25,7 +27,6 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.protbugfix.ProtelisLoader;
 import it.unibo.alchemist.protelis.AlchemistExecutionContext;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 

@@ -29,7 +29,8 @@ public class RemoteSimulationException extends RuntimeException {
      * @param simulationConfig Simulation's config
      * @param throwable Error that made the simulation fail
      */
-    public RemoteSimulationException(final UUID nodeId, final SimulationConfig simulationConfig, final Throwable throwable) {
+    public RemoteSimulationException(final UUID nodeId, final SimulationConfig simulationConfig, 
+            final Throwable throwable) {
         super("Error for simulation with variables: " + simulationConfig.getVariables().entrySet().stream()
                 .map(e -> e.getKey() + '=' + e.getValue())
                 .collect(Collectors.joining(" ")) + "in node: " + nodeId, throwable);

@@ -23,7 +23,8 @@ public class SimulationSetImpl<T> implements SimulationSet<T> {
      * @param genSimConfig Config's shared by all simulations of set
      * @param simulationConfigs List of configs that differentiate set's simulations
      */
-    public SimulationSetImpl(final GeneralSimulationConfig<T> genSimConfig, final List<SimulationConfig> simulationConfigs) {
+    public SimulationSetImpl(final GeneralSimulationConfig<T> genSimConfig, 
+            final List<SimulationConfig> simulationConfigs) {
         super();
         this.genSimConfig = genSimConfig;
         this.simulationConfigs = simulationConfigs;

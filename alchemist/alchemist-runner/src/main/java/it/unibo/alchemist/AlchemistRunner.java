@@ -12,16 +12,20 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -237,7 +241,8 @@ public final class AlchemistRunner<T> {
                 .map(e -> new SimulationConfigImpl(e))
                 .collect(Collectors.toList());
         final SimulationSet<T> set = new SimulationSetImpl<>(gsc, simConfigs);
-        try (Cluster cluster = new ClusterImpl(Paths.get(this.gridConfigFile.orElseThrow(() -> new IllegalStateException("No remote configuration file"))))) {
+        try (Cluster cluster = new ClusterImpl(Paths.get(this.gridConfigFile.orElseThrow(
+                () -> new IllegalStateException("No remote configuration file"))))) {
             final Set<RemoteResult> resSet = cluster.getWorkersSet(set.computeComplexity()).distributeSimulations(set);
             for (final RemoteResult res: resSet) {
                 res.saveLocally(this.exportFileRoot.get());
@@ -262,12 +267,15 @@ public final class AlchemistRunner<T> {
     }
 
     private void printBenchmarkResult(final Long value, final boolean distributed) {
-        System.out.printf("Total simulation running time (nanos): %d \n", value); //NOPMD: I want to show the result in any case
+        System.out.printf("Total simulation running time (nanos): %d \n", value); // NOPMD: I want to show the result in any case
         final File f = new File(benchmarkOutputFile.get());
         try {
             FileUtils.forceMkdirParent(f);
             try (PrintWriter w = new PrintWriter(new BufferedWriter(new FileWriter(f, true)))) {
-                w.println(distributed ? "Distributed exc time:" + value.toString() : "Serial exc time:" + value.toString());
+                final SimpleDateFormat isoTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US);
+                isoTime.setTimeZone(TimeZone.getTimeZone("UTC"));
+                w.println(isoTime.format(new Date())
+                        + (distributed ? " - Distributed exc time:" : " - Serial exc time:") + value.toString());
             }
         } catch (IOException e) {
             L.error(e.getMessage());

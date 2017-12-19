@@ -30,7 +30,8 @@ public class ClusterImpl implements Cluster {
     public WorkerSet getWorkersSet(final Complexity complexity) {
         final ClusterGroup grp = ignite.cluster()
                 .forServers()
-                .forPredicate((node) -> node.metrics().getHeapMemoryTotal() >= complexity.getRamUsage() * IGNITE_RAM_MULT_FACTOR);
+                .forPredicate((node) 
+                        -> node.metrics().getHeapMemoryTotal() >= complexity.getRamUsage() * IGNITE_RAM_MULT_FACTOR);
         return new WorkerSetImpl(ignite, grp);
     }
 

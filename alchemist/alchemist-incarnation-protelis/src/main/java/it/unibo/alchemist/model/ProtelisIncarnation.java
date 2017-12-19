@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.LangUtils;
+import org.protelis.lang.ProtelisLoader;
 import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.vm.ExecutionContext;
 import org.protelis.vm.ExecutionEnvironment;
@@ -59,7 +61,6 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
-import it.unibo.alchemist.model.protbugfix.ProtelisLoader;
 
 /**
  */
@@ -374,6 +375,12 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
         }
         @Override
         public void setup() {
+        }
+
+        @Override
+        public Set<String> keySet() {
+            // TODO Auto-generated method stub
+            return null;
         }
     }
 

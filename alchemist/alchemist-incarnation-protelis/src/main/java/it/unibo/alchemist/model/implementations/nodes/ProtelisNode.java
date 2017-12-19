@@ -12,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.lang.datatype.Field;
@@ -138,6 +139,12 @@ public class ProtelisNode extends GenericNode<Object> implements DeviceUID, Exec
         });
         getReactions().forEach(r -> result.addReaction(r.cloneOnNewNode(result, currentTime)));
         return result;
+    }
+
+    @Override
+    public Set<String> keySet() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

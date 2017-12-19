@@ -46,7 +46,8 @@ public class RemoteSimulationImpl<T> implements RemoteSimulation<T> {
      * @param config Simulation's specific configs
      * @param masterNodeId The node that started the computation
      */
-    public RemoteSimulationImpl(final GeneralSimulationConfig<T> generalConfig, final SimulationConfig config, final UUID masterNodeId) {
+    public RemoteSimulationImpl(final GeneralSimulationConfig<T> generalConfig, final SimulationConfig config, 
+            final UUID masterNodeId) {
         this.generalConfig = generalConfig;
         this.config = config;
         this.masterNodeId = masterNodeId;
@@ -75,20 +76,24 @@ public class RemoteSimulationImpl<T> implements RemoteSimulation<T> {
                     final String filename = masterNodeId.toString() + "_" + config.getVariables().entrySet().stream()
                             .map(e -> e.getKey() + '-' + e.getValue())
                             .collect(Collectors.joining("_")) + ".txt";
-                    final Exporter<T> exp = new Exporter<>(wd.getFileAbsolutePath(filename), 1, header, loader.getDataExtractors());
+                    final Exporter<T> exp = new Exporter<>(wd.getFileAbsolutePath(filename), 
+                            1, header, loader.getDataExtractors());
                     sim.addOutputMonitor(exp);
                     sim.play();
                     sim.run();
-                    return new RemoteResultImpl(wd.getFileContent(filename), Ignition.ignite().cluster().localNode().id(), sim.getError(), config);
+                    return new RemoteResultImpl(wd.getFileContent(filename), 
+                            Ignition.ignite().cluster().localNode().id(), sim.getError(), config);
                 }
             };
             final FutureTask<RemoteResultImpl> futureTask = new FutureTask<>(callable);
             final Thread t = new Thread(futureTask);
-            final URLClassLoader cl = new URLClassLoader(new URL[]{wd.getDirectoryUrl()}, ResourceLoader.getClassLoader());
+            final URLClassLoader cl = new URLClassLoader(new URL[]{wd.getDirectoryUrl()},
+                    ResourceLoader.getClassLoader());
             t.setContextClassLoader(cl);
             t.start();
             return futureTask.get();
-        } catch (SecurityException | IllegalArgumentException | IOException | InterruptedException | ExecutionException e1) {
+        } catch (SecurityException | IllegalArgumentException
+                | IOException | InterruptedException | ExecutionException e1) {
             throw new IllegalStateException(e1);
         }
     }

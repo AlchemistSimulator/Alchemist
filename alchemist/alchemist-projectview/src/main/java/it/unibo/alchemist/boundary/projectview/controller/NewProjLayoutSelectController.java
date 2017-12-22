@@ -139,6 +139,9 @@ public class NewProjLayoutSelectController {
         ctrl.setFolderPath(this.folderPath);
     }
 
+    /*
+     * Must return strings that represent RELATIVE paths starting by input path
+     */
     private static Stream<String> resourcesFrom(final String path, final int depth) {
         try {
             final URI uri = ResourceLoader.getResource(path).toURI();
@@ -156,14 +159,14 @@ public class NewProjLayoutSelectController {
             }
             Stream<String> resourcesStream = Files.walk(myPath, depth)
                     .skip(1)
-                    .map(Path::toString);
+                    .map(Path::toString)
+                    .map(s -> s.replace(myPath.toString(), ""))
+                    .map(s-> s.substring(1))
+                    .sorted();
             if (ON_WINDOWS) {
                 resourcesStream = resourcesStream.map(s -> s.replaceAll("\\\\", "/"));
             }
-            final String regex = ".*\\" + path + "\\/";
-            return resourcesStream
-                    .map(s -> s.replaceFirst(regex, ""))
-                    .sorted();
+            return resourcesStream;
         } catch (URISyntaxException | IOException e) {
             throw new IllegalStateException(e);
         }

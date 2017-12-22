@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import it.unibo.alchemist.boundary.projectview.model.Project;
+import it.unibo.alchemist.boundary.projectview.utils.URLManager;
 import it.unibo.alchemist.boundary.projectview.utils.ProjectIOUtils;
 import it.unibo.alchemist.boundary.projectview.utils.SVGImageUtils;
 import javafx.beans.value.ChangeListener;
@@ -171,7 +172,11 @@ public class LeftLayoutController {
         }
         final Project project = ProjectIOUtils.loadFrom(this.pathFolder);
         if (project != null) {
-           final Thread thread = new Thread(Unchecked.runnable(() -> project.runAlchemistSimulation(false)), "SingleRunGUI");
+           final Thread thread = new Thread(Unchecked.runnable(() -> {
+               ResourceLoader.setDefault();
+               project.runAlchemistSimulation(false);
+           }), "SingleRunGUI");
+           URLManager.getInstance().setupThreadClassLoader(thread);
            thread.setDaemon(true);
            thread.start();
         } else {

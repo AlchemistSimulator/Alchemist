@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,7 +19,6 @@ import java.util.ResourceBundle;
 
 import org.apache.commons.io.FilenameUtils;
 import org.controlsfx.control.ToggleSwitch;
-import org.danilopianini.urlclassloader.URLClassLoaderUtil;
 import org.kaikikm.threadresloader.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +28,7 @@ import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import it.unibo.alchemist.boundary.projectview.model.Batch;
 import it.unibo.alchemist.boundary.projectview.model.Output;
 import it.unibo.alchemist.boundary.projectview.model.Project;
+import it.unibo.alchemist.boundary.projectview.utils.URLManager;
 import it.unibo.alchemist.boundary.projectview.utils.DoubleSpinnerValueFactory;
 import it.unibo.alchemist.boundary.projectview.utils.ProjectIOUtils;
 import it.unibo.alchemist.boundary.projectview.utils.SVGImageUtils;
@@ -492,10 +493,15 @@ public class CenterLayoutController {
                     RESOURCES.getString("file_no_selected_content"));
         } else {
             if (!this.data.contains(this.ctrlLeft.getSelectedFilePath())) {
-                URLClassLoaderUtil.addFirst(this.ctrlLeft.getSelectedFilePath());
-                this.data.add(new File(this.ctrlLeft.getPathFolder()).toURI()
-                        .relativize(new File(this.ctrlLeft.getSelectedFilePath()).toURI()).getPath());
-                this.listClass.setItems(data);
+                try {
+                    URLManager.getInstance().addURL(new File(this.ctrlLeft.getSelectedFilePath()).toURI().toURL());
+                    this.data.add(new File(this.ctrlLeft.getPathFolder()).toURI()
+                            .relativize(new File(this.ctrlLeft.getSelectedFilePath()).toURI()).getPath());
+                    this.listClass.setItems(data);
+                } catch (MalformedURLException e) {
+                    setAlert(RESOURCES.getString("wrong_selection"), RESOURCES.getString("wrong_selection_header"),
+                            RESOURCES.getString("wrong_selection_content"));
+                }
             } else {
                 setAlert(RESOURCES.getString("file_name_exists"), RESOURCES.getString("file_name_class_header"),
                         RESOURCES.getString("file_name_class_content"));
@@ -512,11 +518,17 @@ public class CenterLayoutController {
             setAlert(RESOURCES.getString("library_no_selected"), RESOURCES.getString("library_no_selected_header"),
                     RESOURCES.getString("library_no_selected_content"));
         } else {
-            final String nameFile = this.listClass.getSelectionModel().getSelectedItem();
-            URLClassLoaderUtil.remove(this.ctrlLeft.getPathFolder() + File.separator + nameFile.replace("/", File.separator));
-            this.listClass.getItems().remove(nameFile);
-            if (this.listClass.getItems().size() == 0) {
-                this.removeClass.setDisable(true);
+            try {
+                final String nameFile = this.listClass.getSelectionModel().getSelectedItem();
+                URLManager.getInstance().removeURL(new File(this.ctrlLeft.getPathFolder() + File.separator + nameFile.replace("/", File.separator)).toURI().toURL());
+
+                this.listClass.getItems().remove(nameFile);
+                if (this.listClass.getItems().size() == 0) {
+                    this.removeClass.setDisable(true);
+                }
+            } catch (MalformedURLException e) {
+                setAlert(RESOURCES.getString("library_no_selected"), RESOURCES.getString("library_no_selected_header"),
+                        RESOURCES.getString("library_no_selected_content"));
             }
         }
     }
@@ -532,12 +544,14 @@ public class CenterLayoutController {
             @Override
             public void run() {
                 try {
+                    ResourceLoader.setDefault();
                     project.runAlchemistSimulation(true);
                 } catch (FileNotFoundException e) {
                     L.error("Error loading simulation file.", e);
                 }
             }
         }, "Batch");
+        URLManager.getInstance().setupThreadClassLoader(thread);
         thread.setDaemon(true);
         thread.start();
     }
@@ -737,8 +751,13 @@ public class CenterLayoutController {
             if (!new File(this.ctrlLeft.getPathFolder() + File.separator + lib.replace("/", File.separator)).exists()) {
                 listLibError.add(new File(lib).getName());
             } else {
-                URLClassLoaderUtil.addFirst(lib);
-                this.data.add(lib);
+                try {
+                    URLManager.getInstance().addURL(new File(this.ctrlLeft.getPathFolder() + File.separator + lib.replace("/", File.separator)).toURI().toURL());
+                    this.data.add(lib);
+                } catch (MalformedURLException e) {
+                    // TODO cambia sistema eccezione
+                    listLibError.add(new File(lib).getName());
+                }
             }
         }
         this.listClass.setItems(this.data);

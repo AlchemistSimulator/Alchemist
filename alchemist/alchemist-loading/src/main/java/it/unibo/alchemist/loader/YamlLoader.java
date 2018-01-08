@@ -343,6 +343,7 @@ public class YamlLoader implements Loader {
         if (dependencies == null) {
             this.dependencies = ImmutableList.of();
         } else {
+            //TODO This may raise an unclear classcastexception at runtime
             this.dependencies = ImmutableList.copyOf((List<String>) dependencies);
         }
     }

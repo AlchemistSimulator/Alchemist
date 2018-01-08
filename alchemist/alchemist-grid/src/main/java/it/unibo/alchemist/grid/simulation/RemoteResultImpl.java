@@ -3,6 +3,7 @@ package it.unibo.alchemist.grid.simulation;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -32,10 +33,10 @@ public class RemoteResultImpl implements RemoteResult {
      */
     public RemoteResultImpl(final String result, final UUID workerNode, final Optional<Throwable> simulationErrors,
             final SimulationConfig config) {
-        this.result = result;
-        this.workerNode = workerNode;
-        this.simulationErrors = simulationErrors;
-        this.config = config;
+        this.result = Objects.requireNonNull(result);
+        this.workerNode = Objects.requireNonNull(workerNode);
+        this.simulationErrors = Objects.requireNonNull(simulationErrors);
+        this.config = Objects.requireNonNull(config);
     }
 
     @Override

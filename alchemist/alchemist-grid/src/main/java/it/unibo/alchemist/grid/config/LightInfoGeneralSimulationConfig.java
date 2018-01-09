@@ -1,6 +1,7 @@
 package it.unibo.alchemist.grid.config;
 
 import java.util.Map;
+import java.util.Objects;
 
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.model.interfaces.Time;
@@ -27,9 +28,9 @@ public abstract class LightInfoGeneralSimulationConfig<T> implements GeneralSimu
      * @param loader Simulation's loader
      */
     public LightInfoGeneralSimulationConfig(final Loader loader, final long endStep, final Time endTime) {
-        this.endStep = endStep;
-        this.endTime = endTime;
-        this.loader = loader;
+        this.endStep = Objects.requireNonNull(endStep);
+        this.endTime = Objects.requireNonNull(endTime);
+        this.loader = Objects.requireNonNull(loader);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package it.unibo.alchemist.grid.cluster;
 
 import java.nio.file.Path;
+import java.util.Objects;
 
 import org.apache.ignite.Ignite;
 import org.apache.ignite.Ignition;
@@ -23,7 +24,7 @@ public class ClusterImpl implements Cluster {
      */
     public ClusterImpl(final Path configPath) {
         Ignition.setClientMode(true);
-        this.ignite = Ignition.start(configPath.toString());
+        this.ignite = Ignition.start(Objects.requireNonNull(configPath).toString());
     }
 
     @Override

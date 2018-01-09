@@ -63,12 +63,7 @@ public final class RemoteResultImpl implements RemoteResult {
         }
         if (obj instanceof RemoteResultImpl) {
             final RemoteResultImpl other = (RemoteResultImpl) obj;
-            if (config.equals(other.config)) {
-                if (result.equals(other.result)) {
-                    return true;
-                }
-            }
-            return false;
+            return config.equals(other.config) && result.equals(other.result);
         }
         return false;
     }

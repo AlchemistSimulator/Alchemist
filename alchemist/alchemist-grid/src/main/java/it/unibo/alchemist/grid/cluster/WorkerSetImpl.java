@@ -2,6 +2,7 @@ package it.unibo.alchemist.grid.cluster;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,8 +31,8 @@ public class WorkerSetImpl implements WorkerSet {
      * @param grp workers' group
      */
     public WorkerSetImpl(final Ignite ignite, final ClusterGroup grp) {
-        this.grp = grp;
-        this.ignite = ignite;
+        this.grp = Objects.requireNonNull(grp);
+        this.ignite = Objects.requireNonNull(ignite);
     }
 
     @Override

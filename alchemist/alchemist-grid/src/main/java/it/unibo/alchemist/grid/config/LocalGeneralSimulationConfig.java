@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.kaikikm.threadresloader.ResourceLoader;
 
@@ -35,7 +36,7 @@ public class LocalGeneralSimulationConfig<T> extends LightInfoGeneralSimulationC
     public LocalGeneralSimulationConfig(final Loader loader, final long endStep, final Time endTime) {
         super(loader, endStep, endTime);
         this.dependencies = new HashMap<>();
-        for (final String file : loader.getDependencies()) {
+        for (final String file : Objects.requireNonNull(loader).getDependencies()) {
             try {
                 final URL dependency = ResourceLoader.getResource(file);
                 if (dependency != null) {

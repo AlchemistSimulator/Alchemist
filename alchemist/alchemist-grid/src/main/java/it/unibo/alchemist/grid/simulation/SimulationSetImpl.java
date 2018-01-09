@@ -1,6 +1,7 @@
 package it.unibo.alchemist.grid.simulation;
 
 import java.util.List;
+import java.util.Objects;
 
 import it.unibo.alchemist.grid.config.GeneralSimulationConfig;
 import it.unibo.alchemist.grid.config.SimulationConfig;
@@ -25,9 +26,8 @@ public class SimulationSetImpl<T> implements SimulationSet<T> {
      */
     public SimulationSetImpl(final GeneralSimulationConfig<T> genSimConfig, 
             final List<SimulationConfig> simulationConfigs) {
-        super();
-        this.genSimConfig = genSimConfig;
-        this.simulationConfigs = simulationConfigs;
+        this.genSimConfig = Objects.requireNonNull(genSimConfig);
+        this.simulationConfigs = Objects.requireNonNull(simulationConfigs);
     }
 
     @Override

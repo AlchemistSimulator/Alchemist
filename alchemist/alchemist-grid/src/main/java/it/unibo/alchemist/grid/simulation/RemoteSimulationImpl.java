@@ -5,6 +5,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -48,9 +49,9 @@ public class RemoteSimulationImpl<T> implements RemoteSimulation<T> {
      */
     public RemoteSimulationImpl(final GeneralSimulationConfig<T> generalConfig, final SimulationConfig config, 
             final UUID masterNodeId) {
-        this.generalConfig = generalConfig;
-        this.config = config;
-        this.masterNodeId = masterNodeId;
+        this.generalConfig = Objects.requireNonNull(generalConfig);
+        this.config = Objects.requireNonNull(config);
+        this.masterNodeId = Objects.requireNonNull(masterNodeId);
     }
 
 

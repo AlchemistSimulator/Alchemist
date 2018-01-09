@@ -37,6 +37,7 @@ import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.jirf.Factory;
 import org.danilopianini.jirf.FactoryBuilder;
+import org.kaikikm.threadresloader.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
@@ -710,7 +711,7 @@ public class YamlLoader implements Loader {
                         assert type != null;
                         type = (type.contains(".") ? "" : packageRoot) + type;
                         try {
-                            final Class<?> actualClass = Class.forName(type);
+                            final Class<?> actualClass = ResourceLoader.classForName(type);
                             if (clazz.isAssignableFrom(actualClass)) {
                                 final Optional<Object> rawParams = Optional.ofNullable(m.get(PARAMS));
                                 rawParams.ifPresent(l -> {

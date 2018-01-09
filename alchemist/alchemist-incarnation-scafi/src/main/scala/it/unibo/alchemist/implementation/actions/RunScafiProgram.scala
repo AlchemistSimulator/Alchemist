@@ -15,6 +15,7 @@ import ScafiIncarnationForAlchemist.ID
 import ScafiIncarnationForAlchemist.EXPORT
 import ScafiIncarnationForAlchemist.factory
 import it.unibo.alchemist.implementation.nodes.SimpleNodeManager
+import org.kaikikm.threadresloader.ResourceLoader
 
 sealed class RunScafiProgram(
     environment: Environment[Any],
@@ -34,7 +35,7 @@ sealed class RunScafiProgram(
   }
 
   import RunScafiProgram.NBRData
-  private val program = Class.forName(programName).newInstance().asInstanceOf[AggregateProgram]
+  private val program = ResourceLoader.classForName(programName).newInstance().asInstanceOf[AggregateProgram]
   private[this] var nbrData: Map[ID, NBRData] = Map()
   addModifiedMolecule(programName)
 

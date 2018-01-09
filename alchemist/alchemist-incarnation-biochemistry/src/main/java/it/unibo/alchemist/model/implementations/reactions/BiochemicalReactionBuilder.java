@@ -28,6 +28,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.jirf.Factory;
 import org.danilopianini.jirf.FactoryBuilder;
+import org.kaikikm.threadresloader.ResourceLoader;
 
 import it.unibo.alchemist.biochemistrydsl.BiochemistrydslBaseVisitor;
 import it.unibo.alchemist.biochemistrydsl.BiochemistrydslLexer;
@@ -196,7 +197,7 @@ public class BiochemicalReactionBuilder {
                 className = packageName + className;
             }
             try {
-                final Class<O> clazz = (Class<O>) Class.forName(className);
+                final Class<O> clazz = (Class<O>) ResourceLoader.classForName(className);
                 final ArgListContext lctx = ctx.argList();
                 final List<Object> params = new ArrayList<>();
                 if (lctx != null) { // if null there are no parameters, so params must be an empty List (as it is, actually)

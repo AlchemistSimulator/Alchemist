@@ -157,7 +157,7 @@ public class TraceLoader implements Iterable<GPSTrace> {
     private static GPSTimeAlignment makeNormalizer(final String clazzName, final Object... args) {
         final String fullName = clazzName.contains(".") ? clazzName : GPSTimeAlignment.class.getPackage().getName() + "." + clazzName;
         try {
-            return Arrays.stream(Class.forName(fullName).getConstructors())
+            return Arrays.stream(ResourceLoader.classForName(fullName).getConstructors())
                 .map(c -> {
                     try {
                         return Optional.of((GPSTimeAlignment) c.newInstance(args));

@@ -73,9 +73,7 @@ public class RemoteSimulationImpl<T> implements RemoteSimulation<T> {
                     final String header = config.getVariables().entrySet().stream()
                             .map(e -> e.getKey() + " = " + e.getValue())
                             .collect(Collectors.joining(", "));
-                    final String filename = masterNodeId.toString() + "_" + config.getVariables().entrySet().stream()
-                            .map(e -> e.getKey() + '-' + e.getValue())
-                            .collect(Collectors.joining("_")) + ".txt";
+                    final String filename = masterNodeId.toString() + "_" + config.toString() + ".txt";
                     final Exporter<T> exp = new Exporter<>(wd.getFileAbsolutePath(filename), 
                             1, header, loader.getDataExtractors());
                     sim.addOutputMonitor(exp);

@@ -4,13 +4,16 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.stream.Collectors;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * {@link SimulationConfig} implementation.
  *
  */
-public class SimulationConfigImpl implements SimulationConfig {
+public final class SimulationConfigImpl implements SimulationConfig {
     /**
      * 
      */
@@ -22,7 +25,8 @@ public class SimulationConfigImpl implements SimulationConfig {
      * @param variables Simulation's initialization variables
      */
     public SimulationConfigImpl(final List<Entry<String, ? extends Serializable>> variables) {
-        this.variables = variables.stream().collect(Collectors.toMap(e -> e.getKey(), e-> e.getValue()));
+        this.variables = Objects.requireNonNull(variables).stream()
+                .collect(ImmutableMap.toImmutableMap(Entry::getKey, Entry::getValue));
     }
 
     @Override
@@ -32,10 +36,7 @@ public class SimulationConfigImpl implements SimulationConfig {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((variables == null) ? 0 : variables.hashCode());
-        return result;
+        return variables.hashCode();
     }
 
     @Override
@@ -43,20 +44,17 @@ public class SimulationConfigImpl implements SimulationConfig {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
+        if (obj instanceof SimulationConfigImpl) {
+            final SimulationConfigImpl other = (SimulationConfigImpl) obj;
+            return variables.equals(other.variables);
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final SimulationConfigImpl other = (SimulationConfigImpl) obj;
-        if (variables == null) {
-            if (other.variables != null) {
-                return false;
-            }
-        } else if (!variables.equals(other.variables)) {
-            return false;
-        }
-        return true;
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return this.variables.entrySet().stream()
+                .map(e -> e.getKey() + '-' + e.getValue())
+                .collect(Collectors.joining("_"));
     }
 }

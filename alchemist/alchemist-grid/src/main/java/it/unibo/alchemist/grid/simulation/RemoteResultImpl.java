@@ -6,7 +6,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import com.google.common.base.Charsets;
 
@@ -17,7 +16,7 @@ import it.unibo.alchemist.grid.exceptions.RemoteSimulationException;
  * {@link RemoteResult} implementation.
  *
  */
-public class RemoteResultImpl implements RemoteResult {
+public final class RemoteResultImpl implements RemoteResult {
 
     private final String result;
     private final UUID workerNode;
@@ -44,9 +43,7 @@ public class RemoteResultImpl implements RemoteResult {
         if (simulationErrors.isPresent()) {
             throw new RemoteSimulationException(this.workerNode, this.config, simulationErrors.get());
         }
-        final String target = targetFile + "_" + this.config.getVariables().entrySet().stream()
-                .map(e -> e.getKey() + '-' + e.getValue())
-                .collect(Collectors.joining("_")) + ".txt";
+        final String target = targetFile + "_" + this.config.toString() + ".txt";
         try (PrintStream out = new PrintStream(target, Charsets.UTF_8.name())) {
             out.print(result);
         } catch (UnsupportedEncodingException e) {
@@ -56,11 +53,7 @@ public class RemoteResultImpl implements RemoteResult {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((config == null) ? 0 : config.hashCode());
-        result = prime * result + ((this.result == null) ? 0 : this.result.hashCode());
-        return result;
+        return this.config.hashCode();
     }
 
     @Override
@@ -68,28 +61,16 @@ public class RemoteResultImpl implements RemoteResult {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final RemoteResultImpl other = (RemoteResultImpl) obj;
-        if (config == null) {
-            if (other.config != null) {
-                return false;
+        if (obj instanceof RemoteResultImpl) {
+            final RemoteResultImpl other = (RemoteResultImpl) obj;
+            if (config.equals(other.config)) {
+                if (result.equals(other.result)) {
+                    return true;
+                }
             }
-        } else if (!config.equals(other.config)) {
             return false;
         }
-        if (result == null) {
-            if (other.result != null) {
-                return false;
-            }
-        } else if (!result.equals(other.result)) {
-            return false;
-        }
-        return true;
+        return false;
     }
 
 }

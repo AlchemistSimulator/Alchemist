@@ -16,6 +16,7 @@ import it.unibo.alchemist.grid.config.LocalGeneralSimulationConfig;
 import it.unibo.alchemist.grid.util.WorkingDirectory;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.YamlLoader;
+import it.unibo.alchemist.model.implementations.times.DoubleTime;
 
 /**
  */
@@ -32,7 +33,7 @@ public class TestConfig {
         final InputStream yaml = ResourceLoader.getResourceAsStream(resource);
         Assert.assertNotNull(yaml);
         final Loader l = this.getLoader(yaml);
-        final GeneralSimulationConfig<?> gsc = new LocalGeneralSimulationConfig<>(l, 0, null);
+        final GeneralSimulationConfig<?> gsc = new LocalGeneralSimulationConfig<>(l, 0, DoubleTime.INFINITE_TIME);
         Assert.assertEquals(gsc.getDependencies().size(), 2);
         try {
             Assert.assertArrayEquals(gsc.getDependencies().get(DEPENDENCY_FILE), Files.readAllBytes(Paths.get(ResourceLoader.getResource(DEPENDENCY_FILE).toURI())));
@@ -56,7 +57,7 @@ public class TestConfig {
         final InputStream yaml = ResourceLoader.getResourceAsStream(resource);
         Assert.assertNotNull(yaml);
         final Loader l = this.getLoader(yaml);
-        final GeneralSimulationConfig<?> gsc = new LocalGeneralSimulationConfig<>(l, 0, null);
+        final GeneralSimulationConfig<?> gsc = new LocalGeneralSimulationConfig<>(l, 0, DoubleTime.INFINITE_TIME);
         Assert.assertEquals(gsc.getDependencies().size(), 2);
         File test = null;
         try (WorkingDirectory wd = new WorkingDirectory()) {

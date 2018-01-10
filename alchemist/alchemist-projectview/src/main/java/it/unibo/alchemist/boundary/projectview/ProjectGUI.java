@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.IOException;
 
+import org.kaikikm.threadresloader.ResourceLoader;
+
 import it.unibo.alchemist.boundary.projectview.controller.CenterLayoutController;
 import it.unibo.alchemist.boundary.projectview.controller.LeftLayoutController;
 import it.unibo.alchemist.boundary.projectview.controller.TopLayoutController;
@@ -23,6 +25,10 @@ import javafx.stage.WindowEvent;
  */
 public class ProjectGUI extends Application {
 
+    /**
+     * 
+     */
+    public static final String RESOURCE_LOCATION = ProjectGUI.class.getPackage().getName().replace('.', '/');
     private BorderPane root;
     private CenterLayoutController controllerCenter;
     private LeftLayoutController controllerLeft;
@@ -69,7 +75,7 @@ public class ProjectGUI extends Application {
 
     private void initLayout(final String layoutName) throws IOException {
         final FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(ProjectGUI.class.getResource("view/" + layoutName + ".fxml"));
+        loader.setLocation(ResourceLoader.getResource(ProjectGUI.RESOURCE_LOCATION + "/view/" + layoutName + ".fxml"));
         if (layoutName.equals("RootLayout")) {
             this.root = (BorderPane) loader.load();
             final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

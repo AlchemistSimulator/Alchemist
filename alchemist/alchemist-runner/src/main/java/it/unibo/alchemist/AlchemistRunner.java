@@ -4,16 +4,28 @@
 package it.unibo.alchemist;
 
 import java.awt.GraphicsEnvironment;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.Set;
+import java.util.TimeZone;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -26,6 +38,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +53,16 @@ import it.unibo.alchemist.boundary.gui.SingleRunGUI;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.grid.cluster.Cluster;
+import it.unibo.alchemist.grid.cluster.ClusterImpl;
+import it.unibo.alchemist.grid.config.GeneralSimulationConfig;
+import it.unibo.alchemist.grid.config.LocalGeneralSimulationConfig;
+import it.unibo.alchemist.grid.config.SimulationConfig;
+import it.unibo.alchemist.grid.config.SimulationConfigImpl;
+import it.unibo.alchemist.grid.exceptions.RemoteSimulationException;
+import it.unibo.alchemist.grid.simulation.RemoteResult;
+import it.unibo.alchemist.grid.simulation.SimulationSet;
+import it.unibo.alchemist.grid.simulation.SimulationSetImpl;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.export.EnvPerformanceStats;
 import it.unibo.alchemist.loader.export.Exporter;
@@ -62,7 +85,6 @@ public final class AlchemistRunner<T> {
             .setNameFormat("alchemist-batch-%d")
             .build();
     private final int closeOperation;
-    private final boolean doBenchmark;
     private final Optional<String> effectsFile;
     private final long endStep;
     private final Time endTime;
@@ -72,6 +94,8 @@ public final class AlchemistRunner<T> {
     private final ImmutableCollection<Supplier<OutputMonitor<T>>> outputMonitors;
     private final int parallelism;
     private final double samplingInterval;
+    private final Optional<String> gridConfigFile;
+    private final Optional<String> benchmarkOutputFile;
 
     private AlchemistRunner(final Loader source,
             final Time endTime,
@@ -82,8 +106,9 @@ public final class AlchemistRunner<T> {
             final int parallelism,
             final boolean headless,
             final int closeOperation,
-            final boolean benchmark,
-            final ImmutableCollection<Supplier<OutputMonitor<T>>> outputMonitors) {
+            final ImmutableCollection<Supplier<OutputMonitor<T>>> outputMonitors,
+            final Optional<String> gridConfigFile,
+            final Optional<String> benchmarkOutputFile) {
         this.effectsFile = effectsFile;
         this.endTime = endTime;
         this.endStep = endStep;
@@ -93,8 +118,9 @@ public final class AlchemistRunner<T> {
         this.parallelism = parallelism;
         this.samplingInterval = sampling;
         this.closeOperation = closeOperation;
-        this.doBenchmark = benchmark;
         this.outputMonitors = outputMonitors;
+        this.gridConfigFile = gridConfigFile;
+        this.benchmarkOutputFile = benchmarkOutputFile;
     }
 
     /**
@@ -122,47 +148,10 @@ public final class AlchemistRunner<T> {
                     throw new IllegalArgumentException("Variable " + s + " is not allowed. Valid variables are: " + simVars.keySet());
                 }
             }
-            final ExecutorService executor = Executors.newFixedThreadPool(parallelism, THREAD_FACTORY);
-            final Optional<Long> start = Optional.ofNullable(doBenchmark ? System.nanoTime() : null);
-            final Stream<Future<Optional<Throwable>>> futureErrors = prepareSimulations(sim -> {
-                        if (sim.getEnvironment() instanceof BenchmarkableEnvironment) {
-                            for (final Extractor e : loader.getDataExtractors()) {
-                                if (e instanceof EnvPerformanceStats) {
-                                    ((BenchmarkableEnvironment<?>) (sim.getEnvironment())).enableBenchmark();
-                                }
-                            }
-                        }
-                        sim.play();
-                        sim.run();
-                        return sim.getError();
-                    }, variables)
-                    .map(executor::submit);
-            final Queue<Future<Optional<Throwable>>> allErrors = futureErrors.collect(Collectors.toCollection(LinkedList::new));
-            while (!(exception.isPresent() || allErrors.isEmpty())) {
-                try {
-                    exception = allErrors.remove().get();
-                } catch (InterruptedException | ExecutionException e1) {
-                    exception = Optional.of(e1);
-                }
-            }
-            /*
-             * findAny does NOT short-circuit the stream due to a known bug in
-             * the JDK: https://bugs.openjdk.java.net/browse/JDK-8075939
-             * 
-             * Thus, to date, if an exception occurs in a thread which is
-             * running a simulation, that exception will be effectively thrown
-             * outside that thread only when all the threads have completed
-             * their execution. Blame Oracle for this.
-             */
-            start.ifPresent(s -> System.out.printf("Total simulation running time (nanos): %d \n", (System.nanoTime() - s))); //NOPMD: I want to show the result in any case
-            executor.shutdown();
-            if (exception.isPresent()) {
-                executor.shutdownNow();
-            }
-            try {
-                executor.awaitTermination(Integer.MAX_VALUE, TimeUnit.DAYS);
-            } catch (InterruptedException e1) {
-                throw new IllegalStateException("The batch execution got interrupted.");
+            if (this.gridConfigFile.isPresent()) {
+                exception = launchRemote(variables);
+            } else {
+                exception = launchLocal(variables);
             }
         } else {
             Optional<Throwable> localEx = Optional.empty();
@@ -194,15 +183,107 @@ public final class AlchemistRunner<T> {
         }
     }
 
-    private <R> Stream<Callable<R>> prepareSimulations(final Function<Simulation<T>, R> finalizer, final String... variables) {
-        final List<List<? extends Entry<String, ?>>> varStreams = Arrays.stream(variables)
+    private Optional<? extends Throwable> launchLocal(final String... variables) {
+        Optional<? extends Throwable> exception = Optional.empty();
+        /*
+         * Local batch mode
+         */
+        final ExecutorService executor = Executors.newFixedThreadPool(parallelism, THREAD_FACTORY);
+        final Optional<Long> start = Optional.ofNullable(benchmarkOutputFile.isPresent() ? System.nanoTime() : null);
+        final Stream<Future<Optional<Throwable>>> futureErrors = prepareSimulations(sim -> {
+                    if (sim.getEnvironment() instanceof BenchmarkableEnvironment) {
+                        for (final Extractor e : loader.getDataExtractors()) {
+                            if (e instanceof EnvPerformanceStats) {
+                                ((BenchmarkableEnvironment<?>) (sim.getEnvironment())).enableBenchmark();
+                            }
+                        }
+                    }
+                    sim.play();
+                    sim.run();
+                    return sim.getError();
+                }, variables)
+                .map(executor::submit);
+        final Queue<Future<Optional<Throwable>>> allErrors = futureErrors.collect(Collectors.toCollection(LinkedList::new));
+        while (!(exception.isPresent() || allErrors.isEmpty())) {
+            try {
+                exception = allErrors.remove().get();
+            } catch (InterruptedException | ExecutionException e1) {
+                exception = Optional.of(e1);
+            }
+        }
+        /*
+         * findAny does NOT short-circuit the stream due to a known bug in
+         * the JDK: https://bugs.openjdk.java.net/browse/JDK-8075939
+         * 
+         * Thus, to date, if an exception occurs in a thread which is
+         * running a simulation, that exception will be effectively thrown
+         * outside that thread only when all the threads have completed
+         * their execution. Blame Oracle for this.
+         */
+        start.ifPresent(e -> printBenchmarkResult(System.nanoTime() - e, false));
+        executor.shutdown();
+        if (exception.isPresent()) {
+            executor.shutdownNow();
+        }
+        try {
+            executor.awaitTermination(Integer.MAX_VALUE, TimeUnit.DAYS);
+        } catch (InterruptedException e1) {
+            throw new IllegalStateException("The batch execution got interrupted.");
+        }
+        return exception;
+    }
+
+    private Optional<? extends Throwable> launchRemote(final String... variables) {
+        Optional<? extends Throwable> simException = Optional.empty();
+        final Optional<Long> start = Optional.ofNullable(benchmarkOutputFile.isPresent() ? System.nanoTime() : null);
+        final GeneralSimulationConfig<T> gsc = new LocalGeneralSimulationConfig<>(this.loader, this.endStep, this.endTime);
+        final List<SimulationConfig> simConfigs = getVariablesCartesianProduct(variables).stream()
+                .map(e -> new SimulationConfigImpl(e))
+                .collect(Collectors.toList());
+        final SimulationSet<T> set = new SimulationSetImpl<>(gsc, simConfigs);
+        try (Cluster cluster = new ClusterImpl(Paths.get(this.gridConfigFile.orElseThrow(
+                () -> new IllegalStateException("No remote configuration file"))))) {
+            final Set<RemoteResult> resSet = cluster.getWorkersSet(set.computeComplexity()).distributeSimulations(set);
+            for (final RemoteResult res: resSet) {
+                res.saveLocally(this.exportFileRoot.get());
+            }
+            start.ifPresent(e -> printBenchmarkResult(System.nanoTime() - e, true));
+        } catch (RemoteSimulationException e) {
+            simException = Optional.of(e);
+        } catch (FileNotFoundException e1) {
+            throw new IllegalStateException(e1);
+        }
+        return simException;
+    }
+
+    private List<List<Entry<String, ? extends Serializable>>> getVariablesCartesianProduct(final String... variables) {
+        final List<List<? extends Entry<String, ? extends Serializable>>> varStreams = Arrays.stream(variables)
                 .map(it -> getVariables().get(it).stream()
                         .map(val -> new ImmutablePair<>(it, val))
                         .collect(Collectors.toList()))
                 .collect(Collectors.toList());
-        return (varStreams.isEmpty()
-                ? ImmutableList.of(ImmutableList.<Entry<String, Double>>of())
-                : Lists.cartesianProduct(varStreams)).stream()
+        return varStreams.isEmpty() ? ImmutableList.of(ImmutableList.<Entry<String, ? extends Serializable>>of())
+        : Lists.cartesianProduct(varStreams);
+    }
+
+    private void printBenchmarkResult(final Long value, final boolean distributed) {
+        System.out.printf("Total simulation running time (nanos): %d \n", value); // NOPMD: I want to show the result in any case
+        final File f = new File(benchmarkOutputFile.get());
+        try {
+            FileUtils.forceMkdirParent(f);
+            try (PrintWriter w = new PrintWriter(new BufferedWriter(new FileWriter(f, true)))) {
+                final SimpleDateFormat isoTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US);
+                isoTime.setTimeZone(TimeZone.getTimeZone("UTC"));
+                w.println(isoTime.format(new Date())
+                        + (distributed ? " - Distributed exc time:" : " - Serial exc time:") + value.toString());
+            }
+        } catch (IOException e) {
+            L.error(e.getMessage());
+        }
+    }
+
+    private <R> Stream<Callable<R>> prepareSimulations(final Function<Simulation<T>, R> finalizer, final String... variables) {
+        return getVariablesCartesianProduct(variables).stream()
             .map(ImmutableMap::copyOf)
             .map(vars -> () -> {
                 final Environment<T> env = loader.getWith(vars);
@@ -239,7 +320,6 @@ public final class AlchemistRunner<T> {
      * @param <T> concentration type
      */
     public static class Builder<T> {
-        private boolean benchmark;
         private int closeOperation;
         private Optional<String> effectsFile = Optional.empty();
         private long endStep = Long.MAX_VALUE;
@@ -250,6 +330,8 @@ public final class AlchemistRunner<T> {
         private final Collection<Supplier<OutputMonitor<T>>> outputMonitors = new LinkedList<>();
         private int parallelism = Runtime.getRuntime().availableProcessors() + 1;
         private double samplingInt = 1;
+        private Optional<String> gridConfigFile = Optional.empty();
+        private Optional<String> benchmarkOutputFile = Optional.empty();
 
         /**
          * 
@@ -275,17 +357,8 @@ public final class AlchemistRunner<T> {
          */
         public AlchemistRunner<T> build() {
             return new AlchemistRunner<>(this.loader, this.endTime, this.endStep, this.exportFileRoot, this.effectsFile,
-                    this.samplingInt, this.parallelism, this.headless, this.closeOperation, this.benchmark,
-                    ImmutableList.copyOf(outputMonitors));
-        }
-
-        /**
-         * @param benchmark set true if you want to benchmark this run
-         * @return builder
-         */
-        public Builder<T> setBenchmarkMode(final boolean benchmark) {
-            this.benchmark = benchmark;
-            return this;
+                    this.samplingInt, this.parallelism, this.headless, this.closeOperation,
+                    ImmutableList.copyOf(outputMonitors), this.gridConfigFile, this.benchmarkOutputFile);
         }
 
         /**
@@ -401,6 +474,26 @@ public final class AlchemistRunner<T> {
                 throw new IllegalArgumentException("Thread number must be >= 0");
             }
             this.parallelism = threads;
+            return this;
+        }
+
+        /**
+         * 
+         * @param path Ignite's setting file path
+         * @return builder
+         */
+        public Builder<T> setRemoteConfig(final String path) {
+            this.gridConfigFile = Optional.ofNullable(path);
+            return this;
+        }
+
+        /**
+         * 
+         * @param path Benchmark save file path
+         * @return builder
+         */
+        public Builder<T> setBenchmarkOutputFile(final String path) {
+            this.benchmarkOutputFile = Optional.ofNullable(path);
             return this;
         }
     }

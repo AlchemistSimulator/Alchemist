@@ -1,5 +1,6 @@
 package it.unibo.alchemist.loader;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +12,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
  * An entity which is able to produce an Alchemist {@link Environment}, possibly
  * with user defined variable values.
  */
-public interface Loader {
+public interface Loader extends Serializable {
 
     /**
      * @param <T>
@@ -43,4 +44,11 @@ public interface Loader {
      * @return The data extractors
      */
     List<Extractor> getDataExtractors();
+
+    /**
+     * 
+     * @return dependencies files
+     */
+    List<String> getDependencies();
+
 }

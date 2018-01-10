@@ -23,6 +23,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.ignite.startup.cmdline.CommandLineStartup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,12 +45,14 @@ public final class Alchemist {
     private static final String HEADLESS = "hl";
     private static final String VARIABLES = "var";
     private static final String BENCHMARK = "bmk";
-    private static final char PARALLELISM = 'p';
     private static final char BATCH = 'b';
     private static final char EXPORT = 'e';
+    private static final char DISTRIBUTED = 'd';
     private static final char GRAPHICS = 'g';
     private static final char HELP = 'h';
     private static final char INTERVAL = 'i';
+    private static final char NODE = 's';
+    private static final char PARALLELISM = 'p';
     private static final char TIME = 't';
     private static final char YAML = 'y';
 
@@ -78,6 +81,9 @@ public final class Alchemist {
         try {
             final CommandLine cmd = parser.parse(opts, args);
             setVerbosity(cmd);
+            if (cmd.hasOption(NODE)) {
+                CommandLineStartup.main(new String[] {cmd.getOptionValue(NODE)});
+            }
             if (cmd.hasOption(HELP)) {
                 final HelpFormatter formatter = new HelpFormatter();
                 formatter.printHelp("java -jar alchemist-redist-{version}.jar", opts);
@@ -113,7 +119,7 @@ public final class Alchemist {
                             }
                         }
                         if (cmd.hasOption(BENCHMARK)) {
-                            simBuilder.setBenchmarkMode(true);
+                            simBuilder.setBenchmarkOutputFile(cmd.getOptionValue(BENCHMARK));
                         }
                         if (varsUnderRun == null) {
                             L.error("You must specify which variables you want the batch to run on.");
@@ -123,6 +129,10 @@ public final class Alchemist {
                         if (vars.length == 0) {
                             L.info("Alchemist is in batch mode, but no variable is available.");
                             System.exit(2);
+                        }
+
+                        if (cmd.hasOption(DISTRIBUTED)) {
+                            ifPresent(cmd, DISTRIBUTED, simBuilder::setRemoteConfig);
                         }
                         simBuilder.build().launch(vars);
                     } else {

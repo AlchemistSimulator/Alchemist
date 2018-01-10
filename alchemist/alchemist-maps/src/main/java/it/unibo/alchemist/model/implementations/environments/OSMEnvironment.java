@@ -31,6 +31,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.danilopianini.util.Hashes;
 import org.danilopianini.util.concurrent.FastReadWriteLock;
 import org.jooq.lambda.Unchecked;
+import org.kaikikm.threadresloader.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -437,7 +438,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
                 .filter(File::exists)
                 .map(File::toURI)
                 .map(Unchecked.function(URI::toURL));
-        final URL resource = Optional.ofNullable(OSMEnvironment.class.getResource(fileName))
+        final URL resource = Optional.ofNullable(ResourceLoader.getResource(fileName))
                     .orElseGet(Unchecked.supplier(() -> file
                             .orElseThrow(() -> new FileNotFoundException("No file or resource with name " + fileName))));
         final String dir = initDir(resource).intern();

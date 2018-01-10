@@ -1,0 +1,4 @@
+incarnation: sapere
+remote-dependencies:
+  - dependencies_test.txt
+  - dependencies_test2.txt

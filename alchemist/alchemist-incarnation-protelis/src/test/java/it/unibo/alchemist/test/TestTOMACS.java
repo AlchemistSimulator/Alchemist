@@ -5,6 +5,7 @@ import java.util.stream.StreamSupport;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.kaikikm.threadresloader.ResourceLoader;
 
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.YamlLoader;
@@ -24,7 +25,7 @@ public class TestTOMACS {
      */
     @Test
     public void testCustomRetainTimeLoading() {
-        final Loader loader = new YamlLoader(TestTOMACS.class.getResourceAsStream("/tomacs.yml"));
+        final Loader loader = new YamlLoader(ResourceLoader.getResourceAsStream("tomacs.yml"));
         Assert.assertTrue(StreamSupport.stream(loader.getDefault().spliterator(), false)
             .map(n -> (ProtelisNode) n)
             .flatMap(n -> n.getReactions().stream()

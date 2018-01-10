@@ -1,12 +1,13 @@
 package it.unibo.alchemist.loader.export;
 
+import java.io.Serializable;
 import java.util.stream.DoubleStream;
 
 /**
  * Expresses a flat map operation over a double.
  */
 @FunctionalInterface
-public interface FilteringPolicy {
+public interface FilteringPolicy extends Serializable {
 
     /**
      * From a single value, builds a stream of values.

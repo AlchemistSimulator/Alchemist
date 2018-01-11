@@ -35,25 +35,25 @@
 	<module name="RegexpSingleline">
 		<property name="severity" value="warning" />
 		<property name="format" value="\s{2,}$" />
-		<property name="fileExtensions" value="java,xtend,scala" />
+		<property name="fileExtensions" value="java,xtend,scala,kt" />
 		<property name="message" value="Line has trailing spaces." />
 	</module>
 	<module name="RegexpSingleline">
 		<property name="severity" value="error" />
 		<property name="format" value="Math\s*\.\s*random\s*\(\s*\)" />
-		<property name="fileExtensions" value="java,xtend,scala" />
+		<property name="fileExtensions" value="java,xtend,scala,kt" />
 		<property name="message" value="Don't use Math.random() inside Alchemist. Breaks stuff." />
 	</module>
 	<module name="RegexpSingleline">
 		<property name="severity" value="error" />
 		<property name="format" value="(import\s*(static\s*java\s*\.\s*lang\s*\.\s*Math\s*\.\s*random)|(java\s*\.\s*util\s*\.\s*Random))|(Math\s*\.\s*random\s*\(\s*\))" />
-		<property name="fileExtensions" value="java,xtend,scala" />
+		<property name="fileExtensions" value="java,xtend,scala,kt" />
 		<property name="message" value="Don't use Math.random() inside Alchemist. Breaks stuff." />
 	</module>
 	<module name="RegexpSingleline">
 		<property name="severity" value="warning" />
 		<property name="format" value="\t" />
-		<property name="fileExtensions" value="java,scala" />
+		<property name="fileExtensions" value="java,scala,kt" />
 		<property name="message"
 			value="Line is tab-indented (see Java Code Conventions, Section 4.2)." />
 	</module>

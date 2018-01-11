@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -40,6 +41,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.actions.SendToNeighbor;
@@ -374,6 +376,11 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
         }
         @Override
         public void setup() {
+        }
+
+        @Override
+        public Set<String> keySet() {
+            return Sets.union(node.getContents().keySet().stream().map(Molecule::getName).collect(Collectors.toSet()), shadow.keySet());
         }
     }
 

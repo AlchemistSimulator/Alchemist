@@ -11,6 +11,7 @@ package it.unibo.alchemist.test;
 import java.io.IOException;
 
 import org.junit.Test;
+import org.kaikikm.threadresloader.ResourceLoader;
 
 import it.unibo.alchemist.model.implementations.environments.ImageEnvironment;
 import static org.junit.Assert.assertNotNull;
@@ -33,7 +34,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina1() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(TestImageEnvironment.class.getResource("/piantina1.png").getPath()));
+            assertNotNull(new ImageEnvironment<Object>(ResourceLoader.getResource("piantina1.png").getPath()));
         } catch (IOException e) {
             assumeNoException(e);
             fail();

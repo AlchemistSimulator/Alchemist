@@ -44,6 +44,24 @@
 		<property name="fileExtensions" value="java,xtend,scala,kt" />
 		<property name="message" value="Don't use Math.random() inside Alchemist. Breaks stuff." />
 	</module>
+    <module name="RegexpSingleline">
+        <property name="severity" value="error" />
+        <property name="format" value="class\s*\.\s*forName\s*\(" />
+        <property name="fileExtensions" value="java,xtend,scala,kt" />
+        <property name="message" value="Use the library to load classes and resources. Breaks grid otherwise." />
+    </module>
+    <module name="RegexpSingleline">
+        <property name="severity" value="error" />
+        <property name="format" value="class\s*\.\s*getResource" />
+        <property name="fileExtensions" value="java,xtend,scala,kt" />
+        <property name="message" value="Use the library to load classes and resources. Breaks grid otherwise." />
+    </module>
+    <module name="RegexpSingleline">
+        <property name="severity" value="error" />
+        <property name="format" value="class\s*\.\s*getClassLoader" />
+        <property name="fileExtensions" value="java,xtend,scala,kt" />
+        <property name="message" value="Use the library to load classes and resources. Breaks grid otherwise." />
+    </module>
 	<module name="RegexpSingleline">
 		<property name="severity" value="error" />
 		<property name="format" value="(import\s*(static\s*java\s*\.\s*lang\s*\.\s*Math\s*\.\s*random)|(java\s*\.\s*util\s*\.\s*Random))|(Math\s*\.\s*random\s*\(\s*\))" />

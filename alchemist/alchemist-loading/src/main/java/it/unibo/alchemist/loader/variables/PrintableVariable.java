@@ -1,5 +1,6 @@
 package it.unibo.alchemist.loader.variables;
 
+import java.io.Serializable;
 import java.util.stream.Collectors;
 
 /**
@@ -7,7 +8,7 @@ import java.util.stream.Collectors;
  *
  * @param <V>
  */
-public abstract class PrintableVariable<V> implements Variable<V> {
+public abstract class PrintableVariable<V extends Serializable> implements Variable<V> {
 
     private static final long serialVersionUID = 1L;
 

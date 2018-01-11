@@ -9,6 +9,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import org.kaikikm.threadresloader.ResourceLoader;
+
 import com.google.common.io.Files;
 
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
@@ -108,7 +110,7 @@ public class TopLayoutController {
             this.ctrlCenter.checkChanges();
         }
         final FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(ProjectGUI.class.getResource("view/NewProjLayoutFolder.fxml"));
+        loader.setLocation(ResourceLoader.getResource(ProjectGUI.RESOURCE_LOCATION + "/view/NewProjLayoutFolder.fxml"));
         final AnchorPane pane = (AnchorPane) loader.load();
         final Stage stage = new Stage();
         stage.setTitle(RESOURCES.getString("new_proj"));

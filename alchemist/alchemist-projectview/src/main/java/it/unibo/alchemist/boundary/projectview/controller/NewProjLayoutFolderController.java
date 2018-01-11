@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ResourceBundle;
 
+import org.kaikikm.threadresloader.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,7 +120,7 @@ public class NewProjLayoutFolderController {
     @FXML
     public void clickNext() {
         final FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(ProjectGUI.class.getResource("view/NewProjLayoutSelect.fxml"));
+        loader.setLocation(ResourceLoader.getResource(ProjectGUI.RESOURCE_LOCATION + "/view/NewProjLayoutSelect.fxml"));
         try {
             final AnchorPane pane = (AnchorPane) loader.load();
             final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

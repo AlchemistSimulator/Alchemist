@@ -37,12 +37,14 @@ import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.jirf.Factory;
 import org.danilopianini.jirf.FactoryBuilder;
+import org.kaikikm.threadresloader.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -89,6 +91,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
  */
 public class YamlLoader implements Loader {
 
+    private static final long serialVersionUID = 1L;
     private static final Logger L = LoggerFactory.getLogger(YamlLoader.class);
     private static final ResourceBundle SYNTAX = getBundle(YamlLoader.class.getPackage().getName() + ".YamlSyntax", Locale.US);
     private static final String ACTIONS = SYNTAX.getString("actions");
@@ -119,6 +122,7 @@ public class YamlLoader implements Loader {
     private static final String PROGRAMS = SYNTAX.getString("programs");
     private static final String PROPERTY = SYNTAX.getString("property");
     private static final String REACTION = SYNTAX.getString("reaction");
+    private static final String REMOTE_DEPENDENCIES = SYNTAX.getString("remote-dependencies");
     private static final String SCENARIO_SEED = SYNTAX.getString("scenario-seed");
     private static final String SEEDS = SYNTAX.getString("seeds");
     private static final String SIMULATION_SEED = SYNTAX.getString("simulation-seed");
@@ -194,6 +198,7 @@ public class YamlLoader implements Loader {
     private transient Incarnation<?> incarnation;
     private final ImmutableMap<Map<String, Object>, String> reverseLookupTable;
     private final ImmutableMap<String, Variable<?>> variables;
+    private final ImmutableList<String> dependencies;
 
     /**
      * @param source
@@ -335,6 +340,13 @@ public class YamlLoader implements Loader {
         } else {
             throw new IllegalAlchemistYAMLException("Exports must be a YAML map.");
         }
+        final Object dependencies = rawContents.get(REMOTE_DEPENDENCIES);
+        if (dependencies == null) {
+            this.dependencies = ImmutableList.of();
+        } else {
+            //TODO This may raise an unclear classcastexception at runtime
+            this.dependencies = ImmutableList.copyOf((List<String>) dependencies);
+        }
     }
 
     /**
@@ -359,7 +371,12 @@ public class YamlLoader implements Loader {
     public Map<String, Variable<?>> getVariables() {
         return Collections.unmodifiableMap(variables);
     }
-
+    
+    @Override
+    public List<String> getDependencies() {
+        return this.dependencies;
+    }
+    
     @Override
     public <T> Environment<T> getWith(final Map<String, ?> values) {
         if (values.size() > variables.size()) {
@@ -694,7 +711,7 @@ public class YamlLoader implements Loader {
                         assert type != null;
                         type = (type.contains(".") ? "" : packageRoot) + type;
                         try {
-                            final Class<?> actualClass = Class.forName(type);
+                            final Class<?> actualClass = ResourceLoader.classForName(type);
                             if (clazz.isAssignableFrom(actualClass)) {
                                 final Optional<Object> rawParams = Optional.ofNullable(m.get(PARAMS));
                                 rawParams.ifPresent(l -> {

@@ -29,7 +29,7 @@ public class TestOSMEnvironment {
         final Collection<Future<Object>> futureResults = IntStream.range(0, 100)
             .<Callable<Object>>mapToObj(i -> () -> {
                 try {
-                    new OSMEnvironment<>("/maps/cesena.pbf");
+                    new OSMEnvironment<>("maps/cesena.pbf");
                     return true;
                 } catch (IOException e) {
                     return e;

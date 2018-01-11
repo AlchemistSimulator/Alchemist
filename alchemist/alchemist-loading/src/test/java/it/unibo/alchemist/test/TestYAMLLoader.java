@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -21,6 +22,7 @@ import org.reflections.util.ConfigurationBuilder;
 import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.YamlLoader;
 import it.unibo.alchemist.model.implementations.layers.StepLayer;
 import it.unibo.alchemist.model.implementations.timedistributions.AnyRealDistribution;
@@ -144,6 +146,19 @@ public class TestYAMLLoader {
         final Environment<Object> env = testNoVar("/synthetic/scalavar.yml");
         assertNotNull(env);
         assertEquals(env.makePosition(3, 10), env.getPosition(env.getNodeByID(0)));
+    }
+    
+    /**
+     * Test dependencies section.
+     */
+    @Test
+    public void testDependencies() {
+        final InputStream is = TestYAMLLoader.class.getResourceAsStream("/isac/16-dependencies.yaml");
+        assertNotNull(is);
+        final Loader loader = new YamlLoader(is);
+        final List<String> dependencies = loader.getDependencies();
+        assertEquals(dependencies.size(), 2);
+        assertEquals(dependencies.get(0), "dependencies_test.txt");
     }
 
     private static <T> Environment<T> testLoading(final String resource, final Map<String, Double> vars) {

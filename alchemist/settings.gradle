@@ -1,5 +1,6 @@
 include(
     'alchemist-engine',
+    'alchemist-grid',
     'alchemist-implementationbase',
     'alchemist-incarnation-protelis',
     'alchemist-incarnation-sapere',

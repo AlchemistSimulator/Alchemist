@@ -1,0 +1,10 @@
+dependencies {
+    compile project(':alchemist-implementationbase')
+    compile project(':alchemist-interfaces')
+    compile project(':alchemist-loading')
+    compile project(':alchemist-engine')
+    testCompile project(':alchemist-incarnation-sapere')
+    compile "org.apache.ignite:ignite-core:${igniteVersion}"
+    compile "org.apache.ignite:ignite-spring:${igniteVersion}"
+    compile "org.apache.ignite:ignite-indexing:${igniteVersion}"
+}

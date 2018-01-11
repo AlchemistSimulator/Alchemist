@@ -10,6 +10,7 @@ package it.unibo.alchemist.model.implementations.actions;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.LangUtils;
 import org.danilopianini.util.ListSet;

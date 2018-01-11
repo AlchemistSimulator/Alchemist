@@ -32,7 +32,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  */
 public class TestTargetWalker {
 
-    private static final String TESTMAP = "/maps/cesena.pbf";
+    private static final String TESTMAP = "maps/cesena.pbf";
     private static final Molecule TRACK = new SimpleMolecule("track");
     private static final Molecule INTERACTING = new SimpleMolecule("interacting");
     private static final int STEPS = 2000;

@@ -157,22 +157,22 @@ public final class AlchemistRunner<T> {
             Optional<Throwable> localEx = Optional.empty();
             try {
                 localEx = prepareSimulations(sim -> {
-                            final boolean onHeadlessEnvironment = GraphicsEnvironment.isHeadless();
-                            if (!headless && onHeadlessEnvironment) {
-                                L.error("Could not initialize the UI (the graphics environment is headless). Falling back to headless mode.");
-                            }
-                            if (headless || onHeadlessEnvironment) {
-                                sim.play();
-                            } else {
-                                if (effectsFile.isPresent()) {
-                                    SingleRunGUI.make(sim, effectsFile.get(), closeOperation);
-                                } else {
-                                    SingleRunGUI.make(sim, closeOperation);
-                                }
-                            }
-                            sim.run();
-                            return sim.getError();
-                        }, variables).findAny().get().call();
+                    final boolean onHeadlessEnvironment = GraphicsEnvironment.isHeadless();
+                    if (!headless && onHeadlessEnvironment) {
+                        L.error("Could not initialize the UI (the graphics environment is headless). Falling back to headless mode.");
+                    }
+                    if (headless || onHeadlessEnvironment) {
+                        sim.play();
+                    } else {
+                        if (effectsFile.isPresent()) {
+                            SingleRunGUI.make(sim, effectsFile.get(), closeOperation);
+                        } else {
+                            SingleRunGUI.make(sim, closeOperation);
+                        }
+                    }
+                    sim.run();
+                    return sim.getError();
+                }).findAny().get().call();
             } catch (Exception e) {
                 localEx = Optional.of(e);
             }
@@ -191,18 +191,18 @@ public final class AlchemistRunner<T> {
         final ExecutorService executor = Executors.newFixedThreadPool(parallelism, THREAD_FACTORY);
         final Optional<Long> start = Optional.ofNullable(benchmarkOutputFile.isPresent() ? System.nanoTime() : null);
         final Stream<Future<Optional<Throwable>>> futureErrors = prepareSimulations(sim -> {
-                    if (sim.getEnvironment() instanceof BenchmarkableEnvironment) {
-                        for (final Extractor e : loader.getDataExtractors()) {
-                            if (e instanceof EnvPerformanceStats) {
-                                ((BenchmarkableEnvironment<?>) (sim.getEnvironment())).enableBenchmark();
-                            }
+                if (sim.getEnvironment() instanceof BenchmarkableEnvironment) {
+                    for (final Extractor e : loader.getDataExtractors()) {
+                        if (e instanceof EnvPerformanceStats) {
+                            ((BenchmarkableEnvironment<?>) (sim.getEnvironment())).enableBenchmark();
                         }
                     }
-                    sim.play();
-                    sim.run();
-                    return sim.getError();
-                }, variables)
-                .map(executor::submit);
+                }
+                sim.play();
+                sim.run();
+                return sim.getError();
+            }, variables)
+            .map(executor::submit);
         final Queue<Future<Optional<Throwable>>> allErrors = futureErrors.collect(Collectors.toCollection(LinkedList::new));
         while (!(exception.isPresent() || allErrors.isEmpty())) {
             try {
@@ -298,10 +298,10 @@ public final class AlchemistRunner<T> {
                      * Make the header: get all the default values and
                      * substitute those that are different in this run
                      */
-                    final Map<String, Object> defaultVars = loader.getVariables().entrySet().stream()
+                    final Map<String, Object> variableValues = loader.getVariables().entrySet().stream()
                             .collect(Collectors.toMap(Entry::getKey, e -> e.getValue().getDefault()));
-                    defaultVars.putAll(vars);
-                    final String header = vars.entrySet().stream()
+                    variableValues.putAll(vars);
+                    final String header = variableValues.entrySet().stream()
                             .map(e -> e.getKey() + " = " + e.getValue())
                             .collect(Collectors.joining(", "));
                     try {

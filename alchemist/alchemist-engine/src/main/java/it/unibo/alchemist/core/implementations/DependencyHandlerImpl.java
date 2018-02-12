@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 
  * @param <T>
  */
-public class DependencyHandlerImpl<T> implements DependencyHandler<T> {
+public final class DependencyHandlerImpl<T> implements DependencyHandler<T> {
 
     private static final long serialVersionUID = 3442635555170492280L;
     private static final AtomicInteger SINGLETON = new AtomicInteger();

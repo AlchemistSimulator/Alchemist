@@ -26,7 +26,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  * 
  * @param <T>
  */
-public class ArrayIndexedPriorityQueue<T> implements ReactionManager<T> {
+public final class ArrayIndexedPriorityQueue<T> implements ReactionManager<T> {
 
     private static final long serialVersionUID = 8064379974084348391L;
 

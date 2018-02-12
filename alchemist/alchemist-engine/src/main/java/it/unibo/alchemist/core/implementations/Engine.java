@@ -48,7 +48,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  * 
  * @param <T>
  */
-public class Engine<T> implements Simulation<T> {
+public final class Engine<T> implements Simulation<T> {
 
     private static final Logger L = LoggerFactory.getLogger(Engine.class);
     private static final double NANOS_TO_SEC = 1000000000.0;
@@ -513,5 +513,4 @@ public class Engine<T> implements Simulation<T> {
         }
         return getStatus();
     }
-
 }

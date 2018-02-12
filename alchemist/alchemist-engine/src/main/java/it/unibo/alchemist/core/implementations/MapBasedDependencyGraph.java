@@ -34,7 +34,7 @@ import java.util.Set;
  * 
  * @param <T>
  */
-public class MapBasedDependencyGraph<T> implements DependencyGraph<T> {
+public final class MapBasedDependencyGraph<T> implements DependencyGraph<T> {
 
     private static final long serialVersionUID = 4118923665670988775L;
     private final Environment<T> env;
@@ -190,7 +190,7 @@ public class MapBasedDependencyGraph<T> implements DependencyGraph<T> {
 
     /**
      * This method checks if there may be a dependency considering the
-     * neighborhoods
+     * neighborhoods.
      */
     private static <T> boolean influenceNeighborCheck(final Environment<T> env, final Reaction<T> source, final Reaction<T> target, final Context in, final Context out) {
         final Neighborhood<T> sn = env.getNeighborhood(source.getNode());

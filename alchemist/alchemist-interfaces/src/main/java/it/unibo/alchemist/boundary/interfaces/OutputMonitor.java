@@ -8,7 +8,6 @@
  */
 package it.unibo.alchemist.boundary.interfaces;
 
-import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;

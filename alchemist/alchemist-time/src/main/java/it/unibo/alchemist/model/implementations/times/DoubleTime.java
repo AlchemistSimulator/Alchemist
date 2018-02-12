@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  *         simulations.
  * 
  */
-public class DoubleTime implements Time {
+public final class DoubleTime implements Time {
 
     private static final long serialVersionUID = -6332407580176508417L;
     /**

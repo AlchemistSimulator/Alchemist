@@ -7,5 +7,6 @@
 <suppressions>
 	<suppress files="[/\\]target[/\\]" checks=".*"/>
 	<suppress files=".+\.(?:jar|zip|war|class|tar|bin)$" checks=".*"/>
-	<suppress checks=".*" files=".*[\\/].*-gen[\\/].*"/>
+	<suppress files=".*[\\/]xtend-gen[\\/].*" checks=".*"/>
+	<suppress files=".*[\\/]src/antlr[\\/].*" checks=".*"/>
 </suppressions>

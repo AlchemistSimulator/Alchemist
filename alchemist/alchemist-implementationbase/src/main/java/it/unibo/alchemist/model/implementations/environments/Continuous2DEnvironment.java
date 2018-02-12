@@ -14,7 +14,6 @@ import static java.lang.Double.POSITIVE_INFINITY;
 
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.util.FlexibleQuadTree;
-import org.danilopianini.util.SpatialIndex;
 
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;

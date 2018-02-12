@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 
 import org.jooq.lambda.Unchecked;
 import org.reflections.Reflections;
-import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 
 /**
@@ -29,7 +28,7 @@ import it.unibo.alchemist.model.interfaces.Incarnation;
 public final class SupportedIncarnations {
 
     @SuppressWarnings("rawtypes")
-    private static final Map<String, Class< ? extends Incarnation>> INCARNATIONS;
+    private static final Map<String, Class<? extends Incarnation>> INCARNATIONS;
 
     static {
         final Reflections reflections = new Reflections();
@@ -61,7 +60,7 @@ public final class SupportedIncarnations {
     public static <T> Optional<Incarnation<T>> get(final String s) {
         final String cmp = preprocess(s);
         return Optional.ofNullable(INCARNATIONS.get(cmp))
-                .map(Unchecked.<Class< ? extends Incarnation>, Incarnation<T>>function(Class::newInstance));
+                .map(Unchecked.<Class<? extends Incarnation>, Incarnation<T>>function(Class::newInstance));
     }
 
     private static String preprocess(final String s) {

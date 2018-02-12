@@ -39,7 +39,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  * 
  * @param <T>
  */
-public class ConnectionBeam<T> extends EuclideanDistance<T> {
+public final class ConnectionBeam<T> extends EuclideanDistance<T> {
 
     private static final long serialVersionUID = -6303232843110524434L;
     private static final int COORDS = 6;
@@ -135,7 +135,7 @@ public class ConnectionBeam<T> extends EuclideanDistance<T> {
         final PathIterator pi = beam.getPathIterator(null);
         final double[] coords = new double[COORDS];
         while (!pi.isDone()) {
-            switch(pi.currentSegment(coords)) {
+            switch (pi.currentSegment(coords)) {
             case PathIterator.SEG_MOVETO :
                 curpath = new Path2D.Double();
                 curpath.moveTo(coords[0], coords[1]);

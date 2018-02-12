@@ -21,6 +21,11 @@
 
 	<property name="fileExtensions" value="java, properties, xml" />
 
+	<module name="SuppressionFilter">
+		<property name="file" value="${config_loc}/suppressions.xml" />
+		<property name="optional" value="false" />
+	</module>
+
 	<!-- Checks whether files end with a new line. -->
 	<!-- See http://checkstyle.sf.net/config_misc.html#NewlineAtEndOfFile -->
 	<module name="NewlineAtEndOfFile" />
@@ -76,15 +81,7 @@
 			value="Use the library to load classes and resources. Breaks grid otherwise." />
 	</module>
 
-	<!-- Checks for Headers -->
-	<!-- See http://checkstyle.sf.net/config_header.html -->
-	<!-- <module name="Header"> -->
-	<!-- <property name="headerFile" value="${checkstyle.header.file}"/> -->
-	<!-- <property name="fileExtensions" value="java"/> -->
-	<!-- </module> -->
-
 	<module name="TreeWalker">
-
 		<module name="SuppressionCommentFilter">
 			<property name="offCommentFormat" value="CHECKSTYLE: ([\w\|]+) OFF" />
 			<property name="onCommentFormat" value="CHECKSTYLE: ([\w\|]+) ON" />

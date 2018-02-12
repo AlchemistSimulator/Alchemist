@@ -39,13 +39,19 @@ public abstract class AbstractCondition<T> implements Condition<T> {
         this.n = Objects.requireNonNull(node);
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * How to override: if you intend your condition to be potentially changed by
+     * any change in the context, return null.
+     */
     @Override
     public ListSet<? extends Molecule> getInfluencingMolecules() {
         return influencing;
     }
 
     @Override
-    public Node<T> getNode() {
+    public final Node<T> getNode() {
         return n;
     }
 
@@ -56,6 +62,11 @@ public abstract class AbstractCondition<T> implements Condition<T> {
         influencing.add(m);
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * How to override: create a new action of your concrete subtype.
+     */
     @Override
     public Condition<T> cloneCondition(final Node<T> n, final Reaction<T> r) {
         throw new UnsupportedOperationException(getClass().getSimpleName() + " has no support for cloning.");

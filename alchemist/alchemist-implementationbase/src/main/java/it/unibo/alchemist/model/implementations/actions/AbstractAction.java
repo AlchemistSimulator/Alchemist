@@ -68,6 +68,12 @@ public abstract class AbstractAction<T> implements Action<T> {
         return Optional.ofNullable(getNode().getConcentration(m));
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * How to override: if you intend your action to influence any reaction with
+     * compatible context, return null.
+     */
     @Override
     public ListSet<? extends Molecule> getModifiedMolecules() {
         return influenced;

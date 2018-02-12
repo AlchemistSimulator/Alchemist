@@ -26,10 +26,12 @@ import org.junit.Test;
  */
 public class TestContinuous2DObstacle {
 
-    // CHECKSTYLE:OFF
     private static final RectObstacle2D R1021 = new RectObstacle2D(1, 0, 1, 1);
     private static final RectObstacle2D R0527 = new RectObstacle2D(0, 5, 2, -2);
 
+    /**
+     * 
+     */
     @Test
     public void test() {
         final Continuous2DObstacles<Integer> env = new Continuous2DObstacles<>();
@@ -45,6 +47,7 @@ public class TestContinuous2DObstacle {
         assertEquals(env.getNodesNumber(), 1);
         env.addNode(new DummyNode(env), new Continuous2DEuclidean(1, 1));
         assertEquals(env.getNodesNumber(), 1);
+        // CHECKSTYLE: MagicNumber OFF
         env.addNode(new DummyNode(env), new Continuous2DEuclidean(1.5, 0.5));
         assertEquals(env.getNodesNumber(), 1);
         env.addNode(new DummyNode(env), new Continuous2DEuclidean(1, 5));
@@ -56,27 +59,23 @@ public class TestContinuous2DObstacle {
         assertEquals(env.getObstaclesInRange(0d, 0d, 1d).get(0), R1021);
         assertEquals(env.getObstaclesInRange(1d, 5d, 1d).size(), 1);
         assertEquals(env.getObstaclesInRange(1d, 5d, 1d).get(0), R0527);
+        // CHECKSTYLE: MagicNumber ON
         assertEquals(env.getObstaclesInRange(0d, 0d, 0.5d).size(), 0);
     }
 
     private static class DummyNode extends GenericNode<Integer> {
-
         private static final long serialVersionUID = -6826365559224388894L;
-
         protected DummyNode(final Environment<Integer> env) {
             super(env);
         }
-
         @Override
         protected Integer createT() {
             return 0;
         }
-
         @Override
         public Map<Molecule, Integer> getContents() {
             return null;
         }
-
     }
 
 }

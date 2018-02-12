@@ -12,7 +12,6 @@
 package it.unibo.alchemist.model.interfaces;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 

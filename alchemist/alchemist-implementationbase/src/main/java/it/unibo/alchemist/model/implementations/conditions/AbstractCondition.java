@@ -50,8 +50,14 @@ public abstract class AbstractCondition<T> implements Condition<T> {
         return influencing;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * Override if your {@link Condition} can return a more specific type of node.
+     * The typical way is to cast the call to super.getNode().
+     */
     @Override
-    public final Node<T> getNode() {
+    public Node<T> getNode() {
         return n;
     }
 

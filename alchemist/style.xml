@@ -85,6 +85,11 @@
 
 	<module name="TreeWalker">
 
+		<module name="SuppressionCommentFilter">
+			<property name="offCommentFormat" value="CHECKSTYLE: ([\w\|]+) OFF" />
+			<property name="onCommentFormat" value="CHECKSTYLE: ([\w\|]+) ON" />
+			<property name="checkFormat" value="$1" />
+		</module>
 		<!-- Checks for Javadoc comments. -->
 		<!-- See http://checkstyle.sf.net/config_javadoc.html -->
 		<module name="JavadocMethod">
@@ -128,7 +133,10 @@
 		<module name="EmptyForIteratorPad" />
 		<module name="GenericWhitespace" />
 		<module name="MethodParamPad" />
-		<module name="NoWhitespaceAfter" />
+		<module name="NoWhitespaceAfter">
+			<property name="tokens"
+				value="BNOT,DEC,DOT,INC,LNOT,UNARY_MINUS,UNARY_PLUS" />
+		</module>
 		<module name="NoWhitespaceBefore" />
 		<module name="OperatorWrap" />
 		<module name="ParenPad" />
@@ -156,7 +164,8 @@
 		<module name="IllegalInstantiation" />
 		<module name="InnerAssignment" />
 		<module name="MagicNumber">
-			<property name="ignoreNumbers" value="-0.5, -1, 0, 0.5, 1, 2, 3, 4, 8, 10, 16, 32, 64, 90, 100, 180, 360, 1000" />
+			<property name="ignoreNumbers"
+				value="-0.5, -1, 0, 0.5, 1, 2, 3, 4, 8, 10, 16, 32, 64, 90, 100, 180, 360, 1000" />
 		</module>
 		<module name="MissingSwitchDefault" />
 		<module name="SimplifyBooleanExpression" />
@@ -176,7 +185,5 @@
 		<module name="FinalParameters" />
 		<module name="TodoComment" />
 		<module name="UpperEll" />
-
 	</module>
-
 </module>

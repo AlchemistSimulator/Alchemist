@@ -5,7 +5,6 @@ package it.unibo.alchemist.model.interfaces.movestrategies;
 
 import java.io.Serializable;
 
-import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 
 /**

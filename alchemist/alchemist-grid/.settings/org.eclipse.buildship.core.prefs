@@ -1,4 +1,4 @@
-#Fri Oct 27 11:30:55 CEST 2017
+#Thu Jan 11 16:30:55 CET 2018
 GRADLE_FILTERS=1.0-projectRelativePath-matches-false-false-build,1.0-projectRelativePath-matches-false-false-.gradle
 connection.arguments=
 containers=org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6/
@@ -11,5 +11,5 @@ GRADLE_BUILD_COMMANDS=org.eclipse.jdt.core.javabuilder
 eclipse.preferences.version=1
 connection.java.home=null
 derived.resources=.gradle,build
-project.path=\:alchemist-time
 connection.gradle.distribution=GRADLE_DISTRIBUTION(WRAPPER)
+project.path=\:alchemist-grid

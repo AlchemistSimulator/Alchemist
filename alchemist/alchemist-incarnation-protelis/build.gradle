@@ -3,6 +3,7 @@ dependencies {
         project(':alchemist-interfaces'),
         project(':alchemist-maps'),
         "com.google.guava:guava:$guavaVersion",
+        "org.eclipse.xtext:org.eclipse.xtext.java:${xtextVersion}",
         "org.protelis:protelis:$protelisVersion"
     )
     testCompile(

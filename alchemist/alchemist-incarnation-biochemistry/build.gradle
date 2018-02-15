@@ -25,7 +25,12 @@ sourcesJar {
 
 generateGrammarSource {
     arguments += ["-visitor", "-package", "it.unibo.alchemist.biochemistrydsl"]
-    outputDirectory = new File('src/antlr/java')
+    def target = new File('src/antlr/java/')
+    if ((target.exists() && target.isDirectory()) || target.mkdirs()) {
+        outputDirectory = target
+    } else {
+        throw new IllegalStateException("$target is not an existing directory and could not be created as such.")
+    }
 }
 
 compileAntlrJava.dependsOn('generateGrammarSource')

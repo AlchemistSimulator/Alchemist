@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.kaikikm.threadresloader.ResourceLoader;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 import org.reflections.util.ClasspathHelper;
@@ -48,7 +49,7 @@ public class TestYAMLLoader {
      */
     @Test
     public void testAnyRealDistribution() {
-        final Environment<?> env = testNoVar("/synthetic/anyrealdistribution.yml");
+        final Environment<?> env = testNoVar("synthetic/anyrealdistribution.yml");
         env.forEach(n -> {
             n.forEach(r -> {
                 assertTrue(r.getTimeDistribution() instanceof AnyRealDistribution);
@@ -61,7 +62,7 @@ public class TestYAMLLoader {
      */
     @Test
     public void testCustomNodes() {
-        testNoVar("/synthetic/customnode.yml")
+        testNoVar("synthetic/customnode.yml")
         .forEach(n -> assertTrue(
                 "Node are not instances of " + TestNode.class.getName() + " as expected, but " + n.getClass().getName() + " instead",
                 n instanceof TestNode));
@@ -79,8 +80,6 @@ public class TestYAMLLoader {
                 .setUrls(ClasspathHelper.forPackage("isac"))
                 .setScanners(new ResourcesScanner()));
         reflections.getResources(Pattern.compile(ISAC_REGEX))
-            .stream()
-            .map(r -> "/" + r)
             .forEach(TestYAMLLoader::testNoVar);
     }
 
@@ -89,7 +88,7 @@ public class TestYAMLLoader {
      */
     @Test
     public void testLayers() {
-        final Environment<Object> env = testNoVar("/synthetic/testlayer.yml");
+        final Environment<Object> env = testNoVar("synthetic/testlayer.yml");
         final Set<Layer<Object>> layers = env.getLayers();
         assertFalse(layers.isEmpty());
         assertEquals(2, layers.size());
@@ -108,7 +107,7 @@ public class TestYAMLLoader {
      */
     @Test
     public void testLoadVariablesInLists() {
-        assertNotNull(testNoVar("/synthetic/testlist.yml"));
+        assertNotNull(testNoVar("synthetic/testlist.yml"));
     }
 
     /**
@@ -116,7 +115,7 @@ public class TestYAMLLoader {
      */
     @Test
     public void testMultipleMolecules() {
-        final Environment<?> env = testNoVar("/synthetic/multiplemolecule.yml");
+        final Environment<?> env = testNoVar("synthetic/multiplemolecule.yml");
         env.forEach(n -> {
             assertEquals(4, n.getChemicalSpecies());
         });
@@ -127,7 +126,7 @@ public class TestYAMLLoader {
      */
     @Test
     public void testSingleValuedGeometricVar() {
-        assertNotNull(testNoVar("/synthetic/singleValuedGeometricVar.yml"));
+        assertNotNull(testNoVar("synthetic/singleValuedGeometricVar.yml"));
     }
 
     /**
@@ -135,7 +134,7 @@ public class TestYAMLLoader {
      */
     @Test
     public void testVariableContentClash() {
-        assertNotNull(testNoVar("/synthetic/varcontentclash.yml"));
+        assertNotNull(testNoVar("synthetic/varcontentclash.yml"));
     }
 
     /**
@@ -143,7 +142,7 @@ public class TestYAMLLoader {
      */
     @Test
     public void testScalaVar() {
-        final Environment<Object> env = testNoVar("/synthetic/scalavar.yml");
+        final Environment<Object> env = testNoVar("synthetic/scalavar.yml");
         assertNotNull(env);
         assertEquals(env.makePosition(3, 10), env.getPosition(env.getNodeByID(0)));
     }
@@ -153,7 +152,7 @@ public class TestYAMLLoader {
      */
     @Test
     public void testDependencies() {
-        final InputStream is = TestYAMLLoader.class.getResourceAsStream("/isac/16-dependencies.yaml");
+        final InputStream is = ResourceLoader.getResourceAsStream("isac/16-dependencies.yaml");
         assertNotNull(is);
         final Loader loader = new YamlLoader(is);
         final List<String> dependencies = loader.getDependencies();
@@ -162,7 +161,7 @@ public class TestYAMLLoader {
     }
 
     private static <T> Environment<T> testLoading(final String resource, final Map<String, Double> vars) {
-        final InputStream res = TestYAMLLoader.class.getResourceAsStream(resource);
+        final InputStream res = ResourceLoader.getResourceAsStream(resource);
         assertNotNull("Missing test resource " + resource, res);
         final Environment<T> env = new YamlLoader(res).getWith(vars);
         final Simulation<T> sim = new Engine<>(env, 10000);

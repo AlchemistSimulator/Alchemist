@@ -147,7 +147,7 @@ public class TestYAMLLoader {
         assertNotNull(env);
         assertEquals(env.makePosition(3, 10), env.getPosition(env.getNodeByID(0)));
     }
-    
+
     /**
      * Test dependencies section.
      */

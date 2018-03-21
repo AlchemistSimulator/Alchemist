@@ -62,7 +62,7 @@ public class TestGrid {
         test(100, -10, -10);
     }
 
-    private void test(long expected, double x, double y) {
+    private void test(final long expected, final double x, final double y) {
         assertEquals(expected, new Grid(new Continuous2DEnvironment<>(), new MersenneTwister(), 0, 0, x, y, 1, 1, 0, 0).stream().count());
     }
 

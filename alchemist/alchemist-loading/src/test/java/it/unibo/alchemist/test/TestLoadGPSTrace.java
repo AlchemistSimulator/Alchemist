@@ -9,6 +9,7 @@ import java.util.Objects;
 
 import org.jooq.lambda.Unchecked;
 import org.junit.Test;
+import org.kaikikm.threadresloader.ResourceLoader;
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
@@ -62,12 +63,12 @@ public class TestLoadGPSTrace {
      */
     @Test
     public void testLoadGPSTrace() {
-        testLoading("/testgps.yml");
+        testLoading("testgps.yml");
     }
 
     @SuppressWarnings("serial")
     private static <T> void testLoading(final String resource) {
-        final InputStream res = TestLoadGPSTrace.class.getResourceAsStream(resource);
+        final InputStream res = ResourceLoader.getResourceAsStream(resource);
         assertNotNull("Missing test resource " + resource, res);
         final Environment<T> env = new YamlLoader(res).getDefault();
         final Simulation<T> sim = new Engine<>(env, new DoubleTime(TIME_TO_REACH));

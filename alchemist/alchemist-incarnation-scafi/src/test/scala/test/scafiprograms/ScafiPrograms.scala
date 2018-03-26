@@ -9,6 +9,7 @@ trait ScafiAlchemistSupport { self: AggregateProgram =>
 }
 
 class ScafiGradientProgram extends AggregateProgram {
+  override type MainResult = Double
   override def main(): Double = gradient(sense[Boolean]("source"))
 
   def gradient(source: Boolean): Double =
@@ -20,6 +21,7 @@ class ScafiGradientProgram extends AggregateProgram {
 }
 
 class ScafiEnvProgram extends AggregateProgram with ScafiAlchemistSupport {
+  override type MainResult = Any
   override def main(): Any = {
     env.put("number2", env.get[Int]("number")+100)
   }

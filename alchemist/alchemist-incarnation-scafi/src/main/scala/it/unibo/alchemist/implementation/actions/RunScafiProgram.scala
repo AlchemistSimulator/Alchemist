@@ -9,10 +9,10 @@ import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.scala.PimpMyAlchemist._
 import org.apache.commons.math3.util.FastMath
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist
-import ScafiIncarnationForAlchemist.AggregateProgram
 import ScafiIncarnationForAlchemist.ContextImpl
 import ScafiIncarnationForAlchemist.ID
 import ScafiIncarnationForAlchemist.EXPORT
+import ScafiIncarnationForAlchemist.CONTEXT
 import ScafiIncarnationForAlchemist.factory
 import it.unibo.alchemist.implementation.nodes.SimpleNodeManager
 import org.kaikikm.threadresloader.ResourceLoader
@@ -35,7 +35,7 @@ sealed class RunScafiProgram(
   }
 
   import RunScafiProgram.NBRData
-  private val program = ResourceLoader.classForName(programName).newInstance().asInstanceOf[AggregateProgram]
+  private val program = ResourceLoader.classForName(programName).newInstance().asInstanceOf[CONTEXT => EXPORT]
   private[this] var nbrData: Map[ID, NBRData] = Map()
   addModifiedMolecule(programName)
 
@@ -73,7 +73,7 @@ sealed class RunScafiProgram(
     val nbrRange = nbrData.mapValues { _.position }
     val exports = nbrData.mapValues { _.export }
     val ctx = new ContextImpl(node.getId, exports, localSensors, nbrSensors)
-    val computed = program.round(ctx)
+    val computed = program(ctx)
     node.setConcentration(programName, computed.root[Any]())
     val toSend = NBRData(computed, position, currentTime)
     nbrData = nbrData + (node.getId -> toSend)

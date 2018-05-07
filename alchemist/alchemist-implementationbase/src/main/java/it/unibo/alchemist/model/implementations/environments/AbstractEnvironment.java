@@ -445,7 +445,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
          * The following optimization allows to define as local the context of
          * reactions which are actually including a move, which should be
          * normally considered global. This because for each node which is
-         * detached, all the dependencies are updated, ensuring the soundness.
+         * detached, all the dependencies are updated, ensuring soundness.
          */
         if (Objects.requireNonNull(rule).isLocallyConsistent()) {
             final Neighborhood<T> newNeighborhood = rule.computeNeighborhood(Objects.requireNonNull(node), this);

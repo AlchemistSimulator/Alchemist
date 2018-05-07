@@ -8,10 +8,11 @@
  */
 package it.unibo.alchemist.model.implementations.linkingrules;
 
-import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
+
+import static it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods.make;
 
 /**
  * LinkingRule which connects nodes whose euclidean distance is shorter than a
@@ -35,7 +36,7 @@ public class EuclideanDistance<T> extends AbstractLocallyConsistentLinkingRule<T
 
     @Override
     public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T> env) {
-        return Neighborhoods.make(env, center, env.getNodesWithinRange(center, range));
+        return make(env, center, env.getNodesWithinRange(center, range));
     }
 
     /**

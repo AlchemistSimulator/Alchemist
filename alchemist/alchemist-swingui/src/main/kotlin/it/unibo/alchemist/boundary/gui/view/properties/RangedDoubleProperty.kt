@@ -54,7 +54,7 @@ open class RangedDoubleProperty @JvmOverloads constructor(private var name: Stri
     }
 
     override fun hashCode() =
-            lowerBound.hashCode() xor upperBound.hashCode() xor value.hashCode() xor (name.hashCode() ?: 0)
+            lowerBound.hashCode() xor upperBound.hashCode() xor value.hashCode() xor (name.hashCode())
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

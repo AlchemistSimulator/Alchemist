@@ -4,7 +4,7 @@ import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import it.unibo.alchemist.boundary.projectview.model.Project;
-import it.unibo.alchemist.boundary.projectview.utils.ProjectIOUtils;
+import it.unibo.alchemist.boundary.util.ProjectIOUtils;
 import java.awt.Desktop;
 import java.awt.Desktop.Action;
 import java.awt.Dimension;

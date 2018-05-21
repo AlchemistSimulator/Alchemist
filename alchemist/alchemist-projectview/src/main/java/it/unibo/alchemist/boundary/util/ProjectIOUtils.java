@@ -1,4 +1,4 @@
-package it.unibo.alchemist.boundary.projectview.utils;
+package it.unibo.alchemist.boundary.util;
 
 import com.google.common.io.Files;
 import com.google.gson.Gson;

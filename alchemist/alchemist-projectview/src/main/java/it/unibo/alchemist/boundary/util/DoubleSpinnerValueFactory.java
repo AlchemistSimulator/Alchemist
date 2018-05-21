@@ -1,4 +1,4 @@
-package it.unibo.alchemist.boundary.projectview.utils;
+package it.unibo.alchemist.boundary.util;
 
 import java.util.function.DoubleBinaryOperator;
 

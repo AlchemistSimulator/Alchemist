@@ -158,7 +158,7 @@ public class ButtonsBarController implements Initializable {
         addMonitors();
 
         final JFXDrawer effectGroupsDrawer = new JFXDrawer();
-        effectsGroupBarController = new EffectsGroupBarController(getDisplayMonitor().get(), this.drawerStack);
+        effectsGroupBarController = new EffectsGroupBarController(getDisplayMonitor().orElse(null), this.drawerStack);
         effectGroupsDrawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
         try {
             effectGroupsDrawer.setSidePane(FXResourceLoader.getLayout(BorderPane.class, effectsGroupBarController,

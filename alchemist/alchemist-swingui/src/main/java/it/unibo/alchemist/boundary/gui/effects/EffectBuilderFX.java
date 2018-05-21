@@ -36,7 +36,6 @@ public class EffectBuilderFX {
      */
     public EffectBuilderFX() {
         effects = new ArrayList<>(EFFECTS);
-
         dialog = new ChoiceDialog<>(effects.get(0), effects);
         ((Stage) dialog.getDialogPane()
                 .getScene()

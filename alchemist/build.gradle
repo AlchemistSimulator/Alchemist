@@ -5,9 +5,11 @@ buildscript {
         maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
+        classpath "gradle.plugin.org.jmailen.gradle:kotlinter-gradle:$ktlintVersion"
         classpath "org.danilopianini:build-commons:${buildCommonsVersion}"
         classpath "org.danilopianini:javadoc.io-linker:${javadocIOLinkerVersion}"
 //        classpath "org.xtext:xtext-gradle-plugin:${xtextPluginVersion}"
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:${dokkaVersion}"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
     }
 }
@@ -17,9 +19,29 @@ allprojects {
     scalaVersion = "${scalaMajorVersion}.${scalaMinorVersion}"
 
     apply plugin: 'org.danilopianini.build-commons'
-//    apply plugin: "org.xtext.xtend"
     apply plugin: 'idea'
     apply plugin: 'kotlin'
+    apply plugin: 'org.jetbrains.dokka'
+    apply plugin: "org.jmailen.kotlinter"
+
+    compileKotlin {
+        kotlinOptions {
+            jvmTarget = 1.8
+        }
+    }
+
+    kotlinter {
+        ignoreFailures = false
+        indentSize = 4
+        continuationIndentSize = 4
+        reporters = ['checkstyle', 'plain', 'html']
+    }
+
+    /*
+     * This forces the main classes to be ready before going on, preventing potential
+     * issues with interleaving project tasks
+     */
+    processResources.dependsOn('copyMainKotlinClasses')
 
     configurations {
         all*.exclude group: 'org.eclipse.xtext', module: 'org.eclipse.xtext.dependencies'
@@ -171,6 +193,10 @@ javadoc {
     source subprojects.javadoc.source
 }
 
+dokka {
+    sourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
+}
+
 allprojects {
     def jdocTasks = ['javadoc', 'uploadArchives', 'projectReport', 'buildDashboard', 'javadocJar']
     def selectedTasks = gradle.startParameter.taskNames ?: defaultTasks
@@ -201,4 +227,4 @@ task fatJar(type: Jar, dependsOn: subprojects.compileJava) {
     with jar
 }
 
-defaultTasks 'clean', 'build', 'check', 'javadoc', 'assemble', 'install', 'projectReport', 'buildDashboard', 'fatJar'
+defaultTasks 'clean', 'build', 'check', 'javadoc', 'dokka', 'assemble', 'install', 'projectReport', 'buildDashboard', 'fatJar'

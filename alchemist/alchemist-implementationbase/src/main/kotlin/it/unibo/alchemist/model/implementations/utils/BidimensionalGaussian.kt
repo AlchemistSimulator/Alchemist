@@ -1,0 +1,24 @@
+package it.unibo.alchemist.model.implementations.utils
+
+import org.apache.commons.math3.analysis.BivariateFunction
+import org.apache.commons.math3.util.FastMath.exp
+import java.io.Serializable
+
+open class BidimensionalGaussian(
+    private val amplitude: Double,
+    private val x0: Double,
+    private val y0: Double,
+    private val sigmaX: Double,
+    private val sigmaY: Double
+) : BivariateFunction, Serializable {
+
+    override fun value(x: Double, y: Double): Double {
+        val dx = x - x0
+        val dy = y - y0
+        val sigmaXsq = 2 * sigmaX * sigmaX
+        val sigmaYsq = 2 * sigmaY * sigmaY
+        return amplitude * exp(-(dx * dx / sigmaXsq + dy * dy / sigmaYsq))
+    }
+
+    fun integral() = 2 * Math.PI * amplitude * sigmaX * sigmaY
+}

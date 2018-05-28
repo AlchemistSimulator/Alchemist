@@ -15,10 +15,12 @@ import java.lang.reflect.Type
 private const val LOWER_BOUND = "lower bound"
 private const val UPPER_BOUND = "upper bound"
 
-open class RangedDoubleProperty @JvmOverloads constructor(private var name: String,
-                           initialValue: Double = 0.0,
-                           lowerBound: Double = -Double.MAX_VALUE,
-                           upperBound: Double = Double.MAX_VALUE) : DoublePropertyBase(initialValue), Serializable {
+open class RangedDoubleProperty @JvmOverloads constructor(
+    private var name: String,
+    initialValue: Double = 0.0,
+    lowerBound: Double = -Double.MAX_VALUE,
+    upperBound: Double = Double.MAX_VALUE
+) : DoublePropertyBase(initialValue), Serializable {
 
     var lowerBound: Double = lowerBound
         private set
@@ -67,7 +69,7 @@ open class RangedDoubleProperty @JvmOverloads constructor(private var name: Stri
     }
 
     companion object {
-        @JvmStatic fun getTypeAdapter() : PropertyTypeAdapter<RangedDoubleProperty> {
+        @JvmStatic fun getTypeAdapter(): PropertyTypeAdapter<RangedDoubleProperty> {
             return object : PropertyTypeAdapter<RangedDoubleProperty> {
 
                 override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): RangedDoubleProperty {

@@ -22,7 +22,7 @@ class FXUtil {
                 .unfold { when (it.cause) {
                     null -> emptySequence()
                     else -> sequenceOf(it)
-                }}
+                } }
                 .map { it.message }
                 .filter { it != null }
                 .joinToString ("\n")

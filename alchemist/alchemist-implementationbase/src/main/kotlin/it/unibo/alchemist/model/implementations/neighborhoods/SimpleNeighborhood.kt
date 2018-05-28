@@ -29,9 +29,9 @@ class SimpleNeighborhood<T> private constructor(
     override fun contains(n: Node<T>?) = neighbors.contains(n)
 
     override fun getBetweenRange(min: Double, max: Double): ListSet<Node<T>> =
-            environment.getPosition(center).let { centerPos -> ListBackedSet(neighbors.filter {
-                centerPos.getDistanceTo(environment.getPosition(it)) in min..max })
-            }
+        environment.getPosition(center).let { centerPos -> ListBackedSet(neighbors.filter {
+            centerPos.getDistanceTo(environment.getPosition(it)) in min..max })
+        }
 
     override fun getCenter() = center
 

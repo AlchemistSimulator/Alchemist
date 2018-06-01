@@ -5,6 +5,13 @@ import it.unibo.alchemist.model.interfaces.Node
 
 class Neighborhoods {
     companion object {
+        /**
+         * Creates a [SimpleNeighborhood].
+         *
+         * @param env The environment of the neighborhood.
+         * @param center The center of the neighborhood.
+         * @param neighbors The neighbors in the neighborhood, defaults to empty.
+         */
         @JvmStatic @JvmOverloads fun <T> make(
             env: Environment<T>,
             center: Node<T>,

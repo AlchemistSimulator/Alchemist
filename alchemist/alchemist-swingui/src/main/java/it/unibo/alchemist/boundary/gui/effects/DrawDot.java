@@ -223,7 +223,7 @@ public class DrawDot extends AbstractEffect {
 
     @Override
     public boolean equals(final Object obj) {
-        if (this.getClass() != obj.getClass()) {
+        if (obj == null || this.getClass() != obj.getClass()) {
             return false;
         }
         final boolean check = checkBasicProperties(this, obj);

@@ -9,6 +9,9 @@ import org.danilopianini.util.ListBackedSet
 import org.danilopianini.util.ListSet
 import org.danilopianini.util.ListSets
 
+/**
+ * A basic implementation of the [Neighborhood] interface.
+ */
 class SimpleNeighborhood<T> private constructor(
     val environment: Environment<T>,
     private val center: Node<T>,

@@ -8,7 +8,6 @@ buildscript {
         classpath "gradle.plugin.org.jmailen.gradle:kotlinter-gradle:$ktlintVersion"
         classpath "org.danilopianini:build-commons:${buildCommonsVersion}"
         classpath "org.danilopianini:javadoc.io-linker:${javadocIOLinkerVersion}"
-//        classpath "org.xtext:xtext-gradle-plugin:${xtextPluginVersion}"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:${dokkaVersion}"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
     }

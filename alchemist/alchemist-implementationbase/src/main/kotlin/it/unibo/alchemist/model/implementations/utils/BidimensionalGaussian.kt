@@ -4,7 +4,10 @@ import org.apache.commons.math3.analysis.BivariateFunction
 import org.apache.commons.math3.util.FastMath.exp
 import java.io.Serializable
 
-open class BidimensionalGaussian(
+/**
+ * A 2D gaussian function.
+ */
+class BidimensionalGaussian(
     private val amplitude: Double,
     private val x0: Double,
     private val y0: Double,
@@ -20,5 +23,10 @@ open class BidimensionalGaussian(
         return amplitude * exp(-(dx * dx / sigmaXsq + dy * dy / sigmaYsq))
     }
 
+    /**
+     * The integral of the function.
+     *
+     * @return The computed value of the integral.
+     */
     fun integral() = 2 * Math.PI * amplitude * sigmaX * sigmaY
 }

@@ -11,6 +11,8 @@ class Neighborhoods {
          * @param env The environment of the neighborhood.
          * @param center The center of the neighborhood.
          * @param neighbors The neighbors in the neighborhood, defaults to empty.
+         *
+         * @return The newly created [SimpleNeighborhood].
          */
         @JvmStatic @JvmOverloads fun <T> make(
             env: Environment<T>,

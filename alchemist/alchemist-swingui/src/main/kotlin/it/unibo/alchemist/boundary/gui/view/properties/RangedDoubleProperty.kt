@@ -15,7 +15,17 @@ import java.lang.reflect.Type
 private const val LOWER_BOUND = "lower bound"
 private const val UPPER_BOUND = "upper bound"
 
-open class RangedDoubleProperty @JvmOverloads constructor(
+/**
+ * This [DoubleProperty][javafx.beans.property.DoubleProperty] is designed to have a range for the wrapped value
+ * and to be serializable.
+ *
+ * @constructor Based on constructor of [DoubleProperty][DoublePropertyBase], adds the specified bounds.
+ * @param name the name of this property
+ * @param initialValue the initial value of the wrapped value, defaults to 0.0
+ * @param lowerBound the lower bound for the wrapped value to be considered acceptable, defaults to -[Double.MAX_VALUE]
+ * @param upperBound the upper bound for the wrapped value to be considered acceptable, defaults to [Double.MAX_VALUE]
+ */
+class RangedDoubleProperty @JvmOverloads constructor(
     private var name: String,
     initialValue: Double = 0.0,
     lowerBound: Double = -Double.MAX_VALUE,
@@ -37,17 +47,61 @@ open class RangedDoubleProperty @JvmOverloads constructor(
         set(v.toDouble())
     }
 
+    /**
+     * Getter method for unused field bean.
+     *
+     * @return null
+     */
     override fun getBean() = null
 
+    /**
+     * Getter method for name.
+     *
+     * @return [name]
+     */
     override fun getName() = name
 
-    private fun writeObject(out: ObjectOutputStream) {
-        out.writeUTF(name)
-        out.writeDouble(lowerBound)
-        out.writeDouble(upperBound)
-        out.writeDouble(value)
+    /**
+     * Method needed for well working serialization.
+     *
+     * From [Serializable]:
+     * > The [writeObject] method is responsible for writing the state of the
+     * object for its particular class so that the corresponding readObject method
+     * can restore it. The default mechanism for saving the Object's fields can be
+     * invoked by calling [java.io.ObjectOutputStream.defaultWriteObject]. The method does
+     * not need to concern itself with the state belonging to its superclasses or
+     * subclasses. State is saved by writing the 3 individual fields to the
+     * [ObjectOutputStream] using the [writeObject] method or by using the methods
+     * for primitive data types supported by [java.io.DataOutput].
+     *
+     * @param output The output stream
+     */
+    private fun writeObject(output: ObjectOutputStream) {
+        output.writeUTF(name)
+        output.writeDouble(lowerBound)
+        output.writeDouble(upperBound)
+        output.writeDouble(value)
     }
 
+    /**
+     * Method needed for well working serialization.
+     *
+     * From [Serializable]:
+     * > The [readObject] method is
+     * responsible for reading from the stream and restoring the classes fields.
+     * It may call [java.io.ObjectInputStream.defaultReadObject] to invoke the default mechanism
+     * for restoring the object's non-static and non-transient fields. The
+     * [java.io.ObjectInputStream.defaultReadObject] method uses information in the stream to assign
+     * the fields of the object saved in the stream with the correspondingly
+     * named fields in the current object. This handles the case when the class
+     * has evolved to add new fields. The method does not need to concern itself
+     * with the state belonging to its superclasses or subclasses. State is
+     * saved by writing the individual fields to the [ObjectOutputStream]
+     * using the [writeObject] method or by using the methods for
+     * primitive data types supported by [java.io.DataOutput].
+     *
+     * @param input The input stream
+     */
     private fun readObject(input: ObjectInputStream) {
         name = input.readUTF()
         lowerBound = input.readDouble()
@@ -69,6 +123,14 @@ open class RangedDoubleProperty @JvmOverloads constructor(
     }
 
     companion object {
+        /**
+         * Returns a [JsonSerializer][com.google.gson.JsonSerializer] and
+         * [JsonDeserializer][com.google.gson.JsonDeserializer] combo class
+         * to be used as a [TypeAdapter][com.google.gson.TypeAdapter] for this
+         * [RangedDoubleProperty].
+         *
+         * @return the [TypeAdapter][com.google.gson.TypeAdapter] for this class
+         */
         @JvmStatic fun getTypeAdapter(): PropertyTypeAdapter<RangedDoubleProperty> {
             return object : PropertyTypeAdapter<RangedDoubleProperty> {
 

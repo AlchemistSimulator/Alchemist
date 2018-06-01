@@ -6,8 +6,14 @@ import it.unibo.alchemist.model.implementations.nodes.IntNode
 import org.junit.Assert
 import org.junit.Test
 
+/**
+ * Tests pertaining to the [it.unibo.alchemist.model.implementations.neighborhoods] package.
+ */
 class TestNeighborhood {
-
+    /**
+     * Tests whether the clone function of the
+     * [it.unibo.alchemist.model.implementations.neighborhoods.SimpleNeighborhood] class works as expected.
+     */
     @Test
     fun testClone() {
         val env = Continuous2DEnvironment<Int>()

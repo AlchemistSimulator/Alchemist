@@ -64,7 +64,8 @@ public class TestYAMLLoader {
     public void testCustomNodes() {
         testNoVar("synthetic/customnode.yml")
         .forEach(n -> assertTrue(
-                "Node are not instances of " + TestNode.class.getName() + " as expected, but " + n.getClass().getName() + " instead",
+                "Node are not instances of " + TestNode.class.getName()
+                + " as expected, but " + n.getClass().getName() + " instead",
                 n instanceof TestNode));
     }
 

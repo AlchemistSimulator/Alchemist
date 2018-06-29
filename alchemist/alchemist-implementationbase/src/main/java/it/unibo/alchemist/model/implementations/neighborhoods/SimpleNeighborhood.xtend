@@ -3,31 +3,22 @@ package it.unibo.alchemist.model.implementations.neighborhoods
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Neighborhood
 import it.unibo.alchemist.model.interfaces.Node
+import java.util.Iterator
+import org.danilopianini.util.ImmutableListSet
 import org.danilopianini.util.ListBackedSet
-import org.danilopianini.util.ListSet
 import org.eclipse.xtend.lib.annotations.Accessors
-import org.danilopianini.util.ListSets
-import java.util.ArrayList
 
 @Accessors(PROTECTED_GETTER, PROTECTED_SETTER)
 class SimpleNeighborhood<T> implements Neighborhood<T> {
 
 	val Environment<T> env
-	val ListSet<Node<T>> neighbors
+	val ImmutableListSet<? extends Node<T>> neighbors
 	val Node<T> center
 
 	protected new(Environment<T> env, Node<T> center, Iterable<? extends Node<T>> neighbors) {
 		this.env = env
 		this.center = center
-		this.neighbors = new ListBackedSet(new ArrayList(neighbors.toList))
-	}
-
-	override addNeighbor(Node<T> neigh) {
-		neighbors.add(neigh)
-	}
-
-	override clone() {
-		new SimpleNeighborhood(env, center, neighbors)
+		this.neighbors = new ImmutableListSet.Builder().addAll(neighbors).build
 	}
 
 	override contains(Node<T> n) { neighbors.contains(n) }
@@ -50,18 +41,69 @@ class SimpleNeighborhood<T> implements Neighborhood<T> {
 
 	override getNeighborByNumber(int num) { neighbors.get(num) }
 
-	override getNeighbors() { ListSets.unmodifiableListSet(neighbors) }
+	override getNeighbors() { neighbors }
 
 	override isEmpty() { neighbors.isEmpty }
 
-	override removeNeighbor(Node<T> neighbor) { neighbors.remove(neighbor) }
-
 	override size() { neighbors.size }
 
-	override iterator() { neighbors.iterator }
+	override iterator() { neighbors.iterator as Iterator<Node<T>> }
 	
 	override toString() {
 		'''«center» links: «neighbors»'''
+	}
+	
+	override add(Node<T> node) {
+		new SimpleNeighborhood(env, center, [new Iterator<Node<T>> {
+			val previousNodes = neighbors.iterator
+			var nodeReady = true
+			override hasNext() { nodeReady }
+			override next() {
+				if (previousNodes.hasNext) {
+					previousNodes.next
+				} else {
+					if (nodeReady){
+						nodeReady = false
+						node
+					} else {
+						throw new IllegalStateException("No other elements.")
+					}
+				}
+			}
+		}])
+	}
+	
+	override remove(Node<T> node) {
+		if (contains(node)) {
+			new SimpleNeighborhood(env, center, [new Iterator<Node<T>> {
+				val base = neighbors.iterator
+				var Node<T> lookahead = updateLookAhead
+				def Node<T> updateLookAhead() {
+					if (base.hasNext){
+						val maybeNext = base.next
+						if (maybeNext == node) {
+							updateLookAhead
+						} else {
+							maybeNext
+						}
+					} else {
+						null
+					}
+				}
+				override hasNext() { lookahead !== null }
+				override next() {
+					if (hasNext) {
+						val result = lookahead
+						lookahead = updateLookAhead
+						result
+					} else {
+						throw new IllegalStateException("No other elements.")
+					}
+				}
+			}])
+		} else {
+			throw new IllegalArgumentException('''«node» not in «this»''')
+		}
 	}
 
 

@@ -8,6 +8,10 @@
  */
 package it.unibo.alchemist.model.implementations.linkingrules;
 
+import java.util.stream.Collectors;
+
+import org.danilopianini.util.ListSet;
+
 import gnu.trove.map.TIntDoubleMap;
 import gnu.trove.map.hash.TIntDoubleHashMap;
 import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods;
@@ -156,17 +160,10 @@ public class AdaptiveRange<T> extends EuclideanDistance<T> {
             ranges.put(center.getId(), getRange());
         }
         final double curRange = ranges.get(center.getId());
-        final Neighborhood<T> neigh = Neighborhoods.make(env, center, env.getNodesWithinRange(center, curRange));
-        for (int i = 0; i < neigh.size();) {
-            final Node<T> neighbor = neigh.getNeighborByNumber(i);
-            final double neighrange = ranges.get(neighbor.getId());
-            if (conditionForRemoval(env, center, neighbor, curRange, neighrange)) {
-                neigh.removeNeighbor(neighbor);
-                i = 0;
-            } else {
-                i++;
-            }
-        }
+        final ListSet<Node<T>> potentialNeighs = env.getNodesWithinRange(center, curRange);
+        final Neighborhood<T> neigh = Neighborhoods.make(env, center, potentialNeighs.stream()
+                .filter(neighbor -> !conditionForRemoval(env, center, neighbor, curRange, ranges.get(neighbor.getId())))
+                .collect(Collectors.toList()));
         if (neigh.size() > n + t) {
             ranges.put(center.getId(), Math.max(curRange - defaultAdjustment, minRange));
         } else if (neigh.size() < Math.max(1, n - t)) {

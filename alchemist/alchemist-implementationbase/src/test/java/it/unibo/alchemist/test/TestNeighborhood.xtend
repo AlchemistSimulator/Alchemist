@@ -14,10 +14,9 @@ class TestNeighborhood {
 		val n1 = new IntNode(env)
 		val n2 = new IntNode(env)
 		val neigh1 = Neighborhoods.make(env, n1, #[n2])
-		val neigh2 = neigh1.clone
-		neigh1.removeNeighbor(n2)
-		Assert.assertEquals(1, neigh2.size)
-		Assert.assertTrue(neigh2.neighbors.contains(n2))
+		val neigh2 = neigh1.remove(n2)
+		Assert.assertEquals(0, neigh2.size)
+		Assert.assertTrue(neigh1.neighbors.contains(n2))
 	}
 	
 }

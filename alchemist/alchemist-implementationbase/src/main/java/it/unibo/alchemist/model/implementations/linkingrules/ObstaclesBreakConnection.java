@@ -8,6 +8,10 @@
  */
 package it.unibo.alchemist.model.implementations.linkingrules;
 
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
@@ -20,7 +24,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  * 
  * @param <T>
  */
-public class ObstaclesBreakConnection<T> extends EuclideanDistance<T> {
+public final class ObstaclesBreakConnection<T> extends EuclideanDistance<T> {
 
     private static final long serialVersionUID = -3279202906910960340L;
 
@@ -34,19 +38,14 @@ public class ObstaclesBreakConnection<T> extends EuclideanDistance<T> {
 
     @Override
     public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T> env) {
-        final Neighborhood<T> normal = super.computeNeighborhood(center, env);
+        Neighborhood<T> normal = super.computeNeighborhood(center, env);
         if (!normal.isEmpty() && env instanceof Environment2DWithObstacles) {
             final Position cp = env.getPosition(center);
             @SuppressWarnings("unchecked")
             final Environment2DWithObstacles<?, T> environment = (Environment2DWithObstacles<?, T>) env;
-            for (int i = 0; i < normal.size(); i++) {
-                final Node<T> node = normal.getNeighborByNumber(i);
-                final Position np = environment.getPosition(node);
-                if (environment.intersectsObstacle(cp, np)) {
-                    normal.removeNeighbor(node);
-                    i--;
-                }
-            }
+            normal = Neighborhoods.make(env, center, StreamSupport.stream(normal.spliterator(), false)
+                    .filter(node -> !environment.intersectsObstacle(cp, environment.getPosition(node)))
+                    .collect(Collectors.toList()));
         }
         return normal;
     }

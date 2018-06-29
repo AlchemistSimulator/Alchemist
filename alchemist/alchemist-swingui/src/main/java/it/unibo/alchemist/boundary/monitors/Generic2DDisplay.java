@@ -617,11 +617,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
             neighbors.clear();
             env.getNodes().parallelStream().forEach(node -> {
                 positions.put(node, env.getPosition(node));
-                try {
-                    neighbors.put(node, env.getNeighborhood(node).clone());
-                } catch (Exception e) {
-                    L.error("Unable to clone neighborhood for " + node, e);
-                }
+                neighbors.put(node, env.getNeighborhood(node));
             });
             releaseData();
             repaint();
@@ -631,7 +627,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
     }
 
     @Override
-    public void zoomTo(final Position center, final double zoomLevel) {
+    public final void zoomTo(final Position center, final double zoomLevel) {
         assert center.getDimensions() == 2;
         wormhole.zoomOnPoint(wormhole.getViewPoint(center), zoomLevel);
     }

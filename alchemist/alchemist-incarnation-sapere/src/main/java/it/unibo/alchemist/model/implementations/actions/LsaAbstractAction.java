@@ -565,7 +565,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
      * @param list
      *            the list of nodes to use
      */
-    protected void setSyntheticNeigh(final Collection<Node<List<ILsaMolecule>>> list) {
+    protected void setSyntheticNeigh(final Collection<? extends Node<List<ILsaMolecule>>> list) {
         final Set<ITreeNode<?>> l = Sets.newHashSetWithExpectedSize(list.size());
         for (final Node<List<ILsaMolecule>> n : list) {
             l.add(new NumTreeNode(n.getId()));

@@ -17,16 +17,19 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.Set;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.danilopianini.util.ArrayListSet;
+import org.danilopianini.util.ImmutableListSet;
 import org.danilopianini.util.LinkedListSet;
 import org.danilopianini.util.ListSet;
 import org.danilopianini.util.ListSets;
@@ -35,6 +38,7 @@ import org.danilopianini.util.SpatialIndex;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Sets;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.TIntSet;
@@ -350,7 +354,8 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
          */
         final Neighborhood<T> neigh = neighCache.remove(node.getId());
         for (final Node<T> n : neigh) {
-            neighCache.get(n.getId()).removeNeighbor(node);
+            final Neighborhood<T> target = neighCache.remove(n.getId());
+            neighCache.put(n.getId(), target.remove(node));
         }
         /*
          * Update all the reactions which may have been affected by the node
@@ -450,29 +455,30 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
         if (Objects.requireNonNull(rule).isLocallyConsistent()) {
             final Neighborhood<T> newNeighborhood = rule.computeNeighborhood(Objects.requireNonNull(node), this);
             final Neighborhood<T> oldNeighborhood = neighCache.put(node.getId(), newNeighborhood);
+            /*
+             * Remove the node from all lost neighbors' neighborhoods.
+             */
             if (oldNeighborhood != null) {
-                final Iterator<Node<T>> iter = oldNeighborhood.iterator();
-                while (iter.hasNext()) {
-                    final Node<T> neighbor = iter.next();
-                    if (!newNeighborhood.contains(neighbor)) {
-                        /*
-                         * Neighbor lost
-                         */
-                        iter.remove();
-                        final Neighborhood<T> neighborsNeighborhood = neighCache.get(neighbor.getId());
-                        neighborsNeighborhood.removeNeighbor(node);
-                        ifEngineAvailable(s -> s.neighborRemoved(node, neighbor));
-                    }
-                }
+                StreamSupport.stream(oldNeighborhood.spliterator(), false)
+                .filter(formerNeighbor -> !newNeighborhood.contains(formerNeighbor))
+                .map(this::getNeighborhood)
+                .filter(neigh -> neigh.contains(node))
+                .forEachOrdered(neighborhoodToChange -> {
+                    final Node<T> formerNeighbor = neighborhoodToChange.getCenter();
+                    neighCache.put(formerNeighbor.getId(), neighborhoodToChange.remove(node));
+                    ifEngineAvailable(s -> s.neighborRemoved(node, formerNeighbor));
+                });
             }
-            for (final Node<T> n : newNeighborhood) {
-                if (oldNeighborhood == null || !oldNeighborhood.contains(n)) {
-                    /*
-                     * If it's a new neighbor
-                     */
-                    neighCache.get(n.getId()).addNeighbor(node);
-                    ifEngineAvailable(s -> s.neighborAdded(node, n));
-                }
+            /*
+             * Add the node to all gained neighbors' neighborhoods
+             */
+            for (final Node<T> newNeighbor: Sets.difference(newNeighborhood.getNeighbors(),
+                    Optional.ofNullable(oldNeighborhood)
+                    .map(Neighborhood::getNeighbors)
+                    .map(it -> (Set<? extends Node<T>>) it)
+                    .orElseGet(() -> Collections.emptySet()))) {
+                neighCache.put(newNeighbor.getId(), neighCache.get(newNeighbor.getId()).add(node));
+                ifEngineAvailable(s -> s.neighborAdded(node, newNeighbor));
             }
         } else {
             final Queue<Operation> operations = recursiveOperation(node);

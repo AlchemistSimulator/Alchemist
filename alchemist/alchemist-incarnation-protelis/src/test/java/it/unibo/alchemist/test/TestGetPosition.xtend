@@ -48,6 +48,7 @@ class TestGetPosition {
         })
         sim.play
         sim.run
+
         Assert.assertEquals(Optional.empty, sim.error)
     }
 

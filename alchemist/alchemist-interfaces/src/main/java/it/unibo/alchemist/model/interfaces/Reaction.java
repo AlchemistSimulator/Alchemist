@@ -161,8 +161,6 @@ public interface Reaction<T> extends Comparable<Reaction<T>>, Serializable {
      *            already-scheduled reaction
      * @param env
      *            the current environment
-     * @param <P>
-     *            Position type 
      */
     void update(Time curTime, boolean executed, Environment<T, ?> env);
 

@@ -10,7 +10,6 @@ package it.unibo.alchemist.boundary.interfaces;
 
 import java.io.Serializable;
 
-import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
@@ -19,6 +18,9 @@ import it.unibo.alchemist.model.interfaces.Time;
 /**
  * 
  * An interface for the visualization of the simulation.
+ *
+ * @param <T> Concentration Type
+ * @param <P> {@link Position} Type
  */
 public interface OutputMonitor<T, P extends Position<? extends P>> extends Serializable {
 

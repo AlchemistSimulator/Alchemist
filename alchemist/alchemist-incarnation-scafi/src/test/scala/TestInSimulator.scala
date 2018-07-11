@@ -11,9 +11,11 @@ import org.slf4j.{Logger, LoggerFactory}
 import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.collection.JavaConverters.mapAsScalaMapConverter
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
+import it.unibo.alchemist.model.interfaces.Position
 
 @SuppressFBWarnings(value = Array("SE_BAD_FIELD"), justification="We are not going to Serialize test classes")
-class TestInSimulator extends FunSuite with Matchers {
+class TestInSimulator[P <: Position[P]] extends FunSuite with Matchers {
+  
   test("Basic test"){
     testNoVar("/plain_vanilla.yml")
   }
@@ -41,18 +43,18 @@ class TestInSimulator extends FunSuite with Matchers {
     })
   }
 
-  private def testNoVar[T](resource: String, maxSteps: Long = 1000): Environment[T] = {
+  private def testNoVar[T](resource: String, maxSteps: Long = 1000): Environment[T, P] = {
     testLoading(resource, Map(), maxSteps)
   }
 
-  private def testLoading[T](resource: String, vars: Map[String, java.lang.Double], maxSteps: Long = 1000): Environment[T] = {
+  private def testLoading[T](resource: String, vars: Map[String, java.lang.Double], maxSteps: Long = 1000): Environment[T, P] = {
     import scala.collection.JavaConverters._
     import ch.qos.logback.classic.{Logger,Level}
     LoggerFactory.getLogger("ROOT").asInstanceOf[Logger].setLevel(Level.ERROR)
-    val res: InputStream = classOf[TestInSimulator].getResourceAsStream(resource)
+    val res: InputStream = classOf[TestInSimulator[P]].getResourceAsStream(resource)
     res shouldNot be(null)
-    val env: Environment[T] = new YamlLoader(res).getWith(vars.asJava)
-    val sim = new Engine[T](env, maxSteps)
+    val env: Environment[T, P] = new YamlLoader(res).getWith(vars.asJava)
+    val sim = new Engine[T, P](env, maxSteps)
     sim.play()
     sim.run()
     env

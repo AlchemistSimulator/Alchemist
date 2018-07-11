@@ -66,12 +66,7 @@ import it.unibo.alchemist.model.interfaces.Vehicle;
  *
  * @param <T>
  */
-public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements MapEnvironment<T> {
-
-    /**
-     * Default maximum communication range (in meters).
-     */
-    public static final double DEFAULT_MAX_RANGE = 100;
+public class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPosition> implements MapEnvironment<T> {
 
     /**
      * The default routing algorithm.
@@ -79,26 +74,28 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     public static final String DEFAULT_ALGORITHM = "dijkstrabi";
 
     /**
-     * The default routing strategy.
-     */
-    public static final String ROUTING_STRATEGY = "fastest";
-
-    /**
      * The default value for approximating the positions comparison. 
      */
     public static final int DEFAULT_APPROXIMATION = 0;
+
+    /**
+     * The default value for the discard of nodes too far from streets option.
+     */
+    public static final boolean DEFAULT_FORCE_STREETS = false;
+
+    /**
+     * Default maximum communication range (in meters).
+     */
+    public static final double DEFAULT_MAX_RANGE = 100;
 
     /**
      * The default value for the force nodes on streets option.
      */
     public static final boolean DEFAULT_ON_STREETS = true;
 
-    /**
-     * The default value for the discard of nodes too far from streets option.
-     */
-    public static final boolean DEFAULT_FORCE_STREETS = false;
     private static final Logger L = LoggerFactory.getLogger(OSMEnvironment.class);
-    private static final long serialVersionUID = 1L;
+    private static final Semaphore LOCK_FILE = new Semaphore(1);
+    private static final String MAPNAME = "map";
     /**
      * System file separator.
      */
@@ -107,15 +104,18 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      * Alchemist's temp dir.
      */
     private static final String PERSISTENTPATH = System.getProperty("user.home") + SLASH + ".alchemist";
-    private static final String MAPNAME = "map";
-    private static final Semaphore LOCK_FILE = new Semaphore(1);
-    private final String mapResource;
+    /**
+     * The default routing strategy.
+     */
+    public static final String ROUTING_STRATEGY = "fastest";
+    private static final long serialVersionUID = 1L;
+    private final int approximation;
+    private boolean benchmarking;
     private final boolean forceStreets, onlyStreet;
     private transient FastReadWriteLock mapLock;
+    private final String mapResource;
     private transient Map<Vehicle, GraphHopperAPI> navigators;
     private transient LoadingCache<CacheEntry, Route<GeoPosition>> routecache;
-    private boolean benchmarking;
-    private final int approximation;
 
     /**
      * Builds a new {@link OSMEnvironment}, with nodes forced on streets.
@@ -229,7 +229,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     }
 
     @Override
-    protected Position computeActualInsertionPosition(final Node<T> node, final Position position) {
+    protected final GeoPosition computeActualInsertionPosition(final Node<T> node, final GeoPosition position) {
 
         /*
          * If it must be located on streets, query the navigation engine for a street
@@ -237,48 +237,15 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
          */
         assert position != null;
         return forceStreets ? getNearestStreetPoint(position).orElse(position) : position;
-
     }
 
     @Override
-    public void enableBenchmark() {
-        this.benchmarking = true;
-    }
-
-    @Override
-    public double getBenchmarkResult() {
-        if (benchmarking) {
-            if (routecache != null) {
-                return routecache.stats().hitRate();
-            }
-            return 0;
-        } else {
-            throw new IllegalStateException("You should call doBenchmark() before.");
-        }
-    }
-
-    @Override
-    public Route<GeoPosition> computeRoute(final Node<T> node, final Node<T> node2) {
-        return computeRoute(node, getPosition(node2));
-    }
-
-    @Override
-    public Route<GeoPosition> computeRoute(final Node<T> node, final Position coord) {
-        return computeRoute(node, coord, DEFAULT_VEHICLE);
-    }
-
-    @Override
-    public Route<GeoPosition> computeRoute(final Node<T> node, final Position coord, final Vehicle vehicle) {
-        return computeRoute(getPosition(node), coord, vehicle);
-    }
-
-    @Override
-    public Route<GeoPosition> computeRoute(final Position p1, final Position p2) {
+    public final Route<GeoPosition> computeRoute(final GeoPosition p1, final GeoPosition p2) {
         return computeRoute(p1, p2, DEFAULT_VEHICLE);
     }
 
     @Override
-    public Route<GeoPosition> computeRoute(final Position p1, final Position p2, final Vehicle vehicle) {
+    public final Route<GeoPosition> computeRoute(final GeoPosition p1, final GeoPosition p2, final Vehicle vehicle) {
         if (routecache == null) {
             CacheBuilder<Object, Object> builder = CacheBuilder.newBuilder();
             if (benchmarking) {
@@ -290,8 +257,8 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
                     @Override
                     public Route<GeoPosition> load(final CacheEntry key) {
                         final Vehicle vehicle = key.v;
-                        final Position p1 = key.start;
-                        final Position p2 = key.end;
+                        final GeoPosition p1 = key.start;
+                        final GeoPosition p2 = key.end;
                         final GHRequest req = new GHRequest(p1.getCoordinate(1), p1.getCoordinate(0), p2.getCoordinate(1), p2.getCoordinate(0))
                                 .setAlgorithm(DEFAULT_ALGORITHM)
                                 .setVehicle(vehicle.toString())
@@ -316,52 +283,38 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
         }
     }
 
+    @Override
+    public final Route<GeoPosition> computeRoute(final Node<T> node, final GeoPosition coord) {
+        return computeRoute(node, coord, DEFAULT_VEHICLE);
+    }
 
-    private class CacheEntry {
+    @Override
+    public final Route<GeoPosition> computeRoute(final Node<T> node, final GeoPosition coord, final Vehicle vehicle) {
+        return computeRoute(getPosition(node), coord, vehicle);
+    }
 
-        private final Vehicle v;
-        private final Position start;
-        private final Position end;
-        private final Position apprStart;
-        private final Position apprEnd;
-        private int hash;
+    @Override
+    public final Route<GeoPosition> computeRoute(final Node<T> node, final Node<T> node2) {
+        return computeRoute(node, getPosition(node2));
+    }
 
-        CacheEntry(final Vehicle v, final Position p1, final Position p2) {
-            this.v = Objects.requireNonNull(v);
-            this.start = Objects.requireNonNull(p1);
-            this.end = Objects.requireNonNull(p2);
-            this.apprStart = approximate(start);
-            this.apprEnd = approximate(end);
-        }
+    @Override
+    public final void enableBenchmark() {
+        this.benchmarking = true;
+    }
 
-        @Override
-        public int hashCode() {
-            if (hash == 0) {
-                hash =  Hashes.hash32(v, apprStart, apprEnd);
+    @Override
+    public final double getBenchmarkResult() {
+        if (benchmarking) {
+            if (routecache != null) {
+                return routecache.stats().hitRate();
             }
-            return hash;
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            if (obj instanceof OSMEnvironment.CacheEntry) {
-                final OSMEnvironment<?>.CacheEntry other = (OSMEnvironment<?>.CacheEntry) obj;
-                return v.equals(other.v) && apprStart.equals(other.apprStart) && apprEnd.equals(other.apprEnd);
-            }
-            return false;
-        }
-
-        private Position approximate(final Position p) {
-            if (approximation == 0) {
-                return p;
-            }
-            return makePosition(approximate(p.getCoordinate(0)), approximate(p.getCoordinate(1)));
-        }
-
-        private double approximate(final double value) {
-            return Double.longBitsToDouble(Double.doubleToLongBits(value) & (0xFFFFFFFFFFFFFFFFL << approximation));
+            return 0;
+        } else {
+            throw new IllegalStateException("You should call doBenchmark() before.");
         }
     }
+
 
     /**
      * @return the maximum latitude
@@ -391,7 +344,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
         return super.getOffset()[0];
     }
 
-    private Optional<Position> getNearestStreetPoint(final Position position) {
+    private Optional<GeoPosition> getNearestStreetPoint(final GeoPosition position) {
         assert position != null;
         mapLock.read();
         final GraphHopperAPI gh = navigators.get(Vehicle.BIKE);
@@ -406,7 +359,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     }
 
     @Override
-    public GeoPosition getPosition(final Node<T> node) {
+    public final GeoPosition getPosition(final Node<T> node) {
         if (super.getPosition(node) instanceof GeoPosition) {
             return (GeoPosition) super.getPosition(node);
         }
@@ -414,15 +367,15 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     }
 
     @Override
-    public double[] getSizeInDistanceUnits() {
+    public final double[] getSizeInDistanceUnits() {
         final double minlat = getMinLatitude();
         final double maxlat = getMaxLatitude();
         final double minlon = getMinLongitude();
         final double maxlon = getMaxLongitude();
-        final Position minmin = new LatLongPosition(minlat, minlon);
-        final Position minmax = new LatLongPosition(minlat, maxlon);
-        final Position maxmin = new LatLongPosition(maxlat, minlon);
-        final Position maxmax = new LatLongPosition(maxlat, maxlon);
+        final GeoPosition minmin = new LatLongPosition(minlat, minlon);
+        final GeoPosition minmax = new LatLongPosition(minlat, maxlon);
+        final GeoPosition maxmin = new LatLongPosition(maxlat, minlon);
+        final GeoPosition maxmax = new LatLongPosition(maxlat, maxlon);
         /*
          * Maximum x: maximum distance between the same longitudes Maximum y: maximum
          * distance between the same latitudes
@@ -500,7 +453,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     }
 
     @Override
-    public GeoPosition makePosition(final Number... coordinates) {
+    public final GeoPosition makePosition(final Number... coordinates) {
         if (coordinates.length != 2) {
             throw new IllegalArgumentException(
                     getClass().getSimpleName() + " only supports bi-dimensional coordinates (latitude, longitude)");
@@ -514,7 +467,7 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
      * engine can not resolve any such position.
      */
     @Override
-    protected boolean nodeShouldBeAdded(final Node<T> node, final Position position) {
+    protected boolean nodeShouldBeAdded(final Node<T> node, final GeoPosition position) {
         assert node != null;
         return !onlyStreet || getNearestStreetPoint(position).isPresent();
     }
@@ -522,6 +475,11 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
     private void readObject(final ObjectInputStream s) throws IOException, ClassNotFoundException {
         s.defaultReadObject();
         initAll(mapResource);
+    }
+
+    @Override
+    public final GeoPosition sumVectors(final GeoPosition p1, final GeoPosition p2) {
+        return p1.add(p2);
     }
 
     private static synchronized GraphHopperAPI initNavigationSystem(final File mapFile, final String internalWorkdir, final Vehicle v) throws IOException {
@@ -541,5 +499,51 @@ public class OSMEnvironment<T> extends Continuous2DEnvironment<T> implements Map
 
     private static boolean mkdirsIfNeeded(final String target) {
         return mkdirsIfNeeded(new File(target));
+    }
+
+    private class CacheEntry {
+
+        private final GeoPosition apprEnd;
+        private final GeoPosition apprStart;
+        private final GeoPosition end;
+        private int hash;
+        private final GeoPosition start;
+        private final Vehicle v;
+
+        CacheEntry(final Vehicle v, final GeoPosition p1, final GeoPosition p2) {
+            this.v = Objects.requireNonNull(v);
+            this.start = Objects.requireNonNull(p1);
+            this.end = Objects.requireNonNull(p2);
+            this.apprStart = approximate(start);
+            this.apprEnd = approximate(end);
+        }
+
+        private double approximate(final double value) {
+            return Double.longBitsToDouble(Double.doubleToLongBits(value) & (0xFFFFFFFFFFFFFFFFL << approximation));
+        }
+
+        private GeoPosition approximate(final GeoPosition p) {
+            if (approximation == 0) {
+                return p;
+            }
+            return makePosition(approximate(p.getCoordinate(0)), approximate(p.getCoordinate(1)));
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (obj instanceof OSMEnvironment.CacheEntry) {
+                final OSMEnvironment<?>.CacheEntry other = (OSMEnvironment<?>.CacheEntry) obj;
+                return v.equals(other.v) && apprStart.equals(other.apprStart) && apprEnd.equals(other.apprEnd);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            if (hash == 0) {
+                hash =  Hashes.hash32(v, apprStart, apprEnd);
+            }
+            return hash;
+        }
     }
 }

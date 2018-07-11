@@ -2,7 +2,6 @@ package it.unibo.alchemist.model.implementations.movestrategies.routing;
 
 import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
-import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Route;
 import it.unibo.alchemist.model.interfaces.Vehicle;
 import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy;
@@ -13,7 +12,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy;
  * 
  * @param <T>
  */
-public class OnStreets<T> implements RoutingStrategy {
+public class OnStreets<T> implements RoutingStrategy<GeoPosition> {
 
     private static final long serialVersionUID = 9041363003794088201L;
     private final MapEnvironment<T> env;
@@ -31,7 +30,7 @@ public class OnStreets<T> implements RoutingStrategy {
     }
 
     @Override
-    public Route<GeoPosition> computeRoute(final Position currentPos, final Position finalPos) {
+    public Route<GeoPosition> computeRoute(final GeoPosition currentPos, final GeoPosition finalPos) {
         return env.computeRoute(currentPos, finalPos, vehicle);
     }
 

@@ -9,7 +9,7 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
-import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  */
-public class LsaAscendingAgent extends SAPEREMoveNodeAgent {
+public class LsaAscendingAgent<P extends Position<? extends P>> extends SAPEREMoveNodeAgent<P> {
 
     /*
      * an agent can move at most of LIMIT along each axis
@@ -52,7 +52,7 @@ public class LsaAscendingAgent extends SAPEREMoveNodeAgent {
      *            the new position
      */
     public LsaAscendingAgent(final Reaction<List<ILsaMolecule>> reaction,
-            final Environment<List<ILsaMolecule>> environment, final ILsaNode node,
+            final Environment<List<ILsaMolecule>, P> environment, final ILsaNode node,
             final LsaMolecule molecule, final int pos) {
         super(environment, node);
         this.r = reaction;
@@ -64,7 +64,7 @@ public class LsaAscendingAgent extends SAPEREMoveNodeAgent {
     public void execute() {
         double minGrad = Double.MAX_VALUE;
         final Neighborhood<List<ILsaMolecule>> neigh = getLocalNeighborhood();
-        Position targetPositions = null;
+        P targetPositions = null;
         Node<List<ILsaMolecule>> bestNode = null;
         for (final Node<List<ILsaMolecule>> node : neigh.getNeighbors()) {
             final ILsaNode n = (ILsaNode) node;
@@ -85,7 +85,7 @@ public class LsaAscendingAgent extends SAPEREMoveNodeAgent {
         if (bestNode == null || bestNode.contains(ACTIVE)) {
             return;
         }
-        final Position mypos = getCurrentPosition();
+        final P mypos = getCurrentPosition();
         final double myx = mypos.getCartesianCoordinates()[0];
         final double myy = mypos.getCartesianCoordinates()[1];
         double x = 0;
@@ -101,7 +101,7 @@ public class LsaAscendingAgent extends SAPEREMoveNodeAgent {
             final boolean moveH = dx > 0 || dx < 0;
             final boolean moveV = dy > 0 || dy < 0;
             if (moveH || moveV) {
-                move(new Continuous2DEuclidean(moveH ? dx : 0, moveV ? dy : 0));
+                move(getEnvironment().makePosition(moveH ? dx : 0, moveV ? dy : 0));
             }
         }
 

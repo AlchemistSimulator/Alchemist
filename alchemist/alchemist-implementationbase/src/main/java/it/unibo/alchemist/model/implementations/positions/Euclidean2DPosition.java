@@ -11,12 +11,20 @@
  */
 package it.unibo.alchemist.model.implementations.positions;
 
+import it.unibo.alchemist.model.interfaces.Position2D;
+
 /**
  * 
  */
-public class Continuous2DEuclidean extends ContinuousGenericEuclidean {
+public final class Euclidean2DPosition
+        extends AbstractEuclideanPosition<Euclidean2DPosition>
+        implements Position2D<Euclidean2DPosition> {
 
     private static final long serialVersionUID = 1042391992665398942L;
+
+    private Euclidean2DPosition(final boolean copy, final double xp, final double yp) {
+        super(copy, xp, yp);
+    }
 
     /**
      * @param xp
@@ -24,18 +32,33 @@ public class Continuous2DEuclidean extends ContinuousGenericEuclidean {
      * @param yp
      *            The Y coordinate
      */
-    public Continuous2DEuclidean(final double xp, final double yp) {
-        super(xp, yp);
+    public Euclidean2DPosition(final double xp, final double yp) {
+        this(true, xp, yp);
     }
 
     /**
      * @param c an array of length 2 containing the coordinates
      */
-    public Continuous2DEuclidean(final double[] c) {
-        super(c);
+    public Euclidean2DPosition(final double[] c) {
+        super(true, c);
         if (c.length != 2) {
             throw new IllegalArgumentException("The array must have exactly two elements.");
         }
+    }
+
+    @Override
+    public double getX() {
+        return getCoordinate(0);
+    }
+
+    @Override
+    public double getY() {
+        return getCoordinate(1);
+    }
+
+    @Override
+    protected Euclidean2DPosition unsafeConstructor(final double[] coord) {
+        return new Euclidean2DPosition(false, coord[0], coord[1]);
     }
 
 }

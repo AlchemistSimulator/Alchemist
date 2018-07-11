@@ -27,7 +27,7 @@ public class MoleculeReader<T> implements Extractor {
 
     private final List<UnivariateStatistic> aggregators;
     private final List<String> columns;
-    private final Incarnation<T> incarnation;
+    private final Incarnation<T, ?> incarnation;
     private final String property;
     private final Molecule mol;
     private final FilteringPolicy filter;
@@ -48,7 +48,7 @@ public class MoleculeReader<T> implements Extractor {
      */
     public MoleculeReader(final String molecule,
                           final String property,
-                          final Incarnation<T> incarnation,
+                          final Incarnation<T, ?> incarnation,
                           final FilteringPolicy filter,
                           final List<String> aggregators) {
         this.incarnation = Objects.requireNonNull(incarnation);
@@ -72,9 +72,9 @@ public class MoleculeReader<T> implements Extractor {
     }
 
     @Override
-    public double[] extractData(final Environment<?> env, final Reaction<?> r, final Time time, final long step) {
+    public double[] extractData(final Environment<?, ?> env, final Reaction<?> r, final Time time, final long step) {
         @SuppressWarnings("unchecked")
-        final DoubleStream values = ((Environment<T>) env).getNodes().stream()
+        final DoubleStream values = ((Environment<T, ?>) env).getNodes().stream()
                 .mapToDouble(node -> incarnation.getProperty(node, mol, property));
         if (aggregators.isEmpty()) {
             return values.toArray();

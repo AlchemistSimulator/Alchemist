@@ -18,6 +18,7 @@ import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * This linking rule dynamically searches for the best radius for each device,
@@ -25,7 +26,7 @@ import it.unibo.alchemist.model.interfaces.Node;
  * 
  * @param <T>
  */
-public class AdaptiveRange<T> extends EuclideanDistance<T> {
+public class AdaptiveRange<T, P extends Position<P>> extends ConnectWithinDistance<T, P> {
 
     /**
      * Default adjustment.
@@ -155,7 +156,7 @@ public class AdaptiveRange<T> extends EuclideanDistance<T> {
     }
 
     @Override
-    public final Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T> env) {
+    public final Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> env) {
         if (!ranges.containsKey(center.getId())) {
             ranges.put(center.getId(), getRange());
         }
@@ -182,7 +183,7 @@ public class AdaptiveRange<T> extends EuclideanDistance<T> {
      * @param neighRange the communication range of the neighbor
      * @return true if the node must be removed, false otherwise
      */
-    protected boolean conditionForRemoval(final Environment<T> env, final Node<T> center, final Node<T> neighbor, final double centerRange, final double neighRange) {
+    protected boolean conditionForRemoval(final Environment<T, P> env, final Node<T> center, final Node<T> neighbor, final double centerRange, final double neighRange) {
         return env.getDistanceBetweenNodes(center, neighbor) > neighRange;
     }
 

@@ -18,6 +18,7 @@ import org.junit.Test;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
 import it.unibo.alchemist.model.implementations.nodes.LsaNode;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 
@@ -33,7 +34,7 @@ public class TestLsaNode {
      */
     @Test
     public void testConcurrentAccess() {
-        final Environment<List<ILsaMolecule>> env = new Continuous2DEnvironment<>();
+        final Environment<List<ILsaMolecule>, Euclidean2DPosition> env = new Continuous2DEnvironment<>();
         final LsaNode node = new LsaNode(env);
         final CountDownLatch cd = new CountDownLatch(THREADS);
         final Queue<Exception> queue = new ConcurrentLinkedQueue<>();

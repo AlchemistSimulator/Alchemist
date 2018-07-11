@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.swing.BoxLayout;
@@ -26,8 +27,8 @@ import it.unibo.alchemist.boundary.monitors.Generic2DDisplay;
 import it.unibo.alchemist.boundary.monitors.MapDisplay;
 import it.unibo.alchemist.boundary.monitors.TimeStepMonitor;
 import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
-import java.util.Objects;
+import it.unibo.alchemist.model.interfaces.MapEnvironment;
+import it.unibo.alchemist.model.interfaces.Position2D;
 
 /**
  * Utility class for quickly creating non-reusable graphical interfaces.
@@ -50,7 +51,7 @@ public final class SingleRunGUI {
      * @param <T>
      *            concentration type
      */
-    public static <T> void make(final Simulation<T> sim) {
+    public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim) {
         make(sim, (File) null, JFrame.EXIT_ON_CLOSE);
     }
 
@@ -63,7 +64,7 @@ public final class SingleRunGUI {
      * @param <T>
      *            concentration type
      */
-    public static <T> void make(final Simulation<T> sim, final int closeOperation) {
+    public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final int closeOperation) {
         make(sim, (File) null, closeOperation);
     }
 
@@ -78,7 +79,7 @@ public final class SingleRunGUI {
      *            concentration type
      * @throws FileNotFoundException
      */
-    public static <T> void make(final Simulation<T> sim, final String effectsFile) {
+    public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final String effectsFile) {
         make(sim, new File(effectsFile), JFrame.EXIT_ON_CLOSE);
     }
 
@@ -94,7 +95,7 @@ public final class SingleRunGUI {
      * @param <T>
      *            concentration type
      */
-    public static <T> void make(final Simulation<T> sim, final String effectsFile, final int closeOperation) {
+    public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final String effectsFile, final int closeOperation) {
         make(sim, new File(effectsFile), closeOperation);
     }
 
@@ -114,10 +115,11 @@ public final class SingleRunGUI {
      * @param <T>
      *            concentration type
      */
-    public static <T> void make(final Simulation<T> sim, final File effectsFile, final int closeOperation) {
-        final GraphicalOutputMonitor<T> main = Objects.requireNonNull(sim).getEnvironment() instanceof OSMEnvironment
-                ? new MapDisplay<>()
-                : new Generic2DDisplay<>();
+    public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final File effectsFile, final int closeOperation) {
+        @SuppressWarnings("unchecked") // Actually safe: MapEnvironment uses the same P type of MapDisplay
+        final GraphicalOutputMonitor<T, P> main = Objects.requireNonNull(sim).getEnvironment() instanceof MapEnvironment
+                ? (GraphicalOutputMonitor<T, P>) new MapDisplay<T>()
+                : new Generic2DDisplay<T, P>();
         if (main instanceof Component) {
             final JFrame frame = new JFrame("Alchemist Simulator");
             frame.setDefaultCloseOperation(closeOperation);
@@ -140,7 +142,7 @@ public final class SingleRunGUI {
                 }
             }
             upper.add(effects);
-            final TimeStepMonitor<T> time = new TimeStepMonitor<>();
+            final TimeStepMonitor<T, P> time = new TimeStepMonitor<>();
             sim.addOutputMonitor(time);
             upper.add(time);
             /*

@@ -15,7 +15,7 @@ import java.util.List;
  * An interface to represent a generic coordinates system.
  * 
  */
-public interface Position extends Serializable {
+public interface Position<P extends Position<? extends P>> extends Serializable {
 
     /**
      * Given a range, produces N coordinates, representing the N opposite
@@ -29,7 +29,7 @@ public interface Position extends Serializable {
      *            the radius of the hypersphere
      * @return the vertices of the circumscribed hypercube
      */
-    List<Position> buildBoundingBox(double range);
+    List<P> buildBoundingBox(double range);
 
     /**
      * Allows to get the position as a Number array.
@@ -62,7 +62,7 @@ public interface Position extends Serializable {
      *            the position you want to know the distance to
      * @return the distance between this and p
      */
-    double getDistanceTo(Position p);
+    double getDistanceTo(Position<?> p);
 
     /**
      * Considers both positions as vectors, and sums them.
@@ -70,7 +70,7 @@ public interface Position extends Serializable {
      * @param other the other position
      * @return a new {@link Position} that is the sum of the two.
      */
-    Position add(Position other);
+    P add(P other);
 
     /**
      * Considers both positions as vectors, and returns the difference between this position and the passed one.
@@ -78,6 +78,6 @@ public interface Position extends Serializable {
      * @param other the other position
      * @return a new {@link Position} that is this position minus the one passed.
      */
-    Position subtract(Position other);
+    P subtract(P other);
 
 }

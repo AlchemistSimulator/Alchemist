@@ -17,6 +17,7 @@ import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
@@ -41,13 +42,13 @@ import org.danilopianini.util.ListSets;
  * 
  * @param <T>
  */
-public abstract class AReaction<T> implements Reaction<T> {
+public abstract class AbstractReaction<T> implements Reaction<T> {
 
     private static final int CENTER = 0;
     private static final AtomicInteger ID_GEN = new AtomicInteger();
     /**
      * How bigger should be the StringBuffer with respect to the previous
-     * interaction
+     * interaction.
      */
     private static final byte MARGIN = 20;
     private static final int MAX = 1073741824;
@@ -107,7 +108,7 @@ public abstract class AReaction<T> implements Reaction<T> {
      * @param pd
      *            the time distribution this reaction should follow
      */
-    public AReaction(final Node<T> n, final TimeDistribution<T> pd) {
+    public AbstractReaction(final Node<T> n, final TimeDistribution<T> pd) {
         final int id = ID_GEN.getAndIncrement();
         if (id == 0) {
             hash = CENTER;
@@ -138,8 +139,8 @@ public abstract class AReaction<T> implements Reaction<T> {
 
     @Override
     public final boolean equals(final Object o) {
-        if (o instanceof AReaction) {
-            return ((AReaction<?>) o).hash == hash;
+        if (o instanceof AbstractReaction) {
+            return ((AbstractReaction<?>) o).hash == hash;
         }
         return false;
     }
@@ -165,7 +166,7 @@ public abstract class AReaction<T> implements Reaction<T> {
     }
 
     @Override
-    public void initializationComplete(final Time t, final Environment<T> env) { }
+    public void initializationComplete(final Time t, final Environment<T, ?> env) { }
 
     /**
      * Used by sublcasses to set their input context.
@@ -220,7 +221,7 @@ public abstract class AReaction<T> implements Reaction<T> {
     }
 
     @Override
-    public final void update(final Time curTime, final boolean executed, final Environment<T> env) {
+    public final void update(final Time curTime, final boolean executed, final Environment<T, ?> env) {
         updateInternalStatus(curTime, executed, env);
         dist.update(curTime, executed, getRate(), env);
     }
@@ -253,7 +254,7 @@ public abstract class AReaction<T> implements Reaction<T> {
      * @param env
      *            the current environment
      */
-    protected abstract void updateInternalStatus(Time curTime, boolean executed, Environment<T> env);
+    protected abstract void updateInternalStatus(Time curTime, boolean executed, Environment<T, ?> env);
 
     /**
      * Allows subclasses to add influencing molecules.

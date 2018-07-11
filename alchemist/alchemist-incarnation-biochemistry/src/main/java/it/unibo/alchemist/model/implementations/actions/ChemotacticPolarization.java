@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.math3.util.FastMath;
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
-import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -19,13 +18,13 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 /**
  *
  */
-public class ChemotacticPolarization extends AbstractAction<Double> {
+public class ChemotacticPolarization<P extends Position<? extends P>> extends AbstractAction<Double> {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
-    private final Environment<Double> env;
+    private final Environment<Double, P> env;
     private final Biomolecule biomol;
     private final boolean ascend;
 
@@ -36,20 +35,16 @@ public class ChemotacticPolarization extends AbstractAction<Double> {
      * @param biomol 
      * @param ascendGrad 
      */
-    public ChemotacticPolarization(final Environment<Double> environment, final Node<Double> node, final Biomolecule biomol, final String ascendGrad) {
+    public ChemotacticPolarization(final Environment<Double, P> environment, final CellNode<P> node, final Biomolecule biomol, final String ascendGrad) {
         super(node);
-        if (node instanceof CellNode) {
-            this.env = Objects.requireNonNull(environment);
-            this.biomol = Objects.requireNonNull(biomol);
-            if (ascendGrad.equalsIgnoreCase("up")) {
-                this.ascend = true;
-            } else if (ascendGrad.equalsIgnoreCase("down")) {
-                this.ascend = false;
-            } else {
-                throw new IllegalArgumentException("Possible imput string are only up or down");
-            }
+        this.env = Objects.requireNonNull(environment);
+        this.biomol = Objects.requireNonNull(biomol);
+        if (ascendGrad.equalsIgnoreCase("up")) {
+            this.ascend = true;
+        } else if (ascendGrad.equalsIgnoreCase("down")) {
+            this.ascend = false;
         } else {
-            throw new UnsupportedOperationException("Polarization can happen only in cells.");
+            throw new IllegalArgumentException("Possible imput string are only up or down");
         }
     }
 
@@ -60,44 +55,45 @@ public class ChemotacticPolarization extends AbstractAction<Double> {
      * @param biomol biomolecule's name
      * @param ascendGrad if that parameter is true, the polarization versor of the cell will be directed in direction of the greates concentration of biomolecule in neighborhood; if it's false, the versor will be directed in the exactly the opposite direction.
      */
-    public ChemotacticPolarization(final Environment<Double> environment, final Node<Double> node, final String biomol, final String ascendGrad) {
-        this(environment, node, new Biomolecule(biomol), ascendGrad);
+    @SuppressWarnings("unchecked")
+    public ChemotacticPolarization(final Environment<Double, P> environment, final Node<Double> node, final String biomol, final String ascendGrad) {
+        this(environment, (CellNode<P>) node, new Biomolecule(biomol), ascendGrad);
     }
 
 
     @Override
-    public ChemotacticPolarization cloneAction(final Node<Double> n, final Reaction<Double> r) {
-        return new ChemotacticPolarization(env, n, biomol.toString(), ascend ? "up" : "down");
+    public ChemotacticPolarization<P> cloneAction(final Node<Double> n, final Reaction<Double> r) {
+        return new ChemotacticPolarization<>(env, n, biomol.toString(), ascend ? "up" : "down");
     }
 
     @Override
     public void execute() {
         // declaring a variable for the node where this action is set, to have faster access
-        final CellNode thisNode = getNode();
+        final CellNode<P> thisNode = getNode();
         final List<Node<Double>> l = env.getNeighborhood(thisNode).getNeighbors().stream()
                 .filter(n -> n instanceof EnvironmentNode && n.contains(biomol))
                 .collect(Collectors.toList());
         if (l.isEmpty()) {
-            thisNode.addPolarization(new Continuous2DEuclidean(0, 0));
+            thisNode.addPolarization(env.makePosition(0, 0));
         } else {
             final boolean isNodeOnMaxConc = env.getPosition(l.stream()
                     .max((n1, n2) -> Double.compare(n1.getConcentration(biomol), n2.getConcentration(biomol)))
                     .get()).equals(env.getPosition(thisNode));
             if (isNodeOnMaxConc) {
-                thisNode.addPolarization(new Continuous2DEuclidean(0, 0));
+                thisNode.addPolarization(env.makePosition(0, 0));
             } else {
-                Position newPolVer = weightedAverageVectors(l, thisNode);
+                P newPolVer = weightedAverageVectors(l, thisNode);
                 final double newPolVerModule = FastMath.sqrt(FastMath.pow(
                         newPolVer.getCoordinate(0), 2) + FastMath.pow(newPolVer.getCoordinate(1), 2)
                         );
                 if (newPolVerModule == 0) {
                     thisNode.addPolarization(newPolVer);
                 } else {
-                    newPolVer = new Continuous2DEuclidean(newPolVer.getCoordinate(0) / newPolVerModule, newPolVer.getCoordinate(1) / newPolVerModule);
+                    newPolVer = env.makePosition(newPolVer.getCoordinate(0) / newPolVerModule, newPolVer.getCoordinate(1) / newPolVerModule);
                     if (ascend) {
                         thisNode.addPolarization(newPolVer);
                     } else {
-                        thisNode.addPolarization(new Continuous2DEuclidean(
+                        thisNode.addPolarization(env.makePosition(
                                 -newPolVer.getCoordinate(0), 
                                 -newPolVer.getCoordinate(1))
                                 );
@@ -107,19 +103,19 @@ public class ChemotacticPolarization extends AbstractAction<Double> {
         }
     }
 
-    private Position weightedAverageVectors(final List<Node<Double>> list, final CellNode thisNode) {
-        Position res = new Continuous2DEuclidean(0, 0);
-        final Position thisNodePos = env.getPosition(thisNode);
+    private P weightedAverageVectors(final List<Node<Double>> list, final CellNode<P> thisNode) {
+        P res = env.makePosition(0, 0);
+        final P thisNodePos = env.getPosition(thisNode);
         for (final Node<Double> n : list) {
-            final Position nPos = env.getPosition(n);
-            Position vecTemp = new Continuous2DEuclidean(
+            final P nPos = env.getPosition(n);
+            P vecTemp = env.makePosition(
                     nPos.getCoordinate(0) - thisNodePos.getCoordinate(0),
                     nPos.getCoordinate(1) - thisNodePos.getCoordinate(1));
             final double vecTempModule = FastMath.sqrt(FastMath.pow(vecTemp.getCoordinate(0), 2) + FastMath.pow(vecTemp.getCoordinate(1), 2));
-            vecTemp = new Continuous2DEuclidean(
+            vecTemp = env.makePosition(
                     n.getConcentration(biomol) * (vecTemp.getCoordinate(0) / vecTempModule), 
                     n.getConcentration(biomol) * (vecTemp.getCoordinate(1) / vecTempModule));
-            res = new Continuous2DEuclidean(
+            res = env.makePosition(
                     res.getCoordinate(0) + vecTemp.getCoordinate(0),
                     res.getCoordinate(1) + vecTemp.getCoordinate(1));
         }
@@ -131,9 +127,10 @@ public class ChemotacticPolarization extends AbstractAction<Double> {
         return Context.LOCAL;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public CellNode getNode() {
-        return (CellNode) super.getNode();
+    public CellNode<P> getNode() {
+        return (CellNode<P>) super.getNode();
     }
 
 }

@@ -24,14 +24,14 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 public class NeighborhoodPresent<T> extends AbstractCondition<T> {
 
     private static final long serialVersionUID = 689059297366332946L;
-    private final Environment<T> env;
+    private final Environment<T, ?> env;
 
     /**
      * Create the condition.
      * @param node the node
      * @param environment the current environment.
      */
-    public NeighborhoodPresent(final Environment<T> environment, final Node<T> node) {
+    public NeighborhoodPresent(final Environment<T, ?> environment, final Node<T> node) {
         super(node);
         env = environment;
     }

@@ -11,11 +11,11 @@ import org.eclipse.xtend.lib.annotations.Accessors
 @Accessors(PROTECTED_GETTER, PROTECTED_SETTER)
 class SimpleNeighborhood<T> implements Neighborhood<T> {
 
-	val Environment<T> env
+	val Environment<T, ?> env
 	val ImmutableListSet<? extends Node<T>> neighbors
 	val Node<T> center
 
-	protected new(Environment<T> env, Node<T> center, Iterable<? extends Node<T>> neighbors) {
+	protected new(Environment<T, ?> env, Node<T> center, Iterable<? extends Node<T>> neighbors) {
 		this.env = env
 		this.center = center
 		this.neighbors = new ImmutableListSet.Builder().addAll(neighbors).build

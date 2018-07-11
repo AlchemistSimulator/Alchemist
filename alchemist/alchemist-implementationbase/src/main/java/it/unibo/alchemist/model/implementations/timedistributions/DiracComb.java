@@ -52,7 +52,7 @@ public class DiracComb<T> extends AbstractDistribution<T> {
             final Time curTime,
             final boolean executed,
             final double param,
-            final Environment<T> env) {
+            final Environment<T, ?> env) {
         if (executed) {
             setTau(new DoubleTime(curTime.toDouble() + timeInterval));
         }

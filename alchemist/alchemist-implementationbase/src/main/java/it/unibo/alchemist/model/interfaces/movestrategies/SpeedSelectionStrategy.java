@@ -14,7 +14,7 @@ import java.io.Serializable;
  * 
  */
 @FunctionalInterface
-public interface SpeedSelectionStrategy extends Serializable {
+public interface SpeedSelectionStrategy<P extends Position<? extends P>> extends Serializable {
 
     /**
      * @param target
@@ -22,6 +22,6 @@ public interface SpeedSelectionStrategy extends Serializable {
      *            directed
      * @return the current node's speed
      */
-    double getCurrentSpeed(Position target);
+    double getCurrentSpeed(P target);
 
 }

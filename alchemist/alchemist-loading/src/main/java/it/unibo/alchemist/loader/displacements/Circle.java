@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.Position;
 /**
  *
  */
-public class Circle extends AbstractRandomDisplacement {
+public class Circle<P extends Position<? extends P>> extends AbstractRandomDisplacement<P> {
 
     private final double centerx, centery, radius;
 
@@ -34,7 +34,7 @@ public class Circle extends AbstractRandomDisplacement {
      * @param radius
      *            the radius of the circle
      */
-    public Circle(final Environment<?> pm,
+    public Circle(final Environment<?, P> pm,
             final RandomGenerator rand,
             final int nodes,
             final double centerx, final double centery, final double radius) {
@@ -45,7 +45,7 @@ public class Circle extends AbstractRandomDisplacement {
     }
 
     @Override
-    protected Position indexToPosition(final int i) {
+    protected P indexToPosition(final int i) {
         final double angle = randomDouble(0, 2 * PI);
         final double rad = radius * sqrt(randomDouble());
         return makePosition(centerx + rad * cos(angle), centery + rad * sin(angle));

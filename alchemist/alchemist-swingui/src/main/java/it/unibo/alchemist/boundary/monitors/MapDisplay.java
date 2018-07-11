@@ -30,13 +30,14 @@ import org.mapsforge.map.model.Model;
 import it.unibo.alchemist.boundary.wormhole.implementation.LinearZoomManager;
 import it.unibo.alchemist.boundary.wormhole.implementation.MapWormhole;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.Time;
 
 /**
  * 
  * @param <T>
  */
-public class MapDisplay<T> extends Generic2DDisplay<T> {
+public class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
     private static final long serialVersionUID = 8593507198560560646L;
     private static final GraphicFactory GRAPHIC_FACTORY = AwtGraphicFactory.INSTANCE;
     private static final int IN_MEMORY_TILES = 256;
@@ -71,7 +72,7 @@ public class MapDisplay<T> extends Generic2DDisplay<T> {
     };
 
     @Override
-    public void initialized(final Environment<T> env) {
+    public void initialized(final Environment<T, GeoPosition> env) {
         super.initialized(env);
         Arrays.stream(getMouseListeners()).forEach(mapView::addMouseListener);
         Arrays.stream(getMouseMotionListeners()).forEach(mapView::addMouseMotionListener);
@@ -112,7 +113,7 @@ public class MapDisplay<T> extends Generic2DDisplay<T> {
     }
 
     @Override
-    public void finished(final Environment<T> env, final Time time, final long step) {
+    public void finished(final Environment<T, GeoPosition> env, final Time time, final long step) {
         /*
          * Shut down the download threads, preventing memory leaks
          */

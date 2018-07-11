@@ -23,6 +23,7 @@ import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.actions.SendToNeighbor;
 import it.unibo.alchemist.model.implementations.conditions.ComputationalRoundComplete;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.reactions.ChemicalReaction;
 import it.unibo.alchemist.model.implementations.reactions.Event;
 import it.unibo.alchemist.model.interfaces.Action;
@@ -37,7 +38,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
  */
 public class TestIncarnation {
 
-    private static final ProtelisIncarnation INC = new ProtelisIncarnation();
+    private static final ProtelisIncarnation<Euclidean2DPosition> INC = new ProtelisIncarnation<>();
 
     /**
      * Tests the ability of {@link ProtelisIncarnation} of properly building a
@@ -46,7 +47,7 @@ public class TestIncarnation {
     @Test
     public void testBuild() {
         final RandomGenerator rng = new MersenneTwister(0);
-        final Environment<Object> env = new Continuous2DEnvironment<>();
+        final Environment<Object, Euclidean2DPosition> env = new Continuous2DEnvironment<>();
         final Node<Object> node = INC.createNode(rng, env, null);
         assertNotNull(node);
         final TimeDistribution<Object> immediately = INC.createTimeDistribution(rng, env, node, null);

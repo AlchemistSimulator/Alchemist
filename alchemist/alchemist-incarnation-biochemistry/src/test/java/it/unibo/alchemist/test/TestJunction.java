@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironmen
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.CellNode;
 
@@ -21,18 +22,18 @@ import it.unibo.alchemist.model.interfaces.CellNode;
  */
 public class TestJunction {
 
-    private CellNode node1;
-    private CellNode node2;
-    private CellNode node3;
+    private CellNode<Euclidean2DPosition> node1;
+    private CellNode<Euclidean2DPosition> node2;
+    private CellNode<Euclidean2DPosition> node3;
 
     /**
      */
     @Before
     public void setUp() {
-        final Environment<Double> env = new BioRect2DEnvironment();
-        node1 = new CellNodeImpl(env);
-        node2 = new CellNodeImpl(env);
-        node3 = new CellNodeImpl(env);
+        final Environment<Double, Euclidean2DPosition> env = new BioRect2DEnvironment();
+        node1 = new CellNodeImpl<>(env);
+        node2 = new CellNodeImpl<>(env);
+        node3 = new CellNodeImpl<>(env);
     }
 
     /**

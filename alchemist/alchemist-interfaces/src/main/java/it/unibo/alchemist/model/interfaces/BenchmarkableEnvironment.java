@@ -4,8 +4,9 @@ package it.unibo.alchemist.model.interfaces;
  * An environment which provides a mean to get infos about its performances.
  *
  * @param <T>
+ * @param <P>
  */
-public interface BenchmarkableEnvironment<T> extends Environment<T> {
+public interface BenchmarkableEnvironment<T, P extends Position<? extends P>> extends Environment<T, P> {
 
     /**
      * Call this method to tell this environment that it should record its performances.

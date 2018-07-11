@@ -19,14 +19,15 @@ import org.protelis.lang.datatype.DatatypeFactory
 import org.junit.Before
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import java.util.Optional
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 
 class TestGetPosition {
 
-    val Environment<Object> env = new Continuous2DEnvironment()
+    val Environment<Object, Euclidean2DPosition> env = new Continuous2DEnvironment()
     val ProtelisNode node = new ProtelisNode(env)
     val RandomGenerator rng = new MersenneTwister(0)
     val Event<Object> reaction = new Event(node, new ExponentialTime(1, rng))
-    val RunProtelisProgram action = new RunProtelisProgram(env, node, reaction, rng, "self.getCoordinates()")
+    val RunProtelisProgram<?> action = new RunProtelisProgram(env, node, reaction, rng, "self.getCoordinates()")
 
     @Before
     def setUp() {
@@ -38,11 +39,11 @@ class TestGetPosition {
 
     @Test
     def testGetPosition() {
-        val Simulation<Object> sim = new Engine(env, 100)
-        sim.addOutputMonitor(new OutputMonitor<Object>(){
-            override finished(Environment<Object> env, Time time, long step) { }
-            override initialized(Environment<Object> env) { }
-            override stepDone(Environment<Object> env, Reaction<Object> r, Time time, long step) {
+        val Simulation<Object, Euclidean2DPosition> sim = new Engine(env, 100)
+        sim.addOutputMonitor(new OutputMonitor<Object, Euclidean2DPosition>(){
+            override finished(Environment<Object, Euclidean2DPosition> env, Time time, long step) { }
+            override initialized(Environment<Object, Euclidean2DPosition> env) { }
+            override stepDone(Environment<Object, Euclidean2DPosition> env, Reaction<Object> r, Time time, long step) {
                 Assert.assertEquals(DatatypeFactory.createTuple(1.0, 1.0), node.getConcentration(action.asMolecule))
             }
         })

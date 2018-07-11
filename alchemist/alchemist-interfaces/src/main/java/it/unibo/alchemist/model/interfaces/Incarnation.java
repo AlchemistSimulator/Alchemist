@@ -13,7 +13,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 /**
  * @param <T> Concentration type
  */
-public interface Incarnation<T> {
+public interface Incarnation<T, P extends Position<? extends P>> {
 
     /**
      * Given an {@link Node}, an {@link Molecule} and a property expressed as
@@ -54,9 +54,11 @@ public interface Incarnation<T> {
      *            the environment that will host this object
      * @param param
      *            a {@link String} describing the object
+     * @param <P>
+     *            Position type
      * @return a new {@link TimeDistribution}
      */
-    Node<T> createNode(RandomGenerator rand, Environment<T> env, String param);
+    Node<T> createNode(RandomGenerator rand, Environment<T, P> env, String param);
 
     /**
      * @param rand
@@ -67,9 +69,11 @@ public interface Incarnation<T> {
      *            the node that will host this object
      * @param param
      *            a {@link String} describing the object
+     * @param <P>
+     *            Position type 
      * @return a new {@link TimeDistribution}
      */
-    TimeDistribution<T> createTimeDistribution(RandomGenerator rand, Environment<T> env, Node<T> node, String param);
+    TimeDistribution<T> createTimeDistribution(RandomGenerator rand, Environment<T, P> env, Node<T> node, String param);
 
     /**
      * @param rand
@@ -82,9 +86,11 @@ public interface Incarnation<T> {
      *            the time distribution of the reaction
      * @param param
      *            a {@link String} describing the object
+     * @param <P>
+     *            Position type 
      * @return a new {@link Reaction}
      */
-    Reaction<T> createReaction(RandomGenerator rand, Environment<T> env, Node<T> node, TimeDistribution<T> time, String param);
+    Reaction<T> createReaction(RandomGenerator rand, Environment<T, P> env, Node<T> node, TimeDistribution<T> time, String param);
 
     /**
      * @param rand
@@ -99,9 +105,11 @@ public interface Incarnation<T> {
      *            the reaction hosting this object
      * @param param
      *            a {@link String} describing the object
+     * @param <P>
+     *            Position type 
      * @return a new {@link Condition}
      */
-    Condition<T> createCondition(RandomGenerator rand, Environment<T> env, Node<T> node, TimeDistribution<T> time, Reaction<T> reaction, String param);
+    Condition<T> createCondition(RandomGenerator rand, Environment<T, P> env, Node<T> node, TimeDistribution<T> time, Reaction<T> reaction, String param);
 
     /**
      * @param rand
@@ -116,8 +124,10 @@ public interface Incarnation<T> {
      *            the reaction hosting this object
      * @param param
      *            a {@link String} describing the object
+     * @param <P>
+     *            Position type 
      * @return a new {@link Action}
      */
-    Action<T> createAction(RandomGenerator rand, Environment<T> env, Node<T> node, TimeDistribution<T> time, Reaction<T> reaction, String param);
+    Action<T> createAction(RandomGenerator rand, Environment<T, P> env, Node<T> node, TimeDistribution<T> time, Reaction<T> reaction, String param);
 
 }

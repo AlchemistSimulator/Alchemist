@@ -13,6 +13,7 @@ package it.unibo.alchemist.model.implementations.positions;
 
 import it.unibo.alchemist.exceptions.UncomparableDistancesException;
 import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Position2D;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ import com.google.common.collect.Lists;
  * discrete environments. The distance between two nodes is computed as
  * Manhattan distance.
  */
-public final class Discrete2DManhattan implements Position {
+public final class Manhattan2DPosition implements Position2D<Manhattan2DPosition> {
 
     private static final int MASK = 0x0000FFFF;
     private static final long serialVersionUID = 4773955346963361299L;
@@ -36,24 +37,29 @@ public final class Discrete2DManhattan implements Position {
      * @param y
      *            Y coordinate
      */
-    public Discrete2DManhattan(final int x, final int y) {
+    public Manhattan2DPosition(final int x, final int y) {
         this.xCoord = x;
         this.yCoord = y;
         hash = (x & MASK) << SHIFT | (y & MASK);
     }
 
     @Override
-    public List<Position> buildBoundingBox(final double r) {
+    public Manhattan2DPosition add(final Manhattan2DPosition other) {
+        return new Manhattan2DPosition(xCoord + other.xCoord, yCoord + other.yCoord);
+    }
+
+    @Override
+    public List<Manhattan2DPosition> buildBoundingBox(final double r) {
         final int range = (int) r;
-        final Discrete2DManhattan bl = new Discrete2DManhattan(xCoord - range, yCoord - range);
-        final Discrete2DManhattan ur = new Discrete2DManhattan(xCoord + range, yCoord + range);
+        final Manhattan2DPosition bl = new Manhattan2DPosition(xCoord - range, yCoord - range);
+        final Manhattan2DPosition ur = new Manhattan2DPosition(xCoord + range, yCoord + range);
         return Lists.newArrayList(bl, ur);
     }
 
     @Override
     public boolean equals(final Object o) {
-        if (o instanceof Discrete2DManhattan) {
-            final Discrete2DManhattan d = (Discrete2DManhattan) o;
+        if (o instanceof Manhattan2DPosition) {
+            final Manhattan2DPosition d = (Manhattan2DPosition) o;
             return xCoord == d.xCoord && yCoord == d.yCoord;
         }
         return false;
@@ -81,13 +87,23 @@ public final class Discrete2DManhattan implements Position {
     }
 
     @Override
-    public double getDistanceTo(final Position p) {
+    public double getDistanceTo(final Position<?> p) {
         try {
-            final Discrete2DManhattan d = (Discrete2DManhattan) p;
+            final Manhattan2DPosition d = (Manhattan2DPosition) p;
             return Math.abs(xCoord - d.xCoord) + Math.abs(yCoord - d.yCoord);
         } catch (ClassCastException e) {
             throw new UncomparableDistancesException(this, p);
         }
+    }
+
+    @Override
+    public double getX() {
+        return xCoord;
+    }
+
+    @Override
+    public double getY() {
+        return yCoord;
     }
 
     @Override
@@ -96,27 +112,13 @@ public final class Discrete2DManhattan implements Position {
     }
 
     @Override
+    public Manhattan2DPosition subtract(final Manhattan2DPosition other) {
+        return new Manhattan2DPosition(xCoord - other.xCoord, yCoord - other.yCoord);
+    }
+
+    @Override
     public String toString() {
         return "[" + xCoord + "," + yCoord + "]";
-    }
-
-    @Override
-    public Position add(final Position other) {
-        final Discrete2DManhattan o = checkAndConvert(other);
-        return new Discrete2DManhattan(xCoord + o.xCoord, yCoord + o.yCoord);
-    }
-
-    @Override
-    public Position subtract(final Position other) {
-        final Discrete2DManhattan o = checkAndConvert(other);
-        return new Discrete2DManhattan(xCoord - o.xCoord, yCoord - o.yCoord);
-    }
-
-    private static Discrete2DManhattan checkAndConvert(final Position other) {
-        if (other instanceof Discrete2DManhattan) {
-            return (Discrete2DManhattan) other;
-        }
-        throw new IllegalArgumentException(other + " is not a valid " + Discrete2DManhattan.class.getSimpleName());
     }
 
 }

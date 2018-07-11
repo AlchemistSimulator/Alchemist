@@ -9,11 +9,11 @@ final class Neighborhoods {
 
 	private new() {}
 
-	def public static <T> Neighborhood<T> make(Environment<T> env, Node<T> center) {
+	def static <T> Neighborhood<T> make(Environment<T, ?> env, Node<T> center) {
 		make(env, center, Collections.emptyList)
 	}
 
-	def public static <T> Neighborhood<T> make(Environment<T> env, Node<T> center, Iterable<? extends Node<T>> neighbors) {
+	def static <T> Neighborhood<T> make(Environment<T, ?> env, Node<T> center, Iterable<? extends Node<T>> neighbors) {
 		new SimpleNeighborhood(env, center, neighbors)
 	}
 

@@ -46,7 +46,7 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
     }
 
     @Override
-    public final void update(final Time curTime, final boolean executed, final double param, final Environment<T> env) {
+    public final void update(final Time curTime, final boolean executed, final double param, final Environment<T, ?> env) {
         if (!schedulable && curTime.compareTo(startTime) >= 0) {
             /*
              * If the simulation time is beyond the startTime for this reaction,
@@ -79,7 +79,7 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
      * @param env
      *            the current environment
      */
-    protected abstract void updateStatus(Time curTime, boolean executed, double param, Environment<T> env);
+    protected abstract void updateStatus(Time curTime, boolean executed, double param, Environment<T, ?> env);
 
     @Override
     public abstract AbstractDistribution<T> clone(Time currentTime);

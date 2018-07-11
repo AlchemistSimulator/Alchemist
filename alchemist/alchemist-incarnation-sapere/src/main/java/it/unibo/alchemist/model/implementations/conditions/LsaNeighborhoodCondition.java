@@ -34,14 +34,14 @@ import java.util.Map;
 public class LsaNeighborhoodCondition extends LsaStandardCondition {
 
     private static final long serialVersionUID = 5472803597473997104L;
-    private final Environment<List<ILsaMolecule>> env;
+    private final Environment<List<ILsaMolecule>, ?> env;
 
     /**
      * @param n 
      * @param mol 
      * @param environment 
      */
-    public LsaNeighborhoodCondition(final ILsaNode n, final ILsaMolecule mol, final Environment<List<ILsaMolecule>> environment) {
+    public LsaNeighborhoodCondition(final ILsaNode n, final ILsaMolecule mol, final Environment<List<ILsaMolecule>, ?> environment) {
         super(mol, n);
         env = environment;
     }
@@ -195,7 +195,7 @@ public class LsaNeighborhoodCondition extends LsaStandardCondition {
     /**
      * @return the current environment
      */
-    protected Environment<List<ILsaMolecule>> getEnvironment() {
+    protected Environment<List<ILsaMolecule>, ?> getEnvironment() {
         return env;
     }
 

@@ -23,7 +23,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
  * 
  * @param <T>
  */
-public class Event<T> extends AReaction<T> {
+public class Event<T> extends AbstractReaction<T> {
 
     private static final long serialVersionUID = -1640973841645383193L;
 
@@ -36,7 +36,7 @@ public class Event<T> extends AReaction<T> {
     }
 
     @Override
-    protected void updateInternalStatus(final Time curTime, final boolean executed, final Environment<T> env) {
+    protected void updateInternalStatus(final Time curTime, final boolean executed, final Environment<T, ?> env) {
     }
 
     @Override

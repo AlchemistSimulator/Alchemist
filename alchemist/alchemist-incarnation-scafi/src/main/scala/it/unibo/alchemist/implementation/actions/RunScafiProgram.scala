@@ -17,8 +17,8 @@ import ScafiIncarnationForAlchemist.factory
 import it.unibo.alchemist.implementation.nodes.SimpleNodeManager
 import org.kaikikm.threadresloader.ResourceLoader
 
-sealed class RunScafiProgram(
-    environment: Environment[Any],
+sealed class RunScafiProgram[P <: Position[P]] (
+    environment: Environment[Any, P],
     node: Node[Any],
     reaction: Reaction[Any],
     rng: RandomGenerator,
@@ -26,7 +26,7 @@ sealed class RunScafiProgram(
     retentionTime: Double
     ) extends AbstractLocalAction[Any](node) {
 
-  def this(environment: Environment[Any],
+  def this(environment: Environment[Any, P],
     node: Node[Any],
     reaction: Reaction[Any],
     rng: RandomGenerator,
@@ -36,7 +36,7 @@ sealed class RunScafiProgram(
 
   import RunScafiProgram.NBRData
   private val program = ResourceLoader.classForName(programName).newInstance().asInstanceOf[CONTEXT => EXPORT]
-  private[this] var nbrData: Map[ID, NBRData] = Map()
+  private[this] var nbrData: Map[ID, NBRData[P]] = Map()
   addModifiedMolecule(programName)
 
   override def cloneAction(n: Node[Any], r: Reaction[Any]) = {
@@ -45,7 +45,7 @@ sealed class RunScafiProgram(
 
   override def execute() {
     import collection.JavaConverters.mapAsScalaMapConverter
-    val position = environment.getPosition(node)
+    val position: P = environment.getPosition(node)
     val currentTime = reaction.getTau
     if(!nbrData.contains(node.getId)) nbrData += node.getId -> new NBRData(factory.emptyExport(), environment.getPosition(node), Double.NaN)
     nbrData = nbrData.filter { case (id,data) => id==node.getId || data.executionTime >= currentTime - retentionTime }
@@ -68,7 +68,7 @@ sealed class RunScafiProgram(
          */
         "nbrDelay" -> nbrData.mapValues[Double](nbr => nbr.executionTime + deltaTime - currentTime),
         "nbrRange" -> nbrData.mapValues[Double](_.position.getDistanceTo(position)),
-        "nbrVector" -> nbrData.mapValues[Position](position - _.position)
+        "nbrVector" -> nbrData.mapValues[P](position - _.position)
     )
     val nbrRange = nbrData.mapValues { _.position }
     val exports = nbrData.mapValues { _.export }
@@ -82,14 +82,14 @@ sealed class RunScafiProgram(
     for (nbr: Node[Any] <- environment.getNeighborhood(node).asScala;
         reaction: Reaction[Any] <- nbr.getReactions().asScala;
         action: Action[Any] <- reaction.getActions().asScala;
-        if action.isInstanceOf[RunScafiProgram] && action.asInstanceOf[RunScafiProgram].program.getClass == program.getClass) {
-      action.asInstanceOf[RunScafiProgram].sendExport(node.getId, toSend)
+        if action.isInstanceOf[RunScafiProgram[P]] && action.asInstanceOf[RunScafiProgram[P]].program.getClass == program.getClass) {
+      action.asInstanceOf[RunScafiProgram[P]].sendExport(node.getId, toSend)
     }
   }
 
-  private def sendExport(id: ID, export: NBRData) { nbrData += id -> export }
+  private def sendExport(id: ID, export: NBRData[P]) { nbrData += id -> export }
 }
 
 object RunScafiProgram {
-  private case class NBRData(export: EXPORT, position: Position, executionTime: Time)
+  private case class NBRData[P <: Position[P]](export: EXPORT, position: P, executionTime: Time)
 }

@@ -15,17 +15,35 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 
 /**
- * This rule guarantees that no links are created at all.
+ * LinkingRule which connects nodes whose euclidean distance is shorter than a
+ * given radius.
  * 
  * @param <T>
+ *            The type which describes the concentration of a molecule
  */
-public class NoLinks<T, P extends Position<? extends P>> extends AbstractLocallyConsistentLinkingRule<T, P> {
+public class ConnectWithinDistance<T, P extends Position<? extends P>> extends AbstractLocallyConsistentLinkingRule<T, P> {
 
-    private static final long serialVersionUID = -711043794655618585L;
+    private static final long serialVersionUID = -405055780667941773L;
+    private final double range;
+
+    /**
+     * @param radius
+     *            connection radius
+     */
+    public ConnectWithinDistance(final double radius) {
+        range = radius;
+    }
 
     @Override
     public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> env) {
-        return Neighborhoods.make(env, center);
+        return Neighborhoods.make(env, center, env.getNodesWithinRange(center, range));
+    }
+
+    /**
+     * @return the range
+     */
+    protected final double getRange() {
+        return range;
     }
 
 }

@@ -41,7 +41,7 @@ public class JOutputMonitorRepresentation<T> extends JPanel implements ItemSelec
      */
     private static final long serialVersionUID = 5590060251090393414L;
     private static final Logger L = LoggerFactory.getLogger(JOutputMonitorRepresentation.class);
-    private final OutputMonitor<T> monitor;
+    private final OutputMonitor<T, ?> monitor;
     private boolean selected;
     private final transient List<ItemListener> itemListeners = new LinkedList<>();
     private final transient MouseAdapter mouseAdapter = new MouseAdapter() {
@@ -82,7 +82,7 @@ public class JOutputMonitorRepresentation<T> extends JPanel implements ItemSelec
     /**
      * @param mon the {@link OutputMonitor}
      */
-    public JOutputMonitorRepresentation(final OutputMonitor<T> mon) {
+    public JOutputMonitorRepresentation(final OutputMonitor<T, ?> mon) {
         super();
         setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
         setLayout(new BorderLayout(0, 0));
@@ -111,7 +111,7 @@ public class JOutputMonitorRepresentation<T> extends JPanel implements ItemSelec
     /**
      * @return the monitor
      */
-    public OutputMonitor<T> getMonitor() {
+    public OutputMonitor<T, ?> getMonitor() {
         return monitor;
     }
 

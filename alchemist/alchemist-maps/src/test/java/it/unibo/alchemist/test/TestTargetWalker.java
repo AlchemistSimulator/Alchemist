@@ -17,10 +17,11 @@ import it.unibo.alchemist.model.implementations.actions.TargetWalker;
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
-import it.unibo.alchemist.model.implementations.nodes.GenericNode;
+import it.unibo.alchemist.model.implementations.nodes.AbstractNode;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.implementations.reactions.Event;
 import it.unibo.alchemist.model.implementations.timedistributions.DiracComb;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -43,11 +44,11 @@ public class TestTargetWalker {
     /*
      * Rocca Malatestiana
      */
-    private static final Position STARTPOSITION = new LatLongPosition(STARTLAT, STARTLON);
+    private static final GeoPosition STARTPOSITION = new LatLongPosition(STARTLAT, STARTLON);
     /*
      * Near Montefiore
      */
-    private static final Position ENDPOSITION = new LatLongPosition(ENDLAT, ENDLON);
+    private static final GeoPosition ENDPOSITION = new LatLongPosition(ENDLAT, ENDLON);
     private MapEnvironment<Object> env;
     private Node<Object> node;
     private Reaction<Object> reaction;
@@ -63,7 +64,7 @@ public class TestTargetWalker {
         try {
             env = new OSMEnvironment<>(TESTMAP, true, true);
             env.setLinkingRule(new NoLinks<>());
-            node = new GenericNode<Object>(env) {
+            node = new AbstractNode<Object>(env) {
                 private static final long serialVersionUID = -3982001064673078159L;
                 @Override
                 protected Object createT() {
@@ -92,7 +93,7 @@ public class TestTargetWalker {
      */
     @Test
     public void testNoPosition() {
-        final Position start = env.getPosition(node);
+        final GeoPosition start = env.getPosition(node);
         /*
          * Should not be more than 10 meters afar the suggested start
          */
@@ -109,7 +110,7 @@ public class TestTargetWalker {
      */
     @Test
     public void testPosition() {
-        final Position start = env.getPosition(node);
+        final GeoPosition start = env.getPosition(node);
         /*
          * Should not be more than 10 meters afar the suggested start
          */
@@ -127,7 +128,7 @@ public class TestTargetWalker {
      */
     @Test
     public void testIterableDouble() {
-        final Position start = env.getPosition(node);
+        final GeoPosition start = env.getPosition(node);
         /*
          * Should not be more than 10 meters afar the suggested start
          */
@@ -145,7 +146,7 @@ public class TestTargetWalker {
      */
     @Test
     public void testIterableStrings() {
-        final Position start = env.getPosition(node);
+        final GeoPosition start = env.getPosition(node);
         assertNotNull(start);
         /*
          * Should not be more than 10 meters afar the suggested start
@@ -164,7 +165,7 @@ public class TestTargetWalker {
      */
     @Test
     public void testStrings01() {
-        final Position start = env.getPosition(node);
+        final GeoPosition start = env.getPosition(node);
         /*
          * Should not be more than 10 meters afar the suggested start
          */
@@ -182,7 +183,7 @@ public class TestTargetWalker {
      */
     @Test
     public void testStrings02() {
-        final Position start = env.getPosition(node);
+        final GeoPosition start = env.getPosition(node);
         /*
          * Should not be more than 10 meters afar the suggested start
          */
@@ -200,7 +201,7 @@ public class TestTargetWalker {
      */
     @Test
     public void testStrings03() {
-        final Position start = env.getPosition(node);
+        final GeoPosition start = env.getPosition(node);
         /*
          * Should not be more than 10 meters afar the suggested start
          */
@@ -218,7 +219,7 @@ public class TestTargetWalker {
      */
     @Test
     public void testStrings04() {
-        final Position start = env.getPosition(node);
+        final GeoPosition start = env.getPosition(node);
         /*
          * Should not be more than 10 meters afar the suggested start
          */

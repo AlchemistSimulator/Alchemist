@@ -171,7 +171,7 @@ public final class Project {
          */
         final Loader loader = createLoader();
         if (loader != null) {
-            final AlchemistRunner<?> runner = new AlchemistRunner.Builder<>(loader).build();
+            final AlchemistRunner<?, ?> runner = new AlchemistRunner.Builder<>(loader).build();
             final Map<String, Boolean> vars = Collections.unmodifiableMap(this.batch.getVariables());
             this.batch.setVariables(runner.getVariables().keySet().stream()
                     .collect(Collectors.toMap(
@@ -207,7 +207,7 @@ public final class Project {
                  * 1. Try to use resourceloader "/it/unibo/images/pluto.png" getResource() -- getResourceAsStream()
                  * 2. If it fails, use file access
                  */
-                final AlchemistRunner<?> runner = new AlchemistRunner.Builder<>(loader)
+                final AlchemistRunner<?, ?> runner = new AlchemistRunner.Builder<>(loader)
                         .setEndTime(new DoubleTime(getEndTime()))
                         .setEffects(getEffectPath())
                         .setOutputFile(getFolderPath())

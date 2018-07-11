@@ -22,13 +22,14 @@ import javax.swing.SwingUtilities;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 
 /**
  * @param <T>
  */
-public class NodeTracker<T> extends JPanel implements OutputMonitor<T>, ActionListener {
+public class NodeTracker<T, P extends Position<? extends P>> extends JPanel implements OutputMonitor<T, P>, ActionListener {
     private static final byte MARGIN = 100;
     private static final String PROGRAM = " = Program =", CONTENT = " = Content =", POSITION = " = POSITION = ";
     private static final long serialVersionUID = -676002989218532788L;
@@ -58,17 +59,17 @@ public class NodeTracker<T> extends JPanel implements OutputMonitor<T>, ActionLi
     }
 
     @Override
-    public void finished(final Environment<T> env, final Time time, final long step) {
+    public void finished(final Environment<T, P> env, final Time time, final long step) {
         stepDone(env, null, time, step);
     }
 
     @Override
-    public void initialized(final Environment<T> env) {
+    public void initialized(final Environment<T, P> env) {
         stepDone(env, null, null, 0L);
     }
 
     @Override
-    public void stepDone(final Environment<T> env, final Reaction<T> exec, final Time time, final long step) {
+    public void stepDone(final Environment<T, P> env, final Reaction<T> exec, final Time time, final long step) {
         if (exec == null || exec.getNode().equals(n)) {
             final StringBuilder sb = new StringBuilder(stringLength);
             sb.append(POSITION);

@@ -27,7 +27,7 @@ public interface Extractor {
      *            the simulation step
      * @return the extracted properties
      */
-    double[] extractData(Environment<?> env, Reaction<?> r, Time time, long step);
+    double[] extractData(Environment<?, ?> env, Reaction<?> r, Time time, long step);
 
     /**
      * @return the name of the properties that this {@link Extractor} can

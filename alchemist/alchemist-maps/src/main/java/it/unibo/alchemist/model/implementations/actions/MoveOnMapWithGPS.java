@@ -12,6 +12,7 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.gpsload.impl.TraceLoader;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.ObjectWithGPS;
@@ -59,9 +60,11 @@ public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
      * @param normalizerArgs
      *            Args to build normalize
      */
-    public MoveOnMapWithGPS(final MapEnvironment<T> environment, final Node<T> node, 
-            final RoutingStrategy rt, final SpeedSelectionStrategy sp, 
-            final TargetSelectionStrategy tg,
+    public MoveOnMapWithGPS(final MapEnvironment<T> environment,
+            final Node<T> node, 
+            final RoutingStrategy<GeoPosition> rt,
+            final SpeedSelectionStrategy<GeoPosition> sp, 
+            final TargetSelectionStrategy<GeoPosition> tg,
             final String path, final boolean cycle, final String normalizer, final Object... normalizerArgs) {
         this(environment, node, rt, sp, tg, traceFor(environment, path, cycle, normalizer, normalizerArgs));
     }
@@ -84,9 +87,9 @@ public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
     public MoveOnMapWithGPS(
             final MapEnvironment<T> environment,
             final Node<T> node, 
-            final RoutingStrategy rt,
-            final SpeedSelectionStrategy sp, 
-            final TargetSelectionStrategy tg,
+            final RoutingStrategy<GeoPosition> rt,
+            final SpeedSelectionStrategy<GeoPosition> sp, 
+            final TargetSelectionStrategy<GeoPosition> tg,
             final GPSTrace trace) {
         super(environment, node, rt, sp, tg);
         this.trace = requireNonNull(trace);

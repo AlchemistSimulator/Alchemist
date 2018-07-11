@@ -43,7 +43,7 @@ public interface GPSTrace extends TimedRoute<GPSPoint> {
      *         a straight line connecting the previous and the next point of
      *         time at constant speed
      */
-    GPSPoint interpolate(Time time);
+    GeoPosition interpolate(Time time);
 
     /**
      * @param time

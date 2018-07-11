@@ -20,11 +20,11 @@ import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
  * 
  * @param <T>
  */
-public class InteractWithOthers<T> implements SpeedSelectionStrategy {
+public class InteractWithOthers<T, P extends Position<? extends P>> implements SpeedSelectionStrategy<P> {
 
     private static final long serialVersionUID = -1900168887685703120L;
     private static final double MINIMUM_DISTANCE_WALKED = 1;
-    private final Environment<T> env;
+    private final Environment<T, P> env;
     private final Node<T> node;
     private final Molecule interacting;
     private final double rd, in, sp;
@@ -47,7 +47,7 @@ public class InteractWithOthers<T> implements SpeedSelectionStrategy {
      *            factor dynamically computed, and the speed will be divided by
      *            the number obtained
      */
-    public InteractWithOthers(final Environment<T> environment, final Node<T> n, final Reaction<T> reaction,
+    public InteractWithOthers(final Environment<T, P> environment, final Node<T> n, final Reaction<T> reaction,
             final Molecule inter, final double speed, final double radius, final double interaction) {
         env = Objects.requireNonNull(environment);
         node = Objects.requireNonNull(n);
@@ -62,7 +62,7 @@ public class InteractWithOthers<T> implements SpeedSelectionStrategy {
     }
 
     @Override
-    public double getCurrentSpeed(final Position target) {
+    public double getCurrentSpeed(final P target) {
         double crowd = 0;
         final Collection<? extends Node<T>> neighs = rd > 0 ? env.getNodesWithinRange(node, rd) : Collections.emptyList();
         if (neighs.size() > 1 / in) {

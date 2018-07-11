@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.implementations.actions;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
+import it.unibo.alchemist.model.interfaces.Position;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ import java.util.List;
  *         an agent able to move a molecule towards a specific node.
  * 
  */
-public class SAPEREChemotaxis extends SAPERENeighborAgent {
+public class SAPEREChemotaxis<P extends Position<? extends P>> extends SAPERENeighborAgent<P> {
 
     private static final long serialVersionUID = -4845100315774422690L;
     private final int o;
@@ -41,7 +42,7 @@ public class SAPEREChemotaxis extends SAPERENeighborAgent {
      * @param oPos
      *            the argument number where to search for the node ID
      */
-    public SAPEREChemotaxis(final Environment<List<ILsaMolecule>> env, final ILsaNode node, final ILsaMolecule response, final ILsaMolecule gradient, final int oPos) {
+    public SAPEREChemotaxis(final Environment<List<ILsaMolecule>, P> env, final ILsaNode node, final ILsaMolecule response, final ILsaMolecule gradient, final int oPos) {
         super(env, node, response);
         /*
          * Thanks Java, for not having unsigned primitives! -.-

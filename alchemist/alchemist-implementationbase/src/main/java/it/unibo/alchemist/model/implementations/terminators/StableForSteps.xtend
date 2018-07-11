@@ -13,9 +13,9 @@ import java.util.function.Predicate
 import org.eclipse.xtend.lib.annotations.Accessors
 
 @Accessors(PROTECTED_GETTER, PROTECTED_SETTER)
-class StableForSteps<T> implements Predicate<Environment<T>> {
+class StableForSteps<T> implements Predicate<Environment<T, ?>> {
 	
-	var Map<Node<T>, Position> positions = Collections.emptyMap
+	var Map<Node<T>, Position<?>> positions = Collections.emptyMap
 	var Table<Node<T>, Molecule, T> contents = makeTable(0)
 	val long interval
 	val long intervals
@@ -33,7 +33,7 @@ class StableForSteps<T> implements Predicate<Environment<T>> {
 		Tables.newCustomTable(Maps.newLinkedHashMapWithExpectedSize(size), [Maps.newLinkedHashMapWithExpectedSize(size)])
 	}
 	
-	override test(Environment<T> env) {
+	override test(Environment<T, ?> env) {
 		if (env.simulation.step % interval == 0) {
 			val newPositions = env.toMap([it], [env.getPosition(it)])
 			val newContents = makeTable(env.nodesNumber)

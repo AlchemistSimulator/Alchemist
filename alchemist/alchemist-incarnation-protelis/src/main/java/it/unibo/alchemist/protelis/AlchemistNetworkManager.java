@@ -29,7 +29,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 public final class AlchemistNetworkManager implements NetworkManager, Serializable {
 
     private static final long serialVersionUID = -7028533174885876642L;
-    private final Environment<Object> env;
+    private final Environment<Object, ?> env;
     private final ProtelisNode node;
     /**
      * This reaction stores the time at which the neighbor state is read
@@ -51,7 +51,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
      *            the {@link RunProtelisProgram}
      */
     public AlchemistNetworkManager(
-            final Environment<Object> environment,
+            final Environment<Object, ?> environment,
             final ProtelisNode local,
             final Reaction<Object> executionTime,
             final RunProtelisProgram program) {
@@ -72,7 +72,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
      *            to mean that they should get eliminated upon node awake.
      */
     public AlchemistNetworkManager(
-            final Environment<Object> environment,
+            final Environment<Object, ?> environment,
             final ProtelisNode local,
             final Reaction<Object> executionTime,
             final RunProtelisProgram program,

@@ -16,14 +16,14 @@ public class EnvPresent extends AbstractCondition<Double> {
      * 
      */
     private static final long serialVersionUID = 1L;
-    private final Environment<Double> environment;
+    private final Environment<Double, ?> environment;
 
     /**
      * 
      * @param node 
      * @param env 
      */
-    public EnvPresent(final Environment<Double> env, final Node<Double> node) {
+    public EnvPresent(final Environment<Double, ?> env, final Node<Double> node) {
         super(node);
         environment = env;
     }

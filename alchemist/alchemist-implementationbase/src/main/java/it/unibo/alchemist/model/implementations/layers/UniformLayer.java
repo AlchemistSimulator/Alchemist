@@ -8,7 +8,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  *
  * @param <T> concentration type
  */
-public class UniformLayer<T> implements Layer<T> {
+public class UniformLayer<T, P extends Position<? extends P>> implements Layer<T, P> {
 
     /**
      * 
@@ -25,7 +25,7 @@ public class UniformLayer<T> implements Layer<T> {
     }
 
     @Override
-    public T getValue(final Position p) {
+    public T getValue(final P p) {
         return level;
     }
 

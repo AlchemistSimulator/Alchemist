@@ -70,30 +70,30 @@ public class TestLoadGPSTrace {
     private static <T> void testLoading(final String resource) {
         final InputStream res = ResourceLoader.getResourceAsStream(resource);
         assertNotNull("Missing test resource " + resource, res);
-        final Environment<T> env = new YamlLoader(res).getDefault();
-        final Simulation<T> sim = new Engine<>(env, new DoubleTime(TIME_TO_REACH));
-        sim.addOutputMonitor(new OutputMonitor<T>() {
+        final Environment<T, GeoPosition> env = new YamlLoader(res).getDefault();
+        final Simulation<T, GeoPosition> sim = new Engine<>(env, new DoubleTime(TIME_TO_REACH));
+        sim.addOutputMonitor(new OutputMonitor<T, GeoPosition>() {
 
             @Override
-            public void finished(final Environment<T> env, final Time time, final long step) {
+            public void finished(final Environment<T, GeoPosition> env, final Time time, final long step) {
                 for (final Node<T> node : env.getNodes()) {
                     final GeoPosition start = Objects.requireNonNull(NODE_START_POSITION.get(node));
                     final GeoPosition idealArrive = Objects.requireNonNull(START_ARRIVE_POSITION.get(start));
-                    final Position realArrive = Objects.requireNonNull(env.getPosition(node));
+                    final Position<?> realArrive = Objects.requireNonNull(env.getPosition(node));
                     assertEquals(0.0, idealArrive.getDistanceTo(realArrive), DELTA);
                 }
             }
 
             @Override
-            public void initialized(final Environment<T> env) {
+            public void initialized(final Environment<T, GeoPosition> env) {
                 for (final Node<T> node : env.getNodes()) {
-                    final Position p = env.getPosition(node);
+                    final Position<?> p = env.getPosition(node);
                     NODE_START_POSITION.put(node, new LatLongPosition(p.getCoordinate(1), p.getCoordinate(0)));
                 }
             }
 
             @Override
-            public void stepDone(final Environment<T> env, final Reaction<T> r, final Time time, final long step) {
+            public void stepDone(final Environment<T, GeoPosition> env, final Reaction<T> r, final Time time, final long step) {
             }
         });
         sim.play();

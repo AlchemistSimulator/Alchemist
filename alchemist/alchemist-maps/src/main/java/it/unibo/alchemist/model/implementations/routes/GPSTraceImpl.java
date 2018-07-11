@@ -20,7 +20,7 @@ import it.unibo.alchemist.utils.MapUtils;
 
 /**
  */
-public class GPSTraceImpl extends PolygonalChain<GPSPoint> implements GPSTrace {
+public final class GPSTraceImpl extends PolygonalChain<GPSPoint> implements GPSTrace {
 
     private static final long serialVersionUID = 1L;
 
@@ -29,6 +29,7 @@ public class GPSTraceImpl extends PolygonalChain<GPSPoint> implements GPSTrace {
      * @param tr
      *            GPS points
      */
+    @SafeVarargs
     public GPSTraceImpl(final GPSPoint... tr) {
        super(tr);
     }
@@ -38,11 +39,11 @@ public class GPSTraceImpl extends PolygonalChain<GPSPoint> implements GPSTrace {
      *            GPS points
      */
     public GPSTraceImpl(final List<GPSPoint> tr) {
-        this(tr.stream().sorted().toArray(GPSPoint[]::new));
+        this(tr.toArray(new GPSPoint[tr.size()]));
     }
 
     @Override
-    public GPSTrace startAt(final Time time) {
+    public GPSTraceImpl startAt(final Time time) {
         final GPSPoint[] filtered = stream()
             .filter(pt -> pt.getTime().toDouble() >= time.toDouble())
             .map(p -> new GPSPointImpl(p.getLatitude(), p.getLongitude(), p.getTime().subtract(time)))

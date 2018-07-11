@@ -39,6 +39,7 @@ import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 
@@ -48,7 +49,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  * 
  * @param <T>
  */
-public final class Engine<T> implements Simulation<T> {
+public final class Engine<T, P extends Position<? extends P>> implements Simulation<T, P> {
 
     private static final Logger L = LoggerFactory.getLogger(Engine.class);
     private static final double NANOS_TO_SEC = 1000000000.0;
@@ -56,13 +57,13 @@ public final class Engine<T> implements Simulation<T> {
     private final Lock statusLock = new ReentrantLock();
     private final Condition statusCondition = statusLock.newCondition();
     private final BlockingQueue<CheckedRunnable> commands = new LinkedBlockingQueue<>();
-    private final Environment<T> env;
+    private final Environment<T, P> env;
     private final DependencyGraph<T> dg;
     private final Map<Reaction<T>, DependencyHandler<T>> handlers = new LinkedHashMap<>();
     private final ReactionManager<T> ipq;
     private final Time finalTime;
     private final FastReadWriteLock monitorLock = new FastReadWriteLock();
-    private final List<OutputMonitor<T>> monitors = new LinkedList<OutputMonitor<T>>();
+    private final List<OutputMonitor<T, P>> monitors = new LinkedList<OutputMonitor<T, P>>();
     private final long steps;
     private Optional<Throwable> error = Optional.empty();
     private Time currentTime = DoubleTime.ZERO_TIME;
@@ -81,7 +82,7 @@ public final class Engine<T> implements Simulation<T> {
      * @param maxSteps
      *            the maximum number of steps to do
      */
-    public Engine(final Environment<T> e, final long maxSteps) {
+    public Engine(final Environment<T, P> e, final long maxSteps) {
         this(e, maxSteps, new DoubleTime(Double.POSITIVE_INFINITY));
     }
 
@@ -98,7 +99,7 @@ public final class Engine<T> implements Simulation<T> {
      * @param t
      *            the maximum time to reach
      */
-    public Engine(final Environment<T> e, final long maxSteps, final Time t) {
+    public Engine(final Environment<T, P> e, final long maxSteps, final Time t) {
         L.trace("Engine created");
         env = e;
         env.setSimulation(this);
@@ -119,12 +120,12 @@ public final class Engine<T> implements Simulation<T> {
      * @param t
      *            the maximum time to reach
      */
-    public Engine(final Environment<T> e, final Time t) {
+    public Engine(final Environment<T, P> e, final Time t) {
         this(e, Long.MAX_VALUE, t);
     }
 
     @Override
-    public void addOutputMonitor(final OutputMonitor<T> op) {
+    public void addOutputMonitor(final OutputMonitor<T, P> op) {
             monitorLock.write();
             monitors.add(op);
             monitorLock.release();
@@ -171,7 +172,7 @@ public final class Engine<T> implements Simulation<T> {
             mu.update(currentTime, true, env);
             ipq.updateReaction(root);
             monitorLock.read();
-            for (final OutputMonitor<T> m : monitors) {
+            for (final OutputMonitor<T, P> m : monitors) {
                 m.stepDone(env, mu, currentTime, curStep);
             }
             monitorLock.release();
@@ -199,7 +200,7 @@ public final class Engine<T> implements Simulation<T> {
     }
 
     @Override
-    public Environment<T> getEnvironment() {
+    public Environment<T, P> getEnvironment() {
         return env;
     }
 
@@ -337,7 +338,7 @@ public final class Engine<T> implements Simulation<T> {
     }
 
     @Override
-    public void removeOutputMonitor(final OutputMonitor<T> op) {
+    public void removeOutputMonitor(final OutputMonitor<T, P> op) {
         new Thread(() -> {
             monitorLock.write();
             monitors.remove(op);
@@ -361,7 +362,7 @@ public final class Engine<T> implements Simulation<T> {
             final long startExecutionTime = System.nanoTime();
             L.trace("Thread {} started running.", currentThread);
             monitorLock.read();
-            for (final OutputMonitor<T> m : monitors) {
+            for (final OutputMonitor<T, P> m : monitors) {
                 m.initialized(env);
             }
             monitorLock.release();
@@ -388,7 +389,7 @@ public final class Engine<T> implements Simulation<T> {
                 L.trace("Thread {} execution time: {}", currentThread, (System.nanoTime() - startExecutionTime) / NANOS_TO_SEC);
                 commands.clear();
                 monitorLock.read();
-                for (final OutputMonitor<T> m : monitors) {
+                for (final OutputMonitor<T, P> m : monitors) {
                     m.finished(env, currentTime, curStep);
                 }
                 monitorLock.release();

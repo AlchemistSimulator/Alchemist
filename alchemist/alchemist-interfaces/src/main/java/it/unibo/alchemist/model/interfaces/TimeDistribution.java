@@ -13,19 +13,26 @@ import java.io.Serializable;
 /**
  * This interface represents a temporal distribution for any event.
  * 
- * @param <T> concentration type
+ * @param <T>
+ *            concentration type
  */
 public interface TimeDistribution<T> extends Cloneable, Serializable {
 
     /**
      * Updates the internal status.
      * 
-     * @param curTime current time
-     * @param executed true if the reaction has just been executed
-     * @param param a parameter passed by the reaction
-     * @param env the current environment
+     * @param curTime
+     *            current time
+     * @param executed
+     *            true if the reaction has just been executed
+     * @param param
+     *            a parameter passed by the reaction
+     * @param env
+     *            the current environment
+     * @param <P>
+     *            Position type
      */
-    void update(Time curTime, boolean executed, double param, Environment<T> env);
+    void update(Time curTime, boolean executed, double param, Environment<T, ?> env);
 
     /**
      * @return the next time at which the event will occur

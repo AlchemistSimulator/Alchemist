@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.interfaces;
 /**
  * @param <T>
  */
-public interface MapEnvironment<T> extends BenchmarkableEnvironment<T> {
+public interface MapEnvironment<T> extends BenchmarkableEnvironment<T, GeoPosition> {
 
     /**
      * The default vehicle.
@@ -46,7 +46,7 @@ public interface MapEnvironment<T> extends BenchmarkableEnvironment<T> {
      * @return A {@link Route} object describing the path the node should
      *         follow
      */
-    Route<GeoPosition> computeRoute(Node<T> node, Position coord);
+    Route<GeoPosition> computeRoute(Node<T> node, GeoPosition coord);
 
     /**
      * This method relies on the map data, and computes a route towards some
@@ -63,7 +63,7 @@ public interface MapEnvironment<T> extends BenchmarkableEnvironment<T> {
      * @return A {@link Route} object describing the path the node should
      *         follow
      */
-    Route<GeoPosition> computeRoute(Node<T> node, Position coord, Vehicle vehicle);
+    Route<GeoPosition> computeRoute(Node<T> node, GeoPosition coord, Vehicle vehicle);
 
     /**
      * This method relies on the map data, and computes a route towards some
@@ -80,7 +80,7 @@ public interface MapEnvironment<T> extends BenchmarkableEnvironment<T> {
      * @return A {@link Route} object describing the path the node should
      *         follow
      */
-    Route<GeoPosition> computeRoute(Position p1, Position p2);
+    Route<GeoPosition> computeRoute(GeoPosition p1, GeoPosition p2);
 
     /**
      * This method relies on the map data, and computes a route towards some
@@ -101,7 +101,7 @@ public interface MapEnvironment<T> extends BenchmarkableEnvironment<T> {
      * @return A {@link Route} object describing the path the node should
      *         follow
      */
-    Route<GeoPosition> computeRoute(Position p1, Position p2, Vehicle vehicle);
+    Route<GeoPosition> computeRoute(GeoPosition p1, GeoPosition p2, Vehicle vehicle);
 
     @Override
     GeoPosition getPosition(Node<T> node);

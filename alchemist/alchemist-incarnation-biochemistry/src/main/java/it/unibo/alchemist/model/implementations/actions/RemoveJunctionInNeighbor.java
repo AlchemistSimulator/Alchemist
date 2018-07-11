@@ -33,7 +33,7 @@ public class RemoveJunctionInNeighbor extends AbstractNeighborAction<Double> {
     private static final long serialVersionUID = -5033532863301442377L;
 
     private final Junction jun;
-    private final Environment<Double> env;
+    private final Environment<Double, ?> env;
 
     /**
      * 
@@ -42,7 +42,7 @@ public class RemoveJunctionInNeighbor extends AbstractNeighborAction<Double> {
      * @param e 
      * @param rg 
      */
-    public RemoveJunctionInNeighbor(final Environment<Double> e, final Node<Double> n, final Junction junction, final RandomGenerator rg) {
+    public RemoveJunctionInNeighbor(final Environment<Double, ?> e, final Node<Double> n, final Junction junction, final RandomGenerator rg) {
         super(n, e, rg);
         if (n instanceof CellNode) {
             addModifiedMolecule(junction);
@@ -75,7 +75,7 @@ public class RemoveJunctionInNeighbor extends AbstractNeighborAction<Double> {
     @Override
     public void execute(final Node<Double> targetNode) {
         if (targetNode instanceof CellNode) {
-            ((CellNode) targetNode).removeJunction(jun, getNode());
+            ((CellNode<?>) targetNode).removeJunction(jun, getNode());
         } else {
             throw new UnsupportedOperationException("Can't add Junction in a node that it's not a CellNode");
         }
@@ -87,8 +87,8 @@ public class RemoveJunctionInNeighbor extends AbstractNeighborAction<Double> {
     }
 
     @Override
-    public CellNode getNode() {
-        return (CellNode) super.getNode();
+    public CellNode<?> getNode() {
+        return (CellNode<?>) super.getNode();
     }
 
 }

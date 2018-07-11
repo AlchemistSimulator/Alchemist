@@ -16,8 +16,10 @@ import java.io.Serializable;
  * 
  * @param <T>
  *            The type which describes the concentration of a molecule
+ * @param <P>
+ *            The position type
  */
-public interface LinkingRule<T> extends Serializable {
+public interface LinkingRule<T, P extends Position<? extends P>> extends Serializable {
 
     /**
      * Produces a new neighborhood for specified node considering its position.
@@ -28,7 +30,7 @@ public interface LinkingRule<T> extends Serializable {
      *            the node's environment
      * @return a neighborhood
      */
-    Neighborhood<T> computeNeighborhood(Node<T> center, Environment<T> env);
+    Neighborhood<T> computeNeighborhood(Node<T> center, Environment<T, P> env);
 
     /**
      * Some rules may require to be evaluated against multiple nodes until the

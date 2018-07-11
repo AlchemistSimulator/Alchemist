@@ -17,6 +17,7 @@ import it.unibo.alchemist.model.implementations.reactions.BiochemicalReactionBui
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 import it.unibo.alchemist.model.interfaces.Action;
@@ -27,7 +28,7 @@ import it.unibo.alchemist.model.interfaces.Incarnation;
 
 /**
  */
-public class BiochemistryIncarnation implements Incarnation<Double> {
+public class BiochemistryIncarnation<P extends Position<P>> implements Incarnation<Double, P> {
 
     @Override
     public double getProperty(final Node<Double> node, final Molecule mol, final String prop) {
@@ -40,19 +41,19 @@ public class BiochemistryIncarnation implements Incarnation<Double> {
     }
 
     @Override
-    public CellNode createNode(final RandomGenerator rand, final Environment<Double> env, final String param) {
+    public CellNode<P> createNode(final RandomGenerator rand, final Environment<Double, P> env, final String param) {
         if (param == null || param.isEmpty()) {
-            return new CellNodeImpl(env);
+            return new CellNodeImpl<P>(env);
         }
         try {
-            return new CellNodeImpl(env, Double.parseDouble(param));
+            return new CellNodeImpl<>(env, Double.parseDouble(param));
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Inserted a string not attributable to a Double");
         }
     }
 
     @Override
-    public TimeDistribution<Double> createTimeDistribution(final RandomGenerator rand, final Environment<Double> env,
+    public TimeDistribution<Double> createTimeDistribution(final RandomGenerator rand, final Environment<Double, P> env,
             final Node<Double> node, final String param) {
         if (param == null || param.isEmpty()) {
             return new ExponentialTime<>(1.0, rand);
@@ -67,11 +68,11 @@ public class BiochemistryIncarnation implements Incarnation<Double> {
 
     @Override
     public Reaction<Double> createReaction(final RandomGenerator rand, 
-            final Environment<Double> env, 
+            final Environment<Double, P> env, 
             final Node<Double> node,
             final TimeDistribution<Double> time, 
             final String param) {
-        return new BiochemicalReactionBuilder(this, node, env)
+        return new BiochemicalReactionBuilder<>(this, node, env)
                 .randomGenerator(rand)
                 .timeDistribution(time)
                 .program(param)
@@ -79,13 +80,13 @@ public class BiochemistryIncarnation implements Incarnation<Double> {
     }
 
     @Override
-    public Condition<Double> createCondition(final RandomGenerator rand, final Environment<Double> env, final Node<Double> node,
+    public Condition<Double> createCondition(final RandomGenerator rand, final Environment<Double, P> env, final Node<Double> node,
             final TimeDistribution<Double> time, final Reaction<Double> reaction, final String param) {
         return null;
     }
 
     @Override
-    public Action<Double> createAction(final RandomGenerator rand, final Environment<Double> env, final Node<Double> node,
+    public Action<Double> createAction(final RandomGenerator rand, final Environment<Double, P> env, final Node<Double> node,
             final TimeDistribution<Double> time, final Reaction<Double> reaction, final String param) {
         return null;
     }

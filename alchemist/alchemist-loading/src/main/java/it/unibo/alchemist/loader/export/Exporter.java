@@ -17,6 +17,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 
@@ -30,7 +31,7 @@ import it.unibo.alchemist.model.interfaces.Time;
 @SuppressWarnings("serial")
 @SuppressFBWarnings(value = {"SE_BAD_FIELD", "SE_NO_SERIALVERSIONID"},
     justification = "This class does not comply to Serializable.")
-public class Exporter<T> implements OutputMonitor<T> {
+public class Exporter<T, P extends Position<? extends P>> implements OutputMonitor<T, P> {
 
     private static final String SEPARATOR = "#####################################################################";
     private final double sampleSpace;
@@ -59,7 +60,7 @@ public class Exporter<T> implements OutputMonitor<T> {
     }
 
     @Override
-    public void finished(final Environment<T> env, final Time time, final long step) {
+    public void finished(final Environment<T, P> env, final Time time, final long step) {
         out.println(SEPARATOR);
         out.print("# End of data export. Simulation finished at: ");
         final SimpleDateFormat isoTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US);
@@ -71,7 +72,7 @@ public class Exporter<T> implements OutputMonitor<T> {
     }
 
     @Override
-    public void initialized(final Environment<T> env) {
+    public void initialized(final Environment<T, P> env) {
         out.println(SEPARATOR);
         out.print("# Alchemist log file - simulation started at: ");
         final SimpleDateFormat isoTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US);
@@ -95,7 +96,7 @@ public class Exporter<T> implements OutputMonitor<T> {
     }
 
     @Override
-    public void stepDone(final Environment<T> env, final Reaction<T> r, final Time time, final long step) {
+    public void stepDone(final Environment<T, P> env, final Reaction<T> r, final Time time, final long step) {
         final long curSample = (long) (time.toDouble() / sampleSpace);
         if (curSample > count) {
             count = curSample;
@@ -108,7 +109,7 @@ public class Exporter<T> implements OutputMonitor<T> {
         out.print(' ');
     }
 
-    private void writeRow(final Environment<T> env, final Reaction<T> r, final Time time, final long step) {
+    private void writeRow(final Environment<?, ?> env, final Reaction<?> r, final Time time, final long step) {
         extractors.parallelStream()
             .flatMapToDouble(e -> Arrays.stream(e.extractData(env, r, time, step)))
             .forEachOrdered(this::printDatum);

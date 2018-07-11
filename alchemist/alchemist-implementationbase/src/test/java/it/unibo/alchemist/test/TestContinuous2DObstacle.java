@@ -11,8 +11,9 @@ package it.unibo.alchemist.test;
 import static org.junit.Assert.assertEquals;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DObstacles;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
-import it.unibo.alchemist.model.implementations.nodes.GenericNode;
-import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
+import it.unibo.alchemist.model.implementations.nodes.AbstractNode;
+import it.unibo.alchemist.model.implementations.nodes.IntNode;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.utils.RectObstacle2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
@@ -35,24 +36,24 @@ public class TestContinuous2DObstacle {
     @Test
     public void test() {
         final Continuous2DObstacles<Integer> env = new Continuous2DObstacles<>();
-        env.setLinkingRule(new NoLinks<Integer>());
+        env.setLinkingRule(new NoLinks<>());
         env.addObstacle(R1021);
         env.addObstacle(R0527);
 
-        assertEquals(new Continuous2DEuclidean(FastMath.nextAfter(1.0, 0.0), FastMath.nextAfter(1.0, 0.0)), env.next(0, 0, 1, 1));
-        assertEquals(new Continuous2DEuclidean(0, 1), env.next(1, 1, 0, 0));
-        assertEquals(new Continuous2DEuclidean(FastMath.nextAfter(1.0, 0.0), FastMath.nextAfter(0.5, 0.0)), env.next(0, 0, 2, 1));
+        assertEquals(new Euclidean2DPosition(FastMath.nextAfter(1.0, 0.0), FastMath.nextAfter(1.0, 0.0)), env.next(0, 0, 1, 1));
+        assertEquals(new Euclidean2DPosition(0, 1), env.next(1, 1, 0, 0));
+        assertEquals(new Euclidean2DPosition(FastMath.nextAfter(1.0, 0.0), FastMath.nextAfter(0.5, 0.0)), env.next(0, 0, 2, 1));
 
-        env.addNode(new DummyNode(env), new Continuous2DEuclidean(0, 0));
+        env.addNode(new IntNode(env), new Euclidean2DPosition(0, 0));
         assertEquals(env.getNodesNumber(), 1);
-        env.addNode(new DummyNode(env), new Continuous2DEuclidean(1, 1));
+        env.addNode(new IntNode(env), new Euclidean2DPosition(1, 1));
         assertEquals(env.getNodesNumber(), 1);
         // CHECKSTYLE: MagicNumber OFF
-        env.addNode(new DummyNode(env), new Continuous2DEuclidean(1.5, 0.5));
+        env.addNode(new IntNode(env), new Euclidean2DPosition(1.5, 0.5));
         assertEquals(env.getNodesNumber(), 1);
-        env.addNode(new DummyNode(env), new Continuous2DEuclidean(1, 5));
+        env.addNode(new IntNode(env), new Euclidean2DPosition(1, 5));
         assertEquals(env.getNodesNumber(), 1);
-        env.addNode(new DummyNode(env), new Continuous2DEuclidean(1, 2.999));
+        env.addNode(new IntNode(env), new Euclidean2DPosition(1, 2.999));
         assertEquals(env.getNodesNumber(), 2);
         assertEquals(env.getObstaclesInRange(0d, 0d, 100d).size(), 2);
         assertEquals(env.getObstaclesInRange(0d, 0d, 1d).size(), 1);
@@ -61,21 +62,6 @@ public class TestContinuous2DObstacle {
         assertEquals(env.getObstaclesInRange(1d, 5d, 1d).get(0), R0527);
         // CHECKSTYLE: MagicNumber ON
         assertEquals(env.getObstaclesInRange(0d, 0d, 0.5d).size(), 0);
-    }
-
-    private static class DummyNode extends GenericNode<Integer> {
-        private static final long serialVersionUID = -6826365559224388894L;
-        protected DummyNode(final Environment<Integer> env) {
-            super(env);
-        }
-        @Override
-        protected Integer createT() {
-            return 0;
-        }
-        @Override
-        public Map<Molecule, Integer> getContents() {
-            return null;
-        }
     }
 
 }

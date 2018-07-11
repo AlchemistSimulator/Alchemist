@@ -12,11 +12,11 @@ import it.unibo.alchemist.model.interfaces.Position;
  * 
  */
 @FunctionalInterface
-public interface TargetSelectionStrategy extends Serializable {
+public interface TargetSelectionStrategy<P extends Position<? extends P>> extends Serializable {
 
     /**
      * @return the next target where the {@link Node} is directed
      */
-    Position getTarget();
+    P getTarget();
 
 }

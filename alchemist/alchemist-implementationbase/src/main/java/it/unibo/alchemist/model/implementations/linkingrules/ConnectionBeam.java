@@ -39,12 +39,12 @@ import it.unibo.alchemist.model.interfaces.Position;
  * 
  * @param <T>
  */
-public final class ConnectionBeam<T> extends EuclideanDistance<T> {
+public final class ConnectionBeam<T, P extends Position<? extends P>> extends ConnectWithinDistance<T, P> {
 
-    private static final long serialVersionUID = -6303232843110524434L;
+    private static final long serialVersionUID = 1L;
     private static final int COORDS = 6;
     private final double range;
-    private transient Environment2DWithObstacles<?, ?> oenv;
+    private transient Environment2DWithObstacles<?, T, P> oenv;
     private transient Area obstacles = new Area();
 
     /**
@@ -58,14 +58,15 @@ public final class ConnectionBeam<T> extends EuclideanDistance<T> {
         range = beamSize;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T> env) {
+    public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> env) {
         final Neighborhood<T> normal = super.computeNeighborhood(center, env);
         if (oenv == null) {
-            if (!(env instanceof Environment2DWithObstacles<?, ?>)) {
+            if (!(env instanceof Environment2DWithObstacles<?, ?, ?>)) {
                 return normal;
             }
-            oenv = (Environment2DWithObstacles<?, ?>) env;
+            oenv = (Environment2DWithObstacles<?, T, P>) env;
             obstacles.reset();
             oenv.getObstacles().forEach((obs) -> {
                 /*
@@ -80,10 +81,10 @@ public final class ConnectionBeam<T> extends EuclideanDistance<T> {
             });
         }
         if (!normal.isEmpty()) {
-            final Position cp = env.getPosition(center);
+            final P cp = env.getPosition(center);
             final List<Node<T>> neighs = normal.getNeighbors().stream()
                 .filter((neigh) -> {
-                    final Position np = env.getPosition(neigh);
+                    final P np = env.getPosition(neigh);
                     return !oenv.intersectsObstacle(cp, np) || projectedBeamOvercomesObstacle(cp, np);
                 })
                 .collect(ArrayList::new, (l, el) -> l.add(el), (l1, l2) -> l1.addAll(l2));
@@ -92,7 +93,7 @@ public final class ConnectionBeam<T> extends EuclideanDistance<T> {
         return normal;
     }
 
-    private boolean projectedBeamOvercomesObstacle(final Position pos1, final Position pos2) {
+    private boolean projectedBeamOvercomesObstacle(final Position<?> pos1, final Position<?> pos2) {
         final double p1x = pos1.getCoordinate(0);
         final double p1y = pos1.getCoordinate(1);
         final double p2x = pos2.getCoordinate(0);

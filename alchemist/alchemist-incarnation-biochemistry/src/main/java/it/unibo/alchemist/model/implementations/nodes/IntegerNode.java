@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 
 /**
  */
-public abstract class IntegerNode extends GenericNode<Integer> {
+public abstract class IntegerNode extends AbstractNode<Integer> {
 
     private static final long serialVersionUID = -1064026943504464379L;
 
@@ -21,7 +21,7 @@ public abstract class IntegerNode extends GenericNode<Integer> {
      * Create a new integer node.
      * @param env the environment
      */
-    public IntegerNode(final Environment<Integer> env) {
+    public IntegerNode(final Environment<Integer, ?> env) {
         super(env);
     }
 

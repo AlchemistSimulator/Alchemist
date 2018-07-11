@@ -23,7 +23,7 @@ import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  */
-public class ContinuousGenericEuclidean implements Position {
+public abstract class AbstractEuclideanPosition<P extends AbstractEuclideanPosition<? extends P>> implements Position<P> {
 
     /**
      * 
@@ -34,15 +34,12 @@ public class ContinuousGenericEuclidean implements Position {
     private String stringCache;
 
     /**
-     * 
+     * @param copy
+     *            true if it is unsafe to store the array as-is
      * @param coord
-     *            the coordinates
+     *            the array of coordinates
      */
-    public ContinuousGenericEuclidean(final double... coord) {
-        this(true, coord);
-    }
-
-    private ContinuousGenericEuclidean(final boolean copy, final double... coord) {
+    protected AbstractEuclideanPosition(final boolean copy, final double... coord) {
         if (copy) {
             c = Arrays.copyOf(coord, coord.length);
         } else {
@@ -52,8 +49,8 @@ public class ContinuousGenericEuclidean implements Position {
     }
 
     @Override
-    public List<Position> buildBoundingBox(final double range) {
-        final List<Position> box = new ArrayList<>(getDimensions());
+    public final List<P> buildBoundingBox(final double range) {
+        final List<P> box = new ArrayList<>(getDimensions());
         for (int i = 0; i < getDimensions(); i++) {
             final double[] coords = new double[c.length];
             /*
@@ -62,27 +59,31 @@ public class ContinuousGenericEuclidean implements Position {
             for (int j = 0; j < coords.length; j++) {
                 coords[j] = c[j] + (i == j ? -range : range);
             }
-            box.add(new ContinuousGenericEuclidean(false, coords));
+            box.add(unsafeConstructor(coords));
         }
         return box;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean equals(final Object o) {
-        if (o instanceof Position) {
-            return samePosition((Position) o);
+        if (o == null) {
+            return false;
+        }
+        if (o.getClass() == getClass()) {
+            return samePosition((P) o);
         } else {
             return false;
         }
     }
 
     @Override
-    public double[] getCartesianCoordinates() {
+    public final double[] getCartesianCoordinates() {
         return Arrays.copyOf(c, c.length);
     }
 
     @Override
-    public double getCoordinate(final int dim) {
+    public final double getCoordinate(final int dim) {
         if (dim < 0 || dim >= c.length) {
             throw new IllegalArgumentException(dim + "is not an allowed dimension, only values between 0 and " + (c.length - 1) + "are allowed.");
         }
@@ -90,12 +91,12 @@ public class ContinuousGenericEuclidean implements Position {
     }
 
     @Override
-    public int getDimensions() {
+    public final int getDimensions() {
         return c.length;
     }
 
     @Override
-    public double getDistanceTo(final Position p) {
+    public double getDistanceTo(final Position<?> p) {
         final double[] coord = p.getCartesianCoordinates();
         if (c.length == coord.length) {
             return MathArrays.distance(c, coord);
@@ -117,7 +118,7 @@ public class ContinuousGenericEuclidean implements Position {
      *            the position to compare with
      * @return true if the two positions are the the same
      */
-    public boolean samePosition(final Position o) {
+    public boolean samePosition(final P o) {
         final double[] p = o.getCartesianCoordinates();
         return Arrays.equals(c, p);
     }
@@ -131,13 +132,15 @@ public class ContinuousGenericEuclidean implements Position {
     }
 
     @Override
-    public Position add(final Position other) {
-        return new ContinuousGenericEuclidean(false, MathArrays.ebeAdd(c, other.getCartesianCoordinates()));
+    public final P add(final P other) {
+        return unsafeConstructor(MathArrays.ebeAdd(c, other.getCartesianCoordinates()));
     }
 
     @Override
-    public Position subtract(final Position other) {
-        return new ContinuousGenericEuclidean(false, MathArrays.ebeSubtract(c, other.getCartesianCoordinates()));
+    public final P subtract(final P other) {
+        return unsafeConstructor(MathArrays.ebeSubtract(c, other.getCartesianCoordinates()));
     }
+
+    protected abstract P unsafeConstructor(double[] coord);
 
 }

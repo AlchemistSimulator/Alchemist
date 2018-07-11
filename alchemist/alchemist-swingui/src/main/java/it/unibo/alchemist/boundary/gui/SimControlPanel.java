@@ -37,15 +37,11 @@ import it.unibo.alchemist.core.interfaces.Status;
 public final class SimControlPanel extends JTapeGroup {
 
     private static final long serialVersionUID = 8245609434257107323L;
-
-    private static final Map<Simulation<?>, Set<SimControlPanel>> SIMCONTROLMAP = new MapMaker()
+    private static final Map<Simulation<?, ?>, Set<SimControlPanel>> SIMCONTROLMAP = new MapMaker()
             .weakKeys().makeMap();
-
     private boolean down;
-
     private final Map<SimControlCommand, SimControlButton> map = new EnumMap<>(SimControlCommand.class);
-
-    private Simulation<?> simulation;
+    private Simulation<?, ?> simulation;
 
     private static synchronized void addActionListener(final SimControlPanel cmd, final ActionListener l) {
         for (final SimControlPanel scp : getSiblings(cmd)) {
@@ -56,13 +52,13 @@ public final class SimControlPanel extends JTapeGroup {
     }
 
     private static synchronized void checkOldAndRemove() {
-        final Set<Simulation<?>> toRemove = new HashSet<>();
-        for (final Simulation<?> sim : SIMCONTROLMAP.keySet()) {
+        final Set<Simulation<?, ?>> toRemove = new HashSet<>();
+        for (final Simulation<?, ?> sim : SIMCONTROLMAP.keySet()) {
             if (sim.getStatus().equals(Status.TERMINATED) || SIMCONTROLMAP.get(sim).isEmpty()) {
                 toRemove.add(sim);
             }
         }
-        for (final Simulation<?> sim : toRemove) {
+        for (final Simulation<?,?> sim : toRemove) {
             SIMCONTROLMAP.remove(sim);
         }
     }
@@ -72,7 +68,7 @@ public final class SimControlPanel extends JTapeGroup {
      *            the simulation, null values allowed.
      * @return a new SimControlPanel
      */
-    public static SimControlPanel createControlPanel(final Simulation<?> sim) {
+    public static SimControlPanel createControlPanel(final Simulation<?, ?> sim) {
         if (sim == null) {
             return new SimControlPanel();
         }
@@ -101,7 +97,7 @@ public final class SimControlPanel extends JTapeGroup {
         }
     }
 
-    private static synchronized void setSimulation(final SimControlPanel scp, final Simulation<?> sim) {
+    private static synchronized void setSimulation(final SimControlPanel scp, final Simulation<?, ?> sim) {
         if (sim != scp.simulation) {
             if (scp.simulation != null) {
                 /*
@@ -179,7 +175,7 @@ public final class SimControlPanel extends JTapeGroup {
         registerSection(s);
     }
 
-    private SimControlPanel(final Simulation<?> sim) {
+    private SimControlPanel(final Simulation<?, ?> sim) {
         this();
         setSimulation(sim);
     }
@@ -200,8 +196,8 @@ public final class SimControlPanel extends JTapeGroup {
      * @return the simulation
      */
     @SuppressWarnings("unchecked")
-    public <T> Simulation<T> getSimulation() {
-        return (Simulation<T>) simulation;
+    public <T> Simulation<T, ?> getSimulation() {
+        return (Simulation<T, ?>) simulation;
     }
 
     /**
@@ -234,7 +230,7 @@ public final class SimControlPanel extends JTapeGroup {
      * @param sim
      *            the simulation to set
      */
-    public void setSimulation(final Simulation<?> sim) {
+    public void setSimulation(final Simulation<?, ?> sim) {
         setSimulation(this, sim);
     }
 

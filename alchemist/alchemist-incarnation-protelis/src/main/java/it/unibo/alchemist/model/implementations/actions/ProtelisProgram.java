@@ -36,7 +36,7 @@ public class ProtelisProgram extends RunProtelisProgram {
      * @throws ClassNotFoundException
      *             if required classes can not be found
      */
-    public ProtelisProgram(final Environment<Object> env, final ProtelisNode n, final Reaction<Object> r, final RandomGenerator rand,
+    public ProtelisProgram(final Environment<Object, ?> env, final ProtelisNode n, final Reaction<Object> r, final RandomGenerator rand,
             final String prog) throws SecurityException, ClassNotFoundException {
         super(env, n, r, rand, prog, r.getRate());
     }

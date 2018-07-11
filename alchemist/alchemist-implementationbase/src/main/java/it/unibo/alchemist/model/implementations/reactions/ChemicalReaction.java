@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
  * 
  * @param <T>
  */
-public class ChemicalReaction<T> extends AReaction<T> {
+public class ChemicalReaction<T> extends AbstractReaction<T> {
 
     private static final long serialVersionUID = -5260452049415003046L;
     private double currentRate;
@@ -40,12 +40,12 @@ public class ChemicalReaction<T> extends AReaction<T> {
     }
 
     @Override
-    public void initializationComplete(final Time t, final Environment<T> env) {
+    public void initializationComplete(final Time t, final Environment<T, ?> env) {
         update(t, true, env);
     }
 
     @Override
-    protected void updateInternalStatus(final Time curTime, final boolean executed, final Environment<T> env) {
+    protected void updateInternalStatus(final Time curTime, final boolean executed, final Environment<T, ?> env) {
         currentRate = getTimeDistribution().getRate();
         for (final Condition<T> cond : getConditions()) {
             final double v = cond.getPropensityConditioning();

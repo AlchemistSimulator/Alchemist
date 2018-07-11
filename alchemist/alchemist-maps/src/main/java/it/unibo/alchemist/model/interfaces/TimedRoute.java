@@ -6,7 +6,7 @@ package it.unibo.alchemist.model.interfaces;
  * 
  * @param <P> type of position in the route
  */
-public interface TimedRoute<P extends Position> extends Route<P> {
+public interface TimedRoute<P extends Position<?>> extends Route<P> {
 
     /**
      * 

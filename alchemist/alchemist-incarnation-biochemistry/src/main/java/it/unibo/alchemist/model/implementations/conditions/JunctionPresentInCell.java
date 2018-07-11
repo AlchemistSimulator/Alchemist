@@ -27,7 +27,7 @@ public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
     private static final long serialVersionUID = 4213307452790768059L;
 
     private final Junction j;
-    private final Environment<Double> env;
+    private final Environment<Double, ?> env;
 
     /**
      * 
@@ -35,7 +35,7 @@ public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
      * @param n the node
      * @param e the environment
      */
-    public JunctionPresentInCell(final Environment<Double> e, final Node<Double> n, final Junction junction) {
+    public JunctionPresentInCell(final Environment<Double, ?> e, final Node<Double> n, final Junction junction) {
         super(e, n);
         if (n instanceof CellNode) {
             addReadMolecule(junction);
@@ -63,7 +63,7 @@ public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
 
     @Override
     public Map<Node<Double>, Double> getValidNeighbors(final Collection<? extends Node<Double>> neighborhood) {
-        final Set<CellNode> linkedNodes = getNode().getNeighborsLinkWithJunction(j);
+        final Set<CellNode<?>> linkedNodes = getNode().getNeighborsLinkWithJunction(j);
         return neighborhood.stream().filter(n -> linkedNodes.contains(n))
         .collect(Collectors.<Node<Double>, Node<Double>, Double>toMap(
                 n -> n,
@@ -76,8 +76,8 @@ public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
     }
 
     @Override
-    public CellNode getNode() {
-        return (CellNode) super.getNode();
+    public CellNode<?> getNode() {
+        return (CellNode<?>) super.getNode();
     }
 
 }

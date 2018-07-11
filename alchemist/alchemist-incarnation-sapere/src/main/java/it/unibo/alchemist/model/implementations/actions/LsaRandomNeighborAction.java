@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class LsaRandomNeighborAction extends LsaStandardAction {
     private static final long serialVersionUID = -7128058274012426458L;
-    private final Environment<List<ILsaMolecule>> env;
+    private final Environment<List<ILsaMolecule>, ?> env;
     private final MapEnvironment<List<ILsaMolecule>> menv;
     private final boolean initO, initD, initNeigh, initRoute, mapEnv;
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All provided RandomGenerator implementations are actually Serializable")
@@ -50,7 +50,8 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
      *            the random engine
      * 
      */
-    public LsaRandomNeighborAction(final ILsaNode node, final ILsaMolecule molecule, final Environment<List<ILsaMolecule>> environment, final RandomGenerator random) {
+    @SuppressWarnings("unchecked")
+    public LsaRandomNeighborAction(final ILsaNode node, final ILsaMolecule molecule, final Environment<List<ILsaMolecule>, ?> environment, final RandomGenerator random) {
         super(molecule, node);
         final String molString = molecule.toString();
         initO = molString.contains(LsaMolecule.SYN_O);
@@ -106,7 +107,7 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
     /**
      * @return the current environment
      */
-    protected Environment<List< ILsaMolecule>> getEnvironment() {
+    protected Environment<List<ILsaMolecule>, ?> getEnvironment() {
         return env;
     }
 

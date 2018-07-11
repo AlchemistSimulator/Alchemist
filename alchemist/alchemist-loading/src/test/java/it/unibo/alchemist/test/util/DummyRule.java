@@ -3,11 +3,12 @@ package it.unibo.alchemist.test.util;
 import java.util.List;
 
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
+import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * @param <T>
  */
-public class DummyRule<T> extends NoLinks<T> {
+public final class DummyRule<T> extends NoLinks<T, Position<?>> {
 
     private static final long serialVersionUID = 1L;
 

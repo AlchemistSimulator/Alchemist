@@ -9,15 +9,15 @@ import it.unibo.alchemist.model.interfaces.Position;
  *
  */
 @FunctionalInterface
-public interface Displacement extends Iterable<Position> {
+public interface Displacement<P extends Position<? extends P>> extends Iterable<P> {
 
     /**
      * @return a {@link Stream} over the positions of this {@link Displacement}
      */
-    Stream<Position> stream();
+    Stream<P> stream();
 
     @Override
-    default Iterator<Position> iterator() {
+    default Iterator<P> iterator() {
         return stream().iterator();
     }
 

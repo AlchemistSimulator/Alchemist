@@ -27,7 +27,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 /**
  * 
  */
-public class LsaDeleteNodeAction extends RemoveNode<List< ILsaMolecule>> implements ILsaAction {
+public class LsaDeleteNodeAction extends RemoveNode<List<ILsaMolecule>> implements ILsaAction {
 
     private static final long serialVersionUID = -7128058274012426458L;
 
@@ -35,7 +35,7 @@ public class LsaDeleteNodeAction extends RemoveNode<List< ILsaMolecule>> impleme
      * @param environment the current environment
      * @param node the node for this action
      */
-    public LsaDeleteNodeAction(final Environment<List< ILsaMolecule>> environment, final ILsaNode node) {
+    public LsaDeleteNodeAction(final Environment<List<ILsaMolecule>, ?> environment, final ILsaNode node) {
         super(environment, node);
     }
 
@@ -43,7 +43,7 @@ public class LsaDeleteNodeAction extends RemoveNode<List< ILsaMolecule>> impleme
      * @see alice.alchemist.model.implementations.actions.LsaAbstractAction#cloneOnNewNode(alice.alchemist.model.interfaces.Node, alice.alchemist.model.interfaces.Reaction)
      */
     @Override
-    public LsaDeleteNodeAction cloneAction(final Node<List< ILsaMolecule>> n, final Reaction<List< ILsaMolecule>> r) {
+    public LsaDeleteNodeAction cloneAction(final Node<List<ILsaMolecule>> n, final Reaction<List<ILsaMolecule>> r) {
         return new LsaDeleteNodeAction(getEnvironment(), (ILsaNode) n);
     }
 

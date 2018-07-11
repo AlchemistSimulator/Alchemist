@@ -9,13 +9,14 @@
 package it.unibo.alchemist.boundary.interfaces;
 
 import it.unibo.alchemist.boundary.gui.effects.Effect;
+import it.unibo.alchemist.model.interfaces.Position;
 
 import java.util.List;
 
 /**
  * @param <T>
  */
-public interface GraphicalOutputMonitor<T> extends OutputMonitor<T> {
+public interface GraphicalOutputMonitor<T, P extends Position<? extends P>> extends OutputMonitor<T, P> {
 
     /**
      * @return how many simulation steps this monitor updates the graphics

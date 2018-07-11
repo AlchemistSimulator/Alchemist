@@ -12,11 +12,12 @@ import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * @param <T>
  */
-public class SelectiveAdaptiveRange<T> extends AdaptiveRange<T> {
+public class SelectiveAdaptiveRange<T, P extends Position<P>> extends AdaptiveRange<T, P> {
 
     /**
      * The default filter molecule.
@@ -192,7 +193,7 @@ public class SelectiveAdaptiveRange<T> extends AdaptiveRange<T> {
      * @return true if the node must be removed, false otherwise
      */
     @Override
-    protected boolean conditionForRemoval(final Environment<T> env, final Node<T> center, final Node<T> neighbor, final double centerRange, final double neighRange) {
+    protected boolean conditionForRemoval(final Environment<T, P> env, final Node<T> center, final Node<T> neighbor, final double centerRange, final double neighRange) {
         return !neighbor.contains(moleculeType) || super.conditionForRemoval(env, center, neighbor, centerRange, neighRange);
     }
 }

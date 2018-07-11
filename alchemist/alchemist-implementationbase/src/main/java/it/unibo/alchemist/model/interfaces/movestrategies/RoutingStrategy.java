@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.interfaces.Route;
  * 
  */
 @FunctionalInterface
-public interface RoutingStrategy extends Serializable {
+public interface RoutingStrategy<P extends Position<P>> extends Serializable {
 
     /**
      * Computes a route between two positions.
@@ -22,6 +22,6 @@ public interface RoutingStrategy extends Serializable {
      * @param finalPos ending {@link Position}
      * @return a {@link Route} connecting the two points
      */
-    Route<? extends Position> computeRoute(Position currentPos, Position finalPos);
+    Route<P> computeRoute(P currentPos, P finalPos);
 
 }

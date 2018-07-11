@@ -44,7 +44,7 @@ public class JEffectRepresentation<T> extends JTapeFeatureStack implements ItemS
     private static final long serialVersionUID = -6875167656425950159L;
     private static final Logger L = LoggerFactory.getLogger(JEffectRepresentation.class);
     private final Effect effect;
-    private final GraphicalOutputMonitor<T> monitor;
+    private final GraphicalOutputMonitor<T, ?> monitor;
     private final JLabel info;
     private boolean selected;
     private final transient List<ItemListener> itemListeners = new LinkedList<>();
@@ -122,7 +122,7 @@ public class JEffectRepresentation<T> extends JTapeFeatureStack implements ItemS
      * @param main
      *            is the {@link GraphicalOutputMonitor} that will use the effect
      */
-    public JEffectRepresentation(final Effect e, final GraphicalOutputMonitor<T> main) {
+    public JEffectRepresentation(final Effect e, final GraphicalOutputMonitor<T, ?> main) {
         super();
         effect = e;
         info = new JLabel();

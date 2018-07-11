@@ -21,15 +21,16 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
 import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 /**
  *
  */
-public class BiomolPresentInEnv extends GenericMoleculePresent<Double> {
+public class BiomolPresentInEnv<P extends Position<? extends P>> extends GenericMoleculePresent<Double> {
 
     private static final long serialVersionUID = 1L;
 
-    private final Environment<Double> environment;
+    private final Environment<Double, P> environment;
 
     /**
      * Initialize condition for extra-cellular environment, implemented as a set
@@ -44,7 +45,7 @@ public class BiomolPresentInEnv extends GenericMoleculePresent<Double> {
      * @param env
      *            the {@link Environment} where the node is located.
      */
-    public BiomolPresentInEnv(final Environment<Double> env, final Node<Double> node, final Biomolecule biomol, final Double conc) {
+    public BiomolPresentInEnv(final Environment<Double, P> env, final Node<Double> node, final Biomolecule biomol, final Double conc) {
         super(node, biomol, conc);
         environment = env;
     }
@@ -72,8 +73,8 @@ public class BiomolPresentInEnv extends GenericMoleculePresent<Double> {
     }
 
     @Override 
-    public BiomolPresentInEnv cloneCondition(final Node<Double> n, final Reaction<Double> r) {
-        return new BiomolPresentInEnv(environment, n, getBiomolecule(), getQuantity());
+    public BiomolPresentInEnv<P> cloneCondition(final Node<Double> n, final Reaction<Double> r) {
+        return new BiomolPresentInEnv<>(environment, n, getBiomolecule(), getQuantity());
     }
 
     @Override
@@ -99,7 +100,7 @@ public class BiomolPresentInEnv extends GenericMoleculePresent<Double> {
                     .sum();
         }
         double quantityInLayers = 0;
-        final Optional<Layer<Double>> layer = environment.getLayer(getBiomolecule());
+        final Optional<Layer<Double, P>> layer = environment.getLayer(getBiomolecule());
         if (layer.isPresent()) {
             quantityInLayers = layer.get().getValue(environment.getPosition(getNode()));
         }

@@ -26,6 +26,7 @@ import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.protelis.AlchemistExecutionContext;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
@@ -33,11 +34,11 @@ import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 /**
  */
 @SuppressFBWarnings(value = "EQ_DOESNT_OVERRIDE_EQUALS", justification = "This is desired.")
-public class RunProtelisProgram implements Action<Object> {
+public class RunProtelisProgram<P extends Position<P>> implements Action<Object> {
 
     private static final long serialVersionUID = 2207914086772704332L;
     private boolean computationalCycleComplete;
-    private final Environment<Object> environment;
+    private final Environment<Object, P> environment;
     private final Molecule name;
     private final ProtelisNode node;
     private String originalProgram = "unknown";
@@ -49,7 +50,7 @@ public class RunProtelisProgram implements Action<Object> {
     private transient ProtelisVM vm;
 
     private RunProtelisProgram(
-            final Environment<Object> env,
+            final Environment<Object, P> env,
             final ProtelisNode n,
             final Reaction<Object> r,
             final RandomGenerator rand,
@@ -65,7 +66,7 @@ public class RunProtelisProgram implements Action<Object> {
         reaction = r;
         final AlchemistNetworkManager netmgr = new AlchemistNetworkManager(environment, node, reaction, this, retentionTime);
         node.addNetworkManger(this, netmgr);
-        final ExecutionContext ctx = new AlchemistExecutionContext(env, n, r, rand, netmgr);
+        final ExecutionContext ctx = new AlchemistExecutionContext<P>(env, n, r, rand, netmgr);
         vm = new ProtelisVM(prog, ctx);
         this.retentionTime = retentionTime;
     }
@@ -87,7 +88,7 @@ public class RunProtelisProgram implements Action<Object> {
      *             if required classes can not be found
      */
     public RunProtelisProgram(
-            final Environment<Object> env,
+            final Environment<Object, P> env,
             final ProtelisNode n,
             final Reaction<Object> r,
             final RandomGenerator rand,
@@ -115,7 +116,7 @@ public class RunProtelisProgram implements Action<Object> {
      *             if required classes can not be found
      */
     public RunProtelisProgram(
-            final Environment<Object> env,
+            final Environment<Object, P> env,
             final ProtelisNode n,
             final Reaction<Object> r,
             final RandomGenerator rand,
@@ -133,10 +134,10 @@ public class RunProtelisProgram implements Action<Object> {
     }
 
     @Override
-    public RunProtelisProgram cloneAction(final Node<Object> n, final Reaction<Object> r) {
+    public RunProtelisProgram<P> cloneAction(final Node<Object> n, final Reaction<Object> r) {
         if (n instanceof ProtelisNode) {
             try {
-                return new RunProtelisProgram(getEnvironment(), (ProtelisNode) n, r, getRandomGenerator(), originalProgram, getRetentionTime());
+                return new RunProtelisProgram<>(getEnvironment(), (ProtelisNode) n, r, getRandomGenerator(), originalProgram, getRetentionTime());
             } catch (SecurityException | ClassNotFoundException e) {
                 throw new IllegalStateException(e);
             }
@@ -150,7 +151,7 @@ public class RunProtelisProgram implements Action<Object> {
             return true;
         }
         if (other != null && other.getClass() == getClass()) {
-            return name.equals(((RunProtelisProgram) other).name);
+            return name.equals(((RunProtelisProgram<?>) other).name);
         }
         return false;
     }
@@ -173,7 +174,7 @@ public class RunProtelisProgram implements Action<Object> {
     /**
      * @return the environment
      */
-    protected final Environment<Object> getEnvironment() {
+    protected final Environment<Object, P> getEnvironment() {
         return environment;
     }
 
@@ -229,7 +230,7 @@ public class RunProtelisProgram implements Action<Object> {
         stream.defaultReadObject();
         final AlchemistNetworkManager netmgr = new AlchemistNetworkManager(environment, node, reaction, this);
         node.addNetworkManger(this, netmgr);
-        vm = new ProtelisVM(program, new AlchemistExecutionContext(environment, node, reaction, random, netmgr));
+        vm = new ProtelisVM(program, new AlchemistExecutionContext<>(environment, node, reaction, random, netmgr));
     }
 
     @Override

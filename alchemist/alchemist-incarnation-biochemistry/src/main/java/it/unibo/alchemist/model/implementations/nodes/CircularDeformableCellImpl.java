@@ -2,12 +2,13 @@ package it.unibo.alchemist.model.implementations.nodes;
 
 import it.unibo.alchemist.model.interfaces.CircularDeformableCell;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * Implementation of a circular deformable cell.
  *
  */
-public class CircularDeformableCellImpl extends CellNodeImpl implements CircularDeformableCell {
+public class CircularDeformableCellImpl<P extends Position<P>> extends CellNodeImpl<P> implements CircularDeformableCell<P> {
 
     /**
      * 
@@ -21,7 +22,7 @@ public class CircularDeformableCellImpl extends CellNodeImpl implements Circular
      * @param maxDiameter 
      * @param rigidity 
      */
-    public CircularDeformableCellImpl(final Environment<Double> env, final double maxDiameter, final double rigidity) {
+    public CircularDeformableCellImpl(final Environment<Double, P> env, final double maxDiameter, final double rigidity) {
         super(env, maxDiameter * rigidity);
         if (rigidity > 1 || rigidity < 0) {
             throw new IllegalArgumentException("deformability must be between 0 and 1");

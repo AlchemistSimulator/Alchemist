@@ -111,7 +111,7 @@ public class DrawShape implements Effect {
     private transient Object molStringCached;
     @SuppressFBWarnings(value = "SE_TRANSIENT_FIELD_NOT_RESTORED", justification = "If null, it gets reinitialized anyway if needed")
     private transient CollectionWithCurrentElement<String> prevIncarnation;
-    private transient Incarnation<?> incarnation;
+    private transient Incarnation<?, ?> incarnation;
 
     /**
      * Builds a new {@link DrawShape} effect.

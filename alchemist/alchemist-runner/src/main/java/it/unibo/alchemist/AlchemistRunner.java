@@ -71,6 +71,7 @@ import it.unibo.alchemist.loader.variables.Variable;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.BenchmarkableEnvironment;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Time;
 
 /**
@@ -78,7 +79,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  * 
  * @param <T> the concentration type
  */
-public final class AlchemistRunner<T> {
+public final class AlchemistRunner<T, P extends Position2D<P>> {
 
     private static final Logger L = LoggerFactory.getLogger(AlchemistRunner.class);
     private static final ThreadFactory THREAD_FACTORY = new ThreadFactoryBuilder()
@@ -91,7 +92,7 @@ public final class AlchemistRunner<T> {
     private final Optional<String> exportFileRoot;
     private final boolean headless;
     private final Loader loader;
-    private final ImmutableCollection<Supplier<OutputMonitor<T>>> outputMonitors;
+    private final ImmutableCollection<Supplier<OutputMonitor<T, P>>> outputMonitors;
     private final int parallelism;
     private final double samplingInterval;
     private final Optional<String> gridConfigFile;
@@ -106,7 +107,7 @@ public final class AlchemistRunner<T> {
             final int parallelism,
             final boolean headless,
             final int closeOperation,
-            final ImmutableCollection<Supplier<OutputMonitor<T>>> outputMonitors,
+            final ImmutableCollection<Supplier<OutputMonitor<T, P>>> outputMonitors,
             final Optional<String> gridConfigFile,
             final Optional<String> benchmarkOutputFile) {
         this.effectsFile = effectsFile;
@@ -194,7 +195,7 @@ public final class AlchemistRunner<T> {
                 if (sim.getEnvironment() instanceof BenchmarkableEnvironment) {
                     for (final Extractor e : loader.getDataExtractors()) {
                         if (e instanceof EnvPerformanceStats) {
-                            ((BenchmarkableEnvironment<?>) (sim.getEnvironment())).enableBenchmark();
+                            ((BenchmarkableEnvironment<?, ?>) (sim.getEnvironment())).enableBenchmark();
                         }
                     }
                 }
@@ -282,12 +283,12 @@ public final class AlchemistRunner<T> {
         }
     }
 
-    private <R> Stream<Callable<R>> prepareSimulations(final Function<Simulation<T>, R> finalizer, final String... variables) {
+    private <R> Stream<Callable<R>> prepareSimulations(final Function<Simulation<T, P>, R> finalizer, final String... variables) {
         return getVariablesCartesianProduct(variables).stream()
             .map(ImmutableMap::copyOf)
             .map(vars -> () -> {
-                final Environment<T> env = loader.getWith(vars);
-                final Simulation<T> sim = new Engine<>(env, endStep, endTime);
+                final Environment<T, P> env = loader.getWith(vars);
+                final Simulation<T, P> sim = new Engine<>(env, endStep, endTime);
                 outputMonitors.stream().map(Supplier::get).forEach(sim::addOutputMonitor);
                 if (exportFileRoot.isPresent()) {
                     final String filename = exportFileRoot.get() + (vars.isEmpty() ? "" : "_" + vars.entrySet().stream()
@@ -305,7 +306,7 @@ public final class AlchemistRunner<T> {
                             .map(e -> e.getKey() + " = " + e.getValue())
                             .collect(Collectors.joining(", "));
                     try {
-                        final Exporter<T> exp = new Exporter<>(filename, samplingInterval, header, loader.getDataExtractors());
+                        final Exporter<T, P> exp = new Exporter<>(filename, samplingInterval, header, loader.getDataExtractors());
                         sim.addOutputMonitor(exp);
                     } catch (FileNotFoundException e) {
                         throw new IllegalStateException(e);
@@ -319,7 +320,7 @@ public final class AlchemistRunner<T> {
      *
      * @param <T> concentration type
      */
-    public static class Builder<T> {
+    public static class Builder<T, P extends Position2D<P>> {
         private int closeOperation;
         private Optional<String> effectsFile = Optional.empty();
         private long endStep = Long.MAX_VALUE;
@@ -327,7 +328,7 @@ public final class AlchemistRunner<T> {
         private Optional<String> exportFileRoot = Optional.empty();
         private boolean headless;
         private final Loader loader;
-        private final Collection<Supplier<OutputMonitor<T>>> outputMonitors = new LinkedList<>();
+        private final Collection<Supplier<OutputMonitor<T, P>>> outputMonitors = new LinkedList<>();
         private int parallelism = Runtime.getRuntime().availableProcessors() + 1;
         private double samplingInt = 1;
         private Optional<String> gridConfigFile = Optional.empty();
@@ -346,7 +347,7 @@ public final class AlchemistRunner<T> {
          * @param provider the function providing the required {@link OutputMonitor}
          * @return this builder
          */
-        public Builder<T> addOutputMonitorSupplier(final Supplier<OutputMonitor<T>> provider) {
+        public Builder<T, P> addOutputMonitorSupplier(final Supplier<OutputMonitor<T, P>> provider) {
             outputMonitors.add(provider);
             return this;
         }
@@ -355,7 +356,7 @@ public final class AlchemistRunner<T> {
          * 
          * @return AlchemistRunner
          */
-        public AlchemistRunner<T> build() {
+        public AlchemistRunner<T, P> build() {
             return new AlchemistRunner<>(this.loader, this.endTime, this.endStep, this.exportFileRoot, this.effectsFile,
                     this.samplingInt, this.parallelism, this.headless, this.closeOperation,
                     ImmutableList.copyOf(outputMonitors), this.gridConfigFile, this.benchmarkOutputFile);
@@ -367,7 +368,7 @@ public final class AlchemistRunner<T> {
          *            effect uri
          * @return builder
          */
-        public Builder<T> setEffects(final String uri) {
+        public Builder<T, P> setEffects(final String uri) {
             this.effectsFile = Optional.ofNullable(uri);
             return this;
         }
@@ -378,7 +379,7 @@ public final class AlchemistRunner<T> {
          *            end step
          * @return builder
          */
-        public Builder<T> setEndStep(final long steps) {
+        public Builder<T, P> setEndStep(final long steps) {
             if (steps < 0) {
                 throw new IllegalArgumentException("The number of steps (" + steps + ") must be zero or positive");
             }
@@ -392,7 +393,7 @@ public final class AlchemistRunner<T> {
          *            end time
          * @return builder
          */
-        public Builder<T> setEndTime(final Number t) {
+        public Builder<T, P> setEndTime(final Number t) {
             final double dt = t.doubleValue();
             if (dt < 0) {
                 throw new IllegalArgumentException("The end time (" + dt + ") must be zero or positive");
@@ -407,7 +408,7 @@ public final class AlchemistRunner<T> {
          *            end time
          * @return builder
          */
-        public Builder<T> setEndTime(final Time t) {
+        public Builder<T, P> setEndTime(final Time t) {
             this.endTime = t;
             return this;
         }
@@ -418,7 +419,7 @@ public final class AlchemistRunner<T> {
          *            the close operation
          * @return buider
          */
-        public Builder<T> setGUICloseOperation(final int closeOp) {
+        public Builder<T, P> setGUICloseOperation(final int closeOp) {
             if (closeOp < 0 || closeOp > 3) {
                 throw new IllegalArgumentException("The value of close operation is not valid.");
             }
@@ -432,7 +433,7 @@ public final class AlchemistRunner<T> {
          *            is headless
          * @return builder
          */
-        public Builder<T> setHeadless(final boolean headless) {
+        public Builder<T, P> setHeadless(final boolean headless) {
             this.headless = headless;
             return this;
         }
@@ -443,7 +444,7 @@ public final class AlchemistRunner<T> {
          *            time interval
          * @return builder
          */
-        public Builder<T> setInterval(final double deltaTime) {
+        public Builder<T, P> setInterval(final double deltaTime) {
             if (deltaTime > 0) {
                 this.samplingInt = deltaTime;
             } else {
@@ -458,7 +459,7 @@ public final class AlchemistRunner<T> {
          *            output uri
          * @return builder
          */
-        public Builder<T> setOutputFile(final String uri) {
+        public Builder<T, P> setOutputFile(final String uri) {
             this.exportFileRoot = Optional.ofNullable(uri);
             return this;
         }
@@ -469,7 +470,7 @@ public final class AlchemistRunner<T> {
          *            threads number
          * @return builder
          */
-        public Builder<T> setParallelism(final int threads) {
+        public Builder<T, P> setParallelism(final int threads) {
             if (threads <= 0) {
                 throw new IllegalArgumentException("Thread number must be >= 0");
             }
@@ -482,7 +483,7 @@ public final class AlchemistRunner<T> {
          * @param path Ignite's setting file path
          * @return builder
          */
-        public Builder<T> setRemoteConfig(final String path) {
+        public Builder<T, P> setRemoteConfig(final String path) {
             this.gridConfigFile = Optional.ofNullable(path);
             return this;
         }
@@ -492,7 +493,7 @@ public final class AlchemistRunner<T> {
          * @param path Benchmark save file path
          * @return builder
          */
-        public Builder<T> setBenchmarkOutputFile(final String path) {
+        public Builder<T, P> setBenchmarkOutputFile(final String path) {
             this.benchmarkOutputFile = Optional.ofNullable(path);
             return this;
         }

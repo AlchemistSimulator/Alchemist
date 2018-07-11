@@ -15,6 +15,7 @@ import it.unibo.alchemist.model.interfaces.Time;
 public class EnvPerformanceStats implements Extractor {
 
     private static final List<String> COLNAME;
+    private static final double[] EMPTY = new double[0];
     static {
         final List<String> cName = new LinkedList<>();
         cName.add("envPerformance");
@@ -22,11 +23,11 @@ public class EnvPerformanceStats implements Extractor {
     }
 
     @Override
-    public double[] extractData(final Environment<?> env, final Reaction<?> r, final Time time, final long step) {
+    public double[] extractData(final Environment<?, ?> env, final Reaction<?> r, final Time time, final long step) {
         if (env instanceof BenchmarkableEnvironment) {
-            return new double[]{((BenchmarkableEnvironment<?>) env).getBenchmarkResult()};
+            return new double[]{((BenchmarkableEnvironment<?, ?>) env).getBenchmarkResult()};
         }
-        return new double[]{};
+        return EMPTY;
     }
 
     @Override

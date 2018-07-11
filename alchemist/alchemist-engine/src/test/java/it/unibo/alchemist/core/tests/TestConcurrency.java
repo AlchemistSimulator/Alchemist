@@ -20,7 +20,8 @@ import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
-import it.unibo.alchemist.model.implementations.nodes.GenericNode;
+import it.unibo.alchemist.model.implementations.nodes.AbstractNode;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.reactions.Event;
 import it.unibo.alchemist.model.implementations.timedistributions.DiracComb;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -35,7 +36,7 @@ public class TestConcurrency {
 
     private static final Logger L = LoggerFactory.getLogger(Engine.class);
 
-    private Environment<Object> env;
+    private Environment<Object, Euclidean2DPosition> env;
 
     /**
      * Setup phase.
@@ -43,7 +44,7 @@ public class TestConcurrency {
     @Before
     public void setUp() {
         env = new Continuous2DEnvironment<>();
-        final Node<Object> n = new GenericNode<Object>(env) {
+        final Node<Object> n = new AbstractNode<Object>(env) {
             private static final long serialVersionUID = 1L;
             @Override
             protected Object createT() {
@@ -65,7 +66,7 @@ public class TestConcurrency {
     @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", justification = "We don't need the status of the Runnable")
     public void newNewTest1() {
 
-        final Simulation<Object> sim = new Engine<>(env, 10);
+        final Simulation<?, ?> sim = new Engine<>(env, 10);
         final ExecutorService ex = Executors.newCachedThreadPool();
 
         ex.submit(sim);
@@ -107,7 +108,7 @@ public class TestConcurrency {
     @Test
     @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", justification = "We don't need the status of the Runnable")
     public void newTest2() {
-        final Simulation<Object> sim = new Engine<>(env, 10);
+        final Simulation<?, ?> sim = new Engine<>(env, 10);
         final ExecutorService ex = Executors.newCachedThreadPool();
         ex.submit(sim);
         ex.submit(() -> sim.play());
@@ -115,7 +116,7 @@ public class TestConcurrency {
         verifyStatus(ex, sim, Status.TERMINATED, 1000, 100);
     }
 
-    private void verifyStatus(final ExecutorService ex, final Simulation<?> sim, final Status s,
+    private void verifyStatus(final ExecutorService ex, final Simulation<?, ?> sim, final Status s,
             final int terminationTimeout, final int sleepTimeout) {
         try {
             if (ex.isShutdown()) {

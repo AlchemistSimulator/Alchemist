@@ -20,15 +20,14 @@ import com.github.davidmoten.rtree.geometry.Rectangle;
 import com.github.davidmoten.rtree.internal.EntryDefault;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.utils.RectObstacle2D;
 import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
-import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * @param <T>
  */
-public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements Environment2DWithObstacles<RectObstacle2D, T> {
+public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements Environment2DWithObstacles<RectObstacle2D, T, Euclidean2DPosition> {
 
     private static final double TOLERANCE_MULTIPLIER = 0.01;
     /**
@@ -72,23 +71,23 @@ public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements E
     }
 
     @Override
-    public boolean intersectsObstacle(final Position p1, final Position p2) {
+    public boolean intersectsObstacle(final Euclidean2DPosition p1, final Euclidean2DPosition p2) {
         return intersectsObstacle(p1.getCoordinate(0), p1.getCoordinate(1), p2.getCoordinate(0), p2.getCoordinate(1));
     }
 
     @Override
-    protected boolean isAllowed(final Position p) {
+    protected boolean isAllowed(final Euclidean2DPosition p) {
         return rtree.search(Geometries.point(p.getCoordinate(0), p.getCoordinate(1))).isEmpty().toBlocking().single();
     }
 
     @Override
     @SuppressFBWarnings("FE_FLOATING_POINT_EQUALITY")
-    public final Position next(final double ox, final double oy, final double nx, final double ny) {
+    public final Euclidean2DPosition next(final double ox, final double oy, final double nx, final double ny) {
         final List<RectObstacle2D> l = query(ox, oy, nx, ny, TOLERANCE_MULTIPLIER);
         if (l.isEmpty()) {
-            return new Continuous2DEuclidean(nx, ny);
+            return new Euclidean2DPosition(nx, ny);
         }
-        Position shortest = null;
+        Euclidean2DPosition shortest = null;
         double fx = nx;
         double fy = ny;
         double fxCache = Double.NaN;

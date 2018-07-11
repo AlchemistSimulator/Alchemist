@@ -23,7 +23,7 @@ public class EnvironmentNodeImpl extends DoubleNode implements EnvironmentNode {
      * Create a new environment node.
      * @param env the environment
      */
-    public EnvironmentNodeImpl(final Environment<Double> env) {
+    public EnvironmentNodeImpl(final Environment<Double, ?> env) {
         super(env);
     }
 

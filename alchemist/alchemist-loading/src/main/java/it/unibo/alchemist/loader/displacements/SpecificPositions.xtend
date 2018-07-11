@@ -6,15 +6,15 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Environment
 import java.util.List
 
-public class SpecificPositions implements Displacement {
+class SpecificPositions<P extends Position<? extends P>> implements Displacement<P> {
 	
-	List<Position> positions;
+	List<P> positions;
 
-    new(Environment<?> env, Iterable<? extends Number>... positions) {
+    new(Environment<?, P> env, Iterable<? extends Number>... positions) {
     	this.positions = positions.map[env.makePosition(it)].toList
     }
 
-    override Stream<Position> stream() {
+    override Stream<P> stream() {
         return positions.stream;
     }
 

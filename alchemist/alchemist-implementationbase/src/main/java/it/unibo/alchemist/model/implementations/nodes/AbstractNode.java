@@ -39,10 +39,10 @@ import it.unibo.alchemist.model.interfaces.Time;
  * 
  * @param <T>
  */
-public abstract class GenericNode<T> implements Node<T> {
+public abstract class AbstractNode<T> implements Node<T> {
 
     private static final long serialVersionUID = 2496775909028222278L;
-    private static final ConcurrentMap<Environment<?>, AtomicInteger> IDGENERATOR = new MapMaker()
+    private static final ConcurrentMap<Environment<?, ?>, AtomicInteger> IDGENERATOR = new MapMaker()
             .weakKeys().makeMap();
     private static final Semaphore MUTEX = new Semaphore(1);
     private final int id;
@@ -52,7 +52,7 @@ public abstract class GenericNode<T> implements Node<T> {
             .concurrencyLevel(2)
             .build();
 
-    private static int idFromEnv(final Environment<?> env) {
+    private static int idFromEnv(final Environment<?, ?> env) {
         MUTEX.acquireUninterruptibly();
         AtomicInteger idgen = IDGENERATOR.get(Objects.requireNonNull(env));
         if (idgen == null) {
@@ -68,11 +68,11 @@ public abstract class GenericNode<T> implements Node<T> {
      *            the environment, used to generate sequential ids for each
      *            environment, always starting from 0.
      */
-    public GenericNode(final Environment<?> env) {
+    public AbstractNode(final Environment<?, ?> env) {
         this(idFromEnv(env));
     }
 
-    private GenericNode(final int id) {
+    private AbstractNode(final int id) {
         this.id = id;
     }
 
@@ -82,17 +82,17 @@ public abstract class GenericNode<T> implements Node<T> {
     }
 
     @Override
-    public GenericNode<T> cloneNode(final Time currentTime) {
+    public AbstractNode<T> cloneNode(final Time currentTime) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public int compareTo(final Node<T> o) {
-        if (o instanceof GenericNode<?>) {
-            if (id > ((GenericNode<?>) o).id) {
+        if (o instanceof AbstractNode<?>) {
+            if (id > ((AbstractNode<?>) o).id) {
                 return 1;
             }
-            if (id < ((GenericNode<?>) o).id) {
+            if (id < ((AbstractNode<?>) o).id) {
                 return -1;
             }
         }
@@ -111,8 +111,8 @@ public abstract class GenericNode<T> implements Node<T> {
 
     @Override
     public boolean equals(final Object o) {
-        if (o instanceof GenericNode<?>) {
-            return ((GenericNode<?>) o).id == id;
+        if (o instanceof AbstractNode<?>) {
+            return ((AbstractNode<?>) o).id == id;
         }
         return false;
     }

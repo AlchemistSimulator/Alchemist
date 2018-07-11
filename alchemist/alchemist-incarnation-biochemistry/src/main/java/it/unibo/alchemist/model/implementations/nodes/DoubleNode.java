@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 
 /**
  */
-public abstract class DoubleNode extends GenericNode<Double> {
+public abstract class DoubleNode extends AbstractNode<Double> {
 
     private static final long serialVersionUID = 3426243332828063314L;
 
@@ -23,7 +23,7 @@ public abstract class DoubleNode extends GenericNode<Double> {
      * Builds a new DoubleNode.
      * @param env the environment
      */
-    public DoubleNode(final Environment<Double> env) {
+    public DoubleNode(final Environment<Double, ?> env) {
         super(env);
     }
 

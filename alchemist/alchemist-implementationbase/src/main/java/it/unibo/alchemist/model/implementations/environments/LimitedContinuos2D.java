@@ -8,8 +8,8 @@
  */
 package it.unibo.alchemist.model.implementations.environments;
 
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * This class represents a 2D continuous environment with spatial limitations.
@@ -23,16 +23,16 @@ public abstract class LimitedContinuos2D<T> extends Continuous2DEnvironment<T> {
     private static final long serialVersionUID = -7838255122589911058L;
 
     @Override
-    public void moveNodeToPosition(final Node<T> node, final Position newPos) {
+    public void moveNodeToPosition(final Node<T> node, final Euclidean2DPosition newPos) {
         final double[] cur = getPosition(node).getCartesianCoordinates();
         final double[] np = newPos.getCartesianCoordinates();
         // Calculate the next position allowed
-        final Position next = next(cur[0], cur[1], np[0], np[1]);
+        final Euclidean2DPosition next = next(cur[0], cur[1], np[0], np[1]);
         super.moveNodeToPosition(node, next);
     }
 
     @Override
-    protected boolean nodeShouldBeAdded(final Node<T> node, final Position p) {
+    protected boolean nodeShouldBeAdded(final Node<T> node, final Euclidean2DPosition p) {
         return isAllowed(p);
     }
 
@@ -57,7 +57,7 @@ public abstract class LimitedContinuos2D<T> extends Continuous2DEnvironment<T> {
      *         position MUST be considered as a vector whose start point is in
      *         [ox, oy].
      */
-    protected abstract Position next(double ox, double oy, double nx, double ny);
+    protected abstract Euclidean2DPosition next(double ox, double oy, double nx, double ny);
 
     /**
      * Checks whether a position is allowed to be occupied by a node in this
@@ -67,6 +67,6 @@ public abstract class LimitedContinuos2D<T> extends Continuous2DEnvironment<T> {
      *            the position to check
      * @return true if the position is allowed
      */
-    protected abstract boolean isAllowed(Position p);
+    protected abstract boolean isAllowed(Euclidean2DPosition p);
 
 }

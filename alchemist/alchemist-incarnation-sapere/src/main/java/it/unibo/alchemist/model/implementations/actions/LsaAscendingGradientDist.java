@@ -27,19 +27,19 @@ import java.util.List;
 
 /**
  */
-public class LsaAscendingGradientDist extends SAPERENeighborAgent {
+public final class LsaAscendingGradientDist<P extends Position<? extends P>> extends SAPERENeighborAgent<P> {
 
     private static final long serialVersionUID = 7719580008466360029L;
     private static final ILsaMolecule MOLGRAD = new LsaMolecule("grad, req, Type, Distance, Time");
     private static final ILsaMolecule MOLRESPONSE = new LsaMolecule("response, Req, Ser, MD, D");
     private static final int POS = 3;
-    private final Environment<List<ILsaMolecule>> env;
+    private final Environment<List<ILsaMolecule>, ?> env;
 
     /**
      * @param environment environment
      * @param node node
      */
-    public LsaAscendingGradientDist(final Environment<List<ILsaMolecule>> environment, final ILsaNode node) {
+    public LsaAscendingGradientDist(final Environment<List<ILsaMolecule>, P> environment, final ILsaNode node) {
         super(environment, node, MOLRESPONSE);
         this.env = environment;
     }
@@ -65,7 +65,7 @@ public class LsaAscendingGradientDist extends SAPERENeighborAgent {
             }
         }
         if (!targetPositions.isEmpty()) {
-            final Position pd = getPosition(targetPositions.get(targetPositions.size() - 1));
+            final P pd = getPosition(targetPositions.get(targetPositions.size() - 1));
             final double distance = getCurrentPosition().getDistanceTo(pd);
             final List<IExpression> l = MOLRESPONSE.allocateVar(getMatches());
             final IExpression d = l.remove(l.size() - 1);

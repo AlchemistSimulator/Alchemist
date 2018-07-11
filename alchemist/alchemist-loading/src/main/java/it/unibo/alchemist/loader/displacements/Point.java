@@ -8,10 +8,10 @@ import it.unibo.alchemist.model.interfaces.Position;
 /**
  * A single node in a single point.
  */
-public class Point implements Displacement {
+public class Point<P extends Position<? extends P>> implements Displacement<P> {
 
     private final double x, y;
-    private final Environment<?> pm;
+    private final Environment<?, P> pm;
 
     /**
      * @param pm
@@ -21,14 +21,14 @@ public class Point implements Displacement {
      * @param y
      *            y coordinate
      */
-    public Point(final Environment<?> pm, final double x, final double y) {
+    public Point(final Environment<?, P> pm, final double x, final double y) {
         this.x = x;
         this.y = y;
         this.pm = pm;
     }
 
     @Override
-    public Stream<Position> stream() {
+    public Stream<P> stream() {
         return Stream.of(pm.makePosition(x, y));
     }
 

@@ -27,6 +27,7 @@ import javax.swing.border.LineBorder;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 
@@ -35,7 +36,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  *            Concentration type
  */
 @Deprecated
-public class TimeStepMonitor<T> extends JPanel implements OutputMonitor<T> {
+public class TimeStepMonitor<T, P extends Position<? extends P>> extends JPanel implements OutputMonitor<T, P> {
 
     private static final long serialVersionUID = 5818408644038869442L;
     private static final String BLANK = "", FINISHED = " (finished)";
@@ -88,7 +89,7 @@ public class TimeStepMonitor<T> extends JPanel implements OutputMonitor<T> {
     }
 
     @Override
-    public void finished(final Environment<T> env, final Time tt, final long cs) {
+    public void finished(final Environment<T, P> env, final Time tt, final long cs) {
         isFinished = true;
         stepDone(env, null, tt, cs);
         updater.stop();
@@ -97,13 +98,13 @@ public class TimeStepMonitor<T> extends JPanel implements OutputMonitor<T> {
     }
 
     @Override
-    public void initialized(final Environment<T> env) {
+    public void initialized(final Environment<T, P> env) {
         isFinished = false;
         stepDone(env, null, new DoubleTime(), 0);
     }
 
     @Override
-    public void stepDone(final Environment<T> env, final Reaction<T> r, final Time curTime, final long curStep) {
+    public void stepDone(final Environment<T, P> env, final Reaction<T> r, final Time curTime, final long curStep) {
         if (updater == null) {
             updater = new Updater();
             new Thread(updater, TimeStepMonitor.class.getSimpleName() + " updater thread").start();

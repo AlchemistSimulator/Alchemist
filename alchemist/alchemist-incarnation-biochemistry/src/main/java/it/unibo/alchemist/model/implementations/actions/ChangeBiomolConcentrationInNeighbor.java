@@ -28,7 +28,6 @@ public class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborAction<
 
     private final Biomolecule mol;
     private final double delta;
-    private final Environment<Double> env;
 
     /**
      * 
@@ -38,7 +37,7 @@ public class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborAction<
      * @param environment 
      * @param randGen 
      */
-    public ChangeBiomolConcentrationInNeighbor(final Environment<Double> environment,
+    public ChangeBiomolConcentrationInNeighbor(final Environment<Double, ?> environment,
             final Node<Double> node,
             final Biomolecule biomol, 
             final RandomGenerator randGen,
@@ -47,17 +46,16 @@ public class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborAction<
         addModifiedMolecule(biomol);
         mol = biomol;
         delta = deltaConcentration;
-        env = environment;
     }
 
     @Override
     public ChangeBiomolConcentrationInNeighbor cloneAction(final Node<Double> n, final Reaction<Double> r) {
-        return new ChangeBiomolConcentrationInNeighbor(env, n, mol, getRandomGenerator(), delta);
+        return new ChangeBiomolConcentrationInNeighbor(getEnvironment(), n, mol, getRandomGenerator(), delta);
     }
 
     @Override
     public void execute() {
-        final Neighborhood<Double> neighborhood = env.getNeighborhood(getNode());
+        final Neighborhood<Double> neighborhood = getEnvironment().getNeighborhood(getNode());
         final List<Integer> validTargetsIds = new ArrayList<>();
         if (delta < 0) {
             neighborhood.getNeighbors().stream()

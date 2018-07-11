@@ -63,7 +63,7 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
     private static final String ADD_EFFECT = LocalizedResourceBundle.getString("add_effect");
     private static final String REMOVE_EFFECT = LocalizedResourceBundle.getString("remove_effect");
 
-    private final GraphicalOutputMonitor<T> main;
+    private final GraphicalOutputMonitor<T, ?> main;
     private final List<ActionListener> listeners = new LinkedList<>();
     private final JTapeFeatureStack stackSec;
     private final JButton addEffectButton, remEffectButton, saveButton, loadButton, moveLeftButton, moveRightButton;
@@ -79,7 +79,7 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
      *            pass true if you want a button to be able to switch link
      *            visualization on or off
      */
-    public JEffectsTab(final GraphicalOutputMonitor<T> main, final boolean displayPaintLinks) {
+    public JEffectsTab(final GraphicalOutputMonitor<T, ?> main, final boolean displayPaintLinks) {
         super(EFFECT_TAB);
         this.main = main;
         stackSec = new JTapeFeatureStack(Type.HORIZONTAL_STACK);

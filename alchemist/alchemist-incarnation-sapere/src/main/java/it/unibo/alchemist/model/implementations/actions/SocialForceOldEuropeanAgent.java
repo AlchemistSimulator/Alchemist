@@ -13,12 +13,13 @@ import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
+import it.unibo.alchemist.model.interfaces.Position;
 
 import java.util.List;
 
 /**
  */
-public class SocialForceOldEuropeanAgent extends SocialForceAgent {
+public class SocialForceOldEuropeanAgent<P extends Position<? extends P>> extends SocialForceAgent<P> {
 
     /**
      * 
@@ -63,7 +64,7 @@ public class SocialForceOldEuropeanAgent extends SocialForceAgent {
      *            once the target is reached
      */
     public SocialForceOldEuropeanAgent(
-            final Environment<List<ILsaMolecule>> environment,
+            final Environment<List<ILsaMolecule>, P> environment,
             final ILsaNode node,
             final RandomGenerator random,
             final LsaMolecule molecule,

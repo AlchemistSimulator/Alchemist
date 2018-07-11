@@ -9,13 +9,13 @@ import java.io.Serializable;
  * @param <T> the value that measure the substance in a point.
  */
 @FunctionalInterface
-public interface Layer<T> extends Serializable {
+public interface Layer<T, P extends Position<? extends P>> extends Serializable {
 
     /**
      * 
      * @param p the {@link Position}.
      * @return the value in the requested {@link Position}.
      */
-    T getValue(Position p);
+    T getValue(P p);
 
 }

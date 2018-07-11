@@ -3,7 +3,6 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
@@ -13,7 +12,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  * @param <T>
  *            Concentration type
  */
-public class MoveForwardAndTeleport<T> extends AbstractMoveNode<T> {
+public class MoveForwardAndTeleport<T, P extends Position<P>> extends AbstractMoveNode<T, P> {
 
     private static final long serialVersionUID = 6853946136578807021L;
     private final double dx, minx, maxx;
@@ -26,7 +25,7 @@ public class MoveForwardAndTeleport<T> extends AbstractMoveNode<T> {
      * @param minX minimum x point
      * @param maxX maximum x point
      */
-    public MoveForwardAndTeleport(final Environment<T> environment, final Node<T> node, final double deltaX, final double minX, final double maxX) {
+    public MoveForwardAndTeleport(final Environment<T, P> environment, final Node<T> node, final double deltaX, final double minX, final double maxX) {
         super(environment, node, true);
         dx = deltaX;
         minx = minX;
@@ -34,21 +33,21 @@ public class MoveForwardAndTeleport<T> extends AbstractMoveNode<T> {
     }
 
     @Override
-    public MoveForwardAndTeleport<T> cloneAction(final Node<T> n, final Reaction<T> r) {
+    public MoveForwardAndTeleport<T, P> cloneAction(final Node<T> n, final Reaction<T> r) {
         return new MoveForwardAndTeleport<>(getEnvironment(), n, dx, minx, maxx);
     }
 
     @Override
-    public Position getNextPosition() {
-        final Position cur = getEnvironment().getPosition(getNode());
+    public P getNextPosition() {
+        final P cur = getEnvironment().getPosition(getNode());
         if (Double.isNaN(y)) {
             y = cur.getCoordinate(1);
         }
         final double x = cur.getCoordinate(0);
         if (x > maxx) {
-            return new Continuous2DEuclidean(minx, y);
+            return getEnvironment().makePosition(minx, y);
         }
-        return new Continuous2DEuclidean(x + dx, y);
+        return getEnvironment().makePosition(x + dx, y);
     }
 
 }

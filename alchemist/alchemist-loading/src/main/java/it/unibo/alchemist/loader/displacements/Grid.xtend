@@ -5,15 +5,16 @@ import java.util.stream.StreamSupport
 import org.apache.commons.math3.random.RandomGenerator
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtend.lib.annotations.Data
+import it.unibo.alchemist.model.interfaces.Position
 
 /**
  * A (possibly randomized) grid of nodes.
  */
 @Data
 @Accessors(PUBLIC_GETTER, PROTECTED_SETTER)
-class Grid implements Displacement {
+class Grid<P extends Position<? extends P>> implements Displacement<P> {
 
-	val Environment<?> pm
+	val Environment<?, P> pm
 	val RandomGenerator rand
 	val double xRand
 	val double yRand
@@ -44,7 +45,7 @@ class Grid implements Displacement {
 	 * @param ystep
 	 *            how distant on the y axis (on average) nodes should be
 	 */
-	new(Environment<?> pm, RandomGenerator rand, double xstart, double ystart, double xend, double yend, double xstep,
+	new(Environment<?, P> pm, RandomGenerator rand, double xstart, double ystart, double xend, double yend, double xstep,
 		double ystep) {
 		this(pm, rand, xstart, ystart, xend, yend, xstep, ystep, 0, 0)
 	}
@@ -71,7 +72,7 @@ class Grid implements Displacement {
 	 * @param yrand
 	 *            how randomized should be positions along the y axis
 	 */
-	new(Environment<?> pm, RandomGenerator rand, double xstart, double ystart, double xend, double yend, double xstep,
+	new(Environment<?, P> pm, RandomGenerator rand, double xstart, double ystart, double xend, double yend, double xstep,
 		double ystep, double xrand, double yrand) {
 		this(pm, rand, xstart, ystart, xend, yend, xstep, ystep, xrand, yrand, 0)
 	}
@@ -100,7 +101,7 @@ class Grid implements Displacement {
 	 * @param xshift
 	 *            how shifted should be positions between lines
 	 */
-	new(Environment<?> pm, RandomGenerator rand, double xstart, double ystart, double xend, double yend, double xstep,
+	new(Environment<?, P> pm, RandomGenerator rand, double xstart, double ystart, double xend, double yend, double xstep,
 		double ystep, double xrand, double yrand, double xshift) {
 		this(pm, rand, xstart, ystart, xend, yend, xstep, ystep, xrand, yrand, xshift, 0)
 	}
@@ -131,7 +132,7 @@ class Grid implements Displacement {
 	 * @param yshift
 	 *            how shifted should be positions along columns
 	 */
-	new(Environment<?> pm, RandomGenerator rand, double xstart, double ystart, double xend, double yend, double xstep,
+	new(Environment<?, P> pm, RandomGenerator rand, double xstart, double ystart, double xend, double yend, double xstep,
 		double ystep, double xrand, double yrand, double xshift, double yshift) {
 		this.pm = pm
 		this.rand = rand
@@ -164,13 +165,11 @@ class Grid implements Displacement {
 
 	private static def int steps(double min, double max, double step) {
 		val res = Math.ceil(Math.abs((max - min) / step)) as int
-//		res
 		if (step * res <= Math.abs(max - min)) {
 			res + 1
 		} else {
 			res
 		}
-//		((max - min) / step) as int
 	}
 
 }

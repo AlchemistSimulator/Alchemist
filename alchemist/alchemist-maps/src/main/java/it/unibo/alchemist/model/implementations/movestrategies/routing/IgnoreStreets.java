@@ -11,12 +11,12 @@ import it.unibo.alchemist.model.interfaces.Route;
  * {@link PolygonalChain}.
  * 
  */
-public class IgnoreStreets implements RoutingStrategy {
+public class IgnoreStreets<P extends Position<P>> implements RoutingStrategy<P> {
 
     private static final long serialVersionUID = 2678088737744440021L;
 
     @Override
-    public Route<Position> computeRoute(final Position currentPos, final Position finalPos) {
+    public Route<P> computeRoute(final P currentPos, final P finalPos) {
         return new PolygonalChain<>(currentPos, finalPos);
     }
 

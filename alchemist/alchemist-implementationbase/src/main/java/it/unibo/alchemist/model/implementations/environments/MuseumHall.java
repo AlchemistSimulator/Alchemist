@@ -11,9 +11,8 @@
  */
 package it.unibo.alchemist.model.implementations.environments;
 
-import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * @param <T>
@@ -66,7 +65,7 @@ public class MuseumHall<T> extends Continuous2DEnvironment<T> {
      *            requested y coordinate
      * @return the allowed point nearest to the requested one
      */
-    protected Position next(final double ox, final double oy, final double nx, final double ny) {
+    protected Euclidean2DPosition next(final double ox, final double oy, final double nx, final double ny) {
         return nextAllowed(ox, oy, nx, ny);
     }
 
@@ -84,9 +83,9 @@ public class MuseumHall<T> extends Continuous2DEnvironment<T> {
      *            requested y coordinate
      * @return the allowed point nearest to the requested one
      */
-    protected static Position nextAllowed(final double ox, final double oy, final double nx, final double ny) {
+    protected Euclidean2DPosition nextAllowed(final double ox, final double oy, final double nx, final double ny) {
         if (isAllowed(nx, ny)) {
-            return new Continuous2DEuclidean(nx - ox, ny - oy);
+            makePosition(nx - ox, ny - oy);
         }
         double nxm = nx;
         double nym = ny;
@@ -140,18 +139,18 @@ public class MuseumHall<T> extends Continuous2DEnvironment<T> {
                 nym = CENTRALUP;
             }
         }
-        return new Continuous2DEuclidean(nxm - ox, nym - oy);
+        return new Euclidean2DPosition(nxm - ox, nym - oy);
     }
 
     @Override
-    public void moveNode(final Node<T> node, final Position direction) {
-        final Position cur = getPosition(node);
+    public void moveNode(final Node<T> node, final Euclidean2DPosition direction) {
+        final Euclidean2DPosition cur = getPosition(node);
         final double ox = cur.getCartesianCoordinates()[0];
         final double oy = cur.getCartesianCoordinates()[1];
         double nx = direction.getCartesianCoordinates()[0] + ox;
         double ny = direction.getCartesianCoordinates()[1] + oy;
         if (ox >= 0 && oy <= SIZE) {
-            final Position next = next(ox, oy, nx, ny);
+            final Euclidean2DPosition next = next(ox, oy, nx, ny);
             nx = next.getCartesianCoordinates()[0] + ox;
             ny = next.getCartesianCoordinates()[1] + oy;
             if (nx < 1.0 && ny < 1.0 || nx > UPPER && ny > UPPER) {

@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import org.jooq.lambda.Unchecked;
 import org.reflections.Reflections;
 import it.unibo.alchemist.model.interfaces.Incarnation;
+import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * This enum interfaces the generic components of the graphical interface with
@@ -57,10 +58,10 @@ public final class SupportedIncarnations {
      *         matching name exists
      */
     @SuppressWarnings("rawtypes")
-    public static <T> Optional<Incarnation<T>> get(final String s) {
+    public static <T, P extends Position<? extends P>> Optional<Incarnation<T, P>> get(final String s) {
         final String cmp = preprocess(s);
         return Optional.ofNullable(INCARNATIONS.get(cmp))
-                .map(Unchecked.<Class<? extends Incarnation>, Incarnation<T>>function(Class::newInstance));
+                .map(Unchecked.<Class<? extends Incarnation>, Incarnation<T, P>>function(Class::newInstance));
     }
 
     private static String preprocess(final String s) {

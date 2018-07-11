@@ -11,7 +11,7 @@
  */
 package it.unibo.alchemist.model.implementations.environments;
 
-import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Position;
 
 /**
@@ -131,15 +131,15 @@ public class InfiniteHalls<T> extends LimitedContinuos2D<T> {
     }
 
     @Override
-    protected boolean isAllowed(final Position p) {
+    protected boolean isAllowed(final Euclidean2DPosition p) {
         final double[] coord = p.getCartesianCoordinates();
         return allowed(coord[0], coord[1]);
     }
 
     @Override
-    protected Position next(final double ox, final double oy, final double nx, final double ny) {
+    protected Euclidean2DPosition next(final double ox, final double oy, final double nx, final double ny) {
         if (allowed(nx, ny)) {
-            return new Continuous2DEuclidean(nx - ox, ny - oy);
+            return makePosition(nx - ox, ny - oy);
         }
         final int snx = (int) (ox / s);
         final int sny = (int) (oy / s);
@@ -192,7 +192,7 @@ public class InfiniteHalls<T> extends LimitedContinuos2D<T> {
                 nxm = snx * s + cf;
             }
         }
-        return new Continuous2DEuclidean(nxm, nym);
+        return new Euclidean2DPosition(nxm, nym);
     }
 
     /**

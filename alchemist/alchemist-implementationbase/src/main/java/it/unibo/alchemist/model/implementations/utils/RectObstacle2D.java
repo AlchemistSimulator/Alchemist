@@ -20,7 +20,7 @@ import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.MathArrays;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Obstacle2D;
 
 /**
@@ -77,13 +77,13 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
     }
 
     @Override
-    public Continuous2DEuclidean next(final double startx, final double starty, final double endx, final double endy) {
+    public Euclidean2DPosition next(final double startx, final double starty, final double endx, final double endy) {
         final double[] onBorders = enforceBorders(startx, starty, endx, endy);
         if (onBorders != null) {
             /*
              * The starting point was on the border.
              */
-            return new Continuous2DEuclidean(onBorders);
+            return new Euclidean2DPosition(onBorders);
         }
         final double[] intersection = nearestIntersection(startx, starty, endx, endy);
         /*
@@ -95,9 +95,9 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
         }
         final double[] restricted = enforceBorders(intersection[0], intersection[1], intersection[0], intersection[1]);
         if (restricted == null) {
-            return new Continuous2DEuclidean(intersection);
+            return new Euclidean2DPosition(intersection);
         }
-        return new Continuous2DEuclidean(restricted);
+        return new Euclidean2DPosition(restricted);
     }
 
     @SuppressFBWarnings("PZLA_PREFER_ZERO_LENGTH_ARRAYS")

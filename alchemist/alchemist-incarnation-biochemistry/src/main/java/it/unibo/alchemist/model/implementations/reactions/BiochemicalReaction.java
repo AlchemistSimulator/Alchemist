@@ -36,7 +36,7 @@ public class BiochemicalReaction extends ChemicalReaction<Double> {
     private static final long serialVersionUID = 3849210665619933894L;
     private Map<Node<Double>, Double> validNeighbors = new LinkedHashMap<>(0);
     private final Node<Double> node;
-    private final Environment<Double> environment;
+    private final Environment<Double, ?> environment;
     /*
      * Check if at least a neighbor condition is present in the reaction.
      * It is used when a neighbor action is present:
@@ -64,7 +64,7 @@ public class BiochemicalReaction extends ChemicalReaction<Double> {
      * @param env 
      *            the environment
      */
-    public BiochemicalReaction(final Node<Double> n, final TimeDistribution<Double> td, final Environment<Double> env) {
+    public BiochemicalReaction(final Node<Double> n, final TimeDistribution<Double> td, final Environment<Double, ?> env) {
         super(n, td);
         node = n;
         environment = env;
@@ -76,7 +76,7 @@ public class BiochemicalReaction extends ChemicalReaction<Double> {
     }
 
     @Override 
-    protected void updateInternalStatus(final Time curTime, final boolean executed, final Environment<Double> env) {
+    protected void updateInternalStatus(final Time curTime, final boolean executed, final Environment<Double, ?> env) {
         if (neighborConditionsPresent) {
             validNeighbors.clear();
             validNeighbors = env.getNeighborhood(node).getNeighbors().stream().collect(Collectors.<Node<Double>, Node<Double>, Double>toMap(

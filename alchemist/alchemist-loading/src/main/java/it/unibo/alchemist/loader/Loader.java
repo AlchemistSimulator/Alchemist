@@ -7,6 +7,7 @@ import java.util.Map;
 import it.unibo.alchemist.loader.export.Extractor;
 import it.unibo.alchemist.loader.variables.Variable;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * An entity which is able to produce an Alchemist {@link Environment}, possibly
@@ -20,7 +21,7 @@ public interface Loader extends Serializable {
      * @return an {@link Environment} with all the variables set at their
      *         default values
      */
-    <T> Environment<T> getDefault();
+    <T, P extends Position<? extends P>> Environment<T, P> getDefault();
 
     /**
      * @return a {@link Map} between variable names and their actual
@@ -38,7 +39,7 @@ public interface Loader extends Serializable {
      *         specified values. If the value is unspecified, the default is
      *         used instead
      */
-    <T> Environment<T> getWith(Map<String, ?> values);
+    <T, P extends Position<? extends P>> Environment<T, P> getWith(Map<String, ?> values);
 
     /**
      * @return The data extractors

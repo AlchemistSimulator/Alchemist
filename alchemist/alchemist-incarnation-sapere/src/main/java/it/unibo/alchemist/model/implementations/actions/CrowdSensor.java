@@ -28,7 +28,7 @@ public class CrowdSensor extends SAPERELocalAgent {
     private static final long serialVersionUID = -647690735880121675L;
     private static final ILsaMolecule PERSON = new LsaMolecule("person");
     private static final ILsaMolecule CROWD = new LsaMolecule("crowd, Level");
-    private final Environment<List<ILsaMolecule>> env;
+    private final Environment<List<ILsaMolecule>, ?> env;
 
     /**
      * @param environment
@@ -36,7 +36,7 @@ public class CrowdSensor extends SAPERELocalAgent {
      * @param node
      *            the current node
      */
-    public CrowdSensor(final Environment<List<ILsaMolecule>> environment, final ILsaNode node) {
+    public CrowdSensor(final Environment<List<ILsaMolecule>, ?> environment, final ILsaNode node) {
         super(node);
         env = environment;
     }

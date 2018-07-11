@@ -5,9 +5,11 @@ import it.unibo.alchemist.model.implementations.reactions.{ChemicalReaction, Eve
 import it.unibo.alchemist.model.interfaces.Reaction
 import org.apache.commons.math3.random.MersenneTwister
 import org.scalatest.{FunSuite, Matchers}
+import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 
 class TestScafiIncarnation extends FunSuite with Matchers {
-  private val INC = new ScafiIncarnation
+  private val INC = new ScafiIncarnation[Euclidean2DPosition]
 
   /**
     * Tests the ability of {@link ScafiIncarnation} of properly building
@@ -37,7 +39,7 @@ class TestScafiIncarnation extends FunSuite with Matchers {
 
     val prog = program.getActions.get(0)
     assertNotNull(prog)
-    assertTrue(prog.isInstanceOf[RunScafiProgram])
+    assertTrue(prog.isInstanceOf[RunScafiProgram[_]])
   }
 
   /**

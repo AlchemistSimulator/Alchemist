@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.Route;
  * 
  * @param <P> the type of position that the route is composed
  */
-public class PolygonalChain<P extends Position> implements Route<P> {
+public class PolygonalChain<P extends Position<?>> implements Route<P> {
 
     private static final long serialVersionUID = 1L;
     private double distance = Double.NaN;
@@ -54,7 +54,7 @@ public class PolygonalChain<P extends Position> implements Route<P> {
     }
 
     @Override
-    public P getPoint(final int step) {
+    public final P getPoint(final int step) {
         if (step < size()) {
             return positions.get(step);
         }
@@ -62,7 +62,7 @@ public class PolygonalChain<P extends Position> implements Route<P> {
     }
 
     @Override
-    public ImmutableList<P> getPoints() {
+    public final ImmutableList<P> getPoints() {
         return positions;
     }
 
@@ -75,12 +75,12 @@ public class PolygonalChain<P extends Position> implements Route<P> {
     }
 
     @Override
-    public Iterator<P> iterator() {
+    public final Iterator<P> iterator() {
         return positions.iterator();
     }
 
     @Override
-    public double length() {
+    public final double length() {
         if (Double.isNaN(distance) && size() > 0) {
             distance = 0;
             final Iterator<P> iter = positions.iterator();
@@ -94,12 +94,12 @@ public class PolygonalChain<P extends Position> implements Route<P> {
     }
 
     @Override
-    public int size() {
+    public final int size() {
         return positions.size();
     }
 
     @Override
-    public Stream<P> stream() {
+    public final Stream<P> stream() {
         return positions.stream();
     }
 

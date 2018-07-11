@@ -13,14 +13,13 @@ import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironmen
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
 import it.unibo.alchemist.model.implementations.nodes.EnvironmentNodeImpl;
-import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
-import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 
@@ -38,14 +37,14 @@ public class TestChemotaxis {
     private static final String CELL_IS_IN_POS = "the cell is in pos = ";
     private static final double PRECISION = 0.000000000000001;
     private static final String CELL_MOVE_REACTION = "[] --> [CellMove(false, 1)]";
-    private Environment<Double> env;
-    private CellNode cellNode1;
+    private Environment<Double, Euclidean2DPosition> env;
+    private CellNode<Euclidean2DPosition> cellNode1;
     private EnvironmentNode envNode1;
     private EnvironmentNode envNode2;
     private EnvironmentNode envNode3;
     private EnvironmentNode envNode4;
     private final Biomolecule biomolA = new Biomolecule("A");
-    private final Incarnation<Double> inc = new BiochemistryIncarnation();
+    private final Incarnation<Double, Euclidean2DPosition> inc = new BiochemistryIncarnation<Euclidean2DPosition>();
     private RandomGenerator rand;
     private TimeDistribution<Double> time;
 
@@ -55,12 +54,12 @@ public class TestChemotaxis {
     @Before
     public void setUp() {
         env = new BioRect2DEnvironmentNoOverlap();
-        env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.EuclideanDistance<>(2));
+        env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(2));
         envNode1 = new EnvironmentNodeImpl(env);
         envNode2 = new EnvironmentNodeImpl(env);
         envNode3 = new EnvironmentNodeImpl(env);
         envNode4 = new EnvironmentNodeImpl(env);
-        cellNode1 = new CellNodeImpl(env);
+        cellNode1 = new CellNodeImpl<Euclidean2DPosition>(env);
         rand = new MersenneTwister();
         time = new ExponentialTime<>(1, rand);
     }
@@ -70,11 +69,11 @@ public class TestChemotaxis {
      */
     @Test
     public void testChemotacticPolarization1() {
-        final Position p1 =  new Continuous2DEuclidean(0, 0);
-        final Position p2 = new Continuous2DEuclidean(1, 0);
-        final Position p3 =  new Continuous2DEuclidean(0, 1);
-        final Position p4 =  new Continuous2DEuclidean(1, 1);
-        final Position p5 =  new Continuous2DEuclidean(0.5, 0.5);
+        final Euclidean2DPosition p1 =  new Euclidean2DPosition(0, 0);
+        final Euclidean2DPosition p2 = new Euclidean2DPosition(1, 0);
+        final Euclidean2DPosition p3 =  new Euclidean2DPosition(0, 1);
+        final Euclidean2DPosition p4 =  new Euclidean2DPosition(1, 1);
+        final Euclidean2DPosition p5 =  new Euclidean2DPosition(0.5, 0.5);
         env.addNode(envNode1, p1);
         env.addNode(envNode2, p2);
         env.addNode(envNode3, p3);
@@ -102,11 +101,11 @@ public class TestChemotaxis {
      */
     @Test
     public void testChemotacticPolarization2() {
-        final Position p1 =  new Continuous2DEuclidean(0, 0);
-        final Position p2 = new Continuous2DEuclidean(1, 0);
-        final Position p3 =  new Continuous2DEuclidean(0, 1);
-        final Position p4 =  new Continuous2DEuclidean(3, 3);
-        final Position p5 =  new Continuous2DEuclidean(0.5, 0.5);
+        final Euclidean2DPosition p1 =  new Euclidean2DPosition(0, 0);
+        final Euclidean2DPosition p2 = new Euclidean2DPosition(1, 0);
+        final Euclidean2DPosition p3 =  new Euclidean2DPosition(0, 1);
+        final Euclidean2DPosition p4 =  new Euclidean2DPosition(3, 3);
+        final Euclidean2DPosition p5 =  new Euclidean2DPosition(0.5, 0.5);
         env.addNode(envNode1, p1);
         env.addNode(envNode2, p2);
         env.addNode(envNode3, p3);
@@ -134,11 +133,11 @@ public class TestChemotaxis {
      */
     @Test
     public void testChemotacticPolarization3() {
-        final Position p1 =  new Continuous2DEuclidean(0, 0);
-        final Position p2 = new Continuous2DEuclidean(1, 0);
-        final Position p3 =  new Continuous2DEuclidean(0, 1);
-        final Position p4 =  new Continuous2DEuclidean(1, 1);
-        final Position p5 =  new Continuous2DEuclidean(0.5, 0.5);
+        final Euclidean2DPosition p1 =  new Euclidean2DPosition(0, 0);
+        final Euclidean2DPosition p2 = new Euclidean2DPosition(1, 0);
+        final Euclidean2DPosition p3 =  new Euclidean2DPosition(0, 1);
+        final Euclidean2DPosition p4 =  new Euclidean2DPosition(1, 1);
+        final Euclidean2DPosition p5 =  new Euclidean2DPosition(0.5, 0.5);
         env.addNode(envNode1, p1);
         env.addNode(envNode2, p2);
         env.addNode(envNode3, p3);
@@ -163,7 +162,7 @@ public class TestChemotaxis {
      */
     @Test
     public void testChemotacticPolarization4() {
-        final Position p1 = new Continuous2DEuclidean(0.5, 0.5);
+        final Euclidean2DPosition p1 = new Euclidean2DPosition(0.5, 0.5);
         env.addNode(cellNode1, p1);
         final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
         r.execute();
@@ -184,9 +183,9 @@ public class TestChemotaxis {
      */
     @Test
     public void testChemotacticPolarization5() {
-        final Position p1 = new Continuous2DEuclidean(0, 0);
-        final Position p2 = new Continuous2DEuclidean(1, 0);
-        final Position p3 = new Continuous2DEuclidean(-1, 0);
+        final Euclidean2DPosition p1 = new Euclidean2DPosition(0, 0);
+        final Euclidean2DPosition p2 = new Euclidean2DPosition(1, 0);
+        final Euclidean2DPosition p3 = new Euclidean2DPosition(-1, 0);
         env.addNode(cellNode1, p1);
         final Molecule a = new Biomolecule("A");
         final Molecule b = new Biomolecule("B");
@@ -215,11 +214,11 @@ public class TestChemotaxis {
      */
     @Test
     public void testChemotacticMove1() {
-        final Position p1 = new Continuous2DEuclidean(0, 0);
-        final Position p2 = new Continuous2DEuclidean(1, 0);
-        final Position p3 = new Continuous2DEuclidean(0, 1);
-        final Position p4 = new Continuous2DEuclidean(1, 1);
-        final Position p5 = new Continuous2DEuclidean(0.5, 0.5);
+        final Euclidean2DPosition p1 = new Euclidean2DPosition(0, 0);
+        final Euclidean2DPosition p2 = new Euclidean2DPosition(1, 0);
+        final Euclidean2DPosition p3 = new Euclidean2DPosition(0, 1);
+        final Euclidean2DPosition p4 = new Euclidean2DPosition(1, 1);
+        final Euclidean2DPosition p5 = new Euclidean2DPosition(0.5, 0.5);
         env.addNode(envNode1, p1);
         env.addNode(envNode2, p2);
         env.addNode(envNode3, p3);
@@ -233,7 +232,7 @@ public class TestChemotaxis {
         final Reaction<Double> r2 = inc.createReaction(rand, env, cellNode1, time, CELL_MOVE_REACTION);
         r1.execute();
         r2.execute();
-        assertEquals(new Continuous2DEuclidean(0.5 + FastMath.sqrt(0.5), 0.5 + FastMath.sqrt(0.5)), env.getPosition(cellNode1));
+        assertEquals(new Euclidean2DPosition(0.5 + FastMath.sqrt(0.5), 0.5 + FastMath.sqrt(0.5)), env.getPosition(cellNode1));
     }
 
     /**
@@ -241,11 +240,11 @@ public class TestChemotaxis {
      */
     @Test
     public void testChemotacticMove2() {
-        final Position p1 = new Continuous2DEuclidean(0, 0);
-        final Position p2 = new Continuous2DEuclidean(1, 0);
-        final Position p3 = new Continuous2DEuclidean(0, 1);
-        final Position p4 = new Continuous2DEuclidean(1, 1);
-        final Position p5 = new Continuous2DEuclidean(1, 1);
+        final Euclidean2DPosition p1 = new Euclidean2DPosition(0, 0);
+        final Euclidean2DPosition p2 = new Euclidean2DPosition(1, 0);
+        final Euclidean2DPosition p3 = new Euclidean2DPosition(0, 1);
+        final Euclidean2DPosition p4 = new Euclidean2DPosition(1, 1);
+        final Euclidean2DPosition p5 = new Euclidean2DPosition(1, 1);
         env.addNode(envNode1, p1);
         env.addNode(envNode2, p2);
         env.addNode(envNode3, p3);
@@ -276,11 +275,11 @@ public class TestChemotaxis {
      */
     @Test
     public void testChemotacticMove3() {
-        final Position p1 = new Continuous2DEuclidean(0, 0);
-        final Position p2 = new Continuous2DEuclidean(1, 0);
-        final Position p3 = new Continuous2DEuclidean(0, 1);
-        final Position p4 = new Continuous2DEuclidean(1, 1);
-        final Position p5 = new Continuous2DEuclidean(0.5, 0.5);
+        final Euclidean2DPosition p1 = new Euclidean2DPosition(0, 0);
+        final Euclidean2DPosition p2 = new Euclidean2DPosition(1, 0);
+        final Euclidean2DPosition p3 = new Euclidean2DPosition(0, 1);
+        final Euclidean2DPosition p4 = new Euclidean2DPosition(1, 1);
+        final Euclidean2DPosition p5 = new Euclidean2DPosition(0.5, 0.5);
         env.addNode(envNode1, p1);
         env.addNode(envNode2, p2);
         env.addNode(envNode3, p3);

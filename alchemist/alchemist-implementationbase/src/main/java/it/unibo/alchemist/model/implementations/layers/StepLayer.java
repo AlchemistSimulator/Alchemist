@@ -9,7 +9,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  * @param <T> the type describing the concentration in this {@link Layer}.
  *
  */
-public class StepLayer<T> implements Layer<T> {
+public class StepLayer<T, P extends Position<? extends P>> implements Layer<T, P> {
 
     /**
      * 
@@ -45,7 +45,7 @@ public class StepLayer<T> implements Layer<T> {
     }
 
     @Override
-    public T getValue(final Position p) {
+    public T getValue(final P p) {
         if (p.getCoordinate(0) > maxx && p.getCoordinate(1) > maxy) {
             return highValue;
         } else {

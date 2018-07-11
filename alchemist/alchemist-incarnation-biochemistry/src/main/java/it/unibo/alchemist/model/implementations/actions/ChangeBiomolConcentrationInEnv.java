@@ -33,7 +33,7 @@ public class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<D
     private static final long serialVersionUID = 1L;
     private final double delta;
     private final Biomolecule biomolecule;
-    private final Environment<Double> env;
+    private final Environment<Double, ?> env;
 
     /**
      * Initialize a new {@link Action} that change concentration of the given
@@ -45,7 +45,7 @@ public class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<D
      * @param environment the {@link Environment} where the node is located.
      * @param randomGen 
      */
-    public ChangeBiomolConcentrationInEnv(final Environment<Double> environment, final Node<Double> node, final Biomolecule biomol, 
+    public ChangeBiomolConcentrationInEnv(final Environment<Double, ?> environment, final Node<Double> node, final Biomolecule biomol, 
             final double deltaCon, final RandomGenerator randomGen) {
         super(node, randomGen);
         if (node instanceof EnvironmentNode || node instanceof CellNode) {
@@ -66,7 +66,7 @@ public class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<D
      * @param randomGen 
      */
     public ChangeBiomolConcentrationInEnv(final Node<Double> node, final Biomolecule biomol, 
-            final Environment<Double> environment, final RandomGenerator randomGen) {
+            final Environment<Double, ?> environment, final RandomGenerator randomGen) {
         this(environment, node, biomol, -1, randomGen);
     }
 

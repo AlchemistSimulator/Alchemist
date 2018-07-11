@@ -98,7 +98,7 @@ public final class Alchemist {
                 }
             }
             if (loader.isPresent()) {
-                final Builder<?> simBuilder = new Builder<>(loader.get())
+                final Builder<?, ?> simBuilder = new Builder<>(loader.get())
                         .setHeadless(cmd.hasOption(HEADLESS))
                         .setGUICloseOperation(JFrame.EXIT_ON_CLOSE);
                 ifPresent(cmd, EXPORT, simBuilder::setOutputFile);

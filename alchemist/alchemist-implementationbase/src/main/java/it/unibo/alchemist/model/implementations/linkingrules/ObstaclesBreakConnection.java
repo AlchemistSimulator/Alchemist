@@ -19,12 +19,12 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 
 /**
- * Similar to {@link EuclideanDistance}, but if the environment has obstacles,
+ * Similar to {@link ConnectWithinDistance}, but if the environment has obstacles,
  * the links are removed.
  * 
  * @param <T>
  */
-public final class ObstaclesBreakConnection<T> extends EuclideanDistance<T> {
+public final class ObstaclesBreakConnection<T, P extends Position<? extends P>> extends ConnectWithinDistance<T, P> {
 
     private static final long serialVersionUID = -3279202906910960340L;
 
@@ -37,12 +37,12 @@ public final class ObstaclesBreakConnection<T> extends EuclideanDistance<T> {
     }
 
     @Override
-    public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T> env) {
+    public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> env) {
         Neighborhood<T> normal = super.computeNeighborhood(center, env);
         if (!normal.isEmpty() && env instanceof Environment2DWithObstacles) {
-            final Position cp = env.getPosition(center);
+            final P cp = env.getPosition(center);
             @SuppressWarnings("unchecked")
-            final Environment2DWithObstacles<?, T> environment = (Environment2DWithObstacles<?, T>) env;
+            final Environment2DWithObstacles<?, T, P> environment = (Environment2DWithObstacles<?, T, P>) env;
             normal = Neighborhoods.make(env, center, StreamSupport.stream(normal.spliterator(), false)
                     .filter(node -> !environment.intersectsObstacle(cp, environment.getPosition(node)))
                     .collect(Collectors.toList()));

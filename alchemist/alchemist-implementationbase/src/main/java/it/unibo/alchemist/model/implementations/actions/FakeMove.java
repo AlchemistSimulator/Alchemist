@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  * 
  * @param <T>
  */
-public class FakeMove<T> extends AbstractMoveNode<T> {
+public class FakeMove<T,P extends Position<P>> extends AbstractMoveNode<T, P> {
 
     private static final long serialVersionUID = 1774989279335172458L;
 
@@ -29,7 +29,7 @@ public class FakeMove<T> extends AbstractMoveNode<T> {
      * @param node
      *            the node
      */
-    public FakeMove(final Environment<T> environment, final Node<T> node) {
+    public FakeMove(final Environment<T, P> environment, final Node<T> node) {
         super(environment, node, true);
     }
 
@@ -39,7 +39,7 @@ public class FakeMove<T> extends AbstractMoveNode<T> {
     }
 
     @Override
-    public Position getNextPosition() {
+    public P getNextPosition() {
         return getEnvironment().getPosition(getNode());
     }
 

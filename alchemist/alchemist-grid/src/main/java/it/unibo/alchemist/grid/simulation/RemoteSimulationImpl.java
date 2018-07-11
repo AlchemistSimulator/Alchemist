@@ -25,13 +25,14 @@ import it.unibo.alchemist.grid.util.WorkingDirectory;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.export.Exporter;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * {@link RemoteSimulation} implementation for Apache Ignite.
  *
  * @param <T>
  */
-public class RemoteSimulationImpl<T> implements RemoteSimulation<T> {
+public class RemoteSimulationImpl<T, P extends Position<? extends P>> implements RemoteSimulation<T> {
 
     /**
      * 
@@ -66,8 +67,8 @@ public class RemoteSimulationImpl<T> implements RemoteSimulation<T> {
                 public RemoteResultImpl call() throws Exception {
                     ResourceLoader.injectURLs(wd.getDirectoryUrl());
                     final Loader loader = generalConfig.getLoader();
-                    final Environment<T> env = loader.getWith(config.getVariables());
-                    final Simulation<T> sim = new Engine<>(env, generalConfig.getEndStep(), generalConfig.getEndTime());
+                    final Environment<T, P> env = loader.getWith(config.getVariables());
+                    final Simulation<T, P> sim = new Engine<>(env, generalConfig.getEndStep(), generalConfig.getEndTime());
                     final Map<String, Object> defaultVars = loader.getVariables().entrySet().stream()
                             .collect(Collectors.toMap(Entry::getKey, e -> e.getValue().getDefault()));
                     defaultVars.putAll(config.getVariables());
@@ -75,7 +76,7 @@ public class RemoteSimulationImpl<T> implements RemoteSimulation<T> {
                             .map(e -> e.getKey() + " = " + e.getValue())
                             .collect(Collectors.joining(", "));
                     final String filename = masterNodeId.toString() + "_" + config.toString() + ".txt";
-                    final Exporter<T> exp = new Exporter<>(wd.getFileAbsolutePath(filename), 
+                    final Exporter<T, P> exp = new Exporter<>(wd.getFileAbsolutePath(filename), 
                             1, header, loader.getDataExtractors());
                     sim.addOutputMonitor(exp);
                     sim.play();

@@ -7,7 +7,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  * 
  * @param <T>
  */
-public interface Graphical2DOutputMonitor<T> extends GraphicalOutputMonitor<T> {
+public interface Graphical2DOutputMonitor<T, P extends Position<? extends P>> extends GraphicalOutputMonitor<T, P> {
 
     /**
      * @param center
@@ -15,6 +15,6 @@ public interface Graphical2DOutputMonitor<T> extends GraphicalOutputMonitor<T> {
      * @param zoomLevel
      *            the desired zoom level
      */
-    void zoomTo(Position center, double zoomLevel);
+    void zoomTo(P center, double zoomLevel);
 
 }

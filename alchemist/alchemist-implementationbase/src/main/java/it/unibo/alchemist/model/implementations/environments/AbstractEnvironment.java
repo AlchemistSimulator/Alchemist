@@ -29,7 +29,6 @@ import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.danilopianini.util.ArrayListSet;
-import org.danilopianini.util.ImmutableListSet;
 import org.danilopianini.util.LinkedListSet;
 import org.danilopianini.util.ListSet;
 import org.danilopianini.util.ListSets;
@@ -59,7 +58,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  * 
  * @param <T>
  */
-public abstract class AbstractEnvironment<T> implements Environment<T> {
+public abstract class AbstractEnvironment<T, P extends Position<? extends P>> implements Environment<T, P> {
 
     /**
      * The default monitor that will be loaded. If null, the GUI must default to
@@ -67,17 +66,17 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
      */
     protected static final String DEFAULT_MONITOR = null;
     private static final long serialVersionUID = 0L;
-    private transient LoadingCache<ImmutablePair<Position, Double>, ListSet<Node<T>>> cache;
-    private Incarnation<T> incarnation;
-    private final Map<Molecule, Layer<T>> layers = new LinkedHashMap<>();
+    private transient LoadingCache<ImmutablePair<P, Double>, ListSet<Node<T>>> cache;
+    private Incarnation<T, P> incarnation;
+    private final Map<Molecule, Layer<T, P>> layers = new LinkedHashMap<>();
     private final TIntObjectHashMap<Neighborhood<T>> neighCache = new TIntObjectHashMap<>();
     private final TIntObjectHashMap<Node<T>> nodes = new TIntObjectHashMap<Node<T>>();
-    private final TIntObjectHashMap<Position> nodeToPos = new TIntObjectHashMap<>();
-    private LinkingRule<T> rule;
-    private transient Simulation<T> simulation;
+    private final TIntObjectHashMap<P> nodeToPos = new TIntObjectHashMap<>();
+    private LinkingRule<T, P> rule;
+    private transient Simulation<T, P> simulation;
     private final SpatialIndex<Node<T>> spatialIndex;
 
-    private Predicate<Environment<T>> terminator = Predicates.alwaysFalse();
+    private Predicate<Environment<T, P>> terminator = Predicates.alwaysFalse();
 
     /**
      * @param internalIndex
@@ -89,16 +88,16 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     }
 
     @Override
-    public void addLayer(final Molecule m, final Layer<T> l) {
+    public final void addLayer(final Molecule m, final Layer<T, P> l) {
         if (layers.put(m, l) != null) {
             throw new IllegalStateException("Two layers have been associated to " + m);
         }
     }
 
     @Override
-    public final void addNode(final Node<T> node, final Position p) {
+    public final void addNode(final Node<T> node, final P p) {
         if (nodeShouldBeAdded(node, p)) {
-            final Position actualPosition = computeActualInsertionPosition(node, p);
+            final P actualPosition = computeActualInsertionPosition(node, p);
             setPosition(node, actualPosition);
             if (nodes.put(node.getId(), node) != null) {
                 throw new IllegalArgumentException("Node with id " + node.getId() + " was already existing in this environment.");
@@ -122,7 +121,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     }
 
     @Override
-    public final void addTerminator(final Predicate<Environment<T>> terminator) {
+    public final void addTerminator(final Predicate<Environment<T, P>> terminator) {
         this.terminator = this.terminator.or(terminator);
     }
 
@@ -136,10 +135,10 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
      *            the original (requested) position
      * @return the actual position where the node should be located
      */
-    protected abstract Position computeActualInsertionPosition(Node<T> node, Position p);
+    protected abstract P computeActualInsertionPosition(Node<T> node, P p);
 
     @Override
-    public void forEach(final Consumer<? super Node<T>> action) {
+    public final void forEach(final Consumer<? super Node<T>> action) {
         getNodes().forEach(action);
     }
 
@@ -150,7 +149,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
                 .map(n -> new Operation(center, n, true));
     }
 
-    private ListSet<Node<T>> getAllNodesInRange(final Position center, final double range) {
+    private ListSet<Node<T>> getAllNodesInRange(final P center, final double range) {
         if (range <= 0) {
             throw new IllegalArgumentException("Range query must be positive (provided: " + range + ")");
         }
@@ -163,29 +162,27 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     }
 
     @Override
-    public double getDistanceBetweenNodes(final Node<T> n1, final Node<T> n2) {
-        final Position p1 = getPosition(n1);
-        final Position p2 = getPosition(n2);
-        return p1.getDistanceTo(p2);
+    public final double getDistanceBetweenNodes(final Node<T> n1, final Node<T> n2) {
+        return getPosition(n1).getDistanceTo(getPosition(n2));
     }
 
     @Override
-    public Optional<Incarnation<T>> getIncarnation() {
+    public final Optional<Incarnation<T, P>> getIncarnation() {
         return Optional.ofNullable(incarnation);
     }
 
     @Override
-    public Optional<Layer<T>> getLayer(final Molecule m) {
+    public final Optional<Layer<T, P>> getLayer(final Molecule m) {
         return Optional.ofNullable(layers.get(m));
     }
 
     @Override
-    public ListSet<Layer<T>> getLayers() {
+    public final ListSet<Layer<T, P>> getLayers() {
         return new ArrayListSet<>(layers.values());
     }
 
     @Override
-    public final LinkingRule<T> getLinkingRule() {
+    public final LinkingRule<T, P> getLinkingRule() {
         return rule;
     }
 
@@ -210,26 +207,26 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     }
 
     @Override
-    public Node<T> getNodeByID(final int id) {
+    public final Node<T> getNodeByID(final int id) {
         return nodes.get(id);
     }
 
     @Override
-    public ListSet<Node<T>> getNodes() {
+    public final ListSet<Node<T>> getNodes() {
         return new ArrayListSet<>(nodes.valueCollection());
     }
 
     @Override
-    public int getNodesNumber() {
+    public final int getNodesNumber() {
         return nodes.size();
     }
 
     @Override
-    public ListSet<Node<T>> getNodesWithinRange(final Node<T> center, final double range) {
+    public final ListSet<Node<T>> getNodesWithinRange(final Node<T> center, final double range) {
         /*
          * Remove the center node
          */
-        final Position centerPosition = getPosition(center);
+        final P centerPosition = getPosition(center);
         if (centerPosition == null) {
             throw new IllegalArgumentException("Node " + center + " was not part of this environment");
         }
@@ -241,29 +238,38 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     }
 
     @Override
-    public ListSet<Node<T>> getNodesWithinRange(final Position center, final double range) {
+    public final ListSet<Node<T>> getNodesWithinRange(final P center, final double range) {
         /*
          * Collect every node in range
          */
         return getAllNodesInRange(center, range);
     }
 
+    /**
+     * This method should not get overriden in general. However, if your
+     */
     @Override
-    public Position getPosition(final Node<T> node) {
+    public P getPosition(final Node<T> node) {
         return nodeToPos.get(Objects.requireNonNull(node).getId());
     }
 
     @Override
-    public Simulation<T> getSimulation() {
+    public final Simulation<T, P> getSimulation() {
         return simulation;
     }
 
+    /**
+     * Override this method if units measuring distance do not match with units used
+     * for coordinates. For instance, if your space is non-Euclidean, or if you are
+     * using polar coordinates. A notable example is using geographical
+     * latitude-longitude as y-x coordinates and meters as distance measure.
+     */
     @Override
     public double[] getSizeInDistanceUnits() {
         return getSize();
     }
 
-    private void ifEngineAvailable(final Consumer<Simulation<T>> r) {
+    private void ifEngineAvailable(final Consumer<Simulation<T, P>> r) {
         Optional.ofNullable(getSimulation()).ifPresent(r);
     }
 
@@ -279,7 +285,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     }
 
     @Override
-    public Iterator<Node<T>> iterator() {
+    public final Iterator<Node<T>> iterator() {
         return Collections.unmodifiableCollection(nodes.valueCollection()).iterator();
     }
 
@@ -300,7 +306,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
      * @param position the position of the node
      * @param neighborhood the current neighborhood of the node
      */
-    protected abstract void nodeAdded(Node<T> node, Position position, Neighborhood<T> neighborhood);
+    protected abstract void nodeAdded(Node<T> node, P position, Neighborhood<T> neighborhood);
 
     /**
      * This method gets called once a node has been removed.
@@ -311,20 +317,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
      *            the OLD neighborhood of the node (it is no longer in sync with
      *            the {@link Environment} status)
      */
-    protected abstract void nodeRemoved(Node<T> node, Neighborhood<T> neighborhood);
-
-    /**
-     * Allows subclasses to determine wether or not a {@link Node} should
-     * actually get added to this environment.
-     * 
-     * @param node
-     *            the node
-     * @param p
-     *            the original (requested) position
-     * @return true if the node should be added to this environment, false
-     *         otherwise
-     */
-    protected abstract boolean nodeShouldBeAdded(Node<T> node, Position p);
+    protected void nodeRemoved(Node<T> node, Neighborhood<T> neighborhood) { }
 
     private Queue<Operation> recursiveOperation(final Node<T> origin) {
         final Neighborhood<T> newNeighborhood = rule.computeNeighborhood(Objects.requireNonNull(origin), this);
@@ -347,7 +340,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     public final void removeNode(@Nonnull final Node<T> node) {
         invalidateCache();
         nodes.remove(Objects.requireNonNull(node).getId());
-        final Position pos = nodeToPos.remove(node.getId());
+        final P pos = nodeToPos.remove(node.getId());
         spatialIndex.remove(node, pos.getCartesianCoordinates());
         /*
          * Neighborhood update
@@ -368,7 +361,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
         nodeRemoved(node, neigh);
     }
 
-    private ListSet<Node<T>> runQuery(final Position center, final double range) {
+    private ListSet<Node<T>> runQuery(final P center, final double range) {
         final List<Node<T>> result = spatialIndex.query(center.buildBoundingBox(range).stream()
                 .map(Position::getCartesianCoordinates)
                 .toArray(i -> new double[i][]));
@@ -379,7 +372,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     }
 
     @Override
-    public final void setIncarnation(final Incarnation<T> incarnation) {
+    public final void setIncarnation(final Incarnation<T, P> incarnation) {
         if (this.incarnation == null) {
             this.incarnation = Objects.requireNonNull(incarnation);
         } else {
@@ -388,7 +381,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     }
 
     @Override
-    public void setLinkingRule(final LinkingRule<T> r) {
+    public final void setLinkingRule(final LinkingRule<T, P> r) {
         rule = Objects.requireNonNull(r);
     }
 
@@ -400,8 +393,8 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
      * @param p
      *            its new position
      */
-    protected final void setPosition(final Node<T> n, final Position p) {
-        final Position pos = nodeToPos.put(Objects.requireNonNull(n).getId(), Objects.requireNonNull(p));
+    protected final void setPosition(final Node<T> n, final P p) {
+        final P pos = nodeToPos.put(Objects.requireNonNull(n).getId(), Objects.requireNonNull(p));
         if (!p.equals(pos)) {
             invalidateCache();
         }
@@ -412,7 +405,7 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
     }
 
     @Override
-    public final void setSimulation(final Simulation<T> s) {
+    public final void setSimulation(final Simulation<T, P> s) {
         if (simulation == null) {
             simulation = s;
         } else {
@@ -420,8 +413,23 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
         }
     }
 
+    /**
+     * Allows subclasses to determine wether or not a {@link Node} should
+     * actually get added to this environment.
+     * 
+     * @param node
+     *            the node
+     * @param p
+     *            the original (requested) position
+     * @return true if the node should be added to this environment, false
+     *         otherwise
+     */
+    protected boolean nodeShouldBeAdded(final Node<T> node, final P p) {
+        return true;
+    }
+
     @Override
-    public Spliterator<Node<T>> spliterator() {
+    public final Spliterator<Node<T>> spliterator() {
         return getNodes().spliterator();
     }
 
@@ -432,6 +440,9 @@ public abstract class AbstractEnvironment<T> implements Environment<T> {
                 .collect(Collectors.toCollection(LinkedList::new));
     }
 
+    /**
+     * Not used internally. Override as you please.
+     */
     @Override
     public String toString() {
         return getClass().getSimpleName();

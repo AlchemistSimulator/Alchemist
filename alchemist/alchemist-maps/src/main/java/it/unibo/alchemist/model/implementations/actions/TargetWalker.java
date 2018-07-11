@@ -81,7 +81,7 @@ public class TargetWalker<T> extends MoveOnMap<T> {
         super(environment, node,
                 new OnStreets<>(environment, Vehicle.FOOT),
                 interaction <= 0 || interactingMolecule == null
-                    ? new ConstantSpeed(reaction, speed)
+                    ? new ConstantSpeed<>(reaction, speed)
                     : new InteractWithOthers<>(environment, node, reaction, interactingMolecule, speed, range, interaction),
                 new FollowTargetOnMap<>(environment, node, trackMolecule));
     }

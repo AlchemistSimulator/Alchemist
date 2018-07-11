@@ -20,6 +20,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.LinkingRule;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * Non local-consistent rule that connect the closest N nodes together.
@@ -27,7 +28,7 @@ import it.unibo.alchemist.model.interfaces.Node;
  * 
  * @param <T>
  */
-public class ClosestN<T> implements LinkingRule<T> {
+public class ClosestN<T> implements LinkingRule<T, Position<?>> {
 
     private static final long serialVersionUID = 1L;
     private static final double CONNECTION_RANGE_TOLERANCE = 1.1;
@@ -75,7 +76,7 @@ public class ClosestN<T> implements LinkingRule<T> {
     }
 
     @Override
-    public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T> env) {
+    public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, Position<?>> env) {
         if (env.getNodesNumber() < expectedNodes || !nodeIsEnabled(center)) {
             return Neighborhoods.make(env, center);
         }
@@ -98,7 +99,7 @@ public class ClosestN<T> implements LinkingRule<T> {
                 .collect(Collectors.toCollection(LinkedHashSet::new)));
     }
 
-    private Stream<Node<T>> closestN(final Node<T> center, final Environment<T> env) {
+    private Stream<Node<T>> closestN(final Node<T> center, final Environment<T, ?> env) {
         if (!nodeIsEnabled(center)) {
             return Stream.empty();
         }
@@ -129,7 +130,7 @@ public class ClosestN<T> implements LinkingRule<T> {
      * @param range the communication range
      * @return the set of nodes within the communication range
      */
-    protected final Set<Node<T>> nodesInRange(final Environment<T> env, final Node<T> node, final double range) {
+    protected final Set<Node<T>> nodesInRange(final Environment<T, ?> env, final Node<T> node, final double range) {
         return env.getNodesWithinRange(node, range);
     }
 
@@ -153,7 +154,7 @@ public class ClosestN<T> implements LinkingRule<T> {
      *            the node
      * @return the communication range
      */
-    protected final double getRange(final Environment<T> env, final Node<T> center) {
+    protected final double getRange(final Environment<T, ?> env, final Node<T> center) {
         try {
             /*
              * Range estimation: twice the radius of a circle with an area that

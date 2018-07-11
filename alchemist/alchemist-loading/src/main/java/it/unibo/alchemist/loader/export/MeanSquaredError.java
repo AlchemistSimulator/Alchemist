@@ -26,7 +26,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  */
 public class MeanSquaredError<T> implements Extractor {
 
-    private final Incarnation<T> incarnation;
+    private final Incarnation<T, ?> incarnation;
     private final String pReference;
     private final Molecule mReference;
     private final String pActual;
@@ -49,7 +49,7 @@ public class MeanSquaredError<T> implements Extractor {
      *            the {@link Incarnation} to use
      */
     public MeanSquaredError(final String molRef, final String propRef, final String stat, final String molActual,
-            final String propActual, final Incarnation<T> incarnation) {
+            final String propActual, final Incarnation<T, ?> incarnation) {
         final Optional<UnivariateStatistic> statOpt = StatUtil.makeUnivariateStatistic(stat);
         if (!statOpt.isPresent()) {
             throw new IllegalArgumentException("Could not create univariate statistic " + stat);
@@ -79,9 +79,9 @@ public class MeanSquaredError<T> implements Extractor {
     }
 
     @Override
-    public double[] extractData(final Environment<?> env, final Reaction<?> r, final Time time, final long step) {
+    public double[] extractData(final Environment<?, ?> env, final Reaction<?> r, final Time time, final long step) {
         @SuppressWarnings("unchecked")
-        final Environment<T> environment = (Environment<T>) env;
+        final Environment<T, ?> environment = (Environment<T, ?>) env;
         final double value = statistic.evaluate(
                 environment.getNodes().parallelStream()
                     .mapToDouble(n -> incarnation.getProperty(n, mReference, pReference))

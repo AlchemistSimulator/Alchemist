@@ -29,8 +29,6 @@ public interface TimeDistribution<T> extends Cloneable, Serializable {
      *            a parameter passed by the reaction
      * @param env
      *            the current environment
-     * @param <P>
-     *            Position type
      */
     void update(Time curTime, boolean executed, double param, Environment<T, ?> env);
 

@@ -11,6 +11,8 @@ package it.unibo.alchemist.model.interfaces;
 import java.awt.Shape;
 import java.io.Serializable;
 
+import org.apache.commons.math3.util.Pair;
+
 /**
  */
 public interface Obstacle2D extends Serializable, Shape {
@@ -36,7 +38,7 @@ public interface Obstacle2D extends Serializable, Shape {
      * @return the intersection point between the vector and the rectangle
      *         nearest to the vector's starting point
      */
-    Position next(double sx, double sy, double ex, double ey);
+    Pair<Double, Double> next(double sx, double sy, double ex, double ey);
 
     /**
      * Given a vector (represented as a starting point and an end point) and a

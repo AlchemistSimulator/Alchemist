@@ -14,6 +14,8 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.math3.util.Pair;
+
 import com.github.davidmoten.rtree.RTree;
 import com.github.davidmoten.rtree.geometry.Geometries;
 import com.github.davidmoten.rtree.geometry.Rectangle;
@@ -87,7 +89,7 @@ public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements E
         if (l.isEmpty()) {
             return new Euclidean2DPosition(nx, ny);
         }
-        Euclidean2DPosition shortest = null;
+        Pair<Double, Double> shortest = null;
         double fx = nx;
         double fy = ny;
         double fxCache = Double.NaN;
@@ -101,8 +103,8 @@ public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements E
                  * If one of the dimensions is limited, such limit must be
                  * retained!
                  */
-                final double sfx = shortest.getCoordinate(0);
-                final double sfy = shortest.getCoordinate(1);
+                final double sfx = shortest.getFirst();
+                final double sfy = shortest.getSecond();
                 if (sfx != fx || fy != sfy) {
                     /*
                      * This obstacle has contributed already
@@ -114,7 +116,7 @@ public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements E
                 }
             }
         }
-        return shortest;
+        return makePosition(shortest.getFirst(), shortest.getSecond());
     }
 
     private List<RectObstacle2D> query(final double ox, final double oy, final double nx, final double ny, final double tolerance) {

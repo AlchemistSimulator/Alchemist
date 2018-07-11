@@ -48,6 +48,9 @@ import it.unibo.alchemist.model.interfaces.Time;
  * factories to ease the creation process.
  * 
  * @param <T>
+ *            concentration type
+ * @param <P>
+ *            {@link Position} type
  */
 public final class Engine<T, P extends Position<? extends P>> implements Simulation<T, P> {
 

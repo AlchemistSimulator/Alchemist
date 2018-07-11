@@ -8,13 +8,12 @@
  ******************************************************************************/
 package it.unibo.alchemist.model.implementations.actions;
 
-import static org.apache.commons.math3.util.FastMath.sin;
-import static org.apache.commons.math3.util.FastMath.cos;
 import static org.apache.commons.math3.util.FastMath.atan2;
+import static org.apache.commons.math3.util.FastMath.cos;
+import static org.apache.commons.math3.util.FastMath.sin;
 
 import it.unibo.alchemist.model.implementations.movestrategies.speed.ConstantSpeed;
 import it.unibo.alchemist.model.implementations.movestrategies.target.FollowTarget;
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.routes.PolygonalChain;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
@@ -26,8 +25,11 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  * Movement towards a target defined as a concentration.
  *
  * @param <T>
+ *            concentration type
+ * @param <P>
+ *            {@link Position} type
  */
-public class MoveToTarget<T,P extends Position<P>> extends AbstractConfigurableMoveNode<T, P> {
+public final class MoveToTarget<T, P extends Position<P>> extends AbstractConfigurableMoveNode<T, P> {
 
     private static final long serialVersionUID = 1L;
     private final Molecule trackMolecule;

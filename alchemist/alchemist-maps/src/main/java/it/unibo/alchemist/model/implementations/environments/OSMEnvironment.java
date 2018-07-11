@@ -61,7 +61,6 @@ import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Route;
 import it.unibo.alchemist.model.interfaces.Vehicle;
 
@@ -483,11 +482,6 @@ public class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPosition> imp
     private void readObject(final ObjectInputStream s) throws IOException, ClassNotFoundException {
         s.defaultReadObject();
         initAll(mapResource);
-    }
-
-    @Override
-    public final GeoPosition sumVectors(final GeoPosition p1, final GeoPosition p2) {
-        return p1.add(p2);
     }
 
     private static synchronized GraphHopperAPI initNavigationSystem(final File mapFile, final String internalWorkdir, final Vehicle v) throws IOException {

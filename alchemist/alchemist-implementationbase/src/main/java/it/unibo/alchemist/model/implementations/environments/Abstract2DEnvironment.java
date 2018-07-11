@@ -18,15 +18,25 @@ import org.danilopianini.util.FlexibleQuadTree;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Position2D;
 
-public abstract class Abstract2DEnvironment<T, P extends Position<? extends P>> extends AbstractEnvironment<T, P> {
+/**
+ * 
+ * Models a bidimensional environment.
+ * 
+ * @param <T> concentration type
+ * @param <P> {@link Position2D} type
+ */
+public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends AbstractEnvironment<T, P> {
 
     private static final long serialVersionUID = 1L;
 
     private double minX = POSITIVE_INFINITY, maxX = NEGATIVE_INFINITY, minY = POSITIVE_INFINITY,
             maxY = NEGATIVE_INFINITY;
 
+    /**
+     * 
+     */
     protected Abstract2DEnvironment() {
         super(new FlexibleQuadTree<>());
     }
@@ -95,7 +105,7 @@ public abstract class Abstract2DEnvironment<T, P extends Position<? extends P>> 
     @Override
     public void moveNode(final Node<T> node, final P direction) {
         final P oldcoord = getPosition(node);
-        moveNodeToPosition(node, sumVectors(oldcoord, direction));
+        moveNodeToPosition(node, oldcoord.add(direction));
     }
 
     @Override
@@ -116,8 +126,5 @@ public abstract class Abstract2DEnvironment<T, P extends Position<? extends P>> 
          */
         includeObject(position);
     }
-
-    public abstract P sumVectors(P p1, P p2);
-
 
 }

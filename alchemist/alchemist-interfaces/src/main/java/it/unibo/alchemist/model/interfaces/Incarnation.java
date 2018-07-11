@@ -11,7 +11,10 @@ package it.unibo.alchemist.model.interfaces;
 import org.apache.commons.math3.random.RandomGenerator;
 
 /**
- * @param <T> Concentration type
+ * @param <T>
+ *            Concentration type
+ * @param <P>
+ *            Concentration type
  */
 public interface Incarnation<T, P extends Position<? extends P>> {
 
@@ -54,8 +57,6 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      *            the environment that will host this object
      * @param param
      *            a {@link String} describing the object
-     * @param <P>
-     *            Position type
      * @return a new {@link TimeDistribution}
      */
     Node<T> createNode(RandomGenerator rand, Environment<T, P> env, String param);
@@ -69,8 +70,6 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      *            the node that will host this object
      * @param param
      *            a {@link String} describing the object
-     * @param <P>
-     *            Position type 
      * @return a new {@link TimeDistribution}
      */
     TimeDistribution<T> createTimeDistribution(RandomGenerator rand, Environment<T, P> env, Node<T> node, String param);
@@ -86,8 +85,6 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      *            the time distribution of the reaction
      * @param param
      *            a {@link String} describing the object
-     * @param <P>
-     *            Position type 
      * @return a new {@link Reaction}
      */
     Reaction<T> createReaction(RandomGenerator rand, Environment<T, P> env, Node<T> node, TimeDistribution<T> time, String param);
@@ -105,8 +102,6 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      *            the reaction hosting this object
      * @param param
      *            a {@link String} describing the object
-     * @param <P>
-     *            Position type 
      * @return a new {@link Condition}
      */
     Condition<T> createCondition(RandomGenerator rand, Environment<T, P> env, Node<T> node, TimeDistribution<T> time, Reaction<T> reaction, String param);
@@ -124,8 +119,6 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      *            the reaction hosting this object
      * @param param
      *            a {@link String} describing the object
-     * @param <P>
-     *            Position type 
      * @return a new {@link Action}
      */
     Action<T> createAction(RandomGenerator rand, Environment<T, P> env, Node<T> node, TimeDistribution<T> time, Reaction<T> reaction, String param);

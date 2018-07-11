@@ -20,12 +20,10 @@ import org.danilopianini.util.ListSet;
 import it.unibo.alchemist.core.interfaces.Simulation;
 
 /**
- * The type which describes the concentration of a molecule
- * 
  * Interface for an environment. Every environment must implement this
  * specification.
  * 
- * @param <T>
+ * @param <P>
  *            Concentration type
  * @param <T>
  *            Position type

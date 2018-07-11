@@ -14,6 +14,10 @@ import java.util.List;
 /**
  * An interface to represent a generic coordinates system.
  * 
+ * @param <P>
+ *            the actual {@link Position} type: this strategy allows to
+ *            progressively refine the {@link Position} by inheritance, allowing
+ *            for specifying incrementally fine grained model elements.
  */
 public interface Position<P extends Position<? extends P>> extends Serializable {
 

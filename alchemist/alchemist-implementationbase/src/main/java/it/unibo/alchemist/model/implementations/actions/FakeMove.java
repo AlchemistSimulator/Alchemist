@@ -18,8 +18,9 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  * Fake movement class, used only to trigger the neighborhood update.
  * 
  * @param <T>
+ * @param <P>
  */
-public class FakeMove<T,P extends Position<P>> extends AbstractMoveNode<T, P> {
+public final class FakeMove<T, P extends Position<P>> extends AbstractMoveNode<T, P> {
 
     private static final long serialVersionUID = 1774989279335172458L;
 

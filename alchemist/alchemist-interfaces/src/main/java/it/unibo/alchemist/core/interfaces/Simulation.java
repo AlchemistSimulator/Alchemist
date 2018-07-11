@@ -25,7 +25,9 @@ import it.unibo.alchemist.model.interfaces.Time;
  * controllable from an external console.
  *
  * @param <T>
- *            The type which describes the concentration of a molecule
+ *            Concentration type
+ * @param <P>
+ *            Position Type
  */
 public interface Simulation<T, P extends Position<? extends P>> extends Runnable {
 

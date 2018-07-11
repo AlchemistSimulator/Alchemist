@@ -41,6 +41,11 @@ public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends 
         super(new FlexibleQuadTree<>());
     }
 
+    /**
+     * Subclasses can override this method if they will to modify the actual
+     * position a node gets inserted in (e.g. to restrict the areas in which a node
+     * can be)
+     */
     @Override
     protected P computeActualInsertionPosition(final Node<T> node, final P p) {
         return p;
@@ -102,12 +107,24 @@ public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends 
         includeObject(x, x, y, y);
     }
 
+    /**
+     * Subclasses may override this method if they want to change the way a node
+     * moves towards some direction. The current implementation internally calls
+     * {@link #moveNodeToPosition(Node, Position2D)}, as such, overriding that
+     * method may suffice.
+     */
     @Override
     public void moveNode(final Node<T> node, final P direction) {
         final P oldcoord = getPosition(node);
         moveNodeToPosition(node, oldcoord.add(direction));
     }
 
+    /**
+     * Subclasses may override this method if they want to change the way a node
+     * moves towards some aboslute position. Overriding this method will also
+     * influence {@link #moveNode(Node, Position2D)}, as it calls this method in the
+     * current implementation
+     */
     @Override
     public void moveNodeToPosition(final Node<T> node, final P newpos) {
         includeObject(newpos);
@@ -119,6 +136,11 @@ public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends 
         }
     }
 
+    /**
+     * Subclasses may want to override this method to hook to the node addition
+     * event. Overriders should call the super implementation, as it ensures the
+     * environment bounds are updated considering the newly included object.
+     */
     @Override
     protected void nodeAdded(final Node<T> node, final P position, final Neighborhood<T> neighborhood) {
         /*

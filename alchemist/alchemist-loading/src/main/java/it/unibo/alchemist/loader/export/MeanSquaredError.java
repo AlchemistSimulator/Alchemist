@@ -24,15 +24,15 @@ import it.unibo.alchemist.model.interfaces.Time;
 
 /**
  * Exports the Mean Squared Error for the concentration of some molecule, given
- * another molecule that carries the expected result. The expected value is
+ * another molecule that carries the correct result. The correct value is
  * extracted from every node, then the provided {@link UnivariateStatistic} is
- * applied to get the actual reference value. Then, the actual value is
- * extracted from every node, its value is compared to the reference, it gets
- * squared, and then logged.
+ * applied to get a single, global correct value. Then, the actual value is
+ * extracted from every node, its value is compared (subtracted) to the computed
+ * correct value, it gets squared, and then logged.
  * 
  * @param <T>
  */
-public class MeanSquaredError<T> implements Extractor {
+public final class MeanSquaredError<T> implements Extractor {
 
     private final Incarnation<T, ?> incarnation;
     private final String pReference;
@@ -43,45 +43,50 @@ public class MeanSquaredError<T> implements Extractor {
     private final UnivariateStatistic statistic;
 
     /**
-     * @param molRef
+     * @param localCorrectValueMolecule
      *            expected value {@link Molecule}
-     * @param propRef
+     * @param localCorrectValueProperty
      *            expected value property name
-     * @param stat
+     * @param statistics
      *            the {@link UnivariateStatistic} to apply
-     * @param molActual
+     * @param localValueMolecule
      *            the target {@link Molecule}
-     * @param propActual
+     * @param localValueProperty
      *            the target property
      * @param incarnation
      *            the {@link Incarnation} to use
      */
-    public MeanSquaredError(final String molRef, final String propRef, final String stat, final String molActual,
-            final String propActual, final Incarnation<T, ?> incarnation) {
-        final Optional<UnivariateStatistic> statOpt = StatUtil.makeUnivariateStatistic(stat);
+    public MeanSquaredError(
+            final Incarnation<T, ?> incarnation,
+            final String localCorrectValueMolecule,
+            final String localCorrectValueProperty,
+            final String statistics,
+            final String localValueMolecule,
+            final String localValueProperty) {
+        final Optional<UnivariateStatistic> statOpt = StatUtil.makeUnivariateStatistic(statistics);
         if (!statOpt.isPresent()) {
-            throw new IllegalArgumentException("Could not create univariate statistic " + stat);
+            throw new IllegalArgumentException("Could not create univariate statistic " + statistics);
         }
         statistic = statOpt.get();
         this.incarnation = incarnation;
-        this.mReference = incarnation.createMolecule(molRef);
-        this.pReference = propRef == null ? "" : propRef;
-        this.pActual = propActual == null ? "" : propActual;
-        this.mActual = incarnation.createMolecule(molActual);
+        this.mReference = incarnation.createMolecule(localCorrectValueMolecule);
+        this.pReference = localCorrectValueProperty == null ? "" : localCorrectValueProperty;
+        this.pActual = localValueProperty == null ? "" : localValueProperty;
+        this.mActual = incarnation.createMolecule(localValueMolecule);
         final StringBuilder mse = new StringBuilder("MSE(");
-        mse.append(stat);
+        mse.append(statistics);
         mse.append('(');
         if (!pReference.isEmpty()) {
             mse.append(pReference);
             mse.append('@');
         }
-        mse.append(molRef);
+        mse.append(localCorrectValueMolecule);
         mse.append("),");
         if (!pActual.isEmpty()) {
             mse.append(pActual);
             mse.append('@');
         }
-        mse.append(molActual);
+        mse.append(localValueMolecule);
         mse.append(')');
         name = Collections.unmodifiableList(Lists.newArrayList(mse.toString()));
     }

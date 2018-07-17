@@ -1,0 +1,5 @@
+incarnation: sapere
+
+export:
+   - type: MeanSquaredError
+     parameters: ["A", "A", product, "A", "A"]

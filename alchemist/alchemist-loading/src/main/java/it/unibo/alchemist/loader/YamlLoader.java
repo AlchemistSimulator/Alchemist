@@ -198,6 +198,7 @@ public class YamlLoader implements Loader {
             .put(TimeDistribution.class, MODEL_PACKAGE_ROOT + "timedistributions.")
             .put(Molecule.class, MODEL_PACKAGE_ROOT + "molecules.")
             .put(Concentration.class, MODEL_PACKAGE_ROOT + "concentrations.")
+            .put(Extractor.class, ALCHEMIST_PACKAGE_ROOT + "loader.export.")
             .build();
     private final ImmutableMap<String, Object> constants;
     private final ImmutableMap<String, Object> contents;

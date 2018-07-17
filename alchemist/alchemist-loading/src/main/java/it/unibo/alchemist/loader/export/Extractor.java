@@ -10,15 +10,15 @@ package it.unibo.alchemist.loader.export;
 
 import java.util.List;
 
-import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 
 /**
  * An object that is able to extract numeric informations from an Alchemist
- * {@link Environment}, given the current {@link Simulation} {@link Time}, the
- * last {@link Reaction} executed and the current simulation step.
+ * {@link Environment}, given the current
+ * {@link it.unibo.alchemist.core.interfaces.Simulation} {@link Time}, the last
+ * {@link Reaction} executed and the current simulation step.
  */
 public interface Extractor {
 

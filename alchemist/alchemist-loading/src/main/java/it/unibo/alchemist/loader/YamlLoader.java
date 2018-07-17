@@ -97,7 +97,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
 /**
  * Loads a properly formatted YAML file and provides method for instancing a batch of scenarios.
  */
-public class YamlLoader implements Loader {
+public final class YamlLoader implements Loader {
 
     private static final long serialVersionUID = 1L;
     private static final Logger L = LoggerFactory.getLogger(YamlLoader.class);

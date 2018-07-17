@@ -9,23 +9,24 @@
 package it.unibo.alchemist.loader.variables;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Stream;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.danilopianini.util.ImmutableListSet;
+import org.danilopianini.util.ListSet;
 
 /**
  * A variable spanning over an arbitrary set of values.
  */
-public class ArbitraryVariable extends PrintableVariable<Serializable> {
+public final class ArbitraryVariable extends PrintableVariable<Serializable> {
 
     private static final long serialVersionUID = 1L;
     private final Serializable def;
-    private final Serializable[] vals;
+    private final ListSet<? extends Serializable> vals;
 
-    private ArbitraryVariable(final Serializable def, final boolean copy, final Serializable... values) {
+    private ArbitraryVariable(final ListSet<? extends Serializable> values, final Serializable def) {
         this.def = def;
-        vals = copy ? Arrays.copyOf(values, values.length) : values;
-        Arrays.sort(vals);
+        vals = values;
     }
 
     /**
@@ -34,8 +35,8 @@ public class ArbitraryVariable extends PrintableVariable<Serializable> {
      * @param values
      *            all the values this variable may yield
      */
-    public ArbitraryVariable(final double def, final double... values) {
-        this(def, true, values);
+    public ArbitraryVariable(final Serializable def, final double... values) {
+        this(ImmutableListSet.<Double>of(ArrayUtils.toObject(values)), def);
     }
 
     /**
@@ -44,8 +45,8 @@ public class ArbitraryVariable extends PrintableVariable<Serializable> {
      * @param values
      *            all the values this variable may yield
      */
-    public ArbitraryVariable(final double def, final List<? extends Number> values) {
-        this(def, false, values.stream().mapToDouble(Number::doubleValue).distinct().toArray());
+    public ArbitraryVariable(final Serializable def, final Iterable<? extends Serializable> values) {
+        this(ImmutableListSet.copyOf(values), def);
     }
 
     @Override
@@ -55,7 +56,7 @@ public class ArbitraryVariable extends PrintableVariable<Serializable> {
 
     @Override
     public Stream<Serializable> stream() {
-        return Arrays.stream(vals).distinct().sorted();
+        return vals.stream().map(it -> (Serializable) it);
     }
 
 }

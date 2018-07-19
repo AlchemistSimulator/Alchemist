@@ -8,6 +8,10 @@
  ******************************************************************************/
 package it.unibo.alchemist.model.implementations.environments;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -42,6 +46,7 @@ import com.google.common.collect.Sets;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
+import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
@@ -57,6 +62,10 @@ import it.unibo.alchemist.model.interfaces.Position;
  * manages an internal set of nodes and their position.
  * 
  * @param <T>
+ *            concentration type
+ * @param <P>
+ *            {@link Position} type
+ * 
  */
 public abstract class AbstractEnvironment<T, P extends Position<? extends P>> implements Environment<T, P> {
 
@@ -67,7 +76,7 @@ public abstract class AbstractEnvironment<T, P extends Position<? extends P>> im
     protected static final String DEFAULT_MONITOR = null;
     private static final long serialVersionUID = 0L;
     private transient LoadingCache<ImmutablePair<P, Double>, ListSet<Node<T>>> cache;
-    private Incarnation<T, P> incarnation;
+    private transient Incarnation<T, P> incarnation;
     private final Map<Molecule, Layer<T, P>> layers = new LinkedHashMap<>();
     private final TIntObjectHashMap<Neighborhood<T>> neighCache = new TIntObjectHashMap<>();
     private final TIntObjectHashMap<Node<T>> nodes = new TIntObjectHashMap<Node<T>>();
@@ -75,8 +84,7 @@ public abstract class AbstractEnvironment<T, P extends Position<? extends P>> im
     private LinkingRule<T, P> rule;
     private transient Simulation<T, P> simulation;
     private final SpatialIndex<Node<T>> spatialIndex;
-
-    private Predicate<Environment<T, P>> terminator = Predicates.alwaysFalse();
+    private Predicate<Environment<T, P>> terminator = (Predicate<Environment<T, P>> & Serializable) Predicates.<Environment<T, P>>alwaysFalse();
 
     /**
      * @param internalIndex
@@ -93,7 +101,7 @@ public abstract class AbstractEnvironment<T, P extends Position<? extends P>> im
             throw new IllegalStateException("Two layers have been associated to " + m);
         }
     }
-
+ 
     @Override
     public final void addNode(final Node<T> node, final P p) {
         if (nodeShouldBeAdded(node, p)) {
@@ -122,7 +130,7 @@ public abstract class AbstractEnvironment<T, P extends Position<? extends P>> im
 
     @Override
     public final void addTerminator(final Predicate<Environment<T, P>> terminator) {
-        this.terminator = this.terminator.or(terminator);
+        this.terminator = this.terminator.or((Predicate<Environment<T, P>> & Serializable) terminator);
     }
 
     /**
@@ -186,7 +194,6 @@ public abstract class AbstractEnvironment<T, P extends Position<? extends P>> im
         return rule;
     }
 
-
     @Override
     public final Neighborhood<T> getNeighborhood(@Nonnull final Node<T> center) {
         final Neighborhood<T> result = neighCache.get(Objects.requireNonNull(center).getId());
@@ -205,6 +212,7 @@ public abstract class AbstractEnvironment<T, P extends Position<? extends P>> im
     protected final TIntObjectHashMap<Neighborhood<T>> getNeighborsCache() {
         return neighCache;
     }
+
 
     @Override
     public final Node<T> getNodeByID(final int id) {
@@ -317,7 +325,30 @@ public abstract class AbstractEnvironment<T, P extends Position<? extends P>> im
      *            the OLD neighborhood of the node (it is no longer in sync with
      *            the {@link Environment} status)
      */
-    protected void nodeRemoved(Node<T> node, Neighborhood<T> neighborhood) { }
+    protected void nodeRemoved(final Node<T> node, final Neighborhood<T> neighborhood) { }
+
+    /**
+     * Allows subclasses to determine wether or not a {@link Node} should
+     * actually get added to this environment.
+     * 
+     * @param node
+     *            the node
+     * @param p
+     *            the original (requested) position
+     * @return true if the node should be added to this environment, false
+     *         otherwise
+     */
+    protected boolean nodeShouldBeAdded(final Node<T> node, final P p) {
+        return true;
+    }
+
+    private void readObject(final ObjectInputStream in) throws ClassNotFoundException, IOException {
+        in.defaultReadObject();
+        final String name = in.readObject().toString();
+        incarnation = SupportedIncarnations.<T, P>get(name).orElseThrow(() ->
+            new IllegalStateException("Unknown incarnation " + name)
+        );
+    }
 
     private Queue<Operation> recursiveOperation(final Node<T> origin) {
         final Neighborhood<T> newNeighborhood = rule.computeNeighborhood(Objects.requireNonNull(origin), this);
@@ -413,21 +444,6 @@ public abstract class AbstractEnvironment<T, P extends Position<? extends P>> im
         }
     }
 
-    /**
-     * Allows subclasses to determine wether or not a {@link Node} should
-     * actually get added to this environment.
-     * 
-     * @param node
-     *            the node
-     * @param p
-     *            the original (requested) position
-     * @return true if the node should be added to this environment, false
-     *         otherwise
-     */
-    protected boolean nodeShouldBeAdded(final Node<T> node, final P p) {
-        return true;
-    }
-
     @Override
     public final Spliterator<Node<T>> spliterator() {
         return getNodes().spliterator();
@@ -505,6 +521,11 @@ public abstract class AbstractEnvironment<T, P extends Position<? extends P>> im
                 }
             }
         }
+    }
+
+    private void writeObject(final ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+        out.writeObject(incarnation.getClass().getSimpleName());
     }
 
     private class Operation {

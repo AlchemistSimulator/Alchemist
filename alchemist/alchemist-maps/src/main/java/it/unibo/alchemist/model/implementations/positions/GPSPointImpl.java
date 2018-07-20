@@ -60,8 +60,8 @@ public final class GPSPointImpl implements GPSPoint {
     }
 
     @Override
-    public List<GeoPosition> buildBoundingBox(final double range) {
-        return repr.buildBoundingBox(range);
+    public List<LatLongPosition> boundingBox(final double range) {
+        return repr.boundingBox(range);
     }
 
     @Override

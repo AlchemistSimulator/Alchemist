@@ -33,7 +33,7 @@ public interface Position<P extends Position<? extends P>> extends Serializable 
      *            the radius of the hypersphere
      * @return the vertices of the circumscribed hypercube
      */
-    List<P> buildBoundingBox(double range);
+    List<? extends P> boundingBox(double range);
 
     /**
      * Allows to get the position as a Number array.

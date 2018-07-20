@@ -393,7 +393,7 @@ public abstract class AbstractEnvironment<T, P extends Position<? extends P>> im
     }
 
     private ListSet<Node<T>> runQuery(final P center, final double range) {
-        final List<Node<T>> result = spatialIndex.query(center.buildBoundingBox(range).stream()
+        final List<Node<T>> result = spatialIndex.query(center.boundingBox(range).stream()
                 .map(Position::getCartesianCoordinates)
                 .toArray(i -> new double[i][]));
         final int size = result.size();

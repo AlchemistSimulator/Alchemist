@@ -109,7 +109,7 @@ public final class LatLongPosition implements GeoPosition {
     }
 
     @Override
-    public List<GeoPosition> buildBoundingBox(final double range) {
+    public List<LatLongPosition> boundingBox(final double range) {
         if (range < 0d) {
             throw new IllegalArgumentException("Negative ranges make no sense.");
         }

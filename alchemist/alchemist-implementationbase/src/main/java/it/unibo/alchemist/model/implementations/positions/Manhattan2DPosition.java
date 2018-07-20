@@ -50,7 +50,7 @@ public final class Manhattan2DPosition implements Position2D<Manhattan2DPosition
     }
 
     @Override
-    public List<Manhattan2DPosition> buildBoundingBox(final double r) {
+    public List<Manhattan2DPosition> boundingBox(final double r) {
         final int range = (int) r;
         final Manhattan2DPosition bl = new Manhattan2DPosition(xCoord - range, yCoord - range);
         final Manhattan2DPosition ur = new Manhattan2DPosition(xCoord + range, yCoord + range);

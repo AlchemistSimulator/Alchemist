@@ -95,7 +95,7 @@ public final class GPSPointImpl implements GPSPoint {
     }
 
     @Override
-    public double getDistanceTo(final Position<?> p) {
+    public double getDistanceTo(final GeoPosition p) {
         if (p instanceof GPSPointImpl) {
             return repr.getDistanceTo(((GPSPointImpl) p).repr);
         }

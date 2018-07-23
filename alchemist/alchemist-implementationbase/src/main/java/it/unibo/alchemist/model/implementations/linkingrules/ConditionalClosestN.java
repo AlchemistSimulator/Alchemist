@@ -12,6 +12,7 @@ import java.util.Objects;
 
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * A {@link ClosestN} rule that also checks that a {@link Molecule} has a
@@ -19,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.Node;
  * 
  * @param <T>
  */
-public class ConditionalClosestN<T> extends ClosestN<T> {
+public class ConditionalClosestN<T, P extends Position<P>> extends ClosestN<T, P> {
 
     private static final long serialVersionUID = 1L;
     private final Molecule molecule;

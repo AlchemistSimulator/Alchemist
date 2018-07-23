@@ -29,7 +29,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
  */
-public abstract class SocialForceAgent<P extends Position<? extends P>> extends SAPEREMoveNodeAgent<P> {
+public abstract class SocialForceAgent<P extends Position<P>> extends SAPEREMoveNodeAgent<P> {
 
     private static final ILsaMolecule ACTIVE = new LsaMolecule("active");
     /**

@@ -39,7 +39,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  * 
  * @param <T>
  */
-public final class ConnectionBeam<T, P extends Position<? extends P>> extends ConnectWithinDistance<T, P> {
+public final class ConnectionBeam<T, P extends Position<P>> extends ConnectWithinDistance<T, P> {
 
     private static final long serialVersionUID = 1L;
     private static final int COORDS = 6;

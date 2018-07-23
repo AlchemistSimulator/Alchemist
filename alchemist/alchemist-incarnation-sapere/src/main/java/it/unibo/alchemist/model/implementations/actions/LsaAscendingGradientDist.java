@@ -27,7 +27,7 @@ import java.util.List;
 
 /**
  */
-public final class LsaAscendingGradientDist<P extends Position<? extends P>> extends SAPERENeighborAgent<P> {
+public final class LsaAscendingGradientDist<P extends Position<P>> extends SAPERENeighborAgent<P> {
 
     private static final long serialVersionUID = 7719580008466360029L;
     private static final ILsaMolecule MOLGRAD = new LsaMolecule("grad, req, Type, Distance, Time");

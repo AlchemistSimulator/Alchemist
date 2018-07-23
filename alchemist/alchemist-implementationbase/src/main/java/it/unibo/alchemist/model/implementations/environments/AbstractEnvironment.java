@@ -67,7 +67,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  *            {@link Position} type
  * 
  */
-public abstract class AbstractEnvironment<T, P extends Position<? extends P>> implements Environment<T, P> {
+public abstract class AbstractEnvironment<T, P extends Position<P>> implements Environment<T, P> {
 
     /**
      * The default monitor that will be loaded. If null, the GUI must default to

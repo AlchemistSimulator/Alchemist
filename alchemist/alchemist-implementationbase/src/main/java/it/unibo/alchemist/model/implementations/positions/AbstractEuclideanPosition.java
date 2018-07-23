@@ -101,7 +101,7 @@ public abstract class AbstractEuclideanPosition<P extends AbstractEuclideanPosit
     }
 
     @Override
-    public final double getDistanceTo(final Position<?> p) {
+    public final double getDistanceTo(final P p) {
         final double[] coord = p.getCartesianCoordinates();
         if (c.length == coord.length) {
             return MathArrays.distance(c, coord);

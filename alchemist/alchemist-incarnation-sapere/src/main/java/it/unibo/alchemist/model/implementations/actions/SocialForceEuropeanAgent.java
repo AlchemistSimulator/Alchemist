@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  */
-public class SocialForceEuropeanAgent<P extends Position<? extends P>> extends SocialForceAgent<P> {
+public class SocialForceEuropeanAgent<P extends Position<P>> extends SocialForceAgent<P> {
 
     /**
      * 

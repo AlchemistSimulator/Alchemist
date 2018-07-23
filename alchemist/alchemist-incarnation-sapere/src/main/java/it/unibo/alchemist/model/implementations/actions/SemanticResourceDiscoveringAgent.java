@@ -23,7 +23,7 @@ import it.unibo.alchemist.model.interfaces.Position;
 /**
  * 
  */
-public class SemanticResourceDiscoveringAgent<P extends Position<? extends P>> extends SAPERENeighborAgent<P> {
+public class SemanticResourceDiscoveringAgent<P extends Position<P>> extends SAPERENeighborAgent<P> {
 
     private static final long serialVersionUID = 3931150573326003357L;
     private final ILsaMolecule grad;

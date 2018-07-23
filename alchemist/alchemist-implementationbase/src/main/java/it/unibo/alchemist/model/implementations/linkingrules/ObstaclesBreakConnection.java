@@ -24,7 +24,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  * 
  * @param <T>
  */
-public final class ObstaclesBreakConnection<T, P extends Position<? extends P>> extends ConnectWithinDistance<T, P> {
+public final class ObstaclesBreakConnection<T, P extends Position<P>> extends ConnectWithinDistance<T, P> {
 
     private static final long serialVersionUID = -3279202906910960340L;
 

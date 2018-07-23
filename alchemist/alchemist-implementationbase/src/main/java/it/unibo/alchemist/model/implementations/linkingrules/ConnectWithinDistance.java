@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  * @param <T>
  *            The type which describes the concentration of a molecule
  */
-public class ConnectWithinDistance<T, P extends Position<? extends P>> extends AbstractLocallyConsistentLinkingRule<T, P> {
+public class ConnectWithinDistance<T, P extends Position<P>> extends AbstractLocallyConsistentLinkingRule<T, P> {
 
     private static final long serialVersionUID = -405055780667941773L;
     private final double range;

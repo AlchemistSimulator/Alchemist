@@ -28,13 +28,11 @@ import com.javadocmd.simplelatlng.LatLng;
 import com.javadocmd.simplelatlng.util.LengthUnit;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.exceptions.UncomparableDistancesException;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
-import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * Unmodifiable state version of {@link LatLng}, also implementing the
- * {@link Position} interface.
+ * {@link it.unibo.alchemist.model.interfaces.Position} interface.
  * 
  */
 public final class LatLongPosition implements GeoPosition {
@@ -185,15 +183,11 @@ public final class LatLongPosition implements GeoPosition {
     }
 
     @Override
-    public double getDistanceTo(final Position<?> p) {
+    public double getDistanceTo(final GeoPosition p) {
         if (p instanceof LatLongPosition) {
             return distance(latlng, ((LatLongPosition) p).latlng, df);
         }
-        if (p instanceof GeoPosition) {
-            final GeoPosition gp = (GeoPosition) p;
-            return distance(latlng, new LatLng(gp.getLatitude(), gp.getLongitude()), df);
-        }
-        throw new UncomparableDistancesException(this, p);
+        return distance(latlng, new LatLng(p.getLatitude(), p.getLongitude()), df);
     }
 
     /**

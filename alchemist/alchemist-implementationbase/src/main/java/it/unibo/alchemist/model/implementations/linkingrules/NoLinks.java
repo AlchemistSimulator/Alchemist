@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  * 
  * @param <T>
  */
-public class NoLinks<T, P extends Position<? extends P>> extends AbstractLocallyConsistentLinkingRule<T, P> {
+public class NoLinks<T, P extends Position<P>> extends AbstractLocallyConsistentLinkingRule<T, P> {
 
     private static final long serialVersionUID = -711043794655618585L;
 

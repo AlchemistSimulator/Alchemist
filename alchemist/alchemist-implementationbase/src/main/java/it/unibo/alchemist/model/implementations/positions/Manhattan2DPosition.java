@@ -88,13 +88,8 @@ public final class Manhattan2DPosition implements Position2D<Manhattan2DPosition
     }
 
     @Override
-    public double getDistanceTo(final Position<?> p) {
-        try {
-            final Manhattan2DPosition d = (Manhattan2DPosition) p;
-            return Math.abs(xCoord - d.xCoord) + Math.abs(yCoord - d.yCoord);
-        } catch (ClassCastException e) {
-            throw new UncomparableDistancesException(this, p);
-        }
+    public double getDistanceTo(final Manhattan2DPosition p) {
+        return Math.abs(xCoord - p.xCoord) + Math.abs(yCoord - p.yCoord);
     }
 
     @Override

@@ -55,13 +55,13 @@ public class AlchemistExecutionContext<P extends Position<P>> extends AbstractEx
      * Put this {@link Molecule} inside nodes that should compute distances using routes approximating them. It only makes sense in case the environment is a {@link MapEnvironment}
      */
     public static final Molecule APPROXIMATE_NBR_RANGE = new SimpleMolecule("APPROXIMATE_NBR_RANGE");
-    private final LoadingCache<Position<?>, Double> cache = CacheBuilder.newBuilder()
+    private final LoadingCache<P, Double> cache = CacheBuilder.newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES)
             .maximumSize(100)
-            .build(new CacheLoader<Position<?>, Double>() {
+            .build(new CacheLoader<P, Double>() {
                 @SuppressWarnings("unchecked")
                 @Override
-                public Double load(final Position<?> dest) {
+                public Double load(final P dest) {
                     if (env instanceof MapEnvironment) {
                         if (dest instanceof GeoPosition) {
                             return ((MapEnvironment<Object>) env).computeRoute(node, (GeoPosition) dest).length();
@@ -272,9 +272,10 @@ public class AlchemistExecutionContext<P extends Position<P>> extends AbstractEx
      *            the destination
      * @return the distance on a map
      */
+    @SuppressWarnings("unchecked")
     public double routingDistance(final GeoPosition dest) {
         try {
-            return cache.get(dest);
+            return cache.get((P) dest);
         } catch (ExecutionException e) {
             throw new IllegalStateException(e);
         }

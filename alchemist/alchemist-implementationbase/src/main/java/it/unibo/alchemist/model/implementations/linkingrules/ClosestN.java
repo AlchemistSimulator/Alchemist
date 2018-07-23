@@ -36,7 +36,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  * 
  * @param <T>
  */
-public class ClosestN<T> implements LinkingRule<T, Position<?>> {
+public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
 
     private static final long serialVersionUID = 1L;
     private static final double CONNECTION_RANGE_TOLERANCE = 1.1;
@@ -84,7 +84,7 @@ public class ClosestN<T> implements LinkingRule<T, Position<?>> {
     }
 
     @Override
-    public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, Position<?>> env) {
+    public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> env) {
         if (env.getNodesNumber() < expectedNodes || !nodeIsEnabled(center)) {
             return Neighborhoods.make(env, center);
         }

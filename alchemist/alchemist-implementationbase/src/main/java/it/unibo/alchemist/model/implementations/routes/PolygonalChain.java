@@ -16,6 +16,7 @@ import org.danilopianini.util.Hashes;
 
 import com.google.common.collect.ImmutableList;
 
+import it.unibo.alchemist.exceptions.UncomparableDistancesException;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Route;
 
@@ -48,13 +49,21 @@ public class PolygonalChain<P extends Position<?>> implements Route<P> {
      * @param p2
      *            second position
      * @return the distance between p1 and p2
+     * @param <U>
+     *            upper {@link Position} type, used internally
      */
-    protected double computeDistance(final P p1, final P p2) {
-        return p1.getDistanceTo(p2);
+    @SuppressWarnings("unchecked")
+    protected <U extends Position<U>> double computeDistance(final P p1, final P p2) {
+        if (p1.getClass() == p2.getClass() || p1.getClass().isAssignableFrom(p2.getClass())) {
+            return ((U) p1).getDistanceTo((U) p2);
+        } else if (p2.getClass().isAssignableFrom(p1.getClass())) {
+            return ((U) p2).getDistanceTo((U) p1);
+        }
+        throw new UncomparableDistancesException(p1, p2);
     }
 
     @Override
-    public boolean equals(final Object other) {
+    public final boolean equals(final Object other) {
         if (other == null) {
             return false;
         }
@@ -75,7 +84,7 @@ public class PolygonalChain<P extends Position<?>> implements Route<P> {
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         if (hash == 0) {
             hash = Hashes.hash32(positions);
         }

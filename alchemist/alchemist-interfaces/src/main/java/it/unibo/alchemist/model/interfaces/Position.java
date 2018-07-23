@@ -19,7 +19,7 @@ import java.util.List;
  *            progressively refine the {@link Position} by inheritance, allowing
  *            for specifying incrementally fine grained model elements.
  */
-public interface Position<P extends Position<? extends P>> extends Serializable {
+public interface Position<P extends Position<?>> extends Serializable {
 
     /**
      * Given a range, produces N coordinates, representing the N opposite
@@ -66,7 +66,7 @@ public interface Position<P extends Position<? extends P>> extends Serializable 
      *            the position you want to know the distance to
      * @return the distance between this and p
      */
-    double getDistanceTo(Position<?> p);
+    double getDistanceTo(P p);
 
     /**
      * Considers both positions as vectors, and sums them.

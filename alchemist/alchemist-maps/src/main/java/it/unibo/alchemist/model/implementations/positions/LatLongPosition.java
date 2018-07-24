@@ -32,7 +32,7 @@ import it.unibo.alchemist.model.interfaces.GeoPosition;
 
 /**
  * Unmodifiable state version of {@link LatLng}, also implementing the
- * {@link it.unibo.alchemist.model.interfaces.Position} interface.
+ * {@link GeoPosition} interface.
  * 
  */
 public final class LatLongPosition implements GeoPosition {

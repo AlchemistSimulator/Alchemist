@@ -9,6 +9,7 @@
 package it.unibo.alchemist.model.implementations.routes;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -33,14 +34,25 @@ public class PolygonalChain<P extends Position<?>> implements Route<P> {
     private final ImmutableList<P> positions;
 
     /**
-     * @param positions the positions this route traverses
+     * @param positions
+     *            the positions this route traverses
      */
     @SafeVarargs
     public PolygonalChain(final P... positions) {
-        if (Objects.requireNonNull(positions).length == 0) {
+        this(ImmutableList.copyOf(positions));
+    }
+
+    /**
+     * @param positions
+     *            the positions this route traverses
+     */
+    public PolygonalChain(final List<P> positions) {
+        if (Objects.requireNonNull(positions).size() == 0) {
             throw new IllegalArgumentException("At least one point is required for creating a Route");
         }
-        this.positions = ImmutableList.copyOf(positions);
+        this.positions = positions instanceof ImmutableList
+                ? (ImmutableList<P>) positions
+                : ImmutableList.copyOf(positions);
     }
 
     /**
@@ -120,6 +132,9 @@ public class PolygonalChain<P extends Position<?>> implements Route<P> {
         return positions.stream();
     }
 
+    /**
+     * Prints the class name and the list of positions.
+     */
     @Override
     public String toString() {
         return getClass().getSimpleName() + positions;

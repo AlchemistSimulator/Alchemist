@@ -12,13 +12,16 @@ import java.util.List;
 
 import org.apache.commons.math3.util.Pair;
 
-import it.unibo.alchemist.model.implementations.positions.GPSPointImpl;
+import com.google.common.collect.ImmutableList;
+
 import it.unibo.alchemist.model.interfaces.GPSPoint;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.utils.MapUtils;
 
 /**
+ * 
  */
 public final class GPSTraceImpl extends PolygonalChain<GPSPoint> implements GPSTrace {
 
@@ -39,16 +42,16 @@ public final class GPSTraceImpl extends PolygonalChain<GPSPoint> implements GPST
      *            GPS points
      */
     public GPSTraceImpl(final List<GPSPoint> tr) {
-        this(tr.toArray(new GPSPoint[tr.size()]));
+        super(tr);
     }
 
     @Override
     public GPSTraceImpl startAt(final Time time) {
-        final GPSPoint[] filtered = stream()
-            .filter(pt -> pt.getTime().toDouble() >= time.toDouble())
-            .map(p -> new GPSPointImpl(p.getLatitude(), p.getLongitude(), p.getTime().subtract(time)))
-            .toArray(GPSPoint[]::new);
-        return new GPSTraceImpl(filtered.length == 0 ? new GPSPoint[] { getFinalPosition() } : filtered);
+        final List<GPSPoint> filtered = stream()
+            .map(p -> p.subtractTime(time))
+            .filter(pt -> pt.getTime().toDouble() >= 0)
+            .collect(ImmutableList.toImmutableList());
+        return new GPSTraceImpl(filtered.isEmpty() ? ImmutableList.of(getFinalPosition()) : filtered);
     }
 
     @Override
@@ -67,7 +70,7 @@ public final class GPSTraceImpl extends PolygonalChain<GPSPoint> implements GPST
     }
 
     @Override
-    public GPSPoint interpolate(final Time time) {
+    public GeoPosition interpolate(final Time time) {
         final Pair<GPSPoint, GPSPoint> coords = searchPoint(time);
         final GPSPoint prev = coords.getFirst();
         final GPSPoint next = coords.getSecond();
@@ -77,7 +80,7 @@ public final class GPSTraceImpl extends PolygonalChain<GPSPoint> implements GPST
         }
         final double ratio = (time.toDouble() - prev.getTime().toDouble()) / tdtime;
         final double dist = MapUtils.getDistance(prev, next);
-        return new GPSPointImpl(MapUtils.getDestinationLocation(prev, next, dist * ratio), time);
+        return MapUtils.getDestinationLocation(prev, next, dist * ratio);
     }
 
     private Pair<GPSPoint, GPSPoint> searchPoint(final Time time) {

@@ -71,6 +71,13 @@
 		<property name="message"
 			value="Use the library to load classes and resources. Breaks grid otherwise." />
 	</module>
+	<module name="RegexpSingleline">
+		<property name="severity" value="warning" />
+		<property name="format" value="@author" />
+		<property name="fileExtensions" value="java,xtend,scala,kt" />
+		<property name="message"
+			value="Do not use @author. Changes and authors are tracked by the content manager." />
+	</module>
 
 	<module name="TreeWalker">
 		<module name="SuppressionCommentFilter">

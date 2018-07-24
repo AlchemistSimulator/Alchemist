@@ -18,8 +18,11 @@ import it.unibo.alchemist.model.interfaces.Position;
  * This rule guarantees that no links are created at all.
  * 
  * @param <T>
+ *            concentration type
+ * @param <P>
+ *            position type
  */
-public class NoLinks<T, P extends Position<P>> extends AbstractLocallyConsistentLinkingRule<T, P> {
+public final class NoLinks<T, P extends Position<? extends P>> extends AbstractLocallyConsistentLinkingRule<T, P> {
 
     private static final long serialVersionUID = -711043794655618585L;
 

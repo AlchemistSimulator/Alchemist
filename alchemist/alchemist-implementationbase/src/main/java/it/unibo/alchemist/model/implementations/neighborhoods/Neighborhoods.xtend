@@ -18,11 +18,11 @@ final class Neighborhoods {
 
 	private new() {}
 
-	def static <T, P extends Position<P>> Neighborhood<T> make(Environment<T, P> env, Node<T> center) {
+	def static <T, P extends Position<? extends P>> Neighborhood<T> make(Environment<T, P> env, Node<T> center) {
 		make(env, center, Collections.emptyList)
 	}
 
-	def static <T, P extends Position<P>> Neighborhood<T> make(Environment<T, P> env, Node<T> center, Iterable<? extends Node<T>> neighbors) {
+	def static <T, P extends Position<? extends P>> Neighborhood<T> make(Environment<T, P> env, Node<T> center, Iterable<? extends Node<T>> neighbors) {
 		new SimpleNeighborhood(env, center, neighbors)
 	}
 

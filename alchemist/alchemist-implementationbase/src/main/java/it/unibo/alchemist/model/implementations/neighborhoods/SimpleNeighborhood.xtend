@@ -16,9 +16,10 @@ import org.danilopianini.util.ImmutableListSet
 import org.danilopianini.util.ListBackedSet
 import org.eclipse.xtend.lib.annotations.Accessors
 import it.unibo.alchemist.model.interfaces.Position
+import org.danilopianini.util.ListSet
 
 @Accessors(PROTECTED_GETTER, PROTECTED_SETTER)
-class SimpleNeighborhood<T, P extends Position<P>> implements Neighborhood<T> {
+class SimpleNeighborhood<T, P extends Position<? extends P>> implements Neighborhood<T> {
 
 	val Environment<T, P> env
 	val ImmutableListSet<? extends Node<T>> neighbors
@@ -36,10 +37,10 @@ class SimpleNeighborhood<T, P extends Position<P>> implements Neighborhood<T> {
 		neighbors.map[it.getId].exists[it == n]
 	}
 
-	override getBetweenRange(double min, double max) {
-		val cpos = env.getPosition(center)
+	override ListSet<? extends Node<T>> getBetweenRange(double min, double max) {
+		val centerPosition = env.getPosition(center)
 		new ListBackedSet(neighbors.filter[
-			val d = cpos.getDistanceTo(env.getPosition(it))
+			val d = Position.distanceTo(centerPosition, env.getPosition(it))
 			d < min || d > max
 		].toList)
 	}

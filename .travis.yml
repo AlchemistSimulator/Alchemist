@@ -12,8 +12,7 @@ env:
     - secure: "G7b+NejZABu2+j1+rrNfhEFiAYMZ9KizzI6AdUx8dh/k7zcjn6TaBnPFRbR5+4QS6121USQABwrvDdi2MAcGuzBfjejNWOm6oH7a+3ko3RPY/T2h0d5/eSyRuhFYx4GJpx4MJyjcSsrjjEUwrAnf7A6olkjHLJn3ROP6qK7Vh9i+Y4WvFypyLSN3sboI1oi6LWHv2JajZJnmceiCp3R5BrzpXqjBI6hiuvYgEbZ67lCFiXGa2poXAUFVplT6mq5mHoTfc+dDvJ9i5gk+14I3ZSdBREtY/Z1zo/mtpJyl1P+GqvhQhOBBZ0qk0S7SdJXLHV7IBezZcyihwVCfhShs3XAi2UuPrhuBtNoJMCaf0ITwp9ZKtGfK9hQ5NecVpjIUOyQpqM93ygrPwiBbHklJJtIfMg7yWP9GIgRAncwslonW/EkefX+LNNuDQmj+kHEtkZVGxpnTBlrO3qCerc83N0+8YH7W0Ur94dIYKYD/LYC+3/4nCJ3DlUuW6lc/SMi8DtkXplmGueUUpY2HWAn0Q2EpERhEIowdcPw+2KxCHbGIQSH7BJqqfsdwrnVeLdl1Fjnx244N5E9KRpNHECgHx3pZQaHqGJNriax0gginr7VAHh1zpNCNctYjpFYiswyxdcjGoGN1gRSOeGrYo/ed8R1kz6ag/HvDiRfDc3vCzOg="
     - secure: "emv/wjP9BXCzoEzxlAruXOCMPaswObCaEESdhKfdikJt8gDFQfKydcu95XrfXPG6Eww4QleoOnxIppTNpphbcMbcZu/aa7N4JH+DV3XPqqlsvosz+CLhVjBr4OVtBoHxzKeTqeP+uE5D0hOdFJrIJK+qvelDO05Bknx3xLLayz1viE/chHdvX2zRMRCEA97GapkwfaQrCfNO0rkViy20v/A4C3HjkoL5yGgu3iqJdq2l89LXSsQgvyfevGV1vkhiqOEsd5FU7UmfgbKphbhUSSL7qV+i4hyMIjQFhFluCeC2+dXZdCr011pjYrNfLcpp0gesHsIhi7om42tQ8hTTNC5WO/QXGkIWcUql1eVgpRaDIAffGmTSXf4CQvKS7LVSfFW7njy01xcDF6fsukoMW9JU3toCUtyhGrmgaDldzE+ZsDl8nnqMNGqBSdeVzwPF1GzjPZUxWIntBNU3XrtXb/vyNldbkXQpzPZ+ah5K3c6989BHleBcL8ynlpE9CBrSyB4oSQ2GpoKJuIUYnKkhTHU0W08jTKx1Ac/O2UbvfTY+hYPiqTUKvO5bfmyKQK6T8qMRlZSq1935QNnahcRRBPyNn9CAXbOcNRdEmMB44PETiEeIMTQG8oLc+gLxXnPKqSrFzJOA84pmH7SRS0QtyB9YOzRfMnxOU7E6V6poXlw="
 script:
-  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash travis_build.sh; fi'
-  - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then bash travis_build_pull_request.sh; fi'
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_REPO_SLUG" = "AlchemistSimulator/Alchemist" ]; then bash travis_build.sh; else bash travis_build_pull_request.sh; fi'
 before_deploy: echo Preparing for deploy
 deploy:
   - provider: releases

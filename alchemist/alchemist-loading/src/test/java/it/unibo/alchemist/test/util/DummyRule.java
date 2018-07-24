@@ -15,6 +15,9 @@ import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * @param <T>
+ *            concentration type
+ * @param <P>
+ *            position type
  */
 public final class DummyRule<T, P extends Position<P>> extends NoLinks<T, P> {
 

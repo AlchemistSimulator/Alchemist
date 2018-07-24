@@ -22,12 +22,12 @@ import it.unibo.alchemist.model.interfaces.Position;
  * @param <P>
  *            position type
  */
-public final class NoLinks<T, P extends Position<? extends P>> extends AbstractLocallyConsistentLinkingRule<T, P> {
+public class NoLinks<T, P extends Position<? extends P>> extends AbstractLocallyConsistentLinkingRule<T, P> {
 
     private static final long serialVersionUID = -711043794655618585L;
 
     @Override
-    public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> env) {
+    public final Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> env) {
         return Neighborhoods.make(env, center);
     }
 

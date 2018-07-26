@@ -30,13 +30,13 @@ public class TestApplication extends Application {
         final StackPane main = (StackPane) rootLayout.getChildren().get(0);
         final Button button = new Button("Open from another thread");
         button.setOnAction(event -> new Thread(() -> Platform.runLater(() -> {
-            final SingleRunApp<?> app = new SingleRunApp<>();
+            final SingleRunApp<?, ?> app = new SingleRunApp<>();
             // TODO app.setParams(buildParams());
             app.start(new Stage());
         })).start());
         final Button button2 = new Button("Open from JFX thread");
         button2.setOnAction(event -> {
-            final SingleRunApp<?> app = new SingleRunApp<>();
+            final SingleRunApp<?, ?> app = new SingleRunApp<>();
             // TODO app.setParams(buildParams());
             app.start(new Stage());
         });

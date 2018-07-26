@@ -50,7 +50,7 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
 
     @Override
     public P getEnvPoint(final Point viewPoint) {
-        return envPointFromView(from(viewPoint)).toPosition().get();
+        return envPointFromView(from(viewPoint)).toPosition(environment);
     }
 
     @Override
@@ -175,7 +175,7 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
         final PointAdapter<P> center = Double.isNaN(off[0]) || Double.isNaN(off[1]) || size[0] <= 0 || size[1] <= 0
                 ? from(0, 0)
                 : from(off[0] + size[0] / 2, off[1] + size[1] / 2);
-        setEnvPosition(center.toPosition().get());
+        setEnvPosition(center.toPosition(environment));
     }
 
     /**

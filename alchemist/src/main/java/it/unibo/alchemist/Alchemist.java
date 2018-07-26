@@ -9,6 +9,7 @@
 package it.unibo.alchemist;
 
 import ch.qos.logback.classic.Level;
+import it.unibo.alchemist.AlchemistRunner.Builder;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import it.unibo.alchemist.cli.CLIMaker;
 import it.unibo.alchemist.loader.Loader;

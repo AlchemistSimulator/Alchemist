@@ -40,7 +40,7 @@ allprojects {
      * This forces the main classes to be ready before going on, preventing potential
      * issues with interleaving project tasks
      */
-    processResources.dependsOn('copyMainKotlinClasses')
+//    processResources.dependsOn('copyMainKotlinClasses')
 
     configurations {
         all*.exclude group: 'org.eclipse.xtext', module: 'org.eclipse.xtext.dependencies'

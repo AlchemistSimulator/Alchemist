@@ -191,7 +191,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
                     if (headless || onHeadlessEnvironment) {
                         sim.play();
                     } else {
-                        final SingleRunAppBuilder builder = new SingleRunAppBuilder<>(sim);
+                        final SingleRunAppBuilder<T, P> builder = new SingleRunAppBuilder<>(sim);
                         effectsFile.ifPresent(builder::addEffectGroup);
                         builder.useDefaultEffects(true);
                         builder.build();

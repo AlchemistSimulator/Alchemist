@@ -8,14 +8,13 @@
  ******************************************************************************/
 package it.unibo.alchemist.boundary.wormhole.implementation;
 
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.MapEnvironment;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
-import java.util.Optional;
-
 import org.danilopianini.lang.HashUtils;
-
-import it.unibo.alchemist.model.interfaces.Position2D;
 
 /**
  * Adapts various representations of bidimensional positions.
@@ -34,8 +33,8 @@ public final class PointAdapter<P extends Position2D<? extends P>> implements Se
 
     private PointAdapter(final P pos) {
         this.pos = pos;
-        x = getX();
-        y = getY();
+        x = pos.getX();
+        y = pos.getY();
     }
 
     /**
@@ -102,8 +101,13 @@ public final class PointAdapter<P extends Position2D<? extends P>> implements Se
     /**
      * @return the {@link Position2D} view of this {@link PointAdapter}
      */
-    public Optional<P> toPosition() {
-        return Optional.ofNullable(pos);
+    public P toPosition(Environment<?, P> environment) {
+        if (pos == null) {
+            pos = environment instanceof MapEnvironment
+                ? environment.makePosition(getY(), getX())
+                : environment.makePosition(getX(), getY());
+        }
+        return pos;
     }
 
     @Override

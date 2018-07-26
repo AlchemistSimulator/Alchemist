@@ -9,7 +9,7 @@
 package it.unibo.alchemist.loader.displacements
 
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Position2D
+import it.unibo.alchemist.model.interfaces.Position
 import org.apache.commons.math3.random.RandomGenerator
 import java.util.stream.Stream
 import java.util.stream.StreamSupport
@@ -42,8 +42,8 @@ import java.util.stream.StreamSupport
  * @param yShift
  *            how shifted should be positions along columns
  */
-open class Grid@JvmOverloads constructor(
-    private val environment: Environment<*, Position2D<*>>,
+open class Grid @JvmOverloads constructor(
+    private val environment: Environment<*, *>,
     private val randomGenerator: RandomGenerator,
     private val xStart: Double,
     private val yStart: Double,
@@ -55,9 +55,9 @@ open class Grid@JvmOverloads constructor(
     private val yRand: Double = 0.0,
     private val xShift: Double = 0.0,
     private val yShift: Double = 0.0
-) : Displacement<Position2D<*>> {
+) : Displacement<Position<*>> {
 
-    override fun stream() : Stream<Position2D<*>> {
+    override fun stream() : Stream<Position<*>> {
         val steps = Pair(steps(xStart, xEnd, xStep), steps(yStart, yEnd, yStep))
         println(steps.first)
         println(steps.second)

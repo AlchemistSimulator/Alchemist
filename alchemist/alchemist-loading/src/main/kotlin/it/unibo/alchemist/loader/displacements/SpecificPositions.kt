@@ -12,7 +12,7 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
 
 open class SpecificPositions(
-    environment: Environment<*, Position<*>>,
+    environment: Environment<*, *>,
     vararg positions: Iterable<Number>
 ) : Displacement<Position<*>> {
 

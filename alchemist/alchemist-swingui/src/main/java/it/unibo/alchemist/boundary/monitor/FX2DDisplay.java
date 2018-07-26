@@ -59,7 +59,7 @@ public class FX2DDisplay<T, P extends Position2D<? extends P>> extends AbstractF
      */
     protected void setZoomManager(final ZoomManager zoomManager) {
         this.zoomManager = zoomManager;
-        final BidimensionalWormhole wh = getWormhole();
+        final BidimensionalWormhole<P> wh = getWormhole();
         if (wh != null) {
             wh.setZoom(zoomManager.getZoom());
         }
@@ -78,7 +78,7 @@ public class FX2DDisplay<T, P extends Position2D<? extends P>> extends AbstractF
     protected void initMouseListener() {
         super.initMouseListener();
         setOnScroll(event -> {
-            final BidimensionalWormhole wh = getWormhole();
+            final BidimensionalWormhole<P> wh = getWormhole();
             if (wh != null && zoomManager != null) {
                 zoomManager.inc(event.getDeltaY() / ZOOM_SCALE);
                 final int mouseX = (int) event.getX();

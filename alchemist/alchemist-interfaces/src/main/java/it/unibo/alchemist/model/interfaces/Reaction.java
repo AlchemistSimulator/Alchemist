@@ -1,11 +1,11 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
  * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.interfaces;
 
 import java.io.Serializable;
@@ -58,7 +58,7 @@ public interface Reaction<T> extends Comparable<Reaction<T>>, Serializable {
      * @param env
      *            the environment
      */
-    void initializationComplete(Time t, Environment<T> env);
+    void initializationComplete(Time t, Environment<T, ?> env);
 
     /**
      * @return The list of {@link Action}s of the {@link Reaction}. There is no
@@ -162,6 +162,6 @@ public interface Reaction<T> extends Comparable<Reaction<T>>, Serializable {
      * @param env
      *            the current environment
      */
-    void update(Time curTime, boolean executed, Environment<T> env);
+    void update(Time curTime, boolean executed, Environment<T, ?> env);
 
 }

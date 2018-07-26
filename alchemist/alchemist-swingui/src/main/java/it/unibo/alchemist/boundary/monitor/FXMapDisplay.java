@@ -4,14 +4,14 @@ import it.unibo.alchemist.boundary.interfaces.FX2DOutputMonitor;
 import it.unibo.alchemist.boundary.monitor.generic.AbstractFXDisplay;
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.model.interfaces.Concentration;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
 
 /**
  * Simple implementation of a monitor that graphically represents a simulation on a 2D map.
  *
  * @param <T> The type which describes the {@link Concentration} of a molecule
  */
-public class FXMapDisplay<T> extends AbstractFXDisplay<T> implements FX2DOutputMonitor<T> {
+public class FXMapDisplay<T> extends AbstractFXDisplay<T, GeoPosition> implements FX2DOutputMonitor<T, GeoPosition> {
     /**
      * Default serial version UID.
      */
@@ -42,9 +42,9 @@ public class FXMapDisplay<T> extends AbstractFXDisplay<T> implements FX2DOutputM
     }
 
     @Override
-    public void zoomTo(final Position center, final double zoomLevel) {
+    public void zoomTo(final GeoPosition center, final double zoomLevel) {
         assert center.getDimensions() == 2;
-        final BidimensionalWormhole wh = getWormhole();
+        final BidimensionalWormhole<GeoPosition> wh = getWormhole();
         if (wh != null) {
             wh.zoomOnPoint(wh.getViewPoint(center), zoomLevel);
         }

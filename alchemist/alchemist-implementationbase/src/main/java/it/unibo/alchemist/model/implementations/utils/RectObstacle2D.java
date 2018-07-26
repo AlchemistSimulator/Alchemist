@@ -1,11 +1,11 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
  * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.implementations.utils;
 
 import static org.apache.commons.math3.util.FastMath.max;
@@ -18,9 +18,9 @@ import java.awt.geom.Rectangle2D;
 
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.MathArrays;
+import org.apache.commons.math3.util.Pair;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.interfaces.Obstacle2D;
 
 /**
@@ -77,13 +77,13 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
     }
 
     @Override
-    public Continuous2DEuclidean next(final double startx, final double starty, final double endx, final double endy) {
+    public Pair<java.lang.Double, java.lang.Double> next(final double startx, final double starty, final double endx, final double endy) {
         final double[] onBorders = enforceBorders(startx, starty, endx, endy);
         if (onBorders != null) {
             /*
              * The starting point was on the border.
              */
-            return new Continuous2DEuclidean(onBorders);
+            return asPair(onBorders);
         }
         final double[] intersection = nearestIntersection(startx, starty, endx, endy);
         /*
@@ -95,9 +95,14 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
         }
         final double[] restricted = enforceBorders(intersection[0], intersection[1], intersection[0], intersection[1]);
         if (restricted == null) {
-            return new Continuous2DEuclidean(intersection);
+            return asPair(intersection);
         }
-        return new Continuous2DEuclidean(restricted);
+        return asPair(restricted);
+    }
+    
+    private static Pair<java.lang.Double, java.lang.Double> asPair(double[] coords) {
+        assert coords.length == 2;
+        return new Pair<>(coords[0], coords[1]);
     }
 
     @SuppressFBWarnings("PZLA_PREFER_ZERO_LENGTH_ARRAYS")

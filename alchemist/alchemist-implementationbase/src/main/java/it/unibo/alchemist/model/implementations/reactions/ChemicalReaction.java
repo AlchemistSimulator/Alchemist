@@ -1,11 +1,11 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
  * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.implementations.reactions;
 
 import it.unibo.alchemist.model.interfaces.Condition;
@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
  * 
  * @param <T>
  */
-public class ChemicalReaction<T> extends AReaction<T> {
+public class ChemicalReaction<T> extends AbstractReaction<T> {
 
     private static final long serialVersionUID = -5260452049415003046L;
     private double currentRate;
@@ -40,12 +40,12 @@ public class ChemicalReaction<T> extends AReaction<T> {
     }
 
     @Override
-    public void initializationComplete(final Time t, final Environment<T> env) {
+    public void initializationComplete(final Time t, final Environment<T, ?> env) {
         update(t, true, env);
     }
 
     @Override
-    protected void updateInternalStatus(final Time curTime, final boolean executed, final Environment<T> env) {
+    protected void updateInternalStatus(final Time curTime, final boolean executed, final Environment<T, ?> env) {
         currentRate = getTimeDistribution().getRate();
         for (final Condition<T> cond : getConditions()) {
             final double v = cond.getPropensityConditioning();

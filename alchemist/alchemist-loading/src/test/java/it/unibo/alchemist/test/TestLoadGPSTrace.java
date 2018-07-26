@@ -1,14 +1,12 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.test;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
-import org.jooq.lambda.Unchecked;
-import org.junit.Test;
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
@@ -22,6 +20,16 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import org.jooq.lambda.Unchecked;
+import org.junit.Test;
+import org.kaikikm.threadresloader.ResourceLoader;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * A series of tests checking that our Yaml Loader is working as expected.
@@ -62,37 +70,37 @@ public class TestLoadGPSTrace {
      */
     @Test
     public void testLoadGPSTrace() {
-        testLoading("/testgps.yml");
+        testLoading("testgps.yml");
     }
 
     @SuppressWarnings("serial")
     private static <T> void testLoading(final String resource) {
-        final InputStream res = TestLoadGPSTrace.class.getResourceAsStream(resource);
+        final InputStream res = ResourceLoader.getResourceAsStream(resource);
         assertNotNull("Missing test resource " + resource, res);
-        final Environment<T> env = new YamlLoader(res).getDefault();
-        final Simulation<T> sim = new Engine<>(env, new DoubleTime(TIME_TO_REACH));
-        sim.addOutputMonitor(new OutputMonitor<T>() {
+        final Environment<T, GeoPosition> env = new YamlLoader(res).getDefault();
+        final Simulation<T, GeoPosition> sim = new Engine<>(env, new DoubleTime(TIME_TO_REACH));
+        sim.addOutputMonitor(new OutputMonitor<T, GeoPosition>() {
 
             @Override
-            public void finished(final Environment<T> environment, final Time time, final long step) {
-                for (final Node<T> node : environment.getNodes()) {
+            public void finished(final Environment<T, GeoPosition> env, final Time time, final long step) {
+                for (final Node<T> node : env.getNodes()) {
                     final GeoPosition start = Objects.requireNonNull(NODE_START_POSITION.get(node));
                     final GeoPosition idealArrive = Objects.requireNonNull(START_ARRIVE_POSITION.get(start));
-                    final Position realArrive = Objects.requireNonNull(environment.getPosition(node));
+                    final Position<?> realArrive = Objects.requireNonNull(env.getPosition(node));
                     assertEquals(0.0, idealArrive.getDistanceTo(realArrive), DELTA);
                 }
             }
 
             @Override
-            public void initialized(final Environment<T> environment) {
-                for (final Node<T> node : environment.getNodes()) {
-                    final Position p = environment.getPosition(node);
+            public void initialized(final Environment<T, GeoPosition> env) {
+                for (final Node<T> node : env.getNodes()) {
+                    final Position<?> p = env.getPosition(node);
                     NODE_START_POSITION.put(node, new LatLongPosition(p.getCoordinate(1), p.getCoordinate(0)));
                 }
             }
 
             @Override
-            public void stepDone(final Environment<T> environment, final Reaction<T> reaction, final Time time, final long step) {
+            public void stepDone(final Environment<T, GeoPosition> env, final Reaction<T> r, final Time time, final long step) {
             }
         });
         sim.play();

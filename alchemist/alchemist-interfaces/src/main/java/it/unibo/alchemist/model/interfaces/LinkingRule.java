@@ -1,11 +1,11 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
  * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.interfaces;
 
 import java.io.Serializable;
@@ -16,8 +16,10 @@ import java.io.Serializable;
  * 
  * @param <T>
  *            The type which describes the concentration of a molecule
+ * @param <P>
+ *            The position type
  */
-public interface LinkingRule<T> extends Serializable {
+public interface LinkingRule<T, P extends Position<? extends P>> extends Serializable {
 
     /**
      * Produces a new neighborhood for specified node considering its position.
@@ -28,7 +30,7 @@ public interface LinkingRule<T> extends Serializable {
      *            the node's environment
      * @return a neighborhood
      */
-    Neighborhood<T> computeNeighborhood(Node<T> center, Environment<T> env);
+    Neighborhood<T> computeNeighborhood(Node<T> center, Environment<T, P> env);
 
     /**
      * Some rules may require to be evaluated against multiple nodes until the

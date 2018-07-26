@@ -1,8 +1,18 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.boundary.gui.utility;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.InputStream;
+
+import org.kaikikm.threadresloader.ResourceLoader;
 
 import de.codecentric.centerdevice.javafxsvg.SvgImageLoaderFactory;
 import javafx.scene.image.Image;
@@ -15,7 +25,7 @@ public final class SVGImageUtils {
     /**
      * Default Alchemist icon path.
      */
-    public static final String DEFAULT_ALCHEMIST_ICON_PATH = "/icon/icon.svg";
+    public static final String DEFAULT_ALCHEMIST_ICON_PATH = "icon/icon.svg";
 
     /**
      * Private, empty, constructor, as this is an utility class.
@@ -41,19 +51,19 @@ public final class SVGImageUtils {
      */
     public static Image getSvgImage(final String path, final double width, final double height) {
         final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        final InputStream imageStream = ResourceLoader.load(path);
+        final InputStream imageStream = ResourceLoader.getResourceAsStream(path);
         return new Image(imageStream, screenSize.getWidth() * width / 100, screenSize.getHeight() * height / 100, true, true);
     }
 
     /**
      * Returns the Image of a SVG image.
-     * 
+     *
      * @param path
      *            The SVG image position
      * @return The image
      */
     public static Image getSvgImage(final String path) {
-        final InputStream imageStream = ResourceLoader.load(path);
+        final InputStream imageStream = ResourceLoader.getResourceAsStream(path);
         return new Image(imageStream);
     }
 

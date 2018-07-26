@@ -1,11 +1,11 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
  * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.core.implementations;
 
 import it.unibo.alchemist.core.interfaces.DependencyHandler;
@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 
  * @param <T>
  */
-public class DependencyHandlerImpl<T> implements DependencyHandler<T> {
+public final class DependencyHandlerImpl<T> implements DependencyHandler<T> {
 
     private static final long serialVersionUID = 3442635555170492280L;
     private static final AtomicInteger SINGLETON = new AtomicInteger();

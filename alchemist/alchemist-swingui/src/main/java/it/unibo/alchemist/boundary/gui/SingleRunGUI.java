@@ -1,7 +1,15 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.boundary.gui;
 
+import it.unibo.alchemist.boundary.gui.effects.EffectSerializationFactory;
 import it.unibo.alchemist.boundary.gui.effects.JEffectsTab;
-import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializationFactory;
 import it.unibo.alchemist.boundary.gui.view.SingleRunAppBuilder;
 import it.unibo.alchemist.boundary.interfaces.GraphicalOutputMonitor;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
@@ -9,12 +17,9 @@ import it.unibo.alchemist.boundary.monitors.Generic2DDisplay;
 import it.unibo.alchemist.boundary.monitors.MapDisplay;
 import it.unibo.alchemist.boundary.monitors.TimeStepMonitor;
 import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
+import it.unibo.alchemist.model.interfaces.MapEnvironment;
+import it.unibo.alchemist.model.interfaces.Position2D;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -22,9 +27,7 @@ import java.util.Comparator;
 import java.util.Objects;
 import java.util.Optional;
 import javafx.scene.Node;
-import javax.swing.BoxLayout;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +54,7 @@ public final class SingleRunGUI {
      * @param sim the simulation for this GUI
      * @param <T> concentration type
      */
-    public static <T> void make(final Simulation<T> sim) {
+    public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim) {
         make(sim, (File) null, JFrame.EXIT_ON_CLOSE);
     }
 
@@ -60,7 +63,7 @@ public final class SingleRunGUI {
      * @param closeOperation the type of close operation for this GUI
      * @param <T>            concentration type
      */
-    public static <T> void make(final Simulation<T> sim, final int closeOperation) {
+    public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final int closeOperation) {
         make(sim, (File) null, closeOperation);
     }
 
@@ -71,7 +74,7 @@ public final class SingleRunGUI {
      * @param effectsFile the effects file
      * @param <T>         concentration type
      */
-    public static <T> void make(final Simulation<T> sim, final String effectsFile) {
+    public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final String effectsFile) {
         make(sim, new File(effectsFile), JFrame.EXIT_ON_CLOSE);
     }
 
@@ -83,7 +86,7 @@ public final class SingleRunGUI {
      * @param closeOperation the type of close operation for this GUI
      * @param <T>            concentration type
      */
-    public static <T> void make(final Simulation<T> sim, final String effectsFile, final int closeOperation) {
+    public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final String effectsFile, final int closeOperation) {
         make(sim, new File(effectsFile), closeOperation);
     }
 
@@ -104,9 +107,10 @@ public final class SingleRunGUI {
      * @param closeOperation the type of close operation for this GUI
      * @param <T>            concentration type
      */
-    public static <T> void make(final Simulation<T> sim, final File effectsFile, final int closeOperation) {
-        final GraphicalOutputMonitor<T> main = Objects.requireNonNull(sim).getEnvironment() instanceof OSMEnvironment
-                ? new MapDisplay<>()
+    public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final File effectsFile, final int closeOperation) {
+        @SuppressWarnings("unchecked") // Actually safe: MapEnvironment uses the same P type of MapDisplay
+        final GraphicalOutputMonitor<T, P> main = Objects.requireNonNull(sim).getEnvironment() instanceof MapEnvironment
+                ? (GraphicalOutputMonitor<T, P>) new MapDisplay<T>()
                 : new Generic2DDisplay<>();
         if (main instanceof Component) {
             final JFrame frame = new JFrame("Alchemist Simulator");
@@ -130,7 +134,7 @@ public final class SingleRunGUI {
                 }
             }
             upper.add(effects);
-            final TimeStepMonitor<T> time = new TimeStepMonitor<>();
+            final TimeStepMonitor<T, P> time = new TimeStepMonitor<>();
             sim.addOutputMonitor(time);
             upper.add(time);
             /*

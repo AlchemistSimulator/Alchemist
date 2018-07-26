@@ -1,6 +1,13 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.implementations.actions;
 
-import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
@@ -13,11 +20,8 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  * 
  *
  */
-public class CellMove extends AbstractMoveNode<Double> {
+public class CellMove<P extends Position<P>> extends AbstractMoveNode<Double, P> {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
     private final boolean inPer;
     private final double delta;
@@ -32,13 +36,13 @@ public class CellMove extends AbstractMoveNode<Double> {
      * @param inPercent a boolean parameter which set the way of expressing delta: if is true the cell movement will be (delta * cellDiameter), otherwise will be simply delta. If cellDiameter is zero, this {@link Action} will in both cases behave like inPercent == false.
      * @param delta the distance at which the cell will be moved.
      */
-    public CellMove(final Environment<Double> environment, final Node<Double> node, final boolean inPercent, final double delta) {
+    public CellMove(final Environment<Double, P> environment, final Node<Double> node, final boolean inPercent, final double delta) {
         super(environment, node);
         this.inPer = inPercent;
         if (node instanceof CellNode) {
             if (inPercent) {
-                if (node instanceof CellWithCircularArea && ((CellWithCircularArea) node).getRadius() != 0) {
-                    this.delta = ((CellWithCircularArea) node).getDiameter() * delta;
+                if (node instanceof CellWithCircularArea && ((CellWithCircularArea<?>) node).getRadius() != 0) {
+                    this.delta = ((CellWithCircularArea<?>) node).getDiameter() * delta;
                 } else {
                     throw new IllegalArgumentException("Can't set distance in percent of the cell's diameter if cell has not a diameter");
                 }
@@ -51,28 +55,28 @@ public class CellMove extends AbstractMoveNode<Double> {
     }
 
     @Override
-    public CellMove cloneAction(final Node<Double> n, final Reaction<Double> r) {
-        return new CellMove(getEnvironment(), n, inPer, delta);
+    public CellMove<P> cloneAction(final Node<Double> n, final Reaction<Double> r) {
+        return new CellMove<>(getEnvironment(), n, inPer, delta);
     }
 
     @Override
-    public Position getNextPosition() {
-        final CellNode thisNode = getNode();
-        return new Continuous2DEuclidean(
-                delta * thisNode.getPolarizationVersor().getCoordinate(0),
-                delta * thisNode.getPolarizationVersor().getCoordinate(1)
+    public P getNextPosition() {
+        return getEnvironment().makePosition(
+                delta * getNode().getPolarizationVersor().getCoordinate(0),
+                delta * getNode().getPolarizationVersor().getCoordinate(1)
                 );
     }
 
     @Override
     public void execute() {
         super.execute();
-        getNode().setPolarization(new Continuous2DEuclidean(0, 0));
+        getNode().setPolarization(getEnvironment().makePosition(0, 0));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public CellNode getNode() {
-        return ((CellNode) super.getNode());
+    public CellNode<P> getNode() {
+        return ((CellNode<P>) super.getNode());
     }
 
 }

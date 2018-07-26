@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.loader.export;
 
 import java.io.FileNotFoundException;
@@ -17,6 +25,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 
@@ -29,8 +38,8 @@ import it.unibo.alchemist.model.interfaces.Time;
  */
 @SuppressWarnings("serial")
 @SuppressFBWarnings(value = {"SE_BAD_FIELD", "SE_NO_SERIALVERSIONID"},
-    justification = "This class does not comply to Serializable.")
-public class Exporter<T> implements OutputMonitor<T> {
+        justification = "This class does not comply to Serializable.")
+public class Exporter<T, P extends Position<? extends P>> implements OutputMonitor<T, P> {
 
     private static final String SEPARATOR = "#####################################################################";
     private final double sampleSpace;
@@ -45,7 +54,7 @@ public class Exporter<T> implements OutputMonitor<T> {
      * @param header a message to be inserted in the header of the file.
      * @param columns the extractors to use
      * @throws FileNotFoundException if the file can not be opened for writing
-     * @throws UnsupportedEncodingException 
+     * @throws UnsupportedEncodingException
      */
     public Exporter(final String target, final double space, final String header, final List<Extractor> columns) throws FileNotFoundException {
         this.sampleSpace = space;
@@ -59,7 +68,7 @@ public class Exporter<T> implements OutputMonitor<T> {
     }
 
     @Override
-    public void finished(final Environment<T> environment, final Time time, final long step) {
+    public void finished(final Environment<T, P> env, final Time time, final long step) {
         out.println(SEPARATOR);
         out.print("# End of data export. Simulation finished at: ");
         final SimpleDateFormat isoTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US);
@@ -71,7 +80,7 @@ public class Exporter<T> implements OutputMonitor<T> {
     }
 
     @Override
-    public void initialized(final Environment<T> environment) {
+    public void initialized(final Environment<T, P> env) {
         out.println(SEPARATOR);
         out.print("# Alchemist log file - simulation started at: ");
         final SimpleDateFormat isoTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US);
@@ -85,21 +94,21 @@ public class Exporter<T> implements OutputMonitor<T> {
         out.println("# The columns have the following meaning: ");
         out.print("# ");
         extractors.stream()
-            .flatMap(e -> e.getNames().stream())
-            .forEach(name -> {
-                out.print(name);
-                out.print(" ");
-            });
+                .flatMap(e -> e.getNames().stream())
+                .forEach(name -> {
+                    out.print(name);
+                    out.print(" ");
+                });
         out.println();
-        stepDone(environment, null, new DoubleTime(), 0);
+        stepDone(env, null, new DoubleTime(), 0);
     }
 
     @Override
-    public void stepDone(final Environment<T> environment, final Reaction<T> reaction, final Time time, final long step) {
+    public void stepDone(final Environment<T, P> env, final Reaction<T> r, final Time time, final long step) {
         final long curSample = (long) (time.toDouble() / sampleSpace);
         if (curSample > count) {
             count = curSample;
-            writeRow(environment, reaction, time, step);
+            writeRow(env, r, time, step);
         }
     }
 
@@ -108,10 +117,10 @@ public class Exporter<T> implements OutputMonitor<T> {
         out.print(' ');
     }
 
-    private void writeRow(final Environment<T> env, final Reaction<T> r, final Time time, final long step) {
+    private void writeRow(final Environment<?, ?> env, final Reaction<?> r, final Time time, final long step) {
         extractors.parallelStream()
-            .flatMapToDouble(e -> Arrays.stream(e.extractData(env, r, time, step)))
-            .forEachOrdered(this::printDatum);
+                .flatMapToDouble(e -> Arrays.stream(e.extractData(env, r, time, step)))
+                .forEachOrdered(this::printDatum);
         out.println();
     }
 

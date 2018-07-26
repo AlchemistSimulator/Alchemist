@@ -5,6 +5,7 @@ import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 
@@ -13,7 +14,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  *
  * @param <T> The type which describes the {@link Concentration} of a molecule
  */
-public class FXTimeMonitor<T> extends NumericLabelMonitor<Time, T> {
+public class FXTimeMonitor<T, P extends Position<? extends P>> extends NumericLabelMonitor<Time, T, P> {
     /**
      * Default serial version UID.
      */
@@ -26,12 +27,12 @@ public class FXTimeMonitor<T> extends NumericLabelMonitor<Time, T> {
     }
 
     @Override
-    public void finished(final Environment<T> environment, final Time time, final long step) {
+    public void finished(final Environment<T, P> environment, final Time time, final long step) {
         update(time);
     }
 
     @Override
-    public void stepDone(final Environment<T> environment, final Reaction<T> reaction, final Time time, final long step) {
+    public void stepDone(final Environment<T, P> environment, final Reaction<T> reaction, final Time time, final long step) {
         update(time);
     }
 }

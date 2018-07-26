@@ -1,12 +1,19 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.implementations.actions;
 
-import static org.apache.commons.math3.util.FastMath.sin;
-import static org.apache.commons.math3.util.FastMath.cos;
 import static org.apache.commons.math3.util.FastMath.atan2;
+import static org.apache.commons.math3.util.FastMath.cos;
+import static org.apache.commons.math3.util.FastMath.sin;
 
 import it.unibo.alchemist.model.implementations.movestrategies.speed.ConstantSpeed;
 import it.unibo.alchemist.model.implementations.movestrategies.target.FollowTarget;
-import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.implementations.routes.PolygonalChain;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
@@ -18,8 +25,11 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  * Movement towards a target defined as a concentration.
  *
  * @param <T>
+ *            concentration type
+ * @param <P>
+ *            {@link Position} type
  */
-public class MoveToTarget<T> extends AbstractConfigurableMoveNode<T> {
+public final class MoveToTarget<T, P extends Position<P>> extends AbstractConfigurableMoveNode<T, P> {
 
     private static final long serialVersionUID = 1L;
     private final Molecule trackMolecule;
@@ -38,7 +48,7 @@ public class MoveToTarget<T> extends AbstractConfigurableMoveNode<T> {
      * @param speed
      *            the speed of the node
      */
-    public MoveToTarget(final Environment<T> environment,
+    public MoveToTarget(final Environment<T, P> environment,
             final Node<T> node,
             final Reaction<T> reaction,
             final Molecule trackMolecule,
@@ -46,24 +56,24 @@ public class MoveToTarget<T> extends AbstractConfigurableMoveNode<T> {
         super(environment, node,
                 PolygonalChain::new,
                 new FollowTarget<>(environment, node, trackMolecule),
-                new ConstantSpeed(reaction, speed));
+                new ConstantSpeed<>(reaction, speed));
         this.trackMolecule = trackMolecule;
         this.speed = speed;
     }
 
     @Override
-    public MoveToTarget<T> cloneAction(final Node<T> n, final Reaction<T> r) {
+    public MoveToTarget<T, P> cloneAction(final Node<T> n, final Reaction<T> r) {
         return new MoveToTarget<>(getEnvironment(), n, r, trackMolecule, speed);
     }
 
     @Override
-    protected Position getDestination(final Position current, final Position target, final double maxWalk) {
-        final Position vector = target.subtract(current);
+    protected P getDestination(final P current, final P target, final double maxWalk) {
+        final P vector = target.subtract(current);
         if (current.getDistanceTo(target) < maxWalk) {
             return vector;
         }
         final double angle = atan2(vector.getCoordinate(1), vector.getCoordinate(0));
-        return new Continuous2DEuclidean(maxWalk * cos(angle), maxWalk * sin(angle));
+        return getEnvironment().makePosition(maxWalk * cos(angle), maxWalk * sin(angle));
     }
 
 }

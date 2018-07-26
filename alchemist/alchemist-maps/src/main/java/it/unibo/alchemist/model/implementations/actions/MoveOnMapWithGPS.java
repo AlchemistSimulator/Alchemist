@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.implementations.actions;
 
 import java.util.Arrays;
@@ -12,6 +20,7 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.gpsload.impl.TraceLoader;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.ObjectWithGPS;
@@ -59,9 +68,11 @@ public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
      * @param normalizerArgs
      *            Args to build normalize
      */
-    public MoveOnMapWithGPS(final MapEnvironment<T> environment, final Node<T> node, 
-            final RoutingStrategy rt, final SpeedSelectionStrategy sp, 
-            final TargetSelectionStrategy tg,
+    public MoveOnMapWithGPS(final MapEnvironment<T> environment,
+            final Node<T> node, 
+            final RoutingStrategy<GeoPosition> rt,
+            final SpeedSelectionStrategy<GeoPosition> sp, 
+            final TargetSelectionStrategy<GeoPosition> tg,
             final String path, final boolean cycle, final String normalizer, final Object... normalizerArgs) {
         this(environment, node, rt, sp, tg, traceFor(environment, path, cycle, normalizer, normalizerArgs));
     }
@@ -84,9 +95,9 @@ public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
     public MoveOnMapWithGPS(
             final MapEnvironment<T> environment,
             final Node<T> node, 
-            final RoutingStrategy rt,
-            final SpeedSelectionStrategy sp, 
-            final TargetSelectionStrategy tg,
+            final RoutingStrategy<GeoPosition> rt,
+            final SpeedSelectionStrategy<GeoPosition> sp, 
+            final TargetSelectionStrategy<GeoPosition> tg,
             final GPSTrace trace) {
         super(environment, node, rt, sp, tg);
         this.trace = requireNonNull(trace);

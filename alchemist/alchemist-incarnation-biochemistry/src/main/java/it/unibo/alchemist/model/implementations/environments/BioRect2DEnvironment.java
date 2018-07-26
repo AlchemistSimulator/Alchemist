@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 /*
  * Copyright (C) 2010-2016, Danilo Pianini and contributors
 
@@ -7,7 +15,6 @@
  * the GNU General Public License, with a linking exception, as described
  * in the file LICENSE in the Alchemist distribution's top directory.
  */
-
 package it.unibo.alchemist.model.implementations.environments;
 
 import java.util.Map;
@@ -16,11 +23,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.model.implementations.molecules.Junction;
-import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  */
@@ -67,7 +73,7 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
     }
 
     @Override
-    protected Position next(final double ox, final double oy, final double nx, final double ny) {
+    protected Euclidean2DPosition next(final double ox, final double oy, final double nx, final double ny) {
         double x, y;
         if (nx > maxX) {
             x = maxX;
@@ -83,22 +89,22 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
         } else {
             y = ny;
         }
-        return new Continuous2DEuclidean(x, y);
+        return new Euclidean2DPosition(x, y);
     }
 
     @Override
-    protected boolean isAllowed(final Position p) {
+    protected boolean isAllowed(final Euclidean2DPosition p) {
         return (p.getCoordinate(0) < maxX && p.getCoordinate(0) > minX 
                 && p.getCoordinate(1) < maxY && p.getCoordinate(1) > minY);
     }
 
     @Override
-    public void moveNode(final Node<Double> node, final Position direction) {
+    public void moveNode(final Node<Double> node, final Euclidean2DPosition direction) {
         if (node instanceof CellNode) {
             super.moveNode(node, direction);
-            final CellNode nodeToMove = (CellNode) node;
+            final CellNode<Euclidean2DPosition> nodeToMove = (CellNode<Euclidean2DPosition>) node;
             final Neighborhood<Double> neigh = getNeighborhood(nodeToMove);
-            final Map<Junction, Map<CellNode, Integer>> jun = nodeToMove.getJunctions();
+            final Map<Junction, Map<CellNode<?>, Integer>> jun = nodeToMove.getJunctions();
             jun.entrySet().stream().forEach(e -> e.getValue().entrySet().forEach(e2 -> {
                 if (!neigh.contains(e2.getKey())) { // there is a junction that links a node which isn't in the neighborhood after the movement
                    for (int i = 0; i < e2.getValue(); i++) {

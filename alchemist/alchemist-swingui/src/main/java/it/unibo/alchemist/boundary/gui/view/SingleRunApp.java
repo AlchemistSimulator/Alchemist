@@ -16,6 +16,7 @@ import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -56,7 +57,7 @@ import static it.unibo.alchemist.boundary.gui.controller.ButtonsBarController.BU
  *
  * @param <T> the {@link Concentration} type
  */
-public class SingleRunApp<T> extends Application {
+public class SingleRunApp<T, P extends Position2D<? extends P>> extends Application {
     /**
      * Main layout without nested layouts. Must inject eventual other nested layouts.
      */
@@ -83,12 +84,12 @@ public class SingleRunApp<T> extends Application {
     private ObservableList<EffectGroup> effectGroups = FXCollections.observableArrayList();
     private boolean initialized;
     @Nullable
-    private Simulation<T> simulation;
+    private Simulation<T, P> simulation;
     @Nullable
-    private AbstractFXDisplay<T> displayMonitor;
-    private PlayPauseMonitor<T> playPauseMonitor;
-    private FXTimeMonitor<T> timeMonitor;
-    private FXStepMonitor<T> stepMonitor;
+    private AbstractFXDisplay<T, P> displayMonitor;
+    private PlayPauseMonitor<T, P> playPauseMonitor;
+    private FXTimeMonitor<T, P> timeMonitor;
+    private FXStepMonitor<T, P> stepMonitor;
 
     /**
      * Method that launches the application.
@@ -177,8 +178,8 @@ public class SingleRunApp<T> extends Application {
                     if (p.startsWith(PARAMETER_NAME_START)) {
                         final String param = p.substring(PARAMETER_NAME_START.length());
                         if (param.contains(PARAMETER_NAME_END)) {
-                            final int splitterIntex = param.lastIndexOf(PARAMETER_NAME_END);
-                            addNamedParam(param.substring(0, splitterIntex), param.substring(splitterIntex));
+                            final int splitterIndex = param.lastIndexOf(PARAMETER_NAME_END);
+                            addNamedParam(param.substring(0, splitterIndex), param.substring(splitterIndex));
                         } else {
                             addUnnamedParam(param);
                         }
@@ -192,7 +193,7 @@ public class SingleRunApp<T> extends Application {
     public void start(final Stage primaryStage) {
         parseNamedParams(getNamedParams());
         parseUnnamedParams(getUnnamedParams());
-        final Optional<Simulation<T>> optSim = getSimulation();
+        final Optional<Simulation<T, P>> optSim = getSimulation();
         optSim.ifPresent(sim -> {
             try {
                 initDisplayMonitor(
@@ -205,7 +206,7 @@ public class SingleRunApp<T> extends Application {
                 throw new IllegalArgumentException(exception);
             }
         });
-        final Optional<AbstractFXDisplay<T>> optDisplayMonitor = Optional.ofNullable(this.displayMonitor);
+        final Optional<AbstractFXDisplay<T, P>> optDisplayMonitor = Optional.ofNullable(this.displayMonitor);
         final Pane rootLayout;
         try {
             rootLayout = FXResourceLoader.getLayout(AnchorPane.class, this, ROOT_LAYOUT);
@@ -272,9 +273,9 @@ public class SingleRunApp<T> extends Application {
      * @see OutputMonitor#initialized(Environment)
      */
     @SafeVarargs
-    private final void initMonitors(final @NotNull Simulation<T> simulation, final @Nullable OutputMonitor<T>... monitors) { // NOPMD - UnnecessaryFinalModifier - necessary to @SafeVarargs tag
+    private final void initMonitors(final @NotNull Simulation<T, P> simulation, final @Nullable OutputMonitor<T, P>... monitors) { // NOPMD - UnnecessaryFinalModifier - necessary to @SafeVarargs tag
         if (monitors != null) {
-            for (final OutputMonitor<T> m : monitors) {
+            for (final OutputMonitor<T, P> m : monitors) {
                 if (m != null) {
                     simulation.schedule(() -> m.initialized(simulation.getEnvironment()));
                 }
@@ -384,8 +385,8 @@ public class SingleRunApp<T> extends Application {
         }
 
         try {
-            final Class<? extends AbstractFXDisplay<T>> clazz;
-            clazz = (Class<? extends AbstractFXDisplay<T>>) Class.forName(className);
+            final Class<? extends AbstractFXDisplay<T, P>> clazz;
+            clazz = (Class<? extends AbstractFXDisplay<T, P>>) Class.forName(className);
 
             final Constructor<?>[] constructors = clazz.getDeclaredConstructors();
             Constructor<?> constructor = null;
@@ -400,7 +401,7 @@ public class SingleRunApp<T> extends Application {
                 throw new IllegalArgumentException();
             } else {
                 try {
-                    displayMonitor = (AbstractFXDisplay<T>) constructor.newInstance();
+                    displayMonitor = (AbstractFXDisplay<T, P>) constructor.newInstance();
                 } catch (final IllegalAccessException | IllegalArgumentException | InstantiationException
                         | InvocationTargetException | ExceptionInInitializerError exception) {
                     L.warn("No valid constructor found");
@@ -452,7 +453,7 @@ public class SingleRunApp<T> extends Application {
      *
      * @return the optional simulation
      */
-    private Optional<Simulation<T>> getSimulation() {
+    private Optional<Simulation<T, P>> getSimulation() {
         return Optional.ofNullable(simulation);
     }
 
@@ -462,7 +463,7 @@ public class SingleRunApp<T> extends Application {
      * @param simulation the simulation this {@link Application} will display
      * @throws IllegalStateException if the application is already started
      */
-    public void setSimulation(final Simulation<T> simulation) {
+    public void setSimulation(final Simulation<T, P> simulation) {
         checkIfInitialized();
         this.simulation = simulation;
     }

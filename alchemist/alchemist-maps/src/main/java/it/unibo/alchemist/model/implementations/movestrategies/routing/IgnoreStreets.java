@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.implementations.movestrategies.routing;
 
 import it.unibo.alchemist.model.implementations.routes.PolygonalChain;
@@ -11,12 +19,12 @@ import it.unibo.alchemist.model.interfaces.Route;
  * {@link PolygonalChain}.
  * 
  */
-public class IgnoreStreets implements RoutingStrategy {
+public class IgnoreStreets<P extends Position<P>> implements RoutingStrategy<P> {
 
     private static final long serialVersionUID = 2678088737744440021L;
 
     @Override
-    public Route<Position> computeRoute(final Position currentPos, final Position finalPos) {
+    public Route<P> computeRoute(final P currentPos, final P finalPos) {
         return new PolygonalChain<>(currentPos, finalPos);
     }
 

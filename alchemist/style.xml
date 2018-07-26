@@ -1,21 +1,25 @@
 <?xml version="1.0"?>
 <!DOCTYPE module PUBLIC
-    "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
-    "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
-<!-- Checkstyle configuration that checks a relaxed version of the Java Coding Conventions from: 
-	- the Java Language Specification at http://java.sun.com/docs/books/jls/second_edition/html/index.html 
-	- the Sun Code Conventions at http://java.sun.com/docs/codeconv/ - the Javadoc 
-	guidelines at http://java.sun.com/j2se/javadoc/writingdoccomments/index.html 
-	- the JDK Api documentation http://java.sun.com/j2se/docs/api/index.html 
-	- some best practices Checkstyle is very configurable. Be sure to read the 
-	documentation at http://checkstyle.sf.net (or in your downloaded distribution). 
-	Most Checks are configurable, be sure to consult the documentation. To completely 
-	disable a check, just comment it out or delete it from the file. Finally, 
-	it is worth reading the documentation. -->
+          "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
+          "http://checkstyle.sourceforge.net/dtds/configuration_1_3.dtd">
 
 <module name="Checker">
+	<!-- If you set the basedir property below, then all reported file names 
+		will be relative to the specified directory. See http://checkstyle.sourceforge.net/5.x/config.html#Checker 
+		<property name="basedir" value="${basedir}"/> -->
 
-	<module name="SuppressionCommentFilter" />
+	<property name="fileExtensions" value="java, properties, xml" />
+
+	<module name="SuppressionFilter">
+		<property name="file" value="${config_loc}/suppressions.xml" />
+		<property name="optional" value="false" />
+	</module>
+
+	<!-- Checks whether files end with a new line. -->
+	<!-- See http://checkstyle.sf.net/config_misc.html#NewlineAtEndOfFile -->
+	<module name="NewlineAtEndOfFile">
+		<property name="lineSeparator" value="lf" />
+	</module>
 
 	<property name="severity" value="warning" />
 
@@ -23,63 +27,61 @@
 	<!-- See http://checkstyle.sf.net/config_misc.html#Translation -->
 	<module name="Translation" />
 
+	<!-- Checks for Size Violations. -->
+	<!-- See http://checkstyle.sf.net/config_sizes.html -->
+	<module name="FileLength" />
+
 	<!-- Checks for whitespace -->
 	<!-- See http://checkstyle.sf.net/config_whitespace.html -->
-	<module name="FileTabCharacter">
-		<property name="fileExtensions" value="java,scala" />
-	    <property name="severity" value="warning" />
-	</module>
+	<module name="FileTabCharacter" />
 
 	<!-- Miscellaneous other checks. -->
 	<!-- See http://checkstyle.sf.net/config_misc.html -->
 	<module name="RegexpSingleline">
-		<property name="severity" value="warning" />
 		<property name="format" value="\s{2,}$" />
-		<property name="fileExtensions" value="java,xtend,scala" />
+		<property name="minimum" value="0" />
+		<property name="maximum" value="0" />
 		<property name="message" value="Line has trailing spaces." />
 	</module>
 	<module name="RegexpSingleline">
 		<property name="severity" value="error" />
 		<property name="format" value="Math\s*\.\s*random\s*\(\s*\)" />
-		<property name="fileExtensions" value="java,xtend,scala" />
-		<property name="message" value="Don't use Math.random() inside Alchemist. Breaks stuff." />
+		<property name="fileExtensions" value="java,xtend,scala,kt" />
+		<property name="message"
+			value="Don't use Math.random() inside Alchemist. Breaks stuff." />
 	</module>
 	<module name="RegexpSingleline">
 		<property name="severity" value="error" />
-		<property name="format" value="(import\s*(static\s*java\s*\.\s*lang\s*\.\s*Math\s*\.\s*random)|(java\s*\.\s*util\s*\.\s*Random))|(Math\s*\.\s*random\s*\(\s*\))" />
-		<property name="fileExtensions" value="java,xtend,scala" />
-		<property name="message" value="Don't use Math.random() inside Alchemist. Breaks stuff." />
+		<property name="format" value="class\s*\.\s*forName\s*\(" />
+		<property name="fileExtensions" value="java,xtend,scala,kt" />
+		<property name="message"
+			value="Use the library to load classes and resources. Breaks grid otherwise." />
 	</module>
 	<module name="RegexpSingleline">
-		<property name="severity" value="warning" />
-		<property name="format" value="\t" />
-		<property name="fileExtensions" value="java,scala" />
+		<property name="severity" value="error" />
+		<property name="format" value="class\s*\.\s*getResource" />
+		<property name="fileExtensions" value="java,xtend,scala,kt" />
 		<property name="message"
-			value="Line is tab-indented (see Java Code Conventions, Section 4.2)." />
+			value="Use the library to load classes and resources. Breaks grid otherwise." />
 	</module>
 	<module name="RegexpSingleline">
-		<property name="severity" value="warning" />
-		<property name="format" value="@author" />
-		<property name="fileExtensions" value="java,xtend,scala" />
+		<property name="severity" value="error" />
+		<property name="format" value="class\s*\.\s*getClassLoader" />
+		<property name="fileExtensions" value="java,xtend,scala,kt" />
 		<property name="message"
-			value="@author should no longer be used. If you want to identify authors, use a DVCS properly." />
-	</module>
-	<module name="RegexpSingleline">
-		<property name="severity" value="warning" />
-		<property name="format" value="@version" />
-		<property name="fileExtensions" value="java,xtend,scala" />
-		<property name="message"
-			value="@version should no longer be used. You should version your source with a proper tool." />
+			value="Use the library to load classes and resources. Breaks grid otherwise." />
 	</module>
 
 	<module name="TreeWalker">
-		<property name="tabWidth" value="8" />
+		<module name="SuppressionCommentFilter">
+			<property name="offCommentFormat" value="CHECKSTYLE: ([\w\|]+) OFF" />
+			<property name="onCommentFormat" value="CHECKSTYLE: ([\w\|]+) ON" />
+			<property name="checkFormat" value="$1" />
+		</module>
 		<!-- Checks for Javadoc comments. -->
 		<!-- See http://checkstyle.sf.net/config_javadoc.html -->
 		<module name="JavadocMethod">
 			<property name="scope" value="protected" />
-			<property name="logLoadErrors" value="true" />
-			<property name="suppressLoadErrors" value="true" />
 		</module>
 		<module name="JavadocType">
 			<property name="scope" value="protected" />
@@ -87,9 +89,7 @@
 		<module name="JavadocVariable">
 			<property name="scope" value="protected" />
 		</module>
-		<module name="JavadocStyle">
-			<property name="scope" value="protected" />
-		</module>
+		<module name="JavadocStyle" />
 
 		<!-- Checks for Naming Conventions. -->
 		<!-- See http://checkstyle.sf.net/config_naming.html -->
@@ -97,9 +97,7 @@
 		<module name="LocalFinalVariableName" />
 		<module name="LocalVariableName" />
 		<module name="MemberName" />
-		<module name="MethodName">
-			<property name="format" value="^[a-z][a-zA-Z0-9_]*$" />
-		</module>
+		<module name="MethodName" />
 		<module name="PackageName" />
 		<module name="ParameterName" />
 		<module name="StaticVariableName" />
@@ -108,12 +106,16 @@
 		<!-- Checks for imports -->
 		<!-- See http://checkstyle.sf.net/config_import.html -->
 		<module name="AvoidStarImport" />
-		<module name="IllegalImport" />
+		<module name="IllegalImport" /> <!-- defaults to sun.* packages -->
 		<module name="RedundantImport" />
+		<module name="UnusedImports">
+			<property name="processJavadoc" value="false" />
+		</module>
 
 		<!-- Checks for whitespace -->
 		<!-- See http://checkstyle.sf.net/config_whitespace.html -->
 		<module name="EmptyForIteratorPad" />
+		<module name="GenericWhitespace" />
 		<module name="MethodParamPad" />
 		<module name="NoWhitespaceAfter">
 			<property name="tokens"
@@ -124,10 +126,7 @@
 		<module name="ParenPad" />
 		<module name="TypecastParenPad" />
 		<module name="WhitespaceAfter" />
-		<module name="WhitespaceAround">
-			<property name="tokens"
-				value="ASSIGN,BAND,BAND_ASSIGN,BOR,BOR_ASSIGN,BSR,BSR_ASSIGN,BXOR,BXOR_ASSIGN,COLON,DIV,DIV_ASSIGN,EQUAL,GE,GT,LAND,LCURLY,LE,LITERAL_ASSERT,LITERAL_CATCH,LITERAL_DO,LITERAL_ELSE,LITERAL_FINALLY,LITERAL_FOR,LITERAL_IF,LITERAL_RETURN,LITERAL_SYNCHRONIZED,LITERAL_TRY,LITERAL_WHILE,LOR,LT,MINUS,MINUS_ASSIGN,MOD,MOD_ASSIGN,NOT_EQUAL,PLUS,PLUS_ASSIGN,QUESTION,RCURLY,SL,SLIST,SL_ASSIGN,SR,SR_ASSIGN,STAR,STAR_ASSIGN,LITERAL_ASSERT,TYPE_EXTENSION_AND" />
-		</module>
+		<module name="WhitespaceAround" />
 
 		<!-- Modifier Checks -->
 		<!-- See http://checkstyle.sf.net/config_modifiers.html -->
@@ -141,6 +140,9 @@
 		<module name="LeftCurly" />
 		<module name="NeedBraces" />
 		<module name="RightCurly" />
+
+		<!-- Checks for common coding problems -->
+		<!-- See http://checkstyle.sf.net/config_coding.html -->
 		<module name="EmptyStatement" />
 		<module name="EqualsHashCode" />
 		<module name="IllegalInstantiation" />
@@ -155,6 +157,7 @@
 
 		<!-- Checks for class design -->
 		<!-- See http://checkstyle.sf.net/config_design.html -->
+		<module name="DesignForExtension" />
 		<module name="FinalClass" />
 		<module name="HideUtilityClassConstructor" />
 		<module name="InterfaceIsType" />
@@ -164,12 +167,7 @@
 		<!-- See http://checkstyle.sf.net/config_misc.html -->
 		<module name="ArrayTypeStyle" />
 		<module name="FinalParameters" />
-		<module name="TodoComment">
-			<property name="severity" value="ignore" />
-		</module>
+		<module name="TodoComment" />
 		<module name="UpperEll" />
-		<module name="FileContentsHolder" />
-
 	</module>
 </module>
-

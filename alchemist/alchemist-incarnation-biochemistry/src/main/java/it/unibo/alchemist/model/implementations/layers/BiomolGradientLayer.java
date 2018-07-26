@@ -1,6 +1,12 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.implementations.layers;
-
-import java.lang.reflect.Array;
 
 import org.apache.commons.math3.util.FastMath;
 
@@ -11,7 +17,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  * A {@link Layer} representing a linear distribution in space of a molecule.
  *
  */
-public class BiomolGradientLayer implements Layer<Double> {
+public class BiomolGradientLayer<P extends Position<? extends P>> implements Layer<Double, P> {
 
     /**
      * 
@@ -50,12 +56,12 @@ public class BiomolGradientLayer implements Layer<Double> {
      * @param unitVariation unit variation of the gradient
      * @param offset minimum value of concentration reached by this spatial distribution
      */
-    public BiomolGradientLayer(final Position direction, final double unitVariation, final double offset) {
+    public BiomolGradientLayer(final P direction, final double unitVariation, final double offset) {
         this(direction.getCoordinate(0), direction.getCoordinate(1), unitVariation, offset);
     }
 
     @Override
-    public Double getValue(final Position p) {
+    public Double getValue(final P p) {
         final double[] cord = p.getCartesianCoordinates();
         return (cord[0] * a) + (cord[1] * b) + c;
     }

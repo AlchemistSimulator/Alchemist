@@ -1,23 +1,24 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
  * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.boundary.wormhole.interfaces;
 
 import java.awt.Point;
 
 import it.unibo.alchemist.model.interfaces.Position;
-import org.jooq.lambda.tuple.Tuple2;
+import it.unibo.alchemist.model.interfaces.Position2D;
+import java.awt.geom.Dimension2D;
 
 /**
  * A Wormhole (in this context) is an entity that "connects" two worlds: the
  * "environment" and the "view". Above all it provides services to convert
  * coordinates from the "environment-space" to the "view-space".
- * <code>BidimensionalWormhole</code> is the type of a wormhole whose both environment and
+ * <code>IWormhole2D</code> is the type of a wormhole whose both environment and
  * view are bi-dimensional spaces. <br>
  * <br>
  * <strong>Terminology:</strong> <br>
@@ -40,7 +41,7 @@ import org.jooq.lambda.tuple.Tuple2;
  * corner of the view.<br>
  * 
  */
-public interface BidimensionalWormhole {
+public interface BidimensionalWormhole<P extends Position2D<? extends P>> {
 
     /**
      * Wormhole mode.
@@ -51,7 +52,7 @@ public interface BidimensionalWormhole {
          * No stretch allowed
          */
         ISOMETRIC,
-        /**
+        /**P
          * Stretch to adapt to view
          */
         ADAPT_TO_VIEW,
@@ -73,7 +74,7 @@ public interface BidimensionalWormhole {
      *            view-space
      * @return a {@link Position} object whose coordinates are from env-space
      */
-    Position getEnvPoint(Point viewPoint);
+    P getEnvPoint(Point viewPoint);
 
     /**
      * Gets the rendering mode.
@@ -90,7 +91,7 @@ public interface BidimensionalWormhole {
      *            env-space
      * @return a {@link Point} object whose coordinates are from view-space
      */
-    Point getViewPoint(Position envPoint);
+    Point getViewPoint(Position2D<?> envPoint);
 
     /**
      * Gets the Position.
@@ -105,7 +106,7 @@ public interface BidimensionalWormhole {
      * @return a tuple containing the view's width and
      *         height
      */
-    Tuple2<Double, Double> getViewSize();
+    Dimension2D getViewSize();
 
     /**
      * Gets the zoom factor.
@@ -142,7 +143,7 @@ public interface BidimensionalWormhole {
      *            is the {@link Position} object representing the new position
      *            with env-coordinates
      */
-    void setEnvPosition(Position envPoint);
+    void setEnvPosition(Position2D<?> envPoint);
 
     /**
      * Automatically sets the zoom rate in order to make the environment

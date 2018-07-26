@@ -1,11 +1,11 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
  * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.implementations.reactions;
 
 import it.unibo.alchemist.expressions.implementations.NumTreeNode;
@@ -46,11 +46,11 @@ import java.util.Map.Entry;
  * 
  */
 @SuppressWarnings("unchecked")
-public class SAPEREReaction extends AReaction<List<ILsaMolecule>> {
+public class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
 
     private static final long serialVersionUID = -7264856859267079626L;
 
-    private final Environment<List<ILsaMolecule>> environment;
+    private final Environment<List<ILsaMolecule>, ?> environment;
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All provided RandomGenerator implementations are actually Serializable")
     private final RandomGenerator rng;
     private final SAPERETimeDistribution timedist;
@@ -105,7 +105,7 @@ public class SAPEREReaction extends AReaction<List<ILsaMolecule>> {
      * @param timeDist
      *            Time Distribution
      */
-    public SAPEREReaction(final Environment<List<ILsaMolecule>> env, final ILsaNode n, final RandomGenerator random, final TimeDistribution<List<ILsaMolecule>> timeDist) {
+    public SAPEREReaction(final Environment<List<ILsaMolecule>, ?> env, final ILsaNode n, final RandomGenerator random, final TimeDistribution<List<ILsaMolecule>> timeDist) {
         super(n, timeDist);
         if (getTimeDistribution() instanceof SAPERETimeDistribution) {
             timedist = (SAPERETimeDistribution) getTimeDistribution();
@@ -155,7 +155,7 @@ public class SAPEREReaction extends AReaction<List<ILsaMolecule>> {
             }
             return;
         }
-        final Position nodePosCache = modifiesOnlyLocally ? environment.getPosition(getNode()) : null;
+        final Position<?> nodePosCache = modifiesOnlyLocally ? environment.getPosition(getNode()) : null;
         final List<? extends ILsaMolecule> localContentCache = modifiesOnlyLocally ? new ArrayList<>(getNode().getLsaSpace()) : null;
         Map<HashString, ITreeNode<?>> matches = null;
         Map<ILsaNode, List<ILsaMolecule>> toRemove = null;
@@ -227,7 +227,7 @@ public class SAPEREReaction extends AReaction<List<ILsaMolecule>> {
     /**
      * @return the current environment
      */
-    protected Environment<List<ILsaMolecule>> getEnvironment() {
+    protected Environment<List<ILsaMolecule>, ?> getEnvironment() {
         return environment;
     }
 
@@ -259,7 +259,7 @@ public class SAPEREReaction extends AReaction<List<ILsaMolecule>> {
     }
 
     @Override
-    protected void updateInternalStatus(final Time curTime, final boolean executed, final Environment<List<ILsaMolecule>> env) {
+    protected void updateInternalStatus(final Time curTime, final boolean executed, final Environment<List<ILsaMolecule>, ?> env) {
         if (emptyExecution) {
             emptyExecution = false;
             totalPropensity = 0;
@@ -267,7 +267,7 @@ public class SAPEREReaction extends AReaction<List<ILsaMolecule>> {
             /*
              * Valid nodes must be re-inited, as per issue #
              */
-            final Collection<Node<List<ILsaMolecule>>> neighs = environment.getNeighborhood(getNode()).getNeighbors();
+            final Collection<? extends Node<List<ILsaMolecule>>> neighs = environment.getNeighborhood(getNode()).getNeighbors();
             validNodes = new ArrayList<>(neighs.size());
             for (final Node<List<ILsaMolecule>> neigh: neighs) {
                 validNodes.add((ILsaNode) neigh);

@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 /*
  * Copyright (C) 2010-2016, Danilo Pianini and contributors
  * listed in the project's pom.xml file.
@@ -28,7 +36,6 @@ public class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborAction<
 
     private final Biomolecule mol;
     private final double delta;
-    private final Environment<Double> env;
 
     /**
      * 
@@ -38,7 +45,7 @@ public class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborAction<
      * @param environment 
      * @param randGen 
      */
-    public ChangeBiomolConcentrationInNeighbor(final Environment<Double> environment,
+    public ChangeBiomolConcentrationInNeighbor(final Environment<Double, ?> environment,
             final Node<Double> node,
             final Biomolecule biomol, 
             final RandomGenerator randGen,
@@ -47,17 +54,16 @@ public class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborAction<
         addModifiedMolecule(biomol);
         mol = biomol;
         delta = deltaConcentration;
-        env = environment;
     }
 
     @Override
     public ChangeBiomolConcentrationInNeighbor cloneAction(final Node<Double> n, final Reaction<Double> r) {
-        return new ChangeBiomolConcentrationInNeighbor(env, n, mol, getRandomGenerator(), delta);
+        return new ChangeBiomolConcentrationInNeighbor(getEnvironment(), n, mol, getRandomGenerator(), delta);
     }
 
     @Override
     public void execute() {
-        final Neighborhood<Double> neighborhood = env.getNeighborhood(getNode());
+        final Neighborhood<Double> neighborhood = getEnvironment().getNeighborhood(getNode());
         final List<Integer> validTargetsIds = new ArrayList<>();
         if (delta < 0) {
             neighborhood.getNeighbors().stream()

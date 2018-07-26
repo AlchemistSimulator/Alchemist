@@ -1,15 +1,15 @@
 package it.unibo.alchemist.boundary.gui.view;
 
+import it.unibo.alchemist.boundary.gui.effects.EffectFX;
+import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
+import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
+import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
-
-import it.unibo.alchemist.boundary.gui.effects.EffectFX;
-import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
-import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
-import it.unibo.alchemist.core.interfaces.Simulation;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
@@ -20,9 +20,9 @@ import javafx.stage.Stage;
  *
  * @param <T> the concentration type
  */
-public class SingleRunAppBuilder<T> {
+public class SingleRunAppBuilder<T, P extends Position2D<? extends P>> {
     private static final String DEFAULT_EFFECTS = "/it/unibo/alchemist/gui/effects/json/DefaultEffects.json";
-    private final Simulation<T> simulation;
+    private final Simulation<T, P> simulation;
     private final Collection<EffectGroup> effectGroups;
     private volatile boolean shouldUseDefaultEffects;
 
@@ -31,7 +31,7 @@ public class SingleRunAppBuilder<T> {
      *
      * @param simulation the simulation to build the view for
      */
-    public SingleRunAppBuilder(final Simulation<T> simulation) {
+    public SingleRunAppBuilder(final Simulation<T, P> simulation) {
         this.simulation = Objects.requireNonNull(simulation);
         this.effectGroups = new ArrayList<>();
         this.shouldUseDefaultEffects = true;
@@ -45,7 +45,7 @@ public class SingleRunAppBuilder<T> {
      * @param shouldUse if should load default {@link EffectFX effects}
      * @return this builder
      */
-    public SingleRunAppBuilder<T> useDefaultEffects(final boolean shouldUse) {
+    public SingleRunAppBuilder<T, P> useDefaultEffects(final boolean shouldUse) {
         this.shouldUseDefaultEffects = shouldUse;
         return this;
     }
@@ -58,7 +58,7 @@ public class SingleRunAppBuilder<T> {
      * @param effectGroups the {@code EffectGroups} to set
      * @return this builder
      */
-    public SingleRunAppBuilder<T> setEffectGroups(final Collection<EffectGroup> effectGroups) {
+    public SingleRunAppBuilder<T, P> setEffectGroups(final Collection<EffectGroup> effectGroups) {
         this.effectGroups.clear();
         this.effectGroups.addAll(effectGroups);
         return this;
@@ -74,7 +74,7 @@ public class SingleRunAppBuilder<T> {
      * @see #setEffectGroups(Collection)
      * @see EffectSerializer#effectGroupsFromFile(File)
      */
-    public SingleRunAppBuilder<T> setEffectGroups(final File file) {
+    public SingleRunAppBuilder<T, P> setEffectGroups(final File file) {
         try {
             return setEffectGroups(EffectSerializer.effectGroupsFromFile(file));
         } catch (final IOException e) {
@@ -91,7 +91,7 @@ public class SingleRunAppBuilder<T> {
      * @return this builder
      * @see #setEffectGroups(File)
      */
-    public SingleRunAppBuilder<T> setEffectGroups(final String path) {
+    public SingleRunAppBuilder<T, P> setEffectGroups(final String path) {
         return setEffectGroups(new File(path));
     }
 
@@ -101,7 +101,7 @@ public class SingleRunAppBuilder<T> {
      * @param effects the {@code EffectGroup} to add
      * @return this builder
      */
-    public SingleRunAppBuilder<T> addEffectGroup(final EffectGroup effects) {
+    public SingleRunAppBuilder<T, P> addEffectGroup(final EffectGroup effects) {
         this.effectGroups.add(effects);
         return this;
     }
@@ -114,7 +114,7 @@ public class SingleRunAppBuilder<T> {
      * @see #addEffectGroup(EffectGroup)
      * @see EffectSerializer#effectsFromFile(File)
      */
-    public SingleRunAppBuilder<T> addEffectGroup(final File file) {
+    public SingleRunAppBuilder<T, P> addEffectGroup(final File file) {
         try {
             return addEffectGroup(EffectSerializer.effectsFromFile(file));
         } catch (final IOException e) {
@@ -129,7 +129,7 @@ public class SingleRunAppBuilder<T> {
      * @return this builder
      * @see #addEffectGroup(File)
      */
-    public SingleRunAppBuilder<T> addEffectGroup(final String path) {
+    public SingleRunAppBuilder<T, P> addEffectGroup(final String path) {
         return addEffectGroup(new File(path));
     }
 
@@ -165,7 +165,7 @@ public class SingleRunAppBuilder<T> {
             }
         }
         final Runnable lambda = () -> {
-            final SingleRunApp<T> app = new SingleRunApp<>();
+            final SingleRunApp<T, P> app = new SingleRunApp<>();
             if (!effectGroups.isEmpty()) {
                 app.setEffectGroups(effectGroups);
             }

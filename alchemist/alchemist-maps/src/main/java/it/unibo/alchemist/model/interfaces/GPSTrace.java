@@ -1,11 +1,11 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
  * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.interfaces;
 
 /**
@@ -43,7 +43,7 @@ public interface GPSTrace extends TimedRoute<GPSPoint> {
      *         a straight line connecting the previous and the next point of
      *         time at constant speed
      */
-    GPSPoint interpolate(Time time);
+    GeoPosition interpolate(Time time);
 
     /**
      * @param time

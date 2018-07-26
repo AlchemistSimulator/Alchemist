@@ -1,11 +1,11 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
  * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.boundary.gui.effects;
 
 import it.unibo.alchemist.boundary.gui.tape.JTapeFeatureStack;
@@ -45,7 +45,7 @@ public class JEffectRepresentation<T> extends JTapeFeatureStack implements ItemS
     private static final long serialVersionUID = -6875167656425950159L;
     private static final Logger L = LoggerFactory.getLogger(JEffectRepresentation.class);
     private final Effect effect;
-    private final GraphicalOutputMonitor<T> monitor;
+    private final GraphicalOutputMonitor<T, ?> monitor;
     private final JLabel info;
     private boolean selected;
     private final transient List<ItemListener> itemListeners = new LinkedList<>();
@@ -123,7 +123,7 @@ public class JEffectRepresentation<T> extends JTapeFeatureStack implements ItemS
      * @param main
      *            is the {@link GraphicalOutputMonitor} that will use the effect
      */
-    public JEffectRepresentation(final Effect e, final GraphicalOutputMonitor<T> main) {
+    public JEffectRepresentation(final Effect e, final GraphicalOutputMonitor<T, ?> main) {
         super();
         effect = e;
         info = new JLabel();

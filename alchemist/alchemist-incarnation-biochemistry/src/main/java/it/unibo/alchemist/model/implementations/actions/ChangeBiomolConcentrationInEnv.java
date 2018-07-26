@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 /*
  * Copyright (C) 2010-2016, Danilo Pianini and contributors
  * listed in the project's pom.xml file.
@@ -33,7 +41,7 @@ public class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<D
     private static final long serialVersionUID = 1L;
     private final double delta;
     private final Biomolecule biomolecule;
-    private final Environment<Double> env;
+    private final Environment<Double, ?> env;
 
     /**
      * Initialize a new {@link Action} that change concentration of the given
@@ -45,7 +53,7 @@ public class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<D
      * @param environment the {@link Environment} where the node is located.
      * @param randomGen 
      */
-    public ChangeBiomolConcentrationInEnv(final Environment<Double> environment, final Node<Double> node, final Biomolecule biomol, 
+    public ChangeBiomolConcentrationInEnv(final Environment<Double, ?> environment, final Node<Double> node, final Biomolecule biomol, 
             final double deltaCon, final RandomGenerator randomGen) {
         super(node, randomGen);
         if (node instanceof EnvironmentNode || node instanceof CellNode) {
@@ -66,7 +74,7 @@ public class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<D
      * @param randomGen 
      */
     public ChangeBiomolConcentrationInEnv(final Node<Double> node, final Biomolecule biomol, 
-            final Environment<Double> environment, final RandomGenerator randomGen) {
+            final Environment<Double, ?> environment, final RandomGenerator randomGen) {
         this(environment, node, biomol, -1, randomGen);
     }
 

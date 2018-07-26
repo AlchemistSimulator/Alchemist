@@ -97,7 +97,7 @@ public class EffectCell extends AbstractEffectCell<EffectFX> {
      * @param monitor the graphical {@link OutputMonitor}
      * @param stack   the stack where to open the effect properties
      */
-    public EffectCell(final @Nullable FXOutputMonitor<?> monitor, final JFXDrawersStack stack) {
+    public EffectCell(final @Nullable FXOutputMonitor<?, ?> monitor, final JFXDrawersStack stack) {
         this(stack);
         setupDisplayMonitor(monitor);
     }
@@ -109,7 +109,7 @@ public class EffectCell extends AbstractEffectCell<EffectFX> {
      * @param effectName the name of the effect
      * @param stack      the stack where to open the effect properties
      */
-    public EffectCell(final @Nullable FXOutputMonitor<?> monitor, final String effectName, final JFXDrawersStack stack) {
+    public EffectCell(final @Nullable FXOutputMonitor<?, ?> monitor, final String effectName, final JFXDrawersStack stack) {
         this(effectName, stack);
         setupDisplayMonitor(monitor);
     }
@@ -128,7 +128,7 @@ public class EffectCell extends AbstractEffectCell<EffectFX> {
      *
      * @param monitor the graphical {@link OutputMonitor}
      */
-    private void setupDisplayMonitor(final @Nullable FXOutputMonitor<?> monitor) {
+    private void setupDisplayMonitor(final @Nullable FXOutputMonitor<?, ?> monitor) {
         setDisplayMonitor(monitor);
         getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> this.getDisplayMonitor().ifPresent(d -> {
             if (!oldValue.equals(newValue)) {

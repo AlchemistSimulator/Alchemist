@@ -1,9 +1,17 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.boundary.projectview.controller;
 
 import com.google.common.io.Files;
-import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
+import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.File;
@@ -12,6 +20,9 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.ResourceBundle;
+
+import org.kaikikm.threadresloader.ResourceLoader;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -99,8 +110,8 @@ public class TopLayoutController implements Initializable {
             this.ctrlCenter.checkChanges();
         }
         final FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(ProjectGUI.class.getResource("view/NewProjLayoutFolder.fxml"));
-        final AnchorPane pane = loader.load();
+        loader.setLocation(ResourceLoader.getResource(ProjectGUI.RESOURCE_LOCATION + "/view/NewProjLayoutFolder.fxml"));
+        final AnchorPane pane = (AnchorPane) loader.load();
         final Stage stage = new Stage();
         stage.setTitle(RESOURCES.getString("new_proj"));
         stage.initModality(Modality.WINDOW_MODAL);

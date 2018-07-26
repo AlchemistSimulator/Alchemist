@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.boundary.projectview.controller;
 
 import java.io.File;
@@ -20,6 +28,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 import org.jooq.lambda.Unchecked;
+import org.kaikikm.threadresloader.ResourceLoader;
 
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
@@ -106,7 +115,7 @@ public class NewProjLayoutSelectController implements Initializable {
         resourcesFrom(path, Integer.MAX_VALUE)
             .sorted((s1, s2) -> Integer.compare(s2.length(), s1.length())) // Longest first
             .forEach(Unchecked.consumer(p -> {
-                try (InputStream is = NewProjLayoutSelectController.class.getResourceAsStream(path + '/' + p)) {
+                try (InputStream is = ResourceLoader.getResourceAsStream(path + '/' + p)) {
                     final File destination = new File(folderPath + '/' + p);
                     if (!destination.exists()) {
                         FileUtils.copyInputStreamToFile(is, destination);
@@ -120,7 +129,7 @@ public class NewProjLayoutSelectController implements Initializable {
      */
     @FXML
     public void clickFinish() {
-        copyRecursively("/templates/" + selectedTemplate);
+        copyRecursively("templates/" + selectedTemplate);
         this.stage.close();
     }
 
@@ -131,7 +140,7 @@ public class NewProjLayoutSelectController implements Initializable {
     @FXML
     public void clickBack() throws IOException {
         final FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(ProjectGUI.class.getResource("view/NewProjLayoutFolder.fxml"));
+        loader.setLocation(ResourceLoader.getResource(ProjectGUI.RESOURCE_LOCATION + "/view/NewProjLayoutFolder.fxml"));
         final AnchorPane pane = loader.load();
         final Scene scene = new Scene(pane);
         this.stage.setScene(scene);
@@ -141,9 +150,12 @@ public class NewProjLayoutSelectController implements Initializable {
         ctrl.setFolderPath(this.folderPath);
     }
 
+    /*
+     * Must return strings that represent RELATIVE paths starting by input path
+     */
     private static Stream<String> resourcesFrom(final String path, final int depth) {
         try {
-            final URI uri = NewProjLayoutFolderController.class.getResource(path).toURI();
+            final URI uri = ResourceLoader.getResource(path).toURI();
             Path myPath;
             if (uri.getScheme().equals("jar")) {
                 FileSystem fileSystem;
@@ -158,14 +170,14 @@ public class NewProjLayoutSelectController implements Initializable {
             }
             Stream<String> resourcesStream = Files.walk(myPath, depth)
                     .skip(1)
-                    .map(Path::toString);
+                    .map(Path::toString)
+                    .map(s -> s.replace(myPath.toString(), ""))
+                    .map(s-> s.substring(1))
+                    .sorted();
             if (ON_WINDOWS) {
                 resourcesStream = resourcesStream.map(s -> s.replaceAll("\\\\", "/"));
             }
-            final String regex = ".*\\" + path + "\\/";
-            return resourcesStream
-                    .map(s -> s.replaceFirst(regex, ""))
-                    .sorted();
+            return resourcesStream;
         } catch (URISyntaxException | IOException e) {
             throw new IllegalStateException(e);
         }

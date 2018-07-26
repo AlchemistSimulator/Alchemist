@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 /*
  * Copyright (C) 2010-2015, Danilo Pianini and contributors
  * listed in the project's pom.xml file.
@@ -15,13 +23,13 @@ import it.unibo.alchemist.boundary.wormhole.implementation.AngleManagerImpl;
 import it.unibo.alchemist.boundary.wormhole.implementation.ExponentialZoomManager;
 import it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter;
 import it.unibo.alchemist.boundary.wormhole.implementation.PointerSpeedImpl;
+import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D;
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole.Mode;
 import it.unibo.alchemist.boundary.wormhole.interfaces.PointerSpeed;
 import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
-import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -29,14 +37,10 @@ import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Obstacle2D;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Shape;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -45,9 +49,6 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Path2D;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -63,12 +64,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
-import javax.swing.AbstractAction;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import org.apache.commons.math3.util.Pair;
 import org.danilopianini.lang.LangUtils;
@@ -84,7 +80,7 @@ import org.slf4j.LoggerFactory;
  * @param <T> The type which describes the {@link Concentration} of a molecule
  */
 @Deprecated
-public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMonitor<T> {
+public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel implements Graphical2DOutputMonitor<T, P> {
 
     /**
      * The default frame rate.
@@ -120,9 +116,9 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
     private final Semaphore mapConsistencyMutex = new Semaphore(1);
     private final transient PointerSpeed mouseMovement = new PointerSpeedImpl();
     private final ConcurrentMap<Node<T>, Neighborhood<T>> neighbors = new ConcurrentHashMap<>();
-    private final ConcurrentMap<Node<T>, Position> positions = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Node<T>, P> positions = new ConcurrentHashMap<>();
     private transient AngleManagerImpl angleManager;
-    private Environment<T> currentEnv;
+    private Environment<T, P> currentEnv;
     private List<Effect> effectStack;
     private volatile boolean firstTime = true;
     private boolean paintLinks;
@@ -137,7 +133,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
 
     private long timeInit = System.currentTimeMillis();
 
-    private transient BidimensionalWormhole wormhole;
+    private transient BidimensionalWormhole<P> wormhole;
 
     private transient ZoomManager zoomManager;
 
@@ -182,8 +178,8 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
      * @return true if env is subclass of {@link Environment2DWithObstacles}
      * and has mobile obstacles
      */
-    protected static <N extends Number, D extends Number> boolean envHasMobileObstacles(final Environment<?> env) {
-        return env instanceof Environment2DWithObstacles && ((Environment2DWithObstacles<?, ?>) env).hasMobileObstacles();
+    protected static <N extends Number, D extends Number> boolean envHasMobileObstacles(final Environment<?, ? extends Position2D<?>> env) {
+        return env instanceof Environment2DWithObstacles && ((Environment2DWithObstacles<?, ?, ?>) env).hasMobileObstacles();
     }
 
     private static <I, O> Pair<O, O> mapPair(
@@ -278,7 +274,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
                 for (final Node<T> n : selectedNodes) {
                     currentEnv.removeNode(n);
                 }
-                final Simulation<T> sim = currentEnv.getSimulation();
+                final Simulation<T, P> sim = currentEnv.getSimulation();
                 sim.schedule(() -> update(currentEnv, sim.getTime()));
                 resetStatus();
             }
@@ -303,22 +299,23 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
     }
 
     private Shape convertObstacle(final Obstacle2D o) {
-        final Rectangle2D r = o.getBounds2D();
-        final Position[] points = new Position[]{
-                new Continuous2DEuclidean(r.getX(), r.getY()),
-                new Continuous2DEuclidean(r.getX() + r.getWidth(), r.getY()),
-                new Continuous2DEuclidean(r.getX() + r.getWidth(), r.getY() + r.getHeight()),
-                new Continuous2DEuclidean(r.getX(), r.getY() + r.getHeight())};
-        final Path2D path = new GeneralPath();
-        for (int i = 0; i < points.length; i++) {
-            final Point pt = wormhole.getViewPoint(points[i]);
-            if (i == 0) {
-                path.moveTo(pt.getX(), pt.getY());
-            }
-            path.lineTo(pt.getX(), pt.getY());
-        }
-        path.closePath();
-        return path;
+//        final Rectangle2D r = o.getBounds2D();
+//        final P[] points = new P[] {
+//                new Euclidean2DPosition(r.getX(), r.getY()),
+//                new Euclidean2DPosition(r.getX() + r.getWidth(), r.getY()),
+//                new Euclidean2DPosition(r.getX() + r.getWidth(), r.getY() + r.getHeight()),
+//                new Euclidean2DPosition(r.getX(), r.getY() + r.getHeight()) };
+//        final Path2D path = new GeneralPath();
+//        for (int i = 0; i < points.length; i++) {
+//            final Point pt = wormhole.getViewPoint(points[i]);
+//            if (i == 0) {
+//                path.moveTo(pt.getX(), pt.getY());
+//            }
+//            path.lineTo(pt.getX(), pt.getY());
+//        }
+//        path.closePath();
+//        return path;
+        return o.getBounds2D();
     }
 
     /**
@@ -341,7 +338,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
         }
         accessData();
         if (hooked.isPresent()) {
-            final Position hcoor = positions.get(hooked.get());
+            final P hcoor = positions.get(hooked.get());
             final Point hp = wormhole.getViewPoint(hcoor);
             if (hp.distance(getCenter()) > FREEDOM_RADIUS) {
                 wormhole.setViewPosition(hp);
@@ -444,7 +441,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
     }
 
     @Override
-    public void finished(final Environment<T> environment, final Time time, final long step) {
+    public void finished(final Environment<T, P> environment, final Time time, final long step) {
         update(environment, time);
         firstTime = true;
     }
@@ -476,7 +473,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
      *
      * @return an {@link BidimensionalWormhole}
      */
-    protected final BidimensionalWormhole getWormhole() {
+    protected final BidimensionalWormhole<P> getWormhole() {
         return wormhole;
     }
 
@@ -485,7 +482,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
      *
      * @param w an {@link BidimensionalWormhole}
      */
-    protected void setWormhole(final BidimensionalWormhole w) {
+    protected void setWormhole(final BidimensionalWormhole<P> w) {
         Objects.requireNonNull(w);
         wormhole = w;
     }
@@ -512,8 +509,8 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
     /**
      * Initializes all the internal data.
      */
-    private void initAll(final Environment<T> env) {
-        wormhole = new it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D(env, this);
+    private void initAll(final Environment<T, P> env) {
+        wormhole = new Wormhole2D<>(env, this);
         wormhole.center();
         wormhole.optimalZoom();
         angleManager = new AngleManagerImpl(AngleManagerImpl.DEF_DEG_PER_PIXEL);
@@ -526,7 +523,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
     }
 
     @Override
-    public void initialized(final Environment<T> environment) {
+    public void initialized(final Environment<T, P> environment) {
         stepDone(environment, null, new DoubleTime(), 0);
     }
 
@@ -560,9 +557,8 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
     public void setRealTime(final boolean rt) {
         realTime = rt;
     }
-
-    private void loadObstacles(final Environment<T> env) {
-        obstacles = ((Environment2DWithObstacles<?, ?>) env).getObstacles();
+    private void loadObstacles(final Environment<T, P> env) {
+        obstacles = ((Environment2DWithObstacles<?, ?, ?>) env).getObstacles();
     }
 
     @Override
@@ -586,7 +582,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
         if (wormhole != null) {
             mouseX = x;
             mouseY = y;
-            final Position envMouse = wormhole.getEnvPoint(new Point(mouseX, mouseY));
+            final P envMouse = wormhole.getEnvPoint(new Point(mouseX, mouseY));
             final StringBuilder sb = new StringBuilder();
             sb.append(envMouse);
             if (nearest != null) {
@@ -627,7 +623,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
     }
 
     @Override
-    public void stepDone(final Environment<T> environment, final Reaction<T> reaction, final Time time, final long step) {
+    public void stepDone(final Environment<T, P> environment, final Reaction<T> reaction, final Time time, final long step) {
         if (firstTime) {
             synchronized (this) {
                 if (firstTime) {
@@ -669,7 +665,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
      * @param env  the {@code Environment}
      * @param time the current {@code Time} of simulation
      */
-    protected void update(final Environment<T> env, final Time time) {
+    private void update(final Environment<T, P> env, final Time time) {
         if (Thread.holdsLock(env)) {
             if (envHasMobileObstacles(env)) {
                 loadObstacles(env);
@@ -681,11 +677,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
             neighbors.clear();
             env.getNodes().parallelStream().forEach(node -> {
                 positions.put(node, env.getPosition(node));
-                try {
-                    neighbors.put(node, env.getNeighborhood(node).clone());
-                } catch (Exception e) {
-                    L.error("Unable to clone neighborhood for " + node, e);
-                }
+                neighbors.put(node, env.getNeighborhood(node));
             });
             releaseData();
             repaint();
@@ -695,7 +687,7 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
     }
 
     @Override
-    public void zoomTo(final Position center, final double zoomLevel) {
+    public final void zoomTo(final P center, final double zoomLevel) {
         assert center.getDimensions() == 2;
         wormhole.zoomOnPoint(wormhole.getViewPoint(center), zoomLevel);
     }
@@ -755,9 +747,9 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
         public void mouseClicked(final MouseEvent e) {
             setDist(e.getX(), e.getY());
             if (isCloserNodeMarked() && nearest != null && SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
-                final NodeTracker<T> monitor = new NodeTracker<>(nearest);
+                final NodeTracker<T, P> monitor = new NodeTracker<>(nearest);
                 monitor.stepDone(currentEnv, null, new DoubleTime(lastTime), st);
-                final Simulation<T> sim = currentEnv.getSimulation();
+                final Simulation<T, P> sim = currentEnv.getSimulation();
                 makeFrame("Tracker for node " + nearest.getId(), monitor, jf -> {
                     final JFrame frame = (JFrame) jf;
                     if (sim != null) {
@@ -770,10 +762,9 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
                         });
                     }
                 });
-
             } else if (status == ViewStatus.CLONING && SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1) {
-                final Simulation<T> engine = currentEnv.getSimulation();
-                final Position envEnding = wormhole.getEnvPoint(e.getPoint());
+                final Simulation<T, P> engine = currentEnv.getSimulation();
+                final P envEnding = wormhole.getEnvPoint(e.getPoint());
                 engine.schedule(() -> {
                     final Collection<Node<T>> newNodes = new ArrayList<>(selectedNodes.size());
                     try {
@@ -859,15 +850,13 @@ public class Generic2DDisplay<T> extends JPanel implements Graphical2DOutputMoni
                 endingPoint = Optional.of(e.getPoint());
                 if (status == ViewStatus.MOVING && originPoint.isPresent() && endingPoint.isPresent()) {
                     if (currentEnv.getDimensions() == 2) {
-                        final Simulation<T> engine = currentEnv.getSimulation();
+                        final Simulation<T, P> engine = currentEnv.getSimulation();
                         if (engine != null) {
-                            final Position envEnding = wormhole.getEnvPoint(endingPoint.get());
-                            final Position envOrigin = wormhole.getEnvPoint(originPoint.get());
+                            final P envEnding = wormhole.getEnvPoint(endingPoint.get());
+                            final P envOrigin = wormhole.getEnvPoint(originPoint.get());
                             for (final Node<T> n : selectedNodes) {
-                                final Position p = currentEnv.getPosition(n);
-                                final double finalX = p.getCoordinate(0) + (envEnding.getCoordinate(0) - envOrigin.getCoordinate(0));
-                                final double finalY = p.getCoordinate(1) + (envEnding.getCoordinate(1) - envOrigin.getCoordinate(1));
-                                final Position finalPos = PointAdapter.from(finalX, finalY).toPosition();
+                                final P p = currentEnv.getPosition(n);
+                                final P finalPos = p.add(envEnding.subtract(envOrigin));
                                 engine.schedule(() -> {
                                     currentEnv.moveNodeToPosition(n, finalPos);
                                     update(currentEnv, engine.getTime());

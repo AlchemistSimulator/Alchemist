@@ -1,11 +1,11 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
  * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.implementations.routes;
 
 import java.util.List;
@@ -20,7 +20,7 @@ import it.unibo.alchemist.utils.MapUtils;
 
 /**
  */
-public class GPSTraceImpl extends PolygonalChain<GPSPoint> implements GPSTrace {
+public final class GPSTraceImpl extends PolygonalChain<GPSPoint> implements GPSTrace {
 
     private static final long serialVersionUID = 1L;
 
@@ -29,6 +29,7 @@ public class GPSTraceImpl extends PolygonalChain<GPSPoint> implements GPSTrace {
      * @param tr
      *            GPS points
      */
+    @SafeVarargs
     public GPSTraceImpl(final GPSPoint... tr) {
        super(tr);
     }
@@ -38,11 +39,11 @@ public class GPSTraceImpl extends PolygonalChain<GPSPoint> implements GPSTrace {
      *            GPS points
      */
     public GPSTraceImpl(final List<GPSPoint> tr) {
-        this(tr.stream().sorted().toArray(GPSPoint[]::new));
+        this(tr.toArray(new GPSPoint[tr.size()]));
     }
 
     @Override
-    public GPSTrace startAt(final Time time) {
+    public GPSTraceImpl startAt(final Time time) {
         final GPSPoint[] filtered = stream()
             .filter(pt -> pt.getTime().toDouble() >= time.toDouble())
             .map(p -> new GPSPointImpl(p.getLatitude(), p.getLongitude(), p.getTime().subtract(time)))

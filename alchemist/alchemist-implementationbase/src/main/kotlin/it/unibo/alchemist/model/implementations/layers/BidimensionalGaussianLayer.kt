@@ -1,8 +1,16 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.implementations.layers
 
 import it.unibo.alchemist.model.implementations.utils.BidimensionalGaussian
 import it.unibo.alchemist.model.interfaces.Layer
-import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.Position2D
 
 /**
  * A [Layer] based on a [2D gaussian function][BidimensionalGaussian] and an optional baseline value.
@@ -14,12 +22,12 @@ open class BidimensionalGaussianLayer @JvmOverloads constructor(
     norm: Double,
     sigmaX: Double,
     sigmaY: Double = sigmaX
-) : Layer<Double> {
+) : Layer<Double, Position2D<*>> {
 
     /**
      * The function on which the layer is based.
      */
     val function = BidimensionalGaussian(norm, centerX, centerY, sigmaX, sigmaY)
 
-    override fun getValue(p: Position) = baseline + function.value(p.getCoordinate(0), p.getCoordinate(1))
+    override fun getValue(p: Position2D<*>) = baseline + function.value(p.getX(), p.getY())
 }

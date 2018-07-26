@@ -1,5 +1,18 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist;
 
+import ch.qos.logback.classic.Level;
+import it.unibo.alchemist.boundary.projectview.ProjectGUI;
+import it.unibo.alchemist.cli.CLIMaker;
+import it.unibo.alchemist.loader.Loader;
+import it.unibo.alchemist.loader.YamlLoader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,24 +24,16 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import javax.swing.JFrame;
-
+import javax.swing.*;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.ignite.startup.cmdline.CommandLineStartup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ch.qos.logback.classic.Level;
-import it.unibo.alchemist.AlchemistRunner.Builder;
-import it.unibo.alchemist.boundary.projectview.ProjectGUI;
-import it.unibo.alchemist.cli.CLIMaker;
-import it.unibo.alchemist.loader.Loader;
-import it.unibo.alchemist.loader.YamlLoader;
 
 /**
  * Starts Alchemist.
@@ -40,12 +45,14 @@ public final class Alchemist {
     private static final String HEADLESS = "hl";
     private static final String VARIABLES = "var";
     private static final String BENCHMARK = "bmk";
-    private static final char PARALLELISM = 'p';
     private static final char BATCH = 'b';
     private static final char EXPORT = 'e';
+    private static final char DISTRIBUTED = 'd';
     private static final char GRAPHICS = 'g';
     private static final char HELP = 'h';
     private static final char INTERVAL = 'i';
+    private static final char NODE = 's';
+    private static final char PARALLELISM = 'p';
     private static final char TIME = 't';
     private static final char YAML = 'y';
 
@@ -75,6 +82,9 @@ public final class Alchemist {
         try {
             final CommandLine cmd = parser.parse(opts, args);
             setVerbosity(cmd);
+            if (cmd.hasOption(NODE)) {
+                CommandLineStartup.main(new String[] {cmd.getOptionValue(NODE)});
+            }
             if (cmd.hasOption(HELP)) {
                 final HelpFormatter formatter = new HelpFormatter();
                 formatter.printHelp("java -jar alchemist-redist-{version}.jar", opts);
@@ -89,7 +99,7 @@ public final class Alchemist {
                 }
             }
             if (loader.isPresent()) {
-                final Builder<?> simBuilder = new Builder<>(loader.get())
+                final Builder<?, ?> simBuilder = new Builder<>(loader.get())
                         .setHeadless(cmd.hasOption(HEADLESS))
                         .setGUICloseOperation(JFrame.EXIT_ON_CLOSE);
                 ifPresent(cmd, EXPORT, simBuilder::setOutputFile);
@@ -110,7 +120,7 @@ public final class Alchemist {
                             }
                         }
                         if (cmd.hasOption(BENCHMARK)) {
-                            simBuilder.setBenchmarkMode(true);
+                            simBuilder.setBenchmarkOutputFile(cmd.getOptionValue(BENCHMARK));
                         }
                         if (varsUnderRun == null) {
                             L.error("You must specify which variables you want the batch to run on.");
@@ -120,6 +130,10 @@ public final class Alchemist {
                         if (vars.length == 0) {
                             L.info("Alchemist is in batch mode, but no variable is available.");
                             System.exit(2);
+                        }
+
+                        if (cmd.hasOption(DISTRIBUTED)) {
+                            ifPresent(cmd, DISTRIBUTED, simBuilder::setRemoteConfig);
                         }
                         simBuilder.build().launch(vars);
                     } else {

@@ -6,6 +6,7 @@ import it.unibo.alchemist.boundary.interfaces.DrawCommand;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -131,7 +132,7 @@ public abstract class AbstractEffect implements EffectFX {
     }
 
     @Override
-    public <T> Queue<DrawCommand> computeDrawCommands(final Environment<T> environment) {
+    public <T, P extends Position2D<? extends P>> Queue<DrawCommand> computeDrawCommands(final Environment<T, P> environment) {
         getData(environment);
         final CommandQueueBuilder builder = new CommandQueueBuilder();
         consumeData().stream()
@@ -155,7 +156,7 @@ public abstract class AbstractEffect implements EffectFX {
      * @param environment the {@link Environment} to extrapolate data from
      * @param <T>         the {@link Concentration} type
      */
-    protected abstract <T> void getData(Environment<T> environment);
+    protected abstract <T, P extends Position2D<? extends P>> void getData(Environment<T, P> environment);
 
     @Override
     public final String getName() {

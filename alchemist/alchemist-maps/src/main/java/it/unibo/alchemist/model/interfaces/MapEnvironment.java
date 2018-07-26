@@ -1,17 +1,17 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
  * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.interfaces;
 
 /**
  * @param <T>
  */
-public interface MapEnvironment<T> extends BenchmarkableEnvironment<T> {
+public interface MapEnvironment<T> extends BenchmarkableEnvironment<T, GeoPosition> {
 
     /**
      * The default vehicle.
@@ -46,7 +46,7 @@ public interface MapEnvironment<T> extends BenchmarkableEnvironment<T> {
      * @return A {@link Route} object describing the path the node should
      *         follow
      */
-    Route<GeoPosition> computeRoute(Node<T> node, Position coord);
+    Route<GeoPosition> computeRoute(Node<T> node, GeoPosition coord);
 
     /**
      * This method relies on the map data, and computes a route towards some
@@ -63,7 +63,7 @@ public interface MapEnvironment<T> extends BenchmarkableEnvironment<T> {
      * @return A {@link Route} object describing the path the node should
      *         follow
      */
-    Route<GeoPosition> computeRoute(Node<T> node, Position coord, Vehicle vehicle);
+    Route<GeoPosition> computeRoute(Node<T> node, GeoPosition coord, Vehicle vehicle);
 
     /**
      * This method relies on the map data, and computes a route towards some
@@ -80,7 +80,7 @@ public interface MapEnvironment<T> extends BenchmarkableEnvironment<T> {
      * @return A {@link Route} object describing the path the node should
      *         follow
      */
-    Route<GeoPosition> computeRoute(Position p1, Position p2);
+    Route<GeoPosition> computeRoute(GeoPosition p1, GeoPosition p2);
 
     /**
      * This method relies on the map data, and computes a route towards some
@@ -101,7 +101,7 @@ public interface MapEnvironment<T> extends BenchmarkableEnvironment<T> {
      * @return A {@link Route} object describing the path the node should
      *         follow
      */
-    Route<GeoPosition> computeRoute(Position p1, Position p2, Vehicle vehicle);
+    Route<GeoPosition> computeRoute(GeoPosition p1, GeoPosition p2, Vehicle vehicle);
 
     @Override
     GeoPosition getPosition(Node<T> node);

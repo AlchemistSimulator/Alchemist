@@ -1,11 +1,11 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
  * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.implementations.reactions;
 
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
  * the NBR construct used in Proto.
  * 
  */
-public class SAPEREGradient extends AReaction<List<ILsaMolecule>> {
+public final class SAPEREGradient extends AbstractReaction<List<ILsaMolecule>> {
 
     private static final List<ILsaMolecule> EMPTY_LIST = Collections.unmodifiableList(new ArrayList<ILsaMolecule>(0));
     private static final long serialVersionUID = 8362443887879500016L;
@@ -59,15 +59,15 @@ public class SAPEREGradient extends AReaction<List<ILsaMolecule>> {
     private final int argPosition;
     private boolean canRun = true;
     private List<? extends ILsaMolecule> contextCache;
-    private final Environment<List<ILsaMolecule>> environment;
+    private final Environment<List<ILsaMolecule>, ?> environment;
     private final List<Action<List<ILsaMolecule>>> fakeacts = new ArrayList<>(1);
     private final List<Condition<List<ILsaMolecule>>> fakeconds = new ArrayList<>(2);
     private TIntObjectMap<List<? extends ILsaMolecule>> gradCache = new TIntObjectHashMap<>();
     private final MapEnvironment<List<ILsaMolecule>> mapenvironment;
-    private Position mypos;
+    private Position<?> mypos;
 
     private final ILsaNode node;
-    private TIntObjectMap<Position> positionCache = new TIntObjectHashMap<>();
+    private TIntObjectMap<Position<?>> positionCache = new TIntObjectHashMap<>();
     private final TIntDoubleMap routecache = new TIntDoubleHashMap(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1, Double.NaN);
     private final ILsaMolecule source, gradient, gradientExpr, context;
     private List<? extends ILsaMolecule> sourceCache;
@@ -107,7 +107,8 @@ public class SAPEREGradient extends AReaction<List<ILsaMolecule>> {
      * @param td
      *            Markovian Rate
      */
-    public SAPEREGradient(final Environment<List<ILsaMolecule>> env, final ILsaNode n, final ILsaMolecule sourceTemplate, final ILsaMolecule gradientTemplate, final int valuePosition, final String expression, final ILsaMolecule contextTemplate, final double gradThreshold, final TimeDistribution<List<ILsaMolecule>> td) {
+    @SuppressWarnings("unchecked")
+    public SAPEREGradient(final Environment<List<ILsaMolecule>, ?> env, final ILsaNode n, final ILsaMolecule sourceTemplate, final ILsaMolecule gradientTemplate, final int valuePosition, final String expression, final ILsaMolecule contextTemplate, final double gradThreshold, final TimeDistribution<List<ILsaMolecule>> td) {
         super(n, td);
         gradient = Objects.requireNonNull(gradientTemplate);
         source = Objects.requireNonNull(sourceTemplate);
@@ -172,7 +173,7 @@ public class SAPEREGradient extends AReaction<List<ILsaMolecule>> {
      * @param td
      *            Markovian Rate
      */
-    public SAPEREGradient(final Environment<List<ILsaMolecule>> env,
+    public SAPEREGradient(final Environment<List<ILsaMolecule>, ?> env,
             final ILsaNode n,
             final TimeDistribution<List<ILsaMolecule>> td,
             final String sourceTemplate,
@@ -325,7 +326,7 @@ public class SAPEREGradient extends AReaction<List<ILsaMolecule>> {
     }
 
     @Override
-    protected void updateInternalStatus(final Time curTime, final boolean executed, final Environment<List<ILsaMolecule>> env) {
+    protected void updateInternalStatus(final Time curTime, final boolean executed, final Environment<List<ILsaMolecule>, ?> env) {
         /*
          * It makes sense to reschedule the reaction if:
          * 
@@ -341,13 +342,13 @@ public class SAPEREGradient extends AReaction<List<ILsaMolecule>> {
          */
         final List<? extends ILsaMolecule> sourceCacheTemp = node.getConcentration(source);
         final List<? extends ILsaMolecule> contextCacheTemp = context == null ? EMPTY_LIST : node.getConcentration(context);
-        final TIntObjectMap<Position> positionCacheTemp = new TIntObjectHashMap<>(positionCache.size());
+        final TIntObjectMap<Position<?>> positionCacheTemp = new TIntObjectHashMap<>(positionCache.size());
         final TIntObjectMap<List<? extends ILsaMolecule>> gradCacheTemp = new TIntObjectHashMap<>(gradCache.size());
-        final Position curPos = environment.getPosition(node);
+        final Position<?> curPos = environment.getPosition(node);
         final boolean positionChanged = !curPos.equals(mypos);
         boolean neighPositionChanged = false;
         for (final Node<List<ILsaMolecule>> n : environment.getNeighborhood(node)) {
-            final Position p = environment.getPosition(n);
+            final Position<?> p = environment.getPosition(n);
             final int nid = n.getId();
             positionCacheTemp.put(nid, p);
             gradCacheTemp.put(n.getId(), n.getConcentration(gradient));
@@ -355,11 +356,8 @@ public class SAPEREGradient extends AReaction<List<ILsaMolecule>> {
             if (!pConstant) {
                 neighPositionChanged = true;
             }
-            /*
-             * TODO: may need to cleanup old values for routes and positions
-             */
             if (mapenvironment != null && (!pConstant || positionChanged)) {
-                routecache.put(nid, mapenvironment.computeRoute(n, curPos).length());
+                routecache.put(nid, mapenvironment.computeRoute(n, node).length());
             }
         }
         if (!sourceCacheTemp.equals(sourceCache) || !contextCacheTemp.equals(contextCache) || neighPositionChanged || !gradCacheTemp.equals(gradCache) || positionChanged) {
@@ -422,7 +420,7 @@ public class SAPEREGradient extends AReaction<List<ILsaMolecule>> {
         @Override
         public boolean execute(final int a, final List<? extends ILsaMolecule> mgnList) {
             if (!mgnList.isEmpty()) {
-                final Position aPos = positionCache.get(a);
+                final Position<?> aPos = positionCache.get(a);
                 final double distNode = aPos.getDistanceTo(mypos);
                 matches.put(LsaMolecule.SYN_O, new NumTreeNode(a));
                 matches.put(LsaMolecule.SYN_D, new NumTreeNode(distNode));

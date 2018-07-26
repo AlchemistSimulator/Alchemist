@@ -1,31 +1,29 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonSerializer;
 import it.unibo.alchemist.boundary.gui.CommandQueueBuilder;
+import it.unibo.alchemist.boundary.gui.effects.json.EffectGroupAdapter;
+import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.interfaces.DrawCommand;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Queue;
-
 import org.danilopianini.util.Hashes;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonSerializer;
-
-import it.unibo.alchemist.boundary.gui.effects.json.EffectGroupAdapter;
-import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
-
 /**
  * The class models a group of effects, stored as a stack. It can manage
  * priority of visualization and visibility of each effect inside it.
  */
-public class EffectStack implements EffectGroup {
+public final class EffectStack implements EffectGroup {
     /** Default generated serial version UID. */
     private static final long serialVersionUID = -3606828966321303483L;
     /** Default IllegalArgumentException message. */
@@ -62,7 +60,7 @@ public class EffectStack implements EffectGroup {
     }
 
     @Override
-    public <T> Queue<DrawCommand> computeDrawCommands(final Environment<T> environment) {
+    public <T, P extends Position2D<? extends P>> Queue<DrawCommand> computeDrawCommands(final Environment<T, P> environment) {
         final CommandQueueBuilder builder = new CommandQueueBuilder();
 
         if (isVisible()) {

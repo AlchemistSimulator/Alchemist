@@ -10,9 +10,10 @@ import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
-import java.awt.Point;
+import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -41,8 +42,9 @@ import org.jetbrains.annotations.Nullable;
  * Base abstract class for each display able to graphically represent a 2D space and simulation.
  *
  * @param <T> The type which describes the {@link Concentration} of a molecule
+ * @param <P> The type of position
  */
-public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMonitor<T> {
+public abstract class AbstractFXDisplay<T, P extends Position2D<? extends P>> extends Canvas implements FXOutputMonitor<T, P> {
     /**
      * The default frame rate.
      */
@@ -73,7 +75,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     private final Semaphore mutex = new Semaphore(1);
     private final AtomicBoolean mayRender = new AtomicBoolean(true);
     private int step;
-    private BidimensionalWormhole wormhole;
+    private BidimensionalWormhole<P> wormhole;
     private volatile boolean firstTime;
     private boolean realTime;
     private volatile ConcurrentLinkedQueue<Runnable> commandQueue;
@@ -179,8 +181,8 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      * @param event the event to check
      * @return the position, if any
      */
-    protected final Optional<Position> getEventPosition(final InputEvent event) {
-        final BidimensionalWormhole wormhole = getWormhole();
+    protected final Optional<P> getEventPosition(final InputEvent event) {
+        final BidimensionalWormhole<P> wormhole = getWormhole();
         final Method[] methods = event.getClass().getMethods();
         Optional<Method> getX = Optional.empty();
         Optional<Method> getY = Optional.empty();
@@ -228,7 +230,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      * @param event the event
      */
     protected void startEnvironmentDragNDrop(final MouseEvent event) {
-        final Optional<Position> position = getEventPosition(event);
+        final Optional<P> position = getEventPosition(event);
         position.ifPresent(p -> {
             final Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
             final ClipboardContent content = new ClipboardContent();
@@ -311,7 +313,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      * @return a function of what to do to draw the background
      * @see #repaint()
      */
-    protected Runnable drawBackground(final GraphicsContext graphicsContext, final Environment<T> environment) {
+    protected Runnable drawBackground(final GraphicsContext graphicsContext, final Environment<T, P> environment) {
         return () -> graphicsContext.clearRect(0, 0, getWidth(), getHeight());
     }
 
@@ -321,7 +323,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      * @return the wormhole object
      */
     @Nullable
-    protected BidimensionalWormhole getWormhole() {
+    protected BidimensionalWormhole<P> getWormhole() {
         return this.wormhole;
     }
 
@@ -347,12 +349,12 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     }
 
     @Override
-    public void initialized(final Environment<T> environment) {
+    public void initialized(final Environment<T, P> environment) {
         stepDone(environment, null, new DoubleTime(), 0);
     }
 
     @Override
-    public void stepDone(final Environment<T> environment, final Reaction<T> reaction, final Time time, final long step) {
+    public void stepDone(final Environment<T, P> environment, final Reaction<T> reaction, final Time time, final long step) {
         if (firstTime) {
             synchronized (this) {
                 if (firstTime) {
@@ -370,8 +372,8 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      *
      * @param environment the {@code Environment}
      */
-    protected void init(final Environment<T> environment) {
-        wormhole = new Wormhole2D(environment, this);
+    protected void init(final Environment<T, P> environment) {
+        wormhole = new Wormhole2D<>(environment, this);
         wormhole.center();
         wormhole.optimalZoom();
         firstTime = false;
@@ -379,7 +381,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
     }
 
     @Override
-    public void finished(final Environment<T> environment, final Time time, final long step) {
+    public void finished(final Environment<T, P> environment, final Time time, final long step) {
         update(environment, time);
         firstTime = true;
     }
@@ -390,7 +392,7 @@ public abstract class AbstractFXDisplay<T> extends Canvas implements FXOutputMon
      * @param environment the {@code Environment}
      * @param time        the current {@code Time} of simulation
      */
-    private void update(final Environment<T> environment, final Time time) {
+    private void update(final Environment<T, P> environment, final Time time) {
         if (Thread.holdsLock(environment)) {
             time.toDouble();
             final GraphicsContext graphicsContext = this.getGraphicsContext2D();

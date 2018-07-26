@@ -1,12 +1,20 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.implementations.movestrategies.speed;
 
 import java.util.Objects;
 
 import it.unibo.alchemist.model.implementations.movestrategies.AbstractStrategyWithGPS;
 import it.unibo.alchemist.model.interfaces.GPSPoint;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
@@ -17,7 +25,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
  *
  * @param <T>
  */
-public abstract class TraceDependantSpeed<T> extends AbstractStrategyWithGPS implements SpeedSelectionStrategy {
+public abstract class TraceDependantSpeed<T> extends AbstractStrategyWithGPS implements SpeedSelectionStrategy<GeoPosition> {
 
     private static final long serialVersionUID = 8021140539083062866L;
     private final Reaction<T> reaction;
@@ -39,7 +47,7 @@ public abstract class TraceDependantSpeed<T> extends AbstractStrategyWithGPS imp
     }
 
     @Override
-    public final double getCurrentSpeed(final Position target) {
+    public final double getCurrentSpeed(final GeoPosition target) {
         final Time currentTime = reaction.getTau();
         final double curTime = currentTime.toDouble();
         final GPSPoint next = getTrace().getNextPosition(currentTime);
@@ -62,5 +70,5 @@ public abstract class TraceDependantSpeed<T> extends AbstractStrategyWithGPS imp
      * @return an estimation of the distance between the node and the target
      *         position
      */
-    protected abstract double computeDistance(MapEnvironment<T> environment, Node<T> curNode, Position targetPosition);
+    protected abstract double computeDistance(MapEnvironment<T> environment, Node<T> curNode, GeoPosition targetPosition);
 }

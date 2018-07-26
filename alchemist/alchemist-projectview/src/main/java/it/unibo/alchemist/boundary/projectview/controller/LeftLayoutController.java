@@ -1,6 +1,13 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.boundary.projectview.controller;
 
-import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import it.unibo.alchemist.boundary.projectview.model.Project;
@@ -13,6 +20,13 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import org.jooq.lambda.Unchecked;
+import org.kaikikm.threadresloader.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import it.unibo.alchemist.boundary.util.URLManager;
+import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -30,9 +44,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.jooq.lambda.Unchecked;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -154,9 +165,13 @@ public class LeftLayoutController implements Initializable {
         }
         final Project project = ProjectIOUtils.loadFrom(this.pathFolder);
         if (project != null) {
-            final Thread thread = new Thread(Unchecked.runnable(() -> project.runAlchemistSimulation(false)), "SingleRunGUI");
-            thread.setDaemon(true);
-            thread.start();
+           final Thread thread = new Thread(Unchecked.runnable(() -> {
+               ResourceLoader.setDefault();
+               project.runAlchemistSimulation(false);
+           }), "SingleRunGUI");
+           URLManager.getInstance().setupThreadClassLoader(thread);
+           thread.setDaemon(true);
+           thread.start();
         } else {
             final Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle(RESOURCES.getString("error_running"));
@@ -195,7 +210,7 @@ public class LeftLayoutController implements Initializable {
 
     private void loadLayout(final boolean isFolder) {
         final FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(ProjectGUI.class.getResource("view/NewFolderOrFileDialog.fxml"));
+        loader.setLocation(ResourceLoader.getResource(ProjectGUI.RESOURCE_LOCATION + "/view/NewFolderOrFileDialog.fxml"));
         AnchorPane pane;
         try {
             pane = loader.load();

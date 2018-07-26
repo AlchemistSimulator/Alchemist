@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.test;
 
 import static org.junit.Assert.assertEquals;
@@ -7,12 +15,14 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.kaikikm.threadresloader.ResourceLoader;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 import org.reflections.util.ClasspathHelper;
@@ -21,6 +31,7 @@ import org.reflections.util.ConfigurationBuilder;
 import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.YamlLoader;
 import it.unibo.alchemist.model.implementations.layers.StepLayer;
 import it.unibo.alchemist.model.implementations.timedistributions.AnyRealDistribution;
@@ -28,6 +39,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Molecule;
+import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.test.util.TestNode;
 
 /**
@@ -46,7 +58,7 @@ public class TestYAMLLoader {
      */
     @Test
     public void testAnyRealDistribution() {
-        final Environment<?> env = testNoVar("/synthetic/anyrealdistribution.yml");
+        final Environment<?, ?> env = testNoVar("synthetic/anyrealdistribution.yml");
         env.forEach(n -> {
             n.forEach(r -> {
                 assertTrue(r.getTimeDistribution() instanceof AnyRealDistribution);
@@ -59,9 +71,10 @@ public class TestYAMLLoader {
      */
     @Test
     public void testCustomNodes() {
-        testNoVar("/synthetic/customnode.yml")
+        testNoVar("synthetic/customnode.yml")
         .forEach(n -> assertTrue(
-                "Node are not instances of " + TestNode.class.getName() + " as expected, but " + n.getClass().getName() + " instead",
+                "Node are not instances of " + TestNode.class.getName()
+                + " as expected, but " + n.getClass().getName() + " instead",
                 n instanceof TestNode));
     }
 
@@ -77,8 +90,6 @@ public class TestYAMLLoader {
                 .setUrls(ClasspathHelper.forPackage("isac"))
                 .setScanners(new ResourcesScanner()));
         reflections.getResources(Pattern.compile(ISAC_REGEX))
-            .stream()
-            .map(r -> "/" + r)
             .forEach(TestYAMLLoader::testNoVar);
     }
 
@@ -86,15 +97,16 @@ public class TestYAMLLoader {
      * Test loading layer classes.
      */
     @Test
-    public void testLayers() {
-        final Environment<Object> env = testNoVar("/synthetic/testlayer.yml");
-        final Set<Layer<Object>> layers = env.getLayers();
+    public <P extends Position<? extends P>> void testLayers() {
+        @SuppressWarnings("unchecked")
+        final Environment<Object, P> env = (Environment<Object, P>) testNoVar("synthetic/testlayer.yml");
+        final Set<Layer<Object, P>> layers = env.getLayers();
         assertFalse(layers.isEmpty());
         assertEquals(2, layers.size());
         assertEquals(2L, layers.stream()
                 .filter(l -> l instanceof StepLayer)
                 .count());
-        final Incarnation<?> inc = SupportedIncarnations.get("sapere").get();
+        final Incarnation<?, ?> inc = SupportedIncarnations.get("sapere").get();
         final Molecule a = inc.createMolecule("A");
         assertTrue(env.getLayer(a).get() instanceof StepLayer);
         final Molecule b = inc.createMolecule("B");
@@ -106,7 +118,7 @@ public class TestYAMLLoader {
      */
     @Test
     public void testLoadVariablesInLists() {
-        assertNotNull(testNoVar("/synthetic/testlist.yml"));
+        assertNotNull(testNoVar("synthetic/testlist.yml"));
     }
 
     /**
@@ -114,7 +126,7 @@ public class TestYAMLLoader {
      */
     @Test
     public void testMultipleMolecules() {
-        final Environment<?> env = testNoVar("/synthetic/multiplemolecule.yml");
+        final Environment<?, ?> env = testNoVar("synthetic/multiplemolecule.yml");
         env.forEach(n -> {
             assertEquals(4, n.getChemicalSpecies());
         });
@@ -125,7 +137,7 @@ public class TestYAMLLoader {
      */
     @Test
     public void testSingleValuedGeometricVar() {
-        assertNotNull(testNoVar("/synthetic/singleValuedGeometricVar.yml"));
+        assertNotNull(testNoVar("synthetic/singleValuedGeometricVar.yml"));
     }
 
     /**
@@ -133,7 +145,7 @@ public class TestYAMLLoader {
      */
     @Test
     public void testVariableContentClash() {
-        assertNotNull(testNoVar("/synthetic/varcontentclash.yml"));
+        assertNotNull(testNoVar("synthetic/varcontentclash.yml"));
     }
 
     /**
@@ -141,16 +153,29 @@ public class TestYAMLLoader {
      */
     @Test
     public void testScalaVar() {
-        final Environment<Object> env = testNoVar("/synthetic/scalavar.yml");
+        final Environment<Object, ?> env = testNoVar("synthetic/scalavar.yml");
         assertNotNull(env);
         assertEquals(env.makePosition(3, 10), env.getPosition(env.getNodeByID(0)));
     }
 
-    private static <T> Environment<T> testLoading(final String resource, final Map<String, Double> vars) {
-        final InputStream res = TestYAMLLoader.class.getResourceAsStream(resource);
+    /**
+     * Test dependencies section.
+     */
+    @Test
+    public void testDependencies() {
+        final InputStream is = ResourceLoader.getResourceAsStream("isac/16-dependencies.yaml");
+        assertNotNull(is);
+        final Loader loader = new YamlLoader(is);
+        final List<String> dependencies = loader.getDependencies();
+        assertEquals(dependencies.size(), 2);
+        assertEquals(dependencies.get(0), "dependencies_test.txt");
+    }
+
+    private static <T, P extends Position<? extends P>> Environment<T, P> testLoading(final String resource, final Map<String, Double> vars) {
+        final InputStream res = ResourceLoader.getResourceAsStream(resource);
         assertNotNull("Missing test resource " + resource, res);
-        final Environment<T> env = new YamlLoader(res).getWith(vars);
-        final Simulation<T> sim = new Engine<>(env, 10000);
+        final Environment<T, P> env = new YamlLoader(res).getWith(vars);
+        final Simulation<T, P> sim = new Engine<>(env, 10000);
         sim.play();
 //        if (!java.awt.GraphicsEnvironment.isHeadless()) {
 //            it.unibo.alchemist.boundary.gui.SingleRunGUI.make(sim);
@@ -160,7 +185,7 @@ public class TestYAMLLoader {
         return env;
     }
 
-    private static <T> Environment<T> testNoVar(final String resource) {
+    private static <T> Environment<T, ?> testNoVar(final String resource) {
         return testLoading(resource, Collections.emptyMap());
     }
 

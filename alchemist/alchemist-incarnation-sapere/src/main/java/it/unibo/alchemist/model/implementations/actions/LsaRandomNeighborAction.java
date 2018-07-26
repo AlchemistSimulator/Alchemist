@@ -1,11 +1,11 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
  * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
@@ -28,8 +28,8 @@ import java.util.List;
  */
 public class LsaRandomNeighborAction extends LsaStandardAction {
     private static final long serialVersionUID = -7128058274012426458L;
-    private final Environment<List<ILsaMolecule>> env;
-    private final MapEnvironment<List< ILsaMolecule>> menv;
+    private final Environment<List<ILsaMolecule>, ?> env;
+    private final MapEnvironment<List<ILsaMolecule>> menv;
     private final boolean initO, initD, initNeigh, initRoute, mapEnv;
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All provided RandomGenerator implementations are actually Serializable")
     private final RandomGenerator randomEngine;
@@ -50,7 +50,8 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
      *            the random engine
      * 
      */
-    public LsaRandomNeighborAction(final ILsaNode node, final ILsaMolecule molecule, final Environment<List< ILsaMolecule>> environment, final RandomGenerator random) {
+    @SuppressWarnings("unchecked")
+    public LsaRandomNeighborAction(final ILsaNode node, final ILsaMolecule molecule, final Environment<List<ILsaMolecule>, ?> environment, final RandomGenerator random) {
         super(molecule, node);
         final String molString = molecule.toString();
         initO = molString.contains(LsaMolecule.SYN_O);
@@ -59,12 +60,12 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
         initRoute = molString.contains(LsaMolecule.SYN_ROUTE);
         env = environment;
         mapEnv = environment instanceof MapEnvironment;
-        menv = mapEnv ? (MapEnvironment<List< ILsaMolecule>>) env : null;
+        menv = mapEnv ? (MapEnvironment<List<ILsaMolecule>>) env : null;
         randomEngine = random;
     }
 
     @Override
-    public LsaRandomNeighborAction cloneAction(final Node<List< ILsaMolecule>> n, final Reaction<List< ILsaMolecule>> r) {
+    public LsaRandomNeighborAction cloneAction(final Node<List<ILsaMolecule>> n, final Reaction<List<ILsaMolecule>> r) {
         return new LsaRandomNeighborAction((ILsaNode) n, getMolecule(), getEnvironment(), randomEngine);
     }
 
@@ -106,7 +107,7 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
     /**
      * @return the current environment
      */
-    protected Environment<List< ILsaMolecule>> getEnvironment() {
+    protected Environment<List<ILsaMolecule>, ?> getEnvironment() {
         return env;
     }
 

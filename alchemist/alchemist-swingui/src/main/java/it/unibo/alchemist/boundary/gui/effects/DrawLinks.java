@@ -9,8 +9,8 @@ import it.unibo.alchemist.boundary.interfaces.DrawCommand;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
-import java.awt.Point;
+import it.unibo.alchemist.model.interfaces.Position2D;
+import java.awt.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -48,7 +48,7 @@ public class DrawLinks extends AbstractEffect {
      * Default {@code Color}.
      */
     private static final Color DEFAULT_COLOR = Color.BLACK;
-    private final transient ConcurrentHashMap<Position, ConcurrentLinkedQueue<Position>> positions;
+    private final transient ConcurrentHashMap<Position2D<?>, ConcurrentLinkedQueue<Position2D<?>>> positions;
     private RangedDoubleProperty size = PropertyFactory.getPercentageRangedProperty(ResourceLoader.getStringRes("drawdot_size"), DEFAULT_SIZE);
     private Color color = DEFAULT_COLOR;
 
@@ -97,10 +97,10 @@ public class DrawLinks extends AbstractEffect {
     }
 
     @Override
-    protected <T> void getData(final Environment<T> environment) {
+    protected <T, P extends Position2D<? extends P>> void getData(final Environment<T, P> environment) {
         positions.clear();
         environment.forEach(node -> {
-            final ConcurrentLinkedQueue<Position> neighbors = new ConcurrentLinkedQueue<>();
+            final ConcurrentLinkedQueue<Position2D<?>> neighbors = new ConcurrentLinkedQueue<>();
             environment.getNeighborhood(node)
                     .getNeighbors()
                     .stream()

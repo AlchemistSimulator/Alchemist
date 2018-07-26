@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 /*
  * Copyright (C) 2010-2016, Danilo Pianini and contributors
  * listed in the project's pom.xml file.
@@ -6,7 +14,6 @@
  * the GNU General Public License, with a linking exception, as described
  * in the file LICENSE in the Alchemist distribution's top directory.
  */
-
 package it.unibo.alchemist.model.implementations.conditions;
 
 import it.unibo.alchemist.model.interfaces.CellNode;
@@ -24,14 +31,14 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 public class NeighborhoodPresent<T> extends AbstractCondition<T> {
 
     private static final long serialVersionUID = 689059297366332946L;
-    private final Environment<T> env;
+    private final Environment<T, ?> env;
 
     /**
      * Create the condition.
      * @param node the node
      * @param environment the current environment.
      */
-    public NeighborhoodPresent(final Environment<T> environment, final Node<T> node) {
+    public NeighborhoodPresent(final Environment<T, ?> environment, final Node<T> node) {
         super(node);
         env = environment;
     }

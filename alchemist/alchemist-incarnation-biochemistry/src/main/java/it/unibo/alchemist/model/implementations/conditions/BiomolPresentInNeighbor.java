@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 /*
  * Copyright (C) 2010-2016, Danilo Pianini and contributors
  * listed in the project's pom.xml file.
@@ -6,7 +14,6 @@
  * the GNU General Public License, with a linking exception, as described
  * in the file LICENSE in the Alchemist distribution's top directory.
  */
-
 package it.unibo.alchemist.model.implementations.conditions;
 
 import java.util.Collection;
@@ -33,7 +40,6 @@ public class BiomolPresentInNeighbor extends AbstractNeighborCondition<Double> {
 
     private final Biomolecule mol;
     private final Double conc;
-    private final Environment<Double> environment;
     private double propensity;
     private Map<Node<Double>, Double> neigh = new LinkedHashMap<>();
 
@@ -44,12 +50,11 @@ public class BiomolPresentInNeighbor extends AbstractNeighborCondition<Double> {
      * @param node 
      * @param env 
      */
-    public BiomolPresentInNeighbor(final Environment<Double> env, final Node<Double> node, final Biomolecule molecule, final Double concentration) {
+    public BiomolPresentInNeighbor(final Environment<Double, ?> env, final Node<Double> node, final Biomolecule molecule, final Double concentration) {
         super(env, node);
         addReadMolecule(molecule);
         mol = molecule;
         conc = concentration;
-        environment = env;
     }
 
     @Override
@@ -62,7 +67,7 @@ public class BiomolPresentInNeighbor extends AbstractNeighborCondition<Double> {
         if (neigh.isEmpty()) {
             return false;
         } else {
-            final Neighborhood<Double> neighborhood = environment.getNeighborhood(getNode());
+            final Neighborhood<Double> neighborhood = getEnvironment().getNeighborhood(getNode());
             return neigh.entrySet().stream()
                     .filter(n -> n.getKey() instanceof CellNode)
                     .allMatch(n -> neighborhood.contains(n.getKey()) 
@@ -72,7 +77,7 @@ public class BiomolPresentInNeighbor extends AbstractNeighborCondition<Double> {
 
     @Override
     public BiomolPresentInNeighbor cloneCondition(final Node<Double> n, final Reaction<Double> r) {
-        return new BiomolPresentInNeighbor(environment, n, mol, conc);
+        return new BiomolPresentInNeighbor(getEnvironment(), n, mol, conc);
     }
 
     @Override

@@ -3,17 +3,16 @@ package it.unibo.alchemist.boundary.interfaces;
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 
 /**
  * Functional interface that models a command for JavaFX thread to draw something on a {@link Canvas}.
  */
 @FunctionalInterface
-public interface DrawCommand extends BiConsumer<GraphicsContext, BidimensionalWormhole> {
+public interface DrawCommand extends BiConsumer<GraphicsContext, BidimensionalWormhole<?>> {
 
     /**
      * The method consumes a graphic and a wormhole to draw something.
@@ -22,7 +21,7 @@ public interface DrawCommand extends BiConsumer<GraphicsContext, BidimensionalWo
      * @param wormhole the {@link BidimensionalWormhole Wormhole} that maps {@link Environment} {@link Position positions} to GUI positions
      */
     @Override
-    void accept(GraphicsContext graphic, BidimensionalWormhole wormhole);
+    void accept(GraphicsContext graphic, BidimensionalWormhole<?> wormhole);
 
     /**
      * Wrapper method that wraps this {@link DrawCommand} into another that checks if should execute or not the {@link #accept(GraphicsContext, BidimensionalWormhole)} method.

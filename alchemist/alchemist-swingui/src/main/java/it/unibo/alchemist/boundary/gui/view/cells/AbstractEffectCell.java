@@ -1,7 +1,6 @@
 package it.unibo.alchemist.boundary.gui.view.cells;
 
 import com.jfoenix.controls.JFXToggleButton;
-import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
@@ -18,7 +17,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.effect.Effect;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
@@ -37,11 +35,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Abstract class that models a ListView Cell to represent {@link Effect}s or
- * {@link EffectGroup}s.
+ * Abstract class that models a ListView Cell to represent {@link it.unibo.alchemist.boundary.gui.effects.EffectFX}s or
+ * {@link it.unibo.alchemist.boundary.gui.effects.EffectGroup}s.
  *
  * @param <T> the generic class that will be inside the cell; it should be
- *            {@link Effect} or {@link EffectGroup}
+ *            {@link it.unibo.alchemist.boundary.gui.effects.EffectFX} or {@link it.unibo.alchemist.boundary.gui.effects.EffectGroup}
  */
 public abstract class AbstractEffectCell<T> extends ListCell<T> {
     /**
@@ -52,7 +50,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
     private static final String WRONG_POS = "Wrong position specified";
     private final GridPane pane;
     private final int injectedNodes;
-    private Optional<FXOutputMonitor<?>> displayMonitor = Optional.empty();
+    private Optional<FXOutputMonitor<?, ?>> displayMonitor = Optional.empty();
 
     /**
      * Default constructor. The class accepts many nodes that will be injected
@@ -163,7 +161,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
      *
      * @return the graphical {@link OutputMonitor}, if any
      */
-    protected final Optional<FXOutputMonitor<?>> getDisplayMonitor() {
+    protected final Optional<FXOutputMonitor<?, ?>> getDisplayMonitor() {
         return displayMonitor;
     }
 
@@ -172,7 +170,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
      *
      * @param displayMonitor the graphical {@link OutputMonitor} to set; if null, it will be {@link Optional#empty() unset}
      */
-    protected final void setDisplayMonitor(final @Nullable FXOutputMonitor<?> displayMonitor) {
+    protected final void setDisplayMonitor(final @Nullable FXOutputMonitor<?, ?> displayMonitor) {
         this.displayMonitor = Optional.ofNullable(displayMonitor);
     }
 

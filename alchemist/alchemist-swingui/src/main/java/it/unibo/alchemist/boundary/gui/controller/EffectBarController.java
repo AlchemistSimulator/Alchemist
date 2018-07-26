@@ -60,7 +60,7 @@ public class EffectBarController implements Initializable {
     private JFXButton backToGroups;
     private ObservableList<EffectFX> observableList;
     private EffectBuilderFX effectBuilder;
-    private Optional<FXOutputMonitor<?>> displayMonitor = Optional.empty();
+    private Optional<FXOutputMonitor<?, ?>> displayMonitor = Optional.empty();
 
     /**
      * Default constructor.
@@ -87,7 +87,7 @@ public class EffectBarController implements Initializable {
      * @param thisDrawer     the drawer the layout this controller is assigned to is loaded
      *                       into
      */
-    public EffectBarController(final @Nullable FXOutputMonitor<?> displayMonitor, final EffectGroupCell parentCell, final JFXDrawersStack stack, final JFXDrawer thisDrawer) {
+    public EffectBarController(final @Nullable FXOutputMonitor<?, ?> displayMonitor, final EffectGroupCell parentCell, final JFXDrawersStack stack, final JFXDrawer thisDrawer) {
         this(parentCell, stack, thisDrawer);
         setDisplayMonitor(displayMonitor);
     }
@@ -97,7 +97,7 @@ public class EffectBarController implements Initializable {
      *
      * @return the graphical {@link OutputMonitor}, if any
      */
-    public final Optional<FXOutputMonitor<?>> getDisplayMonitor() {
+    public final Optional<FXOutputMonitor<?, ?>> getDisplayMonitor() {
         return displayMonitor;
     }
 
@@ -106,7 +106,7 @@ public class EffectBarController implements Initializable {
      *
      * @param displayMonitor the graphical {@link OutputMonitor} to set; if null, it will be {@link Optional#empty() unset}
      */
-    public final void setDisplayMonitor(final @Nullable FXOutputMonitor<?> displayMonitor) {
+    public final void setDisplayMonitor(final @Nullable FXOutputMonitor<?, ?> displayMonitor) {
         this.displayMonitor = Optional.ofNullable(displayMonitor);
     }
 

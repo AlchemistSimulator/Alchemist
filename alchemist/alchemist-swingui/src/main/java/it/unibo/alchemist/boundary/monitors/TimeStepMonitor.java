@@ -1,41 +1,33 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
  * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.boundary.monitors;
-
-import static it.unibo.alchemist.boundary.gui.AlchemistSwingUI.DEFAULT_ICON_SIZE;
-import static it.unibo.alchemist.boundary.gui.AlchemistSwingUI.loadScaledImage;
-
-import java.awt.Color;
-import java.awt.Dimension;
-import java.util.concurrent.Semaphore;
-
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.border.LineBorder;
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+import java.awt.*;
+import java.util.concurrent.Semaphore;
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+
+import static it.unibo.alchemist.boundary.gui.AlchemistSwingUI.DEFAULT_ICON_SIZE;
+import static it.unibo.alchemist.boundary.gui.AlchemistSwingUI.loadScaledImage;
 
 /**
  * @param <T>
  *            Concentration type
  */
 @Deprecated
-public class TimeStepMonitor<T> extends JPanel implements OutputMonitor<T> {
+public class TimeStepMonitor<T, P extends Position<? extends P>> extends JPanel implements OutputMonitor<T, P> {
 
     private static final long serialVersionUID = 5818408644038869442L;
     private static final String BLANK = "", FINISHED = " (finished)";
@@ -88,22 +80,22 @@ public class TimeStepMonitor<T> extends JPanel implements OutputMonitor<T> {
     }
 
     @Override
-    public void finished(final Environment<T> environment, final Time tt, final long cs) {
+    public void finished(final Environment<T, P> env, final Time tt, final long cs) {
         isFinished = true;
-        stepDone(environment, null, tt, cs);
+        stepDone(env, null, tt, cs);
         updater.stop();
         updater.update();
         updater = null;
     }
 
     @Override
-    public void initialized(final Environment<T> environment) {
+    public void initialized(final Environment<T, P> env) {
         isFinished = false;
-        stepDone(environment, null, new DoubleTime(), 0);
+        stepDone(env, null, new DoubleTime(), 0);
     }
 
     @Override
-    public void stepDone(final Environment<T> environment, final Reaction<T> reaction, final Time curTime, final long curStep) {
+    public void stepDone(final Environment<T, P> env, final Reaction<T> r, final Time curTime, final long curStep) {
         if (updater == null) {
             updater = new Updater();
             new Thread(updater, TimeStepMonitor.class.getSimpleName() + " updater thread").start();

@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 /*
  * Copyright (C) 2010-2016, Danilo Pianini and contributors
  * listed in the project's pom.xml file.
@@ -6,7 +14,6 @@
  * the GNU General Public License, with a linking exception, as described
  * in the file LICENSE in the Alchemist distribution's top directory.
  */
-
 package it.unibo.alchemist.model.implementations.conditions;
 
 import java.util.Collection;
@@ -27,7 +34,7 @@ public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
     private static final long serialVersionUID = 4213307452790768059L;
 
     private final Junction j;
-    private final Environment<Double> env;
+    private final Environment<Double, ?> env;
 
     /**
      * 
@@ -35,7 +42,7 @@ public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
      * @param n the node
      * @param e the environment
      */
-    public JunctionPresentInCell(final Environment<Double> e, final Node<Double> n, final Junction junction) {
+    public JunctionPresentInCell(final Environment<Double, ?> e, final Node<Double> n, final Junction junction) {
         super(e, n);
         if (n instanceof CellNode) {
             addReadMolecule(junction);
@@ -63,7 +70,7 @@ public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
 
     @Override
     public Map<Node<Double>, Double> getValidNeighbors(final Collection<? extends Node<Double>> neighborhood) {
-        final Set<CellNode> linkedNodes = getNode().getNeighborsLinkWithJunction(j);
+        final Set<CellNode<?>> linkedNodes = getNode().getNeighborsLinkWithJunction(j);
         return neighborhood.stream().filter(n -> linkedNodes.contains(n))
         .collect(Collectors.<Node<Double>, Node<Double>, Double>toMap(
                 n -> n,
@@ -76,8 +83,8 @@ public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
     }
 
     @Override
-    public CellNode getNode() {
-        return (CellNode) super.getNode();
+    public CellNode<?> getNode() {
+        return (CellNode<?>) super.getNode();
     }
 
 }

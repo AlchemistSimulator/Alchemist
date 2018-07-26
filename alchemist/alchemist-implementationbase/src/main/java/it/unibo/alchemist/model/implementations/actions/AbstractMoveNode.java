@@ -1,11 +1,12 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
  * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
+
 /**
  * 
  */
@@ -22,10 +23,10 @@ import it.unibo.alchemist.model.interfaces.Position;
  * 
  * @param <T>
  */
-public abstract class AbstractMoveNode<T> extends AbstractAction<T> {
+public abstract class AbstractMoveNode<T, P extends Position<P>> extends AbstractAction<T> {
 
     private static final long serialVersionUID = -5867654295577425307L;
-    private final Environment<T> env;
+    private final Environment<T, P> env;
     private final boolean isAbs;
 
     /**
@@ -36,7 +37,7 @@ public abstract class AbstractMoveNode<T> extends AbstractAction<T> {
      * @param node
      *            The node to which this action belongs
      */
-    protected AbstractMoveNode(final Environment<T> environment, final Node<T> node) {
+    protected AbstractMoveNode(final Environment<T, P> environment, final Node<T> node) {
         this(environment, node, false);
     }
 
@@ -52,7 +53,7 @@ public abstract class AbstractMoveNode<T> extends AbstractAction<T> {
      *            return (2,3). If false, a relative coordinate is expected, and
      *            the method for the same effect must return (1,2).
      */
-    protected AbstractMoveNode(final Environment<T> environment, final Node<T> node, final boolean isAbsolute) {
+    protected AbstractMoveNode(final Environment<T, P> environment, final Node<T> node, final boolean isAbsolute) {
         super(node);
         this.env = environment;
         this.isAbs = isAbsolute;
@@ -75,7 +76,7 @@ public abstract class AbstractMoveNode<T> extends AbstractAction<T> {
     /**
      * @return the current environment
      */
-    public Environment<T> getEnvironment() {
+    public Environment<T, P> getEnvironment() {
         return env;
     }
 
@@ -90,7 +91,7 @@ public abstract class AbstractMoveNode<T> extends AbstractAction<T> {
      * @return The next position where to move, in relative coordinates with
      *         respect to the current node position.
      */
-    public abstract Position getNextPosition();
+    public abstract P getNextPosition();
 
     /**
      * Given a node, computes its position.
@@ -98,7 +99,7 @@ public abstract class AbstractMoveNode<T> extends AbstractAction<T> {
      * @param n the node
      * @return the position of the node
      */
-    protected final Position getNodePosition(final Node<T> n) {
+    protected final P getNodePosition(final Node<T> n) {
         return env.getPosition(n);
     }
 

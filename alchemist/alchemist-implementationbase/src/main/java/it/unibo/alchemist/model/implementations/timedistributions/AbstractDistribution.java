@@ -1,11 +1,11 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
  * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.implementations.timedistributions;
 
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -46,7 +46,7 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
     }
 
     @Override
-    public final void update(final Time curTime, final boolean executed, final double param, final Environment<T> env) {
+    public final void update(final Time curTime, final boolean executed, final double param, final Environment<T, ?> env) {
         if (!schedulable && curTime.compareTo(startTime) >= 0) {
             /*
              * If the simulation time is beyond the startTime for this reaction,
@@ -79,7 +79,7 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
      * @param env
      *            the current environment
      */
-    protected abstract void updateStatus(Time curTime, boolean executed, double param, Environment<T> env);
+    protected abstract void updateStatus(Time curTime, boolean executed, double param, Environment<T, ?> env);
 
     @Override
     public abstract AbstractDistribution<T> clone(Time currentTime);

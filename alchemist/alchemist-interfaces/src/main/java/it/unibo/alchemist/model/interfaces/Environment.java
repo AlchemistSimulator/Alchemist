@@ -1,18 +1,14 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
  * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
-/**
- * 
- */
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.interfaces;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -21,14 +17,15 @@ import org.danilopianini.util.ListSet;
 import it.unibo.alchemist.core.interfaces.Simulation;
 
 /**
- * The type which describes the concentration of a molecule
- * 
  * Interface for an environment. Every environment must implement this
  * specification.
  * 
+ * @param <P>
+ *            Concentration type
  * @param <T>
+ *            Position type
  */
-public interface Environment<T> extends Serializable, Iterable<Node<T>> {
+public interface Environment<T, P extends Position<? extends P>> extends Serializable, Iterable<Node<T>> {
 
     /**
      * Add a {@link Layer} to the {@link Environment}.
@@ -38,7 +35,7 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
      * @param l
      *            the {@link Layer}
      */
-    void addLayer(Molecule m, Layer<T> l);
+    void addLayer(Molecule m, Layer<T, P> l);
 
     /**
      * This method allows to add a new node to this environment. The environment
@@ -50,14 +47,14 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
      * @param p
      *            The position where to place it
      */
-    void addNode(Node<T> node, Position p);
+    void addNode(Node<T> node, P p);
 
     /**
      * @param terminator
      *            a {@link Predicate} indicating whether the simulation should
      *            be considered finished
      */
-    void addTerminator(Predicate<Environment<T>> terminator);
+    void addTerminator(Predicate<Environment<T, P>> terminator);
 
     /**
      * The number of dimensions of this environment.
@@ -80,7 +77,7 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
     /**
      * @return the {@link Incarnation} used to initialize the entities of this {@link Environment}, if it has been set.
      */
-    Optional<Incarnation<T>> getIncarnation();
+    Optional<Incarnation<T, P>> getIncarnation();
 
     /**
      * Get the layer associate to the given molecule. If no Layer is associated
@@ -91,19 +88,19 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
      * @return the {@link Optional} containing the {@link Layer} associated with
      *         the requested molecule
      */
-    Optional<Layer<T>> getLayer(Molecule m);
+    Optional<Layer<T, P>> getLayer(Molecule m);
 
     /**
      * Return all the Layers in this {@link Environment}.
      * 
      * @return a {@link List} of {@link Layer}.
      */
-    ListSet<Layer<T>> getLayers();
+    ListSet<Layer<T, P>> getLayers();
 
     /**
      * @return the current linking rule
      */
-    LinkingRule<T> getLinkingRule();
+    LinkingRule<T, P> getLinkingRule();
 
     /**
      * Given a node, this method returns its neighborhood.
@@ -163,7 +160,7 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
      *            the exploration range
      * @return the list of nodes within the range
      */
-    ListSet<Node<T>> getNodesWithinRange(Position center, double range);
+    ListSet<Node<T>> getNodesWithinRange(P center, double range);
 
     /**
      * This method allows to know which are the smallest coordinates
@@ -181,13 +178,13 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
      *            the node you want to know the position
      * @return The position
      */
-    Position getPosition(Node<T> node);
+    P getPosition(Node<T> node);
 
     /**
      * @return the current simulation, if present, or throws an
      *         {@link IllegalStateException} otherwise
      */
-    Simulation<T> getSimulation();
+    Simulation<T, P> getSimulation();
 
     /**
      * This method returns the size of the environment as an array of length
@@ -219,7 +216,7 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
      *            the coordinates of the point
      * @return a {@link Position} compatible with this environment
      */
-    Position makePosition(Number... coordinates);
+    P makePosition(Number... coordinates);
 
     /**
      * This method moves a node in the environment toward some direction. If
@@ -231,7 +228,7 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
      *            The position which will be summed to the current position to
      *            move the node in the right place.
      */
-    void moveNode(Node<T> node, Position direction);
+    void moveNode(Node<T> node, P direction);
 
     /**
      * This method moves a node in the environment to some position. If node
@@ -242,7 +239,7 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
      * @param position
      *            The absolute position in which this node will be moved.
      */
-    void moveNodeToPosition(Node<T> node, Position position);
+    void moveNodeToPosition(Node<T> node, P position);
 
     /**
      * This method allows to remove a node. If node removal is unsupported, it
@@ -258,18 +255,18 @@ public interface Environment<T> extends Serializable, Iterable<Node<T>> {
      *            the {@link Incarnation} that will be used for creating the
      *            entities of this environment
      */
-    void setIncarnation(Incarnation<T> incarnation);
+    void setIncarnation(Incarnation<T, P> incarnation);
 
     /**
      * @param rule
      *            the rule to set
      */
-    void setLinkingRule(LinkingRule<T> rule);
+    void setLinkingRule(LinkingRule<T, P> rule);
 
     /**
      * @param s
      *            the simulation
      */
-    void setSimulation(Simulation<T> s);
+    void setSimulation(Simulation<T, P> s);
 
 }

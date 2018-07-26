@@ -1,21 +1,20 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- *
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.boundary.monitors;
 
 import it.unibo.alchemist.boundary.wormhole.implementation.LinearZoomManager;
 import it.unibo.alchemist.boundary.wormhole.implementation.MapWormhole;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.Time;
-import java.awt.BorderLayout;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.io.File;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -37,7 +36,7 @@ import org.mapsforge.map.model.Model;
  * @param <T> the {@link Concentration} type
  */
 @Deprecated
-public class MapDisplay<T> extends Generic2DDisplay<T> {
+public class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
     private static final long serialVersionUID = 8593507198560560646L;
     private static final GraphicFactory GRAPHIC_FACTORY = AwtGraphicFactory.INSTANCE;
     private static final int IN_MEMORY_TILES = 256;
@@ -91,16 +90,15 @@ public class MapDisplay<T> extends Generic2DDisplay<T> {
     }
 
     @Override
-    public void initialized(final Environment<T> environment) {
-        super.initialized(environment);
+    public void initialized(final Environment<T, GeoPosition> env) {
         Arrays.stream(getMouseListeners()).forEach(mapView::addMouseListener);
         Arrays.stream(getMouseMotionListeners()).forEach(mapView::addMouseMotionListener);
-        setWormhole(new MapWormhole(environment, this, mapView.getModel().mapViewPosition));
+        setWormhole(new MapWormhole(env, this, mapView.getModel().mapViewPosition));
         setZoomManager(new LinearZoomManager(1, 1, 2, MapWormhole.MAX_ZOOM));
         getWormhole().center();
         getWormhole().optimalZoom();
         getZoomManager().setZoom(getWormhole().getZoom());
-        super.initialized(environment);
+        super.initialized(env);
     }
 
     @Override
@@ -113,12 +111,12 @@ public class MapDisplay<T> extends Generic2DDisplay<T> {
     }
 
     @Override
-    public void finished(final Environment<T> environment, final Time time, final long step) {
+    public void finished(final Environment<T, GeoPosition> env, final Time time, final long step) {
         /*
          * Shut down the download threads, preventing memory leaks
          */
         mapView.getLayerManager().interrupt();
-        super.finished(environment, time, step);
+        super.finished(env, time, step);
     }
 
 }

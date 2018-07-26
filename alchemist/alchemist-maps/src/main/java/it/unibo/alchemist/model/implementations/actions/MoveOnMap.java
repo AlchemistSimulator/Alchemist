@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 /*
  * Copyright (C) 2010-2015, Danilo Pianini and contributors
  * listed in the project's pom.xml file.
@@ -8,6 +16,7 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
+import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
@@ -20,7 +29,7 @@ import it.unibo.alchemist.utils.MapUtils;
 /**
  * @param <T>
  */
-public class MoveOnMap<T> extends AbstractConfigurableMoveNode<T> {
+public class MoveOnMap<T> extends AbstractConfigurableMoveNode<T, GeoPosition> {
 
     /**
      * Minimum distance to walk per step in meters. Under this value, the
@@ -41,7 +50,11 @@ public class MoveOnMap<T> extends AbstractConfigurableMoveNode<T> {
      * @param tg
      *            {@link TargetSelectionStrategy}
      */
-    public MoveOnMap(final MapEnvironment<T> environment, final Node<T> node, final RoutingStrategy rt, final SpeedSelectionStrategy sp, final TargetSelectionStrategy tg) {
+    public MoveOnMap(final MapEnvironment<T> environment,
+            final Node<T> node,
+            final RoutingStrategy<GeoPosition> rt,
+            final SpeedSelectionStrategy<GeoPosition> sp,
+            final TargetSelectionStrategy<GeoPosition> tg) {
         super(environment, node, rt, tg, sp, true);
     }
 
@@ -59,7 +72,7 @@ public class MoveOnMap<T> extends AbstractConfigurableMoveNode<T> {
     }
 
     @Override
-    protected Position getDestination(final Position current, final Position target, final double maxWalk) {
+    protected GeoPosition getDestination(final GeoPosition current, final GeoPosition target, final double maxWalk) {
         return MapUtils.getDestinationLocation(current, target, maxWalk);
     }
 

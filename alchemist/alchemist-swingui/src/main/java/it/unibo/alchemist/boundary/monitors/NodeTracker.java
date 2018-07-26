@@ -1,11 +1,11 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
  * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.boundary.monitors;
 
 import java.awt.BorderLayout;
@@ -22,6 +22,7 @@ import javax.swing.SwingUtilities;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 
@@ -29,7 +30,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  * @param <T>
  */
 @Deprecated
-public class NodeTracker<T> extends JPanel implements OutputMonitor<T>, ActionListener {
+public class NodeTracker<T, P extends Position<? extends P>> extends JPanel implements OutputMonitor<T, P>, ActionListener {
     private static final byte MARGIN = 100;
     private static final String PROGRAM = " = Program =", CONTENT = " = Content =", POSITION = " = POSITION = ";
     private static final long serialVersionUID = -676002989218532788L;
@@ -59,22 +60,22 @@ public class NodeTracker<T> extends JPanel implements OutputMonitor<T>, ActionLi
     }
 
     @Override
-    public void finished(final Environment<T> environment, final Time time, final long step) {
-        stepDone(environment, null, time, step);
+    public void finished(final Environment<T, P> env, final Time time, final long step) {
+        stepDone(env, null, time, step);
     }
 
     @Override
-    public void initialized(final Environment<T> environment) {
-        stepDone(environment, null, null, 0L);
+    public void initialized(final Environment<T, P> env) {
+        stepDone(env, null, null, 0L);
     }
 
     @Override
-    public void stepDone(final Environment<T> environment, final Reaction<T> reaction, final Time time, final long step) {
-        if (reaction == null || reaction.getNode().equals(n)) {
+    public void stepDone(final Environment<T, P> env, final Reaction<T> exec, final Time time, final long step) {
+        if (exec == null || exec.getNode().equals(n)) {
             final StringBuilder sb = new StringBuilder(stringLength);
             sb.append(POSITION);
             sb.append('\n');
-            sb.append(environment.getPosition(n));
+            sb.append(env.getPosition(n));
             sb.append("\n\n\n");
             sb.append(CONTENT);
             sb.append('\n');

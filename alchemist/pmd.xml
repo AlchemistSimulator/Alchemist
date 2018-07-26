@@ -139,7 +139,6 @@
 	<rule ref="rulesets/java/javabeans.xml/MissingSerialVersionUID" />
 	<rule ref="rulesets/java/design.xml/MissingStaticMethodInNonInstantiatableClass" />
 	<rule ref="rulesets/xml/basic.xml/MistypedCDATASection" />
-	<rule ref="rulesets/java/logging-java.xml/MoreThanOneLogger" />
 	<rule ref="rulesets/jsp/basic.xml/NoClassAttribute" />
 	<rule ref="rulesets/jsp/basic.xml/NoHtmlComments" />
 	<rule ref="rulesets/vm/basic.xml/NoInlineJavaScript" />

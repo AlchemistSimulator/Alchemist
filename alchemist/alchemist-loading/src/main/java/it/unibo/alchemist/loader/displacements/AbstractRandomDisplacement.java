@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.loader.displacements;
 
 import java.util.stream.IntStream;
@@ -11,9 +19,9 @@ import it.unibo.alchemist.model.interfaces.Position;
 /**
  *
  */
-public abstract class AbstractRandomDisplacement implements Displacement {
+public abstract class AbstractRandomDisplacement<P extends Position<? extends P>> implements Displacement<P> {
 
-    private final Environment<?> env;
+    private final Environment<?, P> env;
     private final RandomGenerator rng;
     private final int nodes;
 
@@ -25,14 +33,14 @@ public abstract class AbstractRandomDisplacement implements Displacement {
      * @param nodes
      *            the number of nodes
      */
-    public AbstractRandomDisplacement(final Environment<?> env, final RandomGenerator rng, final int nodes) {
+    public AbstractRandomDisplacement(final Environment<?, P> env, final RandomGenerator rng, final int nodes) {
         this.env = env;
         this.rng = rng;
         this.nodes = nodes;
     }
 
     @Override
-    public Stream<Position> stream() {
+    public Stream<P> stream() {
         return IntStream.range(0, nodes).mapToObj(this::indexToPosition);
     }
 
@@ -44,7 +52,7 @@ public abstract class AbstractRandomDisplacement implements Displacement {
      * @param coordinates the coordinates
      * @return a position
      */
-    protected final Position makePosition(final Number... coordinates) {
+    protected final P makePosition(final Number... coordinates) {
         return env.makePosition(coordinates);
     }
 
@@ -82,7 +90,7 @@ public abstract class AbstractRandomDisplacement implements Displacement {
      *            the node number
      * @return the position of the node
      */
-    protected abstract Position indexToPosition(int i);
+    protected abstract P indexToPosition(int i);
 
 
 }

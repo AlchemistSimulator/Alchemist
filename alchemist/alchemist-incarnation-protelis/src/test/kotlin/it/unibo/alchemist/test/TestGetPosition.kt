@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.test
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor
@@ -7,6 +15,7 @@ import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.reactions.Event
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.interfaces.Environment
@@ -17,10 +26,10 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.protelis.lang.datatype.DatatypeFactory
-import java.util.Optional
+import java.util.*
 
 class TestGetPosition {
-    private val env: Environment<Any> = Continuous2DEnvironment()
+    private val env: Environment<Any, Euclidean2DPosition> = Continuous2DEnvironment()
     private val node = ProtelisNode(env)
     private val rng = MersenneTwister(0)
     private val reaction = Event(node, ExponentialTime(1.0, rng))
@@ -36,15 +45,15 @@ class TestGetPosition {
 
     @Test
     fun testGetPosition() {
-        val sim: Simulation<Any> = Engine(env, 100)
-        sim.addOutputMonitor(object : OutputMonitor<Any> {
-            override fun finished(environment: Environment<Any>?, time: Time?, step: Long) { }
-            override fun initialized(environment: Environment<Any>?) { }
-            override fun stepDone(env: Environment<Any>?, r: Reaction<Any>?, time: Time?, step: Long) =
-                    Assert.assertEquals(
-                            DatatypeFactory.createTuple(1.0, 1.0),
-                            node.getConcentration(action.asMolecule())
-                    )
+        val sim: Simulation<Any, Euclidean2DPosition> = Engine(env, 100)
+        sim.addOutputMonitor(object : OutputMonitor<Any, Euclidean2DPosition> {
+            override fun finished(environment: Environment<Any, Euclidean2DPosition>?, time: Time?, step: Long) { }
+            override fun initialized(environment: Environment<Any, Euclidean2DPosition>?) { }
+            override fun stepDone(env: Environment<Any, Euclidean2DPosition>?, r: Reaction<Any>?, time: Time?, step: Long) =
+                Assert.assertEquals(
+                    DatatypeFactory.createTuple(1.0, 1.0),
+                    node.getConcentration(action.asMolecule())
+                )
         })
         sim.play()
         sim.run()

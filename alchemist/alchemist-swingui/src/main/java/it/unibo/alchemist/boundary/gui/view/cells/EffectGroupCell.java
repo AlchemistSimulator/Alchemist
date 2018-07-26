@@ -49,7 +49,7 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
      * @param monitor the graphical {@link OutputMonitor}
      * @param stack   the stack where to open the effects lists
      */
-    public EffectGroupCell(final @Nullable FXOutputMonitor<?> monitor, final JFXDrawersStack stack) {
+    public EffectGroupCell(final @Nullable FXOutputMonitor<?, ?> monitor, final JFXDrawersStack stack) {
         this(stack);
         setupDisplayMonitor(monitor);
     }
@@ -107,7 +107,7 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
      * @param groupName the name of the EffectGroup
      * @param stack     the stack where to open the effects lists
      */
-    public EffectGroupCell(final @Nullable FXOutputMonitor<?> monitor, final String groupName, final JFXDrawersStack stack) {
+    public EffectGroupCell(final @Nullable FXOutputMonitor<?, ?> monitor, final String groupName, final JFXDrawersStack stack) {
         this(groupName, stack);
         setupDisplayMonitor(monitor);
     }
@@ -117,7 +117,7 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
      *
      * @param monitor the graphical {@link OutputMonitor}
      */
-    private void setupDisplayMonitor(final @Nullable FXOutputMonitor<?> monitor) {
+    private void setupDisplayMonitor(final @Nullable FXOutputMonitor<?, ?> monitor) {
         setDisplayMonitor(monitor);
         getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> this.getDisplayMonitor().ifPresent(d -> {
             if (!oldValue.equals(newValue)) {

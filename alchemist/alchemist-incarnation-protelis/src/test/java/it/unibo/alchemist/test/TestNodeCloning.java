@@ -1,14 +1,24 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.test;
 
 import com.google.common.collect.ImmutableMap;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
+import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.loader.YamlLoader;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import java.util.Collections;
@@ -16,13 +26,11 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.junit.Before;
 import org.junit.Test;
+import org.kaikikm.threadresloader.ResourceLoader;
 
 import static org.junit.Assert.assertEquals;
 
-/***
- * TODO.
- */
-public class TestNodeCloning {
+public class TestNodeCloning<P extends Position<P>> {
 
     private static final Molecule SOURCEMOL = new SimpleMolecule("source");
     private static final Molecule ENABLEDMOL = new SimpleMolecule("enabled");
@@ -32,16 +40,16 @@ public class TestNodeCloning {
     private static final long ENABLE_CHECKS = ENABLE_STEP + 10;
     private static final double[] X = {-30.72191619873047, -34.62321853637695, -33.585994720458987, -26.3700008392334};
     private static final double[] Y = {-9.75, -6.039149761199951, -1.3899999856948853, -9.899999618530274};
-    private Environment<Object> env;
-    private Engine<Object> sim;
+    private Environment<Object, P> env;
+    private Simulation<Object, P> sim;
 
     /***
      * Prepare the simulation.
      */
     @Before
     public void setUp() {
-        final String pathYaml = "/gradient.yml";
-        final YamlLoader loader = new YamlLoader(TestNodeCloning.class.getResourceAsStream(pathYaml));
+        final String pathYaml = "gradient.yml";
+        final YamlLoader loader = new YamlLoader(ResourceLoader.getResourceAsStream(pathYaml));
         env = loader.getWith(Collections.emptyMap());
         sim = new Engine<>(env, SIMULATED_STEPS);
     }
@@ -75,11 +83,11 @@ public class TestNodeCloning {
         // 2(S) -- 1 -- 0 -- 3
         final Function<Integer, Node<Object>> nid = i -> env.getNodeByID(i);
         final BiFunction<Integer, Integer, Double> dist = (a, b) -> env.getDistanceBetweenNodes(nid.apply(a), nid.apply(b));
-        sim.addOutputMonitor(new OutputMonitor<Object>() {
+        sim.addOutputMonitor(new OutputMonitor<Object, P>() {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public void stepDone(final Environment<Object> environment, final Reaction<Object> reaction, final Time time, final long step) {
+            public void stepDone(final Environment<Object, P> env, final Reaction<Object> r, final Time time, final long step) {
                 final ImmutableMap<Node<Object>, Double> expectations = ImmutableMap.of(
                         nid.apply(2), 0d,
                         nid.apply(1), dist.apply(2, 1),
@@ -91,7 +99,7 @@ public class TestNodeCloning {
 //                    System.out.println(n + ": " + n.getConcentration(DATAMOL));
 //                }
                 if (step == ENABLE_STEP) {
-                    sim.schedule(() -> environment.getNodeByID(3).setConcentration(ENABLEDMOL, true));
+                    sim.schedule(() -> env.getNodeByID(3).setConcentration(ENABLEDMOL, true));
                 }
                 if (step > ENABLE_CHECKS) {
                     expectations.forEach((node, expected) -> assertEquals(expected, node.getConcentration(DATAMOL)));
@@ -99,12 +107,9 @@ public class TestNodeCloning {
             }
 
             @Override
-            public void initialized(final Environment<Object> environment) {
-            }
-
+            public void initialized(final Environment<Object, P> env) { }
             @Override
-            public void finished(final Environment<Object> environment, final Time time, final long step) {
-            }
+            public void finished(final Environment<Object, P> env, final Time time, final long step) { }
         });
         sim.play();
         sim.run();

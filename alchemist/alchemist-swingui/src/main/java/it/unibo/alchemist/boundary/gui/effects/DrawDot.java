@@ -1,15 +1,17 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.boundary.gui.CommandQueueBuilder;
+import com.google.common.collect.Queues;
 import it.unibo.alchemist.boundary.gui.effects.json.ColorSerializationAdapter;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
 import it.unibo.alchemist.boundary.interfaces.DrawCommand;
+import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
-import java.awt.Point;
+import it.unibo.alchemist.model.interfaces.Position2D;
+import java.awt.*;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InvalidClassException;
@@ -23,6 +25,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 import javafx.beans.property.DoubleProperty;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import org.danilopianini.util.Hashes;
 
@@ -51,7 +54,7 @@ public class DrawDot extends AbstractEffect {
      * Default {@code Color}.
      */
     private static final Color DEFAULT_COLOR = Color.BLACK;
-    private final transient ConcurrentLinkedQueue<Position> positions;
+    private final transient ConcurrentLinkedQueue<Position2D<?>> positions;
     private RangedDoubleProperty size = PropertyFactory.getPercentageRangedProperty(ResourceLoader.getStringRes("drawdot_size"), DEFAULT_SIZE);
     private Color color = DEFAULT_COLOR;
 
@@ -80,17 +83,14 @@ public class DrawDot extends AbstractEffect {
 
     @Override
     protected Queue<DrawCommand> consumeData() {
-        final CommandQueueBuilder builder = new CommandQueueBuilder();
         final double size = getSize();
-        positions.forEach(position -> builder.addCommand((graphic, wormhole) -> {
+        return positions.stream().<DrawCommand>map((Position2D<?> position) -> (GraphicsContext graphic, BidimensionalWormhole<?> wormhole) -> {
             final Point viewPoint = wormhole.getViewPoint(position);
             final double startX = viewPoint.getX() - size / 2;
             final double startY = viewPoint.getY() - size / 2;
             graphic.setFill(getColor());
             graphic.fillOval((int) startX, (int) startY, (int) size, (int) size);
-        }));
-
-        return builder.buildCommandQueue();
+        }).collect(Collectors.toCollection(Queues::newConcurrentLinkedQueue));
     }
 
     /**
@@ -100,7 +100,7 @@ public class DrawDot extends AbstractEffect {
      * @param <T>         {@inheritDoc}
      */
     @Override
-    protected <T> void getData(final Environment<T> environment) {
+    protected <T, P extends Position2D<? extends P>> void getData(final Environment<T, P> environment) {
         positions.clear();
         positions.addAll(environment
                 .getNodes()

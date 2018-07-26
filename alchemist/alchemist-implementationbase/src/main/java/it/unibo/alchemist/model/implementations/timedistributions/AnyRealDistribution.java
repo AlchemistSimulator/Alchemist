@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.implementations.timedistributions;
 
 import org.apache.commons.math3.distribution.RealDistribution;
@@ -84,7 +92,7 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
     }
 
     @Override
-    protected final void updateStatus(final Time curTime, final boolean executed, final double param, final Environment<T> env) {
+    protected final void updateStatus(final Time curTime, final boolean executed, final double param, final Environment<T, ?> env) {
         if (param != getRate()) {
             throw new IllegalStateException(getClass().getSimpleName() + " does not allow to dynamically tune the rate.");
         }

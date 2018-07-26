@@ -1,18 +1,23 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
  * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 
 package it.unibo.alchemist.boundary.gui.effects;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.ItemSelectable;
-import java.awt.Point;
+import it.unibo.alchemist.boundary.gui.tape.JTapeFeatureStack;
+import it.unibo.alchemist.boundary.gui.tape.JTapeFeatureStack.Type;
+import it.unibo.alchemist.boundary.gui.tape.JTapeGroup;
+import it.unibo.alchemist.boundary.gui.tape.JTapeMainFeature;
+import it.unibo.alchemist.boundary.gui.tape.JTapeSection;
+import it.unibo.alchemist.boundary.gui.tape.JTapeTab;
+import it.unibo.alchemist.boundary.interfaces.GraphicalOutputMonitor;
+import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -22,26 +27,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.swing.AbstractButton;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JToggleButton;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileFilter;
-
 import org.danilopianini.view.GUIUtilities;
-
-import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializationFactory;
-import it.unibo.alchemist.boundary.gui.tape.JTapeFeatureStack;
-import it.unibo.alchemist.boundary.gui.tape.JTapeFeatureStack.Type;
-import it.unibo.alchemist.boundary.gui.tape.JTapeGroup;
-import it.unibo.alchemist.boundary.gui.tape.JTapeMainFeature;
-import it.unibo.alchemist.boundary.gui.tape.JTapeSection;
-import it.unibo.alchemist.boundary.gui.tape.JTapeTab;
-import it.unibo.alchemist.boundary.interfaces.GraphicalOutputMonitor;
-import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 
 /**
  * Graphic component to handle effects.
@@ -65,7 +54,7 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
     private static final String ADD_EFFECT = LocalizedResourceBundle.getString("add_effect");
     private static final String REMOVE_EFFECT = LocalizedResourceBundle.getString("remove_effect");
 
-    private final GraphicalOutputMonitor<T> main;
+    private final GraphicalOutputMonitor<T, ?> main;
     private final List<ActionListener> listeners = new LinkedList<>();
     private final JTapeFeatureStack stackSec;
     private final JButton addEffectButton, remEffectButton, saveButton, loadButton, moveLeftButton, moveRightButton;
@@ -81,7 +70,7 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
      *            pass true if you want a button to be able to switch link
      *            visualization on or off
      */
-    public JEffectsTab(final GraphicalOutputMonitor<T> main, final boolean displayPaintLinks) {
+    public JEffectsTab(final GraphicalOutputMonitor<T, ?> main, final boolean displayPaintLinks) {
         super(EFFECT_TAB);
         this.main = main;
         stackSec = new JTapeFeatureStack(Type.HORIZONTAL_STACK);

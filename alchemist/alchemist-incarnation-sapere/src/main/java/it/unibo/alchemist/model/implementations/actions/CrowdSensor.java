@@ -1,11 +1,11 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
  * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
@@ -28,7 +28,7 @@ public class CrowdSensor extends SAPERELocalAgent {
     private static final long serialVersionUID = -647690735880121675L;
     private static final ILsaMolecule PERSON = new LsaMolecule("person");
     private static final ILsaMolecule CROWD = new LsaMolecule("crowd, Level");
-    private final Environment<List<ILsaMolecule>> env;
+    private final Environment<List<ILsaMolecule>, ?> env;
 
     /**
      * @param environment
@@ -36,7 +36,7 @@ public class CrowdSensor extends SAPERELocalAgent {
      * @param node
      *            the current node
      */
-    public CrowdSensor(final Environment<List<ILsaMolecule>> environment, final ILsaNode node) {
+    public CrowdSensor(final Environment<List<ILsaMolecule>, ?> environment, final ILsaNode node) {
         super(node);
         env = environment;
     }

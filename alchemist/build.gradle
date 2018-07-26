@@ -46,9 +46,9 @@ allprojects {
         all*.exclude group: 'org.eclipse.xtext', module: 'org.eclipse.xtext.dependencies'
         all {
             if(!it.name.contains('antlr')) {
-	            resolutionStrategy {
-	                forcedModules += "org.antlr:antlr-runtime:${antlrRuntimeVersion}"
-	            }
+                resolutionStrategy {
+                    forcedModules += "org.antlr:antlr-runtime:${antlrRuntimeVersion}"
+                }
             }
         }
     }
@@ -65,7 +65,7 @@ allprojects {
         compile "org.slf4j:slf4j-api:$slf4jVersion"
         compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
         compile "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
-
+        compile "org.danilopianini:thread-inheritable-resource-loader:${resLoaderVersion}"
         runtime "ch.qos.logback:logback-classic:$logbackVersion"
 
         testCompile "junit:junit:$junitVersion"
@@ -171,7 +171,7 @@ subprojects.each { it.tasks.remove(closeRepository) }
 /*
  * Running a task on the parent project implies running the same task first on any subproject
  */
-tasks.each { task -> 
+tasks.each { task ->
     subprojects.each { subproject ->
         def subtask = subproject.tasks.findByPath("${task.name}")
         if (subtask != null) {
@@ -183,7 +183,7 @@ tasks.each { task ->
 dependencies {
     compile subprojects
     compile (
-        "commons-cli:commons-cli:$cliVersion",
+            "commons-cli:commons-cli:$cliVersion",
     )
 }
 
@@ -207,8 +207,8 @@ allprojects {
 task fatJar(type: Jar, dependsOn: subprojects.compileJava) {
     manifest {
         attributes 'Implementation-Title': 'Alchemist',
-        'Implementation-Version': rootProject.version,
-        'Main-Class': 'it.unibo.alchemist.Alchemist'
+                'Implementation-Version': rootProject.version,
+                'Main-Class': 'it.unibo.alchemist.Alchemist'
     }
     baseName = "${rootProject.name}-redist"
     from(configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) }) {

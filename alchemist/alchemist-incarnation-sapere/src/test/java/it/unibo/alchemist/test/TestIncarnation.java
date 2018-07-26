@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.test;
 
 import static org.junit.Assert.assertEquals;
@@ -18,6 +26,7 @@ import it.unibo.alchemist.model.implementations.actions.LsaRandomNeighborAction;
 import it.unibo.alchemist.model.implementations.conditions.LsaNeighborhoodCondition;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.implementations.nodes.LsaNode;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.timedistributions.SAPEREExponentialTime;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
@@ -30,14 +39,14 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
  */
 public final class TestIncarnation {
 
-    private static final SAPEREIncarnation INCARNATION = new SAPEREIncarnation();
+    private final SAPEREIncarnation<Euclidean2DPosition> incarnation = new SAPEREIncarnation<>();
     private ILsaNode node;
-    private Environment<List<ILsaMolecule>> env;
+    private Environment<List<ILsaMolecule>, Euclidean2DPosition> env;
     private RandomGenerator rand;
     private TimeDistribution<List<ILsaMolecule>> time;
 
-    private static ILsaMolecule mkMol(final String s, final int args, final boolean ground) {
-        final ILsaMolecule res = INCARNATION.createMolecule(s);
+    private ILsaMolecule mkMol(final String s, final int args, final boolean ground) {
+        final ILsaMolecule res = incarnation.createMolecule(s);
         assertNotNull(res);
         assertEquals(ground, res.isIstance());
         assertEquals(args, res.argsNumber());
@@ -72,7 +81,7 @@ public final class TestIncarnation {
     }
 
     private void testTD(final String param, final double rate, final double occurrence) {
-        final TimeDistribution<List<ILsaMolecule>> t0 = INCARNATION.createTimeDistribution(rand, env, node, param);
+        final TimeDistribution<List<ILsaMolecule>> t0 = incarnation.createTimeDistribution(rand, env, node, param);
         assertNotNull(t0);
         if (!Double.isNaN(rate)) {
             assertEquals(rate, t0.getRate(), 0d);
@@ -101,7 +110,7 @@ public final class TestIncarnation {
     }
 
     private void testR(final String param, final int ncond, final int nact, final int nneighcond, final int nneighact, final int nallneighact) {
-        final Reaction<List<ILsaMolecule>> r = INCARNATION.createReaction(rand, env, node, time, param);
+        final Reaction<List<ILsaMolecule>> r = incarnation.createReaction(rand, env, node, time, param);
         assertNotNull(r);
         assertEquals(ncond, r.getConditions().size());
         assertEquals(nact, r.getActions().size());
@@ -112,7 +121,7 @@ public final class TestIncarnation {
 
     private void testNoR(final String param) {
         try {
-            INCARNATION.createReaction(rand, env, node, time, param);
+            incarnation.createReaction(rand, env, node, time, param);
             fail();
         } catch (IllegalArgumentException e) {
             assertFalse(e.getMessage().isEmpty());

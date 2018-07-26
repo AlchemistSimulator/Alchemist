@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package test.scafiprograms
 
 import it.unibo.alchemist.implementation.nodes.NodeManager
@@ -9,6 +17,7 @@ trait ScafiAlchemistSupport { self: AggregateProgram =>
 }
 
 class ScafiGradientProgram extends AggregateProgram {
+  override type MainResult = Double
   override def main(): Double = gradient(sense[Boolean]("source"))
 
   def gradient(source: Boolean): Double =
@@ -20,6 +29,7 @@ class ScafiGradientProgram extends AggregateProgram {
 }
 
 class ScafiEnvProgram extends AggregateProgram with ScafiAlchemistSupport {
+  override type MainResult = Any
   override def main(): Any = {
     env.put("number2", env.get[Int]("number")+100)
   }

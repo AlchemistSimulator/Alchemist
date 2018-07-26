@@ -8,6 +8,7 @@ import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import java.lang.ref.WeakReference;
@@ -29,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @param <T> The type which describes the {@link Concentration} of a molecule
  */
-public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
+public class PlayPauseMonitor<T, P extends Position<? extends P>> extends JFXButton implements OutputMonitor<T, P> {
     /**
      * Default serial version UID.
      */
@@ -42,7 +43,7 @@ public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
      * Default {@link Status#RUNNING running} icon.
      */
     private static final IconNode PAUSE_ICON = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.PAUSE);
-    private transient WeakReference<Simulation<T>> simulation;
+    private transient WeakReference<Simulation<T, P>> simulation;
     private Status currentStatus = Status.INIT;
     private volatile boolean isError;
 
@@ -58,7 +59,7 @@ public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
      *
      * @param simulation the simulation to control
      */
-    public PlayPauseMonitor(final @Nullable Simulation<T> simulation) {
+    public PlayPauseMonitor(final @Nullable Simulation<T, P> simulation) {
         setOnAction(e -> getSimulation().ifPresent(this::playPause));
         update(simulation);
     }
@@ -68,7 +69,7 @@ public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
      *
      * @param simulation the simulation to take status from
      */
-    private void playPause(final Simulation<T> simulation) {
+    private void playPause(final Simulation<T, P> simulation) {
         switch (simulation.getStatus()) {
             case INIT:
             case READY:
@@ -89,17 +90,17 @@ public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
 
 
     @Override
-    public void finished(final Environment<T> environment, final Time time, final long step) {
+    public void finished(final Environment<T, P> environment, final Time time, final long step) {
         update(environment.getSimulation());
     }
 
     @Override
-    public void initialized(final Environment<T> environment) {
+    public void initialized(final Environment<T, P> environment) {
         update(environment.getSimulation());
     }
 
     @Override
-    public void stepDone(final Environment<T> environment, final Reaction<T> reaction, final Time time, final long step) {
+    public void stepDone(final Environment<T, P> environment, final Reaction<T> reaction, final Time time, final long step) {
         update(environment.getSimulation());
     }
 
@@ -108,7 +109,7 @@ public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
      *
      * @return the current simulation
      */
-    public final Optional<Simulation<T>> getSimulation() {
+    public final Optional<Simulation<T, P>> getSimulation() {
         return Optional.ofNullable(simulation.get());
     }
 
@@ -117,7 +118,7 @@ public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
      *
      * @param simulation the simulation to set
      */
-    public final void setSimulation(final @Nullable Simulation<T> simulation) {
+    public final void setSimulation(final @Nullable Simulation<T, P> simulation) {
         this.simulation = new WeakReference<>(simulation);
     }
 
@@ -126,7 +127,7 @@ public class PlayPauseMonitor<T> extends JFXButton implements OutputMonitor<T> {
      *
      * @param simulation the simulation
      */
-    private void update(final @Nullable Simulation<T> simulation) {
+    private void update(final @Nullable Simulation<T, P> simulation) {
         setSimulation(simulation);
         if (!isError) {
             if (simulation != null && simulation.getStatus() != currentStatus) {

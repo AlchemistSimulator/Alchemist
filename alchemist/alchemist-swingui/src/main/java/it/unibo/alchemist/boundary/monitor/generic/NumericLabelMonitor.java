@@ -4,6 +4,7 @@ import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Position;
 import java.util.Objects;
 import java.util.Optional;
 import javafx.application.Platform;
@@ -18,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <T> The type which describes the {@link Concentration} of a molecule
  * @param <N> the numeric type
  */
-public abstract class NumericLabelMonitor<N, T> extends Label implements OutputMonitor<T> {
+public abstract class NumericLabelMonitor<N, T, P extends Position<? extends P>> extends Label implements OutputMonitor<T, P> {
     /**
      * Default serial version UID.
      */
@@ -51,7 +52,7 @@ public abstract class NumericLabelMonitor<N, T> extends Label implements OutputM
     }
 
     @Override
-    public void initialized(final Environment<T> environment) {
+    public void initialized(final Environment<T, P> environment) {
         update(init);
     }
 

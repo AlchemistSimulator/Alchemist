@@ -1,11 +1,12 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
  * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
+
 /**
  * 
  */
@@ -34,10 +35,10 @@ import java.util.Set;
  * 
  * @param <T>
  */
-public class MapBasedDependencyGraph<T> implements DependencyGraph<T> {
+public final class MapBasedDependencyGraph<T> implements DependencyGraph<T> {
 
     private static final long serialVersionUID = 4118923665670988775L;
-    private final Environment<T> env;
+    private final Environment<T, ?> env;
     private final Map<Reaction<T>, DependencyHandler<T>> hndlrs;
 
     /**
@@ -50,7 +51,7 @@ public class MapBasedDependencyGraph<T> implements DependencyGraph<T> {
      * @param handlers
      *            A map storing, for each reaction, its handler.
      */
-    public MapBasedDependencyGraph(final Environment<T> environment, final Map<Reaction<T>, DependencyHandler<T>> handlers) {
+    public MapBasedDependencyGraph(final Environment<T, ?> environment, final Map<Reaction<T>, DependencyHandler<T>> handlers) {
         this.hndlrs = handlers;
         this.env = environment;
     }
@@ -190,9 +191,9 @@ public class MapBasedDependencyGraph<T> implements DependencyGraph<T> {
 
     /**
      * This method checks if there may be a dependency considering the
-     * neighborhoods
+     * neighborhoods.
      */
-    private static <T> boolean influenceNeighborCheck(final Environment<T> env, final Reaction<T> source, final Reaction<T> target, final Context in, final Context out) {
+    private static <T> boolean influenceNeighborCheck(final Environment<T, ?> env, final Reaction<T> source, final Reaction<T> target, final Context in, final Context out) {
         final Neighborhood<T> sn = env.getNeighborhood(source.getNode());
         final boolean scn = in.equals(Context.NEIGHBORHOOD);
         // If source reads from neighborhood and target is within
@@ -210,7 +211,7 @@ public class MapBasedDependencyGraph<T> implements DependencyGraph<T> {
         return scn && tcn && commonNeighbor(env, sn, target.getNode());
     }
 
-    private static <T> boolean commonNeighbor(final Environment<T> env, final Neighborhood<T> sl, final Node<T> t) {
+    private static <T> boolean commonNeighbor(final Environment<T, ?> env, final Neighborhood<T> sl, final Node<T> t) {
         for (final Node<T> n : sl) {
             if (env.getNeighborhood(n).getNeighbors().contains(t)) {
                 return true;

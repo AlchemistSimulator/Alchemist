@@ -1,19 +1,17 @@
 package it.unibo.alchemist.boundary.wormhole.implementation;
 
-import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
-
-import java.awt.Point;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
-import java.awt.geom.Point2D;
-
-import org.jooq.lambda.tuple.Tuple2;
-import org.slf4j.Logger;
-
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.boundary.wormhole.interfaces.ViewType;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Position2D;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Dimension2D;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
+import org.slf4j.Logger;
+
+import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
 
 /**
  * Partial, abstract, implementation for the interface {@link BidimensionalWormhole}.
@@ -23,16 +21,16 @@ import it.unibo.alchemist.model.interfaces.Position;
  * <br/>
  * This abstract class is independent from the 2D graphical component wrapped.
  */
-public abstract class AbstractWormhole2D implements BidimensionalWormhole {
-    private final Environment<?> environment;
+public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> implements BidimensionalWormhole<P> {
+    private final Environment<?, P> environment;
     private final ViewType view;
-    private PointAdapter position;
+    private PointAdapter<P> position;
     private double zoom = 1d;
     private double hRate = 1d;
     private double vRate = 1d;
     private double rotation;
     private Mode mode = Mode.ISOMETRIC;
-    private PointAdapter effectCenter = from(0, 0);
+    private PointAdapter<P> effectCenter = from(0, 0);
 
     /**
      * Default constructor.
@@ -44,15 +42,15 @@ public abstract class AbstractWormhole2D implements BidimensionalWormhole {
      * @param view        the controlled view
      * @param position    the position
      */
-    public AbstractWormhole2D(final Environment<?> environment, final ViewType view, final PointAdapter position) {
+    public AbstractWormhole2D(final Environment<?, P> environment, final ViewType view, final PointAdapter<P> position) {
         this.environment = environment;
         this.view = view;
         this.position = position;
     }
 
     @Override
-    public Position getEnvPoint(final Point viewPoint) {
-        return envPointFromView(from(viewPoint)).toPosition();
+    public P getEnvPoint(final Point viewPoint) {
+        return envPointFromView(from(viewPoint)).toPosition().get();
     }
 
     @Override
@@ -74,8 +72,8 @@ public abstract class AbstractWormhole2D implements BidimensionalWormhole {
     }
 
     @Override
-    public Point getViewPoint(final Position envPoint) {
-        return viewPointFromEnv(from(envPoint)).toPoint();
+    public Point getViewPoint(final Position2D<?> envPoint) {
+        return viewPointFromEnv(PointAdapter.from(envPoint)).toPoint();
     }
 
     /**
@@ -84,8 +82,8 @@ public abstract class AbstractWormhole2D implements BidimensionalWormhole {
      * @param envPoint env space point
      * @return view space point
      */
-    protected PointAdapter viewPointFromEnv(final PointAdapter envPoint) {
-        final PointAdapter envp = envPoint.diff(effectCenter);
+    protected PointAdapter<P> viewPointFromEnv(final PointAdapter<P> envPoint) {
+        final PointAdapter<P> envp = envPoint.diff(effectCenter);
         final Point2D ep = envp.toPoint2D();
         final AffineTransform t = calculateTransform();
         t.transform(ep, ep);
@@ -103,7 +101,7 @@ public abstract class AbstractWormhole2D implements BidimensionalWormhole {
     }
 
     @Override
-    public abstract Tuple2<Double, Double> getViewSize();
+    public abstract Dimension2D getViewSize();
 
     @Override
     public double getZoom() {
@@ -122,13 +120,13 @@ public abstract class AbstractWormhole2D implements BidimensionalWormhole {
     public boolean isInsideView(final Point viewPoint) {
         final double x = viewPoint.getX();
         final double y = viewPoint.getY();
-        final Tuple2<Double, Double> vs = getViewSize();
-        return x >= 0 && x <= vs.v1() && y >= 0 && y <= vs.v2();
+        final Dimension2D vs = getViewSize();
+        return x >= 0 && x <= vs.getWidth() && y >= 0 && y <= vs.getHeight();
     }
 
     @Override
     public void rotateAroundPoint(final Point p, final double a) {
-        final PointAdapter orig = effectCenter;
+        final PointAdapter<P> orig = effectCenter;
         setViewPositionWithoutMoving(from(p));
         setRotation(a);
         setEnvPositionWithoutMoving(orig);
@@ -139,7 +137,7 @@ public abstract class AbstractWormhole2D implements BidimensionalWormhole {
      *
      * @param envPoint is a {@link Point2D} into the env-space
      */
-    private void setEnvPositionWithoutMoving(final PointAdapter envPoint) {
+    private void setEnvPositionWithoutMoving(final PointAdapter<P> envPoint) {
         setViewPositionWithoutMoving(viewPointFromEnv(envPoint));
     }
 
@@ -148,14 +146,14 @@ public abstract class AbstractWormhole2D implements BidimensionalWormhole {
      *
      * @param from is a {@link Point2D} into the view-space
      */
-    private void setViewPositionWithoutMoving(final PointAdapter from) {
-        final PointAdapter envDelta = envPointFromView(from).diff(envPointFromView(position));
+    private void setViewPositionWithoutMoving(final PointAdapter<P> from) {
+        final PointAdapter<P> envDelta = envPointFromView(from).diff(envPointFromView(position));
         position = from;
         effectCenter = effectCenter.sum(envDelta);
     }
 
     @Override
-    public void setEnvPosition(final Position envPoint) {
+    public void setEnvPosition(final Position2D<?> envPoint) {
         setViewPosition(getViewPoint(envPoint));
     }
 
@@ -164,7 +162,7 @@ public abstract class AbstractWormhole2D implements BidimensionalWormhole {
 
     @Override
     public void zoomOnPoint(final Point point, final double zoomRate) {
-        final PointAdapter orig = effectCenter;
+        final PointAdapter<P> orig = effectCenter;
         setViewPositionWithoutMoving(from(point));
         setZoom(zoomRate);
         setEnvPositionWithoutMoving(orig);
@@ -174,10 +172,10 @@ public abstract class AbstractWormhole2D implements BidimensionalWormhole {
     public void center() {
         final double[] off = getEnvironment().getOffset();
         final double[] size = getEnvironment().getSize();
-        final PointAdapter center = Double.isNaN(off[0]) || Double.isNaN(off[1]) || size[0] <= 0 || size[1] <= 0
+        final PointAdapter<P> center = Double.isNaN(off[0]) || Double.isNaN(off[1]) || size[0] <= 0 || size[1] <= 0
                 ? from(0, 0)
                 : from(off[0] + size[0] / 2, off[1] + size[1] / 2);
-        setEnvPosition(center.toPosition());
+        setEnvPosition(center.toPosition().get());
     }
 
     /**
@@ -185,7 +183,7 @@ public abstract class AbstractWormhole2D implements BidimensionalWormhole {
      *
      * @return the {@code Environment} model
      */
-    protected final Environment<?> getEnvironment() {
+    protected final Environment<?, P> getEnvironment() {
         return this.environment;
     }
 
@@ -203,7 +201,7 @@ public abstract class AbstractWormhole2D implements BidimensionalWormhole {
      *
      * @return the position
      */
-    protected final PointAdapter getPosition() {
+    protected final PointAdapter<P> getPosition() {
         return position;
     }
 
@@ -212,7 +210,7 @@ public abstract class AbstractWormhole2D implements BidimensionalWormhole {
      *
      * @param position the position to set
      */
-    protected final void setPosition(final PointAdapter position) {
+    protected final void setPosition(final PointAdapter<P> position) {
         this.position = position;
     }
 
@@ -222,7 +220,7 @@ public abstract class AbstractWormhole2D implements BidimensionalWormhole {
      * @param viewPoint view space point
      * @return env space point
      */
-    protected final PointAdapter envPointFromView(final PointAdapter viewPoint) {
+    protected final PointAdapter<P> envPointFromView(final PointAdapter<P> viewPoint) {
         final Point2D.Double vp = new Point2D.Double(viewPoint.toPoint().x, viewPoint.toPoint().y);
         final AffineTransform t = calculateTransform();
         try {
@@ -323,7 +321,7 @@ public abstract class AbstractWormhole2D implements BidimensionalWormhole {
         if (mode == Mode.ISOMETRIC) {
             return 1d;
         } else if (mode == Mode.ADAPT_TO_VIEW) {
-            return getViewSize().v1() / environment.getSize()[0];
+            return getViewSize().getWidth() / environment.getSize()[0];
         } else {
             return hRate;
         }
@@ -341,7 +339,7 @@ public abstract class AbstractWormhole2D implements BidimensionalWormhole {
         if (mode == Mode.ISOMETRIC) {
             return 1d;
         } else if (mode == Mode.ADAPT_TO_VIEW) {
-            return getViewSize().v2() / environment.getSize()[1];
+            return getViewSize().getHeight() / environment.getSize()[1];
         } else {
             return vRate;
         }

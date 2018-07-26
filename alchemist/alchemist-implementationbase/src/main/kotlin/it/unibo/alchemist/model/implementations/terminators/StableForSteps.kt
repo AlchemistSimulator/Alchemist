@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.implementations.terminators
 
 import com.google.common.collect.Maps
@@ -37,9 +45,9 @@ import java.util.function.Predicate
 class StableForSteps<T>(
     private val checkInterval: Long,
     private val equalIntervals: Long
-) : Predicate<Environment<T>> {
+) : Predicate<Environment<T, *>> {
     private var success: Long = 0
-    private var positions: Map<Node<T>, Position> = emptyMap()
+    private var positions: Map<Node<T>, Position<*>> = emptyMap()
     private var contents = makeTable<T>(0)
 
     init {
@@ -48,10 +56,10 @@ class StableForSteps<T>(
         }
     }
 
-    override fun test(environment: Environment<T>): Boolean {
-        if (environment.simulation.step % checkInterval == 0L) {
+    override fun test(environment: Environment<T, *>): Boolean {
+        if (environment.getSimulation().getStep() % checkInterval == 0L) {
             val newPositions = environment.associateBy({ it }, { environment.getPosition(it) })
-            val newContents = makeTable<T>(environment.nodesNumber)
+            val newContents = makeTable<T>(environment.getNodesNumber())
             environment.forEach { node ->
                 node.contents.forEach { molecule, concentration ->
                     newContents.put(node, molecule, concentration)
@@ -66,6 +74,6 @@ class StableForSteps<T>(
 
     companion object {
         private fun <T> makeTable(size: Int): Table<Node<T>, Molecule, T> =
-                Tables.newCustomTable(Maps.newLinkedHashMapWithExpectedSize(size), { Maps.newLinkedHashMapWithExpectedSize<Molecule, T>(size) })
+            Tables.newCustomTable(Maps.newLinkedHashMapWithExpectedSize(size), { Maps.newLinkedHashMapWithExpectedSize<Molecule, T>(size) })
     }
 }

@@ -1,11 +1,11 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
  * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.interfaces.Action;
@@ -18,8 +18,9 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  * Fake movement class, used only to trigger the neighborhood update.
  * 
  * @param <T>
+ * @param <P>
  */
-public class FakeMove<T> extends AbstractMoveNode<T> {
+public final class FakeMove<T, P extends Position<P>> extends AbstractMoveNode<T, P> {
 
     private static final long serialVersionUID = 1774989279335172458L;
 
@@ -29,7 +30,7 @@ public class FakeMove<T> extends AbstractMoveNode<T> {
      * @param node
      *            the node
      */
-    public FakeMove(final Environment<T> environment, final Node<T> node) {
+    public FakeMove(final Environment<T, P> environment, final Node<T> node) {
         super(environment, node, true);
     }
 
@@ -39,7 +40,7 @@ public class FakeMove<T> extends AbstractMoveNode<T> {
     }
 
     @Override
-    public Position getNextPosition() {
+    public P getNextPosition() {
         return getEnvironment().getPosition(getNode());
     }
 

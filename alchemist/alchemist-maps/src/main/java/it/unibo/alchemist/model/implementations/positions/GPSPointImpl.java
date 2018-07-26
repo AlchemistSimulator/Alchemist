@@ -1,11 +1,11 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
  * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.implementations.positions;
 
 import java.util.List;
@@ -20,10 +20,10 @@ import it.unibo.alchemist.model.interfaces.Time;
 
 /**
  */
-public class GPSPointImpl implements GPSPoint {
+public final class GPSPointImpl implements GPSPoint {
 
     private static final long serialVersionUID = -6060550940453129358L;
-    private final GeoPosition repr;
+    private final LatLongPosition repr;
     private final Time t;
 
     /**
@@ -44,34 +44,29 @@ public class GPSPointImpl implements GPSPoint {
      * @param time
      *            time
      */
-    public GPSPointImpl(final GeoPosition latlong, final Time time) {
+    public GPSPointImpl(final LatLongPosition latlong, final Time time) {
         this.repr = latlong;
         this.t = time;
     }
 
     @Override
+    public GeoPosition add(final GeoPosition other) {
+        return repr.add(other);
+    }
+
+    @Override
+    public GPSPointImpl addTime(final Time t) {
+        return new GPSPointImpl(repr, this.t.sum(t));
+    }
+
+    @Override
+    public List<LatLongPosition> boundingBox(final double range) {
+        return repr.boundingBox(range);
+    }
+
+    @Override
     public int compareTo(final GPSPoint p) {
         return (int) Math.signum(t.toDouble() - p.getTime().toDouble());
-    }
-
-    @Override
-    public double getLatitude() {
-        return repr.getLatitude();
-    }
-
-    @Override
-    public double getLongitude() {
-        return repr.getLongitude();
-    }
-
-    @Override
-    public Time getTime() {
-        return t;
-    }
-
-    @Override
-    public String toString() {
-        return "[" + repr.getLatitude() + "," + repr.getLongitude() + "]@" + t;
     }
 
     @Override
@@ -82,16 +77,6 @@ public class GPSPointImpl implements GPSPoint {
             return pt.getTime() == t && repr.equals(pt.repr);
         }
         return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return Hashes.hash32(repr, t);
-    }
-
-    @Override
-    public List<Position> buildBoundingBox(final double range) {
-        return repr.buildBoundingBox(range);
     }
 
     @Override
@@ -110,27 +95,55 @@ public class GPSPointImpl implements GPSPoint {
     }
 
     @Override
-    public double getDistanceTo(final Position p) {
+    public double getDistanceTo(final Position<?> p) {
+        if (p instanceof GPSPointImpl) {
+            return repr.getDistanceTo(((GPSPointImpl) p).repr);
+        }
         return repr.getDistanceTo(p);
     }
 
     @Override
-    public Position add(final Position other) {
-        return repr.add(other);
+    public double getLatitude() {
+        return repr.getLatitude();
     }
 
     @Override
-    public Position subtract(final Position other) {
+    public double getLongitude() {
+        return repr.getLongitude();
+    }
+
+    @Override
+    public Time getTime() {
+        return t;
+    }
+
+    @Override
+    public double getX() {
+        return repr.getX();
+    }
+
+    @Override
+    public double getY() {
+        return repr.getY();
+    }
+
+    @Override
+    public int hashCode() {
+        return Hashes.hash32(repr, t);
+    }
+
+    @Override
+    public GeoPosition subtract(final GeoPosition other) {
         return repr.subtract(other);
     }
 
     @Override
-    public GPSPoint subtractTime(final Time t) {
+    public GPSPointImpl subtractTime(final Time t) {
         return new GPSPointImpl(repr, this.t.subtract(t));
     }
 
     @Override
-    public GPSPoint addTime(final Time t) {
-        return new GPSPointImpl(repr, this.t.sum(t));
+    public String toString() {
+        return "[" + repr.getLatitude() + "," + repr.getLongitude() + "]@" + t;
     }
 }

@@ -1,11 +1,11 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
  * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.implementations.environments;
 
 import java.io.IOException;
@@ -14,21 +14,22 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.math3.util.Pair;
+
 import com.github.davidmoten.rtree.RTree;
 import com.github.davidmoten.rtree.geometry.Geometries;
 import com.github.davidmoten.rtree.geometry.Rectangle;
 import com.github.davidmoten.rtree.internal.EntryDefault;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.utils.RectObstacle2D;
 import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
-import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * @param <T>
  */
-public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements Environment2DWithObstacles<RectObstacle2D, T> {
+public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements Environment2DWithObstacles<RectObstacle2D, T, Euclidean2DPosition> {
 
     private static final double TOLERANCE_MULTIPLIER = 0.01;
     /**
@@ -72,23 +73,23 @@ public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements E
     }
 
     @Override
-    public boolean intersectsObstacle(final Position p1, final Position p2) {
+    public boolean intersectsObstacle(final Euclidean2DPosition p1, final Euclidean2DPosition p2) {
         return intersectsObstacle(p1.getCoordinate(0), p1.getCoordinate(1), p2.getCoordinate(0), p2.getCoordinate(1));
     }
 
     @Override
-    protected boolean isAllowed(final Position p) {
+    protected boolean isAllowed(final Euclidean2DPosition p) {
         return rtree.search(Geometries.point(p.getCoordinate(0), p.getCoordinate(1))).isEmpty().toBlocking().single();
     }
 
     @Override
     @SuppressFBWarnings("FE_FLOATING_POINT_EQUALITY")
-    public final Position next(final double ox, final double oy, final double nx, final double ny) {
+    public final Euclidean2DPosition next(final double ox, final double oy, final double nx, final double ny) {
         final List<RectObstacle2D> l = query(ox, oy, nx, ny, TOLERANCE_MULTIPLIER);
         if (l.isEmpty()) {
-            return new Continuous2DEuclidean(nx, ny);
+            return new Euclidean2DPosition(nx, ny);
         }
-        Position shortest = null;
+        Pair<Double, Double> shortest = null;
         double fx = nx;
         double fy = ny;
         double fxCache = Double.NaN;
@@ -102,8 +103,8 @@ public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements E
                  * If one of the dimensions is limited, such limit must be
                  * retained!
                  */
-                final double sfx = shortest.getCoordinate(0);
-                final double sfy = shortest.getCoordinate(1);
+                final double sfx = shortest.getFirst();
+                final double sfy = shortest.getSecond();
                 if (sfx != fx || fy != sfy) {
                     /*
                      * This obstacle has contributed already
@@ -115,7 +116,7 @@ public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements E
                 }
             }
         }
-        return shortest;
+        return makePosition(shortest.getFirst(), shortest.getSecond());
     }
 
     private List<RectObstacle2D> query(final double ox, final double oy, final double nx, final double ny, final double tolerance) {

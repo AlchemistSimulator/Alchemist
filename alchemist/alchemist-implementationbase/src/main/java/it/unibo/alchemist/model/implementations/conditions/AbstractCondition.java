@@ -1,11 +1,12 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
  * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
+
 /**
  * 
  */
@@ -39,11 +40,23 @@ public abstract class AbstractCondition<T> implements Condition<T> {
         this.n = Objects.requireNonNull(node);
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * How to override: if you intend your condition to be potentially changed by
+     * any change in the context, return null.
+     */
     @Override
     public ListSet<? extends Molecule> getInfluencingMolecules() {
         return influencing;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * Override if your {@link Condition} can return a more specific type of node.
+     * The typical way is to cast the call to super.getNode().
+     */
     @Override
     public Node<T> getNode() {
         return n;
@@ -56,6 +69,11 @@ public abstract class AbstractCondition<T> implements Condition<T> {
         influencing.add(m);
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * How to override: create a new action of your concrete subtype.
+     */
     @Override
     public Condition<T> cloneCondition(final Node<T> n, final Reaction<T> r) {
         throw new UnsupportedOperationException(getClass().getSimpleName() + " has no support for cloning.");

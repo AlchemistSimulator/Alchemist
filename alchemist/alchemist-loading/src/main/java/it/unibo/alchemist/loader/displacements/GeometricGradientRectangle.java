@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.loader.displacements;
 
 import org.apache.commons.math3.distribution.ExponentialDistribution;
@@ -10,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.Position;
 /**
  * Distributes nodes geometrically within a rectangular shape.
  */
-public class GeometricGradientRectangle extends Rectangle {
+public class GeometricGradientRectangle<P extends Position<? extends P>> extends Rectangle<P> {
 
     private final ExponentialDistribution exp;
     private final double bound, size;
@@ -48,7 +56,7 @@ public class GeometricGradientRectangle extends Rectangle {
      * @param increasing
      *            true if device density should increase with the desired axis
      */
-    public GeometricGradientRectangle(final Environment<?> env,
+    public GeometricGradientRectangle(final Environment<?, P> env,
             final RandomGenerator rng,
             final int nodes,
             final double x, final double y,
@@ -86,7 +94,7 @@ public class GeometricGradientRectangle extends Rectangle {
      * @param increasing
      *            true if device density should increase with the desired axis
      */
-    public GeometricGradientRectangle(final Environment<?> env,
+    public GeometricGradientRectangle(final Environment<?, P> env,
             final RandomGenerator rng,
             final int nodes,
             final double x, final double y,
@@ -96,7 +104,7 @@ public class GeometricGradientRectangle extends Rectangle {
         this(env, rng, nodes, x, y, sizex, sizey, lambda, true, Integer.MIN_VALUE, horizontal, increasing);
     }
 
-    private GeometricGradientRectangle(final Environment<?> env,
+    private GeometricGradientRectangle(final Environment<?, P> env,
             final RandomGenerator rng,
             final int nodes,
             final double x, final double y,
@@ -125,7 +133,7 @@ public class GeometricGradientRectangle extends Rectangle {
     }
 
     @Override
-    protected Position indexToPosition(final int i) {
+    protected P indexToPosition(final int i) {
         double exponential = increasing ? size - nextExpRandom() : nextExpRandom();
         if (!continuous) {
             final double groupSize = size / steps;

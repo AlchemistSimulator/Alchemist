@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.boundary.monitors;
 
 import it.unibo.alchemist.model.interfaces.Incarnation;
@@ -40,7 +48,7 @@ public class MoleculeInjectorGUI<T> extends JPanel {
     private static final long serialVersionUID = -375286112397911525L;
 
     private static final Logger L = LoggerFactory.getLogger(MoleculeInjectorGUI.class);
-    private static final List<Incarnation<?>> INCARNATIONS = new LinkedList<>();
+    private static final List<Incarnation<?, ?>> INCARNATIONS = new LinkedList<>();
 
     static {
         final Reflections reflections = new Reflections("it.unibo.alchemist");
@@ -53,12 +61,12 @@ public class MoleculeInjectorGUI<T> extends JPanel {
         }
     }
 
-    private final transient CollectionWithCurrentElement<Incarnation<T>> incarnation = makeIncarnation();
+    private final transient CollectionWithCurrentElement<Incarnation<T, ?>> incarnation = makeIncarnation();
     private final Set<Node<T>> affectedNodes = new HashSet<>();
     private final List<JLabel> nodesLabels;
     private final JTextArea concentration;
     private final JTextArea molecule;
-    private final JComboBox<Incarnation<?>> selectedIncr;
+    private final JComboBox<Incarnation<?, ?>> selectedIncr;
     private final JButton apply = new JButton("Apply");
 
     /**
@@ -80,10 +88,10 @@ public class MoleculeInjectorGUI<T> extends JPanel {
     }
 
     @SuppressWarnings("unchecked")
-    private CollectionWithCurrentElement<Incarnation<T>> makeIncarnation() {
+    private CollectionWithCurrentElement<Incarnation<T, ?>> makeIncarnation() {
         return new ImmutableCollectionWithCurrentElement<>(
-                INCARNATIONS.stream().map(i -> (Incarnation<T>) i).collect(Collectors.toList()),
-                (Incarnation<T>) INCARNATIONS.get(0));
+                INCARNATIONS.stream().map(i -> (Incarnation<T, ?>) i).collect(Collectors.toList()),
+                (Incarnation<T, ?>) INCARNATIONS.get(0));
     }
 
     private void buildView() {
@@ -103,7 +111,7 @@ public class MoleculeInjectorGUI<T> extends JPanel {
         jsp.setPreferredSize(new Dimension(jsp.getPreferredSize().width * 2, jsp.getPreferredSize().height));
         jsp.setAutoscrolls(true);
         add(jsp);
-        for (final Incarnation<?> inc : MoleculeInjectorGUI.INCARNATIONS) {
+        for (final Incarnation<?, ?> inc : MoleculeInjectorGUI.INCARNATIONS) {
             selectedIncr.addItem(inc);
         }
         add(selectedIncr);
@@ -141,7 +149,7 @@ public class MoleculeInjectorGUI<T> extends JPanel {
         apply.addActionListener((event) -> {
             final String mol = molecule.getText();
             final String conc = concentration.getText();
-            final Incarnation<T> currentInc = incarnation.getCurrent();
+            final Incarnation<T, ?> currentInc = incarnation.getCurrent();
             for (final Node<T> n : affectedNodes) {
                 try {
                     n.setConcentration(currentInc.createMolecule(mol), currentInc.createConcentration(conc));
@@ -150,6 +158,6 @@ public class MoleculeInjectorGUI<T> extends JPanel {
                 }
             }
         });
-        selectedIncr.addActionListener((event) -> incarnation.setCurrent((Incarnation<T>) (selectedIncr.getSelectedItem())));
+        selectedIncr.addActionListener((event) -> incarnation.setCurrent((Incarnation<T, ?>) (selectedIncr.getSelectedItem())));
     }
 }

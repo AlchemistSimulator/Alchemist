@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.boundary.projectview.controller;
 
 import java.awt.Desktop;
@@ -8,6 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,11 +28,10 @@ import java.util.ResourceBundle;
 
 import org.apache.commons.io.FilenameUtils;
 import org.controlsfx.control.ToggleSwitch;
-import org.danilopianini.urlclassloader.URLClassLoaderUtil;
+import org.kaikikm.threadresloader.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import it.unibo.alchemist.boundary.projectview.model.Batch;
@@ -31,6 +39,8 @@ import it.unibo.alchemist.boundary.projectview.model.Output;
 import it.unibo.alchemist.boundary.projectview.model.Project;
 import it.unibo.alchemist.boundary.util.DoubleSpinnerValueFactory;
 import it.unibo.alchemist.boundary.util.ProjectIOUtils;
+import it.unibo.alchemist.boundary.util.URLManager;
+import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.YamlLoader;
 import javafx.beans.property.BooleanProperty;
@@ -479,10 +489,15 @@ public class CenterLayoutController implements Initializable {
                     RESOURCES.getString("file_no_selected_content"));
         } else {
             if (!this.data.contains(this.ctrlLeft.getSelectedFilePath())) {
-                URLClassLoaderUtil.addFirst(this.ctrlLeft.getSelectedFilePath());
-                this.data.add(new File(this.ctrlLeft.getPathFolder()).toURI()
-                        .relativize(new File(this.ctrlLeft.getSelectedFilePath()).toURI()).getPath());
-                this.listClass.setItems(data);
+                try {
+                    URLManager.getInstance().addURL(new File(this.ctrlLeft.getSelectedFilePath()).toURI().toURL());
+                    this.data.add(new File(this.ctrlLeft.getPathFolder()).toURI()
+                            .relativize(new File(this.ctrlLeft.getSelectedFilePath()).toURI()).getPath());
+                    this.listClass.setItems(data);
+                } catch (MalformedURLException e) {
+                    setAlert(RESOURCES.getString("wrong_selection"), RESOURCES.getString("wrong_selection_header"),
+                            RESOURCES.getString("wrong_selection_content"));
+                }
             } else {
                 setAlert(RESOURCES.getString("file_name_exists"), RESOURCES.getString("file_name_class_header"),
                         RESOURCES.getString("file_name_class_content"));
@@ -499,11 +514,17 @@ public class CenterLayoutController implements Initializable {
             setAlert(RESOURCES.getString("library_no_selected"), RESOURCES.getString("library_no_selected_header"),
                     RESOURCES.getString("library_no_selected_content"));
         } else {
-            final String nameFile = this.listClass.getSelectionModel().getSelectedItem();
-            URLClassLoaderUtil.remove(this.ctrlLeft.getPathFolder() + File.separator + nameFile.replace("/", File.separator));
-            this.listClass.getItems().remove(nameFile);
-            if (this.listClass.getItems().size() == 0) {
-                this.removeClass.setDisable(true);
+            try {
+                final String nameFile = this.listClass.getSelectionModel().getSelectedItem();
+                URLManager.getInstance().removeURL(new File(this.ctrlLeft.getPathFolder() + File.separator + nameFile.replace("/", File.separator)).toURI().toURL());
+
+                this.listClass.getItems().remove(nameFile);
+                if (this.listClass.getItems().size() == 0) {
+                    this.removeClass.setDisable(true);
+                }
+            } catch (MalformedURLException e) {
+                setAlert(RESOURCES.getString("library_no_selected"), RESOURCES.getString("library_no_selected_header"),
+                        RESOURCES.getString("library_no_selected_content"));
             }
         }
     }
@@ -517,11 +538,13 @@ public class CenterLayoutController implements Initializable {
         this.project = ProjectIOUtils.loadFrom(this.ctrlLeft.getPathFolder());
         final Thread thread = new Thread(() -> {
             try {
+                ResourceLoader.setDefault();
                 project.runAlchemistSimulation(true);
             } catch (FileNotFoundException e) {
                 L.error("Error loading simulation file.", e);
             }
         }, "Batch");
+        URLManager.getInstance().setupThreadClassLoader(thread);
         thread.setDaemon(true);
         thread.start();
     }
@@ -721,8 +744,13 @@ public class CenterLayoutController implements Initializable {
             if (!new File(this.ctrlLeft.getPathFolder() + File.separator + lib.replace("/", File.separator)).exists()) {
                 listLibError.add(new File(lib).getName());
             } else {
-                URLClassLoaderUtil.addFirst(lib);
-                this.data.add(lib);
+                try {
+                    URLManager.getInstance().addURL(new File(this.ctrlLeft.getPathFolder() + File.separator + lib.replace("/", File.separator)).toURI().toURL());
+                    this.data.add(lib);
+                } catch (MalformedURLException e) {
+                    // TODO cambia sistema eccezione
+                    listLibError.add(new File(lib).getName());
+                }
             }
         }
         this.listClass.setItems(this.data);
@@ -961,7 +989,7 @@ public class CenterLayoutController implements Initializable {
     private void newFile(final String extension) {
         try {
             final FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(ProjectGUI.class.getResource("view/FileNameDialog.fxml"));
+            loader.setLocation(ResourceLoader.getResource(ProjectGUI.RESOURCE_LOCATION + "/view/FileNameDialog.fxml"));
             final AnchorPane pane = loader.load();
 
             final Stage stage = new Stage();

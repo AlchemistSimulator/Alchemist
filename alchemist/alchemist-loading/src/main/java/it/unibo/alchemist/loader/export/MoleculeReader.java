@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.loader.export;
 
 import java.util.Arrays;
@@ -27,7 +35,7 @@ public class MoleculeReader<T> implements Extractor {
 
     private final List<UnivariateStatistic> aggregators;
     private final List<String> columns;
-    private final Incarnation<T> incarnation;
+    private final Incarnation<T, ?> incarnation;
     private final String property;
     private final Molecule mol;
     private final FilteringPolicy filter;
@@ -48,7 +56,7 @@ public class MoleculeReader<T> implements Extractor {
      */
     public MoleculeReader(final String molecule,
                           final String property,
-                          final Incarnation<T> incarnation,
+                          final Incarnation<T, ?> incarnation,
                           final FilteringPolicy filter,
                           final List<String> aggregators) {
         this.incarnation = Objects.requireNonNull(incarnation);
@@ -72,9 +80,9 @@ public class MoleculeReader<T> implements Extractor {
     }
 
     @Override
-    public double[] extractData(final Environment<?> env, final Reaction<?> r, final Time time, final long step) {
+    public double[] extractData(final Environment<?, ?> env, final Reaction<?> r, final Time time, final long step) {
         @SuppressWarnings("unchecked")
-        final DoubleStream values = ((Environment<T>) env).getNodes().stream()
+        final DoubleStream values = ((Environment<T, ?>) env).getNodes().stream()
                 .mapToDouble(node -> incarnation.getProperty(node, mol, property));
         if (aggregators.isEmpty()) {
             return values.toArray();

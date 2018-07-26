@@ -1,9 +1,5 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.boundary.interfaces.DrawCommand;
-import it.unibo.alchemist.model.interfaces.Concentration;
-import it.unibo.alchemist.model.interfaces.Environment;
-
 import java.io.Serializable;
 import java.util.Queue;
 
@@ -11,31 +7,7 @@ import java.util.Queue;
  * Models a group of effects. Each effect has a different priority of
  * visualization.
  */
-public interface EffectGroup extends Serializable, Queue<EffectFX> {
-
-    /**
-     * Computes all the commands for all the visible effects in this group.
-     *
-     * @param environment the environment to gather data from
-     * @param <T>         the {@link Concentration} type
-     * @return the queue of commands that should be run to draw the effects of the group
-     * @see EffectFX#computeDrawCommands(Environment)
-     */
-    <T> Queue<DrawCommand> computeDrawCommands(Environment<T> environment);
-
-    /**
-     * Gets the name of the group.
-     *
-     * @return the name of the group
-     */
-    String getName();
-
-    /**
-     * Sets the name of the group.
-     *
-     * @param name the name of the group
-     */
-    void setName(String name);
+public interface EffectGroup extends Serializable, Queue<EffectFX>, EffectFX {
 
     /**
      * Checks if an effect is present in the group.
@@ -44,20 +16,6 @@ public interface EffectGroup extends Serializable, Queue<EffectFX> {
      * @return the position, or -1 if not present
      */
     int search(EffectFX effect);
-
-    /**
-     * Returns the visibility of the group.
-     *
-     * @return the visibility
-     */
-    boolean isVisible();
-
-    /**
-     * Sets the visibility of the group.
-     *
-     * @param visibility the visibility
-     */
-    void setVisibility(boolean visibility);
 
     /**
      * Returns the visibility of the specified effect.

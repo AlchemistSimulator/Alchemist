@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.boundary.util;
 
 import java.util.function.DoubleBinaryOperator;
@@ -16,7 +24,7 @@ public final class DoubleSpinnerValueFactory extends SpinnerValueFactory<Double>
 
     /**
      * Constructor.
-     * 
+     *
      * @param min
      *            the min value
      * @param max
@@ -28,8 +36,8 @@ public final class DoubleSpinnerValueFactory extends SpinnerValueFactory<Double>
      * @param tolerance
      *            the tolerance value
      */
-    public DoubleSpinnerValueFactory(final double min, final double max, final double def, 
-            final double step, final double tolerance) {
+    public DoubleSpinnerValueFactory(final double min, final double max, final double def,
+                                     final double step, final double tolerance) {
         if (min > max) {
             throw new IllegalArgumentException("The min value must be smaller than max value.");
         }
@@ -67,7 +75,7 @@ public final class DoubleSpinnerValueFactory extends SpinnerValueFactory<Double>
         final double closest = closestOnScaleDiv == closestOnScaleMul
                 ? closestOnScaleDiv
                 : Double.toString(closestOnScaleDiv).length() < Double.toString(closestOnScaleMul).length()
-                        ? closestOnScaleDiv : closestOnScaleMul;
+                ? closestOnScaleDiv : closestOnScaleMul;
         setValue(Math.min(Math.max(Math.abs(newVal - closest) < tolerance ? closest : newVal, min), max));
     }
 }

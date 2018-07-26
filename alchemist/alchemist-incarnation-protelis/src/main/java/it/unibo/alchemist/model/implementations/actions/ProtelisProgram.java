@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.implementations.actions;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -36,7 +44,7 @@ public class ProtelisProgram extends RunProtelisProgram {
      * @throws ClassNotFoundException
      *             if required classes can not be found
      */
-    public ProtelisProgram(final Environment<Object> env, final ProtelisNode n, final Reaction<Object> r, final RandomGenerator rand,
+    public ProtelisProgram(final Environment<Object, ?> env, final ProtelisNode n, final Reaction<Object> r, final RandomGenerator rand,
             final String prog) throws SecurityException, ClassNotFoundException {
         super(env, n, r, rand, prog, r.getRate());
     }

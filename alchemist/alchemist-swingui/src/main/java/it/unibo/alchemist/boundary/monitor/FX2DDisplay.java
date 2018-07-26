@@ -7,15 +7,15 @@ import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position;
-import java.awt.Point;
+import it.unibo.alchemist.model.interfaces.Position2D;
+import java.awt.*;
 
 /**
  * Simple implementation of a monitor that graphically represents a 2D space and simulation.
  *
  * @param <T> The type which describes the {@link Concentration} of a molecule
  */
-public class FX2DDisplay<T> extends AbstractFXDisplay<T> implements FX2DOutputMonitor<T> {
+public class FX2DDisplay<T, P extends Position2D<? extends P>> extends AbstractFXDisplay<T, P> implements FX2DOutputMonitor<T, P> {
     /**
      * Default serial version UID.
      */
@@ -66,9 +66,9 @@ public class FX2DDisplay<T> extends AbstractFXDisplay<T> implements FX2DOutputMo
     }
 
     @Override
-    public void zoomTo(final Position center, final double zoomLevel) {
+    public void zoomTo(final P center, final double zoomLevel) {
         assert center.getDimensions() == 2;
-        final BidimensionalWormhole wh = getWormhole();
+        final BidimensionalWormhole<P> wh = getWormhole();
         if (wh != null) {
             wh.zoomOnPoint(wh.getViewPoint(center), zoomLevel);
         }
@@ -91,7 +91,7 @@ public class FX2DDisplay<T> extends AbstractFXDisplay<T> implements FX2DOutputMo
     }
 
     @Override
-    protected void init(final Environment<T> environment) {
+    protected void init(final Environment<T, P> environment) {
         super.init(environment);
         if (getWormhole() != null) {
             zoomManager = new ExponentialZoomManager(getWormhole().getZoom(), ExponentialZoomManager.DEF_BASE);

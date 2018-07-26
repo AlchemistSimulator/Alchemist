@@ -1,13 +1,24 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.boundary.projectview;
 
-import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.io.IOException;
+
+import org.kaikikm.threadresloader.ResourceLoader;
+
 import it.unibo.alchemist.boundary.projectview.controller.CenterLayoutController;
 import it.unibo.alchemist.boundary.projectview.controller.LeftLayoutController;
 import it.unibo.alchemist.boundary.projectview.controller.TopLayoutController;
 import it.unibo.alchemist.boundary.util.FXUtil;
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.io.IOException;
+import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -23,6 +34,10 @@ import static it.unibo.alchemist.boundary.gui.utility.SVGImageUtils.DEFAULT_ALCH
  */
 public class ProjectGUI extends Application {
 
+    /**
+     * 
+     */
+    public static final String RESOURCE_LOCATION = ProjectGUI.class.getPackage().getName().replace('.', '/');
     private BorderPane root;
     private CenterLayoutController controllerCenter;
     private LeftLayoutController controllerLeft;
@@ -76,7 +91,7 @@ public class ProjectGUI extends Application {
 
     private void initLayout(final String layoutName) throws IOException {
         final FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(ProjectGUI.class.getResource("view/" + layoutName + ".fxml"));
+        loader.setLocation(ResourceLoader.getResource(ProjectGUI.RESOURCE_LOCATION + "/view/" + layoutName + ".fxml"));
         if (layoutName.equals("RootLayout")) {
             this.root = loader.load();
             final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

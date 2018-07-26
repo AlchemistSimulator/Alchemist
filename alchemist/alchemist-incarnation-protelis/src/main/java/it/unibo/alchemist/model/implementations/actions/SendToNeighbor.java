@@ -1,11 +1,11 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
  * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.implementations.actions;
 
 import java.util.List;
@@ -22,7 +22,7 @@ import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 public class SendToNeighbor extends AbstractLocalAction<Object> {
 
     private static final long serialVersionUID = -8826563176323247613L;
-    private final RunProtelisProgram prog;
+    private final RunProtelisProgram<?> prog;
     private final Reaction<Object> reaction;
 
     /**
@@ -33,7 +33,7 @@ public class SendToNeighbor extends AbstractLocalAction<Object> {
      * @param program
      *            the reference {@link RunProtelisProgram}
      */
-    public SendToNeighbor(final ProtelisNode node, final Reaction<Object> reaction, final RunProtelisProgram program) {
+    public SendToNeighbor(final ProtelisNode node, final Reaction<Object> reaction, final RunProtelisProgram<?> program) {
         super(node);
         this.reaction = Objects.requireNonNull(reaction);
         prog = Objects.requireNonNull(program);
@@ -41,11 +41,11 @@ public class SendToNeighbor extends AbstractLocalAction<Object> {
 
     @Override
     public SendToNeighbor cloneAction(final Node<Object> n, final Reaction<Object> r) {
-        final List<RunProtelisProgram> possibleRefs = n.getReactions().stream()
+        final List<RunProtelisProgram<?>> possibleRefs = n.getReactions().stream()
                 .map(Reaction::getActions)
                 .flatMap(List::stream)
                 .filter(a -> a instanceof RunProtelisProgram)
-                .map(a -> (RunProtelisProgram) a)
+                .map(a -> (RunProtelisProgram<?>) a)
                 .collect(Collectors.toList());
         if (possibleRefs.size() == 1) {
             return new SendToNeighbor((ProtelisNode) n, reaction, possibleRefs.get(0));
@@ -69,7 +69,7 @@ public class SendToNeighbor extends AbstractLocalAction<Object> {
     /**
      * @return the {@link RunProtelisProgram} whose data will be sent
      */
-    public RunProtelisProgram getProtelisProgram() {
+    public RunProtelisProgram<?> getProtelisProgram() {
         return prog;
     }
 

@@ -1,75 +1,88 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.boundary.wormhole.implementation;
 
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
+import java.util.Optional;
 
 import org.danilopianini.lang.HashUtils;
 
-import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Position2D;
 
 /**
  * Adapts various representations of bidimensional positions.
  */
-public final class PointAdapter implements Serializable {
+public final class PointAdapter<P extends Position2D<? extends P>> implements Serializable {
 
     private static final long serialVersionUID = 4144646922749713533L;
+    private transient int hash;
+    private transient P pos;
     private final double x, y;
-    private Position pos;
-    private int hash;
 
     private PointAdapter(final double x, final double y) {
         this.x = x;
         this.y = y;
     }
 
-    private PointAdapter(final Position pos) {
-        assert pos.getDimensions() == 2;
+    private PointAdapter(final P pos) {
         this.pos = pos;
-        x = pos.getCoordinate(0);
-        y = pos.getCoordinate(1);
-    }
-
-    private static int approx(final double d) {
-        return (int) Math.round(d);
+        x = getX();
+        y = getY();
     }
 
     /**
-     * Builds a {@link PointAdapter} from coordinates.
-     * 
-     * @param x
-     *            the x coordinate
-     * @param y
-     *            the y coordinate
-     * @return a {@link PointAdapter}
+     * @param op
+     *            the {@link PointAdapter} to sum
+     * @return a new {@link PointAdapter} obtained by subtracting the passed
+     *         argument to this {@link PointAdapter}
      */
-    public static PointAdapter from(final double x, final double y) {
-        return new PointAdapter(x, y);
+    public PointAdapter<P> diff(final PointAdapter<?> op) {
+        return new PointAdapter<>(x - op.x, y - op.y);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return obj instanceof PointAdapter && ((PointAdapter<?>) obj).x == x && ((PointAdapter<?>) obj).y == y;
     }
 
     /**
-     * Builds a {@link PointAdapter}.
-     * 
-     * @param p
-     *            the {@link Position}
-     * 
-     * @return a {@link PointAdapter}
+     * @return x coordinate
      */
-    public static PointAdapter from(final Position p) {
-        return new PointAdapter(p);
+    public double getX() {
+        return x;
     }
 
     /**
-     * Builds a {@link PointAdapter}.
-     * 
-     * @param p
-     *            the {@link Point2D}
-     * 
-     * @return a {@link PointAdapter}
+     * @return y coordinate
      */
-    public static PointAdapter from(final Point2D p) {
-        return new PointAdapter(p.getX(), p.getY());
+    public double getY() {
+        return y;
+    }
+
+    @Override
+    public int hashCode() {
+        if (hash == 0) {
+            hash = HashUtils.hash32(x, y);
+        }
+        return hash;
+    }
+
+    /**
+     * @param op
+     *            the {@link PointAdapter} to sum
+     * @return a new {@link PointAdapter} obtained by summing the passed
+     *         argument to this {@link PointAdapter}
+     */
+    public PointAdapter<P> sum(final PointAdapter<?> op) {
+        return new PointAdapter<>(x + op.x, y + op.y);
     }
 
     /**
@@ -87,65 +100,57 @@ public final class PointAdapter implements Serializable {
     }
 
     /**
-     * @return the {@link Position} view of this {@link PointAdapter}
+     * @return the {@link Position2D} view of this {@link PointAdapter}
      */
-    public Position toPosition() {
-        if (pos == null) {
-            pos = new Continuous2DEuclidean(x, y);
-        }
-        return pos;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        return obj instanceof PointAdapter && ((PointAdapter) obj).x == x && ((PointAdapter) obj).y == y;
-    }
-
-    @Override
-    public int hashCode() {
-        if (hash == 0) {
-            hash = HashUtils.hash32(x, y);
-        }
-        return hash;
-    }
-
-    /**
-     * @return x coordinate
-     */
-    public double getX() {
-        return x;
-    }
-
-    /**
-     * @return y coordinate
-     */
-    public double getY() {
-        return y;
-    }
-
-    /**
-     * @param op
-     *            the {@link PointAdapter} to sum
-     * @return a new {@link PointAdapter} obtained by subtracting the passed
-     *         argument to this {@link PointAdapter}
-     */
-    public PointAdapter diff(final PointAdapter op) {
-        return new PointAdapter(x - op.x, y - op.y);
-    }
-
-    /**
-     * @param op
-     *            the {@link PointAdapter} to sum
-     * @return a new {@link PointAdapter} obtained by summing the passed
-     *         argument to this {@link PointAdapter}
-     */
-    public PointAdapter sum(final PointAdapter op) {
-        return new PointAdapter(x + op.x, y + op.y);
+    public Optional<P> toPosition() {
+        return Optional.ofNullable(pos);
     }
 
     @Override
     public String toString() {
         return "[" + x + ", " + y + "]";
+    }
+
+    private static int approx(final double d) {
+        return (int) Math.round(d);
+    }
+
+    /**
+     * Builds a {@link PointAdapter} from coordinates.
+     * 
+     * @param x
+     *            the x coordinate
+     * @param y
+     *            the y coordinate
+     * @return a {@link PointAdapter}
+     */
+    public static <P extends Position2D<? extends P>> PointAdapter<P> from(final double x, final double y) {
+        return new PointAdapter<>(x, y);
+    }
+
+    /**
+     * Builds a {@link PointAdapter}.
+     * 
+     * @param p
+     *            the {@link Position2D}
+     * 
+     * @return a {@link PointAdapter}
+     */
+    @SuppressWarnings("unchecked")
+    public static <P extends Position2D<? extends P>> PointAdapter<P> from(final Position2D<?> p) {
+        return new PointAdapter<>((P) p);
+    }
+
+    /**
+     * Builds a {@link PointAdapter}.
+     * 
+     * @param p
+     *            the {@link Point2D}
+     * 
+     * @return a {@link PointAdapter}
+     */
+    public static <P extends Position2D<? extends P>> PointAdapter<P> from(final Point2D p) {
+        return new PointAdapter<>(p.getX(), p.getY());
     }
 
 }

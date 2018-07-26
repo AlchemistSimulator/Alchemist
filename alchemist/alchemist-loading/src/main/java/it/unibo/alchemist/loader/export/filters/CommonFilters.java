@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
+ * 
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.loader.export.filters;
 
 import java.util.Locale;
@@ -14,19 +22,19 @@ public enum CommonFilters {
     /**
      * Remove all {@link Double#NaN} values.
      */
-    FILTERNAN(d -> Double.isNaN(d) ? DoubleStream.empty() : DoubleStream.of(d)),
+    FILTERNAN((FilteringPolicy & java.io.Serializable) d -> Double.isNaN(d) ? DoubleStream.empty() : DoubleStream.of(d)),
     /**
      * Remove all values that match {@link Double#isInfinite(double)}  ({@link Double#NaN} don't get filtered).
      */
-    FILTERINFINITY(d -> Double.isInfinite(d) ? DoubleStream.empty() : DoubleStream.of(d)),
+    FILTERINFINITY((FilteringPolicy & java.io.Serializable) d -> Double.isInfinite(d) ? DoubleStream.empty() : DoubleStream.of(d)),
     /**
      * Keeps only finite values ({@link Double#isFinite(double)} returns true).
      */
-    ONLYFINITE(d -> Double.isFinite(d) ? DoubleStream.of(d) : DoubleStream.empty()),
+    ONLYFINITE((FilteringPolicy & java.io.Serializable) d -> Double.isFinite(d) ? DoubleStream.of(d) : DoubleStream.empty()),
     /**
      * Keeps all values.
      */
-    NOFILTER(DoubleStream::of);
+    NOFILTER((FilteringPolicy & java.io.Serializable) DoubleStream::of);
 
     private final FilteringPolicy filter;
 

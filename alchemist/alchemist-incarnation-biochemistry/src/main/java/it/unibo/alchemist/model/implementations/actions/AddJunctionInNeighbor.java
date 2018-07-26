@@ -1,11 +1,11 @@
-/*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+/*******************************************************************************
+ * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
+ * project's alchemist/build.gradle file.
  * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception, as described in the file
+ * LICENSE in the Alchemist distribution's top directory.
+ ******************************************************************************/
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.interfaces.Context;
@@ -16,6 +16,7 @@ import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
@@ -25,12 +26,11 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  * This is a part of the junction creation process. <br/>
  * See {@link AddJunctionInCell} for the other part of the process
  */
-public class AddJunctionInNeighbor extends AbstractNeighborAction<Double> {
+public final class AddJunctionInNeighbor<P extends Position<? extends P>> extends AbstractNeighborAction<Double> {
 
     private static final long serialVersionUID = 8670229402770243539L;
 
     private final Junction jun;
-    private final Environment<Double> env;
     /**
      * 
      * @param junction the junction
@@ -38,20 +38,20 @@ public class AddJunctionInNeighbor extends AbstractNeighborAction<Double> {
      * @param e the environment
      * @param rg the random generator
      */
-    public AddJunctionInNeighbor(final Environment<Double> e, final Node<Double> n, final Junction junction, final RandomGenerator rg) {
+    public AddJunctionInNeighbor(final Environment<Double, P> e, final CellNode<P> n, final Junction junction, final RandomGenerator rg) {
         super(n, e, rg);
         if (n instanceof CellNode) {
             addModifiedMolecule(junction);
             jun = junction; 
-            env = e;
         } else {
             throw new UnsupportedOperationException("This Action can be set only in CellNodes");
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public AddJunctionInNeighbor cloneAction(final Node<Double> n, final Reaction<Double> r) {
-        return new AddJunctionInNeighbor(env, n, jun, getRandomGenerator());
+    public AddJunctionInNeighbor<P> cloneAction(final Node<Double> n, final Reaction<Double> r) {
+        return new AddJunctionInNeighbor<P>((Environment<Double, P>) getEnvironment(), (CellNode<P>) n, jun, getRandomGenerator());
     }
 
     /**
@@ -71,10 +71,11 @@ public class AddJunctionInNeighbor extends AbstractNeighborAction<Double> {
     /**
      * Create the junction that links the target node and the node when this action is executed. 
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void execute(final Node<Double> targetNode) {
         if (targetNode instanceof CellNode) {
-            ((CellNode) targetNode).addJunction(jun, getNode());
+            ((CellNode<P>) targetNode).addJunction(jun, getNode());
         } else {
             throw new UnsupportedOperationException("Can't add Junction in a node that it's not a CellNode");
         }
@@ -85,9 +86,10 @@ public class AddJunctionInNeighbor extends AbstractNeighborAction<Double> {
         return "add junction " + jun.toString() + " in neighbor";
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public CellNode getNode() {
-        return (CellNode) super.getNode();
+    public CellNode<P> getNode() {
+        return (CellNode<P>) super.getNode();
     }
 
 }

@@ -119,7 +119,6 @@
 	<rule ref="rulesets/java/migrating.xml/JUnit4TestShouldUseTestAnnotation" />
 	<rule ref="rulesets/java/junit.xml/JUnitSpelling" />
 	<rule ref="rulesets/java/junit.xml/JUnitStaticSuite" />
-	<rule ref="rulesets/java/junit.xml/JUnitTestsShouldIncludeAssert" />
 	<rule ref="rulesets/java/migrating.xml/JUnitUseExpected" />
 	<rule ref="rulesets/jsp/basic.xml/JspEncoding" />
 	<rule ref="rulesets/java/basic.xml/JumbledIncrementer" />

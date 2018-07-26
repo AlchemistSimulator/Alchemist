@@ -15,8 +15,11 @@ import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * @param <T>
+ *            concentration type
+ * @param <P>
+ *            position type
  */
-public final class DummyRule<T> extends NoLinks<T, Position<?>> {
+public final class DummyRule<T, P extends Position<P>> extends NoLinks<T, P> {
 
     private static final long serialVersionUID = 1L;
 

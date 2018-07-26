@@ -626,7 +626,7 @@ public final class YamlLoader implements Loader {
         return cast(factory, clazz.getRawType(), target, message);
     }
 
-    private static <T> BuilderConfiguration<T> emptyConfig(final Factory factory, final Supplier<T> supplier) {
+    private static <X> BuilderConfiguration<X> emptyConfig(final Factory factory, final Supplier<X> supplier) {
         return new BuilderConfiguration<>(emptyMap(), emptyMap(), factory, m -> supplier.get());
     }
 

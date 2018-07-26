@@ -8,6 +8,9 @@
  ******************************************************************************/
 package it.unibo.alchemist.model.implementations.actions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 
  */
@@ -15,7 +18,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.nodes.LsaNode;
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
@@ -23,13 +25,10 @@ import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 /**
  */
-public class LsaMASSAgent<P extends Position<? extends P>> extends SAPEREMoveNodeAgent<P> {
+public class LsaMASSAgent<P extends Position<P>> extends SAPEREMoveNodeAgent<P> {
 
     private static final double LIMIT = 0.4;
     private static final double RANGE = 0.5;

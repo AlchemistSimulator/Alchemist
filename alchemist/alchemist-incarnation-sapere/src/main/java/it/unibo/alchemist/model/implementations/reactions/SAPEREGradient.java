@@ -50,7 +50,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
  * the NBR construct used in Proto.
  * 
  */
-public final class SAPEREGradient extends AbstractReaction<List<ILsaMolecule>> {
+public final class SAPEREGradient<P extends Position<P>> extends AbstractReaction<List<ILsaMolecule>> {
 
     private static final List<ILsaMolecule> EMPTY_LIST = Collections.unmodifiableList(new ArrayList<ILsaMolecule>(0));
     private static final long serialVersionUID = 8362443887879500016L;
@@ -59,15 +59,15 @@ public final class SAPEREGradient extends AbstractReaction<List<ILsaMolecule>> {
     private final int argPosition;
     private boolean canRun = true;
     private List<? extends ILsaMolecule> contextCache;
-    private final Environment<List<ILsaMolecule>, ?> environment;
+    private final Environment<List<ILsaMolecule>, P> environment;
     private final List<Action<List<ILsaMolecule>>> fakeacts = new ArrayList<>(1);
     private final List<Condition<List<ILsaMolecule>>> fakeconds = new ArrayList<>(2);
     private TIntObjectMap<List<? extends ILsaMolecule>> gradCache = new TIntObjectHashMap<>();
     private final MapEnvironment<List<ILsaMolecule>> mapenvironment;
-    private Position<?> mypos;
+    private P mypos;
 
     private final ILsaNode node;
-    private TIntObjectMap<Position<?>> positionCache = new TIntObjectHashMap<>();
+    private TIntObjectMap<P> positionCache = new TIntObjectHashMap<>();
     private final TIntDoubleMap routecache = new TIntDoubleHashMap(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1, Double.NaN);
     private final ILsaMolecule source, gradient, gradientExpr, context;
     private List<? extends ILsaMolecule> sourceCache;
@@ -108,7 +108,7 @@ public final class SAPEREGradient extends AbstractReaction<List<ILsaMolecule>> {
      *            Markovian Rate
      */
     @SuppressWarnings("unchecked")
-    public SAPEREGradient(final Environment<List<ILsaMolecule>, ?> env, final ILsaNode n, final ILsaMolecule sourceTemplate, final ILsaMolecule gradientTemplate, final int valuePosition, final String expression, final ILsaMolecule contextTemplate, final double gradThreshold, final TimeDistribution<List<ILsaMolecule>> td) {
+    public SAPEREGradient(final Environment<List<ILsaMolecule>, P> env, final ILsaNode n, final ILsaMolecule sourceTemplate, final ILsaMolecule gradientTemplate, final int valuePosition, final String expression, final ILsaMolecule contextTemplate, final double gradThreshold, final TimeDistribution<List<ILsaMolecule>> td) {
         super(n, td);
         gradient = Objects.requireNonNull(gradientTemplate);
         source = Objects.requireNonNull(sourceTemplate);
@@ -173,7 +173,7 @@ public final class SAPEREGradient extends AbstractReaction<List<ILsaMolecule>> {
      * @param td
      *            Markovian Rate
      */
-    public SAPEREGradient(final Environment<List<ILsaMolecule>, ?> env,
+    public SAPEREGradient(final Environment<List<ILsaMolecule>, P> env,
             final ILsaNode n,
             final TimeDistribution<List<ILsaMolecule>> td,
             final String sourceTemplate,
@@ -342,13 +342,13 @@ public final class SAPEREGradient extends AbstractReaction<List<ILsaMolecule>> {
          */
         final List<? extends ILsaMolecule> sourceCacheTemp = node.getConcentration(source);
         final List<? extends ILsaMolecule> contextCacheTemp = context == null ? EMPTY_LIST : node.getConcentration(context);
-        final TIntObjectMap<Position<?>> positionCacheTemp = new TIntObjectHashMap<>(positionCache.size());
+        final TIntObjectMap<P> positionCacheTemp = new TIntObjectHashMap<>(positionCache.size());
         final TIntObjectMap<List<? extends ILsaMolecule>> gradCacheTemp = new TIntObjectHashMap<>(gradCache.size());
-        final Position<?> curPos = environment.getPosition(node);
+        final P curPos = environment.getPosition(node);
         final boolean positionChanged = !curPos.equals(mypos);
         boolean neighPositionChanged = false;
         for (final Node<List<ILsaMolecule>> n : environment.getNeighborhood(node)) {
-            final Position<?> p = environment.getPosition(n);
+            final P p = environment.getPosition(n);
             final int nid = n.getId();
             positionCacheTemp.put(nid, p);
             gradCacheTemp.put(n.getId(), n.getConcentration(gradient));
@@ -420,7 +420,7 @@ public final class SAPEREGradient extends AbstractReaction<List<ILsaMolecule>> {
         @Override
         public boolean execute(final int a, final List<? extends ILsaMolecule> mgnList) {
             if (!mgnList.isEmpty()) {
-                final Position<?> aPos = positionCache.get(a);
+                final P aPos = positionCache.get(a);
                 final double distNode = aPos.getDistanceTo(mypos);
                 matches.put(LsaMolecule.SYN_O, new NumTreeNode(a));
                 matches.put(LsaMolecule.SYN_D, new NumTreeNode(distNode));

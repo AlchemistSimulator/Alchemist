@@ -9,7 +9,10 @@
 package it.unibo.alchemist.model.interfaces;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * An interface to represent a generic coordinates system.
@@ -19,7 +22,7 @@ import java.util.List;
  *            progressively refine the {@link Position} by inheritance, allowing
  *            for specifying incrementally fine grained model elements.
  */
-public interface Position<P extends Position<? extends P>> extends Serializable {
+public interface Position<P extends Position<?>> extends Serializable {
 
     /**
      * Given a range, produces N coordinates, representing the N opposite
@@ -66,7 +69,7 @@ public interface Position<P extends Position<? extends P>> extends Serializable 
      *            the position you want to know the distance to
      * @return the distance between this and p
      */
-    double getDistanceTo(Position<?> p);
+    double getDistanceTo(P p);
 
     /**
      * Considers both positions as vectors, and sums them.
@@ -83,5 +86,55 @@ public interface Position<P extends Position<? extends P>> extends Serializable 
      * @return a new {@link Position} that is this position minus the one passed.
      */
     P subtract(P other);
+
+    /**
+     * Tries to compute distance between arbitrary positions, looking for a common
+     * supertype.
+     * 
+     * @param p1
+     *            first position
+     * @param p2
+     *            second position
+     * @param <P>
+     *            position type
+     * @return the distance between the positions, if computable
+     */
+    @SuppressWarnings("unchecked")
+    static <P extends Position<? extends P>> double distanceTo(P p1, P p2) {
+        final Class<?> p1Class = Objects.requireNonNull(p1).getClass();
+        final Class<?> p2Class = Objects.requireNonNull(p2).getClass();
+        @SuppressWarnings("rawtypes")
+        final Position p1Unsafe = (Position) p1;
+        @SuppressWarnings("rawtypes")
+        final Position p2Unsafe = (Position) p2;
+        if (p1Class == p2Class || p1Class.isAssignableFrom(p2Class)) {
+            return p1Unsafe.getDistanceTo(p2Unsafe);
+        }
+        if (p2Class.isAssignableFrom(p1Class)) {
+            return p2Unsafe.getDistanceTo(p1Unsafe);
+        }
+        // Check arguments of distanceTo
+        Method p1distTo = Arrays.stream(p1Class.getDeclaredMethods())
+            .filter(Method::isAccessible)
+            .filter(it -> it.getReturnType() == double.class)
+            .filter(it -> it.getParameterCount() == 1)
+            .filter(it -> it.getName().equals("getDistanceTo"))
+            .findAny()
+            .orElseThrow(() -> new IllegalArgumentException(p1 + " has no valid getDistanceTo() method"));
+        if (p1distTo.getParameterTypes()[0].isAssignableFrom(p2Class)) {
+            return p1Unsafe.getDistanceTo(p2Unsafe);
+        }
+        Method p2distTo = Arrays.stream(p2Class.getDeclaredMethods())
+                .filter(Method::isAccessible)
+                .filter(it -> it.getReturnType() == double.class)
+                .filter(it -> it.getParameterCount() == 1)
+                .filter(it -> it.getName().equals("getDistanceTo"))
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException(p1 + " has no valid getDistanceTo() method"));
+        if (p2distTo.getParameterTypes()[0].isAssignableFrom(p1Class)) {
+            return p2Unsafe.getDistanceTo(p1Unsafe);
+        }
+        throw new IllegalArgumentException("computing distance between " + p1 + " and " + p2 + " is impossible");
+    }
 
 }

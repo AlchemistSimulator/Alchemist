@@ -15,7 +15,6 @@ import org.danilopianini.util.Hashes;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.GPSPoint;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
-import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Time;
 
 /**
@@ -95,7 +94,7 @@ public final class GPSPointImpl implements GPSPoint {
     }
 
     @Override
-    public double getDistanceTo(final Position<?> p) {
+    public double getDistanceTo(final GeoPosition p) {
         if (p instanceof GPSPointImpl) {
             return repr.getDistanceTo(((GPSPointImpl) p).repr);
         }

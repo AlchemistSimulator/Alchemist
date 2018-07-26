@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.implementations.neighborhoods
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Neighborhood
 import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.Position
 import org.danilopianini.util.ArrayListSet
 import org.danilopianini.util.Hashes
 import org.danilopianini.util.ImmutableListSet
@@ -36,9 +37,9 @@ class SimpleNeighborhood<T> private constructor(
 
     override fun contains(n: Node<T>?) = neighbors.contains(n)
 
-    override fun getBetweenRange(min: Double, max: Double): ListSet<Node<T>> =
+    override fun getBetweenRange(min: Double, max: Double): ListSet<out Node<T>> =
         environment.getPosition(center).let { centerPos -> ListBackedSet(neighbors.filter {
-            centerPos.getDistanceTo(environment.getPosition(it)) in min..max })
+            Position.distanceTo(centerPos, environment.getPosition(it)) in min..max })
         }
 
     override fun getCenter() = center

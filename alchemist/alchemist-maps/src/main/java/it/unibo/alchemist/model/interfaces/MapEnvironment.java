@@ -10,6 +10,7 @@ package it.unibo.alchemist.model.interfaces;
 
 /**
  * @param <T>
+ *            concentration type
  */
 public interface MapEnvironment<T> extends BenchmarkableEnvironment<T, GeoPosition> {
 
@@ -103,9 +104,4 @@ public interface MapEnvironment<T> extends BenchmarkableEnvironment<T, GeoPositi
      */
     Route<GeoPosition> computeRoute(GeoPosition p1, GeoPosition p2, Vehicle vehicle);
 
-    @Override
-    GeoPosition getPosition(Node<T> node);
-
-    @Override
-    GeoPosition makePosition(Number... coordinates);
 }

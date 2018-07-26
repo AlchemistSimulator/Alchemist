@@ -8,13 +8,12 @@
  ******************************************************************************/
 package it.unibo.alchemist.utils;
 
-import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
-import it.unibo.alchemist.model.interfaces.GeoPosition;
-import it.unibo.alchemist.model.interfaces.Position;
-
 import com.javadocmd.simplelatlng.LatLng;
 import com.javadocmd.simplelatlng.LatLngTool;
 import com.javadocmd.simplelatlng.util.LengthUnit;
+
+import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
 
 /**
  */
@@ -92,10 +91,10 @@ public final class MapUtils {
     }
 
     /**
-     * Converts {@link Position} to {@link LatLng}.
+     * Converts {@link GeoPosition} to {@link LatLng}.
      * 
      * @param p
-     *            the {@link Position}
+     *            the {@link GeoPosition}
      * @return a {@link LatLng}
      */
     public static LatLng toLatLng(final GeoPosition p) {

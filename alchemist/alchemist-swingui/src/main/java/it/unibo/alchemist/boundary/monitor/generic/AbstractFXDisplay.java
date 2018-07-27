@@ -8,12 +8,11 @@ import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
-import java.awt.*;
+import java.awt.Point;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -121,48 +120,62 @@ public abstract class AbstractFXDisplay<T, P extends Position2D<? extends P>> ex
      * Should be overridden to implement mouse interaction with the GUI.
      */
     protected void initMouseListener() {
-        // TODO
-        setOnMouseClicked(event -> {
-            switch (event.getButton()) {
-                case PRIMARY:
-                    // TODO Handle primary button
-                    break;
-                case SECONDARY:
-                    // TODO Handle secondary button
-                    break;
-                default:
-                    // Do nothing
-                    break;
-            }
-        });
-
         setOnDragDetected(event -> {
             switch (getViewStatus()) {
                 case PAN:
-                    startEnvironmentDragNDrop(event);
-                    break;
-                case MOVING:
-                    startNodeDragNDrop(event);
-                    break;
-                // TODO
+                    onPanInitiated(event);
+                break;
                 default:
                     break;
             }
         });
-
-        setOnDragEntered(event -> {
+        setOnDragOver(event -> {
             switch (getViewStatus()) {
                 case PAN:
-                    onEnvironmentDragEntered(event);
+                    onPanning(event);
                     break;
-                case MOVING:
-                    onNodeDragEntered(event);
-                    break;
-                // TODO
                 default:
                     break;
             }
         });
+    }
+
+    /**
+     * Called when a pan is initiated.
+     * @param event the caller
+     */
+    protected void onPanInitiated(MouseEvent event) {
+        final Optional<P> eventPosition = getEventPosition(event);
+        eventPosition.ifPresent(startPosition -> {
+            final Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
+            final ClipboardContent content = new ClipboardContent();
+            content.put(POSITION_DATA_FORMAT, startPosition);
+            dragboard.setContent(content);
+        });
+        event.consume();
+    }
+
+    /**
+     * Called while a pan is in progress and the view is moving.
+     * @param event the caller
+     */
+    protected void onPanning(DragEvent event) {
+        final Optional<P> eventPosition = getEventPosition(event);
+        eventPosition.ifPresent(currentPosition -> {
+            final BidimensionalWormhole<P> wh = getWormhole();
+            final Dragboard dragboard = event.getDragboard();
+            final Point previousPoint = wh.getViewPoint((P) dragboard.getContent(POSITION_DATA_FORMAT));
+            final Point currentPoint = wh.getViewPoint(currentPosition);
+            final Point nextPoint = new Point(
+                    (int)(wh.getViewPosition().getX() + (currentPoint.getX() - previousPoint.getX())),
+                    (int)(wh.getViewPosition().getY() + (currentPoint.getY() - previousPoint.getY())));
+            final ClipboardContent content = new ClipboardContent();
+            content.put(POSITION_DATA_FORMAT, currentPosition);
+            dragboard.setContent(content);
+            wh.setViewPosition(nextPoint);
+            repaint();
+        });
+        event.consume();
     }
 
     @Override
@@ -213,55 +226,6 @@ public abstract class AbstractFXDisplay<T, P extends Position2D<? extends P>> ex
         } else {
             return Optional.empty();
         }
-    }
-
-    /**
-     * The method is meant to handle what should the monitor do when a drag'n'drop of a {@link Node} starts.
-     *
-     * @param event the event
-     */
-    protected void startNodeDragNDrop(final MouseEvent event) {
-        // TODO
-    }
-
-    /**
-     * The method is meant to handle what should the monitor do when a pan gesture in the {@link Environment} starts.
-     *
-     * @param event the event
-     */
-    protected void startEnvironmentDragNDrop(final MouseEvent event) {
-        final Optional<P> position = getEventPosition(event);
-        position.ifPresent(p -> {
-            final Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
-            final ClipboardContent content = new ClipboardContent();
-            content.put(POSITION_DATA_FORMAT, p);
-            dragboard.setContent(content);
-        });
-
-        event.consume();
-    }
-
-    /**
-     * The method is meant to handle what should the monitor do when the mouse enters in a valid position during a pan gesture in the {@link Environment}.
-     *
-     * @param event the event
-     */
-    protected void onEnvironmentDragEntered(final DragEvent event) {
-//        final BidimensionalWormhole wormhole = getWormhole();
-//        if (wormhole != null) {
-//            final Position previousMousePos = (Position) event.getDragboard().getContent(POSITION_DATA_FORMAT);
-//            repaint();
-//        }
-        // TODO
-    }
-
-    /**
-     * The method is meant to handle what should the monitor do when the mouse enters in a valid position during a drag'n'drop gesture of a {@link Node}.
-     *
-     * @param event the event
-     */
-    protected void onNodeDragEntered(final DragEvent event) {
-        // TODO
     }
 
     @Override

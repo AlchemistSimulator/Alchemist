@@ -28,22 +28,28 @@ deploy:
     skip_cleanup: true
     project: "./alchemist/build/docs/javadoc/"
     domain: alchemist-unstable-doc.surge.sh
-    on: develop
+    on:
+      branch: develop
+      repo: AlchemistSimulator/Alchemist
   - provider: surge
     skip_cleanup: true
     project: "./alchemist/report"
     domain: alchemist-unstable-reports.surge.sh
-    on: develop
+    on:
+      branch: develop
+      repo: AlchemistSimulator/Alchemist
   - provider: surge
     skip_cleanup: true
     project: "./alchemist/build/docs/javadoc/"
     domain: alchemist-doc.surge.sh
     on:
       tags: true
+      repo: AlchemistSimulator/Alchemist
   - provider: surge
     skip_cleanup: true
     project: "./alchemist/report"
     domain: alchemist-reports.surge.sh
     on:
       tags: true
+      repo: AlchemistSimulator/Alchemist
 after_deploy: echo Deployment phase concluded.

@@ -8,7 +8,7 @@ import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position2D;
-import java.awt.*;
+import java.awt.Point;
 
 /**
  * Simple implementation of a monitor that graphically represents a 2D space and simulation.

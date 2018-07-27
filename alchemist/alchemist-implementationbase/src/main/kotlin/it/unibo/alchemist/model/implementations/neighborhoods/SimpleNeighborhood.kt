@@ -86,7 +86,7 @@ class SimpleNeighborhood<T> private constructor(
             object : Iterator<Node<T>> {
                 val base = neighbors.iterator()
                 var lookahead = updateLookAhead()
-                fun updateLookAhead() : Node<T>? =
+                fun updateLookAhead(): Node<T>? =
                     if (base.hasNext()) {
                         val maybeNext = base.next()
                         if (maybeNext == node) {

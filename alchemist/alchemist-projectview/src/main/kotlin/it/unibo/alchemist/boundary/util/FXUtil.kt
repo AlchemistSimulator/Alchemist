@@ -33,7 +33,7 @@ class FXUtil {
                 } }
                 .map { it.message }
                 .filter { it != null }
-                .joinToString ("\n")
+                .joinToString("\n")
             val strWriter = StringWriter()
             ex.printStackTrace(PrintWriter(strWriter))
             val exceptionTest = strWriter.toString()

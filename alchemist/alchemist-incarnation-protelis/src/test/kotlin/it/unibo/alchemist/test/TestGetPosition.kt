@@ -26,7 +26,7 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.protelis.lang.datatype.DatatypeFactory
-import java.util.*
+import java.util.Optional
 
 class TestGetPosition {
     private val env: Environment<Any, Euclidean2DPosition> = Continuous2DEnvironment()

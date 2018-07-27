@@ -57,7 +57,7 @@ open class Grid @JvmOverloads constructor(
     private val yShift: Double = 0.0
 ) : Displacement<Position<*>> {
 
-    override fun stream() : Stream<Position<*>> {
+    override fun stream(): Stream<Position<*>> {
         val steps = Pair(steps(xStart, xEnd, xStep), steps(yStart, yEnd, yStep))
         println(steps.first)
         println(steps.second)

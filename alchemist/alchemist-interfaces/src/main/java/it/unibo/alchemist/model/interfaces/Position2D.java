@@ -13,7 +13,7 @@ package it.unibo.alchemist.model.interfaces;
  *
  * @param <P>
  */
-public interface Position2D<P extends Position2D<?>> extends Position<P> {
+public interface Position2D<P extends Position2D<? extends P>> extends Position<P> {
 
     /**
      * @return horizontal position

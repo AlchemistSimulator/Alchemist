@@ -90,7 +90,6 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
             .setNameFormat("alchemist-batch-%d")
             .build();
     private final boolean doBenchmark;
-    private final int closeOperation;
     private final Optional<String> effectsFile;
     private final long endStep;
     private final Time endTime;
@@ -115,7 +114,6 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
      * @param parallelism               the number of threads in the pool of the {@link Executor}
      * @param headless                  if the simulation should run headless or with a GUI
      * @param benchmark                 if you want to benchmark this run
-     * @param closeOperation            -
      * @param outputMonitors            the {@link Collection} of {@link OutputMonitor} to add to the simulation
      * @param gridConfigFile            -
      * @param benchmarkOutputFile       -
@@ -130,7 +128,6 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
             final int parallelism,
             final boolean headless,
             final boolean benchmark,
-            final int closeOperation,
             final ImmutableCollection<Supplier<OutputMonitor<T, P>>> outputMonitors,
             final Optional<String> gridConfigFile,
             final Optional<String> benchmarkOutputFile) {
@@ -143,7 +140,6 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
         this.parallelism = parallelism;
         this.samplingInterval = sampling;
         this.doBenchmark = benchmark;
-        this.closeOperation = closeOperation;
         this.outputMonitors = outputMonitors;
         this.gridConfigFile = gridConfigFile;
         this.benchmarkOutputFile = benchmarkOutputFile;
@@ -354,7 +350,6 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
      * @param <T> concentration type
      */
     public static class Builder<T, P extends Position2D<P>> {
-        private int closeOperation;
         private boolean benchmark;
         private Optional<String> effectsFile = Optional.empty();
         private long endStep = Long.MAX_VALUE;
@@ -395,7 +390,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
          */
         public AlchemistRunner<T, P> build() {
             return new AlchemistRunner<>(this.loader, this.endTime, this.endStep, this.exportFileRoot, this.effectsFile,
-                    this.samplingInt, this.parallelism, this.headless, this.benchmark, this.closeOperation,
+                    this.samplingInt, this.parallelism, this.headless, this.benchmark,
                     ImmutableList.copyOf(outputMonitors), gridConfigFile, benchmarkOutputFile);
         }
 
@@ -463,20 +458,6 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
          */
         public Builder<T, P> setEndTime(final Time time) {
             this.endTime = time;
-            return this;
-        }
-
-        /**
-         * Sets the GUI default close operation.
-         *
-         * @param closeOp the close operation
-         * @return this builder
-         */
-        public Builder<T, P> setGUICloseOperation(final int closeOp) {
-            if (closeOp < 0 || closeOp > 3) {
-                throw new IllegalArgumentException("The value of close operation is not valid.");
-            }
-            this.closeOperation = closeOp;
             return this;
         }
 

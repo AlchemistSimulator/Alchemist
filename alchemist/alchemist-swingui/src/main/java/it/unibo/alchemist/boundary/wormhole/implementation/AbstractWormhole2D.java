@@ -73,7 +73,7 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
 
     @Override
     public Point getViewPoint(final Position2D<?> envPoint) {
-        return viewPointFromEnv(PointAdapter.from(envPoint)).toPoint();
+        return viewPointFromEnv(from(envPoint)).toPoint();
     }
 
     /**

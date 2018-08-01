@@ -12,7 +12,7 @@ import it.unibo.alchemist.model.interfaces.Position;
 
 @Deprecated
 public class EuclideanDistance<T, P extends Position<P>> extends ConnectWithinDistance<T, P> {
-    public EuclideanDistance(double radius) {
+    public EuclideanDistance(final double radius) {
         super(radius);
     }
 

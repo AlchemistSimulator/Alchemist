@@ -25,7 +25,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import javax.swing.*;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -101,8 +100,7 @@ public final class Alchemist {
             }
             if (loader.isPresent()) {
                 final Builder<?, ?> simBuilder = new Builder<>(loader.get())
-                        .setHeadless(cmd.hasOption(HEADLESS))
-                        .setGUICloseOperation(JFrame.EXIT_ON_CLOSE);
+                        .setHeadless(cmd.hasOption(HEADLESS));
                 ifPresent(cmd, EXPORT, simBuilder::setOutputFile);
                 ifPresent(cmd, GRAPHICS, simBuilder::setEffects);
                 try {

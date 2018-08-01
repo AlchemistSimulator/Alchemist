@@ -8,20 +8,18 @@
  ******************************************************************************/
 package it.unibo.alchemist.model.implementations.utils;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.model.interfaces.Obstacle2D;
+import java.awt.geom.Rectangle2D;
+import org.apache.commons.math3.util.FastMath;
+import org.apache.commons.math3.util.MathArrays;
+import org.apache.commons.math3.util.Pair;
+
 import static org.apache.commons.math3.util.FastMath.max;
 import static org.apache.commons.math3.util.FastMath.min;
 import static org.danilopianini.lang.MathUtils.closestTo;
 import static org.danilopianini.lang.MathUtils.fuzzyEquals;
 import static org.danilopianini.lang.MathUtils.fuzzyGreaterEquals;
-
-import java.awt.geom.Rectangle2D;
-
-import org.apache.commons.math3.util.FastMath;
-import org.apache.commons.math3.util.MathArrays;
-import org.apache.commons.math3.util.Pair;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.interfaces.Obstacle2D;
 
 /**
  * This class implements a rectangular obstacle, whose sides are parallel to the
@@ -100,7 +98,7 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
         return asPair(restricted);
     }
     
-    private static Pair<java.lang.Double, java.lang.Double> asPair(double[] coords) {
+    private static Pair<java.lang.Double, java.lang.Double> asPair(final double[] coords) {
         assert coords.length == 2;
         return new Pair<>(coords[0], coords[1]);
     }

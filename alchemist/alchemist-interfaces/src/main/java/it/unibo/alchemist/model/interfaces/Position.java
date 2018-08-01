@@ -107,7 +107,7 @@ public interface Position<P extends Position<?>> extends Serializable {
         final Position p1Unsafe = (Position) p1;
         @SuppressWarnings("rawtypes")
         final Position p2Unsafe = (Position) p2;
-        if (p1Class == p2Class || p1Class.isAssignableFrom(p2Class)) {
+        if (p1Class.equals(p2Class) || p1Class.isAssignableFrom(p2Class)) {
             return p1Unsafe.getDistanceTo(p2Unsafe);
         }
         if (p2Class.isAssignableFrom(p1Class)) {

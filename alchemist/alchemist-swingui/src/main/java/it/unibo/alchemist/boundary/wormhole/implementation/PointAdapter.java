@@ -101,7 +101,7 @@ public final class PointAdapter<P extends Position2D<? extends P>> implements Se
     /**
      * @return the {@link Position2D} view of this {@link PointAdapter}
      */
-    public P toPosition(Environment<?, P> environment) {
+    public P toPosition(final Environment<?, P> environment) {
         if (pos == null) {
             pos = environment instanceof MapEnvironment
                 ? environment.makePosition(getY(), getX())

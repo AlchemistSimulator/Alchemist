@@ -8,24 +8,20 @@
  ******************************************************************************/
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
-
+import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
+import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
+import it.unibo.alchemist.model.implementations.nodes.IntNode;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.interfaces.Node;
 import java.util.Arrays;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
-import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
-import it.unibo.alchemist.model.implementations.nodes.AbstractNode;
-import it.unibo.alchemist.model.implementations.nodes.IntNode;
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Node;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  *

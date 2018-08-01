@@ -178,7 +178,6 @@ public class ButtonsBarController implements Initializable {
                 this.drawerStack.setMouseTransparent(false);
             }
         });
-        drawerStack.setOnMouseClicked(e -> System.out.println("Mouse clicked in drawer"));
         controlType.setText("");
         controlType.setGraphic(pan);
 

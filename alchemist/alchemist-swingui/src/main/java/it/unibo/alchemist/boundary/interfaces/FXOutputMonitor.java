@@ -15,7 +15,7 @@ import javafx.scene.canvas.GraphicsContext;
  *
  * @param <T> the {@link Concentration} type
  */
-public interface FXOutputMonitor<T, P extends Position2D<? extends P>> extends OutputMonitor<T, P> {
+public interface FXOutputMonitor<T, P extends Position2D<?>> extends OutputMonitor<T, Position2D<?>> {
 
     /**
      * Getter method for the steps.
@@ -114,6 +114,12 @@ public interface FXOutputMonitor<T, P extends Position2D<? extends P>> extends O
         /** In this status, click to open editor to modify node properties. */
         EDITING,
         /** In this status, click and drag to move the view. */
-        PAN
+        PANNING
     }
+
+    /**
+     * Sets the canvas used for user interaction
+     * @param canvas
+     */
+    void setInteractionCanvas(Canvas canvas);
 }

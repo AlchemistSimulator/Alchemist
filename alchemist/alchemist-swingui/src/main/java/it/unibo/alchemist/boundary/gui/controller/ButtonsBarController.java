@@ -221,7 +221,7 @@ public class ButtonsBarController implements Initializable {
             Optional.ofNullable(controlTypePopoverController.getPanButton()).ifPresent(b -> b.setOnAction(e -> {
                 Platform.runLater(() -> this.controlType.setGraphic(pan));
                 this.displayMonitor.ifPresent(d -> {
-                    d.setViewStatus(FXOutputMonitor.ViewStatus.PAN);
+                    d.setViewStatus(FXOutputMonitor.ViewStatus.PANNING);
                 });
             }));
             controlTypePopOver = Optional.of(pop);

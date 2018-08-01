@@ -6,12 +6,12 @@ import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
-import it.unibo.alchemist.boundary.monitor.FX2DDisplay;
-import it.unibo.alchemist.boundary.monitor.FXMapDisplay;
 import it.unibo.alchemist.boundary.monitor.FXStepMonitor;
 import it.unibo.alchemist.boundary.monitor.FXTimeMonitor;
 import it.unibo.alchemist.boundary.monitor.PlayPauseMonitor;
-import it.unibo.alchemist.boundary.monitor.generic.AbstractFXDisplay;
+import it.unibo.alchemist.boundary.monitors.AbstractFXDisplay;
+import it.unibo.alchemist.boundary.monitors.FX2DDisplay;
+import it.unibo.alchemist.boundary.monitors.FXMapDisplay;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -37,6 +37,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -86,7 +87,7 @@ public class SingleRunApp<T, P extends Position2D<? extends P>> extends Applicat
     @Nullable
     private Simulation<T, P> simulation;
     @Nullable
-    private AbstractFXDisplay<T, P> displayMonitor;
+    private AbstractFXDisplay<T> displayMonitor;
     private PlayPauseMonitor<T, P> playPauseMonitor;
     private FXTimeMonitor<T, P> timeMonitor;
     private FXStepMonitor<T, P> stepMonitor;
@@ -206,13 +207,14 @@ public class SingleRunApp<T, P extends Position2D<? extends P>> extends Applicat
                 throw new IllegalArgumentException(exception);
             }
         });
-        final Optional<AbstractFXDisplay<T, P>> optDisplayMonitor = Optional.ofNullable(this.displayMonitor);
+        final Optional<AbstractFXDisplay<T>> optDisplayMonitor = Optional.ofNullable(this.displayMonitor);
         final Pane rootLayout;
         try {
             rootLayout = FXResourceLoader.getLayout(AnchorPane.class, this, ROOT_LAYOUT);
             final StackPane main = (StackPane) rootLayout.getChildren().get(0);
 //            main.setPickOnBounds(false);
             optDisplayMonitor.ifPresent(dm -> {
+                final Canvas interactions = new Canvas(); // canvas used for user input and feedback (eg. box elements)
                 dm.widthProperty().bind(main.widthProperty());
                 dm.heightProperty().bind(main.heightProperty());
                 dm.widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -225,13 +227,15 @@ public class SingleRunApp<T, P extends Position2D<? extends P>> extends Applicat
                         dm.repaint();
                     }
                 });
+                main.getChildren().add(interactions);
                 main.getChildren().add(dm);
+                dm.setInteractionCanvas(interactions);
             });
             this.timeMonitor = new FXTimeMonitor<>();
             this.stepMonitor = new FXStepMonitor<>();
             this.playPauseMonitor = new PlayPauseMonitor<>(simulation);
             optSim.ifPresent(s -> {
-                optDisplayMonitor.ifPresent(s::addOutputMonitor);
+                optDisplayMonitor.ifPresent(it -> s.addOutputMonitor((OutputMonitor<T, P>) it));
                 s.addOutputMonitor(this.playPauseMonitor);
                 s.addOutputMonitor(this.timeMonitor);
                 s.addOutputMonitor(this.stepMonitor);
@@ -257,7 +261,7 @@ public class SingleRunApp<T, P extends Position2D<? extends P>> extends Applicat
             initialized = true;
             primaryStage.show();
             // The initialization of the monitors MUST be done AFTER the Stage is shown
-            optSim.ifPresent(s -> initMonitors(s, optDisplayMonitor.orElse(null), stepMonitor, timeMonitor, playPauseMonitor));
+            optSim.ifPresent(s -> initMonitors(s, (OutputMonitor<T, P>) optDisplayMonitor.orElse(null), stepMonitor, timeMonitor, playPauseMonitor));
         } catch (final IOException e) {
             L.error("I/O Exception loading FXML layout files", e);
             throw new UncheckedIOException(e);
@@ -385,8 +389,8 @@ public class SingleRunApp<T, P extends Position2D<? extends P>> extends Applicat
         }
 
         try {
-            final Class<? extends AbstractFXDisplay<T, P>> clazz;
-            clazz = (Class<? extends AbstractFXDisplay<T, P>>) Class.forName(className);
+            final Class<? extends AbstractFXDisplay<T>> clazz;
+            clazz = (Class<? extends AbstractFXDisplay<T>>) Class.forName(className);
 
             final Constructor<?>[] constructors = clazz.getDeclaredConstructors();
             Constructor<?> constructor = null;
@@ -401,7 +405,7 @@ public class SingleRunApp<T, P extends Position2D<? extends P>> extends Applicat
                 throw new IllegalArgumentException();
             } else {
                 try {
-                    displayMonitor = (AbstractFXDisplay<T, P>) constructor.newInstance();
+                    displayMonitor = (AbstractFXDisplay<T>) constructor.newInstance();
                 } catch (final IllegalAccessException | IllegalArgumentException | InstantiationException
                         | InvocationTargetException | ExceptionInInitializerError exception) {
                     L.warn("No valid constructor found");

@@ -89,7 +89,6 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
     private static final ThreadFactory THREAD_FACTORY = new ThreadFactoryBuilder()
             .setNameFormat("alchemist-batch-%d")
             .build();
-    private final boolean doBenchmark;
     private final Optional<String> effectsFile;
     private final long endStep;
     private final Time endTime;
@@ -113,7 +112,6 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
      * @param sampling                  the sampling interval
      * @param parallelism               the number of threads in the pool of the {@link Executor}
      * @param headless                  if the simulation should run headless or with a GUI
-     * @param benchmark                 if you want to benchmark this run
      * @param outputMonitors            the {@link Collection} of {@link OutputMonitor} to add to the simulation
      * @param gridConfigFile            -
      * @param benchmarkOutputFile       -
@@ -127,7 +125,6 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
             final double sampling,
             final int parallelism,
             final boolean headless,
-            final boolean benchmark,
             final ImmutableCollection<Supplier<OutputMonitor<T, P>>> outputMonitors,
             final Optional<String> gridConfigFile,
             final Optional<String> benchmarkOutputFile) {
@@ -139,7 +136,6 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
         this.loader = source;
         this.parallelism = parallelism;
         this.samplingInterval = sampling;
-        this.doBenchmark = benchmark;
         this.outputMonitors = outputMonitors;
         this.gridConfigFile = gridConfigFile;
         this.benchmarkOutputFile = benchmarkOutputFile;
@@ -390,7 +386,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
          */
         public AlchemistRunner<T, P> build() {
             return new AlchemistRunner<>(this.loader, this.endTime, this.endStep, this.exportFileRoot, this.effectsFile,
-                    this.samplingInt, this.parallelism, this.headless, this.benchmark,
+                    this.samplingInt, this.parallelism, this.headless,
                     ImmutableList.copyOf(outputMonitors), gridConfigFile, benchmarkOutputFile);
         }
 

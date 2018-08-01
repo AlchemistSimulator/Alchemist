@@ -167,18 +167,18 @@ public class ButtonsBarController implements Initializable {
         }
         effectGroupsDrawer.setOverLayVisible(false);
         effectGroupsDrawer.setResizableOnDrag(false);
-
         effectsButton.setOnAction(e -> {
-            // Drawer size is modified every time it's opened
-            if (effectGroupsDrawer.isHidden() || effectGroupsDrawer.isHiding()) {
-                effectGroupsDrawer.setDefaultDrawerSize(controlPane.getWidth() / DEFAULT_DRAWER_FRACTION);
-            }
-            this.drawerStack.toggle(effectGroupsDrawer);
             if (effectGroupsDrawer.isShown() || effectGroupsDrawer.isShowing()) {
                 this.drawerStack.setContent(new JFXDrawer());
+                this.drawerStack.toggle(effectGroupsDrawer, false);
+                this.drawerStack.setMouseTransparent(true);
+            } else {
+                effectGroupsDrawer.setDefaultDrawerSize(controlPane.getWidth() / DEFAULT_DRAWER_FRACTION);
+                this.drawerStack.toggle(effectGroupsDrawer, true);
+                this.drawerStack.setMouseTransparent(false);
             }
         });
-
+        drawerStack.setOnMouseClicked(e -> System.out.println("Mouse clicked in drawer"));
         controlType.setText("");
         controlType.setGraphic(pan);
 

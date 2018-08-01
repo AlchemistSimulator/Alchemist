@@ -35,7 +35,8 @@ import java.awt.Point
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
-import java.util.*
+import java.util.Optional
+import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicBoolean
@@ -62,16 +63,16 @@ abstract class AbstractFXDisplay<T>
     private val mutex = Semaphore(1)
     private val mayRender = AtomicBoolean(true)
     private var step: Int = 0
-    protected lateinit var wormhole: BidimensionalWormhole<Position2D<*>>
-        private set
     @Volatile private var firstTime: Boolean = false
     private var realTime: Boolean = false
     @Volatile private var commandQueue: ConcurrentLinkedQueue<() -> Unit> = ConcurrentLinkedQueue()
     private var viewStatus = DEFAULT_VIEW_STATUS
-    private var selection: SelectionBox<T>? = null
-    private var interactions: Canvas? = null
+    protected lateinit var wormhole: BidimensionalWormhole<Position2D<*>>
+        private set
+    private lateinit var interactions: Canvas
     private lateinit var nodes: Map<Node<T>, Position2D<*>>
     private var panPosition: Position2D<*>? = null
+    private var selection: SelectionBox<T>? = null
 
     init {
         firstTime = true // ?
@@ -94,7 +95,7 @@ abstract class AbstractFXDisplay<T>
      * Called in setInteractionCanvas
      */
     protected open fun initMouseListener() {
-        interactions!!.setOnMousePressed {
+        interactions.setOnMousePressed {
             when (getViewStatus()) {
                 FXOutputMonitor.ViewStatus.PANNING -> onPanInitiated(it)
                 FXOutputMonitor.ViewStatus.SELECTING -> onSelectInitiated(it)
@@ -102,7 +103,7 @@ abstract class AbstractFXDisplay<T>
                 }
             }
         }
-        interactions!!.setOnMouseDragged {
+        interactions.setOnMouseDragged {
             when (getViewStatus()) {
                 FXOutputMonitor.ViewStatus.PANNING -> onPanning(it)
                 FXOutputMonitor.ViewStatus.SELECTING -> onSelecting(it)
@@ -110,7 +111,7 @@ abstract class AbstractFXDisplay<T>
                 }
             }
         }
-        interactions!!.setOnMouseReleased {
+        interactions.setOnMouseReleased {
             when (getViewStatus()) {
                 FXOutputMonitor.ViewStatus.PANNING -> onPanned(it)
                 FXOutputMonitor.ViewStatus.SELECTING -> onSelected(it)
@@ -118,7 +119,7 @@ abstract class AbstractFXDisplay<T>
                 }
             }
         }
-        interactions!!.setOnMouseExited {
+        interactions.setOnMouseExited {
             when (getViewStatus()) {
                 FXOutputMonitor.ViewStatus.PANNING -> onPanCanceled(it)
                 FXOutputMonitor.ViewStatus.SELECTING -> onSelectCanceled(it)
@@ -176,7 +177,7 @@ abstract class AbstractFXDisplay<T>
      * Called when a elements gesture is initiated
      */
     protected fun onSelectInitiated(event: MouseEvent) {
-        selection = SelectionBox(makePoint(event.x, event.y), interactions!!.graphicsContext2D, wormhole)
+        selection = SelectionBox(makePoint(event.x, event.y), interactions.graphicsContext2D, wormhole)
         event.consume()
     }
 
@@ -303,10 +304,10 @@ abstract class AbstractFXDisplay<T>
     }
 
     /**
-     * Changes the background of the specified `GraphicsContext`.
+     * Changes the background of the specified [GraphicsContext].
      *
      * @param graphicsContext the graphic component to draw on
-     * @param environment     the `Environment` that contains the data to pass to `Effects`
+     * @param environment the [Environment] that contains the data to pass to [Effects]
      * @return a function of what to do to draw the background
      * @see .repaint
      */
@@ -331,17 +332,17 @@ abstract class AbstractFXDisplay<T>
         this.effectStack.addAll(effects)
     }
 
-    protected fun getInteractionCanvas() : Canvas? = interactions
+    /**
+     * Returns the interaction canvas.
+     */
+    protected fun getInteractionCanvas(): Canvas = interactions
 
     override fun setInteractionCanvas(canvas: Canvas) {
-        if (interactions != null) {
-            throw IllegalStateException("Cannot set " + this + "'s interaction canvas: it is already set")
-        }
         interactions = canvas
-        interactions!!.widthProperty().bind(this.widthProperty())
-        interactions!!.heightProperty().bind(this.heightProperty())
-        interactions!!.toFront()
-        interactions!!.graphicsContext2D.globalAlpha = 0.5
+        interactions.widthProperty().bind(this.widthProperty())
+        interactions.heightProperty().bind(this.heightProperty())
+        interactions.toFront()
+        interactions.graphicsContext2D.globalAlpha = 0.5
         initMouseListener()
     }
 
@@ -384,7 +385,7 @@ abstract class AbstractFXDisplay<T>
      * Updates parameter for correct `Environment` representation.
      *
      * @param environment the `Environment`
-     * @param time        the current `Time` of simulation
+     * @param time the current `Time` of simulation
      */
     private fun update(environment: Environment<T, Position2D<*>>, time: Time) {
         if (Thread.holdsLock(environment)) {
@@ -396,8 +397,8 @@ abstract class AbstractFXDisplay<T>
             val effects = effects
                 .stream()
                 .map<Queue<DrawCommand>> { group -> group.computeDrawCommands(environment) }
-                .flatMap<DrawCommand>{ it.stream() }
-                .map { cmd -> {cmd.accept(graphicsContext, wormhole) } }
+                .flatMap<DrawCommand> { it.stream() }
+                .map { cmd -> { cmd.accept(graphicsContext, wormhole) } }
             commandQueue = Stream
                 .concat(background, effects)
                 .collect(Collectors.toCollection { ConcurrentLinkedQueue<() -> Unit>() })

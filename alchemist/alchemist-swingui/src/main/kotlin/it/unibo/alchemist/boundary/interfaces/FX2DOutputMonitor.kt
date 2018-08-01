@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.Position2D
 </T> */
 interface FX2DOutputMonitor<T> : FXOutputMonitor<T, Position2D<*>> {
     /**
-     * @param center    the point where to zoom
+     * @param center the point where to zoom
      * @param zoomLevel the desired zoom level
      */
     fun zoomTo(center: Position2D<*>, zoomLevel: Double)

@@ -205,7 +205,7 @@ abstract class AbstractFXDisplay<T>
      */
     protected fun onSelectCanceled(event: MouseEvent) {
         if (selection != null) {
-            selection!!.clear()
+            selection!!.cancel()
             selection = null
         }
         event.consume()

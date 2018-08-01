@@ -49,9 +49,26 @@ class SelectionBox<T>
     }
 
     /**
+     * Cancels the current selection
+     */
+    fun cancel() {
+        clear()
+    }
+
+    /**
+     * Locks the elements and writes the items selected to [elements].
+     * @param nodes a map having nodes as keys and their positions as values
+     */
+    fun finalize(nodes: Map<Node<T>, Position2D<*>>): Collection<Node<T>> =
+        rectangle.let { selection ->
+            nodes.filterValues { selection.contains(wormhole.getViewPoint(it)) }
+                .keys
+        }.also { elements = it }.also { clear() }
+
+    /**
      * Draws the box.
      */
-    fun draw() {
+    private fun draw() {
         rectangle.let {
             Platform.runLater {
                 // can edit the elements box's style here
@@ -64,23 +81,13 @@ class SelectionBox<T>
     /**
      * Clears the box.
      */
-    fun clear() {
+    private fun clear() {
         rectangle.let {
             Platform.runLater {
                 context.clearRect(it.x, it.y, it.width, it.height)
             }
         }
     }
-
-    /**
-     * Locks the elements and writes the items selected to [elements].
-     * @param nodes a map having nodes as keys and their positions as values
-     */
-    fun finalize(nodes: Map<Node<T>, Position2D<*>>): Collection<Node<T>> =
-        rectangle.let { selection ->
-            nodes.filterValues { selection.contains(wormhole.getViewPoint(it)) }
-                .keys
-        }.also { elements = it }.also { clear() }
 }
 
 private fun Rectangle.contains(point: Point): Boolean =

@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary.monitors
 
+import com.google.common.collect.ImmutableSet
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup
 import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory
 import it.unibo.alchemist.boundary.interfaces.DrawCommand
@@ -16,6 +17,7 @@ import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor
 import it.unibo.alchemist.boundary.monitors.utility.SelectionBox
 import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole
+import it.unibo.alchemist.kotlin.distanceTo
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.Concentration
 import it.unibo.alchemist.model.interfaces.Environment
@@ -26,7 +28,9 @@ import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
 import javafx.application.Platform
 import javafx.collections.FXCollections
+import javafx.collections.MapChangeListener
 import javafx.collections.ObservableList
+import javafx.collections.ObservableMap
 import javafx.scene.canvas.Canvas
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.input.InputEvent
@@ -49,7 +53,6 @@ import java.util.stream.Stream
  * @param <T> The type which describes the [Concentration] of a molecule
  * @param <P> The type of position
 </P></T> */
-
 abstract class AbstractFXDisplay<T>
 /**
  * Main constructor. It lets the developer specify the number of steps.
@@ -69,16 +72,25 @@ abstract class AbstractFXDisplay<T>
     private var viewStatus = DEFAULT_VIEW_STATUS
     protected lateinit var wormhole: BidimensionalWormhole<Position2D<*>>
         private set
+    protected val keyboardModifiers: MutableSet<FXOutputMonitor.KeyboardModifier> = HashSet()
     private lateinit var interactions: Canvas
     private lateinit var nodes: Map<Node<T>, Position2D<*>>
     private var panPosition: Position2D<*>? = null
-    private var selection: SelectionBox<T>? = null
+    private var selectionPoint: Point? = null
+    private var selectionBox: SelectionBox<T>? = null
+    private val selection: ObservableMap<Node<T>, Position2D<*>> = FXCollections.observableHashMap()
+    private var isSelecting = false
+
+    // TODO: enum for key states (CTRL, SHIFT, ...)
 
     init {
         firstTime = true // ?
         setStep(steps)
         enableEventReceiving()
         style = "-fx-background-color: #FFF;"
+        selection.addListener(MapChangeListener {
+            // TODO: draw/clear highlights
+        })
     }
 
     /**
@@ -98,7 +110,10 @@ abstract class AbstractFXDisplay<T>
         interactions.setOnMousePressed {
             when (getViewStatus()) {
                 FXOutputMonitor.ViewStatus.PANNING -> onPanInitiated(it)
-                FXOutputMonitor.ViewStatus.SELECTING -> onSelectInitiated(it)
+                FXOutputMonitor.ViewStatus.SELECTING -> {
+                    selectionPoint = makePoint(it.x, it.y)
+                    isSelecting = true
+                }
                 else -> {
                 }
             }
@@ -106,7 +121,15 @@ abstract class AbstractFXDisplay<T>
         interactions.setOnMouseDragged {
             when (getViewStatus()) {
                 FXOutputMonitor.ViewStatus.PANNING -> onPanning(it)
-                FXOutputMonitor.ViewStatus.SELECTING -> onSelecting(it)
+                FXOutputMonitor.ViewStatus.SELECTING -> {
+                    if (isSelecting) {
+                        if (selectionBox == null) {
+                            onBoxSelectInitiated(it)
+                        } else {
+                            onBoxSelecting(it)
+                        }
+                    }
+                }
                 else -> {
                 }
             }
@@ -114,7 +137,12 @@ abstract class AbstractFXDisplay<T>
         interactions.setOnMouseReleased {
             when (getViewStatus()) {
                 FXOutputMonitor.ViewStatus.PANNING -> onPanned(it)
-                FXOutputMonitor.ViewStatus.SELECTING -> onSelected(it)
+                FXOutputMonitor.ViewStatus.SELECTING -> {
+                    if (isSelecting) {
+                        onSelected(it)
+                        isSelecting = false
+                    }
+                }
                 else -> {
                 }
             }
@@ -122,7 +150,10 @@ abstract class AbstractFXDisplay<T>
         interactions.setOnMouseExited {
             when (getViewStatus()) {
                 FXOutputMonitor.ViewStatus.PANNING -> onPanCanceled(it)
-                FXOutputMonitor.ViewStatus.SELECTING -> onSelectCanceled(it)
+                FXOutputMonitor.ViewStatus.SELECTING -> {
+                    isSelecting = false
+                    onSelectCanceled(it)
+                }
                 else -> {
                 }
             }
@@ -176,18 +207,16 @@ abstract class AbstractFXDisplay<T>
     /**
      * Called when a elements gesture is initiated
      */
-    protected fun onSelectInitiated(event: MouseEvent) {
-        selection = SelectionBox(makePoint(event.x, event.y), interactions.graphicsContext2D, wormhole)
+    protected fun onBoxSelectInitiated(event: MouseEvent) {
+        selectionBox = SelectionBox(selectionPoint!!, interactions.graphicsContext2D, wormhole)
         event.consume()
     }
 
     /**
      * Called while a elements gesture is in progress and the elements is changing.
      */
-    protected fun onSelecting(event: MouseEvent) {
-        if (selection != null) {
-            selection!!.update(makePoint(event.x, event.y))
-        }
+    protected fun onBoxSelecting(event: MouseEvent) {
+        selectionBox!!.update(makePoint(event.x, event.y))
         event.consume()
     }
 
@@ -195,9 +224,39 @@ abstract class AbstractFXDisplay<T>
      * Called when a elements gesture finishes.
      */
     protected fun onSelected(event: MouseEvent) {
-        if (selection != null) {
-            selection!!.finalize(nodes)
+        if (selectionBox == null) {
+            wormhole.getEnvPoint(selectionPoint).let { cursorPosition ->
+                nodes.keys.minBy { (nodes[it]!!).distanceTo(cursorPosition) }?.let {
+                    if (!keyboardModifiers.contains(FXOutputMonitor.KeyboardModifier.CTRL)) {
+                        selection.clear()
+                        selection[it] = nodes[it]
+                    } else {
+                        if (it in selection) {
+                            selection -= it
+                        } else {
+                            selection[it] = nodes[it]
+                        }
+                    }
+                }
+            }
+        } else {
+            if (!keyboardModifiers.contains(FXOutputMonitor.KeyboardModifier.CTRL)) {
+                selection.clear()
+                selection += selectionBox!!.finalize(nodes)
+            } else {
+                selectionBox!!.finalize(nodes).let {
+                    it.forEach {
+                        if (it.key in selection) {
+                            selection -= it.key
+                        } else {
+                            selection[it.key] = it.value
+                        }
+                    }
+                }
+            }
+            selectionBox = null
         }
+        selectionPoint = null
         event.consume()
     }
 
@@ -205,10 +264,11 @@ abstract class AbstractFXDisplay<T>
      * Called when a select gesture is canceled.
      */
     protected fun onSelectCanceled(event: MouseEvent) {
-        if (selection != null) {
-            selection!!.cancel()
-            selection = null
+        if (selectionBox != null) {
+            selectionBox!!.cancel()
+            selectionBox = null
         }
+        selectionPoint = null
         event.consume()
     }
 
@@ -218,6 +278,16 @@ abstract class AbstractFXDisplay<T>
 
     override fun setViewStatus(viewStatus: FXOutputMonitor.ViewStatus) {
         this.viewStatus = viewStatus
+    }
+
+    override fun getActiveModifiers(): ImmutableSet<FXOutputMonitor.KeyboardModifier> = ImmutableSet.copyOf(keyboardModifiers)
+
+    override fun setModifier(modifier: FXOutputMonitor.KeyboardModifier, active: Boolean) {
+        if (active) {
+            keyboardModifiers += modifier
+        } else {
+            keyboardModifiers -= modifier
+        }
     }
 
     /**

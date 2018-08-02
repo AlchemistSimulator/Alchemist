@@ -5,6 +5,7 @@ import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
+import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.boundary.monitor.FXStepMonitor;
 import it.unibo.alchemist.boundary.monitor.FXTimeMonitor;
@@ -38,7 +39,6 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -296,18 +296,30 @@ public class SingleRunApp<T, P extends Position2D<? extends P>> extends Applicat
      */
     protected void initKeybindings(final Scene scene) {
         scene.setOnKeyPressed(event -> {
-//            switch (event.getCode()) {
-//                case P:
-//                    playPauseMonitor.fireEvent(new ActionEvent(event.getSource(), playPauseMonitor));
-//                    break;
-//                default:
-//                    break;
-//            }
-            // TODO remove if and use switch (like comment above) for new key bindings
-            if (event.getCode().equals(KeyCode.P)) {
-                playPauseMonitor.fireEvent(new ActionEvent(event.getSource(), playPauseMonitor));
+            switch (event.getCode()) {
+                case P:
+                    playPauseMonitor.fireEvent(new ActionEvent(event.getSource(), playPauseMonitor));
+                    break;
+                case CONTROL:
+                    displayMonitor.setModifier(FXOutputMonitor.KeyboardModifier.CTRL, true);
+                    break;
+                default:
+                    break;
             }
-
+            event.consume();
+            // TODO remove if and use switch (like comment above) for new key bindings
+//            if (event.getCode().equals(KeyCode.P)) {
+//                playPauseMonitor.fireEvent(new ActionEvent(event.getSource(), playPauseMonitor));
+//            }
+        });
+        scene.setOnKeyReleased(event -> {
+            switch (event.getCode()) {
+                case CONTROL:
+                    displayMonitor.setModifier(FXOutputMonitor.KeyboardModifier.CTRL, false);
+                    break;
+                default:
+                    break;
+            }
             event.consume();
         });
     }

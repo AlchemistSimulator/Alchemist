@@ -1,5 +1,6 @@
 package it.unibo.alchemist.boundary.interfaces;
 
+import com.google.common.collect.ImmutableSet;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.model.interfaces.Concentration;
@@ -9,6 +10,7 @@ import it.unibo.alchemist.model.interfaces.Position2D;
 import java.util.Collection;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * {@code OutputMonitor} that handles the graphical part of the simulation in JavaFX.
@@ -115,6 +117,26 @@ public interface FXOutputMonitor<T, P extends Position2D<?>> extends OutputMonit
         EDITING,
         /** In this status, click and drag to move the view. */
         PANNING
+    }
+
+    /**
+     * Returns the currently active modifiers.
+     * @return the currently active modifiers.
+     */
+    ImmutableSet<KeyboardModifier> getActiveModifiers();
+
+    /**
+     * Sets a certain modifier to an active or inactive state.
+     * @param modifier the modifier to be set
+     * @param active whether the modifier is active or not
+     */
+    void setModifier(@NotNull KeyboardModifier modifier, boolean active);
+
+    /**
+     * Keys that can modify the behavior of certain interactive functions
+     */
+    enum KeyboardModifier {
+        CTRL
     }
 
     /**

@@ -22,7 +22,7 @@ import java.util.Objects;
  *            progressively refine the {@link Position} by inheritance, allowing
  *            for specifying incrementally fine grained model elements.
  */
-public interface Position<P extends Position<?>> extends Serializable {
+public interface Position<P extends Position<? extends P>> extends Serializable {
 
     /**
      * Given a range, produces N coordinates, representing the N opposite
@@ -114,7 +114,7 @@ public interface Position<P extends Position<?>> extends Serializable {
             return p2Unsafe.getDistanceTo(p1Unsafe);
         }
         // Check arguments of distanceTo
-        Method p1distTo = Arrays.stream(p1Class.getDeclaredMethods())
+        final Method p1distTo = Arrays.stream(p1Class.getDeclaredMethods())
             .filter(Method::isAccessible)
             .filter(it -> it.getReturnType() == double.class)
             .filter(it -> it.getParameterCount() == 1)
@@ -124,7 +124,7 @@ public interface Position<P extends Position<?>> extends Serializable {
         if (p1distTo.getParameterTypes()[0].isAssignableFrom(p2Class)) {
             return p1Unsafe.getDistanceTo(p2Unsafe);
         }
-        Method p2distTo = Arrays.stream(p2Class.getDeclaredMethods())
+        final Method p2distTo = Arrays.stream(p2Class.getDeclaredMethods())
                 .filter(Method::isAccessible)
                 .filter(it -> it.getReturnType() == double.class)
                 .filter(it -> it.getParameterCount() == 1)

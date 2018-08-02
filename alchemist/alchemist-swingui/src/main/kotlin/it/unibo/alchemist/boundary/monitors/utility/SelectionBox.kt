@@ -23,14 +23,11 @@ import kotlin.math.min
 /**
  * Allows basic multi-element box selections.
  * @param T the concentration of the simulation
- */
-class SelectionBox<T>
-/**
  * @param anchorPoint the starting and unchanging [Point] of the selection
  * @param context the [GraphicsContext] used for printing the visual representation of the selection
  * @param wormhole the wormhole of the display being used
  */
-(private val anchorPoint: Point, private val context: GraphicsContext, private val wormhole: BidimensionalWormhole<Position2D<*>>) {
+class SelectionBox<T>(private val anchorPoint: Point, private val context: GraphicsContext, private val wormhole: BidimensionalWormhole<Position2D<*>>) {
     private val movingPoint = Point(anchorPoint.x, anchorPoint.y)
     var elements: Collection<Node<T>>? = null
         private set

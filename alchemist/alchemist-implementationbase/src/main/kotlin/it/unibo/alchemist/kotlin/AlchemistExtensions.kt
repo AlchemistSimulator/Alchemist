@@ -24,9 +24,9 @@ import it.unibo.alchemist.model.interfaces.Time
  */
 fun <E> E.unfold(extractor: (E) -> Sequence<E>): Sequence<E> =
     sequenceOf(this) + extractor(this).flatMap { it.unfold(extractor) }
-fun <P: Position<P>> Position<*>.distanceTo(other: Position<*>) = (this as P).getDistanceTo(other as P)
+fun <P : Position<P>> Position<*>.distanceTo(other: Position<*>) = (this as P).getDistanceTo(other as P)
 operator fun Position<*>.get(i: Int) = getCoordinate(i)
-operator fun <P: Position<P>> Position<*>.plus(other: Position<*>) = (this as P).add(other as P)!!
-operator fun <P: Position<P>> Position<*>.minus(other: Position<*>) = (this as P).subtract(other as P)!!
+operator fun <P : Position<P>> Position<*>.plus(other: Position<*>) = (this as P).add(other as P)!!
+operator fun <P : Position<P>> Position<*>.minus(other: Position<*>) = (this as P).subtract(other as P)!!
 operator fun Time.plus(other: Time) = sum(other)!!
 operator fun Time.minus(other: Time) = subtract(other)!!

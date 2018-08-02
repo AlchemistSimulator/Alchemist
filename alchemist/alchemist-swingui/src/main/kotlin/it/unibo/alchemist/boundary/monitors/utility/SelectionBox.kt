@@ -20,11 +20,6 @@ import java.awt.Point
 import kotlin.math.abs
 import kotlin.math.min
 
-enum class SelectionBoxState {
-    SELECTING,
-    SELECTED
-}
-
 /**
  * Allows basic multi-element box selections.
  * @param T the concentration of the simulation
@@ -38,8 +33,6 @@ class SelectionBox<T>(private val anchorPoint: Point, private val context: Graph
         private set
     private var rectangle = Rectangle()
         get() = anchorPoint.makeRectangleWith(movingPoint)
-    var state = SelectionBoxState.SELECTING
-        private set
 
     /**
      * Updates the box, clearing the old one and drawing the updated one.
@@ -59,7 +52,7 @@ class SelectionBox<T>(private val anchorPoint: Point, private val context: Graph
     fun finalize(nodes: Map<Node<T>, Position2D<*>>): Map<Node<T>, Position2D<*>> =
         checkFinalized().rectangle.let { area ->
             nodes.filterValues { wormhole.getViewPoint(it) in area }
-        }.also { elements = it }.also { clear() }.also { state = SelectionBoxState.SELECTED }
+        }.also { elements = it }.also { clear() }
 
     /**
      * Draws the box.
@@ -96,7 +89,7 @@ class SelectionBox<T>(private val anchorPoint: Point, private val context: Graph
      * @throws IllegalStateException if the selection has been finalized
      */
     private fun checkFinalized(): SelectionBox<T> {
-        if (state == SelectionBoxState.SELECTED) {
+        if (elements != null) {
             throw IllegalStateException("Selection " + this + " has already been finalized")
         }
         return this

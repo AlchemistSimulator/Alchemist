@@ -10,6 +10,7 @@ package it.unibo.alchemist.kotlin
 
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Time
+import java.awt.Point
 
 /**
  * The opposite of [fold].
@@ -30,3 +31,4 @@ operator fun <P : Position<P>> Position<*>.plus(other: Position<*>): P = (this a
 operator fun <P : Position<P>> Position<*>.minus(other: Position<*>): P = (this as P).subtract(other as P)!!
 operator fun Time.plus(other: Time) = sum(other)!!
 operator fun Time.minus(other: Time) = subtract(other)!!
+fun makePoint(x: Number, y: Number) = Point(x.toInt(), y.toInt())

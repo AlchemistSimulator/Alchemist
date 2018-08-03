@@ -119,11 +119,10 @@ public interface FXOutputMonitor<T, P extends Position2D<?>> extends OutputMonit
     }
 
     /**
-     * Sets a certain modifier to an active or inactive state.
-     * @param modifier the modifier to be set
-     * @param active whether the modifier is active or not
+     * Toggles a modifier
+     * @param modifier the modifier to be toggled
      */
-    void setModifier(@NotNull KeyboardModifier modifier, boolean active);
+    void toggleModifier(@NotNull KeyboardModifier modifier);
 
     /**
      * Keys that can modify the behavior of certain interactive functions
@@ -132,8 +131,5 @@ public interface FXOutputMonitor<T, P extends Position2D<?>> extends OutputMonit
         CTRL
     }
 
-    /**
-     * Sets the canvases used for user interaction
-     */
-    void setInteractionCanvas(Canvas input, Canvas highlights, Canvas selections);
+    Collection<Canvas> getInteractionCanvases();
 }

@@ -41,7 +41,7 @@ import java.util.stream.Stream
  *
  * @param <T> The type which describes the [Concentration] of a molecule
  * @param <P> The type of position
-</P></T> */
+ */
 abstract class AbstractFXDisplay<T>
 /**
  * Main constructor. It lets the developer specify the number of steps.
@@ -61,16 +61,8 @@ abstract class AbstractFXDisplay<T>
     private var viewStatus = DEFAULT_VIEW_STATUS
     protected lateinit var wormhole: BidimensionalWormhole<Position2D<*>>
         private set
-    private var nodes: ObservableMap<Node<T>, Position2D<*>> = FXCollections.observableHashMap()
-    protected var interactions: InteractionManager<T>? = null
-
-    /**
-     * - layer per highlight
-     * - highlight sugli elementi selezionati
-     * - highlight sugli elementi nel selectionBox
-     * - aggiornare highlight se un elemento entra nel selectionBox
-     * - aggiornare highlight al pan
-     */
+    private val nodes: ObservableMap<Node<T>, Position2D<*>> = FXCollections.observableHashMap()
+    private var interactions: InteractionManager<T>? = null
 
     init {
         firstTime = true
@@ -78,8 +70,6 @@ abstract class AbstractFXDisplay<T>
         style = "-fx-background-color: #FFF;"
         isMouseTransparent = true
     }
-
-    protected open fun initMouseListener() { }
 
     override fun getViewStatus(): FXOutputMonitor.ViewStatus {
         return this.viewStatus
@@ -89,12 +79,8 @@ abstract class AbstractFXDisplay<T>
         this.viewStatus = viewStatus
     }
 
-    override fun setModifier(modifier: FXOutputMonitor.KeyboardModifier, active: Boolean) {
-        if (active) {
-            interactions!!.keyboardModifiers += modifier
-        } else {
-            interactions!!.keyboardModifiers -= modifier
-        }
+    override fun toggleModifier(modifier: FXOutputMonitor.KeyboardModifier) {
+        interactions!!.toggleModifier(modifier)
     }
 
     override fun getStep(): Int {
@@ -129,7 +115,6 @@ abstract class AbstractFXDisplay<T>
                 mayRender.set(false)
                 Platform.runLater {
                     commandQueue.forEach { it() }
-                    interactions!!.repaintFeedback()
                     mayRender.set(true)
                 }
             }
@@ -168,9 +153,11 @@ abstract class AbstractFXDisplay<T>
         this.effectStack.addAll(effects)
     }
 
-    override fun setInteractionCanvas(input: Canvas, highlights: Canvas, selection: Canvas) {
-        interactions = SimpleInteractionManager(input, highlights, selection, nodes, this)
-        initMouseListener()
+    override fun getInteractionCanvases(): Collection<Canvas> {
+        if (interactions == null) {
+            interactions = SimpleInteractionManager(nodes, this)
+        }
+        return interactions!!.canvases()
     }
 
     override fun initialized(environment: Environment<T, Position2D<*>>) {
@@ -218,7 +205,7 @@ abstract class AbstractFXDisplay<T>
     private fun update(environment: Environment<T, Position2D<*>>, time: Time) {
         if (Thread.holdsLock(environment)) {
             environment.nodes.associate { Pair(it, environment.getPosition(it)) }.let { existingNodes ->
-                nodes.filterKeys { it !in existingNodes }.forEach { nodes.remove(it.key) }
+//                nodes = nodes.filterKeys { it !in existingNodes }//.forEach { nodes.remove(it.key) }
                 existingNodes.filterKeys { it !in nodes.keys }.forEach { nodes[it.key] = it.value }
             }
             time.toDouble()
@@ -233,9 +220,7 @@ abstract class AbstractFXDisplay<T>
             commandQueue = Stream
                 .concat(background, effects)
                 .collect(Collectors.toCollection { ConcurrentLinkedQueue<() -> Unit>() })
-            if (interactions != null) {
-                interactions!!.simulationStep()
-            }
+            interactions?.simulationStep()
             repaint()
         } else {
             throw IllegalStateException("Only the simulation thread can dictate GUI updates")

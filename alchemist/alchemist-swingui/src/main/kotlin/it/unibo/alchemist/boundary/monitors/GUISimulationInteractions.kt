@@ -9,11 +9,11 @@
 
 package it.unibo.alchemist.boundary.monitors
 
-import com.google.common.collect.ImmutableCollection
-import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableMap
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor
+import it.unibo.alchemist.boundary.wormhole.implementation.ExponentialZoomManager
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole
+import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager
 import it.unibo.alchemist.kotlin.distanceTo
 import it.unibo.alchemist.kotlin.makePoint
 import it.unibo.alchemist.model.interfaces.Environment
@@ -45,29 +45,20 @@ enum class Interaction {
     SELECTION_BOX
 }
 
-// TODO: add zoom feature and remove it from FX2DDisplay, remove input canvas from interface, make canvas management more generic
-
 /**
  * Manages interactions with the simulation (user input and relevant feedback)
  */
 interface InteractionManager<T> {
-    /**
-     * The canvas used for catching user input
-     */
-    val input: Canvas
-    /**
-     * Currently pressed keys that affect the user input or feedback
-     */
-    val keyboardModifiers: MutableSet<FXOutputMonitor.KeyboardModifier>
+
     /**
      * Nodes currently selected by the user
      */
     val selectedElements: ImmutableMap<Node<T>, Position2D<*>>
 
     /**
-     * Repaints the currently active feedback
+     * Toggles a given keyboard modifier
      */
-    fun repaintFeedback()
+    fun toggleModifier(modifier: FXOutputMonitor.KeyboardModifier)
 
     /**
      * To be called whenever a step is done
@@ -76,40 +67,42 @@ interface InteractionManager<T> {
 
     /**
      * Sets the wormhole to be used to represent feedback
+     *
+     * TODO: In the constructor?
      */
     fun setWormhole(wormhole: BidimensionalWormhole<Position2D<*>>)
 
     /**
      * Returns the canvases used by this interaction manager
      */
-    fun canvases(): ImmutableCollection<Canvas>
+    fun canvases(): Collection<Canvas>
 }
 
 /**
- * A basic interaction manager.
- * @param input the canvas used for mouse inputs
- * @param highlighter the canvas used to show selected nodes
- * @param selector the canvas used to show the selection box
- * @param
+ * A basic interaction manager. Implements zoom, pan and select features.
+ * @param nodes an observable map containing the nodes in the simulation
+ * @param parentMonitor the parent monitor
  */
 class SimpleInteractionManager<T>(
-    override val input: Canvas,
-    private val highlighter: Canvas,
-    private val selector: Canvas,
     private val nodes: ObservableMap<Node<T>, Position2D<*>>,
     private val parentMonitor: AbstractFXDisplay<T>
 ) : InteractionManager<T> {
 
+    private val input = Canvas()
+    private val highlighter = Canvas()
+    private val selector = Canvas()
+
     private lateinit var wormhole: BidimensionalWormhole<Position2D<*>>
+    private var panPosition: Position2D<*>? = null
+    private var zoomManager: ZoomManager? = null
     private var selectionBox: SelectionBox<T>? = null
     private var selectionPoint: Point? = null
-    private var panPosition: Position2D<*>? = null
     private var isSelecting = false
     private val selection: ObservableMap<Node<T>, Position2D<*>> = FXCollections.observableHashMap()
     private val selectionCandidates: ObservableMap<Node<T>, Position2D<*>> = FXCollections.observableHashMap()
-    private val feedback: MutableMap<Interaction, MutableList<() -> Unit>> = HashMap()
+    @Volatile private var feedback: Map<Interaction, List<() -> Unit>> = emptyMap()
+    private var keyboardModifiers: Set<FXOutputMonitor.KeyboardModifier> = emptySet()
 
-    override val keyboardModifiers: MutableSet<FXOutputMonitor.KeyboardModifier> = HashSet()
     override val selectedElements: ImmutableMap<Node<T>, Position2D<*>>
         get() = ImmutableMap.copyOf(selection)
 
@@ -117,26 +110,29 @@ class SimpleInteractionManager<T>(
         input.apply {
             widthProperty().bind(parentMonitor.widthProperty())
             heightProperty().bind(parentMonitor.heightProperty())
-            toFront()
         }
-
         selector.apply {
             widthProperty().bind(parentMonitor.widthProperty())
             heightProperty().bind(parentMonitor.heightProperty())
+            isMouseTransparent = true
         }
-
         highlighter.apply {
             widthProperty().bind(parentMonitor.widthProperty())
             heightProperty().bind(parentMonitor.heightProperty())
+            isMouseTransparent = true
         }
-
-        feedback[Interaction.HIGHLIGHT_CANDIDATE] = ArrayList()
-        feedback[Interaction.HIGHLIGHTED] = ArrayList()
-        feedback[Interaction.SELECTION_BOX] = ArrayList()
 
         highlighter.graphicsContext2D.globalAlpha = 0.5
         selector.graphicsContext2D.globalAlpha = 0.4
 
+        input.setOnScroll {
+            if (zoomManager != null) {
+                zoomManager!!.inc(it.deltaY / ZOOM_SCALE)
+                wormhole.zoomOnPoint(makePoint(it.x, it.y), zoomManager!!.zoom)
+            }
+            parentMonitor.repaint()
+            it.consume()
+        }
         input.setOnMousePressed {
             when (parentMonitor.viewStatus) {
                 FXOutputMonitor.ViewStatus.PANNING -> onPanInitiated(it)
@@ -192,21 +188,11 @@ class SimpleInteractionManager<T>(
         }
 
         selection.addListener(MapChangeListener {
-            feedback[Interaction.HIGHLIGHTED]!!.let { highlights ->
-                highlights.clear()
-                highlights.add {
-                    selection.forEach { paintHighlight(it.value, alreadySelected.color()) }
-                }
-            }
+            feedback += Interaction.HIGHLIGHTED to selection.map { paintHighlight(it.value, alreadySelected.color()) }
             repaint()
         })
         selectionCandidates.addListener(MapChangeListener {
-            feedback[Interaction.HIGHLIGHT_CANDIDATE]!!.let { highlights ->
-                highlights.clear()
-                highlights.add {
-                    selectionCandidates.forEach { paintHighlight(it.value, selecting.color()) }
-                }
-            }
+            feedback += Interaction.HIGHLIGHT_CANDIDATE to selectionCandidates.map { paintHighlight(it.value, selecting.color()) }
             repaint()
         })
     }
@@ -226,16 +212,30 @@ class SimpleInteractionManager<T>(
      */
     private fun onPanning(event: MouseEvent) {
         if (panPosition != null) {
-            getEventPosition(event).ifPresent {
-                val currentPoint = wormhole.getViewPoint(it)
-                val newPoint = wormhole.getViewPoint(panPosition!!).let { makePoint(
-                    (wormhole.viewPosition.getX() + (currentPoint.getX() - it.getX())),
-                    (wormhole.viewPosition.getY() + (currentPoint.getY() - it.getY()))) }
+            getEventPosition(event).ifPresent { mousePosition ->
+                val currentPoint = wormhole.getViewPoint(mousePosition)
+                val newPoint = wormhole.getViewPoint(panPosition!!).let { previousPoint ->
+                    makePoint(
+                        (wormhole.viewPosition.getX() + (currentPoint.getX() - previousPoint.getX())),
+                        (wormhole.viewPosition.getY() + (currentPoint.getY() - previousPoint.getY()))) }
                 wormhole.viewPosition = newPoint
                 panPosition = wormhole.getEnvPoint(currentPoint)
                 parentMonitor.repaint()
+                repaint()
             }
         }
+//        if (panPosition != null) {
+//            getEventPosition(event).ifPresent {
+//                val currentPoint = wormhole.getViewPoint(it)
+//                val newPoint = wormhole.getViewPoint(panPosition!!).let {
+//                    makePoint(
+//                        (wormhole.viewPosition.getX() + (currentPoint.getX() - it.getX())),
+//                        (wormhole.viewPosition.getY() + (currentPoint.getY() - it.getY()))) }
+//                wormhole.viewPosition = newPoint
+//                panPosition = wormhole.getEnvPoint(currentPoint)
+//                parentMonitor.repaint()
+//            }
+//        }
         event.consume()
     }
 
@@ -267,10 +267,7 @@ class SimpleInteractionManager<T>(
      * Called while a select gesture is in progress and the selection is changing.
      */
     private fun onBoxSelecting(event: MouseEvent) {
-        feedback[Interaction.SELECTION_BOX]!!.let { feedback ->
-            feedback.clear()
-            feedback.add(selectionBox!!.update(makePoint(event.x, event.y)))
-        }
+        feedback += Interaction.SELECTION_BOX to listOf(selectionBox!!.update(makePoint(event.x, event.y)))
         addNodesToSelectionCandidates()
         repaint()
         event.consume()
@@ -310,7 +307,7 @@ class SimpleInteractionManager<T>(
                     }
                 }
             }
-            feedback[Interaction.SELECTION_BOX]!!.clear()
+            feedback += Interaction.SELECTION_BOX to emptyList()
             selectionCandidates.clear()
             selectionBox = null
         }
@@ -325,7 +322,7 @@ class SimpleInteractionManager<T>(
     private fun onSelectCanceled(event: MouseEvent) {
         if (selectionBox != null) {
             selectionBox = null
-            feedback[Interaction.SELECTION_BOX]!!.clear()
+            feedback += Interaction.SELECTION_BOX to emptyList()
             repaint()
         }
         selectionPoint = null
@@ -376,11 +373,13 @@ class SimpleInteractionManager<T>(
 
     private fun repaint() {
         Platform.runLater {
-            repaintFeedback()
+            clearCanvas(selector)
+            clearCanvas(highlighter)
+            feedback.values.forEach { it.forEach { it() } }
         }
     }
 
-    private fun paintHighlight(position: Position2D<*>, paint: Paint) {
+    private fun paintHighlight(position: Position2D<*>, paint: Paint): () -> Unit = {
         highlighter.graphicsContext2D.let { graphics ->
             graphics.fill = paint
             wormhole.getViewPoint(position).let {
@@ -394,7 +393,7 @@ class SimpleInteractionManager<T>(
     }
 
     private fun addNodesToSelectionCandidates() {
-        selectionBox!!.intersectingNodes(nodes).let {
+        selectionBox?.intersectingNodes(nodes)?.let {
             if (it.entries != selectionCandidates.entries) {
                 selectionCandidates.clear()
                 selectionCandidates += it
@@ -402,22 +401,23 @@ class SimpleInteractionManager<T>(
         }
     }
 
-    override fun canvases(): ImmutableCollection<Canvas> = ImmutableList.of(input, highlighter, selector)
+    override fun toggleModifier(modifier: FXOutputMonitor.KeyboardModifier) {
+        if (keyboardModifiers.contains(modifier)) {
+            keyboardModifiers -= modifier
+        } else {
+            keyboardModifiers += modifier
+        }
+    }
+
+    override fun canvases(): Collection<Canvas> = listOf(input, highlighter, selector)
 
     override fun setWormhole(wormhole: BidimensionalWormhole<Position2D<*>>) {
         this.wormhole = wormhole
-    }
-
-    override fun repaintFeedback() {
-        clearCanvas(selector)
-        clearCanvas(highlighter)
-        feedback.values.forEach { it.forEach { it() } }
+        zoomManager = ExponentialZoomManager(this.wormhole.zoom, ExponentialZoomManager.DEF_BASE)
     }
 
     override fun simulationStep() {
-        if (selectionBox != null) {
-            addNodesToSelectionCandidates()
-        }
+        addNodesToSelectionCandidates()
     }
 
     companion object {
@@ -426,6 +426,10 @@ class SimpleInteractionManager<T>(
         private const val highlightSize = 10.0
         private const val alreadySelected = "#1f70f2"
         private const val selecting = "#fffa00"
+        /**
+         * Empiric zoom scale value.
+         */
+        private const val ZOOM_SCALE = 40.0
     }
 }
 

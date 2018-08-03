@@ -9,9 +9,7 @@
 
 package it.unibo.alchemist.boundary.monitors
 
-import it.unibo.alchemist.boundary.interfaces.FX2DOutputMonitor
 import it.unibo.alchemist.model.interfaces.Concentration
-import it.unibo.alchemist.model.interfaces.Position2D
 
 /**
  * Simple implementation of a monitor that graphically represents a simulation on a 2D map.
@@ -19,22 +17,4 @@ import it.unibo.alchemist.model.interfaces.Position2D
  * @param <T> The type which describes the [Concentration] of a molecule
 </T> */
 class FXMapDisplay<T>
-@JvmOverloads constructor(step: Int = DEFAULT_NUMBER_OF_STEPS) : AbstractFXDisplay<T>(step), FX2DOutputMonitor<T> {
-    // TODO
-    // TODO
-    // TODO
-    // TODO
-
-    override fun zoomTo(center: Position2D<*>, zoomLevel: Double) {
-        assert(center.getDimensions() == 2)
-        val wh = wormhole
-        wh?.zoomOnPoint(wh.getViewPoint(center), zoomLevel)
-    }
-
-    companion object {
-        /**
-         * Default serial version UID.
-         */
-        private val serialVersionUID = 1L
-    }
-}
+@JvmOverloads constructor(step: Int = DEFAULT_NUMBER_OF_STEPS) : AbstractFXDisplay<T>(step)

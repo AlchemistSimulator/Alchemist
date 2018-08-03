@@ -38,7 +38,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -226,14 +225,8 @@ public class SingleRunApp<T, P extends Position2D<? extends P>> extends Applicat
                         dm.repaint();
                     }
                 });
-                final Canvas input = new Canvas();
-                final Canvas highlights = new Canvas();
-                final Canvas selection = new Canvas();
-                main.getChildren().add(input);
-                main.getChildren().add(selection);
-                main.getChildren().add(highlights);
+                main.getChildren().addAll(dm.getInteractionCanvases());
                 main.getChildren().add(dm);
-                dm.setInteractionCanvas(input, highlights, selection);
             });
             this.timeMonitor = new FXTimeMonitor<>();
             this.stepMonitor = new FXStepMonitor<>();
@@ -305,7 +298,7 @@ public class SingleRunApp<T, P extends Position2D<? extends P>> extends Applicat
                     playPauseMonitor.fireEvent(new ActionEvent(event.getSource(), playPauseMonitor));
                     break;
                 case CONTROL:
-                    displayMonitor.setModifier(FXOutputMonitor.KeyboardModifier.CTRL, true);
+                    displayMonitor.toggleModifier(FXOutputMonitor.KeyboardModifier.CTRL);
                     break;
                 default:
                     break;
@@ -319,7 +312,7 @@ public class SingleRunApp<T, P extends Position2D<? extends P>> extends Applicat
         scene.setOnKeyReleased(event -> {
             switch (event.getCode()) {
                 case CONTROL:
-                    displayMonitor.setModifier(FXOutputMonitor.KeyboardModifier.CTRL, false);
+                    displayMonitor.toggleModifier(FXOutputMonitor.KeyboardModifier.CTRL);
                     break;
                 default:
                     break;

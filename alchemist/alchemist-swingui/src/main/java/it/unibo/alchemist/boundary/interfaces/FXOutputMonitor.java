@@ -1,6 +1,5 @@
 package it.unibo.alchemist.boundary.interfaces;
 
-import com.google.common.collect.ImmutableSet;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.model.interfaces.Concentration;
@@ -120,12 +119,6 @@ public interface FXOutputMonitor<T, P extends Position2D<?>> extends OutputMonit
     }
 
     /**
-     * Returns the currently active modifiers.
-     * @return the currently active modifiers.
-     */
-    ImmutableSet<KeyboardModifier> getActiveModifiers();
-
-    /**
      * Sets a certain modifier to an active or inactive state.
      * @param modifier the modifier to be set
      * @param active whether the modifier is active or not
@@ -140,8 +133,7 @@ public interface FXOutputMonitor<T, P extends Position2D<?>> extends OutputMonit
     }
 
     /**
-     * Sets the canvas used for user interaction
-     * @param canvas
+     * Sets the canvases used for user interaction
      */
-    void setInteractionCanvas(Canvas canvas);
+    void setInteractionCanvas(Canvas input, Canvas highlights, Canvas selections);
 }

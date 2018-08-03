@@ -214,7 +214,6 @@ public class SingleRunApp<T, P extends Position2D<? extends P>> extends Applicat
             final StackPane main = (StackPane) rootLayout.getChildren().get(0);
 //            main.setPickOnBounds(false);
             optDisplayMonitor.ifPresent(dm -> {
-                final Canvas interactions = new Canvas(); // canvas used for user input and feedback (eg. box elements)
                 dm.widthProperty().bind(main.widthProperty());
                 dm.heightProperty().bind(main.heightProperty());
                 dm.widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -227,9 +226,14 @@ public class SingleRunApp<T, P extends Position2D<? extends P>> extends Applicat
                         dm.repaint();
                     }
                 });
-                main.getChildren().add(interactions);
+                final Canvas input = new Canvas();
+                final Canvas highlights = new Canvas();
+                final Canvas selection = new Canvas();
+                main.getChildren().add(input);
+                main.getChildren().add(selection);
+                main.getChildren().add(highlights);
                 main.getChildren().add(dm);
-                dm.setInteractionCanvas(interactions);
+                dm.setInteractionCanvas(input, highlights, selection);
             });
             this.timeMonitor = new FXTimeMonitor<>();
             this.stepMonitor = new FXStepMonitor<>();

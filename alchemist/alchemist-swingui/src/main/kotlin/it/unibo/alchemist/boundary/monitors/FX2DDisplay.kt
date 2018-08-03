@@ -54,7 +54,7 @@ class FX2DDisplay<T>
 
     override fun initMouseListener() {
         super.initMouseListener()
-        getInteractionCanvas()!!.setOnScroll { event ->
+        interactions!!.input.setOnScroll { event ->
             if (zoomManager != null) {
                 zoomManager!!.inc(event.deltaY / ZOOM_SCALE)
                 val mouseX = event.x.toInt()

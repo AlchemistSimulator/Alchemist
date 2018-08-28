@@ -62,7 +62,7 @@ abstract class AbstractFXDisplay<T>
     protected lateinit var wormhole: BidimensionalWormhole<Position2D<*>>
         private set
     private val nodes: ObservableMap<Node<T>, Position2D<*>> = FXCollections.observableHashMap()
-    private var interactions: InteractionManager<T>? = null
+    private val interactions: InteractionManager<T> by lazy { InteractionManager(this) }
 
     init {
         firstTime = true
@@ -80,7 +80,7 @@ abstract class AbstractFXDisplay<T>
     }
 
     override fun toggleModifier(modifier: FXOutputMonitor.KeyboardModifier) {
-        interactions!!.toggleModifier(modifier)
+        interactions.toggleModifier(modifier)
     }
 
     override fun getStep(): Int {
@@ -118,6 +118,7 @@ abstract class AbstractFXDisplay<T>
                     mayRender.set(true)
                 }
             }
+            interactions.repaint()
         } catch (e: UninitializedPropertyAccessException) {
             // wormhole hasn't been initialized
         }
@@ -153,12 +154,7 @@ abstract class AbstractFXDisplay<T>
         this.effectStack.addAll(effects)
     }
 
-    override fun getInteractionCanvases(): Collection<Canvas> {
-        if (interactions == null) {
-            interactions = SimpleInteractionManager(nodes, this)
-        }
-        return interactions!!.canvases()
-    }
+    override fun getInteractionCanvases(): List<Canvas> = interactions.canvases()
 
     override fun initialized(environment: Environment<T, Position2D<*>>) {
         stepDone(environment, null, DoubleTime(), 0)
@@ -186,7 +182,7 @@ abstract class AbstractFXDisplay<T>
         wormhole = Wormhole2D(environment, this)
         wormhole.center()
         wormhole.optimalZoom()
-        interactions!!.setWormhole(wormhole)
+        interactions.setWormhole(wormhole)
         firstTime = false
         System.currentTimeMillis()
     }
@@ -204,10 +200,7 @@ abstract class AbstractFXDisplay<T>
      */
     private fun update(environment: Environment<T, Position2D<*>>, time: Time) {
         if (Thread.holdsLock(environment)) {
-            environment.nodes.associate { Pair(it, environment.getPosition(it)) }.let { existingNodes ->
-//                nodes = nodes.filterKeys { it !in existingNodes }//.forEach { nodes.remove(it.key) }
-                existingNodes.filterKeys { it !in nodes.keys }.forEach { nodes[it.key] = it.value }
-            }
+            interactions.nodes = environment.nodes.associate { Pair(it, environment.getPosition(it)) }
             time.toDouble()
 //            environment.simulation.schedule{ environment.moveNodeToPosition(environment.getNodeByID(0), LatLongPosition(8, 8)) }
             val graphicsContext = this.graphicsContext2D
@@ -220,7 +213,7 @@ abstract class AbstractFXDisplay<T>
             commandQueue = Stream
                 .concat(background, effects)
                 .collect(Collectors.toCollection { ConcurrentLinkedQueue<() -> Unit>() })
-            interactions?.simulationStep()
+            interactions.simulationStep()
             repaint()
         } else {
             throw IllegalStateException("Only the simulation thread can dictate GUI updates")

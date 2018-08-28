@@ -32,3 +32,4 @@ operator fun <P : Position<P>> Position<*>.minus(other: Position<*>): P = (this 
 operator fun Time.plus(other: Time) = sum(other)!!
 operator fun Time.minus(other: Time) = subtract(other)!!
 fun makePoint(x: Number, y: Number) = Point(x.toInt(), y.toInt())
+operator fun Point.plus(p: Point): Point = Point(x + p.x, y + p.y)

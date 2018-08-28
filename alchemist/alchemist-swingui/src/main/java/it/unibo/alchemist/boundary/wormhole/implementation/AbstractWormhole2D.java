@@ -4,12 +4,11 @@ import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.boundary.wormhole.interfaces.ViewType;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position2D;
-import java.awt.*;
+import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
-import org.slf4j.Logger;
 
 import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
 
@@ -226,7 +225,8 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
         try {
             t.inverseTransform(vp, vp);
         } catch (final NoninvertibleTransformException e) {
-            getLogger().error("Unable to perform the transformation from view point to env point. Please check if this method has been called after making the UI visible", e);
+            throw new IllegalStateException("Unable to perform the transformation from view point to env point." +
+                    " Please check if this method has been called after making the UI visible", e);
         }
         return from(vp);
     }
@@ -283,13 +283,6 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
     protected double getVRate() {
         return this.vRate;
     }
-
-    /**
-     * Getter method for the {@link Logger} of this class.
-     *
-     * @return the {@code Logger}
-     */
-    protected abstract Logger getLogger();
 
     /**
      * Returns the dimensions ratio of the {@link Environment} used as model.

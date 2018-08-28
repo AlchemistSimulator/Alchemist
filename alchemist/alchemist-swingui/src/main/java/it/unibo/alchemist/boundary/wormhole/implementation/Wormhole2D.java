@@ -80,11 +80,6 @@ public class Wormhole2D<P extends Position2D<? extends P>> extends AbstractWormh
     }
 
     @Override
-    protected Logger getLogger() {
-        return Wormhole2D.L;
-    }
-
-    @Override
     protected double getViewRatio() {
         return Math.max(1, getView().getWidth()) / Math.max(1, getView().getHeight());
     }

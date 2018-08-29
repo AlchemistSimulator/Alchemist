@@ -1,7 +1,5 @@
 package it.unibo.alchemist.boundary.gui.view;
 
-import it.unibo.alchemist.input.KeyActionType;
-import it.unibo.alchemist.input.KeyboardActionListener;
 import it.unibo.alchemist.boundary.gui.controller.ButtonsBarController;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
@@ -15,6 +13,9 @@ import it.unibo.alchemist.boundary.monitors.AbstractFXDisplay;
 import it.unibo.alchemist.boundary.monitors.FX2DDisplay;
 import it.unibo.alchemist.boundary.monitors.FXMapDisplay;
 import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.input.ActionOnKey;
+import it.unibo.alchemist.input.KeyboardActionListener;
+import it.unibo.alchemist.input.KeyboardTriggerAction;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
@@ -296,11 +297,11 @@ public class SingleRunApp<T, P extends Position2D<? extends P>> extends Applicat
                 case P: playPauseMonitor.fireEvent(new ActionEvent(e.getSource(), playPauseMonitor));
                     e.consume();
                     break;
-                default: listener.onAction(KeyActionType.PRESSED, e);
+                default: listener.onAction(new KeyboardTriggerAction(ActionOnKey.PRESSED, e.getCode()), e);
                     break;
             }
         });
-        scene.setOnKeyReleased(e -> listener.onAction(KeyActionType.RELEASED, e));
+        scene.setOnKeyReleased(e -> listener.onAction(new KeyboardTriggerAction(ActionOnKey.RELEASED, e.getCode()), e));
     }
 
     /**

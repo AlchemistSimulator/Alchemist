@@ -12,10 +12,7 @@ package it.unibo.alchemist.input
 import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
 
-/**
- * The [ActionType] objects regarding mouse clicks
- */
-enum class MouseButtonActionType : ActionType {
+enum class ActionOnMouse {
     CLICKED,
     DRAGGED,
     ENTERED,
@@ -25,18 +22,27 @@ enum class MouseButtonActionType : ActionType {
     RELEASED
 }
 
+enum class MouseCommand {
+    PAN,
+    SELECT,
+    REMOVE,
+    MOVE
+}
+
+data class MouseButtonTriggerAction(val type: ActionOnMouse, val button: MouseButton, val command: MouseCommand) : TriggerAction
+
 /**
  * An action listener in the context of mouse button events.
  */
-interface MouseButtonActionListener : ActionListener<MouseButtonActionType, MouseEvent>
+interface MouseButtonActionListener : ActionListener<MouseButtonTriggerAction, MouseEvent>
 
 /**
  * A basic implementation of a mouse button event dispatcher.
  */
-open class SimpleMouseButtonEventDispatcher : AbstractEventDispatcher<MouseButtonActionType, MouseButton, MouseEvent>() {
-    override val listener: ActionListener<MouseButtonActionType, MouseEvent> = object : MouseButtonActionListener {
-        override fun onAction(actionType: MouseButtonActionType, event: MouseEvent) {
-            actions[Pair(actionType, event.button)]?.invoke(event)
+open class SimpleMouseButtonEventDispatcher : AbstractEventDispatcher<MouseButtonTriggerAction, MouseEvent>() {
+    override val listener: ActionListener<MouseButtonTriggerAction, MouseEvent> = object : MouseButtonActionListener {
+        override fun onAction(action: MouseButtonTriggerAction, event: MouseEvent) {
+            triggers[action]?.invoke(event)
         }
     }
 }

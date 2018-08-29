@@ -12,69 +12,65 @@ package it.unibo.alchemist.input
 import javafx.event.Event
 
 /**
- * The type of a certain action.
+ * The action that triggers an event dispatcher. May contain information about the trigger.
  */
-interface ActionType
+interface TriggerAction
 
 /**
  * An action listener.
- * @param A the type of actions listened
- * @param T the type of events that trigger the actions
+ * @param T the type of triggers
+ * @param E the type of events that trigger the triggers
  */
-interface ActionListener<A : ActionType, T : Event> {
+interface ActionListener<T : TriggerAction, E : Event> {
 
     /**
      * To be called whenever a certain action happens.
-     * @param actionType the type of action that happened
+     * @param action the action that happened
      * @param event the event that triggered the action
      */
-    fun onAction(actionType: A, event: T)
+    fun onAction(action: T, event: E)
 }
 
 /**
  * An event dispatcher.
- * @param A the type of the action this dispatcher models
- * @param O the type of a token object containing information regarding the trigger of an action
- * @param T the type of event that triggered the action
+ * @param T the type of the action this dispatcher models
+ * @param E the type of event that triggers this dispatcher
  */
-interface EventDispatcher<A : ActionType, O : Any, T : Event> {
+interface EventDispatcher<T : TriggerAction, E : Event> {
 
     /**
      * The listener bound to this dispatcher.
      */
-    val listener: ActionListener<A, T>
+    val listener: ActionListener<T, E>
 
     /**
-     * Adds an action to be performed whenever an event is triggered through the [listener].
-     * @param actionType the type of the action that needs to occur.
-     * @param item the item containing information regarding each specific occurrence.
-     * @param action the action that will happen whenever the given action occurs.
+     * Adds a job to be performed whenever an event triggers the dispatcher through the [listener].
+     * @param trigger the type of the job that needs to occur.
+     * @param job the job that will happen whenever the given job occurs.
      */
-    fun setOnAction(actionType: A, item: O, action: (event: T) -> Unit): Unit
+    fun setOnAction(trigger: T, job: (event: E) -> Unit): Unit
 }
 
 /**
  * A generic event dispatcher that implements action management.
  */
-abstract class AbstractEventDispatcher<A : ActionType, O : Any, T : Event> : EventDispatcher<A, O, T> {
+abstract class AbstractEventDispatcher<T : TriggerAction, E : Event> : EventDispatcher<T, E> {
 
-    protected var actions: Map<Pair<A, O>, (event: T) -> Unit> = emptyMap()
+    protected var triggers: Map<T, (event: E) -> Unit> = emptyMap()
 
-    override fun setOnAction(actionType: A, item: O, action: (event: T) -> Unit) {
-        actions += Pair(actionType, item) to action
+    override fun setOnAction(trigger: T, job: (event: E) -> Unit) {
+        triggers += trigger to job
     }
 }
 
 /**
- * An event dispatcher which doesn't overwrite its actions when [setOnAction] is called on an already existing trigger.
+ * An event dispatcher which doesn't overwrite its triggers when [setOnAction] is called on an already existing trigger.
  */
-abstract class PersistentEventDispatcher<A : ActionType, O : Any, T : Event> : AbstractEventDispatcher<A, O, T>() {
+abstract class PersistentEventDispatcher<T : TriggerAction, E : Event> : AbstractEventDispatcher<T, E>() {
 
-    override fun setOnAction(actionType: A, item: O, action: (event: T) -> Unit) {
-        Pair(actionType, item).let {
-            if (it !in actions) {
-                super.setOnAction(actionType, item, action)
-            }
+    override fun setOnAction(trigger: T, job: (event: E) -> Unit) {
+        if (trigger !in triggers) {
+            super.setOnAction(trigger, job)
         }
     }
 }

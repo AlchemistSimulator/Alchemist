@@ -13,22 +13,24 @@ import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 
 /**
- * The [ActionType] objects regarding key strokes.
+ * The [TriggerAction] objects regarding key strokes.
  */
-enum class KeyActionType : ActionType {
+enum class ActionOnKey {
     PRESSED,
     RELEASED
 }
 
+data class KeyboardTriggerAction(val type: ActionOnKey, val key: KeyCode) : TriggerAction
+
 /**
  * An action listener in the context of a keyboard.
  */
-interface KeyboardActionListener : ActionListener<KeyActionType, KeyEvent>
+interface KeyboardActionListener : ActionListener<KeyboardTriggerAction, KeyEvent>
 
 /**
- * An action dispatcher in the context of a keyboard.
+ * An event dispatcher in the context of a keyboard.
  */
-abstract class KeyboardEventDispatcher : PersistentEventDispatcher<KeyActionType, KeyCode, KeyEvent>() {
+abstract class KeyboardEventDispatcher : PersistentEventDispatcher<KeyboardTriggerAction, KeyEvent>() {
 
     /**
      * Returns whether a given key is being held or not at the time of the call.
@@ -46,20 +48,11 @@ open class SimpleKeyboardEventDispatcher : KeyboardEventDispatcher() {
     private var keysHeld: Set<KeyCode> = emptySet()
 
     override val listener = object : KeyboardActionListener {
-        override fun onAction(actionType: KeyActionType, event: KeyEvent) {
-            when (actionType) {
-                KeyActionType.PRESSED -> {
-                    event.code.let {
-                        actions[Pair(KeyActionType.PRESSED, event.code)]?.invoke(event)
-                        keysHeld += it
-                    }
-                }
-                KeyActionType.RELEASED -> {
-                    event.code.let {
-                        actions[Pair(KeyActionType.RELEASED, event.code)]?.invoke(event)
-                        keysHeld -= it
-                    }
-                }
+        override fun onAction(action: KeyboardTriggerAction, event: KeyEvent) {
+            triggers[action]?.invoke(event)
+            keysHeld = when (action.type) {
+                ActionOnKey.PRESSED -> keysHeld + action.key
+                ActionOnKey.RELEASED -> keysHeld - action.key
             }
             event.consume()
         }

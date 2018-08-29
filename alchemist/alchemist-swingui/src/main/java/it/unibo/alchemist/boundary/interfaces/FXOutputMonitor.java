@@ -1,8 +1,8 @@
 package it.unibo.alchemist.boundary.interfaces;
 
+import it.unibo.alchemist.input.KeyboardActionListener;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
-import it.unibo.alchemist.boundary.monitors.KeyboardActionListener;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;

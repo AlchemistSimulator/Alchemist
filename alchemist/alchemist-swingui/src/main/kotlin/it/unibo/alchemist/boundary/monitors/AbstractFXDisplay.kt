@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary.monitors
 
+import it.unibo.alchemist.input.KeyboardActionListener
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup
 import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory
 import it.unibo.alchemist.boundary.interfaces.DrawCommand

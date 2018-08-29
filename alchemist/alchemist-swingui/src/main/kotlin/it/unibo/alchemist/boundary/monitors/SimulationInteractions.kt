@@ -14,6 +14,8 @@ import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor
 import it.unibo.alchemist.boundary.wormhole.implementation.ExponentialZoomManager
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole
 import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager
+import it.unibo.alchemist.input.KeyboardActionListener
+import it.unibo.alchemist.input.SimpleKeyboardEventDispatcher
 import it.unibo.alchemist.kotlin.distanceTo
 import it.unibo.alchemist.kotlin.makePoint
 import it.unibo.alchemist.kotlin.plus
@@ -115,10 +117,10 @@ class InteractionManager<T>(
             when (parentMonitor.viewStatus) {
                 FXOutputMonitor.ViewStatus.PANNING -> onPanInitiated(it)
                 FXOutputMonitor.ViewStatus.SELECTING -> {
-                        selectionPoint = makePoint(it.x, it.y)
-                        isSelecting = true
-                        it.consume()
-                    }
+                    selectionPoint = makePoint(it.x, it.y)
+                    isSelecting = true
+                    it.consume()
+                }
             }
         }
         input.setOnMouseDragged {

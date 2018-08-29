@@ -383,8 +383,7 @@ class PanHelper(private var panPosition: Point) {
                 panPosition = currentPoint
             }
         }
-    }
-    else {
+    } else {
         throw IllegalStateException("Unable to pan after finalizing the PanHelper")
     }
 
@@ -426,7 +425,7 @@ class SelectionHelper<T> {
     /**
      * Begins a new selection at the given point.
      */
-    fun begin(point: Point) : SelectionHelper<T> = apply {
+    fun begin(point: Point): SelectionHelper<T> = apply {
         isSelecting = true
         selectionPoint = point
         box = SelectionBox(point)
@@ -435,7 +434,7 @@ class SelectionHelper<T> {
     /**
      * Updates the selection with a new point.
      */
-    fun update(point: Point) : SelectionHelper<T> = apply {
+    fun update(point: Point): SelectionHelper<T> = apply {
         if (isSelecting) {
             box?.let {
                 box = SelectionBox(it.anchorPoint, point)
@@ -456,8 +455,10 @@ class SelectionHelper<T> {
     /**
      * Retrieves the element selected by clicking. If selection was not done by clicking, null
      */
-    fun clickSelection(nodes: Map<Node<T>, Position2D<*>>,
-        wormhole: BidimensionalWormhole<Position2D<*>>): Pair<Node<T>, Position2D<*>>? =
+    fun clickSelection(
+        nodes: Map<Node<T>, Position2D<*>>,
+        wormhole: BidimensionalWormhole<Position2D<*>>
+    ): Pair<Node<T>, Position2D<*>>? =
         selectionPoint?.let { point ->
             nodes.minBy { (nodes[it.key]!!).distanceTo(wormhole.getEnvPoint(point)) }?.let {
                 Pair(it.key, it.value)
@@ -467,8 +468,10 @@ class SelectionHelper<T> {
     /**
      * Retrieves the elements selected by box selection, thus possibly empty
      */
-    fun boxSelection(nodes: Map<Node<T>, Position2D<*>>,
-        wormhole: BidimensionalWormhole<Position2D<*>>): Map<Node<T>, Position2D<*>> =
+    fun boxSelection(
+        nodes: Map<Node<T>, Position2D<*>>,
+        wormhole: BidimensionalWormhole<Position2D<*>>
+    ): Map<Node<T>, Position2D<*>> =
         box?.let {
             rectangle.intersectingNodes(nodes, wormhole)
         } ?: emptyMap()
@@ -488,8 +491,8 @@ private fun Canvas.createDrawCommand(rectangle: Rectangle): () -> Unit = {
  */
 private fun <T> Rectangle.intersectingNodes(
     nodes: Map<Node<T>, Position2D<*>>,
-    wormhole: BidimensionalWormhole<Position2D<*>>): Map<Node<T>, Position2D<*>> =
-    let { area -> nodes.filterValues { wormhole.getViewPoint(it) in area } }
+    wormhole: BidimensionalWormhole<Position2D<*>>
+): Map<Node<T>, Position2D<*>> = let { area -> nodes.filterValues { wormhole.getViewPoint(it) in area } }
 
 private operator fun Rectangle.contains(point: Point): Boolean =
     point.x in x..(x + width) &&

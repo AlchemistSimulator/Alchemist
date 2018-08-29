@@ -43,7 +43,6 @@ abstract class KeyboardEventDispatcher : PersistentEventDispatcher<KeyActionType
  */
 open class SimpleKeyboardEventDispatcher : KeyboardEventDispatcher() {
 
-    private var keyActions: Map<Pair<KeyActionType, KeyCode>, (event: KeyEvent) -> Unit> = emptyMap()
     private var keysHeld: Set<KeyCode> = emptySet()
 
     override val listener = object : KeyboardActionListener {
@@ -51,13 +50,13 @@ open class SimpleKeyboardEventDispatcher : KeyboardEventDispatcher() {
             when (actionType) {
                 KeyActionType.PRESSED -> {
                     event.code.let {
-                        keyActions[Pair(KeyActionType.PRESSED, event.code)]?.invoke(event)
+                        actions[Pair(KeyActionType.PRESSED, event.code)]?.invoke(event)
                         keysHeld += it
                     }
                 }
                 KeyActionType.RELEASED -> {
                     event.code.let {
-                        keyActions[Pair(KeyActionType.RELEASED, event.code)]?.invoke(event)
+                        actions[Pair(KeyActionType.RELEASED, event.code)]?.invoke(event)
                         keysHeld -= it
                     }
                 }

@@ -25,6 +25,7 @@ import javafx.collections.MapChangeListener
 import javafx.collections.ObservableMap
 import javafx.scene.canvas.Canvas
 import javafx.scene.canvas.GraphicsContext
+import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
@@ -51,11 +52,26 @@ class InteractionManager<T>(
 
     val selectedElements: ImmutableMap<Node<T>, Position2D<*>>
         get() = ImmutableMap.copyOf(selection)
+    /**
+     * The nodes in the environment.
+     * Should be updated as frequently as possible to ensure a consistent representation of the feedback.
+     */
     var nodes: Map<Node<T>, Position2D<*>> = emptyMap()
+    /**
+     * The keyboard listener.
+     */
+    val keyboardListener: KeyboardActionListener
+        get() = keyboard.listener
+    /**
+     * The canvases used for input/output.
+     */
+    val canvases: List<Canvas>
+        get() = listOf(input, highlighter, selector)
 
     private val input = Canvas()
     private val highlighter = Canvas()
     private val selector = Canvas()
+    private val keyboard = SimpleKeyboardEventDispatcher()
     private val zoomManager: ZoomManager by lazy {
         ExponentialZoomManager(this.wormhole.zoom, ExponentialZoomManager.DEF_BASE)
     }
@@ -63,7 +79,6 @@ class InteractionManager<T>(
     private val selectionCandidates: ObservableMap<Node<T>, Position2D<*>> = FXCollections.observableHashMap()
     private val candidatesMutex: Semaphore = Semaphore(1)
 
-    private var keyboardModifiers: Set<FXOutputMonitor.KeyboardModifier> = emptySet()
     private var panPosition: Point? = null
     private var selectionBox: SelectionBox<T>? = null
     private var selectionPoint: Point? = null
@@ -221,7 +236,7 @@ class InteractionManager<T>(
         if (selectionBox == null) { // a single node has been selected (click selection)
             wormhole.getEnvPoint(selectionPoint).let { cursorPosition ->
                 nodes.keys.minBy { (nodes[it]!!).distanceTo(cursorPosition) }?.let {
-                    if (!keyboardModifiers.contains(FXOutputMonitor.KeyboardModifier.CTRL)) {
+                    if (!keyboard.isHeld(KeyCode.CONTROL)) {
                         selection.clear()
                         selection[it] = nodes[it]
                     } else {
@@ -234,7 +249,7 @@ class InteractionManager<T>(
                 }
             }
         } else { // multiple nodes have been selected (box selection)
-            if (!keyboardModifiers.contains(FXOutputMonitor.KeyboardModifier.CTRL)) {
+            if (!keyboard.isHeld(KeyCode.CONTROL)) {
                 selection.clear()
                 selectionBox?.let {
                     selection += it.finalize(nodes)
@@ -323,22 +338,6 @@ class InteractionManager<T>(
     }
 
     /**
-     * Toggles a given key modifier.
-     */
-    fun toggleModifier(modifier: FXOutputMonitor.KeyboardModifier) {
-        if (keyboardModifiers.contains(modifier)) {
-            keyboardModifiers -= modifier
-        } else {
-            keyboardModifiers += modifier
-        }
-    }
-
-    /**
-     * Returns the canvases used by this InteractionManager.
-     */
-    fun canvases(): List<Canvas> = listOf(input, highlighter, selector)
-
-    /**
      * Sets the wormhole.
      */
     fun setWormhole(wormhole: BidimensionalWormhole<Position2D<*>>) {
@@ -353,10 +352,17 @@ class InteractionManager<T>(
     }
 
     companion object {
-        private const val GET_X_METHOD_NAME = "getX"
-        private const val GET_Y_METHOD_NAME = "getY"
+        /**
+         * The size (radius) of the highlights.
+         */
         private const val highlightSize = 10.0
+        /**
+         * The colour of the highlights for the already selected nodes.
+         */
         private const val alreadySelected = "#1f70f2"
+        /**
+         * The colour of the highlights for the nodes that are candidates for selection.
+         */
         private const val selecting = "#ff5400"
         /**
          * Empiric zoom scale value.
@@ -386,12 +392,11 @@ class SelectionBox<T>(private val anchorPoint: Point, private val context: Graph
     fun update(newPoint: Point): () -> Unit = checkFinalized().setNewPoint(newPoint).draw()
 
     /**
-     * Returns the nodes currently intersecting with the selection-
+     * Returns the nodes currently intersecting with the selection.
      * @param nodes a map having nodes as keys and their positions as values
      */
     fun intersectingNodes(nodes: Map<Node<T>, Position2D<*>>): Map<Node<T>, Position2D<*>> =
-//        checkFinalized().rectangle.let { area -> nodes.filterValues { wormhole.getViewPoint(it) in area } }
-        if (elements != null) { emptyMap() } else /*checkFinalized().*/rectangle.let { area -> nodes.filterValues { wormhole.getViewPoint(it) in area } }
+        elements ?: rectangle.let { area -> nodes.filterValues { wormhole.getViewPoint(it) in area } }
 
     /**
      * Locks the elements and writes the items selected to [elements].
@@ -404,7 +409,6 @@ class SelectionBox<T>(private val anchorPoint: Point, private val context: Graph
      * Returns a lambda that draws the box.
      */
     fun draw(): () -> Unit = { rectangle.let {
-        // can edit the elements box's style here
         context.fill = selection.color()
         context.fillRect(it.x, it.y, it.width, it.height)
     } }

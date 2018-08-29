@@ -79,10 +79,6 @@ abstract class AbstractFXDisplay<T>
         this.viewStatus = viewStatus
     }
 
-    override fun toggleModifier(modifier: FXOutputMonitor.KeyboardModifier) {
-        interactions.toggleModifier(modifier)
-    }
-
     override fun getStep(): Int {
         return this.step
     }
@@ -154,7 +150,9 @@ abstract class AbstractFXDisplay<T>
         this.effectStack.addAll(effects)
     }
 
-    override fun getInteractionCanvases(): List<Canvas> = interactions.canvases()
+    override fun getInteractionCanvases(): List<Canvas> = interactions.canvases
+
+    override fun getKeyboardListener(): KeyboardActionListener = interactions.keyboardListener
 
     override fun initialized(environment: Environment<T, Position2D<*>>) {
         stepDone(environment, null, DoubleTime(), 0)

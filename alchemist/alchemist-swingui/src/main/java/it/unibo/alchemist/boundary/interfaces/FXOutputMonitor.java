@@ -2,14 +2,15 @@ package it.unibo.alchemist.boundary.interfaces;
 
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
+import it.unibo.alchemist.boundary.monitors.KeyboardActionListener;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import java.util.Collection;
+import java.util.List;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * {@code OutputMonitor} that handles the graphical part of the simulation in JavaFX.
@@ -119,17 +120,14 @@ public interface FXOutputMonitor<T, P extends Position2D<?>> extends OutputMonit
     }
 
     /**
-     * Toggles a modifier
-     * @param modifier the modifier to be toggled
+     * Returns a list of canvases used for interacting with the user.
+     * @return the list
      */
-    void toggleModifier(@NotNull KeyboardModifier modifier);
+    List<Canvas> getInteractionCanvases();
 
     /**
-     * Keys that can modify the behavior of certain interactive functions
+     * Returns the keyboard listener associated with this monitor.
+     * @return the listener
      */
-    enum KeyboardModifier {
-        CTRL
-    }
-
-    Collection<Canvas> getInteractionCanvases();
+    KeyboardActionListener getKeyboardListener();
 }

@@ -5,7 +5,6 @@ import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
-import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.boundary.monitor.FXStepMonitor;
 import it.unibo.alchemist.boundary.monitor.FXTimeMonitor;
@@ -13,6 +12,7 @@ import it.unibo.alchemist.boundary.monitor.PlayPauseMonitor;
 import it.unibo.alchemist.boundary.monitors.AbstractFXDisplay;
 import it.unibo.alchemist.boundary.monitors.FX2DDisplay;
 import it.unibo.alchemist.boundary.monitors.FXMapDisplay;
+import it.unibo.alchemist.boundary.monitors.KeyboardActionListener;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -36,7 +36,6 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -211,7 +210,7 @@ public class SingleRunApp<T, P extends Position2D<? extends P>> extends Applicat
         try {
             rootLayout = FXResourceLoader.getLayout(AnchorPane.class, this, ROOT_LAYOUT);
             final StackPane main = (StackPane) rootLayout.getChildren().get(0);
-//            main.setPickOnBounds(false);
+            final Scene scene = new Scene(rootLayout);
             optDisplayMonitor.ifPresent(dm -> {
                 dm.widthProperty().bind(main.widthProperty());
                 dm.heightProperty().bind(main.heightProperty());
@@ -227,6 +226,7 @@ public class SingleRunApp<T, P extends Position2D<? extends P>> extends Applicat
                 });
                 main.getChildren().addAll(dm.getInteractionCanvases());
                 main.getChildren().add(dm);
+                initKeybindings(scene, dm.getKeyboardListener());
             });
             this.timeMonitor = new FXTimeMonitor<>();
             this.stepMonitor = new FXStepMonitor<>();
@@ -252,8 +252,8 @@ public class SingleRunApp<T, P extends Position2D<? extends P>> extends Applicat
                 System.exit(0);
             });
             primaryStage.getIcons().add(SVGImageUtils.getSvgImage(SVGImageUtils.DEFAULT_ALCHEMIST_ICON_PATH));
-            final Scene scene = new Scene(rootLayout);
-            initKeybindings(scene);
+//            final Scene scene = new Scene(rootLayout);
+//            initKeybindings(scene);
             primaryStage.setScene(scene);
             initialized = true;
             primaryStage.show();
@@ -288,37 +288,18 @@ public class SingleRunApp<T, P extends Position2D<? extends P>> extends Applicat
      * Initializes the key bindings.
      * <p>
      * Should be overridden to implement keyboard interaction with the GUI.
-     *
-     * @param scene the Scene that receives the {@link Event}s
      */
-    protected void initKeybindings(final Scene scene) {
-        scene.setOnKeyPressed(event -> {
-            switch (event.getCode()) {
-                case P:
-                    playPauseMonitor.fireEvent(new ActionEvent(event.getSource(), playPauseMonitor));
+    protected void initKeybindings(final Scene scene, final KeyboardActionListener listener) {
+        scene.setOnKeyPressed(e -> {
+            switch (e.getCode()) {
+                case P: playPauseMonitor.fireEvent(new ActionEvent(e.getSource(), playPauseMonitor));
+                    e.consume();
                     break;
-                case CONTROL:
-                    displayMonitor.toggleModifier(FXOutputMonitor.KeyboardModifier.CTRL);
-                    break;
-                default:
+                default: listener.keyPressed(e);
                     break;
             }
-            event.consume();
-            // TODO remove if and use switch (like comment above) for new key bindings
-//            if (event.getCode().equals(KeyCode.P)) {
-//                playPauseMonitor.fireEvent(new ActionEvent(event.getSource(), playPauseMonitor));
-//            }
         });
-        scene.setOnKeyReleased(event -> {
-            switch (event.getCode()) {
-                case CONTROL:
-                    displayMonitor.toggleModifier(FXOutputMonitor.KeyboardModifier.CTRL);
-                    break;
-                default:
-                    break;
-            }
-            event.consume();
-        });
+        scene.setOnKeyReleased(listener::keyReleased);
     }
 
     /**

@@ -37,14 +37,12 @@ interface ActionListener<A : ActionType, T : Event> {
  * @param O the type of a token object containing information regarding the trigger of an action
  * @param T the type of event that triggered the action
  */
-abstract class EventDispatcher<A : ActionType, O : Any, T : Event> {
-
-    protected var actions: Map<Pair<A, O>, (event: T) -> Unit> = emptyMap()
+interface EventDispatcher<A : ActionType, O : Any, T : Event> {
 
     /**
      * The listener bound to this dispatcher.
      */
-    abstract val listener: ActionListener<A, T>
+    val listener: ActionListener<A, T>
 
     /**
      * Adds an action to be performed whenever an event is triggered through the [listener].
@@ -52,20 +50,27 @@ abstract class EventDispatcher<A : ActionType, O : Any, T : Event> {
      * @param item the item containing information regarding each specific occurrence.
      * @param action the action that will happen whenever the given action occurs.
      */
-    open fun setOnAction(actionType: A, item: O, action: (event: T) -> Unit): Unit {
-        Pair(actionType, item).let {
-            if (it !in actions) {
-                actions += it to action
-            }
-        }
+    fun setOnAction(actionType: A, item: O, action: (event: T) -> Unit): Unit
+}
+
+/**
+ * A generic event dispatcher that implements action management.
+ */
+abstract class AbstractEventDispatcher<A : ActionType, O : Any, T : Event> : EventDispatcher<A, O, T> {
+
+    protected var actions: Map<Pair<A, O>, (event: T) -> Unit> = emptyMap()
+
+    override fun setOnAction(actionType: A, item: O, action: (event: T) -> Unit) {
+        actions += Pair(actionType, item) to action
     }
 }
 
 /**
  * An event dispatcher which doesn't overwrite its actions when [setOnAction] is called on an already existing trigger.
  */
-abstract class PersistentEventDispatcher<A : ActionType, O : Any, T : Event> : EventDispatcher<A, O, T>() {
-    override fun setOnAction(actionType: A, item: O, action: (event: T) -> Unit): Unit {
+abstract class PersistentEventDispatcher<A : ActionType, O : Any, T : Event> : AbstractEventDispatcher<A, O, T>() {
+
+    override fun setOnAction(actionType: A, item: O, action: (event: T) -> Unit) {
         Pair(actionType, item).let {
             if (it !in actions) {
                 super.setOnAction(actionType, item, action)

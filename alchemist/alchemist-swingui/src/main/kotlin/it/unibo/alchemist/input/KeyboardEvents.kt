@@ -28,20 +28,20 @@ interface KeyboardActionListener : ActionListener<KeyActionType, KeyEvent>
 /**
  * An action dispatcher in the context of a keyboard.
  */
-interface KeyboardEventDispatcher : EventDispatcher<KeyActionType, KeyCode, KeyEvent> {
+abstract class KeyboardEventDispatcher : PersistentEventDispatcher<KeyActionType, KeyCode, KeyEvent>() {
 
     /**
      * Returns whether a given key is being held or not at the time of the call.
      * @param key the queried key
      * @returns whether the given key is being held or not
      */
-    fun isHeld(key: KeyCode): Boolean
+    abstract fun isHeld(key: KeyCode): Boolean
 }
 
 /**
  * A basic implementation of [KeyboardEventDispatcher]
  */
-open class SimpleKeyboardEventDispatcher : KeyboardEventDispatcher {
+open class SimpleKeyboardEventDispatcher : KeyboardEventDispatcher() {
 
     private var keyActions: Map<Pair<KeyActionType, KeyCode>, (event: KeyEvent) -> Unit> = emptyMap()
     private var keysHeld: Set<KeyCode> = emptySet()
@@ -63,14 +63,6 @@ open class SimpleKeyboardEventDispatcher : KeyboardEventDispatcher {
                 }
             }
             event.consume()
-        }
-    }
-
-    override fun setOnAction(actionType: KeyActionType, item: KeyCode, action: (event: KeyEvent) -> Unit) {
-        Pair(actionType, item).let {
-            if (it !in keyActions) {
-                keyActions += it to action
-            }
         }
     }
 

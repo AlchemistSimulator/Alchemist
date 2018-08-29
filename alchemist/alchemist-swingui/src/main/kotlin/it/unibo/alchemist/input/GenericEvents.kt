@@ -32,23 +32,44 @@ interface ActionListener<A : ActionType, T : Event> {
 }
 
 /**
- * An action dispatcher.
+ * An event dispatcher.
  * @param A the type of the action this dispatcher models
  * @param O the type of a token object containing information regarding the trigger of an action
  * @param T the type of event that triggered the action
  */
-interface EventDispatcher<A : ActionType, O : Any, T : Event> {
+abstract class EventDispatcher<A : ActionType, O : Any, T : Event> {
+
+    protected var actions: Map<Pair<A, O>, (event: T) -> Unit> = emptyMap()
 
     /**
      * The listener bound to this dispatcher.
      */
-    val listener: ActionListener<A, T>
+    abstract val listener: ActionListener<A, T>
 
     /**
-     * Adds an action to be performed whenever an event.
+     * Adds an action to be performed whenever an event is triggered through the [listener].
      * @param actionType the type of the action that needs to occur.
      * @param item the item containing information regarding each specific occurrence.
      * @param action the action that will happen whenever the given action occurs.
      */
-    fun setOnAction(actionType: A, item: O, action: (event: T) -> Unit): Unit
+    open fun setOnAction(actionType: A, item: O, action: (event: T) -> Unit): Unit {
+        Pair(actionType, item).let {
+            if (it !in actions) {
+                actions += it to action
+            }
+        }
+    }
+}
+
+/**
+ * An event dispatcher which doesn't overwrite its actions when [setOnAction] is called on an already existing trigger.
+ */
+abstract class PersistentEventDispatcher<A : ActionType, O : Any, T : Event> : EventDispatcher<A, O, T>() {
+    override fun setOnAction(actionType: A, item: O, action: (event: T) -> Unit): Unit {
+        Pair(actionType, item).let {
+            if (it !in actions) {
+                super.setOnAction(actionType, item, action)
+            }
+        }
+    }
 }

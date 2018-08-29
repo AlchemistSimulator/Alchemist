@@ -105,6 +105,8 @@ public interface FXOutputMonitor<T, P extends Position2D<?>> extends OutputMonit
      * The enum models the status of the view.
      */
     enum ViewStatus {
+        /** In this status, click and drag to move the view. */
+        PANNING,
         /** In this status, click and drag to select nodes. */
         SELECTING,
         /** In this status, click and drag to move selected nodes. */
@@ -112,11 +114,7 @@ public interface FXOutputMonitor<T, P extends Position2D<?>> extends OutputMonit
         /** In this status, click to clone nodes. */
         CLONING,
         /** In this status, click to delete nodes. */
-        DELETING,
-        /** In this status, click to open editor to modify node properties. */
-        EDITING,
-        /** In this status, click and drag to move the view. */
-        PANNING
+        DELETING
     }
 
     /**

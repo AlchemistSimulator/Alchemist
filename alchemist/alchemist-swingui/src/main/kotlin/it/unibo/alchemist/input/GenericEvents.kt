@@ -28,7 +28,7 @@ interface ActionListener<T : TriggerAction, E : Event> {
      * @param action the action that happened
      * @param event the event that triggered the action
      */
-    fun onAction(action: T, event: E)
+    fun action(action: T, event: E)
 }
 
 /**

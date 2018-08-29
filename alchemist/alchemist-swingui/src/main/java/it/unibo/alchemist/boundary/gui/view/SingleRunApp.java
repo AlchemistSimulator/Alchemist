@@ -297,11 +297,11 @@ public class SingleRunApp<T, P extends Position2D<? extends P>> extends Applicat
                 case P: playPauseMonitor.fireEvent(new ActionEvent(e.getSource(), playPauseMonitor));
                     e.consume();
                     break;
-                default: listener.onAction(new KeyboardTriggerAction(ActionOnKey.PRESSED, e.getCode()), e);
+                default: listener.action(new KeyboardTriggerAction(ActionOnKey.PRESSED, e.getCode()), e);
                     break;
             }
         });
-        scene.setOnKeyReleased(e -> listener.onAction(new KeyboardTriggerAction(ActionOnKey.RELEASED, e.getCode()), e));
+        scene.setOnKeyReleased(e -> listener.action(new KeyboardTriggerAction(ActionOnKey.RELEASED, e.getCode()), e));
     }
 
     /**

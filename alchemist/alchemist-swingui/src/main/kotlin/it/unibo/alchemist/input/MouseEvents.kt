@@ -9,9 +9,13 @@
 
 package it.unibo.alchemist.input
 
+import javafx.scene.canvas.Canvas
 import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
 
+/**
+ * Actions that can happen on a mouse and a certain mouse button.
+ */
 enum class ActionOnMouse {
     CLICKED,
     DRAGGED,
@@ -22,27 +26,49 @@ enum class ActionOnMouse {
     RELEASED
 }
 
-enum class MouseCommand {
-    PAN,
-    SELECT,
-    REMOVE,
-    MOVE
+data class MouseTriggerAction(val type: ActionOnMouse, val button: MouseButton) : TriggerAction
+
+/**
+ * An action listener in the context of mouse events.
+ */
+interface MouseActionListener : ActionListener<MouseTriggerAction, MouseEvent>
+
+/**
+ * A basic implementation of a mouse event dispatcher.
+ */
+open class SimpleMouseEventDispatcher : AbstractEventDispatcher<MouseTriggerAction, MouseEvent>() {
+    override val listener: ActionListener<MouseTriggerAction, MouseEvent> = object : MouseActionListener {
+        override fun action(action: MouseTriggerAction, event: MouseEvent) {
+            triggers[action]?.invoke(event)
+        }
+    }
 }
 
-data class MouseButtonTriggerAction(val type: ActionOnMouse, val button: MouseButton, val command: MouseCommand) : TriggerAction
-
 /**
- * An action listener in the context of mouse button events.
+ * A mouse event dispatcher that catches mouse input from a canvas.
  */
-interface MouseButtonActionListener : ActionListener<MouseButtonTriggerAction, MouseEvent>
-
-/**
- * A basic implementation of a mouse button event dispatcher.
- */
-open class SimpleMouseButtonEventDispatcher : AbstractEventDispatcher<MouseButtonTriggerAction, MouseEvent>() {
-    override val listener: ActionListener<MouseButtonTriggerAction, MouseEvent> = object : MouseButtonActionListener {
-        override fun onAction(action: MouseButtonTriggerAction, event: MouseEvent) {
-            triggers[action]?.invoke(event)
+open class CanvasBoundMouseEventDispatcher(canvas: Canvas) : SimpleMouseEventDispatcher() {
+    init {
+        canvas.setOnMouseClicked {
+            listener.action(MouseTriggerAction(ActionOnMouse.CLICKED, it.button), it)
+        }
+        canvas.setOnMouseDragged {
+            listener.action(MouseTriggerAction(ActionOnMouse.DRAGGED, it.button), it)
+        }
+        canvas.setOnMouseEntered {
+            listener.action(MouseTriggerAction(ActionOnMouse.ENTERED, it.button), it)
+        }
+        canvas.setOnMouseExited {
+            listener.action(MouseTriggerAction(ActionOnMouse.EXITED, it.button), it)
+        }
+        canvas.setOnMouseMoved {
+            listener.action(MouseTriggerAction(ActionOnMouse.MOVED, it.button), it)
+        }
+        canvas.setOnMousePressed {
+            listener.action(MouseTriggerAction(ActionOnMouse.PRESSED, it.button), it)
+        }
+        canvas.setOnMouseReleased {
+            listener.action(MouseTriggerAction(ActionOnMouse.RELEASED, it.button), it)
         }
     }
 }

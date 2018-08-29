@@ -48,7 +48,7 @@ open class SimpleKeyboardEventDispatcher : KeyboardEventDispatcher() {
     private var keysHeld: Set<KeyCode> = emptySet()
 
     override val listener = object : KeyboardActionListener {
-        override fun onAction(action: KeyboardTriggerAction, event: KeyEvent) {
+        override fun action(action: KeyboardTriggerAction, event: KeyEvent) {
             triggers[action]?.invoke(event)
             keysHeld = when (action.type) {
                 ActionOnKey.PRESSED -> keysHeld + action.key

@@ -14,11 +14,17 @@ import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor
 import it.unibo.alchemist.boundary.wormhole.implementation.ExponentialZoomManager
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole
 import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager
+import it.unibo.alchemist.input.ActionOnKey
+import it.unibo.alchemist.input.ActionOnMouse
+import it.unibo.alchemist.input.CanvasBoundMouseEventDispatcher
 import it.unibo.alchemist.input.KeyboardActionListener
+import it.unibo.alchemist.input.KeyboardTriggerAction
+import it.unibo.alchemist.input.MouseTriggerAction
 import it.unibo.alchemist.input.SimpleKeyboardEventDispatcher
 import it.unibo.alchemist.kotlin.distanceTo
 import it.unibo.alchemist.kotlin.makePoint
 import it.unibo.alchemist.kotlin.plus
+import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position2D
 import javafx.application.Platform
@@ -26,8 +32,9 @@ import javafx.collections.FXCollections
 import javafx.collections.MapChangeListener
 import javafx.collections.ObservableMap
 import javafx.scene.canvas.Canvas
-import javafx.scene.canvas.GraphicsContext
 import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
+import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
@@ -69,22 +76,28 @@ class InteractionManager<T>(
      */
     val canvases: List<Canvas>
         get() = listOf(input, highlighter, selector)
+    /**
+     * Commands that have to be run through the environment.
+     */
+    var runOnSimulation: List<(env: Environment<T, Position2D<*>>) -> Unit> = emptyList()
+    /**
+     * Mutex for the commands that have to be run through the environment
+     */
+    val runMutex: Semaphore = Semaphore(1)
 
     private val input = Canvas()
     private val highlighter = Canvas()
     private val selector = Canvas()
     private val keyboard = SimpleKeyboardEventDispatcher()
+    private val mouse = CanvasBoundMouseEventDispatcher(input)
     private val zoomManager: ZoomManager by lazy {
         ExponentialZoomManager(this.wormhole.zoom, ExponentialZoomManager.DEF_BASE)
     }
     private val selection: ObservableMap<Node<T>, Position2D<*>> = FXCollections.observableHashMap()
     private val selectionCandidates: ObservableMap<Node<T>, Position2D<*>> = FXCollections.observableHashMap()
     private val candidatesMutex: Semaphore = Semaphore(1)
-
-    private var panPosition: Point? = null
-    private var selectionBox: SelectionBox<T>? = null
-    private var selectionPoint: Point? = null
-    private var isSelecting = false
+    private lateinit var panHelper: PanHelper
+    private val selectionHelper: SelectionHelper<T> = SelectionHelper()
     private lateinit var wormhole: BidimensionalWormhole<Position2D<*>>
     @Volatile private var feedback: Map<Interaction, List<() -> Unit>> = emptyMap()
 
@@ -107,64 +120,63 @@ class InteractionManager<T>(
         highlighter.graphicsContext2D.globalAlpha = 0.5
         selector.graphicsContext2D.globalAlpha = 0.4
 
+        // TODO: rework node deletion. the way delete works now, it only updates when a step occurs.
+        val deleteNodes: (KeyEvent) -> Unit = {
+            runMutex.acquireUninterruptibly()
+            if (selection.isNotEmpty()) {
+                val nodesToRemove: Set<Node<T>> = selection.keys
+                runOnSimulation += { env ->
+                    nodesToRemove.forEach { env.removeNode(it) }
+                    repaint()
+                }
+            }
+            runMutex.release()
+        }
+        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, KeyCode.DELETE), deleteNodes)
+        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, KeyCode.BACK_SPACE), deleteNodes)
+
+        mouse.setOnAction(MouseTriggerAction(ActionOnMouse.PRESSED, MouseButton.PRIMARY)) {
+            when (parentMonitor.viewStatus) {
+                FXOutputMonitor.ViewStatus.PANNING -> onPanInitiated(it)
+                FXOutputMonitor.ViewStatus.SELECTING -> onSelectInitiated(it)
+            }
+        }
+        mouse.setOnAction(MouseTriggerAction(ActionOnMouse.DRAGGED, MouseButton.PRIMARY)) {
+            when (parentMonitor.viewStatus) {
+                FXOutputMonitor.ViewStatus.PANNING -> onPanning(it)
+                FXOutputMonitor.ViewStatus.SELECTING -> onSelecting(it)
+            }
+        }
+        mouse.setOnAction(MouseTriggerAction(ActionOnMouse.RELEASED, MouseButton.PRIMARY)) {
+            when (parentMonitor.viewStatus) {
+                FXOutputMonitor.ViewStatus.PANNING -> onPanned(it)
+                FXOutputMonitor.ViewStatus.SELECTING -> onSelected(it)
+            }
+        }
+        mouse.setOnAction(MouseTriggerAction(ActionOnMouse.EXITED, MouseButton.PRIMARY)) {
+            when (parentMonitor.viewStatus) {
+                FXOutputMonitor.ViewStatus.PANNING -> onPanCanceled(it)
+                FXOutputMonitor.ViewStatus.SELECTING -> onSelectCanceled(it)
+            }
+        }
+        mouse.setOnAction(MouseTriggerAction(ActionOnMouse.PRESSED, MouseButton.SECONDARY), this::onSelectInitiated)
+        mouse.setOnAction(MouseTriggerAction(ActionOnMouse.DRAGGED, MouseButton.SECONDARY), this::onSelecting)
+        mouse.setOnAction(MouseTriggerAction(ActionOnMouse.RELEASED, MouseButton.SECONDARY), this::onSelected)
+        mouse.setOnAction(MouseTriggerAction(ActionOnMouse.EXITED, MouseButton.SECONDARY), this::onSelectCanceled)
+
         input.setOnScroll {
             zoomManager.inc(it.deltaY / ZOOM_SCALE)
             wormhole.zoomOnPoint(makePoint(it.x, it.y), zoomManager.zoom)
             parentMonitor.repaint()
             it.consume()
         }
-        input.setOnMousePressed {
-            when (parentMonitor.viewStatus) {
-                FXOutputMonitor.ViewStatus.PANNING -> onPanInitiated(it)
-                FXOutputMonitor.ViewStatus.SELECTING -> {
-                    selectionPoint = makePoint(it.x, it.y)
-                    isSelecting = true
-                    it.consume()
-                }
-            }
-        }
-        input.setOnMouseDragged {
-            when (parentMonitor.viewStatus) {
-                FXOutputMonitor.ViewStatus.PANNING -> onPanning(it)
-                FXOutputMonitor.ViewStatus.SELECTING -> {
-                    if (isSelecting) {
-                        if (selectionBox == null) {
-                            onBoxSelectInitiated(it)
-                        } else {
-                            onBoxSelecting(it)
-                        }
-                    }
-                }
-            }
-        }
-        input.setOnMouseReleased {
-            when (parentMonitor.viewStatus) {
-                FXOutputMonitor.ViewStatus.PANNING -> onPanned(it)
-                FXOutputMonitor.ViewStatus.SELECTING -> {
-                    if (isSelecting) {
-                        onSelected(it)
-                        isSelecting = false
-                    }
-                    it.consume()
-                }
-            }
-        }
-        input.setOnMouseExited {
-            when (parentMonitor.viewStatus) {
-                FXOutputMonitor.ViewStatus.PANNING -> onPanCanceled(it)
-                FXOutputMonitor.ViewStatus.SELECTING -> {
-                    isSelecting = false
-                    onSelectCanceled(it)
-                }
-            }
-        }
 
         selection.addListener(MapChangeListener {
-            feedback += Interaction.HIGHLIGHTED to selection.map { paintHighlight(it.value, alreadySelected.color()) }
+            feedback += Interaction.HIGHLIGHTED to selection.map { paintHighlight(it.value, alreadySelectedColour.color()) }
             repaint()
         })
         selectionCandidates.addListener(MapChangeListener {
-            feedback += Interaction.HIGHLIGHT_CANDIDATE to selectionCandidates.map { paintHighlight(it.value, selecting.color()) }
+            feedback += Interaction.HIGHLIGHT_CANDIDATE to selectionCandidates.map { paintHighlight(it.value, selectingColour.color()) }
             repaint()
         })
     }
@@ -174,7 +186,7 @@ class InteractionManager<T>(
      * @param event the caller
      */
     private fun onPanInitiated(event: MouseEvent) {
-        panPosition = makePoint(event.x, event.y)
+        panHelper = PanHelper(makePoint(event.x, event.y))
     }
 
     /**
@@ -182,14 +194,8 @@ class InteractionManager<T>(
      * @param event the caller
      */
     private fun onPanning(event: MouseEvent) {
-        panPosition?.also { previousPan ->
-            val currentPoint = makePoint(event.x, event.y)
-            val newPoint = wormhole.viewPosition + makePoint(
-                currentPoint.x - previousPan.getX(),
-                currentPoint.y - previousPan.getY()
-            )
-            wormhole.viewPosition = newPoint
-            panPosition = currentPoint
+        if (panHelper.valid) {
+            wormhole.viewPosition = panHelper.update(makePoint(event.x, event.y), wormhole.viewPosition)
             parentMonitor.repaint()
         }
         event.consume()
@@ -199,7 +205,7 @@ class InteractionManager<T>(
      * Called when a pan gesture finishes.
      */
     private fun onPanned(event: MouseEvent) {
-        panPosition = null
+        panHelper.close()
         event.consume()
     }
 
@@ -207,24 +213,24 @@ class InteractionManager<T>(
      * Called when a pan gesture is canceled.
      */
     private fun onPanCanceled(event: MouseEvent) {
-        panPosition = null
+        panHelper.close()
         event.consume()
     }
 
     /**
-     * Called when a select gesture is initiated
+     * Called when a select gesture is initiated.
      */
-    private fun onBoxSelectInitiated(event: MouseEvent) {
-        selectionPoint?.let { selectionBox = SelectionBox(it, selector.graphicsContext2D, wormhole) }
-        event.consume()
+    private fun onSelectInitiated(event: MouseEvent) {
+        selectionHelper.begin(makePoint(event.x, event.y))
     }
 
     /**
      * Called while a select gesture is in progress and the selection is changing.
      */
-    private fun onBoxSelecting(event: MouseEvent) {
-        selectionBox?.let {
-            feedback += Interaction.SELECTION_BOX to listOf(it.update(makePoint(event.x, event.y)))
+    private fun onSelecting(event: MouseEvent) {
+        selectionHelper.let {
+            it.update(makePoint(event.x, event.y))
+            feedback += Interaction.SELECTION_BOX to listOf(selector.createDrawCommand(it.rectangle))
             addNodesToSelectionCandidates()
             repaint()
         }
@@ -235,46 +241,30 @@ class InteractionManager<T>(
      * Called when a select gesture finishes.
      */
     private fun onSelected(event: MouseEvent) {
-        if (selectionBox == null) { // a single node has been selected (click selection)
-            wormhole.getEnvPoint(selectionPoint).let { cursorPosition ->
-                nodes.keys.minBy { (nodes[it]!!).distanceTo(cursorPosition) }?.let {
-                    if (!keyboard.isHeld(KeyCode.CONTROL)) {
-                        selection.clear()
-                        selection[it] = nodes[it]
-                    } else {
-                        if (it in selection) {
-                            selection -= it
-                        } else {
-                            selection[it] = nodes[it]
-                        }
-                    }
-                }
-            }
-        } else { // multiple nodes have been selected (box selection)
-            if (!keyboard.isHeld(KeyCode.CONTROL)) {
-                selection.clear()
-                selectionBox?.let {
-                    selection += it.finalize(nodes)
-                }
-            } else {
-                selectionBox?.let { it.finalize(nodes).let {
-                        it.forEach {
-                            if (it.key in selection) {
-                                selection -= it.key
-                            } else {
-                                selection[it.key] = it.value
-                            }
-                        }
-                    }
-                }
-            }
-            selectionBox = null
-            candidatesMutex.acquireUninterruptibly()
-            selectionCandidates.clear()
-            candidatesMutex.release()
+        if (!keyboard.isHeld(KeyCode.CONTROL)) {
+            selection.clear()
         }
+        selectionHelper.clickSelection(nodes, wormhole)?.let {
+            if (it.first in selection) {
+                selection -= it.first
+            } else {
+                selection[it.first] = it.second
+            }
+        }
+        selectionHelper.boxSelection(nodes, wormhole).let {
+            it.forEach {
+                if (it.key in selection) {
+                    selection -= it.key
+                } else {
+                    selection[it.key] = it.value
+                }
+            }
+        }
+        candidatesMutex.acquireUninterruptibly()
+        selectionHelper.close()
+        selectionCandidates.clear()
+        candidatesMutex.release()
         feedback += Interaction.SELECTION_BOX to emptyList()
-        selectionPoint = null
         repaint()
         event.consume()
     }
@@ -283,13 +273,10 @@ class InteractionManager<T>(
      * Called when a select gesture is canceled.
      */
     private fun onSelectCanceled(event: MouseEvent) {
-        if (selectionBox != null) {
-            selectionBox = null
-            feedback += Interaction.SELECTION_BOX to emptyList()
-            feedback += Interaction.HIGHLIGHT_CANDIDATE to emptyList()
-            repaint()
-        }
-        selectionPoint = null
+        selectionHelper.close()
+        feedback += Interaction.SELECTION_BOX to emptyList()
+        feedback += Interaction.HIGHLIGHT_CANDIDATE to emptyList()
+        repaint()
         event.consume()
     }
 
@@ -319,7 +306,7 @@ class InteractionManager<T>(
      */
     private fun addNodesToSelectionCandidates() {
         candidatesMutex.acquireUninterruptibly()
-        selectionBox?.intersectingNodes(nodes)?.let {
+        selectionHelper.boxSelection(nodes, wormhole).let {
             if (it.entries != selectionCandidates.entries) {
                 selectionCandidates.clear()
                 selectionCandidates += it
@@ -357,15 +344,16 @@ class InteractionManager<T>(
         /**
          * The size (radius) of the highlights.
          */
-        private const val highlightSize = 10.0
+        const val highlightSize = 10.0
         /**
          * The colour of the highlights for the already selected nodes.
          */
-        private const val alreadySelected = "#1f70f2"
+        const val alreadySelectedColour = "#1f70f2"
         /**
          * The colour of the highlights for the nodes that are candidates for selection.
          */
-        private const val selecting = "#ff5400"
+        const val selectingColour = "#ff5400"
+        const val selectionBoxColour = "#8e99f3"
         /**
          * Empiric zoom scale value.
          */
@@ -374,81 +362,138 @@ class InteractionManager<T>(
 }
 
 /**
- * Allows basic multi-element box selections.
- * @param T the concentration of the simulation
- * @param anchorPoint the starting and unchanging [Point] of the selection
- * @param context the [GraphicsContext] used for printing the visual representation of the selection
- * @param wormhole the wormhole of the display being used
+ * Manages panning.
  */
-class SelectionBox<T>(private val anchorPoint: Point, private val context: GraphicsContext, private val wormhole: BidimensionalWormhole<Position2D<*>>) {
-    private val movingPoint = Point(anchorPoint.x, anchorPoint.y)
-    var elements: Map<Node<T>, Position2D<*>>? = null
+class PanHelper(private var panPosition: Point) {
+
+    var valid: Boolean = true
         private set
-    private var rectangle = Rectangle()
-        get() = anchorPoint.makeRectangleWith(movingPoint)
 
     /**
-     * Updates the box, clearing the old one and drawing the updated one.
-     * @param newPoint the cursor's new position
+     * Updates the panning position and returns it.
+     * @param currentPoint the destination point
+     * @param viewPoint the position of the view
      */
-    fun update(newPoint: Point): () -> Unit = checkFinalized().setNewPoint(newPoint).draw()
-
-    /**
-     * Returns the nodes currently intersecting with the selection.
-     * @param nodes a map having nodes as keys and their positions as values
-     */
-    fun intersectingNodes(nodes: Map<Node<T>, Position2D<*>>): Map<Node<T>, Position2D<*>> =
-        elements ?: rectangle.let { area -> nodes.filterValues { wormhole.getViewPoint(it) in area } }
-
-    /**
-     * Locks the elements and writes the items selected to [elements].
-     * @param nodes a map having nodes as keys and their positions as values
-     */
-    fun finalize(nodes: Map<Node<T>, Position2D<*>>): Map<Node<T>, Position2D<*>> =
-        intersectingNodes(nodes).also { elements = it }
-
-    /**
-     * Returns a lambda that draws the box.
-     */
-    fun draw(): () -> Unit = { rectangle.let {
-        context.fill = selection.color()
-        context.fillRect(it.x, it.y, it.width, it.height)
-    } }
-
-    /**
-     * Returns a lambda that clears the box.
-     */
-    fun clear(): () -> Unit = { rectangle.let {
-        context.clearRect(it.x, it.y, it.width, it.height)
-    } }
-
-    /**
-     * Sets the moving point to the given point
-     */
-    private fun setNewPoint(point: Point): SelectionBox<T> = apply {
-        movingPoint.x = point.x
-        movingPoint.y = point.y
-    }
-
-    /**
-     * Checks if the selection has been finalized
-     * @throws IllegalStateException if the selection has been finalized
-     */
-    private fun checkFinalized(): SelectionBox<T> {
-        if (elements != null) {
-            throw IllegalStateException("Selection " + this + " has already been finalized")
+    fun update(currentPoint: Point, viewPoint: Point): Point = if (valid) {
+        panPosition.let { previousPan ->
+            viewPoint + makePoint(
+                currentPoint.x - previousPan.getX(),
+                currentPoint.y - previousPan.getY()
+            ).also {
+                panPosition = currentPoint
+            }
         }
-        return this
+    }
+    else {
+        throw IllegalStateException("Unable to pan after finalizing the PanHelper")
     }
 
-    companion object {
-        private const val selection = "#8e99f3"
+    /**
+     * Closes the helper.
+     */
+    fun close() {
+        valid = false
     }
 }
 
+/**
+ * Manages multi-element selection and click-selection.
+ */
+class SelectionHelper<T> {
+
+    /**
+     * Allows basic multi-element box selections.
+     * @param anchorPoint the starting and unchanging [Point] of the selection
+     */
+    class SelectionBox(val anchorPoint: Point, val movingPoint: Point = anchorPoint) {
+        var rectangle = Rectangle()
+            get() = anchorPoint.makeRectangleWith(movingPoint)
+
+        override fun toString(): String = "[$anchorPoint, $movingPoint]"
+    }
+
+    private var box: SelectionBox? = null
+    private var selectionPoint: Point? = null
+    private var isSelecting = false
+
+    /**
+     * The rectangle representing the box.
+     * If the rectangle's dimensions are (0, 0), the rectangle is to be considered non-existing.
+     */
+    val rectangle
+        get() = box?.rectangle ?: makePoint(0, 0).let { it.makeRectangleWith(it) }
+
+    /**
+     * Begins a new selection at the given point.
+     */
+    fun begin(point: Point) : SelectionHelper<T> = apply {
+        isSelecting = true
+        selectionPoint = point
+        box = SelectionBox(point)
+    }
+
+    /**
+     * Updates the selection with a new point.
+     */
+    fun update(point: Point) : SelectionHelper<T> = apply {
+        if (isSelecting) {
+            box?.let {
+                box = SelectionBox(it.anchorPoint, point)
+            }
+            selectionPoint = null
+        }
+    }
+
+    /**
+     * Closes the selection.
+     */
+    fun close() {
+        box = null
+        selectionPoint = null
+        isSelecting = false
+    }
+
+    /**
+     * Retrieves the element selected by clicking. If selection was not done by clicking, null
+     */
+    fun clickSelection(nodes: Map<Node<T>, Position2D<*>>,
+        wormhole: BidimensionalWormhole<Position2D<*>>): Pair<Node<T>, Position2D<*>>? =
+        selectionPoint?.let { point ->
+            nodes.minBy { (nodes[it.key]!!).distanceTo(wormhole.getEnvPoint(point)) }?.let {
+                Pair(it.key, it.value)
+            }
+        }
+
+    /**
+     * Retrieves the elements selected by box selection, thus possibly empty
+     */
+    fun boxSelection(nodes: Map<Node<T>, Position2D<*>>,
+        wormhole: BidimensionalWormhole<Position2D<*>>): Map<Node<T>, Position2D<*>> =
+        box?.let {
+            rectangle.intersectingNodes(nodes, wormhole)
+        } ?: emptyMap()
+}
+
+/**
+ * Returns a command for drawing the given rectangle on the caller canvas.
+ */
+private fun Canvas.createDrawCommand(rectangle: Rectangle): () -> Unit = {
+    graphicsContext2D.let {
+        it.fill = InteractionManager.selectionBoxColour.color()
+        it.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height)
+    } }
+
+/**
+ * Returns the nodes intersecting with the caller rectangle.
+ */
+private fun <T> Rectangle.intersectingNodes(
+    nodes: Map<Node<T>, Position2D<*>>,
+    wormhole: BidimensionalWormhole<Position2D<*>>): Map<Node<T>, Position2D<*>> =
+    let { area -> nodes.filterValues { wormhole.getViewPoint(it) in area } }
+
 private operator fun Rectangle.contains(point: Point): Boolean =
-    point.x in this.x..(this.x + this.width) &&
-        point.y in this.y..(this.y + this.height)
+    point.x in x..(x + width) &&
+        point.y in y..(y + height)
 
 private fun Point.makeRectangleWith(other: Point): Rectangle = Rectangle(
     min(this.x, other.x).toDouble(),

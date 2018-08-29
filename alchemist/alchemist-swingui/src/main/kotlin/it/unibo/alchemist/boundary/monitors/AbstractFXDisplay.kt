@@ -9,13 +9,13 @@
 
 package it.unibo.alchemist.boundary.monitors
 
-import it.unibo.alchemist.input.KeyboardActionListener
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup
 import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory
 import it.unibo.alchemist.boundary.interfaces.DrawCommand
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor
 import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole
+import it.unibo.alchemist.input.KeyboardActionListener
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.Concentration
 import it.unibo.alchemist.model.interfaces.Environment
@@ -198,10 +198,14 @@ abstract class AbstractFXDisplay<T>
      * @param time the current `Time` of simulation
      */
     private fun update(environment: Environment<T, Position2D<*>>, time: Time) {
-        if (Thread.holdsLock(environment)) {
-            interactions.nodes = environment.nodes.associate { Pair(it, environment.getPosition(it)) }
-            time.toDouble()
 //            environment.simulation.schedule{ environment.moveNodeToPosition(environment.getNodeByID(0), LatLongPosition(8, 8)) }
+        if (Thread.holdsLock(environment)) {
+            time.toDouble()
+            interactions.runMutex.acquireUninterruptibly()
+            interactions.runOnSimulation.forEach { it(environment) }
+            interactions.runOnSimulation = emptyList()
+            interactions.runMutex.release()
+            interactions.nodes = environment.nodes.associate { Pair(it, environment.getPosition(it)) }
             val graphicsContext = this.graphicsContext2D
             val background = Stream.of(drawBackground(graphicsContext, environment))
             val effects = effects

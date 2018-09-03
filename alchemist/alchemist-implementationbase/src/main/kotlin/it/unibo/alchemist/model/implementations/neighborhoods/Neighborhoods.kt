@@ -23,7 +23,7 @@ class Neighborhoods {
          *
          * @return The newly created [SimpleNeighborhood].
          */
-        @JvmStatic @JvmOverloads fun <T, P : Position<out P>> make(
+        @JvmStatic @JvmOverloads fun <T, P : Position<P>> make(
             env: Environment<T, P>,
             center: Node<T>,
             neighbors: Iterable<Node<T>> = mutableListOf()

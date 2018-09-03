@@ -25,10 +25,10 @@ import java.awt.Point
  */
 fun <E> E.unfold(extractor: (E) -> Sequence<E>): Sequence<E> =
     sequenceOf(this) + extractor(this).flatMap { it.unfold(extractor) }
-fun Position<*>.distanceTo(other: Position<*>): Double = Position.distanceTo(this, other)
+// fun Position<*>.distanceTo(other: Position<*>): Double = Position.distanceTo(this, other)
 operator fun Position<*>.get(i: Int) = getCoordinate(i)
-operator fun <P : Position<P>> Position<*>.plus(other: Position<*>): P = (this as P).add(other as P)!!
-operator fun <P : Position<P>> Position<*>.minus(other: Position<*>): P = (this as P).subtract(other as P)!!
+// operator fun <P : Position<P>> Position<*>.plus(other: Position<*>): P = (this as P).add(other as P)!!
+// operator fun <P : Position<P>> Position<*>.minus(other: Position<*>): P = (this as P).subtract(other as P)!!
 operator fun Time.plus(other: Time) = sum(other)!!
 operator fun Time.minus(other: Time) = subtract(other)!!
 fun makePoint(x: Number, y: Number) = Point(x.toInt(), y.toInt())

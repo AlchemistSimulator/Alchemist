@@ -8,19 +8,6 @@
  ******************************************************************************/
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
-
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.Map;
-
-
-import org.apache.commons.math3.random.MersenneTwister;
-import org.junit.Test;
-import org.kaikikm.threadresloader.ResourceLoader;
-
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.loader.YamlLoader;
@@ -38,6 +25,16 @@ import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.Map;
+import org.apache.commons.math3.random.MersenneTwister;
+import org.junit.Test;
+import org.kaikikm.threadresloader.ResourceLoader;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test implementation of extra-cellular environment  created with EnvironmentNodes.
@@ -368,11 +365,11 @@ public class TestEnvironmentNodes {
         assertEquals(CON_A_IN_CELL + conAInCell, conAInCell, 1000, PRECISION);
     }
 
-    private static <T, P extends Position<? extends P>> Environment<T, P> testNoVar(final String resource) {
+    private static <T, P extends Position<P>> Environment<T, P> testNoVar(final String resource) {
         return testLoading(resource, Collections.emptyMap());
     }
 
-    private static <T, P extends Position<? extends P>> Environment<T, P> testLoading(final String resource, final Map<String, Double> vars) {
+    private static <T, P extends Position<P>> Environment<T, P> testLoading(final String resource, final Map<String, Double> vars) {
         final InputStream res = ResourceLoader.getResourceAsStream(resource);
         assertNotNull("Missing test resource " + resource, res);
         final Environment<T, P> env = new YamlLoader(res).getWith(vars);

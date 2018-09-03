@@ -8,8 +8,13 @@
  ******************************************************************************/
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertNotNull;
-
+import com.google.common.collect.Maps;
+import com.google.common.io.Files;
+import it.unibo.alchemist.core.implementations.Engine;
+import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.loader.YamlLoader;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Position;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,20 +25,12 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
-
 import org.apache.commons.io.FileUtils;
 import org.jooq.lambda.Unchecked;
 import org.junit.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
-import com.google.common.collect.Maps;
-import com.google.common.io.Files;
-
-import it.unibo.alchemist.core.implementations.Engine;
-import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.loader.YamlLoader;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * A series of tests checking that our Yaml Loader is working as expected.
@@ -112,7 +109,7 @@ public class TestInSimulator {
         testLoading(resource, Collections.emptyMap());
     }
 
-    private static <T, P extends Position<? extends P>> void testLoading(final String resource, final Map<String, Double> vars) {
+    private static <T, P extends Position<P>> void testLoading(final String resource, final Map<String, Double> vars) {
         final InputStream res = ResourceLoader.getResourceAsStream(resource);
         assertNotNull("Missing test resource " + resource, res);
         final Environment<T, P> env = new YamlLoader(res).getWith(vars);

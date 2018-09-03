@@ -8,26 +8,6 @@
  ******************************************************************************/
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.kaikikm.threadresloader.ResourceLoader;
-import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-
 import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -41,6 +21,24 @@ import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.test.util.TestNode;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+import org.junit.Assert;
+import org.junit.Test;
+import org.kaikikm.threadresloader.ResourceLoader;
+import org.reflections.Reflections;
+import org.reflections.scanners.ResourcesScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * A series of tests checking that our Yaml Loader is working as expected.
@@ -97,7 +95,7 @@ public class TestYAMLLoader {
      * Test loading layer classes.
      */
     @Test
-    public <P extends Position<? extends P>> void testLayers() {
+    public <P extends Position<P>> void testLayers() {
         @SuppressWarnings("unchecked")
         final Environment<Object, P> env = (Environment<Object, P>) testNoVar("synthetic/testlayer.yml");
         final Set<Layer<Object, P>> layers = env.getLayers();
@@ -171,7 +169,7 @@ public class TestYAMLLoader {
         assertEquals(dependencies.get(0), "dependencies_test.txt");
     }
 
-    private static <T, P extends Position<? extends P>> Environment<T, P> testLoading(final String resource, final Map<String, Double> vars) {
+    private static <T, P extends Position<P>> Environment<T, P> testLoading(final String resource, final Map<String, Double> vars) {
         final InputStream res = ResourceLoader.getResourceAsStream(resource);
         assertNotNull("Missing test resource " + resource, res);
         final Environment<T, P> env = new YamlLoader(res).getWith(vars);

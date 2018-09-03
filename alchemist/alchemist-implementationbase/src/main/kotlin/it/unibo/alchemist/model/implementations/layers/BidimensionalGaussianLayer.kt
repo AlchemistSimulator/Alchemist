@@ -29,5 +29,5 @@ open class BidimensionalGaussianLayer @JvmOverloads constructor(
      */
     val function = BidimensionalGaussian(norm, centerX, centerY, sigmaX, sigmaY)
 
-    override fun getValue(p: Position2D<*>) = baseline + function.value(p.getX(), p.getY())
+    override fun getValue(p: Position2D<*>) = baseline + function.value(p.x, p.y)
 }

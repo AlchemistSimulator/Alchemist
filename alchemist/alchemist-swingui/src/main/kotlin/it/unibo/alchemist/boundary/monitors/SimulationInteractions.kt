@@ -24,7 +24,6 @@ import it.unibo.alchemist.input.KeyboardTriggerAction
 import it.unibo.alchemist.input.MouseButtonTriggerAction
 import it.unibo.alchemist.input.SimpleKeyboardEventDispatcher
 import it.unibo.alchemist.input.TemporariesMouseEventDispatcher
-import it.unibo.alchemist.kotlin.distanceTo
 import it.unibo.alchemist.kotlin.makePoint
 import it.unibo.alchemist.kotlin.minus
 import it.unibo.alchemist.kotlin.plus
@@ -187,11 +186,10 @@ class InteractionManager<T>(
                     selection.clear()
                     val mousePosition = wormhole.getEnvPoint(makePoint(mouse.x, mouse.y))
                     invokeOnSimulation {
-                        nodesToMove.values.minWith( Comparator { a, b ->
-//                            (a - b).let { Math.sqrt(Math.pow(it.x, 2.0) + Math.pow(it.y, 2.0)) }.roundToInt()
-                            Math.sqrt(Math.pow(a.getX() - b.getX(), 2.0) + Math.pow(a.getY() - b.getY(), 2.0)).roundToInt()
+                        nodesToMove.values.maxWith(Comparator { a, b ->
+                            (b - a).let { it.x + it.y }.roundToInt()
                         })?.let {
-                            environment?.makePosition(mousePosition.x - it.x, mousePosition.y - it.y)
+                            mousePosition - it
                         }?.let { offset ->
                             environment?.let { env ->
                                 nodesToMove.forEach {
@@ -547,7 +545,7 @@ class SelectionHelper<T> {
         wormhole: BidimensionalWormhole<Position2D<*>>
     ): Pair<Node<T>, Position2D<*>>? =
         selectionPoint?.let { point ->
-            nodes.minBy { (nodes[it.key]!!).distanceTo(wormhole.getEnvPoint(point)) }?.let {
+            nodes.minBy { it.value.x /*(nodes[it.key]!!).distanceTo(wormhole.getEnvPoint(point))*/ }?.let {
                 Pair(it.key, it.value)
             }
         }

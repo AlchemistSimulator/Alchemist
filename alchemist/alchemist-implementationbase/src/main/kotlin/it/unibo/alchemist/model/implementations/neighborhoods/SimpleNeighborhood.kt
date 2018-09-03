@@ -22,13 +22,13 @@ import org.danilopianini.util.ListSets
 /**
  * A basic implementation of the [Neighborhood] interface.
  */
-class SimpleNeighborhood<T> private constructor(
-    private val environment: Environment<T, *>,
+class SimpleNeighborhood<T, P : Position<P>> private constructor(
+    private val environment: Environment<T, P>,
     private val center: Node<T>,
     private val neighbors: ImmutableListSet<out Node<T>>
 ) : Neighborhood<T> {
 
-    internal constructor(env: Environment<T, *>, center: Node<T>, neighbors: Iterable<Node<T>>)
+    internal constructor(env: Environment<T, P>, center: Node<T>, neighbors: Iterable<Node<T>>)
         : this(env, center, ImmutableListSet.Builder<Node<T>>().addAll(neighbors).build())
 
     override fun clone() = SimpleNeighborhood(environment, center, ArrayListSet(neighbors))
@@ -38,9 +38,9 @@ class SimpleNeighborhood<T> private constructor(
     override fun contains(n: Node<T>?) = neighbors.contains(n)
 
     override fun getBetweenRange(min: Double, max: Double): ListSet<out Node<T>> =
-        environment.getPosition(center).let { centerPos -> ListBackedSet(neighbors.filter {
-            Position.distanceTo(centerPos, environment.getPosition(it)) in min..max })
-        }
+        ListBackedSet(neighbors.filter {
+            environment.getPosition(center).getDistanceTo(environment.getPosition(it)) in min..max
+        })
 
     override fun getCenter() = center
 
@@ -59,7 +59,7 @@ class SimpleNeighborhood<T> private constructor(
     override fun toString() = "$center links: $neighbors"
 
     override fun equals(other: Any?): Boolean =
-        other is SimpleNeighborhood<*> && other.environment == environment && other.center == center && other.neighbors == neighbors
+        other is SimpleNeighborhood<*, *> && other.environment == environment && other.center == center && other.neighbors == neighbors
 
     override fun hashCode(): Int = Hashes.hash32(environment, center, neighbors)
 

@@ -26,7 +26,22 @@ enum class ActionOnMouse {
     RELEASED
 }
 
-data class MouseTriggerAction(val type: ActionOnMouse, val button: MouseButton) : TriggerAction
+/**
+ * The [TriggerAction] regarding mouse events.
+ */
+interface MouseTriggerAction : TriggerAction
+
+/**
+ * Simple mouse actions.
+ */
+enum class BasicMouseTriggerAction : MouseTriggerAction {
+    MOVEMENT
+}
+
+/**
+ * A [MouseTriggerAction] related to mouse button presses.
+ */
+data class MouseButtonTriggerAction(val type: ActionOnMouse, val button: MouseButton) : MouseTriggerAction
 
 /**
  * An action listener in the context of mouse events.
@@ -34,10 +49,19 @@ data class MouseTriggerAction(val type: ActionOnMouse, val button: MouseButton) 
 interface MouseActionListener : ActionListener<MouseTriggerAction, MouseEvent>
 
 /**
+ * An event dispatcher in the context of mouse events.
+ */
+abstract class MouseEventDispatcher : PersistentEventDispatcher<MouseTriggerAction, MouseEvent>() {
+
+    abstract override val listener: MouseActionListener
+}
+
+/**
  * A basic implementation of a mouse event dispatcher.
  */
-open class SimpleMouseEventDispatcher : AbstractEventDispatcher<MouseTriggerAction, MouseEvent>() {
-    override val listener: ActionListener<MouseTriggerAction, MouseEvent> = object : MouseActionListener {
+open class SimpleMouseEventDispatcher : MouseEventDispatcher() {
+
+    override val listener = object : MouseActionListener {
         override fun action(action: MouseTriggerAction, event: MouseEvent) {
             triggers[action]?.invoke(event)
         }
@@ -45,30 +69,63 @@ open class SimpleMouseEventDispatcher : AbstractEventDispatcher<MouseTriggerActi
 }
 
 /**
+ * A mouse event dispatcher which can receive temporary actions to listen to which will only be triggered once.
+ * These temporary actions have a higher priority than actions set through [setOnAction].
+ */
+open class TemporariesMouseEventDispatcher : SimpleMouseEventDispatcher() {
+    private var temporaryActions: List<Pair<MouseTriggerAction, (MouseEvent) -> Unit>> = emptyList()
+
+    override val listener = object : MouseActionListener {
+        override fun action(action: MouseTriggerAction, event: MouseEvent) {
+            if (action in temporaryActions.map { it.first }) {
+                temporaryActions.find { it.first == action }?.let {
+                    it.second.invoke(event)
+                    temporaryActions -= it
+                }
+            } else {
+                triggers[action]?.invoke(event)
+            }
+        }
+    }
+
+    /**
+     * Set a temporary action.
+     * @param trigger the trigger for the action
+     * @param job the job that will be run when the action occurs
+     */
+    fun setOnActionTemporary(trigger: MouseTriggerAction, job: (MouseEvent) -> Unit) {
+        temporaryActions += trigger to job
+    }
+}
+
+/**
  * A mouse event dispatcher that catches mouse input from a canvas.
  */
-open class CanvasBoundMouseEventDispatcher(canvas: Canvas) : SimpleMouseEventDispatcher() {
+open class CanvasBoundMouseEventDispatcher(canvas: Canvas) : TemporariesMouseEventDispatcher() {
     init {
         canvas.setOnMouseClicked {
-            listener.action(MouseTriggerAction(ActionOnMouse.CLICKED, it.button), it)
+            listener.action(MouseButtonTriggerAction(ActionOnMouse.CLICKED, it.button), it)
         }
         canvas.setOnMouseDragged {
-            listener.action(MouseTriggerAction(ActionOnMouse.DRAGGED, it.button), it)
+            listener.action(MouseButtonTriggerAction(ActionOnMouse.DRAGGED, it.button), it)
         }
         canvas.setOnMouseEntered {
-            listener.action(MouseTriggerAction(ActionOnMouse.ENTERED, it.button), it)
+            listener.action(MouseButtonTriggerAction(ActionOnMouse.ENTERED, it.button), it)
         }
         canvas.setOnMouseExited {
-            listener.action(MouseTriggerAction(ActionOnMouse.EXITED, it.button), it)
+            listener.action(MouseButtonTriggerAction(ActionOnMouse.EXITED, it.button), it)
         }
         canvas.setOnMouseMoved {
-            listener.action(MouseTriggerAction(ActionOnMouse.MOVED, it.button), it)
+            listener.action(MouseButtonTriggerAction(ActionOnMouse.MOVED, it.button), it)
         }
         canvas.setOnMousePressed {
-            listener.action(MouseTriggerAction(ActionOnMouse.PRESSED, it.button), it)
+            listener.action(MouseButtonTriggerAction(ActionOnMouse.PRESSED, it.button), it)
         }
         canvas.setOnMouseReleased {
-            listener.action(MouseTriggerAction(ActionOnMouse.RELEASED, it.button), it)
+            listener.action(MouseButtonTriggerAction(ActionOnMouse.RELEASED, it.button), it)
+        }
+        canvas.setOnMouseMoved {
+            listener.action(BasicMouseTriggerAction.MOVEMENT, it)
         }
     }
 }

@@ -174,17 +174,21 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
             }
             mu.update(currentTime, true, env);
             ipq.updateReaction(root);
-            monitorLock.read();
-            for (final OutputMonitor<T, P> m : monitors) {
-                m.stepDone(env, mu, currentTime, curStep);
-            }
-            monitorLock.release();
+            updateMonitors();
         }
         if (env.isTerminated()) {
             newStatus(Status.TERMINATED);
             L.info("Termination condition reached.");
         }
         curStep++;
+    }
+
+    private void updateMonitors() {
+        monitorLock.read();
+        for (final OutputMonitor<T, P> m : monitors) {
+            m.stepDone(env, mu, currentTime, curStep);
+        }
+        monitorLock.release();
     }
 
     private void finalizeConstructor() {
@@ -262,6 +266,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
             try {
                 nextCommand = commands.take();
                 nextCommand.run();
+                updateMonitors();
             } catch (InterruptedException e) {
                 L.debug("Look! A spurious wakeup! :-)");
             }
@@ -376,6 +381,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                 while (status != Status.TERMINATED && curStep < steps && currentTime.compareTo(finalTime) < 0) {
                     while (!commands.isEmpty()) {
                         commands.poll().run();
+                        updateMonitors();
                     }
                     if (status.equals(Status.RUNNING)) {
                         doStep();

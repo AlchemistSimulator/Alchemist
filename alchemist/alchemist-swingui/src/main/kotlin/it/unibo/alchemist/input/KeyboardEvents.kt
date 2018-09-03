@@ -32,6 +32,8 @@ interface KeyboardActionListener : ActionListener<KeyboardTriggerAction, KeyEven
  */
 abstract class KeyboardEventDispatcher : PersistentEventDispatcher<KeyboardTriggerAction, KeyEvent>() {
 
+    abstract override val listener: KeyboardActionListener
+
     /**
      * Returns whether a given key is being held or not at the time of the call.
      * @param key the queried key

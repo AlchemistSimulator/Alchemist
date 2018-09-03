@@ -4,7 +4,8 @@ dependencies {
         project(':alchemist-maps'),
         "com.google.guava:guava:$guavaVersion",
         "org.eclipse.xtext:org.eclipse.xtext.java:${xtextVersion}",
-        "org.protelis:protelis:$protelisVersion"
+        "org.protelis:protelis:$protelisVersion",
+        "org.eclipse.platform:org.eclipse.equinox.common:3.10.0"
     )
     testCompile(
         project(':alchemist-engine'),

@@ -14,15 +14,19 @@ import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor
 import it.unibo.alchemist.boundary.wormhole.implementation.ExponentialZoomManager
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole
 import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager
+import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.input.ActionOnKey
 import it.unibo.alchemist.input.ActionOnMouse
 import it.unibo.alchemist.input.CanvasBoundMouseEventDispatcher
 import it.unibo.alchemist.input.KeyboardActionListener
+import it.unibo.alchemist.input.KeyboardEventDispatcher
 import it.unibo.alchemist.input.KeyboardTriggerAction
-import it.unibo.alchemist.input.MouseTriggerAction
+import it.unibo.alchemist.input.MouseButtonTriggerAction
 import it.unibo.alchemist.input.SimpleKeyboardEventDispatcher
+import it.unibo.alchemist.input.TemporariesMouseEventDispatcher
 import it.unibo.alchemist.kotlin.distanceTo
 import it.unibo.alchemist.kotlin.makePoint
+import it.unibo.alchemist.kotlin.minus
 import it.unibo.alchemist.kotlin.plus
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
@@ -31,6 +35,7 @@ import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.collections.MapChangeListener
 import javafx.collections.ObservableMap
+import javafx.event.Event
 import javafx.scene.canvas.Canvas
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
@@ -43,63 +48,61 @@ import java.awt.Point
 import java.util.concurrent.Semaphore
 import kotlin.math.abs
 import kotlin.math.min
-
-enum class Interaction {
-    HIGHLIGHT_CANDIDATE,
-    HIGHLIGHTED,
-    SELECTION_BOX
-}
+import kotlin.math.roundToInt
 
 /**
- * A basic interaction manager. Implements zoom, pan and select features.
- * @param nodes an observable map containing the nodes in the simulation
+ * An interaction manager that controls the input/output on the environment done through the GUI.
  * @param parentMonitor the parent monitor
  */
 class InteractionManager<T>(
     private val parentMonitor: AbstractFXDisplay<T>
 ) {
 
-    val selectedElements: ImmutableMap<Node<T>, Position2D<*>>
-        get() = ImmutableMap.copyOf(selection)
+    private enum class Interaction {
+        HIGHLIGHT_CANDIDATE,
+        HIGHLIGHTED,
+        SELECTION_BOX
+    }
+
+    /**
+     * The current environment.
+     */
+    var environment: Environment<T, Position2D<*>>? = null
     /**
      * The nodes in the environment.
-     * Should be updated as frequently as possible to ensure a consistent representation of the feedback.
+     * Should be updated as frequently as possible to ensure a representation of
+     * the feedback that is consistent with the actual environment.
      */
     var nodes: Map<Node<T>, Position2D<*>> = emptyMap()
-    /**
-     * The keyboard listener.
-     */
-    val keyboardListener: KeyboardActionListener
-        get() = keyboard.listener
     /**
      * The canvases used for input/output.
      */
     val canvases: List<Canvas>
         get() = listOf(input, highlighter, selector)
     /**
-     * Commands that have to be run through the environment.
+     * The keyboard listener.
      */
-    var runOnSimulation: List<(env: Environment<T, Position2D<*>>) -> Unit> = emptyList()
-    /**
-     * Mutex for the commands that have to be run through the environment
-     */
-    val runMutex: Semaphore = Semaphore(1)
+    val keyboardListener: KeyboardActionListener
+        get() = keyboard.listener
 
-    private val input = Canvas()
+    private val input: Canvas = Canvas()
+    private val keyboard: KeyboardEventDispatcher = SimpleKeyboardEventDispatcher()
+    private val mouse: TemporariesMouseEventDispatcher = CanvasBoundMouseEventDispatcher(input)
+    private lateinit var mousePan: PanHelper
     private val highlighter = Canvas()
     private val selector = Canvas()
-    private val keyboard = SimpleKeyboardEventDispatcher()
-    private val mouse = CanvasBoundMouseEventDispatcher(input)
+    private val selectionHelper: SelectionHelper<T> = SelectionHelper()
+    private val selection: ObservableMap<Node<T>, Position2D<*>> = FXCollections.observableHashMap()
+    private val selectionCandidates: ObservableMap<Node<T>, Position2D<*>> = FXCollections.observableHashMap()
+    private val selectedElements: ImmutableMap<Node<T>, Position2D<*>>
+        get() = ImmutableMap.copyOf(selection)
+    private val selectionCandidatesMutex: Semaphore = Semaphore(1)
     private val zoomManager: ZoomManager by lazy {
         ExponentialZoomManager(this.wormhole.zoom, ExponentialZoomManager.DEF_BASE)
     }
-    private val selection: ObservableMap<Node<T>, Position2D<*>> = FXCollections.observableHashMap()
-    private val selectionCandidates: ObservableMap<Node<T>, Position2D<*>> = FXCollections.observableHashMap()
-    private val candidatesMutex: Semaphore = Semaphore(1)
-    private lateinit var panHelper: PanHelper
-    private val selectionHelper: SelectionHelper<T> = SelectionHelper()
     private lateinit var wormhole: BidimensionalWormhole<Position2D<*>>
     @Volatile private var feedback: Map<Interaction, List<() -> Unit>> = emptyMap()
+    private val runMutex: Semaphore = Semaphore(1)
 
     init {
         input.apply {
@@ -120,50 +123,123 @@ class InteractionManager<T>(
         highlighter.graphicsContext2D.globalAlpha = 0.5
         selector.graphicsContext2D.globalAlpha = 0.4
 
-        // TODO: rework node deletion. the way delete works now, it only updates when a step occurs.
-        val deleteNodes: (KeyEvent) -> Unit = {
+        // delete
+        val deleteNodes = { _: KeyEvent ->
             runMutex.acquireUninterruptibly()
             if (selection.isNotEmpty()) {
-                val nodesToRemove: Set<Node<T>> = selection.keys
-                runOnSimulation += { env ->
-                    nodesToRemove.forEach { env.removeNode(it) }
-                    repaint()
+                val nodesToRemove: Set<Node<T>> = selectedElements.keys
+                selection.clear()
+                invokeOnSimulation {
+                    nodesToRemove.forEach { environment?.removeNode(it) }
                 }
+                repaint()
             }
             runMutex.release()
         }
         keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, KeyCode.DELETE), deleteNodes)
         keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, KeyCode.BACK_SPACE), deleteNodes)
 
-        mouse.setOnAction(MouseTriggerAction(ActionOnMouse.PRESSED, MouseButton.PRIMARY)) {
+        // keyboard-pan
+        // TODO: rework keyboard-panning, make it smoother
+        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, KeyCode.W)) {
+            wormhole.viewPosition = PanHelper(wormhole.viewPosition).update(
+                wormhole.viewPosition.let { viewPos ->
+                    makePoint(viewPos.x, viewPos.y + KEYBOARD_PAN_SPEED)
+                },
+                wormhole.viewPosition
+            )
+            parentMonitor.repaint()
+        }
+        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, KeyCode.A)) {
+            wormhole.viewPosition = PanHelper(wormhole.viewPosition).update(
+                wormhole.viewPosition.let { viewPos ->
+                    makePoint(viewPos.x + KEYBOARD_PAN_SPEED, viewPos.y)
+                },
+                wormhole.viewPosition
+            )
+            parentMonitor.repaint()
+        }
+        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, KeyCode.S)) {
+            wormhole.viewPosition = PanHelper(wormhole.viewPosition).update(
+                wormhole.viewPosition.let { viewPos ->
+                    makePoint(viewPos.x, viewPos.y - KEYBOARD_PAN_SPEED)
+                },
+                wormhole.viewPosition
+            )
+            parentMonitor.repaint()
+        }
+        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, KeyCode.D)) {
+            wormhole.viewPosition = PanHelper(wormhole.viewPosition).update(
+                wormhole.viewPosition.let { viewPos ->
+                    makePoint(viewPos.x - KEYBOARD_PAN_SPEED, viewPos.y)
+                },
+                wormhole.viewPosition
+            )
+            parentMonitor.repaint()
+        }
+
+        // move
+        val enqueueMove = { _: Event ->
+            mouse.setOnActionTemporary(MouseButtonTriggerAction(ActionOnMouse.CLICKED, MouseButton.PRIMARY)) { mouse ->
+                runMutex.acquireUninterruptibly()
+                if (selection.isNotEmpty()) {
+                    val nodesToMove: Map<Node<T>, Position2D<*>> = selectedElements
+                    selection.clear()
+                    val mousePosition = wormhole.getEnvPoint(makePoint(mouse.x, mouse.y))
+                    invokeOnSimulation {
+                        nodesToMove.values.minWith( Comparator { a, b ->
+//                            (a - b).let { Math.sqrt(Math.pow(it.x, 2.0) + Math.pow(it.y, 2.0)) }.roundToInt()
+                            Math.sqrt(Math.pow(a.getX() - b.getX(), 2.0) + Math.pow(a.getY() - b.getY(), 2.0)).roundToInt()
+                        })?.let {
+                            environment?.makePosition(mousePosition.x - it.x, mousePosition.y - it.y)
+                        }?.let { offset ->
+                            environment?.let { env ->
+                                nodesToMove.forEach {
+                                    env.moveNode(it.key, offset)
+                                }
+                            }
+                        }
+                    }
+                }
+                runMutex.release()
+            }
+        }
+        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, KeyCode.M), enqueueMove)
+        mouse.setOnAction(MouseButtonTriggerAction(ActionOnMouse.CLICKED, MouseButton.MIDDLE), enqueueMove)
+
+        // select
+        mouse.setOnAction(MouseButtonTriggerAction(ActionOnMouse.PRESSED, MouseButton.SECONDARY), this::onSelectInitiated)
+        mouse.setOnAction(MouseButtonTriggerAction(ActionOnMouse.DRAGGED, MouseButton.SECONDARY), this::onSelecting)
+        mouse.setOnAction(MouseButtonTriggerAction(ActionOnMouse.RELEASED, MouseButton.SECONDARY), this::onSelected)
+        mouse.setOnAction(MouseButtonTriggerAction(ActionOnMouse.EXITED, MouseButton.SECONDARY), this::onSelectCanceled)
+
+        // primary mouse button
+        mouse.setOnAction(MouseButtonTriggerAction(ActionOnMouse.PRESSED, MouseButton.PRIMARY)) {
             when (parentMonitor.viewStatus) {
                 FXOutputMonitor.ViewStatus.PANNING -> onPanInitiated(it)
                 FXOutputMonitor.ViewStatus.SELECTING -> onSelectInitiated(it)
             }
         }
-        mouse.setOnAction(MouseTriggerAction(ActionOnMouse.DRAGGED, MouseButton.PRIMARY)) {
+        mouse.setOnAction(MouseButtonTriggerAction(ActionOnMouse.DRAGGED, MouseButton.PRIMARY)) {
             when (parentMonitor.viewStatus) {
                 FXOutputMonitor.ViewStatus.PANNING -> onPanning(it)
                 FXOutputMonitor.ViewStatus.SELECTING -> onSelecting(it)
             }
         }
-        mouse.setOnAction(MouseTriggerAction(ActionOnMouse.RELEASED, MouseButton.PRIMARY)) {
+        mouse.setOnAction(MouseButtonTriggerAction(ActionOnMouse.RELEASED, MouseButton.PRIMARY)) {
             when (parentMonitor.viewStatus) {
                 FXOutputMonitor.ViewStatus.PANNING -> onPanned(it)
                 FXOutputMonitor.ViewStatus.SELECTING -> onSelected(it)
             }
         }
-        mouse.setOnAction(MouseTriggerAction(ActionOnMouse.EXITED, MouseButton.PRIMARY)) {
+        mouse.setOnAction(MouseButtonTriggerAction(ActionOnMouse.EXITED, MouseButton.PRIMARY)) {
             when (parentMonitor.viewStatus) {
                 FXOutputMonitor.ViewStatus.PANNING -> onPanCanceled(it)
                 FXOutputMonitor.ViewStatus.SELECTING -> onSelectCanceled(it)
             }
         }
-        mouse.setOnAction(MouseTriggerAction(ActionOnMouse.PRESSED, MouseButton.SECONDARY), this::onSelectInitiated)
-        mouse.setOnAction(MouseTriggerAction(ActionOnMouse.DRAGGED, MouseButton.SECONDARY), this::onSelecting)
-        mouse.setOnAction(MouseTriggerAction(ActionOnMouse.RELEASED, MouseButton.SECONDARY), this::onSelected)
-        mouse.setOnAction(MouseTriggerAction(ActionOnMouse.EXITED, MouseButton.SECONDARY), this::onSelectCanceled)
 
+        // scroll
         input.setOnScroll {
             zoomManager.inc(it.deltaY / ZOOM_SCALE)
             wormhole.zoomOnPoint(makePoint(it.x, it.y), zoomManager.zoom)
@@ -186,7 +262,7 @@ class InteractionManager<T>(
      * @param event the caller
      */
     private fun onPanInitiated(event: MouseEvent) {
-        panHelper = PanHelper(makePoint(event.x, event.y))
+        mousePan = PanHelper(makePoint(event.x, event.y))
     }
 
     /**
@@ -194,8 +270,8 @@ class InteractionManager<T>(
      * @param event the caller
      */
     private fun onPanning(event: MouseEvent) {
-        if (panHelper.valid) {
-            wormhole.viewPosition = panHelper.update(makePoint(event.x, event.y), wormhole.viewPosition)
+        if (mousePan.valid) {
+            wormhole.viewPosition = mousePan.update(makePoint(event.x, event.y), wormhole.viewPosition)
             parentMonitor.repaint()
         }
         event.consume()
@@ -205,7 +281,7 @@ class InteractionManager<T>(
      * Called when a pan gesture finishes.
      */
     private fun onPanned(event: MouseEvent) {
-        panHelper.close()
+        mousePan.close()
         event.consume()
     }
 
@@ -213,7 +289,7 @@ class InteractionManager<T>(
      * Called when a pan gesture is canceled.
      */
     private fun onPanCanceled(event: MouseEvent) {
-        panHelper.close()
+        mousePan.close()
         event.consume()
     }
 
@@ -260,10 +336,10 @@ class InteractionManager<T>(
                 }
             }
         }
-        candidatesMutex.acquireUninterruptibly()
+        selectionCandidatesMutex.acquireUninterruptibly()
         selectionHelper.close()
         selectionCandidates.clear()
-        candidatesMutex.release()
+        selectionCandidatesMutex.release()
         feedback += Interaction.SELECTION_BOX to emptyList()
         repaint()
         event.consume()
@@ -305,15 +381,22 @@ class InteractionManager<T>(
      * Grabs all the nodes in the selection box and adds them to the selection candidates.
      */
     private fun addNodesToSelectionCandidates() {
-        candidatesMutex.acquireUninterruptibly()
+        selectionCandidatesMutex.acquireUninterruptibly()
         selectionHelper.boxSelection(nodes, wormhole).let {
             if (it.entries != selectionCandidates.entries) {
                 selectionCandidates.clear()
                 selectionCandidates += it
             }
         }
-        candidatesMutex.release()
+        selectionCandidatesMutex.release()
     }
+
+    /**
+     * Invokes a given command on the simulation.
+     */
+    private val invokeOnSimulation: (Simulation<*, *>.() -> Unit) -> Unit
+        get() = environment?.simulation?.let { { exec: Simulation<*, *>.() -> Unit -> it.schedule { exec.invoke(it) } } }
+            ?: throw IllegalStateException("Uninitialized environment or simulation")
 
     /**
      * Clears and then paints every currently active feedback.
@@ -358,6 +441,7 @@ class InteractionManager<T>(
          * Empiric zoom scale value.
          */
         private const val ZOOM_SCALE = 40.0
+        private const val KEYBOARD_PAN_SPEED = 10
     }
 }
 
@@ -365,7 +449,10 @@ class InteractionManager<T>(
  * Manages panning.
  */
 class PanHelper(private var panPosition: Point) {
-
+    /**
+     * Returns whether this [PanHelper] is still valid.
+     * Invalidation happens when [close] is called, for example when the mouse goes out of bounds.
+     */
     var valid: Boolean = true
         private set
 
@@ -388,7 +475,7 @@ class PanHelper(private var panPosition: Point) {
     }
 
     /**
-     * Closes the helper.
+     * Closes the helper. This invalidates the [PanHelper]
      */
     fun close() {
         valid = false

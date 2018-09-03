@@ -19,7 +19,6 @@ import it.unibo.alchemist.input.KeyboardActionListener
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.Concentration
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.interfaces.Reaction
@@ -27,7 +26,6 @@ import it.unibo.alchemist.model.interfaces.Time
 import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
-import javafx.collections.ObservableMap
 import javafx.scene.canvas.Canvas
 import javafx.scene.canvas.GraphicsContext
 import java.util.Queue
@@ -62,7 +60,6 @@ abstract class AbstractFXDisplay<T>
     private var viewStatus = DEFAULT_VIEW_STATUS
     protected lateinit var wormhole: BidimensionalWormhole<Position2D<*>>
         private set
-    private val nodes: ObservableMap<Node<T>, Position2D<*>> = FXCollections.observableHashMap()
     private val interactions: InteractionManager<T> by lazy { InteractionManager(this) }
 
     init {
@@ -201,10 +198,11 @@ abstract class AbstractFXDisplay<T>
 //            environment.simulation.schedule{ environment.moveNodeToPosition(environment.getNodeByID(0), LatLongPosition(8, 8)) }
         if (Thread.holdsLock(environment)) {
             time.toDouble()
-            interactions.runMutex.acquireUninterruptibly()
-            interactions.runOnSimulation.forEach { it(environment) }
-            interactions.runOnSimulation = emptyList()
-            interactions.runMutex.release()
+            interactions.environment = environment
+            /*
+             * TODO: Future optimization -- Let the simulation (or the environment, probably both) expose the last moment
+             * at which a change in position occurred. This way, we don't need to constantly regenerate the position map.
+             */
             interactions.nodes = environment.nodes.associate { Pair(it, environment.getPosition(it)) }
             val graphicsContext = this.graphicsContext2D
             val background = Stream.of(drawBackground(graphicsContext, environment))

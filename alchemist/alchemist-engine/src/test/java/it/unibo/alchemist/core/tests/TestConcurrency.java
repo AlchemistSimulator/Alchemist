@@ -72,7 +72,7 @@ public class TestConcurrency {
      */
     @Test
     @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", justification = "We don't need the status of the Runnable")
-    public void newNewTest1() {
+    public void testStatusChange() {
 
         final Simulation<?, ?> sim = new Engine<>(env, 10);
         final ExecutorService ex = Executors.newCachedThreadPool();
@@ -115,7 +115,7 @@ public class TestConcurrency {
      */
     @Test
     @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", justification = "We don't need the status of the Runnable")
-    public void newTest2() {
+    public void testEnd() {
         final Simulation<?, ?> sim = new Engine<>(env, 10);
         final ExecutorService ex = Executors.newCachedThreadPool();
         ex.submit(sim);

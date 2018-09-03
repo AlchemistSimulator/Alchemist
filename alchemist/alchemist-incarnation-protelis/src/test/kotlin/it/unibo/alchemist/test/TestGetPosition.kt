@@ -49,11 +49,14 @@ class TestGetPosition {
         sim.addOutputMonitor(object : OutputMonitor<Any, Euclidean2DPosition> {
             override fun finished(environment: Environment<Any, Euclidean2DPosition>?, time: Time?, step: Long) { }
             override fun initialized(environment: Environment<Any, Euclidean2DPosition>?) { }
-            override fun stepDone(env: Environment<Any, Euclidean2DPosition>?, r: Reaction<Any>?, time: Time?, step: Long) =
-                Assert.assertEquals(
-                    DatatypeFactory.createTuple(1.0, 1.0),
-                    node.getConcentration(action.asMolecule())
-                )
+            override fun stepDone(env: Environment<Any, Euclidean2DPosition>?, r: Reaction<Any>?, time: Time?, step: Long) {
+                if (step > 0) {
+                    Assert.assertEquals(
+                        DatatypeFactory.createTuple(1.0, 1.0),
+                        node.getConcentration(action.asMolecule())
+                    )
+                }
+            }
         })
         sim.play()
         sim.run()

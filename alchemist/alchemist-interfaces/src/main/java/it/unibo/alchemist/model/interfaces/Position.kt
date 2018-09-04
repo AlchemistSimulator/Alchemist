@@ -32,7 +32,7 @@ interface Position<P : Position<P>> : Serializable {
      *            the radius of the hypersphere
      * @return the vertices of the circumscribed hypercube
      */
-    fun boundingBox(range: Double): java.util.List<out P>
+    fun boundingBox(range: Double): kotlin.collections.MutableList<out P>
 
     /**
      * Allows to get the position as a Number array.
@@ -83,11 +83,11 @@ interface Position<P : Position<P>> : Serializable {
      */
     fun subtract(other: P): P
 
-    companion object {
-        operator fun <P : Position<P>> P.get(i: Int): Double = getCoordinate(i)
-        operator fun <P : Position<P>> P.minus(other: P): P = subtract(other)
-        operator fun <P : Position<P>> P.plus(other: P): P = add(other)
-    }
+//    companion object {
+//        operator fun <P : Position<P>> P.get(i: Int): Double = getCoordinate(i)
+//        operator fun <P : Position<P>> P.minus(other: P): P = subtract(other)
+//        operator fun <P : Position<P>> P.plus(other: P): P = add(other)
+//    }
 
 //    /**
 //     * Tries to compute distance between arbitrary positions, looking for a common
@@ -139,3 +139,7 @@ interface Position<P : Position<P>> : Serializable {
 //        throw new IllegalArgumentException("computing distance between " + p1 + " and " + p2 + " is impossible");
 //    }
 }
+
+operator fun <P : Position<P>> P.get(i: Int): Double = getCoordinate(i)
+operator fun <P : Position<P>> P.minus(other: P): P = subtract(other)
+operator fun <P : Position<P>> P.plus(other: P): P = add(other)

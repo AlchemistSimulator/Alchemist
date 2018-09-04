@@ -44,8 +44,11 @@ import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
 import javafx.scene.shape.Rectangle
 import java.awt.Point
+import java.util.Timer
 import java.util.concurrent.Semaphore
+import kotlin.concurrent.fixedRateTimer
 import kotlin.math.abs
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -84,8 +87,15 @@ class InteractionManager<T, P : Position2D<P>>(
     val keyboardListener: KeyboardActionListener
         get() = keyboard.listener
 
+    private lateinit var wormhole: BidimensionalWormhole<P>
     private val input: Canvas = Canvas()
     private val keyboard: KeyboardEventDispatcher = SimpleKeyboardEventDispatcher()
+    private val keyboardPan: DirectionalPan<P> by lazy {
+        DirectionalPan(wormhole = wormhole, repaint = {
+            parentMonitor.repaint()
+            repaint()
+        })
+    }
     private val mouse: TemporariesMouseEventDispatcher = CanvasBoundMouseEventDispatcher(input)
     private lateinit var mousePan: PanHelper
     private val highlighter = Canvas()
@@ -99,7 +109,6 @@ class InteractionManager<T, P : Position2D<P>>(
     private val zoomManager: ZoomManager by lazy {
         ExponentialZoomManager(this.wormhole.zoom, ExponentialZoomManager.DEF_BASE)
     }
-    private lateinit var wormhole: BidimensionalWormhole<P>
     @Volatile private var feedback: Map<Interaction, List<() -> Unit>> = emptyMap()
     private val runMutex: Semaphore = Semaphore(1)
 
@@ -139,43 +148,14 @@ class InteractionManager<T, P : Position2D<P>>(
         keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, KeyCode.BACK_SPACE), deleteNodes)
 
         // keyboard-pan
-        // TODO: rework keyboard-panning, make it smoother
-        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, KeyCode.W)) {
-            wormhole.viewPosition = PanHelper(wormhole.viewPosition).update(
-                wormhole.viewPosition.let { viewPos ->
-                    makePoint(viewPos.x, viewPos.y + KEYBOARD_PAN_SPEED)
-                },
-                wormhole.viewPosition
-            )
-            parentMonitor.repaint()
-        }
-        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, KeyCode.A)) {
-            wormhole.viewPosition = PanHelper(wormhole.viewPosition).update(
-                wormhole.viewPosition.let { viewPos ->
-                    makePoint(viewPos.x + KEYBOARD_PAN_SPEED, viewPos.y)
-                },
-                wormhole.viewPosition
-            )
-            parentMonitor.repaint()
-        }
-        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, KeyCode.S)) {
-            wormhole.viewPosition = PanHelper(wormhole.viewPosition).update(
-                wormhole.viewPosition.let { viewPos ->
-                    makePoint(viewPos.x, viewPos.y - KEYBOARD_PAN_SPEED)
-                },
-                wormhole.viewPosition
-            )
-            parentMonitor.repaint()
-        }
-        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, KeyCode.D)) {
-            wormhole.viewPosition = PanHelper(wormhole.viewPosition).update(
-                wormhole.viewPosition.let { viewPos ->
-                    makePoint(viewPos.x - KEYBOARD_PAN_SPEED, viewPos.y)
-                },
-                wormhole.viewPosition
-            )
-            parentMonitor.repaint()
-        }
+        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, KeyCode.W)) { keyboardPan += Direction2D.NORTH }
+        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, KeyCode.A)) { keyboardPan += Direction2D.WEST }
+        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, KeyCode.S)) { keyboardPan += Direction2D.SOUTH }
+        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, KeyCode.D)) { keyboardPan += Direction2D.EAST }
+        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.RELEASED, KeyCode.W)) { keyboardPan -= Direction2D.NORTH }
+        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.RELEASED, KeyCode.A)) { keyboardPan -= Direction2D.WEST }
+        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.RELEASED, KeyCode.S)) { keyboardPan -= Direction2D.SOUTH }
+        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.RELEASED, KeyCode.D)) { keyboardPan -= Direction2D.EAST }
 
         // move
         val enqueueMove = { _: Event ->
@@ -426,12 +406,10 @@ class InteractionManager<T, P : Position2D<P>>(
          * The size (radius) of the highlights.
          */
         const val highlightSize = 10.0
-
         /**
          * Empiric zoom scale value.
          */
         private const val ZOOM_SCALE = 40.0
-        private const val KEYBOARD_PAN_SPEED = 10
     }
 
     private class Colors {
@@ -450,6 +428,87 @@ class InteractionManager<T, P : Position2D<P>>(
             val selectionBox = "#8e99f3".color()
 
             private fun String.color(): Paint = Color.valueOf(this)
+        }
+    }
+}
+
+enum class Direction2D(val x: Int, val y: Int) {
+    NONE(0, 0),
+    NORTH(0, 1),
+    SOUTH(0, -1),
+    EAST(1, 0),
+    WEST(-1, 0),
+    NORTHEAST(1, 1),
+    SOUTHEAST(1, -1),
+    SOUTHWEST(-1, -1),
+    NORTHWEST(-1, 1);
+
+    val flipped: Direction2D
+        get() = Direction2D.values().find { it.x == -x && it.y == -y } ?: Direction2D.NONE
+
+    val flippedX: Direction2D
+        get() = Direction2D.values().find { it.x == -x && it.y == y } ?: Direction2D.NONE
+
+    val flippedY: Direction2D
+        get() = Direction2D.values().find { it.x == x && it.y == -y } ?: Direction2D.NONE
+
+    operator fun contains(other: Direction2D): Boolean {
+        return this + other == this
+    }
+
+    operator fun plus(other: Direction2D): Direction2D =
+        Direction2D.values().find {
+            it.x == min(1, max(this.x + other.x, -1)) && it.y == min(1, max(this.y + other.y, -1))
+        } ?: Direction2D.NONE
+
+    operator fun minus(other: Direction2D): Direction2D =
+        Direction2D.values().find {
+            it.x == min(1, max(this.x - other.x, -1)) && it.y == min(1, max(this.y - other.y, -1))
+        } ?: Direction2D.NONE
+}
+
+class DirectionalPan<P : Position2D<P>>(
+    private val speed: Int = 5,
+    private val period: Long = 20,
+    private val wormhole: BidimensionalWormhole<P>,
+    private val repaint: () -> Unit
+) {
+
+    var timer: Timer = Timer()
+    var currentDirection: Direction2D = Direction2D.NONE
+
+    operator fun plusAssign(direction: Direction2D) {
+        if (direction !in currentDirection) {
+            redirect(currentDirection + direction)
+        }
+    }
+
+    operator fun minusAssign(direction: Direction2D) {
+        if (direction in currentDirection) {
+            redirect(currentDirection - direction)
+        }
+    }
+
+    private fun redirect(direction: Direction2D) {
+        if (direction == Direction2D.NONE) {
+            timer.cancel()
+            currentDirection = Direction2D.NONE
+        } else {
+            if (direction != currentDirection) {
+                timer.cancel()
+                currentDirection = direction
+                direction.flippedX.let {
+                    timer = fixedRateTimer(period = period) {
+                        wormhole.viewPosition = PanHelper(wormhole.viewPosition).update(
+                            wormhole.viewPosition.let { viewPos ->
+                                makePoint(viewPos.x + it.x * speed, viewPos.y + it.y * speed)
+                            },
+                            wormhole.viewPosition
+                        )
+                        repaint()
+                    }
+                }
+            }
         }
     }
 }

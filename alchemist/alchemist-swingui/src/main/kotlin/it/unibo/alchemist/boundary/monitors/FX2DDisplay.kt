@@ -10,11 +10,12 @@
 package it.unibo.alchemist.boundary.monitors
 
 import it.unibo.alchemist.model.interfaces.Concentration
+import it.unibo.alchemist.model.interfaces.Position2D
 
 /**
  * Simple implementation of a monitor that graphically represents a 2D space and simulation.
  *
  * @param <T> The type which describes the [Concentration] of a molecule
 </T> */
-class FX2DDisplay<T>
-@JvmOverloads constructor(step: Int = AbstractFXDisplay.DEFAULT_NUMBER_OF_STEPS) : AbstractFXDisplay<T>(step)
+class FX2DDisplay<T, P : Position2D<P>>
+@JvmOverloads constructor(step: Int = AbstractFXDisplay.DEFAULT_NUMBER_OF_STEPS) : AbstractFXDisplay<T, P>(step)

@@ -1,8 +1,8 @@
 package it.unibo.alchemist.boundary.interfaces;
 
-import it.unibo.alchemist.input.KeyboardActionListener;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
+import it.unibo.alchemist.input.KeyboardActionListener;
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -17,7 +17,7 @@ import javafx.scene.canvas.GraphicsContext;
  *
  * @param <T> the {@link Concentration} type
  */
-public interface FXOutputMonitor<T, P extends Position2D<?>> extends OutputMonitor<T, Position2D<?>> {
+public interface FXOutputMonitor<T, P extends Position2D<? extends P>> extends OutputMonitor<T, P> {
 
     /**
      * Getter method for the steps.

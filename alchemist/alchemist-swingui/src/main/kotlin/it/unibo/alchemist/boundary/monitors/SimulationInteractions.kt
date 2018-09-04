@@ -25,11 +25,11 @@ import it.unibo.alchemist.input.MouseButtonTriggerAction
 import it.unibo.alchemist.input.SimpleKeyboardEventDispatcher
 import it.unibo.alchemist.input.TemporariesMouseEventDispatcher
 import it.unibo.alchemist.kotlin.makePoint
-import it.unibo.alchemist.kotlin.minus
 import it.unibo.alchemist.kotlin.plus
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position2D
+import it.unibo.alchemist.model.interfaces.minus
 import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.collections.MapChangeListener
@@ -53,8 +53,8 @@ import kotlin.math.roundToInt
  * An interaction manager that controls the input/output on the environment done through the GUI.
  * @param parentMonitor the parent monitor
  */
-class InteractionManager<T>(
-    private val parentMonitor: AbstractFXDisplay<T>
+class InteractionManager<T, P : Position2D<P>>(
+    private val parentMonitor: AbstractFXDisplay<T, P>
 ) {
 
     private enum class Interaction {
@@ -66,13 +66,13 @@ class InteractionManager<T>(
     /**
      * The current environment.
      */
-    var environment: Environment<T, Position2D<*>>? = null
+    var environment: Environment<T, P>? = null
     /**
      * The nodes in the environment.
      * Should be updated as frequently as possible to ensure a representation of
      * the feedback that is consistent with the actual environment.
      */
-    var nodes: Map<Node<T>, Position2D<*>> = emptyMap()
+    var nodes: Map<Node<T>, P> = emptyMap()
     /**
      * The canvases used for input/output.
      */
@@ -90,16 +90,16 @@ class InteractionManager<T>(
     private lateinit var mousePan: PanHelper
     private val highlighter = Canvas()
     private val selector = Canvas()
-    private val selectionHelper: SelectionHelper<T> = SelectionHelper()
-    private val selection: ObservableMap<Node<T>, Position2D<*>> = FXCollections.observableHashMap()
-    private val selectionCandidates: ObservableMap<Node<T>, Position2D<*>> = FXCollections.observableHashMap()
-    private val selectedElements: ImmutableMap<Node<T>, Position2D<*>>
+    private val selectionHelper: SelectionHelper<T, P> = SelectionHelper()
+    private val selection: ObservableMap<Node<T>, P> = FXCollections.observableHashMap()
+    private val selectionCandidates: ObservableMap<Node<T>, P> = FXCollections.observableHashMap()
+    private val selectedElements: ImmutableMap<Node<T>, P>
         get() = ImmutableMap.copyOf(selection)
     private val selectionCandidatesMutex: Semaphore = Semaphore(1)
     private val zoomManager: ZoomManager by lazy {
         ExponentialZoomManager(this.wormhole.zoom, ExponentialZoomManager.DEF_BASE)
     }
-    private lateinit var wormhole: BidimensionalWormhole<Position2D<*>>
+    private lateinit var wormhole: BidimensionalWormhole<P>
     @Volatile private var feedback: Map<Interaction, List<() -> Unit>> = emptyMap()
     private val runMutex: Semaphore = Semaphore(1)
 
@@ -182,7 +182,7 @@ class InteractionManager<T>(
             mouse.setOnActionTemporary(MouseButtonTriggerAction(ActionOnMouse.CLICKED, MouseButton.PRIMARY)) { mouse ->
                 runMutex.acquireUninterruptibly()
                 if (selection.isNotEmpty()) {
-                    val nodesToMove: Map<Node<T>, Position2D<*>> = selectedElements
+                    val nodesToMove: Map<Node<T>, P> = selectedElements
                     selection.clear()
                     val mousePosition = wormhole.getEnvPoint(makePoint(mouse.x, mouse.y))
                     invokeOnSimulation {
@@ -246,11 +246,11 @@ class InteractionManager<T>(
         }
 
         selection.addListener(MapChangeListener {
-            feedback += Interaction.HIGHLIGHTED to selection.map { paintHighlight(it.value, alreadySelectedColour.color()) }
+            feedback += Interaction.HIGHLIGHTED to selection.map { paintHighlight(it.value, Colors.alreadySelected) }
             repaint()
         })
         selectionCandidates.addListener(MapChangeListener {
-            feedback += Interaction.HIGHLIGHT_CANDIDATE to selectionCandidates.map { paintHighlight(it.value, selectingColour.color()) }
+            feedback += Interaction.HIGHLIGHT_CANDIDATE to selectionCandidates.map { paintHighlight(it.value, Colors.selecting) }
             repaint()
         })
     }
@@ -304,7 +304,7 @@ class InteractionManager<T>(
     private fun onSelecting(event: MouseEvent) {
         selectionHelper.let {
             it.update(makePoint(event.x, event.y))
-            feedback += Interaction.SELECTION_BOX to listOf(selector.createDrawCommand(it.rectangle))
+            feedback += Interaction.SELECTION_BOX to listOf(selector.createDrawCommand(it.rectangle, Colors.selectionBox))
             addNodesToSelectionCandidates()
             repaint()
         }
@@ -359,7 +359,7 @@ class InteractionManager<T>(
      * @param position the position of the highlight
      * @param paint the colour of the highlight
      */
-    private fun paintHighlight(position: Position2D<*>, paint: Paint): () -> Unit = {
+    private fun paintHighlight(position: P, paint: Paint): () -> Unit = {
         highlighter.graphicsContext2D.let { graphics ->
             graphics.fill = paint
             wormhole.getViewPoint(position).let {
@@ -410,7 +410,7 @@ class InteractionManager<T>(
     /**
      * Sets the wormhole.
      */
-    fun setWormhole(wormhole: BidimensionalWormhole<Position2D<*>>) {
+    fun setWormhole(wormhole: BidimensionalWormhole<P>) {
         this.wormhole = wormhole
     }
 
@@ -426,20 +426,31 @@ class InteractionManager<T>(
          * The size (radius) of the highlights.
          */
         const val highlightSize = 10.0
-        /**
-         * The colour of the highlights for the already selected nodes.
-         */
-        const val alreadySelectedColour = "#1f70f2"
-        /**
-         * The colour of the highlights for the nodes that are candidates for selection.
-         */
-        const val selectingColour = "#ff5400"
-        const val selectionBoxColour = "#8e99f3"
+
         /**
          * Empiric zoom scale value.
          */
         private const val ZOOM_SCALE = 40.0
         private const val KEYBOARD_PAN_SPEED = 10
+    }
+
+    private class Colors {
+        companion object {
+            /**
+             * The colour of the highlights for the already selected nodes.
+             */
+            val alreadySelected = "#1f70f2".color()
+            /**
+             * The colour of the highlights for the nodes that are candidates for selection.
+             */
+            val selecting = "#ff5400".color()
+            /**
+             *
+             */
+            val selectionBox = "#8e99f3".color()
+
+            private fun String.color(): Paint = Color.valueOf(this)
+        }
     }
 }
 
@@ -483,13 +494,13 @@ class PanHelper(private var panPosition: Point) {
 /**
  * Manages multi-element selection and click-selection.
  */
-class SelectionHelper<T> {
+class SelectionHelper<T, P : Position2D<P>> {
 
     /**
      * Allows basic multi-element box selections.
      * @param anchorPoint the starting and unchanging [Point] of the selection
      */
-    class SelectionBox(val anchorPoint: Point, val movingPoint: Point = anchorPoint) {
+    class SelectionBox(val anchorPoint: Point, private val movingPoint: Point = anchorPoint) {
         var rectangle = Rectangle()
             get() = anchorPoint.makeRectangleWith(movingPoint)
 
@@ -510,7 +521,7 @@ class SelectionHelper<T> {
     /**
      * Begins a new selection at the given point.
      */
-    fun begin(point: Point): SelectionHelper<T> = apply {
+    fun begin(point: Point): SelectionHelper<T, P> = apply {
         isSelecting = true
         selectionPoint = point
         box = SelectionBox(point)
@@ -519,7 +530,7 @@ class SelectionHelper<T> {
     /**
      * Updates the selection with a new point.
      */
-    fun update(point: Point): SelectionHelper<T> = apply {
+    fun update(point: Point): SelectionHelper<T, P> = apply {
         if (isSelecting) {
             box?.let {
                 box = SelectionBox(it.anchorPoint, point)
@@ -541,11 +552,11 @@ class SelectionHelper<T> {
      * Retrieves the element selected by clicking. If selection was not done by clicking, null
      */
     fun clickSelection(
-        nodes: Map<Node<T>, Position2D<*>>,
-        wormhole: BidimensionalWormhole<Position2D<*>>
-    ): Pair<Node<T>, Position2D<*>>? =
+        nodes: Map<Node<T>, P>,
+        wormhole: BidimensionalWormhole<P>
+    ): Pair<Node<T>, P>? =
         selectionPoint?.let { point ->
-            nodes.minBy { it.value.x /*(nodes[it.key]!!).distanceTo(wormhole.getEnvPoint(point))*/ }?.let {
+            nodes.minBy { (nodes[it.key]!!).getDistanceTo(wormhole.getEnvPoint(point)) }?.let {
                 Pair(it.key, it.value)
             }
         }
@@ -554,9 +565,9 @@ class SelectionHelper<T> {
      * Retrieves the elements selected by box selection, thus possibly empty
      */
     fun boxSelection(
-        nodes: Map<Node<T>, Position2D<*>>,
-        wormhole: BidimensionalWormhole<Position2D<*>>
-    ): Map<Node<T>, Position2D<*>> =
+        nodes: Map<Node<T>, P>,
+        wormhole: BidimensionalWormhole<P>
+    ): Map<Node<T>, P> =
         box?.let {
             rectangle.intersectingNodes(nodes, wormhole)
         } ?: emptyMap()
@@ -565,19 +576,19 @@ class SelectionHelper<T> {
 /**
  * Returns a command for drawing the given rectangle on the caller canvas.
  */
-private fun Canvas.createDrawCommand(rectangle: Rectangle): () -> Unit = {
+private fun Canvas.createDrawCommand(rectangle: Rectangle, colour: Paint): () -> Unit = {
     graphicsContext2D.let {
-        it.fill = InteractionManager.selectionBoxColour.color()
+        it.fill = colour
         it.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height)
     } }
 
 /**
  * Returns the nodes intersecting with the caller rectangle.
  */
-private fun <T> Rectangle.intersectingNodes(
-    nodes: Map<Node<T>, Position2D<*>>,
-    wormhole: BidimensionalWormhole<Position2D<*>>
-): Map<Node<T>, Position2D<*>> = let { area -> nodes.filterValues { wormhole.getViewPoint(it) in area } }
+private fun <T, P : Position2D<P>> Rectangle.intersectingNodes(
+    nodes: Map<Node<T>, P>,
+    wormhole: BidimensionalWormhole<P>
+): Map<Node<T>, P> = let { area -> nodes.filterValues { wormhole.getViewPoint(it) in area } }
 
 private operator fun Rectangle.contains(point: Point): Boolean =
     point.x in x..(x + width) &&
@@ -588,5 +599,3 @@ private fun Point.makeRectangleWith(other: Point): Rectangle = Rectangle(
     min(this.y, other.y).toDouble(),
     abs(this.x - other.x).toDouble(),
     abs(this.y - other.y).toDouble())
-
-private fun String.color(): Paint = Color.valueOf(this)

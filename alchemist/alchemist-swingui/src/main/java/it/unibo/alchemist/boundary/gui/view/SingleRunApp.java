@@ -58,7 +58,7 @@ import static it.unibo.alchemist.boundary.gui.controller.ButtonsBarController.BU
  *
  * @param <T> the {@link Concentration} type
  */
-public class SingleRunApp<T, P extends Position2D<? extends P>> extends Application {
+public class SingleRunApp<T, P extends Position2D<P>> extends Application {
     /**
      * Main layout without nested layouts. Must inject eventual other nested layouts.
      */
@@ -87,7 +87,7 @@ public class SingleRunApp<T, P extends Position2D<? extends P>> extends Applicat
     @Nullable
     private Simulation<T, P> simulation;
     @Nullable
-    private AbstractFXDisplay<T> displayMonitor;
+    private AbstractFXDisplay<T, P> displayMonitor;
     private PlayPauseMonitor<T, P> playPauseMonitor;
     private FXTimeMonitor<T, P> timeMonitor;
     private FXStepMonitor<T, P> stepMonitor;
@@ -207,7 +207,7 @@ public class SingleRunApp<T, P extends Position2D<? extends P>> extends Applicat
                 throw new IllegalArgumentException(exception);
             }
         });
-        final Optional<AbstractFXDisplay<T>> optDisplayMonitor = Optional.ofNullable(this.displayMonitor);
+        final Optional<AbstractFXDisplay<T, P>> optDisplayMonitor = Optional.ofNullable(this.displayMonitor);
         final Pane rootLayout;
         try {
             rootLayout = FXResourceLoader.getLayout(AnchorPane.class, this, ROOT_LAYOUT);
@@ -381,8 +381,8 @@ public class SingleRunApp<T, P extends Position2D<? extends P>> extends Applicat
         }
 
         try {
-            final Class<? extends AbstractFXDisplay<T>> clazz;
-            clazz = (Class<? extends AbstractFXDisplay<T>>) Class.forName(className);
+            final Class<? extends AbstractFXDisplay<T, P>> clazz;
+            clazz = (Class<? extends AbstractFXDisplay<T, P>>) Class.forName(className);
 
             final Constructor<?>[] constructors = clazz.getDeclaredConstructors();
             Constructor<?> constructor = null;
@@ -397,7 +397,7 @@ public class SingleRunApp<T, P extends Position2D<? extends P>> extends Applicat
                 throw new IllegalArgumentException();
             } else {
                 try {
-                    displayMonitor = (AbstractFXDisplay<T>) constructor.newInstance();
+                    displayMonitor = (AbstractFXDisplay<T, P>) constructor.newInstance();
                 } catch (final IllegalAccessException | IllegalArgumentException | InstantiationException
                         | InvocationTargetException | ExceptionInInitializerError exception) {
                     L.warn("No valid constructor found");

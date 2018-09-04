@@ -41,14 +41,14 @@ import java.util.stream.Stream
  * @param <T> The type which describes the [Concentration] of a molecule
  * @param <P> The type of position
  */
-abstract class AbstractFXDisplay<T>
+abstract class AbstractFXDisplay<T, P : Position2D<P>>
 /**
  * Main constructor. It lets the developer specify the number of steps.
  *
  * @param steps the number of steps
  * @see .setStep
  */
-@JvmOverloads constructor(steps: Int = DEFAULT_NUMBER_OF_STEPS) : Canvas(), FXOutputMonitor<T, Position2D<*>> {
+@JvmOverloads constructor(steps: Int = DEFAULT_NUMBER_OF_STEPS) : Canvas(), FXOutputMonitor<T, P> {
 
     private val effectStack: ObservableList<EffectGroup> = FXCollections.observableArrayList()
     private val mutex = Semaphore(1)
@@ -58,9 +58,9 @@ abstract class AbstractFXDisplay<T>
     private var realTime: Boolean = false
     @Volatile private var commandQueue: ConcurrentLinkedQueue<() -> Unit> = ConcurrentLinkedQueue()
     private var viewStatus = DEFAULT_VIEW_STATUS
-    protected lateinit var wormhole: BidimensionalWormhole<Position2D<*>>
+    protected lateinit var wormhole: BidimensionalWormhole<P>
         private set
-    private val interactions: InteractionManager<T> by lazy { InteractionManager(this) }
+    private val interactions: InteractionManager<T, P> by lazy { InteractionManager(this) }
 
     init {
         firstTime = true
@@ -127,7 +127,7 @@ abstract class AbstractFXDisplay<T>
      * @return a function of what to do to draw the background
      * @see .repaint
      */
-    protected fun drawBackground(graphicsContext: GraphicsContext, environment: Environment<T, Position2D<*>>): () -> Unit {
+    protected fun drawBackground(graphicsContext: GraphicsContext, environment: Environment<T, P>): () -> Unit {
         return { graphicsContext.clearRect(0.0, 0.0, width, height) }
     }
 
@@ -152,11 +152,11 @@ abstract class AbstractFXDisplay<T>
 
     override fun getKeyboardListener(): KeyboardActionListener = interactions.keyboardListener
 
-    override fun initialized(environment: Environment<T, Position2D<*>>) {
+    override fun initialized(environment: Environment<T, P>) {
         stepDone(environment, null, DoubleTime(), 0)
     }
 
-    override fun stepDone(environment: Environment<T, Position2D<*>>, reaction: Reaction<T>?, time: Time, step: Long) {
+    override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
         if (firstTime) {
             synchronized(this) {
                 if (firstTime) {
@@ -174,7 +174,7 @@ abstract class AbstractFXDisplay<T>
      *
      * @param environment the `Environment`
      */
-    protected open fun init(environment: Environment<T, Position2D<*>>) {
+    protected open fun init(environment: Environment<T, P>) {
         wormhole = Wormhole2D(environment, this)
         wormhole.center()
         wormhole.optimalZoom()
@@ -183,7 +183,7 @@ abstract class AbstractFXDisplay<T>
         System.currentTimeMillis()
     }
 
-    override fun finished(environment: Environment<T, Position2D<*>>, time: Time, step: Long) {
+    override fun finished(environment: Environment<T, P>, time: Time, step: Long) {
         update(environment, time)
         firstTime = true
     }
@@ -194,7 +194,7 @@ abstract class AbstractFXDisplay<T>
      * @param environment the `Environment`
      * @param time the current `Time` of simulation
      */
-    private fun update(environment: Environment<T, Position2D<*>>, time: Time) {
+    private fun update(environment: Environment<T, P>, time: Time) {
 //            environment.simulation.schedule{ environment.moveNodeToPosition(environment.getNodeByID(0), LatLongPosition(8, 8)) }
         if (Thread.holdsLock(environment)) {
             time.toDouble()

@@ -25,6 +25,7 @@ import it.unibo.alchemist.input.MouseButtonTriggerAction
 import it.unibo.alchemist.input.SimpleKeyboardEventDispatcher
 import it.unibo.alchemist.input.TemporariesMouseEventDispatcher
 import it.unibo.alchemist.kotlin.makePoint
+import it.unibo.alchemist.kotlin.minus
 import it.unibo.alchemist.kotlin.plus
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
@@ -91,7 +92,7 @@ class InteractionManager<T, P : Position2D<P>>(
     private val input: Canvas = Canvas()
     private val keyboard: KeyboardEventDispatcher = SimpleKeyboardEventDispatcher()
     private val keyboardPan: DirectionalPan<P> by lazy {
-        DirectionalPan(wormhole = wormhole, repaint = {
+        DirectionalPan(wormhole = wormhole, updates = {
             parentMonitor.repaint()
             repaint()
         })
@@ -432,6 +433,11 @@ class InteractionManager<T, P : Position2D<P>>(
     }
 }
 
+/**
+ * Cardinal and intercardinal directions.
+ * @param x the X-value. Grows positively towards the "right".
+ * @param y the Y-value. Grows positively upwards.
+ */
 enum class Direction2D(val x: Int, val y: Int) {
     NONE(0, 0),
     NORTH(0, 1),
@@ -443,52 +449,102 @@ enum class Direction2D(val x: Int, val y: Int) {
     SOUTHWEST(-1, -1),
     NORTHWEST(-1, 1);
 
+    private fun flip(xFlip: Boolean, yFlip: Boolean): Direction2D =
+        Direction2D.values().find {
+            it.x == (if (xFlip) -x else x) && it.y == (if (yFlip) -y else y)
+        } ?: Direction2D.NONE
+
+    /**
+     * Flips the direction horizontally and vertically
+     */
     val flipped: Direction2D
-        get() = Direction2D.values().find { it.x == -x && it.y == -y } ?: Direction2D.NONE
+        get() = flip(true, true)
 
+    /**
+     * Flips the direction's X-values
+     */
     val flippedX: Direction2D
-        get() = Direction2D.values().find { it.x == -x && it.y == y } ?: Direction2D.NONE
+        get() = flip(true, false)
 
+    /**
+     * Flips the direction's Y-values
+     */
     val flippedY: Direction2D
-        get() = Direction2D.values().find { it.x == x && it.y == -y } ?: Direction2D.NONE
+        get() = flip(false, true)
 
+    private fun Int.limited(): Int = min(1, max(this, -1))
+
+    /**
+     * Sums with a direction.
+     */
+    operator fun plus(other: Direction2D): Direction2D =
+        Direction2D.values().find {
+            it.x == (x + other.x).limited() && it.y == (y + other.y).limited()
+        } ?: Direction2D.NONE
+
+    /**
+     * Subtracts with a direction.
+     */
+    operator fun minus(other: Direction2D): Direction2D =
+        Direction2D.values().find {
+            it.x == (x - other.x).limited() && it.y == (y - other.y).limited()
+        } ?: Direction2D.NONE
+
+    /**
+     * Multiplies by a scalar.
+     */
+    operator fun times(scalar: Int): Point = makePoint(x * scalar, y * scalar)
+
+    /**
+     * Returns whether this direction contains [other].
+     * Specifically, a direction "D" contains another if D [Direction2D.plus] [other] equals D.
+     * For example, [NORTHEAST] contains [NORTH] and [EAST], but not [WEST].
+     * All directions contain [NONE]. [NONE] contains only [NONE].
+     */
     operator fun contains(other: Direction2D): Boolean {
         return this + other == this
     }
-
-    operator fun plus(other: Direction2D): Direction2D =
-        Direction2D.values().find {
-            it.x == min(1, max(this.x + other.x, -1)) && it.y == min(1, max(this.y + other.y, -1))
-        } ?: Direction2D.NONE
-
-    operator fun minus(other: Direction2D): Direction2D =
-        Direction2D.values().find {
-            it.x == min(1, max(this.x - other.x, -1)) && it.y == min(1, max(this.y - other.y, -1))
-        } ?: Direction2D.NONE
 }
 
+/**
+ * Manages panning towards a cardinal (N, S, E, W) or intercardinal (NE, NW, SE, SW) direction.
+ * When a direction is added, panning towards it begins and doesn't stop until the given direction is removed.
+ * @param speed The speed of each movement.
+ * @param period Amount of time (milliseconds) between each movement.
+ * @param wormhole The wormhole used to pan.
+ * @param updates A runnable which will be called whenever a panning movement occurs.
+ */
 class DirectionalPan<P : Position2D<P>>(
     private val speed: Int = 5,
-    private val period: Long = 20,
+    private val period: Long = 15,
     private val wormhole: BidimensionalWormhole<P>,
-    private val repaint: () -> Unit
+    private val updates: () -> Unit
 ) {
+    private var timer: Timer = Timer()
+    private var currentDirection: Direction2D = Direction2D.NONE
 
-    var timer: Timer = Timer()
-    var currentDirection: Direction2D = Direction2D.NONE
-
+    /**
+     * Inputs a movement towards a certain direction.
+     */
     operator fun plusAssign(direction: Direction2D) {
         if (direction !in currentDirection) {
             redirect(currentDirection + direction)
         }
     }
 
+    /**
+     * Stops moving towards a certain direction.
+     */
     operator fun minusAssign(direction: Direction2D) {
         if (direction in currentDirection) {
             redirect(currentDirection - direction)
         }
     }
 
+    /**
+     * Redirects the movement towards a given direction,
+     * potentially stopping the movement altogether if the given direction is [Direction2D.NONE].
+     */
     private fun redirect(direction: Direction2D) {
         if (direction == Direction2D.NONE) {
             timer.cancel()
@@ -497,15 +553,12 @@ class DirectionalPan<P : Position2D<P>>(
             if (direction != currentDirection) {
                 timer.cancel()
                 currentDirection = direction
+                // the X-axis seems to be flipped... (grows positively towards the "left")
+                // so we flip the X-values of the directions
                 direction.flippedX.let {
                     timer = fixedRateTimer(period = period) {
-                        wormhole.viewPosition = PanHelper(wormhole.viewPosition).update(
-                            wormhole.viewPosition.let { viewPos ->
-                                makePoint(viewPos.x + it.x * speed, viewPos.y + it.y * speed)
-                            },
-                            wormhole.viewPosition
-                        )
-                        repaint()
+                        wormhole.viewPosition += it * speed
+                        updates()
                     }
                 }
             }
@@ -516,7 +569,7 @@ class DirectionalPan<P : Position2D<P>>(
 /**
  * Manages panning.
  */
-class PanHelper(private var panPosition: Point) {
+class PanHelper(private var current: Point) {
     /**
      * Returns whether this [PanHelper] is still valid.
      * Invalidation happens when [close] is called, for example when the mouse goes out of bounds.
@@ -526,18 +579,11 @@ class PanHelper(private var panPosition: Point) {
 
     /**
      * Updates the panning position and returns it.
-     * @param currentPoint the destination point
-     * @param viewPoint the position of the view
+     * @param next the destination point
+     * @param view the position of the view
      */
-    fun update(currentPoint: Point, viewPoint: Point): Point = if (valid) {
-        panPosition.let { previousPan ->
-            viewPoint + makePoint(
-                currentPoint.x - previousPan.getX(),
-                currentPoint.y - previousPan.getY()
-            ).also {
-                panPosition = currentPoint
-            }
-        }
+    fun update(next: Point, view: Point): Point = if (valid) {
+        (view + next - current).also { current = next }
     } else {
         throw IllegalStateException("Unable to pan after finalizing the PanHelper")
     }

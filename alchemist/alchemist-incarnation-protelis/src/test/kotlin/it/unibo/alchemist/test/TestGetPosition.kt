@@ -8,28 +8,58 @@
  ******************************************************************************/
 package it.unibo.alchemist.test
 
+import it.unibo.alchemist.boundary.interfaces.OutputMonitor
+import it.unibo.alchemist.core.implementations.Engine
+import it.unibo.alchemist.core.interfaces.Simulation
+import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
-import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods
-import it.unibo.alchemist.model.implementations.nodes.IntNode
+import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
+import it.unibo.alchemist.model.implementations.nodes.ProtelisNode
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.implementations.reactions.Event
+import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime
+import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.Reaction
+import it.unibo.alchemist.model.interfaces.Time
+import org.apache.commons.math3.random.MersenneTwister
 import org.junit.Assert
+import org.junit.Before
 import org.junit.Test
+import org.protelis.lang.datatype.DatatypeFactory
+import java.util.Optional
 
-/**
- * Tests pertaining to the [it.unibo.alchemist.model.implementations.neighborhoods] package.
- */
-class TestNeighborhood {
-    /**
-     * Tests whether the clone function of the
-     * [it.unibo.alchemist.model.implementations.neighborhoods.SimpleNeighborhood] class works as expected.
-     */
+class TestGetPosition {
+    private val env: Environment<Any, Euclidean2DPosition> = Continuous2DEnvironment()
+    private val node = ProtelisNode(env)
+    private val rng = MersenneTwister(0)
+    private val reaction = Event(node, ExponentialTime(1.0, rng))
+    private val action = RunProtelisProgram(env, node, reaction, rng, "self.getCoordinates()")
+
+    @Before
+    fun setUp() {
+        env.linkingRule = NoLinks()
+        reaction.actions = listOf(action)
+        node.addReaction(reaction)
+        env.addNode(node, env.makePosition(1, 1))
+    }
+
     @Test
-    fun testClone() {
-        val env = Continuous2DEnvironment<Int>()
-        val n1 = IntNode(env)
-        val n2 = IntNode(env)
-        val neigh1 = Neighborhoods.make(env, n1, mutableListOf(n2))
-        val neigh2 = neigh1.remove(n2)
-        Assert.assertEquals(0, neigh2.size())
-        Assert.assertTrue(neigh1.neighbors.contains(n2))
+    fun testGetPosition() {
+        val sim: Simulation<Any, Euclidean2DPosition> = Engine(env, 100)
+        sim.addOutputMonitor(object : OutputMonitor<Any, Euclidean2DPosition> {
+            override fun finished(environment: Environment<Any, Euclidean2DPosition>?, time: Time?, step: Long) { }
+            override fun initialized(environment: Environment<Any, Euclidean2DPosition>?) { }
+            override fun stepDone(env: Environment<Any, Euclidean2DPosition>?, r: Reaction<Any>?, time: Time?, step: Long) {
+                if (step > 0) {
+                    Assert.assertEquals(
+                        DatatypeFactory.createTuple(1.0, 1.0),
+                        node.getConcentration(action.asMolecule())
+                    )
+                }
+            }
+        })
+        sim.play()
+        sim.run()
+        Assert.assertEquals(Optional.empty<Any>(), sim.error)
     }
 }

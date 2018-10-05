@@ -74,5 +74,7 @@ open class Grid @JvmOverloads constructor(
     }
 
     private fun steps(min: Double, max: Double, step: Double): Int =
-        Math.ceil(Math.abs((max - min) / step)).toInt().let { if (step * it <= Math.abs(max - min)) it + 1 else it }
+        Math.ceil(Math.abs((max - min) / step)).toInt().let {
+            it + if (step * it <= Math.abs(max - min)) 1 else 0
+        }
 }

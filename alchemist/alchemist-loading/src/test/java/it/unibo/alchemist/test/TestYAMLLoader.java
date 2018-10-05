@@ -97,7 +97,7 @@ public class TestYAMLLoader {
      * Test loading layer classes.
      */
     @Test
-    public <P extends Position<? extends P>> void testLayers() {
+    public <P extends Position<P>> void testLayers() {
         @SuppressWarnings("unchecked")
         final Environment<Object, P> env = (Environment<Object, P>) testNoVar("synthetic/testlayer.yml");
         final Set<Layer<Object, P>> layers = env.getLayers();
@@ -171,7 +171,7 @@ public class TestYAMLLoader {
         assertEquals(dependencies.get(0), "dependencies_test.txt");
     }
 
-    private static <T, P extends Position<? extends P>> Environment<T, P> testLoading(final String resource, final Map<String, Double> vars) {
+    private static <T, P extends Position<P>> Environment<T, P> testLoading(final String resource, final Map<String, Double> vars) {
         final InputStream res = ResourceLoader.getResourceAsStream(resource);
         assertNotNull("Missing test resource " + resource, res);
         final Environment<T, P> env = new YamlLoader(res).getWith(vars);

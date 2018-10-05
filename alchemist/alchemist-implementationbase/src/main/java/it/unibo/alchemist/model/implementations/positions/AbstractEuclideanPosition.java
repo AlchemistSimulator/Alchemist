@@ -28,7 +28,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  * @param <P>
  *            actual type
  */
-public abstract class AbstractEuclideanPosition<P extends AbstractEuclideanPosition<? extends P>> implements Position<P> {
+public abstract class AbstractEuclideanPosition<P extends AbstractEuclideanPosition<P>> implements Position<P> {
 
     /**
      * 

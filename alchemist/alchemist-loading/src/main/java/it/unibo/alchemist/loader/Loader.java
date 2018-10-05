@@ -29,7 +29,7 @@ public interface Loader extends Serializable {
      * @return an {@link Environment} with all the variables set at their
      *         default values
      */
-    <T, P extends Position<? extends P>> Environment<T, P> getDefault();
+    <T, P extends Position<P>> Environment<T, P> getDefault();
 
     /**
      * @return a {@link Map} between variable names and their actual
@@ -47,7 +47,7 @@ public interface Loader extends Serializable {
      *         specified values. If the value is unspecified, the default is
      *         used instead
      */
-    <T, P extends Position<? extends P>> Environment<T, P> getWith(Map<String, ?> values);
+    <T, P extends Position<P>> Environment<T, P> getWith(Map<String, ?> values);
 
     /**
      * @return The data extractors

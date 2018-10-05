@@ -112,7 +112,7 @@ public class TestInSimulator {
         testLoading(resource, Collections.emptyMap());
     }
 
-    private static <T, P extends Position<? extends P>> void testLoading(final String resource, final Map<String, Double> vars) {
+    private static <T, P extends Position<P>> void testLoading(final String resource, final Map<String, Double> vars) {
         final InputStream res = ResourceLoader.getResourceAsStream(resource);
         assertNotNull("Missing test resource " + resource, res);
         final Environment<T, P> env = new YamlLoader(res).getWith(vars);

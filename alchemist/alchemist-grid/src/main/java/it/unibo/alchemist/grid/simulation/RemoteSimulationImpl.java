@@ -40,7 +40,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  *
  * @param <T>
  */
-public class RemoteSimulationImpl<T, P extends Position<? extends P>> implements RemoteSimulation<T> {
+public class RemoteSimulationImpl<T, P extends Position<P>> implements RemoteSimulation<T> {
 
     /**
      * 

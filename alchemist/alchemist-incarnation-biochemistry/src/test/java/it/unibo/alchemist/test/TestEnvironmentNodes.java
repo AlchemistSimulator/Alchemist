@@ -368,11 +368,11 @@ public class TestEnvironmentNodes {
         assertEquals(CON_A_IN_CELL + conAInCell, conAInCell, 1000, PRECISION);
     }
 
-    private static <T, P extends Position<? extends P>> Environment<T, P> testNoVar(final String resource) {
+    private static <T, P extends Position<P>> Environment<T, P> testNoVar(final String resource) {
         return testLoading(resource, Collections.emptyMap());
     }
 
-    private static <T, P extends Position<? extends P>> Environment<T, P> testLoading(final String resource, final Map<String, Double> vars) {
+    private static <T, P extends Position<P>> Environment<T, P> testLoading(final String resource, final Map<String, Double> vars) {
         final InputStream res = ResourceLoader.getResourceAsStream(resource);
         assertNotNull("Missing test resource " + resource, res);
         final Environment<T, P> env = new YamlLoader(res).getWith(vars);

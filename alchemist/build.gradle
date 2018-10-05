@@ -5,9 +5,11 @@ buildscript {
         maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
+        classpath "gradle.plugin.org.jmailen.gradle:kotlinter-gradle:$ktlintVersion"
         classpath "org.danilopianini:build-commons:${buildCommonsVersion}"
         classpath "org.danilopianini:javadoc.io-linker:${javadocIOLinkerVersion}"
-        classpath "org.xtext:xtext-gradle-plugin:${xtextPluginVersion}"
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:${dokkaVersion}"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
     }
 }
 
@@ -16,15 +18,37 @@ allprojects {
     scalaVersion = "${scalaMajorVersion}.${scalaMinorVersion}"
 
     apply plugin: 'org.danilopianini.build-commons'
-    apply plugin: "org.xtext.xtend"
+    apply plugin: 'idea'
+    apply plugin: 'kotlin'
+    apply plugin: 'org.jetbrains.dokka'
+    apply plugin: "org.jmailen.kotlinter"
+
+    compileKotlin {
+        kotlinOptions {
+            jvmTarget = 1.8
+        }
+    }
+
+    kotlinter {
+        ignoreFailures = false
+        indentSize = 4
+        continuationIndentSize = 4
+        reporters = ['checkstyle', 'plain', 'html']
+    }
+
+    /*
+     * This forces the main classes to be ready before going on, preventing potential
+     * issues with interleaving project tasks
+     */
+//    processResources.dependsOn('copyMainKotlinClasses')
 
     configurations {
         all*.exclude group: 'org.eclipse.xtext', module: 'org.eclipse.xtext.dependencies'
         all {
             if(!it.name.contains('antlr')) {
-	            resolutionStrategy {
-	                forcedModules += "org.antlr:antlr-runtime:${antlrRuntimeVersion}"
-	            }
+                resolutionStrategy {
+                    forcedModules += "org.antlr:antlr-runtime:${antlrRuntimeVersion}"
+                }
             }
         }
     }
@@ -32,14 +56,16 @@ allprojects {
     test { testLogging { events "passed", "skipped", "failed", "standardError" } }
 
     dependencies {
+        compile "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
         compile "com.google.code.findbugs:findbugs:$findBugsVersion"
         compile "org.apache.commons:commons-math3:$math3Version"
-        compile "org.eclipse.xtend:org.eclipse.xtend.lib:${xtendLibVersion}"
+//        compile "org.eclipse.xtend:org.eclipse.xtend.lib:${xtendLibVersion}"
         compile "org.scala-lang:scala-compiler:${scalaVersion}"
         compile "org.scala-lang:scala-library:${scalaVersion}"
         compile "org.slf4j:slf4j-api:$slf4jVersion"
+        compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
+        compile "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
         compile "org.danilopianini:thread-inheritable-resource-loader:${resLoaderVersion}"
-
         runtime "ch.qos.logback:logback-classic:$logbackVersion"
 
         testCompile "junit:junit:$junitVersion"
@@ -145,7 +171,7 @@ subprojects.each { it.tasks.remove(closeRepository) }
 /*
  * Running a task on the parent project implies running the same task first on any subproject
  */
-tasks.each { task -> 
+tasks.each { task ->
     subprojects.each { subproject ->
         def subtask = subproject.tasks.findByPath("${task.name}")
         if (subtask != null) {
@@ -157,13 +183,17 @@ tasks.each { task ->
 dependencies {
     compile subprojects
     compile (
-        "commons-cli:commons-cli:$cliVersion",
+            "commons-cli:commons-cli:$cliVersion",
     )
 }
 
 javadoc {
     dependsOn subprojects.javadoc
     source subprojects.javadoc.source
+}
+
+dokka {
+    sourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
 }
 
 allprojects {
@@ -177,8 +207,8 @@ allprojects {
 task fatJar(type: Jar, dependsOn: subprojects.compileJava) {
     manifest {
         attributes 'Implementation-Title': 'Alchemist',
-        'Implementation-Version': rootProject.version,
-        'Main-Class': 'it.unibo.alchemist.Alchemist'
+                'Implementation-Version': rootProject.version,
+                'Main-Class': 'it.unibo.alchemist.Alchemist'
     }
     baseName = "${rootProject.name}-redist"
     from(configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) }) {
@@ -196,4 +226,4 @@ task fatJar(type: Jar, dependsOn: subprojects.compileJava) {
     with jar
 }
 
-defaultTasks 'clean', 'build', 'check', 'javadoc', 'assemble', 'install', 'projectReport', 'buildDashboard', 'fatJar'
+defaultTasks 'clean', 'build', 'check', 'javadoc', 'dokka', 'assemble', 'install', 'projectReport', 'buildDashboard', 'fatJar'

@@ -8,9 +8,6 @@
  ******************************************************************************/
 package it.unibo.alchemist.kotlin
 
-import it.unibo.alchemist.model.interfaces.Time
-import java.awt.Point
-
 /**
  * The opposite of [fold].
  *

@@ -59,7 +59,6 @@ allprojects {
         compile "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
         compile "com.google.code.findbugs:findbugs:$findBugsVersion"
         compile "org.apache.commons:commons-math3:$math3Version"
-//        compile "org.eclipse.xtend:org.eclipse.xtend.lib:${xtendLibVersion}"
         compile "org.scala-lang:scala-compiler:${scalaVersion}"
         compile "org.scala-lang:scala-library:${scalaVersion}"
         compile "org.slf4j:slf4j-api:$slf4jVersion"

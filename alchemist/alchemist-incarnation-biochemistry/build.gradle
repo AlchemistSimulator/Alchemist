@@ -47,3 +47,7 @@ pmd {
 findbugs {
     sourceSets = [project.sourceSets.main, project.sourceSets.test]
 }
+
+jar {
+    from sourceSets.antlr.output
+}

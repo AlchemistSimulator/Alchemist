@@ -1,13 +1,5 @@
 apply plugin: 'antlr'
 
-sourceSets {
-    main {
-        java {
-            srcDirs 'src/antlr/java/'
-        }
-    }
-}
-
 dependencies {
     implementation (
         project(':alchemist-maps'),
@@ -18,23 +10,16 @@ dependencies {
         project(':alchemist-loading'),
         project(':alchemist-engine')
     )
-    compileOnly "org.antlr:antlr4:$antlr4Version"
+    antlr "org.antlr:antlr4:$antlr4Version"
     runtimeOnly "org.antlr:antlr4-runtime:$antlr4Version"
     testCompileOnly "org.antlr:antlr4-runtime:$antlr4Version"
 }
 
 generateGrammarSource {
-    arguments += ["-visitor", "-package", "it.unibo.alchemist.biochemistrydsl"]
-    def target = new File('src/antlr/java/')
-    if ((target.exists() && target.isDirectory()) || target.mkdirs()) {
-        outputDirectory = target
-    } else {
-        throw new IllegalStateException("$target is not an existing directory and could not be created as such.")
-    }
+    arguments += ["-visitor", "-package", "it.unibo.alchemist.biochemistrydsl", "-long-messages"]
 }
 
-compileJava.dependsOn('generateGrammarSource')
-compileKotlin.dependsOn('generateGrammarSource')
+compileKotlin.dependsOn("generateGrammarSource")
 
 checkstyle {
     sourceSets = [project.sourceSets.main, project.sourceSets.test]

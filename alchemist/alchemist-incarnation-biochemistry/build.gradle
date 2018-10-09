@@ -1,26 +1,26 @@
 apply plugin: 'antlr'
 
 sourceSets {
-    antlr
+    main {
+        java {
+            srcDirs 'src/antlr/java/'
+        }
+    }
 }
 
 dependencies {
-    compile (
+    implementation (
         project(':alchemist-maps'),
         "com.google.guava:guava:$guavaVersion",
-        "org.danilopianini:jirf:${jirfVersion}",
-        project.sourceSets.antlr.output
+        "org.danilopianini:jirf:${jirfVersion}"//,
     )
     testCompile(
         project(':alchemist-loading'),
         project(':alchemist-engine')
     )
-    antlr "org.antlr:antlr4:$antlr4Version"
-    antlrCompile "org.antlr:antlr4:$antlr4Version"
-}
-
-sourcesJar {
-    from sourceSets.antlr.allSource
+    compileOnly "org.antlr:antlr4:$antlr4Version"
+    runtimeOnly "org.antlr:antlr4-runtime:$antlr4Version"
+    testCompileOnly "org.antlr:antlr4-runtime:$antlr4Version"
 }
 
 generateGrammarSource {
@@ -33,8 +33,7 @@ generateGrammarSource {
     }
 }
 
-compileAntlrJava.dependsOn('generateGrammarSource')
-compileJava.dependsOn('compileAntlrJava')
+compileJava.dependsOn('generateGrammarSource')
 
 checkstyle {
     sourceSets = [project.sourceSets.main, project.sourceSets.test]
@@ -46,8 +45,4 @@ pmd {
 
 findbugs {
     sourceSets = [project.sourceSets.main, project.sourceSets.test]
-}
-
-jar {
-    from sourceSets.antlr.output
 }

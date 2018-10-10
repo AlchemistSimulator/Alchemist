@@ -4,6 +4,7 @@ dependencies {
         project(':alchemist-interfaces'),
         project(':alchemist-time'),
         project(':alchemist-maps'),
+        "com.google.guava:guava:${guavaVersion}",
         "org.apache.commons:commons-lang3:${lang3Version}",
         "org.danilopianini:jirf:${jirfVersion}",
         "org.reflections:reflections:$reflectionsVersion",
@@ -17,3 +18,5 @@ dependencies {
         project(':alchemist-incarnation-sapere')
     )
 }
+compileKotlin.mustRunAfter(project(':alchemist-implementationbase').compileScala)
+compileJava.mustRunAfter(project(':alchemist-implementationbase').compileScala)

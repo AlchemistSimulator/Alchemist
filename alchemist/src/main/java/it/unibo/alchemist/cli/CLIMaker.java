@@ -10,7 +10,6 @@ package it.unibo.alchemist.cli;
 
 import static java.util.ResourceBundle.getBundle;
 
-import java.io.IOException;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -20,7 +19,6 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.util.FastMath;
-import org.danilopianini.io.FileUtilities;
 
 /**
  * This support class generates a CLI interface backed by a property file.
@@ -81,11 +79,7 @@ public final class CLIMaker {
      * @return an Apache {@link Options} object
      */
     public static Options getOptions() {
-        try {
-            return FileUtilities.cloneObject(OPTIONS);
-        } catch (ClassNotFoundException | IOException e) {
-            throw new IllegalStateException("Unable to get the command line support.", e);
-        }
+        return OPTIONS;
     }
 
     private CLIMaker() { }

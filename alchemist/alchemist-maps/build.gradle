@@ -1,7 +1,9 @@
 dependencies {
+    api project(':alchemist-interfaces')
+    implementation project(':alchemist-implementationbase')
+    implementation project(':alchemist-time')
     implementation (
-        project(':alchemist-interfaces'),
-        project(':alchemist-implementationbase'),
+        "com.github.ben-manes.caffeine:caffeine:${caffeineVersion}",
         "com.google.code.gson:gson:$gsonVersion",
         "com.google.guava:guava:$guavaVersion",
         "com.javadocmd:simplelatlng:$latlngVersion",
@@ -10,7 +12,9 @@ dependencies {
         "commons-io:commons-io:${commonsIOVersion}",
         "io.jenetics:jpx:$gpxVersion",
         "net.sf.trove4j:trove4j:$troveVersion",
-        "org.apache.commons:commons-lang3:$lang3Version"
+        "org.danilopianini:boilerplate:$boilerplateVersion",
+        "org.apache.commons:commons-lang3:$lang3Version",
+        "org.reflections:reflections:$reflectionsVersion"
     )
     implementation("com.graphhopper:graphhopper-reader-osm:$graphhopperVersion") {
         exclude module: "slf4j-log4j12"

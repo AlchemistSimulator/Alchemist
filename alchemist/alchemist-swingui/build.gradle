@@ -1,14 +1,16 @@
 dependencies {
+    api project(':alchemist-interfaces')
     implementation (
         project(':alchemist-engine'),
         project(':alchemist-implementationbase'),
-        project(':alchemist-interfaces'),
         project(':alchemist-loading'),
         project(':alchemist-maps'),
+        project(':alchemist-time'),
         "com.miglayout:miglayout-swing:${miglayoutVersion}",
         "org.mapsforge:mapsforge-map-awt:${mapsforgeVersion}",
         "org.danilopianini:gson-extras:${gsonExtrasVersion}",
-        'org.danilopianini:javalib-java7:0.6.1'
+        'org.danilopianini:javalib-java7:0.6.1',
+        "org.reflections:reflections:$reflectionsVersion"
     )
     testRuntimeOnly project(':alchemist-incarnation-protelis')
 }

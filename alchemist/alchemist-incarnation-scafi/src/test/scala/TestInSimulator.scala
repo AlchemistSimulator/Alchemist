@@ -57,8 +57,6 @@ class TestInSimulator[P <: Position[P]] extends FunSuite with Matchers {
 
   private def testLoading[T](resource: String, vars: Map[String, java.lang.Double], maxSteps: Long = 1000): Environment[T, P] = {
     import scala.collection.JavaConverters._
-    import ch.qos.logback.classic.{Logger,Level}
-    LoggerFactory.getLogger("ROOT").asInstanceOf[Logger].setLevel(Level.ERROR)
     val res: InputStream = classOf[TestInSimulator[P]].getResourceAsStream(resource)
     res shouldNot be(null)
     val env: Environment[T, P] = new YamlLoader(res).getWith(vars.asJava)

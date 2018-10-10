@@ -1,4 +1,7 @@
 apply plugin: 'project-report'
+subprojects {
+    apply plugin: 'java-library'
+}
 
 buildscript {
     repositories {
@@ -10,6 +13,7 @@ buildscript {
         classpath "org.danilopianini:javadoc.io-linker:${javadocIOLinkerVersion}"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:${dokkaVersion}"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
+        classpath "gradle.plugin.com.dorongold.plugins:task-tree:1.3.1"
     }
 }
 
@@ -22,6 +26,7 @@ allprojects {
     apply plugin: 'kotlin'
     apply plugin: 'org.jetbrains.dokka'
     apply plugin: "org.jmailen.kotlinter"
+    apply plugin: "com.dorongold.task-tree"
 
     compileKotlin {
         kotlinOptions {
@@ -59,18 +64,13 @@ allprojects {
         implementation "org.apache.commons:commons-math3:$math3Version"
         implementation "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
         implementation "com.google.code.findbugs:findbugs:$findBugsVersion"
-        implementation "org.scala-lang:scala-compiler:${scalaVersion}"
-        implementation "org.scala-lang:scala-library:${scalaVersion}"
         implementation "org.slf4j:slf4j-api:$slf4jVersion"
         implementation "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
         implementation "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
         implementation "org.danilopianini:thread-inheritable-resource-loader:${resLoaderVersion}"
         runtimeOnly "ch.qos.logback:logback-classic:$logbackVersion"
-
-        testCompileOnly "junit:junit:$junitVersion"
-
+        testImplementation "junit:junit:$junitVersion"
         testRuntimeOnly "ch.qos.logback:logback-classic:$logbackVersion"
-
         doclet "org.jboss.apiviz:apiviz:$apivizVersion"
     }
 
@@ -180,10 +180,11 @@ tasks.each { task ->
 }
 
 dependencies {
-    compile subprojects
-    compile (
-            "commons-cli:commons-cli:$cliVersion",
-    )
+    implementation subprojects
+    implementation "commons-cli:commons-cli:$cliVersion"
+    implementation "ch.qos.logback:logback-classic:$logbackVersion"
+    implementation "org.apache.commons:commons-lang3:${lang3Version}"
+    implementation "org.apache.ignite:ignite-core:${igniteVersion}"
 }
 
 javadoc {

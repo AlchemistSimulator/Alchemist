@@ -1,4 +1,4 @@
 dependencies {
-    implementation "org.danilopianini:listset:${listsetVersion}"
-    implementation "org.jooq:jool:${joolVersion}"
+    api "org.danilopianini:listset:${listsetVersion}"
+    api "org.jooq:jool:${joolVersion}"
 }

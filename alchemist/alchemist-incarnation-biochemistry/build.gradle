@@ -2,9 +2,11 @@ apply plugin: 'antlr'
 
 dependencies {
     implementation (
-        project(':alchemist-maps'),
+        project(':alchemist-implementationbase'),
         "com.google.guava:guava:$guavaVersion",
-        "org.danilopianini:jirf:${jirfVersion}"//,
+        "net.sf.trove4j:trove4j:$troveVersion",
+        "org.danilopianini:boilerplate:$boilerplateVersion",
+        "org.danilopianini:jirf:${jirfVersion}"
     )
     testImplementation(
         project(':alchemist-loading'),

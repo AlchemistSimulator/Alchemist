@@ -69,14 +69,11 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment implemen
                     range = thisNode.getDiameter();
                 }
                 final double nodeRadius = thisNode.getRadius();
-                return isWithinLimits
-                        && (range <= 0
-                        || !getNodesWithinRange(p, range).stream()
+                return range <= 0
+                        || getNodesWithinRange(p, range).stream()
                                 .filter(n -> n instanceof CellWithCircularArea)
                                 .map(n -> (CellWithCircularArea<Euclidean2DPosition>) n)
-                                .filter(n -> getPosition(n).getDistanceTo(p) < nodeRadius + n.getRadius())
-                                .findFirst()
-                                .isPresent());
+                                .noneMatch(n -> getPosition(n).getDistanceTo(p) < nodeRadius + n.getRadius());
             } else {
                 return true;
             }

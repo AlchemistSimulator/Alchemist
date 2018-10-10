@@ -38,7 +38,7 @@ deploy:
   - provider: surge
     skip_cleanup: true
     project: "./alchemist/build/dokka/"
-    domain: alchemist-unstable-dokka.sh
+    domain: alchemist-unstable-dokka.surge.sh
     on: develop
   - provider: surge
     skip_cleanup: true
@@ -55,7 +55,7 @@ deploy:
   - provider: surge
     skip_cleanup: true
     project: "./alchemist/build/dokka/"
-    domain: alchemist-dokka.sh
+    domain: alchemist-dokka.surge.sh
     on:
       tags: true
 after_deploy: echo Deployment phase concluded.

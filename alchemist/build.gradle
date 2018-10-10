@@ -171,6 +171,40 @@ allprojects {
             }
         }
     }
+    
+    /*
+     * Configure Dokka to run before Javadoc, so that Kotlin classes are correctly documented
+     * and doclet still applied for Java classes. Then copy missing files and lowercase files
+     * to the javadoc folder.
+     */
+    dokka {
+        sourceDirs += files(subprojects.sourceSets.main.allSource.srcDirs)
+        outputDirectory = "$buildDir/dokka"
+        reportUndocumented = true
+        impliedPlatforms = ["JVM"]
+        outputFormat = 'javadoc'
+    }
+    javadoc.dependsOn(dokka)
+    task fillDocs(type: Copy) {
+        dependsOn dokka
+        dependsOn javadoc
+        from dokka.outputDirectory
+        into javadoc.destinationDir
+        eachFile {
+            if (it.relativePath.getFile(destinationDir).exists()) {
+                it.exclude()
+            }
+        }
+    }
+    task makeDocs(type: Copy) {
+        dependsOn fillDocs
+        from dokka.outputDirectory {
+            find {
+                Character.isLowerCase(it.name.charAt(0))
+            }
+        }
+        into javadoc.destinationDir
+    }
 }
 
 subprojects.each { subproject -> rootProject.evaluationDependsOn(subproject.path)}
@@ -204,14 +238,7 @@ dependencies {
 javadoc {
     dependsOn subprojects.javadoc
     source subprojects.javadoc.source
-}
-
-dokka {
-    sourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
-    outputDirectory = "$buildDir/dokka"
-    includeNonPublic = true
-    reportUndocumented = true
-    impliedPlatforms = ["JVM"]
+    options.encoding = 'UTF-8'
 }
 
 allprojects {
@@ -244,4 +271,4 @@ task fatJar(type: Jar, dependsOn: subprojects.compileJava) {
     with jar
 }
 
-defaultTasks 'clean', 'build', 'check', 'javadoc', 'dokka', 'assemble', 'install', 'projectReport', 'buildDashboard', 'fatJar'
+defaultTasks 'clean', 'build', 'check', 'makeDocs', 'assemble', 'install', 'projectReport', 'buildDashboard', 'fatJar'

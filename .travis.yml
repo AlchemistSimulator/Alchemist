@@ -15,6 +15,9 @@ install: true
 script:
   - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_REPO_SLUG" = "AlchemistSimulator/Alchemist" ]; then bash travis_build.sh; else bash travis_build_pull_request.sh; fi'
 before_deploy: echo Preparing for deploy
+after_success:
+  - cd alchemist
+  - ./gradle uploadArchives
 deploy:
   - provider: releases
     skip_cleanup: true
@@ -37,11 +40,6 @@ deploy:
     on: develop
   - provider: surge
     skip_cleanup: true
-    project: "./alchemist/build/dokka/"
-    domain: alchemist-unstable-dokka.surge.sh
-    on: develop
-  - provider: surge
-    skip_cleanup: true
     project: "./alchemist/build/docs/javadoc/"
     domain: alchemist-doc.surge.sh
     on:
@@ -52,10 +50,3 @@ deploy:
     domain: alchemist-reports.surge.sh
     on:
       tags: true
-  - provider: surge
-    skip_cleanup: true
-    project: "./alchemist/build/dokka/"
-    domain: alchemist-dokka.surge.sh
-    on:
-      tags: true
-after_deploy: echo Deployment phase concluded.

@@ -50,99 +50,25 @@ If you need to access the documentation for any older stable version, [javadoc.i
 ## Notes for Developers
 
 ### Importing the project
-The project has been developed using Eclipse, and can be easily imported in such IDE.
+The project is easiest to import in IntelliJ Idea.
 
 #### Recommended configuration
-* Download [the latest Eclipse for Java][eclipse]. For a smooth import, Gradle Buildship is needed (starting from Eclipse Mars.1, it is included by default)
-  * Arch Linux users can use the package `eclipse-java`
-  * Ubuntu-based Linux users can install it using [ubuntu-make](https://wiki.ubuntu.com/ubuntu-make): 
-    ```bash
-    sudo apt-add-repository ppa:ubuntu-desktop/ubuntu-make
-    sudo apt-get update
-    sudo apt-get install ubuntu-make
-    umake ide eclipse 
-    ```
-* Install the Scala interpreter:
-  * Arch Linux users can use the package `scala`
-  * Ubuntu-based Linux users can use the package scala:
-    ```bash
-    sudo apt-get update
-    sudo apt-get install scala
-    ```
-  * Users of other OS can follow the [official installation guide](https://www.scala-lang.org/download/install.html)
-* Install the required eclipse plugins:
-  * In Eclipse, click "Help" -> "Eclipse Marketplace..."
-  * In the search field enter "findbugs", then press Enter
-  * One of the retrieved entries should be "FindBugs Eclipse Plugin", click Install
-  * Click "< Install More"
-  * In the search field enter "checkstyle", then press Enter
-  * One of the retrieved entries should be "Checkstyle Plug-in" with a written icon whose text is "eclipse-cs", click Install
-  * Click "< Install More"
-  * In the search field enter "xtext", then press Enter
-  * One of the retrieved entries should be "Eclipse Xtext", click Install
-  * Click "< Install More"
-  * In the search field enter "scala", then press Enter
-  * One of the retrieved entries should be "Scala IDE 4.2.x", click Install
-  * Click "Install Now >"
-  * Wait for Eclipse to resolve all the features
-  * Click "Confirm >"
-  * Follow the instructions, accept the license, wait for Eclipse to download and install the product, accept the installation and restart the IDE
-  * When restarted, click "Help" -> "Install New Software..."
-  * Click "Add..."
-  * In "Location" field, enter `https://dl.bintray.com/pmd/pmd-eclipse-plugin/updates/`
-  * The "Name" field is not mandatory (suggested: "PMD")
-  * Click OK.
-  * If not already selected, in "Work with:" dropdown menu choose the just added update site
-  * Select "PMD for Eclipse 4" and click next
-  * Follow the instructions, accept the license, wait for Eclipse to download and install the product, accept the installation and restart the IDE.
-* Set the line delimiter to LF (only for Windows users)
-  * In Eclipse, click window -> preferences
-  * In the search form enter "encoding", then press Enter
-  * Go to General -> Workspace
-  * In the section "New text file line delimiter" check "Other" and choose Unix
-  * Apply
-* Use space instead of tabs
-  * In Eclipse, click window -> preferences
-  * Go to General -> Editors -> Text Editors
-  * Check "insert spaces for tabs" option.
-  * Apply.
-  * Go to Java -> Code style -> Formatter
-  * Click Edit button
-  * In Indentation tab, under "General Settings", set "tab policy" to "Spaces only"
-  * Apply (you should probably rename the formatter settings).
+Install the following plugins:
+* Scala
+* Kotlin
+* [ANTLR v4 grammar plugin](https://plugins.jetbrains.com/plugin/7358-antlr-v4-grammar-plugin)
+* [Checkstyle-IDEA](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea)
+* [FindBugs-IDEA](https://plugins.jetbrains.com/plugin/3847-findbugs-idea)
+* [PMDPlugin](https://plugins.jetbrains.com/plugin/1137-pmdplugin)
 
-#### Import Procedure
-* Install git on your system, if you haven't yet
-* Pull up a terminal, and `cd` to the folder where you want the project to be cloned (presumably, your Eclipse workspace)
-* Clone the project with `git clone git@github.com:AlchemistSimulator/alchemist.git`
-  * If you are a Windows user, you might find easier to import via HTTPS: `git clone https://github.com/AlchemistSimulator/Alchemist.git`
-  * If the cloning ends with `Permission denied (publickey)` error, please, follow [this](https://help.github.com/articles/error-permission-denied-publickey/) guide.
-* In terminal type `git branch`. This shows you all the branches. If you only have the master branch type `git branch -a` to see local and remote branches. For add a remote branch to your local repository type `git checkout -b <branch-name> origin/<branch-name>`. For switch between branches use `git checkout <branch-name>`.
-* Open Eclipse
-* Click File -> Import -> Gradle -> Gradle Project -> Next
-* Select the project root directory, namely, the `alchemist` folder located inside the folder where you have cloned the repository. Do not point to the folder containing this `README.md` file, but to the `alchemist` folder on the same level.
-* Next
-* Make sure that "Gradle wrapper (recommended)" is selected
-* Next
-* Wait for Eclipse to scan the project, then make sure that the Gradle project structure can be expanded, and contains an external `alchemist` project and many `alchemist-*` subprojects. If it does not, you have pointed to the wrong folder while importing, go back and select the correct one.
-* Finish
-* When asked about the existing Eclipse configuration, select "Keep" (so that all the default development options are imported)
-* The projects will appear in your projects list.
-* Checkstyle, PMD and FindBugs should be pre-configured.
-* If you have errors in `alchemist-incarnation-biochemistry` project open a terminal in alchemist folder (do not point to the folder containing this `README.md` file, but to the `alchemist` folder on the same level) and run:
-  * If you are a Linux or Mac user `./gradlew alchemist-incarnation-biochemistry:generateGrammarSource`
-  * If you are a Windows user: `gradlew.bat alchemist-incarnation-biochemistry:generateGrammarSource`
-
-  Go to Eclipse, right click on `alchemist-incarnation-biochemistry` project -> Refresh
-* If you have errors in `alchemist-projectview` project, make sure Eclipse Xtext plugin is correctly installed
-
-
+#### Importing the project
+* Import the project as Gradle project
 
 ### Developing the project
 Contributions to this project are welcome. Just some rules:
 0. We use [git flow](https://github.com/nvie/gitflow), so if you write new features, please do so in a separate `feature-` branch.
 0. We recommend forking the project, developing your stuff, then contributing back via pull request directly from GitHub
-0. Commit often. Do not throw at me pull requests with a single giant commit adding or changing the world. Split it in multiple commits and request a merge to the mainline often.
+0. Commit often. Do not throw at me pull requests with a single giant commit adding or changing the whole world. Split it in multiple commits and request a merge to the mainline often.
 0. Do not introduce low quality code. All the new code must comply with the checker rules (that are quite strict) and must not introduce any other warning. Resolutions of existing warnings (if any is present) are very welcome instead.
 
 

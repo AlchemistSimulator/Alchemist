@@ -30,7 +30,6 @@
 	<rule ref="rulesets/java/logging-java.xml/AvoidPrintStackTrace" />
 	<rule ref="rulesets/java/design.xml/AvoidProtectedFieldInFinalClass" />
 	<rule ref="rulesets/java/design.xml/AvoidProtectedMethodInFinalClassNotExtending" />
-	<rule ref="rulesets/vm/basic.xml/AvoidReassigningParameters" />
 	<rule ref="rulesets/java/design.xml/AvoidReassigningParameters" />
 	<rule ref="rulesets/java/strictexception.xml/AvoidRethrowingException" />
 	<rule ref="rulesets/java/strings.xml/AvoidStringBufferField" />
@@ -54,7 +53,6 @@
 	<rule ref="rulesets/java/naming.xml/ClassNamingConventions" />
 	<rule ref="rulesets/java/design.xml/ClassWithOnlyPrivateConstructorsShouldBeFinal" />
 	<rule ref="rulesets/java/design.xml/CloseResource" />
-	<rule ref="rulesets/vm/basic.xml/CollapsibleIfStatements" />
 	<rule ref="rulesets/java/basic.xml/CollapsibleIfStatements" />
 	<rule ref="rulesets/java/comments.xml/CommentContent" />
 	<rule ref="rulesets/java/design.xml/CompareObjectsWithEquals" />
@@ -69,17 +67,13 @@
 	<rule ref="rulesets/java/basic.xml/DontCallThreadRun" />
 	<rule ref="rulesets/java/imports.xml/DontImportJavaLang" />
 	<rule ref="rulesets/java/controversial.xml/DontImportSun" />
-	<rule ref="rulesets/jsp/basic-jsf.xml/DontNestJsfInJstlIteration" />
 	<rule ref="rulesets/java/basic.xml/DontUseFloatTypeForLoopIndices" />
 	<rule ref="rulesets/java/basic.xml/DoubleCheckedLocking" />
 	<rule ref="rulesets/java/imports.xml/DuplicateImports" />
-	<rule ref="rulesets/jsp/basic.xml/DuplicateJspImports" />
 	<rule ref="rulesets/java/empty.xml/EmptyCatchBlock" />
 	<rule ref="rulesets/java/finalizers.xml/EmptyFinalizer" />
 	<rule ref="rulesets/java/empty.xml/EmptyFinallyBlock" />
-	<rule ref="rulesets/vm/basic.xml/EmptyForeachStmt" />
 	<rule ref="rulesets/java/empty.xml/EmptyIfStmt" />
-	<rule ref="rulesets/vm/basic.xml/EmptyIfStmt" />
 	<rule ref="rulesets/java/empty.xml/EmptyInitializer" />
 	<rule ref="rulesets/java/empty.xml/EmptyStatementBlock" />
 	<rule ref="rulesets/java/empty.xml/EmptyStatementNotInLoop" />
@@ -90,8 +84,6 @@
 	<rule ref="rulesets/java/empty.xml/EmptyWhileStmt" />
 	<rule ref="rulesets/java/design.xml/EqualsNull" />
 	<rule ref="rulesets/java/strictexception.xml/ExceptionAsFlowControl" />
-	<rule ref="rulesets/vm/basic.xml/ExcessiveTemplateLength" />
-	<rule ref="rulesets/plsql/codesize.xml/ExcessiveTypeLength" />
 	<rule ref="rulesets/java/basic.xml/ExtendsObject" />
 	<rule ref="rulesets/java/design.xml/FieldDeclarationsShouldBeAtStartOfClass" />
 	<rule ref="rulesets/java/design.xml/FinalFieldCouldBeStatic" />
@@ -105,7 +97,6 @@
 	<rule ref="rulesets/java/design.xml/IdempotentOperations" />
 	<rule ref="rulesets/java/braces.xml/IfElseStmtsMustUseBraces" />
 	<rule ref="rulesets/java/braces.xml/IfStmtsMustUseBraces" />
-	<rule ref="rulesets/jsp/basic.xml/IframeMissingSrcAttribute" />
 	<rule ref="rulesets/java/design.xml/ImmutableField" />
 	<rule ref="rulesets/java/imports.xml/ImportFromSamePackage" />
 	<rule ref="rulesets/java/strings.xml/InefficientEmptyStringCheck" />
@@ -120,7 +111,6 @@
 	<rule ref="rulesets/java/junit.xml/JUnitSpelling" />
 	<rule ref="rulesets/java/junit.xml/JUnitStaticSuite" />
 	<rule ref="rulesets/java/migrating.xml/JUnitUseExpected" />
-	<rule ref="rulesets/jsp/basic.xml/JspEncoding" />
 	<rule ref="rulesets/java/basic.xml/JumbledIncrementer" />
 	<rule ref="rulesets/java/j2ee.xml/LocalHomeNamingConvention" />
 	<rule ref="rulesets/java/j2ee.xml/LocalInterfaceSessionNamingConvention" />
@@ -138,16 +128,7 @@
 	<rule ref="rulesets/java/javabeans.xml/MissingSerialVersionUID" />
 	<rule ref="rulesets/java/design.xml/MissingStaticMethodInNonInstantiatableClass" />
 	<rule ref="rulesets/xml/basic.xml/MistypedCDATASection" />
-	<rule ref="rulesets/jsp/basic.xml/NoClassAttribute" />
-	<rule ref="rulesets/jsp/basic.xml/NoHtmlComments" />
-	<rule ref="rulesets/vm/basic.xml/NoInlineJavaScript" />
-	<rule ref="rulesets/jsp/basic.xml/NoInlineScript" />
-	<rule ref="rulesets/jsp/basic.xml/NoInlineStyleInformation" />
-	<rule ref="rulesets/vm/basic.xml/NoInlineStyles" />
-	<rule ref="rulesets/jsp/basic.xml/NoJspForward" />
-	<rule ref="rulesets/jsp/basic.xml/NoLongScripts" />
 	<rule ref="rulesets/java/naming.xml/NoPackage" />
-	<rule ref="rulesets/jsp/basic.xml/NoScriptlets" />
 	<rule ref="rulesets/java/design.xml/NonCaseLabelInSwitchStatement" />
 	<rule ref="rulesets/java/design.xml/NonStaticInitializer" />
 	<rule ref="rulesets/java/design.xml/NonThreadSafeSingleton" />
@@ -181,11 +162,7 @@
 	<rule ref="rulesets/java/design.xml/SwitchDensity" />
 	<rule ref="rulesets/java/design.xml/SwitchStmtsShouldHaveDefault" />
 	<rule ref="rulesets/java/logging-java.xml/SystemPrintln" />
-	<rule ref="rulesets/plsql/dates.xml/TO_DATEWithoutDateFormat" />
-	<rule ref="rulesets/plsql/dates.xml/TO_DATE_TO_CHAR" />
-	<rule ref="rulesets/plsql/dates.xml/TO_TIMESTAMPWithoutDateFormat" />
 	<rule ref="rulesets/java/junit.xml/TestClassWithoutTestCases" />
-	<rule ref="rulesets/plsql/TomKytesDespair.xml/TomKytesDespair" />
 	<rule ref="rulesets/java/design.xml/TooFewBranchesForASwitchStatement" />
 	<rule ref="rulesets/java/design.xml/UncommentedEmptyConstructor" />
 	<rule ref="rulesets/java/basic.xml/UnconditionalIfStatement" />
@@ -202,7 +179,6 @@
 	<rule ref="rulesets/java/unusedcode.xml/UnusedFormalParameter" />
 	<rule ref="rulesets/java/imports.xml/UnusedImports" />
 	<rule ref="rulesets/java/unusedcode.xml/UnusedLocalVariable" />
-	<rule ref="rulesets/vm/basic.xml/UnusedMacroParameter" />
 	<rule ref="rulesets/java/unnecessary.xml/UnusedNullCheckInEquals" />
 	<rule ref="rulesets/java/unusedcode.xml/UnusedPrivateField" />
 	<rule ref="rulesets/java/unusedcode.xml/UnusedPrivateMethod" />

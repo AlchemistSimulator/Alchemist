@@ -208,6 +208,10 @@ javadoc {
 
 dokka {
     sourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
+    outputDirectory = "$buildDir/dokka"
+    includeNonPublic = true
+    reportUndocumented = true
+    impliedPlatforms = ["JVM"]
 }
 
 allprojects {

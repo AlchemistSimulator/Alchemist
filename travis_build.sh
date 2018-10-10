@@ -7,3 +7,5 @@ cd alchemist
 ./gradlew fatJar
 mkdir -p report
 cp --parent */build/reports build/reports report -R
+mkdir -p dokka
+cp --parent */build/dokka build/dokka dokka -R

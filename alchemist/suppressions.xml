@@ -9,4 +9,5 @@
 	<suppress files=".+\.(?:jar|zip|war|class|tar|bin)$" checks=".*"/>
 	<suppress files=".*[\\/]xtend-gen[\\/].*" checks=".*"/>
 	<suppress files=".*[\\/]src/antlr[\\/].*" checks=".*"/>
+	<suppress files=".*[\\/]build[\\/].*" checks=".*"/>
 </suppressions>

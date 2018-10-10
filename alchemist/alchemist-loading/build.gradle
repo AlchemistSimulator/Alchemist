@@ -18,5 +18,5 @@ dependencies {
         project(':alchemist-incarnation-sapere')
     )
 }
-compileKotlin.mustRunAfter(project(':alchemist-implementationbase').compileScala)
-compileJava.mustRunAfter(project(':alchemist-implementationbase').compileScala)
+compileKotlin.dependsOn(project(':alchemist-implementationbase').compileScala)
+compileJava.dependsOn(project(':alchemist-implementationbase').compileScala)

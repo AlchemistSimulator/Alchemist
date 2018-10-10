@@ -1,7 +1,7 @@
 apply plugin: 'scala'
 
 dependencies {
-    compile (
+    implementation (
         "com.github.cb372:scalacache-core_${scalaMajorVersion}:${scalaCacheVersion}",
         "com.github.cb372:scalacache-guava_${scalaMajorVersion}:${scalaCacheVersion}",
         "it.unibo.apice.scafiteam:scafi-lib_${scalaMajorVersion}:${scafiVersion}",
@@ -10,7 +10,7 @@ dependencies {
         project(':alchemist-interfaces'),
         project(':alchemist-implementationbase'),
     )
-    testCompile(
+    testImplementation(
         project(':alchemist-engine'),
         project(':alchemist-loading'),
         "org.scalatest:scalatest_${scalaMajorVersion}:${scalatestVersion}"

@@ -1,6 +1,4 @@
 dependencies {
-    compile (
-        "org.danilopianini:listset:${listsetVersion}",
-        "org.jooq:jool:${joolVersion}"
-    )
+    implementation "org.danilopianini:listset:${listsetVersion}"
+    implementation "org.jooq:jool:${joolVersion}"
 }

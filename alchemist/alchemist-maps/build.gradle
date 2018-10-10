@@ -1,5 +1,5 @@
 dependencies {
-    compile (
+    implementation (
         project(':alchemist-interfaces'),
         project(':alchemist-implementationbase'),
         "com.google.code.gson:gson:$gsonVersion",
@@ -12,7 +12,7 @@ dependencies {
         "net.sf.trove4j:trove4j:$troveVersion",
         "org.apache.commons:commons-lang3:$lang3Version"
     )
-    compile("com.graphhopper:graphhopper-reader-osm:$graphhopperVersion"){
+    implementation("com.graphhopper:graphhopper-reader-osm:$graphhopperVersion") {
         exclude module: "slf4j-log4j12"
     }
 }

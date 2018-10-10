@@ -1,5 +1,5 @@
 dependencies {
-    compile (
+    implementation (
         project(':alchemist-engine'),
         project(':alchemist-implementationbase'),
         project(':alchemist-interfaces'),
@@ -10,5 +10,5 @@ dependencies {
         "org.danilopianini:gson-extras:${gsonExtrasVersion}",
         'org.danilopianini:javalib-java7:0.6.1'
     )
-    testRuntime(project(':alchemist-incarnation-protelis'))
+    testRuntimeOnly project(':alchemist-incarnation-protelis')
 }

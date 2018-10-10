@@ -56,20 +56,20 @@ allprojects {
     test { testLogging { events "passed", "skipped", "failed", "standardError" } }
 
     dependencies {
-        compile "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
-        compile "com.google.code.findbugs:findbugs:$findBugsVersion"
-        compile "org.apache.commons:commons-math3:$math3Version"
-        compile "org.scala-lang:scala-compiler:${scalaVersion}"
-        compile "org.scala-lang:scala-library:${scalaVersion}"
-        compile "org.slf4j:slf4j-api:$slf4jVersion"
-        compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
-        compile "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
-        compile "org.danilopianini:thread-inheritable-resource-loader:${resLoaderVersion}"
-        runtime "ch.qos.logback:logback-classic:$logbackVersion"
+        implementation "org.apache.commons:commons-math3:$math3Version"
+        implementation "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
+        implementation "com.google.code.findbugs:findbugs:$findBugsVersion"
+        implementation "org.scala-lang:scala-compiler:${scalaVersion}"
+        implementation "org.scala-lang:scala-library:${scalaVersion}"
+        implementation "org.slf4j:slf4j-api:$slf4jVersion"
+        implementation "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
+        implementation "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
+        implementation "org.danilopianini:thread-inheritable-resource-loader:${resLoaderVersion}"
+        runtimeOnly "ch.qos.logback:logback-classic:$logbackVersion"
 
-        testCompile "junit:junit:$junitVersion"
+        testCompileOnly "junit:junit:$junitVersion"
 
-        testRuntime "ch.qos.logback:logback-classic:$logbackVersion"
+        testRuntimeOnly "ch.qos.logback:logback-classic:$logbackVersion"
 
         doclet "org.jboss.apiviz:apiviz:$apivizVersion"
     }

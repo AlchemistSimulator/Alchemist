@@ -1,5 +1,5 @@
 dependencies {
-    compile(
+    implementation(
         project(':alchemist-implementationbase'),
         project(':alchemist-interfaces'),
         project(':alchemist-time'),
@@ -9,11 +9,11 @@ dependencies {
         "org.reflections:reflections:$reflectionsVersion",
         "org.yaml:snakeyaml:$snakeyamlVersion"
     )
-    testCompile(
+    testImplementation(
         project(':alchemist-engine'),
         project(':alchemist-maps')
     )
-    testRuntime(
+    testRuntimeOnly(
         project(':alchemist-incarnation-sapere')
     )
 }

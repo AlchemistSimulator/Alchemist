@@ -1,12 +1,12 @@
 dependencies {
-    compile (
+    implementation(
         project(':alchemist-interfaces'),
         project(':alchemist-maps'),
         "com.google.guava:guava:$guavaVersion",
         "org.eclipse.xtext:org.eclipse.xtext.java:${xtextVersion}",
         "org.protelis:protelis:$protelisVersion"
     )
-    testCompile(
+    testImplementation(
         project(':alchemist-engine'),
         project(':alchemist-loading'),
     )

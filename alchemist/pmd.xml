@@ -132,7 +132,6 @@
 	<rule ref="rulesets/java/design.xml/NonCaseLabelInSwitchStatement" />
 	<rule ref="rulesets/java/design.xml/NonStaticInitializer" />
 	<rule ref="rulesets/java/design.xml/NonThreadSafeSingleton" />
-	<rule ref="rulesets/java/design.xml/OptimizableToArrayCall" />
 	<rule ref="rulesets/java/basic.xml/OverrideBothEqualsAndHashcode" />
 	<rule ref="rulesets/java/naming.xml/PackageCase" />
 	<rule ref="rulesets/java/optimizations.xml/PrematureDeclaration" />

@@ -90,11 +90,6 @@ allprojects {
                     }
                     contributors {
                         contributor {
-                            name 'Sara Montagna'
-                            email 'sara.montagna@unibo.it'
-                            url 'http://saramontagna.apice.unibo.it/'
-                        }
-                        contributor {
                             name 'Jacob Beal'
                             email 'jakebeal@bbn.com'
                             url 'http://web.mit.edu/jakebeal/www/'
@@ -105,9 +100,17 @@ allprojects {
                             url 'http://apice.unibo.it/xwiki/bin/view/XWiki/MicheleBombardi/'
                         }
                         contributor {
+                            name 'Elisa Casadio'
+                            email 'elisa.casadio7@studio.unibo.it'
+                        }
+                        contributor {
                             name 'Chiara Casalboni'
                             email 'chiara.casalboni2@studio.unibo.it'
                             url 'http://apice.unibo.it/xwiki/bin/view/XWiki/ChiaraCasalboni2/'
+                        }
+                        contributor {
+                            name 'Matteo Francia'
+                            email 'm.francia@unibo.it'
                         }
                         contributor {
                             name 'Enrico Galassi'
@@ -115,14 +118,43 @@ allprojects {
                             url 'http://apice.unibo.it/xwiki/bin/view/XWiki/EnricoGalassi/'
                         }
                         contributor {
+                            name 'Gabriele Graffieti'
+                            email 'gabriele.graffieti@studio.unibo.it'
+                        }
+                        contributor {
+                            name 'Matteo Magnani'
+                            email 'matteo.magnani18@studio.unibo.it'
+                        }
+                        contributor {
+                            name 'Niccolò Maltoni'
+                            email 'niccolo.maltoni@studio.unibo.it'
+                        }
+                        contributor {
                             name 'Luca Mella'
+                            email 'vuksa.mihajlovic@studio.unibo.it'
+                        }
+                        contributor {
+                            name 'Vuksa Mihajlovic'
                             email 'luca.mella@studio.unibo.it'
                             url 'http://apice.unibo.it/xwiki/bin/view/XWiki/LucaMella/'
+                        }
+                        contributor {
+                            name 'Sara Montagna'
+                            email 'sara.montagna@unibo.it'
+                            url 'http://saramontagna.apice.unibo.it/'
                         }
                         contributor {
                             name 'Luca Nenni'
                             email 'luca.nenni@studio.unibo.it'
                             url 'http://apice.unibo.it/xwiki/bin/view/XWiki/LucaNenni/'
+                        }
+                        contributor {
+                            name 'Andrea Placuzzi'
+                            email 'andrea.placuzzi@studio.unibo.it'
+                        }
+                        contributor {
+                            name 'Franco Pradelli'
+                            email 'franco.pradelli@studio.unibo.it'
                         }
                         contributor {
                             name 'Giacomo Pronti'
@@ -133,22 +165,6 @@ allprojects {
                             name 'Giacomo Scaparrotti'
                             email 'giacomo.scaparrotti@studio.unibo.it'
                             url 'https://www.linkedin.com/in/giacomo-scaparrotti-0aa77569'
-                        }
-                        contributor {
-                            name 'Gabriele Graffieti'
-                            email 'gabriele.graffieti@studio.unibo.it'
-                        }
-                        contributor {
-                            name 'Franco Pradelli'
-                            email 'franco.pradelli@studio.unibo.it'
-                        }
-                        contributor {
-                            name 'Elisa Casadio'
-                            email 'elisa.casadio7@studio.unibo.it'
-                        }
-                        contributor {
-                            name 'Matteo Francia'
-                            email 'm.francia@unibo.it'
                         }
                     }
                 }

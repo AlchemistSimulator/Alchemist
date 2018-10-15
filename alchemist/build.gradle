@@ -257,13 +257,14 @@ allprojects {
     }
 }
 
-task fatJar(type: Jar, dependsOn: subprojects.compileJava) {
+task fatJar(type: Jar, dependsOn: subprojects.jar) {
     manifest {
         attributes 'Implementation-Title': 'Alchemist',
                 'Implementation-Version': rootProject.version,
                 'Main-Class': 'it.unibo.alchemist.Alchemist'
     }
     baseName = "${rootProject.name}-redist"
+    zip64 = true
     from(configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }) {
         // remove all signature files
         exclude "META-INF/*.SF"

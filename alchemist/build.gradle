@@ -267,9 +267,10 @@ task fatJar(type: Jar, dependsOn: subprojects.jar) {
     zip64 = true
     from(configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }) {
         // remove all signature files
-        exclude "META-INF/*.SF"
-        exclude "META-INF/*.DSA"
-        exclude "META-INF/*.RSA"
+        exclude "META-INF/"
+        exclude "ant_tasks/"
+        exclude "about_files/"
+        exclude "help/about/"
         exclude 'build'
         exclude '.gradle'
         exclude 'build.gradle'

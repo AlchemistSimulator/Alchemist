@@ -61,6 +61,16 @@ allprojects {
         testLogging { events "passed", "skipped", "failed", "standardError" }
     }
 
+    tasks.withType(Checkstyle) {
+        mustRunAfter(test)
+    }
+    tasks.withType(FindBugs) {
+        mustRunAfter(test)
+    }
+    tasks.withType(Pmd) {
+        mustRunAfter(test)
+    }
+
     dependencies {
         implementation "org.apache.commons:commons-math3:$math3Version"
         implementation "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
@@ -284,4 +294,4 @@ task fatJar(type: Jar, dependsOn: subprojects.jar) {
     with jar
 }
 
-defaultTasks 'clean', 'build', 'check', 'makeDocs', 'assemble', 'install', 'projectReport', 'buildDashboard', 'fatJar'
+defaultTasks 'clean', 'test', 'check', 'makeDocs', 'assemble', 'projectReport', 'buildDashboard', 'fatJar'

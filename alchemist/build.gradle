@@ -56,7 +56,10 @@ allprojects {
         }
     }
 
-    test { testLogging { events "passed", "skipped", "failed", "standardError" } }
+    test {
+        failFast = true
+        testLogging { events "passed", "skipped", "failed", "standardError" }
+    }
 
     dependencies {
         implementation "org.apache.commons:commons-math3:$math3Version"

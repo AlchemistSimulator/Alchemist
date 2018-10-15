@@ -6,6 +6,7 @@ subprojects {
 buildscript {
     repositories {
         maven { url "https://plugins.gradle.org/m2/" }
+        mavenLocal()
     }
     dependencies {
         classpath "gradle.plugin.org.jmailen.gradle:kotlinter-gradle:$ktlintVersion"
@@ -72,100 +73,98 @@ allprojects {
         doclet "org.jboss.apiviz:apiviz:$apivizVersion"
     }
 
-    uploadArchives {
-        repositories {
-            mavenDeployer {
-                pom.project {
-                    developers {
-                        developer {
-                            name 'Danilo Pianini'
-                            email 'danilo.pianini@unibo.it'
-                            url 'http://www.danilopianini.org'
-                        }
-                        developer {
-                            name 'Roberto Casadei'
-                            email 'roby.casadei@unibo.it'
-                            url 'https://www.unibo.it/sitoweb/roby.casadei'
-                        }
+    publishing.publications {
+        main(MavenPublication) {
+            pom {
+                developers {
+                    developer {
+                        name = 'Danilo Pianini'
+                        email = 'danilo.pianini@unibo.it'
+                        url = 'http://www.danilopianini.org'
                     }
-                    contributors {
-                        contributor {
-                            name 'Jacob Beal'
-                            email 'jakebeal@bbn.com'
-                            url 'http://web.mit.edu/jakebeal/www/'
-                        }
-                        contributor {
-                            name 'Michele Bombardi'
-                            email 'michele.bombardi@studio.unibo.it'
-                            url 'http://apice.unibo.it/xwiki/bin/view/XWiki/MicheleBombardi/'
-                        }
-                        contributor {
-                            name 'Elisa Casadio'
-                            email 'elisa.casadio7@studio.unibo.it'
-                        }
-                        contributor {
-                            name 'Chiara Casalboni'
-                            email 'chiara.casalboni2@studio.unibo.it'
-                            url 'http://apice.unibo.it/xwiki/bin/view/XWiki/ChiaraCasalboni2/'
-                        }
-                        contributor {
-                            name 'Matteo Francia'
-                            email 'm.francia@unibo.it'
-                        }
-                        contributor {
-                            name 'Enrico Galassi'
-                            email 'enrico.galassi@studio.unibo.it'
-                            url 'http://apice.unibo.it/xwiki/bin/view/XWiki/EnricoGalassi/'
-                        }
-                        contributor {
-                            name 'Gabriele Graffieti'
-                            email 'gabriele.graffieti@studio.unibo.it'
-                        }
-                        contributor {
-                            name 'Matteo Magnani'
-                            email 'matteo.magnani18@studio.unibo.it'
-                        }
-                        contributor {
-                            name 'Niccolò Maltoni'
-                            email 'niccolo.maltoni@studio.unibo.it'
-                        }
-                        contributor {
-                            name 'Luca Mella'
-                            email 'vuksa.mihajlovic@studio.unibo.it'
-                        }
-                        contributor {
-                            name 'Vuksa Mihajlovic'
-                            email 'luca.mella@studio.unibo.it'
-                            url 'http://apice.unibo.it/xwiki/bin/view/XWiki/LucaMella/'
-                        }
-                        contributor {
-                            name 'Sara Montagna'
-                            email 'sara.montagna@unibo.it'
-                            url 'http://saramontagna.apice.unibo.it/'
-                        }
-                        contributor {
-                            name 'Luca Nenni'
-                            email 'luca.nenni@studio.unibo.it'
-                            url 'http://apice.unibo.it/xwiki/bin/view/XWiki/LucaNenni/'
-                        }
-                        contributor {
-                            name 'Andrea Placuzzi'
-                            email 'andrea.placuzzi@studio.unibo.it'
-                        }
-                        contributor {
-                            name 'Franco Pradelli'
-                            email 'franco.pradelli@studio.unibo.it'
-                        }
-                        contributor {
-                            name 'Giacomo Pronti'
-                            email 'giacomo.pronti@studio.unibo.it'
-                            url 'http://apice.unibo.it/xwiki/bin/view/XWiki/GiacomoPronti/'
-                        }
-                        contributor {
-                            name 'Giacomo Scaparrotti'
-                            email 'giacomo.scaparrotti@studio.unibo.it'
-                            url 'https://www.linkedin.com/in/giacomo-scaparrotti-0aa77569'
-                        }
+                    developer {
+                        name = 'Roberto Casadei'
+                        email = 'roby.casadei@unibo.it'
+                        url = 'https://www.unibo.it/sitoweb/roby.casadei'
+                    }
+                }
+                contributors {
+                    contributor {
+                        name = 'Jacob Beal'
+                        email = 'jakebeal@bbn.com'
+                        url = 'http://web.mit.edu/jakebeal/www/'
+                    }
+                    contributor {
+                        name = 'Michele Bombardi'
+                        email = 'michele.bombardi@studio.unibo.it'
+                        url = 'http://apice.unibo.it/xwiki/bin/view/XWiki/MicheleBombardi/'
+                    }
+                    contributor {
+                        name = 'Elisa Casadio'
+                        email = 'elisa.casadio7@studio.unibo.it'
+                    }
+                    contributor {
+                        name = 'Chiara Casalboni'
+                        email = 'chiara.casalboni2@studio.unibo.it'
+                        url = 'http://apice.unibo.it/xwiki/bin/view/XWiki/ChiaraCasalboni2/'
+                    }
+                    contributor {
+                        name = 'Matteo Francia'
+                        email = 'm.francia@unibo.it'
+                    }
+                    contributor {
+                        name = 'Enrico Galassi'
+                        email = 'enrico.galassi@studio.unibo.it'
+                        url = 'http://apice.unibo.it/xwiki/bin/view/XWiki/EnricoGalassi/'
+                    }
+                    contributor {
+                        name = 'Gabriele Graffieti'
+                        email = 'gabriele.graffieti@studio.unibo.it'
+                    }
+                    contributor {
+                        name = 'Matteo Magnani'
+                        email = 'matteo.magnani18@studio.unibo.it'
+                    }
+                    contributor {
+                        name = 'Niccolò Maltoni'
+                        email = 'niccolo.maltoni@studio.unibo.it'
+                    }
+                    contributor {
+                        name = 'Luca Mella'
+                        email = 'vuksa.mihajlovic@studio.unibo.it'
+                    }
+                    contributor {
+                        name = 'Vuksa Mihajlovic'
+                        email = 'luca.mella@studio.unibo.it'
+                        url = 'http://apice.unibo.it/xwiki/bin/view/XWiki/LucaMella/'
+                    }
+                    contributor {
+                        name = 'Sara Montagna'
+                        email = 'sara.montagna@unibo.it'
+                        url = 'http://saramontagna.apice.unibo.it/'
+                    }
+                    contributor {
+                        name = 'Luca Nenni'
+                        email = 'luca.nenni@studio.unibo.it'
+                        url = 'http://apice.unibo.it/xwiki/bin/view/XWiki/LucaNenni/'
+                    }
+                    contributor {
+                        name = 'Andrea Placuzzi'
+                        email = 'andrea.placuzzi@studio.unibo.it'
+                    }
+                    contributor {
+                        name = 'Franco Pradelli'
+                        email = 'franco.pradelli@studio.unibo.it'
+                    }
+                    contributor {
+                        name = 'Giacomo Pronti'
+                        email = 'giacomo.pronti@studio.unibo.it'
+                        url = 'http://apice.unibo.it/xwiki/bin/view/XWiki/GiacomoPronti/'
+                    }
+                    contributor {
+                        name = 'Giacomo Scaparrotti'
+                        email = 'giacomo.scaparrotti@studio.unibo.it'
+                        url = 'https://www.linkedin.com/in/giacomo-scaparrotti-0aa77569'
                     }
                 }
             }
@@ -216,7 +215,6 @@ subprojects.each { subproject -> rootProject.evaluationDependsOn(subproject.path
  * Remove tasks that should not exist in subprojects
  */
 subprojects.each { it.tasks.remove(wrapper) }
-subprojects.each { it.tasks.remove(closeRepository) }
 
 /*
  * Running a task on the parent project implies running the same task first on any subproject

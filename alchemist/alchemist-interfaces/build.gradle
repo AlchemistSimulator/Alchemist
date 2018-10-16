@@ -1,4 +1,4 @@
 dependencies {
     api "org.danilopianini:listset:${listsetVersion}"
-    api "org.jooq:jool:${joolVersion}"
+    api "org.jooq:jool-java-8:${joolJ8Version}"
 }

@@ -183,22 +183,22 @@ public final class YamlLoader implements Loader {
                 throw new IllegalAlchemistYAMLException("Invalid named " + EXPORT + ' ' + name);
             });
     private static final Map<Class<?>, String> PACKAGE_ROOTS = ImmutableMap.<Class<?>, String>builder()
-            .put(Variable.class, ALCHEMIST_PACKAGE_ROOT + "loader.variables.")
+            .put(Action.class, MODEL_PACKAGE_ROOT + "actions.")
+            .put(Concentration.class, MODEL_PACKAGE_ROOT + "concentrations.")
+            .put(Condition.class, MODEL_PACKAGE_ROOT + "conditions.")
             .put(DependentVariable.class, ALCHEMIST_PACKAGE_ROOT + "loader.variables.")
+            .put(Displacement.class, ALCHEMIST_PACKAGE_ROOT + "loader.displacements.")
             .put(Environment.class, MODEL_PACKAGE_ROOT + "environments.")
+            .put(Extractor.class, ALCHEMIST_PACKAGE_ROOT + "loader.export.")
             .put(FilteringPolicy.class, ALCHEMIST_PACKAGE_ROOT + "loader.export.filters")
             .put(Layer.class, MODEL_PACKAGE_ROOT + "layers.")
-            .put(Displacement.class, ALCHEMIST_PACKAGE_ROOT + "loader.displacements.")
-            .put(Shape.class, ALCHEMIST_PACKAGE_ROOT + "loader.shapes.")
             .put(LinkingRule.class, MODEL_PACKAGE_ROOT + "linkingrules.")
+            .put(Molecule.class, MODEL_PACKAGE_ROOT + "molecules.")
             .put(Node.class, MODEL_PACKAGE_ROOT + "nodes.")
             .put(Reaction.class, MODEL_PACKAGE_ROOT + "reactions.")
-            .put(Condition.class, MODEL_PACKAGE_ROOT + "conditions.")
-            .put(Action.class, MODEL_PACKAGE_ROOT + "actions.")
+            .put(Shape.class, ALCHEMIST_PACKAGE_ROOT + "loader.shapes.")
             .put(TimeDistribution.class, MODEL_PACKAGE_ROOT + "timedistributions.")
-            .put(Molecule.class, MODEL_PACKAGE_ROOT + "molecules.")
-            .put(Concentration.class, MODEL_PACKAGE_ROOT + "concentrations.")
-            .put(Extractor.class, ALCHEMIST_PACKAGE_ROOT + "loader.export.")
+            .put(Variable.class, ALCHEMIST_PACKAGE_ROOT + "loader.variables.")
             .build();
     private final ImmutableMap<String, Object> constants;
     private final ImmutableMap<String, Object> contents;

@@ -6,6 +6,7 @@ subprojects {
 buildscript {
     repositories {
         maven { url "https://plugins.gradle.org/m2/" }
+        gradlePluginPortal()
     }
     dependencies {
         classpath "gradle.plugin.org.jmailen.gradle:kotlinter-gradle:$ktlintVersion"
@@ -13,6 +14,7 @@ buildscript {
         classpath "org.danilopianini:javadoc.io-linker:${javadocIOLinkerVersion}"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:${dokkaVersion}"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
+        classpath "com.gradle:build-scan-plugin:${buildScanPluginVersion}"
     }
 }
 

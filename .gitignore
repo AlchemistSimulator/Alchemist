@@ -14,3 +14,4 @@ prepare_environment.sh
 out/
 .DS_Store
 *.iml
+*.kate-swp

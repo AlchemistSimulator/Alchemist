@@ -17,7 +17,7 @@ script:
 before_deploy: echo Preparing for deploy
 after_success:
   - cd alchemist
-  - ./gradle publishMainPublicationToMavenRepository
+  - ./gradlew publishMainPublicationToMavenRepository
 deploy:
   - provider: releases
     skip_cleanup: true

@@ -10,7 +10,7 @@ dependencies {
         "com.graphhopper:graphhopper-core:$graphhopperVersion",
         "commons-codec:commons-codec:$codecVersion",
         "commons-io:commons-io:${commonsIOVersion}",
-        "io.jenetics:jpx:$gpxVersion",
+        "io.jenetics:jpx:$jpxVersion",
         "net.sf.trove4j:trove4j:$troveVersion",
         "org.danilopianini:boilerplate:$boilerplateVersion",
         "org.apache.commons:commons-lang3:$lang3Version",

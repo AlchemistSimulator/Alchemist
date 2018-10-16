@@ -8,6 +8,8 @@
  ******************************************************************************/
 package it.unibo.alchemist.kotlin
 
+import it.unibo.alchemist.model.interfaces.Time
+
 /**
  * The opposite of [fold].
  *
@@ -21,3 +23,5 @@ package it.unibo.alchemist.kotlin
  */
 fun <E> E.unfold(extractor: (E) -> Sequence<E>): Sequence<E> =
     sequenceOf(this) + extractor(this).flatMap { it.unfold(extractor) }
+operator fun Time.plus(other: Time) = sum(other)
+operator fun Time.minus(other: Time) = subtract(other)

@@ -252,6 +252,11 @@ public final class YamlLoader implements Loader {
         }
         final Map<String, Map<String, Object>> originalVars = Optional.ofNullable((Map<String, Map<String, Object>>) varObj).orElse(emptyMap());
         for (final Entry<String, Map<String, Object>> varEntry : originalVars.entrySet()) {
+            if (varEntry.getValue() == null) {
+                throw new IllegalAlchemistYAMLException("The " + VARIABLES + " section has an invalid format."
+                        + " Likely, the error is in " + varEntry.getKey() + ", and due to its members not being"
+                        + " correctly indented.");
+            }
             varEntry.getValue().put(NAME, varEntry.getKey());
         }
         L.debug("Variables: {}", originalVars);

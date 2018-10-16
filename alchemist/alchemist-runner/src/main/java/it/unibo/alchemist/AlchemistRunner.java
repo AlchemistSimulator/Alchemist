@@ -1,14 +1,11 @@
 /*******************************************************************************
  * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
  * project's alchemist/build.gradle file.
- * 
+ *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception, as described in the file
  * LICENSE in the Alchemist distribution's top directory.
  ******************************************************************************/
-/**
- * 
- */
 package it.unibo.alchemist;
 
 import java.awt.GraphicsEnvironment;
@@ -84,8 +81,9 @@ import it.unibo.alchemist.model.interfaces.Time;
 
 /**
  * Starts Alchemist.
- * 
+ *
  * @param <T> the concentration type
+ * @param <P> the position type
  */
 public final class AlchemistRunner<T, P extends Position2D<P>> {
 
@@ -133,7 +131,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
     }
 
     /**
-     * 
+     *
      * @return loader variables
      */
     public Map<String, Variable<?>> getVariables() {
@@ -141,12 +139,12 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
     }
 
     /**
-     * 
+     *
      * @param variables
      *            loader variables
      */
     public void launch(final String... variables) {
-        Optional<? extends Throwable> exception = Optional.empty();
+        Optional<? extends Throwable> exception;
         if (variables != null && variables.length > 0) {
             /*
              * Batch mode
@@ -163,7 +161,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
                 exception = launchLocal(variables);
             }
         } else {
-            Optional<Throwable> localEx = Optional.empty();
+            Optional<Throwable> localEx;
             try {
                 localEx = prepareSimulations(sim -> {
                     final boolean onHeadlessEnvironment = GraphicsEnvironment.isHeadless();
@@ -223,7 +221,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
         /*
          * findAny does NOT short-circuit the stream due to a known bug in
          * the JDK: https://bugs.openjdk.java.net/browse/JDK-8075939
-         * 
+         *
          * Thus, to date, if an exception occurs in a thread which is
          * running a simulation, that exception will be effectively thrown
          * outside that thread only when all the threads have completed
@@ -247,7 +245,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
         final Optional<Long> start = Optional.ofNullable(benchmarkOutputFile.isPresent() ? System.nanoTime() : null);
         final GeneralSimulationConfig<T> gsc = new LocalGeneralSimulationConfig<>(this.loader, this.endStep, this.endTime);
         final List<SimulationConfig> simConfigs = getVariablesCartesianProduct(variables).stream()
-                .map(e -> new SimulationConfigImpl(e))
+                .map(SimulationConfigImpl::new)
                 .collect(Collectors.toList());
         final SimulationSet<T> set = new SimulationSetImpl<>(gsc, simConfigs);
         try (Cluster cluster = new ClusterImpl(Paths.get(this.gridConfigFile.orElseThrow(
@@ -325,8 +323,8 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
         }
 
     /**
-     *
      * @param <T> concentration type
+     * @param <P> position type
      */
     public static class Builder<T, P extends Position2D<P>> {
         private int closeOperation;
@@ -343,7 +341,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
         private Optional<String> benchmarkOutputFile = Optional.empty();
 
         /**
-         * 
+         *
          * @param loader
          *            loader
          */
@@ -361,7 +359,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
         }
 
         /**
-         * 
+         *
          * @return AlchemistRunner
          */
         public AlchemistRunner<T, P> build() {
@@ -371,7 +369,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
         }
 
         /**
-         * 
+         *
          * @param uri
          *            effect uri
          * @return builder
@@ -382,7 +380,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
         }
 
         /**
-         * 
+         *
          * @param steps
          *            end step
          * @return builder
@@ -396,7 +394,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
         }
 
         /**
-         * 
+         *
          * @param t
          *            end time
          * @return builder
@@ -411,7 +409,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
         }
 
         /**
-         * 
+         *
          * @param t
          *            end time
          * @return builder
@@ -422,7 +420,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
         }
 
         /**
-         * 
+         *
          * @param closeOp
          *            the close operation
          * @return buider
@@ -436,7 +434,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
         }
 
         /**
-         * 
+         *
          * @param headless
          *            is headless
          * @return builder
@@ -447,7 +445,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
         }
 
         /**
-         * 
+         *
          * @param deltaTime
          *            time interval
          * @return builder
@@ -462,7 +460,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
         }
 
         /**
-         * 
+         *
          * @param uri
          *            output uri
          * @return builder
@@ -473,7 +471,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
         }
 
         /**
-         * 
+         *
          * @param threads
          *            threads number
          * @return builder
@@ -487,7 +485,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
         }
 
         /**
-         * 
+         *
          * @param path Ignite's setting file path
          * @return builder
          */
@@ -497,7 +495,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
         }
 
         /**
-         * 
+         *
          * @param path Benchmark save file path
          * @return builder
          */

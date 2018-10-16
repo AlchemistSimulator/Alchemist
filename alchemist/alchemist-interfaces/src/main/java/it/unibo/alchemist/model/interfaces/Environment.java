@@ -38,12 +38,12 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
     void addLayer(Molecule m, Layer<T, P> l);
 
     /**
-     * This method allows to plus a new node to this environment. The environment
+     * This method allows to add a new node to this environment. The environment
      * is responsible to call the right method of the simulation in order to
      * ensure that the reaction is properly scheduled.
      * 
      * @param node
-     *            The node to plus
+     *            The node to add
      * @param p
      *            The position where to place it
      */

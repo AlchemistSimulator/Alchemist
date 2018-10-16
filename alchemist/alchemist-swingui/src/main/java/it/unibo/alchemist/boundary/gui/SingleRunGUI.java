@@ -166,7 +166,7 @@ public final class SingleRunGUI {
             frame.setLocationByPlatform(true);
             frame.setVisible(true);
             /*
-             * OutputMonitor's plus to the sim must be done as the last operation
+             * OutputMonitor's add to the sim must be done as the last operation
              */
             sim.addOutputMonitor(main);
         } else {

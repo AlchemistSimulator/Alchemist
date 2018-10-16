@@ -84,7 +84,7 @@ public interface CellNode<P extends Position<? extends P>> extends Node<Double> 
     P getPolarizationVersor();
 
     /**
-     * plus v to the polarization versor inside the cell; useful for considering the combination of various stimuli in a cell.
+     * add v to the polarization versor inside the cell; useful for considering the combination of various stimuli in a cell.
      * @param v 
      */
     void addPolarization(P v);

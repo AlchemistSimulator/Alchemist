@@ -37,7 +37,7 @@ public class LsaChangeArgument extends SAPERELocalAgent {
     /**
      * Builds a new action that test neighbors which contain in their lsaSpace
      * an lsaMolecule matching <target,Type>. The effect of this Action is to
-     * plus to the matches map the variable PreferredType (the most present type
+     * add to the matches map the variable PreferredType (the most present type
      * in neighborhood). The execution has no effect on influenced molecule of
      * reaction.
      * 

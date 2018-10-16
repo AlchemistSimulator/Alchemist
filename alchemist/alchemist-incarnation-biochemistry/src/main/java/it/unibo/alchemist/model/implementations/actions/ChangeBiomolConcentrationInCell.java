@@ -59,7 +59,7 @@ public class ChangeBiomolConcentrationInCell extends AbstractActionOnSingleMolec
     @Override
     public String toString() {
          if (deltaC > 0) {
-             return "plus " + deltaC + " of " + getMolecule() + " ";
+             return "add " + deltaC + " of " + getMolecule() + " ";
          }  else {
              return "remove " + (-deltaC) + " of " + getMolecule() + " ";
          }

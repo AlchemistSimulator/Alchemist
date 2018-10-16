@@ -85,7 +85,7 @@ public class RemoveJunctionInNeighbor extends AbstractNeighborAction<Double> {
         if (targetNode instanceof CellNode) {
             ((CellNode<?>) targetNode).removeJunction(jun, getNode());
         } else {
-            throw new UnsupportedOperationException("Can't plus Junction in a node that it's not a CellNode");
+            throw new UnsupportedOperationException("Can't add Junction in a node that it's not a CellNode");
         }
     }
 

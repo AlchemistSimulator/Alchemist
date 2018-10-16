@@ -38,7 +38,7 @@ public class LsaCountNeighborsAction extends SAPERELocalAgent {
 
     /**
      * Builds a new action that counts neighbors which contain in their lsaSpace
-     * an lsaMolecule matching mol. The effect of this Action is to plus to the
+     * an lsaMolecule matching mol. The effect of this Action is to add to the
      * matches list the variable countVar. The execution has no effect on the
      * set of influenced molecules for the reaction.
      * 
@@ -50,7 +50,7 @@ public class LsaCountNeighborsAction extends SAPERELocalAgent {
      *            The IlsaMolecule instance you want to search in neighbor lsa
      *            space.
      * @param countVar
-     *            The String representing the name of the counting var. (to plus
+     *            The String representing the name of the counting var. (to add
      *            to matches map)
      * @param rand
      *            Random engine
@@ -65,7 +65,7 @@ public class LsaCountNeighborsAction extends SAPERELocalAgent {
 
     /**
      * Builds a new action that counts neighbors which contain in their lsaSpace
-     * an lsaMolecule matching mol. The effect of this Action is to plus to the
+     * an lsaMolecule matching mol. The effect of this Action is to add to the
      * matches list the variable countVar. The execution has no effect on the
      * set of influenced molecules for the reaction.
      * 
@@ -77,7 +77,7 @@ public class LsaCountNeighborsAction extends SAPERELocalAgent {
      *            The IlsaMolecule instance you want to search in neighbor lsa
      *            space.
      * @param countVar
-     *            The String representing the name of the counting var. (to plus
+     *            The String representing the name of the counting var. (to add
      *            to matches map)
      * @param rand
      *            Random engine

@@ -90,7 +90,7 @@ public class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborAction<
     @Override
     public String toString() {
          if (delta > 0) {
-             return "plus " + delta + " of " + mol + " in neighbor ";
+             return "add " + delta + " of " + mol + " in neighbor ";
          }  else {
              return "remove " + (-delta) + " of " + mol + " in neighbor ";
          }

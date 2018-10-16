@@ -20,7 +20,7 @@ public interface ILsaNode extends Node<List<ILsaMolecule>> {
      * Adds an instance of ILsaMolecule in the node's LsaSpace.
      * 
      * @param inst
-     *            the molecule you want to plus
+     *            the molecule you want to add
      */
     void setConcentration(ILsaMolecule inst);
 

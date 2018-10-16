@@ -63,7 +63,7 @@ public abstract class AbstractCondition<T> implements Condition<T> {
     }
 
     /**
-     * @param m the molecule to plus
+     * @param m the molecule to add
      */
     protected void addReadMolecule(final Molecule m) {
         influencing.add(m);

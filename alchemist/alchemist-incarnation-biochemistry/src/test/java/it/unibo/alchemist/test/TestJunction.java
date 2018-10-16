@@ -78,7 +78,7 @@ public class TestJunction {
         //CHECKSTYLE:OFF magicnumber
         final int totJ = 123;
         //CHECKSTYLE:ON magicnumber
-        for (int i = 0; i < totJ; i++) { // plus many identical junction to node 2
+        for (int i = 0; i < totJ; i++) { // add many identical junction to node 2
             final Junction jtmp = new Junction(jBase);
             node2.addJunction(jtmp, node3);
         }

@@ -26,7 +26,7 @@ public class JTape extends JTabbedPane {
      * Adds a tab to the JTape instance.
      * 
      * @param tab
-     *            is the {@link JTapeTab} to plus
+     *            is the {@link JTapeTab} to add
      * @return <code>true</code>
      */
     public boolean registerTab(final JTapeTab tab) {

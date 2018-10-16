@@ -70,7 +70,7 @@ public class LsaNeighborhoodCondition extends LsaStandardCondition {
                 if (matchesList.size() > lastSize) {
                     /*
                      * This neighbor has the LSA we are checking for, so new
-                     * matches have been created. For each of them, we must plus
+                     * matches have been created. For each of them, we must add
                      * the selected node special property, in order for the
                      * actions on single neighbor to be correctly bound.
                      */

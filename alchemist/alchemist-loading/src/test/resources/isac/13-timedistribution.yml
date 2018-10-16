@@ -8,7 +8,7 @@ send: &grad
   - time-distribution:
       type: DiracComb
       parameters: [0.5]
-    program: "{token, N, L} --> {token, N, L} *{token, N+#D, L plus [#NODE;]}"
+    program: "{token, N, L} --> {token, N, L} *{token, N+#D, L add [#NODE;]}"
   - program: >
       {token, N, L}{token, def: N2>=N, L2} --> {token, N, L}
  

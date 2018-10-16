@@ -56,7 +56,7 @@ import com.graphhopper.routing.util.EncodingManager;
 import com.graphhopper.storage.index.QueryResult;
 import com.graphhopper.util.shapes.GHPoint;
 
-import it.unibo.alchemist.model.implementations.GraphHopperRoute;
+import it.unibo.alchemist.model.implementations.routes.GraphHopperRoute;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;

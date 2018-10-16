@@ -16,3 +16,4 @@ include(
     'alchemist-time'
     )
 rootProject.name = "${artifactId}"
+enableFeaturePreview('STABLE_PUBLISHING')

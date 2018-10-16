@@ -305,10 +305,10 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
                      * Make the header: get all the default values and
                      * substitute those that are different in this run
                      */
-                    final Map<String, Object> variableValues = loader.getVariables().entrySet().stream()
+                    final Map<String, Object> defaultValues = loader.getVariables().entrySet().stream()
                             .collect(Collectors.toMap(Entry::getKey, e -> e.getValue().getDefault()));
-                    variableValues.putAll(vars);
-                    final String header = variableValues.entrySet().stream()
+                    defaultValues.putAll(vars);
+                    final String header = vars.entrySet().stream()
                             .map(e -> e.getKey() + " = " + e.getValue())
                             .collect(Collectors.joining(", "));
                     try {

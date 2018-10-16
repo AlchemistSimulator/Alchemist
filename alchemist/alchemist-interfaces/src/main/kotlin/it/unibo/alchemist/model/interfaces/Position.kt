@@ -73,7 +73,7 @@ interface Position<P : Position<P>> : Serializable {
      * @param other the other position
      * @return a new {@link Position} that is the sum of the two.
      */
-    fun add(other: P): P
+    operator fun plus(other: P): P
 
     /**
      * Considers both positions as vectors, and returns the difference between this position and the passed one.
@@ -81,65 +81,11 @@ interface Position<P : Position<P>> : Serializable {
      * @param other the other position
      * @return a new {@link Position} that is this position minus the one passed.
      */
-    fun subtract(other: P): P
-
-//    companion object {
-//        operator fun <P : Position<P>> P.get(i: Int): Double = getCoordinate(i)
-//        operator fun <P : Position<P>> P.minus(other: P): P = subtract(other)
-//        operator fun <P : Position<P>> P.plus(other: P): P = add(other)
-//    }
-
-//    /**
-//     * Tries to compute distance between arbitrary positions, looking for a common
-//     * supertype.
-//     *
-//     * @param p1
-//     *            first position
-//     * @param p2
-//     *            second position
-//     * @param <P>
-//     *            position type
-//     * @return the distance between the positions, if computable
-//     */
-//    @SuppressWarnings("unchecked")
-//    static <P extends Position<? extends P>> double distanceTo(P p1, P p2) {
-//        final Class<?> p1Class = Objects.requireNonNull(p1).getClass();
-//        final Class<?> p2Class = Objects.requireNonNull(p2).getClass();
-//        @SuppressWarnings("rawtypes")
-//        final Position p1Unsafe = (Position) p1;
-//        @SuppressWarnings("rawtypes")
-//        final Position p2Unsafe = (Position) p2;
-//        if (p1Class.equals(p2Class) || p1Class.isAssignableFrom(p2Class)) {
-//            return p1Unsafe.getDistanceTo(p2Unsafe);
-//        }
-//        if (p2Class.isAssignableFrom(p1Class)) {
-//            return p2Unsafe.getDistanceTo(p1Unsafe);
-//        }
-//        // Check arguments of distanceTo
-//        final Method p1distTo = Arrays.stream(p1Class.getDeclaredMethods())
-//            .filter(Method::isAccessible)
-//            .filter(it -> it.getReturnType() == double.class)
-//        .filter(it -> it.getParameterCount() == 1)
-//        .filter(it -> it.getName().equals("getDistanceTo"))
-//        .findAny()
-//        .orElseThrow(() -> new IllegalArgumentException(p1 + " has no valid getDistanceTo() method"));
-//        if (p1distTo.getParameterTypes()[0].isAssignableFrom(p2Class)) {
-//            return p1Unsafe.getDistanceTo(p2Unsafe);
-//        }
-//        final Method p2distTo = Arrays.stream(p2Class.getDeclaredMethods())
-//            .filter(Method::isAccessible)
-//            .filter(it -> it.getReturnType() == double.class)
-//        .filter(it -> it.getParameterCount() == 1)
-//        .filter(it -> it.getName().equals("getDistanceTo"))
-//        .findAny()
-//        .orElseThrow(() -> new IllegalArgumentException(p1 + " has no valid getDistanceTo() method"));
-//        if (p2distTo.getParameterTypes()[0].isAssignableFrom(p1Class)) {
-//            return p2Unsafe.getDistanceTo(p1Unsafe);
-//        }
-//        throw new IllegalArgumentException("computing distance between " + p1 + " and " + p2 + " is impossible");
-//    }
+    operator fun minus(other: P): P
 }
 
+/**
+ * Invokes #getCoordinate. Used to allow Component access to Kotlin sources
+ */
 operator fun <P : Position<P>> P.get(i: Int): Double = getCoordinate(i)
-operator fun <P : Position<P>> P.minus(other: P): P = subtract(other)
-operator fun <P : Position<P>> P.plus(other: P): P = add(other)
+

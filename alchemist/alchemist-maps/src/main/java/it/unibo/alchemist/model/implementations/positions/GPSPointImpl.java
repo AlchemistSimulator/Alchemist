@@ -49,8 +49,8 @@ public final class GPSPointImpl implements GPSPoint {
     }
 
     @Override
-    public GeoPosition add(final GeoPosition other) {
-        return repr.add(other);
+    public GeoPosition plus(final GeoPosition other) {
+        return repr.plus(other);
     }
 
     @Override
@@ -132,8 +132,8 @@ public final class GPSPointImpl implements GPSPoint {
     }
 
     @Override
-    public GeoPosition subtract(final GeoPosition other) {
-        return repr.subtract(other);
+    public GeoPosition minus(final GeoPosition other) {
+        return repr.minus(other);
     }
 
     @Override

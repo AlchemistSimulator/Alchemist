@@ -26,7 +26,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
- * Represent the action of add a junction between the current node and a neighbor. <br/>
+ * Represent the action of plus a junction between the current node and a neighbor. <br/>
  * This action only create the junction reference inside this node, the neighbor totally ignore 
  * that a junction has been created. <br/>
  * This is a part of the junction creation process. <br/>
@@ -81,13 +81,13 @@ public class AddJunctionInCell extends AbstractNeighborAction<Double> {
         if (targetNode instanceof CellNode) {
             getNode().addJunction(jun, (CellNode<?>) targetNode);
         } else {
-            throw new UnsupportedOperationException("Can't add Junction in a node that it's not a CellNode");
+            throw new UnsupportedOperationException("Can't plus Junction in a node that it's not a CellNode");
         }
     }
 
     @Override 
     public String toString() {
-        return "add junction " + jun.toString() + " in node";
+        return "plus junction " + jun.toString() + " in node";
     }
 
     @Override

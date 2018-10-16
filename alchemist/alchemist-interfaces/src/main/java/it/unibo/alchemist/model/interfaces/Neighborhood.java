@@ -24,7 +24,7 @@ public interface Neighborhood<T> extends Serializable, Cloneable, Iterable<Node<
 
     /**
      * @param node
-     *            the {@link Node} to add
+     *            the {@link Node} to plus
      * @return a new {@link Neighborhood} with the same center and the new node
      *         among its neighbors
      */

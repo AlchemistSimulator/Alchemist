@@ -65,7 +65,7 @@ public class JTapeGroup extends JPanel {
      * Adds a section to the current group.
      * 
      * @param section
-     *            is the {@link JTapeSection} to add
+     *            is the {@link JTapeSection} to plus
      * @return <code>true</code>
      */
     public boolean registerSection(final JTapeSection section) {

@@ -233,7 +233,7 @@ public class AlchemistExecutionContext<P extends Position<P>> extends AbstractEx
 
     @Override
     public Field nbrVector() {
-        return buildFieldWithPosition(p -> getDevicePosition().subtract(p));
+        return buildFieldWithPosition(p -> getDevicePosition().minus(p));
     }
 
     @Override

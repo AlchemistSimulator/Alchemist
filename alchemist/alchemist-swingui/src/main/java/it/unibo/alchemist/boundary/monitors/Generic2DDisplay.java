@@ -769,7 +769,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                             final P envOrigin = wormhole.getEnvPoint(originPoint.get());
                             for (final Node<T> n : selectedNodes) {
                                 final P p = currentEnv.getPosition(n);
-                                final P finalPos = p.add(envEnding.subtract(envOrigin));
+                                final P finalPos = p.plus(envEnding.minus(envOrigin));
                                 engine.schedule(() -> {
                                     currentEnv.moveNodeToPosition(n, finalPos);
                                     update(currentEnv, engine.getTime());

@@ -49,7 +49,7 @@ public class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<D
      * 
      * @param node the {@link Node} where this action is located.
      * @param biomol the {@link Biomolecule} which concentration will be changed.
-     * @param deltaCon the quantity to add to actual concentration of {@link Biomolecule}
+     * @param deltaCon the quantity to plus to actual concentration of {@link Biomolecule}
      * @param environment the {@link Environment} where the node is located.
      * @param randomGen 
      */
@@ -163,7 +163,7 @@ public class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<D
                 }
             }
         } else {
-            // if delta > 0, simply add delta to the first node of the list (which has been sorted randomly)
+            // if delta > 0, simply plus delta to the first node of the list (which has been sorted randomly)
             final Node<Double> target = envNodesSurrounding.get(0);
             target.setConcentration(biomolecule, target.getConcentration(biomolecule) + delta);
         }
@@ -188,7 +188,7 @@ public class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<D
                 envNodesSurrounding.remove(index);
             }
         } else {
-            // if delta > 0, simply add delta to the first node of the list (which has been sorted randomly)
+            // if delta > 0, simply plus delta to the first node of the list (which has been sorted randomly)
             final Node<Double> target = envNodesSurrounding.get(getRandomGenerator().nextInt(envNodesSurrounding.size()));
             target.setConcentration(biomolecule, target.getConcentration(biomolecule) + delta);
         }

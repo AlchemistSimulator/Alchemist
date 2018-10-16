@@ -102,7 +102,7 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
             final P destination = end;
             end = target.getTarget();
             resetRoute();
-            return isAbsolute() ? destination : destination.subtract(curPos);
+            return isAbsolute() ? destination : destination.minus(curPos);
         }
         if (route == null) {
             route = routing.computeRoute(curPos, end);

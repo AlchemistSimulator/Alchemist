@@ -123,7 +123,7 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment implemen
         final double xVecToMid1 = xVer * halfDistance;
         final double yVecToMid1 = yVer * halfDistance;
         final Euclidean2DPosition vecToMid1 = new Euclidean2DPosition(xVecToMid1, yVecToMid1);
-        final Euclidean2DPosition midPoint = originalPos.add(vecToMid1);
+        final Euclidean2DPosition midPoint = originalPos.plus(vecToMid1);
         // compute optimum scanning range
         double range = FastMath.sqrt(FastMath.pow(halfDistance, 2) + FastMath.pow(maxDiameter, 2));
         final double newMaxDiameter = getNodesWithinRange(midPoint, range).stream()
@@ -135,7 +135,7 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment implemen
         final double newDistanceToScan = distanceToReq + nodeToMove.getRadius() + newMaxDiameter / 2;
         final double newHalfDistance = newDistanceToScan / 2;
         final Euclidean2DPosition vecToMid2 = new Euclidean2DPosition(xVer * newHalfDistance, yVer * newHalfDistance);
-        final Euclidean2DPosition newMidPoint = originalPos.add(vecToMid2);
+        final Euclidean2DPosition newMidPoint = originalPos.plus(vecToMid2);
         range = FastMath.sqrt(FastMath.pow(newHalfDistance, 2) + FastMath.pow(newMaxDiameter, 2));
         return getNodesWithinRange(newMidPoint, range).stream()
                 .filter(n -> !n.equals(nodeToMove) && n instanceof CellWithCircularArea)
@@ -226,7 +226,7 @@ public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment implemen
         // computes vector representing the practicable movement
         final Euclidean2DPosition vectorToSum = new Euclidean2DPosition(distToSum * (versor.getCoordinate(0)), distToSum * (versor.getCoordinate(1)));
         // returns the right position of the cell
-        final Euclidean2DPosition result = originalPos.add(vectorToSum);
+        final Euclidean2DPosition result = originalPos.plus(vectorToSum);
         return Optional.of(result);
     }
 

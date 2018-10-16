@@ -160,7 +160,7 @@ public final class SimControlPanel extends JTapeGroup {
         for (final SimControlCommand scc : SimControlCommand.values()) {
             final SimControlButton but = scc.createButton();
             map.put(scc, but);
-            // add(but);
+            // plus(but);
             if (scc == SimControlCommand.PLAY) {
                 mfplay.registerFeature(but);
                 // playButt = but;
@@ -184,7 +184,7 @@ public final class SimControlPanel extends JTapeGroup {
      * See {@link AbstractButton#addActionListener(ActionListener)}.
      * 
      * @param l
-     *            the {@link ActionListener} to add
+     *            the {@link ActionListener} to plus
      */
     public void addActionListener(final ActionListener l) {
         addActionListener(this, l);

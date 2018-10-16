@@ -741,7 +741,7 @@ public class CenterLayoutController {
 
     /**
      * 
-     * @return The libraries to add to the classpath.
+     * @return The libraries to plus to the classpath.
      */
     private ObservableList<String> getClasspath() {
         return this.listClass.getItems();
@@ -750,7 +750,7 @@ public class CenterLayoutController {
     /**
      * 
      * @param list
-     *            The libraries to add to the classpath.
+     *            The libraries to plus to the classpath.
      */
     private void setClasspath(final ObservableList<String> list) {
         this.listClass.getItems().clear();

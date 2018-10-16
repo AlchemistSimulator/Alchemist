@@ -22,8 +22,8 @@ object PimpMyAlchemist {
    */
   @SuppressFBWarnings(Array("NM_METHOD_NAMING_CONVENTION"))
   implicit class RichPosition[P <: Position[P]](position: P) {
-    def -(p: P) = position.subtract(p)
-    def +(p: P) = position.add(p)
+    def -(p: P) = position.minus(p)
+    def +(p: P) = position.plus(p)
   }
   /** Shortcut for DoubleTime.ZERO_TIME */
   implicit val zeroTime = DoubleTime.ZERO_TIME

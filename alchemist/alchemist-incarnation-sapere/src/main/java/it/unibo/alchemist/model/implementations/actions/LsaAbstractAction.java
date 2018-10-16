@@ -53,7 +53,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
     }
 
     /**
-     * Used to add a new match to the matches map.
+     * Used to plus a new match to the matches map.
      * 
      * @param key
      *            the variable
@@ -65,7 +65,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
     }
 
     /**
-     * Used to add a new match to the matches map.
+     * Used to plus a new match to the matches map.
      * 
      * @param key
      *            the variable
@@ -88,7 +88,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
     }
 
     /**
-     * Used to add a new match to the matches map.
+     * Used to plus a new match to the matches map.
      * 
      * @param key
      *            the variable
@@ -100,7 +100,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
     }
 
     /**
-     * Used to add a new match to the matches map.
+     * Used to plus a new match to the matches map.
      * 
      * @param key
      *            the variable
@@ -112,7 +112,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
     }
 
     /**
-     * Used to add a new match to the matches map.
+     * Used to plus a new match to the matches map.
      * 
      * @param key
      *            the variable
@@ -127,7 +127,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
     }
 
     /**
-     * Used to add a new match to the matches map.
+     * Used to plus a new match to the matches map.
      * 
      * @param key
      *            the variable
@@ -139,7 +139,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
     }
 
     /**
-     * Used to add a new match to the matches map.
+     * Used to plus a new match to the matches map.
      * 
      * @param key
      *            the variable

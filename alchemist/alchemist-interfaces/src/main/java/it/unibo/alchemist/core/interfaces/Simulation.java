@@ -43,7 +43,7 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
      * Adds an {@link OutputMonitor} to this simulation.
      *
      * @param op
-     *            the OutputMonitor to add
+     *            the OutputMonitor to plus
      */
     void addOutputMonitor(OutputMonitor<T, P> op);
 
@@ -198,7 +198,7 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
      * nothing.
      *
      * @param op
-     *            the OutputMonitor to add
+     *            the OutputMonitor to plus
      */
     void removeOutputMonitor(OutputMonitor<T, P> op);
 

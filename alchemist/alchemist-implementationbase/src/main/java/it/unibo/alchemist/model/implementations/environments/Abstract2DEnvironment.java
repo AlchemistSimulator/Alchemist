@@ -116,7 +116,7 @@ public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends 
     @Override
     public void moveNode(final Node<T> node, final P direction) {
         final P oldcoord = getPosition(node);
-        moveNodeToPosition(node, oldcoord.add(direction));
+        moveNodeToPosition(node, oldcoord.plus(direction));
     }
 
     /**

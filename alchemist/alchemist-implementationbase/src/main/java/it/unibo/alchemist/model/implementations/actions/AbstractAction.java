@@ -47,7 +47,7 @@ public abstract class AbstractAction<T> implements Action<T> {
     }
 
     /**
-     * Allows to add an Molecule to the set of molecules which are modified by
+     * Allows to plus an Molecule to the set of molecules which are modified by
      * this action. This method must be called in the constructor, and not
      * during the execution.
      * 

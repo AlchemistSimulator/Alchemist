@@ -140,12 +140,12 @@ public abstract class AbstractEuclideanPosition<P extends AbstractEuclideanPosit
     }
 
     @Override
-    public final P add(final P other) {
+    public final P plus(final P other) {
         return unsafeConstructor(MathArrays.ebeAdd(c, other.getCartesianCoordinates()));
     }
 
     @Override
-    public final P subtract(final P other) {
+    public final P minus(final P other) {
         return unsafeConstructor(MathArrays.ebeSubtract(c, other.getCartesianCoordinates()));
     }
 

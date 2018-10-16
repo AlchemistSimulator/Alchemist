@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
- * Represent the action of add a junction between a neighbor and the current node. <br/>
+ * Represent the action of plus a junction between a neighbor and the current node. <br/>
  * This action only create the junction reference inside the neighbor, the current node totally ignore 
  * that a junction has been created.  <br/>
  * This is a part of the junction creation process. <br/>
@@ -77,13 +77,13 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
         if (targetNode instanceof CellNode) {
             ((CellNode<P>) targetNode).addJunction(jun, getNode());
         } else {
-            throw new UnsupportedOperationException("Can't add Junction in a node that it's not a CellNode");
+            throw new UnsupportedOperationException("Can't plus Junction in a node that it's not a CellNode");
         }
     }
 
     @Override 
     public String toString() {
-        return "add junction " + jun.toString() + " in neighbor";
+        return "plus junction " + jun.toString() + " in neighbor";
     }
 
     @SuppressWarnings("unchecked")

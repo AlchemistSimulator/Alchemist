@@ -155,7 +155,7 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
      * See {@link AbstractButton#addActionListener(ActionListener)}.
      * 
      * @param al
-     *            the {@link ActionListener} to add
+     *            the {@link ActionListener} to plus
      */
     public void addActionListener(final ActionListener al) {
         listeners.add(al);
@@ -165,7 +165,7 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
      * Adds a new {@link Effect} to this stack.
      * 
      * @param e
-     *            the {@link Effect} to add
+     *            the {@link Effect} to plus
      */
     public final void addEffect(final Effect e) {
         final JEffectRepresentation<T> er = new JEffectRepresentation<>(e, main);

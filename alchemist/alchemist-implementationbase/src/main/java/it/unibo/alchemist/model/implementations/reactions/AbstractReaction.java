@@ -233,7 +233,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     }
 
     /**
-     * Allows subclasses to add influenced molecules.
+     * Allows subclasses to plus influenced molecules.
      * 
      * @param m
      *            the influenced molecule
@@ -258,10 +258,10 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     protected abstract void updateInternalStatus(Time curTime, boolean executed, Environment<T, ?> env);
 
     /**
-     * Allows subclasses to add influencing molecules.
+     * Allows subclasses to plus influencing molecules.
      * 
      * @param m
-     *            the molecule to add
+     *            the molecule to plus
      */
     protected void addInfluencingMolecule(final Molecule m) {
         influencing.add(m);

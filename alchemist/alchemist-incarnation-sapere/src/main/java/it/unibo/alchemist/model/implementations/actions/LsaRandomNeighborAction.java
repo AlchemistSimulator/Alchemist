@@ -44,7 +44,7 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
      * @param node
      *            The source node
      * @param molecule
-     *            The IlsaMolecule instance you want to add to neighbor lsa
+     *            The IlsaMolecule instance you want to plus to neighbor lsa
      *            space.
      * @param random
      *            the random engine

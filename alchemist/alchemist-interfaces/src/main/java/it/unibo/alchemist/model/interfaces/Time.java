@@ -49,17 +49,17 @@ public interface Time extends Comparable<Time>, Serializable, Cloneable {
     Time multiply(double var);
 
     /**
-     * Allows to subtract a {@link Time} to this {@link Time}.
+     * Allows to minus a {@link Time} to this {@link Time}.
      * 
      * @param dt
-     *            the time to subtract from the current {@link Time}
+     *            the time to minus from the current {@link Time}
      * 
      * @return the result of the subtraction
      */
     Time subtract(Time dt);
 
     /**
-     * Allows to add a {@link Time} to this {@link Time}.
+     * Allows to plus a {@link Time} to this {@link Time}.
      * 
      * @param dt
      *            the time to sum to the current {@link Time}

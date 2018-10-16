@@ -84,7 +84,7 @@ public class ReactivityPanel extends JTapeGroup implements ItemListener {
         btnReal = new JToggleButton(REALTIME, real, false);
         btnUser = new JToggleButton(USER_SELECTED, user, false);
         /*
-         * add(button); add(slider); button.addActionListener(this);
+         * plus(button); plus(slider); button.addActionListener(this);
          */
         btnMax.addItemListener(this);
         btnReal.addItemListener(this);
@@ -105,7 +105,7 @@ public class ReactivityPanel extends JTapeGroup implements ItemListener {
      * See {@link AbstractButton#addActionListener(ActionListener)}.
      * 
      * @param l
-     *            the {@link ActionListener} to add
+     *            the {@link ActionListener} to plus
      */
     public void addActionListener(final ActionListener l) {
         btnMax.addActionListener(l);
@@ -115,7 +115,7 @@ public class ReactivityPanel extends JTapeGroup implements ItemListener {
 
     /**
      * @param c
-     *            the ChangeListener to add
+     *            the ChangeListener to plus
      */
     public void addChangeLister(final ChangeListener c) {
         slider.addChangeListener(c);

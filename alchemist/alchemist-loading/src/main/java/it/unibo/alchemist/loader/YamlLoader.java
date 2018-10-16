@@ -401,7 +401,7 @@ public final class YamlLoader implements Loader {
             actualVars.put(var, varVal == null ? entry.getValue().getDefault() : varVal); 
         }
         /*
-         * Initialize the remaining dependent variables, and add them to the actual Vars
+         * Initialize the remaining dependent variables, and plus them to the actual Vars
          */
         final Map<String, DependentVariable<?>> depClone = new LinkedHashMap<>(depVariables);
         final List<Exception> issues = Lists.newArrayListWithCapacity(depClone.size());

@@ -21,7 +21,7 @@ public interface Environment2DWithObstacles<W extends Obstacle2D, T, P extends P
      * Adds an {@link Obstacle2D} to this environment.
      * 
      * @param o
-     *            the {@link Obstacle2D} to add
+     *            the {@link Obstacle2D} to plus
      */
     void addObstacle(W o);
 
@@ -98,7 +98,7 @@ public interface Environment2DWithObstacles<W extends Obstacle2D, T, P extends P
      * Removes an {@link Obstacle2D} from this environment.
      * 
      * @param o
-     *            the {@link Obstacle2D} to add
+     *            the {@link Obstacle2D} to plus
      * @return true if the {@link Obstacle2D} has actually been removed
      */
     boolean removeObstacle(W o);

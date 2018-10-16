@@ -78,7 +78,7 @@ public class JTapeTab extends JPanel {
      * Adds a group of features to the tab.
      * 
      * @param g
-     *            is the {@link JTapeGroup} to add
+     *            is the {@link JTapeGroup} to plus
      * @return <code>true</code>
      */
     public boolean registerGroup(final JTapeGroup g) {

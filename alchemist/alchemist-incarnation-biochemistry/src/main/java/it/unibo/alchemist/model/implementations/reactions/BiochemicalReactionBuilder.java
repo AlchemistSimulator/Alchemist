@@ -234,7 +234,7 @@ public class BiochemicalReactionBuilder<P extends Position<P>> {
             }
             /*
              * if the reaction has at least one neighbor action but no neighbor condition 
-             * add the neighborhoodPresent condition.
+             * plus the neighborhoodPresent condition.
              * This is necessary because if the node which contain this reaction don't have
              * a neighborhood and the reaction is valid (all conditions are valid) the neighbor action
              * is undefined, and can lead to unwanted behavior.

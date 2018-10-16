@@ -102,7 +102,7 @@ public final class LatLongPosition implements GeoPosition {
     }
 
     @Override
-    public GeoPosition add(final GeoPosition other) {
+    public GeoPosition plus(final GeoPosition other) {
         return ebeOperation((self, b) -> self + b, other);
     }
 
@@ -223,7 +223,7 @@ public final class LatLongPosition implements GeoPosition {
     }
 
     @Override
-    public GeoPosition subtract(final GeoPosition other) {
+    public GeoPosition minus(final GeoPosition other) {
         return ebeOperation((self, o) -> self - o, other);
     }
 

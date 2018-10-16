@@ -74,7 +74,7 @@ public final class Project {
 
     /**
      * 
-     * @return a list of the libraries to add to the classpath.
+     * @return a list of the libraries to plus to the classpath.
      */
     public List<String> getClasspath() {
         return this.classpath;

@@ -38,7 +38,7 @@ import java.util.Objects;
 
 
 /**
- * This action add LsaMolecule in a single node.
+ * This action plus LsaMolecule in a single node.
  * 
  * 
  */
@@ -58,7 +58,7 @@ public class LsaStandardAction extends LsaAbstractAction {
      * @param n
      *            The source node
      * @param m
-     *            The ILsaMolecule instance you want to add to the node lsa
+     *            The ILsaMolecule instance you want to plus to the node lsa
      *            space.
      */
     public LsaStandardAction(final ILsaMolecule m, final ILsaNode n) {
@@ -71,7 +71,7 @@ public class LsaStandardAction extends LsaAbstractAction {
      * @param n
      *            The source node
      * @param m
-     *            The ILsaMolecule instance you want to add to the node lsa
+     *            The ILsaMolecule instance you want to plus to the node lsa
      *            space.
      * @param random
      *            The Random generator to use

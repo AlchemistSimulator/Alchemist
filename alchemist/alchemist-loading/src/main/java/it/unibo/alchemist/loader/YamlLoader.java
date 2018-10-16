@@ -651,6 +651,7 @@ public final class YamlLoader implements Loader {
         factory.registerImplicit(Number.class, CharSequence.class, Number::toString);
         factory.registerImplicit(double.class, Time.class, DoubleTime::new);
         factory.registerImplicit(List.class, Number[].class, l -> ((List<?>) l).stream().map(e -> factory.convertOrFail(Number.class, e)).toArray(Number[]::new));
+        factory.registerImplicit(CharSequence.class, FilteringPolicy.class, s -> CommonFilters.fromString(s.toString()));
         return factory;
     }
 

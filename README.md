@@ -53,16 +53,20 @@ If you need to access the documentation for any older stable version, [javadoc.i
 The project is easiest to import in IntelliJ Idea.
 
 #### Recommended configuration
-Install the following plugins:
-* Scala
-* Kotlin
-* [ANTLR v4 grammar plugin](https://plugins.jetbrains.com/plugin/7358-antlr-v4-grammar-plugin)
-* [Checkstyle-IDEA](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea)
-* [FindBugs-IDEA](https://plugins.jetbrains.com/plugin/3847-findbugs-idea)
-* [PMDPlugin](https://plugins.jetbrains.com/plugin/1137-pmdplugin)
+Install the following plugins (use <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>, then search for "Plugins"):
+* From the main list:
+    * Scala
+    * Kotlin
+* From "Browse Repositories":
+    * [ANTLR v4 grammar plugin](https://plugins.jetbrains.com/plugin/7358-antlr-v4-grammar-plugin)
+    * [Checkstyle-IDEA](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea)
+    * [FindBugs-IDEA](https://plugins.jetbrains.com/plugin/3847-findbugs-idea)
+    * [PMDPlugin](https://plugins.jetbrains.com/plugin/1137-pmdplugin)
 
 #### Importing the project
-* Import the project as Gradle project
+1. Clone this repository in a folder of your preference
+2. Open the `alchemist` folder as project with IntelliJ Idea
+3. Wait for the IDE to import the project from Gradle. The process may take several minutes, due to the amount of dependencies.
 
 ### Developing the project
 Contributions to this project are welcome. Just some rules:
@@ -83,19 +87,7 @@ If you want to generate the artifacts, you can rely on Gradle. Just point a term
 This will trigger the creation of the artifacts the executions of the tests, the generation of the documentation and of the project reports.
 
 #### Build reports
-
 Every Alchemist build triggers the creation of a set of reports, that provide hints regarding the current status of quality of the code base. Such reports are available for both [the latest stable][reports] and [the latest development][reports-unstable] versions.
-
-#### Run Alchemist
-Alchemist uses YAML for writing simulations. If you want to write your own simulation please follow [this](https://alchemistsimulator.github.io/pages/tutorial/simulations/) guide.<br/>
-The complete documentation of alchemist graphical interface can be found [here](https://alchemistsimulator.github.io/pages/tutorial/swingui/)
-* In Eclipse
-  * Right click on the `alchemist` project -> Run As -> Java Application.
-  * Select `Alchemist - it.unibo.alchemist` and click Ok.
-* If you have the JAR file
-  * Open a terminal
-  * Go into the directory where you have downloaded alchemist-redist-VERSION.jar
-  * Launch `java -jar alchemist-redist-VERSION.jar`, the graphical interface should pop up (remember to substitute VERSION with the actual version you have downloaded).
 
 #### Release numbers explained
 We release often. We are not scared of high version numbers, they are just numbers in the end.

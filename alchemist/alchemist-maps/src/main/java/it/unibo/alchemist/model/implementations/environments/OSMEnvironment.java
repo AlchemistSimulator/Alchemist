@@ -1,19 +1,11 @@
 /*******************************************************************************
  * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
  * project's alchemist/build.gradle file.
- * 
+ *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception, as described in the file
  * LICENSE in the Alchemist distribution's top directory.
  ******************************************************************************/
-/*
- * Copyright (C) 2010-2015, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- *
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
- */
 package it.unibo.alchemist.model.implementations.environments;
 
 import java.io.File;
@@ -58,9 +50,11 @@ import com.graphhopper.util.shapes.GHPoint;
 
 import it.unibo.alchemist.model.implementations.routes.GraphHopperRoute;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
+import it.unibo.alchemist.model.implementations.routes.PolygonalChain;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Route;
 import it.unibo.alchemist.model.interfaces.Vehicle;
 
@@ -81,28 +75,26 @@ public class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPosition> imp
     public static final String DEFAULT_ALGORITHM = "dijkstrabi";
 
     /**
-     * The default value for approximating the positions comparison. 
+     * The default routing strategy.
+     */
+    public static final String ROUTING_STRATEGY = "fastest";
+
+    /**
+     * The default value for approximating the positions comparison.
      */
     public static final int DEFAULT_APPROXIMATION = 0;
-
-    /**
-     * The default value for the discard of nodes too far from streets option.
-     */
-    public static final boolean DEFAULT_FORCE_STREETS = false;
-
-    /**
-     * Default maximum communication range (in meters).
-     */
-    public static final double DEFAULT_MAX_RANGE = 100;
 
     /**
      * The default value for the force nodes on streets option.
      */
     public static final boolean DEFAULT_ON_STREETS = true;
 
+    /**
+     * The default value for the discard of nodes too far from streets option.
+     */
+    public static final boolean DEFAULT_FORCE_STREETS = false;
     private static final Logger L = LoggerFactory.getLogger(OSMEnvironment.class);
-    private static final Semaphore LOCK_FILE = new Semaphore(1);
-    private static final String MAPNAME = "map";
+    private static final long serialVersionUID = 1L;
     /**
      * System file separator.
      */
@@ -111,18 +103,17 @@ public class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPosition> imp
      * Alchemist's temp dir.
      */
     private static final String PERSISTENTPATH = System.getProperty("user.home") + SLASH + ".alchemist";
-    /**
-     * The default routing strategy.
-     */
-    public static final String ROUTING_STRATEGY = "fastest";
-    private static final long serialVersionUID = 1L;
-    private final int approximation;
-    private boolean benchmarking;
+    private static final String MAPNAME = "map";
+    private static final Semaphore LOCK_FILE = new Semaphore(1);
+    private final String mapResource;
     private final boolean forceStreets, onlyStreet;
     private transient FastReadWriteLock mapLock;
-    private final String mapResource;
     private transient Map<Vehicle, GraphHopperAPI> navigators;
     private transient LoadingCache<CacheEntry, Route<GeoPosition>> routecache;
+    private boolean benchmarking;
+    private final int approximation;
+
+
 
     /**
      * Builds a new {@link OSMEnvironment}, with nodes forced on streets.
@@ -138,28 +129,28 @@ public class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPosition> imp
         this(file, DEFAULT_ON_STREETS);
     }
 
-   /**
-    * @param file
-    *            the file path where the map data is stored
-    * @param onStreets
-    *            if true, the nodes will be placed on the street nearest to the
-    *            desired {@link Position}. 
-    * @throws IOException
-    *             if the map file is not found, or it's not readable, or
-    *             accessible, or a file system error occurred, or you kicked your
-    *             hard drive while Alchemist was reading the map
-    */
-   public OSMEnvironment(final String file, final boolean onStreets) throws IOException {
-       this(file, onStreets, DEFAULT_FORCE_STREETS);
+    /**
+     * @param file
+     *            the file path where the map data is stored
+     * @param onStreets
+     *            if true, the nodes will be placed on the street nearest to the
+     *            desired {@link Position}.
+     * @throws IOException
+     *             if the map file is not found, or it's not readable, or
+     *             accessible, or a file system error occurred, or you kicked your
+     *             hard drive while Alchemist was reading the map
+     */
+    public OSMEnvironment(final String file, final boolean onStreets) throws IOException {
+        this(file, onStreets, DEFAULT_FORCE_STREETS);
 
-   }
+    }
 
     /**
      * @param file
      *            the file path where the map data is stored
      * @param onStreets
      *            if true, the nodes will be placed on the street nearest to the
-     *            desired {@link Position}. 
+     *            desired {@link Position}.
      * @param onlyOnStreets
      *            if true, the nodes which are too far from a street will be simply
      *            discarded. If false, they will be placed anyway, in the original
@@ -237,7 +228,6 @@ public class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPosition> imp
 
     @Override
     protected final GeoPosition computeActualInsertionPosition(final Node<T> node, final GeoPosition position) {
-
         /*
          * If it must be located on streets, query the navigation engine for a street
          * point. Otherwise, put it where it is declared.
@@ -247,12 +237,12 @@ public class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPosition> imp
     }
 
     @Override
-    public final Route<GeoPosition> computeRoute(final GeoPosition p1, final GeoPosition p2) {
+    public Route<GeoPosition> computeRoute(final GeoPosition p1, final GeoPosition p2) {
         return computeRoute(p1, p2, DEFAULT_VEHICLE);
     }
 
     @Override
-    public final Route<GeoPosition> computeRoute(final GeoPosition p1, final GeoPosition p2, final Vehicle vehicle) {
+    public Route<GeoPosition> computeRoute(final GeoPosition p1, final GeoPosition p2, final Vehicle vehicle) {
         if (routecache == null) {
             CacheBuilder<Object, Object> builder = CacheBuilder.newBuilder();
             if (benchmarking) {
@@ -275,7 +265,11 @@ public class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPosition> imp
                         mapLock.release();
                         if (gh != null) {
                             final GHResponse resp = gh.route(req);
-                            return new GraphHopperRoute(resp);
+                            if (resp.getErrors().isEmpty()) {
+                                return new GraphHopperRoute(resp);
+                            } else {
+                                return new PolygonalChain<>(p1, p2);
+                            }
                         }
                         throw new IllegalStateException("Something went wrong while evaluating a route.");
                     }
@@ -291,27 +285,27 @@ public class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPosition> imp
     }
 
     @Override
-    public final Route<GeoPosition> computeRoute(final Node<T> node, final GeoPosition coord) {
+    public Route<GeoPosition> computeRoute(final Node<T> node, final GeoPosition coord) {
         return computeRoute(node, coord, DEFAULT_VEHICLE);
     }
 
     @Override
-    public final Route<GeoPosition> computeRoute(final Node<T> node, final GeoPosition coord, final Vehicle vehicle) {
+    public Route<GeoPosition> computeRoute(final Node<T> node, final GeoPosition coord, final Vehicle vehicle) {
         return computeRoute(getPosition(node), coord, vehicle);
     }
 
     @Override
-    public final Route<GeoPosition> computeRoute(final Node<T> node, final Node<T> node2) {
+    public Route<GeoPosition> computeRoute(final Node<T> node, final Node<T> node2) {
         return computeRoute(node, getPosition(node2));
     }
 
     @Override
-    public final void enableBenchmark() {
+    public void enableBenchmark() {
         this.benchmarking = true;
     }
 
     @Override
-    public final double getBenchmarkResult() {
+    public double getBenchmarkResult() {
         if (benchmarking) {
             if (routecache != null) {
                 return routecache.stats().hitRate();
@@ -321,7 +315,6 @@ public class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPosition> imp
             throw new IllegalStateException("You should call doBenchmark() before.");
         }
     }
-
 
     /**
      * @return the maximum latitude
@@ -366,7 +359,7 @@ public class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPosition> imp
     }
 
     @Override
-    public final GeoPosition getPosition(final Node<T> node) {
+    public GeoPosition getPosition(final Node<T> node) {
         if (super.getPosition(node) instanceof GeoPosition) {
             return (GeoPosition) super.getPosition(node);
         }
@@ -374,7 +367,7 @@ public class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPosition> imp
     }
 
     @Override
-    public final double[] getSizeInDistanceUnits() {
+    public double[] getSizeInDistanceUnits() {
         final double minlat = getMinLatitude();
         final double maxlat = getMaxLatitude();
         final double minlon = getMinLongitude();
@@ -399,8 +392,8 @@ public class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPosition> imp
                 .map(File::toURI)
                 .map(Unchecked.function(URI::toURL));
         final URL resource = Optional.ofNullable(ResourceLoader.getResource(fileName))
-                    .orElseGet(Unchecked.supplier(() -> file
-                            .orElseThrow(() -> new FileNotFoundException("No file or resource with name " + fileName))));
+            .orElseGet(Unchecked.supplier(() ->
+                file.orElseThrow(() -> new FileNotFoundException("No file or resource with name " + fileName))));
         final String dir = initDir(resource).intern();
         final File workdir = new File(dir);
         mkdirsIfNeeded(workdir);

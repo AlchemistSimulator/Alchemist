@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.codec.binary.Hex;
 import org.danilopianini.util.Hashes;
 import org.danilopianini.util.concurrent.FastReadWriteLock;
+import org.jetbrains.annotations.NotNull;
 import org.jooq.lambda.Unchecked;
 import org.kaikikm.threadresloader.ResourceLoader;
 import org.slf4j.Logger;
@@ -54,7 +55,6 @@ import it.unibo.alchemist.model.implementations.routes.PolygonalChain;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Route;
 import it.unibo.alchemist.model.interfaces.Vehicle;
 
@@ -67,7 +67,7 @@ import it.unibo.alchemist.model.interfaces.Vehicle;
  *
  * @param <T>
  */
-public class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPosition> implements MapEnvironment<T> {
+public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPosition> implements MapEnvironment<T> {
 
     /**
      * The default routing algorithm.
@@ -134,7 +134,7 @@ public class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPosition> imp
      *            the file path where the map data is stored
      * @param onStreets
      *            if true, the nodes will be placed on the street nearest to the
-     *            desired {@link Position}.
+     *            desired {@link it.unibo.alchemist.model.interfaces.Position}.
      * @throws IOException
      *             if the map file is not found, or it's not readable, or
      *             accessible, or a file system error occurred, or you kicked your
@@ -142,7 +142,6 @@ public class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPosition> imp
      */
     public OSMEnvironment(final String file, final boolean onStreets) throws IOException {
         this(file, onStreets, DEFAULT_FORCE_STREETS);
-
     }
 
     /**
@@ -150,7 +149,7 @@ public class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPosition> imp
      *            the file path where the map data is stored
      * @param onStreets
      *            if true, the nodes will be placed on the street nearest to the
-     *            desired {@link Position}.
+     *            desired {@link it.unibo.alchemist.model.interfaces.Position}.
      * @param onlyOnStreets
      *            if true, the nodes which are too far from a street will be simply
      *            discarded. If false, they will be placed anyway, in the original
@@ -200,7 +199,7 @@ public class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPosition> imp
      *            the level of precision determined by this value
      * @param onStreets
      *            if true, the nodes will be placed on the street nearest to the
-     *            desired {@link Position}.
+     *            desired {@link it.unibo.alchemist.model.interfaces.Position}.
      * @param onlyOnStreets
      *            if true, the nodes which are too far from a street will be simply
      *            discarded. If false, they will be placed anyway, in the original
@@ -222,12 +221,12 @@ public class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPosition> imp
         initAll(file);
     }
 
-    private boolean canWriteOnDir(final String dir) {
-        return new File(dir).canWrite();
+    private boolean directoryIsReadOnly(final String dir) {
+        return !new File(dir).canWrite();
     }
 
     @Override
-    protected final GeoPosition computeActualInsertionPosition(final Node<T> node, final GeoPosition position) {
+    protected GeoPosition computeActualInsertionPosition(final Node<T> node, final GeoPosition position) {
         /*
          * If it must be located on streets, query the navigation engine for a street
          * point. Otherwise, put it where it is declared.
@@ -246,13 +245,13 @@ public class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPosition> imp
         if (routecache == null) {
             CacheBuilder<Object, Object> builder = CacheBuilder.newBuilder();
             if (benchmarking) {
-                builder = builder.recordStats();
+                builder.recordStats();
             }
             routecache = builder
                 .expireAfterAccess(10, TimeUnit.SECONDS)
                 .build(new CacheLoader<CacheEntry, Route<GeoPosition>>() {
                     @Override
-                    public Route<GeoPosition> load(final CacheEntry key) {
+                    public Route<GeoPosition> load(@NotNull final CacheEntry key) {
                         final Vehicle vehicle = key.v;
                         final GeoPosition p1 = key.start;
                         final GeoPosition p2 = key.end;
@@ -359,14 +358,6 @@ public class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPosition> imp
     }
 
     @Override
-    public GeoPosition getPosition(final Node<T> node) {
-        if (super.getPosition(node) instanceof GeoPosition) {
-            return (GeoPosition) super.getPosition(node);
-        }
-        throw new IllegalStateException("the position isn't a GeoPosition");
-    }
-
-    @Override
     public double[] getSizeInDistanceUnits() {
         final double minlat = getMinLatitude();
         final double maxlat = getMaxLatitude();
@@ -404,6 +395,7 @@ public class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPosition> imp
                 if (!mapFile.exists()) {
                     Files.copy(resource.openStream(), mapFile.toPath());
                 }
+                lock.release();
             }
         } finally {
             LOCK_FILE.release();
@@ -438,11 +430,11 @@ public class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPosition> imp
         final String[] prefixes = new String[] { PERSISTENTPATH, System.getProperty("java.io.tmpdir"),
                 System.getProperty("user.dir"), "." };
         String dir = prefixes[0] + append;
-        for (int i = 1; (!mkdirsIfNeeded(dir) || !canWriteOnDir(dir)) && i < prefixes.length; i++) {
+        for (int i = 1; (!mkdirsIfNeeded(dir) || directoryIsReadOnly(dir)) && i < prefixes.length; i++) {
             L.warn("Can not write on " + dir + ", trying " + prefixes[i]);
             dir = prefixes[i] + append;
         }
-        if (!canWriteOnDir(dir)) {
+        if (directoryIsReadOnly(dir)) {
             /*
              * Give up.
              */
@@ -453,7 +445,7 @@ public class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPosition> imp
     }
 
     @Override
-    public final GeoPosition makePosition(final Number... coordinates) {
+    public GeoPosition makePosition(final Number... coordinates) {
         if (coordinates.length != 2) {
             throw new IllegalArgumentException(
                     getClass().getSimpleName() + " only supports bi-dimensional coordinates (latitude, longitude)");
@@ -477,7 +469,7 @@ public class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPosition> imp
         initAll(mapResource);
     }
 
-    private static synchronized GraphHopperAPI initNavigationSystem(final File mapFile, final String internalWorkdir, final Vehicle v) throws IOException {
+    private static synchronized GraphHopperAPI initNavigationSystem(final File mapFile, final String internalWorkdir, final Vehicle v) {
         return new GraphHopperOSM().setOSMFile(mapFile.getAbsolutePath()).forDesktop()
                 .setElevation(false)
                 .setEnableInstructions(false)

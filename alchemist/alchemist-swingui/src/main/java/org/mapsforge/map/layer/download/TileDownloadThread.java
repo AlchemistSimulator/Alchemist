@@ -56,8 +56,7 @@ class TileDownloadThread extends PausableThread {
 
     @Override
     protected void doWork() throws InterruptedException {
-        DownloadJob downloadJob = this.jobQueue.get();
-
+        final DownloadJob downloadJob = this.jobQueue.get();
         this.layer.requestRedraw();
         if (!this.tileCache.containsKey(downloadJob)) {
             try {
@@ -80,12 +79,12 @@ class TileDownloadThread extends PausableThread {
     }
 
     private TileBitmap downloadTile(final DownloadJob downloadJob) throws IOException {
-        TileDownloader tileDownloader = new TileDownloader(downloadJob, this.graphicFactory);
+        final TileDownloader tileDownloader = new TileDownloader(downloadJob, this.graphicFactory);
         TileBitmap bitmap;
         try {
             bitmap = tileDownloader.downloadImage();
         } catch (IOException e) {
-            BufferedImage img = ImageIO.read(ResourceLoader.getResourceAsStream("other/nointernet.png"));
+            final BufferedImage img = ImageIO.read(ResourceLoader.getResourceAsStream("other/nointernet.png"));
             bitmap = new AwtTileBitmap(img);
         }
         bitmap.scaleTo(this.displayModel.getTileSize(), this.displayModel.getTileSize());

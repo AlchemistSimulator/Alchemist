@@ -18,10 +18,7 @@ import it.unibo.alchemist.scala.PimpMyAlchemist._
 import org.apache.commons.math3.util.FastMath
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist
 import ScafiIncarnationForAlchemist.ContextImpl
-import ScafiIncarnationForAlchemist.ID
-import ScafiIncarnationForAlchemist.EXPORT
-import ScafiIncarnationForAlchemist.CONTEXT
-import ScafiIncarnationForAlchemist.factory
+import ScafiIncarnationForAlchemist._
 import it.unibo.alchemist.implementation.nodes.SimpleNodeManager
 import org.kaikikm.threadresloader.ResourceLoader
 
@@ -61,22 +58,22 @@ sealed class RunScafiProgram[P <: Position[P]] (
     val localSensors = node.getContents().asScala.map({
       case (k, v) => k.getName -> v
     }) ++ Map(
-        "coordinates" -> position.getCartesianCoordinates,
-        "dt" -> deltaTime,
-        "position" -> position,
-        "random" -> {() => rng.nextDouble},
-        "time" -> currentTime,
-        "manager" -> new SimpleNodeManager(node)
+        LSNS_COORDINATES -> position.getCartesianCoordinates,
+        LSNS_DELTA_TIME -> deltaTime,
+        LSNS_POSITION -> position,
+        LSNS_RANDOM_VALUE -> {() => rng.nextDouble},
+        LSNS_TIMESTAMP -> currentTime,
+        LSNS_NODE_MANAGER -> new SimpleNodeManager(node)
     )
     val nbrSensors = Map(
-        "nbrLag" -> nbrData.mapValues[Double](currentTime - _.executionTime),
+        NBR_LAG -> nbrData.mapValues[Double](currentTime - _.executionTime),
         /*
          * nbrDelay is estimated: it should be nbr(deltaTime), here we suppose the round frequency
          * is negligibly different between devices.
          */
-        "nbrDelay" -> nbrData.mapValues[Double](nbr => nbr.executionTime + deltaTime - currentTime),
-        "nbrRange" -> nbrData.mapValues[Double](_.position.getDistanceTo(position)),
-        "nbrVector" -> nbrData.mapValues[P](position - _.position)
+        NBR_DELAY -> nbrData.mapValues[Double](nbr => nbr.executionTime + deltaTime - currentTime),
+        NBR_RANGE_NAME -> nbrData.mapValues[Double](_.position.getDistanceTo(position)),
+        NBR_VECTOR -> nbrData.mapValues[P](position - _.position)
     )
     val nbrRange = nbrData.mapValues { _.position }
     val exports = nbrData.mapValues { _.export }

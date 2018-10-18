@@ -34,7 +34,7 @@ object ScafiIncarnationForAlchemist extends BasicAbstractIncarnation
       if(dt.isNaN) whenNan else dt
     }
     def nextRandom: Double = sense[()=>java.lang.Double](LSNS_RANDOM_VALUE)().toDouble
-    def environment = sense[Environment[Any]](LSNS_ENVIRONMENT)
+    def environment = sense[Environment[Any,P]](LSNS_ENVIRONMENT)
 
     override def aggregate[T](f: => T): T =
       vm.nest(FunCall[T](vm.index, sun.reflect.Reflection.getCallerClass(PlatformDependentConstants.StackTracePosition).getName()))(!vm.neighbour.isDefined) {

@@ -29,7 +29,27 @@ class ScafiEnvProgram extends AggregateProgram with StandardSensors with ScafiAl
   override def main(): Any = {
     node.put("number2", node.get[Int]("number")+100)
 
+    node.put("out", "" +
+    // Local sensors
+    randomGenerator().nextDouble() +
+    environment.getDimensions +
+    deltaTime().length +
 
+    // Alchemist-specific local sensors
+    dt(whenNan = 0.0).longValue() +
+    nextRandom +
+    alchemistRandomGen.nextBoolean() +
+    currentTime().getDayOfMonth +
+    coordinates.getElements +
+
+    // Environmental sensors
+    foldhood("")(_+_){
+      "" +
+      nbrLag().length +
+      nbrRange().toString +
+      nbrDelay().length +
+      nbrVector().y
+    })
   }
 }
 

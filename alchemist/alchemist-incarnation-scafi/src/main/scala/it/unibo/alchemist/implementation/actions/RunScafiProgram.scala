@@ -61,7 +61,7 @@ sealed class RunScafiProgram[P <: Position[P]] (
         LSNS_COORDINATES -> position.getCartesianCoordinates,
         LSNS_DELTA_TIME -> deltaTime,
         LSNS_POSITION -> position,
-        LSNS_RANDOM_VALUE -> {() => rng.nextDouble},
+        LSNS_RANDOM_ALCHEMIST -> rng,
         LSNS_TIMESTAMP -> currentTime,
         LSNS_NODE_MANAGER -> new SimpleNodeManager(node)
     )

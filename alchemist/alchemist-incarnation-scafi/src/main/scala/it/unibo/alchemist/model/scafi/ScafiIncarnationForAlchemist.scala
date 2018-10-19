@@ -9,7 +9,7 @@
 package it.unibo.alchemist.model.scafi
 
 import it.unibo.alchemist.implementation.nodes.NodeManager
-import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.{Environment, Position}
 import it.unibo.scafi.PlatformDependentConstants
 import it.unibo.scafi.incarnations.BasicAbstractIncarnation
 import it.unibo.scafi.lib.StandardLibrary
@@ -39,7 +39,7 @@ object ScafiIncarnationForAlchemist extends BasicAbstractIncarnation
     override def nextLong(): Long = rg.nextLong()
     override def nextGaussian(): Double = rg.nextGaussian()
 
-    override def clone(): AnyRef = new AlchemistRandomWrapper(rg.clone().asInstanceOf[RandomGenerator])
+    override def clone(): AnyRef = new AlchemistRandomWrapper(rg)
   }
 
   trait ScafiAlchemistSupport { self: AggregateProgram with StandardSensors =>
@@ -54,11 +54,11 @@ object ScafiIncarnationForAlchemist extends BasicAbstractIncarnation
       if(dt.isNaN) whenNan else dt
     }
 
-    def nextRandom: Double = sense[RandomGenerator](LSNS_RANDOM).nextDouble()
+    //def nextRandom: Double = sense[RandomGenerator](LSNS_RANDOM).nextDouble()
     def alchemistRandomGen = sense[RandomGenerator](LSNS_RANDOM_ALCHEMIST)
     lazy val randomGen: Random = new AlchemistRandomWrapper(sense[RandomGenerator](LSNS_RANDOM))
     override def randomGenerator(): Random = randomGen
 
-    def environment = sense[Environment[Any,P]](LSNS_ENVIRONMENT)
+    def environment = sense[Environment[Any,Position[_]]](LSNS_ENVIRONMENT)
   }
 }

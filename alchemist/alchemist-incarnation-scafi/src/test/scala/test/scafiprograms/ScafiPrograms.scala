@@ -13,7 +13,6 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist._
 
 class ScafiGradientProgram extends AggregateProgram {
-  override type MainResult = Double
   override def main(): Double = gradient(sense[Boolean]("source"))
 
   def gradient(source: Boolean): Double =
@@ -25,7 +24,6 @@ class ScafiGradientProgram extends AggregateProgram {
 }
 
 class ScafiEnvProgram extends AggregateProgram with StandardSensors with ScafiAlchemistSupport {
-  override type MainResult = Any
   override def main(): Any = {
     node.put("number2", node.get[Int]("number")+100)
 

@@ -72,7 +72,7 @@ sealed class RunScafiProgram[P <: Position[P]] (
          * is negligibly different between devices.
          */
         NBR_DELAY -> nbrData.mapValues[Double](nbr => nbr.executionTime + deltaTime - currentTime),
-        NBR_RANGE_NAME -> nbrData.mapValues[Double](_.position.getDistanceTo(position)),
+        NBR_RANGE -> nbrData.mapValues[Double](_.position.getDistanceTo(position)),
         NBR_VECTOR -> nbrData.mapValues[P](position - _.position)
     )
     val nbrRange = nbrData.mapValues { _.position }

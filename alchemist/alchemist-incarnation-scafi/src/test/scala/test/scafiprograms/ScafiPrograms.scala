@@ -12,10 +12,6 @@ import it.unibo.alchemist.implementation.nodes.NodeManager
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist._
 
-trait ScafiAlchemistSupport { self: AggregateProgram =>
-  def env = sense[NodeManager]("manager")
-}
-
 class ScafiGradientProgram extends AggregateProgram {
   override type MainResult = Double
   override def main(): Double = gradient(sense[Boolean]("source"))
@@ -23,15 +19,17 @@ class ScafiGradientProgram extends AggregateProgram {
   def gradient(source: Boolean): Double =
     rep(Double.PositiveInfinity){
       distance => mux(source) { 0.0 } {
-        foldhood(Double.PositiveInfinity)(Math.min)(nbr{distance}+nbrvar[Double](NBR_RANGE_NAME))
+        foldhood(Double.PositiveInfinity)(Math.min)(nbr{distance}+nbrvar[Double](NBR_RANGE))
       }
     }
 }
 
-class ScafiEnvProgram extends AggregateProgram with ScafiAlchemistSupport {
+class ScafiEnvProgram extends AggregateProgram with StandardSensors with ScafiAlchemistSupport {
   override type MainResult = Any
   override def main(): Any = {
-    env.put("number2", env.get[Int]("number")+100)
+    node.put("number2", node.get[Int]("number")+100)
+
+
   }
 }
 

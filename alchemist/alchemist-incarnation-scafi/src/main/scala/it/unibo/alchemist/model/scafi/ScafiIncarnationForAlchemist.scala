@@ -56,8 +56,9 @@ object ScafiIncarnationForAlchemist extends BasicAbstractIncarnation
 
     //def nextRandom: Double = sense[RandomGenerator](LSNS_RANDOM).nextDouble()
     def alchemistRandomGen = sense[RandomGenerator](LSNS_RANDOM_ALCHEMIST)
-    lazy val randomGen: Random = new AlchemistRandomWrapper(sense[RandomGenerator](LSNS_RANDOM))
+    lazy val randomGen: Random = new AlchemistRandomWrapper(alchemistRandomGen)
     override def randomGenerator(): Random = randomGen
+    override def nextRandom(): Double = alchemistRandomGen.nextDouble()
 
     def environment = sense[Environment[Any,Position[_]]](LSNS_ENVIRONMENT)
   }

@@ -15,11 +15,14 @@ import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.loader.YamlLoader
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.interfaces.{Environment, Position}
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FunSuite, Matchers}
 
 import scala.collection.JavaConverters.{asScalaBufferConverter, mapAsScalaMapConverter}
 
 @SuppressFBWarnings(value = Array("SE_BAD_FIELD"), justification="We are not going to Serialize test classes")
+@RunWith(classOf[JUnitRunner])
 class TestInSimulator[P <: Position[P]] extends FunSuite with Matchers {
   
   test("Basic test"){

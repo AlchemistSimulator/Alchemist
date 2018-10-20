@@ -1,3 +1,5 @@
+package it.unibo.alchemist.scafi.test
+
 /*******************************************************************************
  * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
  * project's alchemist/build.gradle file.
@@ -8,18 +10,14 @@
  ******************************************************************************/
 import java.io.InputStream
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.loader.YamlLoader
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
-import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.{Environment, Position}
 import org.scalatest.{FunSuite, Matchers}
-import org.slf4j.event.Level
-import org.slf4j.{Logger, LoggerFactory}
 
-import scala.collection.JavaConverters.asScalaBufferConverter
-import scala.collection.JavaConverters.mapAsScalaMapConverter
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
-import it.unibo.alchemist.model.interfaces.Position
+import scala.collection.JavaConverters.{asScalaBufferConverter, mapAsScalaMapConverter}
 
 @SuppressFBWarnings(value = Array("SE_BAD_FIELD"), justification="We are not going to Serialize test classes")
 class TestInSimulator[P <: Position[P]] extends FunSuite with Matchers {

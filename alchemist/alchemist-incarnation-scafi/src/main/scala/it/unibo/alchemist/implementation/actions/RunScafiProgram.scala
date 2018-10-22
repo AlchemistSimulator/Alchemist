@@ -74,12 +74,13 @@ sealed class RunScafiProgram[P <: Position[P]] (
         LSNS_ALCHEMIST_COORDINATES -> position.getCartesianCoordinates,
         LSNS_DELTA_TIME -> FiniteDuration(deltaTime.toInt, TimeUnit.SECONDS),
         LSNS_POSITION -> position,
-        LSNS_TIMESTAMP -> currentTime,
+        LSNS_TIMESTAMP -> currentTime.toLong,
         LSNS_TIME -> LocalDateTime.MIN.plusSeconds(currentTime.toDouble.toInt),
         LSNS_ALCHEMIST_NODE_MANAGER -> new SimpleNodeManager(node),
         LSNS_ALCHEMIST_DELTA_TIME -> deltaTime,
         LSNS_ALCHEMIST_ENVIRONMENT -> environment,
-        LSNS_ALCHEMIST_RANDOM -> rng
+        LSNS_ALCHEMIST_RANDOM -> rng,
+        LSNS_ALCHEMIST_TIMESTAMP -> currentTime
     )
     val nbrSensors = Map(
         NBR_LAG -> nbrData.mapValues[FiniteDuration](nbr => FiniteDuration((currentTime - nbr.executionTime).toInt, TimeUnit.SECONDS)),

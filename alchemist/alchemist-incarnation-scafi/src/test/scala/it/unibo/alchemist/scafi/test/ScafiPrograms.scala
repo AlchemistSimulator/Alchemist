@@ -30,14 +30,15 @@ class ScafiEnvProgram extends AggregateProgram with StandardSensors with ScafiAl
     randomGenerator().nextDouble() +
     alchemistEnvironment.getDimensions +
     deltaTime().length +
-
-    (nextRandom+0.0) +
     currentTime().getDayOfMonth +
+    timestamp() +
+    (nextRandom+0.0) +
 
     // Alchemist-specific local sensors
     (!alchemistRandomGen.nextBoolean()) +
     alchemistCoordinates.head +
     alchemistDeltaTime(whenNan = 0.0).longValue() +
+    alchemistTimestamp.toDouble +
 
     // Environmental sensors
     foldhood("")(_+_){

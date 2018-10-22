@@ -30,6 +30,7 @@ object ScafiIncarnationForAlchemist extends BasicAbstractIncarnation
   val LSNS_ALCHEMIST_COORDINATES = "coordinates"
   val LSNS_ALCHEMIST_RANDOM = "alchemistRandomGen"
   val LSNS_ALCHEMIST_DELTA_TIME = "alchemistDeltaTime"
+  val LSNS_ALCHEMIST_TIMESTAMP = "alchemistTimestamp"
   val NBR_ALCHEMIST_DELAY = "alchemistNbrDelay"
   val NBR_ALCHEMIST_LAG = "alchemistNbrLag"
 
@@ -54,6 +55,8 @@ object ScafiIncarnationForAlchemist extends BasicAbstractIncarnation
       val dt = sense[DoubleTime](LSNS_ALCHEMIST_DELTA_TIME).toDouble
       if(dt.isNaN) whenNan else dt
     }
+
+    def alchemistTimestamp = sense[it.unibo.alchemist.model.interfaces.Time](LSNS_ALCHEMIST_TIMESTAMP)
 
     //def nextRandom: Double = sense[RandomGenerator](LSNS_RANDOM).nextDouble()
     def alchemistRandomGen = sense[RandomGenerator](LSNS_ALCHEMIST_RANDOM)

@@ -1,4 +1,7 @@
-apply plugin: 'scala'
+plugins {
+    id "scala"
+    id "com.github.maiflai.scalatest" version "0.23"
+}
 
 dependencies {
     api project(':alchemist-interfaces')
@@ -14,15 +17,9 @@ dependencies {
     testImplementation(
         project(':alchemist-engine'),
         project(':alchemist-loading'),
-        "org.scalatest:scalatest_${scalaMajorVersion}:${scalatestVersion}"
+        "org.scalatest:scalatest_${scalaMajorVersion}:${scalatestVersion}",
+        'org.pegdown:pegdown:1.6.0'
     )
 }
 
-task scalaTest(dependsOn: ['testClasses'], type: JavaExec) {
-  main = 'org.scalatest.tools.Runner'
-  args = ['-R', 'build/classes/test', '-o']
-  classpath = sourceSets.test.runtimeClasspath
-}
-
-test.dependsOn(scalaTest)
 

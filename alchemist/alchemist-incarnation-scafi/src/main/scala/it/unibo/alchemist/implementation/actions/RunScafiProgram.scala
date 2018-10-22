@@ -8,6 +8,9 @@
  ******************************************************************************/
 package it.unibo.alchemist.model.implementations.actions
 
+import java.time.LocalDateTime
+import java.util.concurrent.TimeUnit
+
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Time
@@ -20,7 +23,11 @@ import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist
 import ScafiIncarnationForAlchemist.ContextImpl
 import ScafiIncarnationForAlchemist._
 import it.unibo.alchemist.implementation.nodes.SimpleNodeManager
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.scafi.space.Point3D
 import org.kaikikm.threadresloader.ResourceLoader
+
+import scala.concurrent.duration.FiniteDuration
 
 sealed class RunScafiProgram[P <: Position[P]] (
     environment: Environment[Any, P],
@@ -50,6 +57,12 @@ sealed class RunScafiProgram[P <: Position[P]] (
 
   override def execute() {
     import collection.JavaConverters.mapAsScalaMapConverter
+    implicit def euclideanToPoint(p: P): Point3D = p.getDimensions match {
+      case 1 => Point3D(p.getCoordinate(0), 0, 0)
+      case 2 => Point3D(p.getCoordinate(0), p.getCoordinate(1), 0)
+      case 3 => Point3D(p.getCoordinate(0), p.getCoordinate(1), p.getCoordinate(2))
+    }
+
     val position: P = environment.getPosition(node)
     val currentTime = reaction.getTau
     if(!nbrData.contains(node.getId)) nbrData += node.getId -> new NBRData(factory.emptyExport(), environment.getPosition(node), Double.NaN)
@@ -58,22 +71,27 @@ sealed class RunScafiProgram[P <: Position[P]] (
     val localSensors = node.getContents().asScala.map({
       case (k, v) => k.getName -> v
     }) ++ Map(
-        LSNS_COORDINATES -> position.getCartesianCoordinates,
-        LSNS_DELTA_TIME -> deltaTime,
+        LSNS_ALCHEMIST_COORDINATES -> position.getCartesianCoordinates,
+        LSNS_DELTA_TIME -> FiniteDuration(deltaTime.toInt, TimeUnit.SECONDS),
         LSNS_POSITION -> position,
-        LSNS_RANDOM_ALCHEMIST -> rng,
         LSNS_TIMESTAMP -> currentTime,
-        LSNS_NODE_MANAGER -> new SimpleNodeManager(node)
+        LSNS_TIME -> LocalDateTime.MIN.plusSeconds(currentTime.toDouble.toInt),
+        LSNS_ALCHEMIST_NODE_MANAGER -> new SimpleNodeManager(node),
+        LSNS_ALCHEMIST_DELTA_TIME -> deltaTime,
+        LSNS_ALCHEMIST_ENVIRONMENT -> environment,
+        LSNS_ALCHEMIST_RANDOM -> rng
     )
     val nbrSensors = Map(
-        NBR_LAG -> nbrData.mapValues[Double](currentTime - _.executionTime),
+        NBR_LAG -> nbrData.mapValues[FiniteDuration](nbr => FiniteDuration((currentTime - nbr.executionTime).toInt, TimeUnit.SECONDS)),
         /*
          * nbrDelay is estimated: it should be nbr(deltaTime), here we suppose the round frequency
          * is negligibly different between devices.
          */
-        NBR_DELAY -> nbrData.mapValues[Double](nbr => nbr.executionTime + deltaTime - currentTime),
+        NBR_DELAY -> nbrData.mapValues[FiniteDuration](nbr => FiniteDuration((nbr.executionTime + deltaTime - currentTime).toInt, TimeUnit.SECONDS)),
         NBR_RANGE -> nbrData.mapValues[Double](_.position.getDistanceTo(position)),
-        NBR_VECTOR -> nbrData.mapValues[P](position - _.position)
+        NBR_VECTOR -> nbrData.mapValues[Point3D](nbr => position - nbr.position),
+        NBR_ALCHEMIST_LAG -> nbrData.mapValues[Double](currentTime - _.executionTime),
+        NBR_ALCHEMIST_DELAY -> nbrData.mapValues[Double](nbr => nbr.executionTime + deltaTime - currentTime),
     )
     val nbrRange = nbrData.mapValues { _.position }
     val exports = nbrData.mapValues { _.export }

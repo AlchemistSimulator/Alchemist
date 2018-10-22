@@ -64,6 +64,7 @@ class TestInSimulator[P <: Position[P]] extends FunSuite with Matchers {
     val sim = new Engine[T, P](env, maxSteps)
     sim.play()
     sim.run()
+    if(sim.getError.isPresent) throw new Exception(sim.getError.get().getMessage)
     env
   }
 }

@@ -8,8 +8,6 @@
  ******************************************************************************/
 package it.unibo.alchemist.scafi.test
 
-import it.unibo.alchemist.implementation.nodes.NodeManager
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist._
 
 class ScafiGradientProgram extends AggregateProgram {
@@ -33,12 +31,12 @@ class ScafiEnvProgram extends AggregateProgram with StandardSensors with ScafiAl
     alchemistEnvironment.getDimensions +
     deltaTime().length +
 
-    nextRandom +
+    (nextRandom+0.0) +
     currentTime().getDayOfMonth +
 
     // Alchemist-specific local sensors
-    alchemistRandomGen.nextBoolean() +
-    alchemistCoordinates +
+    (!alchemistRandomGen.nextBoolean()) +
+    alchemistCoordinates.head +
     alchemistDeltaTime(whenNan = 0.0).longValue() +
 
     // Environmental sensors

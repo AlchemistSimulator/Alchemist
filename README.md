@@ -66,7 +66,7 @@ Install the following plugins (use <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>
 #### Importing the project
 1. Clone this repository in a folder of your preference
 2. Open the `alchemist` folder as project with IntelliJ Idea
-3. Wait for the IDE to import the project from Gradle. The process may take several minutes, due to the amount of dependencies.
+3. Wait for the IDE to import the project from Gradle. The process may take several minutes, due to the amount of dependencies. Should the synchronization fail, make sure that the IDE's Gradle is configured correctly. In 'Settings -> Build, Execution, Deployment -> Build Tools > Gradle', select 'Use default gradle wrapper (recommended)'.
 
 ### Developing the project
 Contributions to this project are welcome. Just some rules:

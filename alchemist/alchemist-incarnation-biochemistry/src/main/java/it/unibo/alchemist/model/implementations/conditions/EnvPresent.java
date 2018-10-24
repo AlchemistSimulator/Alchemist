@@ -54,10 +54,11 @@ public class EnvPresent extends AbstractCondition<Double> {
     @Override
     public boolean isValid() {
         return environment.getNeighborhood(getNode()).getNeighbors().stream()
-                .parallel()
-                .filter(n -> n instanceof EnvironmentNode)
-                .findAny()
-                .isPresent();
+                .anyMatch(n -> n instanceof EnvironmentNode);
     }
 
+    @Override
+    public String toString() {
+        return "has environment [" + isValid() + "]";
+    }
 }

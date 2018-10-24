@@ -10,10 +10,10 @@ package it.unibo.alchemist.core.implementations;
 
 import it.unibo.alchemist.core.interfaces.DependencyHandler;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -24,9 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public final class DependencyHandlerImpl<T> implements DependencyHandler<T> {
 
-    private static final long serialVersionUID = 3442635555170492280L;
-    private static final AtomicInteger SINGLETON = new AtomicInteger();
-    private final int id = SINGLETON.getAndIncrement();
+    private static final long serialVersionUID = 1L;
     private final Reaction<T> reaction;
     private List<DependencyHandler<T>> indeps = new LinkedList<>();
     private List<DependencyHandler<T>> outdeps = new LinkedList<>();
@@ -44,17 +42,17 @@ public final class DependencyHandlerImpl<T> implements DependencyHandler<T> {
     }
 
     @Override
-    public void addInDependency(final DependencyHandler<T> r) {
+    public void addInbound(final DependencyHandler<T> r) {
         indeps.add(r);
     }
 
     @Override
-    public void addOutDependency(final DependencyHandler<T> r) {
+    public void addOutbound(final DependencyHandler<T> r) {
         outdeps.add(r);
     }
 
     @Override
-    public int compareTo(final DependencyHandler<T> o) {
+    public int compareTo(@NotNull final DependencyHandler<T> o) {
         return reaction.getTau().compareTo(o.getReaction().getTau());
     }
 
@@ -69,51 +67,28 @@ public final class DependencyHandlerImpl<T> implements DependencyHandler<T> {
     }
 
     @Override
-    public List<DependencyHandler<T>> influences() {
+    public List<DependencyHandler<T>> inbound() {
         return outdeps;
     }
 
     @Override
-    public List<DependencyHandler<T>> isInfluenced() {
+    public List<DependencyHandler<T>> outbound() {
         return indeps;
     }
 
     @Override
-    public void removeInDependency(final DependencyHandler<T> rh) {
+    public void removeInbound(final DependencyHandler<T> rh) {
         indeps.remove(rh);
     }
 
     @Override
-    public void removeOutDependency(final DependencyHandler<T> rh) {
+    public void removeOutbound(final DependencyHandler<T> rh) {
         outdeps.remove(rh);
-    }
-
-    @Override
-    public void setInDependencies(final List<DependencyHandler<T>> dep) {
-        indeps = dep;
-    }
-
-    @Override
-    public void setOutDependencies(final List<DependencyHandler<T>> dep) {
-        outdeps = dep;
     }
 
     @Override
     public String toString() {
         return "Handling: " + reaction.toString();
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (o instanceof DependencyHandlerImpl<?>) {
-            return id == o.hashCode();
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return id;
     }
 
 }

@@ -93,7 +93,7 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
     /**
      * Return all the Layers in this {@link Environment}.
      * 
-     * @return a {@link List} of {@link Layer}.
+     * @return a {@link ListSet} of {@link Layer}.
      */
     ListSet<Layer<T, P>> getLayers();
 

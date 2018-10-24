@@ -24,7 +24,7 @@ import java.io.Serializable;
  * 
  * @param <T>
  */
-public interface ReactionManager<T> extends Serializable {
+public interface Scheduler<T> extends Serializable {
 
     /**
      * Adds a reaction to the data structure.

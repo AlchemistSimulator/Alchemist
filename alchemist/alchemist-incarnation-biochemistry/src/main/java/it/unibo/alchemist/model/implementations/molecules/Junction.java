@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.implementations.molecules;
 import java.util.Collections;
 import java.util.Map;
 
+import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.Molecule;
 
 /**
@@ -69,7 +70,7 @@ public class Junction extends SimpleMolecule {
     }
 
     @Override
-    public boolean dependsOn(final Molecule mol) {
+    public boolean dependsOn(final Dependency mol) {
         return equals(mol);
     }
 

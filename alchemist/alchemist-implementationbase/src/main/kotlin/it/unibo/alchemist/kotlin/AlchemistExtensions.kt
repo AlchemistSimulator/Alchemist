@@ -23,5 +23,5 @@ import it.unibo.alchemist.model.interfaces.Time
  */
 fun <E> E.unfold(extractor: (E) -> Sequence<E>): Sequence<E> =
     sequenceOf(this) + extractor(this).flatMap { it.unfold(extractor) }
-operator fun Time.plus(other: Time) = sum(other)
-operator fun Time.minus(other: Time) = subtract(other)
+operator fun Time.plus(other: Time): Time = sum(other)
+operator fun Time.minus(other: Time): Time = subtract(other)

@@ -18,6 +18,7 @@ import java.util.Arrays;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 
+import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.Molecule;
 
 
@@ -41,11 +42,6 @@ public class SimpleMolecule implements Molecule {
      */
     public SimpleMolecule(final CharSequence name) {
         this.n = name;
-    }
-
-    @Override
-    public boolean dependsOn(final Molecule mol) {
-        return equals(mol);
     }
 
     @Override

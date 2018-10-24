@@ -19,8 +19,10 @@ package it.unibo.alchemist.model.implementations.actions;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import it.unibo.alchemist.model.interfaces.Dependency;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.LangUtils;
+import org.danilopianini.util.ImmutableListSet;
 import org.danilopianini.util.ListSet;
 import org.protelis.lang.ProtelisLoader;
 import org.protelis.vm.ExecutionContext;
@@ -64,7 +66,6 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
             final RandomGenerator rand,
             final org.protelis.vm.ProtelisProgram prog,
             final double retentionTime) {
-//        super(prog.getName());
         name = new SimpleMolecule(prog.getName());
         LangUtils.requireNonNull(env, r, n, prog, rand);
         program = prog;
@@ -192,6 +193,11 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
          * A Protelis program may modify any molecule (global variable)
          */
         return null;
+    }
+
+    @Override
+    public ListSet<? extends Dependency> getOutboundDependencies() {
+        return ImmutableListSet.of(Dependency.EVERYTHING);
     }
 
     /**

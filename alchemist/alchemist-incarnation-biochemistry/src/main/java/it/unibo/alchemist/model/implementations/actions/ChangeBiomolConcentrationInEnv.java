@@ -193,4 +193,9 @@ public class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<D
             target.setConcentration(biomolecule, target.getConcentration(biomolecule) + delta);
         }
     }
+
+    @Override
+    public String toString() {
+        return "add " + delta + " " + biomolecule + " in env ";
+    }
 }

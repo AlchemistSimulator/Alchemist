@@ -10,6 +10,7 @@ package it.unibo.alchemist.model.implementations.reactions;
 
 import it.unibo.alchemist.expressions.implementations.NumTreeNode;
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
+import it.unibo.alchemist.model.interfaces.Dependency;
 import org.apache.commons.math3.random.RandomGenerator;
 import it.unibo.alchemist.model.implementations.actions.LsaStandardAction;
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
@@ -70,7 +71,7 @@ public class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
      * @param listmol
      *            List of lsaMolecule to screen
      */
-    private static void screen(final List<Molecule> listmol) {
+    private static void screen(final List<Dependency> listmol) {
         /*
          * PHASE 1: generalize the list
          */
@@ -359,8 +360,8 @@ public class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
          * locally. Otherwise there is no control on where the modified
          * molecules will end up.
          */
-        final ListSet<Molecule> influencing = new ArrayListSet<>(getInfluencingMolecules());
-        final ListSet<Molecule> influenced = new ArrayListSet<>(getInfluencedMolecules());
+        final ListSet<Dependency> influencing = new ArrayListSet<>(getInfluencingMolecules());
+        final ListSet<Dependency> influenced = new ArrayListSet<>(getInfluencedMolecules());
         if (getInputContext() == Context.LOCAL && modifiesOnlyLocally) {
             /*
              * Moreover, since there is no control over the personalised agents,
@@ -375,7 +376,7 @@ public class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
                 }
             }
             if (allStandard) {
-                for (final Molecule m : influencing) {
+                for (final Dependency m : influencing) {
                     /*
                      * For each influencing molecule:
                      * 

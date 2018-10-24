@@ -44,7 +44,16 @@ public interface Condition<T> extends Serializable {
      * @return The list of molecules whose concentration may influence the truth
      *         value of this condition
      */
-    ListSet<? extends Molecule> getInfluencingMolecules();
+    @Deprecated
+    ListSet<? extends Dependency> getInfluencingMolecules();
+
+    /**
+     * @return The list of molecules whose concentration may influence the truth
+     *         value of this condition
+     */
+    default ListSet<? extends Dependency> getInboundDependencies() {
+        return getInfluencingMolecules();
+    }
 
     /**
      * @return the node this Condition belongs to
@@ -56,14 +65,36 @@ public interface Condition<T> extends Serializable {
      * Reactions. It allows this condition to influence the rate calculation in
      * some way. It's up to the reaction to decide whether to use or not this
      * information, and how.
-     * 
+     *
      * @return how this condition may influence the propensity.
      */
+    @Deprecated
     double getPropensityConditioning();
+
+    /**
+     * This method is a support for the propensity calculation inside the
+     * Reactions. It allows this condition to influence the rate calculation in
+     * some way. It's up to the reaction to decide whether to use or not this
+     * information, and how.
+     *
+     * @return how this condition may influence the propensity.
+     */
+    default double getPropensityContribution() {
+        return getPropensityConditioning();
+    }
 
     /**
      * @return true if the condition is satisfied in current environment.
      */
     boolean isValid();
 
+    /**
+     * This method is called by the {@link it.unibo.alchemist.core.interfaces.Simulation} once the {@link Reaction}
+     * whose this {@link Condition} belongs to is the next one to be executed, and
+     * all its conditions passed (namely, the next operation will be the reaction
+     * execution). It can be used to perform sanity checks, as well as for
+     * registering the status of the simulated world for future comparisons.
+     * Defaults to an empty implementation.
+     */
+    default void reactionReady() { };
 }

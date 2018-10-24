@@ -15,6 +15,7 @@ import it.unibo.alchemist.expressions.implementations.Type;
 import it.unibo.alchemist.expressions.implementations.VarTreeNode;
 import it.unibo.alchemist.expressions.interfaces.IExpression;
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
+import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import org.danilopianini.lang.HashString;
@@ -177,7 +178,7 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
     }
 
     @Override
-    public boolean dependsOn(final Molecule m) {
+    public boolean dependsOn(final Dependency m) {
         if (m instanceof ILsaMolecule) {
             final ILsaMolecule mol = (ILsaMolecule) m;
             if (mol.argsNumber() != argsNumber()) {

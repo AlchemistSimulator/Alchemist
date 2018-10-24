@@ -9,6 +9,8 @@
 package it.unibo.alchemist.core.interfaces;
 
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.Time;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.List;
@@ -26,7 +28,7 @@ public interface DependencyHandler<T> extends Serializable, Comparable<Dependenc
      * @param r
      *            the reaction
      */
-    void addInDependency(DependencyHandler<T> r);
+    void addInbound(DependencyHandler<T> r);
 
     /**
      * Adds r to those reactions ifluenced by the execution of this reaction.
@@ -34,7 +36,12 @@ public interface DependencyHandler<T> extends Serializable, Comparable<Dependenc
      * @param r
      *            the reaction
      */
-    void addOutDependency(DependencyHandler<T> r);
+    void addOutbound(DependencyHandler<T> r);
+
+    @Override
+    default int compareTo(@NotNull final DependencyHandler<T> o) {
+        return getTau().compareTo(o.getTau());
+    }
 
     /**
      * @return a list handlers of those reaction whose execution means an
@@ -48,12 +55,19 @@ public interface DependencyHandler<T> extends Serializable, Comparable<Dependenc
     Reaction<T> getReaction();
 
     /**
+     * @return The time at which the decorated reaction is scheduled
+     */
+    default Time getTau() {
+        return getReaction().getTau();
+    }
+
+    /**
      * Calculates the reactions which are influenced by this one.
      * 
      * @return a list handlers of those reaction whose times needs to be updated
      *         after the execution of the current reaction.
      */
-    List<DependencyHandler<T>> influences();
+    List<DependencyHandler<T>> inbound();
 
     /**
      * Calculates the reactions which influence by this one.
@@ -61,7 +75,7 @@ public interface DependencyHandler<T> extends Serializable, Comparable<Dependenc
      * @return a list handlers of those reaction whose execution implies a time
      *         update for this reaction.
      */
-    List<DependencyHandler<T>> isInfluenced();
+    List<DependencyHandler<T>> outbound();
 
     /**
      * Removes an in dependency. If the dependency was not present, this method
@@ -70,7 +84,7 @@ public interface DependencyHandler<T> extends Serializable, Comparable<Dependenc
      * @param rh
      *            the reaction to be removed from the list
      */
-    void removeInDependency(DependencyHandler<T> rh);
+    void removeInbound(DependencyHandler<T> rh);
 
     /**
      * Removes an out dependency. If the dependency was not present, this method
@@ -79,26 +93,6 @@ public interface DependencyHandler<T> extends Serializable, Comparable<Dependenc
      * @param rh
      *            the reaction to be removed from the list
      */
-    void removeOutDependency(DependencyHandler<T> rh);
-
-    /**
-     * Allows to change the in dependencies for this handler. No soundness is
-     * guaranteed for this change. Be careful.
-     * 
-     * @param dep
-     *            the list of the in dependencies.
-     */
-    void setInDependencies(List<DependencyHandler<T>> dep);
-
-    /**
-     * Allows to change the in dependencies for this handler. No soundness is
-     * guaranteed for this change. Be careful.
-     * 
-     * @param dep
-     *            the list of the out dependencies
-     */
-    void setOutDependencies(List<DependencyHandler<T>> dep);
-
-
+    void removeOutbound(DependencyHandler<T> rh);
 
 }

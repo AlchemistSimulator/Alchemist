@@ -14,7 +14,7 @@ import java.io.Serializable;
  *          Interface for a molecule.
  * 
  */
-public interface Molecule extends Serializable {
+public interface Molecule extends Dependency {
 
     /**
      * @return the name of this {@link Molecule}
@@ -27,13 +27,5 @@ public interface Molecule extends Serializable {
      * @return the id of the molecule
      */
     long getId();
-
-    /**
-     * Calculates the dependency of an {@link Molecule} against another.
-     * 
-     * @param mol the molecole to verify the dependency
-     * @return true if this molecule generates a dependency with mol
-     */
-    boolean dependsOn(Molecule mol);
 
 }

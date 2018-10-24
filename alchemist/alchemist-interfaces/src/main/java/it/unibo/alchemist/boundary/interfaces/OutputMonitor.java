@@ -30,7 +30,7 @@ public interface OutputMonitor<T, P extends Position<? extends P>> extends Seria
      * stopped it. Thread safety note: no specific policy is defined for the control
      * flow which will execute this method. A new thread could have been spawned or
      * the same flow of the simulation may execute this method. This depends on the
-     * specific {@link Simulation} implementation.
+     * specific {@link it.unibo.alchemist.core.interfaces.Simulation} implementation.
      * 
      * @param env
      *            The current environment
@@ -46,8 +46,8 @@ public interface OutputMonitor<T, P extends Position<? extends P>> extends Seria
      * phase is completed. Thread safety note: no specific policy is defined for the
      * control flow which will execute this method. A new thread could have been
      * spawned or the same flow of the simulation may execute this method. This
-     * depends on the specific {@link Simulation} implementation.
-     * 
+     * depends on the specific {@link it.unibo.alchemist.core.interfaces.Simulation} implementation.
+     *
      * @param env
      *            the environment
      */
@@ -58,7 +58,7 @@ public interface OutputMonitor<T, P extends Position<? extends P>> extends Seria
      * done. Thread safety note: no specific policy is defined for the control flow
      * which will execute this method. A new thread could have been spawned or the
      * same flow of the simulation may execute this method. This depends on the
-     * specific {@link Simulation} implementation.
+     * specific {@link it.unibo.alchemist.core.interfaces.Simulation} implementation.
      * 
      * @param env
      *            The current environment

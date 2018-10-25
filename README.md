@@ -64,27 +64,34 @@ Install the following plugins (use <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>
     * [PMDPlugin](https://plugins.jetbrains.com/plugin/1137-pmdplugin)
 
 #### Importing the project
-1. Clone this repository in a folder of your preference
-2. Select "Import Project"
-3. Select "Import Project from external model" and click <kbd>Next</kbd>
-4. Check "Use auto-import"
-5. Check "Create directories for empty content roots automatically"
-6. The correct group module option is "using explicit module groups", make sure it is selected
-7. Check "Create separate module per source set"
-8. *Important:* ensure that "Use default gradle wrapper (recommended) is selected
-9. Click <kbd>Finish</kbd>
-10. If prompted to override any .idea file, answer <kbd>No</kbd>
-11. Wait for the IDE to import the project from Gradle. The process may take several minutes, due to the amount of dependencies. Should the synchronization fail, make sure that the IDE's Gradle is configured correctly. In 'Settings -> Build, Execution, Deployment -> Build Tools > Gradle', select 'Use default gradle wrapper (recommended)'.
-12. Once imported, the project may still be unable to compile, due to missing sources in incarnation-biochemistry. This problem can be solved by opening the IntelliJ terminal (e.g. with <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>, typing "terminal" and pressing <kbd>Enter</kbd>), and issue:
+
+0. Clone this repository in a folder of your preference using `git clone` appropriately
+0. Open IntellJ. If a project opens automatically, select "Close project". You should be on the welcome screen of IntelliJ idea, with an aspect similar to this image: ![IntelliJ Welcome Screen](https://www.jetbrains.com/help/img/idea/2018.2/ideaWelcomeScreen.png)
+0. Select "Import Project"
+0. Navigate your file system and find the folder where you cloned the repository. **Do not select it**. Open the folder, and you should find a lowercase `alchemist` folder. That is the correct project folder, not the outermost `Alchemist` folder (created by `git` in case you cloned without specifying a different folder name). Once the correct folder has been selected, click <kbd>Ok</kbd>
+0. Select "Import Project from external model"
+0. Make sure "Gradle" is selected as external model tool
+0. click <kbd>Next</kbd>
+0. Check "Use auto-import"
+0. Check "Create directories for empty content roots automatically"
+0. The correct group module option is "using explicit module groups", make sure it is selected
+0. Check "Create separate module per source set"
+0. *Important:* ensure that "Use default gradle wrapper (recommended) is selected
+0. Click <kbd>Finish</kbd>
+0. If prompted to override any .idea file, try to answer <kbd>No</kbd>. It's possible that IntelliJ refuses to proceed and comes back to the previous window, in which case click <kbd>Finish</kbd> again, then select <kbd>Yes</kbd>.
+0. Wait for the IDE to import the project from Gradle. The process may take several minutes, due to the amount of dependencies. Should the synchronization fail, make sure that the IDE's Gradle is configured correctly. In 'Settings -> Build, Execution, Deployment -> Build Tools > Gradle', select 'Use default gradle wrapper (recommended)'.
+0. Once imported, the project may still be unable to compile, due to missing sources in incarnation-biochemistry. This problem can be solved by opening the IntelliJ terminal (e.g. with <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>, typing "terminal" and pressing <kbd>Enter</kbd>), and issue:
   - *On Unix: * `./gradlew alchemist-incarnation-biochemistry:generateGrammarSource`
-  - *On Unix: * `gradlew.bat alchemist-incarnation-biochemistry:generateGrammarSource`
+  - *On Windows: * `gradlew.bat alchemist-incarnation-biochemistry:generateGrammarSource`
 
 ### Developing the project
 Contributions to this project are welcome. Just some rules:
-0. We use [git flow](https://github.com/nvie/gitflow), so if you write new features, please do so in a separate `feature-` branch.
-0. We recommend forking the project, developing your stuff, then contributing back via pull request directly from GitHub
-0. Commit often. Do not throw at me pull requests with a single giant commit adding or changing the whole world. Split it in multiple commits and request a merge to the mainline often.
-0. Do not introduce low quality code. All the new code must comply with the checker rules (that are quite strict) and must not introduce any other warning. Resolutions of existing warnings (if any is present) are very welcome instead.
+
+* We use [git flow](https://github.com/nvie/gitflow), so if you write new features, please do so in a separate `feature-` branch.
+* We recommend forking the project, developing your stuff, then contributing back via pull request directly from GitHub
+* Commit often. Do not throw at me pull requests with a single giant commit adding or changing the whole world. Split it in multiple commits and request a merge to the mainline often.
+* Stay in sync with the `develop` branch: pull often from `develop` (if the build passes), so that you don't diverge too much from the main development line.
+* Do not introduce low quality code. All the new code must comply with the checker rules (that are quite strict) and must not introduce any other warning. Resolutions of existing warnings (if any is present) are very welcome instead.
 
 
 #### Building the project

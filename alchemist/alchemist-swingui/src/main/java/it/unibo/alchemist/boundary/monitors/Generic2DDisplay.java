@@ -712,7 +712,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                 if (isDraggingMouse) {
                     endingPoint = Optional.of(e.getPoint());
                 }
-                if (mouseMovement != null && !hooked.isPresent() && !isNotInteracting()) {
+                if (!hooked.isPresent() && !isNotInteracting()) {
                     final Point previous = wormhole.getViewPosition();
                     wormhole.setViewPosition(
                             PointAdapter.from(previous)

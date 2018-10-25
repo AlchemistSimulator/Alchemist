@@ -59,8 +59,6 @@ open class Grid @JvmOverloads constructor(
 
     override fun stream(): Stream<Position<*>> {
         val steps = Pair(steps(xStart, xEnd, xStep), steps(yStart, yEnd, yStep))
-        println(steps.first)
-        println(steps.second)
         val positions = (1 until steps.second).map { yn ->
             val y = yStart + yStep * yn
             (1 until steps.first).map { xn ->

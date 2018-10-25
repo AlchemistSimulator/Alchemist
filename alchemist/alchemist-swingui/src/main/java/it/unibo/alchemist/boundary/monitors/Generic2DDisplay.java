@@ -129,13 +129,9 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     private final ConcurrentMap<Node<T>, P> positions = new ConcurrentHashMap<>();
     private boolean realTime;
     private int st;
-
     private long timeInit = System.currentTimeMillis();
-
     private transient IWormhole2D<P> wormhole;
-
     private transient ZoomManager zoomManager;
-
     private transient boolean isPreviousStateMarking = true;
     private ViewStatus status = ViewStatus.MARK_CLOSER;
     private transient boolean isDraggingMouse;

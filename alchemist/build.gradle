@@ -65,6 +65,7 @@ allprojects {
 
     tasks.withType(Checkstyle) {
         mustRunAfter(test)
+        showViolations = false
     }
     tasks.withType(FindBugs) {
         mustRunAfter(test)

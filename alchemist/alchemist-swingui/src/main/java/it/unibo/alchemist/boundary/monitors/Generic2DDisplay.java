@@ -388,7 +388,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     }
 
     @Override
-    public void finished(final Environment<T, P> environment, final Time time, final long step) {
+    public final void finished(final Environment<T, P> environment, final Time time, final long step) {
         update(environment, time);
         firstTime = true;
     }

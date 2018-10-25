@@ -33,7 +33,7 @@ class SimpleNeighborhood<T, P : Position<P>> private constructor(
 
     override fun clone() = SimpleNeighborhood(environment, center, ArrayListSet(neighbors))
 
-    override fun contains(n: Int) = neighbors.map { it.id }.contains(n)
+    override fun contains(n: Int) = neighbors.any { it.id == n }
 
     override fun contains(n: Node<T>?) = neighbors.contains(n)
 
@@ -58,8 +58,10 @@ class SimpleNeighborhood<T, P : Position<P>> private constructor(
 
     override fun toString() = "$center links: $neighbors"
 
-    override fun equals(other: Any?): Boolean =
-        other is SimpleNeighborhood<*, *> && other.environment == environment && other.center == center && other.neighbors == neighbors
+    override fun equals(other: Any?): Boolean = other is SimpleNeighborhood<*, *>
+            && other.environment == environment
+            && other.center == center
+            && other.neighbors == neighbors
 
     override fun hashCode(): Int = Hashes.hash32(environment, center, neighbors)
 

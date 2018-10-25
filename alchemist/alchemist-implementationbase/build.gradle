@@ -17,5 +17,11 @@ dependencies {
     compile "org.scala-lang:scala-compiler:${scalaVersion}"
     compile "org.scala-lang:scala-library:${scalaVersion}"
 }
-compileJava.shouldRunAfter(compileScala)
-sourceSets.main.scala.outputDir = sourceSets.main.java.outputDir
+configurations {
+    apiElements {
+        outgoing.variants.getByName('classes').artifact(
+                file: compileScala.destinationDir,
+                type: ArtifactTypeDefinition.JVM_CLASS_DIRECTORY,
+                builtBy: compileScala)
+    }
+}

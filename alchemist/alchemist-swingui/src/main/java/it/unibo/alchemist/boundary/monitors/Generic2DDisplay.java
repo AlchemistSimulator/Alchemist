@@ -487,6 +487,11 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         obstacles = ((Environment2DWithObstacles<?, ?, ?>) env).getObstacles();
     }
 
+    /**
+     * Override as per {@link javax.swing.JComponent#paintComponent(Graphics)}
+     *
+     * @param g the {@link Graphics} in use
+     */
     @Override
     protected void paintComponent(final Graphics g) {
         super.paintComponent(g);

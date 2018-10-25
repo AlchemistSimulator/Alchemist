@@ -54,7 +54,7 @@ public final class MoveToTarget<T, P extends Position<P>> extends AbstractConfig
             final Molecule trackMolecule,
             final double speed) {
         super(environment, node,
-                PolygonalChain::new,
+                (p1, p2) -> new PolygonalChain<>(p1, p2),
                 new FollowTarget<>(environment, node, trackMolecule),
                 new ConstantSpeed<>(reaction, speed));
         this.trackMolecule = trackMolecule;

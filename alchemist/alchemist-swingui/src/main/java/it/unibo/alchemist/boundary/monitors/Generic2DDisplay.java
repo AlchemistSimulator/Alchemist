@@ -641,14 +641,10 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     /**
      * @param env
      *            the current environment
-     * @param <N>
-     *            positions
-     * @param <D>
-     *            distances
      * @return true if env is subclass of {@link Environment2DWithObstacles}
      *         and has mobile obstacles
      */
-    protected static <N extends Number, D extends Number> boolean envHasMobileObstacles(final Environment<?, ?> env) {
+    protected static boolean envHasMobileObstacles(final Environment<?, ?> env) {
         return env instanceof Environment2DWithObstacles && ((Environment2DWithObstacles<?, ?, ?>) env).hasMobileObstacles();
     }
 

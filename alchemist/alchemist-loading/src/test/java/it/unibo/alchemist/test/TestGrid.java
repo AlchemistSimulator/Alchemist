@@ -74,7 +74,7 @@ public class TestGrid {
      */
     @Test
     public void testbug73() {
-        assertEquals(20L * 20, new Grid(env(), rand(), 0, 0, 20, 20, 1, 1, 0.8, 0.8).stream().peek(System.out::println).count());
+        assertEquals(20L * 20, new Grid(env(), rand(), 0, 0, 20, 20, 1, 1, 0.8, 0.8).stream().distinct().count());
     }
 
     /**

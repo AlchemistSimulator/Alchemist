@@ -444,7 +444,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     /**
      *  Defines what to do when the UI is initialized.
      *
-     * @param environment
+     * @param environment the {@link Environment}
      */
     @Override
     public void initialized(final Environment<T, P> environment) {

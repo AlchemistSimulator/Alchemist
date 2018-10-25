@@ -305,4 +305,4 @@ buildScan {
     termsOfServiceAgree = 'yes'
 }
 
-defaultTasks 'clean', 'test', 'check', 'makeDocs', 'assemble', 'projectReport', 'buildDashboard', 'fatJar'
+defaultTasks 'clean', 'test', 'check', 'makeDocs', 'projectReport', 'buildDashboard', 'fatJar', 'signMainPublication'

@@ -762,7 +762,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         public void mouseReleased(final MouseEvent e) {
             if (SwingUtilities.isLeftMouseButton(e) && isDraggingMouse) {
                 endingPoint = Optional.of(e.getPoint());
-                if (status == ViewStatus.MOVING && originPoint.isPresent() && endingPoint.isPresent()) {
+                if (status == ViewStatus.MOVING && originPoint.isPresent()) {
                     if (currentEnv.getDimensions() == 2) {
                         final Simulation<T, P> engine = currentEnv.getSimulation();
                         if (engine != null) {

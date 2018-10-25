@@ -14,13 +14,15 @@ import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
 
 /**
  * This strategy makes the node move at an average constant speed, which is
- * influenced by the {@link TimeDistribution} of the {@link Reaction} hosting
- * this {@link Action}. This action tries to normalize on the {@link Reaction}
- * rate, but if the {@link TimeDistribution} has a high variance, the movements
+ * influenced by the {@link it.unibo.alchemist.model.interfaces.TimeDistribution} of the {@link Reaction} hosting
+ * this {@link it.unibo.alchemist.model.interfaces.Action}. This action tries to normalize on the {@link Reaction}
+ * rate, but if the {@link it.unibo.alchemist.model.interfaces.TimeDistribution} has a high variance, the movements
  * on the map will inherit this tract.
+ *
+ * @param <P> Position type
  * 
  */
-public class ConstantSpeed<P extends Position<P>> implements SpeedSelectionStrategy<P> {
+public final class ConstantSpeed<P extends Position<P>> implements SpeedSelectionStrategy<P> {
 
     private static final long serialVersionUID = 1746429998480123049L;
     private final double sp;

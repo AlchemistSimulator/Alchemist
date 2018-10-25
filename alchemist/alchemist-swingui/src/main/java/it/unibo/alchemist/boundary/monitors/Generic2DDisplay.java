@@ -575,7 +575,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     }
 
     @Override
-    public void stepDone(final Environment<T, P> environment, final Reaction<T> r, final Time time, final long step) {
+    public final void stepDone(final Environment<T, P> environment, final Reaction<T> r, final Time time, final long step) {
         if (firstTime) {
             synchronized (this) {
                 if (firstTime) {

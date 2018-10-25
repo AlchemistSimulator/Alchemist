@@ -11,15 +11,19 @@ package it.unibo.alchemist.model.implementations.actions
 import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
 
-import it.unibo.alchemist.model.interfaces.{Time => _, _}
+import it.unibo.alchemist.model.interfaces.Dependency
+import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.model.interfaces.Environment
 import org.apache.commons.math3.random.RandomGenerator
+import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.scala.PimpMyAlchemist._
 import org.apache.commons.math3.util.FastMath
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist
 import ScafiIncarnationForAlchemist.ContextImpl
 import ScafiIncarnationForAlchemist._
 import it.unibo.alchemist.implementation.nodes.SimpleNodeManager
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.scafi.space.Point3D
 import org.kaikikm.threadresloader.ResourceLoader
 

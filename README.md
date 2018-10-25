@@ -65,8 +65,19 @@ Install the following plugins (use <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>
 
 #### Importing the project
 1. Clone this repository in a folder of your preference
-2. Open the `alchemist` folder as project with IntelliJ Idea
-3. Wait for the IDE to import the project from Gradle. The process may take several minutes, due to the amount of dependencies. Should the synchronization fail, make sure that the IDE's Gradle is configured correctly. In 'Settings -> Build, Execution, Deployment -> Build Tools > Gradle', select 'Use default gradle wrapper (recommended)'.
+2. Select "Import Project"
+3. Select "Import Project from external model" and click <kbd>Next</kbd>
+4. Check "Use auto-import"
+5. Check "Create directories for empty content roots automatically"
+6. The correct group module option is "using explicit module groups", make sure it is selected
+7. Check "Create separate module per source set"
+8. *Important:* ensure that "Use default gradle wrapper (recommended) is selected
+9. Click <kbd>Finish</kbd>
+10. If prompted to override any .idea file, answer <kbd>Yes</kbd>
+11. Wait for the IDE to import the project from Gradle. The process may take several minutes, due to the amount of dependencies. Should the synchronization fail, make sure that the IDE's Gradle is configured correctly. In 'Settings -> Build, Execution, Deployment -> Build Tools > Gradle', select 'Use default gradle wrapper (recommended)'.
+12. Once imported, the project may still be unable to compile, due to missing sources in incarnation-biochemistry. This problem can be solved by opening the IntelliJ terminal (e.g. with <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>, typing "terminal" and pressing <kbd>Enter</kbd>), and issue:
+  - *On Unix: * `./gradlew alchemist-incarnation-biochemistry:generateGrammarSource`
+  - *On Unix: * `gradlew.bat alchemist-incarnation-biochemistry:generateGrammarSource`
 
 ### Developing the project
 Contributions to this project are welcome. Just some rules:

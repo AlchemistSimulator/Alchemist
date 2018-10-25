@@ -10,7 +10,7 @@ pools:
       type: Event
       actions:
         - type: RunScafiProgram
-          parameters: [test.scafiprograms.ScafiGradientProgram]
+          parameters: [it.unibo.alchemist.scafi.test.ScafiGradientProgram]
       
 positions:
   type: Continuous2DEuclidean

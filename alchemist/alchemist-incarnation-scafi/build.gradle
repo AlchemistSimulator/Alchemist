@@ -1,11 +1,13 @@
-apply plugin: 'scala'
+plugins {
+    id "scala"
+}
 
 dependencies {
     api project(':alchemist-interfaces')
     implementation (
         "com.github.cb372:scalacache-core_${scalaMajorVersion}:${scalaCacheVersion}",
         "com.github.cb372:scalacache-guava_${scalaMajorVersion}:${scalaCacheVersion}",
-        "it.unibo.apice.scafiteam:scafi-lib_${scalaMajorVersion}:${scafiVersion}",
+        "it.unibo.apice.scafiteam:scafi-core_${scalaMajorVersion}:${scafiVersion}",
         "org.scala-lang:scala-compiler:${scalaVersion}",
         "org.scala-lang:scala-library:${scalaVersion}",
         project(':alchemist-implementationbase'),
@@ -14,15 +16,9 @@ dependencies {
     testImplementation(
         project(':alchemist-engine'),
         project(':alchemist-loading'),
-        "org.scalatest:scalatest_${scalaMajorVersion}:${scalatestVersion}"
+        "org.scalatest:scalatest_${scalaMajorVersion}:${scalatestVersion}",
+        'org.pegdown:pegdown:1.6.0'
     )
 }
 
-task scalaTest(dependsOn: ['testClasses'], type: JavaExec) {
-  main = 'org.scalatest.tools.Runner'
-  args = ['-R', 'build/classes/test', '-o']
-  classpath = sourceSets.test.runtimeClasspath
-}
-
-test.dependsOn(scalaTest)
 

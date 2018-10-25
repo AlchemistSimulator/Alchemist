@@ -1,3 +1,5 @@
+package it.unibo.alchemist.scafi.test
+
 /*******************************************************************************
  * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
  * project's alchemist/build.gradle file.
@@ -8,20 +10,19 @@
  ******************************************************************************/
 import java.io.InputStream
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.loader.YamlLoader
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
-import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.{Environment, Position}
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FunSuite, Matchers}
-import org.slf4j.event.Level
-import org.slf4j.{Logger, LoggerFactory}
 
-import scala.collection.JavaConverters.asScalaBufferConverter
-import scala.collection.JavaConverters.mapAsScalaMapConverter
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
-import it.unibo.alchemist.model.interfaces.Position
+import scala.collection.JavaConverters.{asScalaBufferConverter, mapAsScalaMapConverter}
 
 @SuppressFBWarnings(value = Array("SE_BAD_FIELD"), justification="We are not going to Serialize test classes")
+@RunWith(classOf[JUnitRunner])
 class TestInSimulator[P <: Position[P]] extends FunSuite with Matchers {
   
   test("Basic test"){
@@ -31,7 +32,7 @@ class TestInSimulator[P <: Position[P]] extends FunSuite with Matchers {
     val env = testNoVar[Any]("/test_gradient.yml")
     env.getNodes.asScala.foreach(node => {
       val contents = node.getContents.asScala
-      (contents.get(new SimpleMolecule("test.scafiprograms.ScafiGradientProgram")).get.asInstanceOf[Double]) should (be >= 0.0 and be <= 100.0)
+      (contents.get(new SimpleMolecule("it.unibo.alchemist.scafi.test.ScafiGradientProgram")).get.asInstanceOf[Double]) should (be >= 0.0 and be <= 100.0)
     })
   }
 
@@ -63,6 +64,7 @@ class TestInSimulator[P <: Position[P]] extends FunSuite with Matchers {
     val sim = new Engine[T, P](env, maxSteps)
     sim.play()
     sim.run()
+    if(sim.getError.isPresent) throw new Exception(sim.getError.get().getMessage)
     env
   }
 }

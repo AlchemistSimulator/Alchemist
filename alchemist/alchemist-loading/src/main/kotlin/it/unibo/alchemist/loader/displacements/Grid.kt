@@ -58,10 +58,9 @@ open class Grid @JvmOverloads constructor(
 ) : Displacement<Position<*>> {
 
     override fun stream(): Stream<Position<*>> {
-        val steps = Pair(steps(xStart, xEnd, xStep), steps(yStart, yEnd, yStep))
-        val positions = (1 until steps.second).map { yn ->
+        val positions = (1 until stepCount(yStart, yEnd, yStep)).map { yn ->
             val y = yStart + yStep * yn
-            (1 until steps.first).map { xn ->
+            (1 until stepCount(xStart, xEnd, xStep)).map { xn ->
                 val x = xStart + xStep * xn
                 val dx = xRand * (randomGenerator.nextDouble() - 0.5) + yn * xShift % xStep
                 val dy = yRand * (randomGenerator.nextDouble() - 0.5) + xn * yShift % yStep
@@ -71,7 +70,7 @@ open class Grid @JvmOverloads constructor(
         return StreamSupport.stream(positions.spliterator(), false)
     }
 
-    private fun steps(min: Double, max: Double, step: Double): Int =
+    private fun stepCount(min: Double, max: Double, step: Double): Int =
         Math.ceil(Math.abs((max - min) / step)).toInt().let {
             it + if (step * it <= Math.abs(max - min)) 1 else 0
         }

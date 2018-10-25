@@ -387,8 +387,16 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         g.fillOval(x - SELECTED_NODE_INTERNAL_SIZE / 2, y - SELECTED_NODE_INTERNAL_SIZE / 2, SELECTED_NODE_INTERNAL_SIZE, SELECTED_NODE_INTERNAL_SIZE);
     }
 
+    /**
+     * Override to change or add operations to be done after a simulation is concluded.
+     *
+     * @param environment the {@link Environment}
+     * @param time
+     *            The time at which the simulation ended
+     * @param step the step at which the simulation ended
+     */
     @Override
-    public final void finished(final Environment<T, P> environment, final Time time, final long step) {
+    public void finished(final Environment<T, P> environment, final Time time, final long step) {
         update(environment, time);
         firstTime = true;
     }

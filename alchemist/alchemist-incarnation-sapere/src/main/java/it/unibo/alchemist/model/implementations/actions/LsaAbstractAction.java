@@ -48,7 +48,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
     public LsaAbstractAction(final ILsaNode node, final List<ILsaMolecule> m) {
         super(node);
         for (final ILsaMolecule mol : m) {
-            declareDependencyOn(mol);
+            declareDependencyTo(mol);
         }
     }
 
@@ -452,12 +452,6 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
      */
     protected final Map<HashString, ITreeNode<?>> getMatches() {
         return matches;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public ListSet<ILsaMolecule> getOutboundDependencies() {
-        return (ListSet<ILsaMolecule>) super.getOutboundDependencies();
     }
 
     @Override

@@ -54,10 +54,10 @@ public class CrowdSteeringService<P extends Position<? extends P>> extends SAPER
      */
     public CrowdSteeringService(final Environment<List<ILsaMolecule>, P> environment, final ILsaNode node, final LsaMolecule molecule, final int idPos, final int distPos) {
         super(environment, node);
-        declareDependencyOn(GRADID);
-        declareDependencyOn(FB);
-        declareDependencyOn(P);
-        declareDependencyOn(GO);
+        declareDependencyTo(GRADID);
+        declareDependencyTo(FB);
+        declareDependencyTo(P);
+        declareDependencyTo(GO);
         this.template = molecule;
         this.gradDistPos = distPos;
         this.gradIdPos = idPos;

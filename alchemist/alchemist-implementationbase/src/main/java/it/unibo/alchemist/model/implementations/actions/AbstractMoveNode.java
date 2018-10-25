@@ -26,7 +26,6 @@ import org.danilopianini.util.ListSet;
 public abstract class AbstractMoveNode<T, P extends Position<P>> extends AbstractAction<T> {
 
     private static final long serialVersionUID = -5867654295577425307L;
-    private static final ListSet<Dependency> DEPENDENCY = ImmutableListSet.of(Dependency.MOVEMENT);
     private final Environment<T, P> env;
     private final boolean isAbs;
 
@@ -58,6 +57,7 @@ public abstract class AbstractMoveNode<T, P extends Position<P>> extends Abstrac
         super(node);
         this.env = environment;
         this.isAbs = isAbsolute;
+        declareDependencyTo(Dependency.MOVEMENT);
     }
 
     @Override
@@ -111,8 +111,4 @@ public abstract class AbstractMoveNode<T, P extends Position<P>> extends Abstrac
         return isAbs;
     }
 
-    @Override
-    public final ListSet<? extends Dependency> getOutboundDependencies() {
-        return DEPENDENCY;
-    }
 }

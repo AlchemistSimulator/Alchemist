@@ -47,7 +47,7 @@ public class AddJunctionInCell extends AbstractNeighborAction<Double> {
     public AddJunctionInCell(final Environment<Double, ?> e, final Node<Double> n, final Junction j, final RandomGenerator rg) {
         super(n, e, rg);
         if (n instanceof CellNode) {
-            declareDependencyOn(j);
+            declareDependencyTo(j);
             jun = j;
         } else {
             throw new UnsupportedOperationException("This Action can be set only in CellNodes");

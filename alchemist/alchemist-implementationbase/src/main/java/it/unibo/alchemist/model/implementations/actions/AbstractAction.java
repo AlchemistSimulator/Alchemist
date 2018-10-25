@@ -55,7 +55,7 @@ public abstract class AbstractAction<T> implements Action<T> {
      * @param m
      *            the molecule which will be modified
      */
-    protected void declareDependencyOn(final Molecule m) {
+    protected final void declareDependencyTo(final Dependency m) {
         dependencies.add(m);
     }
 
@@ -77,7 +77,7 @@ public abstract class AbstractAction<T> implements Action<T> {
      * compatible context, return null.
      */
     @Override
-    public ListSet<? extends Dependency> getOutboundDependencies() {
+    public final ListSet<? extends Dependency> getOutboundDependencies() {
         return dependencies;
     }
 

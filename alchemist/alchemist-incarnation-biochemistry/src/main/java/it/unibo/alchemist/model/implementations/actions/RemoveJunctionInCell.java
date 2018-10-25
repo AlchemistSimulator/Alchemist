@@ -53,9 +53,9 @@ public class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
     public RemoveJunctionInCell(final Environment<Double, ?> e, final Node<Double> n, final Junction junction, final RandomGenerator rg) {
         super(n, e, rg);
         if (n instanceof CellNode) {
-            declareDependencyOn(junction);
+            declareDependencyTo(junction);
             for (final Map.Entry<Biomolecule, Double> entry : junction.getMoleculesInCurrentNode().entrySet()) {
-                declareDependencyOn(entry.getKey());
+                declareDependencyTo(entry.getKey());
             }
             jun = junction;
             env = e;

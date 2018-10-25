@@ -39,6 +39,7 @@ public class LsaDeleteNodeAction extends RemoveNode<List<ILsaMolecule>> implemen
      */
     public LsaDeleteNodeAction(final Environment<List<ILsaMolecule>, ?> environment, final ILsaNode node) {
         super(environment, node);
+        declareDependencyTo(Dependency.NEIGHBORHOOD_CHANGE);
     }
 
     /* (non-Javadoc)
@@ -47,11 +48,6 @@ public class LsaDeleteNodeAction extends RemoveNode<List<ILsaMolecule>> implemen
     @Override
     public LsaDeleteNodeAction cloneAction(final Node<List<ILsaMolecule>> n, final Reaction<List<ILsaMolecule>> r) {
         return new LsaDeleteNodeAction(getEnvironment(), (ILsaNode) n);
-    }
-
-    @Override
-    public ListSet<Dependency> getOutboundDependencies() {
-        return ImmutableListSet.of(Dependency.NEIGHBORHOOD_CHANGE);
     }
 
     @Override

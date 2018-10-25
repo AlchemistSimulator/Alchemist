@@ -403,7 +403,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     }
 
     @Override
-    public int getStep() {
+    public final int getStep() {
         return st;
     }
 

@@ -553,7 +553,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     }
 
     @Override
-    public void setRealTime(final boolean rt) {
+    public final void setRealTime(final boolean rt) {
         realTime = rt;
     }
 

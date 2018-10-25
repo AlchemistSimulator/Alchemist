@@ -53,7 +53,10 @@ public final class SupportedIncarnations {
      * @param s
      *            the name of the {@link Incarnation}
      * @param <T>
-     *            {@link Concentration} type
+     *            {@link it.unibo.alchemist.model.interfaces.Concentration} type
+     * @param <P>
+     *            {@link it.unibo.alchemist.model.interfaces.Position} type
+     *
      * @return an {@link Optional} containing the incarnation, if one with a
      *         matching name exists
      */

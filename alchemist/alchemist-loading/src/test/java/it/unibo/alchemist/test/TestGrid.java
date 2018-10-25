@@ -21,13 +21,20 @@ import it.unibo.alchemist.model.implementations.environments.Continuous2DEnviron
  */
 public class TestGrid {
 
+    private static Continuous2DEnvironment env() {
+        return new Continuous2DEnvironment<>();
+    }
+
+    private static MersenneTwister rand() {
+        return new MersenneTwister();
+    }
     /**
      * 
      */
     @Test
     public void testVerticalLine() {
         test(9, 1, 9.9);
-        assertEquals(10L, new Grid(new Continuous2DEnvironment<>(), new MersenneTwister(), 0, 0, 1, 10, 1, 1, 0, 0).stream().count());
+        assertEquals(10L, new Grid(env(), rand(), 0, 0, 1, 10, 1, 1, 0, 0).stream().count());
     }
 
     /**
@@ -60,6 +67,14 @@ public class TestGrid {
     @Test
     public void test10x10() {
         test(100, 10, 10);
+    }
+
+    /**
+     *
+     */
+    @Test
+    public void testbug73() {
+        assertEquals(20L * 20, new Grid(env(), rand(), 0, 0, 20, 20, 1, 1, 0.8, 0.8).stream().peek(System.out::println).count());
     }
 
     /**

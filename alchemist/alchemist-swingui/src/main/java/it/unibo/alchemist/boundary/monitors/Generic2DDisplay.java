@@ -171,8 +171,8 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         bindKeys();
     }
 
-    private boolean isInteracting() {
-        return status != ViewStatus.MARK_CLOSER && status != ViewStatus.VIEW_ONLY;
+    private boolean isNotInteracting() {
+        return status == ViewStatus.MARK_CLOSER || status == ViewStatus.VIEW_ONLY;
     }
 
     private void resetStatus() {
@@ -188,7 +188,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             if (status == ViewStatus.SELECTING) {
                 resetStatus();
                 this.selectedNodes.clear();
-            } else if (!isInteracting()) {
+            } else if (isNotInteracting()) {
                 this.status = ViewStatus.SELECTING;
             } 
             this.repaint();
@@ -526,7 +526,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
 
     @Override
     public void setMarkCloserNode(final boolean mark) {
-        if (!isInteracting()) {
+        if (isNotInteracting()) {
             if (mark) {
                 isPreviousStateMarking = true;
                 status = ViewStatus.MARK_CLOSER;
@@ -715,7 +715,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                 if (isDraggingMouse) {
                     endingPoint = Optional.of(e.getPoint());
                 }
-                if (mouseMovement != null && !hooked.isPresent() && !isInteracting()) {
+                if (mouseMovement != null && !hooked.isPresent() && !isNotInteracting()) {
                     final Point previous = wormhole.getViewPosition();
                     wormhole.setViewPosition(
                             PointAdapter.from(previous)

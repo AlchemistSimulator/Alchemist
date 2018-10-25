@@ -11,9 +11,12 @@ package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Context;
+import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
+import org.danilopianini.util.ImmutableListSet;
+import org.danilopianini.util.ListSet;
 
 /**
  * This action moves a node inside a given environment.
@@ -23,6 +26,7 @@ import it.unibo.alchemist.model.interfaces.Position;
 public abstract class AbstractMoveNode<T, P extends Position<P>> extends AbstractAction<T> {
 
     private static final long serialVersionUID = -5867654295577425307L;
+    private static final ListSet<Dependency> DEPENDENCY = ImmutableListSet.of(Dependency.MOVEMENT);
     private final Environment<T, P> env;
     private final boolean isAbs;
 
@@ -107,4 +111,8 @@ public abstract class AbstractMoveNode<T, P extends Position<P>> extends Abstrac
         return isAbs;
     }
 
+    @Override
+    public final ListSet<? extends Dependency> getOutboundDependencies() {
+        return DEPENDENCY;
+    }
 }

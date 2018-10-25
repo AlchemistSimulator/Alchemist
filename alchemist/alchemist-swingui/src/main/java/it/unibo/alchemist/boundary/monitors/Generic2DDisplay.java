@@ -526,7 +526,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     }
 
     @Override
-    public void setMarkCloserNode(final boolean mark) {
+    public final void setMarkCloserNode(final boolean mark) {
         if (isNotInteracting()) {
             if (mark) {
                 isPreviousStateMarking = true;

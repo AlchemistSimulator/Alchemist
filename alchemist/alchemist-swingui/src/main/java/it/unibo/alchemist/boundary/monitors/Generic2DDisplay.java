@@ -216,10 +216,10 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         bindKey(KeyEvent.VK_D, () -> {
             if (status == ViewStatus.SELECTING) {
                 this.status = ViewStatus.DELETING;
-                for (final Node<T> n : selectedNodes) {
-                    currentEnv.removeNode(n);
-                }
                 final Simulation<T, P> sim = currentEnv.getSimulation();
+                for (final Node<T> n : selectedNodes) {
+                    sim.schedule(() -> currentEnv.removeNode(n));
+                }
                 sim.schedule(() -> update(currentEnv, sim.getTime()));
                 resetStatus();
             }

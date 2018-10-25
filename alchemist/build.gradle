@@ -224,6 +224,8 @@ allprojects {
             }
         }
     }
+    javadoc.finalizedBy makeDocs
+    dokka.finalizedBy makeDocs
 }
 
 subprojects.each { subproject -> rootProject.evaluationDependsOn(subproject.path)}

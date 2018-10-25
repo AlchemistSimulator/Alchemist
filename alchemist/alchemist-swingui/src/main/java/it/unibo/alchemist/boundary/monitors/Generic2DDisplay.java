@@ -89,6 +89,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  * and simulation.
  * 
  * @param <T>
+ * @param <P>
  */
 public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel implements Graphical2DOutputMonitor<T, P> {
 
@@ -340,12 +341,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         }
         g.setColor(Color.GREEN);
         if (effectStack != null) {
-            effectStack.forEach(effect -> {
-                onView.entrySet().forEach(entry -> {
-                    final Point p = entry.getValue();
-                    effect.apply(g, entry.getKey(), p.x, p.y);
-                });
-            });
+            effectStack.forEach(effect -> onView.forEach((node, point) -> effect.apply(g, node, point.x, point.y)));
         }
         if (isCloserNodeMarked()) {
             final Optional<Map.Entry<Node<T>, Point>> closest = onView.entrySet().parallelStream()

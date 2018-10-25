@@ -370,7 +370,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             g.drawRect(x, y, width, height);
             selectedNodes = onView.entrySet().parallelStream()
                     .filter(nodes -> isInsideRectangle(nodes.getValue(), x, y, width, height))
-                    .map(onScreen -> onScreen.getKey())
+                    .map(Map.Entry::getKey)
                     .collect(Collectors.toSet());
         }
         selectedNodes.parallelStream()

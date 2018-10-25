@@ -219,8 +219,6 @@ allprojects {
         eachFile {
             if (Character.isUpperCase(it.name.charAt(0))) {
                 it.exclude()
-            } else {
-                println("Copied $it")
             }
         }
     }

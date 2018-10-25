@@ -55,7 +55,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     /**
      * Separators for toString.
      */
-    protected static final String NEXT = "next scheduled @", SEP0 = " :: ", SEP1 = " -", SEP2 = "-> ";
+    protected static final String SEP1 = " -", SEP2 = "-> ";
     private static final long serialVersionUID = 1L;
     private final int hash;
     private List<? extends Action<T>> actions = new ArrayList<Action<T>>(0);
@@ -298,21 +298,13 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     public String toString() {
         final StringBuilder tot = new StringBuilder(stringLength + MARGIN);
         tot.append(getReactionName());
-        tot.append(SEP0);
-        tot.append(NEXT);
+        tot.append('@');
         tot.append(getTau());
-        tot.append('\n');
-        for (final Condition<T> c : getConditions()) {
-            tot.append(c);
-            tot.append(' ');
-        }
-        tot.append(SEP1);
+        tot.append(getConditions().toString());
+        tot.append('-');
         tot.append(getRateAsString());
-        tot.append(SEP2);
-        for (final Action<T> a : getActions()) {
-            tot.append(a);
-            tot.append(' ');
-        }
+        tot.append("->");
+        tot.append(getActions().toString());
         stringLength = tot.length();
         return tot.toString();
     }

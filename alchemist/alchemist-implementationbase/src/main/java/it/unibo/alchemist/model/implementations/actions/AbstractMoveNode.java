@@ -7,9 +7,6 @@
  * LICENSE in the Alchemist distribution's top directory.
  ******************************************************************************/
 
-/**
- * 
- */
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.interfaces.Action;

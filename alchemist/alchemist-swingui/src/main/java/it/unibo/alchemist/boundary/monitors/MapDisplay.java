@@ -108,6 +108,7 @@ public class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
         try {
             super.setDist(x, y);
         } catch (final IllegalArgumentException e) {
+            // TODO: why is this silenced???
             return;
         }
     }

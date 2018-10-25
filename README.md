@@ -73,7 +73,7 @@ Install the following plugins (use <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>
 7. Check "Create separate module per source set"
 8. *Important:* ensure that "Use default gradle wrapper (recommended) is selected
 9. Click <kbd>Finish</kbd>
-10. If prompted to override any .idea file, answer <kbd>Yes</kbd>
+10. If prompted to override any .idea file, answer <kbd>No</kbd>
 11. Wait for the IDE to import the project from Gradle. The process may take several minutes, due to the amount of dependencies. Should the synchronization fail, make sure that the IDE's Gradle is configured correctly. In 'Settings -> Build, Execution, Deployment -> Build Tools > Gradle', select 'Use default gradle wrapper (recommended)'.
 12. Once imported, the project may still be unable to compile, due to missing sources in incarnation-biochemistry. This problem can be solved by opening the IntelliJ terminal (e.g. with <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>, typing "terminal" and pressing <kbd>Enter</kbd>), and issue:
   - *On Unix: * `./gradlew alchemist-incarnation-biochemistry:generateGrammarSource`

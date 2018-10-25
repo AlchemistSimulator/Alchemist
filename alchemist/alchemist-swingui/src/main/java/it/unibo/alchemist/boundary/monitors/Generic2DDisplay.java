@@ -848,6 +848,6 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
 
         DELETING,
 
-        MOLECULING;
+        MOLECULING
     }
 }

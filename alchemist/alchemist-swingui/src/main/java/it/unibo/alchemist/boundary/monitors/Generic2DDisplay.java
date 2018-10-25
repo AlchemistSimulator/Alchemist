@@ -29,6 +29,9 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -51,6 +54,7 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
 
+import com.google.common.collect.ImmutableList;
 import org.apache.commons.math3.util.Pair;
 import org.danilopianini.lang.LangUtils;
 import org.slf4j.Logger;
@@ -244,23 +248,23 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     }
 
     private Shape convertObstacle(final Obstacle2D o) {
-//        final Rectangle2D r = o.getBounds2D();
-//        final P[] points = new P[] {
-//                new Euclidean2DPosition(r.getX(), r.getY()),
-//                new Euclidean2DPosition(r.getX() + r.getWidth(), r.getY()),
-//                new Euclidean2DPosition(r.getX() + r.getWidth(), r.getY() + r.getHeight()),
-//                new Euclidean2DPosition(r.getX(), r.getY() + r.getHeight()) };
-//        final Path2D path = new GeneralPath();
-//        for (int i = 0; i < points.length; i++) {
-//            final Point pt = wormhole.getViewPoint(points[i]);
-//            if (i == 0) {
-//                path.moveTo(pt.getX(), pt.getY());
-//            }
-//            path.lineTo(pt.getX(), pt.getY());
-//        }
-//        path.closePath();
-//        return path;
-        return o.getBounds2D();
+        final Rectangle2D r = o.getBounds2D();
+        final List<P> points = ImmutableList.of(
+                currentEnv.makePosition(r.getX(), r.getY()),
+                currentEnv.makePosition(r.getX() + r.getWidth(), r.getY()),
+                currentEnv.makePosition(r.getX() + r.getWidth(), r.getY() + r.getHeight()),
+                currentEnv.makePosition(r.getX(), r.getY() + r.getHeight())
+        );
+        final Path2D path = new GeneralPath();
+        for (int i = 0; i < points.size(); i++) {
+            final Point pt = wormhole.getViewPoint(points.get(i));
+            if (i == 0) {
+                path.moveTo(pt.getX(), pt.getY());
+            }
+            path.lineTo(pt.getX(), pt.getY());
+        }
+        path.closePath();
+        return path;
     }
 
     /**

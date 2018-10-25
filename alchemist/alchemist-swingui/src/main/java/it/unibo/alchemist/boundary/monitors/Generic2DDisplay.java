@@ -513,7 +513,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     }
 
     @Override
-    public void setDrawLinks(final boolean b) {
+    public final void setDrawLinks(final boolean b) {
         if (paintLinks != b) {
             paintLinks = b;
             repaint();

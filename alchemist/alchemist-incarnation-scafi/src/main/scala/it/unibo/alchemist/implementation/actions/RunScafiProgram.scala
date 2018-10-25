@@ -11,12 +11,8 @@ package it.unibo.alchemist.model.implementations.actions
 import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
 
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.Time
-import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.{Time => _, _}
 import org.apache.commons.math3.random.RandomGenerator
-import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.scala.PimpMyAlchemist._
 import org.apache.commons.math3.util.FastMath
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist
@@ -49,7 +45,7 @@ sealed class RunScafiProgram[P <: Position[P]] (
   import RunScafiProgram.NBRData
   private val program = ResourceLoader.classForName(programName).newInstance().asInstanceOf[CONTEXT => EXPORT]
   private[this] var nbrData: Map[ID, NBRData[P]] = Map()
-  declareDependencyTo(programName)
+  declareDependencyTo(Dependency.EVERY_MOLECULE)
 
   override def cloneAction(n: Node[Any], r: Reaction[Any]) = {
     new RunScafiProgram(environment, n, r, rng, programName, retentionTime)

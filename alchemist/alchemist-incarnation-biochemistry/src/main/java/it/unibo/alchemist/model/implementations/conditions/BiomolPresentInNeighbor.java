@@ -52,7 +52,7 @@ public class BiomolPresentInNeighbor extends AbstractNeighborCondition<Double> {
      */
     public BiomolPresentInNeighbor(final Environment<Double, ?> env, final Node<Double> node, final Biomolecule molecule, final Double concentration) {
         super(env, node);
-        addReadMolecule(molecule);
+        declareDependencyOn(molecule);
         mol = molecule;
         conc = concentration;
     }

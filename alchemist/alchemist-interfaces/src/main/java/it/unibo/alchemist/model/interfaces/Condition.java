@@ -44,16 +44,7 @@ public interface Condition<T> extends Serializable {
      * @return The list of molecules whose concentration may influence the truth
      *         value of this condition
      */
-    @Deprecated
-    ListSet<? extends Dependency> getInfluencingMolecules();
-
-    /**
-     * @return The list of molecules whose concentration may influence the truth
-     *         value of this condition
-     */
-    default ListSet<? extends Dependency> getInboundDependencies() {
-        return getInfluencingMolecules();
-    }
+    ListSet<? extends Dependency> getInboundDependencies();
 
     /**
      * @return the node this Condition belongs to

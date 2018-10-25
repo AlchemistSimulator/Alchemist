@@ -39,7 +39,7 @@ public class MoleculeHasConcentration<T> extends AbstractCondition<T> {
         super(node);
         this.mol = Objects.requireNonNull(molecule);
         this.value = Objects.requireNonNull(value);
-        addReadMolecule(this.mol);
+        declareDependencyOn(this.mol);
     }
 
     @Override

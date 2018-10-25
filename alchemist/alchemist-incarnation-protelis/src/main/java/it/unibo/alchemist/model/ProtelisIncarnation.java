@@ -156,7 +156,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                 .flatMap(r -> r.getConditions().parallelStream())
                 .filter(c -> c instanceof ComputationalRoundComplete)
                 .map(c -> (ComputationalRoundComplete) c)
-                .flatMap(crc -> crc.getInfluencingMolecules().parallelStream())
+                .flatMap(crc -> crc.getInboundDependencies().parallelStream())
                 .filter(mol -> mol instanceof RunProtelisProgram)
                 .map(mol -> (RunProtelisProgram<P>) mol)
                 .collect(Collectors.toList());

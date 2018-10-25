@@ -43,7 +43,7 @@ public class ConcentrationChanged<T> extends AbstractCondition<T> {
         this.target = Objects.requireNonNull(target);
         previous = Optional.fromNullable(node.getConcentration(target));
         hasFlipped = false;
-        addReadMolecule(target);
+        declareDependencyOn(target);
     }
 
     @Override

@@ -50,7 +50,7 @@ public class GenericMoleculePresent<T extends Number> extends
         }
         molecule = mol;
         qty = quantity;
-        addReadMolecule(mol);
+        declareDependencyOn(mol);
     }
 
     @Override

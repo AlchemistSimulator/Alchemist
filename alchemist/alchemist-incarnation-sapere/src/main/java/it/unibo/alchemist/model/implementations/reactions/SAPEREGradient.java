@@ -517,7 +517,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         }
 
         @Override
-        public ListSet<? extends Dependency> getInfluencingMolecules() {
+        public ListSet<? extends Dependency> getInboundDependencies() {
             return DEPENDENCY;
         }
 

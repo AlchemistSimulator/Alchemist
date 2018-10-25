@@ -488,7 +488,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     }
 
     /**
-     * Override as per {@link javax.swing.JComponent#paintComponent(Graphics)}
+     * Override as per {@link javax.swing.JComponent#paintComponent(Graphics)}.
      *
      * @param g the {@link Graphics} in use
      */

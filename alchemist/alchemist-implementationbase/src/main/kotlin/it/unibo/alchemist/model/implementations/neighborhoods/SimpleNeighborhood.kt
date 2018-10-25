@@ -58,10 +58,10 @@ class SimpleNeighborhood<T, P : Position<P>> private constructor(
 
     override fun toString() = "$center links: $neighbors"
 
-    override fun equals(other: Any?): Boolean = other is SimpleNeighborhood<*, *>
-            && other.environment == environment
-            && other.center == center
-            && other.neighbors == neighbors
+    override fun equals(other: Any?): Boolean = other is SimpleNeighborhood<*, *> &&
+        other.environment == environment &&
+        other.center == center &&
+        other.neighbors == neighbors
 
     override fun hashCode(): Int = Hashes.hash32(environment, center, neighbors)
 

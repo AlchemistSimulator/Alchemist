@@ -49,7 +49,7 @@ sealed class RunScafiProgram[P <: Position[P]] (
   import RunScafiProgram.NBRData
   private val program = ResourceLoader.classForName(programName).newInstance().asInstanceOf[CONTEXT => EXPORT]
   private[this] var nbrData: Map[ID, NBRData[P]] = Map()
-  addModifiedMolecule(programName)
+  declareDependencyOn(programName)
 
   override def cloneAction(n: Node[Any], r: Reaction[Any]) = {
     new RunScafiProgram(environment, n, r, rng, programName, retentionTime)

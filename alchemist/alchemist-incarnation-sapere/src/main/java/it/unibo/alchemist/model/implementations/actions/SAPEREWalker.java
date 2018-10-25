@@ -85,11 +85,6 @@ public class SAPEREWalker extends MoveOnMap<List<ILsaMolecule>> implements ILsaA
     }
 
     @Override
-    public ListSet<ILsaMolecule> getModifiedMolecules() {
-        return ListSets.emptyListSet();
-    }
-
-    @Override
     public ILsaNode getNode() {
         return (ILsaNode) super.getNode();
     }

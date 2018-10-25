@@ -51,7 +51,7 @@ public class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborAction<
             final RandomGenerator randGen,
             final Double deltaConcentration) {
         super(node, environment, randGen);
-        addModifiedMolecule(biomol);
+        declareDependencyOn(biomol);
         mol = biomol;
         delta = deltaConcentration;
     }

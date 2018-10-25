@@ -188,16 +188,8 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
     }
 
     @Override
-    public ListSet<? extends Molecule> getModifiedMolecules() {
-        /*
-         * A Protelis program may modify any molecule (global variable)
-         */
-        return null;
-    }
-
-    @Override
     public ListSet<? extends Dependency> getOutboundDependencies() {
-        return ImmutableListSet.of(Dependency.EVERYTHING);
+        return ImmutableListSet.of(Dependency.EVERY_MOLECULE);
     }
 
     /**

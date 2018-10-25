@@ -11,7 +11,9 @@ package it.unibo.alchemist.model.implementations.actions;
 import java.util.List;
 import java.util.Map;
 
+import it.unibo.alchemist.model.interfaces.Dependency;
 import org.danilopianini.lang.HashString;
+import org.danilopianini.util.ImmutableListSet;
 import org.danilopianini.util.ListSet;
 import org.danilopianini.util.ListSets;
 
@@ -48,8 +50,8 @@ public class LsaDeleteNodeAction extends RemoveNode<List<ILsaMolecule>> implemen
     }
 
     @Override
-    public ListSet<ILsaMolecule> getModifiedMolecules() {
-        return ListSets.emptyListSet();
+    public ListSet<Dependency> getOutboundDependencies() {
+        return ImmutableListSet.of(Dependency.NEIGHBORHOOD_CHANGE);
     }
 
     @Override

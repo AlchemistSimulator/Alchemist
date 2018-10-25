@@ -15,7 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import it.unibo.alchemist.model.interfaces.Dependency;
 import org.danilopianini.lang.HashString;
+import org.danilopianini.util.ImmutableListSet;
 import org.danilopianini.util.ListSet;
 
 import gnu.trove.impl.Constants;
@@ -486,7 +488,8 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
     }
 
     private static class SGFakeConditionAction implements Action<List<ILsaMolecule>>, Condition<List<ILsaMolecule>> {
-        private static final long serialVersionUID = 2202769961348637251L;
+        private static final long serialVersionUID = 1L;
+        private static final ListSet<Dependency> DEPENDENCY = ImmutableListSet.of(Dependency.EVERYTHING);
         private final Molecule mol;
 
         SGFakeConditionAction(final Molecule m) {
@@ -514,13 +517,13 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         }
 
         @Override
-        public ListSet<? extends Molecule> getInfluencingMolecules() {
-            return null;
+        public ListSet<? extends Dependency> getInfluencingMolecules() {
+            return DEPENDENCY;
         }
 
         @Override
-        public ListSet<? extends Molecule> getModifiedMolecules() {
-            return null;
+        public ListSet<? extends Dependency> getOutboundDependencies() {
+            return DEPENDENCY;
         }
 
         @Override

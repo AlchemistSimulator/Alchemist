@@ -41,7 +41,7 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
     public AddJunctionInNeighbor(final Environment<Double, P> e, final CellNode<P> n, final Junction junction, final RandomGenerator rg) {
         super(n, e, rg);
         if (n instanceof CellNode) {
-            addModifiedMolecule(junction);
+            declareDependencyOn(junction);
             jun = junction; 
         } else {
             throw new UnsupportedOperationException("This Action can be set only in CellNodes");

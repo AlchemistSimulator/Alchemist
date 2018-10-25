@@ -31,7 +31,7 @@ public interface ILsaAction extends Action<List<ILsaMolecule>> {
     void setExecutionContext(Map<HashString, ITreeNode<?>> matches, List<ILsaNode> nodes);
 
     @Override
-    ListSet<? extends ILsaMolecule> getModifiedMolecules();
+    ListSet<? extends Dependency> getOutboundDependencies();
 
     @Override
     ILsaAction cloneAction(Node<List<ILsaMolecule>> n, Reaction<List<ILsaMolecule>> r);

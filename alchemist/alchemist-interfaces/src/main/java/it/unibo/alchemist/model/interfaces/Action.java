@@ -45,20 +45,9 @@ public interface Action<T> extends Serializable {
      */
     Context getContext();
 
-
     /**
-     * @return The list of the molecules whose concentration may be modified by
-     *         the execution of this action.
+     * @return The list of the dependencies that this action generates.
      */
-    @Deprecated
-    ListSet<? extends Dependency> getModifiedMolecules();
-
-    /**
-     * @return The list of the molecules whose concentration may be modified by
-     *         the execution of this action.
-     */
-    default ListSet<? extends Dependency> getOutboundDependencies() {
-        return getModifiedMolecules();
-    }
+    ListSet<? extends Dependency> getOutboundDependencies();
 
 }

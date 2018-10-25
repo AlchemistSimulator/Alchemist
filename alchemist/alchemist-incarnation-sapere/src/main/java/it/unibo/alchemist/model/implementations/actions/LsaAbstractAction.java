@@ -48,7 +48,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
     public LsaAbstractAction(final ILsaNode node, final List<ILsaMolecule> m) {
         super(node);
         for (final ILsaMolecule mol : m) {
-            addModifiedMolecule(mol);
+            declareDependencyOn(mol);
         }
     }
 
@@ -456,8 +456,8 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
 
     @Override
     @SuppressWarnings("unchecked")
-    public ListSet<ILsaMolecule> getModifiedMolecules() {
-        return (ListSet<ILsaMolecule>) super.getModifiedMolecules();
+    public ListSet<ILsaMolecule> getOutboundDependencies() {
+        return (ListSet<ILsaMolecule>) super.getOutboundDependencies();
     }
 
     @Override

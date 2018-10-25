@@ -441,6 +441,11 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         }
     }
 
+    /**
+     *  Defines what to do when the UI is initialized.
+     *
+     * @param environment
+     */
     @Override
     public void initialized(final Environment<T, P> environment) {
         stepDone(environment, null, new DoubleTime(), 0);
@@ -490,7 +495,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
      * @param x x coord
      * @param y y coord
      */
-    protected void setDist(final int x, final int y) {
+    protected void setMouseTooltipTo(final int x, final int y) {
         if (wormhole != null) {
             mousex = x;
             mousey = y;
@@ -656,7 +661,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     private class MouseManager implements MouseInputListener, MouseWheelListener, MouseMotionListener {
         @Override
         public void mouseClicked(final MouseEvent e) {
-            setDist(e.getX(), e.getY());
+            setMouseTooltipTo(e.getX(), e.getY());
             if (isCloserNodeMarked() && nearest != null && SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
                 final NodeTracker<T, P> monitor = new NodeTracker<>(nearest);
                 monitor.stepDone(currentEnv, null, new DoubleTime(lasttime), st);
@@ -703,7 +708,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
 
         @Override
         public void mouseDragged(final MouseEvent e) {
-            setDist(e.getX(), e.getY());
+            setMouseTooltipTo(e.getX(), e.getY());
             if (wormhole == null || mouseMovement == null) {
                 return;
             }
@@ -798,7 +803,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         }
 
         private void updateMouse(final MouseEvent e) {
-            setDist(e.getX(), e.getY());
+            setMouseTooltipTo(e.getX(), e.getY());
             if (isCloserNodeMarked()) {
                 repaint();
             }

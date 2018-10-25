@@ -722,7 +722,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                             PointAdapter.from(previous)
                                 .sum(PointAdapter.from(mouseMovement.getVariation())).toPoint());
                 }
-            } else if (SwingUtilities.isRightMouseButton(e) && mouseMovement != null && angleManager != null && wormhole.getMode() != Mode.MAP) {
+            } else if (SwingUtilities.isRightMouseButton(e) && angleManager != null && wormhole.getMode() != Mode.MAP) {
                 angleManager.inc(mouseMovement.getVariation().getX());
                 wormhole.rotateAroundPoint(getCenter(), angleManager.getAngle());
             }

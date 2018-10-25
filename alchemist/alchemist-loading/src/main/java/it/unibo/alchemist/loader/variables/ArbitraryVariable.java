@@ -24,7 +24,7 @@ public final class ArbitraryVariable extends PrintableVariable<Serializable> {
     private final Serializable def;
     private final ListSet<? extends Serializable> vals;
 
-    private ArbitraryVariable(final ListSet<? extends Serializable> values, final Serializable def) {
+    private ArbitraryVariable(final Serializable def, final ListSet<? extends Serializable> values, boolean unused) {
         this.def = def;
         vals = values;
     }
@@ -36,7 +36,7 @@ public final class ArbitraryVariable extends PrintableVariable<Serializable> {
      *            all the values this variable may yield
      */
     public ArbitraryVariable(final Serializable def, final double... values) {
-        this(ImmutableListSet.<Double>of(ArrayUtils.toObject(values)), def);
+        this(def, ImmutableListSet.<Double>of(ArrayUtils.toObject(values)), true);
     }
 
     /**
@@ -46,7 +46,7 @@ public final class ArbitraryVariable extends PrintableVariable<Serializable> {
      *            all the values this variable may yield
      */
     public ArbitraryVariable(final Serializable def, final Iterable<? extends Serializable> values) {
-        this(ImmutableListSet.copyOf(values), def);
+        this(def, ImmutableListSet.copyOf(values), true);
     }
 
     @Override

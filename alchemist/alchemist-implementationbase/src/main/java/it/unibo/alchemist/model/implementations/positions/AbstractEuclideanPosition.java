@@ -21,6 +21,7 @@ import org.danilopianini.util.Hashes;
 
 import it.unibo.alchemist.exceptions.UncomparableDistancesException;
 import it.unibo.alchemist.model.interfaces.Position;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * N-dimensional Euclidean position.
@@ -54,6 +55,7 @@ public abstract class AbstractEuclideanPosition<P extends AbstractEuclideanPosit
     }
 
     @Override
+    @NotNull
     public final List<? extends P> boundingBox(final double range) {
         final List<P> box = new ArrayList<>(getDimensions());
         for (int i = 0; i < getDimensions(); i++) {
@@ -140,12 +142,14 @@ public abstract class AbstractEuclideanPosition<P extends AbstractEuclideanPosit
     }
 
     @Override
-    public final P plus(final P other) {
+    @NotNull
+    public final P plus(@NotNull final P other) {
         return unsafeConstructor(MathArrays.ebeAdd(c, other.getCartesianCoordinates()));
     }
 
     @Override
-    public final P minus(final P other) {
+    @NotNull
+    public final P minus(@NotNull final P other) {
         return unsafeConstructor(MathArrays.ebeSubtract(c, other.getCartesianCoordinates()));
     }
 

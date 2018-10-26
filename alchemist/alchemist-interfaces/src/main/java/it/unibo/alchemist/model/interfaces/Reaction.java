@@ -81,13 +81,13 @@ public interface Reaction<T> extends Comparable<Reaction<T>>, Serializable {
      * @return The list of {@link Dependency} whose concentration may change after the
      *         execution of this reaction.
      */
-    @NotNull ListSet<? extends Dependency> getOutboundDependencies();
+    ListSet<? extends Dependency> getOutboundDependencies();
 
     /**
      * @return The list of {@link Dependency}s whose concentration may affect the
      *         execution of the {@link Reaction}.
      */
-    @NotNull ListSet<? extends Dependency> getInboundDependencies();
+    ListSet<? extends Dependency> getInboundDependencies();
 
     /**
      * @return The widest {@link Context} among {@link Condition}s, namely the

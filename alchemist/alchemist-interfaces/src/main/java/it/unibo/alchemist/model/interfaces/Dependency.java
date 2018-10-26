@@ -7,6 +7,11 @@ public interface Dependency extends Serializable {
     public static Dependency EVERYTHING = new Dependency() {
         @Override
         public boolean dependsOn(final Dependency dependency) { return true; }
+
+        @Override
+        public String toString() {
+            return "Everything";
+        }
     };
 
     public static Dependency EVERY_MOLECULE = new Dependency() {
@@ -14,9 +19,18 @@ public interface Dependency extends Serializable {
         public boolean dependsOn(final Dependency dependency) {
             return dependency == this || dependency instanceof Molecule;
         }
+        @Override
+        public String toString() {
+            return "Every_molecule";
+        }
     };
 
-    public static Dependency MOVEMENT = new Dependency() { };
+    public static Dependency MOVEMENT = new Dependency() {
+        @Override
+        public String toString() {
+            return "Movement";
+        }
+    };
 
     public static Dependency NEIGHBORHOOD_CHANGE = new Dependency() {
         @Override
@@ -26,6 +40,10 @@ public interface Dependency extends Serializable {
         @Override
         public boolean makesDependent(Dependency dependency) {
             return equals(dependency);
+        }
+        @Override
+        public String toString() {
+            return "Neighborhood_change";
         }
     };
 

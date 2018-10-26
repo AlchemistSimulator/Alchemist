@@ -121,7 +121,7 @@ public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends 
 
     /**
      * Subclasses may override this method if they want to change the way a node
-     * moves towards some aboslute position. Overriding this method will also
+     * moves towards some absolute position. Overriding this method will also
      * influence {@link #moveNode(Node, Position2D)}, as it calls this method in the
      * current implementation
      */
@@ -129,7 +129,8 @@ public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends 
     public void moveNodeToPosition(final Node<T> node, final P newpos) {
         includeObject(newpos);
         setPosition(node, newpos);
-        updateNeighborhood(node);
+        // TODO: before this point, reactions dependent on movement must be updated
+        updateNeighborhood(node, false);
         final Simulation<T, P> sim = getSimulation();
         if (sim != null) {
             sim.nodeMoved(node);

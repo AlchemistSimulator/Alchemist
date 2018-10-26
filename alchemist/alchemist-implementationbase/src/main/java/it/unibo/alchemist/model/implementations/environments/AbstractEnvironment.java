@@ -114,11 +114,11 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
             /*
              * Neighborhood computation
              */
-            updateNeighborhood(node);
+            updateNeighborhood(node, true);
             /*
              * Reaction and dependencies creation on the engine. This must be
              * executed only when the neighborhoods have been correctly computed,
-             * and only if a simulation engine have actually been attached.
+             * and only if a simulation engine has actually been attached.
              */
             ifEngineAvailable(s -> s.nodeAdded(node));
             /*
@@ -472,7 +472,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
      * @param node
      *            the node that has been moved
      */
-    protected final void updateNeighborhood(final Node<T> node) {
+    protected final void updateNeighborhood(final Node<T> node, final boolean isNewNode) {
         /*
          * The following optimization allows to define as local the context of
          * reactions which are actually including a move, which should be
@@ -493,7 +493,9 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
                 .forEachOrdered(neighborhoodToChange -> {
                     final Node<T> formerNeighbor = neighborhoodToChange.getCenter();
                     neighCache.put(formerNeighbor.getId(), neighborhoodToChange.remove(node));
-                    ifEngineAvailable(s -> s.neighborRemoved(node, formerNeighbor));
+                    if (!isNewNode) {
+                        ifEngineAvailable(s -> s.neighborRemoved(node, formerNeighbor));
+                    }
                 });
             }
             /*
@@ -505,7 +507,9 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
                     .map(it -> (Set<? extends Node<T>>) it)
                     .orElseGet(() -> Collections.emptySet()))) {
                 neighCache.put(newNeighbor.getId(), neighCache.get(newNeighbor.getId()).add(node));
-                ifEngineAvailable(s -> s.neighborAdded(node, newNeighbor));
+                if (!isNewNode) {
+                    ifEngineAvailable(s -> s.neighborAdded(node, newNeighbor));
+                }
             }
         } else {
             final Queue<Operation> operations = recursiveOperation(node);

@@ -112,6 +112,8 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
     @SuppressWarnings("unchecked")
     public SAPEREGradient(final Environment<List<ILsaMolecule>, P> env, final ILsaNode n, final ILsaMolecule sourceTemplate, final ILsaMolecule gradientTemplate, final int valuePosition, final String expression, final ILsaMolecule contextTemplate, final double gradThreshold, final TimeDistribution<List<ILsaMolecule>> td) {
         super(n, td);
+        setInputContext(Context.LOCAL);
+        setOutputContext(Context.NEIGHBORHOOD);
         gradient = Objects.requireNonNull(gradientTemplate);
         source = Objects.requireNonNull(sourceTemplate);
         context = contextTemplate;
@@ -306,21 +308,11 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         return fakeconds;
     }
 
-    @Override
-    public Context getInputContext() {
-        return Context.NEIGHBORHOOD;
-    }
-
     /**
      * @return the current node as {@link ILsaNode}
      */
     public ILsaNode getLsaNode() {
         return (ILsaNode) getNode();
-    }
-
-    @Override
-    public Context getOutputContext() {
-        return Context.LOCAL;
     }
 
     @Override

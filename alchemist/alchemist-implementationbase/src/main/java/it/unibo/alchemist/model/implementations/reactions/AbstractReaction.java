@@ -54,15 +54,10 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      */
     private static final byte MARGIN = 20;
     private static final ListSet<Dependency> EVERYTHING = ImmutableListSet.of(Dependency.EVERYTHING);
-    private static final ListSet<Dependency> EVERY_MOLECULE = ImmutableListSet.of(Dependency.EVERY_MOLECULE);
-    /**
-     * Separators for toString.
-     */
-    protected static final String SEP1 = " -", SEP2 = "-> ";
     private static final long serialVersionUID = 1L;
     private final int hash;
-    private List<? extends Action<T>> actions = new ArrayList<Action<T>>(0);
-    private List<? extends Condition<T>> conditions = new ArrayList<Condition<T>>(0);
+    private List<? extends Action<T>> actions = new ArrayList<>(0);
+    private List<? extends Condition<T>> conditions = new ArrayList<>(0);
     private Context incontext = Context.LOCAL, outcontext = Context.LOCAL;
     private ListSet<Dependency> outbound = new LinkedListSet<>();
     private ListSet<Dependency> inbound = new LinkedListSet<>();
@@ -104,6 +99,11 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
         inbound.add(m);
     }
 
+    /**
+     * The default implementation verifies if all the conditions are valid.
+     *
+     * @return true if the reaction can execute right now.
+     */
     @Override
     public boolean canExecute() {
         if (conditions == null) {
@@ -117,7 +117,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     }
 
     @Override
-    public int compareTo(final Reaction<T> o) {
+    public final int compareTo(final Reaction<T> o) {
         return getTau().compareTo(o.getTau());
     }
 
@@ -126,6 +126,9 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
         return this == o;
     }
 
+    /**
+     * The default execution iterates all the actions in order and executes them. Override to change the behaviour.
+     */
     @Override
     public void execute() {
         for (final Action<T> a : actions) {
@@ -133,33 +136,45 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
         }
     }
 
+    /**
+     * Override only if you need to implement extremely tricky behaviours. Must be overridden along with
+     * {@link #setActions(List)}.
+     *
+     * @return the list of {@link Action}s.
+     */
     @Override
     public List<Action<T>> getActions() {
         return Collections.unmodifiableList(actions);
     }
 
+    /**
+     * Override only if you need to implement extremely tricky behaviours. Must be overridden along with
+     * {@link #setConditions(List)}.
+     *
+     * @return the list of {@link Condition}s.
+     */
     @Override
     public List<Condition<T>> getConditions() {
         return Collections.unmodifiableList(conditions);
     }
 
     @Override
-    public ListSet<Dependency> getOutboundDependencies() {
+    public final ListSet<Dependency> getOutboundDependencies() {
         return optionallyImmodifiableView(outbound);
     }
 
     @Override
-    public ListSet<Dependency> getInboundDependencies() {
+    public final ListSet<Dependency> getInboundDependencies() {
         return optionallyImmodifiableView(inbound);
     }
 
     @Override
-    public Context getInputContext() {
+    public final Context getInputContext() {
         return incontext;
     }
 
     @Override
-    public Context getOutputContext() {
+    public final Context getOutputContext() {
         return outcontext;
     }
 
@@ -180,7 +195,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     }
 
     @Override
-    public Time getTau() {
+    public final Time getTau() {
         return dist.getNextOccurence();
     }
 
@@ -212,24 +227,17 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     protected <R extends Reaction<T>> R makeClone(final Supplier<R> builder) {
         final R res = builder.get();
         final Node<T> n = res.getNode();
-        final ArrayList<Condition<T>> c = new ArrayList<Condition<T>>(conditions.size());
+        final ArrayList<Condition<T>> c = new ArrayList<>(conditions.size());
         for (final Condition<T> cond : getConditions()) {
             c.add(cond.cloneCondition(n, res));
         }
-        final ArrayList<Action<T>> a = new ArrayList<Action<T>>(actions.size());
+        final ArrayList<Action<T>> a = new ArrayList<>(actions.size());
         for (final Action<T> act : getActions()) {
             a.add(act.cloneAction(n, res));
         }
         res.setActions(a);
         res.setConditions(c);
         return res;
-    }
-
-    @Override
-    public void setActions(final List<Action<T>> a) {
-        actions = Objects.requireNonNull(a, "The actions list can't be null");
-        setInputContext(a.stream().map(Action::getContext).reduce(Context.LOCAL, Context::getWider));
-        outbound = computeDependencies(a.stream().map(Action::getOutboundDependencies).flatMap(List::stream));
     }
 
     private static ListSet<Dependency> computeDependencies(final Stream<? extends Dependency> stream) {
@@ -252,6 +260,25 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
         return result;
     }
 
+    /**
+     * This should get overridden only if very tricky behaviours are implemented, such that the default Alchemist
+     * action addition model is no longer usable. Must be overridden along with {@link #getActions()}.
+     *
+     * @param a the actions to set
+     */
+    @Override
+    public void setActions(final List<Action<T>> a) {
+        actions = Objects.requireNonNull(a, "The actions list can't be null");
+        setOutputContext(a.stream().map(Action::getContext).reduce(Context.LOCAL, Context::getWider));
+        outbound = computeDependencies(a.stream().map(Action::getOutboundDependencies).flatMap(List::stream));
+    }
+
+    /**
+     * This should get overridden only if very tricky behaviours are implemented, such that the default Alchemist
+     * condition addition model is no longer usable. Must be overridden along with {@link #getConditions()}.
+     *
+     * @param c the actions to set
+     */
     @Override
     public void setConditions(final List<Condition<T>> c) {
         conditions = Objects.requireNonNull(c, "The conditions list can't be null");
@@ -260,22 +287,22 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     }
 
     /**
-     * Used by sublcasses to set their input context.
+     * Used by subclasses to set their input context.
      * 
      * @param c
      *            the new input context
      */
-    protected void setInputContext(final Context c) {
+    protected final void setInputContext(final Context c) {
         incontext = c;
     }
 
     /**
-     * Used by sublcasses to set their output context.
+     * Used by subclasses to set their output context.
      * 
      * @param c
      *            the new input context
      */
-    protected void setOutputContext(final Context c) {
+    protected final void setOutputContext(final Context c) {
         outcontext = c;
     }
 

@@ -85,7 +85,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      * @param m
      *            the influenced molecule
      */
-    protected void addInfluencedMolecule(final Molecule m) {
+    protected final void addOutboundDependency(final Dependency m) {
         outbound.add(m);
     }
 
@@ -95,7 +95,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      * @param m
      *            the molecule to add
      */
-    protected void addInfluencingMolecule(final Molecule m) {
+    protected final void addInboundDependency(final Dependency m) {
         inbound.add(m);
     }
 
@@ -345,24 +345,6 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      *            the current environment
      */
     protected abstract void updateInternalStatus(Time curTime, boolean executed, Environment<T, ?> env);
-
-    /**
-     * @param influenced
-     *            the new influenced molecules. Can be null.
-     */
-    @SuppressWarnings("unchecked")
-    protected void setInfluencedMolecules(final ListSet<? extends Dependency> influenced) {
-        this.outbound = (ListSet<Dependency>) influenced;
-    }
-
-    /**
-     * @param influencing
-     *            the new influencing molecules. Can be null.
-     */
-    @SuppressWarnings("unchecked")
-    protected void setInfluencingMolecules(final ListSet<? extends Dependency> influencing) {
-        this.inbound = (ListSet<Dependency>) influencing;
-    }
 
     @Override
     public final Node<T> getNode() {

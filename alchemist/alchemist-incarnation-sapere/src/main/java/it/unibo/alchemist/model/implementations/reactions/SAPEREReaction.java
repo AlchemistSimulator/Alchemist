@@ -362,8 +362,8 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
          * locally. Otherwise there is no control on where the modified
          * molecules will end up.
          */
-        final ListSet<Dependency> influencingThisReaction = new ArrayListSet<>(getInboundDependencies());
-        final ListSet<Dependency> influencedByMe = new ArrayListSet<>(getOutboundDependencies());
+        final ListSet<Dependency> inboundDependencies = new ArrayListSet<>(getInboundDependencies());
+        final ListSet<Dependency> outboundDependencies = new ArrayListSet<>(getOutboundDependencies());
         if (getInputContext() == Context.LOCAL && modifiesOnlyLocally) {
             /*
              * Moreover, since there is no control over the personalised agents,
@@ -378,7 +378,7 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
                 }
             }
             if (allStandard) {
-                for (final Dependency m : influencingThisReaction) {
+                for (final Dependency m : inboundDependencies) {
                     /*
                      * For each influencing molecule:
                      * 
@@ -389,18 +389,18 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
                      * not on the right side, they should be added (they will be
                      * removed)
                      */
-                    if (influencedByMe.contains(m)) {
-                        influencedByMe.remove(m);
+                    if (outboundDependencies.contains(m)) {
+                        outboundDependencies.remove(m);
                     } else {
-                        influencedByMe.add(m);
+                        outboundDependencies.add(m);
                     }
                 }
             }
         }
-        screen(influencingThisReaction);
-        screen(influencedByMe);
-        setInfluencingMolecules(influencingThisReaction);
-        setInfluencedMolecules(influencedByMe);
+        screen(inboundDependencies);
+        screen(outboundDependencies);
+        inboundDependencies.forEach(this::addInboundDependency);
+        outboundDependencies.forEach(this::addOutboundDependency);
     }
 
     /**

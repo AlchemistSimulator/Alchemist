@@ -127,13 +127,13 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         final List<IExpression> grexp = gradient.allocateVar(null);
         grexp.set(argPosition, exp);
         gradientExpr = new LsaMolecule(grexp);
-        addInfluencedMolecule(gradient);
-        addInfluencingMolecule(source);
+        addOutboundDependency(gradient);
+        addInboundDependency(source);
         fakeconds.add(new SGFakeConditionAction(source));
-        addInfluencingMolecule(gradient);
+        addInboundDependency(gradient);
         fakeacts.add(new SGFakeConditionAction(gradient));
         if (context != null) {
-            addInfluencingMolecule(context);
+            addInboundDependency(context);
             fakeconds.add(new SGFakeConditionAction(context));
         }
         final boolean usesRoutes = environment instanceof MapEnvironment && (gradientTemplate.toString().contains(LsaMolecule.SYN_ROUTE) || expression.contains(LsaMolecule.SYN_ROUTE));

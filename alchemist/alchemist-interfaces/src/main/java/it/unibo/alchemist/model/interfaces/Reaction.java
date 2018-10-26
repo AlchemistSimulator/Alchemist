@@ -12,7 +12,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.danilopianini.util.ListSet;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @param <T>

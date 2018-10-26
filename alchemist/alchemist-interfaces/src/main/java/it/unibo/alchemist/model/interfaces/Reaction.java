@@ -82,37 +82,9 @@ public interface Reaction<T> extends Comparable<Reaction<T>>, Serializable {
      *         will influence every other reaction with compatible context,
      *         regardless the molecules involved.
      */
-    @Deprecated
-    ListSet<? extends Dependency> getInfluencedMolecules();
+    ListSet<? extends Dependency> getOutboundDependencies();
 
-    /**
-     * @return The list of {@link Molecule}s whose concentration may affect the
-     *         execution of the {@link Reaction}. If it returns null, it means
-     *         that it is influenced every other reaction with compatible
-     *         context, regardless the molecules involved.
-     */
-    @Deprecated
-    ListSet<? extends Dependency> getInfluencingMolecules();
-
-    /**
-     * @return The list of molecules whose concentration may change after the
-     *         execution of this reaction. If it returns null, it means that it
-     *         will influence every other reaction with compatible context,
-     *         regardless the molecules involved.
-     */
-    default ListSet<? extends Dependency> getOutboundDependencies() {
-        return getInfluencedMolecules();
-    }
-
-    /**
-     * @return The list of {@link Dependency}s whose concentration may affect the
-     *         execution of the {@link Reaction}. If it returns null, it means
-     *         that it is influenced every other reaction with compatible
-     *         context, regardless the molecules involved.
-     */
-    default ListSet<? extends Dependency> getInboundDependencies() {
-        return getInfluencingMolecules();
-    }
+    ListSet<? extends Dependency> getInboundDependencies();
 
     /**
      * @return The widest {@link Context} among {@link Condition}s, namely the

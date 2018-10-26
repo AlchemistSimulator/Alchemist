@@ -362,8 +362,8 @@ public class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
          * locally. Otherwise there is no control on where the modified
          * molecules will end up.
          */
-        final ListSet<Dependency> influencing = new ArrayListSet<>(getInfluencingMolecules());
-        final ListSet<Dependency> influenced = new ArrayListSet<>(getInfluencedMolecules());
+        final ListSet<Dependency> influencing = new ArrayListSet<>(getInboundDependencies());
+        final ListSet<Dependency> influenced = new ArrayListSet<>(getInboundDependencies());
         if (getInputContext() == Context.LOCAL && modifiesOnlyLocally) {
             /*
              * Moreover, since there is no control over the personalised agents,

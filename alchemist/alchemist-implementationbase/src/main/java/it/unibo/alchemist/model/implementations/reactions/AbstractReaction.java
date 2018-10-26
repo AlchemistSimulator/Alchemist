@@ -144,12 +144,12 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     }
 
     @Override
-    public ListSet<Dependency> getInfluencedMolecules() {
+    public ListSet<Dependency> getOutboundDependencies() {
         return optionallyImmodifiableView(outbound);
     }
 
     @Override
-    public ListSet<Dependency> getInfluencingMolecules() {
+    public ListSet<Dependency> getInboundDependencies() {
         return optionallyImmodifiableView(inbound);
     }
 

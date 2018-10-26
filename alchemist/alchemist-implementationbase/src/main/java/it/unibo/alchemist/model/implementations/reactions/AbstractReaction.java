@@ -237,7 +237,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
         outbound = computeDependencies(a.stream().map(Action::getOutboundDependencies).flatMap(List::stream));
     }
 
-    private static ListSet<Dependency> computeDependencies(Stream<? extends Dependency> stream) {
+    private static ListSet<Dependency> computeDependencies(final Stream<? extends Dependency> stream) {
         final Iterator<? extends Dependency> fromStream = stream.iterator();
         boolean everyMolecule = false;
         ListSet<Dependency> result = new ArrayListSet<>();
@@ -247,12 +247,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
                 return EVERYTHING;
             }
             if (dependency.equals(Dependency.EVERY_MOLECULE) && !everyMolecule) {
-                final Iterator<Dependency> previousResults = result.iterator();
-                while (previousResults.hasNext()) {
-                    if (previousResults.next() instanceof Molecule) {
-                        previousResults.remove();
-                    }
-                }
+                result.removeIf(it -> it instanceof Molecule);
                 everyMolecule = true;
                 result.add(Dependency.EVERY_MOLECULE);
             } else  if (!(everyMolecule && dependency instanceof Molecule)) {

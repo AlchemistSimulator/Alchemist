@@ -157,7 +157,7 @@ public class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
             return;
         }
         final Position<?> nodePosCache = modifiesOnlyLocally ? environment.getPosition(getNode()) : null;
-        final List<? extends ILsaMolecule> localContentCache = modifiesOnlyLocally ? new ArrayList<>(getNode().getLsaSpace()) : null;
+        final List<? extends ILsaMolecule> localContentCache = modifiesOnlyLocally ? new ArrayList<>(getLsaNode().getLsaSpace()) : null;
         Map<HashString, ITreeNode<?>> matches = null;
         Map<ILsaNode, List<ILsaMolecule>> toRemove = null;
         /*
@@ -215,8 +215,8 @@ public class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
          * Empty action optimization
          */
         if (modifiesOnlyLocally) {
-            final ILsaNode n = getNode();
-            if (nodePosCache.equals(environment.getPosition(getNode()))) {
+            final ILsaNode n = getLsaNode();
+            if (nodePosCache != null && nodePosCache.equals(environment.getPosition(getNode()))) {
                 final List<? extends ILsaMolecule> contents = n.getLsaSpace();
                 if (contents.size() == localContentCache.size()) {
                     emptyExecution = localContentCache.containsAll(contents);
@@ -232,8 +232,10 @@ public class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
         return environment;
     }
 
-    @Override
-    public ILsaNode getNode() {
+    /**
+     * @return the local {@link Node} as {@link ILsaNode}
+     */
+    protected final ILsaNode getLsaNode() {
         return (ILsaNode) super.getNode();
     }
 
@@ -260,7 +262,7 @@ public class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
     }
 
     @Override
-    protected void updateInternalStatus(final Time curTime, final boolean executed, final Environment<List<ILsaMolecule>, ?> env) {
+    protected final void updateInternalStatus(final Time curTime, final boolean executed, final Environment<List<ILsaMolecule>, ?> env) {
         if (emptyExecution) {
             emptyExecution = false;
             totalPropensity = 0;
@@ -317,12 +319,12 @@ public class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
     }
 
     @Override
-    public double getRate() {
+    public final double getRate() {
         return totalPropensity;
     }
 
     @Override
-    public String getRateAsString() {
+    public final String getRateAsString() {
         return numericRate() ? Double.toString(getTimeDistribution().getRate()) : timedist.getRateEquation().toString();
     }
 

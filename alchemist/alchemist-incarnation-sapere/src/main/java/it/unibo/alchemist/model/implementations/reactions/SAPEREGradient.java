@@ -50,11 +50,12 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
 /**
  * This class provides a fast and stable gradient implementation, inspired on
  * the NBR construct used in Proto.
- * 
+ *
+ * @param <P> Position type
  */
 public final class SAPEREGradient<P extends Position<P>> extends AbstractReaction<List<ILsaMolecule>> {
 
-    private static final List<ILsaMolecule> EMPTY_LIST = Collections.unmodifiableList(new ArrayList<ILsaMolecule>(0));
+    private static final List<ILsaMolecule> EMPTY_LIST = Collections.unmodifiableList(new ArrayList<>(0));
     private static final long serialVersionUID = 8362443887879500016L;
     private static final IExpression ZERO_NODE = new Expression(new NumTreeNode(0d));
 
@@ -68,7 +69,6 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
     private final MapEnvironment<List<ILsaMolecule>> mapenvironment;
     private P mypos;
 
-    private final ILsaNode node;
     private TIntObjectMap<P> positionCache = new TIntObjectHashMap<>();
     private final TIntDoubleMap routecache = new TIntDoubleHashMap(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1, Double.NaN);
     private final ILsaMolecule source, gradient, gradientExpr, context;
@@ -86,7 +86,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
      *            a template ILsaMolecule representing the source
      * @param gradientTemplate
      *            a template ILsaMolecule representing the gradient. ALL the
-     *            variables MUST be the same of sourceTemplate: no uninstanced
+     *            variables MUST be the same of sourceTemplate: no un-instanced
      *            variables are admitted when inserting tuples into nodes
      * @param valuePosition
      *            the point at which the computation of the new values should be
@@ -101,7 +101,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
      *            by the contextTemplate
      * @param contextTemplate
      *            a template ILsaMolecule. It can be used to match some contents
-     *            of the local node in order to have local informations to use
+     *            of the local node in order to have local information to use
      *            in the gradient value computation
      * @param gradThreshold
      *            if the value of the gradient grows above this threshold, the
@@ -116,7 +116,6 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         source = Objects.requireNonNull(sourceTemplate);
         context = contextTemplate;
         environment = env;
-        node = n;
         if (valuePosition < 0) {
             throw new IllegalArgumentException("The position in the gradient LSA must be a positive integer");
         }
@@ -152,7 +151,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
      *            a template ILsaMolecule representing the source
      * @param gradientTemplate
      *            a template ILsaMolecule representing the gradient. ALL the
-     *            variables MUST be the same of sourceTemplate: no uninstanced
+     *            variables MUST be the same of sourceTemplate: no un-instanced
      *            variables are admitted when inserting tuples into nodes
      * @param valuePosition
      *            the point at which the computation of the new values should be
@@ -167,7 +166,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
      *            by the contextTemplate
      * @param contextTemplate
      *            a template ILsaMolecule. It can be used to match some contents
-     *            of the local node in order to have local informations to use
+     *            of the local node in order to have local information to use
      *            in the gradient value computation
      * @param gradThreshold
      *            if the value of the gradient grows above this threshold, the
@@ -205,8 +204,8 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
      * neighbors'
      */
     private List<ILsaMolecule> cleanUpExistingAndRecomputeFromSource(final Map<HashString, ITreeNode<?>> matches) {
-        for (final ILsaMolecule g : node.getConcentration(gradient)) {
-            node.removeConcentration(g);
+        for (final ILsaMolecule g : getNode().getConcentration(gradient)) {
+            getNode().removeConcentration(g);
         }
         final List<ILsaMolecule> createdFromSource = new ArrayList<>(sourceCache.size());
         if (!sourceCache.isEmpty()) {
@@ -221,7 +220,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
                 final List<IExpression> gl = gradient.allocateVar(matches);
                 final ILsaMolecule m = new LsaMolecule(gl);
                 createdFromSource.add(m);
-                node.setConcentration(m);
+                getLsaNode().setConcentration(m);
             }
         }
         return createdFromSource;
@@ -293,8 +292,8 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         final List<ILsaMolecule> gradientsFound = new ArrayList<>();
         final GradientSearch gradSearch = new GradientSearch(gradientsFound, matches);
         filteredGradCache.forEachEntry(gradSearch);
-        createdFromSource.forEach(genGrad -> gradientsFound.add(genGrad));
-        gradientsFound.forEach(grad -> node.setConcentration(grad));
+        gradientsFound.addAll(createdFromSource);
+        gradientsFound.forEach(grad -> getLsaNode().setConcentration(grad));
     }
 
     @Override
@@ -312,9 +311,11 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         return Context.NEIGHBORHOOD;
     }
 
-    @Override
-    public ILsaNode getNode() {
-        return node;
+    /**
+     * @return the current node as {@link ILsaNode}
+     */
+    public ILsaNode getLsaNode() {
+        return (ILsaNode) getNode();
     }
 
     @Override
@@ -342,14 +343,14 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
          * 
          * my position is changed
          */
-        final List<? extends ILsaMolecule> sourceCacheTemp = node.getConcentration(source);
-        final List<? extends ILsaMolecule> contextCacheTemp = context == null ? EMPTY_LIST : node.getConcentration(context);
+        final List<? extends ILsaMolecule> sourceCacheTemp = getNode().getConcentration(source);
+        final List<? extends ILsaMolecule> contextCacheTemp = context == null ? EMPTY_LIST : getNode().getConcentration(context);
         final TIntObjectMap<P> positionCacheTemp = new TIntObjectHashMap<>(positionCache.size());
         final TIntObjectMap<List<? extends ILsaMolecule>> gradCacheTemp = new TIntObjectHashMap<>(gradCache.size());
-        final P curPos = environment.getPosition(node);
+        final P curPos = environment.getPosition(getNode());
         final boolean positionChanged = !curPos.equals(mypos);
         boolean neighPositionChanged = false;
-        for (final Node<List<ILsaMolecule>> n : environment.getNeighborhood(node)) {
+        for (final Node<List<ILsaMolecule>> n : environment.getNeighborhood(getNode())) {
             final P p = environment.getPosition(n);
             final int nid = n.getId();
             positionCacheTemp.put(nid, p);
@@ -359,7 +360,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
                 neighPositionChanged = true;
             }
             if (mapenvironment != null && (!pConstant || positionChanged)) {
-                routecache.put(nid, mapenvironment.computeRoute(n, node).length());
+                routecache.put(nid, mapenvironment.computeRoute(n, getNode()).length());
             }
         }
         if (!sourceCacheTemp.equals(sourceCache) || !contextCacheTemp.equals(contextCache) || neighPositionChanged || !gradCacheTemp.equals(gradCache) || positionChanged) {

@@ -19,7 +19,6 @@ import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
@@ -29,11 +28,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.danilopianini.util.ArrayListSet;
@@ -284,6 +279,10 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
         outcontext = c;
     }
 
+    /**
+     * @return the default implementation returns a String in the form
+     * className@timeScheduled[Conditions]-rate->[Actions]
+     */
     @Override
     public String toString() {
         final StringBuilder tot = new StringBuilder(stringLength + MARGIN);
@@ -339,12 +338,12 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     }
 
     @Override
-    public Node<T> getNode() {
+    public final Node<T> getNode() {
         return node;
     }
 
 
-    private static <E> ListSet<E> optionallyImmodifiableView(ListSet<E> in) {
+    private static <E> ListSet<E> optionallyImmodifiableView(final ListSet<E> in) {
         return in == null ? null : ListSets.unmodifiableListSet(in);
     }
 }

@@ -362,8 +362,8 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
          * locally. Otherwise there is no control on where the modified
          * molecules will end up.
          */
-        final ListSet<Dependency> influencing = new ArrayListSet<>(getInboundDependencies());
-        final ListSet<Dependency> influenced = new ArrayListSet<>(getInboundDependencies());
+        final ListSet<Dependency> influencingThisReaction = new ArrayListSet<>(getInboundDependencies());
+        final ListSet<Dependency> influencedByMe = new ArrayListSet<>(getOutboundDependencies());
         if (getInputContext() == Context.LOCAL && modifiesOnlyLocally) {
             /*
              * Moreover, since there is no control over the personalised agents,
@@ -378,7 +378,7 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
                 }
             }
             if (allStandard) {
-                for (final Dependency m : influencing) {
+                for (final Dependency m : influencingThisReaction) {
                     /*
                      * For each influencing molecule:
                      * 
@@ -389,18 +389,18 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
                      * not on the right side, they should be added (they will be
                      * removed)
                      */
-                    if (influenced.contains(m)) {
-                        influenced.remove(m);
+                    if (influencedByMe.contains(m)) {
+                        influencedByMe.remove(m);
                     } else {
-                        influenced.add(m);
+                        influencedByMe.add(m);
                     }
                 }
             }
         }
-        screen(influencing);
-        screen(influenced);
-        setInfluencingMolecules(influencing);
-        setInfluencedMolecules(influenced);
+        screen(influencingThisReaction);
+        screen(influencedByMe);
+        setInfluencingMolecules(influencingThisReaction);
+        setInfluencedMolecules(influencedByMe);
     }
 
     /**

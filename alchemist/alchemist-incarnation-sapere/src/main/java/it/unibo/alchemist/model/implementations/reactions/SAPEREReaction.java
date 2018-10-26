@@ -39,6 +39,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 /**
  * This class realizes a reaction with Lsa concentrations.
@@ -67,28 +68,28 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
      * This method screens the lsaMolecule list, deleting all molecule which can
      * be covered from another one more generic.
      * 
-     * @param listmol
+     * @param moleculeList
      *            List of lsaMolecule to screen
      */
-    private static void screen(final List<Dependency> listmol) {
+    private static void screen(final List<Dependency> moleculeList) {
         /*
          * PHASE 1: generalize the list
          */
-        for (int i = 0; i < listmol.size(); i++) {
-            listmol.add(((ILsaMolecule) listmol.remove(0)).generalize());
+        for (int i = 0; i < moleculeList.size(); i++) {
+            moleculeList.add(((ILsaMolecule) moleculeList.remove(0)).generalize());
         }
         /*
          * PHASE2: compare one-by-one
          */
-        for (int i = listmol.size() - 1; i > 0; i--) {
+        for (int i = moleculeList.size() - 1; i > 0; i--) {
             for (int p = i - 1; p >= 0; p--) {
-                final ILsaMolecule m1 = (ILsaMolecule) listmol.get(i);
-                final ILsaMolecule m2 = (ILsaMolecule) listmol.get(p);
+                final ILsaMolecule m1 = (ILsaMolecule) moleculeList.get(i);
+                final ILsaMolecule m2 = (ILsaMolecule) moleculeList.get(p);
                 if (m2.equals(m1) || m2.moreGenericOf(m1)) {
-                    listmol.remove(i);
+                    moleculeList.remove(i);
                     i--;
                 } else if (m1.moreGenericOf(m2)) {
-                    listmol.remove(p);
+                    moleculeList.remove(p);
                     i--;
                 }
             }
@@ -215,9 +216,9 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
          */
         if (modifiesOnlyLocally) {
             final ILsaNode n = getLsaNode();
-            if (nodePosCache != null && nodePosCache.equals(environment.getPosition(getNode()))) {
+            if (Objects.requireNonNull(nodePosCache).equals(environment.getPosition(getNode()))) {
                 final List<? extends ILsaMolecule> contents = n.getLsaSpace();
-                if (contents.size() == localContentCache.size()) {
+                if (contents.size() == Objects.requireNonNull(localContentCache).size()) {
                     emptyExecution = localContentCache.containsAll(contents);
                 }
             }
@@ -234,7 +235,7 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
     /**
      * @return the local {@link Node} as {@link ILsaNode}
      */
-    protected final ILsaNode getLsaNode() {
+    protected ILsaNode getLsaNode() {
         return (ILsaNode) super.getNode();
     }
 
@@ -261,13 +262,13 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
     }
 
     @Override
-    protected final void updateInternalStatus(final Time curTime, final boolean executed, final Environment<List<ILsaMolecule>, ?> env) {
+    protected void updateInternalStatus(final Time curTime, final boolean executed, final Environment<List<ILsaMolecule>, ?> env) {
         if (emptyExecution) {
             emptyExecution = false;
             totalPropensity = 0;
         } else {
             /*
-             * Valid nodes must be re-inited, as per issue #
+             * Valid nodes must be re-initialized, as per issue #
              */
             final Collection<? extends Node<List<ILsaMolecule>>> neighs = environment.getNeighborhood(getNode()).getNeighbors();
             validNodes = new ArrayList<>(neighs.size());
@@ -318,12 +319,12 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
     }
 
     @Override
-    public final double getRate() {
+    public double getRate() {
         return totalPropensity;
     }
 
     @Override
-    public final String getRateAsString() {
+    public String getRateAsString() {
         return numericRate() ? Double.toString(getTimeDistribution().getRate()) : timedist.getRateEquation().toString();
     }
 

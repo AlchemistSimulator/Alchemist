@@ -304,6 +304,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
     @Override
     public void nodeMoved(final Node<T> node) {
         checkCaller();
+        // TODO all the reactions dependent on movement must be updated as soon as the movement is done, before their dependency graph is recomputed.
         for (final Reaction<T> r : node.getReactions()) {
             updateReaction(r);
         }
@@ -437,6 +438,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
                 }
             }
         }
+        // TODO: make the dependency graph return the globals
         /*
          * It is possible that some global reaction is changed due to the
          * creation of a new node. Checking.

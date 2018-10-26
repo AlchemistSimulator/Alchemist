@@ -23,7 +23,6 @@ import it.unibo.alchemist.model.interfaces.ILsaAction;
 import it.unibo.alchemist.model.interfaces.ILsaCondition;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
-import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
@@ -47,7 +46,7 @@ import java.util.Map.Entry;
  * 
  */
 @SuppressWarnings("unchecked")
-public class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
+public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
 
     private static final long serialVersionUID = -7264856859267079626L;
 

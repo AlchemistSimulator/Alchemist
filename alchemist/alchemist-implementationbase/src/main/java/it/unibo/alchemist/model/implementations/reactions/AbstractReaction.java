@@ -26,13 +26,19 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.danilopianini.util.ArrayListSet;
 import org.danilopianini.util.Hashes;
+import org.danilopianini.util.ImmutableListSet;
 import org.danilopianini.util.LinkedListSet;
 import org.danilopianini.util.ListSet;
 import org.danilopianini.util.ListSets;
@@ -52,6 +58,8 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      * interaction.
      */
     private static final byte MARGIN = 20;
+    private static final ListSet<Dependency> EVERYTHING = ImmutableListSet.of(Dependency.EVERYTHING);
+    private static final ListSet<Dependency> EVERY_MOLECULE = ImmutableListSet.of(Dependency.EVERY_MOLECULE);
     /**
      * Separators for toString.
      */
@@ -225,53 +233,40 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     @Override
     public void setActions(final List<Action<T>> a) {
         actions = Objects.requireNonNull(a, "The actions list can't be null");
-        Context lessStrict = Context.LOCAL;
-        outbound = new LinkedListSet<>();
-        for (final Action<T> act : actions) {
-            final Context condcontext = Objects.requireNonNull(act, "Actions can't be null").getContext();
-            lessStrict = lessStrict.isMoreStrict(condcontext) ? condcontext : lessStrict;
-            final List<? extends Dependency> mod = act.getOutboundDependencies();
-            /*
-             * This check is needed because of the meaning of a null list of
-             * modified molecules: it means that the reaction will influence
-             * every other reaction. This must be managed directly by the
-             * dependency graph, and consequently the whole reaction must have a
-             * null list of modified molecules.
-             */
-            if (mod != null) {
-                outbound.addAll(mod);
-            } else {
-                outbound = null;
-                break;
+        setInputContext(a.stream().map(Action::getContext).reduce(Context.LOCAL, Context::getWider));
+        outbound = computeDependencies(a.stream().map(Action::getOutboundDependencies).flatMap(List::stream));
+    }
+
+    private static ListSet<Dependency> computeDependencies(Stream<? extends Dependency> stream) {
+        final Iterator<? extends Dependency> fromStream = stream.iterator();
+        boolean everyMolecule = false;
+        ListSet<Dependency> result = new ArrayListSet<>();
+        while (fromStream.hasNext()) {
+            final Dependency dependency = fromStream.next();
+            if (dependency.equals(Dependency.EVERYTHING)) {
+                return EVERYTHING;
+            }
+            if (dependency.equals(Dependency.EVERY_MOLECULE) && !everyMolecule) {
+                final Iterator<Dependency> previousResults = result.iterator();
+                while (previousResults.hasNext()) {
+                    if (previousResults.next() instanceof Molecule) {
+                        previousResults.remove();
+                    }
+                }
+                everyMolecule = true;
+                result.add(Dependency.EVERY_MOLECULE);
+            } else  if (!(everyMolecule && dependency instanceof Molecule)) {
+                result.add(dependency);
             }
         }
-        setOutputContext(lessStrict);
+        return result;
     }
 
     @Override
     public void setConditions(final List<Condition<T>> c) {
-        conditions = c;
-        Context lessStrict = Context.LOCAL;
-        inbound = new LinkedListSet<>();
-        for (final Condition<T> cond : conditions) {
-            final Context condcontext = cond.getContext();
-            lessStrict = lessStrict.isMoreStrict(condcontext) ? condcontext : lessStrict;
-            final ListSet<? extends Dependency> mod = cond.getInboundDependencies();
-            /*
-             * This check is needed because of the meaning of a null list of
-             * modified molecules: it means that the reaction will influence
-             * every other reaction. This must be managed directly by the
-             * dependency graph, and consequently the whole reaction must have a
-             * null list of modified molecules.
-             */
-            if (mod != null) {
-                inbound.addAll(mod);
-            } else {
-                inbound = null;
-                break;
-            }
-        }
-        setInputContext(lessStrict);
+        conditions = Objects.requireNonNull(c, "The conditions list can't be null");
+        setInputContext(c.stream().map(Condition::getContext).reduce(Context.LOCAL, Context::getWider));
+        inbound = computeDependencies(c.stream().map(Condition::getInboundDependencies).flatMap(List::stream));
     }
 
     /**

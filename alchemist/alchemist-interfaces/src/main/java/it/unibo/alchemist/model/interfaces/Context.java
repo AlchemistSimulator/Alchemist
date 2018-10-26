@@ -38,15 +38,13 @@ public enum Context {
      */
     NEIGHBORHOOD;
 
-    /**
-     * This method provides support to determine if the current Context is less
-     * wide than the one passed.
-     * 
-     * @param c
-     *            The Context to compare with
-     * @return true if this context is more strict than the one passed
-     */
-    public boolean isMoreStrict(final Context c) {
-        return !(this.equals(GLOBAL) || c.equals(LOCAL) || this.equals(NEIGHBORHOOD) && c.equals(LOCAL));
+    public static Context getWider(Context c1, Context c2) {
+        if (c1 == GLOBAL || c2 == GLOBAL) {
+            return GLOBAL;
+        }
+        if (c1 == NEIGHBORHOOD || c2 == NEIGHBORHOOD) {
+            return NEIGHBORHOOD;
+        }
+        return LOCAL;
     }
 }

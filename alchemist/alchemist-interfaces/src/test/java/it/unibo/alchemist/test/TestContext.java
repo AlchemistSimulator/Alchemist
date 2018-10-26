@@ -9,9 +9,6 @@
 package it.unibo.alchemist.test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import it.unibo.alchemist.model.interfaces.Context;
 import static it.unibo.alchemist.model.interfaces.Context.LOCAL;
 import static it.unibo.alchemist.model.interfaces.Context.NEIGHBORHOOD;
 import static it.unibo.alchemist.model.interfaces.Context.GLOBAL;

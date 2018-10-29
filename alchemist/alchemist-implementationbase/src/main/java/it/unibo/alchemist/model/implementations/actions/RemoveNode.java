@@ -9,6 +9,7 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.interfaces.Context;
+import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
@@ -31,6 +32,8 @@ public class RemoveNode<T> extends AbstractAction<T> {
     public RemoveNode(final Environment<T, ?> environment, final Node<T> node) {
         super(node);
         env = environment;
+        declareDependencyTo(Dependency.MOVEMENT);
+        declareDependencyTo(Dependency.NEIGHBORHOOD_CHANGE);
     }
 
     @Override

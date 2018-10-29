@@ -277,7 +277,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         return getSize();
     }
 
-    private void ifEngineAvailable(final Consumer<Simulation<T, P>> r) {
+    protected void ifEngineAvailable(final Consumer<Simulation<T, P>> r) {
         Optional.ofNullable(getSimulation()).ifPresent(r);
     }
 

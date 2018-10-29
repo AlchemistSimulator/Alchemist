@@ -131,10 +131,7 @@ public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends 
         setPosition(node, newpos);
         // TODO: before this point, reactions dependent on movement must be updated
         updateNeighborhood(node, false);
-        final Simulation<T, P> sim = getSimulation();
-        if (sim != null) {
-            sim.nodeMoved(node);
-        }
+        ifEngineAvailable(sim -> sim.nodeMoved(node));
     }
 
     /**

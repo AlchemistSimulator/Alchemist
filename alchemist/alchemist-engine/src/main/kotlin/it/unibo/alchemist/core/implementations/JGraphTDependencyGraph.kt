@@ -19,6 +19,8 @@ import it.unibo.alchemist.model.interfaces.Context
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
+import org.danilopianini.util.ListSet
+import org.danilopianini.util.ListSets
 
 /**
  * This class offers an implementation of a dependency graph, namely a
@@ -34,9 +36,8 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
     private val inGlobals = ArrayListSet<Reaction<T>>()
     private val outGlobals = ArrayListSet<Reaction<T>>()
     private val graph = DefaultDirectedGraph<Reaction<T>, Edge<T>> { source, target ->
-        Pair(source, target)
-//            .apply {  println("Creating edge from ${source.prettyfy} to ${target.prettyfy}") }
-            .takeUnless { source === target } ?: throw IllegalStateException("Error: dependency auto-arc")
+        Pair(source, target).takeUnless { source === target }
+            ?: throw IllegalStateException("Error: dependency auto-arc")
     }
 
     override fun createDependencies(newReaction: Reaction<T>) {
@@ -185,4 +186,6 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
     override fun toString(): String {
         return graph.toString()
     }
+
+    override fun globalInputContextReactions(): ListSet<Reaction<T>> = ListSets.unmodifiableListSet(inGlobals)
 }

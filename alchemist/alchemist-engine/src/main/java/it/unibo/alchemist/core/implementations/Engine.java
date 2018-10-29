@@ -8,9 +8,13 @@
  ******************************************************************************/
 package it.unibo.alchemist.core.implementations;
 
+import java.util.ArrayDeque;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -19,8 +23,11 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BooleanSupplier;
+import java.util.stream.Stream;
 
+import com.google.common.collect.Sets;
 import it.unibo.alchemist.model.interfaces.*;
+import org.danilopianini.util.ListSet;
 import org.danilopianini.util.concurrent.FastReadWriteLock;
 import org.jooq.lambda.fi.lang.CheckedRunnable;
 import org.slf4j.Logger;
@@ -50,16 +57,17 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
     private final Lock statusLock = new ReentrantLock();
     private final Condition statusCondition = statusLock.newCondition();
     private final BlockingQueue<CheckedRunnable> commands = new LinkedBlockingQueue<>();
+    private final Queue<Update> afterExecutionUpdates = new ArrayDeque<>();
     private final Environment<T, P> env;
     private final DependencyGraph<T> dg;
     private final Scheduler<T> ipq;
     private final Time finalTime;
     private final FastReadWriteLock monitorLock = new FastReadWriteLock();
     private final List<OutputMonitor<T, P>> monitors = new LinkedList<>();
-    private final long steps;
+    private final long finalStep;
     private Optional<Throwable> error = Optional.empty();
     private Time currentTime = DoubleTime.ZERO_TIME;
-    private long curStep;
+    private long currentStep;
     private Thread myThread;
 
 
@@ -97,7 +105,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         env.setSimulation(this);
         dg = new JGraphTDependencyGraph<T>(env);
         ipq = new ArrayIndexedPriorityQueue<>();
-        this.steps = maxSteps;
+        this.finalStep = maxSteps;
         this.finalTime = t;
     }
 
@@ -147,7 +155,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
             if (t.compareTo(currentTime) < 0) {
                 throw new IllegalStateException(mu + "\nis scheduled in the past at time " + t
                         + ", current time is " + currentTime
-                        + ". Problem occurred at step " + curStep);
+                        + ". Problem occurred at step " + currentStep);
             }
             currentTime = t;
             if (mu.canExecute()) {
@@ -157,13 +165,19 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
                  */
                 mu.getConditions().forEach(c -> c.reactionReady());
                 mu.execute();
-                dg.outboundDependencies(mu).forEach(this::updateReaction);
+                Set<Reaction<T>> toUpdate = dg.outboundDependencies(mu);
+                if (!afterExecutionUpdates.isEmpty()) {
+                    afterExecutionUpdates.stream().forEach(Update::performChanges);
+                    afterExecutionUpdates.clear();
+                    toUpdate = Sets.union(toUpdate, dg.outboundDependencies(mu));
+                }
+                toUpdate.forEach(this::updateReaction);
             }
             mu.update(currentTime, true, env);
             ipq.updateReaction(mu);
             monitorLock.read();
             for (final OutputMonitor<T, P> m : monitors) {
-                m.stepDone(env, mu, currentTime, curStep);
+                m.stepDone(env, mu, currentTime, currentStep);
             }
             monitorLock.release();
         }
@@ -171,7 +185,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
             newStatus(Status.TERMINATED);
             L.info("Termination condition reached.");
         }
-        curStep++;
+        currentStep++;
     }
 
     private void finalizeConstructor() {
@@ -201,7 +215,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
 
     @Override
     public long getFinalStep() {
-        return steps;
+        return finalStep;
     }
 
     @Override
@@ -224,7 +238,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
 
     @Override
     public long getStep() {
-        return curStep;
+        return currentStep;
     }
 
     @Override
@@ -248,7 +262,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         while (nextCommand == null) {
             try {
                 nextCommand = commands.take();
-                nextCommand.run();
+                processCommand(nextCommand);
             } catch (InterruptedException e) {
                 L.debug("Look! A spurious wakeup! :-)");
             }
@@ -258,20 +272,13 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
     @Override
     public void neighborAdded(final Node<T> node, final Node<T> n) {
         checkCaller();
-        dg.addNeighbor(node, n);
-        updateNeighborhood(node);
-        /*
-         * This is necessary, see bug #43
-         */
-        updateNeighborhood(n);
+        afterExecutionUpdates.add(new NeigborAdded(node, n));
     }
 
     @Override
     public void neighborRemoved(final Node<T> node, final Node<T> n) {
         checkCaller();
-        dg.removeNeighbor(node, n);
-        updateNeighborhood(node);
-        updateNeighborhood(n);
+        afterExecutionUpdates.add(new NeigborRemoved(node, n));
     }
 
     private void newStatus(final Status s) {
@@ -304,18 +311,13 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
     @Override
     public void nodeMoved(final Node<T> node) {
         checkCaller();
-        // TODO all the reactions dependent on movement must be updated as soon as the movement is done, before their dependency graph is recomputed.
-        for (final Reaction<T> r : node.getReactions()) {
-            updateReaction(r);
-        }
+        afterExecutionUpdates.add(new Movement(node));
     }
 
     @Override
     public void nodeRemoved(final Node<T> node, final Neighborhood<T> oldNeighborhood) {
         checkCaller();
-        for (final Reaction<T> r : node.getReactions()) {
-            removeReaction(r);
-        }
+        afterExecutionUpdates.add(new Removal(node));
     }
 
     @Override
@@ -328,6 +330,48 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         newStatus(Status.RUNNING);
     }
 
+    private Stream<Reaction<T>> reactionsToUpdateAfterExecution() {
+        return afterExecutionUpdates.stream()
+            .flatMap(u -> u.getReactionsToUpdate())
+            .distinct();
+    }
+
+    private void processCommand(CheckedRunnable command) throws Throwable {
+        command.run();
+        // Update all reactions before applying dependency graph updates
+        final Set<Reaction<T>> updated = new LinkedHashSet<>();
+        reactionsToUpdateAfterExecution().forEach(r -> {
+            updated.add(r);
+            updateReaction(r);
+        });
+        // Now update the dependency graph as needed
+        afterExecutionUpdates.forEach(Update::performChanges);
+        // Now update the new reactions
+        reactionsToUpdateAfterExecution().forEach(r -> {
+            if (!updated.contains(r)) {
+                updateReaction(r);
+            }
+        });
+    }
+
+    private void updateDirectDependenciesOf(Reaction<T> mu) {
+        if (mu != null) {
+            // Update all the reactions that depended on the execution of mu
+            dg.outboundDependencies(mu).forEach(r -> r.update(currentTime, false, env));
+        }
+    }
+
+    private void processUpdates(final Reaction<T> mu) {
+        updateDirectDependenciesOf(mu);
+        if (!afterExecutionUpdates.isEmpty()) {
+            // Apply all changes to the dependency graph
+            // TODO
+//            afterExecutionUpdates.forEach(Runnable::run);
+            // Update all the reactions that NOW depend on the executed one
+            dg.outboundDependencies(mu).forEach(r -> r.update(currentTime, false, env));
+        }
+    }
+
     @Override
     public void removeOutputMonitor(final OutputMonitor<T, P> op) {
         new Thread(() -> {
@@ -335,11 +379,6 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
             monitors.remove(op);
             monitorLock.release();
         }).start();
-    }
-
-    private void removeReaction(final Reaction<T> r) {
-        dg.removeDependencies(r);
-        ipq.removeReaction(r);
     }
 
     @Override
@@ -360,9 +399,11 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
                 while (status.equals(Status.READY)) {
                     idleProcessSingleCommand();
                 }
-                while (status != Status.TERMINATED && curStep < steps && currentTime.compareTo(finalTime) < 0) {
+                while (status != Status.TERMINATED
+                        && currentStep < finalStep
+                        && currentTime.compareTo(finalTime) < 0) {
                     while (!commands.isEmpty()) {
-                        commands.poll().run();
+                        processCommand(commands.poll());
                     }
                     if (status.equals(Status.RUNNING)) {
                         doStep();
@@ -380,7 +421,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
                 commands.clear();
                 monitorLock.read();
                 for (final OutputMonitor<T, P> m : monitors) {
-                    m.finished(env, currentTime, curStep);
+                    m.finished(env, currentTime, currentStep);
                 }
                 monitorLock.release();
             }
@@ -427,6 +468,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
     }
 
     private void updateDependenciesForOperationOnNode(final Neighborhood<T> oldNeighborhood) {
+        // TODO: uhmm... can I just update the reactions returned by the dg?
         /*
          * A reaction in the neighborhood may have changed due to the content of
          * this new node. Must check.
@@ -503,4 +545,114 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         return getStatus();
     }
 
+    private abstract class Update {
+        private final Node<T> source;
+
+        Update(Node<T> source) { this.source = source; }
+
+        final Stream<Reaction<T>> getReactionsRelatedTo(Node<T> source, Neighborhood<T> neighborhood) {
+            return Stream.of(
+                    source.getReactions().stream(),
+                    neighborhood.getNeighbors().stream()
+                            .flatMap(node -> node.getReactions().stream())
+                            .filter(it -> it.getInputContext() == Context.NEIGHBORHOOD),
+                    dg.globalInputContextReactions().stream())
+                .reduce(Stream.empty(), Stream::concat);
+        }
+
+        Stream<Reaction<T>> getReactionsToUpdate() {
+            return Stream.empty();
+        }
+
+        void performChanges() { };
+
+        protected Node<T> getSource() {
+            return source;
+        }
+    }
+
+    private class Movement extends Update {
+
+        Movement(Node<T> source) { super(source); }
+
+        @Override
+        Stream<Reaction<T>> getReactionsToUpdate() {
+            return getReactionsRelatedTo(getSource(), env.getNeighborhood(getSource()))
+                    .filter(it -> it.getInboundDependencies().stream()
+                            .anyMatch(dependency -> dependency.dependsOn(Dependency.MOVEMENT)));
+        }
+
+    }
+
+    private class Removal extends Update {
+
+        Removal(final Node<T> source) {
+            super(source);
+        }
+
+        @Override
+        void performChanges() {
+            for (final Reaction<T> r : getSource().getReactions()) {
+                dg.removeDependencies(r);
+                ipq.removeReaction(r);
+            }
+        }
+    }
+
+    private class NeighborhoodChanged extends Update {
+
+        private final Node<T> target;
+
+        NeighborhoodChanged(final Node<T> source, final Node<T> target) {
+            super(source);
+            this.target = target;
+        }
+
+        public Node<T> getTarget() {
+            return target;
+        }
+
+        @Override
+        Stream<Reaction<T>> getReactionsToUpdate() {
+            return Stream.of(
+                    // Local reactions
+                    Stream.of(getSource(), target)
+                        .flatMap(it -> it.getReactions().stream()),
+                    // Neigborhood reactions with neighborhood context
+                    Stream.of(env.getNeighborhood(getSource()), env.getNeighborhood(getTarget()))
+                        .flatMap(it -> it.getNeighbors().stream())
+                        .distinct()
+                        .flatMap(it -> it.getReactions().stream())
+                        .filter(it -> it.getInputContext() == Context.NEIGHBORHOOD),
+                    // Global reactions
+                    dg.globalInputContextReactions().stream())
+                .reduce(Stream.empty(), Stream::concat)
+                // Pick only reactions that depend on neighborhood change
+                .filter(it -> it.getInboundDependencies().stream().anyMatch(d -> d.dependsOn(Dependency.NEIGHBORHOOD_CHANGE)));
+        }
+    }
+
+    private class NeigborAdded extends NeighborhoodChanged {
+
+        NeigborAdded(final Node<T> source, final Node<T> target) {
+            super(source, target);
+        }
+
+        @Override
+        void performChanges() {
+            dg.addNeighbor(getSource(), getTarget());
+        }
+    }
+
+    private class NeigborRemoved extends NeighborhoodChanged {
+
+        NeigborRemoved(final Node<T> source, final Node<T> target) {
+            super(source, target);
+        }
+
+        @Override
+        void performChanges() {
+            dg.removeNeighbor(getSource(), getTarget());
+        }
+    }
 }

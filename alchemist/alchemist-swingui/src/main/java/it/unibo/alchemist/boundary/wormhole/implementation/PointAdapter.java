@@ -100,7 +100,7 @@ public final class PointAdapter<P extends Position2D<? extends P>> implements Se
     }
 
     /**
-     * @return the {@link Position} view of this {@link PointAdapter}
+     * @return the {@link it.unibo.alchemist.model.interfaces.Position} view of this {@link PointAdapter}
      */
     public Optional<P> toPosition() {
         return Optional.ofNullable(pos);
@@ -122,6 +122,9 @@ public final class PointAdapter<P extends Position2D<? extends P>> implements Se
      *            the x coordinate
      * @param y
      *            the y coordinate
+     * @param <P>
+     *            Position type
+     *
      * @return a {@link PointAdapter}
      */
     public static <P extends Position2D<? extends P>> PointAdapter<P> from(final double x, final double y) {
@@ -132,8 +135,10 @@ public final class PointAdapter<P extends Position2D<? extends P>> implements Se
      * Builds a {@link PointAdapter}.
      * 
      * @param p
-     *            the {@link Position}
-     * 
+     *            the {@link it.unibo.alchemist.model.interfaces.Position}
+     * @param <P>
+     *            Position type
+     *
      * @return a {@link PointAdapter}
      */
     public static <P extends Position2D<? extends P>> PointAdapter<P> from(final P p) {
@@ -145,7 +150,9 @@ public final class PointAdapter<P extends Position2D<? extends P>> implements Se
      * 
      * @param p
      *            the {@link Point2D}
-     * 
+     * @param <P>
+     *            Position type
+     *
      * @return a {@link PointAdapter}
      */
     public static <P extends Position2D<? extends P>> PointAdapter<P> from(final Point2D p) {

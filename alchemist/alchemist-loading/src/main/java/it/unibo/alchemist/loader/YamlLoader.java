@@ -658,7 +658,6 @@ public final class YamlLoader implements Loader {
     }
 
     private static Factory makeBaseFactory(@Nonnull final Incarnation<?, ?> incarnation) {
-        assert incarnation != null;
         final Factory factory = makeBaseFactory();
         factory.registerSingleton(Incarnation.class, incarnation);
         factory.registerImplicit(CharSequence.class, Molecule.class, s -> incarnation.createMolecule(s.toString()));

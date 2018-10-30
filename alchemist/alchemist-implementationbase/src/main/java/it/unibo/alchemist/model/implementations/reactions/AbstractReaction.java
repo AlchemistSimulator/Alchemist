@@ -316,6 +316,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
         tot.append(getReactionName());
         tot.append('@');
         tot.append(getTau());
+        tot.append(':');
         tot.append(getConditions().toString());
         tot.append('-');
         tot.append(getRateAsString());

@@ -38,7 +38,9 @@ public final class ConstantSpeed<P extends Position<P>> implements SpeedSelectio
      *            the speed, in meters/second
      */
     public ConstantSpeed(final Reaction<?> reaction, final double speed) {
-        assert speed > 0 : "Speed must be positive.";
+        if (speed < 0) {
+            throw new IllegalArgumentException("Speed must be positive");
+        }
         this.speed = speed;
         this.reaction = reaction;
     }

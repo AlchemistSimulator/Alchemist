@@ -45,6 +45,7 @@ import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.jirf.Factory;
 import org.danilopianini.jirf.FactoryBuilder;
+import org.jetbrains.annotations.NotNull;
 import org.kaikikm.threadresloader.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -522,7 +523,7 @@ public final class YamlLoader implements Loader {
                  * Nodes
                  */
                 factory.registerSingleton(RandomGenerator.class, simRng);
-                for (final P position: displacement) {
+                for (@NotNull final P position: displacement) {
                     final Node<T> node = nodeBuilder.build(dispMap.get(NODE));
                     factory.registerSingleton(Node.class, node);
                     /*
@@ -530,6 +531,9 @@ public final class YamlLoader implements Loader {
                      */
                     for (final Cell<Shape, Molecule, String> entry: shapes.cellSet()) {
                         final Shape shape = entry.getRowKey();
+                        if (shape == null) {
+                            throw new IllegalStateException("Illegal null shape in " + shapes);
+                        }
                         if (shape.contains(position)) {
                             final Molecule mol = entry.getColumnKey();
                             final String concentration = entry.getValue();

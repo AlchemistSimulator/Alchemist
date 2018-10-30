@@ -19,7 +19,6 @@ import org.danilopianini.util.LinkedListSet;
 import org.danilopianini.util.ListSet;
 
 import it.unibo.alchemist.model.interfaces.Condition;
-import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
@@ -78,5 +77,14 @@ public abstract class AbstractCondition<T> implements Condition<T> {
     @Override
     public Condition<T> cloneCondition(final Node<T> n, final Reaction<T> r) {
         throw new UnsupportedOperationException(getClass().getSimpleName() + " has no support for cloning.");
+    }
+
+    /**
+     *
+     * @return the simple class name
+     */
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
     }
 }

@@ -8,10 +8,8 @@
  ******************************************************************************/
 package it.unibo.alchemist.model.implementations.movestrategies.speed;
 
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
 
 /**
@@ -29,7 +27,6 @@ public final class ConstantSpeed<P extends Position<P>> implements SpeedSelectio
     private static final long serialVersionUID = 1746429998480123049L;
     private final double speed;
     private final Reaction<?> reaction;
-    private final Time lastExecuted = DoubleTime.ZERO_TIME;
 
     /**
      * @param reaction

@@ -360,7 +360,7 @@ public final class YamlLoader implements Loader {
         if (dependencies == null) {
             this.dependencies = ImmutableList.of();
         } else if (dependencies instanceof List) {
-            List<?> dependencyList = (List<?>) dependencies;
+            final List<?> dependencyList = (List<?>) dependencies;
             if (dependencyList.stream().allMatch(it -> it instanceof  String)) {
                 this.dependencies = ImmutableList.copyOf((List<String>) dependencies);
             } else {

@@ -35,6 +35,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -136,6 +137,7 @@ public final class YamlLoader implements Loader {
     private static final String SEEDS = SYNTAX.getString("seeds");
     private static final String SIMULATION_SEED = SYNTAX.getString("simulation-seed");
     private static final String STEP = SYNTAX.getString("step");
+    private static final String TERMINATORS = SYNTAX.getString("terminators");
     private static final String TIME = SYNTAX.getString("time");
     private static final String TIMEDISTRIBUTION = SYNTAX.getString("time-distribution");
     private static final String TYPE = SYNTAX.getString("type");
@@ -196,6 +198,7 @@ public final class YamlLoader implements Loader {
             .put(LinkingRule.class, MODEL_PACKAGE_ROOT + "linkingrules.")
             .put(Molecule.class, MODEL_PACKAGE_ROOT + "molecules.")
             .put(Node.class, MODEL_PACKAGE_ROOT + "nodes.")
+            .put(Predicate.class, MODEL_PACKAGE_ROOT + "terminators.")
             .put(Reaction.class, MODEL_PACKAGE_ROOT + "reactions.")
             .put(Shape.class, ALCHEMIST_PACKAGE_ROOT + "loader.shapes.")
             .put(TimeDistribution.class, MODEL_PACKAGE_ROOT + "timedistributions.")
@@ -496,6 +499,14 @@ public final class YamlLoader implements Loader {
         final LinkingRule<T, P> linkingRule = linkingBuilder.build(contents.get(LINKING_RULE));
         env.setLinkingRule(linkingRule);
         factory.registerSingleton(LinkingRule.class, linkingRule);
+        /*
+         * Termination conditions
+         */
+        final Builder<Predicate<Environment<T, P>>> terminatorBuilder = new Builder<>(Predicate.class, emptySet(), factory);
+        final Object terminatorsDesc = contents.get(TERMINATORS);
+        for (Object terminatorDescriptor: listCast(factory, terminatorsDesc, "terminator")) {
+            env.addTerminator(terminatorBuilder.build(terminatorDescriptor));
+        }
         /*
          * Displacements
          */

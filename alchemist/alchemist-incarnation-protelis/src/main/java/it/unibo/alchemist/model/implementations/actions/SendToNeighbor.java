@@ -39,7 +39,7 @@ public final class SendToNeighbor extends AbstractAction<Object> {
         super(node);
         this.reaction = Objects.requireNonNull(reaction);
         prog = Objects.requireNonNull(program);
-        declareDependencyTo(Dependency.EVERY_MOLECULE);
+        declareDependencyTo(program.asMolecule());
     }
 
     @Override

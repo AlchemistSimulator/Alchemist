@@ -359,9 +359,17 @@ public final class YamlLoader implements Loader {
         final Object dependencies = rawContents.get(REMOTE_DEPENDENCIES);
         if (dependencies == null) {
             this.dependencies = ImmutableList.of();
+        } else if (dependencies instanceof List) {
+            List<?> dependencyList = (List<?>) dependencies;
+            if (dependencyList.stream().allMatch(it -> it instanceof  String)) {
+                this.dependencies = ImmutableList.copyOf((List<String>) dependencies);
+            } else {
+                throw new IllegalStateException("Dependencies are declared,"
+                        + " but some of them are not strings: " + dependencies);
+            }
         } else {
-            //TODO This may raise an unclear classcastexception at runtime
-            this.dependencies = ImmutableList.copyOf((List<String>) dependencies);
+            throw new IllegalStateException("Dependencies are expected to be declared as list. Found a "
+                + dependencies.getClass().getSimpleName() + ": " + dependencies);
         }
     }
 

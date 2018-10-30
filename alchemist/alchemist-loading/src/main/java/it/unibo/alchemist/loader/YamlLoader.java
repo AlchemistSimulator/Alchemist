@@ -602,7 +602,9 @@ public final class YamlLoader implements Loader {
 
     private void readObject(final ObjectInputStream ois) throws IOException, ClassNotFoundException {
         ois.defaultReadObject();
-        incarnation = SupportedIncarnations.get(ois.readObject().toString()).get();
+        final String incarnationName = ois.readObject().toString();
+        incarnation = SupportedIncarnations.get(incarnationName).
+                orElseThrow(() -> new IllegalStateException(incarnationName + " is not a valid incarnation."));
     }
 
     private Builder<RandomGenerator> rngBuilder(final Factory factory, final String seed) {

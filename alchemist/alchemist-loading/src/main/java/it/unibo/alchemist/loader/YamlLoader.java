@@ -310,7 +310,8 @@ public final class YamlLoader implements Loader {
         /*
          * Compute variables
          */
-        final BiFunction<Map<String, ?>, CharSequence, Double> toDouble = (m, s) -> factory.convertOrFail(Double.class, m.get(s));
+        final BiFunction<Map<String, ?>, String, Double> toDouble =
+                (m, s) -> factory.convertOrFail(Double.class, m.get(s));
         final BuilderConfiguration<Variable<?>> arbitraryVarConfig = new BuilderConfiguration<>(
                 ImmutableMap.of(VALUES, List.class, DEFAULT, Number.class), ImmutableMap.of(NAME, CharSequence.class), factory,
                 m -> new ArbitraryVariable(toDouble.apply(m, DEFAULT), factory.convertOrFail(List.class, m.get(VALUES))));

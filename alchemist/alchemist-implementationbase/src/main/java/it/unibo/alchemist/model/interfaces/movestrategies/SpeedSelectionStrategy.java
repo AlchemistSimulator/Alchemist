@@ -28,8 +28,8 @@ public interface SpeedSelectionStrategy<P extends Position<? extends P>> extends
      * @param target
      *            the {@link Position} describing where the {@link Node} is
      *            directed
-     * @return the current node's speed
+     * @return the current node's movement. The returned value represents a length.
      */
-    double getCurrentSpeed(P target);
+    double getNodeMovementLength(P target);
 
 }

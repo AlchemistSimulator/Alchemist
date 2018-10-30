@@ -94,7 +94,7 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
         if (!end.equals(previousEnd)) {
             resetRoute();
         }
-        double maxWalk = speed.getCurrentSpeed(end);
+        double maxWalk = speed.getNodeMovementLength(end);
         final Environment<T, P> env = getEnvironment();
         final Node<T> node = getNode();
         P curPos = env.getPosition(node);

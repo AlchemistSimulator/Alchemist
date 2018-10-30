@@ -30,7 +30,7 @@ public final class ConstantSpace<P extends Position<P>> implements SpeedSelectio
     }
 
     @Override
-    public double getCurrentSpeed(final P target) {
+    public double getNodeMovementLength(final P target) {
         return space;
     }
 

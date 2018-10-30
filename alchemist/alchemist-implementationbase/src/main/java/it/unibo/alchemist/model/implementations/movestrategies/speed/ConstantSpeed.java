@@ -43,7 +43,7 @@ public final class ConstantSpeed<P extends Position<P>> implements SpeedSelectio
     }
 
     @Override
-    public double getCurrentSpeed(final P target) {
+    public double getNodeMovementLength(final P target) {
         return speed / reaction.getRate();
     }
 

@@ -21,6 +21,7 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
 import org.danilopianini.util.ListSet
 import org.danilopianini.util.ListSets
+import java.lang.IllegalArgumentException
 
 /**
  * This class offers an implementation of a dependency graph, namely a
@@ -64,29 +65,25 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
                 .filter { allReactions.contains(it) }
                 .toList().asSequence()
         }
-        var inboundCandidates: Sequence<Reaction<T>> = outGlobals.asSequence() + when (newReaction.inputContext) {
+        val inboundCandidates: Sequence<Reaction<T>> = outGlobals.asSequence() + when (newReaction.inputContext) {
             Context.LOCAL ->
                 localReactions + neighborhoodReactions.filter { it.outputContext == Context.NEIGHBORHOOD }
             Context.NEIGHBORHOOD ->
                 localReactions + neighborhoodReactions +
                 extendedNeighborhoodReactions.filter { it.outputContext == Context.NEIGHBORHOOD }
             else -> allReactions.asSequence()
-        }
-        if (newReaction.inboundDependencies.none { it == null }) {
-            inboundCandidates = inboundCandidates.filter { newReaction.dependsOn(it) }
-        }
-        var outboundCandidates: Sequence<Reaction<T>> = inGlobals.asSequence() + when (newReaction.outputContext) {
+        }.filter { newReaction.dependsOn(it) }
+        val outboundCandidates: Sequence<Reaction<T>> = inGlobals.asSequence() + when (newReaction.outputContext) {
             Context.LOCAL ->
                 localReactions + neighborhoodReactions.filter { it.inputContext == Context.NEIGHBORHOOD }
             Context.NEIGHBORHOOD ->
                 localReactions + neighborhoodReactions +
                 extendedNeighborhoodReactions.filter { it.inputContext == Context.NEIGHBORHOOD }
             else -> allReactions.asSequence()
+        }.filter { it.dependsOn(newReaction) }
+        if (!graph.addVertex(newReaction)) {
+            throw IllegalArgumentException("$newReaction was already in the dependency graph")
         }
-        if (newReaction.outboundDependencies.none { it == null }) {
-            outboundCandidates = outboundCandidates.filter { it.dependsOn(newReaction) }
-        }
-        graph.addVertex(newReaction)
         inboundCandidates.forEach { graph.addEdge(it, newReaction) }
         outboundCandidates.forEach { graph.addEdge(newReaction, it) }
     }

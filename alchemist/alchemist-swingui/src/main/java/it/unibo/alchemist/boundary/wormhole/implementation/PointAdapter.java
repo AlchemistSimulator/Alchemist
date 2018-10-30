@@ -34,8 +34,8 @@ public final class PointAdapter<P extends Position2D<? extends P>> implements Se
 
     private PointAdapter(final P pos) {
         this.pos = pos;
-        x = getX();
-        y = getY();
+        x = pos.getX();
+        y = pos.getY();
     }
 
     /**

@@ -93,7 +93,7 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
 
     private fun Reaction<T>.dependsOn(other: Reaction<T>) = inboundDependencies.any {
             inbound -> other.outboundDependencies.any { outbound ->
-                inbound.dependsOn(outbound) or outbound.makesDependent(inbound)
+                inbound.dependsOn(outbound) || outbound.makesDependent(inbound)
             }
         }
 

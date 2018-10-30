@@ -14,7 +14,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.implementations.utils.RealDistributionUtil;
-import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Time;
 
@@ -23,7 +22,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  * subclass of {@link RealDistribution}. Being generic, however, it does not
  * allow for dynamic rate tuning (namely, it can't be used to generate events
  * with varying frequency based on
- * {@link Condition#getPropensityContribution()}.
+ * {@link it.unibo.alchemist.model.interfaces.Condition#getPropensityContribution()}.
  * 
  * @param <T>
  *            concentration type
@@ -87,7 +86,7 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
     }
 
     @Override
-    public double getRate() {
+    public final double getRate() {
         return distribution.getNumericalMean();
     }
 

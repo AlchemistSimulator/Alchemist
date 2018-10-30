@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.interfaces.Context;
-import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
@@ -81,4 +80,8 @@ public final class SendToNeighbor extends AbstractAction<Object> {
         return prog;
     }
 
+    @Override
+    public String toString() {
+        return "broadcast " + prog.asMolecule().getName() + " data";
+    }
 }

@@ -16,7 +16,6 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
@@ -26,8 +25,14 @@ import java.util.function.BooleanSupplier;
 import java.util.stream.Stream;
 
 import com.google.common.collect.Sets;
-import it.unibo.alchemist.model.interfaces.*;
-import org.danilopianini.util.ListSet;
+import it.unibo.alchemist.model.interfaces.Context;
+import it.unibo.alchemist.model.interfaces.Dependency;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Neighborhood;
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.Time;
 import org.danilopianini.util.concurrent.FastReadWriteLock;
 import org.jooq.lambda.fi.lang.CheckedRunnable;
 import org.slf4j.Logger;
@@ -49,7 +54,7 @@ import it.unibo.alchemist.model.implementations.times.DoubleTime;
  * @param <P>
  *            {@link Position} type
  */
-public class Engine<T, P extends Position<? extends P>> implements Simulation<T, P> {
+public final class Engine<T, P extends Position<? extends P>> implements Simulation<T, P> {
 
     private static final Logger L = LoggerFactory.getLogger(Engine.class);
     private static final double NANOS_TO_SEC = 1000000000.0;
@@ -103,7 +108,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         L.trace("Engine created");
         env = e;
         env.setSimulation(this);
-        dg = new JGraphTDependencyGraph<T>(env);
+        dg = new JGraphTDependencyGraph<>(env);
         ipq = new ArrayIndexedPriorityQueue<>();
         this.finalStep = maxSteps;
         this.finalTime = t;
@@ -145,7 +150,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         }
     }
 
-    private void doStep() throws InterruptedException, ExecutionException {
+    private void doStep() {
         final Reaction<T> mu = ipq.getNext();
         if (mu == null) {
             this.newStatus(Status.TERMINATED);
@@ -163,11 +168,11 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
                  * This must be taken before execution, because the reaction
                  * might remove itself (or its node) from the environment.
                  */
-                mu.getConditions().forEach(c -> c.reactionReady());
+                mu.getConditions().forEach(it.unibo.alchemist.model.interfaces.Condition::reactionReady);
                 mu.execute();
                 Set<Reaction<T>> toUpdate = dg.outboundDependencies(mu);
                 if (!afterExecutionUpdates.isEmpty()) {
-                    afterExecutionUpdates.stream().forEach(Update::performChanges);
+                    afterExecutionUpdates.forEach(Update::performChanges);
                     afterExecutionUpdates.clear();
                     toUpdate = Sets.union(toUpdate, dg.outboundDependencies(mu));
                 }
@@ -300,12 +305,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
     @Override
     public void nodeAdded(final Node<T> node) {
         checkCaller();
-        if (status != Status.INIT) {
-            for (final Reaction<T> r : node.getReactions()) {
-                scheduleReaction(r);
-            }
-            updateDependenciesForOperationOnNode(env.getNeighborhood(node));
-        }
+        afterExecutionUpdates.add(new Addition(node));
     }
 
     @Override
@@ -332,11 +332,11 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
 
     private Stream<Reaction<T>> reactionsToUpdateAfterExecution() {
         return afterExecutionUpdates.stream()
-            .flatMap(u -> u.getReactionsToUpdate())
+            .flatMap(Update::getReactionsToUpdate)
             .distinct();
     }
 
-    private void processCommand(CheckedRunnable command) throws Throwable {
+    private void processCommand(final CheckedRunnable command) throws Throwable {
         command.run();
         // Update all reactions before applying dependency graph updates
         final Set<Reaction<T>> updated = new LinkedHashSet<>();
@@ -346,30 +346,13 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         });
         // Now update the dependency graph as needed
         afterExecutionUpdates.forEach(Update::performChanges);
+        afterExecutionUpdates.clear();
         // Now update the new reactions
         reactionsToUpdateAfterExecution().forEach(r -> {
             if (!updated.contains(r)) {
                 updateReaction(r);
             }
         });
-    }
-
-    private void updateDirectDependenciesOf(Reaction<T> mu) {
-        if (mu != null) {
-            // Update all the reactions that depended on the execution of mu
-            dg.outboundDependencies(mu).forEach(r -> r.update(currentTime, false, env));
-        }
-    }
-
-    private void processUpdates(final Reaction<T> mu) {
-        updateDirectDependenciesOf(mu);
-        if (!afterExecutionUpdates.isEmpty()) {
-            // Apply all changes to the dependency graph
-            // TODO
-//            afterExecutionUpdates.forEach(Runnable::run);
-            // Update all the reactions that NOW depend on the executed one
-            dg.outboundDependencies(mu).forEach(r -> r.update(currentTime, false, env));
-        }
     }
 
     @Override
@@ -431,13 +414,8 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
     private void runUntil(final BooleanSupplier condition) {
         play();
         schedule(() -> {
-            try {
-                while (status == Status.RUNNING && condition.getAsBoolean()) {
-                    doStep();
-                }
-            } catch (ExecutionException | InterruptedException e) {
-                terminate();
-                error = Optional.of(e);
+            while (status == Status.RUNNING && condition.getAsBoolean()) {
+                doStep();
             }
         });
         pause();
@@ -465,41 +443,6 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
     @Override
     public String toString() {
         return getClass().getSimpleName() + " t: " + getTime() + ", s: " + getStep();
-    }
-
-    private void updateDependenciesForOperationOnNode(final Neighborhood<T> oldNeighborhood) {
-        // TODO: uhmm... can I just update the reactions returned by the dg?
-        /*
-         * A reaction in the neighborhood may have changed due to the content of
-         * this new node. Must check.
-         */
-        for (final Node<T> n : oldNeighborhood) {
-            for (final Reaction<T> r : n.getReactions()) {
-                if (r.getInputContext().equals(Context.NEIGHBORHOOD)) {
-                    updateReaction(r);
-                }
-            }
-        }
-        // TODO: make the dependency graph return the globals
-        /*
-         * It is possible that some global reaction is changed due to the
-         * creation of a new node. Checking.
-         */
-        for (final Node<T> n : env) {
-            for (final Reaction<T> r : n.getReactions()) {
-                if (r.getInputContext().equals(Context.GLOBAL)) {
-                    updateReaction(r);
-                }
-            }
-        }
-    }
-
-    private void updateNeighborhood(final Node<T> n) {
-        for (final Reaction<T> r : n.getReactions()) {
-            if (r.getInputContext().equals(Context.NEIGHBORHOOD)) {
-                updateReaction(r);
-            }
-        }
     }
 
     private void updateReaction(final Reaction<T> r) {
@@ -533,7 +476,6 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
                                 }
                             }
                         } catch (InterruptedException e) {
-                            exit = false;
                             L.info("A wild spurious wakeup appears! Go, Catch Block! (wild 8-bit music rushes in background)");
                         }
                     }
@@ -548,9 +490,11 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
     private abstract class Update {
         private final Node<T> source;
 
-        Update(Node<T> source) { this.source = source; }
+        Update(final Node<T> source) {
+            this.source = source;
+        }
 
-        final Stream<Reaction<T>> getReactionsRelatedTo(Node<T> source, Neighborhood<T> neighborhood) {
+        final Stream<Reaction<T>> getReactionsRelatedTo(final Node<T> source, final Neighborhood<T> neighborhood) {
             return Stream.of(
                     source.getReactions().stream(),
                     neighborhood.getNeighbors().stream()
@@ -564,7 +508,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
             return Stream.empty();
         }
 
-        void performChanges() { };
+        void performChanges() { }
 
         protected Node<T> getSource() {
             return source;
@@ -573,7 +517,9 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
 
     private class Movement extends Update {
 
-        Movement(Node<T> source) { super(source); }
+        Movement(final Node<T> source) {
+            super(source);
+        }
 
         @Override
         Stream<Reaction<T>> getReactionsToUpdate() {
@@ -599,6 +545,16 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
         }
     }
 
+    private class Addition extends Update {
+        Addition(final Node<T> source) {
+            super(source);
+        }
+        @Override
+        void performChanges() {
+            getSource().getReactions().forEach(Engine.this::scheduleReaction);
+        }
+    }
+
     private class NeighborhoodChanged extends Update {
 
         private final Node<T> target;
@@ -618,7 +574,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
                     // Local reactions
                     Stream.of(getSource(), target)
                         .flatMap(it -> it.getReactions().stream()),
-                    // Neigborhood reactions with neighborhood context
+                    // Neighborhood reactions with neighborhood context
                     Stream.of(env.getNeighborhood(getSource()), env.getNeighborhood(getTarget()))
                         .flatMap(it -> it.getNeighbors().stream())
                         .distinct()

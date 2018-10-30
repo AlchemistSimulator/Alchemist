@@ -321,7 +321,7 @@ public final class YamlLoader implements Loader {
                 m -> new LinearVariable(toDouble.apply(m, DEFAULT), toDouble.apply(m, MIN), toDouble.apply(m, MAX), toDouble.apply(m, STEP)));
         final Builder<Variable<?>> varBuilder = new Builder<>(Variable.class, ImmutableSet.of(arbitraryVarConfig, linearVarConfig), factory);
         variables = originalVars.entrySet().stream()
-                .filter(e -> e.getValue() instanceof Map && !((Map<?, ?>) e.getValue()).containsKey(FORMULA))
+                .filter(e -> e != null && !e.getValue().containsKey(FORMULA))
                 .collect(ImmutableMap.toImmutableMap(Entry::getKey, e -> varBuilder.build(e.getValue())));
         L.debug("Lookup table: {}", variables);
         assert depVariables.size() + variables.size() == reverseLookupTable.size();

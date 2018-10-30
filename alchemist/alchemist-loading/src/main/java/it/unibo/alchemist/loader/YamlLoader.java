@@ -669,7 +669,7 @@ public final class YamlLoader implements Loader {
         return factory;
     }
 
-    private static <T> Object recursivelyResolveVariables(final Object o, final Map<Map<String, Object>, String> reverseLookupTable, final Map<String, Object> variables) {
+    private static Object recursivelyResolveVariables(final Object o, final Map<Map<String, Object>, String> reverseLookupTable, final Map<String, Object> variables) {
         if (reverseLookupTable.isEmpty() || variables.isEmpty()) {
             return o;
         }

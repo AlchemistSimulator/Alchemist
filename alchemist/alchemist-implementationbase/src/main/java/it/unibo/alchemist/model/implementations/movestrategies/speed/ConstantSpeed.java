@@ -8,8 +8,10 @@
  ******************************************************************************/
 package it.unibo.alchemist.model.implementations.movestrategies.speed;
 
+import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
 
 /**
@@ -25,7 +27,9 @@ import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
 public final class ConstantSpeed<P extends Position<P>> implements SpeedSelectionStrategy<P> {
 
     private static final long serialVersionUID = 1746429998480123049L;
-    private final double sp;
+    private final double speed;
+    private final Reaction<?> reaction;
+    private final Time lastExecuted = DoubleTime.ZERO_TIME;
 
     /**
      * @param reaction
@@ -35,12 +39,13 @@ public final class ConstantSpeed<P extends Position<P>> implements SpeedSelectio
      */
     public ConstantSpeed(final Reaction<?> reaction, final double speed) {
         assert speed > 0 : "Speed must be positive.";
-        sp = speed / reaction.getRate();
+        this.speed = speed;
+        this.reaction = reaction;
     }
 
     @Override
     public double getCurrentSpeed(final P target) {
-        return sp;
+        return speed / reaction.getRate();
     }
 
 }

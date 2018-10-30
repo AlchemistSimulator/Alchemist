@@ -86,7 +86,7 @@ public class GenericMoleculePresent<T extends Number> extends
      * @return the propensity influence
      */
     @Override
-    public double getPropensityConditioning() {
+    public double getPropensityContribution() {
         final int n = getNode().getConcentration(molecule).intValue();
         final int k = qty.intValue();
         if (k > n) {

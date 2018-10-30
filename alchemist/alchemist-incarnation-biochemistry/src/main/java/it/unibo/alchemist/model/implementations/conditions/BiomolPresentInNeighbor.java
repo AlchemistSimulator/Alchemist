@@ -58,7 +58,7 @@ public class BiomolPresentInNeighbor extends AbstractNeighborCondition<Double> {
     }
 
     @Override
-    public double getPropensityConditioning() {
+    public double getPropensityContribution() {
         return propensity;
     }
 

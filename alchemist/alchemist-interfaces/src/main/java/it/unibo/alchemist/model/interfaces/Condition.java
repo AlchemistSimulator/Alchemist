@@ -59,20 +59,7 @@ public interface Condition<T> extends Serializable {
      *
      * @return how this condition may influence the propensity.
      */
-    @Deprecated
-    double getPropensityConditioning();
-
-    /**
-     * This method is a support for the propensity calculation inside the
-     * Reactions. It allows this condition to influence the rate calculation in
-     * some way. It's up to the reaction to decide whether to use or not this
-     * information, and how.
-     *
-     * @return how this condition may influence the propensity.
-     */
-    default double getPropensityContribution() {
-        return getPropensityConditioning();
-    }
+    double getPropensityContribution();
 
     /**
      * @return true if the condition is satisfied in current environment.

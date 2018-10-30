@@ -57,7 +57,7 @@ public class ConcentrationChanged<T> extends AbstractCondition<T> {
     }
 
     @Override
-    public double getPropensityConditioning() {
+    public double getPropensityContribution() {
         return isValid(true) ? 1 : 0;
     }
 

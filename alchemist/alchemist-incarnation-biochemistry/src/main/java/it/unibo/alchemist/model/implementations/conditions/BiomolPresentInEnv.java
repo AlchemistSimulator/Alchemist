@@ -59,7 +59,7 @@ public class BiomolPresentInEnv<P extends Position<? extends P>> extends Generic
     }
 
     @Override
-    public double getPropensityConditioning() {
+    public double getPropensityContribution() {
         final double totalQuantity = getTotalQuantity();
         if (totalQuantity < getQuantity()) {
             return 0;

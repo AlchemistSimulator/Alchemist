@@ -525,7 +525,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         }
 
         @Override
-        public double getPropensityConditioning() {
+        public double getPropensityContribution() {
             return 0;
         }
 

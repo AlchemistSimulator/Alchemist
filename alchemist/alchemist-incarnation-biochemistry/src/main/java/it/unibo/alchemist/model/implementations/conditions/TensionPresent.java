@@ -49,7 +49,7 @@ public class TensionPresent extends AbstractCondition<Double> {
     }
 
     @Override
-    public double getPropensityConditioning() {
+    public double getPropensityContribution() {
         final CircularDeformableCell<?> thisNode = (CircularDeformableCell<?>) getNode();
         return env.getNodesWithinRange(thisNode, env.getMaxDiameterAmongCircularDeformableCells()).stream()
                 //.parallel()

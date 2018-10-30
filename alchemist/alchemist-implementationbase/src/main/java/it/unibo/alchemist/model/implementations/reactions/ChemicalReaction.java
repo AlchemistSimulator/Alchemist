@@ -48,7 +48,7 @@ public class ChemicalReaction<T> extends AbstractReaction<T> {
     protected void updateInternalStatus(final Time curTime, final boolean executed, final Environment<T, ?> env) {
         currentRate = getTimeDistribution().getRate();
         for (final Condition<T> cond : getConditions()) {
-            final double v = cond.getPropensityConditioning();
+            final double v = cond.getPropensityContribution();
             if (v == 0) {
                 currentRate = 0;
                 break;
@@ -56,7 +56,7 @@ public class ChemicalReaction<T> extends AbstractReaction<T> {
             if (v < 0) {
                 throw new IllegalStateException("Condition " + cond + " returned a negative propensity conditioning value");
             }
-            currentRate *= cond.getPropensityConditioning();
+            currentRate *= cond.getPropensityContribution();
         }
     }
 

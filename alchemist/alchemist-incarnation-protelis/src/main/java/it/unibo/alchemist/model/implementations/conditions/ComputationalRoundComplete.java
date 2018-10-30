@@ -56,7 +56,7 @@ public final class ComputationalRoundComplete extends AbstractCondition<Object> 
     }
 
     @Override
-    public double getPropensityConditioning() {
+    public double getPropensityContribution() {
         return isValid() ? 1 : 0;
     }
 

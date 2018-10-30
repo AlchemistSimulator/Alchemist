@@ -23,7 +23,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  * subclass of {@link RealDistribution}. Being generic, however, it does not
  * allow for dynamic rate tuning (namely, it can't be used to generate events
  * with varying frequency based on
- * {@link Condition#getPropensityConditioning()}.
+ * {@link Condition#getPropensityContribution()}.
  * 
  * @param <T>
  *            concentration type

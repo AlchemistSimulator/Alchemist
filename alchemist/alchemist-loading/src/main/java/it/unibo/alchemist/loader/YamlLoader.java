@@ -716,7 +716,7 @@ public final class YamlLoader implements Loader {
         @SuppressWarnings(UNCHECKED)
         Builder(@Nonnull final Class<? super T> clazz, @Nonnull final Set<BuilderConfiguration<T>> supportedConfigs, final Factory factory) {
             this.clazz = clazz;
-            final String packageRoot = PACKAGE_ROOTS.containsKey(clazz) ? PACKAGE_ROOTS.get(clazz) : "";
+            final String packageRoot = PACKAGE_ROOTS.getOrDefault(clazz, "");
             this.supportedConfigs = Sets.newLinkedHashSet(supportedConfigs);
             this.supportedConfigs.add(new BuilderConfiguration<>(
                     DEFAULT_MANDATORY_PARAMETERS.getOrDefault(clazz, ImmutableMap.of(TYPE, CharSequence.class)),

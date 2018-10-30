@@ -496,7 +496,7 @@ public final class YamlLoader implements Loader {
             L.warn("Your {} section is empty. No nodes will be placed in this scenario, making it pretty useless.", DISPLACEMENTS);
         } else {
             final Builder<Displacement<P>> displacementBuilder = new Builder<>(Displacement.class, emptySet(), factory);
-            final Builder<Node<T>> nodeBuilder = new Builder<Node<T>>(Node.class, ImmutableSet.of(
+            final Builder<Node<T>> nodeBuilder = new Builder<>(Node.class, ImmutableSet.of(
                     emptyConfig(factory, () -> incarnation.createNode(simRng, env, null)),
                     singleParamConfig(factory, o -> incarnation.createNode(simRng, env, o.toString()))),
                     factory);

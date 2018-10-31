@@ -9,15 +9,16 @@
 package it.unibo.alchemist.model.implementations.layers;
 
 import it.unibo.alchemist.model.interfaces.Layer;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Position2D;
 
 /**
  * Implements a {@link Layer} with a discontinue spatial distribution: the plane is divided 
  * in two parts, both with a constant concentration but with a different in value.
  * @param <T> the type describing the concentration in this {@link Layer}.
+ * @param <P> {@link Position2D} type.
  *
  */
-public class StepLayer<T, P extends Position<? extends P>> implements Layer<T, P> {
+public final class StepLayer<T, P extends Position2D<? extends P>> implements Layer<T, P> {
 
     /**
      * 
@@ -54,7 +55,7 @@ public class StepLayer<T, P extends Position<? extends P>> implements Layer<T, P
 
     @Override
     public T getValue(final P p) {
-        if (p.getCoordinate(0) > maxx && p.getCoordinate(1) > maxy) {
+        if (p.getX() > maxx && p.getY() > maxy) {
             return highValue;
         } else {
             return lowValue;

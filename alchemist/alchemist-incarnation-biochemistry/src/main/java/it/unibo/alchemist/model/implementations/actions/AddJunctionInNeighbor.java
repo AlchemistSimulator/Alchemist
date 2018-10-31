@@ -8,8 +8,6 @@
  ******************************************************************************/
 package it.unibo.alchemist.model.implementations.actions;
 
-import it.unibo.alchemist.model.interfaces.Context;
-
 import org.apache.commons.math3.random.RandomGenerator;
 
 import it.unibo.alchemist.model.implementations.molecules.Junction;
@@ -58,11 +56,6 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
     @Override
     public void execute() {
         throw new UnsupportedOperationException("A junction CAN NOT be created without a target node.");
-    }
-
-    @Override
-    public Context getContext() {
-        return Context.NEIGHBORHOOD; // TODO try with local
     }
 
     /**

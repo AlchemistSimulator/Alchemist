@@ -14,6 +14,8 @@ import it.unibo.alchemist.model.interfaces.Position;
 /**
  * @param <T>
  *            Concentration type
+ * @param <P>
+ *            {@link Position} type
  */
 public abstract class AbstractLocallyConsistentLinkingRule<T, P extends Position<? extends P>> implements LinkingRule<T, P> {
 

@@ -19,7 +19,6 @@ package it.unibo.alchemist.model.implementations.actions;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import it.unibo.alchemist.model.implementations.molecules.Junction;
-import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -32,7 +31,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  * This is a part of the junction creation process. <br/>
  * See {@link AddJunctionInNeighbor} for the other part of the process
  */
-public class AddJunctionInCell extends AbstractNeighborAction<Double> {
+public final class AddJunctionInCell extends AbstractNeighborAction<Double> { // TODO try with local
 
     private static final long serialVersionUID = -7074995950043793067L;
 
@@ -66,11 +65,6 @@ public class AddJunctionInCell extends AbstractNeighborAction<Double> {
     @Override
     public void execute() {
         throw new UnsupportedOperationException("A junction CAN NOT be created without a target node.");
-    }
-
-    @Override
-    public Context getContext() {
-        return Context.NEIGHBORHOOD; // TODO try with local
     }
 
     /**

@@ -67,18 +67,14 @@ public class TestConcurrency {
     }
 
     /**
-     * Test if the status of a {@link Engine} changes accordingly to the methods
-     * provided by {@link Engine.StateCommand}.
+     * Test if the status of a {@link Engine} changes as expected
      */
     @Test
     @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", justification = "We don't need the status of the Runnable")
-    public void newNewTest1() {
-
+    public void testCommandInterleaving() {
         final Simulation<?, ?> sim = new Engine<>(env, 10);
         final ExecutorService ex = Executors.newCachedThreadPool();
-
         ex.submit(sim);
-
         ex.submit(() -> sim.pause());
         if (sim.waitFor(Status.RUNNING, 1, TimeUnit.SECONDS) != Status.RUNNING) { // after a second the method must return
             L.info("The status I was waiting for did not arrived! (as predicted)");
@@ -86,26 +82,21 @@ public class TestConcurrency {
             fail();
         }
         verifyStatus(ex, sim, Status.PAUSED, 1000, 100);
-
         sim.waitFor(Status.PAUSED, 0, TimeUnit.DAYS);
         verifyStatus(ex, sim, Status.PAUSED, 1000, 100);
-
         ex.submit(() -> sim.play());
         sim.waitFor(Status.RUNNING, 1, TimeUnit.SECONDS); // the method must return instantly
-
         /*
          * this test does only 10 steps, so, after reaching RUNNING status, the simulation stops almost
          * instantly, because it takes a very little time to perform 10 steps, since in every step the 
          * simulation executes the fake reaction you can see below, which simply does nothing.
          */
         verifyStatus(ex, sim, Status.TERMINATED, 1000, 100);
-
         /*
          * the method must return immediatly with a message error because is not
          * possible to reach RUNNING or PAUSED status while in STOPPED
          */
         sim.waitFor(Status.RUNNING, 0, TimeUnit.DAYS);
-
         ex.shutdown();
         verifyStatus(ex, sim, Status.TERMINATED, 1000, 100);
     }

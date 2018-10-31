@@ -243,7 +243,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     private static ListSet<Dependency> computeDependencies(final Stream<? extends Dependency> stream) {
         final Iterator<? extends Dependency> fromStream = stream.iterator();
         boolean everyMolecule = false;
-        ListSet<Dependency> result = new ArrayListSet<>();
+        final ListSet<Dependency> result = new ArrayListSet<>();
         while (fromStream.hasNext()) {
             final Dependency dependency = fromStream.next();
             if (dependency.equals(Dependency.EVERYTHING)) {

@@ -11,7 +11,6 @@ package it.unibo.alchemist.model.implementations.actions;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -22,8 +21,9 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  * Moves the node randomly.
  * 
  * @param <T>
+ * @param <P>
  */
-public class BrownianMove<T, P extends Position<P>> extends AbstractMoveNode<T, P> {
+public final class BrownianMove<T, P extends Position<P>> extends AbstractMoveNode<T, P> {
 
     private static final long serialVersionUID = -904100978119782403L;
     private final double r;

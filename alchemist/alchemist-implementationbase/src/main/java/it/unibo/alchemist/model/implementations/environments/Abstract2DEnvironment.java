@@ -15,7 +15,6 @@ import static java.lang.Double.POSITIVE_INFINITY;
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.util.FlexibleQuadTree;
 
-import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
@@ -129,7 +128,6 @@ public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends 
     public void moveNodeToPosition(final Node<T> node, final P newpos) {
         includeObject(newpos);
         setPosition(node, newpos);
-        // TODO: before this point, reactions dependent on movement must be updated
         updateNeighborhood(node, false);
         ifEngineAvailable(sim -> sim.nodeMoved(node));
     }

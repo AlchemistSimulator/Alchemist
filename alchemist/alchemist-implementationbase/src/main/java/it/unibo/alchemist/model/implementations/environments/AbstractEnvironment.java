@@ -40,7 +40,6 @@ import org.danilopianini.util.SpatialIndex;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -69,22 +68,17 @@ import it.unibo.alchemist.model.interfaces.Position;
  */
 public abstract class AbstractEnvironment<T, P extends Position<P>> implements Environment<T, P> {
 
-    /**
-     * The default monitor that will be loaded. If null, the GUI must default to
-     * a compatible monitor.
-     */
-    protected static final String DEFAULT_MONITOR = null;
     private static final long serialVersionUID = 0L;
     private transient LoadingCache<ImmutablePair<P, Double>, ListSet<Node<T>>> cache;
     private transient Incarnation<T, P> incarnation;
     private final Map<Molecule, Layer<T, P>> layers = new LinkedHashMap<>();
     private final TIntObjectHashMap<Neighborhood<T>> neighCache = new TIntObjectHashMap<>();
-    private final TIntObjectHashMap<Node<T>> nodes = new TIntObjectHashMap<Node<T>>();
+    private final TIntObjectHashMap<Node<T>> nodes = new TIntObjectHashMap<>();
     private final TIntObjectHashMap<P> nodeToPos = new TIntObjectHashMap<>();
     private LinkingRule<T, P> rule;
     private transient Simulation<T, P> simulation;
     private final SpatialIndex<Node<T>> spatialIndex;
-    private Predicate<Environment<T, P>> terminator = (Predicate<Environment<T, P>> & Serializable) Predicates.<Environment<T, P>>alwaysFalse();
+    private Predicate<Environment<T, P>> terminator = (Predicate<Environment<T, P>> & Serializable) c -> false;
 
     /**
      * @param internalIndex
@@ -130,7 +124,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
 
     @Override
     public final void addTerminator(final Predicate<Environment<T, P>> terminator) {
-        this.terminator = this.terminator.or((Predicate<Environment<T, P>> & Serializable) terminator);
+        this.terminator = this.terminator.or((Serializable & Predicate<Environment<T, P>>) terminator);
     }
 
     /**
@@ -277,8 +271,13 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         return getSize();
     }
 
-    protected void ifEngineAvailable(final Consumer<Simulation<T, P>> r) {
-        Optional.ofNullable(getSimulation()).ifPresent(r);
+    /**
+     * If this environment is attached to a simulation engine, executes consumer.
+     *
+     * @param action  the {@link Consumer} to execute
+     */
+    protected final void ifEngineAvailable(final Consumer<Simulation<T, P>> action) {
+        Optional.ofNullable(getSimulation()).ifPresent(action);
     }
 
     private void invalidateCache() {
@@ -395,7 +394,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     private ListSet<Node<T>> runQuery(final P center, final double range) {
         final List<Node<T>> result = spatialIndex.query(center.boundingBox(range).stream()
                 .map(Position::getCartesianCoordinates)
-                .toArray(i -> new double[i][]));
+                .toArray(double[][]::new));
         final int size = result.size();
         return ListSets.unmodifiableListSet(result.stream()
             .filter(it -> getPosition(it).getDistanceTo(center) <= range)
@@ -471,6 +470,8 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
      * 
      * @param node
      *            the node that has been moved
+     * @param  isNewNode
+     *            true if the node is a new node, false otherwise
      */
     protected final void updateNeighborhood(final Node<T> node, final boolean isNewNode) {
         /*
@@ -505,7 +506,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
                     Optional.ofNullable(oldNeighborhood)
                     .map(Neighborhood::getNeighbors)
                     .map(it -> (Set<? extends Node<T>>) it)
-                    .orElseGet(() -> Collections.emptySet()))) {
+                    .orElse(Collections.emptySet()))) {
                 neighCache.put(newNeighbor.getId(), neighCache.get(newNeighbor.getId()).add(node));
                 if (!isNewNode) {
                     ifEngineAvailable(s -> s.neighborAdded(node, newNeighbor));

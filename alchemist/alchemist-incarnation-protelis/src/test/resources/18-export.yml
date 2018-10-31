@@ -2,7 +2,7 @@ incarnation: protelis
 variables:
   seed: &seed # You can give the anchor any name, assigning the name of the variable is convenient, though
     {min: 0, max: 1, step: 1, default: 0} # This variable ranges in [0, 9], steps of 1, defaulting to 0
-network-model: { type: EuclideanDistance, parameters: [10] }
+network-model: { type: ConnectWithinDistance, parameters: [10] }
 program-pools:
   - compute-gradient: &gradient
     - { time-distribution: 1, program: "advanced:converge" }

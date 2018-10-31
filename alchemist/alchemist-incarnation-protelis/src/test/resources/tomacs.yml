@@ -43,7 +43,7 @@ seeds:
   simulation: *seed
 
 network-model:
-  type: EuclideanDistance
+  type: ConnectWithinDistance
   parameters: [*range]
 
 pools:

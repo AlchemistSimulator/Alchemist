@@ -12,12 +12,11 @@ import java.util.Collections;
 import java.util.Map;
 
 import it.unibo.alchemist.model.interfaces.Dependency;
-import it.unibo.alchemist.model.interfaces.Molecule;
 
 /**
  * Represents a junction between two cells.
  */
-public class Junction extends SimpleMolecule {
+public final class Junction extends SimpleMolecule {
 
     private static final long serialVersionUID = -5538036651435573599L;
 

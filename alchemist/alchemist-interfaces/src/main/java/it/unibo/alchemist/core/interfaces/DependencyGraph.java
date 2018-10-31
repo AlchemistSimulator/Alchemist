@@ -13,7 +13,6 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 import org.danilopianini.util.ListSet;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * This interface allows to separate the usage of a dependency graph from its

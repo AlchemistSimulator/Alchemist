@@ -252,7 +252,7 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
                 .build(new CacheLoader<CacheEntry, Route<GeoPosition>>() {
                     @Override
                     public Route<GeoPosition> load(@NotNull final CacheEntry key) {
-                        final Vehicle vehicle = key.v;
+                        final Vehicle vehicle = Objects.requireNonNull(key).v;
                         final GeoPosition p1 = key.start;
                         final GeoPosition p2 = key.end;
                         final GHRequest req = new GHRequest(p1.getCoordinate(1), p1.getCoordinate(0), p2.getCoordinate(1), p2.getCoordinate(0))

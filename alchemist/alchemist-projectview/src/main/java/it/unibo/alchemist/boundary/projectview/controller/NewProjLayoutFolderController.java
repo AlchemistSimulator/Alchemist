@@ -103,7 +103,7 @@ public class NewProjLayoutFolderController {
         dirChooser.setTitle(RESOURCES.getString("select_folder_proj"));
         dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         final File dir = dirChooser.showDialog(this.main.getStage());
-        if (dir != null) {
+        if (dir != null && dir.listFiles() != null) {
             if (dir.listFiles().length != 0) {
                 final Alert alert = new Alert(AlertType.CONFIRMATION);
                 alert.setTitle(RESOURCES.getString("select_folder_full"));

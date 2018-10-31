@@ -18,7 +18,6 @@ import java.util.Arrays;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 
-import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.Molecule;
 
 
@@ -44,6 +43,9 @@ public class SimpleMolecule implements Molecule {
         this.n = name;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(final Object obj) {
         if (obj == this) {
@@ -60,7 +62,7 @@ public class SimpleMolecule implements Molecule {
     }
 
     @Override
-    public long getId() {
+    public final long getId() {
         initHash();
         return hash64;
     }
@@ -70,6 +72,9 @@ public class SimpleMolecule implements Molecule {
         return n.toString();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         initHash();
@@ -85,6 +90,9 @@ public class SimpleMolecule implements Molecule {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return n.toString();

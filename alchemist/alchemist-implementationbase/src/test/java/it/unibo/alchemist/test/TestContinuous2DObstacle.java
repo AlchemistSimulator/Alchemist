@@ -8,20 +8,15 @@
  ******************************************************************************/
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertEquals;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DObstacles;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
-import it.unibo.alchemist.model.implementations.nodes.AbstractNode;
 import it.unibo.alchemist.model.implementations.nodes.IntNode;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.utils.RectObstacle2D;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Molecule;
-
-import java.util.Map;
-
 import org.apache.commons.math3.util.FastMath;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  */

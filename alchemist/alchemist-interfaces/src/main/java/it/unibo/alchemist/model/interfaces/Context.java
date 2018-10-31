@@ -46,7 +46,7 @@ public enum Context {
      * returned. Otherwise, if either one is {@link #NEIGHBORHOOD}, {@link #NEIGHBORHOOD} is returned. Otherwise,
      * {@link #LOCAL} is returned.
      */
-    static Context getWider(final Context c1, final Context c2) {
+    public static Context getWider(final Context c1, final Context c2) {
         if (c1 == GLOBAL || c2 == GLOBAL) {
             return GLOBAL;
         }

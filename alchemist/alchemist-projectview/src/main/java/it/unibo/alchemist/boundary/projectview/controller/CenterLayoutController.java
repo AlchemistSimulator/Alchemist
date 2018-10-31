@@ -44,11 +44,8 @@ import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.YamlLoader;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -70,7 +67,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import javafx.util.StringConverter;
 
 /**
@@ -166,10 +162,9 @@ public class CenterLayoutController {
 
     private boolean isSpinTimeCorrect = true;
     private boolean isSpinOutCorrect = true;
-    private Image img;
-    private ImageView imgViewYaml = new ImageView(img);
-    private ImageView imgViewEff = new ImageView(img);
-    private ImageView imgViewOut = new ImageView(img);
+    private ImageView imgViewYaml;
+    private ImageView imgViewEff;
+    private ImageView imgViewOut;
     private LeftLayoutController ctrlLeft;
     private Map<String, Boolean> variables = new HashMap<>();
     private final ObservableList<String> data = FXCollections.observableArrayList();
@@ -183,7 +178,7 @@ public class CenterLayoutController {
      */
     public void initialize() {
         SVGImageUtils.installSvgLoader();
-        this.img = SVGImageUtils.getSvgImage("icon/delete.svg", DELETE_WIDTH, DELETE_HEIGHT);
+        final Image img = SVGImageUtils.getSvgImage("icon/delete.svg", DELETE_WIDTH, DELETE_HEIGHT);
         this.imgViewYaml = new ImageView(img);
         this.imgViewEff = new ImageView(img);
         this.imgViewOut = new ImageView(img);
@@ -315,14 +310,11 @@ public class CenterLayoutController {
             setComponentVisible(ts, false);
         }
 
-        ts.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(final ObservableValue<? extends Boolean> ov, final Boolean t1, final Boolean t2) {
-                if (ts.isSelected()) {
-                    setComponentVisible(ts, true);
-                } else {
-                    setComponentVisible(ts, false);
-                }
+        ts.selectedProperty().addListener((ov, t1, t2) -> {
+            if (ts.isSelected()) {
+                setComponentVisible(ts, true);
+            } else {
+                setComponentVisible(ts, false);
             }
         });
     }
@@ -379,23 +371,20 @@ public class CenterLayoutController {
                 }
             }
             this.listYaml.setItems(vars);
-            this.listYaml.setCellFactory(CheckBoxListCell.forListView(new Callback<String, ObservableValue<Boolean>>() {
-                @Override
-                public ObservableValue<Boolean> call(final String var) {
-                    final BooleanProperty observable = new SimpleBooleanProperty();
-                    if (variables.get(var)) {
-                        observable.set(true);
-                    }
-                    observable.addListener((obs, wasSelected, isNowSelected) -> {
-                        if (wasSelected && !isNowSelected) {
-                            variables.put(var, false);
-                        }
-                        if (!wasSelected && isNowSelected) {
-                            variables.put(var, true);
-                        }
-                    });
-                    return observable;
+            this.listYaml.setCellFactory(CheckBoxListCell.forListView(var -> {
+                final BooleanProperty observable = new SimpleBooleanProperty();
+                if (variables.get(var)) {
+                    observable.set(true);
                 }
+                observable.addListener((obs, wasSelected, isNowSelected) -> {
+                    if (wasSelected && !isNowSelected) {
+                        variables.put(var, false);
+                    }
+                    if (!wasSelected && isNowSelected) {
+                        variables.put(var, true);
+                    }
+                });
+                return observable;
             }));
         }
     }
@@ -548,15 +537,12 @@ public class CenterLayoutController {
     public void clickBatch() {
         checkChanges();
         this.project = ProjectIOUtils.loadFrom(this.ctrlLeft.getPathFolder());
-        final Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    ResourceLoader.setDefault();
-                    project.runAlchemistSimulation(true);
-                } catch (FileNotFoundException e) {
-                    L.error("Error loading simulation file.", e);
-                }
+        final Thread thread = new Thread(() -> {
+            try {
+                ResourceLoader.setDefault();
+                project.runAlchemistSimulation(true);
+            } catch (FileNotFoundException e) {
+                L.error("Error loading simulation file.", e);
             }
         }, "Batch");
         URLManager.getInstance().setupThreadClassLoader(thread);
@@ -773,15 +759,15 @@ public class CenterLayoutController {
             this.removeClass.setDisable(false);
         }
         if (!listLibError.isEmpty()) {
-            String content = RESOURCES.getString("error_adding_classpath_content")
-                    + System.getProperty("line.separator");
+            final StringBuilder content = new StringBuilder(RESOURCES.getString("error_adding_classpath_content")
+                    + System.getProperty("line.separator"));
             for (final String lib : listLibError) {
-                content = content + System.getProperty("line.separator") + "- " + lib;
+                content.append(System.getProperty("line.separator")).append("- ").append(lib);
             }
             final Alert alertCancel = new Alert(AlertType.ERROR);
             alertCancel.setTitle(RESOURCES.getString("error_adding_classpath"));
             alertCancel.setHeaderText(RESOURCES.getString("error_adding_classpath_header"));
-            alertCancel.setContentText(content);
+            alertCancel.setContentText(content.toString());
             alertCancel.showAndWait();
         }
     }
@@ -903,7 +889,7 @@ public class CenterLayoutController {
             setBaseName(RESOURCES.getString("base_name_text"));
             setSamplInterval(1);
             setSwitchBatchSelected(false);
-            setVariables(new HashMap<String, Boolean>());
+            setVariables(new HashMap<>());
             setNumberThreads(Runtime.getRuntime().availableProcessors() + 1);
             setClasspath(FXCollections.observableArrayList());
         }
@@ -1005,7 +991,7 @@ public class CenterLayoutController {
         try {
             final FXMLLoader loader = new FXMLLoader();
             loader.setLocation(ResourceLoader.getResource(ProjectGUI.RESOURCE_LOCATION + "/view/FileNameDialog.fxml"));
-            final AnchorPane pane = (AnchorPane) loader.load();
+            final AnchorPane pane = loader.load();
 
             final Stage stage = new Stage();
             stage.setTitle(RESOURCES.getString("file_name_title"));
@@ -1026,7 +1012,7 @@ public class CenterLayoutController {
             stage.showAndWait();
         } catch (IOException e) {
             L.error("Error loading the graphical interface. This is most likely a bug.", e);
-            System.exit(1);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -1036,7 +1022,7 @@ public class CenterLayoutController {
             desk.open(new File(this.ctrlLeft.getSelectedFilePath()));
         } catch (IOException e) {
             L.error("Error opening file.", e);
-            System.exit(1);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -1046,14 +1032,11 @@ public class CenterLayoutController {
         Tooltip.install(imgView, tooltip);
         grid.getChildren().remove(imgView);
         grid.add(imgView, 0, 2);
-        imgView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(final MouseEvent event) {
-                label.setText("");
-                grid.getChildren().remove(imgView);
-                if (isYaml) {
-                    setSwitchBatchSelected(false);
-                }
+        imgView.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            label.setText("");
+            grid.getChildren().remove(imgView);
+            if (isYaml) {
+                setSwitchBatchSelected(false);
             }
         });
     }
@@ -1093,7 +1076,7 @@ public class CenterLayoutController {
             alert.setHeaderText(RESOURCES.getString("save_changes_header"));
             alert.setContentText(RESOURCES.getString("save_changes_content"));
             final Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK) {
+            if (result.isPresent() && result.get() == ButtonType.OK) {
                 saveProject();
                 this.project = ProjectIOUtils.loadFrom(this.ctrlLeft.getPathFolder());
             }

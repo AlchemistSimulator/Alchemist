@@ -98,6 +98,9 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
         setTau(new DoubleTime(curTime.toDouble() + distribution.sample()));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public AbstractDistribution<T> clone(final Time currentTime) {
         return new AnyRealDistribution<>(currentTime, distribution);

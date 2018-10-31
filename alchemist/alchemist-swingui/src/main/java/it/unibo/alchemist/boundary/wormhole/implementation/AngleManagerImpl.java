@@ -18,14 +18,7 @@ import java.awt.Toolkit;
  * 
 
  */
-public class AngleManagerImpl extends AbstractSlideInputManager implements AngleManager {
-    /**
-     * <code>DEF_DEG_PER_WHEEL_CLICK</code> =
-     * "DEFault amount of DEGrees PER WHEEL CLICK".<br>
-     * Currently set to {@value #DEF_DEG_PER_WHEEL_CLICK} that seems pretty good
-     * to me.
-     */
-    public static final double DEF_DEG_PER_WHEEL_CLICK = 5d;
+public final class AngleManagerImpl extends AbstractSlideInputManager implements AngleManager {
 
     /**
      * <code>DEF_DEG_PER_PIXEL</code> = "DEFault amount of DEGrees PER PIXEL".<br>

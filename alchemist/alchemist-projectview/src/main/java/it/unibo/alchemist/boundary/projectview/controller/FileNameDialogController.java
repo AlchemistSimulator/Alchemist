@@ -14,11 +14,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
-import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -34,7 +30,6 @@ import javafx.stage.Stage;
  */
 public class FileNameDialogController {
 
-    private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
     private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
 
     @FXML
@@ -104,24 +99,26 @@ public class FileNameDialogController {
             final Desktop desk = Desktop.getDesktop();
             try {
                 if (!file.exists()) {
-                    file.createNewFile();
-                    this.dialogStage.close();
-                    this.ctrlLeft.setTreeView(new File(projPath));
-                    desk.open(file);
+                    if (file.createNewFile()) {
+                        this.dialogStage.close();
+                        this.ctrlLeft.setTreeView(new File(projPath));
+                        desk.open(file);
+                    } else {
+                        throw new IllegalStateException("Error creating a new file.");
+                    }
                 } else {
                     final Alert alert = new Alert(AlertType.CONFIRMATION);
                     alert.setTitle(RESOURCES.getString("file_name_exists"));
                     alert.setHeaderText(RESOURCES.getString("file_name_exists_header"));
                     alert.setContentText(RESOURCES.getString("file_name_exists_content"));
                     final Optional<ButtonType> result = alert.showAndWait();
-                    if (result.get() == ButtonType.OK) {
+                    if (result.isPresent() && result.get() == ButtonType.OK) {
                         this.dialogStage.close();
                         desk.open(file);
                     }
                 }
             } catch (IOException e) {
-                L.error("Error creation new file.", e);
-                System.exit(1);
+                throw new IllegalStateException("Error creating a new file.", e);
             }
         } else {
             final Alert alert = new Alert(AlertType.WARNING);

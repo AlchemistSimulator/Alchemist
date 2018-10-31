@@ -40,7 +40,7 @@ public class AbstractSlideInputManager implements ISlideInputManager {
     }
 
     @Override
-    public void dec(final double val) {
+    public final void dec(final double val) {
         setValue(value - val);
     }
 
@@ -54,7 +54,7 @@ public class AbstractSlideInputManager implements ISlideInputManager {
     }
 
     @Override
-    public void inc(final double val) {
+    public final void inc(final double val) {
         setValue(value + val);
     }
 

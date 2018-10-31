@@ -65,14 +65,14 @@ allprojects {
     }
 
     tasks.withType(Checkstyle) {
-        mustRunAfter(test)
+        dependsOn(test)
         showViolations = false
     }
     tasks.withType(FindBugs) {
-        mustRunAfter(test)
+        dependsOn(test)
     }
     tasks.withType(Pmd) {
-        mustRunAfter(test)
+        dependsOn(test)
     }
 
     dependencies {

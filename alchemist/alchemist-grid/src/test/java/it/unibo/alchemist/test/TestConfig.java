@@ -11,7 +11,6 @@ package it.unibo.alchemist.test;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -51,31 +50,28 @@ public class TestConfig {
     }
 
     /**
-     * @throws IOException 
-     * @throws ReflectiveOperationException 
-     * @throws InvocationTargetException 
-     * @throws IllegalArgumentException 
-     * @throws SecurityException 
-     * @throws NoSuchMethodException 
-     * 
+     * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testWorkingDirectory() throws IOException, NoSuchMethodException, SecurityException, IllegalArgumentException, InvocationTargetException, ReflectiveOperationException {
+    public void testWorkingDirectory() throws IOException {
         final String resource = "config/00-dependencies.yml";
         final InputStream yaml = ResourceLoader.getResourceAsStream(resource);
         Assert.assertNotNull(yaml);
         final Loader l = this.getLoader(yaml);
         final GeneralSimulationConfig<?> gsc = new LocalGeneralSimulationConfig<>(l, 0, DoubleTime.INFINITE_TIME);
         Assert.assertEquals(gsc.getDependencies().size(), 2);
-        File test = null;
+        File test;
         try (WorkingDirectory wd = new WorkingDirectory()) {
             test = new File(wd.getFileAbsolutePath("nothing")).getParentFile();
             Assert.assertTrue(test.exists());
             wd.writeFiles(gsc.getDependencies());
             final File newFile = new File(wd.getFileAbsolutePath("test.txt"));
-            newFile.createNewFile();
-            ResourceLoader.addURL(wd.getDirectoryUrl());
-            Assert.assertNotNull(ResourceLoader.getResource("test.txt"));
+            if (newFile.exists() || newFile.createNewFile()) {
+                ResourceLoader.addURL(wd.getDirectoryUrl());
+                Assert.assertNotNull(ResourceLoader.getResource("test.txt"));
+            } else {
+                Assert.fail();
+            }
         }
         Assert.assertFalse(test.exists());
     }

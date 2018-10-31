@@ -9,8 +9,8 @@ dependencies {
         "org.danilopianini:jirf:${jirfVersion}"
     )
     testImplementation(
-        project(':alchemist-loading'),
-        project(':alchemist-engine')
+        project(':alchemist-engine'),
+        project(':alchemist-loading')
     )
     antlr "org.antlr:antlr4:$antlr4Version"
     runtimeOnly "org.antlr:antlr4-runtime:$antlr4Version"

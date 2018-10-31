@@ -33,9 +33,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.LangUtils;
+import org.jetbrains.annotations.NotNull;
 import org.protelis.lang.ProtelisLoader;
 import org.protelis.lang.datatype.DeviceUID;
-import org.protelis.vm.ExecutionContext;
 import org.protelis.vm.ExecutionEnvironment;
 import org.protelis.vm.NetworkManager;
 import org.protelis.vm.ProtelisVM;
@@ -73,6 +73,7 @@ import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 
 /**
+ * @param <P> position type
  */
 public final class ProtelisIncarnation<P extends Position<P>> implements Incarnation<Object, P> {
 
@@ -86,7 +87,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             .expireAfterAccess(10, TimeUnit.MINUTES)
             .build(new CacheLoader<CacheKey, SynchronizedVM>() {
                 @Override
-                public SynchronizedVM load(final CacheKey key) {
+                public SynchronizedVM load(@NotNull final CacheKey key) {
                     return new SynchronizedVM(key);
                 }
             });
@@ -104,7 +105,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                     .flatMap(r -> r.getActions().parallelStream())
                     .filter(a -> a instanceof SendToNeighbor)
                     .map(c -> (SendToNeighbor) c)
-                    .map(crc -> crc.getProtelisProgram())
+                    .map(SendToNeighbor::getProtelisProgram)
                     .collect(Collectors.toList());
                 final List<RunProtelisProgram<?>> pList = getIncomplete(pNode, alreadyDone);
                 if (pList.isEmpty()) {
@@ -298,10 +299,10 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     }
 
     /**
-     * An {@link ExecutionContext} that operates over a node, but does not
+     * An {@link org.protelis.vm.ExecutionContext} that operates over a node, but does not
      * modify it.
      */
-    public static class DummyContext extends AbstractExecutionContext {
+    public static final class DummyContext extends AbstractExecutionContext {
         private static final Semaphore MUTEX = new Semaphore(1);
         private static final int SEED = -241837578;
         private static final RandomGenerator RNG = new MersenneTwister(SEED);
@@ -350,7 +351,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
      * {@link Node}, but cannot modify it. This is used to prevent badly written
      * properties to interact with the simulation flow.
      */
-    public static class ProtectedExecutionEnvironment implements ExecutionEnvironment {
+    public static final class ProtectedExecutionEnvironment implements ExecutionEnvironment {
         private final Node<?> node;
         private final ExecutionEnvironment shadow = new SimpleExecutionEnvironment();
 
@@ -370,7 +371,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         }
         @Override
         public Object get(final String id, final Object defaultValue) {
-            return Optional.<Object>ofNullable(get(id)).orElse(defaultValue);
+            return Optional.ofNullable(get(id)).orElse(defaultValue);
         }
         @Override
         public boolean has(final String id) {
@@ -436,17 +437,15 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     private static final class NoNode implements Node<Object> {
         private static final long serialVersionUID = 1L;
         public static final NoNode INSTANCE = new NoNode();
-        private NoNode() {
-        }
         private <A> A notImplemented() {
             throw new UnsupportedOperationException("Method can't be invoked in this context.");
         }
-        @Override
+        @Override @NotNull
         public Iterator<Reaction<Object>> iterator() {
             return notImplemented();
         }
         @Override
-        public int compareTo(final Node<Object> o) {
+        public int compareTo(@NotNull final Node<Object> o) {
             return notImplemented();
         }
         @Override

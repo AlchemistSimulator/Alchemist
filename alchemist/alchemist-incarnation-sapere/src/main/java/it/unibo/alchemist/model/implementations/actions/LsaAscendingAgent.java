@@ -9,20 +9,20 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
 import java.util.List;
 
 /**
+ * @param <P>
  */
-public class LsaAscendingAgent<P extends Position<? extends P>> extends SAPEREMoveNodeAgent<P> {
+public final class LsaAscendingAgent<P extends Position2D<? extends P>> extends SAPEREMoveNodeAgent<P> {
 
     /*
      * an agent can move at most of LIMIT along each axis
@@ -71,8 +71,8 @@ public class LsaAscendingAgent<P extends Position<? extends P>> extends SAPEREMo
             final List<ILsaMolecule> gradList;
             gradList = n.getConcentration(template);
             if (!gradList.isEmpty()) {
-                for (int i = 0; i < gradList.size(); i++) {
-                    final double valueGrad = getLSAArgumentAsDouble(gradList.get(i), gradDistPos);
+                for (final ILsaMolecule grad : gradList) {
+                    final double valueGrad = getLSAArgumentAsDouble(grad, gradDistPos);
                     if (valueGrad <= minGrad) {
                         minGrad = valueGrad;
                         targetPositions = getPosition(n);
@@ -85,14 +85,12 @@ public class LsaAscendingAgent<P extends Position<? extends P>> extends SAPEREMo
         if (bestNode == null || bestNode.contains(ACTIVE)) {
             return;
         }
-        final P mypos = getCurrentPosition();
-        final double myx = mypos.getCartesianCoordinates()[0];
-        final double myy = mypos.getCartesianCoordinates()[1];
-        double x = 0;
-        double y = 0;
         if (targetPositions != null) {
-            x = targetPositions.getCartesianCoordinates()[0];
-            y = targetPositions.getCartesianCoordinates()[1];
+            final P mypos = getCurrentPosition();
+            final double myx = mypos.getX();
+            final double myy = mypos.getY();
+            final double x = targetPositions.getX();
+            final double y = targetPositions.getY();
             double dx = x - myx;
             double dy = y - myy;
             dx = dx > 0 ? Math.min(LIMIT, dx) : Math.max(-LIMIT, dx);
@@ -104,7 +102,6 @@ public class LsaAscendingAgent<P extends Position<? extends P>> extends SAPEREMo
                 move(getEnvironment().makePosition(moveH ? dx : 0, moveV ? dy : 0));
             }
         }
-
     }
 
     /**

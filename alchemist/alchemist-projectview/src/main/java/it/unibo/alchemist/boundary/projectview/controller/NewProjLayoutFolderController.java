@@ -15,8 +15,6 @@ import java.io.IOException;
 import java.util.ResourceBundle;
 
 import org.kaikikm.threadresloader.ResourceLoader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
@@ -37,7 +35,6 @@ import javafx.stage.Stage;
  */
 public class NewProjLayoutFolderController {
 
-    private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
     private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
 
     @FXML
@@ -103,8 +100,9 @@ public class NewProjLayoutFolderController {
         dirChooser.setTitle(RESOURCES.getString("select_folder_proj"));
         dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         final File dir = dirChooser.showDialog(this.main.getStage());
-        if (dir != null && dir.listFiles() != null) {
-            if (dir.listFiles().length != 0) {
+        if (dir != null && dir.isDirectory()) {
+            final File[] listFiles = dir.listFiles();
+            if (listFiles != null && listFiles.length != 0) {
                 final Alert alert = new Alert(AlertType.CONFIRMATION);
                 alert.setTitle(RESOURCES.getString("select_folder_full"));
                 alert.setHeaderText(RESOURCES.getString("select_folder_full_header"));
@@ -130,7 +128,7 @@ public class NewProjLayoutFolderController {
         final FXMLLoader loader = new FXMLLoader();
         loader.setLocation(ResourceLoader.getResource(ProjectGUI.RESOURCE_LOCATION + "/view/NewProjLayoutSelect.fxml"));
         try {
-            final AnchorPane pane = (AnchorPane) loader.load();
+            final AnchorPane pane = loader.load();
             final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
             final double width = screenSize.getWidth() * 20.83 / 100;
             final double height = screenSize.getHeight() * 13.89 / 100;
@@ -142,8 +140,7 @@ public class NewProjLayoutFolderController {
             ctrl.setMain(this.main);
             ctrl.setStage(this.stage);
         } catch (IOException e) {
-            L.error("Error loading the graphical interface. This is most likely a bug.", e);
-            System.exit(1);
+            throw new IllegalStateException("Error loading the graphical interface. This is most likely a bug.", e);
         }
     }
 

@@ -487,14 +487,14 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         return getStatus();
     }
 
-    private abstract class Update {
+    private class Update {
         private final Node<T> source;
 
         Update(final Node<T> source) {
             this.source = source;
         }
 
-        final Stream<Reaction<T>> getReactionsRelatedTo(final Node<T> source, final Neighborhood<T> neighborhood) {
+        public final Stream<Reaction<T>> getReactionsRelatedTo(final Node<T> source, final Neighborhood<T> neighborhood) {
             return Stream.of(
                     source.getReactions().stream(),
                     neighborhood.getNeighbors().stream()
@@ -504,13 +504,13 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                 .reduce(Stream.empty(), Stream::concat);
         }
 
-        Stream<Reaction<T>> getReactionsToUpdate() {
+        public Stream<Reaction<T>> getReactionsToUpdate() {
             return Stream.empty();
         }
 
-        void performChanges() { }
+        public void performChanges() { }
 
-        protected Node<T> getSource() {
+        protected final Node<T> getSource() {
             return source;
         }
     }
@@ -522,7 +522,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         }
 
         @Override
-        Stream<Reaction<T>> getReactionsToUpdate() {
+        public Stream<Reaction<T>> getReactionsToUpdate() {
             return getReactionsRelatedTo(getSource(), env.getNeighborhood(getSource()))
                     .filter(it -> it.getInboundDependencies().stream()
                             .anyMatch(dependency -> dependency.dependsOn(Dependency.MOVEMENT)));
@@ -537,7 +537,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         }
 
         @Override
-        void performChanges() {
+        public void performChanges() {
             for (final Reaction<T> r : getSource().getReactions()) {
                 dg.removeDependencies(r);
                 ipq.removeReaction(r);
@@ -550,7 +550,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
             super(source);
         }
         @Override
-        void performChanges() {
+        public void performChanges() {
             getSource().getReactions().forEach(Engine.this::scheduleReaction);
         }
     }
@@ -569,7 +569,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         }
 
         @Override
-        Stream<Reaction<T>> getReactionsToUpdate() {
+        public Stream<Reaction<T>> getReactionsToUpdate() {
             return Stream.of(
                     // Local reactions
                     Stream.of(getSource(), target)
@@ -595,7 +595,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         }
 
         @Override
-        void performChanges() {
+        public void performChanges() {
             dg.addNeighbor(getSource(), getTarget());
         }
     }
@@ -607,7 +607,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         }
 
         @Override
-        void performChanges() {
+        public void performChanges() {
             dg.removeNeighbor(getSource(), getTarget());
         }
     }

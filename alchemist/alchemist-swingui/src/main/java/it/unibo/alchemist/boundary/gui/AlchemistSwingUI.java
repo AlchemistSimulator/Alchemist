@@ -8,27 +8,9 @@
  ******************************************************************************/
 package it.unibo.alchemist.boundary.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.event.ActionListener;
-
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-
-import org.danilopianini.view.ButtonTabComponent;
 import org.danilopianini.view.GUIUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle.getString;
 
 /**
  * The main frame for the standard Alchemist GUI.
@@ -42,11 +24,6 @@ public final class AlchemistSwingUI extends JFrame {
      * The default icon size.
      */
     public static final byte DEFAULT_ICON_SIZE = 16;
-
-    /**
-     * The default window dimension.
-     */
-    public static final int DEFAULT_WINDOW_HEIGHT = 960, DEFAULT_WINDOW_WIDTH = 1280;
 
     /**
      * Loads an image and scales it to the default Alchemist's icon size.

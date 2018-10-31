@@ -28,7 +28,7 @@ public class EuclideanDistance<T, P extends Position<P>> extends ConnectWithinDi
      */
     public EuclideanDistance(final double radius) {
         super(radius);
-        LOGGER.warn("{} has deprecated in favor of {}. Please update your simulation configuration to use the latter",
+        LOGGER.warn("{} has been deprecated in favor of {}. Please update your simulation configuration to use the latter",
             this.getClass().getSimpleName(),
             ConnectWithinDistance.class.getSimpleName()
         );

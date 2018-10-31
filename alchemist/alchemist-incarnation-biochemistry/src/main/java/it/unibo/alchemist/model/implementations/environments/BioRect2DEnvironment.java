@@ -73,7 +73,7 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
     }
 
     @Override
-    protected Euclidean2DPosition next(final double ox, final double oy, final double nx, final double ny) {
+    protected final Euclidean2DPosition next(final double ox, final double oy, final double nx, final double ny) {
         double x, y;
         if (nx > maxX) {
             x = maxX;
@@ -93,19 +93,19 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
     }
 
     @Override
-    protected boolean isAllowed(final Euclidean2DPosition p) {
+    protected final boolean isAllowed(final Euclidean2DPosition p) {
         return (p.getCoordinate(0) < maxX && p.getCoordinate(0) > minX 
                 && p.getCoordinate(1) < maxY && p.getCoordinate(1) > minY);
     }
 
     @Override
-    public void moveNode(final Node<Double> node, final Euclidean2DPosition direction) {
+    public final void moveNode(final Node<Double> node, final Euclidean2DPosition direction) {
         if (node instanceof CellNode) {
             super.moveNode(node, direction);
             final CellNode<Euclidean2DPosition> nodeToMove = (CellNode<Euclidean2DPosition>) node;
             final Neighborhood<Double> neigh = getNeighborhood(nodeToMove);
             final Map<Junction, Map<CellNode<?>, Integer>> jun = nodeToMove.getJunctions();
-            jun.entrySet().stream().forEach(e -> e.getValue().entrySet().forEach(e2 -> {
+            jun.entrySet().forEach(e -> e.getValue().entrySet().forEach(e2 -> {
                 if (!neigh.contains(e2.getKey())) { // there is a junction that links a node which isn't in the neighborhood after the movement
                    for (int i = 0; i < e2.getValue(); i++) {
                        nodeToMove.removeJunction(e.getKey(), e2.getKey());

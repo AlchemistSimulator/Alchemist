@@ -27,7 +27,7 @@ public abstract class AbstractLocalAction<T> extends AbstractAction<T> {
     }
 
     @Override
-    public Context getContext() {
+    public final Context getContext() {
         return Context.LOCAL;
     }
 

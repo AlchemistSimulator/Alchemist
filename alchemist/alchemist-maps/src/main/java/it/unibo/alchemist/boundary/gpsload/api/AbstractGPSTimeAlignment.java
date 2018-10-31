@@ -49,6 +49,9 @@ public abstract class AbstractGPSTimeAlignment implements GPSTimeAlignment {
         this.policy = policy;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ImmutableList<GPSTrace> alignTime(final List<GPSTrace> traces) {
         Stream<GPSTrace> stream = traces.stream().map(trace -> trace.startAt(computeStartTime(traces, trace)));

@@ -504,7 +504,7 @@ public final class YamlLoader implements Loader {
          */
         final Builder<Predicate<Environment<T, P>>> terminatorBuilder = new Builder<>(Predicate.class, emptySet(), factory);
         final Object terminatorsDesc = contents.get(TERMINATORS);
-        for (Object terminatorDescriptor: listCast(factory, terminatorsDesc, "terminator")) {
+        for (final Object terminatorDescriptor: listCast(factory, terminatorsDesc, "terminator")) {
             env.addTerminator(terminatorBuilder.build(terminatorDescriptor));
         }
         /*

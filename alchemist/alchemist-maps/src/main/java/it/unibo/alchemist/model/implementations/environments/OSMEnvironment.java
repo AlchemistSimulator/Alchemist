@@ -243,7 +243,7 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
     @Override
     public Route<GeoPosition> computeRoute(final GeoPosition p1, final GeoPosition p2, final Vehicle vehicle) {
         if (routecache == null) {
-            CacheBuilder<Object, Object> builder = CacheBuilder.newBuilder();
+            final CacheBuilder<Object, Object> builder = CacheBuilder.newBuilder();
             if (benchmarking) {
                 builder.recordStats();
             }

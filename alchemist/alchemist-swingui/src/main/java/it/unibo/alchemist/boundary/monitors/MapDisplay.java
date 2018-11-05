@@ -8,13 +8,16 @@
  ******************************************************************************/
 package it.unibo.alchemist.boundary.monitors;
 
-import java.awt.BorderLayout;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import it.unibo.alchemist.boundary.wormhole.implementation.LinearZoomManager;
+import it.unibo.alchemist.boundary.wormhole.implementation.MapWormhole;
+import it.unibo.alchemist.model.interfaces.Concentration;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
+import it.unibo.alchemist.model.interfaces.Time;
+import java.awt.*;
 import java.io.File;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import org.mapsforge.core.graphics.GraphicFactory;
 import org.mapsforge.map.awt.graphics.AwtGraphicFactory;
 import org.mapsforge.map.awt.view.MapView;
@@ -27,16 +30,12 @@ import org.mapsforge.map.layer.download.tilesource.OpenStreetMapMapnik;
 import org.mapsforge.map.layer.download.tilesource.TileSource;
 import org.mapsforge.map.model.Model;
 
-import it.unibo.alchemist.boundary.wormhole.implementation.LinearZoomManager;
-import it.unibo.alchemist.boundary.wormhole.implementation.MapWormhole;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.GeoPosition;
-import it.unibo.alchemist.model.interfaces.Time;
-
 /**
- * 
- * @param <T>
+ * Graphical 2D display of an environments that uses a map.
+ *
+ * @param <T> the {@link Concentration} type
  */
+@Deprecated
 public class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
     private static final long serialVersionUID = 8593507198560560646L;
     private static final GraphicFactory GRAPHIC_FACTORY = AwtGraphicFactory.INSTANCE;
@@ -46,7 +45,7 @@ public class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
     private final MapView mapView = new MapView();
 
     /**
-     * 
+     * Default constructor.
      */
     public MapDisplay() {
         super();
@@ -56,32 +55,6 @@ public class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
         tdl.start();
         mapView.getMapScaleBar().setVisible(true);
         add(mapView);
-    }
-
-    @Override
-    protected void drawBackground(final Graphics2D g) {
-    }
-
-    @Override
-    public void paint(final Graphics g) {
-        super.paint(g);
-        if (mapView != null) {
-            mapView.paint(g);
-        }
-        drawEnvOnView((Graphics2D) g);
-    };
-
-    @Override
-    public void initialized(final Environment<T, GeoPosition> env) {
-        super.initialized(env);
-        Arrays.stream(getMouseListeners()).forEach(mapView::addMouseListener);
-        Arrays.stream(getMouseMotionListeners()).forEach(mapView::addMouseMotionListener);
-        setWormhole(new MapWormhole(env, this, mapView.getModel().mapViewPosition));
-        setZoomManager(new LinearZoomManager(1, 1, 2, MapWormhole.MAX_ZOOM));
-        getWormhole().center();
-        getWormhole().optimalZoom();
-        getZoomManager().setZoom(getWormhole().getZoom());
-        super.initialized(env);
     }
 
     private static TileCache createTileCache() {
@@ -101,6 +74,31 @@ public class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
                 GRAPHIC_FACTORY);
         tdl.setDisplayModel(model.displayModel);
         return tdl;
+    }
+
+    @Override
+    protected void drawBackground(final Graphics2D g) {
+    }
+
+    @Override
+    public void paint(final Graphics g) {
+        super.paint(g);
+        if (mapView != null) {
+            mapView.paint(g);
+        }
+        drawEnvOnView((Graphics2D) g);
+    }
+
+    @Override
+    public void initialized(final Environment<T, GeoPosition> env) {
+        Arrays.stream(getMouseListeners()).forEach(mapView::addMouseListener);
+        Arrays.stream(getMouseMotionListeners()).forEach(mapView::addMouseMotionListener);
+        setWormhole(new MapWormhole(env, this, mapView.getModel().mapViewPosition));
+        setZoomManager(new LinearZoomManager(1, 1, 2, MapWormhole.MAX_ZOOM));
+        getWormhole().center();
+        getWormhole().optimalZoom();
+        getZoomManager().setZoom(getWormhole().getZoom());
+        super.initialized(env);
     }
 
     @Override

@@ -7,7 +7,7 @@
  * LICENSE in the Alchemist distribution's top directory.
  ******************************************************************************/
 /**
- * This package contains the Alchemist Swing GUI implementation.
+ * This package contains the Alchemist simulation GUI implementation.
  */
 package it.unibo.alchemist.boundary.gui;
 

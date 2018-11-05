@@ -8,6 +8,14 @@
  ******************************************************************************/
 package it.unibo.alchemist.boundary.gui.effects;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapter;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
+import it.unibo.alchemist.SupportedIncarnations;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -16,25 +24,15 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.danilopianini.io.FileUtilities;
 import org.danilopianini.lang.CollectionWithCurrentElement;
 import org.danilopianini.lang.ImmutableCollectionWithCurrentElement;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.TypeAdapter;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
-
-import it.unibo.alchemist.SupportedIncarnations;
 
 /**
  * Serialize Alchemist effects from/to file in human readable format.
  *
  */
+@Deprecated
 public final class EffectSerializationFactory {
 
     /*

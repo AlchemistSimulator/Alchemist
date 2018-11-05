@@ -24,6 +24,7 @@ import net.miginfocom.swing.MigLayout;
  * like New, Open, Close, Save, etc. should stay togheter.
  * 
  */
+@Deprecated
 public class JTapeTab extends JPanel {
     /**
      * 

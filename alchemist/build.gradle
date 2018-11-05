@@ -267,6 +267,10 @@ dokka {
     }   
 }
 
+dokka {
+    sourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
+}
+
 allprojects {
     def jdocTasks = ['javadoc', 'uploadArchives', 'projectReport', 'buildDashboard', 'javadocJar']
     def selectedTasks = gradle.startParameter.taskNames ?: defaultTasks

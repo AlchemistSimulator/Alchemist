@@ -6,11 +6,17 @@ dependencies {
         project(':alchemist-loading'),
         project(':alchemist-maps'),
         project(':alchemist-time'),
+        "de.codecentric.centerdevice:javafxsvg:${javaFXSVG}",
         "com.miglayout:miglayout-swing:${miglayoutVersion}",
+        "org.apache.commons:commons-lang3:3.8.1",
         "org.mapsforge:mapsforge-map-awt:${mapsforgeVersion}",
         "org.danilopianini:gson-extras:${gsonExtrasVersion}",
-        'org.danilopianini:javalib-java7:0.6.1',
-        "org.reflections:reflections:$reflectionsVersion"
+        "org.danilopianini:javalib-java7:0.6.1",
+        "org.controlsfx:controlsfx:${controlsFXVersion}",        
+        "org.reflections:reflections:${reflectionsVersion}",
+        "com.jfoenix:jfoenix:${jFoenixVersion}",
+        "com.github.jiconfont:jiconfont-javafx:${jIconFontJavaFXVersion}",
+        "com.github.jiconfont:jiconfont-google_material_design_icons:${jIconFontGoogleMaterialVersion}"
     )
     testRuntimeOnly project(':alchemist-incarnation-protelis')
 }

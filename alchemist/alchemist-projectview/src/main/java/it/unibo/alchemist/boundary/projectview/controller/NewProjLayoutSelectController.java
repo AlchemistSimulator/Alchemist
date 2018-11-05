@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.FileSystems;
@@ -35,6 +36,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -43,20 +45,22 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 /**
- * 
- *
+ * This class models a JavaFX controller for NewPorjLayoutSelect.fxml.
  */
-public class NewProjLayoutSelectController {
+public class NewProjLayoutSelectController implements Initializable {
 
     private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
     private static final boolean ON_WINDOWS = System.getProperty("os.name").toLowerCase(Locale.US).contains("windows");
 
     @FXML
     private Button backBtn;
+
     @FXML
     private Button finishBtn;
+
     @FXML
     private ChoiceBox<String> choiceTempl;
+
     @FXML
     private Label select;
 
@@ -64,15 +68,11 @@ public class NewProjLayoutSelectController {
     private String folderPath;
     private String selectedTemplate;
     private Stage stage;
-    private static final ObservableList<String> TEMPLATES = FXCollections.observableList(
-        resourcesFrom("templates", 1)
-            .map(s -> s.substring(0,  s.length() - (s.endsWith("/") ? 1 : 0)))
-            .collect(Collectors.toList()));
+    private static final ObservableList<String> TEMPLATES = FXCollections.observableList(resourcesFrom("/templates", 1)
+            .map(s -> s.substring(0, s.length() - (s.endsWith("/") ? 1 : 0))).collect(Collectors.toList()));
 
-    /**
-     * 
-     */
-    public void initialize() {
+    @Override
+    public void initialize(final URL location, final ResourceBundle resources) {
         this.backBtn.setText(RESOURCES.getString("back"));
         this.finishBtn.setText(RESOURCES.getString("finish"));
         this.finishBtn.setDisable(true);
@@ -82,11 +82,12 @@ public class NewProjLayoutSelectController {
             selectedTemplate = newValue;
             finishBtn.setDisable(false);
         });
-}
+    }
 
     /**
      * 
-     * @param main main
+     * @param main
+     *            main
      */
     public void setMain(final ProjectGUI main) {
         this.main = main;
@@ -94,7 +95,8 @@ public class NewProjLayoutSelectController {
 
     /**
      * 
-     * @param stage Stage
+     * @param stage
+     *            Stage
      */
     public void setStage(final Stage stage) {
         this.stage = stage;
@@ -102,7 +104,8 @@ public class NewProjLayoutSelectController {
 
     /**
      * 
-     * @param path Folder path
+     * @param path
+     *            Folder path
      */
     public void setFolderPath(final String path) {
         this.folderPath = path;
@@ -138,7 +141,7 @@ public class NewProjLayoutSelectController {
     public void clickBack() throws IOException {
         final FXMLLoader loader = new FXMLLoader();
         loader.setLocation(ResourceLoader.getResource(ProjectGUI.RESOURCE_LOCATION + "/view/NewProjLayoutFolder.fxml"));
-        final AnchorPane pane = (AnchorPane) loader.load();
+        final AnchorPane pane = loader.load();
         final Scene scene = new Scene(pane);
         this.stage.setScene(scene);
         final NewProjLayoutFolderController ctrl = loader.getController();

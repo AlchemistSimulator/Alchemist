@@ -15,8 +15,7 @@ import java.awt.Toolkit;
 /**
  * An <code>AngleManager</code> converts the sliding of any physical/virtual
  * device/control into an angle expressed with radians.
- * 
-
+ *
  */
 public class AngleManagerImpl extends AbstractSlideInputManager implements AngleManager {
     /**

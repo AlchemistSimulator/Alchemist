@@ -14,8 +14,7 @@ import java.awt.geom.Point2D;
 /**
  * Base type for any pointing device: it provides services to analyze the
  * pointer's movement.
- * 
-
+ *
  */
 public interface PointerSpeed {
     /**

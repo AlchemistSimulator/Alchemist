@@ -8,18 +8,16 @@
  ******************************************************************************/
 package it.unibo.alchemist.boundary.projectview.controller;
 
+import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
+import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
-import java.util.Optional;
+import java.io.UncheckedIOException;
+import java.net.URL;
 import java.util.ResourceBundle;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
-import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -27,12 +25,14 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  *
  */
-public class FileNameDialogController {
+public class FileNameDialogController implements Initializable {
 
     private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
     private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
@@ -52,10 +52,8 @@ public class FileNameDialogController {
     private Stage dialogStage;
     private String extension;
 
-    /**
-     * 
-     */
-    public void initialize() {
+    @Override
+    public void initialize(final URL location, final ResourceBundle resources) {
         this.btnCancel.setText(RESOURCES.getString("cancel"));
         this.btnOk.setText(RESOURCES.getString("ok"));
         this.fileName.setText(RESOURCES.getString("file_name"));
@@ -64,6 +62,7 @@ public class FileNameDialogController {
 
     /**
      * Sets the stage.
+     *
      * @param dialog dialog stage
      */
     public void setDialogStage(final Stage dialog) {
@@ -72,6 +71,7 @@ public class FileNameDialogController {
 
     /**
      * Sets the extension of the file.
+     *
      * @param extension File extension
      */
     public void setExtension(final String extension) {
@@ -80,7 +80,6 @@ public class FileNameDialogController {
     }
 
     /**
-     * 
      * @param ctrl Left Layout controller
      */
     public void setCtrlLeftLayout(final LeftLayoutController ctrl) {
@@ -88,7 +87,7 @@ public class FileNameDialogController {
     }
 
     /**
-     * 
+     *
      */
     @FXML
     protected void clickOK() {
@@ -103,8 +102,7 @@ public class FileNameDialogController {
             }
             final Desktop desk = Desktop.getDesktop();
             try {
-                if (!file.exists()) {
-                    file.createNewFile();
+                if (!file.exists() && file.createNewFile()) {
                     this.dialogStage.close();
                     this.ctrlLeft.setTreeView(new File(projPath));
                     desk.open(file);
@@ -113,11 +111,18 @@ public class FileNameDialogController {
                     alert.setTitle(RESOURCES.getString("file_name_exists"));
                     alert.setHeaderText(RESOURCES.getString("file_name_exists_header"));
                     alert.setContentText(RESOURCES.getString("file_name_exists_content"));
-                    final Optional<ButtonType> result = alert.showAndWait();
-                    if (result.get() == ButtonType.OK) {
-                        this.dialogStage.close();
-                        desk.open(file);
-                    }
+                    alert.showAndWait()
+                            .ifPresent(buttonType -> {
+                                if (buttonType == ButtonType.OK) {
+                                    this.dialogStage.close();
+                                    try {
+                                        desk.open(file);
+                                    } catch (final IOException e) {
+                                        L.warn(e.getMessage(), e);
+                                        throw new UncheckedIOException(e);
+                                    }
+                                }
+                            });
                 }
             } catch (IOException e) {
                 L.error("Error creation new file.", e);
@@ -133,7 +138,7 @@ public class FileNameDialogController {
     }
 
     /**
-     * 
+     *
      */
     @FXML
     protected void clickCancel() {

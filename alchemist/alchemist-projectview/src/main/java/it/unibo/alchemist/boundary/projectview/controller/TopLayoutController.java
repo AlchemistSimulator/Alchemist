@@ -8,25 +8,24 @@
  ******************************************************************************/
 package it.unibo.alchemist.boundary.projectview.controller;
 
+import com.google.common.io.Files;
+import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
+import it.unibo.alchemist.boundary.projectview.ProjectGUI;
+import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.kaikikm.threadresloader.ResourceLoader;
 
-import com.google.common.io.Files;
-
-import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
-import it.unibo.alchemist.boundary.projectview.ProjectGUI;
-import it.unibo.alchemist.boundary.projectview.utils.SVGImageUtils;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
@@ -34,13 +33,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 /**
- * 
- *
+ * This class models a JavaFX controller for TopLayout.fxml.
  */
-public class TopLayoutController {
+public class TopLayoutController implements Initializable {
 
     private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
     private static final double IMG_WIDTH = 3;
@@ -59,22 +56,20 @@ public class TopLayoutController {
     private LeftLayoutController ctrlLeft;
     private Watcher watcher;
 
-    /**
-     * 
-     */
-    public void initialize() {
-        SVGImageUtils.installSvgLoader();
-        this.btnNew.setGraphic(new ImageView(SVGImageUtils.getSvgImage("icon/new.svg", IMG_WIDTH, IMG_HEIGHT)));
+    @Override
+    public void initialize(final URL location, final ResourceBundle resources) {
+        this.btnNew.setGraphic(new ImageView(SVGImageUtils.getSvgImage("/icon/new.svg", IMG_WIDTH, IMG_HEIGHT)));
         this.btnNew.setText(RESOURCES.getString("new"));
-        this.btnOpen.setGraphic(new ImageView(SVGImageUtils.getSvgImage("icon/open.svg", IMG_WIDTH, IMG_HEIGHT)));
+        this.btnOpen.setGraphic(new ImageView(SVGImageUtils.getSvgImage("/icon/open.svg", IMG_WIDTH, IMG_HEIGHT)));
         this.btnOpen.setText(RESOURCES.getString("open"));
-        this.btnSave.setGraphic(new ImageView(SVGImageUtils.getSvgImage("icon/save.svg", IMG_WIDTH, IMG_HEIGHT)));
+        this.btnSave.setGraphic(new ImageView(SVGImageUtils.getSvgImage("/icon/save.svg", IMG_WIDTH, IMG_HEIGHT)));
         this.btnSave.setText(RESOURCES.getString("save"));
         this.btnSave.setDisable(true);
     }
 
     /**
      * Sets the main class.
+     *
      * @param main main class
      */
     public void setMain(final ProjectGUI main) {
@@ -82,7 +77,6 @@ public class TopLayoutController {
     }
 
     /**
-     * 
      * @param controller LeftLayout controller
      */
     public void setCtrlLeft(final LeftLayoutController controller) {
@@ -90,7 +84,6 @@ public class TopLayoutController {
     }
 
     /**
-     * 
      * @param controller CenterLayout controller
      */
     public void setCtrlCenter(final CenterLayoutController controller) {
@@ -108,9 +101,8 @@ public class TopLayoutController {
 
     /**
      * Show a view to create new project.
-     * 
-     * @throws IOException
-     *             if the FXML can't get loaded
+     *
+     * @throws IOException if the FXML can't get loaded
      */
     @FXML
     public void clickNew() throws IOException {
@@ -132,12 +124,7 @@ public class TopLayoutController {
         final NewProjLayoutFolderController ctrl = loader.getController();
         ctrl.setMain(this.main);
         ctrl.setStage(stage);
-        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(final WindowEvent event) {
-                ctrl.setFolderPath(null);
-            }
-        });
+        stage.setOnCloseRequest(event -> ctrl.setFolderPath(null));
         stage.showAndWait();
         if (ctrl.getFolderPath() != null) {
             setView(new File(ctrl.getFolderPath()));
@@ -146,11 +133,11 @@ public class TopLayoutController {
 
     /**
      * Show a directory chooser to open an existing project.
-     * @throws IOException 
-     * @throws FileNotFoundException 
+     *
+     * @throws IOException if something goes wrong
      */
     @FXML
-    public void clickOpen() throws FileNotFoundException, IOException {
+    public void clickOpen() throws IOException {
         if (this.ctrlCenter.getProject() != null) {
             this.ctrlCenter.checkChanges();
         }

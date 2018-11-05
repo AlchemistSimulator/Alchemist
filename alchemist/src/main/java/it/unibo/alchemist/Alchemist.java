@@ -6,11 +6,14 @@
  * GNU General Public License, with a linking exception, as described in the file
  * LICENSE in the Alchemist distribution's top directory.
  ******************************************************************************/
-/**
- * 
- */
 package it.unibo.alchemist;
 
+import ch.qos.logback.classic.Level;
+import it.unibo.alchemist.AlchemistRunner.Builder;
+import it.unibo.alchemist.boundary.projectview.ProjectGUI;
+import it.unibo.alchemist.cli.CLIMaker;
+import it.unibo.alchemist.loader.Loader;
+import it.unibo.alchemist.loader.YamlLoader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -22,9 +25,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import javax.swing.JFrame;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -35,16 +35,8 @@ import org.apache.ignite.startup.cmdline.CommandLineStartup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.Level;
-import it.unibo.alchemist.AlchemistRunner.Builder;
-import it.unibo.alchemist.boundary.projectview.ProjectGUI;
-import it.unibo.alchemist.cli.CLIMaker;
-import it.unibo.alchemist.loader.Loader;
-import it.unibo.alchemist.loader.YamlLoader;
-
 /**
  * Starts Alchemist.
- * 
  */
 public final class Alchemist {
 
@@ -74,16 +66,17 @@ public final class Alchemist {
         LOGLEVELS = Collections.unmodifiableMap(levels);
     }
 
+    /**
+     * Private, empty constructor.
+     */
     private Alchemist() {
+        throw new AssertionError("Suppress default constructor for noninstantiability");
     }
 
     /**
-     * @param args
-     *            the argument for the program
-     * @param <T>
-     *            concentration type
+     * @param args the argument for the program
      */
-    public static <T> void main(final String[] args) {
+    public static void main(final String[] args) {
         final Options opts = CLIMaker.getOptions();
         final CommandLineParser parser = new DefaultParser();
         try {
@@ -101,14 +94,13 @@ public final class Alchemist {
             if (cmd.hasOption(YAML)) {
                 try (InputStream is = new FileInputStream(new File(cmd.getOptionValue(YAML)))) {
                     loader = Optional.of(new YamlLoader(is));
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     L.error("Unable to load the requested file.", e);
                 }
             }
             if (loader.isPresent()) {
                 final Builder<?, ?> simBuilder = new Builder<>(loader.get())
-                        .setHeadless(cmd.hasOption(HEADLESS))
-                        .setGUICloseOperation(JFrame.EXIT_ON_CLOSE);
+                        .setHeadless(cmd.hasOption(HEADLESS));
                 ifPresent(cmd, EXPORT, simBuilder::setOutputFile);
                 ifPresent(cmd, GRAPHICS, simBuilder::setEffects);
                 try {
@@ -146,14 +138,14 @@ public final class Alchemist {
                     } else {
                         simBuilder.build().launch();
                     }
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     L.error("A number was expected. " + e.getMessage());
                     System.exit(1);
                 }
             } else {
                 ProjectGUI.main();
             }
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
             L.error("Your command sequence could not be parsed.", e);
         }
     }
@@ -172,7 +164,7 @@ public final class Alchemist {
 
     private static void setVerbosity(final CommandLine cmd) {
         boolean oneFound = false;
-        for (final Entry<String, Level> entry: LOGLEVELS.entrySet()) {
+        for (final Entry<String, Level> entry : LOGLEVELS.entrySet()) {
             if (cmd.hasOption(entry.getKey())) {
                 if (oneFound) {
                     /*

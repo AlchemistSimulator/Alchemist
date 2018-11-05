@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
  * project's alchemist/build.gradle file.
- * 
+ *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception, as described in the file
  * LICENSE in the Alchemist distribution's top directory.
@@ -38,7 +38,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  */
 @SuppressWarnings("serial")
 @SuppressFBWarnings(value = {"SE_BAD_FIELD", "SE_NO_SERIALVERSIONID"},
-    justification = "This class does not comply to Serializable.")
+        justification = "This class does not comply to Serializable.")
 public class Exporter<T, P extends Position<? extends P>> implements OutputMonitor<T, P> {
 
     private static final String SEPARATOR = "#####################################################################";
@@ -54,7 +54,7 @@ public class Exporter<T, P extends Position<? extends P>> implements OutputMonit
      * @param header a message to be inserted in the header of the file.
      * @param columns the extractors to use
      * @throws FileNotFoundException if the file can not be opened for writing
-     * @throws UnsupportedEncodingException 
+     * @throws UnsupportedEncodingException
      */
     public Exporter(final String target, final double space, final String header, final List<Extractor> columns) throws FileNotFoundException {
         this.sampleSpace = space;
@@ -94,11 +94,11 @@ public class Exporter<T, P extends Position<? extends P>> implements OutputMonit
         out.println("# The columns have the following meaning: ");
         out.print("# ");
         extractors.stream()
-            .flatMap(e -> e.getNames().stream())
-            .forEach(name -> {
-                out.print(name);
-                out.print(" ");
-            });
+                .flatMap(e -> e.getNames().stream())
+                .forEach(name -> {
+                    out.print(name);
+                    out.print(" ");
+                });
         out.println();
         stepDone(env, null, new DoubleTime(), 0);
     }
@@ -119,8 +119,8 @@ public class Exporter<T, P extends Position<? extends P>> implements OutputMonit
 
     private void writeRow(final Environment<?, ?> env, final Reaction<?> r, final Time time, final long step) {
         extractors.parallelStream()
-            .flatMapToDouble(e -> Arrays.stream(e.extractData(env, r, time, step)))
-            .forEachOrdered(this::printDatum);
+                .flatMapToDouble(e -> Arrays.stream(e.extractData(env, r, time, step)))
+                .forEachOrdered(this::printDatum);
         out.println();
     }
 

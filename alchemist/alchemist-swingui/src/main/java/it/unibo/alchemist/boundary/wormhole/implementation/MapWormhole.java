@@ -8,24 +8,21 @@
  ******************************************************************************/
 package it.unibo.alchemist.boundary.wormhole.implementation;
 
-import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
-
-import java.awt.Component;
-import java.awt.Point;
+import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
+import it.unibo.alchemist.model.interfaces.Position2D;
+import java.awt.*;
 import java.util.function.BiFunction;
-
 import org.mapsforge.core.model.LatLong;
 import org.mapsforge.core.util.MercatorProjection;
 import org.mapsforge.map.model.MapViewPosition;
 
-import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.GeoPosition;
+import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
 
 /**
  * Wormhole used for maps rendering.
- * 
-
+ *
  */
 public final class MapWormhole extends Wormhole2D<GeoPosition> {
     private final MapViewPosition mapModel;
@@ -96,13 +93,19 @@ public final class MapWormhole extends Wormhole2D<GeoPosition> {
     }
 
     @Override
-    public Point getViewPoint(final GeoPosition envPoint) {
-        final LatLong l = mapModel.getCenter();
-        final PointAdapter<GeoPosition> viewPoint = coordToPx(from(envPoint));
-        final PointAdapter<GeoPosition> centerView = coordToPx(from(l.longitude, l.latitude));
-        final PointAdapter<GeoPosition> diff = viewPoint.diff(centerView);
-        final PointAdapter<GeoPosition> vc = from(getViewPosition());
-        return vc.sum(diff).toPoint();
+    public Point getViewPoint(final Position2D<?> environmentPoint) {
+        if (environmentPoint instanceof GeoPosition) {
+            final GeoPosition envPoint = (GeoPosition) environmentPoint;
+            final LatLong l = mapModel.getCenter();
+            final PointAdapter<GeoPosition> viewPoint = coordToPx(from(envPoint));
+            final PointAdapter<GeoPosition> centerView = coordToPx(from(l.longitude, l.latitude));
+            final PointAdapter<GeoPosition> diff = viewPoint.diff(centerView);
+            final PointAdapter<GeoPosition> vc = from(getViewPosition());
+            return vc.sum(diff).toPoint();
+        }
+        throw new IllegalArgumentException("Invalid position type on map: "
+                + environmentPoint + " of type: "
+                + environmentPoint.getClass().getName());
     }
 
     @Override
@@ -116,10 +119,10 @@ public final class MapWormhole extends Wormhole2D<GeoPosition> {
     }
 
     @Override
-    public void setEnvPosition(final GeoPosition ep) {
+    public void setEnvPosition(final Position2D<?> ep) {
         LatLong center;
         try {
-            center = new LatLong(ep.getCoordinate(1), ep.getCoordinate(0));
+            center = new LatLong(ep.getY(), ep.getX());
         } catch (IllegalArgumentException e) {
             center = new LatLong(0, 0);
         }
@@ -161,7 +164,6 @@ public final class MapWormhole extends Wormhole2D<GeoPosition> {
         setViewPosition(from(getViewPosition()).sum(delta).toPoint());
     }
 
-    @Override
     protected GeoPosition makePosition(final double x, final double y) {
         return new LatLongPosition(y, x);
     }

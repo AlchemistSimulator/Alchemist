@@ -8,18 +8,29 @@
  ******************************************************************************/
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertEquals;
-
+import it.unibo.alchemist.loader.displacements.Grid;
+import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.junit.Test;
 
-import it.unibo.alchemist.loader.displacements.Grid;
-import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
+import static org.junit.Assert.assertEquals;
 
 /**
  *
  */
 public class TestGrid {
+    // Test values to avoid using magic numbers
+    // Arrays of test values
+    private static final double[] X = {1, 10, 0, 1, 10, -10};
+    private static final double[] Y = {9.9, 1, 0, 1, 10, -10};
+    private static final long[] EXPECTED = {9, 10, 0, 1, 100, 100};
+    // Indexes
+    private static final int VERTICAL = 0;
+    private static final int HORIZONTAL = 1;
+    private static final int EMPTY = 2;
+    private static final int ONE_X_ONE = 3;
+    private static final int TEN_X_TEN = 4;
+    private static final int NEGATIVE_10_X_10 = 5;
 
     private static Continuous2DEnvironment env() {
         return new Continuous2DEnvironment<>();
@@ -29,7 +40,7 @@ public class TestGrid {
         return new MersenneTwister();
     }
     /**
-     * 
+     *
      */
     @Test
     public void testVerticalLine() {
@@ -38,35 +49,35 @@ public class TestGrid {
     }
 
     /**
-     * 
+     *
      */
     @Test
     public void testHorizontalLine() {
-        test(10, 10, 1);
+        test(EXPECTED[HORIZONTAL], X[HORIZONTAL], Y[HORIZONTAL]);
     }
 
     /**
-     * 
+     *
      */
     @Test
     public void testEmpty() {
-        test(0, 0, 0);
+        test(EXPECTED[EMPTY], X[EMPTY], Y[EMPTY]);
     }
 
     /**
-     * 
+     *
      */
     @Test
     public void test1x1() {
-        test(1, 1, 1);
+        test(EXPECTED[ONE_X_ONE], X[ONE_X_ONE], Y[ONE_X_ONE]);
     }
 
     /**
-     * 
+     *
      */
     @Test
     public void test10x10() {
-        test(100, 10, 10);
+        test(EXPECTED[TEN_X_TEN], X[TEN_X_TEN], Y[TEN_X_TEN]);
     }
 
     /**
@@ -82,7 +93,7 @@ public class TestGrid {
      */
     @Test
     public void test10x10negative() {
-        test(100, -10, -10);
+        test(EXPECTED[NEGATIVE_10_X_10], X[NEGATIVE_10_X_10], Y[NEGATIVE_10_X_10]);
     }
 
     private void test(final long expected, final double x, final double y) {

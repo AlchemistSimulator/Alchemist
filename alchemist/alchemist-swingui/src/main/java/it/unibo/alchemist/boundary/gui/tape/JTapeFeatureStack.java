@@ -19,6 +19,7 @@ import java.util.List;
  * 
  * 
  */
+@Deprecated
 public class JTapeFeatureStack extends JTapeSection {
 
     private static final long serialVersionUID = -6600427004858078324L;

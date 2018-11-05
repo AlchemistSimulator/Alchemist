@@ -12,7 +12,6 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.Map;
 
-
 import org.apache.commons.math3.random.MersenneTwister;
 import org.junit.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
@@ -34,6 +33,10 @@ import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import static org.junit.Assert.*;
 

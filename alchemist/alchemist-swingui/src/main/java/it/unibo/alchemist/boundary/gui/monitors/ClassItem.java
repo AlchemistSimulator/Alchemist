@@ -15,6 +15,7 @@ import java.io.Serializable;
  *
  * @param <E>
  */
+@Deprecated
 public final class ClassItem<E> implements Serializable {
 
     private static final long serialVersionUID = 3274105941480613159L;

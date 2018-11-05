@@ -8,20 +8,16 @@
  ******************************************************************************/
 package it.unibo.alchemist.boundary.projectview.controller;
 
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.io.File;
-import java.io.IOException;
-import java.util.ResourceBundle;
-
-import org.kaikikm.threadresloader.ResourceLoader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -30,12 +26,14 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import org.kaikikm.threadresloader.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * 
- *
+ * This class models a JavaFX controller for NewProjLayoutFolder.fxml.
  */
-public class NewProjLayoutFolderController {
+public class NewProjLayoutFolderController implements Initializable {
 
     private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
     private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
@@ -51,17 +49,14 @@ public class NewProjLayoutFolderController {
     private Stage stage;
     private String path;
 
-    /**
-     * 
-     */
-    public void initialize() {
+    @Override
+    public void initialize(final URL location, final ResourceBundle resources) {
         this.next.setText(RESOURCES.getString("next"));
         this.next.setDisable(true);
         this.selectFolder.setText(RESOURCES.getString("select_folder"));
     }
 
     /**
-     * 
      * @param main main
      */
     public void setMain(final ProjectGUI main) {
@@ -69,7 +64,6 @@ public class NewProjLayoutFolderController {
     }
 
     /**
-     * 
      * @param stage stage
      */
     public void setStage(final Stage stage) {
@@ -77,7 +71,13 @@ public class NewProjLayoutFolderController {
     }
 
     /**
-     * 
+     * @return Folder path of new project.
+     */
+    public String getFolderPath() {
+        return this.path;
+    }
+
+    /**
      * @param path Folder path
      */
     public void setFolderPath(final String path) {
@@ -87,15 +87,7 @@ public class NewProjLayoutFolderController {
     }
 
     /**
-     * 
-     * @return Folder path of new project.
-     */
-    public String getFolderPath() {
-        return this.path;
-    }
-
-    /**
-     * 
+     *
      */
     @FXML
     public void clickSelect() {
@@ -121,9 +113,8 @@ public class NewProjLayoutFolderController {
         }
     }
 
-
     /**
-     * 
+     *
      */
     @FXML
     public void clickNext() {

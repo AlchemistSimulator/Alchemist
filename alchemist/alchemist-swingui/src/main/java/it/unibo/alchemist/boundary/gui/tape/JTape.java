@@ -15,6 +15,7 @@ import javax.swing.JTabbedPane;
  * features of an application that may concern the user.
  * 
  */
+@Deprecated
 public class JTape extends JTabbedPane {
 
     /**

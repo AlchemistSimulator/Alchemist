@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
  * @param <T>
  *            is the type for the concentration
  */
+@Deprecated
 public class JEffectRepresentation<T> extends JTapeFeatureStack implements ItemSelectable {
 
     private static final long serialVersionUID = -6875167656425950159L;

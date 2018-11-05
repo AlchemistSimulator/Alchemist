@@ -8,11 +8,31 @@
  ******************************************************************************/
 package it.unibo.alchemist.boundary.monitors;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Shape;
+import it.unibo.alchemist.boundary.gui.effects.Effect;
+import it.unibo.alchemist.boundary.interfaces.Graphical2DOutputMonitor;
+import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
+import it.unibo.alchemist.boundary.wormhole.implementation.AngleManagerImpl;
+import it.unibo.alchemist.boundary.wormhole.implementation.ExponentialZoomManager;
+import it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter;
+import it.unibo.alchemist.boundary.wormhole.implementation.PointerSpeedImpl;
+import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D;
+import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
+import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole.Mode;
+import it.unibo.alchemist.boundary.wormhole.interfaces.PointerSpeed;
+import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager;
+import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.core.interfaces.Status;
+import it.unibo.alchemist.model.implementations.times.DoubleTime;
+import it.unibo.alchemist.model.interfaces.Concentration;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
+import it.unibo.alchemist.model.interfaces.Neighborhood;
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Obstacle2D;
+import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.Time;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -35,15 +55,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Semaphore;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import javax.swing.AbstractAction;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
+import javax.annotation.Nullable;
+import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 
 import com.google.common.collect.ImmutableList;
@@ -52,82 +68,66 @@ import org.danilopianini.lang.LangUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.unibo.alchemist.boundary.gui.effects.Effect;
-import it.unibo.alchemist.boundary.interfaces.Graphical2DOutputMonitor;
-import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
-import it.unibo.alchemist.boundary.wormhole.implementation.AngleManagerImpl;
-import it.unibo.alchemist.boundary.wormhole.implementation.ExponentialZoomManager;
-import it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter;
-import it.unibo.alchemist.boundary.wormhole.implementation.PointerSpeedImpl;
-import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D;
-import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
-import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D.Mode;
-import it.unibo.alchemist.boundary.wormhole.interfaces.PointerSpeed;
-import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager;
-import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.core.interfaces.Status;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
-import it.unibo.alchemist.model.interfaces.Neighborhood;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Obstacle2D;
-import it.unibo.alchemist.model.interfaces.Position2D;
-import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.Time;
-
 /**
- * Abstract base-class for each display able a graphically represent a 2D space
+ * Base-class for each display able a graphically represent a 2D space
  * and simulation.
  * 
  * @param <T>
  * @param <P>
  */
+@Deprecated
 public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel implements Graphical2DOutputMonitor<T, P> {
-
-    static {
-        System.setProperty("sun.java2d.opengl", "true");
-    }
 
     /**
      * The default frame rate.
      */
     public static final byte DEFAULT_FRAME_RATE = 25;
-
-    private static final double TIME_STEP = 1d / DEFAULT_FRAME_RATE;
-    private static final double FREEDOM_RADIUS = 1d;
-    private static final Logger L = LoggerFactory.getLogger(Generic2DDisplay.class);
-    private static final int MS_PER_SECOND = 1000;
-
     /**
-     * 
+     *
      */
     public static final long PAUSE_DETECTION_THRESHOLD = 200;
     /**
+     * The default time per frame.
+     */
+    protected static final double TIME_STEP = 1d / DEFAULT_FRAME_RATE;
+    /**
+     *
+     */
+    protected static final double FREEDOM_RADIUS = 1d;
+    /**
+     *
+     */
+    protected static final int MS_PER_SECOND = 1000;
+    /**
      * How big (in pixels) the selected node should appear.
      */
-    private static final byte SELECTED_NODE_DRAWING_SIZE = 16, SELECTED_NODE_INTERNAL_SIZE = 10;
+    protected static final byte SELECTED_NODE_DRAWING_SIZE = 16, SELECTED_NODE_INTERNAL_SIZE = 10;
+    private static final Logger L = LoggerFactory.getLogger(Generic2DDisplay.class);
     private static final long serialVersionUID = 511631766719686842L;
 
+    static {
+        System.setProperty("sun.java2d.opengl", "true");
+    }
+
+    private final Semaphore mapConsistencyMutex = new Semaphore(1);
+    private final transient PointerSpeed mouseMovement = new PointerSpeedImpl();
+    private final ConcurrentMap<Node<T>, Neighborhood<T>> neighbors = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Node<T>, P> positions = new ConcurrentHashMap<>();
     private transient AngleManagerImpl angleManager;
     private Environment<T, P> currentEnv;
     private List<Effect> effectStack;
-    private volatile boolean firstTime = true; 
+    private volatile boolean firstTime = true;
     private boolean paintLinks;
     private transient Optional<Node<T>> hooked = Optional.empty();
-    private boolean inited;
-    private double lasttime;
-    private final Semaphore mapConsistencyMutex = new Semaphore(1);
-    private final transient PointerSpeed mouseMovement = new PointerSpeedImpl();
-    private int mousex, mousey;
+    private boolean init;
+    private double lastTime;
+    private int mouseX, mouseY;
     private Node<T> nearest;
-    private final ConcurrentMap<Node<T>, Neighborhood<T>> neighbors = new ConcurrentHashMap<>();
     private List<? extends Obstacle2D> obstacles;
-    private final ConcurrentMap<Node<T>, P> positions = new ConcurrentHashMap<>();
     private boolean realTime;
     private int st;
     private long timeInit = System.currentTimeMillis();
-    private transient IWormhole2D<P> wormhole;
+    private transient BidimensionalWormhole<P> wormhole;
     private transient ZoomManager zoomManager;
     private transient boolean isPreviousStateMarking = true;
     private ViewStatus status = ViewStatus.MARK_CLOSER;
@@ -145,9 +145,8 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
 
     /**
      * Initializes a new display.
-     * 
-     * @param step
-     *            number of steps to let pass without re-drawing
+     *
+     * @param step number of steps to let pass without re-drawing
      */
     public Generic2DDisplay(final int step) {
         super();
@@ -156,7 +155,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         }
         setStep(step);
         setBackground(Color.WHITE);
-        inited = false;
+        init = false;
         final MouseManager mgr = new MouseManager();
         addMouseListener(mgr);
         addMouseMotionListener(mgr);
@@ -168,6 +167,31 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         return status == ViewStatus.MARK_CLOSER || status == ViewStatus.VIEW_ONLY;
     }
 
+    private static <I, O> Pair<O, O> mapPair(
+            final Pair<? extends I, ? extends I> pair,
+            final Function<? super I, ? extends O> converter) {
+        return new Pair<>(converter.apply(pair.getFirst()), converter.apply(pair.getSecond()));
+    }
+
+    /**
+     * Builds a frame. After building a {@link JFrame}, it performs the given operation on it, if any.
+     *
+     * @param title       the title of the frame
+     * @param content     the content of the frame
+     * @param frameEditor the operation to perform on the built {@code JFrame}
+     */
+    protected static void makeFrame(final String title, final JPanel content, final @Nullable Consumer<Object> frameEditor) {
+        final JFrame frame = new JFrame(title);
+        frame.getContentPane().add(content);
+        frame.setLocationByPlatform(true);
+        frame.pack();
+        frame.setVisible(true);
+        frameEditor.accept(frame);
+    }
+
+    /**
+     * Reset the the status of the view.
+     */
     private void resetStatus() {
         if (isPreviousStateMarking) {
             this.status = ViewStatus.MARK_CLOSER;
@@ -176,6 +200,9 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         }
     }
 
+    /**
+     * The method binds {@link KeyEvent}s to specific actions.
+     */
     private void bindKeys() {
         bindKey(KeyEvent.VK_S, () -> {
             if (status == ViewStatus.SELECTING) {
@@ -183,7 +210,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                 this.selectedNodes.clear();
             } else if (isNotInteracting()) {
                 this.status = ViewStatus.SELECTING;
-            } 
+            }
             this.repaint();
         });
         bindKey(KeyEvent.VK_O, () -> {
@@ -199,16 +226,19 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         bindKey(KeyEvent.VK_E, () -> {
             if (status == ViewStatus.SELECTING) {
                 this.status = ViewStatus.MOLECULING;
-                final JFrame mol = Generic2DDisplay.makeFrame("Moleculing", new MoleculeInjectorGUI<>(selectedNodes));
-                mol.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                mol.addWindowListener(new WindowAdapter() {
-                    @Override
-                    public void windowClosed(final WindowEvent e) {
-                        selectedNodes.clear();
-                        resetStatus();
-                    }
+                Generic2DDisplay.makeFrame("Moleculing", new MoleculeInjectorGUI<>(selectedNodes), jf -> {
+                    final JFrame mol = (JFrame) jf;
+                    mol.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    mol.addWindowListener(new WindowAdapter() {
+                        @Override
+                        public void windowClosed(final WindowEvent e) {
+                            selectedNodes.clear();
+                            resetStatus();
+                        }
+                    });
                 });
-            } 
+
+            }
         });
         bindKey(KeyEvent.VK_D, () -> {
             if (status == ViewStatus.SELECTING) {
@@ -263,20 +293,18 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     /**
      * This method is meant to be overridden by subclasses that want to display
      * a more sophisticated background than a simple color.
-     * 
-     * @param g
-     *            the Graphics2D to use
+     *
+     * @param g the Graphics2D to use
      */
     protected void drawBackground(final Graphics2D g) {
     }
 
     /**
      * Actually draws the environment on the view.
-     * 
-     * @param g
-     *            {@link Graphics2D} object responsible for drawing
+     *
+     * @param g {@link Graphics2D} object responsible for drawing
      */
-    protected final void drawEnvOnView(final Graphics2D g) {
+    protected void drawEnvOnView(final Graphics2D g) {
         if (wormhole == null || !isVisible() || !isEnabled()) {
             return;
         }
@@ -301,32 +329,32 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
              * TODO: only draw obstacles if on view
              */
             obstacles.parallelStream()
-                .map(this::convertObstacle)
-                .forEachOrdered(g::fill);
+                    .map(this::convertObstacle)
+                    .forEachOrdered(g::fill);
         }
         if (paintLinks) {
             g.setColor(Color.GRAY);
             onView.keySet().parallelStream()
-                .map(neighbors::get)
-                .flatMap(neigh -> neigh.getNeighbors().parallelStream()
-                    .map(node -> node.compareTo(neigh.getCenter()) > 0
-                                ? new Pair<>(neigh.getCenter(), node)
-                                : new Pair<>(node, neigh.getCenter())))
-                .distinct()
-                .map(pair -> mapPair(pair, node ->
-                        Optional.ofNullable(onView.get(node))
-                        .orElse(wormhole.getViewPoint(positions.get(node)))))
-                .forEachOrdered(line -> {
-                    final Point p1 = line.getFirst();
-                    final Point p2 = line.getSecond();
-                    g.drawLine(p1.x, p1.y, p2.x, p2.y);
-                });
+                    .map(neighbors::get)
+                    .flatMap(neigh -> neigh.getNeighbors().parallelStream()
+                            .map(node -> node.compareTo(neigh.getCenter()) > 0
+                                    ? new Pair<>(neigh.getCenter(), node)
+                                    : new Pair<>(node, neigh.getCenter())))
+                    .distinct()
+                    .map(pair -> mapPair(pair, node ->
+                            Optional.ofNullable(onView.get(node))
+                                    .orElse(wormhole.getViewPoint(positions.get(node)))))
+                    .forEachOrdered(line -> {
+                        final Point p1 = line.getFirst();
+                        final Point p2 = line.getSecond();
+                        g.drawLine(p1.x, p1.y, p2.x, p2.y);
+                    });
         }
         releaseData();
         if (isDraggingMouse && status == ViewStatus.MOVING && originPoint.isPresent() && endingPoint.isPresent()) {
             for (final Node<T> n : selectedNodes) {
                 if (onView.containsKey(n)) {
-                    onView.put(n, new Point(onView.get(n).x + (endingPoint.get().x - originPoint.get().x), 
+                    onView.put(n, new Point(onView.get(n).x + (endingPoint.get().x - originPoint.get().x),
                             onView.get(n).y + (endingPoint.get().y - originPoint.get().y)));
                 }
             }
@@ -340,15 +368,15 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                     .min((pair1, pair2) -> {
                         final Point p1 = pair1.getValue();
                         final Point p2 = pair2.getValue();
-                        final double d1 = Math.hypot(p1.x - mousex, p1.y - mousey);
-                        final double d2 = Math.hypot(p2.x - mousex, p2.y - mousey);
+                        final double d1 = Math.hypot(p1.x - mouseX, p1.y - mouseY);
+                        final double d2 = Math.hypot(p2.x - mouseX, p2.y - mouseY);
                         return Double.compare(d1, d2);
                     });
             if (closest.isPresent()) {
                 nearest = closest.get().getKey();
-                final int nearestx = closest.get().getValue().x;
-                final int nearesty = closest.get().getValue().y;
-                drawFriedEgg(g, nearestx, nearesty, Color.RED, Color.YELLOW);
+                final int nearestX = closest.get().getValue().x;
+                final int nearestY = closest.get().getValue().y;
+                drawFriedEgg(g, nearestX, nearestY, Color.RED, Color.YELLOW);
             }
         } else {
             nearest = null;
@@ -366,10 +394,10 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                     .collect(Collectors.toSet());
         }
         selectedNodes.parallelStream()
-            .map(e -> Optional.ofNullable(onView.get(e)))
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .forEachOrdered(p -> drawFriedEgg(g, p.x, p.y, Color.BLUE, Color.CYAN));
+                .map(e -> Optional.ofNullable(onView.get(e)))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .forEachOrdered(p -> drawFriedEgg(g, p.x, p.y, Color.BLUE, Color.CYAN));
     }
 
     private void drawFriedEgg(final Graphics g, final int x, final int y, final Color c1, final Color c2) {
@@ -395,7 +423,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
 
     /**
      * Gets the view center point.
-     * 
+     *
      * @return the center
      */
     private Point getCenter() {
@@ -409,23 +437,23 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
 
     /**
      * Lets child-classes access the wormhole.
-     * 
-     * @return an {@link IWormhole2D}
+     *
+     * @return an {@link BidimensionalWormhole}
      */
-    protected final IWormhole2D<P> getWormhole() {
+    protected final BidimensionalWormhole<P> getWormhole() {
         return wormhole;
     }
 
     /**
      * Lets child-classes access the zoom manager.
-     * 
+     *
      * @return an {@link ZoomManager}
      */
     protected final ZoomManager getZoomManager() {
         return zoomManager;
     }
 
-    /*
+    /**
      * Initializes all the internal data.
      */
     private void initAll(final Environment<T, P> env) {
@@ -452,6 +480,8 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     }
 
     /**
+     * The method checks if the closer node is marked.
+     *
      * @return true if the closer node is marked
      */
     protected final boolean isCloserNodeMarked() {
@@ -460,11 +490,11 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
 
     /**
      * Lets child-classes check if the display is initialized.
-     * 
+     *
      * @return a <code>boolean</code> value
      */
     protected boolean isInitilized() {
-        return inited;
+        return init;
     }
 
     /**
@@ -496,15 +526,16 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     }
 
     /**
-     * 
-     * @param x x coord
-     * @param y y coord
+     * Updates {@link #setToolTipText(String) tooltip} of this component with nearest node from the mouse position.
+     *
+     * @param x x coordinate of the mouse
+     * @param y y coordinate of the mouse
      */
     protected void setMouseTooltipTo(final int x, final int y) {
         if (wormhole != null) {
-            mousex = x;
-            mousey = y;
-            final P envMouse = wormhole.getEnvPoint(new Point(mousex, mousey));
+            mouseX = x;
+            mouseY = y;
+            final P envMouse = wormhole.getEnvPoint(new Point(mouseX, mouseY));
             final StringBuilder sb = new StringBuilder();
             sb.append(envMouse);
             if (nearest != null) {
@@ -559,11 +590,10 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
 
     /**
      * Lets child-classes change the wormhole.
-     * 
-     * @param w
-     *            an {@link IWormhole2D}
+     *
+     * @param w an {@link BidimensionalWormhole}
      */
-    protected void setWormhole(final IWormhole2D<P> w) {
+    protected void setWormhole(final BidimensionalWormhole<P> w) {
         Objects.requireNonNull(w);
         wormhole = w;
     }
@@ -585,15 +615,15 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             synchronized (this) {
                 if (firstTime) {
                     initAll(environment);
-                    lasttime = -TIME_STEP;
+                    lastTime = -TIME_STEP;
                     firstTime = false;
                     timeInit = System.currentTimeMillis();
                     update(environment, time);
-                } 
+                }
             }
         } else if (st < 1 || step % st == 0) {
             if (isRealTime()) {
-                if (lasttime + TIME_STEP > time.toDouble()) {
+                if (lastTime + TIME_STEP > time.toDouble()) {
                     return;
                 }
                 final long timeSimulated = (long) (time.toDouble() * MS_PER_SECOND);
@@ -616,12 +646,18 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         }
     }
 
+    /**
+     * Updates parameter for correct {@code Environment} representation.
+     *
+     * @param env  the {@code Environment}
+     * @param time the current {@code Time} of simulation
+     */
     private void update(final Environment<T, P> env, final Time time) {
         if (Thread.holdsLock(env)) {
             if (envHasMobileObstacles(env)) {
                 loadObstacles(env);
             }
-            lasttime = time.toDouble();
+            lastTime = time.toDouble();
             currentEnv = env;
             accessData();
             positions.clear();
@@ -653,30 +689,42 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         return env instanceof Environment2DWithObstacles && ((Environment2DWithObstacles<?, ?, ?>) env).hasMobileObstacles();
     }
 
-    private static <I, O> Pair<O, O> mapPair(
-            final Pair<? extends I, ? extends I> pair,
-            final Function<? super I, ? extends O> converter) {
-        return new Pair<>(converter.apply(pair.getFirst()), converter.apply(pair.getSecond()));
+    private void bindKey(final int key, final Runnable fun) {
+        final Object binder = "Key: " + key;
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(key, 0), binder);
+        getActionMap().put(binder, new AbstractAction() {
+            private static final long serialVersionUID = 7927420406960259675L;
+
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                fun.run();
+            }
+        });
     }
 
-    private class MouseManager implements MouseInputListener, MouseWheelListener, MouseMotionListener {
+    /**
+     * Custom listener for {@link MouseEvent}s.
+     */
+    protected class MouseManager implements MouseInputListener, MouseWheelListener, MouseMotionListener {
         @Override
         public void mouseClicked(final MouseEvent e) {
             setMouseTooltipTo(e.getX(), e.getY());
             if (isCloserNodeMarked() && nearest != null && SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
                 final NodeTracker<T, P> monitor = new NodeTracker<>(nearest);
-                monitor.stepDone(currentEnv, null, new DoubleTime(lasttime), st);
+                monitor.stepDone(currentEnv, null, new DoubleTime(lastTime), st);
                 final Simulation<T, P> sim = currentEnv.getSimulation();
-                final JFrame frame = makeFrame("Tracker for node " + nearest.getId(), monitor);
-                if (sim != null) {
-                    sim.addOutputMonitor(monitor);
-                    frame.addWindowListener(new WindowAdapter() {
-                        @Override
-                        public void windowClosing(final WindowEvent e) {
-                            sim.removeOutputMonitor(monitor);
-                        }
-                    });
-                }
+                makeFrame("Tracker for node " + nearest.getId(), monitor, jf -> {
+                    final JFrame frame = (JFrame) jf;
+                    if (sim != null) {
+                        sim.addOutputMonitor(monitor);
+                        frame.addWindowListener(new WindowAdapter() {
+                            @Override
+                            public void windowClosing(final WindowEvent e) {
+                                sim.removeOutputMonitor(monitor);
+                            }
+                        });
+                    }
+                });
             } else if (status == ViewStatus.CLONING && SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1) {
                 final Simulation<T, P> engine = currentEnv.getSimulation();
                 final P envEnding = wormhole.getEnvPoint(e.getPoint());
@@ -686,7 +734,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                         for (final Node<T> n : selectedNodes) {
                             newNodes.add(n.cloneNode(engine.getTime()));
                         }
-                        for (final Node<T> n: newNodes) {
+                        for (final Node<T> n : newNodes) {
                             currentEnv.addNode(n, envEnding);
                         }
                         update(currentEnv, engine.getTime());
@@ -721,7 +769,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                     final Point previous = wormhole.getViewPosition();
                     wormhole.setViewPosition(
                             PointAdapter.from(previous)
-                                .sum(PointAdapter.from(mouseMovement.getVariation())).toPoint());
+                                    .sum(PointAdapter.from(mouseMovement.getVariation())).toPoint());
                 }
             } else if (SwingUtilities.isRightMouseButton(e) && angleManager != null && wormhole.getMode() != Mode.MAP) {
                 angleManager.inc(mouseMovement.getVariation().getX());
@@ -803,6 +851,12 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             }
         }
 
+        /**
+         * Sets the tooltip of the parent component and marks the nearest node if it's not already marked.
+         *
+         * @param e the mouse event
+         * @see #setMouseTooltipTo(int, int)
+         */
         private void updateMouse(final MouseEvent e) {
             setMouseTooltipTo(e.getX(), e.getY());
             if (isCloserNodeMarked()) {
@@ -819,18 +873,6 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         frame.pack();
         frame.setVisible(true);
         return frame;
-    }
-
-    private void bindKey(final int key, final Runnable fun) {
-        final Object binder = "Key: " + key;
-        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(key, 0), binder);
-        getActionMap().put(binder, new AbstractAction() {
-            private static final long serialVersionUID = 7927420406960259675L;
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                fun.run();
-            }
-        });
     }
 
     private static boolean isInsideRectangle(final Point viewPoint, final int rx, final int ry, final int width, final int height) {

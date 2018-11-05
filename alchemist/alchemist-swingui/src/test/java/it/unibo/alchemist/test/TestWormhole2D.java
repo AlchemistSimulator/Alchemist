@@ -7,6 +7,7 @@
  * LICENSE in the Alchemist distribution's top directory.
  ******************************************************************************/
 package it.unibo.alchemist.test;
+
 import java.awt.Component;
 
 import org.junit.Test;
@@ -33,5 +34,4 @@ public class TestWormhole2D {
         });
         worm.center();
     }
-
 }

@@ -8,8 +8,11 @@
  ******************************************************************************/
 package it.unibo.alchemist.core.implementations;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
@@ -20,7 +23,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BooleanSupplier;
 
-import it.unibo.alchemist.model.interfaces.*;
 import org.danilopianini.util.concurrent.FastReadWriteLock;
 import org.jooq.lambda.fi.lang.CheckedRunnable;
 import org.slf4j.Logger;
@@ -32,6 +34,13 @@ import it.unibo.alchemist.core.interfaces.Scheduler;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
+import it.unibo.alchemist.model.interfaces.Context;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Neighborhood;
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.Time;
 
 /**
  * This class implements a simulation. It offers a wide number of static
@@ -61,6 +70,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
     private Time currentTime = DoubleTime.ZERO_TIME;
     private long curStep;
     private Thread myThread;
+    private Reaction<T> mu;
 
 
     /**
@@ -138,11 +148,12 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
     }
 
     private void doStep() throws InterruptedException, ExecutionException {
-        final Reaction<T> mu = ipq.getNext();
-        if (mu == null) {
+        final Reaction<T> root = ipq.getNext();
+        if (root == null) {
             this.newStatus(Status.TERMINATED);
             L.info("No more reactions.");
         } else {
+            mu = root;
             final Time t = mu.getTau();
             if (t.compareTo(currentTime) < 0) {
                 throw new IllegalStateException(mu + "\nis scheduled in the past at time " + t
@@ -161,17 +172,21 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
             }
             mu.update(currentTime, true, env);
             ipq.updateReaction(mu);
-            monitorLock.read();
-            for (final OutputMonitor<T, P> m : monitors) {
-                m.stepDone(env, mu, currentTime, curStep);
-            }
-            monitorLock.release();
+            updateMonitors();
         }
         if (env.isTerminated()) {
             newStatus(Status.TERMINATED);
             L.info("Termination condition reached.");
         }
         curStep++;
+    }
+
+    private void updateMonitors() {
+        monitorLock.read();
+        for (final OutputMonitor<T, P> m : monitors) {
+            m.stepDone(env, mu, currentTime, curStep);
+        }
+        monitorLock.release();
     }
 
     private void finalizeConstructor() {
@@ -249,6 +264,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
             try {
                 nextCommand = commands.take();
                 nextCommand.run();
+                updateMonitors();
             } catch (InterruptedException e) {
                 L.debug("Look! A spurious wakeup! :-)");
             }
@@ -362,6 +378,7 @@ public class Engine<T, P extends Position<? extends P>> implements Simulation<T,
                 while (status != Status.TERMINATED && curStep < steps && currentTime.compareTo(finalTime) < 0) {
                     while (!commands.isEmpty()) {
                         commands.poll().run();
+                        updateMonitors();
                     }
                     if (status.equals(Status.RUNNING)) {
                         doStep();

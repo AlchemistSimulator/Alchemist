@@ -8,7 +8,7 @@
  ******************************************************************************/
 package it.unibo.alchemist.boundary.wormhole.implementation;
 
-import it.unibo.alchemist.boundary.wormhole.interfaces.ISlideInputManager;
+import it.unibo.alchemist.boundary.wormhole.interfaces.SlideInputManager;
 
 /**
  * <code>ASlideInputManager</code> is the base class for any class whose aim is
@@ -16,7 +16,7 @@ import it.unibo.alchemist.boundary.wormhole.interfaces.ISlideInputManager;
  * 
  * 
  */
-public class AbstractSlideInputManager implements ISlideInputManager {
+public class AbstractSlideInputManager implements SlideInputManager {
 
     private double value;
     private final double min, max;

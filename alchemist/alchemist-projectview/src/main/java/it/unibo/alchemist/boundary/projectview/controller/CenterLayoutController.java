@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -36,21 +37,19 @@ import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import it.unibo.alchemist.boundary.projectview.model.Batch;
 import it.unibo.alchemist.boundary.projectview.model.Output;
 import it.unibo.alchemist.boundary.projectview.model.Project;
-import it.unibo.alchemist.boundary.projectview.utils.URLManager;
-import it.unibo.alchemist.boundary.projectview.utils.DoubleSpinnerValueFactory;
-import it.unibo.alchemist.boundary.projectview.utils.ProjectIOUtils;
-import it.unibo.alchemist.boundary.projectview.utils.SVGImageUtils;
+import it.unibo.alchemist.boundary.util.DoubleSpinnerValueFactory;
+import it.unibo.alchemist.boundary.util.ProjectIOUtils;
+import it.unibo.alchemist.boundary.util.URLManager;
+import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.YamlLoader;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -70,17 +69,15 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import javafx.util.StringConverter;
 
 /**
  * Controller of CenterLayout view.
  */
-public class CenterLayoutController {
+public class CenterLayoutController implements Initializable {
 
     private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
-    private static final ResourceBundle RESOURCES = LocalizedResourceBundle
-            .get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
+    private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
     private static final double MIN = Double.MIN_VALUE;
     private static final double MAX = Double.MAX_VALUE;
     private static final double STEP = 0.01;
@@ -178,19 +175,16 @@ public class CenterLayoutController {
     private final ToggleSwitch tsOut = new ToggleSwitch();
     private final ToggleSwitch tsVar = new ToggleSwitch();
 
-    /**
-     * 
-     */
-    public void initialize() {
-        SVGImageUtils.installSvgLoader();
-        this.img = SVGImageUtils.getSvgImage("icon/delete.svg", DELETE_WIDTH, DELETE_HEIGHT);
+    @Override
+    public void initialize(final URL location, final ResourceBundle resources) {
+        this.img = SVGImageUtils.getSvgImage("/icon/delete.svg", DELETE_WIDTH, DELETE_HEIGHT);
         this.imgViewYaml = new ImageView(img);
         this.imgViewEff = new ImageView(img);
         this.imgViewOut = new ImageView(img);
         this.grid.setDisable(true);
         this.addClass.setText(RESOURCES.getString("add"));
         this.baseNameOut.setText(RESOURCES.getString("base_name"));
-        this.batch.setGraphic(new ImageView(SVGImageUtils.getSvgImage("icon/batch.svg", BATCH_WIDTH, BATCH_HEIGHT)));
+        this.batch.setGraphic(new ImageView(SVGImageUtils.getSvgImage("/icon/batch.svg", BATCH_WIDTH, BATCH_HEIGHT)));
         this.batch.setText(RESOURCES.getString("batch_start"));
         this.batchMode.setText(RESOURCES.getString("batch_pane_title"));
         this.bnTextOut.setPromptText(RESOURCES.getString("enter_base_name"));
@@ -264,7 +258,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      * @return True if the end time spinner is correctly set, otherwise false.
      */
     public boolean isCorrectnessSpinTime() {
@@ -272,7 +266,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      * @return True if the sampling interval spinner is correctly set or the
      *         output section is not selected, otherwise false.
      */
@@ -286,7 +280,7 @@ public class CenterLayoutController {
 
     /**
      * Sets the main class and adds toggle switch to view.
-     * 
+     *
      * @param main
      *            main class.
      */
@@ -300,7 +294,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      * @param controller
      *            LeftLayout controller
      */
@@ -315,14 +309,11 @@ public class CenterLayoutController {
             setComponentVisible(ts, false);
         }
 
-        ts.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(final ObservableValue<? extends Boolean> ov, final Boolean t1, final Boolean t2) {
-                if (ts.isSelected()) {
-                    setComponentVisible(ts, true);
-                } else {
-                    setComponentVisible(ts, false);
-                }
+        ts.selectedProperty().addListener((ov, t1, t2) -> {
+            if (ts.isSelected()) {
+                setComponentVisible(ts, true);
+            } else {
+                setComponentVisible(ts, false);
             }
         });
     }
@@ -360,7 +351,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      */
     public void setVariablesList() {
         Loader fileYaml = null;
@@ -379,29 +370,26 @@ public class CenterLayoutController {
                 }
             }
             this.listYaml.setItems(vars);
-            this.listYaml.setCellFactory(CheckBoxListCell.forListView(new Callback<String, ObservableValue<Boolean>>() {
-                @Override
-                public ObservableValue<Boolean> call(final String var) {
-                    final BooleanProperty observable = new SimpleBooleanProperty();
-                    if (variables.get(var)) {
-                        observable.set(true);
-                    }
-                    observable.addListener((obs, wasSelected, isNowSelected) -> {
-                        if (wasSelected && !isNowSelected) {
-                            variables.put(var, false);
-                        }
-                        if (!wasSelected && isNowSelected) {
-                            variables.put(var, true);
-                        }
-                    });
-                    return observable;
+            this.listYaml.setCellFactory(CheckBoxListCell.forListView(var -> {
+                final BooleanProperty observable = new SimpleBooleanProperty();
+                if (variables.get(var)) {
+                    observable.set(true);
                 }
+                observable.addListener((obs, wasSelected, isNowSelected) -> {
+                    if (wasSelected && !isNowSelected) {
+                        variables.put(var, false);
+                    }
+                    if (!wasSelected && isNowSelected) {
+                        variables.put(var, true);
+                    }
+                });
+                return observable;
             }));
         }
     }
 
     /**
-     * 
+     *
      * @return A entity of project.
      */
     public Project getProject() {
@@ -409,7 +397,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      */
     @FXML
     public void clickSetYaml() {
@@ -428,7 +416,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      */
     @FXML
     public void clickEditYaml() {
@@ -436,7 +424,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      */
     @FXML
     public void clickSetEffect() {
@@ -452,7 +440,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      */
     @FXML
     public void clickEditEffect() {
@@ -460,7 +448,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      */
     @FXML
     public void clickSetFolderOut() {
@@ -488,7 +476,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      */
     @FXML
     public void clickAddClass() {
@@ -518,7 +506,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      */
     @FXML
     public void clickRemoveClass() {
@@ -542,21 +530,18 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      */
     @FXML
     public void clickBatch() {
         checkChanges();
         this.project = ProjectIOUtils.loadFrom(this.ctrlLeft.getPathFolder());
-        final Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    ResourceLoader.setDefault();
-                    project.runAlchemistSimulation(true);
-                } catch (FileNotFoundException e) {
-                    L.error("Error loading simulation file.", e);
-                }
+        final Thread thread = new Thread(() -> {
+            try {
+                ResourceLoader.setDefault();
+                project.runAlchemistSimulation(true);
+            } catch (FileNotFoundException e) {
+                L.error("Error loading simulation file.", e);
             }
         }, "Batch");
         URLManager.getInstance().setupThreadClassLoader(thread);
@@ -565,14 +550,14 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      */
     public void setEnableGrid() {
         this.grid.setDisable(false);
     }
 
     /**
-     * 
+     *
      * @return Selected simulation path.
      */
     public String getSimulationFilePath() {
@@ -580,7 +565,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      * @param path
      *            The path of file simulation.
      */
@@ -590,7 +575,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      * @return Selected end time.
      */
     private double getEndTime() {
@@ -598,7 +583,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      * @param endT
      *            Selected end time.
      */
@@ -607,7 +592,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      * @return Selected effect path
      */
     private String getEffect() {
@@ -615,7 +600,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      * @param path
      *            The path of file effect.
      */
@@ -625,7 +610,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      * @return true if the output switch is selected.
      */
     private boolean isSwitchOutputSelected() {
@@ -633,7 +618,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      * @param select
      *            true if the output switch is selected.
      */
@@ -642,7 +627,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      * @return Selected output folder
      */
     private String getOutputFolder() {
@@ -650,7 +635,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      * @param path
      *            The path of output folder.
      */
@@ -660,7 +645,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      * @return Base name typed
      */
     private String getBaseName() {
@@ -668,7 +653,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      * @param name
      *            The name of output file.
      */
@@ -677,7 +662,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      * @return Selected sampling interval.
      */
     private double getSamplInterval() {
@@ -685,7 +670,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      * @param sampInt
      *            Selected sampling interval.
      */
@@ -694,7 +679,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      * @return True if the batch mode switch is selected.
      */
     private boolean isSwitchBatchSelected() {
@@ -702,7 +687,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      * @param select
      *            True if the batch mode switch is selected.
      */
@@ -711,7 +696,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      * @return a map of variables.
      */
     private Map<String, Boolean> getVariables() {
@@ -723,7 +708,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      * @return Selected number of threads.
      */
     private int getNumberThreads() {
@@ -731,7 +716,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      * @param threads
      *            Selected number of threads.
      */
@@ -740,7 +725,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      * @return The libraries to add to the classpath.
      */
     private ObservableList<String> getClasspath() {
@@ -748,7 +733,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      * @param list
      *            The libraries to add to the classpath.
      */
@@ -787,7 +772,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      * @return The entity project.
      */
     public Project setField() {
@@ -903,7 +888,7 @@ public class CenterLayoutController {
             setBaseName(RESOURCES.getString("base_name_text"));
             setSamplInterval(1);
             setSwitchBatchSelected(false);
-            setVariables(new HashMap<String, Boolean>());
+            setVariables(new HashMap<>());
             setNumberThreads(Runtime.getRuntime().availableProcessors() + 1);
             setClasspath(FXCollections.observableArrayList());
         }
@@ -915,7 +900,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      * @param path
      *            A path of output folder
      */
@@ -939,7 +924,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      * @param path
      *            A path of file
      */
@@ -1005,7 +990,7 @@ public class CenterLayoutController {
         try {
             final FXMLLoader loader = new FXMLLoader();
             loader.setLocation(ResourceLoader.getResource(ProjectGUI.RESOURCE_LOCATION + "/view/FileNameDialog.fxml"));
-            final AnchorPane pane = (AnchorPane) loader.load();
+            final AnchorPane pane = loader.load();
 
             final Stage stage = new Stage();
             stage.setTitle(RESOURCES.getString("file_name_title"));
@@ -1046,14 +1031,11 @@ public class CenterLayoutController {
         Tooltip.install(imgView, tooltip);
         grid.getChildren().remove(imgView);
         grid.add(imgView, 0, 2);
-        imgView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(final MouseEvent event) {
-                label.setText("");
-                grid.getChildren().remove(imgView);
-                if (isYaml) {
-                    setSwitchBatchSelected(false);
-                }
+        imgView.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            label.setText("");
+            grid.getChildren().remove(imgView);
+            if (isYaml) {
+                setSwitchBatchSelected(false);
             }
         });
     }
@@ -1067,7 +1049,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      */
     public void checkChanges() {
         this.grid.requestFocus();
@@ -1101,7 +1083,7 @@ public class CenterLayoutController {
     }
 
     /**
-     * 
+     *
      */
     public void saveProject() {
         final Output out = new Output();

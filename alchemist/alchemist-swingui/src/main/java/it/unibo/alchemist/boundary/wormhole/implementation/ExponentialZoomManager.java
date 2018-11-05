@@ -15,8 +15,7 @@ import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager;
  * device/control into a zoom rate through an exponential function (in this way
  * I am sure to not see negative values ;-).<br>
  * Zoom = base ^ (amount of slides / normalization value).
- * 
-
+ *
  */
 public class ExponentialZoomManager extends AbstractSlideInputManager implements ZoomManager {
     /**

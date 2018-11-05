@@ -54,7 +54,7 @@ public abstract class AbstractEuclideanPosition<P extends AbstractEuclideanPosit
     }
 
     @Override
-    public final List<? extends P> boundingBox(final double range) {
+    public final List<P> boundingBox(final double range) {
         final List<P> box = new ArrayList<>(getDimensions());
         for (int i = 0; i < getDimensions(); i++) {
             final double[] coords = new double[c.length];

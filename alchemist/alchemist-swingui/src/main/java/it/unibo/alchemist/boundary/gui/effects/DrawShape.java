@@ -8,12 +8,6 @@
  ******************************************************************************/
 package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.SupportedIncarnations;
-import it.unibo.alchemist.boundary.gui.ColorChannel;
-import it.unibo.alchemist.model.interfaces.Incarnation;
-import it.unibo.alchemist.model.interfaces.Molecule;
-import it.unibo.alchemist.model.interfaces.Node;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Set;
@@ -27,17 +21,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.SupportedIncarnations;
+import it.unibo.alchemist.boundary.gui.ColorChannel;
+import it.unibo.alchemist.model.interfaces.Incarnation;
+import it.unibo.alchemist.model.interfaces.Molecule;
+import it.unibo.alchemist.model.interfaces.Node;
 
 /**
  */
+@Deprecated
 public class DrawShape implements Effect {
 
     /**
+     * Enum that models the mode to use the DrawShape.
      */
     public enum Mode {
-        /**
-         * 
-         */
+        /***/
         DrawEllipse, DrawRectangle, FillEllipse, FillRectangle;
 
         @Override
@@ -324,117 +323,136 @@ public class DrawShape implements Effect {
     }
 
     /**
-     * @param a alpha
+     * @param a
+     *            alpha
      */
     protected void setAlpha(final RangedInteger a) {
         this.alpha = a;
     }
 
     /**
-     * @param b blue
+     * @param b
+     *            blue
      */
     protected void setBlue(final RangedInteger b) {
         this.blue = b;
     }
 
     /**
-     * @param colorChannel colorChannel
+     * @param colorChannel
+     *            colorChannel
      */
     protected void setC(final ColorChannel colorChannel) {
         this.c = colorChannel;
     }
 
     /**
-     * @param g green
+     * @param g
+     *            green
      */
     protected void setGreen(final RangedInteger g) {
         this.green = g;
     }
 
     /**
-     * @param element incarnation
+     * @param element
+     *            incarnation
      */
     protected void setIncarnation(final CollectionWithCurrentElement<String> element) {
         this.curIncarnation = element;
     }
 
     /**
-     * @param mp maxprop
+     * @param mp
+     *            maxprop
      */
     protected void setMaxprop(final RangedInteger mp) {
         this.maxprop = mp;
     }
 
     /**
-     * @param mp minprop
+     * @param mp
+     *            minprop
      */
     protected void setMinprop(final RangedInteger mp) {
         this.minprop = mp;
     }
 
     /**
-     * @param m mode
+     * @param m
+     *            mode
      */
     protected void setMode(final Mode m) {
         this.mode = m;
     }
 
     /**
-     * @param mol molFilter
+     * @param mol
+     *            molFilter
      */
     protected void setMolFilter(final boolean mol) {
         this.molFilter = mol;
     }
+
     /**
-     * @param molpf molPropertyFilter
+     * @param molpf
+     *            molPropertyFilter
      */
     protected void setMolPropertyFilter(final boolean molpf) {
         this.molPropertyFilter = molpf;
     }
+
     /**
-     * @param mols molString
+     * @param mols
+     *            molString
      */
     protected void setMolString(final String mols) {
         this.molString = mols;
     }
 
     /**
-     * @param pr property
+     * @param pr
+     *            property
      */
     protected void setProperty(final String pr) {
         this.property = pr;
     }
 
     /**
-     * @param oom Order of magnitude
+     * @param oom
+     *            Order of magnitude
      */
     protected void setPropoom(final RangedInteger oom) {
         this.propoom = oom;
     }
 
     /**
-     * @param r red
+     * @param r
+     *            red
      */
     protected void setRed(final RangedInteger r) {
         this.red = r;
     }
 
     /**
-     * @param r reverse
+     * @param r
+     *            reverse
      */
     protected void setReverse(final boolean r) {
         this.reverse = r;
     }
 
     /**
-     * @param sf scaleFactor
+     * @param sf
+     *            scaleFactor
      */
     protected void setScaleFactor(final RangedInteger sf) {
         this.scaleFactor = sf;
     }
 
     /**
-     * @param s size
+     * @param s
+     *            size
      */
     protected void setSize(final RangedInteger s) {
         this.size = s;
@@ -448,13 +466,11 @@ public class DrawShape implements Effect {
     }
 
     /**
-     * @param writingPropertyValue if it should draw the property value
+     * @param writingPropertyValue
+     *            if it should draw the property value
      */
     protected void setWritingPropertyValue(final boolean writingPropertyValue) {
         this.writingPropertyValue = writingPropertyValue;
     }
 
-
 }
-
-

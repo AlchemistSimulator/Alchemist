@@ -17,6 +17,7 @@ import javax.swing.SpringLayout;
 /**
  *
  */
+@Deprecated
 public class JTapeMainFeature extends JTapeSection {
 
     /**

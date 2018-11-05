@@ -8,9 +8,8 @@
  ******************************************************************************/
 package it.unibo.alchemist.boundary.gui;
 
-import java.awt.Color;
-
 /**
+ * Enumeration that models all the possible channels of a color.
  */
 public enum ColorChannel {
 
@@ -53,24 +52,33 @@ public enum ColorChannel {
 
     /**
      * Given a color, modifies the channel setting the passed value.
-     * 
-     * @param c
-     *            the initial color
-     * @param q
-     *            the value for the channel
+     *
+     * @param c the initial color
+     * @param q the value for the channel
      * @return the modified color
      */
-    public Color alter(final Color c, final float q) {
+    public java.awt.Color alter(final java.awt.Color c, final float q) {
         final float[] cc = c.getRGBComponents(null);
         if (isRGB) {
             cc[channel] = q;
-            return new Color(cc[0], cc[1], cc[2], cc[3]);
+            return new java.awt.Color(cc[0], cc[1], cc[2], cc[3]);
         }
-        final float[] hsb = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), new float[4]);
+        final float[] hsb = java.awt.Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), new float[4]);
         hsb[channel] = q;
-        final Color temp = new Color(Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]));
+        final java.awt.Color temp = new java.awt.Color(java.awt.Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]));
         temp.getRGBComponents(hsb);
-        return new Color(hsb[0], hsb[1], hsb[2], cc[3]);
+        return new java.awt.Color(hsb[0], hsb[1], hsb[2], cc[3]);
     }
 
+    /**
+     * Given a color, modifies the channel setting the passed value.
+     *
+     * @param c the initial color
+     * @param q the value for the channel
+     * @return the modified color
+     */
+    public javafx.scene.paint.Color alter(final javafx.scene.paint.Color c, final float q) {
+        final java.awt.Color color = alter(new java.awt.Color((float) c.getRed(), (float) c.getGreen(), (float) c.getBlue(), (float) c.getOpacity()), q);
+        return javafx.scene.paint.Color.rgb(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+    }
 }

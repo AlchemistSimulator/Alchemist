@@ -8,29 +8,28 @@
  ******************************************************************************/
 package it.unibo.alchemist.boundary.projectview.controller;
 
+import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
+import it.unibo.alchemist.boundary.projectview.ProjectGUI;
+import it.unibo.alchemist.boundary.projectview.model.Project;
+import it.unibo.alchemist.boundary.util.ProjectIOUtils;
 import java.awt.Desktop;
 import java.awt.Desktop.Action;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ResourceBundle;
-
 import org.jooq.lambda.Unchecked;
 import org.kaikikm.threadresloader.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
-import it.unibo.alchemist.boundary.projectview.ProjectGUI;
-import it.unibo.alchemist.boundary.projectview.model.Project;
-import it.unibo.alchemist.boundary.projectview.utils.URLManager;
-import it.unibo.alchemist.boundary.projectview.utils.ProjectIOUtils;
-import it.unibo.alchemist.boundary.projectview.utils.SVGImageUtils;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import it.unibo.alchemist.boundary.util.URLManager;
+import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -47,10 +46,10 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
- * 
+ *
  *
  */
-public class LeftLayoutController {
+public class LeftLayoutController implements Initializable {
 
     private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
     private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
@@ -73,20 +72,16 @@ public class LeftLayoutController {
     private String selectedFile;
     private CenterLayoutController ctrlCenter;
 
-    /**
-     * 
-     */
-    public void initialize() {
-        SVGImageUtils.installSvgLoader();
-        this.run.setGraphic(new ImageView(SVGImageUtils.getSvgImage("icon/run.svg", RUN_WIDTH, RUN_HEIGHT)));
+    @Override
+    public void initialize(final URL location, final ResourceBundle resources) {
+        this.run.setGraphic(new ImageView(SVGImageUtils.getSvgImage("/icon/run.svg", RUN_WIDTH, RUN_HEIGHT)));
         this.run.setText(RESOURCES.getString("run"));
         this.run.setDisable(true);
-        this.folder = SVGImageUtils.getSvgImage("icon/folder.svg", TREE_ICON_WIDTH, TREE_ICON_HEIGHT);
-        this.file = SVGImageUtils.getSvgImage("icon/file.svg", TREE_ICON_WIDTH, TREE_ICON_HEIGHT);
+        this.folder = SVGImageUtils.getSvgImage("/icon/folder.svg", TREE_ICON_WIDTH, TREE_ICON_HEIGHT);
+        this.file = SVGImageUtils.getSvgImage("/icon/file.svg", TREE_ICON_WIDTH, TREE_ICON_HEIGHT);
     }
 
     /**
-     * 
      * @param main Main class.
      */
     public void setMain(final ProjectGUI main) {
@@ -94,7 +89,6 @@ public class LeftLayoutController {
     }
 
     /**
-     * 
      * @return path of project folder
      */
     public String getPathFolder() {
@@ -102,7 +96,6 @@ public class LeftLayoutController {
     }
 
     /**
-     * 
      * @return path of selected file
      */
     public String getSelectedFilePath() {
@@ -110,7 +103,6 @@ public class LeftLayoutController {
     }
 
     /**
-     * 
      * @param ctrlCenter A controller of CenterLayout
      */
     public void setCtrlCenter(final CenterLayoutController ctrlCenter) {
@@ -118,33 +110,26 @@ public class LeftLayoutController {
     }
 
     /**
-     * 
      * @param dir Selected directory
      */
     public void setTreeView(final File dir) {
         this.pathFolder = dir.getAbsolutePath();
-        final TreeItem<String> root = new TreeItem<>(dir.getName(), new ImageView(SVGImageUtils.getSvgImage("icon/project.svg", TREE_ICON_WIDTH, TREE_ICON_HEIGHT)));
+        final TreeItem<String> root = new TreeItem<>(dir.getName(), new ImageView(SVGImageUtils.getSvgImage("/icon/project.svg", TREE_ICON_WIDTH, TREE_ICON_HEIGHT)));
         root.setExpanded(true);
         this.treeView = new TreeView<>(root);
         displayProjectContent(dir, root);
         this.pane.getChildren().add(this.treeView);
-        this.treeView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<String>>() {
-            @Override
-            public void changed(final ObservableValue<? extends TreeItem<String>> observable, 
-                    final TreeItem<String> oldVal,
-                    final TreeItem<String> newVal) {
-                final TreeItem<String> selectedItem = (TreeItem<String>) newVal;
-                TreeItem<String> parent = selectedItem.getParent();
-                String path = File.separator + selectedItem.getValue();
-                while (parent != null)  {
-                    if (parent.getParent() != null) {
-                        path = File.separator + parent.getValue() + path;
-                    }
-                    parent = parent.getParent();
+        this.treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldVal, newVal) -> {
+            final TreeItem<String> selectedItem = (TreeItem<String>) newVal;
+            TreeItem<String> parent = selectedItem.getParent();
+            String path = File.separator + selectedItem.getValue();
+            while (parent != null) {
+                if (parent.getParent() != null) {
+                    path = File.separator + parent.getValue() + path;
                 }
-                selectedFile = pathFolder + path;
+                parent = parent.getParent();
             }
-
+            selectedFile = pathFolder + path;
         });
         this.treeView.setOnMouseClicked(mouseEv -> {
             final File target = new File(selectedFile);
@@ -171,7 +156,7 @@ public class LeftLayoutController {
     }
 
     /**
-     * 
+     *
      */
     @FXML
     public void clickRun() {
@@ -197,7 +182,7 @@ public class LeftLayoutController {
     }
 
     /**
-     * 
+     *
      */
     public void setEnableRun() {
         this.run.setDisable(false);
@@ -206,9 +191,9 @@ public class LeftLayoutController {
     private void displayProjectContent(final File dir, final TreeItem<String> root) {
         final File[] files = dir.listFiles();
         if (files != null) {
-            for (final File file: files) {
+            for (final File file : files) {
                 if (!file.getName().equals(".alchemist_project_descriptor.json")) {
-                    final TreeItem<String> singleFile; 
+                    final TreeItem<String> singleFile;
                     if (file.isDirectory()) {
                         singleFile = new TreeItem<>(file.getName(), new ImageView(this.folder));
                         displayProjectContent(file, singleFile);
@@ -228,7 +213,7 @@ public class LeftLayoutController {
         loader.setLocation(ResourceLoader.getResource(ProjectGUI.RESOURCE_LOCATION + "/view/NewFolderOrFileDialog.fxml"));
         AnchorPane pane;
         try {
-            pane = (AnchorPane) loader.load();
+            pane = loader.load();
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }

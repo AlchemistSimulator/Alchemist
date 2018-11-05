@@ -196,47 +196,22 @@ public class Watcher implements Runnable {
     }
 
     private void refreshTreeView(final String path) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                ctrlLeft.setTreeView(new File(path));
-            }
-        });
+        Platform.runLater(() -> ctrlLeft.setTreeView(new File(path)));
     }
 
     private void refreshGrid() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                ctrlCenter.setField();
-            }
-        });
+        Platform.runLater(ctrlCenter::setField);
     }
 
     private void refreshFolder(final Path path) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                ctrlCenter.setFolderAfterDelete(path);
-            }
-        });
+        Platform.runLater(() -> ctrlCenter.setFolderAfterDelete(path));
     }
 
     private void refreshFile(final Path path) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                ctrlCenter.setFileAfterDelete(path);
-            }
-        });
+        Platform.runLater(() -> ctrlCenter.setFileAfterDelete(path));
     }
 
     private void refreshVariables() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                ctrlCenter.setVariablesList();
-            }
-        });
+        Platform.runLater(ctrlCenter::setVariablesList);
     }
 }

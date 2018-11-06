@@ -243,7 +243,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
     private Optional<? extends Throwable> launchRemote(final String... variables) {
         Optional<? extends Throwable> simException = Optional.empty();
         final Optional<Long> start = Optional.ofNullable(benchmarkOutputFile.isPresent() ? System.nanoTime() : null);
-        final GeneralSimulationConfig<T> gsc = new LocalGeneralSimulationConfig<>(this.loader, this.endStep, this.endTime);
+        final GeneralSimulationConfig gsc = new LocalGeneralSimulationConfig(this.loader, this.endStep, this.endTime);
         final List<SimulationConfig> simConfigs = getVariablesCartesianProduct(variables).stream()
                 .map(SimulationConfigImpl::new)
                 .collect(Collectors.toList());

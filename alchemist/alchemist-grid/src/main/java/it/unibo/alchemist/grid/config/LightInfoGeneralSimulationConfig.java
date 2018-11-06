@@ -17,9 +17,8 @@ import it.unibo.alchemist.model.interfaces.Time;
 /**
  *  Abstract simulation config that contains small serializable informations.
  * 
- * @param <T> the concentration type
  */
-public abstract class LightInfoGeneralSimulationConfig<T> implements GeneralSimulationConfig<T> {
+public abstract class LightInfoGeneralSimulationConfig implements GeneralSimulationConfig {
 
     /**
      * 

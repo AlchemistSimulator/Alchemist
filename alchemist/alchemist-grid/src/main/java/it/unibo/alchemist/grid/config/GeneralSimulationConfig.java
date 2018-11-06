@@ -15,10 +15,8 @@ import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.model.interfaces.Time;
 /**
  * Simulation's configs valid for more than one simulation.
- *
- * @param <T> the concentration type
  */
-public interface GeneralSimulationConfig<T> extends Serializable {
+public interface GeneralSimulationConfig extends Serializable {
     /**
      * 
      * @return simulation's yaml as string

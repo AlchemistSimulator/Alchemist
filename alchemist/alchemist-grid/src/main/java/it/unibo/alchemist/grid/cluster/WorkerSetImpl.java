@@ -46,7 +46,7 @@ public final class WorkerSetImpl implements WorkerSet {
     @Override
     public Set<RemoteResult> distributeSimulations(final SimulationSet<?> simulationsSet) {
         final IgniteCompute compute = this.ignite.compute(this.grp);
-        try (RemoteGeneralSimulationConfig<?> gc = new RemoteGeneralSimulationConfig<>(simulationsSet.getGeneralSimulationConfig(), this.ignite)) {
+        try (RemoteGeneralSimulationConfig gc = new RemoteGeneralSimulationConfig(simulationsSet.getGeneralSimulationConfig(), this.ignite)) {
             final List<RemoteSimulation<?>> jobs = simulationsSet.getSimulationConfigs().stream()
                     .map(e -> new RemoteSimulationImpl<>(gc, e, ignite.cluster().localNode().id()))
                     .collect(Collectors.toList());

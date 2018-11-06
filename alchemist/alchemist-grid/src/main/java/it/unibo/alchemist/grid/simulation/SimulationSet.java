@@ -29,7 +29,7 @@ public interface SimulationSet<T> {
      * 
      * @return Config's shared by all simulations of set
      */
-    GeneralSimulationConfig<?> getGeneralSimulationConfig();
+    GeneralSimulationConfig getGeneralSimulationConfig();
     /**
      * 
      * @return List of configs that differentiate set's simulations

@@ -47,7 +47,7 @@ public class RemoteSimulationImpl<T, P extends Position<P>> implements RemoteSim
      */
     private static final long serialVersionUID = 1L;
     private static final Logger L = LoggerFactory.getLogger(RemoteSimulationImpl.class);
-    private final GeneralSimulationConfig<T> generalConfig;
+    private final GeneralSimulationConfig generalConfig;
     private final SimulationConfig config;
     private final UUID masterNodeId;
     /**
@@ -56,7 +56,7 @@ public class RemoteSimulationImpl<T, P extends Position<P>> implements RemoteSim
      * @param config Simulation's specific configs
      * @param masterNodeId The node that started the computation
      */
-    public RemoteSimulationImpl(final GeneralSimulationConfig<T> generalConfig, final SimulationConfig config, 
+    public RemoteSimulationImpl(final GeneralSimulationConfig generalConfig, final SimulationConfig config,
             final UUID masterNodeId) {
         this.generalConfig = Objects.requireNonNull(generalConfig);
         this.config = Objects.requireNonNull(config);

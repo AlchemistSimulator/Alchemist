@@ -45,6 +45,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -252,13 +253,11 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
                 () -> new IllegalStateException("No remote configuration file"))))) {
             final Set<RemoteResult> resSet = cluster.getWorkersSet(set.computeComplexity()).distributeSimulations(set);
             for (final RemoteResult res: resSet) {
-                res.saveLocally(this.exportFileRoot.get());
+                this.exportFileRoot.ifPresent(CheckedConsumer.unchecked(res::saveLocally));
             }
             start.ifPresent(e -> printBenchmarkResult(System.nanoTime() - e, true));
         } catch (RemoteSimulationException e) {
             simException = Optional.of(e);
-        } catch (FileNotFoundException e1) {
-            throw new IllegalStateException(e1);
         }
         return simException;
     }
@@ -275,17 +274,19 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
 
     private void printBenchmarkResult(final Long value, final boolean distributed) {
         System.out.printf("Total simulation running time (nanos): %d \n", value); // NOPMD: I want to show the result in any case
-        final File f = new File(benchmarkOutputFile.get());
-        try {
-            FileUtils.forceMkdirParent(f);
-            try (PrintWriter w = new PrintWriter(new BufferedWriter(new FileWriter(f, true)))) {
-                final SimpleDateFormat isoTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US);
-                isoTime.setTimeZone(TimeZone.getTimeZone("UTC"));
-                w.println(isoTime.format(new Date())
-                        + (distributed ? " - Distributed exc time:" : " - Serial exc time:") + value.toString());
+        if (benchmarkOutputFile.isPresent()) {
+            final File f = new File(benchmarkOutputFile.get());
+            try {
+                FileUtils.forceMkdirParent(f);
+                try (PrintWriter w = new PrintWriter(new BufferedWriter(new FileWriter(f, true)))) {
+                    final SimpleDateFormat isoTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US);
+                    isoTime.setTimeZone(TimeZone.getTimeZone("UTC"));
+                    w.println(isoTime.format(new Date())
+                            + (distributed ? " - Distributed exc time:" : " - Serial exc time:") + value.toString());
+                }
+            } catch (IOException e) {
+                L.error(e.getMessage());
             }
-        } catch (IOException e) {
-            L.error(e.getMessage());
         }
     }
 
@@ -423,7 +424,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
          *
          * @param closeOp
          *            the close operation
-         * @return buider
+         * @return builder
          */
         public Builder<T, P> setGUICloseOperation(final int closeOp) {
             if (closeOp < 0 || closeOp > 3) {

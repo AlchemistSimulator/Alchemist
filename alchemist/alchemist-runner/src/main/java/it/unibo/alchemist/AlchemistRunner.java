@@ -179,7 +179,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
                     }
                     sim.run();
                     return sim.getError();
-                }).findAny().get().call();
+                }).findAny().orElse(() -> Optional.of(new IllegalStateException("No simulations are executable"))).call();
             } catch (Exception e) {
                 localEx = Optional.of(e);
             }

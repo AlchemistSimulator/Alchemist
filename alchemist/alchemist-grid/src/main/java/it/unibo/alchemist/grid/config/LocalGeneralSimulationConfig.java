@@ -26,7 +26,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  * Local {@link GeneralSimulationConfig} that contains all informations in local memory.
  *
  */
-public class LocalGeneralSimulationConfig extends LightInfoGeneralSimulationConfig {
+public final class LocalGeneralSimulationConfig extends LightInfoGeneralSimulationConfig {
 
     /**
      * 

@@ -17,9 +17,8 @@ import it.unibo.alchemist.grid.config.SimulationConfig;
 /**
  * {@link SimulationSet} implementation.
  *
- * @param <T>
  */
-public final class SimulationSetImpl<T> implements SimulationSet<T> {
+public final class SimulationSetImpl implements SimulationSet {
 
     private static final float DEFAULT_RAM = 0;
     private static final float DEFAULT_CPU = 0;

@@ -248,7 +248,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
         final List<SimulationConfig> simConfigs = getVariablesCartesianProduct(variables).stream()
                 .map(SimulationConfigImpl::new)
                 .collect(Collectors.toList());
-        final SimulationSet<T> set = new SimulationSetImpl<>(gsc, simConfigs);
+        final SimulationSet set = new SimulationSetImpl(gsc, simConfigs);
         try (Cluster cluster = new ClusterImpl(Paths.get(this.gridConfigFile.orElseThrow(
                 () -> new IllegalStateException("No remote configuration file"))))) {
             final Set<RemoteResult> resSet = cluster.getWorkersSet(set.computeComplexity()).distributeSimulations(set);

@@ -24,5 +24,5 @@ public interface WorkerSet {
      * @param simulationsSet Simulations to execute
      * @return Simulations' results
      */
-    Set<RemoteResult> distributeSimulations(SimulationSet<?> simulationsSet);
+    Set<RemoteResult> distributeSimulations(SimulationSet simulationsSet);
 }

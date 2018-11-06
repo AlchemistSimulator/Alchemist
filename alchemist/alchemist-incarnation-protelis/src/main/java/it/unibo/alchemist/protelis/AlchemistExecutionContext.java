@@ -170,11 +170,6 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
         return node;
     }
 
-    @Override
-    public ExecutionEnvironment getExecutionEnvironment() {
-        return node;
-    }
-
     /**
      * @return experimental access to the simulated environment, for building oracles
      */

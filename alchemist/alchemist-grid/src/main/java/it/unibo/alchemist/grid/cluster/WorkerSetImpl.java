@@ -28,7 +28,7 @@ import it.unibo.alchemist.grid.simulation.SimulationSet;
  * Implementation of {@link WorkerSet} which uses Apache Ignite.
  *
  */
-public class WorkerSetImpl implements WorkerSet {
+public final class WorkerSetImpl implements WorkerSet {
 
     private final ClusterGroup grp;
     private final Ignite ignite;

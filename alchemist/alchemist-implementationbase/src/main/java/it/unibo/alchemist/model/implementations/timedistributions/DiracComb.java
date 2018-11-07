@@ -43,12 +43,12 @@ public class DiracComb<T> extends AbstractDistribution<T> {
     }
 
     @Override
-    public double getRate() {
+    public final double getRate() {
         return 1 / timeInterval;
     }
 
     @Override
-    protected void updateStatus(
+    protected final void updateStatus(
             final Time curTime,
             final boolean executed,
             final double param,
@@ -59,10 +59,13 @@ public class DiracComb<T> extends AbstractDistribution<T> {
     }
 
     @Override
-    public DiracComb<T> clone(final Time currentTime) {
+    public final DiracComb<T> clone(final Time currentTime) {
         return new DiracComb<>(currentTime, 1 / timeInterval);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return getClass().getSimpleName() + " every " + timeInterval;

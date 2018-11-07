@@ -14,6 +14,7 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.github.davidmoten.rtree.Entry;
 import org.apache.commons.math3.util.Pair;
 
 import com.github.davidmoten.rtree.RTree;
@@ -32,29 +33,30 @@ import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
 public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements Environment2DWithObstacles<RectObstacle2D, T, Euclidean2DPosition> {
 
     private static final double TOLERANCE_MULTIPLIER = 0.01;
-    /**
-     * Default maximum communication range.
-     */
-    public static final double DEFAULT_MAX_RANGE = 1.5;
     private static final long serialVersionUID = 69931743897405107L;
     private transient RTree<RectObstacle2D, Rectangle> rtree = RTree.create();
 
     @Override
-    public void addObstacle(final RectObstacle2D o) {
+    public final void addObstacle(final RectObstacle2D o) {
         rtree = rtree.add(o, toGeometry(o));
         includeObject(o.getMinX(), o.getMaxX(), o.getMinY(), o.getMaxY());
     }
 
     @Override
-    public List<RectObstacle2D> getObstacles() {
-        return rtree.entries().map(e -> e.value()).toList().toBlocking().single();
+    public final List<RectObstacle2D> getObstacles() {
+        return rtree.entries().map(Entry::value).toList().toBlocking().single();
     }
 
     @Override
-    public List<RectObstacle2D> getObstaclesInRange(final double centerx, final double centery, final double range) {
-        return rtree.search(Geometries.circle(centerx, centery, range)).map(e -> e.value()).toList().toBlocking().single();
+    public final List<RectObstacle2D> getObstaclesInRange(final double centerx, final double centery, final double range) {
+        return rtree.search(Geometries.circle(centerx, centery, range)).map(Entry::value).toList().toBlocking().single();
     }
 
+    /**
+     * Subclasses dealing with mobile obstacles may change this.
+     *
+     * @return false
+     */
     @Override
     public boolean hasMobileObstacles() {
         return false;
@@ -62,7 +64,7 @@ public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements E
 
     @Override
     @SuppressFBWarnings("FE_FLOATING_POINT_EQUALITY")
-    public boolean intersectsObstacle(final double sx, final double sy, final double ex, final double ey) {
+    public final boolean intersectsObstacle(final double sx, final double sy, final double ex, final double ey) {
         for (final RectObstacle2D obstacle : query(sx, sy, ex, ey, 0)) {
             final double[] coords = obstacle.nearestIntersection(sx, sy, ex, ey);
             if (coords[0] != ex || coords[1] != ey || obstacle.contains(coords[0], coords[1])) {
@@ -73,12 +75,12 @@ public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements E
     }
 
     @Override
-    public boolean intersectsObstacle(final Euclidean2DPosition p1, final Euclidean2DPosition p2) {
+    public final boolean intersectsObstacle(final Euclidean2DPosition p1, final Euclidean2DPosition p2) {
         return intersectsObstacle(p1.getCoordinate(0), p1.getCoordinate(1), p2.getCoordinate(0), p2.getCoordinate(1));
     }
 
     @Override
-    protected boolean isAllowed(final Euclidean2DPosition p) {
+    protected final boolean isAllowed(final Euclidean2DPosition p) {
         return rtree.search(Geometries.point(p.getCoordinate(0), p.getCoordinate(1))).isEmpty().toBlocking().single();
     }
 
@@ -130,11 +132,11 @@ public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements E
         maxx += dx;
         miny -= dy;
         maxy += dy;
-        return rtree.search(Geometries.rectangle(minx, miny, maxx, maxy)).map(e -> e.value()).toList().toBlocking().single();
+        return rtree.search(Geometries.rectangle(minx, miny, maxx, maxy)).map(Entry::value).toList().toBlocking().single();
     }
 
     @Override
-    public boolean removeObstacle(final RectObstacle2D o) {
+    public final boolean removeObstacle(final RectObstacle2D o) {
         final int initialSize = rtree.size();
         rtree = rtree.delete(o, toGeometry(o));
         return rtree.size() == initialSize - 1;

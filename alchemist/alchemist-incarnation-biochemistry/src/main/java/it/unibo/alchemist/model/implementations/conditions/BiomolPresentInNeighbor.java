@@ -17,6 +17,7 @@
 package it.unibo.alchemist.model.implementations.conditions;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -34,7 +35,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  * 
  *
  */
-public class BiomolPresentInNeighbor extends AbstractNeighborCondition<Double> {
+public final class BiomolPresentInNeighbor extends AbstractNeighborCondition<Double> {
 
     private static final long serialVersionUID = 499903479123400111L;
 
@@ -45,12 +46,16 @@ public class BiomolPresentInNeighbor extends AbstractNeighborCondition<Double> {
 
     /**
      * 
-     * @param molecule 
-     * @param concentration 
-     * @param node 
-     * @param env 
+     * @param molecule the molecule to check
+     * @param concentration the minimum concentration
+     * @param node the local node
+     * @param env the environment
      */
-    public BiomolPresentInNeighbor(final Environment<Double, ?> env, final Node<Double> node, final Biomolecule molecule, final Double concentration) {
+    public BiomolPresentInNeighbor(
+            final Environment<Double, ?> env,
+            final Node<Double> node,
+            final Biomolecule molecule,
+            final Double concentration) {
         super(env, node);
         declareDependencyOn(molecule);
         mol = molecule;
@@ -88,9 +93,7 @@ public class BiomolPresentInNeighbor extends AbstractNeighborCondition<Double> {
                 .collect(Collectors.<Node<Double>, Node<Double>, Double>toMap(
                         n -> n,
                         n -> CombinatoricsUtils.binomialCoefficientDouble(n.getConcentration(mol).intValue(), conc.intValue())));
-        if (!neigh.isEmpty()) {
-            propensity = neigh.values().stream().max((d1, d2) -> d1.compareTo(d2)).get();
-        }
+        propensity = neigh.values().stream().max(Comparator.naturalOrder()).orElse(0.0);
         return new LinkedHashMap<>(neigh);
     }
 

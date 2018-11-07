@@ -39,20 +39,20 @@ public final class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborA
 
     /**
      * 
-     * @param biomol 
-     * @param deltaConcentration 
-     * @param node 
-     * @param environment 
-     * @param randGen 
+     * @param biomolecule the molecule
+     * @param deltaConcentration concentration change
+     * @param node the node
+     * @param environment the environment
+     * @param randGen the random generator
      */
     public ChangeBiomolConcentrationInNeighbor(final Environment<Double, ?> environment,
             final Node<Double> node,
-            final Biomolecule biomol, 
+            final Biomolecule biomolecule,
             final RandomGenerator randGen,
             final Double deltaConcentration) {
         super(node, environment, randGen);
-        declareDependencyTo(biomol);
-        mol = biomol;
+        declareDependencyTo(biomolecule);
+        mol = biomolecule;
         delta = deltaConcentration;
     }
 
@@ -68,13 +68,13 @@ public final class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborA
         if (delta < 0) {
             neighborhood.getNeighbors().stream()
             .filter(n -> n instanceof CellNode && n.getConcentration(mol) >= delta)
-            .mapToInt(n -> n.getId())
-            .forEach(i -> validTargetsIds.add(i));
+            .mapToInt(Node::getId)
+            .forEach(validTargetsIds::add);
         } else {
             neighborhood.getNeighbors().stream()
             .filter(n -> n instanceof CellNode && n.getConcentration(mol) >= delta)
-            .mapToInt(n -> n.getId())
-            .forEach(i -> validTargetsIds.add(i));
+            .mapToInt(Node::getId)
+            .forEach(validTargetsIds::add);
         }
         if (!validTargetsIds.isEmpty()) {
             final int targetId = validTargetsIds.get(getRandomGenerator().nextInt(validTargetsIds.size()));

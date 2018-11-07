@@ -45,7 +45,7 @@ public final class ConnectionBeam<T, P extends Position<P>> extends ConnectWithi
 
     private static final long serialVersionUID = 1L;
     private static final int COORDS = 6;
-    private final double range;
+    private final double beamWidth;
     private transient Environment2DWithObstacles<?, T, P> oenv;
     private transient Area obstacles = new Area();
 
@@ -57,7 +57,7 @@ public final class ConnectionBeam<T, P extends Position<P>> extends ConnectWithi
      */
     public ConnectionBeam(final double radius, final double beamSize) {
         super(radius);
-        range = beamSize;
+        beamWidth = beamSize;
     }
 
     @SuppressWarnings("unchecked")
@@ -109,13 +109,13 @@ public final class ConnectionBeam<T, P extends Position<P>> extends ConnectWithi
         /*
          * Deduce surrounding beam vertices
          */
-        final double dx = range * cos(PI / 2 + angle);
-        final double dy = range * sin(PI / 2 + angle);
+        final double dx = beamWidth * cos(PI / 2 + angle);
+        final double dy = beamWidth * sin(PI / 2 + angle);
         /*
          * Enlarge the beam
          */
-        final double cx = range * cos(angle);
-        final double cy = range * sin(angle);
+        final double cx = beamWidth * cos(angle);
+        final double cy = beamWidth * sin(angle);
         /*
          * Create the beam
          */

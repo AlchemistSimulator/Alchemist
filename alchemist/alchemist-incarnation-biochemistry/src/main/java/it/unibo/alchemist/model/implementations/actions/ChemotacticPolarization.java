@@ -26,7 +26,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 /**
  *
  */
-public class ChemotacticPolarization<P extends Position<? extends P>> extends AbstractAction<Double> {
+public final class ChemotacticPolarization<P extends Position<? extends P>> extends AbstractAction<Double> {
 
     /**
      * 

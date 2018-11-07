@@ -14,7 +14,6 @@ import org.junit.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import it.unibo.alchemist.model.implementations.environments.ImageEnvironment;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeNoException;
 
@@ -34,7 +33,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina1() {
         try {
-            assertNotNull(new ImageEnvironment<Object>(ResourceLoader.getResource("piantina1.png").getPath()));
+            new ImageEnvironment<>(ResourceLoader.getResource("piantina1.png").getPath());
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -48,7 +47,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina1white() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/piantina1.png", MAX, MAX, MAX));
+            new ImageEnvironment<>("piantina1.png", MAX, MAX, MAX);
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -62,7 +61,7 @@ public class TestImageEnvironment {
     @Test
     public void testPlanimetria() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/planimetriabn1.png"));
+            new ImageEnvironment<>("planimetriabn1.png");
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -76,7 +75,7 @@ public class TestImageEnvironment {
     @Test
     public void testPlanimetriaWhite() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/planimetriabn1.png", MAX, MAX, MAX));
+            new ImageEnvironment<>("planimetriabn1.png", MAX, MAX, MAX);
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -90,7 +89,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina2() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/piantina2.png"));
+            new ImageEnvironment<>("piantina2.png");
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -104,7 +103,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina2White() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/piantina2.png", MAX, MAX, MAX));
+            new ImageEnvironment<>("piantina2.png", MAX, MAX, MAX);
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -118,7 +117,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina3() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/piantina3.png"));
+            new ImageEnvironment<>("piantina3.png");
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -132,7 +131,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina3White() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/piantina3.png", MAX, MAX, MAX));
+            new ImageEnvironment<>("piantina3.png", MAX, MAX, MAX);
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -146,7 +145,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina4() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/piantina4.png"));
+            new ImageEnvironment<>("piantina4.png");
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -160,7 +159,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina4White() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/piantina4.png", MAX, MAX, MAX));
+            new ImageEnvironment<>("piantina4.png", MAX, MAX, MAX);
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -174,7 +173,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina5() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/piantina5.png"));
+            new ImageEnvironment<>("piantina5.png");
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -188,7 +187,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina5White() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/piantina5.png", MAX, MAX, MAX));
+            new ImageEnvironment<>("piantina5.png", MAX, MAX, MAX);
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -202,7 +201,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina6() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/piantina6.png"));
+            new ImageEnvironment<>("piantina6.png");
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -216,7 +215,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina6White() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/piantina6.png", MAX, MAX, MAX));
+            new ImageEnvironment<>("piantina6.png", MAX, MAX, MAX);
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -230,7 +229,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina7() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/piantina7.png"));
+            new ImageEnvironment<>("piantina7.png");
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -244,7 +243,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina7White() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/piantina7.png", MAX, MAX, MAX));
+            new ImageEnvironment<>("piantina7.png", MAX, MAX, MAX);
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -258,7 +257,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina8() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/piantina8.png"));
+            new ImageEnvironment<>("piantina8.png");
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -272,7 +271,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina8White() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/piantina8.png", MAX, MAX, MAX));
+            new ImageEnvironment<>("piantina8.png", MAX, MAX, MAX);
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -286,7 +285,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina9() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/piantina9.png"));
+            new ImageEnvironment<>("piantina9.png");
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -300,7 +299,7 @@ public class TestImageEnvironment {
     @Test
     public void testPiantina9White() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/piantina9.png", MAX, MAX, MAX));
+            new ImageEnvironment<>("piantina9.png", MAX, MAX, MAX);
         } catch (IOException e) {
             assumeNoException(e);
             fail();
@@ -314,7 +313,7 @@ public class TestImageEnvironment {
     @Test
     public void testPastorello() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/Pastorello.png"));
+            new ImageEnvironment<>("Pastorello.png");
         } catch (IOException e) {
             assumeNoException(e);
         }
@@ -327,7 +326,7 @@ public class TestImageEnvironment {
     @Test
     public void testPastorelloWhite() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/Pastorello.png", MAX, MAX, MAX));
+            new ImageEnvironment<>("Pastorello.png", MAX, MAX, MAX);
         } catch (IOException e) {
             assumeNoException(e);
         }
@@ -340,7 +339,7 @@ public class TestImageEnvironment {
     @Test
     public void testSenzanome() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/Senzanome.png"));
+            new ImageEnvironment<>("Senzanome.png");
         } catch (IOException e) {
             assumeNoException(e);
         }
@@ -353,7 +352,7 @@ public class TestImageEnvironment {
     @Test
     public void testSenzanomeWhite() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/Senzanome.png", MAX, MAX, MAX));
+            new ImageEnvironment<>("Senzanome.png", MAX, MAX, MAX);
         } catch (IOException e) {
             assumeNoException(e);
         }
@@ -366,7 +365,7 @@ public class TestImageEnvironment {
     @Test
     public void testDuelocali() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/duelocalioreno-pianta3.png"));
+            new ImageEnvironment<>("duelocalioreno-pianta3.png");
         } catch (IOException e) {
             assumeNoException(e);
         }
@@ -379,7 +378,7 @@ public class TestImageEnvironment {
     @Test
     public void testDuelocaliWhite() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/duelocalioreno-pianta3.png", MAX, MAX, MAX));
+            new ImageEnvironment<>("duelocalioreno-pianta3.png", MAX, MAX, MAX);
         } catch (IOException e) {
             assumeNoException(e);
         }
@@ -392,7 +391,7 @@ public class TestImageEnvironment {
     @Test
     public void test2Rettangoli() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/2rettangolo_nero.png"));
+            new ImageEnvironment<>("2rettangolo_nero.png");
         } catch (IOException e) {
             assumeNoException(e);
         }
@@ -405,7 +404,7 @@ public class TestImageEnvironment {
     @Test
     public void test2RettangoliWhite() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/2rettangolo_nero.png", MAX, MAX, MAX));
+            new ImageEnvironment<>("2rettangolo_nero.png", MAX, MAX, MAX);
         } catch (IOException e) {
             assumeNoException(e);
         }
@@ -418,7 +417,7 @@ public class TestImageEnvironment {
     @Test
     public void testPlanimetriaChiaravalle1() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/PlanimetriaChiaravalle1.png"));
+            new ImageEnvironment<>("PlanimetriaChiaravalle1.png");
         } catch (IOException e) {
             assumeNoException(e);
         }
@@ -431,7 +430,7 @@ public class TestImageEnvironment {
     @Test
     public void testPlanimetriaChiaravalle1White() {
         try {
-            assertNotNull(new ImageEnvironment<Object>("/PlanimetriaChiaravalle1.png", MAX, MAX, MAX));
+            new ImageEnvironment<>("PlanimetriaChiaravalle1.png", MAX, MAX, MAX);
         } catch (IOException e) {
             assumeNoException(e);
         }

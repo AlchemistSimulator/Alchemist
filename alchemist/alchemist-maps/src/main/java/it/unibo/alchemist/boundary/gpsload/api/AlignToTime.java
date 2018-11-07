@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  * be shifted back. Summarizing, the time that is provided represents in the
  * real world the time zero of the simulation.
  */
-public class AlignToTime extends AbstractGPSTimeAlignment {
+public final class AlignToTime extends AbstractGPSTimeAlignment {
 
     private final Time time;
 

@@ -15,7 +15,6 @@ import static java.lang.Double.POSITIVE_INFINITY;
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.util.FlexibleQuadTree;
 
-import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
@@ -121,7 +120,7 @@ public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends 
 
     /**
      * Subclasses may override this method if they want to change the way a node
-     * moves towards some aboslute position. Overriding this method will also
+     * moves towards some absolute position. Overriding this method will also
      * influence {@link #moveNode(Node, Position2D)}, as it calls this method in the
      * current implementation
      */
@@ -129,11 +128,8 @@ public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends 
     public void moveNodeToPosition(final Node<T> node, final P newpos) {
         includeObject(newpos);
         setPosition(node, newpos);
-        updateNeighborhood(node);
-        final Simulation<T, P> sim = getSimulation();
-        if (sim != null) {
-            sim.nodeMoved(node);
-        }
+        updateNeighborhood(node, false);
+        ifEngineAvailable(sim -> sim.nodeMoved(node));
     }
 
     /**

@@ -10,9 +10,9 @@ package it.unibo.alchemist.core.interfaces;
 
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import org.danilopianini.util.ListSet;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * This interface allows to separate the usage of a dependency graph from its
@@ -74,5 +74,11 @@ public interface DependencyGraph<T> extends Serializable {
      * @return the set of reactions that may be influenced by the provided reaction
      *
      */
-    List<Reaction<T>> outboundDependencies(Reaction<T> reaction);
+    ListSet<Reaction<T>> outboundDependencies(Reaction<T> reaction);
+
+    /**
+     *
+     * @return the set of all reactions with a {@link it.unibo.alchemist.model.interfaces.Context#GLOBAL} input context
+     */
+    ListSet<Reaction<T>> globalInputContextReactions();
 }

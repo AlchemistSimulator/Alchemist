@@ -13,9 +13,6 @@ import java.util.Map;
 
 import it.unibo.alchemist.model.interfaces.Dependency;
 import org.danilopianini.lang.HashString;
-import org.danilopianini.util.ImmutableListSet;
-import org.danilopianini.util.ListSet;
-import org.danilopianini.util.ListSets;
 
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -29,7 +26,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 /**
  * 
  */
-public class LsaDeleteNodeAction extends RemoveNode<List<ILsaMolecule>> implements ILsaAction {
+public final class LsaDeleteNodeAction extends RemoveNode<List<ILsaMolecule>> implements ILsaAction {
 
     private static final long serialVersionUID = -7128058274012426458L;
 
@@ -39,7 +36,7 @@ public class LsaDeleteNodeAction extends RemoveNode<List<ILsaMolecule>> implemen
      */
     public LsaDeleteNodeAction(final Environment<List<ILsaMolecule>, ?> environment, final ILsaNode node) {
         super(environment, node);
-        declareDependencyTo(Dependency.NEIGHBORHOOD_CHANGE);
+        declareDependencyTo(Dependency.MOVEMENT);
     }
 
     /* (non-Javadoc)
@@ -51,7 +48,7 @@ public class LsaDeleteNodeAction extends RemoveNode<List<ILsaMolecule>> implemen
     }
 
     @Override
-    public void setExecutionContext(final Map<HashString, ITreeNode<?>> matches, final List< ILsaNode> nodes) {
+    public void setExecutionContext(final Map<HashString, ITreeNode<?>> matches, final List<ILsaNode> nodes) {
         /*
          * This reaction runs regardless the context.
          */

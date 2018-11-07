@@ -12,7 +12,7 @@ package it.unibo.alchemist.grid.simulation;
  * {@link Complexity} implementation.
  *
  */
-public class ComplexityImpl implements Complexity {
+public final class ComplexityImpl implements Complexity {
 
     private final double ram;
     private final double cpu;

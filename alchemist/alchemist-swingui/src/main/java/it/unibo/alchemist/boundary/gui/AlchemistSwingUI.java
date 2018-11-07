@@ -10,7 +10,6 @@ package it.unibo.alchemist.boundary.gui;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-
 import org.danilopianini.view.GUIUtilities;
 
 /**
@@ -30,16 +29,6 @@ public final class AlchemistSwingUI extends JFrame {
      * The default icon size.
      */
     public static final byte DEFAULT_ICON_SIZE = 16;
-
-    /**
-     * The default window dimension.
-     */
-    public static final int DEFAULT_WINDOW_HEIGHT = 960, DEFAULT_WINDOW_WIDTH = 1280;
-
-    /** Private constructor. */
-    private AlchemistSwingUI() {
-        super();
-    }
 
     /**
      * Loads an image and scales it to the default Alchemist's icon size.

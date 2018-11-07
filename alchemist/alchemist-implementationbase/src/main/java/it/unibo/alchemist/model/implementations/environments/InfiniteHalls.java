@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 /**
  * @param <T>
  */
-public class InfiniteHalls<T> extends LimitedContinuos2D<T> {
+public final class InfiniteHalls<T> extends LimitedContinuos2D<T> {
 
     private static final long serialVersionUID = -7481116157809902856L;
     private static final double DEFAULT_SIZE = 10;

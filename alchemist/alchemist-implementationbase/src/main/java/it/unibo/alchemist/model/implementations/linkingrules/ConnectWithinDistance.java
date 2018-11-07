@@ -20,6 +20,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  * 
  * @param <T>
  *            The type which describes the concentration of a molecule
+ * @param <P>
  */
 public class ConnectWithinDistance<T, P extends Position<P>> extends AbstractLocallyConsistentLinkingRule<T, P> {
 
@@ -34,6 +35,9 @@ public class ConnectWithinDistance<T, P extends Position<P>> extends AbstractLoc
         range = radius;
     }
 
+    /**
+     * Subclasses may change the way a neighborhood is computed.
+     */
     @Override
     public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> env) {
         return Neighborhoods.make(env, center, env.getNodesWithinRange(center, range));

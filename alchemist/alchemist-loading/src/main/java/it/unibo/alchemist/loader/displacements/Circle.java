@@ -22,9 +22,9 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 
 /**
- *
+ * @param <P>
  */
-public class Circle<P extends Position<? extends P>> extends AbstractRandomDisplacement<P> {
+public final class Circle<P extends Position<? extends P>> extends AbstractRandomDisplacement<P> {
 
     private final double centerx, centery, radius;
 
@@ -35,9 +35,9 @@ public class Circle<P extends Position<? extends P>> extends AbstractRandomDispl
      *            the {@link RandomGenerator}
      * @param nodes
      *            the number of nodes
-     * @param centerx
+     * @param centerX
      *            the center x of the circle
-     * @param centery
+     * @param centerY
      *            the center y of the circle
      * @param radius
      *            the radius of the circle
@@ -45,10 +45,10 @@ public class Circle<P extends Position<? extends P>> extends AbstractRandomDispl
     public Circle(final Environment<?, P> pm,
             final RandomGenerator rand,
             final int nodes,
-            final double centerx, final double centery, final double radius) {
+            final double centerX, final double centerY, final double radius) {
         super(pm, rand, nodes);
-        this.centerx = centerx;
-        this.centery = centery;
+        this.centerx = centerX;
+        this.centery = centerY;
         this.radius = radius;
     }
 

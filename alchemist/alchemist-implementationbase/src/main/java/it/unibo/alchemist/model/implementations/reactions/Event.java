@@ -24,7 +24,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
  * 
  * @param <T>
  */
-public class Event<T> extends AbstractReaction<T> {
+public final class Event<T> extends AbstractReaction<T> {
 
     private static final long serialVersionUID = -1640973841645383193L;
 
@@ -49,6 +49,4 @@ public class Event<T> extends AbstractReaction<T> {
     public Event<T> cloneOnNewNode(final Node<T> n, final Time currentTime) {
         return makeClone(() -> new Event<>(n, getTimeDistribution().clone(currentTime)));
     }
-
-
 }

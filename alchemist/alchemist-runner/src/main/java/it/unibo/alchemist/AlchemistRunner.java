@@ -75,6 +75,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -191,8 +192,8 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
                     }
                     sim.run();
                     return sim.getError();
-                }, variables).findAny().get().call();
-            } catch (final Exception e) {
+                }).findAny().orElse(() -> Optional.of(new IllegalStateException("No simulations are executable"))).call();
+            } catch (Exception e) {
                 localEx = Optional.of(e);
             }
             exception = localEx;
@@ -254,22 +255,20 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
     private Optional<? extends Throwable> launchRemote(final String... variables) {
         Optional<? extends Throwable> simException = Optional.empty();
         final Optional<Long> start = Optional.ofNullable(benchmarkOutputFile.isPresent() ? System.nanoTime() : null);
-        final GeneralSimulationConfig<T> gsc = new LocalGeneralSimulationConfig<>(this.loader, this.endStep, this.endTime);
+        final GeneralSimulationConfig gsc = new LocalGeneralSimulationConfig(this.loader, this.endStep, this.endTime);
         final List<SimulationConfig> simConfigs = getVariablesCartesianProduct(variables).stream()
                 .map(SimulationConfigImpl::new)
                 .collect(Collectors.toList());
-        final SimulationSet<T> set = new SimulationSetImpl<>(gsc, simConfigs);
+        final SimulationSet set = new SimulationSetImpl(gsc, simConfigs);
         try (Cluster cluster = new ClusterImpl(Paths.get(this.gridConfigFile.orElseThrow(
                 () -> new IllegalStateException("No remote configuration file"))))) {
             final Set<RemoteResult> resSet = cluster.getWorkersSet(set.computeComplexity()).distributeSimulations(set);
             for (final RemoteResult res: resSet) {
-                res.saveLocally(this.exportFileRoot.get());
+                this.exportFileRoot.ifPresent(CheckedConsumer.unchecked(res::saveLocally));
             }
             start.ifPresent(e -> printBenchmarkResult(System.nanoTime() - e, true));
         } catch (RemoteSimulationException e) {
             simException = Optional.of(e);
-        } catch (FileNotFoundException e1) {
-            throw new IllegalStateException(e1);
         }
         return simException;
     }
@@ -286,17 +285,19 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
 
     private void printBenchmarkResult(final Long value, final boolean distributed) {
         System.out.printf("Total simulation running time (nanos): %d \n", value); // NOPMD: I want to show the result in any case
-        final File f = new File(benchmarkOutputFile.get());
-        try {
-            FileUtils.forceMkdirParent(f);
-            try (PrintWriter w = new PrintWriter(new BufferedWriter(new FileWriter(f, true)))) {
-                final SimpleDateFormat isoTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US);
-                isoTime.setTimeZone(TimeZone.getTimeZone("UTC"));
-                w.println(isoTime.format(new Date())
-                        + (distributed ? " - Distributed exc time:" : " - Serial exc time:") + value.toString());
+        if (benchmarkOutputFile.isPresent()) {
+            final File f = new File(benchmarkOutputFile.get());
+            try {
+                FileUtils.forceMkdirParent(f);
+                try (PrintWriter w = new PrintWriter(new BufferedWriter(new FileWriter(f, true)))) {
+                    final SimpleDateFormat isoTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US);
+                    isoTime.setTimeZone(TimeZone.getTimeZone("UTC"));
+                    w.println(isoTime.format(new Date())
+                            + (distributed ? " - Distributed exc time:" : " - Serial exc time:") + value.toString());
+                }
+            } catch (IOException e) {
+                L.error(e.getMessage());
             }
-        } catch (IOException e) {
-            L.error(e.getMessage());
         }
     }
 
@@ -451,9 +452,12 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
          * Sets the time to reach.
          * <p>
          * Default is {@link DoubleTime#INFINITE_TIME infinite}.
-         *
+         * 
          * @param time the end time
          * @return this builder
+         * @param closeOp
+         *            the close operation
+         * @return builder
          */
         public Builder<T, P> setEndTime(final Time time) {
             this.endTime = time;

@@ -27,7 +27,7 @@ import it.unibo.alchemist.expressions.parser.Exp;
 
 /**
  */
-public class Expression implements IExpression {
+public final class Expression implements IExpression {
 
     private static final long serialVersionUID = 3443642011985784643L;
 
@@ -241,9 +241,8 @@ public class Expression implements IExpression {
 
     private static boolean operatorVsList(final IExpression operator, final IExpression list) {
         final OperatorTreeNode root = (OperatorTreeNode) operator.getAST().getRoot();
-        final Set<ITreeNode<?>> listTemp = new LinkedHashSet<>();
         final Set<ITreeNode<?>> listExpr = ((ListTreeNode) list.getAST().getRoot()).getData();
-        listTemp.addAll(((ListTreeNode) operator.getRightChildren()).getData());
+        final Set<ITreeNode<?>> listTemp = new LinkedHashSet<>(((ListTreeNode) operator.getRightChildren()).getData());
         if (root.getOperator().equals(Operator.ADD)) {
             listTemp.add(operator.getLeftChildren());
             /*
@@ -543,8 +542,7 @@ public class Expression implements IExpression {
         case NUM:
             return ast;
         default:
-            ITree astModified = null;
-            astModified = ast.assignVarValue(matches);
+            ITree astModified = ast.assignVarValue(matches);
             final ITreeNode<?> elem = astModified.getRoot();
             if (elem.getType() == Type.OPERATOR) {
                 final OperatorTreeNode op = (OperatorTreeNode) elem;

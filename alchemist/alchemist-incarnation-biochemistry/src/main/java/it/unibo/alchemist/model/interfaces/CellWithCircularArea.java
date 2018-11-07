@@ -11,6 +11,8 @@ package it.unibo.alchemist.model.interfaces;
 /**
  * Implements a cell with a defined volume.
  *
+ * @param <P>
+ *
  */
 public interface CellWithCircularArea<P extends Position<? extends P>> extends CellNode<P> {
 

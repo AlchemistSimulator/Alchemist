@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.implementations.actions;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import it.unibo.alchemist.model.interfaces.Position2D;
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.lang.MathUtils;
 
@@ -19,13 +20,12 @@ import it.unibo.alchemist.model.interfaces.CircularDeformableCell;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.EnvironmentSupportingDeformableCells;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
- *
+ * @param <P>
  */
-public class CellTensionPolarization<P extends Position<? extends P>> extends AbstractAction<Double> {
+public final class CellTensionPolarization<P extends Position2D<P>> extends AbstractAction<Double> {
 
     /**
      * 
@@ -35,15 +35,14 @@ public class CellTensionPolarization<P extends Position<? extends P>> extends Ab
 
     /**
      * 
-     * @param node 
-     * @param env 
+     * @param node the node
+     * @param env the environment
      */
     public CellTensionPolarization(final EnvironmentSupportingDeformableCells<P> env, final CircularDeformableCell<P> node) {
         super(node);
-        this.env = (EnvironmentSupportingDeformableCells<P>) env;
+        this.env = env;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public CellTensionPolarization<P> cloneAction(final Node<Double> n, final Reaction<Double> r) {
         return new CellTensionPolarization<>(env, (CircularDeformableCell<P>) n);

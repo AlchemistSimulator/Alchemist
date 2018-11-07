@@ -19,6 +19,7 @@
 
 package it.unibo.alchemist.model.implementations.reactions;
 
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
 /** 
  * A biochemical Reaction.
  */
-public class BiochemicalReaction extends ChemicalReaction<Double> {
+public final class BiochemicalReaction extends ChemicalReaction<Double> {
 
     private static final long serialVersionUID = 3849210665619933894L;
     private Map<Node<Double>, Double> validNeighbors = new LinkedHashMap<>(0);
@@ -104,7 +105,7 @@ public class BiochemicalReaction extends ChemicalReaction<Double> {
     @Override 
     public void execute() {
         if (neighborConditionsPresent) {
-            final Optional<Map.Entry<Node<Double>, Double>> neighTarget = validNeighbors.entrySet().stream().max((e1, e2) -> e1.getValue().compareTo(e2.getValue()));
+            final Optional<Map.Entry<Node<Double>, Double>> neighTarget = validNeighbors.entrySet().stream().max(Comparator.comparing(Map.Entry::getValue));
             for (final Action<Double> a : getActions()) {
                 if (a instanceof AbstractNeighborAction && neighTarget.isPresent()) {
                     ((AbstractNeighborAction<Double>) a).execute(neighTarget.get().getKey());

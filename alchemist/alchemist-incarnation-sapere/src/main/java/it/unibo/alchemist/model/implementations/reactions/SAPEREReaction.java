@@ -23,7 +23,6 @@ import it.unibo.alchemist.model.interfaces.ILsaAction;
 import it.unibo.alchemist.model.interfaces.ILsaCondition;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
-import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
@@ -40,6 +39,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 /**
  * This class realizes a reaction with Lsa concentrations.
@@ -47,7 +47,7 @@ import java.util.Map.Entry;
  * 
  */
 @SuppressWarnings("unchecked")
-public class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
+public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
 
     private static final long serialVersionUID = -7264856859267079626L;
 
@@ -68,28 +68,28 @@ public class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
      * This method screens the lsaMolecule list, deleting all molecule which can
      * be covered from another one more generic.
      * 
-     * @param listmol
+     * @param moleculeList
      *            List of lsaMolecule to screen
      */
-    private static void screen(final List<Dependency> listmol) {
+    private static void screen(final List<Dependency> moleculeList) {
         /*
          * PHASE 1: generalize the list
          */
-        for (int i = 0; i < listmol.size(); i++) {
-            listmol.add(((ILsaMolecule) listmol.remove(0)).generalize());
+        for (int i = 0; i < moleculeList.size(); i++) {
+            moleculeList.add(((ILsaMolecule) moleculeList.remove(0)).generalize());
         }
         /*
          * PHASE2: compare one-by-one
          */
-        for (int i = listmol.size() - 1; i > 0; i--) {
+        for (int i = moleculeList.size() - 1; i > 0; i--) {
             for (int p = i - 1; p >= 0; p--) {
-                final ILsaMolecule m1 = (ILsaMolecule) listmol.get(i);
-                final ILsaMolecule m2 = (ILsaMolecule) listmol.get(p);
+                final ILsaMolecule m1 = (ILsaMolecule) moleculeList.get(i);
+                final ILsaMolecule m2 = (ILsaMolecule) moleculeList.get(p);
                 if (m2.equals(m1) || m2.moreGenericOf(m1)) {
-                    listmol.remove(i);
+                    moleculeList.remove(i);
                     i--;
                 } else if (m1.moreGenericOf(m2)) {
-                    listmol.remove(p);
+                    moleculeList.remove(p);
                     i--;
                 }
             }
@@ -157,7 +157,7 @@ public class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
             return;
         }
         final Position<?> nodePosCache = modifiesOnlyLocally ? environment.getPosition(getNode()) : null;
-        final List<? extends ILsaMolecule> localContentCache = modifiesOnlyLocally ? new ArrayList<>(getNode().getLsaSpace()) : null;
+        final List<? extends ILsaMolecule> localContentCache = modifiesOnlyLocally ? new ArrayList<>(getLsaNode().getLsaSpace()) : null;
         Map<HashString, ITreeNode<?>> matches = null;
         Map<ILsaNode, List<ILsaMolecule>> toRemove = null;
         /*
@@ -215,10 +215,10 @@ public class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
          * Empty action optimization
          */
         if (modifiesOnlyLocally) {
-            final ILsaNode n = getNode();
-            if (nodePosCache.equals(environment.getPosition(getNode()))) {
+            final ILsaNode n = getLsaNode();
+            if (Objects.requireNonNull(nodePosCache).equals(environment.getPosition(getNode()))) {
                 final List<? extends ILsaMolecule> contents = n.getLsaSpace();
-                if (contents.size() == localContentCache.size()) {
+                if (contents.size() == Objects.requireNonNull(localContentCache).size()) {
                     emptyExecution = localContentCache.containsAll(contents);
                 }
             }
@@ -232,8 +232,10 @@ public class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
         return environment;
     }
 
-    @Override
-    public ILsaNode getNode() {
+    /**
+     * @return the local {@link Node} as {@link ILsaNode}
+     */
+    protected ILsaNode getLsaNode() {
         return (ILsaNode) super.getNode();
     }
 
@@ -266,7 +268,7 @@ public class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
             totalPropensity = 0;
         } else {
             /*
-             * Valid nodes must be re-inited, as per issue #
+             * Valid nodes must be re-initialized, as per issue #
              */
             final Collection<? extends Node<List<ILsaMolecule>>> neighs = environment.getNeighborhood(getNode()).getNeighbors();
             validNodes = new ArrayList<>(neighs.size());
@@ -360,8 +362,8 @@ public class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
          * locally. Otherwise there is no control on where the modified
          * molecules will end up.
          */
-        final ListSet<Dependency> influencing = new ArrayListSet<>(getInfluencingMolecules());
-        final ListSet<Dependency> influenced = new ArrayListSet<>(getInfluencedMolecules());
+        final ListSet<Dependency> inboundDependencies = new ArrayListSet<>(getInboundDependencies());
+        final ListSet<Dependency> outboundDependencies = new ArrayListSet<>(getOutboundDependencies());
         if (getInputContext() == Context.LOCAL && modifiesOnlyLocally) {
             /*
              * Moreover, since there is no control over the personalised agents,
@@ -376,7 +378,7 @@ public class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
                 }
             }
             if (allStandard) {
-                for (final Dependency m : influencing) {
+                for (final Dependency m : inboundDependencies) {
                     /*
                      * For each influencing molecule:
                      * 
@@ -387,18 +389,18 @@ public class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
                      * not on the right side, they should be added (they will be
                      * removed)
                      */
-                    if (influenced.contains(m)) {
-                        influenced.remove(m);
+                    if (outboundDependencies.contains(m)) {
+                        outboundDependencies.remove(m);
                     } else {
-                        influenced.add(m);
+                        outboundDependencies.add(m);
                     }
                 }
             }
         }
-        screen(influencing);
-        screen(influenced);
-        setInfluencingMolecules(influencing);
-        setInfluencedMolecules(influenced);
+        screen(inboundDependencies);
+        screen(outboundDependencies);
+        inboundDependencies.forEach(this::addInboundDependency);
+        outboundDependencies.forEach(this::addOutboundDependency);
     }
 
     /**

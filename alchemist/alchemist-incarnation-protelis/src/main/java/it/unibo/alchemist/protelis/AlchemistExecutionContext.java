@@ -16,11 +16,11 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.HashUtils;
+import org.jetbrains.annotations.NotNull;
 import org.protelis.lang.datatype.DatatypeFactory;
 import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.lang.datatype.Field;
 import org.protelis.lang.datatype.Tuple;
-import org.protelis.vm.ExecutionEnvironment;
 import org.protelis.vm.LocalizedDevice;
 import org.protelis.vm.SpatiallyEmbeddedDevice;
 import org.protelis.vm.TimeAwareDevice;
@@ -44,8 +44,9 @@ import java8.util.function.Function;
 import java8.util.function.Functions;
 
 /**
+ * @param <P> position type
  */
-public class AlchemistExecutionContext<P extends Position<P>> extends AbstractExecutionContext implements SpatiallyEmbeddedDevice, LocalizedDevice, TimeAwareDevice {
+public final class AlchemistExecutionContext<P extends Position<P>> extends AbstractExecutionContext implements SpatiallyEmbeddedDevice, LocalizedDevice, TimeAwareDevice {
 
     /**
      * Put this {@link Molecule} inside nodes that should compute distances using routes. It only makes sense in case the environment is a {@link MapEnvironment}
@@ -61,7 +62,7 @@ public class AlchemistExecutionContext<P extends Position<P>> extends AbstractEx
             .build(new CacheLoader<P, Double>() {
                 @SuppressWarnings("unchecked")
                 @Override
-                public Double load(final P dest) {
+                public Double load(@NotNull final P dest) {
                     if (env instanceof MapEnvironment) {
                         if (dest instanceof GeoPosition) {
                             return ((MapEnvironment<Object>) env).computeRoute(node, (GeoPosition) dest).length();
@@ -89,12 +90,16 @@ public class AlchemistExecutionContext<P extends Position<P>> extends AbstractEx
      *            the {@link Reaction} hosting the program
      * @param random
      *            the {@link RandomGenerator} for this simulation
-     * @param netmgr
+     * @param networkManager
      *            the {@link AlchemistNetworkManager} to be used
      */
-    public AlchemistExecutionContext(final Environment<Object, P> environment, final ProtelisNode localNode,
-            final Reaction<Object> reaction, final RandomGenerator random, final AlchemistNetworkManager netmgr) {
-        super(localNode, netmgr);
+    public AlchemistExecutionContext(
+            final Environment<Object, P> environment,
+            final ProtelisNode localNode,
+            final Reaction<Object> reaction,
+            final RandomGenerator random,
+            final AlchemistNetworkManager networkManager) {
+        super(localNode, networkManager);
         env = environment;
         node = localNode;
         react = reaction;
@@ -161,11 +166,6 @@ public class AlchemistExecutionContext<P extends Position<P>> extends AbstractEx
 
     @Override
     public DeviceUID getDeviceUID() {
-        return node;
-    }
-
-    @Override
-    public ExecutionEnvironment getExecutionEnvironment() {
         return node;
     }
 
@@ -288,9 +288,8 @@ public class AlchemistExecutionContext<P extends Position<P>> extends AbstractEx
      *            the destination, as a {@link Tuple} of two values: [latitude,
      *            longitude]
      * @return the distance on a map
-     * @throws ExecutionException 
      */
-    public double routingDistance(final Tuple dest) throws ExecutionException {
+    public double routingDistance(final Tuple dest) {
         if (dest.size() == 2) {
             return routingDistance(new LatLongPosition((Number) dest.get(0), (Number) dest.get(1)));
         }

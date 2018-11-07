@@ -33,7 +33,7 @@ import it.unibo.alchemist.model.interfaces.Node;
  * 
  * 
  */
-public class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment implements EnvironmentSupportingDeformableCells<Euclidean2DPosition> {
+public final class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment implements EnvironmentSupportingDeformableCells<Euclidean2DPosition> {
 
     private static final long serialVersionUID = 1L;
     private static final Logger L = LoggerFactory.getLogger(BioRect2DEnvironmentNoOverlap.class);

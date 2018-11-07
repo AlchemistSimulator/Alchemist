@@ -17,9 +17,8 @@ import it.unibo.alchemist.grid.config.SimulationConfig;
 /**
  * Set of configs for remote simulations creation.
  *
- * @param <T>
  */
-public interface SimulationSet<T> {
+public interface SimulationSet {
     /**
      * 
      * @return complexity of one simulation
@@ -29,7 +28,7 @@ public interface SimulationSet<T> {
      * 
      * @return Config's shared by all simulations of set
      */
-    GeneralSimulationConfig<?> getGeneralSimulationConfig();
+    GeneralSimulationConfig getGeneralSimulationConfig();
     /**
      * 
      * @return List of configs that differentiate set's simulations

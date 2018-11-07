@@ -69,7 +69,7 @@ public abstract class AbstractNeighborAction<T> extends AbstractRandomizableActi
     public abstract void execute(Node<T> targetNode);
 
     @Override
-    public Context getContext() {
+    public final Context getContext() {
         return Context.NEIGHBORHOOD;
     }
 

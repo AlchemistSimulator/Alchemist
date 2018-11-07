@@ -8,6 +8,12 @@
  ******************************************************************************/
 package it.unibo.alchemist.model.implementations.movestrategies.target;
 
+import static org.danilopianini.util.regex.Patterns.FLOAT_PATTERN;
+
+import java.util.Iterator;
+import java.util.Optional;
+import java.util.regex.Matcher;
+
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;

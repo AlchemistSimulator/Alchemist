@@ -47,7 +47,7 @@ public class EnvPresent extends AbstractCondition<Double> {
     }
 
     @Override
-    public double getPropensityConditioning() {
+    public double getPropensityContribution() {
         return isValid() ? 1d : 0d;
     }
 

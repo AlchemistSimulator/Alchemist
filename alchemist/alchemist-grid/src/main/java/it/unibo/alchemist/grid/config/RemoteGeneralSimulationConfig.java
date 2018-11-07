@@ -20,9 +20,8 @@ import org.apache.ignite.configuration.CacheConfiguration;
 /**
  * Remote {@link GeneralSimulationConfig} that stores big informations in Ignite's cache.
  *
- * @param <T> the concentration type
  */
-public class RemoteGeneralSimulationConfig<T> extends LightInfoGeneralSimulationConfig<T> implements AutoCloseable {
+public class RemoteGeneralSimulationConfig extends LightInfoGeneralSimulationConfig implements AutoCloseable {
 
     /**
      * 
@@ -36,7 +35,7 @@ public class RemoteGeneralSimulationConfig<T> extends LightInfoGeneralSimulation
      * @param sc A general simulation config to clone
      * @param ignite An Ignite instance for cache creation
      */
-    public RemoteGeneralSimulationConfig(final GeneralSimulationConfig<T> sc, final Ignite ignite) {
+    public RemoteGeneralSimulationConfig(final GeneralSimulationConfig sc, final Ignite ignite) {
         super(sc.getLoader(), sc.getEndStep(), sc.getEndTime());
         this.cacheName = ignite.cluster().localNode().id().toString();
 

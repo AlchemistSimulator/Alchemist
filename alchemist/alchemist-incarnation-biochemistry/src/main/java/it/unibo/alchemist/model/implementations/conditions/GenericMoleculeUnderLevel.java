@@ -62,7 +62,7 @@ public class GenericMoleculeUnderLevel<T extends Number> extends
      *         molecule
      */
     @Override
-    public double getPropensityConditioning() {
+    public double getPropensityContribution() {
         final double qty = getQuantity().doubleValue();
         final double c = getNode().getConcentration(getMolecule())
                 .doubleValue();

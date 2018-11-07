@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 import it.unibo.alchemist.model.interfaces.Position;
 
 /**
- *
+ * @param <P>
  */
 @FunctionalInterface
 public interface Displacement<P extends Position<? extends P>> extends Iterable<P> {

@@ -127,7 +127,7 @@ public class LsaStandardCondition extends LsaAbstractCondition {
     }
 
     @Override
-    public double getPropensityConditioning() {
+    public double getPropensityContribution() {
         return -1;
     }
 

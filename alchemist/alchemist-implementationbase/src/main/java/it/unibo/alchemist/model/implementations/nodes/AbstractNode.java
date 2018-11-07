@@ -32,6 +32,7 @@ import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+import org.jetbrains.annotations.NotNull;
 
 
 /**
@@ -78,17 +79,20 @@ public abstract class AbstractNode<T> implements Node<T> {
     }
 
     @Override
-    public void addReaction(final Reaction<T> r) {
+    public final void addReaction(final Reaction<T> r) {
         reactions.add(r);
     }
 
+    /**
+     * Default implementation fails: override correctly calling the constructor.
+     */
     @Override
     public AbstractNode<T> cloneNode(final Time currentTime) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public int compareTo(final Node<T> o) {
+    public final int compareTo(@NotNull final Node<T> o) {
         if (o instanceof AbstractNode<?>) {
             if (id > ((AbstractNode<?>) o).id) {
                 return 1;
@@ -100,6 +104,9 @@ public abstract class AbstractNode<T> implements Node<T> {
         return 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean contains(final Molecule m) {
         return molecules.containsKey(m);
@@ -111,7 +118,7 @@ public abstract class AbstractNode<T> implements Node<T> {
     protected abstract T createT();
 
     @Override
-    public boolean equals(final Object o) {
+    public final boolean equals(final Object o) {
         if (o instanceof AbstractNode<?>) {
             return ((AbstractNode<?>) o).id == id;
         }
@@ -119,15 +126,21 @@ public abstract class AbstractNode<T> implements Node<T> {
     }
 
     @Override
-    public void forEach(final Consumer<? super Reaction<T>> action) {
+    public final void forEach(final Consumer<? super Reaction<T>> action) {
         reactions.forEach(action);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getChemicalSpecies() {
         return molecules.size();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public T getConcentration(final Molecule mol) {
         final T res = molecules.get(mol);
@@ -137,51 +150,63 @@ public abstract class AbstractNode<T> implements Node<T> {
         return res;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Map<Molecule, T> getContents() {
         return Collections.unmodifiableMap(molecules);
     }
 
     @Override
-    public int getId() {
+    public final int getId() {
         return id;
     }
 
     @Override
-    public List<Reaction<T>> getReactions() {
+    public final List<Reaction<T>> getReactions() {
         return reactions;
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return id;
     }
 
     @Override
-    public Iterator<Reaction<T>> iterator() {
+    public final Iterator<Reaction<T>> iterator() {
         return reactions.iterator();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void removeConcentration(final Molecule mol) {
         molecules.remove(mol);
     }
 
     @Override
-    public void removeReaction(final Reaction<T> r) {
+    public final void removeReaction(final Reaction<T> r) {
         reactions.remove(r);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setConcentration(final Molecule mol, final T c) {
         molecules.put(mol, c);
     }
 
     @Override
-    public Spliterator<Reaction<T>> spliterator() {
+    public final Spliterator<Reaction<T>> spliterator() {
         return reactions.spliterator();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return molecules.toString();

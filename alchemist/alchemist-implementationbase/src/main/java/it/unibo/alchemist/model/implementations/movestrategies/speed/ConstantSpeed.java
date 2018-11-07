@@ -25,7 +25,8 @@ import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
 public final class ConstantSpeed<P extends Position<P>> implements SpeedSelectionStrategy<P> {
 
     private static final long serialVersionUID = 1746429998480123049L;
-    private final double sp;
+    private final double speed;
+    private final Reaction<?> reaction;
 
     /**
      * @param reaction
@@ -34,13 +35,16 @@ public final class ConstantSpeed<P extends Position<P>> implements SpeedSelectio
      *            the speed, in meters/second
      */
     public ConstantSpeed(final Reaction<?> reaction, final double speed) {
-        assert speed > 0 : "Speed must be positive.";
-        sp = speed / reaction.getRate();
+        if (speed < 0) {
+            throw new IllegalArgumentException("Speed must be positive");
+        }
+        this.speed = speed;
+        this.reaction = reaction;
     }
 
     @Override
-    public double getCurrentSpeed(final P target) {
-        return sp;
+    public double getNodeMovementLength(final P target) {
+        return speed / reaction.getRate();
     }
 
 }

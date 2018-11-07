@@ -121,4 +121,11 @@ public abstract class AbstractAction<T> implements Action<T> {
                 Objects.requireNonNull(concentration, "Cannot inject null concentrations"));
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
 }

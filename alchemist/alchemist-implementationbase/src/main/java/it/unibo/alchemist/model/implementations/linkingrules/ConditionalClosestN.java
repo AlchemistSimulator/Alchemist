@@ -19,8 +19,9 @@ import it.unibo.alchemist.model.interfaces.Position;
  * specific concentration before allowing the connection.
  * 
  * @param <T>
+ * @param <P>
  */
-public class ConditionalClosestN<T, P extends Position<P>> extends ClosestN<T, P> {
+public final class ConditionalClosestN<T, P extends Position<P>> extends ClosestN<T, P> {
 
     private static final long serialVersionUID = 1L;
     private final Molecule molecule;

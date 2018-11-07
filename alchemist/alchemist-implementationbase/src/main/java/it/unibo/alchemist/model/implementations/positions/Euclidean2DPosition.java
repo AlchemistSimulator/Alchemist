@@ -58,8 +58,8 @@ public final class Euclidean2DPosition
     }
 
     @Override
-    protected Euclidean2DPosition unsafeConstructor(final double[] coord) {
-        return new Euclidean2DPosition(false, coord[0], coord[1]);
+    protected Euclidean2DPosition unsafeConstructor(final double[] coordinates) {
+        return new Euclidean2DPosition(false, coordinates[0], coordinates[1]);
     }
 
 }

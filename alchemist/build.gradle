@@ -34,13 +34,6 @@ allprojects {
         }
     }
 
-    kotlinter {
-        ignoreFailures = false
-        indentSize = 4
-        continuationIndentSize = 4
-        reporters = ['checkstyle', 'plain', 'html']
-    }
-
     /*
      * This forces the main classes to be ready before going on, preventing potential
      * issues with interleaving project tasks
@@ -49,6 +42,7 @@ allprojects {
 
     configurations {
         all*.exclude group: 'org.eclipse.xtext', module: 'org.eclipse.xtext.dependencies'
+        all*.exclude group: 'org.eclipse.platform', module: 'org.eclipse.equinox.common'
         all {
             if(!it.name.contains('antlr')) {
                 resolutionStrategy {
@@ -64,14 +58,20 @@ allprojects {
     }
 
     tasks.withType(Checkstyle) {
-        mustRunAfter(test)
+        dependsOn(test)
         showViolations = false
     }
     tasks.withType(FindBugs) {
-        mustRunAfter(test)
+        dependsOn(test)
     }
     tasks.withType(Pmd) {
-        mustRunAfter(test)
+        dependsOn(test)
+    }
+    kotlinter {
+        ignoreFailures = false
+        indentSize = 4
+        continuationIndentSize = 4
+        reporters = ['checkstyle', 'plain', 'html']
     }
 
     dependencies {

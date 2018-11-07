@@ -24,13 +24,15 @@ import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
+import org.danilopianini.util.ArrayListSet;
 import org.danilopianini.util.Hashes;
+import org.danilopianini.util.ImmutableListSet;
 import org.danilopianini.util.LinkedListSet;
 import org.danilopianini.util.ListSet;
 import org.danilopianini.util.ListSets;
@@ -50,14 +52,11 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      * interaction.
      */
     private static final byte MARGIN = 20;
-    /**
-     * Separators for toString.
-     */
-    protected static final String SEP1 = " -", SEP2 = "-> ";
+    private static final ListSet<Dependency> EVERYTHING = ImmutableListSet.of(Dependency.EVERYTHING);
     private static final long serialVersionUID = 1L;
     private final int hash;
-    private List<? extends Action<T>> actions = new ArrayList<Action<T>>(0);
-    private List<? extends Condition<T>> conditions = new ArrayList<Condition<T>>(0);
+    private List<? extends Action<T>> actions = new ArrayList<>(0);
+    private List<? extends Condition<T>> conditions = new ArrayList<>(0);
     private Context incontext = Context.LOCAL, outcontext = Context.LOCAL;
     private ListSet<Dependency> outbound = new LinkedListSet<>();
     private ListSet<Dependency> inbound = new LinkedListSet<>();
@@ -85,7 +84,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      * @param m
      *            the influenced molecule
      */
-    protected void addInfluencedMolecule(final Molecule m) {
+    protected final void addOutboundDependency(final Dependency m) {
         outbound.add(m);
     }
 
@@ -95,10 +94,15 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      * @param m
      *            the molecule to add
      */
-    protected void addInfluencingMolecule(final Molecule m) {
+    protected final void addInboundDependency(final Dependency m) {
         inbound.add(m);
     }
 
+    /**
+     * The default implementation verifies if all the conditions are valid.
+     *
+     * @return true if the reaction can execute right now.
+     */
     @Override
     public boolean canExecute() {
         if (conditions == null) {
@@ -112,7 +116,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     }
 
     @Override
-    public int compareTo(final Reaction<T> o) {
+    public final int compareTo(final Reaction<T> o) {
         return getTau().compareTo(o.getTau());
     }
 
@@ -121,6 +125,9 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
         return this == o;
     }
 
+    /**
+     * The default execution iterates all the actions in order and executes them. Override to change the behaviour.
+     */
     @Override
     public void execute() {
         for (final Action<T> a : actions) {
@@ -128,33 +135,45 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
         }
     }
 
+    /**
+     * Override only if you need to implement extremely tricky behaviours. Must be overridden along with
+     * {@link #setActions(List)}.
+     *
+     * @return the list of {@link Action}s.
+     */
     @Override
     public List<Action<T>> getActions() {
         return Collections.unmodifiableList(actions);
     }
 
+    /**
+     * Override only if you need to implement extremely tricky behaviours. Must be overridden along with
+     * {@link #setConditions(List)}.
+     *
+     * @return the list of {@link Condition}s.
+     */
     @Override
     public List<Condition<T>> getConditions() {
         return Collections.unmodifiableList(conditions);
     }
 
     @Override
-    public ListSet<Dependency> getInfluencedMolecules() {
+    public final ListSet<Dependency> getOutboundDependencies() {
         return optionallyImmodifiableView(outbound);
     }
 
     @Override
-    public ListSet<Dependency> getInfluencingMolecules() {
+    public final ListSet<Dependency> getInboundDependencies() {
         return optionallyImmodifiableView(inbound);
     }
 
     @Override
-    public Context getInputContext() {
+    public final Context getInputContext() {
         return incontext;
     }
 
     @Override
-    public Context getOutputContext() {
+    public final Context getOutputContext() {
         return outcontext;
     }
 
@@ -175,7 +194,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     }
 
     @Override
-    public Time getTau() {
+    public final Time getTau() {
         return dist.getNextOccurence();
     }
 
@@ -207,11 +226,11 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     protected <R extends Reaction<T>> R makeClone(final Supplier<R> builder) {
         final R res = builder.get();
         final Node<T> n = res.getNode();
-        final ArrayList<Condition<T>> c = new ArrayList<Condition<T>>(conditions.size());
+        final ArrayList<Condition<T>> c = new ArrayList<>(conditions.size());
         for (final Condition<T> cond : getConditions()) {
             c.add(cond.cloneCondition(n, res));
         }
-        final ArrayList<Action<T>> a = new ArrayList<Action<T>>(actions.size());
+        final ArrayList<Action<T>> a = new ArrayList<>(actions.size());
         for (final Action<T> act : getActions()) {
             a.add(act.cloneAction(n, res));
         }
@@ -220,84 +239,83 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
         return res;
     }
 
-    @Override
-    public void setActions(final List<Action<T>> a) {
-        actions = Objects.requireNonNull(a, "The actions list can't be null");
-        Context lessStrict = Context.LOCAL;
-        outbound = new LinkedListSet<>();
-        for (final Action<T> act : actions) {
-            final Context condcontext = Objects.requireNonNull(act, "Actions can't be null").getContext();
-            lessStrict = lessStrict.isMoreStrict(condcontext) ? condcontext : lessStrict;
-            final List<? extends Dependency> mod = act.getOutboundDependencies();
-            /*
-             * This check is needed because of the meaning of a null list of
-             * modified molecules: it means that the reaction will influence
-             * every other reaction. This must be managed directly by the
-             * dependency graph, and consequently the whole reaction must have a
-             * null list of modified molecules.
-             */
-            if (mod != null) {
-                outbound.addAll(mod);
-            } else {
-                outbound = null;
-                break;
+    private static ListSet<Dependency> computeDependencies(final Stream<? extends Dependency> stream) {
+        final Iterator<? extends Dependency> fromStream = stream.iterator();
+        boolean everyMolecule = false;
+        final ListSet<Dependency> result = new ArrayListSet<>();
+        while (fromStream.hasNext()) {
+            final Dependency dependency = fromStream.next();
+            if (dependency.equals(Dependency.EVERYTHING)) {
+                return EVERYTHING;
+            }
+            if (dependency.equals(Dependency.EVERY_MOLECULE) && !everyMolecule) {
+                result.removeIf(it -> it instanceof Molecule);
+                everyMolecule = true;
+                result.add(Dependency.EVERY_MOLECULE);
+            } else  if (!(everyMolecule && dependency instanceof Molecule)) {
+                result.add(dependency);
             }
         }
-        setOutputContext(lessStrict);
-    }
-
-    @Override
-    public void setConditions(final List<Condition<T>> c) {
-        conditions = c;
-        Context lessStrict = Context.LOCAL;
-        inbound = new LinkedListSet<>();
-        for (final Condition<T> cond : conditions) {
-            final Context condcontext = cond.getContext();
-            lessStrict = lessStrict.isMoreStrict(condcontext) ? condcontext : lessStrict;
-            final ListSet<? extends Dependency> mod = cond.getInboundDependencies();
-            /*
-             * This check is needed because of the meaning of a null list of
-             * modified molecules: it means that the reaction will influence
-             * every other reaction. This must be managed directly by the
-             * dependency graph, and consequently the whole reaction must have a
-             * null list of modified molecules.
-             */
-            if (mod != null) {
-                inbound.addAll(mod);
-            } else {
-                inbound = null;
-                break;
-            }
-        }
-        setInputContext(lessStrict);
+        return result;
     }
 
     /**
-     * Used by sublcasses to set their input context.
+     * This should get overridden only if very tricky behaviours are implemented, such that the default Alchemist
+     * action addition model is no longer usable. Must be overridden along with {@link #getActions()}.
+     *
+     * @param a the actions to set
+     */
+    @Override
+    public void setActions(final List<Action<T>> a) {
+        actions = Objects.requireNonNull(a, "The actions list can't be null");
+        setOutputContext(a.stream().map(Action::getContext).reduce(Context.LOCAL, Context::getWider));
+        outbound = computeDependencies(a.stream().map(Action::getOutboundDependencies).flatMap(List::stream));
+    }
+
+    /**
+     * This should get overridden only if very tricky behaviours are implemented, such that the default Alchemist
+     * condition addition model is no longer usable. Must be overridden along with {@link #getConditions()}.
+     *
+     * @param c the actions to set
+     */
+    @Override
+    public void setConditions(final List<Condition<T>> c) {
+        conditions = Objects.requireNonNull(c, "The conditions list can't be null");
+        setInputContext(c.stream().map(Condition::getContext).reduce(Context.LOCAL, Context::getWider));
+        inbound = computeDependencies(c.stream().map(Condition::getInboundDependencies).flatMap(List::stream));
+    }
+
+    /**
+     * Used by subclasses to set their input context.
      * 
      * @param c
      *            the new input context
      */
-    protected void setInputContext(final Context c) {
+    protected final void setInputContext(final Context c) {
         incontext = c;
     }
 
     /**
-     * Used by sublcasses to set their output context.
+     * Used by subclasses to set their output context.
      * 
      * @param c
      *            the new input context
      */
-    protected void setOutputContext(final Context c) {
+    protected final void setOutputContext(final Context c) {
         outcontext = c;
     }
 
+    /**
+     * @return the default implementation returns a String in the form
+     * className@timeScheduled[Conditions]-rate->[Actions]
+     */
     @Override
     public String toString() {
         final StringBuilder tot = new StringBuilder(stringLength + MARGIN);
         tot.append(getReactionName());
         tot.append('@');
         tot.append(getTau());
+        tot.append(':');
         tot.append(getConditions().toString());
         tot.append('-');
         tot.append(getRateAsString());
@@ -328,31 +346,13 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      */
     protected abstract void updateInternalStatus(Time curTime, boolean executed, Environment<T, ?> env);
 
-    /**
-     * @param influenced
-     *            the new influenced molecules. Can be null.
-     */
-    @SuppressWarnings("unchecked")
-    protected void setInfluencedMolecules(final ListSet<? extends Dependency> influenced) {
-        this.outbound = (ListSet<Dependency>) influenced;
-    }
-
-    /**
-     * @param influencing
-     *            the new influencing molecules. Can be null.
-     */
-    @SuppressWarnings("unchecked")
-    protected void setInfluencingMolecules(final ListSet<? extends Dependency> influencing) {
-        this.inbound = (ListSet<Dependency>) influencing;
-    }
-
     @Override
-    public Node<T> getNode() {
+    public final Node<T> getNode() {
         return node;
     }
 
 
-    private static <E> ListSet<E> optionallyImmodifiableView(ListSet<E> in) {
+    private static <E> ListSet<E> optionallyImmodifiableView(final ListSet<E> in) {
         return in == null ? null : ListSets.unmodifiableListSet(in);
     }
 }

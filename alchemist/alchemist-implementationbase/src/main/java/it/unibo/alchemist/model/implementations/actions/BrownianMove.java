@@ -21,8 +21,9 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  * Moves the node randomly.
  * 
  * @param <T>
+ * @param <P>
  */
-public class BrownianMove<T, P extends Position<P>> extends AbstractMoveNode<T, P> {
+public final class BrownianMove<T, P extends Position<P>> extends AbstractMoveNode<T, P> {
 
     private static final long serialVersionUID = -904100978119782403L;
     private final double r;

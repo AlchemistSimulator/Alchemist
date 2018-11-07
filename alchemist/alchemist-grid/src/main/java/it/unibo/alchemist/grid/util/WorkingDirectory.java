@@ -24,7 +24,7 @@ import com.google.common.io.Files;
  * Class that manage a temp local working directory.
  *
  */
-public class WorkingDirectory implements AutoCloseable {
+public final class WorkingDirectory implements AutoCloseable {
 
     private final File directory;
 
@@ -38,7 +38,7 @@ public class WorkingDirectory implements AutoCloseable {
     /**
      * 
      * @return Temp directory URL
-     * @throws MalformedURLException 
+     * @throws MalformedURLException if the directory {@link java.net.URI} form cannot be converted to {@link URL} form
      */
     public URL getDirectoryUrl() throws MalformedURLException {
         return this.directory.toURI().toURL();
@@ -48,7 +48,7 @@ public class WorkingDirectory implements AutoCloseable {
      * Get folder's file content.
      * @param filename File's name
      * @return File's content
-     * @throws IOException 
+     * @throws IOException in case of an I/O error
      */
     public String getFileContent(final String filename) throws IOException {
         final File f = new File(this.getFileAbsolutePath(filename));
@@ -57,14 +57,17 @@ public class WorkingDirectory implements AutoCloseable {
 
     /**
      * Write multiple files inside the directory.
-     * @param files A map with relative paths + files names as kay and files content as value.
-     * @throws IOException 
+     * @param files A map with relative paths + files names as keys and file contents as values.
+     * @throws IOException in case of an I/O error
      */
     public void writeFiles(final Map<String, byte[]> files) throws IOException {
         for (final Entry<String, byte[]> e : files.entrySet()) {
             final File f = new File(this.directory.getAbsolutePath() + File.separator + e.getKey());
-            f.getParentFile().mkdirs();
-            FileUtils.writeByteArrayToFile(f, e.getValue());
+            if (f.getParentFile().exists() || f.getParentFile().mkdirs()) {
+                FileUtils.writeByteArrayToFile(f, e.getValue());
+            } else {
+                throw new IllegalStateException("Could not create directory structure for " + f);
+            }
         }
     }
 

@@ -8,6 +8,7 @@
  ******************************************************************************/
 package it.unibo.alchemist.model.implementations.linkingrules;
 
+import static java.lang.Double.NEGATIVE_INFINITY;
 import static org.apache.commons.math3.util.FastMath.PI;
 import static org.apache.commons.math3.util.FastMath.atan2;
 import static org.apache.commons.math3.util.FastMath.cos;
@@ -38,12 +39,13 @@ import it.unibo.alchemist.model.interfaces.Position;
  * tolerance in connection breaking.
  * 
  * @param <T>
+ * @param <P>
  */
 public final class ConnectionBeam<T, P extends Position<P>> extends ConnectWithinDistance<T, P> {
 
     private static final long serialVersionUID = 1L;
     private static final int COORDS = 6;
-    private final double range;
+    private final double beamWidth;
     private transient Environment2DWithObstacles<?, T, P> oenv;
     private transient Area obstacles = new Area();
 
@@ -55,7 +57,7 @@ public final class ConnectionBeam<T, P extends Position<P>> extends ConnectWithi
      */
     public ConnectionBeam(final double radius, final double beamSize) {
         super(radius);
-        range = beamSize;
+        beamWidth = beamSize;
     }
 
     @SuppressWarnings("unchecked")
@@ -73,8 +75,8 @@ public final class ConnectionBeam<T, P extends Position<P>> extends ConnectWithi
                  * Doubles are prone to approximation errors. Use nextAfter to get rid of them
                  */
                 final Rectangle2D bounds = obs.getBounds2D();
-                final double mx = nextAfter(bounds.getMinX(), java.lang.Double.NEGATIVE_INFINITY);
-                final double my = nextAfter(bounds.getMinY(), java.lang.Double.NEGATIVE_INFINITY);
+                final double mx = nextAfter(bounds.getMinX(), NEGATIVE_INFINITY);
+                final double my = nextAfter(bounds.getMinY(), NEGATIVE_INFINITY);
                 final double ex = nextUp(bounds.getMaxX());
                 final double ey = nextUp(bounds.getMaxY());
                 obstacles.add(new Area(new Rectangle2D.Double(mx, my, ex - mx, ey - my)));
@@ -87,7 +89,7 @@ public final class ConnectionBeam<T, P extends Position<P>> extends ConnectWithi
                     final P np = env.getPosition(neigh);
                     return !oenv.intersectsObstacle(cp, np) || projectedBeamOvercomesObstacle(cp, np);
                 })
-                .collect(ArrayList::new, (l, el) -> l.add(el), (l1, l2) -> l1.addAll(l2));
+                .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
             return Neighborhoods.make(env, center, neighs);
         }
         return normal;
@@ -107,13 +109,13 @@ public final class ConnectionBeam<T, P extends Position<P>> extends ConnectWithi
         /*
          * Deduce surrounding beam vertices
          */
-        final double dx = range * cos(PI / 2 + angle);
-        final double dy = range * sin(PI / 2 + angle);
+        final double dx = beamWidth * cos(PI / 2 + angle);
+        final double dy = beamWidth * sin(PI / 2 + angle);
         /*
          * Enlarge the beam
          */
-        final double cx = range * cos(angle);
-        final double cy = range * sin(angle);
+        final double cx = beamWidth * cos(angle);
+        final double cy = beamWidth * sin(angle);
         /*
          * Create the beam
          */

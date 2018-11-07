@@ -47,7 +47,7 @@ public abstract class TraceDependantSpeed<T> extends AbstractStrategyWithGPS imp
     }
 
     @Override
-    public final double getCurrentSpeed(final GeoPosition target) {
+    public final double getNodeMovementLength(final GeoPosition target) {
         final Time currentTime = reaction.getTau();
         final double curTime = currentTime.toDouble();
         final GPSPoint next = getTrace().getNextPosition(currentTime);

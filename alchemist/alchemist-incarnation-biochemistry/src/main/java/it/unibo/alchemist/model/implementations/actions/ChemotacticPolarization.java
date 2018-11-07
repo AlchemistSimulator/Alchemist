@@ -8,10 +8,12 @@
  ******************************************************************************/
 package it.unibo.alchemist.model.implementations.actions;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import it.unibo.alchemist.model.interfaces.Position2D;
 import org.apache.commons.math3.util.FastMath;
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
@@ -20,13 +22,12 @@ import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
- *
+ * @param <P>
  */
-public class ChemotacticPolarization<P extends Position<? extends P>> extends AbstractAction<Double> {
+public final class ChemotacticPolarization<P extends Position2D<P>> extends AbstractAction<Double> {
 
     /**
      * 
@@ -38,15 +39,17 @@ public class ChemotacticPolarization<P extends Position<? extends P>> extends Ab
 
     /**
      * 
-     * @param environment 
-     * @param node 
-     * @param biomol 
-     * @param ascendGrad 
+     * @param environment the environment
+     * @param node the node
+     * @param biomolecule biomolecule's name
+     * @param ascendGrad if that parameter is true, the polarization versor of the cell will be directed in direction of
+     *                  the highest concentration of biomolecule in neighborhood; if it's false, the versor will be
+     *                   directed in the exactly the opposite direction.
      */
-    public ChemotacticPolarization(final Environment<Double, P> environment, final CellNode<P> node, final Biomolecule biomol, final String ascendGrad) {
+    public ChemotacticPolarization(final Environment<Double, P> environment, final CellNode<P> node, final Biomolecule biomolecule, final String ascendGrad) {
         super(node);
         this.env = Objects.requireNonNull(environment);
-        this.biomol = Objects.requireNonNull(biomol);
+        this.biomol = Objects.requireNonNull(biomolecule);
         if (ascendGrad.equalsIgnoreCase("up")) {
             this.ascend = true;
         } else if (ascendGrad.equalsIgnoreCase("down")) {
@@ -58,14 +61,16 @@ public class ChemotacticPolarization<P extends Position<? extends P>> extends Ab
 
     /**
      * Initialize a polarization activity regulated by environmental concentration of a molecule.
-     * @param environment 
-     * @param node 
-     * @param biomol biomolecule's name
-     * @param ascendGrad if that parameter is true, the polarization versor of the cell will be directed in direction of the greates concentration of biomolecule in neighborhood; if it's false, the versor will be directed in the exactly the opposite direction.
+     * @param environment the environment
+     * @param node the node
+     * @param biomolecule biomolecule's name
+     * @param ascendGrad if that parameter is true, the polarization versor of the cell will be directed in direction
+     *                   of the highest concentration of biomolecule in neighborhood; if it's false, the versor will
+     *                   be directed in the exactly the opposite direction.
      */
     @SuppressWarnings("unchecked")
-    public ChemotacticPolarization(final Environment<Double, P> environment, final Node<Double> node, final String biomol, final String ascendGrad) {
-        this(environment, (CellNode<P>) node, new Biomolecule(biomol), ascendGrad);
+    public ChemotacticPolarization(final Environment<Double, P> environment, final Node<Double> node, final String biomolecule, final String ascendGrad) {
+        this(environment, (CellNode<P>) node, new Biomolecule(biomolecule), ascendGrad);
     }
 
 
@@ -85,26 +90,23 @@ public class ChemotacticPolarization<P extends Position<? extends P>> extends Ab
             thisNode.addPolarization(env.makePosition(0, 0));
         } else {
             final boolean isNodeOnMaxConc = env.getPosition(l.stream()
-                    .max((n1, n2) -> Double.compare(n1.getConcentration(biomol), n2.getConcentration(biomol)))
+                    .max(Comparator.comparingDouble(n -> n.getConcentration(biomol)))
                     .get()).equals(env.getPosition(thisNode));
             if (isNodeOnMaxConc) {
                 thisNode.addPolarization(env.makePosition(0, 0));
             } else {
                 P newPolVer = weightedAverageVectors(l, thisNode);
-                final double newPolVerModule = FastMath.sqrt(FastMath.pow(
-                        newPolVer.getCoordinate(0), 2) + FastMath.pow(newPolVer.getCoordinate(1), 2)
-                        );
+                final double newPolX = newPolVer.getX();
+                final double newPolY = newPolVer.getY();
+                final double newPolVerModule = FastMath.sqrt(newPolX * newPolX + newPolY * newPolY);
                 if (newPolVerModule == 0) {
                     thisNode.addPolarization(newPolVer);
                 } else {
-                    newPolVer = env.makePosition(newPolVer.getCoordinate(0) / newPolVerModule, newPolVer.getCoordinate(1) / newPolVerModule);
+                    newPolVer = env.makePosition(newPolVer.getX() / newPolVerModule, newPolVer.getY() / newPolVerModule);
                     if (ascend) {
                         thisNode.addPolarization(newPolVer);
                     } else {
-                        thisNode.addPolarization(env.makePosition(
-                                -newPolVer.getCoordinate(0), 
-                                -newPolVer.getCoordinate(1))
-                                );
+                        thisNode.addPolarization(env.makePosition(-newPolVer.getX(), -newPolVer.getY()));
                     }
                 }
             }

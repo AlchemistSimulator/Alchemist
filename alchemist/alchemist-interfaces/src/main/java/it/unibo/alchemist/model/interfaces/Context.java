@@ -21,7 +21,7 @@ package it.unibo.alchemist.model.interfaces;
  * dramatically on performances. Contexts are used internally to better
  * determine dependencies among reactions. See
  * <a href= "http://apice.unibo.it/xwiki/bin/view/Publications/PianiniMASS11" >
- * this paper</a> for further informations about the usage of contexts.
+ * this paper</a> for further information about the usage of contexts.
  * 
  */
 public enum Context {
@@ -39,14 +39,20 @@ public enum Context {
     NEIGHBORHOOD;
 
     /**
-     * This method provides support to determine if the current Context is less
-     * wide than the one passed.
-     * 
-     * @param c
-     *            The Context to compare with
-     * @return true if this context is more strict than the one passed
+     *
+     * @param c1 context to compare
+     * @param c2 other context to compare
+     * @return the wider (more general) between the two: if either one is {@link #GLOBAL}, then {@link #GLOBAL} is
+     * returned. Otherwise, if either one is {@link #NEIGHBORHOOD}, {@link #NEIGHBORHOOD} is returned. Otherwise,
+     * {@link #LOCAL} is returned.
      */
-    public boolean isMoreStrict(final Context c) {
-        return !(this.equals(GLOBAL) || c.equals(LOCAL) || this.equals(NEIGHBORHOOD) && c.equals(LOCAL));
+    public static Context getWider(final Context c1, final Context c2) {
+        if (c1 == GLOBAL || c2 == GLOBAL) {
+            return GLOBAL;
+        }
+        if (c1 == NEIGHBORHOOD || c2 == NEIGHBORHOOD) {
+            return NEIGHBORHOOD;
+        }
+        return LOCAL;
     }
 }

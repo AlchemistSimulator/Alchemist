@@ -8,8 +8,6 @@
  ******************************************************************************/
 package it.unibo.alchemist.model.interfaces;
 
-import java.io.Serializable;
-
 /**
  *          Interface for a molecule.
  * 

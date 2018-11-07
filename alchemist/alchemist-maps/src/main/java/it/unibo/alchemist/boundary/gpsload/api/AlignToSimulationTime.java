@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  * - first trace start with time = 0 and second point with time = 3
  * - second trace start with time = 0 and second point with time = 2
  */
-public class AlignToSimulationTime extends AbstractGPSTimeAlignment {
+public final class AlignToSimulationTime extends AbstractGPSTimeAlignment {
 
     private static final SinglePointBehavior POLICY = SinglePointBehavior.RETAIN_SINGLE_POINTS;
 

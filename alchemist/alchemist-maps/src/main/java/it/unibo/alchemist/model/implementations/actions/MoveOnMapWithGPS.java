@@ -10,6 +10,7 @@ package it.unibo.alchemist.model.implementations.actions;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import org.danilopianini.util.Hashes;
@@ -43,7 +44,7 @@ public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
             .build(key -> new TraceLoader(key.path, key.cycle, key.normalizer, key.args));
     private static final LoadingCache<MapEnvironment<?>, LoadingCache<TraceRef, Iterator<GPSTrace>>> LOADER = Caffeine.newBuilder()
             .weakKeys()
-            .build(e -> Caffeine.newBuilder().build(key -> TRACE_LOADER_CACHE.get(key).iterator()));
+            .build(e -> Caffeine.newBuilder().build(key -> Objects.requireNonNull(TRACE_LOADER_CACHE.get(key)).iterator()));
     private final GPSTrace trace;
 
     /**
@@ -127,6 +128,7 @@ public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
      *            Args to build normalize
      * @return the GPSTrace
      */
+    @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
     public static GPSTrace traceFor(final MapEnvironment<?> environment, final String path, final boolean cycle, final String normalizer, final Object... normalizerArgs) {
         final LoadingCache<TraceRef, Iterator<GPSTrace>> gpsTraceLoader = LOADER.get(requireNonNull(environment));
         if (gpsTraceLoader == null) {
@@ -161,7 +163,10 @@ public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
         private final Object[] args;
         private int hash;
 
-        TraceRef(final String path, final boolean cycle, final String normalizer, final Object... args) {
+        TraceRef(final String path,
+                 final boolean cycle,
+                 final String normalizer,
+                 final Object... args) { // NOPMD: array is stored direcly by purpose.
             this.path = path;
             this.cycle = cycle;
             this.normalizer = normalizer;

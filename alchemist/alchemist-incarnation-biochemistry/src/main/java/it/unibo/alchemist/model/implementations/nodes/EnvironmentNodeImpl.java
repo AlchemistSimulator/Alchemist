@@ -36,11 +36,6 @@ public class EnvironmentNodeImpl extends DoubleNode implements EnvironmentNode {
     }
 
     @Override
-    protected Double createT() {
-        return 0d;
-    }
-
-    @Override
     public void setConcentration(final Molecule mol, final Double c) {
         if (c < 0) {
             throw new IllegalArgumentException("No negative concentrations allowed (" + mol + " -> " + c + ")");

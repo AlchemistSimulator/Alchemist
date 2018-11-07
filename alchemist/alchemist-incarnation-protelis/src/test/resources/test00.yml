@@ -13,7 +13,7 @@ seeds:
   simulation: *testVar
 
 network-model:
-  type: EuclideanDistance
+  type: ConnectWithinDistance
   parameters: [1.5]
   
 environment:

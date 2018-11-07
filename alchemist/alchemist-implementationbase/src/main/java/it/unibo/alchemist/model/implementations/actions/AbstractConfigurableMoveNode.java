@@ -24,6 +24,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
  * strategy to adopt, the speed to move at.
  *
  * @param <T>
+ * @param <P>
  */
 public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> extends AbstractMoveNode<T, P> {
 
@@ -94,7 +95,7 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
         if (!end.equals(previousEnd)) {
             resetRoute();
         }
-        double maxWalk = speed.getCurrentSpeed(end);
+        double maxWalk = speed.getNodeMovementLength(end);
         final Environment<T, P> env = getEnvironment();
         final Node<T> node = getNode();
         P curPos = env.getPosition(node);
@@ -111,12 +112,13 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
             resetRoute();
             return getDestination(curPos, end, maxWalk);
         }
-        P target = null;
-        double toWalk;
         do {
-            target = route.getPoint(curStep);
-            toWalk = target.getDistanceTo(curPos);
+            P target = route.getPoint(curStep);
+            double toWalk = target.getDistanceTo(curPos);
             if (toWalk > maxWalk) {
+                /*
+                 * I can arrive at most at maxWalk
+                 */
                 return getDestination(curPos, target, maxWalk);
             }
             curStep++;
@@ -127,8 +129,7 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
          * I've followed the whole route
          */
         resetRoute();
-        target = end;
-        return getDestination(curPos, target, maxWalk);
+        return getDestination(curPos, end, maxWalk);
     }
 
     /**

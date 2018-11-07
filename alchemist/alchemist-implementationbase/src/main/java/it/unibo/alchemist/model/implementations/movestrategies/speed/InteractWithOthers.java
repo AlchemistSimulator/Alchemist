@@ -70,7 +70,7 @@ public class InteractWithOthers<T, P extends Position<? extends P>> implements S
     }
 
     @Override
-    public double getCurrentSpeed(final P target) {
+    public double getNodeMovementLength(final P target) {
         double crowd = 0;
         final Collection<? extends Node<T>> neighs = rd > 0 ? env.getNodesWithinRange(node, rd) : Collections.emptyList();
         if (neighs.size() > 1 / in) {

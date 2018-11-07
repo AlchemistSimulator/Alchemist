@@ -130,7 +130,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     private transient BidimensionalWormhole<P> wormhole;
     private transient ZoomManager zoomManager;
     private transient boolean isPreviousStateMarking = true;
-    private ViewStatus status = ViewStatus.MARK_CLOSER;
+    private ViewStatus status = ViewStatus.VIEW_WITH_MARKER;
     private transient boolean isDraggingMouse;
     private transient Optional<Point> originPoint = Optional.empty();
     private transient Optional<Point> endingPoint = Optional.empty();
@@ -164,7 +164,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     }
 
     private boolean isNotInteracting() {
-        return status == ViewStatus.MARK_CLOSER || status == ViewStatus.VIEW_ONLY;
+        return status == ViewStatus.VIEW_WITH_MARKER || status == ViewStatus.VIEW_ONLY;
     }
 
     private static <I, O> Pair<O, O> mapPair(
@@ -194,7 +194,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
      */
     private void resetStatus() {
         if (isPreviousStateMarking) {
-            this.status = ViewStatus.MARK_CLOSER;
+            this.status = ViewStatus.VIEW_WITH_MARKER;
         } else {
             this.status = ViewStatus.VIEW_ONLY;
         }
@@ -205,44 +205,42 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
      */
     private void bindKeys() {
         bindKey(KeyEvent.VK_S, () -> {
-            if (status == ViewStatus.SELECTING) {
+            if (status == ViewStatus.SELECTING_NODES) {
                 resetStatus();
                 this.selectedNodes.clear();
             } else if (isNotInteracting()) {
-                this.status = ViewStatus.SELECTING;
-            }
+                this.status = ViewStatus.SELECTING_NODES;
+            } 
             this.repaint();
         });
         bindKey(KeyEvent.VK_O, () -> {
-            if (status == ViewStatus.SELECTING) {
-                this.status = ViewStatus.MOVING;
+            if (status == ViewStatus.SELECTING_NODES) {
+                this.status = ViewStatus.MOVING_SELECTED_NODES;
             }
         });
         bindKey(KeyEvent.VK_C, () -> {
-            if (status == ViewStatus.SELECTING) {
-                this.status = ViewStatus.CLONING;
+            if (status == ViewStatus.SELECTING_NODES) {
+                this.status = ViewStatus.CLONING_NODES;
             }
         });
         bindKey(KeyEvent.VK_E, () -> {
-            if (status == ViewStatus.SELECTING) {
-                this.status = ViewStatus.MOLECULING;
-                Generic2DDisplay.makeFrame("Moleculing", new MoleculeInjectorGUI<>(selectedNodes), jf -> {
-                    final JFrame mol = (JFrame) jf;
-                    mol.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                    mol.addWindowListener(new WindowAdapter() {
-                        @Override
-                        public void windowClosed(final WindowEvent e) {
-                            selectedNodes.clear();
-                            resetStatus();
-                        }
-                    });
+            if (status == ViewStatus.SELECTING_NODES) {
+                this.status = ViewStatus.EDITING_NODES_CONTENT;
+                final JFrame mol = Generic2DDisplay.makeFrame("Moleculing", new MoleculeInjectorGUI<>(selectedNodes));
+                mol.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                mol.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosed(final WindowEvent e) {
+                        selectedNodes.clear();
+                        resetStatus();
+                    }
                 });
 
             }
         });
         bindKey(KeyEvent.VK_D, () -> {
-            if (status == ViewStatus.SELECTING) {
-                this.status = ViewStatus.DELETING;
+            if (status == ViewStatus.SELECTING_NODES) {
+                this.status = ViewStatus.DELETING_NODES;
                 final Simulation<T, P> sim = currentEnv.getSimulation();
                 for (final Node<T> n : selectedNodes) {
                     sim.schedule(() -> currentEnv.removeNode(n));
@@ -351,7 +349,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                     });
         }
         releaseData();
-        if (isDraggingMouse && status == ViewStatus.MOVING && originPoint.isPresent() && endingPoint.isPresent()) {
+        if (isDraggingMouse && status == ViewStatus.MOVING_SELECTED_NODES && originPoint.isPresent() && endingPoint.isPresent()) {
             for (final Node<T> n : selectedNodes) {
                 if (onView.containsKey(n)) {
                     onView.put(n, new Point(onView.get(n).x + (endingPoint.get().x - originPoint.get().x),
@@ -381,7 +379,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         } else {
             nearest = null;
         }
-        if (isDraggingMouse && status == ViewStatus.SELECTING && originPoint.isPresent() && endingPoint.isPresent()) {
+        if (isDraggingMouse && status == ViewStatus.SELECTING_NODES && originPoint.isPresent() && endingPoint.isPresent()) {
             g.setColor(Color.BLACK);
             final int x = originPoint.get().x < endingPoint.get().x ? originPoint.get().x : endingPoint.get().x;
             final int y = originPoint.get().y < endingPoint.get().y ? originPoint.get().y : endingPoint.get().y;
@@ -485,7 +483,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
      * @return true if the closer node is marked
      */
     protected final boolean isCloserNodeMarked() {
-        return status == ViewStatus.MARK_CLOSER;
+        return status == ViewStatus.VIEW_WITH_MARKER;
     }
 
     /**
@@ -566,7 +564,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         if (isNotInteracting()) {
             if (mark) {
                 isPreviousStateMarking = true;
-                status = ViewStatus.MARK_CLOSER;
+                status = ViewStatus.VIEW_WITH_MARKER;
             } else {
                 isPreviousStateMarking = false;
                 status = ViewStatus.VIEW_ONLY;
@@ -713,19 +711,17 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                 final NodeTracker<T, P> monitor = new NodeTracker<>(nearest);
                 monitor.stepDone(currentEnv, null, new DoubleTime(lastTime), st);
                 final Simulation<T, P> sim = currentEnv.getSimulation();
-                makeFrame("Tracker for node " + nearest.getId(), monitor, jf -> {
-                    final JFrame frame = (JFrame) jf;
-                    if (sim != null) {
-                        sim.addOutputMonitor(monitor);
-                        frame.addWindowListener(new WindowAdapter() {
-                            @Override
-                            public void windowClosing(final WindowEvent e) {
-                                sim.removeOutputMonitor(monitor);
-                            }
-                        });
-                    }
-                });
-            } else if (status == ViewStatus.CLONING && SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1) {
+                final JFrame frame = makeFrame("Tracker for node " + nearest.getId(), monitor);
+                if (sim != null) {
+                    sim.addOutputMonitor(monitor);
+                    frame.addWindowListener(new WindowAdapter() {
+                        @Override
+                        public void windowClosing(final WindowEvent e) {
+                            sim.removeOutputMonitor(monitor);
+                        }
+                    });
+                }
+            } else if (status == ViewStatus.CLONING_NODES && SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1) {
                 final Simulation<T, P> engine = currentEnv.getSimulation();
                 final P envEnding = wormhole.getEnvPoint(e.getPoint());
                 engine.schedule(() -> {
@@ -765,7 +761,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                 if (isDraggingMouse) {
                     endingPoint = Optional.of(e.getPoint());
                 }
-                if (!hooked.isPresent() && !isNotInteracting()) {
+                if (!hooked.isPresent() && isNotInteracting()) {
                     final Point previous = wormhole.getViewPosition();
                     wormhole.setViewPosition(
                             PointAdapter.from(previous)
@@ -799,7 +795,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
 
         @Override
         public void mousePressed(final MouseEvent e) {
-            if (SwingUtilities.isLeftMouseButton(e) && (status == ViewStatus.MOVING || status == ViewStatus.SELECTING)) {
+            if (SwingUtilities.isLeftMouseButton(e) && (status == ViewStatus.MOVING_SELECTED_NODES || status == ViewStatus.SELECTING_NODES)) {
                 isDraggingMouse = true;
                 originPoint = Optional.of(e.getPoint());
                 endingPoint = Optional.of(e.getPoint());
@@ -811,7 +807,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         public void mouseReleased(final MouseEvent e) {
             if (SwingUtilities.isLeftMouseButton(e) && isDraggingMouse) {
                 endingPoint = Optional.of(e.getPoint());
-                if (status == ViewStatus.MOVING && originPoint.isPresent()) {
+                if (status == ViewStatus.MOVING_SELECTED_NODES && originPoint.isPresent()) {
                     if (currentEnv.getDimensions() == 2) {
                         final Simulation<T, P> engine = currentEnv.getSimulation();
                         if (engine != null) {
@@ -885,16 +881,16 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
 
         VIEW_ONLY,
 
-        MARK_CLOSER,
+        VIEW_WITH_MARKER,
 
-        SELECTING,
+        SELECTING_NODES,
 
-        MOVING,
+        MOVING_SELECTED_NODES,
 
-        CLONING,
+        CLONING_NODES,
 
-        DELETING,
+        DELETING_NODES,
 
-        MOLECULING
+        EDITING_NODES_CONTENT
     }
 }

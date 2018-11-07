@@ -8,9 +8,11 @@
  ******************************************************************************/
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import it.unibo.alchemist.model.interfaces.Context;
+import static org.junit.Assert.assertEquals;
+import static it.unibo.alchemist.model.interfaces.Context.LOCAL;
+import static it.unibo.alchemist.model.interfaces.Context.NEIGHBORHOOD;
+import static it.unibo.alchemist.model.interfaces.Context.GLOBAL;
+import static it.unibo.alchemist.model.interfaces.Context.getWider;
 
 import org.junit.Test;
 
@@ -24,22 +26,15 @@ public class TestContext {
      */
     @Test
     public final void test() {
-        assertTrue(Context.LOCAL.isMoreStrict(Context.NEIGHBORHOOD));
-        assertTrue(Context.LOCAL.isMoreStrict(Context.GLOBAL));
-        assertTrue(Context.NEIGHBORHOOD.isMoreStrict(Context.GLOBAL));
-        assertFalse(Context.NEIGHBORHOOD.isMoreStrict(Context.LOCAL));
-        assertFalse(Context.GLOBAL.isMoreStrict(Context.LOCAL));
-        assertFalse(Context.GLOBAL.isMoreStrict(Context.NEIGHBORHOOD));
-        /*
-         * If the context is the same, this method can return whatever. The
-         * following test are just to ensure full line coverage.
-         */
-        assertTrue(Context.GLOBAL.isMoreStrict(Context.GLOBAL)
-                || !Context.GLOBAL.isMoreStrict(Context.GLOBAL));
-        assertTrue(Context.NEIGHBORHOOD.isMoreStrict(Context.NEIGHBORHOOD)
-                || !Context.NEIGHBORHOOD.isMoreStrict(Context.NEIGHBORHOOD));
-        assertTrue(Context.LOCAL.isMoreStrict(Context.LOCAL)
-                || !Context.LOCAL.isMoreStrict(Context.LOCAL));
+        assertEquals(LOCAL, getWider(LOCAL, LOCAL));
+        assertEquals(NEIGHBORHOOD, getWider(LOCAL, NEIGHBORHOOD));
+        assertEquals(GLOBAL, getWider(LOCAL, GLOBAL));
+        assertEquals(NEIGHBORHOOD, getWider(NEIGHBORHOOD, LOCAL));
+        assertEquals(NEIGHBORHOOD, getWider(NEIGHBORHOOD, NEIGHBORHOOD));
+        assertEquals(GLOBAL, getWider(NEIGHBORHOOD, GLOBAL));
+        assertEquals(GLOBAL, getWider(GLOBAL, LOCAL));
+        assertEquals(GLOBAL, getWider(GLOBAL, NEIGHBORHOOD));
+        assertEquals(GLOBAL, getWider(GLOBAL, GLOBAL));
     }
 
 }

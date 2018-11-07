@@ -18,7 +18,7 @@ public interface Cluster extends AutoCloseable {
 
     /**
      * 
-     * @param complexity a siumulation's complexity
+     * @param complexity a simulation's complexity
      * @return Workers' set that can execute a simulation with given complexity 
      */
     WorkerSet getWorkersSet(Complexity complexity);

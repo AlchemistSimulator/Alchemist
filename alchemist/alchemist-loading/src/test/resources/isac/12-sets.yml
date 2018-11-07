@@ -1,7 +1,7 @@
 incarnation: sapere
 
 network-model:
-  type: EuclideanDistance
+  type: ConnectWithinDistance
   parameters: [0.5]
 
 send: &grad

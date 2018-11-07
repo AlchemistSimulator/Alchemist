@@ -1,7 +1,7 @@
 incarnation: protelis
 
 network-model:
-  type: EuclideanDistance
+  type: ConnectWithinDistance
   parameters: [7]
 
 gradient: &gradient

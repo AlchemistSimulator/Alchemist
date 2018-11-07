@@ -15,12 +15,14 @@ package it.unibo.alchemist.model.implementations.positions;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.math3.util.MathArrays;
 import org.danilopianini.util.Hashes;
 
 import it.unibo.alchemist.exceptions.UncomparableDistancesException;
 import it.unibo.alchemist.model.interfaces.Position;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * N-dimensional Euclidean position.
@@ -34,27 +36,28 @@ public abstract class AbstractEuclideanPosition<P extends AbstractEuclideanPosit
      * 
      */
     private static final long serialVersionUID = 2993200108153260352L;
-    private final double[] c;
+    private final @NotNull double[] c;
     private int hash;
     private String stringCache;
 
     /**
      * @param copy
      *            true if it is unsafe to store the array as-is
-     * @param coord
+     * @param coordinates
      *            the array of coordinates
      */
-    protected AbstractEuclideanPosition(final boolean copy, final double... coord) { // NOPMD: array stored directly by purpose
+    protected AbstractEuclideanPosition(final boolean copy, @NotNull final double... coordinates) { // NOPMD: array stored directly by purpose
         if (copy) {
-            c = Arrays.copyOf(coord, coord.length);
+            c = Arrays.copyOf(coordinates, coordinates.length);
         } else {
-            c = coord;
+            c = coordinates;
         }
         org.apache.commons.math3.util.MathUtils.checkFinite(c);
     }
 
     @Override
-    public final List<P> boundingBox(final double range) {
+    @NotNull
+    public final List<? extends P> boundingBox(final double range) {
         final List<P> box = new ArrayList<>(getDimensions());
         for (int i = 0; i < getDimensions(); i++) {
             final double[] coords = new double[c.length];
@@ -83,6 +86,7 @@ public abstract class AbstractEuclideanPosition<P extends AbstractEuclideanPosit
     }
 
     @Override
+    @NotNull
     public final double[] getCartesianCoordinates() {
         return Arrays.copyOf(c, c.length);
     }
@@ -113,7 +117,7 @@ public abstract class AbstractEuclideanPosition<P extends AbstractEuclideanPosit
     @Override
     public final int hashCode() {
         if (hash == 0) {
-            hash = Hashes.hash32(c);
+            hash = Hashes.hash32((Object) c);
         }
         return hash;
     }
@@ -139,24 +143,30 @@ public abstract class AbstractEuclideanPosition<P extends AbstractEuclideanPosit
         return stringCache;
     }
 
-    @Override
-    public final P plus(final P other) {
-        return unsafeConstructor(MathArrays.ebeAdd(c, other.getCartesianCoordinates()));
+    private @NotNull  double[] extractInternalRepresentation(final @NotNull P position) {
+        return ((AbstractEuclideanPosition<P>) Objects.requireNonNull(position)).c;
     }
 
     @Override
-    public final P minus(final P other) {
-        return unsafeConstructor(MathArrays.ebeSubtract(c, other.getCartesianCoordinates()));
+    @NotNull
+    public final P plus(@NotNull final P other) {
+        return unsafeConstructor(MathArrays.ebeAdd(c, extractInternalRepresentation(other)));
+    }
+
+    @Override
+    @NotNull
+    public final P minus(@NotNull final P other) {
+        return unsafeConstructor(MathArrays.ebeSubtract(c, extractInternalRepresentation(other)));
     }
 
     /**
      * Calls an internal constructor of subclasses that provides a way to instance a
      * new position given its coordinates.
      * 
-     * @param coord
+     * @param coordinates
      *            the coordinates
      * @return a new position (with correct subtype)
      */
-    protected abstract P unsafeConstructor(double[] coord);
+    protected abstract P unsafeConstructor(double[] coordinates);
 
 }

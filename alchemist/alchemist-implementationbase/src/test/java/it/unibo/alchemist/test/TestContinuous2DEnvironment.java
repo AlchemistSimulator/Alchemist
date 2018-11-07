@@ -8,6 +8,17 @@
  ******************************************************************************/
 package it.unibo.alchemist.test;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
+
+import java.util.Collections;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
 import it.unibo.alchemist.model.implementations.nodes.IntNode;
@@ -101,7 +112,7 @@ public final class TestContinuous2DEnvironment {
         env.addNode(dummy, new Euclidean2DPosition(ZEROS));
         env.addNode(dummy2, new Euclidean2DPosition(ZEROS));
         assertEquals(2, env.getNodesNumber());
-        assertEquals(Arrays.asList(dummy2), env.getNodesWithinRange(dummy, Math.nextUp(0)));
+        assertEquals(Collections.singletonList(dummy2), env.getNodesWithinRange(dummy, Math.nextUp(0)));
     }
 
 }

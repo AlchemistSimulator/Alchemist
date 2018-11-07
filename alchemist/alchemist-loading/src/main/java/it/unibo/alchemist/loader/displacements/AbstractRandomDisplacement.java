@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 
 /**
- *
+ * @param <P>
  */
 public abstract class AbstractRandomDisplacement<P extends Position<? extends P>> implements Displacement<P> {
 
@@ -40,7 +40,7 @@ public abstract class AbstractRandomDisplacement<P extends Position<? extends P>
     }
 
     @Override
-    public Stream<P> stream() {
+    public final Stream<P> stream() {
         return IntStream.range(0, nodes).mapToObj(this::indexToPosition);
     }
 

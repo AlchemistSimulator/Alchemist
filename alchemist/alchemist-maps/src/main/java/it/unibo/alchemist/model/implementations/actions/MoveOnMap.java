@@ -30,12 +30,6 @@ import it.unibo.alchemist.utils.MapUtils;
  */
 public class MoveOnMap<T> extends AbstractConfigurableMoveNode<T, GeoPosition> {
 
-    /**
-     * Minimum distance to walk per step in meters. Under this value, the
-     * movement will become imprecise, due to errors in computation of the
-     * distance between two points on the surface of the Earth.
-     */
-    public static final double MINIMUM_DISTANCE_WALKED = 1.0;
     private static final long serialVersionUID = 1L;
 
     /**
@@ -58,10 +52,13 @@ public class MoveOnMap<T> extends AbstractConfigurableMoveNode<T, GeoPosition> {
     }
 
     @Override
-    public MapEnvironment<T> getEnvironment() {
+    public final MapEnvironment<T> getEnvironment() {
         return (MapEnvironment<T>) super.getEnvironment();
     }
 
+    /**
+     * Fails, can't be cloned.
+     */
     @Override
     public MoveOnMap<T> cloneAction(final Node<T> n, final Reaction<T> r) {
         /*
@@ -71,7 +68,7 @@ public class MoveOnMap<T> extends AbstractConfigurableMoveNode<T, GeoPosition> {
     }
 
     @Override
-    protected GeoPosition getDestination(final GeoPosition current, final GeoPosition target, final double maxWalk) {
+    protected final GeoPosition getDestination(final GeoPosition current, final GeoPosition target, final double maxWalk) {
         return MapUtils.getDestinationLocation(current, target, maxWalk);
     }
 

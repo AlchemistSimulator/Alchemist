@@ -30,8 +30,8 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
  * Emulates a {@link NetworkManager}. This particular network manager does not
- * send messages istantly. Instead, it records the last message to send, and
- * only when {@link #simulateMessageArrival()} is called the transfer is
+ * send messages instantly. Instead, it records the last message to send, and
+ * only when {@link #simulateMessageArrival(double)} is called the transfer is
  * actually done.
  */
 public final class AlchemistNetworkManager implements NetworkManager, Serializable {
@@ -40,7 +40,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
     private final Environment<Object, ?> env;
     private final ProtelisNode node;
     /**
-     * This reaction stores the time at which the neighbor state is read
+     * This reaction stores the time at which the neighbor state is read.
      */
     private final Reaction<Object> event;
     private final RunProtelisProgram prog;
@@ -54,7 +54,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
      * @param local
      *            the node
      * @param executionTime
-     *            the reacion hosting the {@link NetworkManager}
+     *            the reaction hosting the {@link NetworkManager}
      * @param program
      *            the {@link RunProtelisProgram}
      */
@@ -72,7 +72,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
      * @param local
      *            the node
      * @param executionTime
-     *            the reacion hosting the {@link NetworkManager}
+     *            the reaction hosting the {@link NetworkManager}
      * @param program
      *            the {@link RunProtelisProgram}
      * @param retentionTime

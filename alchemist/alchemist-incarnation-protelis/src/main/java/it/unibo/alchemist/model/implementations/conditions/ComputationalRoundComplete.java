@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
  */
-public class ComputationalRoundComplete extends AbstractCondition<Object> {
+public final class ComputationalRoundComplete extends AbstractCondition<Object> {
 
     private static final long serialVersionUID = -4113718948444451107L;
     private final RunProtelisProgram program;
@@ -27,13 +27,13 @@ public class ComputationalRoundComplete extends AbstractCondition<Object> {
     /**
      * @param node
      *            the local node
-     * @param prog
+     * @param program
      *            the reference {@link RunProtelisProgram}
      */
-    public ComputationalRoundComplete(final ProtelisNode node, final RunProtelisProgram prog) {
+    public ComputationalRoundComplete(final ProtelisNode node, final RunProtelisProgram program) {
         super(node);
-        program = prog;
-        declareDependencyOn(program.asMolecule());
+        this.program = program;
+        declareDependencyOn(this.program.asMolecule());
     }
 
     @Override
@@ -56,7 +56,7 @@ public class ComputationalRoundComplete extends AbstractCondition<Object> {
     }
 
     @Override
-    public double getPropensityConditioning() {
+    public double getPropensityContribution() {
         return isValid() ? 1 : 0;
     }
 
@@ -70,4 +70,8 @@ public class ComputationalRoundComplete extends AbstractCondition<Object> {
         return (ProtelisNode) super.getNode();
     }
 
+    @Override
+    public String toString() {
+        return program.asMolecule().getName() + " completed round";
+    }
 }

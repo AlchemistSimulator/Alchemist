@@ -74,7 +74,7 @@ import javafx.util.StringConverter;
 /**
  * Controller of CenterLayout view.
  */
-public class CenterLayoutController implements Initializable {
+public class CenterLayoutController {
 
     private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
     private static final ResourceBundle RESOURCES = LocalizedResourceBundle.get("it.unibo.alchemist.l10n.ProjectViewUIStrings");
@@ -163,10 +163,9 @@ public class CenterLayoutController implements Initializable {
 
     private boolean isSpinTimeCorrect = true;
     private boolean isSpinOutCorrect = true;
-    private Image img;
-    private ImageView imgViewYaml = new ImageView(img);
-    private ImageView imgViewEff = new ImageView(img);
-    private ImageView imgViewOut = new ImageView(img);
+    private ImageView imgViewYaml;
+    private ImageView imgViewEff;
+    private ImageView imgViewOut;
     private LeftLayoutController ctrlLeft;
     private Map<String, Boolean> variables = new HashMap<>();
     private final ObservableList<String> data = FXCollections.observableArrayList();
@@ -175,9 +174,11 @@ public class CenterLayoutController implements Initializable {
     private final ToggleSwitch tsOut = new ToggleSwitch();
     private final ToggleSwitch tsVar = new ToggleSwitch();
 
-    @Override
-    public void initialize(final URL location, final ResourceBundle resources) {
-        this.img = SVGImageUtils.getSvgImage("/icon/delete.svg", DELETE_WIDTH, DELETE_HEIGHT);
+    /**
+     * 
+     */
+    public void initialize() {
+        final Image img = SVGImageUtils.getSvgImage("icon/delete.svg", DELETE_WIDTH, DELETE_HEIGHT);
         this.imgViewYaml = new ImageView(img);
         this.imgViewEff = new ImageView(img);
         this.imgViewOut = new ImageView(img);
@@ -758,15 +759,15 @@ public class CenterLayoutController implements Initializable {
             this.removeClass.setDisable(false);
         }
         if (!listLibError.isEmpty()) {
-            String content = RESOURCES.getString("error_adding_classpath_content")
-                    + System.getProperty("line.separator");
+            final StringBuilder content = new StringBuilder(RESOURCES.getString("error_adding_classpath_content")
+                    + System.getProperty("line.separator"));
             for (final String lib : listLibError) {
-                content = content + System.getProperty("line.separator") + "- " + lib;
+                content.append(System.getProperty("line.separator")).append("- ").append(lib);
             }
             final Alert alertCancel = new Alert(AlertType.ERROR);
             alertCancel.setTitle(RESOURCES.getString("error_adding_classpath"));
             alertCancel.setHeaderText(RESOURCES.getString("error_adding_classpath_header"));
-            alertCancel.setContentText(content);
+            alertCancel.setContentText(content.toString());
             alertCancel.showAndWait();
         }
     }
@@ -1011,7 +1012,7 @@ public class CenterLayoutController implements Initializable {
             stage.showAndWait();
         } catch (IOException e) {
             L.error("Error loading the graphical interface. This is most likely a bug.", e);
-            System.exit(1);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -1021,7 +1022,7 @@ public class CenterLayoutController implements Initializable {
             desk.open(new File(this.ctrlLeft.getSelectedFilePath()));
         } catch (IOException e) {
             L.error("Error opening file.", e);
-            System.exit(1);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -1075,7 +1076,7 @@ public class CenterLayoutController implements Initializable {
             alert.setHeaderText(RESOURCES.getString("save_changes_header"));
             alert.setContentText(RESOURCES.getString("save_changes_content"));
             final Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK) {
+            if (result.isPresent() && result.get() == ButtonType.OK) {
                 saveProject();
                 this.project = ProjectIOUtils.loadFrom(this.ctrlLeft.getPathFolder());
             }

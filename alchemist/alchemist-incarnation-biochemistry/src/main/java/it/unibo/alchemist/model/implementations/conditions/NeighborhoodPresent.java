@@ -54,7 +54,7 @@ public class NeighborhoodPresent<T> extends AbstractCondition<T> {
     }
 
     @Override
-    public double getPropensityConditioning() {
+    public double getPropensityContribution() {
         return isValid() ? 1d : 0d;
     }
 

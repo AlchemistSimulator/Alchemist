@@ -12,9 +12,11 @@
  */
 package it.unibo.alchemist.model.implementations.positions;
 
-import com.google.common.collect.Lists;
 import it.unibo.alchemist.model.interfaces.Position2D;
+
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 /**
  * This class measures distances as integers. Suitable for bidimensional

@@ -15,8 +15,9 @@ import it.unibo.alchemist.model.interfaces.Position;
 /**
  * Implementation of a circular deformable cell.
  *
+ * @param <P>
  */
-public class CircularDeformableCellImpl<P extends Position<P>> extends CellNodeImpl<P> implements CircularDeformableCell<P> {
+public final class CircularDeformableCellImpl<P extends Position<P>> extends CellNodeImpl<P> implements CircularDeformableCell<P> {
 
     /**
      * 
@@ -26,9 +27,9 @@ public class CircularDeformableCellImpl<P extends Position<P>> extends CellNodeI
 
     /**
      * Create a circular deformable cell of maxDiam = maxDiameter and minDiam = deformability * maxDiam.
-     * @param env 
-     * @param maxDiameter 
-     * @param rigidity 
+     * @param env the environment
+     * @param maxDiameter the maximum diameter
+     * @param rigidity the rigidity of the cell, in ]0, 1[
      */
     public CircularDeformableCellImpl(final Environment<Double, P> env, final double maxDiameter, final double rigidity) {
         super(env, maxDiameter * rigidity);

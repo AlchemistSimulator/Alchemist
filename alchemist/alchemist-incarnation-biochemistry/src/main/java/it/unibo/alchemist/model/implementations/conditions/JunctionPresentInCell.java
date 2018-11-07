@@ -54,7 +54,7 @@ public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
     }
 
     @Override
-    public double getPropensityConditioning() {
+    public double getPropensityContribution() {
         return isValid() ? 1 : 0;
     }
 

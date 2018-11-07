@@ -14,15 +14,15 @@ import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import org.danilopianini.lang.HashString;
 
 import java.util.List;
 
 /**
- * 
+ * @param <P>
  */
-public class CrowdSteeringService<P extends Position<? extends P>> extends SAPEREMoveNodeAgent<P> {
+public final class CrowdSteeringService<P extends Position2D<P>> extends SAPEREMoveNodeAgent<P> {
 
     /*
      * an agent can move at most of LIMIT along each axis
@@ -75,9 +75,9 @@ public class CrowdSteeringService<P extends Position<? extends P>> extends SAPER
             final List<ILsaMolecule> gradList;
             gradList = n.getConcentration(template);
             if (!gradList.isEmpty() && !n.contains(new LsaMolecule("person"))) {
-                for (int i = 0; i < gradList.size(); i++) {
-                    if (gradList.get(i).getArg(gradIdPos).getAST().toHashString().equals(idValue)) {
-                        final double valueGrad = getLSAArgumentAsDouble(gradList.get(i), gradDistPos);
+                for (ILsaMolecule aGradList : gradList) {
+                    if (aGradList.getArg(gradIdPos).getAST().toHashString().equals(idValue)) {
+                        final double valueGrad = getLSAArgumentAsDouble(aGradList, gradDistPos);
                         if (valueGrad <= minGrad) {
                             minGrad = valueGrad;
                             targetPositions = getPosition(n);
@@ -91,14 +91,12 @@ public class CrowdSteeringService<P extends Position<? extends P>> extends SAPER
         if (bestNode == null) {
             return;
         }
-        final P mypos = getCurrentPosition();
-        final double myx = mypos.getCartesianCoordinates()[0];
-        final double myy = mypos.getCartesianCoordinates()[1];
-        double x = 0;
-        double y = 0;
         if (targetPositions != null) {
-            x = targetPositions.getCartesianCoordinates()[0];
-            y = targetPositions.getCartesianCoordinates()[1];
+            final P mypos = getCurrentPosition();
+            final double myx = mypos.getX();
+            final double myy = mypos.getY();
+            double x = targetPositions.getX();
+            double y = targetPositions.getY();
             double dx = x - myx;
             double dy = y - myy;
             dx = dx > 0 ? Math.min(LIMIT, dx) : Math.max(-LIMIT, dx);

@@ -21,7 +21,7 @@ import it.unibo.alchemist.grid.simulation.Complexity;
  * An implementation of {@link Cluster}  uses Apache Ignite. 
  *
  */
-public class ClusterImpl implements Cluster {
+public final class ClusterImpl implements Cluster {
 
     private static final int IGNITE_RAM_MULT_FACTOR = 1000000000;
     private final Ignite ignite;

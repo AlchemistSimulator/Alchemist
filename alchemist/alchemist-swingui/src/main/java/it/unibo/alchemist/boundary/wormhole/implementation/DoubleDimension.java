@@ -13,15 +13,12 @@ import java.awt.geom.Dimension2D;
 /**
  * Implementation of the {@link Dimension2D} abstract class with double
  * precision.
- *
+ * 
  */
-public class DoubleDimension extends Dimension2D {
+public final class DoubleDimension extends Dimension2D {
 
     private double width;
     private double height;
-
-    @SuppressWarnings("unused")
-    private static final long serialVersionUID = 1L;
 
     /**
      * Initializes a new <code>DoubleDimension</code> instance with both width

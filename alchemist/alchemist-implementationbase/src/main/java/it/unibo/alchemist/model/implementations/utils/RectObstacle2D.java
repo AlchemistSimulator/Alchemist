@@ -34,12 +34,11 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
      * Relative precision value under which two double values are considered to
      * be equal by fuzzyEquals.
      */
-    public static final double DOUBLE_EQUALITY_EPSILON = 10e-12;
     private static final long serialVersionUID = -3552947311155196461L;
     private final int id = System.identityHashCode(this);
     private final double minX, maxX, minY, maxY;
 
-    /**
+    /*
      * This code was built upon Alexander Hristov's, see:
      * 
      * http://www.ahristov.com/tutorial/geometry-games/intersection-segments.html
@@ -68,14 +67,16 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
         return new double[] { xi, yi };
     }
 
-    private static boolean intersectionOutOfRange(final double xi, final double x1, final double x2) {
-        final double min = Math.min(x1, x2);
-        final double max = Math.max(x1, x2);
-        return !fuzzyGreaterEquals(xi, min) || !fuzzyGreaterEquals(max, xi);
+    private static boolean intersectionOutOfRange(final double intersection, final double start, final double end) {
+        final double min = Math.min(start, end);
+        final double max = Math.max(start, end);
+        return !fuzzyGreaterEquals(intersection, min) || !fuzzyGreaterEquals(max, intersection);
     }
 
     @Override
-    public Pair<java.lang.Double, java.lang.Double> next(final double startx, final double starty, final double endx, final double endy) {
+    public Pair<java.lang.Double, java.lang.Double> next(// NOPMD: fully qualified name is necessary
+            final double startx, final double starty,
+            final double endx, final double endy) {
         final double[] onBorders = enforceBorders(startx, starty, endx, endy);
         if (onBorders != null) {
             /*
@@ -97,9 +98,11 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
         }
         return asPair(restricted);
     }
-    
-    private static Pair<java.lang.Double, java.lang.Double> asPair(final double[] coords) {
-        assert coords.length == 2;
+
+    private static Pair<java.lang.Double, java.lang.Double> asPair(final double[] coords) { // NOPMD: fully qualified name is necessary
+        if (coords.length != 2) {
+            throw new IllegalStateException("Array must have exactly two parameters");
+        }
         return new Pair<>(coords[0], coords[1]);
     }
 

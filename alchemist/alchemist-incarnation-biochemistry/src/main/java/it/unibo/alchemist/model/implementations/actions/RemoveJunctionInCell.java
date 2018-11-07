@@ -16,7 +16,6 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.CellNode;
 
@@ -33,10 +32,10 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  * Represent the action of removing a junction between the current node and a neighbor. <br/>
  * This action only remove the junction reference inside this node, the neighbor totally ignore 
  * that a junction has been removed. <br/>
- * This is a part of the junction remotion process. <br/>
+ * This is a part of the junction removal process. <br/>
  * See {@link RemoveJunctionInNeighbor} for the other part of the process
  */
-public class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
+public final class RemoveJunctionInCell extends AbstractNeighborAction<Double> { // TODO try local
 
     private static final long serialVersionUID = 3565077605882164314L;
 
@@ -74,11 +73,6 @@ public class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
      */
     @Override
     public void execute() { }
-
-    @Override
-    public Context getContext() {
-        return Context.NEIGHBORHOOD; // TODO try local
-    }
 
     /**
      * Removes the junction that links the node where this action is executed and the target node. 

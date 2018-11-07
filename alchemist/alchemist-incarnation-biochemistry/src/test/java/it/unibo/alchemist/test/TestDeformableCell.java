@@ -144,7 +144,7 @@ public class TestDeformableCell {
         assertEquals(1d, cellNode1.getReactions().stream()
                 .findFirst()
                 .get()
-                .getConditions().get(0).getPropensityConditioning(), 
+                .getConditions().get(0).getPropensityContribution(),
                 PRECISION);
         env.moveNodeToPosition(cellNode2, new Euclidean2DPosition(0, 4));
         assertFalse(cellNode1.getReactions().stream()
@@ -154,7 +154,7 @@ public class TestDeformableCell {
         assertEquals(0d, cellNode1.getReactions().stream()
                 .findFirst()
                 .get()
-                .getConditions().get(0).getPropensityConditioning(), 
+                .getConditions().get(0).getPropensityContribution(),
                 PRECISION);
     }
 
@@ -174,7 +174,7 @@ public class TestDeformableCell {
         assertEquals(1d, cellNode1.getReactions().stream()
                 .findFirst()
                 .get()
-                .getConditions().get(0).getPropensityConditioning(), 
+                .getConditions().get(0).getPropensityContribution(),
                 PRECISION);
         env.moveNodeToPosition(cellNode3, MOVE_TO_POS2_1);
         assertTrue(cellNode1.getReactions().stream()
@@ -184,7 +184,7 @@ public class TestDeformableCell {
         assertEquals(0.5, cellNode1.getReactions().stream()
                 .findFirst()
                 .get()
-                .getConditions().get(0).getPropensityConditioning(), 
+                .getConditions().get(0).getPropensityContribution(),
                 PRECISION);
         env.moveNodeToPosition(cellNode3, MOVE_TO_POS2_2);
         assertFalse(cellNode1.getReactions().stream()
@@ -194,7 +194,7 @@ public class TestDeformableCell {
         assertEquals(0d, cellNode1.getReactions().stream()
                 .findFirst()
                 .get()
-                .getConditions().get(0).getPropensityConditioning(), 
+                .getConditions().get(0).getPropensityContribution(),
                 PRECISION);
     }
 

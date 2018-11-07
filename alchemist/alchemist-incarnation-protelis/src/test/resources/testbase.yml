@@ -8,7 +8,7 @@ seeds:
  simulation: 0
  
 network-model:
- type: EuclideanDistance
+ type: ConnectWithinDistance
  parameters: [1.8]
  
 environment: 

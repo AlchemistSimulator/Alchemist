@@ -31,7 +31,7 @@ import java.lang.IllegalArgumentException
  * interface.
  *
  * @param <T>
-</T> */
+ */
 typealias Edge<T> = Pair<Reaction<T>, Reaction<T>>
 class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : DependencyGraph<T> {
     private val inGlobals = ArrayListSet<Reaction<T>>()
@@ -142,6 +142,7 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
         }
     }
 
+    /** @see [DependencyGraph.addNeighbor] */
     override fun addNeighbor(n1: Node<T>, n2: Node<T>) {
         addNeigborDirected(n1, n2)
         addNeigborDirected(n2, n1)

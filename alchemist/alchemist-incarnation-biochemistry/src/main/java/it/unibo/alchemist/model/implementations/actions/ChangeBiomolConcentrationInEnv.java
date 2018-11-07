@@ -36,7 +36,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 /**
  * Action implementing the changing of the concentration of a given biomolecule in environment.
  */
-public class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<Double> {
+public final class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<Double> {
 
     private static final long serialVersionUID = 1L;
     private final double delta;

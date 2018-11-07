@@ -197,11 +197,8 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
         ranges.put(center, range);
     }
 
-    /**
-     * Subclasses may decide to extend this rule with a non locally consistent one.
-     */
     @Override
-    public boolean isLocallyConsistent() {
+    public final boolean isLocallyConsistent() {
         return false;
     }
 

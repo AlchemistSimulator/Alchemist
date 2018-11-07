@@ -22,6 +22,7 @@ import java.util.Set;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 
 /**
+ * @param <P> position type
  */
 public interface CellNode<P extends Position<? extends P>> extends Node<Double> {
     /**
@@ -85,7 +86,7 @@ public interface CellNode<P extends Position<? extends P>> extends Node<Double> 
 
     /**
      * add v to the polarization versor inside the cell; useful for considering the combination of various stimuli in a cell.
-     * @param v 
+     * @param v polarization direction
      */
     void addPolarization(P v);
 

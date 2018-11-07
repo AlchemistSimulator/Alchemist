@@ -69,12 +69,12 @@ public class CellNodeImpl<P extends Position<P>> extends DoubleNode implements C
     }
 
     @Override
-    protected Double createT() {
+    protected final Double createT() {
         return 0d;
     }
 
     @Override
-    public void setConcentration(final Molecule mol, final Double c) {
+    public final void setConcentration(final Molecule mol, final Double c) {
         if (c < 0) {
             throw new IllegalArgumentException("No negative concentrations allowed (" + mol + " -> " + c + ")");
         }
@@ -86,17 +86,17 @@ public class CellNodeImpl<P extends Position<P>> extends DoubleNode implements C
     }
 
     @Override
-    public void setPolarization(final P v) {
+    public final void setPolarization(final P v) {
         this.polarizationVersor = v;
     }
 
     @Override
-    public P getPolarizationVersor() {
+    public final P getPolarizationVersor() {
         return polarizationVersor;
     }
 
     @Override
-    public void addPolarization(final P v) {
+    public final void addPolarization(final P v) {
         final double[] tempCor = this.polarizationVersor.plus(v).getCartesianCoordinates();
         final double module = FastMath.sqrt(FastMath.pow(tempCor[0], 2) + FastMath.pow(tempCor[1], 2));
         this.polarizationVersor = module == 0 
@@ -105,7 +105,7 @@ public class CellNodeImpl<P extends Position<P>> extends DoubleNode implements C
     }
 
     @Override
-    public boolean contains(final Molecule m) {
+    public final boolean contains(final Molecule m) {
         if (m instanceof Junction) {
             return containsJunction((Junction) m);
         } else {
@@ -114,7 +114,7 @@ public class CellNodeImpl<P extends Position<P>> extends DoubleNode implements C
     }
 
     @Override
-    public Map<Junction, Map<CellNode<?>, Integer>> getJunctions() {
+    public final Map<Junction, Map<CellNode<?>, Integer>> getJunctions() {
         //return Collections.unmodifiableMap(junctions);
         final Map<Junction, Map<CellNode<?>, Integer>> ret = new LinkedHashMap<>();
         junctions.entrySet().forEach(e -> ret.put(e.getKey(), new LinkedHashMap<>(e.getValue())));
@@ -122,7 +122,7 @@ public class CellNodeImpl<P extends Position<P>> extends DoubleNode implements C
     }
 
     @Override
-    public void addJunction(final Junction j, final CellNode<?> neighbor) {
+    public final void addJunction(final Junction j, final CellNode<?> neighbor) {
         if (junctions.containsKey(j)) {
             final Map<CellNode<?>, Integer> inner = junctions.get(j);
             if (inner.containsKey(neighbor)) {
@@ -139,12 +139,12 @@ public class CellNodeImpl<P extends Position<P>> extends DoubleNode implements C
     }
 
     @Override
-    public boolean containsJunction(final Junction j) {
+    public final boolean containsJunction(final Junction j) {
         return junctions.containsKey(j);
     }
 
     @Override
-    public void removeJunction(final Junction j, final CellNode<?> neighbor) {
+    public final void removeJunction(final Junction j, final CellNode<?> neighbor) {
         if (junctions.containsKey(j)) {
             final Map<CellNode<?>, Integer> inner = junctions.get(j);
             if (inner.containsKey(neighbor)) {
@@ -166,7 +166,7 @@ public class CellNodeImpl<P extends Position<P>> extends DoubleNode implements C
     }
 
     @Override
-    public Set<CellNode<?>> getNeighborsLinkWithJunction(final Junction j) {
+    public final Set<CellNode<?>> getNeighborsLinkWithJunction(final Junction j) {
         if (junctions.get(j) == null) {
             return Collections.emptySet();
         }
@@ -174,7 +174,7 @@ public class CellNodeImpl<P extends Position<P>> extends DoubleNode implements C
     }
 
     @Override
-    public Set<CellNode<?>> getAllNodesLinkWithJunction() {
+    public final Set<CellNode<?>> getAllNodesLinkWithJunction() {
         final Set<CellNode<?>> r = new HashSet<>();
         for (final Map.Entry<Junction, Map<CellNode<?>, Integer>> e : junctions.entrySet()) {
             r.addAll(e.getValue().keySet());
@@ -183,20 +183,23 @@ public class CellNodeImpl<P extends Position<P>> extends DoubleNode implements C
     }
 
     @Override
-    public int getJunctionNumber() {
+    public final int getJunctionNumber() {
         return junctions.values().stream().mapToInt(m -> m.values().stream().mapToInt(v -> v.intValue()).sum()).sum();
     }
 
     @Override
-    public double getDiameter() {
+    public final double getDiameter() {
         return diameter;
     }
 
     @Override
-    public double getRadius() {
+    public final double getRadius() {
         return getDiameter() / 2;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return "Instance of CellNodeImpl with diameter = " + diameter;

@@ -426,7 +426,7 @@ public class BiochemicalReactionBuilder<P extends Position<P>> {
             return new Biomolecule(ctx.name.getText());
         }
 
-        // create the concentration of a biomolecule from a biomolecular context
+        // create the concentration of a biomolecule from a bio-molecular context
         private static double createConcentration(final BiomoleculeContext ctx) {
             return (ctx.concentration() == null) ? 1.0 : Double.parseDouble(ctx.concentration().POSDOUBLE().getText());
         }

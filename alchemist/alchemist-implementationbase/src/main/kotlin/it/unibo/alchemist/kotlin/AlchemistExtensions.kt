@@ -33,4 +33,3 @@ operator fun Time.minus(other: Time): Time = subtract(other)
 fun makePoint(x: Number, y: Number) = Point(x.toInt(), y.toInt())
 operator fun Point.plus(p: Point): Point = Point(x + p.x, y + p.y)
 operator fun Point.minus(p: Point): Point = Point(x - p.x, y - p.y)
-

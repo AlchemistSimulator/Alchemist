@@ -38,10 +38,8 @@ allprojects {
         all*.exclude group: 'org.eclipse.xtext', module: 'org.eclipse.xtext.dependencies'
         all*.exclude group: 'org.eclipse.platform', module: 'org.eclipse.equinox.common'
         all {
-            if(!it.name.contains('antlr')) {
-                resolutionStrategy {
-                    forcedModules += "org.antlr:antlr-runtime:${antlrRuntimeVersion}"
-                }
+            resolutionStrategy {
+                force "org.antlr:antlr-runtime:${antlrRuntimeVersion}"
             }
         }
     }

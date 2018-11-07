@@ -21,7 +21,6 @@ import org.protelis.lang.datatype.DatatypeFactory;
 import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.lang.datatype.Field;
 import org.protelis.lang.datatype.Tuple;
-import org.protelis.vm.ExecutionEnvironment;
 import org.protelis.vm.LocalizedDevice;
 import org.protelis.vm.SpatiallyEmbeddedDevice;
 import org.protelis.vm.TimeAwareDevice;

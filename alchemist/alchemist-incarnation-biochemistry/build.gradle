@@ -14,7 +14,6 @@ dependencies {
     )
     antlr "org.antlr:antlr4:$antlr4Version"
     runtimeOnly "org.antlr:antlr4-runtime:$antlr4Version"
-    testImplementation "org.antlr:antlr4-runtime:$antlr4Version"
 }
 
 generateGrammarSource {

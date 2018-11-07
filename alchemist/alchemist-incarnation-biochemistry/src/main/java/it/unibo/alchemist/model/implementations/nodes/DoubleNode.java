@@ -23,7 +23,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 
 /**
  */
-public abstract class DoubleNode extends AbstractNode<Double> {
+public class DoubleNode extends AbstractNode<Double> {
 
     private static final long serialVersionUID = 3426243332828063314L;
 
@@ -36,7 +36,7 @@ public abstract class DoubleNode extends AbstractNode<Double> {
     }
 
     @Override
-    protected Double createT() {
+    protected final Double createT() {
         return 0d;
     }
 }

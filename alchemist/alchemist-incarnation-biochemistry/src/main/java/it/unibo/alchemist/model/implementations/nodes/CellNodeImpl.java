@@ -69,11 +69,6 @@ public class CellNodeImpl<P extends Position<P>> extends DoubleNode implements C
     }
 
     @Override
-    protected final Double createT() {
-        return 0d;
-    }
-
-    @Override
     public final void setConcentration(final Molecule mol, final Double c) {
         if (c < 0) {
             throw new IllegalArgumentException("No negative concentrations allowed (" + mol + " -> " + c + ")");

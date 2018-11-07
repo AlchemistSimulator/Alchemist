@@ -25,7 +25,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 /**
  *
  */
-public class ChangeBiomolConcentrationInCell extends AbstractActionOnSingleMolecule<Double> {
+public final class ChangeBiomolConcentrationInCell extends AbstractActionOnSingleMolecule<Double> {
 
     private static final long serialVersionUID = 5569613886926615012L;
     private final double deltaC;

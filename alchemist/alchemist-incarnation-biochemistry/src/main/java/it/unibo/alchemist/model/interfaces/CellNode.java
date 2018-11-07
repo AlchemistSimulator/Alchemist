@@ -64,7 +64,7 @@ public interface CellNode<P extends Position<? extends P>> extends Node<Double> 
      * 
      * @return The total number of junctions presents in this node
      */
-    int getJunctionNumber();
+    int getJunctionsCount();
 
     /**
      * 

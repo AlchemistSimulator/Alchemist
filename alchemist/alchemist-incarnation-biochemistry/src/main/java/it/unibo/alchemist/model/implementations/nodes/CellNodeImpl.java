@@ -183,7 +183,7 @@ public class CellNodeImpl<P extends Position<P>> extends DoubleNode implements C
     }
 
     @Override
-    public final int getJunctionNumber() {
+    public final int getJunctionsCount() {
         return junctions.values().stream().mapToInt(m -> m.values().stream().reduce(0, (a, b) -> a + b)).sum();
     }
 

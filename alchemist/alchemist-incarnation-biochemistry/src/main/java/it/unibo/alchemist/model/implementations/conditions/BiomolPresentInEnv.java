@@ -34,7 +34,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 /**
  *
  */
-public class BiomolPresentInEnv<P extends Position<? extends P>> extends GenericMoleculePresent<Double> {
+public final class BiomolPresentInEnv<P extends Position<? extends P>> extends GenericMoleculePresent<Double> {
 
     private static final long serialVersionUID = 1L;
 

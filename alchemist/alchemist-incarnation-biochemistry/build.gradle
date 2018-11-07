@@ -16,6 +16,14 @@ dependencies {
     runtimeOnly "org.antlr:antlr4-runtime:$antlr4Version"
 }
 
+configurations {
+    all {
+        if(!it.name.contains('antlr')) {
+            exclude group: 'org.antlr', module: 'antlr-runtime'
+        }
+    }
+}
+
 generateGrammarSource {
     arguments += ["-visitor", "-package", "it.unibo.alchemist.biochemistrydsl", "-long-messages"]
 }

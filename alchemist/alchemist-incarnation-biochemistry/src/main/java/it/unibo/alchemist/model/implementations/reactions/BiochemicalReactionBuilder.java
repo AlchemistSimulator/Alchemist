@@ -270,7 +270,7 @@ public class BiochemicalReactionBuilder<P extends Position<P>> {
             for (final BiomoleculeContext b : ctx.biomolecule()) {
                 final Biomolecule biomol = createBiomolecule(b);
                 final double concentration = createConcentration(b);
-                conditionList.add(new BiomolPresentInEnv(env, node, biomol, concentration));
+                conditionList.add(new BiomolPresentInEnv<>(env, node, biomol, concentration));
                 actionList.add(new ChangeBiomolConcentrationInEnv(node, biomol, env, rand));
                 envConditionPresent = true;
             }

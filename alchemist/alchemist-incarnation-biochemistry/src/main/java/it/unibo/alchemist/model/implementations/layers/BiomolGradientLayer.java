@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  * A {@link Layer} representing a linear distribution in space of a molecule.
  *
  */
-public class BiomolGradientLayer<P extends Position<? extends P>> implements Layer<Double, P> {
+public final class BiomolGradientLayer<P extends Position<? extends P>> implements Layer<Double, P> {
 
     /**
      * 

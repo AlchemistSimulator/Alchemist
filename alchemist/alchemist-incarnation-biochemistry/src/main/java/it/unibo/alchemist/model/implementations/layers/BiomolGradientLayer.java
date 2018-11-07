@@ -8,16 +8,18 @@
  ******************************************************************************/
 package it.unibo.alchemist.model.implementations.layers;
 
+import it.unibo.alchemist.model.interfaces.Position2D;
 import org.apache.commons.math3.util.FastMath;
 
 import it.unibo.alchemist.model.interfaces.Layer;
-import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * A {@link Layer} representing a linear distribution in space of a molecule.
  *
+ * @param <P>
+ *
  */
-public final class BiomolGradientLayer<P extends Position<? extends P>> implements Layer<Double, P> {
+public final class BiomolGradientLayer<P extends Position2D<P>> implements Layer<Double, P> {
 
     /**
      * 
@@ -29,20 +31,20 @@ public final class BiomolGradientLayer<P extends Position<? extends P>> implemen
     private final double steep;
 
     /**
-     * Initialize a gradient layer which grows in concentration proportionaly in space. 
+     * Initialize a gradient layer which grows in concentration proportionally in space.
      * 
-     * @param dirx x coordinate of the vector representing the direction in which the gradient grows
-     * @param diry y coordinate of the vector representing the direction in which the gradient grows
+     * @param directionX x coordinate of the vector representing the direction in which the gradient grows
+     * @param directionY y coordinate of the vector representing the direction in which the gradient grows
      * @param unitVariation unit variation of the gradient
      * @param offset minimum value of concentration reached by this spatial distribution
      */
-    public BiomolGradientLayer(final double dirx, final double diry, final double unitVariation, final double offset) {
-        final double dirModule = FastMath.sqrt(FastMath.pow(dirx, 2) + FastMath.pow(diry, 2));
+    public BiomolGradientLayer(final double directionX, final double directionY, final double unitVariation, final double offset) {
+        final double dirModule = FastMath.sqrt(FastMath.pow(directionX, 2) + FastMath.pow(directionY, 2));
         steep = unitVariation;
         // versor coordinates
         assert dirModule != 0;
-        final double vx = dirx / dirModule;
-        final double vy = diry / dirModule;
+        final double vx = directionX / dirModule;
+        final double vy = directionY / dirModule;
         // initialize the parameters of plan representing the gradient.
         c = offset;
         a = unitVariation * vx;
@@ -50,20 +52,19 @@ public final class BiomolGradientLayer<P extends Position<? extends P>> implemen
     }
 
     /**
-     * Initialize a gradient layer which grows in concentration proportionaly in space. 
+     * Initialize a gradient layer which grows in concentration proportionally in space.
      * 
-     * @param direction the {@link Position} representing the direction in which the gradient grows (here the positions is considered as a vector)
+     * @param direction the {@link Position2D} representing the direction in which the gradient grows (here the positions is considered as a vector)
      * @param unitVariation unit variation of the gradient
      * @param offset minimum value of concentration reached by this spatial distribution
      */
     public BiomolGradientLayer(final P direction, final double unitVariation, final double offset) {
-        this(direction.getCoordinate(0), direction.getCoordinate(1), unitVariation, offset);
+        this(direction.getX(), direction.getY(), unitVariation, offset);
     }
 
     @Override
     public Double getValue(final P p) {
-        final double[] cord = p.getCartesianCoordinates();
-        return (cord[0] * a) + (cord[1] * b) + c;
+        return (p.getX() * a) + (p.getY() * b) + c;
     }
 
     @Override
@@ -75,7 +76,9 @@ public final class BiomolGradientLayer<P extends Position<? extends P>> implemen
 
     /**
      * 
-     * @return the parameters describing this spatial distribution, that's actually a plain. So the {@link Array} a returned by this method contains the parameters of that plain ( concentration = a[0] * x + a[1] * y + a[2])
+     * @return the parameters describing this spatial distribution, that's actually a plain. So the
+     * {@link java.lang.reflect.Array} a returned by this method contains the parameters of that plain
+     * (concentration = a[0] * x + a[1] * y + a[2])
      */
     public double[] getParameters() {
         return new double[]{a, b, c};

@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  * Exports the stats about the performance of the environment.
  *
  */
-public class EnvPerformanceStats implements Extractor {
+public final class EnvPerformanceStats implements Extractor {
 
     private static final List<String> COLNAME;
     private static final double[] EMPTY = new double[0];

@@ -14,14 +14,14 @@ import javax.annotation.Nonnull;
 
 import com.google.common.base.Optional;
 
-import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
- * A condition that holds true only if the tracked {@link Molecule} changed its {@link Concentration}.
+ * A condition that holds true only if the tracked {@link Molecule} changed its
+ * {@link it.unibo.alchemist.model.interfaces.Concentration}.
  * 
  * @param <T>
  */
@@ -31,7 +31,6 @@ public final class ConcentrationChanged<T> extends AbstractCondition<T> {
     private final Molecule target;
     @Nonnull
     private Optional<T> previous;
-    @Nonnull
     private boolean hasFlipped;
 
     /**

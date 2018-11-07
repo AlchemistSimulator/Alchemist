@@ -34,7 +34,7 @@ import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Position;
 
 /**
- *
+ * @param <P>
  */
 public class CellNodeImpl<P extends Position<P>> extends DoubleNode implements CellNode<P>, CellWithCircularArea<P> {
 
@@ -117,7 +117,7 @@ public class CellNodeImpl<P extends Position<P>> extends DoubleNode implements C
     public final Map<Junction, Map<CellNode<?>, Integer>> getJunctions() {
         //return Collections.unmodifiableMap(junctions);
         final Map<Junction, Map<CellNode<?>, Integer>> ret = new LinkedHashMap<>();
-        junctions.entrySet().forEach(e -> ret.put(e.getKey(), new LinkedHashMap<>(e.getValue())));
+        junctions.forEach((key, value) -> ret.put(key, new LinkedHashMap<>(value)));
         return ret;
     }
 
@@ -184,7 +184,7 @@ public class CellNodeImpl<P extends Position<P>> extends DoubleNode implements C
 
     @Override
     public final int getJunctionNumber() {
-        return junctions.values().stream().mapToInt(m -> m.values().stream().mapToInt(v -> v.intValue()).sum()).sum();
+        return junctions.values().stream().mapToInt(m -> m.values().stream().reduce(0, (a, b) -> a + b)).sum();
     }
 
     @Override

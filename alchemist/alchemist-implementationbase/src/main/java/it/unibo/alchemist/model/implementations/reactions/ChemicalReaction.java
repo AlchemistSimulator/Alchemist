@@ -34,16 +34,22 @@ public class ChemicalReaction<T> extends AbstractReaction<T> {
         super(n, pd);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ChemicalReaction<T> cloneOnNewNode(final Node<T> n, final Time currentTime) {
         return makeClone(() -> new ChemicalReaction<>(n, getTimeDistribution().clone(currentTime)));
     }
 
     @Override
-    public void initializationComplete(final Time t, final Environment<T, ?> env) {
+    public final void initializationComplete(final Time t, final Environment<T, ?> env) {
         update(t, true, env);
     }
 
+    /**
+     * Subclasses must call super.updateInternalStatus for the rate to get updated in case of method override.
+     */
     @Override
     protected void updateInternalStatus(final Time curTime, final boolean executed, final Environment<T, ?> env) {
         currentRate = getTimeDistribution().getRate();
@@ -61,7 +67,7 @@ public class ChemicalReaction<T> extends AbstractReaction<T> {
     }
 
     @Override
-    public double getRate() {
+    public final double getRate() {
         return currentRate;
     }
 

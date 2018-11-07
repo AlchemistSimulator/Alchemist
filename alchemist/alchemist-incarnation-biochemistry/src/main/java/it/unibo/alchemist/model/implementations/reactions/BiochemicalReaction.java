@@ -38,7 +38,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
 /** 
  * A biochemical Reaction.
  */
-public class BiochemicalReaction extends ChemicalReaction<Double> {
+public final class BiochemicalReaction extends ChemicalReaction<Double> {
 
     private static final long serialVersionUID = 3849210665619933894L;
     private Map<Node<Double>, Double> validNeighbors = new LinkedHashMap<>(0);

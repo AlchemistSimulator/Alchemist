@@ -30,7 +30,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
  */
-public class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborAction<Double> {
+public final class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborAction<Double> {
 
     private static final long serialVersionUID = -6262967512444676061L;
 

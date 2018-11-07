@@ -25,7 +25,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 /**
  *
  */
-public class CellTensionPolarization<P extends Position<? extends P>> extends AbstractAction<Double> {
+public final class CellTensionPolarization<P extends Position<? extends P>> extends AbstractAction<Double> {
 
     /**
      * 

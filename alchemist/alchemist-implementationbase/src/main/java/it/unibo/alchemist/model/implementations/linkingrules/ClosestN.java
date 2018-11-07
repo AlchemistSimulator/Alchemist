@@ -35,6 +35,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  * Two nodes get connected if either one belongs to the set of the ten devices closest to the other.
  * 
  * @param <T>
+ * @param <P>
  */
 public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
 
@@ -84,7 +85,7 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
     }
 
     @Override
-    public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> env) {
+    public final Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> env) {
         if (env.getNodesNumber() < expectedNodes || !nodeIsEnabled(center)) {
             return Neighborhoods.make(env, center);
         }
@@ -100,7 +101,7 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
                          */
                         .filter(node -> 
                                 !center.equals(node)
-                                && closestN(node, env).anyMatch(closeNode -> center.equals(closeNode))
+                                && closestN(node, env).anyMatch(center::equals)
                         )
                 )
                 .sequential()
@@ -196,6 +197,9 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
         ranges.put(center, range);
     }
 
+    /**
+     * Subclasses may decide to extend this rule with a non locally consistent one.
+     */
     @Override
     public boolean isLocallyConsistent() {
         return false;

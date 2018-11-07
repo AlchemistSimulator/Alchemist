@@ -36,6 +36,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.jirf.Factory;
 import org.danilopianini.jirf.FactoryBuilder;
+import org.jetbrains.annotations.NotNull;
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import it.unibo.alchemist.biochemistrydsl.BiochemistrydslBaseVisitor;
@@ -73,7 +74,9 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 
 /**
- * This class implements a builder for chemical reactions. 
+ * This class implements a builder for chemical reactions.
+ *
+ * @param <P>
  */
 public class BiochemicalReactionBuilder<P extends Position<P>> {
 
@@ -126,7 +129,7 @@ public class BiochemicalReactionBuilder<P extends Position<P>> {
 
     /**
      * Set the reaction to the passed program string.
-     * @param program 
+     * @param program the string version of this reaction
      * @return .
      */
     public BiochemicalReactionBuilder<P> program(final String program) {
@@ -174,11 +177,11 @@ public class BiochemicalReactionBuilder<P extends Position<P>> {
         private boolean envConditionPresent;
         private boolean envActionPresent;
 
-        private BiochemistryDSLVisitor(final RandomGenerator rand,
-                final BiochemistryIncarnation<?> incarnation,
-                final TimeDistribution<Double> timeDistribution,
-                final Node<Double> currentNode,
-                final Environment<Double, P> environment) {
+        private BiochemistryDSLVisitor(@NotNull final RandomGenerator rand,
+                                       @NotNull final BiochemistryIncarnation<?> incarnation,
+                                       @NotNull final TimeDistribution<Double> timeDistribution,
+                                       @NotNull final Node<Double> currentNode,
+                                       @NotNull final Environment<Double, P> environment) {
             this.rand = rand;
             currentInc = incarnation;
             time = timeDistribution;
@@ -360,7 +363,7 @@ public class BiochemicalReactionBuilder<P extends Position<P>> {
                 }
             });
             if (node instanceof CellNode) {
-                actionList.add(new AddJunctionInCell(env, (CellNode<P>) node, j, rand));
+                actionList.add(new AddJunctionInCell(env, node, j, rand));
                 actionList.add(new AddJunctionInNeighbor<>(env, (CellNode<P>) node, reverseJunction(j), rand));
             } else {
                 throw new UnsupportedOperationException("Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName());
@@ -386,8 +389,8 @@ public class BiochemicalReactionBuilder<P extends Position<P>> {
             }
             junctionList.forEach((j -> {
                 if (node instanceof CellNode) {
-                    actionList.add(new RemoveJunctionInCell(env, (CellNode<?>) node, j, rand));
-                    actionList.add(new RemoveJunctionInNeighbor(env, (CellNode<?>) node, reverseJunction(j), rand));
+                    actionList.add(new RemoveJunctionInCell(env, node, j, rand));
+                    actionList.add(new RemoveJunctionInNeighbor(env, node, reverseJunction(j), rand));
                 } else {
                     throw new UnsupportedOperationException("Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName());
                 }
@@ -412,7 +415,7 @@ public class BiochemicalReactionBuilder<P extends Position<P>> {
             if (node instanceof CellNode) {
                 final Junction j = createJunction(ctx.junction());
                 junctionList.add(j);
-                conditionList.add(new JunctionPresentInCell(env, (CellNode<?>) node, j));
+                conditionList.add(new JunctionPresentInCell(env, node, j));
                 return reaction;
             } else {
                 throw new UnsupportedOperationException("Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName());

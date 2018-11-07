@@ -32,7 +32,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 /**
- *
+ * @param <P> Position type
  */
 public final class BiomolPresentInEnv<P extends Position<? extends P>> extends GenericMoleculePresent<Double> {
 
@@ -44,17 +44,20 @@ public final class BiomolPresentInEnv<P extends Position<? extends P>> extends G
      * Initialize condition for extra-cellular environment, implemented as a set
      * of {@link EnvironmentNode}.
      * 
-     * @param biomol
+     * @param biomolecule
      *            the {@link Biomolecule} which the condition is about.
-     * @param conc
+     * @param concentration
      *            the requested concentration.
      * @param node
      *            the node where this condition is located;
      * @param env
      *            the {@link Environment} where the node is located.
      */
-    public BiomolPresentInEnv(final Environment<Double, P> env, final Node<Double> node, final Biomolecule biomol, final Double conc) {
-        super(node, biomol, conc);
+    public BiomolPresentInEnv(final Environment<Double, P> env,
+                              final Node<Double> node,
+                              final Biomolecule biomolecule,
+                              final Double concentration) {
+        super(node, biomolecule, concentration);
         environment = env;
     }
 
@@ -67,13 +70,13 @@ public final class BiomolPresentInEnv<P extends Position<? extends P>> extends G
         return CombinatoricsUtils.binomialCoefficientDouble(
                 (int) FastMath.round(totalQuantity), 
                 (int) FastMath.round(getQuantity())
-                );
+            );
     }
 
     /**
      * @return a list of EnvironmentNodes near to the node where this condition is located.
      */
-    protected final List<Node<Double>> getEnviromentNodesSurrounding() {
+    protected List<Node<Double>> getEnviromentNodesSurrounding() {
         return environment.getNeighborhood(getNode()).getNeighbors().stream()
                 .parallel()
                 .filter(n -> n instanceof EnvironmentNode)

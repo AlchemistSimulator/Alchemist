@@ -35,8 +35,9 @@ import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 
 /**
+ * @param <P>
  */
-public class BiochemistryIncarnation<P extends Position<P>> implements Incarnation<Double, P> {
+public final class BiochemistryIncarnation<P extends Position<P>> implements Incarnation<Double, P> {
 
     @Override
     public double getProperty(final Node<Double> node, final Molecule mol, final String prop) {
@@ -51,7 +52,7 @@ public class BiochemistryIncarnation<P extends Position<P>> implements Incarnati
     @Override
     public CellNode<P> createNode(final RandomGenerator rand, final Environment<Double, P> env, final String param) {
         if (param == null || param.isEmpty()) {
-            return new CellNodeImpl<P>(env);
+            return new CellNodeImpl<>(env);
         }
         try {
             return new CellNodeImpl<>(env, Double.parseDouble(param));

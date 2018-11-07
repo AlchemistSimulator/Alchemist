@@ -25,7 +25,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  * 
  * @param <T>
  */
-public class ConcentrationChanged<T> extends AbstractCondition<T> {
+public final class ConcentrationChanged<T> extends AbstractCondition<T> {
 
     private static final long serialVersionUID = 1L;
     private final Molecule target;

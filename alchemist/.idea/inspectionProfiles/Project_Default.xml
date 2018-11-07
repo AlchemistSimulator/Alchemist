@@ -646,6 +646,7 @@
     <inspection_tool class="Convert2streamapi" enabled="true" level="INFORMATION" enabled_by_default="true" />
     <inspection_tool class="ConvertCallChainIntoSequence" enabled="true" level="INFO" enabled_by_default="true" />
     <inspection_tool class="ConvertExpressionToSAM" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ConvertFlatMapToFlatten" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="ConvertJavadoc" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ConvertLambdaToReference" enabled="true" level="INFORMATION" enabled_by_default="true" />
     <inspection_tool class="ConvertNullInitializerToUnderscore" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -1033,7 +1034,7 @@
       <option name="ignoreNonEmtpyLoops" value="false" />
     </inspection_tool>
     <inspection_tool class="GtkPreferredJComboBoxRenderer" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="Guava" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="Guava" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="HardCodedStringLiteral" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="ignoreForAssertStatements" value="true" />
       <option name="ignoreForExceptionConstructors" value="true" />
@@ -1599,6 +1600,7 @@
     <inspection_tool class="OptionEqualsSome" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="OptionalAssignedToNull" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="OptionalContainsCollection" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="OptionalExpectation" enabled="false" level="INFORMATION" enabled_by_default="false" />
     <inspection_tool class="OptionalGetWithoutIsPresent" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="OptionalIsPresent" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="OptionalUsedAsFieldOrParameterType" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -1778,6 +1780,7 @@
     <inspection_tool class="RedundantNotNullExtensionReceiverOfInline" enabled="false" level="INFORMATION" enabled_by_default="false" />
     <inspection_tool class="RedundantObjectTypeCheck" enabled="true" level="INFORMATION" enabled_by_default="true" />
     <inspection_tool class="RedundantReturnLabel" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="RedundantRunCatching" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="RedundantSamConstructor" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="RedundantSemicolon" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="RedundantSetter" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
@@ -1853,6 +1856,7 @@
     <inspection_tool class="RequiredAttributes" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="myAdditionalRequiredHtmlAttributes" value="" />
     </inspection_tool>
+    <inspection_tool class="ResultIsResult" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="ResultOfObjectAllocationIgnored" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ResultSetIndexZero" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ReturnFromFinallyBlock" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -1872,6 +1876,7 @@
     <inspection_tool class="RuntimeExec" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="RuntimeExecWithNonConstantString" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="SSBasedInspection" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="SafeCastWithReturn" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="SafeLock" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="SafeVarargsDetector" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="SameElementsToEquals" enabled="true" level="WARNING" enabled_by_default="true" />

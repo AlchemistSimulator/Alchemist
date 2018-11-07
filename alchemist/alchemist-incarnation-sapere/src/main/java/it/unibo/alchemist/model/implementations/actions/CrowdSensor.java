@@ -23,7 +23,7 @@ import java.util.List;
  * form "crowd, N".
  * 
  */ 
-public class CrowdSensor extends SAPERELocalAgent {
+public final class CrowdSensor extends SAPERELocalAgent {
 
     private static final long serialVersionUID = -647690735880121675L;
     private static final ILsaMolecule PERSON = new LsaMolecule("person");

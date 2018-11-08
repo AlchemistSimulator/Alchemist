@@ -72,13 +72,6 @@ public interface Neighborhood<T> extends Serializable, Cloneable, Iterable<Node<
     Node<T> getCenter();
 
     /**
-     * @param id
-     *            the node id
-     * @return the nodes
-     */
-    Node<T> getNeighborById(int id);
-
-    /**
      * Returns the num-th neighbor.
      * 
      * @param num

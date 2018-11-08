@@ -44,8 +44,6 @@ class SimpleNeighborhood<T, P : Position<P>> private constructor(
 
     override fun getCenter() = center
 
-    override fun getNeighborById(id: Int): Node<T> = neighbors.first { it.id == id }
-
     override fun getNeighborByNumber(num: Int): Node<T> = neighbors[num]
 
     override fun getNeighbors(): ListSet<out Node<T>> = ListSets.unmodifiableListSet(neighbors)

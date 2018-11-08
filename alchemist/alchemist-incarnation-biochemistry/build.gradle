@@ -14,7 +14,14 @@ dependencies {
     )
     antlr "org.antlr:antlr4:$antlr4Version"
     runtimeOnly "org.antlr:antlr4-runtime:$antlr4Version"
-    testImplementation "org.antlr:antlr4-runtime:$antlr4Version"
+}
+
+configurations {
+    all {
+        if(!it.name.contains('antlr')) {
+            exclude group: 'org.antlr', module: 'antlr-runtime'
+        }
+    }
 }
 
 generateGrammarSource {

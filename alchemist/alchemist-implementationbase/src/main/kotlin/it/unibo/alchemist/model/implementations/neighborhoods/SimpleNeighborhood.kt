@@ -33,8 +33,6 @@ class SimpleNeighborhood<T, P : Position<P>> private constructor(
 
     override fun clone() = SimpleNeighborhood(environment, center, ArrayListSet(neighbors))
 
-    override fun contains(n: Int) = neighbors.any { it.id == n }
-
     override fun contains(n: Node<T>?) = neighbors.contains(n)
 
     override fun getBetweenRange(min: Double, max: Double): ListSet<out Node<T>> =

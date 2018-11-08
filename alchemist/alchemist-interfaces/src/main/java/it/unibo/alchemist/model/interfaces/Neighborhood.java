@@ -31,15 +31,6 @@ public interface Neighborhood<T> extends Serializable, Cloneable, Iterable<Node<
     Neighborhood<T> add(Node<T> node);
 
     /**
-     * Verifies if a node with the specified id is contained inside a neighborhood.
-     * 
-     * @param n
-     *            the node id to be searched
-     * @return true if n belongs to this neighborhood
-     */
-    boolean contains(int n);
-
-    /**
      * Verifies if a node is contained inside a neighborhood.
      * 
      * @param n

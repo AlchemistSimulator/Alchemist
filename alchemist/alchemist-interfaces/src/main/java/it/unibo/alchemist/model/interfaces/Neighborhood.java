@@ -85,6 +85,7 @@ public interface Neighborhood<T> extends Serializable, Cloneable, Iterable<Node<
      *            the neighbor index
      * @return the num-th neighbor
      */
+    @Deprecated
     Node<T> getNeighborByNumber(int num);
 
     /**

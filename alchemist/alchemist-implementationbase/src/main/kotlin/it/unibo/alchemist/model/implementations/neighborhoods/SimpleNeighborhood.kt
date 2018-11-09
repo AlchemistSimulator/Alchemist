@@ -15,7 +15,6 @@ import it.unibo.alchemist.model.interfaces.Position
 import org.danilopianini.util.ArrayListSet
 import org.danilopianini.util.Hashes
 import org.danilopianini.util.ImmutableListSet
-import org.danilopianini.util.ListBackedSet
 import org.danilopianini.util.ListSet
 import org.danilopianini.util.ListSets
 

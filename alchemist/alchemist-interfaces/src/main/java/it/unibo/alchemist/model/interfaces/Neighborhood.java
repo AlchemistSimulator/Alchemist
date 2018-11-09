@@ -40,21 +40,6 @@ public interface Neighborhood<T> extends Serializable, Cloneable, Iterable<Node<
     boolean contains(Node<T> n);
 
     /**
-     * Allows to get all the nodes in this neighborhood whose distance from the
-     * center node is between min and max.
-     * 
-     * @param min
-     *            if a node has a distance from the center node lower than min, it
-     *            will be not in the returned list
-     * @param max
-     *            if a node has a distance from the center node higher than max, it
-     *            will be not in the returned list
-     * @return the list of nodes whose distance from the center node is between min
-     *         and max.
-     */
-    ListSet<? extends Node<T>> getBetweenRange(double min, double max);
-
-    /**
      * Allows to access the central node.
      * 
      * @return the central node, namely the node whose neighbors are represented by

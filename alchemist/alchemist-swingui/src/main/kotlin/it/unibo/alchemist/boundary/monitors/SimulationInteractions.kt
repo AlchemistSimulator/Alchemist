@@ -59,7 +59,9 @@ import kotlin.math.roundToInt
 class InteractionManager<T, P : Position2D<P>>(
     private val parentMonitor: AbstractFXDisplay<T, P>
 ) {
-
+    /**
+     * Describes a certain interaction that has a feedback associated to it.
+     */
     private enum class Interaction {
         HIGHLIGHT_CANDIDATE,
         HIGHLIGHTED,
@@ -91,10 +93,10 @@ class InteractionManager<T, P : Position2D<P>>(
     private val input: Canvas = Canvas()
     private val keyboard: KeyboardEventDispatcher = SimpleKeyboardEventDispatcher()
     private val keyboardPan: DirectionalPan<P> by lazy {
-        DirectionalPan(wormhole = wormhole, updates = {
+        DirectionalPan(wormhole = wormhole) {
             parentMonitor.repaint()
             repaint()
-        })
+        }
     }
     private val mouse: TemporariesMouseEventDispatcher = CanvasBoundMouseEventDispatcher(input)
     private lateinit var mousePan: PanHelper
@@ -196,24 +198,28 @@ class InteractionManager<T, P : Position2D<P>>(
             when (parentMonitor.viewStatus) {
                 FXOutputMonitor.ViewStatus.PANNING -> onPanInitiated(it)
                 FXOutputMonitor.ViewStatus.SELECTING -> onSelectInitiated(it)
+                else -> { }
             }
         }
         mouse.setOnAction(MouseButtonTriggerAction(ActionOnMouse.DRAGGED, MouseButton.PRIMARY)) {
             when (parentMonitor.viewStatus) {
                 FXOutputMonitor.ViewStatus.PANNING -> onPanning(it)
                 FXOutputMonitor.ViewStatus.SELECTING -> onSelecting(it)
+                else -> { }
             }
         }
         mouse.setOnAction(MouseButtonTriggerAction(ActionOnMouse.RELEASED, MouseButton.PRIMARY)) {
             when (parentMonitor.viewStatus) {
                 FXOutputMonitor.ViewStatus.PANNING -> onPanned(it)
                 FXOutputMonitor.ViewStatus.SELECTING -> onSelected(it)
+                else -> { }
             }
         }
         mouse.setOnAction(MouseButtonTriggerAction(ActionOnMouse.EXITED, MouseButton.PRIMARY)) {
             when (parentMonitor.viewStatus) {
                 FXOutputMonitor.ViewStatus.PANNING -> onPanCanceled(it)
                 FXOutputMonitor.ViewStatus.SELECTING -> onSelectCanceled(it)
+                else -> { }
             }
         }
 

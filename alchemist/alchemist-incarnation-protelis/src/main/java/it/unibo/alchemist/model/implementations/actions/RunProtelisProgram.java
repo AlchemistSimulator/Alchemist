@@ -121,8 +121,6 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
      *            to mean that they should get eliminated upon node awake.
      * @throws SecurityException
      *             if you are not authorized to load required classes
-     * @throws ClassNotFoundException
-     *             if required classes can not be found
      */
     public RunProtelisProgram(
             final Environment<Object, P> env,
@@ -130,7 +128,7 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
             final Reaction<Object> r,
             final RandomGenerator rand,
             final String prog,
-            final double retentionTime) throws SecurityException, ClassNotFoundException {
+            final double retentionTime) throws SecurityException {
         this(env, n, r, rand, ProtelisLoader.parse(prog), retentionTime);
         originalProgram = prog;
     }
@@ -147,7 +145,7 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
         if (n instanceof ProtelisNode) {
             try {
                 return new RunProtelisProgram<>(getEnvironment(), (ProtelisNode) n, r, getRandomGenerator(), originalProgram, getRetentionTime());
-            } catch (SecurityException | ClassNotFoundException e) {
+            } catch (SecurityException e) {
                 throw new IllegalStateException(e);
             }
         }

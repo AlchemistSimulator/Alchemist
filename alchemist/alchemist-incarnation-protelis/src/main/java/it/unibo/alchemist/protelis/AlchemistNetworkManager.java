@@ -43,7 +43,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
      * This reaction stores the time at which the neighbor state is read.
      */
     private final Reaction<Object> event;
-    private final RunProtelisProgram prog;
+    private final RunProtelisProgram<?> prog;
     private final double retentionTime;
     private Map<DeviceUID, MessageInfo> msgs = new LinkedHashMap<>();
     private Map<CodePath, Object> toBeSent;
@@ -62,7 +62,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
             final Environment<Object, ?> environment,
             final ProtelisNode local,
             final Reaction<Object> executionTime,
-            final RunProtelisProgram program) {
+            final RunProtelisProgram<?> program) {
         this(environment, local, executionTime, program, Double.NaN);
     }
 
@@ -83,7 +83,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
             final Environment<Object, ?> environment,
             final ProtelisNode local,
             final Reaction<Object> executionTime,
-            final RunProtelisProgram program,
+            final RunProtelisProgram<?> program,
             final double retentionTime) {
         env = Objects.requireNonNull(environment);
         node = Objects.requireNonNull(local);

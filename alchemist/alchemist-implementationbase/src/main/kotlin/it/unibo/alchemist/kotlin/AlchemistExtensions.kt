@@ -8,6 +8,7 @@
  ******************************************************************************/
 package it.unibo.alchemist.kotlin
 
+import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.Time
 
 /**
@@ -23,5 +24,6 @@ import it.unibo.alchemist.model.interfaces.Time
  */
 fun <E> E.unfold(extractor: (E) -> Sequence<E>): Sequence<E> =
     sequenceOf(this) + extractor(this).flatMap { it.unfold(extractor) }
-operator fun Time.plus(other: Time): Time = sum(other)
-operator fun Time.minus(other: Time): Time = subtract(other)
+operator fun Time.plus(other: Double): Time = plus(DoubleTime(other))
+operator fun Time.minus(other: Double): Time = minus(DoubleTime(other))
+

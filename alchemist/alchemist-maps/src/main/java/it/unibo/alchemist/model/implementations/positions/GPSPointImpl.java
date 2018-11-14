@@ -55,7 +55,7 @@ public final class GPSPointImpl implements GPSPoint {
 
     @Override
     public GPSPointImpl addTime(final Time t) {
-        return new GPSPointImpl(repr, this.t.sum(t));
+        return new GPSPointImpl(repr, this.t.plus(t));
     }
 
     @Override
@@ -138,7 +138,7 @@ public final class GPSPointImpl implements GPSPoint {
 
     @Override
     public GPSPointImpl subtractTime(final Time t) {
-        return new GPSPointImpl(repr, this.t.subtract(t));
+        return new GPSPointImpl(repr, this.t.minus(t));
     }
 
     @Override

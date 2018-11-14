@@ -77,12 +77,12 @@ public class ExponentialTime<T> extends AbstractDistribution<T> {
         assert !Double.isNaN(oldPropensity);
         if (isMu) {
             final Time dt = genTime(newpropensity);
-            setTau(curTime.sum(dt));
+            setTau(curTime.plus(dt));
         } else {
             if (oldPropensity != newpropensity) {
-                final Time sub = getNextOccurence().subtract(curTime);
-                final Time mul = sub.multiply(oldPropensity / newpropensity);
-                setTau(mul.sum(curTime));
+                final Time sub = getNextOccurence().minus(curTime);
+                final Time mul = sub.times(oldPropensity / newpropensity);
+                setTau(mul.plus(curTime));
             }
         }
     }

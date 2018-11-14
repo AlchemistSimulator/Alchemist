@@ -191,7 +191,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                 toUpdate.forEach(this::updateReaction);
             }
             mu.update(currentTime, true, env);
-            ipq.updateReaction(mu);
+            ipq.updateReaction(root);
             updateMonitors();
         }
         if (env.isTerminated()) {

@@ -29,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
  * {@link Simulation#play() play} and {@link Simulation#pause() pause} the {@code Simulation}.
  *
  * @param <T> The type which describes the {@link Concentration} of a molecule
+ * @param <P> The type which describes the {@link Position} positions
  */
 public class PlayPauseMonitor<T, P extends Position<? extends P>> extends JFXButton implements OutputMonitor<T, P> {
     /**
@@ -43,6 +44,10 @@ public class PlayPauseMonitor<T, P extends Position<? extends P>> extends JFXBut
      * Default {@link Status#RUNNING running} icon.
      */
     private static final IconNode PAUSE_ICON = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.PAUSE);
+    /**
+     * Timeout (in seconds) for each simulation status transition.
+     */
+    private static final long TRANSITION_TIMEOUT = 1;
     private transient WeakReference<Simulation<T, P>> simulation;
     private Status currentStatus = Status.INIT;
     private volatile boolean isError;
@@ -62,6 +67,7 @@ public class PlayPauseMonitor<T, P extends Position<? extends P>> extends JFXBut
     public PlayPauseMonitor(final @Nullable Simulation<T, P> simulation) {
         setOnAction(e -> getSimulation().ifPresent(this::playPause));
         update(simulation);
+        setIcon(Status.PAUSED);
     }
 
     /**
@@ -75,10 +81,12 @@ public class PlayPauseMonitor<T, P extends Position<? extends P>> extends JFXBut
             case READY:
             case PAUSED:
                 simulation.play();
+                setStatus(currentStatus);
                 setIcon(Status.RUNNING);
                 break;
             case RUNNING:
                 simulation.pause();
+                setStatus(currentStatus);
                 setIcon(Status.PAUSED);
                 break;
             case TERMINATED:
@@ -131,8 +139,9 @@ public class PlayPauseMonitor<T, P extends Position<? extends P>> extends JFXBut
         setSimulation(simulation);
         if (!isError) {
             if (simulation != null && simulation.getStatus() != currentStatus) {
-                setIcon(currentStatus);
                 currentStatus = simulation.getStatus();
+                setStatus(currentStatus);
+                setIcon(currentStatus);
             }
         } else {
             getSimulation().ifPresent(Simulation::terminate);
@@ -149,9 +158,20 @@ public class PlayPauseMonitor<T, P extends Position<? extends P>> extends JFXBut
      */
     private void setIcon(final Status nextStatus) {
         getSimulation().ifPresent(s -> {
+            final Node icon = nextStatus == Status.RUNNING || nextStatus == Status.READY ? PAUSE_ICON : PLAY_ICON;
+            Platform.runLater(() -> setGraphic(icon));
+        });
+    }
+
+    /**
+     * Orders the simulation to transition into a certain status.
+     * @param nextStatus the status to transition into.
+     */
+    private void setStatus(final Status nextStatus) {
+        getSimulation().ifPresent(s -> {
             final long t = System.currentTimeMillis();
             if (nextStatus == Status.RUNNING || nextStatus == Status.PAUSED) {
-                s.waitFor(nextStatus, 1, TimeUnit.SECONDS);
+                s.waitFor(nextStatus, TRANSITION_TIMEOUT, TimeUnit.SECONDS);
                 final Status currentStatus = s.getStatus();
                 if (!currentStatus.equals(nextStatus)) {
                     isError = true;
@@ -177,8 +197,6 @@ public class PlayPauseMonitor<T, P extends Position<? extends P>> extends JFXBut
                     });
                 }
             }
-            final Node icon = nextStatus == Status.RUNNING || nextStatus == Status.READY ? PAUSE_ICON : PLAY_ICON;
-            Platform.runLater(() -> setGraphic(icon));
         });
     }
 }

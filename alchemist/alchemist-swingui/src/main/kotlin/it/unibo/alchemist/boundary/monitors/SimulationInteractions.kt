@@ -15,9 +15,11 @@ import it.unibo.alchemist.boundary.wormhole.implementation.ExponentialZoomManage
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole
 import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager
 import it.unibo.alchemist.core.interfaces.Simulation
+import it.unibo.alchemist.input.ActionFromKey
 import it.unibo.alchemist.input.ActionOnKey
 import it.unibo.alchemist.input.ActionOnMouse
 import it.unibo.alchemist.input.CanvasBoundMouseEventDispatcher
+import it.unibo.alchemist.input.Keybinds
 import it.unibo.alchemist.input.KeyboardActionListener
 import it.unibo.alchemist.input.KeyboardEventDispatcher
 import it.unibo.alchemist.input.KeyboardTriggerAction
@@ -36,7 +38,6 @@ import javafx.collections.MapChangeListener
 import javafx.collections.ObservableMap
 import javafx.event.Event
 import javafx.scene.canvas.Canvas
-import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
@@ -146,18 +147,27 @@ class InteractionManager<T, P : Position2D<P>>(
             }
             runMutex.release()
         }
-        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, KeyCode.DELETE), deleteNodes)
-        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, KeyCode.BACK_SPACE), deleteNodes)
+        Keybinds[ActionFromKey.DELETE].forEach {
+            keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, it), deleteNodes)
+        }
 
         // keyboard-pan
-        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, KeyCode.W)) { keyboardPan += Direction2D.NORTH }
-        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, KeyCode.A)) { keyboardPan += Direction2D.WEST }
-        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, KeyCode.S)) { keyboardPan += Direction2D.SOUTH }
-        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, KeyCode.D)) { keyboardPan += Direction2D.EAST }
-        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.RELEASED, KeyCode.W)) { keyboardPan -= Direction2D.NORTH }
-        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.RELEASED, KeyCode.A)) { keyboardPan -= Direction2D.WEST }
-        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.RELEASED, KeyCode.S)) { keyboardPan -= Direction2D.SOUTH }
-        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.RELEASED, KeyCode.D)) { keyboardPan -= Direction2D.EAST }
+        Keybinds[ActionFromKey.PAN_NORTH].forEach {
+            keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, it)) { keyboardPan += Direction2D.NORTH }
+            keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.RELEASED, it)) { keyboardPan -= Direction2D.NORTH }
+        }
+        Keybinds[ActionFromKey.PAN_SOUTH].forEach {
+            keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, it)) { keyboardPan += Direction2D.SOUTH }
+            keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.RELEASED, it)) { keyboardPan -= Direction2D.SOUTH }
+        }
+        Keybinds[ActionFromKey.PAN_EAST].forEach {
+            keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, it)) { keyboardPan += Direction2D.EAST }
+            keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.RELEASED, it)) { keyboardPan -= Direction2D.EAST }
+        }
+        Keybinds[ActionFromKey.PAN_WEST].forEach {
+            keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, it)) { keyboardPan += Direction2D.WEST }
+            keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.RELEASED, it)) { keyboardPan -= Direction2D.WEST }
+        }
 
         // move
         val enqueueMove = { _: Event ->
@@ -184,7 +194,9 @@ class InteractionManager<T, P : Position2D<P>>(
                 runMutex.release()
             }
         }
-        keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, KeyCode.M), enqueueMove)
+        Keybinds[ActionFromKey.MOVE].forEach {
+            keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, it), enqueueMove)
+        }
         mouse.setOnAction(MouseButtonTriggerAction(ActionOnMouse.CLICKED, MouseButton.MIDDLE), enqueueMove)
 
         // select
@@ -301,7 +313,7 @@ class InteractionManager<T, P : Position2D<P>>(
      * Called when a select gesture finishes.
      */
     private fun onSelected(event: MouseEvent) {
-        if (!keyboard.isHeld(KeyCode.CONTROL)) {
+        if (Keybinds[ActionFromKey.MODIFIER_CONTROL].any { !keyboard.isHeld(it) }) {
             selection.clear()
         }
         selectionHelper.clickSelection(nodes, wormhole)?.let {

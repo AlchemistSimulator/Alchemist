@@ -13,7 +13,9 @@ import it.unibo.alchemist.boundary.monitors.AbstractFXDisplay;
 import it.unibo.alchemist.boundary.monitors.FX2DDisplay;
 import it.unibo.alchemist.boundary.monitors.FXMapDisplay;
 import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.input.ActionFromKey;
 import it.unibo.alchemist.input.ActionOnKey;
+import it.unibo.alchemist.input.Keybinds;
 import it.unibo.alchemist.input.KeyboardActionListener;
 import it.unibo.alchemist.input.KeyboardTriggerAction;
 import it.unibo.alchemist.model.interfaces.Concentration;
@@ -39,6 +41,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -293,13 +296,12 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
      */
     protected void initKeybindings(final Scene scene, final KeyboardActionListener listener) {
         scene.setOnKeyPressed(e -> {
-            switch (e.getCode()) {
-                case P: playPauseMonitor.fireEvent(new ActionEvent(e.getSource(), playPauseMonitor));
-                    e.consume();
-                    break;
-                default: listener.action(new KeyboardTriggerAction(ActionOnKey.PRESSED, e.getCode()), e);
-                    break;
+            if (Keybinds.Companion.get(ActionFromKey.PLAY_AND_PAUSE).stream().anyMatch(k -> e.getCode().equals(k))) {
+                playPauseMonitor.fireEvent(new ActionEvent(e.getSource(), playPauseMonitor));
+                e.consume();
+                return;
             }
+            listener.action(new KeyboardTriggerAction(ActionOnKey.PRESSED, e.getCode()), e);
         });
         scene.setOnKeyReleased(e -> listener.action(new KeyboardTriggerAction(ActionOnKey.RELEASED, e.getCode()), e));
     }

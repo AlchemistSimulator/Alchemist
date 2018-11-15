@@ -1,0 +1,33 @@
+{
+  "DELETE": [
+    "DELETE",
+    "BACK_SPACE"
+  ],
+  "MOVE": [
+    "M"
+  ],
+  "PAN_WEST": [
+    "A"
+  ],
+  "PAN_SOUTH": [
+    "S"
+  ],
+  "MODIFIER_CONTROL": [
+    "CONTROL"
+  ],
+  "PAN_NORTH": [
+    "W"
+  ],
+  "PLAY_AND_PAUSE": [
+    "P"
+  ],
+  "ONE_STEP": [
+    "PERIOD"
+  ],
+  "PAN_EAST": [
+    "D"
+  ],
+  "MODIFIER_SHIFT": [
+    "SHIFT"
+  ]
+}

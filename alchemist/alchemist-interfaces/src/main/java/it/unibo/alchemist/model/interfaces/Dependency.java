@@ -47,24 +47,6 @@ public interface Dependency extends Serializable {
     };
 
     /**
-     * Declares a dependency on neighborhood changes in the reachable scope.
-     */
-    Dependency NEIGHBORHOOD_CHANGE = new Dependency() {
-        @Override
-        public boolean dependsOn(final Dependency dependency) {
-            return MOVEMENT.equals(dependency) || equals(dependency);
-        }
-        @Override
-        public boolean makesDependent(final Dependency dependency) {
-            return equals(dependency);
-        }
-        @Override
-        public String toString() {
-            return "Neighborhood_change";
-        }
-    };
-
-    /**
      * Determines whether this dependency depends on the provided dependency.
      * The default behavior requires equality.
      * 

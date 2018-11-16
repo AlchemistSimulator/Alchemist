@@ -571,20 +571,17 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         @Override
         public Stream<Reaction<T>> getReactionsToUpdate() {
             return Stream.of(
-                    // Local reactions
-                    Stream.of(getSource(), target)
-                        .flatMap(it -> it.getReactions().stream()),
-                    // Neighborhood reactions with neighborhood context
-                    Stream.of(env.getNeighborhood(getSource()), env.getNeighborhood(getTarget()))
-                        .flatMap(it -> it.getNeighbors().stream())
+                    Stream.concat(
+                            // source, target, and all their neighbors are candidates.
+                            Stream.of(getSource(), target),
+                            Stream.of(env.getNeighborhood(getSource()), env.getNeighborhood(getTarget()))
+                                .flatMap(it -> it.getNeighbors().stream()))
                         .distinct()
                         .flatMap(it -> it.getReactions().stream())
                         .filter(it -> it.getInputContext() == Context.NEIGHBORHOOD),
-                    // Global reactions
+                        // Global reactions
                     dg.globalInputContextReactions().stream())
-                .reduce(Stream.empty(), Stream::concat)
-                // Pick only reactions that depend on neighborhood change
-                .filter(it -> it.getInboundDependencies().stream().anyMatch(d -> d.dependsOn(Dependency.NEIGHBORHOOD_CHANGE)));
+                .reduce(Stream.empty(), Stream::concat);
         }
     }
 

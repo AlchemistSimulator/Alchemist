@@ -33,7 +33,6 @@ public class RemoveNode<T> extends AbstractAction<T> {
         super(node);
         env = environment;
         declareDependencyTo(Dependency.MOVEMENT);
-        declareDependencyTo(Dependency.NEIGHBORHOOD_CHANGE);
     }
 
     @Override

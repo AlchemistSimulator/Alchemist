@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Spliterator;
 import java.util.concurrent.ConcurrentMap;
@@ -183,7 +184,9 @@ public abstract class AbstractNode<T> implements Node<T> {
      */
     @Override
     public void removeConcentration(final Molecule mol) {
-        molecules.remove(mol);
+        if (molecules.remove(mol) == null) {
+            throw new NoSuchElementException(mol + " was not present in node " + getId());
+        }
     }
 
     @Override

@@ -112,8 +112,8 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
     @SuppressWarnings("unchecked")
     public SAPEREGradient(final Environment<List<ILsaMolecule>, P> env, final ILsaNode n, final ILsaMolecule sourceTemplate, final ILsaMolecule gradientTemplate, final int valuePosition, final String expression, final ILsaMolecule contextTemplate, final double gradThreshold, final TimeDistribution<List<ILsaMolecule>> td) {
         super(n, td);
-        setInputContext(Context.LOCAL);
-        setOutputContext(Context.NEIGHBORHOOD);
+        setInputContext(Context.NEIGHBORHOOD);
+        setOutputContext(Context.LOCAL);
         gradient = Objects.requireNonNull(gradientTemplate);
         source = Objects.requireNonNull(sourceTemplate);
         context = contextTemplate;
@@ -127,8 +127,14 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         final List<IExpression> grexp = gradient.allocateVar(null);
         grexp.set(argPosition, exp);
         gradientExpr = new LsaMolecule(grexp);
+        /*
+         * Dependency management: this reaction depends on the value of source in this node, the value of gradient in
+         * the neighbors, and the value of the context locally. Moreover, the value may change if the neighborhood
+         * changes, or if the node moves.
+         */
         addOutboundDependency(gradient);
         addInboundDependency(source);
+        addInboundDependency(Dependency.MOVEMENT);
         fakeconds.add(new SGFakeConditionAction(source));
         addInboundDependency(gradient);
         fakeacts.add(new SGFakeConditionAction(gradient));
@@ -207,7 +213,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
      */
     private List<ILsaMolecule> cleanUpExistingAndRecomputeFromSource(final Map<HashString, ITreeNode<?>> matches) {
         for (final ILsaMolecule g : getNode().getConcentration(gradient)) {
-            getNode().removeConcentration(g);
+            getLsaNode().removeConcentration(g);
         }
         final List<ILsaMolecule> createdFromSource = new ArrayList<>(sourceCache.size());
         if (!sourceCache.isEmpty()) {

@@ -724,8 +724,8 @@ private fun <T, P : Position2D<P>> Rectangle.intersectingNodes(
 ): Map<Node<T>, P> = let { area -> nodes.filterValues { wormhole.getViewPoint(it) in area } }
 
 private operator fun Rectangle.contains(point: Point): Boolean =
-    point.x in x..(x + width) &&
-        point.y in y..(y + height)
+    point.x.toDouble() in x..(x + width) &&
+        point.y.toDouble() in y..(y + height)
 
 private fun Point.makeRectangleWith(other: Point): Rectangle = Rectangle(
     min(this.x, other.x).toDouble(),

@@ -115,6 +115,13 @@ class InteractionManager<T, P : Position2D<P>>(
     @Volatile private var feedback: Map<Interaction, List<() -> Unit>> = emptyMap()
     private val runMutex: Semaphore = Semaphore(1)
 
+    /**
+     * Invokes a given command on the simulation.
+     */
+    private val invokeOnSimulation: (Simulation<*, *>.() -> Unit) -> Unit
+        get() = environment?.simulation?.let { { exec: Simulation<*, *>.() -> Unit -> it.schedule { exec.invoke(it) } } }
+            ?: throw IllegalStateException("Uninitialized environment or simulation")
+
     init {
         input.apply {
             widthProperty().bind(parentMonitor.widthProperty())
@@ -386,13 +393,6 @@ class InteractionManager<T, P : Position2D<P>>(
         }
         selectionCandidatesMutex.release()
     }
-
-    /**
-     * Invokes a given command on the simulation.
-     */
-    private val invokeOnSimulation: (Simulation<*, *>.() -> Unit) -> Unit
-        get() = environment?.simulation?.let { { exec: Simulation<*, *>.() -> Unit -> it.schedule { exec.invoke(it) } } }
-            ?: throw IllegalStateException("Uninitialized environment or simulation")
 
     /**
      * Clears and then paints every currently active feedback.

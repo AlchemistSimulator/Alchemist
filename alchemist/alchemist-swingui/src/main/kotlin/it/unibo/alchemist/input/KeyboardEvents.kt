@@ -17,7 +17,9 @@ import javafx.scene.input.KeyEvent
  */
 enum class ActionOnKey {
     PRESSED,
-    RELEASED
+    RELEASED;
+
+    operator fun plus(key: KeyCode): KeyboardTriggerAction = KeyboardTriggerAction(this, key)
 }
 
 data class KeyboardTriggerAction(val type: ActionOnKey, val key: KeyCode) : TriggerAction

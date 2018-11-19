@@ -22,7 +22,6 @@ import it.unibo.alchemist.input.CanvasBoundMouseEventDispatcher
 import it.unibo.alchemist.input.Keybinds
 import it.unibo.alchemist.input.KeyboardActionListener
 import it.unibo.alchemist.input.KeyboardEventDispatcher
-import it.unibo.alchemist.input.KeyboardTriggerAction
 import it.unibo.alchemist.input.MouseButtonTriggerAction
 import it.unibo.alchemist.input.SimpleKeyboardEventDispatcher
 import it.unibo.alchemist.input.TemporariesMouseEventDispatcher
@@ -155,25 +154,25 @@ class InteractionManager<T, P : Position2D<P>>(
             runMutex.release()
         }
         Keybinds[ActionFromKey.DELETE].forEach {
-            keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, it), deleteNodes)
+            keyboard.setOnAction(ActionOnKey.PRESSED + it, deleteNodes)
         }
 
         // keyboard-pan
         Keybinds[ActionFromKey.PAN_NORTH].forEach {
-            keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, it)) { keyboardPan += Direction2D.NORTH }
-            keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.RELEASED, it)) { keyboardPan -= Direction2D.NORTH }
+            keyboard.setOnAction(ActionOnKey.PRESSED + it) { keyboardPan += Direction2D.NORTH }
+            keyboard.setOnAction(ActionOnKey.RELEASED + it) { keyboardPan -= Direction2D.NORTH }
         }
         Keybinds[ActionFromKey.PAN_SOUTH].forEach {
-            keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, it)) { keyboardPan += Direction2D.SOUTH }
-            keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.RELEASED, it)) { keyboardPan -= Direction2D.SOUTH }
+            keyboard.setOnAction(ActionOnKey.PRESSED + it) { keyboardPan += Direction2D.SOUTH }
+            keyboard.setOnAction(ActionOnKey.RELEASED + it) { keyboardPan -= Direction2D.SOUTH }
         }
         Keybinds[ActionFromKey.PAN_EAST].forEach {
-            keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, it)) { keyboardPan += Direction2D.EAST }
-            keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.RELEASED, it)) { keyboardPan -= Direction2D.EAST }
+            keyboard.setOnAction(ActionOnKey.PRESSED + it) { keyboardPan += Direction2D.EAST }
+            keyboard.setOnAction(ActionOnKey.RELEASED + it) { keyboardPan -= Direction2D.EAST }
         }
         Keybinds[ActionFromKey.PAN_WEST].forEach {
-            keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, it)) { keyboardPan += Direction2D.WEST }
-            keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.RELEASED, it)) { keyboardPan -= Direction2D.WEST }
+            keyboard.setOnAction(ActionOnKey.PRESSED + it) { keyboardPan += Direction2D.WEST }
+            keyboard.setOnAction(ActionOnKey.RELEASED + it) { keyboardPan -= Direction2D.WEST }
         }
 
         // move
@@ -202,7 +201,7 @@ class InteractionManager<T, P : Position2D<P>>(
             }
         }
         Keybinds[ActionFromKey.MOVE].forEach {
-            keyboard.setOnAction(KeyboardTriggerAction(ActionOnKey.PRESSED, it), enqueueMove)
+            keyboard.setOnAction(ActionOnKey.PRESSED + it, enqueueMove)
         }
         mouse.setOnAction(MouseButtonTriggerAction(ActionOnMouse.CLICKED, MouseButton.MIDDLE), enqueueMove)
 

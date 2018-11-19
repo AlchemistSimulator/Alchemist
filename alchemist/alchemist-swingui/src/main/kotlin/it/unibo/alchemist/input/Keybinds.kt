@@ -63,7 +63,7 @@ class Keybinds {
          */
         @Throws(IOException::class)
         fun write() {
-            File(System.getProperty("user.home") + File.separator + "Alchemist" + File.separator + filename).let {
+            File("$filesystemPath$filename").let {
                 it.parentFile.mkdirs()
                 if (!it.exists()) {
                     it.createNewFile()

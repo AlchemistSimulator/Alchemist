@@ -154,25 +154,25 @@ class InteractionManager<T, P : Position2D<P>>(
             runMutex.release()
         }
         Keybinds[ActionFromKey.DELETE].forEach {
-            keyboard.setOnAction(ActionOnKey.PRESSED + it, deleteNodes)
+            keyboard[ActionOnKey.PRESSED + it] = deleteNodes
         }
 
         // keyboard-pan
         Keybinds[ActionFromKey.PAN_NORTH].forEach {
-            keyboard.setOnAction(ActionOnKey.PRESSED + it) { keyboardPan += Direction2D.NORTH }
-            keyboard.setOnAction(ActionOnKey.RELEASED + it) { keyboardPan -= Direction2D.NORTH }
+            keyboard[ActionOnKey.PRESSED + it] = { keyboardPan += Direction2D.NORTH }
+            keyboard[ActionOnKey.RELEASED + it] = { keyboardPan -= Direction2D.NORTH }
         }
         Keybinds[ActionFromKey.PAN_SOUTH].forEach {
-            keyboard.setOnAction(ActionOnKey.PRESSED + it) { keyboardPan += Direction2D.SOUTH }
-            keyboard.setOnAction(ActionOnKey.RELEASED + it) { keyboardPan -= Direction2D.SOUTH }
+            keyboard[ActionOnKey.PRESSED + it] = { keyboardPan += Direction2D.SOUTH }
+            keyboard[ActionOnKey.RELEASED + it] = { keyboardPan -= Direction2D.SOUTH }
         }
         Keybinds[ActionFromKey.PAN_EAST].forEach {
-            keyboard.setOnAction(ActionOnKey.PRESSED + it) { keyboardPan += Direction2D.EAST }
-            keyboard.setOnAction(ActionOnKey.RELEASED + it) { keyboardPan -= Direction2D.EAST }
+            keyboard[ActionOnKey.PRESSED + it] = { keyboardPan += Direction2D.EAST }
+            keyboard[ActionOnKey.RELEASED + it] = { keyboardPan -= Direction2D.EAST }
         }
         Keybinds[ActionFromKey.PAN_WEST].forEach {
-            keyboard.setOnAction(ActionOnKey.PRESSED + it) { keyboardPan += Direction2D.WEST }
-            keyboard.setOnAction(ActionOnKey.RELEASED + it) { keyboardPan -= Direction2D.WEST }
+            keyboard[ActionOnKey.PRESSED + it] = { keyboardPan += Direction2D.WEST }
+            keyboard[ActionOnKey.RELEASED + it] = { keyboardPan -= Direction2D.WEST }
         }
 
         // move
@@ -201,39 +201,39 @@ class InteractionManager<T, P : Position2D<P>>(
             }
         }
         Keybinds[ActionFromKey.MOVE].forEach {
-            keyboard.setOnAction(ActionOnKey.PRESSED + it, enqueueMove)
+            keyboard[ActionOnKey.PRESSED + it] = enqueueMove
         }
-        mouse.setOnAction(MouseButtonTriggerAction(ActionOnMouse.CLICKED, MouseButton.MIDDLE), enqueueMove)
+        mouse[MouseButtonTriggerAction(ActionOnMouse.CLICKED, MouseButton.MIDDLE)] = enqueueMove
 
         // select
-        mouse.setOnAction(MouseButtonTriggerAction(ActionOnMouse.PRESSED, MouseButton.SECONDARY), this::onSelectInitiated)
-        mouse.setOnAction(MouseButtonTriggerAction(ActionOnMouse.DRAGGED, MouseButton.SECONDARY), this::onSelecting)
-        mouse.setOnAction(MouseButtonTriggerAction(ActionOnMouse.RELEASED, MouseButton.SECONDARY), this::onSelected)
-        mouse.setOnAction(MouseButtonTriggerAction(ActionOnMouse.EXITED, MouseButton.SECONDARY), this::onSelectCanceled)
+        mouse[MouseButtonTriggerAction(ActionOnMouse.PRESSED, MouseButton.SECONDARY)] = this::onSelectInitiated
+        mouse[MouseButtonTriggerAction(ActionOnMouse.DRAGGED, MouseButton.SECONDARY)] = this::onSelecting
+        mouse[MouseButtonTriggerAction(ActionOnMouse.RELEASED, MouseButton.SECONDARY)] = this::onSelected
+        mouse[MouseButtonTriggerAction(ActionOnMouse.EXITED, MouseButton.SECONDARY)] = this::onSelectCanceled
 
         // primary mouse button
-        mouse.setOnAction(MouseButtonTriggerAction(ActionOnMouse.PRESSED, MouseButton.PRIMARY)) {
+        mouse[MouseButtonTriggerAction(ActionOnMouse.PRESSED, MouseButton.PRIMARY)] = {
             when (parentMonitor.viewStatus) {
                 FXOutputMonitor.ViewStatus.PANNING -> onPanInitiated(it)
                 FXOutputMonitor.ViewStatus.SELECTING -> onSelectInitiated(it)
                 else -> { }
             }
         }
-        mouse.setOnAction(MouseButtonTriggerAction(ActionOnMouse.DRAGGED, MouseButton.PRIMARY)) {
+        mouse[MouseButtonTriggerAction(ActionOnMouse.DRAGGED, MouseButton.PRIMARY)] = {
             when (parentMonitor.viewStatus) {
                 FXOutputMonitor.ViewStatus.PANNING -> onPanning(it)
                 FXOutputMonitor.ViewStatus.SELECTING -> onSelecting(it)
                 else -> { }
             }
         }
-        mouse.setOnAction(MouseButtonTriggerAction(ActionOnMouse.RELEASED, MouseButton.PRIMARY)) {
+        mouse[MouseButtonTriggerAction(ActionOnMouse.RELEASED, MouseButton.PRIMARY)] = {
             when (parentMonitor.viewStatus) {
                 FXOutputMonitor.ViewStatus.PANNING -> onPanned(it)
                 FXOutputMonitor.ViewStatus.SELECTING -> onSelected(it)
                 else -> { }
             }
         }
-        mouse.setOnAction(MouseButtonTriggerAction(ActionOnMouse.EXITED, MouseButton.PRIMARY)) {
+        mouse[MouseButtonTriggerAction(ActionOnMouse.EXITED, MouseButton.PRIMARY)] = {
             when (parentMonitor.viewStatus) {
                 FXOutputMonitor.ViewStatus.PANNING -> onPanCanceled(it)
                 FXOutputMonitor.ViewStatus.SELECTING -> onSelectCanceled(it)

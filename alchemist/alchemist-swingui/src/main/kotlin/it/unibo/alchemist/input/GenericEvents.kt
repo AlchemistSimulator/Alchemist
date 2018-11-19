@@ -48,7 +48,7 @@ interface EventDispatcher<T : TriggerAction, E : Event> {
      * @param trigger the type of the job that needs to occur.
      * @param job the job that will happen whenever the given job occurs.
      */
-    fun setOnAction(trigger: T, job: (event: E) -> Unit): Unit
+    operator fun set(trigger: T, job: (event: E) -> Unit): Unit
 }
 
 /**
@@ -58,19 +58,19 @@ abstract class AbstractEventDispatcher<T : TriggerAction, E : Event> : EventDisp
 
     protected var triggers: Map<T, (event: E) -> Unit> = emptyMap()
 
-    override fun setOnAction(trigger: T, job: (event: E) -> Unit) {
+    override fun set(trigger: T, job: (event: E) -> Unit) {
         triggers += trigger to job
     }
 }
 
 /**
- * An event dispatcher which doesn't overwrite its triggers when [setOnAction] is called on an already existing trigger.
+ * An event dispatcher which doesn't overwrite its triggers when [set] is called on an already existing trigger.
  */
 abstract class PersistentEventDispatcher<T : TriggerAction, E : Event> : AbstractEventDispatcher<T, E>() {
 
-    override fun setOnAction(trigger: T, job: (event: E) -> Unit) {
+    override fun set(trigger: T, job: (event: E) -> Unit) {
         if (trigger !in triggers) {
-            super.setOnAction(trigger, job)
+            super.set(trigger, job)
         }
     }
 }

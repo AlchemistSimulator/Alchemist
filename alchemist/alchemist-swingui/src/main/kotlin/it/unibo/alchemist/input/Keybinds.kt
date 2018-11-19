@@ -32,7 +32,7 @@ enum class ActionFromKey {
 class Keybinds {
     companion object {
         private val filesystemPath = "${System.getProperty("user.home")}${File.separator}Alchemist${File.separator}"
-        private val classpathPath = "it${File.pathSeparator}unibo${File.pathSeparator}alchemist${File.pathSeparator}gui${File.pathSeparator}"
+        private val classpathPath = "it${File.separator}unibo${File.separator}alchemist${File.separator}gui${File.separator}"
         private const val filename: String = "keybinds.json"
         private val typeToken: TypeToken<Map<ActionFromKey, Set<KeyCode>>> =
             object : TypeToken<Map<ActionFromKey, Set<KeyCode>>>() {}

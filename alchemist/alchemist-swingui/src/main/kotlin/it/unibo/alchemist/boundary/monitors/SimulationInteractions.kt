@@ -15,6 +15,7 @@ import it.unibo.alchemist.boundary.wormhole.implementation.ExponentialZoomManage
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole
 import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager
 import it.unibo.alchemist.core.interfaces.Simulation
+import it.unibo.alchemist.core.interfaces.Status
 import it.unibo.alchemist.input.ActionFromKey
 import it.unibo.alchemist.input.ActionOnKey
 import it.unibo.alchemist.input.ActionOnMouse
@@ -204,6 +205,17 @@ class InteractionManager<T, P : Position2D<P>>(
             keyboard[ActionOnKey.PRESSED + it] = enqueueMove
         }
         mouse[MouseButtonTriggerAction(ActionOnMouse.CLICKED, MouseButton.MIDDLE)] = enqueueMove
+
+        // forward one step
+        Keybinds[ActionFromKey.ONE_STEP].forEach {
+            keyboard[ActionOnKey.PRESSED + it] = {
+                invokeOnSimulation {
+                    if (getStatus() == Status.PAUSED) {
+                        goToStep(getStep() + 1)
+                    }
+                }
+            }
+        }
 
         // select
         mouse[MouseButtonTriggerAction(ActionOnMouse.PRESSED, MouseButton.SECONDARY)] = this::onSelectInitiated

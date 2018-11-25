@@ -16,7 +16,8 @@ dependencies {
         "org.reflections:reflections:${reflectionsVersion}",
         "com.jfoenix:jfoenix:${jFoenixVersion}",
         "com.github.jiconfont:jiconfont-javafx:${jIconFontJavaFXVersion}",
-        "com.github.jiconfont:jiconfont-google_material_design_icons:${jIconFontGoogleMaterialVersion}"
+        "com.github.jiconfont:jiconfont-google_material_design_icons:${jIconFontGoogleMaterialVersion}", 
+        "no.tornado:tornadofx:${tornadofxVersion}"
     )
     testRuntimeOnly project(':alchemist-incarnation-protelis')
 }

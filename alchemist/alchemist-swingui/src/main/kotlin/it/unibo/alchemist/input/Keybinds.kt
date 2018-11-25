@@ -37,15 +37,7 @@ class Keybinds {
         private val typeToken: TypeToken<Map<ActionFromKey, Set<KeyCode>>> =
             object : TypeToken<Map<ActionFromKey, Set<KeyCode>>>() {}
         private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
-        private var config: Map<ActionFromKey, Set<KeyCode>> = try {
-            // try reading from the file system
-            gson.fromJson(URL("$filesystemPath$filename").readText(), typeToken.type)
-        } catch (e: Exception) {
-            // read from the classpath
-            gson.fromJson(
-                Keybinds::class.java.classLoader.getResource("$classpathPath$filename").readText(), typeToken.type
-            )
-        }
+        var config: Map<ActionFromKey, Set<KeyCode>> = emptyMap()
 
         /**
          * Retrieve the keys bound to a certain action.
@@ -62,7 +54,7 @@ class Keybinds {
          * @throws IOException
          */
         @Throws(IOException::class)
-        fun write() {
+        fun save() {
             File("$filesystemPath$filename").let {
                 it.parentFile.mkdirs()
                 if (!it.exists()) {
@@ -72,6 +64,22 @@ class Keybinds {
                     writer.write(gson.toJson(config))
                     writer.close()
                 }
+            }
+        }
+
+        /**
+         * Read the binds from a file in the file system, run a GUI for writing the binds if the file doesn't exist.
+         */
+        fun load() {
+            config = try {
+                // try reading from the file system
+                gson.fromJson(URL("$filesystemPath$filename").readText(), typeToken.type)
+            } catch (e: Exception) {
+                // read from the classpath
+                gson.fromJson(
+                    Keybinds::class.java.classLoader.getResource("$classpathPath$filename").readText(), typeToken.type
+                )
+                // TODO: run GUI
             }
         }
     }

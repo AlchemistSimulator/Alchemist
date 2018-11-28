@@ -154,24 +154,24 @@ class InteractionManager<T, P : Position2D<P>>(
             }
             runMutex.release()
         }
-        Keybinds[ActionFromKey.DELETE].forEach {
+        Keybinds[ActionFromKey.DELETE].ifPresent {
             keyboard[ActionOnKey.PRESSED + it] = deleteNodes
         }
 
         // keyboard-pan
-        Keybinds[ActionFromKey.PAN_NORTH].forEach {
+        Keybinds[ActionFromKey.PAN_NORTH].ifPresent {
             keyboard[ActionOnKey.PRESSED + it] = { keyboardPan += Direction2D.NORTH }
             keyboard[ActionOnKey.RELEASED + it] = { keyboardPan -= Direction2D.NORTH }
         }
-        Keybinds[ActionFromKey.PAN_SOUTH].forEach {
+        Keybinds[ActionFromKey.PAN_SOUTH].ifPresent {
             keyboard[ActionOnKey.PRESSED + it] = { keyboardPan += Direction2D.SOUTH }
             keyboard[ActionOnKey.RELEASED + it] = { keyboardPan -= Direction2D.SOUTH }
         }
-        Keybinds[ActionFromKey.PAN_EAST].forEach {
+        Keybinds[ActionFromKey.PAN_EAST].ifPresent {
             keyboard[ActionOnKey.PRESSED + it] = { keyboardPan += Direction2D.EAST }
             keyboard[ActionOnKey.RELEASED + it] = { keyboardPan -= Direction2D.EAST }
         }
-        Keybinds[ActionFromKey.PAN_WEST].forEach {
+        Keybinds[ActionFromKey.PAN_WEST].ifPresent {
             keyboard[ActionOnKey.PRESSED + it] = { keyboardPan += Direction2D.WEST }
             keyboard[ActionOnKey.RELEASED + it] = { keyboardPan -= Direction2D.WEST }
         }
@@ -201,13 +201,13 @@ class InteractionManager<T, P : Position2D<P>>(
                 runMutex.release()
             }
         }
-        Keybinds[ActionFromKey.MOVE].forEach {
+        Keybinds[ActionFromKey.MOVE].ifPresent {
             keyboard[ActionOnKey.PRESSED + it] = enqueueMove
         }
         mouse[MouseButtonTriggerAction(ActionOnMouse.CLICKED, MouseButton.MIDDLE)] = enqueueMove
 
         // forward one step
-        Keybinds[ActionFromKey.ONE_STEP].forEach {
+        Keybinds[ActionFromKey.ONE_STEP].ifPresent {
             keyboard[ActionOnKey.PRESSED + it] = {
                 invokeOnSimulation {
                     if (getStatus() == Status.PAUSED) {
@@ -331,7 +331,10 @@ class InteractionManager<T, P : Position2D<P>>(
      * Called when a select gesture finishes.
      */
     private fun onSelected(event: MouseEvent) {
-        if (Keybinds[ActionFromKey.MODIFIER_CONTROL].any { !keyboard.isHeld(it) }) {
+//        if (Keybinds[ActionFromKey.MODIFIER_CONTROL].ifPresent { !keyboard.isHeld(it) }) {
+//            selection.clear()
+//        }
+        if (Keybinds[ActionFromKey.MODIFIER_CONTROL].filter { keyboard.isHeld(it).not() }.isPresent) {
             selection.clear()
         }
         selectionHelper.clickSelection(nodes, wormhole)?.let {

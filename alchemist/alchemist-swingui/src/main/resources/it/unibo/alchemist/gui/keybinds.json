@@ -1,33 +1,12 @@
 {
-  "DELETE": [
-    "DELETE",
-    "BACK_SPACE"
-  ],
-  "MOVE": [
-    "M"
-  ],
-  "PAN_WEST": [
-    "A"
-  ],
-  "PAN_SOUTH": [
-    "S"
-  ],
-  "MODIFIER_CONTROL": [
-    "CONTROL"
-  ],
-  "PAN_NORTH": [
-    "W"
-  ],
-  "PLAY_AND_PAUSE": [
-    "P"
-  ],
-  "ONE_STEP": [
-    "PERIOD"
-  ],
-  "PAN_EAST": [
-    "D"
-  ],
-  "MODIFIER_SHIFT": [
-    "SHIFT"
-  ]
+  "MODIFIER_CONTROL": "CONTROL",
+  "MODIFIER_SHIFT": "SHIFT",
+  "PAN_NORTH": "W",
+  "PAN_SOUTH": "S",
+  "PAN_EAST": "D",
+  "PAN_WEST": "A",
+  "DELETE": "DELETE",
+  "MOVE": "M",
+  "PLAY_AND_PAUSE": "P",
+  "ONE_STEP": "PERIOD"
 }

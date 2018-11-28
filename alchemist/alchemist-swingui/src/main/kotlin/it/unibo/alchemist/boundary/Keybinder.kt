@@ -2,53 +2,46 @@ package it.unibo.alchemist.boundary
 
 import it.unibo.alchemist.input.ActionFromKey
 import it.unibo.alchemist.input.Keybinds
-import javafx.beans.property.SimpleObjectProperty
-import javafx.beans.property.SimpleSetProperty
-import javafx.collections.ObservableSet
 import javafx.geometry.Insets
-import javafx.scene.control.SelectionMode
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.Priority
 import tornadofx.App
-import tornadofx.Fragment
 import tornadofx.ItemViewModel
 import tornadofx.View
 import tornadofx.action
 import tornadofx.bindSelected
 import tornadofx.button
 import tornadofx.column
-import tornadofx.enableWhen
-import tornadofx.getValue
+import tornadofx.getProperty
 import tornadofx.hbox
 import tornadofx.hgrow
 import tornadofx.launch
-import tornadofx.listview
 import tornadofx.minWidth
 import tornadofx.observable
-import tornadofx.onDoubleClick
+import tornadofx.property
 import tornadofx.region
 import tornadofx.remainingWidth
-import tornadofx.setValue
 import tornadofx.smartResize
 import tornadofx.tableview
-import tornadofx.toProperty
 import tornadofx.vbox
 import tornadofx.vgrow
+import java.util.Optional
+
 // TODO: use wildcard import?
 // ktlint-disable no-wildcard-imports
 // import tornadofx.*
 
-class Keybind(action: ActionFromKey, keys: ObservableSet<KeyCode>) {
-    val actionProperty = SimpleObjectProperty(this, "action", action)
-    var action by actionProperty
+class Keybind(action: ActionFromKey, key: Optional<KeyCode>) {
+    var action by property(action)
+    fun actionProperty() = getProperty(Keybind::action)
 
-    val keysProperty = SimpleSetProperty(this, "keys", keys)
-    var keys by keysProperty
+    var key by property(key)
+    fun keyProperty() = getProperty(Keybind::key)
 }
 
 class KeybindModel : ItemViewModel<Keybind>() {
     val action = bind(Keybind::actionProperty)
-    val keys = bind(Keybind::keysProperty)
+    val keys = bind(Keybind::keyProperty)
 }
 
 class ListKeybindsView : View("keybinds") {
@@ -56,20 +49,17 @@ class ListKeybindsView : View("keybinds") {
     private val selected = KeybindModel()
 
     private val binds = Keybinds
-        .config.asSequence().map {
-            Keybind(it.key, it.value.observable())
+        .map.asSequence().map {
+            Keybind(it.key, it.value)
         }.toList().observable()
 
     override val root = vbox(10.0) {
         tableview(binds) {
-            column("ACTION", Keybind::action).minWidth(70)
-            column("KEYS", Keybind::keys).minWidth(100).remainingWidth()
+            column("ACTION", Keybind::actionProperty).minWidth(200)
+            column("KEY", Keybind::keyProperty).minWidth(150).remainingWidth()
             smartResize()
             bindSelected(selected)
             vgrow = Priority.ALWAYS
-            onDoubleClick {
-                find<EditKeybindFragment>(mapOf(EditKeybindFragment::toEdit to selected)).openWindow()
-            }
         }
         hbox(8.0) {
             region {
@@ -77,42 +67,11 @@ class ListKeybindsView : View("keybinds") {
             }
             button("Save and close") {
                 action {
-                    Keybinds.config = binds.associate { it.action to it.keys }
-                    Keybinds.save()
+                    Keybinds.map = binds.associate { it.action to it.key }
+//                    Keybinds.save()
+                    println(Keybinds.map)
+                    close()
                 }
-            }
-        }
-        padding = Insets(10.0)
-    }
-}
-
-class KeyModel : ItemViewModel<KeyCode>() {
-    val key = bind(KeyCode::toProperty)
-}
-
-class EditKeybindFragment : Fragment("edit keybind") {
-
-    val toEdit: KeybindModel by param()
-    private val selected = KeyModel()
-    private val keys = toEdit.keys.value.toList().observable()
-
-    override val root = vbox(10.0) {
-        listview(keys) {
-            bindSelected(selected)
-            selectionModel.selectionMode = SelectionMode.SINGLE
-        }
-        hbox(8.0) {
-            button("Add bind") {
-            }
-            button("Remove bind") {
-            }
-            region {
-                hgrow = Priority.ALWAYS
-            }
-            button("Apply") {
-                enableWhen(toEdit.dirty)
-            }
-            button("Cancel") {
             }
         }
         padding = Insets(10.0)

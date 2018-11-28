@@ -8,6 +8,7 @@ import java.io.File
 import java.io.FileWriter
 import java.io.IOException
 import java.net.URL
+import java.util.Optional
 
 /**
  * Actions which can be bound to a key on the keyboard
@@ -15,15 +16,15 @@ import java.net.URL
 enum class ActionFromKey {
     MODIFIER_CONTROL,
     MODIFIER_SHIFT,
-    MOVE,
-    DELETE,
-    EDIT,
-    PLAY_AND_PAUSE,
-    ONE_STEP,
     PAN_NORTH,
     PAN_SOUTH,
     PAN_EAST,
-    PAN_WEST
+    PAN_WEST,
+    DELETE,
+    MOVE,
+    EDIT,
+    PLAY_AND_PAUSE,
+    ONE_STEP,
 }
 
 /**
@@ -34,20 +35,26 @@ class Keybinds {
         private val filesystemPath = "${System.getProperty("user.home")}${File.separator}Alchemist${File.separator}"
         private val classpathPath = "it${File.separator}unibo${File.separator}alchemist${File.separator}gui${File.separator}"
         private const val filename: String = "keybinds.json"
-        private val typeToken: TypeToken<Map<ActionFromKey, Set<KeyCode>>> =
-            object : TypeToken<Map<ActionFromKey, Set<KeyCode>>>() {}
+        private val typeToken: TypeToken<Map<ActionFromKey, KeyCode>> =
+            object : TypeToken<Map<ActionFromKey, KeyCode>>() {}
         private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
-        var config: Map<ActionFromKey, Set<KeyCode>> = emptyMap()
+        private var config: Map<ActionFromKey, KeyCode> = emptyMap()
+
+        var map: Map<ActionFromKey, Optional<KeyCode>>
+            get() = ActionFromKey.values().associate { it to Keybinds[it] }
+            set(value) {
+                config = value.filter { it.value.isPresent }.map { it.key to it.value.get() }.toMap()
+            }
 
         /**
          * Retrieve the keys bound to a certain action.
          */
-        operator fun get(action: ActionFromKey): Set<KeyCode> = config[action] ?: emptySet()
+        operator fun get(action: ActionFromKey): Optional<KeyCode> = Optional.ofNullable(config[action])
 
         /**
          * Associate an action with a set of keys.
          */
-        operator fun set(action: ActionFromKey, keys: Set<KeyCode>) { config += action to HashSet(keys) }
+        operator fun set(action: ActionFromKey, key: KeyCode) { config += action to key }
 
         /**
          * Write the binds to the file system.

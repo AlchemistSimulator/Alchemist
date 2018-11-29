@@ -8,5 +8,6 @@
   "DELETE": "DELETE",
   "MOVE": "M",
   "PLAY_AND_PAUSE": "P",
-  "ONE_STEP": "PERIOD"
+  "ONE_STEP": "PERIOD",
+  "EDIT": "UNDEFINED"
 }

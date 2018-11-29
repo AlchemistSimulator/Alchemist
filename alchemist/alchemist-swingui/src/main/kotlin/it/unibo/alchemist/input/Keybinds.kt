@@ -7,7 +7,6 @@ import javafx.scene.input.KeyCode
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
-import java.net.URL
 import java.util.Optional
 
 /**
@@ -38,13 +37,7 @@ class Keybinds {
         private val typeToken: TypeToken<Map<ActionFromKey, KeyCode>> =
             object : TypeToken<Map<ActionFromKey, KeyCode>>() {}
         private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
-        private var config: Map<ActionFromKey, KeyCode> = emptyMap()
-
-        var map: Map<ActionFromKey, Optional<KeyCode>>
-            get() = ActionFromKey.values().associate { it to Keybinds[it] }
-            set(value) {
-                config = value.filter { it.value.isPresent }.map { it.key to it.value.get() }.toMap()
-            }
+        var config: Map<ActionFromKey, KeyCode> = emptyMap()
 
         /**
          * Retrieve the keys bound to a certain action.
@@ -78,15 +71,16 @@ class Keybinds {
          * Read the binds from a file in the file system, run a GUI for writing the binds if the file doesn't exist.
          */
         fun load() {
-            config = try {
-                // try reading from the file system
-                gson.fromJson(URL("$filesystemPath$filename").readText(), typeToken.type)
+            try {
+                config = gson.fromJson(
+                    File("$filesystemPath$filename").readLines().reduce { a, b -> a + b }, typeToken.type
+                )
             } catch (e: Exception) {
-                // read from the classpath
-                gson.fromJson(
+                config = gson.fromJson(
                     Keybinds::class.java.classLoader.getResource("$classpathPath$filename").readText(), typeToken.type
                 )
-                // TODO: run GUI
+                // TODO: find a way to launch the keybind GUI and wait for it to close before continuing with the simulation
+//                launch<Keybinder>()
             }
         }
     }

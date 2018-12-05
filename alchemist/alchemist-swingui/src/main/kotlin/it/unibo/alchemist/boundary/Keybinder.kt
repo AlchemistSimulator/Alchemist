@@ -2,12 +2,14 @@ package it.unibo.alchemist.boundary
 
 import it.unibo.alchemist.input.ActionFromKey
 import it.unibo.alchemist.input.Keybinds
+import javafx.beans.property.StringProperty
 import javafx.geometry.Insets
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.layout.Priority
 import tornadofx.App
 import tornadofx.Controller
+import tornadofx.FX
 import tornadofx.ItemViewModel
 import tornadofx.Scope
 import tornadofx.View
@@ -16,6 +18,7 @@ import tornadofx.bindSelected
 import tornadofx.button
 import tornadofx.column
 import tornadofx.find
+import tornadofx.get
 import tornadofx.getProperty
 import tornadofx.hbox
 import tornadofx.hgrow
@@ -30,14 +33,14 @@ import tornadofx.region
 import tornadofx.remainingWidth
 import tornadofx.smartResize
 import tornadofx.tableview
+import tornadofx.toProperty
 import tornadofx.vbox
 import tornadofx.vgrow
+import java.util.ResourceBundle
 
 // TODO: use wildcard import?
 // ktlint-disable no-wildcard-imports
 // import tornadofx.*
-
-// TODO: use localized strings
 
 class Keybind(action: ActionFromKey, key: KeyCode) {
     var action by property(action)
@@ -62,14 +65,16 @@ class KeybindController : Controller() {
     val selected = KeybindModel()
 }
 
-class ListKeybindsView : View("Keybinds") {
-
+class ListKeybindsView : View() {
     val controller: KeybindController by inject()
+
+    override val titleProperty: StringProperty
+        get() = messages["title_keybinds_list"].toProperty()
 
     override val root = vbox(10.0) {
         tableview(controller.keybinds) {
-            column("ACTION", Keybind::actionProperty).minWidth(200)
-            column("KEY", Keybind::keyProperty).minWidth(150).remainingWidth()
+            column(messages["column_action"], Keybind::actionProperty).minWidth(200)
+            column(messages["column_key"], Keybind::keyProperty).minWidth(150).remainingWidth()
             setMinSize(400.0, 500.0)
             smartResize()
             bindSelected(controller.selected)
@@ -85,7 +90,7 @@ class ListKeybindsView : View("Keybinds") {
             region {
                 hgrow = Priority.ALWAYS
             }
-            button("Save and close") {
+            button(messages["button_close"]) {
                 action {
                     Keybinds.config = controller.keybinds.associate { it.action to it.key }
                     Keybinds.save()
@@ -97,11 +102,14 @@ class ListKeybindsView : View("Keybinds") {
     }
 }
 
-class EditKeybindView : View("Edit keybind") {
+class EditKeybindView : View() {
     private val toEdit: KeybindModel by inject()
+    override val titleProperty: StringProperty
+        get() = messages["title_edit_keybind"].toProperty()
 
     override val root = vbox(10.0) {
-        label("Press a key for ${toEdit.actionProperty.value}. Currently: ${toEdit.keyProperty.value}")
+        label("${messages["label_key_rebind"]} ${toEdit.actionProperty.value}. " +
+            "${messages["label_key_current"]}: ${toEdit.keyProperty.value}")
         keyboard {
             addEventHandler(KeyEvent.KEY_PRESSED) {
                 if (it.code != KeyCode.ESCAPE) {
@@ -114,7 +122,11 @@ class EditKeybindView : View("Edit keybind") {
     }
 }
 
-class Keybinder : App(ListKeybindsView::class)
+class Keybinder : App(ListKeybindsView::class) {
+    init {
+        FX.messages = ResourceBundle.getBundle("it.unibo.alchemist.l10n.KeybinderStrings")
+    }
+}
 
 fun main(args: Array<String>) {
     Keybinds.load()

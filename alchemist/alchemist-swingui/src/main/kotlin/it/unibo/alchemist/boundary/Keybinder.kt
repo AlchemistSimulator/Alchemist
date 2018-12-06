@@ -38,10 +38,6 @@ import tornadofx.vbox
 import tornadofx.vgrow
 import java.util.ResourceBundle
 
-// TODO: use wildcard import?
-// ktlint-disable no-wildcard-imports
-// import tornadofx.*
-
 class Keybind(action: ActionFromKey, key: KeyCode) {
     var action by property(action)
     val actionProperty = getProperty(Keybind::action)
@@ -56,12 +52,11 @@ class KeybindModel : ItemViewModel<Keybind>() {
 }
 
 class KeybindController : Controller() {
-    val keybinds = Keybinds
-        .config.asSequence().map {
-        Keybind(it.key, it.value)
-    }.plus(
-        ActionFromKey.values().map { Keybind(it, KeyCode.UNDEFINED) }
-    ).distinctBy { it.action }.toList().observable()
+    val keybinds = Keybinds.config.asSequence()
+        .map { Keybind(it.key, it.value) }
+        .plus(ActionFromKey.values().map { Keybind(it, KeyCode.UNDEFINED) })
+        .distinctBy { it.action }
+        .toList().observable()
     val selected = KeybindModel()
 }
 
@@ -126,9 +121,11 @@ class Keybinder : App(ListKeybindsView::class) {
     init {
         FX.messages = ResourceBundle.getBundle("it.unibo.alchemist.l10n.KeybinderStrings")
     }
-}
 
-fun main(args: Array<String>) {
-    Keybinds.load()
-    launch<Keybinder>()
+    companion object {
+        /**
+         * Function for launching the GUI from java classes.
+         */
+        fun run() = launch<Keybinder>()
+    }
 }

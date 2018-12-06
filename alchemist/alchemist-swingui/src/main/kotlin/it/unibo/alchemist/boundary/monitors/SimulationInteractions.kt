@@ -331,9 +331,6 @@ class InteractionManager<T, P : Position2D<P>>(
      * Called when a select gesture finishes.
      */
     private fun onSelected(event: MouseEvent) {
-//        if (Keybinds[ActionFromKey.MODIFIER_CONTROL].ifPresent { !keyboard.isHeld(it) }) {
-//            selection.clear()
-//        }
         if (Keybinds[ActionFromKey.MODIFIER_CONTROL].filter { keyboard.isHeld(it).not() }.isPresent) {
             selection.clear()
         }

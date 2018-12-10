@@ -46,8 +46,8 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
     }
 
     @Override
-    public final void update(final Time curTime, final boolean executed, final double param, final Environment<T, ?> env) {
-        if (!schedulable && curTime.compareTo(startTime) >= 0) {
+    public final void update(final Time currentTime, final boolean executed, final double param, final Environment<T, ?> environment) {
+        if (!schedulable && currentTime.compareTo(startTime) >= 0) {
             /*
              * If the simulation time is beyond the startTime for this reaction,
              * it can start being scheduled normally.
@@ -58,7 +58,7 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
          * If the current time is not past the starting time for this reaction,
          * it should not be used.
          */
-        updateStatus(schedulable ? curTime : startTime, executed, param, env);
+        updateStatus(schedulable ? currentTime : startTime, executed, param, environment);
     }
 
     @Override

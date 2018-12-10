@@ -76,7 +76,9 @@ public class CellNodeImpl<P extends Position<P>> extends DoubleNode implements C
         if (c > 0) {
             super.setConcentration(mol, c);
         } else {
-            removeConcentration(mol);
+            if (contains(mol)) {
+                removeConcentration(mol);
+            }
         }
     }
 

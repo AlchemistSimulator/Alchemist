@@ -67,7 +67,7 @@ sealed class RunScafiProgram[P <: Position[P]] (
     val currentTime = reaction.getTau
     if(!nbrData.contains(node.getId)) nbrData += node.getId -> new NBRData(factory.emptyExport(), environment.getPosition(node), Double.NaN)
     nbrData = nbrData.filter { case (id,data) => id==node.getId || data.executionTime >= currentTime - retentionTime }
-    val deltaTime = currentTime.subtract(nbrData.get(node.getId).map( _.executionTime).getOrElse(Double.NaN))
+    val deltaTime = currentTime.minus(nbrData.get(node.getId).map( _.executionTime).getOrElse(Double.NaN))
     val localSensors = node.getContents().asScala.map({
       case (k, v) => k.getName -> v
     }) ++ Map(

@@ -191,7 +191,7 @@ allprojects {
     }
     dokka {
         outputDirectory = "$buildDir/dokka"
-        reportUndocumented = true
+        reportUndocumented = false
         impliedPlatforms = ["JVM"]
         outputFormat = 'javadoc'
     }

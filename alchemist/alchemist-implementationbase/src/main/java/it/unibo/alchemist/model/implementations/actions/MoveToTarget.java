@@ -12,6 +12,7 @@ import static org.apache.commons.math3.util.FastMath.atan2;
 import static org.apache.commons.math3.util.FastMath.cos;
 import static org.apache.commons.math3.util.FastMath.sin;
 
+import com.google.common.collect.ImmutableList;
 import it.unibo.alchemist.model.implementations.movestrategies.speed.ConstantSpeed;
 import it.unibo.alchemist.model.implementations.movestrategies.target.FollowTarget;
 import it.unibo.alchemist.model.implementations.routes.PolygonalChain;
@@ -54,7 +55,7 @@ public final class MoveToTarget<T, P extends Position<P>> extends AbstractConfig
             final Molecule trackMolecule,
             final double speed) {
         super(environment, node,
-                (p1, p2) -> new PolygonalChain<>(p1, p2),
+                (p1, p2) -> new PolygonalChain<>(ImmutableList.of(p1, p2)),
                 new FollowTarget<>(environment, node, trackMolecule),
                 new ConstantSpeed<>(reaction, speed));
         this.trackMolecule = trackMolecule;

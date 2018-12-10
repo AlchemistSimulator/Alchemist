@@ -15,7 +15,6 @@ import it.unibo.alchemist.model.interfaces.Position
 import org.danilopianini.util.ArrayListSet
 import org.danilopianini.util.Hashes
 import org.danilopianini.util.ImmutableListSet
-import org.danilopianini.util.ListBackedSet
 import org.danilopianini.util.ListSet
 import org.danilopianini.util.ListSets
 
@@ -33,18 +32,9 @@ class SimpleNeighborhood<T, P : Position<P>> private constructor(
 
     override fun clone() = SimpleNeighborhood(environment, center, ArrayListSet(neighbors))
 
-    override fun contains(n: Int) = neighbors.any { it.id == n }
-
     override fun contains(n: Node<T>?) = neighbors.contains(n)
 
-    override fun getBetweenRange(min: Double, max: Double): ListSet<out Node<T>> =
-        ListBackedSet(neighbors.filter {
-            environment.getPosition(center).getDistanceTo(environment.getPosition(it)) in min..max
-        })
-
     override fun getCenter() = center
-
-    override fun getNeighborById(id: Int): Node<T> = neighbors.first { it.id == id }
 
     override fun getNeighborByNumber(num: Int): Node<T> = neighbors[num]
 

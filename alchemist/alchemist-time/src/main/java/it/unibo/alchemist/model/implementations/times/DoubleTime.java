@@ -53,7 +53,7 @@ public final class DoubleTime implements Time {
     }
 
     @Override
-    public DoubleTime sum(final Time dt) {
+    public DoubleTime plus(final Time dt) {
         return new DoubleTime(t + dt.toDouble());
     }
 
@@ -83,12 +83,12 @@ public final class DoubleTime implements Time {
     }
 
     @Override
-    public Time multiply(final double var) {
+    public Time times(final double var) {
         return new DoubleTime(t * var);
     }
 
     @Override
-    public Time subtract(final Time dt) {
+    public Time minus(final Time dt) {
         return new DoubleTime(t - dt.toDouble());
     }
 

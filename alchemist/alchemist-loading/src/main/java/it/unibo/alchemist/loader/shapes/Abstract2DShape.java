@@ -27,7 +27,8 @@ public abstract class Abstract2DShape implements Shape {
     @Override
     public final boolean contains(final Position position) {
         if (position.getDimensions() != 2) {
-            throw new IllegalArgumentException("Only bidimensional positions are accepted by this " + Abstract2DShape.class.getName());
+            throw new IllegalArgumentException("Only bidimensional positions are accepted by this "
+                    + getClass().getSimpleName());
         }
         return shape.contains(position.getCoordinate(0), position.getCoordinate(1));
     }

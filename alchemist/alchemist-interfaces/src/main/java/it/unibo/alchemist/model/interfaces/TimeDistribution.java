@@ -21,16 +21,16 @@ public interface TimeDistribution<T> extends Cloneable, Serializable {
     /**
      * Updates the internal status.
      * 
-     * @param curTime
+     * @param currentTime
      *            current time
      * @param executed
      *            true if the reaction has just been executed
      * @param param
      *            a parameter passed by the reaction
-     * @param env
+     * @param environment
      *            the current environment
      */
-    void update(Time curTime, boolean executed, double param, Environment<T, ?> env);
+    void update(Time currentTime, boolean executed, double param, Environment<T, ?> environment);
 
     /**
      * @return the next time at which the event will occur

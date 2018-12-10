@@ -13,15 +13,18 @@ import it.unibo.alchemist.model.interfaces.Position;
 /**
  * A Shape, representing an partition of the space where a {@link Position} may
  * lie in.
+ *
+ * @param <P> position type
+ *
  */
 @FunctionalInterface
-public interface Shape {
+public interface Shape<P extends Position<P>> {
 
     /**
      * @param position
      *            the position
      * @return true if the position is inside the {@link Shape}.
      */
-    boolean contains(Position position);
+    boolean contains(P position);
 
 }

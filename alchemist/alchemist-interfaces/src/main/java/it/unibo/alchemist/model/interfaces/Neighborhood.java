@@ -31,15 +31,6 @@ public interface Neighborhood<T> extends Serializable, Cloneable, Iterable<Node<
     Neighborhood<T> add(Node<T> node);
 
     /**
-     * Verifies if a node with the specified id is contained inside a neighborhood.
-     * 
-     * @param n
-     *            the node id to be searched
-     * @return true if n belongs to this neighborhood
-     */
-    boolean contains(int n);
-
-    /**
      * Verifies if a node is contained inside a neighborhood.
      * 
      * @param n
@@ -47,21 +38,6 @@ public interface Neighborhood<T> extends Serializable, Cloneable, Iterable<Node<
      * @return true if n belongs to this neighborhood
      */
     boolean contains(Node<T> n);
-
-    /**
-     * Allows to get all the nodes in this neighborhood whose distance from the
-     * center node is between min and max.
-     * 
-     * @param min
-     *            if a node has a distance from the center node lower than min, it
-     *            will be not in the returned list
-     * @param max
-     *            if a node has a distance from the center node higher than max, it
-     *            will be not in the returned list
-     * @return the list of nodes whose distance from the center node is between min
-     *         and max.
-     */
-    ListSet<? extends Node<T>> getBetweenRange(double min, double max);
 
     /**
      * Allows to access the central node.
@@ -72,19 +48,13 @@ public interface Neighborhood<T> extends Serializable, Cloneable, Iterable<Node<
     Node<T> getCenter();
 
     /**
-     * @param id
-     *            the node id
-     * @return the nodes
-     */
-    Node<T> getNeighborById(int id);
-
-    /**
      * Returns the num-th neighbor.
      * 
      * @param num
      *            the neighbor index
      * @return the num-th neighbor
      */
+    @Deprecated
     Node<T> getNeighborByNumber(int num);
 
     /**

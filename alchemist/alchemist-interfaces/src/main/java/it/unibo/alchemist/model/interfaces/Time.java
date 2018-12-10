@@ -46,7 +46,7 @@ public interface Time extends Comparable<Time>, Serializable, Cloneable {
      * @return the result of the multiplication
      * 
      */
-    Time multiply(double var);
+    Time times(double var);
 
     /**
      * Allows to subtract a {@link Time} to this {@link Time}.
@@ -56,7 +56,7 @@ public interface Time extends Comparable<Time>, Serializable, Cloneable {
      * 
      * @return the result of the subtraction
      */
-    Time subtract(Time dt);
+    Time minus(Time dt);
 
     /**
      * Allows to add a {@link Time} to this {@link Time}.
@@ -66,7 +66,7 @@ public interface Time extends Comparable<Time>, Serializable, Cloneable {
      * 
      * @return the result of the sum
      */
-    Time sum(Time dt);
+    Time plus(Time dt);
 
     /**
      * Allows to get a double representation of this {@link Time}.

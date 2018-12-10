@@ -195,7 +195,7 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
 
     @Override
     public void start(final Stage primaryStage) {
-        // load the keybinds from file, or run a GUI to configure them if not present
+        // load the keybinds from file or classpath
         Keybinds.Companion.load();
         parseNamedParams(getNamedParams());
         parseUnnamedParams(getUnnamedParams());

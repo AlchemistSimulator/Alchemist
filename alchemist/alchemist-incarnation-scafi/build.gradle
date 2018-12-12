@@ -21,4 +21,11 @@ dependencies {
     )
 }
 
-
+configurations {
+    apiElements {
+        outgoing.variants.getByName('classes').artifact(
+                file: compileScala.destinationDir,
+                type: ArtifactTypeDefinition.JVM_CLASS_DIRECTORY,
+                builtBy: compileScala)
+    }
+}

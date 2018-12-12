@@ -17,7 +17,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.jooq.lambda.Unchecked;
-import org.reflections.Reflections;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Position;
 
@@ -32,8 +31,7 @@ public final class SupportedIncarnations {
     private static final Map<String, Class<? extends Incarnation>> INCARNATIONS;
 
     static {
-        final Reflections reflections = new Reflections();
-        INCARNATIONS = reflections.getSubTypesOf(Incarnation.class).stream()
+        INCARNATIONS = ClassPathScanner.subTypesOf(Incarnation.class).stream()
                 .collect(Collectors.toMap(c -> preprocess(c.getSimpleName()), Function.identity()));
     }
 

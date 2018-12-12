@@ -7,7 +7,6 @@ dependencies {
         "com.google.guava:guava:${guavaVersion}",
         "org.apache.commons:commons-lang3:${lang3Version}",
         "org.danilopianini:jirf:${jirfVersion}",
-        "org.reflections:reflections:$reflectionsVersion",
         "org.yaml:snakeyaml:$snakeyamlVersion"
     )
     testImplementation(

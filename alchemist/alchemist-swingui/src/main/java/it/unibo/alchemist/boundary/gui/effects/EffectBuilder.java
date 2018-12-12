@@ -12,7 +12,7 @@ import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Modifier;
-import java.util.Set;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import javax.swing.BorderFactory;
@@ -26,7 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import org.reflections.Reflections;
+import it.unibo.alchemist.ClassPathScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,9 +37,8 @@ import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
  */
 public class EffectBuilder extends JFrame implements ActionListener {
 
-    private static final Reflections REFLECTIONS = new Reflections("it.unibo.alchemist");
     private static final long serialVersionUID = -5030318714404946998L;
-    private static final Set<Class<? extends Effect>> EFFECTS = REFLECTIONS.getSubTypesOf(Effect.class);
+    private static final List<Class<? extends Effect>> EFFECTS = ClassPathScanner.subTypesOf(Effect.class, "it.unibo.alchemist");
     private static final Logger L = LoggerFactory.getLogger(EffectBuilder.class);
     private static final String ALCHEMIST_EFFECT_BUILDER = LocalizedResourceBundle.getString("alchemist_effect_builder");
     private static final String EFFECT = LocalizedResourceBundle.getString("effect");

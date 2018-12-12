@@ -30,9 +30,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.plaf.basic.BasicBorders;
 
+import it.unibo.alchemist.ClassPathScanner;
 import org.danilopianini.lang.CollectionWithCurrentElement;
 import org.danilopianini.lang.ImmutableCollectionWithCurrentElement;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,8 +61,7 @@ public class MoleculeInjectorGUI<T> extends JPanel {
     private final JButton apply = new JButton("Apply");
 
     static {
-        final Reflections reflections = new Reflections("it.unibo.alchemist");
-        for (@SuppressWarnings("rawtypes") final Class<? extends Incarnation> clazz : reflections.getSubTypesOf(Incarnation.class)) {
+        for (final Class<? extends Incarnation> clazz : ClassPathScanner.subTypesOf(Incarnation.class)) {
             try {
                 INCARNATIONS.add(clazz.newInstance());
             } catch (InstantiationException | IllegalAccessException e) {

@@ -71,7 +71,7 @@ allprojects {
     dependencies {
         implementation "org.apache.commons:commons-math3:$math3Version"
         implementation "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
-        implementation "com.google.code.findbugs:findbugs:$findBugsVersion"
+        implementation "com.github.spotbugs:spotbugs:$spotBugsVersion"
         implementation "org.slf4j:slf4j-api:$slf4jVersion"
         implementation "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
         implementation "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"

@@ -4,9 +4,6 @@ language: java
 jdk:
   - openjdk8
   - openjdk9
-  - openjdk10
-  - openjdk11
-  - openjdk12
 
 before_install:
   - sudo apt-get -qq update

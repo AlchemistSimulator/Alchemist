@@ -7,8 +7,10 @@ buildscript {
     repositories {
         maven { url "https://plugins.gradle.org/m2/" }
         gradlePluginPortal()
+        mavenLocal()
     }
     dependencies {
+        classpath "gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:$spotBugsPluginVersion"
         classpath "gradle.plugin.org.jmailen.gradle:kotlinter-gradle:$ktlintVersion"
         classpath "org.danilopianini:build-commons:${buildCommonsVersion}"
         classpath "org.danilopianini:javadoc.io-linker:${javadocIOLinkerVersion}"
@@ -21,7 +23,7 @@ buildscript {
 allprojects {
 
     if(JavaVersion.current() != JavaVersion.VERSION_1_8){
-        project.version += -j8
+        project.version += "-j8"
     }
     scalaVersion = "${scalaMajorVersion}.${scalaMinorVersion}"
 
@@ -58,12 +60,26 @@ allprojects {
         testLogging { events "passed", "skipped", "failed", "standardError" }
     }
 
+    apply plugin: 'com.github.spotbugs'
+    spotbugs {
+        ignoreFailures = true
+        effort = "max"
+        reportLevel = "low"
+        def excludeFile = new File("${project.rootProject.projectDir}/findbugsExcludes.xml");
+        if (excludeFile.exists()) {
+            excludeFilterConfig = project.resources.text.fromFile(excludeFile)
+        }
+    }
+    tasks.withType(com.github.spotbugs.SpotBugsTask) {
+        dependsOn(test)
+        reports {
+            xml.enabled = false
+            html.enabled = true
+        }
+    }
     tasks.withType(Checkstyle) {
         dependsOn(test)
         showViolations = false
-    }
-    tasks.withType(FindBugs) {
-        dependsOn(test)
     }
     tasks.withType(Pmd) {
         dependsOn(test)

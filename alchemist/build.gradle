@@ -70,6 +70,9 @@ allprojects {
             excludeFilterConfig = project.resources.text.fromFile(excludeFile)
         }
     }
+    tasks.withType(FindBugs) {
+        enabled = false
+    }
     tasks.withType(com.github.spotbugs.SpotBugsTask) {
         dependsOn(test)
         reports {

@@ -25,7 +25,7 @@ script:
 before_deploy: echo Preparing for deploy
 after_success:
   - cd alchemist
-  - ./gradlew publishMainPublicationToMavenRepository
+  - ./gradlew publishMainPublicationToMavenRepository > >(egrep -v '(null:-1:-1)|(t find node by signature)')
 deploy:
   - provider: releases
     skip_cleanup: true

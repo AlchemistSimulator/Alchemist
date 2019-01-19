@@ -34,6 +34,10 @@ allprojects {
         }
     }
 
+    jacoco {
+        toolVersion = jacocoVersion
+    }
+
     configurations {
         all*.exclude group: 'org.eclipse.xtext', module: 'org.eclipse.xtext.dependencies'
         all*.exclude group: 'org.eclipse.platform', module: 'org.eclipse.equinox.common'

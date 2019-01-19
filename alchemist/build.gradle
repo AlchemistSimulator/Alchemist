@@ -20,6 +20,9 @@ buildscript {
 
 allprojects {
 
+    if(JavaVersion.current() != JavaVersion.VERSION_1_8){
+        project.version += -j8
+    }
     scalaVersion = "${scalaMajorVersion}.${scalaMinorVersion}"
 
     apply plugin: 'org.danilopianini.build-commons'

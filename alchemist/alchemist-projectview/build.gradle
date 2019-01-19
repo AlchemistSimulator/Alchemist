@@ -1,12 +1,14 @@
 dependencies {
     api project(':alchemist-interfaces')
-    for(platform in ['linux', 'mac', 'win']) {
-        api "org.openjfx:javafx-base:${javafxVersion}:$platform"
-        api "org.openjfx:javafx-controls:${javafxVersion}:$platform"
-        api "org.openjfx:javafx-fxml:${javafxVersion}:$platform"
-        api "org.openjfx:javafx-graphics:${javafxVersion}:$platform"
-        api "org.openjfx:javafx-media:${javafxVersion}:$platform"
-        api "org.openjfx:javafx-swing:${javafxVersion}:$platform"
+    if (JavaVersion.current().isJava11Compatible()) {
+        for(platform in ['linux', 'mac', 'win']) {
+            api "org.openjfx:javafx-base:${javafxVersion}:$platform"
+            api "org.openjfx:javafx-controls:${javafxVersion}:$platform"
+            api "org.openjfx:javafx-fxml:${javafxVersion}:$platform"
+            api "org.openjfx:javafx-graphics:${javafxVersion}:$platform"
+            api "org.openjfx:javafx-media:${javafxVersion}:$platform"
+            api "org.openjfx:javafx-swing:${javafxVersion}:$platform"
+        }
     }
     
     implementation project(':alchemist-implementationbase')

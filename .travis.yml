@@ -3,7 +3,7 @@ dist: xenial
 language: java
 jdk:
   - openjdk8
-  - oraclejdk9
+  - openjdk11
 
 before_install:
   - sudo apt-get -qq update

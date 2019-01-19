@@ -8,6 +8,8 @@ jdk:
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y graphviz openjfx
+  - cp -n -r /usr/lib/jvm/java-8-openjdk-amd64/ $JAVA_HOME/
+
 env:
   global:
     - secure: "OMDTeFBKjw0acBlmqh4+FZ5nnt/Aj2pF705Tta0qm3Sf61S+k1u503Dzt+nDs+/yY19HyyDFUj3+56a88IssEjd3xUVzPOz7kCW0p/lcqbAQ8jIATmoWpoMM9cOI4Xv9h+JJxOqLR54ODR0MGo/BVa51w93jsdpDnrlLNOoNf08r1bfA2Hifh/iKD/YzMyGqFI+vxvED7HhbDNG48chsr3QSGxsizXDtEZK+u0JZ6/CR2rHZTQzD6bkv3N2Vbq/4tc4pZVdH7zMXWRkrGunhHchwmgEwz90iJeo4fEeMBiWpchWg7Huxr2LUisdRKjzNqf+UjV5DljtK/RDbzyjC8vIAllD2hsmPJW1EfTOrIfIVgT2CoRrKKGIp/Dk5LkOTePMCXloe+M7gYipEWreAXeGYotAOdnxW1IoxhM3Dsbb4yxd6h1h2bFXToj0bzIEMySgivYJ0n0PhvuwWb/KUf2vt8r+ULdWvPVjgqQUDv38fgnqyfMmgMDfABlGpSxQWT2gy5VAinpgQzfNrVeOkDxxGDBLa4vOMy/yQm/bnXJyyUA0NAv5xQBCZhsDqjTOwzKWGFWkdrN0e91JjF7+bvkKnH1JQhz8yuLdLASm5LEj5nZbCZeDu4jbZhags1pkmNxwlPJjWfpzeXiiXwMdAkIn1RrkMefHPfJ5hq+G3y9I="

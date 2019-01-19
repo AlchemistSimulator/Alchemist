@@ -10,6 +10,7 @@ dependencies {
     implementation "org.controlsfx:controlsfx:${controlsFXVersion}"
     implementation "org.danilopianini:urlclassloader-util:${urlClassLoaderUtilVersion}"
     implementation "commons-io:commons-io:${commonsIOVersion}"
+    implementation "org.openjfx:javafx:${javafxVersion}"
     testRuntimeOnly project(':alchemist-incarnation-protelis')
     testRuntimeOnly project(':alchemist-incarnation-sapere')
     testRuntimeOnly project(':alchemist-incarnation-biochemistry')

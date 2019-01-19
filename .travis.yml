@@ -8,7 +8,7 @@ jdk:
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y graphviz openjfx
-  - cp -n -r /usr/lib/jvm/java-8-openjdk-amd64/ $JAVA_HOME/
+  - sudo cp -n -r /usr/lib/jvm/java-8-openjdk-amd64/ $JAVA_HOME/
 
 env:
   global:

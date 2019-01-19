@@ -1,5 +1,14 @@
 dependencies {
     api project(':alchemist-interfaces')
+    for(platform in ['linux', 'mac', 'win']) {
+        api "org.openjfx:javafx-base:${javafxVersion}:$platform"
+        api "org.openjfx:javafx-controls:${javafxVersion}:$platform"
+        api "org.openjfx:javafx-fxml:${javafxVersion}:$platform"
+        api "org.openjfx:javafx-graphics:${javafxVersion}:$platform"
+        api "org.openjfx:javafx-media:${javafxVersion}:$platform"
+        api "org.openjfx:javafx-swing:${javafxVersion}:$platform"
+    }
+    
     implementation project(':alchemist-implementationbase')
     implementation project(':alchemist-loading')
     implementation project(':alchemist-runner')
@@ -10,7 +19,6 @@ dependencies {
     implementation "org.controlsfx:controlsfx:${controlsFXVersion}"
     implementation "org.danilopianini:urlclassloader-util:${urlClassLoaderUtilVersion}"
     implementation "commons-io:commons-io:${commonsIOVersion}"
-    implementation "org.openjfx:javafx:${javafxVersion}"
     testRuntimeOnly project(':alchemist-incarnation-protelis')
     testRuntimeOnly project(':alchemist-incarnation-sapere')
     testRuntimeOnly project(':alchemist-incarnation-biochemistry')

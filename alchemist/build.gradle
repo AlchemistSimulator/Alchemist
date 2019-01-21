@@ -22,7 +22,7 @@ buildscript {
 
 allprojects {
 
-    if(JavaVersion.current() != JavaVersion.VERSION_1_8){
+    if(!JavaVersion.current().java11Compatible){
         project.version += "-j8"
     }
     scalaVersion = "${scalaMajorVersion}.${scalaMinorVersion}"
@@ -209,6 +209,9 @@ allprojects {
         dependsOn(dokka)
     }
     dokka {
+        if (JavaVersion.current().java9Compatible) {
+            enabled = false
+        }
         outputDirectory = "$buildDir/dokka"
         reportUndocumented = false
         impliedPlatforms = ["JVM"]

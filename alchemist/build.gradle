@@ -97,7 +97,7 @@ allprojects {
         implementation "org.danilopianini:thread-inheritable-resource-loader:${resLoaderVersion}"
         runtimeOnly "ch.qos.logback:logback-classic:$logbackVersion"
         testImplementation "junit:junit:$junitVersion"
-        testRuntimeOnly "ch.qos.logback:logback-classic:$logbackVersion"
+        runtimeOnly "ch.qos.logback:logback-classic:$logbackVersion"
         doclet "org.jboss.apiviz:apiviz:$apivizVersion"
     }
 
@@ -295,7 +295,8 @@ task fatJar(type: Jar, dependsOn: subprojects.jar) {
     manifest {
         attributes 'Implementation-Title': 'Alchemist',
                 'Implementation-Version': rootProject.version,
-                'Main-Class': 'it.unibo.alchemist.Alchemist'
+                'Main-Class': 'it.unibo.alchemist.Alchemist',
+                'Automatic-Module-Name': 'it.unibo.alchemist'
     }
     baseName = "${rootProject.name}-redist"
     zip64 = true

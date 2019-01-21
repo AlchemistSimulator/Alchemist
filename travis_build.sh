@@ -6,4 +6,5 @@ cd alchemist
 ./gradlew --scan > >(egrep -v "(null:-1:-1)|(Can't find node by signature)")
 mkdir -p report
 cp --parent */build/reports build/reports report -R
+mkdir --parents foo
 cp dokka/index.html build/dokka/ 

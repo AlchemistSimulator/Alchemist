@@ -60,7 +60,10 @@ public class ProjectGUI extends Application {
      */
     @Override
     public void start(final Stage primaryStage) throws IOException {
-        Thread.setDefaultUncaughtExceptionHandler((thread, ex) -> FXUtil.errorAlert(ex));
+        Thread.setDefaultUncaughtExceptionHandler((thread, ex) -> {
+            ex.printStackTrace();
+            FXUtil.errorAlert(ex);
+        });
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Alchemist");
         initLayout("RootLayout");

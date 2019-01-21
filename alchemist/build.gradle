@@ -44,8 +44,6 @@ allprojects {
     }
 
     configurations {
-        all*.exclude group: 'org.eclipse.xtext', module: 'org.eclipse.xtext.dependencies'
-        all*.exclude group: 'org.eclipse.platform', module: 'org.eclipse.equinox.common'
         all {
             if(!it.name.contains('antlr')) {
                 resolutionStrategy {
@@ -74,18 +72,13 @@ allprojects {
         enabled = false
     }
     tasks.withType(com.github.spotbugs.SpotBugsTask) {
-        dependsOn(test)
         reports {
             xml.enabled = false
             html.enabled = true
         }
     }
     tasks.withType(Checkstyle) {
-        dependsOn(test)
         showViolations = false
-    }
-    tasks.withType(Pmd) {
-        dependsOn(test)
     }
     kotlinter {
         ignoreFailures = false

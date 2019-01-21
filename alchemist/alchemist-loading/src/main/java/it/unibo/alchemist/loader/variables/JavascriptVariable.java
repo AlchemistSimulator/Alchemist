@@ -17,7 +17,10 @@ import javax.script.ScriptException;
  * standard JDK. Variables are substituted with their provided values using a
  * simple regular expression, and then the resulting {@link String} is fed to
  * the Javascript interpereter.
+ *
+ * @deprecated This class uses Nashorn, which is scheduled to be removed since
  */
+@Deprecated
 public class JavascriptVariable extends ScriptVariable<Object> {
 
     private static final long serialVersionUID = 1L;

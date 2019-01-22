@@ -35,6 +35,16 @@ deploy:
       repo: AlchemistSimulator/Alchemist
       tags: true
       jdk: openjdk8
+  - provider: releases
+    skip_cleanup: true
+    api_key:
+      secure: OiCBDNskosVJ+svWTi6VrgjRiQJr/veNuz79FpoVZk3wFjWHj6yQICkBHEcYO/XQzXB9EYwZsXQkMNhMBX3OTeG3c1nHDvFINpGKB2cKqYS8/qmY228ZPF51ovXmT1v+C6Y+TMJFK8+uNVMHukzJZMW0TupFgjXaFRGr7odee62Oa5zYd5WWl2a5NkCtrHllKdyTnrizaLAVMGU9CUqIDMKHrIe4tD79utn9rgo1uAxIKSrPZMKomul6D+kp3eZAkBi0YWqem9QPzSXa+Bs8e4QbhydwFYx7B5OcnY2e5iYZlM6AXJJeUQ499Ntyhw7t64C6ThPevKrdg7zQ8MCcSbOFNv0Sehm639AzgM+5ripXowSJVpLxb5+dEbe+uc8TKb9NKEniY4Ox5Ml3o193+1BSUDVEapoLA7VVGc+E+qeL1ZwGyNwTmMQJ3pg50AS9xH4cO5F2Z7ffnX1iUGEGoAc1aS7nr4fu7cH04P4CJ0OYYmB9/ERUudPbTdx4Jt8+WaiRLarnLRdgr8Ui7MgVL+Ck5auwA7z5Rw/gX4GNlxmqZeCNUmo7qkwo+e5HqjbifrZifIynl45oj/bbBy8JeioC5ug0FK5I8IKDFyTn2doHHpoU4Wq6EGhTK02Mcvc5brVz5D2cV4++lzauDGUUypJO1o19W6Kbb1THZTLgYAQ=
+    file_glob: true
+    file: "${HOME}/build/${TRAVIS_REPO_SLUG}/alchemist/build/libs/alchemist-redist*.jar"
+    on:
+      repo: AlchemistSimulator/Alchemist
+      tags: true
+      jdk: openjdk11
   - provider: surge
     skip_cleanup: true
     project: "./alchemist/build/docs/javadoc/"

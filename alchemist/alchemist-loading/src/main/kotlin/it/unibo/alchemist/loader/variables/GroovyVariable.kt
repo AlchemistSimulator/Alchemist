@@ -6,7 +6,7 @@ import groovy.util.Eval
  * A variable written as Groovy script
  */
 class GroovyVariable<R>(formula: String) : ScriptVariable<R>(formula) {
-    override fun interpret(s: String?): R {
+    override fun interpret(s: String): R {
         try {
             @Suppress("UNCHECKED_CAST")
             return Eval.me(s) as R

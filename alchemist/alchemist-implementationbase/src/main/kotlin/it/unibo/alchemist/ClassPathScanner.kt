@@ -21,7 +21,7 @@ object ClassPathScanner {
      */
     @JvmStatic
     @JvmOverloads
-    @Suppress("UNCKECKED_CAST")
+    @Suppress("UNCHECKED_CAST")
     fun <T> subTypesOf(superClass: Class<T>, inPackage: String? = null): List<Class<out T>> = classGraphForPackage(inPackage)
         .enableClassInfo().scan().let { scanResult ->
             if (superClass.isInterface) {

@@ -21,6 +21,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -42,6 +44,8 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
+import it.unibo.alchemist.loader.variables.GroovyVariable;
+import it.unibo.alchemist.loader.variables.ScriptVariable;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.jirf.Factory;
@@ -145,6 +149,11 @@ public final class YamlLoader implements Loader {
     private static final String VALUE_FILTER = SYNTAX.getString("value-filter");
     private static final String VALUES = SYNTAX.getString("values");
     private static final String VARIABLES = SYNTAX.getString("variables");
+    private static final Map<String, Function<String, ScriptVariable<?>>> SUPPORTED_LANGUAGES = ImmutableMap.of(
+            "groovy", GroovyVariable::new,
+            "javascript", JavascriptVariable::new,
+            "scala", ScalaVariable::new
+    );
     private static final Map<Class<?>, Map<String, Class<?>>> DEFAULT_MANDATORY_PARAMETERS = ImmutableMap.<Class<?>, Map<String, Class<?>>>builder()
             .put(Layer.class, ImmutableMap.of(TYPE, CharSequence.class, MOLECULE, CharSequence.class))
             .build();
@@ -162,9 +171,8 @@ public final class YamlLoader implements Loader {
                     final Object formula = m.get(FORMULA);
                     return formula instanceof Number
                         ? new NumericConstant((Number) formula)
-                        : m.getOrDefault(LANGUAGE, "").toString().equalsIgnoreCase("scala")
-                            ? new ScalaVariable<>(formula.toString())
-                            : new JavascriptVariable(formula.toString());
+                        : SUPPORTED_LANGUAGES.get(m.getOrDefault(LANGUAGE, "groovy").toString().toLowerCase())
+                            .apply(formula.toString());
                 }));
     private static final BuilderConfiguration<FilteringPolicy> FILTERING_CONFIG = new BuilderConfiguration<>(
             ImmutableMap.of(NAME, CharSequence.class), ImmutableMap.of(), makeBaseFactory(), m -> CommonFilters.fromString(m.get(NAME).toString()));
@@ -678,6 +686,9 @@ public final class YamlLoader implements Loader {
         factory.registerImplicit(double.class, Time.class, DoubleTime::new);
         factory.registerImplicit(List.class, Number[].class, l -> ((List<?>) l).stream().map(e -> factory.convertOrFail(Number.class, e)).toArray(Number[]::new));
         factory.registerImplicit(CharSequence.class, FilteringPolicy.class, s -> CommonFilters.fromString(s.toString()));
+        factory.registerImplicit(Number.class, double.class, Number::doubleValue);
+        factory.registerImplicit(double.class, BigDecimal.class, BigDecimal::new);
+        factory.registerImplicit(long.class, BigInteger.class, BigInteger::valueOf);
         return factory;
     }
 

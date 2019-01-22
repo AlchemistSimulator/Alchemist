@@ -8,6 +8,9 @@
  ******************************************************************************/
 package it.unibo.alchemist.loader.variables;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -18,7 +21,7 @@ import javax.script.ScriptException;
  * simple regular expression, and then the resulting {@link String} is fed to
  * the Javascript interpereter.
  *
- * @deprecated This class uses Nashorn, which is scheduled to be removed since
+ * @deprecated This class uses Nashorn, which is scheduled to be removed in future JDKs
  */
 @Deprecated
 public class JavascriptVariable extends ScriptVariable<Object> {
@@ -26,6 +29,7 @@ public class JavascriptVariable extends ScriptVariable<Object> {
     private static final long serialVersionUID = 1L;
     private static final ScriptEngineManager MANAGER = new ScriptEngineManager();
     private static final ScriptEngine ENGINE = MANAGER.getEngineByName("nashorn");
+    private static final Logger L = LoggerFactory.getLogger(JavascriptVariable.class);
 
     /**
      * @param formula
@@ -33,6 +37,8 @@ public class JavascriptVariable extends ScriptVariable<Object> {
      */
     public JavascriptVariable(final String formula) {
         super(formula);
+        L.warn("Javascript variables are deprecated and will get dropped from Alchemist as soon as Nashorn gets " +
+                "dropped from the JDK as per JEP 335. See https://openjdk.java.net/jeps/335.");
     }
 
     @Override

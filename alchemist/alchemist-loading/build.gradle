@@ -5,6 +5,7 @@ dependencies {
         project(':alchemist-time'),
         project(':alchemist-maps'),
         "com.google.guava:guava:${guavaVersion}",
+        "org.codehaus.groovy:groovy:${groovyVersion}",
         "org.apache.commons:commons-lang3:${lang3Version}",
         "org.danilopianini:jirf:${jirfVersion}",
         "org.yaml:snakeyaml:$snakeyamlVersion"

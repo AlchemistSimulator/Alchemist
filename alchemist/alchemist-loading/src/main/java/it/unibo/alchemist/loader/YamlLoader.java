@@ -103,6 +103,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
 /**
  * Loads a properly formatted YAML file and provides method for instancing a batch of scenarios.
  */
+@SuppressWarnings("UnstableApiUsage")
 public final class YamlLoader implements Loader {
 
     private static final long serialVersionUID = 1L;
@@ -149,6 +150,7 @@ public final class YamlLoader implements Loader {
     private static final String VALUE_FILTER = SYNTAX.getString("value-filter");
     private static final String VALUES = SYNTAX.getString("values");
     private static final String VARIABLES = SYNTAX.getString("variables");
+    @SuppressWarnings("deprecation")
     private static final Map<String, Function<String, ScriptVariable<?>>> SUPPORTED_LANGUAGES = ImmutableMap.of(
             "groovy", GroovyVariable::new,
             "javascript", JavascriptVariable::new,
@@ -527,7 +529,7 @@ public final class YamlLoader implements Loader {
                     emptyConfig(factory, () -> incarnation.createNode(simRng, env, null)),
                     singleParamConfig(factory, o -> incarnation.createNode(simRng, env, o.toString()))),
                     factory);
-            final Builder<Shape> shapeBuilder = new Builder<>(Shape.class, emptyConfig(factory, () -> p -> true), factory);
+            final Builder<Shape<P>> shapeBuilder = new Builder<>(Shape.class, emptyConfig(factory, () -> p -> true), factory);
             for (final Object dispObj: dispList) {
                 final Map<String, Object> dispMap = cast(factory, MAP_STRING_OBJECT, dispObj, "displacement");
                 factory.registerSingleton(RandomGenerator.class,  scenarioRng);
@@ -538,10 +540,10 @@ public final class YamlLoader implements Loader {
                  * Contents
                  */
                 final List<?> contentsList = listCast(factory, dispMap.get(CONTENTS), "contents");
-                final Table<Shape, Molecule, String> shapes = HashBasedTable.create(contentsList.size(), contentsList.size());
+                final Table<Shape<P>, Molecule, String> shapes = HashBasedTable.create(contentsList.size(), contentsList.size());
                 for (final Object contentObj: contentsList) {
                     final Map<String, Object> contentMap = cast(factory, MAP_STRING_OBJECT, contentObj, "content");
-                    final Shape shape = shapeBuilder.build(contentMap.get(IN));
+                    final Shape<P> shape = shapeBuilder.build(contentMap.get(IN));
                     final Molecule molecule = molBuilder.build(contentMap.get(MOLECULE));
                     final Object concObj = contentMap.get(CONCENTRATION);
                     shapes.put(shape, molecule, concObj == null ? "" : concObj.toString());
@@ -556,7 +558,7 @@ public final class YamlLoader implements Loader {
                     /*
                      * Node contents
                      */
-                    for (final Cell<Shape, Molecule, String> entry: shapes.cellSet()) {
+                    for (final Cell<Shape<P>, Molecule, String> entry: shapes.cellSet()) {
                         final Shape<P> shape = entry.getRowKey();
                         if (shape == null) {
                             throw new IllegalStateException("Illegal null shape in " + shapes);

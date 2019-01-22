@@ -839,7 +839,7 @@ public final class YamlLoader implements Loader {
             }
             return otherwise.get();
         }
-        public boolean matches(final Object o) {
+        private boolean matches(final Object o) {
             return ifMap(o, m -> 
                 m.keySet().containsAll(mandatoryFields.keySet())
                 && Sets.union(mandatoryFields.keySet(), optionalFields.keySet()).containsAll(m.keySet()),

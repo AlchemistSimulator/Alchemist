@@ -557,7 +557,7 @@ public final class YamlLoader implements Loader {
                      * Node contents
                      */
                     for (final Cell<Shape, Molecule, String> entry: shapes.cellSet()) {
-                        final Shape shape = entry.getRowKey();
+                        final Shape<P> shape = entry.getRowKey();
                         if (shape == null) {
                             throw new IllegalStateException("Illegal null shape in " + shapes);
                         }

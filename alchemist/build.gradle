@@ -17,6 +17,7 @@ buildscript {
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:${dokkaVersion}"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
         classpath "com.gradle:build-scan-plugin:${buildScanPluginVersion}"
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+'
     }
 }
 
@@ -32,6 +33,7 @@ allprojects {
     apply plugin: 'kotlin'
     apply plugin: 'org.jetbrains.dokka'
     apply plugin: "org.jmailen.kotlinter"
+    apply plugin: 'com.jfrog.bintray'
 
     compileKotlin {
         kotlinOptions {
@@ -201,7 +203,35 @@ allprojects {
             }
         }
     }
-    
+    def apiKeyName = 'BINTRAY_API_KEY'
+    def userKeyName = 'BINTRAY_USER'
+    bintray {
+        user = System.env[userKeyName]
+        key = System.env[apiKeyName]
+        publications = ['main']
+        pkg {
+            repo = longName
+            name = project.name
+            userOrg = 'alchemist-simulator'
+            vcsUrl = "$scmRootUrl/$scmRepoName"
+            licenses = ['GPL-3.0-or-later']
+            version {
+                name = project.version
+            }
+        }
+    }
+    bintrayUpload.onlyIf {
+        def hasKey = System.env[apiKeyName] != null;
+        def hasUser = System.env[userKeyName] != null
+        if (!hasKey) {
+            println("The $apiKeyName environment variable must be set in order for the bintray deployment to work")
+        }
+        if (!hasUser) {
+            println("The $userKeyName environment variable must be set in order for the bintray deployment to work")
+        }
+        return hasKey && hasUser
+    }
+
     /*
      * Configure Dokka to run before Javadoc, so that Kotlin classes are correctly documented
      * and doclet still applied for Java classes. Then copy missing files and lowercase files

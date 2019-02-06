@@ -213,6 +213,7 @@ allprojects {
         user = System.env[userKeyName]
         key = System.env[apiKeyName]
         publications = ['main']
+        override = true
         pkg {
             repo = longName
             name = project.name

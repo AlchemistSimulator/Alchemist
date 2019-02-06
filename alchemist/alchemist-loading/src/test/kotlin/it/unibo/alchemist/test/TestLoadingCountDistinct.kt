@@ -1,7 +1,6 @@
 package it.unibo.alchemist.test
 
 import it.unibo.alchemist.loader.export.StatUtil
-import it.unibo.alchemist.loader.export.statistic.CountDistinct
 import org.apache.commons.math3.stat.descriptive.UnivariateStatistic
 import org.junit.Assert
 import org.junit.Test

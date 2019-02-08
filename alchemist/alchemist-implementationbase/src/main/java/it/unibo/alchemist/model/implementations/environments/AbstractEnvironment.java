@@ -225,16 +225,16 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
 
     @Override
     public final ListSet<Node<T>> getNodesWithinRange(final Node<T> center, final double range) {
-        /*
-         * Remove the center node
-         */
         final P centerPosition = getPosition(center);
         if (centerPosition == null) {
             throw new IllegalArgumentException("Node " + center + " was not part of this environment");
         }
         final ListSet<Node<T>> res = new LinkedListSet<>(getAllNodesInRange(centerPosition, range));
         if (!res.remove(center)) {
-            throw new IllegalStateException("Either the provided range (" + range + ") is too small for queries to work without losses of precision, or the environment is an inconsistent state.");
+            throw new IllegalStateException("Either the provided range (" + range + ") is too small"
+                    + " for queries to work without losses of precision, or the environment is an inconsistent state."
+                    + " Node " + center + " located at " + centerPosition + " was the query center, but within range "
+                    + range + " only nodes " + res + " were found in the environment.");
         }
         return res;
     }

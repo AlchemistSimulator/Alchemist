@@ -9,17 +9,22 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
+        classpath "gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:$spotBugsPluginVersion"
         classpath "gradle.plugin.org.jmailen.gradle:kotlinter-gradle:$ktlintVersion"
         classpath "org.danilopianini:build-commons:${buildCommonsVersion}"
         classpath "org.danilopianini:javadoc.io-linker:${javadocIOLinkerVersion}"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:${dokkaVersion}"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
         classpath "com.gradle:build-scan-plugin:${buildScanPluginVersion}"
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+'
     }
 }
 
 allprojects {
 
+    if(!JavaVersion.current().java11Compatible){
+        project.version += "-j8"
+    }
     scalaVersion = "${scalaMajorVersion}.${scalaMinorVersion}"
 
     apply plugin: 'org.danilopianini.build-commons'
@@ -27,6 +32,12 @@ allprojects {
     apply plugin: 'kotlin'
     apply plugin: 'org.jetbrains.dokka'
     apply plugin: "org.jmailen.kotlinter"
+    apply plugin: 'com.jfrog.bintray'
+
+    repositories {
+        // Allow usage of protelis betas
+        maven { url "https://dl.bintray.com/protelis/Protelis/" }
+    }
 
     compileKotlin {
         kotlinOptions {
@@ -34,9 +45,11 @@ allprojects {
         }
     }
 
+    jacoco {
+        toolVersion = jacocoVersion
+    }
+
     configurations {
-        all*.exclude group: 'org.eclipse.xtext', module: 'org.eclipse.xtext.dependencies'
-        all*.exclude group: 'org.eclipse.platform', module: 'org.eclipse.equinox.common'
         all {
             if(!it.name.contains('antlr')) {
                 resolutionStrategy {
@@ -51,15 +64,30 @@ allprojects {
         testLogging { events "passed", "skipped", "failed", "standardError" }
     }
 
-    tasks.withType(Checkstyle) {
-        dependsOn(test)
-        showViolations = false
+    apply plugin: 'com.github.spotbugs'
+    spotbugs {
+        ignoreFailures = true
+        effort = "max"
+        reportLevel = "low"
+        def excludeFile = new File("${project.rootProject.projectDir}/findbugsExcludes.xml");
+        if (excludeFile.exists()) {
+            excludeFilterConfig = project.resources.text.fromFile(excludeFile)
+        }
     }
     tasks.withType(FindBugs) {
-        dependsOn(test)
+        enabled = false
     }
-    tasks.withType(Pmd) {
-        dependsOn(test)
+    tasks.withType(com.github.spotbugs.SpotBugsTask) {
+        reports {
+            xml.enabled = false
+            html.enabled = true
+        }
+    }
+    checkstyle {
+        configDir = file("${rootProject.projectDir}")
+    }
+    tasks.withType(Checkstyle) {
+        showViolations = false
     }
     kotlinter {
         ignoreFailures = false
@@ -71,14 +99,14 @@ allprojects {
     dependencies {
         implementation "org.apache.commons:commons-math3:$math3Version"
         implementation "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
-        implementation "com.google.code.findbugs:findbugs:$findBugsVersion"
+        implementation "com.github.spotbugs:spotbugs:$spotBugsVersion"
         implementation "org.slf4j:slf4j-api:$slf4jVersion"
         implementation "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
         implementation "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
         implementation "org.danilopianini:thread-inheritable-resource-loader:${resLoaderVersion}"
         runtimeOnly "ch.qos.logback:logback-classic:$logbackVersion"
         testImplementation "junit:junit:$junitVersion"
-        testRuntimeOnly "ch.qos.logback:logback-classic:$logbackVersion"
+        runtimeOnly "ch.qos.logback:logback-classic:$logbackVersion"
         doclet "org.jboss.apiviz:apiviz:$apivizVersion"
     }
 
@@ -179,7 +207,36 @@ allprojects {
             }
         }
     }
-    
+    def apiKeyName = 'BINTRAY_API_KEY'
+    def userKeyName = 'BINTRAY_USER'
+    bintray {
+        user = System.env[userKeyName]
+        key = System.env[apiKeyName]
+        publications = ['main']
+        override = true
+        pkg {
+            repo = longName
+            name = project.name
+            userOrg = 'alchemist-simulator'
+            vcsUrl = "$scmRootUrl/$scmRepoName"
+            licenses = ['GPL-3.0-or-later']
+            version {
+                name = project.version
+            }
+        }
+    }
+    bintrayUpload.onlyIf {
+        def hasKey = System.env[apiKeyName] != null;
+        def hasUser = System.env[userKeyName] != null
+        if (!hasKey) {
+            println("The $apiKeyName environment variable must be set in order for the bintray deployment to work")
+        }
+        if (!hasUser) {
+            println("The $userKeyName environment variable must be set in order for the bintray deployment to work")
+        }
+        return hasKey && hasUser
+    }
+
     /*
      * Configure Dokka to run before Javadoc, so that Kotlin classes are correctly documented
      * and doclet still applied for Java classes. Then copy missing files and lowercase files
@@ -190,6 +247,9 @@ allprojects {
         dependsOn(dokka)
     }
     dokka {
+        if (JavaVersion.current().java9Compatible) {
+            enabled = false
+        }
         outputDirectory = "$buildDir/dokka"
         reportUndocumented = false
         impliedPlatforms = ["JVM"]
@@ -277,7 +337,8 @@ task fatJar(type: Jar, dependsOn: subprojects.jar) {
     manifest {
         attributes 'Implementation-Title': 'Alchemist',
                 'Implementation-Version': rootProject.version,
-                'Main-Class': 'it.unibo.alchemist.Alchemist'
+                'Main-Class': 'it.unibo.alchemist.Alchemist',
+                'Automatic-Module-Name': 'it.unibo.alchemist'
     }
     baseName = "${rootProject.name}-redist"
     zip64 = true

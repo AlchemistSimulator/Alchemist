@@ -21,6 +21,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -42,6 +44,8 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
+import it.unibo.alchemist.loader.variables.GroovyVariable;
+import it.unibo.alchemist.loader.variables.ScriptVariable;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.jirf.Factory;
@@ -137,6 +141,7 @@ import static java.util.ResourceBundle.getBundle;
 /**
  * Loads a properly formatted YAML file and provides method for instancing a batch of scenarios.
  */
+@SuppressWarnings("UnstableApiUsage")
 public final class YamlLoader implements Loader {
 
     private static final long serialVersionUID = 1L;
@@ -183,6 +188,12 @@ public final class YamlLoader implements Loader {
     private static final String VALUE_FILTER = SYNTAX.getString("value-filter");
     private static final String VALUES = SYNTAX.getString("values");
     private static final String VARIABLES = SYNTAX.getString("variables");
+    @SuppressWarnings("deprecation")
+    private static final Map<String, Function<String, ScriptVariable<?>>> SUPPORTED_LANGUAGES = ImmutableMap.of(
+            "groovy", GroovyVariable::new,
+            "javascript", JavascriptVariable::new,
+            "scala", ScalaVariable::new
+    );
     private static final Map<Class<?>, Map<String, Class<?>>> DEFAULT_MANDATORY_PARAMETERS = ImmutableMap.<Class<?>, Map<String, Class<?>>>builder()
             .put(Layer.class, ImmutableMap.of(TYPE, CharSequence.class, MOLECULE, CharSequence.class))
             .build();
@@ -200,9 +211,8 @@ public final class YamlLoader implements Loader {
                     final Object formula = m.get(FORMULA);
                     return formula instanceof Number
                         ? new NumericConstant((Number) formula)
-                        : m.getOrDefault(LANGUAGE, "").toString().equalsIgnoreCase("scala")
-                            ? new ScalaVariable<>(formula.toString())
-                            : new JavascriptVariable(formula.toString());
+                        : SUPPORTED_LANGUAGES.get(m.getOrDefault(LANGUAGE, "groovy").toString().toLowerCase())
+                            .apply(formula.toString());
                 }));
     private static final BuilderConfiguration<FilteringPolicy> FILTERING_CONFIG = new BuilderConfiguration<>(
             ImmutableMap.of(NAME, CharSequence.class), ImmutableMap.of(), makeBaseFactory(), m -> CommonFilters.fromString(m.get(NAME).toString()));
@@ -557,7 +567,7 @@ public final class YamlLoader implements Loader {
                     emptyConfig(factory, () -> incarnation.createNode(simRng, env, null)),
                     singleParamConfig(factory, o -> incarnation.createNode(simRng, env, o.toString()))),
                     factory);
-            final Builder<Shape> shapeBuilder = new Builder<>(Shape.class, emptyConfig(factory, () -> p -> true), factory);
+            final Builder<Shape<P>> shapeBuilder = new Builder<>(Shape.class, emptyConfig(factory, () -> p -> true), factory);
             for (final Object dispObj: dispList) {
                 final Map<String, Object> dispMap = cast(factory, MAP_STRING_OBJECT, dispObj, "displacement");
                 factory.registerSingleton(RandomGenerator.class,  scenarioRng);
@@ -568,10 +578,10 @@ public final class YamlLoader implements Loader {
                  * Contents
                  */
                 final List<?> contentsList = listCast(factory, dispMap.get(CONTENTS), "contents");
-                final Table<Shape, Molecule, String> shapes = HashBasedTable.create(contentsList.size(), contentsList.size());
+                final Table<Shape<P>, Molecule, String> shapes = HashBasedTable.create(contentsList.size(), contentsList.size());
                 for (final Object contentObj: contentsList) {
                     final Map<String, Object> contentMap = cast(factory, MAP_STRING_OBJECT, contentObj, "content");
-                    final Shape shape = shapeBuilder.build(contentMap.get(IN));
+                    final Shape<P> shape = shapeBuilder.build(contentMap.get(IN));
                     final Molecule molecule = molBuilder.build(contentMap.get(MOLECULE));
                     final Object concObj = contentMap.get(CONCENTRATION);
                     shapes.put(shape, molecule, concObj == null ? "" : concObj.toString());
@@ -586,8 +596,8 @@ public final class YamlLoader implements Loader {
                     /*
                      * Node contents
                      */
-                    for (final Cell<Shape, Molecule, String> entry: shapes.cellSet()) {
-                        final Shape shape = entry.getRowKey();
+                    for (final Cell<Shape<P>, Molecule, String> entry: shapes.cellSet()) {
+                        final Shape<P> shape = entry.getRowKey();
                         if (shape == null) {
                             throw new IllegalStateException("Illegal null shape in " + shapes);
                         }
@@ -716,6 +726,9 @@ public final class YamlLoader implements Loader {
         factory.registerImplicit(double.class, Time.class, DoubleTime::new);
         factory.registerImplicit(List.class, Number[].class, l -> ((List<?>) l).stream().map(e -> factory.convertOrFail(Number.class, e)).toArray(Number[]::new));
         factory.registerImplicit(CharSequence.class, FilteringPolicy.class, s -> CommonFilters.fromString(s.toString()));
+        factory.registerImplicit(Number.class, double.class, Number::doubleValue);
+        factory.registerImplicit(double.class, BigDecimal.class, BigDecimal::new);
+        factory.registerImplicit(long.class, BigInteger.class, BigInteger::valueOf);
         return factory;
     }
 
@@ -866,7 +879,7 @@ public final class YamlLoader implements Loader {
             }
             return otherwise.get();
         }
-        public boolean matches(final Object o) {
+        private boolean matches(final Object o) {
             return ifMap(o, m -> 
                 m.keySet().containsAll(mandatoryFields.keySet())
                 && Sets.union(mandatoryFields.keySet(), optionalFields.keySet()).containsAll(m.keySet()),

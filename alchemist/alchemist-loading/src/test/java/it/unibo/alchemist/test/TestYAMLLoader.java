@@ -8,6 +8,7 @@
  ******************************************************************************/
 package it.unibo.alchemist.test;
 
+import it.unibo.alchemist.ClassPathScanner;
 import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -21,6 +22,10 @@ import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.test.util.TestNode;
+import org.junit.Assert;
+import org.junit.Test;
+import org.kaikikm.threadresloader.ResourceLoader;
+
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
@@ -49,7 +54,7 @@ public class TestYAMLLoader {
      * To run a single test, just change from "any two digits" to the exact test
      * number. Yay!
      */
-    private static final String ISAC_REGEX = "\\d{2}-.*\\.yml";
+    private static final String ISAC_REGEX = ".*/\\d{2}-.*\\.yml";
 
     /**
      * Tests building a custom implementation of time distribution.
@@ -57,11 +62,9 @@ public class TestYAMLLoader {
     @Test
     public void testAnyRealDistribution() {
         final Environment<?, ?> env = testNoVar("synthetic/anyrealdistribution.yml");
-        env.forEach(n -> {
-            n.forEach(r -> {
-                assertTrue(r.getTimeDistribution() instanceof AnyRealDistribution);
-            });
-        });
+        env.forEach(n -> n.forEach(r -> {
+            assertTrue(r.getTimeDistribution() instanceof AnyRealDistribution);
+        }));
     }
 
     /**
@@ -84,10 +87,7 @@ public class TestYAMLLoader {
      */
     @Test
     public void testISAC2016Lab() {
-        final Reflections reflections = new Reflections(new ConfigurationBuilder()
-                .setUrls(ClasspathHelper.forPackage("isac"))
-                .setScanners(new ResourcesScanner()));
-        reflections.getResources(Pattern.compile(ISAC_REGEX))
+        ClassPathScanner.resourcesMatchingAsStream(ISAC_REGEX, "isac")
             .forEach(TestYAMLLoader::testNoVar);
     }
 
@@ -104,10 +104,13 @@ public class TestYAMLLoader {
         assertEquals(2L, layers.stream()
                 .filter(l -> l instanceof StepLayer)
                 .count());
-        final Incarnation<?, ?> inc = SupportedIncarnations.get("sapere").get();
+        final Incarnation<?, ?> inc = SupportedIncarnations.get("sapere").orElseThrow(
+                () -> new IllegalStateException("No SAPERE incarnation available"));
         final Molecule a = inc.createMolecule("A");
+        assertTrue(env.getLayer(a).isPresent());
         assertTrue(env.getLayer(a).get() instanceof StepLayer);
         final Molecule b = inc.createMolecule("B");
+        assertTrue(env.getLayer(b).isPresent());
         assertTrue(env.getLayer(b).get() instanceof StepLayer);
     }
 
@@ -125,9 +128,7 @@ public class TestYAMLLoader {
     @Test
     public void testMultipleMolecules() {
         final Environment<?, ?> env = testNoVar("synthetic/multiplemolecule.yml");
-        env.forEach(n -> {
-            assertEquals(4, n.getChemicalSpecies());
-        });
+        env.forEach(n -> assertEquals(4, n.getChemicalSpecies()));
     }
 
     /**
@@ -169,10 +170,9 @@ public class TestYAMLLoader {
         assertEquals(dependencies.get(0), "dependencies_test.txt");
     }
 
-    private static <T, P extends Position<P>> Environment<T, P> testLoading(final String resource, final Map<String, Double> vars) {
-        final InputStream res = ResourceLoader.getResourceAsStream(resource);
-        assertNotNull("Missing test resource " + resource, res);
-        final Environment<T, P> env = new YamlLoader(res).getWith(vars);
+    private static <T, P extends Position<P>> Environment<T, P> testLoading(final InputStream resource, final Map<String, Double> vars) {
+        assertNotNull("Missing test resource " + resource, resource);
+        final Environment<T, P> env = new YamlLoader(resource).getWith(vars);
         final Simulation<T, P> sim = new Engine<>(env, 10000);
         sim.play();
 //        if (!java.awt.GraphicsEnvironment.isHeadless()) {
@@ -183,8 +183,12 @@ public class TestYAMLLoader {
         return env;
     }
 
-    private static <T> Environment<T, ?> testNoVar(final String resource) {
+    private static <T> Environment<T, ?> testNoVar(final InputStream resource) {
         return testLoading(resource, Collections.emptyMap());
+    }
+
+    private static <T> Environment<T, ?> testNoVar(final String resource) {
+        return testLoading(ResourceLoader.getResourceAsStream(resource), Collections.emptyMap());
     }
 
 }

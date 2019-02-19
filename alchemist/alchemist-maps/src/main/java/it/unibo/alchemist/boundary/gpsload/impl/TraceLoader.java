@@ -23,13 +23,13 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import it.unibo.alchemist.ClassPathScanner;
 import org.apache.commons.io.input.BoundedInputStream;
 import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedFunction;
 import org.jooq.lambda.tuple.Tuple2;
 import org.kaikikm.threadresloader.ResourceLoader;
 import org.openstreetmap.osmosis.osmbinary.file.FileFormatException;
-import org.reflections.Reflections;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import it.unibo.alchemist.boundary.gpsload.api.GPSFileLoader;
@@ -41,8 +41,7 @@ import it.unibo.alchemist.model.interfaces.GPSTrace;
  */
 public class TraceLoader implements Iterable<GPSTrace> {
 
-    private static final Map<String, GPSFileLoader> LOADER = new Reflections()
-            .getSubTypesOf(GPSFileLoader.class).stream()
+    private static final Map<String, GPSFileLoader> LOADER = ClassPathScanner.subTypesOf(GPSFileLoader.class).stream()
             .map(Unchecked.function(Class::newInstance))
             .flatMap(l -> l.supportedExtensions().stream()
                     .map(ext -> new Tuple2<>(ext.toLowerCase(Locale.US), l)))

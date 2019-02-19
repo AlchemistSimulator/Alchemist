@@ -11,16 +11,17 @@ package it.unibo.alchemist.loader.export;
 import java.util.Optional;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableSet;
+import it.unibo.alchemist.ClassPathScanner;
 import org.apache.commons.math3.stat.descriptive.UnivariateStatistic;
-import org.reflections.Reflections;
 
 /**
  * Utility to translate statistics names into a {@link UnivariateStatistic}.
  */
 public final class StatUtil {
 
-    private static final Set<Class<? extends UnivariateStatistic>> STATISTICS = new Reflections()
-            .getSubTypesOf(UnivariateStatistic.class);
+    private static final Set<Class<? extends UnivariateStatistic>> STATISTICS = ImmutableSet.copyOf(
+            ClassPathScanner.subTypesOf(UnivariateStatistic.class));
 
     private StatUtil() {
     }

@@ -71,7 +71,10 @@ public class ProjectGUI extends Application {
      */
     @Override
     public void start(final Stage primaryStage) throws IOException {
-        Thread.setDefaultUncaughtExceptionHandler((thread, ex) -> FXUtil.errorAlert(ex));
+        Thread.setDefaultUncaughtExceptionHandler((thread, ex) -> {
+            ex.printStackTrace();
+            FXUtil.errorAlert(ex);
+        });
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Alchemist");
         this.primaryStage.getIcons().add(SVGImageUtils.getSvgImage(DEFAULT_ALCHEMIST_ICON_PATH));

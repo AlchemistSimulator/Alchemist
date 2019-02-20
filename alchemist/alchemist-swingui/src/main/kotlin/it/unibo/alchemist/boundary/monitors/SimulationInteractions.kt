@@ -155,25 +155,25 @@ class InteractionManager<T, P : Position2D<P>>(
             runMutex.release()
         }
         Keybinds[ActionFromKey.DELETE].ifPresent {
-            keyboard[ActionOnKey.PRESSED + it] = deleteNodes
+            keyboard[ActionOnKey.PRESSED with it] = deleteNodes
         }
 
         // keyboard-pan
         Keybinds[ActionFromKey.PAN_NORTH].ifPresent {
-            keyboard[ActionOnKey.PRESSED + it] = { keyboardPan += Direction2D.NORTH }
-            keyboard[ActionOnKey.RELEASED + it] = { keyboardPan -= Direction2D.NORTH }
+            keyboard[ActionOnKey.PRESSED with it] = { keyboardPan += Direction2D.NORTH }
+            keyboard[ActionOnKey.RELEASED with it] = { keyboardPan -= Direction2D.NORTH }
         }
         Keybinds[ActionFromKey.PAN_SOUTH].ifPresent {
-            keyboard[ActionOnKey.PRESSED + it] = { keyboardPan += Direction2D.SOUTH }
-            keyboard[ActionOnKey.RELEASED + it] = { keyboardPan -= Direction2D.SOUTH }
+            keyboard[ActionOnKey.PRESSED with it] = { keyboardPan += Direction2D.SOUTH }
+            keyboard[ActionOnKey.RELEASED with it] = { keyboardPan -= Direction2D.SOUTH }
         }
         Keybinds[ActionFromKey.PAN_EAST].ifPresent {
-            keyboard[ActionOnKey.PRESSED + it] = { keyboardPan += Direction2D.EAST }
-            keyboard[ActionOnKey.RELEASED + it] = { keyboardPan -= Direction2D.EAST }
+            keyboard[ActionOnKey.PRESSED with it] = { keyboardPan += Direction2D.EAST }
+            keyboard[ActionOnKey.RELEASED with it] = { keyboardPan -= Direction2D.EAST }
         }
         Keybinds[ActionFromKey.PAN_WEST].ifPresent {
-            keyboard[ActionOnKey.PRESSED + it] = { keyboardPan += Direction2D.WEST }
-            keyboard[ActionOnKey.RELEASED + it] = { keyboardPan -= Direction2D.WEST }
+            keyboard[ActionOnKey.PRESSED with it] = { keyboardPan += Direction2D.WEST }
+            keyboard[ActionOnKey.RELEASED with it] = { keyboardPan -= Direction2D.WEST }
         }
 
         // move
@@ -202,13 +202,13 @@ class InteractionManager<T, P : Position2D<P>>(
             }
         }
         Keybinds[ActionFromKey.MOVE].ifPresent {
-            keyboard[ActionOnKey.PRESSED + it] = enqueueMove
+            keyboard[ActionOnKey.PRESSED with it] = enqueueMove
         }
         mouse[MouseButtonTriggerAction(ActionOnMouse.CLICKED, MouseButton.MIDDLE)] = enqueueMove
 
         // forward one step
         Keybinds[ActionFromKey.ONE_STEP].ifPresent {
-            keyboard[ActionOnKey.PRESSED + it] = {
+            keyboard[ActionOnKey.PRESSED with it] = {
                 invokeOnSimulation {
                     if (getStatus() == Status.PAUSED) {
                         goToStep(getStep() + 1)

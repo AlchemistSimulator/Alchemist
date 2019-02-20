@@ -19,7 +19,7 @@ enum class ActionOnKey {
     PRESSED,
     RELEASED;
 
-    operator fun plus(key: KeyCode): KeyboardTriggerAction = KeyboardTriggerAction(this, key)
+    infix fun with(key: KeyCode): KeyboardTriggerAction = KeyboardTriggerAction(this, key)
 }
 
 data class KeyboardTriggerAction(val type: ActionOnKey, val key: KeyCode) : TriggerAction

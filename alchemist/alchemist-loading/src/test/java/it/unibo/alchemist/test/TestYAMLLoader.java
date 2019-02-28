@@ -31,14 +31,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
-import org.junit.Assert;
-import org.junit.Test;
-import org.kaikikm.threadresloader.ResourceLoader;
-import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -73,7 +65,7 @@ public class TestYAMLLoader {
     @Test
     public void testCustomNodes() {
         testNoVar("synthetic/customnode.yml")
-        .forEach(n -> assertTrue(
+                .forEach(n -> assertTrue(
                 "Node are not instances of " + TestNode.class.getName()
                 + " as expected, but " + n.getClass().getName() + " instead",
                 n instanceof TestNode));

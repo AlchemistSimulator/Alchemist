@@ -211,7 +211,7 @@ public final class YamlLoader implements Loader {
                     final Object formula = m.get(FORMULA);
                     return formula instanceof Number
                         ? new NumericConstant((Number) formula)
-                        : SUPPORTED_LANGUAGES.get(m.getOrDefault(LANGUAGE, "groovy").toString().toLowerCase())
+                        : SUPPORTED_LANGUAGES.get(m.getOrDefault(LANGUAGE, "groovy").toString().toLowerCase(Locale.ENGLISH))
                             .apply(formula.toString());
                 }));
     private static final BuilderConfiguration<FilteringPolicy> FILTERING_CONFIG = new BuilderConfiguration<>(

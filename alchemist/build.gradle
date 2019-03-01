@@ -167,11 +167,11 @@ allprojects {
                         email = 'niccolo.maltoni@studio.unibo.it'
                     }
                     contributor {
-                        name = 'Luca Mella'
+                        name = 'Vuksa Mihajlovic'
                         email = 'vuksa.mihajlovic@studio.unibo.it'
                     }
                     contributor {
-                        name = 'Vuksa Mihajlovic'
+                        name = 'Luca Mella'
                         email = 'luca.mella@studio.unibo.it'
                         url = 'http://apice.unibo.it/xwiki/bin/view/XWiki/LucaMella/'
                     }

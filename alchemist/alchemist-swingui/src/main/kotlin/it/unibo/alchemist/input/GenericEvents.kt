@@ -56,6 +56,9 @@ interface EventDispatcher<T : TriggerAction, E : Event> {
  */
 abstract class AbstractEventDispatcher<T : TriggerAction, E : Event> : EventDispatcher<T, E> {
 
+    /**
+    * Inheriting classes can access and modify the collection of triggers to change the behaviour of the dispatcher.
+    */
     protected var triggers: Map<T, (event: E) -> Unit> = emptyMap()
 
     override fun set(trigger: T, job: (event: E) -> Unit) {

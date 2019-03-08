@@ -112,7 +112,8 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
     Neighborhood<T> getNeighborhood(Node<T> center);
 
     /**
-     * Allows to access a node known its id.
+     * Allows to access a node known its id. Depending on the implementation, this method may or not be optimized
+     * (namely, id could run in constant or linear time with the number of nodes).
      * 
      * @param id
      *            the node's ID

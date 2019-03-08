@@ -22,6 +22,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BooleanSupplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.common.collect.Sets;
@@ -194,7 +195,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     private void finalizeConstructor() {
-        for (final Node<T> n : env.getNodes()) {
+        for (final Node<T> n : env) {
             for (final Reaction<T> r : n.getReactions()) {
                 scheduleReaction(r);
             }

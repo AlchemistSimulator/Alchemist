@@ -16,3 +16,4 @@ out/
 *.iml
 *.kate-swp
 */.idea/libraries 
+.idea/

@@ -8,15 +8,11 @@
 package it.unibo.alchemist.test;
 
 import java.io.InputStream;
-import java.util.AbstractMap;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.math3.util.FastMath;
-import org.apache.commons.math3.util.Pair;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kaikikm.threadresloader.ResourceLoader;

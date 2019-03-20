@@ -40,7 +40,13 @@ import static org.junit.Assert.*;
  */
 public class TestBioRect2DEnvironmentNoOverlap {
 
-    private static final double DELTA = 1e-6;
+    /**
+     * The test seems to work for values of delta up to 2*10^(-8)
+     *
+     * As future changes in the core can vary the sensibility of floating point operations, leading to an undesired
+     * test failure, the value has been set to the next order of magnitude.
+     */
+    private static final double DELTA = 1e-7;
     private static final double BIG_CELL_DIAMETER = 30;
     private static final double MEDIUM_CELL_DIAMETER = 20;
     private static final double LITTLE_CELL_DIAMETER = 10;

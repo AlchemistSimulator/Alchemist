@@ -54,6 +54,7 @@ interface Position<P : Position<P>> : Serializable {
     /**
      * Invokes #getCoordinate. Used to allow Component access to Kotlin sources
      */
+    @JvmDefault
     operator fun get(i: Int): Double = getCoordinate(i)
 
     /**

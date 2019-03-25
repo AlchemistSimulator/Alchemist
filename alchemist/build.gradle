@@ -49,6 +49,7 @@ allprojects {
     compileKotlin {
         kotlinOptions {
             jvmTarget = 1.8
+            freeCompilerArgs = ["-Xjvm-default=enable"]
         }
     }
 
@@ -92,7 +93,6 @@ allprojects {
     }
     checkstyle {
         configDir = file("${rootProject.projectDir}")
-        println(configDir)
     }
     tasks.withType(Checkstyle) {
         showViolations = false

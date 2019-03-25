@@ -63,7 +63,6 @@ allprojects {
     compileTestJava.options.encoding = "UTF-8"
 
     test {
-        useJUnitPlatform()
         failFast = true
         testLogging { events "passed", "skipped", "failed", "standardError" }
     }
@@ -110,7 +109,6 @@ allprojects {
         implementation "org.danilopianini:thread-inheritable-resource-loader:${resLoaderVersion}"
         runtimeOnly "ch.qos.logback:logback-classic:$logbackVersion"
         testImplementation "junit:junit:$junitVersion"
-        testImplementation "io.kotlintest:kotlintest-runner-junit5:$kotlinTestVersion"
         runtimeOnly "ch.qos.logback:logback-classic:$logbackVersion"
         doclet "org.jboss.apiviz:apiviz:$apivizVersion"
     }

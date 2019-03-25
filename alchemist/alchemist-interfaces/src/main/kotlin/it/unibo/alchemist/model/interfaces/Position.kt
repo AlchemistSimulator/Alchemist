@@ -88,4 +88,3 @@ interface Position<P : Position<P>> : Serializable {
      */
     operator fun minus(other: P): P
 }
-

@@ -6,7 +6,7 @@ language: java
 jdk:
   - openjdk8
   - openjdk11
-#  - openjdk12 Temporarily disabled due to https://github.com/travis-ci/travis-ci/issues/10411
+  - openjdk12
 
 before_install:
   - sudo apt-get -qq update

@@ -63,7 +63,7 @@ allprojects {
     compileTestJava.options.encoding = "UTF-8"
 
     test {
-        // useJUnitPlatform()
+        useJUnitPlatform()
         failFast = true
         testLogging { events "passed", "skipped", "failed", "standardError" }
     }

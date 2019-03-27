@@ -109,13 +109,8 @@ public final class BiochemicalReaction extends ChemicalReaction<Double> {
 
     @Override
     public void setConditions(final List<Condition<Double>> c) {
-        for (final Condition<Double> cond : c) {
-            if (cond instanceof AbstractNeighborCondition) {
-                neighborConditionsPresent = true;
-                break;
-            }
-        }
         super.setConditions(c);
+        neighborConditionsPresent = c.stream().anyMatch(it -> it instanceof AbstractNeighborCondition);
     }
 
 }

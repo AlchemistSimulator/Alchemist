@@ -7,30 +7,28 @@
  */
 package it.unibo.alchemist.test
 
-import io.kotlintest.*
-import io.kotlintest.inspectors.forAny
+import io.kotlintest.Matcher
+import io.kotlintest.Result
+import io.kotlintest.TestCase
 import io.kotlintest.matchers.collections.shouldContain
-import io.kotlintest.matchers.numerics.shouldBeGreaterThan
-import io.kotlintest.matchers.numerics.shouldBeGreaterThanOrEqual
-import io.kotlintest.matchers.types.shouldBeInstanceOf
-import io.kotlintest.matchers.types.shouldBeSameInstanceAs
-import io.kotlintest.specs.AbstractAnnotationSpec
+import io.kotlintest.shouldBe
+import io.kotlintest.shouldHave
 import io.kotlintest.specs.StringSpec
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor
 import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.model.BiochemistryIncarnation
 import it.unibo.alchemist.model.implementations.conditions.AbstractNeighborCondition
-import it.unibo.alchemist.model.implementations.conditions.BiomolPresentInNeighbor
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.implementations.times.DoubleTime
-import it.unibo.alchemist.model.interfaces.*
+import it.unibo.alchemist.model.interfaces.CellNode
+import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.Reaction
+import it.unibo.alchemist.model.interfaces.Time
 import org.apache.commons.math3.random.MersenneTwister
-import java.util.stream.Collectors
-import java.util.stream.Stream
 import kotlin.properties.Delegates
 
 private const val DIRECT_REACTION = "[token] --> [token in neighbor]"
@@ -44,7 +42,7 @@ private val INITIAL_POSITIONS = Pair(Euclidean2DPosition(0.0, 0.0), Euclidean2DP
 private var environment: Environment<Double, Euclidean2DPosition> by Delegates.notNull()
 private var nodes: Pair<CellNode<Euclidean2DPosition>, CellNode<Euclidean2DPosition>> by Delegates.notNull()
 
-class TestNeighborhood : StringSpec() {
+class TestMoleculeSwapWithinNeighborhood : StringSpec() {
     override fun beforeTest(testCase: TestCase) {
         environment = BioRect2DEnvironment()
         nodes = Pair(CellNodeImpl(environment), CellNodeImpl(environment))
@@ -78,7 +76,7 @@ class TestNeighborhood : StringSpec() {
 
 private fun startSimulation() {
     val simulation = Engine(environment, DoubleTime.INFINITE_TIME)
-    simulation.addOutputMonitor(object: OutputMonitor<Double, Euclidean2DPosition> {
+    simulation.addOutputMonitor(object : OutputMonitor<Double, Euclidean2DPosition> {
         override fun initialized(e: Environment<Double, Euclidean2DPosition>) {
             nodes.first.getConcentration(BIOMOLECULE) shouldBe 1.0
             nodes.second.getConcentration(BIOMOLECULE) shouldBe 0.0
@@ -98,30 +96,29 @@ private fun startSimulation() {
     simulation.run()
 }
 
-private fun matcher(test: (Reaction<Double>) -> Result) = object: Matcher<Reaction<Double>> {
+private fun matcher(test: (Reaction<Double>) -> Result) = object : Matcher<Reaction<Double>> {
     override fun test(reaction: Reaction<Double>) = test.invoke(reaction)
 }
 
 private val Int.conditions: Matcher<Reaction<Double>>
-    get() = matcher{ Result(
+    get() = matcher { Result(
             it.conditions.size == this@conditions,
-            "reaction should have ${this@conditions} conditions but it has ${it.conditions.size}",
-            "reaction should not have ${this@conditions} conditions but it has"
-    )}
+            "reaction should have ${ this@conditions } conditions but it has ${ it.conditions.size }",
+            "reaction should not have ${ this@conditions } conditions but it has"
+    ) }
 
 private val Int.neighborConditions: Matcher<Reaction<Double>>
-    get() = matcher{ Result(
-            it.conditions.filter{ c -> c is AbstractNeighborCondition }.size == this@neighborConditions,
-            "reaction should have ${this@neighborConditions} neighbor conditions but it has " +
-                    "${it.conditions.filter{ c -> c is AbstractNeighborCondition }.size}",
-            "reaction should not have ${this@neighborConditions} conditions but it has"
-    )}
-
+    get() = matcher { Result(
+            it.conditions.filter { c -> c is AbstractNeighborCondition }.size == this@neighborConditions,
+            "reaction should have ${ this@neighborConditions } neighbor conditions but it has " +
+                    "${ it.conditions.filter { c -> c is AbstractNeighborCondition }.size }",
+            "reaction should not have ${ this@neighborConditions } conditions but it has"
+    ) }
 
 private val Int.actions: Matcher<Reaction<Double>>
-    get() = matcher{
+    get() = matcher {
         Result(
             it.actions.size == this@actions,
-            "reaction should have ${this@actions} actions but it has",
-            "reaction should not have ${this@actions} actions but it has"
-    )}
+            "reaction should have ${ this@actions } actions but it has",
+            "reaction should not have ${ this@actions } actions but it has"
+    ) }

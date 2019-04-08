@@ -29,7 +29,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Position2D;
 
 /**
  * Connects two nodes if, throwing a beam from one to the other, there exists at
@@ -40,7 +40,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  * @param <T>
  * @param <P>
  */
-public final class ConnectionBeam<T, P extends Position<P>> extends ConnectWithinDistance<T, P> {
+public final class ConnectionBeam<T, P extends Position2D<P>> extends ConnectWithinDistance<T, P> {
 
     private static final long serialVersionUID = 1L;
     private static final int COORDS = 6;
@@ -59,7 +59,6 @@ public final class ConnectionBeam<T, P extends Position<P>> extends ConnectWithi
         beamWidth = beamSize;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> env) {
         final Neighborhood<T> normal = super.computeNeighborhood(center, env);
@@ -94,11 +93,11 @@ public final class ConnectionBeam<T, P extends Position<P>> extends ConnectWithi
         return normal;
     }
 
-    private boolean projectedBeamOvercomesObstacle(final Position<?> pos1, final Position<?> pos2) {
-        final double p1x = pos1.getCoordinate(0);
-        final double p1y = pos1.getCoordinate(1);
-        final double p2x = pos2.getCoordinate(0);
-        final double p2y = pos2.getCoordinate(1);
+    private boolean projectedBeamOvercomesObstacle(final P pos1, final P pos2) {
+        final double p1x = pos1.getX();
+        final double p1y = pos1.getY();
+        final double p2x = pos2.getX();
+        final double p2y = pos2.getY();
         final double x = p2x - p1x;
         final double y = p2y - p1y;
         /*

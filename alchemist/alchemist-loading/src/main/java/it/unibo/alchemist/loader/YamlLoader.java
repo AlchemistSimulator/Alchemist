@@ -45,6 +45,9 @@ import javax.annotation.Nonnull;
 
 import it.unibo.alchemist.loader.variables.GroovyVariable;
 import it.unibo.alchemist.loader.variables.ScriptVariable;
+import kotlin.Pair;
+import kotlin.Triple;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.jirf.Factory;
@@ -690,6 +693,36 @@ public final class YamlLoader implements Loader {
         factory.registerImplicit(Number.class, double.class, Number::doubleValue);
         factory.registerImplicit(double.class, BigDecimal.class, BigDecimal::new);
         factory.registerImplicit(long.class, BigInteger.class, BigInteger::valueOf);
+        /*
+         * Pairs
+         */
+        factory.registerImplicit(List.class, Pair.class, it -> {
+            if (it.size() == 2) {
+                return new Pair<>(it.get(0), it.get(1));
+            }
+            throw new IllegalArgumentException("Only a two argument list can be converted to a Pair. Provided: " + it);
+        });
+        factory.registerImplicit(Pair.class, org.apache.commons.math3.util.Pair.class,
+                it -> new org.apache.commons.math3.util.Pair<>(it.getFirst(), it.getSecond()));
+        factory.registerImplicit(org.apache.commons.math3.util.Pair.class, Pair.class,
+                it -> new Pair<>(it.getFirst(), it.getSecond()));
+        factory.registerImplicit(Pair.class, org.apache.commons.lang3.tuple.Pair.class,
+                it -> new ImmutablePair<>(it.getFirst(), it.getSecond()));
+        factory.registerImplicit(org.apache.commons.lang3.tuple.Pair.class, Pair.class,
+                it -> new Pair<>(it.getLeft(), it.getRight()));
+        /*
+         * Triples
+         */
+        factory.registerImplicit(List.class, Triple.class, it -> {
+            if (it.size() == 3) {
+                return new Triple<>(it.get(0), it.get(1), it.get(2));
+            }
+            throw new IllegalArgumentException("Only a two argument list can be converted to a Pair. Provided: " + it);
+        });
+        factory.registerImplicit(Triple.class, org.apache.commons.lang3.tuple.Triple.class,
+                it -> new org.apache.commons.lang3.tuple.ImmutableTriple<>(it.getFirst(), it.getSecond(), it.getThird()));
+        factory.registerImplicit(org.apache.commons.lang3.tuple.Triple.class, Triple.class,
+                it -> new Triple<>(it.getLeft(), it.getMiddle(), it.getRight()));
         return factory;
     }
 

@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.implementations.routes.PolygonalChain;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
@@ -27,9 +27,9 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  * @param <T>
  *            concentration type
  * @param <P>
- *            {@link Position} type
+ *            {@link Position2D} type
  */
-public final class MoveToTarget<T, P extends Position<P>> extends AbstractConfigurableMoveNode<T, P> {
+public final class MoveToTarget<T, P extends Position2D<P>> extends AbstractConfigurableMoveNode<T, P> {
 
     private static final long serialVersionUID = 1L;
     private final Molecule trackMolecule;
@@ -72,7 +72,7 @@ public final class MoveToTarget<T, P extends Position<P>> extends AbstractConfig
         if (current.getDistanceTo(target) < maxWalk) {
             return vector;
         }
-        final double angle = atan2(vector.getCoordinate(1), vector.getCoordinate(0));
+        final double angle = atan2(vector.getY(), vector.getX());
         return getEnvironment().makePosition(maxWalk * cos(angle), maxWalk * sin(angle));
     }
 

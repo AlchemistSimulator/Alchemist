@@ -118,15 +118,15 @@ public final class ChemotacticPolarization<P extends Position2D<P>> extends Abst
         for (final Node<Double> n : list) {
             final P nPos = env.getPosition(n);
             P vecTemp = env.makePosition(
-                    nPos.getCoordinate(0) - thisNodePos.getCoordinate(0),
-                    nPos.getCoordinate(1) - thisNodePos.getCoordinate(1));
-            final double vecTempModule = FastMath.sqrt(FastMath.pow(vecTemp.getCoordinate(0), 2) + FastMath.pow(vecTemp.getCoordinate(1), 2));
+                    nPos.getX() - thisNodePos.getX(),
+                    nPos.getY() - thisNodePos.getY());
+            final double vecTempModule = FastMath.sqrt(FastMath.pow(vecTemp.getX(), 2) + FastMath.pow(vecTemp.getY(), 2));
             vecTemp = env.makePosition(
-                    n.getConcentration(biomol) * (vecTemp.getCoordinate(0) / vecTempModule), 
-                    n.getConcentration(biomol) * (vecTemp.getCoordinate(1) / vecTempModule));
+                    n.getConcentration(biomol) * (vecTemp.getX() / vecTempModule),
+                    n.getConcentration(biomol) * (vecTemp.getY() / vecTempModule));
             res = env.makePosition(
-                    res.getCoordinate(0) + vecTemp.getCoordinate(0),
-                    res.getCoordinate(1) + vecTemp.getCoordinate(1));
+                    res.getX() + vecTemp.getX(),
+                    res.getY() + vecTemp.getY());
         }
         return res;
     }

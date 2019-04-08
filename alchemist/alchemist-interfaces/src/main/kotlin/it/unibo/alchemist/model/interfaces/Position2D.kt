@@ -13,6 +13,9 @@ package it.unibo.alchemist.model.interfaces
  * @param <P>
 </P> */
 interface Position2D<P : Position2D<P>> : Position<P> {
+
+    @Deprecated("Access to coordinates in a 2D manifold should be performed using getX / getY")
+    override fun getCoordinate(dim: Int): Double
     /**
      * @return horizontal position
      */

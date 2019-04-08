@@ -8,11 +8,12 @@
 package it.unibo.alchemist.loader.shapes;
 
 import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Position2D;
 
 /**
  * A bidimensional Alchemist {@link Shape} that relies on AWT {@link java.awt.Shape}.
  */
-public abstract class Abstract2DShape implements Shape {
+public abstract class Abstract2DShape<P extends Position2D<P>> implements Shape<P> {
 
     private final java.awt.Shape shape;
 
@@ -24,12 +25,12 @@ public abstract class Abstract2DShape implements Shape {
     }
 
     @Override
-    public final boolean contains(final Position position) {
+    public final boolean contains(final P position) {
         if (position.getDimensions() != 2) {
             throw new IllegalArgumentException("Only bidimensional positions are accepted by this "
                     + getClass().getSimpleName());
         }
-        return shape.contains(position.getCoordinate(0), position.getCoordinate(1));
+        return shape.contains(position.getX(), position.getY());
     }
 
     /**

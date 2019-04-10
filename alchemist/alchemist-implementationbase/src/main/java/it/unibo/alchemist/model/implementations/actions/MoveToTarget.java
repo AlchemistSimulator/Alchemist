@@ -1,11 +1,10 @@
-/*******************************************************************************
- * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
- * project's alchemist/build.gradle file.
- * 
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
  * This file is part of Alchemist, and is distributed under the terms of the
- * GNU General Public License, with a linking exception, as described in the file
- * LICENSE in the Alchemist distribution's top directory.
- ******************************************************************************/
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.model.implementations.actions;
 
 import static org.apache.commons.math3.util.FastMath.atan2;
@@ -19,7 +18,7 @@ import it.unibo.alchemist.model.implementations.routes.PolygonalChain;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
@@ -28,9 +27,9 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  * @param <T>
  *            concentration type
  * @param <P>
- *            {@link Position} type
+ *            {@link Position2D} type
  */
-public final class MoveToTarget<T, P extends Position<P>> extends AbstractConfigurableMoveNode<T, P> {
+public final class MoveToTarget<T, P extends Position2D<P>> extends AbstractConfigurableMoveNode<T, P> {
 
     private static final long serialVersionUID = 1L;
     private final Molecule trackMolecule;
@@ -73,7 +72,7 @@ public final class MoveToTarget<T, P extends Position<P>> extends AbstractConfig
         if (current.getDistanceTo(target) < maxWalk) {
             return vector;
         }
-        final double angle = atan2(vector.getCoordinate(1), vector.getCoordinate(0));
+        final double angle = atan2(vector.getY(), vector.getX());
         return getEnvironment().makePosition(maxWalk * cos(angle), maxWalk * sin(angle));
     }
 

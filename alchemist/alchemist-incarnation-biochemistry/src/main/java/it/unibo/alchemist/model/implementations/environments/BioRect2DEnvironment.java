@@ -1,20 +1,11 @@
-/*******************************************************************************
- * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
- * project's alchemist/build.gradle file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of the
- * GNU General Public License, with a linking exception, as described in the file
- * LICENSE in the Alchemist distribution's top directory.
- ******************************************************************************/
 /*
- * Copyright (C) 2010-2016, Danilo Pianini and contributors
-
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.implementations.environments;
 
 import java.util.Map;
@@ -94,8 +85,8 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
 
     @Override
     protected final boolean isAllowed(final Euclidean2DPosition p) {
-        return (p.getCoordinate(0) < maxX && p.getCoordinate(0) > minX 
-                && p.getCoordinate(1) < maxY && p.getCoordinate(1) > minY);
+        return (p.getX() < maxX && p.getX() > minX 
+                && p.getY() < maxY && p.getY() > minY);
     }
 
     @Override

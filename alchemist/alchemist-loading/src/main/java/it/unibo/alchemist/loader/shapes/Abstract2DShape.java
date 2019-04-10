@@ -1,19 +1,19 @@
-/*******************************************************************************
- * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
- * project's alchemist/build.gradle file.
- * 
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
  * This file is part of Alchemist, and is distributed under the terms of the
- * GNU General Public License, with a linking exception, as described in the file
- * LICENSE in the Alchemist distribution's top directory.
- ******************************************************************************/
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.loader.shapes;
 
 import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Position2D;
 
 /**
  * A bidimensional Alchemist {@link Shape} that relies on AWT {@link java.awt.Shape}.
  */
-public abstract class Abstract2DShape implements Shape {
+public abstract class Abstract2DShape<P extends Position2D<P>> implements Shape<P> {
 
     private final java.awt.Shape shape;
 
@@ -25,12 +25,12 @@ public abstract class Abstract2DShape implements Shape {
     }
 
     @Override
-    public final boolean contains(final Position position) {
+    public final boolean contains(final P position) {
         if (position.getDimensions() != 2) {
             throw new IllegalArgumentException("Only bidimensional positions are accepted by this "
                     + getClass().getSimpleName());
         }
-        return shape.contains(position.getCoordinate(0), position.getCoordinate(1));
+        return shape.contains(position.getX(), position.getY());
     }
 
     /**

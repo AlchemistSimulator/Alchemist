@@ -1,11 +1,10 @@
-/*******************************************************************************
- * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
- * project's alchemist/build.gradle file.
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
- * GNU General Public License, with a linking exception, as described in the file
- * LICENSE in the Alchemist distribution's top directory.
- ******************************************************************************/
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.core.implementations;
 
 import java.util.LinkedHashMap;
@@ -25,6 +24,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BooleanSupplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.common.collect.Sets;
@@ -210,7 +210,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     private void finalizeConstructor() {
-        for (final Node<T> n : env.getNodes()) {
+        for (final Node<T> n : env) {
             for (final Reaction<T> r : n.getReactions()) {
                 scheduleReaction(r);
             }

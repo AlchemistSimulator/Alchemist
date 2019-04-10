@@ -1,11 +1,10 @@
-/*******************************************************************************
- * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
- * project's alchemist/build.gradle file.
- * 
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
  * This file is part of Alchemist, and is distributed under the terms of the
- * GNU General Public License, with a linking exception, as described in the file
- * LICENSE in the Alchemist distribution's top directory.
- ******************************************************************************/
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.model.implementations.environments;
 
 import java.io.IOException;
@@ -76,12 +75,12 @@ public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements E
 
     @Override
     public final boolean intersectsObstacle(final Euclidean2DPosition p1, final Euclidean2DPosition p2) {
-        return intersectsObstacle(p1.getCoordinate(0), p1.getCoordinate(1), p2.getCoordinate(0), p2.getCoordinate(1));
+        return intersectsObstacle(p1.getX(), p1.getY(), p2.getX(), p2.getY());
     }
 
     @Override
     protected final boolean isAllowed(final Euclidean2DPosition p) {
-        return rtree.search(Geometries.point(p.getCoordinate(0), p.getCoordinate(1))).isEmpty().toBlocking().single();
+        return rtree.search(Geometries.point(p.getX(), p.getY())).isEmpty().toBlocking().single();
     }
 
     @Override

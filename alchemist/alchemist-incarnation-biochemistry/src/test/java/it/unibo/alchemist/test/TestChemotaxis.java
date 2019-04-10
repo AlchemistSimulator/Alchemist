@@ -1,11 +1,10 @@
-/*******************************************************************************
- * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
- * project's alchemist/build.gradle file.
- * 
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
  * This file is part of Alchemist, and is distributed under the terms of the
- * GNU General Public License, with a linking exception, as described in the file
- * LICENSE in the Alchemist distribution's top directory.
- ******************************************************************************/
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.test;
 
 import static org.junit.Assert.assertEquals;
@@ -93,12 +92,12 @@ public class TestChemotaxis {
         final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION); 
         r.execute();
         assertEquals(POLARIZATION_IS + cellNode1.getPolarizationVersor(),
-                cellNode1.getPolarizationVersor().getCoordinate(0),
+                cellNode1.getPolarizationVersor().getX(),
                 FastMath.sqrt(0.5),
                 PRECISION
                 );
         assertEquals(POLARIZATION_IS + cellNode1.getPolarizationVersor(), 
-                cellNode1.getPolarizationVersor().getCoordinate(1),
+                cellNode1.getPolarizationVersor().getY(),
                 FastMath.sqrt(0.5),
                 PRECISION
                 );
@@ -125,12 +124,12 @@ public class TestChemotaxis {
         final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
         r.execute();
         assertEquals(POLARIZATION_IS + cellNode1.getPolarizationVersor(), 
-                cellNode1.getPolarizationVersor().getCoordinate(0),
+                cellNode1.getPolarizationVersor().getX(),
                 0,
                 PRECISION
                 );
         assertEquals(POLARIZATION_IS + cellNode1.getPolarizationVersor(), 
-                cellNode1.getPolarizationVersor().getCoordinate(1),
+                cellNode1.getPolarizationVersor().getY(),
                 0,
                 PRECISION
                 );
@@ -154,12 +153,12 @@ public class TestChemotaxis {
         final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
         r.execute();
         assertEquals(POLARIZATION_IS + cellNode1.getPolarizationVersor(), 
-                cellNode1.getPolarizationVersor().getCoordinate(0),
+                cellNode1.getPolarizationVersor().getX(),
                 0,
                 PRECISION
                 );
         assertEquals(POLARIZATION_IS + cellNode1.getPolarizationVersor(), 
-                cellNode1.getPolarizationVersor().getCoordinate(1),
+                cellNode1.getPolarizationVersor().getY(),
                 0,
                 PRECISION
                 );
@@ -175,12 +174,12 @@ public class TestChemotaxis {
         final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
         r.execute();
         assertEquals(POLARIZATION_IS + cellNode1.getPolarizationVersor(), 
-                cellNode1.getPolarizationVersor().getCoordinate(0),
+                cellNode1.getPolarizationVersor().getX(),
                 0,
                 PRECISION
                 );
         assertEquals(POLARIZATION_IS + cellNode1.getPolarizationVersor(), 
-                cellNode1.getPolarizationVersor().getCoordinate(1),
+                cellNode1.getPolarizationVersor().getY(),
                 0,
                 PRECISION
                 );
@@ -206,12 +205,12 @@ public class TestChemotaxis {
         r1.execute();
         r2.execute();
         assertEquals(POLARIZATION_IS + cellNode1.getPolarizationVersor(), 
-                cellNode1.getPolarizationVersor().getCoordinate(0),
+                cellNode1.getPolarizationVersor().getX(),
                 0,
                 PRECISION
                 );
         assertEquals(POLARIZATION_IS + cellNode1.getPolarizationVersor(), 
-                cellNode1.getPolarizationVersor().getCoordinate(1),
+                cellNode1.getPolarizationVersor().getY(),
                 0,
                 PRECISION
                 );
@@ -268,12 +267,12 @@ public class TestChemotaxis {
         r2.execute();
         assertEquals(CELL_IS_IN_POS + env.getPosition(cellNode1), 
                 1,
-                env.getPosition(cellNode1).getCoordinate(0),
+                env.getPosition(cellNode1).getX(),
                 PRECISION
                 );
         assertEquals(CELL_IS_IN_POS + env.getPosition(cellNode1), 
                 1,
-                env.getPosition(cellNode1).getCoordinate(1),
+                env.getPosition(cellNode1).getY(),
                 PRECISION
                 );
     }
@@ -305,12 +304,12 @@ public class TestChemotaxis {
         r2.execute();
         assertEquals(CELL_IS_IN_POS + env.getPosition(cellNode1), 
                 0.5,
-                env.getPosition(cellNode1).getCoordinate(0),
+                env.getPosition(cellNode1).getX(),
                 PRECISION
                 );
         assertEquals(CELL_IS_IN_POS + env.getPosition(cellNode1), 
                 0.5,
-                env.getPosition(cellNode1).getCoordinate(1),
+                env.getPosition(cellNode1).getY(),
                 PRECISION
                 );
     }

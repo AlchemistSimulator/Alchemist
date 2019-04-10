@@ -1,11 +1,10 @@
-/*******************************************************************************
- * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
- * project's alchemist/build.gradle file.
- * 
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
  * This file is part of Alchemist, and is distributed under the terms of the
- * GNU General Public License, with a linking exception, as described in the file
- * LICENSE in the Alchemist distribution's top directory.
- ******************************************************************************/
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.test;
 
 import static org.junit.Assert.assertFalse;
@@ -61,11 +60,10 @@ public class TestGPSLoader {
         CLASS_ALIGNMENT_NO_ARG.add(CLASS_TIME_NO_ALIGNMENT);
     }
     /**
-     * 
+     * TODO: review test code, its quality is currently too low
      */
     @Test
     public void testOk() {
-
         for (final String normalizer : CLASS_ALIGNMENT_NO_ARG) {
             try {
                 this.loaderGpx = new TraceLoader(DIRECTORY_WITH_FILES, normalizer);
@@ -77,12 +75,11 @@ public class TestGPSLoader {
                         fail("not loading all trace");
                     }
                 }
-                assertFalse("Load more traces of the due", trace.hasNext());
+                assertFalse("Load more traces than expected", trace.hasNext());
             } catch (Exception e) {
                 fail(e.getMessage());
             }
         }
-
         try {
             this.loaderGpx = new TraceLoader(DIRECTORY_WITH_FILES, CLASS_TIME_ALIGNMENT_TO_TIME, 0.0, false, false);
             final Iterator<GPSTrace> trace = this.loaderGpx.iterator();
@@ -97,7 +94,6 @@ public class TestGPSLoader {
         } catch (Exception e) {
             fail(e.getMessage());
         }
-
         try {
             this.loaderGpx = new TraceLoader(DIRECTORY_WITH_SUBDIRECTORIES, true,  ALIGNMENT);
             final Iterator<GPSTrace> trace = this.loaderGpx.iterator();
@@ -109,12 +105,11 @@ public class TestGPSLoader {
                     fail("not loading all trace");
                 }
             }
-            assertTrue("the iterator is not cycle", trace.hasNext());
+            assertTrue("the iterator does not cycle", trace.hasNext());
             assertEquals(points, TOTAL_POINTS);
         } catch (Exception e) {
             fail(e.getMessage());
         }
-
     }
 
     /**

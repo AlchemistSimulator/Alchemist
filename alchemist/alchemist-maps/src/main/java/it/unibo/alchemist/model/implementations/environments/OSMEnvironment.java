@@ -1,11 +1,10 @@
-/*******************************************************************************
- * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
- * project's alchemist/build.gradle file.
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
- * GNU General Public License, with a linking exception, as described in the file
- * LICENSE in the Alchemist distribution's top directory.
- ******************************************************************************/
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.model.implementations.environments;
 
 import java.io.File;
@@ -255,7 +254,7 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
                         final Vehicle vehicle = Objects.requireNonNull(key).v;
                         final GeoPosition p1 = key.start;
                         final GeoPosition p2 = key.end;
-                        final GHRequest req = new GHRequest(p1.getCoordinate(1), p1.getCoordinate(0), p2.getCoordinate(1), p2.getCoordinate(0))
+                        final GHRequest req = new GHRequest(p1.getLatitude(), p1.getLongitude(), p2.getLatitude(), p2.getLongitude())
                                 .setAlgorithm(DEFAULT_ALGORITHM)
                                 .setVehicle(vehicle.toString())
                                 .setWeighting(ROUTING_STRATEGY);
@@ -348,8 +347,8 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
         mapLock.read();
         final GraphHopperAPI gh = navigators.get(Vehicle.BIKE);
         mapLock.release();
-        final QueryResult qr = ((GraphHopper) gh).getLocationIndex().findClosest(position.getCoordinate(1),
-                position.getCoordinate(0), EdgeFilter.ALL_EDGES);
+        final QueryResult qr = ((GraphHopper) gh).getLocationIndex()
+                .findClosest(position.getLatitude(), position.getLongitude(), EdgeFilter.ALL_EDGES);
         if (qr.isValid()) {
             final GHPoint pt = qr.getSnappedPoint();
             return Optional.of(new LatLongPosition(pt.lat, pt.lon));
@@ -513,7 +512,7 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
             if (approximation == 0) {
                 return p;
             }
-            return makePosition(approximate(p.getCoordinate(0)), approximate(p.getCoordinate(1)));
+            return makePosition(approximate(p.getLatitude()), approximate(p.getLongitude()));
         }
 
         @Override

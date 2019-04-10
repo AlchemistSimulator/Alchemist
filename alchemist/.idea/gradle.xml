@@ -3,6 +3,7 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+        <option name="createEmptyContentRootDirectories" value="true" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="gradleHome" value="/usr/share/java/gradle" />
@@ -27,26 +28,6 @@
           </set>
         </option>
         <option name="useAutoImport" value="true" />
-        <option name="myModules">
-          <set>
-            <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/alchemist-engine" />
-            <option value="$PROJECT_DIR$/alchemist-grid" />
-            <option value="$PROJECT_DIR$/alchemist-implementationbase" />
-            <option value="$PROJECT_DIR$/alchemist-incarnation-biochemistry" />
-            <option value="$PROJECT_DIR$/alchemist-incarnation-protelis" />
-            <option value="$PROJECT_DIR$/alchemist-incarnation-sapere" />
-            <option value="$PROJECT_DIR$/alchemist-incarnation-scafi" />
-            <option value="$PROJECT_DIR$/alchemist-interfaces" />
-            <option value="$PROJECT_DIR$/alchemist-loading" />
-            <option value="$PROJECT_DIR$/alchemist-maps" />
-            <option value="$PROJECT_DIR$/alchemist-projectview" />
-            <option value="$PROJECT_DIR$/alchemist-runner" />
-            <option value="$PROJECT_DIR$/alchemist-sapere-mathexp" />
-            <option value="$PROJECT_DIR$/alchemist-swingui" />
-            <option value="$PROJECT_DIR$/alchemist-time" />
-          </set>
-        </option>
       </GradleProjectSettings>
     </option>
   </component>

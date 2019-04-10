@@ -15,3 +15,5 @@ out/
 .DS_Store
 *.iml
 *.kate-swp
+*/.idea/libraries 
+.idea/

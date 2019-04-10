@@ -1,11 +1,10 @@
-/*******************************************************************************
- * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
- * project's alchemist/build.gradle file.
- * 
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
  * This file is part of Alchemist, and is distributed under the terms of the
- * GNU General Public License, with a linking exception, as described in the file
- * LICENSE in the Alchemist distribution's top directory.
- ******************************************************************************/
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.model.implementations.positions; // NOPMD by danysk on 2/4/14 3:39 PM
 
 import com.google.common.collect.Lists;
@@ -160,18 +159,18 @@ public final class LatLongPosition implements GeoPosition {
 
     @Override
     public double[] getCartesianCoordinates() {
-        return new double[] { getLongitude(), getLatitude() };
+        return new double[] { getX(), getY() };
     }
 
     @Override
     public double getCoordinate(final int dim) {
         if (dim == 0) {
-            return getLongitude();
-        }
-        if (dim == 1) {
             return getLatitude();
         }
-        throw new IllegalArgumentException("Pass 0 for longitude and 1 for latitude. No other value accepted.");
+        if (dim == 1) {
+            return getLongitude();
+        }
+        throw new IllegalArgumentException("Pass 1 for longitude or 0 for latitude. No other value accepted.");
     }
 
     @Override

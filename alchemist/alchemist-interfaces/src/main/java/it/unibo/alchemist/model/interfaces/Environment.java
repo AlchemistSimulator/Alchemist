@@ -1,11 +1,10 @@
-/*******************************************************************************
- * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
- * project's alchemist/build.gradle file.
- * 
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
  * This file is part of Alchemist, and is distributed under the terms of the
- * GNU General Public License, with a linking exception, as described in the file
- * LICENSE in the Alchemist distribution's top directory.
- ******************************************************************************/
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.model.interfaces;
 
 import java.io.Serializable;
@@ -112,7 +111,8 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
     Neighborhood<T> getNeighborhood(Node<T> center);
 
     /**
-     * Allows to access a node known its id.
+     * Allows to access a node known its id. Depending on the implementation, this method may or not be optimized
+     * (namely, id could run in constant or linear time with the number of nodes).
      * 
      * @param id
      *            the node's ID

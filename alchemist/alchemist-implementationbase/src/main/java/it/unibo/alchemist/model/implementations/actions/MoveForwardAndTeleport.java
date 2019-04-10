@@ -1,11 +1,10 @@
-/*******************************************************************************
- * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
- * project's alchemist/build.gradle file.
- * 
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
  * This file is part of Alchemist, and is distributed under the terms of the
- * GNU General Public License, with a linking exception, as described in the file
- * LICENSE in the Alchemist distribution's top directory.
- ******************************************************************************/
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 /**
  * 
  */
@@ -13,14 +12,16 @@ package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
  * @param <T>
  *            Concentration type
+ * @param <P>
+ *            Position type
  */
-public class MoveForwardAndTeleport<T, P extends Position<P>> extends AbstractMoveNode<T, P> {
+public final class MoveForwardAndTeleport<T, P extends Position2D<P>> extends AbstractMoveNode<T, P> {
 
     private static final long serialVersionUID = 6853946136578807021L;
     private final double dx, minx, maxx;
@@ -49,9 +50,9 @@ public class MoveForwardAndTeleport<T, P extends Position<P>> extends AbstractMo
     public P getNextPosition() {
         final P cur = getEnvironment().getPosition(getNode());
         if (Double.isNaN(y)) {
-            y = cur.getCoordinate(1);
+            y = cur.getY();
         }
-        final double x = cur.getCoordinate(0);
+        final double x = cur.getX();
         if (x > maxx) {
             return getEnvironment().makePosition(minx, y);
         }

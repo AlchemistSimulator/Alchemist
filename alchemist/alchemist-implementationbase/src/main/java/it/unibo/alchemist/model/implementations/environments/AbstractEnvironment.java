@@ -1,11 +1,10 @@
-/*******************************************************************************
- * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
- * project's alchemist/build.gradle file.
- * 
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
  * This file is part of Alchemist, and is distributed under the terms of the
- * GNU General Public License, with a linking exception, as described in the file
- * LICENSE in the Alchemist distribution's top directory.
- ******************************************************************************/
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.model.implementations.environments;
 
 import java.io.IOException;
@@ -59,12 +58,12 @@ import it.unibo.alchemist.model.interfaces.Position;
 /**
  * Very generic and basic implementation for an environment. Basically, only
  * manages an internal set of nodes and their position.
- * 
+ *
  * @param <T>
  *            concentration type
  * @param <P>
  *            {@link Position} type
- * 
+ *
  */
 public abstract class AbstractEnvironment<T, P extends Position<P>> implements Environment<T, P> {
 
@@ -73,7 +72,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     private transient Incarnation<T, P> incarnation;
     private final Map<Molecule, Layer<T, P>> layers = new LinkedHashMap<>();
     private final TIntObjectHashMap<Neighborhood<T>> neighCache = new TIntObjectHashMap<>();
-    private final TIntObjectHashMap<Node<T>> nodes = new TIntObjectHashMap<>();
+    private final ListSet<Node<T>> nodes = new ArrayListSet<>();
     private final TIntObjectHashMap<P> nodeToPos = new TIntObjectHashMap<>();
     private LinkingRule<T, P> rule;
     private transient Simulation<T, P> simulation;
@@ -95,13 +94,14 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
             throw new IllegalStateException("Two layers have been associated to " + m);
         }
     }
- 
+
     @Override
     public final void addNode(final Node<T> node, final P p) {
+        System.out.println("Trying to add " + node.getId() + "@" + p);
         if (nodeShouldBeAdded(node, p)) {
             final P actualPosition = computeActualInsertionPosition(node, p);
             setPosition(node, actualPosition);
-            if (nodes.put(node.getId(), node) != null) {
+            if (!nodes.add(node)) {
                 throw new IllegalArgumentException("Node with id " + node.getId() + " was already existing in this environment.");
             }
             spatialIndex.insert(node, actualPosition.getCartesianCoordinates());
@@ -130,7 +130,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     /**
      * Allows subclasses to tune the actual position of a node, applying spatial
      * constrains at node addition.
-     * 
+     *
      * @param node
      *            the node
      * @param p
@@ -157,8 +157,8 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         }
         if (cache == null) {
             cache = Caffeine.newBuilder()
-                .maximumSize(1000)
-                .build(pair -> runQuery(pair.left, pair.right));
+                    .maximumSize(1000)
+                    .build(pair -> runQuery(pair.left, pair.right));
         }
         return cache.get(new ImmutablePair<>(center, range));
     }
@@ -200,22 +200,17 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         return result;
     }
 
-    /**
-     * @return a pointer to the neighborhoods cache structure
-     */
-    protected final TIntObjectHashMap<Neighborhood<T>> getNeighborsCache() {
-        return neighCache;
-    }
-
-
     @Override
     public final Node<T> getNodeByID(final int id) {
-        return nodes.get(id);
+        return (nodes.size() > 1000 ? nodes.parallelStream() : nodes.stream())
+                .filter(n -> n.getId() == id)
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("Node with id " + id + "does not exist in environment"));
     }
 
     @Override
     public final ListSet<Node<T>> getNodes() {
-        return new ArrayListSet<>(nodes.valueCollection());
+        return ListSets.unmodifiableListSet(nodes);
     }
 
     @Override
@@ -293,22 +288,22 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
 
     @Override
     public final Iterator<Node<T>> iterator() {
-        return Collections.unmodifiableCollection(nodes.valueCollection()).iterator();
+        return getNodes().iterator();
     }
 
     private Stream<Operation> lostNeighbors(final Node<T> center, final Neighborhood<T> oldNeighborhood, final Neighborhood<T> newNeighborhood) {
         return Optional.ofNullable(oldNeighborhood)
-            .map(Neighborhood::getNeighbors)
-            .orElse(ListSets.emptyListSet())
-            .stream()
-            .filter(neigh -> !newNeighborhood.contains(neigh))
-            .filter(neigh -> getNeighborhood(neigh).contains(center))
-            .map(n -> new Operation(center, n, false));
+                .map(Neighborhood::getNeighbors)
+                .orElse(ListSets.emptyListSet())
+                .stream()
+                .filter(neigh -> !newNeighborhood.contains(neigh))
+                .filter(neigh -> getNeighborhood(neigh).contains(center))
+                .map(n -> new Operation(center, n, false));
     }
 
     /**
      * This method gets called once a node has been added, and its neighborhood has been computed and memorized.
-     * 
+     *
      * @param node the node
      * @param position the position of the node
      * @param neighborhood the current neighborhood of the node
@@ -317,7 +312,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
 
     /**
      * This method gets called once a node has been removed.
-     * 
+     *
      * @param node
      *            the node
      * @param neighborhood
@@ -329,7 +324,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     /**
      * Allows subclasses to determine wether or not a {@link Node} should
      * actually get added to this environment.
-     * 
+     *
      * @param node
      *            the node
      * @param p
@@ -345,7 +340,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         in.defaultReadObject();
         final String name = in.readObject().toString();
         incarnation = SupportedIncarnations.<T, P>get(name).orElseThrow(() ->
-            new IllegalStateException("Unknown incarnation " + name)
+                new IllegalStateException("Unknown incarnation " + name)
         );
     }
 
@@ -369,7 +364,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     @Override
     public final void removeNode(@Nonnull final Node<T> node) {
         invalidateCache();
-        nodes.remove(Objects.requireNonNull(node).getId());
+        nodes.remove(Objects.requireNonNull(node));
         final P pos = nodeToPos.remove(node.getId());
         spatialIndex.remove(node, pos.getCartesianCoordinates());
         /*
@@ -397,8 +392,8 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
                 .toArray(double[][]::new));
         final int size = result.size();
         return ListSets.unmodifiableListSet(result.stream()
-            .filter(it -> getPosition(it).getDistanceTo(center) <= range)
-            .collect(Collectors.toCollection(() -> new ArrayListSet<>(size))));
+                .filter(it -> getPosition(it).getDistanceTo(center) <= range)
+                .collect(Collectors.toCollection(() -> new ArrayListSet<>(size))));
     }
 
     @Override
@@ -417,7 +412,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
 
     /**
      * Adds or changes a position entry in the position map.
-     * 
+     *
      * @param n
      *            the node
      * @param p
@@ -467,7 +462,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
      * After a node movement, recomputes the neighborhood, also notifying the
      * running simulation about the modifications. This allows movement actions
      * to be defined as LOCAL (they should be normally considered GLOBAL).
-     * 
+     *
      * @param node
      *            the node that has been moved
      * @param  isNewNode
@@ -488,25 +483,25 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
              */
             if (oldNeighborhood != null) {
                 StreamSupport.stream(oldNeighborhood.spliterator(), false)
-                .filter(formerNeighbor -> !newNeighborhood.contains(formerNeighbor))
-                .map(this::getNeighborhood)
-                .filter(neigh -> neigh.contains(node))
-                .forEachOrdered(neighborhoodToChange -> {
-                    final Node<T> formerNeighbor = neighborhoodToChange.getCenter();
-                    neighCache.put(formerNeighbor.getId(), neighborhoodToChange.remove(node));
-                    if (!isNewNode) {
-                        ifEngineAvailable(s -> s.neighborRemoved(node, formerNeighbor));
-                    }
-                });
+                        .filter(formerNeighbor -> !newNeighborhood.contains(formerNeighbor))
+                        .map(this::getNeighborhood)
+                        .filter(neigh -> neigh.contains(node))
+                        .forEachOrdered(neighborhoodToChange -> {
+                            final Node<T> formerNeighbor = neighborhoodToChange.getCenter();
+                            neighCache.put(formerNeighbor.getId(), neighborhoodToChange.remove(node));
+                            if (!isNewNode) {
+                                ifEngineAvailable(s -> s.neighborRemoved(node, formerNeighbor));
+                            }
+                        });
             }
             /*
              * Add the node to all gained neighbors' neighborhoods
              */
             for (final Node<T> newNeighbor: Sets.difference(newNeighborhood.getNeighbors(),
                     Optional.ofNullable(oldNeighborhood)
-                    .map(Neighborhood::getNeighbors)
-                    .map(it -> (Set<? extends Node<T>>) it)
-                    .orElse(Collections.emptySet()))) {
+                            .map(Neighborhood::getNeighbors)
+                            .map(it -> (Set<? extends Node<T>>) it)
+                            .orElse(Collections.emptySet()))) {
                 neighCache.put(newNeighbor.getId(), neighCache.get(newNeighbor.getId()).add(node));
                 if (!isNewNode) {
                     ifEngineAvailable(s -> s.neighborAdded(node, newNeighbor));

@@ -1,11 +1,10 @@
-/*******************************************************************************
- * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
- * project's alchemist/build.gradle file.
- * 
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
  * This file is part of Alchemist, and is distributed under the terms of the
- * GNU General Public License, with a linking exception, as described in the file
- * LICENSE in the Alchemist distribution's top directory.
- ******************************************************************************/
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.boundary.wormhole.implementation;
 
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
@@ -35,7 +34,7 @@ public final class MapWormhole extends Wormhole2D<GeoPosition> {
     /**
      * Initializes a new {@link MapWormhole} copying the state of the one in
      * input.
-     * 
+     *
      * @param env
      *            the {@link Environment}
      * @param comp
@@ -122,7 +121,7 @@ public final class MapWormhole extends Wormhole2D<GeoPosition> {
     public void setEnvPosition(final Position2D<?> ep) {
         LatLong center;
         try {
-            center = new LatLong(ep.getY(), ep.getX());
+            center = new LatLong(ep.getLatitude(), ep.getLongitude());
         } catch (IllegalArgumentException e) {
             center = new LatLong(0, 0);
         }

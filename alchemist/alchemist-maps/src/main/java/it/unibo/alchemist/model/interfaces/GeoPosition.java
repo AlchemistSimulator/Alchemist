@@ -22,4 +22,7 @@ public interface GeoPosition extends Position2D<GeoPosition> {
      */
     double getLongitude();
 
+    @Deprecated
+    @Override
+    double getCoordinate(int dim);
 }

@@ -100,8 +100,8 @@ public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends 
      *            the position to include
      */
     protected final void includeObject(final P pos) {
-        final double x = pos.getCoordinate(0);
-        final double y = pos.getCoordinate(1);
+        final double x = pos.getX();
+        final double y = pos.getY();
         includeObject(x, x, y, y);
     }
 

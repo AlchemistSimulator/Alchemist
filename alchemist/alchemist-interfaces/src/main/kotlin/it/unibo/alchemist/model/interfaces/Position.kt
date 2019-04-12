@@ -52,12 +52,6 @@ interface Position<P : Position<P>> : Serializable {
     fun getCoordinate(dim: Int): Double
 
     /**
-     * Invokes #getCoordinate. Used to allow Component access to Kotlin sources
-     */
-    @JvmDefault
-    operator fun get(i: Int): Double = getCoordinate(i)
-
-    /**
      * @return the number of dimensions of this {@link Position}.
      */
     val dimensions: Int

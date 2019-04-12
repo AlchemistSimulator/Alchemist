@@ -118,7 +118,7 @@ public final class MapWormhole extends Wormhole2D<GeoPosition> {
     public void setEnvPosition(final GeoPosition ep) {
         LatLong center;
         try {
-            center = new LatLong(ep.getCoordinate(1), ep.getCoordinate(0));
+            center = new LatLong(ep.getLatitude(), ep.getLongitude());
         } catch (IllegalArgumentException e) {
             center = new LatLong(0, 0);
         }

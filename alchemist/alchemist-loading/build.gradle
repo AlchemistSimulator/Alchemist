@@ -20,11 +20,18 @@ dependencies {
     )
     testImplementation(
         project(':alchemist-engine'),
-        project(':alchemist-maps')
+        project(':alchemist-maps'),
+        "com.google.code.gson:gson:$gsonVersion",
+        "io.kotlintest:kotlintest-runner-junit5:$kotlinTestVersion"
     )
     testRuntimeOnly(
         project(':alchemist-incarnation-sapere')
     )
 }
+
+test {
+    useJUnitPlatform()
+}
+
 compileKotlin.dependsOn(project(':alchemist-implementationbase').compileScala)
 compileJava.dependsOn(project(':alchemist-implementationbase').compileScala)

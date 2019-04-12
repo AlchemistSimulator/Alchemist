@@ -162,18 +162,18 @@ public final class LatLongPosition implements GeoPosition {
 
     @Override
     public double[] getCartesianCoordinates() {
-        return new double[] { getLongitude(), getLatitude() };
+        return new double[] { getX(), getY() };
     }
 
     @Override
     public double getCoordinate(final int dim) {
         if (dim == 0) {
-            return getLongitude();
-        }
-        if (dim == 1) {
             return getLatitude();
         }
-        throw new IllegalArgumentException("Pass 0 for longitude and 1 for latitude. No other value accepted.");
+        if (dim == 1) {
+            return getLongitude();
+        }
+        throw new IllegalArgumentException("Pass 1 for longitude or 0 for latitude. No other value accepted.");
     }
 
     @Override

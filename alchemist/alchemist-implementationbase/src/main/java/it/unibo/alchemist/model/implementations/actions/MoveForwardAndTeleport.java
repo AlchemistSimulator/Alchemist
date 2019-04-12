@@ -12,14 +12,16 @@ package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
  * @param <T>
  *            Concentration type
+ * @param <P>
+ *            Position type
  */
-public class MoveForwardAndTeleport<T, P extends Position<P>> extends AbstractMoveNode<T, P> {
+public final class MoveForwardAndTeleport<T, P extends Position2D<P>> extends AbstractMoveNode<T, P> {
 
     private static final long serialVersionUID = 6853946136578807021L;
     private final double dx, minx, maxx;
@@ -48,9 +50,9 @@ public class MoveForwardAndTeleport<T, P extends Position<P>> extends AbstractMo
     public P getNextPosition() {
         final P cur = getEnvironment().getPosition(getNode());
         if (Double.isNaN(y)) {
-            y = cur.getCoordinate(1);
+            y = cur.getY();
         }
-        final double x = cur.getCoordinate(0);
+        final double x = cur.getX();
         if (x > maxx) {
             return getEnvironment().makePosition(minx, y);
         }

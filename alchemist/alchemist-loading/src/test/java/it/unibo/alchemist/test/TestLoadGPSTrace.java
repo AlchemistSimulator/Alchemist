@@ -94,8 +94,7 @@ public class TestLoadGPSTrace {
             @Override
             public void initialized(final Environment<T, GeoPosition> env) {
                 for (final Node<T> node : env.getNodes()) {
-                    final Position<?> p = env.getPosition(node);
-                    NODE_START_POSITION.put(node, new LatLongPosition(p.getCoordinate(1), p.getCoordinate(0)));
+                    NODE_START_POSITION.put(node, env.getPosition(node));
                 }
             }
 

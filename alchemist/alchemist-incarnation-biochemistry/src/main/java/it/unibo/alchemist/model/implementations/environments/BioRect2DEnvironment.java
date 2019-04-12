@@ -85,8 +85,8 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
 
     @Override
     protected final boolean isAllowed(final Euclidean2DPosition p) {
-        return (p.getCoordinate(0) < maxX && p.getCoordinate(0) > minX 
-                && p.getCoordinate(1) < maxY && p.getCoordinate(1) > minY);
+        return (p.getX() < maxX && p.getX() > minX 
+                && p.getY() < maxY && p.getY() > minY);
     }
 
     @Override

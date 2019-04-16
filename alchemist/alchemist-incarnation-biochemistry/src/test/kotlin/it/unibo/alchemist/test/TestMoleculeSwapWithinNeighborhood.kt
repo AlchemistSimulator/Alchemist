@@ -24,7 +24,10 @@ import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.implementations.times.DoubleTime
-import it.unibo.alchemist.model.interfaces.*
+import it.unibo.alchemist.model.interfaces.CellNode
+import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.Reaction
+import it.unibo.alchemist.model.interfaces.Time
 import org.apache.commons.math3.random.MersenneTwister
 import kotlin.properties.Delegates
 
@@ -107,9 +110,9 @@ private fun <T> Int.sizeMatcher(collectionName: String, collection: (Reaction<Do
         override fun test(reaction: Reaction<Double>): Result {
             val actualSize = collection.invoke(reaction).size
             return Result(
-            actualSize == this@sizeMatcher,
-            "reaction should have ${ this@sizeMatcher } $collectionName but it has $actualSize",
-            "reaction should not have ${ this@sizeMatcher } $collectionName conditions but it has"
+                actualSize == this@sizeMatcher,
+                "reaction should have ${ this@sizeMatcher } $collectionName but it has $actualSize",
+                "reaction should not have ${ this@sizeMatcher } $collectionName conditions but it has"
             )
         }
     }

@@ -24,10 +24,7 @@ import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.implementations.times.DoubleTime
-import it.unibo.alchemist.model.interfaces.CellNode
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Reaction
-import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.model.interfaces.*
 import org.apache.commons.math3.random.MersenneTwister
 import kotlin.properties.Delegates
 
@@ -96,29 +93,23 @@ private fun startSimulation() {
     simulation.run()
 }
 
-private fun matcher(test: (Reaction<Double>) -> Result) = object : Matcher<Reaction<Double>> {
-    override fun test(reaction: Reaction<Double>) = test.invoke(reaction)
-}
-
 private val Int.conditions: Matcher<Reaction<Double>>
-    get() = matcher { Result(
-            it.conditions.size == this@conditions,
-            "reaction should have ${ this@conditions } conditions but it has ${ it.conditions.size }",
-            "reaction should not have ${ this@conditions } conditions but it has"
-    ) }
+    get() = sizeMatcher("conditions") { it.conditions }
 
 private val Int.neighborConditions: Matcher<Reaction<Double>>
-    get() = matcher { Result(
-            it.conditions.filter { c -> c is AbstractNeighborCondition }.size == this@neighborConditions,
-            "reaction should have ${ this@neighborConditions } neighbor conditions but it has " +
-                    "${ it.conditions.filter { c -> c is AbstractNeighborCondition }.size }",
-            "reaction should not have ${ this@neighborConditions } conditions but it has"
-    ) }
+    get() = sizeMatcher("neighbor conditions") { it.conditions.filter { c -> c is AbstractNeighborCondition } }
 
 private val Int.actions: Matcher<Reaction<Double>>
-    get() = matcher {
-        Result(
-            it.actions.size == this@actions,
-            "reaction should have ${ this@actions } actions but it has",
-            "reaction should not have ${ this@actions } actions but it has"
-    ) }
+    get() = sizeMatcher("actions") { it.actions }
+
+private fun <T> Int.sizeMatcher(collectionName: String, collection: (Reaction<Double>) -> List<T>) =
+    object : Matcher<Reaction<Double>> {
+        override fun test(reaction: Reaction<Double>): Result {
+            val actualSize = collection.invoke(reaction).size
+            return Result(
+            actualSize == this@sizeMatcher,
+            "reaction should have ${ this@sizeMatcher } $collectionName but it has $actualSize",
+            "reaction should not have ${ this@sizeMatcher } $collectionName conditions but it has"
+            )
+        }
+    }

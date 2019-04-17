@@ -10,6 +10,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/alchemist-cognitive-agents" />
             <option value="$PROJECT_DIR$/alchemist-engine" />
             <option value="$PROJECT_DIR$/alchemist-grid" />
             <option value="$PROJECT_DIR$/alchemist-implementationbase" />

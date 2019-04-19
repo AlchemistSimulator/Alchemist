@@ -14,8 +14,6 @@ import io.kotlintest.matchers.collections.shouldContain
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldHave
 import io.kotlintest.specs.StringSpec
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor
-import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.model.BiochemistryIncarnation
 import it.unibo.alchemist.model.implementations.conditions.AbstractNeighborCondition
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment
@@ -23,11 +21,9 @@ import it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistan
 import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime
-import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.CellNode
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Reaction
-import it.unibo.alchemist.model.interfaces.Time
 import org.apache.commons.math3.random.MersenneTwister
 import kotlin.properties.Delegates
 
@@ -42,7 +38,24 @@ private val INITIAL_POSITIONS = Pair(Euclidean2DPosition(0.0, 0.0), Euclidean2DP
 private var environment: Environment<Double, Euclidean2DPosition> by Delegates.notNull()
 private var nodes: Pair<CellNode<Euclidean2DPosition>, CellNode<Euclidean2DPosition>> by Delegates.notNull()
 
-class TestMoleculeSwapWithinNeighborhood : StringSpec() {
+class TestMoleculeSwapWithinNeighborhood : StringSpec({
+    "send molecule to a neighbor" {
+        val reaction = INCARNATION.createReaction(RANDOM, environment, nodes.first, TIME, DIRECT_REACTION)
+        reaction shouldHave 2.conditions
+        reaction shouldHave 1.neighborConditions
+        reaction shouldHave 2.actions
+        nodes.first.addReaction(reaction)
+        testSimulation()
+    }
+    "pick molecule from a neighbor" {
+        val reaction = INCARNATION.createReaction(RANDOM, environment, nodes.second, TIME, INVERSE_REACTION)
+        reaction shouldHave 1.conditions
+        reaction shouldHave 1.neighborConditions
+        reaction shouldHave 2.actions
+        nodes.second.addReaction(reaction)
+        testSimulation()
+    }
+}) {
     override fun beforeTest(testCase: TestCase) {
         environment = BioRect2DEnvironment()
         nodes = Pair(CellNodeImpl(environment), CellNodeImpl(environment))
@@ -53,48 +66,23 @@ class TestMoleculeSwapWithinNeighborhood : StringSpec() {
         environment.getNeighborhood(nodes.second).neighbors shouldContain nodes.first
         nodes.first.setConcentration(BIOMOLECULE, 1.0)
     }
-
-    init {
-        "send molecule to a neighbor" {
-            val reaction = INCARNATION.createReaction(RANDOM, environment, nodes.first, TIME, DIRECT_REACTION)
-            reaction shouldHave 2.conditions
-            reaction shouldHave 1.neighborConditions
-            reaction shouldHave 2.actions
-            nodes.first.addReaction(reaction)
-            startSimulation()
-        }
-        "pick molecule from a neighbor" {
-            val reaction = INCARNATION.createReaction(RANDOM, environment, nodes.second, TIME, INVERSE_REACTION)
-            reaction shouldHave 1.conditions
-            reaction shouldHave 1.neighborConditions
-            reaction shouldHave 2.actions
-            nodes.second.addReaction(reaction)
-            startSimulation()
-        }
-    }
 }
 
-private fun startSimulation() {
-    val simulation = Engine(environment, DoubleTime.INFINITE_TIME)
-    simulation.addOutputMonitor(object : OutputMonitor<Double, Euclidean2DPosition> {
-        override fun initialized(e: Environment<Double, Euclidean2DPosition>) {
-            nodes.first.getConcentration(BIOMOLECULE) shouldBe 1.0
-            nodes.second.getConcentration(BIOMOLECULE) shouldBe 0.0
-            nodes.toList().stream().mapToInt { it.reactions.count() }.sum() shouldBe 1
-        }
-
-        override fun stepDone(e: Environment<Double, Euclidean2DPosition>, r: Reaction<Double>, t: Time, s: Long) {
-            nodes.toList().stream().mapToDouble { it.getConcentration(BIOMOLECULE) }.sum() shouldBe 1.0
-        }
-
-        override fun finished(e: Environment<Double, Euclidean2DPosition>, t: Time, s: Long) {
-            nodes.first.getConcentration(BIOMOLECULE) shouldBe 0.0
-            nodes.second.getConcentration(BIOMOLECULE) shouldBe 1.0
-        }
-    })
-    simulation.play()
-    simulation.run()
-}
+private fun testSimulation() =
+    environment.startSimulationWithoutParameters(
+            initialized = {
+                nodes.first.getConcentration(BIOMOLECULE) shouldBe 1.0
+                nodes.second.getConcentration(BIOMOLECULE) shouldBe 0.0
+                nodes.toList().stream().mapToInt { it.reactions.count() }.sum() shouldBe 1
+            },
+            stepDone = {
+                nodes.toList().stream().mapToDouble { it.getConcentration(BIOMOLECULE) }.sum() shouldBe 1.0
+            },
+            finished = {
+                nodes.first.getConcentration(BIOMOLECULE) shouldBe 0.0
+                nodes.second.getConcentration(BIOMOLECULE) shouldBe 1.0
+            }
+    )
 
 private val Int.conditions: Matcher<Reaction<Double>>
     get() = sizeMatcher("conditions") { it.conditions }

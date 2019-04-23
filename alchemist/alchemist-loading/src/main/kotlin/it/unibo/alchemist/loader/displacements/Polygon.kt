@@ -19,7 +19,7 @@ import java.awt.geom.Rectangle2D
 /**
  * Alias for using pairs as bidimensional points
  */
-typealias Point2D = Pair<out Number, out Number>
+typealias Point2D = Pair<Number, Number>
 
 /**
  * Creates a new Polygon with the given points.

@@ -10,6 +10,7 @@ import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import java.io.IOException;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -28,7 +29,7 @@ import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRe
  * when clicked should open a {@link ListView} to show the {@link EffectFX
  * effects} the group is composed of.
  */
-public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
+public class EffectGroupCell<P extends Position2D<? extends P>> extends AbstractEffectCell<EffectGroup<P>> {
     private static final String DEFAULT_NAME = getStringRes("effect_group_default_name");
     private final JFXDrawersStack stack;
     private JFXDrawer effectDrawer;
@@ -188,7 +189,7 @@ public class EffectGroupCell extends AbstractEffectCell<EffectGroup> {
      * The side drawer opened by this cell is also rebuilt.
      */
     @Override
-    protected void updateItem(final EffectGroup item, final boolean empty) {
+    protected void updateItem(final EffectGroup<P> item, final boolean empty) {
         super.updateItem(item, empty);
 
         if (empty || item == null) {

@@ -36,7 +36,7 @@ import org.danilopianini.util.Hashes;
  * <p>
  * It's possible to set the size of the dots.
  */
-public class DrawDot extends AbstractEffect {
+public class DrawDot<P extends Position2D<? extends P>> extends AbstractEffect<P> {
 
     /**
      * Default generated Serial Version UID.
@@ -54,7 +54,7 @@ public class DrawDot extends AbstractEffect {
      * Default {@code Color}.
      */
     private static final Color DEFAULT_COLOR = Color.BLACK;
-    private final transient ConcurrentLinkedQueue<Position2D<?>> positions;
+    private final transient ConcurrentLinkedQueue<P> positions;
     private RangedDoubleProperty size = PropertyFactory.getPercentageRangedProperty(ResourceLoader.getStringRes("drawdot_size"), DEFAULT_SIZE);
     private Color color = DEFAULT_COLOR;
 
@@ -82,9 +82,9 @@ public class DrawDot extends AbstractEffect {
     }
 
     @Override
-    protected Queue<DrawCommand> consumeData() {
+    protected Queue<DrawCommand<P>> consumeData() {
         final double size = getSize();
-        return positions.stream().<DrawCommand>map((Position2D<?> position) -> (GraphicsContext graphic, BidimensionalWormhole<?> wormhole) -> {
+        return positions.stream().<DrawCommand<P>>map((P position) -> (GraphicsContext graphic, BidimensionalWormhole<P> wormhole) -> {
             final Point viewPoint = wormhole.getViewPoint(position);
             final double startX = viewPoint.getX() - size / 2;
             final double startY = viewPoint.getY() - size / 2;
@@ -100,7 +100,7 @@ public class DrawDot extends AbstractEffect {
      * @param <T>         {@inheritDoc}
      */
     @Override
-    protected <T, P extends Position2D<? extends P>> void getData(final Environment<T, P> environment) {
+    protected <T> void getData(final Environment<T, P> environment) {
         positions.clear();
         positions.addAll(environment
                 .getNodes()

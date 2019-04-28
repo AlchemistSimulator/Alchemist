@@ -90,7 +90,7 @@ public interface BidimensionalWormhole<P extends Position2D<? extends P>> {
      *            env-space
      * @return a {@link Point} object whose coordinates are from view-space
      */
-    Point getViewPoint(Position2D<?> envPoint);
+    Point getViewPoint(P envPoint);
 
     /**
      * Gets the Position.
@@ -142,7 +142,7 @@ public interface BidimensionalWormhole<P extends Position2D<? extends P>> {
      *            is the {@link Position} object representing the new position
      *            with env-coordinates
      */
-    void setEnvPosition(Position2D<?> envPoint);
+    void setEnvPosition(P envPoint);
 
     /**
      * Automatically sets the zoom rate in order to make the environment

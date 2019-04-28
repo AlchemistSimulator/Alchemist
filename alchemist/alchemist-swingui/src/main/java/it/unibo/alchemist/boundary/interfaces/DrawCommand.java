@@ -3,6 +3,7 @@ package it.unibo.alchemist.boundary.interfaces;
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import javafx.scene.canvas.Canvas;
@@ -12,7 +13,7 @@ import javafx.scene.canvas.GraphicsContext;
  * Functional interface that models a command for JavaFX thread to draw something on a {@link Canvas}.
  */
 @FunctionalInterface
-public interface DrawCommand extends BiConsumer<GraphicsContext, BidimensionalWormhole<?>> {
+public interface DrawCommand<P extends Position2D<? extends P>> extends BiConsumer<GraphicsContext, BidimensionalWormhole<P>> {
 
     /**
      * The method consumes a graphic and a wormhole to draw something.
@@ -21,7 +22,7 @@ public interface DrawCommand extends BiConsumer<GraphicsContext, BidimensionalWo
      * @param wormhole the {@link BidimensionalWormhole Wormhole} that maps {@link Environment} {@link Position positions} to GUI positions
      */
     @Override
-    void accept(GraphicsContext graphic, BidimensionalWormhole<?> wormhole);
+    void accept(GraphicsContext graphic, BidimensionalWormhole<P> wormhole);
 
     /**
      * Wrapper method that wraps this {@link DrawCommand} into another that checks if should execute or not the {@link #accept(GraphicsContext, BidimensionalWormhole)} method.
@@ -29,7 +30,7 @@ public interface DrawCommand extends BiConsumer<GraphicsContext, BidimensionalWo
      * @param booleanSupplier a condition checker {@link Boolean} {@link Supplier}
      * @return a new {@link DrawCommand} that wraps this one around the if checking
      */
-    default DrawCommand wrap(final Supplier<Boolean> booleanSupplier) {
+    default DrawCommand<P> wrap(final Supplier<Boolean> booleanSupplier) {
         return (g, wh) -> {
             if (booleanSupplier.get()) {
                 this.accept(g, wh);

@@ -50,7 +50,7 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
  */
 @JvmOverloads constructor(steps: Int = DEFAULT_NUMBER_OF_STEPS) : Canvas(), FXOutputMonitor<T, P> {
 
-    private val effectStack: ObservableList<EffectGroup> = FXCollections.observableArrayList()
+    private val effectStack: ObservableList<EffectGroup<P>> = FXCollections.observableArrayList()
     private val mutex = Semaphore(1)
     private val mayRender = AtomicBoolean(true)
     private var step: Int = 0
@@ -131,19 +131,19 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
         return { graphicsContext.clearRect(0.0, 0.0, width, height) }
     }
 
-    override fun addEffects(effects: Collection<EffectGroup>) {
+    override fun addEffects(effects: Collection<EffectGroup<P>>) {
         this.effectStack.addAll(effects)
     }
 
-    override fun addEffectGroup(effects: EffectGroup) {
+    override fun addEffectGroup(effects: EffectGroup<P>) {
         this.effectStack.add(effects)
     }
 
-    override fun getEffects(): Collection<EffectGroup> {
+    override fun getEffects(): Collection<EffectGroup<P>> {
         return this.effectStack
     }
 
-    override fun setEffects(effects: Collection<EffectGroup>) {
+    override fun setEffects(effects: Collection<EffectGroup<P>>) {
         this.effectStack.clear()
         this.effectStack.addAll(effects)
     }
@@ -208,8 +208,8 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
             val background = Stream.of(drawBackground(graphicsContext, environment))
             val effects = effects
                 .stream()
-                .map<Queue<DrawCommand>> { group -> group.computeDrawCommands(environment) }
-                .flatMap<DrawCommand> { it.stream() }
+                .map<Queue<DrawCommand<P>>> { group -> group.computeDrawCommands(environment) }
+                .flatMap<DrawCommand<P>> { it.stream() }
                 .map { cmd -> { cmd.accept(graphicsContext, wormhole) } }
             commandQueue = Stream
                 .concat(background, effects)

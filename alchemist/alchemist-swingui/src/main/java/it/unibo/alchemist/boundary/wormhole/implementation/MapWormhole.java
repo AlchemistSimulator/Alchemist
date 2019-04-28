@@ -92,7 +92,7 @@ public final class MapWormhole extends Wormhole2D<GeoPosition> {
     }
 
     @Override
-    public Point getViewPoint(final Position2D<?> environmentPoint) {
+    public Point getViewPoint(final GeoPosition environmentPoint) {
         if (environmentPoint instanceof GeoPosition) {
             final GeoPosition envPoint = (GeoPosition) environmentPoint;
             final LatLong l = mapModel.getCenter();
@@ -118,7 +118,7 @@ public final class MapWormhole extends Wormhole2D<GeoPosition> {
     }
 
     @Override
-    public void setEnvPosition(final Position2D<?> ep) {
+    public void setEnvPosition(final GeoPosition ep) {
         LatLong center;
         try {
             center = new LatLong(ep.getLatitude(), ep.getLongitude());

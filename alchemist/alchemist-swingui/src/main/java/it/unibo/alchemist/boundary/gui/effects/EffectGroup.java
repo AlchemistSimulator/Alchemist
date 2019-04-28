@@ -1,5 +1,6 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
+import it.unibo.alchemist.model.interfaces.Position2D;
 import java.io.Serializable;
 import java.util.Queue;
 
@@ -7,7 +8,7 @@ import java.util.Queue;
  * Models a group of effects. Each effect has a different priority of
  * visualization.
  */
-public interface EffectGroup extends Serializable, Queue<EffectFX>, EffectFX {
+public interface EffectGroup<P extends Position2D<? extends P>> extends Serializable, Queue<EffectFX<P>>, EffectFX<P> {
 
     /**
      * Checks if an effect is present in the group.
@@ -15,7 +16,7 @@ public interface EffectGroup extends Serializable, Queue<EffectFX>, EffectFX {
      * @param effect the effect to search
      * @return the position, or -1 if not present
      */
-    int search(EffectFX effect);
+    int search(EffectFX<P> effect);
 
     /**
      * Returns the visibility of the specified effect.
@@ -25,7 +26,7 @@ public interface EffectGroup extends Serializable, Queue<EffectFX>, EffectFX {
      * @throws IllegalArgumentException if can't find the effect
      * @see EffectFX#isVisible()
      */
-    boolean getVisibilityOf(EffectFX effect);
+    boolean getVisibilityOf(EffectFX<P> effect);
 
     /**
      * Sets the visibility of the specified effect.
@@ -35,7 +36,7 @@ public interface EffectGroup extends Serializable, Queue<EffectFX>, EffectFX {
      * @throws IllegalArgumentException if can't find the effect
      * @see EffectFX#setVisibility(boolean)
      */
-    void setVisibilityOf(EffectFX effect, boolean visibility);
+    void setVisibilityOf(EffectFX<P> effect, boolean visibility);
 
     /**
      * Changes the specified offset priority of the specified offset.
@@ -44,7 +45,7 @@ public interface EffectGroup extends Serializable, Queue<EffectFX>, EffectFX {
      * @param offset the offset; it can be positive or negative
      * @throws IllegalArgumentException if can't find the effect
      */
-    void changePriority(EffectFX effect, int offset);
+    void changePriority(EffectFX<P> effect, int offset);
 
     /* Is suggested to override Object default equals method. */
     @Override

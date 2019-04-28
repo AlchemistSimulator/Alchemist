@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
  * <p>
  * The effect behavior can be implemented via {@link #computeDrawCommands(Environment)} template method.
  */
-public abstract class AbstractEffect implements EffectFX {
+public abstract class AbstractEffect<P extends Position2D<? extends P>> implements EffectFX<P> {
     /**
      * Default name of the effect.
      */
@@ -132,9 +132,9 @@ public abstract class AbstractEffect implements EffectFX {
     }
 
     @Override
-    public <T, P extends Position2D<? extends P>> Queue<DrawCommand> computeDrawCommands(final Environment<T, P> environment) {
+    public <T> Queue<DrawCommand<P>> computeDrawCommands(final Environment<T, P> environment) {
         getData(environment);
-        final CommandQueueBuilder builder = new CommandQueueBuilder();
+        final CommandQueueBuilder<P> builder = new CommandQueueBuilder<P>();
         consumeData().stream()
                 .map(cmd -> cmd.wrap(this::isVisible))
                 .forEach(builder::addCommand);
@@ -146,7 +146,7 @@ public abstract class AbstractEffect implements EffectFX {
      *
      * @return the queue of command to be executed on JavaFX thread
      */
-    protected abstract Queue<DrawCommand> consumeData();
+    protected abstract Queue<DrawCommand<P>> consumeData();
 
     /**
      * The method extrapolates data from environment.
@@ -156,7 +156,7 @@ public abstract class AbstractEffect implements EffectFX {
      * @param environment the {@link Environment} to extrapolate data from
      * @param <T>         the {@link Concentration} type
      */
-    protected abstract <T, P extends Position2D<? extends P>> void getData(Environment<T, P> environment);
+    protected abstract <T> void getData(Environment<T, P> environment);
 
     @Override
     public final String getName() {

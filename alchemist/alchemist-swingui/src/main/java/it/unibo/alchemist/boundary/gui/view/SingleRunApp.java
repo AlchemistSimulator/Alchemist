@@ -85,7 +85,7 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
 
     private final Map<String, String> namedParams = new HashMap<>();
     private final List<String> unnamedParams = new ArrayList<>();
-    private ObservableList<EffectGroup> effectGroups = FXCollections.observableArrayList();
+    private ObservableList<EffectGroup<P>> effectGroups = FXCollections.observableArrayList();
     private boolean initialized;
     @Nullable
     private Simulation<T, P> simulation;
@@ -420,7 +420,7 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
      * @param effectGroups the groups of effects
      * @throws IllegalStateException if the application is already started
      */
-    public void setEffectGroups(final Collection<EffectGroup> effectGroups) {
+    public void setEffectGroups(final Collection<EffectGroup<P>> effectGroups) {
         checkIfInitialized();
         this.effectGroups.clear();
         this.effectGroups.addAll(effectGroups);
@@ -432,7 +432,7 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
      * @param effectGroups the group of effects to add
      * @throws IllegalStateException if the application is already started
      */
-    public void addEffectGroups(final Collection<EffectGroup> effectGroups) {
+    public void addEffectGroups(final Collection<EffectGroup<P>> effectGroups) {
         checkIfInitialized();
         this.effectGroups.addAll(effectGroups);
     }

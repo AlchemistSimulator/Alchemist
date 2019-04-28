@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  * The class models a group of effects, stored as a stack. It can manage
  * priority of visualization and visibility of each effect inside it.
  */
-public final class EffectStack implements EffectGroup {
+public final class EffectStack<P extends Position2D<? extends P>> implements EffectGroup<P> {
     /** Default generated serial version UID. */
     private static final long serialVersionUID = -3606828966321303483L;
     /** Default IllegalArgumentException message. */
@@ -33,7 +33,7 @@ public final class EffectStack implements EffectGroup {
     /** Default logger. */
     private static final Logger L = LoggerFactory.getLogger(EffectStack.class);
 
-    private final List<EffectFX> effects;
+    private final List<EffectFX<P>> effects;
     private int topIndex;
     private String name;
     private boolean visibility;
@@ -60,8 +60,8 @@ public final class EffectStack implements EffectGroup {
     }
 
     @Override
-    public <T, P extends Position2D<? extends P>> Queue<DrawCommand> computeDrawCommands(final Environment<T, P> environment) {
-        final CommandQueueBuilder builder = new CommandQueueBuilder();
+    public <T> Queue<DrawCommand<P>> computeDrawCommands(final Environment<T, P> environment) {
+        final CommandQueueBuilder<P> builder = new CommandQueueBuilder<P>();
 
         if (isVisible()) {
             this.stream()
@@ -104,7 +104,7 @@ public final class EffectStack implements EffectGroup {
      *             if some property of this element prevents it from being added
      *             to this list
      */
-    public EffectFX push(final EffectFX effect) {
+    public EffectFX<P> push(final EffectFX<P> effect) {
         this.effects.add(effect);
         this.topIndex++;
         return effect;
@@ -117,7 +117,7 @@ public final class EffectStack implements EffectGroup {
      * 
      * @return the effect with maximum priority
      */
-    public EffectFX pop() {
+    public EffectFX<P> pop() {
         final EffectFX e = this.effects.get(topIndex);
         this.effects.remove(topIndex);
         this.topIndex--;
@@ -125,7 +125,7 @@ public final class EffectStack implements EffectGroup {
     }
 
     @Override
-    public int search(final EffectFX effect) {
+    public int search(final EffectFX<P> effect) {
         for (int i = topIndex; i >= 0; i--) {
             if (this.effects.get(i).equals(effect)) {
                 return i;
@@ -135,7 +135,7 @@ public final class EffectStack implements EffectGroup {
     }
 
     @Override
-    public boolean getVisibilityOf(final EffectFX effect) {
+    public boolean getVisibilityOf(final EffectFX<P> effect) {
         try {
             return this.effects.get(this.search(effect)).isVisible();
         } catch (final IndexOutOfBoundsException e) {
@@ -144,7 +144,7 @@ public final class EffectStack implements EffectGroup {
     }
 
     @Override
-    public void setVisibilityOf(final EffectFX effect, final boolean visibility) {
+    public void setVisibilityOf(final EffectFX<P> effect, final boolean visibility) {
         try {
             this.effects.get(this.search(effect)).setVisibility(visibility);
         } catch (final IndexOutOfBoundsException e) {
@@ -153,7 +153,7 @@ public final class EffectStack implements EffectGroup {
     }
 
     @Override
-    public void changePriority(final EffectFX effect, final int offset) {
+    public void changePriority(final EffectFX<P> effect, final int offset) {
         final int currentPos = this.search(effect);
         final int newPos = currentPos + offset;
         final EffectFX temp = this.effects.get(newPos);
@@ -174,7 +174,7 @@ public final class EffectStack implements EffectGroup {
     }
 
     @Override
-    public Iterator<EffectFX> iterator() {
+    public Iterator<EffectFX<P>> iterator() {
         return effects.iterator();
     }
 
@@ -240,7 +240,7 @@ public final class EffectStack implements EffectGroup {
     }
 
     @Override
-    public boolean addAll(final Collection<? extends EffectFX> c) {
+    public boolean addAll(final Collection<? extends EffectFX<P>> c) {
         try {
             c.forEach(e -> {
                 if (this.push(e) == null) {

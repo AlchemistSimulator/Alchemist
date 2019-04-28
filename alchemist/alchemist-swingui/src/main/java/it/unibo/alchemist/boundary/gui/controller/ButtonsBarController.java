@@ -11,6 +11,7 @@ import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.boundary.monitor.PlayPauseMonitor;
 import it.unibo.alchemist.boundary.monitor.generic.NumericLabelMonitor;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
@@ -34,7 +35,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * This class models a JavaFX controller for ButtonsBarLayout.fxml.
  */
-public class ButtonsBarController implements Initializable {
+public class ButtonsBarController<P extends Position2D<? extends P>> implements Initializable {
     /**
      * Layout path.
      */
@@ -287,7 +288,7 @@ public class ButtonsBarController implements Initializable {
      *
      * @return an {@code ObservableList} of {@code EffectGroup}
      */
-    public ObservableList<EffectGroup> getObservableEffectsList() {
+    public ObservableList<EffectGroup<P>> getObservableEffectsList() {
         return this.effectsGroupBarController.getObservableEffectsList();
     }
 }

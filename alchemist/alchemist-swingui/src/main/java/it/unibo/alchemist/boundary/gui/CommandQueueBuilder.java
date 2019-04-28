@@ -1,6 +1,7 @@
 package it.unibo.alchemist.boundary.gui;
 
 import it.unibo.alchemist.boundary.interfaces.DrawCommand;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.function.Supplier;
@@ -8,8 +9,8 @@ import java.util.function.Supplier;
 /**
  * Builder class that eases the building of a queue of {@link DrawCommand}s.
  */
-public final class CommandQueueBuilder {
-    private final Queue<DrawCommand> commandQueue = new LinkedList<>();
+public final class CommandQueueBuilder<P extends Position2D<? extends P>> {
+    private final Queue<DrawCommand<P>> commandQueue = new LinkedList<>();
 
     /**
      * Wraps a {@code DrawCommand} around to the queue to be executed on the JavaFX thread.
@@ -18,7 +19,7 @@ public final class CommandQueueBuilder {
      * @param supplier the boolean supplier that will check if the command should be executed
      * @return this builder
      */
-    public CommandQueueBuilder wrapAndAdd(final Supplier<Boolean> supplier, final DrawCommand doOnJFXThread) {
+    public CommandQueueBuilder wrapAndAdd(final Supplier<Boolean> supplier, final DrawCommand<P> doOnJFXThread) {
         return addCommand(doOnJFXThread.wrap(supplier));
     }
 
@@ -28,7 +29,7 @@ public final class CommandQueueBuilder {
      * @param doOnJFXThread the action to do
      * @return this builder
      */
-    public CommandQueueBuilder addCommand(final DrawCommand doOnJFXThread) {
+    public CommandQueueBuilder addCommand(final DrawCommand<P> doOnJFXThread) {
         commandQueue.add(doOnJFXThread);
         return this;
     }
@@ -48,7 +49,7 @@ public final class CommandQueueBuilder {
      *
      * @return the queue of commands
      */
-    public Queue<DrawCommand> buildCommandQueue() {
+    public Queue<DrawCommand<P>> buildCommandQueue() {
         return commandQueue;
     }
 }

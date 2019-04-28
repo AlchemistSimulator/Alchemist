@@ -11,6 +11,7 @@ import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.cells.EffectGroupCell;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -48,7 +49,7 @@ import static jiconfont.icons.GoogleMaterialDesignIcons.SAVE;
 /**
  * This class models a JavaFX controller for EffectsGroupBar.fxml.
  */
-public class EffectsGroupBarController implements Initializable {
+public class EffectsGroupBarController<P extends Position2D<? extends P>> implements Initializable {
     /**
      * Layout path.
      */
@@ -69,8 +70,8 @@ public class EffectsGroupBarController implements Initializable {
     private JFXButton addGroup; // Value injected by FXMLLoader
     @FXML
     @Nullable
-    private ListView<EffectGroup> effectGroupsList; // Value injected by FXMLLoader
-    private ObservableList<EffectGroup> observableEffectsList;
+    private ListView<EffectGroup<P>> effectGroupsList; // Value injected by FXMLLoader
+    private ObservableList<EffectGroup<P>> observableEffectsList;
     private Optional<String> lastPath;
     private Optional<FXOutputMonitor<?, ?>> displayMonitor = Optional.empty();
 
@@ -139,7 +140,7 @@ public class EffectsGroupBarController implements Initializable {
      * @param name the name to give to the {@code EffectGroup}
      */
     private void addGroupToList(final String name) {
-        final EffectGroup newGroup = new EffectStack();
+        final EffectGroup<P> newGroup = new EffectStack<P>();
         newGroup.setName(name);
         this.getObservableEffectsList().add(newGroup);
         if (this.effectGroupsList != null) {
@@ -154,16 +155,16 @@ public class EffectsGroupBarController implements Initializable {
      * @return the {@code ObservableList} associated to the controlled
      * {@link ListView}
      */
-    public ObservableList<EffectGroup> getObservableEffectsList() {
+    public ObservableList<EffectGroup<P>> getObservableEffectsList() {
         if (this.observableEffectsList == null) {
             this.observableEffectsList = FXCollections.observableArrayList();
             if (this.effectGroupsList != null) {
                 this.effectGroupsList.setItems(observableEffectsList);
                 this.effectGroupsList.setCellFactory(lv -> {
                     if (getDisplayMonitor().isPresent()) {
-                        return new EffectGroupCell(getDisplayMonitor().get(), this.stack);
+                        return new EffectGroupCell<>(getDisplayMonitor().get(), this.stack);
                     } else {
-                        return new EffectGroupCell(this.stack);
+                        return new EffectGroupCell<>(this.stack);
                     }
                 });
             }

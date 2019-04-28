@@ -10,6 +10,7 @@ import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -58,17 +59,17 @@ public final class EffectSerializer {
     /**
      * {@code Type} of an {@code EffectFX}.
      */
-    private static final TypeToken<EffectFX> EFFECT_TYPE = new TypeToken<EffectFX>() {
+    private static final TypeToken<EffectFX<?>> EFFECT_TYPE = new TypeToken<EffectFX<?>>() {
     };
     /**
      * {@code Type} of an {@code EffectGroup}.
      */
-    private static final TypeToken<EffectGroup> EFFECT_GROUP_TYPE = new TypeToken<EffectGroup>() {
+    private static final TypeToken<EffectGroup<?>> EFFECT_GROUP_TYPE = new TypeToken<EffectGroup<?>>() {
     };
     /**
      * @code Type} of a {@code List} of {@code EffectGroup}.
      */
-    private static final TypeToken<List<EffectGroup>> EFFECT_GROUP_LIST_TYPE = new TypeToken<List<EffectGroup>>() {
+    private static final TypeToken<List<EffectGroup<?>>> EFFECT_GROUP_LIST_TYPE = new TypeToken<List<EffectGroup<?>>>() {
     };
     /**
      * Reflection object for main Alchemist package.
@@ -199,7 +200,7 @@ public final class EffectSerializer {
      * @throws JsonSyntaxException   If JSON is not a valid representation for an object of type
      * @throws IOException           If some other I/O error occurs
      */
-    public static EffectFX effectFromFile(final File effectFile) throws IOException {
+    public static EffectFX<?> effectFromFile(final File effectFile) throws IOException {
         return load(new FileReader(effectFile), EFFECT_TYPE);
     }
 
@@ -216,7 +217,7 @@ public final class EffectSerializer {
      * @throws JsonSyntaxException   If JSON is not a valid representation for an object of type
      * @throws IOException           If some other I/O error occurs
      */
-    public static EffectFX effectFromResources(final String resource) throws IOException {
+    public static EffectFX<?> effectFromResources(final String resource) throws IOException {
         return load(new InputStreamReader(ResourceLoader.load(resource), DEFAULT_CHARSET), EFFECT_TYPE);
     }
 
@@ -230,7 +231,7 @@ public final class EffectSerializer {
      *                         file, does not exist but cannot be created, cannot be opened
      *                         for any other reason, or another I/O error occurs
      */
-    public static void effectToFile(final File effectFile, final EffectFX effect) throws IOException {
+    public static void effectToFile(final File effectFile, final EffectFX<?> effect) throws IOException {
         save(new FileWriter(effectFile), effect, EFFECT_TYPE);
     }
 
@@ -247,7 +248,7 @@ public final class EffectSerializer {
      * @throws JsonSyntaxException   If JSON is not a valid representation for an object of type
      * @throws IOException           If some other I/O error occurs
      */
-    public static EffectGroup effectsFromFile(final File effectFile) throws IOException {
+    public static EffectGroup<?> effectsFromFile(final File effectFile) throws IOException {
         return load(new FileReader(effectFile), EFFECT_GROUP_TYPE);
     }
 
@@ -264,7 +265,7 @@ public final class EffectSerializer {
      * @throws JsonSyntaxException   If JSON is not a valid representation for an object of type
      * @throws IOException           If some other I/O error occurs
      */
-    public static EffectGroup effectsFromResources(final String resource) throws IOException {
+    public static EffectGroup<?> effectsFromResources(final String resource) throws IOException {
         return load(new InputStreamReader(ResourceLoader.load(resource), DEFAULT_CHARSET), EFFECT_GROUP_TYPE);
     }
 
@@ -278,7 +279,7 @@ public final class EffectSerializer {
      *                         file, does not exist but cannot be created, cannot be opened
      *                         for any other reason, or another I/O error occurs
      */
-    public static void effectsToFile(final File effectFile, final EffectGroup effects) throws IOException {
+    public static void effectsToFile(final File effectFile, final EffectGroup<?> effects) throws IOException {
         save(new FileWriter(effectFile), effects, EFFECT_GROUP_TYPE);
     }
 
@@ -295,7 +296,7 @@ public final class EffectSerializer {
      * @throws JsonSyntaxException   If JSON is not a valid representation for an object of type
      * @throws IOException           If some other I/O error occurs
      */
-    public static List<EffectGroup> effectGroupsFromFile(final File effectFile) throws IOException {
+    public static List<EffectGroup<?>> effectGroupsFromFile(final File effectFile) throws IOException {
         return load(new FileReader(effectFile), EFFECT_GROUP_LIST_TYPE);
     }
 
@@ -312,7 +313,7 @@ public final class EffectSerializer {
      * @throws JsonSyntaxException   If JSON is not a valid representation for an object of type
      * @throws IOException           If some other I/O error occurs
      */
-    public static List<EffectGroup> effectGroupsFromResources(final String resource) throws IOException {
+    public static List<EffectGroup<?>> effectGroupsFromResources(final String resource) throws IOException {
         return load(new InputStreamReader(ResourceLoader.load(resource), DEFAULT_CHARSET), EFFECT_GROUP_LIST_TYPE);
     }
 
@@ -326,7 +327,7 @@ public final class EffectSerializer {
      *                         file, does not exist but cannot be created, cannot be opened
      *                         for any other reason, or another I/O error occurs
      */
-    public static void effectGroupsToFile(final File effectFile, final List<EffectGroup> effects) throws IOException {
+    public static void effectGroupsToFile(final File effectFile, final List<EffectGroup<?>> effects) throws IOException {
         save(new FileWriter(effectFile), effects, EFFECT_GROUP_LIST_TYPE);
     }
 

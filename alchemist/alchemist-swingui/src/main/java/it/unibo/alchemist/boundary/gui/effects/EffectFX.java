@@ -10,7 +10,7 @@ import java.util.Queue;
 /**
  * Graphical visualization of something happening in the environment.
  */
-public interface EffectFX extends Serializable {
+public interface EffectFX<P extends Position2D<? extends P>> extends Serializable {
 
     /**
      * Computes a queue of commands to Draw something.
@@ -19,7 +19,7 @@ public interface EffectFX extends Serializable {
      * @param <T>         the {@link Concentration} type
      * @return the queue of commands that should be run to draw the effect
      */
-    <T, P extends Position2D<? extends P>> Queue<DrawCommand> computeDrawCommands(Environment<T, P> environment);
+    <T> Queue<DrawCommand<P>> computeDrawCommands(Environment<T, P> environment);
 
     /**
      * Gets the name of the effect.

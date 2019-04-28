@@ -28,7 +28,7 @@ import org.danilopianini.util.Hashes;
  * <p>
  * It's possible to set the size of the dots.
  */
-public class DrawLinks extends AbstractEffect {
+public class DrawLinks<P extends Position2D<? extends P>> extends AbstractEffect<P> {
     /**
      * Default serial version UID.
      */
@@ -48,7 +48,7 @@ public class DrawLinks extends AbstractEffect {
      * Default {@code Color}.
      */
     private static final Color DEFAULT_COLOR = Color.BLACK;
-    private final transient ConcurrentHashMap<Position2D<?>, ConcurrentLinkedQueue<Position2D<?>>> positions;
+    private final transient ConcurrentHashMap<P, ConcurrentLinkedQueue<P>> positions;
     private RangedDoubleProperty size = PropertyFactory.getPercentageRangedProperty(ResourceLoader.getStringRes("drawdot_size"), DEFAULT_SIZE);
     private Color color = DEFAULT_COLOR;
 
@@ -76,8 +76,8 @@ public class DrawLinks extends AbstractEffect {
     }
 
     @Override
-    protected Queue<DrawCommand> consumeData() {
-        final CommandQueueBuilder builder = new CommandQueueBuilder();
+    protected Queue<DrawCommand<P>> consumeData() {
+        final CommandQueueBuilder<P> builder = new CommandQueueBuilder<P>();
         positions.forEach((position, neighbors) -> {
             final double size = getSize();
             builder.addCommand((graphic, wormhole) -> {
@@ -97,10 +97,10 @@ public class DrawLinks extends AbstractEffect {
     }
 
     @Override
-    protected <T, P extends Position2D<? extends P>> void getData(final Environment<T, P> environment) {
+    protected <T> void getData(final Environment<T, P> environment) {
         positions.clear();
         environment.forEach(node -> {
-            final ConcurrentLinkedQueue<Position2D<?>> neighbors = new ConcurrentLinkedQueue<>();
+            final ConcurrentLinkedQueue<P> neighbors = new ConcurrentLinkedQueue<>();
             environment.getNeighborhood(node)
                     .getNeighbors()
                     .stream()

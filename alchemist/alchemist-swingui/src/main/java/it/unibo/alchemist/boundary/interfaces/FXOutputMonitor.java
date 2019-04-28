@@ -60,7 +60,7 @@ public interface FXOutputMonitor<T, P extends Position2D<? extends P>> extends O
      *
      * @return the current {@code Effects} to draw
      */
-    Collection<EffectGroup> getEffects();
+    Collection<EffectGroup<P>> getEffects();
 
     /**
      * Setter method for the effects to draw.
@@ -69,7 +69,7 @@ public interface FXOutputMonitor<T, P extends Position2D<? extends P>> extends O
      *
      * @param effects the {@code Effects} to draw
      */
-    void setEffects(Collection<EffectGroup> effects);
+    void setEffects(Collection<EffectGroup<P>> effects);
 
     /**
      * Add all the {@link EffectGroup}s in the collection to the {@link EffectFX Effects} to draw.
@@ -77,7 +77,7 @@ public interface FXOutputMonitor<T, P extends Position2D<? extends P>> extends O
      * @param effects the {@link EffectGroup}s to draw
      * @see Collection#addAll(Collection)
      */
-    void addEffects(Collection<EffectGroup> effects);
+    void addEffects(Collection<EffectGroup<P>> effects);
 
     /**
      * Add the {@link EffectGroup} in the collection to the {@link EffectFX Effects} to draw.
@@ -85,7 +85,7 @@ public interface FXOutputMonitor<T, P extends Position2D<? extends P>> extends O
      * @param effects the {@link EffectGroup} to draw
      * @see Collection#add(Object)
      */
-    void addEffectGroup(EffectGroup effects);
+    void addEffectGroup(EffectGroup<P> effects);
 
     /**
      * Getter method for the current view status.

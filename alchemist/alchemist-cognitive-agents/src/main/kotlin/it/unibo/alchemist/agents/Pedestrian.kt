@@ -1,6 +1,7 @@
 package it.unibo.alchemist.agents
 
-import it.unibo.alchemist.characteristics.interfaces.Characteristic
+import it.unibo.alchemist.characteristics.implementations.Age
+import it.unibo.alchemist.characteristics.implementations.Gender
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.sensory.InfluenceSphere
@@ -8,23 +9,31 @@ import it.unibo.alchemist.sensory.InfluenceSphere
 /**
  * A pedestrian is an agent with cognitive capabilities
  */
-interface Pedestrian<P: Position<P>> : Node<Collection<Characteristic>> {
+interface Pedestrian<T, P : Position<P>> : Node<T> {
 
     /**
      * A builder of pedestrians
      */
-    interface Builder<P: Position<P>, S: InfluenceSphere<P>> {
+    interface Builder<T, P : Position<P>, S : InfluenceSphere<P>> {
 
         /**
          * Equip the pedestrian with a sensorial sphere
          */
-        fun attachSensorialSphere(sense: S): Builder<P, S>
+        fun attachSensorialSphere(sense: S): Builder<T, P, S>
+
+        /**
+         * Give relevance to the age of the pedestrian
+         */
+        fun specifyAge(age: Age): Builder<T, P, S>
+
+        /**
+         * Give relevance to the gender of the pedestrian
+         */
+        fun specifyGender(gender: Gender): Builder<T, P, S>
 
         /**
          * Create the pedestrian
          */
-        fun build(): Pedestrian<P>
-
+        fun build(): Pedestrian<T, P>
     }
-
 }

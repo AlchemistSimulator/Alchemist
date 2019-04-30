@@ -15,5 +15,4 @@ class Speed(age: Age, gender: Gender) : IndividualCharacteristic {
     }
 
     val running = walking * 3
-
 }

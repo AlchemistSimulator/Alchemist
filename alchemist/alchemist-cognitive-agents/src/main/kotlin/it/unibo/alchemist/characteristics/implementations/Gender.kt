@@ -4,6 +4,6 @@ import it.unibo.alchemist.characteristics.interfaces.IndividualCharacteristic
 
 enum class Gender : IndividualCharacteristic {
 
-    MALE, FEMALE
-
+    MALE,
+    FEMALE
 }

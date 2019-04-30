@@ -11,5 +11,4 @@ class Compliance(age: Age, gender: Gender) : IndividualCharacteristic {
         age == Age.ADULT && gender == Gender.FEMALE -> 0.94
         else -> 0.89 // Age.CHILD
     }
-
 }

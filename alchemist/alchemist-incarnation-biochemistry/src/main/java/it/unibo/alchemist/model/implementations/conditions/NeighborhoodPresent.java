@@ -9,7 +9,6 @@
 package it.unibo.alchemist.model.implementations.conditions;
 
 import it.unibo.alchemist.model.interfaces.CellNode;
-import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
@@ -20,10 +19,9 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  *
  * @param <T> The concentration type.
  */
-public class NeighborhoodPresent<T> extends AbstractCondition<T> {
+public class NeighborhoodPresent<T> extends AbstractNeighborCondition<T> {
 
     private static final long serialVersionUID = 689059297366332946L;
-    private final Environment<T, ?> env;
 
     /**
      * Create the condition.
@@ -31,29 +29,23 @@ public class NeighborhoodPresent<T> extends AbstractCondition<T> {
      * @param environment the current environment.
      */
     public NeighborhoodPresent(final Environment<T, ?> environment, final Node<T> node) {
-        super(node);
-        env = environment;
+        super(environment, node);
     }
 
     @Override
     public NeighborhoodPresent<T> cloneCondition(final Node<T> n, final Reaction<T> r) {
-        return new NeighborhoodPresent<>(env, n);
+        return new NeighborhoodPresent<>(getEnvironment(), n);
     }
 
     @Override
-    public Context getContext() {
-        return Context.NEIGHBORHOOD;
-    }
-
-    @Override
-    public double getPropensityContribution() {
-        return isValid() ? 1d : 0d;
+    protected double getNeighborPropensity(Node<T> neighbor) {
+        // to be eligible (p = 1) a neighbor just needs to be instance of CellNode
+        return neighbor instanceof CellNode ? 1d : 0d;
     }
 
     @Override
     public boolean isValid() {
-        return env.getNeighborhood(getNode()).getNeighbors().stream()
-                .parallel()
+        return getEnvironment().getNeighborhood(getNode()).getNeighbors().stream()
                 .filter(n -> n instanceof CellNode)
                 .findAny()
                 .isPresent();
@@ -63,5 +55,4 @@ public class NeighborhoodPresent<T> extends AbstractCondition<T> {
     public String toString() {
         return " node has a neighbor ";
     }
-
 }

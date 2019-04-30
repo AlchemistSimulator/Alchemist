@@ -1,4 +1,4 @@
 uiDesigner.xml
 buildProfile/
-.idea/workspace.xml
-.idea/compiler.xml
+.idea/
+.kotlintest/

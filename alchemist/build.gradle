@@ -5,7 +5,6 @@ subprojects {
 
 buildscript {
     repositories {
-        maven { url "https://plugins.gradle.org/m2/" }
         gradlePluginPortal()
     }
     dependencies {
@@ -34,10 +33,10 @@ allprojects {
     apply plugin: "org.jmailen.kotlinter"
     apply plugin: 'com.jfrog.bintray'
 
-    repositories {
-        // Allow usage of protelis betas
-        maven { url "https://dl.bintray.com/protelis/Protelis/" }
-    }
+//    repositories {
+//        // Allow usage of protelis betas
+//        maven { url "https://dl.bintray.com/protelis/Protelis/" }
+//    }
 
     compileKotlin {
         kotlinOptions {

@@ -21,5 +21,4 @@ class TestSensory {
         Assert.assertFalse(audioField.isInfluenced(Euclidean2DPosition(2.0, 3.0)))
         Assert.assertTrue(audioField.isInfluenced(Euclidean2DPosition(0.1, 0.0)))
     }
-
 }

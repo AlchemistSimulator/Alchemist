@@ -9,5 +9,4 @@ import java.awt.Shape
 open class GeometricShape2D<P : Position2D<P>>(shape: Shape) : GeometricShape<P>, Shape by shape {
 
     override fun contains(point: P): Boolean = contains(point.x, point.y)
-
 }

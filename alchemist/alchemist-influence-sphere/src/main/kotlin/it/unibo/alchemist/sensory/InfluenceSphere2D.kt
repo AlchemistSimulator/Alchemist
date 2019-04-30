@@ -9,5 +9,4 @@ import it.unibo.alchemist.shapes.GeometricShape2D
 abstract class InfluenceSphere2D<P : Position2D<P>>(private val shape: GeometricShape2D<P>) : InfluenceSphere<P> {
 
     override fun isInfluenced(point: P): Boolean = shape.contains(point)
-
 }

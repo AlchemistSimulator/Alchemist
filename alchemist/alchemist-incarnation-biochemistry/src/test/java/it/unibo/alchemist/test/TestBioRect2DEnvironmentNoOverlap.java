@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
+import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.junit.Before;
 import org.junit.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
@@ -683,35 +684,25 @@ public class TestBioRect2DEnvironmentNoOverlap {
         assertNotNull("Missing test resource " + resource, res);
         final Environment<Double, Euclidean2DPosition> env = new YamlLoader(res).getWith(vars);
         final Simulation<Double, Euclidean2DPosition> sim = new Engine<>(env, 10000);
-        sim.play();
         sim.addOutputMonitor(new OutputMonitor<Double, Euclidean2DPosition>() {
-
-            /**
-             * 
-             */
-            private static final long serialVersionUID = -6746841308070417583L;
-
-            @Override
+            private static final long serialVersionUID = 1L;
+           @Override
             public void stepDone(final Environment<Double, Euclidean2DPosition> env, final Reaction<Double> r, final Time time, final long step) {
                 assertTrue("Fail at time: " + time, thereIsOverlap(env));
             }
-
             @Override
             public void initialized(final Environment<Double, Euclidean2DPosition> env) {
                 assertTrue(thereIsOverlap(env));
             }
-
             @Override
             public void finished(final Environment<Double, Euclidean2DPosition> env, final Time time, final long step) {
                 assertTrue(thereIsOverlap(env));
             }
-
             private Stream<CellWithCircularArea<Euclidean2DPosition>> getNodes() {
                 return env.getNodes().stream()
                         .filter(n -> n instanceof CellWithCircularArea)
                         .map(n -> (CellWithCircularArea<Euclidean2DPosition>) n);
             }
-
             private boolean thereIsOverlap(final Environment<Double, Euclidean2DPosition> env) {
                 getNodes().flatMap(n -> getNodes()
                             .filter(c -> !c.equals(n))
@@ -723,26 +714,11 @@ public class TestBioRect2DEnvironmentNoOverlap {
                                 "Their distance is: " + env.getDistanceBetweenNodes(e.getFirst(), e.getSecond()) +
                                 " but should be greater than " + (e.getFirst().getRadius() + e.getSecond().getRadius())));
                 return true;
-
-                /* DEBUG
-
-                env.getNodes().stream()
-                .filter(n -> n instanceof CellWithCircularArea)
-                .forEach(n -> {
-                    final List<Node<Double>> listOverlapping = env.getNodesWithinRange(n, (((CellWithCircularArea) n).getDiameter())).stream()
-                            .filter(c -> env.getDistanceBetweenNodes(c, n) < ((CellWithCircularArea) n).getDiameter())
-                            .collect(Collectors.toList());
-                    if (!listOverlapping.isEmpty()) {
-                        System.out.println("nodes: ");
-                        System.out.println("center : " + env.getPosition(n));
-                        listOverlapping.forEach(c -> System.out.println("In range : " + env.getPosition(c)));
-                        listOverlapping.forEach(c -> System.out.println("distance : " + env.getPosition(c).getDistanceTo(env.getPosition(n))));
-                    }
-                });
-                */
             }
         });
+        sim.play();
         sim.run();
+        sim.getError().ifPresent(CheckedConsumer.unchecked(it -> { throw it; }));
     }
 
     private String getFailureTestString(final String nodeName, final Node<Double> n, final Euclidean2DPosition expected) {

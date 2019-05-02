@@ -8,13 +8,14 @@
 
 package it.unibo.alchemist.model.implementations.conditions;
 
-import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 
 /**
  * Represents a condition on a neighbor. Formally this conditions is satisfied
@@ -55,15 +56,10 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
     protected final Environment<T, ?> getEnvironment() {
         return env;
     }
-
-    /**
-     * Searches in the whole neighborhood of the current node which neighbors
-     * satisfy the condition, and returns a list of this neighbors.
-     * 
-     * @return a map of neighbors which satisfy the condition and their propensity
-     */
-    public Map<Node<T>, Double> getValidNeighbors() {
-        return getValidNeighbors(env.getNeighborhood(getNode()).getNeighbors());
+    @Override
+    public double getPropensityContribution() {
+        // the condition's propensity contribution is computed as the sum of the neighbor's propensities
+        return getValidNeighbors().values().stream().mapToDouble(it -> it).sum();
     }
 
     /**
@@ -72,10 +68,25 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
      * method checks if the passed neighborhood is the actual neighborhood of the
      * node. Make sure the passed neighborhood is up to date for avoid problems.
      * 
-     * @param neighborhood
-     *            the neighborhood of the node.
      * @return a map of neighbors which satisfy the condition and their propensity
      */
-    public abstract Map<Node<T>, Double> getValidNeighbors(Collection<? extends Node<T>> neighborhood);
+    public final Map<Node<T>, Double> getValidNeighbors() {
+        return getEnvironment().getNeighborhood(getNode()).getNeighbors().stream()
+                .map(it -> new ImmutablePair<>(it, getNeighborPropensity(it)))
+                .filter(it -> it.getValue() > 0)
+                .collect(Collectors.toMap(ImmutablePair::getKey, ImmutablePair::getValue));
+    }
 
+    /**
+     * Given a node, which is supposed to be in the neighborhood of the current node, the function computes a double
+     * value representing the propensity of the neighbor to be the chosen one for the reaction to be executed.
+     * The value returned must be 0 if the neighbor is not eligible for the reaction due to this condition.
+     * This value could be used to compute the reaction's propensity, but the main usage is to give a rate to
+     * every neighbor and randomly choose one of them.
+     *
+     * @param neighbor - the neighbor whose propensity to be chosen has to be computed
+     *
+     * @return the neighbor's propensity to be chosen as the other node of the reaction
+     */
+    protected abstract double getNeighborPropensity(Node<T> neighbor);
 }

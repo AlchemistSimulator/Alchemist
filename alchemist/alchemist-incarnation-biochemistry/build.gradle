@@ -8,6 +8,10 @@
 
 apply plugin: 'antlr'
 
+test {
+    useJUnitPlatform()
+}
+
 dependencies {
     implementation (
         project(':alchemist-implementationbase'),
@@ -18,7 +22,9 @@ dependencies {
     )
     testImplementation(
         project(':alchemist-engine'),
-        project(':alchemist-loading')
+        project(':alchemist-loading'),
+        project(':alchemist-time'),
+        "io.kotlintest:kotlintest-runner-junit5:$kotlinTestVersion"
     )
     antlr "org.antlr:antlr4:$antlr4Version"
     runtimeOnly "org.antlr:antlr4-runtime:$antlr4Version"

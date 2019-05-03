@@ -9,6 +9,7 @@ import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import java.io.IOException;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -25,7 +26,7 @@ import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRe
  * an {@link EffectFX}. It has a name that identifies the Effect and when
  * clicked should open another view to edit effect-specific parameters.
  */
-public class EffectCell extends AbstractEffectCell<EffectFX> {
+public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffectCell<EffectFX<P>> {
     private static final String DEFAULT_NAME = getStringRes("effect_default_name");
     private final JFXDrawersStack stack;
 
@@ -157,7 +158,7 @@ public class EffectCell extends AbstractEffectCell<EffectFX> {
 
     @Override
     public DataFormat getDataFormat() {
-        final EffectFX item = this.getItem();
+        final EffectFX<P> item = this.getItem();
 
         if (item == null || !EffectFX.class.isAssignableFrom(item.getClass())) {
             return DataFormatFactory.getDataFormat(this.getClass());
@@ -167,7 +168,7 @@ public class EffectCell extends AbstractEffectCell<EffectFX> {
     }
 
     @Override
-    protected void updateItem(final EffectFX item, final boolean empty) {
+    protected void updateItem(final EffectFX<P> item, final boolean empty) {
         super.updateItem(item, empty);
 
         if (empty || item == null) {

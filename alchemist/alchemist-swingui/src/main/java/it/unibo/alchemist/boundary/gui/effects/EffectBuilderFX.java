@@ -1,7 +1,9 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
+import it.unibo.alchemist.ClassPathScanner;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,25 +20,16 @@ import org.reflections.Reflections;
  */
 public class EffectBuilderFX {
     /**
-     * Reflection object for main Alchemist package.
-     */
-    private static final Reflections REFLECTIONS = new Reflections("it.unibo.alchemist");
-    /**
      * Set of available {@link EffectFX effect}s found by reflection.
      */
-    private static final Set<Class<? extends EffectFX>> EFFECTS = REFLECTIONS.getSubTypesOf(EffectFX.class)
-            .stream()
-            .filter(c -> !Modifier.isAbstract(c.getModifiers()))
-            .collect(Collectors.toSet());
-    private final List<Class<? extends EffectFX>> effects;
+    private static final List<Class<? extends EffectFX>> EFFECTS = ClassPathScanner.subTypesOf(EffectFX.class, "it.unibo.alchemist");
     private final ChoiceDialog<Class<? extends EffectFX>> dialog;
 
     /**
      * Default constructor.
      */
     public EffectBuilderFX() {
-        effects = new ArrayList<>(EFFECTS);
-        dialog = new ChoiceDialog<>(effects.get(0), effects);
+        dialog = new ChoiceDialog<>(EFFECTS.get(0), EFFECTS);
         ((Stage) dialog.getDialogPane()
                 .getScene()
                 .getWindow())
@@ -94,6 +87,6 @@ public class EffectBuilderFX {
      * @return the list of effects found
      */
     public List<Class<? extends EffectFX>> getFoundEffects() {
-        return Collections.unmodifiableList(this.effects);
+        return Collections.unmodifiableList(EFFECTS);
     }
 }

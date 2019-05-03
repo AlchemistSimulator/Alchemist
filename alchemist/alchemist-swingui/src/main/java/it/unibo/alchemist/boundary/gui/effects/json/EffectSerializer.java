@@ -200,8 +200,8 @@ public final class EffectSerializer {
      * @throws JsonSyntaxException   If JSON is not a valid representation for an object of type
      * @throws IOException           If some other I/O error occurs
      */
-    public static EffectFX<?> effectFromFile(final File effectFile) throws IOException {
-        return load(new FileReader(effectFile), EFFECT_TYPE);
+    public static <P extends Position2D<? extends P>> EffectFX<P> effectFromFile(final File effectFile) throws IOException {
+        return load(new FileReader(effectFile), new TypeToken<EffectGroup<P>>() { });
     }
 
     /**
@@ -217,8 +217,8 @@ public final class EffectSerializer {
      * @throws JsonSyntaxException   If JSON is not a valid representation for an object of type
      * @throws IOException           If some other I/O error occurs
      */
-    public static EffectFX<?> effectFromResources(final String resource) throws IOException {
-        return load(new InputStreamReader(ResourceLoader.load(resource), DEFAULT_CHARSET), EFFECT_TYPE);
+    public static <P extends Position2D<? extends P>> EffectFX<P> effectFromResources(final String resource) throws IOException {
+        return load(new InputStreamReader(ResourceLoader.load(resource), DEFAULT_CHARSET), new TypeToken<EffectGroup<P>>() { });
     }
 
     /**
@@ -231,8 +231,8 @@ public final class EffectSerializer {
      *                         file, does not exist but cannot be created, cannot be opened
      *                         for any other reason, or another I/O error occurs
      */
-    public static void effectToFile(final File effectFile, final EffectFX<?> effect) throws IOException {
-        save(new FileWriter(effectFile), effect, EFFECT_TYPE);
+    public static <P extends Position2D<? extends P>> void effectToFile(final File effectFile, final EffectFX<P> effect) throws IOException {
+        save(new FileWriter(effectFile), effect, new TypeToken<EffectFX<P>>() { });
     }
 
     /**
@@ -248,8 +248,8 @@ public final class EffectSerializer {
      * @throws JsonSyntaxException   If JSON is not a valid representation for an object of type
      * @throws IOException           If some other I/O error occurs
      */
-    public static EffectGroup<?> effectsFromFile(final File effectFile) throws IOException {
-        return load(new FileReader(effectFile), EFFECT_GROUP_TYPE);
+    public static <P extends Position2D<? extends P>> EffectGroup<P> effectsFromFile(final File effectFile) throws IOException {
+        return load(new FileReader(effectFile), new TypeToken<EffectGroup<P>>() { });
     }
 
     /**
@@ -265,8 +265,8 @@ public final class EffectSerializer {
      * @throws JsonSyntaxException   If JSON is not a valid representation for an object of type
      * @throws IOException           If some other I/O error occurs
      */
-    public static EffectGroup<?> effectsFromResources(final String resource) throws IOException {
-        return load(new InputStreamReader(ResourceLoader.load(resource), DEFAULT_CHARSET), EFFECT_GROUP_TYPE);
+    public static <P extends Position2D<? extends P>> EffectGroup<P> effectsFromResources(final String resource) throws IOException {
+        return load(new InputStreamReader(ResourceLoader.load(resource), DEFAULT_CHARSET), new TypeToken<EffectGroup<P>>() { });
     }
 
     /**
@@ -279,8 +279,8 @@ public final class EffectSerializer {
      *                         file, does not exist but cannot be created, cannot be opened
      *                         for any other reason, or another I/O error occurs
      */
-    public static void effectsToFile(final File effectFile, final EffectGroup<?> effects) throws IOException {
-        save(new FileWriter(effectFile), effects, EFFECT_GROUP_TYPE);
+    public static <P extends Position2D<? extends P>> void effectsToFile(final File effectFile, final EffectGroup<P> effects) throws IOException {
+        save(new FileWriter(effectFile), effects, new TypeToken<EffectGroup<P>>() { });
     }
 
     /**
@@ -296,8 +296,8 @@ public final class EffectSerializer {
      * @throws JsonSyntaxException   If JSON is not a valid representation for an object of type
      * @throws IOException           If some other I/O error occurs
      */
-    public static List<EffectGroup<?>> effectGroupsFromFile(final File effectFile) throws IOException {
-        return load(new FileReader(effectFile), EFFECT_GROUP_LIST_TYPE);
+    public static <P extends Position2D<? extends P>> List<EffectGroup<P>> effectGroupsFromFile(final File effectFile) throws IOException {
+        return load(new FileReader(effectFile), new TypeToken<List<EffectGroup<P>>>() { });
     }
 
     /**
@@ -313,8 +313,8 @@ public final class EffectSerializer {
      * @throws JsonSyntaxException   If JSON is not a valid representation for an object of type
      * @throws IOException           If some other I/O error occurs
      */
-    public static List<EffectGroup<?>> effectGroupsFromResources(final String resource) throws IOException {
-        return load(new InputStreamReader(ResourceLoader.load(resource), DEFAULT_CHARSET), EFFECT_GROUP_LIST_TYPE);
+    public static <P extends Position2D<? extends P>> List<EffectGroup<P>> effectGroupsFromResources(final String resource) throws IOException {
+        return load(new InputStreamReader(ResourceLoader.load(resource), DEFAULT_CHARSET), new TypeToken<List<EffectGroup<P>>>() { });
     }
 
     /**
@@ -327,8 +327,8 @@ public final class EffectSerializer {
      *                         file, does not exist but cannot be created, cannot be opened
      *                         for any other reason, or another I/O error occurs
      */
-    public static void effectGroupsToFile(final File effectFile, final List<EffectGroup<?>> effects) throws IOException {
-        save(new FileWriter(effectFile), effects, EFFECT_GROUP_LIST_TYPE);
+    public static <P extends Position2D<? extends P>> void effectGroupsToFile(final File effectFile, final List<EffectGroup<P>> effects) throws IOException {
+        save(new FileWriter(effectFile), effects, new TypeToken<List<EffectGroup<P>>>() { });
     }
 
     /**

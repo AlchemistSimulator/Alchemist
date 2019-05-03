@@ -23,7 +23,7 @@ import javafx.stage.Stage;
 public class SingleRunAppBuilder<T, P extends Position2D<P>> {
     private static final String DEFAULT_EFFECTS = "/it/unibo/alchemist/gui/effects/json/DefaultEffects.json";
     private final Simulation<T, P> simulation;
-    private final Collection<EffectGroup<?>> effectGroups;
+    private final Collection<EffectGroup<P>> effectGroups;
     private volatile boolean shouldUseDefaultEffects;
 
     /**
@@ -58,7 +58,7 @@ public class SingleRunAppBuilder<T, P extends Position2D<P>> {
      * @param effectGroups the {@code EffectGroups} to set
      * @return this builder
      */
-    public SingleRunAppBuilder<T, P> setEffectGroups(final Collection<EffectGroup<?>> effectGroups) {
+    public SingleRunAppBuilder<T, P> setEffectGroups(final Collection<EffectGroup<P>> effectGroups) {
         this.effectGroups.clear();
         this.effectGroups.addAll(effectGroups);
         return this;
@@ -101,7 +101,7 @@ public class SingleRunAppBuilder<T, P extends Position2D<P>> {
      * @param effects the {@code EffectGroup} to add
      * @return this builder
      */
-    public SingleRunAppBuilder<T, P> addEffectGroup(final EffectGroup<?> effects) {
+    public SingleRunAppBuilder<T, P> addEffectGroup(final EffectGroup<P> effects) {
         this.effectGroups.add(effects);
         return this;
     }

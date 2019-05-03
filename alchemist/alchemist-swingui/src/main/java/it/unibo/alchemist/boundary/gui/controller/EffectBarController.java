@@ -12,6 +12,7 @@ import it.unibo.alchemist.boundary.gui.view.cells.EffectCell;
 import it.unibo.alchemist.boundary.gui.view.cells.EffectGroupCell;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -35,14 +36,14 @@ import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRe
 /**
  * This class models a JavaFX controller for EffectBar.fxml.
  */
-public class EffectBarController implements Initializable {
+public class EffectBarController<P extends Position2D<? extends P>> implements Initializable {
     /**
      * Layout path.
      */
     public static final String EFFECT_BAR_LAYOUT = "EffectBar";
     private final JFXDrawersStack stack;
     private final JFXDrawer thisDrawer;
-    private final EffectGroupCell parentCell;
+    private final EffectGroupCell<P> parentCell;
     @FXML
     @Nullable
     private ButtonBar topBar; // Value injected by FXMLLoader
@@ -51,14 +52,14 @@ public class EffectBarController implements Initializable {
     private JFXButton addEffect;
     @FXML
     @Nullable
-    private ListView<EffectFX> effectsList;
+    private ListView<EffectFX<P>> effectsList;
     @FXML
     @Nullable
     private Label groupName;
     @FXML
     @Nullable
     private JFXButton backToGroups;
-    private ObservableList<EffectFX> observableList;
+    private ObservableList<EffectFX<P>> observableList;
     private EffectBuilderFX effectBuilder;
     private Optional<FXOutputMonitor<?, ?>> displayMonitor = Optional.empty();
 
@@ -71,7 +72,7 @@ public class EffectBarController implements Initializable {
      * @param thisDrawer the drawer the layout this controller is assigned to is loaded
      *                   into
      */
-    public EffectBarController(final EffectGroupCell parentCell, final JFXDrawersStack stack, final JFXDrawer thisDrawer) {
+    public EffectBarController(final EffectGroupCell<P> parentCell, final JFXDrawersStack stack, final JFXDrawer thisDrawer) {
         this.stack = stack;
         this.thisDrawer = thisDrawer;
         this.parentCell = parentCell;
@@ -163,7 +164,7 @@ public class EffectBarController implements Initializable {
      *
      * @param effect the effect to add
      */
-    public void addEffectToGroup(final EffectFX effect) {
+    public void addEffectToGroup(final EffectFX<P> effect) {
         this.getObservableList().add(effect);
         this.parentCell.getItem().add(effect);
         if (this.effectsList != null) {
@@ -176,7 +177,7 @@ public class EffectBarController implements Initializable {
      * adds it to the {@link ObservableList list}.
      */
     private void addEffectToList() {
-        final EffectFX choice = effectBuilder.chooseAndLoad();
+        final EffectFX<P> choice = effectBuilder.chooseAndLoad();
         if (choice != null) {
             this.addEffectToGroup(choice);
             this.getObservableList().get(this.getObservableList().size() - 1).setName(choice.getName() + " " + getObservableList().size());
@@ -190,16 +191,16 @@ public class EffectBarController implements Initializable {
      * @return the {@code ObservableList} associated to the controlled
      * {@link ListView}
      */
-    private ObservableList<EffectFX> getObservableList() {
+    private ObservableList<EffectFX<P>> getObservableList() {
         if (this.observableList == null) {
             this.observableList = FXCollections.observableArrayList();
             if (this.effectsList != null) {
             this.effectsList.setItems(observableList);
                 this.effectsList.setCellFactory(lv -> {
                     if (getDisplayMonitor().isPresent()) {
-                        return new EffectCell(getDisplayMonitor().get(), this.stack);
+                        return new EffectCell<>(getDisplayMonitor().get(), this.stack);
                     } else {
-                        return new EffectCell(this.stack);
+                        return new EffectCell<>(this.stack);
                     }
                 });
             }

@@ -1,4 +1,5 @@
 {
+  "type": "EffectStack",
   "name": "Default Effects",
   "visibility": true,
   "transparency": 100,

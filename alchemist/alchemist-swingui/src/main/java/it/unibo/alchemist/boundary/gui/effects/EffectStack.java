@@ -61,7 +61,7 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
 
     @Override
     public <T> Queue<DrawCommand<P>> computeDrawCommands(final Environment<T, P> environment) {
-        final CommandQueueBuilder<P> builder = new CommandQueueBuilder<P>();
+        final CommandQueueBuilder<P> builder = new CommandQueueBuilder<>();
 
         if (isVisible()) {
             this.stream()
@@ -201,7 +201,7 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
     }
 
     @Override
-    public boolean add(final EffectFX e) {
+    public boolean add(final EffectFX<P> e) {
         if (e == null || this.contains(e)) {
             return false;
         } else {
@@ -284,7 +284,7 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
     }
 
     @Override
-    public boolean offer(final EffectFX e) {
+    public boolean offer(final EffectFX<P> e) {
         try {
             return this.add(e);
         } catch (final Exception ex) {
@@ -293,7 +293,7 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
     }
 
     @Override
-    public EffectFX remove() {
+    public EffectFX<P> remove() {
         if (this.isEmpty()) {
             throw new NoSuchElementException("The stack is empty");
         } else {
@@ -302,7 +302,7 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
     }
 
     @Override
-    public EffectFX poll() {
+    public EffectFX<P> poll() {
         return this.pop();
     }
 
@@ -314,12 +314,12 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
      * @return the effect with maximum priority
      */
     @Override
-    public EffectFX peek() {
+    public EffectFX<P> peek() {
         return this.effects.get(topIndex);
     }
 
     @Override
-    public EffectFX element() {
+    public EffectFX<P> element() {
         if (this.isEmpty()) {
             throw new NoSuchElementException("The stack is empty");
         } else {

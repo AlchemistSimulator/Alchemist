@@ -162,9 +162,9 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
                 this.effectGroupsList.setItems(observableEffectsList);
                 this.effectGroupsList.setCellFactory(lv -> {
                     if (getDisplayMonitor().isPresent()) {
-                        return new EffectGroupCell<>(getDisplayMonitor().get(), this.stack);
+                        return new EffectGroupCell<P>(getDisplayMonitor().get(), this.stack);
                     } else {
-                        return new EffectGroupCell<>(this.stack);
+                        return new EffectGroupCell<P>(this.stack);
                     }
                 });
             }

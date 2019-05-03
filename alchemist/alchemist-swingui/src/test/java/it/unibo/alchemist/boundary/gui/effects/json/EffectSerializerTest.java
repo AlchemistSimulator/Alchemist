@@ -1,5 +1,6 @@
 package it.unibo.alchemist.boundary.gui.effects.json;
 
+import it.unibo.alchemist.model.interfaces.Position2D;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -47,11 +48,11 @@ public class EffectSerializerTest {
     public void testMultipleEffectGroupsSerialization() throws IOException {
         final File file = folder.newFile();
 
-        final List<EffectGroup> groups = initList();
+        final List<EffectGroup<Position2D<? extends Position2D>>> groups = initList();
 
         EffectSerializer.effectGroupsToFile(file, groups);
 
-        final List<EffectGroup> deserialized = EffectSerializer.effectGroupsFromFile(file);
+        final List<EffectGroup<Position2D<? extends Position2D>>> deserialized = EffectSerializer.effectGroupsFromFile(file);
 
         Assert.assertTrue(groups.equals(deserialized));
     }
@@ -64,16 +65,16 @@ public class EffectSerializerTest {
     @Test
     public void testListOfEffectSerialization() throws IOException {
         final File file = folder.newFile();
-        final Type type = new TypeToken<List<EffectFX>>() {
+        final Type type = new TypeToken<List<EffectFX<Position2D<? extends Position2D>>>>() {
         }.getType();
-        final List<EffectFX> effects = new ArrayList<>();
-        effects.add(new DrawDot());
+        final List<EffectFX<Position2D<? extends Position2D>>> effects = new ArrayList<>();
+        effects.add(new DrawDot<>());
         effects.add(new DrawColoredDot("Test"));
         final Writer writer = new FileWriter(file);
         EffectSerializer.getGSON().toJson(effects, type, writer);
         writer.close();
         final Reader reader = new FileReader(file);
-        final List<EffectFX> deserialized = EffectSerializer.getGSON().fromJson(reader, type);
+        final List<EffectFX<Position2D<? extends Position2D>>> deserialized = EffectSerializer.getGSON().fromJson(reader, type);
         reader.close();
         Assert.assertTrue(effects.equals(deserialized));
     }
@@ -83,23 +84,23 @@ public class EffectSerializerTest {
      *
      * @return a list of {@code EffectGroups}
      */
-    private List<EffectGroup> initList() {
-        final List<EffectGroup> groups = new ArrayList<>();
+    private List<EffectGroup<Position2D<? extends Position2D>>> initList() {
+        final List<EffectGroup<Position2D<? extends Position2D>>> groups = new ArrayList<>();
 
-        groups.add(new EffectStack());
-        groups.add(new EffectStack("Group 2"));
+        groups.add(new EffectStack<>());
+        groups.add(new EffectStack<>("Group 2"));
 
-        final EffectGroup group3 = new EffectStack("Group 3");
+        final EffectGroup<Position2D<? extends Position2D>> group3 = new EffectStack<>("Group 3");
         group3.setVisibility(false);
         groups.add(group3);
 
-        final EffectGroup group4 = new EffectStack();
-        group4.add(new DrawDot());
-        group4.add(new DrawDot("TestDot"));
+        final EffectGroup<Position2D<? extends Position2D>> group4 = new EffectStack<>();
+        group4.add(new DrawDot<>());
+        group4.add(new DrawDot<>("TestDot"));
         groups.add(group4);
 
-        final EffectGroup group5 = new EffectStack("Group 5");
-        final DrawDot dot = new DrawDot("Dot 2");
+        final EffectGroup<Position2D<? extends Position2D>> group5 = new EffectStack<>("Group 5");
+        final DrawDot<Position2D<? extends Position2D>> dot = new DrawDot<>("Dot 2");
         // CHECKSTYLE:OFF
         dot.setSize(7.0);
         // CHECKSTYLE:ON
@@ -120,11 +121,11 @@ public class EffectSerializerTest {
      */
     @Test
     public void testResourceSerialization() throws IOException {
-        final EffectGroup group = new EffectStack("Default Effects");
-        final DrawDot effect = new DrawDot("Draw the dots");
+        final EffectGroup<Position2D<? extends Position2D>> group = new EffectStack<>("Default Effects");
+        final DrawDot<Position2D<? extends Position2D>> effect = new DrawDot<>("Draw the dots");
         effect.setSize(TEST_SIZE);
         group.add(effect);
-        final EffectGroup deserialized = EffectSerializer.effectsFromResources(TEST_EFFECTS);
+        final EffectGroup<Position2D<? extends Position2D>> deserialized = EffectSerializer.effectsFromResources(TEST_EFFECTS);
         Assert.assertEquals(group, deserialized);
         final File file = folder.newFile();
         EffectSerializer.effectsToFile(file, group);

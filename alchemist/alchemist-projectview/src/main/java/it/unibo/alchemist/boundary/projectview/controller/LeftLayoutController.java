@@ -10,7 +10,7 @@ package it.unibo.alchemist.boundary.projectview.controller;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import it.unibo.alchemist.boundary.projectview.model.Project;
-import it.unibo.alchemist.boundary.util.ProjectIOUtils;
+import it.unibo.alchemist.boundary.projectview.utils.ProjectIOUtils;
 import java.awt.Desktop;
 import java.awt.Desktop.Action;
 import java.awt.Dimension;
@@ -24,7 +24,7 @@ import org.kaikikm.threadresloader.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.unibo.alchemist.boundary.util.URLManager;
+import it.unibo.alchemist.boundary.projectview.utils.URLManager;
 import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

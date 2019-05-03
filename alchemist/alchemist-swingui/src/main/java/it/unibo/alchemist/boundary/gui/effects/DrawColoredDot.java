@@ -6,6 +6,7 @@ import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedIntegerProperty;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import java.io.IOException;
 import java.io.InvalidClassException;
 import java.io.NotSerializableException;
@@ -25,7 +26,7 @@ import org.danilopianini.util.Hashes;
  * <p>
  * It's possible to set the size and the color of the dots.
  */
-public class DrawColoredDot extends DrawDot {
+public class DrawColoredDot extends DrawDot<Position2D<? extends Position2D>> {
 
     /**
      * Default generated Serial Version UID.

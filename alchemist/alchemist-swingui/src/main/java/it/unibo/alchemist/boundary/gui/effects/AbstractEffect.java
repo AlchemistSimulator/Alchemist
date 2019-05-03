@@ -107,7 +107,7 @@ public abstract class AbstractEffect<P extends Position2D<? extends P>> implemen
      */
     @Contract("null, null -> true; null, !null -> false; !null, null -> false")
     @SuppressWarnings("unchecked")
-    protected static <T extends AbstractEffect> boolean checkBasicProperties(final @Nullable T anEffect, final @Nullable Object otherEffect) {
+    protected static <T extends AbstractEffect<?>> boolean checkBasicProperties(final @Nullable T anEffect, final @Nullable Object otherEffect) {
         if (anEffect == null) {
             return otherEffect == null;
         } else if (otherEffect != null) {

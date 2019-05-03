@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 
 import com.google.common.io.Files;
@@ -21,11 +20,6 @@ import com.google.gson.InstanceCreator;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import it.unibo.alchemist.boundary.projectview.model.Project;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 /**
  * A class with static methods that load or save data in a json file.

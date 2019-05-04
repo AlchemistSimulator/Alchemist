@@ -1,5 +1,6 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
+import it.unibo.alchemist.model.interfaces.Position2D;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -48,11 +49,11 @@ public class DrawLinksSerializationTest extends AbstractEffectSerializationTest<
     public void testGsonSerialization() throws IOException {
         final File file = folder.newFile();
 
-        final DrawLinks effect = new DrawLinks(TEST_NAME);
+        final DrawLinks<Position2D<? extends Position2D>> effect = new DrawLinks<>(TEST_NAME);
         effect.setSize(TEST_SIZE);
         EffectSerializer.effectToFile(file, effect);
 
-        final DrawLinks deserialized = (DrawLinks) EffectSerializer.effectFromFile(file);
+        final DrawLinks<Position2D<? extends Position2D>> deserialized = (DrawLinks<Position2D<? extends Position2D>>) EffectSerializer.effectFromFile(file);
 
         Assert.assertTrue(getMessage(effect, deserialized), effect.equals(deserialized));
     }

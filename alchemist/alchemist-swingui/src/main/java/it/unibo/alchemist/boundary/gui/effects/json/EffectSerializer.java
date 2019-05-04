@@ -201,7 +201,7 @@ public final class EffectSerializer {
      * @throws IOException           If some other I/O error occurs
      */
     public static <P extends Position2D<? extends P>> EffectFX<P> effectFromFile(final File effectFile) throws IOException {
-        return load(new FileReader(effectFile), new TypeToken<EffectGroup<P>>() { });
+        return load(new FileReader(effectFile), new TypeToken<EffectFX<P>>() { });
     }
 
     /**
@@ -218,7 +218,7 @@ public final class EffectSerializer {
      * @throws IOException           If some other I/O error occurs
      */
     public static <P extends Position2D<? extends P>> EffectFX<P> effectFromResources(final String resource) throws IOException {
-        return load(new InputStreamReader(ResourceLoader.load(resource), DEFAULT_CHARSET), new TypeToken<EffectGroup<P>>() { });
+        return load(new InputStreamReader(ResourceLoader.load(resource), DEFAULT_CHARSET), new TypeToken<EffectFX<P>>() { });
     }
 
     /**

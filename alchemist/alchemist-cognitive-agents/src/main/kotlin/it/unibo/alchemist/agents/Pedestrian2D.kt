@@ -1,10 +1,10 @@
 package it.unibo.alchemist.agents
 
-import it.unibo.alchemist.characteristics.implementations.Age
-import it.unibo.alchemist.characteristics.implementations.Gender
-import it.unibo.alchemist.characteristics.implementations.Speed
-import it.unibo.alchemist.characteristics.implementations.Compliance
-import it.unibo.alchemist.characteristics.interfaces.Characteristic
+import it.unibo.alchemist.characteristics.individual.Age
+import it.unibo.alchemist.characteristics.individual.Gender
+import it.unibo.alchemist.characteristics.individual.Speed
+import it.unibo.alchemist.characteristics.individual.Compliance
+import it.unibo.alchemist.characteristics.Characteristic
 import it.unibo.alchemist.model.implementations.nodes.AbstractNode
 import it.unibo.alchemist.model.interfaces.Environment
 
@@ -23,6 +23,9 @@ class Pedestrian2D<T, P : Position2D<P>> private constructor(
 ) : Pedestrian<T, P>, AbstractNode<T>(env) {
 
     override fun createT(): T = TODO()
+
+    override val age = characteristics.find { it is Age } as Age?
+    override val gender = characteristics.find { it is Gender } as Gender?
 
     /**
      * A builder of bidimensional pedestrians

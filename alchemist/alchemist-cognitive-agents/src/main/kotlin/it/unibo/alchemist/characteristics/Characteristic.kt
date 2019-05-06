@@ -1,4 +1,4 @@
-package it.unibo.alchemist.characteristics.interfaces
+package it.unibo.alchemist.characteristics
 
 /**
  * Any characteristic associable to a pedestrian

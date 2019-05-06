@@ -1,7 +1,7 @@
 package it.unibo.alchemist.agents
 
-import it.unibo.alchemist.characteristics.implementations.Age
-import it.unibo.alchemist.characteristics.implementations.Gender
+import it.unibo.alchemist.characteristics.individual.Age
+import it.unibo.alchemist.characteristics.individual.Gender
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.sensory.InfluenceSphere
@@ -10,6 +10,10 @@ import it.unibo.alchemist.sensory.InfluenceSphere
  * A pedestrian is an agent with cognitive capabilities
  */
 interface Pedestrian<T, P : Position<P>> : Node<T> {
+
+    val age: Age?
+
+    val gender: Gender?
 
     /**
      * A builder of pedestrians

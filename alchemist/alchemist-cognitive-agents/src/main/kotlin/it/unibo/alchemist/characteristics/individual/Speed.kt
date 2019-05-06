@@ -1,6 +1,5 @@
-package it.unibo.alchemist.characteristics.implementations
+package it.unibo.alchemist.characteristics.individual
 
-import it.unibo.alchemist.characteristics.interfaces.IndividualCharacteristic
 import kotlin.random.Random
 
 class Speed(age: Age, gender: Gender) : IndividualCharacteristic {

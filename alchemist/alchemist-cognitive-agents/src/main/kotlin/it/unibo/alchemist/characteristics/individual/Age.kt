@@ -1,6 +1,4 @@
-package it.unibo.alchemist.characteristics.implementations
-
-import it.unibo.alchemist.characteristics.interfaces.IndividualCharacteristic
+package it.unibo.alchemist.characteristics.individual
 
 const val CHILD_THRESHOLD = 18
 

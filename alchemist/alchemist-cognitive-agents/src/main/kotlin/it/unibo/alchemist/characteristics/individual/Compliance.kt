@@ -1,6 +1,4 @@
-package it.unibo.alchemist.characteristics.implementations
-
-import it.unibo.alchemist.characteristics.interfaces.IndividualCharacteristic
+package it.unibo.alchemist.characteristics.individual
 
 class Compliance(age: Age, gender: Gender) : IndividualCharacteristic {
 

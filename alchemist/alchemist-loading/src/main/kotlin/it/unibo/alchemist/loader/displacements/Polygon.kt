@@ -35,8 +35,23 @@ open class Polygon<P : Position2D<out P>>(
     environment: Environment<*, P>,
     randomGenerator: RandomGenerator,
     nodes: Int,
-    points: List<Point2D>
+    pointsInput: List<*>
 ) : AbstractRandomDisplacement<P>(environment, randomGenerator, nodes) {
+
+    private val points: List<Point2D> = pointsInput.map {
+        val error: () -> String = { "$it cannot get converted to Pair<out Number, out Number>" }
+        when (it) {
+            is Pair<*, *> -> {
+                require(it.first is Number && it.second is Number, error)
+                it as Point2D
+            }
+            is List<*> -> {
+                require(it.size == 2 && it[0] is Number && it[1] is Number, error)
+                Pair(it[0] as Number, it[1] as Number)
+            }
+            else -> throw IllegalArgumentException(error())
+        }
+    }
 
     /**
      * The polygon in which positions are generated

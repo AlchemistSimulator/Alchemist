@@ -1,6 +1,6 @@
 package it.unibo.alchemist.groups
 
-import it.unibo.alchemist.agents.Pedestrian
+import it.unibo.alchemist.agents.homogeneous.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
 
 /**

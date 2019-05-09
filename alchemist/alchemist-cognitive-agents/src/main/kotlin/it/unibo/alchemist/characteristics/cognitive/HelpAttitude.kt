@@ -1,11 +1,10 @@
-package it.unibo.alchemist.characteristics.relational
+package it.unibo.alchemist.characteristics.cognitive
 
-import it.unibo.alchemist.agents.Pedestrian
+import it.unibo.alchemist.agents.heterogeneous.HeterogeneousPedestrian
 import it.unibo.alchemist.characteristics.individual.Age
 import it.unibo.alchemist.characteristics.individual.Gender
-import it.unibo.alchemist.model.interfaces.Position
 
-class HelpAttitude<T, P : Position<P>> : RelationalCharacteristic<T, P>() {
+class HelpAttitude : CognitiveCharacteristic() {
 
     companion object {
         // first -> in the same group level
@@ -49,7 +48,7 @@ class HelpAttitude<T, P : Position<P>> : RelationalCharacteristic<T, P>() {
         )
     }
 
-    fun level(toHelp: Pedestrian<T, P>): Double =
+    fun level(toHelp: HeterogeneousPedestrian<*>): Double =
             rules[Pair(owner.age, owner.gender)]?.get(Pair(toHelp.age, toHelp.gender))
                     ?.let { it.second } ?: 0.0 // can't be part of the group yet
 }

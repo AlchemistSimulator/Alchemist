@@ -9,6 +9,7 @@ package it.unibo.alchemist.test;
 
 import static org.junit.Assert.assertEquals;
 import org.apache.commons.math3.random.MersenneTwister;
+import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.junit.Test;
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
@@ -78,5 +79,6 @@ public class TestBiomolLayer {
             public void finished(final Environment<Double, Euclidean2DPosition> env, final Time time, final long step) { }
         });
         sim.run();
+        sim.getError().ifPresent(CheckedConsumer.unchecked(it -> { throw it; }));
     }
 }

@@ -6,7 +6,7 @@ import it.unibo.alchemist.model.interfaces.Position
 /**
  * Abstraction for a group of pedestrians
  */
-class Group<T, P : Position<P>>(val members: MutableSet<Pedestrian<T, P>> = mutableSetOf()) {
+class Group<T, P : Position<P>>(val members: MutableSet<Pedestrian<T>> = mutableSetOf()) {
 
-    fun addPedestrian(ped: Pedestrian<T, P>) = members.add(ped)
+    fun addPedestrian(ped: Pedestrian<T>) = members.add(ped)
 }

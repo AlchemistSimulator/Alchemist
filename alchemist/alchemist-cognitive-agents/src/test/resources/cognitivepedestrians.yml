@@ -1,0 +1,17 @@
+incarnation: protelis
+
+environment:
+  type: Continuous2DEnvironment
+
+positions:
+  type: EuclideanPosition2D
+
+network-model:
+  type: NoLinks
+
+displacements:
+  - in:
+      type: Circle
+      parameters: [100, 0, 0, 20]
+    nodes:
+      type: MaleAdult

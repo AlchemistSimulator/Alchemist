@@ -1,3 +1,12 @@
+/*
+ * Kotlin migration TODO list
+ *
+ * use https://github.com/jmfayard/buildSrcVersions for dependency version management
+ * check why implementationbase is required in alchemist-engine
+ * check why there is no dependency of type api in alchemist-engin
+ * update checkstyle configuration
+ */
+
 apply plugin: 'project-report'
 subprojects {
     apply plugin: 'java-library'

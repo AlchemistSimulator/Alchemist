@@ -10,6 +10,7 @@
  * use gitsemverplugin
  * use publish-on-central
  * move deployment on a separate phase in travis ci
+ * use the new ktlint
  */
 
 apply plugin: 'project-report'

@@ -5,6 +5,9 @@
  * check why implementationbase is required in alchemist-engine
  * check why there is no dependency of type api in alchemist-engin
  * update checkstyle configuration
+ * give up build commons
+ * use gitsemverplugin
+ * use publish-on-central
  */
 
 apply plugin: 'project-report'

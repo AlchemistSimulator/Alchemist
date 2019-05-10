@@ -7,4 +7,4 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position2D
 
 class MaleAdult<T, P : Position2D<P>>(env: Environment<T, P>)
-    : CognitivePedestrian2D<T, P>(env, Age.ADULT, Gender.MALE, true, true)
+    : CognitivePedestrian2D<T, P>(env, Age.ADULT, Gender.MALE)

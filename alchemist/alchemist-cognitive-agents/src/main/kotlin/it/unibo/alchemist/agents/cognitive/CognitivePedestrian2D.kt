@@ -12,15 +12,12 @@ import kotlin.random.Random
 open class CognitivePedestrian2D<T, P : Position2D<P>>(
     private val env: Environment<T, P>,
     age: Age,
-    gender: Gender,
-    canSee: Boolean,
-    canHear: Boolean
+    gender: Gender
 ) : AbstractCognitivePedestrian<T, P>(env, age, gender) {
 
     override val influencialPeople = {
         env.getPosition(this).let {
-            (if (canSee) it.fieldOfView().peopleWithInfluence() else listOf())
-                    .union(if (canHear) it.hearingField().peopleWithInfluence() else listOf())
+            it.fieldOfView().peopleWithInfluence().union(it.hearingField().peopleWithInfluence())
         }
     }
 

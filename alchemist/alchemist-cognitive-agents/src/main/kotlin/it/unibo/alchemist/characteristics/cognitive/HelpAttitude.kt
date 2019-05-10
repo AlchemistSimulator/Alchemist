@@ -6,6 +6,12 @@ import it.unibo.alchemist.characteristics.individual.Gender
 
 class HelpAttitude : CognitiveCharacteristic() {
 
+    fun level(toHelp: HeterogeneousPedestrian<*>): Double =
+            rules[Pair(owner.age, owner.gender)]?.get(Pair(toHelp.age, toHelp.gender))
+                    ?.let { it.second } ?: 0.0 // can't be part of the group yet
+
+    override fun combinationFunction() = TODO() // HelpAttitude don't need it
+
     companion object {
         // first -> in the same group level
         // second -> not in the same group level
@@ -47,8 +53,4 @@ class HelpAttitude : CognitiveCharacteristic() {
             )
         )
     }
-
-    fun level(toHelp: HeterogeneousPedestrian<*>): Double =
-            rules[Pair(owner.age, owner.gender)]?.get(Pair(toHelp.age, toHelp.gender))
-                    ?.let { it.second } ?: 0.0 // can't be part of the group yet
 }

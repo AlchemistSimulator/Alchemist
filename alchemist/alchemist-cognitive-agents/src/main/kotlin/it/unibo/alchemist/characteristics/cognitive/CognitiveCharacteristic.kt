@@ -23,8 +23,15 @@ abstract class CognitiveCharacteristic : Characteristic {
         val wAmplifyingEvacuation = 1.0
         val wInhibitingWalkRand = -1.0
         val wAmplifyingIntention = 1.0
-        val wDecreasingIntention = -1.0
+        val wInhibitingIntention = -1.0
         val nMental = 0.9
         val nBody = 0.25
+        val logisticSigma = 20.0
+        val logisticTau = 0.5
+        val aLogisticSigma = 2.0
+        val aLogisticTau = 0.14
+        val deltaT = 1.0
     }
+
+    protected abstract fun combinationFunction(): Double
 }

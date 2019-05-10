@@ -11,6 +11,10 @@ interface CognitivePedestrian<T> : HeterogeneousPedestrian<T> {
 
     val fearLevel: () -> Double
 
+    val desireEvacuateLevel: () -> Double
+
+    val desireWalkRandomlyLevel: () -> Double
+
     val influencialPeople: () -> Collection<CognitivePedestrian<*>>
 
     val probabilityOfHelping: (toHelp: HeterogeneousPedestrian<T>) -> Double

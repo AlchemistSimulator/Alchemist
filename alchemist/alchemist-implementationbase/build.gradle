@@ -22,8 +22,8 @@ dependencies {
         "org.apache.commons:commons-lang3:${lang3Version}",
         "org.danilopianini:boilerplate:$boilerplateVersion"
     )
-    compile "org.scala-lang:scala-compiler:${scalaVersion}"
-    compile "org.scala-lang:scala-library:${scalaVersion}"
+    implementation("org.scala-lang:scala-compiler:${scalaVersion}")
+    implementation("org.scala-lang:scala-library:${scalaVersion}")
 }
 configurations {
     apiElements {

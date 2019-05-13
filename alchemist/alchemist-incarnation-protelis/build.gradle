@@ -8,17 +8,12 @@
 
 dependencies {
     api project(':alchemist-interfaces')
-    api "org.protelis:protelis:$protelisVersion"
+    api "org.protelis:protelis-interpreter:$protelisVersion"
+    api "org.protelis:protelis-lang:$protelisVersion"
     implementation project(':alchemist-time')
     implementation project(':alchemist-implementationbase')
     implementation project(':alchemist-maps')
     implementation "com.google.guava:guava:$guavaVersion"
     testImplementation project(':alchemist-engine')
     testImplementation project(':alchemist-loading')
-}
-
-configurations {
-    compile {
-        exclude group: 'org.protelis', module: 'protelis-test'
-    } 
 }

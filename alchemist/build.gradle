@@ -115,15 +115,17 @@ allprojects {
     }
 
     dependencies {
+        implementation "commons-io:commons-io:${commonsIOVersion}"
         implementation "org.apache.commons:commons-math3:$math3Version"
+        implementation("org.apache.commons:commons-lang3:$lang3Version")
         implementation "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
         implementation "com.github.spotbugs:spotbugs:$spotBugsVersion"
         implementation "org.slf4j:slf4j-api:$slf4jVersion"
         implementation "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
         implementation "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
         implementation "org.danilopianini:thread-inheritable-resource-loader:${resLoaderVersion}"
-        runtimeOnly "ch.qos.logback:logback-classic:$logbackVersion"
         testImplementation "junit:junit:$junitVersion"
+        runtimeOnly "ch.qos.logback:logback-classic:$logbackVersion"
         runtimeOnly "ch.qos.logback:logback-classic:$logbackVersion"
         doclet "org.jboss.apiviz:apiviz:$apivizVersion"
     }

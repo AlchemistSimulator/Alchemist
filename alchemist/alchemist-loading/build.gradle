@@ -31,6 +31,7 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    maxHeapSize = "768m"
 }
 
 compileKotlin.dependsOn(project(':alchemist-implementationbase').compileScala)

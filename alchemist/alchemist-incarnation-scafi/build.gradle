@@ -25,6 +25,6 @@ dependencies {
         project(":alchemist-engine"),
         project(":alchemist-loading"),
         "org.scalatest:scalatest_${scalaMajorVersion}:${scalatestVersion}",
-        "org.pegdown:pegdown:1.6.0"
+        "org.pegdown:pegdown:${pegdownVersion}"
     )
 }

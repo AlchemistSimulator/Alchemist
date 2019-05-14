@@ -14,7 +14,7 @@ dependencies {
     implementation(project(":alchemist-loading"))
     implementation(project(":alchemist-swingui"))
     implementation(project(":alchemist-time"))
-    implementation("com.google.guava:guava:$guavaVersion")
-    implementation("commons-io:commons-io:${commonsIOVersion}")
-    implementation("org.apache.commons:commons-lang3:${lang3Version}")
+    implementation("com.google.guava:guava:${extra["guavaVersion"]}")
+    implementation("commons-io:commons-io:${extra["commonsIOVersion"]}")
+    implementation("org.apache.commons:commons-lang3:${extra["lang3Version"]}")
 }

@@ -7,5 +7,5 @@
  */
 
 dependencies {
-    implementation "org.danilopianini:boilerplate:${boilerplateVersion}"
+    implementation("org.danilopianini:boilerplate:${boilerplateVersion}")
 }

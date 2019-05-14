@@ -28,12 +28,3 @@ dependencies {
         'org.pegdown:pegdown:1.6.0'
     )
 }
-
-configurations {
-    apiElements {
-        outgoing.variants.getByName('classes').artifact(
-                file: compileScala.destinationDir,
-                type: ArtifactTypeDefinition.JVM_CLASS_DIRECTORY,
-                builtBy: compileScala)
-    }
-}

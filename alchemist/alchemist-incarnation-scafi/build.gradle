@@ -1,8 +1,8 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
+ * Copyright (C) 2010-2019) Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
  *
- * This file is part of Alchemist, and is distributed under the terms of the
- * GNU General Public License, with a linking exception,
+ * This file is part of Alchemist) and is distributed under the terms of the
+ * GNU General Public License) with a linking exception)
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
 
@@ -11,20 +11,18 @@ plugins {
 }
 
 dependencies {
-    api project(":alchemist-interfaces")
-    implementation (
-        "com.github.cb372:scalacache-core_${scalaMajorVersion}:${scalaCacheVersion}",
-        "com.github.cb372:scalacache-guava_${scalaMajorVersion}:${scalaCacheVersion}",
-        "it.unibo.apice.scafiteam:scafi-core_${scalaMajorVersion}:${scafiVersion}",
-        "org.scala-lang:scala-compiler:${scalaVersion}",
-        "org.scala-lang:scala-library:${scalaVersion}",
-        project(":alchemist-implementationbase"),
-        project(":alchemist-time"),
-    )
-    testImplementation(
-        project(":alchemist-engine"),
-        project(":alchemist-loading"),
-        "org.scalatest:scalatest_${scalaMajorVersion}:${scalatestVersion}",
-        "org.pegdown:pegdown:${pegdownVersion}"
-    )
+    api(project(":alchemist-interfaces"))
+    api("it.unibo.apice.scafiteam:scafi-core_${scalaMajorVersion}:${scafiVersion}")
+
+    implementation("com.github.cb372:scalacache-core_${scalaMajorVersion}:${scalaCacheVersion}")
+    implementation("com.github.cb372:scalacache-guava_${scalaMajorVersion}:${scalaCacheVersion}")
+    implementation("org.scala-lang:scala-compiler:${scalaVersion}")
+    implementation("org.scala-lang:scala-library:${scalaVersion}")
+    implementation(project(":alchemist-implementationbase"))
+    implementation(project(":alchemist-time"))
+
+    testImplementation(project(":alchemist-engine"))
+    testImplementation(project(":alchemist-loading"))
+    testImplementation("org.scalatest:scalatest_${scalaMajorVersion}:${scalatestVersion}")
+    testImplementation("org.pegdown:pegdown:${pegdownVersion}")
 }

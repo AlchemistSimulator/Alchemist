@@ -13,9 +13,9 @@
  * use the new ktlint
  */
 
-apply plugin: 'project-report'
+apply plugin: "project-report"
 subprojects {
-    apply plugin: 'java-library'
+    apply plugin: "java-library"
 }
 
 buildscript {
@@ -30,7 +30,7 @@ buildscript {
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:${dokkaVersion}"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
         classpath "com.gradle:build-scan-plugin:${buildScanPluginVersion}"
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+'
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+"
     }
 }
 
@@ -41,12 +41,12 @@ allprojects {
     }
     scalaVersion = "${scalaMajorVersion}.${scalaMinorVersion}"
 
-    apply plugin: 'org.danilopianini.build-commons'
-    apply plugin: 'idea'
-    apply plugin: 'kotlin'
-    apply plugin: 'org.jetbrains.dokka'
+    apply plugin: "org.danilopianini.build-commons"
+    apply plugin: "idea"
+    apply plugin: "kotlin"
+    apply plugin: "org.jetbrains.dokka"
     apply plugin: "org.jmailen.kotlinter"
-    apply plugin: 'com.jfrog.bintray'
+    apply plugin: "com.jfrog.bintray"
 
 //    repositories {
 //        // Allow usage of protelis betas
@@ -66,7 +66,7 @@ allprojects {
 
     configurations {
         all {
-            if(!it.name.contains('antlr')) {
+            if(!it.name.contains("antlr")) {
                 resolutionStrategy {
                     force "org.antlr:antlr-runtime:${antlrRuntimeVersion}"
                 }
@@ -82,7 +82,7 @@ allprojects {
         testLogging { events "passed", "skipped", "failed", "standardError" }
     }
 
-    apply plugin: 'com.github.spotbugs'
+    apply plugin: "com.github.spotbugs"
     spotbugs {
         ignoreFailures = true
         effort = "max"
@@ -111,7 +111,7 @@ allprojects {
         ignoreFailures = false
         indentSize = 4
         continuationIndentSize = 4
-        reporters = ['checkstyle', 'plain', 'html']
+        reporters = ["checkstyle", "plain", "html"]
     }
 
     dependencies {
@@ -135,111 +135,111 @@ allprojects {
             pom {
                 developers {
                     developer {
-                        name = 'Danilo Pianini'
-                        email = 'danilo.pianini@unibo.it'
-                        url = 'http://www.danilopianini.org'
+                        name = "Danilo Pianini"
+                        email = "danilo.pianini@unibo.it"
+                        url = "http://www.danilopianini.org"
                     }
                     developer {
-                        name = 'Roberto Casadei'
-                        email = 'roby.casadei@unibo.it'
-                        url = 'https://www.unibo.it/sitoweb/roby.casadei'
+                        name = "Roberto Casadei"
+                        email = "roby.casadei@unibo.it"
+                        url = "https://www.unibo.it/sitoweb/roby.casadei"
                     }
                 }
                 contributors {
                     contributor {
-                        name = 'Jacob Beal'
-                        email = 'jakebeal@bbn.com'
-                        url = 'http://web.mit.edu/jakebeal/www/'
+                        name = "Jacob Beal"
+                        email = "jakebeal@bbn.com"
+                        url = "http://web.mit.edu/jakebeal/www/"
                     }
                     contributor {
-                        name = 'Michele Bombardi'
-                        email = 'michele.bombardi@studio.unibo.it'
-                        url = 'http://apice.unibo.it/xwiki/bin/view/XWiki/MicheleBombardi/'
+                        name = "Michele Bombardi"
+                        email = "michele.bombardi@studio.unibo.it"
+                        url = "http://apice.unibo.it/xwiki/bin/view/XWiki/MicheleBombardi/"
                     }
                     contributor {
-                        name = 'Elisa Casadio'
-                        email = 'elisa.casadio7@studio.unibo.it'
+                        name = "Elisa Casadio"
+                        email = "elisa.casadio7@studio.unibo.it"
                     }
                     contributor {
-                        name = 'Chiara Casalboni'
-                        email = 'chiara.casalboni2@studio.unibo.it'
-                        url = 'http://apice.unibo.it/xwiki/bin/view/XWiki/ChiaraCasalboni2/'
+                        name = "Chiara Casalboni"
+                        email = "chiara.casalboni2@studio.unibo.it"
+                        url = "http://apice.unibo.it/xwiki/bin/view/XWiki/ChiaraCasalboni2/"
                     }
                     contributor {
-                        name = 'Matteo Francia'
-                        email = 'm.francia@unibo.it'
+                        name = "Matteo Francia"
+                        email = "m.francia@unibo.it"
                     }
                     contributor {
-                        name = 'Enrico Galassi'
-                        email = 'enrico.galassi@studio.unibo.it'
-                        url = 'http://apice.unibo.it/xwiki/bin/view/XWiki/EnricoGalassi/'
+                        name = "Enrico Galassi"
+                        email = "enrico.galassi@studio.unibo.it"
+                        url = "http://apice.unibo.it/xwiki/bin/view/XWiki/EnricoGalassi/"
                     }
                     contributor {
-                        name = 'Gabriele Graffieti'
-                        email = 'gabriele.graffieti@studio.unibo.it'
+                        name = "Gabriele Graffieti"
+                        email = "gabriele.graffieti@studio.unibo.it"
                     }
                     contributor {
-                        name = 'Matteo Magnani'
-                        email = 'matteo.magnani18@studio.unibo.it'
+                        name = "Matteo Magnani"
+                        email = "matteo.magnani18@studio.unibo.it"
                     }
                     contributor {
-                        name = 'Niccolò Maltoni'
-                        email = 'niccolo.maltoni@studio.unibo.it'
+                        name = "Niccolò Maltoni"
+                        email = "niccolo.maltoni@studio.unibo.it"
                     }
                     contributor {
-                        name = 'Luca Mella'
-                        email = 'vuksa.mihajlovic@studio.unibo.it'
+                        name = "Luca Mella"
+                        email = "vuksa.mihajlovic@studio.unibo.it"
                     }
                     contributor {
-                        name = 'Vuksa Mihajlovic'
-                        email = 'luca.mella@studio.unibo.it'
-                        url = 'http://apice.unibo.it/xwiki/bin/view/XWiki/LucaMella/'
+                        name = "Vuksa Mihajlovic"
+                        email = "luca.mella@studio.unibo.it"
+                        url = "http://apice.unibo.it/xwiki/bin/view/XWiki/LucaMella/"
                     }
                     contributor {
-                        name = 'Sara Montagna'
-                        email = 'sara.montagna@unibo.it'
-                        url = 'http://saramontagna.apice.unibo.it/'
+                        name = "Sara Montagna"
+                        email = "sara.montagna@unibo.it"
+                        url = "http://saramontagna.apice.unibo.it/"
                     }
                     contributor {
-                        name = 'Luca Nenni'
-                        email = 'luca.nenni@studio.unibo.it'
-                        url = 'http://apice.unibo.it/xwiki/bin/view/XWiki/LucaNenni/'
+                        name = "Luca Nenni"
+                        email = "luca.nenni@studio.unibo.it"
+                        url = "http://apice.unibo.it/xwiki/bin/view/XWiki/LucaNenni/"
                     }
                     contributor {
-                        name = 'Andrea Placuzzi'
-                        email = 'andrea.placuzzi@studio.unibo.it'
+                        name = "Andrea Placuzzi"
+                        email = "andrea.placuzzi@studio.unibo.it"
                     }
                     contributor {
-                        name = 'Franco Pradelli'
-                        email = 'franco.pradelli@studio.unibo.it'
+                        name = "Franco Pradelli"
+                        email = "franco.pradelli@studio.unibo.it"
                     }
                     contributor {
-                        name = 'Giacomo Pronti'
-                        email = 'giacomo.pronti@studio.unibo.it'
-                        url = 'http://apice.unibo.it/xwiki/bin/view/XWiki/GiacomoPronti/'
+                        name = "Giacomo Pronti"
+                        email = "giacomo.pronti@studio.unibo.it"
+                        url = "http://apice.unibo.it/xwiki/bin/view/XWiki/GiacomoPronti/"
                     }
                     contributor {
-                        name = 'Giacomo Scaparrotti'
-                        email = 'giacomo.scaparrotti@studio.unibo.it'
-                        url = 'https://www.linkedin.com/in/giacomo-scaparrotti-0aa77569'
+                        name = "Giacomo Scaparrotti"
+                        email = "giacomo.scaparrotti@studio.unibo.it"
+                        url = "https://www.linkedin.com/in/giacomo-scaparrotti-0aa77569"
                     }
                 }
             }
         }
     }
-    def apiKeyName = 'BINTRAY_API_KEY'
-    def userKeyName = 'BINTRAY_USER'
+    def apiKeyName = "BINTRAY_API_KEY"
+    def userKeyName = "BINTRAY_USER"
     bintray {
         user = System.env[userKeyName]
         key = System.env[apiKeyName]
-        publications = ['main']
+        publications = ["main"]
         override = true
         pkg {
             repo = longName
             name = project.name
-            userOrg = 'alchemist-simulator'
+            userOrg = "alchemist-simulator"
             vcsUrl = "$scmRootUrl/$scmRepoName"
-            licenses = ['GPL-3.0-or-later']
+            licenses = ["GPL-3.0-or-later"]
             version {
                 name = project.version
             }
@@ -263,7 +263,7 @@ allprojects {
      * to the javadoc folder.
      */
     javadoc {
-        options.encoding = 'UTF-8'
+        options.encoding = "UTF-8"
         dependsOn(dokka)
     }
     dokka {
@@ -273,7 +273,7 @@ allprojects {
         outputDirectory = "$buildDir/dokka"
         reportUndocumented = false
         impliedPlatforms = ["JVM"]
-        outputFormat = 'javadoc'
+        outputFormat = "javadoc"
     }
     task fillDocs(type: Copy) {
         dependsOn dokka
@@ -303,11 +303,11 @@ allprojects {
 subprojects.each { subproject -> rootProject.evaluationDependsOn(subproject.path)}
 
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
- * as described in the file LICENSE in the Alchemist distribution's top directory.
+ * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
 
 /*
@@ -350,19 +350,19 @@ dokka {
 }
 
 allprojects {
-    def jdocTasks = ['javadoc', 'uploadArchives', 'projectReport', 'buildDashboard', 'javadocJar']
+    def jdocTasks = ["javadoc", "uploadArchives", "projectReport", "buildDashboard", "javadocJar"]
     def selectedTasks = gradle.startParameter.taskNames ?: defaultTasks
     if (!selectedTasks.disjoint(jdocTasks)) {
-        apply plugin: 'org.danilopianini.javadoc.io-linker'
+        apply plugin: "org.danilopianini.javadoc.io-linker"
     }
 }
 
 task fatJar(type: Jar, dependsOn: subprojects.jar) {
     manifest {
-        attributes 'Implementation-Title': 'Alchemist',
-                'Implementation-Version': rootProject.version,
-                'Main-Class': 'it.unibo.alchemist.Alchemist',
-                'Automatic-Module-Name': 'it.unibo.alchemist'
+        attributes "Implementation-Title": "Alchemist",
+                "Implementation-Version": rootProject.version,
+                "Main-Class": "it.unibo.alchemist.Alchemist",
+                "Automatic-Module-Name": "it.unibo.alchemist"
     }
     baseName = "${rootProject.name}-redist"
     zip64 = true
@@ -372,20 +372,20 @@ task fatJar(type: Jar, dependsOn: subprojects.jar) {
         exclude "ant_tasks/"
         exclude "about_files/"
         exclude "help/about/"
-        exclude 'build'
-        exclude '.gradle'
-        exclude 'build.gradle'
-        exclude 'gradle'
-        exclude 'gradlew'
-        exclude 'gradlew.bat'
+        exclude "build"
+        exclude ".gradle"
+        exclude "build.gradle"
+        exclude "gradle"
+        exclude "gradlew"
+        exclude "gradlew.bat"
     }
     with jar
 }
 
 apply plugin: com.gradle.scan.plugin.BuildScanPlugin
 buildScan {
-    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-    termsOfServiceAgree = 'yes'
+    termsOfServiceUrl = "https://gradle.com/terms-of-service"
+    termsOfServiceAgree = "yes"
 }
 
-defaultTasks 'clean', 'test', 'check', 'makeDocs', 'projectReport', 'buildDashboard', 'fatJar', 'signMainPublication'
+defaultTasks "clean", "test", "check", "makeDocs", "projectReport", "buildDashboard", "fatJar", "signMainPublication"

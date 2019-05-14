@@ -11,6 +11,9 @@
  * use publish-on-central
  * move deployment on a separate phase in travis ci
  * use the new ktlint
+ * upgrade to junit5
+ * farjar plugin?
+ * dokka-merge-plugin?
  */
 
 apply plugin: "project-report"
@@ -115,19 +118,19 @@ allprojects {
     }
 
     dependencies {
-        implementation "commons-io:commons-io:${commonsIOVersion}"
-        implementation "org.apache.commons:commons-math3:$math3Version"
+        implementation("commons-io:commons-io:${commonsIOVersion}")
+        implementation("org.apache.commons:commons-math3:$math3Version")
         implementation("org.apache.commons:commons-lang3:$lang3Version")
-        implementation "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
-        implementation "com.github.spotbugs:spotbugs:$spotBugsVersion"
-        implementation "org.slf4j:slf4j-api:$slf4jVersion"
-        implementation "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
-        implementation "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
-        implementation "org.danilopianini:thread-inheritable-resource-loader:${resLoaderVersion}"
-        testImplementation "junit:junit:$junitVersion"
-        runtimeOnly "ch.qos.logback:logback-classic:$logbackVersion"
-        runtimeOnly "ch.qos.logback:logback-classic:$logbackVersion"
-        doclet "org.jboss.apiviz:apiviz:$apivizVersion"
+        implementation("org.jetbrains:annotations:$jetbrainsAnnotationsVersion")
+        implementation("com.github.spotbugs:spotbugs:$spotBugsVersion")
+        implementation("org.slf4j:slf4j-api:$slf4jVersion")
+        implementation("org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}")
+        implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
+        implementation("org.danilopianini:thread-inheritable-resource-loader:${resLoaderVersion}")
+        testImplementation("junit:junit:$junitVersion")
+        runtimeOnly("ch.qos.logback:logback-classic:$logbackVersion")
+        runtimeOnly("ch.qos.logback:logback-classic:$logbackVersion")
+        doclet("org.jboss.apiviz:apiviz:$apivizVersion")
     }
 
     publishing.publications {
@@ -276,10 +279,10 @@ allprojects {
         outputFormat = "javadoc"
     }
     task fillDocs(type: Copy) {
-        dependsOn dokka
-        dependsOn javadoc
-        from dokka.outputDirectory
-        into javadoc.destinationDir
+        dependsOn(dokka)
+        dependsOn(javadoc)
+        from(dokka.outputDirectory)
+        into(javadoc.destinationDir)
         eachFile {
             if (it.relativePath.getFile(destinationDir).exists()) {
                 it.exclude()
@@ -287,9 +290,9 @@ allprojects {
         }
     }
     task makeDocs(type: Copy) {
-        dependsOn fillDocs
-        from dokka.outputDirectory
-        into javadoc.destinationDir
+        dependsOn(fillDocs)
+        from(dokka.outputDirectory)
+        into(javadoc.destinationDir)
         eachFile {
             if (Character.isUpperCase(it.name.charAt(0))) {
                 it.exclude()
@@ -328,16 +331,16 @@ tasks.each { task ->
 }
 
 dependencies {
-    implementation subprojects
-    implementation "commons-cli:commons-cli:$cliVersion"
-    implementation "ch.qos.logback:logback-classic:$logbackVersion"
-    implementation "org.apache.commons:commons-lang3:${lang3Version}"
-    implementation "org.apache.ignite:ignite-core:${igniteVersion}"
+    implementation(subprojects)
+    implementation("commons-cli:commons-cli:$cliVersion")
+    implementation("ch.qos.logback:logback-classic:$logbackVersion")
+    implementation("org.apache.commons:commons-lang3:${lang3Version}")
+    implementation("org.apache.ignite:ignite-core:${igniteVersion}")
 }
 
 javadoc {
-    dependsOn subprojects.javadoc
-    source subprojects.javadoc.source
+    dependsOn(subprojects.javadoc)
+    source(subprojects.javadoc.source)
     subprojects.sourceSets.main.runtimeClasspath.each {
         classpath += it
     }
@@ -359,25 +362,25 @@ allprojects {
 
 task fatJar(type: Jar, dependsOn: subprojects.jar) {
     manifest {
-        attributes "Implementation-Title": "Alchemist",
+        attributes("Implementation-Title": "Alchemist",
                 "Implementation-Version": rootProject.version,
                 "Main-Class": "it.unibo.alchemist.Alchemist",
-                "Automatic-Module-Name": "it.unibo.alchemist"
+                "Automatic-Module-Name": "it.unibo.alchemist")
     }
     baseName = "${rootProject.name}-redist"
     zip64 = true
     from(configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }) {
         // remove all signature files
-        exclude "META-INF/"
-        exclude "ant_tasks/"
-        exclude "about_files/"
-        exclude "help/about/"
-        exclude "build"
-        exclude ".gradle"
-        exclude "build.gradle"
-        exclude "gradle"
-        exclude "gradlew"
-        exclude "gradlew.bat"
+        exclude("META-INF/")
+        exclude("ant_tasks/")
+        exclude("about_files/")
+        exclude("help/about/")
+        exclude("build")
+        exclude(".gradle")
+        exclude("build.gradle")
+        exclude("gradle")
+        exclude("gradlew")
+        exclude("gradlew.bat")
     }
     with jar
 }
@@ -388,4 +391,4 @@ buildScan {
     termsOfServiceAgree = "yes"
 }
 
-defaultTasks "clean", "test", "check", "makeDocs", "projectReport", "buildDashboard", "fatJar", "signMainPublication"
+defaultTasks("clean", "test", "check", "makeDocs", "projectReport", "buildDashboard", "fatJar", "signMainPublication")

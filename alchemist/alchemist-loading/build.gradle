@@ -1,17 +1,17 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
- * as described in the file LICENSE in the Alchemist distribution's top directory.
+ * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
 
 dependencies {
     implementation(
-        project(':alchemist-implementationbase'),
-        project(':alchemist-interfaces'),
-        project(':alchemist-time'),
-        project(':alchemist-maps'),
+        project(":alchemist-implementationbase"),
+        project(":alchemist-interfaces"),
+        project(":alchemist-time"),
+        project(":alchemist-maps"),
         "com.google.guava:guava:${guavaVersion}",
         "org.codehaus.groovy:groovy:${groovyVersion}",
         "org.apache.commons:commons-lang3:${lang3Version}",
@@ -19,13 +19,13 @@ dependencies {
         "org.yaml:snakeyaml:$snakeyamlVersion"
     )
     testImplementation(
-        project(':alchemist-engine'),
-        project(':alchemist-maps'),
+        project(":alchemist-engine"),
+        project(":alchemist-maps"),
         "com.google.code.gson:gson:$gsonVersion",
         "io.kotlintest:kotlintest-runner-junit5:$kotlinTestVersion"
     )
     testRuntimeOnly(
-        project(':alchemist-incarnation-sapere')
+        project(":alchemist-incarnation-sapere")
     )
 }
 
@@ -34,5 +34,5 @@ test {
     maxHeapSize = "2g"
 }
 
-compileKotlin.dependsOn(project(':alchemist-implementationbase').compileScala)
-compileJava.dependsOn(project(':alchemist-implementationbase').compileScala)
+compileKotlin.dependsOn(project(":alchemist-implementationbase").compileScala)
+compileJava.dependsOn(project(":alchemist-implementationbase").compileScala)

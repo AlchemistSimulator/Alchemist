@@ -27,3 +27,7 @@ dependencies {
         exclude module: "slf4j-log4j12"
     }
 }
+
+test {
+    maxHeapSize = "4g"
+}

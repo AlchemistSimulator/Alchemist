@@ -40,7 +40,9 @@ import it.unibo.alchemist.model.interfaces.GPSTrace;
  */
 public class TraceLoader implements Iterable<GPSTrace> {
 
-    private static final Map<String, GPSFileLoader> LOADER = ClassPathScanner.subTypesOf(GPSFileLoader.class).stream()
+    private static final Map<String, GPSFileLoader> LOADER = ClassPathScanner
+            .subTypesOf(GPSFileLoader.class, "it.unibo.alchemist")
+            .stream()
             .map(Unchecked.function(Class::newInstance))
             .flatMap(l -> l.supportedExtensions().stream()
                     .map(ext -> new Tuple2<>(ext.toLowerCase(Locale.US), l)))

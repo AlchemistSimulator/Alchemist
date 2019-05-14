@@ -1,32 +1,26 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
+ * Copyright (C) 2010-2019) Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
  *
- * This file is part of Alchemist, and is distributed under the terms of the
- * GNU General Public License, with a linking exception,
+ * This file is part of Alchemist) and is distributed under the terms of the
+ * GNU General Public License) with a linking exception)
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
 
 dependencies {
-    implementation(
-        project(":alchemist-implementationbase"),
-        project(":alchemist-interfaces"),
-        project(":alchemist-time"),
-        project(":alchemist-maps"),
-        "com.google.guava:guava:${guavaVersion}",
-        "org.codehaus.groovy:groovy:${groovyVersion}",
-        "org.apache.commons:commons-lang3:${lang3Version}",
-        "org.danilopianini:jirf:${jirfVersion}",
-        "org.yaml:snakeyaml:$snakeyamlVersion"
-    )
-    testImplementation(
-        project(":alchemist-engine"),
-        project(":alchemist-maps"),
-        "com.google.code.gson:gson:$gsonVersion",
-        "io.kotlintest:kotlintest-runner-junit5:$kotlinTestVersion"
-    )
-    testRuntimeOnly(
-        project(":alchemist-incarnation-sapere")
-    )
+    implementation(project(":alchemist-implementationbase"))
+    implementation(project(":alchemist-interfaces"))
+    implementation(project(":alchemist-time"))
+    implementation(project(":alchemist-maps"))
+    implementation("com.google.guava:guava:${guavaVersion}")
+    implementation("org.codehaus.groovy:groovy:${groovyVersion}")
+    implementation("org.apache.commons:commons-lang3:${lang3Version}")
+    implementation("org.danilopianini:jirf:${jirfVersion}")
+    implementation("org.yaml:snakeyaml:$snakeyamlVersion")
+    testImplementation(project(":alchemist-engine"))
+    testImplementation(project(":alchemist-maps"))
+    testImplementation("com.google.code.gson:gson:$gsonVersion")
+    testImplementation("io.kotlintest:kotlintest-runner-junit5:$kotlinTestVersion")
+    testRuntimeOnly(project(":alchemist-incarnation-sapere"))
 }
 
 test {

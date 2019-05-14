@@ -7,6 +7,6 @@
  */
 
 dependencies {
-    api "org.danilopianini:listset:${listsetVersion}"
-    api "org.jooq:jool-java-8:${joolJ8Version}"
+    api("org.danilopianini:listset:${extra["listsetVersion"]}")
+    api("org.jooq:jool-java-8:${extra["joolJ8Version"]}")
 }

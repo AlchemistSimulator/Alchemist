@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
- * as described in the file LICENSE in the Alchemist distribution's top directory.
+ * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
 
 plugins {
@@ -11,20 +11,20 @@ plugins {
 }
 
 dependencies {
-    api project(':alchemist-interfaces')
+    api project(":alchemist-interfaces")
     implementation (
         "com.github.cb372:scalacache-core_${scalaMajorVersion}:${scalaCacheVersion}",
         "com.github.cb372:scalacache-guava_${scalaMajorVersion}:${scalaCacheVersion}",
         "it.unibo.apice.scafiteam:scafi-core_${scalaMajorVersion}:${scafiVersion}",
         "org.scala-lang:scala-compiler:${scalaVersion}",
         "org.scala-lang:scala-library:${scalaVersion}",
-        project(':alchemist-implementationbase'),
-        project(':alchemist-time'),
+        project(":alchemist-implementationbase"),
+        project(":alchemist-time"),
     )
     testImplementation(
-        project(':alchemist-engine'),
-        project(':alchemist-loading'),
+        project(":alchemist-engine"),
+        project(":alchemist-loading"),
         "org.scalatest:scalatest_${scalaMajorVersion}:${scalatestVersion}",
-        'org.pegdown:pegdown:1.6.0'
+        "org.pegdown:pegdown:1.6.0"
     )
 }

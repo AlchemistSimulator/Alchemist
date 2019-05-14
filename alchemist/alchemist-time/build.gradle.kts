@@ -7,5 +7,5 @@
  */
 
 dependencies {
-	api project(":alchemist-interfaces")
+	api(project(":alchemist-interfaces"))
 }

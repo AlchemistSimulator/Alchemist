@@ -8,14 +8,16 @@
 
 dependencies {
     api(project(":alchemist-interfaces"))
+
     implementation(project(":alchemist-engine"))
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-loading"))
     implementation(project(":alchemist-maps"))
     implementation(project(":alchemist-time"))
-    implementation("com.miglayout:miglayout-swing:${extra["miglayoutVersion"]}")
-    implementation("org.mapsforge:mapsforge-map-awt:${extra["mapsforgeVersion"]}")
-    implementation("org.danilopianini:gson-extras:${extra["gsonExtrasVersion"]}")
-    implementation("org.danilopianini:javalib-java7:0.6.1")
+    implementation(Libs.miglayout_swing)
+    implementation(Libs.mapsforge_map_awt)
+    implementation(Libs.gson_extras)
+    implementation(Libs.javalib_java7)
+
     testRuntimeOnly(project(":alchemist-incarnation-protelis"))
 }

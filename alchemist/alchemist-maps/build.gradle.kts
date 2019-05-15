@@ -8,22 +8,22 @@
 
 dependencies {
     api(project(":alchemist-interfaces"))
+
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-time"))
-    implementation("com.github.ben-manes.caffeine:caffeine:${extra["caffeineVersion"]}")
-    implementation("com.google.code.gson:gson:${extra["gsonVersion"]}")
-    implementation("com.google.guava:guava:${extra["guavaVersion"]}")
-    implementation("com.javadocmd:simplelatlng:${extra["latlngVersion"]}")
-    implementation("com.graphhopper:graphhopper-core:${extra["graphhopperVersion"]}")
-    implementation("com.graphhopper:graphhopper-reader-osm:${extra["graphhopperVersion"]}") {
+    implementation(Libs.caffeine)
+    implementation(Libs.gson)
+    implementation(Libs.simplelatlng)
+    implementation(Libs.graphhopper_core)
+    implementation(Libs.graphhopper_reader_osm) {
         exclude(module = "slf4j-log4j12")
     }
-    implementation("commons-codec:commons-codec:${extra["codecVersion"]}")
-    implementation("commons-io:commons-io:${extra["commonsIOVersion"]}")
-    implementation("io.jenetics:jpx:${extra["jpxVersion"]}")
-    implementation("net.sf.trove4j:trove4j:${extra["troveVersion"]}")
-    implementation("org.danilopianini:boilerplate:${extra["boilerplateVersion"]}")
-    implementation("org.apache.commons:commons-lang3:${extra["lang3Version"]}")
+    implementation(Libs.commons_codec)
+    implementation(Libs.commons_io)
+    implementation(Libs.jpx)
+    implementation(Libs.trove4j)
+    implementation(Libs.boilerplate)
+    implementation(Libs.commons_lang3)
 }
 
 tasks.withType<Test> {

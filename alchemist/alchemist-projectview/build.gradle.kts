@@ -7,6 +7,7 @@
  */
 dependencies {
     api(project(":alchemist-interfaces"))
+
     if (JavaVersion.current().isJava9Compatible) {
         implementation("org.controlsfx:controlsfx:${extra["controlsFXVersion"]}")
     } else {
@@ -28,10 +29,11 @@ dependencies {
     implementation(project(":alchemist-runner"))
     implementation(project(":alchemist-swingui"))
     implementation(project(":alchemist-time"))
-    implementation("com.google.code.gson:gson:${extra["gsonVersion"]}")
-    implementation("de.codecentric.centerdevice:javafxsvg:${extra["javaFXSVG"]}")
-    implementation("org.danilopianini:urlclassloader-util:${extra["urlClassLoaderUtilVersion"]}")
-    implementation("commons-io:commons-io:${extra["commonsIOVersion"]}")
+    implementation(Libs.gson)
+    implementation(Libs.javafxsvg)
+    implementation(Libs.urlclassloader_util)
+    implementation(Libs.commons_io)
+
     testRuntimeOnly(project(":alchemist-incarnation-protelis"))
     testRuntimeOnly(project(":alchemist-incarnation-sapere"))
     testRuntimeOnly(project(":alchemist-incarnation-biochemistry"))

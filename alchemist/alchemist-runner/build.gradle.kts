@@ -8,13 +8,13 @@
 
 dependencies {
     api(project(":alchemist-interfaces"))
+
     implementation(project(":alchemist-engine"))
     implementation(project(":alchemist-grid"))
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-loading"))
     implementation(project(":alchemist-swingui"))
     implementation(project(":alchemist-time"))
-    implementation("com.google.guava:guava:${extra["guavaVersion"]}")
-    implementation("commons-io:commons-io:${extra["commonsIOVersion"]}")
-    implementation("org.apache.commons:commons-lang3:${extra["lang3Version"]}")
+    implementation(Libs.commons_io)
+    implementation(Libs.commons_lang3)
 }

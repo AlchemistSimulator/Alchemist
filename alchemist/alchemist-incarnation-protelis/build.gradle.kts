@@ -8,12 +8,13 @@
 
 dependencies {
     api(project(":alchemist-interfaces"))
-    api("org.protelis:protelis-interpreter:${extra["protelisVersion"]}")
-    api("org.protelis:protelis-lang:${extra["protelisVersion"]}")
+    api(Libs.protelis_interpreter)
+    api(Libs.protelis_lang)
+
     implementation(project(":alchemist-time"))
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-maps"))
-    implementation("com.google.guava:guava:${extra["guavaVersion"]}")
+
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-loading"))
 }

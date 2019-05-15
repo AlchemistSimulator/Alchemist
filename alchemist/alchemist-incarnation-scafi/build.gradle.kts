@@ -12,17 +12,17 @@ plugins {
 
 dependencies {
     api(project(":alchemist-interfaces"))
-    api("it.unibo.apice.scafiteam:scafi-core_${extra["scalaMajorVersion"]}:${extra["scafiVersion"]}")
+    api(Libs.scafi_core_2_12)
 
-    implementation("com.github.cb372:scalacache-core_${extra["scalaMajorVersion"]}:${extra["scalaCacheVersion"]}")
-    implementation("com.github.cb372:scalacache-guava_${extra["scalaMajorVersion"]}:${extra["scalaCacheVersion"]}")
-    implementation("org.scala-lang:scala-compiler:${extra["scalaVersion"]}")
-    implementation("org.scala-lang:scala-library:${extra["scalaVersion"]}")
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-time"))
+    implementation(Libs.scalacache_core_2_12)
+    implementation(Libs.scalacache_guava_2_12)
+    implementation(Libs.scala_compiler) // TODO: try to remove and use implementationbase
+    implementation(Libs.scala_library)
 
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-loading"))
-    testImplementation("org.scalatest:scalatest_${extra["scalaMajorVersion"]}:${extra["scalatestVersion"]}")
-    testImplementation("org.pegdown:pegdown:${extra["pegdownVersion"]}")
+    testImplementation(Libs.scalatest_2_12)
+    testImplementation(Libs.pegdown)
 }

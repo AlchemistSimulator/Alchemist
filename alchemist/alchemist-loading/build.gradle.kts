@@ -11,15 +11,16 @@ dependencies {
     implementation(project(":alchemist-interfaces"))
     implementation(project(":alchemist-time"))
     implementation(project(":alchemist-maps"))
-    implementation("com.google.guava:guava:${extra["guavaVersion"]}")
-    implementation("org.codehaus.groovy:groovy:${extra["groovyVersion"]}")
-    implementation("org.apache.commons:commons-lang3:${extra["lang3Version"]}")
-    implementation("org.danilopianini:jirf:${extra["jirfVersion"]}")
-    implementation("org.yaml:snakeyaml:${extra["snakeyamlVersion"]}")
+    implementation(Libs.groovy)
+    implementation(Libs.commons_lang3)
+    implementation(Libs.jirf)
+    implementation(Libs.snakeyaml)
+
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-maps"))
-    testImplementation("com.google.code.gson:gson:${extra["gsonVersion"]}")
-    testImplementation("io.kotlintest:kotlintest-runner-junit5:${extra["kotlinTestVersion"]}")
+    testImplementation(Libs.gson)
+    testImplementation(Libs.kotlintest_runner_junit5)
+
     testRuntimeOnly(project(":alchemist-incarnation-sapere"))
 }
 

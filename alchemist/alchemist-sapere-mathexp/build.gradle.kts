@@ -7,5 +7,5 @@
  */
 
 dependencies {
-    implementation("org.danilopianini:boilerplate:${extra["boilerplateVersion"]}")
+    implementation(Libs.boilerplate)
 }

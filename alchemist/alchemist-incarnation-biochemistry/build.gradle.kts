@@ -11,17 +11,19 @@ plugins {
 }
 
 dependencies {
-    antlr("org.antlr:antlr4:${extra["antlr4Version"]}")
+    antlr(Libs.antlr4)
+
     implementation(project(":alchemist-implementationbase"))
-    implementation("com.google.guava:guava:${extra["guavaVersion"]}")
-    implementation("net.sf.trove4j:trove4j:${extra["troveVersion"]}")
-    implementation("org.danilopianini:boilerplate:${extra["boilerplateVersion"]}")
-    implementation("org.danilopianini:jirf:${extra["jirfVersion"]}")
+    implementation(Libs.trove4j)
+    implementation(Libs.boilerplate)
+    implementation(Libs.jirf)
+
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-loading"))
     testImplementation(project(":alchemist-time"))
-    testImplementation("io.kotlintest:kotlintest-runner-junit5:${extra["kotlinTestVersion"]}")
-    runtimeOnly("org.antlr:antlr4-runtime:${extra["antlr4Version"]}")
+    testImplementation(Libs.kotlintest_runner_junit5)
+
+    runtimeOnly(Libs.antlr4_runtime)
 }
 
 configurations {

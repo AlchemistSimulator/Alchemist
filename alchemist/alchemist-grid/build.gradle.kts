@@ -11,11 +11,10 @@ dependencies {
     implementation(project(":alchemist-loading"))
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-engine"))
-    implementation("com.google.guava:guava:${extra["guavaVersion"]}")
-    implementation("commons-io:commons-io:${extra["commonsIOVersion"]}")
-    implementation("org.apache.ignite:ignite-core:${extra["igniteVersion"]}")
-    implementation("org.apache.ignite:ignite-spring:${extra["igniteVersion"]}")
-    implementation("org.apache.ignite:ignite-indexing:${extra["igniteVersion"]}")
+    implementation(Libs.ignite_core)
+    implementation(Libs.ignite_spring)
+    implementation(Libs.ignite_indexing)
+
     testImplementation(project(":alchemist-incarnation-sapere"))
     testImplementation(project(":alchemist-time"))
 }

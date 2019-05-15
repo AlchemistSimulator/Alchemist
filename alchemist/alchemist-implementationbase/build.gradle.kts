@@ -11,27 +11,15 @@ plugins {
 }
 
 dependencies {
-    api("org.danilopianini:java-quadtree:${extra["quadtreeVersion"]}")
     api(project(":alchemist-interfaces"))
+    api(Libs.java_quadtree)
     implementation(project(":alchemist-time"))
-    implementation("com.github.ben-manes.caffeine:caffeine:${extra["caffeineVersion"]}")
-    implementation("com.github.davidmoten:rtree:${extra["rtreeVersion"]}")
-    implementation("com.google.guava:guava:${extra["guavaVersion"]}")
-    implementation("com.googlecode.concurrentlinkedhashmap:concurrentlinkedhashmap-lru:${extra["concurrentlinkedhashmapVersion"]}")
-    implementation("io.github.classgraph:classgraph:${extra["classgraphVersion"]}")
-    implementation("net.sf.trove4j:trove4j:${extra["troveVersion"]}")
-    implementation("org.danilopianini:boilerplate:${extra["boilerplateVersion"]}")
-    implementation("org.scala-lang:scala-compiler:${extra["scalaVersion"]}")
-    implementation("org.scala-lang:scala-library:${extra["scalaVersion"]}")
+    implementation(Libs.caffeine)
+    implementation(Libs.rtree)
+    implementation(Libs.concurrentlinkedhashmap_lru)
+    implementation(Libs.classgraph)
+    implementation(Libs.trove4j)
+    implementation(Libs.boilerplate)
+    implementation(Libs.scala_compiler)
+    implementation(Libs.scala_library)
 }
-//configurations {
-//    apiElements {
-//        val compileScala = tasks.compileScala.get()
-//        outgoing.variants["classes"].artifact(mapOf(
-//            "file" to compileScala.destinationDir,
-//            "type" to ArtifactTypeDefinition.JVM_CLASS_DIRECTORY,
-//            "builtBy" to compileScala)
-//        )
-//    }
-//}
-

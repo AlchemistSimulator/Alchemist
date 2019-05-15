@@ -120,18 +120,18 @@ allprojects {
     }
     dependencies {
         implementation(Libs.commons_io)
-        implementation("org.apache.commons:commons-math3:${extra["math3Version"]}")
-        implementation("org.apache.commons:commons-lang3:${extra["lang3Version"]}")
-        implementation("org.jetbrains:annotations:${extra["jetbrainsAnnotationsVersion"]}")
-        implementation("com.github.spotbugs:spotbugs:${extra["spotBugsVersion"]}")
-        implementation("org.slf4j:slf4j-api:${extra["slf4jVersion"]}")
-        implementation("org.jetbrains.kotlin:kotlin-stdlib:${extra["kotlinVersion"]}")
-        implementation("org.jetbrains.kotlin:kotlin-reflect:${extra["kotlinVersion"]}")
-        implementation("org.danilopianini:thread-inheritable-resource-loader:${extra["resLoaderVersion"]}")
-        testImplementation("junit:junit:${extra["junitVersion"]}")
-        runtimeOnly("ch.qos.logback:logback-classic:${extra["logbackVersion"]}")
-        runtimeOnly("ch.qos.logback:logback-classic:${extra["logbackVersion"]}")
-        doclet("org.jboss.apiviz:apiviz:${extra["apivizVersion"]}")
+        implementation(Libs.commons_math3)
+        implementation(Libs.commons_lang3)
+        implementation(Libs.guava)
+        implementation(Libs.annotations)
+        implementation(Libs.spotbugs)
+        implementation(Libs.slf4j_api)
+        implementation(Libs.kotlin_stdlib)
+        implementation(Libs.kotlin_reflect)
+        implementation(Libs.thread_inheritable_resource_loader)
+        testImplementation(Libs.junit)
+        runtimeOnly(Libs.logback_classic)
+        doclet(Libs.apiviz)
     }
 
     publishing.publications {
@@ -332,10 +332,10 @@ tasks.forEach { task ->
 
 dependencies {
     subprojects.forEach { implementation(it) }
-    implementation("commons-cli:commons-cli:${extra["cliVersion"]}")
-    implementation("ch.qos.logback:logback-classic:${extra["logbackVersion"]}")
-    implementation("org.apache.commons:commons-lang3:${extra["lang3Version"]}")
-    implementation("org.apache.ignite:ignite-core:${extra["igniteVersion"]}")
+    implementation(Libs.commons_cli)
+    implementation(Libs.logback_classic)
+    implementation(Libs.commons_lang3)
+    implementation(Libs.ignite_core)
 }
 
 tasks.withType<Javadoc> {

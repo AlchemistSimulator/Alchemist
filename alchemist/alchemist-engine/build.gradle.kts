@@ -9,8 +9,9 @@
 dependencies {
     implementation(project(":alchemist-interfaces"))
     implementation(project(":alchemist-time"))
-    implementation("net.sf.trove4j:trove4j:${extra["troveVersion"]}")
-    implementation("org.danilopianini:boilerplate:${extra["boilerplateVersion"]}")
-    implementation("org.jgrapht:jgrapht-core:${extra["jgraphtVersion"]}")
+    implementation(Libs.trove4j)
+    implementation(Libs.boilerplate)
+    implementation(Libs.jgrapht_core)
+
     testImplementation(project(":alchemist-implementationbase"))
 }

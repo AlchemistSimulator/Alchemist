@@ -1,8 +1,13 @@
 package it.unibo.alchemist.agents.cognitive
 
 import it.unibo.alchemist.agents.heterogeneous.AbstractHeterogeneousPedestrian
-import it.unibo.alchemist.agents.heterogeneous.HeterogeneousPedestrian
-import it.unibo.alchemist.characteristics.cognitive.*
+import it.unibo.alchemist.characteristics.cognitive.CognitiveCharacteristic
+import it.unibo.alchemist.characteristics.cognitive.BeliefDanger
+import it.unibo.alchemist.characteristics.cognitive.Fear
+import it.unibo.alchemist.characteristics.cognitive.DesireWalkRandomly
+import it.unibo.alchemist.characteristics.cognitive.DesireEvacuate
+import it.unibo.alchemist.characteristics.cognitive.IntentionEvacuate
+import it.unibo.alchemist.characteristics.cognitive.IntentionWalkRandomly
 import it.unibo.alchemist.characteristics.individual.Age
 import it.unibo.alchemist.characteristics.individual.Gender
 import it.unibo.alchemist.model.interfaces.Environment
@@ -28,9 +33,6 @@ abstract class AbstractCognitivePedestrian<T, P : Position<P>> (
     override fun dangerBelief() = characteristicLevel<BeliefDanger>()
 
     override fun fear() = characteristicLevel<Fear>()
-
-    override fun probabilityOfHelping(toHelp: HeterogeneousPedestrian<T>): Double = 0.0
-        //toHelp: HeterogeneousPedestrian<T> -> characteristicLevel(HelpAttitude::class).level(toHelp)
 
     private inline fun <reified C : CognitiveCharacteristic> characteristicLevel(): Double =
         cognitiveCharacteristics[C::class]?.level() ?: 0.0

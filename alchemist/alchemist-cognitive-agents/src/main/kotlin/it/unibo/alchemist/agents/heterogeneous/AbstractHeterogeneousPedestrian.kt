@@ -5,6 +5,7 @@ import it.unibo.alchemist.characteristics.individual.Age
 import it.unibo.alchemist.characteristics.individual.Compliance
 import it.unibo.alchemist.characteristics.individual.Gender
 import it.unibo.alchemist.characteristics.individual.Speed
+import it.unibo.alchemist.characteristics.individual.HelpAttitude
 import it.unibo.alchemist.model.interfaces.Environment
 
 abstract class AbstractHeterogeneousPedestrian<T>(
@@ -16,4 +17,9 @@ abstract class AbstractHeterogeneousPedestrian<T>(
     override val speed = Speed(age, gender)
 
     override val compliance = Compliance(age, gender)
+
+    private val helpAttitude = HelpAttitude(age, gender)
+
+    override fun probabilityOfHelping(toHelp: HeterogeneousPedestrian<T>) =
+            helpAttitude.level(toHelp)
 }

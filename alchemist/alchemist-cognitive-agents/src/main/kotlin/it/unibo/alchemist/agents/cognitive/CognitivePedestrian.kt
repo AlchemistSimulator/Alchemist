@@ -12,6 +12,4 @@ interface CognitivePedestrian<T> : HeterogeneousPedestrian<T> {
     fun fear(): Double
 
     fun influencialPeople(): Collection<CognitivePedestrian<*>>
-
-    fun probabilityOfHelping(toHelp: HeterogeneousPedestrian<T>): Double
 }

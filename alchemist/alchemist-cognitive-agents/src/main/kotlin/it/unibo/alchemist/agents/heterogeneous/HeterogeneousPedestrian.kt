@@ -18,4 +18,6 @@ interface HeterogeneousPedestrian<T> : Pedestrian<T> {
     val speed: Speed
 
     val compliance: Compliance
+
+    fun probabilityOfHelping(toHelp: HeterogeneousPedestrian<T>): Double
 }

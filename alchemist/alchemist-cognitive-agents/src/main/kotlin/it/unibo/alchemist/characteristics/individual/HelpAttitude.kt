@@ -1,22 +1,17 @@
-package it.unibo.alchemist.characteristics.cognitive
+package it.unibo.alchemist.characteristics.individual
 
-import it.unibo.alchemist.characteristics.individual.Age
-import it.unibo.alchemist.characteristics.individual.Gender
+import it.unibo.alchemist.agents.heterogeneous.HeterogeneousPedestrian
 
-class HelpAttitude(
-    private val age: Age,
-    private val gender: Gender,
-    private val toHelp: () -> Pair<Age, Gender>
-) : CognitiveCharacteristic {
+class HelpAttitude(age: Age, gender: Gender) : IndividualCharacteristic {
 
-    private val helperRules = rules[age to gender]!!
+    private val helperRules = rules[age to gender]
 
-    override fun level(): Double =
-            helperRules[toHelp()]?.first ?: 0.0
+    fun level(toHelp: HeterogeneousPedestrian<*>): Double =
+            helperRules?.get(toHelp.age to toHelp.gender)?.first ?: 0.0
 
     companion object {
-        // first -> in the same group level
-        // second -> not in the same group level
+        // first -> in the same group
+        // second -> not in the same group
         private val rules: Map<Pair<Age, Gender>, Map<Pair<Age, Gender>, Pair<Double, Double>>> = mapOf(
             Pair(Age.ADULT, Gender.MALE) to mapOf(
                 Pair(Age.CHILD, Gender.MALE) to Pair(0.30, 0.25),

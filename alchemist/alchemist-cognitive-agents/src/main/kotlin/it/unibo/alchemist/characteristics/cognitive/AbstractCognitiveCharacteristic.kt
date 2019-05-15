@@ -6,8 +6,6 @@ abstract class AbstractCognitiveCharacteristic : CognitiveCharacteristic {
 
     override fun level() = currLevel
 
-    abstract fun update(deltaT: Double)
-
     abstract fun combinationFunction(): Double
 
     // must be put in a configuration file

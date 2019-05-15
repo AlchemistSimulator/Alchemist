@@ -1,4 +1,4 @@
-package it.unibo.alchemist.agents.homogeneous
+package it.unibo.alchemist.agents
 
 import it.unibo.alchemist.model.interfaces.Node
 

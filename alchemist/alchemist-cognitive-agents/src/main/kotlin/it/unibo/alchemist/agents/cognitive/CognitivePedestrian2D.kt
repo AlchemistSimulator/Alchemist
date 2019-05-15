@@ -2,8 +2,10 @@ package it.unibo.alchemist.agents.cognitive
 
 import it.unibo.alchemist.characteristics.individual.Age
 import it.unibo.alchemist.characteristics.individual.Gender
+import it.unibo.alchemist.agents.cognitive.reactions.CognitiveReaction
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position2D
+import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.sensory.FieldOfView2D
 import it.unibo.alchemist.sensory.HearingField2D
 import it.unibo.alchemist.sensory.InfluenceSphere2D
@@ -11,9 +13,16 @@ import kotlin.random.Random
 
 open class CognitivePedestrian2D<T, P : Position2D<P>>(
     private val env: Environment<T, P>,
+    private val timeDistribution: TimeDistribution<T>,
     age: Age,
     gender: Gender
 ) : AbstractCognitivePedestrian<T, P>(env, age, gender) {
+
+    init {
+        cognitiveCharacteristics.values
+                .map { CognitiveReaction(this, it, timeDistribution) }
+                .forEach { this.addReaction(it) }
+    }
 
     override fun influencialPeople() =
         env.getPosition(this).let {

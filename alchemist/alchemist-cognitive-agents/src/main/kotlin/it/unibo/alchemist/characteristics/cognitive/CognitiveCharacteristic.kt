@@ -11,4 +11,9 @@ interface CognitiveCharacteristic : Characteristic {
      * A number between 0 and 1 describing the current intensity of this characteristic
      */
     fun level(): Double
+
+    /**
+     * Update the current intensity of this characteristic
+     */
+    fun update(deltaT: Double)
 }

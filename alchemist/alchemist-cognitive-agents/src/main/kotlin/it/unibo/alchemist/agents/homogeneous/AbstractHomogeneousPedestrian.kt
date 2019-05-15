@@ -1,5 +1,6 @@
 package it.unibo.alchemist.agents.homogeneous
 
+import it.unibo.alchemist.agents.Pedestrian
 import it.unibo.alchemist.model.implementations.nodes.AbstractNode
 import it.unibo.alchemist.model.interfaces.Environment
 

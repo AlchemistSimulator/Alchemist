@@ -20,7 +20,7 @@ abstract class AbstractCognitivePedestrian<T, P : Position<P>> (
     gender: Gender
 ) : CognitivePedestrian<T>, AbstractHeterogeneousPedestrian<T>(env, age, gender) {
 
-    private val cognitiveCharacteristics: Map<KClass<out CognitiveCharacteristic>, CognitiveCharacteristic> =
+    protected val cognitiveCharacteristics: Map<KClass<out CognitiveCharacteristic>, CognitiveCharacteristic> =
         mapOf(
             BeliefDanger::class to BeliefDanger({ characteristicLevel<Fear>() }, { influencialPeople() }),
             Fear::class to Fear({ characteristicLevel<DesireWalkRandomly>() }, { characteristicLevel<DesireEvacuate>() }, { influencialPeople() }),

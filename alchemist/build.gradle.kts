@@ -337,27 +337,29 @@ dependencies {
     implementation("org.apache.ignite:ignite-core:${extra["igniteVersion"]}")
 }
 
-//tasks.withType<Javadoc> {
-//    dependsOn(subprojects.javadoc)
-//    source(subprojects.javadoc.source)
-//    subprojects.sourceSets.main.runtimeClasspath.each {
-//        classpath += it
-//    }
-//}
+tasks.withType<Javadoc> {
+    val subprojectJavadocs = subprojects.flatMap { it.tasks.withType<Javadoc>() }
+    dependsOn(subprojectJavadocs)
+    source(subprojectJavadocs.map { it.source })
+    classpath += subprojects.asSequence()
+        .flatMap { it.sourceSets.getByName("main").runtimeClasspath.files.asSequence() }
+        .toList().toTypedArray()
+        .let { files(*it) }
+}
 
-//dokka {
-//    subprojects.sourceSets.main.allSource.srcDirs.flatten().each {
-//        sourceDirs += it
-//    }
-//}
+tasks.withType<DokkaTask> {
+    sourceDirs += subprojects.asSequence()
+        .map { it.sourceSets.getByName("main") }
+        .flatMap { it.allSource.srcDirs.asSequence() }
+}
 
-//allprojects {
-//    val jdocTasks = listOf("javadoc", "uploadArchives", "projectReport", "buildDashboard", "javadocJar")
-//    val selectedTasks = gradle.startParameter.taskNames ?: defaultTasks
-//    if (!jdocTasks.any { selectedTasks.contains(it) }) {
-//        apply(plugin = "org.danilopianini.javadoc.io-linker")
-//    }
-//}
+allprojects {
+    val jdocTasks = listOf("javadoc", "uploadArchives", "projectReport", "buildDashboard", "javadocJar")
+    val selectedTasks = gradle.startParameter.taskNames
+    if (!jdocTasks.any { selectedTasks.contains(it) }) {
+        apply(plugin = "org.danilopianini.javadoc.io-linker")
+    }
+}
 
 tasks.register<Jar>("fatJar") {
     dependsOn(subprojects.map { it.tasks.withType<Jar>()})
@@ -393,4 +395,4 @@ buildScan {
     termsOfServiceAgree = "yes"
 }
 
-//defaultTasks("clean", "test", "check", "makeDocs", "projectReport", "buildDashboard", "fatJar", "signMainPublication")
+defaultTasks("clean", "test", "check", "makeDocs", "projectReport", "buildDashboard", "fatJar", "signMainPublication")

@@ -1,17 +1,23 @@
 package it.unibo.alchemist.characteristics.cognitive
 
+import it.unibo.alchemist.agents.cognitive.CognitivePedestrian
 import it.unibo.alchemist.characteristics.utils.Functions
 
-class Fear : MentalCognitiveCharacteristic() {
+class Fear(
+    private val desireWalkRandomly: () -> Double,
+    private val desireEvacuate: () -> Double,
+    private val influencialPeople: () -> Collection<CognitivePedestrian<*>>
+) : MentalCognitiveCharacteristic() {
 
     override fun combinationFunction() =
-        maxOf(wPersisting * level,
-                Functions.advancedLogistic(aLogisticSigma, aLogisticTau,
-                        aggregateFears(),
-                        wAmplifyingFeeling * owner.desireEvacuateLevel(),
-                        wInhibitingFeeling * owner.desireWalkRandomlyLevel()))
+        maxOf(wPersisting * currLevel,
+                Functions.advancedLogistic(
+                    aLogisticSigma, aLogisticTau,
+                    influencialPeople().aggregateFears(),
+                    wAmplifyingFeeling * desireEvacuate(),
+                    wInhibitingFeeling * desireWalkRandomly()
+                ))
 
-    private fun aggregateFears() = with(owner.influencialPeople()) {
-        this.sumByDouble { it.fearLevel() } / this.size
-    }
+    private fun Collection<CognitivePedestrian<*>>.aggregateFears() =
+            this.sumByDouble { it.dangerBelief() } / this.size
 }

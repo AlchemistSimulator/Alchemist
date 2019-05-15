@@ -1,11 +1,8 @@
 package it.unibo.alchemist.characteristics.cognitive
 
-abstract class BodyCognitiveCharacteristic : CognitiveCharacteristic() {
+abstract class BodyCognitiveCharacteristic : AbstractCognitiveCharacteristic() {
 
-    var level: Double = 0.0
-        private set
-
-    fun update() {
-        level += nBody * combinationFunction() * deltaT
+    override fun update(deltaT: Double) {
+        currLevel += nBody * combinationFunction() * deltaT
     }
 }

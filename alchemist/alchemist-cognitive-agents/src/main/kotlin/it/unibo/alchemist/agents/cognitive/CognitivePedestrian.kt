@@ -7,15 +7,11 @@ import it.unibo.alchemist.agents.heterogeneous.HeterogeneousPedestrian
  */
 interface CognitivePedestrian<T> : HeterogeneousPedestrian<T> {
 
-    val dangerBeliefLevel: () -> Double
+    fun dangerBelief(): Double
 
-    val fearLevel: () -> Double
+    fun fear(): Double
 
-    val desireEvacuateLevel: () -> Double
+    fun influencialPeople(): Collection<CognitivePedestrian<*>>
 
-    val desireWalkRandomlyLevel: () -> Double
-
-    val influencialPeople: () -> Collection<CognitivePedestrian<*>>
-
-    val probabilityOfHelping: (toHelp: HeterogeneousPedestrian<T>) -> Double
+    fun probabilityOfHelping(toHelp: HeterogeneousPedestrian<T>): Double
 }

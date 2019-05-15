@@ -7,6 +7,7 @@ import it.unibo.alchemist.characteristics.individual.Age
 import it.unibo.alchemist.characteristics.individual.Gender
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
+import kotlin.reflect.KClass
 
 abstract class AbstractCognitivePedestrian<T, P : Position<P>> (
     env: Environment<T, P>,
@@ -14,21 +15,23 @@ abstract class AbstractCognitivePedestrian<T, P : Position<P>> (
     gender: Gender
 ) : CognitivePedestrian<T>, AbstractHeterogeneousPedestrian<T>(env, age, gender) {
 
-    private val dangerBelief = BeliefDanger()
-    private val fear = Fear()
-    private val desireEvacuate = DesireEvacuate()
-    private val desireWalkRandomly = DesireWalkRandomly()
-    private val helpAttitude = HelpAttitude()
+    private val cognitiveCharacteristics: Map<KClass<out CognitiveCharacteristic>, CognitiveCharacteristic> =
+        mapOf(
+            BeliefDanger::class to BeliefDanger({ characteristicLevel<Fear>() }, { influencialPeople() }),
+            Fear::class to Fear({ characteristicLevel<DesireWalkRandomly>() }, { characteristicLevel<DesireEvacuate>() }, { influencialPeople() }),
+            DesireEvacuate::class to DesireEvacuate({ characteristicLevel<BeliefDanger>() }, { characteristicLevel<Fear>() }),
+            DesireWalkRandomly::class to DesireWalkRandomly({ characteristicLevel<BeliefDanger>() }, { characteristicLevel<Fear>() }),
+            IntentionEvacuate::class to IntentionEvacuate({ characteristicLevel<DesireWalkRandomly>() }, { characteristicLevel<DesireEvacuate>() }),
+            IntentionWalkRandomly::class to IntentionWalkRandomly({ characteristicLevel<DesireWalkRandomly>() }, { characteristicLevel<DesireEvacuate>() })
+        )
 
-    override val dangerBeliefLevel = { dangerBelief.level }
+    override fun dangerBelief() = characteristicLevel<BeliefDanger>()
 
-    override val fearLevel = { fear.level }
+    override fun fear() = characteristicLevel<Fear>()
 
-    override val desireEvacuateLevel = { desireEvacuate.level }
+    override fun probabilityOfHelping(toHelp: HeterogeneousPedestrian<T>): Double = 0.0
+        //toHelp: HeterogeneousPedestrian<T> -> characteristicLevel(HelpAttitude::class).level(toHelp)
 
-    override val desireWalkRandomlyLevel = { desireWalkRandomly.level }
-
-    override val probabilityOfHelping = {
-        toHelp: HeterogeneousPedestrian<T> -> helpAttitude.level(toHelp)
-    }
+    private inline fun <reified C : CognitiveCharacteristic> characteristicLevel(): Double =
+        cognitiveCharacteristics[C::class]?.level() ?: 0.0
 }

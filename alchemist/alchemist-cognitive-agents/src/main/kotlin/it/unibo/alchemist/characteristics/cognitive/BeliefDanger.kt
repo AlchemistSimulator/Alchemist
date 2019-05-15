@@ -1,12 +1,16 @@
 package it.unibo.alchemist.characteristics.cognitive
 
-class BeliefDanger : MentalCognitiveCharacteristic() {
+import it.unibo.alchemist.agents.cognitive.CognitivePedestrian
+
+class BeliefDanger(
+    private val fear: () -> Double,
+    private val influencialPeople: () -> Collection<CognitivePedestrian<*>>
+) : MentalCognitiveCharacteristic() {
 
     override fun combinationFunction() =
-            maxOf(wPersisting * level,
-                    (wAffectiveBiasing * owner.fearLevel() + aggregateBeliefs()) / (wAffectiveBiasing + 1))
+            maxOf(wPersisting * level(),
+                    (wAffectiveBiasing * fear() + influencialPeople().aggregateDangerBeliefs()) / (wAffectiveBiasing + 1))
 
-    private fun aggregateBeliefs() = with(owner.influencialPeople()) {
-        this.sumByDouble { it.dangerBeliefLevel() } / this.size
-    }
+    private fun Collection<CognitivePedestrian<*>>.aggregateDangerBeliefs() =
+            this.sumByDouble { it.dangerBelief() } / this.size
 }

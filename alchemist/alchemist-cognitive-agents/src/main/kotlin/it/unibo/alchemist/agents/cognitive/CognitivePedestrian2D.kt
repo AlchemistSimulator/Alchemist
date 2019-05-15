@@ -15,11 +15,10 @@ open class CognitivePedestrian2D<T, P : Position2D<P>>(
     gender: Gender
 ) : AbstractCognitivePedestrian<T, P>(env, age, gender) {
 
-    override val influencialPeople = {
+    override fun influencialPeople() =
         env.getPosition(this).let {
             it.fieldOfView().peopleWithInfluence().union(it.hearingField().peopleWithInfluence())
         }
-    }
 
     private fun <P : Position2D<P>> P.fieldOfView(): FieldOfView2D<P> =
             FieldOfView2D(this.x, this.y,

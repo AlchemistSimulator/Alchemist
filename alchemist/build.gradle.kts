@@ -32,6 +32,7 @@ plugins {
     id("org.danilopianini.build-commons") version "0.4.0"
     id("com.jfrog.bintray") version "1.8.4"
     id("com.gradle.build-scan") version "2.1"
+    id("de.fayard.buildSrcVersions") version "0.3.2"
 }
 
 apply(plugin = "project-report")
@@ -118,7 +119,7 @@ allprojects {
         isShowViolations = false
     }
     dependencies {
-        implementation("commons-io:commons-io:${extra["commonsIOVersion"]}")
+        implementation(Libs.commons_io)
         implementation("org.apache.commons:commons-math3:${extra["math3Version"]}")
         implementation("org.apache.commons:commons-lang3:${extra["lang3Version"]}")
         implementation("org.jetbrains:annotations:${extra["jetbrainsAnnotationsVersion"]}")

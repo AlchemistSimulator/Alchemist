@@ -34,10 +34,14 @@ matrix:
     - jdk: openjdk8
       os: osx
 
-before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install -y graphviz openjfx
-  - export SHOULD_CONFIGURE="$(if ! $TRAVIS_PULL_REQUEST && [ $TRAVIS_REPO_SLUG = 'AlchemistSimulator/Alchemist' ] && [ $TRAVIS_OS_NAME = 'linux' ]; then echo 'true'; else echo 'false'; fi)"
+before_install: >-
+    if [ $TRAVIS_OS_NAME = 'linux' ]; then
+        sudo apt-get -qq update
+        sudo apt-get install -y graphviz openjfx
+        export SHOULD_CONFIGURE="$(if ! $TRAVIS_PULL_REQUEST && [ $TRAVIS_REPO_SLUG = 'AlchemistSimulator/Alchemist' ]; then echo 'true'; else echo 'false'; fi)"
+    else
+        export SHOULD_CONFIGURE="$(else echo 'false')"
+    fi
 
 install: >-
     if $SHOULD_CONFIGURE; then

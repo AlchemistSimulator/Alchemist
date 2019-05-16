@@ -52,14 +52,20 @@ install: >-
 script: >-
     cd alchemist;
     if [ $TRAVIS_OS_NAME = "windows" ]; then
-        gradlew.bat clean check sourcesJar javadocJar
+        gradlew.bat clean check --scan
     else
-        ./gradlew clean check sourcesJar javadocJar fatJar
+        ./gradlew clean check fatJar buildDashboard projectReport --scan
     fi
 
-after_success:
-  - cd alchemist
-  - "if $SHOULD_CONFIGURE && $PUBLISH; then ./gradlew bintrayUpload publishMainPublicationToMavenRepository -x dokka -x javadoc > >(egrep -v '(null:-1:-1)|(t find node by signature)'); fi"
+after_success: >-
+    cd alchemist;
+    if $SHOULD_CONFIGURE && $PUBLISH; then
+        ./gradlew makeDocs bintrayUpload publish > >(egrep -v '(null:-1:-1)|(t find node by signature)')
+        mkdir -p report
+        cp --parent */build/reports build/reports report -R
+        mkdir --parents build/dokka/
+        cp dokka/index.html build/dokka/
+    fi
 
 deploy:
   - provider: releases

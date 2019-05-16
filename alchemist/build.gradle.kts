@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 /*
  * Kotlin migration TODO list
  *
- * use https://github.com/jmfayard/buildSrcVersions for dependency version management
  * check why implementationbase is required in alchemist-engine
  * check why there is no dependency of type api in alchemist-engine
  * checke the two above for every plugin

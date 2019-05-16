@@ -7,7 +7,7 @@
  */
 
 dependencies {
-    implementation(project(":alchemist-interfaces"))
+    api(project(":alchemist-interfaces"))
     implementation(project(":alchemist-time"))
     implementation(Libs.trove4j)
     implementation(Libs.boilerplate)

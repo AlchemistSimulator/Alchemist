@@ -7,8 +7,8 @@
  */
 
 dependencies {
-    implementation(project(":alchemist-implementationbase"))
-    implementation(project(":alchemist-interfaces"))
+    api(project(":alchemist-implementationbase"))
+    api(project(":alchemist-interfaces"))
     implementation(project(":alchemist-time"))
     implementation(project(":alchemist-maps"))
     implementation(Libs.groovy)

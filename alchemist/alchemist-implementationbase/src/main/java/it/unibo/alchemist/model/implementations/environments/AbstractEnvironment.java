@@ -97,7 +97,6 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
 
     @Override
     public final void addNode(final Node<T> node, final P p) {
-        System.out.println("Trying to add " + node.getId() + "@" + p);
         if (nodeShouldBeAdded(node, p)) {
             final P actualPosition = computeActualInsertionPosition(node, p);
             setPosition(node, actualPosition);

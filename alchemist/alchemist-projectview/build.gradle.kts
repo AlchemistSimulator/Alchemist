@@ -15,7 +15,7 @@ dependencies {
     }
     if (JavaVersion.current().isJava11Compatible()) {
         val javaFXVersion = extra["javafxVersion"]
-        for(platform in listOf("linux", "mac", "win")) {
+        for (platform in listOf("linux", "mac", "win")) {
             api("org.openjfx:javafx-base:$javaFXVersion:$platform")
             api("org.openjfx:javafx-controls:$javaFXVersion:$platform")
             api("org.openjfx:javafx-fxml:$javaFXVersion:$platform")

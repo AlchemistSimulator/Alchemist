@@ -28,7 +28,7 @@ dependencies {
 
 configurations {
     all {
-        if(!name.contains("antlr")) {
+        if (!name.contains("antlr")) {
             exclude(group = "org.antlr", module = "antlr-runtime")
         }
     }

@@ -77,6 +77,10 @@ object Libs {
     const val miglayout_swing: String = "com.miglayout:miglayout-swing:" + Versions.miglayout_swing
 
     /**
+     * https://github.com/pinterest/ktlint */
+    const val ktlint: String = "com.pinterest:ktlint:" + Versions.ktlint
+
+    /**
      * http://commons.apache.org/proper/commons-cli/ */
     const val commons_cli: String = "commons-cli:commons-cli:" + Versions.commons_cli
 
@@ -238,6 +242,10 @@ object Libs {
     /**
      * http://www.jgrapht.org */
     const val jgrapht_core: String = "org.jgrapht:jgrapht-core:" + Versions.jgrapht_core
+
+    const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String =
+            "org.jlleitschuh.gradle.ktlint:org.jlleitschuh.gradle.ktlint.gradle.plugin:" +
+            Versions.org_jlleitschuh_gradle_ktlint_gradle_plugin
 
     const val jool_java_8: String = "org.jooq:jool-java-8:" + Versions.jool_java_8
 

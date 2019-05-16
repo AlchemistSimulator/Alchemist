@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 /*
  * Kotlin migration TODO list
  *
- * use publish-on-central
- * move deployment on a separate phase in travis ci
  * use the new ktlint
  * upgrade to junit5
  * farjar plugin?
@@ -26,29 +24,41 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
  */
 
 plugins {
-    id("de.fayard.buildSrcVersions") version Versions.de_fayard_buildsrcversions_gradle_plugin
-    id("org.danilopianini.git-sensitive-semantic-versioning") version Versions.org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin
+    id("de.fayard.buildSrcVersions") version
+            Versions.de_fayard_buildsrcversions_gradle_plugin
+    id("org.danilopianini.git-sensitive-semantic-versioning") version
+            Versions.org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin
     `java-library`
-    kotlin("jvm") version Versions.org_jetbrains_kotlin
+    kotlin("jvm") version
+            Versions.org_jetbrains_kotlin
     jacoco
-    id("com.github.spotbugs") version Versions.com_github_spotbugs_gradle_plugin
+    id("com.github.spotbugs") version
+            Versions.com_github_spotbugs_gradle_plugin
     pmd
+    checkstyle
+    id("org.jlleitschuh.gradle.ktlint") version
+            Versions.org_jlleitschuh_gradle_ktlint_gradle_plugin
     `project-report`
     `build-dashboard`
-    id("org.jetbrains.dokka") version Versions.org_jetbrains_dokka_gradle_plugin
-    id("org.danilopianini.javadoc.io-linker") version Versions.org_danilopianini_javadoc_io_linker_gradle_plugin
+    id("org.jetbrains.dokka") version
+            Versions.org_jetbrains_dokka_gradle_plugin
+    id("org.danilopianini.javadoc.io-linker") version
+            Versions.org_danilopianini_javadoc_io_linker_gradle_plugin
     signing
     `maven-publish`
-    id("org.danilopianini.publish-on-central") version Versions.org_danilopianini_publish_on_central_gradle_plugin
-    id("com.jfrog.bintray") version Versions.com_jfrog_bintray_gradle_plugin
-    id("com.gradle.build-scan") version Versions.com_gradle_build_scan_gradle_plugin
+    id("org.danilopianini.publish-on-central") version
+            Versions.org_danilopianini_publish_on_central_gradle_plugin
+    id("com.jfrog.bintray") version
+            Versions.com_jfrog_bintray_gradle_plugin
+    id("com.gradle.build-scan") version
+            Versions.com_gradle_build_scan_gradle_plugin
 }
 
 apply(plugin = "project-report")
 
 allprojects {
 
-    if(!JavaVersion.current().isJava11Compatible){
+    if (!JavaVersion.current().isJava11Compatible) {
         project.version = project.version.toString() + "-j8"
     }
     extra["scalaVersion"] = "${extra["scalaMajorVersion"]}.${extra["scalaMinorVersion"]}"
@@ -60,6 +70,7 @@ allprojects {
     apply(plugin = "com.github.spotbugs")
     apply(plugin = "checkstyle")
     apply(plugin = "pmd")
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
     apply(plugin = "project-report")
     apply(plugin = "build-dashboard")
     apply(plugin = "org.jetbrains.dokka")
@@ -74,7 +85,7 @@ allprojects {
 
     configurations {
         all {
-            if(!name.contains("antlr")) {
+            if (!name.contains("antlr")) {
                 resolutionStrategy {
                     force("org.antlr:antlr-runtime:${extra["antlrRuntimeVersion"]}")
                 }
@@ -114,14 +125,14 @@ allprojects {
 
     tasks.withType<Test> {
         failFast = true
-        testLogging { events("passed", "skipped", "failed", "standardError")}
+        testLogging { events("passed", "skipped", "failed", "standardError") }
     }
 
     spotbugs {
         isIgnoreFailures = true
         effort = "max"
         reportLevel = "low"
-        val excludeFile = File("${project.rootProject.projectDir}/config/spotbugs/excludes.xml");
+        val excludeFile = File("${project.rootProject.projectDir}/config/spotbugs/excludes.xml")
         if (excludeFile.exists()) {
             excludeFilterConfig = project.resources.text.fromFile(excludeFile)
         }
@@ -257,7 +268,7 @@ allprojects {
     }
     tasks.withType<BintrayUploadTask> {
         onlyIf {
-            val hasKey = System.getenv(apiKeyName) != null;
+            val hasKey = System.getenv(apiKeyName) != null
             val hasUser = System.getenv(userKeyName) != null
             if (!hasKey) {
                 println("The $apiKeyName environment variable must be set in order for the bintray deployment to work")
@@ -316,13 +327,7 @@ allprojects {
     dokka.finalizedBy(makeDocs)
 }
 
-subprojects.forEach { subproject -> rootProject.evaluationDependsOn(subproject.path)}
-
-
-/*
- * Remove tasks that should not exist in subprojects
- */
-//subprojects.forEach { it.tasks.remove(tasks.withType<Wrapper>()) }
+subprojects.forEach { subproject -> rootProject.evaluationDependsOn(subproject.path) }
 
 /*
  * Running a task on the parent project implies running the same task first on any subproject
@@ -369,7 +374,7 @@ allprojects {
 }
 
 tasks.register<Jar>("fatJar") {
-    dependsOn(subprojects.map { it.tasks.withType<Jar>()})
+    dependsOn(subprojects.map { it.tasks.withType<Jar>() })
     manifest {
         attributes(mapOf(
             "Implementation-Title" to "Alchemist",

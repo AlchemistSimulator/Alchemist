@@ -11,7 +11,7 @@ object Versions {
 
     const val caffeine: String = "2.6.2" // available: "2.7.0"
 
-    const val com_github_cb372: String = "0.9.3" // available: "0.27.0s"
+    const val com_github_cb372: String = "0.9.3" // available: "0.27.0"
 
     const val rtree: String = "0.8.6" 
 
@@ -34,6 +34,8 @@ object Versions {
     const val com_jfrog_bintray_gradle_plugin: String = "1.8.4" 
 
     const val miglayout_swing: String = "5.0" // available: "5.2"
+
+    const val ktlint: String = "0.32.0" 
 
     const val commons_cli: String = "1.4" 
 
@@ -101,6 +103,8 @@ object Versions {
     const val annotations: String = "16.0.3" // available: "17.0.0"
 
     const val jgrapht_core: String = "1.1.0" // available: "1.3.0"
+
+    const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String = "8.0.0" 
 
     const val jool_java_8: String = "0.9.14" 
 

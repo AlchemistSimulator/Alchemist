@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 /*
  * Kotlin migration TODO list
  *
- * use the new ktlint
  * upgrade to junit5
  * farjar plugin?
  * switch to orchid kotlindoc https://orchid.netlify.com/plugins/OrchidKotlindoc
@@ -334,7 +333,7 @@ subprojects.forEach { subproject -> rootProject.evaluationDependsOn(subproject.p
  */
 tasks.forEach { task ->
     subprojects.forEach { subproject ->
-        val subtask = subproject.tasks.findByPath("${task.name}")
+        val subtask = subproject.tasks.findByPath(task.name)
         if (subtask != null) {
             task.dependsOn(subtask)
         }

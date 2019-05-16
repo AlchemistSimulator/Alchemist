@@ -8,16 +8,14 @@ import it.unibo.alchemist.characteristics.cognitive.DesireWalkRandomly
 import it.unibo.alchemist.characteristics.cognitive.DesireEvacuate
 import it.unibo.alchemist.characteristics.cognitive.IntentionEvacuate
 import it.unibo.alchemist.characteristics.cognitive.IntentionWalkRandomly
-import it.unibo.alchemist.characteristics.individual.Age
-import it.unibo.alchemist.characteristics.individual.Gender
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
 import kotlin.reflect.KClass
 
 abstract class AbstractCognitivePedestrian<T, P : Position<P>> (
     env: Environment<T, P>,
-    age: Age,
-    gender: Gender
+    age: String,
+    gender: String
 ) : CognitivePedestrian<T>, AbstractHeterogeneousPedestrian<T>(env, age, gender) {
 
     protected val cognitiveCharacteristics: Map<KClass<out CognitiveCharacteristic>, CognitiveCharacteristic> =

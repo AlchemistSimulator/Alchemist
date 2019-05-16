@@ -10,9 +10,22 @@ import it.unibo.alchemist.model.interfaces.Environment
 
 abstract class AbstractHeterogeneousPedestrian<T>(
     env: Environment<T, *>,
-    final override val age: Age,
-    final override val gender: Gender
+    ageString: String,
+    genderString: String
 ) : HeterogeneousPedestrian<T>, AbstractHomogeneousPedestrian<T>(env) {
+
+    final override val age: Age = when (ageString) {
+        "child", "CHILD" -> Age.CHILD
+        "adult", "ADULT" -> Age.ADULT
+        "elderly", "ELDERLY" -> Age.ELDERLY
+        else -> throw IllegalArgumentException("The specified age is not valid")
+    }
+
+    final override val gender: Gender = when (genderString) {
+        "male", "m", "MALE", "M" -> Gender.MALE
+        "female", "f", "FEMALE", "F" -> Gender.FEMALE
+        else -> throw IllegalArgumentException("The specified gender is not valid")
+    }
 
     override val speed = Speed(age, gender)
 

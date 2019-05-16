@@ -25,40 +25,30 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
  * use the new ktlint
  * upgrade to junit5
  * farjar plugin?
- * switch to orchid kotlindoc
+ * switch to orchid kotlindoc https://orchid.netlify.com/plugins/OrchidKotlindoc
  * dokka-merge-plugin?
+ * don't ignore checkers failures
  */
 
 plugins {
     id("de.fayard.buildSrcVersions") version "0.3.2"
     `java-library`
+    kotlin("jvm") version "1.3.0"
+    jacoco
     id("com.github.spotbugs") version "1.6.9"
     pmd
     `project-report`
     `build-dashboard`
+    id("org.jetbrains.dokka") version "0.9.17"
+    id("org.danilopianini.javadoc.io-linker") version "0.1.4"
     signing
     `maven-publish`
     id("org.danilopianini.publish-on-central") version "0.1.1"
-//    id("org.danilopianini.build-commons") version "0.4.0"
     id("com.jfrog.bintray") version "1.8.4"
     id("com.gradle.build-scan") version "2.1"
 }
 
 apply(plugin = "project-report")
-
-buildscript {
-    repositories {
-        gradlePluginPortal()
-    }
-    dependencies {
-        classpath("gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:${extra["spotBugsPluginVersion"]}")
-        classpath("org.danilopianini:build-commons:${extra["buildCommonsVersion"]}")
-        classpath("org.danilopianini:javadoc.io-linker:${extra["javadocIOLinkerVersion"]}")
-        classpath("org.jetbrains.dokka:dokka-gradle-plugin:${extra["dokkaVersion"]}")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${extra["kotlinVersion"]}")
-        classpath("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+")
-    }
-}
 
 allprojects {
 
@@ -67,9 +57,9 @@ allprojects {
     }
     extra["scalaVersion"] = "${extra["scalaMajorVersion"]}.${extra["scalaMinorVersion"]}"
 
-//    apply(plugin = "org.danilopianini.build-commons")
     apply(plugin = "java-library")
     apply(plugin = "kotlin")
+    apply(plugin = "jacoco")
     apply(plugin = "com.github.spotbugs")
     apply(plugin = "checkstyle")
     apply(plugin = "pmd")
@@ -80,10 +70,6 @@ allprojects {
     apply(plugin = "maven-publish")
     apply(plugin = "org.danilopianini.publish-on-central")
     apply(plugin = "com.jfrog.bintray")
-
-//    jacoco {
-//        toolVersion = extra["jacocoVersion"].toString()
-//    }
 
     configurations {
         all {

@@ -160,6 +160,10 @@ object Libs {
      * http://www.controlsfx.org/ */
     const val controlsfx: String = "org.controlsfx:controlsfx:" + Versions.controlsfx
 
+    const val org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin: String =
+            "org.danilopianini.git-sensitive-semantic-versioning:org.danilopianini.git-sensitive-semantic-versioning.gradle.plugin:" +
+            Versions.org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin
+
     const val org_danilopianini_javadoc_io_linker_gradle_plugin: String =
             "org.danilopianini.javadoc.io-linker:org.danilopianini.javadoc.io-linker.gradle.plugin:" +
             Versions.org_danilopianini_javadoc_io_linker_gradle_plugin

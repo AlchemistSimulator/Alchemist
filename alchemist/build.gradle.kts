@@ -13,12 +13,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 /*
  * Kotlin migration TODO list
  *
- * check why implementationbase is required in alchemist-engine
- * check why there is no dependency of type api in alchemist-engine
- * checke the two above for every plugin
- * update checkstyle configuration
- * give up build commons
- * use gitsemverplugin
  * use publish-on-central
  * move deployment on a separate phase in travis ci
  * use the new ktlint
@@ -28,11 +22,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
  * dokka-merge-plugin?
  * update dependencies
  * don't ignore checkers failures
- *
+ * recheck all dependencies
  */
 
 plugins {
     id("de.fayard.buildSrcVersions") version Versions.de_fayard_buildsrcversions_gradle_plugin
+    id("org.danilopianini.git-sensitive-semantic-versioning") version Versions.org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin
     `java-library`
     kotlin("jvm") version Versions.org_jetbrains_kotlin
     jacoco
@@ -58,6 +53,7 @@ allprojects {
     }
     extra["scalaVersion"] = "${extra["scalaMajorVersion"]}.${extra["scalaMinorVersion"]}"
 
+    apply(plugin = "org.danilopianini.git-sensitive-semantic-versioning")
     apply(plugin = "java-library")
     apply(plugin = "kotlin")
     apply(plugin = "jacoco")
@@ -71,6 +67,10 @@ allprojects {
     apply(plugin = "maven-publish")
     apply(plugin = "org.danilopianini.publish-on-central")
     apply(plugin = "com.jfrog.bintray")
+
+    gitSemVer {
+        version = computeGitSemVer()
+    }
 
     configurations {
         all {

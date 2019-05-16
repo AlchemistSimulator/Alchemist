@@ -11,7 +11,7 @@ object Versions {
 
     const val caffeine: String = "2.6.2" // available: "2.7.0"
 
-    const val com_github_cb372: String = "0.9.3" // available: "0.27.0"
+    const val com_github_cb372: String = "0.9.3" // available: "0.27.0s"
 
     const val rtree: String = "0.8.6" 
 
@@ -69,6 +69,8 @@ object Versions {
 
     const val controlsfx: String = "9.0.0" // available: "11.0.0"
 
+    const val org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin: String = "0.1.0" 
+
     const val org_danilopianini_javadoc_io_linker_gradle_plugin: String = "0.1.4" 
             // available: "0.1.4-700fdb6"
 
@@ -92,9 +94,9 @@ object Versions {
 
     const val org_jetbrains_dokka_gradle_plugin: String = "0.9.17" // available: "0.9.18"
 
-    const val org_jetbrains_kotlin_jvm_gradle_plugin: String = "1.3.31" // available: "1.3.31"
+    const val org_jetbrains_kotlin_jvm_gradle_plugin: String = "1.3.31" 
 
-    const val org_jetbrains_kotlin: String = "1.3.31" // available: "1.3.31"
+    const val org_jetbrains_kotlin: String = "1.3.31" 
 
     const val annotations: String = "16.0.3" // available: "17.0.0"
 

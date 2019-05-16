@@ -23,3 +23,14 @@ dependencies {
     implementation(Libs.scala_compiler)
     implementation(Libs.scala_library)
 }
+
+configurations {
+    apiElements {
+        val compileScala = tasks.compileScala.get()
+        outgoing.variants["classes"].artifact(mapOf(
+                "file" to compileScala.destinationDir,
+                "type" to ArtifactTypeDefinition.JVM_CLASS_DIRECTORY,
+                "builtBy" to compileScala)
+        )
+    }
+}

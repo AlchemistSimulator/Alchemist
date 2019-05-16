@@ -47,7 +47,7 @@ object Versions {
 
     const val spotbugs_gradle_plugin: String = "1.6.9" // available: "2.0.0"
 
-    const val classgraph: String = "4.4.12" // available: "4.8.35"
+    const val classgraph: String = "4.4.12" // available: "4.8.36"
 
     const val jpx: String = "1.4.0" 
 
@@ -76,7 +76,7 @@ object Versions {
     const val org_danilopianini_build_commons_gradle_plugin: String = "0.4.0" 
             // available: "0.4.0+0ls.7bb38ef"
 
-    const val boilerplate: String = "0.1.8" 
+    const val boilerplate: String = "0.2.0"
 
     const val build_commons: String = "0.4.0" 
 
@@ -132,7 +132,7 @@ object Versions {
 
         const val currentVersion: String = "5.4.1"
 
-        const val nightlyVersion: String = "5.5-20190515000032+0000"
+        const val nightlyVersion: String = "5.5-20190516000042+0000"
 
         const val releaseCandidate: String = ""
     }

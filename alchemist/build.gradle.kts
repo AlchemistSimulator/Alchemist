@@ -27,25 +27,27 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
  * farjar plugin?
  * switch to orchid kotlindoc https://orchid.netlify.com/plugins/OrchidKotlindoc
  * dokka-merge-plugin?
+ * update dependencies
  * don't ignore checkers failures
+ *
  */
 
 plugins {
-    id("de.fayard.buildSrcVersions") version "0.3.2"
+    id("de.fayard.buildSrcVersions") version Versions.de_fayard_buildsrcversions_gradle_plugin
     `java-library`
-    kotlin("jvm") version "1.3.0"
+    kotlin("jvm") version Versions.org_jetbrains_kotlin
     jacoco
-    id("com.github.spotbugs") version "1.6.9"
+    id("com.github.spotbugs") version Versions.com_github_spotbugs_gradle_plugin
     pmd
     `project-report`
     `build-dashboard`
-    id("org.jetbrains.dokka") version "0.9.17"
-    id("org.danilopianini.javadoc.io-linker") version "0.1.4"
+    id("org.jetbrains.dokka") version Versions.org_jetbrains_dokka_gradle_plugin
+    id("org.danilopianini.javadoc.io-linker") version Versions.org_danilopianini_javadoc_io_linker_gradle_plugin
     signing
     `maven-publish`
-    id("org.danilopianini.publish-on-central") version "0.1.1"
-    id("com.jfrog.bintray") version "1.8.4"
-    id("com.gradle.build-scan") version "2.1"
+    id("org.danilopianini.publish-on-central") version Versions.org_danilopianini_publish_on_central_gradle_plugin
+    id("com.jfrog.bintray") version Versions.com_jfrog_bintray_gradle_plugin
+    id("com.gradle.build-scan") version Versions.com_gradle_build_scan_gradle_plugin
 }
 
 apply(plugin = "project-report")

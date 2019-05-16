@@ -28,6 +28,10 @@ object Libs {
      * http://github.com/davidmoten/rtree */
     const val rtree: String = "com.github.davidmoten:rtree:" + Versions.rtree
 
+    const val com_github_spotbugs_gradle_plugin: String =
+            "com.github.spotbugs:com.github.spotbugs.gradle.plugin:" +
+            Versions.com_github_spotbugs_gradle_plugin
+
     /**
      * https://spotbugs.github.io/ */
     const val spotbugs: String = "com.github.spotbugs:spotbugs:" + Versions.spotbugs
@@ -64,9 +68,6 @@ object Libs {
      * http://code.google.com/p/simplelatlng */
     const val simplelatlng: String = "com.javadocmd:simplelatlng:" + Versions.simplelatlng
 
-    const val gradle_bintray_plugin: String = "com.jfrog.bintray.gradle:gradle-bintray-plugin:" +
-            Versions.gradle_bintray_plugin
-
     const val com_jfrog_bintray_gradle_plugin: String =
             "com.jfrog.bintray:com.jfrog.bintray.gradle.plugin:" +
             Versions.com_jfrog_bintray_gradle_plugin
@@ -95,10 +96,6 @@ object Libs {
             "de.fayard.buildSrcVersions:de.fayard.buildSrcVersions.gradle.plugin:" +
             Versions.de_fayard_buildsrcversions_gradle_plugin
 
-    const val spotbugs_gradle_plugin: String =
-            "gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:" +
-            Versions.spotbugs_gradle_plugin
-
     /**
      * https://github.com/classgraph/classgraph */
     const val classgraph: String = "io.github.classgraph:classgraph:" + Versions.classgraph
@@ -124,30 +121,6 @@ object Libs {
     /**
      * http://trove4j.sf.net */
     const val trove4j: String = "net.sf.trove4j:trove4j:" + Versions.trove4j
-
-    /**
-     * https://pmd.github.io/ */
-    const val pmd_core: String = "net.sourceforge.pmd:pmd-core:" + Versions.net_sourceforge_pmd
-
-    /**
-     * https://pmd.github.io/ */
-    const val pmd_java: String = "net.sourceforge.pmd:pmd-java:" + Versions.net_sourceforge_pmd
-
-    /**
-     * https://pmd.github.io/ */
-    const val pmd_jsp: String = "net.sourceforge.pmd:pmd-jsp:" + Versions.net_sourceforge_pmd
-
-    /**
-     * https://pmd.github.io/ */
-    const val pmd_plsql: String = "net.sourceforge.pmd:pmd-plsql:" + Versions.net_sourceforge_pmd
-
-    /**
-     * https://pmd.github.io/ */
-    const val pmd_vm: String = "net.sourceforge.pmd:pmd-vm:" + Versions.net_sourceforge_pmd
-
-    /**
-     * https://pmd.github.io/ */
-    const val pmd_xml: String = "net.sourceforge.pmd:pmd-xml:" + Versions.net_sourceforge_pmd
 
     /**
      * http://www.antlr.org */
@@ -187,17 +160,17 @@ object Libs {
      * http://www.controlsfx.org/ */
     const val controlsfx: String = "org.controlsfx:controlsfx:" + Versions.controlsfx
 
-    const val org_danilopianini_build_commons_gradle_plugin: String =
-            "org.danilopianini.build-commons:org.danilopianini.build-commons.gradle.plugin:" +
-            Versions.org_danilopianini_build_commons_gradle_plugin
+    const val org_danilopianini_javadoc_io_linker_gradle_plugin: String =
+            "org.danilopianini.javadoc.io-linker:org.danilopianini.javadoc.io-linker.gradle.plugin:" +
+            Versions.org_danilopianini_javadoc_io_linker_gradle_plugin
+
+    const val org_danilopianini_publish_on_central_gradle_plugin: String =
+            "org.danilopianini.publish-on-central:org.danilopianini.publish-on-central.gradle.plugin:" +
+            Versions.org_danilopianini_publish_on_central_gradle_plugin
 
     /**
      * https://github.com/DanySK/boilerplate */
     const val boilerplate: String = "org.danilopianini:boilerplate:" + Versions.boilerplate
-
-    /**
-     * https://github.com/DanySK/build-commons */
-    const val build_commons: String = "org.danilopianini:build-commons:" + Versions.build_commons
 
     /**
      * https://github.com/DanySK/gson-extras */
@@ -206,11 +179,6 @@ object Libs {
     /**
      * https://github.com/DanySK/java-quadtree */
     const val java_quadtree: String = "org.danilopianini:java-quadtree:" + Versions.java_quadtree
-
-    /**
-     * https://github.com/DanySK/javadoc.io-linker */
-    const val javadoc_io_linker: String = "org.danilopianini:javadoc.io-linker:" +
-            Versions.javadoc_io_linker
 
     /**
      * https://github.com/DanySK/javalib-java7 */
@@ -235,17 +203,13 @@ object Libs {
     const val urlclassloader_util: String = "org.danilopianini:urlclassloader-util:" +
             Versions.urlclassloader_util
 
-    /**
-     * http://www.jboss.org/apiviz/ */
-    const val apiviz: String = "org.jboss.apiviz:apiviz:" + Versions.apiviz
+    const val org_jetbrains_dokka_gradle_plugin: String =
+            "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin:" +
+            Versions.org_jetbrains_dokka_gradle_plugin
 
-    const val dokka_gradle_plugin: String = "org.jetbrains.dokka:dokka-gradle-plugin:" +
-            Versions.dokka_gradle_plugin
-
-    /**
-     * https://kotlinlang.org/ */
-    const val kotlin_gradle_plugin: String = "org.jetbrains.kotlin:kotlin-gradle-plugin:" +
-            Versions.org_jetbrains_kotlin
+    const val org_jetbrains_kotlin_jvm_gradle_plugin: String =
+            "org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin:" +
+            Versions.org_jetbrains_kotlin_jvm_gradle_plugin
 
     /**
      * https://kotlinlang.org/ */
@@ -277,6 +241,30 @@ object Libs {
      * https://github.com/mapsforge/mapsforge */
     const val mapsforge_map_awt: String = "org.mapsforge:mapsforge-map-awt:" +
             Versions.mapsforge_map_awt
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/ */
+    const val javafx_base: String = "org.openjfx:javafx-base:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/ */
+    const val javafx_controls: String = "org.openjfx:javafx-controls:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/ */
+    const val javafx_fxml: String = "org.openjfx:javafx-fxml:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/ */
+    const val javafx_graphics: String = "org.openjfx:javafx-graphics:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/ */
+    const val javafx_media: String = "org.openjfx:javafx-media:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/ */
+    const val javafx_swing: String = "org.openjfx:javafx-swing:" + Versions.org_openjfx
 
     /**
      * http://pegdown.org */

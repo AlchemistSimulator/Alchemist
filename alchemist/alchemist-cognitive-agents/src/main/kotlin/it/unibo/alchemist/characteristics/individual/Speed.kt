@@ -1,10 +1,10 @@
 package it.unibo.alchemist.characteristics.individual
 
-import kotlin.random.Random
+import org.apache.commons.math3.random.RandomGenerator
 
-class Speed(age: Age, gender: Gender) : IndividualCharacteristic {
+class Speed(rg: RandomGenerator, age: Age, gender: Gender) : IndividualCharacteristic {
 
-    private val individualFactor = { Random.nextDouble(0.0, 0.5) }
+    private val individualFactor = { rg.nextDouble() / 2 } // from 0.0 to 0.5
 
     val walking = when {
         age == Age.ELDERLY -> 0.9 + individualFactor()

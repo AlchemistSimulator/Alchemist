@@ -9,9 +9,22 @@ positions:
 network-model:
   type: NoLinks
 
+seeds:
+  scenario: 0
+  simulation: 1
+
+reactions: &behavior
+  - time-distribution:
+      type: DiracComb
+      parameters: [1.0]
+    type: it.unibo.alchemist.behaviours.CognitiveBehaviour
+
 displacements:
   - in:
       type: Circle
       parameters: [100, 0, 0, 20]
     nodes:
-      type: MaleAdult
+      type: it.unibo.alchemist.agents.cognitive.CognitivePedestrian2D
+      parameters: ["adult", "male"]
+    programs:
+      - *behavior

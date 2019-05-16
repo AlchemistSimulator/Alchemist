@@ -46,6 +46,7 @@ install: >-
     fi
 
 script: >-
+    cd alchemist
     if [ $TRAVIS_OS_NAME = "windows" ]; then
         gradlew.bat clean check sourcesJar javadocJar
     else

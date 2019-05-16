@@ -55,6 +55,6 @@ pmd {
     sourceSets = sourceSetsToCheck
 }
 
-findbugs {
+spotbugs {
     sourceSets = sourceSetsToCheck
 }

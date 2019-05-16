@@ -25,20 +25,26 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
  * use the new ktlint
  * upgrade to junit5
  * farjar plugin?
+ * switch to orchid kotlindoc
  * dokka-merge-plugin?
  */
 
 plugins {
-    id("org.danilopianini.build-commons") version "0.4.0"
+    id("de.fayard.buildSrcVersions") version "0.3.2"
+    `java-library`
+    id("com.github.spotbugs") version "1.6.9"
+    pmd
+    `project-report`
+    `build-dashboard`
+    signing
+    `maven-publish`
+    id("org.danilopianini.publish-on-central") version "0.1.1"
+//    id("org.danilopianini.build-commons") version "0.4.0"
     id("com.jfrog.bintray") version "1.8.4"
     id("com.gradle.build-scan") version "2.1"
-    id("de.fayard.buildSrcVersions") version "0.3.2"
 }
 
 apply(plugin = "project-report")
-subprojects {
-    apply(plugin = "java-library")
-}
 
 buildscript {
     repositories {
@@ -61,21 +67,23 @@ allprojects {
     }
     extra["scalaVersion"] = "${extra["scalaMajorVersion"]}.${extra["scalaMinorVersion"]}"
 
-    apply(plugin = "org.danilopianini.build-commons")
+//    apply(plugin = "org.danilopianini.build-commons")
+    apply(plugin = "java-library")
     apply(plugin = "kotlin")
+    apply(plugin = "com.github.spotbugs")
+    apply(plugin = "checkstyle")
+    apply(plugin = "pmd")
+    apply(plugin = "project-report")
+    apply(plugin = "build-dashboard")
     apply(plugin = "org.jetbrains.dokka")
+    apply(plugin = "signing")
+    apply(plugin = "maven-publish")
+    apply(plugin = "org.danilopianini.publish-on-central")
     apply(plugin = "com.jfrog.bintray")
 
-    tasks.withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = "1.8"
-            freeCompilerArgs = listOf("-Xjvm-default=enable")
-        }
-    }
-
-    jacoco {
-        toolVersion = extra["jacocoVersion"].toString()
-    }
+//    jacoco {
+//        toolVersion = extra["jacocoVersion"].toString()
+//    }
 
     configurations {
         all {
@@ -87,36 +95,8 @@ allprojects {
         }
     }
 
-    tasks.withType<JavaCompile> {
-        options.encoding = "UTF-8"
-    }
-
-    tasks.withType<Test> {
-        failFast = true
-        testLogging { events("passed", "skipped", "failed", "standardError")}
-    }
-
-    apply(plugin = "com.github.spotbugs")
-    tasks.withType<SpotBugsTask> {
-        ignoreFailures = true
-        effort = "max"
-        reportLevel = "low"
-        val excludeFile = File("${project.rootProject.projectDir}/findbugsExcludes.xml");
-        if (excludeFile.exists()) {
-            excludeFilterConfig = project.resources.text.fromFile(excludeFile)
-        }
-    }
-    tasks.withType<FindBugs> {
-        enabled = false
-    }
-    tasks.withType<SpotBugsTask> {
-        reports {
-            xml.setEnabled(false)
-            html.setEnabled(true)
-        }
-    }
-    tasks.withType<Checkstyle> {
-        isShowViolations = false
+    repositories {
+        mavenCentral()
     }
     dependencies {
         implementation(Libs.commons_io)
@@ -131,7 +111,46 @@ allprojects {
         implementation(Libs.thread_inheritable_resource_loader)
         testImplementation(Libs.junit)
         runtimeOnly(Libs.logback_classic)
-        doclet(Libs.apiviz)
+//        doclet(Libs.apiviz)
+    }
+
+    tasks.withType<JavaCompile> {
+        options.encoding = "UTF-8"
+    }
+
+    tasks.withType<KotlinCompile> {
+        kotlinOptions {
+            jvmTarget = "1.8"
+            freeCompilerArgs = listOf("-Xjvm-default=enable")
+        }
+    }
+
+    tasks.withType<Test> {
+        failFast = true
+        testLogging { events("passed", "skipped", "failed", "standardError")}
+    }
+
+    spotbugs {
+        isIgnoreFailures = true
+        effort = "max"
+        reportLevel = "low"
+        val excludeFile = File("${project.rootProject.projectDir}/config/spotbugs/excludes.xml");
+        if (excludeFile.exists()) {
+            excludeFilterConfig = project.resources.text.fromFile(excludeFile)
+        }
+    }
+
+    tasks.withType<SpotBugsTask> {
+        reports {
+            xml.setEnabled(false)
+            html.setEnabled(true)
+        }
+    }
+
+    pmd {
+        setIgnoreFailures(true)
+        ruleSets = listOf()
+        ruleSetConfig = resources.text.fromFile("${project.rootProject.projectDir}/config/pmd/pmd.xml")
     }
 
     publishing.publications {
@@ -236,7 +255,7 @@ allprojects {
     bintray {
         user = System.getenv(userKeyName)
         key = System.getenv(apiKeyName)
-        setPublications("main")
+        setPublications("mavenCentral")
         override = true
         with(pkg) {
             repo = extra["longName"].toString()
@@ -331,7 +350,7 @@ tasks.forEach { task ->
 }
 
 dependencies {
-    subprojects.forEach { implementation(it) }
+    subprojects.forEach { api(it) }
     implementation(Libs.commons_cli)
     implementation(Libs.logback_classic)
     implementation(Libs.commons_lang3)
@@ -396,4 +415,4 @@ buildScan {
     termsOfServiceAgree = "yes"
 }
 
-defaultTasks("clean", "test", "check", "makeDocs", "projectReport", "buildDashboard", "fatJar", "signMainPublication")
+defaultTasks("clean", "test", "check", "makeDocs", "projectReport", "buildDashboard", "fatJar", "sign")

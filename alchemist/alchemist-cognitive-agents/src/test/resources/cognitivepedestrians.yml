@@ -22,9 +22,17 @@ reactions: &behavior
 displacements:
   - in:
       type: Circle
-      parameters: [100, 0, 0, 20]
+      parameters: [50, 0, 0, 20]
     nodes:
       type: it.unibo.alchemist.agents.cognitive.CognitivePedestrian2D
       parameters: ["adult", "male"]
+    programs:
+      - *behavior
+  - in:
+      type: Circle
+      parameters: [50, 0, 0, 20]
+    nodes:
+      type: it.unibo.alchemist.agents.cognitive.CognitivePedestrian2D
+      parameters: ["adult", "female"]
     programs:
       - *behavior

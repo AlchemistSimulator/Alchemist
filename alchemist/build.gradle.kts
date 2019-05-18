@@ -118,9 +118,10 @@ allprojects {
         implementation(Libs.thread_inheritable_resource_loader)
         testImplementation(Libs.junit)
         runtimeOnly(Libs.logback_classic)
-        orchidRuntime(Libs.orchidkotlindoc)
         orchidRuntime(Libs.orchideditorial)
+        orchidRuntime(Libs.orchidkotlindoc)
         orchidRuntime(Libs.orchidplugindocs)
+        orchidRuntime("io.github.javaeden.orchid:OrchidSyntaxHighlighter:0.16.10")
         orchidRuntime(Libs.orchidwiki)
     }
 
@@ -141,7 +142,7 @@ allprojects {
     }
 
     spotbugs {
-        isIgnoreFailures = false
+        isIgnoreFailures = true
         effort = "max"
         reportLevel = "low"
         val excludeFile = File("${project.rootProject.projectDir}/config/spotbugs/excludes.xml")

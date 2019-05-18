@@ -5,12 +5,10 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
-import com.eden.orchid.gradle.OrchidGenerateMainTask
 import com.github.spotbugs.SpotBugsTask
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.nio.file.Files.lines
 
 /*
  * Kotlin migration TODO list
@@ -57,6 +55,7 @@ plugins {
 }
 
 apply(plugin = "project-report")
+apply(plugin = "com.gradle.build-scan")
 
 allprojects {
 
@@ -101,7 +100,6 @@ allprojects {
         jcenter {
             content {
                 includeGroupByRegex("""io\.github\.javaeden.*""")
-//                includeGroupByRegex("""com\.github\.JavaEden.*""")
                 includeGroupByRegex("""com\.eden.*""")
                 includeModuleByRegex("""org\.jetbrains\.kotlinx""", """kotlinx-serialization.*""")
             }
@@ -124,7 +122,6 @@ allprojects {
         orchidRuntime(Libs.orchideditorial)
         orchidRuntime(Libs.orchidplugindocs)
         orchidRuntime(Libs.orchidwiki)
-//        doclet(Libs.apiviz)
     }
 
     tasks.withType<JavaCompile> {
@@ -301,67 +298,9 @@ allprojects {
             hasKey && hasUser
         }
     }
-
-    /*
-     * Configure Dokka to run before Javadoc, so that Kotlin classes are correctly documented
-     * and doclet still applied for Java classes. Then copy missing files and lowercase files
-     * to the javadoc folder.
-     */
-//    tasks.withType<Javadoc> {
-//        options.encoding = "UTF-8"
-//        dependsOn(tasks.withType<DokkaTask>())
-//    }
-//    tasks.withType<DokkaTask> {
-//        if (JavaVersion.current().isJava9Compatible) {
-//            enabled = false
-//        }
-//        outputDirectory = "$buildDir/dokka"
-//        reportUndocumented = false
-//        impliedPlatforms = mutableListOf("JVM")
-//        outputFormat = "javadoc"
-//    }
-//    val dokka = tasks.findByName("dokka") as DokkaTask
-//    val javadoc = tasks.findByName("javadoc") as Javadoc
-//    tasks.register<Copy>("fillDocs") {
-//        dependsOn(dokka)
-//        dependsOn(javadoc)
-//        from(dokka.outputDirectory)
-//        into(javadoc.destinationDir!!)
-//        eachFile {
-//            if (relativePath.getFile(destinationDir).exists()) {
-//                exclude()
-//            }
-//        }
-//    }
-//    tasks.register<Copy>("makeDocs") {
-//        val fillDocs = tasks.findByName("fillDocs")
-//        dependsOn(fillDocs)
-//        from(dokka.outputDirectory)
-//        into(javadoc.destinationDir!!)
-//        eachFile {
-//            if (Character.isUpperCase(name[0])) {
-//                exclude()
-//            }
-//        }
-//    }
-//    val makeDocs = tasks.findByName("makeDocs")
-//    javadoc.finalizedBy(makeDocs)
-//    dokka.finalizedBy(makeDocs)
 }
 
 subprojects.forEach { subproject -> rootProject.evaluationDependsOn(subproject.path) }
-
-/*
- * Running a task on the parent project implies running the same task first on any subproject
- */
-//tasks.forEach { task ->
-//    subprojects.forEach { subproject ->
-//        val subtask = subproject.tasks.findByPath(task.name)
-//        if (subtask != null) {
-//            task.dependsOn(subtask)
-//        }
-//    }
-//}
 
 dependencies {
     subprojects.forEach { api(it) }
@@ -371,16 +310,6 @@ dependencies {
     implementation(Libs.ignite_core)
 }
 
-//tasks.withType<Javadoc> {
-//    val subprojectJavadocs = subprojects.flatMap { it.tasks.withType<Javadoc>() }
-//    dependsOn(subprojectJavadocs)
-//    source(subprojectJavadocs.map { it.source })
-//    classpath += subprojects.asSequence()
-//        .flatMap { it.sourceSets.getByName("main").runtimeClasspath.files.asSequence() }
-//        .toList().toTypedArray()
-//        .let { files(*it) }
-//}
-//
 tasks.withType<DokkaTask> {
     sourceDirs += subprojects.asSequence()
         .map { it.sourceSets.getByName("main") }
@@ -396,7 +325,6 @@ orchid {
 
 val orchidSeedSources = "orchidSeedSources"
 tasks.register(orchidSeedSources) {
-//    dependsOn(tasks.processOrchidResources)
     doLast {
         val configFolder = listOf(projectDir.toString(), "src", "orchid", "resources")
             .joinToString(separator = File.separator)
@@ -405,9 +333,9 @@ tasks.register(orchidSeedSources) {
         if (!baseConfig.contains("kotlindoc:")) {
             val sourceFolders = allprojects.asSequence()
                 .flatMap { it.sourceSets["main"].allSource.srcDirs.asSequence() }
-                .map { it.toString().replace("$projectDir/", "../../../")}
+                .map { it.toString().replace("$projectDir/", "../../../") }
                 .map { "\n    - '$it'" }
-                .joinToString(separator="")
+                .joinToString(separator = "")
             val ktdocConfiguration = baseConfig + "\n" + """
                 kotlindoc:
                   menu:
@@ -424,25 +352,6 @@ tasks.register(orchidSeedSources) {
     }
 }
 tasks.orchidClasses.orNull!!.dependsOn(tasks.getByName(orchidSeedSources))
-
-//kotlindoc:
-//sourceDirs:
-//- '../../../src/main/resources'
-//- '../../../src/main/java'
-
-//kotlindoc:
-//sourceDirs:
-//- '../../../src/main/resources'
-//- '../../../src/main/java'
-//- '../../../src/main/kotlin'
-
-//allprojects {
-//    val jdocTasks = listOf("javadoc", "uploadArchives", "projectReport", "buildDashboard", "javadocJar")
-//    val selectedTasks = gradle.startParameter.taskNames
-//    if (!jdocTasks.any { selectedTasks.contains(it) }) {
-//        apply(plugin = "org.danilopianini.javadoc.io-linker")
-//    }
-//}
 
 tasks.register<Jar>("fatJar") {
     dependsOn(subprojects.map { it.tasks.withType<Jar>() })
@@ -472,10 +381,7 @@ tasks.register<Jar>("fatJar") {
     with(tasks.jar.get() as CopySpec)
 }
 
-apply(plugin = "com.gradle.build-scan")
 buildScan {
     termsOfServiceUrl = "https://gradle.com/terms-of-service"
     termsOfServiceAgree = "yes"
 }
-
-defaultTasks("clean", "test", "check", "makeDocs", "projectReport", "buildDashboard", "fatJar", "sign")

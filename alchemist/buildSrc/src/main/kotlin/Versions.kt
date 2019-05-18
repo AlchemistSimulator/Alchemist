@@ -9,6 +9,8 @@ import kotlin.String
 object Versions {
     const val logback_classic: String = "1.3.0-alpha4" 
 
+    const val com_eden_orchidplugin_gradle_plugin: String = "0.16.0" // available: "0.16.10"
+
     const val caffeine: String = "2.6.2" // available: "2.7.0"
 
     const val com_github_cb372: String = "0.9.3" // available: "0.27.0"
@@ -49,6 +51,8 @@ object Versions {
 
     const val classgraph: String = "4.4.12" // available: "4.8.36"
 
+    const val io_github_javaeden_orchid: String = "0.16.10" 
+
     const val jpx: String = "1.4.0" 
 
     const val kotlintest_runner_junit5: String = "3.3.2" 
@@ -72,9 +76,6 @@ object Versions {
     const val controlsfx: String = "9.0.0" // available: "11.0.0"
 
     const val org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin: String = "0.1.0" 
-
-    const val org_danilopianini_javadoc_io_linker_gradle_plugin: String = "0.1.4" 
-            // available: "0.1.4-700fdb6"
 
     const val org_danilopianini_publish_on_central_gradle_plugin: String = "0.1.1" 
 
@@ -134,7 +135,7 @@ object Versions {
 
         const val currentVersion: String = "5.4.1"
 
-        const val nightlyVersion: String = "5.5-20190516000042+0000"
+        const val nightlyVersion: String = "5.6-20190518000059+0000"
 
         const val releaseCandidate: String = ""
     }

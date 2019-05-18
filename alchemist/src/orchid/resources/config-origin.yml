@@ -1,0 +1,23 @@
+site:
+  about:
+    siteName: Alchemist Simulator
+    siteDescription: This is a short description of this project.
+Editorial:
+  primaryColor: '#169C2D'
+  social:
+    github: 'AlchemistSimulator/Alchemist'
+  menu:
+    - type: 'separator'
+      title: 'Documentation'
+    - type: 'wiki'
+    - type: "page"
+      itemId: license
+      title: License
+    - type: 'separator'
+      title: 'API Docs'
+    - type: "kotlindocPackages"
+      title: All Packages
+    - type: "kotlindocClasses"
+      title: All Classes
+    - type: "kotlindocClassLinks"
+      includeItems: true

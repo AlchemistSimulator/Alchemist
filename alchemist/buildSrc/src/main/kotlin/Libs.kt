@@ -10,6 +10,10 @@ object Libs {
      * http://logback.qos.ch */
     const val logback_classic: String = "ch.qos.logback:logback-classic:" + Versions.logback_classic
 
+    const val com_eden_orchidplugin_gradle_plugin: String =
+            "com.eden.orchidPlugin:com.eden.orchidPlugin.gradle.plugin:" +
+            Versions.com_eden_orchidplugin_gradle_plugin
+
     /**
      * https://github.com/ben-manes/caffeine */
     const val caffeine: String = "com.github.ben-manes.caffeine:caffeine:" + Versions.caffeine
@@ -105,6 +109,26 @@ object Libs {
     const val classgraph: String = "io.github.classgraph:classgraph:" + Versions.classgraph
 
     /**
+     * https://javaeden.github.io/Orchid/latest/core/ */
+    const val orchideditorial: String = "io.github.javaeden.orchid:OrchidEditorial:" +
+            Versions.io_github_javaeden_orchid
+
+    /**
+     * https://javaeden.github.io/Orchid/latest/core/ */
+    const val orchidkotlindoc: String = "io.github.javaeden.orchid:OrchidKotlindoc:" +
+            Versions.io_github_javaeden_orchid
+
+    /**
+     * https://javaeden.github.io/Orchid/latest/core/ */
+    const val orchidplugindocs: String = "io.github.javaeden.orchid:OrchidPluginDocs:" +
+            Versions.io_github_javaeden_orchid
+
+    /**
+     * https://javaeden.github.io/Orchid/latest/core/ */
+    const val orchidwiki: String = "io.github.javaeden.orchid:OrchidWiki:" +
+            Versions.io_github_javaeden_orchid
+
+    /**
      * https://github.com/jenetics/jpx */
     const val jpx: String = "io.jenetics:jpx:" + Versions.jpx
 
@@ -167,10 +191,6 @@ object Libs {
     const val org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin: String =
             "org.danilopianini.git-sensitive-semantic-versioning:org.danilopianini.git-sensitive-semantic-versioning.gradle.plugin:" +
             Versions.org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin
-
-    const val org_danilopianini_javadoc_io_linker_gradle_plugin: String =
-            "org.danilopianini.javadoc.io-linker:org.danilopianini.javadoc.io-linker.gradle.plugin:" +
-            Versions.org_danilopianini_javadoc_io_linker_gradle_plugin
 
     const val org_danilopianini_publish_on_central_gradle_plugin: String =
             "org.danilopianini.publish-on-central:org.danilopianini.publish-on-central.gradle.plugin:" +

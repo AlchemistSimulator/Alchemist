@@ -1,18 +1,18 @@
 site:
   about:
-    siteName: Alchemist Simulator
-    siteDescription: This is a short description of this project.
+    siteName: The Alchemist Simulator
+    siteDescription: An extensible simulator for doing science and engineering in pervasive, bio-inspired, and aggregate computing.
 Editorial:
   primaryColor: '#169C2D'
   social:
     github: 'AlchemistSimulator/Alchemist'
   menu:
+    - type: link
+      title: Home
+      url: '/'
     - type: 'separator'
       title: 'Documentation'
     - type: 'wiki'
-    - type: "page"
-      itemId: license
-      title: License
     - type: 'separator'
       title: 'API Docs'
     - type: "kotlindocPackages"
@@ -21,3 +21,5 @@ Editorial:
       title: All Classes
     - type: "kotlindocClassLinks"
       includeItems: true
+  extraCss:
+    - 'assets/css/pygments.scss'

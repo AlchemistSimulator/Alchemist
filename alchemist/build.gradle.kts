@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
  * Kotlin migration TODO list
  *
  * upgrade to junit5
- * farjar plugin?
  * switch to orchid kotlindoc https://orchid.netlify.com/plugins/OrchidKotlindoc
- * dokka-merge-plugin?
  * update dependencies
  * don't ignore checkers failures
  * recheck all dependencies
@@ -41,8 +39,6 @@ plugins {
     `build-dashboard`
     id("org.jetbrains.dokka") version
             Versions.org_jetbrains_dokka_gradle_plugin
-//    id("org.danilopianini.javadoc.io-linker") version
-//            Versions.org_danilopianini_javadoc_io_linker_gradle_plugin
     id("com.eden.orchidPlugin") version "0.16.0"
     signing
     `maven-publish`
@@ -346,7 +342,6 @@ tasks.register(orchidSeedSources) {
                     extraCss:
                       - 'assets/css/orchidKotlindoc.scss'
                   sourceDirs:
-
             """.trimIndent() + sourceFolders + "\n"
             finalConfig.writeText(ktdocConfiguration)
         }

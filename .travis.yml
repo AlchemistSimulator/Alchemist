@@ -60,7 +60,7 @@ script: >-
 after_success: >-
     cd alchemist;
     if $SHOULD_CONFIGURE && $PUBLISH; then
-        ./gradlew makeDocs bintrayUpload publish > >(egrep -v '(null:-1:-1)|(t find node by signature)')
+        ./gradlew dokka bintrayUpload publish > >(egrep -v '(null:-1:-1)|(t find node by signature)')
         mkdir -p report
         cp --parent */build/reports build/reports report -R
         mkdir --parents build/dokka/

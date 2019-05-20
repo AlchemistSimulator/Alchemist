@@ -161,7 +161,7 @@ allprojects {
     }
 
     tasks.withType<DokkaTask> {
-        outputDirectory = "$buildDir/javadoc"
+        outputDirectory = "$buildDir/docs/javadoc"
         reportUndocumented = false
         impliedPlatforms = mutableListOf("JVM")
         outputFormat = "javadoc"

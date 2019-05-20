@@ -40,7 +40,7 @@ before_install: >-
         sudo apt-get install -y graphviz openjfx;
         export SHOULD_CONFIGURE="$(if ! $TRAVIS_PULL_REQUEST && [ $TRAVIS_REPO_SLUG = 'AlchemistSimulator/Alchemist' ]; then echo 'true'; else echo 'false'; fi)"
     else
-        export SHOULD_CONFIGURE="$(else echo 'false')"
+        export SHOULD_CONFIGURE="$(echo 'false')"
     fi
 
 install: >-
@@ -52,15 +52,15 @@ install: >-
 script: >-
     cd alchemist;
     if [ $TRAVIS_OS_NAME = "windows" ]; then
-        gradlew.bat clean check --scan
+        gradlew.bat clean check fatJar --scan
     else
-        ./gradlew clean check fatJar buildDashboard projectReport --scan
+        ./gradlew clean check fatJar --scan
     fi
 
 after_success: >-
     cd alchemist;
     if $SHOULD_CONFIGURE && $PUBLISH; then
-        ./gradlew dokka bintrayUpload publish > >(egrep -v '(null:-1:-1)|(t find node by signature)')
+        ./gradlew dokka buildDashboard projectReport bintrayUpload publish > >(egrep -v '(null:-1:-1)|(t find node by signature)')
         mkdir -p report
         cp --parent */build/reports build/reports report -R
         mkdir --parents build/dokka/

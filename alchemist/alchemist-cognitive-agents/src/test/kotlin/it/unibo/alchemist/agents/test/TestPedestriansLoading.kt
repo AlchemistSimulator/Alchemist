@@ -22,6 +22,6 @@ class TestPedestriansLoading<T, P : Position<P>> : StringSpec({
         try {
             loadYamlSimulation<T, P>("cant-give-cognitive-to-heterogeneous.yml")
             fail("An heterogeneous pedestrian can't have cognitive capabilities")
-        } catch(exc: Throwable) { }
+        } catch (exc: Throwable) { }
     }
 })

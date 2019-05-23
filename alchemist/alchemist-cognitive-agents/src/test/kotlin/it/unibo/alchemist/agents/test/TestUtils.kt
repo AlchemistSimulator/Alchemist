@@ -3,7 +3,6 @@ package it.unibo.alchemist.agents.test
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor
 import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.loader.YamlLoader
-import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
@@ -12,9 +11,9 @@ import org.junit.Assert
 import org.kaikikm.threadresloader.ResourceLoader
 
 fun <T, P : Position<out P>> Environment<T, P>.startSimulation(
-        initialized: (e: Environment<T, P>) -> Unit,
-        stepDone: (e: Environment<T, P>, r: Reaction<T>, t: Time, s: Long) -> Unit,
-        finished: (e: Environment<T, P>, t: Time, s: Long) -> Unit
+    initialized: (e: Environment<T, P>) -> Unit,
+    stepDone: (e: Environment<T, P>, r: Reaction<T>, t: Time, s: Long) -> Unit,
+    finished: (e: Environment<T, P>, t: Time, s: Long) -> Unit
 ) {
     with(Engine(this, 10000)) {
         addOutputMonitor(object : OutputMonitor<T, P> {
@@ -29,9 +28,9 @@ fun <T, P : Position<out P>> Environment<T, P>.startSimulation(
 }
 
 fun <T, P : Position<out P>> Environment<T, P>.startSimulationWithoutParameters(
-        initialized: () -> Unit = { },
-        stepDone: () -> Unit = { },
-        finished: () -> Unit = { }
+    initialized: () -> Unit = { },
+    stepDone: () -> Unit = { },
+    finished: () -> Unit = { }
 ) = startSimulation(
         { initialized.invoke() },
         { _, _, _, _ -> stepDone.invoke() },

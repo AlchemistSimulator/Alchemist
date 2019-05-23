@@ -7,6 +7,35 @@
  */
 package it.unibo.alchemist.model.implementations.environments;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.graphhopper.GHRequest;
+import com.graphhopper.GHResponse;
+import com.graphhopper.GraphHopper;
+import com.graphhopper.GraphHopperAPI;
+import com.graphhopper.reader.osm.GraphHopperOSM;
+import com.graphhopper.routing.util.EdgeFilter;
+import com.graphhopper.routing.util.EncodingManager;
+import com.graphhopper.storage.index.QueryResult;
+import com.graphhopper.util.shapes.GHPoint;
+import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
+import it.unibo.alchemist.model.implementations.routes.GraphHopperRoute;
+import it.unibo.alchemist.model.implementations.routes.PolygonalChain;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
+import it.unibo.alchemist.model.interfaces.MapEnvironment;
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Route;
+import it.unibo.alchemist.model.interfaces.Vehicle;
+import org.apache.commons.codec.binary.Hex;
+import org.danilopianini.util.Hashes;
+import org.danilopianini.util.concurrent.FastReadWriteLock;
+import org.jetbrains.annotations.NotNull;
+import org.jooq.lambda.Unchecked;
+import org.kaikikm.threadresloader.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -25,37 +54,6 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.codec.binary.Hex;
-import org.danilopianini.util.Hashes;
-import org.danilopianini.util.concurrent.FastReadWriteLock;
-import org.jetbrains.annotations.NotNull;
-import org.jooq.lambda.Unchecked;
-import org.kaikikm.threadresloader.ResourceLoader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.graphhopper.GHRequest;
-import com.graphhopper.GHResponse;
-import com.graphhopper.GraphHopper;
-import com.graphhopper.GraphHopperAPI;
-import com.graphhopper.reader.osm.GraphHopperOSM;
-import com.graphhopper.routing.util.EdgeFilter;
-import com.graphhopper.routing.util.EncodingManager;
-import com.graphhopper.storage.index.QueryResult;
-import com.graphhopper.util.shapes.GHPoint;
-
-import it.unibo.alchemist.model.implementations.routes.GraphHopperRoute;
-import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
-import it.unibo.alchemist.model.implementations.routes.PolygonalChain;
-import it.unibo.alchemist.model.interfaces.GeoPosition;
-import it.unibo.alchemist.model.interfaces.MapEnvironment;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Route;
-import it.unibo.alchemist.model.interfaces.Vehicle;
 
 /**
  * This class serves as template for more specific implementations of
@@ -471,11 +469,10 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
     private static synchronized GraphHopperAPI initNavigationSystem(final File mapFile, final String internalWorkdir, final Vehicle v) {
         return new GraphHopperOSM().setOSMFile(mapFile.getAbsolutePath()).forDesktop()
                 .setElevation(false)
-                .setEnableInstructions(false)
                 .setEnableCalcPoints(true)
                 .setInMemory()
                 .setGraphHopperLocation(internalWorkdir)
-                .setEncodingManager(new EncodingManager(v.toString().toLowerCase(Locale.US)))
+                .setEncodingManager(EncodingManager.create(v.toString().toLowerCase(Locale.US)))
                 .importOrLoad();
     }
 

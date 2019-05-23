@@ -26,6 +26,7 @@
             <option value="$PROJECT_DIR$/alchemist-sapere-mathexp" />
             <option value="$PROJECT_DIR$/alchemist-swingui" />
             <option value="$PROJECT_DIR$/alchemist-time" />
+            <option value="$PROJECT_DIR$/buildSrc" />
           </set>
         </option>
         <option name="useQualifiedModuleNames" value="true" />

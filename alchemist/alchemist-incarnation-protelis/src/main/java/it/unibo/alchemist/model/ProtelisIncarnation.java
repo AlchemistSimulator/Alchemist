@@ -24,16 +24,15 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
-import org.danilopianini.lang.LangUtils;
 import org.jetbrains.annotations.NotNull;
 import org.protelis.lang.ProtelisLoader;
 import org.protelis.lang.datatype.DeviceUID;
+import org.protelis.vm.CodePath;
 import org.protelis.vm.ExecutionEnvironment;
 import org.protelis.vm.NetworkManager;
 import org.protelis.vm.ProtelisVM;
 import org.protelis.vm.impl.AbstractExecutionContext;
 import org.protelis.vm.impl.SimpleExecutionEnvironment;
-import org.protelis.vm.util.CodePath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -181,9 +180,10 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     @Override
     public Reaction<Object> createReaction(final RandomGenerator rand, final Environment<Object, P> env,
             final Node<Object> node, final TimeDistribution<Object> time, final String param) {
-        LangUtils.requireNonNull(node, time);
         final boolean isSend = "send".equalsIgnoreCase(param);
-        final Reaction<Object> result = isSend ? new ChemicalReaction<>(node, time) : new Event<>(node, time);
+        final Reaction<Object> result = isSend
+                ? new ChemicalReaction<>(Objects.requireNonNull(node), Objects.requireNonNull(time))
+                : new Event<>(node, time);
         if (param != null) {
             result.setActions(Lists.newArrayList(createAction(rand, env, node, time, result, param)));
         }

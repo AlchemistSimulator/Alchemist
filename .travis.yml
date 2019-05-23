@@ -1,16 +1,15 @@
-sudo: required
+os:
+   - linux
+   - osx
 dist: xenial
-git:
-  depth: false
 language: java
 jdk:
   - openjdk8
   - openjdk11
   - openjdk12
 
-before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install -y graphviz openjfx
+git:
+  depth: false
 
 env:
   global:
@@ -23,25 +22,47 @@ env:
     - secure: "YkhodE9pmi+NooHmAdVWFaDaVtWZv2y5qaKhHqJoMIDhdaaS4f0t5Fn9S48ndPh0VlAboD5oF8bR2BwotEJNOoI5bsA9TzlIxIFaK+yS2UrkMEpC5BswmfyidY6H8wJZPFbaGxLXuw77aPE5G0QhTO4kKjpUxJSG2Yp0y9uEOeY8FZMjSsV7i4+2XllCXMG3jc8N7UC9vvAqYA5TwzL/CyyBdrRVO7QFzb+F1V5464ha5JJlAAvrNZDHq+g0NZvBsWLAe9VgGNbDms7q7BC1ZXOHM9do86i/Ca4AHndJwl5KdipyscNdgz1IFgTHJaMB5Xqhh8lmh/1rZX/5oeChigxuLB6mOcgcqmcI8Ye/6EXSA0Y33nmfKoXmG8+EBXOPYtD8iQSJlq1hTHdwZOleUBKaDVkn57MHvdiOMH/De2kqHiBGJRpsnBtu/zK7TTocZOgis7MmeCf8FPLJ0IL69pXYlXHZeO5OC890s7AkZgWgHsctozjdJK0t6dpWNO3HP2ZGb+EysbeVjV7eSF5WBtXhAnm1RIHZRdZolCCj5zpQev6t4ULcsD171zWdvnBQ8cKWl9JxlqSaaZx9c4zp+b/atMMBpvTrIOddvCRurPVXbXR8X+KT9wExT0Sfe3RE8OIN99DU1fWXDGV6J6t0Lzveenwr47hm/2IfrjTaXls="
     - TERM=dumb
   matrix:
-    - PUBLISH=true
-    - PUBLISH=false
+    - PUBLISH="false"
 matrix:
+  include:
+    - jdk: openjdk8
+      env: PUBLISH="true"
   exclude:
     - jdk: openjdk8
-      env: PUBLISH=false
-    - jdk: openjdk11
-      env: PUBLISH=false
-    - jdk: openjdk12
-      env: PUBLISH=true
+      env: PUBLISH="false"
+      os: linux
+    - jdk: openjdk8
+      os: osx
 
-install: true
+before_install: >-
+    if [ $TRAVIS_OS_NAME = 'linux' ]; then
+        sudo apt-get -qq update;
+        sudo apt-get install -y graphviz openjfx;
+        export SHOULD_CONFIGURE="$(if ! $TRAVIS_PULL_REQUEST && [ $TRAVIS_REPO_SLUG = 'AlchemistSimulator/Alchemist' ]; then echo 'true'; else echo 'false'; fi)"
+    else
+        export SHOULD_CONFIGURE="$(echo 'false')"
+    fi
 
-script:
-  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_REPO_SLUG" = "AlchemistSimulator/Alchemist" ]; then bash travis_build.sh; else bash travis_build_pull_request.sh; fi'
+install: >-
+    if $SHOULD_CONFIGURE; then
+        openssl aes-256-cbc -K $encrypted_f6fa8cf5bc89_key -iv $encrypted_f6fa8cf5bc89_iv -in prepare_environment.sh.enc -out prepare_environment.sh -d
+        bash prepare_environment.sh
+    fi
 
-after_success:
-  - cd alchemist
-  - if [ "$PUBLISH" = true ]; then ./gradlew bintrayUpload publishMainPublicationToMavenRepository -x dokka -x javadoc > >(egrep -v '(null:-1:-1)|(t find node by signature)'); fi
+script: >-
+    cd alchemist;
+    if [ $TRAVIS_OS_NAME = "windows" ]; then
+        gradlew.bat clean check fatJar --scan
+    else
+        ./gradlew clean check fatJar --scan
+    fi
+
+after_success: >-
+    if $SHOULD_CONFIGURE && $PUBLISH; then
+        ./gradlew dokka buildDashboard projectReport bintrayUpload publish > >(egrep -v '(null:-1:-1)|(t find node by signature)')
+        mkdir -p report
+        cp --parent */build/reports build/reports report -R
+    fi
 
 deploy:
   - provider: releases
@@ -54,6 +75,7 @@ deploy:
       repo: AlchemistSimulator/Alchemist
       tags: true
       jdk: openjdk8
+      os: linux
   - provider: releases
     skip_cleanup: true
     api_key:
@@ -64,6 +86,7 @@ deploy:
       repo: AlchemistSimulator/Alchemist
       tags: true
       jdk: openjdk11
+      os: linux
   - provider: surge
     skip_cleanup: true
     project: "./alchemist/build/docs/javadoc/"
@@ -72,6 +95,7 @@ deploy:
       repo: AlchemistSimulator/Alchemist
       jdk: openjdk8
       branch: develop
+      os: linux
   - provider: surge
     skip_cleanup: true
     project: "./alchemist/report"
@@ -80,6 +104,7 @@ deploy:
       repo: AlchemistSimulator/Alchemist
       jdk: openjdk8
       branch: develop
+      os: linux
   - provider: surge
     skip_cleanup: true
     project: "./alchemist/build/docs/javadoc/"
@@ -88,6 +113,7 @@ deploy:
       repo: AlchemistSimulator/Alchemist
       tags: true
       jdk: openjdk8
+      os: linux
   - provider: surge
     skip_cleanup: true
     project: "./alchemist/report"
@@ -96,3 +122,4 @@ deploy:
       repo: AlchemistSimulator/Alchemist
       tags: true
       jdk: openjdk8
+      os: linux

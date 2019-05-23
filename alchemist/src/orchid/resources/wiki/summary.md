@@ -1,0 +1,5 @@
+- [Understanding the metamodel](metamodel.md)
+- [Quickstart](quickstart.md)
+- [Test](test.md)
+  - [Test](test.md)
+- [License](license.md)

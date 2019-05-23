@@ -7,5 +7,6 @@
  */
 
 dependencies {
-	api project(':alchemist-interfaces')
+    api(Libs.listset)
+    api(Libs.jool_java_8)
 }

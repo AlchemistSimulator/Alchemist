@@ -1,13 +1,13 @@
 package it.unibo.alchemist.characteristics.individual
 
-import it.unibo.alchemist.agents.heterogeneous.HeterogeneousPedestrian
-
 class HelpAttitude(age: Age, gender: Gender) : IndividualCharacteristic {
 
     private val helperRules = rules[age to gender]
 
-    fun level(toHelp: HeterogeneousPedestrian<*>): Double =
-            helperRules?.get(toHelp.age to toHelp.gender)?.first ?: 0.0
+    fun level(toHelpAge: Age, toHelpGender: Gender, sameGroup: Boolean): Double =
+            helperRules?.get(toHelpAge to toHelpGender)?.let {
+                if (sameGroup) it.first else it.second
+            } ?: 0.0
 
     companion object {
         // first -> in the same group

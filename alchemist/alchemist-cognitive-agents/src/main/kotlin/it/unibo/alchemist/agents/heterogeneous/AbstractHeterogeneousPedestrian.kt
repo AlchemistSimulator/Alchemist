@@ -36,5 +36,5 @@ abstract class AbstractHeterogeneousPedestrian<T>(
     private val helpAttitude = HelpAttitude(age, gender)
 
     override fun probabilityOfHelping(toHelp: HeterogeneousPedestrian<T>) =
-            helpAttitude.level(toHelp)
+            helpAttitude.level(toHelp.age, toHelp.gender, membershipGroup.contains(toHelp))
 }

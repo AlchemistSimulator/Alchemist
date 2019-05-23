@@ -5,7 +5,9 @@ import it.unibo.alchemist.agents.Pedestrian
 /**
  * Abstraction for a group of pedestrians
  */
-class Group<T>(val members: MutableSet<Pedestrian<T>> = mutableSetOf()) {
+interface Group {
 
-    fun addPedestrian(ped: Pedestrian<T>) = members.add(ped)
+    val members: Set<Pedestrian<*>>
+
+    fun contains(ped: Pedestrian<*>): Boolean = members.contains(ped)
 }

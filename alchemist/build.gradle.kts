@@ -116,6 +116,7 @@ allprojects {
         orchidRuntime(Libs.orchideditorial)
         orchidRuntime(Libs.orchidkotlindoc)
         orchidRuntime(Libs.orchidplugindocs)
+        orchidRuntime(Libs.orchidsearch)
         orchidRuntime(Libs.orchidsyntaxhighlighter)
         orchidRuntime(Libs.orchidwiki)
     }

@@ -125,6 +125,11 @@ object Libs {
 
     /**
      * https://javaeden.github.io/Orchid/latest/core/ */
+    const val orchidsearch: String = "io.github.javaeden.orchid:OrchidSearch:" +
+            Versions.io_github_javaeden_orchid
+
+    /**
+     * https://javaeden.github.io/Orchid/latest/core/ */
     const val orchidsyntaxhighlighter: String =
             "io.github.javaeden.orchid:OrchidSyntaxHighlighter:" +
             Versions.io_github_javaeden_orchid

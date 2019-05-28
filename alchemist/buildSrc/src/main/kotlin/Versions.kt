@@ -75,7 +75,7 @@ object Versions {
 
     const val controlsfx: String = "8.40.14" // available: "11.0.0"
 
-    const val org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin: String = "0.2.2"
+    const val org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin: String = "0.2.2" 
 
     const val org_danilopianini_publish_on_central_gradle_plugin: String = "0.1.1" 
 
@@ -113,7 +113,7 @@ object Versions {
 
     const val pegdown: String = "1.6.0" 
 
-    const val org_protelis: String = "12.1.0"
+    const val org_protelis: String = "12.1.0" 
 
     const val org_scala_lang: String = "2.12.2" // available: "2.13.0-M5-1775dba"
 

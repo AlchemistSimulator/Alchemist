@@ -50,7 +50,6 @@ plugins {
             Versions.com_gradle_build_scan_gradle_plugin
 }
 
-apply(plugin = "project-report")
 apply(plugin = "com.gradle.build-scan")
 
 allprojects {

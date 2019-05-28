@@ -116,7 +116,7 @@ allprojects {
         orchidRuntime(Libs.orchideditorial)
         orchidRuntime(Libs.orchidkotlindoc)
         orchidRuntime(Libs.orchidplugindocs)
-        orchidRuntime("io.github.javaeden.orchid:OrchidSyntaxHighlighter:0.16.10")
+        orchidRuntime(Libs.orchidsyntaxhighlighter)
         orchidRuntime(Libs.orchidwiki)
     }
 

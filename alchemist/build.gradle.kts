@@ -54,9 +54,6 @@ apply(plugin = "com.gradle.build-scan")
 
 allprojects {
 
-    if (!JavaVersion.current().isJava11Compatible) {
-        project.version = project.version.toString() + "-j8"
-    }
     extra["scalaVersion"] = "${extra["scalaMajorVersion"]}.${extra["scalaMinorVersion"]}"
 
     apply(plugin = "org.danilopianini.git-sensitive-semantic-versioning")
@@ -78,6 +75,9 @@ allprojects {
 
     gitSemVer {
         version = computeGitSemVer()
+        if (!JavaVersion.current().isJava11Compatible) {
+            project.version = project.version.toString() + "-j8"
+        }
     }
 
     configurations {

@@ -354,7 +354,8 @@ orchid {
     )
 }
 
-tasks.register("orchidSeedConfiguration") {
+val orchidSeedConfiguration = "orchidSeedConfiguration"
+tasks.register(orchidSeedConfiguration) {
     doLast {
         /*
          * Detect files
@@ -397,8 +398,8 @@ tasks.register("orchidSeedConfiguration") {
         } else ""
         finalConfig.writeText(baseConfig + ktdocConfiguration + deployMentConfiguration)
     }
-    tasks.orchidClasses.orNull!!.dependsOn(this)
 }
+tasks.orchidClasses.orNull!!.dependsOn(tasks.getByName(orchidSeedConfiguration))
 
 tasks.register<Jar>("fatJar") {
     dependsOn(subprojects.map { it.tasks.withType<Jar>() })

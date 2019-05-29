@@ -59,9 +59,9 @@ install: >-
 script: >-
     cd alchemist;
     if [ $TRAVIS_OS_NAME = "windows" ]; then
-        gradlew.bat clean check fatJar --scan
+        gradlew.bat clean check fatJar --scan --parallel
     else
-        ./gradlew clean check fatJar --scan
+        ./gradlew clean check fatJar --scan --parallel
     fi
 
 after_success: >-

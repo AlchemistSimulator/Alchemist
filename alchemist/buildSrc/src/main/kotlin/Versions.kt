@@ -37,7 +37,7 @@ object Versions {
 
     const val miglayout_swing: String = "5.0" // available: "5.2"
 
-    const val ktlint: String = "0.32.0" 
+    const val ktlint: String = "0.32.0" // available: "0.33.0"
 
     const val commons_cli: String = "1.4" 
 
@@ -133,7 +133,7 @@ object Versions {
 
         const val currentVersion: String = "5.4.1"
 
-        const val nightlyVersion: String = "5.6-20190528000143+0000"
+        const val nightlyVersion: String = "5.6-20190529004812+0000"
 
         const val releaseCandidate: String = ""
     }

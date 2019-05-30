@@ -56,8 +56,6 @@ apply(plugin = "com.eden.orchidPlugin")
 
 allprojects {
 
-    extra["scalaVersion"] = "${extra["scalaMajorVersion"]}.${extra["scalaMinorVersion"]}"
-
     apply(plugin = "org.danilopianini.git-sensitive-semantic-versioning")
     apply(plugin = "java-library")
     apply(plugin = "kotlin")
@@ -243,6 +241,15 @@ allprojects {
             }
         }
     }
+    val projectName = "Alchemist"
+    val repoSlug = "AlchemistSimulator/Alchemist.git"
+    publishOnCentral {
+        projectDescription.set("A simulator for pervasive, aggregate, and nature-inspired computing")
+        projectLongName.set(projectName)
+        licenseName.set("GPL 3.0 with linking exception")
+        licenseUrl.set("https://github.com/AlchemistSimulator/Alchemist/blob/develop/LICENSE.md")
+        scmConnection.set("git:git@github.com:$repoSlug")
+    }
     val apiKeyName = "BINTRAY_API_KEY"
     val userKeyName = "BINTRAY_USER"
     bintray {
@@ -251,10 +258,10 @@ allprojects {
         setPublications("mavenCentral")
         override = true
         with(pkg) {
-            repo = extra["longName"].toString()
+            repo = projectName
             name = project.name
             userOrg = "alchemist-simulator"
-            vcsUrl = "${extra["scmRootUrl"]}/${extra["scmRepoName"]}"
+            vcsUrl = "https://github.com/$repoSlug"
             setLicenses("GPL-3.0-or-later")
             with(version) {
                 name = project.version.toString()

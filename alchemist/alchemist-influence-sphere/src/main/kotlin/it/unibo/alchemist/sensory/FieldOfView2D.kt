@@ -11,6 +11,6 @@ class FieldOfView2D<P : Position2D<P>>(
     direction: Double,
     aperture: Double,
     distance: Double
-) : InfluenceSphere2D<P>(GeometricShape2D<P>(Arc2D.Double(originX - distance, originY - distance,
-                                                            distance * 2, distance * 2,
-                                                            -direction, -aperture, Arc2D.PIE)))
+) : InfluenceSphere2D<P>(GeometricShape2D<P>(
+    Arc2D.Double(originX - distance, originY - distance, distance * 2, distance * 2, -direction, -aperture, Arc2D.PIE)
+))

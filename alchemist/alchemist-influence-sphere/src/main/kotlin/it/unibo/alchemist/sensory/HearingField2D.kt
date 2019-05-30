@@ -8,5 +8,6 @@ class HearingField2D<P : Position2D<P>>(
     originX: Double,
     originY: Double,
     radius: Double
-) : InfluenceSphere2D<P>(GeometricShape2D<P>(Ellipse2D.Double(originX - radius, originY - radius,
-                                                                radius * 2, radius * 2)))
+) : InfluenceSphere2D<P>(GeometricShape2D<P>(
+    Ellipse2D.Double(originX - radius, originY - radius, radius * 2, radius * 2)
+))

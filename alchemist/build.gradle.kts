@@ -243,11 +243,10 @@ allprojects {
         }
     }
     group = "it.unibo.alchemist"
-    val projectName = "Alchemist"
     val repoSlug = "AlchemistSimulator/Alchemist.git"
     publishOnCentral {
-        projectDescription.set("A simulator for pervasive, aggregate, and nature-inspired computing")
-        projectLongName.set(projectName)
+        projectDescription.set(extra["projectDescription"].toString())
+        projectLongName.set(extra["projectLongName"].toString())
         licenseName.set("GPL 3.0 with linking exception")
         licenseUrl.set("https://github.com/AlchemistSimulator/Alchemist/blob/develop/LICENSE.md")
         scmConnection.set("git:git@github.com:$repoSlug")
@@ -260,7 +259,7 @@ allprojects {
         setPublications("mavenCentral")
         override = true
         with(pkg) {
-            repo = projectName
+            repo = "Alchemist"
             name = project.name
             userOrg = "alchemist-simulator"
             vcsUrl = "https://github.com/$repoSlug"

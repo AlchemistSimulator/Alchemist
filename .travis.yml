@@ -55,7 +55,7 @@ before_install: >-
 
 install: >-
     if $SHOULD_CONFIGURE; then
-        openssl aes-256-cbc -K $encrypted_f6fa8cf5bc89_key -iv $encrypted_f6fa8cf5bc89_iv -in prepare_environment.sh.enc -out prepare_environment.sh -d
+        openssl aes-256-cbc -K $encrypted_9993846e3f84_key -iv $encrypted_9993846e3f84_iv -in prepare_environment.sh.enc -out prepare_environment.sh -d
         bash prepare_environment.sh
     fi
 

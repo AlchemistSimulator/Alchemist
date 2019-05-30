@@ -12,9 +12,12 @@ package it.unibo.alchemist.protelis;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hasher;
+import com.google.common.hash.Hashing;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.random.RandomGenerator;
-import org.danilopianini.lang.HashUtils;
 import org.jetbrains.annotations.NotNull;
 import org.protelis.lang.datatype.DatatypeFactory;
 import org.protelis.lang.datatype.DeviceUID;
@@ -178,7 +181,11 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
     @Override
     public int hashCode() {
         if (hash == 0) {
-            hash = HashUtils.hash32(node, env, react);
+            hash = Hashing.murmur3_32().newHasher()
+                .putInt(node.getId())
+                .putInt(env.hashCode())
+                .putInt(react.hashCode())
+                .hash().asInt();
         }
         return hash;
     }

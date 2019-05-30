@@ -19,8 +19,8 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 import org.protelis.lang.datatype.DeviceUID;
+import org.protelis.vm.CodePath;
 import org.protelis.vm.NetworkManager;
-import org.protelis.vm.util.CodePath;
 
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;

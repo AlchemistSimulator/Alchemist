@@ -8,7 +8,7 @@ import it.unibo.alchemist.model.interfaces.Position
 interface GeometricShape<P : Position<P>> {
 
     /**
-     * Whenever or not a given point is inside this shape.
+     * Whether or not a given point is inside this shape.
      */
     fun contains(point: P): Boolean
 }

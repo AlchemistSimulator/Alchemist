@@ -4,7 +4,7 @@ import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.shapes.GeometricShape2D
 import java.awt.geom.Ellipse2D
 
-class HearingField2D<P : Position2D<P>> (
+class HearingField2D<P : Position2D<P>>(
     originX: Double,
     originY: Double,
     radius: Double

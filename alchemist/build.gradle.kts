@@ -142,7 +142,10 @@ allprojects {
         outputDirectory = "$buildDir/docs/javadoc"
         reportUndocumented = false
         impliedPlatforms = mutableListOf("JVM")
-        outputFormat = "javadoc"
+        // Work around https://github.com/Kotlin/dokka/issues/294
+        if (!JavaVersion.current().isJava10Compatible) {
+            outputFormat = "javadoc"
+        }
     }
 
     publishing.publications {

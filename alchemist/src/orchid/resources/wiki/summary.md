@@ -20,5 +20,4 @@
   - [With Protelis](examples/protelis.md)
   - [With Scafi](examples/scafi.md)
   - [On maps](examples/maps.md)
-- [Readme file](readme.md)
 - [License](license.md)

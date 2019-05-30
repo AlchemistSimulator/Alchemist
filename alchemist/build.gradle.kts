@@ -85,17 +85,6 @@ allprojects {
         mavenCentral()
     }
 
-    // TODO: check if this one is still needed
-    configurations {
-        all {
-            if (!name.contains("antlr")) {
-                resolutionStrategy {
-                    force("org.antlr:antlr-runtime:${extra["antlrRuntimeVersion"]}")
-                }
-            }
-        }
-    }
-
     dependencies {
         implementation(Libs.commons_io)
         implementation(Libs.commons_math3)

@@ -1,4 +1,4 @@
-# Alchemist simulator userguide
+# Alchemist simulator user guide
 
 - [Understanding Alchemist](simulator.md)
   - [The metamodel](simulator/metamodel.md)

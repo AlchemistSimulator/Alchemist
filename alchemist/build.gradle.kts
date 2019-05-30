@@ -388,6 +388,8 @@ tasks.register(orchidSeedConfiguration) {
                     stages:
                       - type: ghPages
                         username: 'DanySK'
+                        commitUsername: Danilo Pianini
+                        commitEmail: danilo.pianini@gmail.com
                         repo: 'AlchemistSimulator/${if (isMarkedStable) "alchemistsimulator.github.io" else "latest" }'
                         branch: ${if (isMarkedStable) "master" else "gh-pages"}
                         publishType: CleanBranchMaintainHistory

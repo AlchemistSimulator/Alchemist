@@ -81,6 +81,7 @@ allprojects {
 
     repositories {
         mavenCentral()
+        maven(url = "https://dl.bintray.com/kotlin/dokka/")
     }
 
     dependencies {
@@ -241,6 +242,7 @@ allprojects {
             }
         }
     }
+    group = "it.unibo.alchemist"
     val projectName = "Alchemist"
     val repoSlug = "AlchemistSimulator/Alchemist.git"
     publishOnCentral {

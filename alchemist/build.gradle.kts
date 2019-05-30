@@ -9,6 +9,7 @@ import com.github.spotbugs.SpotBugsTask
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.net.URL
 
 /*
  * Kotlin migration TODO list
@@ -50,14 +51,11 @@ plugins {
             Versions.com_gradle_build_scan_gradle_plugin
 }
 
-apply(plugin = "project-report")
 apply(plugin = "com.gradle.build-scan")
+apply(plugin = "com.eden.orchidPlugin")
 
 allprojects {
 
-    if (!JavaVersion.current().isJava11Compatible) {
-        project.version = project.version.toString() + "-j8"
-    }
     extra["scalaVersion"] = "${extra["scalaMajorVersion"]}.${extra["scalaMinorVersion"]}"
 
     apply(plugin = "org.danilopianini.git-sensitive-semantic-versioning")
@@ -71,7 +69,6 @@ allprojects {
     apply(plugin = "project-report")
     apply(plugin = "build-dashboard")
     apply(plugin = "org.jetbrains.dokka")
-    apply(plugin = "com.eden.orchidPlugin")
     apply(plugin = "signing")
     apply(plugin = "maven-publish")
     apply(plugin = "org.danilopianini.publish-on-central")
@@ -79,8 +76,16 @@ allprojects {
 
     gitSemVer {
         version = computeGitSemVer()
+        if (!JavaVersion.current().isJava11Compatible) {
+            project.version = project.version.toString() + "-j8"
+        }
     }
 
+    repositories {
+        mavenCentral()
+    }
+
+    // TODO: check if this one is still needed
     configurations {
         all {
             if (!name.contains("antlr")) {
@@ -91,16 +96,6 @@ allprojects {
         }
     }
 
-    repositories {
-        mavenCentral()
-        jcenter {
-            content {
-                includeGroupByRegex("""io\.github\.javaeden.*""")
-                includeGroupByRegex("""com\.eden.*""")
-                includeModuleByRegex("""org\.jetbrains\.kotlinx""", """kotlinx-serialization.*""")
-            }
-        }
-    }
     dependencies {
         implementation(Libs.commons_io)
         implementation(Libs.commons_math3)
@@ -114,11 +109,6 @@ allprojects {
         implementation(Libs.thread_inheritable_resource_loader)
         testImplementation(Libs.junit)
         runtimeOnly(Libs.logback_classic)
-        orchidRuntime(Libs.orchideditorial)
-        orchidRuntime(Libs.orchidkotlindoc)
-        orchidRuntime(Libs.orchidplugindocs)
-        orchidRuntime("io.github.javaeden.orchid:OrchidSyntaxHighlighter:0.16.10")
-        orchidRuntime(Libs.orchidwiki)
     }
 
     tasks.withType<JavaCompile> {
@@ -299,12 +289,29 @@ allprojects {
 
 subprojects.forEach { subproject -> rootProject.evaluationDependsOn(subproject.path) }
 
+repositories {
+    mavenCentral()
+    jcenter {
+        content {
+            includeGroupByRegex("""io\.github\.javaeden.*""")
+            includeGroupByRegex("""com\.eden.*""")
+            includeModuleByRegex("""org\.jetbrains\.kotlinx""", """kotlinx-serialization.*""")
+        }
+    }
+}
+
 dependencies {
     subprojects.forEach { api(it) }
     implementation(Libs.commons_cli)
     implementation(Libs.logback_classic)
     implementation(Libs.commons_lang3)
     implementation(Libs.ignite_core)
+    orchidRuntime(Libs.orchideditorial)
+    orchidRuntime(Libs.orchidkotlindoc)
+    orchidRuntime(Libs.orchidplugindocs)
+    orchidRuntime(Libs.orchidsearch)
+    orchidRuntime(Libs.orchidsyntaxhighlighter)
+    orchidRuntime(Libs.orchidwiki)
 }
 
 tasks.withType<DokkaTask> {
@@ -313,27 +320,60 @@ tasks.withType<DokkaTask> {
         .flatMap { it.allSource.srcDirs.asSequence() }
 }
 
+val isMarkedStable by lazy { """\d+(\.\d+){2}""".toRegex().matches(rootProject.version.toString()) }
+
 orchid {
     theme = "Editorial"
+    // Feed arguments to Kdoc
     val projects: Collection<Project> = listOf(project) + subprojects
     val paths = projects.map { it.sourceSets["main"].compileClasspath.asPath }
     args = listOf("--kotlindocClasspath") + paths.joinToString(File.pathSeparator)
+    // Determine whether it's a deployment or a dry run
+    baseUrl = "https://alchemistsimulator.github.io/${if (isMarkedStable) "" else "latest/"}"
+    // Fetch the latest version of the website, if this one is more recent enable deploy
+    val versionRegex = """.*Currently\s*(.+)\.\s*Created""".toRegex()
+    val matchedVersions: List<String> = try {
+        URL(baseUrl).openConnection().getInputStream().use { stream ->
+            stream.bufferedReader().lineSequence()
+                .flatMap { line -> versionRegex.find(line)?.groupValues?.last()?.let { sequenceOf(it) } ?: emptySequence() }
+                .toList()
+        }
+    } catch (e: Exception) { emptyList() }
+    val shouldDeploy = matchedVersions
+        .takeIf { it.size == 1 }
+        ?.first()
+        ?.let { rootProject.version.toString() > it }
+        ?: false
+    dryDeploy = shouldDeploy.not().toString()
+    println(
+        when (matchedVersions.size) {
+            0 -> "Unable to fetch the current site version from $baseUrl"
+            1 -> "Website $baseUrl is at version ${matchedVersions.first()}"
+            else -> "Multiple site versions fetched from $baseUrl: $matchedVersions"
+        } + ". Orchid deployment ${if (shouldDeploy) "enabled" else "set as dry run"}."
+    )
 }
 
-val orchidSeedSources = "orchidSeedSources"
-tasks.register(orchidSeedSources) {
+val orchidSeedConfiguration = "orchidSeedConfiguration"
+tasks.register(orchidSeedConfiguration) {
     doLast {
+        /*
+         * Detect files
+         */
         val configFolder = listOf(projectDir.toString(), "src", "orchid", "resources")
             .joinToString(separator = File.separator)
         val baseConfig = file("$configFolder${File.separator}config-origin.yml").readText()
         val finalConfig = file("$configFolder${File.separator}config.yml")
-        if (!baseConfig.contains("kotlindoc:")) {
+        /*
+         * Compute Kdoc targets
+         */
+        val ktdocConfiguration = if (!baseConfig.contains("kotlindoc:")) {
             val sourceFolders = allprojects.asSequence()
                 .flatMap { it.sourceSets["main"].allSource.srcDirs.asSequence() }
                 .map { it.toString().replace("$projectDir/", "../../../") }
                 .map { "\n    - '$it'" }
                 .joinToString(separator = "")
-            val ktdocConfiguration = baseConfig + "\n" + """
+            """
                 kotlindoc:
                   menu:
                     - type: "kotlindocClassLinks"
@@ -343,11 +383,23 @@ tasks.register(orchidSeedSources) {
                       - 'assets/css/orchidKotlindoc.scss'
                   sourceDirs:
             """.trimIndent() + sourceFolders + "\n"
-            finalConfig.writeText(ktdocConfiguration)
-        }
+        } else ""
+        val deployMentConfiguration = if (!baseConfig.contains("services:")) {
+            """
+                services:
+                  publications:
+                    stages:
+                      - type: ghPages
+                        username: 'DanySK'
+                        repo: 'AlchemistSimulator/${if (isMarkedStable) "alchemistsimulator.github.io" else "latest" }'
+                        branch: ${if (isMarkedStable) "master" else "gh-pages"}
+                        publishType: CleanBranchMaintainHistory
+            """.trimIndent()
+        } else ""
+        finalConfig.writeText(baseConfig + ktdocConfiguration + deployMentConfiguration)
     }
 }
-tasks.orchidClasses.orNull!!.dependsOn(tasks.getByName(orchidSeedSources))
+tasks.orchidClasses.orNull!!.dependsOn(tasks.getByName(orchidSeedConfiguration))
 
 tasks.register<Jar>("fatJar") {
     dependsOn(subprojects.map { it.tasks.withType<Jar>() })

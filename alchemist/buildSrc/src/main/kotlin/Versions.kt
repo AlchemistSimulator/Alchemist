@@ -29,7 +29,7 @@ object Versions {
 
     const val com_gradle_build_scan_gradle_plugin: String = "2.1" // available: "2.3"
 
-    const val com_graphhopper: String = "0.12.0" // available: "0.13.0-pre2"
+    const val com_graphhopper: String = "0.12.0" // available: "0.13.0-pre3"
 
     const val simplelatlng: String = "1.3.1" 
 
@@ -37,7 +37,7 @@ object Versions {
 
     const val miglayout_swing: String = "5.0" // available: "5.2"
 
-    const val ktlint: String = "0.32.0" 
+    const val ktlint: String = "0.32.0" // available: "0.33.0"
 
     const val commons_cli: String = "1.4" 
 
@@ -49,7 +49,7 @@ object Versions {
 
     const val de_fayard_buildsrcversions_gradle_plugin: String = "0.3.2" 
 
-    const val classgraph: String = "4.4.12" // available: "4.8.36"
+    const val classgraph: String = "4.4.12" // available: "4.8.37"
 
     const val io_github_javaeden_orchid: String = "0.16.10" 
 
@@ -73,13 +73,13 @@ object Versions {
 
     const val groovy: String = "2.5.5" // available: "2.5.7"
 
-    const val controlsfx: String = "9.0.0" // available: "11.0.0"
+    const val controlsfx: String = "8.40.14" // available: "11.0.0"
 
-    const val org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin: String = "0.1.0" 
+    const val org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin: String = "0.2.2" 
 
     const val org_danilopianini_publish_on_central_gradle_plugin: String = "0.1.1" 
 
-    const val boilerplate: String = "0.2.0" 
+    const val boilerplate: String = "0.2.0" // available: "0.2.1"
 
     const val gson_extras: String = "0.2.1" 
 
@@ -111,11 +111,9 @@ object Versions {
 
     const val mapsforge_map_awt: String = "0.6.1" // available: "0.11.0"
 
-    const val org_openjfx: String = "11" // available: "13-ea+7"
-
     const val pegdown: String = "1.6.0" 
 
-    const val org_protelis: String = "12.0.0" 
+    const val org_protelis: String = "12.1.0" 
 
     const val org_scala_lang: String = "2.12.2" // available: "2.13.0-M5-1775dba"
 
@@ -135,7 +133,7 @@ object Versions {
 
         const val currentVersion: String = "5.4.1"
 
-        const val nightlyVersion: String = "5.6-20190518000059+0000"
+        const val nightlyVersion: String = "5.6-20190529004812+0000"
 
         const val releaseCandidate: String = ""
     }

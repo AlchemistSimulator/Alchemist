@@ -47,6 +47,9 @@ public class TestInSimulator {
         testNoVar("testbase.yml");
     }
 
+    @Test
+    public void testCustomNodes() { testNoVar("customnodes.yml"); }
+
     /**
      * Test the ability to load a Protelis module from classpath.
      */

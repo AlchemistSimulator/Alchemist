@@ -34,10 +34,13 @@ matrix:
   include:
     - jdk: openjdk8
       env: PUBLISH="true"
+    - jdk: openjdk11
+      env: PUBLISH="true"
   exclude:
     - jdk: openjdk8
       env: PUBLISH="false"
-      os: linux
+    - jdk: openjdk11
+      env: PUBLISH="false"
     - jdk: openjdk8
       os: osx
 

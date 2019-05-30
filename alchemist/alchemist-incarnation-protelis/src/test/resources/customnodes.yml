@@ -1,0 +1,18 @@
+incarnation: protelis
+
+environment:
+  type: Continuous2DEnvironment
+
+positions:
+  type: Continuous2DEuclidean
+
+network-model:
+  type: NoLinks
+
+displacements:
+  - in:
+      type: Circle
+      parameters: [50, 0, 0, 20]
+    nodes:
+      type: it.unibo.alchemist.test.CustomNode
+      parameters: []

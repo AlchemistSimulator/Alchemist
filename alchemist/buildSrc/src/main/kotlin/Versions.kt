@@ -29,7 +29,7 @@ object Versions {
 
     const val com_gradle_build_scan_gradle_plugin: String = "2.1" // available: "2.3"
 
-    const val com_graphhopper: String = "0.12.0" // available: "0.13.0-pre3"
+    const val com_graphhopper: String = "0.12.0" // available: "0.13.0-pre4"
 
     const val simplelatlng: String = "1.3.1" 
 
@@ -95,7 +95,7 @@ object Versions {
 
     const val urlclassloader_util: String = "0.1.0" // available: "0.1.1"
 
-    const val org_jetbrains_dokka_gradle_plugin: String = "0.9.17" // available: "0.9.18"
+    const val org_jetbrains_dokka_gradle_plugin: String = "0.9.18" 
 
     const val org_jetbrains_kotlin_jvm_gradle_plugin: String = "1.3.31" 
 
@@ -133,8 +133,8 @@ object Versions {
 
         const val currentVersion: String = "5.4.1"
 
-        const val nightlyVersion: String = "5.6-20190529004812+0000"
+        const val nightlyVersion: String = "5.6-20190530000040+0000"
 
-        const val releaseCandidate: String = ""
+        const val releaseCandidate: String = "5.5-rc-1"
     }
 }

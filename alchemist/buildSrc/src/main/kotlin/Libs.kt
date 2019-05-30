@@ -290,12 +290,12 @@ object Libs {
     const val pegdown: String = "org.pegdown:pegdown:" + Versions.pegdown
 
     /**
-     * https://github.com/Protelis/protelis-interpreter */
+     * http://www.protelis.org */
     const val protelis_interpreter: String = "org.protelis:protelis-interpreter:" +
             Versions.org_protelis
 
     /**
-     * https://github.com/Protelis/protelis-lang */
+     * http://www.protelis.org */
     const val protelis_lang: String = "org.protelis:protelis-lang:" + Versions.org_protelis
 
     /**

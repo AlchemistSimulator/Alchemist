@@ -80,7 +80,6 @@ allprojects {
         compileOnly(Libs.spotbugs) {
             exclude(group = "commons-lang")
         }
-        implementation(Libs.slf4j_api)
         implementation(Libs.kotlin_stdlib)
         implementation(Libs.kotlin_reflect)
         implementation(Libs.thread_inheritable_resource_loader)

@@ -9,7 +9,7 @@ import kotlin.String
 object Versions {
     const val logback_classic: String = "1.3.0-alpha4" 
 
-    const val com_eden_orchidplugin_gradle_plugin: String = "0.16.0" // available: "0.16.10"
+    const val com_eden_orchidplugin_gradle_plugin: String = "0.16.10"
 
     const val caffeine: String = "2.6.2" // available: "2.7.0"
 

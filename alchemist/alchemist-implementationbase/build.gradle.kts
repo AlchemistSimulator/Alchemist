@@ -14,15 +14,16 @@ dependencies {
     api(project(":alchemist-interfaces"))
     api(Libs.java_quadtree)
     implementation(project(":alchemist-time"))
-    implementation(Libs.caffeine)
-    implementation(Libs.commons_lang3)
-    implementation(Libs.rtree)
-    implementation(Libs.concurrentlinkedhashmap_lru)
-    implementation(Libs.classgraph)
-    implementation(Libs.trove4j)
     implementation(Libs.boilerplate)
+    implementation(Libs.caffeine)
+    implementation(Libs.classgraph)
+    implementation(Libs.commons_lang3)
+    implementation(Libs.concurrentlinkedhashmap_lru)
+    implementation(Libs.guava)
+    implementation(Libs.rtree)
     implementation(Libs.scala_compiler)
     implementation(Libs.scala_library)
+    implementation(Libs.trove4j)
 }
 
 configurations {

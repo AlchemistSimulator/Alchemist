@@ -11,8 +11,9 @@ dependencies {
     api(project(":alchemist-interfaces"))
     implementation(project(":alchemist-time"))
     implementation(project(":alchemist-maps"))
-    implementation(Libs.groovy)
     implementation(Libs.commons_lang3)
+    implementation(Libs.groovy)
+    implementation(Libs.guava)
     implementation(Libs.jirf)
     implementation(Libs.snakeyaml)
 

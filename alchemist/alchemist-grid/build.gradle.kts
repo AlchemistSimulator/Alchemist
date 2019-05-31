@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":alchemist-loading"))
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-engine"))
+    implementation(Libs.guava)
     implementation(Libs.ignite_spring)
     implementation(Libs.ignite_indexing)
     implementation(Libs.commons_io)

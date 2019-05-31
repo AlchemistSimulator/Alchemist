@@ -80,7 +80,6 @@ allprojects {
         compileOnly(Libs.spotbugs) {
             exclude(group = "commons-lang")
         }
-        implementation(Libs.guava)
         implementation(Libs.slf4j_api)
         implementation(Libs.kotlin_stdlib)
         implementation(Libs.kotlin_reflect)

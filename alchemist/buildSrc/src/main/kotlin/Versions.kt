@@ -21,7 +21,7 @@ object Versions {
 
     const val com_github_spotbugs_gradle_plugin: String = "1.6.9" // available: "2.0.0"
 
-    const val spotbugs: String = "3.1.10" // available: "3.1.12"
+    const val spotbugs: String = "3.1.12"
 
     const val gson: String = "2.8.5" 
 

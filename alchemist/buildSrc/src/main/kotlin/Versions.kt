@@ -109,7 +109,7 @@ object Versions {
 
     const val jool_java_8: String = "0.9.14" 
 
-    const val org_junit_jupiter: String = "5.3.1" // available: "5.4.2"
+    const val org_junit_jupiter: String = "5.4.2" 
 
     const val mapsforge_map_awt: String = "0.6.1" // available: "0.11.0"
 

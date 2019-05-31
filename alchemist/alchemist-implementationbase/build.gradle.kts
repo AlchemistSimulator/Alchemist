@@ -15,6 +15,7 @@ dependencies {
     api(Libs.java_quadtree)
     implementation(project(":alchemist-time"))
     implementation(Libs.caffeine)
+    implementation(Libs.commons_lang3)
     implementation(Libs.rtree)
     implementation(Libs.concurrentlinkedhashmap_lru)
     implementation(Libs.classgraph)

@@ -15,6 +15,7 @@ plugins {
 dependencies {
     antlr(Libs.antlr4)
     implementation(project(":alchemist-implementationbase"))
+    implementation(Libs.commons_lang3)
     implementation(Libs.trove4j)
     implementation(Libs.boilerplate)
     implementation(Libs.jirf)

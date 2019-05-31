@@ -62,14 +62,14 @@ install: >-
 script: >-
     cd alchemist;
     if [ $TRAVIS_OS_NAME = "windows" ]; then
-        gradlew.bat clean check fatJar dokka buildDashboard projectReport --scan --parallel
+        gradlew.bat clean check fatJar dokka buildDashboard projectReport --scan --parallel > >(egrep -v '(null:-1:-1)|(t find node by signature)')
     else
-        ./gradlew clean check fatJar dokka buildDashboard projectReport --scan --parallel
+        ./gradlew clean check fatJar dokka buildDashboard projectReport --scan --parallel > >(egrep -v '(null:-1:-1)|(t find node by signature)')
     fi
 
 after_success: >-
     if $SHOULD_CONFIGURE && $PUBLISH; then
-        ./gradlew bintrayUpload orchidDeploy publish --parallel > >(egrep -v '(null:-1:-1)|(t find node by signature)')
+        ./gradlew bintrayUpload orchidDeploy publish --parallel
         mkdir -p report
         cp --parent */build/reports build/reports report -R
     fi

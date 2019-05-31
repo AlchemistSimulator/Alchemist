@@ -65,7 +65,7 @@ object Versions {
 
     const val org_antlr: String = "4.6" // available: "4.7.2"
 
-    const val bcel: String = "6.3" // available: "6.3.1"
+    const val bcel: String = "6.3.1" 
 
     const val commons_lang3: String = "3.9" 
 

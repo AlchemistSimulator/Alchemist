@@ -25,7 +25,7 @@ object Versions {
 
     const val gson: String = "2.8.5" 
 
-    const val guava: String = "26.0-jre" // available: "27.1-jre"
+    const val guava: String = "27.1-jre"
 
     const val concurrentlinkedhashmap_lru: String = "1.4.2" 
 

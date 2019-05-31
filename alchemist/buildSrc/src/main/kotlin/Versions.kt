@@ -71,7 +71,7 @@ object Versions {
 
     const val org_apache_ignite: String = "2.7.0"
 
-    const val groovy: String = "2.5.5" // available: "2.5.7"
+    const val groovy: String = "2.5.7"
 
     const val controlsfx: String = "9.0.0" // available: "11.0.0"
 

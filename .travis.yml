@@ -62,7 +62,7 @@ install: >-
 script: >-
     cd alchemist;
     if [ $TRAVIS_OS_NAME = "windows" ]; then
-        gradlew.bat clean check fatJar dokka buildDashboard projectReport --scan --parallel > >(egrep -v '(null:-1:-1)|(t find node by signature)')
+        gradlew.bat clean check fatJar dokka buildDashboard projectReport --scan --parallel
     else
         ./gradlew clean check fatJar dokka buildDashboard projectReport --scan --parallel > >(egrep -v '(null:-1:-1)|(t find node by signature)')
     fi

@@ -51,7 +51,7 @@ object Versions {
 
     const val de_fayard_buildsrcversions_gradle_plugin: String = "0.3.2" 
 
-    const val classgraph: String = "4.4.12" // available: "4.8.37"
+    const val classgraph: String = "4.8.37"
 
     const val io_github_javaeden_orchid: String = "0.16.10" 
 

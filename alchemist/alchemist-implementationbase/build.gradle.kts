@@ -12,6 +12,7 @@ plugins {
 
 dependencies {
     api(project(":alchemist-interfaces"))
+    api(Libs.commons_math3)
     api(Libs.java_quadtree)
     implementation(project(":alchemist-time"))
     implementation(Libs.boilerplate)

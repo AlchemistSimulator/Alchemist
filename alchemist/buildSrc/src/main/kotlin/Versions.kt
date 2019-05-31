@@ -37,7 +37,7 @@ object Versions {
 
     const val com_jfrog_bintray_gradle_plugin: String = "1.8.4" 
 
-    const val miglayout_swing: String = "5.2"
+    const val miglayout_swing: String = "5.2" 
 
     const val ktlint: String = "0.32.0" // available: "0.33.0"
 
@@ -65,7 +65,7 @@ object Versions {
 
     const val org_antlr: String = "4.6" // available: "4.7.2"
 
-    const val commons_lang3: String = "3.8.1" // available: "3.9"
+    const val commons_lang3: String = "3.9"
 
     const val commons_math3: String = "3.6.1" 
 

@@ -43,7 +43,7 @@ object Versions {
 
     const val commons_cli: String = "1.4" 
 
-    const val commons_codec: String = "1.10" // available: "1.12"
+    const val commons_codec: String = "1.12"
 
     const val commons_io: String = "2.6" 
 

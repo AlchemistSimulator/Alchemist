@@ -296,6 +296,30 @@ object Libs {
             Versions.mapsforge_map_awt
 
     /**
+     * https://openjdk.java.net/projects/openjfx/ */
+    const val javafx_base: String = "org.openjfx:javafx-base:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/ */
+    const val javafx_controls: String = "org.openjfx:javafx-controls:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/ */
+    const val javafx_fxml: String = "org.openjfx:javafx-fxml:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/ */
+    const val javafx_graphics: String = "org.openjfx:javafx-graphics:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/ */
+    const val javafx_media: String = "org.openjfx:javafx-media:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/ */
+    const val javafx_swing: String = "org.openjfx:javafx-swing:" + Versions.org_openjfx
+
+    /**
      * http://parboiled.org */
     const val parboiled_java: String = "org.parboiled:parboiled-java:" + Versions.parboiled_java
 

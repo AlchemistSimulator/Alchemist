@@ -70,7 +70,7 @@ script: >-
 
 after_success: >-
     if $SHOULD_CONFIGURE && $PUBLISH; then
-        ./gradlew bintrayUpload orchidDeploy publish --parallel
+        ./gradlew orchidDeploy publish --parallel
         mkdir -p report
         cp --parent */build/reports build/reports report -R
     fi

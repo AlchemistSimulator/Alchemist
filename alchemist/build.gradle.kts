@@ -91,8 +91,8 @@ allprojects {
         testCompileOnly(Libs.spotbugs) {
             exclude(group = "commons-lang")
         }
-        testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.1")
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.1")
+        testImplementation(Libs.junit_jupiter_api)
+        testRuntimeOnly(Libs.junit_jupiter_engine)
         runtimeOnly(Libs.logback_classic)
     }
 

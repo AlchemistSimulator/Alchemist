@@ -13,7 +13,7 @@ object Versions {
 
     const val caffeine: String = "2.7.0"
 
-    const val com_github_cb372: String = "0.9.3" // available: "0.27.0"
+    const val com_github_cb372: String = "0.27.0"
 
     const val rtree: String = "0.8.6" 
 
@@ -29,7 +29,7 @@ object Versions {
 
     const val concurrentlinkedhashmap_lru: String = "1.4.2" 
 
-    const val com_gradle_build_scan_gradle_plugin: String = "2.1" // available: "2.3"
+    const val com_gradle_build_scan_gradle_plugin: String = "2.3" // available: "2.3"
 
     const val com_graphhopper: String = "0.12.0" // available: "0.13.0-tardur1"
 

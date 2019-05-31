@@ -76,6 +76,7 @@ allprojects {
     }
 
     dependencies {
+        compileOnly(Libs.annotations)
         compileOnly(Libs.spotbugs) {
             exclude(group = "commons-lang")
         }
@@ -83,7 +84,6 @@ allprojects {
         implementation(Libs.commons_math3)
         implementation(Libs.commons_lang3)
         implementation(Libs.guava)
-        implementation(Libs.annotations)
         implementation(Libs.slf4j_api)
         implementation(Libs.kotlin_stdlib)
         implementation(Libs.kotlin_reflect)

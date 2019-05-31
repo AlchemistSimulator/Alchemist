@@ -1,3 +1,5 @@
+import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.exclude
+
 /*
  * Copyright (C) 2010-2019) Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
  *
@@ -20,6 +22,7 @@ dependencies {
     // TODO: deprecated, must be removed
     implementation(Libs.javalib_java7) {
         exclude(group = "org.ow2.asm")
+        exclude(module = "findbugs")
     }
 
     testRuntimeOnly(project(":alchemist-incarnation-protelis"))

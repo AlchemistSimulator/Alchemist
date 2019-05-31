@@ -35,10 +35,7 @@ typealias Edge<T> = Pair<Reaction<T>, Reaction<T>>
 class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : DependencyGraph<T> {
     private val inGlobals = ArrayListSet<Reaction<T>>()
     private val outGlobals = ArrayListSet<Reaction<T>>()
-    private val graph = DefaultDirectedGraph<Reaction<T>, Edge<T>> { source, target ->
-        Pair(source, target).takeUnless { source === target }
-            ?: throw IllegalStateException("Error: dependency auto-arc")
-    }
+    private val graph: DefaultDirectedGraph<Reaction<T>, Edge<T>> = DefaultDirectedGraph(null)
 
     override fun createDependencies(newReaction: Reaction<T>) {
         val allReactions = graph.vertexSet()
@@ -83,8 +80,8 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
         if (!graph.addVertex(newReaction)) {
             throw IllegalArgumentException("$newReaction was already in the dependency graph")
         }
-        inboundCandidates.forEach { graph.addEdge(it, newReaction) }
-        outboundCandidates.forEach { graph.addEdge(newReaction, it) }
+        inboundCandidates.forEach { graph.addEdge(it, newReaction, Edge(it, newReaction)) }
+        outboundCandidates.forEach { graph.addEdge(newReaction, it, Edge(newReaction, it)) }
     }
 
     private val Node<T>.neighborhood
@@ -137,7 +134,7 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
                 else -> emptyList()
             }.asSequence()
             .filter { reaction.dependsOn(it) }
-            .forEach { graph.addEdge(it, reaction) }
+            .forEach { graph.addEdge(it, reaction, Edge(it, reaction)) }
         }
     }
 

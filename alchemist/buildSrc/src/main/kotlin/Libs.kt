@@ -170,6 +170,10 @@ object Libs {
     const val antlr4: String = "org.antlr:antlr4:" + Versions.org_antlr
 
     /**
+     * http://commons.apache.org/proper/commons-bcel */
+    const val bcel: String = "org.apache.bcel:bcel:" + Versions.bcel
+
+    /**
      * http://commons.apache.org/proper/commons-lang/ */
     const val commons_lang3: String = "org.apache.commons:commons-lang3:" + Versions.commons_lang3
 

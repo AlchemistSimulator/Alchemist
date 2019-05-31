@@ -22,33 +22,24 @@ import java.net.URL
  */
 
 plugins {
-    id("de.fayard.buildSrcVersions") version
-            Versions.de_fayard_buildsrcversions_gradle_plugin
-    id("org.danilopianini.git-sensitive-semantic-versioning") version
-            Versions.org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin
+    id("de.fayard.buildSrcVersions") version Versions.de_fayard_buildsrcversions_gradle_plugin
+    id("org.danilopianini.git-sensitive-semantic-versioning") version Versions.org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin
     `java-library`
-    kotlin("jvm") version
-            Versions.org_jetbrains_kotlin
+    kotlin("jvm") version Versions.org_jetbrains_kotlin
     jacoco
-    id("com.github.spotbugs") version
-            Versions.com_github_spotbugs_gradle_plugin
+    id("com.github.spotbugs") version Versions.com_github_spotbugs_gradle_plugin
     pmd
     checkstyle
-    id("org.jlleitschuh.gradle.ktlint") version
-            Versions.org_jlleitschuh_gradle_ktlint_gradle_plugin
+    id("org.jlleitschuh.gradle.ktlint") version Versions.org_jlleitschuh_gradle_ktlint_gradle_plugin
     `project-report`
     `build-dashboard`
-    id("org.jetbrains.dokka") version
-            Versions.org_jetbrains_dokka_gradle_plugin
-    id("com.eden.orchidPlugin") version "0.16.0"
+    id("org.jetbrains.dokka") version Versions.org_jetbrains_dokka_gradle_plugin
+    id("com.eden.orchidPlugin") version Versions.com_eden_orchidplugin_gradle_plugin
     signing
     `maven-publish`
-    id("org.danilopianini.publish-on-central") version
-            Versions.org_danilopianini_publish_on_central_gradle_plugin
-    id("com.jfrog.bintray") version
-            Versions.com_jfrog_bintray_gradle_plugin
-    id("com.gradle.build-scan") version
-            Versions.com_gradle_build_scan_gradle_plugin
+    id("org.danilopianini.publish-on-central") version Versions.org_danilopianini_publish_on_central_gradle_plugin
+    id("com.jfrog.bintray") version Versions.com_jfrog_bintray_gradle_plugin
+    id("com.gradle.build-scan") version Versions.com_gradle_build_scan_gradle_plugin
 }
 
 apply(plugin = "com.gradle.build-scan")
@@ -85,7 +76,9 @@ allprojects {
     }
 
     dependencies {
-        compileOnly(Libs.spotbugs)
+        compileOnly(Libs.spotbugs) {
+            exclude(group = "commons-lang")
+        }
         implementation(Libs.commons_io)
         implementation(Libs.commons_math3)
         implementation(Libs.commons_lang3)
@@ -95,7 +88,9 @@ allprojects {
         implementation(Libs.kotlin_stdlib)
         implementation(Libs.kotlin_reflect)
         implementation(Libs.thread_inheritable_resource_loader)
-        testCompileOnly(Libs.spotbugs)
+        testCompileOnly(Libs.spotbugs) {
+            exclude(group = "commons-lang")
+        }
         testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.1")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.1")
         runtimeOnly(Libs.logback_classic)

@@ -80,7 +80,6 @@ allprojects {
         compileOnly(Libs.spotbugs) {
             exclude(group = "commons-lang")
         }
-        implementation(Libs.commons_math3)
         implementation(Libs.commons_lang3)
         implementation(Libs.guava)
         implementation(Libs.slf4j_api)

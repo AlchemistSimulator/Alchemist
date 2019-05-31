@@ -10,11 +10,10 @@ dependencies {
     api(project(":alchemist-interfaces"))
     api(Libs.protelis_interpreter)
     api(Libs.protelis_lang)
-
     implementation(project(":alchemist-time"))
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-maps"))
-
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-loading"))
+    testImplementation(Libs.commons_io)
 }

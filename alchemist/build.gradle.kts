@@ -331,9 +331,9 @@ val isMarkedStable by lazy { """\d+(\.\d+){2}""".toRegex().matches(rootProject.v
 orchid {
     theme = "Editorial"
     // Feed arguments to Kdoc
-    val projects: Collection<Project> = listOf(project) + subprojects
-    val paths = projects.map { it.sourceSets["main"].compileClasspath.asPath }
-    args = listOf("--kotlindocClasspath") + paths.joinToString(File.pathSeparator)
+//    val projects: Collection<Project> = listOf(project) + subprojects
+//    val paths = projects.map { it.sourceSets["main"].compileClasspath.asPath }
+//    args = listOf("--kotlindocClasspath") + paths.joinToString(File.pathSeparator)
     // Determine whether it's a deployment or a dry run
     baseUrl = "https://alchemistsimulator.github.io/${if (isMarkedStable) "" else "latest/"}"
     // Fetch the latest version of the website, if this one is more recent enable deploy

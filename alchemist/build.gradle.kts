@@ -7,6 +7,7 @@
  */
 import com.github.spotbugs.SpotBugsTask
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
@@ -113,7 +114,10 @@ allprojects {
 
     tasks.withType<Test> {
         failFast = true
-        testLogging { events("passed", "skipped", "failed", "standardError") }
+        testLogging {
+            events("passed", "skipped", "failed", "standardError")
+            exceptionFormat = TestExceptionFormat.FULL
+        }
         useJUnitPlatform()
     }
 

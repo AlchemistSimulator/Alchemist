@@ -99,7 +99,7 @@ object Versions {
 
     const val org_jetbrains_kotlin: String = "1.3.31" 
 
-    const val annotations: String = "16.0.3" // available: "17.0.0"
+    const val annotations: String = "17.0.0"
 
     const val jgrapht_core: String = "1.1.0" // available: "1.3.0"
 

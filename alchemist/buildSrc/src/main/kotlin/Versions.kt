@@ -11,7 +11,7 @@ object Versions {
 
     const val com_eden_orchidplugin_gradle_plugin: String = "0.16.10"
 
-    const val caffeine: String = "2.6.2" // available: "2.7.0"
+    const val caffeine: String = "2.7.0"
 
     const val com_github_cb372: String = "0.9.3" // available: "0.27.0"
 

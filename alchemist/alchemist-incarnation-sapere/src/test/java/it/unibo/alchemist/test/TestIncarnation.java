@@ -7,17 +7,17 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
 
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import it.unibo.alchemist.model.SAPEREIncarnation;
 import it.unibo.alchemist.model.implementations.actions.LsaAllNeighborsAction;
@@ -56,7 +56,7 @@ public final class TestIncarnation {
     /**
      * 
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         env = new Continuous2DEnvironment<>();
         node = new LsaNode(env);
@@ -83,10 +83,10 @@ public final class TestIncarnation {
         final TimeDistribution<List<ILsaMolecule>> t0 = incarnation.createTimeDistribution(rand, env, node, param);
         assertNotNull(t0);
         if (!Double.isNaN(rate)) {
-            assertEquals(rate, t0.getRate(), 0d);
+            assertEquals(rate, t0.getRate(), Double.MIN_VALUE);
         }
         if (!Double.isNaN(occurrence)) {
-            assertEquals(occurrence, t0.getNextOccurence().toDouble(), 0d);
+            assertEquals(occurrence, t0.getNextOccurence().toDouble(), Double.MIN_VALUE);
         }
     }
 

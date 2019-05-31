@@ -7,9 +7,9 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import it.unibo.alchemist.loader.shapes.Rectangle;
 import it.unibo.alchemist.loader.shapes.Shape;

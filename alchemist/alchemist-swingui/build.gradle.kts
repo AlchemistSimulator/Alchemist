@@ -17,7 +17,10 @@ dependencies {
     implementation(Libs.miglayout_swing)
     implementation(Libs.mapsforge_map_awt)
     implementation(Libs.gson_extras)
-    implementation(Libs.javalib_java7)
+    // TODO: deprecated, must be removed
+    implementation(Libs.javalib_java7) {
+        exclude(group = "org.ow2.asm")
+    }
 
     testRuntimeOnly(project(":alchemist-incarnation-protelis"))
 }

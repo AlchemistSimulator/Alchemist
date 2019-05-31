@@ -23,14 +23,11 @@ import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.loader.YamlLoader
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.interfaces.{Environment, Position}
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FunSuite, Matchers}
 
 import scala.collection.JavaConverters.{asScalaBufferConverter, mapAsScalaMapConverter}
 
 @SuppressFBWarnings(value = Array("SE_BAD_FIELD"), justification="We are not going to Serialize test classes")
-@RunWith(classOf[JUnitRunner])
 class TestInSimulator[P <: Position[P]] extends FunSuite with Matchers {
   
   test("Basic test"){
@@ -40,7 +37,7 @@ class TestInSimulator[P <: Position[P]] extends FunSuite with Matchers {
     val env = testNoVar[Any]("/test_gradient.yml")
     env.getNodes.asScala.foreach(node => {
       val contents = node.getContents.asScala
-      (contents.get(new SimpleMolecule("it.unibo.alchemist.scafi.test.ScafiGradientProgram")).get.asInstanceOf[Double]) should (be >= 0.0 and be <= 100.0)
+      contents(new SimpleMolecule("it.unibo.alchemist.scafi.test.ScafiGradientProgram")).asInstanceOf[Double] should (be >= 0.0 and be <= 100.0)
     })
   }
 
@@ -48,11 +45,11 @@ class TestInSimulator[P <: Position[P]] extends FunSuite with Matchers {
     val env = testNoVar[Any]("/test_env.yml")
     env.getNodes.asScala.foreach(node => {
       val contents = node.getContents.asScala
-      def inputMolecule = (contents.get(new SimpleMolecule("number")).get.asInstanceOf[Int])
-      def outputMolecule = (contents.get(new SimpleMolecule("number2")).get.asInstanceOf[Int])
+      def inputMolecule = contents(new SimpleMolecule("number")).asInstanceOf[Int]
+      def outputMolecule = contents(new SimpleMolecule("number2")).asInstanceOf[Int]
       if(node.getId==0) {
-        inputMolecule shouldBe (77)
-        outputMolecule shouldBe (177)
+        inputMolecule shouldBe 77
+        outputMolecule shouldBe 177
       } else {
         inputMolecule shouldBe (-500)
         outputMolecule shouldBe (-400)

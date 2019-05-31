@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.danilopianini.io.FileUtilities;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import it.unibo.alchemist.boundary.gui.effects.Effect;
 import it.unibo.alchemist.boundary.gui.effects.EffectFactory;

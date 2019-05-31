@@ -16,7 +16,7 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
 

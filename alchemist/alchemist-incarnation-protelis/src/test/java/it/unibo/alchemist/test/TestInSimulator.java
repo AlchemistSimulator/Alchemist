@@ -7,7 +7,7 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +22,7 @@ import java.util.concurrent.FutureTask;
 
 import org.apache.commons.io.FileUtils;
 import org.jooq.lambda.Unchecked;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import com.google.common.collect.Maps;
@@ -116,7 +116,7 @@ public class TestInSimulator {
 
     private static <T, P extends Position<P>> void testLoading(final String resource, final Map<String, Double> vars) {
         final InputStream res = ResourceLoader.getResourceAsStream(resource);
-        assertNotNull("Missing test resource " + resource, res);
+        assertNotNull(res, "Missing test resource " + resource);
         final Environment<T, P> env = new YamlLoader(res).getWith(vars);
         final Simulation<T, P> sim = new Engine<>(env, 10000);
         sim.play();

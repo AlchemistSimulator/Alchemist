@@ -7,15 +7,15 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import it.unibo.alchemist.model.ProtelisIncarnation;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
@@ -55,7 +55,7 @@ public class TestIncarnation {
         assertTrue(immediately.getRate() > 0);
         final TimeDistribution<Object> standard = INC.createTimeDistribution(rng, env, node, "3");
         assertNotNull(standard);
-        assertEquals(3d, standard.getRate(), 0d);
+        assertEquals(3d, standard.getRate(), Double.MIN_VALUE);
         final Reaction<Object> generic = INC.createReaction(rng, env, node, standard, null);
         assertNotNull(generic);
         assertTrue(generic instanceof Event);

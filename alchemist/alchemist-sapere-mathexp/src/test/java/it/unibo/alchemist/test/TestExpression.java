@@ -9,13 +9,13 @@ package it.unibo.alchemist.test;
 
 // CHECKSTYLE:OFF
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import it.unibo.alchemist.expressions.implementations.Expression;
 import it.unibo.alchemist.expressions.implementations.Type;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 /**

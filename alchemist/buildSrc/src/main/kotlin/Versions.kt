@@ -17,6 +17,8 @@ object Versions {
 
     const val rtree: String = "0.8.6" 
 
+    const val com_github_maiflai_scalatest_gradle_plugin: String = "0.25" 
+
     const val com_github_spotbugs_gradle_plugin: String = "1.6.9" // available: "2.0.0"
 
     const val spotbugs: String = "3.1.10" // available: "3.1.12"
@@ -29,7 +31,7 @@ object Versions {
 
     const val com_gradle_build_scan_gradle_plugin: String = "2.1" // available: "2.3"
 
-    const val com_graphhopper: String = "0.12.0" // available: "0.13.0-pre4"
+    const val com_graphhopper: String = "0.12.0" // available: "0.13.0-tardur1"
 
     const val simplelatlng: String = "1.3.1" 
 
@@ -58,8 +60,6 @@ object Versions {
     const val kotlintest_runner_junit5: String = "3.3.2" 
 
     const val scafi_core_2_12: String = "0.3.2" // available: "53ddebd1"
-
-    const val junit: String = "4.12" 
 
     const val trove4j: String = "3.0.3" 
 
@@ -95,7 +95,7 @@ object Versions {
 
     const val urlclassloader_util: String = "0.1.0" // available: "0.1.1"
 
-    const val org_jetbrains_dokka_gradle_plugin: String = "0.9.18" 
+    const val org_jetbrains_dokka_gradle_plugin: String = "0.9.17"
 
     const val org_jetbrains_kotlin_jvm_gradle_plugin: String = "1.3.31" 
 
@@ -109,7 +109,11 @@ object Versions {
 
     const val jool_java_8: String = "0.9.14" 
 
+    const val org_junit_jupiter: String = "5.3.1" // available: "5.4.2"
+
     const val mapsforge_map_awt: String = "0.6.1" // available: "0.11.0"
+
+    const val parboiled_java: String = "1.3.0" 
 
     const val pegdown: String = "1.6.0" 
 
@@ -133,7 +137,7 @@ object Versions {
 
         const val currentVersion: String = "5.4.1"
 
-        const val nightlyVersion: String = "5.6-20190530000040+0000"
+        const val nightlyVersion: String = "5.6-20190531002906+0000"
 
         const val releaseCandidate: String = "5.5-rc-1"
     }

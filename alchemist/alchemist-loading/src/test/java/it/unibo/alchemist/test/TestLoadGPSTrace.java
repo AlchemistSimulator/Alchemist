@@ -7,15 +7,15 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 import org.jooq.lambda.Unchecked;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
@@ -36,23 +36,23 @@ import it.unibo.alchemist.model.interfaces.Time;
  */
 public class TestLoadGPSTrace {
 
-    private static final Map<GeoPosition, GeoPosition> START_ARRIVE_POSITION = new HashMap<>();
-    private static final Map<Node<?>, GeoPosition> NODE_START_POSITION = new HashMap<>();
+    private static final Map<LatLongPosition, LatLongPosition> START_ARRIVE_POSITION = new HashMap<>();
+    private static final Map<Node<?>, LatLongPosition> NODE_START_POSITION = new HashMap<>();
 
-    private static final GeoPosition START_1 = new LatLongPosition(48.176559999999995, 16.36939);
-    private static final GeoPosition ARRIVE_1 = new LatLongPosition(48.176567, 16.369469);
+    private static final LatLongPosition START_1 = new LatLongPosition(48.176559999999995, 16.36939);
+    private static final LatLongPosition ARRIVE_1 = new LatLongPosition(48.176567, 16.369469);
 
-    private static final GeoPosition START_2 = new LatLongPosition(48.200253, 16.366229);
-    private static final GeoPosition ARRIVE_2 = new LatLongPosition(48.219395, 16.389551);
+    private static final LatLongPosition START_2 = new LatLongPosition(48.200253, 16.366229);
+    private static final LatLongPosition ARRIVE_2 = new LatLongPosition(48.219395, 16.389551);
 
-    private static final GeoPosition START_3 = new LatLongPosition(48.250569999999996, 16.341894);
-    private static final GeoPosition ARRIVE_3 = new LatLongPosition(48.19978, 16.353043);
+    private static final LatLongPosition START_3 = new LatLongPosition(48.250569999999996, 16.341894);
+    private static final LatLongPosition ARRIVE_3 = new LatLongPosition(48.19978, 16.353043);
 
-    private static final GeoPosition START_4 = new LatLongPosition(48.20625, 16.364506);
-    private static final GeoPosition ARRIVE_4 = new LatLongPosition(48.206326, 16.364582);
+    private static final LatLongPosition START_4 = new LatLongPosition(48.20625, 16.364506);
+    private static final LatLongPosition ARRIVE_4 = new LatLongPosition(48.206326, 16.364582);
 
-    private static final GeoPosition START_5 = new LatLongPosition(48.233093, 16.418);
-    private static final GeoPosition ARRIVE_5 = new LatLongPosition(48.207733, 16.36331);
+    private static final LatLongPosition START_5 = new LatLongPosition(48.233093, 16.418);
+    private static final LatLongPosition ARRIVE_5 = new LatLongPosition(48.207733, 16.36331);
     static {
         START_ARRIVE_POSITION.put(START_1, ARRIVE_1);
         START_ARRIVE_POSITION.put(START_2, ARRIVE_2);
@@ -76,7 +76,7 @@ public class TestLoadGPSTrace {
     @SuppressWarnings("serial")
     private static <T> void testLoading(final String resource) {
         final InputStream res = ResourceLoader.getResourceAsStream(resource);
-        assertNotNull("Missing test resource " + resource, res);
+        assertNotNull(res,"Missing test resource " + resource);
         final Environment<T, GeoPosition> env = new YamlLoader(res).getDefault();
         final Simulation<T, GeoPosition> sim = new Engine<>(env, new DoubleTime(TIME_TO_REACH));
         sim.addOutputMonitor(new OutputMonitor<T, GeoPosition>() {
@@ -94,7 +94,12 @@ public class TestLoadGPSTrace {
             @Override
             public void initialized(final Environment<T, GeoPosition> env) {
                 for (final Node<T> node : env.getNodes()) {
-                    NODE_START_POSITION.put(node, env.getPosition(node));
+                    final GeoPosition position = env.getPosition(node);
+                    /*
+                     * We don't know the actual type of position, we use LatLongPosition here so we need to make sure
+                     * that types match, or the map won't return what we expect
+                     */
+                    NODE_START_POSITION.put(node, new LatLongPosition(position.getLatitude(), position.getLongitude()));
                 }
             }
 

@@ -7,14 +7,14 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableList;
 
@@ -49,7 +49,7 @@ public class TestNormalizer {
     private static final GPSTrace TRACE_2 = new GPSTraceImpl(TRACE_2_POINT_1, TRACE_2_POINT_2, TRACE_2_POINT_3);
     private static final GPSTrace TRACE_3 = new GPSTraceImpl(TRACE_3_POINT_1, TRACE_3_POINT_2, TRACE_3_POINT_3);
     private static final List<GPSTrace> TRACES = new LinkedList<>();
-    private static final Double DELTA = 0.0;
+    private static final Double DELTA = Double.MIN_VALUE;
 
     static {
         TRACES.add(TRACE_1);

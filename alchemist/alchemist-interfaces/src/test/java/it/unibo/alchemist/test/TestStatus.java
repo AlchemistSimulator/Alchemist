@@ -7,10 +7,10 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import it.unibo.alchemist.core.interfaces.Status;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 /**

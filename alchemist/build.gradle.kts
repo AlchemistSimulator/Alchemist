@@ -15,7 +15,6 @@ import java.net.URL
  * Kotlin migration TODO list
  *
  * upgrade to junit5
- * switch to orchid kotlindoc https://orchid.netlify.com/plugins/OrchidKotlindoc
  * update dependencies
  * don't ignore checkers failures
  * recheck all dependencies
@@ -85,17 +84,19 @@ allprojects {
     }
 
     dependencies {
+        compileOnly(Libs.spotbugs)
         implementation(Libs.commons_io)
         implementation(Libs.commons_math3)
         implementation(Libs.commons_lang3)
         implementation(Libs.guava)
         implementation(Libs.annotations)
-        implementation(Libs.spotbugs)
         implementation(Libs.slf4j_api)
         implementation(Libs.kotlin_stdlib)
         implementation(Libs.kotlin_reflect)
         implementation(Libs.thread_inheritable_resource_loader)
-        testImplementation(Libs.junit)
+        testCompileOnly(Libs.spotbugs)
+        testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.1")
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.1")
         runtimeOnly(Libs.logback_classic)
     }
 
@@ -113,6 +114,7 @@ allprojects {
     tasks.withType<Test> {
         failFast = true
         testLogging { events("passed", "skipped", "failed", "standardError") }
+        useJUnitPlatform()
     }
 
     spotbugs {

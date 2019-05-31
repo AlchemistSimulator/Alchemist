@@ -32,6 +32,10 @@ object Libs {
      * http://github.com/davidmoten/rtree */
     const val rtree: String = "com.github.davidmoten:rtree:" + Versions.rtree
 
+    const val com_github_maiflai_scalatest_gradle_plugin: String =
+            "com.github.maiflai.scalatest:com.github.maiflai.scalatest.gradle.plugin:" +
+            Versions.com_github_maiflai_scalatest_gradle_plugin
+
     const val com_github_spotbugs_gradle_plugin: String =
             "com.github.spotbugs:com.github.spotbugs.gradle.plugin:" +
             Versions.com_github_spotbugs_gradle_plugin
@@ -152,10 +156,6 @@ object Libs {
      * https://scafi.github.io/ */
     const val scafi_core_2_12: String = "it.unibo.apice.scafiteam:scafi-core_2.12:" +
             Versions.scafi_core_2_12
-
-    /**
-     * http://junit.org */
-    const val junit: String = "junit:junit:" + Versions.junit
 
     /**
      * http://trove4j.sf.net */
@@ -281,9 +281,23 @@ object Libs {
     const val jool_java_8: String = "org.jooq:jool-java-8:" + Versions.jool_java_8
 
     /**
+     * https://junit.org/junit5/ */
+    const val junit_jupiter_api: String = "org.junit.jupiter:junit-jupiter-api:" +
+            Versions.org_junit_jupiter
+
+    /**
+     * https://junit.org/junit5/ */
+    const val junit_jupiter_engine: String = "org.junit.jupiter:junit-jupiter-engine:" +
+            Versions.org_junit_jupiter
+
+    /**
      * https://github.com/mapsforge/mapsforge */
     const val mapsforge_map_awt: String = "org.mapsforge:mapsforge-map-awt:" +
             Versions.mapsforge_map_awt
+
+    /**
+     * http://parboiled.org */
+    const val parboiled_java: String = "org.parboiled:parboiled-java:" + Versions.parboiled_java
 
     /**
      * http://pegdown.org */

@@ -7,8 +7,8 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.BitSet;
 
@@ -20,7 +20,7 @@ import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import it.unibo.alchemist.biochemistrydsl.BiochemistrydslLexer;
 import it.unibo.alchemist.biochemistrydsl.BiochemistrydslParser;

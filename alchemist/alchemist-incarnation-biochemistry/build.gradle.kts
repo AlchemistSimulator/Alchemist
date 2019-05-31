@@ -26,14 +26,6 @@ dependencies {
     runtimeOnly(Libs.antlr4_runtime)
 }
 
-configurations {
-    all {
-        if (!name.contains("antlr")) {
-            exclude(group = "org.antlr", module = "antlr-runtime")
-        }
-    }
-}
-
 tasks.withType<Test> {
     useJUnitPlatform()
 }

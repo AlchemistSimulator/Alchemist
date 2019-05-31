@@ -81,7 +81,7 @@ object Versions {
 
     const val org_danilopianini_publish_on_central_gradle_plugin: String = "0.1.1" 
 
-    const val boilerplate: String = "0.2.0" // available: "0.2.1"
+    const val boilerplate: String = "0.2.1" 
 
     const val gson_extras: String = "0.2.1" 
 

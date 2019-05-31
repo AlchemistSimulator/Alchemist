@@ -31,7 +31,6 @@ dependencies {
     implementation(project(":alchemist-time"))
     implementation(Libs.gson)
     implementation(Libs.javafxsvg)
-    implementation(Libs.urlclassloader_util)
     implementation(Libs.commons_io)
 
     testRuntimeOnly(project(":alchemist-incarnation-protelis"))

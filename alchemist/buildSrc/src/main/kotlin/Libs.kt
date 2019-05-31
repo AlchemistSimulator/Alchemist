@@ -237,11 +237,6 @@ object Libs {
             "org.danilopianini:thread-inheritable-resource-loader:" +
             Versions.thread_inheritable_resource_loader
 
-    /**
-     * https://github.com/DanySK/urlclassloader-util */
-    const val urlclassloader_util: String = "org.danilopianini:urlclassloader-util:" +
-            Versions.urlclassloader_util
-
     const val org_jetbrains_dokka_gradle_plugin: String =
             "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin:" +
             Versions.org_jetbrains_dokka_gradle_plugin

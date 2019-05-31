@@ -69,6 +69,7 @@ public final class Manhattan2DPosition implements Position2D<Manhattan2DPosition
     }
 
     @Override
+    @Deprecated
     public double getCoordinate(final int dim) {
         if (dim == 0) {
             return xCoord;

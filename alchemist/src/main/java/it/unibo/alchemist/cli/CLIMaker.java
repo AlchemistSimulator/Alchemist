@@ -14,6 +14,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+import com.google.common.math.DoubleMath;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.lang3.ArrayUtils;
@@ -55,7 +56,7 @@ public final class CLIMaker {
                             if (Double.isInfinite(num) && num > 0) {
                                 optBuilder.hasArgs();
                             } else {
-                                if (FastMath.floor(num) != num) {
+                                if (!DoubleMath.isMathematicalInteger(num)) {
                                     throw new IllegalStateException(optionValue + " is not an integer.");
                                 }
                                 optBuilder.numberOfArgs((int) num);

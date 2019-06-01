@@ -77,7 +77,14 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     private LinkingRule<T, P> rule;
     private transient Simulation<T, P> simulation;
     private final SpatialIndex<Node<T>> spatialIndex;
-    private Predicate<Environment<T, P>> terminator = (Predicate<Environment<T, P>> & Serializable) c -> false;
+    private SerializablePredicate<T, P> terminator = c -> false;
+
+    @FunctionalInterface
+    private interface SerializablePredicate<T, P extends Position<P>> extends Predicate<Environment<T, P>>, Serializable {
+        default SerializablePredicate<T, P> orPredicate(Predicate<Environment<T, P>> other) {
+            return e -> this.test(e) || other.test(e);
+        }
+    }
 
     /**
      * @param internalIndex
@@ -123,7 +130,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
 
     @Override
     public final void addTerminator(final Predicate<Environment<T, P>> terminator) {
-        this.terminator = this.terminator.or((Serializable & Predicate<Environment<T, P>>) terminator);
+        this.terminator = this.terminator.orPredicate(terminator);
     }
 
     /**

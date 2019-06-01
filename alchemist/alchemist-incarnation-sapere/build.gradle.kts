@@ -16,3 +16,7 @@ dependencies {
     implementation(Libs.trove4j)
     implementation(Libs.boilerplate)
 }
+
+spotbugs {
+    isIgnoreFailures = true
+}

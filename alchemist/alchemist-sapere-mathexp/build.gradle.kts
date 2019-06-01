@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.spotbugs
+
 /*
  * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
  *
@@ -8,4 +10,8 @@
 
 dependencies {
     implementation(Libs.boilerplate)
+}
+
+spotbugs {
+    isIgnoreFailures = true
 }

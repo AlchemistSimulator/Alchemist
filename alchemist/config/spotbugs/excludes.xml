@@ -6,11 +6,23 @@
 		<Source name="~.*\.scala" />
 	</Match>
 	<Match>
-		<Bug pattern="SE_NO_SERIALVERSIONID" />
+		<Bug pattern="BC_BAD_CAST_TO_ABSTRACT_COLLECTION" />
 		<Source name="~.*\.kt" />
 	</Match>
 	<Match>
 		<Bug pattern="BC_IMPOSSIBLE_CAST" />
+		<Source name="~.*\.kt" />
+	</Match>
+	<Match>
+		<Bug pattern="BC_UNCONFIRMED_CAST" />
+		<Source name="~.*\.kt" />
+	</Match>
+	<Match>
+		<Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE" />
+		<Source name="~.*\.kt" />
+	</Match>
+	<Match>
+		<Bug pattern="SE_NO_SERIALVERSIONID" />
 		<Source name="~.*\.kt" />
 	</Match>
 	<Match>

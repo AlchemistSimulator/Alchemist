@@ -20,7 +20,7 @@ import java.io.Serializable;
  * @param <T>
  *            The parametrization type for reactions
  */
-public interface DependencyGraph<T> extends Serializable {
+public interface DependencyGraph<T> {
 
     /**
      * Given two nodes, the graph assumes they are now neighbors and calculates the

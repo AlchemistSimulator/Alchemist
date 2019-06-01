@@ -111,7 +111,7 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
         }
     }
 
-    private fun addNeigborDirected(n1: Node<T>, n2: Node<T>) {
+    private fun addNeighborDirected(n1: Node<T>, n2: Node<T>) {
         val n2NonGlobalReactions: Iterable<Reaction<T>> by lazy {
             n2.reactions.filterNot { it.outputContext == Context.GLOBAL }
         }
@@ -140,11 +140,11 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
 
     /** @see [DependencyGraph.addNeighbor] */
     override fun addNeighbor(n1: Node<T>, n2: Node<T>) {
-        addNeigborDirected(n1, n2)
-        addNeigborDirected(n2, n1)
+        addNeighborDirected(n1, n2)
+        addNeighborDirected(n2, n1)
     }
 
-    private fun removeNeigborDirected(n1: Node<T>, n2: Node<T>) {
+    private fun removeNeighborDirected(n1: Node<T>, n2: Node<T>) {
         val n2NonGlobalReactions by lazy { n2.reactions.filterNot { it.outputContext == Context.GLOBAL } }
         val n2NeighborhoodReactions by lazy { n2NonGlobalReactions.filter { it.outputContext == Context.NEIGHBORHOOD } }
         val neighborInputInfluencers by lazy {
@@ -169,8 +169,8 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
     }
 
     override fun removeNeighbor(n1: Node<T>, n2: Node<T>) {
-        removeNeigborDirected(n1, n2)
-        removeNeigborDirected(n2, n1)
+        removeNeighborDirected(n1, n2)
+        removeNeighborDirected(n2, n1)
     }
 
     override fun outboundDependencies(reaction: Reaction<T>) = graph.outgoingEdgesOf(reaction).let { edges ->

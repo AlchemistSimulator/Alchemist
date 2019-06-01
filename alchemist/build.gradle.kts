@@ -113,9 +113,10 @@ allprojects {
         isIgnoreFailures = true
         effort = "max"
         reportLevel = "low"
+        isShowProgress = true
         val excludeFile = File("${project.rootProject.projectDir}/config/spotbugs/excludes.xml")
         if (excludeFile.exists()) {
-            excludeFilterConfig = project.resources.text.fromFile(excludeFile)
+            excludeFilter = excludeFile
         }
     }
 

@@ -10,6 +10,14 @@
 		<Source name="~.*\.kt" />
 	</Match>
 	<Match>
+		<Bug pattern="BC_IMPOSSIBLE_CAST" />
+		<Source name="~.*\.kt" />
+	</Match>
+	<Match>
+		<Bug pattern="UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS" />
+		<Source name="~.*\.kt" />
+	</Match>
+	<Match>
 		<Bug pattern="CN_IDIOM_NO_SUPER_CALL" />
 	</Match>
 	<Match>

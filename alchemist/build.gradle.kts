@@ -110,7 +110,7 @@ allprojects {
     }
 
     spotbugs {
-        isIgnoreFailures = true
+//        isIgnoreFailures = true
         effort = "max"
         reportLevel = "low"
         isShowProgress = true

@@ -20,6 +20,7 @@ import com.graphhopper.routing.util.EdgeFilter;
 import com.graphhopper.routing.util.EncodingManager;
 import com.graphhopper.storage.index.QueryResult;
 import com.graphhopper.util.shapes.GHPoint;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.implementations.routes.GraphHopperRoute;
 import it.unibo.alchemist.model.implementations.routes.PolygonalChain;
@@ -376,6 +377,7 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
         return new double[] { sizex, sizey };
     }
 
+    @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE")
     private void initAll(final String fileName) throws IOException {
         Objects.requireNonNull(fileName, "define the file with the map: " + fileName);
         final Optional<URL> file = Optional.of(new File(fileName))

@@ -22,9 +22,11 @@ import org.danilopianini.lang.ImmutableCollectionWithCurrentElement;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -124,7 +126,7 @@ public final class EffectSerializationFactory {
      *             Exception in handling the file
      */
     public static void effectsToFile(final File effectFile, final List<Effect> effects) throws IOException {
-        try (Writer fw = new FileWriter(effectFile)) {
+        try (Writer fw = new OutputStreamWriter(new FileOutputStream(effectFile), Charsets.UTF_8)) {
             GSON.toJson(effects, new TypeToken<List<Effect>>() {
             }.getType(), fw);
         }

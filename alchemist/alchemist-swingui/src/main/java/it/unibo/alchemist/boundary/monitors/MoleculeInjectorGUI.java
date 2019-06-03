@@ -13,6 +13,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -62,8 +63,8 @@ public class MoleculeInjectorGUI<T> extends JPanel {
     static {
         for (final Class<? extends Incarnation> clazz : ClassPathScanner.subTypesOf(Incarnation.class)) {
             try {
-                INCARNATIONS.add(clazz.newInstance());
-            } catch (InstantiationException | IllegalAccessException e) {
+                INCARNATIONS.add(clazz.getDeclaredConstructor().newInstance());
+            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                 L.warn("Could not initialize incarnation {}", clazz);
             }
         }

@@ -35,7 +35,6 @@ import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 /**
  * @param <T>
  */
-@SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")
 public class JOutputMonitorRepresentation<T> extends JPanel implements ItemSelectable {
     /**
      * 
@@ -43,7 +42,7 @@ public class JOutputMonitorRepresentation<T> extends JPanel implements ItemSelec
     private static final long serialVersionUID = 5590060251090393414L;
     private static final Logger L = LoggerFactory.getLogger(JOutputMonitorRepresentation.class);
     private final OutputMonitor<T, ?> monitor;
-    private final transient List<ItemListener> itemListeners = new LinkedList<>();
+    private final List<ItemListener> itemListeners = new LinkedList<>();
     private boolean selected;
 
     /**

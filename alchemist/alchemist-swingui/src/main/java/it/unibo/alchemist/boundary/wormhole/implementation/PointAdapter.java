@@ -39,54 +39,6 @@ public final class PointAdapter<P extends Position2D<? extends P>> implements Se
         y = pos.getY();
     }
 
-    private static int approx(final double d) {
-        return (int) Math.round(d);
-    }
-
-    /**
-     * Builds a {@link PointAdapter} from coordinates.
-     *
-     * @param x
-     *            the x coordinate
-     * @param y
-     *            the y coordinate
-     * @param <P>
-     *            Position type
-     *
-     * @return a {@link PointAdapter}
-     */
-    public static <P extends Position2D<? extends P>> PointAdapter<P> from(final double x, final double y) {
-        return new PointAdapter<>(x, y);
-    }
-
-    /**
-     * Builds a {@link PointAdapter}.
-     *
-     * @param p
-     *            the {@link it.unibo.alchemist.model.interfaces.Position}
-     * @param <P>
-     *            Position type
-     *
-     * @return a {@link PointAdapter}
-     */
-    public static <P extends Position2D<? extends P>> PointAdapter<P> from(final P p) {
-        return new PointAdapter<>(p);
-    }
-
-    /**
-     * Builds a {@link PointAdapter}.
-     *
-     * @param p
-     *            the {@link Point2D}
-     * @param <P>
-     *            Position type
-     *
-     * @return a {@link PointAdapter}
-     */
-    public static <P extends Position2D<? extends P>> PointAdapter<P> from(final Point2D p) {
-        return new PointAdapter<>(p.getX(), p.getY());
-    }
-
     /**
      * @param op
      *            the {@link PointAdapter} to sum
@@ -158,6 +110,54 @@ public final class PointAdapter<P extends Position2D<? extends P>> implements Se
     @Override
     public String toString() {
         return "[" + x + ", " + y + "]";
+    }
+
+    private static int approx(final double d) {
+        return (int) Math.round(d);
+    }
+
+    /**
+     * Builds a {@link PointAdapter} from coordinates.
+     *
+     * @param x
+     *            the x coordinate
+     * @param y
+     *            the y coordinate
+     * @param <P>
+     *            Position type
+     *
+     * @return a {@link PointAdapter}
+     */
+    public static <P extends Position2D<? extends P>> PointAdapter<P> from(final double x, final double y) {
+        return new PointAdapter<>(x, y);
+    }
+
+    /**
+     * Builds a {@link PointAdapter}.
+     *
+     * @param p
+     *            the {@link it.unibo.alchemist.model.interfaces.Position}
+     * @param <P>
+     *            Position type
+     *
+     * @return a {@link PointAdapter}
+     */
+    public static <P extends Position2D<? extends P>> PointAdapter<P> from(final P p) {
+        return new PointAdapter<>(p);
+    }
+
+    /**
+     * Builds a {@link PointAdapter}.
+     *
+     * @param p
+     *            the {@link Point2D}
+     * @param <P>
+     *            Position type
+     *
+     * @return a {@link PointAdapter}
+     */
+    public static <P extends Position2D<? extends P>> PointAdapter<P> from(final Point2D p) {
+        return new PointAdapter<>(p.getX(), p.getY());
     }
 
 }

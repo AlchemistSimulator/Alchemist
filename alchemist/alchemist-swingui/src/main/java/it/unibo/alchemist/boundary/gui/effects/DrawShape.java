@@ -79,6 +79,8 @@ public class DrawShape implements Effect {
     @ExportForGUI(nameToExport = "Maximum property value")
     private RangedInteger maxprop = new RangedInteger(-PROPERTY_SCALE, PROPERTY_SCALE, PROPERTY_SCALE);
     private Color colorCache = Color.BLACK;
+    @Nullable
+    @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
     private transient Molecule molecule;
     @Nullable
     @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")

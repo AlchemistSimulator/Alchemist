@@ -24,6 +24,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.danilopianini.view.ObjectModFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,7 @@ import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 /**
  * @param <T>
  */
+@SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")
 public class JOutputMonitorRepresentation<T> extends JPanel implements ItemSelectable {
     /**
      * 

@@ -23,6 +23,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -35,6 +36,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  *            Concentration type
  */
 @Deprecated
+@SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")
 public class TimeStepMonitor<T, P extends Position<? extends P>> extends JPanel implements OutputMonitor<T, P> {
 
     private static final long serialVersionUID = 5818408644038869442L;
@@ -119,7 +121,7 @@ public class TimeStepMonitor<T, P extends Position<? extends P>> extends JPanel 
             if (needsUpdate) {
                 needsUpdate = false;
                 t.setText(time + (isFinished ? FINISHED : BLANK));
-                s.setText(Long.toString(step) + (isFinished ? FINISHED : BLANK));
+                s.setText(step + (isFinished ? FINISHED : BLANK));
             }
         });
     }

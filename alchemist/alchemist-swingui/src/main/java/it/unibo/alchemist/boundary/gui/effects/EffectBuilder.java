@@ -7,33 +7,24 @@
  */
 package it.unibo.alchemist.boundary.gui.effects;
 
-import java.awt.Container;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.ClassPathScanner;
+import it.unibo.alchemist.boundary.gui.AlchemistSwingUI;
+import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-
-import it.unibo.alchemist.ClassPathScanner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import it.unibo.alchemist.boundary.gui.AlchemistSwingUI;
-import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
-
 /**
  */
+@SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")
 public class EffectBuilder extends JFrame implements ActionListener {
 
     private static final long serialVersionUID = -5030318714404946998L;
@@ -41,7 +32,6 @@ public class EffectBuilder extends JFrame implements ActionListener {
     private static final Logger L = LoggerFactory.getLogger(EffectBuilder.class);
     private static final String ALCHEMIST_EFFECT_BUILDER = LocalizedResourceBundle.getString("alchemist_effect_builder");
     private static final String EFFECT = LocalizedResourceBundle.getString("effect");
-    private final JButton button = new JButton(LocalizedResourceBundle.getString("done"));
     private final CountDownLatch barrier = new CountDownLatch(1);
     private final JComboBox<Class<? extends Effect>> effectBox;
 
@@ -68,6 +58,7 @@ public class EffectBuilder extends JFrame implements ActionListener {
         pane.add(effectBox);
         final JPanel p4 = new JPanel();
         final Icon done = AlchemistSwingUI.loadScaledImage("/oxygen/categories/applications-graphics.png");
+        final JButton button = new JButton(LocalizedResourceBundle.getString("done"));
         button.setIcon(done);
         p4.add(button);
         pane.add(p4);

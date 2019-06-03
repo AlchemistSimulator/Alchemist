@@ -39,7 +39,7 @@ public class JEffectRepresentation<T> extends JTapeFeatureStack implements ItemS
     private final Effect effect;
     private final GraphicalOutputMonitor<T, ?> monitor;
     private final JLabel info;
-    private final transient List<ItemListener> itemListeners = new LinkedList<>();
+    private final List<ItemListener> itemListeners = new LinkedList<>();
     private boolean selected;
 
     /**

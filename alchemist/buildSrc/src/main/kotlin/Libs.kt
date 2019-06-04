@@ -32,6 +32,17 @@ object Libs {
      * http://github.com/davidmoten/rtree */
     const val rtree: String = "com.github.davidmoten:rtree:" + Versions.rtree
 
+    /**
+     * https://github.com/jIconFont/jiconfont-google_material_design_icons */
+    const val jiconfont_google_material_design_icons: String =
+            "com.github.jiconfont:jiconfont-google_material_design_icons:" +
+            Versions.jiconfont_google_material_design_icons
+
+    /**
+     * https://github.com/jIconFont/jiconfont-javafx */
+    const val jiconfont_javafx: String = "com.github.jiconfont:jiconfont-javafx:" +
+            Versions.jiconfont_javafx
+
     const val com_github_maiflai_scalatest_gradle_plugin: String =
             "com.github.maiflai.scalatest:com.github.maiflai.scalatest.gradle.plugin:" +
             Versions.com_github_maiflai_scalatest_gradle_plugin
@@ -75,6 +86,10 @@ object Libs {
     /**
      * http://code.google.com/p/simplelatlng */
     const val simplelatlng: String = "com.javadocmd:simplelatlng:" + Versions.simplelatlng
+
+    /**
+     * http://www.jfoenix.com/ */
+    const val jfoenix: String = "com.jfoenix:jfoenix:" + Versions.jfoenix
 
     const val com_jfrog_bintray_gradle_plugin: String =
             "com.jfrog.bintray:com.jfrog.bintray.gradle.plugin:" +
@@ -314,6 +329,10 @@ object Libs {
     /**
      * http://www.protelis.org */
     const val protelis_lang: String = "org.protelis:protelis-lang:" + Versions.org_protelis
+
+    /**
+     * http://github.com/ronmamo/reflections */
+    const val reflections: String = "org.reflections:reflections:" + Versions.reflections
 
     /**
      * http://www.scala-lang.org/ */

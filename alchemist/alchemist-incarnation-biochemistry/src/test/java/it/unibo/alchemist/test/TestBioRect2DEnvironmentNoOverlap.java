@@ -40,16 +40,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.math3.util.FastMath;
-import org.junit.Before;
-import org.junit.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import static org.junit.jupiter.api.Assertions.*;
 

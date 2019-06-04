@@ -19,8 +19,15 @@ dependencies {
     implementation(Libs.miglayout_swing)
     implementation(Libs.mapsforge_map_awt)
     implementation(Libs.gson_extras)
+    implementation(Libs.jfoenix)
+    implementation(Libs.commons_lang3)
+    implementation(Libs.javafxsvg)
+    implementation(Libs.javalib_java7)
+    implementation(Libs.controlsfx)
+    implementation(Libs.jiconfont_javafx)
+    implementation(Libs.jiconfont_google_material_design_icons)
     api(Libs.tornadofx)
-    //implementation("org.reflections:reflections:0.9.11")
+    implementation(Libs.reflections)
     // TODO: deprecated, must be removed
     implementation(Libs.javalib_java7) {
         exclude(group = "org.ow2.asm")

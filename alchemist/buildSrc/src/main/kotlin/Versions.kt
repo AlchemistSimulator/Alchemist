@@ -17,6 +17,10 @@ object Versions {
 
     const val rtree: String = "0.8.6" 
 
+    const val jiconfont_google_material_design_icons: String = "2.2.0.1" // available: "2.2.0.2"
+
+    const val jiconfont_javafx: String = "1.0.0" 
+
     const val com_github_maiflai_scalatest_gradle_plugin: String = "0.25" 
 
     const val com_github_spotbugs_gradle_plugin: String = "1.6.9" // available: "2.0.0"
@@ -34,6 +38,8 @@ object Versions {
     const val com_graphhopper: String = "0.12.0" // available: "0.13.0-tardur1"
 
     const val simplelatlng: String = "1.3.1" 
+
+    const val jfoenix: String = "1.10.0" // available: "9.0.9"
 
     const val com_jfrog_bintray_gradle_plugin: String = "1.8.4" 
 
@@ -69,7 +75,7 @@ object Versions {
 
     const val bcel: String = "6.3.1" 
 
-    const val commons_lang3: String = "3.9" 
+    const val commons_lang3: String = "3.8.1" // available: "3.9"
 
     const val commons_math3: String = "3.6.1" 
 
@@ -77,7 +83,7 @@ object Versions {
 
     const val groovy: String = "2.5.7" 
 
-    const val controlsfx: String = "8.40.14" // available: "11.0.0"
+    const val controlsfx: String = "9.0.0" // available: "11.0.0"
 
     const val org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin: String = "0.2.2" 
 
@@ -120,6 +126,8 @@ object Versions {
     const val pegdown: String = "1.6.0" 
 
     const val org_protelis: String = "12.1.0" 
+
+    const val reflections: String = "0.9.11" 
 
     const val org_scala_lang: String = "2.12.2" // available: "2.13.0-M5-1775dba"
 

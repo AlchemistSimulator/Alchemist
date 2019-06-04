@@ -1,6 +1,6 @@
 package it.unibo.alchemist.characteristics.cognitive
 
-import it.unibo.alchemist.characteristics.utils.Functions
+import it.unibo.alchemist.characteristics.utils.logistic
 
 class IntentionWalkRandomly(
     private val desireWalkRandomly: () -> Double,
@@ -8,7 +8,9 @@ class IntentionWalkRandomly(
 ) : BodyCognitiveCharacteristic() {
 
     override fun combinationFunction() =
-            desireEvacuate() * Functions.logistic(logisticSigma, logisticTau,
-                    wInhibitingIntention * desireEvacuate(),
-                    wAmplifyingIntention * desireWalkRandomly())
+        desireEvacuate() * logistic(
+            logisticSigma, logisticTau,
+            wInhibitingIntention * desireEvacuate(),
+            wAmplifyingIntention * desireWalkRandomly()
+        )
 }

@@ -17,5 +17,5 @@ class CognitiveBehaviour<T>(
     override fun getRate() = timeDistribution.rate
 
     override fun updateInternalStatus(curTime: Time?, executed: Boolean, env: Environment<T, *>?) =
-            ped.cognitiveCharacteristics().forEach { it.update(rate) }
+        ped.cognitiveCharacteristics().forEach { it.update(rate) }
 }

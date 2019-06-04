@@ -2,13 +2,19 @@ package it.unibo.alchemist.characteristics.utils
 
 import kotlin.math.pow
 
-class Functions {
+/**
+ * https://en.wikipedia.org/wiki/Logistic_function
+ *
+ * @param sigma Steepness parameter of the logistic function.
+ * @param tau Threshold parameter of the logistic function.
+ */
+fun logistic(sigma: Double, tau: Double, vararg parameters: Double) =
+    1 / (1 + Math.E.pow(-sigma * (parameters.sum() - tau)))
 
-    companion object {
-        fun logistic(sigma: Double, tau: Double, vararg parameters: Double) =
-                1 / (1 + Math.E.pow(-sigma * (parameters.sum() - tau)))
-
-        fun advancedLogistic(sigma: Double, tau: Double, vararg parameters: Double) =
-                logistic(sigma, tau, *parameters) - 1 / (1 + Math.E.pow(sigma*tau)) * (1 + Math.E.pow(-sigma*tau))
-    }
-}
+/**
+ *
+ * @param sigma Steepness parameter of the advanced logistic function.
+ * @param tau Threshold parameter of the advanced logistic function.
+ */
+fun advancedLogistic(sigma: Double, tau: Double, vararg parameters: Double) =
+    logistic(sigma, tau, *parameters) - 1 / (1 + Math.E.pow(sigma*tau)) * (1 + Math.E.pow(-sigma*tau))

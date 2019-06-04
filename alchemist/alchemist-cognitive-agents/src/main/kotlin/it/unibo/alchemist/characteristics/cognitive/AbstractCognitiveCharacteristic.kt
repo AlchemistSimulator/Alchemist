@@ -8,12 +8,11 @@ abstract class AbstractCognitiveCharacteristic : CognitiveCharacteristic {
 
     abstract fun combinationFunction(): Double
 
-    // must be put in a configuration file
+    // TODO: These values must be set inside a configuration file
     companion object {
+        const val wSensing = 0.5
         const val wAffectiveBiasing = 1.0
         const val wPersisting = 0.95
-        const val wComplying = 1.0
-        const val wNonComplying = 1.0
         const val wAmplifyingFeeling = 1.0
         const val wInhibitingFeeling = 1.0
         const val wAmplifyingEvacuation = 1.0

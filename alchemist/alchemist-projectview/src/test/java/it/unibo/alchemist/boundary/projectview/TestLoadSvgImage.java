@@ -9,8 +9,8 @@ package it.unibo.alchemist.boundary.projectview;
 
 import java.io.InputStream;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import javafx.scene.image.Image;
@@ -27,9 +27,9 @@ public class TestLoadSvgImage {
     @Test
     public void testImage() {
         final InputStream imageData = ResourceLoader.getResourceAsStream("icon/testicon.svg");
-        Assert.assertNotNull(imageData);
+        Assertions.assertNotNull(imageData);
         final Image image = new Image(imageData);
-        Assert.assertNotNull(image);
+        Assertions.assertNotNull(image);
     }
 
 }

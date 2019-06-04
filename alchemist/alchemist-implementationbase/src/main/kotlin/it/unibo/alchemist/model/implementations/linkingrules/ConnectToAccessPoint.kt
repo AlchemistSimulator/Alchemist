@@ -15,8 +15,10 @@ import it.unibo.alchemist.model.interfaces.Neighborhood
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 
-class ConnectToAccessPoint<T, P : Position<P>>(radius: Double, val accessPointId: Molecule)
-    : ConnectWithinDistance<T, P>(radius) {
+class ConnectToAccessPoint<T, P : Position<P>>(
+    radius: Double,
+    val accessPointId: Molecule
+) : ConnectWithinDistance<T, P>(radius) {
 
     private val Node<T>.isAccessPoint
         get() = contains(accessPointId)

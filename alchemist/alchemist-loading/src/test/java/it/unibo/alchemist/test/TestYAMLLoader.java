@@ -21,8 +21,8 @@ import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.test.util.TestNode;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import java.io.InputStream;
@@ -31,10 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * A series of tests checking that our Yaml Loader is working as expected.
@@ -64,10 +61,9 @@ public class TestYAMLLoader {
     @Test
     public void testCustomNodes() {
         testNoVar("synthetic/customnode.yml")
-                .forEach(n -> assertTrue(
+        .forEach(n -> assertTrue(n instanceof TestNode,
                 "Node are not instances of " + TestNode.class.getName()
-                + " as expected, but " + n.getClass().getName() + " instead",
-                n instanceof TestNode));
+                + " as expected, but " + n.getClass().getName() + " instead"));
     }
 
     /**
@@ -162,7 +158,7 @@ public class TestYAMLLoader {
     }
 
     private static <T, P extends Position<P>> Environment<T, P> testLoading(final InputStream resource, final Map<String, Double> vars) {
-        assertNotNull("Missing test resource " + resource, resource);
+        assertNotNull(resource, "Missing test resource " + resource);
         final Environment<T, P> env = new YamlLoader(resource).getWith(vars);
         final Simulation<T, P> sim = new Engine<>(env, 10000);
         sim.play();
@@ -170,7 +166,7 @@ public class TestYAMLLoader {
 //            it.unibo.alchemist.boundary.gui.SingleRunGUI.make(sim);
 //        }
         sim.run();
-        sim.getError().ifPresent(e -> Assert.fail(e.getMessage()));
+        sim.getError().ifPresent(e -> Assertions.fail(e.getMessage()));
         return env;
     }
 

@@ -7,13 +7,13 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static it.unibo.alchemist.model.interfaces.Context.LOCAL;
 import static it.unibo.alchemist.model.interfaces.Context.NEIGHBORHOOD;
 import static it.unibo.alchemist.model.interfaces.Context.GLOBAL;
 import static it.unibo.alchemist.model.interfaces.Context.getWider;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 /**

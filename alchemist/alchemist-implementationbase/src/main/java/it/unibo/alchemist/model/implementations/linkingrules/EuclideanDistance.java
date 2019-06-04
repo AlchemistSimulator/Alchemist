@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 @Deprecated
 public class EuclideanDistance<T, P extends Position<P>> extends ConnectWithinDistance<T, P> {
 
+    private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = LoggerFactory.getLogger(EuclideanDistance.class);
 
     /**

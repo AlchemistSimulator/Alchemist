@@ -13,7 +13,5 @@ prepare_environment.sh
 *.cache-tests
 out/
 .DS_Store
-*.iml
 *.kate-swp
-*/.idea/libraries 
-.idea/
+**/*.kotlintest*/*

@@ -15,9 +15,10 @@ import java.util.regex.Pattern
 
 object ClassPathScanner {
 
-    private fun classGraphForPackage(inPackage: String?): ClassGraph = ClassGraph().also {
+    private fun classGraphForPackage(inPackage: String?): ClassGraph = ClassGraph().apply {
         if (inPackage != null) {
-            it.whitelistPackages(inPackage)
+            whitelistPackages(inPackage)
+            blacklistPackages("org.gradle")
         }
     }
 

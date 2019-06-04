@@ -35,10 +35,7 @@ typealias Edge<T> = Pair<Reaction<T>, Reaction<T>>
 class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : DependencyGraph<T> {
     private val inGlobals = ArrayListSet<Reaction<T>>()
     private val outGlobals = ArrayListSet<Reaction<T>>()
-    private val graph = DefaultDirectedGraph<Reaction<T>, Edge<T>> { source, target ->
-        Pair(source, target).takeUnless { source === target }
-            ?: throw IllegalStateException("Error: dependency auto-arc")
-    }
+    private val graph: DefaultDirectedGraph<Reaction<T>, Edge<T>> = DefaultDirectedGraph(null)
 
     override fun createDependencies(newReaction: Reaction<T>) {
         val allReactions = graph.vertexSet()
@@ -83,8 +80,8 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
         if (!graph.addVertex(newReaction)) {
             throw IllegalArgumentException("$newReaction was already in the dependency graph")
         }
-        inboundCandidates.forEach { graph.addEdge(it, newReaction) }
-        outboundCandidates.forEach { graph.addEdge(newReaction, it) }
+        inboundCandidates.forEach { graph.addEdge(it, newReaction, Edge(it, newReaction)) }
+        outboundCandidates.forEach { graph.addEdge(newReaction, it, Edge(newReaction, it)) }
     }
 
     private val Node<T>.neighborhood
@@ -114,7 +111,7 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
         }
     }
 
-    private fun addNeigborDirected(n1: Node<T>, n2: Node<T>) {
+    private fun addNeighborDirected(n1: Node<T>, n2: Node<T>) {
         val n2NonGlobalReactions: Iterable<Reaction<T>> by lazy {
             n2.reactions.filterNot { it.outputContext == Context.GLOBAL }
         }
@@ -137,17 +134,17 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
                 else -> emptyList()
             }.asSequence()
             .filter { reaction.dependsOn(it) }
-            .forEach { graph.addEdge(it, reaction) }
+            .forEach { graph.addEdge(it, reaction, Edge(it, reaction)) }
         }
     }
 
     /** @see [DependencyGraph.addNeighbor] */
     override fun addNeighbor(n1: Node<T>, n2: Node<T>) {
-        addNeigborDirected(n1, n2)
-        addNeigborDirected(n2, n1)
+        addNeighborDirected(n1, n2)
+        addNeighborDirected(n2, n1)
     }
 
-    private fun removeNeigborDirected(n1: Node<T>, n2: Node<T>) {
+    private fun removeNeighborDirected(n1: Node<T>, n2: Node<T>) {
         val n2NonGlobalReactions by lazy { n2.reactions.filterNot { it.outputContext == Context.GLOBAL } }
         val n2NeighborhoodReactions by lazy { n2NonGlobalReactions.filter { it.outputContext == Context.NEIGHBORHOOD } }
         val neighborInputInfluencers by lazy {
@@ -172,8 +169,8 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
     }
 
     override fun removeNeighbor(n1: Node<T>, n2: Node<T>) {
-        removeNeigborDirected(n1, n2)
-        removeNeigborDirected(n2, n1)
+        removeNeighborDirected(n1, n2)
+        removeNeighborDirected(n2, n1)
     }
 
     override fun outboundDependencies(reaction: Reaction<T>) = graph.outgoingEdgesOf(reaction).let { edges ->

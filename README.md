@@ -1,9 +1,50 @@
 # Alchemist
 
-Alchemist is a simulator built upon the kinetic Monte Carlo idea, but heavily enriched in order to work as a developing platform for pervasive computing. Please refer to [the Alchemist main website][Alchemist].
+![Alchemist logo](https://alchemistsimulator.github.io/latest/assets/media/logo.svg)
 
+Alchemist is a simulator for pervasive, aggregate, and nature-inspired computing.
+At the moment, the simulator features:
 
-## Status Badges
+* Executing [Protelis](http://protelis.org) programs
+* Executing [Scafi](https://scafi.github.io/) programs
+* Executing biological simulations with chemical-like reactions
+* Executing [SAPERE](http://dx.doi.org/10.1016/j.pmcj.2014.12.002) -like programs, written in a tuple based language resembling [Linda](https://doi.org/10.1109%2Fmc.1986.1663305)
+* Simulating bidimensional environments
+* Simulating real-world maps, with support for navigation along roads, and for importing gpx format gps traces
+* Simulating indoor environments by importing black and white images
+* Creating batches and run with different value of parameters
+* Run in grid computing environments
+
+## Users
+
+Alchemist users should rely on the documentation available on [the official Alchemist website](http://alchemistsimulator.github.io/).
+Alchemist is available on Maven Central. You can import all the components by importing the `it.unibo.alchemist:alchemist` artifact.
+
+### Gradle
+
+Add this dependency to your build, substituting `ALCHEMIST_VERSION` with the version you want to use (change the scope appropriately if you need Alchemist only for runtime or testing).
+
+```kotlin
+dependencies {
+    implementation("it.unibo.alchemist:alchemist:ALCHEMIST_VERSION")
+}
+```
+
+### Maven
+
+Add this dependency to your build, substitute `ALCHEMIST_VERSION` with the version you want to use. If you do not need the whole Alchemist machinery but just a sub-part of it, you can restrict the set of imported artifacts by using as dependencies the modules you are actually in need of.
+
+```xml
+<dependency>
+    <groupId>it.unibo.alchemist</groupId>
+    <artifactId>alchemist</artifactId>
+    <version>ALCHEMIST_VERSION</version>
+</dependency>
+```
+
+## Developers
+
+### Status Badges
 
 #### Stable branch
 [![Build Status](https://travis-ci.org/AlchemistSimulator/Alchemist.svg?branch=master)](https://travis-ci.org/AlchemistSimulator/Alchemist)
@@ -14,41 +55,11 @@ Alchemist is a simulator built upon the kinetic Monte Carlo idea, but heavily en
 #### Development branch
 [![Build Status](https://travis-ci.org/AlchemistSimulator/Alchemist.svg?branch=develop)](https://travis-ci.org/AlchemistSimulator/Alchemist)
 
-## Import via Maven / Gradle
-
-Alchemist is available on Maven Central. You can import all the components by importing the `it.unibo.alchemist:alchemist` artifact.
-
-### Maven
-
-Add this dependency to your build, substitute `ALCHEMIST_VERSION` with the version you want to use.
-
-```xml
-<dependency>
-    <groupId>it.unibo.alchemist</groupId>
-    <artifactId>alchemist</artifactId>
-    <version>ALCHEMIST_VERSION</version>
-</dependency>
-```
-
-### Gradle
-
-Add this dependency to your build, substituting `ALCHEMIST_VERSION` with the version you want to use (change the scope appropriately if you need Alchemist only for runtime or testing).
-
-```groovy
-compile 'it.unibo.alchemist:alchemist:ALCHEMIST_VERSION'
-```
-
-### Importing a subset of the modules
-
-If you do not need the whole Alchemist machinery but just a sub-part of it, you can restrict the set of imported artifacts by using as dependencies the modules you are actually in need of.
-
 ### Javadocs 
 
 Javadocs are available for both [the latest stable version][Javadoc] and [the latest development snapshot][Javadoc-unstable].
 If you need to access the documentation for any older stable version, [javadoc.io](https://www.javadoc.io/doc/it.unibo.alchemist/alchemist/) is probably the right place to search in.
 
-
-## Notes for Developers
 
 ### Importing the project
 The project is easiest to import in IntelliJ Idea.
@@ -107,18 +118,6 @@ This will trigger the creation of the artifacts the executions of the tests, the
 
 #### Build reports
 Every Alchemist build triggers the creation of a set of reports, that provide hints regarding the current status of quality of the code base. Such reports are available for both [the latest stable][reports] and [the latest development][reports-unstable] versions.
-
-#### Release numbers explained
-We release often. We are not scared of high version numbers, they are just numbers in the end.
-We use a three levels numbering:
-
-* **Update of the minor number**: there are some small changes, and no backwards compatibility is broken. Probably, it is better saying that there is nothing suggesting that any project that depends on this one may have any problem compiling or running. Raise the minor version if there is just a bug fix, or a code improvement, such that no interface, constructor, or non-private member of a class is modified either in syntax or in semantics. Also, no new classes should be provided.
-	* Example: switch from 1.2.3 to 1.2.4
-* **Update of the middle number**: there are changes that should not break any backwards compatibility, but the possibility exists. Raise the middle version number if there is a remote probability that projects that depend upon this one may have problems compiling if they update. For instance, if you have added a new class, since a depending project may have already defined it, that is enough to trigger a mid-number change. Also updating the version ranges of a dependency, or adding a new dependency, should cause the mid-number to raise. As for minor numbers, no changes to interfaces, constructors or non-private member of classes are allowed. If mid-number is update, minor number should be reset to 0.
-	* Example: switch from 1.2.3 to 1.3.0
-* **Update of the major number**: *non-backwards-compatible change*. If a change in interfaces, constructors, or public member of some class have happened, a new major number should be issued. This is also the case if the semantics of some method has changed. In general, if there is a high probability that projects depending upon this one may experience compile-time or run-time issues if they switch to the new version, then a new major number should be adopted. If the major version number is upgraded, the mid and minor numbers should be reset to 0.
-	* Example: switch from 1.2.3 to 2.0.0
-
 
 [Alchemist]: http://alchemistsimulator.github.io/
 [Javadoc]: http://alchemist-doc.surge.sh/

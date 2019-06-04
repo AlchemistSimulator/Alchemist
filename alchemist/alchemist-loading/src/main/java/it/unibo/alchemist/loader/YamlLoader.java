@@ -814,7 +814,7 @@ public final class YamlLoader implements Loader {
         return new BuilderConfiguration<>(ImmutableMap.of(PARAMETER, Object.class), emptyMap(), factory, m -> supplier.apply(m.get(PARAMETER)));
     }
 
-    private class Builder<T> {
+    private static class Builder<T> {
         private final @Nonnull Class<? super T> clazz;
         private final @Nonnull Set<BuilderConfiguration<T>> supportedConfigs;
         Builder(@Nonnull final Class<? super T> clazz, @Nonnull final BuilderConfiguration<T> supportedConfig, final Factory factory) {

@@ -26,8 +26,11 @@ class SimpleNeighborhood<T, P : Position<P>> private constructor(
     private val neighbors: ImmutableListSet<out Node<T>>
 ) : Neighborhood<T> {
 
-    internal constructor(env: Environment<T, P>, center: Node<T>, neighbors: Iterable<Node<T>>)
-        : this(env, center, ImmutableListSet.Builder<Node<T>>().addAll(neighbors).build())
+    internal constructor(
+        env: Environment<T, P>,
+        center: Node<T>,
+        neighbors: Iterable<Node<T>>
+    ) : this(env, center, ImmutableListSet.Builder<Node<T>>().addAll(neighbors).build())
 
     override fun clone() = SimpleNeighborhood(environment, center, ArrayListSet(neighbors))
 

@@ -1,4 +1,12 @@
 uiDesigner.xml
 buildProfile/
+.kotlintest/
+*.iml
+.idea/libraries/
+gradle.xml
+modules.xml
+scala_compiler.xml
+vcs.xml
+compiler.xml
+misc.xml
 .idea/workspace.xml
-.idea/compiler.xml

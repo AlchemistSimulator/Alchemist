@@ -10,8 +10,8 @@ package it.unibo.alchemist.test
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods
 import it.unibo.alchemist.model.implementations.nodes.IntNode
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 /**
  * Tests pertaining to the [it.unibo.alchemist.model.implementations.neighborhoods] package.
@@ -28,7 +28,7 @@ class TestNeighborhood {
         val n2 = IntNode(env)
         val neigh1 = Neighborhoods.make(env, n1, mutableListOf(n2))
         val neigh2 = neigh1.remove(n2)
-        Assert.assertEquals(0, neigh2.size())
-        Assert.assertTrue(neigh1.neighbors.contains(n2))
+        Assertions.assertEquals(0, neigh2.size())
+        Assertions.assertTrue(neigh1.neighbors.contains(n2))
     }
 }

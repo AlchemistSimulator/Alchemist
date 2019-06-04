@@ -23,7 +23,7 @@ import java.io.Serializable;
  * 
  * @param <T>
  */
-public interface Scheduler<T> extends Serializable {
+public interface Scheduler<T> {
 
     /**
      * Adds a reaction to the data structure.

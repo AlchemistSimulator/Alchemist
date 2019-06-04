@@ -179,7 +179,7 @@ public class BiochemicalReactionBuilder<P extends Position<P>> {
             time = timeDistribution;
             this.node = currentNode;
             env = environment;
-            reaction = new BiochemicalReaction(node, time, env);
+            reaction = new BiochemicalReaction(node, time, env, rand);
             factory = new FactoryBuilder()
                     .withAutoBoxing()
                     .withBooleanIntConversions()

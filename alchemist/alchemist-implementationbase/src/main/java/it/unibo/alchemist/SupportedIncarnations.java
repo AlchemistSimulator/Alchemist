@@ -61,7 +61,7 @@ public final class SupportedIncarnations {
     public static <T, P extends Position<? extends P>> Optional<Incarnation<T, P>> get(final String s) {
         final String cmp = preprocess(s);
         return Optional.ofNullable(INCARNATIONS.get(cmp))
-                .map(Unchecked.<Class<? extends Incarnation>, Incarnation<T, P>>function(Class::newInstance));
+                .map(Unchecked.<Class<? extends Incarnation>, Incarnation<T, P>>function(it -> it.getDeclaredConstructor().newInstance()));
     }
 
     private static String preprocess(final String s) {

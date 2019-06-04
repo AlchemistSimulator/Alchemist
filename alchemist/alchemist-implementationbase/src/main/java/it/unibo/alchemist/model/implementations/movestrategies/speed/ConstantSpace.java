@@ -18,6 +18,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
  */
 public final class ConstantSpace<P extends Position<P>> implements SpeedSelectionStrategy<P> {
 
+    private static final long serialVersionUID = 1L;
     private final double space;
 
     /**

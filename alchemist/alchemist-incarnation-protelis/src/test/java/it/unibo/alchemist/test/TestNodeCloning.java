@@ -7,7 +7,18 @@
  */
 package it.unibo.alchemist.test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.Collections;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.kaikikm.threadresloader.ResourceLoader;
+
 import com.google.common.collect.ImmutableMap;
+
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -20,14 +31,6 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
-import java.util.Collections;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import org.junit.Before;
-import org.junit.Test;
-import org.kaikikm.threadresloader.ResourceLoader;
-
-import static org.junit.Assert.assertEquals;
 
 public class TestNodeCloning<P extends Position<P>> {
 
@@ -37,15 +40,13 @@ public class TestNodeCloning<P extends Position<P>> {
     private static final long SIMULATED_STEPS = 5000;
     private static final long ENABLE_STEP = 50;
     private static final long ENABLE_CHECKS = ENABLE_STEP + 10;
-    private static final double[] X = {-30.72191619873047, -34.62321853637695, -33.585994720458987, -26.3700008392334};
-    private static final double[] Y = {-9.75, -6.039149761199951, -1.3899999856948853, -9.899999618530274};
     private Environment<Object, P> env;
     private Simulation<Object, P> sim;
 
     /***
      * Prepare the simulation.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         final String pathYaml = "gradient.yml";
         final YamlLoader loader = new YamlLoader(ResourceLoader.getResourceAsStream(pathYaml));
@@ -62,21 +63,20 @@ public class TestNodeCloning<P extends Position<P>> {
 
     /***
      * Tests that gradient values are consistent and stable.
-     *
+     * 
      * @throws Throwable in case of simulation errors
      */
     @Test
     public void test() throws Throwable {
-        sim.schedule(() -> {
+        sim.schedule(()-> {
             final Node<Object> node0 = env.getNodeByID(0);
             node0.setConcentration(SOURCEMOL, false);
             node0.setConcentration(ENABLEDMOL, true);
             // CHECKSTYLE:OFF - positions are copied from a real experiment
-            // Disable Checkstyle doesn't work with Codacy, use constant arrays fixes it
-            env.moveNodeToPosition(node0, env.makePosition(X[0], Y[0]));
-            makeNode(X[1], Y[1], true, false);
-            makeNode(X[2], Y[2], true, true);
-            makeNode(X[3], Y[3], false, false);
+            env.moveNodeToPosition(node0, env.makePosition(-30.72191619873047, -9.75));
+            makeNode(-34.62321853637695, -6.039149761199951, true, false);
+            makeNode(-33.585994720458987, -1.3899999856948853, true, true);
+            makeNode(-26.3700008392334, -9.899999618530274, false, false);
             //CHECKSTYLE:ON
         });
         // 2(S) -- 1 -- 0 -- 3
@@ -84,7 +84,6 @@ public class TestNodeCloning<P extends Position<P>> {
         final BiFunction<Integer, Integer, Double> dist = (a, b) -> env.getDistanceBetweenNodes(nid.apply(a), nid.apply(b));
         sim.addOutputMonitor(new OutputMonitor<Object, P>() {
             private static final long serialVersionUID = 1L;
-
             @Override
             public void stepDone(final Environment<Object, P> env, final Reaction<Object> r, final Time time, final long step) {
                 final ImmutableMap<Node<Object>, Double> expectations = ImmutableMap.of(
@@ -104,7 +103,6 @@ public class TestNodeCloning<P extends Position<P>> {
                     expectations.forEach((node, expected) -> assertEquals(expected, node.getConcentration(DATAMOL)));
                 }
             }
-
             @Override
             public void initialized(final Environment<Object, P> env) { }
             @Override

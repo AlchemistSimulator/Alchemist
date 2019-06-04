@@ -7,13 +7,13 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -53,7 +53,7 @@ public class TestGPSLoader {
     /**
      * 
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         CLASS_ALIGNMENT_NO_ARG.add(CLASS_TIME_ALIGNMENT_TO_FIRST_TRACE);
         CLASS_ALIGNMENT_NO_ARG.add(CLASS_TIME_ALIGNMENT_TO_SIMULATION_TIME);
@@ -75,7 +75,7 @@ public class TestGPSLoader {
                         fail("not loading all trace");
                     }
                 }
-                assertFalse("Load more traces than expected", trace.hasNext());
+                assertFalse(trace.hasNext());
             } catch (Exception e) {
                 fail(e.getMessage());
             }
@@ -90,7 +90,7 @@ public class TestGPSLoader {
                     fail("not loading all trace");
                 }
             }
-            assertFalse("Load more traces of the due", trace.hasNext());
+            assertFalse(trace.hasNext());
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -105,7 +105,7 @@ public class TestGPSLoader {
                     fail("not loading all trace");
                 }
             }
-            assertTrue("the iterator does not cycle", trace.hasNext());
+            assertTrue(trace.hasNext());
             assertEquals(points, TOTAL_POINTS);
         } catch (Exception e) {
             fail(e.getMessage());

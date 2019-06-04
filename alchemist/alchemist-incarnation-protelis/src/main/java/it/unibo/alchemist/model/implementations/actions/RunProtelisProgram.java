@@ -13,7 +13,6 @@ import java.io.ObjectInputStream;
 
 import it.unibo.alchemist.model.interfaces.Dependency;
 import org.apache.commons.math3.random.RandomGenerator;
-import org.danilopianini.lang.LangUtils;
 import org.danilopianini.util.ImmutableListSet;
 import org.danilopianini.util.ListSet;
 import org.protelis.lang.ProtelisLoader;
@@ -32,6 +31,8 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.protelis.AlchemistExecutionContext;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  */
@@ -58,13 +59,12 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
             final RandomGenerator rand,
             final org.protelis.vm.ProtelisProgram prog,
             final double retentionTime) {
-        name = new SimpleMolecule(prog.getName());
-        LangUtils.requireNonNull(env, r, n, prog, rand);
-        program = prog;
-        environment = env;
-        node = n;
-        random = rand;
-        reaction = r;
+        name = new SimpleMolecule(prog.getName().toString());
+        program = requireNonNull(prog);
+        environment = requireNonNull(env);
+        node = requireNonNull(n);
+        random = requireNonNull(rand);
+        reaction = requireNonNull(r);
         final AlchemistNetworkManager netmgr = new AlchemistNetworkManager(environment, node, reaction, this, retentionTime);
         node.addNetworkManger(this, netmgr);
         final ExecutionContext ctx = new AlchemistExecutionContext<P>(env, n, r, rand, netmgr);

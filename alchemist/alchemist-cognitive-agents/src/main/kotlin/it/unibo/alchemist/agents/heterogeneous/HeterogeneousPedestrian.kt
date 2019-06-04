@@ -2,9 +2,7 @@ package it.unibo.alchemist.agents.heterogeneous
 
 import it.unibo.alchemist.agents.Pedestrian
 import it.unibo.alchemist.characteristics.individual.Age
-import it.unibo.alchemist.characteristics.individual.Compliance
 import it.unibo.alchemist.characteristics.individual.Gender
-import it.unibo.alchemist.characteristics.individual.Speed
 
 /**
  * An heterogeneous pedestrian is a pedestrian where individual characteristics are taken into consideration.

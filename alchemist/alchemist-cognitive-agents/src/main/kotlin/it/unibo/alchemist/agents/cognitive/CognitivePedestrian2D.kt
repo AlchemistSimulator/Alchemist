@@ -1,8 +1,6 @@
 package it.unibo.alchemist.agents.cognitive
 
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Layer
-import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.sensory.FieldOfView2D
 import it.unibo.alchemist.sensory.HearingField2D

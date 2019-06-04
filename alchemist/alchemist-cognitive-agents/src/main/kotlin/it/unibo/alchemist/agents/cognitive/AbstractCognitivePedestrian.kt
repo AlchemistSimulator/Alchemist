@@ -8,9 +8,7 @@ import it.unibo.alchemist.characteristics.cognitive.DesireWalkRandomly
 import it.unibo.alchemist.characteristics.cognitive.DesireEvacuate
 import it.unibo.alchemist.characteristics.cognitive.IntentionEvacuate
 import it.unibo.alchemist.characteristics.cognitive.IntentionWalkRandomly
-import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Position
 import org.apache.commons.math3.random.RandomGenerator
 import kotlin.reflect.KClass

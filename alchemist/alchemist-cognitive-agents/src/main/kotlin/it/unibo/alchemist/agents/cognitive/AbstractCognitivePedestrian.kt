@@ -8,25 +8,38 @@ import it.unibo.alchemist.characteristics.cognitive.DesireWalkRandomly
 import it.unibo.alchemist.characteristics.cognitive.DesireEvacuate
 import it.unibo.alchemist.characteristics.cognitive.IntentionEvacuate
 import it.unibo.alchemist.characteristics.cognitive.IntentionWalkRandomly
+import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Position
 import org.apache.commons.math3.random.RandomGenerator
 import kotlin.reflect.KClass
 
 abstract class AbstractCognitivePedestrian<T, P : Position<P>> (
-    env: Environment<T, P>,
+    private val env: Environment<T, P>,
     rg: RandomGenerator,
     age: String,
     gender: String
 ) : CognitivePedestrian<T>, AbstractHeterogeneousPedestrian<T>(env, rg, age, gender) {
 
-    private val cognitiveCharacteristics: Map<KClass<out CognitiveCharacteristic>, CognitiveCharacteristic> = mapOf(
-        BeliefDanger::class to BeliefDanger({ characteristicLevel<Fear>() }, { influencialPeople() }),
-        Fear::class to Fear({ characteristicLevel<DesireWalkRandomly>() }, { characteristicLevel<DesireEvacuate>() }, { influencialPeople() }),
-        DesireEvacuate::class to DesireEvacuate({ characteristicLevel<BeliefDanger>() }, { characteristicLevel<Fear>() }),
-        DesireWalkRandomly::class to DesireWalkRandomly({ characteristicLevel<BeliefDanger>() }, { characteristicLevel<Fear>() }),
-        IntentionEvacuate::class to IntentionEvacuate({ characteristicLevel<DesireWalkRandomly>() }, { characteristicLevel<DesireEvacuate>() }),
-        IntentionWalkRandomly::class to IntentionWalkRandomly({ characteristicLevel<DesireWalkRandomly>() }, { characteristicLevel<DesireEvacuate>() })
+    private val dangerousLayerLevel: () -> Double = {
+        // TODO: Must be taken from the environment using the getLayer method and specifying the molecule name
+        env.layers.let { if (!it.isEmpty()) it.first().getValue(env.getPosition(this)) as Double else 0.0 }
+    }
+
+    private val cognitiveCharacteristics = mapOf<KClass<out CognitiveCharacteristic>, CognitiveCharacteristic>(
+        BeliefDanger::class to
+            BeliefDanger(dangerousLayerLevel, { characteristicLevel<Fear>() }, { influencialPeople() }),
+        Fear::class to
+            Fear({ characteristicLevel<DesireWalkRandomly>() }, { characteristicLevel<DesireEvacuate>() }, { influencialPeople() }),
+        DesireEvacuate::class to
+            DesireEvacuate(compliance, { characteristicLevel<BeliefDanger>() }, { characteristicLevel<Fear>() }),
+        DesireWalkRandomly::class to
+            DesireWalkRandomly(compliance, { characteristicLevel<BeliefDanger>() }, { characteristicLevel<Fear>() }),
+        IntentionEvacuate::class to
+            IntentionEvacuate({ characteristicLevel<DesireWalkRandomly>() }, { characteristicLevel<DesireEvacuate>() }),
+        IntentionWalkRandomly::class to
+            IntentionWalkRandomly({ characteristicLevel<DesireWalkRandomly>() }, { characteristicLevel<DesireEvacuate>() })
     )
 
     override fun dangerBelief() = characteristicLevel<BeliefDanger>()

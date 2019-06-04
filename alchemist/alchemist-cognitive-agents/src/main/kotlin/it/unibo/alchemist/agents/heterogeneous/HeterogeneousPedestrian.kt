@@ -11,13 +11,25 @@ import it.unibo.alchemist.characteristics.individual.Speed
  */
 interface HeterogeneousPedestrian<T> : Pedestrian<T> {
 
+    /**
+     * The age of this pedestrian.
+     */
     val age: Age
 
+    /**
+     * The gender of this pedestrian.
+     */
     val gender: Gender
 
-    val speed: Speed
+    /**
+     * Value between 0 and 1 representing the attitude towards conforming to social rules of this pedestrian.
+     */
+    val compliance: Double
 
-    val compliance: Compliance
-
+    /**
+     * Value between 0 and 1 representing the probability this pedestrian will help another pedestrian in difficulty.
+     *
+     * @param toHelp The pedestrian who needs help.
+     */
     fun probabilityOfHelping(toHelp: HeterogeneousPedestrian<T>): Double
 }

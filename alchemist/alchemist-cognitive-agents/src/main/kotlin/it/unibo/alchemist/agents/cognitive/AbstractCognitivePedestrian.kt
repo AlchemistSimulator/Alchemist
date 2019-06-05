@@ -25,7 +25,7 @@ abstract class AbstractCognitivePedestrian<T, P : Position<P>> (
         env.layers.let { if (!it.isEmpty()) it.first().getValue(env.getPosition(this)) as Double else 0.0 }
     }
 
-    private val cognitiveCharacteristics = mapOf<KClass<out CognitiveCharacteristic>, CognitiveCharacteristic>(
+    private val cognitiveCharacteristics = linkedMapOf<KClass<out CognitiveCharacteristic>, CognitiveCharacteristic>(
         BeliefDanger::class to
             BeliefDanger(dangerousLayerLevel, { characteristicLevel<Fear>() }, { influencialPeople() }),
         Fear::class to

@@ -20,5 +20,5 @@ class Fear(
     )
 
     private fun Collection<CognitivePedestrian<*>>.aggregateFears() =
-        this.sumByDouble { it.dangerBelief() } / this.size
+        this.sumByDouble { it.fear() } / this.size
 }

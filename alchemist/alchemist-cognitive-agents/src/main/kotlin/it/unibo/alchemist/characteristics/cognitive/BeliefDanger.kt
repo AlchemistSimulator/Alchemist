@@ -9,9 +9,9 @@ class BeliefDanger(
 ) : MentalCognitiveCharacteristic() {
 
     override fun combinationFunction() = maxOf(
-        wSensing * dangerousZone(),
-        wPersisting * level(),
-        (wAffectiveBiasing * fear() + influencialPeople().aggregateDangerBeliefs()) / (wAffectiveBiasing + 1)
+        sensingOmega * dangerousZone(),
+        persistingOmega * level(),
+        (affectiveBiasingOmega * fear() + influencialPeople().aggregateDangerBeliefs()) / (affectiveBiasingOmega + 1)
     )
 
     private fun Collection<CognitivePedestrian<*>>.aggregateDangerBeliefs() =

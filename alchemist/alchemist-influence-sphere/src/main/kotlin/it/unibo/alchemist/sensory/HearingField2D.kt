@@ -7,7 +7,7 @@ import java.awt.geom.Ellipse2D
 class HearingField2D<P : Position2D<P>>(
     originX: Double,
     originY: Double,
-    radius: Double
+    radius: Double = 2.0
 ) : InfluenceSphere2D<P>(GeometricShape2D<P>(
     Ellipse2D.Double(originX - radius, originY - radius, radius * 2, radius * 2)
 ))

@@ -10,7 +10,7 @@ class IntentionEvacuate(
     override fun combinationFunction() =
         desireEvacuate() * logistic(
             logisticSigma, logisticTau,
-            wAmplifyingIntention * desireEvacuate(),
-            wInhibitingIntention * desireWalkRandomly()
+            amplifyingIntentionOmega * desireEvacuate(),
+            inhibitingIntentionOmega * desireWalkRandomly()
         )
 }

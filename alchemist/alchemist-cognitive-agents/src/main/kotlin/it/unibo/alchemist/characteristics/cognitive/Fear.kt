@@ -10,12 +10,12 @@ class Fear(
 ) : MentalCognitiveCharacteristic() {
 
     override fun combinationFunction() = maxOf(
-        wPersisting * currLevel,
+        persistingOmega * currentLevel,
         advancedLogistic(
-            aLogisticSigma, aLogisticTau,
+            advancedLogisticSigma, advancedLogisticTau,
             influencialPeople().aggregateFears(),
-            wAmplifyingFeeling * desireEvacuate(),
-            wInhibitingFeeling * desireWalkRandomly()
+            amplifyingFeelingOmega * desireEvacuate(),
+            inhibitingFeelingOmega * desireWalkRandomly()
         )
     )
 

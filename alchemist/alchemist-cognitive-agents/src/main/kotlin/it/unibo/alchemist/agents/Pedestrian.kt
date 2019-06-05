@@ -14,12 +14,12 @@ interface Pedestrian<T> : Node<T> {
     var membershipGroup: Group
 
     /**
-     * The speed at which the pedestrian moves if he's walking.
+     * The speed at which the pedestrian moves if it's walking.
      */
     val walkingSpeed: Double
 
     /**
-     * The speed at which the pedestrian moves if he's running.
+     * The speed at which the pedestrian moves if it's running.
      */
     val runningSpeed: Double
 }

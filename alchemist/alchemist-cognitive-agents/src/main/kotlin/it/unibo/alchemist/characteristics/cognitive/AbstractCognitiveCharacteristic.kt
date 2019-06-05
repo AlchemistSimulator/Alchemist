@@ -2,28 +2,28 @@ package it.unibo.alchemist.characteristics.cognitive
 
 abstract class AbstractCognitiveCharacteristic : CognitiveCharacteristic {
 
-    protected var currLevel: Double = 0.0
+    protected var currentLevel: Double = 0.0
 
-    override fun level() = currLevel
+    override fun level() = currentLevel
 
     abstract fun combinationFunction(): Double
 
     // TODO: These values must be set inside a configuration file
     companion object {
-        const val wSensing = 0.5
-        const val wAffectiveBiasing = 1.0
-        const val wPersisting = 0.95
-        const val wAmplifyingFeeling = 1.0
-        const val wInhibitingFeeling = 1.0
-        const val wAmplifyingEvacuation = 1.0
-        const val wInhibitingWalkRand = -1.0
-        const val wAmplifyingIntention = 1.0
-        const val wInhibitingIntention = -1.0
-        const val nMental = 0.9
-        const val nBody = 0.25
+        const val sensingOmega = 0.5
+        const val affectiveBiasingOmega = 1.0
+        const val persistingOmega = 0.95
+        const val amplifyingFeelingOmega = 1.0
+        const val inhibitingFeelingOmega = 1.0
+        const val amplifyingEvacuationOmega = 1.0
+        const val inhibitingWalkRandOmega = -1.0
+        const val amplifyingIntentionOmega = 1.0
+        const val inhibitingIntentionOmega = -1.0
+        const val mentalEta = 0.9
+        const val bodyEta = 0.25
         const val logisticSigma = 20.0
         const val logisticTau = 0.5
-        const val aLogisticSigma = 2.0
-        const val aLogisticTau = 0.14
+        const val advancedLogisticSigma = 2.0
+        const val advancedLogisticTau = 0.14
     }
 }

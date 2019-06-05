@@ -7,5 +7,5 @@ class DesireEvacuate(
 ) : MentalCognitiveCharacteristic() {
 
     override fun combinationFunction() =
-        compliance * maxOf(wAmplifyingEvacuation * dangerBelief(), wAmplifyingEvacuation * fear())
+        compliance * maxOf(amplifyingEvacuationOmega * dangerBelief(), amplifyingEvacuationOmega * fear())
 }

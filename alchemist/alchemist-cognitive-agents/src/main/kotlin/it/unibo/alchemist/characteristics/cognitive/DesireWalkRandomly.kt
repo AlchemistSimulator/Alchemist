@@ -7,5 +7,5 @@ class DesireWalkRandomly(
 ) : MentalCognitiveCharacteristic() {
 
     override fun combinationFunction() =
-        compliance * (1 - maxOf(wInhibitingWalkRand * dangerBelief(), wInhibitingWalkRand * fear()))
+        compliance * (1 - maxOf(inhibitingWalkRandOmega * dangerBelief(), inhibitingWalkRandOmega * fear()))
 }

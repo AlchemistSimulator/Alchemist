@@ -10,7 +10,7 @@ class IntentionWalkRandomly(
     override fun combinationFunction() =
         desireEvacuate() * logistic(
             logisticSigma, logisticTau,
-            wInhibitingIntention * desireEvacuate(),
-            wAmplifyingIntention * desireWalkRandomly()
+            inhibitingIntentionOmega * desireEvacuate(),
+            amplifyingIntentionOmega * desireWalkRandomly()
         )
 }

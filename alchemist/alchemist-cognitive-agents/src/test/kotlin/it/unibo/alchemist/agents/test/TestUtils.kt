@@ -7,7 +7,6 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
-import org.junit.Assert
 import org.kaikikm.threadresloader.ResourceLoader
 
 fun <T, P : Position<out P>> Environment<T, P>.startSimulation(
@@ -44,6 +43,5 @@ fun <T, P : Position<P>> loadYamlSimulation(resource: String) = loadYamlSimulati
 
 fun <T, P : Position<P>> loadYamlSimulation(resource: String, vars: Map<String, Double>) {
     val res = ResourceLoader.getResourceAsStream(resource)
-    Assert.assertNotNull("Missing test resource $resource", res)
     YamlLoader(res).getWith<T, P>(vars).startSimulationWithoutParameters()
 }

@@ -36,3 +36,12 @@ allPages:
         - asciidoc
         - markdown
         - python
+  docroot: "../../"
+  alchemistdoc: "../../it/unibo/alchemist/"
+  modeldoc: "../../it/unibo/alchemist/model/"
+  modelapidoc: "../../it/unibo/alchemist/model/interfaces/"
+  modelimpldoc: "../../it/unibo/alchemist/model/implementations/"
+  coredoc: "../../it/unibo/alchemist/core/"
+  coreapidoc: "../../it/unibo/alchemist/core/interfaces/"
+  coreimpldoc: "../../it/unibo/alchemist/core/implementations/"
+  images: ../../assets/media/

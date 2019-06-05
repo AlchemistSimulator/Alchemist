@@ -7,10 +7,12 @@ import org.apache.commons.math3.random.RandomGenerator
 
 class Family<T, P : Position2D<P>>(
     env: Environment<T, P>,
-    rg: RandomGenerator
+    rg: RandomGenerator,
+    numChildren: Int
 ) : AbstractGroup<T>(setOf(
-    CognitivePedestrian2D(env, rg, "adult", "male"),
-    CognitivePedestrian2D(env, rg, "adult", "female"),
-    CognitivePedestrian2D(env, rg, "child", "female"),
-    CognitivePedestrian2D(env, rg, "child", "male")
+    CognitivePedestrian2D(env, rg, "adult", "male"), // father
+    CognitivePedestrian2D(env, rg, "adult", "female"), // mother
+    *(0..numChildren).map {
+        CognitivePedestrian2D(env, rg, "child", if (rg.nextDouble() < 0.5) "male" else "female")
+    }.toTypedArray()
 ))

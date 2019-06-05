@@ -25,7 +25,7 @@ private var nodes: Collection<Pedestrian<Any>> by Delegates.notNull()
 class TestGroupsLoading : StringSpec({
 
     "families loading" {
-        nodes = (0..NUM_FAMILIES).flatMap { Family(ENVIRONMENT, RANDOM).members }
+        nodes = (0..NUM_FAMILIES).flatMap { Family(ENVIRONMENT, RANDOM, 2).members }
         displacement = Circle<Euclidean2DPosition>(ENVIRONMENT, RANDOM, nodes.size, 0.0, 0.0, 10.0)
         with(displacement.iterator()) {
             nodes.onEach { println(it.membershipGroup) }.forEach { ENVIRONMENT.addNode(it, this.next()) }

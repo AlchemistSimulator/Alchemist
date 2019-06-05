@@ -7,13 +7,13 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Time;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  */

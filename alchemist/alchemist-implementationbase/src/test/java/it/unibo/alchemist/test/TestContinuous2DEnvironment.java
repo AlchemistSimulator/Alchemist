@@ -7,16 +7,16 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Collections;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
@@ -38,7 +38,7 @@ public final class TestContinuous2DEnvironment {
     /**
      * Instances the environment.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         env = new Continuous2DEnvironment<>();
         env.setLinkingRule(new NoLinks<>());

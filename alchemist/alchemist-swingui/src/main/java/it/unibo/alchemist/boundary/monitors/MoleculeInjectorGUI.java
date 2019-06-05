@@ -13,6 +13,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -29,6 +30,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.plaf.basic.BasicBorders;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.ClassPathScanner;
 import org.danilopianini.lang.CollectionWithCurrentElement;
 import org.danilopianini.lang.ImmutableCollectionWithCurrentElement;
@@ -44,12 +46,22 @@ import it.unibo.alchemist.model.interfaces.Node;
  *
  * @param <T>
  */
+@SuppressFBWarnings(value = "SE_TRANSIENT_FIELD_NOT_RESTORED", justification = "This class is not meant to get serialized")
 public class MoleculeInjectorGUI<T> extends JPanel {
 
     private static final long serialVersionUID = -375286112397911525L;
-
     private static final Logger L = LoggerFactory.getLogger(MoleculeInjectorGUI.class);
     private static final List<Incarnation<?, ?>> INCARNATIONS = new LinkedList<>();
+
+    static {
+        for (final Class<? extends Incarnation> clazz : ClassPathScanner.subTypesOf(Incarnation.class)) {
+            try {
+                INCARNATIONS.add(clazz.getDeclaredConstructor().newInstance());
+            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                L.warn("Could not initialize incarnation {}", clazz);
+            }
+        }
+    }
 
     private final transient CollectionWithCurrentElement<Incarnation<T, ?>> incarnation = makeIncarnation();
     private final Set<Node<T>> affectedNodes = new HashSet<>();
@@ -58,23 +70,6 @@ public class MoleculeInjectorGUI<T> extends JPanel {
     private final JTextArea molecule;
     private final JComboBox<Incarnation<?, ?>> selectedIncr;
     private final JButton apply = new JButton("Apply");
-
-    static {
-        for (final Class<? extends Incarnation> clazz : ClassPathScanner.subTypesOf(Incarnation.class)) {
-            try {
-                INCARNATIONS.add(clazz.newInstance());
-            } catch (InstantiationException | IllegalAccessException e) {
-                L.warn("Could not initialize incarnation {}", clazz);
-            }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private CollectionWithCurrentElement<Incarnation<T, ?>> makeIncarnation() {
-        return new ImmutableCollectionWithCurrentElement<>(
-                INCARNATIONS.stream().map(i -> (Incarnation<T, ?>) i).collect(Collectors.toList()),
-                (Incarnation<T, ?>) INCARNATIONS.get(0));
-    }
 
     /**
      * @param nodes The nodes which will be affected by the molecule injection.
@@ -92,6 +87,13 @@ public class MoleculeInjectorGUI<T> extends JPanel {
             }
             buildView();
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private CollectionWithCurrentElement<Incarnation<T, ?>> makeIncarnation() {
+        return new ImmutableCollectionWithCurrentElement<>(
+                INCARNATIONS.stream().map(i -> (Incarnation<T, ?>) i).collect(Collectors.toList()),
+                (Incarnation<T, ?>) INCARNATIONS.get(0));
     }
 
     private void buildView() {

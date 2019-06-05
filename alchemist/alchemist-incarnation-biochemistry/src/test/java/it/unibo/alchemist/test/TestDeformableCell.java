@@ -7,17 +7,17 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.implementations.actions.CellTensionPolarization;
@@ -82,7 +82,7 @@ public class TestDeformableCell {
     /**
      * 
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         env = new BioRect2DEnvironmentNoOverlap(XMIN, XMAX, YMIN, YMAX);
         env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(2));
@@ -105,9 +105,9 @@ public class TestDeformableCell {
         env.addNode(cellNode3, CELL_POS1_3);
         env.addNode(cellNode4, CELL_POS1_4);
 
-        assertNotNull("Position of cellNode2 = " + env.getPosition(cellNode2), env.getPosition(cellNode2));
-        assertNotNull("Position of cellNode3 = " + env.getPosition(cellNode3), env.getPosition(cellNode3));
-        assertNull("Position of cellNode4 = " + env.getPosition(cellNode3), env.getPosition(cellNode4));
+        assertNotNull(env.getPosition(cellNode2), "Position of cellNode2 = " + env.getPosition(cellNode2));
+        assertNotNull(env.getPosition(cellNode3), "Position of cellNode3 = " + env.getPosition(cellNode3));
+        assertNull(env.getPosition(cellNode4), "Position of cellNode4 = " + env.getPosition(cellNode3));
     }
 
     /**
@@ -335,6 +335,6 @@ public class TestDeformableCell {
         env.addNode(cellNode1, new Euclidean2DPosition(0, 0));
         env.addNode(cellNode2, CELL_POS_MOV1);
         env.moveNodeToPosition(cellNode1, new Euclidean2DPosition(0, 10));
-        assertEquals("Position of cellNode1 = " + env.getPosition(cellNode1), env.getPosition(cellNode1), EXPECTED_POS_MOV1);
+        assertEquals(env.getPosition(cellNode1), EXPECTED_POS_MOV1, "Position of cellNode1 = " + env.getPosition(cellNode1));
     }
 }

@@ -8,6 +8,7 @@
 
 plugins {
     scala
+    id("com.github.maiflai.scalatest") version "0.25"
 }
 
 dependencies {
@@ -24,5 +25,6 @@ dependencies {
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-loading"))
     testImplementation(Libs.scalatest_2_12)
-    testImplementation(Libs.pegdown)
+    testRuntimeOnly(Libs.pegdown) // This is deprecated and should be replaced
+    testRuntimeOnly(Libs.parboiled_java) // Used to force a version compatible with modern ASM
 }

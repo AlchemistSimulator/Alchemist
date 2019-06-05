@@ -27,35 +27,11 @@ import org.slf4j.LoggerFactory;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import javax.annotation.Nullable;
+
 /**
  */
 public class DrawShape implements Effect {
-
-    /**
-     */
-    public enum Mode {
-        /**
-         * 
-         */
-        DrawEllipse, DrawRectangle, FillEllipse, FillRectangle;
-
-        @Override
-        public String toString() {
-            final String sup = super.toString();
-            final StringBuilder sb = new StringBuilder(2 * sup.length());
-            if (!sup.isEmpty()) {
-                sb.append(sup.charAt(0));
-            }
-            for (int i = 1; i < sup.length(); i++) {
-                final char curChar = sup.charAt(i);
-                if (Character.isUpperCase(curChar)) {
-                    sb.append(' ');
-                }
-                sb.append(curChar);
-            }
-            return sb.toString();
-        }
-    }
 
     private static final int DEFAULT_SIZE = 5;
     private static final int MAX_COLOUR_VALUE = 255;
@@ -65,9 +41,7 @@ public class DrawShape implements Effect {
     private static final int SCALE_DIFF = MAX_SCALE - MIN_SCALE;
     private static final int SCALE_INITIAL = (SCALE_DIFF) / 2 + MIN_SCALE;
     private static final Logger L = LoggerFactory.getLogger(DrawShape.class);
-
     private static final long serialVersionUID = 1L;
-
     @ExportForGUI(nameToExport = "Incarnation to use")
     private CollectionWithCurrentElement<String> curIncarnation;
     @ExportForGUI(nameToExport = "Mode")
@@ -104,14 +78,16 @@ public class DrawShape implements Effect {
     private RangedInteger minprop = new RangedInteger(-PROPERTY_SCALE, PROPERTY_SCALE, 0);
     @ExportForGUI(nameToExport = "Maximum property value")
     private RangedInteger maxprop = new RangedInteger(-PROPERTY_SCALE, PROPERTY_SCALE, PROPERTY_SCALE);
-
     private Color colorCache = Color.BLACK;
+    @Nullable
+    @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
     private transient Molecule molecule;
+    @Nullable
+    @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
     private transient Object molStringCached;
     @SuppressFBWarnings(value = "SE_TRANSIENT_FIELD_NOT_RESTORED", justification = "If null, it gets reinitialized anyway if needed")
     private transient CollectionWithCurrentElement<String> prevIncarnation;
     private transient Incarnation<?, ?> incarnation;
-
     /**
      * Builds a new {@link DrawShape} effect.
      */
@@ -199,10 +175,24 @@ public class DrawShape implements Effect {
     }
 
     /**
+     * @param a alpha
+     */
+    protected void setAlpha(final RangedInteger a) {
+        this.alpha = a;
+    }
+
+    /**
      * @return Blue
      */
     protected RangedInteger getBlue() {
         return blue;
+    }
+
+    /**
+     * @param b blue
+     */
+    protected void setBlue(final RangedInteger b) {
+        this.blue = b;
     }
 
     /**
@@ -225,10 +215,24 @@ public class DrawShape implements Effect {
     }
 
     /**
+     * @param g green
+     */
+    protected void setGreen(final RangedInteger g) {
+        this.green = g;
+    }
+
+    /**
      * @return the current incarnation
      */
     protected CollectionWithCurrentElement<String> getIncarnation() {
         return curIncarnation;
+    }
+
+    /**
+     * @param element incarnation
+     */
+    protected void setIncarnation(final CollectionWithCurrentElement<String> element) {
+        this.curIncarnation = element;
     }
 
     /**
@@ -239,6 +243,13 @@ public class DrawShape implements Effect {
     }
 
     /**
+     * @param mp maxprop
+     */
+    protected void setMaxprop(final RangedInteger mp) {
+        this.maxprop = mp;
+    }
+
+    /**
      * @return minprop
      */
     protected RangedInteger getMinprop() {
@@ -246,10 +257,24 @@ public class DrawShape implements Effect {
     }
 
     /**
+     * @param mp minprop
+     */
+    protected void setMinprop(final RangedInteger mp) {
+        this.minprop = mp;
+    }
+
+    /**
      * @return current mode
      */
     protected Mode getMode() {
         return mode;
+    }
+
+    /**
+     * @param m mode
+     */
+    protected void setMode(final Mode m) {
+        this.mode = m;
     }
 
     /**
@@ -267,134 +292,17 @@ public class DrawShape implements Effect {
     }
 
     /**
-     * @return property
-     */
-    protected String getProperty() {
-        return property;
-    }
-
-    /**
-     * @return propoom
-     */
-    protected RangedInteger getPropoom() {
-        return propoom;
-    }
-
-    /**
-     * @return red
-     */
-    protected RangedInteger getRed() {
-        return red;
-    }
-
-    /**
-     * @return scaleFactor
-     */
-    protected RangedInteger getScaleFactor() {
-        return scaleFactor;
-    }
-
-    /**
-     * @return size
-     */
-    protected RangedInteger getSize() {
-        return size;
-    }
-
-    /**
-     * @return molFilter
-     */
-    protected boolean isMolFilter() {
-        return molFilter;
-    }
-
-    /**
-     * @return molPropertyFilter
-     */
-    protected boolean isMolPropertyFilter() {
-        return molPropertyFilter;
-    }
-
-    /**
-     * @return reverse
-     */
-    protected boolean isReverse() {
-        return reverse;
-    }
-
-    /**
-     * @param a alpha
-     */
-    protected void setAlpha(final RangedInteger a) {
-        this.alpha = a;
-    }
-
-    /**
-     * @param b blue
-     */
-    protected void setBlue(final RangedInteger b) {
-        this.blue = b;
-    }
-
-    /**
-     * @param colorChannel colorChannel
-     */
-    protected void setC(final ColorChannel colorChannel) {
-        this.c = colorChannel;
-    }
-
-    /**
-     * @param g green
-     */
-    protected void setGreen(final RangedInteger g) {
-        this.green = g;
-    }
-
-    /**
-     * @param element incarnation
-     */
-    protected void setIncarnation(final CollectionWithCurrentElement<String> element) {
-        this.curIncarnation = element;
-    }
-
-    /**
-     * @param mp maxprop
-     */
-    protected void setMaxprop(final RangedInteger mp) {
-        this.maxprop = mp;
-    }
-
-    /**
-     * @param mp minprop
-     */
-    protected void setMinprop(final RangedInteger mp) {
-        this.minprop = mp;
-    }
-
-    /**
-     * @param m mode
-     */
-    protected void setMode(final Mode m) {
-        this.mode = m;
-    }
-
-    /**
-     * @param mol molFilter
-     */
-    protected void setMolFilter(final boolean mol) {
-        this.molFilter = mol;
-    }
-    /**
-     * @param molpf molPropertyFilter
-     */
-    protected void setMolPropertyFilter(final boolean molpf) {
-        this.molPropertyFilter = molpf;
-    }
-    /**
      * @param mols molString
      */
     protected void setMolString(final String mols) {
         this.molString = mols;
+    }
+
+    /**
+     * @return property
+     */
+    protected String getProperty() {
+        return property;
     }
 
     /**
@@ -405,10 +313,24 @@ public class DrawShape implements Effect {
     }
 
     /**
+     * @return propoom
+     */
+    protected RangedInteger getPropoom() {
+        return propoom;
+    }
+
+    /**
      * @param oom Order of magnitude
      */
     protected void setPropoom(final RangedInteger oom) {
         this.propoom = oom;
+    }
+
+    /**
+     * @return red
+     */
+    protected RangedInteger getRed() {
+        return red;
     }
 
     /**
@@ -419,10 +341,10 @@ public class DrawShape implements Effect {
     }
 
     /**
-     * @param r reverse
+     * @return scaleFactor
      */
-    protected void setReverse(final boolean r) {
-        this.reverse = r;
+    protected RangedInteger getScaleFactor() {
+        return scaleFactor;
     }
 
     /**
@@ -433,10 +355,66 @@ public class DrawShape implements Effect {
     }
 
     /**
+     * @return size
+     */
+    protected RangedInteger getSize() {
+        return size;
+    }
+
+    /**
      * @param s size
      */
     protected void setSize(final RangedInteger s) {
         this.size = s;
+    }
+
+    /**
+     * @return molFilter
+     */
+    protected boolean isMolFilter() {
+        return molFilter;
+    }
+
+    /**
+     * @param mol molFilter
+     */
+    protected void setMolFilter(final boolean mol) {
+        this.molFilter = mol;
+    }
+
+    /**
+     * @return molPropertyFilter
+     */
+    protected boolean isMolPropertyFilter() {
+        return molPropertyFilter;
+    }
+
+    /**
+     * @param molpf molPropertyFilter
+     */
+    protected void setMolPropertyFilter(final boolean molpf) {
+        this.molPropertyFilter = molpf;
+    }
+
+    /**
+     * @return reverse
+     */
+    protected boolean isReverse() {
+        return reverse;
+    }
+
+    /**
+     * @param r reverse
+     */
+    protected void setReverse(final boolean r) {
+        this.reverse = r;
+    }
+
+    /**
+     * @param colorChannel colorChannel
+     */
+    protected void setC(final ColorChannel colorChannel) {
+        this.c = colorChannel;
     }
 
     /**
@@ -451,6 +429,32 @@ public class DrawShape implements Effect {
      */
     protected void setWritingPropertyValue(final boolean writingPropertyValue) {
         this.writingPropertyValue = writingPropertyValue;
+    }
+
+    /**
+     */
+    public enum Mode {
+        /**
+         *
+         */
+        DrawEllipse, DrawRectangle, FillEllipse, FillRectangle;
+
+        @Override
+        public String toString() {
+            final String sup = super.toString();
+            final StringBuilder sb = new StringBuilder(2 * sup.length());
+            if (!sup.isEmpty()) {
+                sb.append(sup.charAt(0));
+            }
+            for (int i = 1; i < sup.length(); i++) {
+                final char curChar = sup.charAt(i);
+                if (Character.isUpperCase(curChar)) {
+                    sb.append(' ');
+                }
+                sb.append(curChar);
+            }
+            return sb.toString();
+        }
     }
 
 

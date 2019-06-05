@@ -7,13 +7,15 @@
  */
 
 dependencies {
+    api(Libs.ignite_core)
     implementation(project(":alchemist-interfaces"))
     implementation(project(":alchemist-loading"))
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-engine"))
-    implementation(Libs.ignite_core)
+    implementation(Libs.guava)
     implementation(Libs.ignite_spring)
     implementation(Libs.ignite_indexing)
+    implementation(Libs.commons_io)
 
     testImplementation(project(":alchemist-incarnation-sapere"))
     testImplementation(project(":alchemist-time"))

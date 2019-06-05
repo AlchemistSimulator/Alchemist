@@ -14,7 +14,7 @@ dependencies {
         implementation("org.controlsfx:controlsfx:${extra["controlsFXJ8Version"]}")
     }
     if (JavaVersion.current().isJava11Compatible()) {
-        val javaFXVersion = extra["javafxVersion"]
+        val javaFXVersion = "11"
         for (platform in listOf("linux", "mac", "win")) {
             api("org.openjfx:javafx-base:$javaFXVersion:$platform")
             api("org.openjfx:javafx-controls:$javaFXVersion:$platform")
@@ -31,7 +31,6 @@ dependencies {
     implementation(project(":alchemist-time"))
     implementation(Libs.gson)
     implementation(Libs.javafxsvg)
-    implementation(Libs.urlclassloader_util)
     implementation(Libs.commons_io)
 
     testRuntimeOnly(project(":alchemist-incarnation-protelis"))

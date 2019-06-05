@@ -10,6 +10,7 @@ package it.unibo.alchemist.model.implementations.reactions;
 
 import java.util.*;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.actions.AbstractNeighborAction;
 import it.unibo.alchemist.model.implementations.conditions.AbstractNeighborCondition;
 import it.unibo.alchemist.model.interfaces.*;
@@ -27,6 +28,7 @@ public final class BiochemicalReaction extends ChemicalReaction<Double> {
 
     private static final long serialVersionUID = 3849210665619933894L;
     private final Environment<Double, ?> environment;
+    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All subclasses are actually serializable")
     private final RandomGenerator random;
     private Map<Node<Double>, Double> validNeighbors = new LinkedHashMap<>();
     /*

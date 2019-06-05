@@ -1,12 +1,14 @@
 # Alchemist
 
-Alchemist is a simulator for pervasive and nature-inspired computing.
+![Alchemist logo](https://alchemistsimulator.github.io/latest/assets/media/logo.svg)
+
+Alchemist is a simulator for pervasive, aggregate, and nature-inspired computing.
 At the moment, the simulator features:
 
 * Executing [Protelis](http://protelis.org) programs
 * Executing [Scafi](https://scafi.github.io/) programs
 * Executing biological simulations with chemical-like reactions
-* Executing [SAPERE](http://dx.doi.org/10.1016/j.pmcj.2014.12.002)-like programs, written in a tuple based language resembling [Linda](https://doi.org/10.1109%2Fmc.1986.1663305)
+* Executing [SAPERE](http://dx.doi.org/10.1016/j.pmcj.2014.12.002) -like programs, written in a tuple based language resembling [Linda](https://doi.org/10.1109%2Fmc.1986.1663305)
 * Simulating bidimensional environments
 * Simulating real-world maps, with support for navigation along roads, and for importing gpx format gps traces
 * Simulating indoor environments by importing black and white images

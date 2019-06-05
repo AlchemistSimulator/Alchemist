@@ -10,8 +10,8 @@ package it.unibo.alchemist.test;
 import java.util.Collection;
 import java.util.stream.StreamSupport;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import it.unibo.alchemist.loader.Loader;
@@ -33,7 +33,7 @@ public class TestTOMACS {
     @Test
     public void testCustomRetainTimeLoading() {
         final Loader loader = new YamlLoader(ResourceLoader.getResourceAsStream("tomacs.yml"));
-        Assert.assertTrue(StreamSupport.stream(loader.getDefault().spliterator(), false)
+        Assertions.assertTrue(StreamSupport.stream(loader.getDefault().spliterator(), false)
             .map(n -> (ProtelisNode) n)
             .flatMap(n -> n.getReactions().stream()
                     .map(Reaction::getActions)
@@ -42,7 +42,7 @@ public class TestTOMACS {
                     .map(a -> (RunProtelisProgram) a)
                     .map(n::getNetworkManager))
             .mapToDouble(AlchemistNetworkManager::getRetentionTime)
-            .peek(d -> Assert.assertTrue(Double.isFinite(d)))
+            .peek(d -> Assertions.assertTrue(Double.isFinite(d)))
             .count() > 0);
     }
 

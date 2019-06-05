@@ -10,6 +10,7 @@ package it.unibo.alchemist.model.implementations.environments;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.hash.Hashing;
 import com.graphhopper.GHRequest;
 import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
@@ -19,6 +20,7 @@ import com.graphhopper.routing.util.EdgeFilter;
 import com.graphhopper.routing.util.EncodingManager;
 import com.graphhopper.storage.index.QueryResult;
 import com.graphhopper.util.shapes.GHPoint;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.implementations.routes.GraphHopperRoute;
 import it.unibo.alchemist.model.implementations.routes.PolygonalChain;
@@ -28,6 +30,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Route;
 import it.unibo.alchemist.model.interfaces.Vehicle;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.io.IOUtils;
 import org.danilopianini.util.Hashes;
 import org.danilopianini.util.concurrent.FastReadWriteLock;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +39,7 @@ import org.kaikikm.threadresloader.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -373,6 +377,7 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
         return new double[] { sizex, sizey };
     }
 
+    @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE")
     private void initAll(final String fileName) throws IOException {
         Objects.requireNonNull(fileName, "define the file with the map: " + fileName);
         final Optional<URL> file = Optional.of(new File(fileName))
@@ -420,9 +425,7 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
     }
 
     private String initDir(final URL mapfile) throws IOException {
-        final String code = Hex.encodeHexString(Hashes.hashResource(mapfile, e -> {
-            throw new IllegalStateException(e);
-        }).asBytes());
+        final String code = Hex.encodeHexString(Hashing.sha256().hashBytes(IOUtils.toByteArray(mapfile.openStream())).asBytes());
         final String append = SLASH + code;
         final String[] prefixes = new String[] { PERSISTENTPATH, System.getProperty("java.io.tmpdir"),
                 System.getProperty("user.dir"), "." };

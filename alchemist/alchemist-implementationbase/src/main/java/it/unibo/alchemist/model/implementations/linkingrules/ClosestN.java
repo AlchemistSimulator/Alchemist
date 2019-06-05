@@ -13,6 +13,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.util.stream.SmallestN;
 import org.jooq.lambda.tuple.Tuple2;
@@ -38,10 +39,11 @@ import it.unibo.alchemist.model.interfaces.Position;
  */
 public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
     private static final double CONNECTION_RANGE_TOLERANCE = 1.1;
-    private final Cache<Node<T>, Double> ranges;
-    private final int n, expectedNodes;
+    private final int n, expectedNodes, maxNodes;
+    @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
+    private transient Cache<Node<T>, Double> ranges;
 
     /**
      * @param n
@@ -57,11 +59,9 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
         if (n < 1) {
             throw new IllegalArgumentException("The parameter must be an integer greater than 0");
         }
-        ranges = CacheBuilder.newBuilder()
-                .maximumSize(maxNodes)
-                .build();
         this.n = n;
         this.expectedNodes = expectedNodes;
+        this.maxNodes = maxNodes;
     }
 
     /**
@@ -81,6 +81,15 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
      */
     public ClosestN(final int n) {
         this(n, 0);
+    }
+
+    private Cache<Node<T>, Double> ranges() {
+        if (ranges == null) {
+            ranges = CacheBuilder.newBuilder()
+                .maximumSize(maxNodes)
+                .build();
+        }
+        return ranges;
     }
 
     @Override
@@ -168,7 +177,7 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
              * Range estimation: twice the radius of a circle with an area that
              * would, on average, contain the number of required devices
              */
-            return ranges.get(center, () -> {
+            return ranges().get(center, () -> {
                 final int nodes = env.getNodesNumber();
                 if (nodes < n || nodes < 10) {
                     return Double.MAX_VALUE;
@@ -193,7 +202,7 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
      *            the range
      */
     protected final void setRange(final Node<T> center, final double range) {
-        ranges.put(center, range);
+        ranges().put(center, range);
     }
 
     @Override

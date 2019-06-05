@@ -25,5 +25,4 @@ include(
     'alchemist-swingui',
     'alchemist-time'
     )
-rootProject.name = "${artifactId}"
-enableFeaturePreview('STABLE_PUBLISHING')
+rootProject.name = "alchemist"

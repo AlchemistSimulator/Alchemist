@@ -6,16 +6,16 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.stream.IntStream;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
@@ -65,7 +65,7 @@ public class TestTargetWalker {
      */
     @SuppressFBWarnings(value = {"DMI_HARDCODED_ABSOLUTE_FILENAME", "SIC_INNER_SHOULD_BE_STATIC_ANON"},
         justification = "It is a resource path, not an absolute pathname.")
-    @Before
+    @BeforeEach
     public void setUp() throws ClassNotFoundException, IOException {
         try {
             env = new OSMEnvironment<>(TESTMAP, true, true);

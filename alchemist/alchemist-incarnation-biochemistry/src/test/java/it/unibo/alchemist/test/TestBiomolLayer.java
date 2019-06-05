@@ -7,10 +7,10 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;

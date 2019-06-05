@@ -8,19 +8,6 @@
 package it.unibo.alchemist.core.tests;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -35,6 +22,16 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This class tests some basic Commands, like pause and start.
@@ -48,16 +45,10 @@ public class TestConcurrency {
     /**
      * Setup phase.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         env = new Continuous2DEnvironment<>();
-        final Node<Object> n = new AbstractNode<Object>(env) {
-            private static final long serialVersionUID = 1L;
-            @Override
-            protected Object createT() {
-                return "";
-            }
-        };
+        final Node<Object> n = new DummyNode(env);
         env.setLinkingRule(new NoLinks<>());
         final TimeDistribution<Object> td = new DiracComb<>(1);
         final Reaction<Object> r = new Event<>(n, td);
@@ -87,7 +78,7 @@ public class TestConcurrency {
         sim.waitFor(Status.RUNNING, 1, TimeUnit.SECONDS); // the method must return instantly
         /*
          * this test does only 10 steps, so, after reaching RUNNING status, the simulation stops almost
-         * instantly, because it takes a very little time to perform 10 steps, since in every step the 
+         * instantly, because it takes a very little time to perform 10 steps, since in every step the
          * simulation executes the fake reaction you can see below, which simply does nothing.
          */
         verifyStatus(ex, sim, Status.TERMINATED);
@@ -127,6 +118,18 @@ public class TestConcurrency {
             }
         } catch (InterruptedException e) {
             fail(e.getMessage());
+        }
+    }
+
+    private static class DummyNode extends AbstractNode<Object> {
+        private static final long serialVersionUID = 1L;
+        public DummyNode(Environment<?, ?> env) {
+            super(env);
+        }
+
+        @Override
+        protected Object createT() {
+            return "";
         }
     }
 

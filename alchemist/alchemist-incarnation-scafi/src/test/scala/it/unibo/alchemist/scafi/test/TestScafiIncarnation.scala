@@ -23,11 +23,13 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.reactions.Event
 import it.unibo.alchemist.model.interfaces.Reaction
 import org.apache.commons.math3.random.MersenneTwister
-import org.junit.runner.RunWith
+
+import org.junit.jupiter.api.extension.ExtendWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FunSuite, Matchers}
 
-@RunWith(classOf[JUnitRunner])
+// TODO: run with JUnit 5
+// @ExtendWith(classOf[JUnitRunner])
 class TestScafiIncarnation extends FunSuite with Matchers {
   private val INC = new ScafiIncarnation[Euclidean2DPosition]
 

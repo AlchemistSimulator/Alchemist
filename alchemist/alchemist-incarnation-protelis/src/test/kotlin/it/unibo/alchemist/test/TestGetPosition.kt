@@ -21,9 +21,9 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
 import org.apache.commons.math3.random.MersenneTwister
-import org.junit.Assert
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.protelis.lang.datatype.DatatypeFactory
 import java.util.Optional
 
@@ -34,7 +34,7 @@ class TestGetPosition {
     private val reaction = Event(node, ExponentialTime(1.0, rng))
     private val action = RunProtelisProgram(env, node, reaction, rng, "self.getCoordinates()")
 
-    @Before
+    @BeforeEach
     fun setUp() {
         env.linkingRule = NoLinks()
         reaction.actions = listOf(action)
@@ -50,7 +50,7 @@ class TestGetPosition {
             override fun initialized(environment: Environment<Any, Euclidean2DPosition>?) { }
             override fun stepDone(env: Environment<Any, Euclidean2DPosition>?, r: Reaction<Any>?, time: Time?, step: Long) {
                 if (step > 0) {
-                    Assert.assertEquals(
+                    Assertions.assertEquals(
                         DatatypeFactory.createTuple(1.0, 1.0),
                         node.getConcentration(action.asMolecule())
                     )
@@ -59,6 +59,6 @@ class TestGetPosition {
         })
         sim.play()
         sim.run()
-        Assert.assertEquals(Optional.empty<Any>(), sim.error)
+        Assertions.assertEquals(Optional.empty<Any>(), sim.error)
     }
 }

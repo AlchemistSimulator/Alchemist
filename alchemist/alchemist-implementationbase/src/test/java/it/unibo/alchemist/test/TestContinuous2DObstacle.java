@@ -13,9 +13,9 @@ import it.unibo.alchemist.model.implementations.nodes.IntNode;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.utils.RectObstacle2D;
 import org.apache.commons.math3.util.FastMath;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  */

@@ -8,13 +8,13 @@
 
 dependencies {
     api(project(":alchemist-interfaces"))
+    api(project(":alchemist-implementationbase"))
     api(Libs.protelis_interpreter)
     api(Libs.protelis_lang)
-
     implementation(project(":alchemist-time"))
-    implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-maps"))
-
+    implementation(Libs.commons_lang3)
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-loading"))
+    testImplementation(Libs.commons_io)
 }

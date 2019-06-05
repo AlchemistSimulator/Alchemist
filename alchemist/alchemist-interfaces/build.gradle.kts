@@ -9,4 +9,5 @@
 dependencies {
     api(Libs.listset)
     api(Libs.jool_java_8)
+    api(Libs.commons_math3)
 }

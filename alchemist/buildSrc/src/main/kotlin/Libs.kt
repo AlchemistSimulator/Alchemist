@@ -32,6 +32,10 @@ object Libs {
      * http://github.com/davidmoten/rtree */
     const val rtree: String = "com.github.davidmoten:rtree:" + Versions.rtree
 
+    const val com_github_maiflai_scalatest_gradle_plugin: String =
+            "com.github.maiflai.scalatest:com.github.maiflai.scalatest.gradle.plugin:" +
+            Versions.com_github_maiflai_scalatest_gradle_plugin
+
     const val com_github_spotbugs_gradle_plugin: String =
             "com.github.spotbugs:com.github.spotbugs.gradle.plugin:" +
             Versions.com_github_spotbugs_gradle_plugin
@@ -154,10 +158,6 @@ object Libs {
             Versions.scafi_core_2_12
 
     /**
-     * http://junit.org */
-    const val junit: String = "junit:junit:" + Versions.junit
-
-    /**
      * http://trove4j.sf.net */
     const val trove4j: String = "net.sf.trove4j:trove4j:" + Versions.trove4j
 
@@ -168,6 +168,10 @@ object Libs {
     /**
      * http://www.antlr.org */
     const val antlr4: String = "org.antlr:antlr4:" + Versions.org_antlr
+
+    /**
+     * http://commons.apache.org/proper/commons-bcel */
+    const val bcel: String = "org.apache.bcel:bcel:" + Versions.bcel
 
     /**
      * http://commons.apache.org/proper/commons-lang/ */
@@ -237,11 +241,6 @@ object Libs {
             "org.danilopianini:thread-inheritable-resource-loader:" +
             Versions.thread_inheritable_resource_loader
 
-    /**
-     * https://github.com/DanySK/urlclassloader-util */
-    const val urlclassloader_util: String = "org.danilopianini:urlclassloader-util:" +
-            Versions.urlclassloader_util
-
     const val org_jetbrains_dokka_gradle_plugin: String =
             "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin:" +
             Versions.org_jetbrains_dokka_gradle_plugin
@@ -281,21 +280,59 @@ object Libs {
     const val jool_java_8: String = "org.jooq:jool-java-8:" + Versions.jool_java_8
 
     /**
+     * https://junit.org/junit5/ */
+    const val junit_jupiter_api: String = "org.junit.jupiter:junit-jupiter-api:" +
+            Versions.org_junit_jupiter
+
+    /**
+     * https://junit.org/junit5/ */
+    const val junit_jupiter_engine: String = "org.junit.jupiter:junit-jupiter-engine:" +
+            Versions.org_junit_jupiter
+
+    /**
      * https://github.com/mapsforge/mapsforge */
     const val mapsforge_map_awt: String = "org.mapsforge:mapsforge-map-awt:" +
             Versions.mapsforge_map_awt
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/ */
+    const val javafx_base: String = "org.openjfx:javafx-base:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/ */
+    const val javafx_controls: String = "org.openjfx:javafx-controls:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/ */
+    const val javafx_fxml: String = "org.openjfx:javafx-fxml:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/ */
+    const val javafx_graphics: String = "org.openjfx:javafx-graphics:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/ */
+    const val javafx_media: String = "org.openjfx:javafx-media:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/ */
+    const val javafx_swing: String = "org.openjfx:javafx-swing:" + Versions.org_openjfx
+
+    /**
+     * http://parboiled.org */
+    const val parboiled_java: String = "org.parboiled:parboiled-java:" + Versions.parboiled_java
 
     /**
      * http://pegdown.org */
     const val pegdown: String = "org.pegdown:pegdown:" + Versions.pegdown
 
     /**
-     * https://github.com/Protelis/protelis-interpreter */
+     * http://www.protelis.org */
     const val protelis_interpreter: String = "org.protelis:protelis-interpreter:" +
             Versions.org_protelis
 
     /**
-     * https://github.com/Protelis/protelis-lang */
+     * http://www.protelis.org */
     const val protelis_lang: String = "org.protelis:protelis-lang:" + Versions.org_protelis
 
     /**

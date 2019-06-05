@@ -34,8 +34,12 @@ matrix:
   include:
     - jdk: openjdk8
       env: PUBLISH="true"
+    - jdk: openjdk11
+      env: PUBLISH="true"
   exclude:
     - jdk: openjdk8
+      env: PUBLISH="false"
+    - jdk: openjdk11
       env: PUBLISH="false"
       os: linux
     - jdk: openjdk8
@@ -52,21 +56,21 @@ before_install: >-
 
 install: >-
     if $SHOULD_CONFIGURE; then
-        openssl aes-256-cbc -K $encrypted_f6fa8cf5bc89_key -iv $encrypted_f6fa8cf5bc89_iv -in prepare_environment.sh.enc -out prepare_environment.sh -d
+        openssl aes-256-cbc -K $encrypted_9993846e3f84_key -iv $encrypted_9993846e3f84_iv -in prepare_environment.sh.enc -out prepare_environment.sh -d
         bash prepare_environment.sh
     fi
 
 script: >-
     cd alchemist;
     if [ $TRAVIS_OS_NAME = "windows" ]; then
-        gradlew.bat clean check fatJar --scan --parallel
+        gradlew.bat clean check fatJar dokka buildDashboard projectReport --scan --stacktrace
     else
-        ./gradlew clean check fatJar --scan --parallel
+        ./gradlew clean check fatJar dokka buildDashboard projectReport --scan --stacktrace > >(egrep -v '(null:-1:-1)|(t find node by signature)')
     fi
 
 after_success: >-
     if $SHOULD_CONFIGURE && $PUBLISH; then
-        ./gradlew dokka buildDashboard projectReport bintrayUpload orchidDeploy publish > >(egrep -v '(null:-1:-1)|(t find node by signature)')
+        ./gradlew orchidDeploy publish --scan --stacktrace
         mkdir -p report
         cp --parent */build/reports build/reports report -R
     fi

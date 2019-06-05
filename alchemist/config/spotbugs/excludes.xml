@@ -1,15 +1,49 @@
-<!--
-  ~ Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
-  ~
-  ~ This file is part of Alchemist, and is distributed under the terms of the
-  ~ GNU General Public License, with a linking exception,
-  ~ as described in the file LICENSE in the Alchemist distribution's top directory.
-  -->
-
-<FindBugsFilter>
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter xmlns="https://github.com/spotbugs/filter/3.0.0"
+				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubusercontent.com/spotbugs/spotbugs/release-3.1/spotbugs/etc/findbugsfilter.xsd">
+	<Match>
+		<Source name="~.*\.scala" />
+	</Match>
+	<Match>
+		<Bug pattern="BC_BAD_CAST_TO_ABSTRACT_COLLECTION" />
+		<Source name="~.*\.kt" />
+	</Match>
+	<Match>
+		<Bug pattern="BC_IMPOSSIBLE_CAST" />
+		<Source name="~.*\.kt" />
+	</Match>
+	<Match>
+		<Bug pattern="BC_UNCONFIRMED_CAST" />
+		<Source name="~.*\.kt" />
+	</Match>
+	<Match>
+		<Bug pattern="DLS_DEAD_LOCAL_STORE" />
+		<Source name="~.*\.kt" />
+	</Match>
+	<Match>
+		<Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE" />
+		<Source name="~.*\.kt" />
+	</Match>
+	<Match>
+		<Bug pattern="SE_BAD_FIELD" />
+		<Source name="~.*\.kt" />
+	</Match>
+	<Match>
+		<Bug pattern="SE_NO_SERIALVERSIONID" />
+		<Source name="~.*\.kt" />
+	</Match>
+	<Match>
+		<Bug pattern="UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS" />
+		<Source name="~.*\.kt" />
+	</Match>
 	<Match>
 		<Bug pattern="CN_IDIOM_NO_SUPER_CALL" />
+	</Match>
+	<Match>
 		<Bug pattern="IMA_INEFFICIENT_MEMBER_ACCESS" />
+	</Match>
+	<Match>
 		<Bug pattern="SE_INNER_CLASS" />
 	</Match>
 </FindBugsFilter>

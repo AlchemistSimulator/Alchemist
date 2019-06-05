@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallArgument.DefaultArgument.arguments
+
 /*
  * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
  *
@@ -12,26 +14,17 @@ plugins {
 
 dependencies {
     antlr(Libs.antlr4)
-
-    implementation(project(":alchemist-implementationbase"))
+    api(project(":alchemist-implementationbase"))
+    implementation(Libs.commons_lang3)
     implementation(Libs.trove4j)
     implementation(Libs.boilerplate)
     implementation(Libs.jirf)
-
+    runtimeOnly(Libs.antlr4_runtime)
+    runtimeOnly(Libs.bcel)
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-loading"))
     testImplementation(project(":alchemist-time"))
     testImplementation(Libs.kotlintest_runner_junit5)
-
-    runtimeOnly(Libs.antlr4_runtime)
-}
-
-configurations {
-    all {
-        if (!name.contains("antlr")) {
-            exclude(group = "org.antlr", module = "antlr-runtime")
-        }
-    }
 }
 
 tasks.withType<Test> {

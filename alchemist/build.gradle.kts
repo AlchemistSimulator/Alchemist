@@ -7,56 +7,42 @@
  */
 import com.github.spotbugs.SpotBugsTask
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.exclude
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
 
 /*
- * Kotlin migration TODO list
- *
- * upgrade to junit5
- * switch to orchid kotlindoc https://orchid.netlify.com/plugins/OrchidKotlindoc
- * update dependencies
  * don't ignore checkers failures
  * recheck all dependencies
  */
 
 plugins {
-    id("de.fayard.buildSrcVersions") version
-            Versions.de_fayard_buildsrcversions_gradle_plugin
-    id("org.danilopianini.git-sensitive-semantic-versioning") version
-            Versions.org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin
+    id("de.fayard.buildSrcVersions") version Versions.de_fayard_buildsrcversions_gradle_plugin
+    id("org.danilopianini.git-sensitive-semantic-versioning") version Versions.org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin
     `java-library`
-    kotlin("jvm") version
-            Versions.org_jetbrains_kotlin
+    kotlin("jvm") version Versions.org_jetbrains_kotlin
     jacoco
-    id("com.github.spotbugs") version
-            Versions.com_github_spotbugs_gradle_plugin
+    id("com.github.spotbugs") version Versions.com_github_spotbugs_gradle_plugin
     pmd
     checkstyle
-    id("org.jlleitschuh.gradle.ktlint") version
-            Versions.org_jlleitschuh_gradle_ktlint_gradle_plugin
+    id("org.jlleitschuh.gradle.ktlint") version Versions.org_jlleitschuh_gradle_ktlint_gradle_plugin
     `project-report`
     `build-dashboard`
-    id("org.jetbrains.dokka") version
-            Versions.org_jetbrains_dokka_gradle_plugin
-    id("com.eden.orchidPlugin") version "0.16.0"
+    id("org.jetbrains.dokka") version Versions.org_jetbrains_dokka_gradle_plugin
+    id("com.eden.orchidPlugin") version Versions.com_eden_orchidplugin_gradle_plugin
     signing
     `maven-publish`
-    id("org.danilopianini.publish-on-central") version
-            Versions.org_danilopianini_publish_on_central_gradle_plugin
-    id("com.jfrog.bintray") version
-            Versions.com_jfrog_bintray_gradle_plugin
-    id("com.gradle.build-scan") version
-            Versions.com_gradle_build_scan_gradle_plugin
+    id("org.danilopianini.publish-on-central") version Versions.org_danilopianini_publish_on_central_gradle_plugin
+    id("com.jfrog.bintray") version Versions.com_jfrog_bintray_gradle_plugin
+    id("com.gradle.build-scan") version Versions.com_gradle_build_scan_gradle_plugin
 }
 
 apply(plugin = "com.gradle.build-scan")
 apply(plugin = "com.eden.orchidPlugin")
 
 allprojects {
-
-    extra["scalaVersion"] = "${extra["scalaMajorVersion"]}.${extra["scalaMinorVersion"]}"
 
     apply(plugin = "org.danilopianini.git-sensitive-semantic-versioning")
     apply(plugin = "java-library")
@@ -83,31 +69,23 @@ allprojects {
 
     repositories {
         mavenCentral()
-    }
-
-    // TODO: check if this one is still needed
-    configurations {
-        all {
-            if (!name.contains("antlr")) {
-                resolutionStrategy {
-                    force("org.antlr:antlr-runtime:${extra["antlrRuntimeVersion"]}")
-                }
-            }
-        }
+        maven(url = "https://dl.bintray.com/kotlin/dokka/")
     }
 
     dependencies {
-        implementation(Libs.commons_io)
-        implementation(Libs.commons_math3)
-        implementation(Libs.commons_lang3)
-        implementation(Libs.guava)
-        implementation(Libs.annotations)
-        implementation(Libs.spotbugs)
+        compileOnly(Libs.annotations)
+        compileOnly(Libs.spotbugs) {
+            exclude(group = "commons-lang")
+        }
         implementation(Libs.slf4j_api)
         implementation(Libs.kotlin_stdlib)
         implementation(Libs.kotlin_reflect)
         implementation(Libs.thread_inheritable_resource_loader)
-        testImplementation(Libs.junit)
+        testCompileOnly(Libs.spotbugs) {
+            exclude(group = "commons-lang")
+        }
+        testImplementation(Libs.junit_jupiter_api)
+        testRuntimeOnly(Libs.junit_jupiter_engine)
         runtimeOnly(Libs.logback_classic)
     }
 
@@ -124,16 +102,21 @@ allprojects {
 
     tasks.withType<Test> {
         failFast = true
-        testLogging { events("passed", "skipped", "failed", "standardError") }
+        testLogging {
+            events("passed", "skipped", "failed", "standardError")
+            exceptionFormat = TestExceptionFormat.FULL
+        }
+        useJUnitPlatform()
     }
 
     spotbugs {
         isIgnoreFailures = true
         effort = "max"
         reportLevel = "low"
+        isShowProgress = true
         val excludeFile = File("${project.rootProject.projectDir}/config/spotbugs/excludes.xml")
         if (excludeFile.exists()) {
-            excludeFilterConfig = project.resources.text.fromFile(excludeFile)
+            excludeFilter = excludeFile
         }
     }
 
@@ -154,7 +137,10 @@ allprojects {
         outputDirectory = "$buildDir/docs/javadoc"
         reportUndocumented = false
         impliedPlatforms = mutableListOf("JVM")
-        outputFormat = "javadoc"
+        // Work around https://github.com/Kotlin/dokka/issues/294
+        if (!JavaVersion.current().isJava10Compatible) {
+            outputFormat = "javadoc"
+        }
     }
 
     publishing.publications {
@@ -254,6 +240,15 @@ allprojects {
             }
         }
     }
+    group = "it.unibo.alchemist"
+    val repoSlug = "AlchemistSimulator/Alchemist.git"
+    publishOnCentral {
+        projectDescription.set(extra["projectDescription"].toString())
+        projectLongName.set(extra["projectLongName"].toString())
+        licenseName.set("GPL 3.0 with linking exception")
+        licenseUrl.set("https://github.com/AlchemistSimulator/Alchemist/blob/develop/LICENSE.md")
+        scmConnection.set("git:git@github.com:$repoSlug")
+    }
     val apiKeyName = "BINTRAY_API_KEY"
     val userKeyName = "BINTRAY_USER"
     bintray {
@@ -262,10 +257,10 @@ allprojects {
         setPublications("mavenCentral")
         override = true
         with(pkg) {
-            repo = extra["longName"].toString()
+            repo = "Alchemist"
             name = project.name
             userOrg = "alchemist-simulator"
-            vcsUrl = "${extra["scmRootUrl"]}/${extra["scmRepoName"]}"
+            vcsUrl = "https://github.com/$repoSlug"
             setLicenses("GPL-3.0-or-later")
             with(version) {
                 name = project.version.toString()
@@ -325,9 +320,9 @@ val isMarkedStable by lazy { """\d+(\.\d+){2}""".toRegex().matches(rootProject.v
 orchid {
     theme = "Editorial"
     // Feed arguments to Kdoc
-    val projects: Collection<Project> = listOf(project) + subprojects
-    val paths = projects.map { it.sourceSets["main"].compileClasspath.asPath }
-    args = listOf("--kotlindocClasspath") + paths.joinToString(File.pathSeparator)
+//    val projects: Collection<Project> = listOf(project) + subprojects
+//    val paths = projects.map { it.sourceSets["main"].compileClasspath.asPath }
+//    args = listOf("--kotlindocClasspath") + paths.joinToString(File.pathSeparator)
     // Determine whether it's a deployment or a dry run
     baseUrl = "https://alchemistsimulator.github.io/${if (isMarkedStable) "" else "latest/"}"
     // Fetch the latest version of the website, if this one is more recent enable deploy
@@ -391,6 +386,8 @@ tasks.register(orchidSeedConfiguration) {
                     stages:
                       - type: ghPages
                         username: 'DanySK'
+                        commitUsername: Danilo Pianini
+                        commitEmail: danilo.pianini@gmail.com
                         repo: 'AlchemistSimulator/${if (isMarkedStable) "alchemistsimulator.github.io" else "latest" }'
                         branch: ${if (isMarkedStable) "master" else "gh-pages"}
                         publishType: CleanBranchMaintainHistory

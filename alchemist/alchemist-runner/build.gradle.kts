@@ -8,7 +8,6 @@
 
 dependencies {
     api(project(":alchemist-interfaces"))
-
     implementation(project(":alchemist-engine"))
     implementation(project(":alchemist-grid"))
     implementation(project(":alchemist-implementationbase"))
@@ -17,4 +16,5 @@ dependencies {
     implementation(project(":alchemist-time"))
     implementation(Libs.commons_io)
     implementation(Libs.commons_lang3)
+    implementation(Libs.guava)
 }

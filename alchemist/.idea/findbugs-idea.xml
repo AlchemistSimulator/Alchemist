@@ -2,10 +2,9 @@
 <project version="4">
   <component name="FindBugs-IDEA">
     <analysisEffort>max</analysisEffort>
-    <minRank>16</minRank>
     <minPriority>Low</minPriority>
     <excludeFilterFiles>
-      <filter file="$PROJECT_DIR$/findbugsExcludes.xml" enabled="true" />
+      <filter file="$PROJECT_DIR$/config/spotbugs/excludes.xml" enabled="true" />
     </excludeFilterFiles>
   </component>
 </project>

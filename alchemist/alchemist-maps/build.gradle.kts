@@ -1,3 +1,5 @@
+import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.exclude
+
 /*
  * Copyright (C) 2010-2019) Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
  *
@@ -12,6 +14,7 @@ dependencies {
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-time"))
     implementation(Libs.caffeine)
+    implementation(Libs.guava)
     implementation(Libs.gson)
     implementation(Libs.simplelatlng)
     implementation(Libs.graphhopper_core)

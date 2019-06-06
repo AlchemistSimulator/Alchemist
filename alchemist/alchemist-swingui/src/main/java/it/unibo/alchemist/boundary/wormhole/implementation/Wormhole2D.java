@@ -29,7 +29,7 @@ import it.unibo.alchemist.model.interfaces.Position2D;
 /**
  * Partial implementation for the interface {@link IWormhole2D}.<br>
  * I am considering the particular case of the view as an entity into the
- * sceern-space: the y-axis grows on the bottom side of the screen.
+ * screen-space: the y-axis grows on the bottom side of the screen.
  * 
  */
 public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2D<P> {
@@ -55,7 +55,7 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
     public Wormhole2D(final Environment<?, P> env, final Component comp) {
         model = env;
         view = comp;
-        position = from(comp.getWidth() / 2, comp.getHeight() / 2);
+        position = from(comp.getWidth() / 2.0, comp.getHeight() / 2.0);
     }
 
     /**

@@ -42,16 +42,20 @@ public final class SendToNeighbor extends AbstractAction<Object> {
 
     @Override
     public SendToNeighbor cloneAction(final Node<Object> n, final Reaction<Object> r) {
-        final List<RunProtelisProgram<?>> possibleRefs = n.getReactions().stream()
-                .map(Reaction::getActions)
-                .flatMap(List::stream)
-                .filter(a -> a instanceof RunProtelisProgram)
-                .map(a -> (RunProtelisProgram<?>) a)
-                .collect(Collectors.toList());
-        if (possibleRefs.size() == 1) {
-            return new SendToNeighbor((ProtelisNode) n, reaction, possibleRefs.get(0));
+        if (n instanceof ProtelisNode) {
+            final List<RunProtelisProgram<?>> possibleRefs = n.getReactions().stream()
+                    .map(Reaction::getActions)
+                    .flatMap(List::stream)
+                    .filter(a -> a instanceof RunProtelisProgram)
+                    .map(a -> (RunProtelisProgram<?>) a)
+                    .collect(Collectors.toList());
+            if (possibleRefs.size() == 1) {
+                return new SendToNeighbor((ProtelisNode) n, reaction, possibleRefs.get(0));
+            }
+            throw new IllegalStateException("There must be one and one only unconfigured " + RunProtelisProgram.class.getSimpleName());
         }
-        throw new IllegalStateException("There must be one and one only unconfigured " + RunProtelisProgram.class.getSimpleName());
+        throw new IllegalStateException(getClass().getSimpleName() + " cannot get cloned on a node of type "
+                + n.getClass().getSimpleName());
     }
 
     @Override

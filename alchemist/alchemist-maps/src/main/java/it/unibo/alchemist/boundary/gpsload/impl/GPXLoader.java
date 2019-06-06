@@ -95,7 +95,7 @@ public class GPXLoader implements GPSFileLoader {
             .flatMap(TrackSegment::points)
             .map(wp -> new GPSPointImpl(wp.getLatitude().doubleValue(),
                         wp.getLongitude().doubleValue(),
-                        new DoubleTime(wp.getTime().get().toInstant().toEpochMilli() / 1000)))
+                        new DoubleTime(wp.getTime().get().toInstant().toEpochMilli() / 1000.0)))
             .collect(Collectors.toList());
         return new GPSTraceImpl(points);
     }

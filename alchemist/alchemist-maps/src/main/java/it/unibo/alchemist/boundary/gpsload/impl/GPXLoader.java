@@ -42,9 +42,9 @@ public class GPXLoader implements GPSFileLoader {
     public List<GPSTrace> readTrace(final URL url) throws IOException {
         final InputStream stream = url.openStream();
         final List<GPSTrace> ret = getGPX(requireNonNull(stream, "Input stream can't be null"))
-                                        .tracks()
-                                        .map(track -> getTrace(requireNonNull(track, "request GPS track not found")))
-                                        .collect(Collectors.toList()); 
+            .tracks()
+            .map(track -> getTrace(requireNonNull(track, "request GPS track not found")))
+            .collect(Collectors.toList());
         stream.close();
         return ret;
     }

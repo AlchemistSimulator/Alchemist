@@ -44,6 +44,9 @@
 		<Bug pattern="IMA_INEFFICIENT_MEMBER_ACCESS" />
 	</Match>
 	<Match>
+		<Bug pattern="UPM_UNCALLED_PRIVATE_METHOD" />
+	</Match>
+	<Match>
 		<Bug pattern="SE_INNER_CLASS" />
 	</Match>
 </FindBugsFilter>

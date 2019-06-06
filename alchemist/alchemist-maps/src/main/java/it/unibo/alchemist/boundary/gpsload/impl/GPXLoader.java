@@ -7,27 +7,24 @@
  */
 package it.unibo.alchemist.boundary.gpsload.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import org.openstreetmap.osmosis.osmbinary.file.FileFormatException;
-
 import com.google.common.collect.ImmutableSet;
-
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
-import io.jenetics.jpx.WayPoint;
 import it.unibo.alchemist.boundary.gpsload.api.GPSFileLoader;
 import it.unibo.alchemist.model.implementations.positions.GPSPointImpl;
 import it.unibo.alchemist.model.implementations.routes.GPSTraceImpl;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.GPSPoint;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
+import org.openstreetmap.osmosis.osmbinary.file.FileFormatException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
@@ -79,23 +76,19 @@ public class GPXLoader implements GPSFileLoader {
             throw new IllegalStateException("Track " + track + " contains at least a segment with no points");
         }
         /*
-         * Points without time stamp
-         */
-        if (!track.segments()
-                .map(TrackSegment::getPoints)
-                .flatMap(List::stream)
-                .map(WayPoint::getTime)
-                .allMatch(Optional::isPresent)) {
-            throw new IllegalStateException("Track " + track + " contains at least a waypoint without timestamp");
-        }
-        /*
          * Converts the Track points to Alchemist GPSPoints
          */
         final List<GPSPoint> points = track.segments()
             .flatMap(TrackSegment::points)
-            .map(wp -> new GPSPointImpl(wp.getLatitude().doubleValue(),
-                        wp.getLongitude().doubleValue(),
-                        new DoubleTime(wp.getTime().get().toInstant().toEpochMilli() / 1000.0)))
+            .map(wp -> new GPSPointImpl(
+                    wp.getLatitude().doubleValue(),
+                    wp.getLongitude().doubleValue(),
+                    new DoubleTime(wp.getTime()
+                        /*
+                         * Points without time stamp
+                         */
+                        .orElseThrow(() ->new IllegalStateException("Track " + track + " contains at least a waypoint without timestamp"))
+                        .toInstant().toEpochMilli() / 1000.0)))
             .collect(Collectors.toList());
         return new GPSTraceImpl(points);
     }

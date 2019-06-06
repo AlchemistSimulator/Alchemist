@@ -34,7 +34,7 @@ import it.unibo.alchemist.core.interfaces.Status;
  * 
  */
 @Deprecated
-@SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")
+@SuppressFBWarnings
 public final class SimControlPanel extends JTapeGroup {
 
     private static final long serialVersionUID = 8245609434257107323L;

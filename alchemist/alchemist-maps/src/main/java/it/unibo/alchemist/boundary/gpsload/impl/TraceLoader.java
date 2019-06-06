@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -24,6 +25,7 @@ import java.util.stream.Stream;
 
 import it.unibo.alchemist.ClassPathScanner;
 import org.apache.commons.io.input.BoundedInputStream;
+import org.jetbrains.annotations.NotNull;
 import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedFunction;
 import org.jooq.lambda.tuple.Tuple2;
@@ -43,7 +45,7 @@ public class TraceLoader implements Iterable<GPSTrace> {
     private static final Map<String, GPSFileLoader> LOADER = ClassPathScanner
             .subTypesOf(GPSFileLoader.class, "it.unibo.alchemist")
             .stream()
-            .map(Unchecked.function(Class::newInstance))
+            .map(Unchecked.function(clazz -> clazz.getConstructor().newInstance()))
             .flatMap(l -> l.supportedExtensions().stream()
                     .map(ext -> new Tuple2<>(ext.toLowerCase(Locale.US), l)))
             .collect(Collectors.toMap(Tuple2::v1, Tuple2::v2));
@@ -60,7 +62,7 @@ public class TraceLoader implements Iterable<GPSTrace> {
      *            true if considering list of GPSTrace cycle, default false
      * @param normalizer
      *            normalizer to use for normalize time
-     * @throws IOException 
+     * @throws IOException in case of I/O errors
      */
     public TraceLoader(final String path, final boolean cycle, final GPSTimeAlignment normalizer) throws IOException {
         this.cyclic = cycle;
@@ -77,7 +79,7 @@ public class TraceLoader implements Iterable<GPSTrace> {
      *            class to use to normalize time
      * @param normalizerArgs
      *            args to use to create GPSTimeNormalizer
-     * @throws IOException 
+     * @throws IOException in case of I/O errors
      */
     public TraceLoader(final String path,
             final boolean cycle,
@@ -92,7 +94,7 @@ public class TraceLoader implements Iterable<GPSTrace> {
      *            path with the gps tracks
      * @param normalizer
      *            normalizer to use for normalize time
-     * @throws IOException 
+     * @throws IOException in case of I/O errors
      */
     public TraceLoader(final String path, final GPSTimeAlignment normalizer) throws IOException  {
         this(path, false, normalizer);
@@ -106,7 +108,7 @@ public class TraceLoader implements Iterable<GPSTrace> {
      *            class to use to normalize time
      * @param normalizerArgs
      *            args to use to create GPSTimeNormalizer
-     * @throws IOException 
+     * @throws IOException in case of I/O errors
      */
     public TraceLoader(final String path,
             final String timeNormalizerClass,
@@ -114,6 +116,7 @@ public class TraceLoader implements Iterable<GPSTrace> {
         this(path, false, timeNormalizerClass, normalizerArgs);
     }
 
+    @NotNull
     @Override
     public Iterator<GPSTrace> iterator() {
         return cyclic ? Iterators.cycle(traces) : traces.iterator();
@@ -145,7 +148,7 @@ public class TraceLoader implements Iterable<GPSTrace> {
             final GPSFileLoader fileLoader = LOADER.get(extensionFile);
             try {
                 /*
-                 * invoke the loader to load all trake in the file
+                 * invoke the loader to load all tracks in the file
                  */
                 return fileLoader.readTrace(ResourceLoader.getResource(path));
             }  catch (FileFormatException e) {
@@ -169,7 +172,7 @@ public class TraceLoader implements Iterable<GPSTrace> {
                 .map(c -> {
                     try {
                         return Optional.of((GPSTimeAlignment) c.newInstance(args));
-                    } catch (Exception e) {
+                    } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
                         return Optional.<GPSTimeAlignment>empty();
                     }
                 })

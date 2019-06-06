@@ -111,7 +111,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             } else {
                 try {
                     return new RunProtelisProgram<>(env, pNode, reaction, rand, param);
-                } catch (ClassNotFoundException | RuntimeException e) {
+                } catch (RuntimeException e) {
                     throw new IllegalArgumentException("Could not create the requested Protelis program: " + param, e);
                 }
             }

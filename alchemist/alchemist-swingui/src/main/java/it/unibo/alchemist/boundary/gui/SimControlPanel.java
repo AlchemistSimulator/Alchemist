@@ -79,7 +79,7 @@ public final class SimControlPanel extends JTapeGroup {
     private static synchronized Set<SimControlPanel> getSiblings(final SimControlPanel scp) {
         if (scp.simulation != null) {
             final Set<SimControlPanel> result = SIMCONTROLMAP.get(scp.simulation);
-            return result == null ? new HashSet<SimControlPanel>() : result;
+            return result == null ? new HashSet<>() : result;
         }
         return Sets.newHashSet(scp);
     }

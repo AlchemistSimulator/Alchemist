@@ -49,4 +49,7 @@
 	<Match>
 		<Bug pattern="SE_INNER_CLASS" />
 	</Match>
+	<Match>
+		<Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS" />
+	</Match>
 </FindBugsFilter>

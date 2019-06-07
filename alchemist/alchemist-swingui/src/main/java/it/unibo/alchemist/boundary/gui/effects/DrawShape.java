@@ -69,7 +69,7 @@ public class DrawShape implements Effect {
     @ExportForGUI(nameToExport = "Write the value")
     private boolean writingPropertyValue;
     @ExportForGUI(nameToExport = "Channel to use")
-    private ColorChannel c = ColorChannel.Alpha;
+    private ColorChannel c = ColorChannel.ALPHA;
     @ExportForGUI(nameToExport = "Reverse effect")
     private boolean reverse;
     @ExportForGUI(nameToExport = "Property order of magnitude")

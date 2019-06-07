@@ -272,7 +272,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
     }
 
     private void printBenchmarkResult(final Long value, final boolean distributed) {
-        System.out.printf("Total simulation running time (nanos): %d \n", value); // NOPMD: I want to show the result in any case
+        System.out.printf("Total simulation running time (nanos): %d %n", value); // NOPMD: I want to show the result in any case
         if (benchmarkOutputFile.isPresent()) {
             final File f = new File(benchmarkOutputFile.get());
             try {

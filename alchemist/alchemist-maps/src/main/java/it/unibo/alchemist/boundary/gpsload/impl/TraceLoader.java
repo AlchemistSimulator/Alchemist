@@ -25,6 +25,8 @@ import java.util.stream.Stream;
 
 import it.unibo.alchemist.ClassPathScanner;
 import org.apache.commons.io.input.BoundedInputStream;
+import org.danilopianini.jirf.Factory;
+import org.danilopianini.jirf.FactoryBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedFunction;
@@ -53,6 +55,11 @@ public class TraceLoader implements Iterable<GPSTrace> {
     private static final int MAX_BYTES_PER_CHAR = MAX_FILE_NAME_LENGTH * 4;
     private final boolean cyclic;
     private final ImmutableList<GPSTrace> traces;
+    private static final Factory factory = new FactoryBuilder()
+        .withWideningConversions()
+        .withNarrowingConversions()
+        .withAutoBoxing()
+        .build();
 
     /**
      * 
@@ -159,7 +166,7 @@ public class TraceLoader implements Iterable<GPSTrace> {
 
     /**
      * 
-     * @return the number of traces loaded, null is trace is infinity (they are considered cycles)
+     * @return the number of traces loaded, Optional.empty() if cyclic
      */
     public Optional<Integer> size() {
         return Optional.ofNullable(cyclic ? null : traces.size());
@@ -168,20 +175,13 @@ public class TraceLoader implements Iterable<GPSTrace> {
     private static GPSTimeAlignment makeNormalizer(final String clazzName, final Object... args) {
         final String fullName = clazzName.contains(".") ? clazzName : GPSTimeAlignment.class.getPackage().getName() + "." + clazzName;
         try {
-            return Arrays.stream(ResourceLoader.classForName(fullName).getConstructors())
-                .map(c -> {
-                    try {
-                        return Optional.of((GPSTimeAlignment) c.newInstance(args));
-                    } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-                        return Optional.<GPSTimeAlignment>empty();
-                    }
-                })
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Can't instance " + fullName + "(from " + clazzName + ") using " + Arrays.toString(args)));
-        } catch (IllegalArgumentException | SecurityException | ClassNotFoundException e) {
-            throw new IllegalStateException("Cannot instance or use the GPS time normalizer", e);
+            final Class<?> targetClass = ResourceLoader.classForName(fullName);
+            if (GPSTimeAlignment.class.isAssignableFrom(targetClass)) {
+                return (GPSTimeAlignment) factory.build(targetClass, args);
+            }
+            throw new IllegalArgumentException(fullName + " is not a valid subclass of " + GPSTimeAlignment.class.getSimpleName());
+        } catch (ClassNotFoundException e) {
+            throw new IllegalArgumentException(fullName + " could not be found", e);
         }
     }
 

@@ -24,6 +24,7 @@ dependencies {
     }
     implementation(Libs.gson)
     implementation(Libs.guava)
+    implementation(Libs.jirf)
     implementation(Libs.jpx)
     implementation(Libs.simplelatlng)
     implementation(Libs.trove4j)

@@ -105,12 +105,12 @@ public class TestGPSLoader {
             try {
                 fail("Expected error during object creation for " + error + ", got: "
                         + new TraceLoader(error, CLASS_TIME_ALIGNMENT_TO_FIRST_TRACE));
-            } catch (IllegalStateException e) {
+            } catch (final IllegalStateException e) {
                 /*
                  * Expected IllegalArgumentException only for UNRECOGNIZED_EXTENSION
                  */
                 check(error, e.getMessage(), Assertions::assertNotEquals);
-            } catch (IllegalArgumentException e) {
+            } catch (final IllegalArgumentException e) {
                 check(error, e.getMessage(), Assertions::assertEquals);
             }
         }
@@ -120,7 +120,7 @@ public class TestGPSLoader {
         return () -> new IllegalStateException("Unexpected cyclic trace");
     }
 
-    private static void check(String error, String message, Consumer3<String, String, String> assertion) {
+    private static void check(final String error, final String message, final Consumer3<String, String, String> assertion) {
         assertNotNull(message);
         assertFalse(message.isEmpty());
         assertion.accept(error, UNRECOGNIZED_EXTENSION, "Wrong exception type for " + error);

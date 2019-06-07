@@ -7,15 +7,14 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.apache.commons.math3.random.RandomGenerator;
-
+import it.unibo.alchemist.AlchemistUtil;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
-import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.CellNode;
+import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import org.apache.commons.math3.random.RandomGenerator;
 
 /**
  * Represent the action of add a junction between a neighbor and the current node. <br/>
@@ -45,9 +44,9 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
 
     @SuppressWarnings("unchecked")
     @Override
-    @SuppressFBWarnings(value = "BC_UNCONFIRMED_CAST", justification = "Failing is ok")
     public AddJunctionInNeighbor<P> cloneAction(final Node<Double> n, final Reaction<Double> r) {
-        return new AddJunctionInNeighbor<>((Environment<Double, P>) getEnvironment(), (CellNode<P>) n, jun, getRandomGenerator());
+        return new AddJunctionInNeighbor<>(
+                getEnvironment(), AlchemistUtil.cast(CellNode.class, n), jun, getRandomGenerator());
     }
 
     /**

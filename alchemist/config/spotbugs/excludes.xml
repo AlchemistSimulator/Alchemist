@@ -52,4 +52,7 @@
 	<Match>
 		<Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS" />
 	</Match>
+	<Match>
+		<Package name="~.*\.biochemistrydsl" />
+	</Match>
 </FindBugsFilter>

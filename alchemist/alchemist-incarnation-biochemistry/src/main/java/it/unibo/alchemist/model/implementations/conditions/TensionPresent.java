@@ -21,11 +21,9 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 /**
  * 
  */
+@SuppressFBWarnings("FE_FLOATING_POINT")
 public class TensionPresent extends AbstractCondition<Double> {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
     private final EnvironmentSupportingDeformableCells<?> env;
 
@@ -50,7 +48,6 @@ public class TensionPresent extends AbstractCondition<Double> {
     }
 
     @Override
-    @SuppressFBWarnings("FE_FLOATING_POINT_EQUALITY")
     public double getPropensityContribution() {
         final CircularDeformableCell<?> thisNode = (CircularDeformableCell<?>) getNode();
         return env.getNodesWithinRange(thisNode, env.getMaxDiameterAmongCircularDeformableCells()).stream()

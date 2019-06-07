@@ -9,6 +9,7 @@ package it.unibo.alchemist.model.implementations.conditions;
 
 import java.util.stream.Stream;
 
+import it.unibo.alchemist.AlchemistUtil;
 import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
 import it.unibo.alchemist.model.interfaces.CircularDeformableCell;
 import it.unibo.alchemist.model.interfaces.Context;
@@ -29,8 +30,8 @@ public class TensionPresent extends AbstractCondition<Double> {
 
     /**
      * 
-     * @param node 
-     * @param env 
+     * @param node the node
+     * @param env the environment
      */
     public TensionPresent(final EnvironmentSupportingDeformableCells<?> env, final CircularDeformableCell<?> node) {
         super(node);
@@ -39,7 +40,7 @@ public class TensionPresent extends AbstractCondition<Double> {
 
     @Override
     public TensionPresent cloneCondition(final Node<Double> n, final Reaction<Double> r) {
-        return new TensionPresent(env, (CircularDeformableCell<?>) n);
+        return new TensionPresent(env, AlchemistUtil.cast(CircularDeformableCell.class, n));
     }
 
     @Override
@@ -90,16 +91,14 @@ public class TensionPresent extends AbstractCondition<Double> {
                 .flatMap(n -> n instanceof CellWithCircularArea 
                         ? Stream.of((CellWithCircularArea<?>) n) 
                                 : Stream.empty())
-                .filter(n -> {
+                .anyMatch(n -> {
                     final double maxDN =  thisNode.getMaxRadius();
                     if (n instanceof CircularDeformableCell) {
                         return env.getDistanceBetweenNodes(n, thisNode) < (maxDN + ((CircularDeformableCell<?>) n).getMaxRadius());
                     } else {
                         return env.getDistanceBetweenNodes(n, thisNode) < (maxDN + n.getRadius());
                     }
-                })
-                .findAny()
-                .isPresent();
+                });
     }
 
 }

@@ -116,7 +116,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     private volatile boolean firstTime = true; 
     private boolean paintLinks;
     private Optional<Node<T>> hooked = Optional.empty();
-    private boolean inited;
+    private final boolean inited;
     private double lasttime;
     private final Semaphore mapConsistencyMutex = new Semaphore(1);
     private final transient PointerSpeed mouseMovement = new PointerSpeedImpl();
@@ -498,8 +498,8 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
 
     /**
      * 
-     * @param x x coord
-     * @param y y coord
+     * @param x x coordination
+     * @param y y coordination
      */
     protected void setMouseTooltipTo(final int x, final int y) {
         if (wormhole != null) {
@@ -691,7 +691,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                             currentEnv.addNode(n, envEnding);
                         }
                         update(currentEnv, engine.getTime());
-                    } catch (RuntimeException exp) {
+                    } catch (RuntimeException exp) { // NOPMD
                         final String title = "Node cloning error";
                         final String message = "One or more of your nodes do not support cloning, the debug information is:\n"
                                 + LangUtils.stackTraceToString(exp);

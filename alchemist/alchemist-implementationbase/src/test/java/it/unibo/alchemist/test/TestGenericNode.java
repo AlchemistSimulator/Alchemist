@@ -38,7 +38,7 @@ public class TestGenericNode {
      * 
      */
     @Test
-    @SuppressFBWarnings(value = "SIC_INNER_SHOULD_BE_STATIC_ANON")
+    @SuppressFBWarnings(value = { "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE" })
     public void testConcurrentAccess() {
         final Environment<Integer, ?> env = new Continuous2DEnvironment<>();
         @SuppressWarnings("serial")

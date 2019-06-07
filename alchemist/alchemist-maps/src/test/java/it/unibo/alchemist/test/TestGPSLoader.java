@@ -7,12 +7,9 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import com.google.common.collect.ImmutableList;
+import org.jooq.lambda.function.Consumer3;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,6 +23,8 @@ import it.unibo.alchemist.boundary.gpsload.api.GPSTimeAlignment;
 import it.unibo.alchemist.boundary.gpsload.api.AlignToFirstTrace;
 import it.unibo.alchemist.boundary.gpsload.impl.TraceLoader;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 
@@ -101,21 +100,28 @@ public class TestGPSLoader {
         return () -> new IllegalStateException("Unexpected cyclic trace");
     }
 
+    private static void check(String error, String message, Consumer3<String, String, String> assertion) {
+        assertNotNull(message);
+        assertFalse(message.isEmpty());
+        assertion.accept(error, UNRECOGNIZED_EXTENSION, "Wrong exception type for " + error);
+    }
+
     /**
      * 
      */
     @Test
     public void testError() throws IOException {
-        for (String error : ImmutableList.of(NO_SEGMENTS, EMPTY_SEGMENT, POINT_WITHOUT_TIME, WRONG_EXTENSION, UNRECOGNIZED_EXTENSION)) {
+        for (final String error : ImmutableList.of(NO_SEGMENTS, EMPTY_SEGMENT, POINT_WITHOUT_TIME, WRONG_EXTENSION, UNRECOGNIZED_EXTENSION)) {
             try {
                 fail("Expected error during object creation for " + error + ", got: "
                         + new TraceLoader(error, CLASS_TIME_ALIGNMENT_TO_FIRST_TRACE));
-            } catch (IllegalStateException | IllegalArgumentException e) {
+            } catch (IllegalStateException e) {
                 /*
                  * Expected IllegalArgumentException only for UNRECOGNIZED_EXTENSION
                  */
-                assertEquals(error.equals(UNRECOGNIZED_EXTENSION), e instanceof IllegalArgumentException, "Wrong exception type for " + error);
-                assertFalse(e.getMessage().isEmpty());
+                check(error, e.getMessage(), Assertions::assertNotEquals);
+            } catch (IllegalArgumentException e) {
+                check(error, e.getMessage(), Assertions::assertEquals);
             }
         }
     }

@@ -9,6 +9,7 @@ package it.unibo.alchemist.model.implementations.conditions;
 
 import java.util.stream.Stream;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.AlchemistUtil;
 import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
 import it.unibo.alchemist.model.interfaces.CircularDeformableCell;
@@ -49,6 +50,7 @@ public class TensionPresent extends AbstractCondition<Double> {
     }
 
     @Override
+    @SuppressFBWarnings("FE_FLOATING_POINT_EQUALITY")
     public double getPropensityContribution() {
         final CircularDeformableCell<?> thisNode = (CircularDeformableCell<?>) getNode();
         return env.getNodesWithinRange(thisNode, env.getMaxDiameterAmongCircularDeformableCells()).stream()

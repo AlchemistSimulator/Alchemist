@@ -120,7 +120,7 @@ public class DrawShape implements Effect {
                 L.error("Bug.", e);
             }
         }
-        if (!molFilter || (molecule != null && n.contains(molecule))) {
+        if (!molFilter || molecule != null && n.contains(molecule)) {
             final double ks = (scaleFactor.getVal() - MIN_SCALE) * 2 / (double) (SCALE_DIFF);
             final int sizex = size.getVal();
             final int startx = x - sizex / 2;

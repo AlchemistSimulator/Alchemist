@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import it.unibo.alchemist.model.implementations.molecules.Junction;
@@ -15,7 +16,6 @@ import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import org.graalvm.compiler.core.common.SuppressFBWarnings;
 
 /**
  * Represent the action of add a junction between a neighbor and the current node. <br/>

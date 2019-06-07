@@ -7,30 +7,20 @@
  */
 package it.unibo.alchemist.boundary.gui.monitors;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.ItemSelectable;
-import java.awt.Point;
+import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
+import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
+import org.danilopianini.view.ObjectModFrame;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.border.LineBorder;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.danilopianini.view.ObjectModFrame;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
-import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 
 /**
  * @param <T>

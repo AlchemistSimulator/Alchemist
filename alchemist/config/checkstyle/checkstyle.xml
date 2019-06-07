@@ -51,6 +51,12 @@
 		<property name="maximum" value="0" />
 		<property name="message" value="Line has trailing spaces." />
 	</module>
+	<module name="RegexpMultiline">
+		<property name="severity" value="error" />
+		<property name="fileExtensions" value="java,xtend,scala,kt,xml,groovy,yaml,yml" />
+		<property name="format" value="(?s:(\r\n|\r).*)"/>
+		<property name="message" value="CRLF and CR line endings are prohibited, but this file uses them."/>
+	</module>
 	<module name="RegexpSingleline">
 		<property name="severity" value="error" />
 		<property name="format" value="Math\s*\.\s*random\s*\(\s*\)" />

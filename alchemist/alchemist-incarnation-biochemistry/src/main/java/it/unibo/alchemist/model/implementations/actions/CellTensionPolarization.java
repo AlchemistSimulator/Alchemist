@@ -10,6 +10,7 @@ package it.unibo.alchemist.model.implementations.actions;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.google.common.reflect.TypeToken;
 import it.unibo.alchemist.AlchemistUtil;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import org.apache.commons.math3.util.FastMath;
@@ -44,9 +45,8 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public CellTensionPolarization<P> cloneAction(final Node<Double> n, final Reaction<Double> r) {
-        return new CellTensionPolarization<P>(env, AlchemistUtil.cast(getNode().getClass(), n));
+        return new CellTensionPolarization<>(env, AlchemistUtil.cast(new TypeToken<CircularDeformableCell<P>>() { }, n));
     }
 
     @Override
@@ -54,7 +54,7 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
         // get node position as array
         final double[] nodePos = env.getPosition(getNode()).getCartesianCoordinates();
         // initializing resulting versor
-        double[] resVersor = new double[nodePos.length];
+        final double[] resVersor = new double[nodePos.length];
         // declaring a variable for the node where this action is set, to have faster access
         final CircularDeformableCell<P> thisNode = getNode();
         // transforming each node around in a vector (Position) 

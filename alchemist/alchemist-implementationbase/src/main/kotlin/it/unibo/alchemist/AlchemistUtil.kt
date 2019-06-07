@@ -1,5 +1,7 @@
 package it.unibo.alchemist
 
+import com.google.common.reflect.TypeToken
+
 /**
  * Generic utilities.
  */
@@ -30,5 +32,21 @@ object AlchemistUtil {
             what as T
         } else {
             throw IllegalStateException("$what does not conform to the required type ${destination.simpleName}")
+        }
+
+    /**
+     * Performs a cast operation, throwing a decent error message in case of failure.
+     *
+     * @param destination destination type
+     * @param what object to be cast to t
+     * @return [what] as T
+     */
+    @Suppress("UNCHECKED_CAST")
+    @JvmStatic
+    fun <T> cast(destination: TypeToken<T>, what: Any): T =
+        if (destination.isSupertypeOf(what.javaClass)) {
+            what as T
+        } else {
+            throw IllegalStateException("$what does not conform to the required type ${destination.type.typeName}")
         }
 }

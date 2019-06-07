@@ -96,18 +96,8 @@ public class TestGPSLoader {
         assertEquals(points, TOTAL_POINTS);
     }
 
-    private static Supplier<IllegalStateException> unexpectedCyclicTrace() {
-        return () -> new IllegalStateException("Unexpected cyclic trace");
-    }
-
-    private static void check(String error, String message, Consumer3<String, String, String> assertion) {
-        assertNotNull(message);
-        assertFalse(message.isEmpty());
-        assertion.accept(error, UNRECOGNIZED_EXTENSION, "Wrong exception type for " + error);
-    }
-
     /**
-     * 
+     *
      */
     @Test
     public void testError() throws IOException {
@@ -124,5 +114,15 @@ public class TestGPSLoader {
                 check(error, e.getMessage(), Assertions::assertEquals);
             }
         }
+    }
+
+    private static Supplier<IllegalStateException> unexpectedCyclicTrace() {
+        return () -> new IllegalStateException("Unexpected cyclic trace");
+    }
+
+    private static void check(String error, String message, Consumer3<String, String, String> assertion) {
+        assertNotNull(message);
+        assertFalse(message.isEmpty());
+        assertion.accept(error, UNRECOGNIZED_EXTENSION, "Wrong exception type for " + error);
     }
 }

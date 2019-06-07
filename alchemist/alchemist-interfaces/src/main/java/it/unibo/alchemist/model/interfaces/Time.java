@@ -13,20 +13,7 @@ import java.io.Serializable;
  * 
  * Interface for time representation.
  */
-public interface Time extends Comparable<Time>, Serializable, Cloneable {
-
-    /**
-     * Since the default Java usage for {@link Cloneable} is cumbersome, this
-     * method exists to allow the construction of copies.
-     * 
-     * @return a copy of the object. Please notice that it's supposed, given a
-     *         {@link Time} t, that
-     *         <p>
-     *         t != t.clone and t.equals(t.clone)
-     *         <p>
-     *         will be both true.
-     */
-    Time clone();
+public interface Time extends Comparable<Time>, Serializable {
 
     /**
      * Verifies if the {@link Time} is set at infinite, namely if the event will

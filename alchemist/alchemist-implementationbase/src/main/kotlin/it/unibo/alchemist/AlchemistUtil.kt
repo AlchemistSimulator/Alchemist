@@ -43,10 +43,5 @@ object AlchemistUtil {
      */
     @Suppress("UNCHECKED_CAST")
     @JvmStatic
-    fun <T> cast(destination: TypeToken<T>, what: Any): T =
-        if (destination.isSupertypeOf(what.javaClass)) {
-            what as T
-        } else {
-            throw IllegalStateException("$what does not conform to the required type ${destination.type.typeName}")
-        }
+    fun <T> cast(destination: TypeToken<T>, what: Any): T = cast(destination.rawType, what) as T
 }

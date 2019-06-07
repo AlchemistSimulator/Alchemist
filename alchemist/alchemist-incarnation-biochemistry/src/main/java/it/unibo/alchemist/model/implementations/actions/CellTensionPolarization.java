@@ -125,7 +125,7 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
         } else {
             for (final P p : pushForces) {
                 resVersor[0] = resVersor[0] + p.getX();
-                resVersor[1] = resVersor[1] + p.getX();
+                resVersor[1] = resVersor[1] + p.getY();
             }
             final double module = FastMath.sqrt(FastMath.pow(resVersor[0], 2) + FastMath.pow(resVersor[1], 2));
             if (module == 0) {

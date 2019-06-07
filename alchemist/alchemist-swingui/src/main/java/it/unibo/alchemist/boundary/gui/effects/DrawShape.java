@@ -45,7 +45,7 @@ public class DrawShape implements Effect {
     @ExportForGUI(nameToExport = "Incarnation to use")
     private CollectionWithCurrentElement<String> curIncarnation;
     @ExportForGUI(nameToExport = "Mode")
-    private Mode mode = Mode.FillEllipse;
+    private Mode mode = Mode.FILL_ELLIPSE;
     @ExportForGUI(nameToExport = "R")
     private RangedInteger red = new RangedInteger(0, MAX_COLOUR_VALUE);
     @ExportForGUI(nameToExport = "B")
@@ -149,16 +149,16 @@ public class DrawShape implements Effect {
             }
             g.setColor(newcolor);
             switch (mode) {
-            case DrawEllipse:
+            case DRAW_ELLIPSE:
                 g.drawOval(startx, starty, sizex, sizey);
                 break;
-            case DrawRectangle:
+            case DRAW_RECTANGLE:
                 g.drawRect(startx, starty, sizex, sizey);
                 break;
-            case FillRectangle:
+            case FILL_RECTANGLE:
                 g.fillRect(startx, starty, sizex, sizey);
                 break;
-            case FillEllipse:
+            case FILL_ELLIPSE:
             default:
                 g.fillOval(startx, starty, sizex, sizey);
             }
@@ -437,7 +437,7 @@ public class DrawShape implements Effect {
         /**
          *
          */
-        DrawEllipse, DrawRectangle, FillEllipse, FillRectangle;
+        DRAW_ELLIPSE, DRAW_RECTANGLE, FILL_ELLIPSE, FILL_RECTANGLE;
 
         @Override
         public String toString() {

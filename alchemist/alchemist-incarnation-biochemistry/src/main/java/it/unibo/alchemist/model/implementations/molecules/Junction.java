@@ -10,11 +10,13 @@ package it.unibo.alchemist.model.implementations.molecules;
 import java.util.Collections;
 import java.util.Map;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.Dependency;
 
 /**
  * Represents a junction between two cells.
  */
+@SuppressFBWarnings("EQ_DOESNT_OVERRIDE_EQUALS")
 public final class Junction extends SimpleMolecule {
 
     private static final long serialVersionUID = -5538036651435573599L;
@@ -25,9 +27,9 @@ public final class Junction extends SimpleMolecule {
      * Build a junction.
      * @param name the name of the junction.
      * @param moleculesInCurrentNode 
-     *  A map of molecules (with their concentration) which was in the current node. When the junction is removed that molecules will be released in the current node.
+     *  A map of molecules (with their concentration) which was in the current node. When the junction is removed the molecules will be released in the current node.
      * @param moleculesInNeighborNode
-     *  A map of molecules (with their concentration) which was in the current node. When the junction is removed that molecules will be released in the current node.
+     *  A map of molecules (with their concentration) which was in the current node. When the junction is removed the molecules will be released in the current node.
      */
     public Junction(final String name, final Map<Biomolecule, Double> moleculesInCurrentNode, final Map<Biomolecule, Double> moleculesInNeighborNode) {
         super(name);

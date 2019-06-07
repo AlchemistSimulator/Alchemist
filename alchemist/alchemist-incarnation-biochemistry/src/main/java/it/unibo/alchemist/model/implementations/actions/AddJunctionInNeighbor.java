@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
+import com.google.common.reflect.TypeToken;
 import it.unibo.alchemist.AlchemistUtil;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.CellNode;
@@ -46,7 +47,9 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
     @Override
     public AddJunctionInNeighbor<P> cloneAction(final Node<Double> n, final Reaction<Double> r) {
         return new AddJunctionInNeighbor<>(
-                getEnvironment(), AlchemistUtil.cast(CellNode.class, n), jun, getRandomGenerator());
+                (Environment<Double, P>) getEnvironment(),
+                AlchemistUtil.cast(new TypeToken<CellNode<P>>() { }, n),
+                jun, getRandomGenerator());
     }
 
     /**

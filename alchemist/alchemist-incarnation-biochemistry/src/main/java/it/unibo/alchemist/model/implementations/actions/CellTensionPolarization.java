@@ -10,6 +10,7 @@ package it.unibo.alchemist.model.implementations.actions;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import it.unibo.alchemist.AlchemistUtil;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.lang.MathUtils;
@@ -43,8 +44,9 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public CellTensionPolarization<P> cloneAction(final Node<Double> n, final Reaction<Double> r) {
-        return new CellTensionPolarization<>(env, (CircularDeformableCell<P>) n);
+        return new CellTensionPolarization<P>(env, AlchemistUtil.cast(getNode().getClass(), n));
     }
 
     @Override
@@ -56,7 +58,6 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
         // declaring a variable for the node where this action is set, to have faster access
         final CircularDeformableCell<P> thisNode = getNode();
         // transforming each node around in a vector (Position) 
-        @SuppressWarnings("unchecked")
         final List<P> pushForces = env.getNodesWithinRange(
                 thisNode,
                 env.getMaxDiameterAmongCircularDeformableCells()).stream()
@@ -123,9 +124,8 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
             thisNode.addPolarization(env.makePosition(0, 0));
         } else {
             for (final P p : pushForces) {
-                for (int i = 0; i < p.getDimensions(); i++) {
-                    resVersor[i] = resVersor[i] + p.getCoordinate(i);
-                }
+                resVersor[0] = resVersor[0] + p.getX();
+                resVersor[1] = resVersor[1] + p.getX();
             }
             final double module = FastMath.sqrt(FastMath.pow(resVersor[0], 2) + FastMath.pow(resVersor[1], 2));
             if (module == 0) {
@@ -141,7 +141,6 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
         return Context.LOCAL;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public CircularDeformableCell<P> getNode() {
         return (CircularDeformableCell<P>) super.getNode();

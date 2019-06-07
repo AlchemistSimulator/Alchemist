@@ -13,20 +13,20 @@ dependencies {
 
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-time"))
+    implementation(Libs.boilerplate)
     implementation(Libs.caffeine)
-    implementation(Libs.guava)
-    implementation(Libs.gson)
-    implementation(Libs.simplelatlng)
+    implementation(Libs.commons_codec)
+    implementation(Libs.commons_io)
+    implementation(Libs.commons_lang3)
     implementation(Libs.graphhopper_core)
     implementation(Libs.graphhopper_reader_osm) {
         exclude(module = "slf4j-log4j12")
     }
-    implementation(Libs.commons_codec)
-    implementation(Libs.commons_io)
+    implementation(Libs.gson)
+    implementation(Libs.guava)
     implementation(Libs.jpx)
+    implementation(Libs.simplelatlng)
     implementation(Libs.trove4j)
-    implementation(Libs.boilerplate)
-    implementation(Libs.commons_lang3)
 }
 
 tasks.withType<Test> {

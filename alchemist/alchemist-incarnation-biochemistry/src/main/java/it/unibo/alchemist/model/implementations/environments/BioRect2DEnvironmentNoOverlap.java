@@ -9,15 +9,15 @@ package it.unibo.alchemist.model.implementations.environments;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Comparator;
 import java.util.stream.Stream;
 
+import com.google.common.base.Optional;
 import org.apache.bcel.classfile.ClassFormatException;
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.lang.MathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Optional;
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
@@ -40,13 +40,13 @@ public final class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment im
     private Optional<CircularDeformableCell<Euclidean2DPosition>> biggestCircularDeformableCell = Optional.absent();
 
     /**
-     * Returns an infinite BioRect2DEnviroment.
+     * Returns an infinite {@link BioRect2DEnvironment}.
      */
     public BioRect2DEnvironmentNoOverlap() {
         super();
     }
     /**
-     * Returns a limited rectangular BioRect2DEnviroment.
+     * Returns a limited rectangular {@link BioRect2DEnvironment}.
      * 
      * @param minX rectangle's min x value.
      * @param maxX rectangle's max x value.
@@ -70,9 +70,9 @@ public final class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment im
                 final double nodeRadius = thisNode.getRadius();
                 return range <= 0
                         || getNodesWithinRange(p, range).stream()
-                                .filter(n -> n instanceof CellWithCircularArea)
-                                .map(n -> (CellWithCircularArea<Euclidean2DPosition>) n)
-                                .noneMatch(n -> getPosition(n).getDistanceTo(p) < nodeRadius + n.getRadius());
+                            .filter(n -> n instanceof CellWithCircularArea)
+                            .map(n -> (CellWithCircularArea<Euclidean2DPosition>) n)
+                            .noneMatch(n -> getPosition(n).getDistanceTo(p) < nodeRadius + n.getRadius());
             } else {
                 return true;
             }
@@ -108,7 +108,7 @@ public final class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment im
             return requestedPos;
         }
         final double distanceToScan = distanceToReq + nodeToMove.getRadius() + (maxDiameter / 2);
-        final double halfDistance = (distanceToScan / 2);
+        final double halfDistance = distanceToScan / 2;
         // compute position of the midpoint between originalPos and a point at distance distanceToScan
         final double rx = requestedPos.getX();
         final double ox = originalPos.getX();
@@ -143,7 +143,7 @@ public final class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment im
                 .map(n -> getPositionIfNodeIsObstacle(nodeToMove, n, originalPos, oy, ox, ry, rx)) 
                 .filter(Optional::isPresent) 
                 .map(Optional::get)
-                .min((p1, p2) -> Double.compare(p1.getDistanceTo(originalPos), p2.getDistanceTo(originalPos)))
+                .min(Comparator.comparingDouble(p -> p.getDistanceTo(originalPos)))
                 .orElse(requestedPos);
     }
 
@@ -214,16 +214,16 @@ public final class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment im
             return Optional.absent();
         }
         // otherwise, compute the maximum practicable distance for the cell
-        final double module =  FastMath.sqrt(FastMath.pow((yIntersect - yo), 2) + FastMath.pow((xIntersect - xo), 2));
+        final double module =  FastMath.sqrt(FastMath.pow(yIntersect - yo, 2) + FastMath.pow(xIntersect - xo, 2));
         if (module == 0) { // if module == 0 the translation is 0, so return originalPos
             return Optional.of(originalPos);
         }
         // compute the versor relative to requested direction of cell movement
-        final double cat2 = FastMath.sqrt((FastMath.pow(cellRange, 2) - FastMath.pow(cat, 2)));
+        final double cat2 = FastMath.sqrt(FastMath.pow(cellRange, 2) - FastMath.pow(cat, 2));
         final double distToSum  = originalPos.getDistanceTo(intersection) - cat2;
         final Euclidean2DPosition versor = new Euclidean2DPosition((xIntersect - xo) / module, (yIntersect - yo) / module);
         // computes vector representing the practicable movement
-        final Euclidean2DPosition vectorToSum = new Euclidean2DPosition(distToSum * (versor.getX()), distToSum * (versor.getY()));
+        final Euclidean2DPosition vectorToSum = new Euclidean2DPosition(distToSum * versor.getX(), distToSum * versor.getY());
         // returns the right position of the cell
         final Euclidean2DPosition result = originalPos.plus(vectorToSum);
         return Optional.of(result);

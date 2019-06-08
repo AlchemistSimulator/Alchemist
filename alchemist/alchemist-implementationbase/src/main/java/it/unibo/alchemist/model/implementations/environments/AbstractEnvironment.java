@@ -538,7 +538,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         private final Node<T> destination;
         private final boolean isAdd;
         private final Node<T> origin;
-        Operation(final Node<T> origin, final Node<T> destination, final boolean isAdd) {
+        private Operation(final Node<T> origin, final Node<T> destination, final boolean isAdd) {
             this.origin = origin;
             this.destination = destination;
             this.isAdd = isAdd;

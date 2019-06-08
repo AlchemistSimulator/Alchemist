@@ -112,8 +112,8 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
             return getDestination(curPos, end, maxWalk);
         }
         do {
-            P target = route.getPoint(curStep);
-            double toWalk = target.getDistanceTo(curPos);
+            final P target = route.getPoint(curStep);
+            final double toWalk = target.getDistanceTo(curPos);
             if (toWalk > maxWalk) {
                 /*
                  * I can arrive at most at maxWalk

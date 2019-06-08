@@ -102,7 +102,7 @@ public final class MeanSquaredError<T> implements Extractor {
                 .mapToDouble(n -> incarnation.getProperty(n, mActual, pActual) - value)
                 .map(v -> v * v)
                 .average()
-                .orElseGet(() -> Double.NaN);
+                .orElse(Double.NaN);
         return new double[]{mse};
     }
 

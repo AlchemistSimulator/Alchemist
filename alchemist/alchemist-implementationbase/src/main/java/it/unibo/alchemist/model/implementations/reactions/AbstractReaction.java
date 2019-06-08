@@ -307,16 +307,16 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      */
     @Override
     public String toString() {
-        final StringBuilder tot = new StringBuilder(stringLength + MARGIN);
-        tot.append(getReactionName());
-        tot.append('@');
-        tot.append(getTau());
-        tot.append(':');
-        tot.append(getConditions().toString());
-        tot.append('-');
-        tot.append(getRateAsString());
-        tot.append("->");
-        tot.append(getActions().toString());
+        final StringBuilder tot = new StringBuilder(stringLength + MARGIN)
+            .append(getReactionName())
+            .append('@')
+            .append(getTau())
+            .append(':')
+            .append(getConditions().toString())
+            .append('-')
+            .append(getRateAsString())
+            .append("->")
+            .append(getActions().toString());
         stringLength = tot.length();
         return tot.toString();
     }

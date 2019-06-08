@@ -105,8 +105,8 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
                     if (MathUtils.fuzzyEquals(localNodeMaxRadius, localNodeMinRadius) && MathUtils.fuzzyEquals(nodeMaxRadius, nodeMinRadius)) {
                         intensity = 1;
                     } else {
-                        intensity = (localNodeMaxRadius + nodeMaxRadius - env.getDistanceBetweenNodes(n, thisNode))
-                                / (localNodeMaxRadius + nodeMaxRadius - localNodeMinRadius + nodeMinRadius);
+                        final double maxRadiusSum = localNodeMaxRadius + nodeMaxRadius;
+                        intensity = (maxRadiusSum - env.getDistanceBetweenNodes(n, thisNode)) / (maxRadiusSum - localNodeMinRadius - nodeMinRadius);
                     }
                     if (intensity != 0) {
                         double[] propensityVect = new double[]{nodePos[0] - nPos[0], nodePos[1] - nPos[1]};

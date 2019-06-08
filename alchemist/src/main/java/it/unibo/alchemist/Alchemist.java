@@ -5,9 +5,6 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-/**
- * 
- */
 package it.unibo.alchemist;
 
 import java.io.File;
@@ -45,7 +42,7 @@ import it.unibo.alchemist.loader.YamlLoader;
  * Starts Alchemist.
  * 
  */
-public final class Alchemist {
+public final class Alchemist { // NOPMD MoreThanOneLogger
 
     private static final Logger L = LoggerFactory.getLogger(Alchemist.class);
     private static final Map<String, Level> LOGLEVELS;

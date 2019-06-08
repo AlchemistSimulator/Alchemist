@@ -68,11 +68,11 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
  */
 public final class ProtelisIncarnation<P extends Position<P>> implements Incarnation<Object, P> {
 
-    private static final Logger L = LoggerFactory.getLogger(ProtelisIncarnation.class);
     /**
      * The name that can be used in a property to refer to the extracted value.
      */
     public static final String VALUE_TOKEN = "<value>";
+    private static final Logger L = LoggerFactory.getLogger(ProtelisIncarnation.class);
     private final LoadingCache<CacheKey, SynchronizedVM> cache = CacheBuilder
             .newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES)
@@ -82,6 +82,26 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                     return new SynchronizedVM(key);
                 }
             });
+
+    private static List<RunProtelisProgram<?>> getIncomplete(final ProtelisNode pNode, final List<RunProtelisProgram<?>> alreadyDone) {
+        return pNode.getReactions().parallelStream()
+                /*
+                 * Get the actions
+                 */
+                .flatMap(r -> r.getActions().parallelStream())
+                /*
+                 * Get only the ProtelisPrograms
+                 */
+                .filter(a -> a instanceof RunProtelisProgram)
+                .map(a -> (RunProtelisProgram<?>) a)
+                /*
+                 * Retain only those ProtelisPrograms that have no associated ComputationalRoundComplete.
+                 *
+                 * Only one should be available.
+                 */
+                .filter(prog -> !alreadyDone.contains(prog))
+                .collect(Collectors.toList());
+    }
 
     @Override
     public Action<Object> createAction(final RandomGenerator rand, final Environment<Object, P> env,
@@ -246,26 +266,6 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         return getClass().getSimpleName();
     }
 
-    private static List<RunProtelisProgram<?>> getIncomplete(final ProtelisNode pNode, final List<RunProtelisProgram<?>> alreadyDone) {
-        return pNode.getReactions().parallelStream()
-                /*
-                 * Get the actions
-                 */
-                .flatMap(r -> r.getActions().parallelStream())
-                /*
-                 * Get only the ProtelisPrograms
-                 */
-                .filter(a -> a instanceof RunProtelisProgram)
-                .map(a -> (RunProtelisProgram<?>) a)
-                /*
-                 * Retain only those ProtelisPrograms that have no associated ComputationalRoundComplete.
-                 * 
-                 * Only one should be available.
-                 */
-                .filter(prog -> !alreadyDone.contains(prog))
-                .collect(Collectors.toList());
-    }
-
     private static final class CacheKey {
         private final Molecule molecule;
         private final WeakReference<Node<Object>> node;
@@ -299,7 +299,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         private static final int SEED = -241837578;
         private static final RandomGenerator RNG = new MersenneTwister(SEED);
         private final Node<?> node;
-        DummyContext(final Node<?> node) {
+        private DummyContext(final Node<?> node) {
             super(new ProtectedExecutionEnvironment(node), new NetworkManager() {
                 @Override
                 public Map<DeviceUID, Map<CodePath, Object>> getNeighborState() {
@@ -427,8 +427,9 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     }
 
     private static final class NoNode implements Node<Object> {
-        private static final long serialVersionUID = 1L;
         public static final NoNode INSTANCE = new NoNode();
+        private static final long serialVersionUID = 1L;
+
         private <A> A notImplemented() {
             throw new UnsupportedOperationException("Method can't be invoked in this context.");
         }

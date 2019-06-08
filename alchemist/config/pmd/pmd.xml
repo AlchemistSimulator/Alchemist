@@ -79,6 +79,7 @@
         <exclude name="UncommentedEmptyMethodBody" />
     </rule>
     <rule ref="category/java/errorprone.xml">
+		<exclude name="AvoidFieldNameMatchingMethodName" />
         <exclude name="AvoidLiteralsInIfCondition" />
         <exclude name="BeanMembersShouldSerialize" />
         <exclude name="DataflowAnomalyAnalysis" />

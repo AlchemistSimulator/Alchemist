@@ -159,7 +159,7 @@ public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
         private final Object[] args;
         private int hash;
 
-        TraceRef(final String path,
+        private TraceRef(final String path,
                  final boolean cycle,
                  final String normalizer,
                  final Object... args) { // NOPMD: array is stored directly by purpose.

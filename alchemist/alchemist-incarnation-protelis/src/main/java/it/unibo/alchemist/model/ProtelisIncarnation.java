@@ -111,7 +111,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             } else {
                 try {
                     return new RunProtelisProgram<>(env, pNode, reaction, rand, param);
-                } catch (RuntimeException e) {
+                } catch (RuntimeException e) { // NOPMD AvoidCatchingGenericException
                     throw new IllegalArgumentException("Could not create the requested Protelis program: " + param, e);
                 }
             }
@@ -400,7 +400,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                     myVM = new ProtelisVM(
                             ProtelisLoader.parse(key.property.replace(VALUE_TOKEN, baseProgram)),
                             new DummyContext(key.node.get()));
-                } catch (RuntimeException ex) {
+                } catch (RuntimeException ex) { // NOPMD AvoidCatchingGenericException
                     L.warn("Program ignored as invalid: \n" + key.property);
                     L.debug("Debug information", ex);
                 }

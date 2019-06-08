@@ -9,17 +9,14 @@ package it.unibo.alchemist.model.implementations.actions;
 
 import com.google.common.reflect.TypeToken;
 import it.unibo.alchemist.AlchemistUtil;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position2D;
-import org.apache.commons.math3.random.RandomGenerator;
-import org.apache.commons.math3.util.FastMath;
-
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Context;
+import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * 

@@ -165,7 +165,7 @@ public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
         TraceRef(final String path,
                  final boolean cycle,
                  final String normalizer,
-                 final Object... args) { // NOPMD: array is stored direcly by purpose.
+                 final Object... args) { // NOPMD: array is stored directly by purpose.
             this.path = path;
             this.cycle = cycle;
             this.normalizer = normalizer;

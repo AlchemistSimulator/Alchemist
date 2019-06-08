@@ -175,7 +175,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
         private final double time;
         private final Map<CodePath, Object> payload;
         private final DeviceUID source;
-        MessageInfo(final double time, final DeviceUID source, final Map<CodePath, Object> payload) {
+        private MessageInfo(final double time, final DeviceUID source, final Map<CodePath, Object> payload) {
             this.time = time;
             this.payload = payload;
             this.source = source;

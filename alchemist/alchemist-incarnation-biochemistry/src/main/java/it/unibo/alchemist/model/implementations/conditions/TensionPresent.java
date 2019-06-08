@@ -69,13 +69,13 @@ public class TensionPresent extends AbstractCondition<Double> {
                         minRn = maxRn;
                     }
                     final double distance = env.getDistanceBetweenNodes(n, thisNode);
-                    if (((maxRn + maxRN) - distance) < 0) {
+                    if ((maxRn + maxRN - distance) < 0) {
                         return 0;
                     } else {
                         if (maxRn == minRn && maxRN == minRN) {
                             return 1;
                         } else {
-                            return ((maxRn + maxRN) - distance) / ((maxRn + maxRN) - (minRn + minRN));
+                            return (maxRn + maxRN - distance) / (maxRn + maxRN - minRn + minRN);
                         }
                     }
                 })

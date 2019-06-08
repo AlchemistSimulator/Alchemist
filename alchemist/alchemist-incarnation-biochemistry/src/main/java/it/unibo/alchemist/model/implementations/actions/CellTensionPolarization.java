@@ -68,10 +68,10 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
                         double maxDist;
                         if (n instanceof CircularDeformableCell) {
                             // for deformable cell is maxRad + maxRad
-                             maxDist = (thisNode.getMaxRadius() + ((CircularDeformableCell<P>) n).getMaxRadius());
+                             maxDist = thisNode.getMaxRadius() + ((CircularDeformableCell<P>) n).getMaxRadius();
                         } else {
                             // for simple cells is maxRad + rad
-                             maxDist = (thisNode.getMaxRadius() + ((CellWithCircularArea<P>) n).getRadius());
+                             maxDist = thisNode.getMaxRadius() + ((CellWithCircularArea<P>) n).getRadius();
                         }
                         // check
                         return env.getDistanceBetweenNodes(thisNode, n) < maxDist;
@@ -105,7 +105,8 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
                     if (MathUtils.fuzzyEquals(localNodeMaxRadius, localNodeMinRadius) && MathUtils.fuzzyEquals(nodeMaxRadius, nodeMinRadius)) {
                         intensity = 1;
                     } else {
-                        intensity = ((localNodeMaxRadius + nodeMaxRadius) - env.getDistanceBetweenNodes(n, thisNode)) / ((localNodeMaxRadius + nodeMaxRadius) - (localNodeMinRadius + nodeMinRadius));
+                        intensity = (localNodeMaxRadius + nodeMaxRadius - env.getDistanceBetweenNodes(n, thisNode))
+                                / (localNodeMaxRadius + nodeMaxRadius - localNodeMinRadius + nodeMinRadius);
                     }
                     if (intensity != 0) {
                         double[] propensityVect = new double[]{nodePos[0] - nPos[0], nodePos[1] - nPos[1]};

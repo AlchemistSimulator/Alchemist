@@ -163,7 +163,7 @@ public final class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment im
                 nodePos.getY() - requestedPos.getY());
         final double scalarProductResult2 = oppositeVersor.getX() * nodeOrientationFromReq.getX() + oppositeVersor.getY() * nodeOrientationFromReq.getY();
         if (scalarProductResult2 <= 0) {
-            return (nodePos.getDistanceTo(requestedPos) < node.getRadius() + nodeToMove.getRadius())
+            return nodePos.getDistanceTo(requestedPos) < node.getRadius() + nodeToMove.getRadius()
                     && scalarProductResult1 >= 0;
         }
         return scalarProductResult1 >= 0;

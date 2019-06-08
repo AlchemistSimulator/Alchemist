@@ -60,7 +60,7 @@ public class ProjectGUI extends Application {
     @Override
     public void start(final Stage primaryStage) throws IOException {
         Thread.setDefaultUncaughtExceptionHandler((thread, ex) -> {
-            ex.printStackTrace();
+            ex.printStackTrace(); // NOPMD TODO: should be replaced by logger
             FXUtil.errorAlert(ex);
         });
         this.primaryStage = primaryStage;

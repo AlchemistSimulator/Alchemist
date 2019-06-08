@@ -209,7 +209,7 @@ public class BiochemicalReactionBuilder<P extends Position<P>> {
                 }
                 return factory.build(clazz, params);
             } catch (ClassNotFoundException e) {
-                throw new IllegalStateException("cannot instance " + className + ", class not found");
+                throw new IllegalStateException("cannot instance " + className + ", class not found", e);
             }
         }
 

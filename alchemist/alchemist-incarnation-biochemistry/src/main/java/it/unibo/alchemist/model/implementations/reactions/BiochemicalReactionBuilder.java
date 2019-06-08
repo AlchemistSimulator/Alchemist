@@ -198,7 +198,7 @@ public class BiochemicalReactionBuilder<P extends Position<P>> {
         private <O> O createObject(final BiochemistrydslParser.JavaConstructorContext ctx, final String packageName) {
             String className = ctx.javaClass().getText();
             if (!className.contains(".")) {
-                className = packageName + className;
+                className = packageName + className; // NOPMD UseStringBufferForStringAppends
             }
             try {
                 final Class<O> clazz = (Class<O>) ResourceLoader.classForName(className);

@@ -228,7 +228,7 @@ public final class Project {
                             ? this.batch.getVariables().entrySet().stream().filter(Entry::getValue).map(Entry::getKey).collect(Collectors.toSet())
                             : Collections.emptySet();
                     if (keys.keySet().containsAll(selectedVariables)) {
-                        runner.launch(selectedVariables.toArray(new String[selectedVariables.size()]));
+                        runner.launch(selectedVariables.toArray(new String[0]));
                     } else {
                         final Alert alert = new Alert(AlertType.ERROR);
                         alert.setTitle(RESOURCES.getString("var_key_error"));

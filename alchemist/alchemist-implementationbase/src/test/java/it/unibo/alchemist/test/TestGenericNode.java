@@ -30,7 +30,7 @@ import it.unibo.alchemist.model.interfaces.Molecule;
 /**
  *
  */
-@SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
+@SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
 public class TestGenericNode {
 
     private static final int THREADS = 1000;

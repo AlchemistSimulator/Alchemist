@@ -41,11 +41,12 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  */
 
+@SuppressWarnings("ALL")
 public class TestEnvironmentNodes {
 
     private static final double PRECISION = 0.000000000001;
     private static final Incarnation<Double, Euclidean2DPosition> INCARNATION = new BiochemistryIncarnation<>();
-    private static final String CON_A_IN_CELL = "conAInCell = ";
+
     /**
      * test a simple reaction "[A] --> [A in env]".
      */

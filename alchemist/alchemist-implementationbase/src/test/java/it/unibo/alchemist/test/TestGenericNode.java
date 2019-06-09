@@ -51,29 +51,27 @@ public class TestGenericNode {
         final CountDownLatch cd = new CountDownLatch(THREADS);
         final Queue<Exception> queue = new ConcurrentLinkedQueue<>();
         final ExecutorService ex = Executors.newCachedThreadPool();
-        IntStream.range(0, THREADS).forEach(i -> {
-            ex.submit(() -> {
+        IntStream.range(0, THREADS).forEach(i -> ex.submit(() -> {
+            try {
+                final Molecule m = new SimpleMolecule(Integer.toString(i));
+                cd.countDown();
                 try {
-                    final Molecule m = new SimpleMolecule(Integer.toString(i));
-                    cd.countDown();
+                    cd.await();
+                } catch (Exception e) {
+                    queue.add(e);
+                }
+                node.setConcentration(m, i);
+                node.getContents().forEach((a, b) -> {
                     try {
-                        cd.await();
+                        Thread.sleep(1);
                     } catch (Exception e) {
                         queue.add(e);
                     }
-                    node.setConcentration(m, i);
-                    node.getContents().forEach((a, b) -> {
-                        try {
-                            Thread.sleep(1);
-                        } catch (Exception e) {
-                            queue.add(e);
-                        }
-                    });
-                } catch (ConcurrentModificationException e) {
-                    queue.add(e);
-                }
-            });
-        });
+                });
+            } catch (ConcurrentModificationException e) {
+                queue.add(e);
+            }
+        }));
         ex.shutdown();
         try {
             ex.awaitTermination(10, TimeUnit.SECONDS);

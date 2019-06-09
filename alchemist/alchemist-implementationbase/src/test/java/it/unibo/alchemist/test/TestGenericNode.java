@@ -57,14 +57,14 @@ public class TestGenericNode {
                 cd.countDown();
                 try {
                     cd.await();
-                } catch (Exception e) {
+                } catch (Exception e) { // NOPMD
                     queue.add(e);
                 }
                 node.setConcentration(m, i);
                 node.getContents().forEach((a, b) -> {
                     try {
                         Thread.sleep(1);
-                    } catch (Exception e) {
+                    } catch (Exception e) { // NOPMD
                         queue.add(e);
                     }
                 });

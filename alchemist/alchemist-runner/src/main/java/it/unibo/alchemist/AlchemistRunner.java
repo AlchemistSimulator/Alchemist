@@ -247,7 +247,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
                 .map(SimulationConfigImpl::new)
                 .collect(Collectors.toList());
         final SimulationSet set = new SimulationSetImpl(gsc, simConfigs);
-        try (final Cluster cluster = new ClusterImpl(Paths.get(this.gridConfigFile.orElseThrow(
+        try (Cluster cluster = new ClusterImpl(Paths.get(this.gridConfigFile.orElseThrow(
                 () -> new IllegalStateException("No remote configuration file"))))) {
             final Set<RemoteResult> resSet = cluster.getWorkersSet(set.computeComplexity()).distributeSimulations(set);
             for (final RemoteResult res: resSet) {
@@ -276,7 +276,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
             final File f = new File(benchmarkOutputFile.get());
             try {
                 FileUtils.forceMkdirParent(f);
-                try (final PrintWriter w = new PrintWriter(new BufferedWriter(new FileWriterWithEncoding(f, StandardCharsets.UTF_8, true)))) {
+                try (PrintWriter w = new PrintWriter(new BufferedWriter(new FileWriterWithEncoding(f, StandardCharsets.UTF_8, true)))) {
                     final SimpleDateFormat isoTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US);
                     isoTime.setTimeZone(TimeZone.getTimeZone("UTC"));
                     w.println(isoTime.format(new Date())

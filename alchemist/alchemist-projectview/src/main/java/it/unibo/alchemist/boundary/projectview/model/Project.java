@@ -215,13 +215,13 @@ public final class Project {
                  * 2. If it fails, use file access
                  */
                 final AlchemistRunner<?, ?> runner = new AlchemistRunner.Builder<>(loader)
-                        .setEndTime(new DoubleTime(getEndTime()))
-                        .setEffects(getEffectPath())
-                        .setOutputFile(getFolderPath())
-                        .setInterval(getOutput().getSampleInterval())
-                        .setParallelism(getBatch().getThreadCount())
-                        .setHeadless(false)
-                        .setGUICloseOperation(JFrame.DISPOSE_ON_CLOSE)
+                        .endingAtTime(new DoubleTime(getEndTime()))
+                        .withEffects(getEffectPath())
+                        .writingOutputTo(getFolderPath())
+                        .samplingEvery(getOutput().getSampleInterval())
+                        .withParallelism(getBatch().getThreadCount())
+                        .headless(false)
+                        .withGUICloseOperation(JFrame.DISPOSE_ON_CLOSE)
                         .build();
                     final Map<String, Variable<?>> keys = runner.getVariables();
                     final Set<String> selectedVariables = isBatch 

@@ -326,14 +326,14 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
      * @param <P> position type
      */
     public static class Builder<T, P extends Position2D<P>> {
+        private final Loader loader;
+        private final Collection<Supplier<OutputMonitor<T, P>>> outputMonitors = new LinkedList<>();
         private int closeOperation;
         private Optional<String> effectsFile = Optional.empty();
         private long endStep = Long.MAX_VALUE;
         private Time endTime = DoubleTime.INFINITE_TIME;
         private Optional<String> exportFileRoot = Optional.empty();
         private boolean headless;
-        private final Loader loader;
-        private final Collection<Supplier<OutputMonitor<T, P>>> outputMonitors = new LinkedList<>();
         private int parallelism = Runtime.getRuntime().availableProcessors() + 1;
         private double samplingInt = 1;
         private Optional<String> gridConfigFile = Optional.empty();
@@ -373,7 +373,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
          *            effect uri
          * @return builder
          */
-        public Builder<T, P> setEffects(final String uri) {
+        public Builder<T, P> withEffects(final String uri) {
             this.effectsFile = Optional.ofNullable(uri);
             return this;
         }
@@ -384,7 +384,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
          *            end step
          * @return builder
          */
-        public Builder<T, P> setEndStep(final long steps) {
+        public Builder<T, P> endingAtStep(final long steps) {
             if (steps < 0) {
                 throw new IllegalArgumentException("The number of steps (" + steps + ") must be zero or positive");
             }
@@ -398,7 +398,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
          *            end time
          * @return builder
          */
-        public Builder<T, P> setEndTime(final Number t) {
+        public Builder<T, P> endingAtTime(final Number t) {
             final double dt = t.doubleValue();
             if (dt < 0) {
                 throw new IllegalArgumentException("The end time (" + dt + ") must be zero or positive");
@@ -413,7 +413,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
          *            end time
          * @return builder
          */
-        public Builder<T, P> setEndTime(final Time t) {
+        public Builder<T, P> endingAtTime(final Time t) {
             this.endTime = t;
             return this;
         }
@@ -424,7 +424,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
          *            the close operation
          * @return builder
          */
-        public Builder<T, P> setGUICloseOperation(final int closeOp) {
+        public Builder<T, P> withGUICloseOperation(final int closeOp) {
             if (closeOp < 0 || closeOp > 3) {
                 throw new IllegalArgumentException("The value of close operation is not valid.");
             }
@@ -438,7 +438,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
          *            is headless
          * @return builder
          */
-        public Builder<T, P> setHeadless(final boolean headless) {
+        public Builder<T, P> headless(final boolean headless) {
             this.headless = headless;
             return this;
         }
@@ -449,7 +449,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
          *            time interval
          * @return builder
          */
-        public Builder<T, P> setInterval(final double deltaTime) {
+        public Builder<T, P> samplingEvery(final double deltaTime) {
             if (deltaTime > 0) {
                 this.samplingInt = deltaTime;
             } else {
@@ -464,7 +464,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
          *            output uri
          * @return builder
          */
-        public Builder<T, P> setOutputFile(final String uri) {
+        public Builder<T, P> writingOutputTo(final String uri) {
             this.exportFileRoot = Optional.ofNullable(uri);
             return this;
         }
@@ -475,7 +475,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
          *            threads number
          * @return builder
          */
-        public Builder<T, P> setParallelism(final int threads) {
+        public Builder<T, P> withParallelism(final int threads) {
             if (threads <= 0) {
                 throw new IllegalArgumentException("Thread number must be >= 0");
             }
@@ -488,7 +488,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
          * @param path Ignite's setting file path
          * @return builder
          */
-        public Builder<T, P> setRemoteConfig(final String path) {
+        public Builder<T, P> withIgniteConfigration(final String path) {
             this.gridConfigFile = Optional.ofNullable(path);
             return this;
         }
@@ -498,7 +498,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
          * @param path Benchmark save file path
          * @return builder
          */
-        public Builder<T, P> setBenchmarkOutputFile(final String path) {
+        public Builder<T, P> writingBenchmarkResultsTo(final String path) {
             this.benchmarkOutputFile = Optional.ofNullable(path);
             return this;
         }

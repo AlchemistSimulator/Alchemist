@@ -57,7 +57,7 @@ public class TestConfig {
         final GeneralSimulationConfig gsc = new LocalGeneralSimulationConfig(l, 0, DoubleTime.INFINITE_TIME);
         Assertions.assertEquals(gsc.getDependencies().size(), 2);
         final File test;
-        try (final WorkingDirectory wd = new WorkingDirectory()) {
+        try (WorkingDirectory wd = new WorkingDirectory()) {
             test = new File(wd.getFileAbsolutePath("nothing")).getParentFile();
             Assertions.assertTrue(test.exists());
             wd.writeFiles(gsc.getDependencies());

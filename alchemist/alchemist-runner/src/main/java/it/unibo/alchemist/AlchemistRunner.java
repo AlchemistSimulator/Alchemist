@@ -234,7 +234,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
         try {
             executor.awaitTermination(Integer.MAX_VALUE, TimeUnit.DAYS);
         } catch (InterruptedException e1) {
-            throw new IllegalStateException("The batch execution got interrupted.");
+            throw new IllegalStateException("The batch execution got interrupted.", e1);
         }
         return exception;
     }

@@ -32,6 +32,8 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 
 /**
+ *
+ * @param <P> position type
  * @param <T>
  *            Concentration type
  */

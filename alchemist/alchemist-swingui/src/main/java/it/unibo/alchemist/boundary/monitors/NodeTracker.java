@@ -26,6 +26,8 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 
 /**
+ *
+ * @param <P> position type
  * @param <T>
  */
 public class NodeTracker<T, P extends Position<? extends P>> extends JPanel implements OutputMonitor<T, P>, ActionListener {
@@ -89,9 +91,7 @@ public class NodeTracker<T, P extends Position<? extends P>> extends JPanel impl
                 sb.append(r.toString()).append("\n\n");
             }
             stringLength = sb.length() + MARGIN;
-            SwingUtilities.invokeLater(() -> {
-                txt.setText(sb.toString());
-            });
+            SwingUtilities.invokeLater(() -> txt.setText(sb.toString()));
         }
     }
 }

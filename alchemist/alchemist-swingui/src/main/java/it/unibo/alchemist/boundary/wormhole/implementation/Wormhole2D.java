@@ -30,7 +30,8 @@ import it.unibo.alchemist.model.interfaces.Position2D;
  * Partial implementation for the interface {@link IWormhole2D}.<br>
  * I am considering the particular case of the view as an entity into the
  * screen-space: the y-axis grows on the bottom side of the screen.
- * 
+ *
+ * @param <P> position type
  */
 public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2D<P> {
 

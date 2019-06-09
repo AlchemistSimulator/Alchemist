@@ -105,7 +105,7 @@ public final class BiochemicalReaction extends ChemicalReaction<Double> {
         neighborConditionsPresent = c.stream().anyMatch(it -> it instanceof AbstractNeighborCondition);
     }
 
-    private static class Container {
+    private static final class Container {
         public Node<Double> node;
         public Double propensity1;
         public Double propensity2;

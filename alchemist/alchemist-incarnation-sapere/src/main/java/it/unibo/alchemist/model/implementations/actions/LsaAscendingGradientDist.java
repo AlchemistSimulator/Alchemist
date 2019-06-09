@@ -25,6 +25,8 @@ import java.util.List;
 
 
 /**
+ *
+ * @param <P> position type
  */
 public final class LsaAscendingGradientDist<P extends Position<P>> extends SAPERENeighborAgent<P> {
 

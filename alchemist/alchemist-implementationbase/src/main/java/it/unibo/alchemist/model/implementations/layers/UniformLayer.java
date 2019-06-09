@@ -13,6 +13,7 @@ import it.unibo.alchemist.model.interfaces.Position;
 /**
  * a Layer where the concentration is the same at every point in space.
  *
+ * @param <P> position type
  * @param <T> concentration type
  */
 public class UniformLayer<T, P extends Position<? extends P>> implements Layer<T, P> {

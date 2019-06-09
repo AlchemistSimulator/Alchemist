@@ -19,6 +19,8 @@ import it.unibo.alchemist.model.interfaces.Position2D;
 
 /**
  * Adapts various representations of bidimensional positions.
+ *
+ * @param <P> position type
  */
 public final class PointAdapter<P extends Position2D<? extends P>> implements Serializable {
 

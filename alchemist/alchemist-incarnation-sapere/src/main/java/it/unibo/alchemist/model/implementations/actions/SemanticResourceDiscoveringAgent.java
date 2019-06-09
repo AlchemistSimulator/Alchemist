@@ -20,7 +20,8 @@ import it.unibo.alchemist.model.interfaces.Position;
 
 
 /**
- * 
+ *
+ * @param <P> position type
  */
 public class SemanticResourceDiscoveringAgent<P extends Position<P>> extends SAPERENeighborAgent<P> {
 

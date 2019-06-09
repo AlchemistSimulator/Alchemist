@@ -13,6 +13,8 @@ import it.unibo.alchemist.model.interfaces.Position;
 import java.util.List;
 
 /**
+ *
+ * @param <P> position type
  * @param <T>
  */
 public interface GraphicalOutputMonitor<T, P extends Position<? extends P>> extends OutputMonitor<T, P> {

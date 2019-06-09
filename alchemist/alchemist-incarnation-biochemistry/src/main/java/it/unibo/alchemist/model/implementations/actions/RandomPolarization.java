@@ -19,7 +19,8 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
 /**
- * 
+ *
+ * @param <P> position type
  */
 public class RandomPolarization<P extends Position2D<P>> extends AbstractRandomizableAction<Double> {
 

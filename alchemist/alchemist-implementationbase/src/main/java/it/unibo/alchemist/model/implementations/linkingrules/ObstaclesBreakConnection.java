@@ -20,7 +20,8 @@ import it.unibo.alchemist.model.interfaces.Position;
 /**
  * Similar to {@link ConnectWithinDistance}, but if the environment has obstacles,
  * the links are removed.
- * 
+ *
+ * @param <P> position type
  * @param <T>
  */
 public final class ObstaclesBreakConnection<T, P extends Position<P>> extends ConnectWithinDistance<T, P> {
@@ -40,7 +41,6 @@ public final class ObstaclesBreakConnection<T, P extends Position<P>> extends Co
         Neighborhood<T> normal = super.computeNeighborhood(center, env);
         if (!normal.isEmpty() && env instanceof Environment2DWithObstacles) {
             final P cp = env.getPosition(center);
-            @SuppressWarnings("unchecked")
             final Environment2DWithObstacles<?, T, P> environment = (Environment2DWithObstacles<?, T, P>) env;
             normal = Neighborhoods.make(env, center, StreamSupport.stream(normal.spliterator(), false)
                     .filter(node -> !environment.intersectsObstacle(cp, environment.getPosition(node)))

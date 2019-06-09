@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  *
+ * @param <P> position type
  */
 public class Rectangle<P extends Position<? extends P>> extends AbstractRandomDisplacement<P> {
 

@@ -23,6 +23,8 @@ import java.util.List;
 
 
 /**
+ *
+ * @param <P> position type
  */
 public class LsaBarycenterCrowd<P extends Position<? extends P>> extends SAPEREMoveNodeAgent<P> {
 

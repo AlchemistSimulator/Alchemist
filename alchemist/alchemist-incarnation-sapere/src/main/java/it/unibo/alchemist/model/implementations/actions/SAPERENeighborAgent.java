@@ -20,7 +20,8 @@ import java.util.List;
 
 /**
  * A SAPERE Agent that modifies something on neighboring nodes.
- * 
+ *
+ * @param <P> position type
  */
 public abstract class SAPERENeighborAgent<P extends Position<? extends P>> extends SAPEREAgent {
 

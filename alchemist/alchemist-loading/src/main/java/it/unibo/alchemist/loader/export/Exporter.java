@@ -34,6 +34,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  * {@link OutputMonitor}, it is not {@link Serializable}.
  *
  * @param <T>
+ * @param <P> position type
  */
 @SuppressWarnings("serial")
 @SuppressFBWarnings(value = {"SE_BAD_FIELD", "SE_NO_SERIALVERSIONID"},

@@ -17,6 +17,8 @@ import it.unibo.alchemist.model.interfaces.Position;
 import java.util.List;
 
 /**
+ *
+ * @param <P> position type
  */
 public class SocialForceAsianAgent<P extends Position<P>> extends SocialForceAgent<P> {
 

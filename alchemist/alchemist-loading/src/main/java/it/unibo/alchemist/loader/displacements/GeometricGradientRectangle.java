@@ -16,6 +16,8 @@ import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * Distributes nodes geometrically within a rectangular shape.
+ *
+ * @param <P> position type
  */
 public class GeometricGradientRectangle<P extends Position<? extends P>> extends Rectangle<P> {
 

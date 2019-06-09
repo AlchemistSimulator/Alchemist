@@ -7,11 +7,46 @@
  */
 package it.unibo.alchemist;
 
-import java.awt.GraphicsEnvironment;
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import it.unibo.alchemist.boundary.gui.SingleRunGUI;
+import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
+import it.unibo.alchemist.core.implementations.Engine;
+import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.grid.cluster.Cluster;
+import it.unibo.alchemist.grid.cluster.ClusterImpl;
+import it.unibo.alchemist.grid.config.GeneralSimulationConfig;
+import it.unibo.alchemist.grid.config.LocalGeneralSimulationConfig;
+import it.unibo.alchemist.grid.config.SimulationConfig;
+import it.unibo.alchemist.grid.config.SimulationConfigImpl;
+import it.unibo.alchemist.grid.exceptions.RemoteSimulationException;
+import it.unibo.alchemist.grid.simulation.RemoteResult;
+import it.unibo.alchemist.grid.simulation.SimulationSet;
+import it.unibo.alchemist.grid.simulation.SimulationSetImpl;
+import it.unibo.alchemist.loader.Loader;
+import it.unibo.alchemist.loader.export.EnvPerformanceStats;
+import it.unibo.alchemist.loader.export.Exporter;
+import it.unibo.alchemist.loader.export.Extractor;
+import it.unibo.alchemist.loader.variables.Variable;
+import it.unibo.alchemist.model.implementations.times.DoubleTime;
+import it.unibo.alchemist.model.interfaces.BenchmarkableEnvironment;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.interfaces.Time;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.output.FileWriterWithEncoding;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.jooq.lambda.fi.util.function.CheckedConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.awt.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -42,44 +77,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.output.FileWriterWithEncoding;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.jooq.lambda.fi.util.function.CheckedConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-
-import it.unibo.alchemist.boundary.gui.SingleRunGUI;
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
-import it.unibo.alchemist.core.implementations.Engine;
-import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.grid.cluster.Cluster;
-import it.unibo.alchemist.grid.cluster.ClusterImpl;
-import it.unibo.alchemist.grid.config.GeneralSimulationConfig;
-import it.unibo.alchemist.grid.config.LocalGeneralSimulationConfig;
-import it.unibo.alchemist.grid.config.SimulationConfig;
-import it.unibo.alchemist.grid.config.SimulationConfigImpl;
-import it.unibo.alchemist.grid.exceptions.RemoteSimulationException;
-import it.unibo.alchemist.grid.simulation.RemoteResult;
-import it.unibo.alchemist.grid.simulation.SimulationSet;
-import it.unibo.alchemist.grid.simulation.SimulationSetImpl;
-import it.unibo.alchemist.loader.Loader;
-import it.unibo.alchemist.loader.export.EnvPerformanceStats;
-import it.unibo.alchemist.loader.export.Exporter;
-import it.unibo.alchemist.loader.export.Extractor;
-import it.unibo.alchemist.loader.variables.Variable;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
-import it.unibo.alchemist.model.interfaces.BenchmarkableEnvironment;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position2D;
-import it.unibo.alchemist.model.interfaces.Time;
 
 /**
  * Starts Alchemist.

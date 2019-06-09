@@ -217,8 +217,6 @@ public class TestNormalizer {
             fail("not throw exception");
         } catch (IllegalStateException e) {
             assertFalse(e.getMessage().isEmpty());
-        } catch (Exception e) {
-            fail("throw wrong exception");
         }
     }
 
@@ -233,8 +231,6 @@ public class TestNormalizer {
             fail("not throw exception");
         } catch (IllegalArgumentException e) {
             assertFalse(e.getMessage().isEmpty());
-        } catch (Exception e) {
-            fail("throw wrong exception");
         }
     }
 
@@ -249,8 +245,6 @@ public class TestNormalizer {
             fail("not throw exception");
         } catch (IllegalArgumentException e) {
             assertFalse(e.getMessage().isEmpty());
-        } catch (Exception e) {
-            fail("throw wrong exception");
         }
     }
 

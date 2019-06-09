@@ -166,7 +166,7 @@ public class TestYAMLLoader {
 //            it.unibo.alchemist.boundary.gui.SingleRunGUI.make(sim);
 //        }
         sim.run();
-        sim.getError().ifPresent(e -> Assertions.fail(e.getMessage()));
+        sim.getError().ifPresent(e -> fail(e.getMessage()));
         return env;
     }
 

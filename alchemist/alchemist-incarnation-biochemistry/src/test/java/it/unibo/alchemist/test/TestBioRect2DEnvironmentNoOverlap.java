@@ -65,7 +65,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
     private static final Euclidean2DPosition POSITION_TO_MOVE7 = new Euclidean2DPosition(80, 80);
     private static final Euclidean2DPosition EXPECTED_POS7 = new Euclidean2DPosition(40 - (10 / FastMath.sqrt(2)), 40 - (10 / FastMath.sqrt(2)));
     private static final Euclidean2DPosition POSITION_TO_MOVE8 = new Euclidean2DPosition(-80, -80);
-    private static final Euclidean2DPosition EXPECTED_POS8 = new Euclidean2DPosition(-40 + (10 / FastMath.sqrt(2)), -40 + (10 / FastMath.sqrt(2)));
+    private static final Euclidean2DPosition EXPECTED_POS8 = new Euclidean2DPosition(-40 + 10 / FastMath.sqrt(2), -40 + 10 / FastMath.sqrt(2));
     private static final Euclidean2DPosition EXPECTED_POS_DIFFDIAM3_1 = new Euclidean2DPosition(5, 0);
     private static final Euclidean2DPosition EXPECTED_POS_DIFFDIAM3_2 = new Euclidean2DPosition(10, 0);
     private static final Euclidean2DPosition EXPECTED_POS_DIFFDIAM4_1 = new Euclidean2DPosition(-5, 0);

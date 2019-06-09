@@ -103,27 +103,27 @@ public final class Alchemist { // NOPMD MoreThanOneLogger
             }
             if (loader.isPresent()) {
                 final Builder<?, ?> simBuilder = new Builder<>(loader.get())
-                        .setHeadless(cmd.hasOption(HEADLESS))
-                        .setGUICloseOperation(JFrame.EXIT_ON_CLOSE);
-                ifPresent(cmd, EXPORT, simBuilder::setOutputFile);
-                ifPresent(cmd, GRAPHICS, simBuilder::setEffects);
+                        .headless(cmd.hasOption(HEADLESS))
+                        .withGUICloseOperation(JFrame.EXIT_ON_CLOSE);
+                ifPresent(cmd, EXPORT, simBuilder::writingOutputTo);
+                ifPresent(cmd, GRAPHICS, simBuilder::withEffects);
                 try {
-                    ifPresent(cmd, INTERVAL, Double::parseDouble, simBuilder::setInterval);
-                    ifPresent(cmd, TIME, Double::parseDouble, simBuilder::setEndTime);
+                    ifPresent(cmd, INTERVAL, Double::parseDouble, simBuilder::samplingEvery);
+                    ifPresent(cmd, TIME, Double::parseDouble, simBuilder::endingAtTime);
                     final String[] varsUnderRun = cmd.getOptionValues(VARIABLES);
                     if (cmd.hasOption(BATCH)) {
                         if (cmd.hasOption(PARALLELISM)) {
                             try {
                                 final int threads = Integer.parseUnsignedInt(cmd.getOptionValue(PARALLELISM));
-                                simBuilder.setParallelism(threads);
+                                simBuilder.withParallelism(threads);
                                 L.info("Using " + threads + " thread(s).");
                             } catch (final NumberFormatException e) {
-                                simBuilder.setParallelism(Runtime.getRuntime().availableProcessors());
+                                simBuilder.withParallelism(Runtime.getRuntime().availableProcessors());
                                 L.warn("Invalid option for PARALLELISM parameter, back to default.");
                             }
                         }
                         if (cmd.hasOption(BENCHMARK)) {
-                            simBuilder.setBenchmarkOutputFile(cmd.getOptionValue(BENCHMARK));
+                            simBuilder.writingBenchmarkResultsTo(cmd.getOptionValue(BENCHMARK));
                         }
                         if (varsUnderRun == null) {
                             L.error("You must specify which variables you want the batch to run on.");
@@ -136,7 +136,7 @@ public final class Alchemist { // NOPMD MoreThanOneLogger
                         }
 
                         if (cmd.hasOption(DISTRIBUTED)) {
-                            ifPresent(cmd, DISTRIBUTED, simBuilder::setRemoteConfig);
+                            ifPresent(cmd, DISTRIBUTED, simBuilder::withIgniteConfigration);
                         }
                         simBuilder.build().launch(vars);
                     } else {

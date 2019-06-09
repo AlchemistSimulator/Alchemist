@@ -200,7 +200,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
                 if (sim.getEnvironment() instanceof BenchmarkableEnvironment) {
                     for (final Extractor e : loader.getDataExtractors()) {
                         if (e instanceof EnvPerformanceStats) {
-                            ((BenchmarkableEnvironment<?, ?>) (sim.getEnvironment())).enableBenchmark();
+                            ((BenchmarkableEnvironment<?, ?>) sim.getEnvironment()).enableBenchmark();
                         }
                     }
                 }

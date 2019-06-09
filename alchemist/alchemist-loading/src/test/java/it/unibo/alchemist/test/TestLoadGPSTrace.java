@@ -7,17 +7,6 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
-import org.jooq.lambda.Unchecked;
-import org.junit.jupiter.api.Test;
-import org.kaikikm.threadresloader.ResourceLoader;
-
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -27,9 +16,19 @@ import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+import org.jooq.lambda.Unchecked;
+import org.junit.jupiter.api.Test;
+import org.kaikikm.threadresloader.ResourceLoader;
+
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * A series of tests checking that our Yaml Loader is working as expected.
@@ -69,14 +68,9 @@ public class TestLoadGPSTrace {
      * Test the ability to inject variables.
      */
     @Test
-    public void testLoadGPSTrace() {
-        testLoading("testgps.yml");
-    }
-
-    @SuppressWarnings("serial")
-    private static <T> void testLoading(final String resource) {
-        final InputStream res = ResourceLoader.getResourceAsStream(resource);
-        assertNotNull(res,"Missing test resource " + resource);
+    public <T> void testLoadGPSTrace() {
+        final InputStream res = ResourceLoader.getResourceAsStream("testgps.yml");
+        assertNotNull(res,"Missing test resource " + "testgps.yml");
         final Environment<T, GeoPosition> env = new YamlLoader(res).getDefault();
         final Simulation<T, GeoPosition> sim = new Engine<>(env, new DoubleTime(TIME_TO_REACH));
         sim.addOutputMonitor(new OutputMonitor<T, GeoPosition>() {
@@ -113,4 +107,5 @@ public class TestLoadGPSTrace {
             throw e;
         }));
     }
+
 }

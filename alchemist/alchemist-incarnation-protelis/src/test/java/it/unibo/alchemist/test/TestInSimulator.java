@@ -7,7 +7,17 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import com.google.common.collect.Maps;
+import com.google.common.io.Files;
+import it.unibo.alchemist.core.implementations.Engine;
+import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.loader.YamlLoader;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Position;
+import org.apache.commons.io.FileUtils;
+import org.jooq.lambda.Unchecked;
+import org.junit.jupiter.api.Test;
+import org.kaikikm.threadresloader.ResourceLoader;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,21 +28,10 @@ import java.net.URLClassLoader;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
-import org.apache.commons.io.FileUtils;
-import org.jooq.lambda.Unchecked;
-import org.junit.jupiter.api.Test;
-import org.kaikikm.threadresloader.ResourceLoader;
-
-import com.google.common.collect.Maps;
-import com.google.common.io.Files;
-
-import it.unibo.alchemist.core.implementations.Engine;
-import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.loader.YamlLoader;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * A series of tests checking that our Yaml Loader is working as expected.
@@ -47,8 +46,13 @@ public class TestInSimulator {
         testNoVar("testbase.yml");
     }
 
+    /**
+     * Tests loading custom nodes.
+     */
     @Test
-    public void testCustomNodes() { testNoVar("customnodes.yml"); }
+    public void testCustomNodes() {
+        testNoVar("customnodes.yml");
+    }
 
     /**
      * Test the ability to load a Protelis module from classpath.
@@ -60,9 +64,14 @@ public class TestInSimulator {
 
     /**
      * Test the ability to load Protelis modules that are dynamically added and removed from classpath in a multithreaded system.
+     *
+     * @throws IOException causes failure
+     * @throws URISyntaxException causes failure
+     * @throws ExecutionException causes failure
+     * @throws InterruptedException causes failure
      */
     @Test
-    public void testThreadDependentLoadModule() throws Exception {
+    public void testThreadDependentLoadModule() throws IOException, URISyntaxException, ExecutionException, InterruptedException {
         final Callable<Void> c = () -> {
             testNoVar("18-export.yml");
             return null;

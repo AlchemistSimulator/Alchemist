@@ -220,7 +220,7 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
     }
 
     @Override
-    public double getZoom() {
+    public final double getZoom() {
         return zoom;
     }
 

@@ -225,7 +225,7 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
     }
 
     @Override
-    public boolean isInsideView(final Point viewPoint) {
+    public final boolean isInsideView(final Point viewPoint) {
         final double x = viewPoint.getX();
         final double y = viewPoint.getY();
         final Dimension2D vs = getViewSize();

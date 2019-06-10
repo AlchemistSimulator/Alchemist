@@ -7,11 +7,11 @@
  */
 package it.unibo.alchemist.loader.variables;
 
+import org.apache.commons.math3.util.FastMath;
+
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
-import org.apache.commons.math3.util.FastMath;
 
 /**
  * A variable ranging geometrically (exponentially) in a range. Ideal for log-scale comparisons.
@@ -20,7 +20,7 @@ import org.apache.commons.math3.util.FastMath;
  * 
  * Both min and max must be strictly bigger than 0.
  */
-public class GeometricVariable extends PrintableVariable<Double> {
+public final class GeometricVariable extends PrintableVariable<Double> {
 
     private static final long serialVersionUID = 1L;
     private final double def;

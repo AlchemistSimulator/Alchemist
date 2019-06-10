@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 /**
  * @param <T>
  */
-public class MuseumHall<T> extends Continuous2DEnvironment<T> {
+public final class MuseumHall<T> extends Continuous2DEnvironment<T> {
 
     private static final long serialVersionUID = 585211392057392723L;
     private static final int SIZE = 10;

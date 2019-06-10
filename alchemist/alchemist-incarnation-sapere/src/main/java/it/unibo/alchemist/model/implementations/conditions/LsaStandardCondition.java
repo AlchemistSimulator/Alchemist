@@ -138,6 +138,9 @@ public class LsaStandardCondition extends LsaAbstractCondition {
         return valid;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return molecule.toString();

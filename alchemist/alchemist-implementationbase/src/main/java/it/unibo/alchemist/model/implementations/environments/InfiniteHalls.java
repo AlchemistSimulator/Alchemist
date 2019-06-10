@@ -1,26 +1,19 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-/**
- * 
- */
+
 package it.unibo.alchemist.model.implementations.environments;
 
-import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 
 /**
  * @param <T>
  */
-/**
- * @param <T>
- */
-public class InfiniteHalls<T> extends LimitedContinuos2D<T> {
+public final class InfiniteHalls<T> extends LimitedContinuos2D<T> {
 
     private static final long serialVersionUID = -7481116157809902856L;
     private static final double DEFAULT_SIZE = 10;
@@ -121,8 +114,8 @@ public class InfiniteHalls<T> extends LimitedContinuos2D<T> {
      * @return true if the position is allowed
      */
     public boolean allowed(final double xp, final double yp) {
-        final double x = ((xp % s) + s) % s;
-        final double y = ((yp % s) + s) % s;
+        final double x = (xp % s + s) % s;
+        final double y = (yp % s + s) % s;
         return x >= ex || // Right corridor
                 y >= ex || // Upper corridor
                 x >= ci && x <= cf || // Vertical lane
@@ -131,22 +124,22 @@ public class InfiniteHalls<T> extends LimitedContinuos2D<T> {
     }
 
     @Override
-    protected boolean isAllowed(final Position p) {
+    protected boolean isAllowed(final Euclidean2DPosition p) {
         final double[] coord = p.getCartesianCoordinates();
         return allowed(coord[0], coord[1]);
     }
 
     @Override
-    protected Position next(final double ox, final double oy, final double nx, final double ny) {
+    protected Euclidean2DPosition next(final double ox, final double oy, final double nx, final double ny) {
         if (allowed(nx, ny)) {
-            return new Continuous2DEuclidean(nx - ox, ny - oy);
+            return makePosition(nx - ox, ny - oy);
         }
         final int snx = (int) (ox / s);
         final int sny = (int) (oy / s);
         final double oxm = ox % s;
         final double oym = oy % s;
-        final double x = ((nx % s) + s) % s;
-        final double y = ((ny % s) + s) % s;
+        final double x = (nx % s + s) % s;
+        final double y = (ny % s + s) % s;
         double nxm = nx;
         double nym = ny;
         if (oxm >= ex) {
@@ -192,7 +185,7 @@ public class InfiniteHalls<T> extends LimitedContinuos2D<T> {
                 nxm = snx * s + cf;
             }
         }
-        return new Continuous2DEuclidean(nxm, nym);
+        return new Euclidean2DPosition(nxm, nym);
     }
 
     /**

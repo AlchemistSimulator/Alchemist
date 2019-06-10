@@ -1,17 +1,18 @@
 /*
- * Copyright (C) 2010-2015, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.implementations.actions;
 
 import java.util.List;
 
 import it.unibo.alchemist.model.implementations.movestrategies.routing.OnStreets;
 import it.unibo.alchemist.model.implementations.movestrategies.speed.InteractWithOthers;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
@@ -95,7 +96,7 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>> {
                 new NextTargetStrategy(environment, node, templateLSA, neighPos));
     }
 
-    private static final class NextTargetStrategy implements TargetSelectionStrategy<List<ILsaMolecule>> {
+    private static final class NextTargetStrategy implements TargetSelectionStrategy<GeoPosition> {
         /**
          * 
          */
@@ -105,7 +106,7 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>> {
         private final ILsaMolecule template;
         private final int argPos;
         private Node<List<ILsaMolecule>> curNode;
-        private Position curPos;
+        private GeoPosition curPos;
 
         NextTargetStrategy(
                 final MapEnvironment<List<ILsaMolecule>> env,
@@ -116,11 +117,11 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>> {
             node = requireNonNull(n);
             curNode = n;
             template = requireNonNull(ensureIsSAPERE(patt));
-            argPos = requireNonNull(pos);
+            argPos = pos;
         }
 
         @Override
-        public Position getTarget() {
+        public GeoPosition getTarget() {
             final MapEnvironment<List<ILsaMolecule>> env = environment;
             final List<ILsaMolecule> matches = node.getConcentration(template);
             /*
@@ -129,7 +130,7 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>> {
              * 
              * then remain still.
              */
-            final Position currentPosition = env.getPosition(node);
+            final GeoPosition currentPosition = env.getPosition(node);
             if (matches.isEmpty()) {
                 if (curPos == null || currentPosition.equals(curPos)) {
                     return currentPosition;

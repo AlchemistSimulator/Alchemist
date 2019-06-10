@@ -1,127 +1,133 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.model.implementations.actions;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.google.common.reflect.TypeToken;
+import it.unibo.alchemist.AlchemistUtil;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import org.apache.commons.math3.util.FastMath;
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
-import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
- *
+ * @param <P>
  */
-public class ChemotacticPolarization extends AbstractAction<Double> {
+public final class ChemotacticPolarization<P extends Position2D<P>> extends AbstractAction<Double> {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
-    private final Environment<Double> env;
+    private final Environment<Double, P> env;
     private final Biomolecule biomol;
     private final boolean ascend;
 
     /**
      * 
-     * @param environment 
-     * @param node 
-     * @param biomol 
-     * @param ascendGrad 
+     * @param environment the environment
+     * @param node the node
+     * @param biomolecule biomolecule's name
+     * @param ascendGrad if that parameter is true, the polarization versor of the cell will be directed in direction of
+     *                  the highest concentration of biomolecule in neighborhood; if it's false, the versor will be
+     *                   directed in the exactly the opposite direction.
      */
-    public ChemotacticPolarization(final Environment<Double> environment, final Node<Double> node, final Biomolecule biomol, final String ascendGrad) {
+    public ChemotacticPolarization(final Environment<Double, P> environment, final CellNode<P> node, final Biomolecule biomolecule, final String ascendGrad) {
         super(node);
-        if (node instanceof CellNode) {
-            this.env = Objects.requireNonNull(environment);
-            this.biomol = Objects.requireNonNull(biomol);
-            if (ascendGrad.equalsIgnoreCase("up")) {
-                this.ascend = true;
-            } else if (ascendGrad.equalsIgnoreCase("down")) {
-                this.ascend = false;
-            } else {
-                throw new IllegalArgumentException("Possible imput string are only up or down");
-            }
+        this.env = Objects.requireNonNull(environment);
+        this.biomol = Objects.requireNonNull(biomolecule);
+        if (ascendGrad.equalsIgnoreCase("up")) {
+            this.ascend = true;
+        } else if (ascendGrad.equalsIgnoreCase("down")) {
+            this.ascend = false;
         } else {
-            throw new UnsupportedOperationException("Polarization can happen only in cells.");
+            throw new IllegalArgumentException("Possible imput string are only up or down");
         }
     }
 
     /**
      * Initialize a polarization activity regulated by environmental concentration of a molecule.
-     * @param environment 
-     * @param node 
-     * @param biomol biomolecule's name
-     * @param ascendGrad if that parameter is true, the polarization versor of the cell will be directed in direction of the greates concentration of biomolecule in neighborhood; if it's false, the versor will be directed in the exactly the opposite direction.
+     * @param environment the environment
+     * @param node the node
+     * @param biomolecule biomolecule's name
+     * @param ascendGrad if that parameter is true, the polarization versor of the cell will be directed in direction
+     *                   of the highest concentration of biomolecule in neighborhood; if it's false, the versor will
+     *                   be directed in the exactly the opposite direction.
      */
-    public ChemotacticPolarization(final Environment<Double> environment, final Node<Double> node, final String biomol, final String ascendGrad) {
-        this(environment, node, new Biomolecule(biomol), ascendGrad);
+    public ChemotacticPolarization(final Environment<Double, P> environment, final Node<Double> node, final String biomolecule, final String ascendGrad) {
+        this(environment, AlchemistUtil.cast(new TypeToken<CellNode<P>>() { }, node), new Biomolecule(biomolecule), ascendGrad);
     }
 
 
     @Override
-    public ChemotacticPolarization cloneAction(final Node<Double> n, final Reaction<Double> r) {
-        return new ChemotacticPolarization(env, n, biomol.toString(), ascend ? "up" : "down");
+    public ChemotacticPolarization<P> cloneAction(final Node<Double> n, final Reaction<Double> r) {
+        return new ChemotacticPolarization<>(env, n, biomol.toString(), ascend ? "up" : "down");
     }
 
     @Override
     public void execute() {
         // declaring a variable for the node where this action is set, to have faster access
-        final CellNode thisNode = getNode();
+        final CellNode<P> thisNode = getNode();
         final List<Node<Double>> l = env.getNeighborhood(thisNode).getNeighbors().stream()
                 .filter(n -> n instanceof EnvironmentNode && n.contains(biomol))
                 .collect(Collectors.toList());
         if (l.isEmpty()) {
-            thisNode.addPolarization(new Continuous2DEuclidean(0, 0));
+            thisNode.addPolarization(env.makePosition(0, 0));
         } else {
             final boolean isNodeOnMaxConc = env.getPosition(l.stream()
-                    .max((n1, n2) -> Double.compare(n1.getConcentration(biomol), n2.getConcentration(biomol)))
+                    .max(Comparator.comparingDouble(n -> n.getConcentration(biomol)))
                     .get()).equals(env.getPosition(thisNode));
             if (isNodeOnMaxConc) {
-                thisNode.addPolarization(new Continuous2DEuclidean(0, 0));
+                thisNode.addPolarization(env.makePosition(0, 0));
             } else {
-                Position newPolVer = weightedAverageVectors(l, thisNode);
-                final double newPolVerModule = FastMath.sqrt(FastMath.pow(
-                        newPolVer.getCoordinate(0), 2) + FastMath.pow(newPolVer.getCoordinate(1), 2)
-                        );
+                P newPolVer = weightedAverageVectors(l, thisNode);
+                final double newPolX = newPolVer.getX();
+                final double newPolY = newPolVer.getY();
+                final double newPolVerModule = FastMath.sqrt(newPolX * newPolX + newPolY * newPolY);
                 if (newPolVerModule == 0) {
                     thisNode.addPolarization(newPolVer);
                 } else {
-                    newPolVer = new Continuous2DEuclidean(newPolVer.getCoordinate(0) / newPolVerModule, newPolVer.getCoordinate(1) / newPolVerModule);
+                    newPolVer = env.makePosition(newPolVer.getX() / newPolVerModule, newPolVer.getY() / newPolVerModule);
                     if (ascend) {
                         thisNode.addPolarization(newPolVer);
                     } else {
-                        thisNode.addPolarization(new Continuous2DEuclidean(
-                                -newPolVer.getCoordinate(0), 
-                                -newPolVer.getCoordinate(1))
-                                );
+                        thisNode.addPolarization(env.makePosition(-newPolVer.getX(), -newPolVer.getY()));
                     }
                 }
             }
         }
     }
 
-    private Position weightedAverageVectors(final List<Node<Double>> list, final CellNode thisNode) {
-        Position res = new Continuous2DEuclidean(0, 0);
-        final Position thisNodePos = env.getPosition(thisNode);
+    private P weightedAverageVectors(final List<Node<Double>> list, final CellNode<P> thisNode) {
+        P res = env.makePosition(0, 0);
+        final P thisNodePos = env.getPosition(thisNode);
         for (final Node<Double> n : list) {
-            final Position nPos = env.getPosition(n);
-            Position vecTemp = new Continuous2DEuclidean(
-                    nPos.getCoordinate(0) - thisNodePos.getCoordinate(0),
-                    nPos.getCoordinate(1) - thisNodePos.getCoordinate(1));
-            final double vecTempModule = FastMath.sqrt(FastMath.pow(vecTemp.getCoordinate(0), 2) + FastMath.pow(vecTemp.getCoordinate(1), 2));
-            vecTemp = new Continuous2DEuclidean(
-                    n.getConcentration(biomol) * (vecTemp.getCoordinate(0) / vecTempModule), 
-                    n.getConcentration(biomol) * (vecTemp.getCoordinate(1) / vecTempModule));
-            res = new Continuous2DEuclidean(
-                    res.getCoordinate(0) + vecTemp.getCoordinate(0),
-                    res.getCoordinate(1) + vecTemp.getCoordinate(1));
+            final P nPos = env.getPosition(n);
+            P vecTemp = env.makePosition(
+                    nPos.getX() - thisNodePos.getX(),
+                    nPos.getY() - thisNodePos.getY());
+            final double vecTempModule = FastMath.sqrt(FastMath.pow(vecTemp.getX(), 2) + FastMath.pow(vecTemp.getY(), 2));
+            vecTemp = env.makePosition(
+                    n.getConcentration(biomol) * (vecTemp.getX() / vecTempModule),
+                    n.getConcentration(biomol) * (vecTemp.getY() / vecTempModule));
+            res = env.makePosition(
+                    res.getX() + vecTemp.getX(),
+                    res.getY() + vecTemp.getY());
         }
         return res;
     }
@@ -132,8 +138,8 @@ public class ChemotacticPolarization extends AbstractAction<Double> {
     }
 
     @Override
-    public CellNode getNode() {
-        return (CellNode) super.getNode();
+    public CellNode<P> getNode() {
+        return (CellNode<P>) super.getNode();
     }
 
 }

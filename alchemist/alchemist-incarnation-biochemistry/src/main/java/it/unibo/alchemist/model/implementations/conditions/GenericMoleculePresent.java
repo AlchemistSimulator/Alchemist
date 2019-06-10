@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2010-2016, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.implementations.conditions;
 
 import it.unibo.alchemist.model.interfaces.Context;
@@ -42,9 +42,12 @@ public class GenericMoleculePresent<T extends Number> extends
         }
         molecule = mol;
         qty = quantity;
-        addReadMolecule(mol);
+        declareDependencyOn(mol);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Context getContext() {
         return Context.LOCAL;
@@ -60,11 +63,17 @@ public class GenericMoleculePresent<T extends Number> extends
                 .doubleValue();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return molecule.toString() + ">=" + qty;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public GenericMoleculePresent<T> cloneCondition(final Node<T> n, final Reaction<T> r) {
         return new GenericMoleculePresent<T>(n, molecule, qty);
@@ -78,7 +87,7 @@ public class GenericMoleculePresent<T extends Number> extends
      * @return the propensity influence
      */
     @Override
-    public double getPropensityConditioning() {
+    public double getPropensityContribution() {
         final int n = getNode().getConcentration(molecule).intValue();
         final int k = qty.intValue();
         if (k > n) {

@@ -1,37 +1,38 @@
 /*
- * Copyright (C) 2010-2015, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.implementations.nodes;
+
+import com.google.common.collect.ImmutableSet;
+import it.unibo.alchemist.model.ProtelisIncarnation;
+import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Molecule;
+import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.protelis.AlchemistNetworkManager;
+import org.protelis.lang.datatype.DeviceUID;
+import org.protelis.lang.datatype.Field;
+import org.protelis.vm.ExecutionEnvironment;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-
-import org.protelis.lang.datatype.DeviceUID;
-import org.protelis.lang.datatype.Field;
-import org.protelis.vm.ExecutionEnvironment;
-import org.protelis.vm.NetworkManager;
-
-import it.unibo.alchemist.model.ProtelisIncarnation;
-import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Molecule;
-import it.unibo.alchemist.model.interfaces.Time;
-import it.unibo.alchemist.protelis.AlchemistNetworkManager;
+import java.util.Set;
 
 /**
  */
-public class ProtelisNode extends GenericNode<Object> implements DeviceUID, ExecutionEnvironment {
+public final class ProtelisNode extends AbstractNode<Object> implements DeviceUID, ExecutionEnvironment {
 
     private static final long serialVersionUID = 7411790948884770553L;
-    private final Map<RunProtelisProgram, AlchemistNetworkManager> netmgrs = new LinkedHashMap<>();
-    private final Environment<?> environment;
+    private final Map<RunProtelisProgram<?>, AlchemistNetworkManager> netmgrs = new LinkedHashMap<>();
+    private final Environment<?, ?> environment;
 
     /**
      * Builds a new {@link ProtelisNode}.
@@ -39,7 +40,7 @@ public class ProtelisNode extends GenericNode<Object> implements DeviceUID, Exec
      * @param env
      *            the environment
      */
-    public ProtelisNode(final Environment<?> env) {
+    public ProtelisNode(final Environment<?, ?> env) {
         super(env);
         this.environment = env;
     }
@@ -55,15 +56,15 @@ public class ProtelisNode extends GenericNode<Object> implements DeviceUID, Exec
     }
 
     /**
-     * Adds a new {@link NetworkManager}.
+     * Adds a new {@link AlchemistNetworkManager}.
      * 
      * @param program
      *            the {@link RunProtelisProgram}
-     * @param netmgr
+     * @param networkManager
      *            the {@link AlchemistNetworkManager}
      */
-    public void addNetworkManger(final RunProtelisProgram program, final AlchemistNetworkManager netmgr) {
-        netmgrs.put(program, netmgr);
+    public void addNetworkManger(final RunProtelisProgram<?> program, final AlchemistNetworkManager networkManager) {
+        netmgrs.put(program, networkManager);
     }
 
     /**
@@ -72,13 +73,13 @@ public class ProtelisNode extends GenericNode<Object> implements DeviceUID, Exec
      * @return the {@link AlchemistNetworkManager} for this specific
      *         {@link RunProtelisProgram}
      */
-    public AlchemistNetworkManager getNetworkManager(final RunProtelisProgram program) {
+    public AlchemistNetworkManager getNetworkManager(final RunProtelisProgram<?> program) {
         Objects.requireNonNull(program);
         return netmgrs.get(program);
     }
 
-    private static Molecule makeMol(final String id) {
-        return new ProtelisIncarnation().createMolecule(id);
+    private static <P extends Position<P>> Molecule makeMol(final String id) {
+        return new ProtelisIncarnation<P>().createMolecule(id);
     }
 
     @Override
@@ -133,11 +134,16 @@ public class ProtelisNode extends GenericNode<Object> implements DeviceUID, Exec
     @Override
     public ProtelisNode cloneNode(final Time currentTime) {
         final ProtelisNode result = new ProtelisNode(environment);
-        getContents().forEach((mol, conc) -> {
-            result.setConcentration(mol, conc);
-        });
+        getContents().forEach(result::setConcentration);
         getReactions().forEach(r -> result.addReaction(r.cloneOnNewNode(result, currentTime)));
         return result;
+    }
+
+    @Override
+    public Set<String> keySet() {
+        return getContents().keySet().stream()
+                .map(Molecule::getName)
+                .collect(ImmutableSet.toImmutableSet());
     }
 
 }

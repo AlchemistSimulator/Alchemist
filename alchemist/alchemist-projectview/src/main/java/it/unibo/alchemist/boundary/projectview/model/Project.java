@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.boundary.projectview.model;
 
 import java.io.File;
@@ -171,7 +178,7 @@ public final class Project {
          */
         final Loader loader = createLoader();
         if (loader != null) {
-            final AlchemistRunner<?> runner = new AlchemistRunner.Builder<>(loader).build();
+            final AlchemistRunner<?, ?> runner = new AlchemistRunner.Builder<>(loader).build();
             final Map<String, Boolean> vars = Collections.unmodifiableMap(this.batch.getVariables());
             this.batch.setVariables(runner.getVariables().keySet().stream()
                     .collect(Collectors.toMap(
@@ -207,21 +214,21 @@ public final class Project {
                  * 1. Try to use resourceloader "/it/unibo/images/pluto.png" getResource() -- getResourceAsStream()
                  * 2. If it fails, use file access
                  */
-                final AlchemistRunner<?> runner = new AlchemistRunner.Builder<>(loader)
-                        .setEndTime(new DoubleTime(getEndTime()))
-                        .setEffects(getEffectPath())
-                        .setOutputFile(getFolderPath())
-                        .setInterval(getOutput().getSampleInterval())
-                        .setParallelism(getBatch().getThreadCount())
-                        .setHeadless(false)
-                        .setGUICloseOperation(JFrame.DISPOSE_ON_CLOSE)
+                final AlchemistRunner<?, ?> runner = new AlchemistRunner.Builder<>(loader)
+                        .endingAtTime(new DoubleTime(getEndTime()))
+                        .withEffects(getEffectPath())
+                        .writingOutputTo(getFolderPath())
+                        .samplingEvery(getOutput().getSampleInterval())
+                        .withParallelism(getBatch().getThreadCount())
+                        .headless(false)
+                        .withGUICloseOperation(JFrame.DISPOSE_ON_CLOSE)
                         .build();
                     final Map<String, Variable<?>> keys = runner.getVariables();
                     final Set<String> selectedVariables = isBatch 
                             ? this.batch.getVariables().entrySet().stream().filter(Entry::getValue).map(Entry::getKey).collect(Collectors.toSet())
                             : Collections.emptySet();
                     if (keys.keySet().containsAll(selectedVariables)) {
-                        runner.launch(selectedVariables.toArray(new String[selectedVariables.size()]));
+                        runner.launch(selectedVariables.toArray(new String[0]));
                     } else {
                         final Alert alert = new Alert(AlertType.ERROR);
                         alert.setTitle(RESOURCES.getString("var_key_error"));

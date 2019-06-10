@@ -1,5 +1,0 @@
-dependencies {
-    compile (
-        "org.danilopianini:boilerplate:${boilerplateVersion}"
-    )
-}

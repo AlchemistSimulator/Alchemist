@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.boundary.monitors;
 
 import java.awt.Component;
@@ -6,6 +13,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -22,9 +30,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.plaf.basic.BasicBorders;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.ClassPathScanner;
 import org.danilopianini.lang.CollectionWithCurrentElement;
 import org.danilopianini.lang.ImmutableCollectionWithCurrentElement;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,38 +46,30 @@ import it.unibo.alchemist.model.interfaces.Node;
  *
  * @param <T>
  */
+@SuppressFBWarnings(value = "SE_TRANSIENT_FIELD_NOT_RESTORED", justification = "This class is not meant to get serialized")
 public class MoleculeInjectorGUI<T> extends JPanel {
 
     private static final long serialVersionUID = -375286112397911525L;
-
     private static final Logger L = LoggerFactory.getLogger(MoleculeInjectorGUI.class);
-    private static final List<Incarnation<?>> INCARNATIONS = new LinkedList<>();
-
-    private final transient CollectionWithCurrentElement<Incarnation<T>> incarnation = makeIncarnation();
-    private final Set<Node<T>> affectedNodes = new HashSet<>();
-    private final List<JLabel> nodesLabels;
-    private final JTextArea concentration;
-    private final JTextArea molecule;
-    private final JComboBox<Incarnation<?>> selectedIncr;
-    private final JButton apply = new JButton("Apply");
+    private static final List<Incarnation<?, ?>> INCARNATIONS = new LinkedList<>();
 
     static {
-        final Reflections reflections = new Reflections("it.unibo.alchemist");
-        for (@SuppressWarnings("rawtypes") final Class<? extends Incarnation> clazz : reflections.getSubTypesOf(Incarnation.class)) {
+        for (final Class<? extends Incarnation> clazz : ClassPathScanner.subTypesOf(Incarnation.class)) {
             try {
-                INCARNATIONS.add(clazz.newInstance());
-            } catch (InstantiationException | IllegalAccessException e) {
+                INCARNATIONS.add(clazz.getDeclaredConstructor().newInstance());
+            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                 L.warn("Could not initialize incarnation {}", clazz);
             }
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private CollectionWithCurrentElement<Incarnation<T>> makeIncarnation() {
-        return new ImmutableCollectionWithCurrentElement<>(
-                INCARNATIONS.stream().map(i -> (Incarnation<T>) i).collect(Collectors.toList()),
-                (Incarnation<T>) INCARNATIONS.get(0));
-    }
+    private final transient CollectionWithCurrentElement<Incarnation<T, ?>> incarnation = makeIncarnation();
+    private final Set<Node<T>> affectedNodes = new HashSet<>();
+    private final List<JLabel> nodesLabels;
+    private final JTextArea concentration;
+    private final JTextArea molecule;
+    private final JComboBox<Incarnation<?, ?>> selectedIncr;
+    private final JButton apply = new JButton("Apply");
 
     /**
      * @param nodes The nodes which will be affected by the molecule injection.
@@ -88,6 +89,13 @@ public class MoleculeInjectorGUI<T> extends JPanel {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private CollectionWithCurrentElement<Incarnation<T, ?>> makeIncarnation() {
+        return new ImmutableCollectionWithCurrentElement<>(
+                INCARNATIONS.stream().map(i -> (Incarnation<T, ?>) i).collect(Collectors.toList()),
+                (Incarnation<T, ?>) INCARNATIONS.get(0));
+    }
+
     private void buildView() {
         final JPanel nodesPanel = new JPanel();
         final GridBagConstraints nodesCnst = new GridBagConstraints();
@@ -105,7 +113,7 @@ public class MoleculeInjectorGUI<T> extends JPanel {
         jsp.setPreferredSize(new Dimension(jsp.getPreferredSize().width * 2, jsp.getPreferredSize().height));
         jsp.setAutoscrolls(true);
         add(jsp);
-        for (final Incarnation<?> inc : MoleculeInjectorGUI.INCARNATIONS) {
+        for (final Incarnation<?, ?> inc : MoleculeInjectorGUI.INCARNATIONS) {
             selectedIncr.addItem(inc);
         }
         add(selectedIncr);
@@ -143,15 +151,15 @@ public class MoleculeInjectorGUI<T> extends JPanel {
         apply.addActionListener((event) -> {
             final String mol = molecule.getText();
             final String conc = concentration.getText();
-            final Incarnation<T> currentInc = incarnation.getCurrent();
+            final Incarnation<T, ?> currentInc = incarnation.getCurrent();
             for (final Node<T> n : affectedNodes) {
                 try {
                     n.setConcentration(currentInc.createMolecule(mol), currentInc.createConcentration(conc));
-                } catch (Exception | AbstractMethodError e) {
+                } catch (Exception | AbstractMethodError e) { // NOPMD
                     L.error("Unable to set new concentration: ", e);
                 }
             }
         });
-        selectedIncr.addActionListener((event) -> incarnation.setCurrent((Incarnation<T>) (selectedIncr.getSelectedItem())));
+        selectedIncr.addActionListener((event) -> incarnation.setCurrent((Incarnation<T, ?>) (selectedIncr.getSelectedItem())));
     }
 }

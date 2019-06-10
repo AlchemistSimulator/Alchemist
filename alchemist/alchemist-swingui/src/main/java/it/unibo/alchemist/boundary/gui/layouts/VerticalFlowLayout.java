@@ -1,4 +1,11 @@
 /*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+/*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,7 +41,7 @@ import java.awt.Insets;
  *         class libraries Vol 2 Chan/Lee Addison-Wesley 1998
  */
 
-public class VerticalFlowLayout extends AFlowLayout {
+public final class VerticalFlowLayout extends AFlowLayout {
     /**
      * 
      */

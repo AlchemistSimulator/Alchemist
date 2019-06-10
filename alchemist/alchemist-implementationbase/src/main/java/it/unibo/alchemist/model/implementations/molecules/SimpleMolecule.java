@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 /**
  * 
  */
@@ -42,11 +42,9 @@ public class SimpleMolecule implements Molecule {
         this.n = name;
     }
 
-    @Override
-    public boolean dependsOn(final Molecule mol) {
-        return equals(mol);
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(final Object obj) {
         if (obj == this) {
@@ -63,7 +61,7 @@ public class SimpleMolecule implements Molecule {
     }
 
     @Override
-    public long getId() {
+    public final long getId() {
         initHash();
         return hash64;
     }
@@ -73,6 +71,9 @@ public class SimpleMolecule implements Molecule {
         return n.toString();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         initHash();
@@ -88,6 +89,9 @@ public class SimpleMolecule implements Molecule {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return n.toString();

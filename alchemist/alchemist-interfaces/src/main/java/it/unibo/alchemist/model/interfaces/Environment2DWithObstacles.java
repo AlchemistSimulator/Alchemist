@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.interfaces;
 
@@ -13,8 +12,9 @@ import java.util.List;
 /**
  * @param <W>
  * @param <T>
+ * @param <P>
  */
-public interface Environment2DWithObstacles<W extends Obstacle2D, T> extends Environment<T> {
+public interface Environment2DWithObstacles<W extends Obstacle2D, T, P extends Position<? extends P>> extends Environment<T, P> {
 
     /**
      * Adds an {@link Obstacle2D} to this environment.
@@ -66,7 +66,7 @@ public interface Environment2DWithObstacles<W extends Obstacle2D, T> extends Env
      * @param p2 end position
      * @return true if the line connecting p1 and p2 touches an obstacle
      */
-    boolean intersectsObstacle(Position p1, Position p2);
+    boolean intersectsObstacle(P p1, P p2);
 
     /**
      * This method must calculate the RELATIVE next allowed position given the
@@ -90,7 +90,7 @@ public interface Environment2DWithObstacles<W extends Obstacle2D, T> extends Env
      *         position MUST be considered as a vector whose start point is in
      *         [ox, oy].
      */
-    Position next(double ox, double oy, double nx, double ny);
+    P next(double ox, double oy, double nx, double ny);
 
 
     /**

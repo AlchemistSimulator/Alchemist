@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.interfaces;
 
@@ -23,24 +22,12 @@ import org.danilopianini.util.ListSet;
 public interface Neighborhood<T> extends Serializable, Cloneable, Iterable<Node<T>> {
 
     /**
-     * Allows to add a node to the neighborhood. Please note that changing
-     * neighborhoods directly DOES NOT GUARANTEE this modification to be
-     * propagated through the environment.
-     * 
-     * @param neigh
-     *            the node to add
+     * @param node
+     *            the {@link Node} to add
+     * @return a new {@link Neighborhood} with the same center and the new node
+     *         among its neighbors
      */
-    void addNeighbor(Node<T> neigh);
-
-    /**
-     * @return A new Neighborhood, which has a CLONED list of neighbors, but
-     *         POINTS TO and DOES NOT CLONE the whole environment and the center
-     *         node, neither the nodes contained in the neighbors list.
-     * @throws CloneNotSupportedException
-     *             Never thrown. Only for compatibility with the cumbersome
-     *             Object.clone().
-     */
-    Neighborhood<T> clone() throws CloneNotSupportedException;
+    Neighborhood<T> add(Node<T> node);
 
     /**
      * Verifies if a node is contained inside a neighborhood.
@@ -52,44 +39,12 @@ public interface Neighborhood<T> extends Serializable, Cloneable, Iterable<Node<
     boolean contains(Node<T> n);
 
     /**
-     * Verifies if a node with the specified id is contained inside a
-     * neighborhood.
-     * 
-     * @param n
-     *            the node id to be searched
-     * @return true if n belongs to this neighborhood
-     */
-    boolean contains(int n);
-
-    /**
-     * Allows to get all the nodes in this neighborhood whose distance from the
-     * center node is between min and max.
-     * 
-     * @param min
-     *            if a node has a distance from the center node lower than min,
-     *            it will be not in the returned list
-     * @param max
-     *            if a node has a distance from the center node higher than max,
-     *            it will be not in the returned list
-     * @return the list of nodes whose distance from the center node is between
-     *         min and max.
-     */
-    ListSet<? extends Node<T>> getBetweenRange(double min, double max);
-
-    /**
      * Allows to access the central node.
      * 
-     * @return the central node, namely the node whose neighbors are represented
-     *         by this structure.
+     * @return the central node, namely the node whose neighbors are represented by
+     *         this structure.
      */
     Node<T> getCenter();
-
-    /**
-     * @param id
-     *            the node id
-     * @return the nodes
-     */
-    Node<T> getNeighborById(int id);
 
     /**
      * Returns the num-th neighbor.
@@ -98,15 +53,16 @@ public interface Neighborhood<T> extends Serializable, Cloneable, Iterable<Node<
      *            the neighbor index
      * @return the num-th neighbor
      */
+    @Deprecated
     Node<T> getNeighborByNumber(int num);
 
     /**
-     * Allows to directly access every node in the neighborhood. A change of
-     * this List will be reflected in the neighborhood.
+     * Allows to directly access every node in the neighborhood. A change of this
+     * List will be reflected in the neighborhood.
      * 
      * @return the list of the neighbors
      */
-    ListSet<Node<T>> getNeighbors();
+    ListSet<? extends Node<T>> getNeighbors();
 
     /**
      * @return true if this neighborhood has no neighbors
@@ -114,10 +70,12 @@ public interface Neighborhood<T> extends Serializable, Cloneable, Iterable<Node<
     boolean isEmpty();
 
     /**
-     * @param neighbor
-     *            removes a neighbor from the neighborhood
+     * @param node
+     *            the {@link Node} to remove
+     * @return a new {@link Neighborhood} with the same center without the provided
+     *         {@link Node}
      */
-    void removeNeighbor(Node<T> neighbor);
+    Neighborhood<T> remove(Node<T> node);
 
     /**
      * @return the number of neighbors.

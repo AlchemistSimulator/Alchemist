@@ -1,7 +1,14 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ConcurrentModificationException;
 import java.util.List;
@@ -13,11 +20,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
 import it.unibo.alchemist.model.implementations.nodes.LsaNode;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 
@@ -33,7 +41,7 @@ public class TestLsaNode {
      */
     @Test
     public void testConcurrentAccess() {
-        final Environment<List<ILsaMolecule>> env = new Continuous2DEnvironment<>();
+        final Environment<List<ILsaMolecule>, Euclidean2DPosition> env = new Continuous2DEnvironment<>();
         final LsaNode node = new LsaNode(env);
         final CountDownLatch cd = new CountDownLatch(THREADS);
         final Queue<Exception> queue = new ConcurrentLinkedQueue<>();

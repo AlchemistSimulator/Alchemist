@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.model.implementations.timedistributions;
 
 import org.apache.commons.math3.distribution.RealDistribution;
@@ -6,7 +13,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.implementations.utils.RealDistributionUtil;
-import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Time;
 
@@ -15,7 +21,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  * subclass of {@link RealDistribution}. Being generic, however, it does not
  * allow for dynamic rate tuning (namely, it can't be used to generate events
  * with varying frequency based on
- * {@link Condition#getPropensityConditioning()}.
+ * {@link it.unibo.alchemist.model.interfaces.Condition#getPropensityContribution()}.
  * 
  * @param <T>
  *            concentration type
@@ -79,18 +85,22 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
     }
 
     @Override
-    public double getRate() {
+    public final double getRate() {
         return distribution.getNumericalMean();
     }
 
+    @SuppressFBWarnings(value = "FE_FLOATING_POINT_EQUALITY", justification = "We want to check for exact equality here")
     @Override
-    protected final void updateStatus(final Time curTime, final boolean executed, final double param, final Environment<T> env) {
+    protected final void updateStatus(final Time curTime, final boolean executed, final double param, final Environment<T, ?> env) {
         if (param != getRate()) {
             throw new IllegalStateException(getClass().getSimpleName() + " does not allow to dynamically tune the rate.");
         }
         setTau(new DoubleTime(curTime.toDouble() + distribution.sample()));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public AbstractDistribution<T> clone(final Time currentTime) {
         return new AnyRealDistribution<>(currentTime, distribution);

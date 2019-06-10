@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.implementations.actions;
 
@@ -26,20 +25,22 @@ import java.util.List;
 
 
 /**
+ *
+ * @param <P> position type
  */
-public class LsaAscendingGradientDist extends SAPERENeighborAgent {
+public final class LsaAscendingGradientDist<P extends Position<P>> extends SAPERENeighborAgent<P> {
 
     private static final long serialVersionUID = 7719580008466360029L;
     private static final ILsaMolecule MOLGRAD = new LsaMolecule("grad, req, Type, Distance, Time");
     private static final ILsaMolecule MOLRESPONSE = new LsaMolecule("response, Req, Ser, MD, D");
     private static final int POS = 3;
-    private final Environment<List<ILsaMolecule>> env;
+    private final Environment<List<ILsaMolecule>, ?> env;
 
     /**
      * @param environment environment
      * @param node node
      */
-    public LsaAscendingGradientDist(final Environment<List<ILsaMolecule>> environment, final ILsaNode node) {
+    public LsaAscendingGradientDist(final Environment<List<ILsaMolecule>, P> environment, final ILsaNode node) {
         super(environment, node, MOLRESPONSE);
         this.env = environment;
     }
@@ -65,7 +66,7 @@ public class LsaAscendingGradientDist extends SAPERENeighborAgent {
             }
         }
         if (!targetPositions.isEmpty()) {
-            final Position pd = getPosition(targetPositions.get(targetPositions.size() - 1));
+            final P pd = getPosition(targetPositions.get(targetPositions.size() - 1));
             final double distance = getCurrentPosition().getDistanceTo(pd);
             final List<IExpression> l = MOLRESPONSE.allocateVar(getMatches());
             final IExpression d = l.remove(l.size() - 1);

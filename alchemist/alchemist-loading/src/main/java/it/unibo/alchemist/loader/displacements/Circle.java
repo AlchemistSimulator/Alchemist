@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 /**
  * 
  */
@@ -14,9 +21,9 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 
 /**
- *
+ * @param <P>
  */
-public class Circle extends AbstractRandomDisplacement {
+public final class Circle<P extends Position<? extends P>> extends AbstractRandomDisplacement<P> {
 
     private final double centerx, centery, radius;
 
@@ -27,25 +34,25 @@ public class Circle extends AbstractRandomDisplacement {
      *            the {@link RandomGenerator}
      * @param nodes
      *            the number of nodes
-     * @param centerx
+     * @param centerX
      *            the center x of the circle
-     * @param centery
+     * @param centerY
      *            the center y of the circle
      * @param radius
      *            the radius of the circle
      */
-    public Circle(final Environment<?> pm,
+    public Circle(final Environment<?, P> pm,
             final RandomGenerator rand,
             final int nodes,
-            final double centerx, final double centery, final double radius) {
+            final double centerX, final double centerY, final double radius) {
         super(pm, rand, nodes);
-        this.centerx = centerx;
-        this.centery = centery;
+        this.centerx = centerX;
+        this.centery = centerY;
         this.radius = radius;
     }
 
     @Override
-    protected Position indexToPosition(final int i) {
+    protected P indexToPosition(final int i) {
         final double angle = randomDouble(0, 2 * PI);
         final double rad = radius * sqrt(randomDouble());
         return makePosition(centerx + rad * cos(angle), centery + rad * sin(angle));

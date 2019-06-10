@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.implementations.molecules;
 
@@ -15,14 +14,15 @@ import it.unibo.alchemist.expressions.implementations.Type;
 import it.unibo.alchemist.expressions.implementations.VarTreeNode;
 import it.unibo.alchemist.expressions.interfaces.IExpression;
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
+import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
-import it.unibo.alchemist.model.interfaces.Molecule;
 import org.danilopianini.lang.HashString;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Spliterator;
@@ -37,7 +37,8 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
 
     private static final String OPEN_SYMBOL = "<", CLOSE_SYMBOL = ">", SEPARATOR = ", ";
     private static final long serialVersionUID = -2727376723102146271L;
-    private static final Map<HashString, ITreeNode<?>> SMAP = Collections.unmodifiableMap(new HashMap<HashString, ITreeNode<?>>(0, 1f));
+    private static final Map<HashString, ITreeNode<?>> SMAP =
+            Collections.unmodifiableMap(new LinkedHashMap<>(0, 1f));
     /**
      * Synthetic property representing the distance.
      */
@@ -85,7 +86,7 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
      * Empty molecule, no arguments.
      */
     public LsaMolecule() {
-        this(new ArrayList<IExpression>(0));
+        this(new ArrayList<>(0));
     }
 
     /**
@@ -118,6 +119,7 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
      * @param m
      *            the LsaMolecule to copy
      */
+    @SuppressWarnings("CopyConstructorMissesField")
     public LsaMolecule(final LsaMolecule m) {
         this(m.args, m.toHashString(), m.duplicateVars, m.instance);
     }
@@ -177,7 +179,7 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
     }
 
     @Override
-    public boolean dependsOn(final Molecule m) {
+    public boolean dependsOn(final Dependency m) {
         if (m instanceof ILsaMolecule) {
             final ILsaMolecule mol = (ILsaMolecule) m;
             if (mol.argsNumber() != argsNumber()) {
@@ -244,7 +246,7 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
 
     @Override
     public int hashCode() {
-        return super.hashCode() ^ -1;
+        return ~super.hashCode();
     }
 
     @Override
@@ -282,7 +284,7 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
         if (argsNumber() != mol.size()) {
             return false;
         }
-        final Map<HashString, ITreeNode<?>> map = duplicateVars || duplicateVariables ? new HashMap<HashString, ITreeNode<?>>(argsNumber(), 1f) : SMAP;
+        final Map<HashString, ITreeNode<?>> map = duplicateVars || duplicateVariables ? new HashMap<>(argsNumber(), 1f) : SMAP;
         for (int i = 0; i < argsNumber(); i++) {
             /*
              * Call matchwith of Expression
@@ -358,9 +360,9 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
     private static List<IExpression> buildArgsDesc(final String argsString, final String description) {
         final String[] listArgs = argsString.split(",");
         final boolean hasDescription = description != null && description.length() > 0;
-        final List<IExpression> args = new ArrayList<IExpression>(listArgs.length + (hasDescription ? 1 : 0));
-        for (int i = 0; i < listArgs.length; i++) {
-            args.add(new Expression(listArgs[i]));
+        final List<IExpression> args = new ArrayList<>(listArgs.length + (hasDescription ? 1 : 0));
+        for (final String listArg : listArgs) {
+            args.add(new Expression(listArg));
         }
         if (hasDescription) {
             args.add(ExpressionFactory.buildComplexGroundExpression(description));
@@ -369,9 +371,9 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
     }
 
     private static HashString buildString(final List<IExpression> expList) {
-        StringBuilder output = new StringBuilder(OPEN_SYMBOL);
+        final StringBuilder output = new StringBuilder(OPEN_SYMBOL);
         for (int i = 0; i < expList.size(); i++) {
-            output = output.append(expList.get(i).toString());
+            output.append(expList.get(i).toString());
             if (i < expList.size() - 1) {
                 output.append(SEPARATOR);
             }
@@ -420,11 +422,9 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
 
     private static boolean selfVariableUsed(final List<IExpression> expList) {
         final List<HashString> foundVars = new ArrayList<>(expList.size());
-        boolean count = false;
         for (final IExpression e : expList) {
-            count = containVars(e.getRootNode(), foundVars);
-            if (count) {
-                return count;
+            if (containVars(e.getRootNode(), foundVars)) {
+                return true;
             }
         }
         return false;

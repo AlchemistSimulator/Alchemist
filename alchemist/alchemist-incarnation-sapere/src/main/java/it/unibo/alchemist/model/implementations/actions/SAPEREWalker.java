@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.implementations.actions;
 
@@ -12,8 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.danilopianini.lang.HashString;
-import org.danilopianini.util.ListSet;
-import org.danilopianini.util.ListSets;
 
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
@@ -30,7 +27,7 @@ import it.unibo.alchemist.model.interfaces.Vehicle;
 
 /**
  */
-public class SAPEREWalker extends MoveOnMap<List<ILsaMolecule>> implements ILsaAction {
+public final class SAPEREWalker extends MoveOnMap<List<ILsaMolecule>> implements ILsaAction {
 
     /**
      * The default molecule that identifies an interacting object.
@@ -76,17 +73,12 @@ public class SAPEREWalker extends MoveOnMap<List<ILsaMolecule>> implements ILsaA
         super(environment, node,
                 new OnStreets<>(environment, Vehicle.FOOT),
                 new InteractWithOthers<>(environment, node, reaction, tag, speed, range, interaction),
-                new FollowTrace<>(reaction));
+                new FollowTrace(reaction));
     }
 
     @Override
     public SAPEREWalker cloneAction(final Node<List<ILsaMolecule>> n, final Reaction<List<ILsaMolecule>> r) {
         return null;
-    }
-
-    @Override
-    public ListSet<ILsaMolecule> getModifiedMolecules() {
-        return ListSets.emptyListSet();
     }
 
     @Override

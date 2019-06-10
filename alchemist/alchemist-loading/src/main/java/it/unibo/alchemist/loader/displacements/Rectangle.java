@@ -1,14 +1,23 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.loader.displacements;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
+import org.jetbrains.annotations.NotNull;
 
 /**
  *
+ * @param <P> position type
  */
-public class Rectangle extends AbstractRandomDisplacement {
+public class Rectangle<P extends Position<? extends P>> extends AbstractRandomDisplacement<P> {
 
     private final double x, y, width, height;
 
@@ -23,24 +32,28 @@ public class Rectangle extends AbstractRandomDisplacement {
      *            x start point
      * @param y
      *            y start point
-     * @param sizex
+     * @param sizeX
      *            x size
-     * @param sizey
+     * @param sizeY
      *            y size
      */
-    public Rectangle(final Environment<?> pm, final RandomGenerator rand,
+    public Rectangle(final Environment<?, P> pm, final RandomGenerator rand,
             final int nodes,
             final double x, final double y,
-            final double sizex, final double sizey) {
+            final double sizeX, final double sizeY) {
         super(pm, rand, nodes);
         this.x = x;
         this.y = y;
-        this.width = sizex;
-        this.height = sizey;
+        this.width = sizeX;
+        this.height = sizeY;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @NotNull
     @Override
-    protected Position indexToPosition(final int i) {
+    protected P indexToPosition(final int i) {
         return makePosition(randomDouble(x, x + width), randomDouble(y, y + height));
     }
 

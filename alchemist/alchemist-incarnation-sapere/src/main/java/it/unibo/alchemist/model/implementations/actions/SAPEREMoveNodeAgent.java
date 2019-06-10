@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.implementations.actions;
 
@@ -19,11 +18,12 @@ import java.util.List;
 
 
 /**
+ * @param <P>
  */
-public abstract class SAPEREMoveNodeAgent extends SAPERELocalAgent {
+public abstract class SAPEREMoveNodeAgent<P extends Position<? extends P>> extends SAPERELocalAgent {
 
     private static final long serialVersionUID = 1202282862490424016L;
-    private final Environment<List<ILsaMolecule>> environment;
+    private final Environment<List<ILsaMolecule>, P> environment;
 
     /**
      * Creates a new SAPERE Local Agent stub. If you use this constructor, you
@@ -35,7 +35,7 @@ public abstract class SAPEREMoveNodeAgent extends SAPERELocalAgent {
      * @param node
      *            The node in which this agent stays
      */
-    public SAPEREMoveNodeAgent(final Environment<List<ILsaMolecule>> env, final ILsaNode node) {
+    public SAPEREMoveNodeAgent(final Environment<List<ILsaMolecule>, P> env, final ILsaNode node) {
         super(node);
         environment = env;
     }
@@ -51,7 +51,7 @@ public abstract class SAPEREMoveNodeAgent extends SAPERELocalAgent {
      * @param m
      *            The modified molecule template
      */
-    public SAPEREMoveNodeAgent(final Environment<List<ILsaMolecule>> env, final ILsaNode node, final ILsaMolecule m) {
+    public SAPEREMoveNodeAgent(final Environment<List<ILsaMolecule>, P> env, final ILsaNode node, final ILsaMolecule m) {
         super(node, m);
         environment = env;
     }
@@ -59,14 +59,14 @@ public abstract class SAPEREMoveNodeAgent extends SAPERELocalAgent {
     /**
      * @return the environment
      */
-    protected Environment<List<ILsaMolecule>> getEnvironment() {
+    protected Environment<List<ILsaMolecule>, P> getEnvironment() {
         return environment;
     }
 
     /**
      * @return the current position of the node
      */
-    protected Position getCurrentPosition() {
+    protected P getCurrentPosition() {
         return environment.getPosition(getNode());
     }
 
@@ -75,7 +75,7 @@ public abstract class SAPEREMoveNodeAgent extends SAPERELocalAgent {
      *            the node
      * @return the position of node
      */
-    protected final Position getPosition(final Node<List<ILsaMolecule>> node) {
+    protected final P getPosition(final Node<List<ILsaMolecule>> node) {
         return environment.getPosition(node);
     }
 
@@ -99,7 +99,7 @@ public abstract class SAPEREMoveNodeAgent extends SAPERELocalAgent {
      * @param direction
      *            the point towards which move the node
      */
-    protected final void move(final Position direction) {
+    protected final void move(final P direction) {
         environment.moveNode(getNode(), direction);
     }
 

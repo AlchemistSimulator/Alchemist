@@ -1,14 +1,13 @@
 /*
- * Copyright (C) 2010-2016, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.implementations.actions;
 
-import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.CellNode;
 
@@ -25,15 +24,15 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  * Represent the action of removing a junction between the current node and a neighbor. <br/>
  * This action only remove the junction reference inside this node, the neighbor totally ignore 
  * that a junction has been removed. <br/>
- * This is a part of the junction remotion process. <br/>
+ * This is a part of the junction removal process. <br/>
  * See {@link RemoveJunctionInNeighbor} for the other part of the process
  */
-public class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
+public final class RemoveJunctionInCell extends AbstractNeighborAction<Double> { // TODO try local
 
     private static final long serialVersionUID = 3565077605882164314L;
 
     private final Junction jun;
-    private final Environment<Double> env;
+    private final Environment<Double, ?> env;
 
     /**
      * 
@@ -42,12 +41,12 @@ public class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
      * @param e the environment
      * @param rg the random generator
      */
-    public RemoveJunctionInCell(final Environment<Double> e, final Node<Double> n, final Junction junction, final RandomGenerator rg) {
+    public RemoveJunctionInCell(final Environment<Double, ?> e, final Node<Double> n, final Junction junction, final RandomGenerator rg) {
         super(n, e, rg);
         if (n instanceof CellNode) {
-            addModifiedMolecule(junction);
+            declareDependencyTo(junction);
             for (final Map.Entry<Biomolecule, Double> entry : junction.getMoleculesInCurrentNode().entrySet()) {
-                addModifiedMolecule(entry.getKey());
+                declareDependencyTo(entry.getKey());
             }
             jun = junction;
             env = e;
@@ -67,18 +66,13 @@ public class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
     @Override
     public void execute() { }
 
-    @Override
-    public Context getContext() {
-        return Context.NEIGHBORHOOD; // TODO try local
-    }
-
     /**
      * Removes the junction that links the node where this action is executed and the target node. 
      */
     @Override
     public void execute(final Node<Double> targetNode) { 
         if (targetNode instanceof CellNode) {
-            getNode().removeJunction(jun, (CellNode) targetNode);
+            getNode().removeJunction(jun, (CellNode<?>) targetNode);
         } else {
             throw new UnsupportedOperationException("Can't remove Junction in a node that it's not a CellNode");
         }
@@ -90,7 +84,7 @@ public class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
     }
 
     @Override
-    public CellNode getNode() {
-        return (CellNode) super.getNode();
+    public CellNode<?> getNode() {
+        return (CellNode<?>) super.getNode();
     }
 }

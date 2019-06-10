@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.model.implementations.conditions;
 
 import java.util.Objects;
@@ -6,24 +13,23 @@ import javax.annotation.Nonnull;
 
 import com.google.common.base.Optional;
 
-import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
- * A condition that holds true only if the tracked {@link Molecule} changed its {@link Concentration}.
+ * A condition that holds true only if the tracked {@link Molecule} changed its
+ * {@link it.unibo.alchemist.model.interfaces.Concentration}.
  * 
  * @param <T>
  */
-public class ConcentrationChanged<T> extends AbstractCondition<T> {
+public final class ConcentrationChanged<T> extends AbstractCondition<T> {
 
     private static final long serialVersionUID = 1L;
     private final Molecule target;
     @Nonnull
     private Optional<T> previous;
-    @Nonnull
     private boolean hasFlipped;
 
     /**
@@ -35,7 +41,7 @@ public class ConcentrationChanged<T> extends AbstractCondition<T> {
         this.target = Objects.requireNonNull(target);
         previous = Optional.fromNullable(node.getConcentration(target));
         hasFlipped = false;
-        addReadMolecule(target);
+        declareDependencyOn(target);
     }
 
     @Override
@@ -49,7 +55,7 @@ public class ConcentrationChanged<T> extends AbstractCondition<T> {
     }
 
     @Override
-    public double getPropensityConditioning() {
+    public double getPropensityContribution() {
         return isValid(true) ? 1 : 0;
     }
 

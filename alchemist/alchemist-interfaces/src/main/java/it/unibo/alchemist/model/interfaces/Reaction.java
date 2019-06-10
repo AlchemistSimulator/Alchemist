@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.interfaces;
 
@@ -58,7 +57,7 @@ public interface Reaction<T> extends Comparable<Reaction<T>>, Serializable {
      * @param env
      *            the environment
      */
-    void initializationComplete(Time t, Environment<T> env);
+    void initializationComplete(Time t, Environment<T, ?> env);
 
     /**
      * @return The list of {@link Action}s of the {@link Reaction}. There is no
@@ -77,20 +76,16 @@ public interface Reaction<T> extends Comparable<Reaction<T>>, Serializable {
     List<Condition<T>> getConditions();
 
     /**
-     * @return The list of molecules whose concentration may change after the
-     *         execution of this reaction. If it returns null, it means that it
-     *         will influence every other reaction with compatible context,
-     *         regardless the molecules involved.
+     * @return The list of {@link Dependency} whose concentration may change after the
+     *         execution of this reaction.
      */
-    ListSet<Molecule> getInfluencedMolecules();
+    ListSet<? extends Dependency> getOutboundDependencies();
 
     /**
-     * @return The list of {@link Molecule}s whose concentration may affect the
-     *         execution of the {@link Reaction}. If it returns null, it means
-     *         that it is influenced every other reaction with compatible
-     *         context, regardless the molecules involved.
+     * @return The list of {@link Dependency}s whose concentration may affect the
+     *         execution of the {@link Reaction}.
      */
-    ListSet<Molecule> getInfluencingMolecules();
+    ListSet<? extends Dependency> getInboundDependencies();
 
     /**
      * @return The widest {@link Context} among {@link Condition}s, namely the
@@ -162,6 +157,6 @@ public interface Reaction<T> extends Comparable<Reaction<T>>, Serializable {
      * @param env
      *            the current environment
      */
-    void update(Time curTime, boolean executed, Environment<T> env);
+    void update(Time curTime, boolean executed, Environment<T, ?> env);
 
 }

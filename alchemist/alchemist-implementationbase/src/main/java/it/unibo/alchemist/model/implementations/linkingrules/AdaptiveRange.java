@@ -1,12 +1,15 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.implementations.linkingrules;
+
+import java.util.stream.Collectors;
+
+import org.danilopianini.util.ListSet;
 
 import gnu.trove.map.TIntDoubleMap;
 import gnu.trove.map.hash.TIntDoubleHashMap;
@@ -14,14 +17,16 @@ import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * This linking rule dynamically searches for the best radius for each device,
  * in such a way that it connects to a certain number of devices.
- * 
+ *
  * @param <T>
+ * @param <P>
  */
-public class AdaptiveRange<T> extends EuclideanDistance<T> {
+public class AdaptiveRange<T, P extends Position<P>> extends ConnectWithinDistance<T, P> {
 
     /**
      * Default adjustment.
@@ -151,22 +156,15 @@ public class AdaptiveRange<T> extends EuclideanDistance<T> {
     }
 
     @Override
-    public final Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T> env) {
+    public final Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> env) {
         if (!ranges.containsKey(center.getId())) {
             ranges.put(center.getId(), getRange());
         }
         final double curRange = ranges.get(center.getId());
-        final Neighborhood<T> neigh = Neighborhoods.make(env, center, env.getNodesWithinRange(center, curRange));
-        for (int i = 0; i < neigh.size();) {
-            final Node<T> neighbor = neigh.getNeighborByNumber(i);
-            final double neighrange = ranges.get(neighbor.getId());
-            if (conditionForRemoval(env, center, neighbor, curRange, neighrange)) {
-                neigh.removeNeighbor(neighbor);
-                i = 0;
-            } else {
-                i++;
-            }
-        }
+        final ListSet<Node<T>> potentialNeighs = env.getNodesWithinRange(center, curRange);
+        final Neighborhood<T> neigh = Neighborhoods.make(env, center, potentialNeighs.stream()
+                .filter(neighbor -> !conditionForRemoval(env, center, neighbor, curRange, ranges.get(neighbor.getId())))
+                .collect(Collectors.toList()));
         if (neigh.size() > n + t) {
             ranges.put(center.getId(), Math.max(curRange - defaultAdjustment, minRange));
         } else if (neigh.size() < Math.max(1, n - t)) {
@@ -185,7 +183,7 @@ public class AdaptiveRange<T> extends EuclideanDistance<T> {
      * @param neighRange the communication range of the neighbor
      * @return true if the node must be removed, false otherwise
      */
-    protected boolean conditionForRemoval(final Environment<T> env, final Node<T> center, final Node<T> neighbor, final double centerRange, final double neighRange) {
+    protected boolean conditionForRemoval(final Environment<T, P> env, final Node<T> center, final Node<T> neighbor, final double centerRange, final double neighRange) {
         return env.getDistanceBetweenNodes(center, neighbor) > neighRange;
     }
 

@@ -1,11 +1,18 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 /**
  * 
  */
 package it.unibo.alchemist.model.implementations.movestrategies.speed;
 
+import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
@@ -13,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  * 
  * @param <T>
  */
-public class StraightLineTraceDependantSpeed<T> extends TraceDependantSpeed<T> {
+public final class StraightLineTraceDependantSpeed<T> extends TraceDependantSpeed<T> {
 
     private static final long serialVersionUID = 539968590628143027L;
 
@@ -30,7 +37,7 @@ public class StraightLineTraceDependantSpeed<T> extends TraceDependantSpeed<T> {
     }
 
     @Override
-    protected double computeDistance(final MapEnvironment<T> environment, final Node<T> curNode, final Position targetPosition) {
+    protected double computeDistance(final MapEnvironment<T> environment, final Node<T> curNode, final GeoPosition targetPosition) {
         return environment.getPosition(curNode).getDistanceTo(targetPosition);
     }
 

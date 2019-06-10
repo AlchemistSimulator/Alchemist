@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.model.implementations.actions;
 
 import java.util.Objects;
@@ -16,15 +23,16 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
  * strategy to adopt, the speed to move at.
  *
  * @param <T>
+ * @param <P>
  */
-public abstract class AbstractConfigurableMoveNode<T> extends AbstractMoveNode<T> {
+public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> extends AbstractMoveNode<T, P> {
 
     private static final long serialVersionUID = 1L;
-    private final TargetSelectionStrategy<T> target;
-    private final SpeedSelectionStrategy<T> speed;
-    private final RoutingStrategy<T> routing;
-    private Route route;
-    private Position end;
+    private final TargetSelectionStrategy<P> target;
+    private final SpeedSelectionStrategy<P> speed;
+    private final RoutingStrategy<P> routing;
+    private Route<P> route;
+    private P end;
     private int curStep;
 
     /**
@@ -41,11 +49,11 @@ public abstract class AbstractConfigurableMoveNode<T> extends AbstractMoveNode<T
      * @param speed
      *            the speed selection strategy
      */
-    protected AbstractConfigurableMoveNode(final Environment<T> environment,
+    protected AbstractConfigurableMoveNode(final Environment<T, P> environment,
             final Node<T> node,
-            final RoutingStrategy<T> routing,
-            final TargetSelectionStrategy<T> target,
-            final SpeedSelectionStrategy<T> speed) {
+            final RoutingStrategy<P> routing,
+            final TargetSelectionStrategy<P> target,
+            final SpeedSelectionStrategy<P> speed) {
         this(environment, node, routing, target, speed, false);
     }
 
@@ -67,11 +75,11 @@ public abstract class AbstractConfigurableMoveNode<T> extends AbstractMoveNode<T
      *            return (2,3). If false, a relative coordinate is expected, and
      *            the method for the same effect must return (1,2).
      */
-    protected AbstractConfigurableMoveNode(final Environment<T> environment,
+    protected AbstractConfigurableMoveNode(final Environment<T, P> environment,
             final Node<T> node,
-            final RoutingStrategy<T> routing,
-            final TargetSelectionStrategy<T> target,
-            final SpeedSelectionStrategy<T> speed,
+            final RoutingStrategy<P> routing,
+            final TargetSelectionStrategy<P> target,
+            final SpeedSelectionStrategy<P> speed,
             final boolean isAbsolute) {
         super(environment, node, isAbsolute);
         this.speed = Objects.requireNonNull(speed);
@@ -80,21 +88,21 @@ public abstract class AbstractConfigurableMoveNode<T> extends AbstractMoveNode<T
     }
 
     @Override
-    public final Position getNextPosition() {
-        final Position previousEnd = end;
+    public final P getNextPosition() {
+        final P previousEnd = end;
         end = target.getTarget();
         if (!end.equals(previousEnd)) {
             resetRoute();
         }
-        double maxWalk = speed.getCurrentSpeed(end);
-        final Environment<T> env = getEnvironment();
+        double maxWalk = speed.getNodeMovementLength(end);
+        final Environment<T, P> env = getEnvironment();
         final Node<T> node = getNode();
-        Position curPos = env.getPosition(node);
+        P curPos = env.getPosition(node);
         if (curPos.getDistanceTo(end) <= maxWalk) {
-            final Position destination = end;
+            final P destination = end;
             end = target.getTarget();
             resetRoute();
-            return isAbsolute() ? destination : destination.subtract(curPos);
+            return isAbsolute() ? destination : destination.minus(curPos);
         }
         if (route == null) {
             route = routing.computeRoute(curPos, end);
@@ -103,12 +111,13 @@ public abstract class AbstractConfigurableMoveNode<T> extends AbstractMoveNode<T
             resetRoute();
             return getDestination(curPos, end, maxWalk);
         }
-        Position target = null;
-        double toWalk;
         do {
-            target = route.getPoint(curStep);
-            toWalk = target.getDistanceTo(curPos);
+            final P target = route.getPoint(curStep);
+            final double toWalk = target.getDistanceTo(curPos);
             if (toWalk > maxWalk) {
+                /*
+                 * I can arrive at most at maxWalk
+                 */
                 return getDestination(curPos, target, maxWalk);
             }
             curStep++;
@@ -119,8 +128,7 @@ public abstract class AbstractConfigurableMoveNode<T> extends AbstractMoveNode<T
          * I've followed the whole route
          */
         resetRoute();
-        target = end;
-        return getDestination(curPos, target, maxWalk);
+        return getDestination(curPos, end, maxWalk);
     }
 
     /**
@@ -129,12 +137,12 @@ public abstract class AbstractConfigurableMoveNode<T> extends AbstractMoveNode<T
      * @param maxWalk how far the node can move
      * @return the position that the node reaches
      */
-    protected abstract Position getDestination(Position current, Position target, double maxWalk);
+    protected abstract P getDestination(P current, P target, double maxWalk);
 
     /**
      * @return the current target
      */
-    protected final Position getTargetPoint() {
+    protected final P getTargetPoint() {
         return end;
     }
 
@@ -150,14 +158,14 @@ public abstract class AbstractConfigurableMoveNode<T> extends AbstractMoveNode<T
      * @param p
      *            the new target
      */
-    protected final void setTargetPoint(final Position p) {
+    protected final void setTargetPoint(final P p) {
         end = p;
     }
 
     /**
      * @return the current route, or null if no route is currently being followed
      */
-    protected final Route getCurrentRoute() {
+    protected final Route<?> getCurrentRoute() {
         return route;
     }
 }

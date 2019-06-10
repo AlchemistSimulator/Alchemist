@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2010-2015, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model;
 
 import java.lang.ref.WeakReference;
@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -23,16 +24,15 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
-import org.danilopianini.lang.LangUtils;
+import org.jetbrains.annotations.NotNull;
 import org.protelis.lang.ProtelisLoader;
 import org.protelis.lang.datatype.DeviceUID;
-import org.protelis.vm.ExecutionContext;
+import org.protelis.vm.CodePath;
 import org.protelis.vm.ExecutionEnvironment;
 import org.protelis.vm.NetworkManager;
 import org.protelis.vm.ProtelisVM;
 import org.protelis.vm.impl.AbstractExecutionContext;
 import org.protelis.vm.impl.SimpleExecutionEnvironment;
-import org.protelis.vm.util.CodePath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +40,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.actions.SendToNeighbor;
@@ -57,45 +58,67 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 
 /**
+ * @param <P> position type
  */
-public final class ProtelisIncarnation implements Incarnation<Object> {
+public final class ProtelisIncarnation<P extends Position<P>> implements Incarnation<Object, P> {
 
-    private static final Logger L = LoggerFactory.getLogger(ProtelisIncarnation.class);
     /**
      * The name that can be used in a property to refer to the extracted value.
      */
     public static final String VALUE_TOKEN = "<value>";
+    private static final Logger L = LoggerFactory.getLogger(ProtelisIncarnation.class);
     private final LoadingCache<CacheKey, SynchronizedVM> cache = CacheBuilder
             .newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES)
             .build(new CacheLoader<CacheKey, SynchronizedVM>() {
                 @Override
-                public SynchronizedVM load(final CacheKey key) {
+                public SynchronizedVM load(@NotNull final CacheKey key) {
                     return new SynchronizedVM(key);
                 }
             });
 
+    private static List<RunProtelisProgram<?>> getIncomplete(final ProtelisNode pNode, final List<RunProtelisProgram<?>> alreadyDone) {
+        return pNode.getReactions().parallelStream()
+                /*
+                 * Get the actions
+                 */
+                .flatMap(r -> r.getActions().parallelStream())
+                /*
+                 * Get only the ProtelisPrograms
+                 */
+                .filter(a -> a instanceof RunProtelisProgram)
+                .map(a -> (RunProtelisProgram<?>) a)
+                /*
+                 * Retain only those ProtelisPrograms that have no associated ComputationalRoundComplete.
+                 *
+                 * Only one should be available.
+                 */
+                .filter(prog -> !alreadyDone.contains(prog))
+                .collect(Collectors.toList());
+    }
+
     @Override
-    public Action<Object> createAction(final RandomGenerator rand, final Environment<Object> env,
+    public Action<Object> createAction(final RandomGenerator rand, final Environment<Object, P> env,
             final Node<Object> node, final TimeDistribution<Object> time, final Reaction<Object> reaction,
             final String param) {
         Objects.requireNonNull(param);
         if (node instanceof ProtelisNode) {
             final ProtelisNode pNode = (ProtelisNode) node;
             if (param.equalsIgnoreCase("send")) {
-                final List<RunProtelisProgram> alreadyDone = pNode.getReactions()
+                final List<RunProtelisProgram<?>> alreadyDone = pNode.getReactions()
                     .parallelStream()
                     .flatMap(r -> r.getActions().parallelStream())
                     .filter(a -> a instanceof SendToNeighbor)
                     .map(c -> (SendToNeighbor) c)
-                    .map(crc -> crc.getProtelisProgram())
+                    .map(SendToNeighbor::getProtelisProgram)
                     .collect(Collectors.toList());
-                final List<RunProtelisProgram> pList = getIncomplete(pNode, alreadyDone);
+                final List<RunProtelisProgram<?>> pList = getIncomplete(pNode, alreadyDone);
                 if (pList.isEmpty()) {
                     throw new IllegalStateException("There is no program requiring a "
                             + SendToNeighbor.class.getSimpleName() + " action");
@@ -107,8 +130,8 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
                 return new SendToNeighbor(pNode, reaction, pList.get(0));
             } else {
                 try {
-                    return new RunProtelisProgram(env, pNode, reaction, rand, param);
-                } catch (ClassNotFoundException | RuntimeException e) {
+                    return new RunProtelisProgram<>(env, pNode, reaction, rand, param);
+                } catch (RuntimeException e) { // NOPMD AvoidCatchingGenericException
                     throw new IllegalArgumentException("Could not create the requested Protelis program: " + param, e);
                 }
             }
@@ -131,7 +154,7 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
     }
 
     @Override
-    public Condition<Object> createCondition(final RandomGenerator rand, final Environment<Object> env,
+    public Condition<Object> createCondition(final RandomGenerator rand, final Environment<Object, P> env,
             final Node<Object> node, final TimeDistribution<Object> time, final Reaction<Object> reaction,
             final String param) {
         if (node instanceof ProtelisNode) {
@@ -139,16 +162,17 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
             /*
              * The list of ProtelisPrograms that have already been completed with a ComputationalRoundComplete condition
              */
-            final List<RunProtelisProgram> alreadyDone = pNode.getReactions()
+            @SuppressWarnings("unchecked")
+            final List<RunProtelisProgram<?>> alreadyDone = pNode.getReactions()
                 .parallelStream()
                 .flatMap(r -> r.getConditions().parallelStream())
                 .filter(c -> c instanceof ComputationalRoundComplete)
                 .map(c -> (ComputationalRoundComplete) c)
-                .flatMap(crc -> crc.getInfluencingMolecules().parallelStream())
+                .flatMap(crc -> crc.getInboundDependencies().parallelStream())
                 .filter(mol -> mol instanceof RunProtelisProgram)
-                .map(mol -> (RunProtelisProgram) mol)
+                .map(mol -> (RunProtelisProgram<P>) mol)
                 .collect(Collectors.toList());
-            final List<RunProtelisProgram> pList = getIncomplete(pNode, alreadyDone);
+            final List<RunProtelisProgram<?>> pList = getIncomplete(pNode, alreadyDone);
             if (pList.isEmpty()) {
                 throw new IllegalStateException("There is no program requiring a "
                         + ComputationalRoundComplete.class.getSimpleName() + " condition");
@@ -169,16 +193,17 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
     }
 
     @Override
-    public Node<Object> createNode(final RandomGenerator rand, final Environment<Object> env, final String param) {
+    public Node<Object> createNode(final RandomGenerator rand, final Environment<Object, P> env, final String param) {
         return new ProtelisNode(env);
     }
 
     @Override
-    public Reaction<Object> createReaction(final RandomGenerator rand, final Environment<Object> env,
+    public Reaction<Object> createReaction(final RandomGenerator rand, final Environment<Object, P> env,
             final Node<Object> node, final TimeDistribution<Object> time, final String param) {
-        LangUtils.requireNonNull(node, time);
         final boolean isSend = "send".equalsIgnoreCase(param);
-        final Reaction<Object> result = isSend ? new ChemicalReaction<>(node, time) : new Event<>(node, time);
+        final Reaction<Object> result = isSend
+                ? new ChemicalReaction<>(Objects.requireNonNull(node), Objects.requireNonNull(time))
+                : new Event<>(node, time);
         if (param != null) {
             result.setActions(Lists.newArrayList(createAction(rand, env, node, time, result, param)));
         }
@@ -191,7 +216,7 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
     @Override
     public TimeDistribution<Object> createTimeDistribution(
             final RandomGenerator rand,
-            final Environment<Object> env,
+            final Environment<Object, P> env,
             final Node<Object> node,
             final String param) {
         if (param == null) {
@@ -241,26 +266,6 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
         return getClass().getSimpleName();
     }
 
-    private static List<RunProtelisProgram> getIncomplete(final ProtelisNode pNode, final List<RunProtelisProgram> alreadyDone) {
-        return pNode.getReactions().parallelStream()
-                /*
-                 * Get the actions
-                 */
-                .flatMap(r -> r.getActions().parallelStream())
-                /*
-                 * Get only the ProtelisPrograms
-                 */
-                .filter(a -> a instanceof RunProtelisProgram)
-                .map(a -> (RunProtelisProgram) a)
-                /*
-                 * Retain only those ProtelisPrograms that have no associated ComputationalRoundComplete.
-                 * 
-                 * Only one should be available.
-                 */
-                .filter(prog -> !alreadyDone.contains(prog))
-                .collect(Collectors.toList());
-    }
-
     private static final class CacheKey {
         private final Molecule molecule;
         private final WeakReference<Node<Object>> node;
@@ -286,15 +291,15 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
     }
 
     /**
-     * An {@link ExecutionContext} that operates over a node, but does not
+     * An {@link org.protelis.vm.ExecutionContext} that operates over a node, but does not
      * modify it.
      */
-    public static class DummyContext extends AbstractExecutionContext {
+    public static final class DummyContext extends AbstractExecutionContext {
         private static final Semaphore MUTEX = new Semaphore(1);
         private static final int SEED = -241837578;
         private static final RandomGenerator RNG = new MersenneTwister(SEED);
         private final Node<?> node;
-        DummyContext(final Node<?> node) {
+        private DummyContext(final Node<?> node) {
             super(new ProtectedExecutionEnvironment(node), new NetworkManager() {
                 @Override
                 public Map<DeviceUID, Map<CodePath, Object>> getNeighborState() {
@@ -338,7 +343,7 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
      * {@link Node}, but cannot modify it. This is used to prevent badly written
      * properties to interact with the simulation flow.
      */
-    public static class ProtectedExecutionEnvironment implements ExecutionEnvironment {
+    public static final class ProtectedExecutionEnvironment implements ExecutionEnvironment {
         private final Node<?> node;
         private final ExecutionEnvironment shadow = new SimpleExecutionEnvironment();
 
@@ -358,7 +363,7 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
         }
         @Override
         public Object get(final String id, final Object defaultValue) {
-            return Optional.<Object>ofNullable(get(id)).orElse(defaultValue);
+            return Optional.ofNullable(get(id)).orElse(defaultValue);
         }
         @Override
         public boolean has(final String id) {
@@ -375,6 +380,11 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
         @Override
         public void setup() {
         }
+
+        @Override
+        public Set<String> keySet() {
+            return Sets.union(node.getContents().keySet().stream().map(Molecule::getName).collect(Collectors.toSet()), shadow.keySet());
+        }
     }
 
     private static final class SynchronizedVM {
@@ -390,7 +400,7 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
                     myVM = new ProtelisVM(
                             ProtelisLoader.parse(key.property.replace(VALUE_TOKEN, baseProgram)),
                             new DummyContext(key.node.get()));
-                } catch (RuntimeException ex) {
+                } catch (RuntimeException ex) { // NOPMD AvoidCatchingGenericException
                     L.warn("Program ignored as invalid: \n" + key.property);
                     L.debug("Debug information", ex);
                 }
@@ -417,19 +427,18 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
     }
 
     private static final class NoNode implements Node<Object> {
-        private static final long serialVersionUID = 1L;
         public static final NoNode INSTANCE = new NoNode();
-        private NoNode() {
-        }
+        private static final long serialVersionUID = 1L;
+
         private <A> A notImplemented() {
             throw new UnsupportedOperationException("Method can't be invoked in this context.");
         }
-        @Override
+        @Override @NotNull
         public Iterator<Reaction<Object>> iterator() {
             return notImplemented();
         }
         @Override
-        public int compareTo(final Node<Object> o) {
+        public int compareTo(@NotNull final Node<Object> o) {
             return notImplemented();
         }
         @Override

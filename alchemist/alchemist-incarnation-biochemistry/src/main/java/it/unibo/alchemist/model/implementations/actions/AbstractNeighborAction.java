@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2010-2016, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
 package it.unibo.alchemist.model.implementations.actions;
@@ -24,7 +23,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 public abstract class AbstractNeighborAction<T> extends AbstractRandomizableAction<T> {
 
     private static final long serialVersionUID = -2287346030993830896L;
-    private final Environment<T> env;
+    private final Environment<T, ?> env;
     private final Node<T> node;
 
     /**
@@ -33,11 +32,14 @@ public abstract class AbstractNeighborAction<T> extends AbstractRandomizableActi
      * @param environment the environment
      * @param randomGenerator the random generator
      */
-    protected AbstractNeighborAction(final Node<T> node, final Environment<T> environment, final RandomGenerator randomGenerator) {
+    protected AbstractNeighborAction(final Node<T> node, final Environment<T, ?> environment, final RandomGenerator randomGenerator) {
         super(node, randomGenerator);
         this.node = node;
         env = environment;
     }
+
+    @Override
+    public abstract AbstractNeighborAction<T> cloneAction(Node<T> node, Reaction<T> reaction);
 
     /**
      * Execute the action on a random neighbor if the node has a neighborhood. Otherwise do nothing.
@@ -59,11 +61,15 @@ public abstract class AbstractNeighborAction<T> extends AbstractRandomizableActi
     public abstract void execute(Node<T> targetNode);
 
     @Override
-    public Context getContext() {
+    public final Context getContext() {
         return Context.NEIGHBORHOOD;
     }
 
-    @Override
-    public abstract AbstractNeighborAction<T> cloneAction(Node<T> node, Reaction<T> reaction);
+    /**
+     * @return exposes the {@link Environment} to subclasses
+     */
+    protected final Environment<T, ?> getEnvironment() {
+        return env;
+    }
 
 }

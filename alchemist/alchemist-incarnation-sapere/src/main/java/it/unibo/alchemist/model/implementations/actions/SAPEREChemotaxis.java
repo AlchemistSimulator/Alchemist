@@ -1,25 +1,26 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
+import it.unibo.alchemist.model.interfaces.Position;
 
 import java.util.List;
 
 /**
  *         This class provides a chemotaxis implementation for SAPERE, namely,
  *         an agent able to move a molecule towards a specific node.
- * 
+ *
+ * @param <P> position type
  */
-public class SAPEREChemotaxis extends SAPERENeighborAgent {
+public final class SAPEREChemotaxis<P extends Position<? extends P>> extends SAPERENeighborAgent<P> {
 
     private static final long serialVersionUID = -4845100315774422690L;
     private final int o;
@@ -41,7 +42,7 @@ public class SAPEREChemotaxis extends SAPERENeighborAgent {
      * @param oPos
      *            the argument number where to search for the node ID
      */
-    public SAPEREChemotaxis(final Environment<List<ILsaMolecule>> env, final ILsaNode node, final ILsaMolecule response, final ILsaMolecule gradient, final int oPos) {
+    public SAPEREChemotaxis(final Environment<List<ILsaMolecule>, P> env, final ILsaNode node, final ILsaMolecule response, final ILsaMolecule gradient, final int oPos) {
         super(env, node, response);
         /*
          * Thanks Java, for not having unsigned primitives! -.-

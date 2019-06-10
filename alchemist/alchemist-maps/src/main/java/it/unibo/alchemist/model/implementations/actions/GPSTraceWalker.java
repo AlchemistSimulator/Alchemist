@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2010-2015, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.implementations.movestrategies.routing.OnStreets;
@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.interfaces.Vehicle;
  * 
  * @param <T> Concentration Time
  */
-public class GPSTraceWalker<T> extends MoveOnMapWithGPS<T> {
+public final class GPSTraceWalker<T> extends MoveOnMapWithGPS<T> {
 
     private static final long serialVersionUID = -6495138719085165782L;
 
@@ -49,7 +49,7 @@ public class GPSTraceWalker<T> extends MoveOnMapWithGPS<T> {
         super(environment, node,
                 new OnStreets<>(environment, Vehicle.FOOT),
                 new RoutingTraceDependantSpeed<>(environment, node, reaction, Vehicle.FOOT),
-                new FollowTrace<>(reaction),
+                new FollowTrace(reaction),
                 path, cycle, normalizer, normalizerArgs);
     }
 
@@ -58,7 +58,7 @@ public class GPSTraceWalker<T> extends MoveOnMapWithGPS<T> {
         super(environment, node,
                 new OnStreets<>(environment, Vehicle.FOOT),
                 new RoutingTraceDependantSpeed<>(environment, node, reaction, Vehicle.FOOT),
-                new FollowTrace<>(reaction),
+                new FollowTrace(reaction),
                 trace);
     }
 

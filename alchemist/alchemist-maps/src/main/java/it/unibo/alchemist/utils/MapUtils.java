@@ -1,19 +1,18 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.utils;
-
-import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
-import it.unibo.alchemist.model.interfaces.Position;
 
 import com.javadocmd.simplelatlng.LatLng;
 import com.javadocmd.simplelatlng.LatLngTool;
 import com.javadocmd.simplelatlng.util.LengthUnit;
+
+import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
 
 /**
  */
@@ -48,7 +47,7 @@ public final class MapUtils {
      *            Second point
      * @return the distance in meters
      */
-    public static double getDistance(final Position p1, final Position p2) {
+    public static double getDistance(final GeoPosition p1, final GeoPosition p2) {
         return LatLngTool.distance(toLatLng(p1), toLatLng(p2), LengthUnit.METER);
     }
 
@@ -59,7 +58,7 @@ public final class MapUtils {
      *            final position
      * @return the initial bearing
      */
-    public static double initialBearing(final Position start, final Position end) {
+    public static double initialBearing(final GeoPosition start, final GeoPosition end) {
         return LatLngTool.initialBearing(toLatLng(start), toLatLng(end));
     }
 
@@ -72,7 +71,7 @@ public final class MapUtils {
      *            maximum walkable length
      * @return the actual destination
      */
-    public static LatLongPosition getDestinationLocation(final Position start, final double initialBearing, final double dist) {
+    public static LatLongPosition getDestinationLocation(final GeoPosition start, final double initialBearing, final double dist) {
         return toLatLong(LatLngTool.travel(toLatLng(start), initialBearing, dist, LengthUnit.METER));
     }
 
@@ -85,21 +84,20 @@ public final class MapUtils {
      *            maximum walkable length
      * @return the actual destination
      */
-    public static LatLongPosition getDestinationLocation(final Position start, final Position end, final double dist) {
+    public static LatLongPosition getDestinationLocation(final GeoPosition start, final GeoPosition end, final double dist) {
         final double bearing = initialBearing(start, end);
         return getDestinationLocation(start, bearing, dist);
     }
 
     /**
-     * Converts {@link Position} to {@link LatLng}.
+     * Converts {@link GeoPosition} to {@link LatLng}.
      * 
      * @param p
-     *            the {@link Position}
+     *            the {@link GeoPosition}
      * @return a {@link LatLng}
      */
-    public static LatLng toLatLng(final Position p) {
-        final double[] pa = p.getCartesianCoordinates();
-        return new LatLng(pa[1], pa[0]);
+    public static LatLng toLatLng(final GeoPosition p) {
+        return new LatLng(p.getLatitude(), p.getLongitude());
     }
 
     /**

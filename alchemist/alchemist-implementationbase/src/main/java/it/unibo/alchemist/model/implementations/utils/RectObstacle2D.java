@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.implementations.utils;
 
@@ -18,9 +17,9 @@ import java.awt.geom.Rectangle2D;
 
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.MathArrays;
+import org.apache.commons.math3.util.Pair;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.interfaces.Obstacle2D;
 
 /**
@@ -36,12 +35,11 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
      * Relative precision value under which two double values are considered to
      * be equal by fuzzyEquals.
      */
-    public static final double DOUBLE_EQUALITY_EPSILON = 10e-12;
     private static final long serialVersionUID = -3552947311155196461L;
     private final int id = System.identityHashCode(this);
     private final double minX, maxX, minY, maxY;
 
-    /**
+    /*
      * This code was built upon Alexander Hristov's, see:
      * 
      * http://www.ahristov.com/tutorial/geometry-games/intersection-segments.html
@@ -70,20 +68,22 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
         return new double[] { xi, yi };
     }
 
-    private static boolean intersectionOutOfRange(final double xi, final double x1, final double x2) {
-        final double min = Math.min(x1, x2);
-        final double max = Math.max(x1, x2);
-        return !fuzzyGreaterEquals(xi, min) || !fuzzyGreaterEquals(max, xi);
+    private static boolean intersectionOutOfRange(final double intersection, final double start, final double end) {
+        final double min = Math.min(start, end);
+        final double max = Math.max(start, end);
+        return !fuzzyGreaterEquals(intersection, min) || !fuzzyGreaterEquals(max, intersection);
     }
 
     @Override
-    public Continuous2DEuclidean next(final double startx, final double starty, final double endx, final double endy) {
+    public Pair<java.lang.Double, java.lang.Double> next(// NOPMD: fully qualified name is necessary
+            final double startx, final double starty,
+            final double endx, final double endy) {
         final double[] onBorders = enforceBorders(startx, starty, endx, endy);
         if (onBorders != null) {
             /*
              * The starting point was on the border.
              */
-            return new Continuous2DEuclidean(onBorders);
+            return asPair(onBorders);
         }
         final double[] intersection = nearestIntersection(startx, starty, endx, endy);
         /*
@@ -95,9 +95,16 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
         }
         final double[] restricted = enforceBorders(intersection[0], intersection[1], intersection[0], intersection[1]);
         if (restricted == null) {
-            return new Continuous2DEuclidean(intersection);
+            return asPair(intersection);
         }
-        return new Continuous2DEuclidean(restricted);
+        return asPair(restricted);
+    }
+
+    private static Pair<java.lang.Double, java.lang.Double> asPair(final double[] coords) { // NOPMD: fully qualified name is necessary
+        if (coords.length != 2) {
+            throw new IllegalStateException("Array must have exactly two parameters");
+        }
+        return new Pair<>(coords[0], coords[1]);
     }
 
     @SuppressFBWarnings("PZLA_PREFER_ZERO_LENGTH_ARRAYS")

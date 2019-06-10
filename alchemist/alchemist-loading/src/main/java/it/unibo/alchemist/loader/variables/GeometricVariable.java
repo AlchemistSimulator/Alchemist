@@ -1,10 +1,17 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.loader.variables;
+
+import org.apache.commons.math3.util.FastMath;
 
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
-import org.apache.commons.math3.util.FastMath;
 
 /**
  * A variable ranging geometrically (exponentially) in a range. Ideal for log-scale comparisons.
@@ -13,7 +20,7 @@ import org.apache.commons.math3.util.FastMath;
  * 
  * Both min and max must be strictly bigger than 0.
  */
-public class GeometricVariable extends PrintableVariable<Double> {
+public final class GeometricVariable extends PrintableVariable<Double> {
 
     private static final long serialVersionUID = 1L;
     private final double def;

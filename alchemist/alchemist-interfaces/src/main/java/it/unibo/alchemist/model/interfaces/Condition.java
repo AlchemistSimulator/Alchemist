@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.interfaces;
 
@@ -44,7 +43,7 @@ public interface Condition<T> extends Serializable {
      * @return The list of molecules whose concentration may influence the truth
      *         value of this condition
      */
-    ListSet<? extends Molecule> getInfluencingMolecules();
+    ListSet<? extends Dependency> getInboundDependencies();
 
     /**
      * @return the node this Condition belongs to
@@ -56,14 +55,23 @@ public interface Condition<T> extends Serializable {
      * Reactions. It allows this condition to influence the rate calculation in
      * some way. It's up to the reaction to decide whether to use or not this
      * information, and how.
-     * 
+     *
      * @return how this condition may influence the propensity.
      */
-    double getPropensityConditioning();
+    double getPropensityContribution();
 
     /**
      * @return true if the condition is satisfied in current environment.
      */
     boolean isValid();
 
+    /**
+     * This method is called by the {@link it.unibo.alchemist.core.interfaces.Simulation} once the {@link Reaction}
+     * whose this {@link Condition} belongs to is the next one to be executed, and
+     * all its conditions passed (namely, the next operation will be the reaction
+     * execution). It can be used to perform sanity checks, as well as for
+     * registering the status of the simulated world for future comparisons.
+     * Defaults to an empty implementation.
+     */
+    default void reactionReady() { };
 }

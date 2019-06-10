@@ -1,31 +1,21 @@
-/**
- * 
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.protelis;
-
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.math3.random.RandomGenerator;
-import org.danilopianini.lang.HashUtils;
-import org.protelis.lang.datatype.DatatypeFactory;
-import org.protelis.lang.datatype.DeviceUID;
-import org.protelis.lang.datatype.Field;
-import org.protelis.lang.datatype.Tuple;
-import org.protelis.vm.ExecutionEnvironment;
-import org.protelis.vm.LocalizedDevice;
-import org.protelis.vm.SpatiallyEmbeddedDevice;
-import org.protelis.vm.TimeAwareDevice;
-import org.protelis.vm.impl.AbstractExecutionContext;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-
+import com.google.common.hash.Hashing;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -33,10 +23,25 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import java8.util.function.Function;
 import java8.util.function.Functions;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.jetbrains.annotations.NotNull;
+import org.protelis.lang.datatype.DatatypeFactory;
+import org.protelis.lang.datatype.DeviceUID;
+import org.protelis.lang.datatype.Field;
+import org.protelis.lang.datatype.Tuple;
+import org.protelis.vm.LocalizedDevice;
+import org.protelis.vm.SpatiallyEmbeddedDevice;
+import org.protelis.vm.TimeAwareDevice;
+import org.protelis.vm.impl.AbstractExecutionContext;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
+ * @param <P> position type
  */
-public class AlchemistExecutionContext extends AbstractExecutionContext implements SpatiallyEmbeddedDevice, LocalizedDevice, TimeAwareDevice {
+public final class AlchemistExecutionContext<P extends Position<P>> extends AbstractExecutionContext implements SpatiallyEmbeddedDevice, LocalizedDevice, TimeAwareDevice {
 
     /**
      * Put this {@link Molecule} inside nodes that should compute distances using routes. It only makes sense in case the environment is a {@link MapEnvironment}
@@ -46,19 +51,23 @@ public class AlchemistExecutionContext extends AbstractExecutionContext implemen
      * Put this {@link Molecule} inside nodes that should compute distances using routes approximating them. It only makes sense in case the environment is a {@link MapEnvironment}
      */
     public static final Molecule APPROXIMATE_NBR_RANGE = new SimpleMolecule("APPROXIMATE_NBR_RANGE");
-    private final LoadingCache<Position, Double> cache = CacheBuilder.newBuilder()
+    private final LoadingCache<P, Double> cache = CacheBuilder.newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES)
             .maximumSize(100)
-            .build(new CacheLoader<Position, Double>() {
+            .build(new CacheLoader<P, Double>() {
                 @Override
-                public Double load(final Position dest) {
-                    if (env instanceof MapEnvironment<?>) {
-                        return ((MapEnvironment<Object>) env).computeRoute(node, dest).length();
+                public Double load(@NotNull final P dest) {
+                    if (env instanceof MapEnvironment) {
+                        if (dest instanceof GeoPosition) {
+                            return ((MapEnvironment<Object>) env).computeRoute(node, (GeoPosition) dest).length();
+                        } else {
+                            throw new IllegalStateException("Illegal position type: " + dest.getClass() + " " + dest);
+                        }
                     }
                     return getDevicePosition().getDistanceTo(dest);
                 }
             });
-    private final Environment<Object> env;
+    private final Environment<Object, P> env;
     private int hash;
     private double nbrRangeTimeout;
     private double precalcdRoutingDistance = Double.NaN;
@@ -75,19 +84,23 @@ public class AlchemistExecutionContext extends AbstractExecutionContext implemen
      *            the {@link Reaction} hosting the program
      * @param random
      *            the {@link RandomGenerator} for this simulation
-     * @param netmgr
+     * @param networkManager
      *            the {@link AlchemistNetworkManager} to be used
      */
-    public AlchemistExecutionContext(final Environment<Object> environment, final ProtelisNode localNode,
-            final Reaction<Object> reaction, final RandomGenerator random, final AlchemistNetworkManager netmgr) {
-        super(localNode, netmgr);
+    public AlchemistExecutionContext(
+            final Environment<Object, P> environment,
+            final ProtelisNode localNode,
+            final Reaction<Object> reaction,
+            final RandomGenerator random,
+            final AlchemistNetworkManager networkManager) {
+        super(localNode, networkManager);
         env = environment;
         node = localNode;
         react = reaction;
         rand = random;
     }
 
-    private Field buildFieldWithPosition(final Function<Position, ?> fun) {
+    private Field buildFieldWithPosition(final Function<? super P, ?> fun) {
         return buildField(fun, getDevicePosition());
     }
 
@@ -122,7 +135,7 @@ public class AlchemistExecutionContext extends AbstractExecutionContext implemen
             return true;
         }
         if (obj instanceof AlchemistExecutionContext) {
-            final AlchemistExecutionContext ctx = (AlchemistExecutionContext) obj;
+            final AlchemistExecutionContext<?> ctx = (AlchemistExecutionContext<?>) obj;
             return node.equals(ctx.node) && env.equals(ctx.env) && react.equals(ctx.react) && rand.equals(ctx.rand);
         }
         return false;
@@ -141,7 +154,7 @@ public class AlchemistExecutionContext extends AbstractExecutionContext implemen
     /**
      * @return the device position, in form of {@link Position}
      */
-    public Position getDevicePosition() {
+    public P getDevicePosition() {
         return env.getPosition(node);
     }
 
@@ -150,34 +163,34 @@ public class AlchemistExecutionContext extends AbstractExecutionContext implemen
         return node;
     }
 
-    @Override
-    public ExecutionEnvironment getExecutionEnvironment() {
-        return node;
-    }
-
     /**
      * @return experimental access to the simulated environment, for building oracles
      */
-    public Environment<Object> getEnvironmentAccess() {
+    public Environment<Object, ?> getEnvironmentAccess() {
         return env;
     }
 
     @Override
     public int hashCode() {
         if (hash == 0) {
-            hash = HashUtils.hash32(node, env, react);
+            hash = Hashing.murmur3_32().newHasher()
+                .putInt(node.getId())
+                .putInt(env.hashCode())
+                .putInt(react.hashCode())
+                .hash().asInt();
         }
         return hash;
     }
 
     @Override
     protected AbstractExecutionContext instance() {
-        return new AlchemistExecutionContext(env, node, react, rand, (AlchemistNetworkManager) getNetworkManager());
+        return new AlchemistExecutionContext<>(env, node, react, rand, (AlchemistNetworkManager) getNetworkManager());
     }
 
     /**
      * @return The same behavior of MIT Proto's nbrdelay (forward view).
      */
+    @Override
     public Field nbrDelay() {
         return buildField(Functions.identity(), getDeltaTime());
     }
@@ -192,21 +205,26 @@ public class AlchemistExecutionContext extends AbstractExecutionContext implemen
         final boolean useRoutesAsDistances = env instanceof MapEnvironment<?> && node.contains(USE_ROUTES_AS_DISTANCES);
         return buildFieldWithPosition(p -> {
             if (useRoutesAsDistances) {
-                if (node.contains(APPROXIMATE_NBR_RANGE)) {
-                    try {
-                        final double tolerance = (double) node.getConcentration(APPROXIMATE_NBR_RANGE);
-                        final double currTime = env.getSimulation().getTime().toDouble();
-                        if (currTime > nbrRangeTimeout) {
-                            nbrRangeTimeout = currTime + tolerance;
-                            precalcdRoutingDistance = routingDistance(p);
+                if (p instanceof GeoPosition) {
+                    final GeoPosition destination = (GeoPosition) p;
+                    if (node.contains(APPROXIMATE_NBR_RANGE)) {
+                        try {
+                            final double tolerance = (double) node.getConcentration(APPROXIMATE_NBR_RANGE);
+                            final double currTime = env.getSimulation().getTime().toDouble();
+                            if (currTime > nbrRangeTimeout) {
+                                nbrRangeTimeout = currTime + tolerance;
+                                precalcdRoutingDistance = routingDistance(destination);
+                            }
+                            assert !Double.isNaN(precalcdRoutingDistance);
+                            return precalcdRoutingDistance;
+                        } catch (final ClassCastException e) {
+                            throw new IllegalStateException(APPROXIMATE_NBR_RANGE + " should be associated with a double concentration", e);
                         }
-                        assert !Double.isNaN(precalcdRoutingDistance);
-                        return precalcdRoutingDistance;
-                    } catch (final ClassCastException e) {
-                        throw new IllegalStateException(APPROXIMATE_NBR_RANGE + " should be associated with a double concentration", e);
                     }
+                    return routingDistance(destination);
+                } else {
+                    throw new IllegalStateException("Inconsistent position types");
                 }
-                return routingDistance(p);
             }
             return getDevicePosition().getDistanceTo(p);
         });
@@ -214,7 +232,7 @@ public class AlchemistExecutionContext extends AbstractExecutionContext implemen
 
     @Override
     public Field nbrVector() {
-        return buildFieldWithPosition(p -> getDevicePosition().subtract(p));
+        return buildFieldWithPosition(p -> getDevicePosition().minus(p));
     }
 
     @Override
@@ -230,7 +248,7 @@ public class AlchemistExecutionContext extends AbstractExecutionContext implemen
      * @return the distance on a map
      */
     public double routingDistance(final Node<Object> dest) {
-        return routingDistance(env.getPosition(dest));
+        return routingDistance((GeoPosition) env.getPosition(dest));
     }
 
     /**
@@ -253,9 +271,10 @@ public class AlchemistExecutionContext extends AbstractExecutionContext implemen
      *            the destination
      * @return the distance on a map
      */
-    public double routingDistance(final Position dest) {
+    @SuppressWarnings("unchecked")
+    public double routingDistance(final GeoPosition dest) {
         try {
-            return cache.get(dest);
+            return cache.get((P) dest);
         } catch (ExecutionException e) {
             throw new IllegalStateException(e);
         }
@@ -268,9 +287,8 @@ public class AlchemistExecutionContext extends AbstractExecutionContext implemen
      *            the destination, as a {@link Tuple} of two values: [latitude,
      *            longitude]
      * @return the distance on a map
-     * @throws ExecutionException 
      */
-    public double routingDistance(final Tuple dest) throws ExecutionException {
+    public double routingDistance(final Tuple dest) {
         if (dest.size() == 2) {
             return routingDistance(new LatLongPosition((Number) dest.get(0), (Number) dest.get(1)));
         }

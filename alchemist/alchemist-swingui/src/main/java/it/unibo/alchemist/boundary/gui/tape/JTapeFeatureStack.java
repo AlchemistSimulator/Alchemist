@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.boundary.gui.tape;
 
@@ -38,7 +37,7 @@ public class JTapeFeatureStack extends JTapeSection {
         /**
          * 
          */
-        VERTICAL_STACK;
+        VERTICAL_STACK
     }
 
     /**
@@ -62,6 +61,9 @@ public class JTapeFeatureStack extends JTapeSection {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Component add(final Component c) {
         final Component r = super.add(c);
@@ -93,12 +95,18 @@ public class JTapeFeatureStack extends JTapeSection {
         return type;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean registerFeature(final Component c) {
         add(c);
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void remove(final Component c) {
         super.remove(c);
@@ -116,6 +124,9 @@ public class JTapeFeatureStack extends JTapeSection {
         revalidate();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean unregisterFeature(final Component c) {
         remove(c);

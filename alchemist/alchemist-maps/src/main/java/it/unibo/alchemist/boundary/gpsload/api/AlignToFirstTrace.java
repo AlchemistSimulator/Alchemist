@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.boundary.gpsload.api;
 
 import java.util.Comparator;
@@ -15,7 +22,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  * - first trace start with time = 0 and second point with time = 3
  * - second trace start with time = 2 and second point with time = 4
  */
-public class AlignToFirstTrace extends AbstractGPSTimeAlignment {
+public final class AlignToFirstTrace extends AbstractGPSTimeAlignment {
 
     private static final SinglePointBehavior POLICY = SinglePointBehavior.RETAIN_SINGLE_POINTS;
     private Time time;

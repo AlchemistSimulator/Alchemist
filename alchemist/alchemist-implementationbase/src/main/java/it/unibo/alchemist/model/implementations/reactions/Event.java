@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 /**
  * 
  */
@@ -23,7 +23,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
  * 
  * @param <T>
  */
-public class Event<T> extends AReaction<T> {
+public final class Event<T> extends AbstractReaction<T> {
 
     private static final long serialVersionUID = -1640973841645383193L;
 
@@ -36,7 +36,7 @@ public class Event<T> extends AReaction<T> {
     }
 
     @Override
-    protected void updateInternalStatus(final Time curTime, final boolean executed, final Environment<T> env) {
+    protected void updateInternalStatus(final Time curTime, final boolean executed, final Environment<T, ?> env) {
     }
 
     @Override
@@ -48,6 +48,4 @@ public class Event<T> extends AReaction<T> {
     public Event<T> cloneOnNewNode(final Node<T> n, final Time currentTime) {
         return makeClone(() -> new Event<>(n, getTimeDistribution().clone(currentTime)));
     }
-
-
 }

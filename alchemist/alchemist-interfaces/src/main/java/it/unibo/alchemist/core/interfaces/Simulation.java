@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
  *
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.core.interfaces;
 
 import java.util.Optional;
@@ -17,6 +17,7 @@ import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Time;
 
 /**
@@ -24,9 +25,11 @@ import it.unibo.alchemist.model.interfaces.Time;
  * controllable from an external console.
  *
  * @param <T>
- *            The type which describes the concentration of a molecule
+ *            Concentration type
+ * @param <P>
+ *            Position Type
  */
-public interface Simulation<T> extends Runnable {
+public interface Simulation<T, P extends Position<? extends P>> extends Runnable {
 
     /**
      * Adds an {@link OutputMonitor} to this simulation.
@@ -34,7 +37,7 @@ public interface Simulation<T> extends Runnable {
      * @param op
      *            the OutputMonitor to add
      */
-    void addOutputMonitor(OutputMonitor<T> op);
+    void addOutputMonitor(OutputMonitor<T, P> op);
 
     /**
      * Allows to access the current environment.
@@ -43,7 +46,7 @@ public interface Simulation<T> extends Runnable {
      *         copy but back-ends the real environment used in the simulation.
      *         Manipulate it carefully
      */
-    Environment<T> getEnvironment();
+    Environment<T, P> getEnvironment();
 
     /**
      * @return an {@link Optional} containing the exception that made the
@@ -189,7 +192,7 @@ public interface Simulation<T> extends Runnable {
      * @param op
      *            the OutputMonitor to add
      */
-    void removeOutputMonitor(OutputMonitor<T> op);
+    void removeOutputMonitor(OutputMonitor<T, P> op);
 
     /**
      * Schedules a runnable to be executed by the Simulation thread, useful for

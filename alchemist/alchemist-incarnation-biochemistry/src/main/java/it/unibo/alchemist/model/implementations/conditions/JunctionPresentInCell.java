@@ -1,18 +1,12 @@
 /*
- * Copyright (C) 2010-2016, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
 package it.unibo.alchemist.model.implementations.conditions;
-
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -20,14 +14,16 @@ import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
+import java.util.Collections;
+
 /**
  */
-public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
+public final class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
 
     private static final long serialVersionUID = 4213307452790768059L;
 
     private final Junction j;
-    private final Environment<Double> env;
+    private final Environment<Double, ?> env;
 
     /**
      * 
@@ -35,20 +31,15 @@ public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
      * @param n the node
      * @param e the environment
      */
-    public JunctionPresentInCell(final Environment<Double> e, final Node<Double> n, final Junction junction) {
+    public JunctionPresentInCell(final Environment<Double, ?> e, final Node<Double> n, final Junction junction) {
         super(e, n);
         if (n instanceof CellNode) {
-            addReadMolecule(junction);
+            declareDependencyOn(junction);
             j = junction;
             env = e;
         } else {
             throw new UnsupportedOperationException("This Condition can be set only in CellNodes");
         }
-    }
-
-    @Override
-    public double getPropensityConditioning() {
-        return isValid() ? 1 : 0;
     }
 
     @Override
@@ -62,12 +53,12 @@ public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
     }
 
     @Override
-    public Map<Node<Double>, Double> getValidNeighbors(final Collection<? extends Node<Double>> neighborhood) {
-        final Set<CellNode> linkedNodes = getNode().getNeighborsLinkWithJunction(j);
-        return neighborhood.stream().filter(n -> linkedNodes.contains(n))
-        .collect(Collectors.<Node<Double>, Node<Double>, Double>toMap(
-                n -> n,
-                n -> 1.0));
+    protected double getNeighborPropensity(final Node<Double> neighbor) {
+        // the neighbor's propensity is computed as the number of junctions it has
+        //noinspection SuspiciousMethodCalls
+        return getNode().getJunctions()
+                .getOrDefault(j, Collections.emptyMap())
+                .getOrDefault(neighbor, 0);
     }
 
     @Override
@@ -76,8 +67,8 @@ public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
     }
 
     @Override
-    public CellNode getNode() {
-        return (CellNode) super.getNode();
+    public CellNode<?> getNode() {
+        return (CellNode<?>) super.getNode();
     }
 
 }

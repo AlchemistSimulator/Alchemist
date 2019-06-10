@@ -1,31 +1,43 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Collections;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.google.common.collect.ImmutableMap;
-
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
+import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.loader.YamlLoader;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.kaikikm.threadresloader.ResourceLoader;
 
-/***
- * TODO.
+import java.util.Collections;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+/**
+ * Tests node cloning.
+ *
+ * @param <P> position type
  */
-public class TestNodeCloning {
+@SuppressFBWarnings("UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
+public class TestNodeCloning<P extends Position<P>> {
 
     private static final Molecule SOURCEMOL = new SimpleMolecule("source");
     private static final Molecule ENABLEDMOL = new SimpleMolecule("enabled");
@@ -33,18 +45,18 @@ public class TestNodeCloning {
     private static final long SIMULATED_STEPS = 5000;
     private static final long ENABLE_STEP = 50;
     private static final long ENABLE_CHECKS = ENABLE_STEP + 10;
-    private Environment<Object> env;
-    private Engine<Object> sim;
+    private Environment<Object, P> env;
+    private Simulation<Object, P> sim;
 
     /***
      * Prepare the simulation.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
-        final String pathYaml = "/gradient.yml";
-        final YamlLoader loader = new YamlLoader(TestNodeCloning.class.getResourceAsStream(pathYaml));
+        final String pathYaml = "gradient.yml";
+        final YamlLoader loader = new YamlLoader(ResourceLoader.getResourceAsStream(pathYaml));
         env = loader.getWith(Collections.emptyMap());
-        sim = new Engine<Object>(env, SIMULATED_STEPS);
+        sim = new Engine<>(env, SIMULATED_STEPS);
     }
 
     private void makeNode(final double x, final double y, final boolean enabled, final boolean source) {
@@ -61,7 +73,8 @@ public class TestNodeCloning {
      */
     @Test
     public void test() throws Throwable {
-        sim.schedule(()-> {
+        // CHECKSTYLE: MagicNumber OFF - values are taken from a real experiment causing the bug.
+        sim.schedule(() -> {
             final Node<Object> node0 = env.getNodeByID(0);
             node0.setConcentration(SOURCEMOL, false);
             node0.setConcentration(ENABLEDMOL, true);
@@ -75,10 +88,10 @@ public class TestNodeCloning {
         // 2(S) -- 1 -- 0 -- 3
         final Function<Integer, Node<Object>> nid = i -> env.getNodeByID(i);
         final BiFunction<Integer, Integer, Double> dist = (a, b) -> env.getDistanceBetweenNodes(nid.apply(a), nid.apply(b));
-        sim.addOutputMonitor(new OutputMonitor<Object>() {
+        sim.addOutputMonitor(new OutputMonitor<Object, P>() {
             private static final long serialVersionUID = 1L;
             @Override
-            public void stepDone(final Environment<Object> env, final Reaction<Object> r, final Time time, final long step) {
+            public void stepDone(final Environment<Object, P> env, final Reaction<Object> r, final Time time, final long step) {
                 final ImmutableMap<Node<Object>, Double> expectations = ImmutableMap.of(
                         nid.apply(2), 0d,
                         nid.apply(1), dist.apply(2, 1),
@@ -97,9 +110,9 @@ public class TestNodeCloning {
                 }
             }
             @Override
-            public void initialized(final Environment<Object> env) { }
+            public void initialized(final Environment<Object, P> env) { }
             @Override
-            public void finished(final Environment<Object> env, final Time time, final long step) { }
+            public void finished(final Environment<Object, P> env, final Time time, final long step) { }
         });
         sim.play();
         sim.run();

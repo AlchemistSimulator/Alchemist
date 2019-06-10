@@ -1,20 +1,25 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.test;
+
+import it.unibo.alchemist.boundary.gui.effects.Effect;
+import it.unibo.alchemist.boundary.gui.effects.EffectFactory;
+import it.unibo.alchemist.boundary.gui.effects.EffectSerializationFactory;
+import org.danilopianini.io.FileUtilities;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.danilopianini.io.FileUtilities;
-import org.junit.Test;
-
-import it.unibo.alchemist.boundary.gui.effects.Effect;
-import it.unibo.alchemist.boundary.gui.effects.EffectFactory;
-import it.unibo.alchemist.boundary.gui.effects.EffectSerializationFactory;
-import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D;
-
 /**
- * Test for bugs in {@link Wormhole2D}.
+ * Test for bugs in {@link it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D}.
  */
 public class TestEffectSerialization {
 
@@ -76,7 +81,7 @@ public class TestEffectSerialization {
      */
     @Test
     public void testBackwardCompatibilityEffects() throws IOException, ClassNotFoundException {
-        final List<Effect> effects = new ArrayList<Effect>();
+        final List<Effect> effects = new ArrayList<>();
         effects.add(E);
         FileUtilities.objectToFile(effects, FILE, false);
         EffectSerializationFactory.effectsFromFile(FILE);

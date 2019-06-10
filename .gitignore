@@ -5,13 +5,13 @@ bin/
 .directory
 .gradle
 gradle.prefs
-**/src/antlr/java/**/biochemistrydsl
 version.info
 prepare_environment.sh
 **/*-gen/
 **/*generated*/
 *.cache-main
 *.cache-tests
-.idea
 out/
 .DS_Store
+*.kate-swp
+**/*.kotlintest*/*

@@ -1,12 +1,15 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist;
+
+import it.unibo.alchemist.model.interfaces.Incarnation;
+import it.unibo.alchemist.model.interfaces.Position;
+import org.jooq.lambda.Unchecked;
 
 import java.util.Collections;
 import java.util.Locale;
@@ -16,24 +19,19 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.jooq.lambda.Unchecked;
-import org.reflections.Reflections;
-import it.unibo.alchemist.model.interfaces.Concentration;
-import it.unibo.alchemist.model.interfaces.Incarnation;
-
 /**
  * This enum interfaces the generic components of the graphical interface with
  * the specific incarnation details.
  * 
  */
+@SuppressWarnings("unchecked")
 public final class SupportedIncarnations {
 
-    @SuppressWarnings("rawtypes")
-    private static final Map<String, Class< ? extends Incarnation>> INCARNATIONS;
+    private static final Map<String, Class<? extends Incarnation<?, ?>>> INCARNATIONS;
 
     static {
-        final Reflections reflections = new Reflections();
-        INCARNATIONS = reflections.getSubTypesOf(Incarnation.class).stream()
+        INCARNATIONS = ClassPathScanner.subTypesOf(Incarnation.class).stream()
+                .map(it -> (Class<Incarnation<?, ?>>) it)
                 .collect(Collectors.toMap(c -> preprocess(c.getSimpleName()), Function.identity()));
     }
 
@@ -53,15 +51,17 @@ public final class SupportedIncarnations {
      * @param s
      *            the name of the {@link Incarnation}
      * @param <T>
-     *            {@link Concentration} type
+     *            {@link it.unibo.alchemist.model.interfaces.Concentration} type
+     * @param <P>
+     *            {@link it.unibo.alchemist.model.interfaces.Position} type
+     *
      * @return an {@link Optional} containing the incarnation, if one with a
      *         matching name exists
      */
-    @SuppressWarnings("rawtypes")
-    public static <T> Optional<Incarnation<T>> get(final String s) {
+    public static <T, P extends Position<? extends P>> Optional<Incarnation<T, P>> get(final String s) {
         final String cmp = preprocess(s);
         return Optional.ofNullable(INCARNATIONS.get(cmp))
-                .map(Unchecked.<Class< ? extends Incarnation>, Incarnation<T>>function(Class::newInstance));
+                .map(Unchecked.function(it -> (Incarnation<T, P>) it.getDeclaredConstructor().newInstance()));
     }
 
     private static String preprocess(final String s) {

@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.implementations.actions;
 
@@ -12,7 +11,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
-import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
@@ -25,8 +23,10 @@ import java.util.List;
 
 
 /**
+ *
+ * @param <P> position type
  */
-public class LsaBarycenterCrowd extends SAPEREMoveNodeAgent {
+public final class LsaBarycenterCrowd<P extends Position<? extends P>> extends SAPEREMoveNodeAgent<P> {
 
     private static final double LIMIT = 0.1;
     private static final int MIN = 100;
@@ -48,7 +48,7 @@ public class LsaBarycenterCrowd extends SAPEREMoveNodeAgent {
      * @param p
      *            probability for an agent of follow the right direction
      */
-    public LsaBarycenterCrowd(final Environment<List< ILsaMolecule>> aEnvironment, final ILsaNode node, final RandomGenerator aRandom, final Double p) {
+    public LsaBarycenterCrowd(final Environment<List<ILsaMolecule>, P> aEnvironment, final ILsaNode node, final RandomGenerator aRandom, final Double p) {
         super(aEnvironment, node);
         random = aRandom;
         probMoving = p;
@@ -56,18 +56,18 @@ public class LsaBarycenterCrowd extends SAPEREMoveNodeAgent {
 
     @Override
     public void execute() {
-        final Position mypos = getCurrentPosition();
+        final P mypos = getCurrentPosition();
         final double myx = mypos.getCartesianCoordinates()[0];
         final double myy = mypos.getCartesianCoordinates()[1];
         double x = 0;
         double y = 0;
-        final Neighborhood<List< ILsaMolecule>> neigh = getLocalNeighborhood();
-        final List<Position> poss = new ArrayList<Position>();
+        final Neighborhood<List<ILsaMolecule>> neigh = getLocalNeighborhood();
+        final List<P> poss = new ArrayList<P>();
         double minBarycenterField = MIN;
-        for (final Node<List< ILsaMolecule>> nodo : neigh.getNeighbors()) {
+        for (final Node<List<ILsaMolecule>> nodo : neigh.getNeighbors()) {
             final ILsaNode n = (ILsaNode) nodo;
-            final Position pos = getPosition(n);
-            List< ILsaMolecule> barycenterList;
+            final P pos = getPosition(n);
+            List<ILsaMolecule> barycenterList;
             try {
                 barycenterList = n.getConcentration(new LsaMolecule("barycenter,V,T"));
             } catch (IndexOutOfBoundsException e) {
@@ -106,7 +106,7 @@ public class LsaBarycenterCrowd extends SAPEREMoveNodeAgent {
             final boolean moveH = dx > 0 || dx < 0;
             final boolean moveV = dy > 0 || dy < 0;
             if (moveH || moveV) {
-                move(new Continuous2DEuclidean(moveH ? dx : 0, moveV ? dy : 0));
+                move(getEnvironment().makePosition(moveH ? dx : 0, moveV ? dy : 0));
             }
         }
     }

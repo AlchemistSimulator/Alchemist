@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 /**
  * 
  */
@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  *
  * @param <T>
  */
-public class SetLocalMoleculeConcentration<T> extends AbstractActionOnSingleMolecule<T> {
+public final class SetLocalMoleculeConcentration<T> extends AbstractActionOnSingleMolecule<T> {
 
     private static final long serialVersionUID = -197253027556270645L;
     private final T val;

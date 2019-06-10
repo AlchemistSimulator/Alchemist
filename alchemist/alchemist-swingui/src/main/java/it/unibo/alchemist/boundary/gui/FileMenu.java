@@ -1,13 +1,20 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.boundary.gui;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.danilopianini.view.GUIUtilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.JFileChooser;
+import javax.swing.JMenuItem;
+import javax.swing.filechooser.FileFilter;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -16,22 +23,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-import javax.swing.JFileChooser;
-import javax.swing.JMenuItem;
-import javax.swing.filechooser.FileFilter;
-
-import org.danilopianini.view.GUIUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 import static it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle.getString;
 
 /**
  */
 @Deprecated
-public class FileMenu extends AbstractMenu {
+@SuppressFBWarnings
+@SuppressWarnings("PMD")
+public final class FileMenu extends AbstractMenu {
 
     private static final long serialVersionUID = 5209455686362711386L;
     private static final JMenuItem[] ITEMS = {

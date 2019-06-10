@@ -1,14 +1,23 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.model.implementations.molecules;
 
 import java.util.Collections;
 import java.util.Map;
 
-import it.unibo.alchemist.model.interfaces.Molecule;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.model.interfaces.Dependency;
 
 /**
  * Represents a junction between two cells.
  */
-public class Junction extends SimpleMolecule {
+@SuppressFBWarnings("EQ_DOESNT_OVERRIDE_EQUALS")
+public final class Junction extends SimpleMolecule {
 
     private static final long serialVersionUID = -5538036651435573599L;
 
@@ -18,9 +27,9 @@ public class Junction extends SimpleMolecule {
      * Build a junction.
      * @param name the name of the junction.
      * @param moleculesInCurrentNode 
-     *  A map of molecules (with their concentration) which was in the current node. When the junction is removed that molecules will be released in the current node.
+     *  A map of molecules (with their concentration) which was in the current node. When the junction is removed the molecules will be released in the current node.
      * @param moleculesInNeighborNode
-     *  A map of molecules (with their concentration) which was in the current node. When the junction is removed that molecules will be released in the current node.
+     *  A map of molecules (with their concentration) which was in the current node. When the junction is removed the molecules will be released in the current node.
      */
     public Junction(final String name, final Map<Biomolecule, Double> moleculesInCurrentNode, final Map<Biomolecule, Double> moleculesInNeighborNode) {
         super(name);
@@ -61,7 +70,7 @@ public class Junction extends SimpleMolecule {
     }
 
     @Override
-    public boolean dependsOn(final Molecule mol) {
+    public boolean dependsOn(final Dependency mol) {
         return equals(mol);
     }
 

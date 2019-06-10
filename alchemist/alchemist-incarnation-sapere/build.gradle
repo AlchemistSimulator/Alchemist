@@ -1,7 +1,0 @@
-dependencies {
-    compile (
-        project(':alchemist-maps'),
-        project(':alchemist-sapere-mathexp'),
-        "com.google.guava:guava:$guavaVersion"
-    )
-}

@@ -1,29 +1,27 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
-import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import org.danilopianini.lang.HashString;
 
 import java.util.List;
 
 /**
- * 
+ * @param <P>
  */
-public class CrowdSteeringService extends SAPEREMoveNodeAgent {
+public final class CrowdSteeringService<P extends Position2D<P>> extends SAPEREMoveNodeAgent<P> {
 
     /*
      * an agent can move at most of LIMIT along each axis
@@ -53,12 +51,12 @@ public class CrowdSteeringService extends SAPEREMoveNodeAgent {
      *               the position in the LSA of the distance value 
      *               to be read for identifying the direction of movement
      */
-    public CrowdSteeringService(final Environment<List<ILsaMolecule>> environment, final ILsaNode node, final LsaMolecule molecule, final int idPos, final int distPos) {
+    public CrowdSteeringService(final Environment<List<ILsaMolecule>, P> environment, final ILsaNode node, final LsaMolecule molecule, final int idPos, final int distPos) {
         super(environment, node);
-        addModifiedMolecule(GRADID);
-        addModifiedMolecule(FB);
-        addModifiedMolecule(P);
-        addModifiedMolecule(GO);
+        declareDependencyTo(GRADID);
+        declareDependencyTo(FB);
+        declareDependencyTo(P);
+        declareDependencyTo(GO);
         this.template = molecule;
         this.gradDistPos = distPos;
         this.gradIdPos = idPos;
@@ -69,16 +67,16 @@ public class CrowdSteeringService extends SAPEREMoveNodeAgent {
         double minGrad = Double.MAX_VALUE;
         final HashString idValue = getNode().getConcentration(GRADID).get(0).getArg(1).getAST().toHashString();
         final Neighborhood<List<ILsaMolecule>> neigh = getLocalNeighborhood();
-        Position targetPositions = null;
+        P targetPositions = null;
         Node<List<ILsaMolecule>> bestNode = null;
         for (final Node<List<ILsaMolecule>> node : neigh.getNeighbors()) {
             final ILsaNode n = (ILsaNode) node;
             final List<ILsaMolecule> gradList;
             gradList = n.getConcentration(template);
             if (!gradList.isEmpty() && !n.contains(new LsaMolecule("person"))) {
-                for (int i = 0; i < gradList.size(); i++) {
-                    if (gradList.get(i).getArg(gradIdPos).getAST().toHashString().equals(idValue)) {
-                        final double valueGrad = getLSAArgumentAsDouble(gradList.get(i), gradDistPos);
+                for (ILsaMolecule aGradList : gradList) {
+                    if (aGradList.getArg(gradIdPos).getAST().toHashString().equals(idValue)) {
+                        final double valueGrad = getLSAArgumentAsDouble(aGradList, gradDistPos);
                         if (valueGrad <= minGrad) {
                             minGrad = valueGrad;
                             targetPositions = getPosition(n);
@@ -92,14 +90,12 @@ public class CrowdSteeringService extends SAPEREMoveNodeAgent {
         if (bestNode == null) {
             return;
         }
-        final Position mypos = getCurrentPosition();
-        final double myx = mypos.getCartesianCoordinates()[0];
-        final double myy = mypos.getCartesianCoordinates()[1];
-        double x = 0;
-        double y = 0;
         if (targetPositions != null) {
-            x = targetPositions.getCartesianCoordinates()[0];
-            y = targetPositions.getCartesianCoordinates()[1];
+            final P mypos = getCurrentPosition();
+            final double myx = mypos.getX();
+            final double myy = mypos.getY();
+            double x = targetPositions.getX();
+            double y = targetPositions.getY();
             double dx = x - myx;
             double dy = y - myy;
             dx = dx > 0 ? Math.min(LIMIT, dx) : Math.max(-LIMIT, dx);
@@ -107,7 +103,7 @@ public class CrowdSteeringService extends SAPEREMoveNodeAgent {
             final boolean moveH = dx > 0 || dx < 0;
             final boolean moveV = dy > 0 || dy < 0;
             if (moveH || moveV) {
-                move(new Continuous2DEuclidean(moveH ? dx : 0, moveV ? dy : 0));
+                move(getEnvironment().makePosition(moveH ? dx : 0, moveV ? dy : 0));
             } else {
                 if (minGrad != 0) {
                     getNode().setConcentration(GO);

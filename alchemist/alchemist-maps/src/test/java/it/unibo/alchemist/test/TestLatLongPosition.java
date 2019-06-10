@@ -1,8 +1,15 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.javadocmd.simplelatlng.LatLng;
 import com.javadocmd.simplelatlng.util.LengthUnit;
@@ -26,10 +33,10 @@ public class TestLatLongPosition {
         for (final DistanceFormula df1 : DistanceFormula.values()) {
             final double dist = LatLongPosition.distance(NORTH_CAPE, INVERCAGILL, df1);
             final double dist2 = LatLongPosition.distance(INVERCAGILL, NORTH_CAPE, df1);
-            assertEquals(dist, dist2, 0d);
-            assertEquals(dist, LatLongPosition.distance(NORTH_CAPE, INVERCAGILL, LengthUnit.METER, df1), 0d);
+            assertEquals(dist, dist2, Double.MIN_VALUE);
+            assertEquals(dist, LatLongPosition.distance(NORTH_CAPE, INVERCAGILL, LengthUnit.METER, df1), Double.MIN_VALUE);
             assertEquals(dist / LengthUnit.METER.getScaleFactor(),
-                    LatLongPosition.distance(NORTH_CAPE, INVERCAGILL, LengthUnit.KILOMETER, df1), 0d);
+                    LatLongPosition.distance(NORTH_CAPE, INVERCAGILL, LengthUnit.KILOMETER, df1), Double.MIN_VALUE);
         }
     }
 

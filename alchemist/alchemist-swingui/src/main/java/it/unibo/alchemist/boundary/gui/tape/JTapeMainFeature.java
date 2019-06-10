@@ -1,23 +1,24 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.boundary.gui.tape;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import javax.swing.SpringLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 
-import javax.swing.SpringLayout;
-
 /**
  *
  */
-public class JTapeMainFeature extends JTapeSection {
+@SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")
+public final class JTapeMainFeature extends JTapeSection {
 
     /**
      * 

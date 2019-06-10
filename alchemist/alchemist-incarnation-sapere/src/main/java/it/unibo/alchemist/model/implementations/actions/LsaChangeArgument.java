@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.implementations.actions;
 
@@ -24,11 +23,11 @@ import java.util.List;
 
 /**
  */
-public class LsaChangeArgument extends SAPERELocalAgent {
+public final class LsaChangeArgument extends SAPERELocalAgent {
 
     private static final long serialVersionUID = -7128058274012426458L;
     private static final HashString OLD = new HashString("OldType");
-    private final Environment<List< ILsaMolecule>> env;
+    private final Environment<List<ILsaMolecule>, ?> env;
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All provided RandomGenerator implementations are actually Serializable")
     private final RandomGenerator rnd;
     private final HashString newTargetVar;
@@ -53,7 +52,7 @@ public class LsaChangeArgument extends SAPERELocalAgent {
      * @param random
      *            Random engine
      */
-    public LsaChangeArgument(final Environment<List< ILsaMolecule>> environment, final ILsaNode node, final String[] listTarget, final String targetVariab, final RandomGenerator random) {
+    public LsaChangeArgument(final Environment<List<ILsaMolecule>, ?> environment, final ILsaNode node, final String[] listTarget, final String targetVariab, final RandomGenerator random) {
         super(node);
         rnd = random;
         env = environment;
@@ -85,7 +84,7 @@ public class LsaChangeArgument extends SAPERELocalAgent {
     /**
      * @return the current environment
      */
-    protected Environment<List< ILsaMolecule>> getEnvironment() {
+    protected Environment<List<ILsaMolecule>, ?> getEnvironment() {
         return env;
     }
 

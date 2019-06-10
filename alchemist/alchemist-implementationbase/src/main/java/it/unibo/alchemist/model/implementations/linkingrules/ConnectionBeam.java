@@ -1,13 +1,13 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.implementations.linkingrules;
 
+import static java.lang.Double.NEGATIVE_INFINITY;
 import static org.apache.commons.math3.util.FastMath.PI;
 import static org.apache.commons.math3.util.FastMath.atan2;
 import static org.apache.commons.math3.util.FastMath.cos;
@@ -29,7 +29,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Position2D;
 
 /**
  * Connects two nodes if, throwing a beam from one to the other, there exists at
@@ -38,13 +38,14 @@ import it.unibo.alchemist.model.interfaces.Position;
  * tolerance in connection breaking.
  * 
  * @param <T>
+ * @param <P>
  */
-public class ConnectionBeam<T> extends EuclideanDistance<T> {
+public final class ConnectionBeam<T, P extends Position2D<P>> extends ConnectWithinDistance<T, P> {
 
-    private static final long serialVersionUID = -6303232843110524434L;
+    private static final long serialVersionUID = 1L;
     private static final int COORDS = 6;
-    private final double range;
-    private transient Environment2DWithObstacles<?, ?> oenv;
+    private final double beamWidth;
+    private transient Environment2DWithObstacles<?, T, P> oenv;
     private transient Area obstacles = new Area();
 
     /**
@@ -55,48 +56,48 @@ public class ConnectionBeam<T> extends EuclideanDistance<T> {
      */
     public ConnectionBeam(final double radius, final double beamSize) {
         super(radius);
-        range = beamSize;
+        beamWidth = beamSize;
     }
 
     @Override
-    public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T> env) {
+    public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> env) {
         final Neighborhood<T> normal = super.computeNeighborhood(center, env);
         if (oenv == null) {
-            if (!(env instanceof Environment2DWithObstacles<?, ?>)) {
+            if (!(env instanceof Environment2DWithObstacles<?, ?, ?>)) {
                 return normal;
             }
-            oenv = (Environment2DWithObstacles<?, ?>) env;
+            oenv = (Environment2DWithObstacles<?, T, P>) env;
             obstacles.reset();
             oenv.getObstacles().forEach((obs) -> {
                 /*
                  * Doubles are prone to approximation errors. Use nextAfter to get rid of them
                  */
                 final Rectangle2D bounds = obs.getBounds2D();
-                final double mx = nextAfter(bounds.getMinX(), java.lang.Double.NEGATIVE_INFINITY);
-                final double my = nextAfter(bounds.getMinY(), java.lang.Double.NEGATIVE_INFINITY);
+                final double mx = nextAfter(bounds.getMinX(), NEGATIVE_INFINITY);
+                final double my = nextAfter(bounds.getMinY(), NEGATIVE_INFINITY);
                 final double ex = nextUp(bounds.getMaxX());
                 final double ey = nextUp(bounds.getMaxY());
                 obstacles.add(new Area(new Rectangle2D.Double(mx, my, ex - mx, ey - my)));
             });
         }
         if (!normal.isEmpty()) {
-            final Position cp = env.getPosition(center);
+            final P cp = env.getPosition(center);
             final List<Node<T>> neighs = normal.getNeighbors().stream()
                 .filter((neigh) -> {
-                    final Position np = env.getPosition(neigh);
+                    final P np = env.getPosition(neigh);
                     return !oenv.intersectsObstacle(cp, np) || projectedBeamOvercomesObstacle(cp, np);
                 })
-                .collect(ArrayList::new, (l, el) -> l.add(el), (l1, l2) -> l1.addAll(l2));
+                .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
             return Neighborhoods.make(env, center, neighs);
         }
         return normal;
     }
 
-    private boolean projectedBeamOvercomesObstacle(final Position pos1, final Position pos2) {
-        final double p1x = pos1.getCoordinate(0);
-        final double p1y = pos1.getCoordinate(1);
-        final double p2x = pos2.getCoordinate(0);
-        final double p2y = pos2.getCoordinate(1);
+    private boolean projectedBeamOvercomesObstacle(final P pos1, final P pos2) {
+        final double p1x = pos1.getX();
+        final double p1y = pos1.getY();
+        final double p2x = pos2.getX();
+        final double p2y = pos2.getY();
         final double x = p2x - p1x;
         final double y = p2y - p1y;
         /*
@@ -106,13 +107,13 @@ public class ConnectionBeam<T> extends EuclideanDistance<T> {
         /*
          * Deduce surrounding beam vertices
          */
-        final double dx = range * cos(PI / 2 + angle);
-        final double dy = range * sin(PI / 2 + angle);
+        final double dx = beamWidth * cos(PI / 2 + angle);
+        final double dy = beamWidth * sin(PI / 2 + angle);
         /*
          * Enlarge the beam
          */
-        final double cx = range * cos(angle);
-        final double cy = range * sin(angle);
+        final double cx = beamWidth * cos(angle);
+        final double cy = beamWidth * sin(angle);
         /*
          * Create the beam
          */
@@ -135,7 +136,7 @@ public class ConnectionBeam<T> extends EuclideanDistance<T> {
         final PathIterator pi = beam.getPathIterator(null);
         final double[] coords = new double[COORDS];
         while (!pi.isDone()) {
-            switch(pi.currentSegment(coords)) {
+            switch (pi.currentSegment(coords)) {
             case PathIterator.SEG_MOVETO :
                 curpath = new Path2D.Double();
                 curpath.moveTo(coords[0], coords[1]);

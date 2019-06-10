@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.implementations.routes;
 
@@ -12,15 +11,18 @@ import java.util.List;
 
 import org.apache.commons.math3.util.Pair;
 
-import it.unibo.alchemist.model.implementations.positions.GPSPointImpl;
+import com.google.common.collect.ImmutableList;
+
 import it.unibo.alchemist.model.interfaces.GPSPoint;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.utils.MapUtils;
 
 /**
+ * 
  */
-public class GPSTraceImpl extends PolygonalChain<GPSPoint> implements GPSTrace {
+public final class GPSTraceImpl extends PolygonalChain<GPSPoint> implements GPSTrace {
 
     private static final long serialVersionUID = 1L;
 
@@ -29,6 +31,7 @@ public class GPSTraceImpl extends PolygonalChain<GPSPoint> implements GPSTrace {
      * @param tr
      *            GPS points
      */
+    @SafeVarargs
     public GPSTraceImpl(final GPSPoint... tr) {
        super(tr);
     }
@@ -38,16 +41,16 @@ public class GPSTraceImpl extends PolygonalChain<GPSPoint> implements GPSTrace {
      *            GPS points
      */
     public GPSTraceImpl(final List<GPSPoint> tr) {
-        this(tr.stream().sorted().toArray(GPSPoint[]::new));
+        super(tr);
     }
 
     @Override
-    public GPSTrace startAt(final Time time) {
-        final GPSPoint[] filtered = stream()
-            .filter(pt -> pt.getTime().toDouble() >= time.toDouble())
-            .map(p -> new GPSPointImpl(p.getLatitude(), p.getLongitude(), p.getTime().subtract(time)))
-            .toArray(GPSPoint[]::new);
-        return new GPSTraceImpl(filtered.length == 0 ? new GPSPoint[] { getFinalPosition() } : filtered);
+    public GPSTraceImpl startAt(final Time time) {
+        final List<GPSPoint> filtered = stream()
+            .map(p -> p.subtractTime(time))
+            .filter(pt -> pt.getTime().toDouble() >= 0)
+            .collect(ImmutableList.toImmutableList());
+        return new GPSTraceImpl(filtered.isEmpty() ? ImmutableList.of(getFinalPosition()) : filtered);
     }
 
     @Override
@@ -66,7 +69,7 @@ public class GPSTraceImpl extends PolygonalChain<GPSPoint> implements GPSTrace {
     }
 
     @Override
-    public GPSPoint interpolate(final Time time) {
+    public GeoPosition interpolate(final Time time) {
         final Pair<GPSPoint, GPSPoint> coords = searchPoint(time);
         final GPSPoint prev = coords.getFirst();
         final GPSPoint next = coords.getSecond();
@@ -76,7 +79,7 @@ public class GPSTraceImpl extends PolygonalChain<GPSPoint> implements GPSTrace {
         }
         final double ratio = (time.toDouble() - prev.getTime().toDouble()) / tdtime;
         final double dist = MapUtils.getDistance(prev, next);
-        return new GPSPointImpl(MapUtils.getDestinationLocation(prev, next, dist * ratio), time);
+        return MapUtils.getDestinationLocation(prev, next, dist * ratio);
     }
 
     private Pair<GPSPoint, GPSPoint> searchPoint(final Time time) {

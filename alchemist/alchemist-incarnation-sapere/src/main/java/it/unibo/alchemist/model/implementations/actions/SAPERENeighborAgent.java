@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.implementations.actions;
 
@@ -21,12 +20,13 @@ import java.util.List;
 
 /**
  * A SAPERE Agent that modifies something on neighboring nodes.
- * 
+ *
+ * @param <P> position type
  */
-public abstract class SAPERENeighborAgent extends SAPEREAgent {
+public abstract class SAPERENeighborAgent<P extends Position<? extends P>> extends SAPEREAgent {
 
     private static final long serialVersionUID = 8720614570156227036L;
-    private final Environment<List< ILsaMolecule>> environment;
+    private final Environment<List<ILsaMolecule>, P> environment;
 
     /**
      * Creates a new SAPERE Neighbor Agent stub. If you use this constructor,
@@ -40,7 +40,7 @@ public abstract class SAPERENeighborAgent extends SAPEREAgent {
      * @param m1
      *            The molecule template it modifies
      */
-    public SAPERENeighborAgent(final Environment<List< ILsaMolecule>> env, final ILsaNode node, final ILsaMolecule m1) {
+    public SAPERENeighborAgent(final Environment<List<ILsaMolecule>, P> env, final ILsaNode node, final ILsaMolecule m1) {
         super(node, m1);
         environment = env;
     }
@@ -59,7 +59,7 @@ public abstract class SAPERENeighborAgent extends SAPEREAgent {
      * @param m2
      *            The second molecule template it modifies
      */
-    public SAPERENeighborAgent(final Environment<List< ILsaMolecule>> env, final ILsaNode node, final ILsaMolecule m1, final ILsaMolecule m2) {
+    public SAPERENeighborAgent(final Environment<List<ILsaMolecule>, P> env, final ILsaNode node, final ILsaMolecule m1, final ILsaMolecule m2) {
         super(node, m1, m2);
         environment = env;
     }
@@ -80,7 +80,7 @@ public abstract class SAPERENeighborAgent extends SAPEREAgent {
      * @param m3
      *            The third molecule template it modifies
      */
-    public SAPERENeighborAgent(final Environment<List< ILsaMolecule>> env, final ILsaNode node, final ILsaMolecule m1, final ILsaMolecule m2, final ILsaMolecule m3) {
+    public SAPERENeighborAgent(final Environment<List<ILsaMolecule>, P> env, final ILsaNode node, final ILsaMolecule m1, final ILsaMolecule m2, final ILsaMolecule m3) {
         super(node, m1, m2, m3);
         environment = env;
     }
@@ -98,7 +98,7 @@ public abstract class SAPERENeighborAgent extends SAPEREAgent {
     /**
      * @return the current position of the node
      */
-    protected final Position getCurrentPosition() {
+    protected final P getCurrentPosition() {
         return environment.getPosition(getNode());
     }
 
@@ -107,7 +107,7 @@ public abstract class SAPERENeighborAgent extends SAPEREAgent {
      *            the node
      * @return the position of node
      */
-    protected final Position getPosition(final ILsaNode node) {
+    protected final P getPosition(final ILsaNode node) {
         return environment.getPosition(node);
     }
 
@@ -116,21 +116,21 @@ public abstract class SAPERENeighborAgent extends SAPEREAgent {
      *            the node
      * @return the position of node
      */
-    protected final Neighborhood<List< ILsaMolecule>> getNeighborhood(final ILsaNode node) {
+    protected final Neighborhood<List<ILsaMolecule>> getNeighborhood(final ILsaNode node) {
         return environment.getNeighborhood(node);
     }
 
     /**
      * @return the position of node
      */
-    protected final Neighborhood<List< ILsaMolecule>> getLocalNeighborhood() {
+    protected final Neighborhood<List<ILsaMolecule>> getLocalNeighborhood() {
         return environment.getNeighborhood(getNode());
     }
 
     /**
      * @param direction the point towards which move the node
      */
-    protected final void move(final Position direction) {
+    protected final void move(final P direction) {
         environment.moveNode(getNode(), direction);
     }
 
@@ -145,7 +145,7 @@ public abstract class SAPERENeighborAgent extends SAPEREAgent {
     /**
      * @return the current environment
      */
-    protected Environment<List< ILsaMolecule>> getEnvironment() {
+    protected Environment<List<ILsaMolecule>, P> getEnvironment() {
         return environment;
     }
 

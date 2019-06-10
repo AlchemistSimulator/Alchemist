@@ -1,12 +1,22 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.model.implementations.positions; // NOPMD by danysk on 2/4/14 3:39 PM
+package it.unibo.alchemist.model.implementations.positions;
+
+import com.google.common.collect.Lists;
+import com.javadocmd.simplelatlng.LatLng;
+import com.javadocmd.simplelatlng.util.LengthUnit;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
+import org.danilopianini.util.Hashes;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.function.BinaryOperator;
 
 import static org.apache.commons.math3.util.FastMath.abs;
 import static org.apache.commons.math3.util.FastMath.acos;
@@ -18,24 +28,9 @@ import static org.apache.commons.math3.util.FastMath.sqrt;
 import static org.apache.commons.math3.util.FastMath.toDegrees;
 import static org.apache.commons.math3.util.FastMath.toRadians;
 
-import java.util.List;
-import java.util.function.BinaryOperator;
-
-import org.danilopianini.util.Hashes;
-
-import it.unibo.alchemist.exceptions.UncomparableDistancesException;
-import it.unibo.alchemist.model.interfaces.GeoPosition;
-import it.unibo.alchemist.model.interfaces.Position;
-
-import com.google.common.collect.Lists;
-import com.javadocmd.simplelatlng.LatLng;
-import com.javadocmd.simplelatlng.util.LengthUnit;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 /**
  * Unmodifiable state version of {@link LatLng}, also implementing the
- * {@link Position} interface.
+ * {@link GeoPosition} interface.
  * 
  */
 public final class LatLongPosition implements GeoPosition {
@@ -56,20 +51,185 @@ public final class LatLongPosition implements GeoPosition {
     private static final long serialVersionUID = -8972065367390749356L;
 
     private final DistanceFormula df;
-    private final LatLng latlng;
     private int hash;
+    private final LatLng latlng;
 
     /**
-     * Possible methods to compute the distance between two latitude-longitude
-     * points.
-     * 
+     * @param lat
+     *            latitude
+     * @param lon
+     *            longitude
      */
-    public enum DistanceFormula {
+    public LatLongPosition(final double lat, final double lon) {
+        this(lat, lon, DEFAULT_DISTANCE_FORMULA);
+    }
 
-        /**
-         * 
+    /**
+     * @param lat
+     *            latitude
+     * @param lon
+     *            longitude
+     * @param distanceFormula
+     *            the formula to use to compute distances
+     */
+    public LatLongPosition(final double lat, final double lon, final DistanceFormula distanceFormula) {
+        latlng = new LatLng(lat, lon);
+        df = distanceFormula;
+    }
+
+    /**
+     * @param lat
+     *            latitude
+     * @param lon
+     *            longitude
+     * @param distanceFormula
+     *            the index of the formula to use to compute distances
+     */
+    public LatLongPosition(final double lat, final double lon, final int distanceFormula) {
+        this(lat, lon, DistanceFormula.values()[distanceFormula % DistanceFormula.values().length]);
+    }
+
+    /**
+     * @param lat
+     *            latitude
+     * @param lon
+     *            longitude
+     */
+    public LatLongPosition(final Number lat, final Number lon) {
+        this(lat.doubleValue(), lon.doubleValue());
+    }
+
+    @Override
+    public GeoPosition plus(@NotNull final GeoPosition other) {
+        return ebeOperation(Double::sum, other);
+    }
+
+    @Override
+    public List<LatLongPosition> boundingBox(final double range) {
+        if (range < 0d) {
+            throw new IllegalArgumentException("Negative ranges make no sense.");
+        }
+        /*
+         *  angular distance in radians on a great circle
          */
-        EQUIRECTANGULAR, HAVERSINE, SPHERICAL_COSINES
+        final double radDist = range / EARTH_MEAN_RADIUS_METERS;
+        final double radLat = toRadians(getLatitude());
+        final double radLon = toRadians(getLongitude());
+
+        double minLat = radLat - radDist;
+        double maxLat = radLat + radDist;
+
+        double minLon;
+        double maxLon;
+        if (minLat > MIN_LAT && maxLat < MAX_LAT) {
+            final double deltaLon = asin(Math.sin(radDist) / cos(radLat));
+            minLon = radLon - deltaLon;
+            if (minLon < MIN_LON) {
+                minLon += 2d * Math.PI;
+            }
+            maxLon = radLon + deltaLon;
+            if (maxLon > MAX_LON) {
+                maxLon -= 2d * Math.PI;
+            }
+        } else {
+            // a pole is within the distance
+            minLat = Math.max(minLat, MIN_LAT);
+            maxLat = Math.min(maxLat, MAX_LAT);
+            minLon = MIN_LON;
+            maxLon = MAX_LON;
+        }
+        return Lists.newArrayList(
+                new LatLongPosition(toDegrees(minLat), toDegrees(minLon)),
+                new LatLongPosition(toDegrees(maxLat), toDegrees(maxLon)));
+    }
+
+    private GeoPosition ebeOperation(final BinaryOperator<Double> op, final GeoPosition other) {
+        return new LatLongPosition(
+                op.apply(getLatitude(), other.getLatitude()),
+                op.apply(getLongitude(), other.getLongitude()));
+    }
+
+    @Override
+    @SuppressFBWarnings(justification = "Exact floating point equality is required here.")
+    public boolean equals(final Object obj) {
+        if (obj instanceof LatLongPosition) {
+            final LatLongPosition llp = (LatLongPosition) obj;
+            return getLatitude() == llp.getLatitude() && getLongitude() == llp.getLongitude();
+        }
+        return false;
+    }
+
+    @Override
+    public double[] getCartesianCoordinates() {
+        return new double[] { getX(), getY() };
+    }
+
+    @Override
+    public double getCoordinate(final int dim) {
+        if (dim == 0) {
+            return getLatitude();
+        }
+        if (dim == 1) {
+            return getLongitude();
+        }
+        throw new IllegalArgumentException("Pass 1 for longitude or 0 for latitude. No other value accepted.");
+    }
+
+    @Override
+    public int getDimensions() {
+        return 2;
+    }
+
+    @Override
+    public double getDistanceTo(@NotNull final GeoPosition p) {
+        if (p instanceof LatLongPosition) {
+            return distance(latlng, ((LatLongPosition) p).latlng, df);
+        }
+        return distance(latlng, new LatLng(p.getLatitude(), p.getLongitude()), df);
+    }
+
+    /**
+     * @return the latitude
+     */
+    @Override
+    public double getLatitude() {
+        return latlng.getLatitude();
+    }
+
+    /**
+     * @return the longitude
+     */
+    @Override
+    public double getLongitude() {
+        return latlng.getLongitude();
+    }
+
+    @Override
+    public double getX() {
+        return getLongitude();
+    }
+
+    @Override
+    public double getY() {
+        return getLatitude();
+    }
+
+    @Override
+    public int hashCode() {
+        if (hash == 0) {
+            hash = Hashes.hash32(getLatitude(), getLongitude());
+        }
+        return hash;
+    }
+
+    @Override
+    public GeoPosition minus(@NotNull final GeoPosition other) {
+        return ebeOperation((self, o) -> self - o, other);
+    }
+
+    @Override
+    public String toString() {
+        return latlng.toString();
     }
 
     /**
@@ -150,178 +310,16 @@ public final class LatLongPosition implements GeoPosition {
     }
 
     /**
-     * @param lat
-     *            latitude
-     * @param lon
-     *            longitude
+     * Possible methods to compute the distance between two latitude-longitude
+     * points.
+     * 
      */
-    public LatLongPosition(final double lat, final double lon) {
-        this(lat, lon, DEFAULT_DISTANCE_FORMULA);
-    }
+    public enum DistanceFormula {
 
-    /**
-     * @param lat
-     *            latitude
-     * @param lon
-     *            longitude
-     * @param distanceFormula
-     *            the formula to use to compute distances
-     */
-    public LatLongPosition(final double lat, final double lon, final DistanceFormula distanceFormula) {
-        latlng = new LatLng(lat, lon);
-        df = distanceFormula;
-    }
-
-    /**
-     * @param lat
-     *            latitude
-     * @param lon
-     *            longitude
-     * @param distanceFormula
-     *            the index of the formula to use to compute distances
-     */
-    public LatLongPosition(final double lat, final double lon, final int distanceFormula) {
-        this(lat, lon, DistanceFormula.values()[distanceFormula % DistanceFormula.values().length]);
-    }
-
-    /**
-     * @param lat
-     *            latitude
-     * @param lon
-     *            longitude
-     */
-    public LatLongPosition(final Number lat, final Number lon) {
-        this(lat.doubleValue(), lon.doubleValue());
-    }
-
-    @Override
-    public List<Position> buildBoundingBox(final double range) {
-        if (range < 0d) {
-            throw new IllegalArgumentException("Negative ranges make no sense.");
-        }
-        /*
-         *  angular distance in radians on a great circle
+        /**
+         * 
          */
-        final double radDist = range / EARTH_MEAN_RADIUS_METERS;
-        final double radLat = toRadians(getLatitude());
-        final double radLon = toRadians(getLongitude());
-
-        double minLat = radLat - radDist;
-        double maxLat = radLat + radDist;
-
-        double minLon;
-        double maxLon;
-        if (minLat > MIN_LAT && maxLat < MAX_LAT) {
-            final double deltaLon = asin(Math.sin(radDist) / cos(radLat));
-            minLon = radLon - deltaLon;
-            if (minLon < MIN_LON) {
-                minLon += 2d * Math.PI;
-            }
-            maxLon = radLon + deltaLon;
-            if (maxLon > MAX_LON) {
-                maxLon -= 2d * Math.PI;
-            }
-        } else {
-            // a pole is within the distance
-            minLat = Math.max(minLat, MIN_LAT);
-            maxLat = Math.min(maxLat, MAX_LAT);
-            minLon = MIN_LON;
-            maxLon = MAX_LON;
-        }
-        return Lists.newArrayList(
-                new LatLongPosition(toDegrees(minLat), toDegrees(minLon)),
-                new LatLongPosition(toDegrees(maxLat), toDegrees(maxLon)));
-    }
-
-    @Override
-    public double[] getCartesianCoordinates() {
-        return new double[] { getLongitude(), getLatitude() };
-    }
-
-    @Override
-    public double getCoordinate(final int dim) {
-        if (dim == 0) {
-            return getLongitude();
-        }
-        if (dim == 1) {
-            return getLatitude();
-        }
-        throw new IllegalArgumentException("Pass 0 for longitude and 1 for latitude. No other value accepted.");
-    }
-
-    /**
-     * @return the latitude
-     */
-    public double getLatitude() {
-        return latlng.getLatitude();
-    }
-
-    /**
-     * @return the longitude
-     */
-    public double getLongitude() {
-        return latlng.getLongitude();
-    }
-
-    @Override
-    public int getDimensions() {
-        return 2;
-    }
-
-    @Override
-    public double getDistanceTo(final Position p) {
-        if (p instanceof LatLongPosition) {
-            return distance(latlng, ((LatLongPosition) p).latlng, df);
-        }
-        final int pDims = p.getDimensions();
-        if (pDims == 2) {
-            final double[] coords = p.getCartesianCoordinates();
-            return distance(latlng, new LatLng(coords[1], coords[0]), df);
-        }
-        throw new UncomparableDistancesException(this, p);
-    }
-
-    @Override
-    @SuppressFBWarnings(justification = "Exact floating point equality is required here.")
-    public boolean equals(final Object obj) {
-        if (obj instanceof LatLongPosition) {
-            final LatLongPosition llp = (LatLongPosition) obj;
-            return getLatitude() == llp.getLatitude() && getLongitude() == llp.getLongitude();
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        if (hash == 0) {
-            hash = Hashes.hash32(getLatitude(), getLongitude());
-        }
-        return hash;
-    }
-
-    @Override
-    public String toString() {
-        return latlng.toString();
-    }
-
-    @Override
-    public GeoPosition add(final Position other) {
-        return ebeOperation((self, b) -> self + b, other);
-    }
-
-    @Override
-    public GeoPosition subtract(final Position other) {
-        return ebeOperation((self, o) -> self - o, other);
-    }
-
-    private LatLongPosition ebeOperation(final BinaryOperator<Double> op, final Position other) {
-        if (other instanceof LatLongPosition) {
-            final LatLng l2 = ((LatLongPosition) other).latlng;
-            return new LatLongPosition(
-                    op.apply(latlng.getLatitude(), l2.getLatitude()),
-                    op.apply(latlng.getLongitude(), l2.getLongitude()));
-        }
-        throw new IllegalArgumentException("You are trying to do math combining " + this + "with " + other + ". This is not supported.");
+        EQUIRECTANGULAR, HAVERSINE, SPHERICAL_COSINES
     }
 
 }

@@ -1,17 +1,11 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
-
-import java.util.List;
-
-import org.apache.commons.math3.random.MersenneTwister;
-import org.apache.commons.math3.random.RandomGenerator;
-import org.junit.Before;
-import org.junit.Test;
 
 import it.unibo.alchemist.exceptions.BiochemistryParseException;
 import it.unibo.alchemist.model.BiochemistryIncarnation;
@@ -30,20 +24,34 @@ import it.unibo.alchemist.model.implementations.conditions.NeighborhoodPresent;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
-import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.CellNode;
+import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
+import org.apache.commons.math3.random.MersenneTwister;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test for biochemistry incarnation.
  */
 public class TestIncarnation {
 
-    private static final BiochemistryIncarnation INCARNATION = new BiochemistryIncarnation();
-    private CellNode node;
-    private Environment<Double> env;
+    private static final BiochemistryIncarnation<Euclidean2DPosition> INCARNATION = new BiochemistryIncarnation<>();
+    private CellNode<Euclidean2DPosition> node;
+    private Environment<Double, Euclidean2DPosition> env;
     private RandomGenerator rand;
     private TimeDistribution<Double> time;
 
@@ -55,10 +63,10 @@ public class TestIncarnation {
 
     /**
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         env = new BioRect2DEnvironment();
-        node = new CellNodeImpl(env);
+        node = new CellNodeImpl<>(env);
         rand = new MersenneTwister();
         time = new ExponentialTime<>(1, rand);
     }
@@ -125,7 +133,7 @@ public class TestIncarnation {
      */
     @Test
     public void testCreateReaction() {
-        //CHECKSTYLE:OFF: magicnumber
+        //CHECKSTYLE: MagicNumber OFF
         testR("[] --> []", 0, 0, 0, 0, 0, 0, 0, 0);
         testR("[] + [] --> [] + []", 0, 0, 0, 0, 0, 0, 0, 0);
         testR("[A] --> []", 1, 1, 1, 1, 0, 0, 0, 0);
@@ -155,7 +163,7 @@ public class TestIncarnation {
         testR("[A + B] --> [BrownianMove(0.1)]", 2, 3, 2, 2, 0, 0, 0, 0);
         testR("[] --> [B in env] if BiomolPresentInCell(A, 2)", 2, 1, 1, 0, 0, 0, 0, 1); // if a custom condition is used the molecules present in the custom condition will NOT be removed.
         testR("[A] + [B in neighbor] + [C in env] --> [D in cell] + [E in neighbor] + [F in env] + [BrownianMove(1)] if BiomolPresentInCell(A, 2)", 4, 7, 2, 2, 1, 2, 1, 2);
-        // CHECKSTYLE:ON: magicnumber
+        // CHECKSTYLE: MagicNumber ON
         testNoR("[A] + [B in neighbor] --> [junction A-C]"); // C is not present in conditions
         testNoR("[A] + [B in neighbor] --> [junction A-2B]"); // only one molecule B is present in conditions
         testNoR("[A] + [B in neighbor] --> [junction B-A]"); // A is in cell an B is in neighbor. Correct syntax is junction A-B
@@ -170,9 +178,9 @@ public class TestIncarnation {
     /**
      * 
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testCreateNode() {
-        INCARNATION.createNode(rand, env, "foo");
+        assertThrows(IllegalArgumentException.class, () -> INCARNATION.createNode(rand, env, "foo"));
     }
 
 }

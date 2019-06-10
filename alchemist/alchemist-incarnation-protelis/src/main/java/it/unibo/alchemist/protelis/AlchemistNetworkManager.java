@@ -1,5 +1,9 @@
-/**
- * 
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.protelis;
 
@@ -12,8 +16,8 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 import org.protelis.lang.datatype.DeviceUID;
+import org.protelis.vm.CodePath;
 import org.protelis.vm.NetworkManager;
-import org.protelis.vm.util.CodePath;
 
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
@@ -22,20 +26,20 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
  * Emulates a {@link NetworkManager}. This particular network manager does not
- * send messages istantly. Instead, it records the last message to send, and
- * only when {@link #simulateMessageArrival()} is called the transfer is
+ * send messages instantly. Instead, it records the last message to send, and
+ * only when {@link #simulateMessageArrival(double)} is called the transfer is
  * actually done.
  */
 public final class AlchemistNetworkManager implements NetworkManager, Serializable {
 
     private static final long serialVersionUID = -7028533174885876642L;
-    private final Environment<Object> env;
+    private final Environment<Object, ?> env;
     private final ProtelisNode node;
     /**
-     * This reaction stores the time at which the neighbor state is read
+     * This reaction stores the time at which the neighbor state is read.
      */
     private final Reaction<Object> event;
-    private final RunProtelisProgram prog;
+    private final RunProtelisProgram<?> prog;
     private final double retentionTime;
     private Map<DeviceUID, MessageInfo> msgs = new LinkedHashMap<>();
     private Map<CodePath, Object> toBeSent;
@@ -46,15 +50,15 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
      * @param local
      *            the node
      * @param executionTime
-     *            the reacion hosting the {@link NetworkManager}
+     *            the reaction hosting the {@link NetworkManager}
      * @param program
      *            the {@link RunProtelisProgram}
      */
     public AlchemistNetworkManager(
-            final Environment<Object> environment,
+            final Environment<Object, ?> environment,
             final ProtelisNode local,
             final Reaction<Object> executionTime,
-            final RunProtelisProgram program) {
+            final RunProtelisProgram<?> program) {
         this(environment, local, executionTime, program, Double.NaN);
     }
 
@@ -64,7 +68,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
      * @param local
      *            the node
      * @param executionTime
-     *            the reacion hosting the {@link NetworkManager}
+     *            the reaction hosting the {@link NetworkManager}
      * @param program
      *            the {@link RunProtelisProgram}
      * @param retentionTime
@@ -72,10 +76,10 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
      *            to mean that they should get eliminated upon node awake.
      */
     public AlchemistNetworkManager(
-            final Environment<Object> environment,
+            final Environment<Object, ?> environment,
             final ProtelisNode local,
             final Reaction<Object> executionTime,
-            final RunProtelisProgram program,
+            final RunProtelisProgram<?> program,
             final double retentionTime) {
         env = Objects.requireNonNull(environment);
         node = Objects.requireNonNull(local);
@@ -166,12 +170,12 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
         toBeSent = null;
     }
 
-    private static class MessageInfo implements Serializable {
+    private static final class MessageInfo implements Serializable {
         private static final long serialVersionUID = 1L;
         private final double time;
         private final Map<CodePath, Object> payload;
         private final DeviceUID source;
-        MessageInfo(final double time, final DeviceUID source, final Map<CodePath, Object> payload) {
+        private MessageInfo(final double time, final DeviceUID source, final Map<CodePath, Object> payload) {
             this.time = time;
             this.payload = payload;
             this.source = source;

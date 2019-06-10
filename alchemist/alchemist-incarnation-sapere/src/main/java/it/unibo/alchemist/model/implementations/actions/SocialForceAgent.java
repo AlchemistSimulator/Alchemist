@@ -1,21 +1,21 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.implementations.actions;
 
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
-import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
@@ -28,8 +28,9 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
+ * @param <P>
  */
-public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
+public abstract class SocialForceAgent<P extends Position<P>> extends SAPEREMoveNodeAgent<P> {
 
     private static final ILsaMolecule ACTIVE = new LsaMolecule("active");
     /**
@@ -168,22 +169,22 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
     /**
      * The environment in which the simulation exists.
      */
-    private final Environment<List<ILsaMolecule>> env;
+    private final Environment<List<ILsaMolecule>, P> env;
     /**
      * The strength of the pedestrian repulsive force.
      */
     private final double eta;
     /**
      * Control variable used to execute a minimum gradient value motion or a
-     * maximum pheromone value motion
+     * maximum pheromone value motion.
      */
     private boolean getMinimumGradient = true;
     /**
-     * Position of the gradient value inside the tuple
+     * Position of the gradient value inside the tuple.
      */
     private final int gradDistPos;
     /**
-     * The integer group identifier
+     * The integer group identifier.
      */
     private final int groupId;
     /**
@@ -264,7 +265,7 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
     private final double socialForceFactor;
     /**
      * Flag used to let the user chose to make pedestrians to stop once the
-     * target is reached
+     * target is reached.
      */
     private final boolean stopAtTarget;
     /**
@@ -273,9 +274,9 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
      */
     private boolean targetInLineOfSight;
     /**
-     * The next target position
+     * The next target position.
      */
-    private Position targetPositions;
+    private P targetPositions;
     /**
      * Molecule template corresponding to the tuple from which read gradients
      * value.
@@ -288,9 +289,9 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
     private final double turnRightProbability;
 
     /**
-     * List that contains all already visited node
+     * List that contains all already visited node.
      */
-    private final List<ILsaNode> visitedNodes = new ArrayList<ILsaNode>();
+    private final List<ILsaNode> visitedNodes = new ArrayList<>();
 
     /**
      * Maximum movement speed of a pedestrian.
@@ -332,7 +333,7 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
      * @param turnrightprobabilityval
      *            - the probability of turn to the right
      */
-    public SocialForceAgent(final Environment<List<ILsaMolecule>> environment, final ILsaNode node, final RandomGenerator random, final LsaMolecule molecule, final int pos, final int group, final boolean stopWhenAtTarget, final double vmaxval, final double mydimensionval, final double desiredspaceval, final double turnrightprobabilityval) {
+    public SocialForceAgent(final Environment<List<ILsaMolecule>, P> environment, final ILsaNode node, final RandomGenerator random, final LsaMolecule molecule, final int pos, final int group, final boolean stopWhenAtTarget, final double vmaxval, final double mydimensionval, final double desiredspaceval, final double turnrightprobabilityval) {
         this(environment, node, random, molecule, pos, group, stopWhenAtTarget, DELTA_T, vmaxval, MOMENTUM_FACTOR, OLD_W, NEW_W, mydimensionval, desiredspaceval, PROXIMITY_DEC_RANGE, PROXIMITY_TURN_RANGE, DESIRED_FORCE_FACTOR, SOCIAL_FORCE_FACTOR, ETA, DODGE_FORCE_FACTOR, DODGE_FORCE_STRENGTH, turnrightprobabilityval, OBSTACLE_FORCE_FACTOR, OBSTACLE_INTERACTION_RANGE, OBSTACLE_FORCE_STRENGTH, PEJORATIVE_MOVE_PROBABILITY, MIN_PHEROMONE_DISTANCE, DECELERATION_FACTOR, MIN_DISPLACEMENT, MIN_DISP_CYC_TH);
 
     }
@@ -409,7 +410,7 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
      *            - threshold used to stop a pedestrian if he can't move enough
      *            for a certain number of cycles
      */
-    public SocialForceAgent(final Environment<List<ILsaMolecule>> environment, final ILsaNode node, final RandomGenerator random, final LsaMolecule molecule, final int pos, final int group, final boolean stopWhenAtTarget, final double dt, final double vMax, final double momentum, final double oldw, final double neww, final double dimension, final double space, final double decRange, final double turnRange, final double desiredFactor, final double socialFactor, final double etaV, final double dodgeFactor, final double dodgeStrength, final double rightProbability, final double obstacleFactor, final double obstacleRange, final double obstacleStrength, final double detrimentalProbability, final double minpheromoneDist, final double decFactor, final double minDisp, final int minDispCyc) {
+    public SocialForceAgent(final Environment<List<ILsaMolecule>, P> environment, final ILsaNode node, final RandomGenerator random, final LsaMolecule molecule, final int pos, final int group, final boolean stopWhenAtTarget, final double dt, final double vMax, final double momentum, final double oldw, final double neww, final double dimension, final double space, final double decRange, final double turnRange, final double desiredFactor, final double socialFactor, final double etaV, final double dodgeFactor, final double dodgeStrength, final double rightProbability, final double obstacleFactor, final double obstacleRange, final double obstacleStrength, final double detrimentalProbability, final double minpheromoneDist, final double decFactor, final double minDisp, final int minDispCyc) {
 
         super(environment, node);
 
@@ -484,7 +485,7 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
      *            - the current pedestrian position
      * @return dodgeForce: the desire of the pedestrian to dodge a neighbor
      */
-    private Position computeDodgeForce(final Neighborhood<List<ILsaMolecule>> neigh, final Position desiredForce, final Position mypos) {
+    private P computeDodgeForce(final Neighborhood<List<ILsaMolecule>> neigh, final P desiredForce, final P mypos) {
         double dodgeForceX = 0.0;
         double dodgeForceY = 0.0;
 
@@ -493,7 +494,7 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
             final ILsaNode n = (ILsaNode) node;
             // If the current node is a person
             if (n.getConcentration(PERSON).size() != 0) {
-                final Position pos = env.getPosition(n);
+                final P pos = env.getPosition(n);
                 // If the distance between me and the current person is less
                 // than a minor range
                 if (pos.getDistanceTo(mypos) < proximityTurnRange) {
@@ -508,7 +509,8 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
                         final List<Action<List<ILsaMolecule>>> actions = reaction.getActions();
                         if (!actions.isEmpty()) {
                             final Action<List<ILsaMolecule>> action = actions.get(0);
-                            final SocialForceAgent currAgent = (SocialForceAgent) action;
+                            @SuppressWarnings("unchecked")
+                            final SocialForceAgent<P> currAgent = (SocialForceAgent<P>) action;
                             if ((vx > 0 && currAgent.getSpeed().getCartesianCoordinates()[0] < 0 && vy > 0 && currAgent.getSpeed().getCartesianCoordinates()[1] < 0) || (vx < 0 && currAgent.getSpeed().getCartesianCoordinates()[0] > 0 && vy < 0 && currAgent.getSpeed().getCartesianCoordinates()[1] > 0)) {
                                 if (rs.nextDouble() >= turnRightProbability) {
                                     // turn left
@@ -526,7 +528,7 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
             }
         }
 
-        return new Continuous2DEuclidean(dodgeForceX, dodgeForceY);
+        return getEnvironment().makePosition(dodgeForceX, dodgeForceY);
     }
 
     /**
@@ -542,7 +544,7 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
      * @return socialForce - the repulsive force contribution from interactions
      *         with other pedestrians
      */
-    public Position computeInteractions(final Position desiredForce, final double myx, final double myy) {
+    public P computeInteractions(final P desiredForce, final double myx, final double myy) {
         double socialForceX = 0.0;
         double socialForceY = 0.0;
 
@@ -550,7 +552,7 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
         // For each node in the neighborhood
         for (final Node<List<ILsaMolecule>> node : neigh.getNeighbors()) {
             final ILsaNode n = (ILsaNode) node;
-            final Position pi = getPosition(n);
+            final P pi = getPosition(n);
             // If the current node is a person and if is not me
             if (n.getConcentration(PERSON).size() != 0 && node.getId() != getNode().getId()) {
                 /*
@@ -571,7 +573,8 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
                         final List<Action<List<ILsaMolecule>>> actions = reaction.getActions();
                         if (!actions.isEmpty()) {
                             final Action<List<ILsaMolecule>> action = actions.get(0);
-                            final SocialForceAgent currAgent = (SocialForceAgent) action;
+                            @SuppressWarnings("unchecked")
+                            final SocialForceAgent<P> currAgent = (SocialForceAgent<P>) action;
 
                             vij = ((vx - currAgent.getSpeed().getCartesianCoordinates()[0]) * ex) + ((vy - currAgent.getSpeed().getCartesianCoordinates()[1]) * ey);
                             if (vij < 0) {
@@ -580,22 +583,17 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
 
                         }
                     }
-
                     // STEP 3
                     final double vi = Math.sqrt(Math.pow(vx, 2) + Math.pow(vy, 2));
-
                     final double kijpart = (vx * ex) + (vy * ey);
-                    double kij = 0.0;
-
+                    double kij;
                     if (kijpart > 0 && vi != 0) {
                         kij = kijpart / vi;
                     } else {
                         kij = 0.0;
                     }
-
                     // STEP 4
                     final double desired = Math.sqrt(Math.pow(desiredForce.getCartesianCoordinates()[0], 2) + Math.pow(desiredForce.getCartesianCoordinates()[1], 2));
-
                     socialForceX += kij * (Math.pow(((eta * desired) + vij), 2) / (dist - interactionRange)) * ex;
                     socialForceY += kij * (Math.pow(((eta * desired) + vij), 2) / (dist - interactionRange)) * ey;
                 }
@@ -603,7 +601,7 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
             }
         }
 
-        return new Continuous2DEuclidean(socialForceX, socialForceY);
+        return getEnvironment().makePosition(socialForceX, socialForceY);
     }
 
     /**
@@ -617,33 +615,31 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
      *            - the current pedestrian position
      * @return obstacleForce - the repulsive force contribution from obstacles
      */
-    private Position computeObstacleForce(final double myx, final double myy, final Position mypos) {
+    private P computeObstacleForce(final double myx, final double myy, final P mypos) {
         double obstacleForceX = 0.0;
         double obstacleForceY = 0.0;
-
-        Environment2DWithObstacles<?, ?> obstacleEnv = null;
-        if (env instanceof Environment2DWithObstacles<?, ?>) {
-            obstacleEnv = (Environment2DWithObstacles<?, ?>) env;
+        Environment2DWithObstacles<?, ?, ?> obstacleEnv;
+        if (env instanceof Environment2DWithObstacles) {
+            obstacleEnv = (Environment2DWithObstacles<?, ?, ?>) env;
             final List<?> obstacles = obstacleEnv.getObstaclesInRange(myx, myy, obstacleInteractionRange);
-
-            Rectangle2D bounds = null;
+            Rectangle2D bounds;
             double minDist = Double.MAX_VALUE;
             Obstacle2D nearestObstacle = null;
             for (final Object obObj : obstacles) {
                 final Obstacle2D ob = (Obstacle2D) obObj;
                 bounds = ob.getBounds();
-                final Continuous2DEuclidean[] edge = getNearestEdge(myx, myy, bounds);
-                Continuous2DEuclidean intersectionPoint = null;
+                final Euclidean2DPosition[] edge = getNearestEdge(myx, myy, bounds);
+                P intersectionPoint = null;
                 if (edge == null) {
-                    return new Continuous2DEuclidean(obstacleForceX, obstacleForceY);
+                    return getEnvironment().makePosition(obstacleForceX, obstacleForceY);
                 } else {
                     if (edge[1].getCartesianCoordinates()[0] - edge[0].getCartesianCoordinates()[0] == 0) {
-                        intersectionPoint = new Continuous2DEuclidean(edge[0].getCartesianCoordinates()[0], myy);
+                        intersectionPoint = env.makePosition(edge[0].getCartesianCoordinates()[0], myy);
                     } else if (edge[1].getCartesianCoordinates()[1] - edge[0].getCartesianCoordinates()[1] == 0) {
-                        intersectionPoint = new Continuous2DEuclidean(myx, edge[0].getCartesianCoordinates()[0]);
+                        intersectionPoint = env.makePosition(myx, edge[0].getCartesianCoordinates()[0]);
                     }
                 }
-                final double dist = mypos.getDistanceTo(intersectionPoint);
+                final double dist = mypos.getDistanceTo(Objects.requireNonNull(intersectionPoint));
                 if (dist < minDist) {
                     minDist = dist;
                     nearestObstacle = ob;
@@ -658,11 +654,11 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
             }
         }
 
-        return new Continuous2DEuclidean(obstacleForceX, obstacleForceY);
+        return getEnvironment().makePosition(obstacleForceX, obstacleForceY);
     }
 
     @Override
-    public void execute() {
+    public final void execute() {
         // Retrieve the local neighborhood
         final Neighborhood<List<ILsaMolecule>> neigh = getLocalNeighborhood();
         targetPositions = null;
@@ -707,14 +703,13 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
             // Get target x and y coordinates
             final double x = targetPositions.getCartesianCoordinates()[0];
             final double y = targetPositions.getCartesianCoordinates()[1];
-            double dx = 0;
-            double dy = 0;
-            double ax = 0;
-            double ay = 0;
-
+            double dx;
+            double dy;
+            double ax;
+            double ay;
             // TARGET FORCE - Compute the target node attractive force
             // contribution
-            final Position mypos = getCurrentPosition();
+            final P mypos = getCurrentPosition();
             final double myx = mypos.getCartesianCoordinates()[0];
             final double myy = mypos.getCartesianCoordinates()[1];
             final double distancex = x - myx;
@@ -722,46 +717,36 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
             final double dist = env.getDistanceBetweenNodes(bestNode, getNode());
             final double targetForceX = distancex / dist; // vector components
             final double targetForceY = distancey / dist;
-
             // DESIRED FORCE - Compute the desired force starting from the
             // target force and the agent's speed
-            final Position desiredForce = new Continuous2DEuclidean(targetForceX * vmax, targetForceY * vmax);
-
+            final P desiredForce = getEnvironment().makePosition(targetForceX * vmax, targetForceY * vmax);
             // SOCIAL FORCE - Compute neighbors pedestrians repulsive force
             // contribution
-            final Position socialForce = computeInteractions(desiredForce, myx, myy);
-
+            final P socialForce = computeInteractions(desiredForce, myx, myy);
             /*
              * DODGE FORCE - Compute the force contribution that makes
              * pedestrian turn rightor left in order to dodge other pedestrians
              */
-            final Position dodgeForce = computeDodgeForce(neigh, desiredForce, mypos);
-
+            final P dodgeForce = computeDodgeForce(neigh, desiredForce, mypos);
             // OBSTACLE FORCE - Compute near obstacles repulsive force
             // contribution
-            final Position obstacleForce = computeObstacleForce(myx, myy, mypos);
-
+            final P obstacleForce = computeObstacleForce(myx, myy, mypos);
             // Compute acceleration components as a sum between all forces
             // acting on the agent
             ax = desiredForceFactor * desiredForce.getCartesianCoordinates()[0] + socialForceFactor * socialForce.getCartesianCoordinates()[0] + dodgeForceFactor * dodgeForce.getCartesianCoordinates()[0] + obstacleForceFactor * obstacleForce.getCartesianCoordinates()[0];
-
             ay = desiredForceFactor * desiredForce.getCartesianCoordinates()[1] + socialForceFactor * socialForce.getCartesianCoordinates()[1] + dodgeForceFactor * dodgeForce.getCartesianCoordinates()[1] + obstacleForceFactor * obstacleForce.getCartesianCoordinates()[1];
-
             // Compute new speed components
             vx = momentumFactor * vx + ax;
             vy = momentumFactor * vy + ay;
-
             // Check if new speed is greater than max speed, adjust it
             final double speed = Math.sqrt(vx * vx + vy * vy);
             if (speed > vmax) {
                 vx = (vx / speed) * vmax; // compute the vector components
                 vy = (vy / speed) * vmax;
             }
-
             // Compute displacement components
             dx = deltaT * vx;
             dy = deltaT * vy;
-
             // DIRECTION ADJUSTMENT
             /*
              * Check if both new displacement components aren't opposite to
@@ -782,15 +767,14 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
             // Store new direction components for the next cycle
             dxOld = dx;
             dyOld = dy;
-
             // BODY-TO-BODY INTERACION ADJUSTMENT
             // For each node in the neighborhood
             for (final Node<List<ILsaMolecule>> node : neigh.getNeighbors()) {
                 final ILsaNode n = (ILsaNode) node;
                 // If the current node is a person
                 if (n.getConcentration(PERSON).size() != 0) {
-                    final Position pos = env.getPosition(n);
-                    double xOther = 0, yOther = 0;
+                    final P pos = env.getPosition(n);
+                    double xOther, yOther;
                     // If the distance between me and the current person is
                     // less than a certain range
                     if (pos.getDistanceTo(mypos) < proximityDecelerationRange) {
@@ -838,13 +822,13 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
             final boolean moveH = dx > 0 || dx < 0;
             final boolean moveV = dy > 0 || dy < 0;
             if (moveH || moveV) {
-                move(new Continuous2DEuclidean(moveH ? dx : 0, moveV ? dy : 0));
+                move(getEnvironment().makePosition(moveH ? dx : 0, moveV ? dy : 0));
             }
         }
     }
 
     /**
-     * Method used to retrieve the obstacle edge nearest to the pedestrian
+     * Method used to retrieve the obstacle edge nearest to the pedestrian.
      * 
      * @param myx
      *            - the current pedestrian x-coordinate position
@@ -855,9 +839,9 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
      * @return nearest - an array containing two Continuous2DEuclidean object
      *         representing nearest edge vertices
      */
-    private Continuous2DEuclidean[] getNearestEdge(final double myx, final double myy, final Rectangle2D bounds) {
+    private Euclidean2DPosition[] getNearestEdge(final double myx, final double myy, final Rectangle2D bounds) {
 
-        Continuous2DEuclidean[] nearest = null;
+        Euclidean2DPosition[] nearest = null;
 
         final double minX = bounds.getMinX();
         final double maxX = bounds.getMaxX();
@@ -866,15 +850,15 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
 
         if (myx > minX && myx < maxX) {
             if (myy > maxY) { // above the obstacle
-                nearest = new Continuous2DEuclidean[] { new Continuous2DEuclidean(bounds.getMinX(), bounds.getMaxY()), new Continuous2DEuclidean(bounds.getMaxX(), bounds.getMaxY()) };
+                nearest = new Euclidean2DPosition[] { new Euclidean2DPosition(bounds.getMinX(), bounds.getMaxY()), new Euclidean2DPosition(bounds.getMaxX(), bounds.getMaxY()) };
             } else if (myy < minY) { // under the obstacle
-                nearest = new Continuous2DEuclidean[] { new Continuous2DEuclidean(bounds.getMinX(), bounds.getMinY()), new Continuous2DEuclidean(bounds.getMaxX(), bounds.getMinY()) };
+                nearest = new Euclidean2DPosition[] { new Euclidean2DPosition(bounds.getMinX(), bounds.getMinY()), new Euclidean2DPosition(bounds.getMaxX(), bounds.getMinY()) };
             }
         } else if (myy > minY && myy < maxY) {
             if (myx < minX) { // to the left the obstacle
-                nearest = new Continuous2DEuclidean[] { new Continuous2DEuclidean(bounds.getMinX(), bounds.getMaxY()), new Continuous2DEuclidean(bounds.getMinX(), bounds.getMinY()) };
+                nearest = new Euclidean2DPosition[] { new Euclidean2DPosition(bounds.getMinX(), bounds.getMaxY()), new Euclidean2DPosition(bounds.getMinX(), bounds.getMinY()) };
             } else if (myx > maxX) { // to the right the obstacle
-                nearest = new Continuous2DEuclidean[] { new Continuous2DEuclidean(bounds.getMaxX(), bounds.getMaxY()), new Continuous2DEuclidean(bounds.getMaxX(), bounds.getMinY()) };
+                nearest = new Euclidean2DPosition[] { new Euclidean2DPosition(bounds.getMaxX(), bounds.getMaxY()), new Euclidean2DPosition(bounds.getMaxX(), bounds.getMinY()) };
             }
         }
 
@@ -886,12 +870,12 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
      * 
      * @return - v: contains x and y speed components
      */
-    public Position getSpeed() {
-        return new Continuous2DEuclidean(vx, vy);
+    public P getSpeed() {
+        return getEnvironment().makePosition(vx, vy);
     }
 
     /**
-     * Check if the input node is contained in the visited node list
+     * Check if the input node is contained in the visited node list.
      * 
      * @param node
      *            - the node to check
@@ -907,7 +891,7 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
     }
 
     /**
-     * Method used in group behavior to execute a maximum pheromone node search
+     * Method used in group behavior to execute a maximum pheromone node search.
      * 
      * @param neigh
      *            the current pedestrian neighborhood
@@ -941,10 +925,8 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
     }
 
     /**
-     * Method used to execute a minumum gradient node search
+     * Method used to execute a minumum gradient node search.
      * 
-     * @param mypos
-     *            - the current pedestrian position
      * @param neigh
      *            - the current pedestrian neighborhood
      */
@@ -955,9 +937,9 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
             final List<ILsaMolecule> gradList = n.getConcentration(template);
             // Check if the current node has a gradient value
             if (!gradList.isEmpty()) {
-                for (int i = 0; i < gradList.size(); i++) {
+                for (ILsaMolecule aGradList : gradList) {
                     // Get current node gradient value
-                    final double valueGrad = getLSAArgumentAsDouble(gradList.get(i), gradDistPos);
+                    final double valueGrad = getLSAArgumentAsDouble(aGradList, gradDistPos);
                     // If the current minimum value is less than or equals
                     // current node gradient value
                     if (valueGrad <= minGrad) {
@@ -976,14 +958,11 @@ public abstract class SocialForceAgent extends SAPEREMoveNodeAgent {
 
     /**
      * Method used in group behavior to update the pheromone value on a node
-     * choose as target
-     * 
-     * @param pheromoneTmpl
-     *            - the pheromone molecule template
+     * choose as target.
      */
     private void releasepheromone() {
         // Get the pheromone from the best node
-        final List<ILsaMolecule> pheromonelist = ((ILsaNode) bestNode).getConcentration(pheromoneTmpl);
+        final List<ILsaMolecule> pheromonelist = bestNode.getConcentration(pheromoneTmpl);
 
         // If the best node is already visited
         if (isVisited((ILsaNode) bestNode)) {

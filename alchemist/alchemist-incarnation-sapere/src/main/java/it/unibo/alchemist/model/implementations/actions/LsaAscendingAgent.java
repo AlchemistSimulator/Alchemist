@@ -1,28 +1,27 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
-import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
 import java.util.List;
 
 /**
+ * @param <P>
  */
-public class LsaAscendingAgent extends SAPEREMoveNodeAgent {
+public final class LsaAscendingAgent<P extends Position2D<? extends P>> extends SAPEREMoveNodeAgent<P> {
 
     /*
      * an agent can move at most of LIMIT along each axis
@@ -52,7 +51,7 @@ public class LsaAscendingAgent extends SAPEREMoveNodeAgent {
      *            the new position
      */
     public LsaAscendingAgent(final Reaction<List<ILsaMolecule>> reaction,
-            final Environment<List<ILsaMolecule>> environment, final ILsaNode node,
+            final Environment<List<ILsaMolecule>, P> environment, final ILsaNode node,
             final LsaMolecule molecule, final int pos) {
         super(environment, node);
         this.r = reaction;
@@ -64,15 +63,15 @@ public class LsaAscendingAgent extends SAPEREMoveNodeAgent {
     public void execute() {
         double minGrad = Double.MAX_VALUE;
         final Neighborhood<List<ILsaMolecule>> neigh = getLocalNeighborhood();
-        Position targetPositions = null;
+        P targetPositions = null;
         Node<List<ILsaMolecule>> bestNode = null;
         for (final Node<List<ILsaMolecule>> node : neigh.getNeighbors()) {
             final ILsaNode n = (ILsaNode) node;
             final List<ILsaMolecule> gradList;
             gradList = n.getConcentration(template);
             if (!gradList.isEmpty()) {
-                for (int i = 0; i < gradList.size(); i++) {
-                    final double valueGrad = getLSAArgumentAsDouble(gradList.get(i), gradDistPos);
+                for (final ILsaMolecule grad : gradList) {
+                    final double valueGrad = getLSAArgumentAsDouble(grad, gradDistPos);
                     if (valueGrad <= minGrad) {
                         minGrad = valueGrad;
                         targetPositions = getPosition(n);
@@ -85,14 +84,12 @@ public class LsaAscendingAgent extends SAPEREMoveNodeAgent {
         if (bestNode == null || bestNode.contains(ACTIVE)) {
             return;
         }
-        final Position mypos = getCurrentPosition();
-        final double myx = mypos.getCartesianCoordinates()[0];
-        final double myy = mypos.getCartesianCoordinates()[1];
-        double x = 0;
-        double y = 0;
         if (targetPositions != null) {
-            x = targetPositions.getCartesianCoordinates()[0];
-            y = targetPositions.getCartesianCoordinates()[1];
+            final P mypos = getCurrentPosition();
+            final double myx = mypos.getX();
+            final double myy = mypos.getY();
+            final double x = targetPositions.getX();
+            final double y = targetPositions.getY();
             double dx = x - myx;
             double dy = y - myy;
             dx = dx > 0 ? Math.min(LIMIT, dx) : Math.max(-LIMIT, dx);
@@ -101,10 +98,9 @@ public class LsaAscendingAgent extends SAPEREMoveNodeAgent {
             final boolean moveH = dx > 0 || dx < 0;
             final boolean moveV = dy > 0 || dy < 0;
             if (moveH || moveV) {
-                move(new Continuous2DEuclidean(moveH ? dx : 0, moveV ? dy : 0));
+                move(getEnvironment().makePosition(moveH ? dx : 0, moveV ? dy : 0));
             }
         }
-
     }
 
     /**

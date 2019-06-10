@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.implementations.actions;
 
@@ -21,7 +20,6 @@ import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import org.danilopianini.lang.HashString;
-import org.danilopianini.util.ListSet;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -48,7 +46,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
     public LsaAbstractAction(final ILsaNode node, final List<ILsaMolecule> m) {
         super(node);
         for (final ILsaMolecule mol : m) {
-            addModifiedMolecule(mol);
+            declareDependencyTo(mol);
         }
     }
 
@@ -76,7 +74,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
         if (key.getType() != Type.VAR) {
             throw new IllegalArgumentException("Only variables can be used as keys when inserting matches.");
         }
-        switch(value.getType()) {
+        switch (value.getType()) {
         case COMPARATOR:
         case LISTCOMPARATOR:
         case OPERATOR:
@@ -308,10 +306,9 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
     }
 
     /**
-     * Accesses an LSA space and retrieves a molecule matching template. It
-     * instances its variables with the current matches before accessing the
-     * space. Equivalent to getLSAs(n, template, true)
-     * 
+     * Accesses an LSA space and retrieves a molecule matching template. It can
+     * use the template as-is or instance its variables with the current matches
+     * before accessing the space.
      * 
      * @param n
      *            the node to access
@@ -321,60 +318,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
      *         template
      */
     protected List<ILsaMolecule> getLSAs(final ILsaNode n, final ILsaMolecule template) {
-        return getLSAs(n, template, true);
-    }
-
-    /**
-     * Accesses an LSA space and retrieves a molecule matching template. It can
-     * use the template as-is or instance its variables with the current matches
-     * before accessing the space.
-     * 
-     * @param n
-     *            the node to access
-     * @param template
-     *            the template molecule to retrieve
-     * @param useMatches
-     *            if true, the template will have its variables (possibly
-     *            partly) instantiated using the values in the matches map
-     * @return a list of ILsaMolecules matching the (possibly partly instanced)
-     *         template
-     */
-    protected List<ILsaMolecule> getLSAs(final ILsaNode n, final ILsaMolecule template, final boolean useMatches) {
-        if (useMatches) {
-            return n.getConcentration(new LsaMolecule(allocateVars(template)));
-        }
         return n.getConcentration(template);
-    }
-
-    /**
-     * Accesses the local tuple space and retrieves a molecule matching
-     * template. It instances its variables with the current matches before
-     * accessing the space. Equivalent to getLSAsFromLocalSpace(template, true)
-     * 
-     * @param template
-     *            the template molecule to retrieve
-     * @return a list of ILsaMolecules matching the (possibly partly instanced)
-     *         template
-     */
-    protected List<ILsaMolecule> getLSAsFromLocalSpace(final ILsaMolecule template) {
-        return getLSAsFromLocalSpace(template, true);
-    }
-
-    /**
-     * Accesses the local tuple space and retrieves a molecule matching
-     * template. It can use the template as-is or instance its variables with
-     * the current matches before accessing the space.
-     * 
-     * @param template
-     *            the template molecule to retrieve
-     * @param useMatches
-     *            if true, the template will have its variables (possibly
-     *            partly) instantiated using the values in the matches map
-     * @return a list of ILsaMolecules matching the (possibly partly instanced)
-     *         template
-     */
-    protected List<ILsaMolecule> getLSAsFromLocalSpace(final ILsaMolecule template, final boolean useMatches) {
-        return getLSAs(getNode(), template, useMatches);
     }
 
     /**
@@ -455,13 +399,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public ListSet<ILsaMolecule> getModifiedMolecules() {
-        return (ListSet<ILsaMolecule>) super.getModifiedMolecules();
-    }
-
-    @Override
-    public ILsaNode getNode() {
+    public final ILsaNode getNode() {
         return (ILsaNode) super.getNode();
     }
 
@@ -496,6 +434,9 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
         inject(getNode(), m);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setExecutionContext(final Map<HashString, ITreeNode<?>> m, final List<ILsaNode> n) {
         matches = m;
@@ -565,7 +506,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
      * @param list
      *            the list of nodes to use
      */
-    protected void setSyntheticNeigh(final Collection<Node<List<ILsaMolecule>>> list) {
+    protected void setSyntheticNeigh(final Collection<? extends Node<List<ILsaMolecule>>> list) {
         final Set<ITreeNode<?>> l = Sets.newHashSetWithExpectedSize(list.size());
         for (final Node<List<ILsaMolecule>> n : list) {
             l.add(new NumTreeNode(n.getId()));

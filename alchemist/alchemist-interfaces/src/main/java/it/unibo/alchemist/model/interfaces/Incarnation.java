@@ -1,19 +1,21 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.interfaces;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
 /**
- * @param <T> Concentration type
+ * @param <T>
+ *            Concentration type
+ * @param <P>
+ *            Concentration type
  */
-public interface Incarnation<T> {
+public interface Incarnation<T, P extends Position<? extends P>> {
 
     /**
      * Given an {@link Node}, an {@link Molecule} and a property expressed as
@@ -56,7 +58,7 @@ public interface Incarnation<T> {
      *            a {@link String} describing the object
      * @return a new {@link TimeDistribution}
      */
-    Node<T> createNode(RandomGenerator rand, Environment<T> env, String param);
+    Node<T> createNode(RandomGenerator rand, Environment<T, P> env, String param);
 
     /**
      * @param rand
@@ -69,7 +71,7 @@ public interface Incarnation<T> {
      *            a {@link String} describing the object
      * @return a new {@link TimeDistribution}
      */
-    TimeDistribution<T> createTimeDistribution(RandomGenerator rand, Environment<T> env, Node<T> node, String param);
+    TimeDistribution<T> createTimeDistribution(RandomGenerator rand, Environment<T, P> env, Node<T> node, String param);
 
     /**
      * @param rand
@@ -84,7 +86,7 @@ public interface Incarnation<T> {
      *            a {@link String} describing the object
      * @return a new {@link Reaction}
      */
-    Reaction<T> createReaction(RandomGenerator rand, Environment<T> env, Node<T> node, TimeDistribution<T> time, String param);
+    Reaction<T> createReaction(RandomGenerator rand, Environment<T, P> env, Node<T> node, TimeDistribution<T> time, String param);
 
     /**
      * @param rand
@@ -101,7 +103,7 @@ public interface Incarnation<T> {
      *            a {@link String} describing the object
      * @return a new {@link Condition}
      */
-    Condition<T> createCondition(RandomGenerator rand, Environment<T> env, Node<T> node, TimeDistribution<T> time, Reaction<T> reaction, String param);
+    Condition<T> createCondition(RandomGenerator rand, Environment<T, P> env, Node<T> node, TimeDistribution<T> time, Reaction<T> reaction, String param);
 
     /**
      * @param rand
@@ -118,6 +120,6 @@ public interface Incarnation<T> {
      *            a {@link String} describing the object
      * @return a new {@link Action}
      */
-    Action<T> createAction(RandomGenerator rand, Environment<T> env, Node<T> node, TimeDistribution<T> time, Reaction<T> reaction, String param);
+    Action<T> createAction(RandomGenerator rand, Environment<T, P> env, Node<T> node, TimeDistribution<T> time, Reaction<T> reaction, String param);
 
 }

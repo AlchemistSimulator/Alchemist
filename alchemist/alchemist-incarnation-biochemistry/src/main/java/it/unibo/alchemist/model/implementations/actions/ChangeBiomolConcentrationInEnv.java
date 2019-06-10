@@ -1,14 +1,15 @@
 /*
- * Copyright (C) 2010-2016, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.implementations.actions;
 
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,28 +29,28 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 /**
  * Action implementing the changing of the concentration of a given biomolecule in environment.
  */
-public class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<Double> {
+public final class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<Double> {
 
     private static final long serialVersionUID = 1L;
     private final double delta;
     private final Biomolecule biomolecule;
-    private final Environment<Double> env;
+    private final Environment<Double, ?> env;
 
     /**
      * Initialize a new {@link Action} that change concentration of the given
      * {@link Biomolecule} of a "deltaCon" quantity.
      * 
      * @param node the {@link Node} where this action is located.
-     * @param biomol the {@link Biomolecule} which concentration will be changed.
+     * @param biomolecule the {@link Biomolecule} which concentration will be changed.
      * @param deltaCon the quantity to add to actual concentration of {@link Biomolecule}
      * @param environment the {@link Environment} where the node is located.
-     * @param randomGen 
+     * @param randomGen the random generator
      */
-    public ChangeBiomolConcentrationInEnv(final Environment<Double> environment, final Node<Double> node, final Biomolecule biomol, 
+    public ChangeBiomolConcentrationInEnv(final Environment<Double, ?> environment, final Node<Double> node, final Biomolecule biomolecule,
             final double deltaCon, final RandomGenerator randomGen) {
         super(node, randomGen);
         if (node instanceof EnvironmentNode || node instanceof CellNode) {
-            biomolecule = biomol;
+            this.biomolecule = biomolecule;
             delta = deltaCon;
             env = environment;
         } else {
@@ -58,16 +59,16 @@ public class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<D
     }
 
     /**
-     * Initialize a ChangeBiomolConcentrationInEnv with delta = -1.
+     * Initialize a {@link ChangeBiomolConcentrationInEnv} with delta = -1.
      * 
      * @param node node the {@link Node} where this action is located.
-     * @param biomol the {@link Biomolecule} which concentration will be changed.
+     * @param biomolecule the {@link Biomolecule} which concentration will be changed.
      * @param environment environment the {@link Environment} where the node is located.
-     * @param randomGen 
+     * @param randomGen the random generator
      */
-    public ChangeBiomolConcentrationInEnv(final Node<Double> node, final Biomolecule biomol, 
-            final Environment<Double> environment, final RandomGenerator randomGen) {
-        this(environment, node, biomol, -1, randomGen);
+    public ChangeBiomolConcentrationInEnv(final Node<Double> node, final Biomolecule biomolecule,
+            final Environment<Double, ?> environment, final RandomGenerator randomGen) {
+        this(environment, node, biomolecule, -1, randomGen);
     }
 
     @Override
@@ -102,22 +103,12 @@ public class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<D
                     changeConcentrationInRandomNodes(environmentNodesSurrounding);
                 } else {
                     // else, sort the list by the concentration of the biomolecule
-                    environmentNodesSurrounding.sort(
-                            (n1, n2) -> Double.compare(
-                                    n1.getConcentration(biomolecule), 
-                                    n2.getConcentration(biomolecule)
-                                    )
-                            );
+                    environmentNodesSurrounding.sort(Comparator.comparingDouble(n -> n.getConcentration(biomolecule)));
                     changeConcentrationInSortedNodes(environmentNodesSurrounding);
                 }
             } else {
                 // else, sort the list by the distance from the node
-                environmentNodesSurrounding.sort(
-                        (n1, n2) -> Double.compare(
-                                env.getDistanceBetweenNodes(thisNode, n1), 
-                                env.getDistanceBetweenNodes(thisNode, n2)
-                                )
-                        );
+                environmentNodesSurrounding.sort(Comparator.comparingDouble(n -> env.getDistanceBetweenNodes(thisNode, n)));
                 changeConcentrationInSortedNodes(environmentNodesSurrounding);
             }
         }
@@ -133,7 +124,7 @@ public class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<D
      * @return a list containing the environment nodes around
      */
     protected List<EnvironmentNode> getEnvironmentNodesSurrounding() {
-        return (List<EnvironmentNode>) env.getNeighborhood(getNode()).getNeighbors().stream()
+        return env.getNeighborhood(getNode()).getNeighbors().stream()
                 .parallel()
                 .flatMap(n -> n instanceof EnvironmentNode ? Stream.of((EnvironmentNode) n) : Stream.empty())
                 .collect(Collectors.toList());
@@ -144,11 +135,11 @@ public class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<D
             double deltaTemp = delta;
             for (final EnvironmentNode n : envNodesSurrounding) {
                 final double nodeConcentration = n.getConcentration(biomolecule);
-                // if nodeConcentration >= |deltaTemp|, remove the a delta quantity of the biomol only from this node
+                // if nodeConcentration >= |deltaTemp|, remove the a delta quantity of the biomolecule only from this node
                 if (nodeConcentration >= FastMath.abs(deltaTemp)) {
                     n.setConcentration(biomolecule, nodeConcentration + deltaTemp);
                     break;
-                    // else, remove all molecule of that species from that node and go on till deltaTemp is smaller than nodeConcetration
+                    // else, remove all molecule of that species from that node and go on till deltaTemp is smaller than node concentration
                 } else {
                     deltaTemp = deltaTemp + nodeConcentration;
                     n.removeConcentration(biomolecule);
@@ -168,11 +159,11 @@ public class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<D
                 final int index = getRandomGenerator().nextInt(envNodesSurrounding.size());
                 final EnvironmentNode pickedNode = envNodesSurrounding.get(index);
                 final double nodeConcentration = pickedNode.getConcentration(biomolecule);
-                // if nodeConcentration >= |deltaTemp|, remove the a delta quantity of the biomol only from this node
+                // if nodeConcentration >= |deltaTemp|, remove the a delta quantity of the biomolecule only from this node
                 if (nodeConcentration >= FastMath.abs(deltaTemp)) {
                     pickedNode.setConcentration(biomolecule, nodeConcentration + deltaTemp);
                     break;
-                    // else, remove all molecule of that species from that node and go on till deltaTemp is smaller than nodeConcetration
+                    // else, remove all molecule of that species from that node and go on till deltaTemp is smaller than node concentration
                 } else {
                     deltaTemp = deltaTemp + nodeConcentration;
                     pickedNode.removeConcentration(biomolecule);
@@ -184,5 +175,10 @@ public class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAction<D
             final Node<Double> target = envNodesSurrounding.get(getRandomGenerator().nextInt(envNodesSurrounding.size()));
             target.setConcentration(biomolecule, target.getConcentration(biomolecule) + delta);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "add " + delta + " " + biomolecule + " in env ";
     }
 }

@@ -1,12 +1,14 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.implementations.actions;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -15,7 +17,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.nodes.LsaNode;
-import it.unibo.alchemist.model.implementations.positions.Continuous2DEuclidean;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
@@ -23,13 +24,12 @@ import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 /**
+ *
+ * @param <P> position type
  */
-public class LsaMASSAgent extends SAPEREMoveNodeAgent {
+public class LsaMASSAgent<P extends Position<P>> extends SAPEREMoveNodeAgent<P> {
 
     private static final double LIMIT = 0.4;
     private static final double RANGE = 0.5;
@@ -54,7 +54,7 @@ public class LsaMASSAgent extends SAPEREMoveNodeAgent {
      * @param p
      *            probability to move
      */
-    public LsaMASSAgent(final Environment<List< ILsaMolecule>> env, final ILsaNode node, final ILsaMolecule field, final ILsaMolecule isSensor, final RandomGenerator random, final Double p) {
+    public LsaMASSAgent(final Environment<List<ILsaMolecule>, P> env, final ILsaNode node, final ILsaMolecule field, final ILsaMolecule isSensor, final RandomGenerator random, final Double p) {
         super(env, node);
         this.fieldMol = field;
         this.sensor = isSensor;
@@ -70,21 +70,21 @@ public class LsaMASSAgent extends SAPEREMoveNodeAgent {
      */
     @Override
     public void execute() {
-        final Position mypos = getCurrentPosition();
+        final P mypos = getCurrentPosition();
         final double myx = mypos.getCartesianCoordinates()[0];
         final double myy = mypos.getCartesianCoordinates()[1];
         double x = 0;
         double y = 0;
-        final Neighborhood<List< ILsaMolecule>> neigh = getLocalNeighborhood();
+        final Neighborhood<List<ILsaMolecule>> neigh = getLocalNeighborhood();
         boolean up = true, down = true, left = true, right = true;
-        final List<Position> poss = new ArrayList<Position>();
+        final List<P> poss = new ArrayList<>();
         double maxField = -1.0;
 
-        for (final Node<List< ILsaMolecule>> nodo : neigh.getNeighbors()) {
+        for (final Node<List<ILsaMolecule>> nodo : neigh.getNeighbors()) {
             final LsaNode n = (LsaNode) nodo;
             if (up || down || left || right) {
                 if (n.getConcentration(sensor).size() == 0) {
-                    final Position pos = getPosition(n);
+                    final P pos = getPosition(n);
                     if (pos.getDistanceTo(mypos) < RANGE) {
                         x = pos.getCartesianCoordinates()[0];
                         y = pos.getCartesianCoordinates()[1];
@@ -153,7 +153,7 @@ public class LsaMASSAgent extends SAPEREMoveNodeAgent {
                 final boolean moveH = dx > 0 && right || dx < 0 && left;
                 final boolean moveV = dy > 0 && down || dy < 0 && up;
                 if (moveH || moveV) {
-                    move(new Continuous2DEuclidean(moveH ? dx : 0, moveV ? dy : 0));
+                    move(getEnvironment().makePosition(moveH ? dx : 0, moveV ? dy : 0));
                 }
             } else {
                 double u = 0, d = 0, ri = 0, le = 0, ud = 0, lr = 0;
@@ -179,7 +179,7 @@ public class LsaMASSAgent extends SAPEREMoveNodeAgent {
                 } else {
                     lr = (le - ri) - STEP;
                 }
-                move(new Continuous2DEuclidean(ud, lr));
+                move(getEnvironment().makePosition(ud, lr));
             }
         }
 

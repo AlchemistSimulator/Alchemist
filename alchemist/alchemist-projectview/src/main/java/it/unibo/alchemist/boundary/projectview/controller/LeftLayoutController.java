@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.boundary.projectview.controller;
 
 import java.awt.Desktop;
@@ -9,12 +16,14 @@ import java.io.IOException;
 import java.util.ResourceBundle;
 
 import org.jooq.lambda.Unchecked;
+import org.kaikikm.threadresloader.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import it.unibo.alchemist.boundary.projectview.model.Project;
+import it.unibo.alchemist.boundary.projectview.utils.URLManager;
 import it.unibo.alchemist.boundary.projectview.utils.ProjectIOUtils;
 import it.unibo.alchemist.boundary.projectview.utils.SVGImageUtils;
 import javafx.beans.value.ChangeListener;
@@ -125,10 +134,10 @@ public class LeftLayoutController {
                     final TreeItem<String> newVal) {
                 final TreeItem<String> selectedItem = (TreeItem<String>) newVal;
                 TreeItem<String> parent = selectedItem.getParent();
-                String path = File.separator + selectedItem.getValue();
+                final StringBuilder path = new StringBuilder(File.separator + selectedItem.getValue());
                 while (parent != null)  {
                     if (parent.getParent() != null) {
-                        path = File.separator + parent.getValue() + path;
+                        path.insert(0, File.separator + parent.getValue());
                     }
                     parent = parent.getParent();
                 }
@@ -170,7 +179,11 @@ public class LeftLayoutController {
         }
         final Project project = ProjectIOUtils.loadFrom(this.pathFolder);
         if (project != null) {
-           final Thread thread = new Thread(Unchecked.runnable(() -> project.runAlchemistSimulation(false)), "SingleRunGUI");
+           final Thread thread = new Thread(Unchecked.runnable(() -> {
+               ResourceLoader.setDefault();
+               project.runAlchemistSimulation(false);
+           }), "SingleRunGUI");
+           URLManager.getInstance().setupThreadClassLoader(thread);
            thread.setDaemon(true);
            thread.start();
         } else {
@@ -211,7 +224,7 @@ public class LeftLayoutController {
 
     private void loadLayout(final boolean isFolder) {
         final FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(ProjectGUI.class.getResource("view/NewFolderOrFileDialog.fxml"));
+        loader.setLocation(ResourceLoader.getResource(ProjectGUI.RESOURCE_LOCATION + "/view/NewFolderOrFileDialog.fxml"));
         AnchorPane pane;
         try {
             pane = (AnchorPane) loader.load();

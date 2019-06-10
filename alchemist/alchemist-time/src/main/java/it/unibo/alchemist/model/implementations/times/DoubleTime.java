@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.implementations.times;
 
@@ -19,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  *         simulations.
  * 
  */
-public class DoubleTime implements Time {
+public final class DoubleTime implements Time {
 
     private static final long serialVersionUID = -6332407580176508417L;
     /**
@@ -53,7 +52,7 @@ public class DoubleTime implements Time {
     }
 
     @Override
-    public DoubleTime sum(final Time dt) {
+    public DoubleTime plus(final Time dt) {
         return new DoubleTime(t + dt.toDouble());
     }
 
@@ -83,19 +82,13 @@ public class DoubleTime implements Time {
     }
 
     @Override
-    public Time multiply(final double var) {
+    public Time times(final double var) {
         return new DoubleTime(t * var);
     }
 
     @Override
-    public Time subtract(final Time dt) {
+    public Time minus(final Time dt) {
         return new DoubleTime(t - dt.toDouble());
-    }
-
-    @Override
-    @SuppressFBWarnings(justification = "Stateless object.")
-    public DoubleTime clone() {
-        return this;
     }
 
     @Override

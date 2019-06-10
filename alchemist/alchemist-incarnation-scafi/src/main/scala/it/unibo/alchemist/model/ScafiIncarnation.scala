@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.model
 
 import it.unibo.alchemist.model.interfaces.Incarnation
@@ -17,8 +24,9 @@ import it.unibo.alchemist.model.implementations.timedistributions.{DiracComb, Ex
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.scala.ScalaInterpreter
 import com.google.common.cache.CacheBuilder
+import it.unibo.alchemist.model.interfaces.Position
 
-sealed class ScafiIncarnation extends Incarnation[Any]{
+sealed class ScafiIncarnation[P <: Position[P]] extends Incarnation[Any, P]{
 
 
   private[this] def notNull[T](t: T): T = Objects.requireNonNull(t)
@@ -37,7 +45,7 @@ sealed class ScafiIncarnation extends Incarnation[Any]{
 
   override def createAction(
       rand: RandomGenerator,
-      env: Environment[Any],
+      env: Environment[Any, P],
       node: Node[Any],
       time: TimeDistribution[Any],
       reaction: Reaction[Any],
@@ -56,7 +64,7 @@ sealed class ScafiIncarnation extends Incarnation[Any]{
     CachedInterpreter[AnyRef](if(doCacheValue) v else v.tail, doCacheValue)
   }
 
-  override def createCondition(rand: RandomGenerator, env: Environment[Any] , node: Node[Any], time: TimeDistribution[Any], reaction: Reaction[Any], param: String) = {
+  override def createCondition(rand: RandomGenerator, env: Environment[Any, P] , node: Node[Any], time: TimeDistribution[Any], reaction: Reaction[Any], param: String) = {
     throw new UnsupportedOperationException("Use the type/parameters syntax to initialize conditions.")
   }
 
@@ -64,15 +72,15 @@ sealed class ScafiIncarnation extends Incarnation[Any]{
     new SimpleMolecule(notNull(s))
   }
 
-  override def createNode(rand: RandomGenerator, env: Environment[Any], param: String) = {
+  override def createNode(rand: RandomGenerator, env: Environment[Any, P], param: String) = {
     new ScafiNode(env)
   }
 
-  override def createReaction(rand: RandomGenerator, env: Environment[Any], node: Node[Any], time: TimeDistribution[Any], param: String) = {
+  override def createReaction(rand: RandomGenerator, env: Environment[Any, P], node: Node[Any], time: TimeDistribution[Any], param: String) = {
     new Event(node, time)
   }
 
-  override def createTimeDistribution(rand: RandomGenerator, env: Environment[Any], node: Node[Any], param: String): TimeDistribution[Any] = {
+  override def createTimeDistribution(rand: RandomGenerator, env: Environment[Any, P], node: Node[Any], param: String): TimeDistribution[Any] = {
     Objects.requireNonNull(param)
     val frequency = toDouble(param)
     if (frequency.isNaN()) {

@@ -1,18 +1,23 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.cli;
 
-import static java.util.ResourceBundle.getBundle;
+import com.google.common.math.DoubleMath;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.lang3.ArrayUtils;
 
-import java.io.IOException;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.math3.util.FastMath;
-import org.danilopianini.io.FileUtilities;
+import static java.util.ResourceBundle.getBundle;
 
 /**
  * This support class generates a CLI interface backed by a property file.
@@ -50,7 +55,7 @@ public final class CLIMaker {
                             if (Double.isInfinite(num) && num > 0) {
                                 optBuilder.hasArgs();
                             } else {
-                                if (FastMath.floor(num) != num) {
+                                if (!DoubleMath.isMathematicalInteger(num)) {
                                     throw new IllegalStateException(optionValue + " is not an integer.");
                                 }
                                 optBuilder.numberOfArgs((int) num);
@@ -73,11 +78,7 @@ public final class CLIMaker {
      * @return an Apache {@link Options} object
      */
     public static Options getOptions() {
-        try {
-            return FileUtilities.cloneObject(OPTIONS);
-        } catch (ClassNotFoundException | IOException e) {
-            throw new IllegalStateException("Unable to get the command line support.", e);
-        }
+        return OPTIONS;
     }
 
     private CLIMaker() { }

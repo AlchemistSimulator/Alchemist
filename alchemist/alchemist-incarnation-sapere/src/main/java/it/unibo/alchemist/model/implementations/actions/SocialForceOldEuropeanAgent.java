@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.implementations.actions;
 
@@ -13,12 +12,15 @@ import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
+import it.unibo.alchemist.model.interfaces.Position;
 
 import java.util.List;
 
 /**
+ *
+ * @param <P> position type
  */
-public class SocialForceOldEuropeanAgent extends SocialForceAgent {
+public class SocialForceOldEuropeanAgent<P extends Position<P>> extends SocialForceAgent<P> {
 
     /**
      * 
@@ -63,7 +65,7 @@ public class SocialForceOldEuropeanAgent extends SocialForceAgent {
      *            once the target is reached
      */
     public SocialForceOldEuropeanAgent(
-            final Environment<List<ILsaMolecule>> environment,
+            final Environment<List<ILsaMolecule>, P> environment,
             final ILsaNode node,
             final RandomGenerator random,
             final LsaMolecule molecule,

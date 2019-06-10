@@ -1,15 +1,25 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 /**
  * 
  */
 package it.unibo.alchemist.model.implementations.nodes;
+
+import it.unibo.alchemist.expressions.implementations.Expression;
+import it.unibo.alchemist.expressions.implementations.NumTreeNode;
+import it.unibo.alchemist.expressions.interfaces.IExpression;
+import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.ILsaMolecule;
+import it.unibo.alchemist.model.interfaces.ILsaNode;
+import it.unibo.alchemist.model.interfaces.Molecule;
+import org.danilopianini.util.concurrent.FastReadWriteLock;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -20,21 +30,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.danilopianini.util.concurrent.FastReadWriteLock;
-
-import it.unibo.alchemist.expressions.implementations.Expression;
-import it.unibo.alchemist.expressions.implementations.NumTreeNode;
-import it.unibo.alchemist.expressions.interfaces.IExpression;
-import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.ILsaMolecule;
-import it.unibo.alchemist.model.interfaces.ILsaNode;
-import it.unibo.alchemist.model.interfaces.Molecule;
-
 /**
  * This class realizes a node with LSA concentration.
  */
-public class LsaNode extends GenericNode<List<ILsaMolecule>> implements ILsaNode {
+public final class LsaNode extends AbstractNode<List<ILsaMolecule>> implements ILsaNode {
     private static final long serialVersionUID = -2167025208984968645L;
     private final List<ILsaMolecule> instances = new ArrayList<>();
     private transient FastReadWriteLock lock = new FastReadWriteLock();
@@ -44,7 +43,7 @@ public class LsaNode extends GenericNode<List<ILsaMolecule>> implements ILsaNode
      * @param env
      *            The environment (used for safe node id computation)
      */
-    public LsaNode(final Environment<List<ILsaMolecule>> env) {
+    public LsaNode(final Environment<List<ILsaMolecule>, ?> env) {
         super(env);
     }
 

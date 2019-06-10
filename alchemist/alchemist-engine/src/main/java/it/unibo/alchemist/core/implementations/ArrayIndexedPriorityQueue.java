@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 /**
  * 
  */
@@ -17,7 +17,7 @@ import java.util.List;
 import gnu.trove.impl.Constants;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
-import it.unibo.alchemist.core.interfaces.ReactionManager;
+import it.unibo.alchemist.core.interfaces.Scheduler;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 
@@ -26,7 +26,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  * 
  * @param <T>
  */
-public class ArrayIndexedPriorityQueue<T> implements ReactionManager<T> {
+public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
 
     private static final long serialVersionUID = 8064379974084348391L;
 

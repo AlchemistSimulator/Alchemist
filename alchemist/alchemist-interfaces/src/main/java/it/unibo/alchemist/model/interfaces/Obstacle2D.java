@@ -1,15 +1,16 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.interfaces;
 
 import java.awt.Shape;
 import java.io.Serializable;
+
+import org.apache.commons.math3.util.Pair;
 
 /**
  */
@@ -36,7 +37,7 @@ public interface Obstacle2D extends Serializable, Shape {
      * @return the intersection point between the vector and the rectangle
      *         nearest to the vector's starting point
      */
-    Position next(double sx, double sy, double ex, double ey);
+    Pair<Double, Double> next(double sx, double sy, double ex, double ey);
 
     /**
      * Given a vector (represented as a starting point and an end point) and a

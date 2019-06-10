@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.model.implementations.linkingrules;
 
 import java.util.LinkedHashSet;
@@ -6,6 +13,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.util.stream.SmallestN;
 import org.jooq.lambda.tuple.Tuple2;
@@ -20,19 +28,22 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.LinkingRule;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * Non local-consistent rule that connect the closest N nodes together.
  * Two nodes get connected if either one belongs to the set of the ten devices closest to the other.
  * 
  * @param <T>
+ * @param <P>
  */
-public class ClosestN<T> implements LinkingRule<T> {
+public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
     private static final double CONNECTION_RANGE_TOLERANCE = 1.1;
-    private final Cache<Node<T>, Double> ranges;
-    private final int n, expectedNodes;
+    private final int n, expectedNodes, maxNodes;
+    @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
+    private transient Cache<Node<T>, Double> ranges;
 
     /**
      * @param n
@@ -48,11 +59,9 @@ public class ClosestN<T> implements LinkingRule<T> {
         if (n < 1) {
             throw new IllegalArgumentException("The parameter must be an integer greater than 0");
         }
-        ranges = CacheBuilder.newBuilder()
-                .maximumSize(maxNodes)
-                .build();
         this.n = n;
         this.expectedNodes = expectedNodes;
+        this.maxNodes = maxNodes;
     }
 
     /**
@@ -74,8 +83,17 @@ public class ClosestN<T> implements LinkingRule<T> {
         this(n, 0);
     }
 
+    private Cache<Node<T>, Double> ranges() {
+        if (ranges == null) {
+            ranges = CacheBuilder.newBuilder()
+                .maximumSize(maxNodes)
+                .build();
+        }
+        return ranges;
+    }
+
     @Override
-    public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T> env) {
+    public final Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> env) {
         if (env.getNodesNumber() < expectedNodes || !nodeIsEnabled(center)) {
             return Neighborhoods.make(env, center);
         }
@@ -91,14 +109,14 @@ public class ClosestN<T> implements LinkingRule<T> {
                          */
                         .filter(node -> 
                                 !center.equals(node)
-                                && closestN(node, env).anyMatch(closeNode -> center.equals(closeNode))
+                                && closestN(node, env).anyMatch(center::equals)
                         )
                 )
                 .sequential()
                 .collect(Collectors.toCollection(LinkedHashSet::new)));
     }
 
-    private Stream<Node<T>> closestN(final Node<T> center, final Environment<T> env) {
+    private Stream<Node<T>> closestN(final Node<T> center, final Environment<T, ?> env) {
         if (!nodeIsEnabled(center)) {
             return Stream.empty();
         }
@@ -129,7 +147,7 @@ public class ClosestN<T> implements LinkingRule<T> {
      * @param range the communication range
      * @return the set of nodes within the communication range
      */
-    protected final Set<Node<T>> nodesInRange(final Environment<T> env, final Node<T> node, final double range) {
+    protected final Set<Node<T>> nodesInRange(final Environment<T, ?> env, final Node<T> node, final double range) {
         return env.getNodesWithinRange(node, range);
     }
 
@@ -153,13 +171,13 @@ public class ClosestN<T> implements LinkingRule<T> {
      *            the node
      * @return the communication range
      */
-    protected final double getRange(final Environment<T> env, final Node<T> center) {
+    protected final double getRange(final Environment<T, ?> env, final Node<T> center) {
         try {
             /*
              * Range estimation: twice the radius of a circle with an area that
              * would, on average, contain the number of required devices
              */
-            return ranges.get(center, () -> {
+            return ranges().get(center, () -> {
                 final int nodes = env.getNodesNumber();
                 if (nodes < n || nodes < 10) {
                     return Double.MAX_VALUE;
@@ -184,11 +202,11 @@ public class ClosestN<T> implements LinkingRule<T> {
      *            the range
      */
     protected final void setRange(final Node<T> center, final double range) {
-        ranges.put(center, range);
+        ranges().put(center, range);
     }
 
     @Override
-    public boolean isLocallyConsistent() {
+    public final boolean isLocallyConsistent() {
         return false;
     }
 

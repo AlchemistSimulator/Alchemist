@@ -1,8 +1,17 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.boundary.projectview;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.IOException;
+
+import org.kaikikm.threadresloader.ResourceLoader;
 
 import it.unibo.alchemist.boundary.projectview.controller.CenterLayoutController;
 import it.unibo.alchemist.boundary.projectview.controller.LeftLayoutController;
@@ -23,6 +32,10 @@ import javafx.stage.WindowEvent;
  */
 public class ProjectGUI extends Application {
 
+    /**
+     *
+     */
+    public static final String RESOURCE_LOCATION = ProjectGUI.class.getPackage().getName().replace('.', '/');
     private BorderPane root;
     private CenterLayoutController controllerCenter;
     private LeftLayoutController controllerLeft;
@@ -40,13 +53,16 @@ public class ProjectGUI extends Application {
     /**
      * Method that initializes the scene by loading all needed .fxml files and
      * sets the primary stage.
-     * 
+     *
      * @throws IOException
      *             in case of bugs
      */
     @Override
     public void start(final Stage primaryStage) throws IOException {
-        Thread.setDefaultUncaughtExceptionHandler(FXUtil::errorAlert);
+        Thread.setDefaultUncaughtExceptionHandler((thread, ex) -> {
+            ex.printStackTrace(); // NOPMD TODO: should be replaced by logger
+            FXUtil.errorAlert(ex);
+        });
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Alchemist");
         initLayout("RootLayout");
@@ -69,7 +85,7 @@ public class ProjectGUI extends Application {
 
     private void initLayout(final String layoutName) throws IOException {
         final FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(ProjectGUI.class.getResource("view/" + layoutName + ".fxml"));
+        loader.setLocation(ResourceLoader.getResource(ProjectGUI.RESOURCE_LOCATION + "/view/" + layoutName + ".fxml"));
         if (layoutName.equals("RootLayout")) {
             this.root = (BorderPane) loader.load();
             final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

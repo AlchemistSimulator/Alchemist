@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.model.implementations.conditions;
 
 import it.unibo.alchemist.model.interfaces.Context;
@@ -10,20 +17,20 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  * 
  *
  */
-public class EnvPresent extends AbstractCondition<Double> {
+public final class EnvPresent extends AbstractCondition<Double> {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
-    private final Environment<Double> environment;
+    private final Environment<Double, ?> environment;
 
     /**
      * 
      * @param node 
      * @param env 
      */
-    public EnvPresent(final Environment<Double> env, final Node<Double> node) {
+    public EnvPresent(final Environment<Double, ?> env, final Node<Double> node) {
         super(node);
         environment = env;
     }
@@ -39,17 +46,18 @@ public class EnvPresent extends AbstractCondition<Double> {
     }
 
     @Override
-    public double getPropensityConditioning() {
+    public double getPropensityContribution() {
         return isValid() ? 1d : 0d;
     }
 
     @Override
     public boolean isValid() {
         return environment.getNeighborhood(getNode()).getNeighbors().stream()
-                .parallel()
-                .filter(n -> n instanceof EnvironmentNode)
-                .findAny()
-                .isPresent();
+                .anyMatch(n -> n instanceof EnvironmentNode);
     }
 
+    @Override
+    public String toString() {
+        return "has environment [" + isValid() + "]";
+    }
 }

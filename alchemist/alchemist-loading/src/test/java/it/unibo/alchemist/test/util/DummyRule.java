@@ -1,13 +1,24 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.test.util;
 
 import java.util.List;
 
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
+import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * @param <T>
+ *            concentration type
+ * @param <P>
+ *            position type
  */
-public class DummyRule<T> extends NoLinks<T> {
+public final class DummyRule<T, P extends Position<P>> extends NoLinks<T, P> {
 
     private static final long serialVersionUID = 1L;
 

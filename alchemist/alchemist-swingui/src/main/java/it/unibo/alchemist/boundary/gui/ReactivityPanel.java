@@ -1,36 +1,33 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.boundary.gui;
 
-import static it.unibo.alchemist.boundary.gui.AlchemistSwingUI.loadScaledImage;
 import it.unibo.alchemist.boundary.gui.tape.JTapeFeatureStack;
 import it.unibo.alchemist.boundary.gui.tape.JTapeGroup;
 import it.unibo.alchemist.boundary.gui.tape.JTapeMainFeature;
 import it.unibo.alchemist.boundary.gui.tape.JTapeSection;
 
+import javax.swing.Icon;
+import javax.swing.JSlider;
+import javax.swing.JToggleButton;
+import javax.swing.event.ChangeListener;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-import javax.swing.AbstractButton;
-import javax.swing.Icon;
-import javax.swing.JSlider;
-import javax.swing.JToggleButton;
-import javax.swing.event.ChangeListener;
-
+import static it.unibo.alchemist.boundary.gui.AlchemistSwingUI.loadScaledImage;
 import static it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle.getString;
 
 /**
  */
 @Deprecated
-public class ReactivityPanel extends JTapeGroup implements ItemListener {
+public final class ReactivityPanel extends JTapeGroup implements ItemListener {
 
     private static final long serialVersionUID = 6688803192091760332L;
 
@@ -42,16 +39,10 @@ public class ReactivityPanel extends JTapeGroup implements ItemListener {
     private static final String REALTIME = getString("realtime");
     private static final String USER_SELECTED = getString("user_selected");
 
-    private final JTapeSection stack1 = new JTapeFeatureStack();
-    private final JTapeSection buttMF = new JTapeMainFeature();
-    private final JTapeSection sliderMF = new JTapeMainFeature();
     private final JToggleButton btnMax;
     private final JToggleButton btnReal;
     private final JToggleButton btnUser;
     private final JSlider slider = new JSlider(0, SLIDE_MAX, SLIDE_MAX / 2);
-    private final Icon max = loadScaledImage("/oxygen/status/user-online.png");
-    private final Icon real = loadScaledImage("/oxygen/status/user-invisible.png");
-    private final Icon user = loadScaledImage("/oxygen/status/user-offline.png");
     private Status status = Status.MAX_REACTIVITY;
 
     /**
@@ -80,8 +71,11 @@ public class ReactivityPanel extends JTapeGroup implements ItemListener {
         slider.setPreferredSize(new Dimension(SLIDE_SIZE, slider.getHeight()));
         // setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         // button = new JButton(max);
+        final Icon max = loadScaledImage("/oxygen/status/user-online.png");
         btnMax = new JToggleButton(MAX_REACTIVITY, max, true);
+        final Icon real = loadScaledImage("/oxygen/status/user-invisible.png");
         btnReal = new JToggleButton(REALTIME, real, false);
+        final Icon user = loadScaledImage("/oxygen/status/user-offline.png");
         btnUser = new JToggleButton(USER_SELECTED, user, false);
         /*
          * add(button); add(slider); button.addActionListener(this);
@@ -91,9 +85,12 @@ public class ReactivityPanel extends JTapeGroup implements ItemListener {
         btnUser.addItemListener(this);
         slider.setEnabled(false);
 
+        final JTapeSection stack1 = new JTapeFeatureStack();
         stack1.registerFeature(btnMax);
         stack1.registerFeature(btnReal);
+        final JTapeSection buttMF = new JTapeMainFeature();
         buttMF.registerFeature(btnUser);
+        final JTapeSection sliderMF = new JTapeMainFeature();
         sliderMF.registerFeature(slider);
 
         registerSection(stack1);
@@ -102,7 +99,7 @@ public class ReactivityPanel extends JTapeGroup implements ItemListener {
     }
 
     /**
-     * See {@link AbstractButton#addActionListener(ActionListener)}.
+     * See {@link JToggleButton#addActionListener(ActionListener)}.
      * 
      * @param l
      *            the {@link ActionListener} to add

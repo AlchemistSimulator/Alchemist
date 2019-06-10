@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.implementations.conditions;
 
@@ -47,7 +46,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
     public LsaAbstractCondition(final ILsaNode node, final Set<ILsaMolecule> m) {
         super(node);
         for (final ILsaMolecule mol : m) {
-            addReadMolecule(mol);
+            declareDependencyOn(mol);
         }
     }
 
@@ -55,7 +54,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
     public abstract String toString();
 
     @Override
-    public ILsaNode getNode() {
+    public final ILsaNode getNode() {
         return (ILsaNode) super.getNode();
     }
 

@@ -1,16 +1,23 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.loader.variables;
-
-import java.util.stream.DoubleStream;
-import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.stream.DoubleStream;
+import java.util.stream.Stream;
 
 /**
  * This class represents a linear variable, namely a variable whose values span
  * linearly between minimum and maximum.
  */
-public class LinearVariable extends PrintableVariable<Double> {
+public final class LinearVariable extends PrintableVariable<Double> {
 
     private static final long serialVersionUID = 2462199794377640948L;
     private static final Logger L = LoggerFactory.getLogger(LinearVariable.class);

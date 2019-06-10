@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2010-2016, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.implementations.reactions;
 
 import java.util.ArrayList;
@@ -28,6 +28,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.jirf.Factory;
 import org.danilopianini.jirf.FactoryBuilder;
+import org.jetbrains.annotations.NotNull;
+import org.kaikikm.threadresloader.ResourceLoader;
 
 import it.unibo.alchemist.biochemistrydsl.BiochemistrydslBaseVisitor;
 import it.unibo.alchemist.biochemistrydsl.BiochemistrydslLexer;
@@ -59,17 +61,20 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 
 /**
- * This class implements a builder for chemical reactions. 
+ * This class implements a builder for chemical reactions.
+ *
+ * @param <P>
  */
-public class BiochemicalReactionBuilder {
+public class BiochemicalReactionBuilder<P extends Position<P>> {
 
-    private final BiochemistryIncarnation incarnation;
+    private final BiochemistryIncarnation<P> incarnation;
     private final Node<Double> node;
-    private final Environment<Double> env;
+    private final Environment<Double, P> env;
     private RandomGenerator rand;
     private TimeDistribution<Double> time;
     private String reactionString;
@@ -81,7 +86,7 @@ public class BiochemicalReactionBuilder {
      * @param currentNode the node where the reaction is placed.
      * @param environment the environment.
      */
-    public BiochemicalReactionBuilder(final BiochemistryIncarnation inc, final Node<Double> currentNode, final Environment<Double> environment) {
+    public BiochemicalReactionBuilder(final BiochemistryIncarnation<P> inc, final Node<Double> currentNode, final Environment<Double, P> environment) {
         incarnation = inc;
         node = currentNode;
         env = environment;
@@ -89,7 +94,7 @@ public class BiochemicalReactionBuilder {
 
     /**
      * Builds the chemical reaction.
-     * @return a builded chemical reaction based on the given program
+     * @return a chemical reaction based on the given program
      */
     public Reaction<Double> build()  {
         checkReaction();
@@ -98,7 +103,7 @@ public class BiochemicalReactionBuilder {
         parser.removeErrorListeners();
         parser.addErrorListener(new BiochemistryParseErrorListener(reactionString));
         final ParseTree tree = parser.reaction();
-        final BiochemistryDSLVisitor eval = new BiochemistryDSLVisitor(rand, incarnation, time, node, env);
+        final BiochemistryDSLVisitor<P> eval = new BiochemistryDSLVisitor<>(rand, incarnation, time, node, env);
         return eval.visit(tree);
     }
 
@@ -116,10 +121,10 @@ public class BiochemicalReactionBuilder {
 
     /**
      * Set the reaction to the passed program string.
-     * @param program 
+     * @param program the string version of this reaction
      * @return .
      */
-    public BiochemicalReactionBuilder program(final String program) {
+    public BiochemicalReactionBuilder<P> program(final String program) {
         reactionString = program;
         return this;
     }
@@ -129,7 +134,7 @@ public class BiochemicalReactionBuilder {
      * @param rg the random generator.
      * @return .
      */
-    public BiochemicalReactionBuilder randomGenerator(final RandomGenerator rg) {
+    public BiochemicalReactionBuilder<P> randomGenerator(final RandomGenerator rg) {
         rand = rg;
         return this;
     }
@@ -139,21 +144,19 @@ public class BiochemicalReactionBuilder {
      * @param td the time distribution
      * @return .
      */
-    public BiochemicalReactionBuilder timeDistribution(final TimeDistribution<Double> td) {
+    public BiochemicalReactionBuilder<P> timeDistribution(final TimeDistribution<Double> td) {
         time = td;
         return this;
     }
 
-    private static final class BiochemistryDSLVisitor extends BiochemistrydslBaseVisitor<Reaction<Double>> {
+    private static final class BiochemistryDSLVisitor<P extends Position<? extends P>> extends BiochemistrydslBaseVisitor<Reaction<Double>> {
         private static final String CONDITIONS_PACKAGE = "it.unibo.alchemist.model.implementations.conditions.";
         private static final String ACTIONS_PACKAGE = "it.unibo.alchemist.model.implementations.actions.";
 
         private final Factory factory;
         private final @Nonnull RandomGenerator rand;
-        private final @Nonnull BiochemistryIncarnation currentInc;
-        private final @Nonnull TimeDistribution<Double> time;
         private final @Nonnull Node<Double> node;
-        private final @Nonnull Environment<Double> env;
+        private final @Nonnull Environment<Double, P> env;
         private final @Nonnull Reaction<Double> reaction;
         private final List<Condition<Double>> conditionList = new ArrayList<>(0);
         private final List<Action<Double>> actionList = new ArrayList<>(0);
@@ -164,13 +167,15 @@ public class BiochemicalReactionBuilder {
         private boolean envConditionPresent;
         private boolean envActionPresent;
 
-        private BiochemistryDSLVisitor(final RandomGenerator rand, final BiochemistryIncarnation incarnation, final TimeDistribution<Double> timeDistribution, final Node<Double> currentNode, final Environment<Double> environment) {
+        private BiochemistryDSLVisitor(@NotNull final RandomGenerator rand,
+                                       @NotNull final BiochemistryIncarnation<?> incarnation,
+                                       @NotNull final TimeDistribution<Double> timeDistribution,
+                                       @NotNull final Node<Double> currentNode,
+                                       @NotNull final Environment<Double, P> environment) {
             this.rand = rand;
-            currentInc = incarnation;
-            time = timeDistribution;
             this.node = currentNode;
             env = environment;
-            reaction = new BiochemicalReaction(node, time, env);
+            reaction = new BiochemicalReaction(node, timeDistribution, env, rand);
             factory = new FactoryBuilder()
                     .withAutoBoxing()
                     .withBooleanIntConversions()
@@ -178,14 +183,14 @@ public class BiochemicalReactionBuilder {
                     .withArrayBooleanIntConversions()
                     .withArrayNarrowingConversions()
                     .build();
-            factory.registerSingleton(Incarnation.class, currentInc);
+            factory.registerSingleton(Incarnation.class, incarnation);
             factory.registerSingleton(Environment.class, environment);
-            factory.registerSingleton(TimeDistribution.class, time);
+            factory.registerSingleton(TimeDistribution.class, timeDistribution);
             factory.registerSingleton(Node.class, node);
             factory.registerSingleton(Reaction.class, reaction);
             factory.registerSingleton(RandomGenerator.class, rand);
-            factory.registerImplicit(String.class, Double.class, currentInc::createConcentration);
-            factory.registerImplicit(String.class, Molecule.class, currentInc::createMolecule);
+            factory.registerImplicit(String.class, Double.class, incarnation::createConcentration);
+            factory.registerImplicit(String.class, Molecule.class, incarnation::createMolecule);
             factory.registerImplicit(String.class, Boolean.class, Boolean::parseBoolean);
         }
 
@@ -193,10 +198,10 @@ public class BiochemicalReactionBuilder {
         private <O> O createObject(final BiochemistrydslParser.JavaConstructorContext ctx, final String packageName) {
             String className = ctx.javaClass().getText();
             if (!className.contains(".")) {
-                className = packageName + className;
+                className = packageName + className; // NOPMD UseStringBufferForStringAppends
             }
             try {
-                final Class<O> clazz = (Class<O>) Class.forName(className);
+                final Class<O> clazz = (Class<O>) ResourceLoader.classForName(className);
                 final ArgListContext lctx = ctx.argList();
                 final List<Object> params = new ArrayList<>();
                 if (lctx != null) { // if null there are no parameters, so params must be an empty List (as it is, actually)
@@ -204,7 +209,7 @@ public class BiochemicalReactionBuilder {
                 }
                 return factory.build(clazz, params);
             } catch (ClassNotFoundException e) {
-                throw new RuntimeException("cannot instance " + className + ", class not found");
+                throw new IllegalStateException("cannot instance " + className + ", class not found", e);
             }
         }
 
@@ -253,7 +258,7 @@ public class BiochemicalReactionBuilder {
             for (final BiomoleculeContext b : ctx.biomolecule()) {
                 final Biomolecule biomol = createBiomolecule(b);
                 final double concentration = createConcentration(b);
-                conditionList.add(new BiomolPresentInEnv(env, node, biomol, concentration));
+                conditionList.add(new BiomolPresentInEnv<>(env, node, biomol, concentration));
                 actionList.add(new ChangeBiomolConcentrationInEnv(node, biomol, env, rand));
                 envConditionPresent = true;
             }
@@ -345,8 +350,8 @@ public class BiochemicalReactionBuilder {
                 }
             });
             if (node instanceof CellNode) {
-                actionList.add(new AddJunctionInCell(env, (CellNode) node, j, rand));
-                actionList.add(new AddJunctionInNeighbor(env, (CellNode) node, reverseJunction(j), rand));
+                actionList.add(new AddJunctionInCell(env, node, j, rand));
+                actionList.add(new AddJunctionInNeighbor<>(env, (CellNode<P>) node, reverseJunction(j), rand));
             } else {
                 throw new UnsupportedOperationException("Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName());
             }
@@ -369,14 +374,14 @@ public class BiochemicalReactionBuilder {
             if (ctx.customReactionType() != null) {
                 visit(ctx.customReactionType());
             }
-            junctionList.forEach((j -> {
+            junctionList.forEach(j -> {
                 if (node instanceof CellNode) {
-                    actionList.add(new RemoveJunctionInCell(env, (CellNode) node, j, rand));
-                    actionList.add(new RemoveJunctionInNeighbor(env, (CellNode) node, reverseJunction(j), rand));
+                    actionList.add(new RemoveJunctionInCell(env, node, j, rand));
+                    actionList.add(new RemoveJunctionInNeighbor(env, node, reverseJunction(j), rand));
                 } else {
                     throw new UnsupportedOperationException("Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName());
                 }
-            }));
+            });
             reaction.setConditions(conditionList);
             reaction.setActions(actionList);
             return reaction;
@@ -397,7 +402,7 @@ public class BiochemicalReactionBuilder {
             if (node instanceof CellNode) {
                 final Junction j = createJunction(ctx.junction());
                 junctionList.add(j);
-                conditionList.add(new JunctionPresentInCell(env, (CellNode) node, j));
+                conditionList.add(new JunctionPresentInCell(env, node, j));
                 return reaction;
             } else {
                 throw new UnsupportedOperationException("Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName());
@@ -408,7 +413,7 @@ public class BiochemicalReactionBuilder {
             return new Biomolecule(ctx.name.getText());
         }
 
-        // create the concentration of a biomolecule from a biomolecular context
+        // create the concentration of a biomolecule from a bio-molecular context
         private static double createConcentration(final BiomoleculeContext ctx) {
             return (ctx.concentration() == null) ? 1.0 : Double.parseDouble(ctx.concentration().POSDOUBLE().getText());
         }

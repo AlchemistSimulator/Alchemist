@@ -1,19 +1,19 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.boundary.monitors;
 
-import static it.unibo.alchemist.boundary.gui.AlchemistSwingUI.DEFAULT_ICON_SIZE;
-import static it.unibo.alchemist.boundary.gui.AlchemistSwingUI.loadScaledImage;
-
-import java.awt.Color;
-import java.awt.Dimension;
-import java.util.concurrent.Semaphore;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
+import it.unibo.alchemist.model.implementations.times.DoubleTime;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.Time;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -23,19 +23,22 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.util.concurrent.Semaphore;
 
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.Time;
+import static it.unibo.alchemist.boundary.gui.AlchemistSwingUI.DEFAULT_ICON_SIZE;
+import static it.unibo.alchemist.boundary.gui.AlchemistSwingUI.loadScaledImage;
 
 /**
+ *
+ * @param <P> position type
  * @param <T>
  *            Concentration type
  */
 @Deprecated
-public class TimeStepMonitor<T> extends JPanel implements OutputMonitor<T> {
+@SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")
+public final class TimeStepMonitor<T, P extends Position<? extends P>> extends JPanel implements OutputMonitor<T, P> {
 
     private static final long serialVersionUID = 5818408644038869442L;
     private static final String BLANK = "", FINISHED = " (finished)";
@@ -88,7 +91,7 @@ public class TimeStepMonitor<T> extends JPanel implements OutputMonitor<T> {
     }
 
     @Override
-    public void finished(final Environment<T> env, final Time tt, final long cs) {
+    public void finished(final Environment<T, P> env, final Time tt, final long cs) {
         isFinished = true;
         stepDone(env, null, tt, cs);
         updater.stop();
@@ -97,13 +100,13 @@ public class TimeStepMonitor<T> extends JPanel implements OutputMonitor<T> {
     }
 
     @Override
-    public void initialized(final Environment<T> env) {
+    public void initialized(final Environment<T, P> env) {
         isFinished = false;
         stepDone(env, null, new DoubleTime(), 0);
     }
 
     @Override
-    public void stepDone(final Environment<T> env, final Reaction<T> r, final Time curTime, final long curStep) {
+    public void stepDone(final Environment<T, P> env, final Reaction<T> r, final Time curTime, final long curStep) {
         if (updater == null) {
             updater = new Updater();
             new Thread(updater, TimeStepMonitor.class.getSimpleName() + " updater thread").start();
@@ -119,7 +122,7 @@ public class TimeStepMonitor<T> extends JPanel implements OutputMonitor<T> {
             if (needsUpdate) {
                 needsUpdate = false;
                 t.setText(time + (isFinished ? FINISHED : BLANK));
-                s.setText(Long.toString(step) + (isFinished ? FINISHED : BLANK));
+                s.setText(step + (isFinished ? FINISHED : BLANK));
             }
         });
     }

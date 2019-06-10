@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.implementations.concentrations;
 
@@ -12,7 +11,7 @@ import it.unibo.alchemist.model.interfaces.Concentration;
 
 /**
  */
-public class Local implements Concentration<Object> {
+public final class Local implements Concentration<Object> {
 
     private static final long serialVersionUID = 4137133493821814841L;
     private final Object content;

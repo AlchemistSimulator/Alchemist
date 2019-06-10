@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.boundary.gui;
 
@@ -17,31 +16,31 @@ public enum ColorChannel {
     /**
      * Alpha channel.
      */
-    Alpha(3, true),
+    ALPHA(3, true),
     /**
      * Red channel.
      */
-    Red(0, true),
+    RED(0, true),
     /**
      * Green channel.
      */
-    Green(1, true),
+    GREEN(1, true),
     /**
      * Hue channel (HSB).
      */
-    Hue(0, false),
+    HUE(0, false),
     /**
      * Saturation channel (HSB).
      */
-    Saturation(1, false),
+    SATURATION(1, false),
     /**
      * Brightness channel (HSB).
      */
-    Brightness(2, false),
+    BRIGHTNESS(2, false),
     /**
      * Blue channel.
      */
-    Blue(2, true);
+    BLUE(2, true);
 
     private final int channel;
     private final boolean isRGB;

@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model;
 
@@ -40,12 +39,15 @@ import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 
 /**
+ *
+ * @param <P> position type
  */
-public final class SAPEREIncarnation implements Incarnation<List<ILsaMolecule>>, Serializable {
+public final class SAPEREIncarnation<P extends Position<? extends P>> implements Incarnation<List<ILsaMolecule>, P>, Serializable {
 
     private static final long serialVersionUID = 1L;
     private static final Logger L = LoggerFactory.getLogger(SAPEREIncarnation.class);
@@ -149,7 +151,7 @@ public final class SAPEREIncarnation implements Incarnation<List<ILsaMolecule>>,
     @Override
     public ILsaNode createNode(
             final RandomGenerator rand,
-            final Environment<List<ILsaMolecule>> env,
+            final Environment<List<ILsaMolecule>, P> env,
             final String param) {
         return new LsaNode(env);
     }
@@ -161,7 +163,7 @@ public final class SAPEREIncarnation implements Incarnation<List<ILsaMolecule>>,
     @Override
     public TimeDistribution<List<ILsaMolecule>> createTimeDistribution(
             final RandomGenerator rand,
-            final Environment<List<ILsaMolecule>> env,
+            final Environment<List<ILsaMolecule>, P> env,
             final Node<List<ILsaMolecule>> node,
             final String param) {
         if (param == null || param.isEmpty()) {
@@ -183,7 +185,7 @@ public final class SAPEREIncarnation implements Incarnation<List<ILsaMolecule>>,
     @Override
     public Reaction<List<ILsaMolecule>> createReaction(
             final RandomGenerator rand,
-            final Environment<List<ILsaMolecule>> env,
+            final Environment<List<ILsaMolecule>, P> env,
             final Node<List<ILsaMolecule>> node,
             final TimeDistribution<List<ILsaMolecule>> time,
             final String param) {
@@ -229,7 +231,7 @@ public final class SAPEREIncarnation implements Incarnation<List<ILsaMolecule>>,
 
     @Override
     public Condition<List<ILsaMolecule>> createCondition(final RandomGenerator rand,
-            final Environment<List<ILsaMolecule>> env, final Node<List<ILsaMolecule>> node,
+            final Environment<List<ILsaMolecule>, P> env, final Node<List<ILsaMolecule>> node,
             final TimeDistribution<List<ILsaMolecule>> time, final Reaction<List<ILsaMolecule>> reaction,
             final String param) {
         if (param.startsWith("+")) {
@@ -240,7 +242,7 @@ public final class SAPEREIncarnation implements Incarnation<List<ILsaMolecule>>,
 
     @Override
     public Action<List<ILsaMolecule>> createAction(final RandomGenerator rand,
-            final Environment<List<ILsaMolecule>> env, final Node<List<ILsaMolecule>> node,
+            final Environment<List<ILsaMolecule>, P> env, final Node<List<ILsaMolecule>> node,
             final TimeDistribution<List<ILsaMolecule>> time, final Reaction<List<ILsaMolecule>> reaction,
             final String param) {
         if (param.startsWith("+")) {

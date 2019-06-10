@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.implementations.environments;
 
@@ -17,6 +16,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.imageio.ImageIO;
+
+import org.kaikikm.threadresloader.ResourceLoader;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -105,7 +106,7 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
      */
     public ImageEnvironment(final int obs, final String path, final double zoom, final double dx, final double dy) throws IOException {
         super();
-        final InputStream resource = ImageEnvironment.class.getResourceAsStream(path);
+        final InputStream resource = ResourceLoader.getResourceAsStream(path);
         final BufferedImage img = resource == null 
                 ? ImageIO.read(new File(path))
                 : ImageIO.read(resource);

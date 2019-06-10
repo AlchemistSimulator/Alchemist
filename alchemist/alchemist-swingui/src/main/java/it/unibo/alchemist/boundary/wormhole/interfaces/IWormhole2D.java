@@ -1,17 +1,16 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.boundary.wormhole.interfaces;
 
+import it.unibo.alchemist.model.interfaces.Position2D;
+
 import java.awt.Point;
 import java.awt.geom.Dimension2D;
-
-import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * A Wormhole (in this context) is an entity that "connects" two worlds: the
@@ -38,10 +37,10 @@ import it.unibo.alchemist.model.interfaces.Position;
  * the prime meridian and the equator is (0; 0), so I have to set the envOffset
  * to (16; 48) in order to see the "beginning" of the map on the left-bottom
  * corner of the view.<br>
- * 
-
+ *
+ * @param <P> position type
  */
-public interface IWormhole2D {
+public interface IWormhole2D<P extends Position2D<? extends P>> {
 
     /**
      * Wormhole mode.
@@ -49,22 +48,22 @@ public interface IWormhole2D {
      */
     enum Mode {
         /**
-         * No stretch allowed
+         * No stretch allowed.
          */
         ISOMETRIC,
         /**
-         * Stretch to adapt to view
+         * Stretch to adapt to view.
          */
         ADAPT_TO_VIEW,
         /**
-         * Stretch is defined by user
+         * Stretch is defined by user.
          */
         SETTABLE,
         /**
-         * Uses spherical coordinates, no stretch allowed
+         * Uses spherical coordinates, no stretch allowed.
          */
-        MAP;
-    };
+        MAP
+    }
 
     /**
      * Converts a point from the view-space to the env-space.
@@ -72,9 +71,9 @@ public interface IWormhole2D {
      * @param viewPoint
      *            is the {@link Point} object whose coordinates are from
      *            view-space
-     * @return a {@link Position} object whose coordinates are from env-space
+     * @return a {@link Position2D} object whose coordinates are from env-space
      */
-    Position getEnvPoint(Point viewPoint);
+    P getEnvPoint(Point viewPoint);
 
     /**
      * Gets the rendering mode.
@@ -87,11 +86,11 @@ public interface IWormhole2D {
      * Converts a point from the env-space to the view-space.
      * 
      * @param envPoint
-     *            is the {@link Position} object whose coordinates are from
+     *            is the {@link Position2D} object whose coordinates are from
      *            env-space
      * @return a {@link Point} object whose coordinates are from view-space
      */
-    Point getViewPoint(Position envPoint);
+    Point getViewPoint(P envPoint);
 
     /**
      * Gets the Position.
@@ -140,10 +139,10 @@ public interface IWormhole2D {
      * <code>envPoint</code>.
      * 
      * @param envPoint
-     *            is the {@link Position} object representing the new position
+     *            is the {@link Position2D} object representing the new position
      *            with env-coordinates
      */
-    void setEnvPosition(Position envPoint);
+    void setEnvPosition(P envPoint);
 
     /**
      * Automatically sets the zoom rate in order to make the environment

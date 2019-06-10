@@ -1,19 +1,18 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.boundary.gui.effects;
 
-import java.awt.Container;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.lang.reflect.Modifier;
-import java.util.Set;
-import java.util.concurrent.CountDownLatch;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.ClassPathScanner;
+import it.unibo.alchemist.boundary.gui.AlchemistSwingUI;
+import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -25,25 +24,23 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-
-import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import it.unibo.alchemist.boundary.gui.AlchemistSwingUI;
-import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
+import java.awt.Container;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.lang.reflect.Modifier;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 /**
  */
-public class EffectBuilder extends JFrame implements ActionListener {
+@SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")
+public final class EffectBuilder extends JFrame implements ActionListener {
 
-    private static final Reflections REFLECTIONS = new Reflections("it.unibo.alchemist");
     private static final long serialVersionUID = -5030318714404946998L;
-    private static final Set<Class<? extends Effect>> EFFECTS = REFLECTIONS.getSubTypesOf(Effect.class);
+    private static final List<Class<? extends Effect>> EFFECTS = ClassPathScanner.subTypesOf(Effect.class, "it.unibo.alchemist");
     private static final Logger L = LoggerFactory.getLogger(EffectBuilder.class);
     private static final String ALCHEMIST_EFFECT_BUILDER = LocalizedResourceBundle.getString("alchemist_effect_builder");
     private static final String EFFECT = LocalizedResourceBundle.getString("effect");
-    private final JButton button = new JButton(LocalizedResourceBundle.getString("done"));
     private final CountDownLatch barrier = new CountDownLatch(1);
     private final JComboBox<Class<? extends Effect>> effectBox;
 
@@ -70,6 +67,7 @@ public class EffectBuilder extends JFrame implements ActionListener {
         pane.add(effectBox);
         final JPanel p4 = new JPanel();
         final Icon done = AlchemistSwingUI.loadScaledImage("/oxygen/categories/applications-graphics.png");
+        final JButton button = new JButton(LocalizedResourceBundle.getString("done"));
         button.setIcon(done);
         p4.add(button);
         pane.add(p4);

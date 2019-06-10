@@ -1,15 +1,23 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.model.implementations.layers;
 
 import it.unibo.alchemist.model.interfaces.Layer;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Position2D;
 
 /**
  * Implements a {@link Layer} with a discontinue spatial distribution: the plane is divided 
  * in two parts, both with a constant concentration but with a different in value.
  * @param <T> the type describing the concentration in this {@link Layer}.
+ * @param <P> {@link Position2D} type.
  *
  */
-public class StepLayer<T> implements Layer<T> {
+public final class StepLayer<T, P extends Position2D<? extends P>> implements Layer<T, P> {
 
     /**
      * 
@@ -45,8 +53,8 @@ public class StepLayer<T> implements Layer<T> {
     }
 
     @Override
-    public T getValue(final Position p) {
-        if (p.getCoordinate(0) > maxx && p.getCoordinate(1) > maxy) {
+    public T getValue(final P p) {
+        if (p.getX() > maxx && p.getY() > maxy) {
             return highValue;
         } else {
             return lowValue;

@@ -1,24 +1,31 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.model.implementations.utils;
 
-import static java.util.Objects.requireNonNull;
+import com.google.common.collect.ImmutableList;
+import it.unibo.alchemist.ClassPathScanner;
+import org.apache.commons.math3.distribution.RealDistribution;
+import org.apache.commons.math3.random.RandomGenerator;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
-import java.util.Set;
 import java.util.stream.Stream;
 
-import org.apache.commons.math3.distribution.RealDistribution;
-import org.apache.commons.math3.random.RandomGenerator;
-import org.reflections.Reflections;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Utility to translate statistics names into a {@link RealDistribution}.
  */
 public final class RealDistributionUtil {
 
-    private static final Set<Class<? extends RealDistribution>> REAL_DISTRIBUTIONS = new Reflections()
-            .getSubTypesOf(RealDistribution.class);
+    private static final ImmutableList<Class<? extends RealDistribution>> REAL_DISTRIBUTIONS = ImmutableList.copyOf(
+         ClassPathScanner.subTypesOf(RealDistribution.class));
 
     private RealDistributionUtil() {
     }

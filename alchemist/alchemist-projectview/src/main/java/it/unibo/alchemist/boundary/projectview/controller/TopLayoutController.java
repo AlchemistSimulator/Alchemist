@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.boundary.projectview.controller;
 
 import java.awt.Dimension;
@@ -8,6 +15,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.ResourceBundle;
+
+import org.kaikikm.threadresloader.ResourceLoader;
 
 import com.google.common.io.Files;
 
@@ -108,7 +117,7 @@ public class TopLayoutController {
             this.ctrlCenter.checkChanges();
         }
         final FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(ProjectGUI.class.getResource("view/NewProjLayoutFolder.fxml"));
+        loader.setLocation(ResourceLoader.getResource(ProjectGUI.RESOURCE_LOCATION + "/view/NewProjLayoutFolder.fxml"));
         final AnchorPane pane = (AnchorPane) loader.load();
         final Stage stage = new Stage();
         stage.setTitle(RESOURCES.getString("new_proj"));
@@ -152,7 +161,8 @@ public class TopLayoutController {
         final File settingsFile = new File(settingsPath);
         final DirectoryChooser dirChooser = new DirectoryChooser();
         if (settingsFile.exists()) {
-            final String lastUsed = Optional.ofNullable(Files.readFirstLine(settingsFile, StandardCharsets.UTF_8))
+            final String lastUsed = Optional.ofNullable(Files.asCharSource(settingsFile, StandardCharsets.UTF_8)
+                    .readFirstLine())
                     .orElse(USER_HOME);
             final File lastUsedDir = new File(lastUsed);
             dirChooser.setInitialDirectory(lastUsedDir.exists() ? lastUsedDir : new File(USER_HOME));
@@ -160,7 +170,7 @@ public class TopLayoutController {
         dirChooser.setTitle(RESOURCES.getString("select_folder_proj"));
         final File dir = dirChooser.showDialog(this.main.getStage());
         if (dir != null) {
-            Files.write(dir.getPath(), settingsFile, StandardCharsets.UTF_8);
+            Files.asCharSink(settingsFile, StandardCharsets.UTF_8).write(dir.getPath());
             setView(dir);
         }
     }

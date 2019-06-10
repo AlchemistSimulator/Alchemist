@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+  ~
+  ~ This file is part of Alchemist, and is distributed under the terms of the
+  ~ GNU General Public License, with a linking exception,
+  ~ as described in the file LICENSE in the Alchemist distribution's top directory.
+  -->
+
+<ruleset name="Ruleset by Danilo Pianini"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+	<description>Rules selected by Danilo Pianini</description>
+	<rule ref="category/java/bestpractices.xml">
+		<exclude name="AccessorClassGeneration" />
+		<exclude name="AccessorMethodGeneration" />
+		<exclude name="ConstantsInInterface" />
+		<exclude name="GuardLogStatement" />
+		<exclude name="JUnitAssertionsShouldIncludeMessage" />
+		<exclude name="JUnitTestContainsTooManyAsserts" />
+		<exclude name="JUnitTestsShouldIncludeAssert" />
+		<exclude name="OneDeclarationPerLine" />
+		<exclude name="PositionLiteralsFirstInCaseInsensitiveComparisons" />
+		<exclude name="PositionLiteralsFirstInComparisons" />
+		<exclude name="UseVarargs" />
+	</rule>
+	<rule ref="category/java/codestyle.xml">
+		<exclude name="AbstractNaming" />
+		<exclude name="AtLeastOneConstructor" />
+		<exclude name="AvoidFinalLocalVariable" />
+		<exclude name="AvoidPrefixingMethodParameters" />
+		<exclude name="AvoidUsingNativeCode" />
+		<exclude name="CallSuperInConstructor" />
+		<exclude name="ConfusingTernary" />
+		<exclude name="EmptyMethodInAbstractClassShouldBeAbstract" />
+		<exclude name="LongVariable" />
+		<exclude name="MDBAndSessionBeanNamingConvention" />
+		<exclude name="OnlyOneReturn" />
+		<exclude name="ShortClassName" />
+		<exclude name="ShortMethodName" />
+		<exclude name="ShortVariable" />
+		<exclude name="TooManyStaticImports" />
+	</rule>
+	<rule ref="category/java/codestyle.xml/ClassNamingConventions">
+		<properties>
+			<property name="utilityClassPattern" value="[A-Z][a-zA-Z0-9]+" />
+		</properties>
+	</rule>
+	<rule ref="category/java/design.xml">
+		<exclude name="AbstractClassWithoutAnyMethod" />
+		<exclude name="AvoidDeeplyNestedIfStmts" />
+		<exclude name="CouplingBetweenObjects" />
+		<exclude name="CyclomaticComplexity" />
+		<exclude name="DataClass" />
+		<exclude name="ExcessiveClassLength" />
+		<exclude name="ExcessiveImports" />
+		<exclude name="ExcessiveMethodLength" />
+		<exclude name="ExcessiveParameterList" />
+		<exclude name="ExcessivePublicCount" />
+		<exclude name="GodClass" />
+		<exclude name="LawOfDemeter" />
+		<exclude name="LoosePackageCoupling" />
+		<exclude name="ModifiedCyclomaticComplexity" />
+		<exclude name="NcssConstructorCount" />
+		<exclude name="NcssCount" />
+		<exclude name="NcssMethodCount" />
+		<exclude name="NcssTypeCount" />
+		<exclude name="NPathComplexity" />
+		<exclude name="StdCyclomaticComplexity" />
+		<exclude name="SwitchDensity" />
+		<exclude name="TooManyFields" />
+		<exclude name="TooManyMethods" />
+		<exclude name="UseObjectForClearerAPI" />
+	</rule>
+    <rule ref="category/java/documentation.xml">
+        <exclude name="CommentRequired" />
+        <exclude name="CommentSize" />
+        <exclude name="UncommentedEmptyMethodBody" />
+    </rule>
+    <rule ref="category/java/errorprone.xml">
+		<exclude name="AvoidFieldNameMatchingMethodName" />
+        <exclude name="AvoidLiteralsInIfCondition" />
+        <exclude name="BeanMembersShouldSerialize" />
+        <exclude name="DataflowAnomalyAnalysis" />
+		<exclude name="DoNotCallSystemExit" />
+        <exclude name="MissingBreakInSwitch" />
+        <exclude name="NonStaticInitializer" />
+        <exclude name="NullAssignment" />
+        <exclude name="ReturnEmptyArrayRatherThanNull" />
+        <exclude name="TestClassWithoutTestCases" />
+    </rule>
+    <rule ref="category/java/multithreading.xml">
+        <exclude name="AvoidSynchronizedAtMethodLevel" />
+        <exclude name="AvoidUsingVolatile" />
+		<exclude name="DoNotUseThreads" />
+        <exclude name="UseConcurrentHashMap" />
+    </rule>
+    <rule ref="category/java/performance.xml">
+        <exclude name="AvoidFileStream" />
+        <exclude name="AvoidInstantiatingObjectsInLoops" />
+        <exclude name="AvoidUsingShortType" />
+        <exclude name="SimplifyStartsWith" />
+        <exclude name="TooFewBranchesForASwitchStatement" />
+    </rule>
+    <rule ref="category/java/security.xml">
+    </rule>
+</ruleset>

@@ -1,5 +1,5 @@
 network-model:
-  type: EuclideanDistance
+  type: ConnectWithinDistance
   parameters: [5]
   
 incarnation: scafi
@@ -10,7 +10,7 @@ pools:
       type: Event
       actions:
         - type: RunScafiProgram
-          parameters: [test.scafiprograms.ScafiEnvProgram]
+          parameters: [it.unibo.alchemist.scafi.test.ScafiEnvProgram]
       
 positions:
   type: Continuous2DEuclidean
@@ -24,6 +24,8 @@ displacements:
     contents:
       - molecule: number
         concentration: 77
+      - molecule: number2
+        concentration: 0
   - in:
       type: Point
       parameters: [2, 2]
@@ -32,3 +34,5 @@ displacements:
     contents:
       - molecule: number
         concentration: -500
+      - molecule: number2
+        concentration: -400

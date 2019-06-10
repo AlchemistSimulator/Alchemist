@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.implementations.linkingrules;
 
@@ -12,11 +11,14 @@ import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 
 /**
+ *
+ * @param <P> position type
  * @param <T>
  */
-public class SelectiveAdaptiveRange<T> extends AdaptiveRange<T> {
+public class SelectiveAdaptiveRange<T, P extends Position<P>> extends AdaptiveRange<T, P> {
 
     /**
      * The default filter molecule.
@@ -192,7 +194,7 @@ public class SelectiveAdaptiveRange<T> extends AdaptiveRange<T> {
      * @return true if the node must be removed, false otherwise
      */
     @Override
-    protected boolean conditionForRemoval(final Environment<T> env, final Node<T> center, final Node<T> neighbor, final double centerRange, final double neighRange) {
+    protected boolean conditionForRemoval(final Environment<T, P> env, final Node<T> center, final Node<T> neighbor, final double centerRange, final double neighRange) {
         return !neighbor.contains(moleculeType) || super.conditionForRemoval(env, center, neighbor, centerRange, neighRange);
     }
 }

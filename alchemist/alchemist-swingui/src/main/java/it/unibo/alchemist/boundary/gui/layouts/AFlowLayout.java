@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.boundary.gui.layouts;
 
@@ -50,11 +49,6 @@ public abstract class AFlowLayout implements LayoutManager, Serializable {
      * display area.
      */
     public static final int TOP = 1;
-    /**
-     * The anchoring constant that designates anchoring to the bottom of the
-     * display area.
-     */
-    public static final int BOTTOM = 2;
 
     private int gap; // the vertical vgap between components...defaults to 5
     private int alignment; // LEFT, RIGHT, CENTER or BOTH...how the components
@@ -80,7 +74,7 @@ public abstract class AFlowLayout implements LayoutManager, Serializable {
     }
 
     @Override
-    public void addLayoutComponent(final String name, final Component comp) {
+    public final void addLayoutComponent(final String name, final Component comp) {
         if (isOrdered()) {
             getComponentsList().add(comp);
         }
@@ -159,17 +153,17 @@ public abstract class AFlowLayout implements LayoutManager, Serializable {
     protected abstract Dimension layoutSize(Container parent, boolean minimum);
 
     @Override
-    public Dimension minimumLayoutSize(final Container parent) {
+    public final Dimension minimumLayoutSize(final Container parent) {
         return layoutSize(parent, false);
     }
 
     @Override
-    public Dimension preferredLayoutSize(final Container parent) {
+    public final Dimension preferredLayoutSize(final Container parent) {
         return layoutSize(parent, false);
     }
 
     @Override
-    public void removeLayoutComponent(final Component comp) {
+    public final void removeLayoutComponent(final Component comp) {
         if (isOrdered()) {
             getComponentsList().remove(comp);
         }
@@ -195,9 +189,8 @@ public abstract class AFlowLayout implements LayoutManager, Serializable {
      * 
      * @param c the component you want to order
      * @param order the position of the component
-     * @throws IllegalStateException 
      */
-    public void setComponentOrder(final Component c, final int order) throws IllegalStateException {
+    public final void setComponentOrder(final Component c, final int order) {
         if (!isOrdered()) {
             throw new IllegalStateException();
         }
@@ -215,6 +208,9 @@ public abstract class AFlowLayout implements LayoutManager, Serializable {
         this.gap = gap;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return getClass().getName() + "[gap=" + gap + " align=" + alignment + " anchor=" + anchor + "]";

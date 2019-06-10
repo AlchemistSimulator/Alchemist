@@ -1,22 +1,29 @@
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.model.implementations.actions;
-
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.concurrent.TimeUnit;
-
-import org.danilopianini.util.Hashes;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
-
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.gpsload.impl.TraceLoader;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.ObjectWithGPS;
 import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy;
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy;
+import org.danilopianini.util.Hashes;
+
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
 
 import static java.util.Objects.requireNonNull;
 
@@ -24,6 +31,7 @@ import static java.util.Objects.requireNonNull;
  * basic action that follow a {@link GPSTrace}.
  * @param <T>
  */
+@SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE", justification = "SpotBugs is reporting false positives")
 public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
 
     private static final long serialVersionUID = 1L;
@@ -32,7 +40,7 @@ public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
             .build(key -> new TraceLoader(key.path, key.cycle, key.normalizer, key.args));
     private static final LoadingCache<MapEnvironment<?>, LoadingCache<TraceRef, Iterator<GPSTrace>>> LOADER = Caffeine.newBuilder()
             .weakKeys()
-            .build(e -> Caffeine.newBuilder().build(key -> TRACE_LOADER_CACHE.get(key).iterator()));
+            .build(e -> Caffeine.newBuilder().build(key -> requireNonNull(TRACE_LOADER_CACHE.get(key)).iterator()));
     private final GPSTrace trace;
 
     /**
@@ -57,9 +65,11 @@ public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
      * @param normalizerArgs
      *            Args to build normalize
      */
-    public MoveOnMapWithGPS(final MapEnvironment<T> environment, final Node<T> node, 
-            final RoutingStrategy<T> rt, final SpeedSelectionStrategy<T> sp, 
-            final TargetSelectionStrategy<T> tg,
+    public MoveOnMapWithGPS(final MapEnvironment<T> environment,
+            final Node<T> node, 
+            final RoutingStrategy<GeoPosition> rt,
+            final SpeedSelectionStrategy<GeoPosition> sp, 
+            final TargetSelectionStrategy<GeoPosition> tg,
             final String path, final boolean cycle, final String normalizer, final Object... normalizerArgs) {
         this(environment, node, rt, sp, tg, traceFor(environment, path, cycle, normalizer, normalizerArgs));
     }
@@ -79,9 +89,12 @@ public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
      * @param trace
      *            {@link GPSTrace to follow}
      */
-    public MoveOnMapWithGPS(final MapEnvironment<T> environment, final Node<T> node, 
-            final RoutingStrategy<T> rt, final SpeedSelectionStrategy<T> sp, 
-            final TargetSelectionStrategy<T> tg,
+    public MoveOnMapWithGPS(
+            final MapEnvironment<T> environment,
+            final Node<T> node, 
+            final RoutingStrategy<GeoPosition> rt,
+            final SpeedSelectionStrategy<GeoPosition> sp, 
+            final TargetSelectionStrategy<GeoPosition> tg,
             final GPSTrace trace) {
         super(environment, node, rt, sp, tg);
         this.trace = requireNonNull(trace);
@@ -111,6 +124,7 @@ public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
      *            Args to build normalize
      * @return the GPSTrace
      */
+    @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
     public static GPSTrace traceFor(final MapEnvironment<?> environment, final String path, final boolean cycle, final String normalizer, final Object... normalizerArgs) {
         final LoadingCache<TraceRef, Iterator<GPSTrace>> gpsTraceLoader = LOADER.get(requireNonNull(environment));
         if (gpsTraceLoader == null) {
@@ -138,14 +152,17 @@ public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
         return trace;
     }
 
-    private static class TraceRef {
+    private static final class TraceRef {
 
         private final String path, normalizer;
         private final boolean cycle;
         private final Object[] args;
         private int hash;
 
-        TraceRef(final String path, final boolean cycle, final String normalizer, final Object... args) {
+        private TraceRef(final String path,
+                 final boolean cycle,
+                 final String normalizer,
+                 final Object... args) { // NOPMD: array is stored directly by purpose.
             this.path = path;
             this.cycle = cycle;
             this.normalizer = normalizer;

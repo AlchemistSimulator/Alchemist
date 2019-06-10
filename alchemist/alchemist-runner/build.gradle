@@ -1,9 +1,0 @@
-dependencies {
-    compile (
-        project(':alchemist-engine'),
-        project(':alchemist-implementationbase'),
-        project(':alchemist-interfaces'),
-        project(':alchemist-loading'),
-        project(':alchemist-swingui')
-    )
-}

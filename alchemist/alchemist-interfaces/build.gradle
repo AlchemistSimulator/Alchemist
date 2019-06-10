@@ -1,6 +1,0 @@
-dependencies {
-    compile (
-        "org.danilopianini:listset:${listsetVersion}",
-        "org.jooq:jool:${joolVersion}"
-    )
-}

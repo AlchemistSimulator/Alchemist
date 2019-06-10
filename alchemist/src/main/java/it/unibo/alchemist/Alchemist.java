@@ -1,5 +1,9 @@
-/**
- * 
+/*
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist;
 
@@ -23,6 +27,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.ignite.startup.cmdline.CommandLineStartup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,19 +42,21 @@ import it.unibo.alchemist.loader.YamlLoader;
  * Starts Alchemist.
  * 
  */
-public final class Alchemist {
+public final class Alchemist { // NOPMD MoreThanOneLogger
 
     private static final Logger L = LoggerFactory.getLogger(Alchemist.class);
     private static final Map<String, Level> LOGLEVELS;
     private static final String HEADLESS = "hl";
     private static final String VARIABLES = "var";
     private static final String BENCHMARK = "bmk";
-    private static final char PARALLELISM = 'p';
     private static final char BATCH = 'b';
     private static final char EXPORT = 'e';
+    private static final char DISTRIBUTED = 'd';
     private static final char GRAPHICS = 'g';
     private static final char HELP = 'h';
     private static final char INTERVAL = 'i';
+    private static final char NODE = 's';
+    private static final char PARALLELISM = 'p';
     private static final char TIME = 't';
     private static final char YAML = 'y';
 
@@ -78,6 +85,9 @@ public final class Alchemist {
         try {
             final CommandLine cmd = parser.parse(opts, args);
             setVerbosity(cmd);
+            if (cmd.hasOption(NODE)) {
+                CommandLineStartup.main(new String[] {cmd.getOptionValue(NODE)});
+            }
             if (cmd.hasOption(HELP)) {
                 final HelpFormatter formatter = new HelpFormatter();
                 formatter.printHelp("java -jar alchemist-redist-{version}.jar", opts);
@@ -92,28 +102,28 @@ public final class Alchemist {
                 }
             }
             if (loader.isPresent()) {
-                final Builder<?> simBuilder = new Builder<>(loader.get())
-                        .setHeadless(cmd.hasOption(HEADLESS))
-                        .setGUICloseOperation(JFrame.EXIT_ON_CLOSE);
-                ifPresent(cmd, EXPORT, simBuilder::setOutputFile);
-                ifPresent(cmd, GRAPHICS, simBuilder::setEffects);
+                final Builder<?, ?> simBuilder = new Builder<>(loader.get())
+                        .headless(cmd.hasOption(HEADLESS))
+                        .withGUICloseOperation(JFrame.EXIT_ON_CLOSE);
+                ifPresent(cmd, EXPORT, simBuilder::writingOutputTo);
+                ifPresent(cmd, GRAPHICS, simBuilder::withEffects);
                 try {
-                    ifPresent(cmd, INTERVAL, Double::parseDouble, simBuilder::setInterval);
-                    ifPresent(cmd, TIME, Double::parseDouble, simBuilder::setEndTime);
+                    ifPresent(cmd, INTERVAL, Double::parseDouble, simBuilder::samplingEvery);
+                    ifPresent(cmd, TIME, Double::parseDouble, simBuilder::endingAtTime);
                     final String[] varsUnderRun = cmd.getOptionValues(VARIABLES);
                     if (cmd.hasOption(BATCH)) {
                         if (cmd.hasOption(PARALLELISM)) {
                             try {
                                 final int threads = Integer.parseUnsignedInt(cmd.getOptionValue(PARALLELISM));
-                                simBuilder.setParallelism(threads);
+                                simBuilder.withParallelism(threads);
                                 L.info("Using " + threads + " thread(s).");
                             } catch (final NumberFormatException e) {
-                                simBuilder.setParallelism(Runtime.getRuntime().availableProcessors());
+                                simBuilder.withParallelism(Runtime.getRuntime().availableProcessors());
                                 L.warn("Invalid option for PARALLELISM parameter, back to default.");
                             }
                         }
                         if (cmd.hasOption(BENCHMARK)) {
-                            simBuilder.setBenchmarkMode(true);
+                            simBuilder.writingBenchmarkResultsTo(cmd.getOptionValue(BENCHMARK));
                         }
                         if (varsUnderRun == null) {
                             L.error("You must specify which variables you want the batch to run on.");
@@ -123,6 +133,10 @@ public final class Alchemist {
                         if (vars.length == 0) {
                             L.info("Alchemist is in batch mode, but no variable is available.");
                             System.exit(2);
+                        }
+
+                        if (cmd.hasOption(DISTRIBUTED)) {
+                            ifPresent(cmd, DISTRIBUTED, simBuilder::withIgniteConfigration);
                         }
                         simBuilder.build().launch(vars);
                     } else {

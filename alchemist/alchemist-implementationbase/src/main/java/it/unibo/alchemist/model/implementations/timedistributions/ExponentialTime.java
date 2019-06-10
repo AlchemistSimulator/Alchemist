@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.implementations.timedistributions;
 
@@ -54,11 +53,11 @@ public class ExponentialTime<T> extends AbstractDistribution<T> {
     }
 
     @Override
-    public void updateStatus(
+    public final void updateStatus(
             final Time curTime,
             final boolean executed,
             final double newpropensity,
-            final Environment<T> env) {
+            final Environment<T, ?> env) {
         assert !Double.isNaN(newpropensity);
         assert !Double.isNaN(oldPropensity);
         if (oldPropensity == 0 && newpropensity != 0) {
@@ -77,12 +76,12 @@ public class ExponentialTime<T> extends AbstractDistribution<T> {
         assert !Double.isNaN(oldPropensity);
         if (isMu) {
             final Time dt = genTime(newpropensity);
-            setTau(curTime.sum(dt));
+            setTau(curTime.plus(dt));
         } else {
             if (oldPropensity != newpropensity) {
-                final Time sub = getNextOccurence().subtract(curTime);
-                final Time mul = sub.multiply(oldPropensity / newpropensity);
-                setTau(mul.sum(curTime));
+                final Time sub = getNextOccurence().minus(curTime);
+                final Time mul = sub.times(oldPropensity / newpropensity);
+                setTau(mul.plus(curTime));
             }
         }
     }
@@ -101,11 +100,21 @@ public class ExponentialTime<T> extends AbstractDistribution<T> {
         return -FastMath.log1p(-rand.nextDouble()) / lambda;
     }
 
+    /**
+     * Must be overridden by subclasses returning the correct instance.
+     *
+     * @param currentTime the time at which the time distribution was cloned
+     * @return a new ExponentialTime
+     */
     @Override
     public ExponentialTime<T> clone(final Time currentTime) {
         return new ExponentialTime<>(rate, DoubleTime.ZERO_TIME, rand);
     }
 
+    /**
+     *
+     * @return the rate of the reaction
+     */
     @Override
     public double getRate() {
         return rate;

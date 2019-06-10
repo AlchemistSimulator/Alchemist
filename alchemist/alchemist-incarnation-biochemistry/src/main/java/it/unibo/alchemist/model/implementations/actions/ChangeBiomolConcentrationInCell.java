@@ -1,13 +1,11 @@
 /*
- * Copyright (C) 2010-2016, Danilo Pianini and contributors
-
-
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
@@ -17,19 +15,19 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 /**
  *
  */
-public class ChangeBiomolConcentrationInCell extends AbstractActionOnSingleMolecule<Double> {
+public final class ChangeBiomolConcentrationInCell extends AbstractActionOnSingleMolecule<Double> {
 
     private static final long serialVersionUID = 5569613886926615012L;
     private final double deltaC;
 
     /**
      * 
-     * @param biomol 
-     * @param deltaConcentration 
-     * @param node 
+     * @param biomolecule the molecule
+     * @param deltaConcentration the change in concentration
+     * @param node the node
      */
-    public ChangeBiomolConcentrationInCell(final Node<Double> node, final Biomolecule biomol, final double deltaConcentration) {
-        super(node, biomol);
+    public ChangeBiomolConcentrationInCell(final Node<Double> node, final Biomolecule biomolecule, final double deltaConcentration) {
+        super(node, biomolecule);
         this.deltaC = deltaConcentration;
     }
 

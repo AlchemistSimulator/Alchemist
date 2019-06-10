@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2010-2014, Danilo Pianini and contributors
- * listed in the project's pom.xml file.
- * 
- * This file is part of Alchemist, and is distributed under the terms of
- * the GNU General Public License, with a linking exception, as described
- * in the file LICENSE in the Alchemist distribution's top directory.
+ * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.boundary.wormhole.implementation;
 
@@ -18,14 +17,7 @@ import java.awt.Toolkit;
  * 
 
  */
-public class AngleManagerImpl extends AbstractSlideInputManager implements AngleManager {
-    /**
-     * <code>DEF_DEG_PER_WHEEL_CLICK</code> =
-     * "DEFault amount of DEGrees PER WHEEL CLICK".<br>
-     * Currently set to {@value #DEF_DEG_PER_WHEEL_CLICK} that seems pretty good
-     * to me.
-     */
-    public static final double DEF_DEG_PER_WHEEL_CLICK = 5d;
+public final class AngleManagerImpl extends AbstractSlideInputManager implements AngleManager {
 
     /**
      * <code>DEF_DEG_PER_PIXEL</code> = "DEFault amount of DEGrees PER PIXEL".<br>

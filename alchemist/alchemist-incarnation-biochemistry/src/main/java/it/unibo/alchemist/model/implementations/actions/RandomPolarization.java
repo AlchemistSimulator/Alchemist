@@ -22,14 +22,10 @@ import org.apache.commons.math3.util.FastMath;
  *
  * @param <P> position type
  */
-public class RandomPolarization<P extends Position2D<P>> extends AbstractRandomizableAction<Double> {
+public final class RandomPolarization<P extends Position2D<P>> extends AbstractRandomizableAction<Double> {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
     private final Environment<Double, P> environment;
-
 
     /**
      * @param environment the environment

@@ -11,7 +11,7 @@ import it.unibo.alchemist.model.interfaces.Concentration;
 
 /**
  */
-public class Local implements Concentration<Object> {
+public final class Local implements Concentration<Object> {
 
     private static final long serialVersionUID = 4137133493821814841L;
     private final Object content;

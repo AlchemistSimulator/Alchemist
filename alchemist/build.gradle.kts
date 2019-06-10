@@ -317,6 +317,7 @@ dependencies {
     orchidRuntime(Libs.orchidsearch)
     orchidRuntime(Libs.orchidsyntaxhighlighter)
     orchidRuntime(Libs.orchidwiki)
+    orchidRuntime(Libs.orchidgithub)
 }
 
 tasks.withType<DokkaTask> {
@@ -394,7 +395,7 @@ tasks.register(orchidSeedConfiguration) {
                 services:
                   publications:
                     stages:
-                      - type: ghPages
+                      - type: githubPages
                         username: 'DanySK'
                         commitUsername: Danilo Pianini
                         commitEmail: danilo.pianini@gmail.com

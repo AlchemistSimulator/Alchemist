@@ -66,11 +66,13 @@ public class TestLoadGPSTrace {
     private static final int TIME_TO_REACH = 30550;
     /**
      * Test the ability to inject variables.
+     *
+     * @param <T> Used for internal consistency
      */
     @Test
     public <T> void testLoadGPSTrace() {
         final InputStream res = ResourceLoader.getResourceAsStream("testgps.yml");
-        assertNotNull(res,"Missing test resource " + "testgps.yml");
+        assertNotNull(res, "Missing test resource " + "testgps.yml");
         final Environment<T, GeoPosition> env = new YamlLoader(res).getDefault();
         final Simulation<T, GeoPosition> sim = new Engine<>(env, new DoubleTime(TIME_TO_REACH));
         sim.addOutputMonitor(new OutputMonitor<T, GeoPosition>() {

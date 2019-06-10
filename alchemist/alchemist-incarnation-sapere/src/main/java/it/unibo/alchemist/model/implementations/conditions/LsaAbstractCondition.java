@@ -54,7 +54,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
     public abstract String toString();
 
     @Override
-    public ILsaNode getNode() {
+    public final ILsaNode getNode() {
         return (ILsaNode) super.getNode();
     }
 

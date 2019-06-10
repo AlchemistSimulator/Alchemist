@@ -55,6 +55,8 @@ public final class SingleRunGUI {
      *            the simulation for this GUI
      * @param <T>
      *            concentration type
+     * @param <P>
+     *            position type
      */
     public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim) {
         make(sim, (File) null, JFrame.EXIT_ON_CLOSE);
@@ -68,6 +70,8 @@ public final class SingleRunGUI {
      *            the type of close operation for this GUI
      * @param <T>
      *            concentration type
+     * @param <P>
+     *            position type
      */
     public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final int closeOperation) {
         make(sim, (File) null, closeOperation);
@@ -82,6 +86,8 @@ public final class SingleRunGUI {
      *            the effects file
      * @param <T>
      *            concentration type
+     * @param <P>
+     *            position type
      */
     public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final String effectsFile) {
         make(sim, new File(effectsFile), JFrame.EXIT_ON_CLOSE);
@@ -98,6 +104,8 @@ public final class SingleRunGUI {
      *            the type of close operation for this GUI
      * @param <T>
      *            concentration type
+     * @param <P>
+     *            position type
      */
     public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final String effectsFile, final int closeOperation) {
         make(sim, new File(effectsFile), closeOperation);
@@ -118,6 +126,8 @@ public final class SingleRunGUI {
      *            the type of close operation for this GUI
      * @param <T>
      *            concentration type
+     * @param <P>
+     *            position type
      */
     public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final File effectsFile, final int closeOperation) {
         @SuppressWarnings("unchecked") // Actually safe: MapEnvironment uses the same P type of MapDisplay

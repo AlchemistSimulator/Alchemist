@@ -168,7 +168,7 @@ public class NewProjLayoutSelectController {
                     .skip(1)
                     .map(Path::toString)
                     .map(s -> s.replace(myPath.toString(), ""))
-                    .map(s-> s.substring(1))
+                    .map(s -> s.substring(1))
                     .sorted();
             if (ON_WINDOWS) {
                 resourcesStream = resourcesStream.map(s -> s.replaceAll("\\\\", "/"));

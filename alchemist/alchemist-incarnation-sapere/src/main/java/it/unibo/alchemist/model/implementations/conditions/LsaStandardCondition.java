@@ -151,7 +151,7 @@ public class LsaStandardCondition extends LsaAbstractCondition {
      *            true if this condition is valid
      * @return the value which is passed.
      */
-    protected boolean setValid(final boolean isValid) {
+    protected final boolean setValid(final boolean isValid) {
         valid = isValid;
         return valid;
     }

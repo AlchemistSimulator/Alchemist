@@ -60,11 +60,11 @@ public class ProtelisNode extends AbstractNode<Object> implements DeviceUID, Exe
      * 
      * @param program
      *            the {@link RunProtelisProgram}
-     * @param netmgr
+     * @param networkManager
      *            the {@link AlchemistNetworkManager}
      */
-    public void addNetworkManger(final RunProtelisProgram<?> program, final AlchemistNetworkManager netmgr) {
-        netmgrs.put(program, netmgr);
+    public void addNetworkManger(final RunProtelisProgram<?> program, final AlchemistNetworkManager networkManager) {
+        netmgrs.put(program, networkManager);
     }
 
     /**

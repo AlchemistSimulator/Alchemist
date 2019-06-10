@@ -83,6 +83,8 @@ public class TestYAMLLoader {
 
     /**
      * Test loading layer classes.
+     *
+     * @param <P> Used for internal consistency
      */
     @Test
     public <P extends Position<P>> void testLayers() {

@@ -486,7 +486,7 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
         return mkdirsIfNeeded(new File(target));
     }
 
-    private class CacheEntry {
+    private final class CacheEntry {
 
         private final GeoPosition apprEnd;
         private final GeoPosition apprStart;

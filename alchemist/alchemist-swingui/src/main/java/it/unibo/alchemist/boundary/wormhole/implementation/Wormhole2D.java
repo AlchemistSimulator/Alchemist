@@ -183,6 +183,9 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
         return angle;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Point getViewPoint(final P envPoint) {
         return viewPointFromEnv(from(envPoint)).toPoint();

@@ -113,6 +113,9 @@ public class LsaStandardCondition extends LsaAbstractCondition {
         return setValid(matchesfound);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Context getContext() {
         return Context.LOCAL;

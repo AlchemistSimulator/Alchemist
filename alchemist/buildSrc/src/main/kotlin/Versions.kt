@@ -7,7 +7,7 @@
 object Versions {
     const val logback_classic: String = "1.3.0-alpha4" 
 
-    const val com_eden_orchidplugin_gradle_plugin: String = "0.17.1" // available: "0.17.1"
+    const val com_eden_orchidplugin_gradle_plugin: String = "0.17.1"
 
     const val caffeine: String = "2.7.0" 
 
@@ -51,7 +51,7 @@ object Versions {
 
     const val classgraph: String = "4.8.37" // available: "4.8.38"
 
-    const val io_github_javaeden_orchid: String = "0.17.1" // available: "0.17.1"
+    const val io_github_javaeden_orchid: String = "0.17.1"
 
     const val jpx: String = "1.4.0" 
 
@@ -101,7 +101,7 @@ object Versions {
 
     const val annotations: String = "17.0.0" 
 
-    const val jgrapht_core: String = "1.3.0" // available: "1.3.1"
+    const val jgrapht_core: String = "1.3.1"
 
     const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String = "8.0.0" 
 

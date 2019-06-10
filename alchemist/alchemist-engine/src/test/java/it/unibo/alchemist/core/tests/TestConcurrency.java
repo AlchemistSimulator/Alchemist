@@ -59,7 +59,7 @@ public class TestConcurrency {
     }
 
     /**
-     * Test if the status of a {@link Engine} changes as expected
+     * Test if the status of a {@link Engine} changes as expected.
      */
     @Test
     @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", justification = "We don't need the status of the Runnable")
@@ -123,9 +123,9 @@ public class TestConcurrency {
         }
     }
 
-    private static class DummyNode extends AbstractNode<Object> {
+    private static final class DummyNode extends AbstractNode<Object> {
         private static final long serialVersionUID = 1L;
-        public DummyNode(final Environment<?, ?> env) {
+        private DummyNode(final Environment<?, ?> env) {
             super(env);
         }
         @Override

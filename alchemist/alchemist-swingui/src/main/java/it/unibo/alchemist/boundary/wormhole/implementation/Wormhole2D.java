@@ -243,6 +243,9 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
         return getEnvironment().makePosition(x, y);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void optimalZoom() {
         if (getEnvRatio() <= getViewRatio()) {
@@ -253,6 +256,9 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void rotateAroundPoint(final Point p, final double a) {
         final PointAdapter<P> orig = effectCenter;

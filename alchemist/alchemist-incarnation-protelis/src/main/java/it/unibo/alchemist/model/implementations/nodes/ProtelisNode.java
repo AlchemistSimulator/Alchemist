@@ -134,9 +134,7 @@ public class ProtelisNode extends AbstractNode<Object> implements DeviceUID, Exe
     @Override
     public ProtelisNode cloneNode(final Time currentTime) {
         final ProtelisNode result = new ProtelisNode(environment);
-        getContents().forEach((mol, conc) -> {
-            result.setConcentration(mol, conc);
-        });
+        getContents().forEach(result::setConcentration);
         getReactions().forEach(r -> result.addReaction(r.cloneOnNewNode(result, currentTime)));
         return result;
     }

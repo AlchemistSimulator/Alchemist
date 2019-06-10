@@ -485,6 +485,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         return getStatus();
     }
 
+    // CHECKSTYLE: FinalClassCheck OFF
     private class Update {
         private final Node<T> source;
 

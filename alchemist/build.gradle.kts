@@ -8,7 +8,6 @@
 import com.github.spotbugs.SpotBugsTask
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.exclude
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
@@ -91,6 +90,7 @@ allprojects {
 
     tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"
+        options.compilerArgs = options.compilerArgs + listOf("-Xlint:unchecked", "-Werror")
     }
 
     tasks.withType<KotlinCompile> {

@@ -166,6 +166,9 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
         return env.getDistanceBetweenNodes(getNode(), node);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return "+" + getMolecule().toString();

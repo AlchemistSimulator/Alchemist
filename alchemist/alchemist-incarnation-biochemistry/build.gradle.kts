@@ -1,6 +1,3 @@
-import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.exclude
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallArgument.DefaultArgument.arguments
-
 /*
  * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
  *
@@ -26,6 +23,19 @@ dependencies {
     testImplementation(project(":alchemist-loading"))
     testImplementation(project(":alchemist-time"))
     testImplementation(Libs.kotlintest_runner_junit5)
+}
+
+/*
+ * This is required, as the antlr configuration pulls in (and needs to use) a recent version of the antlr-runtime, not just of antlr4-runtime.
+ * Such dependency then breaks Protelis, which uses Xtext that relies on an older antlr.
+ * The antlr-runtime dependency is only needed for running antlr, as the runtime uses antlr4-runtime.
+ */
+configurations {
+    all {
+        if (!name.contains("antlr")) {
+            exclude(module = "antlr-runtime")
+        }
+    }
 }
 
 tasks.withType<Test> {

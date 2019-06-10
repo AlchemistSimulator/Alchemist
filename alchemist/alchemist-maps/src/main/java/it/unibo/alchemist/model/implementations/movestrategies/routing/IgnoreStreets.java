@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.Route;
  *
  * @param <P> position type
  */
-public class IgnoreStreets<P extends Position<P>> implements RoutingStrategy<P> {
+public final class IgnoreStreets<P extends Position<P>> implements RoutingStrategy<P> {
 
     private static final long serialVersionUID = 2678088737744440021L;
 

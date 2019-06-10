@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * @param <T>
  */
-public class JOutputMonitorRepresentation<T> extends JPanel implements ItemSelectable {
+public final class JOutputMonitorRepresentation<T> extends JPanel implements ItemSelectable {
     /**
      * 
      */

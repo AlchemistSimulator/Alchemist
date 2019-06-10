@@ -43,6 +43,10 @@ public final class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
     private static final AtomicInteger IDGEN = new AtomicInteger();
     private final MapView mapView = new MapView();
 
+    static {
+        OpenStreetMapMapnik.INSTANCE.setUserAgent("Alchemist Simulator using mapsforge (alchemistsimulator.github.io)");
+        OpenStreetMapMapnik.INSTANCE.setReferer("alchemistsimulator.github.io");
+    }
     /**
      * 
      */

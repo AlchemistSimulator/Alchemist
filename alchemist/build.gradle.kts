@@ -36,10 +36,12 @@ plugins {
     id("org.danilopianini.publish-on-central") version Versions.org_danilopianini_publish_on_central_gradle_plugin
     id("com.jfrog.bintray") version Versions.com_jfrog_bintray_gradle_plugin
     id("com.gradle.build-scan") version Versions.com_gradle_build_scan_gradle_plugin
+    application
 }
 
 apply(plugin = "com.gradle.build-scan")
 apply(plugin = "com.eden.orchidPlugin")
+apply(plugin = "application")
 
 allprojects {
 
@@ -86,6 +88,15 @@ allprojects {
         testImplementation(Libs.junit_jupiter_api)
         testRuntimeOnly(Libs.junit_jupiter_engine)
         runtimeOnly(Libs.logback_classic)
+    }
+
+    configurations.all {
+        resolutionStrategy.eachDependency {
+            if (requested.name == "svgSalamander") {
+                useTarget("guru.nidi.com.kitfox:svgSalamander:1.1.2")
+                because("mapsforge version is not on central")
+            }
+        }
     }
 
     tasks.withType<JavaCompile> {
@@ -281,7 +292,7 @@ allprojects {
     }
 }
 
-subprojects.forEach { subproject -> rootProject.evaluationDependsOn(subproject.path) }
+evaluationDependsOnChildren()
 
 repositories {
     mavenCentral()
@@ -428,4 +439,14 @@ tasks.register<Jar>("fatJar") {
 buildScan {
     termsOfServiceUrl = "https://gradle.com/terms-of-service"
     termsOfServiceAgree = "yes"
+}
+
+application {
+    mainClassName = "it.unibo.alchemist.Alchemist"
+}
+tasks.register<JavaExec>("runalchemist") {
+    main = "it.unibo.alchemist.Alchemist"
+    args = listOf("-y", "drones.yml")
+    classpath = sourceSets["main"].runtimeClasspath
+    dependsOn(tasks.compileJava)
 }

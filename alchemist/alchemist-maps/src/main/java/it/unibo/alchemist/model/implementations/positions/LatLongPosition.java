@@ -7,6 +7,17 @@
  */
 package it.unibo.alchemist.model.implementations.positions;
 
+import com.google.common.collect.Lists;
+import com.javadocmd.simplelatlng.LatLng;
+import com.javadocmd.simplelatlng.util.LengthUnit;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
+import org.danilopianini.util.Hashes;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.function.BinaryOperator;
+
 import static org.apache.commons.math3.util.FastMath.abs;
 import static org.apache.commons.math3.util.FastMath.acos;
 import static org.apache.commons.math3.util.FastMath.asin;
@@ -16,19 +27,6 @@ import static org.apache.commons.math3.util.FastMath.sin;
 import static org.apache.commons.math3.util.FastMath.sqrt;
 import static org.apache.commons.math3.util.FastMath.toDegrees;
 import static org.apache.commons.math3.util.FastMath.toRadians;
-
-import java.util.List;
-import java.util.function.BinaryOperator;
-
-import org.danilopianini.util.Hashes;
-
-import com.google.common.collect.Lists;
-import com.javadocmd.simplelatlng.LatLng;
-import com.javadocmd.simplelatlng.util.LengthUnit;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.interfaces.GeoPosition;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Unmodifiable state version of {@link LatLng}, also implementing the

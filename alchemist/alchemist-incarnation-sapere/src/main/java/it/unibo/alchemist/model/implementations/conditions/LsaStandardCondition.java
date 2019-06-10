@@ -54,6 +54,9 @@ public class LsaStandardCondition extends LsaAbstractCondition {
         return new LsaStandardCondition(molecule, (ILsaNode) n);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean filter(
             final List<Map<HashString, ITreeNode<?>>> matchesList,

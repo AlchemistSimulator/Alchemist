@@ -8,6 +8,10 @@
 package it.unibo.alchemist.test;
 
 import com.google.common.collect.ImmutableList;
+import it.unibo.alchemist.boundary.gpsload.api.AlignToFirstTrace;
+import it.unibo.alchemist.boundary.gpsload.api.GPSTimeAlignment;
+import it.unibo.alchemist.boundary.gpsload.impl.TraceLoader;
+import it.unibo.alchemist.model.interfaces.GPSTrace;
 import org.jooq.lambda.function.Consumer3;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,12 +23,11 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import it.unibo.alchemist.boundary.gpsload.api.GPSTimeAlignment;
-import it.unibo.alchemist.boundary.gpsload.api.AlignToFirstTrace;
-import it.unibo.alchemist.boundary.gpsload.impl.TraceLoader;
-import it.unibo.alchemist.model.interfaces.GPSTrace;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * 

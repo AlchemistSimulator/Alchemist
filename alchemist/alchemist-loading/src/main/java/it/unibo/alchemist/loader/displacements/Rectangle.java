@@ -32,20 +32,20 @@ public class Rectangle<P extends Position<? extends P>> extends AbstractRandomDi
      *            x start point
      * @param y
      *            y start point
-     * @param sizex
+     * @param sizeX
      *            x size
-     * @param sizey
+     * @param sizeY
      *            y size
      */
     public Rectangle(final Environment<?, P> pm, final RandomGenerator rand,
             final int nodes,
             final double x, final double y,
-            final double sizex, final double sizey) {
+            final double sizeX, final double sizeY) {
         super(pm, rand, nodes);
         this.x = x;
         this.y = y;
-        this.width = sizex;
-        this.height = sizey;
+        this.width = sizeX;
+        this.height = sizeY;
     }
 
     /**

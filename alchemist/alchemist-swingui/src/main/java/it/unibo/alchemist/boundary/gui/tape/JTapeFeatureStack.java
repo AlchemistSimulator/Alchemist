@@ -37,7 +37,7 @@ public class JTapeFeatureStack extends JTapeSection {
         /**
          * 
          */
-        VERTICAL_STACK;
+        VERTICAL_STACK
     }
 
     /**

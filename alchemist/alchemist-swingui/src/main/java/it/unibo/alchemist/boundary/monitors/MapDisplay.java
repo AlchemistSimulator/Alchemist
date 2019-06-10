@@ -68,8 +68,9 @@ public final class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
                 mapView.paint(g);
             }
             drawEnvOnView((Graphics2D) g);
+        } else {
+            throw new IllegalArgumentException("Graphics2D is required");
         }
-        throw new IllegalArgumentException("Graphics2D is required");
     }
 
     @Override

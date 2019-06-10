@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  *
  * @param <T> The concentration type.
  */
-public class NeighborhoodPresent<T> extends AbstractNeighborCondition<T> {
+public final class NeighborhoodPresent<T> extends AbstractNeighborCondition<T> {
 
     private static final long serialVersionUID = 689059297366332946L;
 

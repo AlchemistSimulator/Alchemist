@@ -31,7 +31,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * Class that reads GPS tracks from gpx files. 
  */
-public class GPXLoader implements GPSFileLoader {
+public final class GPXLoader implements GPSFileLoader {
 
     private static final ImmutableSet<String> EXTENSION = ImmutableSet.of("gpx");
 

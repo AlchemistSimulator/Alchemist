@@ -232,6 +232,13 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
         return x >= 0 && x <= vs.getWidth() && y >= 0 && y <= vs.getHeight();
     }
 
+    /**
+     * Creates a new position by delegating to the environment.
+     *
+     * @param x x coordinate
+     * @param y y coordinate
+     * @return a new position
+     */
     protected P makePosition(final double x, final double y) {
         return getEnvironment().makePosition(x, y);
     }

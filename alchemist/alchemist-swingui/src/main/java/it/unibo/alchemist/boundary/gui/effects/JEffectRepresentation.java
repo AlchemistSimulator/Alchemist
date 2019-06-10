@@ -14,9 +14,13 @@ import org.danilopianini.view.ObjectModFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.ItemSelectable;
+import java.awt.Point;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
@@ -32,7 +36,7 @@ import java.util.List;
  *            is the type for the concentration
  */
 @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")
-public class JEffectRepresentation<T> extends JTapeFeatureStack implements ItemSelectable {
+public final class JEffectRepresentation<T> extends JTapeFeatureStack implements ItemSelectable {
 
     private static final long serialVersionUID = -6875167656425950159L;
     private static final Logger L = LoggerFactory.getLogger(JEffectRepresentation.class);
@@ -118,7 +122,7 @@ public class JEffectRepresentation<T> extends JTapeFeatureStack implements ItemS
     }
 
     @Override
-    public final void addItemListener(final ItemListener l) {
+    public void addItemListener(final ItemListener l) {
         itemListeners.add(l);
     }
 

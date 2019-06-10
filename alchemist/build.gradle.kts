@@ -90,13 +90,14 @@ allprojects {
 
     tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"
-        options.compilerArgs = options.compilerArgs + listOf("-Xlint:unchecked", "-Werror")
+        options.compilerArgs = options.compilerArgs + listOf("-Werror")
     }
 
     tasks.withType<KotlinCompile> {
         kotlinOptions {
             jvmTarget = "1.8"
-            freeCompilerArgs = listOf("-Xjvm-default=enable")
+            freeCompilerArgs = listOf("-Xjvm-default=enable") // Enable default methods in Kt interfaces
+            allWarningsAsErrors = true
         }
     }
 

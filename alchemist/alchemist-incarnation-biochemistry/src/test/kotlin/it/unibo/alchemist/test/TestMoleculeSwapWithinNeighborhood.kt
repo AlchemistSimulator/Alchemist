@@ -95,8 +95,8 @@ private val Int.actions: Matcher<Reaction<Double>>
 
 private fun <T> Int.sizeMatcher(collectionName: String, collection: (Reaction<Double>) -> List<T>) =
     object : Matcher<Reaction<Double>> {
-        override fun test(reaction: Reaction<Double>): Result {
-            val actualSize = collection.invoke(reaction).size
+        override fun test(value: Reaction<Double>): Result {
+            val actualSize = collection.invoke(value).size
             return Result(
                 actualSize == this@sizeMatcher,
                 "reaction should have ${ this@sizeMatcher } $collectionName but it has $actualSize",

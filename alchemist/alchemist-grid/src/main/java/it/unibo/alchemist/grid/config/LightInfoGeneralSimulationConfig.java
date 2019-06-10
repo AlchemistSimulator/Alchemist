@@ -7,11 +7,11 @@
  */
 package it.unibo.alchemist.grid.config;
 
-import java.util.Map;
-import java.util.Objects;
-
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.model.interfaces.Time;
+
+import java.util.Map;
+import java.util.Objects;
 
 /**
  *  Abstract simulation config that contains small serializable informations.
@@ -40,18 +40,20 @@ public abstract class LightInfoGeneralSimulationConfig implements GeneralSimulat
     }
 
     @Override
-    public Loader getLoader() {
+    public final Loader getLoader() {
         return this.loader;
     }
 
     @Override
     public abstract Map<String, byte[]> getDependencies();
+
     @Override
-    public long getEndStep() {
+    public final long getEndStep() {
         return endStep;
     }
+
     @Override
-    public Time getEndTime() {
+    public final Time getEndTime() {
         return endTime;
     }
 }

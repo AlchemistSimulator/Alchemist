@@ -8,22 +8,12 @@
 
 package it.unibo.alchemist.model.implementations.actions;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-
-import it.unibo.alchemist.model.interfaces.Dependency;
-import org.apache.commons.math3.random.RandomGenerator;
-import org.danilopianini.util.ImmutableListSet;
-import org.danilopianini.util.ListSet;
-import org.protelis.lang.ProtelisLoader;
-import org.protelis.vm.ExecutionContext;
-import org.protelis.vm.ProtelisVM;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Context;
+import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -31,6 +21,15 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.protelis.AlchemistExecutionContext;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.danilopianini.util.ImmutableListSet;
+import org.danilopianini.util.ListSet;
+import org.protelis.lang.ProtelisLoader;
+import org.protelis.vm.ExecutionContext;
+import org.protelis.vm.ProtelisVM;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
 import static java.util.Objects.requireNonNull;
 
@@ -38,6 +37,7 @@ import static java.util.Objects.requireNonNull;
  * @param <P> position type
  */
 @SuppressFBWarnings(value = "EQ_DOESNT_OVERRIDE_EQUALS", justification = "This is desired.")
+// TODO: make final when ProtelisProgram is dropped.
 public class RunProtelisProgram<P extends Position<P>> implements Action<Object> {
 
     private static final long serialVersionUID = 2207914086772704332L;
@@ -82,7 +82,7 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
      *            the reaction
      * @param rand
      *            the random engine
-     * @param prog
+     * @param program
      *            the Protelis program
      * @throws SecurityException
      *             if you are not authorized to load required classes
@@ -92,8 +92,8 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
             final ProtelisNode n,
             final Reaction<Object> r,
             final RandomGenerator rand,
-            final String prog) throws SecurityException {
-        this(env, n, r, rand, prog, Double.NaN);
+            final String program) throws SecurityException {
+        this(env, n, r, rand, program, Double.NaN);
     }
 
     /**

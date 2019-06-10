@@ -299,11 +299,17 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setRotation(final double rad) {
         angle = rad % (Math.PI * 2d);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setViewPosition(final Point point) {
         position = from(point);

@@ -7,13 +7,12 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import it.unibo.alchemist.loader.displacements.Grid;
+import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.junit.jupiter.api.Test;
 
-import it.unibo.alchemist.loader.displacements.Grid;
-import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -27,6 +26,8 @@ public class TestGrid {
     private static MersenneTwister rand() {
         return new MersenneTwister();
     }
+
+    // CHECKSTYLE: MagicNumber OFF
     /**
      * 
      */

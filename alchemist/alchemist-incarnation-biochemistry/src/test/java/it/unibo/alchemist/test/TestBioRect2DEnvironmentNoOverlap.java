@@ -7,21 +7,6 @@
  */
 package it.unibo.alchemist.test;
 
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.Map;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import it.unibo.alchemist.model.interfaces.Position;
-import org.apache.commons.math3.util.FastMath;
-import org.apache.commons.math3.util.Pair;
-import org.jooq.lambda.fi.util.function.CheckedConsumer;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.kaikikm.threadresloader.ResourceLoader;
-
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -33,10 +18,29 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+import org.apache.commons.math3.util.FastMath;
+import org.apache.commons.math3.util.Pair;
+import org.jooq.lambda.fi.util.function.CheckedConsumer;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.kaikikm.threadresloader.ResourceLoader;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.Map;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static io.kotlintest.DslKt.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -709,10 +713,10 @@ public class TestBioRect2DEnvironmentNoOverlap {
                         .filter(c -> env.getDistanceBetweenNodes(n, c) < n.getRadius() + c.getRadius() - DELTA)
                         .map(c -> new Pair<>(n, c)))
                         .findAny()
-                        .ifPresent(e -> fail("Nodes " + e.getFirst().getId() + env.getPosition(e.getFirst()) + " and " +
-                                e.getSecond().getId() + env.getPosition(e.getSecond()) + " are overlapping. " +
-                                "Their distance is: " + env.getDistanceBetweenNodes(e.getFirst(), e.getSecond()) +
-                                " but should be greater than " + (e.getFirst().getRadius() + e.getSecond().getRadius())));
+                        .ifPresent(e -> fail("Nodes " + e.getFirst().getId() + env.getPosition(e.getFirst()) + " and "
+                            + e.getSecond().getId() + env.getPosition(e.getSecond()) + " are overlapping. "
+                            + "Their distance is: " + env.getDistanceBetweenNodes(e.getFirst(), e.getSecond())
+                            + " but should be greater than " + (e.getFirst().getRadius() + e.getSecond().getRadius())));
                 return true;
             }
         });

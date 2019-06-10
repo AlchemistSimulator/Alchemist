@@ -82,7 +82,7 @@ public class WeibullTime<T> extends AbstractDistribution<T> {
     }
 
     @Override
-    public void updateStatus(final Time curTime, final boolean executed, final double param, final Environment<T, ?> env) {
+    public final void updateStatus(final Time curTime, final boolean executed, final double param, final Environment<T, ?> env) {
         if (executed) {
             setTau(curTime.plus(new DoubleTime(genSample())));
         }
@@ -110,7 +110,7 @@ public class WeibullTime<T> extends AbstractDistribution<T> {
     }
 
     @Override
-    public double getRate() {
+    public final double getRate() {
         return getMean();
     }
 
@@ -146,6 +146,9 @@ public class WeibullTime<T> extends AbstractDistribution<T> {
         return new WeibullDistribution(random, shapeParameter, scaleParameter, WeibullDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public WeibullTime<T> clone(final Time currentTime) {
         return new WeibullTime<>(rand, dist, offset, currentTime);

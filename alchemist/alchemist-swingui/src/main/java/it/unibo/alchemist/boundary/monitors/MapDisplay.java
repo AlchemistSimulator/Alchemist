@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.boundary.monitors;
 
+import it.unibo.alchemist.boundary.util.InitMapsForge;
 import it.unibo.alchemist.boundary.wormhole.implementation.LinearZoomManager;
 import it.unibo.alchemist.boundary.wormhole.implementation.MapWormhole;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -44,8 +45,7 @@ public final class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
     private final MapView mapView = new MapView();
 
     static {
-        OpenStreetMapMapnik.INSTANCE.setUserAgent("Alchemist Simulator using mapsforge (alchemistsimulator.github.io)");
-        OpenStreetMapMapnik.INSTANCE.setReferer("alchemistsimulator.github.io");
+        InitMapsForge.initAgent();
     }
     /**
      * 

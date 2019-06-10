@@ -105,7 +105,7 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
     }
 
     @Override
-    public Context getContext() {
+    public final Context getContext() {
         return Context.NEIGHBORHOOD;
     }
 

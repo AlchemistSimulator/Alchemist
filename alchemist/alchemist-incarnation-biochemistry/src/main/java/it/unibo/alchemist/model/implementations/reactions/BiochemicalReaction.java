@@ -8,8 +8,6 @@
 
 package it.unibo.alchemist.model.implementations.reactions;
 
-import java.util.*;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.actions.AbstractNeighborAction;
 import it.unibo.alchemist.model.implementations.conditions.AbstractNeighborCondition;
@@ -18,8 +16,13 @@ import org.apache.commons.math3.distribution.EnumeratedDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.Pair;
 
-import static java.util.stream.Collectors.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 /** 
  * A biochemical Reaction.

@@ -39,16 +39,10 @@ public class ReactivityPanel extends JTapeGroup implements ItemListener {
     private static final String REALTIME = getString("realtime");
     private static final String USER_SELECTED = getString("user_selected");
 
-    private final JTapeSection stack1 = new JTapeFeatureStack();
-    private final JTapeSection buttMF = new JTapeMainFeature();
-    private final JTapeSection sliderMF = new JTapeMainFeature();
     private final JToggleButton btnMax;
     private final JToggleButton btnReal;
     private final JToggleButton btnUser;
     private final JSlider slider = new JSlider(0, SLIDE_MAX, SLIDE_MAX / 2);
-    private final Icon max = loadScaledImage("/oxygen/status/user-online.png");
-    private final Icon real = loadScaledImage("/oxygen/status/user-invisible.png");
-    private final Icon user = loadScaledImage("/oxygen/status/user-offline.png");
     private Status status = Status.MAX_REACTIVITY;
 
     /**
@@ -77,8 +71,11 @@ public class ReactivityPanel extends JTapeGroup implements ItemListener {
         slider.setPreferredSize(new Dimension(SLIDE_SIZE, slider.getHeight()));
         // setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         // button = new JButton(max);
+        final Icon max = loadScaledImage("/oxygen/status/user-online.png");
         btnMax = new JToggleButton(MAX_REACTIVITY, max, true);
+        final Icon real = loadScaledImage("/oxygen/status/user-invisible.png");
         btnReal = new JToggleButton(REALTIME, real, false);
+        final Icon user = loadScaledImage("/oxygen/status/user-offline.png");
         btnUser = new JToggleButton(USER_SELECTED, user, false);
         /*
          * add(button); add(slider); button.addActionListener(this);
@@ -88,9 +85,12 @@ public class ReactivityPanel extends JTapeGroup implements ItemListener {
         btnUser.addItemListener(this);
         slider.setEnabled(false);
 
+        final JTapeSection stack1 = new JTapeFeatureStack();
         stack1.registerFeature(btnMax);
         stack1.registerFeature(btnReal);
+        final JTapeSection buttMF = new JTapeMainFeature();
         buttMF.registerFeature(btnUser);
+        final JTapeSection sliderMF = new JTapeMainFeature();
         sliderMF.registerFeature(slider);
 
         registerSection(stack1);

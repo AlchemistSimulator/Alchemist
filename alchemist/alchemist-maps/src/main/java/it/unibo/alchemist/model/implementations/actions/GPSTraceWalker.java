@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.interfaces.Vehicle;
  * 
  * @param <T> Concentration Time
  */
-public class GPSTraceWalker<T> extends MoveOnMapWithGPS<T> {
+public final class GPSTraceWalker<T> extends MoveOnMapWithGPS<T> {
 
     private static final long serialVersionUID = -6495138719085165782L;
 

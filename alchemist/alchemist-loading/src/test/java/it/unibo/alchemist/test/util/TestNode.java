@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 /**
  * Generic node for testing purposes.
  */
-public class TestNode extends AbstractNode<Object> {
+public final class TestNode extends AbstractNode<Object> {
 
     private static final long serialVersionUID = 1L;
 

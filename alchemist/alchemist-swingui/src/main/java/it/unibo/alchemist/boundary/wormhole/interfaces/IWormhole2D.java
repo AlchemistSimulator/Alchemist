@@ -7,7 +7,6 @@
  */
 package it.unibo.alchemist.boundary.wormhole.interfaces;
 
-import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Position2D;
 
 import java.awt.Point;
@@ -49,19 +48,19 @@ public interface IWormhole2D<P extends Position2D<? extends P>> {
      */
     enum Mode {
         /**
-         * No stretch allowed
+         * No stretch allowed.
          */
         ISOMETRIC,
         /**
-         * Stretch to adapt to view
+         * Stretch to adapt to view.
          */
         ADAPT_TO_VIEW,
         /**
-         * Stretch is defined by user
+         * Stretch is defined by user.
          */
         SETTABLE,
         /**
-         * Uses spherical coordinates, no stretch allowed
+         * Uses spherical coordinates, no stretch allowed.
          */
         MAP
     }
@@ -72,7 +71,7 @@ public interface IWormhole2D<P extends Position2D<? extends P>> {
      * @param viewPoint
      *            is the {@link Point} object whose coordinates are from
      *            view-space
-     * @return a {@link Position} object whose coordinates are from env-space
+     * @return a {@link Position2D} object whose coordinates are from env-space
      */
     P getEnvPoint(Point viewPoint);
 
@@ -87,7 +86,7 @@ public interface IWormhole2D<P extends Position2D<? extends P>> {
      * Converts a point from the env-space to the view-space.
      * 
      * @param envPoint
-     *            is the {@link Position} object whose coordinates are from
+     *            is the {@link Position2D} object whose coordinates are from
      *            env-space
      * @return a {@link Point} object whose coordinates are from view-space
      */
@@ -140,7 +139,7 @@ public interface IWormhole2D<P extends Position2D<? extends P>> {
      * <code>envPoint</code>.
      * 
      * @param envPoint
-     *            is the {@link Position} object representing the new position
+     *            is the {@link Position2D} object representing the new position
      *            with env-coordinates
      */
     void setEnvPosition(P envPoint);

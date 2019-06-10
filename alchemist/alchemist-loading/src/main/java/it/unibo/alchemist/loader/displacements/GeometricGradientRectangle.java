@@ -150,7 +150,7 @@ public final class GeometricGradientRectangle<P extends Position<? extends P>> e
     /**
      * @return a random value with the chosen exponential distribution
      */
-    protected final double nextExpRandom() {
+    private double nextExpRandom() {
         return exp.inverseCumulativeProbability(randomDouble(0, bound));
     }
 }

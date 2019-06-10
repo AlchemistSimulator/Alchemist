@@ -134,7 +134,7 @@ public class LsaStandardCondition extends LsaAbstractCondition {
     }
 
     @Override
-    public boolean isValid() {
+    public final boolean isValid() {
         return valid;
     }
 

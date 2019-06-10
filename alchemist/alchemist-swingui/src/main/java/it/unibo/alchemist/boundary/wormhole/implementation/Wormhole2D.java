@@ -353,6 +353,9 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
         return from(ep);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void zoomOnPoint(final Point p, final double z) {
         final PointAdapter<P> orig = effectCenter;

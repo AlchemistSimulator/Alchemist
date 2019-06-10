@@ -56,7 +56,7 @@ public final class SimControlPanel extends JTapeGroup {
                 toRemove.add(sim);
             }
         }
-        for (final Simulation<?,?> sim : toRemove) {
+        for (final Simulation<?, ?> sim : toRemove) {
             SIMCONTROLMAP.remove(sim);
         }
     }

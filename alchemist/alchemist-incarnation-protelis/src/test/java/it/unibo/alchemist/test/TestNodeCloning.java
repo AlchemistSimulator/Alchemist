@@ -74,7 +74,7 @@ public class TestNodeCloning<P extends Position<P>> {
     @Test
     public void test() throws Throwable {
         // CHECKSTYLE: MagicNumber OFF - values are taken from a real experiment causing the bug.
-        sim.schedule(()-> {
+        sim.schedule(() -> {
             final Node<Object> node0 = env.getNodeByID(0);
             node0.setConcentration(SOURCEMOL, false);
             node0.setConcentration(ENABLEDMOL, true);

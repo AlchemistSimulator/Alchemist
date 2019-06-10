@@ -7,19 +7,8 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.Collections;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.kaikikm.threadresloader.ResourceLoader;
-
 import com.google.common.collect.ImmutableMap;
-
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -32,6 +21,15 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.kaikikm.threadresloader.ResourceLoader;
+
+import java.util.Collections;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests node cloning.
@@ -75,6 +73,7 @@ public class TestNodeCloning<P extends Position<P>> {
      */
     @Test
     public void test() throws Throwable {
+        // CHECKSTYLE: MagicNumber OFF - values are taken from a real experiment causing the bug.
         sim.schedule(()-> {
             final Node<Object> node0 = env.getNodeByID(0);
             node0.setConcentration(SOURCEMOL, false);

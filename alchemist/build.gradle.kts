@@ -40,7 +40,6 @@ plugins {
 
 apply(plugin = "com.gradle.build-scan")
 apply(plugin = "com.eden.orchidPlugin")
-apply(plugin = "application")
 
 allprojects {
 

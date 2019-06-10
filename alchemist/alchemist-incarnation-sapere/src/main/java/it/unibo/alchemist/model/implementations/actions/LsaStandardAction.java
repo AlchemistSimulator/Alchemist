@@ -131,6 +131,9 @@ public class LsaStandardAction extends LsaAbstractAction {
         node.setConcentration(new LsaMolecule(l));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return getMolecule().toString();

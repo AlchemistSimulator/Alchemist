@@ -177,7 +177,7 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
     }
 
     @Override
-    public ListSet<? extends Dependency> getOutboundDependencies() {
+    public final ListSet<? extends Dependency> getOutboundDependencies() {
         return ImmutableListSet.of(Dependency.EVERY_MOLECULE);
     }
 

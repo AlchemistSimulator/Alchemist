@@ -24,13 +24,14 @@ import java.util.stream.Collectors;
  * the specific incarnation details.
  * 
  */
+@SuppressWarnings({"unchecked", "rawtypes"})
 public final class SupportedIncarnations {
 
-    @SuppressWarnings("rawtypes")
-    private static final Map<String, Class<? extends Incarnation>> INCARNATIONS;
+    private static final Map<String, Class<? extends Incarnation<?, ?>>> INCARNATIONS;
 
     static {
         INCARNATIONS = ClassPathScanner.subTypesOf(Incarnation.class).stream()
+                .map(it -> (Class<Incarnation<?, ?>>) it)
                 .collect(Collectors.toMap(c -> preprocess(c.getSimpleName()), Function.identity()));
     }
 
@@ -57,11 +58,10 @@ public final class SupportedIncarnations {
      * @return an {@link Optional} containing the incarnation, if one with a
      *         matching name exists
      */
-    @SuppressWarnings("unchecked")
     public static <T, P extends Position<? extends P>> Optional<Incarnation<T, P>> get(final String s) {
         final String cmp = preprocess(s);
         return Optional.ofNullable(INCARNATIONS.get(cmp))
-                .map(Unchecked.<Class<? extends Incarnation>, Incarnation<T, P>>function(it -> it.getDeclaredConstructor().newInstance()));
+                .map(Unchecked.function(it -> (Incarnation<T, P>) it.getDeclaredConstructor().newInstance()));
     }
 
     private static String preprocess(final String s) {

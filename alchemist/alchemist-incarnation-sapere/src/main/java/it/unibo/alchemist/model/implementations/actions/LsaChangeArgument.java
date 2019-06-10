@@ -23,7 +23,7 @@ import java.util.List;
 
 /**
  */
-public class LsaChangeArgument extends SAPERELocalAgent {
+public final class LsaChangeArgument extends SAPERELocalAgent {
 
     private static final long serialVersionUID = -7128058274012426458L;
     private static final HashString OLD = new HashString("OldType");

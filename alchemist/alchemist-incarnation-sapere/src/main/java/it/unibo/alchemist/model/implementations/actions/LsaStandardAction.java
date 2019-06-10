@@ -99,6 +99,9 @@ public class LsaStandardAction extends LsaAbstractAction {
         setConcentration(getNode());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Context getContext() {
         return Context.LOCAL;

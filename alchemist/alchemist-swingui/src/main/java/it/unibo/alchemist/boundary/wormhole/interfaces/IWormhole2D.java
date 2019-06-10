@@ -7,11 +7,11 @@
  */
 package it.unibo.alchemist.boundary.wormhole.interfaces;
 
-import java.awt.Point;
-import java.awt.geom.Dimension2D;
-
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Position2D;
+
+import java.awt.Point;
+import java.awt.geom.Dimension2D;
 
 /**
  * A Wormhole (in this context) is an entity that "connects" two worlds: the
@@ -63,8 +63,8 @@ public interface IWormhole2D<P extends Position2D<? extends P>> {
         /**
          * Uses spherical coordinates, no stretch allowed
          */
-        MAP;
-    };
+        MAP
+    }
 
     /**
      * Converts a point from the view-space to the env-space.

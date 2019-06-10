@@ -7,18 +7,16 @@
  */
 package it.unibo.alchemist.model.implementations.routes;
 
+import com.google.common.collect.ImmutableList;
+import it.unibo.alchemist.exceptions.UncomparableDistancesException;
+import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Route;
+import org.danilopianini.util.Hashes;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
-
-import org.danilopianini.util.Hashes;
-
-import com.google.common.collect.ImmutableList;
-
-import it.unibo.alchemist.exceptions.UncomparableDistancesException;
-import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.Route;
 
 /**
  * Abstract route implementation.
@@ -37,6 +35,7 @@ public class PolygonalChain<P extends Position<?>> implements Route<P> {
      *            the positions this route traverses
      */
     @SafeVarargs
+    @SuppressWarnings("varargs")
     public PolygonalChain(final P... positions) {
         this(ImmutableList.copyOf(positions));
     }

@@ -14,5 +14,4 @@ object InitMapsForge {
             referer = "alchemistsimulator.github.io"
         }
     }
-
 }

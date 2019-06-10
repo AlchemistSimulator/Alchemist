@@ -151,6 +151,8 @@ allprojects {
         }
     }
 
+    tasks.getByName("javadocJar").dependsOn(tasks.withType<DokkaTask>())
+
     publishing.publications {
         withType<MavenPublication> {
             pom {

@@ -34,7 +34,7 @@ import java.util.concurrent.CountDownLatch;
 /**
  */
 @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")
-public class EffectBuilder extends JFrame implements ActionListener {
+public final class EffectBuilder extends JFrame implements ActionListener {
 
     private static final long serialVersionUID = -5030318714404946998L;
     private static final List<Class<? extends Effect>> EFFECTS = ClassPathScanner.subTypesOf(Effect.class, "it.unibo.alchemist");

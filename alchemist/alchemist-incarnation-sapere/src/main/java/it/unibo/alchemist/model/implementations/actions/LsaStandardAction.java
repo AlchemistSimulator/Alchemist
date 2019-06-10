@@ -91,6 +91,9 @@ public class LsaStandardAction extends LsaAbstractAction {
         return new LsaStandardAction(getMolecule(), (ILsaNode) n);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void execute() {
         setConcentration(getNode());

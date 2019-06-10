@@ -28,7 +28,7 @@ import java.util.Set;
 
 /**
  */
-public class ProtelisNode extends AbstractNode<Object> implements DeviceUID, ExecutionEnvironment {
+public final class ProtelisNode extends AbstractNode<Object> implements DeviceUID, ExecutionEnvironment {
 
     private static final long serialVersionUID = 7411790948884770553L;
     private final Map<RunProtelisProgram<?>, AlchemistNetworkManager> netmgrs = new LinkedHashMap<>();

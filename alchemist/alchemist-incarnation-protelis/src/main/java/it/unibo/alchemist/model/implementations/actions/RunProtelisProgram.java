@@ -155,7 +155,7 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
     }
 
     @Override
-    public void execute() {
+    public final void execute() {
         vm.runCycle();
         node.setConcentration(name, vm.getCurrentValue());
         computationalCycleComplete = true;

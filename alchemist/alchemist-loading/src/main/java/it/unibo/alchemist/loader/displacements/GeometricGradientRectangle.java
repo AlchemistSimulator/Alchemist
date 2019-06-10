@@ -13,6 +13,7 @@ import org.apache.commons.math3.util.FastMath;
 
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Distributes nodes geometrically within a rectangular shape.
@@ -133,6 +134,7 @@ public final class GeometricGradientRectangle<P extends Position<? extends P>> e
          */
     }
 
+    @NotNull
     @Override
     protected P indexToPosition(final int i) {
         double exponential = increasing ? size - nextExpRandom() : nextExpRandom();

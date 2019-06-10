@@ -129,7 +129,7 @@ public class LsaStandardCondition extends LsaAbstractCondition {
     }
 
     @Override
-    public double getPropensityContribution() {
+    public final double getPropensityContribution() {
         return -1;
     }
 

@@ -90,7 +90,7 @@ public final class GPXLoader implements GPSFileLoader {
                         /*
                          * Points without time stamp
                          */
-                        .orElseThrow(() ->new IllegalStateException("Track " + track + " contains at least a waypoint without timestamp"))
+                        .orElseThrow(() -> new IllegalStateException("Track " + track + " contains at least a waypoint without timestamp"))
                         .toInstant().toEpochMilli() / 1000.0)))
             .collect(Collectors.toList());
         return new GPSTraceImpl(points);

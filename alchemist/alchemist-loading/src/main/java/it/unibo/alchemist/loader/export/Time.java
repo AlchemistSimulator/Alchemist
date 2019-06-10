@@ -7,17 +7,17 @@
  */
 package it.unibo.alchemist.loader.export;
 
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Reaction;
+
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Reaction;
-
 /**
  * Exports a column with the current time.
  */
-public class Time implements Extractor {
+public final class Time implements Extractor {
 
     private static final List<String> COLNAME;
     static {

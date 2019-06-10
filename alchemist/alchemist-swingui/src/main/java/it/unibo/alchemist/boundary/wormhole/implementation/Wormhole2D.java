@@ -327,6 +327,9 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
         effectCenter = effectCenter.sum(envDelta);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setZoom(final double value) {
         if (value <= 0d) {

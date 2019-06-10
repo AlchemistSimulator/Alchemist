@@ -85,7 +85,7 @@ public abstract class AbstractMoveNode<T, P extends Position<P>> extends Abstrac
     /**
      * @return the position of the local node
      */
-    protected final Position getCurrentPosition() {
+    protected final P getCurrentPosition() {
         return getNodePosition(getNode());
     }
 

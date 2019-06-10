@@ -7,11 +7,6 @@
  */
 package org.mapsforge.map.layer.download;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.kaikikm.threadresloader.ResourceLoader;
 import org.mapsforge.core.graphics.GraphicFactory;
@@ -23,6 +18,10 @@ import org.mapsforge.map.layer.queue.JobQueue;
 import org.mapsforge.map.model.DisplayModel;
 import org.mapsforge.map.util.PausableThread;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
 class TileDownloadThread extends PausableThread {
     private final DisplayModel displayModel;
     private final GraphicFactory graphicFactory;
@@ -30,7 +29,7 @@ class TileDownloadThread extends PausableThread {
     private final Layer layer;
     private final TileCache tileCache;
 
-    TileDownloadThread( // NOPMD inherited class
+    TileDownloadThread(// NOPMD inherited class
             final TileCache tileCache,
             final JobQueue<DownloadJob> jobQueue,
             final Layer layer,

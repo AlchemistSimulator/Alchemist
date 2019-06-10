@@ -91,7 +91,7 @@ public final class JOutputMonitorRepresentation<T> extends JPanel implements Ite
             }
         };
         addMouseListener(mouseAdapter);
-        addItemListener((e) -> {
+        addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 setBorder(new LineBorder(Color.BLUE, 2, true));
             } else if (e.getStateChange() == ItemEvent.DESELECTED) {

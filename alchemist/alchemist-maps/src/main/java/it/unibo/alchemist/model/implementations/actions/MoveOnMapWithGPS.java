@@ -152,7 +152,7 @@ public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
         return trace;
     }
 
-    private static class TraceRef {
+    private static final class TraceRef {
 
         private final String path, normalizer;
         private final boolean cycle;

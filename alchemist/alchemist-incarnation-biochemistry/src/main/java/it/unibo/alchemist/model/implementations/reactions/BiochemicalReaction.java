@@ -113,9 +113,9 @@ public final class BiochemicalReaction extends ChemicalReaction<Double> {
     }
 
     private static final class Container {
-        public Node<Double> node;
-        public Double propensity1;
-        public Double propensity2;
+        private final Node<Double> node;
+        private final Double propensity1;
+        private final Double propensity2;
         private Container(final Node<Double> node, final Double propensity1, final Double propensity2) {
             this.node = node;
             this.propensity1 = propensity1;

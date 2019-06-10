@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Class to retain backwards compatibility with the Alchemist XML loader.
- *
+ * @param <P> position type
  */
 @Deprecated
 public class ProtelisProgram<P extends Position<P>> extends RunProtelisProgram<P> {

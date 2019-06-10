@@ -58,7 +58,7 @@ public class RemoveNode<T> extends AbstractAction<T> {
 
     @Override
     public RemoveNode<T> cloneAction(final Node<T> n, final Reaction<T> r) {
-        return new RemoveNode<T>(getEnvironment(), n);
+        return new RemoveNode<>(getEnvironment(), n);
     }
 
 }

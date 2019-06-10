@@ -267,6 +267,9 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
         setEnvPositionWithoutMoving(orig);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setEnvPosition(final P pos) {
         setViewPosition(getViewPoint(pos));

@@ -21,6 +21,9 @@ public abstract class LimitedContinuos2D<T> extends Continuous2DEnvironment<T> {
 
     private static final long serialVersionUID = -7838255122589911058L;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void moveNodeToPosition(final Node<T> node, final Euclidean2DPosition newPos) {
         final double[] cur = getPosition(node).getCartesianCoordinates();
@@ -30,6 +33,9 @@ public abstract class LimitedContinuos2D<T> extends Continuous2DEnvironment<T> {
         super.moveNodeToPosition(node, next);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected boolean nodeShouldBeAdded(final Node<T> node, final Euclidean2DPosition p) {
         return isAllowed(p);

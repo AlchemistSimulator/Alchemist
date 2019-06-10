@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  * 
  *
  */
-public class EnvPresent extends AbstractCondition<Double> {
+public final class EnvPresent extends AbstractCondition<Double> {
 
     /**
      * 

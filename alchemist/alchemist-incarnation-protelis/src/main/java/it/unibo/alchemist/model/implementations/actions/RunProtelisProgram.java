@@ -105,7 +105,7 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
      *            the reaction
      * @param rand
      *            the random engine
-     * @param prog
+     * @param program
      *            the Protelis program
      * @param retentionTime
      *            how long the messages will be stored. Pass {@link Double#NaN}
@@ -118,10 +118,10 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
             final ProtelisNode n,
             final Reaction<Object> r,
             final RandomGenerator rand,
-            final String prog,
+            final String program,
             final double retentionTime) throws SecurityException {
-        this(env, n, r, rand, ProtelisLoader.parse(prog), retentionTime);
-        originalProgram = prog;
+        this(env, n, r, rand, ProtelisLoader.parse(program), retentionTime);
+        originalProgram = program;
     }
 
     /**

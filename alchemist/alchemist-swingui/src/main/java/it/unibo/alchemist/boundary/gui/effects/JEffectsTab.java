@@ -8,6 +8,22 @@
 
 package it.unibo.alchemist.boundary.gui.effects;
 
+import it.unibo.alchemist.boundary.gui.tape.JTapeFeatureStack;
+import it.unibo.alchemist.boundary.gui.tape.JTapeFeatureStack.Type;
+import it.unibo.alchemist.boundary.gui.tape.JTapeGroup;
+import it.unibo.alchemist.boundary.gui.tape.JTapeMainFeature;
+import it.unibo.alchemist.boundary.gui.tape.JTapeSection;
+import it.unibo.alchemist.boundary.gui.tape.JTapeTab;
+import it.unibo.alchemist.boundary.interfaces.GraphicalOutputMonitor;
+import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
+import org.danilopianini.view.GUIUtilities;
+
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JToggleButton;
+import javax.swing.SwingUtilities;
+import javax.swing.border.LineBorder;
+import javax.swing.filechooser.FileFilter;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.ItemSelectable;
@@ -21,25 +37,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.swing.AbstractButton;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JToggleButton;
-import javax.swing.SwingUtilities;
-import javax.swing.border.LineBorder;
-import javax.swing.filechooser.FileFilter;
-
-import org.danilopianini.view.GUIUtilities;
-
-import it.unibo.alchemist.boundary.gui.tape.JTapeFeatureStack;
-import it.unibo.alchemist.boundary.gui.tape.JTapeFeatureStack.Type;
-import it.unibo.alchemist.boundary.gui.tape.JTapeGroup;
-import it.unibo.alchemist.boundary.gui.tape.JTapeMainFeature;
-import it.unibo.alchemist.boundary.gui.tape.JTapeSection;
-import it.unibo.alchemist.boundary.gui.tape.JTapeTab;
-import it.unibo.alchemist.boundary.interfaces.GraphicalOutputMonitor;
-import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 
 /**
  * Graphic component to handle effects.
@@ -87,7 +84,7 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
             final JTapeGroup showGroup = new JTapeGroup(DRAW_LINKS);
             final JTapeSection showLinksSec = new JTapeMainFeature();
             final JToggleButton paintLinksButton = new JToggleButton(DRAW_LINKS);
-            paintLinksButton.addActionListener((e) -> main.setDrawLinks(paintLinksButton.isSelected()));
+            paintLinksButton.addActionListener(e -> main.setDrawLinks(paintLinksButton.isSelected()));
             showLinksSec.registerFeature(paintLinksButton);
             showGroup.registerSection(showLinksSec);
             registerGroup(showGroup);
@@ -150,7 +147,7 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
     }
 
     /**
-     * See {@link AbstractButton#addActionListener(ActionListener)}.
+     * See {@link JToggleButton#addActionListener(ActionListener)}.
      * 
      * @param al
      *            the {@link ActionListener} to add

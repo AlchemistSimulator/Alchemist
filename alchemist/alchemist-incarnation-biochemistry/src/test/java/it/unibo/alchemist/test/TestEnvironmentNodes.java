@@ -197,7 +197,7 @@ public class TestEnvironmentNodes {
         sim.run();
         assertNotEquals(0.0, envNode3.getConcentration(a));
         assertNotEquals(0.0, envNode4.getConcentration(a));
-        assertEquals(total, envNode3.getConcentration(a) + envNode4.getConcentration(a), 0.1);
+        assertEquals(total, envNode3.getConcentration(a) + envNode4.getConcentration(a), PRECISION);
     }
 
     /**

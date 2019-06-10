@@ -7,17 +7,6 @@
  */
 package it.unibo.alchemist.boundary.monitors;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.stream.Collectors;
-
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingUtilities;
-
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -25,12 +14,22 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.stream.Collectors;
+
 /**
  *
  * @param <P> position type
  * @param <T>
  */
-public class NodeTracker<T, P extends Position<? extends P>> extends JPanel implements OutputMonitor<T, P>, ActionListener {
+public final class NodeTracker<T, P extends Position<? extends P>> extends JPanel implements OutputMonitor<T, P>, ActionListener {
     private static final byte MARGIN = 100;
     private static final String PROGRAM = " = Program =", CONTENT = " = Content =", POSITION = " = POSITION = ";
     private static final long serialVersionUID = -676002989218532788L;

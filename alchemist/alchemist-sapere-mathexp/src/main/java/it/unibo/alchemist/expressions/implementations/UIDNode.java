@@ -15,7 +15,7 @@ import java.util.Map;
 
 /**
  */
-public class UIDNode extends ConstTreeNode {
+public final class UIDNode extends ConstTreeNode {
 
     private static final String PREFIX = "id";
     /**

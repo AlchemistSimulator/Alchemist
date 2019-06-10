@@ -36,7 +36,6 @@ plugins {
     id("org.danilopianini.publish-on-central") version Versions.org_danilopianini_publish_on_central_gradle_plugin
     id("com.jfrog.bintray") version Versions.com_jfrog_bintray_gradle_plugin
     id("com.gradle.build-scan") version Versions.com_gradle_build_scan_gradle_plugin
-    application
 }
 
 apply(plugin = "com.gradle.build-scan")
@@ -439,14 +438,4 @@ tasks.register<Jar>("fatJar") {
 buildScan {
     termsOfServiceUrl = "https://gradle.com/terms-of-service"
     termsOfServiceAgree = "yes"
-}
-
-application {
-    mainClassName = "it.unibo.alchemist.Alchemist"
-}
-tasks.register<JavaExec>("runalchemist") {
-    main = "it.unibo.alchemist.Alchemist"
-    args = listOf("-y", "drones.yml")
-    classpath = sourceSets["main"].runtimeClasspath
-    dependsOn(tasks.compileJava)
 }

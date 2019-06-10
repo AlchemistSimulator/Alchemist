@@ -32,7 +32,7 @@ public class RandomPolarization<P extends Position2D<P>> extends AbstractRandomi
 
 
     /**
-     * 
+     * @param environment the environment
      * @param node the node
      * @param random the {@link RandomGenerator}
      */

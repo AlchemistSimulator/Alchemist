@@ -7,6 +7,10 @@
  */
 package it.unibo.alchemist;
 
+import it.unibo.alchemist.model.interfaces.Incarnation;
+import it.unibo.alchemist.model.interfaces.Position;
+import org.jooq.lambda.Unchecked;
+
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
@@ -14,10 +18,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import org.jooq.lambda.Unchecked;
-import it.unibo.alchemist.model.interfaces.Incarnation;
-import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * This enum interfaces the generic components of the graphical interface with
@@ -57,7 +57,7 @@ public final class SupportedIncarnations {
      * @return an {@link Optional} containing the incarnation, if one with a
      *         matching name exists
      */
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings("unchecked")
     public static <T, P extends Position<? extends P>> Optional<Incarnation<T, P>> get(final String s) {
         final String cmp = preprocess(s);
         return Optional.ofNullable(INCARNATIONS.get(cmp))

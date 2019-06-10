@@ -7,12 +7,13 @@
  */
 package it.unibo.alchemist.loader.export;
 
-import java.util.Optional;
-import java.util.Set;
-
 import com.google.common.collect.ImmutableSet;
 import it.unibo.alchemist.ClassPathScanner;
 import org.apache.commons.math3.stat.descriptive.UnivariateStatistic;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Utility to translate statistics names into a {@link UnivariateStatistic}.
@@ -38,8 +39,8 @@ public final class StatUtil {
             .findAny()
             .map(clazz -> {
                 try {
-                    return clazz.newInstance();
-                } catch (IllegalAccessException | InstantiationException e) {
+                    return clazz.getDeclaredConstructor().newInstance();
+                } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
                     throw new IllegalStateException("Could not initialize with empty constructor " + clazz, e);
                 }
             });

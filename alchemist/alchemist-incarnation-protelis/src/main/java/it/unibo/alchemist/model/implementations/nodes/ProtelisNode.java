@@ -8,19 +8,7 @@
 
 package it.unibo.alchemist.model.implementations.nodes;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-
-import org.protelis.lang.datatype.DeviceUID;
-import org.protelis.lang.datatype.Field;
-import org.protelis.vm.ExecutionEnvironment;
-import org.protelis.vm.NetworkManager;
-
 import com.google.common.collect.ImmutableSet;
-
 import it.unibo.alchemist.model.ProtelisIncarnation;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -28,6 +16,15 @@ import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
+import org.protelis.lang.datatype.DeviceUID;
+import org.protelis.lang.datatype.Field;
+import org.protelis.vm.ExecutionEnvironment;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  */
@@ -59,7 +56,7 @@ public class ProtelisNode extends AbstractNode<Object> implements DeviceUID, Exe
     }
 
     /**
-     * Adds a new {@link NetworkManager}.
+     * Adds a new {@link AlchemistNetworkManager}.
      * 
      * @param program
      *            the {@link RunProtelisProgram}

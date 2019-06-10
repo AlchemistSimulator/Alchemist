@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.ILsaNode;
  * updates, slowing down the whole simulation. Handle with care.
  * 
  */
-public class SAPEREMoveLSAToAgent extends SAPEREAgent {
+public final class SAPEREMoveLSAToAgent extends SAPEREAgent {
 
     private static final long serialVersionUID = -8020706131248061313L;
     private final ILsaNode destination;

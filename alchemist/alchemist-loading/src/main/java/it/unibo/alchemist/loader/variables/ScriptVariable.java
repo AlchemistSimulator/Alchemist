@@ -7,10 +7,10 @@
  */
 package it.unibo.alchemist.loader.variables;
 
+import org.danilopianini.util.Hashes;
+
 import java.util.Map;
 import java.util.stream.Stream;
-
-import org.danilopianini.util.Hashes;
 
 /**
  * This variable can be initialized by providing a formula where other variables
@@ -70,6 +70,9 @@ public abstract class ScriptVariable<R> implements DependentVariable<R> {
      */
     protected abstract R interpret(String s);
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return script;

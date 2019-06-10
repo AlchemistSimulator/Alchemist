@@ -203,7 +203,7 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return name.hashCode();
     }
 

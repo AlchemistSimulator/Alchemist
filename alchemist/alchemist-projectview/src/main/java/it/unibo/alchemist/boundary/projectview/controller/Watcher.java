@@ -35,7 +35,7 @@ import javafx.application.Platform;
  * 
  *
  */
-public class Watcher implements Runnable {
+public final class Watcher implements Runnable {
 
     private static final Logger L = LoggerFactory.getLogger(ProjectGUI.class);
     private static final long TIMEOUT = 10;

@@ -78,6 +78,11 @@ public class TestGPSLoader {
         CLASS_ALIGNMENT_NO_ARG.add(CLASS_TIME_ALIGNMENT_TO_SIMULATION_TIME);
         CLASS_ALIGNMENT_NO_ARG.add(CLASS_TIME_NO_ALIGNMENT);
     }
+
+    /**
+     * Tests traces alignment.
+     * @throws IOException causes failure
+     */
     @Test
     public void testAlignment() throws IOException {
         for (final String normalizer : CLASS_ALIGNMENT_NO_ARG) {
@@ -100,7 +105,8 @@ public class TestGPSLoader {
     }
 
     /**
-     *
+     * Tests error reporting.
+     * @throws IOException causes failure
      */
     @Test
     public void testError() throws IOException {

@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * the specific incarnation details.
  * 
  */
-@SuppressWarnings({"unchecked", "rawtypes"})
+@SuppressWarnings("unchecked")
 public final class SupportedIncarnations {
 
     private static final Map<String, Class<? extends Incarnation<?, ?>>> INCARNATIONS;

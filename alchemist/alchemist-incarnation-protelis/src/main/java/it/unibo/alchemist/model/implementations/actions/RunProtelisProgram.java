@@ -162,7 +162,7 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
     }
 
     @Override
-    public Context getContext() {
+    public final Context getContext() {
         /*
          * A Protelis program never writes in other nodes
          */

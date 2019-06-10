@@ -29,7 +29,7 @@
 		<property name="lineSeparator" value="lf" />
 	</module>
 
-	<property name="severity" value="warning" />
+	<property name="severity" value="error" />
 
 	<!-- Checks that property files contain the same keys. -->
 	<!-- See http://checkstyle.sf.net/config_misc.html#Translation -->
@@ -179,8 +179,10 @@
 
 		<!-- Checks for class design -->
 		<!-- See http://checkstyle.sf.net/config_design.html -->
-		<module name="DesignForExtension" />
+		<module name="DesignForExtension">
+		</module>
 		<module name="FinalClass">
+            <property name="severity" value="warning" />
 		</module>
 		<module name="HideUtilityClassConstructor" />
 		<module name="InterfaceIsType" />

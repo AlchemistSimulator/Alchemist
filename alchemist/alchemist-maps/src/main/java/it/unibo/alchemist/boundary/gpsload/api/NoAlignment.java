@@ -7,11 +7,11 @@
  */
 package it.unibo.alchemist.boundary.gpsload.api;
 
-import java.util.List;
-
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
 import it.unibo.alchemist.model.interfaces.Time;
+
+import java.util.List;
 
 /**
  * No alignment is performed.
@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  * - first trace start with time = 2 and second point with time = 5
  * - second trace start with time = 4 and second point with time = 6
  */
-public class NoAlignment extends AbstractGPSTimeAlignment {
+public final class NoAlignment extends AbstractGPSTimeAlignment {
 
     private static final SinglePointBehavior POLICY = SinglePointBehavior.RETAIN_SINGLE_POINTS;
 

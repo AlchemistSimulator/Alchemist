@@ -31,7 +31,7 @@ import javax.annotation.Nullable;
 
 /**
  */
-public class DrawShape implements Effect {
+public final class DrawShape implements Effect {
 
     private static final int DEFAULT_SIZE = 5;
     private static final int MAX_COLOUR_VALUE = 255;

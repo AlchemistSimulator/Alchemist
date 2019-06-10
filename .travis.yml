@@ -92,18 +92,16 @@ deploy:
     domain: alchemist-unstable-doc.surge.sh
     on:
       repo: AlchemistSimulator/Alchemist
-      jdk: openjdk8
       branch: develop
-      os: linux
+      condition: $PUBLISH = true
   - provider: surge
     skip_cleanup: true
     project: "./alchemist/report"
     domain: alchemist-unstable-reports.surge.sh
     on:
       repo: AlchemistSimulator/Alchemist
-      jdk: openjdk8
       branch: develop
-      os: linux
+      condition: $PUBLISH = true
   - provider: surge
     skip_cleanup: true
     project: "./alchemist/build/docs/javadoc/"
@@ -111,8 +109,7 @@ deploy:
     on:
       repo: AlchemistSimulator/Alchemist
       tags: true
-      jdk: openjdk8
-      os: linux
+      condition: $PUBLISH = true
   - provider: surge
     skip_cleanup: true
     project: "./alchemist/report"
@@ -120,5 +117,4 @@ deploy:
     on:
       repo: AlchemistSimulator/Alchemist
       tags: true
-      jdk: openjdk8
-      os: linux
+      condition: $PUBLISH = true

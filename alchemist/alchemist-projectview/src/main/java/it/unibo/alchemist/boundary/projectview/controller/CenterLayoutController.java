@@ -773,7 +773,6 @@ public class CenterLayoutController {
 
     /**
      * 
-     * @return The entity project.
      */
     public void setField() {
         this.project = ProjectIOUtils.loadFrom(this.ctrlLeft.getPathFolder());

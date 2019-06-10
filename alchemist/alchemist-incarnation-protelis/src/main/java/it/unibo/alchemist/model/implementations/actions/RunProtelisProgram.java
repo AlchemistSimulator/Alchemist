@@ -132,7 +132,7 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
     }
 
     @Override
-    public RunProtelisProgram<P> cloneAction(final Node<Object> n, final Reaction<Object> r) {
+    public final RunProtelisProgram<P> cloneAction(final Node<Object> n, final Reaction<Object> r) {
         if (n instanceof ProtelisNode) {
             try {
                 return new RunProtelisProgram<>(getEnvironment(), (ProtelisNode) n, r, getRandomGenerator(), originalProgram, getRetentionTime());

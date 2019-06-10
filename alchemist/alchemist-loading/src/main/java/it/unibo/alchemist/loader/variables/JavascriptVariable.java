@@ -23,7 +23,7 @@ import javax.script.ScriptException;
  * @deprecated This class uses Nashorn, which is scheduled to be removed in future JDKs
  */
 @Deprecated
-public class JavascriptVariable extends ScriptVariable<Object> {
+public final class JavascriptVariable extends ScriptVariable<Object> {
 
     private static final long serialVersionUID = 1L;
     private static final ScriptEngineManager MANAGER = new ScriptEngineManager();
@@ -36,8 +36,8 @@ public class JavascriptVariable extends ScriptVariable<Object> {
      */
     public JavascriptVariable(final String formula) {
         super(formula);
-        L.warn("Javascript variables are deprecated and will get dropped from Alchemist as soon as Nashorn gets " +
-                "dropped from the JDK as per JEP 335. See https://openjdk.java.net/jeps/335.");
+        L.warn("Javascript variables are deprecated and will get dropped from Alchemist as soon as Nashorn gets "
+            + "dropped from the JDK as per JEP 335. See https://openjdk.java.net/jeps/335.");
     }
 
     @Override

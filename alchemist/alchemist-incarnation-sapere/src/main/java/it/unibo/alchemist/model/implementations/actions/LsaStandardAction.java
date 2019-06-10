@@ -83,6 +83,9 @@ public class LsaStandardAction extends LsaAbstractAction {
         nodeId = initNode ? new ConstTreeNode(new HashString("node" + n.getId())) : null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public LsaStandardAction cloneAction(final Node<List<ILsaMolecule>> n, final Reaction<List<ILsaMolecule>> r) {
         return new LsaStandardAction(getMolecule(), (ILsaNode) n);

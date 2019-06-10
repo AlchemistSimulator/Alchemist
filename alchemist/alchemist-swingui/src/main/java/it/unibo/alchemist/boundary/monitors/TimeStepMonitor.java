@@ -39,7 +39,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  */
 @Deprecated
 @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")
-public class TimeStepMonitor<T, P extends Position<? extends P>> extends JPanel implements OutputMonitor<T, P> {
+public final class TimeStepMonitor<T, P extends Position<? extends P>> extends JPanel implements OutputMonitor<T, P> {
 
     private static final long serialVersionUID = 5818408644038869442L;
     private static final String BLANK = "", FINISHED = " (finished)";

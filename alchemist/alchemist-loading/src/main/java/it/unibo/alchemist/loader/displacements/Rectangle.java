@@ -7,9 +7,11 @@
  */
 package it.unibo.alchemist.loader.displacements;
 
+import org.apache.commons.math3.random.RandomGenerator;
+
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
-import org.apache.commons.math3.random.RandomGenerator;
+import org.jetbrains.annotations.NotNull;
 
 /**
  *
@@ -49,6 +51,7 @@ public class Rectangle<P extends Position<? extends P>> extends AbstractRandomDi
     /**
      * {@inheritDoc}
      */
+    @NotNull
     @Override
     protected P indexToPosition(final int i) {
         return makePosition(randomDouble(x, x + width), randomDouble(y, y + height));

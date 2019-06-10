@@ -205,7 +205,7 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
     }
 
     @Override
-    public Dimension2D getViewSize() {
+    public final Dimension2D getViewSize() {
         return view.getSize();
     }
 

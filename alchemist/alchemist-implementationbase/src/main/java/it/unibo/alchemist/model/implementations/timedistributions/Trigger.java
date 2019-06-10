@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  * @param <T>
  *            Concentration type
  */
-public class Trigger<T> extends AbstractDistribution<T> {
+public final class Trigger<T> extends AbstractDistribution<T> {
 
     private static final long serialVersionUID = 5207992119302525618L;
     private boolean dryRunDone;

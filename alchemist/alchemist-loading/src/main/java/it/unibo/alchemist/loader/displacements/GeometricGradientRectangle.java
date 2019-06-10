@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  *
  * @param <P> position type
  */
-public class GeometricGradientRectangle<P extends Position<? extends P>> extends Rectangle<P> {
+public final class GeometricGradientRectangle<P extends Position<? extends P>> extends Rectangle<P> {
 
     private final ExponentialDistribution exp;
     private final double bound, size;

@@ -8,8 +8,11 @@
 
 package it.unibo.alchemist.boundary.wormhole.implementation;
 
-import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
-import static java.lang.Double.isNaN;
+import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Position2D;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -19,12 +22,8 @@ import java.awt.geom.Dimension2D;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
+import static java.lang.Double.isNaN;
 
 /**
  * Partial implementation for the interface {@link IWormhole2D}.<br>
@@ -113,6 +112,9 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
         return model;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public P getEnvPoint(final Point viewPoint) {
         final PointAdapter<P> adapter = envPointFromView(from(viewPoint));

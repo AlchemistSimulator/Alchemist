@@ -23,7 +23,7 @@ import org.danilopianini.lang.HashString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -71,7 +71,7 @@ public class LsaStandardAction extends LsaAbstractAction {
      *            The Random generator to use
      */
     public LsaStandardAction(final ILsaMolecule m, final ILsaNode n, final RandomGenerator random) {
-        super(n, Arrays.asList(m));
+        super(n, Collections.singletonList(m));
         mol = Objects.requireNonNull(m);
         rand = random;
         final String molString = mol.toString();

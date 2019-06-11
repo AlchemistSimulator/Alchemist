@@ -6,7 +6,8 @@ language: java
 jdk:
   - openjdk11
   - openjdk12
-  - openjdk13
+# To be enabled when the official version is out
+#  - openjdk13
 git:
   depth: false
 before_cache:

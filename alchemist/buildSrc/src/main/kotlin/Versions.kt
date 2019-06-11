@@ -69,7 +69,7 @@ object Versions {
 
     const val commons_math3: String = "3.6.1" 
 
-    const val org_apache_ignite: String = "2.7.0" // available: "2.7.5"
+    const val org_apache_ignite: String = "2.7.0" 
 
     const val groovy: String = "2.5.7" 
 
@@ -137,7 +137,7 @@ object Versions {
 
         const val currentVersion: String = "5.4.1"
 
-        const val nightlyVersion: String = "5.6-20190610000035+0000"
+        const val nightlyVersion: String = "5.6-20190611000032+0000"
 
         const val releaseCandidate: String = "5.5-rc-2"
     }

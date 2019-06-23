@@ -48,13 +48,7 @@ public class TestConcurrency {
     @BeforeEach
     public void setUp() {
         env = new Continuous2DEnvironment<>();
-        final Node<Object> n = new AbstractNode<Object>(env) {
-            private static final long serialVersionUID = 1L;
-            @Override
-            protected Object createT() {
-                return "";
-            }
-        };
+        final Node<Object> n = new DummyNode(env);
         env.setLinkingRule(new NoLinks<>());
         final TimeDistribution<Object> td = new DiracComb<>(1);
         final Reaction<Object> r = new Event<>(n, td);
@@ -84,7 +78,7 @@ public class TestConcurrency {
         sim.waitFor(Status.RUNNING, 1, TimeUnit.SECONDS); // the method must return instantly
         /*
          * this test does only 10 steps, so, after reaching RUNNING status, the simulation stops almost
-         * instantly, because it takes a very little time to perform 10 steps, since in every step the 
+         * instantly, because it takes a very little time to perform 10 steps, since in every step the
          * simulation executes the fake reaction you can see below, which simply does nothing.
          */
         verifyStatus(ex, sim, Status.TERMINATED);
@@ -124,6 +118,18 @@ public class TestConcurrency {
             }
         } catch (InterruptedException e) {
             fail(e.getMessage());
+        }
+    }
+
+    private static class DummyNode extends AbstractNode<Object> {
+        private static final long serialVersionUID = 1L;
+        public DummyNode(Environment<?, ?> env) {
+            super(env);
+        }
+
+        @Override
+        protected Object createT() {
+            return "";
         }
     }
 

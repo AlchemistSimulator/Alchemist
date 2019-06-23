@@ -122,9 +122,9 @@ public final class EffectSerializationFactory {
      *             Exception in handling the file
      */
     public static void effectsToFile(final File effectFile, final List<Effect> effects) throws IOException {
-        final Writer fw = new FileWriter(effectFile);
-        GSON.toJson(effects, new TypeToken<List<Effect>>() {
-        }.getType(), fw);
-        fw.close();
+        try (Writer fw = new FileWriter(effectFile)) {
+            GSON.toJson(effects, new TypeToken<List<Effect>>() {
+            }.getType(), fw);
+        }
     }
 }

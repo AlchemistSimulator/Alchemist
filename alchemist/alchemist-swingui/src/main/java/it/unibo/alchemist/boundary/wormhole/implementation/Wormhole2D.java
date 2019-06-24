@@ -8,8 +8,11 @@
 
 package it.unibo.alchemist.boundary.wormhole.implementation;
 
-import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
-import static java.lang.Double.isNaN;
+import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Position2D;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -19,18 +22,15 @@ import java.awt.geom.Dimension2D;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
+import static java.lang.Double.isNaN;
 
 /**
  * Partial implementation for the interface {@link IWormhole2D}.<br>
  * I am considering the particular case of the view as an entity into the
- * sceern-space: the y-axis grows on the bottom side of the screen.
- * 
+ * screen-space: the y-axis grows on the bottom side of the screen.
+ *
+ * @param <P> position type
  */
 public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2D<P> {
 
@@ -55,7 +55,7 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
     public Wormhole2D(final Environment<?, P> env, final Component comp) {
         model = env;
         view = comp;
-        position = from(comp.getWidth() / 2, comp.getHeight() / 2);
+        position = from(comp.getWidth() / 2.0, comp.getHeight() / 2.0);
     }
 
     /**
@@ -112,6 +112,9 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
         return model;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public P getEnvPoint(final Point viewPoint) {
         final PointAdapter<P> adapter = envPointFromView(from(viewPoint));
@@ -131,7 +134,7 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
     }
 
     @Override
-    public Mode getMode() {
+    public final Mode getMode() {
         return mode;
     }
 
@@ -180,11 +183,17 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
         return angle;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Point getViewPoint(final P envPoint) {
         return viewPointFromEnv(from(envPoint)).toPoint();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Point getViewPosition() {
         return position.toPoint();
@@ -196,7 +205,7 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
     }
 
     @Override
-    public Dimension2D getViewSize() {
+    public final Dimension2D getViewSize() {
         return view.getSize();
     }
 
@@ -211,22 +220,32 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
     }
 
     @Override
-    public double getZoom() {
+    public final double getZoom() {
         return zoom;
     }
 
     @Override
-    public boolean isInsideView(final Point viewPoint) {
+    public final boolean isInsideView(final Point viewPoint) {
         final double x = viewPoint.getX();
         final double y = viewPoint.getY();
         final Dimension2D vs = getViewSize();
         return x >= 0 && x <= vs.getWidth() && y >= 0 && y <= vs.getHeight();
     }
 
-    protected P makePosition(double x, double y) {
+    /**
+     * Creates a new position by delegating to the environment.
+     *
+     * @param x x coordinate
+     * @param y y coordinate
+     * @return a new position
+     */
+    protected P makePosition(final double x, final double y) {
         return getEnvironment().makePosition(x, y);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void optimalZoom() {
         if (getEnvRatio() <= getViewRatio()) {
@@ -237,6 +256,9 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void rotateAroundPoint(final Point p, final double a) {
         final PointAdapter<P> orig = effectCenter;
@@ -245,6 +267,9 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
         setEnvPositionWithoutMoving(orig);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setEnvPosition(final P pos) {
         setViewPosition(getViewPoint(pos));
@@ -274,11 +299,17 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setRotation(final double rad) {
         angle = rad % (Math.PI * 2d);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setViewPosition(final Point point) {
         position = from(point);
@@ -296,6 +327,9 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
         effectCenter = effectCenter.sum(envDelta);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setZoom(final double value) {
         if (value <= 0d) {
@@ -319,6 +353,9 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
         return from(ep);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void zoomOnPoint(final Point p, final double z) {
         final PointAdapter<P> orig = effectCenter;

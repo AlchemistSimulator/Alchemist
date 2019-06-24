@@ -134,10 +134,10 @@ public class LeftLayoutController {
                     final TreeItem<String> newVal) {
                 final TreeItem<String> selectedItem = (TreeItem<String>) newVal;
                 TreeItem<String> parent = selectedItem.getParent();
-                String path = File.separator + selectedItem.getValue();
+                final StringBuilder path = new StringBuilder(File.separator + selectedItem.getValue());
                 while (parent != null)  {
                     if (parent.getParent() != null) {
-                        path = File.separator + parent.getValue() + path;
+                        path.insert(0, File.separator + parent.getValue());
                     }
                     parent = parent.getParent();
                 }

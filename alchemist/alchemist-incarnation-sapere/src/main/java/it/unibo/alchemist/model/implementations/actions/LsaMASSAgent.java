@@ -26,6 +26,8 @@ import it.unibo.alchemist.model.interfaces.Position;
 
 
 /**
+ *
+ * @param <P> position type
  */
 public class LsaMASSAgent<P extends Position<P>> extends SAPEREMoveNodeAgent<P> {
 

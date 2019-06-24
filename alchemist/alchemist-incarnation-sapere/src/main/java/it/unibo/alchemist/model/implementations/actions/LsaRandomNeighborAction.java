@@ -63,11 +63,17 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
         randomEngine = random;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public LsaRandomNeighborAction cloneAction(final Node<List<ILsaMolecule>> n, final Reaction<List<ILsaMolecule>> r) {
         return new LsaRandomNeighborAction((ILsaNode) n, getMolecule(), getEnvironment(), randomEngine);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void execute() {
         final List<ILsaNode> nodes = getNodes();
@@ -99,7 +105,7 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
     }
 
     @Override
-    public Context getContext() {
+    public final Context getContext() {
         return Context.NEIGHBORHOOD;
     }
 
@@ -160,6 +166,9 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
         return env.getDistanceBetweenNodes(getNode(), node);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return "+" + getMolecule().toString();

@@ -5,7 +5,18 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.model.implementations.positions; // NOPMD by danysk on 2/4/14 3:39 PM
+package it.unibo.alchemist.model.implementations.positions;
+
+import com.google.common.collect.Lists;
+import com.javadocmd.simplelatlng.LatLng;
+import com.javadocmd.simplelatlng.util.LengthUnit;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
+import org.danilopianini.util.Hashes;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.function.BinaryOperator;
 
 import static org.apache.commons.math3.util.FastMath.abs;
 import static org.apache.commons.math3.util.FastMath.acos;
@@ -16,18 +27,6 @@ import static org.apache.commons.math3.util.FastMath.sin;
 import static org.apache.commons.math3.util.FastMath.sqrt;
 import static org.apache.commons.math3.util.FastMath.toDegrees;
 import static org.apache.commons.math3.util.FastMath.toRadians;
-
-import java.util.List;
-import java.util.function.BinaryOperator;
-
-import org.danilopianini.util.Hashes;
-
-import com.google.common.collect.Lists;
-import com.javadocmd.simplelatlng.LatLng;
-import com.javadocmd.simplelatlng.util.LengthUnit;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.interfaces.GeoPosition;
 
 /**
  * Unmodifiable state version of {@link LatLng}, also implementing the
@@ -101,8 +100,8 @@ public final class LatLongPosition implements GeoPosition {
     }
 
     @Override
-    public GeoPosition plus(final GeoPosition other) {
-        return ebeOperation((self, b) -> self + b, other);
+    public GeoPosition plus(@NotNull final GeoPosition other) {
+        return ebeOperation(Double::sum, other);
     }
 
     @Override
@@ -182,7 +181,7 @@ public final class LatLongPosition implements GeoPosition {
     }
 
     @Override
-    public double getDistanceTo(final GeoPosition p) {
+    public double getDistanceTo(@NotNull final GeoPosition p) {
         if (p instanceof LatLongPosition) {
             return distance(latlng, ((LatLongPosition) p).latlng, df);
         }
@@ -192,6 +191,7 @@ public final class LatLongPosition implements GeoPosition {
     /**
      * @return the latitude
      */
+    @Override
     public double getLatitude() {
         return latlng.getLatitude();
     }
@@ -199,6 +199,7 @@ public final class LatLongPosition implements GeoPosition {
     /**
      * @return the longitude
      */
+    @Override
     public double getLongitude() {
         return latlng.getLongitude();
     }
@@ -222,7 +223,7 @@ public final class LatLongPosition implements GeoPosition {
     }
 
     @Override
-    public GeoPosition minus(final GeoPosition other) {
+    public GeoPosition minus(@NotNull final GeoPosition other) {
         return ebeOperation((self, o) -> self - o, other);
     }
 

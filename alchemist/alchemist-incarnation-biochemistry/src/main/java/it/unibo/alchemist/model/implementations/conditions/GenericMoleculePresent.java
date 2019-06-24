@@ -45,6 +45,9 @@ public class GenericMoleculePresent<T extends Number> extends
         declareDependencyOn(mol);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Context getContext() {
         return Context.LOCAL;
@@ -60,11 +63,17 @@ public class GenericMoleculePresent<T extends Number> extends
                 .doubleValue();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return molecule.toString() + ">=" + qty;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public GenericMoleculePresent<T> cloneCondition(final Node<T> n, final Reaction<T> r) {
         return new GenericMoleculePresent<T>(n, molecule, qty);

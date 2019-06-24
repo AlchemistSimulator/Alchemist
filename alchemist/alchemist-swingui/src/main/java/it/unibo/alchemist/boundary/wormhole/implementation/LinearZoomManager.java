@@ -14,7 +14,7 @@ import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager;
  * device/control into a zoom rate through a linear function.<br>
  * Zoom = amount of slides * rate.
  */
-public class LinearZoomManager extends AbstractSlideInputManager implements ZoomManager {
+public final class LinearZoomManager extends AbstractSlideInputManager implements ZoomManager {
     private final double rate;
 
     /**

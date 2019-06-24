@@ -10,6 +10,8 @@ package it.unibo.alchemist.model.implementations.actions;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.google.common.reflect.TypeToken;
+import it.unibo.alchemist.AlchemistUtil;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.lang.MathUtils;
@@ -44,7 +46,7 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
 
     @Override
     public CellTensionPolarization<P> cloneAction(final Node<Double> n, final Reaction<Double> r) {
-        return new CellTensionPolarization<>(env, (CircularDeformableCell<P>) n);
+        return new CellTensionPolarization<>(env, AlchemistUtil.cast(new TypeToken<CircularDeformableCell<P>>() { }, n));
     }
 
     @Override
@@ -52,11 +54,10 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
         // get node position as array
         final double[] nodePos = env.getPosition(getNode()).getCartesianCoordinates();
         // initializing resulting versor
-        double[] resVersor = new double[nodePos.length];
+        final double[] resVersor = new double[nodePos.length];
         // declaring a variable for the node where this action is set, to have faster access
         final CircularDeformableCell<P> thisNode = getNode();
         // transforming each node around in a vector (Position) 
-        @SuppressWarnings("unchecked")
         final List<P> pushForces = env.getNodesWithinRange(
                 thisNode,
                 env.getMaxDiameterAmongCircularDeformableCells()).stream()
@@ -67,10 +68,10 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
                         double maxDist;
                         if (n instanceof CircularDeformableCell) {
                             // for deformable cell is maxRad + maxRad
-                             maxDist = (thisNode.getMaxRadius() + ((CircularDeformableCell<P>) n).getMaxRadius());
+                             maxDist = thisNode.getMaxRadius() + ((CircularDeformableCell<P>) n).getMaxRadius();
                         } else {
                             // for simple cells is maxRad + rad
-                             maxDist = (thisNode.getMaxRadius() + ((CellWithCircularArea<P>) n).getRadius());
+                             maxDist = thisNode.getMaxRadius() + ((CellWithCircularArea<P>) n).getRadius();
                         }
                         // check
                         return env.getDistanceBetweenNodes(thisNode, n) < maxDist;
@@ -104,7 +105,8 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
                     if (MathUtils.fuzzyEquals(localNodeMaxRadius, localNodeMinRadius) && MathUtils.fuzzyEquals(nodeMaxRadius, nodeMinRadius)) {
                         intensity = 1;
                     } else {
-                        intensity = ((localNodeMaxRadius + nodeMaxRadius) - env.getDistanceBetweenNodes(n, thisNode)) / ((localNodeMaxRadius + nodeMaxRadius) - (localNodeMinRadius + nodeMinRadius));
+                        final double maxRadiusSum = localNodeMaxRadius + nodeMaxRadius;
+                        intensity = (maxRadiusSum - env.getDistanceBetweenNodes(n, thisNode)) / (maxRadiusSum - localNodeMinRadius - nodeMinRadius);
                     }
                     if (intensity != 0) {
                         double[] propensityVect = new double[]{nodePos[0] - nPos[0], nodePos[1] - nPos[1]};
@@ -123,9 +125,8 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
             thisNode.addPolarization(env.makePosition(0, 0));
         } else {
             for (final P p : pushForces) {
-                for (int i = 0; i < p.getDimensions(); i++) {
-                    resVersor[i] = resVersor[i] + p.getCoordinate(i);
-                }
+                resVersor[0] = resVersor[0] + p.getX();
+                resVersor[1] = resVersor[1] + p.getY();
             }
             final double module = FastMath.sqrt(FastMath.pow(resVersor[0], 2) + FastMath.pow(resVersor[1], 2));
             if (module == 0) {
@@ -141,7 +142,6 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
         return Context.LOCAL;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public CircularDeformableCell<P> getNode() {
         return (CircularDeformableCell<P>) super.getNode();

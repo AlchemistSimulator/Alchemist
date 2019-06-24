@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.model.implementations.conditions;
 
+import com.google.common.collect.Sets;
 import it.unibo.alchemist.expressions.interfaces.IExpression;
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
 import it.unibo.alchemist.model.interfaces.Context;
@@ -14,14 +15,11 @@ import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
-
 import org.danilopianini.lang.HashString;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.collect.Sets;
 
 /**
  * simple LSA-condition (example: <grad,X,1>). Search an instance of a template
@@ -48,11 +46,17 @@ public class LsaStandardCondition extends LsaAbstractCondition {
         molecule = mol;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public LsaStandardCondition cloneCondition(final Node<List<ILsaMolecule>> n, final Reaction<List<ILsaMolecule>> r) {
         return new LsaStandardCondition(molecule, (ILsaNode) n);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean filter(
             final List<Map<HashString, ITreeNode<?>>> matchesList,
@@ -77,11 +81,7 @@ public class LsaStandardCondition extends LsaAbstractCondition {
          */
         for (int i = matchesList.size() - 1; i >= 0; i--) {
             final Map<ILsaNode, List<ILsaMolecule>> alreadyRemoved = retrieved.get(i);
-            List<ILsaMolecule> alreadyRemovedInThisNode = alreadyRemoved.get(node);
-            if (alreadyRemovedInThisNode == null) {
-                alreadyRemovedInThisNode = new ArrayList<>();
-                alreadyRemoved.put(node, alreadyRemovedInThisNode);
-            }
+            final List<ILsaMolecule> alreadyRemovedInThisNode = alreadyRemoved.computeIfAbsent(node, k -> new ArrayList<>());
             final Map<HashString, ITreeNode<?>> matches = matchesList.get(i);
             final List<IExpression> partialInstance = molecule.allocateVar(matches);
             final boolean dups = molecule.hasDuplicateVariables();
@@ -113,6 +113,9 @@ public class LsaStandardCondition extends LsaAbstractCondition {
         return setValid(matchesfound);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Context getContext() {
         return Context.LOCAL;
@@ -126,15 +129,18 @@ public class LsaStandardCondition extends LsaAbstractCondition {
     }
 
     @Override
-    public double getPropensityContribution() {
+    public final double getPropensityContribution() {
         return -1;
     }
 
     @Override
-    public boolean isValid() {
+    public final boolean isValid() {
         return valid;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return molecule.toString();
@@ -148,7 +154,7 @@ public class LsaStandardCondition extends LsaAbstractCondition {
      *            true if this condition is valid
      * @return the value which is passed.
      */
-    protected boolean setValid(final boolean isValid) {
+    protected final boolean setValid(final boolean isValid) {
         valid = isValid;
         return valid;
     }

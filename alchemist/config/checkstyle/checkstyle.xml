@@ -29,7 +29,7 @@
 		<property name="lineSeparator" value="lf" />
 	</module>
 
-	<property name="severity" value="warning" />
+	<property name="severity" value="error" />
 
 	<!-- Checks that property files contain the same keys. -->
 	<!-- See http://checkstyle.sf.net/config_misc.html#Translation -->
@@ -50,6 +50,12 @@
 		<property name="minimum" value="0" />
 		<property name="maximum" value="0" />
 		<property name="message" value="Line has trailing spaces." />
+	</module>
+	<module name="RegexpMultiline">
+		<property name="severity" value="error" />
+		<property name="fileExtensions" value="java,xtend,scala,kt,xml,groovy,yaml,yml" />
+		<property name="format" value="(?s:(\r\n|\r).*)"/>
+		<property name="message" value="CRLF and CR line endings are prohibited, but this file uses them."/>
 	</module>
 	<module name="RegexpSingleline">
 		<property name="severity" value="error" />
@@ -99,6 +105,7 @@
 			<property name="scope" value="protected" />
 		</module>
 		<module name="JavadocType">
+			<property name="severity" value="error" />
 			<property name="scope" value="protected" />
 		</module>
 		<module name="JavadocVariable">
@@ -172,8 +179,11 @@
 
 		<!-- Checks for class design -->
 		<!-- See http://checkstyle.sf.net/config_design.html -->
-		<module name="DesignForExtension" />
-		<module name="FinalClass" />
+		<module name="DesignForExtension">
+		</module>
+		<module name="FinalClass">
+            <property name="severity" value="warning" />
+		</module>
 		<module name="HideUtilityClassConstructor" />
 		<module name="InterfaceIsType" />
 		<module name="VisibilityModifier" />
@@ -182,7 +192,9 @@
 		<!-- See http://checkstyle.sf.net/config_misc.html -->
 		<module name="ArrayTypeStyle" />
 		<module name="FinalParameters" />
-		<module name="TodoComment" />
+		<module name="TodoComment">
+            <property name="severity" value="info" />
+        </module>
 		<module name="UpperEll" />
 	</module>
 </module>

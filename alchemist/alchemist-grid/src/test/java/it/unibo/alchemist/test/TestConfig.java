@@ -7,22 +7,22 @@
  */
 package it.unibo.alchemist.test;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.kaikikm.threadresloader.ResourceLoader;
-
 import it.unibo.alchemist.grid.config.GeneralSimulationConfig;
 import it.unibo.alchemist.grid.config.LocalGeneralSimulationConfig;
 import it.unibo.alchemist.grid.util.WorkingDirectory;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.YamlLoader;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.kaikikm.threadresloader.ResourceLoader;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  */
@@ -31,21 +31,18 @@ public class TestConfig {
 
 
     /**
-     * 
+     * @throws URISyntaxException indicates failure
+     * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testGeneralSimulationConfig() {
+    public void testGeneralSimulationConfig() throws URISyntaxException, IOException {
         final String resource = "config/00-dependencies.yml";
         final InputStream yaml = ResourceLoader.getResourceAsStream(resource);
         Assertions.assertNotNull(yaml);
         final Loader l = this.getLoader(yaml);
         final GeneralSimulationConfig gsc = new LocalGeneralSimulationConfig(l, 0, DoubleTime.INFINITE_TIME);
         Assertions.assertEquals(gsc.getDependencies().size(), 2);
-        try {
-            Assertions.assertArrayEquals(gsc.getDependencies().get(DEPENDENCY_FILE), Files.readAllBytes(Paths.get(ResourceLoader.getResource(DEPENDENCY_FILE).toURI())));
-        } catch (Exception e) {
-            Assertions.fail(e.getMessage());
-        }
+        Assertions.assertArrayEquals(gsc.getDependencies().get(DEPENDENCY_FILE), Files.readAllBytes(Paths.get(ResourceLoader.getResource(DEPENDENCY_FILE).toURI())));
     }
 
     /**
@@ -59,7 +56,7 @@ public class TestConfig {
         final Loader l = this.getLoader(yaml);
         final GeneralSimulationConfig gsc = new LocalGeneralSimulationConfig(l, 0, DoubleTime.INFINITE_TIME);
         Assertions.assertEquals(gsc.getDependencies().size(), 2);
-        File test;
+        final File test;
         try (WorkingDirectory wd = new WorkingDirectory()) {
             test = new File(wd.getFileAbsolutePath("nothing")).getParentFile();
             Assertions.assertTrue(test.exists());

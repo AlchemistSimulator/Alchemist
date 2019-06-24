@@ -21,7 +21,6 @@ import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.test.util.TestNode;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
@@ -31,7 +30,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * A series of tests checking that our Yaml Loader is working as expected.
@@ -80,6 +83,8 @@ public class TestYAMLLoader {
 
     /**
      * Test loading layer classes.
+     *
+     * @param <P> Used for internal consistency
      */
     @Test
     public <P extends Position<P>> void testLayers() {
@@ -166,7 +171,7 @@ public class TestYAMLLoader {
 //            it.unibo.alchemist.boundary.gui.SingleRunGUI.make(sim);
 //        }
         sim.run();
-        sim.getError().ifPresent(e -> Assertions.fail(e.getMessage()));
+        sim.getError().ifPresent(e -> fail(e.getMessage()));
         return env;
     }
 

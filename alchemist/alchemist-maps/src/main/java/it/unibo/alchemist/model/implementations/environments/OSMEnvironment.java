@@ -39,7 +39,6 @@ import org.kaikikm.threadresloader.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -415,7 +414,7 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
                     mapLock.release();
                 }
                 return Optional.empty();
-            } catch (Exception e) {
+            } catch (Exception e) { // NOPMD AvoidCatchingGenericException
                 return Optional.of(e);
             }
         }).filter(Optional::isPresent).map(Optional::get).findFirst();
@@ -487,7 +486,7 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
         return mkdirsIfNeeded(new File(target));
     }
 
-    private class CacheEntry {
+    private final class CacheEntry {
 
         private final GeoPosition apprEnd;
         private final GeoPosition apprStart;
@@ -496,7 +495,7 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
         private final GeoPosition start;
         private final Vehicle v;
 
-        CacheEntry(final Vehicle v, final GeoPosition p1, final GeoPosition p2) {
+        private CacheEntry(final Vehicle v, final GeoPosition p1, final GeoPosition p2) {
             this.v = Objects.requireNonNull(v);
             this.start = Objects.requireNonNull(p1);
             this.end = Objects.requireNonNull(p2);

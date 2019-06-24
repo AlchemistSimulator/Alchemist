@@ -7,6 +7,26 @@
  */
 package it.unibo.alchemist.core.implementations;
 
+import com.google.common.collect.Sets;
+import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
+import it.unibo.alchemist.core.interfaces.DependencyGraph;
+import it.unibo.alchemist.core.interfaces.Scheduler;
+import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.core.interfaces.Status;
+import it.unibo.alchemist.model.implementations.times.DoubleTime;
+import it.unibo.alchemist.model.interfaces.Context;
+import it.unibo.alchemist.model.interfaces.Dependency;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Neighborhood;
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.Time;
+import org.danilopianini.util.concurrent.FastReadWriteLock;
+import org.jooq.lambda.fi.lang.CheckedRunnable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayDeque;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -21,29 +41,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BooleanSupplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import com.google.common.collect.Sets;
-import it.unibo.alchemist.model.interfaces.Context;
-import it.unibo.alchemist.model.interfaces.Dependency;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Neighborhood;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.Time;
-import org.danilopianini.util.concurrent.FastReadWriteLock;
-import org.jooq.lambda.fi.lang.CheckedRunnable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
-import it.unibo.alchemist.core.interfaces.DependencyGraph;
-import it.unibo.alchemist.core.interfaces.Scheduler;
-import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.core.interfaces.Status;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
 
 /**
  * This class implements a simulation. It offers a wide number of static
@@ -58,7 +56,6 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
     private static final Logger L = LoggerFactory.getLogger(Engine.class);
     private static final double NANOS_TO_SEC = 1000000000.0;
-    private volatile Status status = Status.INIT;
     private final Lock statusLock = new ReentrantLock();
     private final Condition statusCondition = statusLock.newCondition();
     private final BlockingQueue<CheckedRunnable> commands = new LinkedBlockingQueue<>();
@@ -70,6 +67,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     private final FastReadWriteLock monitorLock = new FastReadWriteLock();
     private final List<OutputMonitor<T, P>> monitors = new LinkedList<>();
     private final long finalStep;
+    private volatile Status status = Status.INIT;
     private Optional<Throwable> error = Optional.empty();
     private Time currentTime = DoubleTime.ZERO_TIME;
     private long currentStep;
@@ -487,10 +485,11 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         return getStatus();
     }
 
+    // CHECKSTYLE: FinalClassCheck OFF
     private class Update {
         private final Node<T> source;
 
-        Update(final Node<T> source) {
+        private Update(final Node<T> source) {
             this.source = source;
         }
 
@@ -515,9 +514,9 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         }
     }
 
-    private class Movement extends Update {
+    private final class Movement extends Update {
 
-        Movement(final Node<T> source) {
+        private Movement(final Node<T> source) {
             super(source);
         }
 
@@ -530,9 +529,9 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
     }
 
-    private class Removal extends Update {
+    private final class Removal extends Update {
 
-        Removal(final Node<T> source) {
+        private Removal(final Node<T> source) {
             super(source);
         }
 
@@ -545,8 +544,8 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         }
     }
 
-    private class Addition extends Update {
-        Addition(final Node<T> source) {
+    private final class Addition extends Update {
+        private Addition(final Node<T> source) {
             super(source);
         }
         @Override
@@ -559,7 +558,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
         private final Node<T> target;
 
-        NeighborhoodChanged(final Node<T> source, final Node<T> target) {
+        private NeighborhoodChanged(final Node<T> source, final Node<T> target) {
             super(source);
             this.target = target;
         }
@@ -585,9 +584,9 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         }
     }
 
-    private class NeigborAdded extends NeighborhoodChanged {
+    private final class NeigborAdded extends NeighborhoodChanged {
 
-        NeigborAdded(final Node<T> source, final Node<T> target) {
+        private NeigborAdded(final Node<T> source, final Node<T> target) {
             super(source, target);
         }
 
@@ -597,9 +596,9 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         }
     }
 
-    private class NeigborRemoved extends NeighborhoodChanged {
+    private final class NeigborRemoved extends NeighborhoodChanged {
 
-        NeigborRemoved(final Node<T> source, final Node<T> target) {
+        private NeigborRemoved(final Node<T> source, final Node<T> target) {
             super(source, target);
         }
 

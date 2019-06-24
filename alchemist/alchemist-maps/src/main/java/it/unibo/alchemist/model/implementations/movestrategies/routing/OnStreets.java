@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy;
  * 
  * @param <T>
  */
-public class OnStreets<T> implements RoutingStrategy<GeoPosition> {
+public final class OnStreets<T> implements RoutingStrategy<GeoPosition> {
 
     private static final long serialVersionUID = 9041363003794088201L;
     private final MapEnvironment<T> env;

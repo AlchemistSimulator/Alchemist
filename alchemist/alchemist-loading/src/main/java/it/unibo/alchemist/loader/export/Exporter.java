@@ -7,19 +7,7 @@
  */
 package it.unibo.alchemist.loader.export;
 
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
-
 import com.google.common.base.Charsets;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
@@ -28,17 +16,28 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
+
 /**
  * Writes on file data provided by a number of {@link Extractor}s. Produces a
  * CSV with '#' as comment character. Even though this class implements
- * {@link OutputMonitor}, it is not {@link Serializable}.
+ * {@link OutputMonitor}, it is not {@link java.io.Serializable}.
  *
  * @param <T>
+ * @param <P> position type
  */
 @SuppressWarnings("serial")
 @SuppressFBWarnings(value = {"SE_BAD_FIELD", "SE_NO_SERIALVERSIONID"},
     justification = "This class does not comply to Serializable.")
-public class Exporter<T, P extends Position<? extends P>> implements OutputMonitor<T, P> {
+public final class Exporter<T, P extends Position<? extends P>> implements OutputMonitor<T, P> {
 
     private static final String SEPARATOR = "#####################################################################";
     private final double sampleSpace;
@@ -53,7 +52,6 @@ public class Exporter<T, P extends Position<? extends P>> implements OutputMonit
      * @param header a message to be inserted in the header of the file.
      * @param columns the extractors to use
      * @throws FileNotFoundException if the file can not be opened for writing
-     * @throws UnsupportedEncodingException 
      */
     public Exporter(final String target, final double space, final String header, final List<Extractor> columns) throws FileNotFoundException {
         this.sampleSpace = space;

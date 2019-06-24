@@ -5,33 +5,12 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-/**
- * 
- */
 package it.unibo.alchemist.protelis;
-
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
-import com.google.common.hash.HashFunction;
-import com.google.common.hash.Hasher;
-import com.google.common.hash.Hashing;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.math3.random.RandomGenerator;
-import org.jetbrains.annotations.NotNull;
-import org.protelis.lang.datatype.DatatypeFactory;
-import org.protelis.lang.datatype.DeviceUID;
-import org.protelis.lang.datatype.Field;
-import org.protelis.lang.datatype.Tuple;
-import org.protelis.vm.LocalizedDevice;
-import org.protelis.vm.SpatiallyEmbeddedDevice;
-import org.protelis.vm.TimeAwareDevice;
-import org.protelis.vm.impl.AbstractExecutionContext;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-
+import com.google.common.hash.Hashing;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
@@ -44,6 +23,20 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import java8.util.function.Function;
 import java8.util.function.Functions;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.jetbrains.annotations.NotNull;
+import org.protelis.lang.datatype.DatatypeFactory;
+import org.protelis.lang.datatype.DeviceUID;
+import org.protelis.lang.datatype.Field;
+import org.protelis.lang.datatype.Tuple;
+import org.protelis.vm.LocalizedDevice;
+import org.protelis.vm.SpatiallyEmbeddedDevice;
+import org.protelis.vm.TimeAwareDevice;
+import org.protelis.vm.impl.AbstractExecutionContext;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @param <P> position type
@@ -62,7 +55,6 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
             .expireAfterAccess(10, TimeUnit.MINUTES)
             .maximumSize(100)
             .build(new CacheLoader<P, Double>() {
-                @SuppressWarnings("unchecked")
                 @Override
                 public Double load(@NotNull final P dest) {
                     if (env instanceof MapEnvironment) {
@@ -198,6 +190,7 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
     /**
      * @return The same behavior of MIT Proto's nbrdelay (forward view).
      */
+    @Override
     public Field nbrDelay() {
         return buildField(Functions.identity(), getDeltaTime());
     }

@@ -7,18 +7,19 @@
  */
 package it.unibo.alchemist.loader.export;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * An extractor which provides informations about the running time of the simulation.
  *
  */
-public class ExecutionTime implements Extractor {
+public final class ExecutionTime implements Extractor {
 
     private static final double NANOS_TO_SEC = 1000000000.0;
     private static final List<String> COLNAME;
@@ -41,7 +42,7 @@ public class ExecutionTime implements Extractor {
             initial = System.nanoTime();
         }
         lastStep = step;
-        return new double[]{((System.nanoTime() - initial) / NANOS_TO_SEC)};
+        return new double[]{(System.nanoTime() - initial) / NANOS_TO_SEC};
     }
 
     @Override

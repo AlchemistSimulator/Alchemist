@@ -7,15 +7,17 @@
  */
 package it.unibo.alchemist.loader.displacements;
 
-import java.util.stream.Stream;
-
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 
+import java.util.stream.Stream;
+
 /**
  * A single node in a single point.
+ *
+ * @param <P> position type
  */
-public class Point<P extends Position<? extends P>> implements Displacement<P> {
+public final class Point<P extends Position<? extends P>> implements Displacement<P> {
 
     private final double x, y;
     private final Environment<?, P> pm;

@@ -7,14 +7,15 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import org.apache.commons.math3.random.RandomGenerator;
-
+import com.google.common.reflect.TypeToken;
+import it.unibo.alchemist.AlchemistUtil;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
-import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.CellNode;
+import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import org.apache.commons.math3.random.RandomGenerator;
 
 /**
  * Represent the action of add a junction between a neighbor and the current node. <br/>
@@ -45,7 +46,10 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
     @SuppressWarnings("unchecked")
     @Override
     public AddJunctionInNeighbor<P> cloneAction(final Node<Double> n, final Reaction<Double> r) {
-        return new AddJunctionInNeighbor<>((Environment<Double, P>) getEnvironment(), (CellNode<P>) n, jun, getRandomGenerator());
+        return new AddJunctionInNeighbor<>(
+                (Environment<Double, P>) getEnvironment(),
+                AlchemistUtil.cast(new TypeToken<CellNode<P>>() { }, n),
+                jun, getRandomGenerator());
     }
 
     /**
@@ -60,7 +64,6 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
     /**
      * Create the junction that links the target node and the node when this action is executed. 
      */
-    @SuppressWarnings("unchecked")
     @Override
     public void execute(final Node<Double> targetNode) {
         if (targetNode instanceof CellNode) {
@@ -75,7 +78,6 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
         return "add junction " + jun.toString() + " in neighbor";
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public CellNode<P> getNode() {
         return (CellNode<P>) super.getNode();

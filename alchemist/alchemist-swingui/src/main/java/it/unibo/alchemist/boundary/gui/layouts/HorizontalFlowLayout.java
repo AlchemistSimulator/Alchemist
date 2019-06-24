@@ -41,7 +41,7 @@ import java.awt.Insets;
  *         class libraries Vol 2 Chan/Lee Addison-Wesley 1998
  */
 
-public class HorizontalFlowLayout extends AFlowLayout {
+public final class HorizontalFlowLayout extends AFlowLayout {
 
     /**
      * 

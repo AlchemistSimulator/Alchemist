@@ -7,22 +7,27 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
+import com.google.common.collect.ImmutableList;
+import it.unibo.alchemist.boundary.gpsload.api.AlignToFirstTrace;
+import it.unibo.alchemist.boundary.gpsload.api.GPSTimeAlignment;
+import it.unibo.alchemist.boundary.gpsload.impl.TraceLoader;
+import it.unibo.alchemist.model.interfaces.GPSTrace;
+import org.jooq.lambda.function.Consumer3;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.function.Supplier;
 
-import it.unibo.alchemist.boundary.gpsload.api.GPSTimeAlignment;
-import it.unibo.alchemist.boundary.gpsload.api.AlignToFirstTrace;
-import it.unibo.alchemist.boundary.gpsload.impl.TraceLoader;
-import it.unibo.alchemist.model.interfaces.GPSTrace;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * 
@@ -34,11 +39,26 @@ public class TestGPSLoader {
     private static final String BASE_NOT_OK_TEST = BASE_DIR + "no_ok/";
     private static final String DIRECTORY_WITH_FILES = BASE_OK_TEST + "sub1/";
     private static final String DIRECTORY_WITH_SUBDIRECTORIES = BASE_OK_TEST;
-    private static final String WRONG_EXTENSION = BASE_NOT_OK_TEST + "wrong_extension/";
-    private static final String UNRECOGNIZED_EXTENSION = BASE_NOT_OK_TEST + "unrecognized_extension/";
-    private static final String NO_SEGMENTS = BASE_NOT_OK_TEST + "no_segments/";
-    private static final String EMPTY_SEGMENT = BASE_NOT_OK_TEST + "empty_segments/";
-    private static final String POINT_WITHOUT_TIME = BASE_NOT_OK_TEST + "point_without_time/";
+    /*
+     * Test file with wrong extension
+     */
+    private static final String WRONG_EXTENSION = BASE_NOT_OK_TEST + "wrong_extension";
+    /*
+     * Test file with unrecognized extension
+     */
+    private static final String UNRECOGNIZED_EXTENSION = BASE_NOT_OK_TEST + "unrecognized_extension";
+    /*
+     * Test track without segment.
+     */
+    private static final String NO_SEGMENTS = BASE_NOT_OK_TEST + "no_segments";
+    /*
+     * Test track with empty segment.
+     */
+    private static final String EMPTY_SEGMENT = BASE_NOT_OK_TEST + "empty_segments";
+    /*
+     * Test track with any point without time.
+     */
+    private static final String POINT_WITHOUT_TIME = BASE_NOT_OK_TEST + "point_without_time";
     private static final String CLASS_TIME_ALIGNMENT_TO_FIRST_TRACE = "AlignToFirstTrace";
     private static final String CLASS_TIME_ALIGNMENT_TO_SIMULATION_TIME = "AlignToSimulationTime";
     private static final String CLASS_TIME_ALIGNMENT_TO_TIME = "AlignToTime";
@@ -46,9 +66,8 @@ public class TestGPSLoader {
     private static final Set<String> CLASS_ALIGNMENT_NO_ARG = new HashSet<>();
     private static final GPSTimeAlignment ALIGNMENT = new AlignToFirstTrace();
 
-    private TraceLoader loaderGpx;
     private static final int NUM_MAX_TRACES = 6;
-    private static final int TOTAL_POINTS = 12196; 
+    private static final int TOTAL_POINTS = 12196;
 
     /**
      * 
@@ -59,124 +78,60 @@ public class TestGPSLoader {
         CLASS_ALIGNMENT_NO_ARG.add(CLASS_TIME_ALIGNMENT_TO_SIMULATION_TIME);
         CLASS_ALIGNMENT_NO_ARG.add(CLASS_TIME_NO_ALIGNMENT);
     }
+
     /**
-     * TODO: review test code, its quality is currently too low
+     * Tests traces alignment.
+     * @throws IOException causes failure
      */
     @Test
-    public void testOk() {
+    public void testAlignment() throws IOException {
         for (final String normalizer : CLASS_ALIGNMENT_NO_ARG) {
-            try {
-                this.loaderGpx = new TraceLoader(DIRECTORY_WITH_FILES, normalizer);
-                final Iterator<GPSTrace> trace = this.loaderGpx.iterator();
-                for (int i = 0; i < 3; i++) {
-                    if (trace.hasNext()) {
-                        trace.next();
-                    } else {
-                        fail("not loading all trace");
-                    }
-                }
-                assertFalse(trace.hasNext());
-            } catch (Exception e) {
-                fail(e.getMessage());
+            assertEquals(3, new TraceLoader(DIRECTORY_WITH_FILES, normalizer).size().orElseThrow(unexpectedCyclicTrace()));
+        }
+        assertEquals(3, new TraceLoader(DIRECTORY_WITH_FILES, CLASS_TIME_ALIGNMENT_TO_TIME, 0.0, false, false)
+            .size().orElseThrow(unexpectedCyclicTrace()));
+        final TraceLoader loaderGpx = new TraceLoader(DIRECTORY_WITH_SUBDIRECTORIES, true,  ALIGNMENT);
+        final Iterator<GPSTrace> trace2 = loaderGpx.iterator();
+        int points = 0;
+        for (int i = 0; i < NUM_MAX_TRACES; i++) {
+            if (trace2.hasNext()) {
+                points += trace2.next().size();
+            } else {
+                fail("not loading all trace");
             }
         }
-        try {
-            this.loaderGpx = new TraceLoader(DIRECTORY_WITH_FILES, CLASS_TIME_ALIGNMENT_TO_TIME, 0.0, false, false);
-            final Iterator<GPSTrace> trace = this.loaderGpx.iterator();
-            for (int i = 0; i < 3; i++) {
-                if (trace.hasNext()) {
-                    trace.next();
-                } else {
-                    fail("not loading all trace");
-                }
-            }
-            assertFalse(trace.hasNext());
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-        try {
-            this.loaderGpx = new TraceLoader(DIRECTORY_WITH_SUBDIRECTORIES, true,  ALIGNMENT);
-            final Iterator<GPSTrace> trace = this.loaderGpx.iterator();
-            int points = 0;
-            for (int i = 0; i < NUM_MAX_TRACES; i++) {
-                if (trace.hasNext()) {
-                    points += trace.next().size();
-                } else {
-                    fail("not loading all trace");
-                }
-            }
-            assertTrue(trace.hasNext());
-            assertEquals(points, TOTAL_POINTS);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
+        assertTrue(trace2.hasNext());
+        assertEquals(points, TOTAL_POINTS);
     }
 
     /**
-     * 
+     * Tests error reporting.
+     * @throws IOException causes failure
      */
     @Test
-    public void testError() {
-
-        /*
-         * Test track without segment.
-         */
-        try {
-            this.loaderGpx = new TraceLoader(NO_SEGMENTS, CLASS_TIME_ALIGNMENT_TO_FIRST_TRACE);
-            fail("not exception for no segments");
-        } catch (IllegalStateException e) {
-            assertFalse(e.getMessage().isEmpty());
-        } catch (Exception e) {
-            fail(e.getMessage());
+    public void testError() throws IOException {
+        for (final String error : ImmutableList.of(NO_SEGMENTS, EMPTY_SEGMENT, POINT_WITHOUT_TIME, WRONG_EXTENSION, UNRECOGNIZED_EXTENSION)) {
+            try {
+                fail("Expected error during object creation for " + error + ", got: "
+                        + new TraceLoader(error, CLASS_TIME_ALIGNMENT_TO_FIRST_TRACE));
+            } catch (final IllegalStateException e) {
+                /*
+                 * Expected IllegalArgumentException only for UNRECOGNIZED_EXTENSION
+                 */
+                check(error, e.getMessage(), Assertions::assertNotEquals);
+            } catch (final IllegalArgumentException e) {
+                check(error, e.getMessage(), Assertions::assertEquals);
+            }
         }
+    }
 
-        /*
-         * Test track with empty segment.
-         */
-        try {
-            this.loaderGpx = new TraceLoader(EMPTY_SEGMENT, CLASS_TIME_ALIGNMENT_TO_FIRST_TRACE);
-            fail("not exception for empty segment");
-        } catch (IllegalStateException e) {
-            assertFalse(e.getMessage().isEmpty());
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
+    private static Supplier<IllegalStateException> unexpectedCyclicTrace() {
+        return () -> new IllegalStateException("Unexpected cyclic trace");
+    }
 
-        /*
-         * Test track with any point without time.
-         */
-        try {
-            this.loaderGpx = new TraceLoader(POINT_WITHOUT_TIME, CLASS_TIME_ALIGNMENT_TO_FIRST_TRACE);
-            fail("not exception for point without time");
-        } catch (IllegalStateException e) {
-            assertFalse(e.getMessage().isEmpty());
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-
-        /*
-         * Test file with wrong extension
-         */
-        try {
-            this.loaderGpx = new TraceLoader(WRONG_EXTENSION, CLASS_TIME_ALIGNMENT_TO_FIRST_TRACE);
-            fail("not exception for wrong extension");
-        } catch (IllegalStateException e) {
-            assertFalse(e.getMessage().isEmpty());
-        } catch (Exception e) {
-            fail(e.getMessage());
-        } 
-
-        /*
-         * Test file with unrecognized extension
-         */
-        try {
-            this.loaderGpx = new TraceLoader(UNRECOGNIZED_EXTENSION, ALIGNMENT);
-            fail("not exception for unrecognized extension");
-        } catch (IllegalArgumentException e) {
-            assertFalse(e.getMessage().isEmpty());
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-
+    private static void check(final String error, final String message, final Consumer3<String, String, String> assertion) {
+        assertNotNull(message);
+        assertFalse(message.isEmpty());
+        assertion.accept(error, UNRECOGNIZED_EXTENSION, "Wrong exception type for " + error);
     }
 }

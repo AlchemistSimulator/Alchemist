@@ -4,9 +4,10 @@ os:
 dist: xenial
 language: java
 jdk:
-  - openjdk8
   - openjdk11
   - openjdk12
+# To be enabled when the official version is out
+#  - openjdk13
 git:
   depth: false
 before_cache:
@@ -32,18 +33,13 @@ env:
     - PUBLISH="false"
 matrix:
   include:
-    - jdk: openjdk8
-      env: PUBLISH="true"
     - jdk: openjdk11
       env: PUBLISH="true"
+      os: linux
   exclude:
-    - jdk: openjdk8
-      env: PUBLISH="false"
     - jdk: openjdk11
       env: PUBLISH="false"
       os: linux
-    - jdk: openjdk8
-      os: osx
 
 before_install: >-
     if [ $TRAVIS_OS_NAME = 'linux' ]; then
@@ -79,43 +75,29 @@ deploy:
   - provider: releases
     skip_cleanup: true
     api_key:
-      secure: OiCBDNskosVJ+svWTi6VrgjRiQJr/veNuz79FpoVZk3wFjWHj6yQICkBHEcYO/XQzXB9EYwZsXQkMNhMBX3OTeG3c1nHDvFINpGKB2cKqYS8/qmY228ZPF51ovXmT1v+C6Y+TMJFK8+uNVMHukzJZMW0TupFgjXaFRGr7odee62Oa5zYd5WWl2a5NkCtrHllKdyTnrizaLAVMGU9CUqIDMKHrIe4tD79utn9rgo1uAxIKSrPZMKomul6D+kp3eZAkBi0YWqem9QPzSXa+Bs8e4QbhydwFYx7B5OcnY2e5iYZlM6AXJJeUQ499Ntyhw7t64C6ThPevKrdg7zQ8MCcSbOFNv0Sehm639AzgM+5ripXowSJVpLxb5+dEbe+uc8TKb9NKEniY4Ox5Ml3o193+1BSUDVEapoLA7VVGc+E+qeL1ZwGyNwTmMQJ3pg50AS9xH4cO5F2Z7ffnX1iUGEGoAc1aS7nr4fu7cH04P4CJ0OYYmB9/ERUudPbTdx4Jt8+WaiRLarnLRdgr8Ui7MgVL+Ck5auwA7z5Rw/gX4GNlxmqZeCNUmo7qkwo+e5HqjbifrZifIynl45oj/bbBy8JeioC5ug0FK5I8IKDFyTn2doHHpoU4Wq6EGhTK02Mcvc5brVz5D2cV4++lzauDGUUypJO1o19W6Kbb1THZTLgYAQ=
+      secure: NiA2CFiiUjreyOGzlA+vxCFT2a6dHZ44gdwA96jBrE3jNdUPXAxzvsaA9rNNxkvHPyADH0DPPZbJ517SdddSYViRcpjlple3dl5jCHxUoBtHBXvrzD2fAhslVejZ7LoxdY9v9K0xSIo3he/pmrtzcuIuPNFrj7LYmYkXeqQcLsxyCrPY+XBOuV6U+Hl5XDUVNqB+/J1qtZUWVg3B1AwGpp8roLKmLYreUfuNwwmF9hXWO8EbS4zIAKDnwf+E/44aiXiULyJ7CPWKEtPgxqJLo9Hi0lABr6I4WV4LzSVaOjA4FdTCVOtFpVzecni0J6+KH2AETTkWtWNt6Hguoa0hUbzD96u4p5eEx1xJzV/k+TRuNkoRMfdGT5Xm0b3N1OF1t/w0woD0NQx2qzqvpnJ7YiPwATfv1n9x8/qqmaCMP3iVDS/manNcyMg2d7ip84313wea/V2H3+mm2VDUsiKoE/Jk5y0Vh3uuSsQOmPd0i3LfpC0AiJCyC0TT3lg6fBRzgVgtC26+idWdw0dXSxaU+iYYJYpPcsAiVzr/bqfpkURe4IWHDcASMuUWKAnzrVtnvaDgKw60RboZFK3aUaECxDYZ9JThZERw2zYP9FX8eXld6y7dLJhEWxCAY7m/IaNemj7+uJ79TCVso43RCosSgBr+tvcF+LzOhaLAHvQ4iHM=
     file_glob: true
     file: "${HOME}/build/${TRAVIS_REPO_SLUG}/alchemist/build/libs/alchemist-redist*.jar"
     on:
       repo: AlchemistSimulator/Alchemist
       tags: true
-      jdk: openjdk8
-      os: linux
-  - provider: releases
-    skip_cleanup: true
-    api_key:
-      secure: OiCBDNskosVJ+svWTi6VrgjRiQJr/veNuz79FpoVZk3wFjWHj6yQICkBHEcYO/XQzXB9EYwZsXQkMNhMBX3OTeG3c1nHDvFINpGKB2cKqYS8/qmY228ZPF51ovXmT1v+C6Y+TMJFK8+uNVMHukzJZMW0TupFgjXaFRGr7odee62Oa5zYd5WWl2a5NkCtrHllKdyTnrizaLAVMGU9CUqIDMKHrIe4tD79utn9rgo1uAxIKSrPZMKomul6D+kp3eZAkBi0YWqem9QPzSXa+Bs8e4QbhydwFYx7B5OcnY2e5iYZlM6AXJJeUQ499Ntyhw7t64C6ThPevKrdg7zQ8MCcSbOFNv0Sehm639AzgM+5ripXowSJVpLxb5+dEbe+uc8TKb9NKEniY4Ox5Ml3o193+1BSUDVEapoLA7VVGc+E+qeL1ZwGyNwTmMQJ3pg50AS9xH4cO5F2Z7ffnX1iUGEGoAc1aS7nr4fu7cH04P4CJ0OYYmB9/ERUudPbTdx4Jt8+WaiRLarnLRdgr8Ui7MgVL+Ck5auwA7z5Rw/gX4GNlxmqZeCNUmo7qkwo+e5HqjbifrZifIynl45oj/bbBy8JeioC5ug0FK5I8IKDFyTn2doHHpoU4Wq6EGhTK02Mcvc5brVz5D2cV4++lzauDGUUypJO1o19W6Kbb1THZTLgYAQ=
-    file_glob: true
-    file: "${HOME}/build/${TRAVIS_REPO_SLUG}/alchemist/build/libs/alchemist-redist*.jar"
-    on:
-      repo: AlchemistSimulator/Alchemist
-      tags: true
-      jdk: openjdk11
-      os: linux
+      condition: $PUBLISH = true
   - provider: surge
     skip_cleanup: true
     project: "./alchemist/build/docs/javadoc/"
     domain: alchemist-unstable-doc.surge.sh
     on:
       repo: AlchemistSimulator/Alchemist
-      jdk: openjdk8
       branch: develop
-      os: linux
+      condition: $PUBLISH = true
   - provider: surge
     skip_cleanup: true
     project: "./alchemist/report"
     domain: alchemist-unstable-reports.surge.sh
     on:
       repo: AlchemistSimulator/Alchemist
-      jdk: openjdk8
       branch: develop
-      os: linux
+      condition: $PUBLISH = true
   - provider: surge
     skip_cleanup: true
     project: "./alchemist/build/docs/javadoc/"
@@ -123,8 +105,7 @@ deploy:
     on:
       repo: AlchemistSimulator/Alchemist
       tags: true
-      jdk: openjdk8
-      os: linux
+      condition: $PUBLISH = true
   - provider: surge
     skip_cleanup: true
     project: "./alchemist/report"
@@ -132,5 +113,4 @@ deploy:
     on:
       repo: AlchemistSimulator/Alchemist
       tags: true
-      jdk: openjdk8
-      os: linux
+      condition: $PUBLISH = true

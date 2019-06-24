@@ -16,9 +16,10 @@ import it.unibo.alchemist.model.interfaces.Route;
  * This strategy ignores any information about the map, and connects the
  * starting and ending point with a straight line using
  * {@link PolygonalChain}.
- * 
+ *
+ * @param <P> position type
  */
-public class IgnoreStreets<P extends Position<P>> implements RoutingStrategy<P> {
+public final class IgnoreStreets<P extends Position<P>> implements RoutingStrategy<P> {
 
     private static final long serialVersionUID = 2678088737744440021L;
 

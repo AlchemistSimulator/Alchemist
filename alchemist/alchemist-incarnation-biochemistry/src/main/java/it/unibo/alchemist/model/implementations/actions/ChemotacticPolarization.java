@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.google.common.reflect.TypeToken;
+import it.unibo.alchemist.AlchemistUtil;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import org.apache.commons.math3.util.FastMath;
 
@@ -67,9 +69,8 @@ public final class ChemotacticPolarization<P extends Position2D<P>> extends Abst
      *                   of the highest concentration of biomolecule in neighborhood; if it's false, the versor will
      *                   be directed in the exactly the opposite direction.
      */
-    @SuppressWarnings("unchecked")
     public ChemotacticPolarization(final Environment<Double, P> environment, final Node<Double> node, final String biomolecule, final String ascendGrad) {
-        this(environment, (CellNode<P>) node, new Biomolecule(biomolecule), ascendGrad);
+        this(environment, AlchemistUtil.cast(new TypeToken<CellNode<P>>() { }, node), new Biomolecule(biomolecule), ascendGrad);
     }
 
 
@@ -136,7 +137,6 @@ public final class ChemotacticPolarization<P extends Position2D<P>> extends Abst
         return Context.LOCAL;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public CellNode<P> getNode() {
         return (CellNode<P>) super.getNode();

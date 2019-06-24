@@ -7,18 +7,8 @@
  */
 package it.unibo.alchemist.boundary.gui;
 
-import java.awt.event.ActionListener;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.swing.AbstractButton;
-
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Sets;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.gui.tape.JTapeFeatureStack;
 import it.unibo.alchemist.boundary.gui.tape.JTapeGroup;
@@ -28,13 +18,20 @@ import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
 
+import java.awt.event.ActionListener;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 /**
  * This class maintains multiple control panels for controlling a simulation,
  * ensuring that they are coherently updated.
  * 
  */
 @Deprecated
-@SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")
+@SuppressFBWarnings
 public final class SimControlPanel extends JTapeGroup {
 
     private static final long serialVersionUID = 8245609434257107323L;
@@ -59,7 +56,7 @@ public final class SimControlPanel extends JTapeGroup {
                 toRemove.add(sim);
             }
         }
-        for (final Simulation<?,?> sim : toRemove) {
+        for (final Simulation<?, ?> sim : toRemove) {
             SIMCONTROLMAP.remove(sim);
         }
     }
@@ -79,7 +76,7 @@ public final class SimControlPanel extends JTapeGroup {
     private static synchronized Set<SimControlPanel> getSiblings(final SimControlPanel scp) {
         if (scp.simulation != null) {
             final Set<SimControlPanel> result = SIMCONTROLMAP.get(scp.simulation);
-            return result == null ? new HashSet<SimControlPanel>() : result;
+            return result == null ? new HashSet<>() : result;
         }
         return Sets.newHashSet(scp);
     }
@@ -182,7 +179,7 @@ public final class SimControlPanel extends JTapeGroup {
     }
 
     /**
-     * See {@link AbstractButton#addActionListener(ActionListener)}.
+     * See {@link SimControlButton#addActionListener(ActionListener)}.
      * 
      * @param l
      *            the {@link ActionListener} to add

@@ -63,7 +63,7 @@ public final class BiomolGradientLayer<P extends Position2D<P>> implements Layer
 
     @Override
     public Double getValue(final P p) {
-        return (p.getX() * a) + (p.getY() * b) + c;
+        return p.getX() * a + p.getY() * b + c;
     }
 
     @Override

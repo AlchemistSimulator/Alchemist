@@ -1,5 +1,3 @@
-import kotlin.String
-
 /**
  * Find which updates are available by running
  *     `$ ./gradlew buildSrcVersions`
@@ -9,7 +7,7 @@ import kotlin.String
 object Versions {
     const val logback_classic: String = "1.3.0-alpha4" 
 
-    const val com_eden_orchidplugin_gradle_plugin: String = "0.16.10" 
+    const val com_eden_orchidplugin_gradle_plugin: String = "0.17.1" 
 
     const val caffeine: String = "2.7.0" 
 
@@ -51,9 +49,9 @@ object Versions {
 
     const val de_fayard_buildsrcversions_gradle_plugin: String = "0.3.2" 
 
-    const val classgraph: String = "4.8.37" 
+    const val classgraph: String = "4.8.37" // available: "4.8.38"
 
-    const val io_github_javaeden_orchid: String = "0.16.10" 
+    const val io_github_javaeden_orchid: String = "0.17.1" 
 
     const val jpx: String = "1.4.0" 
 
@@ -103,7 +101,7 @@ object Versions {
 
     const val annotations: String = "17.0.0" 
 
-    const val jgrapht_core: String = "1.3.0" 
+    const val jgrapht_core: String = "1.3.1" 
 
     const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String = "8.0.0" 
 
@@ -111,7 +109,7 @@ object Versions {
 
     const val org_junit_jupiter: String = "5.4.2" 
 
-    const val mapsforge_map_awt: String = "0.6.1" // available: "0.11.0"
+    const val mapsforge_map_awt: String = "0.11.0" 
 
     const val org_openjfx: String = "11" // available: "13-ea+8"
 
@@ -121,7 +119,7 @@ object Versions {
 
     const val org_protelis: String = "12.1.0" 
 
-    const val org_scala_lang: String = "2.12.2" // available: "2.13.0-M5-1775dba"
+    const val org_scala_lang: String = "2.12.2" // available: "2.13.0"
 
     const val scalatest_2_12: String = "3.0.1" // available: "3.2.0-SNAP10"
 
@@ -139,8 +137,8 @@ object Versions {
 
         const val currentVersion: String = "5.4.1"
 
-        const val nightlyVersion: String = "5.6-20190531002906+0000"
+        const val nightlyVersion: String = "5.6-20190611000032+0000"
 
-        const val releaseCandidate: String = "5.5-rc-1"
+        const val releaseCandidate: String = "5.5-rc-2"
     }
 }

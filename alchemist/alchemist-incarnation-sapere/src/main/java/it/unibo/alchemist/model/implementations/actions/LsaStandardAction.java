@@ -5,35 +5,30 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-
-/**
- * 
- */
 package it.unibo.alchemist.model.implementations.actions;
 
-import static it.unibo.alchemist.model.implementations.molecules.LsaMolecule.SYN_NODE_ID;
-import static it.unibo.alchemist.model.implementations.molecules.LsaMolecule.SYN_RAND;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.expressions.implementations.ConstTreeNode;
 import it.unibo.alchemist.expressions.implementations.NumTreeNode;
 import it.unibo.alchemist.expressions.interfaces.IExpression;
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
-import org.apache.commons.math3.random.RandomGenerator;
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
-
+import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.HashString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+
+import static it.unibo.alchemist.model.implementations.molecules.LsaMolecule.SYN_NODE_ID;
+import static it.unibo.alchemist.model.implementations.molecules.LsaMolecule.SYN_RAND;
 
 
 /**
@@ -76,7 +71,7 @@ public class LsaStandardAction extends LsaAbstractAction {
      *            The Random generator to use
      */
     public LsaStandardAction(final ILsaMolecule m, final ILsaNode n, final RandomGenerator random) {
-        super(n, Arrays.asList(new ILsaMolecule[] { m }));
+        super(n, Collections.singletonList(m));
         mol = Objects.requireNonNull(m);
         rand = random;
         final String molString = mol.toString();
@@ -88,16 +83,25 @@ public class LsaStandardAction extends LsaAbstractAction {
         nodeId = initNode ? new ConstTreeNode(new HashString("node" + n.getId())) : null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public LsaStandardAction cloneAction(final Node<List<ILsaMolecule>> n, final Reaction<List<ILsaMolecule>> r) {
         return new LsaStandardAction(getMolecule(), (ILsaNode) n);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void execute() {
         setConcentration(getNode());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Context getContext() {
         return Context.LOCAL;
@@ -127,6 +131,9 @@ public class LsaStandardAction extends LsaAbstractAction {
         node.setConcentration(new LsaMolecule(l));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return getMolecule().toString();

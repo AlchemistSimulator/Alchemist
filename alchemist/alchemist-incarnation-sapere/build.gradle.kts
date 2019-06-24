@@ -20,3 +20,7 @@ dependencies {
 spotbugs {
     isIgnoreFailures = true
 }
+
+pmd {
+    isIgnoreFailures = true
+}

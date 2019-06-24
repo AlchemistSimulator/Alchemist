@@ -23,8 +23,10 @@ import java.util.List;
 
 
 /**
+ *
+ * @param <P> position type
  */
-public class LsaBarycenterCrowd<P extends Position<? extends P>> extends SAPEREMoveNodeAgent<P> {
+public final class LsaBarycenterCrowd<P extends Position<? extends P>> extends SAPEREMoveNodeAgent<P> {
 
     private static final double LIMIT = 0.1;
     private static final int MIN = 100;

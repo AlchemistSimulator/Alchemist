@@ -7,18 +7,17 @@
  */
 package it.unibo.alchemist.cli;
 
-import static java.util.ResourceBundle.getBundle;
+import com.google.common.math.DoubleMath;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-import com.google.common.math.DoubleMath;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.math3.util.FastMath;
+import static java.util.ResourceBundle.getBundle;
 
 /**
  * This support class generates a CLI interface backed by a property file.

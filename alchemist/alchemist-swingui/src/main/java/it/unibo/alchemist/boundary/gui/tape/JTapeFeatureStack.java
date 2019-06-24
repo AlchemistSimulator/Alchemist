@@ -37,7 +37,7 @@ public class JTapeFeatureStack extends JTapeSection {
         /**
          * 
          */
-        VERTICAL_STACK;
+        VERTICAL_STACK
     }
 
     /**
@@ -61,6 +61,9 @@ public class JTapeFeatureStack extends JTapeSection {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Component add(final Component c) {
         final Component r = super.add(c);
@@ -92,12 +95,18 @@ public class JTapeFeatureStack extends JTapeSection {
         return type;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean registerFeature(final Component c) {
         add(c);
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void remove(final Component c) {
         super.remove(c);
@@ -115,6 +124,9 @@ public class JTapeFeatureStack extends JTapeSection {
         revalidate();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean unregisterFeature(final Component c) {
         remove(c);

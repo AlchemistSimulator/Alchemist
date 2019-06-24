@@ -38,12 +38,31 @@
 		<Source name="~.*\.kt" />
 	</Match>
 	<Match>
+		<Bug pattern="UWF_UNWRITTEN_FIELD" />
+		<Source name="~.*\.kt" />
+	</Match>
+	<Match>
 		<Bug pattern="CN_IDIOM_NO_SUPER_CALL" />
+	</Match>
+	<Match>
+		<Bug pattern="DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED" />
 	</Match>
 	<Match>
 		<Bug pattern="IMA_INEFFICIENT_MEMBER_ACCESS" />
 	</Match>
 	<Match>
 		<Bug pattern="SE_INNER_CLASS" />
+	</Match>
+	<Match>
+		<Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON" />
+	</Match>
+	<Match>
+		<Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS" />
+	</Match>
+	<Match>
+		<Bug pattern="UPM_UNCALLED_PRIVATE_METHOD" />
+	</Match>
+	<Match>
+		<Package name="~.*\.biochemistrydsl" />
 	</Match>
 </FindBugsFilter>

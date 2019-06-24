@@ -7,11 +7,11 @@
  */
 package it.unibo.alchemist.model.implementations.concentrations;
 
-import java.util.Collections;
-import java.util.List;
-
 import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
+
+import java.util.Collections;
+import java.util.List;
 
 
 /**
@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.ILsaMolecule;
  * compatibility with the basic Alchemist model
  * 
  */
-public class LsaConcentration implements Concentration<List<? extends ILsaMolecule>> {
+public final class LsaConcentration implements Concentration<List<? extends ILsaMolecule>> {
 
     private static final long serialVersionUID = -5225528630199110508L;
 

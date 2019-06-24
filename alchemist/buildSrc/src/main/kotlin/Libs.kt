@@ -119,6 +119,11 @@ object Libs {
 
     /**
      * https://javaeden.github.io/Orchid/latest/core/ */
+    const val orchidgithub: String = "io.github.javaeden.orchid:OrchidGithub:" +
+            Versions.io_github_javaeden_orchid
+
+    /**
+     * https://javaeden.github.io/Orchid/latest/core/ */
     const val orchidkotlindoc: String = "io.github.javaeden.orchid:OrchidKotlindoc:" +
             Versions.io_github_javaeden_orchid
 
@@ -336,11 +341,11 @@ object Libs {
     const val protelis_lang: String = "org.protelis:protelis-lang:" + Versions.org_protelis
 
     /**
-     * http://www.scala-lang.org/ */
+     * https://www.scala-lang.org/ */
     const val scala_compiler: String = "org.scala-lang:scala-compiler:" + Versions.org_scala_lang
 
     /**
-     * http://www.scala-lang.org/ */
+     * https://www.scala-lang.org/ */
     const val scala_library: String = "org.scala-lang:scala-library:" + Versions.org_scala_lang
 
     /**

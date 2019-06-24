@@ -19,6 +19,8 @@ import it.unibo.alchemist.model.interfaces.Position2D;
 
 /**
  * Adapts various representations of bidimensional positions.
+ *
+ * @param <P> position type
  */
 public final class PointAdapter<P extends Position2D<? extends P>> implements Serializable {
 
@@ -50,8 +52,10 @@ public final class PointAdapter<P extends Position2D<? extends P>> implements Se
     }
 
     @Override
+    @SuppressFBWarnings(value = "FE_FLOATING_POINT_EQUALITY", justification = "Made by purpose")
     public boolean equals(final Object obj) {
-        return obj instanceof PointAdapter && ((PointAdapter<?>) obj).x == x && ((PointAdapter<?>) obj).y == y;
+        return this == obj
+            || obj instanceof PointAdapter && ((PointAdapter<?>) obj).x == x && ((PointAdapter<?>) obj).y == y;
     }
 
     /**

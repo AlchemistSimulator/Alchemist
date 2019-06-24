@@ -17,6 +17,7 @@ import org.danilopianini.view.GUIUtilities;
  * 
  */
 @Deprecated
+@SuppressWarnings("PMD")
 public final class AlchemistSwingUI extends JFrame {
 
     /**

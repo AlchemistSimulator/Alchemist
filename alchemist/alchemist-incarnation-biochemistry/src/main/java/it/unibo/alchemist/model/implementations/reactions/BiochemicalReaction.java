@@ -8,18 +8,25 @@
 
 package it.unibo.alchemist.model.implementations.reactions;
 
-import java.util.*;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.actions.AbstractNeighborAction;
 import it.unibo.alchemist.model.implementations.conditions.AbstractNeighborCondition;
-import it.unibo.alchemist.model.interfaces.*;
+import it.unibo.alchemist.model.interfaces.Condition;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.model.interfaces.TimeDistribution;
 import org.apache.commons.math3.distribution.EnumeratedDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.Pair;
 
-import static java.util.stream.Collectors.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 /** 
  * A biochemical Reaction.
@@ -105,11 +112,11 @@ public final class BiochemicalReaction extends ChemicalReaction<Double> {
         neighborConditionsPresent = c.stream().anyMatch(it -> it instanceof AbstractNeighborCondition);
     }
 
-    private static class Container {
-        public Node<Double> node;
-        public Double propensity1;
-        public Double propensity2;
-        Container(Node<Double> node, Double propensity1, Double propensity2) {
+    private static final class Container {
+        private final Node<Double> node;
+        private final Double propensity1;
+        private final Double propensity2;
+        private Container(final Node<Double> node, final Double propensity1, final Double propensity2) {
             this.node = node;
             this.propensity1 = propensity1;
             this.propensity2 = propensity2;

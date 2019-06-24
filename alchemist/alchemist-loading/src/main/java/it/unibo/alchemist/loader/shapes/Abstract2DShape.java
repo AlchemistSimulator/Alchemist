@@ -7,11 +7,12 @@
  */
 package it.unibo.alchemist.loader.shapes;
 
-import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Position2D;
 
 /**
  * A bidimensional Alchemist {@link Shape} that relies on AWT {@link java.awt.Shape}.
+ *
+ * @param <P> position type
  */
 public abstract class Abstract2DShape<P extends Position2D<P>> implements Shape<P> {
 

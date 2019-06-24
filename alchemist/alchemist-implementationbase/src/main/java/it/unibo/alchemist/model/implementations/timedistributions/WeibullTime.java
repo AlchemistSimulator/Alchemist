@@ -82,7 +82,7 @@ public class WeibullTime<T> extends AbstractDistribution<T> {
     }
 
     @Override
-    public void updateStatus(final Time curTime, final boolean executed, final double param, final Environment<T, ?> env) {
+    public final void updateStatus(final Time curTime, final boolean executed, final double param, final Environment<T, ?> env) {
         if (executed) {
             setTau(curTime.plus(new DoubleTime(genSample())));
         }
@@ -93,12 +93,6 @@ public class WeibullTime<T> extends AbstractDistribution<T> {
      */
     protected double genSample() {
         return dist.inverseCumulativeProbability(rand.nextDouble()) + offset;
-    }
-
-    @Override
-    @SuppressFBWarnings("CN_IDIOM_NO_SUPER_CALL")
-    public WeibullTime<T> clone() {
-        return new WeibullTime<>(dist.getShape(), dist.getScale(), offset, getNextOccurence(), rand);
     }
 
     /**
@@ -116,17 +110,17 @@ public class WeibullTime<T> extends AbstractDistribution<T> {
     }
 
     @Override
-    public double getRate() {
+    public final double getRate() {
         return getMean();
     }
 
     /**
-     * Generates a {@link WeibullDistribution} given its mean and stdev.
+     * Generates a {@link WeibullDistribution} given its mean and standard deviation.
      * 
      * @param mean
      *            the mean
      * @param deviation
-     *            the stdev
+     *            the standard deviation
      * @param random
      *            the random generator
      * @return a new {@link WeibullDistribution}
@@ -152,6 +146,9 @@ public class WeibullTime<T> extends AbstractDistribution<T> {
         return new WeibullDistribution(random, shapeParameter, scaleParameter, WeibullDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public WeibullTime<T> clone(final Time currentTime) {
         return new WeibullTime<>(rand, dist, offset, currentTime);

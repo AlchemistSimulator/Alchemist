@@ -30,7 +30,7 @@ import java.util.Map;
 
 /**
  */
-public class LsaNeighborhoodCondition extends LsaStandardCondition {
+public final class LsaNeighborhoodCondition extends LsaStandardCondition {
 
     private static final long serialVersionUID = 5472803597473997104L;
     private final Environment<List<ILsaMolecule>, ?> env;

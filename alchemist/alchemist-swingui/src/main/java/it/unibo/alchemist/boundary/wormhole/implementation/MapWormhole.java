@@ -7,19 +7,18 @@
  */
 package it.unibo.alchemist.boundary.wormhole.implementation;
 
-import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
+import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
+import org.mapsforge.core.model.LatLong;
+import org.mapsforge.core.util.MercatorProjection;
+import org.mapsforge.map.model.IMapViewPosition;
 
 import java.awt.Component;
 import java.awt.Point;
 import java.util.function.BiFunction;
 
-import org.mapsforge.core.model.LatLong;
-import org.mapsforge.core.util.MercatorProjection;
-import org.mapsforge.map.model.MapViewPosition;
-
-import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.GeoPosition;
+import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
 
 /**
  * Wormhole used for maps rendering.
@@ -27,7 +26,7 @@ import it.unibo.alchemist.model.interfaces.GeoPosition;
 
  */
 public final class MapWormhole extends Wormhole2D<GeoPosition> {
-    private final MapViewPosition mapModel;
+    private final IMapViewPosition mapModel;
     /**
      * Maximum zoom.
      */
@@ -43,9 +42,9 @@ public final class MapWormhole extends Wormhole2D<GeoPosition> {
      * @param comp
      *            the controlled {@link Component}
      * @param m
-     *            the {@link MapViewPosition}
+     *            the {@link IMapViewPosition}
      */
-    public MapWormhole(final Environment<?, GeoPosition> env, final Component comp, final MapViewPosition m) {
+    public MapWormhole(final Environment<?, GeoPosition> env, final Component comp, final IMapViewPosition m) {
         super(env, comp);
         mapModel = m;
         super.setMode(Mode.MAP);

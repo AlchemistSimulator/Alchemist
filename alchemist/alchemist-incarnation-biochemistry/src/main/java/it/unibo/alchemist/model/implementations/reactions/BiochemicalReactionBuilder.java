@@ -94,7 +94,7 @@ public class BiochemicalReactionBuilder<P extends Position<P>> {
 
     /**
      * Builds the chemical reaction.
-     * @return a builded chemical reaction based on the given program
+     * @return a chemical reaction based on the given program
      */
     public Reaction<Double> build()  {
         checkReaction();
@@ -155,8 +155,6 @@ public class BiochemicalReactionBuilder<P extends Position<P>> {
 
         private final Factory factory;
         private final @Nonnull RandomGenerator rand;
-        private final @Nonnull BiochemistryIncarnation<?> currentInc;
-        private final @Nonnull TimeDistribution<Double> time;
         private final @Nonnull Node<Double> node;
         private final @Nonnull Environment<Double, P> env;
         private final @Nonnull Reaction<Double> reaction;
@@ -175,11 +173,9 @@ public class BiochemicalReactionBuilder<P extends Position<P>> {
                                        @NotNull final Node<Double> currentNode,
                                        @NotNull final Environment<Double, P> environment) {
             this.rand = rand;
-            currentInc = incarnation;
-            time = timeDistribution;
             this.node = currentNode;
             env = environment;
-            reaction = new BiochemicalReaction(node, time, env, rand);
+            reaction = new BiochemicalReaction(node, timeDistribution, env, rand);
             factory = new FactoryBuilder()
                     .withAutoBoxing()
                     .withBooleanIntConversions()
@@ -187,14 +183,14 @@ public class BiochemicalReactionBuilder<P extends Position<P>> {
                     .withArrayBooleanIntConversions()
                     .withArrayNarrowingConversions()
                     .build();
-            factory.registerSingleton(Incarnation.class, currentInc);
+            factory.registerSingleton(Incarnation.class, incarnation);
             factory.registerSingleton(Environment.class, environment);
-            factory.registerSingleton(TimeDistribution.class, time);
+            factory.registerSingleton(TimeDistribution.class, timeDistribution);
             factory.registerSingleton(Node.class, node);
             factory.registerSingleton(Reaction.class, reaction);
             factory.registerSingleton(RandomGenerator.class, rand);
-            factory.registerImplicit(String.class, Double.class, currentInc::createConcentration);
-            factory.registerImplicit(String.class, Molecule.class, currentInc::createMolecule);
+            factory.registerImplicit(String.class, Double.class, incarnation::createConcentration);
+            factory.registerImplicit(String.class, Molecule.class, incarnation::createMolecule);
             factory.registerImplicit(String.class, Boolean.class, Boolean::parseBoolean);
         }
 
@@ -202,7 +198,7 @@ public class BiochemicalReactionBuilder<P extends Position<P>> {
         private <O> O createObject(final BiochemistrydslParser.JavaConstructorContext ctx, final String packageName) {
             String className = ctx.javaClass().getText();
             if (!className.contains(".")) {
-                className = packageName + className;
+                className = packageName + className; // NOPMD UseStringBufferForStringAppends
             }
             try {
                 final Class<O> clazz = (Class<O>) ResourceLoader.classForName(className);
@@ -213,7 +209,7 @@ public class BiochemicalReactionBuilder<P extends Position<P>> {
                 }
                 return factory.build(clazz, params);
             } catch (ClassNotFoundException e) {
-                throw new RuntimeException("cannot instance " + className + ", class not found");
+                throw new IllegalStateException("cannot instance " + className + ", class not found", e);
             }
         }
 
@@ -340,7 +336,6 @@ public class BiochemicalReactionBuilder<P extends Position<P>> {
             return reaction;
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public Reaction<Double> visitCreateJunctionJunction(final BiochemistrydslParser.CreateJunctionJunctionContext ctx) {
             final Junction j = createJunction(ctx.junction());
@@ -379,14 +374,14 @@ public class BiochemicalReactionBuilder<P extends Position<P>> {
             if (ctx.customReactionType() != null) {
                 visit(ctx.customReactionType());
             }
-            junctionList.forEach((j -> {
+            junctionList.forEach(j -> {
                 if (node instanceof CellNode) {
                     actionList.add(new RemoveJunctionInCell(env, node, j, rand));
                     actionList.add(new RemoveJunctionInNeighbor(env, node, reverseJunction(j), rand));
                 } else {
                     throw new UnsupportedOperationException("Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName());
                 }
-            }));
+            });
             reaction.setConditions(conditionList);
             reaction.setActions(actionList);
             return reaction;

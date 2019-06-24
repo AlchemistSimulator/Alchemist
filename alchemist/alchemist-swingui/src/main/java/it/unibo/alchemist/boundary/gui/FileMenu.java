@@ -7,6 +7,14 @@
  */
 package it.unibo.alchemist.boundary.gui;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.danilopianini.view.GUIUtilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.JFileChooser;
+import javax.swing.JMenuItem;
+import javax.swing.filechooser.FileFilter;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -15,22 +23,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-import javax.swing.JFileChooser;
-import javax.swing.JMenuItem;
-import javax.swing.filechooser.FileFilter;
-
-import org.danilopianini.view.GUIUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 import static it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle.getString;
 
 /**
  */
 @Deprecated
-public class FileMenu extends AbstractMenu {
+@SuppressFBWarnings
+@SuppressWarnings("PMD")
+public final class FileMenu extends AbstractMenu {
 
     private static final long serialVersionUID = 5209455686362711386L;
     private static final JMenuItem[] ITEMS = {

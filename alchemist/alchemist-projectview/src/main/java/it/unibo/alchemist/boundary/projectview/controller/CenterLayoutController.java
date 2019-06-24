@@ -773,9 +773,8 @@ public class CenterLayoutController {
 
     /**
      * 
-     * @return The entity project.
      */
-    public Project setField() {
+    public void setField() {
         this.project = ProjectIOUtils.loadFrom(this.ctrlLeft.getPathFolder());
         if (this.project != null) {
             if (this.project.getBatch() != null && this.project.getBatch().getVariables() != null
@@ -896,7 +895,6 @@ public class CenterLayoutController {
             setEnableGrid();
         }
         this.ctrlLeft.setEnableRun();
-        return this.project;
     }
 
     /**
@@ -1053,23 +1051,29 @@ public class CenterLayoutController {
      */
     public void checkChanges() {
         this.grid.requestFocus();
-        if (this.project != null && (this.project.getSimulation() == null
-                || !this.project.getSimulation().equals(getSimulationFilePath()) || this.project.getEndTime() == 0
-                || this.project.getEndTime() != getEndTime() || this.project.getEffect() == null
-                || !this.project.getEffect().equals(getEffect())
-                || this.project.getOutput().isSelected() != isSwitchOutputSelected()
-                || (isSwitchOutputSelected() && (this.project.getOutput().getFolder() == null
-                        || !this.project.getOutput().getFolder().equals(getOutputFolder())
-                        || this.project.getOutput().getBaseName() == null
-                        || !this.project.getOutput().getBaseName().equals(getBaseName())
-                        || this.project.getOutput().getSampleInterval() == 0
-                        || this.project.getOutput().getSampleInterval() != getSamplInterval()))
-                || this.project.getBatch().isSelected() != isSwitchBatchSelected()
-                || (isSwitchBatchSelected() && (this.project.getBatch().getVariables() == null
-                        || !this.project.getBatch().getVariables().equals(getVariables())
-                        || this.project.getBatch().getThreadCount() == 0
-                        || this.project.getBatch().getThreadCount() != getNumberThreads()))
-                || this.project.getClasspath() == null || !this.project.getClasspath().equals(getClasspath()))) {
+        final boolean output = isSwitchOutputSelected()
+                && (this.project.getOutput().getFolder() == null
+                    || !this.project.getOutput().getFolder().equals(getOutputFolder())
+                    || this.project.getOutput().getBaseName() == null
+                    || !this.project.getOutput().getBaseName().equals(getBaseName())
+                    || this.project.getOutput().getSampleInterval() == 0
+                    || this.project.getOutput().getSampleInterval() != getSamplInterval());
+        final boolean batch = isSwitchBatchSelected() && (this.project.getBatch().getVariables() == null
+                || !this.project.getBatch().getVariables().equals(getVariables())
+                || this.project.getBatch().getThreadCount() == 0
+                || this.project.getBatch().getThreadCount() != getNumberThreads());
+        if (this.project != null
+                && (this.project.getSimulation() == null
+                    || !this.project.getSimulation().equals(getSimulationFilePath())
+                    || this.project.getEndTime() == 0
+                    || this.project.getEndTime() != getEndTime()
+                    || this.project.getEffect() == null
+                    || !this.project.getEffect().equals(getEffect())
+                    || this.project.getOutput().isSelected() != isSwitchOutputSelected()
+                    || output
+                    || this.project.getBatch().isSelected() != isSwitchBatchSelected()
+                    || batch
+                    || this.project.getClasspath() == null || !this.project.getClasspath().equals(getClasspath()))) {
             final Alert alert = new Alert(AlertType.CONFIRMATION);
             alert.setTitle(RESOURCES.getString("save"));
             alert.setHeaderText(RESOURCES.getString("save_changes_header"));

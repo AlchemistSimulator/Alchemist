@@ -7,6 +7,14 @@
  */
 package it.unibo.alchemist.loader.export;
 
+import com.google.common.collect.Lists;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Incarnation;
+import it.unibo.alchemist.model.interfaces.Molecule;
+import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.Time;
+import org.apache.commons.math3.stat.descriptive.UnivariateStatistic;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -15,22 +23,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
-import org.apache.commons.math3.stat.descriptive.UnivariateStatistic;
-
-import com.google.common.collect.Lists;
-
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Incarnation;
-import it.unibo.alchemist.model.interfaces.Molecule;
-import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.Time;
-
 /**
  * Reads the value of a molecule and logs it.
  * 
  * @param <T>
  */
-public class MoleculeReader<T> implements Extractor {
+public final class MoleculeReader<T> implements Extractor {
 
     private final List<UnivariateStatistic> aggregators;
     private final List<String> columns;

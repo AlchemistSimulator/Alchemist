@@ -9,6 +9,8 @@ package it.unibo.alchemist.model.interfaces;
 
 /**
  * {@link Environment} supporting deformable cells.
+ *
+ * @param <P> position type
  */
 public interface EnvironmentSupportingDeformableCells<P extends Position<? extends P>> extends Environment<Double, P> {
 

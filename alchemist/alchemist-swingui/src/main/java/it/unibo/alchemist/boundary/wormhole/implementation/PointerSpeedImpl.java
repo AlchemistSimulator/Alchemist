@@ -7,15 +7,15 @@
  */
 package it.unibo.alchemist.boundary.wormhole.implementation;
 
-import java.awt.Point;
-
 import it.unibo.alchemist.boundary.wormhole.interfaces.PointerSpeed;
+
+import java.awt.Point;
 
 /**
  * Implementation for {@link PointerSpeed} interface.
  * 
  */
-public class PointerSpeedImpl implements PointerSpeed {
+public final class PointerSpeedImpl implements PointerSpeed {
     private Point oldPosition = new Point();
     private Point position = new Point();
 

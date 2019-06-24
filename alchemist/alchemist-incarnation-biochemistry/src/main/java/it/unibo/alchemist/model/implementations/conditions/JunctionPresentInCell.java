@@ -18,7 +18,7 @@ import java.util.Collections;
 
 /**
  */
-public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
+public final class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
 
     private static final long serialVersionUID = 4213307452790768059L;
 
@@ -53,9 +53,12 @@ public class JunctionPresentInCell extends AbstractNeighborCondition<Double> {
     }
 
     @Override
-    protected double getNeighborPropensity(Node<Double> neighbor) {
+    protected double getNeighborPropensity(final Node<Double> neighbor) {
         // the neighbor's propensity is computed as the number of junctions it has
-        return getNode().getJunctions().getOrDefault(j, Collections.emptyMap()).getOrDefault(neighbor, 0);
+        //noinspection SuspiciousMethodCalls
+        return getNode().getJunctions()
+                .getOrDefault(j, Collections.emptyMap())
+                .getOrDefault(neighbor, 0);
     }
 
     @Override

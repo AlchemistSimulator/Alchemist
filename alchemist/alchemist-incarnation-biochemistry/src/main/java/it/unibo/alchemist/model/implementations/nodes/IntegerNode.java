@@ -24,6 +24,9 @@ public abstract class IntegerNode extends AbstractNode<Integer> {
         super(env);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Integer createT() {
         return 0;

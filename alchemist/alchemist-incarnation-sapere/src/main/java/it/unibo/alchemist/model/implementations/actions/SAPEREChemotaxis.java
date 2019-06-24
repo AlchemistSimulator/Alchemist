@@ -17,9 +17,10 @@ import java.util.List;
 /**
  *         This class provides a chemotaxis implementation for SAPERE, namely,
  *         an agent able to move a molecule towards a specific node.
- * 
+ *
+ * @param <P> position type
  */
-public class SAPEREChemotaxis<P extends Position<? extends P>> extends SAPERENeighborAgent<P> {
+public final class SAPEREChemotaxis<P extends Position<? extends P>> extends SAPERENeighborAgent<P> {
 
     private static final long serialVersionUID = -4845100315774422690L;
     private final int o;

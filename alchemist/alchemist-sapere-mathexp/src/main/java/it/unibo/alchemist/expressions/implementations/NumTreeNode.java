@@ -15,7 +15,7 @@ import java.util.Map;
 
 /**
  */
-public class NumTreeNode extends ATreeNode<Double> {
+public final class NumTreeNode extends ATreeNode<Double> {
 
     private static final long serialVersionUID = 6624916497764658902L;
     private String s;

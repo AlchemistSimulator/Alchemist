@@ -31,7 +31,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * This class tests some basic Commands, like pause and start.
@@ -57,7 +59,7 @@ public class TestConcurrency {
     }
 
     /**
-     * Test if the status of a {@link Engine} changes as expected
+     * Test if the status of a {@link Engine} changes as expected.
      */
     @Test
     @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", justification = "We don't need the status of the Runnable")
@@ -72,7 +74,7 @@ public class TestConcurrency {
             fail();
         }
         verifyStatus(ex, sim, Status.PAUSED);
-        sim.waitFor(Status.PAUSED, 0, TimeUnit.DAYS);
+        sim.waitFor(Status.PAUSED, 10, TimeUnit.MILLISECONDS);
         verifyStatus(ex, sim, Status.PAUSED);
         ex.submit(sim::play);
         sim.waitFor(Status.RUNNING, 1, TimeUnit.SECONDS); // the method must return instantly
@@ -86,7 +88,7 @@ public class TestConcurrency {
          * the method must return immediately with a message error because is not
          * possible to reach RUNNING or PAUSED status while in STOPPED
          */
-        sim.waitFor(Status.RUNNING, 0, TimeUnit.DAYS);
+        sim.waitFor(Status.RUNNING, 10, TimeUnit.MILLISECONDS);
         ex.shutdown();
         verifyStatus(ex, sim, Status.TERMINATED);
     }
@@ -121,12 +123,11 @@ public class TestConcurrency {
         }
     }
 
-    private static class DummyNode extends AbstractNode<Object> {
+    private static final class DummyNode extends AbstractNode<Object> {
         private static final long serialVersionUID = 1L;
-        public DummyNode(Environment<?, ?> env) {
+        private DummyNode(final Environment<?, ?> env) {
             super(env);
         }
-
         @Override
         protected Object createT() {
             return "";

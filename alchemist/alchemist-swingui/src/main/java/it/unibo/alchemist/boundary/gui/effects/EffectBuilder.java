@@ -14,8 +14,17 @@ import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Modifier;
@@ -25,7 +34,7 @@ import java.util.concurrent.CountDownLatch;
 /**
  */
 @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")
-public class EffectBuilder extends JFrame implements ActionListener {
+public final class EffectBuilder extends JFrame implements ActionListener {
 
     private static final long serialVersionUID = -5030318714404946998L;
     private static final List<Class<? extends Effect>> EFFECTS = ClassPathScanner.subTypesOf(Effect.class, "it.unibo.alchemist");

@@ -53,7 +53,7 @@ public class ExponentialTime<T> extends AbstractDistribution<T> {
     }
 
     @Override
-    public void updateStatus(
+    public final void updateStatus(
             final Time curTime,
             final boolean executed,
             final double newpropensity,
@@ -100,11 +100,21 @@ public class ExponentialTime<T> extends AbstractDistribution<T> {
         return -FastMath.log1p(-rand.nextDouble()) / lambda;
     }
 
+    /**
+     * Must be overridden by subclasses returning the correct instance.
+     *
+     * @param currentTime the time at which the time distribution was cloned
+     * @return a new ExponentialTime
+     */
     @Override
     public ExponentialTime<T> clone(final Time currentTime) {
         return new ExponentialTime<>(rate, DoubleTime.ZERO_TIME, rand);
     }
 
+    /**
+     *
+     * @return the rate of the reaction
+     */
     @Override
     public double getRate() {
         return rate;

@@ -7,25 +7,6 @@
  */
 package it.unibo.alchemist.boundary.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
-
-import javax.swing.BoxLayout;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import it.unibo.alchemist.boundary.gui.effects.EffectSerializationFactory;
 import it.unibo.alchemist.boundary.gui.effects.JEffectsTab;
 import it.unibo.alchemist.boundary.interfaces.GraphicalOutputMonitor;
@@ -36,6 +17,23 @@ import it.unibo.alchemist.boundary.monitors.TimeStepMonitor;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Position2D;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Utility class for quickly creating non-reusable graphical interfaces.
@@ -57,6 +55,8 @@ public final class SingleRunGUI {
      *            the simulation for this GUI
      * @param <T>
      *            concentration type
+     * @param <P>
+     *            position type
      */
     public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim) {
         make(sim, (File) null, JFrame.EXIT_ON_CLOSE);
@@ -70,6 +70,8 @@ public final class SingleRunGUI {
      *            the type of close operation for this GUI
      * @param <T>
      *            concentration type
+     * @param <P>
+     *            position type
      */
     public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final int closeOperation) {
         make(sim, (File) null, closeOperation);
@@ -84,7 +86,8 @@ public final class SingleRunGUI {
      *            the effects file
      * @param <T>
      *            concentration type
-     * @throws FileNotFoundException
+     * @param <P>
+     *            position type
      */
     public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final String effectsFile) {
         make(sim, new File(effectsFile), JFrame.EXIT_ON_CLOSE);
@@ -101,6 +104,8 @@ public final class SingleRunGUI {
      *            the type of close operation for this GUI
      * @param <T>
      *            concentration type
+     * @param <P>
+     *            position type
      */
     public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final String effectsFile, final int closeOperation) {
         make(sim, new File(effectsFile), closeOperation);
@@ -121,56 +126,54 @@ public final class SingleRunGUI {
      *            the type of close operation for this GUI
      * @param <T>
      *            concentration type
+     * @param <P>
+     *            position type
      */
     public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final File effectsFile, final int closeOperation) {
         @SuppressWarnings("unchecked") // Actually safe: MapEnvironment uses the same P type of MapDisplay
         final GraphicalOutputMonitor<T, P> main = Objects.requireNonNull(sim).getEnvironment() instanceof MapEnvironment
                 ? (GraphicalOutputMonitor<T, P>) new MapDisplay<T>()
-                : new Generic2DDisplay<T, P>();
-        if (main instanceof Component) {
-            final JFrame frame = new JFrame("Alchemist Simulator");
-            frame.setDefaultCloseOperation(closeOperation);
-            final JPanel canvas = new JPanel();
-            frame.getContentPane().add(canvas);
-            canvas.setLayout(new BorderLayout());
-            canvas.add((Component) main, BorderLayout.CENTER);
-            /*
-             * Upper area
-             */
-            final JPanel upper = new JPanel();
-            upper.setLayout(new BoxLayout(upper, BoxLayout.X_AXIS));
-            canvas.add(upper, BorderLayout.NORTH);
-            final JEffectsTab<T> effects = new JEffectsTab<>(main, false);
-            if (effectsFile != null) {
-                try {
-                    effects.setEffects(EffectSerializationFactory.effectsFromFile(effectsFile));
-                } catch (IOException | ClassNotFoundException ex) {
-                    errorLoadingEffects(ex);
-                }
+                : new Generic2DDisplay<>();
+        final JFrame frame = new JFrame("Alchemist Simulator");
+        frame.setDefaultCloseOperation(closeOperation);
+        final JPanel canvas = new JPanel();
+        frame.getContentPane().add(canvas);
+        canvas.setLayout(new BorderLayout());
+        canvas.add((Component) main, BorderLayout.CENTER);
+        /*
+         * Upper area
+         */
+        final JPanel upper = new JPanel();
+        upper.setLayout(new BoxLayout(upper, BoxLayout.X_AXIS));
+        canvas.add(upper, BorderLayout.NORTH);
+        final JEffectsTab<T> effects = new JEffectsTab<>(main, false);
+        if (effectsFile != null) {
+            try {
+                effects.setEffects(EffectSerializationFactory.effectsFromFile(effectsFile));
+            } catch (IOException | ClassNotFoundException ex) {
+                errorLoadingEffects(ex);
             }
-            upper.add(effects);
-            final TimeStepMonitor<T, P> time = new TimeStepMonitor<>();
-            sim.addOutputMonitor(time);
-            upper.add(time);
-            /*
-             * Go on screen
-             */
-            // frame.pack();
-            final Optional<Dimension> size = Arrays
-                    .stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices())
-                    .map(GraphicsDevice::getDisplayMode).map(dm -> new Dimension(dm.getWidth(), dm.getHeight()))
-                    .min((d1, d2) -> Double.compare(area(d1), area(d2)));
-            size.ifPresent(d -> d.setSize(d.getWidth() * SCALE_FACTOR, d.getHeight() * SCALE_FACTOR));
-            frame.setSize(size.orElse(new Dimension(FALLBACK_X_SIZE, FALLBACK_Y_SIZE)));
-            frame.setLocationByPlatform(true);
-            frame.setVisible(true);
-            /*
-             * OutputMonitor's add to the sim must be done as the last operation
-             */
-            sim.addOutputMonitor(main);
-        } else {
-            L.error("The default monitor of {} is not compatible with Java Swing.", sim);
         }
+        upper.add(effects);
+        final TimeStepMonitor<T, P> time = new TimeStepMonitor<>();
+        sim.addOutputMonitor(time);
+        upper.add(time);
+        /*
+         * Go on screen
+         */
+        // frame.pack();
+        final Optional<Dimension> size = Arrays
+                .stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices())
+                .map(GraphicsDevice::getDisplayMode).map(dm -> new Dimension(dm.getWidth(), dm.getHeight()))
+                .min(Comparator.comparingDouble(SingleRunGUI::area));
+        size.ifPresent(d -> d.setSize(d.getWidth() * SCALE_FACTOR, d.getHeight() * SCALE_FACTOR));
+        frame.setSize(size.orElse(new Dimension(FALLBACK_X_SIZE, FALLBACK_Y_SIZE)));
+        frame.setLocationByPlatform(true);
+        frame.setVisible(true);
+        /*
+         * OutputMonitor's add to the sim must be done as the last operation
+         */
+        sim.addOutputMonitor(main);
     }
 
     private static double area(final Dimension d) {

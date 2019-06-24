@@ -6,14 +6,9 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-/**
- * 
- */
 package it.unibo.alchemist.core.interfaces;
 
 import it.unibo.alchemist.model.interfaces.Reaction;
-
-import java.io.Serializable;
 
 /**
  * The type which describes the concentration of a molecule

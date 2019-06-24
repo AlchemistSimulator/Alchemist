@@ -5,14 +5,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-/**
- * 
- */
 package it.unibo.alchemist.model.implementations.movestrategies.speed;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
 
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
@@ -21,13 +14,18 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
+
 /**
  * This strategy slows down nodes depending on how many "interacting" nodes are
  * found in the surroundings. It is an attempt at modeling crowding slow-downs.
- * 
+ *
+ * @param <P> position type
  * @param <T>
  */
-public class InteractWithOthers<T, P extends Position<? extends P>> implements SpeedSelectionStrategy<P> {
+public final class InteractWithOthers<T, P extends Position<? extends P>> implements SpeedSelectionStrategy<P> {
 
     private static final long serialVersionUID = -1900168887685703120L;
     private static final double MINIMUM_DISTANCE_WALKED = 1;

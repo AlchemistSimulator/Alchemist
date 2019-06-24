@@ -46,11 +46,7 @@ public final class BiochemistryIncarnation<P extends Position<P>> implements Inc
         if (param == null || param.isEmpty()) {
             return new CellNodeImpl<>(env);
         }
-        try {
-            return new CellNodeImpl<>(env, Double.parseDouble(param));
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Inserted a string not attributable to a Double");
-        }
+        return new CellNodeImpl<>(env, Double.parseDouble(param));
     }
 
     @Override
@@ -97,11 +93,7 @@ public final class BiochemistryIncarnation<P extends Position<P>> implements Inc
         if (s == null) { // default value
             return 1d;
         }
-        try {
-            return Double.parseDouble(s);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("The concentration must be a number");
-        }
+        return Double.parseDouble(s);
     }
 
     @Override

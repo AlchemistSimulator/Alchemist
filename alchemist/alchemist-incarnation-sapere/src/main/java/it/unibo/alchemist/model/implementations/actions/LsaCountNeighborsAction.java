@@ -26,7 +26,7 @@ import java.util.List;
 
 /**
  */
-public class LsaCountNeighborsAction extends SAPERELocalAgent {
+public final class LsaCountNeighborsAction extends SAPERELocalAgent {
 
     private static final long serialVersionUID = -7128058274012426458L;
     private final HashString countVarName;

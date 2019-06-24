@@ -26,10 +26,10 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
     private static final long serialVersionUID = -2952112972706738682L;
     private static final Logger L = LoggerFactory.getLogger(BioRect2DEnvironment.class);
 
-    private double minX;
-    private double minY;
-    private double maxX;
-    private double maxY;
+    private final double minX;
+    private final double minY;
+    private final double maxX;
+    private final double maxY;
 
     /**
      * Builds a BioRect2DEnvironment with given bounds.
@@ -85,8 +85,8 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
 
     @Override
     protected final boolean isAllowed(final Euclidean2DPosition p) {
-        return (p.getX() < maxX && p.getX() > minX 
-                && p.getY() < maxY && p.getY() > minY);
+        return p.getX() < maxX && p.getX() > minX
+                && p.getY() < maxY && p.getY() > minY;
     }
 
     @Override
@@ -96,12 +96,12 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
             final CellNode<Euclidean2DPosition> nodeToMove = (CellNode<Euclidean2DPosition>) node;
             final Neighborhood<Double> neigh = getNeighborhood(nodeToMove);
             final Map<Junction, Map<CellNode<?>, Integer>> jun = nodeToMove.getJunctions();
-            jun.entrySet().forEach(e -> e.getValue().entrySet().forEach(e2 -> {
-                if (!neigh.contains(e2.getKey())) { // there is a junction that links a node which isn't in the neighborhood after the movement
-                   for (int i = 0; i < e2.getValue(); i++) {
-                       nodeToMove.removeJunction(e.getKey(), e2.getKey());
-                       e2.getKey().removeJunction(e.getKey().reverse(), nodeToMove);
-                   }
+            jun.forEach((key, value) -> value.forEach((key1, value1) -> {
+                if (!neigh.contains(key1)) { // there is a junction that links a node which isn't in the neighborhood after the movement
+                    for (int i = 0; i < value1; i++) {
+                        nodeToMove.removeJunction(key, key1);
+                        key1.removeJunction(key.reverse(), nodeToMove);
+                    }
                 }
             }));
         }

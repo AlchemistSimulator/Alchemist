@@ -7,11 +7,10 @@
  */
 package it.unibo.alchemist.boundary.wormhole.interfaces;
 
+import it.unibo.alchemist.model.interfaces.Position2D;
+
 import java.awt.Point;
 import java.awt.geom.Dimension2D;
-
-import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.Position2D;
 
 /**
  * A Wormhole (in this context) is an entity that "connects" two worlds: the
@@ -38,8 +37,8 @@ import it.unibo.alchemist.model.interfaces.Position2D;
  * the prime meridian and the equator is (0; 0), so I have to set the envOffset
  * to (16; 48) in order to see the "beginning" of the map on the left-bottom
  * corner of the view.<br>
- * 
-
+ *
+ * @param <P> position type
  */
 public interface IWormhole2D<P extends Position2D<? extends P>> {
 
@@ -49,22 +48,22 @@ public interface IWormhole2D<P extends Position2D<? extends P>> {
      */
     enum Mode {
         /**
-         * No stretch allowed
+         * No stretch allowed.
          */
         ISOMETRIC,
         /**
-         * Stretch to adapt to view
+         * Stretch to adapt to view.
          */
         ADAPT_TO_VIEW,
         /**
-         * Stretch is defined by user
+         * Stretch is defined by user.
          */
         SETTABLE,
         /**
-         * Uses spherical coordinates, no stretch allowed
+         * Uses spherical coordinates, no stretch allowed.
          */
-        MAP;
-    };
+        MAP
+    }
 
     /**
      * Converts a point from the view-space to the env-space.
@@ -72,7 +71,7 @@ public interface IWormhole2D<P extends Position2D<? extends P>> {
      * @param viewPoint
      *            is the {@link Point} object whose coordinates are from
      *            view-space
-     * @return a {@link Position} object whose coordinates are from env-space
+     * @return a {@link Position2D} object whose coordinates are from env-space
      */
     P getEnvPoint(Point viewPoint);
 
@@ -87,7 +86,7 @@ public interface IWormhole2D<P extends Position2D<? extends P>> {
      * Converts a point from the env-space to the view-space.
      * 
      * @param envPoint
-     *            is the {@link Position} object whose coordinates are from
+     *            is the {@link Position2D} object whose coordinates are from
      *            env-space
      * @return a {@link Point} object whose coordinates are from view-space
      */
@@ -140,7 +139,7 @@ public interface IWormhole2D<P extends Position2D<? extends P>> {
      * <code>envPoint</code>.
      * 
      * @param envPoint
-     *            is the {@link Position} object representing the new position
+     *            is the {@link Position2D} object representing the new position
      *            with env-coordinates
      */
     void setEnvPosition(P envPoint);

@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.test
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import io.kotlintest.Matcher
 import io.kotlintest.Result
 import io.kotlintest.TestCase
@@ -100,7 +101,8 @@ private data class Container(
 
 private val Container.expectedPropensity: Matcher<Container>
     get() = object : Matcher<Container> {
-        override fun test(container: Container): Result {
+        @SuppressFBWarnings("FE_FLOATING_POINT_EQUALITY")
+        override fun test(value: Container): Result {
             val expectedPropensity = when (condition) {
                 is NeighborhoodPresent -> node.neighborhoodPresentPropensity
                 is JunctionPresentInCell -> node.junctionPresentPropensity

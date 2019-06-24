@@ -13,11 +13,14 @@ import org.apache.commons.math3.util.FastMath;
 
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Distributes nodes geometrically within a rectangular shape.
+ *
+ * @param <P> position type
  */
-public class GeometricGradientRectangle<P extends Position<? extends P>> extends Rectangle<P> {
+public final class GeometricGradientRectangle<P extends Position<? extends P>> extends Rectangle<P> {
 
     private final ExponentialDistribution exp;
     private final double bound, size;
@@ -131,6 +134,7 @@ public class GeometricGradientRectangle<P extends Position<? extends P>> extends
          */
     }
 
+    @NotNull
     @Override
     protected P indexToPosition(final int i) {
         double exponential = increasing ? size - nextExpRandom() : nextExpRandom();
@@ -148,7 +152,7 @@ public class GeometricGradientRectangle<P extends Position<? extends P>> extends
     /**
      * @return a random value with the chosen exponential distribution
      */
-    protected final double nextExpRandom() {
+    private double nextExpRandom() {
         return exp.inverseCumulativeProbability(randomDouble(0, bound));
     }
 }

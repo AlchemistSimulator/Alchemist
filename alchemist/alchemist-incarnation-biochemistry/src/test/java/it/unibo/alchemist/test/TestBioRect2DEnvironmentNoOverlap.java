@@ -7,21 +7,6 @@
  */
 package it.unibo.alchemist.test;
 
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.Map;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import it.unibo.alchemist.model.interfaces.Position;
-import org.apache.commons.math3.util.FastMath;
-import org.apache.commons.math3.util.Pair;
-import org.jooq.lambda.fi.util.function.CheckedConsumer;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.kaikikm.threadresloader.ResourceLoader;
-
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -33,10 +18,29 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+import org.apache.commons.math3.util.FastMath;
+import org.apache.commons.math3.util.Pair;
+import org.jooq.lambda.fi.util.function.CheckedConsumer;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.kaikikm.threadresloader.ResourceLoader;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.Map;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static io.kotlintest.DslKt.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -45,7 +49,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
 
     /**
      * The test seems to work for values of delta up to 2*10^(-8)
-     *
+     * <p>
      * As future changes in the core can vary the sensibility of floating point operations, leading to an undesired
      * test failure, the value has been set to the next order of magnitude.
      */
@@ -56,7 +60,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
     private static final Euclidean2DPosition POSITION_TO_MOVE1 = new Euclidean2DPosition(80, 0);
     private static final Euclidean2DPosition EXPECTED_POS1 = new Euclidean2DPosition(30, 0);
     private static final Euclidean2DPosition POSITION_TO_MOVE2 = POSITION_TO_MOVE1;
-    private static final Euclidean2DPosition EXPECTED_POS2 = new Euclidean2DPosition((4 * 10) - FastMath.sqrt(75), 0);
+    private static final Euclidean2DPosition EXPECTED_POS2 = new Euclidean2DPosition(4 * 10 - FastMath.sqrt(75), 0);
     private static final Euclidean2DPosition POSITION_TO_MOVE3 = new Euclidean2DPosition(80, 0);
     private static final Euclidean2DPosition POSITION_TO_MOVE4 = POSITION_TO_MOVE3;
     private static final Euclidean2DPosition POSITION_TO_MOVE5 = POSITION_TO_MOVE3;
@@ -65,7 +69,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
     private static final Euclidean2DPosition POSITION_TO_MOVE7 = new Euclidean2DPosition(80, 80);
     private static final Euclidean2DPosition EXPECTED_POS7 = new Euclidean2DPosition(40 - (10 / FastMath.sqrt(2)), 40 - (10 / FastMath.sqrt(2)));
     private static final Euclidean2DPosition POSITION_TO_MOVE8 = new Euclidean2DPosition(-80, -80);
-    private static final Euclidean2DPosition EXPECTED_POS8 = new Euclidean2DPosition(-40 + (10 / FastMath.sqrt(2)), -40 + (10 / FastMath.sqrt(2)));
+    private static final Euclidean2DPosition EXPECTED_POS8 = new Euclidean2DPosition(-40 + 10 / FastMath.sqrt(2), -40 + 10 / FastMath.sqrt(2));
     private static final Euclidean2DPosition EXPECTED_POS_DIFFDIAM3_1 = new Euclidean2DPosition(5, 0);
     private static final Euclidean2DPosition EXPECTED_POS_DIFFDIAM3_2 = new Euclidean2DPosition(10, 0);
     private static final Euclidean2DPosition EXPECTED_POS_DIFFDIAM4_1 = new Euclidean2DPosition(-5, 0);
@@ -88,8 +92,8 @@ public class TestBioRect2DEnvironmentNoOverlap {
     private static final Euclidean2DPosition NODE_POS13_3 = new Euclidean2DPosition(-5, -5);
     private static final Euclidean2DPosition NODE_POS13_4 = new Euclidean2DPosition(5, -5);
     private final Euclidean2DPosition originalPos = new Euclidean2DPosition(0, 0);
-    private CellWithCircularArea<Euclidean2DPosition> ng1; 
-    private CellWithCircularArea<Euclidean2DPosition> ng2; 
+    private CellWithCircularArea<Euclidean2DPosition> ng1;
+    private CellWithCircularArea<Euclidean2DPosition> ng2;
     private CellWithCircularArea<Euclidean2DPosition> ng3;
     private CellWithCircularArea<Euclidean2DPosition> nm1;
     private CellWithCircularArea<Euclidean2DPosition> nm2;
@@ -100,7 +104,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
     private Environment<Double, Euclidean2DPosition> env;
 
     /**
-     * 
+     *
      */
     @BeforeEach
     public void setUp() {
@@ -133,14 +137,13 @@ public class TestBioRect2DEnvironmentNoOverlap {
         final CellWithCircularArea<Euclidean2DPosition> n10 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
         final CellWithCircularArea<Euclidean2DPosition> n11 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
 
-        final Euclidean2DPosition p1 = originalPos;
         final Euclidean2DPosition p2 = new Euclidean2DPosition(10, 0);
-        env.addNode(n1, p1);
+        env.addNode(n1, originalPos);
         env.addNode(n2, p2);
 
         final Euclidean2DPosition p3 = new Euclidean2DPosition(0, 20); // this should be added
         env.addNode(n3, p3);
-        assertTrue(env.getPosition(n3).equals(p3), getFailureTestString("n3", n3, p3));
+        assertEquals(env.getPosition(n3), p3, getFailureTestString("n3", n3, p3));
         env.removeNode(n3);
         final Euclidean2DPosition p4 = new Euclidean2DPosition(0, 10); // this should be added
         env.addNode(n4, p4);
@@ -165,16 +168,18 @@ public class TestBioRect2DEnvironmentNoOverlap {
         final Euclidean2DPosition p10 = new Euclidean2DPosition(2.5, 2.5); // this should not be added
         env.addNode(n10, p10);
         verifyNotAdded(n10);
-        final Euclidean2DPosition p11 =  new Euclidean2DPosition(7.5, -2.5); // this should not be added
+        final Euclidean2DPosition p11 = new Euclidean2DPosition(7.5, -2.5); // this should not be added
+        env.addNode(n11, p11);
         verifyNotAdded(n11);
         env.removeNode(n1);
         env.removeNode(n2);
     }
 
-    private void verifyNotAdded(Node<Double> node) {
+    private void verifyNotAdded(final Node<Double> node) {
         verifyAdded(node, null);
     }
-    private void verifyAdded(Node<Double> node, Position<?> expected) {
+
+    private void verifyAdded(final Node<Double> node, final Position<?> expected) {
         final Position<?> position = env.getPosition(node);
         final Supplier<String> message = () -> getFailureTestString("node" + node.getId(), node, position);
         if (expected == null) {
@@ -195,7 +200,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
         final CellWithCircularArea<Euclidean2DPosition> c1 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
         env.addNode(c1, p1);
         env.moveNode(cellToMove1, POSITION_TO_MOVE1);
-        assertTrue(env.getPosition(cellToMove1).equals(EXPECTED_POS1), "cellToMove1 is in position: " + env.getPosition(cellToMove1));
+        assertEquals(env.getPosition(cellToMove1), EXPECTED_POS1, "cellToMove1 is in position: " + env.getPosition(cellToMove1));
         env.removeNode(cellToMove1);
         env.removeNode(c1);
     }
@@ -214,7 +219,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
         env.addNode(c2, p2);
         env.addNode(c3, p3);
         env.moveNode(cellToMove2, POSITION_TO_MOVE2);
-        assertTrue(env.getPosition(cellToMove2).equals(EXPECTED_POS2), "cellToMove2 is in position: " + env.getPosition(cellToMove2).toString());
+        assertEquals(env.getPosition(cellToMove2), EXPECTED_POS2, "cellToMove2 is in position: " + env.getPosition(cellToMove2).toString());
         env.removeNode(cellToMove2);
         env.removeNode(c2);
         env.removeNode(c3);
@@ -231,7 +236,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
         final CellWithCircularArea<Euclidean2DPosition> c4 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
         env.addNode(c4, p4);
         env.moveNode(cellToMove3, POSITION_TO_MOVE3);
-        assertTrue(env.getPosition(cellToMove3).equals(originalPos), "cellToMove3 is in position: " + env.getPosition(cellToMove3).toString());
+        assertEquals(env.getPosition(cellToMove3), originalPos, "cellToMove3 is in position: " + env.getPosition(cellToMove3).toString());
         env.removeNode(cellToMove3);
         env.removeNode(c4);
     }
@@ -247,8 +252,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
         final CellWithCircularArea<Euclidean2DPosition> c5 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
         env.addNode(c5, p5);
         env.moveNode(cellToMove4, POSITION_TO_MOVE4);
-        final Euclidean2DPosition expectedPos = POSITION_TO_MOVE4;
-        assertFalse(env.getPosition(cellToMove4).equals(expectedPos), "cellToMove4 is in position: " + env.getPosition(cellToMove4).toString());
+        assertNotEquals(env.getPosition(cellToMove4), POSITION_TO_MOVE4, "cellToMove4 is in position: " + env.getPosition(cellToMove4).toString());
         env.removeNode(cellToMove4);
         env.removeNode(c5);
     }
@@ -264,8 +268,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
         final CellWithCircularArea<Euclidean2DPosition> c6 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
         env.addNode(c6, p6);
         env.moveNode(cellToMove5, POSITION_TO_MOVE5);
-        final Euclidean2DPosition expectedPos = POSITION_TO_MOVE5;
-        assertTrue(env.getPosition(cellToMove5).equals(expectedPos), "cellToMove5 is in position: " + env.getPosition(cellToMove5).toString());
+        assertEquals(env.getPosition(cellToMove5), POSITION_TO_MOVE5, "cellToMove5 is in position: " + env.getPosition(cellToMove5).toString());
         env.removeNode(cellToMove5);
         env.removeNode(c6);
     }
@@ -281,7 +284,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
         final CellWithCircularArea<Euclidean2DPosition> c7 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
         env.addNode(c7, p7);
         env.moveNode(cellToMove6, POSITION_TO_MOVE6);
-        assertTrue(env.getPosition(cellToMove6).equals(EXPECTED_POS6), "cellToMove6 is in position: " + env.getPosition(cellToMove6).toString());
+        assertEquals(env.getPosition(cellToMove6), EXPECTED_POS6, "cellToMove6 is in position: " + env.getPosition(cellToMove6).toString());
         env.removeNode(cellToMove6);
         env.removeNode(c7);
     }
@@ -478,11 +481,11 @@ public class TestBioRect2DEnvironmentNoOverlap {
         final Euclidean2DPosition p1 = new Euclidean2DPosition(25, 25);
         env.addNode(ng1, p1);
         env.moveNode(cellToMove5, pd);
-        assertFalse(env.getPosition(cellToMove5).equals(pd), "cellToMove5 is in position: " + env.getPosition(cellToMove5));
+        assertNotEquals(env.getPosition(cellToMove5), pd, "cellToMove5 is in position: " + env.getPosition(cellToMove5));
         env.removeNode(ng1);
         env.addNode(nm1, p1);
         env.moveNode(cellToMove5, pd);
-        assertFalse(env.getPosition(cellToMove5).equals(pd), "cellToMove5 is in position: " + env.getPosition(cellToMove5));
+        assertNotEquals(env.getPosition(cellToMove5), pd, "cellToMove5 is in position: " + env.getPosition(cellToMove5));
     }
 
     /**
@@ -495,9 +498,9 @@ public class TestBioRect2DEnvironmentNoOverlap {
         final Euclidean2DPosition pd = new Euclidean2DPosition(50, 0);
 
         final Euclidean2DPosition p1 = new Euclidean2DPosition(25, 20);
-        env.addNode(ng1, p1); 
+        env.addNode(ng1, p1);
         final Euclidean2DPosition p2 = new Euclidean2DPosition(-10, 0);
-        env.addNode(np2, p2); 
+        env.addNode(np2, p2);
         env.moveNode(cellToMove6, pd);
         assertTrueJUnit4("cellToMove6 is in position: " + env.getPosition(cellToMove6), env.getPosition(cellToMove6).equals(pd));
     }
@@ -512,9 +515,9 @@ public class TestBioRect2DEnvironmentNoOverlap {
         final Euclidean2DPosition pd = new Euclidean2DPosition(50, 0);
 
         final Euclidean2DPosition p1 = new Euclidean2DPosition(25, 20);
-        env.addNode(ng1, p1); 
+        env.addNode(ng1, p1);
         final Euclidean2DPosition p2 = new Euclidean2DPosition(60, 5);
-        env.addNode(np2, p2); 
+        env.addNode(np2, p2);
         env.moveNode(cellToMove7, pd);
         assertTrueJUnit4("cellToMove7 is in position: " + env.getPosition(cellToMove7),
                 env.getPosition(cellToMove7).equals(pd));
@@ -530,16 +533,17 @@ public class TestBioRect2DEnvironmentNoOverlap {
         final Euclidean2DPosition pd = new Euclidean2DPosition(50, 0);
 
         final Euclidean2DPosition p1 = new Euclidean2DPosition(25, 20);
-        env.addNode(ng1, p1); 
+        env.addNode(ng1, p1);
         final Euclidean2DPosition p2 = new Euclidean2DPosition(0, 10);
-        env.addNode(np2, p2); 
+        env.addNode(np2, p2);
         env.moveNode(cellToMove8, pd);
         assertTrueJUnit4("cellToMove8 is in position: " + env.getPosition(cellToMove8),
                 env.getPosition(cellToMove8).equals(pd));
     }
 
     /**
-     * Testing if node moves respecting dimension of all the others and if moving two times the cell the neighborhood is corectly updated.
+     * Testing if node moves respecting dimension of all the others and if moving two times the cell the neighborhood is
+     * correctly updated.
      */
     @Test
     public void testMoveInTwoSteps1() {
@@ -598,13 +602,13 @@ public class TestBioRect2DEnvironmentNoOverlap {
         env.addNode(c1, NODE_POS11_1);
         env.addNode(c2, NODE_POS11_2);
         env.addNode(c3, NODE_POS11_3);
-        env.addNode(c4, NODE_POS11_4); 
+        env.addNode(c4, NODE_POS11_4);
         final Euclidean2DPosition pd = new Euclidean2DPosition(5.0, -1.8431210525510544);
         env.moveNodeToPosition(c1, pd);
         assertTrueJUnit4("Should be empty but is : " + env.getNodesWithinRange(c1, c1.getDiameter()).stream()
-                .filter(n -> env.getDistanceBetweenNodes(c1, n) < diameter)
-                .map(n -> env.getPosition(n).toString())
-                .collect(Collectors.toList()),
+                        .filter(n -> env.getDistanceBetweenNodes(c1, n) < diameter)
+                        .map(n -> env.getPosition(n).toString())
+                        .collect(Collectors.toList()),
                 env.getNodesWithinRange(c1, c1.getDiameter() - DELTA).isEmpty());
     }
 
@@ -621,13 +625,13 @@ public class TestBioRect2DEnvironmentNoOverlap {
         env.addNode(c1, NODE_POS12_1);
         env.addNode(c2, NODE_POS12_2);
         env.addNode(c3, NODE_POS12_3);
-        env.addNode(c4, NODE_POS12_4); 
+        env.addNode(c4, NODE_POS12_4);
         final Euclidean2DPosition pd = new Euclidean2DPosition(5.3, -1.8431210525510544);
         env.moveNodeToPosition(c1, pd);
         assertTrueJUnit4("Should be empty but is : " + env.getNodesWithinRange(c1, c1.getDiameter()).stream()
-                .filter(n -> env.getDistanceBetweenNodes(c1, n) < diameter)
-                .map(n -> env.getPosition(n).toString())
-                .collect(Collectors.toList()),
+                        .filter(n -> env.getDistanceBetweenNodes(c1, n) < diameter)
+                        .map(n -> env.getPosition(n).toString())
+                        .collect(Collectors.toList()),
                 env.getNodesWithinRange(c1, c1.getDiameter()).isEmpty());
     }
 
@@ -644,16 +648,16 @@ public class TestBioRect2DEnvironmentNoOverlap {
         env.addNode(c1, NODE_POS13_1);
         env.addNode(c2, NODE_POS13_2);
         env.addNode(c3, NODE_POS13_3);
-        env.addNode(c4, NODE_POS13_4); 
+        env.addNode(c4, NODE_POS13_4);
         final Euclidean2DPosition pd = new Euclidean2DPosition(10, 10);
         env.moveNodeToPosition(c1, pd);
         env.moveNodeToPosition(c2, pd);
         env.moveNodeToPosition(c3, pd);
         env.moveNodeToPosition(c4, pd);
         assertTrueJUnit4("Should be empty but is : " + env.getNodesWithinRange(c1, c1.getDiameter()).stream()
-                .filter(n -> env.getDistanceBetweenNodes(c1, n) < diameter)
-                .map(n -> env.getPosition(n).toString())
-                .collect(Collectors.toList()),
+                        .filter(n -> env.getDistanceBetweenNodes(c1, n) < diameter)
+                        .map(n -> env.getPosition(n).toString())
+                        .collect(Collectors.toList()),
                 env.getNodesWithinRange(c1, c1.getDiameter()).isEmpty());
     }
 
@@ -681,54 +685,57 @@ public class TestBioRect2DEnvironmentNoOverlap {
         final Simulation<Double, Euclidean2DPosition> sim = new Engine<>(env, 10000);
         sim.addOutputMonitor(new OutputMonitor<Double, Euclidean2DPosition>() {
             private static final long serialVersionUID = 1L;
-           @Override
+
+            @Override
             public void stepDone(final Environment<Double, Euclidean2DPosition> env, final Reaction<Double> r, final Time time, final long step) {
                 assertTrue(thereIsOverlap(env), "Fail at time: " + time);
             }
+
             @Override
             public void initialized(final Environment<Double, Euclidean2DPosition> env) {
                 assertTrue(thereIsOverlap(env));
             }
+
             @Override
             public void finished(final Environment<Double, Euclidean2DPosition> env, final Time time, final long step) {
                 assertTrue(thereIsOverlap(env));
             }
+
             private Stream<CellWithCircularArea<Euclidean2DPosition>> getNodes() {
                 return env.getNodes().stream()
                         .filter(n -> n instanceof CellWithCircularArea)
                         .map(n -> (CellWithCircularArea<Euclidean2DPosition>) n);
             }
+
             private boolean thereIsOverlap(final Environment<Double, Euclidean2DPosition> env) {
                 getNodes().flatMap(n -> getNodes()
-                            .filter(c -> !c.equals(n))
-                            .filter(c -> env.getDistanceBetweenNodes(n, c) < n.getRadius() + c.getRadius() - DELTA)
+                        .filter(c -> !c.equals(n))
+                        .filter(c -> env.getDistanceBetweenNodes(n, c) < n.getRadius() + c.getRadius() - DELTA)
                         .map(c -> new Pair<>(n, c)))
                         .findAny()
-                        .ifPresent(e -> fail("Nodes " + e.getFirst().getId() + env.getPosition(e.getFirst()) + " and " +
-                                e.getSecond().getId() + env.getPosition(e.getSecond()) + " are overlapping. " +
-                                "Their distance is: " + env.getDistanceBetweenNodes(e.getFirst(), e.getSecond()) +
-                                " but should be greater than " + (e.getFirst().getRadius() + e.getSecond().getRadius())));
+                        .ifPresent(e -> fail("Nodes " + e.getFirst().getId() + env.getPosition(e.getFirst()) + " and "
+                            + e.getSecond().getId() + env.getPosition(e.getSecond()) + " are overlapping. "
+                            + "Their distance is: " + env.getDistanceBetweenNodes(e.getFirst(), e.getSecond())
+                            + " but should be greater than " + (e.getFirst().getRadius() + e.getSecond().getRadius())));
                 return true;
             }
         });
         sim.play();
         sim.run();
-        sim.getError().ifPresent(CheckedConsumer.unchecked(it -> { throw it; }));
+        sim.getError().ifPresent(CheckedConsumer.unchecked(it -> {
+            throw it;
+        }));
     }
 
     private String getFailureTestString(final String nodeName, final Node<Double> n, final Position<?> expected) {
         return nodeName + " not in pos " + expected + "; it's in pos " + env.getPosition(n);
     }
 
-    private static void assertTrueJUnit4(String msg, boolean res) {
+    private static void assertTrueJUnit4(final String msg, final boolean res) {
         assertTrue(res, msg);
     }
 
-    private static void assertFalseJUnit4(String msg, boolean res) {
-        assertFalse(res, msg);
-    }
-
-    private static void assertNullJUnit4(String msg, Object res) {
+    private static void assertNullJUnit4(final String msg, final Object res) {
         assertNull(res, msg);
     }
 

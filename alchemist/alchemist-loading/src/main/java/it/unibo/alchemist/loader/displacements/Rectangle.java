@@ -11,9 +11,11 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
+import org.jetbrains.annotations.NotNull;
 
 /**
  *
+ * @param <P> position type
  */
 public class Rectangle<P extends Position<? extends P>> extends AbstractRandomDisplacement<P> {
 
@@ -30,22 +32,26 @@ public class Rectangle<P extends Position<? extends P>> extends AbstractRandomDi
      *            x start point
      * @param y
      *            y start point
-     * @param sizex
+     * @param sizeX
      *            x size
-     * @param sizey
+     * @param sizeY
      *            y size
      */
     public Rectangle(final Environment<?, P> pm, final RandomGenerator rand,
             final int nodes,
             final double x, final double y,
-            final double sizex, final double sizey) {
+            final double sizeX, final double sizeY) {
         super(pm, rand, nodes);
         this.x = x;
         this.y = y;
-        this.width = sizex;
-        this.height = sizey;
+        this.width = sizeX;
+        this.height = sizeY;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @NotNull
     @Override
     protected P indexToPosition(final int i) {
         return makePosition(randomDouble(x, x + width), randomDouble(y, y + height));

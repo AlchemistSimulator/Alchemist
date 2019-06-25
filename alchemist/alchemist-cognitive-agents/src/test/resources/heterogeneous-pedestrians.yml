@@ -18,11 +18,11 @@ displacements:
       type: Circle
       parameters: [50, 0, 0, 20]
     nodes:
-      type: it.unibo.alchemist.agents.heterogeneous.HeterogeneousPedestrian2D
+      type: HeterogeneousPedestrian2D
       parameters: ["elderly", "female"]
   - in:
       type: Circle
       parameters: [50, 0, 0, 20]
     nodes:
-      type: it.unibo.alchemist.agents.heterogeneous.HeterogeneousPedestrian2D
+      type: HeterogeneousPedestrian2D
       parameters: ["child", "male"]

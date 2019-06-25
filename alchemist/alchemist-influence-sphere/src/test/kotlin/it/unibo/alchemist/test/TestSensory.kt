@@ -1,8 +1,8 @@
-package it.unibo.alchemist.sensory.test
+package it.unibo.alchemist.test
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.sensory.HearingField2D
-import it.unibo.alchemist.sensory.FieldOfView2D
+import it.unibo.alchemist.model.influencesphere.sensory.HearingField2D
+import it.unibo.alchemist.model.influencesphere.sensory.FieldOfView2D
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 

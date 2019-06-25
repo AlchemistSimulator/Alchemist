@@ -1,7 +1,7 @@
-package it.unibo.alchemist.sensory
+package it.unibo.alchemist.model.influencesphere.sensory
 
 import it.unibo.alchemist.model.interfaces.Position2D
-import it.unibo.alchemist.shapes.GeometricShape2D
+import it.unibo.alchemist.model.influencesphere.shapes.GeometricShape2D
 
 /**
  * A sphere of influence in the 2D world.

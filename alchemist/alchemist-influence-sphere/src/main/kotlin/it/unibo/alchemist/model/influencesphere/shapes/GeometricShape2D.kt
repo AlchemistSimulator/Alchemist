@@ -1,4 +1,4 @@
-package it.unibo.alchemist.shapes
+package it.unibo.alchemist.model.influencesphere.shapes
 
 import it.unibo.alchemist.model.interfaces.Position2D
 import java.awt.Shape

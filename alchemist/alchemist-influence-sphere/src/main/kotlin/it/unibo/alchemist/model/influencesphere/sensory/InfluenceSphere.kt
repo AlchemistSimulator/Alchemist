@@ -1,4 +1,4 @@
-package it.unibo.alchemist.sensory
+package it.unibo.alchemist.model.influencesphere.sensory
 
 import it.unibo.alchemist.model.interfaces.Position
 

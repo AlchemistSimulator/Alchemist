@@ -10,11 +10,11 @@ import it.unibo.alchemist.model.interfaces.Time
 import org.kaikikm.threadresloader.ResourceLoader
 
 fun <T, P : Position<out P>> Environment<T, P>.startSimulation(
-    initialized: (e: Environment<T, P>) -> Unit,
-    stepDone: (e: Environment<T, P>, r: Reaction<T>, t: Time, s: Long) -> Unit,
-    finished: (e: Environment<T, P>, t: Time, s: Long) -> Unit,
+    initialized: (e: Environment<T, P>) -> Unit = { },
+    stepDone: (e: Environment<T, P>, r: Reaction<T>, t: Time, s: Long) -> Unit = { _, _, _, _ -> Unit },
+    finished: (e: Environment<T, P>, t: Time, s: Long) -> Unit = { _, _, _ -> Unit },
     numSteps: Long = 10000
-) {
+) = apply {
     with(Engine(this, numSteps)) {
         addOutputMonitor(object : OutputMonitor<T, P> {
             override fun initialized(e: Environment<T, P>) = initialized.invoke(e)
@@ -27,19 +27,7 @@ fun <T, P : Position<out P>> Environment<T, P>.startSimulation(
     }
 }
 
-fun <T, P : Position<out P>> Environment<T, P>.startSimulationWithoutParameters(
-    initialized: () -> Unit = { },
-    stepDone: () -> Unit = { },
-    finished: () -> Unit = { },
-    numSteps: Long = 10000
-) = startSimulation(
-        { initialized.invoke() },
-        { _, _, _, _ -> stepDone.invoke() },
-        { _, _, _ -> finished.invoke() },
-        numSteps
-)
-
-fun <T, P : Position<P>> loadYamlSimulation(resource: String, vars: Map<String, Double> = emptyMap()) {
-    val res = ResourceLoader.getResourceAsStream(resource)
-    YamlLoader(res).getWith<T, P>(vars).startSimulationWithoutParameters()
-}
+fun <T, P : Position<P>> loadYamlSimulation(resource: String, vars: Map<String, Double> = emptyMap()) =
+    with(ResourceLoader.getResourceAsStream(resource)) {
+        YamlLoader(this).getWith<T, P>(vars).startSimulation()
+    }

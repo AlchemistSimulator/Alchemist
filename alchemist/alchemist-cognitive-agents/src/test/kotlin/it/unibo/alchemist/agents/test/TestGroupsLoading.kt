@@ -6,7 +6,6 @@ import it.unibo.alchemist.agents.Pedestrian
 import it.unibo.alchemist.groups.Family
 import it.unibo.alchemist.loader.displacements.Circle
 import it.unibo.alchemist.loader.displacements.Displacement
-import it.unibo.alchemist.model.ProtelisIncarnation
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
@@ -15,7 +14,6 @@ import kotlin.properties.Delegates
 
 private const val NUM_FAMILIES = 3
 
-private val INCARNATION = ProtelisIncarnation<Euclidean2DPosition>()
 private val ENVIRONMENT = Continuous2DEnvironment<Any>()
 private val LINKING_RULE = NoLinks<Any, Euclidean2DPosition>()
 private val RANDOM = MersenneTwister(1)
@@ -30,7 +28,7 @@ class TestGroupsLoading : StringSpec({
         with(displacement.iterator()) {
             nodes.onEach { println(it.membershipGroup) }.forEach { ENVIRONMENT.addNode(it, this.next()) }
         }
-        ENVIRONMENT.startSimulationWithoutParameters()
+        ENVIRONMENT.startSimulation()
     }
 }) {
     override fun beforeTest(testCase: TestCase) {

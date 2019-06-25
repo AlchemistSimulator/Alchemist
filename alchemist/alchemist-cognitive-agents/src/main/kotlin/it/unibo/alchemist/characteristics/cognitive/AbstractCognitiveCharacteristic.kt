@@ -1,5 +1,7 @@
 package it.unibo.alchemist.characteristics.cognitive
 
+import com.uchuhimo.konf.Config
+
 abstract class AbstractCognitiveCharacteristic : CognitiveCharacteristic {
 
     protected var currentLevel: Double = 0.0
@@ -8,22 +10,24 @@ abstract class AbstractCognitiveCharacteristic : CognitiveCharacteristic {
 
     abstract fun combinationFunction(): Double
 
-    // TODO: These values must be set inside a configuration file
     companion object {
-        const val sensingOmega = 0.5
-        const val affectiveBiasingOmega = 1.0
-        const val persistingOmega = 0.95
-        const val amplifyingFeelingOmega = 1.0
-        const val inhibitingFeelingOmega = 1.0
-        const val amplifyingEvacuationOmega = 1.0
-        const val inhibitingWalkRandOmega = -1.0
-        const val amplifyingIntentionOmega = 1.0
-        const val inhibitingIntentionOmega = -1.0
-        const val mentalEta = 0.9
-        const val bodyEta = 0.25
-        const val logisticSigma = 20.0
-        const val logisticTau = 0.5
-        const val advancedLogisticSigma = 2.0
-        const val advancedLogisticTau = 0.14
+        private val config = Config { addSpec(CognitiveSpec) }
+            .from.toml.resource("it/unibo/alchemist/characteristics/parameters.toml")
+        
+        val sensingOmega = config[CognitiveSpec.sensingOmega]
+        val affectiveBiasingOmega = config[CognitiveSpec.affectiveBiasingOmega]
+        val persistingOmega = config[CognitiveSpec.persistingOmega]
+        val amplifyingFeelingOmega = config[CognitiveSpec.amplifyingFeelingOmega]
+        val inhibitingFeelingOmega = config[CognitiveSpec.inhibitingFeelingOmega]
+        val amplifyingEvacuationOmega = config[CognitiveSpec.amplifyingEvacuationOmega]
+        val inhibitingWalkRandOmega = config[CognitiveSpec.inhibitingWalkRandOmega]
+        val amplifyingIntentionOmega = config[CognitiveSpec.amplifyingIntentionOmega]
+        val inhibitingIntentionOmega = config[CognitiveSpec.inhibitingIntentionOmega]
+        val mentalEta = config[CognitiveSpec.mentalEta]
+        val bodyEta = config[CognitiveSpec.bodyEta]
+        val logisticSigma = config[CognitiveSpec.logisticSigma]
+        val logisticTau = config[CognitiveSpec.logisticTau]
+        val advancedLogisticSigma = config[CognitiveSpec.advancedLogisticSigma]
+        val advancedLogisticTau = config[CognitiveSpec.advancedLogisticTau]
     }
 }

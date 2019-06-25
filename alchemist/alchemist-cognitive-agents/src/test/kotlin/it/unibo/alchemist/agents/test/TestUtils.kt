@@ -39,9 +39,7 @@ fun <T, P : Position<out P>> Environment<T, P>.startSimulationWithoutParameters(
         numSteps
 )
 
-fun <T, P : Position<P>> loadYamlSimulation(resource: String) = loadYamlSimulation<T, P>(resource, mapOf())
-
-fun <T, P : Position<P>> loadYamlSimulation(resource: String, vars: Map<String, Double>) {
+fun <T, P : Position<P>> loadYamlSimulation(resource: String, vars: Map<String, Double> = emptyMap()) {
     val res = ResourceLoader.getResourceAsStream(resource)
     YamlLoader(res).getWith<T, P>(vars).startSimulationWithoutParameters()
 }

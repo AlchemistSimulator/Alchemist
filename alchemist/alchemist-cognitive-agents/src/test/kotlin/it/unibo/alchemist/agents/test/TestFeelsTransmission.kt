@@ -5,11 +5,11 @@ import io.kotlintest.specs.StringSpec
 import it.unibo.alchemist.agents.cognitive.CognitivePedestrian2D
 import it.unibo.alchemist.agents.cognitive.CognitivePedestrian
 import it.unibo.alchemist.behaviours.CognitiveBehaviour
-import it.unibo.alchemist.influences.DangerousInfluence
 import it.unibo.alchemist.loader.displacements.Circle
 import it.unibo.alchemist.loader.displacements.Displacement
 import it.unibo.alchemist.model.implementations.actions.BrownianMove
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.implementations.layers.BidimensionalGaussianLayer
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
@@ -30,7 +30,7 @@ private val ENVIRONMENT = Continuous2DEnvironment<T>()
 private val LINKING_RULE = NoLinks<T, Euclidean2DPosition>()
 private val TIME_DISTRIBUTION = DiracComb<T>(1.0)
 private val DANGER_MOLECULE = SimpleMolecule("DANGER")
-private val DANGER_LAYER = DangerousInfluence<Euclidean2DPosition>(0.0, 0.0, 2.0)
+private val DANGER_LAYER = BidimensionalGaussianLayer<Euclidean2DPosition>(centerX = 0.0, centerY = 0.0, norm = 2.0, sigmaX = 5.0)
 private val RANDOM = MersenneTwister(3)
 private val MOVEMENT_STRATEGY: (CognitivePedestrian<T>) -> Action<T> = {
     BrownianMove(ENVIRONMENT, it, RANDOM, it.walkingSpeed * TIME_DISTRIBUTION.rate)

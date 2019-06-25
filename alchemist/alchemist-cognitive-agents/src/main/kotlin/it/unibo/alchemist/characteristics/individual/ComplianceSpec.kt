@@ -2,7 +2,7 @@ package it.unibo.alchemist.characteristics.individual
 
 import com.uchuhimo.konf.ConfigSpec
 
-object ComplianceSpec: ConfigSpec() {
+object ComplianceSpec : ConfigSpec() {
     val childMale by required<Double>()
     val adultMale by required<Double>()
     val elderlyMale by required<Double>()

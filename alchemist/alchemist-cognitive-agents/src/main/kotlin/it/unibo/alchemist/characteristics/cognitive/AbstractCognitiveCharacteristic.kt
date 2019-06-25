@@ -13,7 +13,7 @@ abstract class AbstractCognitiveCharacteristic : CognitiveCharacteristic {
     companion object {
         private val config = Config { addSpec(CognitiveSpec) }
             .from.toml.resource("it/unibo/alchemist/characteristics/parameters.toml")
-        
+
         val sensingOmega = config[CognitiveSpec.sensingOmega]
         val affectiveBiasingOmega = config[CognitiveSpec.affectiveBiasingOmega]
         val persistingOmega = config[CognitiveSpec.persistingOmega]

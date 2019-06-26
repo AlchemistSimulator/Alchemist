@@ -9,8 +9,8 @@ import it.unibo.alchemist.model.influencesphere.sensory.InfluenceSphere2D
 import org.apache.commons.math3.random.RandomGenerator
 
 open class CognitivePedestrian2D<T, P : Position2D<P>>(
-    protected val env: Environment<T, P>,
-    protected val rg: RandomGenerator,
+    override val env: Environment<T, P>,
+    private val rg: RandomGenerator,
     age: String,
     gender: String
 ) : AbstractCognitivePedestrian<T, P>(env, rg, age, gender) {

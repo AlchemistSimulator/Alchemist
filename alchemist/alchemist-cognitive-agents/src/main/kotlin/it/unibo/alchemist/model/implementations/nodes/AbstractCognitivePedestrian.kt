@@ -14,7 +14,7 @@ import org.apache.commons.math3.random.RandomGenerator
 import kotlin.reflect.KClass
 
 abstract class AbstractCognitivePedestrian<T, P : Position<P>> (
-    private val env: Environment<T, P>,
+    protected open val env: Environment<T, P>,
     rg: RandomGenerator,
     age: String,
     gender: String

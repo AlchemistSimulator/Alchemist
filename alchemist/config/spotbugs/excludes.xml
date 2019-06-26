@@ -42,6 +42,10 @@
 		<Source name="~.*\.kt" />
 	</Match>
 	<Match>
+		<Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE" />
+		<Source name="~.*\.kt" />
+	</Match>
+	<Match>
 		<Bug pattern="CN_IDIOM_NO_SUPER_CALL" />
 	</Match>
 	<Match>

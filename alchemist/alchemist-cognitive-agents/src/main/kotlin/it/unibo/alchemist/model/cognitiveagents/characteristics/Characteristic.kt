@@ -6,4 +6,3 @@ const val PARAMETERS_FILE = "it/unibo/alchemist/model/cognitiveagents/characteri
  * Any characteristic associable to a pedestrian.
  */
 interface Characteristic
-

@@ -1,5 +1,9 @@
 incarnation: protelis
 
+variables:
+  danger: &danger
+    formula: "\"danger\""
+
 environment:
   type: Continuous2DEnvironment
 
@@ -15,7 +19,7 @@ seeds:
 
 layers:
   - type: BidimensionalGaussianLayer
-    molecule: danger
+    molecule: *danger
     parameters: [0.0, 0.0, 2.0, 5.0]
 
 reactions: &behavior
@@ -33,7 +37,7 @@ displacements:
       parameters: [50, 0, 0, 20]
     nodes:
       type: CognitivePedestrian2D
-      parameters: ["adult", "male"]
+      parameters: ["adult", "male", *danger]
     programs:
       - *behavior
   - in:
@@ -41,6 +45,6 @@ displacements:
       parameters: [50, 0, 0, 20]
     nodes:
       type: CognitivePedestrian2D
-      parameters: ["adult", "female"]
+      parameters: ["adult", "female", *danger]
     programs:
       - *behavior

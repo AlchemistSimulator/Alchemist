@@ -6,14 +6,16 @@ import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.influencesphere.sensory.FieldOfView2D
 import it.unibo.alchemist.model.influencesphere.sensory.HearingField2D
 import it.unibo.alchemist.model.influencesphere.sensory.InfluenceSphere2D
+import it.unibo.alchemist.model.interfaces.Molecule
 import org.apache.commons.math3.random.RandomGenerator
 
-open class CognitivePedestrian2D<T, P : Position2D<P>>(
+open class CognitivePedestrian2D<T, P : Position2D<P>> @JvmOverloads constructor(
     override val env: Environment<T, P>,
-    private val rg: RandomGenerator,
+    protected open val rg: RandomGenerator,
     age: String,
-    gender: String
-) : AbstractCognitivePedestrian<T, P>(env, rg, age, gender) {
+    gender: String,
+    danger: Molecule? = null
+) : AbstractCognitivePedestrian<T, P>(env, rg, age, gender, danger) {
 
     override fun influencialPeople() =
         env.getPosition(this).let {

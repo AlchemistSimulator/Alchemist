@@ -9,6 +9,7 @@ import it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive.Intent
 import it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive.IntentionWalkRandomly
 import it.unibo.alchemist.model.interfaces.CognitivePedestrian
 import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Position
 import org.apache.commons.math3.random.RandomGenerator
 import kotlin.reflect.KClass
@@ -17,12 +18,12 @@ abstract class AbstractCognitivePedestrian<T, P : Position<P>> (
     protected open val env: Environment<T, P>,
     rg: RandomGenerator,
     age: String,
-    gender: String
+    gender: String,
+    danger: Molecule?
 ) : CognitivePedestrian<T>, AbstractHeterogeneousPedestrian<T>(env, rg, age, gender) {
 
     private val dangerousLayerLevel: () -> Double = {
-        // TODO: Must be taken from the environment using the getLayer method and specifying the molecule name
-        env.layers.let { if (!it.isEmpty()) it.first().getValue(env.getPosition(this)) as Double else 0.0 }
+        env.getLayer(danger).let { if (it.isPresent) it.get().getValue(env.getPosition(this)) as Double else 0.0 }
     }
 
     private val cognitiveCharacteristics = linkedMapOf<KClass<out CognitiveCharacteristic>, CognitiveCharacteristic>(

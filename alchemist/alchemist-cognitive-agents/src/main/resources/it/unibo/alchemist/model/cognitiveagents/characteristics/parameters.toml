@@ -33,79 +33,75 @@ childFemale = 0.89
 adultFemale = 0.94
 elderlyFemale = 0.97
 
-[helpAttitude.adultMale]
-    [helpAttitude.adultMale.childMale]
-    first = 0.30
-    second = 0.25
-    [helpAttitude.adultMale.adultMale]
-    first = 0.15
-    second = 0.13
-    [helpAttitude.adultMale.elderlyMale]
-    first = 0.30
-    second = 0.25
-    [helpAttitude.adultMale.childFemale]
-    first = 0.40
-    second = 0.34
-    [helpAttitude.adultMale.adultFemale]
-    first = 0.30
-    second = 0.25
-    [helpAttitude.adultMale.elderlyFemale]
-    first = 0.40
-    second = 0.34
-[helpAttitude.adultFemale]
-    [helpAttitude.adultFemale.childMale]
-    first = 0.15
-    second = 0.13
-    [helpAttitude.adultFemale.adultMale]
-    first = 0.08
-    second = 0.06
-    [helpAttitude.adultFemale.elderlyMale]
-    first = 0.15
-    second = 0.13
-    [helpAttitude.adultFemale.childFemale]
-    first = 0.20
-    second = 0.17
-    [helpAttitude.adultFemale.adultFemale]
-    first = 0.15
-    second = 0.13
-    [helpAttitude.adultFemale.elderlyFemale]
-    first = 0.20
-    second = 0.17
-[helpAttitude.elderlyMale]
-    [helpAttitude.elderlyMale.childMale]
-    first = 0.15
-    second = 0.13
-    [helpAttitude.elderlyMale.adultMale]
-    first = 0.08
-    second = 0.06
-    [helpAttitude.elderlyMale.elderlyMale]
-    first = 0.15
-    second = 0.13
-    [helpAttitude.elderlyMale.childFemale]
-    first = 0.20
-    second = 0.17
-    [helpAttitude.elderlyMale.adultFemale]
-    first = 0.15
-    second = 0.13
-    [helpAttitude.elderlyMale.elderlyFemale]
-    first = 0.20
-    second = 0.17
-[helpAttitude.elderlyFemale]
-    [helpAttitude.elderlyFemale.childMale]
-    first = 0.08
-    second = 0.06
-    [helpAttitude.elderlyFemale.adultMale]
-    first = 0.04
-    second = 0.03
-    [helpAttitude.elderlyFemale.elderlyMale]
-    first = 0.08
-    second = 0.06
-    [helpAttitude.elderlyFemale.childFemale]
-    first = 0.04
-    second = 0.03
-    [helpAttitude.elderlyFemale.adultFemale]
-    first = 0.10
-    second = 0.08
-    [helpAttitude.elderlyFemale.elderlyFemale]
-    first = 0.10
-    second = 0.08
+[helpAttitude.adultMale.childMale]
+first = 0.30
+second = 0.25
+[helpAttitude.adultMale.adultMale]
+first = 0.15
+second = 0.13
+[helpAttitude.adultMale.elderlyMale]
+first = 0.30
+second = 0.25
+[helpAttitude.adultMale.childFemale]
+first = 0.40
+second = 0.34
+[helpAttitude.adultMale.adultFemale]
+first = 0.30
+second = 0.25
+[helpAttitude.adultMale.elderlyFemale]
+first = 0.40
+second = 0.34
+[helpAttitude.adultFemale.childMale]
+first = 0.15
+second = 0.13
+[helpAttitude.adultFemale.adultMale]
+first = 0.08
+second = 0.06
+[helpAttitude.adultFemale.elderlyMale]
+first = 0.15
+second = 0.13
+[helpAttitude.adultFemale.childFemale]
+first = 0.20
+second = 0.17
+[helpAttitude.adultFemale.adultFemale]
+first = 0.15
+second = 0.13
+[helpAttitude.adultFemale.elderlyFemale]
+first = 0.20
+second = 0.17
+[helpAttitude.elderlyMale.childMale]
+first = 0.15
+second = 0.13
+[helpAttitude.elderlyMale.adultMale]
+first = 0.08
+second = 0.06
+[helpAttitude.elderlyMale.elderlyMale]
+first = 0.15
+second = 0.13
+[helpAttitude.elderlyMale.childFemale]
+first = 0.20
+second = 0.17
+[helpAttitude.elderlyMale.adultFemale]
+first = 0.15
+second = 0.13
+[helpAttitude.elderlyMale.elderlyFemale]
+first = 0.20
+second = 0.17
+[helpAttitude.elderlyFemale.childMale]
+first = 0.08
+second = 0.06
+[helpAttitude.elderlyFemale.adultMale]
+first = 0.04
+second = 0.03
+[helpAttitude.elderlyFemale.elderlyMale]
+first = 0.08
+second = 0.06
+[helpAttitude.elderlyFemale.childFemale]
+first = 0.04
+second = 0.03
+[helpAttitude.elderlyFemale.adultFemale]
+first = 0.10
+second = 0.08
+[helpAttitude.elderlyFemale.elderlyFemale]
+first = 0.10
+second = 0.08

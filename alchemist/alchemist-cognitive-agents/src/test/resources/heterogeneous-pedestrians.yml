@@ -1,0 +1,28 @@
+incarnation: protelis
+
+environment:
+  type: Continuous2DEnvironment
+
+positions:
+  type: EuclideanPosition2D
+
+network-model:
+  type: NoLinks
+
+seeds:
+  scenario: 0
+  simulation: 1
+
+displacements:
+  - in:
+      type: Circle
+      parameters: [50, 0, 0, 20]
+    nodes:
+      type: HeterogeneousPedestrian2D
+      parameters: ["elderly", "female"]
+  - in:
+      type: Circle
+      parameters: [50, 0, 0, 20]
+    nodes:
+      type: HeterogeneousPedestrian2D
+      parameters: ["child", "male"]

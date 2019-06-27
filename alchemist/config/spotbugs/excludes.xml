@@ -22,6 +22,10 @@
 		<Source name="~.*\.kt" />
 	</Match>
 	<Match>
+		<Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE" />
+		<Source name="~.*\.kt" />
+	</Match>
+	<Match>
 		<Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE" />
 		<Source name="~.*\.kt" />
 	</Match>

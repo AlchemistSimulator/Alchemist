@@ -46,9 +46,8 @@ tasks.generateGrammarSource {
     arguments = arguments + listOf("-visitor", "-package", "it.unibo.alchemist.biochemistrydsl", "-long-messages")
 }
 
-tasks.compileKotlin {
-    dependsOn("generateGrammarSource")
-}
+tasks.compileJava { dependsOn(tasks.generateGrammarSource) }
+tasks.compileKotlin { dependsOn(tasks.generateGrammarSource) }
 
 val sourceSetsToCheck = listOf(project.sourceSets.main.get(), project.sourceSets.test.get())
 checkstyle {

@@ -1,0 +1,113 @@
+# The parameters affecting the cognitive characteristics of a pedestrian.
+[cognitive]
+sensingOmega = 0.5
+affectiveBiasingOmega = 1.0
+persistingOmega = 0.95
+amplifyingFeelingOmega = 1.0
+inhibitingFeelingOmega = 1.0
+amplifyingEvacuationOmega = 1.0
+inhibitingWalkRandOmega = -1.0
+amplifyingIntentionOmega = 1.0
+inhibitingIntentionOmega = -1.0
+mentalEta = 0.9
+bodyEta = 0.25
+logisticSigma = 20.0
+logisticTau = 0.5
+advancedLogisticSigma = 2.0
+advancedLogisticTau = 0.14
+
+# The walking speed (m/s) at which each pedestrian goes to depending on its age and gender.
+[speed]
+childMale = 0.5
+adultMale = 1.0
+elderlyMale = 0.9
+childFemale = 0.5
+adultFemale = 0.9
+elderlyFemale = 0.9
+default = 1.0
+variance = 0.5
+
+# The level of compliance each pedestrian has depending on its age and gender.
+[compliance]
+childMale = 0.89
+adultMale = 0.89
+elderlyMale = 0.92
+childFemale = 0.89
+adultFemale = 0.94
+elderlyFemale = 0.97
+
+# The attitude for a pedestrian to help another pedestrian based on the age and gender of both.
+# The first value refers to the probability for a pedestrian of the same group of the helper to be helped
+# The second value refers to the probability for a pedestrian outside helper's group to be helped.
+[helpAttitude.adultMale.childMale]
+first = 0.30
+second = 0.25
+[helpAttitude.adultMale.adultMale]
+first = 0.15
+second = 0.13
+[helpAttitude.adultMale.elderlyMale]
+first = 0.30
+second = 0.25
+[helpAttitude.adultMale.childFemale]
+first = 0.40
+second = 0.34
+[helpAttitude.adultMale.adultFemale]
+first = 0.30
+second = 0.25
+[helpAttitude.adultMale.elderlyFemale]
+first = 0.40
+second = 0.34
+[helpAttitude.adultFemale.childMale]
+first = 0.15
+second = 0.13
+[helpAttitude.adultFemale.adultMale]
+first = 0.08
+second = 0.06
+[helpAttitude.adultFemale.elderlyMale]
+first = 0.15
+second = 0.13
+[helpAttitude.adultFemale.childFemale]
+first = 0.20
+second = 0.17
+[helpAttitude.adultFemale.adultFemale]
+first = 0.15
+second = 0.13
+[helpAttitude.adultFemale.elderlyFemale]
+first = 0.20
+second = 0.17
+[helpAttitude.elderlyMale.childMale]
+first = 0.15
+second = 0.13
+[helpAttitude.elderlyMale.adultMale]
+first = 0.08
+second = 0.06
+[helpAttitude.elderlyMale.elderlyMale]
+first = 0.15
+second = 0.13
+[helpAttitude.elderlyMale.childFemale]
+first = 0.20
+second = 0.17
+[helpAttitude.elderlyMale.adultFemale]
+first = 0.15
+second = 0.13
+[helpAttitude.elderlyMale.elderlyFemale]
+first = 0.20
+second = 0.17
+[helpAttitude.elderlyFemale.childMale]
+first = 0.08
+second = 0.06
+[helpAttitude.elderlyFemale.adultMale]
+first = 0.04
+second = 0.03
+[helpAttitude.elderlyFemale.elderlyMale]
+first = 0.08
+second = 0.06
+[helpAttitude.elderlyFemale.childFemale]
+first = 0.04
+second = 0.03
+[helpAttitude.elderlyFemale.adultFemale]
+first = 0.10
+second = 0.08
+[helpAttitude.elderlyFemale.elderlyFemale]
+first = 0.10
+second = 0.08

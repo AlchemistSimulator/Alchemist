@@ -97,9 +97,9 @@ object Versions {
 
     const val org_jetbrains_dokka_gradle_plugin: String = "0.9.17" // available: "0.9.18"
 
-    const val org_jetbrains_kotlin_jvm_gradle_plugin: String = "1.3.31" // available: "1.3.40"
+    const val org_jetbrains_kotlin_jvm_gradle_plugin: String = "1.3.40"
 
-    const val org_jetbrains_kotlin: String = "1.3.31" // available: "1.3.40"
+    const val org_jetbrains_kotlin: String = "1.3.40"
 
     const val annotations: String = "17.0.0" 
 

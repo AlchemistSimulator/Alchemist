@@ -7,6 +7,8 @@ import it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive.Desire
 import it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive.DesireEvacuate
 import it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive.IntentionEvacuate
 import it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive.IntentionWalkRandomly
+import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Age
+import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Gender
 import it.unibo.alchemist.model.interfaces.CognitivePedestrian
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Molecule
@@ -17,10 +19,10 @@ import kotlin.reflect.KClass
 abstract class AbstractCognitivePedestrian<T, P : Position<P>> (
     protected open val env: Environment<T, P>,
     rg: RandomGenerator,
-    age: String,
-    gender: String,
+    age: Age,
+    gender: Gender,
     danger: Molecule?
-) : CognitivePedestrian<T>, AbstractHeterogeneousPedestrian<T>(env, rg, age, gender) {
+) : AbstractHeterogeneousPedestrian<T>(env, rg, age, gender), CognitivePedestrian<T> {
 
     private val dangerousLayerLevel: () -> Double = {
         env.getLayer(danger).let { if (it.isPresent) it.get().getValue(env.getPosition(this)) as Double else 0.0 }

@@ -13,7 +13,7 @@ object Versions {
 
     const val com_github_cb372: String = "0.9.3" // available: "0.28.0"
 
-    const val rtree: String = "0.8.6" // available: "0.8.7"
+    const val rtree: String = "0.8.7"
 
     const val com_github_maiflai_scalatest_gradle_plugin: String = "0.25" 
 

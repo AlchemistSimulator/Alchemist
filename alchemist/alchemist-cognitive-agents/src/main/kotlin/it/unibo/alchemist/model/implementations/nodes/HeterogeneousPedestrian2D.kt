@@ -18,22 +18,12 @@ open class HeterogeneousPedestrian2D<T, P : Position2D<P>>(
         rg: RandomGenerator,
         age: String,
         gender: String
-    ) : this(
-        env,
-        rg,
-        Age.getCategory(age),
-        Gender.getCategory(gender)
-    )
+    ) : this(env, rg, Age.getCategory(age), Gender.getCategory(gender))
 
     constructor(
         env: Environment<T, P>,
         rg: RandomGenerator,
         age: Int,
         gender: String
-    ) : this(
-        env,
-        rg,
-        Age.getCategory(age),
-        Gender.getCategory(gender)
-    )
+    ) : this(env, rg, Age.getCategory(age), Gender.getCategory(gender))
 }

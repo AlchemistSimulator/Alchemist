@@ -7,7 +7,6 @@ import it.unibo.alchemist.model.influencesphere.sensory.HearingField2D
 import it.unibo.alchemist.model.influencesphere.sensory.InfluenceSphere2D
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.CognitivePedestrian
-import it.unibo.alchemist.model.interfaces.HeterogeneousPedestrian
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Position2D
 import org.apache.commons.math3.random.RandomGenerator
@@ -26,22 +25,7 @@ open class CognitivePedestrian2D<T, P : Position2D<P>> @JvmOverloads constructor
         age: String,
         gender: String,
         danger: Molecule? = null
-    ) : this(
-        env,
-        rg,
-        when {
-            HeterogeneousPedestrian.CHILD_KEYWORDS.contains(age) -> Age.CHILD
-            HeterogeneousPedestrian.ADULT_KEYWORDS.contains(age) -> Age.ADULT
-            HeterogeneousPedestrian.ELDERLY_KEYWORDS.contains(age) -> Age.ELDERLY
-            else -> throw IllegalArgumentException("$age is not a valid age")
-        },
-        when {
-            HeterogeneousPedestrian.MALE_KEYWORDS.contains(gender) -> Gender.MALE
-            HeterogeneousPedestrian.FEMALE_KEYWORDS.contains(gender) -> Gender.FEMALE
-            else -> throw IllegalArgumentException("$gender is not a valid gender")
-        },
-        danger
-    )
+    ) : this(env, rg, Age.getCategory(age), Gender.getCategory(gender), danger)
 
     @JvmOverloads constructor(
         env: Environment<T, P>,
@@ -49,17 +33,7 @@ open class CognitivePedestrian2D<T, P : Position2D<P>> @JvmOverloads constructor
         age: Int,
         gender: String,
         danger: Molecule? = null
-    ) : this(
-        env,
-        rg,
-        Age.getCategory(age),
-        when {
-            HeterogeneousPedestrian.MALE_KEYWORDS.contains(gender) -> Gender.MALE
-            HeterogeneousPedestrian.FEMALE_KEYWORDS.contains(gender) -> Gender.FEMALE
-            else -> throw IllegalArgumentException("$gender is not a valid gender")
-        },
-        danger
-    )
+    ) : this(env, rg, Age.getCategory(age), Gender.getCategory(gender), danger)
 
     override fun influencialPeople() =
         env.getPosition(this).let {

@@ -29,13 +29,4 @@ interface HeterogeneousPedestrian<T> : Pedestrian<T> {
      * @param toHelp The pedestrian who needs help.
      */
     fun probabilityOfHelping(toHelp: HeterogeneousPedestrian<T>): Double
-
-    companion object {
-        val CHILD_KEYWORDS = setOf("child", "CHILD")
-        val ADULT_KEYWORDS = setOf("adult", "ADULT")
-        val ELDERLY_KEYWORDS = setOf("elderly", "ELDERLY")
-
-        val MALE_KEYWORDS = setOf("male", "m", "MALE", "M")
-        val FEMALE_KEYWORDS = setOf("female", "f", "FEMALE", "F")
-    }
 }

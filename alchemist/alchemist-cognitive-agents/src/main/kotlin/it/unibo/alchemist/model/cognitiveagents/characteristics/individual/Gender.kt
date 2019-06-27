@@ -6,12 +6,12 @@ enum class Gender : IndividualCharacteristic {
     FEMALE;
 
     companion object {
-        private val MALE_KEYWORDS = setOf("male", "m", "MALE", "M")
-        private val FEMALE_KEYWORDS = setOf("female", "f", "FEMALE", "F")
+        private const val MALE_KEYWORD = "male"
+        private const val FEMALE_KEYWORD = "female"
 
-        fun getCategory(gender: String): Gender = when {
-            MALE_KEYWORDS.contains(gender) -> MALE
-            FEMALE_KEYWORDS.contains(gender) -> FEMALE
+        fun fromString(gender: String): Gender = when {
+            gender.equals(MALE_KEYWORD, ignoreCase = true) -> MALE
+            gender.equals(FEMALE_KEYWORD, ignoreCase = true) -> FEMALE
             else -> throw IllegalArgumentException("$gender is not a valid gender")
         }
     }

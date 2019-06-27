@@ -18,7 +18,7 @@ import kotlin.reflect.KClass
 
 abstract class AbstractCognitivePedestrian<T, P : Position<P>> (
     protected open val env: Environment<T, P>,
-    rg: RandomGenerator,
+    protected val rg: RandomGenerator,
     age: Age,
     gender: Gender,
     danger: Molecule?

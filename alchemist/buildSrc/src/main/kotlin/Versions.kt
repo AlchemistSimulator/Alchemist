@@ -105,7 +105,7 @@ object Versions {
 
     const val jgrapht_core: String = "1.3.1" 
 
-    const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String = "8.0.0" // available: "8.1.0"
+    const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String = "8.1.0"
 
     const val jool_java_8: String = "0.9.14" 
 

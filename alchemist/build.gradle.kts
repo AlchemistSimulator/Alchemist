@@ -61,9 +61,6 @@ allprojects {
 
     gitSemVer {
         version = computeGitSemVer()
-        if (!JavaVersion.current().isJava11Compatible) {
-            project.version = project.version.toString() + "-j8"
-        }
     }
 
     repositories {
@@ -89,10 +86,12 @@ allprojects {
     }
 
     configurations.all {
-        resolutionStrategy.eachDependency {
-            if (requested.name == "svgSalamander") {
-                useTarget("guru.nidi.com.kitfox:svgSalamander:1.1.2")
-                because("mapsforge version is not on central")
+        resolutionStrategy {
+            eachDependency {
+                if (requested.name == "svgSalamander") {
+                    useTarget("guru.nidi.com.kitfox:svgSalamander:1.1.2")
+                    because("mapsforge version is not on central")
+                }
             }
         }
     }

@@ -9,7 +9,16 @@
 dependencies {
     api(project(":alchemist-interfaces"))
     api(project(":alchemist-implementationbase"))
-    api(Libs.protelis_interpreter)
+    api(Libs.protelis_interpreter) {
+        /*
+         * TODO: once Protelis fixes its dependency issues, remove this one.
+         * Check with:
+         * ./gradlew dependencyInsight --dependency org.eclipse.emf:org.eclipse.emf.ecore --configuration runtimeClasspath
+         */
+        implementation("org.eclipse.emf:org.eclipse.emf.ecore:2.12.0") {
+            isForce = true
+        }
+    }
     api(Libs.protelis_lang)
     implementation(project(":alchemist-time"))
     implementation(project(":alchemist-maps"))

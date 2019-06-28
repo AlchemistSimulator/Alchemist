@@ -4,9 +4,10 @@ os:
 dist: xenial
 language: java
 jdk:
-  - openjdk8
   - openjdk11
   - openjdk12
+# To be enabled when the official version is out
+#  - openjdk13
 git:
   depth: false
 before_cache:
@@ -32,18 +33,13 @@ env:
     - PUBLISH="false"
 matrix:
   include:
-    - jdk: openjdk8
-      env: PUBLISH="true"
     - jdk: openjdk11
       env: PUBLISH="true"
+      os: linux
   exclude:
-    - jdk: openjdk8
-      env: PUBLISH="false"
     - jdk: openjdk11
       env: PUBLISH="false"
       os: linux
-    - jdk: openjdk8
-      os: osx
 
 before_install: >-
     if [ $TRAVIS_OS_NAME = 'linux' ]; then

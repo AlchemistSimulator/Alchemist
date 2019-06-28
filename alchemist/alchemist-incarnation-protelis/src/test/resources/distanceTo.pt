@@ -1,4 +1,5 @@
 module distanceTo
+import java.lang.Double.POSITIVE_INFINITY
 
 def myPosition() {
 	self.getDevicePosition()
@@ -9,7 +10,7 @@ def nbrRange() {
 }
 
 def distanceTo(source) {
-	rep (d <- Infinity) {
+	rep (d <- POSITIVE_INFINITY) {
 		mux (source) {
 			0
 		} else {
@@ -19,7 +20,7 @@ def distanceTo(source) {
 }
 
 def distanceToWithEnable(source, enabled) {
-   if (enabled) { distanceTo(source) } else { Infinity }
+   if (enabled) { distanceTo(source) } else { POSITIVE_INFINITY }
 }
 
 let d = distanceToWithEnable(env.get("source"), env.get("enabled"));

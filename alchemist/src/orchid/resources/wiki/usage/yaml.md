@@ -362,3 +362,19 @@ displacements:
       - *gradient
 ```
 
+## Writing layers
+
+In order to put a layer inside the previously specified environment you have to define the type of the layer, the molecule
+it refers to and possibly the parameters needed for the type of layer you have chosen.  
+Of course, it is possible to add more than one layer inside the same environment.  
+The syntax is like the following:  
+
+```yaml
+layers:
+  - type: BidimensionalGaussianLayer
+    molecule: pippo
+    parameters: [0.0, 0.0, 2.0, 5.0]
+  - type: BidimensionalGaussianLayer
+    molecule: pluto
+    parameters: [0.0, 0.0, 5.0, 10.0]
+```

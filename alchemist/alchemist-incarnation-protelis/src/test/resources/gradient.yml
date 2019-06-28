@@ -22,6 +22,6 @@ displacements:
         - molecule: enabled
           concentration: true
         - molecule: data
-          concentration: Infinity
+          concentration: 1 / 0
     programs:
       - *gradient

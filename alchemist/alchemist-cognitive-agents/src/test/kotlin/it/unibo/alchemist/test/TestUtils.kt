@@ -29,5 +29,5 @@ fun <T, P : Position<out P>> Environment<T, P>.startSimulation(
 
 fun <T, P : Position<P>> loadYamlSimulation(resource: String, vars: Map<String, Double> = emptyMap()) =
     with(ResourceLoader.getResourceAsStream(resource)) {
-        YamlLoader(this).getWith<T, P>(vars).startSimulation()
+        YamlLoader(this).getWith<T, P>(vars)!!
     }

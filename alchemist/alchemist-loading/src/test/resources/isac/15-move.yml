@@ -10,11 +10,11 @@ variables:
     step: 1
     default: 5
   mSize: &mSize
-    formula: -$size
+    formula: -size
   sourceStart: &sourceStart
-    formula: $mSize / 10
+    formula: mSize / 10
   sourceSize: &sourceSize
-    formula: $size / 5
+    formula: size / 5
 
 network-model:
   type: ConnectWithinDistance
@@ -30,11 +30,11 @@ send: &grad
       type: DiracComb
       parameters: [0.1]
     program: >
-      {token, def: N>0, L} --> {token, def: N + 1, L}
+      {token, def: N>0, L} --> {token, N + 1, L}
 # Cleanup old information
-    program: >
+  - program: >
       {token, def: N>30, L} -->
-      
+
 move: &move
   - time-distribution: 0.5
     type: Event

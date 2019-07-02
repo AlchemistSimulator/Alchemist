@@ -15,7 +15,7 @@ dependencies {
          * Check with:
          * ./gradlew dependencyInsight --dependency org.eclipse.emf:org.eclipse.emf.ecore --configuration runtimeClasspath
          */
-        implementation("org.eclipse.emf:org.eclipse.emf.ecore:2.12.0") {
+        implementation(Libs.org_eclipse_emf_ecore) {
             isForce = true
         }
     }

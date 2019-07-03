@@ -2,14 +2,13 @@ package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Pedestrian
-import it.unibo.alchemist.model.interfaces.Position2D
+import it.unibo.alchemist.model.interfaces.Position
 
-open class Flee<T, P : Position2D<P>>(
+open class Flee<T, P : Position<P>>(
     env: Environment<T, P>,
     pedestrian: Pedestrian<T>,
-    x: Double,
-    y: Double
-) : Seek<T, P>(env, pedestrian, x, y) {
+    vararg coords: Double
+) : Seek<T, P>(env, pedestrian, *coords) {
 
     override fun getDestination(current: P, target: P, maxWalk: Double): P = super.getDestination(target, current, maxWalk)
 }

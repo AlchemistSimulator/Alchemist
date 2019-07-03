@@ -1,0 +1,17 @@
+variables:
+  a:
+    formula: 22 + 1
+    language: kts
+  test:
+    formula: |
+      import it.unibo.alchemist.loader.YamlLoader
+      import kotlin.collections.listOf
+      val b = 5.5
+      listOf(bindings["a"], b)
+    language: kotlin
+  test2:
+    formula: |
+      val b = 5.5
+      listOf("a", b)
+    language: kotlin
+incarnation: sapere

@@ -4,7 +4,7 @@ variables:
   myvar: &myvar
     formula: 1
   myvar2: &myvar2
-    formula: $myvar * 100
+    formula: myvar * 100
 
 environment:
   type: Continuous2DEnvironment

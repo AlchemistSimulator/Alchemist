@@ -10,11 +10,11 @@ variables:
     step: 1
     default: 5
   mSize: &mSize
-    formula: -$size
+    formula: -size
   sourceStart: &sourceStart
-    formula: $mSize / 10
+    formula: mSize / 10
   sourceSize: &sourceSize
-    formula: $size / 5
+    formula: size / 5
 
 network-model:
   type: ConnectWithinDistance

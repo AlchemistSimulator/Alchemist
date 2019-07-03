@@ -12,10 +12,14 @@ dependencies {
     implementation(project(":alchemist-time"))
     implementation(project(":alchemist-maps"))
     implementation(Libs.commons_lang3)
-    implementation(Libs.groovy)
     implementation(Libs.guava)
     implementation(Libs.jirf)
     implementation(Libs.snakeyaml)
+
+    runtimeOnly(Libs.groovy_jsr223)
+    runtimeOnly(Libs.kotlin_scripting_jsr223_embeddable)
+//    runtimeOnly(Libs.kotlin_script_runtime)
+//    runtimeOnly("org.jetbrains.kotlin:kotlin-script-util:1.3.40")
 
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-maps"))

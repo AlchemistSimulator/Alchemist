@@ -28,12 +28,9 @@ import it.unibo.alchemist.loader.export.filters.CommonFilters;
 import it.unibo.alchemist.loader.shapes.Shape;
 import it.unibo.alchemist.loader.variables.ArbitraryVariable;
 import it.unibo.alchemist.loader.variables.DependentVariable;
-import it.unibo.alchemist.loader.variables.GroovyVariable;
-import it.unibo.alchemist.loader.variables.JavascriptVariable;
+import it.unibo.alchemist.loader.variables.JSR223Variable;
 import it.unibo.alchemist.loader.variables.LinearVariable;
 import it.unibo.alchemist.loader.variables.NumericConstant;
-import it.unibo.alchemist.loader.variables.ScalaVariable;
-import it.unibo.alchemist.loader.variables.ScriptVariable;
 import it.unibo.alchemist.loader.variables.Variable;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
@@ -149,12 +146,6 @@ public final class YamlLoader implements Loader {
     private static final String VALUE_FILTER = SYNTAX.getString("value-filter");
     private static final String VALUES = SYNTAX.getString("values");
     private static final String VARIABLES = SYNTAX.getString("variables");
-    @SuppressWarnings("deprecation")
-    private static final Map<String, Function<String, ScriptVariable<?>>> SUPPORTED_LANGUAGES = ImmutableMap.of(
-            "groovy", GroovyVariable::new,
-            "javascript", JavascriptVariable::new,
-            "scala", ScalaVariable::new
-    );
     private static final Map<Class<?>, Map<String, Class<?>>> DEFAULT_MANDATORY_PARAMETERS = ImmutableMap.<Class<?>, Map<String, Class<?>>>builder()
             .put(Layer.class, ImmutableMap.of(TYPE, CharSequence.class, MOLECULE, CharSequence.class))
             .build();
@@ -172,8 +163,7 @@ public final class YamlLoader implements Loader {
                     final Object formula = m.get(FORMULA);
                     return formula instanceof Number
                         ? new NumericConstant((Number) formula)
-                        : SUPPORTED_LANGUAGES.get(m.getOrDefault(LANGUAGE, "groovy").toString().toLowerCase(Locale.ENGLISH))
-                            .apply(formula.toString());
+                        : new JSR223Variable<>(m.getOrDefault(LANGUAGE, "groovy").toString().toLowerCase(Locale.ENGLISH), formula.toString());
                 }));
     private static final BuilderConfiguration<FilteringPolicy> FILTERING_CONFIG = new BuilderConfiguration<>(
             ImmutableMap.of(NAME, CharSequence.class), ImmutableMap.of(), makeBaseFactory(), m -> CommonFilters.fromString(m.get(NAME).toString()));
@@ -394,6 +384,11 @@ public final class YamlLoader implements Loader {
     }
 
     @Override
+    public ImmutableMap<String, Object> getConstants() {
+        return constants;
+    }
+
+    @Override
     public List<Extractor> getDataExtractors() {
         return Collections.unmodifiableList(extractors);
     }
@@ -404,8 +399,13 @@ public final class YamlLoader implements Loader {
     }
 
     @Override
-    public Map<String, Variable<?>> getVariables() {
-        return Collections.unmodifiableMap(variables);
+    public ImmutableMap<String, DependentVariable<?>> getDependentVariables() {
+        return depVariables;
+    }
+
+    @Override
+    public ImmutableMap<String, Variable<?>> getVariables() {
+        return variables;
     }
 
     @Override

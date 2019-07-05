@@ -21,7 +21,7 @@ env:
     - PUBLISH="false"
   matrix:
     - JDK="adopt@1.11.28-0"
-    - JDK="adopt-openj9@1.11.28-0"
+    - JDK="adopt-openj9@1.11.0-3"
     - JDK="adopt@1.12.33-0"
     - JDK="1.12.0-1"
 matrix:
@@ -30,10 +30,11 @@ matrix:
       env: PUBLISH="true" JDK="adopt@1.11.28-0"
   exclude:
     - os: linux
-      env: JDK="adopt@1.8.212-04"
-before_install: |-
-    curl "${GRAVIS}.install-jdk-travis.sh" --output .install-jdk-travis.sh
-    bash .install-jdk-travis.sh
+      env: JDK="adopt@1.11.28-0"
+before_install:
+  - curl "${GRAVIS}.install-jdk-travis.sh" --output .install-jdk-travis.sh
+  - bash .install-jdk-travis.sh && source ~/.jdk_config
+  - |-
     if [ $TRAVIS_OS_NAME = 'linux' ]; then
         sudo apt-get -qq update
         sudo apt-get install -y graphviz openjfx
@@ -46,8 +47,6 @@ install: >-
         openssl aes-256-cbc -K $encrypted_9993846e3f84_key -iv $encrypted_9993846e3f84_iv -in prepare_environment.sh.enc -out prepare_environment.sh -d
         bash prepare_environment.sh
     fi
-before_script:
-  - "if [ -f ~/.windows_config ]; then source ~/.windows_config; fi"
 script: |-
     cd "$TRAVIS_BUILD_DIR"/alchemist
     ./gradlew clean check fatJar dokka buildDashboard projectReport --scan --stacktrace > >(egrep -v '(null:-1:-1)|(t find node by signature)')

@@ -23,6 +23,7 @@ include(
     'alchemist-runner',
     'alchemist-sapere-mathexp',
     'alchemist-swingui',
-    'alchemist-time'
-    )
+    'alchemist-time',
+    'alchemist-physics'
+)
 rootProject.name = "alchemist"

@@ -11,4 +11,6 @@ dependencies {
 
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-time"))
+    
+    testImplementation(Libs.kotlintest_runner_junit5)
 }

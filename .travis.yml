@@ -57,7 +57,6 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
-    - $HOME/.jabba/
 after_success: |-
     cd "$TRAVIS_BUILD_DIR"/alchemist
     if $SHOULD_CONFIGURE && $PUBLISH; then

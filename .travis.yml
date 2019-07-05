@@ -36,6 +36,7 @@ before_install:
   - git config core.autocrlf false
   - git status
   - git reset --hard
+  - git status
   - curl "${GRAVIS}.install-jdk-travis.sh" --output .install-jdk-travis.sh
   - bash .install-jdk-travis.sh && source ~/.jdk_config
   - |-

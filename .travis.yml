@@ -2,7 +2,7 @@ language: bash
 git:
   depth: false
 os:
-#  - osx
+  - osx
   - linux
   - windows
 dist: xenial
@@ -21,9 +21,9 @@ env:
     - PUBLISH="false"
   matrix:
     - JDK="adopt@1.11.28-0"
-    #- JDK="adopt-openj9@1.11.0-3"
-    #- JDK="adopt@1.12.33-0"
-    #- JDK="1.12.0-1"
+    - JDK="adopt-openj9@1.11.0-3"
+    - JDK="adopt@1.12.33-0"
+    - JDK="1.12.0-1"
 matrix:
   include:
     - os: linux

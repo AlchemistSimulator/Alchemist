@@ -61,7 +61,7 @@ public class TestConcurrency {
     /**
      * Test if the status of a {@link Engine} changes as expected.
      */
-//    @Test
+    @Test
     @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", justification = "We don't need the status of the Runnable")
     public void testCommandInterleaving() {
         final Simulation<?, ?> sim = new Engine<>(env, 10);
@@ -74,7 +74,7 @@ public class TestConcurrency {
             fail();
         }
         verifyStatus(ex, sim, Status.PAUSED);
-        sim.waitFor(Status.PAUSED, 10, TimeUnit.MILLISECONDS);
+        sim.waitFor(Status.PAUSED, 100, TimeUnit.MILLISECONDS);
         verifyStatus(ex, sim, Status.PAUSED);
         ex.submit(sim::play);
         sim.waitFor(Status.RUNNING, 1, TimeUnit.SECONDS); // the method must return instantly
@@ -88,7 +88,7 @@ public class TestConcurrency {
          * the method must return immediately with a message error because is not
          * possible to reach RUNNING or PAUSED status while in STOPPED
          */
-        sim.waitFor(Status.RUNNING, 10, TimeUnit.MILLISECONDS);
+        sim.waitFor(Status.RUNNING, 100, TimeUnit.MILLISECONDS);
         ex.shutdown();
         verifyStatus(ex, sim, Status.TERMINATED);
     }

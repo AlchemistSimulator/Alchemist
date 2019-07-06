@@ -110,7 +110,6 @@ allprojects {
     }
 
     tasks.withType<Test> {
-        failFast = true
         testLogging {
             events("passed", "skipped", "failed", "standardError")
             exceptionFormat = TestExceptionFormat.FULL

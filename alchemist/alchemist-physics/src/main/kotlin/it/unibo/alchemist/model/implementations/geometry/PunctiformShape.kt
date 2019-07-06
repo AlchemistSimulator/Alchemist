@@ -2,8 +2,6 @@ package it.unibo.alchemist.model.implementations.geometry
 
 import it.unibo.alchemist.model.interfaces.GeometricShape
 import it.unibo.alchemist.model.interfaces.Position
-import javafx.geometry.Point2D
-import java.awt.Shape
 import java.awt.geom.Ellipse2D
 
 internal class PunctiformShape<P : Position<P>>(

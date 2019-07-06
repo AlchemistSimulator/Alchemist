@@ -11,7 +11,6 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.GeometricShape
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.PhysicsEnvironment
-import it.unibo.alchemist.model.interfaces.Position2D
 
 private const val NODE_SIZE = 1.0
 

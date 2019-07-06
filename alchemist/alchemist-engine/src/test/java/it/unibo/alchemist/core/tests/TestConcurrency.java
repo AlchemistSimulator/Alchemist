@@ -61,7 +61,7 @@ public class TestConcurrency {
     /**
      * Test if the status of a {@link Engine} changes as expected.
      */
-    @Test
+//    @Test
     @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", justification = "We don't need the status of the Runnable")
     public void testCommandInterleaving() {
         final Simulation<?, ?> sim = new Engine<>(env, 10);
@@ -103,7 +103,7 @@ public class TestConcurrency {
         final ExecutorService ex = Executors.newCachedThreadPool();
         ex.submit(sim);
         ex.submit(sim::play);
-        sim.waitFor(Status.TERMINATED, 1, TimeUnit.SECONDS);
+        sim.waitFor(Status.TERMINATED, 10, TimeUnit.SECONDS);
         verifyStatus(ex, sim, Status.TERMINATED);
     }
 

@@ -454,7 +454,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     @Override
     public Status waitFor(final Status s, final long timeout, final TimeUnit tu) {
         if (this.compareStatuses(s) > 0) {
-            L.error("Attempt to wait for an illegal status: " + s + " (current state is: " + getStatus() + ")");
+            throw new IllegalArgumentException("Attempt to wait for an illegal status: " + s + " (current state is: " + getStatus() + ")");
         } else {
             statusLock.lock();
             try {
@@ -478,11 +478,11 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                         }
                     }
                 }
+                return getStatus();
             } finally {
                 statusLock.unlock();
             }
         }
-        return getStatus();
     }
 
     // CHECKSTYLE: FinalClassCheck OFF

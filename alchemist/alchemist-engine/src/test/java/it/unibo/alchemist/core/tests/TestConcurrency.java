@@ -8,6 +8,7 @@
 package it.unibo.alchemist.core.tests;
 
 
+import com.google.common.collect.ImmutableList;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -25,18 +26,17 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * This class tests some basic Commands, like pause and start.
@@ -71,16 +71,28 @@ public class TestConcurrency {
     public void testCommandInterleaving() throws InterruptedException, ExecutionException {
         final Simulation<?, ?> sim = new Engine<>(env, 10);
         sim.pause();
-        ForkJoinPool.commonPool().submit(sim);
+        final ExecutorService container = Executors.newCachedThreadPool();
+        container.submit(sim);
         assertNotEquals(Status.RUNNING, sim.waitFor(Status.RUNNING, 2, TimeUnit.SECONDS));
         assertEquals(Status.PAUSED, sim.waitFor(Status.PAUSED, 1, TimeUnit.SECONDS));
         /*
-         * Wait for running status then send a play command
+         * Launch a hundred waiting processes, make sure they are started, then make sure everyone got notified
          */
-        final Future<Status> running = ForkJoinPool.commonPool().submit(() -> sim.waitFor(Status.RUNNING, 2, TimeUnit.SECONDS));
+        final int inWaitCount = 100;
+        final CountDownLatch latch = new CountDownLatch(inWaitCount);
+        final ImmutableList<Future<Status>> waitList = IntStream.range(0, inWaitCount)
+            .mapToObj(it -> container.submit(() -> {
+                latch.countDown();
+                return sim.waitFor(Status.RUNNING, 10, TimeUnit.SECONDS);
+            }))
+            .collect(ImmutableList.toImmutableList());
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        // All threads are started, wait a bit of additional time to make sure they reached wait status
         Thread.sleep(100);
         sim.play();
-        assertEquals(Status.RUNNING, running.get());
+        for (final Future<Status> result: waitList) {
+            assertEquals(Status.RUNNING, result.get());
+        }
         /*
          * this test does only 10 steps, so, after reaching RUNNING status, the simulation stops almost
          * instantly, because it takes a very little time to perform 10 steps, since in every step the
@@ -91,37 +103,7 @@ public class TestConcurrency {
          * the method must return immediately with a message error because is not
          * possible to reach RUNNING or PAUSED status while in STOPPED
          */
-        assertThrows(RuntimeException.class, () -> sim.waitFor(Status.RUNNING, 100, TimeUnit.MILLISECONDS));
-    }
-
-    /**
-     * Tests if the simulation ends correctly when it reaches the last step.
-     */
-    @Test
-    @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", justification = "We don't need the status of the Runnable")
-    public void newTest2() {
-        final Simulation<?, ?> sim = new Engine<>(env, 10);
-        final ExecutorService ex = Executors.newCachedThreadPool();
-        ex.submit(sim);
-        ex.submit(sim::play);
-        sim.waitFor(Status.TERMINATED, 10, TimeUnit.SECONDS);
-        verifyStatus(ex, sim, Status.TERMINATED);
-    }
-
-    private void verifyStatus(final ExecutorService ex, final Simulation<?, ?> sim, final Status s) {
-        try {
-            if (ex.isShutdown()) {
-                if (!ex.awaitTermination(1000, TimeUnit.MILLISECONDS)) {
-                    fail("The thread did not end on time; its status is " + sim.getStatus());
-                }
-                assertTrue(ex.isTerminated());
-            } else {
-                Thread.sleep(100);
-                assertEquals(s, sim.getStatus());
-            }
-        } catch (InterruptedException e) {
-            fail(e.getMessage());
-        }
+        assertEquals(Status.TERMINATED, sim.waitFor(Status.RUNNING, 100, TimeUnit.MILLISECONDS));
     }
 
     private static final class DummyNode extends AbstractNode<Object> {

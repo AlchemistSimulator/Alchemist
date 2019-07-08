@@ -5,7 +5,6 @@ import it.unibo.alchemist.model.interfaces.GeometricShape
 import it.unibo.alchemist.model.interfaces.GeometricShapeFactory
 import org.apache.commons.math3.util.FastMath.toDegrees
 import java.awt.geom.*
-import kotlin.math.atan2
 
 internal class AwtGeometricShapeFactory : GeometricShapeFactory<Euclidean2DPosition> {
     private val punctiformShape: GeometricShape<Euclidean2DPosition> = PunctiformShape(Euclidean2DPosition(0.0, 0.0))
@@ -22,5 +21,4 @@ internal class AwtGeometricShapeFactory : GeometricShapeFactory<Euclidean2DPosit
 
     override fun circle(radius: Double): GeometricShape<Euclidean2DPosition> =
         AwtGeometricShape2D(Ellipse2D.Double(-radius, -radius, radius * 2, radius * 2))
-
 }

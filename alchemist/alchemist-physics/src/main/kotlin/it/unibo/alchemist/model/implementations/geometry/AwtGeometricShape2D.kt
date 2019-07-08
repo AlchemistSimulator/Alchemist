@@ -36,7 +36,7 @@ internal class AwtGeometricShape2D(
              not checking for it results in paradoxes like shape.intersects(other) != other.intersects(shape).
              The asymmetry is tolerated in favour of a half-good implementation.
              */
-            is AwtGeometricShape2D -> shape.intersects(other.shape.bounds2D)// || other.shape.intersects(shape.bounds2D)
+            is AwtGeometricShape2D -> shape.intersects(other.shape.bounds2D) // || other.shape.intersects(shape.bounds2D)
             is PunctiformShape -> false
             else -> throw UnsupportedOperationException("AwtGeometricShape2D only works with other AwtGeometricShape2D")
         }

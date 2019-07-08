@@ -23,14 +23,14 @@ interface PhysicsEnvironment<T, P : Position2D<P>> : Environment<T, P> {
     /**
      * Sets the heading of a node, considering the center of the node's shape as the origin.
      *
-     * @param node    The node
+     * @param node The node
      * @param radians The new angle in radians
      */
     fun setHeading(node: Node<T>, radians: Double)
 
     /**
      * Sets the shape of a node.
-     * @param node    The node
+     * @param node The node
      * @param shape The shape
      */
     fun setShape(node: Node<T>, shape: GeometricShape<P>)
@@ -38,7 +38,7 @@ interface PhysicsEnvironment<T, P : Position2D<P>> : Environment<T, P> {
     /**
      * Gets the shape of a node relatively to its position and heading in the environment.
      *
-     * @param node    The node
+     * @param node The node
      * @return Its shape
      */
     fun getShape(node: Node<T>): GeometricShape<P>

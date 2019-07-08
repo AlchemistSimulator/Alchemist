@@ -41,7 +41,7 @@ class Physics2DEnvironment<T> : Continuous2DEnvironment<T>(), PhysicsEnvironment
     }
 
     override fun getShape(node: Node<T>): GeometricShape<Euclidean2DPosition> =
-        nodeToShape.getOrPut(node, {defaultShape})
+        nodeToShape.getOrPut(node, { defaultShape })
             .rotate(getHeading(node))
             .withOrigin(getPosition(node) ?: defaultOrigin)
 

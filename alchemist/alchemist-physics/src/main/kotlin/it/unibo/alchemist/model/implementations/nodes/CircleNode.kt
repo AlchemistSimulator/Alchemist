@@ -3,7 +3,6 @@ package it.unibo.alchemist.model.implementations.nodes
 import it.unibo.alchemist.model.interfaces.PhysicsEnvironment
 import it.unibo.alchemist.model.interfaces.Position2D
 
-
 /**
  * A {@link Node} with a circle shape meant to be added to a {@link PhysicsEnvironment}.
  */

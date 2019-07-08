@@ -2,8 +2,8 @@ language: bash
 git:
   depth: false
 os:
-#  - osx
-#  - linux
+  - osx
+  - linux
   - windows
 dist: xenial
 env:

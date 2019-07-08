@@ -17,7 +17,7 @@ abstract class AbstractSteeringAction<T, P : Position<P>> @JvmOverloads construc
     target: TargetSelectionStrategy<P>,
     speed: SpeedSelectionStrategy<P>,
     routing: RoutingStrategy<P> = RoutingStrategy { p1, p2 -> PolygonalChain(p1, p2) }
-) : AbstractConfigurableMoveNode<T, P>(env, pedestrian, routing, target, speed), SteeringAction<T> {
+) : AbstractConfigurableMoveNode<T, P>(env, pedestrian, routing, target, speed), SteeringAction<T, P> {
 
     override fun cloneAction(n: Node<T>?, r: Reaction<T>?) = TODO()
 
@@ -27,4 +27,6 @@ abstract class AbstractSteeringAction<T, P : Position<P>> @JvmOverloads construc
                     .map { it / (current.getDistanceTo(target) / maxWalk) }
                     .toTypedArray())
         else target
+
+    override fun target(): P = targetPoint
 }

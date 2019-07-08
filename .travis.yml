@@ -2,8 +2,8 @@ language: bash
 git:
   depth: false
 os:
-  - osx
-  - linux
+#  - osx
+#  - linux
   - windows
 dist: xenial
 env:
@@ -50,7 +50,7 @@ install: >-
     fi
 script: |-
     cd "$TRAVIS_BUILD_DIR"/alchemist
-    ./gradlew clean check fatJar dokka buildDashboard projectReport --scan --stacktrace > >(egrep -v '(null:-1:-1)|(t find node by signature)')
+    ./gradlew clean check fatJar dokka buildDashboard projectReport --scan > >(egrep -v '(null:-1:-1)|(t find node by signature)')
 before_cache:
   - curl "${GRAVIS}.clean_gradle_cache.sh" --output .clean_gradle_cache.sh
   - bash .clean_gradle_cache.sh

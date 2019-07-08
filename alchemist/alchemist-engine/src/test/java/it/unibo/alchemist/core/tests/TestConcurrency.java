@@ -77,7 +77,7 @@ public class TestConcurrency {
         /*
          * Wait for running status then send a play command
          */
-        Future<Status> running = ForkJoinPool.commonPool().submit(() -> sim.waitFor(Status.RUNNING, 2, TimeUnit.SECONDS));
+        final Future<Status> running = ForkJoinPool.commonPool().submit(() -> sim.waitFor(Status.RUNNING, 2, TimeUnit.SECONDS));
         Thread.sleep(100);
         sim.play();
         assertEquals(Status.RUNNING, running.get());

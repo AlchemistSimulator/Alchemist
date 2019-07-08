@@ -60,7 +60,11 @@ public class TestConcurrency {
     }
 
     /**
+     *
      * Test if the status of a {@link Engine} changes as expected.
+     *
+     * @throws InterruptedException fails
+     * @throws ExecutionException fails
      */
     @Test
     @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", justification = "We don't need the status of the Runnable")

@@ -25,8 +25,11 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -61,16 +64,19 @@ public class TestConcurrency {
      */
     @Test
     @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", justification = "We don't need the status of the Runnable")
-    public void testCommandInterleaving() {
-        final ExecutorService ex = Executors.newFixedThreadPool(1);
+    public void testCommandInterleaving() throws InterruptedException, ExecutionException {
         final Simulation<?, ?> sim = new Engine<>(env, 10);
         sim.pause();
-        ex.submit(sim);
+        ForkJoinPool.commonPool().submit(sim);
         assertNotEquals(Status.RUNNING, sim.waitFor(Status.RUNNING, 2, TimeUnit.SECONDS));
-        sim.waitFor(Status.PAUSED, 1, TimeUnit.SECONDS);
-        verifyStatus(ex, sim, Status.PAUSED);
+        assertEquals(Status.PAUSED, sim.waitFor(Status.PAUSED, 1, TimeUnit.SECONDS));
+        /*
+         * Wait for running status then send a play command
+         */
+        Future<Status> running = ForkJoinPool.commonPool().submit(() -> sim.waitFor(Status.RUNNING, 2, TimeUnit.SECONDS));
+        Thread.sleep(100);
         sim.play();
-        sim.waitFor(Status.RUNNING, 1, TimeUnit.SECONDS); // the method must return instantly
+        assertEquals(Status.RUNNING, running.get());
         /*
          * this test does only 10 steps, so, after reaching RUNNING status, the simulation stops almost
          * instantly, because it takes a very little time to perform 10 steps, since in every step the
@@ -82,8 +88,6 @@ public class TestConcurrency {
          * possible to reach RUNNING or PAUSED status while in STOPPED
          */
         assertThrows(RuntimeException.class, () -> sim.waitFor(Status.RUNNING, 100, TimeUnit.MILLISECONDS));
-        ex.shutdown();
-        verifyStatus(ex, sim, Status.TERMINATED);
     }
 
     /**

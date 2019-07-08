@@ -24,8 +24,6 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -41,8 +39,6 @@ import static org.junit.jupiter.api.Assertions.fail;
  * This class tests some basic Commands, like pause and start.
  */
 public class TestConcurrency {
-
-    private static final Logger L = LoggerFactory.getLogger(Engine.class);
 
     private Environment<Object, Euclidean2DPosition> env;
 

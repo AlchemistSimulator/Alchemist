@@ -7,24 +7,23 @@
  */
 package it.unibo.alchemist.model.implementations.environments;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Comparator;
-import java.util.stream.Stream;
-
 import com.google.common.base.Optional;
-import org.apache.bcel.classfile.ClassFormatException;
-import org.apache.commons.math3.util.FastMath;
-import org.danilopianini.lang.MathUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
 import it.unibo.alchemist.model.interfaces.CircularDeformableCell;
 import it.unibo.alchemist.model.interfaces.EnvironmentSupportingDeformableCells;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
+import org.apache.bcel.classfile.ClassFormatException;
+import org.apache.commons.math3.util.FastMath;
+import org.danilopianini.lang.MathUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Comparator;
+import java.util.stream.Stream;
 
 /**
  * Implements a limited environment supporting cells with a defined shape, 
@@ -35,6 +34,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 public final class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment implements EnvironmentSupportingDeformableCells<Euclidean2DPosition> {
 
     private static final long serialVersionUID = 1L;
+    private static final String UNCHECKED = "unchecked";
     private static final Logger L = LoggerFactory.getLogger(BioRect2DEnvironmentNoOverlap.class);
     private Optional<CellWithCircularArea<Euclidean2DPosition>> biggestCellWithCircularArea = Optional.absent();
     private Optional<CircularDeformableCell<Euclidean2DPosition>> biggestCircularDeformableCell = Optional.absent();
@@ -58,6 +58,7 @@ public final class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment im
     }
 
     @Override
+    @SuppressWarnings(UNCHECKED)
     protected boolean nodeShouldBeAdded(final Node<Double> node, final Euclidean2DPosition p) {
         final boolean isWithinLimits = super.nodeShouldBeAdded(node, p);
         if (isWithinLimits) {
@@ -82,6 +83,7 @@ public final class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment im
     }
 
     @Override
+    @SuppressWarnings(UNCHECKED)
     public void moveNodeToPosition(final Node<Double> node, final Euclidean2DPosition newPos) {
         final double[] cur = getPosition(node).getCartesianCoordinates();
         final double[] np = newPos.getCartesianCoordinates();
@@ -97,6 +99,7 @@ public final class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment im
     /*
      *  finds the first position, in requested direction (requestedPos - originalPos), that can be occupied by the cell.
      */
+    @SuppressWarnings(UNCHECKED)
     private Euclidean2DPosition findNearestFreePosition(
             final CellWithCircularArea<Euclidean2DPosition> nodeToMove,
             final Euclidean2DPosition originalPos,
@@ -230,6 +233,7 @@ public final class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment im
     }
 
     @Override
+    @SuppressWarnings(UNCHECKED)
     protected void nodeAdded(final Node<Double> node, final Euclidean2DPosition position, final Neighborhood<Double> neighborhood) {
         super.nodeAdded(node, position, neighborhood);
         if (node instanceof CellWithCircularArea) {
@@ -246,7 +250,7 @@ public final class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment im
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     @Override
     protected void nodeRemoved(final Node<Double> node, final Neighborhood<Double> neighborhood) {
         if (node instanceof CellWithCircularArea) {

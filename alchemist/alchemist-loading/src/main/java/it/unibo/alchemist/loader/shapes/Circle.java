@@ -7,12 +7,16 @@
  */
 package it.unibo.alchemist.loader.shapes;
 
+import it.unibo.alchemist.model.interfaces.Position2D;
+
 import java.awt.geom.Ellipse2D;
 
 /**
  * A circle.
+ *
+ * @param <P> Position type
  */
-public class Circle extends Abstract2DShape {
+public class Circle<P extends Position2D<P>> extends Abstract2DShape<P> {
 
     /**
      * @param centerx x coordinate of the center of the circle

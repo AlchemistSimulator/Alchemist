@@ -8,16 +8,15 @@
 
 package it.unibo.alchemist.model.implementations.environments;
 
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 /**
  */
@@ -90,6 +89,7 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public final void moveNode(final Node<Double> node, final Euclidean2DPosition direction) {
         if (node instanceof CellNode) {
             super.moveNode(node, direction);

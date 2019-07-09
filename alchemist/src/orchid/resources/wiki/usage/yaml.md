@@ -461,7 +461,7 @@ displacements:
           parameters: [-6, -6, 2, 2]
         molecule: source
         concentration: true
-        molecule: randomSensor
+      - molecule: randomSensor
         concentration: >
           import java.lang.Math.random
           random() * pi
@@ -492,17 +492,22 @@ displacements:
 
 ## Writing layers
 
-In order to put a layer inside the previously specified environment you have to define the type of the layer, the molecule
-it refers to and possibly the parameters needed for the type of layer you have chosen.  
-Of course, it is possible to add more than one layer inside the same environment.  
-The syntax is like the following:  
+It is possible to define overlays (layers) of data that can be sensed everywhere in the environment.
+Layers can be used to model physical properties, such as pollution, light, temperature, and so on.
+Conversely than readings from nodes' contents, layers have no dependency optimization.
+This implies that reactions that read values from layers should have special care in defining their `context` appropriately
+
+In order to create layer, the programmer must define the type of the layer, a molecule that will be used as identifier,
+and possibly the parameters needed for intializing the type of layer you have chosen, as per the [`type/parameter` syntax](#loading-arbitrary-java-classes-with-the-typeparameters-syntax).
+
+The following example exemplifies the syntax for initializing two {{ anchor('BidimensionalGaussianLayer') }}: 
 
 ```yaml
 layers:
   - type: BidimensionalGaussianLayer
-    molecule: pippo
+    molecule: foo
     parameters: [0.0, 0.0, 2.0, 5.0]
   - type: BidimensionalGaussianLayer
-    molecule: pluto
+    molecule: bar
     parameters: [0.0, 0.0, 5.0, 10.0]
 ```

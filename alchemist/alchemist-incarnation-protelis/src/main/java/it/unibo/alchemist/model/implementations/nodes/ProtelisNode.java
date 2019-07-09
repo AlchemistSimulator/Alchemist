@@ -27,22 +27,24 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
+ *
+ * @param <P> Position type
  */
-public final class ProtelisNode extends AbstractNode<Object> implements DeviceUID, ExecutionEnvironment {
+public final class ProtelisNode<P extends Position<? extends P>> extends AbstractNode<Object> implements DeviceUID, ExecutionEnvironment {
 
     private static final long serialVersionUID = 7411790948884770553L;
     private final Map<RunProtelisProgram<?>, AlchemistNetworkManager> netmgrs = new LinkedHashMap<>();
-    private final Environment<?, ?> environment;
+    private final Environment<Object, P> environment;
 
     /**
      * Builds a new {@link ProtelisNode}.
      * 
-     * @param env
+     * @param environment
      *            the environment
      */
-    public ProtelisNode(final Environment<?, ?> env) {
-        super(env);
-        this.environment = env;
+    public ProtelisNode(final Environment<Object, P> environment) {
+        super(environment);
+        this.environment = environment;
     }
 
     @Override
@@ -89,7 +91,9 @@ public final class ProtelisNode extends AbstractNode<Object> implements DeviceUI
 
     @Override
     public Object get(final String id) {
-        return getConcentration(makeMol(id));
+        final Molecule mid = makeMol(id);
+        return Optional.ofNullable(getConcentration(mid))
+            .orElse(environment.getLayer(mid).map(it -> it.getValue(environment.getPosition(this))));
     }
 
     @Override
@@ -132,8 +136,8 @@ public final class ProtelisNode extends AbstractNode<Object> implements DeviceUI
     }
 
     @Override
-    public ProtelisNode cloneNode(final Time currentTime) {
-        final ProtelisNode result = new ProtelisNode(environment);
+    public ProtelisNode<P> cloneNode(final Time currentTime) {
+        final ProtelisNode<P> result = new ProtelisNode<>(environment);
         getContents().forEach(result::setConcentration);
         getReactions().forEach(r -> result.addReaction(r.cloneOnNewNode(result, currentTime)));
         return result;

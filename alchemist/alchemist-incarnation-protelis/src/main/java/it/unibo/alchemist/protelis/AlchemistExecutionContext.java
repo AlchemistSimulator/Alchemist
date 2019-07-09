@@ -54,6 +54,7 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
             .expireAfterAccess(10, TimeUnit.MINUTES)
             .maximumSize(100)
             .build(new CacheLoader<P, Double>() {
+                @SuppressWarnings("unchecked")
                 @Override
                 public Double load(@NotNull final P dest) {
                     if (env instanceof MapEnvironment) {
@@ -70,7 +71,7 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
     private int hash;
     private double nbrRangeTimeout;
     private double precalcdRoutingDistance = Double.NaN;
-    private final ProtelisNode node;
+    private final ProtelisNode<P> node;
     private final RandomGenerator rand;
     private final Reaction<Object> react;
 
@@ -88,7 +89,7 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
      */
     public AlchemistExecutionContext(
             final Environment<Object, P> environment,
-            final ProtelisNode localNode,
+            final ProtelisNode<P> localNode,
             final Reaction<Object> reaction,
             final RandomGenerator random,
             final AlchemistNetworkManager networkManager) {
@@ -111,9 +112,10 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
      *            the target device
      * @return the distance
      */
+    @SuppressWarnings("unchecked")
     public double distanceTo(final DeviceUID target) {
         assert target instanceof ProtelisNode;
-        return env.getDistanceBetweenNodes(node, (ProtelisNode) target);
+        return env.getDistanceBetweenNodes(node, (ProtelisNode<P>) target);
     }
 
     /**
@@ -165,7 +167,7 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
     /**
      * @return experimental access to the simulated environment, for building oracles
      */
-    public Environment<Object, ?> getEnvironmentAccess() {
+    public Environment<Object, P> getEnvironmentAccess() {
         return env;
     }
 

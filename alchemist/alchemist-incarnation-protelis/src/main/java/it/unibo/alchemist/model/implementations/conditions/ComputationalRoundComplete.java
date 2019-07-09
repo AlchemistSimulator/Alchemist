@@ -7,14 +7,14 @@
  */
 package it.unibo.alchemist.model.implementations.conditions;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  */
@@ -29,7 +29,7 @@ public final class ComputationalRoundComplete extends AbstractCondition<Object> 
      * @param program
      *            the reference {@link RunProtelisProgram}
      */
-    public ComputationalRoundComplete(final ProtelisNode node, final RunProtelisProgram program) {
+    public ComputationalRoundComplete(final ProtelisNode<?> node, final RunProtelisProgram program) {
         super(node);
         this.program = program;
         declareDependencyOn(this.program.asMolecule());
@@ -70,8 +70,8 @@ public final class ComputationalRoundComplete extends AbstractCondition<Object> 
     }
 
     @Override
-    public ProtelisNode getNode() {
-        return (ProtelisNode) super.getNode();
+    public ProtelisNode<?> getNode() {
+        return (ProtelisNode<?>) super.getNode();
     }
 
     @Override

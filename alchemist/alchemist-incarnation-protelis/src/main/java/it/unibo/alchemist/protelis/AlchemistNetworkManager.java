@@ -7,6 +7,14 @@
  */
 package it.unibo.alchemist.protelis;
 
+import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
+import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Reaction;
+import org.protelis.lang.datatype.DeviceUID;
+import org.protelis.vm.CodePath;
+import org.protelis.vm.NetworkManager;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
@@ -14,15 +22,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
-
-import org.protelis.lang.datatype.DeviceUID;
-import org.protelis.vm.CodePath;
-import org.protelis.vm.NetworkManager;
-
-import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
-import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
  * Emulates a {@link NetworkManager}. This particular network manager does not
@@ -34,7 +33,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
 
     private static final long serialVersionUID = -7028533174885876642L;
     private final Environment<Object, ?> env;
-    private final ProtelisNode node;
+    private final ProtelisNode<?> node;
     /**
      * This reaction stores the time at which the neighbor state is read.
      */
@@ -156,7 +155,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
             final MessageInfo msg = new MessageInfo(currentTime, node, toBeSent);
             env.getNeighborhood(node).forEach(n -> {
                 if (n instanceof ProtelisNode) {
-                    final AlchemistNetworkManager destination = ((ProtelisNode) n).getNetworkManager(prog);
+                    final AlchemistNetworkManager destination = ((ProtelisNode<?>) n).getNetworkManager(prog);
                     if (destination != null) {
                         /*
                          * The node is running the program. Otherwise, the

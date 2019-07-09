@@ -8,40 +8,11 @@
 
 package it.unibo.alchemist.model;
 
-import java.lang.ref.WeakReference;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.math3.random.MersenneTwister;
-import org.apache.commons.math3.random.RandomGenerator;
-import org.jetbrains.annotations.NotNull;
-import org.protelis.lang.ProtelisLoader;
-import org.protelis.lang.datatype.DeviceUID;
-import org.protelis.vm.CodePath;
-import org.protelis.vm.ExecutionEnvironment;
-import org.protelis.vm.NetworkManager;
-import org.protelis.vm.ProtelisVM;
-import org.protelis.vm.impl.AbstractExecutionContext;
-import org.protelis.vm.impl.SimpleExecutionEnvironment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.actions.SendToNeighbor;
 import it.unibo.alchemist.model.implementations.conditions.ComputationalRoundComplete;
@@ -62,6 +33,33 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.math3.random.MersenneTwister;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.jetbrains.annotations.NotNull;
+import org.protelis.lang.ProtelisLoader;
+import org.protelis.lang.datatype.DeviceUID;
+import org.protelis.vm.CodePath;
+import org.protelis.vm.ExecutionEnvironment;
+import org.protelis.vm.NetworkManager;
+import org.protelis.vm.ProtelisVM;
+import org.protelis.vm.impl.AbstractExecutionContext;
+import org.protelis.vm.impl.SimpleExecutionEnvironment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.ref.WeakReference;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @param <P> position type
@@ -83,7 +81,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                 }
             });
 
-    private static List<RunProtelisProgram<?>> getIncomplete(final ProtelisNode pNode, final List<RunProtelisProgram<?>> alreadyDone) {
+    private static List<RunProtelisProgram<?>> getIncomplete(final ProtelisNode<?> pNode, final List<RunProtelisProgram<?>> alreadyDone) {
         return pNode.getReactions().parallelStream()
                 /*
                  * Get the actions
@@ -104,12 +102,13 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Action<Object> createAction(final RandomGenerator rand, final Environment<Object, P> env,
             final Node<Object> node, final TimeDistribution<Object> time, final Reaction<Object> reaction,
             final String param) {
         Objects.requireNonNull(param);
         if (node instanceof ProtelisNode) {
-            final ProtelisNode pNode = (ProtelisNode) node;
+            final ProtelisNode<P> pNode = (ProtelisNode<P>) node;
             if (param.equalsIgnoreCase("send")) {
                 final List<RunProtelisProgram<?>> alreadyDone = pNode.getReactions()
                     .parallelStream()
@@ -158,7 +157,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             final Node<Object> node, final TimeDistribution<Object> time, final Reaction<Object> reaction,
             final String param) {
         if (node instanceof ProtelisNode) {
-            final ProtelisNode pNode = (ProtelisNode) node;
+            final ProtelisNode<?> pNode = (ProtelisNode<?>) node;
             /*
              * The list of ProtelisPrograms that have already been completed with a ComputationalRoundComplete condition
              */
@@ -194,7 +193,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
 
     @Override
     public Node<Object> createNode(final RandomGenerator rand, final Environment<Object, P> env, final String param) {
-        return new ProtelisNode(env);
+        return new ProtelisNode<>(env);
     }
 
     @Override

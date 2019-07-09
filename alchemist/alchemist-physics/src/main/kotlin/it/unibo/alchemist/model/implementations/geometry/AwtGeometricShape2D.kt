@@ -1,6 +1,7 @@
 package it.unibo.alchemist.model.implementations.geometry
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.AwtShapeCompatible
 import it.unibo.alchemist.model.interfaces.GeometricShape
 import java.awt.Shape
 import java.awt.geom.AffineTransform
@@ -13,7 +14,7 @@ import java.lang.UnsupportedOperationException
 internal class AwtGeometricShape2D(
     private val shape: Shape,
     private val origin: Euclidean2DPosition = Euclidean2DPosition(0.0, 0.0)
-) : GeometricShape<Euclidean2DPosition> {
+) : GeometricShape<Euclidean2DPosition>, AwtShapeCompatible {
 
     override val diameter: Double by lazy {
         val rect = shape.bounds2D
@@ -24,7 +25,7 @@ internal class AwtGeometricShape2D(
         Euclidean2DPosition(shape.bounds2D.centerX, shape.bounds2D.centerY)
     }
 
-    override fun asShape() = AffineTransform().createTransformedShape(shape)!!
+    override fun asAwtShape() = AffineTransform().createTransformedShape(shape)!!
 
     override fun contains(point: Euclidean2DPosition) =
         shape.contains(Point2D.Double(point.x, point.y))

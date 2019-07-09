@@ -1,7 +1,5 @@
 package it.unibo.alchemist.model.interfaces
 
-import java.awt.Shape
-
 /**
  * Models a generic shape.
  *
@@ -49,9 +47,4 @@ interface GeometricShape<P : Position<P>> {
      * @return a new shape
      */
     fun rotate(radians: Double): GeometricShape<P>
-
-    /**
-     * Handy method for compatibility with java's awt geometry
-     */
-    fun asShape(): Shape
 }

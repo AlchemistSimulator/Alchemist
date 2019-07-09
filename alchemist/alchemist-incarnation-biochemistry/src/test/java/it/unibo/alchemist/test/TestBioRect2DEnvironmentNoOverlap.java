@@ -701,6 +701,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
                 assertTrue(thereIsOverlap(env));
             }
 
+            @SuppressWarnings("unchecked")
             private Stream<CellWithCircularArea<Euclidean2DPosition>> getNodes() {
                 return env.getNodes().stream()
                         .filter(n -> n instanceof CellWithCircularArea)

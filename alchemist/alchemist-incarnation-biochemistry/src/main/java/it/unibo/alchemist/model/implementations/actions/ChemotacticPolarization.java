@@ -138,6 +138,7 @@ public final class ChemotacticPolarization<P extends Position2D<P>> extends Abst
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public CellNode<P> getNode() {
         return (CellNode<P>) super.getNode();
     }

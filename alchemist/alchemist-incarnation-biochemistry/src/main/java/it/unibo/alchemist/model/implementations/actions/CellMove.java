@@ -78,6 +78,7 @@ public final class CellMove<P extends Position<P>> extends AbstractMoveNode<Doub
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public CellNode<P> getNode() {
         return (CellNode<P>) super.getNode();
     }

@@ -37,12 +37,12 @@ public final class ProtelisNode extends AbstractNode<Object> implements DeviceUI
     /**
      * Builds a new {@link ProtelisNode}.
      * 
-     * @param env
+     * @param environment
      *            the environment
      */
-    public ProtelisNode(final Environment<?, ?> env) {
-        super(env);
-        this.environment = env;
+    public ProtelisNode(final Environment<?, ?> environment) {
+        super(environment);
+        this.environment = environment;
     }
 
     @Override

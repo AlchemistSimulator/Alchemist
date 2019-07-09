@@ -165,10 +165,10 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             @SuppressWarnings("unchecked")
             final List<RunProtelisProgram<?>> alreadyDone = pNode.getReactions()
                 .parallelStream()
-                .flatMap(r -> r.getConditions().parallelStream())
+                .flatMap(r -> r.getConditions().stream())
                 .filter(c -> c instanceof ComputationalRoundComplete)
                 .map(c -> (ComputationalRoundComplete) c)
-                .flatMap(crc -> crc.getInboundDependencies().parallelStream())
+                .flatMap(crc -> crc.getInboundDependencies().stream())
                 .filter(mol -> mol instanceof RunProtelisProgram)
                 .map(mol -> (RunProtelisProgram<P>) mol)
                 .collect(Collectors.toList());

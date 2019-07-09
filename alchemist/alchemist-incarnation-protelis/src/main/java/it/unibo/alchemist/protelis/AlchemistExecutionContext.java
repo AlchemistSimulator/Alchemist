@@ -165,7 +165,7 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
     /**
      * @return experimental access to the simulated environment, for building oracles
      */
-    public Environment<Object, ?> getEnvironmentAccess() {
+    public Environment<Object, P> getEnvironmentAccess() {
         return env;
     }
 

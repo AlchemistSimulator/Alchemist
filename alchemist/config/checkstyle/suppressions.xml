@@ -16,8 +16,8 @@
 	<suppress files="[/\\]target[/\\]" checks=".*"/>
 	<suppress files=".+\.(?:jar|zip|war|class|tar|bin)$" checks=".*"/>
 	<suppress files=".*[\\/]xtend-gen[\\/].*" checks=".*"/>
-	<suppress files=".*[\\/]src/antlr[\\/].*" checks=".*"/>
+	<suppress files=".*[\\/]src[\\/]antlr[\\/].*" checks=".*"/>
 	<suppress files=".*[\\/]generated-.*[\\/].*" checks=".*"/>
-	<suppress files=".*[\\/]expressions/parser[\\/].*" checks=".*"/>
+	<suppress files=".*[\\/]expressions[\\/]parser[\\/].*" checks=".*"/>
 	<suppress files=".*[\\/]biochemistrydsl[\\/].*" checks=".*"/>
 </suppressions>

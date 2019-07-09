@@ -44,4 +44,14 @@ public enum Status {
      */
     TERMINATED;
 
+    /**
+     *
+     * @param s the destination status
+     * @return true if the provided status can be reached from this status (i.e., if the simulation lifecycle allows to
+     * get from the current status to the provided one).
+     */
+    public boolean isReachableFrom(final Status s) {
+        return compareTo(s) >= 0 || this == PAUSED && s == RUNNING;
+    }
+
 }

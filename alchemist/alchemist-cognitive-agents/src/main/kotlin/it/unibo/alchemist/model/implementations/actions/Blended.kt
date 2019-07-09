@@ -7,20 +7,25 @@ import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
-class Blended<T, P : Position<P>>(
+open class Blended<T, P : Position<P>> @JvmOverloads constructor(
     env: Environment<T, P>,
     pedestrian: Pedestrian<T>,
-    actions: List<SteeringAction<T, P>>
-) : AbstractSteeringAction<T, P>(
+    actions: List<SteeringAction<T, P>>,
+    formula: List<SteeringAction<T, P>>.() -> P = {
+        val currentPosition = env.getPosition(pedestrian)
+        if (size > 1) {
+            with(map { it.nextPosition() to it.target().getDistanceTo(currentPosition) }) {
+                val totalDistance = map { it.second }.sum()
+                map {
+                    env.makePosition(*(it.first * (1 - (it.second / totalDistance))))
+                }.fold(currentPosition) { accumulator, position -> accumulator + position }
+            }
+        } else firstOrNull()?.let { currentPosition + it.nextPosition() } ?: currentPosition
+    }
+) : SteeringActionImpl<T, P>(
     env,
     pedestrian,
-    TargetSelectionStrategy {
-        with(actions.map { it.getNextPosition() to it.target().getDistanceTo(env.getPosition(pedestrian)) }) {
-            val totalDistance = this.map { it.second }.sum()
-            this.map { env.makePosition(*(it.first * (1 - (it.second / totalDistance)))) }
-                .fold(env.getPosition(pedestrian)) { acc, p -> acc + p }
-        }
-    },
+    TargetSelectionStrategy { actions.formula() },
     SpeedSelectionStrategy { pedestrian.walkingSpeed }
 )
 

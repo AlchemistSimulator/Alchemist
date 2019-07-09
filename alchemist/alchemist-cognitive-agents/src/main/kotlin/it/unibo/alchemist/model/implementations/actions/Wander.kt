@@ -7,12 +7,12 @@ import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 import org.apache.commons.math3.random.RandomGenerator
 
-class Wander<T, P : Position<P>>(
+open class Wander<T, P : Position<P>>(
     private val env: Environment<T, P>,
     pedestrian: Pedestrian<T>,
     rg: RandomGenerator,
     radius: Double
-) : AbstractSteeringAction<T, P>(
+) : SteeringActionImpl<T, P>(
     env,
     pedestrian,
     TargetSelectionStrategy { with(env) {
@@ -21,4 +21,4 @@ class Wander<T, P : Position<P>>(
     SpeedSelectionStrategy { pedestrian.walkingSpeed }
 )
 
-private fun RandomGenerator.nextDouble(from: Double, to: Double) = nextDouble() * (from - to) - to
+private fun RandomGenerator.nextDouble(from: Double, to: Double) = nextDouble() * (to - from) - to

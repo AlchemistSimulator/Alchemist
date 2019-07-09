@@ -11,7 +11,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
-abstract class AbstractSteeringAction<T, P : Position<P>> @JvmOverloads constructor(
+open class SteeringActionImpl<T, P : Position<P>> @JvmOverloads constructor(
     private val env: Environment<T, P>,
     pedestrian: Pedestrian<T>,
     target: TargetSelectionStrategy<P>,
@@ -27,6 +27,8 @@ abstract class AbstractSteeringAction<T, P : Position<P>> @JvmOverloads construc
                     .map { it / (current.getDistanceTo(target) / maxWalk) }
                     .toTypedArray())
         else target
+
+    override fun nextPosition(): P = nextPosition
 
     override fun target(): P = targetPoint
 }

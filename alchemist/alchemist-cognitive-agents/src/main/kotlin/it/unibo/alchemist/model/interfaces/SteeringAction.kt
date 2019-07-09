@@ -1,8 +1,17 @@
 package it.unibo.alchemist.model.interfaces
 
+/**
+ * An interface for a generic action whose purpose is moving a node inside the environment it is in.
+ */
 interface SteeringAction<T, P : Position<P>> : Action<T> {
 
-    fun getNextPosition(): P
+    /**
+     * The position the owner of this action moves to when it is executed.
+     */
+    fun nextPosition(): P
 
+    /**
+     * The position the owner of this action moves towards.
+     */
     fun target(): P
 }

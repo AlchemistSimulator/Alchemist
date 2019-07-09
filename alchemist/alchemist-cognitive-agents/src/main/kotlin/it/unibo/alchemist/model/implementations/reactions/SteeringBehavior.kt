@@ -24,7 +24,7 @@ class SteeringBehavior<T, P : Position<P>>(
     override fun execute() {
         with(actions.filterIsInstance<SteeringAction<T, P>>().toList()) {
             (actions - this).forEach { it.execute() }
-            if (size > 1) Blended(env, pedestrian, this).execute() else this.first().execute()
+            Blended(env, pedestrian, this).execute()
         }
     }
 }

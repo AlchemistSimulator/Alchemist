@@ -7,12 +7,12 @@ import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
 open class Arrive<T, P : Position<P>>(
-    private val env: Environment<T, P>,
+    env: Environment<T, P>,
     pedestrian: Pedestrian<T>,
     decelerationRadius: Double, // the distance from which the pedestrian starts to decelerate
     arrivalTolerance: Double, // the distance at which the pedestrian is considered arrived to the current target
     vararg coords: Double
-) : AbstractSteeringAction<T, P>(
+) : SteeringActionImpl<T, P>(
     env,
     pedestrian,
     TargetSelectionStrategy { env.makePosition(*coords.toTypedArray()) },

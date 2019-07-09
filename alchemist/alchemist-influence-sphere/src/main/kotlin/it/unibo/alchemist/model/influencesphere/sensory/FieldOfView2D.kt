@@ -1,10 +1,10 @@
 package it.unibo.alchemist.model.influencesphere.sensory
 
-import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.influencesphere.shapes.GeometricShape2D
+import it.unibo.alchemist.model.interfaces.Position2D
 import java.awt.geom.Arc2D
 
-// To be better implemented following https://legends2k.github.io/2d-fov/design.html
+// To be better implemented following http://archive.fo/Cwy38
 class FieldOfView2D<P : Position2D<P>>(
     originX: Double,
     originY: Double,

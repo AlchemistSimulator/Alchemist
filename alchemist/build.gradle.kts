@@ -86,10 +86,12 @@ allprojects {
     }
 
     configurations.all {
-        resolutionStrategy.eachDependency {
-            if (requested.name == "svgSalamander") {
-                useTarget("guru.nidi.com.kitfox:svgSalamander:1.1.2")
-                because("mapsforge version is not on central")
+        resolutionStrategy {
+            eachDependency {
+                if (requested.name == "svgSalamander") {
+                    useTarget("guru.nidi.com.kitfox:svgSalamander:1.1.2")
+                    because("mapsforge version is not on central")
+                }
             }
         }
     }
@@ -108,7 +110,6 @@ allprojects {
     }
 
     tasks.withType<Test> {
-        failFast = true
         testLogging {
             events("passed", "skipped", "failed", "standardError")
             exceptionFormat = TestExceptionFormat.FULL

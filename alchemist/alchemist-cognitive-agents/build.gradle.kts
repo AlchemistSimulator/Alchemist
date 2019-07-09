@@ -11,7 +11,7 @@ dependencies {
     implementation(project(":alchemist-time"))
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-influence-sphere"))
-    implementation("com.uchuhimo:konf:0.13.3")
+    implementation(Libs.konf)
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-loading"))
     testImplementation(project(":alchemist-incarnation-protelis"))

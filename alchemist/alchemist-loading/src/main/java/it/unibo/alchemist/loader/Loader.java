@@ -8,6 +8,7 @@
 package it.unibo.alchemist.loader;
 
 import it.unibo.alchemist.loader.export.Extractor;
+import it.unibo.alchemist.loader.variables.DependentVariable;
 import it.unibo.alchemist.loader.variables.Variable;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
@@ -32,6 +33,15 @@ public interface Loader extends Serializable {
     <T, P extends Position<P>> Environment<T, P> getDefault();
 
     /**
+     * Allows to access the currently defined dependent variable (those variables whose value can be determined given a
+     * valid set of values for the free variables).
+     *
+     * @return a {@link Map} between variable names and their actual
+     * representation
+     */
+    Map<String, DependentVariable<?>> getDependentVariables();
+
+    /**
      * @return a {@link Map} between variable names and their actual
      *         representation
      */
@@ -50,6 +60,14 @@ public interface Loader extends Serializable {
      *         used instead
      */
     <T, P extends Position<P>> Environment<T, P> getWith(Map<String, ?> values);
+
+    /**
+     * Allows to access the currently defined constants, namely variables defined in the simulation file whose value is
+     * constant and does not depend on the value of any free variable (directly or indirectly).
+     *
+     * @return a {@link Map} between variable names and their computed value
+     */
+    Map<String, Object> getConstants();
 
     /**
      * @return The data extractors

@@ -6,6 +6,9 @@ import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShape2D
 
+/**
+ * Base class for {@link Physics2DEnvironment}
+ */
 abstract class AbstractPhysics2DEnvironment<T, P : Position2D<P>> : Abstract2DEnvironment<T, P>(), Physics2DEnvironment<T, P> {
 
     /**
@@ -41,7 +44,7 @@ abstract class AbstractPhysics2DEnvironment<T, P : Position2D<P>> : Abstract2DEn
     override fun getShape(node: Node<T>): GeometricShape2D<P> =
         nodeToShape.getOrPut(node, this::getDefaultShape)
             .rotate(getHeading(node))
-            .withOrigin(getPosition(node) ?: getDefaultOrigin())
+            .withOrigin(if (nodes.contains(node)) getPosition(node) else getDefaultOrigin())
 
     /**
      * move this code in addNode when and if you merge this with AbstractEnvironment
@@ -76,14 +79,6 @@ abstract class AbstractPhysics2DEnvironment<T, P : Position2D<P>> : Abstract2DEn
      */
     override fun nodeShouldBeAdded(node: Node<T>, p: P): Boolean =
         canNodeFitPosition(node, p)
-
-    /**
-     * {@inheritDoc}
-     * @return null if the node is not found.
-     */
-    override fun getPosition(node: Node<T>?): P? {
-        return super.getPosition(node)
-    }
 
     /**
      * @return the default shape for nodes without one

@@ -1,24 +1,29 @@
 package it.unibo.alchemist.model.implementations.environments
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.*
+import it.unibo.alchemist.model.interfaces.Neighborhood
+import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
+import it.unibo.alchemist.model.interfaces.geometry.GeometricShape2D
+import it.unibo.alchemist.model.interfaces.geometry.GeometricShape2DFactory
 
 /**
- * An Environment supporting {@link GeometricShape} and collisions detection.
+ * An Environment supporting {@link GeometricShape2D} and collisions detection.
  * It does not allow for two nodes to overlap unless their shape is punctiform.
  *
  * TODO: getAllNodesInRange is a public method which doesn't consider the shapes..
  */
-class Physics2DEnvironment<T> : Continuous2DEnvironment<T>(), PhysicsEnvironment<T, Euclidean2DPosition> {
-    override val shapeFactory: GeometricShapeFactory<Euclidean2DPosition> = GeometricShapeFactory.getInstance()
+class EuclideanPhysics2DEnvironment<T> : Continuous2DEnvironment<T>(), Physics2DEnvironment<T, Euclidean2DPosition> {
+
+    override val shapeFactory: GeometricShape2DFactory<Euclidean2DPosition> = GeometricShape2DFactory.getInstance()
     private val defaultShape = shapeFactory.punctiform()
     private val defaultHeading = 0.0
     private val defaultOrigin = makePosition(0.0, 0.0)
-    private val nodeToShape = mutableMapOf<Node<T>, GeometricShape<Euclidean2DPosition>>()
+    private val nodeToShape = mutableMapOf<Node<T>, GeometricShape2D<Euclidean2DPosition>>()
     private val nodeToHeading = mutableMapOf<Node<T>, Double>()
     private var largestShapeDiameter: Double = 0.0
 
-    override fun getNodesWithin(shape: GeometricShape<Euclidean2DPosition>): List<Node<T>> =
+    override fun getNodesWithin(shape: GeometricShape2D<Euclidean2DPosition>): List<Node<T>> =
         if (shape.diameter <= 0) emptyList()
         else getNodesWithinRange(shape.centroid, (shape.diameter + largestShapeDiameter) / 2)
             .filter { shape.intersects(getShape(it)) }
@@ -36,11 +41,11 @@ class Physics2DEnvironment<T> : Continuous2DEnvironment<T>(), PhysicsEnvironment
         }
     }
 
-    override fun setShape(node: Node<T>, shape: GeometricShape<Euclidean2DPosition>) {
+    override fun setShape(node: Node<T>, shape: GeometricShape2D<Euclidean2DPosition>) {
         nodeToShape[node] = shape
     }
 
-    override fun getShape(node: Node<T>): GeometricShape<Euclidean2DPosition> =
+    override fun getShape(node: Node<T>): GeometricShape2D<Euclidean2DPosition> =
         nodeToShape.getOrPut(node, { defaultShape })
             .rotate(getHeading(node))
             .withOrigin(getPosition(node) ?: defaultOrigin)

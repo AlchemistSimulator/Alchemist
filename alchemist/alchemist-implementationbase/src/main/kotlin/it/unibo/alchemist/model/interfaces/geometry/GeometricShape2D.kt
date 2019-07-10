@@ -1,11 +1,13 @@
-package it.unibo.alchemist.model.interfaces
+package it.unibo.alchemist.model.interfaces.geometry
+
+import it.unibo.alchemist.model.interfaces.Position2D
 
 /**
- * Models a generic shape.
+ * Models a generic 2D shape.
  *
  * @param <P> Position type
  */
-interface GeometricShape<P : Position<P>> {
+interface GeometricShape2D<P : Position2D<P>> {
 
     /**
      * The largest distance between any pair of vertices.
@@ -31,7 +33,7 @@ interface GeometricShape<P : Position<P>> {
      * @param other the other shape
      * @return true if the intersection is not empty
      */
-    fun intersects(other: GeometricShape<P>): Boolean
+    fun intersects(other: GeometricShape2D<P>): Boolean
 
     /**
      * Returns a new shape with the given origin.
@@ -39,12 +41,12 @@ interface GeometricShape<P : Position<P>> {
      * @param position the new origin
      * @return a new shape having its origin in the given position
      */
-    fun withOrigin(position: P): GeometricShape<P>
+    fun withOrigin(position: P): GeometricShape2D<P>
 
     /**
      * Rotates the shape around its origin
      * @param radians angle
      * @return a new shape
      */
-    fun rotate(radians: Double): GeometricShape<P>
+    fun rotate(radians: Double): GeometricShape2D<P>
 }

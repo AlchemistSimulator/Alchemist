@@ -1,4 +1,4 @@
-package it.unibo.alchemist.model.interfaces
+package it.unibo.alchemist.model.interfaces.geometry
 
 import java.awt.Shape
 

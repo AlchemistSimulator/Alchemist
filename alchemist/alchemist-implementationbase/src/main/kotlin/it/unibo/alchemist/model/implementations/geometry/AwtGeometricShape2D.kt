@@ -1,20 +1,19 @@
 package it.unibo.alchemist.model.implementations.geometry
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.AwtShapeCompatible
-import it.unibo.alchemist.model.interfaces.GeometricShape
+import it.unibo.alchemist.model.interfaces.geometry.AwtShapeCompatible
+import it.unibo.alchemist.model.interfaces.geometry.GeometricShape2D
 import java.awt.Shape
 import java.awt.geom.AffineTransform
 import java.awt.geom.Point2D
-import java.lang.UnsupportedOperationException
 
 /**
- * {@link GeometricShape} delegated to java.awt.geom.
+ * {@link GeometricShape2D} delegated to java.awt.geom.
  */
 internal class AwtGeometricShape2D(
     private val shape: Shape,
     private val origin: Euclidean2DPosition = Euclidean2DPosition(0.0, 0.0)
-) : GeometricShape<Euclidean2DPosition>, AwtShapeCompatible {
+) : GeometricShape2D<Euclidean2DPosition>, AwtShapeCompatible {
 
     override val diameter: Double by lazy {
         val rect = shape.bounds2D
@@ -30,7 +29,7 @@ internal class AwtGeometricShape2D(
     override fun contains(point: Euclidean2DPosition) =
         shape.contains(Point2D.Double(point.x, point.y))
 
-    override fun intersects(other: GeometricShape<Euclidean2DPosition>) =
+    override fun intersects(other: GeometricShape2D<Euclidean2DPosition>) =
         when (other) {
             /*
              checking for other.shape.intersects(shape.bounds2D) means that every shape becomes a rectangle.
@@ -42,14 +41,14 @@ internal class AwtGeometricShape2D(
             else -> throw UnsupportedOperationException("AwtGeometricShape2D only works with other AwtGeometricShape2D")
         }
 
-    override fun withOrigin(position: Euclidean2DPosition): GeometricShape<Euclidean2DPosition> {
+    override fun withOrigin(position: Euclidean2DPosition): GeometricShape2D<Euclidean2DPosition> {
         val tr = AffineTransform()
         val offset = position - origin
         tr.translate(offset.x, offset.y)
         return AwtGeometricShape2D(tr.createTransformedShape(shape), position)
     }
 
-    override fun rotate(radians: Double): GeometricShape<Euclidean2DPosition> {
+    override fun rotate(radians: Double): GeometricShape2D<Euclidean2DPosition> {
         val tr = AffineTransform()
         tr.rotate(radians, origin.x, origin.y)
         return AwtGeometricShape2D(tr.createTransformedShape(shape), origin)

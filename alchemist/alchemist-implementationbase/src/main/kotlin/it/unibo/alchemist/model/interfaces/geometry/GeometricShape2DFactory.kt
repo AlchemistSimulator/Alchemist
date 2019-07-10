@@ -1,12 +1,13 @@
-package it.unibo.alchemist.model.interfaces
+package it.unibo.alchemist.model.interfaces.geometry
 
-import it.unibo.alchemist.model.implementations.geometry.AwtGeometricShapeFactory
+import it.unibo.alchemist.model.implementations.geometry.AwtGeometricShape2DFactory
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.Position2D
 
 /**
- * Factory for {@link GeometricShape}.
+ * Factory for {@link GeometricShape2D}.
  */
-interface GeometricShapeFactory<P : Position<P>> {
+interface GeometricShape2DFactory<P : Position2D<P>> {
 
     /**
      * A circle extends in the first and second axis by its diameter.
@@ -14,7 +15,7 @@ interface GeometricShapeFactory<P : Position<P>> {
      * @param radius the radius
      * @return the shape
      */
-    fun circle(radius: Double): GeometricShape<P>
+    fun circle(radius: Double): GeometricShape2D<P>
 
     /**
      * A rectangle extends in the first and second axis by its width and height.
@@ -23,7 +24,7 @@ interface GeometricShapeFactory<P : Position<P>> {
      * @param height the height
      * @return the shape
      */
-    fun rectangle(width: Double, height: Double): GeometricShape<P>
+    fun rectangle(width: Double, height: Double): GeometricShape2D<P>
 
     /**
      * A circle sector is the portion of a disk enclosed by two radii and an arc
@@ -36,17 +37,17 @@ interface GeometricShapeFactory<P : Position<P>> {
      *                  It's used to determine the sector's heading.
      * @return the shape
      */
-    fun circleSector(radius: Double, angle: Double, heading: Double): GeometricShape<P>
+    fun circleSector(radius: Double, angle: Double, heading: Double): GeometricShape2D<P>
 
     /**
      * A punctiform shape occupies no space.
      * @return the shape
      */
-    fun punctiform(): GeometricShape<P>
+    fun punctiform(): GeometricShape2D<P>
 
     companion object {
         /**
-         * Retrieves a factory of {@link GeometricShape} compatible with the given {@link Position} type.
+         * Retrieves a factory of {@link GeometricShape2D} compatible with the given {@link Position} type.
          * Meant for java compatibility.
          *
          * @param <P> The type of the {@link Position}
@@ -55,19 +56,19 @@ interface GeometricShapeFactory<P : Position<P>> {
          */
         @JvmStatic
         @Suppress("UNCHECKED_CAST")
-        fun <P : Position<P>> getInstance(type: Class<P>): GeometricShapeFactory<P> =
+        fun <P : Position2D<P>> getInstance(type: Class<P>): GeometricShape2DFactory<P> =
             when (type) {
-                Euclidean2DPosition::class.java -> AwtGeometricShapeFactory()
-                else -> throw NotImplementedError("GeometricShapeFactory<" + type.simpleName + "> isn't implemented yet")
-            } as GeometricShapeFactory<P>
+                Euclidean2DPosition::class.java -> AwtGeometricShape2DFactory()
+                else -> throw NotImplementedError("GeometricShape2DFactory<" + type.simpleName + "> isn't implemented yet")
+            } as GeometricShape2DFactory<P>
 
         /**
-         * Retrieves a factory of {@link GeometricShape} compatible with the given {@link Position} type.
+         * Retrieves a factory of {@link GeometricShape2D} compatible with the given {@link Position} type.
          *
          * @param <P> The type of the {@link Position}
          * @return the factory
          */
-        inline fun <reified P : Position<P>> getInstance(): GeometricShapeFactory<P> =
+        inline fun <reified P : Position2D<P>> getInstance(): GeometricShape2DFactory<P> =
             getInstance(P::class.java)
     }
 }

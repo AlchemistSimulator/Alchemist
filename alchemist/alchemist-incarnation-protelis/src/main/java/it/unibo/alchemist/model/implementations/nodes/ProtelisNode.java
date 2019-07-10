@@ -95,7 +95,7 @@ public final class ProtelisNode<P extends Position<? extends P>> extends Abstrac
         return Optional.ofNullable(getConcentration(mid))
             .orElse(environment.getLayer(mid)
                     .map(it -> it.getValue(environment.getPosition(this)))
-                    .orElseThrow());
+                    .orElse(null));
     }
 
     @Override

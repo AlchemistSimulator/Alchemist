@@ -7,16 +7,29 @@
  */
 package it.unibo.alchemist.boundary.monitors;
 
+import static it.unibo.alchemist.boundary.gui.AlchemistSwingUI.DEFAULT_ICON_SIZE;
+import static it.unibo.alchemist.boundary.gui.AlchemistSwingUI.loadScaledImage;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.util.concurrent.Semaphore;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.border.LineBorder;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
-import java.awt.*;
-import java.util.concurrent.Semaphore;
-import javax.swing.*;
-import javax.swing.border.LineBorder;
 
 import static it.unibo.alchemist.boundary.gui.AlchemistSwingUI.DEFAULT_ICON_SIZE;
 import static it.unibo.alchemist.boundary.gui.AlchemistSwingUI.loadScaledImage;
@@ -26,6 +39,7 @@ import static it.unibo.alchemist.boundary.gui.AlchemistSwingUI.loadScaledImage;
  *            Concentration type
  */
 @Deprecated
+@SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")
 public class TimeStepMonitor<T, P extends Position<? extends P>> extends JPanel implements OutputMonitor<T, P> {
 
     private static final long serialVersionUID = 5818408644038869442L;
@@ -110,7 +124,7 @@ public class TimeStepMonitor<T, P extends Position<? extends P>> extends JPanel 
             if (needsUpdate) {
                 needsUpdate = false;
                 t.setText(time + (isFinished ? FINISHED : BLANK));
-                s.setText(Long.toString(step) + (isFinished ? FINISHED : BLANK));
+                s.setText(step + (isFinished ? FINISHED : BLANK));
             }
         });
     }

@@ -62,6 +62,7 @@ import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 
 import com.google.common.collect.ImmutableList;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.math3.util.Pair;
 import org.danilopianini.lang.LangUtils;
 import org.slf4j.Logger;
@@ -75,6 +76,7 @@ import org.slf4j.LoggerFactory;
  * @param <P>
  */
 @Deprecated
+@SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")
 public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel implements Graphical2DOutputMonitor<T, P> {
 
     /**
@@ -128,12 +130,12 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     private long timeInit = System.currentTimeMillis();
     private transient BidimensionalWormhole<P> wormhole;
     private transient ZoomManager zoomManager;
-    private transient boolean isPreviousStateMarking = true;
+    private boolean isPreviousStateMarking = true;
     private ViewStatus status = ViewStatus.VIEW_WITH_MARKER;
-    private transient boolean isDraggingMouse;
-    private transient Optional<Point> originPoint = Optional.empty();
-    private transient Optional<Point> endingPoint = Optional.empty();
-    private transient Set<Node<T>> selectedNodes = new HashSet<>();
+    private boolean isDraggingMouse;
+    private Optional<Point> originPoint = Optional.empty();
+    private Optional<Point> endingPoint = Optional.empty();
+    private Set<Node<T>> selectedNodes = new HashSet<>();
 
     /**
      * Initializes a new display with out redrawing the first step.

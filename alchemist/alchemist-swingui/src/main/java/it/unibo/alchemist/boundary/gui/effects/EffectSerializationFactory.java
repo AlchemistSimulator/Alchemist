@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.boundary.gui.effects;
 
+import com.google.common.base.Charsets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
@@ -15,10 +16,14 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import it.unibo.alchemist.SupportedIncarnations;
+
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -51,7 +56,7 @@ public final class EffectSerializationFactory {
 
                         @Override
                         public ImmutableCollectionWithCurrentElement<?> read(final JsonReader in) throws IOException {
-                            return new ImmutableCollectionWithCurrentElement<String>(
+                            return new ImmutableCollectionWithCurrentElement<>(
                                     SupportedIncarnations.getAvailableIncarnations(), in.nextString());
                         }
                     })
@@ -76,7 +81,7 @@ public final class EffectSerializationFactory {
     @SuppressWarnings("unchecked")
     public static List<Effect> effectsFromFile(final File effectFile) throws IOException, ClassNotFoundException {
         // Try to deserialize a JSON file at first
-        final Reader fr = new FileReader(effectFile);
+        final Reader fr = new InputStreamReader(new FileInputStream(effectFile), Charsets.UTF_8);
         try {
             final List<Effect> effects = GSON.fromJson(fr, new TypeToken<List<Effect>>() {
             }.getType());
@@ -86,7 +91,7 @@ public final class EffectSerializationFactory {
             fr.close();
             final Object res = FileUtilities.fileToObject(effectFile);
             if (res instanceof Effect) {
-                final List<Effect> effects = new ArrayList<Effect>();
+                final List<Effect> effects = new ArrayList<>();
                 effects.add((Effect) res);
                 return effects;
             }
@@ -106,7 +111,7 @@ public final class EffectSerializationFactory {
      *             Exception in handling the file
      */
     public static void effectToFile(final File effectFile, final Effect effect) throws IOException {
-        final List<Effect> effects = new ArrayList<Effect>();
+        final List<Effect> effects = new ArrayList<>();
         effects.add(effect);
         effectsToFile(effectFile, effects);
     }
@@ -122,7 +127,7 @@ public final class EffectSerializationFactory {
      *             Exception in handling the file
      */
     public static void effectsToFile(final File effectFile, final List<Effect> effects) throws IOException {
-        try (Writer fw = new FileWriter(effectFile)) {
+        try (Writer fw = new OutputStreamWriter(new FileOutputStream(effectFile), Charsets.UTF_8)) {
             GSON.toJson(effects, new TypeToken<List<Effect>>() {
             }.getType(), fw);
         }

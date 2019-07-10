@@ -3,8 +3,8 @@ git:
   depth: false
 os:
   - osx
-  - linux
   - windows
+  - linux
 dist: xenial
 addons:
   apt:

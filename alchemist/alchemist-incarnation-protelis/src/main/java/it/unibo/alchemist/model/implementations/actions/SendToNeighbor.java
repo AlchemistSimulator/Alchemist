@@ -7,15 +7,15 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  */
@@ -33,7 +33,7 @@ public final class SendToNeighbor extends AbstractAction<Object> {
      * @param program
      *            the reference {@link RunProtelisProgram}
      */
-    public SendToNeighbor(final ProtelisNode node, final Reaction<Object> reaction, final RunProtelisProgram<?> program) {
+    public SendToNeighbor(final ProtelisNode<?> node, final Reaction<Object> reaction, final RunProtelisProgram<?> program) {
         super(node);
         this.reaction = Objects.requireNonNull(reaction);
         prog = Objects.requireNonNull(program);
@@ -72,8 +72,8 @@ public final class SendToNeighbor extends AbstractAction<Object> {
     }
 
     @Override
-    public ProtelisNode getNode() {
-        return (ProtelisNode) super.getNode();
+    public ProtelisNode<?> getNode() {
+        return (ProtelisNode<?>) super.getNode();
     }
 
     /**

@@ -49,6 +49,7 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
         return new CellTensionPolarization<>(env, AlchemistUtil.cast(new TypeToken<CircularDeformableCell<P>>() { }, n));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void execute() {
         // get node position as array
@@ -143,6 +144,7 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public CircularDeformableCell<P> getNode() {
         return (CircularDeformableCell<P>) super.getNode();
     }

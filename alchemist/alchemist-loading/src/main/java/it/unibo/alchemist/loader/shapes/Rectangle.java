@@ -7,12 +7,16 @@
  */
 package it.unibo.alchemist.loader.shapes;
 
+import it.unibo.alchemist.model.interfaces.Position2D;
+
 import java.awt.geom.Rectangle2D;
 
 /**
  * A Rectangle.
+ *
+ * @param <P> position type
  */
-public class Rectangle extends Abstract2DShape {
+public class Rectangle<P extends Position2D<P>> extends Abstract2DShape<P> {
 
     /**
      * @param x

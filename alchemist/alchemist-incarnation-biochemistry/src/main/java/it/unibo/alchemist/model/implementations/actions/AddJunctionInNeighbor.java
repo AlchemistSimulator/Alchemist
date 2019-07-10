@@ -65,6 +65,7 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
      * Create the junction that links the target node and the node when this action is executed. 
      */
     @Override
+    @SuppressWarnings("unchecked")
     public void execute(final Node<Double> targetNode) {
         if (targetNode instanceof CellNode) {
             ((CellNode<P>) targetNode).addJunction(jun, getNode());
@@ -79,6 +80,7 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public CellNode<P> getNode() {
         return (CellNode<P>) super.getNode();
     }

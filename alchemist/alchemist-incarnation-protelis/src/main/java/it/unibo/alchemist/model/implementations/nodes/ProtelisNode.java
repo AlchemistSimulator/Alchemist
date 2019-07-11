@@ -93,7 +93,9 @@ public final class ProtelisNode<P extends Position<? extends P>> extends Abstrac
     public Object get(final String id) {
         final Molecule mid = makeMol(id);
         return Optional.ofNullable(getConcentration(mid))
-            .orElse(environment.getLayer(mid).map(it -> it.getValue(environment.getPosition(this))));
+            .orElse(environment.getLayer(mid)
+                    .map(it -> it.getValue(environment.getPosition(this)))
+                    .orElse(null));
     }
 
     @Override

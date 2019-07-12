@@ -11,28 +11,18 @@
  */
 package it.unibo.alchemist.model.implementations.nodes;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Spliterator;
+import com.google.common.collect.MapMaker;
+import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
+import it.unibo.alchemist.model.interfaces.*;
+import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment;
+import it.unibo.alchemist.model.interfaces.geometry.GeometricShape;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
-
-import com.google.common.collect.MapMaker;
-import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
-
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Molecule;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.Time;
-import org.jetbrains.annotations.NotNull;
 
 
 /**
@@ -53,6 +43,7 @@ public abstract class AbstractNode<T> implements Node<T> {
             .maximumWeightedCapacity(Long.MAX_VALUE)
             .concurrencyLevel(2)
             .build();
+    private final GeometricShape<?, ?> shape;
 
     private static int idFromEnv(final Environment<?, ?> env) {
         MUTEX.acquireUninterruptibly();
@@ -71,11 +62,18 @@ public abstract class AbstractNode<T> implements Node<T> {
      *            environment, always starting from 0.
      */
     public AbstractNode(final Environment<?, ?> env) {
-        this(idFromEnv(env));
+        this.id = idFromEnv(env);
+        if (env instanceof PhysicsEnvironment) {
+            shape = ((PhysicsEnvironment) env).getShapeFactory().adimensional();
+        } else {
+            // Note: this is safe if the node is not initialized with a different environment from the one it gets added to
+            shape = null;
+        }
     }
 
-    private AbstractNode(final int id) {
-        this.id = id;
+    @Override
+    public final GeometricShape<?, ?> getShape() {
+        return shape;
     }
 
     @Override

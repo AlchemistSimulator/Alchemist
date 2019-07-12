@@ -2,18 +2,25 @@ package it.unibo.alchemist.model.implementations.geometry
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.AwtShapeCompatible
-import it.unibo.alchemist.model.interfaces.geometry.GeometricShape2D
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShape
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
 import java.awt.Shape
 import java.awt.geom.AffineTransform
 import java.awt.geom.Point2D
 
 /**
- * {@link GeometricShape2D} delegated to java.awt.geom.
+ * {@link GeometricShape} delegated to java.awt.geom.
  */
 internal class AwtGeometricShape2D(
     private val shape: Shape,
     private val origin: Euclidean2DPosition = Euclidean2DPosition(0.0, 0.0)
-) : GeometricShape2D<Euclidean2DPosition>, AwtShapeCompatible {
+) : Euclidean2DShape, AwtShapeCompatible {
+
+    override fun transformed(transformation: Euclidean2DTransformation.() -> Unit): Euclidean2DShape {
+        val t = MyTransformation()
+        transformation.invoke(t)
+        return t.execute()
+    }
 
     override val diameter: Double by lazy {
         val rect = shape.bounds2D
@@ -29,7 +36,7 @@ internal class AwtGeometricShape2D(
     override fun contains(point: Euclidean2DPosition) =
         shape.contains(Point2D.Double(point.x, point.y))
 
-    override fun intersects(other: GeometricShape2D<Euclidean2DPosition>) =
+    override fun intersects(other: Euclidean2DShape) =
         when (other) {
             /*
              checking for other.shape.intersects(shape.bounds2D) means that every shape becomes a rectangle.
@@ -37,20 +44,22 @@ internal class AwtGeometricShape2D(
              The asymmetry is tolerated in favour of a half-good implementation.
              */
             is AwtGeometricShape2D -> shape.intersects(other.shape.bounds2D) // || other.shape.intersects(shape.bounds2D)
-            is PunctiformShape -> false
+            is AdimensionalShape -> false
             else -> throw UnsupportedOperationException("AwtGeometricShape2D only works with other AwtGeometricShape2D")
         }
 
-    override fun withOrigin(position: Euclidean2DPosition): GeometricShape2D<Euclidean2DPosition> {
-        val tr = AffineTransform()
-        val offset = position - origin
-        tr.translate(offset.x, offset.y)
-        return AwtGeometricShape2D(tr.createTransformedShape(shape), position)
-    }
+    private inner class MyTransformation : Euclidean2DTransformation {
+        private val transform = AffineTransform()
 
-    override fun rotate(radians: Double): GeometricShape2D<Euclidean2DPosition> {
-        val tr = AffineTransform()
-        tr.rotate(radians, origin.x, origin.y)
-        return AwtGeometricShape2D(tr.createTransformedShape(shape), origin)
+        override fun origin(position: Euclidean2DPosition) {
+            val offset = position - origin
+            transform.translate(offset.x, offset.y)
+        }
+
+        override fun rotate(angle: Double) {
+            transform.rotate(angle, origin.x, origin.y)
+        }
+
+        fun execute() = AwtGeometricShape2D(transform.createTransformedShape(shape))
     }
 }

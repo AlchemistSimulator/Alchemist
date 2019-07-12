@@ -7,6 +7,8 @@
  */
 package it.unibo.alchemist.model.interfaces;
 
+import it.unibo.alchemist.model.interfaces.geometry.GeometricShape;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +20,13 @@ import java.util.Map;
  *            This interface must be implemented in every realization of node
  */
 public interface Node<T> extends Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
+
+    /**
+     * The shape of the node, used in environments supporting geometry and physics.
+     *
+     * @return the shape
+     */
+    GeometricShape<?, ?> getShape();
 
     /**
      * Adds a reaction to this node.

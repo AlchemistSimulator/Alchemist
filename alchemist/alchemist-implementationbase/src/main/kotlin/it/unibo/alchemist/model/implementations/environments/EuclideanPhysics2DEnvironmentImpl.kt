@@ -1,25 +1,26 @@
 package it.unibo.alchemist.model.implementations.environments
 
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Neighborhood
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Position2D
+import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
-import it.unibo.alchemist.model.interfaces.geometry.GeometricShape2D
+import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShape
 
 /**
- * Base class for {@link Physics2DEnvironment}
+ * Base class for {@link EuclideanPhysics2DEnvironmentImpl}
  */
-abstract class AbstractPhysics2DEnvironment<T, P : Position2D<P>> : Abstract2DEnvironment<T, P>(), Physics2DEnvironment<T, P> {
+abstract class AbstractEuclideanPhysics2DEnvironment<T> : Abstract2DEnvironment<T, Euclidean2DPosition>(), EuclideanPhysics2DEnvironment<T> {
 
     /**
      * The default heading for a node.
      */
-    protected val defaultHeading = 0.0
-    private val nodeToShape = mutableMapOf<Node<T>, GeometricShape2D<P>>()
-    private val nodeToHeading = mutableMapOf<Node<T>, Double>()
+    protected val defaultHeading = Euclidean2DPosition(0.0, 0.0)
+    private val nodeToHeading = mutableMapOf<Node<T>, Euclidean2DPosition>()
     private var largestShapeDiameter: Double = 0.0
 
-    override fun getNodesWithin(shape: GeometricShape2D<P>): List<Node<T>> =
+    override fun getNodesWithin(shape: Euclidean2DShape): List<Node<T>> =
         if (shape.diameter <= 0) emptyList()
         else getNodesWithinRange(shape.centroid, (shape.diameter + largestShapeDiameter) / 2)
             .filter { shape.intersects(getShape(it)) }
@@ -27,23 +28,19 @@ abstract class AbstractPhysics2DEnvironment<T, P : Position2D<P>> : Abstract2DEn
     override fun getHeading(node: Node<T>) =
         nodeToHeading.getOrPut(node, { defaultHeading })
 
-    override fun setHeading(node: Node<T>, radians: Double) {
+    override fun setHeading(node: Node<T>, direction: Euclidean2DPosition) {
         val oldHeading = getHeading(node)
         getPosition(node)?.also {
-            nodeToHeading[node] = radians
+            nodeToHeading[node] = direction
             if (!canNodeFitPosition(node, it)) {
                 nodeToHeading[node] = oldHeading
             }
         }
     }
 
-    override fun setShape(node: Node<T>, shape: GeometricShape2D<P>) {
-        nodeToShape[node] = shape
-    }
-
-    override fun getShape(node: Node<T>): GeometricShape2D<P> =
+    override fun getShape(node: Node<T>): GeometricShape<P> =
         nodeToShape.getOrPut(node, this::getDefaultShape)
-            .rotate(getHeading(node))
+            .rotated(getHeading(node))
             .withOrigin(if (nodes.contains(node)) getPosition(node) else getDefaultOrigin())
 
     /**
@@ -84,7 +81,7 @@ abstract class AbstractPhysics2DEnvironment<T, P : Position2D<P>> : Abstract2DEn
      * @return the default shape for nodes without one
      */
     protected fun getDefaultShape() =
-        shapeFactory.punctiform()
+        shapeFactory.adimensional()
 
     /**
      * @return the default origin for nodes' shapes not yet added

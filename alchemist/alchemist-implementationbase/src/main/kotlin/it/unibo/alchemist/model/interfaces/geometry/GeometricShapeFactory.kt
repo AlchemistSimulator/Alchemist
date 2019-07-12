@@ -5,7 +5,7 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Position2D
 
 /**
- * Factory for {@link GeometricShape2D}.
+ * Factory for {@link GeometricShape}.
  */
 interface GeometricShape2DFactory<P : Position2D<P>> {
 
@@ -15,7 +15,7 @@ interface GeometricShape2DFactory<P : Position2D<P>> {
      * @param radius the radius
      * @return the shape
      */
-    fun circle(radius: Double): GeometricShape2D<P>
+    fun circle(radius: Double): GeometricShape<P>
 
     /**
      * A rectangle extends in the first and second axis by its width and height.
@@ -24,7 +24,7 @@ interface GeometricShape2DFactory<P : Position2D<P>> {
      * @param height the height
      * @return the shape
      */
-    fun rectangle(width: Double, height: Double): GeometricShape2D<P>
+    fun rectangle(width: Double, height: Double): GeometricShape<P>
 
     /**
      * A circle sector is the portion of a disk enclosed by two radii and an arc
@@ -37,17 +37,17 @@ interface GeometricShape2DFactory<P : Position2D<P>> {
      *                  It's used to determine the sector's heading.
      * @return the shape
      */
-    fun circleSector(radius: Double, angle: Double, heading: Double): GeometricShape2D<P>
+    fun circleSector(radius: Double, angle: Double, heading: Double): GeometricShape<P>
 
     /**
      * A punctiform shape occupies no space.
      * @return the shape
      */
-    fun punctiform(): GeometricShape2D<P>
+    fun punctiform(): GeometricShape<P>
 
     companion object {
         /**
-         * Retrieves a factory of {@link GeometricShape2D} compatible with the given {@link Position} type.
+         * Retrieves a factory of {@link GeometricShape} compatible with the given {@link Position} type.
          * Meant for java compatibility.
          *
          * @param <P> The type of the {@link Position}
@@ -63,7 +63,7 @@ interface GeometricShape2DFactory<P : Position2D<P>> {
             } as GeometricShape2DFactory<P>
 
         /**
-         * Retrieves a factory of {@link GeometricShape2D} compatible with the given {@link Position} type.
+         * Retrieves a factory of {@link GeometricShape} compatible with the given {@link Position} type.
          *
          * @param <P> The type of the {@link Position}
          * @return the factory
@@ -72,3 +72,5 @@ interface GeometricShape2DFactory<P : Position2D<P>> {
             getInstance(P::class.java)
     }
 }
+
+

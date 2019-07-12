@@ -1,5 +1,6 @@
-package it.unibo.alchemist.model.implementations.geometry
+package it.unibo.alchemist.model.implementations.geometry.euclidean.twod
 
+import it.unibo.alchemist.model.implementations.geometry.AdimensionalShape
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.AwtShapeCompatible
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShape
@@ -11,7 +12,7 @@ import java.awt.geom.Point2D
 /**
  * {@link GeometricShape} delegated to java.awt.geom.
  */
-internal class AwtGeometricShape2D(
+internal class AwtEuclidean2DShape(
     private val shape: Shape,
     private val origin: Euclidean2DPosition = Euclidean2DPosition(0.0, 0.0)
 ) : Euclidean2DShape, AwtShapeCompatible {
@@ -43,9 +44,9 @@ internal class AwtGeometricShape2D(
              not checking for it results in paradoxes like shape.intersects(other) != other.intersects(shape).
              The asymmetry is tolerated in favour of a half-good implementation.
              */
-            is AwtGeometricShape2D -> shape.intersects(other.shape.bounds2D) // || other.shape.intersects(shape.bounds2D)
+            is AwtEuclidean2DShape -> shape.intersects(other.shape.bounds2D) // || other.shape.intersects(shape.bounds2D)
             is AdimensionalShape -> false
-            else -> throw UnsupportedOperationException("AwtGeometricShape2D only works with other AwtGeometricShape2D")
+            else -> throw UnsupportedOperationException("AwtEuclidean2DShape only works with other AwtEuclidean2DShape")
         }
 
     private inner class MyTransformation : Euclidean2DTransformation {
@@ -60,6 +61,6 @@ internal class AwtGeometricShape2D(
             transform.rotate(angle, origin.x, origin.y)
         }
 
-        fun execute() = AwtGeometricShape2D(transform.createTransformedShape(shape))
+        fun execute() = AwtEuclidean2DShape(transform.createTransformedShape(shape))
     }
 }

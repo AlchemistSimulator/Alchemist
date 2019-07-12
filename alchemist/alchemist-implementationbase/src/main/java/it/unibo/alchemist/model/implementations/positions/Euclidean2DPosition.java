@@ -6,19 +6,17 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-/**
- * 
- */
 package it.unibo.alchemist.model.implementations.positions;
 
 import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.interfaces.geometry.Vector;
 
 /**
  * 
  */
 public final class Euclidean2DPosition
         extends AbstractEuclideanPosition<Euclidean2DPosition>
-        implements Position2D<Euclidean2DPosition> {
+    implements Position2D<Euclidean2DPosition>, Vector<Euclidean2DPosition> {
 
     private static final long serialVersionUID = 1042391992665398942L;
 
@@ -60,5 +58,4 @@ public final class Euclidean2DPosition
     protected Euclidean2DPosition unsafeConstructor(final double[] coordinates) {
         return new Euclidean2DPosition(false, coordinates[0], coordinates[1]);
     }
-
 }

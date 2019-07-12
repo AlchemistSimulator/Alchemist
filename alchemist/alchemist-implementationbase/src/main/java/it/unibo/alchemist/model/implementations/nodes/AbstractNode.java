@@ -71,8 +71,13 @@ public abstract class AbstractNode<T> implements Node<T> {
         }
     }
 
+    /**
+     * Override to provide a different shape than the default adimensional one.
+     *
+     * @return the shape of this node.
+     */
     @Override
-    public final GeometricShape<?, ?> getShape() {
+    public GeometricShape<?, ?> getShape() {
         return shape;
     }
 

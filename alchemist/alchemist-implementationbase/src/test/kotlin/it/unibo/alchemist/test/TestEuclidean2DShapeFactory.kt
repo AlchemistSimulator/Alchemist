@@ -4,19 +4,19 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.FreeSpec
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.Position2D
-import it.unibo.alchemist.model.interfaces.geometry.GeometricShape2DFactory
+import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShapeFactory
 
 private const val DEFAULT_SHAPE_SIZE: Double = 1.0
 
-private val factory = GeometricShape2DFactory.getInstance(Euclidean2DPosition::class.java)
+private val factory: Euclidean2DShapeFactory = GeometricShapeFactory.getInstance()
 
-private fun <T : Position2D<T>> GeometricShape2DFactory<T>.oneOfEachWithSize(size: Double) =
+private fun Euclidean2DShapeFactory.oneOfEachWithSize(size: Double) =
     mapOf(
         "circle" to circle(size * 2),
         "circleSector" to circleSector(size * 2, Math.PI, 0.0),
         "rectangle" to rectangle(size, size),
-        "punctiform" to punctiform()
+        "adimensional" to adimensional()
     )
 
 // TODO: spotbugs reports: AbstractFreeSpec$FreeSpecScope stored into non-transient field TestIntersectionSymmetry
@@ -29,7 +29,7 @@ class TestIntersectionSymmetry : FreeSpec({
         val firsts = factory.oneOfEachWithSize(DEFAULT_SHAPE_SIZE)
         val seconds = firsts.mapValues {
             // puts the other shapes in a corner to test "edge" cases
-            it.value.withOrigin(Euclidean2DPosition(DEFAULT_SHAPE_SIZE * 2, DEFAULT_SHAPE_SIZE * 2))
+            it.value.transformed { origin(Euclidean2DPosition(DEFAULT_SHAPE_SIZE * 2, DEFAULT_SHAPE_SIZE * 2)) }
         }
         val names = firsts.keys.toList()
         for (f in 0 until names.size) {

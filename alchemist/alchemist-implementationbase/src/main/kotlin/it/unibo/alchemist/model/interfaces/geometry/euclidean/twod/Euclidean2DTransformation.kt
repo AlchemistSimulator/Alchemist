@@ -23,4 +23,10 @@ interface Euclidean2DTransformation : GeometricTransformation<Euclidean2DPositio
      */
     fun rotate(direction: Euclidean2DPosition) =
         rotate(atan2(direction.y, direction.x))
+
+    /**
+     * {@see rotate}
+     */
+    fun origin(x: Double, y: Double) =
+        origin(Euclidean2DPosition(x, y))
 }

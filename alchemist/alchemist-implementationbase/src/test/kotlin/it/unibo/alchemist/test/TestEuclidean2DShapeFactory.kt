@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTr
 private val factory: Euclidean2DShapeFactory = GeometricShapeFactory.getInstance()
 
 
+@SuppressFBWarnings("UWF_NULL_FIELD")
 private val fakeShape = object : Euclidean2DShape {
     override val diameter = 0.0
     override val centroid = Euclidean2DPosition(0.0, 0.0)
@@ -22,7 +23,7 @@ private val fakeShape = object : Euclidean2DShape {
     override fun transformed(transformation: Euclidean2DTransformation.() -> Unit) = this
 }
 
-// TODO: spotbugs reports: AbstractFreeSpec$FreeSpecScope stored into non-transient field TestIntersectionSymmetry
+// spotbugs reports: AbstractFreeSpec$FreeSpecScope stored into non-transient field TestIntersectionSymmetry
 @SuppressFBWarnings("SE_BAD_FIELD_STORE")
 @Suppress("MapGetWithNotNullAssertionOperator")
 class TestEuclidean2DShapeFactory : FreeSpec({

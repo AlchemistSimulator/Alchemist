@@ -1,5 +1,6 @@
 package it.unibo.alchemist.test
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.FreeSpec
 import it.unibo.alchemist.model.implementations.geometry.AdimensionalShape
@@ -8,6 +9,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSh
 
 private val factory: Euclidean2DShapeFactory = GeometricShapeFactory.getInstance()
 
+@SuppressFBWarnings("SE_BAD_FIELD_STORE")
 class TestEuclidean2DTransformation : FreeSpec({
     "Test origin" - {
         factory.oneOfEachWithSize(DEFAULT_SHAPE_SIZE)

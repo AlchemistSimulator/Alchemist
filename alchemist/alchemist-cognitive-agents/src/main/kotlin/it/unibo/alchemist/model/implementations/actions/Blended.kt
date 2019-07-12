@@ -1,5 +1,7 @@
 package it.unibo.alchemist.model.implementations.actions
 
+import it.unibo.alchemist.model.implementations.actions.utils.makePosition
+import it.unibo.alchemist.model.implementations.actions.utils.times
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
@@ -17,7 +19,7 @@ open class Blended<T, P : Position<P>> @JvmOverloads constructor(
             with(map { it.nextPosition() to it.target().getDistanceTo(currentPosition) }) {
                 val totalDistance = map { it.second }.sum()
                 filter { totalDistance > 0 }.map {
-                    env.makePosition(*(it.first * (1 - (it.second / totalDistance))))
+                    env.makePosition(it.first * (1 - (it.second / totalDistance)))
                 }.fold(currentPosition) { accumulator, position -> accumulator + position }
             }
         } else firstOrNull()?.let { currentPosition + it.nextPosition() } ?: currentPosition
@@ -28,6 +30,3 @@ open class Blended<T, P : Position<P>> @JvmOverloads constructor(
     TargetSelectionStrategy { actions.formula() },
     SpeedSelectionStrategy { pedestrian.walkingSpeed }
 )
-
-private operator fun <P : Position<P>> P.times(n: Double) =
-    this.cartesianCoordinates.map { it * n }.toTypedArray()

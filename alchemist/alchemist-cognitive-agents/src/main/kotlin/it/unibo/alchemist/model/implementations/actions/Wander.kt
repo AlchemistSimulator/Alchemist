@@ -1,5 +1,7 @@
 package it.unibo.alchemist.model.implementations.actions
 
+import it.unibo.alchemist.model.implementations.actions.utils.makePosition
+import it.unibo.alchemist.model.implementations.actions.utils.nextDouble
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
@@ -16,9 +18,7 @@ open class Wander<T, P : Position<P>>(
     env,
     pedestrian,
     TargetSelectionStrategy { with(env) {
-        getPosition(pedestrian) + makePosition(*(1..dimensions).map { (rg.nextDouble(-1.0, 1.0)) * radius }.toTypedArray())
+        getPosition(pedestrian) + makePosition((1..dimensions).map { (rg.nextDouble(-1.0, 1.0)) * radius }.toTypedArray())
     } },
     SpeedSelectionStrategy { pedestrian.walkingSpeed }
 )
-
-private fun RandomGenerator.nextDouble(from: Double, to: Double) = nextDouble() * (to - from) - to

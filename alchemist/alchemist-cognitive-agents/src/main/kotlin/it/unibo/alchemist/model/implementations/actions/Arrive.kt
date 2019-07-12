@@ -1,5 +1,6 @@
 package it.unibo.alchemist.model.implementations.actions
 
+import it.unibo.alchemist.model.implementations.actions.utils.makePosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
@@ -15,7 +16,7 @@ open class Arrive<T, P : Position<P>>(
 ) : SteeringActionImpl<T, P>(
     env,
     pedestrian,
-    TargetSelectionStrategy { env.makePosition(*coords.toTypedArray()) },
+    TargetSelectionStrategy { env.makePosition(coords.toTypedArray()) },
     SpeedSelectionStrategy {
         target -> with(env.getPosition(pedestrian).getDistanceTo(target)) {
             when {

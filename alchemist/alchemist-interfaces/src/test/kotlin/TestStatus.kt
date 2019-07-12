@@ -42,7 +42,6 @@ class TestStatus : StringSpec({
     }
 }) {
     companion object {
-        // Waiting for https://youtrack.jetbrains.com/issue/KT-32489 to get solved
         fun beReachableFrom(initial: Status) = object : Matcher<Status> {
             override fun test(value: Status) = Result(value.isReachableFrom(initial),
                 "$value should be reachable from $initial",

@@ -44,7 +44,7 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
     private boolean computationalCycleComplete;
     private final Environment<Object, P> environment;
     private final Molecule name;
-    private final ProtelisNode node;
+    private final ProtelisNode<P> node;
     private String originalProgram = "unknown";
     private final org.protelis.vm.ProtelisProgram program;
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All the random engines provided by Apache are Serializable")
@@ -55,7 +55,7 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
 
     private RunProtelisProgram(
             final Environment<Object, P> env,
-            final ProtelisNode n,
+            final ProtelisNode<P> n,
             final Reaction<Object> r,
             final RandomGenerator rand,
             final org.protelis.vm.ProtelisProgram prog,
@@ -89,7 +89,7 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
      */
     public RunProtelisProgram(
             final Environment<Object, P> env,
-            final ProtelisNode n,
+            final ProtelisNode<P> n,
             final Reaction<Object> r,
             final RandomGenerator rand,
             final String program) throws SecurityException {
@@ -115,7 +115,7 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
      */
     public RunProtelisProgram(
             final Environment<Object, P> env,
-            final ProtelisNode n,
+            final ProtelisNode<P> n,
             final Reaction<Object> r,
             final RandomGenerator rand,
             final String program,
@@ -132,10 +132,11 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public final RunProtelisProgram<P> cloneAction(final Node<Object> n, final Reaction<Object> r) {
         if (n instanceof ProtelisNode) {
             try {
-                return new RunProtelisProgram<>(getEnvironment(), (ProtelisNode) n, r, getRandomGenerator(), originalProgram, getRetentionTime());
+                return new RunProtelisProgram<>(getEnvironment(), (ProtelisNode<P>) n, r, getRandomGenerator(), originalProgram, getRetentionTime());
             } catch (SecurityException e) {
                 throw new IllegalStateException(e);
             }

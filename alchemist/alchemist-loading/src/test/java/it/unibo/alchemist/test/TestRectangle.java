@@ -10,6 +10,7 @@ package it.unibo.alchemist.test;
 import it.unibo.alchemist.loader.shapes.Rectangle;
 import it.unibo.alchemist.loader.shapes.Shape;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,7 +25,7 @@ public class TestRectangle {
      */
     @Test
     public void test() {
-        final Shape s = new Rectangle(12, 44, 1, 1);
+        final Shape<GeoPosition> s = new Rectangle<>(12, 44, 1, 1);
         // CHECKSTYLE: MagicNumber OFF
         assertTrue(s.contains(new LatLongPosition(44.132300, 12.233000)));
         // CHECKSTYLE: MagicNumber ON

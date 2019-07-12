@@ -7,22 +7,21 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import org.junit.jupiter.api.Test;
-
 import it.unibo.alchemist.loader.shapes.Circle;
 import it.unibo.alchemist.loader.shapes.Shape;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
 public class TestCircle {
 
-    private final Shape s = new Circle(0, 0, 1);
+    private final Shape<GeoPosition> s = new Circle<>(0, 0, 1);
 
     /**
      * 
@@ -51,7 +50,7 @@ public class TestCircle {
         assertFalse(check(-outBorder, -outBorder));
     }
 
-    private static Position mkPos(final double x, final double y) {
+    private static GeoPosition mkPos(final double x, final double y) {
         return new LatLongPosition(y, x);
     }
 

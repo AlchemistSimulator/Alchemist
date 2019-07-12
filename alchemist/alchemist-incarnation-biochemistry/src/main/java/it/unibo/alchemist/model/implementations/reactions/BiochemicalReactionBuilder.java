@@ -8,29 +8,6 @@
 
 package it.unibo.alchemist.model.implementations.reactions;
 
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-
-import org.antlr.v4.runtime.ANTLRErrorListener;
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.Parser;
-import org.antlr.v4.runtime.RecognitionException;
-import org.antlr.v4.runtime.Recognizer;
-import org.antlr.v4.runtime.atn.ATNConfigSet;
-import org.antlr.v4.runtime.dfa.DFA;
-import org.antlr.v4.runtime.tree.ParseTree;
-import org.apache.commons.math3.random.RandomGenerator;
-import org.danilopianini.jirf.Factory;
-import org.danilopianini.jirf.FactoryBuilder;
-import org.jetbrains.annotations.NotNull;
-import org.kaikikm.threadresloader.ResourceLoader;
-
 import it.unibo.alchemist.biochemistrydsl.BiochemistrydslBaseVisitor;
 import it.unibo.alchemist.biochemistrydsl.BiochemistrydslLexer;
 import it.unibo.alchemist.biochemistrydsl.BiochemistrydslParser;
@@ -64,6 +41,27 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
+import org.antlr.v4.runtime.ANTLRErrorListener;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.atn.ATNConfigSet;
+import org.antlr.v4.runtime.dfa.DFA;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.danilopianini.jirf.Factory;
+import org.danilopianini.jirf.FactoryBuilder;
+import org.jetbrains.annotations.NotNull;
+import org.kaikikm.threadresloader.ResourceLoader;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class implements a builder for chemical reactions.
@@ -337,6 +335,7 @@ public class BiochemicalReactionBuilder<P extends Position<P>> {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public Reaction<Double> visitCreateJunctionJunction(final BiochemistrydslParser.CreateJunctionJunctionContext ctx) {
             final Junction j = createJunction(ctx.junction());
             j.getMoleculesInCurrentNode().forEach((k, v) -> {

@@ -9,7 +9,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSh
 /**
  * Implementation of {@link EuclideanPhysics2DEnvironment}
  */
-abstract class EuclideanPhysics2DEnvironmentImpl<T> : Abstract2DEnvironment<T, Euclidean2DPosition>(), EuclideanPhysics2DEnvironment<T> {
+class EuclideanPhysics2DEnvironmentImpl<T> : Abstract2DEnvironment<T, Euclidean2DPosition>(), EuclideanPhysics2DEnvironment<T> {
 
     /**
      * The default heading for a node.

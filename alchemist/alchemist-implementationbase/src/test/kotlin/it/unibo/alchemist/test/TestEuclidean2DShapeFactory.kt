@@ -2,10 +2,14 @@ package it.unibo.alchemist.test
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import io.kotlintest.shouldBe
+import io.kotlintest.shouldNotThrowAny
+import io.kotlintest.shouldThrow
 import io.kotlintest.specs.FreeSpec
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShapeFactory
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
 
 private const val DEFAULT_SHAPE_SIZE: Double = 1.0
 
@@ -19,13 +23,21 @@ private fun Euclidean2DShapeFactory.oneOfEachWithSize(size: Double) =
         "adimensional" to adimensional()
     )
 
+private val fakeShape = object : Euclidean2DShape {
+    override val diameter = 0.0
+    override val centroid = Euclidean2DPosition(0.0, 0.0)
+    override fun intersects(other: Euclidean2DShape) = true
+    override fun contains(vector: Euclidean2DPosition) = true
+    override fun transformed(transformation: Euclidean2DTransformation.() -> Unit) = this
+}
+
 // TODO: spotbugs reports: AbstractFreeSpec$FreeSpecScope stored into non-transient field TestIntersectionSymmetry
 @SuppressFBWarnings("SE_BAD_FIELD_STORE")
 @Suppress("MapGetWithNotNullAssertionOperator")
-class TestIntersectionSymmetry : FreeSpec({
+class TestEuclidean2DShapeFactory : FreeSpec({
     // the ! in front of the test name disables the test, it's currently disable as to not prevent the build from succeeding
     // TODO: enable it once a proper implementation of euclidean geometry is provided
-    "!" + factory.javaClass.simpleName - {
+    "!Shape.intersect simmetry" - {
         val firsts = factory.oneOfEachWithSize(DEFAULT_SHAPE_SIZE)
         val seconds = firsts.mapValues {
             // puts the other shapes in a corner to test "edge" cases
@@ -40,6 +52,16 @@ class TestIntersectionSymmetry : FreeSpec({
                     first.intersects(second) shouldBe second.intersects(first)
                 }
             }
+        }
+    }
+
+    "Test requireCompatible" {
+        shouldNotThrowAny {
+            factory.oneOfEachWithSize(DEFAULT_SHAPE_SIZE)
+                .values.forEach { factory.requireCompatible(it) }
+        }
+        shouldThrow<IllegalArgumentException> {
+            factory.requireCompatible(fakeShape)
         }
     }
 })

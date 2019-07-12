@@ -10,7 +10,17 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
- * Gives the impression of a random walk through the pedestrian's environment.
+ * Give the impression of a random walk through the environment.
+ *
+ * @param env
+ *          the environment inside which the pedestrian moves.
+ * @param pedestrian
+ *          the owner of this action.
+ * @param rg
+ *          the simulation {@link RandomGenerator}.
+ * @param radius
+ *          the radius of the circle with center in current pedestrian position
+ *          and inside which the target position is pseudo-randomly determined.
  */
 open class Wander<T, P : Position<P>>(
     private val env: Environment<T, P>,
@@ -21,7 +31,9 @@ open class Wander<T, P : Position<P>>(
     env,
     pedestrian,
     TargetSelectionStrategy { with(env) {
-        getPosition(pedestrian) + makePosition((1..dimensions).map { (rg.nextDouble(-1.0, 1.0)) * radius }.toTypedArray())
+        getPosition(pedestrian) + makePosition(
+            (1..dimensions).map { rg.nextDouble(-1.0, 1.0) * radius }.toTypedArray()
+        )
     } },
     SpeedSelectionStrategy { pedestrian.walkingSpeed }
 )

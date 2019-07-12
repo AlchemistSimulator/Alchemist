@@ -11,6 +11,15 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
 
 /**
  * Combination of multiple steering actions.
+ *
+ * @param env
+ *          the environment inside which the pedestrian moves.
+ * @param pedestrian
+ *          the owner of this action.
+ * @param actions
+ *          the list of actions to combine to determine the pedestrian movement.
+ * @param formula
+ *          the logic according to the actions inside the list are combined.
  */
 open class Blended<T, P : Position<P>> @JvmOverloads constructor(
     env: Environment<T, P>,

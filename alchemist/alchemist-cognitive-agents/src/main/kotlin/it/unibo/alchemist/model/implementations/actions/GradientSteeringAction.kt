@@ -13,6 +13,20 @@ private const val QUANTITY_OF_POINTS = 6
 
 /**
  * Generic implementation of an action influenced by the concentration of a given molecule in the environment.
+ *
+ * @param env
+ *          the environment inside which the pedestrian moves.
+ * @param pedestrian
+ *          the owner of this action.
+ * @param targetMolecule
+ *          the {@link Molecule} you want to know the concentration in the different positions of the environment.
+ * @param rg
+ *          the simulation {@link RandomGenerator}.
+ * @param radius
+ *          the distance all the positions where the molecule concentration is checked
+ *          must have from the current pedestrian position.
+ * @param formula
+ *          the logic according to the target position is determined from all the positions checked.
  */
 open class GradientSteeringAction<T, P : Position2D<P>>(
     env: Environment<T, P>,

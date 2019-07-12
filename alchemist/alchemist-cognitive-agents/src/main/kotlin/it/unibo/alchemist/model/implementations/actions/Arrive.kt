@@ -8,14 +8,25 @@ import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
 /**
- * Moves the agent towards a target position.
+ * Move the agent towards a target position.
  * It is similar to Seek but it attempts to arrive at the target position with a zero velocity.
+ *
+ * @param env
+ *          the environment inside which the pedestrian moves.
+ * @param pedestrian
+ *          the owner of this action.
+ * @param decelerationRadius
+ *          the distance from which the pedestrian starts to decelerate.
+ * @param arrivalTolerance
+ *          the distance at which the pedestrian is considered arrived to the target.
+ * @param coords
+ *          the coordinates of the position the pedestrian moves towards.
  */
 open class Arrive<T, P : Position<P>>(
     env: Environment<T, P>,
     pedestrian: Pedestrian<T>,
-    decelerationRadius: Double, // the distance from which the pedestrian starts to decelerate
-    arrivalTolerance: Double, // the distance at which the pedestrian is considered arrived to the current target
+    decelerationRadius: Double,
+    arrivalTolerance: Double,
     vararg coords: Double
 ) : SteeringActionImpl<T, P>(
     env,

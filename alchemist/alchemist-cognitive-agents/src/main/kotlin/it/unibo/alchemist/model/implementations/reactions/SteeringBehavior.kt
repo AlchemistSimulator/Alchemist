@@ -9,6 +9,16 @@ import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.model.interfaces.TimeDistribution
 
+/**
+ * Reaction representing the steering behaviors of a pedestrian.
+ *
+ * @param env
+ *          the environment inside which the pedestrian moves.
+ * @param pedestrian
+ *          the owner of this reaction.
+ * @param timeDistribution
+ *          the time distribution according to this the reaction executes.
+ */
 class SteeringBehavior<T, P : Position<P>>(
     private val env: Environment<T, P>,
     private val pedestrian: Pedestrian<T>,

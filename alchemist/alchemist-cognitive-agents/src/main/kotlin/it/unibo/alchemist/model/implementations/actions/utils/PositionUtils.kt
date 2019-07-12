@@ -13,13 +13,25 @@ import kotlin.math.sin
 fun <T, P : Position<P>> Environment<T, P>.makePosition(coords: Array<Double>): P = makePosition(*coords)
 
 /**
- * Multiply each coordinate of this position by the given number.
+ * Multiply each coordinate of this position by a number.
+ *
+ * @param n
+ *          the second factor of each multiplication.
  */
 operator fun <P : Position<P>> P.times(n: Double) =
         this.cartesianCoordinates.map { it * n }.toTypedArray()
 
 /**
- * Create a list of points equally distributed in the circle of given radius with center in this point.
+ * Create a list of points equally distributed in the circle of given radius with center in this position.
+ *
+ * @param env
+ *          the environment containing the position to rotate.
+ * @param rg
+ *          the simulation {@link RandomGenerator}.
+ * @param radius
+ *          the distance each generated position must have from this.
+ * @param quantity
+ *          the number of positions to generate.
  */
 fun <P : Position2D<P>> P.surrounding(
     env: Environment<*, P>,
@@ -31,7 +43,14 @@ fun <P : Position2D<P>> P.surrounding(
         .map { env.makePosition(this.x + radius, y).rotate(env, this, it) }
 
 /**
- * Rotate a point around some other point by a given number of radians.
+ * Perform the rotation of a position.
+ *
+ * @param env
+ *          the environment containing the position to rotate.
+ * @param center
+ *          the position around which operate the rotation.
+ * @param radians
+ *          the number of radians representing the rotation angle.
  */
 fun <P : Position2D<P>> P.rotate(
     env: Environment<*, P>,

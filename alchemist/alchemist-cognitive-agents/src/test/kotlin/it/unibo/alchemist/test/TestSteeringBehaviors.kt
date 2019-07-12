@@ -14,7 +14,9 @@ class TestSteeringBehaviors<T, P : Position2D<P>> : StringSpec({
 
     "seek" {
         loadYamlSimulation<T, P>("seek.yml").startSimulation(
-            finished = { e, _, _ -> e.nodes.forEach { e.getPosition(it) shouldBe e.makePosition(0.0, 0.0) } }
+            finished = { e, _, _ -> e.nodes.forEach {
+                e.getPosition(it) shouldBe e.makePosition(0.0, 0.0)
+            } }
         )
     }
 
@@ -30,7 +32,9 @@ class TestSteeringBehaviors<T, P : Position2D<P>> : StringSpec({
         with(loadYamlSimulation<T, P>("arrive.yml")) {
             val nodesPositions: Map<Node<T>, MutableList<P>> = nodes.map { it to mutableListOf<P>() }.toMap()
             startSimulation(
-                stepDone = { e, _, _, _ -> e.nodes.forEach { nodesPositions[it]?.add(e.getPosition(it)) } }
+                stepDone = { e, _, _, _ -> e.nodes.forEach {
+                    nodesPositions[it]?.add(e.getPosition(it))
+                } }
             )
             nodesPositions.values.forEach { list ->
                 list.zipWithNext()

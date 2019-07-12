@@ -34,8 +34,8 @@ internal class AwtEuclidean2DShape(
 
     override fun asAwtShape() = AffineTransform().createTransformedShape(shape)!!
 
-    override fun contains(point: Euclidean2DPosition) =
-        shape.contains(Point2D.Double(point.x, point.y))
+    override fun contains(vector: Euclidean2DPosition) =
+        shape.contains(Point2D.Double(vector.x, vector.y))
 
     override fun intersects(other: Euclidean2DShape) =
         when (other) {

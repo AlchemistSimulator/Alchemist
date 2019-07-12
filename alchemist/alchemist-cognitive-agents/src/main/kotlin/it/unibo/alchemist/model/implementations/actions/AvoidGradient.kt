@@ -6,6 +6,9 @@ import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Position2D
 import org.apache.commons.math3.random.RandomGenerator
 
+/**
+ * Moves the pedestrian towards positions of the environment with a low concentration of the target molecule.
+ */
 open class AvoidGradient<T, P : Position2D<P>>(
     env: Environment<T, P>,
     pedestrian: Pedestrian<T>,

@@ -7,6 +7,10 @@ import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
+/**
+ * Moves the agent towards a target position.
+ * It is similar to Seek but it attempts to arrive at the target position with a zero velocity.
+ */
 open class Arrive<T, P : Position<P>>(
     env: Environment<T, P>,
     pedestrian: Pedestrian<T>,

@@ -4,6 +4,9 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
 
+/**
+ * Moves the agent away from a target position. It's the opposite of Seek.
+ */
 open class Flee<T, P : Position<P>>(
     env: Environment<T, P>,
     pedestrian: Pedestrian<T>,

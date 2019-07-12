@@ -9,6 +9,9 @@ import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
+/**
+ * Combination of multiple steering actions.
+ */
 open class Blended<T, P : Position<P>> @JvmOverloads constructor(
     env: Environment<T, P>,
     pedestrian: Pedestrian<T>,

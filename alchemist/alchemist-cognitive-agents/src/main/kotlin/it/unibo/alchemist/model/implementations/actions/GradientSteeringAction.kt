@@ -11,6 +11,9 @@ import org.apache.commons.math3.random.RandomGenerator
 
 private const val QUANTITY_OF_POINTS = 6
 
+/**
+ * Generic implementation of an action influenced by the concentration of a given molecule in the environment.
+ */
 open class GradientSteeringAction<T, P : Position2D<P>>(
     env: Environment<T, P>,
     pedestrian: Pedestrian<T>,

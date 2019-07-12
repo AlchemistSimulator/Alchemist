@@ -9,6 +9,9 @@ import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 import org.apache.commons.math3.random.RandomGenerator
 
+/**
+ * Gives the impression of a random walk through the pedestrian's environment.
+ */
 open class Wander<T, P : Position<P>>(
     private val env: Environment<T, P>,
     pedestrian: Pedestrian<T>,

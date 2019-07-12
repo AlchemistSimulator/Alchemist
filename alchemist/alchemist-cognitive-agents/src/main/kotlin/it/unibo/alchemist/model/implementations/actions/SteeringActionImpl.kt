@@ -12,6 +12,9 @@ import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
+/**
+ * Generic implementation of an action adhering the SteeringAction interface.
+ */
 open class SteeringActionImpl<T, P : Position<P>> @JvmOverloads constructor(
     private val env: Environment<T, P>,
     pedestrian: Pedestrian<T>,

@@ -4,12 +4,17 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Neighborhood
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
+import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShape
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShapeFactory
 
 /**
  * Implementation of {@link EuclideanPhysics2DEnvironment}
  */
 class EuclideanPhysics2DEnvironmentImpl<T> : Abstract2DEnvironment<T, Euclidean2DPosition>(), EuclideanPhysics2DEnvironment<T> {
+
+    override val shapeFactory: Euclidean2DShapeFactory
+        get() = GeometricShapeFactory.getInstance()
 
     /**
      * The default heading for a node.
@@ -77,6 +82,17 @@ class EuclideanPhysics2DEnvironmentImpl<T> : Abstract2DEnvironment<T, Euclidean2
     override fun nodeShouldBeAdded(node: Node<T>, position: Euclidean2DPosition): Boolean =
         getNodesWithin(shapeFactory.requireCompatible(node.shape).transformed { origin(position) })
             .isEmpty()
+
+    /**
+     * Creates an euclidean position from the given coordinates.
+     * @param coordinates coordinates array
+     * @return Euclidean2DPosition
+     */
+    override fun makePosition(vararg coordinates: Number) =
+        with(coordinates) {
+            require(size == 2)
+            Euclidean2DPosition(coordinates[0].toDouble(), coordinates[1].toDouble())
+        }
 
     private fun canNodeFitPosition(node: Node<T>, position: Euclidean2DPosition) =
         getNodesWithin(getShape(node).transformed { origin(position) })

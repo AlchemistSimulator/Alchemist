@@ -29,7 +29,6 @@ interface Vector<S : Vector<S>> {
      */
     operator fun plus(other: S): S
 
-
     /**
      * Support for subtraction.
      * Note: the dimensions must coincide.

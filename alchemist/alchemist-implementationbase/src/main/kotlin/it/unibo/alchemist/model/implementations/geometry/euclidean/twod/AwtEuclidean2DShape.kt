@@ -66,7 +66,6 @@ internal class AwtEuclidean2DShape(
             if (newRotation != 0.0) {
                 transform.rotate(newRotation, origin.x, origin.y)
             }
-            
             val offset = newOrigin - origin
             if (offset.x != 0.0 || offset.y != 0.0) {
                 transform.translate(offset.x, offset.y)

@@ -55,5 +55,3 @@ interface GeometricShapeFactory<S : Vector<S>, A : GeometricTransformation<S>> {
             } as F
     }
 }
-
-

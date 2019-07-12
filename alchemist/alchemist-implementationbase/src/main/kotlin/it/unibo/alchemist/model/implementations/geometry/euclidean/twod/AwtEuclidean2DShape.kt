@@ -51,16 +51,27 @@ internal class AwtEuclidean2DShape(
 
     private inner class MyTransformation : Euclidean2DTransformation {
         private val transform = AffineTransform()
+        private var newOrigin = origin
+        private var newRotation = 0.0
 
         override fun origin(position: Euclidean2DPosition) {
-            val offset = position - origin
-            transform.translate(offset.x, offset.y)
+            newOrigin = position
         }
 
         override fun rotate(angle: Double) {
-            transform.rotate(angle, origin.x, origin.y)
+            newRotation = angle
         }
 
-        fun execute() = AwtEuclidean2DShape(transform.createTransformedShape(shape))
+        fun execute(): AwtEuclidean2DShape {
+            if (newRotation != 0.0) {
+                transform.rotate(newRotation, origin.x, origin.y)
+            }
+            
+            val offset = newOrigin - origin
+            if (offset.x != 0.0 || offset.y != 0.0) {
+                transform.translate(offset.x, offset.y)
+            }
+            return AwtEuclidean2DShape(transform.createTransformedShape(shape), newOrigin)
+        }
     }
 }

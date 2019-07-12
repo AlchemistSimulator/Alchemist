@@ -13,12 +13,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSh
  */
 class EuclideanPhysics2DEnvironmentImpl<T> : Abstract2DEnvironment<T, Euclidean2DPosition>(), EuclideanPhysics2DEnvironment<T> {
 
-    override val shapeFactory: Euclidean2DShapeFactory
-        get() = GeometricShapeFactory.getInstance()
-
-    /**
-     * The default heading for a node.
-     */
+    override val shapeFactory: Euclidean2DShapeFactory = GeometricShapeFactory.getInstance()
     private val defaultHeading = Euclidean2DPosition(0.0, 0.0)
     private val nodeToHeading = mutableMapOf<Node<T>, Euclidean2DPosition>()
     private var largestShapeDiameter: Double = 0.0

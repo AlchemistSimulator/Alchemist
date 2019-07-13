@@ -15,7 +15,8 @@ fun RandomGenerator.nextDouble(from: Double, to: Double) = nextDouble() * (to - 
 
 /**
  * Fisher–Yates shuffle algorithm using Apache random number generator.
- * https://www.geeksforgeeks.org/shuffle-a-given-array-using-fisher-yates-shuffle-algorithm/
+ * https://en.wikipedia.org/wiki/Fisher-Yates_shuffle
+ * https://www.worldcat.org/title/statistical-tables-for-biological-agricultural-and-medical-research/oclc/14222135
  *
  * @param rg
  *          the simulation {@link RandomGenerator}.

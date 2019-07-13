@@ -18,12 +18,12 @@ interface CognitivePedestrian<T> : HeterogeneousPedestrian<T> {
     fun fear(): Double
 
     /**
-     * A collection of all the pedestrians in the same environment who have an influence on this pedestrian.
+     * A list of all the pedestrians in the same environment who have an influence on this pedestrian.
      */
-    fun influencialPeople(): Collection<CognitivePedestrian<*>>
+    fun influencialPeople(): List<CognitivePedestrian<*>>
 
     /**
      * The list of all the cognitive characteristics of this pedestrian.
      */
-    fun cognitiveCharacteristics(): Collection<CognitiveCharacteristic>
+    fun cognitiveCharacteristics(): List<CognitiveCharacteristic>
 }

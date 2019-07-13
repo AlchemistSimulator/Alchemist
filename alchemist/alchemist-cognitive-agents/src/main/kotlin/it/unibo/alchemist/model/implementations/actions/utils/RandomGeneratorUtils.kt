@@ -14,9 +14,8 @@ import java.util.Collections
 fun RandomGenerator.nextDouble(from: Double, to: Double) = nextDouble() * (to - from) - to
 
 /**
- * Fisher–Yates shuffle algorithm using Apache random number generator.
- * https://en.wikipedia.org/wiki/Fisher-Yates_shuffle
- * https://www.worldcat.org/title/statistical-tables-for-biological-agricultural-and-medical-research/oclc/14222135
+ * [Fisher–Yates shuffle algorithm](https://www.worldcat.org/title/statistical-tables-for-biological-agricultural-and-medical-research/oclc/14222135)
+ * using Apache random number generator. More information [on Wikipedia](https://en.wikipedia.org/wiki/Fisher-Yates_shuffle).
  *
  * @param rg
  *          the simulation {@link RandomGenerator}.

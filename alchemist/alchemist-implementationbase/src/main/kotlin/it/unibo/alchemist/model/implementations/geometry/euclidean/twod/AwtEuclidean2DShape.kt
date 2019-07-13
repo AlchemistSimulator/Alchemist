@@ -17,12 +17,6 @@ internal class AwtEuclidean2DShape(
     private val origin: Euclidean2DPosition = Euclidean2DPosition(0.0, 0.0)
 ) : Euclidean2DShape, AwtShapeCompatible {
 
-    override fun transformed(transformation: Euclidean2DTransformation.() -> Unit): Euclidean2DShape {
-        val t = MyTransformation()
-        transformation.invoke(t)
-        return t.execute()
-    }
-
     override val diameter: Double by lazy {
         val rect = shape.bounds2D
         Euclidean2DPosition(rect.minX, rect.minY).getDistanceTo(Euclidean2DPosition(rect.maxX, rect.maxY))
@@ -31,6 +25,12 @@ internal class AwtEuclidean2DShape(
     override val centroid: Euclidean2DPosition by lazy {
         Euclidean2DPosition(shape.bounds2D.centerX, shape.bounds2D.centerY)
     }
+
+    override fun transformed(transformation: Euclidean2DTransformation.() -> Unit) =
+        with(MyTransformation()) {
+            transformation.invoke(this)
+            apply()
+        }
 
     override fun asAwtShape() = AffineTransform().createTransformedShape(shape)!!
 
@@ -62,7 +62,7 @@ internal class AwtEuclidean2DShape(
             newRotation = angle
         }
 
-        fun execute(): AwtEuclidean2DShape {
+        fun apply(): AwtEuclidean2DShape {
             if (newRotation != 0.0) {
                 transform.rotate(newRotation, origin.x, origin.y)
             }

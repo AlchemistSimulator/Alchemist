@@ -4,9 +4,9 @@ package it.unibo.alchemist.model.interfaces.geometry
  * Models a generic shape.
  *
  * @param <S> Vector type for the space this shapes is defined in
- * @param <F> The transformations supported by the shapes in this space
+ * @param <A> The transformations supported by the shapes in this space
  */
-interface GeometricShape<S : Vector<S>, F : GeometricTransformation<S>> {
+interface GeometricShape<S : Vector<S>, A : GeometricTransformation<S>> {
 
     /**
      * The largest distance between any pair of vertices.
@@ -24,33 +24,19 @@ interface GeometricShape<S : Vector<S>, F : GeometricTransformation<S>> {
      * @param other the other shape
      * @return true if the intersection is not empty
      */
-    fun intersects(other: GeometricShape<S, F>): Boolean
+    fun intersects(other: GeometricShape<S, A>): Boolean
 
     /**
+     * Check if the shape contains a vector.
      * @param vector the position vector
      * @return true if the vector is contained in the shape
      */
     fun contains(vector: S): Boolean
 
-    fun transformed(transformation: F.() -> Unit): GeometricShape<S, F>
-
-    /*
-
-
     /**
-     * Returns a new shape centered in given origin.
-     *
-     * @param newOrigin the new origin
-     * @return a new shape having its origin in the given position
+     * Transforms the shape.
+     * @param transformation describes the transformations to apply to the shape
+     * @return a copy of the shape transformed accordingly
      */
-    fun withOrigin(newOrigin: S): GeometricShape<S>
-
-    /**
-     * Rotates the shape in its origin about the xy plane
-     *
-     * @param radians angle
-     * @return a new shape
-     */
-    fun rotated(radians: Double): GeometricShape<S>
-     */
+    fun transformed(transformation: A.() -> Unit): GeometricShape<S, A>
 }

@@ -14,19 +14,19 @@ import it.unibo.alchemist.model.interfaces.Position2D
 /**
  * A [Layer] based on a [2D gaussian function][BidimensionalGaussian] and an optional baseline value.
  */
-open class BidimensionalGaussianLayer @JvmOverloads constructor(
+open class BidimensionalGaussianLayer<P : Position2D<P>> @JvmOverloads constructor(
     private val baseline: Double = 0.0,
     centerX: Double,
     centerY: Double,
     norm: Double,
     sigmaX: Double,
     sigmaY: Double = sigmaX
-) : Layer<Double, Position2D<*>> {
+) : Layer<Double, P> {
 
     /**
      * The function on which the layer is based.
      */
     val function = BidimensionalGaussian(norm, centerX, centerY, sigmaX, sigmaY)
 
-    override fun getValue(p: Position2D<*>) = baseline + function.value(p.x, p.y)
+    override fun getValue(p: P) = baseline + function.value(p.x, p.y)
 }

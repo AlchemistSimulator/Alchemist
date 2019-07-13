@@ -15,12 +15,12 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.SupportedIncarnations;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -79,6 +79,7 @@ public final class EffectSerializationFactory {
      *             In case the serialized binary object is not an effect
      */
     @SuppressWarnings("unchecked")
+    @SuppressFBWarnings(value = "REC_CATCH_EXCEPTION", justification = "RuntimeException is willingly caught")
     public static List<Effect> effectsFromFile(final File effectFile) throws IOException, ClassNotFoundException {
         // Try to deserialize a JSON file at first
         final Reader fr = new InputStreamReader(new FileInputStream(effectFile), Charsets.UTF_8);

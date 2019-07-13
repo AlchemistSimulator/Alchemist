@@ -81,11 +81,15 @@ public class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
 
     @Override
     public void paint(final Graphics g) {
-        super.paint(g);
-        if (mapView != null) {
-            mapView.paint(g);
+        if (g instanceof Graphics2D) {
+            super.paint(g);
+            if (mapView != null) {
+                mapView.paint(g);
+            }
+            drawEnvOnView((Graphics2D) g);
+        } else {
+            throw new IllegalArgumentException("Graphics2D is required");
         }
-        drawEnvOnView((Graphics2D) g);
     }
 
     @Override
@@ -106,7 +110,6 @@ public class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
             super.setMouseTooltipTo(x, y);
         } catch (final IllegalArgumentException e) {
             // TODO: why is this silenced???
-            return;
         }
     }
 

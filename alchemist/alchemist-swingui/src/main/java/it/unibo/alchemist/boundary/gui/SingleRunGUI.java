@@ -68,10 +68,13 @@ public final class SingleRunGUI {
 
     /**
      * Builds a single-use graphical interface.
-     *
-     * @param sim         the simulation for this GUI
-     * @param effectsFile the effects file
-     * @param <T>         concentration type
+     * 
+     * @param sim
+     *            the simulation for this GUI
+     * @param effectsFile
+     *            the effects file
+     * @param <T>
+     *            concentration type
      */
     public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final String effectsFile) {
         make(sim, new File(effectsFile), JFrame.EXIT_ON_CLOSE);
@@ -80,10 +83,14 @@ public final class SingleRunGUI {
     /**
      * Builds a single-use graphical interface.
      *
-     * @param sim            the simulation for this GUI
-     * @param effectsFile    the effects file
-     * @param closeOperation the type of close operation for this GUI
-     * @param <T>            concentration type
+     * @param sim            
+     *            the simulation for this GUI
+     * @param effectsFile
+     *            the effects file
+     * @param closeOperation
+     *            the type of close operation for this GUI
+     * @param <T>
+     *            concentration type
      */
     public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final String effectsFile, final int closeOperation) {
         make(sim, new File(effectsFile), closeOperation);
@@ -128,7 +135,7 @@ public final class SingleRunGUI {
             if (effectsFile != null) {
                 try {
                     effects.setEffects(EffectSerializationFactory.effectsFromFile(effectsFile));
-                } catch (final IOException | ClassNotFoundException ex) {
+                } catch (IOException | ClassNotFoundException ex) {
                     errorLoadingEffects(ex);
                 }
             }
@@ -142,8 +149,7 @@ public final class SingleRunGUI {
             // frame.pack();
             final Optional<Dimension> size = Arrays
                     .stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices())
-                    .map(GraphicsDevice::getDisplayMode)
-                    .map(dm -> new Dimension(dm.getWidth(), dm.getHeight()))
+                    .map(GraphicsDevice::getDisplayMode).map(dm -> new Dimension(dm.getWidth(), dm.getHeight()))
                     .min(Comparator.comparingDouble(SingleRunGUI::area));
             size.ifPresent(d -> d.setSize(d.getWidth() * SCALE_FACTOR, d.getHeight() * SCALE_FACTOR));
             frame.setSize(size.orElse(new Dimension(FALLBACK_X_SIZE, FALLBACK_Y_SIZE)));
@@ -155,8 +161,6 @@ public final class SingleRunGUI {
             sim.addOutputMonitor(main);
         } else if (main instanceof Node) {
             new SingleRunAppBuilder<>(sim).setEffectGroups(effectsFile).build();
-        } else {
-            L.error("The default monitor of {} is not compatible with Java Swing.", sim);
         }
     }
 

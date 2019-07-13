@@ -107,7 +107,8 @@ public class DrawShape implements Effect {
                 || curIncarnation != prevIncarnation) { // NOPMD: pointer comparison is wanted here
             molStringCached = molString;
             prevIncarnation = curIncarnation;
-            incarnation = SupportedIncarnations.get(curIncarnation.getCurrent()).get();
+            incarnation = SupportedIncarnations.get(curIncarnation.getCurrent())
+                    .orElseThrow(() -> new IllegalStateException(curIncarnation.getCurrent() + " is not a valid incarnation."));
             /*
              * Process in a separate thread: if it fails, does not kill EDT.
              */
@@ -148,9 +149,6 @@ public class DrawShape implements Effect {
             }
             g.setColor(newcolor);
             switch (mode) {
-            case FillEllipse:
-                g.fillOval(startx, starty, sizex, sizey);
-                break;
             case DrawEllipse:
                 g.drawOval(startx, starty, sizex, sizey);
                 break;
@@ -160,6 +158,7 @@ public class DrawShape implements Effect {
             case FillRectangle:
                 g.fillRect(startx, starty, sizex, sizey);
                 break;
+            case FillEllipse:
             default:
                 g.fillOval(startx, starty, sizex, sizey);
             }
@@ -280,6 +279,7 @@ public class DrawShape implements Effect {
     /**
      * @return molecule
      */
+    @org.jetbrains.annotations.Nullable
     protected Molecule getMolecule() {
         return molecule;
     }

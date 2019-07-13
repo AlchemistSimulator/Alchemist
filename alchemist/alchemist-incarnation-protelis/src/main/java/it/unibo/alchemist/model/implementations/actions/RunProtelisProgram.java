@@ -59,7 +59,7 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
             final RandomGenerator rand,
             final org.protelis.vm.ProtelisProgram prog,
             final double retentionTime) {
-        name = new SimpleMolecule(prog.getName().toString());
+        name = new SimpleMolecule(prog.getName());
         program = requireNonNull(prog);
         environment = requireNonNull(env);
         node = requireNonNull(n);
@@ -67,7 +67,7 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
         reaction = requireNonNull(r);
         final AlchemistNetworkManager netmgr = new AlchemistNetworkManager(environment, node, reaction, this, retentionTime);
         node.addNetworkManger(this, netmgr);
-        final ExecutionContext ctx = new AlchemistExecutionContext<P>(env, n, r, rand, netmgr);
+        final ExecutionContext ctx = new AlchemistExecutionContext<>(env, n, r, rand, netmgr);
         vm = new ProtelisVM(prog, ctx);
         this.retentionTime = retentionTime;
     }
@@ -85,15 +85,13 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
      *            the Protelis program
      * @throws SecurityException
      *             if you are not authorized to load required classes
-     * @throws ClassNotFoundException
-     *             if required classes can not be found
      */
     public RunProtelisProgram(
             final Environment<Object, P> env,
             final ProtelisNode n,
             final Reaction<Object> r,
             final RandomGenerator rand,
-            final String prog) throws SecurityException, ClassNotFoundException {
+            final String prog) throws SecurityException {
         this(env, n, r, rand, prog, Double.NaN);
     }
 

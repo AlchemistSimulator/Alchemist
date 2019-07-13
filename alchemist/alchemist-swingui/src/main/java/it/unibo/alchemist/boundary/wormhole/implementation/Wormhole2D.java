@@ -23,10 +23,10 @@ import org.slf4j.LoggerFactory;
 import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
 
 /**
- * Partial implementation for the interface {@link BidimensionalWormhole} for a {@link Node JavaFX view}.
- * <br/>
- * This considers the particular case of the view as an entity into the
- * sceern-space: the y-axis grows on the bottom side of the screen.
+ * Partial implementation for the interface {@link IWormhole2D}.<br>
+ * I am considering the particular case of the view as an entity into the
+ * screen-space: the y-axis grows on the bottom side of the screen.
+ * 
  */
 public class Wormhole2D<P extends Position2D<? extends P>> extends AbstractWormhole2D<P> {
 

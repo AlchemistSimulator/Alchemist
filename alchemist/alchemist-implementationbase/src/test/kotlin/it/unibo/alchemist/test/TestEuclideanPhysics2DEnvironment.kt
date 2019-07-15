@@ -10,9 +10,10 @@ import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.nodes.CircleNode
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
 
 class TestEuclideanPhysics2DEnvironment : StringSpec() {
-    private lateinit var env: EuclideanPhysics2DEnvironmentImpl<Any>
+    private lateinit var env: EuclideanPhysics2DEnvironment<Any>
     private lateinit var node1: Node<Any>
     private lateinit var node2: Node<Any>
     private lateinit var node3: Node<Any>
@@ -36,13 +37,8 @@ class TestEuclideanPhysics2DEnvironment : StringSpec() {
 
         "Cannot move into other nodes" {
             env.addNode(node1, Euclidean2DPosition(0.0, 0.0))
-            println(env.getPosition(node1))
             env.addNode(node2, Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0))
-            println(env.getPosition(node2))
             env.moveNodeToPosition(node2, env.getPosition(node1))
-            println(env.getPosition(node1))
-            println(env.getPosition(node2))
-            println(env.getNodesWithin(env.getShape(node2)))
             env.getPosition(node1)!!.getDistanceTo(env.getPosition(node2)) shouldBeGreaterThanOrEqual
                 (env.getShape(node1).diameter + env.getShape(node2).diameter) / 2
         }

@@ -1,0 +1,52 @@
+incarnation: protelis
+
+variables:
+  exit1: &exit1
+    formula: "\"exit1\""
+  exit2: &exit2
+    formula: "\"exit2\""
+  radius: &radius
+    formula: 5.0
+
+environment:
+  type: Continuous2DEnvironment
+
+positions:
+  type: EuclideanPosition2D
+
+network-model:
+  type: NoLinks
+
+seeds:
+  scenario: 0
+  simulation: 1
+
+layers:
+  - type: BidimensionalGaussianLayer
+    molecule: *exit1
+    parameters: [100.0, 0.0, 5.0, 2.5]
+  - type: BidimensionalGaussianLayer
+    molecule: *exit2
+    parameters: [-100.0, 0.0, 5.0, 2.5]
+
+reactions: &behavior
+  - time-distribution:
+      type: DiracComb
+      parameters: [50.0]
+    type: SteeringBehavior
+    actions:
+      - type: Flee
+        parameters: [0.0, 0.0]
+      - type: FollowGradient
+        parameters: [*exit2, *radius]
+      - type: FollowGradient
+        parameters: [*exit1, *radius]
+
+displacements:
+  - in:
+      type: Circle
+      parameters: [50, 0, 0, 33]
+    nodes:
+      type: HomogeneousPedestrian2D
+    programs:
+      - *behavior

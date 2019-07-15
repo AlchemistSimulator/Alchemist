@@ -7,20 +7,20 @@ import it.unibo.alchemist.model.interfaces.Position
 class TestPedestriansLoading<T, P : Position<P>> : StringSpec({
 
     "homogeneous pedestrians loading" {
-        loadYamlSimulation<T, P>("homogeneous-pedestrians.yml")
+        loadYamlSimulation<T, P>("homogeneous-pedestrians.yml").startSimulation()
     }
 
     "heterogeneous pedestrians loading" {
-        loadYamlSimulation<T, P>("heterogeneous-pedestrians.yml")
+        loadYamlSimulation<T, P>("heterogeneous-pedestrians.yml").startSimulation()
     }
 
     "cognitive pedestrians loading" {
-        loadYamlSimulation<T, P>("cognitive-pedestrians.yml")
+        loadYamlSimulation<T, P>("cognitive-pedestrians.yml").startSimulation()
     }
 
     "can't give non-cognitive pedestrians cognitive characteristics" {
         try {
-            loadYamlSimulation<T, P>("cant-give-cognitive-to-heterogeneous.yml")
+            loadYamlSimulation<T, P>("cant-give-cognitive-to-heterogeneous.yml").startSimulation()
             fail("An heterogeneous pedestrian can't have cognitive capabilities")
         } catch (exc: Throwable) { }
     }

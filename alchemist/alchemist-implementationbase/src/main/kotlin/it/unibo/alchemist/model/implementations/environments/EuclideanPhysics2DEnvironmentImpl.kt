@@ -46,7 +46,7 @@ class EuclideanPhysics2DEnvironmentImpl<T> : Abstract2DEnvironment<T, Euclidean2
     /**
      * move this code in addNode when and if you merge this with AbstractEnvironment
      */
-    override fun nodeAdded(node: Node<T>, position: Euclidean2DPosition, neighborhood: Neighborhood<T>?) {
+    override fun nodeAdded(node: Node<T>, position: Euclidean2DPosition, neighborhood: Neighborhood<T>) {
         super.nodeAdded(node, position, neighborhood)
         if (node.shape.diameter > largestShapeDiameter) {
             largestShapeDiameter = node.shape.diameter
@@ -56,7 +56,7 @@ class EuclideanPhysics2DEnvironmentImpl<T> : Abstract2DEnvironment<T, Euclidean2
     /**
      * {@inheritDoc}
      */
-    override fun nodeRemoved(node: Node<T>, neighborhood: Neighborhood<T>?) =
+    override fun nodeRemoved(node: Node<T>, neighborhood: Neighborhood<T>) =
         super.nodeRemoved(node, neighborhood)
             .also {
                 nodeToHeading.remove(node)

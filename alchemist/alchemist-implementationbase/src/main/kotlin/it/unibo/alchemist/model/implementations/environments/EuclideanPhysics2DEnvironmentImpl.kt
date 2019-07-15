@@ -44,7 +44,7 @@ class EuclideanPhysics2DEnvironmentImpl<T> : Abstract2DEnvironment<T, Euclidean2
             }
 
     /**
-     * move this code in addNode when and if you merge this with AbstractEnvironment
+     * Keeps track of the largest diameter of the shapes.
      */
     override fun nodeAdded(node: Node<T>, position: Euclidean2DPosition, neighborhood: Neighborhood<T>) {
         super.nodeAdded(node, position, neighborhood)

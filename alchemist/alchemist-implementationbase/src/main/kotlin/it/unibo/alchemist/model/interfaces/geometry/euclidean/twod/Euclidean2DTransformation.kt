@@ -1,11 +1,11 @@
 package it.unibo.alchemist.model.interfaces.geometry.euclidean.twod
 
+import it.unibo.alchemist.model.implementations.geometry.asAngle
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
-import kotlin.math.atan2
 
 /**
- * Defines the possible transformations for a [GeometricShape] in a bidimensional euclidean space.
+ * Defines the possible transformations for a [it.unibo.alchemist.model.interfaces.geometry.GeometricShape] in a bidimensional euclidean space.
  */
 interface Euclidean2DTransformation : GeometricTransformation<Euclidean2DPosition> {
 
@@ -22,7 +22,7 @@ interface Euclidean2DTransformation : GeometricTransformation<Euclidean2DPositio
      * @param direction the direction vector
      */
     fun rotate(direction: Euclidean2DPosition) =
-        rotate(atan2(direction.y, direction.x))
+        rotate(direction.asAngle())
 
     /**
      * See [rotate]

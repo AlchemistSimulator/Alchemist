@@ -5,7 +5,7 @@ import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.AwtEucli
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShapeFactory
 
 /**
- * Generic factory for {@link GeometricShape}.
+ * Generic factory for [GeometricShape].
  */
 interface GeometricShapeFactory<S : Vector<S>, A : GeometricTransformation<S>> {
 
@@ -24,7 +24,7 @@ interface GeometricShapeFactory<S : Vector<S>, A : GeometricTransformation<S>> {
 
     companion object {
         /**
-         * Retrieves a factory of {@link GeometricShape} compatible with the given vector type.
+         * Retrieves a factory of [GeometricShape] compatible with the given vector type.
          *
          * @param <S> The type of vector used
          * @param <A> The supported geometric transformations
@@ -35,7 +35,7 @@ interface GeometricShapeFactory<S : Vector<S>, A : GeometricTransformation<S>> {
             getInstance(F::class.java)
 
         /**
-         * Retrieves a factory of {@link GeometricShape} compatible with the given space.
+         * Retrieves a factory of [GeometricShape] compatible with the given space.
          * (This method is meant for compatibility with java).
          *
          * @param <S> The type of vector used

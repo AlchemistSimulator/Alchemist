@@ -70,12 +70,11 @@ public abstract class AbstractNode<T> implements Node<T> {
      *            environment, always starting from 0.
      */
     public AbstractNode(final Environment<?, ?> env) {
-        this.id = idFromEnv(env);
+        id = idFromEnv(env);
         if (env instanceof PhysicsEnvironment) {
             shape = ((PhysicsEnvironment) env).getShapeFactory().adimensional();
         } else {
-            // Note: this is safe if the node is not initialized with a different environment from the one it gets added to
-            shape = null;
+            shape = null; // throws an exception in getShape
         }
     }
 
@@ -86,6 +85,9 @@ public abstract class AbstractNode<T> implements Node<T> {
      */
     @Override
     public GeometricShape<?, ?> getShape() {
+        if (shape == null) {
+            throw new IllegalStateException("The node was initialized with an environment lacking shapes support, so it does not have a shape");
+        }
         return shape;
     }
 

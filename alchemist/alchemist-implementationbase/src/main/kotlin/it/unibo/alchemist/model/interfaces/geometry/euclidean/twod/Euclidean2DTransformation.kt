@@ -5,7 +5,7 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import kotlin.math.atan2
 
 /**
- * Defines the possible transformations for a {@link GeometricShape} in a bidimensional euclidean space.
+ * Defines the possible transformations for a [GeometricShape] in a bidimensional euclidean space.
  */
 interface Euclidean2DTransformation : GeometricTransformation<Euclidean2DPosition> {
 
@@ -25,7 +25,7 @@ interface Euclidean2DTransformation : GeometricTransformation<Euclidean2DPositio
         rotate(atan2(direction.y, direction.x))
 
     /**
-     * {@see rotate}
+     * See [rotate]
      */
     fun origin(x: Double, y: Double) =
         origin(Euclidean2DPosition(x, y))

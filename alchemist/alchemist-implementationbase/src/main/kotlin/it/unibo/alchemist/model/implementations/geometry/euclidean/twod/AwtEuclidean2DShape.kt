@@ -10,7 +10,7 @@ import java.awt.geom.AffineTransform
 import java.awt.geom.Point2D
 
 /**
- * {@link GeometricShape} delegated to java.awt.geom.
+ * [it.unibo.alchemist.model.interfaces.geometry.GeometricShape] delegated to java.awt.geom.
  */
 internal class AwtEuclidean2DShape(
     private val shape: Shape,

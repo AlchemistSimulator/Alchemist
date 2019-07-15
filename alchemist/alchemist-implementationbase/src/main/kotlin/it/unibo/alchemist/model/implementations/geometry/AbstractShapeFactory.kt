@@ -5,8 +5,8 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 
 /**
- * Base class for {@link GeometricTransformation} providing a standard implementation for
- * {@link GeometricShapeFactory#adimensional}.
+ * Base class for [GeometricTransformation] providing a standard implementation for
+ * [GeometricShapeFactory.adimensional].
  */
 abstract class AbstractShapeFactory<S : Vector<S>, A : GeometricTransformation<S>> : GeometricShapeFactory<S, A> {
     /**

@@ -12,7 +12,6 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSh
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
 
 private val factory: Euclidean2DShapeFactory = GeometricShapeFactory.getInstance()
-@SuppressFBWarnings("UWF_NULL_FIELD")
 private val fakeShape = object : Euclidean2DShape {
     override val diameter = 0.0
     override val centroid = Euclidean2DPosition(0.0, 0.0)
@@ -23,7 +22,6 @@ private val fakeShape = object : Euclidean2DShape {
 
 // spotbugs reports: AbstractFreeSpec$FreeSpecScope stored into non-transient field TestIntersectionSymmetry
 @SuppressFBWarnings("SE_BAD_FIELD_STORE")
-@Suppress("MapGetWithNotNullAssertionOperator")
 class TestEuclidean2DShapeFactory : FreeSpec({
     // the ! in front of the test name disables the test, it's currently disable as to not prevent the build from succeeding
     // TODO: enable it once a proper implementation of euclidean geometry is provided
@@ -36,8 +34,8 @@ class TestEuclidean2DShapeFactory : FreeSpec({
         val names = firsts.keys.toList()
         for (f in 0 until names.size) {
             for (s in f until names.size) {
-                val first = firsts[names[f]]!!
-                val second = seconds[names[s]]!!
+                val first = checkNotNull(firsts[names[f]]) { "Could not find ${names[f]} shape" }
+                val second = checkNotNull(seconds[names[s]]) { "Could not find ${names[s]} shape" }
                 "${names[f]}.intersects(${names[s]}) must be the same as ${names[s]}.intersects(${names[f]})" {
                     first.intersects(second) shouldBe second.intersects(first)
                 }

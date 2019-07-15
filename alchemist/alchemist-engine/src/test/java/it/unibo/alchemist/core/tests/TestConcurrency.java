@@ -74,8 +74,8 @@ public class TestConcurrency {
         sim.pause();
         final ExecutorService container = Executors.newFixedThreadPool(inWaitCount + 1);
         container.submit(sim);
-        assertNotEquals(Status.RUNNING, sim.waitFor(Status.RUNNING, 5, TimeUnit.SECONDS));
-        assertEquals(Status.PAUSED, sim.waitFor(Status.PAUSED, 1, TimeUnit.SECONDS));
+        assertNotEquals(Status.RUNNING, sim.waitFor(Status.RUNNING, 2, TimeUnit.SECONDS));
+        assertEquals(Status.PAUSED, sim.waitFor(Status.PAUSED, 10, TimeUnit.SECONDS));
         /*
          * Launch a hundred waiting processes, make sure they are started, then make sure everyone got notified
          */

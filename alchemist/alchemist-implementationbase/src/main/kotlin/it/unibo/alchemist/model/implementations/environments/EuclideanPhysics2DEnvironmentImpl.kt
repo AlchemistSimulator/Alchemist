@@ -9,7 +9,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSh
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShapeFactory
 
 /**
- * Implementation of {@link EuclideanPhysics2DEnvironment}
+ * Implementation of [EuclideanPhysics2DEnvironment]
  */
 class EuclideanPhysics2DEnvironmentImpl<T> : Abstract2DEnvironment<T, Euclidean2DPosition>(), EuclideanPhysics2DEnvironment<T> {
 

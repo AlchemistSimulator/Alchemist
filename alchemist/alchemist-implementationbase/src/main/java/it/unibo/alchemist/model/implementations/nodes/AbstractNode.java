@@ -6,10 +6,18 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-/**
- * 
- */
 package it.unibo.alchemist.model.implementations.nodes;
+
+import com.google.common.collect.MapMaker;
+import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Molecule;
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment;
+import it.unibo.alchemist.model.interfaces.geometry.GeometricShape;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,16 +31,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
-
-import com.google.common.collect.MapMaker;
-import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
-
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Molecule;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.Time;
-import org.jetbrains.annotations.NotNull;
 
 
 /**
@@ -53,6 +51,7 @@ public abstract class AbstractNode<T> implements Node<T> {
             .maximumWeightedCapacity(Long.MAX_VALUE)
             .concurrencyLevel(2)
             .build();
+    private final GeometricShape<?, ?> shape;
 
     private static int idFromEnv(final Environment<?, ?> env) {
         MUTEX.acquireUninterruptibly();
@@ -71,11 +70,25 @@ public abstract class AbstractNode<T> implements Node<T> {
      *            environment, always starting from 0.
      */
     public AbstractNode(final Environment<?, ?> env) {
-        this(idFromEnv(env));
+        id = idFromEnv(env);
+        if (env instanceof PhysicsEnvironment) {
+            shape = ((PhysicsEnvironment) env).getShapeFactory().adimensional();
+        } else {
+            shape = null; // throws an exception in getShape
+        }
     }
 
-    private AbstractNode(final int id) {
-        this.id = id;
+    /**
+     * Override to provide a different shape than the default adimensional one.
+     *
+     * @return the shape of this node.
+     */
+    @Override
+    public GeometricShape<?, ?> getShape() {
+        if (shape == null) {
+            throw new IllegalStateException("The node was initialized with an environment lacking shapes support, so it does not have a shape");
+        }
+        return shape;
     }
 
     @Override

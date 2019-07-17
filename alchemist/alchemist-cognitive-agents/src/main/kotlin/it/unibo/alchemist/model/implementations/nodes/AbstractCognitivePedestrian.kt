@@ -47,7 +47,7 @@ abstract class AbstractCognitivePedestrian<T, P : Position<P>> (
 
     override fun fear() = characteristicLevel<Fear>()
 
-    override fun cognitiveCharacteristics() = cognitiveCharacteristics.values
+    override fun cognitiveCharacteristics() = cognitiveCharacteristics.values.toList()
 
     private inline fun <reified C : CognitiveCharacteristic> characteristicLevel(): Double =
         cognitiveCharacteristics[C::class]?.level() ?: 0.0

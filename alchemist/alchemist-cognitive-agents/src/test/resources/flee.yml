@@ -17,25 +17,16 @@ reactions: &behavior
   - time-distribution:
       type: DiracComb
       parameters: [1.0]
-    type: CognitiveBehavior
+    type: SteeringBehavior
     actions:
-      - type: Seek
-        parameters: [0.0, 0.0]
+      - type: Flee
+        parameters: [0, 0]
 
 displacements:
   - in:
       type: Circle
       parameters: [50, 0, 0, 20]
     nodes:
-      type: CognitivePedestrian2D
-      parameters: ["adult", "male"]
-    programs:
-      - *behavior
-  - in:
-      type: Circle
-      parameters: [50, 0, 0, 20]
-    nodes:
-      type: CognitivePedestrian2D
-      parameters: ["adult", "female"]
+      type: HomogeneousPedestrian2D
     programs:
       - *behavior

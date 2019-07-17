@@ -26,10 +26,10 @@ reactions: &behavior
   - time-distribution:
       type: DiracComb
       parameters: [1.0]
-    type: CognitiveBehaviour
+    type: CognitiveBehavior
     actions:
-      - type: BrownianMove
-        parameters: [0.2]
+      - type: Seek
+        parameters: [0.0, 0.0]
 
 displacements:
   - in:

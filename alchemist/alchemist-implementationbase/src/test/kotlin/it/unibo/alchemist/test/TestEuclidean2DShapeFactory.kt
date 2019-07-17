@@ -29,7 +29,7 @@ class TestEuclidean2DShapeFactory : FreeSpec({
         val firsts = factory.oneOfEachWithSize(DEFAULT_SHAPE_SIZE)
         val seconds = firsts.mapValues {
             // puts the other shapes in a corner to test "edge" cases
-            it.value.transformed { origin(Euclidean2DPosition(DEFAULT_SHAPE_SIZE * 2, DEFAULT_SHAPE_SIZE * 2)) }
+            it.value.transformed { origin(DEFAULT_SHAPE_SIZE * 2, DEFAULT_SHAPE_SIZE * 2) }
         }
         val names = firsts.keys.toList()
         for (f in 0 until names.size) {
@@ -50,6 +50,26 @@ class TestEuclidean2DShapeFactory : FreeSpec({
         }
         shouldThrow<IllegalArgumentException> {
             factory.requireCompatible(fakeShape)
+        }
+    }
+
+    "Multiple translations and complete rotations around the origin must preserve the centroid" - {
+        factory.oneOfEachWithSize(DEFAULT_SHAPE_SIZE).forEach {
+            it.key {
+                val angle = Math.PI / 4 // Note: 8 rotations are performed, so this test must hold true for asymmetric shapes.
+                val initialOrigin = Euclidean2DPosition(100.0, 100.0)
+                val shape = it.value.transformed { origin(initialOrigin) }
+                val rotated = shape.transformed { rotate(angle) }
+                    .transformed { origin(500.0, 500.0) }
+                    .transformed { rotate(angle) }
+                    .transformed { origin(0.0, 0.0) }
+                    .transformed { rotate(angle) }
+                    .transformed { origin(7.0, 0.0) }
+                    .transformed { rotate(angle) }
+                    .transformed { rotate(angle); rotate(angle); rotate(angle) }
+                    .transformed { origin(initialOrigin); rotate(angle) }
+                rotated.centroid shouldBe shape.centroid
+            }
         }
     }
 })

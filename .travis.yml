@@ -94,6 +94,7 @@ deploy:
     file_glob: true
     file: "${HOME}/build/${TRAVIS_REPO_SLUG}/alchemist/build/libs/alchemist-redist*.jar"
     on:
+      os: *reference_os
       repo: *official_repo
       tags: true
       condition: $PUBLISH = "true"
@@ -102,6 +103,7 @@ deploy:
     project: "./alchemist/build/docs/javadoc/"
     domain: alchemist-unstable-doc.surge.sh
     on:
+      os: *reference_os
       repo: *official_repo
       branch: develop
       condition: $PUBLISH = "true"
@@ -110,6 +112,7 @@ deploy:
     project: "./alchemist/report"
     domain: alchemist-unstable-reports.surge.sh
     on:
+      os: *reference_os
       repo: *official_repo
       branch: develop
       condition: $PUBLISH = "true"
@@ -118,6 +121,7 @@ deploy:
     project: "./alchemist/build/docs/javadoc/"
     domain: alchemist-doc.surge.sh
     on:
+      os: *reference_os
       repo: *official_repo
       tags: true
       condition: $PUBLISH = "true"
@@ -126,6 +130,7 @@ deploy:
     project: "./alchemist/report"
     domain: alchemist-reports.surge.sh
     on:
+      os: *reference_os
       repo: *official_repo
       tags: true
       condition: $PUBLISH = "true"

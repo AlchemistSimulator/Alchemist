@@ -18,7 +18,7 @@ private val ENVIRONMENT = Continuous2DEnvironment<Any>()
 private val LINKING_RULE = NoLinks<Any, Euclidean2DPosition>()
 private val RANDOM = MersenneTwister(1)
 private var displacement: Displacement<Euclidean2DPosition> by Delegates.notNull()
-private var nodes: Collection<Pedestrian<Any>> by Delegates.notNull()
+private var nodes: List<Pedestrian<Any>> by Delegates.notNull()
 
 class TestGroupsLoading : StringSpec({
 

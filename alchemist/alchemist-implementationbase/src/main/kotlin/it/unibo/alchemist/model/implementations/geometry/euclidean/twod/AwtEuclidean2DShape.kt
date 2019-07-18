@@ -59,17 +59,15 @@ internal class AwtEuclidean2DShape(
         }
 
         override fun rotate(angle: Double) {
-            newRotation = angle
+            newRotation += angle
         }
 
         fun apply(): AwtEuclidean2DShape {
+            transform.translate(newOrigin.x, newOrigin.y)
             if (newRotation != 0.0) {
-                transform.rotate(newRotation, origin.x, origin.y)
+                transform.rotate(newRotation)
             }
-            val offset = newOrigin - origin
-            if (offset.x != 0.0 || offset.y != 0.0) {
-                transform.translate(offset.x, offset.y)
-            }
+            transform.translate(-origin.x, -origin.y)
             return AwtEuclidean2DShape(transform.createTransformedShape(shape), newOrigin)
         }
     }

@@ -8,12 +8,12 @@ class BeliefDanger(
     private val influencialPeople: () -> List<CognitivePedestrian<*>>
 ) : MentalCognitiveCharacteristic() {
 
-    override fun combinationFunction() = maxOf(
+    override fun combinationFunction(): Double = maxOf(
         sensingOmega * dangerousZone(),
         persistingOmega * level(),
         (affectiveBiasingOmega * fear() + influencialPeople().aggregateDangerBeliefs()) / (affectiveBiasingOmega + 1)
     )
 
     private fun List<CognitivePedestrian<*>>.aggregateDangerBeliefs() =
-        this.sumByDouble { it.dangerBelief() } / this.size
+        if (size > 0) this.sumByDouble { it.dangerBelief() } / size else 0.0
 }

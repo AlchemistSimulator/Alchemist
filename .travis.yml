@@ -39,7 +39,6 @@ env:
     - JDK="adopt-openj9@1.11.0-3"
     - JDK="adopt@1.12.33-0"
     - JDK="adopt-openj9@1.12.33-0"
-    - JDK="1.12.0-1"
 matrix:
   exclude:
     - os: *reference_os

@@ -1,7 +1,7 @@
 incarnation: protelis
 
 environment:
-  type: Continuous2DEnvironment
+  type: EuclideanPhysics2DEnvironmentImpl
 
 positions:
   type: EuclideanPosition2D

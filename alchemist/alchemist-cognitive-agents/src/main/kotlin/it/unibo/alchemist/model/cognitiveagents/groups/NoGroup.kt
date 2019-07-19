@@ -7,7 +7,7 @@ import it.unibo.alchemist.model.interfaces.Pedestrian
  */
 object NoGroup : Group {
 
-    override val members: Set<Pedestrian<*>> = setOf()
+    override val members: List<Pedestrian<*>> = listOf()
 
     override fun contains(ped: Pedestrian<*>) = false
 }

@@ -10,7 +10,7 @@ interface Group {
     /**
      * The list of pedestrians belonging to this group.
      */
-    val members: Set<Pedestrian<*>>
+    val members: List<Pedestrian<*>>
 
     /**
      * Whether a pedestrian belongs to this group or not.

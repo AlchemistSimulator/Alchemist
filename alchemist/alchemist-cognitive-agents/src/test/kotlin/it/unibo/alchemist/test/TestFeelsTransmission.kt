@@ -11,12 +11,12 @@ class TestFeelsTransmission<T, P : Position<P>> : StringSpec({
         val aggregateDangerWithoutLayer = loadYamlSimulation<T, P>("feels-transmission-without-layer.yml")
                 .startSimulation()
                 .nodes
-                .map { it as CognitivePedestrian2D<T, *> }
+                .map { it as CognitivePedestrian2D<T> }
                 .sumByDouble { it.dangerBelief() }
         val aggregateDangerWithLayer = loadYamlSimulation<T, P>("feels-transmission-with-layer.yml")
                 .startSimulation()
                 .nodes
-                .map { it as CognitivePedestrian2D<T, *> }
+                .map { it as CognitivePedestrian2D<T> }
                 .sumByDouble { it.dangerBelief() }
         println("Without layer aggregate danger: $aggregateDangerWithoutLayer")
         println("With layer aggregate danger: $aggregateDangerWithLayer")

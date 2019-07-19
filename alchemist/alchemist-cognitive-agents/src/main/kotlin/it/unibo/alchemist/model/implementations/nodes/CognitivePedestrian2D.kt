@@ -2,25 +2,25 @@ package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Gender
-import it.unibo.alchemist.model.influencesphere.sensory.FieldOfView2D
-import it.unibo.alchemist.model.influencesphere.sensory.HearingField2D
-import it.unibo.alchemist.model.influencesphere.sensory.InfluenceSphere2D
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.CognitivePedestrian
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.influencesphere.FieldOfView2D
 import it.unibo.alchemist.model.interfaces.Molecule
-import it.unibo.alchemist.model.interfaces.Position2D
+import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
 import org.apache.commons.math3.random.RandomGenerator
 
-open class CognitivePedestrian2D<T, P : Position2D<P>> @JvmOverloads constructor(
-    override val env: Environment<T, P>,
+/**
+ * Implementation of a cognitive pedestrian in the Euclidean world.
+ */
+class CognitivePedestrian2D<T> @JvmOverloads constructor(
+    env: EuclideanPhysics2DEnvironment<T>,
     rg: RandomGenerator,
     age: Age,
     gender: Gender,
     danger: Molecule? = null
-) : AbstractCognitivePedestrian<T, P>(env, rg, age, gender, danger) {
+) : CognitivePedestrianImpl<T, Euclidean2DPosition>(env, rg, age, gender, danger) {
 
     @JvmOverloads constructor(
-        env: Environment<T, P>,
+        env: EuclideanPhysics2DEnvironment<T>,
         rg: RandomGenerator,
         age: String,
         gender: String,
@@ -28,24 +28,21 @@ open class CognitivePedestrian2D<T, P : Position2D<P>> @JvmOverloads constructor
     ) : this(env, rg, Age.fromString(age), Gender.fromString(gender), danger)
 
     @JvmOverloads constructor(
-        env: Environment<T, P>,
+        env: EuclideanPhysics2DEnvironment<T>,
         rg: RandomGenerator,
         age: Int,
         gender: String,
         danger: Molecule? = null
     ) : this(env, rg, Age.fromYears(age), Gender.fromString(gender), danger)
 
-    override fun influencialPeople() =
-        env.getPosition(this).let {
-            it.fieldOfView().peopleWithInfluence().union(it.hearingField().peopleWithInfluence()).toList()
-        }
+    init {
+        sensory.add(FieldOfView2D(env, this))
+    }
 
-    private fun <P : Position2D<P>> P.fieldOfView(): FieldOfView2D<P> =
-            FieldOfView2D(this.x, this.y, rg.nextDouble() * 360)
+    private val shape = env.shapeFactory.circle(1.0)
 
-    private fun <P : Position2D<P>> P.hearingField(): HearingField2D<P> =
-            HearingField2D(this.x, this.y)
-
-    private fun InfluenceSphere2D<P>.peopleWithInfluence() =
-        env.nodes.filter { this.isInfluenced(env.getPosition(it)) }.map { it as CognitivePedestrian<T> }
+    /**
+     * {@inheritDoc}
+     */
+    override fun getShape() = shape
 }

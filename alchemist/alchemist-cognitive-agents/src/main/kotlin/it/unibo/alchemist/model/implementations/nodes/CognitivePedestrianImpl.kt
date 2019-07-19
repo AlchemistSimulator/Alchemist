@@ -1,0 +1,58 @@
+package it.unibo.alchemist.model.implementations.nodes
+
+import it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive.*
+import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Age
+import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Gender
+import it.unibo.alchemist.model.influencesphere.InfluenceSphere
+import it.unibo.alchemist.model.interfaces.CognitivePedestrian
+import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.Molecule
+import it.unibo.alchemist.model.interfaces.Position
+import org.apache.commons.math3.random.RandomGenerator
+import kotlin.reflect.KClass
+
+open class CognitivePedestrianImpl<T, P : Position<P>>(
+    private val env: Environment<T, P>,
+    rg: RandomGenerator,
+    age: Age,
+    gender: Gender,
+    private val danger: Molecule?
+) : HeterogeneousPedestrianImpl<T>(env, rg, age, gender), CognitivePedestrian<T> {
+
+    private val cognitiveCharacteristics = linkedMapOf<KClass<out CognitiveCharacteristic>, CognitiveCharacteristic>(
+        BeliefDanger::class to
+            BeliefDanger({ dangerousLayerLevel() }, { characteristicLevel<Fear>() }, { influencialPeople() }),
+        Fear::class to
+            Fear({ characteristicLevel<DesireWalkRandomly>() }, { characteristicLevel<DesireEvacuate>() }, { influencialPeople() }),
+        DesireEvacuate::class to
+            DesireEvacuate(compliance, { characteristicLevel<BeliefDanger>() }, { characteristicLevel<Fear>() }),
+        DesireWalkRandomly::class to
+            DesireWalkRandomly(compliance, { characteristicLevel<BeliefDanger>() }, { characteristicLevel<Fear>() }),
+        IntentionEvacuate::class to
+            IntentionEvacuate({ characteristicLevel<DesireWalkRandomly>() }, { characteristicLevel<DesireEvacuate>() }),
+        IntentionWalkRandomly::class to
+            IntentionWalkRandomly({ characteristicLevel<DesireWalkRandomly>() }, { characteristicLevel<DesireEvacuate>() })
+    )
+
+    /**
+     * The list of influence spheres belonging to this cognitive pedestrian.
+     */
+    protected val sensory: MutableList<InfluenceSphere<T>> = mutableListOf()
+
+    override fun dangerBelief() = characteristicLevel<BeliefDanger>()
+
+    override fun fear() = characteristicLevel<Fear>()
+
+    override fun cognitiveCharacteristics() = cognitiveCharacteristics.values.toList()
+
+    private inline fun <reified C : CognitiveCharacteristic> characteristicLevel(): Double =
+            cognitiveCharacteristics[C::class]?.level() ?: 0.0
+
+    private fun dangerousLayerLevel(): Double =
+            env.getLayer(danger).let { if (it.isPresent) it.get().getValue(env.getPosition(this)) as Double else 0.0 }
+
+    override fun influencialPeople(): List<CognitivePedestrian<T>> =
+            sensory.fold(listOf()) { accumulator, sphere ->
+                accumulator.union(sphere.influentialNodes().filterIsInstance<CognitivePedestrian<T>>()).toList()
+            }
+}

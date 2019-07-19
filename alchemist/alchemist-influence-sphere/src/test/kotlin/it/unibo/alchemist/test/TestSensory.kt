@@ -19,14 +19,14 @@ class TestSensory<T> : StringSpec ({
         val origin = Euclidean2DPosition(5.0, 5.0)
         env.addNode(observed, origin)
         val quantity = 5
-        origin.surrounding(env, MersenneTwister(1), 5.0, quantity).forEach {
+        origin.surrounding(env, MersenneTwister(1), 10.0, quantity).forEach {
             with(HomogeneousPedestrian2D(env)) {
                 env.addNode(this, it)
                 env.setHeading(this, origin - it)
             }
         }
         env.nodes.minusElement(observed).forEach {
-            with(FieldOfView2D(env, it, distance = 5.0).influentialNodes()) {
+            with(FieldOfView2D(env, it).influentialNodes()) {
                 size shouldBe 1
                 first() shouldBe observed
             }

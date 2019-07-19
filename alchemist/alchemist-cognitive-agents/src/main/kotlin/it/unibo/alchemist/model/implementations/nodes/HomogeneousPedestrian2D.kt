@@ -1,5 +1,6 @@
 package it.unibo.alchemist.model.implementations.nodes
 
+import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
 
 /**
@@ -7,9 +8,9 @@ import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnviro
  */
 class HomogeneousPedestrian2D<T>(
     env: EuclideanPhysics2DEnvironment<T>
-) : HomogeneousPedestrianImpl<T>(env) {
+) : HomogeneousPedestrianImpl<T>(env), Pedestrian2D {
 
-    private val shape = env.shapeFactory.circle(0.2)
+    private val shape = env.defaultShape()
 
     /**
      * {@inheritDoc}

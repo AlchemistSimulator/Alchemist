@@ -2,6 +2,7 @@ package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Gender
+import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
 import org.apache.commons.math3.random.RandomGenerator
 
@@ -13,7 +14,7 @@ class HeterogeneousPedestrian2D<T>(
     rg: RandomGenerator,
     age: Age,
     gender: Gender
-) : HeterogeneousPedestrianImpl<T>(env, rg, age, gender) {
+) : HeterogeneousPedestrianImpl<T>(env, rg, age, gender), Pedestrian2D {
 
     constructor(
         env: EuclideanPhysics2DEnvironment<T>,
@@ -29,7 +30,7 @@ class HeterogeneousPedestrian2D<T>(
         gender: String
     ) : this(env, rg, Age.fromYears(age), Gender.fromString(gender))
 
-    private val shape = env.shapeFactory.circle(1.0)
+    private val shape = env.defaultShape()
 
     /**
      * {@inheritDoc}

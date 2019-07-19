@@ -5,6 +5,7 @@ import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Gende
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.influencesphere.FieldOfView2D
 import it.unibo.alchemist.model.interfaces.Molecule
+import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
 import org.apache.commons.math3.random.RandomGenerator
 
@@ -17,7 +18,7 @@ class CognitivePedestrian2D<T> @JvmOverloads constructor(
     age: Age,
     gender: Gender,
     danger: Molecule? = null
-) : CognitivePedestrianImpl<T, Euclidean2DPosition>(env, rg, age, gender, danger) {
+) : CognitivePedestrianImpl<T, Euclidean2DPosition>(env, rg, age, gender, danger), Pedestrian2D {
 
     @JvmOverloads constructor(
         env: EuclideanPhysics2DEnvironment<T>,
@@ -39,7 +40,7 @@ class CognitivePedestrian2D<T> @JvmOverloads constructor(
         sensory.add(FieldOfView2D(env, this))
     }
 
-    private val shape = env.shapeFactory.circle(1.0)
+    private val shape = env.defaultShape()
 
     /**
      * {@inheritDoc}

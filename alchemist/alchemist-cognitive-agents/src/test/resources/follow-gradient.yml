@@ -20,7 +20,7 @@ seeds:
 layers:
   - type: BidimensionalGaussianLayer
     molecule: *danger
-    parameters: [40.0, 70.0, 2.0, 10.0]
+    parameters: [150.0, 150.0, 2.0, 15.0]
 
 reactions: &behavior
   - time-distribution:
@@ -29,7 +29,7 @@ reactions: &behavior
     type: SteeringBehavior
     actions:
       - type: FollowGradient
-        parameters: [*danger]
+        parameters: [*danger, 1.0]
 
 displacements:
   - in:

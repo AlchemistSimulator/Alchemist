@@ -89,7 +89,7 @@ class EuclideanPhysics2DEnvironmentImpl<T> : Abstract2DEnvironment<T, Euclidean2
             Euclidean2DPosition(coordinates[0].toDouble(), coordinates[1].toDouble())
         }
 
-    private fun canNodeFitPosition(node: Node<T>, position: Euclidean2DPosition) =
+    override fun canNodeFitPosition(node: Node<T>, position: Euclidean2DPosition) =
         getNodesWithin(getShape(node).transformed { origin(position) })
             .minusElement(node)
             .isEmpty()

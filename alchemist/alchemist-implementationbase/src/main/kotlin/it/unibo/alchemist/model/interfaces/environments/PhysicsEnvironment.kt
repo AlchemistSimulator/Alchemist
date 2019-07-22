@@ -51,8 +51,19 @@ interface PhysicsEnvironment<T, P : Position<P>, S : Vector<S>, A : GeometricTra
 
     /**
      * Gets all nodes whose shape.intersect is true for the given shape.
+     *
      * @param shape the shape
      * @return the set of nodes colliding with the given shape
      */
     fun getNodesWithin(shape: GeometricShape<S, A>): List<Node<T>>
+
+    /**
+     * Whether or not a node can be placed in a position.
+     *
+     * @param node
+     *      the node to move.
+     * @param position
+     *      the position you want to move the node to.
+     */
+    fun canNodeFitPosition(node: Node<T>, position: P): Boolean
 }

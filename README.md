@@ -77,7 +77,7 @@ Install the following plugins (use <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>
 
 #### Importing the project
 
-0. Only for Windows system. Before clone the repository disable the autocrlf mode of git using `git config --global core.autocrlf false`
+0. Windows user should perform an additional first step: before cloning the repository, make sure that the autocrlf feature of git is disabled, by issuing `git config --global core.autocrlf false`. If the step is not performed, git will automatically insert CRLF line endings, violating the project's Checkstyle rules (which are rather strict, and prevent the build from succeeding).
 0. Clone this repository in a folder of your preference using `git clone` appropriately
 0. Open IntellJ. If a project opens automatically, select "Close project". You should be on the welcome screen of IntelliJ idea, with an aspect similar to this image: ![IntelliJ Welcome Screen](https://www.jetbrains.com/help/img/idea/2018.2/ideaWelcomeScreen.png)
 0. Select "Import Project"

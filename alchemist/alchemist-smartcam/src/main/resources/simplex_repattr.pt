@@ -1,0 +1,44 @@
+module program1
+import protelis:lang:utils
+import protelis:coord:spreading
+import protelis:coord:accumulation
+import java.lang.System.out
+import java.lang.Math.sqrt
+import it.unibo.alchemist.model.smartcam.ProtelisUtils.CameraTargetAssignmentProblem
+
+public def log(msg) {
+    out.println(msg);
+    0
+}
+
+
+let localTargets = env.get("vision");
+let targets = unionHood PlusSelf(nbr(localTargets));
+
+let distances = self.nbrRange();
+let directionsToOthers = unionHood(self.nbrVector());
+env.put("directionsToOthers", directionsToOthers);
+let directionsToTargets = targets.map((t) -> {t.getPosition() - self.getCoordinates()});
+env.put("directionsToOthers2", directionsToOthers.union(directionsToTargets));
+/*
+let repulsion = 1000 / distances ^ 2;
+let forces = repulsion;
+let directedForces = positions * forces;
+let finalForce = meanHood(directedForces);
+env.put("finalForce", finalForce);
+*/
+let NO_TARGET = 0;
+let MAX_CAMERAS_PER_TARGET = 2;
+let cameras = nbr(self.getCoordinates());
+let myTarget = CameraTargetAssignmentProblem.solve(cameras, targets, MAX_CAMERAS_PER_TARGET).getOrDefault(getUID(), NO_TARGET);
+if(myTarget == NO_TARGET){
+    env.put("state", "exploring");
+    if(env.has("destination")){
+        env.remove("destination");
+        env.remove("heading")
+    } else { 0 }
+} else {
+    env.put("state", "following");
+    env.put("destination", myTarget.getPosition());
+    env.put("heading", myTarget.getPosition())
+}

@@ -1,0 +1,87 @@
+incarnation: protelis
+
+environment:
+  type: EuclideanPhysics2DEnvironmentImpl
+  parameters: [400, 400]
+
+network-model:
+  type: ConnectWithinDistance
+  parameters: [2000]
+
+seeds:
+  scenario: 0
+  simulation: 1
+
+variables:
+  CameraSpeed: &CameraSpeed
+    type: ArbitraryVariable
+    parameters: [1.0]
+  HumanSpeed: &HumanSpeed
+    type: ArbitraryVariable
+    parameters: [0.5]
+
+programs:
+  - &Human
+    - time-distribution: 1
+      type: ChemicalReaction
+      # levy walk / levy flight
+      actions:
+        - type: ZigZagMove
+          parameters: [1000.0, *HumanSpeed]
+    - time-distribution: 0.001
+      type: ChemicalReaction
+      actions:
+        - type: RandomlyToggleMolecule
+          parameters: [wanted, true, 0.01]
+  - &Camera
+    - time-distribution: 1
+      type: ChemicalReaction
+      actions:
+        - type: See
+          parameters: [30, 60, vision]
+    - time-distribution: 1
+      type: ChemicalReaction
+      conditions:
+        - type: MoleculeHasConcentration
+          parameters: [state, following]
+      actions:
+        - type: MoveToTarget
+          parameters: [destination, *CameraSpeed]
+        - type: HeadTowardTarget
+          parameters: [heading]
+
+    - time-distribution: 1
+      type: ChemicalReaction
+      conditions:
+        - type: MoleculeHasConcentration
+          parameters: [state, exploring]
+      actions:
+        - type: Spin
+          parameters: [0.1]
+        - type: ZigZagMove
+          parameters: [1000.0, *CameraSpeed]
+    - time-distribution: 1
+      program: simplex_repattr
+    - program: send
+
+
+
+displacements:
+  - in:
+      type: Circle
+      parameters: [20, 0, 0, 200]
+    nodes:
+      type: CircleNode
+      parameters: [1]
+    programs:
+      - *Human
+  - in:
+      type: Circle
+      parameters: [20, 0, 0, 200]
+    nodes:
+      type: ProtelisNode
+      parameters: [1]
+    programs:
+      - *Camera
+
+

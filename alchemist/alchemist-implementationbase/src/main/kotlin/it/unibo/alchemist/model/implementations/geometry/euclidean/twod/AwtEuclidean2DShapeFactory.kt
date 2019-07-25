@@ -29,7 +29,7 @@ internal class AwtEuclidean2DShapeFactory(
         AwtEuclidean2DShape(Rectangle2D.Double(-width / 2, -height / 2, width, height))
 
     override fun circleSector(radius: Double, angle: Double, heading: Double): Euclidean2DShape {
-        val startAngle = heading - angle / 2
+        val startAngle = -heading - angle / 2
         return AwtEuclidean2DShape(Arc2D.Double(-radius, -radius, radius * 2, radius * 2, toDegrees(startAngle), toDegrees(angle), Arc2D.PIE))
     }
 

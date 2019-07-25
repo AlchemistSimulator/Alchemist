@@ -9,6 +9,7 @@ package it.unibo.alchemist.boundary.monitors;
 
 import com.google.common.collect.ImmutableList;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.boundary.gui.effects.AdvancedEffect;
 import it.unibo.alchemist.boundary.gui.effects.Effect;
 import it.unibo.alchemist.boundary.interfaces.Graphical2DOutputMonitor;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
@@ -23,6 +24,7 @@ import it.unibo.alchemist.boundary.wormhole.interfaces.PointerSpeed;
 import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
+import it.unibo.alchemist.model.implementations.environments.EuclideanPhysics2DEnvironmentImpl;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
@@ -37,18 +39,9 @@ import org.danilopianini.lang.LangUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.AbstractAction;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.MouseInputListener;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Shape;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -169,9 +162,9 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
 
     private void resetStatus() {
         if (isPreviousStateMarking) {
-            this.status = ViewStatus.VIEW_WITH_MARKER;
+            status = ViewStatus.VIEW_WITH_MARKER;
         } else {
-            this.status = ViewStatus.VIEW_ONLY;
+            status = ViewStatus.VIEW_ONLY;
         }
     }
 
@@ -179,25 +172,25 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         bindKey(KeyEvent.VK_S, () -> {
             if (status == ViewStatus.SELECTING_NODES) {
                 resetStatus();
-                this.selectedNodes.clear();
+                selectedNodes.clear();
             } else if (isNotInteracting()) {
-                this.status = ViewStatus.SELECTING_NODES;
-            } 
-            this.repaint();
+                status = ViewStatus.SELECTING_NODES;
+            }
+            repaint();
         });
         bindKey(KeyEvent.VK_O, () -> {
             if (status == ViewStatus.SELECTING_NODES) {
-                this.status = ViewStatus.MOVING_SELECTED_NODES;
+                status = ViewStatus.MOVING_SELECTED_NODES;
             }
         });
         bindKey(KeyEvent.VK_C, () -> {
             if (status == ViewStatus.SELECTING_NODES) {
-                this.status = ViewStatus.CLONING_NODES;
+                status = ViewStatus.CLONING_NODES;
             }
         });
         bindKey(KeyEvent.VK_E, () -> {
             if (status == ViewStatus.SELECTING_NODES) {
-                this.status = ViewStatus.EDITING_NODES_CONTENT;
+                status = ViewStatus.EDITING_NODES_CONTENT;
                 final JFrame mol = Generic2DDisplay.makeFrame("Moleculing", new MoleculeInjectorGUI<>(selectedNodes));
                 mol.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 mol.addWindowListener(new WindowAdapter() {
@@ -211,7 +204,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         });
         bindKey(KeyEvent.VK_D, () -> {
             if (status == ViewStatus.SELECTING_NODES) {
-                this.status = ViewStatus.DELETING_NODES;
+                status = ViewStatus.DELETING_NODES;
                 final Simulation<T, P> sim = currentEnv.getSimulation();
                 for (final Node<T> n : selectedNodes) {
                     sim.schedule(() -> currentEnv.removeNode(n));
@@ -330,9 +323,28 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                 }
             }
         }
+        /*
+         * Draws the borders if there are any
+         */
+        if (currentEnv instanceof EuclideanPhysics2DEnvironmentImpl) {
+            //noinspection unchecked
+            EuclideanPhysics2DEnvironmentImpl<T> env = (EuclideanPhysics2DEnvironmentImpl) currentEnv;
+            Point topLeft = wormhole.getViewPoint(currentEnv.makePosition(-env.getWidth() / 2, env.getHeight() / 2));
+            Point bottomRight = wormhole.getViewPoint(currentEnv.makePosition(env.getWidth() / 2, -env.getHeight() / 2));
+            Point wh = new Point(bottomRight.x - topLeft.x, bottomRight.y - topLeft.y);
+            g.setColor(Color.BLACK);
+            g.drawRect(topLeft.x, topLeft.y, wh.x, wh.y);
+        }
         g.setColor(Color.GREEN);
         if (effectStack != null) {
-            effectStack.forEach(effect -> onView.forEach((node, point) -> effect.apply(g, node, point.x, point.y)));
+            effectStack.forEach(effect -> onView.forEach((node, point) -> {
+                if (effect instanceof AdvancedEffect) {
+                    //noinspection unchecked
+                    ((AdvancedEffect) effect).apply(g, node, currentEnv, wormhole.getZoom(), point.x, point.y);
+                } else {
+                    effect.apply(g, node, point.x, point.y);
+                }
+            }));
         }
         if (isCloserNodeMarked()) {
             final Optional<Map.Entry<Node<T>, Point>> closest = onView.entrySet().parallelStream()

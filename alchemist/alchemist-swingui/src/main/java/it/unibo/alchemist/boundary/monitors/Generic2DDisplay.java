@@ -336,7 +336,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
          * Draws the borders if there are any
          */
         if (currentEnv instanceof EuclideanPhysics2DEnvironmentImpl) {
-            @SuppressWarnings("unchecked") final EuclideanPhysics2DEnvironmentImpl<T> env = (EuclideanPhysics2DEnvironmentImpl) currentEnv;
+            final EuclideanPhysics2DEnvironmentImpl env = (EuclideanPhysics2DEnvironmentImpl) currentEnv;
             final Point topLeft = wormhole.getViewPoint(currentEnv.makePosition(-env.getWidth() / 2, env.getHeight() / 2));
             final Point bottomRight = wormhole.getViewPoint(currentEnv.makePosition(env.getWidth() / 2, -env.getHeight() / 2));
             final Point wh = new Point(bottomRight.x - topLeft.x, bottomRight.y - topLeft.y);

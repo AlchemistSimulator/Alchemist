@@ -39,9 +39,18 @@ import org.danilopianini.lang.LangUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -327,11 +336,10 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
          * Draws the borders if there are any
          */
         if (currentEnv instanceof EuclideanPhysics2DEnvironmentImpl) {
-            //noinspection unchecked
-            EuclideanPhysics2DEnvironmentImpl<T> env = (EuclideanPhysics2DEnvironmentImpl) currentEnv;
-            Point topLeft = wormhole.getViewPoint(currentEnv.makePosition(-env.getWidth() / 2, env.getHeight() / 2));
-            Point bottomRight = wormhole.getViewPoint(currentEnv.makePosition(env.getWidth() / 2, -env.getHeight() / 2));
-            Point wh = new Point(bottomRight.x - topLeft.x, bottomRight.y - topLeft.y);
+            @SuppressWarnings("unchecked") final EuclideanPhysics2DEnvironmentImpl<T> env = (EuclideanPhysics2DEnvironmentImpl) currentEnv;
+            final Point topLeft = wormhole.getViewPoint(currentEnv.makePosition(-env.getWidth() / 2, env.getHeight() / 2));
+            final Point bottomRight = wormhole.getViewPoint(currentEnv.makePosition(env.getWidth() / 2, -env.getHeight() / 2));
+            final Point wh = new Point(bottomRight.x - topLeft.x, bottomRight.y - topLeft.y);
             g.setColor(Color.BLACK);
             g.drawRect(topLeft.x, topLeft.y, wh.x, wh.y);
         }
@@ -701,7 +709,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                             currentEnv.addNode(n, envEnding);
                         }
                         update(currentEnv, engine.getTime());
-                    } catch (RuntimeException exp) { // NOPMD
+                    } catch (final RuntimeException exp) { // NOPMD
                         final String title = "Node cloning error";
                         final String message = "One or more of your nodes do not support cloning, the debug information is:\n"
                                 + LangUtils.stackTraceToString(exp);

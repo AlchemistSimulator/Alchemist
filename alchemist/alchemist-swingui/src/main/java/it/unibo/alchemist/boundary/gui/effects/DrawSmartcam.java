@@ -30,7 +30,7 @@ public final class DrawSmartcam<T, P extends Position<P>> implements AdvancedEff
         if (!(environment instanceof EuclideanPhysics2DEnvironment)) {
             return;
         }
-        //noinspection unchecked
+        @SuppressWarnings("unchecked")
         final EuclideanPhysics2DEnvironment<T> env = (EuclideanPhysics2DEnvironment) environment;
         drawShape(g, node, env, zoom, x, y);
         drawFieldOfView(g, node, env, zoom, x, y);

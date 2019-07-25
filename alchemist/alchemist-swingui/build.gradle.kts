@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-loading"))
     implementation(project(":alchemist-maps"))
+    implementation(project(":alchemist-smartcam"))
     implementation(project(":alchemist-time"))
     implementation(Libs.miglayout_swing)
     implementation(Libs.mapsforge_map_awt)

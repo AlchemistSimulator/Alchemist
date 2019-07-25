@@ -31,5 +31,5 @@ dependencies {
 }
 
 tasks.withType<Test> {
-    maxHeapSize = "3200m"
+    maxHeapSize = "3300m"
 }

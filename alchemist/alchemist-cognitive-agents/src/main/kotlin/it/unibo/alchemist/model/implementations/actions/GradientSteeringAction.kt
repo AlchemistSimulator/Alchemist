@@ -8,8 +8,6 @@ import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnviro
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
-private const val QUANTITY_OF_POINTS = 8
-
 /**
  * Generic implementation of an action influenced by the concentration of a given molecule in the environment.
  *
@@ -38,5 +36,5 @@ open class GradientSteeringAction<T>(
     SpeedSelectionStrategy { pedestrian.walkingSpeed }
 ) {
     override fun getDestination(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double) =
-        current.surrounding(env, maxWalk, QUANTITY_OF_POINTS).formula(targetMolecule)
+        current.surrounding(env, maxWalk, 8).formula(targetMolecule)
 }

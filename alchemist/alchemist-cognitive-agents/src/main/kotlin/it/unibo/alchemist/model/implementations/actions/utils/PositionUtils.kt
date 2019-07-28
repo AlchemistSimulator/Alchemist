@@ -3,7 +3,6 @@ package it.unibo.alchemist.model.implementations.actions.utils
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Position2D
-import org.apache.commons.math3.random.RandomGenerator
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -13,6 +12,11 @@ import kotlin.math.sin
 fun <T, P : Position<P>> Environment<T, P>.makePosition(coords: Array<Double>): P = makePosition(*coords)
 
 /**
+ * Create a position corresponding to the origin of this environment
+ */
+fun <T, P : Position<P>> Environment<T, P>.origin(): P = makePosition((1..dimensions).map { 0.0 }.toTypedArray())
+
+/**
  * Multiply each coordinate of this position by a number.
  *
  * @param n
@@ -20,6 +24,14 @@ fun <T, P : Position<P>> Environment<T, P>.makePosition(coords: Array<Double>): 
  */
 operator fun <P : Position<P>> P.times(n: Double) =
         this.cartesianCoordinates.map { it * n }.toTypedArray()
+
+/**
+ * Divide each coordinate of this position by a number.
+ *
+ * @param n
+ *          the divisor of each division.
+ */
+operator fun <P : Position<P>> P.div(n: Double) = times(1 / n)
 
 /**
  * Create a list of points equally distributed in the circle of given radius with center in this position.
@@ -35,12 +47,11 @@ operator fun <P : Position<P>> P.times(n: Double) =
  */
 fun <P : Position2D<P>> P.surrounding(
     env: Environment<*, P>,
-    rg: RandomGenerator,
     radius: Double,
     quantity: Int
-): List<P> = (1..quantity).map { it * Math.PI * 2 / quantity }
-        .shuffled(rg)
-        .map { env.makePosition(this.x + radius, y).rotate(env, this, it) }
+): List<P> = (1..quantity).map { it * Math.PI * 2 / quantity }.map {
+    env.makePosition(this.x + radius, y).rotate(env, this, it)
+}
 
 /**
  * Perform the rotation of a position.

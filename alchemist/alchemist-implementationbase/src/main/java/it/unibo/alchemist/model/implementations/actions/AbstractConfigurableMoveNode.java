@@ -85,6 +85,7 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
         this.speed = Objects.requireNonNull(speed);
         this.target = Objects.requireNonNull(target);
         this.routing = Objects.requireNonNull(routing);
+        this.end = target.getTarget();
     }
 
     @Override

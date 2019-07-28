@@ -1,9 +1,8 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Molecule
+import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
-import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * Move the pedestrian towards positions of the environment with a low concentration of the target molecule.
@@ -14,26 +13,19 @@ import org.apache.commons.math3.random.RandomGenerator
  *          the owner of this action.
  * @param targetMolecule
  *          the {@link Molecule} you want to know the concentration in the different positions of the environment.
- * @param rg
- *          the simulation {@link RandomGenerator}.
- * @param radius
- *          the distance all the positions where the molecule concentration is checked
- *          must have from the current pedestrian position.
  */
 open class AvoidGradient<T>(
     env: EuclideanPhysics2DEnvironment<T>,
-    pedestrian: Pedestrian<T>,
-    targetMolecule: Molecule,
-    rg: RandomGenerator,
-    radius: Double
+    pedestrian: Pedestrian2D<T>,
+    targetMolecule: Molecule
 ) : GradientSteeringAction<T>(
     env,
     pedestrian,
     targetMolecule,
-    rg,
-    radius,
-    { molecule -> filter { env.canNodeFitPosition(pedestrian, it) }
-            .plusElement(env.getPosition(pedestrian))
-            .minBy { env.getLayer(molecule).get().getValue(it) as Double }
+    { molecule ->
+        val currentPosition = env.getPosition(pedestrian)
+        (filter { env.canNodeFitPosition(pedestrian, it) }
+                .plusElement(currentPosition)
+                .minBy { env.getLayer(molecule).get().getValue(it) as Double } ?: currentPosition) - currentPosition
     }
 )

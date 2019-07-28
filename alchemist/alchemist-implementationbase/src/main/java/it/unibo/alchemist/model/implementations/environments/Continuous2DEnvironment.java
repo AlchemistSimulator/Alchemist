@@ -12,8 +12,7 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 /**
  * @param <T>
  */
-public class Continuous2DEnvironment<T> extends Abstract2DEnvironment<T, Euclidean2DPosition> {
-
+public class Continuous2DEnvironment<T> extends EuclideanPhysics2DEnvironmentImpl<T> {
 
     private static final long serialVersionUID = 1L;
 

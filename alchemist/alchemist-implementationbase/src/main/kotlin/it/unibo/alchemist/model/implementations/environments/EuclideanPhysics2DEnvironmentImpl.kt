@@ -11,7 +11,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSh
 /**
  * Implementation of [EuclideanPhysics2DEnvironment]
  */
-class EuclideanPhysics2DEnvironmentImpl<T> : Abstract2DEnvironment<T, Euclidean2DPosition>(), EuclideanPhysics2DEnvironment<T> {
+open class EuclideanPhysics2DEnvironmentImpl<T> : Abstract2DEnvironment<T, Euclidean2DPosition>(), EuclideanPhysics2DEnvironment<T> {
 
     override val shapeFactory: Euclidean2DShapeFactory = GeometricShapeFactory.getInstance()
     private val defaultHeading = Euclidean2DPosition(0.0, 0.0)

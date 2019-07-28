@@ -18,6 +18,6 @@ import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnviro
 class FieldOfView2D<T>(
     env: EuclideanPhysics2DEnvironment<T>,
     owner: Node<T>,
-    distance: Double = 10.0,
-    aperture: Double = Math.PI * 2 / 3 // 120° in radians
+    distance: Double,
+    aperture: Double
 ) : InfluenceSphere2D<T>(env, owner, env.shapeFactory.circleSector(distance, aperture, -Math.PI / 2))

@@ -14,19 +14,21 @@ class TestSensory<T> : StringSpec ({
 
     "field of view" {
         val env = EuclideanPhysics2DEnvironmentImpl<T>()
+        val rand = MersenneTwister(1)
         env.linkingRule = NoLinks()
-        val observed = HomogeneousPedestrian2D(env)
+        val observed = HomogeneousPedestrian2D(env, rand)
         val origin = Euclidean2DPosition(5.0, 5.0)
         env.addNode(observed, origin)
-        val quantity = 5
-        origin.surrounding(env, MersenneTwister(1), 10.0, quantity).forEach {
-            with(HomogeneousPedestrian2D(env)) {
+        val radius = 10.0
+        val quantity = 20
+        origin.surrounding(env,radius, quantity).forEach {
+            with(HomogeneousPedestrian2D(env, rand)) {
                 env.addNode(this, it)
                 env.setHeading(this, origin - it)
             }
         }
         env.nodes.minusElement(observed).forEach {
-            with(FieldOfView2D(env, it).influentialNodes()) {
+            with(FieldOfView2D(env, it, radius, Math.PI / 2).influentialNodes()) {
                 size shouldBe 1
                 first() shouldBe observed
             }

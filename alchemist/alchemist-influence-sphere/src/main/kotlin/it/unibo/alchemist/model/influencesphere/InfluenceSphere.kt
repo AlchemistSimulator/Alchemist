@@ -3,12 +3,12 @@ package it.unibo.alchemist.model.influencesphere
 import it.unibo.alchemist.model.interfaces.Node
 
 /**
- * Area in which nodes exert/suffer an influence to/by other nodes.
+ * Area inside which nodes exert an influence on each other.
  */
-interface InfluenceSphere<T> {
+interface InfluenceSphere {
 
     /**
      * The list of nodes relevant for this sphere of influence.
      */
-    fun influentialNodes(): List<Node<T>>
+    fun influentialNodes(): List<Node<*>>
 }

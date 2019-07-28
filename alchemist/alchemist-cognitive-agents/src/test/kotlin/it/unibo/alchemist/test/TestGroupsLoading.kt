@@ -26,7 +26,7 @@ class TestGroupsLoading : StringSpec({
     "groups loading" {
         nodes = (0..NUM_FAMILIES).flatMap {
             GenericGroup((0..RANDOM.nextInt() % 10)
-                    .map { HomogeneousPedestrian2D(ENVIRONMENT) })
+                    .map { HomogeneousPedestrian2D(ENVIRONMENT, RANDOM) })
                     .members
         }
         displacement = Circle(ENVIRONMENT, RANDOM, nodes.size, 0.0, 0.0, 10.0)

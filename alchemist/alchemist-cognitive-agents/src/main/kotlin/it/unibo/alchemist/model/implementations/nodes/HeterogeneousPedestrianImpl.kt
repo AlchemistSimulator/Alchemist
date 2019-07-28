@@ -3,17 +3,27 @@ package it.unibo.alchemist.model.implementations.nodes
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.*
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.HeterogeneousPedestrian
+import it.unibo.alchemist.model.interfaces.Position
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * Implementation of an heterogeneous pedestrian.
+ *
+ * @param env
+ *          the environment inside which this pedestrian moves.
+ * @param rg
+ *          the simulation {@link RandomGenerator}.
+ * @param age
+ *          the age of this pedestrian.
+ * @param gender
+ *          the gender of this pedestrian
  */
-open class HeterogeneousPedestrianImpl<T>(
-    env: Environment<T, *>,
+open class HeterogeneousPedestrianImpl<T, P : Position<P>>(
+    env: Environment<T, P>,
     rg: RandomGenerator,
     final override val age: Age,
     final override val gender: Gender
-) : HomogeneousPedestrianImpl<T>(env), HeterogeneousPedestrian<T> {
+) : HomogeneousPedestrianImpl<T, P>(env), HeterogeneousPedestrian<T> {
 
     private val speed = Speed(age, gender, rg)
 

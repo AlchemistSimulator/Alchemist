@@ -20,7 +20,7 @@ interface CognitivePedestrian<T> : HeterogeneousPedestrian<T> {
     /**
      * A list of all the pedestrians in the same environment who have an influence on this pedestrian.
      */
-    fun influencialPeople(): List<CognitivePedestrian<*>>
+    fun influencialPeople(): List<CognitivePedestrian<T>>
 
     /**
      * The list of all the cognitive characteristics of this pedestrian.

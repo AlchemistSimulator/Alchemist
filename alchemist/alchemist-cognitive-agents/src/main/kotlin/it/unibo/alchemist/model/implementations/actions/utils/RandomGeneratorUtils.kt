@@ -1,5 +1,6 @@
 package it.unibo.alchemist.model.implementations.actions.utils
 
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import org.apache.commons.math3.random.RandomGenerator
 import java.util.Collections
 
@@ -12,6 +13,11 @@ import java.util.Collections
  *          the upper bound.
  */
 fun RandomGenerator.nextDouble(from: Double, to: Double) = nextDouble() * (to - from) - to
+
+/**
+ * Generate a random Euclidean direction.
+ */
+fun RandomGenerator.direction() = Euclidean2DPosition(nextDouble(-1.0, 1.0), nextDouble(-1.0, 1.0))
 
 /**
  * [Fisher–Yates shuffle algorithm](https://www.worldcat.org/title/statistical-tables-for-biological-agricultural-and-medical-research/oclc/14222135)

@@ -1,5 +1,6 @@
 package it.unibo.alchemist.model.implementations.actions
 
+import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Speed
 import it.unibo.alchemist.model.implementations.actions.utils.makePosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Pedestrian
@@ -36,8 +37,8 @@ open class Arrive<T, P : Position<P>>(
         target -> with(env.getPosition(pedestrian).getDistanceTo(target)) {
             when {
                 this < arrivalTolerance -> 0.0
-                this < decelerationRadius -> pedestrian.walkingSpeed * this / decelerationRadius
-                else -> pedestrian.walkingSpeed
+                this < decelerationRadius -> Speed.default * this / decelerationRadius
+                else -> Speed.default
             }
         }
     }

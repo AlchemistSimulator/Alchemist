@@ -5,7 +5,6 @@ import it.unibo.alchemist.model.implementations.layers.BidimensionalGaussianLaye
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.*
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
-import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
 /**
@@ -32,8 +31,7 @@ open class GradientSteeringAction<T>(
         with(env.getLayer(targetMolecule).get() as BidimensionalGaussianLayer) {
             Euclidean2DPosition(centerX, centerY)
         }
-    },
-    SpeedSelectionStrategy { pedestrian.walkingSpeed }
+    }
 ) {
     override fun getDestination(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double) =
         current.surrounding(env, maxWalk, 8).formula(targetMolecule) - current

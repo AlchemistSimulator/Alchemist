@@ -47,20 +47,29 @@ open class CognitivePedestrianImpl<T, P : Position<P>> @JvmOverloads constructor
             IntentionWalkRandomly({ characteristicLevel<DesireWalkRandomly>() }, { characteristicLevel<DesireEvacuate>() })
     )
 
+    override fun speed() =
+        if (wantsToEvacuate())
+            runningSpeed * characteristicLevel<IntentionEvacuate>()
+        else
+            walkingSpeed * characteristicLevel<IntentionWalkRandomly>()
+
     override fun dangerBelief() = characteristicLevel<BeliefDanger>()
 
     override fun fear() = characteristicLevel<Fear>()
 
     override fun cognitiveCharacteristics() = cognitiveCharacteristics.values.toList()
 
+    override fun influencialPeople(): List<CognitivePedestrian<T>> =
+        senses.fold(listOf()) { accumulator, sphere ->
+            accumulator.union(sphere.influentialNodes().filterIsInstance<CognitivePedestrian<T>>()).toList()
+        }
+
     private inline fun <reified C : CognitiveCharacteristic> characteristicLevel(): Double =
-            cognitiveCharacteristics[C::class]?.level() ?: 0.0
+        cognitiveCharacteristics[C::class]?.level() ?: 0.0
 
     private fun dangerousLayerLevel(): Double =
-            env.getLayer(danger).let { if (it.isPresent) it.get().getValue(env.getPosition(this)) as Double else 0.0 }
+        env.getLayer(danger).let { if (it.isPresent) it.get().getValue(env.getPosition(this)) as Double else 0.0 }
 
-    override fun influencialPeople(): List<CognitivePedestrian<T>> =
-            senses.fold(listOf()) { accumulator, sphere ->
-                accumulator.union(sphere.influentialNodes().filterIsInstance<CognitivePedestrian<T>>()).toList()
-            }
+    private fun wantsToEvacuate(): Boolean =
+            characteristicLevel<IntentionEvacuate>() > characteristicLevel<IntentionWalkRandomly>()
 }

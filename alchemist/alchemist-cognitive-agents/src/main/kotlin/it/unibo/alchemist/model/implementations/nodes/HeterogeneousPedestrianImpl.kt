@@ -23,7 +23,7 @@ open class HeterogeneousPedestrianImpl<T, P : Position<P>>(
     rg: RandomGenerator,
     final override val age: Age,
     final override val gender: Gender
-) : HomogeneousPedestrianImpl<T, P>(env), HeterogeneousPedestrian<T> {
+) : HomogeneousPedestrianImpl<T, P>(env, rg), HeterogeneousPedestrian<T> {
 
     private val speed = Speed(age, gender, rg)
 

@@ -17,7 +17,7 @@ import org.apache.commons.math3.random.RandomGenerator
 class HomogeneousPedestrian2D<T>(
     env: EuclideanPhysics2DEnvironment<T>,
     rg: RandomGenerator
-) : HomogeneousPedestrianImpl<T, Euclidean2DPosition>(env), Pedestrian2D<T> {
+) : HomogeneousPedestrianImpl<T, Euclidean2DPosition>(env, rg), Pedestrian2D<T> {
 
     init {
         env.setHeading(this, rg.direction())

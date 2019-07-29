@@ -1,5 +1,6 @@
 package it.unibo.alchemist.model.implementations.actions
 
+import it.unibo.alchemist.model.implementations.actions.utils.div
 import it.unibo.alchemist.model.implementations.actions.utils.makePosition
 import it.unibo.alchemist.model.implementations.routes.PolygonalChain
 import it.unibo.alchemist.model.interfaces.Environment
@@ -36,11 +37,12 @@ open class SteeringActionImpl<T, P : Position<P>> @JvmOverloads constructor(
 
     override fun cloneAction(n: Node<T>?, r: Reaction<T>?) = TODO()
 
-    override fun getDestination(current: P, target: P, maxWalk: Double): P =
-        if (maxWalk > 0)
-            env.makePosition((target - current).cartesianCoordinates
-                    .map { it / (current.getDistanceTo(target) / maxWalk) }.toTypedArray())
-        else target
+    override fun getDestination(current: P, target: P, maxWalk: Double): P = with(current.getDistanceTo(target)) {
+        if (this < maxWalk)
+            target
+        else
+            env.makePosition((target - current) / (this / maxWalk))
+    }
 
     override fun nextPosition(): P = nextPosition
 

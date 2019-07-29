@@ -24,8 +24,8 @@ open class AvoidGradient<T>(
     targetMolecule,
     { molecule ->
         val currentPosition = env.getPosition(pedestrian)
-        (filter { env.canNodeFitPosition(pedestrian, it) }
-                .plusElement(currentPosition)
-                .minBy { env.getLayer(molecule).get().getValue(it) as Double } ?: currentPosition) - currentPosition
+        this.filter { env.canNodeFitPosition(pedestrian, it) }
+            .plusElement(currentPosition)
+            .minBy { env.getLayer(molecule).get().getValue(it) as Double } ?: currentPosition
     }
 )

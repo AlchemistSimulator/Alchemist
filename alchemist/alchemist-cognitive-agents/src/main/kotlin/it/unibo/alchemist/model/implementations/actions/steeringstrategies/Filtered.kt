@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.SteeringStrategy
 open class Filtered<T, P : Position<P>>(
     private val steerStrategy: SteeringStrategy<T, P>,
     private val filter: List<SteeringAction<T, P>>.() -> List<SteeringAction<T, P>>
-) : SteeringStrategy<T, P> {
+) : SteeringStrategy<T, P> by steerStrategy {
 
-    override fun computePosition(actions: List<SteeringAction<T, P>>) = steerStrategy.computePosition(actions.filter())
+    override fun computeNextPosition(actions: List<SteeringAction<T, P>>) = steerStrategy.computeNextPosition(actions.filter())
 }

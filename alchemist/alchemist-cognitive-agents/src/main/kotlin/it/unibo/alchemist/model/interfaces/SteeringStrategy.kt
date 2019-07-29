@@ -12,5 +12,13 @@ interface SteeringStrategy<T, P : Position<P>> {
      * @param actions
      *          the list of actions to combine.
      */
-    fun computePosition(actions: List<SteeringAction<T, P>>): P
+    fun computeNextPosition(actions: List<SteeringAction<T, P>>): P
+
+    /**
+     * Computes the target to reach starting from the steering actions the pedestrian obey to.
+     *
+     * @param actions
+     *          the list of actions to combine.
+     */
+    fun computeTarget(actions: List<SteeringAction<T, P>>): P
 }

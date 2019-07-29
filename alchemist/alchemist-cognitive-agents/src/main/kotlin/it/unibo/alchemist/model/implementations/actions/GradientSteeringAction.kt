@@ -36,5 +36,5 @@ open class GradientSteeringAction<T>(
     SpeedSelectionStrategy { pedestrian.walkingSpeed }
 ) {
     override fun getDestination(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double) =
-        current.surrounding(env, maxWalk, 8).formula(targetMolecule)
+        current.surrounding(env, maxWalk, 8).formula(targetMolecule) - current
 }

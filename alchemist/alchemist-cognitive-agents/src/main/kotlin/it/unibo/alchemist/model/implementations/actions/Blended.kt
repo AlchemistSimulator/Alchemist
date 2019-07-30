@@ -6,7 +6,6 @@ import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
-import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
 /**
@@ -24,11 +23,12 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
 open class Blended<T, P : Position<P>> @JvmOverloads constructor(
     env: Environment<T, P>,
     pedestrian: Pedestrian<T>,
-    actions: List<SteeringAction<T, P>>,
-    strategy: SteeringStrategy<T, P> = Nearest(env, pedestrian)
+    private val actions: List<SteeringAction<T, P>>,
+    private val strategy: SteeringStrategy<T, P> = Nearest(env, pedestrian)
 ) : SteeringActionImpl<T, P>(
     env,
     pedestrian,
-    TargetSelectionStrategy { strategy.computePosition(actions) },
-    SpeedSelectionStrategy { pedestrian.walkingSpeed }
-)
+    TargetSelectionStrategy { strategy.computeTarget(actions) }
+) {
+    override fun getDestination(current: P, target: P, maxWalk: Double): P = strategy.computeNextPosition(actions)
+}

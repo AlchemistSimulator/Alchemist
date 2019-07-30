@@ -3,10 +3,12 @@ package it.unibo.alchemist.model.implementations.nodes
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Speed
 import it.unibo.alchemist.model.cognitiveagents.groups.Group
 import it.unibo.alchemist.model.cognitiveagents.groups.NoGroup
+import it.unibo.alchemist.model.implementations.actions.utils.nextDouble
 import it.unibo.alchemist.model.influencesphere.InfluenceSphere
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
+import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * Implementation of a basic pedestrian.
@@ -14,7 +16,20 @@ import it.unibo.alchemist.model.interfaces.Position
  * @param env
  *          the environment inside which this pedestrian moves.
  */
-open class HomogeneousPedestrianImpl<T, P : Position<P>>(env: Environment<T, P>) : AbstractNode<T>(env), Pedestrian<T> {
+open class HomogeneousPedestrianImpl<T, P : Position<P>>(
+    env: Environment<T, P>,
+    private val rg: RandomGenerator
+) : AbstractNode<T>(env), Pedestrian<T> {
+
+    /**
+     * The speed at which the pedestrian moves if it's walking.
+     */
+    protected open val walkingSpeed: Double = Speed.default
+
+    /**
+     * The speed at which the pedestrian moves if it's running.
+     */
+    protected open val runningSpeed: Double = Speed.default * 3
 
     /**
      * The list of influence spheres belonging to this pedestrian.
@@ -23,9 +38,7 @@ open class HomogeneousPedestrianImpl<T, P : Position<P>>(env: Environment<T, P>)
 
     override var membershipGroup: Group = NoGroup
 
-    override val walkingSpeed = Speed.default
-
-    override val runningSpeed = Speed.default * 3
+    override fun speed() = rg.nextDouble(walkingSpeed, runningSpeed)
 
     override fun createT(): T = TODO()
 }

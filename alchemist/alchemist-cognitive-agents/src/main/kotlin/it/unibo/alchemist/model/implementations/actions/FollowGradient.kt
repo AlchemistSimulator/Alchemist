@@ -24,8 +24,8 @@ open class FollowGradient<T>(
     targetMolecule,
     { molecule ->
         val currentPosition = env.getPosition(pedestrian)
-        (filter { env.canNodeFitPosition(pedestrian, it) }
+        this.filter { env.canNodeFitPosition(pedestrian, it) }
             .plusElement(currentPosition)
-            .maxBy { env.getLayer(molecule).get().getValue(it) as Double } ?: currentPosition) - currentPosition
+            .maxBy { env.getLayer(molecule).get().getValue(it) as Double } ?: currentPosition
     }
 )

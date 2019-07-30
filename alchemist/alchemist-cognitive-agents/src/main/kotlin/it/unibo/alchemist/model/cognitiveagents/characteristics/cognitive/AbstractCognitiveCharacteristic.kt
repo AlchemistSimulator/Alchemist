@@ -6,6 +6,13 @@ import it.unibo.alchemist.model.cognitiveagents.characteristics.PARAMETERS_FILE
 abstract class AbstractCognitiveCharacteristic : CognitiveCharacteristic {
 
     protected var currentLevel: Double = 0.0
+        set(value) {
+            field = when {
+                value < 0.0 -> 0.0
+                value > 1.0 -> 1.0
+                else -> value
+            }
+        }
 
     override fun level() = currentLevel
 

@@ -5,8 +5,6 @@ variables:
     formula: "\"exit1\""
   exit2: &exit2
     formula: "\"exit2\""
-  radius: &radius
-    formula: 5.0
 
 environment:
   type: EuclideanPhysics2DEnvironmentImpl
@@ -24,10 +22,10 @@ seeds:
 layers:
   - type: BidimensionalGaussianLayer
     molecule: *exit1
-    parameters: [100.0, 0.0, 5.0, 2.5]
+    parameters: [100.0, 0.0, 5.0, 10]
   - type: BidimensionalGaussianLayer
     molecule: *exit2
-    parameters: [-100.0, 0.0, 5.0, 2.5]
+    parameters: [-100.0, 0.0, 5.0, 10]
 
 reactions: &behavior
   - time-distribution:
@@ -38,9 +36,9 @@ reactions: &behavior
       - type: Flee
         parameters: [0.0, 0.0]
       - type: FollowGradient
-        parameters: [*exit2, *radius]
+        parameters: [*exit2]
       - type: FollowGradient
-        parameters: [*exit1, *radius]
+        parameters: [*exit1]
 
 displacements:
   - in:

@@ -6,7 +6,7 @@ import it.unibo.alchemist.model.cognitiveagents.characteristics.utils.advancedLo
 class Fear(
     private val desireWalkRandomly: () -> Double,
     private val desireEvacuate: () -> Double,
-    private val influencialPeople: () -> Collection<CognitivePedestrian<*>>
+    private val influencialPeople: () -> List<CognitivePedestrian<*>>
 ) : MentalCognitiveCharacteristic() {
 
     override fun combinationFunction() = maxOf(
@@ -19,6 +19,6 @@ class Fear(
         )
     )
 
-    private fun Collection<CognitivePedestrian<*>>.aggregateFears() =
+    private fun List<CognitivePedestrian<*>>.aggregateFears() =
         this.sumByDouble { it.fear() } / this.size
 }

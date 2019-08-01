@@ -20,8 +20,10 @@ import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.protelis.lang.datatype.DatatypeFactory;
@@ -40,7 +42,8 @@ import java.util.function.Function;
 /**
  * @param <P> position type
  */
-public final class AlchemistExecutionContext<P extends Position<P>> extends AbstractExecutionContext implements SpatiallyEmbeddedDevice, LocalizedDevice, TimeAwareDevice {
+public final class AlchemistExecutionContext<P extends Position<P>> extends AbstractExecutionContext<AlchemistExecutionContext<P>>
+        implements SpatiallyEmbeddedDevice<Double>, LocalizedDevice, TimeAwareDevice {
 
     /**
      * Put this {@link Molecule} inside nodes that should compute distances using routes. It only makes sense in case the environment is a {@link MapEnvironment}
@@ -54,7 +57,6 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
             .expireAfterAccess(10, TimeUnit.MINUTES)
             .maximumSize(100)
             .build(new CacheLoader<P, Double>() {
-                @SuppressWarnings("unchecked")
                 @Override
                 public Double load(@NotNull final P dest) {
                     if (env instanceof MapEnvironment) {
@@ -100,7 +102,7 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
         rand = random;
     }
 
-    private Field buildFieldWithPosition(final Function<? super P, ?> fun) {
+    private <X> Field<X> buildFieldWithPosition(final Function<? super P, X> fun) {
         return buildField(fun, getDevicePosition());
     }
 
@@ -184,7 +186,7 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
     }
 
     @Override
-    protected AbstractExecutionContext instance() {
+    protected AlchemistExecutionContext<P> instance() {
         return new AlchemistExecutionContext<>(env, node, react, rand, (AlchemistNetworkManager) getNetworkManager());
     }
 
@@ -202,7 +204,7 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
     }
 
     @Override
-    public Field nbrRange() {
+    public Field<Double> nbrRange() {
         final boolean useRoutesAsDistances = env instanceof MapEnvironment<?> && node.contains(USE_ROUTES_AS_DISTANCES);
         return buildFieldWithPosition(p -> {
             if (useRoutesAsDistances) {
@@ -232,8 +234,15 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
     }
 
     @Override
-    public Field nbrVector() {
-        return buildFieldWithPosition(p -> getDevicePosition().minus(p));
+    public Field<Tuple> nbrVector() {
+        return buildFieldWithPosition(p -> {
+            final P diff = getDevicePosition().minus(p);
+            if (diff instanceof Position2D) {
+                final Position2D<?> vector = (Position2D<?>) diff;
+                return DatatypeFactory.createTuple(vector.getX(), vector.getY());
+            }
+            throw new NotImplementedException("Protelis support for 3D environments not ready yet.");
+        });
     }
 
     @Override

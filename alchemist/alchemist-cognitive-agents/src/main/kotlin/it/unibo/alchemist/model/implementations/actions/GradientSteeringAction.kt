@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
  */
 open class GradientSteeringAction<T>(
     private val env: EuclideanPhysics2DEnvironment<T>,
-    pedestrian: Pedestrian2D<T>,
+    private val pedestrian: Pedestrian2D<T>,
     private val targetMolecule: Molecule,
     private val formula: Iterable<Euclidean2DPosition>.(Molecule) -> Euclidean2DPosition
 ) : SteeringActionImpl<T, Euclidean2DPosition>(
@@ -34,5 +34,7 @@ open class GradientSteeringAction<T>(
     }
 ) {
     override fun getDestination(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double) =
-        current.surrounding(env, maxWalk, 8).formula(targetMolecule) - current
+        current.surrounding(env, maxWalk, 8)
+                .filter { env.canNodeFitPosition(pedestrian, it) }
+                .formula(targetMolecule) - current
 }

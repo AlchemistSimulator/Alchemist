@@ -10,7 +10,7 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.influencesphere.FieldOfView2D
 import org.apache.commons.math3.random.MersenneTwister
 
-class TestSensory<T> : StringSpec ({
+class TestSensory<T> : StringSpec({
 
     "field of view" {
         val env = EuclideanPhysics2DEnvironmentImpl<T>()
@@ -21,7 +21,7 @@ class TestSensory<T> : StringSpec ({
         env.addNode(observed, origin)
         val radius = 10.0
         val quantity = 20
-        origin.surrounding(env,radius, quantity).forEach {
+        origin.surrounding(env, radius, quantity).forEach {
             with(HomogeneousPedestrian2D(env, rand)) {
                 env.addNode(this, it)
                 env.setHeading(this, origin - it)

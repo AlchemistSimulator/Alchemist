@@ -1,5 +1,6 @@
 package it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive
 
+import com.google.common.primitives.Doubles
 import com.uchuhimo.konf.Config
 import it.unibo.alchemist.model.cognitiveagents.characteristics.PARAMETERS_FILE
 
@@ -7,11 +8,7 @@ abstract class AbstractCognitiveCharacteristic : CognitiveCharacteristic {
 
     protected var currentLevel: Double = 0.0
         set(value) {
-            field = when {
-                value < 0.0 -> 0.0
-                value > 1.0 -> 1.0
-                else -> value
-            }
+            field = Doubles.constrainToRange(value, 0.0, 1.0)
         }
 
     override fun level() = currentLevel

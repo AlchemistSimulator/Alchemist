@@ -15,5 +15,7 @@ class BeliefDanger(
     )
 
     private fun List<CognitivePedestrian<*>>.aggregateDangerBeliefs() =
-        if (size > 0) this.sumByDouble { it.dangerBelief() } / size else 0.0
+        if (size > 0) {
+            this.sumByDouble { it.dangerBelief() } / size
+        } else 0.0
 }

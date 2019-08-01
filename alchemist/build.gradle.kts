@@ -85,6 +85,11 @@ allprojects {
         runtimeOnly(Libs.logback_classic)
     }
 
+    java {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
     tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"
         options.compilerArgs = options.compilerArgs + listOf("-Werror", "-Xlint:unchecked")

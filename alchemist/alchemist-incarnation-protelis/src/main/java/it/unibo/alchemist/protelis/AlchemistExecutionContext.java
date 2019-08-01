@@ -58,6 +58,7 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
             .maximumSize(100)
             .build(new CacheLoader<P, Double>() {
                 @Override
+                @SuppressWarnings("unchecked")
                 public Double load(@NotNull final P dest) {
                     if (env instanceof MapEnvironment) {
                         if (dest instanceof GeoPosition) {

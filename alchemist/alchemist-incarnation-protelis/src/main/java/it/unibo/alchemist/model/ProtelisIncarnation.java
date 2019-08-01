@@ -294,7 +294,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
      * An {@link org.protelis.vm.ExecutionContext} that operates over a node, but does not
      * modify it.
      */
-    public static final class DummyContext extends AbstractExecutionContext {
+    public static final class DummyContext extends AbstractExecutionContext<DummyContext> {
         private static final Semaphore MUTEX = new Semaphore(1);
         private static final int SEED = -241837578;
         private static final RandomGenerator RNG = new MersenneTwister(SEED);
@@ -324,7 +324,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             throw new IllegalStateException("You tried to compute a Protelis device UID, on a non-Protelis node");
         }
         @Override
-        protected AbstractExecutionContext instance() {
+        protected DummyContext instance() {
             return this;
         }
         @Override

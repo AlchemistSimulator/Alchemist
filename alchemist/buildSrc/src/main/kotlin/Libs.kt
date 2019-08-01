@@ -95,7 +95,7 @@ object Libs {
     const val commons_cli: String = "commons-cli:commons-cli:" + Versions.commons_cli
 
     /**
-     * http://commons.apache.org/proper/commons-codec/ */
+     * https://commons.apache.org/proper/commons-codec/ */
     const val commons_codec: String = "commons-codec:commons-codec:" + Versions.commons_codec
 
     /**
@@ -109,6 +109,10 @@ object Libs {
     const val de_fayard_buildsrcversions_gradle_plugin: String =
             "de.fayard.buildSrcVersions:de.fayard.buildSrcVersions.gradle.plugin:" +
             Versions.de_fayard_buildsrcversions_gradle_plugin
+
+    /**
+     * https://github.com/blackears/svgSalamander */
+    const val svgsalamander: String = "guru.nidi.com.kitfox:svgSalamander:" + Versions.svgsalamander
 
     /**
      * https://github.com/classgraph/classgraph */

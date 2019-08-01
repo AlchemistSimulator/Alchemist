@@ -1,5 +1,3 @@
-import kotlin.String
-
 /**
  * Find which updates are available by running
  *     `$ ./gradlew buildSrcVersions`
@@ -39,13 +37,13 @@ object Versions {
 
     const val miglayout_swing: String = "5.2" 
 
-    const val ktlint: String = "0.33.0" 
+    const val ktlint: String = "0.33.0" // available: "0.34.2"
 
     const val konf: String = "0.13.3" 
 
     const val commons_cli: String = "1.4" 
 
-    const val commons_codec: String = "1.12" 
+    const val commons_codec: String = "1.12" // available: "1.13"
 
     const val commons_io: String = "2.6" 
 
@@ -53,13 +51,15 @@ object Versions {
 
     const val de_fayard_buildsrcversions_gradle_plugin: String = "0.3.2" 
 
+    const val svgsalamander: String = "1.1.2" 
+
     const val classgraph: String = "4.8.37" // available: "4.8.43"
 
     const val io_github_javaeden_orchid: String = "0.17.1" 
 
-    const val jpx: String = "1.4.0" 
+    const val jpx: String = "1.4.0" // available: "1.5.2"
 
-    const val kotlintest_runner_junit5: String = "3.3.2" // available: "3.3.3"
+    const val kotlintest_runner_junit5: String = "3.3.2" // available: "3.4.0"
 
     const val scafi_core_2_12: String = "0.3.2" // available: "53ddebd1"
 
@@ -101,29 +101,29 @@ object Versions {
 
     const val org_jetbrains_dokka_gradle_plugin: String = "0.9.17" // available: "0.9.18"
 
-    const val org_jetbrains_kotlin_jvm_gradle_plugin: String = "1.3.40" 
+    const val org_jetbrains_kotlin_jvm_gradle_plugin: String = "1.3.40" // available: "1.3.41"
 
-    const val org_jetbrains_kotlin: String = "1.3.40" 
+    const val org_jetbrains_kotlin: String = "1.3.40" // available: "1.3.41"
 
     const val annotations: String = "17.0.0" 
 
     const val jgrapht_core: String = "1.3.1" 
 
-    const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String = "8.1.0" 
+    const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String = "8.1.0" // available: "8.2.0"
 
     const val jool_java_8: String = "0.9.14" 
 
-    const val org_junit_jupiter: String = "5.4.2" // available: "5.5.0"
+    const val org_junit_jupiter: String = "5.4.2" // available: "5.5.1"
 
     const val mapsforge_map_awt: String = "0.11.0" 
 
-    const val org_openjfx: String = "11" // available: "13-ea+9"
+    const val org_openjfx: String = "11" // available: "13-ea+11"
 
     const val parboiled_java: String = "1.3.0" // available: "1.3.1"
 
     const val pegdown: String = "1.6.0" 
 
-    const val org_protelis: String = "12.2.0" 
+    const val org_protelis: String = "13.0.0"
 
     const val org_scala_lang: String = "2.12.2" // available: "2.13.0"
 
@@ -141,10 +141,10 @@ object Versions {
     object Gradle {
         const val runningVersion: String = "5.4.1"
 
-        const val currentVersion: String = "5.5"
+        const val currentVersion: String = "5.5.1"
 
-        const val nightlyVersion: String = "5.6-20190702000118+0000"
+        const val nightlyVersion: String = "5.7-20190731220046+0000"
 
-        const val releaseCandidate: String = ""
+        const val releaseCandidate: String = "5.6-rc-1"
     }
 }

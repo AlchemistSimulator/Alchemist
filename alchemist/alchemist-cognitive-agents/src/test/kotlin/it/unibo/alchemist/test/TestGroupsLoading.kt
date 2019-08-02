@@ -31,7 +31,7 @@ class TestGroupsLoading : StringSpec({
         }
         displacement = Circle(ENVIRONMENT, RANDOM, nodes.size, 0.0, 0.0, 10.0)
         with(displacement.iterator()) {
-            nodes.onEach { println(it.membershipGroup) }.forEach { ENVIRONMENT.addNode(it, this.next()) }
+            nodes.onEach { println(it.membershipGroup()) }.forEach { ENVIRONMENT.addNode(it, this.next()) }
         }
         ENVIRONMENT.startSimulation()
     }

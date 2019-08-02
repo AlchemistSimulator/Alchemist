@@ -36,5 +36,5 @@ open class HeterogeneousPedestrianImpl<T, P : Position<P>>(
     override val runningSpeed = speed.running
 
     override fun probabilityOfHelping(toHelp: HeterogeneousPedestrian<T>) =
-            helpAttitude.level(toHelp.age, toHelp.gender, membershipGroup.contains(toHelp))
+            helpAttitude.level(toHelp.age, toHelp.gender, membershipGroup().contains(toHelp))
 }

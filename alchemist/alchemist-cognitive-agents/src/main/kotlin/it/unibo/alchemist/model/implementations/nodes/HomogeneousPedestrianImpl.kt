@@ -1,8 +1,8 @@
 package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Speed
+import it.unibo.alchemist.model.cognitiveagents.groups.Alone
 import it.unibo.alchemist.model.cognitiveagents.groups.Group
-import it.unibo.alchemist.model.cognitiveagents.groups.NoGroup
 import it.unibo.alchemist.model.implementations.actions.utils.nextDouble
 import it.unibo.alchemist.model.influencesphere.InfluenceSphere
 import it.unibo.alchemist.model.interfaces.Environment
@@ -21,6 +21,8 @@ open class HomogeneousPedestrianImpl<T, P : Position<P>>(
     private val rg: RandomGenerator
 ) : AbstractNode<T>(env), Pedestrian<T> {
 
+    private var membershipGroup: Group<T>? = null
+
     /**
      * The speed at which the pedestrian moves if it's walking.
      */
@@ -36,7 +38,11 @@ open class HomogeneousPedestrianImpl<T, P : Position<P>>(
      */
     protected val senses: MutableList<InfluenceSphere> = mutableListOf()
 
-    override var membershipGroup: Group = NoGroup
+    override fun membershipGroup(): Group<T> = membershipGroup ?: Alone(this)
+
+    override fun changeMembershipGroup(group: Group<T>) {
+        membershipGroup = group
+    }
 
     override fun speed() = rg.nextDouble(walkingSpeed, runningSpeed)
 

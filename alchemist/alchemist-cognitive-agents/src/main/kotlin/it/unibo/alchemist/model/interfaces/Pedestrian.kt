@@ -10,7 +10,15 @@ interface Pedestrian<T> : Node<T> {
     /**
      * The group this pedestrian belongs to.
      */
-    var membershipGroup: Group
+    fun membershipGroup(): Group<T>
+
+    /**
+     * Change the group this pedestrian belongs to.
+     *
+     * @param group
+     *          the group this pedestrian starts to be part of.
+     */
+    fun changeMembershipGroup(group: Group<T>)
 
     /**
      * The speed at which the pedestrian is moving.

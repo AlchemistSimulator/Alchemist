@@ -4,7 +4,7 @@ import it.unibo.alchemist.model.interfaces.Pedestrian
 
 open class GenericGroup<T>(
     final override val members: List<Pedestrian<T>>
-) : Group {
+) : Group<T> {
 
-    init { members.forEach { it.membershipGroup = this } }
+    init { members.forEach { it.changeMembershipGroup(this) } }
 }

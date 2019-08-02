@@ -1,5 +1,5 @@
 reference_jdk: &reference_jdk
-  'JDK="adopt@1.11.28-0"'
+  'JDK="adopt@1.11"'
 reference_os: &reference_os
   'linux'
 official_repo: &official_repo
@@ -36,9 +36,9 @@ env:
     - OFFICIAL_REPO_SLUG="AlchemistSimulator/Alchemist"
   matrix:
     - *reference_jdk
-    - JDK="adopt-openj9@1.11.0-3"
-    - JDK="adopt@1.12.33-0"
-    - JDK="adopt-openj9@1.12.33-0"
+    - JDK="adopt-openj9@1.11"
+    - JDK="adopt@1.12"
+    - JDK="adopt-openj9@1.12"
 matrix:
   exclude:
     - os: *reference_os

@@ -1,6 +1,7 @@
 package it.unibo.alchemist.model.implementations.reactions
 
 import it.unibo.alchemist.model.implementations.actions.Blended
+import it.unibo.alchemist.model.implementations.actions.steeringstrategies.Nearest
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
@@ -34,7 +35,7 @@ class SteeringBehavior<T, P : Position<P>>(
     override fun execute() {
         with(actions.filterIsInstance<SteeringAction<T, P>>().toList()) {
             (actions - this).forEach { it.execute() }
-            Blended(env, pedestrian, this).execute()
+            Blended(env, pedestrian, this, Nearest(env, pedestrian)).execute()
         }
     }
 }

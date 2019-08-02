@@ -123,7 +123,7 @@ object Versions {
 
     const val pegdown: String = "1.6.0" 
 
-    const val org_protelis: String = "13.0.0"
+    const val org_protelis: String = "13.0.2"
 
     const val org_scala_lang: String = "2.12.2" // available: "2.13.0"
 

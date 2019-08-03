@@ -2,6 +2,7 @@ package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Gender
+import it.unibo.alchemist.model.cognitiveagents.groups.Group
 import it.unibo.alchemist.model.implementations.actions.utils.direction
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Molecule
@@ -28,24 +29,27 @@ class CognitivePedestrian2D<T> @JvmOverloads constructor(
     rg: RandomGenerator,
     age: Age,
     gender: Gender,
+    group: Group<T>? = null,
     danger: Molecule? = null
-) : CognitivePedestrianImpl<T, Euclidean2DPosition>(env, rg, age, gender, danger), Pedestrian2D<T> {
+) : CognitivePedestrianImpl<T, Euclidean2DPosition>(env, rg, age, gender, group, danger), Pedestrian2D<T> {
 
     @JvmOverloads constructor(
         env: EuclideanPhysics2DEnvironment<T>,
         rg: RandomGenerator,
         age: String,
         gender: String,
+        group: Group<T>? = null,
         danger: Molecule? = null
-    ) : this(env, rg, Age.fromString(age), Gender.fromString(gender), danger)
+    ) : this(env, rg, Age.fromString(age), Gender.fromString(gender), group, danger)
 
     @JvmOverloads constructor(
         env: EuclideanPhysics2DEnvironment<T>,
         rg: RandomGenerator,
         age: Int,
         gender: String,
+        group: Group<T>? = null,
         danger: Molecule? = null
-    ) : this(env, rg, Age.fromYears(age), Gender.fromString(gender), danger)
+    ) : this(env, rg, Age.fromYears(age), Gender.fromString(gender), group, danger)
 
     init {
         env.setHeading(this, rg.direction())

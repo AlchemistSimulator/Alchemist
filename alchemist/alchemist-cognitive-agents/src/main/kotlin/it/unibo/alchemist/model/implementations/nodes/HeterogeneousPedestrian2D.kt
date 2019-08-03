@@ -2,6 +2,7 @@ package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Gender
+import it.unibo.alchemist.model.cognitiveagents.groups.Group
 import it.unibo.alchemist.model.implementations.actions.utils.direction
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
@@ -20,26 +21,29 @@ import org.apache.commons.math3.random.RandomGenerator
  * @param gender
  *          the gender of this pedestrian
  */
-class HeterogeneousPedestrian2D<T>(
+class HeterogeneousPedestrian2D<T> @JvmOverloads constructor(
     env: EuclideanPhysics2DEnvironment<T>,
     rg: RandomGenerator,
     age: Age,
-    gender: Gender
-) : HeterogeneousPedestrianImpl<T, Euclidean2DPosition>(env, rg, age, gender), Pedestrian2D<T> {
+    gender: Gender,
+    group: Group<T>? = null
+) : HeterogeneousPedestrianImpl<T, Euclidean2DPosition>(env, rg, age, gender, group), Pedestrian2D<T> {
 
-    constructor(
+    @JvmOverloads constructor(
         env: EuclideanPhysics2DEnvironment<T>,
         rg: RandomGenerator,
         age: String,
-        gender: String
-    ) : this(env, rg, Age.fromString(age), Gender.fromString(gender))
+        gender: String,
+        group: Group<T>? = null
+    ) : this(env, rg, Age.fromString(age), Gender.fromString(gender), group)
 
-    constructor(
+    @JvmOverloads constructor(
         env: EuclideanPhysics2DEnvironment<T>,
         rg: RandomGenerator,
         age: Int,
-        gender: String
-    ) : this(env, rg, Age.fromYears(age), Gender.fromString(gender))
+        gender: String,
+        group: Group<T>? = null
+    ) : this(env, rg, Age.fromYears(age), Gender.fromString(gender), group)
 
     init {
         env.setHeading(this, rg.direction())

@@ -3,6 +3,7 @@ package it.unibo.alchemist.model.implementations.nodes
 import it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive.*
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Gender
+import it.unibo.alchemist.model.cognitiveagents.groups.Group
 import it.unibo.alchemist.model.interfaces.CognitivePedestrian
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Molecule
@@ -29,8 +30,9 @@ open class CognitivePedestrianImpl<T, P : Position<P>> @JvmOverloads constructor
     rg: RandomGenerator,
     age: Age,
     gender: Gender,
+    group: Group<T>? = null,
     private val danger: Molecule? = null
-) : HeterogeneousPedestrianImpl<T, P>(env, rg, age, gender), CognitivePedestrian<T> {
+) : HeterogeneousPedestrianImpl<T, P>(env, rg, age, gender, group), CognitivePedestrian<T> {
 
     private val cognitiveCharacteristics = linkedMapOf<KClass<out CognitiveCharacteristic>, CognitiveCharacteristic>(
         BeliefDanger::class to
@@ -71,5 +73,5 @@ open class CognitivePedestrianImpl<T, P : Position<P>> @JvmOverloads constructor
         env.getLayer(danger).let { if (it.isPresent) it.get().getValue(env.getPosition(this)) as Double else 0.0 }
 
     private fun wantsToEvacuate(): Boolean =
-            characteristicLevel<IntentionEvacuate>() > characteristicLevel<IntentionWalkRandomly>()
+        characteristicLevel<IntentionEvacuate>() > characteristicLevel<IntentionWalkRandomly>()
 }

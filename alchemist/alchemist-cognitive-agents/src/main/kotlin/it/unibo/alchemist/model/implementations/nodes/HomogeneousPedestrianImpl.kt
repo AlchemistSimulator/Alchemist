@@ -16,12 +16,15 @@ import org.apache.commons.math3.random.RandomGenerator
  * @param env
  *          the environment inside which this pedestrian moves.
  */
-open class HomogeneousPedestrianImpl<T, P : Position<P>>(
+open class HomogeneousPedestrianImpl<T, P : Position<P>> @JvmOverloads constructor(
     env: Environment<T, P>,
-    private val rg: RandomGenerator
+    private val rg: RandomGenerator,
+    group: Group<T>? = null
 ) : AbstractNode<T>(env), Pedestrian<T> {
 
-    private var membershipGroup: Group<T>? = null
+    override val membershipGroup: Group<T> by lazy {
+        group?.addMember(this) ?: Alone(this)
+    }
 
     /**
      * The speed at which the pedestrian moves if it's walking.
@@ -37,12 +40,6 @@ open class HomogeneousPedestrianImpl<T, P : Position<P>>(
      * The list of influence spheres belonging to this pedestrian.
      */
     protected val senses: MutableList<InfluenceSphere> = mutableListOf()
-
-    override fun membershipGroup(): Group<T> = membershipGroup ?: Alone(this)
-
-    override fun changeMembershipGroup(group: Group<T>) {
-        membershipGroup = group
-    }
 
     override fun speed() = rg.nextDouble(walkingSpeed, runningSpeed)
 

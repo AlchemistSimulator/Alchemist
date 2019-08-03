@@ -1,6 +1,7 @@
 package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.*
+import it.unibo.alchemist.model.cognitiveagents.groups.Group
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.HeterogeneousPedestrian
 import it.unibo.alchemist.model.interfaces.Position
@@ -18,12 +19,13 @@ import org.apache.commons.math3.random.RandomGenerator
  * @param gender
  *          the gender of this pedestrian
  */
-open class HeterogeneousPedestrianImpl<T, P : Position<P>>(
+open class HeterogeneousPedestrianImpl<T, P : Position<P>> @JvmOverloads constructor(
     env: Environment<T, P>,
     rg: RandomGenerator,
     final override val age: Age,
-    final override val gender: Gender
-) : HomogeneousPedestrianImpl<T, P>(env, rg), HeterogeneousPedestrian<T> {
+    final override val gender: Gender,
+    group: Group<T>? = null
+) : HomogeneousPedestrianImpl<T, P>(env, rg, group), HeterogeneousPedestrian<T> {
 
     private val speed = Speed(age, gender, rg)
 
@@ -36,5 +38,5 @@ open class HeterogeneousPedestrianImpl<T, P : Position<P>>(
     override val runningSpeed = speed.running
 
     override fun probabilityOfHelping(toHelp: HeterogeneousPedestrian<T>) =
-            helpAttitude.level(toHelp.age, toHelp.gender, membershipGroup().contains(toHelp))
+            helpAttitude.level(toHelp.age, toHelp.gender, membershipGroup.contains(toHelp))
 }

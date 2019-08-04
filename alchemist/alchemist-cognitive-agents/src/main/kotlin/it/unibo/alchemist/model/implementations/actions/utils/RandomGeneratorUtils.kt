@@ -12,7 +12,7 @@ import java.util.Collections
  * @param to
  *          the upper bound.
  */
-fun RandomGenerator.nextDouble(from: Double, to: Double) = nextDouble() * (to - from) - to
+fun RandomGenerator.nextDouble(from: Double, to: Double) = nextDouble() * (to - from) + from
 
 /**
  * Generate a random Euclidean direction.

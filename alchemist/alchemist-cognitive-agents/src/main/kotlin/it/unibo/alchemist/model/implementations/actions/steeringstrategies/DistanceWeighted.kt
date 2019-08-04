@@ -18,5 +18,5 @@ open class DistanceWeighted<T, P : Position<P>>(
     pedestrian: Pedestrian<T>
 ) : Weighted<T, P>(env, pedestrian, {
     target().getDistanceTo(env.getPosition(pedestrian))
-            .let { if (it > 0) 1 / it else 0.0 }
+            .let { if (it > 0.0) 1 / it else it }
 })

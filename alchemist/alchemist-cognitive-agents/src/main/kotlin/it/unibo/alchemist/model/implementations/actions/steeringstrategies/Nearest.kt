@@ -1,11 +1,9 @@
 package it.unibo.alchemist.model.implementations.actions.steeringstrategies
 
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Pedestrian
-import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.*
 
 /**
- * Steering logic where only the steering action whose target is
+ * Steering logic where only the steering action and the group steering action (if present) whose target is
  * the nearest to the current pedestrian position is taken into consideration.
  *
  * @param env
@@ -17,5 +15,11 @@ class Nearest<T, P : Position<P>>(
     env: Environment<T, P>,
     pedestrian: Pedestrian<T>
 ) : Filtered<T, P>(DistanceWeighted<T, P>(env, pedestrian), {
-    sortedBy { it.target().getDistanceTo(env.getPosition(pedestrian)) }.take(1)
+    val targetDistance = { action: SteeringAction<T, P> -> action.target().getDistanceTo(env.getPosition(pedestrian)) }
+    partition { it is GroupSteering<T, P> }.let { (groupActions, steerActions) ->
+        mutableListOf<SteeringAction<T, P>>().apply {
+            groupActions.minBy { targetDistance(it) }?.let { add(it) }
+            steerActions.minBy { targetDistance(it) }?.let { add(it) }
+        }
+    }
 })

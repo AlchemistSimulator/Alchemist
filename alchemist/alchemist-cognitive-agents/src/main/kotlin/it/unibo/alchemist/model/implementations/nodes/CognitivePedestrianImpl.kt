@@ -30,8 +30,8 @@ open class CognitivePedestrianImpl<T, P : Position<P>> @JvmOverloads constructor
     rg: RandomGenerator,
     age: Age,
     gender: Gender,
-    group: Group<T>? = null,
-    private val danger: Molecule? = null
+    private val danger: Molecule? = null,
+    group: Group<T>? = null
 ) : HeterogeneousPedestrianImpl<T, P>(env, rg, age, gender, group), CognitivePedestrian<T> {
 
     private val cognitiveCharacteristics = linkedMapOf<KClass<out CognitiveCharacteristic>, CognitiveCharacteristic>(

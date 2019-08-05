@@ -29,27 +29,27 @@ class CognitivePedestrian2D<T> @JvmOverloads constructor(
     rg: RandomGenerator,
     age: Age,
     gender: Gender,
-    group: Group<T>? = null,
-    danger: Molecule? = null
-) : CognitivePedestrianImpl<T, Euclidean2DPosition>(env, rg, age, gender, group, danger), Pedestrian2D<T> {
+    danger: Molecule? = null,
+    group: Group<T>? = null
+) : CognitivePedestrianImpl<T, Euclidean2DPosition>(env, rg, age, gender, danger, group), Pedestrian2D<T> {
 
     @JvmOverloads constructor(
         env: EuclideanPhysics2DEnvironment<T>,
         rg: RandomGenerator,
         age: String,
         gender: String,
-        group: Group<T>? = null,
-        danger: Molecule? = null
-    ) : this(env, rg, Age.fromString(age), Gender.fromString(gender), group, danger)
+        danger: Molecule? = null,
+        group: Group<T>? = null
+    ) : this(env, rg, Age.fromString(age), Gender.fromString(gender), danger, group)
 
     @JvmOverloads constructor(
         env: EuclideanPhysics2DEnvironment<T>,
         rg: RandomGenerator,
         age: Int,
         gender: String,
-        group: Group<T>? = null,
-        danger: Molecule? = null
-    ) : this(env, rg, Age.fromYears(age), Gender.fromString(gender), group, danger)
+        danger: Molecule? = null,
+        group: Group<T>? = null
+    ) : this(env, rg, Age.fromYears(age), Gender.fromString(gender), danger, group)
 
     init {
         env.setHeading(this, rg.direction())

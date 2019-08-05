@@ -1,6 +1,5 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.actions.steeringstrategies.Nearest
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
@@ -17,18 +16,18 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
  *          the owner of this action.
  * @param actions
  *          the list of actions to combine to determine the pedestrian movement.
- * @param strategy
+ * @param steerStrategy
  *          the logic according to the steering actions are combined.
  */
-open class Blended<T, P : Position<P>> @JvmOverloads constructor(
+class Combine<T, P : Position<P>>(
     env: Environment<T, P>,
     pedestrian: Pedestrian<T>,
     private val actions: List<SteeringAction<T, P>>,
-    private val strategy: SteeringStrategy<T, P> = Nearest(env, pedestrian)
+    private val steerStrategy: SteeringStrategy<T, P>
 ) : SteeringActionImpl<T, P>(
     env,
     pedestrian,
-    TargetSelectionStrategy { strategy.computeTarget(actions) }
+    TargetSelectionStrategy { steerStrategy.computeTarget(actions) }
 ) {
-    override fun getDestination(current: P, target: P, maxWalk: Double): P = strategy.computeNextPosition(actions)
+    override fun getDestination(current: P, target: P, maxWalk: Double): P = steerStrategy.computeNextPosition(actions)
 }

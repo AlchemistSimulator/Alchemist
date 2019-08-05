@@ -13,7 +13,7 @@ open class GenericGroup<T> : Group<T> {
         get() = _members
 
     override fun addMember(pedestrian: Pedestrian<T>): Group<T> = apply {
-        if(!members.contains(pedestrian)) {
+        if (!members.contains(pedestrian)) {
             _members.add(pedestrian)
         }
     }

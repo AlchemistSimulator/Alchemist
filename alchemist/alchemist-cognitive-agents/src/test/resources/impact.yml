@@ -47,7 +47,7 @@ reactions: &behavior
   - time-distribution:
       type: DiracComb
       parameters: [40.0]
-    type: SteeringBehavior
+    type: PrioritySteering
     actions:
       - type: AvoidGradient
         parameters: [*danger]

@@ -3,7 +3,6 @@ package it.unibo.alchemist.model.implementations.nodes
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Gender
 import it.unibo.alchemist.model.cognitiveagents.groups.Group
-import it.unibo.alchemist.model.implementations.actions.utils.direction
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
@@ -45,12 +44,11 @@ class HeterogeneousPedestrian2D<T> @JvmOverloads constructor(
         group: Group<T>? = null
     ) : this(env, rg, Age.fromYears(age), Gender.fromString(gender), group)
 
+    private val shape = shape(env)
+
     init {
-        env.setHeading(this, rg.direction())
         senses += sensorySpheres(env)
     }
-
-    private val shape = shape(env)
 
     /**
      * {@inheritDoc}

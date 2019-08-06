@@ -7,18 +7,18 @@ official_repo: &official_repo
 language: bash
 git:
   depth: false
-os:
-  - osx
-  - windows
-  - *reference_os
+#os:
+  #- osx
+  #- windows
+  #- *reference_os
 dist: xenial
 addons:
   apt:
     packages:
     - graphviz
 stages:
-  - check
-  - test
+#  - check
+#  - test
   - deploy
 env:
   global:
@@ -34,11 +34,11 @@ env:
     - GRAVIS="https://raw.githubusercontent.com/DanySK/Gravis-CI/master/"
     - PUBLISH="false"
     - OFFICIAL_REPO_SLUG="AlchemistSimulator/Alchemist"
-  matrix:
-    - *reference_jdk
-    - JDK="adopt-openj9@1.11"
-    - JDK="adopt@1.12"
-    - JDK="adopt-openj9@1.12"
+  #matrix:
+    #- *reference_jdk
+    #- JDK="adopt-openj9@1.11"
+    #- JDK="adopt@1.12"
+    #- JDK="adopt-openj9@1.12"
 matrix:
   exclude:
     - os: *reference_os
@@ -65,11 +65,11 @@ jobs:
         - bash prepare_environment.sh
       script:
         - cd "$TRAVIS_BUILD_DIR"/alchemist
-        - ./gradlew fatJar dokka buildDashboard projectReport -x test --scan --parallel > >(egrep -v '(null:-1:-1)|(t find node by signature)')
+        - ./gradlew fatJar dokka buildDashboard projectReport orchidDeploy -x test --scan --parallel > >(egrep -v '(null:-1:-1)|(t find node by signature)')
         - mkdir -p report
         - cp --parent */build/reports build/reports report -R
       after_success:
-        - ./gradlew orchidDeploy publish --scan --parallel --stacktrace
+        - ./gradlew publish --scan --parallel --stacktrace
 before_install:
   - curl "${GRAVIS}.disable-windows-defender.sh" --output .disable-windows-defender.sh
   - source .disable-windows-defender.sh

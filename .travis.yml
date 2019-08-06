@@ -7,18 +7,18 @@ official_repo: &official_repo
 language: bash
 git:
   depth: false
-#os:
-  #- osx
-  #- windows
-  #- *reference_os
+os:
+  - osx
+  - windows
+  - *reference_os
 dist: xenial
 addons:
   apt:
     packages:
     - graphviz
 stages:
-#  - check
-#  - test
+  - check
+  - test
   - deploy
 env:
   global:
@@ -34,11 +34,11 @@ env:
     - GRAVIS="https://raw.githubusercontent.com/DanySK/Gravis-CI/master/"
     - PUBLISH="false"
     - OFFICIAL_REPO_SLUG="AlchemistSimulator/Alchemist"
-  #matrix:
-    #- *reference_jdk
-    #- JDK="adopt-openj9@1.11"
-    #- JDK="adopt@1.12"
-    #- JDK="adopt-openj9@1.12"
+  matrix:
+    - *reference_jdk
+    - JDK="adopt-openj9@1.11"
+    - JDK="adopt@1.12"
+    - JDK="adopt-openj9@1.12"
 matrix:
   exclude:
     - os: *reference_os

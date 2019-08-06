@@ -62,4 +62,12 @@ class TestSteeringBehaviors<T, P : Position2D<P>> : StringSpec({
             }
         }
     }
+
+    "collision avoidance let nodes reach destinations behind obstacles" {
+        loadYamlSimulation<T, P>("collision-avoidance.yml").startSimulation(
+            finished = { e, _, _ -> e.nodes.forEach {
+                e.getPosition(it).getDistanceTo(e.makePosition(700.0, 240.0)) shouldBeLessThan 50.0
+            } }
+        )
+    }
 })

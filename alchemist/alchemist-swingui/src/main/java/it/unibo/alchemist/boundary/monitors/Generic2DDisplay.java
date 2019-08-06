@@ -9,7 +9,6 @@ package it.unibo.alchemist.boundary.monitors;
 
 import com.google.common.collect.ImmutableList;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.boundary.gui.effects.AdvancedEffect;
 import it.unibo.alchemist.boundary.gui.effects.Effect;
 import it.unibo.alchemist.boundary.interfaces.Graphical2DOutputMonitor;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
@@ -345,14 +344,8 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         }
         g.setColor(Color.GREEN);
         if (effectStack != null) {
-            effectStack.forEach(effect -> onView.forEach((node, point) -> {
-                if (effect instanceof AdvancedEffect) {
-                    @SuppressWarnings("unchecked") final AdvancedEffect<T, P> advEffect = (AdvancedEffect) effect;
-                    advEffect.apply(g, node, currentEnv, wormhole.getZoom(), point.x, point.y);
-                } else {
-                    effect.apply(g, node, point.x, point.y);
-                }
-            }));
+            effectStack.forEach(effect -> onView.forEach((node, point) ->
+                effect.apply(g, node, currentEnv, wormhole.getZoom(), point.x, point.y)));
         }
         if (isCloserNodeMarked()) {
             final Optional<Map.Entry<Node<T>, Point>> closest = onView.entrySet().parallelStream()

@@ -17,21 +17,17 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 
 /**
- * Draws node's shapes.
- *
- * @param <T> concentration type
- * @param <P> position type
+ * Draws node's shapes and cameras' fields of view.
  */
-public final class DrawSmartcam<T, P extends Position<P>> implements AdvancedEffect<T, P> {
+public final class DrawSmartcam implements Effect {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public void apply(final Graphics2D g, final Node<T> node, final Environment<T, P> environment, final double zoom, final int x, final int y) {
+    public <T, P extends Position<P>> void apply(final Graphics2D g, final Node<T> node, final Environment<T, P> environment, final double zoom, final int x, final int y) {
         if (!(environment instanceof EuclideanPhysics2DEnvironment)) {
             return;
         }
-        @SuppressWarnings("unchecked")
-        final EuclideanPhysics2DEnvironment<T> env = (EuclideanPhysics2DEnvironment) environment;
+        @SuppressWarnings("unchecked") final EuclideanPhysics2DEnvironment<T> env = (EuclideanPhysics2DEnvironment) environment;
         drawShape(g, node, env, zoom, x, y);
         drawFieldOfView(g, node, env, zoom, x, y);
     }
@@ -41,7 +37,7 @@ public final class DrawSmartcam<T, P extends Position<P>> implements AdvancedEff
         return Color.GREEN;
     }
 
-    private void drawShape(final Graphics2D g, final Node<T> node, final EuclideanPhysics2DEnvironment<T> env, final double zoom, final int x, final int y) {
+    private <T> void drawShape(final Graphics2D g, final Node<T> node, final EuclideanPhysics2DEnvironment<T> env, final double zoom, final int x, final int y) {
         final GeometricShape geometricShape = node.getShape();
         if (!(geometricShape instanceof AwtShapeCompatible)) {
             return;
@@ -56,7 +52,7 @@ public final class DrawSmartcam<T, P extends Position<P>> implements AdvancedEff
         g.draw(shape);
     }
 
-    private void drawFieldOfView(final Graphics2D g, final Node<T> node, final EuclideanPhysics2DEnvironment<T> env, final double zoom, final int x, final int y) {
+    private <T> void drawFieldOfView(final Graphics2D g, final Node<T> node, final EuclideanPhysics2DEnvironment<T> env, final double zoom, final int x, final int y) {
         final AffineTransform transform = getTransform(x, y, zoom, getRotation(node, env));
         g.setColor(Color.BLUE);
         node.getReactions()
@@ -73,7 +69,7 @@ public final class DrawSmartcam<T, P extends Position<P>> implements AdvancedEff
             });
     }
 
-    private double getRotation(final Node<T> node, final EuclideanPhysics2DEnvironment<T> env) {
+    private <T> double getRotation(final Node<T> node, final EuclideanPhysics2DEnvironment<T> env) {
         final Euclidean2DPosition direction = env.getHeading(node);
         return Math.atan2(direction.getY(), direction.getX());
     }

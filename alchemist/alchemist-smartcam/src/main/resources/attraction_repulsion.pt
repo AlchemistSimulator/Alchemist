@@ -1,0 +1,61 @@
+module attraction_repulsion
+import protelis:lang:utils
+import protelis:coord:spreading
+import protelis:coord:accumulation
+import java.lang.Math.sqrt
+
+def targetsPositions(targets) {
+    targets.map((t) -> {t.getPosition()})
+}
+
+def euclideanDistance(pos1, pos2) {
+    let diff = pos1 - pos2;
+    sqrt(diff.get(0)^2 + diff.get(1)^2)
+}
+
+def distanceToPosition(pos) {
+    euclideanDistance(self.getCoordinates(), pos)
+}
+
+def positionsToDirections(positions) {
+    positions.map((p) -> {p - self.getCoordinates()})
+}
+
+def distances(positions) {
+    positions.map((p) -> {euclideanDistance(self.getCoordinates(), p})
+}
+
+def targetForce(position) {
+    let distance = distanceToPosition(position)
+    if(distance < 15){
+        15 - distance
+    } else {
+        min(-2, 15 - distance)
+    }
+}
+
+def targetsForces(targets) {
+    targetsPositions(targets)
+        .map((t) -> {targetForce(t)})
+}
+
+def cameraForce(position) {
+    10 / max(1, distanceToPosition(position) ^ 2)
+}
+
+def camerasForces(cameras) {
+    cameras.map((c) -> {cameraForce(c)})
+}
+
+def minBy(a, b, comparator) {
+    if(comparator.apply(a, b)
+}
+
+let myPos = self.getCoordinates();
+let targets = unionHood PlusSelf(nbr(env.get("vision")));
+let cameras = unionHood(nbr(myPos));
+let force = meanHood(targetsForces(targets).mergeAfter(camerasForces(cameras)));
+env.put("destination", myPos * force);
+let closestTarget = targets.reduce((t1, t2) -> {min(distanceToPosition(t1), distanceToPosition(t2))});
+env.put("heading", closestTarget)
+0

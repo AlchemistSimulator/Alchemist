@@ -1,4 +1,4 @@
-module program1
+module simplex
 import protelis:lang:utils
 import protelis:coord:spreading
 import protelis:coord:accumulation

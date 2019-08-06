@@ -45,11 +45,10 @@ programs:
         - type: MoleculeHasConcentration
           parameters: [state, following]
       actions:
-        - type: MoveToTarget
-          parameters: [destination, *CameraSpeed]
         - type: HeadTowardTarget
-          parameters: [heading]
-
+          parameters: [destination]
+        - type: FollowAtDistance
+          parameters: [destination, 15, *CameraSpeed]
     - time-distribution: 1
       type: ChemicalReaction
       conditions:
@@ -61,7 +60,7 @@ programs:
         - type: ZigZagMove
           parameters: [1000.0, *CameraSpeed]
     - time-distribution: 1
-      program: simplex_repattr
+      program: simplex
     - program: send
 
 

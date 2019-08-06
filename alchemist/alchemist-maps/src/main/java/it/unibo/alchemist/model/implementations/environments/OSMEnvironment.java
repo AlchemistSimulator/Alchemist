@@ -364,9 +364,9 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
         final double minlon = getMinLongitude();
         final double maxlon = getMaxLongitude();
         if (Double.isNaN(minlat)
-                | Double.isNaN(maxlat)
-                | Double.isNaN(minlon)
-                | Double.isNaN(maxlon)) {
+                || Double.isNaN(maxlat)
+                || Double.isNaN(minlon)
+                || Double.isNaN(maxlon)) {
             return new double[] { Double.NaN, Double.NaN };
         }
         final GeoPosition minmin = new LatLongPosition(minlat, minlon);

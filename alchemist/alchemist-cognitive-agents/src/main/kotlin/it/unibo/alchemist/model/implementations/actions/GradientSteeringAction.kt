@@ -1,6 +1,6 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.actions.utils.surrounding
+import it.unibo.alchemist.model.implementations.utils.surrounding
 import it.unibo.alchemist.model.implementations.layers.BidimensionalGaussianLayer
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.*
@@ -21,11 +21,13 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
  */
 open class GradientSteeringAction<T>(
     private val env: EuclideanPhysics2DEnvironment<T>,
+    reaction: Reaction<T>,
     private val pedestrian: Pedestrian2D<T>,
     private val targetMolecule: Molecule,
     private val formula: Iterable<Euclidean2DPosition>.(Molecule) -> Euclidean2DPosition
 ) : SteeringActionImpl<T, Euclidean2DPosition>(
     env,
+    reaction,
     pedestrian,
     TargetSelectionStrategy {
         with(env.getLayer(targetMolecule).get() as BidimensionalGaussianLayer) {
@@ -34,7 +36,7 @@ open class GradientSteeringAction<T>(
     }
 ) {
     override fun getDestination(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double) =
-        current.surrounding(env, maxWalk, 8)
+        current.surrounding(env, maxWalk)
                 .filter { env.canNodeFitPosition(pedestrian, it) }
                 .formula(targetMolecule) - current
 }

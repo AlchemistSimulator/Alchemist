@@ -1,12 +1,9 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.actions.utils.div
-import it.unibo.alchemist.model.implementations.actions.utils.makePosition
-import it.unibo.alchemist.model.implementations.actions.utils.origin
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.GroupSteering
-import it.unibo.alchemist.model.interfaces.Pedestrian
-import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.implementations.utils.div
+import it.unibo.alchemist.model.implementations.utils.makePosition
+import it.unibo.alchemist.model.implementations.utils.origin
+import it.unibo.alchemist.model.interfaces.*
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
 /**
@@ -19,9 +16,11 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
  */
 class Cohesion<T, P : Position<P>>(
     private val env: Environment<T, P>,
+    reaction: Reaction<T>,
     private val pedestrian: Pedestrian<T>
 ) : SteeringActionImpl<T, P>(
     env,
+    reaction,
     pedestrian,
     TargetSelectionStrategy { env.origin() }
 ), GroupSteering<T, P> {
@@ -33,6 +32,6 @@ class Cohesion<T, P : Position<P>>(
     )
 
     private fun centroid(): P = with(pedestrian.membershipGroup.members) {
-        env.makePosition(map { env.getPosition(it) }.reduce { acc, pos -> acc + pos } / size.toDouble())
+        env.makePosition(map { env.getPosition(it) }.reduce { acc, pos -> acc + pos } / size)
     }
 }

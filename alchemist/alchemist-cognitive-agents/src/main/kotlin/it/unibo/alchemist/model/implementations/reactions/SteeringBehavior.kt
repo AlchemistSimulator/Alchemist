@@ -29,9 +29,8 @@ open class SteeringBehavior<T, P : Position<P>>(
     override fun updateInternalStatus(curTime: Time?, executed: Boolean, env: Environment<T, *>?) {}
 
     override fun execute() {
-        with(actions.filterIsInstance<SteeringAction<T, P>>().toList()) {
-            (actions - this).forEach { it.execute() }
-            Combine(env, pedestrian, this, steerStrategy).execute()
-        }
+        val steerActions = actions.filterIsInstance<SteeringAction<T, P>>()
+        (actions - steerActions).forEach { it.execute() }
+        Combine(env, this, pedestrian, steerActions, steerStrategy).execute()
     }
 }

@@ -3,6 +3,7 @@ package it.unibo.alchemist.model.implementations.actions
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.Reaction
 
 /**
  * Move the pedestrian towards the target position as fast as possible.
@@ -16,6 +17,7 @@ import it.unibo.alchemist.model.interfaces.Position
  */
 open class Seek<T, P : Position<P>>(
     env: Environment<T, P>,
+    reaction: Reaction<T>,
     pedestrian: Pedestrian<T>,
     vararg coords: Double
-) : Arrive<T, P>(env, pedestrian, 0.0, 0.0, *coords)
+) : Arrive<T, P>(env, reaction, pedestrian, 0.0, 0.0, *coords)

@@ -1,8 +1,8 @@
 package it.unibo.alchemist.model.implementations.actions.steeringstrategies
 
-import it.unibo.alchemist.model.implementations.actions.utils.makePosition
-import it.unibo.alchemist.model.implementations.actions.utils.origin
-import it.unibo.alchemist.model.implementations.actions.utils.times
+import it.unibo.alchemist.model.implementations.utils.makePosition
+import it.unibo.alchemist.model.implementations.utils.origin
+import it.unibo.alchemist.model.implementations.utils.times
 import it.unibo.alchemist.model.interfaces.*
 
 /**

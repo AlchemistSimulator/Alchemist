@@ -1,15 +1,19 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.actions.utils.makePosition
-import it.unibo.alchemist.model.implementations.actions.utils.nextDouble
-import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.implementations.geometry.asAngle
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.implementations.utils.*
 import it.unibo.alchemist.model.interfaces.Pedestrian
-import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.Reaction
+import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 import org.apache.commons.math3.random.RandomGenerator
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
- * Give the impression of a random walk through the environment.
+ * Give the impression of a random walk through the environment targeting an ever changing pseudo-randomly point
+ * of a circumference at a given distance and with a given radius from the current pedestrian position.
  *
  * @param env
  *          the environment inside which the pedestrian moves.
@@ -17,21 +21,37 @@ import org.apache.commons.math3.random.RandomGenerator
  *          the owner of this action.
  * @param rg
  *          the simulation {@link RandomGenerator}.
+ * @param offset
+ *          the distance from the pedestrian position of the center of the circle.
  * @param radius
- *          the radius of the circle with center in current pedestrian position
- *          and inside which the target position is pseudo-randomly determined.
+ *          the radius of the circle.
  */
-open class Wander<T, P : Position<P>>(
-    private val env: Environment<T, P>,
-    pedestrian: Pedestrian<T>,
-    rg: RandomGenerator,
-    radius: Double
-) : SteeringActionImpl<T, P>(
+open class Wander<T>(
+    private val env: EuclideanPhysics2DEnvironment<T>,
+    reaction: Reaction<T>,
+    private val pedestrian: Pedestrian<T>,
+    private val rg: RandomGenerator,
+    private val offset: Double,
+    private val radius: Double
+) : SteeringActionImpl<T, Euclidean2DPosition>(
     env,
+    reaction,
     pedestrian,
-    TargetSelectionStrategy { with(env) {
-        getPosition(pedestrian) + makePosition(
-            (1..dimensions).map { rg.nextDouble(-1.0, 1.0) * radius }.toTypedArray()
+    TargetSelectionStrategy { rg.position() }
+) {
+
+    private val heading by lazy {
+        env.setHeading(pedestrian, rg.direction()).let {
+            { env.getHeading(pedestrian) }
+        }
+    }
+
+    override fun getDestination(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double) =
+        super.getDestination(
+            env.origin(),
+            heading().asAngle()
+                .let { Euclidean2DPosition(offset * cos(it), offset * sin(it)) }
+                .let { it.surrounding(env, radius).shuffled(rg).first() },
+            maxWalk
         )
-    } }
-)
+}

@@ -2,6 +2,7 @@ package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
+import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
 
 /**
@@ -16,10 +17,12 @@ import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnviro
  */
 open class FollowGradient<T>(
     env: EuclideanPhysics2DEnvironment<T>,
+    reaction: Reaction<T>,
     pedestrian: Pedestrian2D<T>,
     targetMolecule: Molecule
 ) : GradientSteeringAction<T>(
     env,
+    reaction,
     pedestrian,
     targetMolecule,
     { molecule ->

@@ -49,7 +49,7 @@ class CognitivePedestrian2D<T> @JvmOverloads constructor(
         danger: Molecule? = null,
         group: Group<T>? = null
     ) : this(env, rg, Age.fromYears(age), Gender.fromString(gender), danger, group)
-    
+
     private val shape = shape(env)
 
     init {

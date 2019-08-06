@@ -16,4 +16,9 @@ interface Pedestrian<T> : Node<T> {
      * The speed at which the pedestrian is moving.
      */
     fun speed(): Double
+
+    /**
+     * A list of all the pedestrians inside at least one of the sensory spheres of this pedestrian.
+     */
+    fun influencialPeople(): List<Pedestrian<T>>
 }

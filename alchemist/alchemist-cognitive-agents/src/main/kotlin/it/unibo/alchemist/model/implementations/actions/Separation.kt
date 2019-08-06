@@ -7,7 +7,7 @@ import it.unibo.alchemist.model.interfaces.*
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
 /**
- * Move the agent towards the other members of his group.
+ * Move the agent away from the pedestrians near to him.
  *
  * @param env
  *          the environment inside which the pedestrian moves.
@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
  * @param pedestrian
  *          the owner of this action.
  */
-class Cohesion<T, P : Position<P>>(
+class Separation<T, P : Position<P>>(
     private val env: Environment<T, P>,
     reaction: Reaction<T>,
     private val pedestrian: Pedestrian<T>
@@ -27,15 +27,16 @@ class Cohesion<T, P : Position<P>>(
     TargetSelectionStrategy { env.origin() }
 ), GroupSteering<T, P> {
 
-    override fun group(): List<Pedestrian<T>> = pedestrian.membershipGroup.members
+    override fun group(): List<Pedestrian<T>> = pedestrian.influencialPeople().plusElement(pedestrian)
 
     override fun getDestination(current: P, target: P, maxWalk: Double): P = super.getDestination(
         target,
-        centroid() - current,
+        centroid(),
         maxWalk
     )
 
     private fun centroid(): P = with(group()) {
-        env.makePosition(map { env.getPosition(it) }.reduce { acc, pos -> acc + pos } / size)
+        val currentPosition = env.getPosition(pedestrian)
+        env.makePosition(map { env.getPosition(it) - currentPosition }.reduce { acc, pos -> acc + pos } / (-size))
     }
 }

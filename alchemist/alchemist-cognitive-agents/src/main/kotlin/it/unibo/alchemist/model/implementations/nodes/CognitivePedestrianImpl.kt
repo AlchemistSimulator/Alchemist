@@ -36,9 +36,9 @@ open class CognitivePedestrianImpl<T, P : Position<P>> @JvmOverloads constructor
 
     private val cognitiveCharacteristics = linkedMapOf<KClass<out CognitiveCharacteristic>, CognitiveCharacteristic>(
         BeliefDanger::class to
-            BeliefDanger({ dangerousLayerLevel() }, { characteristicLevel<Fear>() }, { influencialPeople() }),
+            BeliefDanger({ dangerousLayerLevel() }, { characteristicLevel<Fear>() }, { cognitiveInfluencialPeople() }),
         Fear::class to
-            Fear({ characteristicLevel<DesireWalkRandomly>() }, { characteristicLevel<DesireEvacuate>() }, { influencialPeople() }),
+            Fear({ characteristicLevel<DesireWalkRandomly>() }, { characteristicLevel<DesireEvacuate>() }, { cognitiveInfluencialPeople() }),
         DesireEvacuate::class to
             DesireEvacuate(compliance, { characteristicLevel<BeliefDanger>() }, { characteristicLevel<Fear>() }),
         DesireWalkRandomly::class to
@@ -61,11 +61,6 @@ open class CognitivePedestrianImpl<T, P : Position<P>> @JvmOverloads constructor
 
     override fun cognitiveCharacteristics() = cognitiveCharacteristics.values.toList()
 
-    override fun influencialPeople(): List<CognitivePedestrian<T>> =
-        senses.fold(listOf()) { accumulator, sphere ->
-            accumulator.union(sphere.influentialNodes().filterIsInstance<CognitivePedestrian<T>>()).toList()
-        }
-
     private inline fun <reified C : CognitiveCharacteristic> characteristicLevel(): Double =
         cognitiveCharacteristics[C::class]?.level() ?: 0.0
 
@@ -74,4 +69,7 @@ open class CognitivePedestrianImpl<T, P : Position<P>> @JvmOverloads constructor
 
     private fun wantsToEvacuate(): Boolean =
         characteristicLevel<IntentionEvacuate>() > characteristicLevel<IntentionWalkRandomly>()
+
+    private fun cognitiveInfluencialPeople(): List<CognitivePedestrian<T>> =
+        influencialPeople().filterIsInstance<CognitivePedestrian<T>>()
 }

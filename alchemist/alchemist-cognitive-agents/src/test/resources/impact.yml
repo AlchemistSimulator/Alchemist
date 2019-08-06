@@ -46,7 +46,7 @@ layers:
 reactions: &behavior
   - time-distribution:
       type: DiracComb
-      parameters: [40.0]
+      parameters: [5.0]
     type: PrioritySteering
     actions:
       - type: AvoidGradient

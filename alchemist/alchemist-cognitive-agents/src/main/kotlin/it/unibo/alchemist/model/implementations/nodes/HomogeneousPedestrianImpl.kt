@@ -22,6 +22,8 @@ open class HomogeneousPedestrianImpl<T, P : Position<P>> @JvmOverloads construct
     group: Group<T>? = null
 ) : AbstractNode<T>(env), Pedestrian<T> {
 
+    override fun createT(): T = TODO()
+
     override val membershipGroup: Group<T> by lazy {
         group?.addMember(this) ?: Alone(this)
     }
@@ -43,5 +45,8 @@ open class HomogeneousPedestrianImpl<T, P : Position<P>> @JvmOverloads construct
 
     override fun speed() = rg.nextDouble(walkingSpeed, runningSpeed)
 
-    override fun createT(): T = TODO()
+    override fun influencialPeople(): List<Pedestrian<T>> =
+        senses.fold(listOf()) { accumulator, sphere ->
+            accumulator.union(sphere.influentialNodes().filterIsInstance<Pedestrian<T>>()).toList()
+        }
 }

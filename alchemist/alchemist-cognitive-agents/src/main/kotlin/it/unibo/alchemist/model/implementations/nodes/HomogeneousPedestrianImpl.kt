@@ -3,7 +3,7 @@ package it.unibo.alchemist.model.implementations.nodes
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Speed
 import it.unibo.alchemist.model.cognitiveagents.groups.Alone
 import it.unibo.alchemist.model.cognitiveagents.groups.Group
-import it.unibo.alchemist.model.implementations.actions.utils.nextDouble
+import it.unibo.alchemist.model.implementations.utils.nextDouble
 import it.unibo.alchemist.model.influencesphere.InfluenceSphere
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Pedestrian

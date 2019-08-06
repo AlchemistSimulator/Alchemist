@@ -4,7 +4,7 @@ import io.kotlintest.matchers.collections.shouldBeSortedWith
 import io.kotlintest.matchers.doubles.shouldBeGreaterThan
 import io.kotlintest.matchers.doubles.shouldBeLessThan
 import io.kotlintest.specs.StringSpec
-import it.unibo.alchemist.model.implementations.actions.utils.origin
+import it.unibo.alchemist.model.implementations.utils.origin
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position2D
 import kotlin.math.abs

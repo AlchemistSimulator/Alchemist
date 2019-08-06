@@ -1,4 +1,4 @@
-package it.unibo.alchemist.model.implementations.actions.utils
+package it.unibo.alchemist.model.implementations.utils
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import org.apache.commons.math3.random.RandomGenerator
@@ -18,6 +18,14 @@ fun RandomGenerator.nextDouble(from: Double, to: Double) = nextDouble() * (to - 
  * Generate a random Euclidean direction.
  */
 fun RandomGenerator.direction() = Euclidean2DPosition(nextDouble(-1.0, 1.0), nextDouble(-1.0, 1.0))
+
+/**
+ * Generate a random Euclidean position.
+ */
+fun RandomGenerator.position() = direction().let {
+    val distance = nextInt()
+    Euclidean2DPosition(it.x * distance, it.y * distance)
+}
 
 /**
  * [Fisher–Yates shuffle algorithm](https://www.worldcat.org/title/statistical-tables-for-biological-agricultural-and-medical-research/oclc/14222135)

@@ -5,7 +5,7 @@ variables:
     formula: "\"danger\""
 
 environment:
-  type: EuclideanPhysics2DEnvironmentImpl
+  type: Continuous2DEnvironment
 
 positions:
   type: EuclideanPosition2D

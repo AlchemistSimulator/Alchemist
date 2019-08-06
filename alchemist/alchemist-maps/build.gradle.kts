@@ -1,5 +1,3 @@
-import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.exclude
-
 /*
  * Copyright (C) 2010-2019) Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
  *
@@ -28,6 +26,8 @@ dependencies {
     implementation(Libs.jpx)
     implementation(Libs.simplelatlng)
     implementation(Libs.trove4j)
+
+    testImplementation(Libs.kotlintest_runner_junit5)
 }
 
 tasks.withType<Test> {

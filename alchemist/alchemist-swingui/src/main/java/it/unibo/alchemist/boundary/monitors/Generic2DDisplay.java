@@ -347,8 +347,8 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         if (effectStack != null) {
             effectStack.forEach(effect -> onView.forEach((node, point) -> {
                 if (effect instanceof AdvancedEffect) {
-                    //noinspection unchecked
-                    ((AdvancedEffect) effect).apply(g, node, currentEnv, wormhole.getZoom(), point.x, point.y);
+                    @SuppressWarnings("unchecked") final AdvancedEffect<T, P> advEffect = (AdvancedEffect) effect;
+                    advEffect.apply(g, node, currentEnv, wormhole.getZoom(), point.x, point.y);
                 } else {
                     effect.apply(g, node, point.x, point.y);
                 }

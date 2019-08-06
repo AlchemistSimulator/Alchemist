@@ -2,7 +2,7 @@ package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Gender
-import it.unibo.alchemist.model.implementations.actions.utils.direction
+import it.unibo.alchemist.model.cognitiveagents.groups.Group
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
@@ -28,31 +28,33 @@ class CognitivePedestrian2D<T> @JvmOverloads constructor(
     rg: RandomGenerator,
     age: Age,
     gender: Gender,
-    danger: Molecule? = null
-) : CognitivePedestrianImpl<T, Euclidean2DPosition>(env, rg, age, gender, danger), Pedestrian2D<T> {
+    danger: Molecule? = null,
+    group: Group<T>? = null
+) : CognitivePedestrianImpl<T, Euclidean2DPosition>(env, rg, age, gender, danger, group), Pedestrian2D<T> {
 
     @JvmOverloads constructor(
         env: EuclideanPhysics2DEnvironment<T>,
         rg: RandomGenerator,
         age: String,
         gender: String,
-        danger: Molecule? = null
-    ) : this(env, rg, Age.fromString(age), Gender.fromString(gender), danger)
+        danger: Molecule? = null,
+        group: Group<T>? = null
+    ) : this(env, rg, Age.fromString(age), Gender.fromString(gender), danger, group)
 
     @JvmOverloads constructor(
         env: EuclideanPhysics2DEnvironment<T>,
         rg: RandomGenerator,
         age: Int,
         gender: String,
-        danger: Molecule? = null
-    ) : this(env, rg, Age.fromYears(age), Gender.fromString(gender), danger)
-
-    init {
-        env.setHeading(this, rg.direction())
-        senses += sensorySpheres(env)
-    }
+        danger: Molecule? = null,
+        group: Group<T>? = null
+    ) : this(env, rg, Age.fromYears(age), Gender.fromString(gender), danger, group)
 
     private val shape = shape(env)
+
+    init {
+        senses += sensorySpheres(env)
+    }
 
     /**
      * {@inheritDoc}

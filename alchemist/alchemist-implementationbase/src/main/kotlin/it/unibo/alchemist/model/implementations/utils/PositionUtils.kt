@@ -1,4 +1,4 @@
-package it.unibo.alchemist.model.implementations.actions.utils
+package it.unibo.alchemist.model.implementations.utils
 
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
@@ -22,8 +22,8 @@ fun <T, P : Position<P>> Environment<T, P>.origin(): P = makePosition((1..dimens
  * @param n
  *          the second factor of each multiplication.
  */
-operator fun <P : Position<P>> P.times(n: Double) =
-        this.cartesianCoordinates.map { it * n }.toTypedArray()
+operator fun <P : Position<P>> P.times(n: Number) =
+        this.cartesianCoordinates.map { it * n.toDouble() }.toTypedArray()
 
 /**
  * Divide each coordinate of this position by a number.
@@ -31,7 +31,7 @@ operator fun <P : Position<P>> P.times(n: Double) =
  * @param n
  *          the divisor of each division.
  */
-operator fun <P : Position<P>> P.div(n: Double) = times(1 / n)
+operator fun <P : Position<P>> P.div(n: Number) = times(1 / n.toDouble())
 
 /**
  * Create a list of points equally distributed in the circle of given radius with center in this position.
@@ -48,7 +48,7 @@ operator fun <P : Position<P>> P.div(n: Double) = times(1 / n)
 fun <P : Position2D<P>> P.surrounding(
     env: Environment<*, P>,
     radius: Double,
-    quantity: Int
+    quantity: Int = 12
 ): List<P> = (1..quantity).map { it * Math.PI * 2 / quantity }.map {
     env.makePosition(this.x + radius, y).rotate(env, this, it)
 }

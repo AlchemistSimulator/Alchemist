@@ -11,7 +11,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSh
 /**
  * Implementation of [EuclideanPhysics2DEnvironment]
  */
-open class EuclideanPhysics2DEnvironmentImpl<T> : Abstract2DEnvironment<T, Euclidean2DPosition>(), EuclideanPhysics2DEnvironment<T> {
+open class Continuous2DEnvironment<T> : Abstract2DEnvironment<T, Euclidean2DPosition>(), EuclideanPhysics2DEnvironment<T> {
 
     companion object {
         @JvmStatic private val serialVersionUID: Long = 1L

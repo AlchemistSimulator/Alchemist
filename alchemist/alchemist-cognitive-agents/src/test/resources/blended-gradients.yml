@@ -7,7 +7,7 @@ variables:
     formula: "\"exit2\""
 
 environment:
-  type: EuclideanPhysics2DEnvironmentImpl
+  type: Continuous2DEnvironment
 
 positions:
   type: EuclideanPosition2D
@@ -31,7 +31,7 @@ reactions: &behavior
   - time-distribution:
       type: DiracComb
       parameters: [50.0]
-    type: SteeringBehavior
+    type: BlendedSteering
     actions:
       - type: Flee
         parameters: [0.0, 0.0]

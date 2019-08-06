@@ -1,12 +1,9 @@
 package it.unibo.alchemist.model.implementations.actions.steeringstrategies
 
-import it.unibo.alchemist.model.implementations.actions.utils.makePosition
-import it.unibo.alchemist.model.implementations.actions.utils.times
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Pedestrian
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.SteeringAction
-import it.unibo.alchemist.model.interfaces.SteeringStrategy
+import it.unibo.alchemist.model.implementations.utils.makePosition
+import it.unibo.alchemist.model.implementations.utils.origin
+import it.unibo.alchemist.model.implementations.utils.times
+import it.unibo.alchemist.model.interfaces.*
 
 /**
  * Steering logic where each steering action is associated to a weight
@@ -27,16 +24,19 @@ open class Weighted<T, P : Position<P>>(
 ) : SteeringStrategy<T, P> {
 
     override fun computeNextPosition(actions: List<SteeringAction<T, P>>): P =
-        if (actions.size > 1) {
-            actions.map { it.nextPosition() to it.weight() }.run {
-                val totalWeight = map { it.second }.sum()
-                map { env.makePosition(it.first * (it.second / totalWeight)) }.reduce { acc, pos -> acc + pos }
-            }
-        } else {
-            actions.firstOrNull()?.nextPosition() ?: env.getPosition(pedestrian)
+        actions.partition { it is GroupSteering<T, P> }.let { (groupActions, steerActions) ->
+            groupActions.calculatePosition() + steerActions.calculatePosition()
         }
 
     override fun computeTarget(actions: List<SteeringAction<T, P>>): P = with(env.getPosition(pedestrian)) {
         actions.map { it.target() }.minBy { it.getDistanceTo(this) } ?: this
     }
+
+    private fun List<SteeringAction<T, P>>.calculatePosition(): P =
+        if (size > 1) {
+            map { it.nextPosition() to it.weight() }.run {
+                val totalWeight = map { it.second }.sum()
+                map { env.makePosition(it.first * (it.second / totalWeight)) }.reduce { acc, pos -> acc + pos }
+            }
+        } else firstOrNull()?.nextPosition() ?: env.origin()
 }

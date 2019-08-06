@@ -5,7 +5,7 @@ import io.kotlintest.matchers.collections.shouldContainExactly
 import io.kotlintest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotlintest.matchers.doubles.shouldBeGreaterThanOrEqual
 import io.kotlintest.specs.StringSpec
-import it.unibo.alchemist.model.implementations.environments.EuclideanPhysics2DEnvironmentImpl
+import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.nodes.CircleNode
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
@@ -20,7 +20,7 @@ class TestEuclideanPhysics2DEnvironment : StringSpec() {
 
     override fun beforeTest(testCase: TestCase) {
         super.beforeTest(testCase)
-        env = EuclideanPhysics2DEnvironmentImpl()
+        env = Continuous2DEnvironment()
         env.linkingRule = NoLinks()
         node1 = CircleNode(env, DEFAULT_SHAPE_SIZE / 2)
         node2 = CircleNode(env, DEFAULT_SHAPE_SIZE / 2)

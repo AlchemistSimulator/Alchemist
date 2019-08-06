@@ -4,7 +4,7 @@ import io.kotlintest.matchers.collections.shouldBeSortedWith
 import io.kotlintest.matchers.doubles.shouldBeGreaterThan
 import io.kotlintest.matchers.doubles.shouldBeLessThan
 import io.kotlintest.specs.StringSpec
-import it.unibo.alchemist.model.implementations.actions.utils.origin
+import it.unibo.alchemist.model.implementations.utils.origin
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position2D
 import kotlin.math.abs
@@ -61,5 +61,13 @@ class TestSteeringBehaviors<T, P : Position2D<P>> : StringSpec({
                     }
             }
         }
+    }
+
+    "collision avoidance let nodes reach destinations behind obstacles" {
+        loadYamlSimulation<T, P>("collision-avoidance.yml").startSimulation(
+            finished = { e, _, _ -> e.nodes.forEach {
+                e.getPosition(it).getDistanceTo(e.makePosition(700.0, 240.0)) shouldBeLessThan 50.0
+            } }
+        )
     }
 })

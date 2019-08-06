@@ -1,7 +1,7 @@
 incarnation: protelis
 
 environment:
-  type: EuclideanPhysics2DEnvironmentImpl
+  type: Continuous2DEnvironment
 
 positions:
   type: EuclideanPosition2D
@@ -16,8 +16,8 @@ seeds:
 reactions: &behavior
   - time-distribution:
       type: DiracComb
-      parameters: [1.0]
-    type: SteeringBehavior
+      parameters: [10.0]
+    type: PrioritySteering
     actions:
       - type: Seek
         parameters: [0, 0]
@@ -25,7 +25,7 @@ reactions: &behavior
 displacements:
   - in:
       type: Circle
-      parameters: [50, 0, 0, 20]
+      parameters: [40, 0, 0, 20]
     nodes:
       type: HomogeneousPedestrian2D
     programs:

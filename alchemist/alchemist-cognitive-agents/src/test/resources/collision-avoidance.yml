@@ -5,7 +5,8 @@ variables:
     formula: "\"danger\""
 
 environment:
-  type: Continuous2DEnvironment
+  type: ImageEnvironment
+  parameters: [/home/mazzio/Progetti/java/Alchemist/alchemist/alchemist-cognitive-agents/src/test/resources/images/impact_room.png]
 
 positions:
   type: EuclideanPosition2D
@@ -20,23 +21,25 @@ seeds:
 layers:
   - type: BidimensionalGaussianLayer
     molecule: *danger
-    parameters: [-100.0, -100.0, 2.0, 10.0]
+    parameters: [700.0, 240.0, 10.0, 100.0]
 
 reactions: &behavior
   - time-distribution:
       type: DiracComb
-      parameters: [1.0]
-    type: PrioritySteering
+      parameters: [1]
+    type: BlendedSteering
     actions:
       - type: FollowGradient
         parameters: [*danger]
+      - type: CollisionAvoidance
+        parameters: [40]
+      - type: RandomRotate
 
 displacements:
   - in:
       type: Circle
-      parameters: [100, 0, 0, 100]
+      parameters: [10, -100, 240, 50]
     nodes:
-      type: CognitivePedestrian2D
-      parameters: ["adult", "male", *danger]
+      type: HomogeneousPedestrian2D
     programs:
       - *behavior

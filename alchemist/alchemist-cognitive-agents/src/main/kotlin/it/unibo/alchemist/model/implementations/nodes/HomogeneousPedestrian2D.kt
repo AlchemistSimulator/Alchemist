@@ -1,6 +1,6 @@
 package it.unibo.alchemist.model.implementations.nodes
 
-import it.unibo.alchemist.model.implementations.actions.utils.direction
+import it.unibo.alchemist.model.cognitiveagents.groups.Group
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
@@ -14,17 +14,17 @@ import org.apache.commons.math3.random.RandomGenerator
  * @param rg
  *          the simulation {@link RandomGenerator}.
  */
-class HomogeneousPedestrian2D<T>(
+class HomogeneousPedestrian2D<T> @JvmOverloads constructor(
     env: EuclideanPhysics2DEnvironment<T>,
-    rg: RandomGenerator
-) : HomogeneousPedestrianImpl<T, Euclidean2DPosition>(env, rg), Pedestrian2D<T> {
-
-    init {
-        env.setHeading(this, rg.direction())
-        senses += sensorySpheres(env)
-    }
+    rg: RandomGenerator,
+    group: Group<T>? = null
+) : HomogeneousPedestrianImpl<T, Euclidean2DPosition>(env, rg, group), Pedestrian2D<T> {
 
     private val shape = shape(env)
+
+    init {
+        senses += sensorySpheres(env)
+    }
 
     /**
      * {@inheritDoc}

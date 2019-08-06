@@ -3,6 +3,7 @@ package it.unibo.alchemist.model.implementations.nodes
 import it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive.*
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Gender
+import it.unibo.alchemist.model.cognitiveagents.groups.Group
 import it.unibo.alchemist.model.interfaces.CognitivePedestrian
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Molecule
@@ -29,14 +30,15 @@ open class CognitivePedestrianImpl<T, P : Position<P>> @JvmOverloads constructor
     rg: RandomGenerator,
     age: Age,
     gender: Gender,
-    private val danger: Molecule? = null
-) : HeterogeneousPedestrianImpl<T, P>(env, rg, age, gender), CognitivePedestrian<T> {
+    private val danger: Molecule? = null,
+    group: Group<T>? = null
+) : HeterogeneousPedestrianImpl<T, P>(env, rg, age, gender, group), CognitivePedestrian<T> {
 
     private val cognitiveCharacteristics = linkedMapOf<KClass<out CognitiveCharacteristic>, CognitiveCharacteristic>(
         BeliefDanger::class to
-            BeliefDanger({ dangerousLayerLevel() }, { characteristicLevel<Fear>() }, { influencialPeople() }),
+            BeliefDanger({ dangerousLayerLevel() }, { characteristicLevel<Fear>() }, { cognitiveInfluencialPeople() }),
         Fear::class to
-            Fear({ characteristicLevel<DesireWalkRandomly>() }, { characteristicLevel<DesireEvacuate>() }, { influencialPeople() }),
+            Fear({ characteristicLevel<DesireWalkRandomly>() }, { characteristicLevel<DesireEvacuate>() }, { cognitiveInfluencialPeople() }),
         DesireEvacuate::class to
             DesireEvacuate(compliance, { characteristicLevel<BeliefDanger>() }, { characteristicLevel<Fear>() }),
         DesireWalkRandomly::class to
@@ -59,11 +61,6 @@ open class CognitivePedestrianImpl<T, P : Position<P>> @JvmOverloads constructor
 
     override fun cognitiveCharacteristics() = cognitiveCharacteristics.values.toList()
 
-    override fun influencialPeople(): List<CognitivePedestrian<T>> =
-        senses.fold(listOf()) { accumulator, sphere ->
-            accumulator.union(sphere.influentialNodes().filterIsInstance<CognitivePedestrian<T>>()).toList()
-        }
-
     private inline fun <reified C : CognitiveCharacteristic> characteristicLevel(): Double =
         cognitiveCharacteristics[C::class]?.level() ?: 0.0
 
@@ -71,5 +68,8 @@ open class CognitivePedestrianImpl<T, P : Position<P>> @JvmOverloads constructor
         env.getLayer(danger).let { if (it.isPresent) it.get().getValue(env.getPosition(this)) as Double else 0.0 }
 
     private fun wantsToEvacuate(): Boolean =
-            characteristicLevel<IntentionEvacuate>() > characteristicLevel<IntentionWalkRandomly>()
+        characteristicLevel<IntentionEvacuate>() > characteristicLevel<IntentionWalkRandomly>()
+
+    private fun cognitiveInfluencialPeople(): List<CognitivePedestrian<T>> =
+        influencialPeople().filterIsInstance<CognitivePedestrian<T>>()
 }

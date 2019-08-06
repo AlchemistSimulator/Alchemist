@@ -5,7 +5,7 @@ import it.unibo.alchemist.model.implementations.linkingrules.ClosestN
 import it.unibo.alchemist.model.implementations.nodes.AbstractNode
 import it.unibo.alchemist.model.interfaces.GeoPosition
 
-class TestClosestNOnMaps : StringSpec ({
+class TestClosestNOnMaps : StringSpec({
     "Use ClosestN on maps" {
         val environment = OSMEnvironment<Any>("maps/cesena.pbf")
         environment.linkingRule = ClosestN<Any, GeoPosition>(10)

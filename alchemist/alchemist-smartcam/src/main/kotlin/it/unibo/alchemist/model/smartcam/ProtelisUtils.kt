@@ -6,6 +6,7 @@ import org.protelis.lang.datatype.FunctionDefinition
 import org.protelis.lang.datatype.Tuple
 import org.protelis.lang.interpreter.util.JavaInteroperabilityUtils
 import org.protelis.vm.ExecutionContext
+import java.util.stream.Collectors
 
 /**
  * Utility class for Kotlin - Protelis intercommunication.
@@ -30,7 +31,7 @@ class CameraTargetAssignmentProblemForProtelis {
          * See [CameraTargetAssignmentProblem.solve]
          */
         @JvmStatic
-        fun solve(cameras: Field, targets: Tuple, maxCamerasPerDestination: Int): Map<String, VisibleTarget<*>> =
+        fun solve(cameras: Field<*>, targets: Tuple, maxCamerasPerDestination: Int): Map<String, VisibleTarget<*>> =
             CameraTargetAssignmentProblem<CameraAdapter, VisibleTarget<*>>().solve(
                 cameras.toCameras(),
                 targets.toTargets(),
@@ -44,7 +45,7 @@ class CameraTargetAssignmentProblemForProtelis {
          */
         @JvmStatic
         fun solve(context: ExecutionContext,
-                  cameras: Field,
+                  cameras: Field<*>,
                   targets: Tuple,
                   maxCamerasPerDestination: Int,
                   cost: FunctionDefinition): Map<String, VisibleTarget<*>> =
@@ -60,7 +61,7 @@ class CameraTargetAssignmentProblemForProtelis {
     }
 }
 
-private fun Field.toCameras() = coupleIterator().map { CameraAdapter(it.key, it.value) }
+private fun Field<*>.toCameras() = stream().map { CameraAdapter(it.key, it.value) }.collect(Collectors.toList())
 private fun Tuple.toTargets() = toList().map{it as VisibleTarget<*>}
 
 private class CameraAdapter(

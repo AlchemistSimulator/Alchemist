@@ -20,7 +20,15 @@ class ProtelisUtils {
          * The algorithm to calculate the best targets for the cameras.
          */
         @JvmField
+        @SuppressFBWarnings("ISC_INSTANTIATE_STATIC_CLASS", justification = "Needed for protelis syntax")
         val CameraTargetAssignmentProblem = CameraTargetAssignmentProblemForProtelis()
+
+        /**
+         * Average value of the elements in the [tuple]. The [tuple] must contain Numbers only.
+         */
+        @JvmStatic
+        fun averageOfTuple(tuple: Tuple) =
+            tuple.map<Any, Number> { require(it is Number); it }.sumByDouble { it.toDouble() } / tuple.size()
     }
 }
 

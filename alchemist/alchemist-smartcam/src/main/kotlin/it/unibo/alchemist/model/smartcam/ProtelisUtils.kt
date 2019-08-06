@@ -1,5 +1,6 @@
 package it.unibo.alchemist.model.smartcam
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import org.protelis.lang.datatype.Field
 import org.protelis.lang.datatype.FunctionDefinition
@@ -11,8 +12,10 @@ import java.util.stream.Collectors
 /**
  * Utility class for Kotlin - Protelis intercommunication.
  */
+@SuppressFBWarnings("ISC_INSTANTIATE_STATIC_CLASS", justification = "Needed for protelis syntax")
 class ProtelisUtils {
     companion object {
+
         /**
          * The algorithm to calculate the best targets for the cameras.
          */

@@ -20,13 +20,13 @@ seeds:
 layers:
   - type: BidimensionalGaussianLayer
     molecule: *danger
-    parameters: [40.0, 70.0, 2.0, 10.0]
+    parameters: [-100.0, -100.0, 2.0, 10.0]
 
 reactions: &behavior
   - time-distribution:
       type: DiracComb
-      parameters: [2.0]
-    type: SteeringBehavior
+      parameters: [1.0]
+    type: PrioritySteering
     actions:
       - type: FollowGradient
         parameters: [*danger]

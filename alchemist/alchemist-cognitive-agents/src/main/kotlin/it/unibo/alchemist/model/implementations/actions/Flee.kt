@@ -3,6 +3,7 @@ package it.unibo.alchemist.model.implementations.actions
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.Reaction
 
 /**
  * Move the agent away from a target position. It's the opposite of Seek.
@@ -16,9 +17,10 @@ import it.unibo.alchemist.model.interfaces.Position
  */
 open class Flee<T, P : Position<P>>(
     env: Environment<T, P>,
+    reaction: Reaction<T>,
     pedestrian: Pedestrian<T>,
     vararg coords: Double
-) : Seek<T, P>(env, pedestrian, *coords) {
+) : Seek<T, P>(env, reaction, pedestrian, *coords) {
 
     override fun getDestination(current: P, target: P, maxWalk: Double): P = super.getDestination(target, current, maxWalk)
 }

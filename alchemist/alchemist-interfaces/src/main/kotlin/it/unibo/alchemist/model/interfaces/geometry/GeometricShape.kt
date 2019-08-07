@@ -1,12 +1,14 @@
 package it.unibo.alchemist.model.interfaces.geometry
 
+import java.io.Serializable
+
 /**
  * Models a generic shape.
  *
  * @param <S> Vector type for the space this shapes is defined in
  * @param <A> The transformations supported by the shapes in this space
  */
-interface GeometricShape<S : Vector<S>, A : GeometricTransformation<S>> {
+interface GeometricShape<S : Vector<S>, A : GeometricTransformation<S>> : Serializable {
 
     /**
      * The largest distance between any pair of vertices.

@@ -1,9 +1,11 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.actions.utils.makePosition
+import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Speed
+import it.unibo.alchemist.model.implementations.utils.makePosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
@@ -24,20 +26,22 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
  */
 open class Arrive<T, P : Position<P>>(
     env: Environment<T, P>,
+    reaction: Reaction<T>,
     pedestrian: Pedestrian<T>,
     decelerationRadius: Double,
     arrivalTolerance: Double,
     vararg coords: Double
 ) : SteeringActionImpl<T, P>(
     env,
+    reaction,
     pedestrian,
     TargetSelectionStrategy { env.makePosition(coords.toTypedArray()) },
     SpeedSelectionStrategy {
         target -> with(env.getPosition(pedestrian).getDistanceTo(target)) {
             when {
                 this < arrivalTolerance -> 0.0
-                this < decelerationRadius -> pedestrian.walkingSpeed * this / decelerationRadius
-                else -> pedestrian.walkingSpeed
+                this < decelerationRadius -> Speed.default * this / decelerationRadius
+                else -> Speed.default
             }
         }
     }

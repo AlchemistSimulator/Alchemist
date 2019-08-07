@@ -6,7 +6,7 @@ variables:
 
 environment:
   type: ImageEnvironment
-  parameters: [/home/mazzio/Progetti/java/Alchemist/alchemist/alchemist-cognitive-agents/src/test/resources/images/impact_room.png]
+  parameters: [images/impact_room.png]
 
 positions:
   type: EuclideanPosition2D

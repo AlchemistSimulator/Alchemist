@@ -14,6 +14,8 @@ import java.util.stream.Collectors
  */
 @SuppressFBWarnings("ISC_INSTANTIATE_STATIC_CLASS", justification = "Needed for protelis syntax")
 class ProtelisUtils {
+
+    @SuppressFBWarnings("ISC_INSTANTIATE_STATIC_CLASS", justification = "Needed for protelis syntax")
     companion object {
 
         /**

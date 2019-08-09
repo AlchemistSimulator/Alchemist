@@ -15,7 +15,7 @@ class FieldOfView2D<T> (
 ) {
 
     private val shape = env.shapeFactory.circleSector(distance, angle, heading).transformed { origin(position) }
-    
+
     /**
      * TODO: Use influence spheres
      */

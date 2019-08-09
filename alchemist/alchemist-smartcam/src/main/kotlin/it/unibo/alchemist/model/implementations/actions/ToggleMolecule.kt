@@ -5,7 +5,6 @@ import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
 
-
 /**
  * Action to toggle a molecule
  *

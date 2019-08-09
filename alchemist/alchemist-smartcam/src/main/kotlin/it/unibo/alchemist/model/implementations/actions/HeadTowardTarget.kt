@@ -32,7 +32,7 @@ class HeadTowardTarget<T>(
     override fun execute() {
         node.getConcentration(target)?.let {
             env.setHeading(node, concentrationToPosition(it) - env.getPosition(node))
-       }
+        }
     }
 
     /**

@@ -27,7 +27,7 @@ data class VisibleTarget<T>(
     val distance = env.getDistanceBetweenNodes(observer, seen)
 
     override fun equals(other: Any?): Boolean {
-        if(other is VisibleTarget<*>) {
+        if (other is VisibleTarget<*>) {
             return other.id == id
         }
         return false

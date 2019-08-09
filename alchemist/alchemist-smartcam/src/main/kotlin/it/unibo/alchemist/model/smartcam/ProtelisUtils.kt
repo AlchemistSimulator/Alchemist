@@ -57,11 +57,13 @@ class CameraTargetAssignmentProblemForProtelis {
          * See [CameraTargetAssignmentProblem.solve]
          */
         @JvmStatic
-        fun solve(context: ExecutionContext,
-                  cameras: Field<*>,
-                  targets: Tuple,
-                  maxCamerasPerDestination: Int,
-                  cost: FunctionDefinition): Map<String, VisibleTarget<*>> =
+        fun solve(
+            context: ExecutionContext,
+            cameras: Field<*>,
+            targets: Tuple,
+            maxCamerasPerDestination: Int,
+            cost: FunctionDefinition
+        ): Map<String, VisibleTarget<*>> =
             CameraTargetAssignmentProblem<CameraAdapter, VisibleTarget<*>>().solve(
                 cameras.toCameras(),
                 targets.toTargets(),
@@ -75,7 +77,7 @@ class CameraTargetAssignmentProblemForProtelis {
 }
 
 private fun Field<*>.toCameras() = stream().map { CameraAdapter(it.key, it.value) }.collect(Collectors.toList())
-private fun Tuple.toTargets() = toList().map{it as VisibleTarget<*>}
+private fun Tuple.toTargets() = toList().map { it as VisibleTarget<*> }
 
 private class CameraAdapter(
     id: Any,

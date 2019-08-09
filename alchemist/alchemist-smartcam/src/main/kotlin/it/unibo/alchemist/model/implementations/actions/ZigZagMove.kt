@@ -13,7 +13,6 @@ import org.apache.commons.math3.random.RandomGenerator
 import kotlin.math.cos
 import kotlin.math.sin
 
-
 /**
  * Moves toward a randomly chosen direction for up to distance meters, then chooses another one and so on.
  * @param <T> concentration type

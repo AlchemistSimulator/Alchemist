@@ -31,9 +31,7 @@ public final class EffectFactory {
         try {
             return effect.getConstructor().newInstance();
         } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            final IllegalArgumentException newExc = new IllegalArgumentException("The effect must have a parameterless constructor " + effect.getSimpleName());
-            newExc.initCause(e);
-            throw newExc;
+            throw new IllegalArgumentException("The effect must have a parameterless constructor " + effect.getSimpleName(), e);
         }
     }
 

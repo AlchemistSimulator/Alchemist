@@ -1,24 +1,51 @@
 incarnation: protelis
 
+variables:
+  CameraSpeed: &CameraSpeed
+    type: ArbitraryVariable
+    parameters: [0.5]
+  HumanSpeed: &HumanSpeed
+    type: ArbitraryVariable
+    parameters: [0.5]
+  NumHumans: &NumHumans
+    type: ArbitraryVariable
+    parameters: [40]
+  NumCameras: &NumCameras
+    type: ArbitraryVariable
+    parameters: [10]
+  EnvironmentSize: &EnvironmentSize
+    type: ArbitraryVariable
+    parameters: [400.0]
+  HalfEnvironmentSize: &HalfEnvironmentSize
+    formula: EnvironmentSize / 2
+  NetworkConnectionMaxDistance: &NetworkConnectionMaxDistance
+    formula: EnvironmentSize * EnvironmentSize
+  FoVAngle: &FoVAngle
+    type: ArbitraryVariable
+    parameters: [60]
+  FoVDistance: &FoVDistance
+    type: ArbitraryVariable
+    parameters: [30]
+  MaxDistanceBeforeChangeInDirection: &MaxDistanceBeforeChangeInDirection
+    type: ArbitraryVariable
+    parameters: [.inf]
+  AngularSpeed: &AngularSpeed
+    type: ArbitraryVariable
+    parameters: [2]
+
+
 environment:
   type: EuclideanPhysics2DEnvironmentImpl
-  parameters: [400, 400]
+  parameters: [*EnvironmentSize, *EnvironmentSize]
 
 network-model:
   type: ConnectWithinDistance
-  parameters: [2000]
+  parameters: [*NetworkConnectionMaxDistance]
 
 seeds:
   scenario: 0
   simulation: 1
 
-variables:
-  CameraSpeed: &CameraSpeed
-    type: ArbitraryVariable
-    parameters: [1.0]
-  HumanSpeed: &HumanSpeed
-    type: ArbitraryVariable
-    parameters: [0.5]
 
 programs:
   - &Human
@@ -27,28 +54,28 @@ programs:
       # levy walk / levy flight
       actions:
         - type: ZigZagMove
-          parameters: [1000.0, *HumanSpeed]
+          parameters: [*MaxDistanceBeforeChangeInDirection, *HumanSpeed]
     - time-distribution: 0.001
       type: ChemicalReaction
       actions:
         - type: RandomlyToggleMolecule
           parameters: [wanted, true, 0.01]
   - &Camera
-    - time-distribution: 1
+    - time-distribution: 4
       type: ChemicalReaction
       actions:
         - type: See
-          parameters: [30, 60, vision]
-    - time-distribution: 1
+          parameters: [*FoVDistance, *FoVAngle, vision]
+    - time-distribution: 2
       type: ChemicalReaction
       conditions:
         - type: MoleculeHasConcentration
           parameters: [state, following]
       actions:
         - type: HeadTowardTarget
-          parameters: [destination]
-        - type: FollowAtDistance
-          parameters: [destination, 15, *CameraSpeed]
+          parameters: [heading, *AngularSpeed]
+        - type: MoveToTarget
+          parameters: [destination, *CameraSpeed]
     - time-distribution: 1
       type: ChemicalReaction
       conditions:
@@ -56,9 +83,9 @@ programs:
           parameters: [state, exploring]
       actions:
         - type: Spin
-          parameters: [0.1]
+          parameters: [*AngularSpeed]
         - type: ZigZagMove
-          parameters: [1000.0, *CameraSpeed]
+          parameters: [*MaxDistanceBeforeChangeInDirection, *CameraSpeed]
     - time-distribution: 1
       program: simplex
     - program: send
@@ -68,7 +95,7 @@ programs:
 displacements:
   - in:
       type: Circle
-      parameters: [20, 0, 0, 200]
+      parameters: [*NumHumans, 0, 0, *HalfEnvironmentSize]
     nodes:
       type: CircleNode
       parameters: [1]
@@ -76,10 +103,13 @@ displacements:
       - *Human
   - in:
       type: Circle
-      parameters: [20, 0, 0, 200]
+      parameters: [*NumCameras, 0, 0, *HalfEnvironmentSize]
     nodes:
       type: ProtelisNode
       parameters: [1]
+    contents:
+      - molecule: FoVDistance
+        concentration: *FoVDistance
     programs:
       - *Camera
 

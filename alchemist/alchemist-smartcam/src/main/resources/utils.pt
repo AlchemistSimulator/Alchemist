@@ -1,0 +1,43 @@
+module utils
+import protelis:lang:utils
+import java.lang.System.out
+import java.lang.Math.sqrt
+import java.lang.Math.abs
+import it.unibo.alchemist.model.smartcam.ProtelisUtils.toTuple
+
+public def log(msg) {
+    out.print("[");
+    out.print(self.getDeviceUID());
+    out.print("]: ");
+    out.println(msg);
+    0
+}
+
+public def getVision() {
+    toTuple(env.get("vision"))
+}
+
+public def minBy(a, b, getValue) {
+    mux(getValue.apply(a) < getValue.apply(b)) {
+        a
+    } else {
+        b
+    }
+}
+
+public def distanceBetweenPos(pos1, pos2) {
+    let diff = pos1 - pos2;
+    sqrt(diff.get(0)^2 + diff.get(1)^2)
+}
+
+public def distanceFromPos(pos) {
+    distanceBetweenPos(self.getCoordinates(), pos)
+}
+
+public def posToTuple(pos) {
+    [pos.getX(), pos.getY()]
+}
+
+public def noTarget() {
+    0
+}

@@ -20,25 +20,40 @@ class ZigZagRandomTarget<T> (
     private val node: Node<T>,
     private val env: Environment<T, Euclidean2DPosition>,
     private val rng: RandomGenerator,
-    private val distance: Double
+    private val maxDistance: Double
 ) : TargetSelectionStrategy<Euclidean2DPosition> {
-    private var target: Euclidean2DPosition? = null
-    private var lastNodePosition = env.getPosition(node)
 
+    private var initialized = false
+    private lateinit var lastNodePosition: Euclidean2DPosition
+    private lateinit var startPosition: Euclidean2DPosition
+    private val distance = 100.0 // random destination picked at this distance from the node
+    private var direction = changeDirection()
 
     override fun getTarget(): Euclidean2DPosition {
         val currentPosition = env.getPosition(node)
-        if (target == null || lastNodePosition == currentPosition || currentPosition == target) {
-            // if it hasn't moved (assuming it's because of an obstacle) or it has reached the target then pick another one
-            target = pickRandomDestination()
+        if (!initialized) {
+            lastNodePosition = currentPosition
+            startPosition = currentPosition
+            initialized = true
+        }
+        // if it hasn't moved (assuming it's because of an obstacle) or or it has gone farther than the maximum distance,
+        // then pick another direction
+        if (lastNodePosition == currentPosition || startPosition.getDistanceTo(currentPosition) >= maxDistance) {
+            startPosition = currentPosition
+            changeDirection()
         }
         lastNodePosition = currentPosition
-        return target!! // it cannot be null here
+        return computeTarget()
     }
 
-    private fun pickRandomDestination(): Euclidean2DPosition {
-        val x = (2 * rng.nextDouble() -1) * distance
-        val y = (2 * rng.nextInt(2) -1) * sqrt(distance * distance + x * x)
+    private fun changeDirection(): Euclidean2DPosition {
+        direction = Euclidean2DPosition(2 * rng.nextDouble() - 1, 2 * rng.nextDouble() - 1)
+        return direction
+    }
+
+    private fun computeTarget(): Euclidean2DPosition {
+        val x = direction.x * distance
+        val y = direction.y * sqrt(distance * distance + x * x)
         return Euclidean2DPosition(x, y) + env.getPosition(node)
     }
 }

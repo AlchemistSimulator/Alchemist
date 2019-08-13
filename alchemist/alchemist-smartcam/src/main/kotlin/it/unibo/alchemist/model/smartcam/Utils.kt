@@ -1,7 +1,10 @@
 package it.unibo.alchemist.model.smartcam
 
+import it.unibo.alchemist.model.implementations.geometry.asAngle
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import org.protelis.lang.datatype.Tuple
+import kotlin.math.cos
+import kotlin.math.sin
 
 internal fun concentrationToPosition(c: Any?): Euclidean2DPosition {
     require(c != null) { "Cannot read the position from null" }
@@ -23,4 +26,10 @@ internal fun concentrationToPosition(c: Any?): Euclidean2DPosition {
         else -> throw IllegalArgumentException("Expected a Protelis Tuple or Euclidean2DPosition but got a ${c::class.simpleName}")
     }
     return Euclidean2DPosition(x, y)
+}
+
+internal fun closestPositionToTargetAtDistance(source: Euclidean2DPosition, target: Euclidean2DPosition, distance: Double): Euclidean2DPosition {
+    val direction = source - target
+    val angle = direction.asAngle()
+    return target + Euclidean2DPosition(cos(angle) * distance, sin(angle) * distance)
 }

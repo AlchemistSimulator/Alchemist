@@ -5,7 +5,7 @@ import it.unibo.alchemist.model.interfaces.Node
 import org.protelis.lang.datatype.impl.ArrayTupleImpl
 
 /**
- * Represents an interesting object detected by the [See] action.
+ * Represents a node seen by the [See] action.
  */
 data class VisibleTarget<T>(
     private val observer: Node<T>,
@@ -18,13 +18,9 @@ data class VisibleTarget<T>(
      */
     val id = seen.id
     /**
-     * Target absolute position.
+     * Absolute position.
      */
     val position = with(env.getPosition(seen)) { ArrayTupleImpl(getCoordinate(0), getCoordinate(1)) }
-    /**
-     * Distance of the target from the observer.
-     */
-    val distance = env.getDistanceBetweenNodes(observer, seen)
 
     override fun equals(other: Any?): Boolean {
         if (other is VisibleTarget<*>) {
@@ -37,5 +33,5 @@ data class VisibleTarget<T>(
         id.hashCode()
 
     override fun toString() =
-        "Target#$id"
+        "Visible#$id"
 }

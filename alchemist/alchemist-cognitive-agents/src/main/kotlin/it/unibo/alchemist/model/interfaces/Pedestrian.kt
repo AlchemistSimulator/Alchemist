@@ -10,15 +10,15 @@ interface Pedestrian<T> : Node<T> {
     /**
      * The group this pedestrian belongs to.
      */
-    var membershipGroup: Group
+    val membershipGroup: Group<T>
 
     /**
-     * The speed at which the pedestrian moves if it's walking.
+     * The speed at which the pedestrian is moving.
      */
-    val walkingSpeed: Double
+    fun speed(): Double
 
     /**
-     * The speed at which the pedestrian moves if it's running.
+     * A list of all the pedestrians inside at least one of the sensory spheres of this pedestrian.
      */
-    val runningSpeed: Double
+    fun influencialPeople(): List<Pedestrian<T>>
 }

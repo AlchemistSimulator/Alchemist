@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.github.davidmoten.rtree.Entry;
+import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithObstacles;
 import org.apache.commons.math3.util.Pair;
 
 import com.github.davidmoten.rtree.RTree;
@@ -24,12 +25,11 @@ import com.github.davidmoten.rtree.internal.EntryDefault;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.utils.RectObstacle2D;
-import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
 
 /**
  * @param <T>
  */
-public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements Environment2DWithObstacles<RectObstacle2D, T, Euclidean2DPosition> {
+public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements EuclideanPhysics2DEnvironmentWithObstacles<RectObstacle2D, T> {
 
     private static final double TOLERANCE_MULTIPLIER = 0.01;
     private static final long serialVersionUID = 69931743897405107L;

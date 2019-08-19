@@ -1,7 +1,7 @@
 package it.unibo.alchemist.model.interfaces
 
 /**
- * An interface for a generic action whose purpose is moving a node inside the environment it is in.
+ * Action whose purpose is moving a node inside the environment it is in.
  */
 interface SteeringAction<T, P : Position<P>> : Action<T> {
 

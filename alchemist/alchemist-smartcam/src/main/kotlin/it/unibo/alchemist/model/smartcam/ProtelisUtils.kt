@@ -8,6 +8,7 @@ import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
 import it.unibo.alchemist.protelis.AlchemistExecutionContext
+import org.protelis.lang.datatype.DeviceUID
 import org.protelis.lang.datatype.Field
 import org.protelis.lang.datatype.FunctionDefinition
 import org.protelis.lang.datatype.Tuple
@@ -72,21 +73,32 @@ class ProtelisUtils {
         }
 
         /**
+         * Finds devices in [field] whose data makes [func] returns a value which can be cast to a boolean.
+         * [func] is expected to have the following signature: fun func(data: Any): Any
+         */
+        @JvmStatic
+        fun findDevicesByData(context: ExecutionContext, field: Field<*>, func: FunctionDefinition) =
+            field.stream().filter {
+                JavaInteroperabilityUtils.runProtelisFunctionWithJavaArguments(context, func, listOf(it.value)).toBoolean()
+            }.map { it.key }.collect(Collectors.toList()).toTuple()
+
+        /**
+         * Returns the data contained in the [field] for the [device], or [default] if there is none.
+         */
+        @JvmStatic
+        fun getDataByDevice(default: Any, field: Field<*>, device: DeviceUID) =
+            if (field.containsKey(device)) field.get(device) ?: default else default
+
+        /**
          * See [OverlapRelationsGraph].
          */
         @JvmStatic
         fun buildOverlapRelationsGraph(
+            context: AlchemistExecutionContext<Euclidean2DPosition>,
             strengthenValue: Double,
             evaporationBaseFactor: Double,
             evaporationMovementFactor: Double) =
-            OverlapRelationsGraph(strengthenValue, evaporationBaseFactor, evaporationMovementFactor)
-
-        /**
-         * Returns [atMost] links with the greater strength in [graph].
-         */
-        @JvmStatic
-        fun strongestLinks(graph: OverlapRelationsGraph, atMost: Int) =
-            graph.links.entries.sortedByDescending { it.value }.take(atMost).map { it.key }.toTuple()
+            OverlapRelationsGraphForProtelis(context.deviceUID, strengthenValue, evaporationBaseFactor, evaporationMovementFactor)
 
         /**
          * Creates a [Tuple] from any collection.
@@ -146,6 +158,58 @@ class CameraTargetAssignmentProblemForProtelis {
 }
 
 /**
+ * See [OverlapRelationsGraph].
+ */
+class OverlapRelationsGraphForProtelis(
+    private val myUid: DeviceUID,
+    strengthenValue: Double,
+    evaporationBaseFactor: Double,
+    evaporationMovementFactor: Double
+) {
+
+    private val graph = OverlapRelationsGraph<DeviceUID>(strengthenValue, evaporationBaseFactor, evaporationMovementFactor)
+
+    /**
+     * See [OverlapRelationsGraph#evaporateAllLinks].
+     */
+    fun evaporate(): OverlapRelationsGraphForProtelis {
+        graph.evaporateAllLinks(true)
+        return this
+    }
+
+    /**
+     * Calls [OverlapRelationsGraph#strengthenLink] for each object in common with each camera contained in the [field].
+     * The [field] is supposed to contain a [Tuple] of [VisibleNode] for each device.
+     */
+    fun update(field: Field<Tuple>): OverlapRelationsGraphForProtelis {
+        val myobjects = field.get(myUid).asIterable().map { require(it is VisibleNode<*, *>); it }
+        field.keys().filterNot { it == myUid }.forEach { camera ->
+            field.get(camera).forEach { if (myobjects.contains(it)) graph.strengthenLink(camera) }
+        }
+        return this
+    }
+
+    /**
+     * Returns a [Tuple] of [atMost] devices with the strongest links.
+     */
+    fun strongestLinks(atMost: Int) =
+        graph.links.entries.sortedByDescending { it.value }.take(atMost).map { it.key }.toTuple()
+
+    /**
+     * Returns devices chosen according to the Smooth strategy described in "Online Multi-object k-coverage with Mobile Smart Cameras"
+     */
+    fun smooth(ctx: ExecutionContext) =
+        graph.links.values.max()?.let { max ->
+            graph.links.entries.filter { entry ->
+                val odds = (1 + entry.value) / (1 + max)
+                ctx.nextRandomDouble() <= odds
+            }.map { it.key }.toTuple()
+        } ?: ArrayTupleImpl()
+
+    override fun toString() = "OverlapRelationsGraph(${graph.links})"
+}
+
+/**
  * Creates a [Tuple] from any collection.
  */
 private fun Collection<*>.toTuple(): Tuple = with(iterator()) { ArrayTupleImpl(*Array(size) { next() }) }
@@ -195,3 +259,14 @@ private fun Tuple.toPosition(): Euclidean2DPosition {
     require(x is Double && y is Double)
     return Euclidean2DPosition(x, y)
 }
+
+private fun Any?.toBoolean(): Boolean =
+    when (this) {
+        null -> false
+        is Boolean -> this
+        is Int -> !equals(0)
+        is Double -> compareTo(0.0).toBoolean()
+        is Number -> toDouble().toBoolean()
+        is String -> with(decapitalize()) { equals("true") || equals("on") || equals("yes") || toDoubleOrNull()?.toBoolean() ?: false }
+        else -> throw IllegalArgumentException("$this of class ${this::class} cannot be cast to boolean")
+    }

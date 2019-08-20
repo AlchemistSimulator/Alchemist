@@ -7,7 +7,7 @@ package it.unibo.alchemist.model.smartcam
  * Links can be strengthen, increasing their values by [strengthenValue].
  * Links can be evaporated, multiplying their values with the factors [evaporationBaseFactor] and [evaporationMovementFactor].
  */
-class OverlapRelationsGraph(
+class OverlapRelationsGraph<C>(
     private val strengthenValue: Double,
     private val evaporationBaseFactor: Double,
     private val evaporationMovementFactor: Double
@@ -16,15 +16,15 @@ class OverlapRelationsGraph(
     /**
      * Returns all the links in form of a map from the camera id to the link strength.
      */
-    val links: Map<Int, Double>
+    val links: Map<C, Double>
         get() = _links
-    private val _links = mutableMapOf<Int, Double>()
+    private val _links = mutableMapOf<C, Double>()
 
     /**
      * Increase link strength by [strengthenValue].
      */
-    fun strengthenLink(cameraId: Int) {
-        _links.merge(cameraId, strengthenValue) {v1, v2 -> v1 + v2}
+    fun strengthenLink(camera: C) {
+        _links.merge(camera, strengthenValue) { v1, v2 -> v1 + v2 }
     }
 
     /**

@@ -16,32 +16,32 @@ let MAX_CAMERAS_PER_TARGET = 3;
 rep(info <- [noTarget(), buildOverlapRelationsGraph(1, 0.995, 0.95)]){
     let myTarget = info.get(0);
     let graph = info.get(1);
-    let localTargets = getVision();
-    let globalTargets = nbr(localTargets);
+    let localObjects = getVision();
+    let globalObjects = nbr(localObjects);
     graph.evaporate();
-    graph.update(globalTargets);
+    graph.update(globalObjects);
     env.put("graph", graph);
 
     let devicesToNotify = graph.smooth();
-    env.put("devicesToNotify", devicesToNotify);
+    //env.put("devicesToNotify", devicesToNotify);
     let notifiedDevices = nbr(devicesToNotify);
     env.putField("notifiedDevices", notifiedDevices);
     let notifiers = findDevicesByData(notifiedDevices, (data) -> {data.contains(self.getDeviceUID())});
-    env.put("notifiers", notifiers);
+    //env.put("notifiers", notifiers);
 
     // now filter targets by who really notified me
     let allTargets = notifiers
-        .map((id) -> {getDataByDevice([], globalTargets, id)})
+        .map((id) -> {onlyTargets(getDataByDevice([], globalObjects, id))})
         .reduce([], (d1, d2) -> {d1.union(d2)})
-        .union(localTargets);
-    env.put("allTargets", allTargets);
+        .union(onlyTargets(localObjects));
+    //env.put("allTargets", allTargets);
 
     myTarget = if(myTarget == noTarget() || !allTargets.contains(myTarget)) {
         closestTarget(allTargets)
     } else {
         allTargets.get(allTargets.indexof(myTarget)) // updated position
     };
-    env.put("myTarget", myTarget);
+    //env.put("myTarget", myTarget);
     followOrExplore(myTarget);
     [myTarget, graph]
 }

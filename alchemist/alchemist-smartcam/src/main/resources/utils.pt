@@ -5,6 +5,7 @@ import java.lang.Math.sqrt
 import java.lang.Math.abs
 import it.unibo.alchemist.model.smartcam.ProtelisUtils.toTuple
 import it.unibo.alchemist.model.smartcam.ProtelisUtils.closestPositionToTargetAtDistance
+import it.unibo.alchemist.model.smartcam.ProtelisUtils.isTarget
 
 public def log(msg) {
     out.print("[");
@@ -16,6 +17,22 @@ public def log(msg) {
 
 public def getVision() {
     toTuple(env.get("vision"))
+}
+
+public def filterVision(vision, attribute) {
+    vision.filter((t) -> { isTarget(t, attribute) })
+}
+
+public def onlyTargets(vision) {
+    if(env.has("target")) {
+        filterVision(vision, env.get("target"))
+    } else {
+        vision
+    }
+}
+
+public def getLocalTargets() {
+    onlyTargets(getVision())
 }
 
 public def minBy(a, b, getValue) {

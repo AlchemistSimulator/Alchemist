@@ -2,6 +2,7 @@ package it.unibo.alchemist.model.smartcam
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import it.unibo.alchemist.model.implementations.geometry.asAngle
+import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
@@ -112,6 +113,17 @@ class ProtelisUtils {
         @JvmStatic
         fun averageOfTuple(tuple: Tuple) =
             tuple.map<Any, Number> { require(it is Number); it }.sumByDouble { it.toDouble() } / tuple.size()
+
+        /**
+         * Check if [target#node] contains a molecule named [attribute] and its concentration can be cast to Boolean,
+         * in which case it returns it, otherwise false.
+         */
+        @JvmStatic
+        fun isTarget(target: VisibleNode<*, *>, attribute: String) =
+            with(SimpleMolecule(attribute)) {
+                target.node.contains(this) && target.node.getConcentration(this).toBooleanOrNull() ?: false
+            }
+
     }
 }
 
@@ -260,13 +272,15 @@ private fun Tuple.toPosition(): Euclidean2DPosition {
     return Euclidean2DPosition(x, y)
 }
 
-private fun Any?.toBoolean(): Boolean =
+private fun Any?.toBooleanOrNull(): Boolean? =
     when (this) {
-        null -> false
+        null -> this
         is Boolean -> this
         is Int -> !equals(0)
         is Double -> compareTo(0.0).toBoolean()
         is Number -> toDouble().toBoolean()
-        is String -> with(decapitalize()) { equals("true") || equals("on") || equals("yes") || toDoubleOrNull()?.toBoolean() ?: false }
-        else -> throw IllegalArgumentException("$this of class ${this::class} cannot be cast to boolean")
+        is String -> with(decapitalize()) { equals("true") || equals("on") || equals("yes") || toDoubleOrNull().toBooleanOrNull() ?: false }
+        else -> null
     }
+
+private fun Any?.toBoolean() = toBooleanOrNull() ?: throw IllegalArgumentException("Failed to convert $this to Boolean")

@@ -23,7 +23,7 @@ import it.unibo.alchemist.boundary.wormhole.interfaces.PointerSpeed;
 import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
-import it.unibo.alchemist.model.implementations.environments.EuclideanPhysics2DEnvironmentImpl;
+import it.unibo.alchemist.model.implementations.environments.Rectangular2DEnvironment;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
@@ -334,8 +334,8 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         /*
          * Draws the borders if there are any
          */
-        if (currentEnv instanceof EuclideanPhysics2DEnvironmentImpl) {
-            final EuclideanPhysics2DEnvironmentImpl env = (EuclideanPhysics2DEnvironmentImpl) currentEnv;
+        if (currentEnv instanceof Rectangular2DEnvironment) {
+            final Rectangular2DEnvironment env = (Rectangular2DEnvironment) currentEnv;
             final Point topLeft = wormhole.getViewPoint(currentEnv.makePosition(-env.getWidth() / 2, env.getHeight() / 2));
             final Point bottomRight = wormhole.getViewPoint(currentEnv.makePosition(env.getWidth() / 2, -env.getHeight() / 2));
             final Point wh = new Point(bottomRight.x - topLeft.x, bottomRight.y - topLeft.y);

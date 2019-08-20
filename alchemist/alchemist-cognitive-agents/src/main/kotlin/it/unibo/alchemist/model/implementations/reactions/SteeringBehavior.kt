@@ -1,16 +1,10 @@
 package it.unibo.alchemist.model.implementations.reactions
 
-import it.unibo.alchemist.model.implementations.actions.Blended
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Pedestrian
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.SteeringAction
-import it.unibo.alchemist.model.interfaces.Time
-import it.unibo.alchemist.model.interfaces.TimeDistribution
+import it.unibo.alchemist.model.implementations.actions.Combine
+import it.unibo.alchemist.model.interfaces.*
 
 /**
- * Reaction representing the steering behaviors of a pedestrian.
+ * Reaction representing the steering behavior of a pedestrian.
  *
  * @param env
  *          the environment inside which the pedestrian moves.
@@ -18,11 +12,14 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution
  *          the owner of this reaction.
  * @param timeDistribution
  *          the time distribution according to this the reaction executes.
+ * @param steerStrategy
+ *          the logic according to the steering actions are combined.
  */
-class SteeringBehavior<T, P : Position<P>>(
+open class SteeringBehavior<T, P : Position<P>>(
     private val env: Environment<T, P>,
     private val pedestrian: Pedestrian<T>,
-    timeDistribution: TimeDistribution<T>
+    timeDistribution: TimeDistribution<T>,
+    private val steerStrategy: SteeringStrategy<T, P>
 ) : AbstractReaction<T>(pedestrian, timeDistribution) {
 
     override fun cloneOnNewNode(n: Node<T>?, currentTime: Time?) = TODO()
@@ -32,9 +29,8 @@ class SteeringBehavior<T, P : Position<P>>(
     override fun updateInternalStatus(curTime: Time?, executed: Boolean, env: Environment<T, *>?) {}
 
     override fun execute() {
-        with(actions.filterIsInstance<SteeringAction<T, P>>().toList()) {
-            (actions - this).forEach { it.execute() }
-            Blended(env, pedestrian, this).execute()
-        }
+        val steerActions = actions.filterIsInstance<SteeringAction<T, P>>()
+        (actions - steerActions).forEach { it.execute() }
+        Combine(env, this, pedestrian, steerActions, steerStrategy).execute()
     }
 }

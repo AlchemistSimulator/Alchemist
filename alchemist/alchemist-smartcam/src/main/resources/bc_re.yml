@@ -32,7 +32,7 @@ variables:
     formula: FoVDistance / 2
 
 environment:
-  type: EuclideanPhysics2DEnvironmentImpl
+  type: Rectangular2DEnvironment
   parameters: [*EnvironmentSize, *EnvironmentSize]
 
 network-model:

@@ -7,21 +7,15 @@ import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnviro
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShapeFactory
-import kotlin.math.abs
 
 /**
  * Implementation of [EuclideanPhysics2DEnvironment]
  */
-class EuclideanPhysics2DEnvironmentImpl<T>(
-    /**
-     * The environment's width limits the positions of the nodes inside a rectangle [width * height] centered in (0,0)
-     */
-    val width: Double = Double.POSITIVE_INFINITY,
-    /**
-     * The environment's height limits the positions of the nodes inside a rectangle [width * height] centered in (0,0)
-     */
-    val height: Double = Double.POSITIVE_INFINITY
-) : Abstract2DEnvironment<T, Euclidean2DPosition>(), EuclideanPhysics2DEnvironment<T> {
+open class Continuous2DEnvironment<T> : Abstract2DEnvironment<T, Euclidean2DPosition>(), EuclideanPhysics2DEnvironment<T> {
+
+    companion object {
+        @JvmStatic private val serialVersionUID: Long = 1L
+    }
 
     override val shapeFactory: Euclidean2DShapeFactory = GeometricShapeFactory.getInstance()
     private val defaultHeading = Euclidean2DPosition(0.0, 0.0)
@@ -85,7 +79,7 @@ class EuclideanPhysics2DEnvironmentImpl<T>(
      * A node should be added only if it doesn't collide with already existing nodes and fits in the environment's limits
      */
     override fun nodeShouldBeAdded(node: Node<T>, position: Euclidean2DPosition): Boolean =
-        isWithinWorldLimits(position) && getNodesWithin(shapeFactory.requireCompatible(node.shape).transformed { origin(position) })
+        getNodesWithin(shapeFactory.requireCompatible(node.shape).transformed { origin(position) })
             .isEmpty()
 
     /**
@@ -99,11 +93,8 @@ class EuclideanPhysics2DEnvironmentImpl<T>(
             Euclidean2DPosition(coordinates[0].toDouble(), coordinates[1].toDouble())
         }
 
-    private fun canNodeFitPosition(node: Node<T>, position: Euclidean2DPosition) =
-        isWithinWorldLimits(position) && getNodesWithin(getShape(node).transformed { origin(position) })
+    override fun canNodeFitPosition(node: Node<T>, position: Euclidean2DPosition) =
+        getNodesWithin(getShape(node).transformed { origin(position) })
             .minusElement(node)
             .isEmpty()
-
-    private fun isWithinWorldLimits(pos: Euclidean2DPosition) =
-        abs(pos.x) < width / 2 && abs(pos.y) < height / 2
 }

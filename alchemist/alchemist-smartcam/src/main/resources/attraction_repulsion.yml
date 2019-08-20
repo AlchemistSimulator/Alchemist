@@ -1,7 +1,7 @@
 incarnation: protelis
 
 environment:
-  type: EuclideanPhysics2DEnvironmentImpl
+  type: Rectangular2DEnvironment
   parameters: [400, 400]
 
 network-model:

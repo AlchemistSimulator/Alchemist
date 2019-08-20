@@ -4,7 +4,7 @@ import com.uchuhimo.konf.Config
 import it.unibo.alchemist.model.cognitiveagents.characteristics.PARAMETERS_FILE
 import org.apache.commons.math3.random.RandomGenerator
 
-class Speed(rg: RandomGenerator, age: Age, gender: Gender) : IndividualCharacteristic {
+class Speed(age: Age, gender: Gender, rg: RandomGenerator) : IndividualCharacteristic {
 
     private val individualFactor = { rg.nextDouble() * variance }
 

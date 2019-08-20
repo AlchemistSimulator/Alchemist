@@ -30,6 +30,7 @@ reactions: &behavior
     actions:
       - type: Seek
         parameters: [0.0, 0.0]
+      - type: RandomRotate
 
 displacements:
   - in:

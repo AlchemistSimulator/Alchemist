@@ -1,0 +1,77 @@
+incarnation: protelis
+
+variables:
+  danger: &danger
+    formula: "\"danger\""
+  exit1: &exit1
+    formula: "\"exit1\""
+  exit2: &exit2
+    formula: "\"exit2\""
+  exit3: &exit3
+    formula: "\"exit3\""
+  exit4: &exit4
+    formula: "\"exit4\""
+
+environment:
+  type: ImageEnvironment
+  parameters: [images/impact_room.png]
+
+positions:
+  type: EuclideanPosition2D
+
+network-model:
+  type: NoLinks
+
+seeds:
+  scenario: 0
+  simulation: 1
+
+layers:
+  - type: BidimensionalGaussianLayer
+    molecule: *danger
+    parameters: [10.0, 10.0, 50, 15]
+  - type: BidimensionalGaussianLayer
+    molecule: *exit1
+    parameters: [0.0, 240.0, 5, 10]
+  - type: BidimensionalGaussianLayer
+    molecule: *exit2
+    parameters: [240.0, 480.0, 5, 10]
+  - type: BidimensionalGaussianLayer
+    molecule: *exit3
+    parameters: [480.0, 240.0, 5, 10]
+  - type: BidimensionalGaussianLayer
+    molecule: *exit4
+    parameters: [240.0, 0.0, 5, 10]
+
+reactions: &behavior
+  - time-distribution:
+      type: DiracComb
+      parameters: [5.0]
+    type: PrioritySteering
+    actions:
+      - type: AvoidGradient
+        parameters: [*danger]
+      - type: FollowGradient
+        parameters: [*exit1]
+      - type: FollowGradient
+        parameters: [*exit2]
+      - type: FollowGradient
+        parameters: [*exit3]
+      - type: FollowGradient
+        parameters: [*exit4]
+  - time-distribution:
+      type: DiracComb
+      parameters: [10.0]
+    type: CognitiveBehavior
+    actions:
+      - type: RandomRotate
+
+displacements:
+  - in:
+      type: Circle
+      parameters: [200, 240, 240, 200]
+    nodes:
+      type: CognitivePedestrian2D
+      parameters: ["adult", "male", *danger]
+    programs:
+      - *behavior

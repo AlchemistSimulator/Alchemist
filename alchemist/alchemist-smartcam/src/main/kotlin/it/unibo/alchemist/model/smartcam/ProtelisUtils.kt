@@ -87,7 +87,7 @@ class ProtelisUtils {
          */
         @JvmStatic
         fun getDataByDevice(default: Any, field: Field<*>, device: DeviceUID) =
-            if (field.containsKey(device)) field.get(device) ?: default else default
+            if (field.containsKey(device)) field[device] ?: default else default
 
         /**
          * See [OverlapRelationsGraph].

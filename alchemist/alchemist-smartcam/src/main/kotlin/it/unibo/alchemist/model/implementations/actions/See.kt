@@ -1,13 +1,12 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.geometry.asAngle
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
+import it.unibo.alchemist.model.influencesphere.FieldOfView2D
 import it.unibo.alchemist.model.interfaces.Context
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
-import it.unibo.alchemist.model.smartcam.FieldOfView2D
 import it.unibo.alchemist.model.smartcam.VisibleNode
 import java.lang.Math.toRadians
 
@@ -30,7 +29,9 @@ class See @JvmOverloads constructor(
     private val outputMolecule: Molecule = SimpleMolecule("vision"),
     private val filterByMolecule: Molecule? = null
 ) : AbstractAction<Any>(node) {
-    private val angleInRadians = toRadians(angle)
+
+    private val fieldOfView = FieldOfView2D(env, node, distance, toRadians(angle))
+
     init {
         node.setConcentration(outputMolecule, emptyList<Any>())
     }
@@ -39,8 +40,9 @@ class See @JvmOverloads constructor(
         See(n, env, distance, angle, outputMolecule, filterByMolecule)
 
     override fun execute() {
-        val fov = FieldOfView2D(env, env.getPosition(node), distance, angleInRadians, env.getHeading(node).asAngle())
-        var seen = fov.influencedNodes().filter { it != node }
+        //val fov = FieldOfView2D(env, env.getPosition(node), distance, angleInRadians, env.getHeading(node).asAngle())
+        //var seen = fov.influencedNodes().filter { it != node }
+        var seen = fieldOfView.influentialNodes()
         filterByMolecule?.run {
             seen = seen.filter { it.contains(filterByMolecule) }
         }

@@ -40,7 +40,7 @@ public def posToTuple(pos) {
 }
 
 public def distanceFromTarget(target) {
-    distanceFromPos(target.getPosition())
+    distanceFromPos(posToTuple(target.getPosition()))
 }
 
 public def closestTarget(targets) {

@@ -20,4 +20,4 @@ class FieldOfView2D<T>(
     owner: Node<T>,
     distance: Double,
     aperture: Double
-) : InfluenceSphere2D<T>(env, owner, env.shapeFactory.circleSector(distance, aperture, -Math.PI / 2))
+) : InfluenceSphere2D<T>(env, owner, env.shapeFactory.circleSector(distance, aperture, 0.0))

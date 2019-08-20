@@ -16,28 +16,6 @@ import utils
 
 
 
-def explore() {
-    env.put("state", "exploring");
-    noTarget()
-}
-
-def follow(target) {
-    env.put("state", "following");
-    env.put("destination", target.getPosition());
-    env.put("heading", target.getPosition());
-    target
-}
-
-def distanceFromTarget(target) {
-    euclideanDistance(self.getCoordinates(), target.getPosition())
-}
-
-def closestTarget(targets) {
-    targets.reduce(noTarget(), (t1, t2) -> { minBy(t1, t2, distanceFromTarget) })
-}
-
-
-
 rep(myTarget <- noTarget()) {
     let localTargets = getVision();
     let allTargets = nbr(localTargets);
@@ -47,9 +25,5 @@ rep(myTarget <- noTarget()) {
     } else {
         localTargets.get(localTargets.indexof(myTarget)) // updated position
     };
-    if(myTarget == noTarget()) {
-        explore()
-    } else {
-        follow(myTarget)
-    }
+    followOrExplore(myTarget)
 }

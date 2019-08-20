@@ -4,6 +4,7 @@ import java.lang.System.out
 import java.lang.Math.sqrt
 import java.lang.Math.abs
 import it.unibo.alchemist.model.smartcam.ProtelisUtils.toTuple
+import it.unibo.alchemist.model.smartcam.ProtelisUtils.closestPositionToTargetAtDistance
 
 public def log(msg) {
     out.print("[");
@@ -38,6 +39,48 @@ public def posToTuple(pos) {
     [pos.getX(), pos.getY()]
 }
 
+public def distanceFromTarget(target) {
+    distanceFromPos(target.getPosition())
+}
+
+public def closestTarget(targets) {
+    targets.reduce(noTarget(), (t1, t2) -> { minBy(t1, t2, distanceFromTarget) })
+}
+
 public def noTarget() {
     0
+}
+
+public def getFoVDistance() {
+    env.get("FoVDistance")
+}
+
+public def getFoVCenterDistance() {
+    2 * getFoVDistance() / 3
+}
+
+public def follow(target) {
+    env.put("state", "following");
+    env.put("destination", closestPositionToTargetAtDistance(target.getPosition(), getFoVCenterDistance()));
+    env.put("heading", target.getPosition());
+    target
+}
+
+public def explore() {
+    env.put("state", "exploring");
+    if(env.has("destination")){
+        env.remove("destination")
+    } else { 0 };
+    if(env.has("heading")){
+        env.remove("heading")
+    } else { 0 };
+    noTarget()
+}
+
+public def followOrExplore(target) {
+    if(target == noTarget()) {
+        explore()
+    } else {
+        follow(target)
+    }
 }

@@ -10,18 +10,8 @@ import it.unibo.alchemist.model.smartcam.ProtelisUtils.closestPositionToTargetAt
 import utils
 
 let MAX_CAMERAS_PER_TARGET = 2;
-let FOV_DISTANCE = env.get("FoVDistance");
-let FOV_DISTANCE_CENTER = 2 * FOV_DISTANCE / 3;
 let localTargets = getVision();
 let targets = unionHood PlusSelf(nbr(localTargets));
-let cameras = nbr(getCenterOfFovAtDistance(FOV_DISTANCE_CENTER));
+let cameras = nbr(getCenterOfFovAtDistance(getFoVCenterDistance()));
 let myTarget = CameraTargetAssignmentProblem.solve(cameras, targets, MAX_CAMERAS_PER_TARGET).getOrDefault(getUID(), noTarget());
-if(myTarget == noTarget()){
-    env.put("state", "exploring");
-    if(env.has("destination")){
-        env.remove("destination")
-    } else { 0 }
-} else {
-    env.put("destination", closestPositionToTargetAtDistance(myTarget.getPosition(), FOV_DISTANCE_CENTER));
-    env.put("heading", myTarget.getPosition())
-}
+followOrExplore(myTarget)

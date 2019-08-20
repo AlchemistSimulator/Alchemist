@@ -9,9 +9,8 @@ import it.unibo.alchemist.model.smartcam.ProtelisUtils.getCenterOfFovAtDistance
 import it.unibo.alchemist.model.smartcam.ProtelisUtils.closestPositionToTargetAtDistance
 import utils
 
-let MAX_CAMERAS_PER_TARGET = 2;
-let localTargets = getVision();
+let localTargets = getLocalTargets();
 let targets = unionHood PlusSelf(nbr(localTargets));
 let cameras = nbr(getCenterOfFovAtDistance(getFoVCenterDistance()));
-let myTarget = CameraTargetAssignmentProblem.solve(cameras, targets, MAX_CAMERAS_PER_TARGET).getOrDefault(getUID(), noTarget());
+let myTarget = CameraTargetAssignmentProblem.solve(cameras, targets, getMaxCamerasPerTarget()).getOrDefault(getUID(), noTarget());
 followOrExplore(myTarget)

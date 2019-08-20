@@ -17,7 +17,7 @@ import utils
 
 
 rep(myTarget <- noTarget()) {
-    let localTargets = getVision();
+    let localTargets = getLocalTargets();
     let allTargets = nbr(localTargets);
     let possibleTarget = closestTarget(elementsWithLeastSources(allTargets));
     myTarget = if(myTarget == noTarget() || !localTargets.contains(myTarget)) {

@@ -1,6 +1,9 @@
 incarnation: protelis
 
 variables:
+  MaxCamerasPerTarget: &MaxCamerasPerTarget
+    type: ArbitraryVariable
+    parameters: [3]
   CameraSpeed: &CameraSpeed
     type: ArbitraryVariable
     parameters: [0.5]
@@ -55,7 +58,7 @@ programs:
       actions:
         - type: ZigZagMove
           parameters: [*MaxDistanceBeforeChangeInDirection, *HumanSpeed]
-    - time-distribution: 0.001
+    - time-distribution: 0.01
       type: ChemicalReaction
       actions:
         - type: RandomlyToggleMolecule
@@ -106,8 +109,11 @@ displacements:
       parameters: [*NumCameras, 0, 0, *HalfEnvironmentSize]
     nodes:
       type: ProtelisNode
-      parameters: [1]
     contents:
+      - molecule: Target
+        concentration: wanted
+      - molecule: MaxCamerasPerTarget
+        concentration: *MaxCamerasPerTarget
       - molecule: FoVDistance
         concentration: *FoVDistance
     programs:

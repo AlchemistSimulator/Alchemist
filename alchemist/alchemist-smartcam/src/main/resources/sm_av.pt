@@ -12,7 +12,6 @@ import it.unibo.alchemist.model.smartcam.ProtelisUtils.getDataByDevice
 import utils
 
 
-let MAX_CAMERAS_PER_TARGET = 3;
 rep(info <- [noTarget(), buildOverlapRelationsGraph(1, 0.995, 0.95)]){
     let myTarget = info.get(0);
     let graph = info.get(1);

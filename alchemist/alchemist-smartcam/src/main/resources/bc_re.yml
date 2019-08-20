@@ -2,6 +2,9 @@ incarnation: protelis
 
 
 variables:
+  MaxCamerasPerTarget: &MaxCamerasPerTarget
+    type: ArbitraryVariable
+    parameters: [3]
   CameraSpeed: &CameraSpeed
     type: ArbitraryVariable
     parameters: [0.5]
@@ -17,6 +20,8 @@ variables:
   EnvironmentSize: &EnvironmentSize
     type: ArbitraryVariable
     parameters: [400.0]
+  HalfEnvironmentSize: &HalfEnvironmentSize
+    formula: EnvironmentSize / 2
   NetworkConnectionMaxDistance: &NetworkConnectionMaxDistance
     formula: EnvironmentSize * EnvironmentSize
   FoVAngle: &FoVAngle
@@ -28,8 +33,9 @@ variables:
   MaxDistanceBeforeChangeInDirection: &MaxDistanceBeforeChangeInDirection
     type: ArbitraryVariable
     parameters: [.inf]
-  DistanceFromTarget: &DistanceFromTarget
-    formula: FoVDistance / 2
+  AngularSpeed: &AngularSpeed
+    type: ArbitraryVariable
+    parameters: [2]
 
 environment:
   type: Rectangular2DEnvironment
@@ -69,9 +75,9 @@ programs:
           parameters: [state, following]
       actions:
         - type: HeadTowardTarget
-          parameters: [heading]
-        - type: FollowAtDistance
-          parameters: [destination, *DistanceFromTarget, *CameraSpeed]
+          parameters: [heading, *AngularSpeed]
+        - type: MoveToTarget
+          parameters: [destination, *CameraSpeed]
     - time-distribution: 1
       type: ChemicalReaction
       conditions:
@@ -79,7 +85,7 @@ programs:
           parameters: [state, exploring]
       actions:
         - type: Spin
-          parameters: [0.1]
+          parameters: [*AngularSpeed]
         - type: ZigZagMove
           parameters: [*MaxDistanceBeforeChangeInDirection, *CameraSpeed]
     - time-distribution: 1
@@ -91,7 +97,7 @@ programs:
 displacements:
   - in:
       type: Circle
-      parameters: [*NumHumans, 0, 0, *EnvironmentSize]
+      parameters: [*NumHumans, 0, 0, *HalfEnvironmentSize]
     nodes:
       type: CircleNode
       parameters: [1]
@@ -99,10 +105,16 @@ displacements:
       - *Human
   - in:
       type: Circle
-      parameters: [*NumCameras, 0, 0, *EnvironmentSize]
+      parameters: [*NumCameras, 0, 0, *HalfEnvironmentSize]
     nodes:
       type: ProtelisNode
-      parameters: [1]
+    contents:
+      - molecule: Target
+        concentration: wanted
+      - molecule: MaxCamerasPerTarget
+        concentration: *MaxCamerasPerTarget
+      - molecule: FoVDistance
+        concentration: *FoVDistance
     programs:
       - *Camera
 

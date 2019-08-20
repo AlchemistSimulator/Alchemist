@@ -24,8 +24,8 @@ public def filterVision(vision, attribute) {
 }
 
 public def onlyTargets(vision) {
-    if(env.has("target")) {
-        filterVision(vision, env.get("target"))
+    if(env.has("Target")) {
+        filterVision(vision, env.get("Target"))
     } else {
         vision
     }
@@ -66,6 +66,10 @@ public def closestTarget(targets) {
 
 public def noTarget() {
     0
+}
+
+public def getMaxCamerasPerTarget() {
+    env.get("MaxCamerasPerTarget")
 }
 
 public def getFoVDistance() {

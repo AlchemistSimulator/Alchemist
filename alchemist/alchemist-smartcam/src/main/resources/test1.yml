@@ -1,6 +1,10 @@
 incarnation: protelis
 
+
 variables:
+  MaxCamerasPerTarget: &MaxCamerasPerTarget
+    type: ArbitraryVariable
+    parameters: [3]
   CameraSpeed: &CameraSpeed
     type: ArbitraryVariable
     parameters: [0.5]
@@ -33,7 +37,6 @@ variables:
     type: ArbitraryVariable
     parameters: [2]
 
-
 environment:
   type: Rectangular2DEnvironment
   parameters: [*EnvironmentSize, *EnvironmentSize]
@@ -45,7 +48,6 @@ network-model:
 seeds:
   scenario: 0
   simulation: 1
-
 
 programs:
   - &Human
@@ -61,12 +63,12 @@ programs:
         - type: RandomlyToggleMolecule
           parameters: [wanted, true, 0.01]
   - &Camera
-    - time-distribution: 4
+    - time-distribution: 1
       type: ChemicalReaction
       actions:
         - type: See
           parameters: [*FoVDistance, *FoVAngle, vision]
-    - time-distribution: 2
+    - time-distribution: 1
       type: ChemicalReaction
       conditions:
         - type: MoleculeHasConcentration
@@ -87,7 +89,7 @@ programs:
         - type: ZigZagMove
           parameters: [*MaxDistanceBeforeChangeInDirection, *CameraSpeed]
     - time-distribution: 1
-      program: sm_av
+      program: bc_re
     - program: send
 
 
@@ -106,8 +108,11 @@ displacements:
       parameters: [*NumCameras, 0, 0, *HalfEnvironmentSize]
     nodes:
       type: ProtelisNode
-      parameters: [1]
     contents:
+      - molecule: Target
+        concentration: wanted
+      - molecule: MaxCamerasPerTarget
+        concentration: *MaxCamerasPerTarget
       - molecule: FoVDistance
         concentration: *FoVDistance
     programs:

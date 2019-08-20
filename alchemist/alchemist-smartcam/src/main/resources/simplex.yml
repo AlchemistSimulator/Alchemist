@@ -1,6 +1,9 @@
 incarnation: protelis
 
 variables:
+  MaxCamerasPerTarget: &MaxCamerasPerTarget
+    type: ArbitraryVariable
+    parameters: [3]
   CameraSpeed: &CameraSpeed
     type: ArbitraryVariable
     parameters: [0.5]
@@ -108,6 +111,10 @@ displacements:
       type: ProtelisNode
       parameters: [1]
     contents:
+      - molecule: Target
+        concentration: wanted
+      - molecule: MaxCamerasPerTarget
+        concentration: *MaxCamerasPerTarget
       - molecule: FoVDistance
         concentration: *FoVDistance
     programs:

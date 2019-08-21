@@ -58,11 +58,11 @@ programs:
       actions:
         - type: ZigZagMove
           parameters: [*MaxDistanceBeforeChangeInDirection, *HumanSpeed]
-    - time-distribution: 0.001
+    - time-distribution: 1
       type: ChemicalReaction
       actions:
-        - type: RandomlyToggleMolecule
-          parameters: [wanted, true, 0.01]
+        - type: RandomlyToggleMoleculeWithDuration
+          parameters: [wanted, true, 0.05, 5, 100]
   - &Camera
     - time-distribution: 4
       type: ChemicalReaction

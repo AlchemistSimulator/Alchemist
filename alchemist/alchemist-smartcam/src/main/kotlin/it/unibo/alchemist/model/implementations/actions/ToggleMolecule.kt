@@ -24,13 +24,23 @@ open class ToggleMolecule<T>(
     /**
      * Toggles concentration.
      */
-    override fun execute() {
-        if (node.contains(molecule)) {
-            node.removeConcentration(molecule)
-        } else {
-            node.setConcentration(molecule, concentration)
-        }
-    }
+    override fun execute() =
+        if (isOn()) switchOff() else switchOn()
+
+    /**
+     * Returns true if it is on, already toggled.
+     */
+    protected fun isOn() = node.contains(molecule)
+
+    /**
+     * Switch off the molecule, or remove it
+     */
+    private fun switchOff() = node.removeConcentration(molecule)
+
+    /**
+     * Switch on the molecule and set its concentration.
+     */
+    private fun switchOn() = node.setConcentration(molecule, concentration)
 
     override fun getContext() = Context.LOCAL
 }

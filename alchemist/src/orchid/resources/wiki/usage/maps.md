@@ -34,17 +34,18 @@ environment:
   parameters: [maps/foo.pbf]
 ```
 
-## Displacing nodes with GPS trace
+## Using GPS traces to displace nodes
 
+GPS traces can be used to displace nodes on a map.
 In order to set the initial position of the nodes with the first position of the GPS traces,
-you need to use the displacement {{ anchor('FromGPSTrace') }}. 
+you need to use the displacement {{ anchor('FromGPSTrace') }}.
 The displacement `FromGPSTrace` require the following parameters:
 
 0. number of nodes to displace
 0. file with the GPS traces to use
-0. boolean that indicate if the list of GPS trace is cyclic.
-   If `true` and the GPS traces are less than the number of nodes to displacing,
-   then the first position of GPS traces are reused for more nodes
+0. boolean that indicates if the list of GPS trace is cyclic.
+   If `true` and the GPS traces are less than the number of nodes to be displaced,
+   then the traces are cyclically re-used to displace nodes.
 0. a {{ anchor('GPSTimeAlignment') }} to define how to align the time of all the GPS points of all GPS traces. 
     There are present several strategy in the package {{ anchor('it.unibo.alchemist.boundary.gpsload.api') }}
 

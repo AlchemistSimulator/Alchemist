@@ -62,20 +62,20 @@ displacements:
       parameters: [1497, "vcmuser.gpx", false, "AlignToTime", 1365922800, false, false]
 ```
 
-## Follow GPS trace
+## Following GPS traces
 
 In order to obtain a behavior that moves the nodes following the GPS traces, the program can use one of the
 following types of actions:
 
-0. {{ anchor('GPSTraceWalker') }} -> to follow the GPS trace using the roads
-0. {{ anchor('ReproduceGPSTrace') }} -> to follow the GPS trace with straight way
+0. {{ anchor('GPSTraceWalker') }} -> to follow the GPS trace, interpolating its points my moving along roads
+0. {{ anchor('ReproduceGPSTrace') }} -> to follow the GPS trace as they are
 
-Both the type of actions require:
+Both types of action require:
  0. the file with the GPS traces
  0. a boolean that indicate if the list of GPS trace is cyclic
  0. the strategy to align the attribute `time` of the GPS points of the GPS traces
 
-The following example show how is possible define a program to follow GPS traces.
+The following example show how it is possible define a program to follow GPS traces.
 
 ```yaml
 programs:

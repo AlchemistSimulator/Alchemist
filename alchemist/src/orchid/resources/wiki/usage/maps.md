@@ -4,24 +4,29 @@ title: Maps and GPS traces
 
 ---
 
-To set a simulation that uses a map and possibly the GPS tracks,
-three parameters of the configuration file must be appropriately defined:
+Alchemist is equipped with the ability to load and simulate on real-world maps.
+Navigation on maps can be done by using gps traces,
+by moving along roads (Alchemist relies on [GraphHopper](https://www.graphhopper.com/) to provide directions),
+by interpolating gps traces with on-the-road-movements,
+or by ignoring the map information on just move as you would in a continous space.
+
+Configuring a simulation to run on a map, possibly using GPS tracks, requires three parameters to be specified:
 0. Environment
 0. Displacement
 0. Program to follow the GPS traces
 
-## Setting environment with map
+## Setting up a map environment
 
-In order to running simulation over real world map, you need to select an environment that support it.
+In order to run simulations on real world maps, an appropriate environment must be selected.
 
-Currently the only environment that support maps is {{ anchor('OSMEnvironment') }}. 
+Currently, the only environment supporting maps is {{ anchor('OSMEnvironment') }}. 
 
 The only mandatory parameter is the path of the file with the map to be loaded.
-For the optional parameters, refer to the documentation of the  environment
- 
-The following example show how to configure a simulation, that loads data from an Openstreetmap file 
-(OSM, XML and PBF formats are supported) located in the classpath in the folder
-`maps`:
+For the optional parameters, refer to the documentation of the environment.
+
+The following example shows how to configure a simulation that loads data from an Openstreetmap file 
+(OSM, XML and PBF formats are supported) located in the classpath folder `maps`:
+
 ```yaml
 incarnation: protelis
 environment:

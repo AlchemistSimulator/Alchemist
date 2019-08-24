@@ -5,7 +5,7 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 
 /**
- * Represents a node seen by the [See] action.
+ * Represents a node seen by the [it.unibo.alchemist.model.implementations.actions.See] action.
  */
 data class VisibleNode<T, P : Position<P>>(
     /**

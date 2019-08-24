@@ -1,5 +1,6 @@
 package it.unibo.alchemist.model.implementations.actions
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import it.unibo.alchemist.model.implementations.geometry.asAngle
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Context
@@ -51,6 +52,7 @@ class HeadTowardTarget<T> @JvmOverloads constructor(
                     val rotation = shortestRotationAngle(currentAngle, targetAngle)
                     val absDistance = abs(rotation)
                     if (absDistance > 0) {
+                        @SuppressFBWarnings("SA_LOCAL_SELF_ASSIGNMENT") // nonsensical spotbugs warning
                         val newAngle = currentAngle + min(speedRadians, absDistance) * rotation.sign
                         env.setHeading(node, Euclidean2DPosition(cos(newAngle), sin(newAngle)))
                     }

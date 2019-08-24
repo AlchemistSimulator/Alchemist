@@ -2,8 +2,7 @@ incarnation: protelis
 
 variables:
   MaxCamerasPerTarget: &MaxCamerasPerTarget
-    type: ArbitraryVariable
-    parameters: [3]
+    formula: 3
   CameraSpeed: &CameraSpeed
     type: ArbitraryVariable
     parameters: [0.5]
@@ -34,7 +33,7 @@ variables:
     parameters: [.inf]
   AngularSpeed: &AngularSpeed
     type: ArbitraryVariable
-    parameters: [2]
+    parameters: [1000]
 
 
 environment:
@@ -49,6 +48,12 @@ seeds:
   scenario: 0
   simulation: 1
 
+export:
+  - time
+  - type: CamerasKCoverage
+    parameters: [vision, wanted, *MaxCamerasPerTarget]
+  - type: DistanceTraveled
+    parameters: [vision]
 
 programs:
   - &Human
@@ -112,7 +117,7 @@ displacements:
       parameters: [1]
     contents:
       - molecule: Target
-        concentration: wanted
+        concentration: "\"wanted\""
       - molecule: MaxCamerasPerTarget
         concentration: *MaxCamerasPerTarget
       - molecule: FoVDistance

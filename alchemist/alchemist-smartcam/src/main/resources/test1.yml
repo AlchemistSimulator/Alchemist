@@ -1,6 +1,5 @@
 incarnation: protelis
 
-
 variables:
   MaxCamerasPerTarget: &MaxCamerasPerTarget
     type: ArbitraryVariable
@@ -37,6 +36,7 @@ variables:
     type: ArbitraryVariable
     parameters: [2]
 
+
 environment:
   type: Rectangular2DEnvironment
   parameters: [*EnvironmentSize, *EnvironmentSize]
@@ -49,6 +49,7 @@ seeds:
   scenario: 0
   simulation: 1
 
+
 programs:
   - &Human
     - time-distribution: 1
@@ -57,18 +58,18 @@ programs:
       actions:
         - type: ZigZagMove
           parameters: [*MaxDistanceBeforeChangeInDirection, *HumanSpeed]
-    - time-distribution: 0.001
+    - time-distribution: 0.01
       type: ChemicalReaction
       actions:
         - type: RandomlyToggleMolecule
           parameters: [wanted, true, 0.01]
   - &Camera
-    - time-distribution: 1
+    - time-distribution: 4
       type: ChemicalReaction
       actions:
         - type: See
           parameters: [*FoVDistance, *FoVAngle, vision]
-    - time-distribution: 1
+    - time-distribution: 2
       type: ChemicalReaction
       conditions:
         - type: MoleculeHasConcentration
@@ -89,7 +90,7 @@ programs:
         - type: ZigZagMove
           parameters: [*MaxDistanceBeforeChangeInDirection, *CameraSpeed]
     - time-distribution: 1
-      program: bc_re
+      program: sm_av
     - program: send
 
 

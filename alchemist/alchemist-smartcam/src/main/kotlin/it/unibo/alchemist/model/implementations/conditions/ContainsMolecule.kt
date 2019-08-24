@@ -10,7 +10,7 @@ import it.unibo.alchemist.model.interfaces.Node
 class ContainsMolecule<T>(
     node: Node<T>,
     private val molecule: Molecule
-): AbstractCondition<T>(node) {
+) : AbstractCondition<T>(node) {
 
     override fun getContext() = Context.LOCAL
 

@@ -38,6 +38,7 @@ class HeadTowardTarget<T> @JvmOverloads constructor(
     /**
      * Sets the heading of the node according to the target molecule.
      */
+    @SuppressFBWarnings("SA_LOCAL_SELF_ASSIGNMENT") // nonsensical spotbugs warning
     override fun execute() {
         node.getConcentration(target)?.also {
             val speedRadians = angularSpeedRadians / reaction.rate
@@ -52,7 +53,6 @@ class HeadTowardTarget<T> @JvmOverloads constructor(
                     val rotation = shortestRotationAngle(currentAngle, targetAngle)
                     val absDistance = abs(rotation)
                     if (absDistance > 0) {
-                        @SuppressFBWarnings("SA_LOCAL_SELF_ASSIGNMENT") // nonsensical spotbugs warning
                         val newAngle = currentAngle + min(speedRadians, absDistance) * rotation.sign
                         env.setHeading(node, Euclidean2DPosition(cos(newAngle), sin(newAngle)))
                     }

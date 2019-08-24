@@ -14,12 +14,12 @@ import java.awt.Point;
  * Draws {@link it.unibo.alchemist.model.interfaces.environments.Boundaries}.
  * @param <P> Position type
  */
-/* package-protected */ class BoundariesDrawer<P extends Position2D<P>> implements BoundariesVisitor {
+/* default */ class BoundariesDrawer<P extends Position2D<P>> implements BoundariesVisitor {
     private final Graphics2D g;
     private final IWormhole2D<P> w;
     private final Environment<?, P> env;
 
-    /* package-protected */ BoundariesDrawer(@NotNull final Graphics2D graphics, @NotNull final IWormhole2D<P> wormhole, @NotNull final Environment<?, P> environment) {
+    /* default */ BoundariesDrawer(@NotNull final Graphics2D graphics, @NotNull final IWormhole2D<P> wormhole, @NotNull final Environment<?, P> environment) {
         g = graphics;
         w = wormhole;
         env = environment;

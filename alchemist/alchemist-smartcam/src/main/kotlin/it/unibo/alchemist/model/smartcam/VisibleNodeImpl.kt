@@ -21,5 +21,5 @@ class VisibleNodeImpl<T, P : Position<P>>(
 
     override fun hashCode() = node.hashCode()
 
-    override fun toString() = "Visible#${node}"
+    override fun toString() = "Visible#${node.id}"
 }

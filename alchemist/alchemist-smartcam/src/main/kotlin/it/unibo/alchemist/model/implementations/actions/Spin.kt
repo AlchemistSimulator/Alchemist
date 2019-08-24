@@ -31,7 +31,7 @@ class Spin<T>(
      */
     @SuppressFBWarnings("SA_LOCAL_SELF_ASSIGNMENT")
     override fun execute() {
-        val realSpeed = angularSpeedRadians / reaction.rate
+        val realSpeed = angularSpeedRadians / reaction.timeDistribution.rate
         val headingAngle = env.getHeading(node).asAngle() + realSpeed
         env.setHeading(node, Euclidean2DPosition(cos(headingAngle), sin(headingAngle)))
     }

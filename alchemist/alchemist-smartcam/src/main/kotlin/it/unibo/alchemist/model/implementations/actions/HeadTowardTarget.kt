@@ -41,7 +41,7 @@ class HeadTowardTarget<T> @JvmOverloads constructor(
     @SuppressFBWarnings("SA_LOCAL_SELF_ASSIGNMENT") // nonsensical spotbugs warning
     override fun execute() {
         node.getConcentration(target)?.also {
-            val speedRadians = angularSpeedRadians / reaction.rate
+            val speedRadians = angularSpeedRadians / reaction.timeDistribution.rate
             val targetPosition = concentrationToPosition(it)
             val myHeading = env.getHeading(node)
             if (targetPosition != myHeading) {

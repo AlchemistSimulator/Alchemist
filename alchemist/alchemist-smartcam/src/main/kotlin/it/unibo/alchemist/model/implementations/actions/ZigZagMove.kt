@@ -2,7 +2,7 @@ package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.geometry.asAngle
 import it.unibo.alchemist.model.implementations.movestrategies.ZigZagRandomTarget
-import it.unibo.alchemist.model.implementations.movestrategies.speed.ConstantSpeed
+import it.unibo.alchemist.model.implementations.movestrategies.speed.GloballyConstantSpeed
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.routes.PolygonalChain
 import it.unibo.alchemist.model.interfaces.Environment
@@ -35,7 +35,7 @@ class ZigZagMove<T>(
     node,
     RoutingStrategy { p1, p2 -> PolygonalChain<Euclidean2DPosition>(listOf(p1, p2)) },
     ZigZagRandomTarget<T>(node, env, rng, distance),
-    ConstantSpeed(reaction, speed)
+    GloballyConstantSpeed(reaction, speed)
 ) {
     override fun cloneAction(n: Node<T>, r: Reaction<T>) =
         ZigZagMove(n, r, env, rng, distance, speed)

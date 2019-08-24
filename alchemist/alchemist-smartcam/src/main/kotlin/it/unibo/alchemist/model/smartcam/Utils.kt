@@ -28,8 +28,10 @@ internal fun concentrationToPosition(c: Any?): Euclidean2DPosition {
     return Euclidean2DPosition(x, y)
 }
 
-internal fun closestPositionToTargetAtDistance(source: Euclidean2DPosition, target: Euclidean2DPosition, distance: Double): Euclidean2DPosition {
-    val direction = source - target
-    val angle = direction.asAngle()
-    return target + Euclidean2DPosition(cos(angle) * distance, sin(angle) * distance)
-}
+internal fun offsetPositionAtDistance(source: Euclidean2DPosition, direction: Euclidean2DPosition, distance: Double) =
+    with(direction.asAngle()) {
+        source + Euclidean2DPosition(cos(this) * distance, sin(this) * distance)
+    }
+
+internal fun closestPositionToTargetAtDistance(source: Euclidean2DPosition, target: Euclidean2DPosition, distance: Double) =
+    offsetPositionAtDistance(target, source - target, distance)

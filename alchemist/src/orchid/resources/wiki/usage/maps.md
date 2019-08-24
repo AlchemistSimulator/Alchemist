@@ -21,8 +21,12 @@ In order to run simulations on real world maps, an appropriate environment must 
 
 Currently, the only environment supporting maps is {{ anchor('OSMEnvironment') }}. 
 
-The only mandatory parameter is the path of the file with the map to be loaded.
-For the optional parameters, refer to the documentation of the environment.
+The only mandatory parameter is the `path` of the file with the map to be loaded. Accepts OSM maps of any format (xml, osm, pbf). 
+Is possible define other optional parameter like:
+
+0. `approximation: Int` -> the amount of ciphers of the IEEE 754 encoded position that may be discarded when comparing two positions, allowing a quicker retrieval of the route between two position, since the cache may already contain a similar route which can be considered to be the same route, according to the level of precision determined by this value
+0. `onStreets: Boolean` -> if true, the nodes will be placed on the street nearest to the desired position
+0. `onlyOnStreets: Boolean` -> if true, the nodes which are too far from a street will be simply discarded. If false, they will be placed anyway, in the original position
 
 The following example shows how to configure a simulation that loads data from an Openstreetmap file 
 (OSM, XML and PBF formats are supported) located in the classpath folder `maps`:
@@ -47,8 +51,9 @@ The displacement `FromGPSTrace` require the following parameters:
    If `true` and the GPS traces are less than the number of nodes to be displaced,
    then the traces are cyclically re-used to displace nodes.
 0. a {{ anchor('GPSTimeAlignment') }} to define how to align the time of all the GPS points of all GPS traces. 
-    There are present several strategy in the package {{ anchor('it.unibo.alchemist.boundary.gpsload.api') }}
-
+    There are present several strategy in the package {{ anchor('it.unibo.alchemist.boundary.gpsload.api') }} 
+    and introduced in the following subsection.
+    
 The following example places 1497 nodes with the first position of the GPS traces in the file `vcmuser.gpx`.
 The list of GPS traces isn't cyclic.
 The strategy to align time of all the GPS points is {{ anchor('AlignTime') }}
@@ -61,6 +66,32 @@ displacements:
       type: FromGPSTrace
       parameters: [1497, "vcmuser.gpx", false, "AlignToTime", 1365922800, false, false]
 ```
+
+### Strategy to align time of GPS trace
+
+The strategies available to align time of GPS trace are the following:
+
+0. NoAlignment -> No alignment is performed.
+0. AlignToFirstTrace -> Aligns all traces at the start time of the first trace. 
+    If you have two traces, the first trace start with time = 2 and second point with time = 5,
+    the second trace start with time = 4 and second point with time = 6,
+    the result will be: 
+     - first trace -> start with time = 0 and second point with time = 3
+     - second trace -> start with time = 2 and second point with time = 4
+0. AlignToSimulationTime -> Aligns all traces at the initial simulation time.
+    If you have two traces, the first trace start with time = 2 and second point with time = 5,
+    the second trace start with time = 4 and second point with time = 6,
+    the result will be: 
+     - first trace -> start with time = 0 and second point with time = 3
+     - second trace -> start with time = 0 and second point with time = 2
+0. AlignToTime -> Aligns the traces with the given time in seconds from Epoch. 
+    All points before such time will be discarded. All points after the provided time will
+    be shifted back. 
+    If you have two traces, the first trace start with time = 2 and second point with time = 5,
+    the second trace start with time = 4 and second point with time = 6, the given time is 3
+    the result will be: 
+     - first trace -> first point discarded and second point with time = 2
+     - second trace -> start with time = 1 and second point with time = 3
 
 ## Following GPS traces
 

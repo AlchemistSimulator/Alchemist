@@ -21,6 +21,7 @@ import kotlin.math.sin
 class HeadTowardTarget<T> @JvmOverloads constructor(
     node: Node<T>,
     private val env: EuclideanPhysics2DEnvironment<T>,
+    private val reaction: Reaction<T>,
     private val target: Molecule,
     private val angularSpeedDegrees: Double = 360.0
 ) : AbstractAction<T>(node) {
@@ -31,17 +32,18 @@ class HeadTowardTarget<T> @JvmOverloads constructor(
      * {@inheritDoc}
      */
     override fun cloneAction(n: Node<T>, r: Reaction<T>) =
-        HeadTowardTarget(n, env, target, angularSpeedDegrees)
+        HeadTowardTarget(n, env, r, target, angularSpeedDegrees)
 
     /**
      * Sets the heading of the node according to the target molecule.
      */
     override fun execute() {
         node.getConcentration(target)?.also {
+            val speedRadians = angularSpeedRadians / reaction.rate
             val targetPosition = concentrationToPosition(it)
             val myHeading = env.getHeading(node)
             if (targetPosition != myHeading) {
-                if (angularSpeedRadians >= 2 * Math.PI) {
+                if (speedRadians >= 2 * Math.PI) {
                     env.setHeading(node, targetPosition - env.getPosition(node))
                 } else {
                     val targetAngle = (targetPosition - env.getPosition(node)).asAngle()
@@ -49,7 +51,7 @@ class HeadTowardTarget<T> @JvmOverloads constructor(
                     val rotation = shortestRotationAngle(currentAngle, targetAngle)
                     val absDistance = abs(rotation)
                     if (absDistance > 0) {
-                        val newAngle = currentAngle + min(angularSpeedRadians, absDistance) * rotation.sign
+                        val newAngle = currentAngle + min(speedRadians, absDistance) * rotation.sign
                         env.setHeading(node, Euclidean2DPosition(cos(newAngle), sin(newAngle)))
                     }
                 }

@@ -6,12 +6,12 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
 
 /**
- * Action to toggle a molecule
+ * Toggles a molecule.
  *
  * @param <T> concentration type
  * @param node the node containing the molecule
  * @param molecule the molecule to toggle
- * @param concentration the concentration to set or unset
+ * @param concentration the concentration to set
  */
 open class ToggleMolecule<T>(
     node: Node<T>,

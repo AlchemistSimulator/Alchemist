@@ -7,6 +7,7 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Position2D
+import it.unibo.alchemist.model.interfaces.VisibleNode
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
 import it.unibo.alchemist.protelis.AlchemistExecutionContext
 import org.protelis.lang.datatype.DeviceUID
@@ -108,6 +109,12 @@ class ProtelisUtils {
         fun toTuple(col: Collection<*>) = col.toTuple()
 
         /**
+         * Creates a [Map] from any [Field].
+         */
+        @JvmStatic
+        fun cloneFieldToMap(field: Field<*>) = field.toMap()!!
+
+        /**
          * Average value of the elements in the [tuple]. The [tuple] must contain Numbers only.
          */
         @JvmStatic
@@ -193,10 +200,16 @@ class OverlapRelationsGraphForProtelis(
      * Calls [OverlapRelationsGraph#strengthenLink] for each object in common with each camera contained in the [field].
      * The [field] is supposed to contain a [Tuple] of [VisibleNode] for each device.
      */
-    fun update(field: Field<Tuple>): OverlapRelationsGraphForProtelis {
-        val myobjects = field.get(myUid).asIterable().map { require(it is VisibleNode<*, *>); it }
-        field.keys().filterNot { it == myUid }.forEach { camera ->
-            field.get(camera).forEach { if (myobjects.contains(it)) graph.strengthenLink(camera) }
+    fun update(field: Field<Tuple>) = update(field.toMap())
+
+    /**
+     * Calls [OverlapRelationsGraph#strengthenLink] for each object in common with each camera contained in the [map].
+     * The [map] is supposed to contain a [Tuple] of [VisibleNode] for each device.
+     */
+    fun update(map: Map<DeviceUID, Tuple>): OverlapRelationsGraphForProtelis {
+        val myobjects = map[myUid]?.asIterable()?.map { require(it is VisibleNode<*, *>); it } ?: emptyList()
+        map.keys.filterNot { it == myUid }.forEach { camera ->
+            map[camera]?.forEach { if (myobjects.contains(it)) graph.strengthenLink(camera) }
         }
         return this
     }

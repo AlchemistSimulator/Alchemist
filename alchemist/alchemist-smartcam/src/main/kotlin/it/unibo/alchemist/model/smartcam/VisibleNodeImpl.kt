@@ -1,4 +1,25 @@
 package it.unibo.alchemist.model.smartcam
 
-class VisibleNodeImpl {
+import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.VisibleNode
+
+/**
+ * Basic implementation of [VisibleNode]
+ */
+class VisibleNodeImpl<T, P : Position<P>>(
+    override val node: Node<T>,
+    override val position: P
+) : VisibleNode<T, P> {
+
+    override fun equals(other: Any?): Boolean {
+        if (other is VisibleNodeImpl<*, *>) {
+            return other.node == node
+        }
+        return false
+    }
+
+    override fun hashCode() = node.hashCode()
+
+    override fun toString() = "Visible#${node}"
 }

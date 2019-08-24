@@ -7,12 +7,12 @@ import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
-import it.unibo.alchemist.model.smartcam.VisibleNode
+import it.unibo.alchemist.model.smartcam.VisibleNodeImpl
 import java.lang.Math.toRadians
 
 /**
- * Checks nodes in the [env] and writes in [outputMolecule] a list of the nodes seen, filtered by those containing
- * [filterByMolecule].
+ * Checks nodes in the [env] and writes in [outputMolecule] a list of [it.unibo.alchemist.model.interfaces.VisibleNode],
+ * filtered by those containing [filterByMolecule].
  * [distance] and [angle] define the field of view.
  */
 class See @JvmOverloads constructor(
@@ -40,13 +40,11 @@ class See @JvmOverloads constructor(
         See(n, env, distance, angle, outputMolecule, filterByMolecule)
 
     override fun execute() {
-        //val fov = FieldOfView2D(env, env.getPosition(node), distance, angleInRadians, env.getHeading(node).asAngle())
-        //var seen = fov.influencedNodes().filter { it != node }
         var seen = fieldOfView.influentialNodes()
         filterByMolecule?.run {
             seen = seen.filter { it.contains(filterByMolecule) }
         }
-        node.setConcentration(outputMolecule, seen.map { VisibleNode(it, env) })
+        node.setConcentration(outputMolecule, seen.map { VisibleNodeImpl(it, env.getPosition(it)) })
     }
 
     override fun getContext() = Context.LOCAL

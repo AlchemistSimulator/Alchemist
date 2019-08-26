@@ -3,11 +3,12 @@ package it.unibo.alchemist.model.interfaces.geometry
 import it.unibo.alchemist.model.implementations.geometry.AdimensionalShape
 import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.AwtEuclidean2DShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShapeFactory
+import java.io.Serializable
 
 /**
  * Generic factory for [GeometricShape].
  */
-interface GeometricShapeFactory<S : Vector<S>, A : GeometricTransformation<S>> {
+interface GeometricShapeFactory<S : Vector<S>, A : GeometricTransformation<S>> : Serializable {
 
     /**
      * A special shape which does not occupy space and does not intersect with any other, not even with itself.

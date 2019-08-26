@@ -11,7 +11,11 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSh
 /**
  * Implementation of [EuclideanPhysics2DEnvironment]
  */
-class EuclideanPhysics2DEnvironmentImpl<T> : Abstract2DEnvironment<T, Euclidean2DPosition>(), EuclideanPhysics2DEnvironment<T> {
+open class Continuous2DEnvironment<T> : Abstract2DEnvironment<T, Euclidean2DPosition>(), EuclideanPhysics2DEnvironment<T> {
+
+    companion object {
+        @JvmStatic private val serialVersionUID: Long = 1L
+    }
 
     override val shapeFactory: Euclidean2DShapeFactory = GeometricShapeFactory.getInstance()
     private val defaultHeading = Euclidean2DPosition(0.0, 0.0)
@@ -89,7 +93,7 @@ class EuclideanPhysics2DEnvironmentImpl<T> : Abstract2DEnvironment<T, Euclidean2
             Euclidean2DPosition(coordinates[0].toDouble(), coordinates[1].toDouble())
         }
 
-    private fun canNodeFitPosition(node: Node<T>, position: Euclidean2DPosition) =
+    override fun canNodeFitPosition(node: Node<T>, position: Euclidean2DPosition) =
         getNodesWithin(getShape(node).transformed { origin(position) })
             .minusElement(node)
             .isEmpty()

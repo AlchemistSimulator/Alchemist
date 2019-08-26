@@ -35,8 +35,7 @@ class FollowAtDistance<T>(
 
     private val speedStrategy = GloballyConstantSpeed<Euclidean2DPosition>(reaction, speed)
 
-    override fun cloneAction(n: Node<T>, r: Reaction<T>) =
-        FollowAtDistance(n, r, env, target, distance, speed)
+    override fun cloneAction(n: Node<T>, r: Reaction<T>) = FollowAtDistance(n, r, env, target, distance, speed)
 
     override fun execute() {
         node.getConcentration(target)?.also {

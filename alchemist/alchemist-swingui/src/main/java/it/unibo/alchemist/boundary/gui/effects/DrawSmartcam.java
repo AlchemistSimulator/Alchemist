@@ -9,6 +9,9 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment;
 import it.unibo.alchemist.model.interfaces.geometry.AwtShapeCompatible;
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShape;
+import org.jooq.lambda.function.Consumer2;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -20,16 +23,20 @@ import java.awt.geom.Arc2D;
  * Draws node's shapes and cameras' fields of view.
  */
 public final class DrawSmartcam implements Effect {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DrawSmartcam.class);
+    private static final SimpleMolecule WANTED = new SimpleMolecule("wanted");
     private static final long serialVersionUID = 1L;
+    private boolean alreadyLogged = false;
 
     @Override
     public <T, P extends Position<P>> void apply(final Graphics2D g, final Node<T> node, final Environment<T, P> environment, final double zoom, final int x, final int y) {
-        if (!(environment instanceof EuclideanPhysics2DEnvironment)) {
-            return;
+        if (environment instanceof EuclideanPhysics2DEnvironment) {
+            final EuclideanPhysics2DEnvironment<T> env = (EuclideanPhysics2DEnvironment<T>) environment;
+            drawShape(g, node, env, zoom, x, y);
+            drawFieldOfView(g, node, env, zoom, x, y);
+        } else {
+            logOnce("DrawSmartcam only works with EuclideanPhysics2DEnvironment", Logger::warn);
         }
-        @SuppressWarnings("unchecked") final EuclideanPhysics2DEnvironment<T> env = (EuclideanPhysics2DEnvironment) environment;
-        drawShape(g, node, env, zoom, x, y);
-        drawFieldOfView(g, node, env, zoom, x, y);
     }
 
     @Override
@@ -39,17 +46,18 @@ public final class DrawSmartcam implements Effect {
 
     private <T> void drawShape(final Graphics2D g, final Node<T> node, final EuclideanPhysics2DEnvironment<T> env, final double zoom, final int x, final int y) {
         final GeometricShape geometricShape = node.getShape();
-        if (!(geometricShape instanceof AwtShapeCompatible)) {
-            return;
-        }
-        final AffineTransform transform = getTransform(x, y, zoom, getRotation(node, env));
-        final Shape shape = transform.createTransformedShape(((AwtShapeCompatible) geometricShape).asAwtShape());
-        if (node.contains(new SimpleMolecule("wanted"))) {
-            g.setColor(Color.RED);
+        if (geometricShape instanceof AwtShapeCompatible) {
+            final AffineTransform transform = getTransform(x, y, zoom, getRotation(node, env));
+            final Shape shape = transform.createTransformedShape(((AwtShapeCompatible) geometricShape).asAwtShape());
+            if (node.contains(WANTED)) {
+                g.setColor(Color.RED);
+            } else {
+                g.setColor(Color.GREEN);
+            }
+            g.draw(shape);
         } else {
-            g.setColor(Color.GREEN);
+            logOnce("DrawSmartcam only works with shapes implementing AwtShapeCompatible", Logger::warn);
         }
-        g.draw(shape);
     }
 
     private <T> void drawFieldOfView(final Graphics2D g, final Node<T> node, final EuclideanPhysics2DEnvironment<T> env, final double zoom, final int x, final int y) {
@@ -80,5 +88,12 @@ public final class DrawSmartcam implements Effect {
         transform.scale(zoom, zoom);
         transform.rotate(-rotation); // invert angle because the y axis is inverted in the gui
         return transform;
+    }
+
+    private void logOnce(final String message, final Consumer2<Logger, String> logger) {
+        if (!alreadyLogged) {
+            logger.accept(LOGGER, message);
+            alreadyLogged = true;
+        }
     }
 }

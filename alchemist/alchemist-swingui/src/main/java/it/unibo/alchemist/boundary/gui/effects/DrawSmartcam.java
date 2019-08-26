@@ -26,7 +26,7 @@ public final class DrawSmartcam implements Effect {
     private static final Logger LOGGER = LoggerFactory.getLogger(DrawSmartcam.class);
     private static final SimpleMolecule WANTED = new SimpleMolecule("wanted");
     private static final long serialVersionUID = 1L;
-    private boolean alreadyLogged = false;
+    private boolean alreadyLogged;
 
     @Override
     public <T, P extends Position<P>> void apply(final Graphics2D g, final Node<T> node, final Environment<T, P> environment, final double zoom, final int x, final int y) {

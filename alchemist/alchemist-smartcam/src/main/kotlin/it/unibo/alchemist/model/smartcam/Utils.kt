@@ -22,10 +22,10 @@ internal inline fun <reified P : Position<P>> Any?.toPosition(env: Environment<*
     else -> throw IllegalArgumentException("Expected a Protelis Tuple or Euclidean2DPosition but got a ${this?.javaClass}")
     }
 
-internal fun offsetPositionAtDistance(source: Euclidean2DPosition, direction: Euclidean2DPosition, distance: Double) =
+internal fun offsetPositionAtDistance(env: Environment<*, Euclidean2DPosition>, source: Euclidean2DPosition, direction: Euclidean2DPosition, distance: Double) =
     with(direction.asAngle()) {
-        source + Euclidean2DPosition(cos(this) * distance, sin(this) * distance)
+        source + env.makePosition(cos(this) * distance, sin(this) * distance)
     }
 
-internal fun closestPositionToTargetAtDistance(source: Euclidean2DPosition, target: Euclidean2DPosition, distance: Double) =
-    offsetPositionAtDistance(target, source - target, distance)
+internal fun closestPositionToTargetAtDistance(env: Environment<*, Euclidean2DPosition>, source: Euclidean2DPosition, target: Euclidean2DPosition, distance: Double) =
+    offsetPositionAtDistance(env, target, source - target, distance)

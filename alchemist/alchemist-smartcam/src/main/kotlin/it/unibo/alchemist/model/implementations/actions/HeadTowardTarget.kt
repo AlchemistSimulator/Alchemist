@@ -1,7 +1,6 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.geometry.asAngle
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Context
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
@@ -28,11 +27,7 @@ class HeadTowardTarget<T> @JvmOverloads constructor(
 
     private val angularSpeedRadians = toRadians(angularSpeedDegrees)
 
-    /**
-     * {@inheritDoc}
-     */
-    override fun cloneAction(n: Node<T>, r: Reaction<T>) =
-        HeadTowardTarget(n, env, r, target, angularSpeedDegrees)
+    override fun cloneAction(n: Node<T>, r: Reaction<T>) = HeadTowardTarget(n, env, r, target, angularSpeedDegrees)
 
     /**
      * Sets the heading of the node according to the target molecule.
@@ -52,7 +47,7 @@ class HeadTowardTarget<T> @JvmOverloads constructor(
                     val absDistance = abs(rotation)
                     if (absDistance > 0) {
                         val newAngle = currentAngle + min(speedRadians, absDistance) * rotation.sign
-                        env.setHeading(node, Euclidean2DPosition(cos(newAngle), sin(newAngle)))
+                        env.setHeading(node, env.makePosition(cos(newAngle), sin(newAngle)))
                     }
                 }
             }

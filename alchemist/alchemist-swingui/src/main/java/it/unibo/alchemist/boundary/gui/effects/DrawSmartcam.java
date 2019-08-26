@@ -31,7 +31,7 @@ public final class DrawSmartcam implements Effect {
     @Override
     public <T, P extends Position<P>> void apply(final Graphics2D g, final Node<T> node, final Environment<T, P> environment, final double zoom, final int x, final int y) {
         if (environment instanceof EuclideanPhysics2DEnvironment) {
-            final EuclideanPhysics2DEnvironment<T> env = (EuclideanPhysics2DEnvironment<T>) environment;
+            @SuppressWarnings("unchecked") final EuclideanPhysics2DEnvironment<T> env = (EuclideanPhysics2DEnvironment<T>) environment;
             drawShape(g, node, env, zoom, x, y);
             drawFieldOfView(g, node, env, zoom, x, y);
         } else {

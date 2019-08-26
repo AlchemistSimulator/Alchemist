@@ -1,6 +1,5 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import it.unibo.alchemist.model.implementations.geometry.asAngle
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Context
@@ -8,7 +7,7 @@ import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
-import it.unibo.alchemist.model.smartcam.concentrationToPosition
+import it.unibo.alchemist.model.smartcam.toPosition
 import org.apache.commons.math3.util.FastMath.toRadians
 import kotlin.math.abs
 import kotlin.math.cos
@@ -38,11 +37,10 @@ class HeadTowardTarget<T> @JvmOverloads constructor(
     /**
      * Sets the heading of the node according to the target molecule.
      */
-    @SuppressFBWarnings("SA_LOCAL_SELF_ASSIGNMENT") // nonsensical spotbugs warning
     override fun execute() {
         node.getConcentration(target)?.also {
             val speedRadians = angularSpeedRadians / reaction.timeDistribution.rate
-            val targetPosition = concentrationToPosition(it)
+            val targetPosition = it.toPosition(env)
             val myHeading = env.getHeading(node)
             if (targetPosition != myHeading) {
                 if (speedRadians >= 2 * Math.PI) {
@@ -61,9 +59,6 @@ class HeadTowardTarget<T> @JvmOverloads constructor(
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     override fun getContext() = Context.LOCAL
 
     /**

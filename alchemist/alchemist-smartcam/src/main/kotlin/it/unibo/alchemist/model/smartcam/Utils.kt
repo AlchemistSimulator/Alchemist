@@ -2,31 +2,25 @@ package it.unibo.alchemist.model.smartcam
 
 import it.unibo.alchemist.model.implementations.geometry.asAngle
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.Position
 import org.protelis.lang.datatype.Tuple
 import kotlin.math.cos
 import kotlin.math.sin
 
-internal fun concentrationToPosition(c: Any?): Euclidean2DPosition {
-    require(c != null) { "Cannot read the position from null" }
-    val x: Double
-    val y: Double
-    when (c) {
+internal inline fun <reified P : Position<P>> Any?.toPosition(env: Environment<*, P>): P = when (this) {
+    is P -> this
         is Tuple -> {
-            require(c.size() == 2) { "Need 2 elements (x,y) but got ${c.size()}" }
-            val tx = c[0]
-            val ty = c[1]
-            require(tx is Number && ty is Number) { "Need 2 numbers (x,y) but got ${tx::class.simpleName} and ${ty::class.simpleName}" }
-            x = tx.toDouble()
-            y = ty.toDouble()
+            this.asIterable()
+                .map {
+                    require(it is Number) {
+                        "The Tuple must contain only Numbers but {$it::class} has been found"
+                    }
+                    it as Number
+                }.let { env.makePosition(*it.toTypedArray()) }
         }
-        is Euclidean2DPosition -> {
-            x = c.x
-            y = c.y
-        }
-        else -> throw IllegalArgumentException("Expected a Protelis Tuple or Euclidean2DPosition but got a ${c::class.simpleName}")
+    else -> throw IllegalArgumentException("Expected a Protelis Tuple or Euclidean2DPosition but got a ${this?.javaClass}")
     }
-    return Euclidean2DPosition(x, y)
-}
 
 internal fun offsetPositionAtDistance(source: Euclidean2DPosition, direction: Euclidean2DPosition, distance: Double) =
     with(direction.asAngle()) {

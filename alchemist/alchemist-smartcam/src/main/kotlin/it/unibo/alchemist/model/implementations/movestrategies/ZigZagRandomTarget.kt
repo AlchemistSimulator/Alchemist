@@ -46,14 +46,11 @@ class ZigZagRandomTarget<T> (
         return computeTarget()
     }
 
-    private fun changeDirection(): Euclidean2DPosition {
-        direction = Euclidean2DPosition(2 * rng.nextDouble() - 1, 2 * rng.nextDouble() - 1)
-        return direction
-    }
+    private fun changeDirection() = env.makePosition(2 * rng.nextDouble() - 1, 2 * rng.nextDouble() - 1)
 
     private fun computeTarget(): Euclidean2DPosition {
         val x = direction.x * distance
         val y = direction.y * sqrt(distance * distance + x * x)
-        return Euclidean2DPosition(x, y) + env.getPosition(node)
+        return env.makePosition(x, y) + env.getPosition(node)
     }
 }

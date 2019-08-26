@@ -38,8 +38,12 @@ class ExtractClosestVisibleNodeAtDistance(
                 if (node.contains(targetMolecule)) node.removeConcentration(targetMolecule)
             } else {
                 val aNode = visibleNodes.first()
-                require(aNode is VisibleNode<*, *>) { "visionMolecule contains List<${aNode?.javaClass}> instead of a List<VisibleNode>" }
-                require(aNode.position is Euclidean2DPosition) { "The VisibleNode contained in visionMolecule is from a different environment" }
+                require(aNode is VisibleNode<*, *>) {
+                    "visionMolecule contains List<${aNode?.javaClass}> instead of a List<VisibleNode>"
+                }
+                require(aNode.position is Euclidean2DPosition) {
+                    "The VisibleNode contained in visionMolecule is from a different environment"
+                }
                 @Suppress("UNCHECKED_CAST") val nodes = visibleNodes as List<VisibleNode<*, Euclidean2DPosition>>
                 val myPosition = offsetPositionAtDistance(env.getPosition(node), env.getHeading(node), distance)
                 nodes.map { it.position }
@@ -51,8 +55,7 @@ class ExtractClosestVisibleNodeAtDistance(
 
     override fun getContext() = Context.LOCAL
 
-    private fun <T> minBy(a: T, b: T, mapper: (T) -> Double) =
-        with(mapper(a)) {
-            if (min(this, mapper(b)) < this) return b else a
-        }
+    private fun <T> minBy(a: T, b: T, mapper: (T) -> Double) = with(mapper(a)) {
+        if (min(this, mapper(b)) < this) return b else a
+    }
 }

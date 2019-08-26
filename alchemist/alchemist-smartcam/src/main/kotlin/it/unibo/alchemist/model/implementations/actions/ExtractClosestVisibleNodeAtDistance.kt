@@ -1,6 +1,5 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Context
 import it.unibo.alchemist.model.interfaces.Molecule
@@ -29,7 +28,6 @@ class ExtractClosestVisibleNodeAtDistance(
     override fun cloneAction(n: Node<Any>, r: Reaction<Any>) =
         ExtractClosestVisibleNodeAtDistance(n, env, distance, visionMolecule, targetMolecule)
 
-    @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE")
     override fun execute() {
         if (node.contains(visionMolecule)) {
             val visibleNodes = node.getConcentration(visionMolecule)

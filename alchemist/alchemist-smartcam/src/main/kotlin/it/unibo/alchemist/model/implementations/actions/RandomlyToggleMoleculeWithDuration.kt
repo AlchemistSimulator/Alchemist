@@ -36,13 +36,12 @@ class RandomlyToggleMoleculeWithDuration<T>(
         super.execute()
     }
 
-    override fun shouldToggle() =
-        when {
-            isOn() -> duration <= 0
-            super.shouldToggle() -> {
-                duration = rng.nextDouble(minDuration, maxDuration)
-                true
-            }
-            else -> false
+    override fun shouldToggle() = when {
+        isOn() -> duration <= 0
+        super.shouldToggle() -> {
+            duration = rng.nextDouble(minDuration, maxDuration)
+            true
         }
+        else -> false
+    }
 }

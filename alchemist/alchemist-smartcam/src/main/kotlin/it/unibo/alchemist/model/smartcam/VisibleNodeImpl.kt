@@ -12,12 +12,7 @@ class VisibleNodeImpl<T, P : Position<P>>(
     override val position: P
 ) : VisibleNode<T, P> {
 
-    override fun equals(other: Any?): Boolean {
-        if (other is VisibleNodeImpl<*, *>) {
-            return other.node == node
-        }
-        return false
-    }
+    override fun equals(other: Any?) = other is VisibleNodeImpl<*, *> && other.node == node
 
     override fun hashCode() = node.hashCode()
 

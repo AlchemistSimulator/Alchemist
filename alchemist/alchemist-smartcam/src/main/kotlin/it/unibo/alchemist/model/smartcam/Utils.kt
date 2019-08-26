@@ -12,11 +12,11 @@ internal inline fun <reified P : Position<P>> Any?.toPosition(env: Environment<*
     is P -> this
         is Tuple -> {
             this.asIterable()
-                .map {
+                .map<Any?, Number> {
                     require(it is Number) {
                         "The Tuple must contain only Numbers but {$it::class} has been found"
                     }
-                    it as Number
+                    it
                 }.let { env.makePosition(*it.toTypedArray()) }
         }
     else -> throw IllegalArgumentException("Expected a Protelis Tuple or Euclidean2DPosition but got a ${this?.javaClass}")

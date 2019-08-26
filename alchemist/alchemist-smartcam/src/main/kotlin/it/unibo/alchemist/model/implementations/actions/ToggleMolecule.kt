@@ -18,14 +18,12 @@ open class ToggleMolecule<T>(
     protected val molecule: Molecule,
     protected val concentration: T
 ) : AbstractAction<T>(node) {
-    override fun cloneAction(n: Node<T>, r: Reaction<T>) =
-        ToggleMolecule(n, molecule, concentration)
+    override fun cloneAction(n: Node<T>, r: Reaction<T>) = ToggleMolecule(n, molecule, concentration)
 
     /**
      * Toggles concentration.
      */
-    override fun execute() =
-        if (isOn()) switchOff() else switchOn()
+    override fun execute() = if (isOn()) switchOff() else switchOn()
 
     /**
      * Returns true if it is on, already toggled.

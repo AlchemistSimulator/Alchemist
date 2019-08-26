@@ -21,6 +21,6 @@ class Else<T>(
             .asSequence()
             .filterNot { it == myReaction }
             .filter { it.conditions.isNotEmpty() }
-            .map { !it.canExecute() }
-            .all { it }
+            .map { it.canExecute() }
+            .none()
 }

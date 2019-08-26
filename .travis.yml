@@ -53,6 +53,9 @@ jobs:
       script:
         - cd "$TRAVIS_BUILD_DIR"/alchemist
         - ./gradlew clean check fatJar --scan --parallel
+      workspaces:
+        create:
+          name: linux-reference-build
     - stage: deploy
       name: "Reports and deployment"
       if: repo = env(OFFICIAL_REPO_SLUG) AND type != pull_request
@@ -70,6 +73,9 @@ jobs:
         - cp --parent */build/reports build/reports report -R
       after_success:
         - ./gradlew publish --scan --parallel --stacktrace
+      workspaces:
+        use:
+          - linux-reference-build
 before_install:
   - curl "${GRAVIS}.disable-windows-defender.sh" --output .disable-windows-defender.sh
   - source .disable-windows-defender.sh

@@ -19,7 +19,7 @@ import kotlin.math.sin
  * @param proximityRange
  *          the distance at which an obstacle is perceived by the pedestrian.
  */
-class CollisionAvoidance<W : Obstacle2D, T, P : Position2D<P>>(
+class ObstacleAvoidance<W : Obstacle2D, T>(
     private val env: EuclideanPhysics2DEnvironmentWithObstacles<W, T>,
     reaction: Reaction<T>,
     pedestrian: Pedestrian<T>,
@@ -43,14 +43,14 @@ class CollisionAvoidance<W : Obstacle2D, T, P : Position2D<P>>(
         super.getDestination(
             current,
             nearestObstacle(target)?.let {
-                it.second - it.first.bounds2D.let { rect -> env.makePosition(rect.centerX, rect.centerY) } + current
+                it.second - it.first.bounds2D.let { rect -> env.makePosition(rect.centerX, rect.centerY) }
             } ?: target,
             maxWalk
         )
 
     private fun nearestObstacle(target: Euclidean2DPosition): Pair<W, Euclidean2DPosition>? = with(currentPosition) {
         env.getObstaclesInRange(x, y, proximityRange)
-            .map { shape -> shape to shape.next(x, y, target.x, target.y).let { env.makePosition(it.first, it.second) } }
+            .map { shape -> shape to this + shape.next(x, y, target.x, target.y).let { env.makePosition(it.first, it.second) } }
             .minBy { getDistanceTo(it.second) }
     }
 }

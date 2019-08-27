@@ -1,0 +1,58 @@
+incarnation: protelis
+
+variables:
+  exit1: &exit
+    formula: "\"exit\""
+
+environment:
+  type: ImageEnvironment
+  parameters: [images/pool-and-columns.png, 0.1]
+
+positions:
+  type: EuclideanPosition2D
+
+network-model:
+  type: NoLinks
+
+seeds:
+  scenario: 0
+  simulation: 1
+
+layers:
+  - type: BidimensionalGaussianLayer
+    molecule: *exit
+    parameters: [100.0, 100.0, 10, 10]
+
+reactions: &behavior
+  - time-distribution:
+      type: DiracComb
+      parameters: [1.0]
+    type: BlendedSteering
+    actions:
+      - type: FollowFlowField
+        parameters: [*exit]
+      - type: ObstacleAvoidance
+        parameters: [6]
+
+displacements:
+  - in:
+      type: Circle
+      parameters: [10, 0, 0, 10]
+    nodes:
+      type: HomogeneousPedestrian2D
+    programs:
+      - *behavior
+  - in:
+      type: Circle
+      parameters: [10, 0, 50, 10]
+    nodes:
+      type: HomogeneousPedestrian2D
+    programs:
+      - *behavior
+  - in:
+      type: Circle
+      parameters: [10, 50, 0, 10]
+    nodes:
+      type: HomogeneousPedestrian2D
+    programs:
+      - *behavior

@@ -66,8 +66,8 @@ open class CognitivePedestrianImpl<T, P : Position<P>> @JvmOverloads constructor
     override fun wantsToEvacuate(): Boolean =
         characteristicLevel<IntentionEvacuate>() > characteristicLevel<IntentionWalkRandomly>()
 
-    override fun influencialPeople(): List<CognitivePedestrian<T>> =
+    override fun influencialPeople(): List<CognitiveAgent> =
         senses.fold(listOf()) { accumulator, sphere ->
-            accumulator.union(sphere.influentialNodes().filterIsInstance<CognitivePedestrian<T>>()).toList()
+            accumulator.union(sphere.influentialNodes().filterIsInstance<CognitiveAgent>()).toList()
         }
 }

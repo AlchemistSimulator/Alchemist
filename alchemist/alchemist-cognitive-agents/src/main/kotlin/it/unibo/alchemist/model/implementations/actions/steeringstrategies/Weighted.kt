@@ -24,7 +24,7 @@ open class Weighted<T, P : Position<P>>(
 ) : SteeringStrategy<T, P> {
 
     override fun computeNextPosition(actions: List<SteeringAction<T, P>>): P =
-        actions.partition { it is GroupSteering<T, P> }.let { (groupActions, steerActions) ->
+        actions.partition { it is GroupSteeringAction<T, P> }.let { (groupActions, steerActions) ->
             groupActions.calculatePosition() + steerActions.calculatePosition()
         }
 

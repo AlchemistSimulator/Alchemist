@@ -1,6 +1,11 @@
 package it.unibo.alchemist.model.cognitiveagents.characteristics.individual
 
-enum class Age : IndividualCharacteristic {
+import it.unibo.alchemist.model.cognitiveagents.characteristics.Characteristic
+
+/**
+ * An enum representing the different periods of life.
+ */
+enum class Age : Characteristic {
 
     CHILD,
     ADULT,
@@ -14,12 +19,24 @@ enum class Age : IndividualCharacteristic {
         private const val ADULT_KEYWORD = "adult"
         private const val ELDERLY_KEYWORD = "elderly"
 
+        /**
+         * Returns the corresponding age in this enum given the age in years.
+         *
+         * @param age
+         *          the age in years.
+         */
         fun fromYears(age: Int): Age = when {
             age < CHILD_THRESHOLD -> CHILD
             age < ADULT_THRESHOLD -> ADULT
             else -> ELDERLY
         }
 
+        /**
+         * Returns the corresponding age in this enum given a string resembling it.
+         *
+         * @param age
+         *          the age as a string.
+         */
         fun fromString(age: String): Age = when {
             age.equals(CHILD_KEYWORD, ignoreCase = true) -> CHILD
             age.equals(ADULT_KEYWORD, ignoreCase = true) -> ADULT

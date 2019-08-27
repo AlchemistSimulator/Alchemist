@@ -22,6 +22,7 @@ include(
     'alchemist-projectview',
     'alchemist-runner',
     'alchemist-sapere-mathexp',
+    'alchemist-smartcam',
     'alchemist-swingui',
     'alchemist-time'
 )

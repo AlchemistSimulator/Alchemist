@@ -21,4 +21,5 @@
   - [With Protelis](examples/protelis.md)
   - [With Scafi](examples/scafi.md)
   - [On maps](examples/maps.md)
+  - [Smart Cameras](examples/smartcam.md)
 - [License](license.md)

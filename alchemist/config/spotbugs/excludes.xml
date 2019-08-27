@@ -64,12 +64,20 @@
 		<Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS" />
 	</Match>
     <Match>
+        <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
+        <Source name="~.*\.kt"/>
+    </Match>
+    <Match>
+        <Bug pattern="SA_LOCAL_SELF_ASSIGNMENT"/>
+        <Source name="~.*\.kt"/>
+    </Match>
+    <Match>
         <Bug pattern="UWF_NULL_FIELD"/>
     </Match>
 	<Match>
 		<Bug pattern="UPM_UNCALLED_PRIVATE_METHOD" />
 	</Match>
-	<Match>
+    <Match>
 		<Package name="~.*\.biochemistrydsl" />
 	</Match>
 </FindBugsFilter>

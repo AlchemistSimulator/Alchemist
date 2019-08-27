@@ -28,7 +28,7 @@ reactions: &behavior
       parameters: [1.0]
     type: PrioritySteering
     actions:
-      - type: FollowGradient
+      - type: FollowFlowField
         parameters: [*danger]
 
 displacements:

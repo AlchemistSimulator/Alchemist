@@ -3,11 +3,7 @@ package it.unibo.alchemist.model.implementations.nodes
 import it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive.*
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Gender
-import it.unibo.alchemist.model.cognitiveagents.groups.Group
-import it.unibo.alchemist.model.interfaces.CognitivePedestrian
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Molecule
-import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.*
 import org.apache.commons.math3.random.RandomGenerator
 import kotlin.reflect.KClass
 
@@ -31,14 +27,14 @@ open class CognitivePedestrianImpl<T, P : Position<P>> @JvmOverloads constructor
     age: Age,
     gender: Gender,
     private val danger: Molecule? = null,
-    group: Group<T>? = null
+    group: PedestrianGroup<T>? = null
 ) : HeterogeneousPedestrianImpl<T, P>(env, rg, age, gender, group), CognitivePedestrian<T> {
 
     private val cognitiveCharacteristics = linkedMapOf<KClass<out CognitiveCharacteristic>, CognitiveCharacteristic>(
         BeliefDanger::class to
-            BeliefDanger({ dangerousLayerLevel() }, { characteristicLevel<Fear>() }, { cognitiveInfluencialPeople() }),
+            BeliefDanger({ dangerousLayerLevel() }, { characteristicLevel<Fear>() }, { influencialPeople() }),
         Fear::class to
-            Fear({ characteristicLevel<DesireWalkRandomly>() }, { characteristicLevel<DesireEvacuate>() }, { cognitiveInfluencialPeople() }),
+            Fear({ characteristicLevel<DesireWalkRandomly>() }, { characteristicLevel<DesireEvacuate>() }, { influencialPeople() }),
         DesireEvacuate::class to
             DesireEvacuate(compliance, { characteristicLevel<BeliefDanger>() }, { characteristicLevel<Fear>() }),
         DesireWalkRandomly::class to
@@ -51,9 +47,9 @@ open class CognitivePedestrianImpl<T, P : Position<P>> @JvmOverloads constructor
 
     override fun speed() =
         if (wantsToEvacuate())
-            runningSpeed * characteristicLevel<IntentionEvacuate>()
+            runningSpeed * minOf(characteristicLevel<IntentionEvacuate>(), 1.0)
         else
-            walkingSpeed * characteristicLevel<IntentionWalkRandomly>()
+            walkingSpeed * minOf(characteristicLevel<IntentionWalkRandomly>(), 1.0)
 
     override fun dangerBelief() = characteristicLevel<BeliefDanger>()
 
@@ -67,9 +63,11 @@ open class CognitivePedestrianImpl<T, P : Position<P>> @JvmOverloads constructor
     private fun dangerousLayerLevel(): Double =
         env.getLayer(danger).let { if (it.isPresent) it.get().getValue(env.getPosition(this)) as Double else 0.0 }
 
-    private fun wantsToEvacuate(): Boolean =
+    override fun wantsToEvacuate(): Boolean =
         characteristicLevel<IntentionEvacuate>() > characteristicLevel<IntentionWalkRandomly>()
 
-    private fun cognitiveInfluencialPeople(): List<CognitivePedestrian<T>> =
-        influencialPeople().filterIsInstance<CognitivePedestrian<T>>()
+    override fun influencialPeople(): List<CognitivePedestrian<T>> =
+        senses.fold(listOf()) { accumulator, sphere ->
+            accumulator.union(sphere.influentialNodes().filterIsInstance<CognitivePedestrian<T>>()).toList()
+        }
 }

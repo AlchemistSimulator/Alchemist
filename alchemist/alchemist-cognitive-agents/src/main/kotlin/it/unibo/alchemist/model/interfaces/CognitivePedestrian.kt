@@ -8,17 +8,27 @@ import it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive.Cognit
 interface CognitivePedestrian<T> : HeterogeneousPedestrian<T> {
 
     /**
-     * Value between 0 and 1 representing the current belief of the situation dangerousness for this pedestrian.
+     * Value representing the current belief of the situation dangerousness for this pedestrian.
      */
     fun dangerBelief(): Double
 
     /**
-     * Value between 0 and 1 representing the level of fear of this pedestrian.
+     * Value representing the level of fear of this pedestrian.
      */
     fun fear(): Double
+
+    /**
+     * Whether or not this pedestrian intends to evacuate.
+     */
+    fun wantsToEvacuate(): Boolean
 
     /**
      * The list of all the cognitive characteristics of this pedestrian.
      */
     fun cognitiveCharacteristics(): List<CognitiveCharacteristic>
+
+    /**
+     * A list of all the pedestrians inside at least one of the sensory spheres of this pedestrian.
+     */
+    fun influencialPeople(): List<CognitivePedestrian<T>>
 }

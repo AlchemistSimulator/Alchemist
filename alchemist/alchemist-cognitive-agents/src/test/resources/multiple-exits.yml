@@ -14,7 +14,7 @@ variables:
 
 environment:
   type: ImageEnvironment
-  parameters: [images/impact_room.png]
+  parameters: [images/multiple-exits.png, 0.0416]
 
 positions:
   type: EuclideanPosition2D
@@ -23,45 +23,47 @@ network-model:
   type: NoLinks
 
 seeds:
-  scenario: 0
-  simulation: 1
+  scenario: 1
+  simulation: 0
 
 layers:
   - type: BidimensionalGaussianLayer
     molecule: *danger
-    parameters: [10.0, 10.0, 50, 15]
+    parameters: [10, 10, 20, 8]
   - type: BidimensionalGaussianLayer
     molecule: *exit1
-    parameters: [0.0, 240.0, 5, 10]
+    parameters: [0.0, 10.0, 5, 2]
   - type: BidimensionalGaussianLayer
     molecule: *exit2
-    parameters: [240.0, 480.0, 5, 10]
+    parameters: [10.0, 20.0, 5, 2]
   - type: BidimensionalGaussianLayer
     molecule: *exit3
-    parameters: [480.0, 240.0, 5, 10]
+    parameters: [20.0, 10.0, 5, 2]
   - type: BidimensionalGaussianLayer
     molecule: *exit4
-    parameters: [240.0, 0.0, 5, 10]
+    parameters: [10.0, 0.0, 5, 2]
 
 reactions: &behavior
   - time-distribution:
       type: DiracComb
-      parameters: [5.0]
+      parameters: [0.2]
     type: PrioritySteering
+    conditions:
+      - type: WantToEvacuate
     actions:
-      - type: AvoidGradient
+      - type: AvoidFlowField
         parameters: [*danger]
-      - type: FollowGradient
+      - type: FollowFlowField
         parameters: [*exit1]
-      - type: FollowGradient
+      - type: FollowFlowField
         parameters: [*exit2]
-      - type: FollowGradient
+      - type: FollowFlowField
         parameters: [*exit3]
-      - type: FollowGradient
+      - type: FollowFlowField
         parameters: [*exit4]
   - time-distribution:
       type: DiracComb
-      parameters: [10.0]
+      parameters: [0.05]
     type: CognitiveBehavior
     actions:
       - type: RandomRotate
@@ -69,9 +71,17 @@ reactions: &behavior
 displacements:
   - in:
       type: Circle
-      parameters: [200, 240, 240, 200]
+      parameters: [75, 10, 10, 10]
     nodes:
       type: CognitivePedestrian2D
       parameters: ["adult", "male", *danger]
+    programs:
+      - *behavior
+  - in:
+      type: Circle
+      parameters: [75, 10, 10, 10]
+    nodes:
+      type: CognitivePedestrian2D
+      parameters: ["adult", "female", *danger]
     programs:
       - *behavior

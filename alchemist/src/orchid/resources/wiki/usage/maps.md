@@ -8,12 +8,7 @@ Alchemist is equipped with the ability to load and simulate on real-world maps.
 Navigation on maps can be done by using gps traces,
 by moving along roads (Alchemist relies on [GraphHopper](https://www.graphhopper.com/) to provide directions),
 by interpolating gps traces with on-the-road-movements,
-or by ignoring the map information on just move as you would in a continous space.
-
-Configuring a simulation to run on a map, possibly using GPS tracks, requires three parameters to be specified:
-0. Environment
-0. Displacement
-0. Program to follow the GPS traces
+or by ignoring the map information on just move as you would in a continuous space.
 
 ## Setting up a map environment
 
@@ -93,15 +88,26 @@ The strategies available to align time of GPS trace are the following:
      - first trace -> first point discarded and second point with time = 2
      - second trace -> start with time = 1 and second point with time = 3
 
-## Following GPS traces
+## Navigation
 
-In order to obtain a behavior that moves the nodes following the GPS traces, the program can use one of the
-following types of actions:
+As previous say there are several behavior in order to move the nodes in a environment with real-word map:
 
-0. {{ anchor('GPSTraceWalker') }} -> to follow the GPS trace, interpolating its points my moving along roads
-0. {{ anchor('ReproduceGPSTrace') }} -> to follow the GPS trace as they are
+0. movement ignoring map information. A node move directly from start position to destination position:
+    ![No map information]({{ 'assets/media/usage/no_map_information.png'|asset }})
+0. movement by using map information. A node move from start position to destination position using
+    intermediate position in order to follow streets and avoid obstacle (like building):
+    ![Use map information]({{ 'assets/media/usage/use_map_information.png'|asset }})
+0. movement by reproducing a GPS trace (action {{ anchor('ReproduceGPSTrace') }}). 
+    A node start to the first position of the GPS trace, than move to the next
+    position of the trace until arrive to the last. The movement from a position to another is direct with a straight line:
+    ![Reproduce GPS trace]({{ 'assets/media/usage/reproduce_gps_trace.png'|asset }})
+0. movement by interpolating the GPS trace with street data (action {{ anchor('GPSTraceWalker') }}). 
+    A node start to the first position of the GPS trace, 
+    than move to the next position of the trace until arrive to the last. The movement from a position to another
+    use map information to define intermediate position in order to follow streets and avoid obstacle (like building):
+    ![Interpolate GPS trace with street data]({{ 'assets/media/usage/interpolate_gps_trace_with_street_data.png'|asset }})
 
-Both types of action require:
+Both the actions {{ anchor('ReproduceGPSTrace') }} and {{ anchor('GPSTraceWalker') }} require:
  0. the file with the GPS traces
  0. a boolean that indicate if the list of GPS trace is cyclic
  0. the strategy to align the attribute `time` of the GPS points of the GPS traces

@@ -6,6 +6,7 @@ import io.kotlintest.matchers.doubles.shouldBeLessThan
 import io.kotlintest.specs.StringSpec
 import it.unibo.alchemist.model.implementations.utils.origin
 import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position2D
 import kotlin.math.abs
 
@@ -63,11 +64,43 @@ class TestSteeringBehaviors<T, P : Position2D<P>> : StringSpec({
         }
     }
 
-    "collision avoidance let nodes reach destinations behind obstacles" {
+    "cohesion gives importance to the other members of the group during an evacuation" {
+        loadYamlSimulation<T, P>("cohesion.yml").startSimulation(
+            finished = { e, _, _ -> e.nodes.asSequence()
+                    .filterIsInstance<Pedestrian<T>>()
+                    .groupBy { it.membershipGroup }
+                    .values
+                    .forEach {
+                        for (nodePos in it.map { node -> e.getPosition(node) }) {
+                            for (otherPos in (it.map { node -> e.getPosition(node) }.minusElement(nodePos))) {
+                                nodePos.getDistanceTo(otherPos) shouldBeLessThan 4.0
+                            }
+                        }
+                    }
+            },
+            numSteps = 20000
+        )
+    }
+
+    "nodes using separation behavior keep a distance to each other" {
+        loadYamlSimulation<T, P>("separation.yml").startSimulation(
+            finished = { e, _, _ -> with(e.nodes.map { e.getPosition(it) }) {
+                for (nodePos in this) {
+                    for (otherPos in (this.minusElement(nodePos))) {
+                        nodePos.getDistanceTo(otherPos) shouldBeGreaterThan 6.0
+                    }
+                }
+            } },
+            numSteps = 30000
+        )
+    }
+
+    "obstacle avoidance let nodes reach destinations behind obstacles" {
         loadYamlSimulation<T, P>("obstacle-avoidance.yml").startSimulation(
             finished = { e, _, _ -> e.nodes.forEach {
-                e.getPosition(it).getDistanceTo(e.makePosition(100.0, 100.0)) shouldBeLessThan 5.0
-            } }
+                e.getPosition(it).getDistanceTo(e.makePosition(600.0, 240.0)) shouldBeLessThan 10.0
+            } },
+            numSteps = 15000
         )
     }
 })

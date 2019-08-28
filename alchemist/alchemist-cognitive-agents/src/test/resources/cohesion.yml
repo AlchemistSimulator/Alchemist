@@ -57,7 +57,7 @@ displacements:
       - *behavior
   - in:
       type: Circle
-      parameters: [12, 0, 0, 15]
+      parameters: [10, 0, 0, 15]
     nodes:
       type: HomogeneousPedestrian2D
       parameters: [*group3]

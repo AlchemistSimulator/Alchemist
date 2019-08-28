@@ -30,7 +30,7 @@ seeds:
 reactions: &behavior
   - time-distribution:
       type: DiracComb
-      parameters: [4.0]
+      parameters: [2.0]
     type: BlendedSteering
     actions:
       - type: AvoidFlowField
@@ -41,7 +41,7 @@ reactions: &behavior
       - type: WantToEvacuate
   - time-distribution:
       type: DiracComb
-      parameters: [1.0]
+      parameters: [0.5]
     type: CognitiveBehavior
     actions:
       - type: RandomRotate

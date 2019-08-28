@@ -42,7 +42,6 @@ class Separation<T>(
         )
 
     private fun centroid(): Euclidean2DPosition = with(group()) {
-        val currentPosition = env.getPosition(pedestrian)
         env.makePosition(map { env.getPosition(it) - currentPosition }.reduce { acc, pos -> acc + pos } / (-size))
     }
 }

@@ -27,7 +27,8 @@ open class SteeringBehavior<T, P : Position<P>>(
      */
     fun steerActions(): List<SteeringAction<T, P>> = actions.filterIsInstance<SteeringAction<T, P>>()
 
-    override fun cloneOnNewNode(n: Node<T>?, currentTime: Time?) = TODO()
+    override fun cloneOnNewNode(n: Node<T>?, currentTime: Time?) =
+        SteeringBehavior(env, node as Pedestrian<T>, timeDistribution, steerStrategy)
 
     override fun getRate() = timeDistribution.rate
 

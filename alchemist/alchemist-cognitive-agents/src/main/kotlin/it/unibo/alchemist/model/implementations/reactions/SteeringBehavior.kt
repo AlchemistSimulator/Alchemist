@@ -19,8 +19,13 @@ open class SteeringBehavior<T, P : Position<P>>(
     private val env: Environment<T, P>,
     private val pedestrian: Pedestrian<T>,
     timeDistribution: TimeDistribution<T>,
-    private val steerStrategy: SteeringStrategy<T, P>
+    val steerStrategy: SteeringStrategy<T, P>
 ) : AbstractReaction<T>(pedestrian, timeDistribution) {
+
+    /**
+     * The list of only the steering actions between all the actions in this reaction.
+     */
+    fun steerActions(): List<SteeringAction<T, P>> = actions.filterIsInstance<SteeringAction<T, P>>()
 
     override fun cloneOnNewNode(n: Node<T>?, currentTime: Time?) = TODO()
 
@@ -29,8 +34,7 @@ open class SteeringBehavior<T, P : Position<P>>(
     override fun updateInternalStatus(curTime: Time?, executed: Boolean, env: Environment<T, *>?) {}
 
     override fun execute() {
-        val steerActions = actions.filterIsInstance<SteeringAction<T, P>>()
-        (actions - steerActions).forEach { it.execute() }
-        Combine(env, this, pedestrian, steerActions, steerStrategy).execute()
+        (actions - steerActions()).forEach { it.execute() }
+        Combine(env, this, pedestrian, steerActions(), steerStrategy).execute()
     }
 }

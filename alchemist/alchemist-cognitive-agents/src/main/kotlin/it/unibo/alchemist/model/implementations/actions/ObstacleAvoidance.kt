@@ -1,13 +1,8 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.geometry.asAngle
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.implementations.utils.origin
+import it.unibo.alchemist.model.implementations.reactions.SteeringBehavior
 import it.unibo.alchemist.model.interfaces.*
-import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithObstacles
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
-import kotlin.math.cos
-import kotlin.math.sin
 
 /**
  * Move the agent avoiding potential obstacles in its path.
@@ -19,38 +14,31 @@ import kotlin.math.sin
  * @param proximityRange
  *          the distance at which an obstacle is perceived by the pedestrian.
  */
-class ObstacleAvoidance<W : Obstacle2D, T>(
-    private val env: EuclideanPhysics2DEnvironmentWithObstacles<W, T>,
-    reaction: Reaction<T>,
+class ObstacleAvoidance<W : Obstacle2D, T, P : Position2D<P>>(
+    private val env: Environment2DWithObstacles<W, T, P>,
+    reaction: SteeringBehavior<T, P>,
     pedestrian: Pedestrian<T>,
     private val proximityRange: Double
-) : SteeringActionImpl<T, Euclidean2DPosition>(
+) : SteeringActionImpl<T, P>(
     env,
     reaction,
     pedestrian,
-    TargetSelectionStrategy {
-        val currentPosition = env.getPosition(pedestrian) ?: env.origin()
-        val currentHeading = env.getHeading(pedestrian).asAngle()
-        if (env.getObstaclesInRange(currentPosition.x, currentPosition.y, proximityRange).isEmpty()) {
-            Euclidean2DPosition(Double.MAX_VALUE, Double.MAX_VALUE)
-        } else {
-            currentPosition + Euclidean2DPosition(cos(currentHeading) * proximityRange, sin(currentHeading) * proximityRange)
-        }
-    }
+    TargetSelectionStrategy { with(reaction) {
+        Combine(env, this, pedestrian, steerActions().filterNot { it is ObstacleAvoidance<*, *, *> }, steerStrategy).target()
+    } }
 ) {
 
-    override fun getDestination(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double): Euclidean2DPosition =
+    override fun getDestination(current: P, target: P, maxWalk: Double): P =
         super.getDestination(
             current,
-            nearestObstacle(target)?.let {
-                it.second - it.first.bounds2D.let { rect -> env.makePosition(rect.centerX, rect.centerY) }
-            } ?: target,
+            env.getObstaclesInRange(current.x, current.y, proximityRange)
+                .asSequence()
+                .map { with(it.bounds2D) {
+                    it.nearestIntersection(current.x, current.y, target.x, target.y).let { pos -> env.makePosition(pos[0], pos[1]) } to this
+                } }
+                .minBy { (intersection, _) -> current.getDistanceTo(intersection) }
+                ?.let { (intersection, bound) -> intersection to env.makePosition(bound.centerX, bound.centerY) }
+                ?.let { (intersection, center) -> current + intersection - center } ?: target,
             maxWalk
         )
-
-    private fun nearestObstacle(target: Euclidean2DPosition): Pair<W, Euclidean2DPosition>? = with(currentPosition) {
-        env.getObstaclesInRange(x, y, proximityRange)
-            .map { shape -> shape to this + shape.next(x, y, target.x, target.y).let { env.makePosition(it.first, it.second) } }
-            .minBy { getDistanceTo(it.second) }
-    }
 }

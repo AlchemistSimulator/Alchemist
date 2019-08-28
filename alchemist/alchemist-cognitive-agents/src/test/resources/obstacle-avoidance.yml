@@ -1,12 +1,12 @@
 incarnation: protelis
 
 variables:
-  exit1: &exit
-    formula: "\"exit\""
+  danger: &danger
+    formula: "\"danger\""
 
 environment:
   type: ImageEnvironment
-  parameters: [images/pool-and-columns.png, 0.1]
+  parameters: [images/obstacles.png]
 
 positions:
   type: EuclideanPosition2D
@@ -20,38 +20,38 @@ seeds:
 
 layers:
   - type: BidimensionalGaussianLayer
-    molecule: *exit
-    parameters: [100.0, 100.0, 10, 10]
+    molecule: *danger
+    parameters: [600.0, 240.0, 10.0, 100.0]
 
 reactions: &behavior
   - time-distribution:
       type: DiracComb
-      parameters: [1.0]
+      parameters: [0.25]
     type: BlendedSteering
     actions:
       - type: FollowFlowField
-        parameters: [*exit]
+        parameters: [*danger]
       - type: ObstacleAvoidance
-        parameters: [6]
+        parameters: [50]
 
 displacements:
   - in:
       type: Circle
-      parameters: [10, 0, 0, 10]
+      parameters: [20, -100, 240, 30]
     nodes:
       type: HomogeneousPedestrian2D
     programs:
       - *behavior
   - in:
       type: Circle
-      parameters: [10, 0, 50, 10]
+      parameters: [30, 0, 600, 50]
     nodes:
       type: HomogeneousPedestrian2D
     programs:
       - *behavior
   - in:
       type: Circle
-      parameters: [10, 50, 0, 10]
+      parameters: [40, 100, -60, 40]
     nodes:
       type: HomogeneousPedestrian2D
     programs:

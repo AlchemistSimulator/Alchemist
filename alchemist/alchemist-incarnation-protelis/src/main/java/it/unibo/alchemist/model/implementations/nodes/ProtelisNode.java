@@ -110,8 +110,7 @@ public final class ProtelisNode<P extends Position<? extends P>> extends Abstrac
     }
 
     /**
-     * Allows writing a {@link Field} as a value. Use only for debug purposes, storing
-     * fields and reusing them over time breaks Field Calculus alignment.
+     * Writes a Map representation of the Field on the environment.
      * 
      * @param id variable name
      * @param v the {@link Field}

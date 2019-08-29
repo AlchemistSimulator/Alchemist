@@ -118,7 +118,7 @@ public final class ProtelisNode<P extends Position<? extends P>> extends Abstrac
      * @return true
      */
     public boolean putField(final String id, final Field v) {
-        setConcentration(makeMol(id), v);
+        setConcentration(makeMol(id), v.toMap());
         return true;
     }
 

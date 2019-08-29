@@ -2,6 +2,7 @@ package it.unibo.alchemist.test
 
 import io.kotlintest.fail
 import io.kotlintest.specs.StringSpec
+import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
 
 class TestPedestriansLoading<T, P : Position<P>> : StringSpec({
@@ -23,5 +24,13 @@ class TestPedestriansLoading<T, P : Position<P>> : StringSpec({
             loadYamlSimulation<T, P>("cant-give-cognitive-to-heterogeneous.yml").startSimulation()
             fail("An heterogeneous pedestrian can't have cognitive capabilities")
         } catch (exc: Throwable) { }
+    }
+
+    "groups of pedestrians loading" {
+        loadYamlSimulation<T, P>("groups.yml").startSimulation(
+            initialized = { e -> e.nodes.filterIsInstance<Pedestrian<T>>().forEach {
+                println("${it.id} -> ${it.membershipGroup}")
+            } }
+        )
     }
 })

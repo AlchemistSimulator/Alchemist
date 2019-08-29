@@ -16,8 +16,8 @@ import it.unibo.alchemist.model.interfaces.Position2D
  */
 open class BidimensionalGaussianLayer<P : Position2D<P>> @JvmOverloads constructor(
     private val baseline: Double = 0.0,
-    centerX: Double,
-    centerY: Double,
+    val centerX: Double,
+    val centerY: Double,
     norm: Double,
     sigmaX: Double,
     sigmaY: Double = sigmaX

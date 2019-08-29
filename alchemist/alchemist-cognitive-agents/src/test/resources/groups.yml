@@ -1,0 +1,36 @@
+incarnation: protelis
+
+environment:
+  type: Continuous2DEnvironment
+
+positions:
+  type: EuclideanPosition2D
+
+network-model:
+  type: NoLinks
+
+seeds:
+  scenario: 0
+  simulation: 1
+
+variables:
+  group1: &group1
+    formula: it.unibo.alchemist.model.cognitiveagents.groups.GenericGroup<Any>()
+    language: kotlin
+  group2: &group2
+    formula: it.unibo.alchemist.model.cognitiveagents.groups.GenericGroup<Any>()
+    language: kotlin
+
+displacements:
+  - in:
+      type: Circle
+      parameters: [10, 100, 20, 10]
+    nodes:
+      type: HomogeneousPedestrian2D
+      parameters: [*group1]
+  - in:
+      type: Circle
+      parameters: [5, 10, 10, 10]
+    nodes:
+      type: HomogeneousPedestrian2D
+      parameters: [*group2]

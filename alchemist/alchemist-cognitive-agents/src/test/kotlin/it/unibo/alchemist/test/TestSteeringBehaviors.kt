@@ -2,8 +2,9 @@ package it.unibo.alchemist.test
 
 import io.kotlintest.matchers.collections.shouldBeSortedWith
 import io.kotlintest.matchers.doubles.shouldBeGreaterThan
-import io.kotlintest.shouldBe
+import io.kotlintest.matchers.doubles.shouldBeLessThan
 import io.kotlintest.specs.StringSpec
+import it.unibo.alchemist.model.implementations.utils.origin
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position2D
 import kotlin.math.abs
@@ -12,23 +13,33 @@ private const val EPSILON = 0.001
 
 class TestSteeringBehaviors<T, P : Position2D<P>> : StringSpec({
 
-    "seek" {
+    "nodes seeking a target must approach it" {
+        val startDistances = mutableMapOf<Node<T>, Double>()
+        val endDistances = mutableMapOf<Node<T>, Double>()
         loadYamlSimulation<T, P>("seek.yml").startSimulation(
+            initialized = { e -> e.nodes.forEach {
+                startDistances[it] = e.getPosition(it).getDistanceTo(e.origin())
+            } },
             finished = { e, _, _ -> e.nodes.forEach {
-                e.getPosition(it) shouldBe e.makePosition(0.0, 0.0)
+                endDistances[it] = e.getPosition(it).getDistanceTo(e.origin())
             } }
-        )
+        ).nodes.forEach { startDistances[it]!! shouldBeGreaterThan endDistances[it]!! }
     }
 
-    "flee" {
+    "nodes fleeing from a target must go away from it" {
+        val startDistances = mutableMapOf<Node<T>, Double>()
+        val endDistances = mutableMapOf<Node<T>, Double>()
         loadYamlSimulation<T, P>("flee.yml").startSimulation(
+            initialized = { e -> e.nodes.forEach {
+                startDistances[it] = e.getPosition(it).getDistanceTo(e.origin())
+            } },
             finished = { e, _, _ -> e.nodes.forEach {
-                e.getPosition(it).getDistanceTo(e.makePosition(0, 0)) shouldBeGreaterThan 100.0
+                endDistances[it] = e.getPosition(it).getDistanceTo(e.origin())
             } }
-        )
+        ).nodes.forEach { startDistances[it]!! shouldBeLessThan endDistances[it]!! }
     }
 
-    "arrive" {
+    "nodes arriving to a target must decelerate while approaching it" {
         with(loadYamlSimulation<T, P>("arrive.yml")) {
             val nodesPositions: Map<Node<T>, MutableList<P>> = nodes.map { it to mutableListOf<P>() }.toMap()
             startSimulation(
@@ -37,7 +48,8 @@ class TestSteeringBehaviors<T, P : Position2D<P>> : StringSpec({
                 } }
             )
             nodesPositions.values.forEach { list ->
-                list.zipWithNext()
+                list.asSequence()
+                    .zipWithNext()
                     .filter { it.first != it.second }
                     .map { it.first.getDistanceTo(it.second) }
                     .toList() shouldBeSortedWith {
@@ -49,5 +61,13 @@ class TestSteeringBehaviors<T, P : Position2D<P>> : StringSpec({
                     }
             }
         }
+    }
+
+    "collision avoidance let nodes reach destinations behind obstacles" {
+        loadYamlSimulation<T, P>("collision-avoidance.yml").startSimulation(
+            finished = { e, _, _ -> e.nodes.forEach {
+                e.getPosition(it).getDistanceTo(e.makePosition(700.0, 240.0)) shouldBeLessThan 50.0
+            } }
+        )
     }
 })

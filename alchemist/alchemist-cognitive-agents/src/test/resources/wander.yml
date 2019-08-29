@@ -16,11 +16,12 @@ seeds:
 reactions: &behavior
   - time-distribution:
       type: DiracComb
-      parameters: [1.0]
-    type: SteeringBehavior
+      parameters: [10.0]
+    type: PrioritySteering
     actions:
       - type: Wander
-        parameters: [30]
+        parameters: [10, 8]
+      - type: RandomRotate
 
 displacements:
   - in:

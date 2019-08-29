@@ -32,6 +32,7 @@ import it.unibo.alchemist.model.interfaces.Obstacle2D;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.model.interfaces.environments.HasBoundaries;
 import org.apache.commons.math3.util.Pair;
 import org.danilopianini.lang.LangUtils;
 import org.slf4j.Logger;
@@ -169,9 +170,9 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
 
     private void resetStatus() {
         if (isPreviousStateMarking) {
-            this.status = ViewStatus.VIEW_WITH_MARKER;
+            status = ViewStatus.VIEW_WITH_MARKER;
         } else {
-            this.status = ViewStatus.VIEW_ONLY;
+            status = ViewStatus.VIEW_ONLY;
         }
     }
 
@@ -179,25 +180,25 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         bindKey(KeyEvent.VK_S, () -> {
             if (status == ViewStatus.SELECTING_NODES) {
                 resetStatus();
-                this.selectedNodes.clear();
+                selectedNodes.clear();
             } else if (isNotInteracting()) {
-                this.status = ViewStatus.SELECTING_NODES;
-            } 
-            this.repaint();
+                status = ViewStatus.SELECTING_NODES;
+            }
+            repaint();
         });
         bindKey(KeyEvent.VK_O, () -> {
             if (status == ViewStatus.SELECTING_NODES) {
-                this.status = ViewStatus.MOVING_SELECTED_NODES;
+                status = ViewStatus.MOVING_SELECTED_NODES;
             }
         });
         bindKey(KeyEvent.VK_C, () -> {
             if (status == ViewStatus.SELECTING_NODES) {
-                this.status = ViewStatus.CLONING_NODES;
+                status = ViewStatus.CLONING_NODES;
             }
         });
         bindKey(KeyEvent.VK_E, () -> {
             if (status == ViewStatus.SELECTING_NODES) {
-                this.status = ViewStatus.EDITING_NODES_CONTENT;
+                status = ViewStatus.EDITING_NODES_CONTENT;
                 final JFrame mol = Generic2DDisplay.makeFrame("Moleculing", new MoleculeInjectorGUI<>(selectedNodes));
                 mol.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 mol.addWindowListener(new WindowAdapter() {
@@ -211,7 +212,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         });
         bindKey(KeyEvent.VK_D, () -> {
             if (status == ViewStatus.SELECTING_NODES) {
-                this.status = ViewStatus.DELETING_NODES;
+                status = ViewStatus.DELETING_NODES;
                 final Simulation<T, P> sim = currentEnv.getSimulation();
                 for (final Node<T> n : selectedNodes) {
                     sim.schedule(() -> currentEnv.removeNode(n));
@@ -330,9 +331,17 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                 }
             }
         }
+        /*
+         * Draws the borders if there are any
+         */
+        if (currentEnv instanceof HasBoundaries) {
+            g.setColor(Color.BLACK);
+            ((HasBoundaries) currentEnv).getBoundaries().accept(new BoundariesDrawer<>(g, wormhole, currentEnv));
+        }
         g.setColor(Color.GREEN);
         if (effectStack != null) {
-            effectStack.forEach(effect -> onView.forEach((node, point) -> effect.apply(g, node, point.x, point.y)));
+            effectStack.forEach(effect -> onView.forEach((node, point) ->
+                effect.apply(g, node, currentEnv, wormhole.getZoom(), point.x, point.y)));
         }
         if (isCloserNodeMarked()) {
             final Optional<Map.Entry<Node<T>, Point>> closest = onView.entrySet().parallelStream()
@@ -689,7 +698,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                             currentEnv.addNode(n, envEnding);
                         }
                         update(currentEnv, engine.getTime());
-                    } catch (RuntimeException exp) { // NOPMD
+                    } catch (final RuntimeException exp) { // NOPMD
                         final String title = "Node cloning error";
                         final String message = "One or more of your nodes do not support cloning, the debug information is:\n"
                                 + LangUtils.stackTraceToString(exp);

@@ -34,6 +34,7 @@ env:
     - GRAVIS="https://raw.githubusercontent.com/DanySK/Gravis-CI/master/"
     - PUBLISH="false"
     - OFFICIAL_REPO_SLUG="AlchemistSimulator/Alchemist"
+    - NO_WIN_DEFENDER=$(curl "${GRAVIS}.disable-windows-defender.sh" --output .no-defender.sh && source .no-defender.sh)
   matrix:
     - *reference_jdk
     - JDK="adopt-openj9@1.11"
@@ -56,6 +57,8 @@ jobs:
       workspaces:
         create:
           name: linux-reference-build
+          paths:
+            - "${TRAVIS_BUILD_DIR}/alchemist/build"
     - stage: deploy
       name: "Reports and deployment"
       if: repo = env(OFFICIAL_REPO_SLUG) AND type != pull_request
@@ -63,6 +66,9 @@ jobs:
       env:
         - PUBLISH="true"
         - *reference_jdk
+      workspaces:
+        use:
+          - linux-reference-build
       install:
         - openssl aes-256-cbc -K $encrypted_9993846e3f84_key -iv $encrypted_9993846e3f84_iv -in prepare_environment.sh.enc -out prepare_environment.sh -d
         - bash prepare_environment.sh
@@ -73,17 +79,12 @@ jobs:
         - cp --parent */build/reports build/reports report -R
       after_success:
         - ./gradlew publish --scan --parallel --stacktrace
-      workspaces:
-        use:
-          - linux-reference-build
 before_install:
-  - curl "${GRAVIS}.disable-windows-defender.sh" --output .disable-windows-defender.sh
-  - source .disable-windows-defender.sh
   - curl "${GRAVIS}.install-jdk-travis.sh" --output .install-jdk-travis.sh
   - source .install-jdk-travis.sh
 script:
   - cd "$TRAVIS_BUILD_DIR"/alchemist
-  - ./gradlew clean test --scan --parallel
+  - ./gradlew test --scan --parallel
 before_cache:
   - curl "${GRAVIS}.clean_gradle_cache.sh" --output .clean_gradle_cache.sh
   - bash .clean_gradle_cache.sh

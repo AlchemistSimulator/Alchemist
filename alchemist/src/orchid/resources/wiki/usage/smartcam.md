@@ -1,6 +1,6 @@
 ---
 
-title: "Simulation examples - Smart Cameras"
+title: "With Smart Cameras"
 
 ---
 

@@ -57,6 +57,8 @@ jobs:
       workspaces:
         create:
           name: linux-reference-build
+          paths:
+            - "${TRAVIS_BUILD_DIR}/alchemist/build"
     - stage: deploy
       name: "Reports and deployment"
       if: repo = env(OFFICIAL_REPO_SLUG) AND type != pull_request

@@ -1,10 +1,22 @@
 package it.unibo.alchemist.model.cognitiveagents.characteristics.individual
 
 import com.uchuhimo.konf.Config
+import it.unibo.alchemist.model.cognitiveagents.characteristics.Characteristic
 import it.unibo.alchemist.model.cognitiveagents.characteristics.PARAMETERS_FILE
 
-class Compliance(age: Age, gender: Gender) : IndividualCharacteristic {
+/**
+ * The level of compliance of an agent considering its gender and its age.
+ *
+ * @param age
+ *          the age of the agent.
+ * @param gender
+ *          the gender of the agent.
+ */
+class Compliance(age: Age, gender: Gender) : Characteristic {
 
+    /**
+     * The calculated level of compliance.
+     */
     val level = when {
         age == Age.CHILD && gender == Gender.MALE -> childMale
         age == Age.ADULT && gender == Gender.MALE -> adultMale

@@ -15,12 +15,12 @@ import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnviro
  * @param targetMolecule
  *          the {@link Molecule} you want to know the concentration in the different positions of the environment.
  */
-open class FollowGradient<T>(
-    env: EuclideanPhysics2DEnvironment<T>,
-    reaction: Reaction<T>,
-    pedestrian: Pedestrian2D<T>,
+open class FollowFlowField(
+    env: EuclideanPhysics2DEnvironment<Number>,
+    reaction: Reaction<Number>,
+    pedestrian: Pedestrian2D<Number>,
     targetMolecule: Molecule
-) : GradientSteeringAction<T>(
+) : FlowFieldSteeringAction<Number>(
     env,
     reaction,
     pedestrian,
@@ -28,8 +28,8 @@ open class FollowGradient<T>(
     { molecule ->
         val currentPosition = env.getPosition(pedestrian)
         val layer = env.getLayer(molecule).get()
-        val currentConcentration = layer.getValue(currentPosition) as Double
-        this.map { it to layer.getValue(it) as Double }
+        val currentConcentration = layer.getValue(currentPosition).toDouble()
+        this.map { it to layer.getValue(it).toDouble() }
             .filter { it.second > currentConcentration }
             .maxBy { it.second }?.first ?: currentPosition
     }

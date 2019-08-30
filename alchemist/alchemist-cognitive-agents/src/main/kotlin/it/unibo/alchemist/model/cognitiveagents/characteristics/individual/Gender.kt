@@ -1,6 +1,11 @@
 package it.unibo.alchemist.model.cognitiveagents.characteristics.individual
 
-enum class Gender : IndividualCharacteristic {
+import it.unibo.alchemist.model.cognitiveagents.characteristics.Characteristic
+
+/**
+ * An enum representing the different genders.
+ */
+enum class Gender : Characteristic {
 
     MALE,
     FEMALE;
@@ -9,6 +14,12 @@ enum class Gender : IndividualCharacteristic {
         private const val MALE_KEYWORD = "male"
         private const val FEMALE_KEYWORD = "female"
 
+        /**
+         * Returns the corresponding gender in this enum given a string resembling it.
+         *
+         * @param gender
+         *          the gender as a string.
+         */
         fun fromString(gender: String): Gender = when {
             gender.equals(MALE_KEYWORD, ignoreCase = true) -> MALE
             gender.equals(FEMALE_KEYWORD, ignoreCase = true) -> FEMALE

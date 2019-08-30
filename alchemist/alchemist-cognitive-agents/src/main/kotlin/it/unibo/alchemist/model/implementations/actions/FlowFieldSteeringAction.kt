@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
  * @param formula
  *          the logic according to the target position is determined from all the positions checked.
  */
-open class GradientSteeringAction<T>(
+open class FlowFieldSteeringAction<T>(
     private val env: EuclideanPhysics2DEnvironment<T>,
     reaction: Reaction<T>,
     private val pedestrian: Pedestrian2D<T>,

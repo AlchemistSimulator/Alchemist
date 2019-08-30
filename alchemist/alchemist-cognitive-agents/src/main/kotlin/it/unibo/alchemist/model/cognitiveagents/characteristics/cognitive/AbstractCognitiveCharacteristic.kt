@@ -16,8 +16,9 @@ abstract class AbstractCognitiveCharacteristic : CognitiveCharacteristic {
     override fun level() = currentLevel
 
     /**
-     * The function according to, the parameters involved
-     * in this characteristic update are combined.
+     * Algorithm which decides how the parameters involved
+     * in the evolution of this characteristic must be combined together.
+     * It can be either a max, min, summation or any other type of function.
      */
     abstract fun combinationFunction(): Double
 

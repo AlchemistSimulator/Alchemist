@@ -1,7 +1,8 @@
 package it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive
 
 /**
- * The belief of the situation dangerousness.
+ * The perception of the situation dangerousness.
+ * The name belief derives from the [IMPACT model](https://doi.org/10.1007/978-3-319-70647-4_11).
  *
  * @param zoneDangerousness
  *          the influence of the position of the agent owning this

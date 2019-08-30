@@ -46,7 +46,7 @@ layers:
 reactions: &behavior
   - time-distribution:
       type: DiracComb
-      parameters: [0.2]
+      parameters: [1.0]
     type: PrioritySteering
     conditions:
       - type: WantToEvacuate
@@ -63,7 +63,7 @@ reactions: &behavior
         parameters: [*exit4]
   - time-distribution:
       type: DiracComb
-      parameters: [0.05]
+      parameters: [0.25]
     type: CognitiveBehavior
     actions:
       - type: RandomRotate

@@ -16,11 +16,11 @@ import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnviro
  *          the {@link Molecule} you want to know the concentration in the different positions of the environment.
  */
 open class AvoidFlowField(
-    env: EuclideanPhysics2DEnvironment<Double>,
-    reaction: Reaction<Double>,
-    pedestrian: Pedestrian2D<Double>,
+    env: EuclideanPhysics2DEnvironment<Number>,
+    reaction: Reaction<Number>,
+    pedestrian: Pedestrian2D<Number>,
     targetMolecule: Molecule
-) : FlowFieldSteeringAction<Double>(
+) : FlowFieldSteeringAction<Number>(
     env,
     reaction,
     pedestrian,
@@ -28,8 +28,8 @@ open class AvoidFlowField(
     { molecule ->
         val currentPosition = env.getPosition(pedestrian)
         val layer = env.getLayer(molecule).get()
-        val currentConcentration = layer.getValue(currentPosition)
-        this.map { it to layer.getValue(it) }
+        val currentConcentration = layer.getValue(currentPosition).toDouble()
+        this.map { it to layer.getValue(it).toDouble() }
             .filter { it.second < currentConcentration }
             .minBy { it.second }?.first ?: currentPosition
     }

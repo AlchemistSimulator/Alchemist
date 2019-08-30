@@ -24,7 +24,7 @@ class ObstacleAvoidance<W : Obstacle2D, T, P : Position2D<P>>(
     reaction,
     pedestrian,
     TargetSelectionStrategy { with(reaction) {
-        Combine(env, this, pedestrian, steerActions().filterNot { it is ObstacleAvoidance<*, *, *> }, steerStrategy).target()
+        steerStrategy.computeTarget(steerActions().filterNot { it is ObstacleAvoidance<*, *, *> })
     } }
 ) {
 
@@ -33,8 +33,8 @@ class ObstacleAvoidance<W : Obstacle2D, T, P : Position2D<P>>(
             current,
             env.getObstaclesInRange(current.x, current.y, proximityRange)
                 .asSequence()
-                .map { with(it.bounds2D) {
-                    it.nearestIntersection(current.x, current.y, target.x, target.y).let { pos -> env.makePosition(pos[0], pos[1]) } to this
+                .map { with(it.nearestIntersection(current.x, current.y, target.x, target.y)) {
+                    env.makePosition(this[0], this[1]) to it.bounds2D
                 } }
                 .minBy { (intersection, _) -> current.getDistanceTo(intersection) }
                 ?.let { (intersection, bound) -> intersection to env.makePosition(bound.centerX, bound.centerY) }

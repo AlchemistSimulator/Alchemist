@@ -12,6 +12,7 @@
   - [SAPERE](usage/sapere.md)
   - [Scafi](usage/scafi.md)
   - [Indoor environments](usage/indoor.md)
+  - [Smart Cameras](usage/smartcam.md)
   - [Maps and GPS traces](usage/maps.md)
   - [Exporting data](usage/export.md)
   - [Executing batches](usage/batch.md)
@@ -21,5 +22,4 @@
   - [With Protelis](examples/protelis.md)
   - [With Scafi](examples/scafi.md)
   - [On maps](examples/maps.md)
-  - [Smart Cameras](examples/smartcam.md)
 - [License](license.md)

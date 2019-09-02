@@ -3,7 +3,7 @@ package it.unibo.alchemist.model.implementations.movestrategies
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
+import it.unibo.alchemist.model.smartcam.randomAngle
 import org.apache.commons.math3.random.RandomGenerator
 import java.lang.Math.toRadians
 import kotlin.math.abs
@@ -23,12 +23,12 @@ import kotlin.math.sqrt
  * [T] is the type of the concentration of the node used in the secondary constructor.
  */
 class ZigZagRandomTarget<T>(
-    private val getCurrentPosition: () -> Euclidean2DPosition,
+    getCurrentPosition: () -> Euclidean2DPosition,
     private val makePosition: (Double, Double) -> Euclidean2DPosition,
     private val rng: RandomGenerator,
     private val maxDistance: Double,
     private val minChangeInDirection: Double = 0.0
-) : TargetSelectionStrategy<Euclidean2DPosition> {
+) : ChangeTargetOnCollision<Euclidean2DPosition>(getCurrentPosition) {
     /**
      * Handy constructor for Alchemist where the object to move is a [node] in the [env].
      * [rng] is the random number generator to use
@@ -46,41 +46,29 @@ class ZigZagRandomTarget<T>(
     }
 
     private val minChangeInDirectionRadians = toRadians(minChangeInDirection)
-    private var initialized = false
-    private lateinit var lastNodePosition: Euclidean2DPosition
     private lateinit var startPosition: Euclidean2DPosition
     private val distance = 100.0 // the random destination is picked at this distance from the node
     private var direction = 0.0 // angle in radians
 
-    override fun getTarget(): Euclidean2DPosition {
-        val currentPosition = getCurrentPosition()
-        if (!initialized) {
-            lastNodePosition = currentPosition
-            startPosition = currentPosition
-            initialized = true
-        }
-        // if it hasn't moved (assuming it's because of an obstacle) or or it has gone farther than the maximum distance,
-        // then pick another direction
-        if (lastNodePosition == currentPosition || startPosition.getDistanceTo(currentPosition) >= maxDistance) {
-            startPosition = currentPosition
-            changeDirection()
-        }
-        lastNodePosition = currentPosition
-        return computeTarget()
+    override fun initializePositions(currentPosition: Euclidean2DPosition) {
+        startPosition = currentPosition
+    }
+
+    override fun shouldChangeTarget() = super.shouldChangeTarget() || getCurrentPosition().getDistanceTo(startPosition) >= maxDistance
+
+    override fun chooseTarget(): Euclidean2DPosition {
+        changeDirection()
+        val x = cos(direction) * distance
+        val y = sin(direction) * sqrt(distance * distance + x * x)
+        return makePosition(x, y) + getCurrentPosition()
     }
 
     private fun changeDirection() {
-        var newDirection = 2 * Math.PI * rng.nextDouble()
+        var newDirection = rng.randomAngle()
         if (minChangeInDirection > 0.0 && abs(newDirection - direction) < minChangeInDirection) {
             // in the event a change in direction is not enough we force it to be so
             newDirection += minChangeInDirection * if (rng.nextBoolean()) 1.0 else -1.0
         }
         direction = newDirection
-    }
-
-    private fun computeTarget(): Euclidean2DPosition {
-        val x = cos(direction) * distance
-        val y = sin(direction) * sqrt(distance * distance + x * x)
-        return makePosition(x, y) + getCurrentPosition()
     }
 }

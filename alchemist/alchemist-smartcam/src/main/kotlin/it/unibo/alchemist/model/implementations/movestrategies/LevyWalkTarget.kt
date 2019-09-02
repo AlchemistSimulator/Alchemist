@@ -19,8 +19,8 @@ class LevyWalkTarget<T>(
     getCurrentPosition: () -> Euclidean2DPosition,
     private val makePosition: (Double, Double) -> Euclidean2DPosition,
     private val rng: RandomGenerator,
-    private val location: Double,
-    private val scale: Double
+    private val location: Double = 0.0, // default parameters for the "standard" lévy walk distribution
+    private val scale: Double = 1.0
 ) : ChangeTargetOnCollision<Euclidean2DPosition>(getCurrentPosition) {
 
     /**

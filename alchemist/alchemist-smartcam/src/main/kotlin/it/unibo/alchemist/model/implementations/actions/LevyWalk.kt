@@ -20,8 +20,8 @@ class LevyWalk<T>(
     private val env: Environment<T, Euclidean2DPosition>,
     private val rng: RandomGenerator,
     private val speed: Double,
-    private val location: Double,
-    private val scale: Double
+    private val location: Double = 0.0, // default parameters for the "standard" lévy walk distribution
+    private val scale: Double = 1.0
 ) : AbstractConfigurableMoveNodeWithAccurateEuclideanDestination<T>(
     env,
     node,

@@ -5,7 +5,7 @@ title: "With Smart Cameras"
 ---
 
 ### Prerequisites
-This guide assumes you already know [the Alchemist metamodel](simulator/metamodel.md) and [how to write simulations in YAML](usage/yaml.md).
+This guide assumes you already know {{anchor('the Alchemist metamodel', 'The Alchemist Simulator metamodel')}} and {{anchor('how to write simulations in YAML', 'Writing Alchemist simulations')}}.
 
 ### Smartcam
 A smartcam is a camera able to detect objects of interest and to communicate with other smartcameras.
@@ -36,7 +36,7 @@ The _Spin_ action only requires the angular speed and will make the camera spin 
 #### Algorithm
 Without defining an algorithm the cameras wouldn't do anything interesting. Algorithms can be definied in a moltitude of different
 ways. Below there's an example of a basic algorithm defined only with _Reactions_, _Conditions_ and _Actions_.
-It is advisable to use real programming languages such as [Protelis](examples/protelis.md) to write more elaborate algorithms.
+It is advisable to use real programming languages such as {{anchor('Protelis', 'Alchemist Protelis incarnation')}} to write more elaborate algorithms.
 In this regard you'd want to use the protelis incarnation, make cameras be _ProtelisNode_, and to make sure
 that the input and output molecules' names of the actions match the ones used by the protelis program.
 
@@ -369,4 +369,4 @@ displacements:
 ### Further references
 [Lukas Esterle, Peter R. Lewis\
 Online Multi-object k-coverage with Mobile Smart Cameras\
-In Proceedings of the International Conference on Distributed Smart Cameras (ICDSC). Nominated for best paper. 2017.](http://www.lukasesterle.com/wp-content/uploads/2017/09/icdsc2017_1.pdf)
+In Proceedings of the International Conference on Distributed Smart Cameras (ICDSC). Nominated for best paper. 2017.](https://doi.org/10.1145/3131885.3131909)

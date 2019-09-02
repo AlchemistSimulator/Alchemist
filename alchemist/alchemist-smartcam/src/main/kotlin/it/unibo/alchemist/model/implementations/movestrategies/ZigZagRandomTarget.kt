@@ -56,19 +56,20 @@ class ZigZagRandomTarget<T>(
 
     override fun shouldChangeTarget() = super.shouldChangeTarget() || getCurrentPosition().getDistanceTo(startPosition) >= maxDistance
 
-    override fun chooseTarget(): Euclidean2DPosition {
-        changeDirection()
-        val x = cos(direction) * distance
-        val y = sin(direction) * sqrt(distance * distance + x * x)
-        return makePosition(x, y) + getCurrentPosition()
+    override fun chooseTarget() = with(changeDirection()) {
+        val x = cos(this) * distance
+        val y = sin(this) * sqrt(distance * distance + x * x)
+        makePosition(x, y) + getCurrentPosition()
     }
 
-    private fun changeDirection() {
-        var newDirection = rng.randomAngle()
-        if (minChangeInDirection > 0.0 && abs(newDirection - direction) < minChangeInDirection) {
+    private fun changeDirection() = with(rng.randomAngle()) {
+        if (minChangeInDirection > 0.0 && abs(this - direction) < minChangeInDirection) {
             // in the event a change in direction is not enough we force it to be so
-            newDirection += minChangeInDirection * if (rng.nextBoolean()) 1.0 else -1.0
+            this + minChangeInDirection * if (rng.nextBoolean()) 1.0 else -1.0
+        } else {
+            this
+        }.also {
+            direction = it
         }
-        direction = newDirection
     }
 }

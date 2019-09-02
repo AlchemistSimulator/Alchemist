@@ -31,9 +31,8 @@ class LevyWalkTarget<T>(
 
     private val levy = LevyDistribution(rng, location, scale)
 
-    override fun chooseTarget(): Euclidean2DPosition {
-        val angle = rng.randomAngle()
+    override fun chooseTarget() = with(rng.randomAngle()) {
         val distance = levy.sample()
-        return getCurrentPosition() + makePosition(distance * cos(angle), distance * sin(angle))
+        getCurrentPosition() + makePosition(distance * cos(this), distance * sin(this))
     }
 }

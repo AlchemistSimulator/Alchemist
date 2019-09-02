@@ -14,7 +14,7 @@ import org.apache.commons.math3.random.RandomGenerator
  * Selects a target based on a random direction extracted from [rng] (which should be an uniform random generator),
  * and a random distance extracted from a lévy distribution of parameters [location] (aka mu) and [scale] (aka c).
  */
-class LevyWalk<T>(
+class LevyWalk<T> @JvmOverloads constructor(
     node: Node<T>,
     reaction: Reaction<T>,
     private val env: Environment<T, Euclidean2DPosition>,

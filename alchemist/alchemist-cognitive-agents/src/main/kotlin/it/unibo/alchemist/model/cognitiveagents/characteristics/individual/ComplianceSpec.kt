@@ -2,6 +2,9 @@ package it.unibo.alchemist.model.cognitiveagents.characteristics.individual
 
 import com.uchuhimo.konf.ConfigSpec
 
+/**
+ * A specification of the parameters regarding compliance to load from a config file.
+ */
 object ComplianceSpec : ConfigSpec() {
     val childMale by required<Double>()
     val adultMale by required<Double>()

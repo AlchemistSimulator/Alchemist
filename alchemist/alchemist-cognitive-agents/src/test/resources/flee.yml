@@ -17,7 +17,7 @@ reactions: &behavior
   - time-distribution:
       type: DiracComb
       parameters: [10.0]
-    type: BlendedSteering
+    type: PrioritySteering
     actions:
       - type: Flee
         parameters: [0, 0]

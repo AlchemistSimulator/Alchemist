@@ -1,18 +1,25 @@
 package it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive
 
-import com.google.common.primitives.Doubles
 import com.uchuhimo.konf.Config
 import it.unibo.alchemist.model.cognitiveagents.characteristics.PARAMETERS_FILE
 
+/**
+ * The generic implementation of a cognitive characteristic.
+ */
 abstract class AbstractCognitiveCharacteristic : CognitiveCharacteristic {
 
+    /**
+     * The current level of this characteristic.
+     */
     protected var currentLevel: Double = 0.0
-        set(value) {
-            field = Doubles.constrainToRange(value, 0.0, 1.0)
-        }
 
     override fun level() = currentLevel
 
+    /**
+     * Algorithm which decides how the parameters involved
+     * in the evolution of this characteristic must be combined together.
+     * It can be either a max, min, summation or any other type of function.
+     */
     abstract fun combinationFunction(): Double
 
     companion object {

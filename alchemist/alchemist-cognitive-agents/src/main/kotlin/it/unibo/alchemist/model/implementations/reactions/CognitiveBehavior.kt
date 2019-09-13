@@ -19,7 +19,8 @@ class CognitiveBehavior<T>(
     timeDistribution: TimeDistribution<T>
 ) : AbstractReaction<T>(pedestrian, timeDistribution) {
 
-    override fun cloneOnNewNode(n: Node<T>?, currentTime: Time?) = TODO()
+    override fun cloneOnNewNode(n: Node<T>?, currentTime: Time?) =
+        CognitiveBehavior(n as CognitivePedestrian<T>, timeDistribution)
 
     override fun getRate() = timeDistribution.rate
 

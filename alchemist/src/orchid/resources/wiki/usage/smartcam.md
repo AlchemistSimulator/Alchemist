@@ -1,10 +1,46 @@
 ---
 
-title: "Simulation examples - Smart Cameras"
+title: "With Smart Cameras"
 
 ---
 
-### Basis
+### Prerequisites
+This guide assumes you already know {{anchor('the Alchemist metamodel', 'The Alchemist Simulator metamodel')}} and {{anchor('how to write simulations in YAML', 'Writing Alchemist simulations')}}.
+
+### Smartcam
+A smartcam is a camera able to detect objects of interest and to communicate with other smartcameras.
+In many cases it is also assumed to be mounted on a drone as to be able to freely move around in the environment.
+In Alchemist smartcams are simulated as _Nodes_ equipped with specific _Reactions_ defining their capabilities and behaviour.
+Single capabilities are expressed as _Actions_.
+
+#### Vision
+The most basic example of a camera is a _Node_ containing a _Reaction_ with the _See_ action. Note: the _See_ action currently
+only works in 2D environments supporting euclidean geometry, for example _Continuous2DEnvironment_ and _Rectangular2DEnvironment_.
+The _See_ action requires 3 parameters to be defined in this order: the distance of the field of view, its angle in degrees,
+and the name of the _Molecule_ which will contain the ouput, namely a list of the nodes contained in the field of view which is updated
+each time the action is triggered. Optionally a fourth parameter can be defined in order to filter the output. Such parameter is expected to
+be the name of a _Molecule_ which has to be contained in a _Node_ for it to be visible, e.g. if it is "wanted" then only nodes containing
+a molecule named "wanted" will be seen.
+
+#### Movement
+The ability to move can be defined using movement actions such as _MoveToTarget_ or _FollowAtDistance_.
+_MoveToTarget_ expects 2 parameters such as the name of the molecule containing the target's position and the movement speed.
+_FollowAtDistance_ requires the name of the molecule containing the target's position, the distance to mantain from the target, 
+and the movement speed.
+
+#### Rotation
+The action _HeadTowardTarget_ can be used to instruct cameras to always face the specified target, it requires
+2 parameters such as the name of the molecule containing the target's position and the angular speed in degrees.
+The _Spin_ action only requires the angular speed and will make the camera spin around itself like a radar.
+
+#### Algorithm
+Without defining an algorithm the cameras wouldn't do anything interesting. Algorithms can be definied in a moltitude of different
+ways. Below there's an example of a basic algorithm defined only with _Reactions_, _Conditions_ and _Actions_.
+It is advisable to use real programming languages such as {{anchor('Protelis', 'Alchemist Protelis incarnation')}} to write more elaborate algorithms.
+In this regard you'd want to use the protelis incarnation, make cameras be _ProtelisNode_, and to make sure
+that the input and output molecules' names of the actions match the ones used by the protelis program.
+
+### Complete example of a simulation
 We start by writing a basic yaml configuration to place 20 potential targets and 10 cameras in a 400 x 400 rectangular environment:
 
 ```yaml
@@ -329,3 +365,8 @@ displacements:
     programs:
       - *Camera
 ```
+
+### Further references
+[Lukas Esterle, Peter R. Lewis\
+Online Multi-object k-coverage with Mobile Smart Cameras\
+In Proceedings of the International Conference on Distributed Smart Cameras (ICDSC). Nominated for best paper. 2017.](https://doi.org/10.1145/3131885.3131909)

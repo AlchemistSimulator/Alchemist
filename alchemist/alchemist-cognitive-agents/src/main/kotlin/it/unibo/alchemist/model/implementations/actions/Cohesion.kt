@@ -25,7 +25,7 @@ class Cohesion<T, P : Position<P>>(
     reaction,
     pedestrian,
     TargetSelectionStrategy { env.origin() }
-), GroupSteering<T, P> {
+), GroupSteeringAction<T, P> {
 
     override fun group(): List<Pedestrian<T>> = pedestrian.membershipGroup.members
 

@@ -90,13 +90,13 @@ class TestRandomTarget : StringSpec() {
         currentPosition = Euclidean2DPosition(0.0, 0.0)
         distanceDistribution = DummyDistribution()
         directionGenerator = DummyRandomGenerator()
+        directionGenerator.value = 0.5
+        distanceDistribution.value = 1.0
         randomTarget = RandomTarget({ currentPosition }, { x, y -> Euclidean2DPosition(x, y) }, directionGenerator, distanceDistribution)
     }
 
     init {
         "Should change distance according to the distribution" {
-            directionGenerator.value = 0.5
-            distanceDistribution.value = 1.0
             val target = randomTarget.target.getDistanceTo(currentPosition)
             randomTarget.target.getDistanceTo(currentPosition) shouldBe target
             randomTarget.target.getDistanceTo(currentPosition) shouldBe target
@@ -109,8 +109,6 @@ class TestRandomTarget : StringSpec() {
         }
 
         "Should change direction according to the generator" {
-            distanceDistribution.value = 1.0
-            directionGenerator.value = 0.5
             val target = randomTarget.target.asAngle()
             randomTarget.target.asAngle() shouldBe target
             randomTarget.target.asAngle() shouldBe target

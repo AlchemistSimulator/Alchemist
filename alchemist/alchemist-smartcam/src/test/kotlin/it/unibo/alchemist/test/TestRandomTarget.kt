@@ -9,6 +9,9 @@ import it.unibo.alchemist.model.implementations.movestrategies.RandomTarget
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import org.apache.commons.math3.distribution.RealDistribution
 import org.apache.commons.math3.random.RandomGenerator
+import kotlin.math.abs
+
+private fun Double.equalityTest(other: Double) = abs(this - other) < 0.0001
 
 private class DummyDistribution : RealDistribution {
     var value: Double = 0.0
@@ -29,7 +32,7 @@ private class DummyDistribution : RealDistribution {
 
     override fun getNumericalVariance() = 0.0
 
-    override fun probability(x: Double) = if (x == value) 1.0 else 0.0
+    override fun probability(x: Double) = if (x.equalityTest(value)) 1.0 else 0.0
 
     override fun reseedRandomGenerator(seed: Long) {
         value = seed.toDouble()

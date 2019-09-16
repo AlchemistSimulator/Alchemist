@@ -256,7 +256,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     }
 
     /**
-     * This method should not get overriden in general. However, if your
+     * This method should not get overridden in general. However, if your
      */
     @Override
     public P getPosition(final Node<T> node) {
@@ -344,7 +344,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     protected void nodeRemoved(final Node<T> node, final Neighborhood<T> neighborhood) { }
 
     /**
-     * Allows subclasses to determine wether or not a {@link Node} should
+     * Allows subclasses to determine whether or not a {@link Node} should
      * actually get added to this environment.
      *
      * @param node
@@ -529,7 +529,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
 
     @FunctionalInterface
     private interface SerializablePredicate<T, P extends Position<P>> extends Predicate<Environment<T, P>>, Serializable {
-        default SerializablePredicate<T, P> orPredicate(Predicate<Environment<T, P>> other) {
+        default SerializablePredicate<T, P> orPredicate(final Predicate<Environment<T, P>> other) {
             return e -> this.test(e) || other.test(e);
         }
     }
@@ -538,7 +538,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         private final Node<T> destination;
         private final boolean isAdd;
         private final Node<T> origin;
-        Operation(final Node<T> origin, final Node<T> destination, final boolean isAdd) {
+        private Operation(final Node<T> origin, final Node<T> destination, final boolean isAdd) {
             this.origin = origin;
             this.destination = destination;
             this.isAdd = isAdd;

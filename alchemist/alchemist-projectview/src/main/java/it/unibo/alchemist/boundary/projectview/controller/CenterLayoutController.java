@@ -775,7 +775,7 @@ public class CenterLayoutController {
      *
      * @return The entity project.
      */
-    public Project setField() {
+    public void setField() {
         this.project = ProjectIOUtils.loadFrom(this.ctrlLeft.getPathFolder());
         if (this.project != null) {
             if (this.project.getBatch() != null && this.project.getBatch().getVariables() != null
@@ -896,7 +896,6 @@ public class CenterLayoutController {
             setEnableGrid();
         }
         this.ctrlLeft.setEnableRun();
-        return this.project;
     }
 
     /**

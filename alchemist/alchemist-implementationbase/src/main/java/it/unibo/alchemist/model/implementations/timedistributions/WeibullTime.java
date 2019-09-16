@@ -95,12 +95,6 @@ public class WeibullTime<T> extends AbstractDistribution<T> {
         return dist.inverseCumulativeProbability(rand.nextDouble()) + offset;
     }
 
-    @Override
-    @SuppressFBWarnings("CN_IDIOM_NO_SUPER_CALL")
-    public WeibullTime<T> clone() {
-        return new WeibullTime<>(dist.getShape(), dist.getScale(), offset, getNextOccurence(), rand);
-    }
-
     /**
      * @return the mean for this distribution.
      */
@@ -121,12 +115,12 @@ public class WeibullTime<T> extends AbstractDistribution<T> {
     }
 
     /**
-     * Generates a {@link WeibullDistribution} given its mean and stdev.
+     * Generates a {@link WeibullDistribution} given its mean and standard deviation.
      * 
      * @param mean
      *            the mean
      * @param deviation
-     *            the stdev
+     *            the standard deviation
      * @param random
      *            the random generator
      * @return a new {@link WeibullDistribution}

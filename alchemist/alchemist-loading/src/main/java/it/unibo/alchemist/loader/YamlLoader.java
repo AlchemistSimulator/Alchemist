@@ -817,12 +817,17 @@ public final class YamlLoader implements Loader {
     private static class Builder<T> {
         private final @Nonnull Class<? super T> clazz;
         private final @Nonnull Set<BuilderConfiguration<T>> supportedConfigs;
-        Builder(@Nonnull final Class<? super T> clazz, @Nonnull final BuilderConfiguration<T> supportedConfig, final Factory factory) {
+        private Builder(@Nonnull final Class<? super T> clazz,
+                        @Nonnull final BuilderConfiguration<T> supportedConfig,
+                        final Factory factory) {
             this(clazz, ImmutableSet.of(supportedConfig), factory);
         }
 
         @SuppressWarnings(UNCHECKED)
-        Builder(@Nonnull final Class<? super T> clazz, @Nonnull final Set<BuilderConfiguration<T>> supportedConfigs, final Factory factory) {
+        private Builder(
+                @Nonnull final Class<? super T> clazz,
+                @Nonnull final Set<BuilderConfiguration<T>> supportedConfigs,
+                final Factory factory) {
             this.clazz = clazz;
             final String packageRoot = PACKAGE_ROOTS.getOrDefault(clazz, "");
             this.supportedConfigs = Sets.newLinkedHashSet(supportedConfigs);
@@ -833,7 +838,7 @@ public final class YamlLoader implements Loader {
                     m -> {
                         String type = m.get(TYPE).toString();
                         assert type != null;
-                        type = (type.contains(".") ? "" : packageRoot) + type;
+                        type = (type.contains(".") ? "" : packageRoot) + type; // NOPMD UseStringBufferForStringAppends
                         try {
                             final Class<?> actualClass = ResourceLoader.classForName(type);
                             if (clazz.isAssignableFrom(actualClass)) {
@@ -872,7 +877,7 @@ public final class YamlLoader implements Loader {
         private final @Nonnull Factory factory;
         private final @Nonnull Map<String, Class<?>> mandatoryFields;
         private final @Nonnull Map<String, Class<?>> optionalFields;
-        BuilderConfiguration(@Nonnull final Map<String, Class<?>> mandatory,
+        private BuilderConfiguration(@Nonnull final Map<String, Class<?>> mandatory,
                 @Nonnull final Map<String, Class<?>> optional,
                 @Nonnull final Factory factory,
                 @Nonnull final Function<Map<String, Object>, T> converter) {

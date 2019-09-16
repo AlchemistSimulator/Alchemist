@@ -7,7 +7,6 @@
  */
 package it.unibo.alchemist.loader.shapes;
 
-import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Position2D;
 
 /**

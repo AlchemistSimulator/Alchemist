@@ -22,7 +22,7 @@ import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.model.interfaces.Time;
 
 /**
- * Local {@link GeneralSimulationConfig} that contains all informations in local memory.
+ * Local {@link GeneralSimulationConfig} that contains all information in local memory.
  *
  */
 public final class LocalGeneralSimulationConfig extends LightInfoGeneralSimulationConfig {
@@ -51,9 +51,9 @@ public final class LocalGeneralSimulationConfig extends LightInfoGeneralSimulati
                     throw new IllegalArgumentException("Dependency non exixts: " + file);
                 }
             } catch (IOException e) {
-                throw new IllegalArgumentException("Dependency non exixts: " + file);
+                throw new IllegalArgumentException("Dependency non exixts: " + file, e);
             } catch (URISyntaxException e) {
-                throw new IllegalStateException("Failed to get resource URI: " + file);
+                throw new IllegalStateException("Failed to get resource URI: " + file, e);
             }
         }
     }

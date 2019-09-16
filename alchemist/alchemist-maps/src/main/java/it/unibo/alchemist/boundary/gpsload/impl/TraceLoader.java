@@ -7,23 +7,12 @@
  */
 package it.unibo.alchemist.boundary.gpsload.impl;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterators;
 import it.unibo.alchemist.ClassPathScanner;
+import it.unibo.alchemist.boundary.gpsload.api.GPSFileLoader;
+import it.unibo.alchemist.boundary.gpsload.api.GPSTimeAlignment;
+import it.unibo.alchemist.model.interfaces.GPSTrace;
 import org.apache.commons.io.input.BoundedInputStream;
 import org.danilopianini.jirf.Factory;
 import org.danilopianini.jirf.FactoryBuilder;
@@ -33,11 +22,20 @@ import org.jooq.lambda.fi.util.function.CheckedFunction;
 import org.jooq.lambda.tuple.Tuple2;
 import org.kaikikm.threadresloader.ResourceLoader;
 import org.openstreetmap.osmosis.osmbinary.file.FileFormatException;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterators;
-import it.unibo.alchemist.boundary.gpsload.api.GPSFileLoader;
-import it.unibo.alchemist.boundary.gpsload.api.GPSTimeAlignment;
-import it.unibo.alchemist.model.interfaces.GPSTrace;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 
@@ -51,11 +49,11 @@ public class TraceLoader implements Iterable<GPSTrace> {
             .flatMap(l -> l.supportedExtensions().stream()
                     .map(ext -> new Tuple2<>(ext.toLowerCase(Locale.US), l)))
             .collect(Collectors.toMap(Tuple2::v1, Tuple2::v2));
-    private static final int MAX_FILE_NAME_LENGTH = (Byte.MAX_VALUE * 2 - 1);
+    private static final int MAX_FILE_NAME_LENGTH = Byte.MAX_VALUE * 2 - 1;
     private static final int MAX_BYTES_PER_CHAR = MAX_FILE_NAME_LENGTH * 4;
     private final boolean cyclic;
     private final ImmutableList<GPSTrace> traces;
-    private static final Factory factory = new FactoryBuilder()
+    private static final Factory FACTORY = new FactoryBuilder()
         .withWideningConversions()
         .withNarrowingConversions()
         .withAutoBoxing()
@@ -177,7 +175,7 @@ public class TraceLoader implements Iterable<GPSTrace> {
         try {
             final Class<?> targetClass = ResourceLoader.classForName(fullName);
             if (GPSTimeAlignment.class.isAssignableFrom(targetClass)) {
-                return (GPSTimeAlignment) factory.build(targetClass, args);
+                return (GPSTimeAlignment) FACTORY.build(targetClass, args);
             }
             throw new IllegalArgumentException(fullName + " is not a valid subclass of " + GPSTimeAlignment.class.getSimpleName());
         } catch (ClassNotFoundException e) {

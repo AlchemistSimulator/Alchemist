@@ -68,7 +68,7 @@ public final class BiomolPresentInNeighbor extends AbstractNeighborCondition<Dou
     }
 
     @Override
-    protected double getNeighborPropensity(Node<Double> neighbor) {
+    protected double getNeighborPropensity(final Node<Double> neighbor) {
         // the neighbor is eligible, its propensity is computed using the concentration of the biomolecule
         return Optional.of(neighbor)
                 .filter(it -> it instanceof CellNode)

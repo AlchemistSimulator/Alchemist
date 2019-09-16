@@ -6,16 +6,10 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-/**
- * 
- */
 package it.unibo.alchemist.model.implementations.environments;
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 
-/**
- * @param <T>
- */
 /**
  * @param <T>
  */
@@ -120,8 +114,8 @@ public final class InfiniteHalls<T> extends LimitedContinuos2D<T> {
      * @return true if the position is allowed
      */
     public boolean allowed(final double xp, final double yp) {
-        final double x = ((xp % s) + s) % s;
-        final double y = ((yp % s) + s) % s;
+        final double x = (xp % s + s) % s;
+        final double y = (yp % s + s) % s;
         return x >= ex || // Right corridor
                 y >= ex || // Upper corridor
                 x >= ci && x <= cf || // Vertical lane
@@ -144,8 +138,8 @@ public final class InfiniteHalls<T> extends LimitedContinuos2D<T> {
         final int sny = (int) (oy / s);
         final double oxm = ox % s;
         final double oym = oy % s;
-        final double x = ((nx % s) + s) % s;
-        final double y = ((ny % s) + s) % s;
+        final double x = (nx % s + s) % s;
+        final double y = (ny % s + s) % s;
         double nxm = nx;
         double nym = ny;
         if (oxm >= ex) {

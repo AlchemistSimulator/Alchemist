@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
- * 
+ *
  */
 @SuppressFBWarnings("FE_FLOATING_POINT")
 public class TensionPresent extends AbstractCondition<Double> {
@@ -28,7 +28,7 @@ public class TensionPresent extends AbstractCondition<Double> {
     private final EnvironmentSupportingDeformableCells<?> env;
 
     /**
-     * 
+     *
      * @param node the node
      * @param env the environment
      */
@@ -52,9 +52,9 @@ public class TensionPresent extends AbstractCondition<Double> {
         final CircularDeformableCell<?> thisNode = (CircularDeformableCell<?>) getNode();
         return env.getNodesWithinRange(thisNode, env.getMaxDiameterAmongCircularDeformableCells()).stream()
                 //.parallel()
-                .flatMap(n -> n instanceof CellWithCircularArea 
-                        ? Stream.of((CellWithCircularArea<?>) n) 
-                                : Stream.empty())
+                .flatMap(n -> n instanceof CellWithCircularArea
+                        ? Stream.of((CellWithCircularArea<?>) n)
+                        : Stream.empty())
                 .mapToDouble(n -> {
                     final double maxRn;
                     final double minRn;
@@ -69,13 +69,13 @@ public class TensionPresent extends AbstractCondition<Double> {
                         minRn = maxRn;
                     }
                     final double distance = env.getDistanceBetweenNodes(n, thisNode);
-                    if (((maxRn + maxRN) - distance) < 0) {
+                    if (maxRn + maxRN - distance < 0) {
                         return 0;
                     } else {
                         if (maxRn == minRn && maxRN == minRN) {
                             return 1;
                         } else {
-                            return ((maxRn + maxRN) - distance) / ((maxRn + maxRN) - (minRn + minRN));
+                            return (maxRn + maxRN - distance) / (maxRn + maxRN - minRn - minRN);
                         }
                     }
                 })
@@ -87,9 +87,9 @@ public class TensionPresent extends AbstractCondition<Double> {
         final CircularDeformableCell<?> thisNode = (CircularDeformableCell<?>) getNode();
         return env.getNodesWithinRange(thisNode, env.getMaxDiameterAmongCircularDeformableCells()).stream()
                 .parallel()
-                .flatMap(n -> n instanceof CellWithCircularArea 
-                        ? Stream.of((CellWithCircularArea<?>) n) 
-                                : Stream.empty())
+                .flatMap(n -> n instanceof CellWithCircularArea
+                        ? Stream.of((CellWithCircularArea<?>) n)
+                        : Stream.empty())
                 .anyMatch(n -> {
                     final double maxDN =  thisNode.getMaxRadius();
                     if (n instanceof CircularDeformableCell) {

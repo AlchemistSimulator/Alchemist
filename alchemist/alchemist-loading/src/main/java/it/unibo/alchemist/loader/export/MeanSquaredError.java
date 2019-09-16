@@ -72,21 +72,19 @@ public final class MeanSquaredError<T> implements Extractor {
         this.pReference = localCorrectValueProperty == null ? "" : localCorrectValueProperty;
         this.pActual = localValueProperty == null ? "" : localValueProperty;
         this.mActual = incarnation.createMolecule(localValueMolecule);
-        final StringBuilder mse = new StringBuilder("MSE(");
-        mse.append(statistics);
-        mse.append('(');
+        final StringBuilder mse = new StringBuilder("MSE(")
+            .append(statistics)
+            .append('(');
         if (!pReference.isEmpty()) {
-            mse.append(pReference);
-            mse.append('@');
+            mse.append(pReference).append('@');
         }
-        mse.append(localCorrectValueMolecule);
-        mse.append("),");
+        mse.append(localCorrectValueMolecule)
+            .append("),");
         if (!pActual.isEmpty()) {
-            mse.append(pActual);
-            mse.append('@');
+            mse.append(pActual).append('@');
         }
-        mse.append(localValueMolecule);
-        mse.append(')');
+        mse.append(localValueMolecule)
+            .append(')');
         name = Collections.unmodifiableList(Lists.newArrayList(mse.toString()));
     }
 
@@ -102,7 +100,7 @@ public final class MeanSquaredError<T> implements Extractor {
                 .mapToDouble(n -> incarnation.getProperty(n, mActual, pActual) - value)
                 .map(v -> v * v)
                 .average()
-                .orElseGet(() -> Double.NaN);
+                .orElse(Double.NaN);
         return new double[]{mse};
     }
 

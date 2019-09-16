@@ -25,5 +25,6 @@ public interface Cluster extends AutoCloseable {
     /**
      * Leave the cluster.
      */
+    @Override
     void close();
 }

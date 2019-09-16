@@ -1,3 +1,4 @@
+import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.exclude
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallArgument.DefaultArgument.arguments
 
 /*
@@ -45,6 +46,10 @@ checkstyle {
 
 pmd {
     sourceSets = sourceSetsToCheck
+}
+
+tasks.withType<Pmd> {
+    exclude("**/biochemistrydsl/**")
 }
 
 spotbugs {

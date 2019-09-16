@@ -55,7 +55,10 @@ public class GPXLoader implements GPSFileLoader {
         try {
             return GPX.read(stream);
         } catch (IOException e) {
-            throw new FileFormatException("Cannot read the GPX file. Please make sure it is a valid GPX file.");
+            final FileFormatException realException = new FileFormatException(
+                    "Cannot read the GPX content. Please make sure it is a valid GPX.");
+            realException.initCause(e);
+            throw realException;
         }
     }
 

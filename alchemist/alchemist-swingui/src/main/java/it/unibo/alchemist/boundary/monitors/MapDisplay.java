@@ -106,11 +106,7 @@ public class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
 
     @Override
     protected void setMouseTooltipTo(final int x, final int y) {
-        try {
-            super.setMouseTooltipTo(x, y);
-        } catch (final IllegalArgumentException e) {
-            // TODO: why is this silenced???
-        }
+        super.setMouseTooltipTo(x, y);
     }
 
     @Override

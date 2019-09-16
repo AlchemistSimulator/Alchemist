@@ -28,6 +28,7 @@
 	<rule ref="category/java/codestyle.xml">
 		<exclude name="AbstractNaming" />
 		<exclude name="AtLeastOneConstructor" />
+		<exclude name="AvoidFinalLocalVariable" />
 		<exclude name="AvoidPrefixingMethodParameters" />
 		<exclude name="AvoidUsingNativeCode" />
 		<exclude name="CallSuperInConstructor" />
@@ -90,6 +91,7 @@
     <rule ref="category/java/multithreading.xml">
         <exclude name="AvoidSynchronizedAtMethodLevel" />
         <exclude name="AvoidUsingVolatile" />
+		<exclude name="DoNotUseThreads" />
         <exclude name="UseConcurrentHashMap" />
     </rule>
     <rule ref="category/java/performance.xml">

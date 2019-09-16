@@ -37,3 +37,7 @@ dependencies {
     testRuntimeOnly(project(":alchemist-incarnation-sapere"))
     testRuntimeOnly(project(":alchemist-incarnation-biochemistry"))
 }
+
+spotbugs {
+    isIgnoreFailures = true
+}

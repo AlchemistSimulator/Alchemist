@@ -92,12 +92,6 @@ public final class DoubleTime implements Time {
     }
 
     @Override
-    @SuppressFBWarnings(justification = "Stateless object.")
-    public DoubleTime clone() {
-        return this;
-    }
-
-    @Override
     @SuppressFBWarnings(justification = "I need exact comparison here")
     public boolean equals(final Object obj) {
         return obj instanceof DoubleTime && ((DoubleTime) obj).toDouble() == t;

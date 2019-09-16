@@ -45,7 +45,7 @@ public class DrawShape implements Effect {
     @ExportForGUI(nameToExport = "Incarnation to use")
     private CollectionWithCurrentElement<String> curIncarnation;
     @ExportForGUI(nameToExport = "Mode")
-    private Mode mode = Mode.FillEllipse;
+    private Mode mode = Mode.FILL_ELLIPSE;
     @ExportForGUI(nameToExport = "R")
     private RangedInteger red = new RangedInteger(0, MAX_COLOUR_VALUE);
     @ExportForGUI(nameToExport = "B")
@@ -69,7 +69,7 @@ public class DrawShape implements Effect {
     @ExportForGUI(nameToExport = "Write the value")
     private boolean writingPropertyValue;
     @ExportForGUI(nameToExport = "Channel to use")
-    private ColorChannel c = ColorChannel.Alpha;
+    private ColorChannel c = ColorChannel.ALPHA;
     @ExportForGUI(nameToExport = "Reverse effect")
     private boolean reverse;
     @ExportForGUI(nameToExport = "Property order of magnitude")
@@ -120,7 +120,7 @@ public class DrawShape implements Effect {
                 L.error("Bug.", e);
             }
         }
-        if (!molFilter || (molecule != null && n.contains(molecule))) {
+        if (!molFilter || molecule != null && n.contains(molecule)) {
             final double ks = (scaleFactor.getVal() - MIN_SCALE) * 2 / (double) (SCALE_DIFF);
             final int sizex = size.getVal();
             final int startx = x - sizex / 2;
@@ -149,16 +149,16 @@ public class DrawShape implements Effect {
             }
             g.setColor(newcolor);
             switch (mode) {
-            case DrawEllipse:
+            case DRAW_ELLIPSE:
                 g.drawOval(startx, starty, sizex, sizey);
                 break;
-            case DrawRectangle:
+            case DRAW_RECTANGLE:
                 g.drawRect(startx, starty, sizex, sizey);
                 break;
-            case FillRectangle:
+            case FILL_RECTANGLE:
                 g.fillRect(startx, starty, sizex, sizey);
                 break;
-            case FillEllipse:
+            case FILL_ELLIPSE:
             default:
                 g.fillOval(startx, starty, sizex, sizey);
             }
@@ -441,7 +441,7 @@ public class DrawShape implements Effect {
         /**
          *
          */
-        DrawEllipse, DrawRectangle, FillEllipse, FillRectangle;
+        DRAW_ELLIPSE, DRAW_RECTANGLE, FILL_ELLIPSE, FILL_RECTANGLE;
 
         @Override
         public String toString() {

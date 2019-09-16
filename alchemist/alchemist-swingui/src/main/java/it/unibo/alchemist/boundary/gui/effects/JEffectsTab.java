@@ -77,8 +77,7 @@ public class JEffectsTab<T> extends JTapeTab implements ItemListener {
         if (displayPaintLinks) {
             final JTapeGroup showGroup = new JTapeGroup(DRAW_LINKS);
             final JTapeSection showLinksSec = new JTapeMainFeature();
-            final JToggleButton paintLinksButton;
-            paintLinksButton = new JToggleButton(DRAW_LINKS);
+            final JToggleButton paintLinksButton = new JToggleButton(DRAW_LINKS);
             paintLinksButton.addActionListener((e) -> main.setDrawLinks(paintLinksButton.isSelected()));
             showLinksSec.registerFeature(paintLinksButton);
             showGroup.registerSection(showLinksSec);

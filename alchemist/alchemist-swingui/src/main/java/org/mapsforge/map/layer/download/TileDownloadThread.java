@@ -30,7 +30,7 @@ class TileDownloadThread extends PausableThread {
     private final Layer layer;
     private final TileCache tileCache;
 
-    TileDownloadThread(
+    TileDownloadThread( // NOPMD inherited class
             final TileCache tileCache,
             final JobQueue<DownloadJob> jobQueue,
             final Layer layer,
@@ -56,7 +56,7 @@ class TileDownloadThread extends PausableThread {
             try {
                 tileCache.put(downloadJob, downloadTile(downloadJob));
             } catch (IOException e) {
-                e.printStackTrace();
+                e.printStackTrace(); // NOPMD
             }
         }
         this.jobQueue.remove(downloadJob);

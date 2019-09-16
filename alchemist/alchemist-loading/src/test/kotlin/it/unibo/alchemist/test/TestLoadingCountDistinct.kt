@@ -9,10 +9,8 @@
 package it.unibo.alchemist.test
 
 import it.unibo.alchemist.loader.export.StatUtil
-import org.apache.commons.math3.stat.descriptive.UnivariateStatistic
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import java.util.Optional
 
 class TestLoadingCountDistinct {
 
@@ -21,9 +19,8 @@ class TestLoadingCountDistinct {
      */
     @Test
     fun `test loading "CountDistinct" and its execution`() {
-        val stat = StatUtil.makeUnivariateStatistic("countdistinct")?.let(Optional<UnivariateStatistic>::get)
-        Assertions.assertNotNull(stat)
-        Assertions.assertEquals(3.0, stat!!.evaluate(doubleArrayOf(1.0, 2.0, 3.0, 1.0)), Double.MIN_VALUE)
+        val stat = StatUtil.makeUnivariateStatistic("countdistinct").get()
+        Assertions.assertEquals(3.0, stat.evaluate(doubleArrayOf(1.0, 2.0, 3.0, 1.0)), Double.MIN_VALUE)
         Assertions.assertEquals(100.0, stat.evaluate((1..100).map(Int::toDouble).toDoubleArray()), 100.0)
         Assertions.assertEquals(100.0, stat.evaluate((1..100).map(Int::toDouble).toDoubleArray(), 50, 1000), 50.0)
     }

@@ -735,7 +735,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                             currentEnv.addNode(n, envEnding);
                         }
                         update(currentEnv, engine.getTime());
-                    } catch (RuntimeException exp) {
+                    } catch (RuntimeException exp) { // NOPMD
                         final String title = "Node cloning error";
                         final String message = "One or more of your nodes do not support cloning, the debug information is:\n"
                                 + LangUtils.stackTraceToString(exp);

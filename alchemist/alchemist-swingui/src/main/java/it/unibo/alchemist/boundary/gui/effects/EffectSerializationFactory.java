@@ -88,7 +88,7 @@ public final class EffectSerializationFactory {
             }.getType());
             fr.close();
             return effects;
-        } catch (Exception e) {
+        } catch (Exception e) { // NOPMD
             fr.close();
             final Object res = FileUtilities.fileToObject(effectFile);
             if (res instanceof Effect) {

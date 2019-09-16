@@ -30,6 +30,7 @@ import it.unibo.alchemist.model.interfaces.Molecule;
 /**
  *
  */
+@SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
 public class TestGenericNode {
 
     private static final int THREADS = 1000;
@@ -38,7 +39,6 @@ public class TestGenericNode {
      * 
      */
     @Test
-    @SuppressFBWarnings(value = "SIC_INNER_SHOULD_BE_STATIC_ANON")
     public void testConcurrentAccess() {
         final Environment<Integer, ?> env = new Continuous2DEnvironment<>();
         @SuppressWarnings("serial")

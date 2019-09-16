@@ -45,6 +45,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -73,6 +74,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.slf4j.Logger;
@@ -157,7 +159,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
      * @param variables loader variables
      */
     public void launch(final String... variables) {
-        Optional<? extends Throwable> exception;
+        final Optional<? extends Throwable> exception;
         if (variables != null && variables.length > 0) {
             /*
              * Batch mode
@@ -259,7 +261,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
                 .map(SimulationConfigImpl::new)
                 .collect(Collectors.toList());
         final SimulationSet set = new SimulationSetImpl(gsc, simConfigs);
-        try (Cluster cluster = new ClusterImpl(Paths.get(this.gridConfigFile.orElseThrow(
+        try (final Cluster cluster = new ClusterImpl(Paths.get(this.gridConfigFile.orElseThrow(
                 () -> new IllegalStateException("No remote configuration file"))))) {
             final Set<RemoteResult> resSet = cluster.getWorkersSet(set.computeComplexity()).distributeSimulations(set);
             for (final RemoteResult res: resSet) {
@@ -283,18 +285,18 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
     }
 
     private void printBenchmarkResult(final Long value, final boolean distributed) {
-        System.out.printf("Total simulation running time (nanos): %d \n", value); // NOPMD: I want to show the result in any case
+        System.out.printf("Total simulation running time (nanos): %d %n", value); // NOPMD: I want to show the result in any case
         if (benchmarkOutputFile.isPresent()) {
             final File f = new File(benchmarkOutputFile.get());
             try {
                 FileUtils.forceMkdirParent(f);
-                try (PrintWriter w = new PrintWriter(new BufferedWriter(new FileWriter(f, true)))) {
+                try (final PrintWriter w = new PrintWriter(new BufferedWriter(new FileWriterWithEncoding(f, StandardCharsets.UTF_8, true)))) {
                     final SimpleDateFormat isoTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US);
                     isoTime.setTimeZone(TimeZone.getTimeZone("UTC"));
                     w.println(isoTime.format(new Date())
                             + (distributed ? " - Distributed exc time:" : " - Serial exc time:") + value.toString());
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 L.error(e.getMessage());
             }
         }

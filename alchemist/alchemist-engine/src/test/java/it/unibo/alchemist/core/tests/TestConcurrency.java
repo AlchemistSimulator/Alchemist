@@ -123,10 +123,9 @@ public class TestConcurrency {
 
     private static class DummyNode extends AbstractNode<Object> {
         private static final long serialVersionUID = 1L;
-        public DummyNode(Environment<?, ?> env) {
+        public DummyNode(final Environment<?, ?> env) {
             super(env);
         }
-
         @Override
         protected Object createT() {
             return "";

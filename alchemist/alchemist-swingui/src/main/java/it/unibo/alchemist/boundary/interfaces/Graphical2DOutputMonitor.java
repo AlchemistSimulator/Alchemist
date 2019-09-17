@@ -12,7 +12,7 @@ import it.unibo.alchemist.model.interfaces.Position;
 /**
  * An output monitor that supports zooming on bidimensional environments.
  *
- * @param <T>
+ * @param <P> position type
  */
 @Deprecated
 public interface Graphical2DOutputMonitor<T, P extends Position<? extends P>> extends GraphicalOutputMonitor<T, P> {

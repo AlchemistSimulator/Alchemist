@@ -35,6 +35,7 @@ import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 import static java.util.Objects.requireNonNull;
 
 /**
+ * @param <P> position type
  */
 @SuppressFBWarnings(value = "EQ_DOESNT_OVERRIDE_EQUALS", justification = "This is desired.")
 public class RunProtelisProgram<P extends Position<P>> implements Action<Object> {

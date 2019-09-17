@@ -18,7 +18,8 @@ import java.io.Serializable;
 /**
  * Given the current target {@link Position}, this strategy interface computes
  * the current {@link Node}'s speed.
- * 
+ *
+ * @param <P> position type
  */
 @FunctionalInterface
 public interface SpeedSelectionStrategy<P extends Position<? extends P>> extends Serializable {

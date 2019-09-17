@@ -33,6 +33,11 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 
+/**
+ * Tests node cloning.
+ *
+ * @param <P> position type
+ */
 @SuppressFBWarnings("UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
 public class TestNodeCloning<P extends Position<P>> {
 

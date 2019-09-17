@@ -44,6 +44,8 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 
 /**
+ *
+ * @param <P> position type
  */
 public final class SAPEREIncarnation<P extends Position<? extends P>> implements Incarnation<List<ILsaMolecule>, P>, Serializable {
 

@@ -59,17 +59,13 @@ public class TestInSimulator {
     }
 
     /**
-     * Test the ability to load Protelist modules that are dynamically added and removed from classpath in a multithread system.
-     * @throws Exception 
+     * Test the ability to load Protelis modules that are dynamically added and removed from classpath in a multithreaded system.
      */
     @Test
     public void testThreadDependentLoadModule() throws Exception {
-        final Callable<Void> c = new Callable<Void>() {
-            @Override
-            public Void call() {
-                testNoVar("18-export.yml");
-                return null;
-            }
+        final Callable<Void> c = () -> {
+            testNoVar("18-export.yml");
+            return null;
         };
         final File d1 = createDependenciesDirectory();
         try {

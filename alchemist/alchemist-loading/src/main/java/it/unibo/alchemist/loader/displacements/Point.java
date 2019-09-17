@@ -14,6 +14,8 @@ import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * A single node in a single point.
+ *
+ * @param <P> position type
  */
 public class Point<P extends Position<? extends P>> implements Displacement<P> {
 

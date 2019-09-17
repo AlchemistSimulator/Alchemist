@@ -14,6 +14,7 @@ import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.view.SingleRunAppBuilder;
+import it.unibo.alchemist.boundary.gui.SingleRunGUI;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -37,11 +38,17 @@ import it.unibo.alchemist.model.interfaces.BenchmarkableEnvironment;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Time;
-import java.awt.*;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.output.FileWriterWithEncoding;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.jooq.lambda.fi.util.function.CheckedConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.awt.GraphicsEnvironment;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -194,7 +201,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
                     sim.run();
                     return sim.getError();
                 }).findAny().orElse(() -> Optional.of(new IllegalStateException("No simulations are executable"))).call();
-            } catch (Exception e) {
+            } catch (Exception e) { // NOPMD: desired behavior
                 localEx = Optional.of(e);
             }
             exception = localEx;
@@ -248,7 +255,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
         try {
             executor.awaitTermination(Integer.MAX_VALUE, TimeUnit.DAYS);
         } catch (InterruptedException e1) {
-            throw new IllegalStateException("The batch execution got interrupted.");
+            throw new IllegalStateException("The batch execution got interrupted.", e1);
         }
         return exception;
     }
@@ -261,7 +268,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
                 .map(SimulationConfigImpl::new)
                 .collect(Collectors.toList());
         final SimulationSet set = new SimulationSetImpl(gsc, simConfigs);
-        try (final Cluster cluster = new ClusterImpl(Paths.get(this.gridConfigFile.orElseThrow(
+        try (Cluster cluster = new ClusterImpl(Paths.get(this.gridConfigFile.orElseThrow(
                 () -> new IllegalStateException("No remote configuration file"))))) {
             final Set<RemoteResult> resSet = cluster.getWorkersSet(set.computeComplexity()).distributeSimulations(set);
             for (final RemoteResult res: resSet) {
@@ -290,7 +297,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
             final File f = new File(benchmarkOutputFile.get());
             try {
                 FileUtils.forceMkdirParent(f);
-                try (final PrintWriter w = new PrintWriter(new BufferedWriter(new FileWriterWithEncoding(f, StandardCharsets.UTF_8, true)))) {
+                try (PrintWriter w = new PrintWriter(new BufferedWriter(new FileWriterWithEncoding(f, StandardCharsets.UTF_8, true)))) {
                     final SimpleDateFormat isoTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US);
                     isoTime.setTimeZone(TimeZone.getTimeZone("UTC"));
                     w.println(isoTime.format(new Date())
@@ -351,13 +358,14 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
      */
     public static class Builder<T, P extends Position2D<P>> {
         private boolean benchmark;
+        private final Loader loader;
+        private final Collection<Supplier<OutputMonitor<T, P>>> outputMonitors = new LinkedList<>();
+        private int closeOperation;
         private Optional<String> effectsFile = Optional.empty();
         private long endStep = Long.MAX_VALUE;
         private Time endTime = DoubleTime.INFINITE_TIME;
         private Optional<String> exportFileRoot = Optional.empty();
         private boolean headless;
-        private final Loader loader;
-        private final Collection<Supplier<OutputMonitor<T, P>>> outputMonitors = new LinkedList<>();
         private int parallelism = Runtime.getRuntime().availableProcessors() + 1;
         private double samplingInt = 1;
         private Optional<String> gridConfigFile = Optional.empty();
@@ -411,7 +419,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
          * @param uri the uri of the effects file
          * @return this builder
          */
-        public Builder<T, P> setEffects(final String uri) {
+        public Builder<T, P> withEffects(final String uri) {
             this.effectsFile = Optional.ofNullable(uri);
             return this;
         }
@@ -424,7 +432,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
          * @param steps the end step
          * @return this builder
          */
-        public Builder<T, P> setEndStep(final long steps) {
+        public Builder<T, P> endingAtStep(final long steps) {
             if (steps < 0) {
                 throw new IllegalArgumentException("The number of steps (" + steps + ") must be zero or positive");
             }
@@ -436,12 +444,12 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
 
          * Sets the time to reach as a number.
          *
-         * @param time the end time
+         * @param t the end time
          * @return this builder
-         * @see #setEndTime(Time)
+         * @see #endingAtTime(Time)
          */
-        public Builder<T, P> setEndTime(final Number time) {
-            final double dt = time.doubleValue();
+        public Builder<T, P> endingAtTime(final Number t) {
+            final double dt = t.doubleValue();
             if (dt < 0) {
                 throw new IllegalArgumentException("The end time (" + dt + ") must be zero or positive");
             }
@@ -450,18 +458,27 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
         }
 
         /**
-         * Sets the time to reach.
-         * <p>
-         * Default is {@link DoubleTime#INFINITE_TIME infinite}.
-         * 
-         * @param time the end time
-         * @return this builder
+         *
+         * @param t
+         *            end time
+         * @return builder
+         */
+        public Builder<T, P> endingAtTime(final Time t) {
+            this.endTime = t;
+            return this;
+        }
+
+        /**
+         *
          * @param closeOp
          *            the close operation
          * @return builder
          */
-        public Builder<T, P> setEndTime(final Time time) {
-            this.endTime = time;
+        public Builder<T, P> withGUICloseOperation(final int closeOp) {
+            if (closeOp < 0 || closeOp > 3) {
+                throw new IllegalArgumentException("The value of close operation is not valid.");
+            }
+            this.closeOperation = closeOp;
             return this;
         }
 
@@ -471,7 +488,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
          * @param headless is headless
          * @return this builder
          */
-        public Builder<T, P> setHeadless(final boolean headless) {
+        public Builder<T, P> headless(final boolean headless) {
             this.headless = headless;
             return this;
         }
@@ -482,7 +499,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
          * @param deltaTime the time interval
          * @return this builder
          */
-        public Builder<T, P> setInterval(final double deltaTime) {
+        public Builder<T, P> samplingEvery(final double deltaTime) {
             if (deltaTime > 0) {
                 this.samplingInt = deltaTime;
             } else {
@@ -497,7 +514,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
          * @param uri the uri of the output file
          * @return this builder
          */
-        public Builder<T, P> setOutputFile(final String uri) {
+        public Builder<T, P> writingOutputTo(final String uri) {
             this.exportFileRoot = Optional.ofNullable(uri);
             return this;
         }
@@ -508,7 +525,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
          * @param threads the threads number
          * @return this builder
          */
-        public Builder<T, P> setParallelism(final int threads) {
+        public Builder<T, P> withParallelism(final int threads) {
             if (threads <= 0) {
                 throw new IllegalArgumentException("Thread number must be >= 0");
             }
@@ -521,7 +538,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
          * @param path Ignite's setting file path
          * @return builder
          */
-        public Builder<T, P> setRemoteConfig(final String path) {
+        public Builder<T, P> withIgniteConfigration(final String path) {
             this.gridConfigFile = Optional.ofNullable(path);
             return this;
         }
@@ -531,7 +548,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
          * @param path Benchmark save file path
          * @return builder
          */
-        public Builder<T, P> setBenchmarkOutputFile(final String path) {
+        public Builder<T, P> writingBenchmarkResultsTo(final String path) {
             this.benchmarkOutputFile = Optional.ofNullable(path);
             return this;
         }

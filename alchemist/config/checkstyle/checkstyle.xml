@@ -105,6 +105,7 @@
 			<property name="scope" value="protected" />
 		</module>
 		<module name="JavadocType">
+			<property name="severity" value="error" />
 			<property name="scope" value="protected" />
 		</module>
 		<module name="JavadocVariable">
@@ -179,7 +180,8 @@
 		<!-- Checks for class design -->
 		<!-- See http://checkstyle.sf.net/config_design.html -->
 		<module name="DesignForExtension" />
-		<module name="FinalClass" />
+		<module name="FinalClass">
+		</module>
 		<module name="HideUtilityClassConstructor" />
 		<module name="InterfaceIsType" />
 		<module name="VisibilityModifier" />

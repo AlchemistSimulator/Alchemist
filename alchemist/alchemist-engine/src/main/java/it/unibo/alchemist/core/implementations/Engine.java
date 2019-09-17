@@ -523,7 +523,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         }
     }
 
-    private class Movement extends Update {
+    private final class Movement extends Update {
 
         private Movement(final Node<T> source) {
             super(source);
@@ -538,7 +538,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
     }
 
-    private class Removal extends Update {
+    private final class Removal extends Update {
 
         private Removal(final Node<T> source) {
             super(source);
@@ -553,7 +553,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         }
     }
 
-    private class Addition extends Update {
+    private final class Addition extends Update {
         private Addition(final Node<T> source) {
             super(source);
         }
@@ -593,7 +593,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         }
     }
 
-    private class NeigborAdded extends NeighborhoodChanged {
+    private final class NeigborAdded extends NeighborhoodChanged {
 
         private NeigborAdded(final Node<T> source, final Node<T> target) {
             super(source, target);
@@ -605,7 +605,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         }
     }
 
-    private class NeigborRemoved extends NeighborhoodChanged {
+    private final class NeigborRemoved extends NeighborhoodChanged {
 
         private NeigborRemoved(final Node<T> source, final Node<T> target) {
             super(source, target);

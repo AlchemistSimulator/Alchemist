@@ -195,26 +195,26 @@ public final class Project {
                  * 2. If it fails, use file access
                  */
                 final AlchemistRunner<?, ?> runner = new AlchemistRunner.Builder<>(loader)
-                        .setEndTime(new DoubleTime(getEndTime()))
-                        .setEffects(getEffectPath())
-                        .setOutputFile(getFolderPath())
-                        .setInterval(getOutput().getSampleInterval())
-                        .setParallelism(getBatch().getThreadCount())
-                        .setHeadless(false)
+                        .endingAtTime(new DoubleTime(getEndTime()))
+                        .withEffects(getEffectPath())
+                        .writingOutputTo(getFolderPath())
+                        .samplingEvery(getOutput().getSampleInterval())
+                        .withParallelism(getBatch().getThreadCount())
+                        .headless(false)
                         .build();
-                final Map<String, Variable<?>> keys = runner.getVariables();
-                final Set<String> selectedVariables = isBatch
-                        ? this.batch.getVariables().entrySet().stream().filter(Entry::getValue).map(Entry::getKey).collect(Collectors.toSet())
-                        : Collections.emptySet();
-                if (keys.keySet().containsAll(selectedVariables)) {
-                    runner.launch(selectedVariables.toArray(new String[selectedVariables.size()]));
-                } else {
-                    final Alert alert = new Alert(AlertType.ERROR);
-                    alert.setTitle(RESOURCES.getString("var_key_error"));
-                    alert.setHeaderText(RESOURCES.getString("var_key_error_header"));
-                    alert.setContentText(RESOURCES.getString("var_key_error_content"));
-                    alert.showAndWait();
-                }
+                    final Map<String, Variable<?>> keys = runner.getVariables();
+                    final Set<String> selectedVariables = isBatch 
+                            ? this.batch.getVariables().entrySet().stream().filter(Entry::getValue).map(Entry::getKey).collect(Collectors.toSet())
+                            : Collections.emptySet();
+                    if (keys.keySet().containsAll(selectedVariables)) {
+                        runner.launch(selectedVariables.toArray(new String[0]));
+                    } else {
+                        final Alert alert = new Alert(AlertType.ERROR);
+                        alert.setTitle(RESOURCES.getString("var_key_error"));
+                        alert.setHeaderText(RESOURCES.getString("var_key_error_header"));
+                        alert.setContentText(RESOURCES.getString("var_key_error_content"));
+                        alert.showAndWait();
+                    }
             }
         }
     }

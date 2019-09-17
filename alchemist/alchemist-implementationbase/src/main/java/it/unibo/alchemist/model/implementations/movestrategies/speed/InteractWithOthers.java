@@ -24,7 +24,8 @@ import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
 /**
  * This strategy slows down nodes depending on how many "interacting" nodes are
  * found in the surroundings. It is an attempt at modeling crowding slow-downs.
- * 
+ *
+ * @param <P> position type
  * @param <T>
  */
 public class InteractWithOthers<T, P extends Position<? extends P>> implements SpeedSelectionStrategy<P> {

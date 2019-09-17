@@ -534,7 +534,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         }
     }
 
-    private class Operation {
+    private final class Operation {
         private final Node<T> destination;
         private final boolean isAdd;
         private final Node<T> origin;

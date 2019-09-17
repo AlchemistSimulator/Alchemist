@@ -17,6 +17,7 @@ import java.util.List;
  * {@code OutputMonitor} that handles the graphical part of the simulation.
  *
  * @param <T> the {@link Concentration} type
+ * @param <P> position type
  */
 @Deprecated
 public interface GraphicalOutputMonitor<T, P extends Position<? extends P>> extends OutputMonitor<T, P> {

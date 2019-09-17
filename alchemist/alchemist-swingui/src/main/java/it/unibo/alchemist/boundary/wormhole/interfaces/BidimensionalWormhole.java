@@ -38,7 +38,8 @@ import java.awt.geom.Dimension2D;
  * the prime meridian and the equator is (0; 0), so I have to set the envOffset
  * to (16; 48) in order to see the "beginning" of the map on the left-bottom
  * corner of the view.<br>
- * 
+ *
+ * @param <P> position type
  */
 public interface BidimensionalWormhole<P extends Position2D<? extends P>> {
 

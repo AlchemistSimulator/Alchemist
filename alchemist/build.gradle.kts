@@ -128,7 +128,6 @@ allprojects {
     }
 
     pmd {
-        setIgnoreFailures(true)
         ruleSets = listOf()
         ruleSetConfig = resources.text.fromFile("${project.rootProject.projectDir}/config/pmd/pmd.xml")
     }

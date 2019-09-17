@@ -170,7 +170,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
         toBeSent = null;
     }
 
-    private static class MessageInfo implements Serializable {
+    private static final class MessageInfo implements Serializable {
         private static final long serialVersionUID = 1L;
         private final double time;
         private final Map<CodePath, Object> payload;

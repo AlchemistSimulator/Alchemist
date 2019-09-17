@@ -26,7 +26,8 @@ import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.f
  * Partial implementation for the interface {@link IWormhole2D}.<br>
  * I am considering the particular case of the view as an entity into the
  * screen-space: the y-axis grows on the bottom side of the screen.
- * 
+ *
+ * @param <P> position type
  */
 public class Wormhole2D<P extends Position2D<? extends P>> extends AbstractWormhole2D<P> {
 

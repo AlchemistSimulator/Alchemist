@@ -1,9 +1,11 @@
 package it.unibo.alchemist.model.implementations.actions
 
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.utils.div
 import it.unibo.alchemist.model.implementations.utils.makePosition
 import it.unibo.alchemist.model.implementations.utils.origin
 import it.unibo.alchemist.model.interfaces.*
+import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
 /**
@@ -16,27 +18,30 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
  * @param pedestrian
  *          the owner of this action.
  */
-class Separation<T, P : Position<P>>(
-    private val env: Environment<T, P>,
+class Separation<T>(
+    private val env: EuclideanPhysics2DEnvironment<T>,
     reaction: Reaction<T>,
-    private val pedestrian: Pedestrian<T>
-) : SteeringActionImpl<T, P>(
+    private val pedestrian: Pedestrian2D<T>
+) : SteeringActionImpl<T, Euclidean2DPosition>(
     env,
     reaction,
     pedestrian,
     TargetSelectionStrategy { env.origin() }
-), GroupSteering<T, P> {
+), GroupSteeringAction<T, Euclidean2DPosition> {
 
-    override fun group(): List<Pedestrian<T>> = pedestrian.influencialPeople().plusElement(pedestrian)
+    override fun group(): List<Pedestrian<T>> = pedestrian.fieldOfView(env)
+            .influentialNodes()
+            .filterIsInstance<Pedestrian<T>>()
+            .plusElement(pedestrian)
 
-    override fun getDestination(current: P, target: P, maxWalk: Double): P = super.getDestination(
-        target,
-        centroid(),
-        maxWalk
-    )
+    override fun getDestination(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double): Euclidean2DPosition =
+        super.getDestination(
+            target,
+            centroid(),
+            maxWalk
+        )
 
-    private fun centroid(): P = with(group()) {
-        val currentPosition = env.getPosition(pedestrian)
+    private fun centroid(): Euclidean2DPosition = with(group()) {
         env.makePosition(map { env.getPosition(it) - currentPosition }.reduce { acc, pos -> acc + pos } / (-size))
     }
 }

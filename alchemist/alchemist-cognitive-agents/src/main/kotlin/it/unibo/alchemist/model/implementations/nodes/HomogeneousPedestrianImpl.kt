@@ -1,13 +1,10 @@
 package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Speed
-import it.unibo.alchemist.model.cognitiveagents.groups.Alone
-import it.unibo.alchemist.model.cognitiveagents.groups.Group
+import it.unibo.alchemist.model.implementations.groups.Alone
 import it.unibo.alchemist.model.implementations.utils.nextDouble
 import it.unibo.alchemist.model.influencesphere.InfluenceSphere
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Pedestrian
-import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.*
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
@@ -19,12 +16,12 @@ import org.apache.commons.math3.random.RandomGenerator
 open class HomogeneousPedestrianImpl<T, P : Position<P>> @JvmOverloads constructor(
     env: Environment<T, P>,
     private val rg: RandomGenerator,
-    group: Group<T>? = null
+    group: PedestrianGroup<T>? = null
 ) : AbstractNode<T>(env), Pedestrian<T> {
 
     override fun createT(): T = TODO()
 
-    override val membershipGroup: Group<T> by lazy {
+    override val membershipGroup: Group<T, Pedestrian<T>> by lazy {
         group?.addMember(this) ?: Alone(this)
     }
 
@@ -44,9 +41,4 @@ open class HomogeneousPedestrianImpl<T, P : Position<P>> @JvmOverloads construct
     protected val senses: MutableList<InfluenceSphere> = mutableListOf()
 
     override fun speed() = rg.nextDouble(walkingSpeed, runningSpeed)
-
-    override fun influencialPeople(): List<Pedestrian<T>> =
-        senses.fold(listOf()) { accumulator, sphere ->
-            accumulator.union(sphere.influentialNodes().filterIsInstance<Pedestrian<T>>()).toList()
-        }
 }

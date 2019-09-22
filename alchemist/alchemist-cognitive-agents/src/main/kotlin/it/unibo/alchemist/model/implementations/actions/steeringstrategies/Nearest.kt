@@ -15,7 +15,7 @@ class Nearest<T, P : Position<P>>(
     env: Environment<T, P>,
     pedestrian: Pedestrian<T>
 ) : Filtered<T, P>(DistanceWeighted<T, P>(env, pedestrian), {
-    partition { it is GroupSteering<T, P> }.let { (groupActions, steerActions) ->
+    partition { it is GroupSteeringAction<T, P> }.let { (groupActions, steerActions) ->
         mutableListOf<SteeringAction<T, P>>().apply {
             groupActions.minBy { pedestrian.targetDistance(env, it) }?.let { add(it) }
             steerActions.minBy { pedestrian.targetDistance(env, it) }?.let { add(it) }

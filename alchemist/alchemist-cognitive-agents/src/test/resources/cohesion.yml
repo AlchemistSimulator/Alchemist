@@ -3,22 +3,22 @@ incarnation: protelis
 environment:
   type: Continuous2DEnvironment
 
-positions:
-  type: EuclideanPosition2D
-
-network-model:
-  type: NoLinks
-
 seeds:
   scenario: 0
   simulation: 1
 
 variables:
   group1: &group1
-    formula: it.unibo.alchemist.model.cognitiveagents.groups.GenericGroup<Any>()
+    formula: it.unibo.alchemist.model.implementations.groups.Friends<Double>()
     language: kotlin
   group2: &group2
-    formula: it.unibo.alchemist.model.cognitiveagents.groups.GenericGroup<Any>()
+    formula: it.unibo.alchemist.model.implementations.groups.Friends<Double>()
+    language: kotlin
+  group3: &group3
+    formula: it.unibo.alchemist.model.implementations.groups.Friends<Double>()
+    language: kotlin
+  group4: &group4
+    formula: it.unibo.alchemist.model.implementations.groups.Friends<Double>()
     language: kotlin
   exit: &exit
     formula: "\"exit\""
@@ -26,22 +26,22 @@ variables:
 layers:
   - type: BidimensionalGaussianLayer
     molecule: *exit
-    parameters: [150.0, 100.0, 5.0, 10.0]
+    parameters: [0.0, 0.0, 1.0, 2.0]
 
 reactions: &behavior
   - time-distribution:
       type: DiracComb
-      parameters: [1.0]
+      parameters: [2.0]
     type: PrioritySteering
     actions:
       - type: Cohesion
-      - type: FollowGradient
+      - type: AvoidFlowField
         parameters: [*exit]
 
 displacements:
   - in:
       type: Circle
-      parameters: [10, 30, 200, 50]
+      parameters: [8, 0, 0, 15]
     nodes:
       type: HomogeneousPedestrian2D
       parameters: [*group1]
@@ -49,16 +49,25 @@ displacements:
       - *behavior
   - in:
       type: Circle
-      parameters: [5, 10, 30, 50]
+      parameters: [4, 0, 0, 15]
     nodes:
       type: HomogeneousPedestrian2D
       parameters: [*group2]
     programs:
       - *behavior
   - in:
-      type: Point
-      parameters: [300, 20]
+      type: Circle
+      parameters: [10, 0, 0, 15]
     nodes:
       type: HomogeneousPedestrian2D
+      parameters: [*group3]
+    programs:
+      - *behavior
+  - in:
+      type: Circle
+      parameters: [2, 0, 0, 15]
+    nodes:
+      type: HomogeneousPedestrian2D
+      parameters: [*group4]
     programs:
       - *behavior

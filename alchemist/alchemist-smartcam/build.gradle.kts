@@ -12,4 +12,5 @@ dependencies {
     implementation(project(":alchemist-incarnation-protelis"))
     implementation(project(":alchemist-influence-sphere"))
     testImplementation(Libs.kotlintest_runner_junit5)
+    testImplementation(project(":alchemist-loading"))
 }

@@ -41,7 +41,7 @@ open class Arrive<T, P : Position<P>>(
             when {
                 this < arrivalTolerance -> 0.0
                 this < decelerationRadius -> Speed.default * this / decelerationRadius
-                else -> Speed.default
+                else -> pedestrian.speed()
             }
         }
     }

@@ -2,6 +2,9 @@ package it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive
 
 import com.uchuhimo.konf.ConfigSpec
 
+/**
+ * A specification of the parameters regarding cognitive characteristics to load from a config file.
+ */
 object CognitiveSpec : ConfigSpec() {
     val sensingOmega by required<Double>()
     val affectiveBiasingOmega by required<Double>()

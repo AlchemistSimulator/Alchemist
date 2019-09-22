@@ -1,0 +1,20 @@
+incarnation: protelis
+
+environment:
+  type: Rectangular2DEnvironment
+  parameters: [400, 400]
+
+displacements:
+  - in:
+      type: Circle
+      parameters: [50, 0, 0, 200]
+    nodes:
+      type: CircleNode
+      parameters: [1]
+    programs:
+      -
+        - time-distribution: 1
+          type: ChemicalReaction
+          actions:
+            - type: LevyWalk
+              parameters: [1.4]

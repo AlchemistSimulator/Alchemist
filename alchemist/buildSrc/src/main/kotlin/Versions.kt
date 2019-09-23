@@ -37,7 +37,7 @@ object Versions {
 
     const val miglayout_swing: String = "5.2" 
 
-    const val ktlint: String = "0.33.0" // available: "0.34.2"
+    const val ktlint: String = "0.34.2" // available: "0.34.2"
 
     const val konf: String = "0.13.3" // available: "0.20.0"
 

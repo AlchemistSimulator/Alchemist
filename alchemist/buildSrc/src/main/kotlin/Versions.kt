@@ -1,4 +1,4 @@
-import kotlin.String
+
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 
@@ -100,7 +100,7 @@ object Versions {
 
     const val org_openjfx: String = "11" // available: "13"
 
-    const val classgraph: String = "4.8.37" // available: "4.8.47"
+    const val classgraph: String = "4.8.47"
 
     const val commons_io: String = "2.6"
 

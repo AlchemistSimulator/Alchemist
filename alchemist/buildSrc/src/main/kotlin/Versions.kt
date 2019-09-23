@@ -9,7 +9,7 @@ object Versions {
 
     const val com_eden_orchidplugin_gradle_plugin: String = "0.17.4" // available: "0.17.4"
 
-    const val caffeine: String = "2.7.0" // available: "2.8.0"
+    const val caffeine: String = "2.8.0" // available: "2.8.0"
 
     const val com_github_cb372: String = "0.9.3" // available: "0.28.0"
 

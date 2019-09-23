@@ -1,4 +1,4 @@
-
+import kotlin.String
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 
@@ -40,7 +40,7 @@ object Versions {
 
     const val io_github_javaeden_orchid: String = "0.17.1" // available: "0.17.4"
 
-    const val kotlintest_runner_junit5: String = "3.3.2" // available: "3.4.2"
+    const val kotlintest_runner_junit5: String = "3.4.2"
 
     const val org_eclipse_emf_ecore: String = "2.12.0" // available: "2.19.0"
 

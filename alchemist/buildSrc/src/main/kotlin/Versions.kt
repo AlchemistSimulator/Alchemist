@@ -27,7 +27,7 @@ object Versions {
 
     const val concurrentlinkedhashmap_lru: String = "1.4.2" 
 
-    const val com_gradle_build_scan_gradle_plugin: String = "2.3" // available: "2.4.2"
+    const val com_gradle_build_scan_gradle_plugin: String = "2.4.2" // available: "2.4.2"
 
     const val com_graphhopper: String = "0.12.0" // available: "0.14.0-pre1"
 

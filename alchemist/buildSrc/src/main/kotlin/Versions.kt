@@ -1,4 +1,4 @@
-
+import kotlin.String
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 
@@ -84,7 +84,7 @@ object Versions {
 
     const val jgrapht_core: String = "1.3.1"
 
-    const val org_protelis: String = "13.0.2" // available: "13.0.3"
+    const val org_protelis: String = "13.0.3"
 
     const val simplelatlng: String = "1.3.1"
 

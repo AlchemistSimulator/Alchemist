@@ -16,13 +16,13 @@ object Versions {
 
     const val org_danilopianini_publish_on_central_gradle_plugin: String = "0.1.1"
 
-    const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String = "8.2.0" // available: "8.2.0"
+    const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String = "8.2.0"
 
     const val com_github_maiflai_scalatest_gradle_plugin: String = "0.25"
 
     const val de_fayard_buildsrcversions_gradle_plugin: String = "0.6.1"
 
-    const val org_jetbrains_kotlin_jvm_gradle_plugin: String = "1.3.50" // available: "1.3.50"
+    const val org_jetbrains_kotlin_jvm_gradle_plugin: String = "1.3.40" // available: "1.3.50"
 
     const val com_eden_orchidplugin_gradle_plugin: String = "0.17.4"
 

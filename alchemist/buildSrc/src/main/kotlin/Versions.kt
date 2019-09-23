@@ -1,4 +1,4 @@
-import kotlin.String
+
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 
@@ -22,7 +22,7 @@ object Versions {
 
     const val de_fayard_buildsrcversions_gradle_plugin: String = "0.6.1"
 
-    const val org_jetbrains_kotlin_jvm_gradle_plugin: String = "1.3.40" // available: "1.3.50"
+    const val org_jetbrains_kotlin_jvm_gradle_plugin: String = "1.3.50"
 
     const val com_eden_orchidplugin_gradle_plugin: String = "0.17.4"
 
@@ -44,7 +44,7 @@ object Versions {
 
     const val org_eclipse_emf_ecore: String = "2.12.0" // available: "2.19.0"
 
-    const val org_jetbrains_kotlin: String = "1.3.40" // available: "1.3.50"
+    const val org_jetbrains_kotlin: String = "1.3.50"
 
     const val mapsforge_map_awt: String = "0.11.0" // available: "0.12.0"
 

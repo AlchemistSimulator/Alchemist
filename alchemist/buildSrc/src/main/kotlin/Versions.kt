@@ -50,7 +50,7 @@ object Versions {
 
     const val org_apache_ignite: String = "2.7.0" // available: "2.7.6"
 
-    const val org_junit_jupiter: String = "5.4.2" // available: "5.5.2"
+    const val org_junit_jupiter: String = "5.5.2"
 
     const val com_github_cb372: String = "0.9.3" // available: "0.28.0"
 

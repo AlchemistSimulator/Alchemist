@@ -74,7 +74,7 @@ object Versions {
 
     const val commons_math3: String = "3.6.1"
 
-    const val groovy_jsr223: String = "2.5.7" // available: "2.5.8"
+    const val groovy_jsr223: String = "2.5.8"
 
     const val java_quadtree: String = "0.1.2"
 

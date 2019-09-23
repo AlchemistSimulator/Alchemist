@@ -74,7 +74,8 @@ jobs:
         - bash prepare_environment.sh
       script:
         - cd "$TRAVIS_BUILD_DIR"/alchemist
-        - ./gradlew fatJar dokka buildDashboard projectReport orchidDeploy -x test --scan --parallel > >(egrep -v '(null:-1:-1)|(t find node by signature)')
+        - ./gradlew dokka > >(egrep -v '(null:-1:-1)|(t find node by signature)') --scan
+        - ./gradlew fatJar buildDashboard projectReport orchidDeploy -x test --scan --parallel 
         - mkdir -p report
         - cp --parent */build/reports build/reports report -R
       after_success:

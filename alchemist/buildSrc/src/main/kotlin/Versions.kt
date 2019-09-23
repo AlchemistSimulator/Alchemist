@@ -40,7 +40,7 @@ object Versions {
 
     const val io_github_javaeden_orchid: String = "0.17.1" // available: "0.17.4"
 
-    const val kotlintest_runner_junit5: String = "3.4.2"
+    const val kotlintest_runner_junit5: String = "3.3.2" // available: "3.4.2"
 
     const val org_eclipse_emf_ecore: String = "2.12.0" // available: "2.19.0"
 
@@ -138,7 +138,7 @@ object Versions {
 
     const val konf: String = "0.13.3" // available: "0.20.0"
 
-    const val jpx: String = "1.4.0" // available: "1.5.3"
+    const val jpx: String = "1.5.3"
 
     /**
      * Current version: "5.4.1"

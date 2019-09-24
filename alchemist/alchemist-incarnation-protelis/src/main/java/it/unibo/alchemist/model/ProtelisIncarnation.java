@@ -296,7 +296,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
      */
     public static final class DummyContext extends AbstractExecutionContext<DummyContext> {
         private static final Semaphore MUTEX = new Semaphore(1);
-        private static final int SEED = -241837578;
+        private static final int SEED = -241_837_578;
         private static final RandomGenerator RNG = new MersenneTwister(SEED);
         private final Node<?> node;
         private DummyContext(final Node<?> node) {

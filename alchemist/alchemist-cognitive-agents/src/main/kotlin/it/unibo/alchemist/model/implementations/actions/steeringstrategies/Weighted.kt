@@ -3,7 +3,12 @@ package it.unibo.alchemist.model.implementations.actions.steeringstrategies
 import it.unibo.alchemist.model.implementations.utils.makePosition
 import it.unibo.alchemist.model.implementations.utils.origin
 import it.unibo.alchemist.model.implementations.utils.times
-import it.unibo.alchemist.model.interfaces.*
+import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.GroupSteeringAction
+import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.SteeringAction
+import it.unibo.alchemist.model.interfaces.SteeringStrategy
 
 /**
  * Steering logic where each steering action is associated to a weight

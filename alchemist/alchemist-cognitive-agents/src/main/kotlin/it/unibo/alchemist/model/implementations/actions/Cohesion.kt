@@ -3,7 +3,11 @@ package it.unibo.alchemist.model.implementations.actions
 import it.unibo.alchemist.model.implementations.utils.div
 import it.unibo.alchemist.model.implementations.utils.makePosition
 import it.unibo.alchemist.model.implementations.utils.origin
-import it.unibo.alchemist.model.interfaces.*
+import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.GroupSteeringAction
+import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
 /**

@@ -2,7 +2,11 @@ package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.geometry.asAngle
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.implementations.utils.*
+import it.unibo.alchemist.model.implementations.utils.direction
+import it.unibo.alchemist.model.implementations.utils.origin
+import it.unibo.alchemist.model.implementations.utils.position
+import it.unibo.alchemist.model.implementations.utils.shuffled
+import it.unibo.alchemist.model.implementations.utils.surrounding
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment

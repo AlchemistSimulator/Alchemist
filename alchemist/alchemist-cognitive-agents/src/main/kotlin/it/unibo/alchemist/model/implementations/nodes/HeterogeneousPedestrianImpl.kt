@@ -1,7 +1,14 @@
 package it.unibo.alchemist.model.implementations.nodes
 
-import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.*
-import it.unibo.alchemist.model.interfaces.*
+import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Age
+import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Compliance
+import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Gender
+import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.HelpAttitude
+import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Speed
+import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.HeterogeneousPedestrian
+import it.unibo.alchemist.model.interfaces.PedestrianGroup
+import it.unibo.alchemist.model.interfaces.Position
 import org.apache.commons.math3.random.RandomGenerator
 
 /**

@@ -6,19 +6,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
-import java.io.IOException;
-import java.util.stream.IntStream;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import com.google.common.collect.Lists;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.actions.TargetWalker;
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
@@ -33,6 +21,16 @@ import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.util.stream.IntStream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
 /**
@@ -43,10 +41,10 @@ public class TestTargetWalker {
     private static final Molecule TRACK = new SimpleMolecule("track");
     private static final Molecule INTERACTING = new SimpleMolecule("interacting");
     private static final int STEPS = 2000;
-    private static final double STARTLAT = 44.13581;
-    private static final double STARTLON = 12.2403;
-    private static final double ENDLAT = 44.143493;
-    private static final double ENDLON = 12.260879;
+    private static final double STARTLAT = 44.135_81;
+    private static final double STARTLON = 12.240_3;
+    private static final double ENDLAT = 44.143_493;
+    private static final double ENDLON = 12.260_879;
     /*
      * Rocca Malatestiana
      */

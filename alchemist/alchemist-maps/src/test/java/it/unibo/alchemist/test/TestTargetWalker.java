@@ -75,7 +75,7 @@ public class TestTargetWalker {
                     return null;
                 }
             };
-            reaction = new Event<Object>(node, new DiracComb<>(1));
+            reaction = new Event<>(node, new DiracComb<>(1));
             reaction.setActions(Lists.newArrayList(new TargetWalker<>(env, node, reaction, TRACK, INTERACTING)));
             node.addReaction(reaction);
             env.addNode(node, STARTPOSITION);

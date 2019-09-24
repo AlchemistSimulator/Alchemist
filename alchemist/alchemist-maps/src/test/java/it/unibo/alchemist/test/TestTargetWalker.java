@@ -76,7 +76,7 @@ public class TestTargetWalker {
                 }
             };
             reaction = new Event<Object>(node, new DiracComb<>(1));
-            reaction.setActions(Lists.newArrayList(new TargetWalker<Object>(env, node, reaction, TRACK, INTERACTING)));
+            reaction.setActions(Lists.newArrayList(new TargetWalker<>(env, node, reaction, TRACK, INTERACTING)));
             node.addReaction(reaction);
             env.addNode(node, STARTPOSITION);
         } catch (IllegalStateException e) {

@@ -37,9 +37,10 @@ env:
     - NO_WIN_DEFENDER=$(curl "${GRAVIS}.disable-windows-defender.sh" --output .no-defender.sh && source .no-defender.sh)
   matrix:
     - *reference_jdk
-    - JDK="adopt-openj9@1.11"
+#    - JDK="adopt-openj9@1.11"
     - JDK="adopt@1.12"
-    - JDK="adopt-openj9@1.12"
+#    - JDK="adopt-openj9@1.12"
+    - JDK="adopt@1.13"
 matrix:
   exclude:
     - os: *reference_os

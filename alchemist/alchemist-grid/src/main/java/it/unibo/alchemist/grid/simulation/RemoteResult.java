@@ -7,8 +7,6 @@
  */
 package it.unibo.alchemist.grid.simulation;
 
-import it.unibo.alchemist.grid.exceptions.RemoteSimulationException;
-
 import java.io.FileNotFoundException;
 
 /**
@@ -19,9 +17,8 @@ public interface RemoteResult {
     /**
      * Save simulation's result in a local file.
      * @param targetFile Local file
-     * @throws FileNotFoundException 
-     * @throws RemoteSimulationException 
-     * 
+     * @throws FileNotFoundException In case file is not found
+     *
      */
     void saveLocally(String targetFile) throws FileNotFoundException;
 }

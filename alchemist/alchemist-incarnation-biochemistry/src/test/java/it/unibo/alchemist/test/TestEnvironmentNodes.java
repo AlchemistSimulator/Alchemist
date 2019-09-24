@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SuppressWarnings("ALL")
 public class TestEnvironmentNodes {
 
-    private static final double PRECISION = 0.000000000001;
+    private static final double PRECISION = 1e-12;
     private static final Incarnation<Double, Euclidean2DPosition> INCARNATION = new BiochemistryIncarnation<>();
 
     /**

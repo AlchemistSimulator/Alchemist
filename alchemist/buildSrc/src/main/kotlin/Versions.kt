@@ -16,7 +16,7 @@ object Versions {
 
     const val org_danilopianini_publish_on_central_gradle_plugin: String = "0.1.1"
 
-    const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String = "8.2.0"
+    const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String = "7.4.0"
 
     const val com_github_maiflai_scalatest_gradle_plugin: String = "0.25"
 

@@ -1,5 +1,5 @@
 reference_jdk: &reference_jdk
-  'JDK="adopt@1.11"'
+  'JDK="adopt@1.11.0"'
 reference_os: &reference_os
   'linux'
 official_repo: &official_repo
@@ -37,10 +37,10 @@ env:
     - NO_WIN_DEFENDER=$(curl "${GRAVIS}.disable-windows-defender.sh" --output .no-defender.sh && source .no-defender.sh)
   matrix:
     - *reference_jdk
-#    - JDK="adopt-openj9@1.11"
-    - JDK="adopt@1.12"
-#    - JDK="adopt-openj9@1.12"
-    - JDK="adopt@1.13"
+    - JDK="adopt-openj9@1.11.0"
+    - JDK="adopt@1.12.0"
+    - JDK="adopt-openj9@1.12.0"
+#    - JDK="adopt@1.13.0"
 matrix:
   exclude:
     - os: *reference_os

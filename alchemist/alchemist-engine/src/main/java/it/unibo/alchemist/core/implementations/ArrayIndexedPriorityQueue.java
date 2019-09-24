@@ -11,15 +11,15 @@
  */
 package it.unibo.alchemist.core.implementations;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import gnu.trove.impl.Constants;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import it.unibo.alchemist.core.interfaces.Scheduler;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class implements the indexed priority queue through an Array.
@@ -53,7 +53,7 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
     private void down(final Reaction<T> r, final int i) {
         int index = i;
         final Time newTime = r.getTau();
-        do {
+        while (true) {
             int minIndex = 2 * index + 1;
             if (minIndex > tree.size() - 1) {
                 return;
@@ -75,7 +75,7 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
             } else {
                 return;
             }
-        } while (true);
+        }
     }
 
     @Override

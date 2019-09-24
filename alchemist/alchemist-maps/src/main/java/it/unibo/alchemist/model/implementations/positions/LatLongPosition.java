@@ -42,7 +42,7 @@ public final class LatLongPosition implements GeoPosition {
     /**
      * Mean Earth radius in meters.
      */
-    public static final double EARTH_MEAN_RADIUS_METERS = 6371009;
+    public static final double EARTH_MEAN_RADIUS_METERS = 6_371_009; // meters
     private static final double MAX_LAT = Math.toRadians(90d); // PI/2
     private static final double MAX_LON = Math.toRadians(180d); // PI
     private static final double MIN_LAT = Math.toRadians(-90d); // -PI/2

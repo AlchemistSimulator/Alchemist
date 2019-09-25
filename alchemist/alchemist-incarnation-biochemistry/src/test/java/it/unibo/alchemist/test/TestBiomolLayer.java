@@ -45,7 +45,7 @@ public class TestBiomolLayer {
     public void testBiomolStepLayer() {
         final Environment<Double, Euclidean2DPosition> env = new BioRect2DEnvironment();
         final Biomolecule b = new Biomolecule("B");
-        final Layer<Double, Euclidean2DPosition> bLayer = new StepLayer<>(10000d, 0d);
+        final Layer<Double, Euclidean2DPosition> bLayer = new StepLayer<>(10_000.0, 0d);
         final CellNode<Euclidean2DPosition> cellNode = new CellNodeImpl<>(env);
         final MersenneTwister rand = new MersenneTwister(0);
         final Molecule a = new Biomolecule("A");

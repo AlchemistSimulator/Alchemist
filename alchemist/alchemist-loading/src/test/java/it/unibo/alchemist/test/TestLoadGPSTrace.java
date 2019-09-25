@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * A series of tests checking that our Yaml Loader is working as expected.
  */
+@SuppressWarnings("PMD.UseUnderscoresInNumericLiterals")
 public class TestLoadGPSTrace {
 
     private static final Map<LatLongPosition, LatLongPosition> START_ARRIVE_POSITION = new HashMap<>();

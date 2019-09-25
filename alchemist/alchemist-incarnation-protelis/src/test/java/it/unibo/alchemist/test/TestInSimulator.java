@@ -123,7 +123,7 @@ public class TestInSimulator {
         final InputStream res = ResourceLoader.getResourceAsStream(resource);
         assertNotNull(res, "Missing test resource " + resource);
         final Environment<T, P> env = new YamlLoader(res).getWith(vars);
-        final Simulation<T, P> sim = new Engine<>(env, 10000);
+        final Simulation<T, P> sim = new Engine<>(env, 10_000);
         sim.play();
 //        if (!java.awt.GraphicsEnvironment.isHeadless()) {
 //            it.unibo.alchemist.boundary.gui.SingleRunGUI.make(sim);

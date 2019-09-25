@@ -432,7 +432,7 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
     private String initDir(final URL mapfile) throws IOException {
         final String code = Hex.encodeHexString(Hashing.sha256().hashBytes(IOUtils.toByteArray(mapfile.openStream())).asBytes());
         final String append = SLASH + code;
-        final String[] prefixes = new String[] { PERSISTENTPATH, System.getProperty("java.io.tmpdir"),
+        final String[] prefixes = { PERSISTENTPATH, System.getProperty("java.io.tmpdir"),
                 System.getProperty("user.dir"), "." };
         String dir = prefixes[0] + append;
         for (int i = 1; (!mkdirsIfNeeded(dir) || directoryIsReadOnly(dir)) && i < prefixes.length; i++) {

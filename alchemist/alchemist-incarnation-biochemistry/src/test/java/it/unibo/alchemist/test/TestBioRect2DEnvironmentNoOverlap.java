@@ -45,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  *
  */
+@SuppressWarnings("PMD.UseUnderscoresInNumericLiterals")
 public class TestBioRect2DEnvironmentNoOverlap {
 
     /**

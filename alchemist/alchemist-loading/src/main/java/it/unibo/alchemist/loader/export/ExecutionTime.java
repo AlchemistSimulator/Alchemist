@@ -21,7 +21,7 @@ import java.util.List;
  */
 public final class ExecutionTime implements Extractor {
 
-    private static final double NANOS_TO_SEC = 1000000000.0;
+    private static final double NANOS_TO_SEC = 1e9;
     private static final List<String> COLNAME;
     static {
         final List<String> cName = new LinkedList<>();

@@ -2,10 +2,10 @@ package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Gender
-import it.unibo.alchemist.model.cognitiveagents.groups.Group
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
+import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
 import org.apache.commons.math3.random.RandomGenerator
 
@@ -29,7 +29,7 @@ class CognitivePedestrian2D<T> @JvmOverloads constructor(
     age: Age,
     gender: Gender,
     danger: Molecule? = null,
-    group: Group<T>? = null
+    group: PedestrianGroup<T>? = null
 ) : CognitivePedestrianImpl<T, Euclidean2DPosition>(env, rg, age, gender, danger, group), Pedestrian2D<T> {
 
     @JvmOverloads constructor(
@@ -38,7 +38,7 @@ class CognitivePedestrian2D<T> @JvmOverloads constructor(
         age: String,
         gender: String,
         danger: Molecule? = null,
-        group: Group<T>? = null
+        group: PedestrianGroup<T>? = null
     ) : this(env, rg, Age.fromString(age), Gender.fromString(gender), danger, group)
 
     @JvmOverloads constructor(
@@ -47,13 +47,13 @@ class CognitivePedestrian2D<T> @JvmOverloads constructor(
         age: Int,
         gender: String,
         danger: Molecule? = null,
-        group: Group<T>? = null
+        group: PedestrianGroup<T>? = null
     ) : this(env, rg, Age.fromYears(age), Gender.fromString(gender), danger, group)
 
     private val shape = shape(env)
 
     init {
-        senses += sensorySpheres(env)
+        senses += fieldOfView(env)
     }
 
     /**

@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class TestDeformableCell {
 
-    private static final double PRECISION = 0.0000000000001;
+    private static final double PRECISION = 1e-13;
     private static final double XMIN = -10;
     private static final double XMAX = 10;
     private static final double YMIN = -10;

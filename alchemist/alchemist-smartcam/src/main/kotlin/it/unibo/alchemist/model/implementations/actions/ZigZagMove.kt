@@ -1,6 +1,5 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.geometry.asAngle
 import it.unibo.alchemist.model.implementations.movestrategies.ZigZagRandomTarget
 import it.unibo.alchemist.model.implementations.movestrategies.speed.GloballyConstantSpeed
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
@@ -10,8 +9,6 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy
 import org.apache.commons.math3.random.RandomGenerator
-import kotlin.math.cos
-import kotlin.math.sin
 
 /**
  * Moves toward a randomly chosen direction for up to distance meters, then chooses another one and so on.
@@ -30,7 +27,7 @@ class ZigZagMove<T>(
     private val rng: RandomGenerator,
     private val distance: Double,
     private val speed: Double
-) : AbstractConfigurableMoveNode<T, Euclidean2DPosition>(
+) : AbstractConfigurableMoveNodeWithAccurateEuclideanDestination<T>(
     env,
     node,
     RoutingStrategy { p1, p2 -> PolygonalChain<Euclidean2DPosition>(listOf(p1, p2)) },
@@ -39,13 +36,4 @@ class ZigZagMove<T>(
 ) {
     override fun cloneAction(n: Node<T>, r: Reaction<T>) =
         ZigZagMove(n, r, env, rng, distance, speed)
-
-    override fun getDestination(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double): Euclidean2DPosition {
-        val vector = target - current
-        if (current.getDistanceTo(target) < maxWalk) {
-            return vector
-        }
-        val angle = vector.asAngle()
-        return environment.makePosition(maxWalk * cos(angle), maxWalk * sin(angle))
-    }
 }

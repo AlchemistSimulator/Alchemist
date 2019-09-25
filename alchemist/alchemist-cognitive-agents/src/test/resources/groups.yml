@@ -15,10 +15,10 @@ seeds:
 
 variables:
   group1: &group1
-    formula: it.unibo.alchemist.model.cognitiveagents.groups.GenericGroup<Any>()
+    formula: it.unibo.alchemist.model.implementations.groups.Friends<Any>()
     language: kotlin
   group2: &group2
-    formula: it.unibo.alchemist.model.cognitiveagents.groups.GenericGroup<Any>()
+    formula: it.unibo.alchemist.model.implementations.groups.Friends<Any>()
     language: kotlin
 
 displacements:

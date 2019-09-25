@@ -3,7 +3,12 @@ package it.unibo.alchemist.model.implementations.actions.steeringstrategies
 import it.unibo.alchemist.model.implementations.utils.makePosition
 import it.unibo.alchemist.model.implementations.utils.origin
 import it.unibo.alchemist.model.implementations.utils.times
-import it.unibo.alchemist.model.interfaces.*
+import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.GroupSteeringAction
+import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.SteeringAction
+import it.unibo.alchemist.model.interfaces.SteeringStrategy
 
 /**
  * Steering logic where each steering action is associated to a weight
@@ -24,11 +29,11 @@ open class Weighted<T, P : Position<P>>(
 ) : SteeringStrategy<T, P> {
 
     override fun computeNextPosition(actions: List<SteeringAction<T, P>>): P =
-        actions.partition { it is GroupSteering<T, P> }.let { (groupActions, steerActions) ->
+        actions.partition { it is GroupSteeringAction<T, P> }.let { (groupActions, steerActions) ->
             groupActions.calculatePosition() + steerActions.calculatePosition()
         }
 
-    override fun computeTarget(actions: List<SteeringAction<T, P>>): P = with(env.getPosition(pedestrian)) {
+    override fun computeTarget(actions: List<SteeringAction<T, P>>): P = with(env.getPosition(pedestrian) ?: env.origin()) {
         actions.map { it.target() }.minBy { it.getDistanceTo(this) } ?: this
     }
 

@@ -37,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @param <P> position type
  */
 @SuppressFBWarnings("UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
+@SuppressWarnings("PMD.UseUnderscoresInNumericLiterals")
 public class TestNodeCloning<P extends Position<P>> {
 
     private static final Molecule SOURCEMOL = new SimpleMolecule("source");

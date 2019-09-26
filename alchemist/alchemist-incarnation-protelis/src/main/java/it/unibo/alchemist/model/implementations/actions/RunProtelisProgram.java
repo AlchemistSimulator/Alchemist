@@ -8,22 +8,12 @@
 
 package it.unibo.alchemist.model.implementations.actions;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-
-import it.unibo.alchemist.model.interfaces.Dependency;
-import org.apache.commons.math3.random.RandomGenerator;
-import org.danilopianini.util.ImmutableListSet;
-import org.danilopianini.util.ListSet;
-import org.protelis.lang.ProtelisLoader;
-import org.protelis.vm.ExecutionContext;
-import org.protelis.vm.ProtelisVM;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Context;
+import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -31,6 +21,15 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.protelis.AlchemistExecutionContext;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.danilopianini.util.ImmutableListSet;
+import org.danilopianini.util.ListSet;
+import org.protelis.lang.ProtelisLoader;
+import org.protelis.vm.ExecutionContext;
+import org.protelis.vm.ProtelisVM;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
 import static java.util.Objects.requireNonNull;
 
@@ -38,6 +37,7 @@ import static java.util.Objects.requireNonNull;
  * @param <P> position type
  */
 @SuppressFBWarnings(value = "EQ_DOESNT_OVERRIDE_EQUALS", justification = "This is desired.")
+// TODO: make final when ProtelisProgram is dropped.
 public class RunProtelisProgram<P extends Position<P>> implements Action<Object> {
 
     private static final long serialVersionUID = 2207914086772704332L;
@@ -82,7 +82,7 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
      *            the reaction
      * @param rand
      *            the random engine
-     * @param prog
+     * @param program
      *            the Protelis program
      * @throws SecurityException
      *             if you are not authorized to load required classes
@@ -92,8 +92,8 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
             final ProtelisNode n,
             final Reaction<Object> r,
             final RandomGenerator rand,
-            final String prog) throws SecurityException {
-        this(env, n, r, rand, prog, Double.NaN);
+            final String program) throws SecurityException {
+        this(env, n, r, rand, program, Double.NaN);
     }
 
     /**
@@ -105,7 +105,7 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
      *            the reaction
      * @param rand
      *            the random engine
-     * @param prog
+     * @param program
      *            the Protelis program
      * @param retentionTime
      *            how long the messages will be stored. Pass {@link Double#NaN}
@@ -118,10 +118,10 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
             final ProtelisNode n,
             final Reaction<Object> r,
             final RandomGenerator rand,
-            final String prog,
+            final String program,
             final double retentionTime) throws SecurityException {
-        this(env, n, r, rand, ProtelisLoader.parse(prog), retentionTime);
-        originalProgram = prog;
+        this(env, n, r, rand, ProtelisLoader.parse(program), retentionTime);
+        originalProgram = program;
     }
 
     /**
@@ -132,7 +132,7 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
     }
 
     @Override
-    public RunProtelisProgram<P> cloneAction(final Node<Object> n, final Reaction<Object> r) {
+    public final RunProtelisProgram<P> cloneAction(final Node<Object> n, final Reaction<Object> r) {
         if (n instanceof ProtelisNode) {
             try {
                 return new RunProtelisProgram<>(getEnvironment(), (ProtelisNode) n, r, getRandomGenerator(), originalProgram, getRetentionTime());
@@ -144,7 +144,7 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
     }
 
     @Override
-    public boolean equals(final Object other) {
+    public final boolean equals(final Object other) {
         if (other == this) {
             return true;
         }
@@ -155,14 +155,14 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
     }
 
     @Override
-    public void execute() {
+    public final void execute() {
         vm.runCycle();
         node.setConcentration(name, vm.getCurrentValue());
         computationalCycleComplete = true;
     }
 
     @Override
-    public Context getContext() {
+    public final Context getContext() {
         /*
          * A Protelis program never writes in other nodes
          */
@@ -177,7 +177,7 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
     }
 
     @Override
-    public ListSet<? extends Dependency> getOutboundDependencies() {
+    public final ListSet<? extends Dependency> getOutboundDependencies() {
         return ImmutableListSet.of(Dependency.EVERY_MOLECULE);
     }
 
@@ -203,7 +203,7 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return name.hashCode();
     }
 
@@ -228,6 +228,9 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
         vm = new ProtelisVM(program, new AlchemistExecutionContext<>(environment, node, reaction, random, netmgr));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return name + "@" + node.getId();

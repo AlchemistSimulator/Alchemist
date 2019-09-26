@@ -7,6 +7,8 @@
  */
 package it.unibo.alchemist.boundary.monitors;
 
+import com.google.common.collect.ImmutableList;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.gui.effects.Effect;
 import it.unibo.alchemist.boundary.interfaces.Graphical2DOutputMonitor;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
@@ -31,7 +33,23 @@ import it.unibo.alchemist.model.interfaces.Obstacle2D;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
-import java.awt.*;
+import org.apache.commons.math3.util.Pair;
+import org.danilopianini.lang.LangUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.AbstractAction;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.event.MouseInputListener;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -739,7 +757,6 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                         final String title = "Node cloning error";
                         final String message = "One or more of your nodes do not support cloning, the debug information is:\n"
                                 + LangUtils.stackTraceToString(exp);
-                        // TODO: switch to JavaFX alerts
                         JOptionPane.showMessageDialog(Generic2DDisplay.this, message, title, JOptionPane.ERROR_MESSAGE);
                     }
                 });

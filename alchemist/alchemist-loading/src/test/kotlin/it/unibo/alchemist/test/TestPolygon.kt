@@ -17,22 +17,23 @@ import it.unibo.alchemist.model.implementations.environments.Continuous2DEnviron
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment
 import org.apache.commons.math3.random.MersenneTwister
 
+const val deploymentSize = 10_000
 class TestPolygon : StringSpec({
     "test deployment on 2D space" {
         val environment = Continuous2DEnvironment<Any>()
         val randomGenerator = MersenneTwister(0)
-        val displacement = Polygon(environment, randomGenerator, 10_000, points)
-        displacement.stream().count() shouldBe 10_000
-        val displacementPoints = Polygon(environment, randomGenerator, 10_000, pointsPair)
-        displacementPoints.stream().count() shouldBe 10_000
+        val displacement = Polygon(environment, randomGenerator, deploymentSize, points)
+        displacement.stream().count() shouldBe deploymentSize
+        val displacementPoints = Polygon(environment, randomGenerator, deploymentSize, pointsPair)
+        displacementPoints.stream().count() shouldBe deploymentSize
     }
     "test deployment on Venice lagoon" {
-        val environment = OSMEnvironment<Object>("venezia.pbf")
+        val environment = OSMEnvironment<Any>("venezia.pbf")
         val randomGenerator = MersenneTwister(0)
-        val displacement = Polygon(environment, randomGenerator, 10_000, points)
-        displacement.stream().count() shouldBe 10_000
-        val displacementPoints = Polygon(environment, randomGenerator, 10_000, pointsPair)
-        displacementPoints.stream().count() shouldBe 10_000
+        val displacement = Polygon(environment, randomGenerator, deploymentSize, points)
+        displacement.stream().count() shouldBe deploymentSize
+        val displacementPoints = Polygon(environment, randomGenerator, deploymentSize, pointsPair)
+        displacementPoints.stream().count() shouldBe deploymentSize
     }
 }) {
     companion object {

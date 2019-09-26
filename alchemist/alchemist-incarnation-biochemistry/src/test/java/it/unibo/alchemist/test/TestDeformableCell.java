@@ -7,21 +7,11 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-
-import org.apache.commons.math3.random.MersenneTwister;
-import org.apache.commons.math3.random.RandomGenerator;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import it.unibo.alchemist.model.BiochemistryIncarnation;
+// CHECKSTYLE: UnusedImportsCheck OFF
 import it.unibo.alchemist.model.implementations.actions.CellTensionPolarization;
 import it.unibo.alchemist.model.implementations.conditions.TensionPresent;
+// CHECKSTYLE: UnusedImportsCheck ON
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironmentNoOverlap;
 import it.unibo.alchemist.model.implementations.nodes.CircularDeformableCellImpl;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
@@ -31,6 +21,16 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentSupportingDeformableCells;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
+import org.apache.commons.math3.random.MersenneTwister;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * 

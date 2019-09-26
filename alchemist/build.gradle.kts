@@ -8,7 +8,6 @@
 import com.github.spotbugs.SpotBugsTask
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.exclude
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
@@ -90,14 +89,25 @@ allprojects {
         runtimeOnly(Libs.logback_classic)
     }
 
+    configurations.all {
+        resolutionStrategy.eachDependency {
+            if (requested.name == "svgSalamander") {
+                useTarget("guru.nidi.com.kitfox:svgSalamander:1.1.2")
+                because("mapsforge version is not on central")
+            }
+        }
+    }
+
     tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"
+        options.compilerArgs = options.compilerArgs + listOf("-Werror")
     }
 
     tasks.withType<KotlinCompile> {
         kotlinOptions {
             jvmTarget = "1.8"
-            freeCompilerArgs = listOf("-Xjvm-default=enable")
+            freeCompilerArgs = listOf("-Xjvm-default=enable") // Enable default methods in Kt interfaces
+            allWarningsAsErrors = true
         }
     }
 
@@ -141,6 +151,8 @@ allprojects {
             outputFormat = "javadoc"
         }
     }
+
+    tasks.getByName("javadocJar").dependsOn(tasks.withType<DokkaTask>())
 
     publishing.publications {
         withType<MavenPublication> {
@@ -281,7 +293,7 @@ allprojects {
     }
 }
 
-subprojects.forEach { subproject -> rootProject.evaluationDependsOn(subproject.path) }
+evaluationDependsOnChildren()
 
 repositories {
     mavenCentral()
@@ -306,6 +318,7 @@ dependencies {
     orchidRuntime(Libs.orchidsearch)
     orchidRuntime(Libs.orchidsyntaxhighlighter)
     orchidRuntime(Libs.orchidwiki)
+    orchidRuntime(Libs.orchidgithub)
 }
 
 tasks.withType<DokkaTask> {
@@ -383,7 +396,7 @@ tasks.register(orchidSeedConfiguration) {
                 services:
                   publications:
                     stages:
-                      - type: ghPages
+                      - type: githubPages
                         username: 'DanySK'
                         commitUsername: Danilo Pianini
                         commitEmail: danilo.pianini@gmail.com

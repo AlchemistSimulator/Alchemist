@@ -7,23 +7,22 @@
  */
 package it.unibo.alchemist.test;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.kaikikm.threadresloader.ResourceLoader;
-
 import it.unibo.alchemist.grid.config.GeneralSimulationConfig;
 import it.unibo.alchemist.grid.config.LocalGeneralSimulationConfig;
 import it.unibo.alchemist.grid.util.WorkingDirectory;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.YamlLoader;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.kaikikm.threadresloader.ResourceLoader;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  */
@@ -32,7 +31,8 @@ public class TestConfig {
 
 
     /**
-     * 
+     * @throws URISyntaxException indicates failure
+     * @throws IOException if an I/O error occurs
      */
     @Test
     public void testGeneralSimulationConfig() throws URISyntaxException, IOException {

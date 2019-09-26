@@ -8,7 +8,6 @@
 package it.unibo.alchemist.boundary.wormhole.interfaces;
 
 import java.awt.Point;
-import java.awt.geom.Point2D;
 
 /**
  * Base type for any pointing device: it provides services to analyze the
@@ -19,7 +18,7 @@ public interface PointerSpeed {
     /**
      * Gets the pointer's current position.
      * 
-     * @return a {@link Point2D} instance representing the pointer's current
+     * @return a {@link Point} instance representing the pointer's current
      *         position
      */
     Point getCurrentPosition();
@@ -27,7 +26,7 @@ public interface PointerSpeed {
     /**
      * Gets the pointer's old position.
      * 
-     * @return a {@link Point2D} instance representing the pointer's old
+     * @return a {@link Point} instance representing the pointer's old
      *         position
      */
     Point getOldPosition();
@@ -35,7 +34,7 @@ public interface PointerSpeed {
     /**
      * Gets the vector [current position - old position].
      * 
-     * @return a {@link Point2D} instance whose coordinates are [cP.x - oP.x;
+     * @return a {@link Point} instance whose coordinates are [cP.x - oP.x;
      *         cP.y - cP.y]
      */
     Point getVariation();
@@ -45,7 +44,7 @@ public interface PointerSpeed {
      * one.
      * 
      * @param point
-     *            is the {@link Point2D} instance representing the pointer's
+     *            is the {@link Point} instance representing the pointer's
      *            current position
      */
     void setCurrentPosition(Point point);

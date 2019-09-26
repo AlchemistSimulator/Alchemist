@@ -7,8 +7,6 @@
  */
 package it.unibo.alchemist.model.implementations.conditions;
 
-import java.util.stream.Stream;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.AlchemistUtil;
 import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
@@ -18,11 +16,13 @@ import it.unibo.alchemist.model.interfaces.EnvironmentSupportingDeformableCells;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
+import java.util.stream.Stream;
+
 /**
  *
  */
 @SuppressFBWarnings("FE_FLOATING_POINT")
-public class TensionPresent extends AbstractCondition<Double> {
+public final class TensionPresent extends AbstractCondition<Double> {
 
     private static final long serialVersionUID = 1L;
     private final EnvironmentSupportingDeformableCells<?> env;

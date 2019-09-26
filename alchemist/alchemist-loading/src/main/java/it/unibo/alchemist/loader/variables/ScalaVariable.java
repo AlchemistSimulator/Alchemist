@@ -15,7 +15,7 @@ import it.unibo.alchemist.scala.ScalaInterpreter;
  *
  * @param <R> return type
  */
-public class ScalaVariable<R> extends ScriptVariable<R> {
+public final class ScalaVariable<R> extends ScriptVariable<R> {
 
     private static final long serialVersionUID = 1L;
 

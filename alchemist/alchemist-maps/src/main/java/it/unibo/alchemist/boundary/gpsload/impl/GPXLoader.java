@@ -31,7 +31,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * Class that reads GPS tracks from gpx files. 
  */
-public class GPXLoader implements GPSFileLoader {
+public final class GPXLoader implements GPSFileLoader {
 
     private static final ImmutableSet<String> EXTENSION = ImmutableSet.of("gpx");
 
@@ -90,7 +90,7 @@ public class GPXLoader implements GPSFileLoader {
                         /*
                          * Points without time stamp
                          */
-                        .orElseThrow(() ->new IllegalStateException("Track " + track + " contains at least a waypoint without timestamp"))
+                        .orElseThrow(() -> new IllegalStateException("Track " + track + " contains at least a waypoint without timestamp"))
                         .toInstant().toEpochMilli() / 1000.0)))
             .collect(Collectors.toList());
         return new GPSTraceImpl(points);

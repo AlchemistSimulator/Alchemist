@@ -128,6 +128,8 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
      * @see .repaint
      */
     protected fun drawBackground(graphicsContext: GraphicsContext, environment: Environment<T, P>): () -> Unit {
+        // TODO environment.dimensions is called to avoid the warning, because -werror registers it as an error
+        environment.dimensions
         return { graphicsContext.clearRect(0.0, 0.0, width, height) }
     }
 

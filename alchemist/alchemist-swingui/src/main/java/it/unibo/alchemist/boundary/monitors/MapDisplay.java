@@ -7,16 +7,12 @@
  */
 package it.unibo.alchemist.boundary.monitors;
 
+import it.unibo.alchemist.boundary.util.InitMapsForge;
 import it.unibo.alchemist.boundary.wormhole.implementation.LinearZoomManager;
 import it.unibo.alchemist.boundary.wormhole.implementation.MapWormhole;
-import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.Time;
-import java.awt.*;
-import java.io.File;
-import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.mapsforge.core.graphics.GraphicFactory;
 import org.mapsforge.map.awt.graphics.AwtGraphicFactory;
 import org.mapsforge.map.awt.view.MapView;
@@ -29,13 +25,20 @@ import org.mapsforge.map.layer.download.tilesource.OpenStreetMapMapnik;
 import org.mapsforge.map.layer.download.tilesource.TileSource;
 import org.mapsforge.map.model.Model;
 
+import java.awt.BorderLayout;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.io.File;
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * Graphical 2D display of an environments that uses a map.
  *
  * @param <T> the {@link Concentration} type
  */
 @Deprecated
-public class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
+public final class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
     private static final long serialVersionUID = 8593507198560560646L;
     private static final GraphicFactory GRAPHIC_FACTORY = AwtGraphicFactory.INSTANCE;
     private static final int IN_MEMORY_TILES = 256;
@@ -43,6 +46,9 @@ public class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
     private static final AtomicInteger IDGEN = new AtomicInteger();
     private final MapView mapView = new MapView();
 
+    static {
+        InitMapsForge.initAgent();
+    }
     /**
      * Default constructor.
      */

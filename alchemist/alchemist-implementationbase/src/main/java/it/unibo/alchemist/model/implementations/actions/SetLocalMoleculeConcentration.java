@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  *
  * @param <T>
  */
-public class SetLocalMoleculeConcentration<T> extends AbstractActionOnSingleMolecule<T> {
+public final class SetLocalMoleculeConcentration<T> extends AbstractActionOnSingleMolecule<T> {
 
     private static final long serialVersionUID = -197253027556270645L;
     private final T val;

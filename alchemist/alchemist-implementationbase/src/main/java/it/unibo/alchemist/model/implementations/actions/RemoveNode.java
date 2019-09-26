@@ -35,15 +35,18 @@ public class RemoveNode<T> extends AbstractAction<T> {
     }
 
     @Override
-    public Context getContext() {
+    public final Context getContext() {
         return Context.LOCAL;
     }
 
     @Override
-    public void execute() {
+    public final void execute() {
         env.removeNode(getNode());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return "Remove node " + getNode().getId();
@@ -56,9 +59,12 @@ public class RemoveNode<T> extends AbstractAction<T> {
         return env;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public RemoveNode<T> cloneAction(final Node<T> n, final Reaction<T> r) {
-        return new RemoveNode<T>(getEnvironment(), n);
+        return new RemoveNode<>(getEnvironment(), n);
     }
 
 }

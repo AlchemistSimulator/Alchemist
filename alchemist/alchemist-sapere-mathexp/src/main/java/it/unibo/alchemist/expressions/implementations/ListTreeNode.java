@@ -7,6 +7,11 @@
  */
 package it.unibo.alchemist.expressions.implementations;
 
+import it.unibo.alchemist.expressions.interfaces.ITreeNode;
+import org.danilopianini.lang.HashString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -14,16 +19,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.danilopianini.lang.HashString;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import it.unibo.alchemist.expressions.interfaces.ITreeNode;
-
 
 /**
  */
-public class ListTreeNode extends ATreeNode<Set<ITreeNode<?>>> implements Iterable<ITreeNode<?>> {
+public final class ListTreeNode extends ATreeNode<Set<ITreeNode<?>>> implements Iterable<ITreeNode<?>> {
 
     private static final long serialVersionUID = -5912038362750826726L;
     private static final CompareElements CMP = new CompareElements();

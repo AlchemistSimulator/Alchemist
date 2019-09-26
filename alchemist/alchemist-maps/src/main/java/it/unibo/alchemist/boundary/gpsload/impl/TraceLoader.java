@@ -40,7 +40,7 @@ import java.util.stream.Stream;
 /**
  * 
  */
-public class TraceLoader implements Iterable<GPSTrace> {
+public final class TraceLoader implements Iterable<GPSTrace> {
 
     private static final Map<String, GPSFileLoader> LOADER = ClassPathScanner
             .subTypesOf(GPSFileLoader.class, "it.unibo.alchemist")

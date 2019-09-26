@@ -22,7 +22,7 @@ import java.util.List;
  * each node. This is why N molecules are instanced if there are N neighbours.
  * 
  */
-public class LsaAllNeighborsAction extends LsaRandomNeighborAction {
+public final class LsaAllNeighborsAction extends LsaRandomNeighborAction {
 
     private static final long serialVersionUID = -4798752202640197182L;
 

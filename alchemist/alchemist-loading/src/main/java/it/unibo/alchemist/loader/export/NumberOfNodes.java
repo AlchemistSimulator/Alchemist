@@ -7,17 +7,17 @@
  */
 package it.unibo.alchemist.loader.export;
 
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Reaction;
+
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Reaction;
-
 /**
  * Logs the number of nodes in the scenario.
  */
-public class NumberOfNodes implements Extractor {
+public final class NumberOfNodes implements Extractor {
 
     private static final List<String> COLNAME;
     static {

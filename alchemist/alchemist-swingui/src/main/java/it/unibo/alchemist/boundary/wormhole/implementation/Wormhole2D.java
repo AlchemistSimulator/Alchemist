@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
 
 /**
- * Partial implementation for the interface {@link IWormhole2D}.<br>
+ * Partial implementation for the class {@link BidimensionalWormhole}.<br>
  * I am considering the particular case of the view as an entity into the
  * screen-space: the y-axis grows on the bottom side of the screen.
  *
@@ -67,10 +67,13 @@ public class Wormhole2D<P extends Position2D<? extends P>> extends AbstractWormh
         );
     }
     @Override
-    public Dimension2D getViewSize() {
+    public final Dimension2D getViewSize() {
         return new Dimension2DDouble(getView().getWidth(), getView().getHeight());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void optimalZoom() {
         if (getEnvRatio() <= getViewRatio()) {
@@ -80,6 +83,9 @@ public class Wormhole2D<P extends Position2D<? extends P>> extends AbstractWormh
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected double getViewRatio() {
         return Math.max(1, getView().getWidth()) / Math.max(1, getView().getHeight());

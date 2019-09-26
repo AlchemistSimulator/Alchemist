@@ -7,20 +7,20 @@
  */
 package it.unibo.alchemist.model.implementations.conditions;
 
-import java.util.Objects;
-
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
+import java.util.Objects;
+
 /**
  * A condition that is valid iff a molecule has exactly the desired concentration.
  * 
  * @param <T> concentration type
  */
-public class MoleculeHasConcentration<T> extends AbstractCondition<T> {
+public final class MoleculeHasConcentration<T> extends AbstractCondition<T> {
 
     private static final long serialVersionUID = 1L;
     private final Molecule mol;

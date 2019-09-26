@@ -108,7 +108,7 @@ object Libs {
     const val commons_cli: String = "commons-cli:commons-cli:" + Versions.commons_cli
 
     /**
-     * http://commons.apache.org/proper/commons-codec/ */
+     * https://commons.apache.org/proper/commons-codec/ */
     const val commons_codec: String = "commons-codec:commons-codec:" + Versions.commons_codec
 
     /**
@@ -130,6 +130,11 @@ object Libs {
     /**
      * https://javaeden.github.io/Orchid/latest/core/ */
     const val orchideditorial: String = "io.github.javaeden.orchid:OrchidEditorial:" +
+            Versions.io_github_javaeden_orchid
+
+    /**
+     * https://javaeden.github.io/Orchid/latest/core/ */
+    const val orchidgithub: String = "io.github.javaeden.orchid:OrchidGithub:" +
             Versions.io_github_javaeden_orchid
 
     /**
@@ -189,7 +194,7 @@ object Libs {
     const val antlr4: String = "org.antlr:antlr4:" + Versions.org_antlr
 
     /**
-     * http://commons.apache.org/proper/commons-bcel */
+     * https://commons.apache.org/proper/commons-bcel */
     const val bcel: String = "org.apache.bcel:bcel:" + Versions.bcel
 
     /**
@@ -220,7 +225,8 @@ object Libs {
 
     /**
      * http://www.controlsfx.org/ */
-    const val controlsfx: String = "org.controlsfx:controlsfx:" + Versions.controlsfx
+    const val org_controlsfx_controlsfx: String = "org.controlsfx:controlsfx:" +
+            Versions.org_controlsfx_controlsfx
 
     const val org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin: String =
             "org.danilopianini.git-sensitive-semantic-versioning:org.danilopianini.git-sensitive-semantic-versioning.gradle.plugin:" +
@@ -314,6 +320,34 @@ object Libs {
             Versions.mapsforge_map_awt
 
     /**
+     * https://openjdk.java.net/projects/openjfx/ */
+    const val javafx_base: String = "org.openjfx:javafx-base:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/ */
+    const val javafx_controls: String = "org.openjfx:javafx-controls:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/ */
+    const val javafx_fxml: String = "org.openjfx:javafx-fxml:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/ */
+    const val javafx_graphics: String = "org.openjfx:javafx-graphics:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/ */
+    const val javafx_media: String = "org.openjfx:javafx-media:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/ */
+    const val javafx_swing: String = "org.openjfx:javafx-swing:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/ */
+    const val javafx_web: String = "org.openjfx:javafx-web:" + Versions.org_openjfx
+
+    /**
      * http://parboiled.org */
     const val parboiled_java: String = "org.parboiled:parboiled-java:" + Versions.parboiled_java
 
@@ -335,11 +369,11 @@ object Libs {
     const val reflections: String = "org.reflections:reflections:" + Versions.reflections
 
     /**
-     * http://www.scala-lang.org/ */
+     * https://www.scala-lang.org/ */
     const val scala_compiler: String = "org.scala-lang:scala-compiler:" + Versions.org_scala_lang
 
     /**
-     * http://www.scala-lang.org/ */
+     * https://www.scala-lang.org/ */
     const val scala_library: String = "org.scala-lang:scala-library:" + Versions.org_scala_lang
 
     /**

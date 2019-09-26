@@ -7,18 +7,8 @@
  */
 package it.unibo.alchemist.boundary.gui;
 
-import java.awt.event.ActionListener;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.swing.AbstractButton;
-
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Sets;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.gui.tape.JTapeFeatureStack;
 import it.unibo.alchemist.boundary.gui.tape.JTapeGroup;
@@ -27,6 +17,13 @@ import it.unibo.alchemist.boundary.gui.tape.JTapeSection;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
+
+import java.awt.event.ActionListener;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * This class maintains multiple control panels for controlling a simulation,
@@ -59,7 +56,7 @@ public final class SimControlPanel extends JTapeGroup {
                 toRemove.add(sim);
             }
         }
-        for (final Simulation<?,?> sim : toRemove) {
+        for (final Simulation<?, ?> sim : toRemove) {
             SIMCONTROLMAP.remove(sim);
         }
     }
@@ -182,7 +179,7 @@ public final class SimControlPanel extends JTapeGroup {
     }
 
     /**
-     * See {@link AbstractButton#addActionListener(ActionListener)}.
+     * See {@link SimControlButton#addActionListener(ActionListener)}.
      * 
      * @param l
      *            the {@link ActionListener} to add

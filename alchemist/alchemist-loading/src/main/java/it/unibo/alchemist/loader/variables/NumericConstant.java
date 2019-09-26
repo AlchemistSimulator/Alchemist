@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * A numeric constant.
  */
-public class NumericConstant implements DependentVariable<Number> {
+public final class NumericConstant implements DependentVariable<Number> {
 
     private static final long serialVersionUID = 1L;
     private final Number internal;

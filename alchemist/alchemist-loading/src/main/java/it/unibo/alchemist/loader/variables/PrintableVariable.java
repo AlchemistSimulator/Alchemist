@@ -19,6 +19,9 @@ public abstract class PrintableVariable<V extends Serializable> implements Varia
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return '[' + stream().map(Object::toString).collect(Collectors.joining(",")) + ']';

@@ -56,6 +56,11 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
     protected final Environment<T, ?> getEnvironment() {
         return env;
     }
+
+    /**
+     * Override if desired behavior differs. Default is returning the sum of the neighbor's propensities
+     * @return the sum of the neighbor's propensities
+     */
     @Override
     public double getPropensityContribution() {
         // the condition's propensity contribution is computed as the sum of the neighbor's propensities

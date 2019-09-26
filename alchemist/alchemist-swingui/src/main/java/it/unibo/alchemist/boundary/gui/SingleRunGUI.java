@@ -18,7 +18,17 @@ import it.unibo.alchemist.boundary.monitors.TimeStepMonitor;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Position2D;
-import java.awt.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -52,6 +62,7 @@ public final class SingleRunGUI {
      *
      * @param sim the simulation for this GUI
      * @param <T> concentration type
+     * @param <P> position type
      */
     public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim) {
         make(sim, (File) null, JFrame.EXIT_ON_CLOSE);
@@ -60,7 +71,8 @@ public final class SingleRunGUI {
     /**
      * @param sim            the simulation for this GUI
      * @param closeOperation the type of close operation for this GUI
-     * @param <T>            concentration type
+     * @param <T>            concentration type         concentration type
+     * @param <P>            position type
      */
     public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final int closeOperation) {
         make(sim, (File) null, closeOperation);
@@ -75,6 +87,8 @@ public final class SingleRunGUI {
      *            the effects file
      * @param <T>
      *            concentration type
+     * @param <P>
+     *            position type
      */
     public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final String effectsFile) {
         make(sim, new File(effectsFile), JFrame.EXIT_ON_CLOSE);
@@ -91,6 +105,8 @@ public final class SingleRunGUI {
      *            the type of close operation for this GUI
      * @param <T>
      *            concentration type
+     * @param <P>
+     *            position type
      */
     public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final String effectsFile, final int closeOperation) {
         make(sim, new File(effectsFile), closeOperation);
@@ -112,6 +128,7 @@ public final class SingleRunGUI {
      * @param effectsFile    the effects file
      * @param closeOperation the type of close operation for this GUI
      * @param <T>            concentration type
+     * @param <P>            position type
      */
     public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final File effectsFile, final int closeOperation) {
         @SuppressWarnings("unchecked") // Actually safe: MapEnvironment uses the same P type of MapDisplay

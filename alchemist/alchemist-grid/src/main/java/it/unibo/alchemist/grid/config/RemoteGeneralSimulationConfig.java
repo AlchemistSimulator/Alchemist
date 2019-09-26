@@ -7,20 +7,20 @@
  */
 package it.unibo.alchemist.grid.config;
 
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.cache.CacheMode;
 import org.apache.ignite.configuration.CacheConfiguration;
 
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Remote {@link GeneralSimulationConfig} that stores big informations in Ignite's cache.
  *
  */
-public class RemoteGeneralSimulationConfig extends LightInfoGeneralSimulationConfig implements AutoCloseable {
+public final class RemoteGeneralSimulationConfig extends LightInfoGeneralSimulationConfig implements AutoCloseable {
 
     /**
      * 

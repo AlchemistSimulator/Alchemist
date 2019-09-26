@@ -16,7 +16,7 @@ import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager;
  * Zoom = base ^ (amount of slides / normalization value).
  *
  */
-public class ExponentialZoomManager extends AbstractSlideInputManager implements ZoomManager {
+public final class ExponentialZoomManager extends AbstractSlideInputManager implements ZoomManager {
     /**
      * DEF_BASE = "DEFault BASE".<br>
      * It is the default base for the exponential function. It is meant to be

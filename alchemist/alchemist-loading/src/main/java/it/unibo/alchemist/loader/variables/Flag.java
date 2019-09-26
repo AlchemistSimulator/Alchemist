@@ -14,7 +14,7 @@ import java.util.stream.Stream;
  * variable just outputs 0 and 1. This is equivalent to a {@link LinearVariable}
  * with two samples ranging from 0 to 1.
  */
-public class Flag extends PrintableVariable<Boolean> {
+public final class Flag extends PrintableVariable<Boolean> {
 
     private static final long serialVersionUID = 1L;
     private final boolean defVal;

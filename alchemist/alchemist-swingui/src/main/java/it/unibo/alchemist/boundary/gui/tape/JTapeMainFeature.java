@@ -9,18 +9,17 @@ package it.unibo.alchemist.boundary.gui.tape;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import javax.swing.SpringLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-
-import javax.swing.SpringLayout;
 
 /**
  *
  */
 @Deprecated
 @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")
-public class JTapeMainFeature extends JTapeSection {
+public final class JTapeMainFeature extends JTapeSection {
 
     /**
      * 

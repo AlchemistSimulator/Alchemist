@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @param <P> position type
  */
-public class SAPEREChemotaxis<P extends Position<? extends P>> extends SAPERENeighborAgent<P> {
+public final class SAPEREChemotaxis<P extends Position<? extends P>> extends SAPERENeighborAgent<P> {
 
     private static final long serialVersionUID = -4845100315774422690L;
     private final int o;

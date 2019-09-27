@@ -24,19 +24,22 @@ dependencies {
     implementation(Libs.org_controlsfx_controlsfx)
     implementation(Libs.jiconfont_javafx)
     implementation(Libs.jiconfont_google_material_design_icons)
-    implementation(Libs.javafx_controls)
-    implementation(Libs.javafx_fxml)
-    implementation(Libs.javafx_web)
-    implementation(Libs.javafx_media)
-    implementation(Libs.javafx_swing)
-    implementation(Libs.javafx_graphics)
-    implementation(Libs.javafx_base)
     implementation(Libs.tornadofx)
     implementation(Libs.reflections)
     // TODO: deprecated, must be removed
     implementation(Libs.javalib_java7) {
         exclude(group = "org.ow2.asm")
         exclude(module = "findbugs")
+    }
+
+    val javaFXVersion = "11"  
+    for (platform in listOf("linux", "mac", "win")) {  
+        api("org.openjfx:javafx-base:$javaFXVersion:$platform")  
+        api("org.openjfx:javafx-controls:$javaFXVersion:$platform")  
+        api("org.openjfx:javafx-fxml:$javaFXVersion:$platform")  
+        api("org.openjfx:javafx-graphics:$javaFXVersion:$platform")  
+        api("org.openjfx:javafx-media:$javaFXVersion:$platform")  
+        api("org.openjfx:javafx-swing:$javaFXVersion:$platform")  
     }
 
     testRuntimeOnly(project(":alchemist-incarnation-protelis"))

@@ -61,9 +61,6 @@ allprojects {
 
     gitSemVer {
         version = computeGitSemVer()
-        if (!JavaVersion.current().isJava11Compatible) {
-            project.version = project.version.toString() + "-j8"
-        }
     }
 
     repositories {

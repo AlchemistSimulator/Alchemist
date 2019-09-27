@@ -17,14 +17,14 @@ reactions: &behavior
   - time-distribution:
       type: DiracComb
       parameters: [1.0]
-    type: it.unibo.alchemist.behaviours.CognitiveBehaviour
+    type: CognitiveBehaviour
 
 displacements:
   - in:
       type: Circle
       parameters: [50, 0, 0, 20]
     nodes:
-      type: it.unibo.alchemist.agents.cognitive.CognitivePedestrian2D
+      type: CognitivePedestrian2D
       parameters: ["adult", "male"]
     programs:
       - *behavior
@@ -32,7 +32,7 @@ displacements:
       type: Circle
       parameters: [50, 0, 0, 20]
     nodes:
-      type: it.unibo.alchemist.agents.cognitive.CognitivePedestrian2D
+      type: CognitivePedestrian2D
       parameters: ["adult", "female"]
     programs:
       - *behavior

@@ -18,4 +18,4 @@ displacements:
       type: Circle
       parameters: [100, 0, 0, 20]
     nodes:
-      type: it.unibo.alchemist.agents.homogeneous.HomogeneousPedestrian2D
+      type: HomogeneousPedestrian2D

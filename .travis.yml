@@ -6,6 +6,8 @@ language: java
 jdk:
   - openjdk11
   - openjdk12
+# To be enabled when the official version is out
+#  - openjdk13
 git:
   depth: false
 before_cache:
@@ -33,6 +35,7 @@ matrix:
   include:
     - jdk: openjdk11
       env: PUBLISH="true"
+      os: linux
   exclude:
     - jdk: openjdk11
       env: PUBLISH="false"

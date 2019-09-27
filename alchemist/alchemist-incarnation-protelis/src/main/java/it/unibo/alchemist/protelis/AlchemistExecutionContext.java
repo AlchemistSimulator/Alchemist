@@ -21,8 +21,6 @@ import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import java8.util.function.Function;
-import java8.util.function.Functions;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.jetbrains.annotations.NotNull;
@@ -37,6 +35,7 @@ import org.protelis.vm.impl.AbstractExecutionContext;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 /**
  * @param <P> position type
@@ -192,7 +191,7 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
      */
     @Override
     public Field nbrDelay() {
-        return buildField(Functions.identity(), getDeltaTime());
+        return buildField(Function.identity(), getDeltaTime());
     }
 
     @Override

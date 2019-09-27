@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":alchemist-time"))
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-influence-sphere"))
+    implementation(Libs.konf)
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-loading"))
     testImplementation(project(":alchemist-incarnation-protelis"))

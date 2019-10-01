@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.core.implementations;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.interfaces.DependencyGraph;
@@ -28,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,11 +41,18 @@ import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BooleanSupplier;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import static it.unibo.alchemist.core.interfaces.Status.PAUSED;
+import static it.unibo.alchemist.core.interfaces.Status.RUNNING;
+import static it.unibo.alchemist.core.interfaces.Status.TERMINATED;
 
 /**
  * This class implements a simulation. It offers a wide number of static
@@ -59,7 +68,8 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     private static final Logger L = LoggerFactory.getLogger(Engine.class);
     private static final double NANOS_TO_SEC = 1000000000.0;
     private final Lock statusLock = new ReentrantLock();
-    private final Condition statusCondition = statusLock.newCondition();
+    private final ImmutableMap<Status, SynchBox> statusLocks = Arrays.stream(Status.values())
+            .collect(ImmutableMap.toImmutableMap(Function.identity(), it -> new SynchBox()));
     private final BlockingQueue<CheckedRunnable> commands = new LinkedBlockingQueue<>();
     private final Queue<Update> afterExecutionUpdates = new ArrayDeque<>();
     private final Environment<T, P> env;
@@ -143,12 +153,20 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         }
     }
 
-    private int compareStatuses(final Status o) {
-        if ((status == Status.RUNNING || status == Status.PAUSED) && (o == Status.RUNNING || o == Status.PAUSED)) {
-            return 0;
-        } else {
-            return status.compareTo(o);
+    private <R> R doOnStatus(final Supplier<R> fun) {
+        try {
+            statusLock.lock();
+            return fun.get();
+        } finally {
+            statusLock.unlock();
         }
+    }
+
+    private void doOnStatus(final Runnable fun) {
+        doOnStatus(() -> {
+            fun.run();
+            return 0;
+        });
     }
 
     private void doStep() {
@@ -185,7 +203,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
             updateMonitors();
         }
         if (env.isTerminated()) {
-            newStatus(Status.TERMINATED);
+            newStatus(TERMINATED);
             L.info("Termination condition reached.");
         }
         currentStep++;
@@ -258,13 +276,13 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     @Override
-    public synchronized void goToStep(final long step) {
-        runUntil(() -> getStep() < step);
+    public void goToStep(final long step) {
+        pauseWhen(() -> getStep() >= step);
     }
 
     @Override
-    public synchronized void goToTime(final Time t) {
-        runUntil(() -> getTime().compareTo(t) < 0);
+    public void goToTime(final Time t) {
+        pauseWhen(() -> getTime().compareTo(t) >= 0);
     }
 
     private void idleProcessSingleCommand() throws Throwable {
@@ -293,20 +311,13 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         afterExecutionUpdates.add(new NeigborRemoved(node, n));
     }
 
-    private void newStatus(final Status s) {
-        if (this.compareStatuses(s) > 0) {
-            L.error("Attempt to enter in an illegal status: " + s);
-        } else {
-            schedule(() -> {
-                statusLock.lock();
-                try {
-                    this.status = s;
-                    statusCondition.signalAll();
-                } finally {
-                    statusLock.unlock();
-                }
-            });
-        }
+    private void newStatus(final Status next) {
+        schedule(() -> doOnStatus(() -> {
+            if (next.isReachableFrom(status)) {
+                status = next;
+                statusLocks.get(next).releaseAll();
+            }
+        }));
     }
 
     @Override
@@ -328,13 +339,13 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     @Override
-    public synchronized void pause() {
-        newStatus(Status.PAUSED);
+    public void pause() {
+        newStatus(PAUSED);
     }
 
     @Override
-    public synchronized void play() {
-        newStatus(Status.RUNNING);
+    public void play() {
+        newStatus(RUNNING);
     }
 
     private Stream<Reaction<T>> reactionsToUpdateAfterExecution() {
@@ -389,17 +400,15 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                 while (status.equals(Status.READY)) {
                     idleProcessSingleCommand();
                 }
-                while (status != Status.TERMINATED
-                        && currentStep < finalStep
-                        && currentTime.compareTo(finalTime) < 0) {
+                while (status != TERMINATED && currentStep < finalStep && currentTime.compareTo(finalTime) < 0) {
                     while (!commands.isEmpty()) {
                         processCommand(commands.poll());
                         updateMonitors();
                     }
-                    if (status.equals(Status.RUNNING)) {
+                    if (status.equals(RUNNING)) {
                         doStep();
                     }
-                    while (status.equals(Status.PAUSED)) {
+                    while (status.equals(PAUSED)) {
                         idleProcessSingleCommand();
                     }
                 }
@@ -407,7 +416,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                 error = Optional.of(e);
                 L.error("The simulation engine crashed.", e);
             } finally {
-                status = Status.TERMINATED;
+                status = TERMINATED;
                 L.trace("Thread {} execution time: {}", currentThread, (System.nanoTime() - startExecutionTime) / NANOS_TO_SEC);
                 commands.clear();
                 monitorLock.read();
@@ -419,19 +428,27 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         }
     }
 
-    private void runUntil(final BooleanSupplier condition) {
-        play();
-        schedule(() -> {
-            while (status == Status.RUNNING && condition.getAsBoolean()) {
-                doStep();
+    private void pauseWhen(final BooleanSupplier condition) {
+        addOutputMonitor(new OutputMonitor<T, P>() {
+            @Override
+            public void finished(final Environment<T, P> env, final Time time, final long step) {
+            }
+            @Override
+            public void initialized(final Environment<T, P> env) {
+                if (condition.getAsBoolean()) {
+                    pause();
+                }
+            }
+            @Override
+            public void stepDone(final Environment<T, P> env, final Reaction<T> r, final Time time, final long step) {
+                initialized(env);
             }
         });
-        pause();
     }
 
     @Override
-    public synchronized void schedule(final CheckedRunnable r) {
-        if (getStatus().equals(Status.TERMINATED)) {
+    public void schedule(final CheckedRunnable r) {
+        if (getStatus().equals(TERMINATED)) {
             throw new IllegalStateException("This simulation is terminated and can not get resumed.");
         }
         commands.add(r);
@@ -444,8 +461,8 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     @Override
-    public synchronized void terminate() {
-        newStatus(Status.TERMINATED);
+    public void terminate() {
+        newStatus(TERMINATED);
     }
 
     @Override
@@ -462,37 +479,8 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     @Override
-    public Status waitFor(final Status s, final long timeout, final TimeUnit tu) {
-        if (this.compareStatuses(s) > 0) {
-            L.error("Attempt to wait for an illegal status: " + s + " (current state is: " + getStatus() + ")");
-        } else {
-            statusLock.lock();
-            try {
-                if (!getStatus().equals(s)) {
-                    boolean exit = false;
-                    while (!exit) {
-                        try {
-                            if (timeout > 0) {
-                                final boolean isOnTime = statusCondition.await(timeout, tu);
-                                if (!isOnTime || getStatus().equals(s)) {
-                                    exit = true;
-                                }
-                            } else {
-                                statusCondition.awaitUninterruptibly();
-                                if (getStatus().equals(s)) {
-                                    exit = true;
-                                }
-                            }
-                        } catch (InterruptedException e) {
-                            L.info("A wild spurious wakeup appears! Go, Catch Block! (wild 8-bit music rushes in background)");
-                        }
-                    }
-                }
-            } finally {
-                statusLock.unlock();
-            }
-        }
-        return getStatus();
+    public Status waitFor(final Status next, final long timeout, final TimeUnit tu) {
+        return statusLocks.get(next).waitFor(next, timeout, tu);
     }
 
     // CHECKSTYLE: FinalClassCheck OFF
@@ -617,4 +605,37 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
             dg.removeNeighbor(getSource(), getTarget());
         }
     }
+
+    private final class SynchBox {
+        private final AtomicInteger queueLength = new AtomicInteger();
+        private final Condition statusReached = statusLock.newCondition();
+        private final Condition allReleased = statusLock.newCondition();
+        public Status waitFor(final Status next, final long timeout, final TimeUnit tu) {
+            return doOnStatus(() -> {
+                boolean notTimedOut = true;
+                while (notTimedOut && next != status && next.isReachableFrom(status)) {
+                    try {
+                        queueLength.getAndIncrement();
+                        notTimedOut = statusReached.await(timeout, tu);
+                        queueLength.getAndDecrement();
+                    } catch (InterruptedException e) {
+                        L.info("Spurious wakeup?", e);
+                    }
+                }
+                if (queueLength.get() == 0) {
+                    allReleased.signal();
+                }
+                return status;
+            });
+        }
+        public void releaseAll() {
+            doOnStatus(() -> {
+                while (queueLength.get() != 0) {
+                    statusReached.signalAll();
+                    allReleased.awaitUninterruptibly();
+                }
+            });
+        }
+    }
+
 }

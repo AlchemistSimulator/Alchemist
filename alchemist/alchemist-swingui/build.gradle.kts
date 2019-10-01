@@ -21,7 +21,7 @@ dependencies {
     implementation(Libs.commons_lang3)
     implementation(Libs.javafxsvg)
     implementation(Libs.javalib_java7)
-    implementation(Libs.org_controlsfx_controlsfx)
+    implementation(Libs.controlsfx)
     implementation(Libs.jiconfont_javafx)
     implementation(Libs.jiconfont_google_material_design_icons)
     implementation(Libs.tornadofx)

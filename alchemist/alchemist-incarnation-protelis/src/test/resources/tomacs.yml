@@ -22,16 +22,16 @@ variables:
   bp:
     formula: 0.5
   retain: &retain
-    formula: 1 / $minfreq
+    formula: 1 / minfreq
   fc:
-    formula: "$time ? ($small ? $sp : $bp) : 0" 
+    formula: "time ? (small ? sp : bp) : 0"
   minfreq: &minfreq
-    formula: "$freq * (1 - $fc)"
+    formula: "freq * (1 - fc)"
   maxfreq: &maxfreq
-    formula: "$freq * (1 + $fc)"
+    formula: "freq * (1 + fc)"
   speed: &speed
     language: scala
-    formula: "if ($time) 0 else 1"
+    formula: "if (time.asInstanceOf[Boolean]) 0 else 1"
   seed: &seed
     min: 0
     max: 199

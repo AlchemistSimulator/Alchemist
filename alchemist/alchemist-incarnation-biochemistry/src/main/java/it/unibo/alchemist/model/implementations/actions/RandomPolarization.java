@@ -36,7 +36,7 @@ public final class RandomPolarization<P extends Position2D<P>> extends AbstractR
         super(node, random);
         this.environment = environment;
         if (!(node instanceof CellNode)) {
-            throw  new UnsupportedOperationException("Polarization can happen only in cells.");
+            throw new UnsupportedOperationException("Polarization can happen only in cells.");
         }
     }
 
@@ -76,7 +76,8 @@ public final class RandomPolarization<P extends Position2D<P>> extends AbstractR
         return new RandomPolarization<>(environment, AlchemistUtil.cast(new TypeToken<CellNode<P>>() { }, n), getRandomGenerator());
     }
 
-    @Override 
+    @Override
+    @SuppressWarnings("unchecked")
     public CellNode<P> getNode()  {
         return (CellNode<P>) super.getNode();
     }

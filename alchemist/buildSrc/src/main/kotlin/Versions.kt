@@ -19,7 +19,7 @@ object Versions {
 
     const val jiconfont_google_material_design_icons: String = "2.2.0.1" // available: "2.2.0.2"
 
-    const val jiconfont_javafx: String = "1.0.0" 
+    const val jiconfont_javafx: String = "1.0.0"
 
     const val com_github_maiflai_scalatest_gradle_plugin: String = "0.25" 
 
@@ -29,7 +29,7 @@ object Versions {
 
     const val gson: String = "2.8.5" 
 
-    const val guava: String = "27.1-jre" // available: "28.1-jre"
+    const val guava: String = "28.0-jre"
 
     const val concurrentlinkedhashmap_lru: String = "1.4.2" 
 
@@ -45,7 +45,9 @@ object Versions {
 
     const val miglayout_swing: String = "5.2" 
 
-    const val ktlint: String = "0.32.0" // available: "0.34.2"
+    const val ktlint: String = "0.33.0" 
+
+    const val konf: String = "0.13.3"
 
     const val commons_cli: String = "1.4" 
 
@@ -81,9 +83,9 @@ object Versions {
 
     const val org_apache_ignite: String = "2.7.0" // available: "2.7.6"
 
-    const val groovy: String = "2.5.7" // available: "2.5.8"
+    const val groovy_jsr223: String = "2.5.7"
 
-    const val org_controlsfx_controlsfx: String = "11.0.0" 
+    const val controlsfx: String = "11.0.0"
 
     const val org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin: String = "0.2.2" 
 
@@ -103,11 +105,13 @@ object Versions {
 
     const val thread_inheritable_resource_loader: String = "0.3.0" 
 
+    const val org_eclipse_emf_ecore: String = "2.12.0" // available: "2.18.0"
+
     const val org_jetbrains_dokka_gradle_plugin: String = "0.9.17" // available: "0.9.18"
 
     const val org_jetbrains_kotlin_jvm_gradle_plugin: String = "1.3.50" 
 
-    const val org_jetbrains_kotlin: String = "1.3.50" 
+    const val org_jetbrains_kotlin: String = "1.3.50"
 
     const val annotations: String = "17.0.0" 
 
@@ -127,9 +131,9 @@ object Versions {
 
     const val pegdown: String = "1.6.0" 
 
-    const val org_protelis: String = "12.1.0" // available: "13.0.3"
+    const val org_protelis: String = "13.0.3"
 
-    const val reflections: String = "0.9.11" 
+    const val reflections: String = "0.9.11"
 
     const val org_scala_lang: String = "2.12.2" // available: "2.13.1"
 

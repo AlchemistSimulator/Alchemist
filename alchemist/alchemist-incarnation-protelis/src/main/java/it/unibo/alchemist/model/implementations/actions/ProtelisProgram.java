@@ -45,7 +45,7 @@ public class ProtelisProgram<P extends Position<P>> extends RunProtelisProgram<P
      * @throws SecurityException
      *             if you are not authorized to load required classes
      */
-    public ProtelisProgram(final Environment<Object, P> env, final ProtelisNode n, final Reaction<Object> r, final RandomGenerator rand,
+    public ProtelisProgram(final Environment<Object, P> env, final ProtelisNode<P> n, final Reaction<Object> r, final RandomGenerator rand,
             final String prog) throws SecurityException {
         super(env, n, r, rand, prog, r.getRate());
         LOGGER.warn("{} is deprecated and should be replaced by {}", getClass(), RunProtelisProgram.class);

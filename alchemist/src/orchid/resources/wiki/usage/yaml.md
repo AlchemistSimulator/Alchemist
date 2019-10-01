@@ -164,6 +164,134 @@ If the simulation is not executed as batch, then the default value is used
 
 ### Dependent variables
 
+Some variables are combination of free parameters.
+Let's suppose that we want to deploy on a circle, but for some reason (e.g. because it is required by the constructor of some action) we need to compute and have available radius and perimeter.
+We don't need to control both of them: the perimeter can be computed.
+Alchemist provides support for performing computation over variables.
+Let's first define our radius.
+We want it to be a free variable, ranging geometrically from 0.1 to 10 in nine steps, and defaulting to 1.
+```yaml
+variables:
+  radius: &radius
+    type: GeometricVariable
+    parameters: [1, 0.1, 10, 9]
+```
+Now we want to compute the diameter.
+We can do so by using the `formula` syntax:
+```yaml
+variables:
+  radius: &radius
+    type: GeometricVariable
+    parameters: [1, 0.1, 10, 9]
+  diameter: &diam
+    formula: Math.PI * 2 * radius
+```
+How does it work?
+Alchemist feeds the formula String to an interpreter and takes the result of the interpretation.
+By default, [Groovy](https://groovy-lang.org/) is used as language to interpret the formula, but other languages can be used.
+
+Variables can be defined in any order.
+Alchemist figures out the dependencies automatically, as far as there are no cyclic dependencies (e.g. variable `a` requires `b`, and `b` requires `a`).
+Please note that the simulator variable dependency resolution system is not designed to solve mathematical systems,
+so even though the problem has a well formed mathematical solution the actual variable resolution may fail;
+e.g. if `a` is defined as `2 * b + 1`, and `b` is defined as `4 - a`, the system **won't** bind `a` to `3` and `b` to `1`,
+but will simply fail complaining about circular dependencies.
+
+### Using different languages
+
+In order to use a language different than Groovy, the user may specify it explicitly by using the `language` keyword.
+For example, Scala can be used:
+```yaml
+variables:
+  radius: &radius
+    type: GeometricVariable
+    parameters: [1, 0.1, 10, 9]
+  diameter: &diam
+    formula: Math.PI * 2 * radius
+    language: scala
+```
+Or Kotlin:
+```yaml
+variables:
+  radius: &radius
+    type: GeometricVariable
+    parameters: [1, 0.1, 10, 9]
+  diameter: &diam
+    formula: listOf(Math.PI, 2.0, 0.3).fold(1.0) { a, b -> a * b  }
+    language: kotlin
+```
+
+The system is [JSR-233](http://archive.fo/PGdk8)-compatible, as such, every language with a valid JSR-233 implementation could be used.
+The only requirement for the language to be available is the availability in the runtime classpath of a JSR-233 compatible version of the desired language.
+If Alchemist is being used (as recommended) in conjunction with Gradle, and you want to embed your favorite JSR-233 compatible scripting language, you should have a dependency declaration similar to:
+
+```kotlin
+dependencies {
+    ...
+    runtimeOnly("my.favorite.scripting.language:supporting-jsr233:0.1.0")
+    ...
+}
+``` 
+
+For instance, Alchemist supports Kotlin and Groovy natively by simply providing in its `build.gradle.kts` something similar to:
+```kotlin
+dependencies {
+    ...
+    runtimeOnly("org.codehaus.groovy:groovy-jsr223:2.5.7")
+    runtimeOnly("org.jetbrains.kotlin:kotlin-scripting-jsr223-embeddable:1.3.40")
+    runtimeOnly("org.jetbrains.kotlin:kotlin-script-runtime:1.3.40")
+    runtimeOnly("org.jetbrains.kotlin:kotlin-script-util:1.3.40")}
+    ...
+``` 
+Alchemist provides a number of ready-to use interpreters. Besides Groovy (used by default) it includes:
+
+* [Scala](https://www.scala-lang.org/)
+* [Kotlin](https://kotlinlang.org/)
+
+Moreover, several implementations of the Java Virtual Machine feature internal interpreters for
+[ECMAScript](https://www.ecma-international.org/publications/standards/Ecma-262.htm)/
+[Javascript](https://en.wikipedia.org/wiki/JavaScript).
+In case they are provided, such engines can be used without any additional effort.
+Javascript used to be the default for Alchemist, but it has been replaced by Groovy since
+[Nashorn, the interpreter embedded in OpenJDK, is deprecated](https://openjdk.java.net/jeps/335).
+
+
+#### Multiline programs
+
+Sometimes data manipulation can get tricky and trivial scripting may no longer be enough.
+In such cases, and especially with modern languages that allow for a reduced usage of cerimonial semicolons (such as Kotlin and Scala), it can be useful to write multiline programs.
+This can be achieved in YAML by using the pipe `|` operator, as exemplified in the following snippet:
+
+```yaml
+variables:
+  a:
+    formula: 22 + 1
+    language: kt
+  test:
+    formula: |
+      import com.google.common.reflect.TypeToken
+      import com.google.gson.Gson
+      Gson().fromJson<Map<String, List<List<List<Double>>>>>(
+          ClassLoader.getSystemResourceAsStream("explorable-area.json")?.reader(),
+          object: TypeToken<Map<String, List<List<List<Double>>>>>() {}.type
+      )
+      .get("coordinates")!!
+      .first()
+      .map { Pair(it.last(), it.first()) }
+    language: kotlin
+```
+If the string begins with a `|`, its contents preserve newlines, thus allowing for multiline scripts of arbitrary complexity.
+
+#### Known issues
+
+Alchemist exploit JSR-233's variable binding system to let the scripts use variables defined elsewhere.
+Not all languages support this system properly.
+In particular, Kotlin does not (yet) support variable injection and requires a workaround.
+In order for a script to access a variable named `myVar`, the programmer should write instead `bindings["myVar"]`.
+The issue is being tracked as [KT-15125](https://youtrack.jetbrains.com/issue/KT-15125).
+Once it gets solved (if ever), and as soon as Alchemist incorporates the version of Kotlin including the fix,
+the workaround will no longer be necessary.
+
 ### Using variables
 
 ## Controlling the reproducibility
@@ -333,7 +461,7 @@ displacements:
           parameters: [-6, -6, 2, 2]
         molecule: source
         concentration: true
-        molecule: randomSensor
+      - molecule: randomSensor
         concentration: >
           import java.lang.Math.random
           random() * pi
@@ -364,17 +492,22 @@ displacements:
 
 ## Writing layers
 
-In order to put a layer inside the previously specified environment you have to define the type of the layer, the molecule
-it refers to and possibly the parameters needed for the type of layer you have chosen.  
-Of course, it is possible to add more than one layer inside the same environment.  
-The syntax is like the following:  
+It is possible to define overlays (layers) of data that can be sensed everywhere in the environment.
+Layers can be used to model physical properties, such as pollution, light, temperature, and so on.
+Conversely than readings from nodes' contents, layers have no dependency optimization.
+This implies that reactions that read values from layers should have special care in defining their `context` appropriately
+
+In order to create layer, the programmer must define the type of the layer, a molecule that will be used as identifier,
+and possibly the parameters needed for intializing the type of layer you have chosen, as per the [`type/parameter` syntax](#loading-arbitrary-java-classes-with-the-typeparameters-syntax).
+
+The following example exemplifies the syntax for initializing two {{ anchor('BidimensionalGaussianLayer') }}: 
 
 ```yaml
 layers:
   - type: BidimensionalGaussianLayer
-    molecule: pippo
+    molecule: foo
     parameters: [0.0, 0.0, 2.0, 5.0]
   - type: BidimensionalGaussianLayer
-    molecule: pluto
+    molecule: bar
     parameters: [0.0, 0.0, 5.0, 10.0]
 ```

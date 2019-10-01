@@ -7,17 +7,6 @@
  */
 package it.unibo.alchemist.model;
 
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.commons.math3.random.RandomGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.expressions.implementations.Type;
 import it.unibo.alchemist.expressions.interfaces.IExpression;
@@ -42,6 +31,16 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -134,13 +133,8 @@ public final class SAPEREIncarnation<P extends Position<? extends P>> implements
 
     @Override
     public ILsaMolecule createMolecule(final String s) {
-        try {
-            final String param = s.startsWith("{") && s.endsWith("}") ? s.substring(1, s.length() - 1) : s;
-            return new LsaMolecule(param);
-        } catch (RuntimeException e) {
-            L.info("Unable to load the requested molecule:\n" + e);
-        }
-        return null;
+        final String param = s.trim().startsWith("{") && s.endsWith("}") ? s.substring(1, s.length() - 1) : s;
+        return new LsaMolecule(param);
     }
 
     @Override

@@ -223,12 +223,12 @@ object Libs {
 
     /**
      * https://groovy-lang.org */
-    const val groovy: String = "org.codehaus.groovy:groovy:" + Versions.groovy
+    const val groovy_jsr223: String = "org.codehaus.groovy:groovy-jsr223:" + Versions.groovy_jsr223
 
     /**
      * http://www.controlsfx.org/ */
-    const val org_controlsfx_controlsfx: String = "org.controlsfx:controlsfx:" +
-            Versions.org_controlsfx_controlsfx
+    const val controlsfx: String = "org.controlsfx:controlsfx:" +
+            Versions.controlsfx
 
     const val org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin: String =
             "org.danilopianini.git-sensitive-semantic-versioning:org.danilopianini.git-sensitive-semantic-versioning.gradle.plugin:" +
@@ -268,6 +268,11 @@ object Libs {
             "org.danilopianini:thread-inheritable-resource-loader:" +
             Versions.thread_inheritable_resource_loader
 
+    /**
+     * https://www.eclipse.org/emf */
+    const val org_eclipse_emf_ecore: String = "org.eclipse.emf:org.eclipse.emf.ecore:" +
+            Versions.org_eclipse_emf_ecore
+
     const val org_jetbrains_dokka_gradle_plugin: String =
             "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin:" +
             Versions.org_jetbrains_dokka_gradle_plugin
@@ -285,6 +290,12 @@ object Libs {
      * https://kotlinlang.org/ */
     const val kotlin_scripting_compiler_embeddable: String =
             "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:" +
+            Versions.org_jetbrains_kotlin
+
+    /**
+     * https://kotlinlang.org/ */
+    const val kotlin_scripting_jsr223_embeddable: String =
+            "org.jetbrains.kotlin:kotlin-scripting-jsr223-embeddable:" +
             Versions.org_jetbrains_kotlin
 
     /**

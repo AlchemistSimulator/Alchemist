@@ -5,7 +5,7 @@ import it.unibo.alchemist.model.interfaces.CognitivePedestrian
 class BeliefDanger(
     private val dangerousZone: () -> Double,
     private val fear: () -> Double,
-    private val influencialPeople: () -> Collection<CognitivePedestrian<*>>
+    private val influencialPeople: () -> List<CognitivePedestrian<*>>
 ) : MentalCognitiveCharacteristic() {
 
     override fun combinationFunction() = maxOf(
@@ -14,6 +14,6 @@ class BeliefDanger(
         (affectiveBiasingOmega * fear() + influencialPeople().aggregateDangerBeliefs()) / (affectiveBiasingOmega + 1)
     )
 
-    private fun Collection<CognitivePedestrian<*>>.aggregateDangerBeliefs() =
+    private fun List<CognitivePedestrian<*>>.aggregateDangerBeliefs() =
         this.sumByDouble { it.dangerBelief() } / this.size
 }

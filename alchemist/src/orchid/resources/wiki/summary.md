@@ -11,6 +11,7 @@
   - [Protelis](usage/protelis.md)
   - [SAPERE](usage/sapere.md)
   - [Scafi](usage/scafi.md)
+  - [Indoor environments](usage/indoor.md)
   - [Maps and GPS traces](usage/maps.md)
   - [Exporting data](usage/export.md)
   - [Executing batches](usage/batch.md)

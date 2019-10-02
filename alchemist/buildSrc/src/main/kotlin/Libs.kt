@@ -126,6 +126,10 @@ object Libs {
             Versions.de_fayard_buildsrcversions_gradle_plugin
 
     /**
+     * https://github.com/blackears/svgSalamander */
+    const val svgsalamander: String = "guru.nidi.com.kitfox:svgSalamander:" + Versions.svgsalamander
+
+    /**
      * https://github.com/classgraph/classgraph */
     const val classgraph: String = "io.github.classgraph:classgraph:" + Versions.classgraph
 

@@ -37,7 +37,7 @@ open class CognitivePedestrian2D<T, P : Position2D<P>> @JvmOverloads constructor
 
     override fun influencialPeople() =
         env.getPosition(this).let {
-            it.fieldOfView().peopleWithInfluence().union(it.hearingField().peopleWithInfluence())
+            it.fieldOfView().peopleWithInfluence().union(it.hearingField().peopleWithInfluence()).toList()
         }
 
     private fun <P : Position2D<P>> P.fieldOfView(): FieldOfView2D<P> =

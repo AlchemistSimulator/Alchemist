@@ -15,7 +15,9 @@ dependencies {
     implementation(project(":alchemist-maps"))
     implementation(project(":alchemist-time"))
     implementation(Libs.miglayout_swing)
-    implementation(Libs.mapsforge_map_awt)
+    implementation(Libs.mapsforge_map_awt) {
+        exclude(group = "com.github.blackears", module = "svgSalamander")
+    }
     implementation(Libs.gson_extras)
     implementation(Libs.jfoenix)
     implementation(Libs.commons_lang3)
@@ -26,6 +28,7 @@ dependencies {
     implementation(Libs.jiconfont_google_material_design_icons)
     implementation(Libs.tornadofx)
     implementation(Libs.reflections)
+    implementation(Libs.svgsalamander)
     // TODO: deprecated, must be removed
     implementation(Libs.javalib_java7) {
         exclude(group = "org.ow2.asm")
@@ -43,4 +46,15 @@ dependencies {
     }
 
     testRuntimeOnly(project(":alchemist-incarnation-protelis"))
+}
+
+configurations.all {
+    resolutionStrategy {
+        eachDependency {
+            if (requested.name == "svgSalamander") {
+                useTarget(Libs.svgsalamander)
+                because("mapsforge version is not on central")
+            }
+        }
+    }
 }

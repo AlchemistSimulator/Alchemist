@@ -31,5 +31,5 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
-    maxHeapSize = "2g"
+    maxHeapSize = "1500m"
 }

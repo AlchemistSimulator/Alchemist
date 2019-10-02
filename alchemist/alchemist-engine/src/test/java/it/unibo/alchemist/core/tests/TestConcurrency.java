@@ -69,26 +69,26 @@ public class TestConcurrency {
     @Test
     @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", justification = "We don't need the status of the Runnable")
     public void testCommandInterleaving() throws InterruptedException, ExecutionException {
+        final int inWaitCount = 100;
         final Simulation<?, ?> sim = new Engine<>(env, 10);
         sim.pause();
-        final ExecutorService container = Executors.newCachedThreadPool();
+        final ExecutorService container = Executors.newFixedThreadPool(inWaitCount + 1);
         container.submit(sim);
         assertNotEquals(Status.RUNNING, sim.waitFor(Status.RUNNING, 2, TimeUnit.SECONDS));
-        assertEquals(Status.PAUSED, sim.waitFor(Status.PAUSED, 1, TimeUnit.SECONDS));
+        assertEquals(Status.PAUSED, sim.waitFor(Status.PAUSED, 1, TimeUnit.MINUTES));
         /*
          * Launch a hundred waiting processes, make sure they are started, then make sure everyone got notified
          */
-        final int inWaitCount = 100;
         final CountDownLatch latch = new CountDownLatch(inWaitCount);
         final ImmutableList<Future<Status>> waitList = IntStream.range(0, inWaitCount)
-                .mapToObj(it -> container.submit(() -> {
-                    latch.countDown();
-                    return sim.waitFor(Status.RUNNING, 10, TimeUnit.SECONDS);
-                }))
-                .collect(ImmutableList.toImmutableList());
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
+            .mapToObj(it -> container.submit(() -> {
+                latch.countDown();
+                return sim.waitFor(Status.RUNNING, 1, TimeUnit.MINUTES);
+            }))
+            .collect(ImmutableList.toImmutableList());
+        assertTrue(latch.await(1, TimeUnit.MINUTES));
         // All threads are started, wait a bit of additional time to make sure they reached wait status
-        Thread.sleep(100);
+        Thread.sleep(1000);
         sim.play();
         for (final Future<Status> result: waitList) {
             assertEquals(Status.RUNNING, result.get());
@@ -98,7 +98,7 @@ public class TestConcurrency {
          * instantly, because it takes a very little time to perform 10 steps, since in every step the
          * simulation executes the fake reaction you can see below, which simply does nothing.
          */
-        assertEquals(Status.TERMINATED, sim.waitFor(Status.TERMINATED, 1, TimeUnit.SECONDS));
+        assertEquals(Status.TERMINATED, sim.waitFor(Status.TERMINATED, 1, TimeUnit.MINUTES));
         /*
          * the method must return immediately with a message error because is not
          * possible to reach RUNNING or PAUSED status while in STOPPED

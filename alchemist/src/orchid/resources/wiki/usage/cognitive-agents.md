@@ -20,8 +20,6 @@ Homogeneous pedestrians are a particular type of _Node_ which have no peculiar c
 It is the most common type of agent which can be load in a simulation.
 
 ```yaml
-incarnation: protelis
-
 displacements:
   - in:
       type: Circle
@@ -37,8 +35,6 @@ The kinds of age which can be used are: *child*, *adult*, *elderly*; alternative
 The kinds of sex available are: *male*, *female*.
 
 ```yaml
-incarnation: protelis
-
 displacements:
   - in:
       type: Circle
@@ -56,11 +52,10 @@ displacements:
 
 #### Cognitive Pedestrian
 A cognitive pedestrian is the most refined type of agent currently present in Alchemist. It is an heterogeneous pedestrian
-with cognitive capabilities who can resemble a real human character not only physically but also mentally.
+with cognitive capabilities.
+For instance, cognitive pedestrians can perceive fear, not just directly but by contagion (seeing other people fleeing may make them flee as well).
 
 ```yaml
-incarnation: protelis
-
 reactions: &behavior
   - time-distribution:
       type: DiracComb
@@ -87,7 +82,7 @@ displacements:
 ```
 
 ### Groups
-It is likely that a pedestrian doesn't move on its own but there is a group consisting of multiple people 
+It is likely that a pedestrian doesn't move on its own, but there is a group consisting of multiple people 
 which are related each other and whose behaviors are strictly dependant on that structure.
 The only way you can currently assign a group to a pedestrian is by creating it as a variable and passing it 
 as a parameter when the _Nodes_ created are of pedestrian type. If you don't specify any group in this phase, 
@@ -122,7 +117,7 @@ displacements:
 ```
 
 ### Steering Actions
-A pedestrian without moving it's not a pedestrian. The need of _Actions_ which can make it steers in a realistic way
+A pedestrian that doesn't move is not a pedestrian. The need of _Actions_ which can make it move in a realistic way
 inside the environment lead to the creation of particular behaviors such as _Flee_, _Wander_, _FollowFlowField_, _ObstacleAvoidance_... <br />
 As a potential part of a group, there must exist also some attitudes typical of this sort of formation such as _Cohesion_ and _Separation_.
 The creation of complex movements can be accomplished by combining different steering actions together. <br />
@@ -159,15 +154,15 @@ displacements:
 ```
 
 ### Steering Strategies
-In order to decide the logic according to the different steering actions must be combined, 
+In order to decide the logic according to which the different steering actions must be combined, 
 the concept of steering strategy has been introduced and related to it different reactions are available to be used
 with the aim of computing the desired route for the pedestrians.
-If you want a pedestrian to execute only one steering action at a time, _PrioritySteering_ is a reaction 
+If you want a pedestrian to execute a single steering action at a time, _PrioritySteering_ is a reaction 
 which gives relevance only to the steering action whose target point is the nearest to the current pedestrian position.
 If you want a pedestrian to execute a movement considering multiple actions at a time, _BlendedSteering_ weights them
 considering their target distance to the current pedestrian position.
 There is no limit to the number of steering actions which can be used together but some messy compositions 
-can result in unpredictable behaviors so pay attention.
+can result in unpredictable behaviors, so pay attention.
 
 In the example below a pedestrian reaches a point of interest, avoiding in the meantime to approach another position.
 
@@ -200,7 +195,7 @@ displacements:
 
 ### Evacuation Scenarios
 Pedestrians can be loaded in any kind of _Environment_ but it is recommended to use _PhysicsEnvironments_ since they
-have properties such as non-overlapping and shapes management which are advisable to be taken into consideration 
+have properties such as non-overlapping shapes which are advisable to be taken into consideration 
 when working with a crowd.
 To specify the existence of a potential danger or a significative zone in general inside the environment you can use _Layers_. 
 Each layer is associated to a _Molecule_ different from the one of all the others.

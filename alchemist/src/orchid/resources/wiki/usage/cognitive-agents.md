@@ -244,3 +244,11 @@ displacements:
     programs:
       - *behavior
 ```
+
+### Further references
+[C. Natalie van der Wal, Daniel Formolo, Mark A. Robinson, Michael Minkov, Tibor Bosse\
+Simulating Crowd Evacuation with Socio-Cultural, Cognitive, and Emotional Elements\
+Transactions on Computational Collective Intelligence XXVII. 2017.](https://doi.org/10.1007/978-3-319-70647-4_11)
+
+[Craig W. Reynolds\
+Steering Behaviors for Autonomous Characters. 1999.](http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.16.8035)

@@ -347,8 +347,7 @@ orchid {
     )
 }
 
-val orchidSeedConfiguration = "orchidSeedConfiguration"
-tasks.register(orchidSeedConfiguration) {
+val orchidSeedConfiguration by tasks.register("orchidSeedConfiguration") {
     doLast {
         /*
          * Detect files
@@ -377,7 +376,7 @@ tasks.register(orchidSeedConfiguration) {
                   sourceDirs:
             """.trimIndent() + sourceFolders + "\n"
         } else ""
-        val deployMentConfiguration = if (!baseConfig.contains("services:")) {
+        val deploymentConfiguration = if (!baseConfig.contains("services:")) {
             """
                 services:
                   publications:
@@ -391,10 +390,10 @@ tasks.register(orchidSeedConfiguration) {
                         publishType: CleanBranchMaintainHistory
             """.trimIndent()
         } else ""
-        finalConfig.writeText(baseConfig + ktdocConfiguration + deployMentConfiguration)
+        finalConfig.writeText(baseConfig + ktdocConfiguration + deploymentConfiguration)
     }
 }
-tasks.orchidClasses.orNull!!.dependsOn(tasks.getByName(orchidSeedConfiguration))
+tasks.orchidClasses.orNull!!.dependsOn(orchidSeedConfiguration)
 
 tasks.register<Jar>("fatJar") {
     dependsOn(subprojects.map { it.tasks.withType<Jar>() })

@@ -88,7 +88,7 @@ public class EffectBarController<P extends Position2D<? extends P>> implements I
      * @param thisDrawer     the drawer the layout this controller is assigned to is loaded
      *                       into
      */
-    public EffectBarController(final @Nullable FXOutputMonitor<?, ?> displayMonitor, final EffectGroupCell parentCell, final JFXDrawersStack stack, final JFXDrawer thisDrawer) {
+    public EffectBarController(final @Nullable FXOutputMonitor<?, ?> displayMonitor, final EffectGroupCell<P> parentCell, final JFXDrawersStack stack, final JFXDrawer thisDrawer) {
         this(parentCell, stack, thisDrawer);
         setDisplayMonitor(displayMonitor);
     }

@@ -33,7 +33,7 @@ public class EffectGroupCell<P extends Position2D<? extends P>> extends Abstract
     private static final String DEFAULT_NAME = getStringRes("effect_group_default_name");
     private final JFXDrawersStack stack;
     private JFXDrawer effectDrawer;
-    private EffectBarController effectBarController;
+    private EffectBarController<P> effectBarController;
 
     /**
      * Default constructor.
@@ -137,9 +137,9 @@ public class EffectGroupCell<P extends Position2D<? extends P>> extends Abstract
         effectDrawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
 
         if (getDisplayMonitor().isPresent()) {
-            effectBarController = new EffectBarController(getDisplayMonitor().get(), this, this.stack, this.effectDrawer);
+            effectBarController = new EffectBarController<P>(getDisplayMonitor().get(), this, this.stack, this.effectDrawer);
         } else {
-            effectBarController = new EffectBarController(this, this.stack, this.effectDrawer);
+            effectBarController = new EffectBarController<P>(this, this.stack, this.effectDrawer);
         }
 
         try {

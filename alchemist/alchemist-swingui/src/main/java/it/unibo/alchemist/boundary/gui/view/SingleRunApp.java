@@ -244,7 +244,7 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
                 s.addOutputMonitor(this.timeMonitor);
                 s.addOutputMonitor(this.stepMonitor);
             });
-            final ButtonsBarController buttonsBarController = new ButtonsBarController(displayMonitor, playPauseMonitor, timeMonitor, stepMonitor);
+            final ButtonsBarController<P> buttonsBarController = new ButtonsBarController<>(displayMonitor, playPauseMonitor, timeMonitor, stepMonitor);
 
             final BorderPane bar = FXResourceLoader.getLayout(BorderPane.class, buttonsBarController, BUTTONS_BAR_LAYOUT);
             bar.setPickOnBounds(false);

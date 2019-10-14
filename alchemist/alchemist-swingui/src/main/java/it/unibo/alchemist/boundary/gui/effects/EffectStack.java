@@ -118,7 +118,7 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
      * @return the effect with maximum priority
      */
     public EffectFX<P> pop() {
-        final EffectFX e = this.effects.get(topIndex);
+        final EffectFX<P> e = this.effects.get(topIndex);
         this.effects.remove(topIndex);
         this.topIndex--;
         return e;
@@ -156,7 +156,7 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
     public void changePriority(final EffectFX<P> effect, final int offset) {
         final int currentPos = this.search(effect);
         final int newPos = currentPos + offset;
-        final EffectFX temp = this.effects.get(newPos);
+        final EffectFX<P> temp = this.effects.get(newPos);
 
         this.effects.set(newPos, effect);
 
@@ -216,8 +216,9 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
 
     @Override
     public boolean remove(final Object o) {
-        if (o instanceof EffectFX) {
-            final EffectFX effect = (EffectFX) o;
+        if (o instanceof EffectFX<?>) {
+            @SuppressWarnings("unchecked")
+            final EffectFX<P> effect = (EffectFX<P>) o;
             final int index = this.search(effect);
             if (index == -1) {
                 return false;

@@ -22,8 +22,8 @@ public class EffectBuilderFX {
     /**
      * Set of available {@link EffectFX effect}s found by reflection.
      */
-    private static final List<Class<? extends EffectFX>> EFFECTS = ClassPathScanner.subTypesOf(EffectFX.class, "it.unibo.alchemist");
-    private final ChoiceDialog<Class<? extends EffectFX>> dialog;
+    private static final List<Class<? extends EffectFX<?>>> EFFECTS = ClassPathScanner.subTypesOf(EffectFX.class, "it.unibo.alchemist");
+    private final ChoiceDialog<Class<? extends EffectFX<?>>> dialog;
 
     /**
      * Default constructor.
@@ -45,7 +45,7 @@ public class EffectBuilderFX {
      *
      * @return the class of the effect
      */
-    public Optional<Class<? extends EffectFX>> getResult() {
+    public Optional<Class<? extends EffectFX<?>>> getResult() {
         return dialog.showAndWait();
     }
 
@@ -72,8 +72,8 @@ public class EffectBuilderFX {
      *
      * @return the effect chosen, or null if no effect was chosen
      */
-    public EffectFX chooseAndLoad() {
-        final Optional<Class<? extends EffectFX>> result = getResult();
+    public EffectFX<?> chooseAndLoad() {
+        final Optional<Class<? extends EffectFX<?>>> result = getResult();
         if (result.isPresent()) {
             return this.instantiateEffect(result.get());
         } else {
@@ -86,7 +86,7 @@ public class EffectBuilderFX {
      *
      * @return the list of effects found
      */
-    public List<Class<? extends EffectFX>> getFoundEffects() {
+    public List<Class<? extends EffectFX<?>>> getFoundEffects() {
         return Collections.unmodifiableList(EFFECTS);
     }
 }

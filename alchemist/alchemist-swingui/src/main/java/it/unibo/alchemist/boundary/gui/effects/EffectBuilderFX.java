@@ -1,19 +1,17 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
+import com.google.common.reflect.TypeToken;
 import it.unibo.alchemist.ClassPathScanner;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.model.interfaces.Position2D;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
+import javafx.scene.control.ChoiceDialog;
+import javafx.stage.Stage;
+
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javafx.scene.control.ChoiceDialog;
-import javafx.stage.Stage;
-import org.reflections.Reflections;
 
 /**
  * Class that lets the user choose the effect from all it can find.
@@ -22,8 +20,9 @@ public class EffectBuilderFX {
     /**
      * Set of available {@link EffectFX effect}s found by reflection.
      */
-    private static final List<Class<? extends EffectFX>> EFFECTS = ClassPathScanner.subTypesOf(EffectFX.class, "it.unibo.alchemist");
-    private final ChoiceDialog<Class<? extends EffectFX>> dialog;
+    private static final List<Class<? extends EffectFX<?>>> EFFECTS = ClassPathScanner.subTypesOf(
+            new TypeToken<>() { }, "it.unibo.alchemist");
+    private final ChoiceDialog<Class<? extends EffectFX<?>>> dialog;
 
     /**
      * Default constructor.
@@ -45,8 +44,9 @@ public class EffectBuilderFX {
      *
      * @return the class of the effect
      */
-    public Optional<Class<? extends EffectFX>> getResult() {
-        return dialog.showAndWait();
+    @SuppressWarnings("unchecked")
+    public <P extends Position2D<? extends P>> Optional<Class<? extends EffectFX<P>>> getResult() {
+        return (Optional<Class<? extends EffectFX<P>>>) dialog.showAndWait();
     }
 
     /**
@@ -55,10 +55,10 @@ public class EffectBuilderFX {
      * @param clazz the class of the effect
      * @return the effect instantiated
      */
-    public EffectFX instantiateEffect(final Class<? extends EffectFX> clazz) {
+    public <P extends Position2D<? extends P>> EffectFX<P> instantiateEffect(final Class<? extends EffectFX<P>> clazz) {
         try {
-            return clazz.newInstance();
-        } catch (final InstantiationException | IllegalAccessException e) {
+            return clazz.getDeclaredConstructor().newInstance();
+        } catch (final InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new IllegalStateException("Could not instantiate the effect", e);
         }
     }
@@ -72,13 +72,9 @@ public class EffectBuilderFX {
      *
      * @return the effect chosen, or null if no effect was chosen
      */
-    public EffectFX chooseAndLoad() {
-        final Optional<Class<? extends EffectFX>> result = getResult();
-        if (result.isPresent()) {
-            return this.instantiateEffect(result.get());
-        } else {
-            return null;
-        }
+    public <P extends Position2D<? extends P>> EffectFX<P> chooseAndLoad() {
+        final Optional<Class<? extends EffectFX<P>>> result = getResult();
+        return result.map(this::instantiateEffect).orElse(null);
     }
 
     /**

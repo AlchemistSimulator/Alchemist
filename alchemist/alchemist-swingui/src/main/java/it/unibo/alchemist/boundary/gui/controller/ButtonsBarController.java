@@ -73,7 +73,7 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
     @Nullable
     private Label stepLabel;
 
-    private EffectsGroupBarController effectsGroupBarController;
+    private EffectsGroupBarController<P> effectsGroupBarController;
     private Optional<PopOver> controlTypePopOver = Optional.empty();
     private Optional<FXOutputMonitor<?, ?>> displayMonitor = Optional.empty();
 
@@ -158,7 +158,7 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
         addMonitors();
 
         final JFXDrawer effectGroupsDrawer = new JFXDrawer();
-        effectsGroupBarController = new EffectsGroupBarController(getDisplayMonitor().orElse(null), this.drawerStack);
+        effectsGroupBarController = new EffectsGroupBarController<>(getDisplayMonitor().orElse(null), this.drawerStack);
         effectGroupsDrawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
         try {
             effectGroupsDrawer.setSidePane(FXResourceLoader.getLayout(BorderPane.class, effectsGroupBarController,

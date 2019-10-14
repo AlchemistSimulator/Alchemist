@@ -86,17 +86,6 @@ allprojects {
         runtimeOnly(Libs.logback_classic)
     }
 
-    configurations.all {
-        resolutionStrategy {
-            eachDependency {
-                if (requested.name == "svgSalamander") {
-                    useTarget("guru.nidi.com.kitfox:svgSalamander:1.1.2")
-                    because("mapsforge version is not on central")
-                }
-            }
-        }
-    }
-
     tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"
         options.compilerArgs = options.compilerArgs + listOf("-Werror", "-Xlint:unchecked")

@@ -6,11 +6,12 @@ import it.unibo.alchemist.model.cognitiveagents.characteristics.PARAMETERS_FILE
 class Compliance(age: Age, gender: Gender) : IndividualCharacteristic {
 
     val level = when {
-        age == Age.ELDERLY && gender == Gender.MALE -> 0.92
-        age == Age.ELDERLY && gender == Gender.FEMALE -> 0.97
-        age == Age.ADULT && gender == Gender.MALE -> 0.89
-        age == Age.ADULT && gender == Gender.FEMALE -> 0.94
-        else -> 0.89 // Age.CHILD
+        age == Age.CHILD && gender == Gender.MALE -> childMale
+        age == Age.ADULT && gender == Gender.MALE -> adultMale
+        age == Age.ELDERLY && gender == Gender.MALE -> elderlyMale
+        age == Age.CHILD && gender == Gender.FEMALE -> childFemale
+        age == Age.ADULT && gender == Gender.FEMALE -> adultFemale
+        else -> elderlyFemale
     }
 
     companion object {

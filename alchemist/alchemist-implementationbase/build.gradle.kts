@@ -25,6 +25,7 @@ dependencies {
     implementation(Libs.scala_compiler)
     implementation(Libs.scala_library)
     implementation(Libs.trove4j)
+    testImplementation(Libs.kotlintest_runner_junit5)
 }
 
 configurations {

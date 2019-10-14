@@ -6,7 +6,15 @@ import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Environment
 
-class CognitiveBehaviour<T>(
+/**
+ * Reaction representing the cognitive behavior of a pedestrian.
+ *
+ * @param pedestrian
+ *          the owner of this reaction.
+ * @param timeDistribution
+ *          the time distribution according to this the reaction executes.
+ */
+class CognitiveBehavior<T>(
     private val pedestrian: CognitivePedestrian<T>,
     timeDistribution: TimeDistribution<T>
 ) : AbstractReaction<T>(pedestrian, timeDistribution) {

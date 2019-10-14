@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -203,7 +204,9 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
 
             try {
                 EffectSerializer.effectGroupsToFile(selectedFile,
-                        Arrays.asList(getObservableEffectsList().toArray(new EffectGroup[getObservableEffectsList().size()])));
+                        // we need to keep the EffectFX parameterized, so we cannot use arrays
+                        // Arrays.asList(getObservableEffectsList().toArray(new EffectGroup[getObservableEffectsList().size()])));
+                        new ArrayList<>(getObservableEffectsList()));
             } catch (final IOException | JsonParseException e) {
                 L.error("Can't save Effect Groups to file: " + e.getMessage());
                 this.errorDialog(getStringRes("save_effect_groups_error_dialog_title"), getStringRes("save_effect_groups_error_dialog_msg"), e);

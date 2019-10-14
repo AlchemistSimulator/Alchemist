@@ -1,0 +1,42 @@
+incarnation: protelis
+
+variables:
+  danger: &danger
+    formula: "\"danger\""
+
+environment:
+  type: Continuous2DEnvironment
+
+positions:
+  type: EuclideanPosition2D
+
+network-model:
+  type: NoLinks
+
+seeds:
+  scenario: 0
+  simulation: 1
+
+layers:
+  - type: BidimensionalGaussianLayer
+    molecule: *danger
+    parameters: [40.0, 70.0, 2.0, 10.0]
+
+reactions: &behavior
+  - time-distribution:
+      type: DiracComb
+      parameters: [2.0]
+    type: SteeringBehavior
+    actions:
+      - type: FollowGradient
+        parameters: [*danger]
+
+displacements:
+  - in:
+      type: Circle
+      parameters: [100, 0, 0, 100]
+    nodes:
+      type: CognitivePedestrian2D
+      parameters: ["adult", "male", *danger]
+    programs:
+      - *behavior

@@ -1,5 +1,3 @@
-import kotlin.String
-
 /**
  * Find which updates are available by running
  *     `$ ./gradlew buildSrcVersions`
@@ -45,7 +43,7 @@ object Versions {
 
     const val miglayout_swing: String = "5.2" 
 
-    const val ktlint: String = "0.33.0" 
+    const val ktlint: String = "0.33.0" // available: "0.34.2"
 
     const val konf: String = "0.13.3"
 
@@ -60,6 +58,8 @@ object Versions {
     const val de_fayard_buildsrcversions_gradle_plugin: String = "0.3.2" // available: "0.6.1"
 
     const val classgraph: String = "4.8.37" // available: "4.8.47"
+
+    const val svgsalamander: String = "1.1.2"
 
     const val io_github_javaeden_orchid: String = "0.17.1" // available: "0.17.5"
 
@@ -155,6 +155,6 @@ object Versions {
 
         const val nightlyVersion: String = "6.0-20190924220028+0000"
 
-        const val releaseCandidate: String = ""
+        const val releaseCandidate: String = "5.6-rc-1"
     }
 }

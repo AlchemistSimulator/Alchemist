@@ -82,7 +82,7 @@ public class EffectBuilderFX {
      *
      * @return the list of effects found
      */
-    public List<Class<? extends EffectFX>> getFoundEffects() {
+    public List<Class<? extends EffectFX<?>>> getFoundEffects() {
         return Collections.unmodifiableList(EFFECTS);
     }
 }

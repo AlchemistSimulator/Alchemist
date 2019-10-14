@@ -9,10 +9,12 @@ class TestFeelsTransmission<T, P : Position<P>> : StringSpec({
 
     "danger layer affects cognitive pedestrians" {
         val aggregateDangerWithoutLayer = loadYamlSimulation<T, P>("feels-transmission-without-layer.yml")
+                .startSimulation()
                 .nodes
                 .map { it as CognitivePedestrian2D<T, *> }
                 .sumByDouble { it.dangerBelief() }
         val aggregateDangerWithLayer = loadYamlSimulation<T, P>("feels-transmission-with-layer.yml")
+                .startSimulation()
                 .nodes
                 .map { it as CognitivePedestrian2D<T, *> }
                 .sumByDouble { it.dangerBelief() }

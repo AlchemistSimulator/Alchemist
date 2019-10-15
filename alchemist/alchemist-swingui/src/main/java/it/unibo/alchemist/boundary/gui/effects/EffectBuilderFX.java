@@ -45,8 +45,8 @@ public class EffectBuilderFX {
      * @return the class of the effect
      */
     @SuppressWarnings("unchecked")
-    public <P extends Position2D<? extends P>> Optional<Class<? extends EffectFX<P>>> getResult() {
-        return (Optional<Class<? extends EffectFX<P>>>) dialog.showAndWait();
+    public <P extends Position2D<? extends P>, C extends EffectFX<P>> Optional<Class<C>> getResult() {
+        return dialog.showAndWait().map(it -> (Class<C>) it);
     }
 
     /**
@@ -73,7 +73,7 @@ public class EffectBuilderFX {
      * @return the effect chosen, or null if no effect was chosen
      */
     public <P extends Position2D<? extends P>> EffectFX<P> chooseAndLoad() {
-        final Optional<Class<? extends EffectFX<P>>> result = getResult();
+        final Optional<Class<EffectFX<P>>> result = getResult();
         return result.map(this::instantiateEffect).orElse(null);
     }
 

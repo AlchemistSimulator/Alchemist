@@ -1,0 +1,49 @@
+incarnation: protelis
+
+environment:
+  type: Continuous2DEnvironment
+
+positions:
+  type: EuclideanPosition2D
+
+network-model:
+  type: NoLinks
+
+seeds:
+  scenario: 0
+  simulation: 1
+
+variables:
+  group1: &group1
+    formula: it.unibo.alchemist.model.cognitiveagents.groups.GenericGroup<Any>()
+    language: kotlin
+  group2: &group2
+    formula: it.unibo.alchemist.model.cognitiveagents.groups.GenericGroup<Any>()
+    language: kotlin
+
+reactions: &behavior
+  - time-distribution:
+      type: DiracComb
+      parameters: [1.0]
+    type: PrioritySteering
+    actions:
+      - type: Separation
+      - type: RandomRotate
+
+displacements:
+  - in:
+      type: Circle
+      parameters: [20, 30, 200, 50]
+    nodes:
+      type: HomogeneousPedestrian2D
+      parameters: [*group1]
+    programs:
+      - *behavior
+  - in:
+      type: Circle
+      parameters: [30, 10, 30, 20]
+    nodes:
+      type: HomogeneousPedestrian2D
+      parameters: [*group2]
+    programs:
+      - *behavior

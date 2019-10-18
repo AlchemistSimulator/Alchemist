@@ -4,9 +4,12 @@ import it.unibo.alchemist.model.implementations.geometry.asAngle
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
+import org.apache.commons.math3.random.RandomGenerator
 import org.protelis.lang.datatype.Tuple
 import kotlin.math.cos
 import kotlin.math.sin
+
+internal fun RandomGenerator.randomAngle() = 2 * Math.PI * nextDouble()
 
 internal inline fun <reified P : Position<P>> Any?.toPosition(env: Environment<*, P>): P = when (this) {
     is P -> this

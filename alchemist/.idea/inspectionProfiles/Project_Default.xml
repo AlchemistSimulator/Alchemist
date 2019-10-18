@@ -18,6 +18,7 @@
       <option name="processLiterals" value="false" />
       <option name="processComments" value="true" />
     </inspection_tool>
+    <inspection_tool class="SuspiciousLiteralUnderscore" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnnecessaryParentheses" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="ignoreClarifyingParentheses" value="true" />
       <option name="ignoreParenthesesOnConditionals" value="false" />

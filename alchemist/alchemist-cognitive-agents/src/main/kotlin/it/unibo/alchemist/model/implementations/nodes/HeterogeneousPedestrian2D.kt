@@ -2,9 +2,9 @@ package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Gender
-import it.unibo.alchemist.model.cognitiveagents.groups.Group
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
+import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
 import org.apache.commons.math3.random.RandomGenerator
 
@@ -25,7 +25,7 @@ class HeterogeneousPedestrian2D<T> @JvmOverloads constructor(
     rg: RandomGenerator,
     age: Age,
     gender: Gender,
-    group: Group<T>? = null
+    group: PedestrianGroup<T>? = null
 ) : HeterogeneousPedestrianImpl<T, Euclidean2DPosition>(env, rg, age, gender, group), Pedestrian2D<T> {
 
     @JvmOverloads constructor(
@@ -33,7 +33,7 @@ class HeterogeneousPedestrian2D<T> @JvmOverloads constructor(
         rg: RandomGenerator,
         age: String,
         gender: String,
-        group: Group<T>? = null
+        group: PedestrianGroup<T>? = null
     ) : this(env, rg, Age.fromString(age), Gender.fromString(gender), group)
 
     @JvmOverloads constructor(
@@ -41,13 +41,13 @@ class HeterogeneousPedestrian2D<T> @JvmOverloads constructor(
         rg: RandomGenerator,
         age: Int,
         gender: String,
-        group: Group<T>? = null
+        group: PedestrianGroup<T>? = null
     ) : this(env, rg, Age.fromYears(age), Gender.fromString(gender), group)
 
     private val shape = shape(env)
 
     init {
-        senses += sensorySpheres(env)
+        senses += fieldOfView(env)
     }
 
     /**

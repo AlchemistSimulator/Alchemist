@@ -1,6 +1,6 @@
 package it.unibo.alchemist.boundary.monitors;
 
-import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
+import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.environments.BoundariesVisitor;
@@ -16,7 +16,7 @@ import java.awt.Point;
  */
 public final class BoundariesDrawer<P extends Position2D<P>> implements BoundariesVisitor {
     private final Graphics2D g;
-    private final IWormhole2D<P> w;
+    private final BidimensionalWormhole<P> w;
     private final Environment<?, P> env;
 
     /**
@@ -26,7 +26,7 @@ public final class BoundariesDrawer<P extends Position2D<P>> implements Boundari
      * @param wormhole    Needed to get view points
      * @param environment The environment compatible with the wormhole
      */
-    public BoundariesDrawer(@NotNull final Graphics2D graphics, @NotNull final IWormhole2D<P> wormhole, @NotNull final Environment<?, P> environment) {
+    public BoundariesDrawer(@NotNull final Graphics2D graphics, @NotNull final BidimensionalWormhole<P> wormhole, @NotNull final Environment<?, P> environment) {
         g = graphics;
         w = wormhole;
         env = environment;

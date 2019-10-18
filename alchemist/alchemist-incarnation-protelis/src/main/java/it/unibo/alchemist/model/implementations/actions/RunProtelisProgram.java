@@ -92,7 +92,7 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
             final ProtelisNode<P> n,
             final Reaction<Object> r,
             final RandomGenerator rand,
-            final String program) throws SecurityException {
+            final String program) {
         this(env, n, r, rand, program, Double.NaN);
     }
 
@@ -119,7 +119,7 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
             final Reaction<Object> r,
             final RandomGenerator rand,
             final String program,
-            final double retentionTime) throws SecurityException {
+            final double retentionTime) {
         this(env, n, r, rand, ProtelisLoader.parse(program), retentionTime);
         originalProgram = program;
     }

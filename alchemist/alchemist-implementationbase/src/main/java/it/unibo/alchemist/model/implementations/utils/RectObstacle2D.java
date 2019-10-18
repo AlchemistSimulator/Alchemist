@@ -9,10 +9,11 @@ package it.unibo.alchemist.model.implementations.utils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.Obstacle2D;
-import java.awt.geom.Rectangle2D;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.MathArrays;
 import org.apache.commons.math3.util.Pair;
+
+import java.awt.geom.Rectangle2D;
 
 import static org.apache.commons.math3.util.FastMath.max;
 import static org.apache.commons.math3.util.FastMath.min;
@@ -112,7 +113,7 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
          * accordingly
          */
         if (fuzzyGreaterEquals(starty, minY) && fuzzyGreaterEquals(maxY, starty) && fuzzyGreaterEquals(startx, minX) && fuzzyGreaterEquals(maxX, startx)) {
-            final double[] res = new double[] { endx, endy };
+            final double[] res = { endx, endy };
             if (fuzzyEquals(startx, minX) && endx >= minX) {
                 /*
                  * Left border

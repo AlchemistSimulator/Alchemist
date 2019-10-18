@@ -133,7 +133,7 @@ public final class SingleRunGUI {
     public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final File effectsFile, final int closeOperation) {
         @SuppressWarnings("unchecked") // Actually safe: MapEnvironment uses the same P type of MapDisplay
         final GraphicalOutputMonitor<T, P> main = Objects.requireNonNull(sim).getEnvironment() instanceof MapEnvironment
-                ? (GraphicalOutputMonitor<T, P>) new MapDisplay<T>()
+                ? (GraphicalOutputMonitor<T, P>) new MapDisplay<>()
                 : new Generic2DDisplay<>();
         if (main instanceof Component) {
             final JFrame frame = new JFrame("Alchemist Simulator");

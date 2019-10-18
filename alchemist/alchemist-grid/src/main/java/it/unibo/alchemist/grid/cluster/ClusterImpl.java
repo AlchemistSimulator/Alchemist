@@ -7,14 +7,13 @@
  */
 package it.unibo.alchemist.grid.cluster;
 
-import java.nio.file.Path;
-import java.util.Objects;
-
+import it.unibo.alchemist.grid.simulation.Complexity;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.cluster.ClusterGroup;
 
-import it.unibo.alchemist.grid.simulation.Complexity;
+import java.nio.file.Path;
+import java.util.Objects;
 
 /**
  * An implementation of {@link Cluster}  uses Apache Ignite. 
@@ -22,7 +21,7 @@ import it.unibo.alchemist.grid.simulation.Complexity;
  */
 public final class ClusterImpl implements Cluster {
 
-    private static final int IGNITE_RAM_MULT_FACTOR = 1000000000;
+    private static final int IGNITE_RAM_MULT_FACTOR = 1_000_000_000;
     private final Ignite ignite;
 
     /**

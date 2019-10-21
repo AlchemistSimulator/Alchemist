@@ -169,7 +169,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     private void doStep() {
         final Reaction<T> root = ipq.getNext();
         if (root == null) {
-            this.newStatus(Status.TERMINATED);
+            this.newStatus(TERMINATED);
             L.info("No more reactions.");
         } else {
             mu = root;

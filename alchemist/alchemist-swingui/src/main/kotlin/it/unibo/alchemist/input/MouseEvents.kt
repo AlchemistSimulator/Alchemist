@@ -15,6 +15,7 @@ import javafx.scene.input.MouseEvent
 
 /**
  * Actions that can happen on a mouse and a certain mouse button.
+ * The enum's values are based on JavaFX's mouse events, such as onMouseClicked
  */
 enum class ActionOnMouse {
     CLICKED,

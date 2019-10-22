@@ -1,4 +1,4 @@
-
+import kotlin.String
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 
@@ -49,7 +49,7 @@ object Versions {
 
     const val com_gradle_build_scan_gradle_plugin: String = "2.4.2"
 
-    const val thread_inheritable_resource_loader: String = "0.3.0" // available: "0.3.2"
+    const val thread_inheritable_resource_loader: String = "0.3.2"
 
     const val com_github_spotbugs_gradle_plugin: String = "1.6.9" // available: "2.0.0"
 

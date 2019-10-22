@@ -1,4 +1,4 @@
-
+import kotlin.String
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 
@@ -26,7 +26,7 @@ object Versions {
 
     const val org_scala_lang: String = "2.12.2" // available: "2.13.1"
 
-    const val org_protelis: String = "13.0.3" // available: "13.1.0"
+    const val org_protelis: String = "13.1.0"
 
     const val org_openjfx: String = "11" // available: "13.0.1"
 

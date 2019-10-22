@@ -1,4 +1,4 @@
-
+import kotlin.String
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 
@@ -119,7 +119,7 @@ object Versions {
 
     const val spotbugs: String = "3.1.12"
 
-    const val listset: String = "0.2.5" // available: "0.2.5"
+    const val listset: String = "0.2.5"
 
     const val pegdown: String = "1.6.0"
 
@@ -133,7 +133,7 @@ object Versions {
 
     const val bcel: String = "6.3.1" // available: "6.4.1"
 
-    const val gson: String = "2.8.5" // available: "2.8.6"
+    const val gson: String = "2.8.6"
 
     const val jirf: String = "0.2.0" // available: "0.2.1"
 

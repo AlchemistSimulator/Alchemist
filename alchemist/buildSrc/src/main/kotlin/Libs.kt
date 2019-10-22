@@ -415,6 +415,11 @@ object Libs {
     const val trove4j: String = "net.sf.trove4j:trove4j:" + Versions.trove4j
 
     /**
+     * https://github.com/pinterest/ktlint
+     */
+    const val ktlint: String = "com.pinterest:ktlint:" + Versions.ktlint
+
+    /**
      * https://github.com/google/guava
      */
     const val guava: String = "com.google.guava:guava:" + Versions.guava

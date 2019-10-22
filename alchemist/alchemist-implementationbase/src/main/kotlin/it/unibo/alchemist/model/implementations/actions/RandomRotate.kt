@@ -7,10 +7,10 @@ import it.unibo.alchemist.model.interfaces.Context
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
-import org.apache.commons.math3.random.RandomGenerator
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
+import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * Changes the heading of the node randomly.

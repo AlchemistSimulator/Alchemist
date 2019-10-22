@@ -9,9 +9,9 @@ package it.unibo.alchemist.loader.displacements
 
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
-import org.apache.commons.math3.random.RandomGenerator
 import java.util.stream.Stream
 import java.util.stream.StreamSupport
+import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * A (possibly randomized) grid of nodes.

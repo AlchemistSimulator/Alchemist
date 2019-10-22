@@ -1,4 +1,4 @@
-import kotlin.String
+
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 
@@ -17,7 +17,7 @@ object Versions {
     const val org_danilopianini_publish_on_central_gradle_plugin: String = "0.1.1"
              // available: "0.2.3"
 
-    const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String = "7.4.0" // available: "9.0.0"
+    const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String = "9.0.0"
 
     const val com_github_maiflai_scalatest_gradle_plugin: String = "0.25"
 
@@ -125,6 +125,8 @@ object Versions {
 
     const val trove4j: String = "3.0.3"
 
+    const val ktlint: String = "0.34.2" // available: "0.35.0"
+
     const val guava: String = "28.1-jre"
 
     const val rtree: String = "0.8.7"
@@ -140,7 +142,7 @@ object Versions {
     const val jpx: String = "1.5.3"
 
     /**
-     * Current version: "5.6.2"
+     * Current version: "5.6.3"
      * See issue 19: How to update Gradle itself?
      * https://github.com/jmfayard/buildSrcVersions/issues/19
      */

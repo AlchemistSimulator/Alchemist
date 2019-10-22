@@ -2,11 +2,11 @@ package it.unibo.alchemist.test
 
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
-import it.unibo.alchemist.model.implementations.utils.surrounding
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.nodes.HomogeneousPedestrian2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.implementations.utils.surrounding
 import it.unibo.alchemist.model.influencesphere.FieldOfView2D
 import org.apache.commons.math3.random.MersenneTwister
 

@@ -119,7 +119,7 @@ object Versions {
 
     const val spotbugs: String = "3.1.12"
 
-    const val listset: String = "0.2.4" // available: "0.2.5"
+    const val listset: String = "0.2.5" // available: "0.2.5"
 
     const val pegdown: String = "1.6.0"
 

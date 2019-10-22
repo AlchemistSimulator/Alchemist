@@ -308,7 +308,6 @@ dependencies {
 
 tasks.withType<DokkaTask> {
     subProjects = subprojects.map { it.name }.toList()
-    println(subProjects)
 }
 
 val isMarkedStable by lazy { """\d+(\.\d+){2}""".toRegex().matches(rootProject.version.toString()) }

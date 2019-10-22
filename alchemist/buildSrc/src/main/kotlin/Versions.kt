@@ -12,6 +12,26 @@ import org.gradle.plugin.use.PluginDependencySpec
  * YOU are responsible for updating manually the dependency version.
  */
 object Versions {
+    const val io_github_javaeden_orchid: String = "0.17.1" // available: "0.17.6"
+
+    const val org_jetbrains_kotlin: String = "1.3.50"
+
+    const val org_apache_ignite: String = "2.7.0" // available: "2.7.6"
+
+    const val org_junit_jupiter: String = "5.5.2"
+
+    const val com_github_cb372: String = "0.9.3" // available: "0.28.0"
+
+    const val com_graphhopper: String = "0.12.0" // available: "0.13.0"
+
+    const val org_scala_lang: String = "2.12.2" // available: "2.13.1"
+
+    const val org_protelis: String = "13.0.3" // available: "13.1.0"
+
+    const val org_openjfx: String = "11" // available: "13.0.1"
+
+    const val org_antlr: String = "4.6" // available: "4.7.2"
+
     const val org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin: String = "0.2.2"
 
     const val org_danilopianini_publish_on_central_gradle_plugin: String = "0.1.1"
@@ -21,7 +41,7 @@ object Versions {
 
     const val com_github_maiflai_scalatest_gradle_plugin: String = "0.25"
 
-    const val de_fayard_buildsrcversions_gradle_plugin: String = "0.6.1" // available: "0.7.0"
+    const val de_fayard_buildsrcversions_gradle_plugin: String = "0.7.0"
 
     const val org_jetbrains_kotlin_jvm_gradle_plugin: String = "1.3.50"
 
@@ -39,31 +59,17 @@ object Versions {
 
     const val concurrentlinkedhashmap_lru: String = "1.4.2"
 
-    const val io_github_javaeden_orchid: String = "0.17.1" // available: "0.17.6"
-
     const val kotlintest_runner_junit5: String = "3.3.2" // available: "3.4.2"
 
     const val org_eclipse_emf_ecore: String = "2.12.0" // available: "2.19.0"
 
-    const val org_jetbrains_kotlin: String = "1.3.50"
-
     const val mapsforge_map_awt: String = "0.11.0" // available: "0.12.0"
-
-    const val org_apache_ignite: String = "2.7.0" // available: "2.7.6"
-
-    const val org_junit_jupiter: String = "5.5.2"
-
-    const val com_github_cb372: String = "0.9.3" // available: "0.28.0"
-
-    const val com_graphhopper: String = "0.12.0" // available: "0.13.0"
 
     const val logback_classic: String = "1.3.0-alpha4"
 
     const val miglayout_swing: String = "5.2"
 
     const val scafi_core_2_12: String = "0.3.2"
-
-    const val org_scala_lang: String = "2.12.2" // available: "2.13.1"
 
     const val parboiled_java: String = "1.3.0" // available: "1.3.1"
 
@@ -85,8 +91,6 @@ object Versions {
 
     const val jgrapht_core: String = "1.3.1"
 
-    const val org_protelis: String = "13.0.3" // available: "13.1.0"
-
     const val simplelatlng: String = "1.3.1"
 
     const val annotations: String = "17.0.0"
@@ -99,8 +103,6 @@ object Versions {
 
     const val jool_java_8: String = "0.9.14"
 
-    const val org_openjfx: String = "11" // available: "13.0.1"
-
     const val classgraph: String = "4.8.47" // available: "4.8.52"
 
     const val commons_io: String = "2.6"
@@ -108,8 +110,6 @@ object Versions {
     const val controlsfx: String = "9.0.0" // available: "11.0.0"
 
     const val javafxsvg: String = "1.3.0"
-
-    const val org_antlr: String = "4.6" // available: "4.7.2"
 
     const val slf4j_api: String = "1.8.0-beta2"
 

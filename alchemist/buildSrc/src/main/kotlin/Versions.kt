@@ -1,4 +1,4 @@
-import kotlin.String
+
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 
@@ -45,7 +45,7 @@ object Versions {
 
     const val org_jetbrains_kotlin_jvm_gradle_plugin: String = "1.3.50"
 
-    const val com_eden_orchidplugin_gradle_plugin: String = "0.17.4" // available: "0.17.6"
+    const val com_eden_orchidplugin_gradle_plugin: String = "0.17.6"
 
     const val com_gradle_build_scan_gradle_plugin: String = "2.4.2"
 

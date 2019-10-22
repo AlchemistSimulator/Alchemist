@@ -53,6 +53,12 @@ object Libs {
     /**
      * https://kotlinlang.org/
      */
+    const val kotlin_compiler_embeddable: String =
+            "org.jetbrains.kotlin:kotlin-compiler-embeddable:" + Versions.org_jetbrains_kotlin
+
+    /**
+     * https://kotlinlang.org/
+     */
     const val kotlin_reflect: String = "org.jetbrains.kotlin:kotlin-reflect:" +
             Versions.org_jetbrains_kotlin
 

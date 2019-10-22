@@ -3,6 +3,7 @@ package it.unibo.alchemist.boundary
 import it.unibo.alchemist.input.ActionFromKey
 import it.unibo.alchemist.input.Keybinds
 import javafx.beans.property.StringProperty
+import javafx.collections.FXCollections
 import javafx.geometry.Insets
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
@@ -26,7 +27,6 @@ import tornadofx.keyboard
 import tornadofx.label
 import tornadofx.launch
 import tornadofx.minWidth
-import tornadofx.observable
 import tornadofx.onDoubleClick
 import tornadofx.property
 import tornadofx.region
@@ -82,11 +82,12 @@ class KeybindController : Controller() {
     /**
      * The current keybinds
      */
-    val keybinds = Keybinds.config.asSequence()
-        .map { Keybind(it.key, it.value) }
-        .plus(ActionFromKey.values().map { Keybind(it, KeyCode.UNDEFINED) })
-        .distinctBy { it.action }.toList()
-        .toList().observable()
+    val keybinds = FXCollections.observableList(
+        Keybinds.config.asSequence()
+            .map { Keybind(it.key, it.value) }
+            .plus(ActionFromKey.values().map { Keybind(it, KeyCode.UNDEFINED) })
+            .distinctBy { it.action }.toList()
+        )
     /**
      * The keybind currently selected in the view
      */

@@ -7,10 +7,10 @@
  */
 import com.github.spotbugs.SpotBugsTask
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
-import java.net.URL
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.net.URL
 
 /*
  * don't ignore checkers failures
@@ -130,7 +130,6 @@ allprojects {
 
     tasks.withType<DokkaTask> {
         outputDirectory = "$buildDir/docs/javadoc"
-        reportUndocumented = false
         impliedPlatforms = mutableListOf("JVM")
         // Work around https://github.com/Kotlin/dokka/issues/294
         if (!JavaVersion.current().isJava10Compatible) {
@@ -308,9 +307,8 @@ dependencies {
 }
 
 tasks.withType<DokkaTask> {
-    sourceDirs += subprojects.asSequence()
-        .map { it.sourceSets.getByName("main") }
-        .flatMap { it.allSource.srcDirs.asSequence() }
+    subProjects = subprojects.map { it.name }.toList()
+    println(subProjects)
 }
 
 val isMarkedStable by lazy { """\d+(\.\d+){2}""".toRegex().matches(rootProject.version.toString()) }

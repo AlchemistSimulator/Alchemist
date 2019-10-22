@@ -1,4 +1,4 @@
-import kotlin.String
+
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 
@@ -53,7 +53,7 @@ object Versions {
 
     const val com_github_spotbugs_gradle_plugin: String = "1.6.9" // available: "2.0.0"
 
-    const val org_jetbrains_dokka_gradle_plugin: String = "0.9.18" // available: "0.10.0"
+    const val org_jetbrains_dokka_gradle_plugin: String = "0.10.0"
 
     const val com_jfrog_bintray_gradle_plugin: String = "1.8.4"
 

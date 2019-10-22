@@ -40,7 +40,7 @@ object Libs {
             Versions.com_gradle_build_scan_gradle_plugin
 
     /**
-     * https://github.com/DanySK/thread-inheritable-resource-loader
+     * https://travis-ci.org/DanySK/Thread-Inheritable-Resource-Loader-for-Java
      */
     const val thread_inheritable_resource_loader: String =
             "org.danilopianini:thread-inheritable-resource-loader:" +
@@ -415,11 +415,6 @@ object Libs {
     const val trove4j: String = "net.sf.trove4j:trove4j:" + Versions.trove4j
 
     /**
-     * https://github.com/pinterest/ktlint
-     */
-    const val ktlint: String = "com.pinterest:ktlint:" + Versions.ktlint
-
-    /**
      * https://github.com/google/guava
      */
     const val guava: String = "com.google.guava:guava:" + Versions.guava
@@ -430,7 +425,7 @@ object Libs {
     const val rtree: String = "com.github.davidmoten:rtree:" + Versions.rtree
 
     /**
-     * http://commons.apache.org/proper/commons-bcel
+     * https://commons.apache.org/proper/commons-bcel
      */
     const val bcel: String = "org.apache.bcel:bcel:" + Versions.bcel
 

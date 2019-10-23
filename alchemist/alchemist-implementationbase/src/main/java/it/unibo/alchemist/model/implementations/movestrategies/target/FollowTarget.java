@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
 /**
  * This strategy reads the value of a "target" molecule and tries to interpret
  * it as a coordinate.
- * 
+ *
  * @param <T>
  *            Concentration type
  */

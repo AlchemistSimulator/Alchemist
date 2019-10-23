@@ -19,17 +19,6 @@ object Libs {
             "org.jlleitschuh.gradle.ktlint:org.jlleitschuh.gradle.ktlint.gradle.plugin:" +
             Versions.org_jlleitschuh_gradle_ktlint_gradle_plugin
 
-    /**
-     * https://github.com/jIconFont/jiconfont-google_material_design_icons */
-    const val jiconfont_google_material_design_icons: String =
-            "com.github.jiconfont:jiconfont-google_material_design_icons:" +
-            Versions.jiconfont_google_material_design_icons
-
-    /**
-     * https://github.com/jIconFont/jiconfont-javafx */
-    const val jiconfont_javafx: String = "com.github.jiconfont:jiconfont-javafx:" +
-            Versions.jiconfont_javafx
-
     const val com_github_maiflai_scalatest_gradle_plugin: String =
             "com.github.maiflai.scalatest:com.github.maiflai.scalatest.gradle.plugin:" +
             Versions.com_github_maiflai_scalatest_gradle_plugin
@@ -37,6 +26,13 @@ object Libs {
     const val de_fayard_buildsrcversions_gradle_plugin: String =
             "de.fayard.buildSrcVersions:de.fayard.buildSrcVersions.gradle.plugin:" +
             Versions.de_fayard_buildsrcversions_gradle_plugin
+
+    /**
+     * https://github.com/jIconFont/jiconfont-google_material_design_icons
+     */
+    const val jiconfont_google_material_design_icons: String =
+            "com.github.jiconfont:jiconfont-google_material_design_icons:" +
+            Versions.jiconfont_google_material_design_icons
 
     const val org_jetbrains_kotlin_jvm_gradle_plugin: String =
             "org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin:" +
@@ -51,7 +47,7 @@ object Libs {
             Versions.com_gradle_build_scan_gradle_plugin
 
     /**
-     * https://github.com/DanySK/thread-inheritable-resource-loader
+     * https://travis-ci.org/DanySK/Thread-Inheritable-Resource-Loader-for-Java
      */
     const val thread_inheritable_resource_loader: String =
             "org.danilopianini:thread-inheritable-resource-loader:" +
@@ -64,10 +60,6 @@ object Libs {
     const val org_jetbrains_dokka_gradle_plugin: String =
             "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin:" +
             Versions.org_jetbrains_dokka_gradle_plugin
-
-    /**
-     * http://www.jfoenix.com/ */
-    const val jfoenix: String = "com.jfoenix:jfoenix:" + Versions.jfoenix
 
     const val com_jfrog_bintray_gradle_plugin: String =
             "com.jfrog.bintray:com.jfrog.bintray.gradle.plugin:" +
@@ -134,10 +126,6 @@ object Libs {
      */
     const val org_eclipse_emf_ecore: String = "org.eclipse.emf:org.eclipse.emf.ecore:" +
             Versions.org_eclipse_emf_ecore
-
-    /**
-     * https://github.com/edvin/tornadofx */
-    const val tornadofx: String = "no.tornado:tornadofx:" + Versions.tornadofx
 
     /**
      * https://kotlinlang.org/
@@ -213,6 +201,12 @@ object Libs {
             Versions.com_github_cb372
 
     /**
+     * https://github.com/jIconFont/jiconfont-javafx
+     */
+    const val jiconfont_javafx: String = "com.github.jiconfont:jiconfont-javafx:" +
+            Versions.jiconfont_javafx
+
+    /**
      * https://www.graphhopper.com
      */
     const val graphhopper_core: String = "com.graphhopper:graphhopper-core:" +
@@ -243,7 +237,17 @@ object Libs {
     /**
      * https://www.scala-lang.org/
      */
+    const val scala_compiler: String = "org.scala-lang:scala-compiler:" + Versions.org_scala_lang
+
+    /**
+     * https://www.scala-lang.org/
+     */
     const val scala_library: String = "org.scala-lang:scala-library:" + Versions.org_scala_lang
+
+    /**
+     * http://parboiled.org
+     */
+    const val parboiled_java: String = "org.parboiled:parboiled-java:" + Versions.parboiled_java
 
     /**
      * http://www.scalatest.org
@@ -359,12 +363,9 @@ object Libs {
     const val javafx_swing: String = "org.openjfx:javafx-swing:" + Versions.org_openjfx
 
     /**
-     * https://openjdk.java.net/projects/openjfx/ */
-    const val javafx_web: String = "org.openjfx:javafx-web:" + Versions.org_openjfx
-
-    /**
-     * http://parboiled.org */
-    const val parboiled_java: String = "org.parboiled:parboiled-java:" + Versions.parboiled_java
+     * http://github.com/ronmamo/reflections
+     */
+    const val reflections: String = "org.reflections:reflections:" + Versions.reflections
 
     /**
      * https://github.com/classgraph/classgraph
@@ -407,6 +408,11 @@ object Libs {
     const val snakeyaml: String = "org.yaml:snakeyaml:" + Versions.snakeyaml
 
     /**
+     * https://github.com/edvin/tornadofx
+     */
+    const val tornadofx: String = "no.tornado:tornadofx:" + Versions.tornadofx
+
+    /**
      * https://github.com/ben-manes/caffeine
      */
     const val caffeine: String = "com.github.ben-manes.caffeine:caffeine:" + Versions.caffeine
@@ -415,6 +421,11 @@ object Libs {
      * https://spotbugs.github.io/
      */
     const val spotbugs: String = "com.github.spotbugs:spotbugs:" + Versions.spotbugs
+
+    /**
+     * http://www.jfoenix.com/
+     */
+    const val jfoenix: String = "com.jfoenix:jfoenix:" + Versions.jfoenix
 
     /**
      * https://github.com/DanySK/listset
@@ -432,19 +443,6 @@ object Libs {
     const val trove4j: String = "net.sf.trove4j:trove4j:" + Versions.trove4j
 
     /**
-     * https://github.com/pinterest/ktlint
-     */
-    const val ktlint: String = "com.pinterest:ktlint:" + Versions.ktlint
-
-    /**
-     * http://github.com/ronmamo/reflections */
-    const val reflections: String = "org.reflections:reflections:" + Versions.reflections
-
-    /**
-     * https://www.scala-lang.org/ */
-    const val scala_compiler: String = "org.scala-lang:scala-compiler:" + Versions.org_scala_lang
-
-    /**
      * https://github.com/google/guava
      */
     const val guava: String = "com.google.guava:guava:" + Versions.guava
@@ -455,7 +453,7 @@ object Libs {
     const val rtree: String = "com.github.davidmoten:rtree:" + Versions.rtree
 
     /**
-     * http://commons.apache.org/proper/commons-bcel
+     * https://commons.apache.org/proper/commons-bcel
      */
     const val bcel: String = "org.apache.bcel:bcel:" + Versions.bcel
 

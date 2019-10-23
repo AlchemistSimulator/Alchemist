@@ -1,4 +1,4 @@
-
+import kotlin.String
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 
@@ -15,48 +15,59 @@ object Versions {
     const val org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin: String = "0.2.2"
 
     const val org_danilopianini_publish_on_central_gradle_plugin: String = "0.1.1"
+             // available: "0.2.3"
+
+    const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String = "7.4.0" // available: "9.0.0"
 
     const val com_github_maiflai_scalatest_gradle_plugin: String = "0.25"
 
+    const val de_fayard_buildsrcversions_gradle_plugin: String = "0.6.1" // available: "0.7.0"
+
     const val jiconfont_google_material_design_icons: String = "2.2.0.1" // available: "2.2.0.2"
 
-    const val jiconfont_javafx: String = "1.0.0"
+    const val org_jetbrains_kotlin_jvm_gradle_plugin: String = "1.3.50"
 
-    const val com_eden_orchidplugin_gradle_plugin: String = "0.17.4"
+    const val com_eden_orchidplugin_gradle_plugin: String = "0.17.4" // available: "0.17.6"
 
-    const val com_gradle_build_scan_gradle_plugin: String = "2.4.2"
+    const val com_gradle_build_scan_gradle_plugin: String = "2.4.2" // available: "3.0"
 
-    const val thread_inheritable_resource_loader: String = "0.3.0"
+    const val thread_inheritable_resource_loader: String = "0.3.0" // available: "0.3.2"
 
     const val com_github_spotbugs_gradle_plugin: String = "1.6.9" // available: "2.0.0"
 
-    const val org_jetbrains_dokka_gradle_plugin: String = "0.9.18"
-
-    const val com_graphhopper: String = "0.12.0" // available: "0.14.0-pre1"
-
-    const val concurrentlinkedhashmap_lru: String = "1.4.2"
-
-    const val jfoenix: String = "1.10.0" // available: "9.0.9"
+    const val org_jetbrains_dokka_gradle_plugin: String = "0.9.18" // available: "0.10.0"
 
     const val com_jfrog_bintray_gradle_plugin: String = "1.8.4"
 
+    const val concurrentlinkedhashmap_lru: String = "1.4.2"
+
+    const val io_github_javaeden_orchid: String = "0.17.1" // available: "0.17.6"
+
+    const val kotlintest_runner_junit5: String = "3.3.2" // available: "3.4.2"
+
     const val org_eclipse_emf_ecore: String = "2.12.0" // available: "2.19.0"
+
+    const val org_jetbrains_kotlin: String = "1.3.50"
+
+    const val mapsforge_map_awt: String = "0.11.0" // available: "0.12.0"
+
+    const val org_apache_ignite: String = "2.7.0" // available: "2.7.6"
 
     const val org_junit_jupiter: String = "5.5.2"
 
     const val com_github_cb372: String = "0.9.3" // available: "0.28.0"
 
-    const val de_fayard_buildsrcversions_gradle_plugin: String = "0.6.1" // available: "0.6.1"
+    const val jiconfont_javafx: String = "1.0.0"
 
-    const val io_github_javaeden_orchid: String = "0.17.1" // available: "0.17.5"
-
-    const val kotlintest_runner_junit5: String = "3.3.2" // available: "3.4.2"
+    const val com_graphhopper: String = "0.12.0" // available: "0.13.0"
 
     const val logback_classic: String = "1.3.0-alpha4"
 
     const val miglayout_swing: String = "5.2"
 
     const val scafi_core_2_12: String = "0.3.2"
+
+    const val org_scala_lang: String = "2.12.2" // available: "2.13.1"
 
     const val parboiled_java: String = "1.3.0" // available: "1.3.1"
 
@@ -66,25 +77,19 @@ object Versions {
 
     const val commons_lang3: String = "3.9"
 
-    const val tornadofx: String = "2.0.0-SNAPSHOT" 
-
-    const val bcel: String = "6.3.1" // available: "6.4.0"
-
     const val commons_math3: String = "3.6.1"
 
     const val groovy_jsr223: String = "2.5.8"
 
-    const val java_quadtree: String = "0.1.2"
+    const val java_quadtree: String = "0.1.2" // available: "0.1.3"
 
     const val javalib_java7: String = "0.6.1"
-
-    const val org_apache_ignite: String = "2.7.0" // available: "2.7.6"
-
-    const val controlsfx: String = "11.0.0"
 
     const val svgsalamander: String = "1.1.2"
 
     const val jgrapht_core: String = "1.3.1"
+
+    const val org_protelis: String = "13.0.3" // available: "13.1.0"
 
     const val simplelatlng: String = "1.3.1"
 
@@ -94,19 +99,21 @@ object Versions {
 
     const val commons_cli: String = "1.4"
 
-    const val gson_extras: String = "0.2.1"
+    const val gson_extras: String = "0.2.1" // available: "0.2.2"
 
     const val jool_java_8: String = "0.9.14"
 
-    const val classgraph: String = "4.8.47"
+    const val org_openjfx: String = "11" // available: "13.0.1"
+
+    const val reflections: String = "0.9.11"
+
+    const val classgraph: String = "4.8.47" // available: "4.8.52"
 
     const val commons_io: String = "2.6"
 
+    const val controlsfx: String = "11.0.0"
+
     const val javafxsvg: String = "1.3.0"
-
-    const val org_jetbrains_kotlin_jvm_gradle_plugin: String = "1.3.50" 
-
-    const val org_jetbrains_kotlin: String = "1.3.50"
 
     const val org_antlr: String = "4.6" // available: "4.7.2"
 
@@ -114,43 +121,40 @@ object Versions {
 
     const val snakeyaml: String = "1.25"
 
-    const val caffeine: String = "2.8.0"
+    const val tornadofx: String = "2.0.0-SNAPSHOT"
 
-    const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String = "7.4.0" // available: "8.2.0"
+    const val caffeine: String = "2.8.0"
 
     const val spotbugs: String = "3.1.12"
 
-    const val listset: String = "0.2.4"
+    const val jfoenix: String = "1.10.0" // available: "9.0.9"
 
-    const val mapsforge_map_awt: String = "0.11.0" // available: "0.12.0"
-
-    const val org_openjfx: String = "11" // available: "14-ea+1"
+    const val listset: String = "0.2.4" // available: "0.2.5"
 
     const val pegdown: String = "1.6.0"
 
     const val trove4j: String = "3.0.3"
 
-    const val ktlint: String = "0.33.0" // available: "0.34.2"
-
     const val guava: String = "28.1-jre"
 
     const val rtree: String = "0.8.7"
 
-    const val org_protelis: String = "13.0.3"
+    const val bcel: String = "6.3.1" // available: "6.4.1"
 
-    const val reflections: String = "0.9.11"
+    const val gson: String = "2.8.5" // available: "2.8.6"
 
-    const val org_scala_lang: String = "2.12.2" // available: "2.13.1"
-
-    const val gson: String = "2.8.5"
-
-    const val jirf: String = "0.2.0"
+    const val jirf: String = "0.2.0" // available: "0.2.1"
 
     const val konf: String = "0.13.3" // available: "0.20.0"
 
     const val jpx: String = "1.5.3"
 
-    const val gradleLatestVersion: String = "5.6.2"
+    /**
+     * Current version: "5.6.2"
+     * See issue 19: How to update Gradle itself?
+     * https://github.com/jmfayard/buildSrcVersions/issues/19
+     */
+    const val gradleLatestVersion: String = "5.6.3"
 }
 
 /**

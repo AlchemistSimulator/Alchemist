@@ -46,7 +46,7 @@ object Versions {
 
     const val com_github_cb372: String = "0.9.3" // available: "0.28.0"
 
-    const val de_fayard_buildsrcversions_gradle_plugin: String = "0.3.2" // available: "0.6.1"
+    const val de_fayard_buildsrcversions_gradle_plugin: String = "0.6.1" // available: "0.6.1"
 
     const val io_github_javaeden_orchid: String = "0.17.1" // available: "0.17.5"
 
@@ -116,7 +116,7 @@ object Versions {
 
     const val caffeine: String = "2.8.0"
 
-    const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String = "8.0.0" // available: "8.2.0"
+    const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String = "7.4.0" // available: "8.2.0"
 
     const val spotbugs: String = "3.1.12"
 

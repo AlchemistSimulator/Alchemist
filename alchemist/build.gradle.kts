@@ -87,7 +87,7 @@ allprojects {
 
     tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"
-        options.compilerArgs = options.compilerArgs + listOf("-Werror", "-Xlint:unchecked")
+//        options.compilerArgs = options.compilerArgs + listOf("-Werror", "-Xlint:unchecked")
     }
 
     tasks.withType<KotlinCompile> {

@@ -7,9 +7,9 @@
  */
 package it.unibo.alchemist.model.implementations.reactions;
 
+import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Condition;
-import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
@@ -17,6 +17,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -34,10 +35,10 @@ import org.danilopianini.util.ListSets;
 
 /**
  * The type which describes the concentration of a molecule
- * 
+ *
  * This class offers a partial implementation of Reaction. In particular, it
  * allows to write new reaction specifying only which distribution time to adopt
- * 
+ *
  * @param <T>
  */
 public abstract class AbstractReaction<T> implements Reaction<T> {
@@ -61,7 +62,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
 
     /**
      * Builds a new reaction, starting at time t.
-     * 
+     *
      * @param n
      *            the node this reaction belongs to
      * @param pd
@@ -282,7 +283,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
 
     /**
      * Used by subclasses to set their input context.
-     * 
+     *
      * @param c
      *            the new input context
      */
@@ -292,7 +293,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
 
     /**
      * Used by subclasses to set their output context.
-     * 
+     *
      * @param c
      *            the new input context
      */
@@ -307,15 +308,15 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     @Override
     public String toString() {
         final StringBuilder tot = new StringBuilder(stringLength + MARGIN)
-            .append(getReactionName())
-            .append('@')
-            .append(getTau())
-            .append(':')
-            .append(getConditions().toString())
-            .append('-')
-            .append(getRateAsString())
-            .append("->")
-            .append(getActions().toString());
+                .append(getReactionName())
+                .append('@')
+                .append(getTau())
+                .append(':')
+                .append(getConditions().toString())
+                .append('-')
+                .append(getRateAsString())
+                .append("->")
+                .append(getActions().toString());
         stringLength = tot.length();
         return tot.toString();
     }
@@ -330,7 +331,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      * This method gets called as soon as
      * {@link #update(Time, boolean, Environment)} is called. It is useful to
      * update the internal status of the reaction.
-     * 
+     *
      * @param curTime
      *            the current simulation time
      * @param executed

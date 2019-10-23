@@ -33,7 +33,7 @@ object ClassPathScanner {
     @JvmOverloads
     @Suppress("UNCHECKED_CAST")
     fun <T> subTypesOf(superClass: Class<T>, inPackage: String? = null): List<Class<out T>> =
-        subTypesOf(object: TypeToken<T>(superClass) {}, inPackage)
+        subTypesOf(object : TypeToken<T>(superClass) {}, inPackage)
 
     /**
      * This function loads all subtypes of the provided Java class that can be discovered on the current classpath.

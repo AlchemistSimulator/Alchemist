@@ -7,71 +7,6 @@ import kotlin.String
  *   `$ ./gradlew buildSrcVersions`
  */
 object Libs {
-    const val org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin: String =
-            "org.danilopianini.git-sensitive-semantic-versioning:org.danilopianini.git-sensitive-semantic-versioning.gradle.plugin:" +
-            Versions.org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin
-
-    const val org_danilopianini_publish_on_central_gradle_plugin: String =
-            "org.danilopianini.publish-on-central:org.danilopianini.publish-on-central.gradle.plugin:" +
-            Versions.org_danilopianini_publish_on_central_gradle_plugin
-
-    const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String =
-            "org.jlleitschuh.gradle.ktlint:org.jlleitschuh.gradle.ktlint.gradle.plugin:" +
-            Versions.org_jlleitschuh_gradle_ktlint_gradle_plugin
-
-    const val com_github_maiflai_scalatest_gradle_plugin: String =
-            "com.github.maiflai.scalatest:com.github.maiflai.scalatest.gradle.plugin:" +
-            Versions.com_github_maiflai_scalatest_gradle_plugin
-
-    const val de_fayard_buildsrcversions_gradle_plugin: String =
-            "de.fayard.buildSrcVersions:de.fayard.buildSrcVersions.gradle.plugin:" +
-            Versions.de_fayard_buildsrcversions_gradle_plugin
-
-    /**
-     * https://github.com/jIconFont/jiconfont-google_material_design_icons
-     */
-    const val jiconfont_google_material_design_icons: String =
-            "com.github.jiconfont:jiconfont-google_material_design_icons:" +
-            Versions.jiconfont_google_material_design_icons
-
-    const val org_jetbrains_kotlin_jvm_gradle_plugin: String =
-            "org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin:" +
-            Versions.org_jetbrains_kotlin_jvm_gradle_plugin
-
-    const val com_eden_orchidplugin_gradle_plugin: String =
-            "com.eden.orchidPlugin:com.eden.orchidPlugin.gradle.plugin:" +
-            Versions.com_eden_orchidplugin_gradle_plugin
-
-    const val com_gradle_build_scan_gradle_plugin: String =
-            "com.gradle.build-scan:com.gradle.build-scan.gradle.plugin:" +
-            Versions.com_gradle_build_scan_gradle_plugin
-
-    /**
-     * https://travis-ci.org/DanySK/Thread-Inheritable-Resource-Loader-for-Java
-     */
-    const val thread_inheritable_resource_loader: String =
-            "org.danilopianini:thread-inheritable-resource-loader:" +
-            Versions.thread_inheritable_resource_loader
-
-    const val com_github_spotbugs_gradle_plugin: String =
-            "com.github.spotbugs:com.github.spotbugs.gradle.plugin:" +
-            Versions.com_github_spotbugs_gradle_plugin
-
-    const val org_jetbrains_dokka_gradle_plugin: String =
-            "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin:" +
-            Versions.org_jetbrains_dokka_gradle_plugin
-
-    const val com_jfrog_bintray_gradle_plugin: String =
-            "com.jfrog.bintray:com.jfrog.bintray.gradle.plugin:" +
-            Versions.com_jfrog_bintray_gradle_plugin
-
-    /**
-     * http://code.google.com/p/concurrentlinkedhashmap
-     */
-    const val concurrentlinkedhashmap_lru: String =
-            "com.googlecode.concurrentlinkedhashmap:concurrentlinkedhashmap-lru:" +
-            Versions.concurrentlinkedhashmap_lru
-
     /**
      * https://javaeden.github.io/Orchid/latest/core/
      */
@@ -183,12 +118,6 @@ object Libs {
             Versions.com_github_cb372
 
     /**
-     * https://github.com/jIconFont/jiconfont-javafx
-     */
-    const val jiconfont_javafx: String = "com.github.jiconfont:jiconfont-javafx:" +
-            Versions.jiconfont_javafx
-
-    /**
      * https://www.graphhopper.com
      */
     const val graphhopper_core: String = "com.graphhopper:graphhopper-core:" +
@@ -281,6 +210,13 @@ object Libs {
             "de.fayard.buildSrcVersions:de.fayard.buildSrcVersions.gradle.plugin:" +
             Versions.de_fayard_buildsrcversions_gradle_plugin
 
+    /**
+     * https://github.com/jIconFont/jiconfont-google_material_design_icons
+     */
+    const val jiconfont_google_material_design_icons: String =
+            "com.github.jiconfont:jiconfont-google_material_design_icons:" +
+            Versions.jiconfont_google_material_design_icons
+
     const val org_jetbrains_kotlin_jvm_gradle_plugin: String =
             "org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin:" +
             Versions.org_jetbrains_kotlin_jvm_gradle_plugin
@@ -336,6 +272,12 @@ object Libs {
      */
     const val mapsforge_map_awt: String = "org.mapsforge:mapsforge-map-awt:" +
             Versions.mapsforge_map_awt
+
+    /**
+     * https://github.com/jIconFont/jiconfont-javafx
+     */
+    const val jiconfont_javafx: String = "com.github.jiconfont:jiconfont-javafx:" +
+            Versions.jiconfont_javafx
 
     /**
      * http://logback.qos.ch
@@ -431,36 +373,6 @@ object Libs {
     const val jool_java_8: String = "org.jooq:jool-java-8:" + Versions.jool_java_8
 
     /**
-     * https://openjdk.java.net/projects/openjfx/
-     */
-    const val javafx_base: String = "org.openjfx:javafx-base:" + Versions.org_openjfx
-
-    /**
-     * https://openjdk.java.net/projects/openjfx/
-     */
-    const val javafx_controls: String = "org.openjfx:javafx-controls:" + Versions.org_openjfx
-
-    /**
-     * https://openjdk.java.net/projects/openjfx/
-     */
-    const val javafx_fxml: String = "org.openjfx:javafx-fxml:" + Versions.org_openjfx
-
-    /**
-     * https://openjdk.java.net/projects/openjfx/
-     */
-    const val javafx_graphics: String = "org.openjfx:javafx-graphics:" + Versions.org_openjfx
-
-    /**
-     * https://openjdk.java.net/projects/openjfx/
-     */
-    const val javafx_media: String = "org.openjfx:javafx-media:" + Versions.org_openjfx
-
-    /**
-     * https://openjdk.java.net/projects/openjfx/
-     */
-    const val javafx_swing: String = "org.openjfx:javafx-swing:" + Versions.org_openjfx
-
-    /**
      * http://github.com/ronmamo/reflections
      */
     const val reflections: String = "org.reflections:reflections:" + Versions.reflections
@@ -529,6 +441,11 @@ object Libs {
      * http://trove4j.sf.net
      */
     const val trove4j: String = "net.sf.trove4j:trove4j:" + Versions.trove4j
+
+    /**
+     * https://github.com/pinterest/ktlint
+     */
+    const val ktlint: String = "com.pinterest:ktlint:" + Versions.ktlint
 
     /**
      * https://github.com/google/guava

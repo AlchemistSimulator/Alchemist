@@ -81,11 +81,11 @@ public class TestConcurrency {
          */
         final CountDownLatch latch = new CountDownLatch(inWaitCount);
         final ImmutableList<Future<Status>> waitList = IntStream.range(0, inWaitCount)
-            .mapToObj(it -> container.submit(() -> {
-                latch.countDown();
-                return sim.waitFor(Status.RUNNING, 1, TimeUnit.MINUTES);
-            }))
-            .collect(ImmutableList.toImmutableList());
+                .mapToObj(it -> container.submit(() -> {
+                    latch.countDown();
+                    return sim.waitFor(Status.RUNNING, 1, TimeUnit.MINUTES);
+                }))
+                .collect(ImmutableList.toImmutableList());
         assertTrue(latch.await(1, TimeUnit.MINUTES));
         // All threads are started, wait a bit of additional time to make sure they reached wait status
         Thread.sleep(1000);

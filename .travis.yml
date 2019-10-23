@@ -76,7 +76,7 @@ jobs:
       script:
         - cd "$TRAVIS_BUILD_DIR"/alchemist
         - ./gradlew dokka > >(egrep -v '(null:-1:-1)|(t find node by signature)') --scan
-        - ./gradlew fatJar projectReport orchidDeploy -x test --scan --parallel
+        - ./gradlew fatJar projectReport orchidDeploy -x test ktlintCheck --scan --parallel
         - ./gradlew sign
         - ./gradlew buildDashboard -x test
         - mkdir -p report

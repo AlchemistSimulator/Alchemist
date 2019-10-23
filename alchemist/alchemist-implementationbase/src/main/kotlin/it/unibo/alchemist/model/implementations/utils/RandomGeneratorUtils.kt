@@ -1,8 +1,8 @@
 package it.unibo.alchemist.model.implementations.utils
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import org.apache.commons.math3.random.RandomGenerator
 import java.util.Collections
+import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * Generate a random double between the given bounds.

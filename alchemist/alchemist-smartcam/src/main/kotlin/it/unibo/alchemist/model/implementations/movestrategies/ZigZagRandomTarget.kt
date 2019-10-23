@@ -4,12 +4,12 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.smartcam.randomAngle
-import org.apache.commons.math3.random.RandomGenerator
 import java.lang.Math.toRadians
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
+import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * Strategy to move an object in a zigzag fashion. It uses euclidean geometry to determine the next position.

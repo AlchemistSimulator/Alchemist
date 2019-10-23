@@ -15,8 +15,8 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.Position
-import org.apache.commons.math3.random.RandomGenerator
 import kotlin.reflect.KClass
+import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * Implementation of a cognitive pedestrian.

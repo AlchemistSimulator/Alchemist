@@ -11,10 +11,10 @@ package it.unibo.alchemist.loader.displacements
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.GeoPosition
 import it.unibo.alchemist.model.interfaces.Position2D
-import org.apache.commons.math3.random.RandomGenerator
 import java.awt.geom.Area
 import java.awt.geom.Path2D
 import java.awt.geom.Rectangle2D
+import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * Alias for using pairs as bidimensional points

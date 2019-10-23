@@ -24,8 +24,8 @@ import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTim
 import it.unibo.alchemist.model.interfaces.CellNode
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Reaction
-import org.apache.commons.math3.random.MersenneTwister
 import kotlin.properties.Delegates
+import org.apache.commons.math3.random.MersenneTwister
 
 private const val DIRECT_REACTION = "[token] --> [token in neighbor]"
 private const val INVERSE_REACTION = "[token in neighbor] --> [token]"

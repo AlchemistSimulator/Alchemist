@@ -18,11 +18,6 @@ import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.regex.Matcher;
-
-import static org.danilopianini.util.regex.Patterns.FLOAT_PATTERN;
 
 /**
  * This strategy reads the value of a "target" molecule and tries to interpret

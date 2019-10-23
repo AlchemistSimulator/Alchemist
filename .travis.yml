@@ -107,5 +107,40 @@ deploy:
       os: *reference_os
       repo: *official_repo
       tags: true
-      jdk: openjdk11
-      os: linux
+      condition: $PUBLISH = "true"
+  - provider: surge
+    skip_cleanup: true
+    project: "./alchemist/build/docs/javadoc/"
+    domain: alchemist-unstable-doc.surge.sh
+    on:
+      os: *reference_os
+      repo: *official_repo
+      branch: develop
+      condition: $PUBLISH = "true"
+  - provider: surge
+    skip_cleanup: true
+    project: "./alchemist/report"
+    domain: alchemist-unstable-reports.surge.sh
+    on:
+      os: *reference_os
+      repo: *official_repo
+      branch: develop
+      condition: $PUBLISH = "true"
+  - provider: surge
+    skip_cleanup: true
+    project: "./alchemist/build/docs/javadoc/"
+    domain: alchemist-doc.surge.sh
+    on:
+      os: *reference_os
+      repo: *official_repo
+      tags: true
+      condition: $PUBLISH = "true"
+  - provider: surge
+    skip_cleanup: true
+    project: "./alchemist/report"
+    domain: alchemist-reports.surge.sh
+    on:
+      os: *reference_os
+      repo: *official_repo
+      tags: true
+      condition: $PUBLISH = "true"

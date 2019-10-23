@@ -256,7 +256,7 @@ class InteractionManager<T, P : Position2D<P>>(
         // scroll
         input.setOnScroll {
             zoomManager.inc(it.deltaY / ZOOM_SCALE)
-            wormhole.zoomOnPoint(makePoint(it.x, it.y), zoomManager.zoom)
+            wormhole.zoomOnPoint(it.unibo.alchemist.kotlin.makePoint(it.x, it.y), zoomManager.zoom)
             parentMonitor.repaint()
             it.consume()
         }
@@ -319,7 +319,7 @@ class InteractionManager<T, P : Position2D<P>>(
      */
     private fun onSelecting(event: MouseEvent) {
         selectionHelper.let {
-            it.update(makePoint(event.x, event.y))
+            it.update(it.unibo.alchemist.kotlin.makePoint(event.x, event.y))
             feedback += Interaction.SELECTION_BOX to listOf(selector.createDrawCommand(it.rectangle, Colors.selectionBox))
             addNodesToSelectionCandidates()
             repaint()

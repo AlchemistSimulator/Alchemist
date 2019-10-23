@@ -81,7 +81,6 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     private Time currentTime = DoubleTime.ZERO_TIME;
     private long currentStep;
     private Thread myThread;
-    private Reaction<T> mu;
 
 
     /**
@@ -167,12 +166,11 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     private void doStep() {
-        final Reaction<T> root = ipq.getNext();
-        if (root == null) {
+        final Reaction<T> mu = ipq.getNext();
+        if (mu == null) {
             this.newStatus(TERMINATED);
             L.info("No more reactions.");
         } else {
-            mu = root;
             final Time t = mu.getTau();
             if (t.compareTo(currentTime) < 0) {
                 throw new IllegalStateException(mu + "\nis scheduled in the past at time " + t
@@ -196,22 +194,18 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                 toUpdate.forEach(this::updateReaction);
             }
             mu.update(currentTime, true, env);
-            ipq.updateReaction(root);
-            updateMonitors();
+            ipq.updateReaction(mu);
+            monitorLock.read();
+            for (final OutputMonitor<T, P> m : monitors) {
+                m.stepDone(env, mu, currentTime, currentStep);
+            }
+            monitorLock.release();
         }
         if (env.isTerminated()) {
             newStatus(TERMINATED);
             L.info("Termination condition reached.");
         }
         currentStep++;
-    }
-
-    private void updateMonitors() {
-        monitorLock.read();
-        for (final OutputMonitor<T, P> m : monitors) {
-            m.stepDone(env, mu, currentTime, currentStep);
-        }
-        monitorLock.release();
     }
 
     private void finalizeConstructor() {
@@ -289,7 +283,6 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
             try {
                 nextCommand = commands.take();
                 processCommand(nextCommand);
-                updateMonitors();
             } catch (InterruptedException e) {
                 L.debug("Look! A spurious wakeup! :-)");
             }
@@ -399,7 +392,6 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                 while (status != TERMINATED && currentStep < finalStep && currentTime.compareTo(finalTime) < 0) {
                     while (!commands.isEmpty()) {
                         processCommand(commands.poll());
-                        updateMonitors();
                     }
                     if (status.equals(RUNNING)) {
                         doStep();

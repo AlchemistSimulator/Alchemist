@@ -35,10 +35,10 @@ import org.danilopianini.util.ListSets;
 
 /**
  * The type which describes the concentration of a molecule
- *
+ * 
  * This class offers a partial implementation of Reaction. In particular, it
  * allows to write new reaction specifying only which distribution time to adopt
- *
+ * 
  * @param <T>
  */
 public abstract class AbstractReaction<T> implements Reaction<T> {
@@ -62,7 +62,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
 
     /**
      * Builds a new reaction, starting at time t.
-     *
+     * 
      * @param n
      *            the node this reaction belongs to
      * @param pd
@@ -283,7 +283,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
 
     /**
      * Used by subclasses to set their input context.
-     *
+     * 
      * @param c
      *            the new input context
      */
@@ -293,7 +293,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
 
     /**
      * Used by subclasses to set their output context.
-     *
+     * 
      * @param c
      *            the new input context
      */
@@ -308,15 +308,15 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     @Override
     public String toString() {
         final StringBuilder tot = new StringBuilder(stringLength + MARGIN)
-                .append(getReactionName())
-                .append('@')
-                .append(getTau())
-                .append(':')
-                .append(getConditions().toString())
-                .append('-')
-                .append(getRateAsString())
-                .append("->")
-                .append(getActions().toString());
+            .append(getReactionName())
+            .append('@')
+            .append(getTau())
+            .append(':')
+            .append(getConditions().toString())
+            .append('-')
+            .append(getRateAsString())
+            .append("->")
+            .append(getActions().toString());
         stringLength = tot.length();
         return tot.toString();
     }
@@ -331,7 +331,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      * This method gets called as soon as
      * {@link #update(Time, boolean, Environment)} is called. It is useful to
      * update the internal status of the reaction.
-     *
+     * 
      * @param curTime
      *            the current simulation time
      * @param executed

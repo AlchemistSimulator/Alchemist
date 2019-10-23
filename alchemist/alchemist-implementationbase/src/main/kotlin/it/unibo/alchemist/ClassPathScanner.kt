@@ -38,8 +38,8 @@ object ClassPathScanner {
             } else {
                 scanResult.getSubclasses(superClass.name)
             }.filter { it -> !it.isAbstract }
-                .loadClasses()
-                .map { it -> it as Class<out T> }
+            .loadClasses()
+            .map { it -> it as Class<out T> }
         }
 
     /**

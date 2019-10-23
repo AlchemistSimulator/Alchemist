@@ -28,9 +28,9 @@ import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTim
 import it.unibo.alchemist.model.interfaces.CellNode
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
+import kotlin.properties.Delegates
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.util.CombinatoricsUtils.binomialCoefficientDouble
-import kotlin.properties.Delegates
 
 private const val BIOMOLECULE_NEEDED = 5
 private const val NEIGHBORHOOD_PRESENT_REACTION = "[5 token] --> [5 token in neighbor]"

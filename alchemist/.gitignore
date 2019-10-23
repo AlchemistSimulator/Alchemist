@@ -10,3 +10,5 @@ vcs.xml
 compiler.xml
 misc.xml
 .idea/workspace.xml
+.idea/codeStyleSettings.xml
+.idea/inspectionProfiles/profiles_settings.xml

@@ -1,10 +1,10 @@
 package it.unibo.alchemist.model.implementations.reactions
 
 import it.unibo.alchemist.model.interfaces.CognitivePedestrian
-import it.unibo.alchemist.model.interfaces.TimeDistribution
-import it.unibo.alchemist.model.interfaces.Time
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.model.interfaces.TimeDistribution
 
 /**
  * Reaction representing the cognitive behavior of a pedestrian.

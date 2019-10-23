@@ -7,12 +7,12 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
 import it.unibo.alchemist.model.smartcam.toPosition
-import org.apache.commons.math3.util.FastMath.toRadians
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sign
 import kotlin.math.sin
+import org.apache.commons.math3.util.FastMath.toRadians
 
 /**
  * Reads the target's absolute coordinates from the [target] molecule contained in [node] and sets the [node]'s heading accordingly.

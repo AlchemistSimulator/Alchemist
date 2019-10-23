@@ -116,18 +116,6 @@ object Libs {
             Versions.io_github_javaeden_orchid
 
     /**
-     * http://www.github.com/kotlintest/kotlintest
-     */
-    const val kotlintest_runner_junit5: String = "io.kotlintest:kotlintest-runner-junit5:" +
-            Versions.kotlintest_runner_junit5
-
-    /**
-     * https://www.eclipse.org/emf
-     */
-    const val org_eclipse_emf_ecore: String = "org.eclipse.emf:org.eclipse.emf.ecore:" +
-            Versions.org_eclipse_emf_ecore
-
-    /**
      * https://kotlinlang.org/
      */
     const val kotlin_reflect: String = "org.jetbrains.kotlin:kotlin-reflect:" +
@@ -152,12 +140,6 @@ object Libs {
      */
     const val kotlin_stdlib: String = "org.jetbrains.kotlin:kotlin-stdlib:" +
             Versions.org_jetbrains_kotlin
-
-    /**
-     * https://github.com/mapsforge/mapsforge
-     */
-    const val mapsforge_map_awt: String = "org.mapsforge:mapsforge-map-awt:" +
-            Versions.mapsforge_map_awt
 
     /**
      * http://ignite.apache.org
@@ -219,6 +201,143 @@ object Libs {
             Versions.com_graphhopper
 
     /**
+     * https://www.scala-lang.org/
+     */
+    const val scala_compiler: String = "org.scala-lang:scala-compiler:" + Versions.org_scala_lang
+
+    /**
+     * https://www.scala-lang.org/
+     */
+    const val scala_library: String = "org.scala-lang:scala-library:" + Versions.org_scala_lang
+
+    /**
+     * http://www.protelis.org
+     */
+    const val protelis_interpreter: String = "org.protelis:protelis-interpreter:" +
+            Versions.org_protelis
+
+    /**
+     * http://www.protelis.org
+     */
+    const val protelis_lang: String = "org.protelis:protelis-lang:" + Versions.org_protelis
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/
+     */
+    const val javafx_base: String = "org.openjfx:javafx-base:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/
+     */
+    const val javafx_controls: String = "org.openjfx:javafx-controls:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/
+     */
+    const val javafx_fxml: String = "org.openjfx:javafx-fxml:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/
+     */
+    const val javafx_graphics: String = "org.openjfx:javafx-graphics:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/
+     */
+    const val javafx_media: String = "org.openjfx:javafx-media:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/
+     */
+    const val javafx_swing: String = "org.openjfx:javafx-swing:" + Versions.org_openjfx
+
+    /**
+     * http://www.antlr.org
+     */
+    const val antlr4: String = "org.antlr:antlr4:" + Versions.org_antlr
+
+    /**
+     * http://www.antlr.org
+     */
+    const val antlr4_runtime: String = "org.antlr:antlr4-runtime:" + Versions.org_antlr
+
+    const val org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin: String =
+            "org.danilopianini.git-sensitive-semantic-versioning:org.danilopianini.git-sensitive-semantic-versioning.gradle.plugin:" +
+            Versions.org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin
+
+    const val org_danilopianini_publish_on_central_gradle_plugin: String =
+            "org.danilopianini.publish-on-central:org.danilopianini.publish-on-central.gradle.plugin:" +
+            Versions.org_danilopianini_publish_on_central_gradle_plugin
+
+    const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String =
+            "org.jlleitschuh.gradle.ktlint:org.jlleitschuh.gradle.ktlint.gradle.plugin:" +
+            Versions.org_jlleitschuh_gradle_ktlint_gradle_plugin
+
+    const val com_github_maiflai_scalatest_gradle_plugin: String =
+            "com.github.maiflai.scalatest:com.github.maiflai.scalatest.gradle.plugin:" +
+            Versions.com_github_maiflai_scalatest_gradle_plugin
+
+    const val de_fayard_buildsrcversions_gradle_plugin: String =
+            "de.fayard.buildSrcVersions:de.fayard.buildSrcVersions.gradle.plugin:" +
+            Versions.de_fayard_buildsrcversions_gradle_plugin
+
+    const val org_jetbrains_kotlin_jvm_gradle_plugin: String =
+            "org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin:" +
+            Versions.org_jetbrains_kotlin_jvm_gradle_plugin
+
+    const val com_eden_orchidplugin_gradle_plugin: String =
+            "com.eden.orchidPlugin:com.eden.orchidPlugin.gradle.plugin:" +
+            Versions.com_eden_orchidplugin_gradle_plugin
+
+    const val com_gradle_build_scan_gradle_plugin: String =
+            "com.gradle.build-scan:com.gradle.build-scan.gradle.plugin:" +
+            Versions.com_gradle_build_scan_gradle_plugin
+
+    /**
+     * https://travis-ci.org/DanySK/Thread-Inheritable-Resource-Loader-for-Java
+     */
+    const val thread_inheritable_resource_loader: String =
+            "org.danilopianini:thread-inheritable-resource-loader:" +
+            Versions.thread_inheritable_resource_loader
+
+    const val com_github_spotbugs_gradle_plugin: String =
+            "com.github.spotbugs:com.github.spotbugs.gradle.plugin:" +
+            Versions.com_github_spotbugs_gradle_plugin
+
+    const val org_jetbrains_dokka_gradle_plugin: String =
+            "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin:" +
+            Versions.org_jetbrains_dokka_gradle_plugin
+
+    const val com_jfrog_bintray_gradle_plugin: String =
+            "com.jfrog.bintray:com.jfrog.bintray.gradle.plugin:" +
+            Versions.com_jfrog_bintray_gradle_plugin
+
+    /**
+     * http://code.google.com/p/concurrentlinkedhashmap
+     */
+    const val concurrentlinkedhashmap_lru: String =
+            "com.googlecode.concurrentlinkedhashmap:concurrentlinkedhashmap-lru:" +
+            Versions.concurrentlinkedhashmap_lru
+
+    /**
+     * http://www.github.com/kotlintest/kotlintest
+     */
+    const val kotlintest_runner_junit5: String = "io.kotlintest:kotlintest-runner-junit5:" +
+            Versions.kotlintest_runner_junit5
+
+    /**
+     * https://www.eclipse.org/emf
+     */
+    const val org_eclipse_emf_ecore: String = "org.eclipse.emf:org.eclipse.emf.ecore:" +
+            Versions.org_eclipse_emf_ecore
+
+    /**
+     * https://github.com/mapsforge/mapsforge
+     */
+    const val mapsforge_map_awt: String = "org.mapsforge:mapsforge-map-awt:" +
+            Versions.mapsforge_map_awt
+
+    /**
      * http://logback.qos.ch
      */
     const val logback_classic: String = "ch.qos.logback:logback-classic:" + Versions.logback_classic
@@ -233,16 +352,6 @@ object Libs {
      */
     const val scafi_core_2_12: String = "it.unibo.apice.scafiteam:scafi-core_2.12:" +
             Versions.scafi_core_2_12
-
-    /**
-     * https://www.scala-lang.org/
-     */
-    const val scala_compiler: String = "org.scala-lang:scala-compiler:" + Versions.org_scala_lang
-
-    /**
-     * https://www.scala-lang.org/
-     */
-    const val scala_library: String = "org.scala-lang:scala-library:" + Versions.org_scala_lang
 
     /**
      * http://parboiled.org
@@ -293,17 +402,6 @@ object Libs {
      * http://www.jgrapht.org
      */
     const val jgrapht_core: String = "org.jgrapht:jgrapht-core:" + Versions.jgrapht_core
-
-    /**
-     * http://www.protelis.org
-     */
-    const val protelis_interpreter: String = "org.protelis:protelis-interpreter:" +
-            Versions.org_protelis
-
-    /**
-     * http://www.protelis.org
-     */
-    const val protelis_lang: String = "org.protelis:protelis-lang:" + Versions.org_protelis
 
     /**
      * http://code.google.com/p/simplelatlng
@@ -386,16 +484,6 @@ object Libs {
      * https://github.com/codecentric/javafxsvg
      */
     const val javafxsvg: String = "de.codecentric.centerdevice:javafxsvg:" + Versions.javafxsvg
-
-    /**
-     * http://www.antlr.org
-     */
-    const val antlr4: String = "org.antlr:antlr4:" + Versions.org_antlr
-
-    /**
-     * http://www.antlr.org
-     */
-    const val antlr4_runtime: String = "org.antlr:antlr4-runtime:" + Versions.org_antlr
 
     /**
      * http://www.slf4j.org

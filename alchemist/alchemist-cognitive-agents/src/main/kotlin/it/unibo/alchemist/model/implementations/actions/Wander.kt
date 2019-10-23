@@ -11,9 +11,9 @@ import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
-import org.apache.commons.math3.random.RandomGenerator
 import kotlin.math.cos
 import kotlin.math.sin
+import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * Give the impression of a random walk through the environment targeting an ever changing pseudo-randomly point

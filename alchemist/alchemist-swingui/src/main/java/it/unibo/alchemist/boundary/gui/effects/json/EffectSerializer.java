@@ -7,6 +7,7 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
+import it.unibo.alchemist.ClassPathScanner;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
@@ -24,13 +25,11 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import javafx.beans.property.Property;
 import javafx.scene.paint.Color;
 import javassist.Modifier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.TestOnly;
-import org.reflections.Reflections;
 
 /**
  * Serialize Alchemist {@link EffectGroup effect groups} from/to file in human
@@ -72,22 +71,18 @@ public final class EffectSerializer {
     private static final TypeToken<List<EffectGroup<?>>> EFFECT_GROUP_LIST_TYPE = new TypeToken<List<EffectGroup<?>>>() {
     };
     /**
-     * Reflection object for main Alchemist package.
-     */
-    private static final Reflections REFLECTIONS = new Reflections("it.unibo.alchemist");
-    /**
      * Set of available {@link EffectFX effect}s found by reflection.
      */
-    private static final Set<Class<? extends EffectFX>> EFFECTS = REFLECTIONS.getSubTypesOf(EffectFX.class);
+    private static final List<Class<? extends EffectFX>> EFFECTS = ClassPathScanner.subTypesOf(EffectFX.class, "it.unibo.alchemist");
     /**
      * Set of available {@link EffectGroup group}s found by reflection.
      */
-    private static final Set<Class<? extends EffectGroup>> GROUPS = REFLECTIONS.getSubTypesOf(EffectGroup.class);
+    private static final List<Class<? extends EffectGroup>> GROUPS = ClassPathScanner.subTypesOf(EffectGroup.class, "it.unibo.alchemist");
     /**
      * Set of available {@link Property Properties} found by reflection.
      */
     @SuppressWarnings("rawtypes") // Needed to make the compiler accept the constant
-    private static final Set<Class<? extends Property>> PROPERTIES = REFLECTIONS.getSubTypesOf(Property.class);
+    private static final List<Class<? extends Property>> PROPERTIES = ClassPathScanner.subTypesOf(Property.class, "it.unibo.alchemist");
     /**
      * {@link RuntimeTypeAdapterFactory} to serialize and deserialize {@link EffectFX effects} properly.
      */

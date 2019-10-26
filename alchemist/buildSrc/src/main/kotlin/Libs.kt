@@ -373,11 +373,6 @@ object Libs {
     const val jool_java_8: String = "org.jooq:jool-java-8:" + Versions.jool_java_8
 
     /**
-     * http://github.com/ronmamo/reflections
-     */
-    const val reflections: String = "org.reflections:reflections:" + Versions.reflections
-
-    /**
      * https://github.com/classgraph/classgraph
      */
     const val classgraph: String = "io.github.classgraph:classgraph:" + Versions.classgraph

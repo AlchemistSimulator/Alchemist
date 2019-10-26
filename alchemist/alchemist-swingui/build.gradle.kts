@@ -28,7 +28,6 @@ dependencies {
     implementation(Libs.jiconfont_javafx)
     implementation(Libs.jiconfont_google_material_design_icons)
     implementation(Libs.tornadofx)
-    implementation(Libs.reflections)
     implementation(Libs.svgsalamander)
     // TODO: deprecated, must be removed
     implementation(Libs.javalib_java7) {

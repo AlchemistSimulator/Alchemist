@@ -107,8 +107,6 @@ object Versions {
 
     const val jool_java_8: String = "0.9.14"
 
-    const val reflections: String = "0.9.11"
-
     const val classgraph: String = "4.8.47" // available: "4.8.52"
 
     const val commons_io: String = "2.6"

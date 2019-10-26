@@ -256,7 +256,7 @@ class InteractionManager<T, P : Position2D<P>>(
         // scroll
         input.setOnScroll {
             zoomManager.inc(it.deltaY / ZOOM_SCALE)
-            wormhole.zoomOnPoint(it.unibo.alchemist.kotlin.makePoint(it.x, it.y), zoomManager.zoom)
+            wormhole.zoomOnPoint(makePoint(it.x, it.y), zoomManager.zoom)
             parentMonitor.repaint()
             it.consume()
         }
@@ -319,7 +319,7 @@ class InteractionManager<T, P : Position2D<P>>(
      */
     private fun onSelecting(event: MouseEvent) {
         selectionHelper.let {
-            it.update(it.unibo.alchemist.kotlin.makePoint(event.x, event.y))
+            it.update(makePoint(event.x, event.y))
             feedback += Interaction.SELECTION_BOX to listOf(selector.createDrawCommand(it.rectangle, Colors.selectionBox))
             addNodesToSelectionCandidates()
             repaint()
@@ -341,8 +341,8 @@ class InteractionManager<T, P : Position2D<P>>(
                 selection[it.first] = it.second
             }
         }
-        selectionHelper.boxSelection(nodes, wormhole).let {
-            it.forEach {
+        selectionHelper.boxSelection(nodes, wormhole).let { selection
+            selection.forEach {
                 if (it.key in selection) {
                     selection -= it.key
                 } else {
@@ -506,17 +506,17 @@ enum class Direction2D(val x: Int, val y: Int) {
      * Sums with a direction.
      */
     operator fun plus(other: Direction2D): Direction2D =
-        Direction2D.values().find {
+        values().find {
             it.x == (x + other.x).limited() && it.y == (y + other.y).limited()
-        } ?: Direction2D.NONE
+        } ?: NONE
 
     /**
      * Subtracts with a direction.
      */
     operator fun minus(other: Direction2D): Direction2D =
-        Direction2D.values().find {
+        values().find {
             it.x == (x - other.x).limited() && it.y == (y - other.y).limited()
-        } ?: Direction2D.NONE
+        } ?: NONE
 
     /**
      * Multiplies by a scalar.

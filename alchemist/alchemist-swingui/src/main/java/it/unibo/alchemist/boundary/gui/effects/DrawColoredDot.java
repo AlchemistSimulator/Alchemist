@@ -19,7 +19,8 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.paint.Color;
-import org.danilopianini.util.Hashes;
+
+import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur3_32;
 
 /**
  * Simple effect that draws a colored dot for each {@link Node}.
@@ -296,7 +297,7 @@ public class DrawColoredDot extends DrawDot<Position2D<? extends Position2D>> {
 
     @Override
     public int hashCode() {
-        return Hashes.hash32(alphaProperty(), blueProperty(), greenProperty(), getName(), redProperty(), getSize(), isVisible());
+        return hashMurmur3_32(alphaProperty(), blueProperty(), greenProperty(), getName(), redProperty(), getSize(), isVisible());
     }
 
     @Override

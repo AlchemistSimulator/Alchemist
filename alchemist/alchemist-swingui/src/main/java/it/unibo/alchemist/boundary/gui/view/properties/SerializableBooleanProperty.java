@@ -6,8 +6,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 
-import org.danilopianini.util.Hashes;
-
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -17,6 +15,8 @@ import com.google.gson.JsonSerializer;
 
 import javafx.beans.property.BooleanPropertyBase;
 import javafx.beans.property.SimpleBooleanProperty;
+
+import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur3_32;
 
 /**
  * {@link SimpleBooleanProperty} that implements also {@link Serializable}.
@@ -146,7 +146,7 @@ public class SerializableBooleanProperty extends BooleanPropertyBase implements 
 
     @Override
     public int hashCode() {
-        return Hashes.hash32(getValue(), getName());
+        return hashMurmur3_32(getValue(), getName());
     }
 
     @Override

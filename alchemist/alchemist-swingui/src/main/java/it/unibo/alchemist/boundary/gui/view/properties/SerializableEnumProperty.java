@@ -5,10 +5,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import org.danilopianini.util.Hashes;
-
 import javafx.beans.property.ObjectPropertyBase;
 import javafx.beans.property.Property;
+
+import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur3_32;
 
 /**
  * {@link Property} designed to wrap an {@link Enum enum}.
@@ -159,7 +159,7 @@ public class SerializableEnumProperty<T extends Enum<T>> extends ObjectPropertyB
 
     @Override
     public int hashCode() {
-        return Hashes.hash32(getValue(), getName());
+        return hashMurmur3_32(getValue(), getName());
     }
 
     @Override

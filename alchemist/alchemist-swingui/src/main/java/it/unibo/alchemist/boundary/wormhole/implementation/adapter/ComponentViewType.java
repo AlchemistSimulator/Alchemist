@@ -2,10 +2,10 @@ package it.unibo.alchemist.boundary.wormhole.implementation.adapter;
 
 import java.awt.Component;
 
-import org.danilopianini.util.Hashes;
-
 import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D;
 import it.unibo.alchemist.boundary.wormhole.interfaces.ViewType;
+
+import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur3_32;
 
 /**
  * Adapter class that adapts the AWT {@link Component} class to a generic View Type for usage in {@link Wormhole2D}.
@@ -64,6 +64,6 @@ public class ComponentViewType implements ViewType {
 
     @Override
     public int hashCode() {
-        return Hashes.hash32(getWidth(), getHeight());
+        return hashMurmur3_32(getWidth(), getHeight());
     }
 }

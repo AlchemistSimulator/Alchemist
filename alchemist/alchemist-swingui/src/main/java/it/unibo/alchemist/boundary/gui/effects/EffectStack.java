@@ -1,5 +1,6 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
+import com.google.common.hash.Hashing;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonSerializer;
 import it.unibo.alchemist.boundary.gui.CommandQueueBuilder;
@@ -14,7 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Queue;
-import org.danilopianini.util.Hashes;
+import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -335,7 +336,12 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
 
     @Override
     public int hashCode() {
-        return Hashes.hash32(effects, name, topIndex, visibility);
+        return Hashing.murmur3_32().newHasher()
+                .putString(effects.toString(), Charsets.UTF_8)
+                .putString(name, Charsets.UTF_8)
+                .putInt(topIndex)
+                .putBoolean(visibility)
+                .hash().asInt();
     }
 
     @Override

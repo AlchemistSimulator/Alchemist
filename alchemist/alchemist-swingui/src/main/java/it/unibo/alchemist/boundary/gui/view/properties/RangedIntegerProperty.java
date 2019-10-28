@@ -6,8 +6,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 
-import org.danilopianini.util.Hashes;
-
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -17,6 +15,8 @@ import com.google.gson.JsonSerializer;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.IntegerPropertyBase;
+
+import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur3_32;
 
 /**
  * This {@link IntegerProperty} is designed to have a range for the wrapped
@@ -326,7 +326,7 @@ public class RangedIntegerProperty extends IntegerPropertyBase implements Serial
 
     @Override
     public int hashCode() {
-        return Hashes.hash32(getLowerBound(), getUpperBound(), getValue(), getName());
+        return hashMurmur3_32(getLowerBound(), getUpperBound(), getValue(), getName());
     }
 
     @Override

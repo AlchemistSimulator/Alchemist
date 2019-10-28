@@ -27,7 +27,8 @@ import java.util.stream.Collectors;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import org.danilopianini.util.Hashes;
+
+import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur3_32;
 
 
 /**
@@ -218,7 +219,7 @@ public class DrawDot<P extends Position2D<? extends P>> extends AbstractEffect<P
 
     @Override
     public int hashCode() {
-        return Hashes.hash32(getColor(), getName(), getSize(), isVisible());
+        return hashMurmur3_32(getColor(), getName(), getSize(), isVisible());
     }
 
     @Override

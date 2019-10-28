@@ -17,8 +17,7 @@ private val MURMUR3_32 = Hashing.murmur3_32()
 /**
  * Hashes a number of [Any]s with [Hashing.murmur3_32].
  * The charset used for strings is [Charsets.UTF_16].
- * For [Iterable], the elements are hashed, meaning that
- * for example a [List] and a [Set] containing the same elements should return the same hash.
+ * For [Iterable], the elements are hashed rather than the [Iterable] itself.
  *
  * @param data the data to hash
  */

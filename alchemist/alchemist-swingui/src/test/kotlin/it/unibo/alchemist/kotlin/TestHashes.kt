@@ -49,7 +49,7 @@ class TestHashes {
                 .putBoolean(true)
                 .hash().asInt()
         )
-        assertEquals(hash(sequence.toList()), hash(sequence.toSet()))
+        assertEquals(hash(sequence.toList()), hash(sequence.toMutableList()))
     }
 
     private fun testOrder(hash: (Any) -> Int): Unit {

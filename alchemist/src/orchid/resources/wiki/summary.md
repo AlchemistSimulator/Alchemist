@@ -4,7 +4,7 @@
   - [The metamodel](simulator/metamodel.md)
 - [Using Alchemist](usage.md)
   - [Requirements and installation](usage/installation.md)
-  - [Quick start](usage/quickstart.md)
+  - [How to run simulations](usage/run.md)
   - [How to write simulations](usage/yaml.md)
   - [Graphical interface](usage/gui.md)
   - [Biology and Biochemistry](usage/biochemistry.md)

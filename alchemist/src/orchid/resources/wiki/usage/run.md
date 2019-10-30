@@ -32,5 +32,5 @@ java -jar path/to/jar/alchemist-redist-{version}.jar {options}
 Alchemist supports multiple options, run the program with the <kbd>-h</kbd> (help) otpion in order to get a list of all of them. To run a simulation you can rely on the <kbd>-y</kbd> option and pass your own *.yml file. A typical command to launch a simulation would be:
 
 ```bash
-java -jar path/to/jar/libs/alchemist-redist-{version}.jar -y mysimulation.yml
+java -jar path/to/jar/alchemist-redist-{version}.jar -y mysimulation.yml
 ```

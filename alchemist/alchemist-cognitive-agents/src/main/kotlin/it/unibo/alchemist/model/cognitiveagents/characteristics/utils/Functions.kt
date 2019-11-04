@@ -17,4 +17,4 @@ fun logistic(sigma: Double, tau: Double, vararg parameters: Double) =
  * @param tau Threshold parameter of the advanced logistic function.
  */
 fun advancedLogistic(sigma: Double, tau: Double, vararg parameters: Double) =
-    logistic(sigma, tau, *parameters) - 1 / (1 + Math.E.pow(sigma*tau)) * (1 + Math.E.pow(-sigma*tau))
+    logistic(sigma, tau, *parameters) - 1 / (1 + Math.E.pow(sigma * tau)) * (1 + Math.E.pow(-sigma * tau))

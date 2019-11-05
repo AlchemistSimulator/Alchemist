@@ -12,6 +12,6 @@ import it.unibo.alchemist.model.interfaces.Environment
 
 class ScafiNode(env: Environment[_, _]) extends AbstractNode[Any](env) {
 
-  override def createT = new {}
+  override def createT = throw new Exception("The molecule does not exist and cannot create empty concentration")
 
 }

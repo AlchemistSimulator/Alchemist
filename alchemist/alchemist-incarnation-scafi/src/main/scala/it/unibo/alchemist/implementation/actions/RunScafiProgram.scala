@@ -5,7 +5,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.model.implementations.actions
+package it.unibo.alchemist.implementations.actions
 
 import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
@@ -23,34 +23,41 @@ import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist
 import ScafiIncarnationForAlchemist.ContextImpl
 import ScafiIncarnationForAlchemist._
 import it.unibo.alchemist.implementation.nodes.SimpleNodeManager
+import it.unibo.alchemist.model.implementations.actions.AbstractLocalAction
+import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.scafi.space.Point3D
 import org.kaikikm.threadresloader.ResourceLoader
 
 import scala.concurrent.duration.FiniteDuration
 
-sealed class RunScafiProgram[P <: Position[P]] (
-    environment: Environment[Any, P],
-    node: Node[Any],
-    reaction: Reaction[Any],
+sealed class RunScafiProgram[T,P <: Position[P]] (
+    environment: Environment[T, P],
+    node: Node[T],
+    reaction: Reaction[T],
     rng: RandomGenerator,
     programName: String,
     retentionTime: Double
-    ) extends AbstractLocalAction[Any](node) {
+    ) extends AbstractLocalAction[T](node) {
 
-  def this(environment: Environment[Any, P],
-    node: Node[Any],
-    reaction: Reaction[Any],
+  def this(environment: Environment[T, P],
+    node: Node[T],
+    reaction: Reaction[T],
     rng: RandomGenerator,
     programName: String) = {
     this(environment, node, reaction, rng, programName, FastMath.nextUp(reaction.getTimeDistribution.getRate))
   }
 
   import RunScafiProgram.NBRData
-  private val program = ResourceLoader.classForName(programName).newInstance().asInstanceOf[CONTEXT => EXPORT]
-  private[this] var nbrData: Map[ID, NBRData[P]] = Map()
+  val program = ResourceLoader.classForName(programName).newInstance().asInstanceOf[CONTEXT => EXPORT]
+  val programNameMolecule = new SimpleMolecule(programName)
+  private var nbrData: Map[ID, NBRData[P]] = Map()
+  private var completed = false
+
   declareDependencyTo(Dependency.EVERY_MOLECULE)
 
-  override def cloneAction(n: Node[Any], r: Reaction[Any]) = {
+  def asMolecule = programNameMolecule
+
+  override def cloneAction(n: Node[T], r: Reaction[T]) = {
     new RunScafiProgram(environment, n, r, rng, programName, retentionTime)
   }
 
@@ -97,22 +104,23 @@ sealed class RunScafiProgram[P <: Position[P]] (
     val exports = nbrData.mapValues { _.export }
     val ctx = new ContextImpl(node.getId, exports, localSensors, nbrSensors)
     val computed = program(ctx)
-    node.setConcentration(programName, computed.root[Any]())
+    node.setConcentration(programName, computed.root[T]())
     val toSend = NBRData(computed, position, currentTime)
     nbrData = nbrData + (node.getId -> toSend)
-    import collection.JavaConverters._
-    import it.unibo.alchemist.model.interfaces.Action
-    for (nbr: Node[Any] <- environment.getNeighborhood(node).asScala;
-        reaction: Reaction[Any] <- nbr.getReactions().asScala;
-        action: Action[Any] <- reaction.getActions().asScala;
-        if action.isInstanceOf[RunScafiProgram[P]] && action.asInstanceOf[RunScafiProgram[P]].program.getClass == program.getClass) {
-      action.asInstanceOf[RunScafiProgram[P]].sendExport(node.getId, toSend)
-    }
+
+    completed = true
   }
 
-  private def sendExport(id: ID, export: NBRData[P]) { nbrData += id -> export }
+  def sendExport(id: ID, export: NBRData[P]) { nbrData += id -> export }
+
+  def getExport(id: ID): Option[NBRData[P]] = nbrData.get(id)
+
+  def isComputationalCycleComplete: Boolean = completed
+
+  def prepareForComputationalCycle: Unit = { completed = false }
+
 }
 
 object RunScafiProgram {
-  private case class NBRData[P <: Position[P]](export: EXPORT, position: P, executionTime: Time)
+  case class NBRData[P <: Position[P]](export: EXPORT, position: P, executionTime: Time)
 }

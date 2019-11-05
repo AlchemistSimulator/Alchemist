@@ -14,8 +14,8 @@ trait NodeManager {
   def put[T](molecule: String, concentration: T)
   def get[T](molecule: String): T
 }
-class SimpleNodeManager(val node: Node[Any]) extends NodeManager {
-  override def put[T](molecule: String, concentration: T): Unit = node.setConcentration(new SimpleMolecule(molecule), concentration)
+class SimpleNodeManager[T](val node: Node[T]) extends NodeManager {
+  override def put[V](molecule: String, concentration: V): Unit = node.setConcentration(new SimpleMolecule(molecule), concentration.asInstanceOf[T])
 
-  override def get[T](molecule: String): T = node.getConcentration(new SimpleMolecule(molecule)).asInstanceOf[T]
+  override def get[V](molecule: String): V = node.getConcentration(new SimpleMolecule(molecule)).asInstanceOf[V]
 }

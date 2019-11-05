@@ -28,8 +28,7 @@ import it.unibo.alchemist.model.interfaces.Position
 
 sealed class ScafiIncarnation[P <: Position[P]] extends Incarnation[Any, P]{
 
-
-  private[this] def notNull[T](t: T): T = Objects.requireNonNull(t)
+  private[this] def notNull[T](t: T, name: String = "Object"): T = Objects.requireNonNull(t, s"$name must not be null")
 
   private[this] def toDouble(v: Any): Double = v match {
     case x: Double => x
@@ -50,7 +49,12 @@ sealed class ScafiIncarnation[P <: Position[P]] extends Incarnation[Any, P]{
       time: TimeDistribution[Any],
       reaction: Reaction[Any],
       param: String) = {
-    new RunScafiProgram(notNull(env), notNull(node), notNull(reaction), notNull(rand), notNull(param))
+    new RunScafiProgram(
+      notNull(env, "environment"),
+      notNull(node, "node"),
+      notNull(reaction, "reaction"),
+      notNull(rand, "random generator"),
+      notNull(param, "action parameter"))
   }
 
   /**
@@ -68,8 +72,8 @@ sealed class ScafiIncarnation[P <: Position[P]] extends Incarnation[Any, P]{
     throw new UnsupportedOperationException("Use the type/parameters syntax to initialize conditions.")
   }
 
-  override def createMolecule(s: String ): SimpleMolecule = {
-    new SimpleMolecule(notNull(s))
+  override def createMolecule(s: String): SimpleMolecule = {
+    new SimpleMolecule(notNull(s, "simple molecule name"))
   }
 
   override def createNode(rand: RandomGenerator, env: Environment[Any, P], param: String) = {
@@ -81,7 +85,7 @@ sealed class ScafiIncarnation[P <: Position[P]] extends Incarnation[Any, P]{
   }
 
   override def createTimeDistribution(rand: RandomGenerator, env: Environment[Any, P], node: Node[Any], param: String): TimeDistribution[Any] = {
-    Objects.requireNonNull(param)
+    Objects.requireNonNull(param, "Frequency parameter to createTimeDistribution must not be null")
     val frequency = toDouble(param)
     if (frequency.isNaN()) {
       throw new IllegalArgumentException(param + " is not a valid number, the time distribution could not be created.")

@@ -6,9 +6,9 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.implementation.conditions
+package it.unibo.alchemist.implementations.conditions
 
-import it.unibo.alchemist.implementation.nodes.ScafiNode
+import it.unibo.alchemist.implementations.nodes.ScafiNode
 import it.unibo.alchemist.implementations.actions.RunScafiProgram
 import it.unibo.alchemist.model.ScafiIncarnationUtils
 import it.unibo.alchemist.model.implementations.conditions.AbstractCondition

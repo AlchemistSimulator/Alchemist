@@ -5,7 +5,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.implementation.nodes
+package it.unibo.alchemist.implementations.nodes
 
 import it.unibo.alchemist.model.implementations.nodes.AbstractNode
 import it.unibo.alchemist.model.interfaces.{Environment, Position}

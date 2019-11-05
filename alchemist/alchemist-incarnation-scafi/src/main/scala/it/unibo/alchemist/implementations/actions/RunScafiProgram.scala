@@ -22,7 +22,7 @@ import org.apache.commons.math3.util.FastMath
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist
 import ScafiIncarnationForAlchemist.ContextImpl
 import ScafiIncarnationForAlchemist._
-import it.unibo.alchemist.implementation.nodes.SimpleNodeManager
+import it.unibo.alchemist.implementations.nodes.SimpleNodeManager
 import it.unibo.alchemist.model.implementations.actions.AbstractLocalAction
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.scafi.space.Point3D

@@ -11,7 +11,7 @@ pools:
       actions:
         - type: RunScafiProgram
           parameters: [it.unibo.alchemist.scafi.test.ScafiEnvProgram]
-      
+    # program: send
 positions:
   type: Continuous2DEuclidean
   

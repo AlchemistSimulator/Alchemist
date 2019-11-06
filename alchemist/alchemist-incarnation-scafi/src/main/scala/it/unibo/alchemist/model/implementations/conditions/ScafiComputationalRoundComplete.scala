@@ -18,15 +18,15 @@ final class ScafiComputationalRoundComplete[T](val node: Node[T], val program: R
   declareDependencyOn(this.program.asMolecule)
 
   override def cloneCondition(n: Node[T], r: Reaction[T]): Condition[T] = {
-    if (!n.isInstanceOf[ScafiNode[_,_]]) {
+    if (!n.isInstanceOf[ScafiNode[_, _]]) {
       throw new IllegalStateException(getClass.getSimpleName + " cannot get cloned on a node of type " + n.getClass.getSimpleName)
     }
-
-    val possibleRefs: Iterable[RunScafiProgram[_,_]] = ScafiIncarnationUtils.allScafiProgramsFor(n)
-      if (possibleRefs.size == 1)
+    val possibleRefs: Iterable[RunScafiProgram[_, _]] = ScafiIncarnationUtils.allScafiProgramsFor(n)
+      if (possibleRefs.size == 1) {
         new ScafiComputationalRoundComplete(n, possibleRefs.head)
-      else
+      } else {
         throw new IllegalStateException("There must be one and one only unconfigured " + classOf[Nothing].getSimpleName)
+      }
   }
 
   override def getContext = Context.LOCAL

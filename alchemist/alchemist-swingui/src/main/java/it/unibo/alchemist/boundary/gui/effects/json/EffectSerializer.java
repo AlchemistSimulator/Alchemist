@@ -21,13 +21,13 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import javafx.beans.property.Property;
 import javafx.scene.paint.Color;
-import javassist.Modifier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.TestOnly;
 

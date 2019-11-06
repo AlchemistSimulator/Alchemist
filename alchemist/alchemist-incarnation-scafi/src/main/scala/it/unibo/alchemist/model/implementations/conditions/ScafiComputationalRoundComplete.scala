@@ -22,8 +22,7 @@ final class ScafiComputationalRoundComplete[T](val node: Node[T], val program: R
       throw new IllegalStateException(getClass.getSimpleName + " cannot get cloned on a node of type " + n.getClass.getSimpleName)
     }
 
-    val scafiNode = n.asInstanceOf[ScafiNode[_,_]]
-    val possibleRefs: Iterable[RunScafiProgram[_,_]] = ScafiIncarnationUtils.possibleRefs(n)
+    val possibleRefs: Iterable[RunScafiProgram[_,_]] = ScafiIncarnationUtils.allScafiProgramsFor(n)
       if (possibleRefs.size == 1)
         new ScafiComputationalRoundComplete(n, possibleRefs.head)
       else

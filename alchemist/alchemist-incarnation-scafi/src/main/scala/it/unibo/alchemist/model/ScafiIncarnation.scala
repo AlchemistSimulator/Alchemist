@@ -55,8 +55,6 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
     val scafiNode = node.asInstanceOf[ScafiNode[T,P]]
 
     if(param=="send") {
-      import scala.reflect.runtime.universe.typeTag
-      implicit val sendScafiMsgTypeTag = typeTag[SendScafiMessage[_,_]]
       val alreadyDone = ScafiIncarnationUtils.allActions[T,P,SendScafiMessage[T,P]](node, classOf[SendScafiMessage[T,P]]).map(_.program)
         // ScafiIncarnationUtils.allScafiProgramsFor[T,P](node).filter(_.isComputationalCycleComplete)
       val spList = ScafiIncarnationUtils.allScafiProgramsFor[T,P](node) -- alreadyDone
@@ -90,13 +88,14 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
   }
 
   override def createCondition(rand: RandomGenerator, env: Environment[T, P] , node: Node[T], time: TimeDistribution[T], reaction: Reaction[T], param: String): Condition[T] = {
-    if(!node.isInstanceOf[ScafiNode[T,P]])
+    if(!node.isInstanceOf[ScafiNode[T,P]]) {
       throw new IllegalArgumentException(s"The node must be an instance of ${classOf[ScafiNode[_,_]]}"
       + s", but it is an ${node.getClass} instead.")
+    }
 
-    val scafiNode = node.asInstanceOf[ScafiNode[_,P]]
-    val ideps = ScafiIncarnationUtils.inboundDependencies(node, classOf[ScafiComputationalRoundComplete[T]])
-    val alreadyDone = ideps.collect { case x: RunScafiProgram[T,P] => x }
+    val alreadyDone = ScafiIncarnationUtils
+      .inboundDependencies(node, classOf[ScafiComputationalRoundComplete[T]])
+      .collect { case x: RunScafiProgram[T,P] => x }
     val spList = ScafiIncarnationUtils.allScafiProgramsFor(node) -- alreadyDone
     if (spList.isEmpty) {
       throw new IllegalStateException("There is no program requiring a " +
@@ -159,43 +158,27 @@ object ScafiIncarnationUtils {
 
   import collection.JavaConverters._
 
-  def possibleRefs(node: Node[_]): Iterable[RunScafiProgram[_,_]] = {
-    for(reaction <- node.getReactions.asScala;
-        action <- reaction.getActions.asScala;
-        if action.isInstanceOf[RunScafiProgram[_,_]])
-      yield action.asInstanceOf[RunScafiProgram[_,_]]
-  }
-
-  def allActions[T,P<:Position[P],C](node: Node[T], klass: Class[C]): mutable.Buffer[C] = {
-    for(
-      reaction: Reaction[T] <- node.getReactions().asScala;
-      action: Action[T] <- reaction.getActions().asScala;
-      if klass.isInstance(action)
-      //&& action.asInstanceOf[RunScafiProgram[P]].program.getClass == programClass
-    )
+  def allActions[T,P<:Position[P],C](node: Node[T], klass: Class[C]): mutable.Buffer[C] =
+    for(reaction: Reaction[T] <- node.getReactions().asScala;
+        action: Action[T] <- reaction.getActions().asScala; if klass.isInstance(action))
       yield action.asInstanceOf[C]
-  }
 
-  def allScafiProgramsFor[T,P<:Position[P]](node: Node[T]) = {
+  def allScafiProgramsFor[T,P<:Position[P]](node: Node[T]) =
     allActions[T,P,RunScafiProgram[T,P]](node, classOf[RunScafiProgram[T,P]])
-  }
 
-  def allConditionsFor[T](node: Node[T], conditionClass: Class[_]): mutable.Buffer[Condition[T]] = {
+  def allConditionsFor[T](node: Node[T], conditionClass: Class[_]): mutable.Buffer[Condition[T]] =
     for(reaction <- node.getReactions.asScala;
-        condition <- reaction.getConditions.asScala;
-        if conditionClass.isInstance(condition))
+        condition <- reaction.getConditions.asScala; if conditionClass.isInstance(condition))
       yield condition
-  }
 
-  def inboundDependencies[T](node: Node[T], conditionClass: Class[_]): mutable.Buffer[Dependency] = {
+
+  def inboundDependencies[T](node: Node[T], conditionClass: Class[_]): mutable.Buffer[Dependency] =
     for(c <- allConditionsFor(node, conditionClass);
-      dep <- c.getInboundDependencies.iterator().asScala)
+        dep <- c.getInboundDependencies.iterator().asScala)
       yield dep
-  }
 
-  def allCompletedScafiProgram[T](node: Node[T], conditionClass: Class[_]): mutable.Buffer[Dependency] = {
+  def allCompletedScafiProgram[T](node: Node[T], conditionClass: Class[_]): mutable.Buffer[Dependency] =
     inboundDependencies(node, classOf[ScafiComputationalRoundComplete[T]])
-  }
 }
 
 object CachedInterpreter {
@@ -214,9 +197,9 @@ object CachedInterpreter {
    * When doCacheValue is false, only the result of parsing is cached.
    */
   def apply[A <: AnyRef](str: String, doCacheValue: Boolean = true): A =
-    (if(doCacheValue) {
+    if(doCacheValue) {
       sync.caching("//VAL"+str)(ScalaInterpreter[A](str))
     } else {
       ScalaInterpreter(str)
-    }).asInstanceOf[A]
+    }
 }

@@ -91,11 +91,11 @@ public final class Exporter<T, P extends Position<? extends P>> implements Outpu
         out.println("# The columns have the following meaning: ");
         out.print("# ");
         extractors.stream()
-                .flatMap(e -> e.getNames().stream())
-                .forEach(name -> {
-                    out.print(name);
-                    out.print(" ");
-                });
+            .flatMap(e -> e.getNames().stream())
+            .forEach(name -> {
+                out.print(name);
+                out.print(" ");
+            });
         out.println();
         stepDone(env, null, new DoubleTime(), 0);
     }
@@ -116,9 +116,10 @@ public final class Exporter<T, P extends Position<? extends P>> implements Outpu
 
     private void writeRow(final Environment<?, ?> env, final Reaction<?> r, final Time time, final long step) {
         extractors.parallelStream()
-                .flatMapToDouble(e -> Arrays.stream(e.extractData(env, r, time, step)))
-                .forEachOrdered(this::printDatum);
+            .flatMapToDouble(e -> Arrays.stream(e.extractData(env, r, time, step)))
+            .forEachOrdered(this::printDatum);
         out.println();
     }
 
 }
+

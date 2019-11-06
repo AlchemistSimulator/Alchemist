@@ -9,10 +9,10 @@ package it.unibo.alchemist.model
 
 import java.util.Objects
 
-import it.unibo.alchemist.implementations.actions.SendScafiMessage
-import it.unibo.alchemist.implementations.conditions.ScafiComputationalRoundComplete
-import it.unibo.alchemist.implementations.nodes.ScafiNode
-import it.unibo.alchemist.implementations.actions.RunScafiProgram
+import it.unibo.alchemist.model.implementations.actions.SendScafiMessage
+import it.unibo.alchemist.model.implementations.conditions.ScafiComputationalRoundComplete
+import it.unibo.alchemist.model.implementations.nodes.ScafiNode
+import it.unibo.alchemist.model.implementations.actions.RunScafiProgram
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.implementations.reactions.Event
 import it.unibo.alchemist.model.implementations.timedistributions.DiracComb

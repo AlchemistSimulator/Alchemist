@@ -5,7 +5,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.implementations.actions
+package it.unibo.alchemist.model.implementations.actions
 
 import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
@@ -22,13 +22,31 @@ import org.apache.commons.math3.util.FastMath
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist
 import ScafiIncarnationForAlchemist.ContextImpl
 import ScafiIncarnationForAlchemist._
-import it.unibo.alchemist.implementations.nodes.SimpleNodeManager
+import it.unibo.alchemist.model.implementations.nodes.SimpleNodeManager
 import it.unibo.alchemist.model.implementations.actions.AbstractLocalAction
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.scafi.space.Point3D
 import org.kaikikm.threadresloader.ResourceLoader
 
 import scala.concurrent.duration.FiniteDuration
+
+sealed class DefaultRunScafiProgram[P <: Position[P]](
+  environment: Environment[Any, P],
+  node: Node[Any],
+  reaction: Reaction[Any],
+  rng: RandomGenerator,
+  programName: String,
+  retentionTime: Double
+) extends RunScafiProgram[Any,P](environment, node, reaction, rng, programName, retentionTime){
+
+  def this(environment: Environment[Any, P],
+           node: Node[Any],
+           reaction: Reaction[Any],
+           rng: RandomGenerator,
+           programName: String) = {
+    this(environment, node, reaction, rng, programName, FastMath.nextUp(reaction.getTimeDistribution.getRate))
+  }
+}
 
 sealed class RunScafiProgram[T,P <: Position[P]] (
     environment: Environment[T, P],

@@ -7,7 +7,7 @@
  */
 package it.unibo.alchemist.model.scafi
 
-import it.unibo.alchemist.implementations.nodes.NodeManager
+import it.unibo.alchemist.model.implementations.nodes.NodeManager
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.{Environment, Position}
 import it.unibo.scafi.PlatformDependentConstants

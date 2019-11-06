@@ -7,9 +7,9 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.implementations.actions
+package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.implementations.nodes.ScafiNode
+import it.unibo.alchemist.model.implementations.nodes.ScafiNode
 import it.unibo.alchemist.model.ScafiIncarnationUtils
 import it.unibo.alchemist.model.implementations.actions.AbstractAction
 import it.unibo.alchemist.model.interfaces._

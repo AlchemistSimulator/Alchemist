@@ -118,7 +118,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
   }
 
   override def createReaction(rand: RandomGenerator, env: Environment[T, P], node: Node[T], time: TimeDistribution[T], param: String): Reaction[T] = {
-    import scala.collection.JavaConversions._
+    import scala.collection.JavaConverters._
 
     val isSend = "send".equalsIgnoreCase(param)
     val result: Reaction[T] =
@@ -127,9 +127,9 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
       else
         new Event[T](node, time)
     if (param != null)
-      result.setActions(ListBuffer(createAction(rand, env, node, time, result, param)))
+      result.setActions(ListBuffer[Action[T]](createAction(rand, env, node, time, result, param)).asJava)
     if (isSend)
-      result.setConditions(ListBuffer(createCondition(rand, env, node, time, result, null)))
+      result.setConditions(ListBuffer[Condition[T]](createCondition(rand, env, node, time, result, null)).asJava)
 
     result
   }

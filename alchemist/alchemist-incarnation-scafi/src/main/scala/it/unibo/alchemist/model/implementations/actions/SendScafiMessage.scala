@@ -9,9 +9,8 @@
 
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.nodes.ScafiNode
 import it.unibo.alchemist.model.ScafiIncarnationUtils
-import it.unibo.alchemist.model.implementations.actions.AbstractAction
+import it.unibo.alchemist.model.implementations.nodes.ScafiNode
 import it.unibo.alchemist.model.interfaces._
 
 class SendScafiMessage[T,P<:Position[P]](

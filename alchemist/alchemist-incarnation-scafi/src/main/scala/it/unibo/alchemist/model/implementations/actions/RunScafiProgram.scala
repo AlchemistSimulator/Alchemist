@@ -23,7 +23,6 @@ import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist
 import ScafiIncarnationForAlchemist.ContextImpl
 import ScafiIncarnationForAlchemist._
 import it.unibo.alchemist.model.implementations.nodes.SimpleNodeManager
-import it.unibo.alchemist.model.implementations.actions.AbstractLocalAction
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.scafi.space.Point3D
 import org.kaikikm.threadresloader.ResourceLoader
@@ -66,7 +65,7 @@ sealed class RunScafiProgram[T,P <: Position[P]] (
   }
 
   import RunScafiProgram.NBRData
-  val program = ResourceLoader.classForName(programName).newInstance().asInstanceOf[CONTEXT => EXPORT]
+  val program = ResourceLoader.classForName(programName).getDeclaredConstructor().newInstance().asInstanceOf[CONTEXT => EXPORT]
   val programNameMolecule = new SimpleMolecule(programName)
   private var nbrData: Map[ID, NBRData[P]] = Map()
   private var completed = false

@@ -9,13 +9,14 @@ package it.unibo.alchemist.model
 
 import java.util.Objects
 
+import com.google.common.collect.Lists
 import it.unibo.alchemist.model.implementations.actions.SendScafiMessage
 import it.unibo.alchemist.model.implementations.conditions.ScafiComputationalRoundComplete
 import it.unibo.alchemist.model.implementations.nodes.ScafiNode
 import it.unibo.alchemist.model.implementations.actions.RunScafiProgram
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
-import it.unibo.alchemist.model.implementations.reactions.Event
-import it.unibo.alchemist.model.implementations.timedistributions.DiracComb
+import it.unibo.alchemist.model.implementations.reactions.{ChemicalReaction, Event}
+import it.unibo.alchemist.model.implementations.timedistributions.{DiracComb, ExponentialTime}
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces._
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist
@@ -23,6 +24,7 @@ import it.unibo.alchemist.scala.ScalaInterpreter
 import org.apache.commons.math3.random.RandomGenerator
 
 import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 
 sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
 
@@ -53,8 +55,11 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
     val scafiNode = node.asInstanceOf[ScafiNode[T,P]]
 
     if(param=="send") {
-      val alreadyDone = ScafiIncarnationUtils.allScafiProgramsFor(env, node.getId, classOf[SendScafiMessage[T,P]]).toSet
-      val spList = ScafiIncarnationUtils.allScafiProgramsFor(env, node.getId, classOf[Any]).toSet -- alreadyDone
+      import scala.reflect.runtime.universe.typeTag
+      implicit val sendScafiMsgTypeTag = typeTag[SendScafiMessage[_,_]]
+      val alreadyDone = ScafiIncarnationUtils.allActions[T,P,SendScafiMessage[T,P]](node, classOf[SendScafiMessage[T,P]]).map(_.program)
+        // ScafiIncarnationUtils.allScafiProgramsFor[T,P](node).filter(_.isComputationalCycleComplete)
+      val spList = ScafiIncarnationUtils.allScafiProgramsFor[T,P](node) -- alreadyDone
 
       if (spList.isEmpty) {
         throw new IllegalStateException("There is no program requiring a " + classOf[SendScafiMessage[T,P]].getSimpleName + " action")
@@ -91,8 +96,8 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
 
     val scafiNode = node.asInstanceOf[ScafiNode[_,P]]
     val ideps = ScafiIncarnationUtils.inboundDependencies(node, classOf[ScafiComputationalRoundComplete[T]])
-    val alreadyDone  = ideps.filter(_.isInstanceOf[RunScafiProgram[T,P]]).map(_.asInstanceOf[RunScafiProgram[T,P]])
-    val spList = ScafiIncarnationUtils.allScafiProgramsFor(env, node.getId, classOf[Any]).toSet -- alreadyDone
+    val alreadyDone = ideps.collect { case x: RunScafiProgram[T,P] => x }
+    val spList = ScafiIncarnationUtils.allScafiProgramsFor(node) -- alreadyDone
     if (spList.isEmpty) {
       throw new IllegalStateException("There is no program requiring a " +
         classOf[ScafiComputationalRoundComplete[_]].getSimpleName + " condition")
@@ -112,12 +117,26 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
     new ScafiNode(env)
   }
 
-  override def createReaction(rand: RandomGenerator, env: Environment[T, P], node: Node[T], time: TimeDistribution[T], param: String) = {
-    new Event(node, time)
+  override def createReaction(rand: RandomGenerator, env: Environment[T, P], node: Node[T], time: TimeDistribution[T], param: String): Reaction[T] = {
+    import scala.collection.JavaConversions._
+
+    val isSend = "send".equalsIgnoreCase(param)
+    val result: Reaction[T] =
+      if (isSend)
+        new ChemicalReaction[T](Objects.requireNonNull[Node[T]](node), Objects.requireNonNull[TimeDistribution[T]](time))
+      else
+        new Event[T](node, time)
+    if (param != null)
+      result.setActions(ListBuffer(createAction(rand, env, node, time, result, param)))
+    if (isSend)
+      result.setConditions(ListBuffer(createCondition(rand, env, node, time, result, null)))
+
+    result
   }
 
   override def createTimeDistribution(rand: RandomGenerator, env: Environment[T, P], node: Node[T], param: String): TimeDistribution[T] = {
-    Objects.requireNonNull(param, "Frequency parameter to createTimeDistribution must not be null")
+    if (param == null) return new ExponentialTime[T](Double.PositiveInfinity, rand)
+    // Objects.requireNonNull(param, "Frequency parameter to createTimeDistribution must not be null")
     val frequency = toDouble(param)
     if (frequency.isNaN()) {
       throw new IllegalArgumentException(param + " is not a valid number, the time distribution could not be created.")
@@ -147,15 +166,18 @@ object ScafiIncarnationUtils {
       yield action.asInstanceOf[RunScafiProgram[_,_]]
   }
 
-  def allScafiProgramsFor[T,P<:Position[P]](env: Environment[T,P], nodeId: Int, actionClass: Class[_]) = {
-    val node = env.getNodeByID(nodeId)
-    for(nbr: Node[T] <- env.getNeighborhood(node).asScala;
-    reaction: Reaction[T] <- nbr.getReactions().asScala;
-    action: Action[T] <- reaction.getActions().asScala;
-    if actionClass.isInstance(action)
-    //&& action.asInstanceOf[RunScafiProgram[P]].program.getClass == programClass
+  def allActions[T,P<:Position[P],C](node: Node[T], klass: Class[C]): mutable.Buffer[C] = {
+    for(
+      reaction: Reaction[T] <- node.getReactions().asScala;
+      action: Action[T] <- reaction.getActions().asScala;
+      if klass.isInstance(action)
+      //&& action.asInstanceOf[RunScafiProgram[P]].program.getClass == programClass
     )
-      yield action.asInstanceOf[RunScafiProgram[T,P]]
+      yield action.asInstanceOf[C]
+  }
+
+  def allScafiProgramsFor[T,P<:Position[P]](node: Node[T]) = {
+    allActions[T,P,RunScafiProgram[T,P]](node, classOf[RunScafiProgram[T,P]])
   }
 
   def allConditionsFor[T](node: Node[T], conditionClass: Class[_]): mutable.Buffer[Condition[T]] = {

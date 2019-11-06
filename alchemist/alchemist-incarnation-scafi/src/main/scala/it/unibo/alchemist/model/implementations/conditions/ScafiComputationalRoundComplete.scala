@@ -8,10 +8,9 @@
  */
 package it.unibo.alchemist.model.implementations.conditions
 
-import it.unibo.alchemist.model.implementations.nodes.ScafiNode
-import it.unibo.alchemist.model.implementations.actions.RunScafiProgram
 import it.unibo.alchemist.model.ScafiIncarnationUtils
-import it.unibo.alchemist.model.implementations.conditions.AbstractCondition
+import it.unibo.alchemist.model.implementations.actions.RunScafiProgram
+import it.unibo.alchemist.model.implementations.nodes.ScafiNode
 import it.unibo.alchemist.model.interfaces.{Condition, Context, Node, Reaction}
 
 final class ScafiComputationalRoundComplete[T](val node: Node[T], val program: RunScafiProgram[_,_])

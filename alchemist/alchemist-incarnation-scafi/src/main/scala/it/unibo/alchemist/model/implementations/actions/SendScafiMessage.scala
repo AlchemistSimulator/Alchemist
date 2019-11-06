@@ -18,7 +18,7 @@ class SendScafiMessage[T,P<:Position[P]](
   env: Environment[T,P],
   node: ScafiNode[T,P],
   reaction: Reaction[T],
-  program: RunScafiProgram[T,P]
+  val program: RunScafiProgram[T,P]
 ) extends AbstractAction[T](node) {
   assert(reaction != null, "Reaction cannot be null")
   assert(program != null, "Program cannot be null")
@@ -42,9 +42,13 @@ class SendScafiMessage[T,P<:Position[P]](
    * Effectively executes this action.
    */
   override def execute(): Unit = {
+    import scala.collection.JavaConverters._
+
     val toSend = program.getExport(node.getId).get
 
-    for (action <- ScafiIncarnationUtils.allScafiProgramsFor(env, node.getId, program.getClass)) {
+    for (
+      nbr <- env.getNeighborhood(node).getNeighbors.iterator().asScala;
+      action <- ScafiIncarnationUtils.allScafiProgramsFor[T,P](nbr).filter(program.getClass.isInstance(_))) {
       action.asInstanceOf[RunScafiProgram[T,P]].sendExport(node.getId, toSend)
     }
 

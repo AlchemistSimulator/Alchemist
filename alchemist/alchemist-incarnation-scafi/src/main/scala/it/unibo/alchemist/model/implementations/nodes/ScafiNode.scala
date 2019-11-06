@@ -7,7 +7,6 @@
  */
 package it.unibo.alchemist.model.implementations.nodes
 
-import it.unibo.alchemist.model.implementations.nodes.AbstractNode
 import it.unibo.alchemist.model.interfaces.{Environment, Position}
 
 class ScafiNode[T,P<:Position[P]](env: Environment[T, P]) extends AbstractNode[T](env) {

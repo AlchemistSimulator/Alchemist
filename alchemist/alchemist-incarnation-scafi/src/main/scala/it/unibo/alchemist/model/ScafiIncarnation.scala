@@ -9,17 +9,14 @@ package it.unibo.alchemist.model
 
 import java.util.Objects
 
-import com.google.common.collect.Lists
-import it.unibo.alchemist.model.implementations.actions.SendScafiMessage
+import it.unibo.alchemist.model.implementations.actions.{RunScafiProgram, SendScafiMessage}
 import it.unibo.alchemist.model.implementations.conditions.ScafiComputationalRoundComplete
-import it.unibo.alchemist.model.implementations.nodes.ScafiNode
-import it.unibo.alchemist.model.implementations.actions.RunScafiProgram
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
+import it.unibo.alchemist.model.implementations.nodes.ScafiNode
 import it.unibo.alchemist.model.implementations.reactions.{ChemicalReaction, Event}
 import it.unibo.alchemist.model.implementations.timedistributions.{DiracComb, ExponentialTime}
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces._
-import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist
 import it.unibo.alchemist.scala.ScalaInterpreter
 import org.apache.commons.math3.random.RandomGenerator
 
@@ -56,9 +53,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
     val scafiNode = node.asInstanceOf[ScafiNode[T,P]]
     if(param=="send") {
       val alreadyDone = ScafiIncarnationUtils.allActions[T,P,SendScafiMessage[T,P]](node, classOf[SendScafiMessage[T,P]]).map(_.program)
-        // ScafiIncarnationUtils.allScafiProgramsFor[T,P](node).filter(_.isComputationalCycleComplete)
       val spList = ScafiIncarnationUtils.allScafiProgramsFor[T,P](node) -- alreadyDone
-
       if (spList.isEmpty) {
         throw new IllegalStateException("There is no program requiring a " + classOf[SendScafiMessage[T,P]].getSimpleName + " action")
       }
@@ -92,7 +87,6 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
       throw new IllegalArgumentException(s"The node must be an instance of ${classOf[ScafiNode[_,_]]}"
       + s", but it is an ${node.getClass} instead.")
     }
-
     val alreadyDone = ScafiIncarnationUtils
       .inboundDependencies(node, classOf[ScafiComputationalRoundComplete[T]])
       .collect { case x: RunScafiProgram[T,P] => x }
@@ -118,24 +112,24 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
 
   override def createReaction(rand: RandomGenerator, env: Environment[T, P], node: Node[T], time: TimeDistribution[T], param: String): Reaction[T] = {
     import scala.collection.JavaConverters._
-
     val isSend = "send".equalsIgnoreCase(param)
     val result: Reaction[T] =
-      if (isSend)
+      if (isSend) {
         new ChemicalReaction[T](Objects.requireNonNull[Node[T]](node), Objects.requireNonNull[TimeDistribution[T]](time))
-      else
+      } else {
         new Event[T](node, time)
-    if (param != null)
+      }
+    if (param != null) {
       result.setActions(ListBuffer[Action[T]](createAction(rand, env, node, time, result, param)).asJava)
-    if (isSend)
+    }
+    if (isSend) {
       result.setConditions(ListBuffer[Condition[T]](createCondition(rand, env, node, time, result, null)).asJava)
-
+    }
     result
   }
 
   override def createTimeDistribution(rand: RandomGenerator, env: Environment[T, P], node: Node[T], param: String): TimeDistribution[T] = {
     if (param == null) return new ExponentialTime[T](Double.PositiveInfinity, rand)
-    // Objects.requireNonNull(param, "Frequency parameter to createTimeDistribution must not be null")
     val frequency = toDouble(param)
     if (frequency.isNaN()) {
       throw new IllegalArgumentException(param + " is not a valid number, the time distribution could not be created.")
@@ -183,8 +177,8 @@ object ScafiIncarnationUtils {
 object CachedInterpreter {
 
   import com.google.common.cache.CacheBuilder
-  import scalacache.{ScalaCache, _}
   import scalacache.guava.GuavaCache
+  import scalacache.{ScalaCache, _}
   private val underlyingGuavaCache = CacheBuilder.newBuilder()
     .maximumSize(1000L)
     .build[String, Object]

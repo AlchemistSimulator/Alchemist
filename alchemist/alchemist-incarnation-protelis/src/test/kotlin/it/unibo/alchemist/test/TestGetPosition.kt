@@ -20,12 +20,12 @@ import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTim
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
+import java.util.Optional
 import org.apache.commons.math3.random.MersenneTwister
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.protelis.lang.datatype.DatatypeFactory
-import java.util.Optional
 
 class TestGetPosition {
     private val env: Environment<Any, Euclidean2DPosition> = Continuous2DEnvironment()

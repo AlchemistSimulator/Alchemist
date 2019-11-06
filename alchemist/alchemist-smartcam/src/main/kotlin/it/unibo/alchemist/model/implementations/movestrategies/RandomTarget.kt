@@ -4,10 +4,10 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.smartcam.randomAngle
-import org.apache.commons.math3.distribution.RealDistribution
-import org.apache.commons.math3.random.RandomGenerator
 import kotlin.math.cos
 import kotlin.math.sin
+import org.apache.commons.math3.distribution.RealDistribution
+import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * Selects a target based on a random direction extracted from [directionRng],

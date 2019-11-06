@@ -7,9 +7,9 @@ import io.kotlintest.specs.StringSpec
 import it.unibo.alchemist.model.implementations.geometry.asAngle
 import it.unibo.alchemist.model.implementations.movestrategies.RandomTarget
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import kotlin.math.abs
 import org.apache.commons.math3.distribution.RealDistribution
 import org.apache.commons.math3.random.RandomGenerator
-import kotlin.math.abs
 
 private fun Double.equalityTest(other: Double) = abs(this - other) < 0.0001
 

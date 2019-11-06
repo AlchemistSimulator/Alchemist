@@ -10,17 +10,16 @@
  */
 package it.unibo.alchemist.core.implementations
 
-import org.danilopianini.util.ArrayListSet
-import org.jgrapht.graph.DefaultDirectedGraph
-
 import it.unibo.alchemist.core.interfaces.DependencyGraph
 import it.unibo.alchemist.model.interfaces.Context
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
+import java.lang.IllegalArgumentException
+import org.danilopianini.util.ArrayListSet
 import org.danilopianini.util.ListSet
 import org.danilopianini.util.ListSets
-import java.lang.IllegalArgumentException
+import org.jgrapht.graph.DefaultDirectedGraph
 
 /**
  * This class offers an implementation of a dependency graph, namely a

@@ -47,14 +47,14 @@ sealed class DefaultRunScafiProgram[P <: Position[P]](
   }
 }
 
-sealed class RunScafiProgram[T,P <: Position[P]] (
+sealed class RunScafiProgram[T, P <: Position[P]] (
     environment: Environment[T, P],
     node: Node[T],
     reaction: Reaction[T],
     rng: RandomGenerator,
     programName: String,
     retentionTime: Double
-    ) extends AbstractLocalAction[T](node) {
+) extends AbstractLocalAction[T](node) {
 
   def this(environment: Environment[T, P],
     node: Node[T],
@@ -69,7 +69,6 @@ sealed class RunScafiProgram[T,P <: Position[P]] (
   val programNameMolecule = new SimpleMolecule(programName)
   private var nbrData: Map[ID, NBRData[P]] = Map()
   private var completed = false
-
   declareDependencyTo(Dependency.EVERY_MOLECULE)
 
   def asMolecule = programNameMolecule
@@ -85,10 +84,11 @@ sealed class RunScafiProgram[T,P <: Position[P]] (
       case 2 => Point3D(p.getCoordinate(0), p.getCoordinate(1), 0)
       case 3 => Point3D(p.getCoordinate(0), p.getCoordinate(1), p.getCoordinate(2))
     }
-
     val position: P = environment.getPosition(node)
     val currentTime = reaction.getTau
-    if(!nbrData.contains(node.getId)) nbrData += node.getId -> new NBRData(factory.emptyExport(), environment.getPosition(node), Double.NaN)
+    if(!nbrData.contains(node.getId)) {
+      nbrData += node.getId -> new NBRData(factory.emptyExport(), environment.getPosition(node), Double.NaN)
+    }
     nbrData = nbrData.filter { case (id,data) => id==node.getId || data.executionTime >= currentTime - retentionTime }
     val deltaTime = currentTime.minus(nbrData.get(node.getId).map( _.executionTime).getOrElse(Double.NaN))
     val localSensors = node.getContents().asScala.map({
@@ -124,7 +124,6 @@ sealed class RunScafiProgram[T,P <: Position[P]] (
     node.setConcentration(programName, computed.root[T]())
     val toSend = NBRData(computed, position, currentTime)
     nbrData = nbrData + (node.getId -> toSend)
-
     completed = true
   }
 

@@ -21,7 +21,7 @@ public class EffectBuilderFX {
      * Set of available {@link EffectFX effect}s found by reflection.
      */
     private static final List<Class<? extends EffectFX<?>>> EFFECTS = ClassPathScanner.subTypesOf(
-            new TypeToken<>() { }, "it.unibo.alchemist");
+            (Class<EffectFX<?>>) (Class<?>) EffectFX.class, "it.unibo.alchemist");
     private final ChoiceDialog<Class<? extends EffectFX<?>>> dialog;
 
     /**

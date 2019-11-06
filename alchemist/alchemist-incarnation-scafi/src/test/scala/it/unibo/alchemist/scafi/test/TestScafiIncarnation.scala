@@ -31,7 +31,7 @@ import org.scalatest.{FunSuite, Matchers}
 // TODO: run with JUnit 5
 // @ExtendWith(classOf[JUnitRunner])
 class TestScafiIncarnation extends FunSuite with Matchers {
-  private val INC = new ScafiIncarnation[Euclidean2DPosition]
+  private val INC = new ScafiIncarnation[Any,Euclidean2DPosition]
 
   /**
     * Tests the ability of {@link ScafiIncarnation} of properly building
@@ -61,7 +61,7 @@ class TestScafiIncarnation extends FunSuite with Matchers {
 
     val prog = program.getActions.get(0)
     assertNotNull(prog)
-    assertTrue(prog.isInstanceOf[RunScafiProgram[_]])
+    assertTrue(prog.isInstanceOf[RunScafiProgram[_,_]])
   }
 
   /**

@@ -13,9 +13,13 @@ import it.unibo.alchemist.model.interfaces.{Node}
 trait NodeManager {
   def put[T](molecule: String, concentration: T)
   def get[T](molecule: String): T
+  def has(molecule: String)
 }
+
 class SimpleNodeManager[T](val node: Node[T]) extends NodeManager {
   override def put[V](molecule: String, concentration: V): Unit = node.setConcentration(new SimpleMolecule(molecule), concentration.asInstanceOf[T])
 
   override def get[V](molecule: String): V = node.getConcentration(new SimpleMolecule(molecule)).asInstanceOf[V]
+
+  override def has(molecule: String): Unit = node.contains(new SimpleMolecule(molecule))
 }

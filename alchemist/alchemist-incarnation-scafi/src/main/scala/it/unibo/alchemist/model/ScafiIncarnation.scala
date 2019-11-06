@@ -48,12 +48,12 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
       node: Node[T],
       time: TimeDistribution[T],
       reaction: Reaction[T],
-      param: String) = {
+      param: String
+  ) = {
     if (!node.isInstanceOf[ScafiNode[T,P]]) {
       throw new IllegalStateException(getClass.getSimpleName + " cannot get cloned on a node of type " + node.getClass.getSimpleName)
     }
     val scafiNode = node.asInstanceOf[ScafiNode[T,P]]
-
     if(param=="send") {
       val alreadyDone = ScafiIncarnationUtils.allActions[T,P,SendScafiMessage[T,P]](node, classOf[SendScafiMessage[T,P]]).map(_.program)
         // ScafiIncarnationUtils.allScafiProgramsFor[T,P](node).filter(_.isComputationalCycleComplete)
@@ -170,7 +170,6 @@ object ScafiIncarnationUtils {
     for(reaction <- node.getReactions.asScala;
         condition <- reaction.getConditions.asScala; if conditionClass.isInstance(condition))
       yield condition
-
 
   def inboundDependencies[T](node: Node[T], conditionClass: Class[_]): mutable.Buffer[Dependency] =
     for(c <- allConditionsFor(node, conditionClass);

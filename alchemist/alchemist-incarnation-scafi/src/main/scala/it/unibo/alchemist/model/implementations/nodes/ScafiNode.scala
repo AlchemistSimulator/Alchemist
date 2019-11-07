@@ -5,13 +5,12 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.implementation.nodes
+package it.unibo.alchemist.model.implementations.nodes
 
-import it.unibo.alchemist.model.implementations.nodes.AbstractNode
-import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.{Environment, Position}
 
-class ScafiNode(env: Environment[_, _]) extends AbstractNode[Any](env) {
+class ScafiNode[T, P<:Position[P]](env: Environment[T, P]) extends AbstractNode[T](env) {
 
-  override def createT = new {}
+  override def createT = throw new IllegalStateException("The molecule does not exist and cannot create empty concentration")
 
 }

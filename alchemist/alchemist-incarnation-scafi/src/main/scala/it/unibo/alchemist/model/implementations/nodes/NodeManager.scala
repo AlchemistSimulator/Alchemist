@@ -5,7 +5,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.implementation.nodes
+package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.interfaces.{Node}
@@ -13,9 +13,13 @@ import it.unibo.alchemist.model.interfaces.{Node}
 trait NodeManager {
   def put[T](molecule: String, concentration: T)
   def get[T](molecule: String): T
+  def has(molecule: String)
 }
-class SimpleNodeManager(val node: Node[Any]) extends NodeManager {
-  override def put[T](molecule: String, concentration: T): Unit = node.setConcentration(new SimpleMolecule(molecule), concentration)
 
-  override def get[T](molecule: String): T = node.getConcentration(new SimpleMolecule(molecule)).asInstanceOf[T]
+class SimpleNodeManager[T](val node: Node[T]) extends NodeManager {
+  override def put[V](molecule: String, concentration: V): Unit = node.setConcentration(new SimpleMolecule(molecule), concentration.asInstanceOf[T])
+
+  override def get[V](molecule: String): V = node.getConcentration(new SimpleMolecule(molecule)).asInstanceOf[V]
+
+  override def has(molecule: String): Unit = node.contains(new SimpleMolecule(molecule))
 }

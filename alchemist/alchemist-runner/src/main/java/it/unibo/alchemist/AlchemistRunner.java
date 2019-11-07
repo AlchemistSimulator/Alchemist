@@ -12,9 +12,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.view.SingleRunAppBuilder;
-import it.unibo.alchemist.boundary.gui.SingleRunGUI;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -70,7 +68,6 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -80,12 +77,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.output.FileWriterWithEncoding;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.jooq.lambda.fi.util.function.CheckedConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Starts Alchemist.
@@ -118,9 +109,9 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
      * @param endTime                   the time to reach; it could be {@link DoubleTime#INFINITE_TIME infinite}
      * @param endStep                   the step to reach; it could be {@link Long#MAX_VALUE infinite}
      * @param exportRoot                the file name to export to
-     * @param effectsFile               the file to load {@link EffectFX effects} from
+     * @param effectsFile               the file to load {@link it.unibo.alchemist.boundary.gui.effects.EffectFX effects} from
      * @param sampling                  the sampling interval
-     * @param parallelism               the number of threads in the pool of the {@link Executor}
+     * @param parallelism               the number of threads in the pool of the {@link java.util.concurrent.Executor}
      * @param headless                  if the simulation should run headless or with a GUI
      * @param outputMonitors            the {@link Collection} of {@link OutputMonitor} to add to the simulation
      * @param gridConfigFile            -
@@ -414,7 +405,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
         }
 
         /**
-         * Sets the uri of the file containing all the {@link EffectFX effects} to apply to the simulation on start.
+         * Sets the uri of the file containing all the {@link it.unibo.alchemist.boundary.gui.effects.EffectFX effects} to apply to the simulation on start.
          *
          * @param uri the uri of the effects file
          * @return this builder

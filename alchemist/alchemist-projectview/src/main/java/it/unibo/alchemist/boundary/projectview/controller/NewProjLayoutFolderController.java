@@ -9,15 +9,14 @@ package it.unibo.alchemist.boundary.projectview.controller;
 
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.projectview.ProjectGUI;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import org.kaikikm.threadresloader.ResourceLoader;
 
-import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
-import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -29,9 +28,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import org.kaikikm.threadresloader.ResourceLoader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class models a JavaFX controller for NewProjLayoutFolder.fxml.
@@ -51,6 +47,11 @@ public class NewProjLayoutFolderController implements Initializable {
     private Stage stage;
     private String path;
 
+    /**
+     *
+     * @param location
+     * @param resources
+     */
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
         this.next.setText(RESOURCES.getString("next"));

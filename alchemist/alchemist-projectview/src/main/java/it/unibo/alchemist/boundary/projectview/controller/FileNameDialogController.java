@@ -8,16 +8,13 @@
 package it.unibo.alchemist.boundary.projectview.controller;
 
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
-import it.unibo.alchemist.boundary.projectview.ProjectGUI;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -27,8 +24,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -53,6 +48,11 @@ public class FileNameDialogController implements Initializable {
     private Stage dialogStage;
     private String extension;
 
+    /**
+     *
+     * @param location
+     * @param resources
+     */
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
         this.btnCancel.setText(RESOURCES.getString("cancel"));

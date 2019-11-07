@@ -55,6 +55,11 @@ public class TopLayoutController implements Initializable {
     private LeftLayoutController ctrlLeft;
     private Watcher watcher;
 
+    /**
+     *
+     * @param location
+     * @param resources
+     */
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
         this.btnNew.setGraphic(new ImageView(SVGImageUtils.getSvgImage("/icon/new.svg", IMG_WIDTH, IMG_HEIGHT)));

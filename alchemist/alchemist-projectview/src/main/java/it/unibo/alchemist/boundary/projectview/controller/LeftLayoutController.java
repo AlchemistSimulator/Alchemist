@@ -71,6 +71,11 @@ public class LeftLayoutController implements Initializable {
     private String selectedFile;
     private CenterLayoutController ctrlCenter;
 
+    /**
+     *
+     * @param location
+     * @param resources
+     */
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
         this.run.setGraphic(new ImageView(SVGImageUtils.getSvgImage("/icon/run.svg", RUN_WIDTH, RUN_HEIGHT)));

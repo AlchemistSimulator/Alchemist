@@ -70,6 +70,11 @@ public class NewProjLayoutSelectController implements Initializable {
     private static final ObservableList<String> TEMPLATES = FXCollections.observableList(resourcesFrom("/templates", 1)
             .map(s -> s.substring(0, s.length() - (s.endsWith("/") ? 1 : 0))).collect(Collectors.toList()));
 
+    /**
+     *
+     * @param location
+     * @param resources
+     */
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
         this.backBtn.setText(RESOURCES.getString("back"));

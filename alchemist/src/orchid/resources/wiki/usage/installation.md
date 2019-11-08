@@ -4,7 +4,7 @@ title: Requirements and installation
 
 ---
 
-Instructions about how to import the project can be found in the README.md file.
+Alchemist requires java 11+, if you don't have a Java Development Kit version 11+ installed we may recommend you to install the version of AdoptOpenJDK, which can be found [here](https://adoptopenjdk.net/index.html?variant=openjdk11&jvmVariant=hotspot). If you prefer, you can install it via [Jabba](https://github.com/shyiko/jabba) - a cross-platform Java Version Manager.
 
-***NOTE THAT***: Alchemist requires java 11+, so make sure to have a JDK version 11+ installed.
+For further information, the JDKs and environment tested [here](https://travis-ci.org/AlchemistSimulator/Alchemist) are those for which executing Alchemist is supported.
 

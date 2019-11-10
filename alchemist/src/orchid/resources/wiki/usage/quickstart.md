@@ -25,7 +25,7 @@ Note that the first launch will be rather slow, since Gradle will download all t
 
 ## The build script
 
-Let's explain how things work by looking at the `build.gradle` script. First of all, we need to set Alchemist as a dependency, thus you will see something like this:
+Let's explain how things work by looking at the `build.gradle` script. First of all, we need to add Alchemist as a dependency, thus you will see something like this:
 ```kotlin
 dependencies {
     implementation("it.unibo.alchemist:alchemist:SOME_ALCHEMIST_VERSION")

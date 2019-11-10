@@ -1,6 +1,6 @@
 ---
 
-title: Run Alchemist via Gradle
+title: Running Alchemist via Gradle
 
 ---
 In this section you will be given information about how to use the simulator via [Gradle](https://gradle.org). If you already practiced with the [quick start](quickstart.md) you may find this information repetitive.
@@ -45,17 +45,17 @@ gradlew.bat runAlchemist
 
 Note that the first launch will be rather slow, since Gradle will download all the required files. They will get cached in the user's home folder (as per Gradle normal behavior).
 
-### Running with options
+### Using the Command Line Interface
 
-Now, to make the simulator do something for you, you should run it with proper arguments. For further information about the supported options see the [command line interface](quickstart.md#command-line-interface) (or run the simulator with the `-h` or `--help` option). The most common case is you want to run your own simulation. To do so, you can rely on the `-y` option followed by the path to the simulation file. Alchemist simulations are contained in *.yml files, more information about how to write such simulations can be found [here](yaml.md). Let's say you want to run Alchemist with the following arguments:
+To make the simulator do something for you (for instance, to make it run your own simulation) you can rely on the [command line interface](quickstart.md#command-line-interface). The most common case is you want to run your own simulation. To do so, you can rely on the `-y` option followed by the path to the simulation file. Alchemist simulations are contained in *.yml files, more information about how to write such simulations can be found [here](yaml.md). Let's say you want to run Alchemist with the following arguments:
 ```bash
 -y path/to/your/simulation.yml
 ```
-You can do so in a couple of way, of course this applies to every option you may want to launch the simulator with. You can explicit such options via command line when you run your custom task, using the `--args` option. So you will have something like this:
+You can do so in a couple of ways, of course this applies to every option you may want to launch the simulator with. You can explicit such options via command line when you run your custom task, using the `--args` option. So you will have something like this:
 ```bash
 ./gradlew runAlchemist --args='-y path/to/your/simulation.yml'
 ```
-In addition, if your options never change, you can explicit them in the body of your custom task, by adding the following line of code:
+Otherwise, if your options never change, you can explicit them in the body of your custom task, by adding the following line of code:
 
 ```kotlin
 args = listOf("-y", "path/to/your/simulation.yml")

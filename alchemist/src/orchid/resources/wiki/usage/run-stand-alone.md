@@ -1,6 +1,6 @@
 ---
 
-title: Run Alchemist stand-alone
+title: Running Alchemist stand-alone
 
 ---
 Another way of running Alchemist is by using the redistributable jar file. However, using the simulator via [Gradle](https://gradle.org) is recommended. For further information, see how to [Run Alchemist via Gradle](run-gradle.md).
@@ -9,15 +9,15 @@ Such jar file can be downloaded from the [releases section on github](https://gi
 
 ## Running Alchemist
 
-If you got the redistributable, runnable Alchemist jar file, running the simulator is straightforward. Open a terminal and move to the folder where the jar is located, then issue:
+If you got the redistributable, runnable Alchemist jar file, launching the simulator is straightforward. Open a terminal and move to the folder where the jar is located, then issue:
 ```bash
 java -jar alchemist-redist-VERSION.jar
 ```
 Remember to substitute `VERSION` with the Alchemist version you actually have downloaded.
 
-### Running with options
+### Using the Command Line Interface
 
-To make the the simulator do something for you, you should run it with proper arguments. For further information about the supported options see the [command line interface](quickstart.md#command-line-interface), or run the simulator with `-h` or `--help` option:
+To make the simulator do something for you (for instance, to make it run your own simulation) you can rely on the [command line interface](quickstart.md#command-line-interface). Try to run the simulator with `-h` or `--help` option in order to get a list of the supported options:
 ```bash
 java -jar alchemist-redist-VERSION.jar -h
 ```
@@ -29,7 +29,7 @@ java -jar alchemist-redist-VERSION.jar -y path/to/your/simulation.yml
 
 ## How to export the jar
 
-Alchemist executable jar files can be generated at need, let's see how. As first step, use git to locally clone [Alchemist repository](https://github.com/AlchemistSimulator/Alchemist). Now, to generate the jar you can rely on the `fatJar` gradle task. To run the task, point a terminal on the alchemist project's root, then on UNIX:
+Alchemist executable jar files can be generated at need, let's see how. As first step, use git to locally clone the [Alchemist repository](https://github.com/AlchemistSimulator/Alchemist). Then, to generate the jar file you can rely on the `fatJar` gradle task. To run the task, point a terminal on the alchemist project's root, then on UNIX:
 ```bash
 ./gradlew fatJar
 ```
@@ -38,4 +38,4 @@ On Windows:
 gradlew.bat fatJar
 ```
 
-As a result, an `alchemist-redist-{version}.jar` file will be generated in `build/libs/`. That's it.
+As a result, an `alchemist-redist-{version}.jar` file will be generated in `build/libs/`. You can use it as described above.

@@ -47,7 +47,7 @@ Note that the first launch will be rather slow, since Gradle will download all t
 
 ### Running with options
 
-Now, to make the simulator do something for you, you should run it with proper arguments. For further information about the supported options see the [command line interface](quickstart.md#command-line-interface). The most common case is you want to run your own simulation. To do so, you can rely on the `-y` option followed by the path to the simulation file. Alchemist simulations are contained in *.yml files, more information about how to write such simulations can be found [here](yaml.md). Let's say you want to run Alchemist with the following arguments:
+Now, to make the simulator do something for you, you should run it with proper arguments. For further information about the supported options see the [command line interface](quickstart.md#command-line-interface) (or run the simulator with the `-h` or `--help` option). The most common case is you want to run your own simulation. To do so, you can rely on the `-y` option followed by the path to the simulation file. Alchemist simulations are contained in *.yml files, more information about how to write such simulations can be found [here](yaml.md). Let's say you want to run Alchemist with the following arguments:
 ```bash
 -y path/to/your/simulation.yml
 ```

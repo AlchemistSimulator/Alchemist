@@ -17,7 +17,7 @@ substituting `ALCHEMIST_VERSION` with the version you want to use (change the sc
 
 ## Running Alchemist
 
-One easy way to run Alchemist via Gradle is by writing a simple Gradle task responsible for launching the simulator. Let's see how this can be done. Firstly, [Gradle](https://gradle.org) has a special task to run a Java class from the build script: `JavaExec`. We can create our custom task of type `JavaExec` and configure it to launch Alchemist. Let's define our task:
+One easy way to run Alchemist via Gradle is by writing a simple Gradle task responsible for launching the simulator. Let's see how this can be done. Firstly, Gradle has a special task to run a Java class from the build script: `JavaExec`. We can create our custom task of type `JavaExec` and configure it to launch Alchemist. Let's define our task:
 ```kotlin
 tasks.register<JavaExec>("runAlchemist") {
     // run alchemist

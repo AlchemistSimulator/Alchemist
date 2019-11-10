@@ -7,13 +7,17 @@ In this section you will be given information about how to use the simulator via
 
 ## Adding Alchemist dependency
 
-First of all, you need to add Alchemist dependency to your Gradle build. You can do so by writing:
+First of all, you need to add Alchemist dependency to your Gradle build. Alchemist is available on Maven Central, you can import all the components by importing the `it.unibo.alchemist:alchemist` artifact. Do so by writing:
 ```kotlin
+repositories { mavenCentral() }
+
 dependencies {
     implementation("it.unibo.alchemist:alchemist:ALCHEMIST_VERSION")
 }
 ```
-substituting `ALCHEMIST_VERSION` with the version you want to use (change the scope appropriately if you need Alchemist only for runtime or testing).
+Remember to substite `ALCHEMIST_VERSION` with the version you want to use (change the scope appropriately if you need Alchemist only for runtime or testing).
+
+If you do not need the whole Alchemist machinery but just a sub-part of it, you can restrict the set of imported artifacts by using as dependencies the modules you are actually in need of.
 
 ## Running Alchemist
 

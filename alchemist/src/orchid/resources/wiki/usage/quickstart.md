@@ -21,6 +21,8 @@ gradlew.bat runAlchemist
 ```
 Press P and you will see some pedestrians wandering around. For further information about the gui, see the [graphical interface shortcuts](gui.md).
 
+Note that the first launch will be rather slow, since Gradle will download all the required files. They will get cached in the user's home folder (as per Gradle normal behavior).
+
 ## The build script
 
 Let's explain how everything works by looking at the `build.gradle` script. First of all, we need to set Alchemist as a dependency, thus you will see something like this:

@@ -19,8 +19,8 @@ substituting `ALCHEMIST_VERSION` with the version you want to use (change the sc
 
 One easy way to run Alchemist via Gradle is by writing a simple Gradle task responsible for launching the simulator. Let's see how this can be done. Firstly, [Gradle](https://gradle.org) has a special task to run a Java class from the build script: `JavaExec`. We can create our custom task of type `JavaExec` and configure it to launch Alchemist. Let's define our task:
 ```kotlin
-tasks.register<JavaExec>("myTask") {
-    // launch alchemist
+tasks.register<JavaExec>("runAlchemist") {
+    // run alchemist
 }
 ```
 Now, in order to launch the simulator, we need to explicit two things:
@@ -29,19 +29,21 @@ Now, in order to launch the simulator, we need to explicit two things:
 
 You can do so by adding two lines of code:
 ```kotlin
-tasks.register<JavaExec>("myTask") {
+tasks.register<JavaExec>("runAlchemist") {
     classpath = project.sourceSets.getByName("main").runtimeClasspath
     main = "it.unibo.alchemist.Alchemist"
 }
 ```
 This is sufficient to succesfully run the simulator. Open a terminal and move to the project root folder, then on UNIX:
 ```bash
-./gradlew myTask
+./gradlew runAlchemist
 ```
 On Windows:
 ```
-gradlew.bat myTask
+gradlew.bat runAlchemist
 ```
+
+Note that the first launch will be rather slow, since Gradle will download all the required files. They will get cached in the user's home folder (as per Gradle normal behavior).
 
 ### Running with options
 
@@ -51,7 +53,7 @@ Now, to make the simulator do something for you, you should run it with proper a
 ```
 You can do so in a couple of way, of course this applies to every option you may want to launch the simulator with. You can explicit such options via command line when you run your custom task, using the `--args` option. So you will have something like this:
 ```bash
-./gradlew myTask --args='-y path/to/your/simulation.yml'
+./gradlew runAlchemist --args='-y path/to/your/simulation.yml'
 ```
 In addition, if your options never change, you can explicit them in the body of your custom task, by adding the following line of code:
 

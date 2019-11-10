@@ -25,13 +25,23 @@ Note that the first launch will be rather slow, since Gradle will download all t
 
 ## The build script
 
-Let's explain how things work by looking at the `build.gradle` script. First of all, we need to add Alchemist as a dependency, thus you will see something like this:
+Let's explain how things work by looking at the `build.gradle` script.
+
+### Importing Alchemist
+
+First of all, we need to add Alchemist as a dependency. Alchemist is available on Maven Central, we can import all the components by importing the `it.unibo.alchemist:alchemist` artifact. Thus, you will see something like this:
 ```kotlin
+repositories { mavenCentral() }
+
 dependencies {
     implementation("it.unibo.alchemist:alchemist:SOME_ALCHEMIST_VERSION")
 }
 ```
 With `SOME_ALCHEMIST_VERSION` replaced by the version used, nothing special actually. 
+
+If you do not need the whole Alchemist machinery but just a sub-part of it, you can restrict the set of imported artifacts by using as dependencies the modules you are actually in need of.
+
+### Running Alchemist
 
 Now, let's look at the `runAlchemist` task, it is a simple gradle task responsible for launching the simulation. Let's dissect it:
 ```kotlin

@@ -3,13 +3,13 @@
 title: Quick start
 
 ---
-You can find [here](https://github.com/paagamelo/Alchemist-quickstart) a project showing how to use the simulator via [Gradle](https://gradle.org) to run a simple simulation. Let's use it as a quick start to have you hit the ground running. 
+You can find [here](https://github.com/paagamelo/Alchemist-quickstart) a project showing how to use Alchemist via [Gradle](https://gradle.org) to run a simple simulation. Let's use it as a quick start to have you hit the ground running. 
 
 You can either follow these instructions or those on the `README.md` file of the linked project, information is equivalent.
 
 ## How to launch
 
-To run the example you can rely on the pre-configured [Gradle](https://gradle.org) build script. It will automatically download all the required libraries, set up the environment, and execute the simulator via command line for you.
+To run the example you can rely on the pre-configured Gradle build script. It will automatically download all the required libraries, set up the environment, and execute the simulator via command line for you.
 As first step, use `git` to locally clone the repository linked above.
 In order to launch, open a terminal and move to the project root folder, then on UNIX:
 ```bash
@@ -41,11 +41,11 @@ tasks.register<JavaExec>("runAlchemist") {
     args = listOf("-y", "src/main/yaml/$simulation.yml")
 }
 ```
-[Gradle](https://gradle.org) has a special task to run a Java class from the build script: `JavaExec`. We can create our custom task of type `JavaExec` and configure it to launch our simulation. In order to make it work, we need to do two more things:
+Gradle has a special task to run a Java class from the build script: `JavaExec`. We can create our custom task of type `JavaExec` and configure it to launch our simulation. In order to make it work, we need to do two more things:
 - specify the Alchemist main class, which is `it.unibo.alchemist.Alchemist`
 - explicit the classpath, or java won't be able to find all the classes needed
 
-This is what we do in the first two lines of code, and it is sufficient to successfully start Alchemist. Now, to make it run our simulation we need to launch the simulator with proper arguments. To run a simulation we can rely on the `-y` option followed by the path to the simulation file. For further information about the supported options see the [command line interface](#command-line-interface) (or run the simulator with the `-h` or `--help` option). Alchemist simulations are contained in *.yml files, more information about how to write such simulations can be found [here](yaml.md). Let's suppose the `$simulation` variable contains the name of our simulation file, which is located in the `src/main/yaml/` folder, what we want to do is to run Alchemist with the following arguments:
+This is what we do in the first two lines of code, and it is sufficient to successfully start Alchemist. Now, to make it run our simulation we need to launch the simulator with proper arguments. To run a simulation we can rely on the `-y` option followed by the path to the simulation file. For further information about the supported options see the [command line interface](#command-line-interface) (or run the simulator with `-h` or `--help` option). Alchemist simulations are contained in *.yml files, more information about how to write such simulations can be found [here](yaml.md). Let's suppose the `$simulation` variable contains the name of our simulation file, which is located in the `src/main/yaml/` folder, what we want to do is to run Alchemist with the following arguments:
 ```bash
 -y src/main/yaml/$simulation.yml
 ```

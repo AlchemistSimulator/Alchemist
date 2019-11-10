@@ -25,13 +25,13 @@ Note that the first launch will be rather slow, since Gradle will download all t
 
 ## The build script
 
-Let's explain how everything works by looking at the `build.gradle` script. First of all, we need to set Alchemist as a dependency, thus you will see something like this:
+Let's explain how things work by looking at the `build.gradle` script. First of all, we need to set Alchemist as a dependency, thus you will see something like this:
 ```kotlin
 dependencies {
     implementation("it.unibo.alchemist:alchemist:SOME_ALCHEMIST_VERSION")
 }
 ```
-Nothing special actually. 
+With `SOME_ALCHEMIST_VERSION` replaced by the version used, nothing special actually. 
 
 Now, let's look at the `runAlchemist` task, it is a simple gradle task responsible for launching the simulation. Let's dissect it:
 ```kotlin
@@ -41,15 +41,15 @@ tasks.register<JavaExec>("runAlchemist") {
     args = listOf("-y", "src/main/yaml/$simulation.yml")
 }
 ```
-Gradle has a special task to run a Java class from the build script: `JavaExec`. We can create our custom task of type `JavaExec` and configure it to launch our simulation. In order to make it work, we need to do two more things:
-- specify the Alchemist main class, which is `it.unibo.alchemist.Alchemist`
-- explicit the classpath, or java won't be able to find all the classes needed
+[Gradle](https://gradle.org) has a special task to run a Java class from the build script: `JavaExec`. We can create our custom task of type `JavaExec`, name it `runAlchemist` and configure it to launch our simulation. In order to make it work, we need to explicit two things:
+- the Alchemist main class, which is `it.unibo.alchemist.Alchemist`
+- the classpath, or java won't be able to find all the classes needed
 
-This is what we do in the first two lines of code, and it is sufficient to successfully start Alchemist. Now, to make it run our simulation we need to launch the simulator with proper arguments. To run a simulation we can rely on the `-y` option followed by the path to the simulation file. For further information about the supported options see the [command line interface](#command-line-interface) (or run the simulator with `-h` or `--help` option). Alchemist simulations are contained in *.yml files, more information about how to write such simulations can be found [here](yaml.md). Let's suppose the `$simulation` variable contains the name of our simulation file, which is located in the `src/main/yaml/` folder, what we want to do is to run Alchemist with the following arguments:
+This is what we do with the first three lines of code, and it is sufficient to successfully start Alchemist. Now, to make it run our simulation we can rely on the [command line interface](#command-line-interface), to run a simulation we can use the `-y` option followed by the path to the simulation file. Alchemist simulations are contained in *.yml files, more information about how to write such simulations can be found [here](https://alchemistsimulator.github.io/wiki/usage/yaml/). Let's suppose the `$simulation` variable contains the name of our simulation file, which is located in the `src/main/yaml/` folder, what we want to do is to run Alchemist with the following arguments:
 ```bash
 -y src/main/yaml/$simulation.yml
 ```
-The third line of code does exactly this. 
+The last line of code specify these arguments.
 
 Ok, that's it. You should be able to use Alchemist via Gradle in your own project now, or at least have a clue.
 
@@ -60,24 +60,24 @@ The CLI supports the following options
 | Option                                     | Effect                                                                                                                                                                            |
 |--------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | -b,--batch                                 | Runs in batch mode. If one or more -var parameters are specified, multiple simulation runs will be executed in parallel with all the combinations of values.                      |
-| -bmk,--benchmark <file>                    | Performs a benchmark with the provided simulation, measuring the total execution time. Saves result in given file.                                                                |
+| -bmk,--benchmark \<file>                    | Performs a benchmark with the provided simulation, measuring the total execution time. Saves result in given file.                                                                |
 | -cc,--comment-char                         | Sets the char that will be used to mark a data file line as commented. Defaults to #. (To be implemented)                                                                         |
-| -d,--distributed <file>                    | Distribute simulations in computer grid                                                                                                                                           |
-| -e,--export <file>                         | Exports the results onto a file                                                                                                                                                   |
-| -g,--effect-stack <file>                   | Loads an effect stack from file. Does nothing if in headless mode (because --batch and/or --headless are enabled)                                                                 |
+| -d,--distributed \<file>                    | Distribute simulations in computer grid                                                                                                                                           |
+| -e,--export \<file>                         | Exports the results onto a file                                                                                                                                                   |
+| -g,--effect-stack \<file>                   | Loads an effect stack from file. Does nothing if in headless mode (because --batch and/or --headless are enabled)                                                                 |
 | -h,--help                                  | Print this help and quits the program                                                                                                                                             |
 | -hl,--headless                             | Disable the graphical interface (automatic in batch mode)                                                                                                                         |
-| -i,--interval <interval>                   | Used when exporting data. Specifies how much simulated time units should pass between two samplings. Defaults to 1.                                                               |
-| -p,--parallelism <arg>                     | Sets how many threads will be used in batch mode (default to the number of cores of your CPU).                                                                                    |
+| -i,--interval \<interval>                   | Used when exporting data. Specifies how much simulated time units should pass between two samplings. Defaults to 1.                                                               |
+| -p,--parallelism \<arg>                     | Sets how many threads will be used in batch mode (default to the number of cores of your CPU).                                                                                    |
 | -q,--quiet                                 | Quiet mode: print only error-level informations.                                                                                                                                  |
 | -qq,--quiet-quiet                          | Super quiet mode: the simulator does not log anything. Go cry somewhere else if something goes wrong and you have no clue what.                                                   |
-| -s,--serv <Ignite note configuration file> | Start Ignite cluster node on local machine                                                                                                                                        |
-| -t,--end-time <Time>                       | The simulation will be concluded at the specified time. Defaults to infinity.                                                                                                     |
+| -s,--serv \<Ignite note configuration file> | Start Ignite cluster node on local machine                                                                                                                                        |
+| -t,--end-time \<Time>                       | The simulation will be concluded at the specified time. Defaults to infinity.                                                                                                     |
 | -v,--verbose                               | Verbose mode: prints info-level informations. Slows the simulator down.                                                                                                           |
-| -var,--variable <var1 var2 ... varN>       | Used with -b. If the specified variable exists in the Alchemist YAML file, it is added to the pool of  variables. Be wary: complexity quickly grows with the number of variables. |
+| -var,--variable \<var1 var2 ... varN>       | Used with -b. If the specified variable exists in the Alchemist YAML file, it is added to the pool of  variables. Be wary: complexity quickly grows with the number of variables. |
 | -vv,--vverbose                             | Very verbose mode: prints debug-level informations. Slows the simulator down. A lot.                                                                                              |
 | -vvv,--vvverbose                           | Very very verbose mode: prints trace-level informations. Slows the simulator down. An awful lot.                                                                                  |
-| -y,--yaml <file>                           | Load the specified Alchemist YAML file                                                                                                                                            |
+| -y,--yaml \<file>                           | Load the specified Alchemist YAML file                                                                                                                                            |
 
 
 

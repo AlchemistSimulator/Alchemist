@@ -1,7 +1,5 @@
 package it.unibo.alchemist.boundary.gui.utility;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -20,39 +18,6 @@ public final class ResourceLoader {
      */
     private ResourceLoader() {
         throw new AssertionError("Suppress default constructor for noninstantiability");
-    }
-
-    /**
-     * Static method that wraps {@link Class#getResourceAsStream(String)} method to return an
-     * input stream form a specified path.
-     * <p>
-     * It also tries to fix wrongly specified paths.
-     *
-     * @deprecated use {@link org.kaikikm.threadresloader.ResourceLoader#getResourceAsStream} instead.
-     *
-     * @param path the path to the file
-     * @return An {@link InputStream} object or null if no resource with this
-     * name is found
-     */
-    @Deprecated
-    public static InputStream load(final String path) {
-        return ResourceLoader.class.getResourceAsStream(path);
-    }
-
-    /**
-     * Static method that wraps {@link Class#getResource(String)} method to return an URL from
-     * a specified path.
-     * <p>
-     * It also tries to fix wrongly specified paths.
-     *
-     * @deprecated use {@link org.kaikikm.threadresloader.ResourceLoader#getResource} instead.
-     *
-     * @param path the path to the file
-     * @return An {@link URL} object or null if no resource with this name is
-     * found
-     */
-    public static URL loadURL(final String path) {
-        return ResourceLoader.class.getResource(path);
     }
 
     /**

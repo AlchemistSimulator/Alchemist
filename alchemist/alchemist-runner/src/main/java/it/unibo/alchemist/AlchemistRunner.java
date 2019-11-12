@@ -36,6 +36,7 @@ import it.unibo.alchemist.model.interfaces.BenchmarkableEnvironment;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Time;
+import java.util.concurrent.Executor;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -348,10 +349,8 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
      * @param <P> position type
      */
     public static class Builder<T, P extends Position2D<P>> {
-        private boolean benchmark;
         private final Loader loader;
         private final Collection<Supplier<OutputMonitor<T, P>>> outputMonitors = new LinkedList<>();
-        private int closeOperation;
         private Optional<String> effectsFile = Optional.empty();
         private long endStep = Long.MAX_VALUE;
         private Time endTime = DoubleTime.INFINITE_TIME;
@@ -391,17 +390,6 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
             return new AlchemistRunner<>(this.loader, this.endTime, this.endStep, this.exportFileRoot, this.effectsFile,
                     this.samplingInt, this.parallelism, this.headless,
                     ImmutableList.copyOf(outputMonitors), gridConfigFile, benchmarkOutputFile);
-        }
-
-        /**
-         * Sets the benchkmark mode for the simulation.
-         *
-         * @param benchmark set true if you want to benchmark this run
-         * @return this builder
-         */
-        public Builder<T, P> benchmarkMode(final boolean benchmark) {
-            this.benchmark = benchmark;
-            return this;
         }
 
         /**
@@ -460,20 +448,6 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
         }
 
         /**
-         *
-         * @param closeOp
-         *            the close operation
-         * @return builder
-         */
-        public Builder<T, P> withGUICloseOperation(final int closeOp) {
-            if (closeOp < 0 || closeOp > 3) {
-                throw new IllegalArgumentException("The value of close operation is not valid.");
-            }
-            this.closeOperation = closeOp;
-            return this;
-        }
-
-        /**
          * Sets whether the simulation will run in headless mode or not.
          *
          * @param headless is headless
@@ -511,7 +485,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
         }
 
         /**
-         * Sets the number of threads in the pool of an {@link Executor} the simulation will use.
+         * Sets the number of threads in the pool of an {@link java.util.concurrent.Executor} the simulation will use.
          *
          * @param threads the threads number
          * @return this builder

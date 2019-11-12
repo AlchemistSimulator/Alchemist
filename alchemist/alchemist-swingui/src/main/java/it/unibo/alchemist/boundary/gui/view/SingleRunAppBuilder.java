@@ -57,7 +57,7 @@ public class SingleRunAppBuilder<T, P extends Position2D<P>> {
      * @param effectGroups the {@code EffectGroups} to set
      * @return this builder
      */
-    public SingleRunAppBuilder<T, P> setEffectGroups(final Collection<EffectGroup<P>> effectGroups) {
+    public SingleRunAppBuilder<T, P> withEffectGroups(final Collection<EffectGroup<P>> effectGroups) {
         this.effectGroups.clear();
         this.effectGroups.addAll(effectGroups);
         return this;
@@ -70,12 +70,12 @@ public class SingleRunAppBuilder<T, P extends Position2D<P>> {
      *
      * @param file the {@code File} containing the {@code EffectGroups} to set
      * @return this builder
-     * @see #setEffectGroups(Collection)
+     * @see #withEffectGroups(Collection)
      * @see EffectSerializer#effectGroupsFromFile(File)
      */
-    public SingleRunAppBuilder<T, P> setEffectGroups(final File file) {
+    public SingleRunAppBuilder<T, P> withEffectGroups(final File file) {
         try {
-            return setEffectGroups(EffectSerializer.effectGroupsFromFile(file));
+            return withEffectGroups(EffectSerializer.effectGroupsFromFile(file));
         } catch (final IOException e) {
             throw new IllegalArgumentException(e);
         }
@@ -88,10 +88,10 @@ public class SingleRunAppBuilder<T, P extends Position2D<P>> {
      *
      * @param path the path of the {@code File} containing the {@code EffectGroups} to set
      * @return this builder
-     * @see #setEffectGroups(File)
+     * @see #withEffectGroups(File)
      */
-    public SingleRunAppBuilder<T, P> setEffectGroups(final String path) {
-        return setEffectGroups(new File(path));
+    public SingleRunAppBuilder<T, P> withEffectGroups(final String path) {
+        return withEffectGroups(new File(path));
     }
 
     /**

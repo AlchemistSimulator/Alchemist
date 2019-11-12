@@ -137,20 +137,20 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
 
     @Override
     public boolean getVisibilityOf(final EffectFX<P> effect) {
-        try {
-            return this.effects.get(this.search(effect)).isVisible();
-        } catch (final IndexOutOfBoundsException e) {
+        final int effectIndex = this.search(effect);
+        if (effectIndex == -1) {
             throw new IllegalArgumentException(CANNOT_FIND_EFFECT);
         }
+        return this.effects.get(effectIndex).isVisible();
     }
 
     @Override
     public void setVisibilityOf(final EffectFX<P> effect, final boolean visibility) {
-        try {
-            this.effects.get(this.search(effect)).setVisibility(visibility);
-        } catch (final IndexOutOfBoundsException e) {
+        final int effectIndex = this.search(effect);
+        if (effectIndex == -1) {
             throw new IllegalArgumentException(CANNOT_FIND_EFFECT);
         }
+        this.effects.get(effectIndex).setVisibility(visibility);
     }
 
     @Override
@@ -289,7 +289,7 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
     public boolean offer(final EffectFX<P> e) {
         try {
             return this.add(e);
-        } catch (final Exception ex) {
+        } catch (UnsupportedOperationException | ClassCastException ex) {
             return false;
         }
     }

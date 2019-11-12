@@ -292,7 +292,7 @@ public class RangedIntegerProperty extends IntegerPropertyBase implements Serial
         out.writeUTF(this.getName());
         out.writeInt(this.getLowerBound());
         out.writeInt(this.getUpperBound());
-        out.writeInt((this.getValue()).intValue());
+        out.writeInt(this.getValue().intValue());
     }
 
     /**

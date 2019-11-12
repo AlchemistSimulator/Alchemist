@@ -476,7 +476,7 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
      *
      * @throws IllegalStateException if the application is initialized
      */
-    private void checkIfInitialized() throws IllegalStateException {
+    private void checkIfInitialized() {
         if (initialized) {
             throw new IllegalStateException("Application is already initialized");
         }

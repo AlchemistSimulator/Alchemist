@@ -142,7 +142,7 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
      * @param name the name to give to the {@code EffectGroup}
      */
     private void addGroupToList(final String name) {
-        final EffectGroup<P> newGroup = new EffectStack<P>();
+        final EffectGroup<P> newGroup = new EffectStack<>();
         newGroup.setName(name);
         this.getObservableEffectsList().add(newGroup);
         if (this.effectGroupsList != null) {

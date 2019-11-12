@@ -4,7 +4,6 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
@@ -45,7 +44,7 @@ public class EffectGroupAdapter<P extends Position2D<? extends P>>  implements J
      * @inheritDocs
      */
     @Override
-    public EffectGroup<P> deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
+    public EffectGroup<P> deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) {
         final JsonObject jObj = json.getAsJsonObject();
 
         final String name = jObj.get(NAME).getAsString();

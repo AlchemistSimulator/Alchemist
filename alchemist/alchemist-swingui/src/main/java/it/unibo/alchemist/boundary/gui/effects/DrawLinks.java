@@ -80,7 +80,7 @@ public class DrawLinks<P extends Position2D<? extends P>> extends AbstractEffect
      */
     @Override
     protected Queue<DrawCommand<P>> consumeData() {
-        final CommandQueueBuilder<P> builder = new CommandQueueBuilder<P>();
+        final CommandQueueBuilder<P> builder = new CommandQueueBuilder<>();
         positions.forEach((position, neighbors) -> {
             final double size = getSize();
             builder.addCommand((graphic, wormhole) -> {

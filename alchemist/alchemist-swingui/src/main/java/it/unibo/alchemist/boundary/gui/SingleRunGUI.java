@@ -174,7 +174,7 @@ public final class SingleRunGUI {
              */
             sim.addOutputMonitor(main);
         } else if (main instanceof Node) {
-            new SingleRunAppBuilder<>(sim).setEffectGroups(effectsFile).build();
+            new SingleRunAppBuilder<>(sim).withEffectGroups(effectsFile).build();
         }
     }
 

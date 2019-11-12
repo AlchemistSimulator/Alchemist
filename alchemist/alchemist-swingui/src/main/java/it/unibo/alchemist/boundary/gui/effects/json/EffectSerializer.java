@@ -49,21 +49,10 @@ public final class EffectSerializer {
      * Default charset of serialized groups of effects.
      */
     public static final String DEFAULT_CHARSET = "UTF-8";
-
-    /**
-     * {@code Type} of an {@code EffectFX}.
-     */
-    private static final TypeToken<EffectFX<?>> EFFECT_TYPE = new TypeToken<EffectFX<?>>() {
-    };
     /**
      * {@code Type} of an {@code EffectGroup}.
      */
-    private static final TypeToken<EffectGroup<?>> EFFECT_GROUP_TYPE = new TypeToken<EffectGroup<?>>() {
-    };
-    /**
-     * @code Type} of a {@code List} of {@code EffectGroup}.
-     */
-    private static final TypeToken<List<EffectGroup<?>>> EFFECT_GROUP_LIST_TYPE = new TypeToken<List<EffectGroup<?>>>() {
+    private static final TypeToken<EffectGroup<?>> EFFECT_GROUP_TYPE = new TypeToken<>() {
     };
     /**
      * Set of available {@link EffectFX effect}s found by reflection.

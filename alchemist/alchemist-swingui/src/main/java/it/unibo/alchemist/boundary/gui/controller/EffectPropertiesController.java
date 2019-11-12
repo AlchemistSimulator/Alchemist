@@ -197,7 +197,7 @@ public class EffectPropertiesController implements Initializable {
                 } else if (SerializableEnumProperty.class.isAssignableFrom(f.getType())) {
                     final SerializableEnumProperty<?> enumProperty = (SerializableEnumProperty<?>) f.get(this.effect);
                     if (enumProperty.get().getClass().isEnum()) {
-                        EffectPropertiesController.this.buildComboBox(enumProperty);
+                        this.buildComboBox(enumProperty);
                     }
                 }
 

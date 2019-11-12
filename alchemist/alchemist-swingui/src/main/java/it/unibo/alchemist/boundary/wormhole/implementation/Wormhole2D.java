@@ -16,8 +16,6 @@ import java.awt.Component;
 import java.awt.geom.Dimension2D;
 import javafx.scene.Node;
 import org.apache.xmlgraphics.java2d.Dimension2DDouble;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
 
@@ -30,7 +28,7 @@ import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.f
  */
 public class Wormhole2D<P extends Position2D<? extends P>> extends AbstractWormhole2D<P> {
 
-    private static final Logger L = LoggerFactory.getLogger(Wormhole2D.class);
+    //private static final Logger L = LoggerFactory.getLogger(Wormhole2D.class);
 
     /**
      * Bidimensional wormhole constructor for an AWT/Swing {@link Component} class.

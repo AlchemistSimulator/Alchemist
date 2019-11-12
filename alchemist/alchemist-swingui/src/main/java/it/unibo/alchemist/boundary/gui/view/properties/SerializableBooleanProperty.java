@@ -7,19 +7,16 @@ import java.io.Serializable;
 import java.lang.reflect.Type;
 
 import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 
 import javafx.beans.property.BooleanPropertyBase;
-import javafx.beans.property.SimpleBooleanProperty;
 
 import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur3_32;
 
 /**
- * {@link SimpleBooleanProperty} that implements also {@link Serializable}.
+ * {@link javafx.beans.property.SimpleBooleanProperty} that implements also {@link Serializable}.
  */
 public class SerializableBooleanProperty extends BooleanPropertyBase implements Serializable {
     /** Default Serial Version UID. */
@@ -144,11 +141,17 @@ public class SerializableBooleanProperty extends BooleanPropertyBase implements 
         this.setValue(in.readBoolean());
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public int hashCode() {
         return hashMurmur3_32(getValue(), getName());
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -179,7 +182,7 @@ public class SerializableBooleanProperty extends BooleanPropertyBase implements 
     }
 
     /**
-     * Returns a {@link JsonSerializer} and {@link JsonDeserializer} combo class
+     * Returns a {@link com.google.gson.JsonSerializer} and {@link com.google.gson.JsonDeserializer} combo class
      * to be used as a {@code TypeAdapter} for this
      * {@code SerializableBooleanProperty}.
      * 

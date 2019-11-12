@@ -5,13 +5,11 @@ import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
 import it.unibo.alchemist.boundary.gui.effects.EffectBuilderFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
-import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.gui.view.cells.EffectCell;
 import it.unibo.alchemist.boundary.gui.view.cells.EffectGroupCell;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import java.net.URL;
 import java.util.Optional;
@@ -23,7 +21,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ButtonBar;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextInputDialog;
@@ -35,6 +32,8 @@ import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRe
 
 /**
  * This class models a JavaFX controller for EffectBar.fxml.
+ *
+ * @param <P> the position type
  */
 public class EffectBarController<P extends Position2D<? extends P>> implements Initializable {
     /**
@@ -81,7 +80,7 @@ public class EffectBarController<P extends Position2D<? extends P>> implements I
     /**
      * Constructor.
      *
-     * @param displayMonitor the graphical {@link OutputMonitor}
+     * @param displayMonitor the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}
      * @param parentCell     the cell that {@link EffectGroupCell} that will open this
      *                       drawer
      * @param stack          the stack where to open the effect properties
@@ -94,23 +93,26 @@ public class EffectBarController<P extends Position2D<? extends P>> implements I
     }
 
     /**
-     * Getter method for the graphical {@link OutputMonitor}.
+     * Getter method for the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}.
      *
-     * @return the graphical {@link OutputMonitor}, if any
+     * @return the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}, if any
      */
     public final Optional<FXOutputMonitor<?, ?>> getDisplayMonitor() {
         return displayMonitor;
     }
 
     /**
-     * Setter method for the graphical {@link OutputMonitor}.
+     * Setter method for the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}.
      *
-     * @param displayMonitor the graphical {@link OutputMonitor} to set; if null, it will be {@link Optional#empty() unset}
+     * @param displayMonitor the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor} to set; if null, it will be {@link Optional#empty() unset}
      */
     public final void setDisplayMonitor(final @Nullable FXOutputMonitor<?, ?> displayMonitor) {
         this.displayMonitor = Optional.ofNullable(displayMonitor);
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
         assert topBar != null : FXResourceLoader.getInjectionErrorMessage("topBar", EFFECT_BAR_LAYOUT);
@@ -160,7 +162,7 @@ public class EffectBarController<P extends Position2D<? extends P>> implements I
     }
 
     /**
-     * Add the {@link EffectFX Effect} to the {@link ListView} controlled by this class and to the {@link EffectGroup} that the GUI controlled by this claass is representation of.
+     * Add the {@link EffectFX Effect} to the {@link ListView} controlled by this class and to the {@link it.unibo.alchemist.boundary.gui.effects.EffectGroup} that the GUI controlled by this claass is representation of.
      *
      * @param effect the effect to add
      */
@@ -173,7 +175,7 @@ public class EffectBarController<P extends Position2D<? extends P>> implements I
     }
 
     /**
-     * Opens a {@link Dialog}, and when user choose an {@link EffectFX effect},
+     * Opens a {@link javafx.scene.control.Dialog}, and when user choose an {@link EffectFX effect},
      * adds it to the {@link ObservableList list}.
      */
     private void addEffectToList() {

@@ -8,6 +8,8 @@ import java.util.function.Supplier;
 
 /**
  * Builder class that eases the building of a queue of {@link DrawCommand}s.
+ *
+ * @param <P> the position type
  */
 public final class CommandQueueBuilder<P extends Position2D<? extends P>> {
     private final Queue<DrawCommand<P>> commandQueue = new LinkedList<>();

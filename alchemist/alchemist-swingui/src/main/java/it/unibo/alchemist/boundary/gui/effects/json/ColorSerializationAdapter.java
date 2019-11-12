@@ -1,6 +1,5 @@
 package it.unibo.alchemist.boundary.gui.effects.json;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -8,7 +7,6 @@ import java.lang.reflect.Type;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -20,7 +18,7 @@ import com.google.gson.JsonSerializer;
 import javafx.scene.paint.Color;
 
 /**
- * This class should be registered in a {@link GsonBuilder} to
+ * This class should be registered in a {@link com.google.gson.GsonBuilder} to
  * serialize and deserialize JavaFX {@link Color} objects.
  */
 public class ColorSerializationAdapter implements JsonSerializer<Color>, JsonDeserializer<Color> {
@@ -48,7 +46,7 @@ public class ColorSerializationAdapter implements JsonSerializer<Color>, JsonDes
      *
      * @param stream the readObject() inputStream
      * @return the color to deserialize
-     * @throws EOFException           if the end of file is reached
+     * @throws java.io.EOFException   if the end of file is reached
      * @throws ClassNotFoundException if cannot find the class
      * @throws IOException            if other I/O error has occurred
      */
@@ -57,6 +55,9 @@ public class ColorSerializationAdapter implements JsonSerializer<Color>, JsonDes
         return new Color(stream.readDouble(), stream.readDouble(), stream.readDouble(), stream.readDouble());
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public Color deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
         final JsonObject jObj = json.getAsJsonObject();
@@ -69,6 +70,9 @@ public class ColorSerializationAdapter implements JsonSerializer<Color>, JsonDes
         return new Color(red, green, blue, alpha);
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public JsonElement serialize(final Color src, final Type typeOfSrc, final JsonSerializationContext context) {
         final JsonObject jObj = new JsonObject();

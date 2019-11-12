@@ -27,6 +27,9 @@ public class ControlTypePopoverController implements Initializable {
     @Nullable
     private JFXButton selectButton; // Value injected by FXMLLoader
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
         IconFontFX.register(GoogleMaterialDesignIcons.getIconFont());

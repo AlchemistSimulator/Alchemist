@@ -37,10 +37,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.*;
-import javax.swing.border.LineBorder;
-import javax.swing.filechooser.FileFilter;
-import org.danilopianini.view.GUIUtilities;
 
 /**
  * Graphic component to handle effects.

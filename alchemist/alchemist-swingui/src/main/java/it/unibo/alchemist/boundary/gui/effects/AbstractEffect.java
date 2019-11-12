@@ -3,16 +3,11 @@ package it.unibo.alchemist.boundary.gui.effects;
 import it.unibo.alchemist.boundary.gui.CommandQueueBuilder;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.interfaces.DrawCommand;
-import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position2D;
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.io.UTFDataFormatException;
 import java.util.Queue;
 import javafx.beans.property.Property;
 import org.jetbrains.annotations.Contract;
@@ -22,6 +17,8 @@ import org.jetbrains.annotations.Nullable;
  * It models an abstract implementation of the {@link EffectFX effect} interface, implementing default name and visibility properties.
  * <p>
  * The effect behavior can be implemented via {@link #computeDrawCommands(Environment)} template method.
+ *
+ * @param <P> the position type
  */
 public abstract class AbstractEffect<P extends Position2D<? extends P>> implements EffectFX<P> {
     /**
@@ -131,6 +128,9 @@ public abstract class AbstractEffect<P extends Position2D<? extends P>> implemen
         }
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public <T> Queue<DrawCommand<P>> computeDrawCommands(final Environment<T, P> environment) {
         getData(environment);
@@ -151,10 +151,10 @@ public abstract class AbstractEffect<P extends Position2D<? extends P>> implemen
     /**
      * The method extrapolates data from environment.
      * <p>
-     * It is strongly recommended not to keep any reference to {@link Environment}- or {@link Simulation}-specific objects.
+     * It is strongly recommended not to keep any reference to {@link Environment}- or {@link it.unibo.alchemist.core.interfaces.Simulation}-specific objects.
      *
      * @param environment the {@link Environment} to extrapolate data from
-     * @param <T>         the {@link Concentration} type
+     * @param <T>         the {@link it.unibo.alchemist.model.interfaces.Concentration} type
      */
     protected abstract <T> void getData(Environment<T, P> environment);
 
@@ -181,7 +181,7 @@ public abstract class AbstractEffect<P extends Position2D<? extends P>> implemen
     /**
      * Method needed for well working serialization.
      * <p>
-     * From {@link Serializable}: <blockquote>The {@code writeObject} method is
+     * From {@link java.io.Serializable}: <blockquote>The {@code writeObject} method is
      * responsible for writing the state of the object for its particular class
      * so that the corresponding readObject method can restore it. The default
      * mechanism for saving the Object's fields can be invoked by calling
@@ -203,7 +203,7 @@ public abstract class AbstractEffect<P extends Position2D<? extends P>> implemen
     /**
      * Method needed for well working serialization.
      * <p>
-     * From {@link Serializable}: <blockquote>The {@code readObject} method is
+     * From {@link java.io.Serializable}: <blockquote>The {@code readObject} method is
      * responsible for reading from the stream and restoring the classes fields.
      * It may call {@code in.defaultReadObject} to invoke the default mechanism
      * for restoring the object's non-static and non-transient fields. The
@@ -217,8 +217,8 @@ public abstract class AbstractEffect<P extends Position2D<? extends P>> implemen
      * primitive data types supported by {@code DataOutput}.</blockquote>
      *
      * @param stream the input stream
-     * @throws UTFDataFormatException if read bytes do not represent a valid modified UTF-8 encoding of a string
-     * @throws EOFException           if the end of file is reached
+     * @throws java.io.UTFDataFormatException if read bytes do not represent a valid modified UTF-8 encoding of a string
+     * @throws java.io.EOFException   if the end of file is reached
      * @throws ClassNotFoundException if cannot find the class
      * @throws IOException            if other I/O error has occurred
      */

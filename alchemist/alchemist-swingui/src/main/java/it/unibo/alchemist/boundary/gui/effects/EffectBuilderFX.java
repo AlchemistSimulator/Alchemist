@@ -1,6 +1,5 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import com.google.common.reflect.TypeToken;
 import it.unibo.alchemist.ClassPathScanner;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
@@ -42,6 +41,8 @@ public class EffectBuilderFX {
     /**
      * Asks the user to chose an effect and returns the related Class.
      *
+     * @param <P> the position type
+     * @param <C> the EffectFX type
      * @return the class of the effect
      */
     @SuppressWarnings("unchecked")
@@ -52,6 +53,7 @@ public class EffectBuilderFX {
     /**
      * Instantiates the desired effect.
      *
+     * @param <P> the position type
      * @param clazz the class of the effect
      * @return the effect instantiated
      */
@@ -70,6 +72,7 @@ public class EffectBuilderFX {
      * Call this method is the same as calling
      * {@link EffectBuilderFX#getResult()} and {@link #chooseAndLoad()}.
      *
+     * @param <P> the position type
      * @return the effect chosen, or null if no effect was chosen
      */
     public <P extends Position2D<? extends P>> EffectFX<P> chooseAndLoad() {

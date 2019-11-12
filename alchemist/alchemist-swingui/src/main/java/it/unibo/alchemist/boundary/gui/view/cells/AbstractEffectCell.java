@@ -4,7 +4,6 @@ import com.jfoenix.controls.JFXToggleButton;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -157,18 +156,19 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
     }
 
     /**
-     * Getter method for the graphical {@link OutputMonitor}.
+     * Getter method for the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}.
      *
-     * @return the graphical {@link OutputMonitor}, if any
+     * @return the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}, if any
      */
     protected final Optional<FXOutputMonitor<?, ?>> getDisplayMonitor() {
         return displayMonitor;
     }
 
     /**
-     * Setter method for the graphical {@link OutputMonitor}.
+     * Setter method for the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}.
      *
-     * @param displayMonitor the graphical {@link OutputMonitor} to set; if null, it will be {@link Optional#empty() unset}
+     * @param displayMonitor the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor} to set;
+     *                       if null, it will be {@link Optional#empty() unset}
      */
     protected final void setDisplayMonitor(final @Nullable FXOutputMonitor<?, ?> displayMonitor) {
         this.displayMonitor = Optional.ofNullable(displayMonitor);
@@ -339,6 +339,9 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
      */
     protected abstract DataFormat getDataFormat();
 
+    /**
+     * @inheritDocs
+     */
     @Override
     protected void updateItem(final T item, final boolean empty) {
         super.updateItem(item, empty);

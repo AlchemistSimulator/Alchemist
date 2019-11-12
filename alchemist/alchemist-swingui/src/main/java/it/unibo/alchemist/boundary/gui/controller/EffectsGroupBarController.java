@@ -1,6 +1,5 @@
 package it.unibo.alchemist.boundary.gui.controller;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawersStack;
@@ -10,7 +9,6 @@ import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.cells.EffectGroupCell;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +16,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
@@ -27,7 +24,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
@@ -49,6 +45,8 @@ import static jiconfont.icons.GoogleMaterialDesignIcons.SAVE;
 
 /**
  * This class models a JavaFX controller for EffectsGroupBar.fxml.
+ *
+ * @param <P> the position type
  */
 public class EffectsGroupBarController<P extends Position2D<? extends P>> implements Initializable {
     /**
@@ -89,7 +87,7 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
     /**
      * Constructor.
      *
-     * @param displayMonitor the graphical {@link OutputMonitor}
+     * @param displayMonitor the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}
      * @param stack          the stack where to open the effects lists
      */
     public EffectsGroupBarController(final @Nullable FXOutputMonitor<?, ?> displayMonitor, final JFXDrawersStack stack) {
@@ -98,23 +96,26 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
     }
 
     /**
-     * Getter method for the graphical {@link OutputMonitor}.
+     * Getter method for the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}.
      *
-     * @return the graphical {@link OutputMonitor}, if any
+     * @return the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}, if any
      */
     public final Optional<FXOutputMonitor<?, ?>> getDisplayMonitor() {
         return displayMonitor;
     }
 
     /**
-     * Setter method for the graphical {@link OutputMonitor}.
+     * Setter method for the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}.
      *
-     * @param displayMonitor the graphical {@link OutputMonitor} to set; if null, it will be {@link Optional#empty() unset}
+     * @param displayMonitor the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor} to set; if null, it will be {@link Optional#empty() unset}
      */
     public final void setDisplayMonitor(final @Nullable FXOutputMonitor<?, ?> displayMonitor) {
         this.displayMonitor = Optional.ofNullable(displayMonitor);
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
         assert save != null : FXResourceLoader.getInjectionErrorMessage("save", EFFECT_GROUP_BAR_LAYOUT);
@@ -174,7 +175,7 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
     }
 
     /**
-     * Saves the {@link EffectGroup}s to file using {@link Gson}.
+     * Saves the {@link EffectGroup}s to file using {@link com.google.gson.Gson}.
      */
     private void saveToFile() {
         final FileChooser fileChooser = new FileChooser();
@@ -215,7 +216,7 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
     }
 
     /**
-     * Loads the {@link EffectGroup}s from file using {@link Gson}.
+     * Loads the {@link EffectGroup}s from file using {@link com.google.gson.Gson}.
      */
     private void loadFromFile() {
         final FileChooser fileChooser = new FileChooser();
@@ -247,7 +248,7 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
     }
 
     /**
-     * Opens up a {@link Dialog} showing the exception that caused it
+     * Opens up a {@link javafx.scene.control.Dialog} showing the exception that caused it.
      *
      * @param title  the title of the {@code Dialog}
      * @param header the header of the {@code Dialog}

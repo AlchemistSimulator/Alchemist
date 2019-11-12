@@ -6,12 +6,11 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import javafx.beans.property.ObjectPropertyBase;
-import javafx.beans.property.Property;
 
 import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur3_32;
 
 /**
- * {@link Property} designed to wrap an {@link Enum enum}.
+ * {@link javafx.beans.property.Property} designed to wrap an {@link Enum enum}.
  * <p>
  * It is based on {@code ObjectPropertyBase} and is {@code Serializable}.
  * 
@@ -95,11 +94,11 @@ public class SerializableEnumProperty<T extends Enum<T>> extends ObjectPropertyB
     }
 
     /**
-     * Returns the elements of the enum class wrapped by this {@link Property}.
+     * Returns the elements of the enum class wrapped by this {@link javafx.beans.property.Property}.
      * 
      * @return the elements of the enum class
      * @throws IllegalStateException
-     *             If this {@link Property} is not wrapping any enum
+     *             If this {@link javafx.beans.property.Property} is not wrapping any enum
      */
     public T[] values() {
         final T enumeration = this.getValue();
@@ -157,11 +156,17 @@ public class SerializableEnumProperty<T extends Enum<T>> extends ObjectPropertyB
         this.setValue((T) in.readObject());
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public int hashCode() {
         return hashMurmur3_32(getValue(), getName());
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {

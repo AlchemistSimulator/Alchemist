@@ -11,8 +11,6 @@ import it.unibo.alchemist.model.interfaces.Position2D;
 
 import java.awt.Point;
 
-import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.Position2D;
 import java.awt.geom.Dimension2D;
 
 /**

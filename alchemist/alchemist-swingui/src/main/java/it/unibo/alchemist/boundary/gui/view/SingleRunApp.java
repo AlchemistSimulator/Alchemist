@@ -18,8 +18,6 @@ import it.unibo.alchemist.input.ActionOnKey;
 import it.unibo.alchemist.input.Keybinds;
 import it.unibo.alchemist.input.KeyboardActionListener;
 import it.unibo.alchemist.input.KeyboardTriggerAction;
-import it.unibo.alchemist.model.interfaces.Concentration;
-import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import java.io.File;
@@ -41,7 +39,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -50,7 +47,6 @@ import javafx.stage.Stage;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jooq.lambda.fi.lang.CheckedRunnable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +55,8 @@ import static it.unibo.alchemist.boundary.gui.controller.ButtonsBarController.BU
 /**
  * The class models a non-reusable GUI for simulation display.
  *
- * @param <T> the {@link Concentration} type
+ * @param <T> the {@link it.unibo.alchemist.model.interfaces.Concentration} type
+ * @param <P> the position type
  */
 public class SingleRunApp<T, P extends Position2D<P>> extends Application {
     /**
@@ -193,6 +190,9 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
                 });
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public void start(final Stage primaryStage) {
         // load the keybinds from file or classpath
@@ -275,10 +275,10 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
     /**
      * The method schedules on the {@link Simulation} thread the initialization of given {@link OutputMonitor OutputMonitors}.
      *
-     * @param simulation the simulation to {@link Simulation#schedule(CheckedRunnable) schedule} initialization to and to take {@link Environment} from
-     * @param monitors   the {@code OutputMonitors} to {@link OutputMonitor#initialized(Environment) initialize}
-     * @see Simulation#schedule(CheckedRunnable)
-     * @see OutputMonitor#initialized(Environment)
+     * @param simulation the simulation to {@link Simulation#schedule(org.jooq.lambda.fi.lang.CheckedRunnable) schedule} initialization to and to take {@link it.unibo.alchemist.model.interfaces.Environment} from
+     * @param monitors   the {@code OutputMonitors} to {@link OutputMonitor#initialized(it.unibo.alchemist.model.interfaces.Environment) initialize}
+     * @see Simulation#schedule(org.jooq.lambda.fi.lang.CheckedRunnable)
+     * @see OutputMonitor#initialized(it.unibo.alchemist.model.interfaces.Environment)
      */
     @SafeVarargs
     private final void initMonitors(final @NotNull Simulation<T, P> simulation, final @Nullable OutputMonitor<T, P>... monitors) { // NOPMD - UnnecessaryFinalModifier - necessary to @SafeVarargs tag
@@ -295,6 +295,9 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
      * Initializes the key bindings.
      * <p>
      * Should be overridden to implement keyboard interaction with the GUI.
+     *
+     * @param scene the scene from which the key strokes will be read
+     * @param listener the listener that will run actions on key strokes
      */
     protected void initKeybindings(final Scene scene, final KeyboardActionListener listener) {
         scene.setOnKeyPressed(e -> {

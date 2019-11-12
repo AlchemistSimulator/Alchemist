@@ -7,6 +7,8 @@ import java.util.Queue;
 /**
  * Models a group of effects. Each effect has a different priority of
  * visualization.
+ *
+ * @param <P> the position type
  */
 public interface EffectGroup<P extends Position2D<? extends P>> extends Serializable, Queue<EffectFX<P>>, EffectFX<P> {
 

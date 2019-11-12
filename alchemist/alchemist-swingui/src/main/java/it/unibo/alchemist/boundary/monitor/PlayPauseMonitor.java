@@ -6,7 +6,6 @@ import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
-import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
@@ -28,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
  * {@code OutputMonitor} that monitors the current {@link Status status} of the {@code Simulation}, acting as a toggle to
  * {@link Simulation#play() play} and {@link Simulation#pause() pause} the {@code Simulation}.
  *
- * @param <T> The type which describes the {@link Concentration} of a molecule
+ * @param <T> The type which describes the {@link it.unibo.alchemist.model.interfaces.Concentration} of a molecule
  * @param <P> The type which describes the {@link Position} positions
  */
 public class PlayPauseMonitor<T, P extends Position<? extends P>> extends JFXButton implements OutputMonitor<T, P> {
@@ -96,17 +95,25 @@ public class PlayPauseMonitor<T, P extends Position<? extends P>> extends JFXBut
         }
     }
 
-
+    /**
+     * @inheritDocs
+     */
     @Override
     public void finished(final Environment<T, P> environment, final Time time, final long step) {
         update(environment.getSimulation());
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public void initialized(final Environment<T, P> environment) {
         update(environment.getSimulation());
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public void stepDone(final Environment<T, P> environment, final Reaction<T> reaction, final Time time, final long step) {
         update(environment.getSimulation());

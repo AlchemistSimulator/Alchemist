@@ -10,10 +10,9 @@ package it.unibo.alchemist.boundary.wormhole.implementation;
 
 import it.unibo.alchemist.boundary.wormhole.implementation.adapter.ComponentViewType;
 import it.unibo.alchemist.boundary.wormhole.implementation.adapter.NodeViewType;
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position2D;
-import java.awt.*;
+import java.awt.Component;
 import java.awt.geom.Dimension2D;
 import javafx.scene.Node;
 import org.apache.xmlgraphics.java2d.Dimension2DDouble;
@@ -23,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
 
 /**
- * Partial implementation for the class {@link BidimensionalWormhole}.<br>
+ * Partial implementation for the class {@link it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole}.<br>
  * I am considering the particular case of the view as an entity into the
  * screen-space: the y-axis grows on the bottom side of the screen.
  *

@@ -41,7 +41,6 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
@@ -114,6 +113,9 @@ public class EffectPropertiesController implements Initializable {
 
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
         assert effectsPane != null : FXResourceLoader.getInjectionErrorMessage("effectsPane", EFFECT_PROPERTIES_LAYOUT);
@@ -242,8 +244,8 @@ public class EffectPropertiesController implements Initializable {
     }
 
     /**
-     * Builds a new {@link Slider} from a {@link RangedIntegerProperty}, binds
-     * its {@link Slider#valueProperty() valueProperty} to the
+     * Builds a new {@link javafx.scene.control.Slider} from a {@link RangedIntegerProperty}, binds
+     * its {@link javafx.scene.control.Slider#valueProperty() valueProperty} to the
      * {@code RangedIntegerProperty} and adds it to internal list of nodes.
      *
      * @param integerProperty the model of the spinner

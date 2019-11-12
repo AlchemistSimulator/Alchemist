@@ -164,8 +164,14 @@ public final class MapWormhole extends Wormhole2D<GeoPosition> {
         setViewPosition(from(getViewPosition()).sum(delta).toPoint());
     }
 
+    /**
+     * Returns a {@link GeoPosition} with the given coordinates.
+     *
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @return the newly created {@link GeoPosition}
+     */
     protected GeoPosition makePosition(final double x, final double y) {
         return new LatLongPosition(y, x);
     }
-
 }

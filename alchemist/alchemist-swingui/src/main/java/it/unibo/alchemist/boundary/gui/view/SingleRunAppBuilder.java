@@ -1,6 +1,5 @@
 package it.unibo.alchemist.boundary.gui.view;
 
-import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -10,15 +9,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.stage.Stage;
 
 /**
- * Builder class for {@link SingleRunApp}, meant to be used to build and run the single run gui along with another (alreay started) JavaFX {@link Application}.
+ * Builder class for {@link SingleRunApp}, meant to be used to build and run the single run gui along with another (already started) JavaFX {@link javafx.application.Application}.
  *
  * @param <T> the concentration type
+ * @param <P> the position type
  */
 public class SingleRunAppBuilder<T, P extends Position2D<P>> {
     private static final String DEFAULT_EFFECTS = "/it/unibo/alchemist/gui/effects/json/DefaultEffects.json";
@@ -42,7 +41,7 @@ public class SingleRunAppBuilder<T, P extends Position2D<P>> {
      * <p>
      * By default, it is true.
      *
-     * @param shouldUse if should load default {@link EffectFX effects}
+     * @param shouldUse if should load default {@link it.unibo.alchemist.boundary.gui.effects.EffectFX effects}
      * @return this builder
      */
     public SingleRunAppBuilder<T, P> useDefaultEffects(final boolean shouldUse) {

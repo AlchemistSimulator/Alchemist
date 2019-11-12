@@ -1,23 +1,20 @@
 package it.unibo.alchemist.boundary.gui.view.properties;
 
 import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Type;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringPropertyBase;
 
 import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur3_32;
 
 /**
- * {@link SimpleStringProperty} that implements also {@link Serializable}.
+ * {@link javafx.beans.property.SimpleStringProperty} that implements also {@link Serializable}.
  */
 public class SerializableStringProperty extends StringPropertyBase implements Serializable {
     /**
@@ -56,7 +53,7 @@ public class SerializableStringProperty extends StringPropertyBase implements Se
     }
 
     /**
-     * Returns a {@link JsonSerializer} and {@link JsonDeserializer} combo class
+     * Returns a {@link com.google.gson.JsonSerializer} and {@link com.google.gson.JsonDeserializer} combo class
      * to be used as a {@code TypeAdapter} for this
      * {@code SerializableStringProperty}.
      *
@@ -165,11 +162,17 @@ public class SerializableStringProperty extends StringPropertyBase implements Se
         this.setValue(in.readUTF());
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public int hashCode() {
         return hashMurmur3_32(getValue(), getName());
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {

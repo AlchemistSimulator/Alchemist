@@ -12,6 +12,7 @@ import it.unibo.alchemist.model.interfaces.Position;
 /**
  * An output monitor that supports zooming on bidimensional environments.
  *
+ * @param <T> the {@link it.unibo.alchemist.model.interfaces.Concentration} type
  * @param <P> position type
  */
 @Deprecated

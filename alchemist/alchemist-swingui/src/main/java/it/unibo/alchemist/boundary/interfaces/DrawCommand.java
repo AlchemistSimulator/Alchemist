@@ -1,16 +1,15 @@
 package it.unibo.alchemist.boundary.interfaces;
 
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
 /**
- * Functional interface that models a command for JavaFX thread to draw something on a {@link Canvas}.
+ * Functional interface that models a command for JavaFX thread to draw something on a {@link javafx.scene.canvas.Canvas}.
+ *
+ * @param <P> The position type
  */
 @FunctionalInterface
 public interface DrawCommand<P extends Position2D<? extends P>> extends BiConsumer<GraphicsContext, BidimensionalWormhole<P>> {
@@ -18,8 +17,10 @@ public interface DrawCommand<P extends Position2D<? extends P>> extends BiConsum
     /**
      * The method consumes a graphic and a wormhole to draw something.
      *
-     * @param graphic  the {@link GraphicsContext} of a JavaFX {@link Canvas}
-     * @param wormhole the {@link BidimensionalWormhole Wormhole} that maps {@link Environment} {@link Position positions} to GUI positions
+     * @param graphic  the {@link GraphicsContext} of a JavaFX {@link javafx.scene.canvas.Canvas}
+     * @param wormhole the {@link BidimensionalWormhole Wormhole} that maps
+     * {@link it.unibo.alchemist.model.interfaces.Environment} {@link it.unibo.alchemist.model.interfaces.Position positions}
+     *                 to GUI positions
      */
     @Override
     void accept(GraphicsContext graphic, BidimensionalWormhole<P> wormhole);

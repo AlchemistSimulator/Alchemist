@@ -31,22 +31,6 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-
-import it.unibo.alchemist.ClassPathScanner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import it.unibo.alchemist.boundary.gui.AlchemistSwingUI;
-import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 
 /**
  */

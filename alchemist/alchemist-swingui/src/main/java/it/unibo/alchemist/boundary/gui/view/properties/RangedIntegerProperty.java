@@ -7,19 +7,16 @@ import java.io.Serializable;
 import java.lang.reflect.Type;
 
 import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.IntegerPropertyBase;
 
 import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur3_32;
 
 /**
- * This {@link IntegerProperty} is designed to have a range for the wrapped
+ * This {@link javafx.beans.property.IntegerProperty} is designed to have a range for the wrapped
  * value and to be serializable.
  */
 public class RangedIntegerProperty extends IntegerPropertyBase implements Serializable {
@@ -324,11 +321,17 @@ public class RangedIntegerProperty extends IntegerPropertyBase implements Serial
         this.setValue(Integer.valueOf(in.readInt()));
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public int hashCode() {
         return hashMurmur3_32(getLowerBound(), getUpperBound(), getValue(), getName());
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -365,7 +368,7 @@ public class RangedIntegerProperty extends IntegerPropertyBase implements Serial
     }
 
     /**
-     * Returns a {@link JsonSerializer} and {@link JsonDeserializer} combo class
+     * Returns a {@link com.google.gson.JsonSerializer} and {@link com.google.gson.JsonDeserializer} combo class
      * to be used as a {@code TypeAdapter} for this
      * {@code RangedIntegerProperty}.
      * 

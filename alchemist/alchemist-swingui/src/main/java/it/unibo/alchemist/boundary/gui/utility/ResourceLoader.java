@@ -3,7 +3,6 @@ package it.unibo.alchemist.boundary.gui.utility;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Locale;
-import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
@@ -24,7 +23,7 @@ public final class ResourceLoader {
     }
 
     /**
-     * Static method that wraps class.getResourceAsStream() method to return an
+     * Static method that wraps {@link Class#getResourceAsStream(String)} method to return an
      * input stream form a specified path.
      * <p>
      * It also tries to fix wrongly specified paths.
@@ -38,7 +37,7 @@ public final class ResourceLoader {
     }
 
     /**
-     * Static method that wraps class.getResource() method to return an URL from
+     * Static method that wraps {@link Class#getResource(String)} method to return an URL from
      * a specified path.
      * <p>
      * It also tries to fix wrongly specified paths.
@@ -57,7 +56,7 @@ public final class ResourceLoader {
      * @param key the key
      * @return the string
      * @throws NullPointerException     if key is null
-     * @throws MissingResourceException if no object for the given key or no resource bundle can be found
+     * @throws java.util.MissingResourceException if no object for the given key or no resource bundle can be found
      * @throws ClassCastException       if the object found for the given key is not a string
      */
     public static String getStringRes(final String key) {
@@ -71,7 +70,7 @@ public final class ResourceLoader {
      * @param locale the locale
      * @return the string
      * @throws NullPointerException     if key or locale is null
-     * @throws MissingResourceException if no object for the given key or no resource bundle can be found
+     * @throws java.util.MissingResourceException if no object for the given key or no resource bundle can be found
      * @throws ClassCastException       if the object found for the given key is not a string
      */
     public static String getStringRes(final String key, final Locale locale) {

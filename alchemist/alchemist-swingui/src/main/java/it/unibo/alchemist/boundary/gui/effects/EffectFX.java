@@ -1,7 +1,6 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
 import it.unibo.alchemist.boundary.interfaces.DrawCommand;
-import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import java.io.Serializable;
@@ -9,6 +8,8 @@ import java.util.Queue;
 
 /**
  * Graphical visualization of something happening in the environment.
+ *
+ * @param <P> the position type
  */
 public interface EffectFX<P extends Position2D<? extends P>> extends Serializable {
 
@@ -16,7 +17,7 @@ public interface EffectFX<P extends Position2D<? extends P>> extends Serializabl
      * Computes a queue of commands to Draw something.
      *
      * @param environment the environment to gather data from
-     * @param <T>         the {@link Concentration} type
+     * @param <T>         the {@link it.unibo.alchemist.model.interfaces.Concentration} type
      * @return the queue of commands that should be run to draw the effect
      */
     <T> Queue<DrawCommand<P>> computeDrawCommands(Environment<T, P> environment);

@@ -30,9 +30,6 @@ import java.util.concurrent.Semaphore;
 import static it.unibo.alchemist.boundary.gui.AlchemistSwingUI.DEFAULT_ICON_SIZE;
 import static it.unibo.alchemist.boundary.gui.AlchemistSwingUI.loadScaledImage;
 
-import static it.unibo.alchemist.boundary.gui.AlchemistSwingUI.DEFAULT_ICON_SIZE;
-import static it.unibo.alchemist.boundary.gui.AlchemistSwingUI.loadScaledImage;
-
 /**
  *
  * @param <P> position type

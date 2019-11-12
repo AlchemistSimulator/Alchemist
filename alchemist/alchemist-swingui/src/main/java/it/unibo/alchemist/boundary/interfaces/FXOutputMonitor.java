@@ -1,21 +1,17 @@
 package it.unibo.alchemist.boundary.interfaces;
 
-import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.input.KeyboardActionListener;
-import it.unibo.alchemist.model.interfaces.Concentration;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import java.util.Collection;
 import java.util.List;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 
 /**
  * {@code OutputMonitor} that handles the graphical part of the simulation in JavaFX.
  *
- * @param <T> the {@link Concentration} type
+ * @param <T> the {@link it.unibo.alchemist.model.interfaces.Concentration} type
+ * @param <P> the position type
  */
 public interface FXOutputMonitor<T, P extends Position2D<? extends P>> extends OutputMonitor<T, P> {
 
@@ -50,13 +46,13 @@ public interface FXOutputMonitor<T, P extends Position2D<? extends P>> extends O
     void setRealTime(boolean realTime);
 
     /**
-     * Repaints this {@link Canvas}' {@link GraphicsContext} by drawing all the {@link EffectFX Effect}s of each
-     * {@link Node} of the specified {@link Environment}.
+     * Repaints this {@link Canvas}' {@link javafx.scene.canvas.GraphicsContext} by drawing all the {@link it.unibo.alchemist.boundary.gui.effects.EffectFX Effect}s of each
+     * {@link it.unibo.alchemist.model.interfaces.Node} of the specified {@link it.unibo.alchemist.model.interfaces.Environment}.
      */
     void repaint();
 
     /**
-     * Getter method for the {@link EffectFX Effects} to draw.
+     * Getter method for the {@link it.unibo.alchemist.boundary.gui.effects.EffectFX Effects} to draw.
      *
      * @return the current {@code Effects} to draw
      */
@@ -65,14 +61,14 @@ public interface FXOutputMonitor<T, P extends Position2D<? extends P>> extends O
     /**
      * Setter method for the effects to draw.
      * <p>
-     * All previous set {@link EffectFX Effects} are removed.
+     * All previous set {@link it.unibo.alchemist.boundary.gui.effects.EffectFX Effects} are removed.
      *
      * @param effects the {@code Effects} to draw
      */
     void setEffects(Collection<EffectGroup<P>> effects);
 
     /**
-     * Add all the {@link EffectGroup}s in the collection to the {@link EffectFX Effects} to draw.
+     * Add all the {@link EffectGroup}s in the collection to the {@link it.unibo.alchemist.boundary.gui.effects.EffectFX Effects} to draw.
      *
      * @param effects the {@link EffectGroup}s to draw
      * @see Collection#addAll(Collection)
@@ -80,7 +76,7 @@ public interface FXOutputMonitor<T, P extends Position2D<? extends P>> extends O
     void addEffects(Collection<EffectGroup<P>> effects);
 
     /**
-     * Add the {@link EffectGroup} in the collection to the {@link EffectFX Effects} to draw.
+     * Add the {@link EffectGroup} in the collection to the {@link it.unibo.alchemist.boundary.gui.effects.EffectFX Effects} to draw.
      *
      * @param effects the {@link EffectGroup} to draw
      * @see Collection#add(Object)

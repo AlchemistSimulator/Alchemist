@@ -1,10 +1,8 @@
 package it.unibo.alchemist.boundary.gui.utility;
 
 import java.io.IOException;
-import java.net.URL;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.paint.Color;
 import jiconfont.IconCode;
 import jiconfont.icons.GoogleMaterialDesignIcons;
@@ -100,11 +98,11 @@ public final class FXResourceLoader {
     }
 
     /**
-     * Returns the {@link URL} to a CSS stylesheet of given name in string form.
+     * Returns the {@link java.net.URL} to a CSS stylesheet of given name in string form.
      *
      * @param cssFileName the CSS file name without extension
      * @return the path
-     * @see Parent#getStylesheets()
+     * @see javafx.scene.Parent#getStylesheets()
      */
     public static String getStyle(final String cssFileName) {
         return ResourceLoader.loadURL(XML_RESOURCE_PATH + cssFileName + STYLE_EXTENSION).toExternalForm();

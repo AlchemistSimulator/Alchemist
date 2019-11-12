@@ -4,17 +4,14 @@ import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
 import com.jfoenix.controls.JFXToggleButton;
 import it.unibo.alchemist.boundary.gui.controller.EffectBarController;
-import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import java.io.IOException;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.MouseButton;
@@ -26,8 +23,10 @@ import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRe
 /**
  * This ListView cell implements the {@link AbstractEffectCell} for containing
  * an {@link EffectGroup}. It has a name that identifies the EffectGroup and
- * when clicked should open a {@link ListView} to show the {@link EffectFX
+ * when clicked should open a {@link javafx.scene.control.ListView} to show the {@link it.unibo.alchemist.boundary.gui.effects.EffectFX
  * effects} the group is composed of.
+ *
+ * @param <P> the position type
  */
 public class EffectGroupCell<P extends Position2D<? extends P>> extends AbstractEffectCell<EffectGroup<P>> {
     private static final String DEFAULT_NAME = getStringRes("effect_group_default_name");
@@ -47,7 +46,7 @@ public class EffectGroupCell<P extends Position2D<? extends P>> extends Abstract
     /**
      * Constructor.
      *
-     * @param monitor the graphical {@link OutputMonitor}
+     * @param monitor the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}
      * @param stack   the stack where to open the effects lists
      */
     public EffectGroupCell(final @Nullable FXOutputMonitor<?, ?> monitor, final JFXDrawersStack stack) {
@@ -104,7 +103,7 @@ public class EffectGroupCell<P extends Position2D<? extends P>> extends Abstract
     /**
      * Constructor.
      *
-     * @param monitor   the graphical {@link OutputMonitor}
+     * @param monitor   the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}
      * @param groupName the name of the EffectGroup
      * @param stack     the stack where to open the effects lists
      */
@@ -114,9 +113,9 @@ public class EffectGroupCell<P extends Position2D<? extends P>> extends Abstract
     }
 
     /**
-     * Configures the graphical {@link OutputMonitor}.
+     * Configures the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}.
      *
-     * @param monitor the graphical {@link OutputMonitor}
+     * @param monitor the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}
      */
     private void setupDisplayMonitor(final @Nullable FXOutputMonitor<?, ?> monitor) {
         setDisplayMonitor(monitor);
@@ -172,6 +171,9 @@ public class EffectGroupCell<P extends Position2D<? extends P>> extends Abstract
         return (JFXToggleButton) super.getInjectedNodeAt(1);
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public DataFormat getDataFormat() {
         final EffectGroup item = this.getItem();

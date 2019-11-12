@@ -36,9 +36,6 @@ import java.util.Comparator;
 import java.util.Objects;
 import java.util.Optional;
 import javafx.scene.Node;
-import javax.swing.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Utility class for quickly creating non-reusable graphical interfaces.
@@ -97,7 +94,7 @@ public final class SingleRunGUI {
     /**
      * Builds a single-use graphical interface.
      *
-     * @param sim            
+     * @param sim
      *            the simulation for this GUI
      * @param effectsFile
      *            the effects file

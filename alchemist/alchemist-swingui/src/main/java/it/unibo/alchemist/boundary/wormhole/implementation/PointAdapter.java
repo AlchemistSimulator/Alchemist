@@ -13,7 +13,6 @@ import it.unibo.alchemist.model.interfaces.Position2D;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
-import java.util.Optional;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.danilopianini.lang.HashUtils;
@@ -106,6 +105,8 @@ public final class PointAdapter<P extends Position2D<? extends P>> implements Se
     }
 
     /**
+     * @param environment the environment
+     *
      * @return the {@link it.unibo.alchemist.model.interfaces.Position} view of this {@link PointAdapter}
      */
     public P toPosition(final Environment<?, P> environment) {

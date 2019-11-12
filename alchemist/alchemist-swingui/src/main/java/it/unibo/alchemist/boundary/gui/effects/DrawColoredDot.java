@@ -4,17 +4,10 @@ import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedIntegerProperty;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import java.io.IOException;
-import java.io.InvalidClassException;
-import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OptionalDataException;
-import java.io.Serializable;
-import java.io.StreamCorruptedException;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.value.ChangeListener;
@@ -23,7 +16,7 @@ import javafx.scene.paint.Color;
 import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur3_32;
 
 /**
- * Simple effect that draws a colored dot for each {@link Node}.
+ * Simple effect that draws a colored dot for each {@link it.unibo.alchemist.model.interfaces.Node}.
  * <p>
  * It's possible to set the size and the color of the dots.
  */
@@ -34,7 +27,7 @@ public class DrawColoredDot extends DrawDot<Position2D<? extends Position2D>> {
      */
     private static final long serialVersionUID = 1L;
     /**
-     * Default effect name
+     * Default effect name.
      */
     private static final String DEFAULT_NAME = ResourceLoader.getStringRes("drawcoloreddot_default_name");
     private RangedIntegerProperty red;
@@ -128,8 +121,8 @@ public class DrawColoredDot extends DrawDot<Position2D<? extends Position2D>> {
     }
 
     /**
-     * The alpha channel of the color of the dots representing each {@link Node}
-     * in the {@link Environment} specified when drawing.
+     * The alpha channel of the color of the dots representing each {@link it.unibo.alchemist.model.interfaces.Node}
+     * in the {@link it.unibo.alchemist.model.interfaces.Environment} specified when drawing.
      *
      * @return the alpha channel property
      */
@@ -156,8 +149,8 @@ public class DrawColoredDot extends DrawDot<Position2D<? extends Position2D>> {
     }
 
     /**
-     * The blue channel of the color of the dots representing each {@link Node}
-     * in the {@link Environment} specified when drawing.
+     * The blue channel of the color of the dots representing each {@link it.unibo.alchemist.model.interfaces.Node}
+     * in the {@link it.unibo.alchemist.model.interfaces.Environment} specified when drawing.
      *
      * @return the blue channel property
      */
@@ -184,8 +177,8 @@ public class DrawColoredDot extends DrawDot<Position2D<? extends Position2D>> {
     }
 
     /**
-     * The green channel of the color of the dots representing each {@link Node}
-     * in the {@link Environment} specified when drawing.
+     * The green channel of the color of the dots representing each {@link it.unibo.alchemist.model.interfaces.Node}
+     * in the {@link it.unibo.alchemist.model.interfaces.Environment} specified when drawing.
      *
      * @return the green channel property
      */
@@ -212,8 +205,8 @@ public class DrawColoredDot extends DrawDot<Position2D<? extends Position2D>> {
     }
 
     /**
-     * The red channel of the color of the dots representing each {@link Node}
-     * in the {@link Environment} specified when drawing.
+     * The red channel of the color of the dots representing each {@link it.unibo.alchemist.model.interfaces.Node}
+     * in the {@link it.unibo.alchemist.model.interfaces.Environment} specified when drawing.
      *
      * @return the red channel property
      */
@@ -242,7 +235,7 @@ public class DrawColoredDot extends DrawDot<Position2D<? extends Position2D>> {
     /**
      * Method needed for well working serialization.
      * <p>
-     * From {@link Serializable}: <blockquote>The {@code writeObject} method is
+     * From {@link java.io.Serializable}: <blockquote>The {@code writeObject} method is
      * responsible for writing the state of the object for its particular class
      * so that the corresponding readObject method can restore it. The default
      * mechanism for saving the Object's fields can be invoked by calling
@@ -254,8 +247,8 @@ public class DrawColoredDot extends DrawDot<Position2D<? extends Position2D>> {
      * {@code DataOutput}.</blockquote>
      *
      * @param stream the output stream
-     * @throws InvalidClassException    if something is wrong with a class used by serialization.
-     * @throws NotSerializableException if some object to be serialized does not implement the java.io.Serializable interface.
+     * @throws java.io.InvalidClassException    if something is wrong with a class used by serialization.
+     * @throws java.io.NotSerializableException if some object to be serialized does not implement the java.io.Serializable interface.
      * @throws IOException              if any exception thrown by the underlying OutputStream.
      */
     private void writeObject(final ObjectOutputStream stream) throws IOException {
@@ -268,7 +261,7 @@ public class DrawColoredDot extends DrawDot<Position2D<? extends Position2D>> {
     /**
      * Method needed for well working serialization.
      * <p>
-     * From {@link Serializable}: <blockquote>The {@code readObject} method is
+     * From {@link java.io.Serializable}: <blockquote>The {@code readObject} method is
      * responsible for reading from the stream and restoring the classes fields.
      * It may call {@code in.defaultReadObject} to invoke the default mechanism
      * for restoring the object's non-static and non-transient fields. The
@@ -283,9 +276,9 @@ public class DrawColoredDot extends DrawDot<Position2D<? extends Position2D>> {
      *
      * @param stream the input stream
      * @throws ClassNotFoundException   if class of a serialized object cannot be found.
-     * @throws InvalidClassException    if something is wrong with a class used by serialization.
-     * @throws StreamCorruptedException if control information in the stream is inconsistent.
-     * @throws OptionalDataException    if primitive data was found in the stream instead of objects.
+     * @throws java.io.InvalidClassException    if something is wrong with a class used by serialization.
+     * @throws java.io.StreamCorruptedException if control information in the stream is inconsistent.
+     * @throws java.io.OptionalDataException    if primitive data was found in the stream instead of objects.
      * @throws IOException              if any of the usual Input/Output related exceptions.
      */
     private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
@@ -295,11 +288,17 @@ public class DrawColoredDot extends DrawDot<Position2D<? extends Position2D>> {
         alpha = (RangedDoubleProperty) stream.readObject();
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public int hashCode() {
         return hashMurmur3_32(alphaProperty(), blueProperty(), greenProperty(), getName(), redProperty(), getSize(), isVisible());
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public boolean equals(final Object obj) {
         if (this.getClass() != obj.getClass()) {

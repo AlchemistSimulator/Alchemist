@@ -1,8 +1,6 @@
 package it.unibo.alchemist.boundary.monitor.generic;
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
-import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 import java.util.Objects;
@@ -14,10 +12,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * {@code OutputMonitor} that monitors the current {@link Simulation#getStep() steps} of the {@code Simulation}.
+ * {@code OutputMonitor} that monitors the current {@link it.unibo.alchemist.core.interfaces.Simulation#getStep() steps} of the {@code Simulation}.
  *
- * @param <T> The type which describes the {@link Concentration} of a molecule
  * @param <N> the numeric type
+ * @param <T> The type which describes the {@link it.unibo.alchemist.model.interfaces.Concentration} of a molecule
+ * @param <P> The position type
  */
 public abstract class NumericLabelMonitor<N, T, P extends Position<? extends P>> extends Label implements OutputMonitor<T, P> {
     /**
@@ -51,6 +50,9 @@ public abstract class NumericLabelMonitor<N, T, P extends Position<? extends P>>
         update(init);
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public void initialized(final Environment<T, P> environment) {
         update(init);

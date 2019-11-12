@@ -36,16 +36,25 @@ public class NodeViewType implements ViewType {
         this.node = node;
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public double getWidth() {
         return node.getBoundsInParent().getWidth();
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public double getHeight() {
         return node.getBoundsInParent().getHeight();
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -58,6 +67,9 @@ public class NodeViewType implements ViewType {
         return getWidth() == nvt.getWidth() && getHeight() == nvt.getHeight();
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public int hashCode() {
         final int prime = 31;

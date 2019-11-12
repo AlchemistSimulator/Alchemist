@@ -24,7 +24,6 @@ import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
-import it.unibo.alchemist.model.interfaces.Concentration;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
@@ -77,15 +76,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
-import javax.swing.*;
-import javax.swing.event.MouseInputListener;
-
-import com.google.common.collect.ImmutableList;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.apache.commons.math3.util.Pair;
-import org.danilopianini.lang.LangUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Base-class for each display able a graphically represent a 2D space
@@ -732,6 +722,10 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
      * Custom listener for {@link MouseEvent}s.
      */
     protected class MouseManager implements MouseInputListener, MouseWheelListener, MouseMotionListener {
+        /**
+         *
+         * @param e
+         */
         @Override
         public void mouseClicked(final MouseEvent e) {
             setMouseTooltipTo(e.getX(), e.getY());
@@ -778,6 +772,10 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             repaint();
         }
 
+        /**
+         *
+         * @param e
+         */
         @Override
         public void mouseDragged(final MouseEvent e) {
             setMouseTooltipTo(e.getX(), e.getY());
@@ -802,16 +800,28 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             repaint();
         }
 
+        /**
+         *
+         * @param e
+         */
         @Override
         public void mouseEntered(final MouseEvent e) {
             updateMouse(e);
         }
 
+        /**
+         *
+         * @param e
+         */
         @Override
         public void mouseExited(final MouseEvent e) {
             updateMouse(e);
         }
 
+        /**
+         *
+         * @param e
+         */
         @Override
         public void mouseMoved(final MouseEvent e) {
             if (mouseMovement != null) {
@@ -820,6 +830,10 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             updateMouse(e);
         }
 
+        /**
+         *
+         * @param e
+         */
         @Override
         public void mousePressed(final MouseEvent e) {
             if (SwingUtilities.isLeftMouseButton(e) && (status == ViewStatus.MOVING_SELECTED_NODES || status == ViewStatus.SELECTING_NODES)) {
@@ -830,6 +844,10 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             }
         }
 
+        /**
+         *
+         * @param e
+         */
         @Override
         public void mouseReleased(final MouseEvent e) {
             if (SwingUtilities.isLeftMouseButton(e) && isDraggingMouse) {
@@ -865,6 +883,10 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             }
         }
 
+        /**
+         *
+         * @param e
+         */
         @Override
         public void mouseWheelMoved(final MouseWheelEvent e) {
             if (wormhole != null && zoomManager != null) {

@@ -1,7 +1,6 @@
 package it.unibo.alchemist.boundary.gui.view.properties;
 
 import it.unibo.alchemist.SupportedIncarnations;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SetProperty;
 import javafx.beans.property.SimpleListProperty;
@@ -31,7 +30,7 @@ public final class PropertyFactory {
      * and a name that identifies the color channel.
      *
      * @param channel the name to give to the {@code Property}
-     * @return the {@link DoubleProperty}
+     * @return the {@link RangedIntegerProperty}
      */
     public static RangedIntegerProperty getAWTColorChannelProperty(final String channel) {
         return new RangedIntegerProperty(channel, INT_COLOR_MIN_VALUE, INT_COLOR_MAX_VALUE);
@@ -54,7 +53,7 @@ public final class PropertyFactory {
      * and a name that identifies the color channel.
      *
      * @param channel the name to give to the {@code Property}
-     * @return the {@link DoubleProperty}
+     * @return the {@link RangedIntegerProperty}
      */
     public static RangedDoubleProperty getFXColorChannelProperty(final String channel) {
         return new RangedDoubleProperty(channel, DOUBLE_COLOR_MIN_VALUE, DOUBLE_COLOR_MAX_VALUE);
@@ -66,7 +65,7 @@ public final class PropertyFactory {
      *
      * @param channel the name to give to the {@code Property}
      * @param value   the initial value to give to the {@code Property}
-     * @return the {@link DoubleProperty}
+     * @return the {@link RangedIntegerProperty}
      */
     public static RangedDoubleProperty getFXColorChannelProperty(final String channel, final double value) {
         return new RangedDoubleProperty(channel, value, DOUBLE_COLOR_MIN_VALUE, DOUBLE_COLOR_MAX_VALUE);
@@ -77,7 +76,7 @@ public final class PropertyFactory {
      * and a name that identifies the {@code Property}.
      *
      * @param name the name to give to the {@code Property}
-     * @return the {@link DoubleProperty}
+     * @return the {@link RangedIntegerProperty}
      */
     public static RangedDoubleProperty getPercentageRangedProperty(final String name) {
         return new RangedDoubleProperty(name, PERCENTAGE_MIN_VALUE, PERCENTAGE_MAX_VALUE);
@@ -89,7 +88,7 @@ public final class PropertyFactory {
      *
      * @param name  the name to give to the {@code Property}
      * @param value the initial value to give to the {@code Property}
-     * @return the {@link DoubleProperty}
+     * @return the {@link RangedIntegerProperty}
      */
     public static RangedDoubleProperty getPercentageRangedProperty(final String name, final double value) {
         return new RangedDoubleProperty(name, value, PERCENTAGE_MIN_VALUE, PERCENTAGE_MAX_VALUE);

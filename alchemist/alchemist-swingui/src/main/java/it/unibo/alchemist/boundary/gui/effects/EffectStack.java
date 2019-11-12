@@ -1,8 +1,6 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
 import com.google.common.hash.Hashing;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonSerializer;
 import it.unibo.alchemist.boundary.gui.CommandQueueBuilder;
 import it.unibo.alchemist.boundary.gui.effects.json.EffectGroupAdapter;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
@@ -23,6 +21,8 @@ import org.slf4j.LoggerFactory;
 /**
  * The class models a group of effects, stored as a stack. It can manage
  * priority of visualization and visibility of each effect inside it.
+ *
+ * @param <P> The position type
  */
 public final class EffectStack<P extends Position2D<? extends P>> implements EffectGroup<P> {
     /** Default generated serial version UID. */
@@ -380,7 +380,7 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
     }
 
     /**
-     * Returns a {@link JsonSerializer} and {@link JsonDeserializer} combo class
+     * Returns a {@link com.google.gson.JsonSerializer} and {@link com.google.gson.JsonDeserializer} combo class
      * to be used as a {@code TypeAdapter} for this
      * {@code EffectStack}.
      * 

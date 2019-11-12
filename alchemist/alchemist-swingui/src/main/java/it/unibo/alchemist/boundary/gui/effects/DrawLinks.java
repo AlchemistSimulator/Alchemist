@@ -7,14 +7,11 @@ import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
 import it.unibo.alchemist.boundary.interfaces.DrawCommand;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Neighborhood;
-import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
-import java.awt.*;
+import java.awt.Point;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -25,9 +22,11 @@ import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur3_32;
 
 /**
  * Simple effect that draws a {@link Color#BLACK black} line for each
- * {@link Node} in a {@link Neighborhood}.
+ * {@link it.unibo.alchemist.model.interfaces.Node} in a {@link it.unibo.alchemist.model.interfaces.Neighborhood}.
  * <p>
  * It's possible to set the size of the dots.
+ *
+ * @param <P> the position type
  */
 public class DrawLinks<P extends Position2D<? extends P>> extends AbstractEffect<P> {
     /**
@@ -76,6 +75,9 @@ public class DrawLinks<P extends Position2D<? extends P>> extends AbstractEffect
         positions = new ConcurrentHashMap<>();
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     protected Queue<DrawCommand<P>> consumeData() {
         final CommandQueueBuilder<P> builder = new CommandQueueBuilder<P>();
@@ -97,6 +99,9 @@ public class DrawLinks<P extends Position2D<? extends P>> extends AbstractEffect
         return builder.buildCommandQueue();
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     protected <T> void getData(final Environment<T, P> environment) {
         positions.clear();
@@ -112,7 +117,7 @@ public class DrawLinks<P extends Position2D<? extends P>> extends AbstractEffect
     }
 
     /**
-     * The size of the dots representing each {@link Node} in the
+     * The size of the dots representing each {@link it.unibo.alchemist.model.interfaces.Node} in the
      * {@link Environment} specified when drawing.
      *
      * @return the size property
@@ -165,11 +170,17 @@ public class DrawLinks<P extends Position2D<? extends P>> extends AbstractEffect
         this.color = color;
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public int hashCode() {
         return hashMurmur3_32(getColor(), getName(), getSize(), isVisible());
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public boolean equals(final Object obj) {
         if (obj == null || this.getClass() != obj.getClass()) {
@@ -190,7 +201,7 @@ public class DrawLinks<P extends Position2D<? extends P>> extends AbstractEffect
     /**
      * Method needed for well working serialization.
      * <p>
-     * From {@link Serializable}: <blockquote>The {@code writeObject} method is
+     * From {@link java.io.Serializable}: <blockquote>The {@code writeObject} method is
      * responsible for writing the state of the object for its particular class
      * so that the corresponding readObject method can restore it. The default
      * mechanism for saving the Object's fields can be invoked by calling
@@ -211,7 +222,7 @@ public class DrawLinks<P extends Position2D<? extends P>> extends AbstractEffect
     /**
      * Method needed for well working serialization.
      * <p>
-     * From {@link Serializable}: <blockquote>The {@code readObject} method is
+     * From {@link java.io.Serializable}: <blockquote>The {@code readObject} method is
      * responsible for reading from the stream and restoring the classes fields.
      * It may call {@code in.defaultReadObject} to invoke the default mechanism
      * for restoring the object's non-static and non-transient fields. The

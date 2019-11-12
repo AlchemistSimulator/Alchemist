@@ -19,6 +19,8 @@ import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.f
  * sceern-space: the y-axis grows on the bottom side of the screen.
  * <br/>
  * This abstract class is independent from the 2D graphical component wrapped.
+ *
+ * @param <P> the position type
  */
 public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> implements BidimensionalWormhole<P> {
     private final Environment<?, P> environment;
@@ -47,11 +49,17 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
         this.position = position;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public P getEnvPoint(final Point viewPoint) {
         return envPointFromView(from(viewPoint)).toPosition(environment);
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public Mode getMode() {
         return mode;
@@ -70,6 +78,9 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public Point getViewPoint(final P envPoint) {
         return viewPointFromEnv(from(envPoint)).toPoint();
@@ -89,24 +100,39 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
         return from(ep);
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public Point getViewPosition() {
         return position.toPoint();
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void setViewPosition(final Point viewPoint) {
         this.position = from(viewPoint);
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public abstract Dimension2D getViewSize();
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public double getZoom() {
         return this.zoom;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void setZoom(final double zoom) {
         if (zoom <= 0) {
@@ -115,6 +141,9 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
         this.zoom = zoom;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public boolean isInsideView(final Point viewPoint) {
         final double x = viewPoint.getX();
@@ -123,6 +152,9 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
         return x >= 0 && x <= vs.getWidth() && y >= 0 && y <= vs.getHeight();
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void rotateAroundPoint(final Point p, final double a) {
         final PointAdapter<P> orig = effectCenter;
@@ -151,14 +183,23 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
         effectCenter = effectCenter.sum(envDelta);
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void setEnvPosition(final P envPoint) {
         setViewPosition(getViewPoint(envPoint));
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public abstract void optimalZoom();
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void zoomOnPoint(final Point point, final double zoomRate) {
         final PointAdapter<P> orig = effectCenter;
@@ -167,6 +208,9 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
         setEnvPositionWithoutMoving(orig);
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void center() {
         final double[] off = getEnvironment().getOffset();
@@ -225,8 +269,8 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
         try {
             t.inverseTransform(vp, vp);
         } catch (final NoninvertibleTransformException e) {
-            throw new IllegalStateException("Unable to perform the transformation from view point to env point." +
-                    " Please check if this method has been called after making the UI visible", e);
+            throw new IllegalStateException("Unable to perform the transformation from view point to env point."
+                    + " Please check if this method has been called after making the UI visible", e);
         }
         return from(vp);
     }
@@ -261,6 +305,9 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
         return this.rotation;
     }
 
+    /**
+     *
+     */
     @Override
     public void setRotation(final double rad) {
         this.rotation = rad % (Math.PI * 2d);

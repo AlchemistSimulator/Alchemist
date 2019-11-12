@@ -2,13 +2,12 @@ package it.unibo.alchemist.boundary.wormhole.implementation.adapter;
 
 import java.awt.Component;
 
-import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D;
 import it.unibo.alchemist.boundary.wormhole.interfaces.ViewType;
 
 import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur3_32;
 
 /**
- * Adapter class that adapts the AWT {@link Component} class to a generic View Type for usage in {@link Wormhole2D}.
+ * Adapter class that adapts the AWT {@link Component} class to a generic View Type for usage in {@link it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D}.
  */
 public class ComponentViewType implements ViewType {
     private Component component;
@@ -40,16 +39,25 @@ public class ComponentViewType implements ViewType {
         this.component = component;
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public double getWidth() {
         return component.getWidth();
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public double getHeight() {
         return component.getHeight();
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -62,6 +70,9 @@ public class ComponentViewType implements ViewType {
         return getWidth() == nvt.getWidth() && getHeight() == nvt.getHeight();
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public int hashCode() {
         return hashMurmur3_32(getWidth(), getHeight());

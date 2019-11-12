@@ -8,7 +8,6 @@ import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import java.io.IOException;
 import javafx.scene.control.ContextMenu;
@@ -25,6 +24,8 @@ import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRe
  * This ListView cell implements the {@link AbstractEffectCell} for containing
  * an {@link EffectFX}. It has a name that identifies the Effect and when
  * clicked should open another view to edit effect-specific parameters.
+ *
+ * @param <P> The position type
  */
 public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffectCell<EffectFX<P>> {
     private static final String DEFAULT_NAME = getStringRes("effect_default_name");
@@ -95,7 +96,7 @@ public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffec
     /**
      * Constructor.
      *
-     * @param monitor the graphical {@link OutputMonitor}
+     * @param monitor the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}
      * @param stack   the stack where to open the effect properties
      */
     public EffectCell(final @Nullable FXOutputMonitor<?, ?> monitor, final JFXDrawersStack stack) {
@@ -106,7 +107,7 @@ public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffec
     /**
      * Constructor.
      *
-     * @param monitor    the graphical {@link OutputMonitor}
+     * @param monitor    the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}
      * @param effectName the name of the effect
      * @param stack      the stack where to open the effect properties
      */
@@ -125,9 +126,9 @@ public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffec
     }
 
     /**
-     * Configures the graphical {@link OutputMonitor}.
+     * Configures the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}.
      *
-     * @param monitor the graphical {@link OutputMonitor}
+     * @param monitor the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}
      */
     private void setupDisplayMonitor(final @Nullable FXOutputMonitor<?, ?> monitor) {
         setDisplayMonitor(monitor);
@@ -156,6 +157,9 @@ public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffec
         return (JFXToggleButton) super.getInjectedNodeAt(1);
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     public DataFormat getDataFormat() {
         final EffectFX<P> item = this.getItem();
@@ -167,6 +171,9 @@ public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffec
         }
     }
 
+    /**
+     * @inheritDocs
+     */
     @Override
     protected void updateItem(final EffectFX<P> item, final boolean empty) {
         super.updateItem(item, empty);

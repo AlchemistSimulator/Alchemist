@@ -28,10 +28,13 @@ public final class ResourceLoader {
      * <p>
      * It also tries to fix wrongly specified paths.
      *
+     * @deprecated use {@link org.kaikikm.threadresloader.ResourceLoader#getResourceAsStream} instead.
+     *
      * @param path the path to the file
      * @return An {@link InputStream} object or null if no resource with this
      * name is found
      */
+    @Deprecated
     public static InputStream load(final String path) {
         return ResourceLoader.class.getResourceAsStream(path);
     }
@@ -41,6 +44,8 @@ public final class ResourceLoader {
      * a specified path.
      * <p>
      * It also tries to fix wrongly specified paths.
+     *
+     * @deprecated use {@link org.kaikikm.threadresloader.ResourceLoader#getResource} instead.
      *
      * @param path the path to the file
      * @return An {@link URL} object or null if no resource with this name is

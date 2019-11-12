@@ -8,6 +8,7 @@ import jiconfont.IconCode;
 import jiconfont.icons.GoogleMaterialDesignIcons;
 import jiconfont.javafx.IconFontFX;
 import jiconfont.javafx.IconNode;
+import org.kaikikm.threadresloader.ResourceLoader;
 
 /**
  * Utility class for loading resources related to layout.
@@ -39,7 +40,7 @@ public final class FXResourceLoader {
     public static <T extends Node> T getLayout(final Class<T> paneInstance, final Object controller,
                                                final String layoutName) throws IOException {
         final FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(ResourceLoader.loadURL(XML_RESOURCE_PATH + layoutName + LAYOUT_EXTENSION));
+        loader.setLocation(ResourceLoader.getResource(XML_RESOURCE_PATH + layoutName + LAYOUT_EXTENSION));
         loader.setController(controller);
         return (T) loader.load();
     }
@@ -105,6 +106,6 @@ public final class FXResourceLoader {
      * @see javafx.scene.Parent#getStylesheets()
      */
     public static String getStyle(final String cssFileName) {
-        return ResourceLoader.loadURL(XML_RESOURCE_PATH + cssFileName + STYLE_EXTENSION).toExternalForm();
+        return ResourceLoader.getResource(XML_RESOURCE_PATH + cssFileName + STYLE_EXTENSION).toExternalForm();
     }
 }

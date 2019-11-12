@@ -7,7 +7,6 @@ import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import it.unibo.alchemist.ClassPathScanner;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
-import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import java.io.File;
 import java.io.FileReader;
@@ -25,6 +24,7 @@ import javafx.beans.property.Property;
 import javafx.scene.paint.Color;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.TestOnly;
+import org.kaikikm.threadresloader.ResourceLoader;
 
 /**
  * Serialize Alchemist {@link EffectGroup effect groups} from/to file in human
@@ -210,7 +210,7 @@ public final class EffectSerializer {
      * @throws IOException           If some other I/O error occurs
      */
     public static <P extends Position2D<? extends P>> EffectFX<P> effectFromResources(final String resource) throws IOException {
-        return load(new InputStreamReader(ResourceLoader.load(resource), DEFAULT_CHARSET), new TypeToken<EffectFX<P>>() { });
+        return load(new InputStreamReader(ResourceLoader.getResourceAsStream(resource), DEFAULT_CHARSET), new TypeToken<EffectFX<P>>() { });
     }
 
     /**
@@ -261,7 +261,7 @@ public final class EffectSerializer {
      * @throws IOException           If some other I/O error occurs
      */
     public static <P extends Position2D<? extends P>> EffectGroup<P> effectsFromResources(final String resource) throws IOException {
-        return load(new InputStreamReader(ResourceLoader.load(resource), DEFAULT_CHARSET), new TypeToken<EffectGroup<P>>() { });
+        return load(new InputStreamReader(ResourceLoader.getResourceAsStream(resource), DEFAULT_CHARSET), new TypeToken<EffectGroup<P>>() { });
     }
 
     /**
@@ -312,7 +312,7 @@ public final class EffectSerializer {
      * @throws IOException           If some other I/O error occurs
      */
     public static <P extends Position2D<? extends P>> List<EffectGroup<P>> effectGroupsFromResources(final String resource) throws IOException {
-        return load(new InputStreamReader(ResourceLoader.load(resource), DEFAULT_CHARSET), new TypeToken<List<EffectGroup<P>>>() { });
+        return load(new InputStreamReader(ResourceLoader.getResourceAsStream(resource), DEFAULT_CHARSET), new TypeToken<List<EffectGroup<P>>>() { });
     }
 
     /**

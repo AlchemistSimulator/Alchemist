@@ -103,7 +103,7 @@ public class DrawLinks<P extends Position2D<? extends P>> extends AbstractEffect
      * @inheritDocs
      */
     @Override
-    protected <T> void getData(final Environment<T, P> environment) {
+    protected <T> void storeData(final Environment<T, P> environment) {
         positions.clear();
         environment.forEach(node -> {
             final ConcurrentLinkedQueue<P> neighbors = new ConcurrentLinkedQueue<>();

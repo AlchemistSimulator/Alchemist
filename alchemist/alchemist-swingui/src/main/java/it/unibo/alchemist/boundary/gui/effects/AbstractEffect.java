@@ -133,8 +133,8 @@ public abstract class AbstractEffect<P extends Position2D<? extends P>> implemen
      */
     @Override
     public <T> Queue<DrawCommand<P>> computeDrawCommands(final Environment<T, P> environment) {
-        getData(environment);
-        final CommandQueueBuilder<P> builder = new CommandQueueBuilder<P>();
+        storeData(environment);
+        final CommandQueueBuilder<P> builder = new CommandQueueBuilder<>();
         consumeData().stream()
                 .map(cmd -> cmd.wrap(this::isVisible))
                 .forEach(builder::addCommand);
@@ -142,7 +142,7 @@ public abstract class AbstractEffect<P extends Position2D<? extends P>> implemen
     }
 
     /**
-     * The method is called to consume the data extrapolated from {@link Environment} by {@link #getData(Environment)} method.
+     * The method is called to consume the data extrapolated from {@link Environment} by {@link #storeData(Environment)} method.
      *
      * @return the queue of command to be executed on JavaFX thread
      */
@@ -156,7 +156,7 @@ public abstract class AbstractEffect<P extends Position2D<? extends P>> implemen
      * @param environment the {@link Environment} to extrapolate data from
      * @param <T>         the {@link it.unibo.alchemist.model.interfaces.Concentration} type
      */
-    protected abstract <T> void getData(Environment<T, P> environment);
+    protected abstract <T> void storeData(Environment<T, P> environment);
 
     @Override
     public final String getName() {

@@ -97,7 +97,7 @@ public class DrawDot<P extends Position2D<? extends P>> extends AbstractEffect<P
      * @param <T>         {@inheritDoc}
      */
     @Override
-    protected <T> void getData(final Environment<T, P> environment) {
+    protected <T> void storeData(final Environment<T, P> environment) {
         positions.clear();
         positions.addAll(environment
                 .getNodes()

@@ -399,7 +399,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
          * @param benchmark set true if you want to benchmark this run
          * @return this builder
          */
-        public Builder<T, P> setBenchmarkMode(final boolean benchmark) {
+        public Builder<T, P> isBenchmarkMode(final boolean benchmark) {
             this.benchmark = benchmark;
             return this;
         }

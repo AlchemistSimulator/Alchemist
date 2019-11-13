@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import javafx.scene.input.KeyCode
+import org.kaikikm.threadresloader.ResourceLoader
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
@@ -54,19 +55,14 @@ class Keybinds {
 
         /**
          * Write the binds to the file system.
-         * @throws IOException
          */
-        @Throws(IOException::class)
         fun save() {
             File("$filesystemPath$filename").let {
                 it.parentFile.mkdirs()
                 if (!it.exists()) {
                     it.createNewFile()
                 }
-                FileWriter(it.path).let { writer ->
-                    writer.write(gson.toJson(config))
-                    writer.close()
-                }
+                FileWriter(it.path).use { w -> w.write(gson.toJson(config)) }
             }
         }
 
@@ -82,7 +78,7 @@ class Keybinds {
         /**
          * Attempt to load the binds from the filesystem.
          */
-        fun loadFromFile(): Boolean =
+        private fun loadFromFile(): Boolean =
             try {
                 config = gson.fromJson(
                     File("$filesystemPath$filename").readLines().reduce { a, b -> a + b },
@@ -96,9 +92,9 @@ class Keybinds {
         /**
          * Read the binds from classpath.
          */
-        fun loadFromClasspath() {
+        private fun loadFromClasspath() {
             config = gson.fromJson(
-                Keybinds::class.java.classLoader.getResource("$classpathPath$filename").readText(),
+                ResourceLoader.getResource("$classpathPath$filename").readText(),
                 typeToken.type
             )
         }

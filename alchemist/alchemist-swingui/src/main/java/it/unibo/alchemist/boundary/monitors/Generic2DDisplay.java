@@ -196,7 +196,9 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         frame.setLocationByPlatform(true);
         frame.pack();
         frame.setVisible(true);
-        frameEditor.accept(frame);
+        if (frameEditor != null) {
+            frameEditor.accept(frame);
+        }
     }
 
     /**

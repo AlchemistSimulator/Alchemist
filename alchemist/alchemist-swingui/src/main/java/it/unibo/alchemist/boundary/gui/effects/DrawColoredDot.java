@@ -301,7 +301,7 @@ public class DrawColoredDot extends DrawDot<Position2D<? extends Position2D>> {
      */
     @Override
     public boolean equals(final Object obj) {
-        if (this.getClass() != obj.getClass()) {
+        if (obj == null || this.getClass() != obj.getClass()) {
             return false;
         }
         final DrawColoredDot other = (DrawColoredDot) obj;

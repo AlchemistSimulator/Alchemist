@@ -55,7 +55,9 @@ class Keybinds {
 
         /**
          * Write the binds to the file system.
+         * @throws IOException
          */
+        @Throws(IOException::class)
         fun save() {
             File("$filesystemPath$filename").let {
                 it.parentFile.mkdirs()

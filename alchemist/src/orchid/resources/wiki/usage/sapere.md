@@ -27,7 +27,7 @@ As a consequence, LSAs can be inserted in nodes.
 For instance, the following code creates an irregular grid of devices,
 of which those located around the center of such grid contain the tuple `{ token }`:
 
-<script src="http://gist-it.appspot.com/github/AlchemistSimulator/SAPERE-incarnation-tutorial/blob/master/src/main/yaml/05-content.yml"></script>
+<script src="https://gist-it.appspot.com/github/AlchemistSimulator/SAPERE-incarnation-tutorial/blob/master/src/main/yaml/05-content.yml"></script>
 
 The relevant part here is `molecule: token`.
 If we wanted to inject the tuple `{ foo, 1, bar, 2 }`, we could have written `molecule: foo, 1, bar, 2`.
@@ -76,7 +76,7 @@ the opposite of the matched number:
 
 Nodes can be programmed with Eco-Laws as follows:
 
-<script src="http://gist-it.appspot.com/github/AlchemistSimulator/SAPERE-incarnation-tutorial/blob/master/src/main/yaml/06-send.yml"></script>
+<script src="https://gist-it.appspot.com/github/AlchemistSimulator/SAPERE-incarnation-tutorial/blob/master/src/main/yaml/06-send.yml"></script>
 
 ### Sharing
 
@@ -99,7 +99,7 @@ The following code exemplifies a diffusion program:
 when `{ token }` is present locally, it is copied into neighboring nodes once per second;
 and as soon as two copies of `{ token }` are present, one gets removed.
 
-<script src="http://gist-it.appspot.com/github/AlchemistSimulator/SAPERE-incarnation-tutorial/blob/master/src/main/yaml/09-diffuse.yml"></script>
+<script src="https://gist-it.appspot.com/github/AlchemistSimulator/SAPERE-incarnation-tutorial/blob/master/src/main/yaml/09-diffuse.yml"></script>
 
 ### Eco-Laws syntax
 
@@ -131,7 +131,7 @@ In the following example, two Eco-Laws are configured, and one of them is bound 
 when executable (the left hand LSAs have local matches), will execute at an average of once per second
 (with a variance of 1 s²).
 
-<script src="http://gist-it.appspot.com/github/AlchemistSimulator/SAPERE-incarnation-tutorial/blob/master/src/main/yaml/06-send.yml"></script>
+<script src="https://gist-it.appspot.com/github/AlchemistSimulator/SAPERE-incarnation-tutorial/blob/master/src/main/yaml/06-send.yml"></script>
 
 ## Tutorial and exercises
 

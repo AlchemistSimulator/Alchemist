@@ -28,6 +28,7 @@ import tornadofx.label
 import tornadofx.launch
 import tornadofx.minWidth
 import tornadofx.onDoubleClick
+import tornadofx.paddingAll
 import tornadofx.property
 import tornadofx.region
 import tornadofx.remainingWidth
@@ -139,7 +140,7 @@ class ListKeybindsView : View() {
                 }
             }
         }
-        padding = Insets(10.0)
+        paddingAll = 10.0
     }
 }
 
@@ -169,7 +170,7 @@ class EditKeybindView : View() {
                 close()
             }
         }
-        padding = Insets(10.0)
+        paddingAll = 10.0
     }
 }
 

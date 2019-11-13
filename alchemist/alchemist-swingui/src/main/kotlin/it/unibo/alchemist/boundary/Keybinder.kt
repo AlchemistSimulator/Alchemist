@@ -2,12 +2,14 @@ package it.unibo.alchemist.boundary
 
 import it.unibo.alchemist.input.ActionFromKey
 import it.unibo.alchemist.input.Keybinds
+import javafx.beans.property.Property
 import javafx.beans.property.StringProperty
 import javafx.collections.FXCollections
-import javafx.geometry.Insets
+import javafx.collections.ObservableList
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.layout.Priority
+import javafx.scene.layout.VBox
 import tornadofx.App
 import tornadofx.Controller
 import tornadofx.FX
@@ -46,7 +48,7 @@ class Keybind(action: ActionFromKey, key: KeyCode) {
     /**
      * The action
      */
-    var action by property(action)
+    var action: ActionFromKey by property(action)
     /**
      * The property of the action
      */
@@ -55,7 +57,7 @@ class Keybind(action: ActionFromKey, key: KeyCode) {
     /**
      * The key
      */
-    var key by property(key)
+    var key: KeyCode by property(key)
     /**
      * The property of the key
      */
@@ -69,11 +71,11 @@ class KeybindModel : ItemViewModel<Keybind>() {
     /**
      * The property of the action
      */
-    val actionProperty = bind(Keybind::actionProperty)
+    val actionProperty: Property<ActionFromKey> = bind(Keybind::actionProperty)
     /**
      * The property of the key
      */
-    val keyProperty = bind(Keybind::keyProperty)
+    val keyProperty: Property<KeyCode> = bind(Keybind::keyProperty)
 }
 
 /**
@@ -83,7 +85,7 @@ class KeybindController : Controller() {
     /**
      * The current keybinds
      */
-    val keybinds = FXCollections.observableList(
+    val keybinds: ObservableList<Keybind> = FXCollections.observableList(
         Keybinds.config.asSequence()
             .map { Keybind(it.key, it.value) }
             .plus(ActionFromKey.values().map { Keybind(it, KeyCode.UNDEFINED) })

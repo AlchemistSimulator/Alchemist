@@ -1,5 +1,6 @@
 package it.unibo.alchemist.boundary.gui.effects.json;
 
+import com.google.common.base.Charsets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -17,6 +18,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -48,7 +50,7 @@ public final class EffectSerializer {
     /**
      * Default charset of serialized groups of effects.
      */
-    public static final String DEFAULT_CHARSET = "UTF-8";
+    public static final Charset DEFAULT_CHARSET = Charsets.UTF_8;
     /**
      * {@code Type} of an {@code EffectGroup}.
      */
@@ -181,7 +183,7 @@ public final class EffectSerializer {
      * @throws IOException           If some other I/O error occurs
      */
     public static <P extends Position2D<? extends P>> EffectFX<P> effectFromFile(final File effectFile) throws IOException {
-        return load(new FileReader(effectFile), new TypeToken<EffectFX<P>>() { });
+        return load(new FileReader(effectFile, DEFAULT_CHARSET), new TypeToken<>() { });
     }
 
     /**
@@ -199,7 +201,7 @@ public final class EffectSerializer {
      * @throws IOException           If some other I/O error occurs
      */
     public static <P extends Position2D<? extends P>> EffectFX<P> effectFromResources(final String resource) throws IOException {
-        return load(new InputStreamReader(ResourceLoader.getResourceAsStream(resource), DEFAULT_CHARSET), new TypeToken<EffectFX<P>>() { });
+        return load(new InputStreamReader(ResourceLoader.getResourceAsStream(resource), DEFAULT_CHARSET), new TypeToken<>() { });
     }
 
     /**
@@ -214,7 +216,7 @@ public final class EffectSerializer {
      *                         for any other reason, or another I/O error occurs
      */
     public static <P extends Position2D<? extends P>> void effectToFile(final File effectFile, final EffectFX<P> effect) throws IOException {
-        save(new FileWriter(effectFile), effect, new TypeToken<EffectFX<P>>() { });
+        save(new FileWriter(effectFile, DEFAULT_CHARSET), effect, new TypeToken<>() { });
     }
 
     /**
@@ -232,7 +234,7 @@ public final class EffectSerializer {
      * @throws IOException           If some other I/O error occurs
      */
     public static <P extends Position2D<? extends P>> EffectGroup<P> effectsFromFile(final File effectFile) throws IOException {
-        return load(new FileReader(effectFile), new TypeToken<EffectGroup<P>>() { });
+        return load(new FileReader(effectFile, DEFAULT_CHARSET), new TypeToken<>() { });
     }
 
     /**
@@ -250,7 +252,7 @@ public final class EffectSerializer {
      * @throws IOException           If some other I/O error occurs
      */
     public static <P extends Position2D<? extends P>> EffectGroup<P> effectsFromResources(final String resource) throws IOException {
-        return load(new InputStreamReader(ResourceLoader.getResourceAsStream(resource), DEFAULT_CHARSET), new TypeToken<EffectGroup<P>>() { });
+        return load(new InputStreamReader(ResourceLoader.getResourceAsStream(resource), DEFAULT_CHARSET), new TypeToken<>() { });
     }
 
     /**
@@ -265,7 +267,7 @@ public final class EffectSerializer {
      *                         for any other reason, or another I/O error occurs
      */
     public static <P extends Position2D<? extends P>> void effectsToFile(final File effectFile, final EffectGroup<P> effects) throws IOException {
-        save(new FileWriter(effectFile), effects, new TypeToken<EffectGroup<P>>() { });
+        save(new FileWriter(effectFile, DEFAULT_CHARSET), effects, new TypeToken<>() { });
     }
 
     /**
@@ -283,7 +285,7 @@ public final class EffectSerializer {
      * @throws IOException           If some other I/O error occurs
      */
     public static <P extends Position2D<? extends P>> List<EffectGroup<P>> effectGroupsFromFile(final File effectFile) throws IOException {
-        return load(new FileReader(effectFile), new TypeToken<List<EffectGroup<P>>>() { });
+        return load(new FileReader(effectFile, DEFAULT_CHARSET), new TypeToken<>() { });
     }
 
     /**
@@ -301,7 +303,7 @@ public final class EffectSerializer {
      * @throws IOException           If some other I/O error occurs
      */
     public static <P extends Position2D<? extends P>> List<EffectGroup<P>> effectGroupsFromResources(final String resource) throws IOException {
-        return load(new InputStreamReader(ResourceLoader.getResourceAsStream(resource), DEFAULT_CHARSET), new TypeToken<List<EffectGroup<P>>>() { });
+        return load(new InputStreamReader(ResourceLoader.getResourceAsStream(resource), DEFAULT_CHARSET), new TypeToken<>() { });
     }
 
     /**
@@ -316,7 +318,7 @@ public final class EffectSerializer {
      *                         for any other reason, or another I/O error occurs
      */
     public static <P extends Position2D<? extends P>> void effectGroupsToFile(final File effectFile, final List<EffectGroup<P>> effects) throws IOException {
-        save(new FileWriter(effectFile), effects, new TypeToken<List<EffectGroup<P>>>() { });
+        save(new FileWriter(effectFile, DEFAULT_CHARSET), effects, new TypeToken<>() { });
     }
 
     /**

@@ -38,6 +38,7 @@ class Keybinds {
         private val typeToken: TypeToken<Map<ActionFromKey, KeyCode>> =
             object : TypeToken<Map<ActionFromKey, KeyCode>>() {}
         private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
+        private val DEFAULT_CHARSET = Charsets.UTF_8
         /**
          * The currently loaded configuration.
          */
@@ -64,7 +65,7 @@ class Keybinds {
                 if (!it.exists()) {
                     it.createNewFile()
                 }
-                FileWriter(it.path).use { w -> w.write(gson.toJson(config)) }
+                FileWriter(it.path, DEFAULT_CHARSET).use { w -> w.write(gson.toJson(config)) }
             }
         }
 
@@ -83,7 +84,7 @@ class Keybinds {
         private fun loadFromFile(): Boolean =
             try {
                 config = gson.fromJson(
-                    File("$filesystemPath$filename").readLines().reduce { a, b -> a + b },
+                    File("$filesystemPath$filename").readLines(DEFAULT_CHARSET).reduce { a, b -> a + b },
                     typeToken.type
                 )
                 true
@@ -96,7 +97,7 @@ class Keybinds {
          */
         private fun loadFromClasspath() {
             config = gson.fromJson(
-                ResourceLoader.getResource("$classpathPath$filename").readText(),
+                ResourceLoader.getResource("$classpathPath$filename").readText(DEFAULT_CHARSET),
                 typeToken.type
             )
         }

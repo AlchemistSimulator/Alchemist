@@ -84,15 +84,12 @@ Install the following plugins (use <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>
 0. Navigate your file system and find the folder where you cloned the repository. **Do not select it**. Open the folder, and you should find a lowercase `alchemist` folder. That is the correct project folder, not the outermost `Alchemist` folder (created by `git` in case you cloned without specifying a different folder name). Once the correct folder has been selected, click <kbd>Ok</kbd>
 0. Select "Import Project from external model"
 0. Make sure "Gradle" is selected as external model tool
-0. click <kbd>Next</kbd>
-0. Check "Use auto-import"
-0. Check "Create directories for empty content roots automatically"
-0. The correct group module option is "using explicit module groups", make sure it is selected
-0. Check "Create separate module per source set"
-0. *Important:* ensure that "Use default gradle wrapper (recommended) is selected
 0. Click <kbd>Finish</kbd>
-0. If prompted to override any .idea file, try to answer <kbd>No</kbd>. It's possible that IntelliJ refuses to proceed and comes back to the previous window, in which case click <kbd>Finish</kbd> again, then select <kbd>Yes</kbd>.
-0. Wait for the IDE to import the project from Gradle. The process may take several minutes, due to the amount of dependencies. Should the synchronization fail, make sure that the IDE's Gradle is configured correctly. In 'Settings -> Build, Execution, Deployment -> Build Tools > Gradle', select 'Use default gradle wrapper (recommended)'.
+0. If prompted to override any .idea file, try to answer <kbd>No</kbd>. It's possible that IntelliJ refuses to proceed, in which case click <kbd>Finish</kbd> again, then select <kbd>Yes</kbd>.
+0. A dialog stating that "IntelliJ IDEA found a Gradle build script" may appear, in such case answer <kbd>Import Gradle Project</kbd>.
+0. Wait for the IDE to import the project from Gradle. The process may take several minutes, due to the amount of dependencies. Should the synchronization fail, make sure that the IDE's Gradle is configured correctly:
+0. In 'Settings -> Build, Execution, Deployment -> Build Tools > Gradle', for the option 'Use Gradle from' select 'gradle-wrapper.properties file'. Enabling auto-import is also recommended. 
+0. **Important:** Alchemist requires java 11+, so make sure the 'Gradle JVM' option points to such a version (if you don't have a JDK 11+ installed make sure to get one).
 0. Once imported, the project may still be unable to compile, due to missing sources in incarnation-biochemistry. This problem can be solved by opening the IntelliJ terminal (e.g. with <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>, typing "terminal" and pressing <kbd>Enter</kbd>), and issue:
   - *On Unix: * `./gradlew alchemist-incarnation-biochemistry:generateGrammarSource`
   - *On Windows: * `gradlew.bat alchemist-incarnation-biochemistry:generateGrammarSource`
@@ -108,14 +105,16 @@ Contributions to this project are welcome. Just some rules:
 
 
 #### Building the project
-While developing, you can rely on Eclipse to build the project, it will generally do a very good job.
+While developing, you can rely on IntelliJ to build the project, it will generally do a very good job.
 If you want to generate the artifacts, you can rely on Gradle. Just point a terminal on the project's root and issue
 
 ```bash
-./gradlew
+./gradlew build
 ```
 
 This will trigger the creation of the artifacts the executions of the tests, the generation of the documentation and of the project reports.
+
+***NOTE THAT:*** Alchemist requires java 11+ to work, make sure to have a JDK version 11+ installed.
 
 #### Build reports
 Every Alchemist build triggers the creation of a set of reports, that provide hints regarding the current status of quality of the code base. Such reports are available for both [the latest stable][reports] and [the latest development][reports-unstable] versions.

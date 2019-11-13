@@ -5,6 +5,8 @@
 - [Using Alchemist](usage.md)
   - [Requirements and installation](usage/installation.md)
   - [Quick start](usage/quickstart.md)
+  - [Running Alchemist via Gradle](usage/run-gradle.md)
+  - [Running Alchemist stand-alone](usage/run-stand-alone.md)
   - [How to write simulations](usage/yaml.md)
   - [Graphical interface](usage/gui.md)
   - [Biology and Biochemistry](usage/biochemistry.md)

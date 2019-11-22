@@ -33,7 +33,7 @@ import java.awt.Graphics2D;
 
 /**
  */
-public abstract class DrawLayer implements Effect {
+public abstract class DrawLayers implements Effect {
 
     private static final int MAX_NUMBER_OF_CONTOUR_LEVELS = 50;
     private static final int MAX_COLOUR_VALUE = 255;

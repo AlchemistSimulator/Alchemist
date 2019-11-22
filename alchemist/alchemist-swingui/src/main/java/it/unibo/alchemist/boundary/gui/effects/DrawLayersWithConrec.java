@@ -17,7 +17,7 @@ import java.awt.geom.Dimension2D;
 
 /**
  */
-public class DrawLayerWithConrec extends DrawLayer {
+public class DrawLayersWithConrec extends DrawLayers {
 
     private static final long serialVersionUID = 1L;
     //private static final int SAMPLES = 100;
@@ -37,6 +37,7 @@ public class DrawLayerWithConrec extends DrawLayer {
         final int viewEndX = (int) Math.ceil(viewSize.getWidth());
         final int viewEndY = (int) Math.ceil(viewSize.getHeight());
         //final int envStartX = wormhole.getEnvPoint();
+        //L.debug(viewSize.getWidth());
         g.drawLine(viewStartX, viewStartY, viewEndX, viewEndY);
     }
 }

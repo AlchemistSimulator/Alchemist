@@ -22,6 +22,7 @@ package it.unibo.alchemist.boundary.gui.isolines.conrec;
  * author  Bradley White
  * @version 1.0
  */
+@FunctionalInterface
 public interface Render {
 
     /**

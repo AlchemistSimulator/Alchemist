@@ -24,13 +24,13 @@ public final class Utilities {
     /**
      * Checks if a variable number of objects are null, in that case an IllegalArgumentException will be thrown.
      * @throws IllegalArgumentException
-     *              with NULL_ARGUMENT message
+     *              with "null argument" message
      * @param objects
      *              the objects to check
      */
     public static void requireNonNull(final Object...objects) {
         if (Arrays.stream(objects).anyMatch(Utilities::isOrContainsNull)) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException("null argument");
         }
     }
 

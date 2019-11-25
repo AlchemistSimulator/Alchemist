@@ -9,9 +9,18 @@
 
 package it.unibo.alchemist.boundary.gui.isolines.conrec;
 
-import it.unibo.alchemist.boundary.gui.isolines.*;
+import it.unibo.alchemist.boundary.gui.isolines.Utilities;
+import it.unibo.alchemist.boundary.gui.isolines.IsolinesFinder;
+import it.unibo.alchemist.boundary.gui.isolines.Isoline;
+import it.unibo.alchemist.boundary.gui.isolines.IsolinesFactory;
+import it.unibo.alchemist.boundary.gui.isolines.Segment2D;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 /**
@@ -83,7 +92,7 @@ public class ConrecIsolinesFinder implements IsolinesFinder {
 
         new Conrec((startX1, startY1, endX1, endY1, contourLevel) -> {
 
-            Segment2D segment = factory.makeSegment(startX1, startY1, endX1, endY1);
+            final Segment2D segment = factory.makeSegment(startX1, startY1, endX1, endY1);
 
             final double flooredValue = Math.floor(contourLevel * 10) / 10;
             if (!isolines.containsKey(flooredValue)) {

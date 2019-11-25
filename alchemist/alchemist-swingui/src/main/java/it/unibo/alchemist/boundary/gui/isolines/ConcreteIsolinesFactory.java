@@ -50,6 +50,6 @@ public class ConcreteIsolinesFactory implements IsolinesFactory {
         if (algorithm == IsolineFinders.CONREC) {
             return new ConrecIsolinesFinder(this);
         }
-        throw new IllegalArgumentException("" + algorithm + " not available");
+        throw new IllegalArgumentException(algorithm + " not available");
     }
 }

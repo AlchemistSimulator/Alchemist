@@ -9,16 +9,9 @@
 
 package it.unibo.alchemist.boundary.gui.isolines.conrec;
 
-import it.unibo.alchemist.boundary.gui.isolines.Isoline;
-import it.unibo.alchemist.boundary.gui.isolines.IsolinesFinder;
-import it.unibo.alchemist.boundary.gui.isolines.IsolinesFactory;
-import it.unibo.alchemist.boundary.gui.isolines.Segment2D;
+import it.unibo.alchemist.boundary.gui.isolines.*;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -42,6 +35,13 @@ public class ConrecIsolinesFinder implements IsolinesFinder {
      */
     @Override
     public Collection<Isoline> findIsolines(final BidimensionalFunction f, final Number x1, final Number y1, final Number x2, final Number y2, final Collection<Number> levels) {
+        Objects.requireNonNull(f);
+        Objects.requireNonNull(x1);
+        Objects.requireNonNull(y1);
+        Objects.requireNonNull(x2);
+        Objects.requireNonNull(y2);
+        Utilities.requireNonNull(levels);
+
         final double startX = x1.doubleValue();
         final double startY = y1.doubleValue();
         final double endX = x2.doubleValue();
@@ -101,6 +101,7 @@ public class ConrecIsolinesFinder implements IsolinesFinder {
      */
     @Override
     public Collection<Isoline> findIsolines(final BidimensionalFunction f, final Segment2D diagonal, final Collection<Number> levels) {
+        Objects.requireNonNull(diagonal);
         return this.findIsolines(f, diagonal.getX1(), diagonal.getY1(), diagonal.getX2(), diagonal.getY2(), levels);
     }
 }

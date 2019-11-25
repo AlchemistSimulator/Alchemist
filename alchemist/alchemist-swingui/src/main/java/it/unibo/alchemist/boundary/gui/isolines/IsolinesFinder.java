@@ -12,7 +12,7 @@ package it.unibo.alchemist.boundary.gui.isolines;
 import java.util.Collection;
 
 /**
- * Defines an isolines finding algorithm.
+ * Defines an object capable of finding isolines (i.e. an isolines finding algorithm).
  */
 public interface IsolinesFinder {
 

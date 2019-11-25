@@ -9,12 +9,10 @@
 
 package it.unibo.alchemist.boundary.gui.isolines;
 
-import it.unibo.alchemist.model.interfaces.Position2D;
-
 import java.util.Collection;
 
 /**
- * A factory
+ * A factory for the creation of the basic astractions contained in this package.
  */
 public interface IsolinesFactory {
 
@@ -41,18 +39,24 @@ public interface IsolinesFactory {
     Isoline makeIsoline(Number value, Collection<Segment2D> segments);
 
     /**
-     * Create an IsolinesFinder object, which represents an Isoline finding algorithm.
+     * Create an IsolinesFinder object, capable of finding isolines.
+     * As different finders could be available - each one extracting
+     * isolines in a different way - you can specify which one to use with
+     * the algorithm parameter.
      *
-     * @param calculator - the algorithm you want to use
+     * @param algorithm - the algorithm you want to use
      *
      * @return the IsolineFinder
      */
-    IsolinesFinder makeIsolinesFinder(IsolinesFinders calculator);
+    IsolinesFinder makeIsolinesFinder(IsolineFinders algorithm);
 
     /**
      * Enum containing all the available isolines finding algorithms.
      */
-    enum IsolinesFinders {
+    enum IsolineFinders {
+        /*
+         * For each class extending IsolinesFinder there should be an element in this enum
+         */
         CONREC
     }
 }

@@ -12,12 +12,12 @@ package it.unibo.alchemist.boundary.gui.effects;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
-import it.unibo.alchemist.model.interfaces.Incarnation;
-import it.unibo.alchemist.model.interfaces.Molecule;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Layer;
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Incarnation;
+import it.unibo.alchemist.model.interfaces.Molecule;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import org.danilopianini.lang.CollectionWithCurrentElement;
 import org.danilopianini.lang.ImmutableCollectionWithCurrentElement;
 import org.danilopianini.lang.RangedInteger;
@@ -26,35 +26,51 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Collection;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
 /**
+ * Basic class for every effect that draws something related to layers.
+ *
+ * This class is a workaround: the Effect abstraction is meant to add effects
+ * to nodes, not to draw layers. At present, is the finest workaround available.
+ * This class collects the following responsibilities:
+ * - as the apply method will be called for every node, this class manages
+ * to draw the layers only when necessary. Any subclass must only define the drawLayers method,
+ * which effectively draws the layers and is called only when necessary.
+ * - it declares gui controls for the selection of the color to use
+ * - it declares gui controls for the selection of a filter, that ideally should be
+ * used to filter the layers to draw. In particular, it allows the user to specify
+ * a molecule, meaning that only the layer containing such molecule will be drawn
+ * (otherwise the effect is applied to all layers)
  */
 public abstract class DrawLayers implements Effect {
 
-    private static final int MAX_NUMBER_OF_CONTOUR_LEVELS = 50;
     private static final int MAX_COLOUR_VALUE = 255;
-    private static final Logger L = LoggerFactory.getLogger(DrawShape.class);
+    private static final int INITIAL_ALPHA_DIVIDER = 6;
+    /**
+     */
+    protected static final Logger L = LoggerFactory.getLogger(DrawShape.class);
     private static final long serialVersionUID = 1L;
-    @ExportForGUI(nameToExport = "Number of contour levels")
-    private RangedInteger contourLevels = new RangedInteger(0, MAX_NUMBER_OF_CONTOUR_LEVELS);
-    @ExportForGUI(nameToExport = "A")
-    private RangedInteger alpha = new RangedInteger(0, MAX_COLOUR_VALUE, MAX_COLOUR_VALUE / 2);
     @ExportForGUI(nameToExport = "Draw only layer containing a molecule")
     private boolean layerFilter;
     @ExportForGUI(nameToExport = "Incarnation to use")
     private CollectionWithCurrentElement<String> curIncarnation;
     @ExportForGUI(nameToExport = "Molecule")
     private String molString = "";
+    @ExportForGUI(nameToExport = "A")
+    private RangedInteger alpha = new RangedInteger(0, MAX_COLOUR_VALUE, MAX_COLOUR_VALUE / INITIAL_ALPHA_DIVIDER);
     @ExportForGUI(nameToExport = "R")
     private RangedInteger red = new RangedInteger(0, MAX_COLOUR_VALUE);
-    @ExportForGUI(nameToExport = "B")
-    private RangedInteger blue = new RangedInteger(0, MAX_COLOUR_VALUE);
     @ExportForGUI(nameToExport = "G")
     private RangedInteger green = new RangedInteger(0, MAX_COLOUR_VALUE);
+    @ExportForGUI(nameToExport = "B")
+    private RangedInteger blue = new RangedInteger(0, MAX_COLOUR_VALUE);
     private Color colorCache = Color.BLACK;
     @Nullable
     @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
@@ -68,27 +84,32 @@ public abstract class DrawLayers implements Effect {
     private transient Optional<Node> markerNode = Optional.empty();
 
     /**
+     */
+    public DrawLayers() {
+        final Set<String> availableIncarnations = SupportedIncarnations.getAvailableIncarnations();
+        if (availableIncarnations.isEmpty()) {
+            throw new IllegalStateException(getClass().getSimpleName() + " can't work if no incarnation is available.");
+        }
+        curIncarnation = new ImmutableCollectionWithCurrentElement<>(availableIncarnations, availableIncarnations.stream().findAny().get());
+    }
+
+    /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("PMD.CompareObjectsWithEquals")
+    @SuppressWarnings({"PMD.CompareObjectsWithEquals", "unchecked"})
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
     public <T, P extends Position2D<P>> void apply(final Graphics2D g, final Node<T> n, final Environment<T, P> env, final IWormhole2D<P> wormhole) {
+        // if marker node is no longer in the environment or it is no longer displayed, we need to change it
+        if (markerNode.isPresent() && (!env.getNodes().contains(markerNode.get())
+                                        || !wormhole.isInsideView(wormhole.getViewPoint(env.getPosition((Node<T>) markerNode.get()))))) {
+            markerNode = Optional.empty();
+        }
         if (markerNode.isEmpty()) {
             markerNode = Optional.of(n);
         }
-        if (!env.getNodes().contains(n)) {
-            markerNode = Optional.empty();
-        }
-        if (markerNode.isPresent() && markerNode.get() == n) { // same object ==
-            if (layerFilter && (curIncarnation == null || incarnation == null || curIncarnation != prevIncarnation || molString != molStringCached)) {
-                if (curIncarnation == null) {
-                    final Set<String> availableIncarnations = SupportedIncarnations.getAvailableIncarnations();
-                    if (availableIncarnations.isEmpty()) {
-                        throw new IllegalStateException(getClass().getSimpleName() + " can't work if no incarnation is available.");
-                    }
-                    curIncarnation = new ImmutableCollectionWithCurrentElement<>(availableIncarnations, availableIncarnations.stream().findAny().get());
-                }
+        if (markerNode.get() == n) { // at this point markerNode.isPresent() is always true, so we directly get it
+            if (layerFilter && (incarnation == null || curIncarnation != prevIncarnation || molString != molStringCached)) {
                 molStringCached = molString;
                 prevIncarnation = curIncarnation;
                 incarnation = SupportedIncarnations.get(curIncarnation.getCurrent())
@@ -108,11 +129,15 @@ public abstract class DrawLayers implements Effect {
             colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
             g.setColor(colorCache);
 
+            final List<Layer<T, P>> toDraw = new ArrayList<>();
             if (layerFilter && molecule != null && env.getLayer(molecule).isPresent()) {
-                final Layer layer = env.getLayer(molecule).get();
-                drawLayer(layer, g, wormhole, contourLevels.getVal());
+                toDraw.add(env.getLayer(molecule).get());
             } else {
-                env.getLayers().forEach(l -> drawLayer(l, g, wormhole, contourLevels.getVal()));
+                toDraw.addAll(env.getLayers());
+            }
+
+            if (!toDraw.isEmpty()) {
+                drawLayers(toDraw, env, g, wormhole);
             }
         }
     }
@@ -126,41 +151,16 @@ public abstract class DrawLayers implements Effect {
     }
 
     /**
-     * Effectively draws a layer.
-     * @param layer - the layer to be drawn
-     * @param g - Graphics2D
-     * @param wormhole - wormhole
-     * @param contourLevels - number of contour levels to be drawn
+     * Effectively draw the layers. This method will be called only when re-drawing the layers is necessary.
+     *
+     * @param toDraw   - collection containing the layers to draw
+     * @param env      - the environment (mainly used to create positions)
+     * @param g        - the graphics2D
+     * @param wormhole - the wormhole
+     * @param <T>      - node concentration type
+     * @param <P>      - position type
      */
-    protected abstract void drawLayer(Layer layer, Graphics2D g, IWormhole2D wormhole, int contourLevels);
-
-    /**
-     * @return the number of contour levels
-     */
-    public RangedInteger getContourLevels() {
-        return contourLevels;
-    }
-
-    /**
-     * @param contourLevels the number of contour levels
-     */
-    public void setContourLevels(final RangedInteger contourLevels) {
-        this.contourLevels = contourLevels;
-    }
-
-    /**
-     * @return alpha channel
-     */
-    public RangedInteger getAlpha() {
-        return alpha;
-    }
-
-    /**
-     * @param alpha the alpha channel
-     */
-    public void setAlpha(final RangedInteger alpha) {
-        this.alpha = alpha;
-    }
+    protected abstract <T, P extends Position2D<P>> void drawLayers(Collection<Layer<T, P>> toDraw, Environment<T, P> env, Graphics2D g, IWormhole2D<P> wormhole);
 
     /**
      * @return a boolean representing whether or not layer filter is on
@@ -184,7 +184,7 @@ public abstract class DrawLayers implements Effect {
     }
 
     /**
-     * @param curIncarnation current incarnation
+     * @param curIncarnation a String representing the incarnation to use
      */
     public void setCurIncarnation(final CollectionWithCurrentElement<String> curIncarnation) {
         this.curIncarnation = curIncarnation;
@@ -198,10 +198,24 @@ public abstract class DrawLayers implements Effect {
     }
 
     /**
-     * @param molString the molecule
+     * @param molString a string representing the molecule to use
      */
     public void setMolString(final String molString) {
         this.molString = molString;
+    }
+
+    /**
+     * @return alpha channel
+     */
+    public RangedInteger getAlpha() {
+        return alpha;
+    }
+
+    /**
+     * @param alpha alpha channel
+     */
+    public void setAlpha(final RangedInteger alpha) {
+        this.alpha = alpha;
     }
 
     /**
@@ -219,6 +233,20 @@ public abstract class DrawLayers implements Effect {
     }
 
     /**
+     * @return green channel
+     */
+    public RangedInteger getGreen() {
+        return green;
+    }
+
+    /**
+     * @param green green channel
+     */
+    public void setGreen(final RangedInteger green) {
+        this.green = green;
+    }
+
+    /**
      * @return blue channel
      */
     public RangedInteger getBlue() {
@@ -233,17 +261,25 @@ public abstract class DrawLayers implements Effect {
     }
 
     /**
-     * @return green channel
+     * @return the cached color
      */
-    public RangedInteger getGreen() {
-        return green;
+    protected Color getColorCache() {
+        return this.colorCache;
     }
 
     /**
-     * @param green green channel
+     * @param c color
      */
-    public void setGreen(final RangedInteger green) {
-        this.green = green;
+    protected void setColorCache(final Color c) {
+        this.colorCache = c;
+    }
+
+    /**
+     * @return the molecule used for layer filter
+     */
+    @org.jetbrains.annotations.Nullable
+    protected Molecule getMolecule() {
+        return this.molecule;
     }
 }
 

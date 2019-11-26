@@ -21,11 +21,30 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Dimension2D;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * TODO().
+ * Draw layers isolines. The user can specify:
+ * - the number of isolines to draw
+ * - the min isoline value
+ * - the max isoline value
+ * - the distribution, used to space isoline values between min and max
+ *
+ * Normally, drawing isolines only makes sense for "numerical" layers (i.e. layers
+ * for which the getValue() method returns a Number). However, one could have a
+ * "non-numerical" layer that returns an object from which a value can be extracted
+ * somehow. In the end, drawing isolines for a layer makes sense as long as there's a
+ * way to map the concentration type of the layer to a numerical value (namely, a Number).
+ * The fact is that this class is not aware of how to map each layer to a
+ * {@link it.unibo.alchemist.boundary.gui.isolines.IsolinesFinder.BidimensionalFunction},
+ * and so leaves this responsibility to its subclasses.
+ *
+ * The purpose of this class is to collect responsibilities related to the
+ * drawing of isolines. As such, it declares the necessary gui controls and
+ * features a drawIsolines method capable of drawing the isolines of a
+ * {@link it.unibo.alchemist.boundary.gui.isolines.IsolinesFinder.BidimensionalFunction}.
  */
 public abstract class DrawLayersIsolines extends DrawLayers {
 
@@ -44,7 +63,7 @@ public abstract class DrawLayersIsolines extends DrawLayers {
     private String minIsolineValueCached = minIsolineValue;
     private String maxIsolineValueCached = maxIsolineValue;
     private Distribution distributionCached = distribution;
-    private double[] levels;
+    private Collection<Number> levels;
     private Double minIsolineValueDouble = Double.parseDouble(minIsolineValue);
     private Double maxIsolineValueDouble = Double.parseDouble(maxIsolineValue);
 
@@ -96,14 +115,16 @@ public abstract class DrawLayersIsolines extends DrawLayers {
             updateMinAndMaxLayerValues();
             distributionCached = distribution;
 
+            final double[] l;
             if (distribution == Distribution.LOGARITHMIC) {
-                levels = logspace(minIsolineValueDouble, maxIsolineValueDouble, nOfIsolines.getVal(), Math.E);
+                l = logspace(minIsolineValueDouble, maxIsolineValueDouble, nOfIsolines.getVal(), Math.E);
             } else {
-                levels = linspace(minIsolineValueDouble, maxIsolineValueDouble, nOfIsolines.getVal());
+                l = linspace(minIsolineValueDouble, maxIsolineValueDouble, nOfIsolines.getVal());
             }
+            levels = Arrays.stream(l).boxed().collect(Collectors.toList());
         }
 
-        algorithm.findIsolines(f, envStart.getX(), envStart.getY(), envEnd.getX(), envEnd.getY(), Arrays.stream(levels).boxed().collect(Collectors.toList())).forEach(isoline -> {
+        algorithm.findIsolines(f, envStart.getX(), envStart.getY(), envEnd.getX(), envEnd.getY(), levels).forEach(isoline -> {
             // draw isoline value
             isoline.getSegments().stream().findAny().ifPresent(segment -> {
                 final Point viewPoint = wormhole.getViewPoint(env.makePosition(segment.getX1(), segment.getY1()));
@@ -162,25 +183,10 @@ public abstract class DrawLayersIsolines extends DrawLayers {
     }
 
     /**
-     * @return the min isoline value
-     */
-    public Double getMinIsolineValue() {
-        updateMinAndMaxLayerValues();
-        return minIsolineValueDouble;
-    }
-
-    /**
      * @param minIsolineValue to set
      */
     public void setMinIsolineValueString(final String minIsolineValue) {
         this.minIsolineValue = minIsolineValue;
-    }
-
-    /**
-     * @param minIsolineValue to set
-     */
-    public void setMinIsolineValue(final Double minIsolineValue) {
-        this.minIsolineValue = minIsolineValue.toString();
     }
 
     /**
@@ -191,18 +197,33 @@ public abstract class DrawLayersIsolines extends DrawLayers {
     }
 
     /**
+     * @param maxIsolineValue to set
+     */
+    public void setMaxIsolineValueString(final String maxIsolineValue) {
+        this.maxIsolineValue = maxIsolineValue;
+    }
+
+    /**
+     * @return the min isoline value
+     */
+    public Double getMinIsolineValue() {
+        updateMinAndMaxLayerValues();
+        return minIsolineValueDouble;
+    }
+
+    /**
+     * @param minIsolineValue to set
+     */
+    public void setMinIsolineValue(final Double minIsolineValue) {
+        this.minIsolineValue = minIsolineValue.toString();
+    }
+
+    /**
      * @return the max isoline value
      */
     public Double getMaxIsolineValue() {
         updateMinAndMaxLayerValues();
         return maxIsolineValueDouble;
-    }
-
-    /**
-     * @param maxIsolineValue to set
-     */
-    public void setMaxIsolineValueString(final String maxIsolineValue) {
-        this.maxIsolineValue = maxIsolineValue;
     }
 
     /**
@@ -234,8 +255,7 @@ public abstract class DrawLayersIsolines extends DrawLayers {
     }
 
     /**
-     * Distributions describing how values within the
-     * [minLayerValue, maxLayerValue] interval will be spaced.
+     * Distributions describing how values within an interval should be spaced.
      */
     public enum Distribution {
         /**

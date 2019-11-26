@@ -17,26 +17,14 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Position2D;
 
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-/**
- * Draw isolines for {@link BidimensionalGaussianLayer}s. It ignores any other layer.
- *
- * This class also manages to infer optimal min and max isoline values automatically
- * so the user does not have to set them by hand.
- */
-public class DrawBidimensionalGaussianLayersIsolines extends DrawLayersIsolines {
+public class DrawBidimensionalGaussianLayersConcentration extends DrawLayersConcentration {
 
     private static final long serialVersionUID = 1L;
     private boolean minAndMaxToBeSet = true;
-
-    /**
-     */
-    public DrawBidimensionalGaussianLayersIsolines() {
-        super(new ConcreteIsolinesFactory().makeIsolinesFinder(IsolinesFactory.IsolineFinders.CONREC));
-    }
 
     /**
      * {@inheritDoc}
@@ -54,11 +42,11 @@ public class DrawBidimensionalGaussianLayersIsolines extends DrawLayersIsolines 
                     .map(l -> l.getValue(env.makePosition(l.getCenterX(), l.getCenterY())))
                     .max(Double::compare).orElse(minLayerValue);
 
-            super.setMinIsolineValue(minLayerValue);
-            super.setMaxIsolineValue(maxLayerValue);
+            super.setMinConcentrationValue(minLayerValue);
+            super.setMaxConcentrationValue(maxLayerValue);
             minAndMaxToBeSet = false;
         }
 
-        layers.forEach(l -> super.drawIsolines((x, y) -> l.getValue(env.makePosition(x, y)), env, g, wormhole));
+        layers.forEach(l -> super.drawConcentration((x, y) -> l.getValue(env.makePosition(x, y)), env, g, wormhole));
     }
 }

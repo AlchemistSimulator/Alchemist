@@ -37,22 +37,29 @@ import java.awt.Graphics2D;
 /**
  * Basic class for every effect that draws something related to layers.
  *
- * This class is a workaround: the Effect abstraction is meant to add effects
+ * This class is a workaround: the {@link Effect} abstraction is meant to add effects
  * to nodes, not to draw layers. At present, is the finest workaround available.
+ * This workaround has the following disadvantages:
+ * - when there aren't nodes visible in the gui the effects are not used at all,
+ * so this effect won't work.
+ *
  * This class collects the following responsibilities:
- * - as the apply method will be called for every node, this class manages
- * to draw the layers only when necessary. Any subclass must only define the drawLayers method,
- * which effectively draws the layers and is called only when necessary.
+ * - it manages to draw layers only when necessary (as the apply method will be called for every node).
+ * Every subclass must only define the drawLayers method, which is guaranteed to be called
+ * only when necessary.
  * - it declares gui controls for the selection of the color to use
- * - it declares gui controls for the selection of a filter, that ideally should be
- * used to filter the layers to draw. In particular, it allows the user to specify
- * a molecule, meaning that only the layer containing such molecule will be drawn
- * (otherwise the effect is applied to all layers)
+ * - it declares gui controls for the selection of a filter, used to filter the layers to draw.
+ * In particular, it allows the user to specify a molecule, meaning that only the layer
+ * containing such molecule will be drawn (otherwise the effect is applied to all layers)
  */
 public abstract class DrawLayers implements Effect {
 
-    private static final int MAX_COLOUR_VALUE = 255;
-    private static final int INITIAL_ALPHA_DIVIDER = 6;
+    /**
+     */
+    protected static final int MAX_COLOUR_VALUE = 255;
+    /**
+     */
+    protected static final int INITIAL_ALPHA_DIVIDER = 2;
     /**
      */
     protected static final Logger L = LoggerFactory.getLogger(DrawShape.class);
@@ -70,8 +77,8 @@ public abstract class DrawLayers implements Effect {
     @ExportForGUI(nameToExport = "G")
     private RangedInteger green = new RangedInteger(0, MAX_COLOUR_VALUE);
     @ExportForGUI(nameToExport = "B")
-    private RangedInteger blue = new RangedInteger(0, MAX_COLOUR_VALUE);
-    private Color colorCache = Color.BLACK;
+    private RangedInteger blue = new RangedInteger(MAX_COLOUR_VALUE, MAX_COLOUR_VALUE);
+    private Color colorCache = Color.BLUE;
     @Nullable
     @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
     private transient Molecule molecule;
@@ -153,7 +160,7 @@ public abstract class DrawLayers implements Effect {
     /**
      * Effectively draw the layers. This method will be called only when re-drawing the layers is necessary.
      *
-     * @param toDraw   - collection containing the layers to draw
+     * @param toDraw   - the layers to draw
      * @param env      - the environment (mainly used to create positions)
      * @param g        - the graphics2D
      * @param wormhole - the wormhole

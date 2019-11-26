@@ -35,7 +35,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 /**
- * Basic class for every effect that draws something related to layers.
+ * Basic class for every effect that draws something related to {@link Layer}s.
  *
  * This class is a workaround: the {@link Effect} abstraction is meant to add effects
  * to nodes, not to draw layers. At present, is the finest workaround available.
@@ -45,8 +45,8 @@ import java.awt.Graphics2D;
  *
  * This class collects the following responsibilities:
  * - it manages to draw layers only when necessary (as the apply method will be called for every node).
- * Every subclass must only define the drawLayers method, which is guaranteed to be called
- * only when necessary.
+ * Every subclass must only define the {@link DrawLayers#drawLayers(Collection, Environment, Graphics2D, IWormhole2D)}
+ * method, which is guaranteed to be called only when necessary.
  * - it declares gui controls for the selection of the color to use
  * - it declares gui controls for the selection of a filter, used to filter the layers to draw.
  * In particular, it allows the user to specify a molecule, meaning that only the layer

@@ -11,6 +11,7 @@ package it.unibo.alchemist.boundary.gui.effects;
 
 import it.unibo.alchemist.boundary.gui.isolines.IsolinesFinder;
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
+import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 
@@ -23,49 +24,32 @@ import java.awt.geom.Dimension2D;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Draw layers isolines. The user can specify:
+ * Draw layers isolines. The user must specify:
  * - the number of isolines to draw
- * - the min isoline value
- * - the max isoline value
+ * - the min layer value
+ * - the max layer value
  * - the distribution, used to space isoline values between min and max
  *
- * Normally, drawing isolines only makes sense for "numerical" layers (i.e. layers
- * for which the getValue() method returns a Number). However, one could have a
- * "non-numerical" layer that returns an object from which a value can be extracted
- * somehow. In the end, drawing isolines for a layer makes sense as long as there's a
- * way to map the concentration type of the layer to a numerical value (namely, a Number).
- * The fact is that this class is not aware of how to map each layer to a
- * {@link it.unibo.alchemist.boundary.gui.isolines.IsolinesFinder.BidimensionalFunction},
- * and so leaves this responsibility to its subclasses.
- *
- * The purpose of this class is to collect responsibilities related to the
- * drawing of isolines. As such, it declares the necessary gui controls and
- * features a drawIsolines method capable of drawing the isolines of a
- * {@link it.unibo.alchemist.boundary.gui.isolines.IsolinesFinder.BidimensionalFunction}.
+ * This class defines the {@link DrawLayersIsolines#drawValues(Function, Environment, Graphics2D, IWormhole2D)}
+ * method, which is capable of drawing a layer's isolines given a function.
+ * It's responsibility of the subclasses to map each layer to such a function.
  */
-public abstract class DrawLayersIsolines extends DrawLayers {
+public abstract class DrawLayersIsolines extends DrawLayersValues {
 
     private static final int MAX_NUMBER_OF_ISOLINES = 50;
     private static final long serialVersionUID = 1L;
     @ExportForGUI(nameToExport = "Number of isolines")
     private RangedInteger nOfIsolines = new RangedInteger(1, MAX_NUMBER_OF_ISOLINES, MAX_NUMBER_OF_ISOLINES / 4);
-    @ExportForGUI(nameToExport = "Min isoline value")
-    private String minIsolineValue = "0.0";
-    @ExportForGUI(nameToExport = "Max isoline value")
-    private String maxIsolineValue = "0.0";
     @ExportForGUI(nameToExport = "Distribution between min and max")
     private Distribution distribution = Distribution.LINEAR;
 
     private int nOfIsolinesCached = nOfIsolines.getVal();
-    private String minIsolineValueCached = minIsolineValue;
-    private String maxIsolineValueCached = maxIsolineValue;
     private Distribution distributionCached = distribution;
     private Collection<Number> levels;
-    private Double minIsolineValueDouble = Double.parseDouble(minIsolineValue);
-    private Double maxIsolineValueDouble = Double.parseDouble(maxIsolineValue);
 
     /**
      * The algorithm used to extract isolines.
@@ -84,16 +68,16 @@ public abstract class DrawLayersIsolines extends DrawLayers {
     }
 
     /**
-     * Effectively draw the isolines for the given bidimensional function.
-     *
-     * @param f        - the function
-     * @param env      - the environment (it is used to make positions)
-     * @param g        - the Graphics2D
-     * @param wormhole - the wormhole
-     * @param <T>      - concentration type
-     * @param <P>      - position type
+     * {@inheritDoc}
      */
-    protected <T, P extends Position2D<P>> void drawIsolines(final IsolinesFinder.BidimensionalFunction f, final Environment<T, P> env, final Graphics2D g, final IWormhole2D<P> wormhole) {
+    @Override
+    protected abstract <T, P extends Position2D<P>> void drawLayers(Collection<Layer<T, P>> toDraw, Environment<T, P> env, Graphics2D g, IWormhole2D<P> wormhole);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected <T, P extends Position2D<P>> void drawValues(final Function<? super P, ? extends Number> f, final Environment<T, P> env, final Graphics2D g, final IWormhole2D<P> wormhole) {
         final Dimension2D viewSize = wormhole.getViewSize();
 
         final int viewStartX = 0;
@@ -108,8 +92,7 @@ public abstract class DrawLayersIsolines extends DrawLayers {
         final P envEnd = wormhole.getEnvPoint(viewEnd);
 
         if (nOfIsolinesCached != nOfIsolines.getVal()
-                || !minIsolineValueCached.equals(minIsolineValue)
-                || !maxIsolineValueCached.equals(maxIsolineValue)
+                || minOrMaxLayerValuesNeedsToBeUpdated()
                 || distributionCached != distribution) {
             nOfIsolinesCached = nOfIsolines.getVal();
             updateMinAndMaxLayerValues();
@@ -117,14 +100,15 @@ public abstract class DrawLayersIsolines extends DrawLayers {
 
             final double[] l;
             if (distribution == Distribution.LOGARITHMIC) {
-                l = logspace(minIsolineValueDouble, maxIsolineValueDouble, nOfIsolines.getVal(), Math.E);
+                l = logspace(getMinLayerValueDouble(), getMaxLayerValueDouble(), nOfIsolines.getVal(), Math.E);
             } else {
-                l = linspace(minIsolineValueDouble, maxIsolineValueDouble, nOfIsolines.getVal());
+                l = linspace(getMinLayerValueDouble(), getMaxLayerValueDouble(), nOfIsolines.getVal());
             }
             levels = Arrays.stream(l).boxed().collect(Collectors.toList());
         }
 
-        algorithm.findIsolines(f, envStart.getX(), envStart.getY(), envEnd.getX(), envEnd.getY(), levels).forEach(isoline -> {
+        algorithm.findIsolines((x, y) -> f.apply(env.makePosition(x, y)),
+                envStart.getX(), envStart.getY(), envEnd.getX(), envEnd.getY(), levels).forEach(isoline -> {
             // draw isoline value
             isoline.getSegments().stream().findAny().ifPresent(segment -> {
                 final Point viewPoint = wormhole.getViewPoint(env.makePosition(segment.getX1(), segment.getY1()));
@@ -149,88 +133,18 @@ public abstract class DrawLayersIsolines extends DrawLayers {
         });
     }
 
-    private void updateMinAndMaxLayerValues() {
-        minIsolineValueCached = minIsolineValue;
-        maxIsolineValueCached = maxIsolineValue;
-
-        try {
-            minIsolineValueDouble = Double.parseDouble(minIsolineValue);
-            maxIsolineValueDouble = Double.parseDouble(maxIsolineValue);
-        } catch (NumberFormatException e) {
-            L.warn(minIsolineValue + " or " + maxIsolineValue + " is not a valid value");
-        }
-    }
-
     /**
-     * @return the number of contour levels
+     * @return the number of isolines
      */
     public RangedInteger getNumberOfIsolines() {
         return nOfIsolines;
     }
 
     /**
-     * @param contourLevels the number of contour levels
+     * @param nOfIsolines the number of isolines
      */
-    public void setNumberOfIsolines(final RangedInteger contourLevels) {
-        this.nOfIsolines = contourLevels;
-    }
-
-    /**
-     * @return a string representation of the min isoline value
-     */
-    public String getMinIsolineValueString() {
-        return minIsolineValue;
-    }
-
-    /**
-     * @param minIsolineValue to set
-     */
-    public void setMinIsolineValueString(final String minIsolineValue) {
-        this.minIsolineValue = minIsolineValue;
-    }
-
-    /**
-     * @return a string representation of the maximum isoline value
-     */
-    public String getMaxIsolineValueString() {
-        return maxIsolineValue;
-    }
-
-    /**
-     * @param maxIsolineValue to set
-     */
-    public void setMaxIsolineValueString(final String maxIsolineValue) {
-        this.maxIsolineValue = maxIsolineValue;
-    }
-
-    /**
-     * @return the min isoline value
-     */
-    public Double getMinIsolineValue() {
-        updateMinAndMaxLayerValues();
-        return minIsolineValueDouble;
-    }
-
-    /**
-     * @param minIsolineValue to set
-     */
-    public void setMinIsolineValue(final Double minIsolineValue) {
-        this.minIsolineValue = minIsolineValue.toString();
-    }
-
-    /**
-     * @return the max isoline value
-     */
-    public Double getMaxIsolineValue() {
-        updateMinAndMaxLayerValues();
-        return maxIsolineValueDouble;
-    }
-
-    /**
-     * @param maxIsolineValue to set
-     */
-    public void setMaxIsolineValue(final Double maxIsolineValue) {
-        this.maxIsolineValue = maxIsolineValue.toString();
+    public void setNumberOfIsolines(final RangedInteger nOfIsolines) {
+        this.nOfIsolines = nOfIsolines;
     }
 
     /**

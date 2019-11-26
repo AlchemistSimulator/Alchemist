@@ -77,7 +77,7 @@ public abstract class DrawLayers implements Effect {
     @ExportForGUI(nameToExport = "G")
     private RangedInteger green = new RangedInteger(0, MAX_COLOUR_VALUE);
     @ExportForGUI(nameToExport = "B")
-    private RangedInteger blue = new RangedInteger(MAX_COLOUR_VALUE, MAX_COLOUR_VALUE);
+    private RangedInteger blue = new RangedInteger(0, MAX_COLOUR_VALUE, MAX_COLOUR_VALUE);
     private Color colorCache = Color.BLUE;
     @Nullable
     @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")

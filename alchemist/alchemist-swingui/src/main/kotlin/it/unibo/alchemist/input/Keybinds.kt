@@ -61,9 +61,8 @@ class Keybinds {
         @Throws(IOException::class)
         fun save() {
             File("$filesystemPath$filename").let {
-                it.parentFile.mkdirs()
-                if (!it.exists()) {
-                    it.createNewFile()
+                if ((!it.parentFile.exists() && !it.parentFile.mkdirs()) || (!it.exists() && !it.createNewFile())) {
+                    throw IOException("Failed to create keybind configuration file")
                 }
                 FileWriter(it.path, DEFAULT_CHARSET).use { w -> w.write(gson.toJson(config)) }
             }

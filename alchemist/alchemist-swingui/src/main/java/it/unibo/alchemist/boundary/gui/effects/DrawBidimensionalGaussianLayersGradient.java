@@ -39,19 +39,19 @@ public class DrawBidimensionalGaussianLayersGradient extends DrawLayersGradient 
         if (minAndMaxToBeSet) {
             final Double minLayerValue = 0.1;
             final Double maxLayerValue = toDraw.stream()
-                    .filter(l -> l instanceof BidimensionalGaussianLayer)
-                    .map(l -> (BidimensionalGaussianLayer) l)
-                    .map(l -> l.getValue(env.makePosition(l.getCenterX(), l.getCenterY())))
-                    .max(Double::compare).orElse(minLayerValue);
-
+                .filter(l -> l instanceof BidimensionalGaussianLayer)
+                .map(l -> (BidimensionalGaussianLayer) l)
+                .map(l -> l.getValue(env.makePosition(l.getCenterX(), l.getCenterY())))
+                .max(Double::compare)
+                .orElse(minLayerValue);
             super.setMinLayerValue(minLayerValue.toString());
             super.setMaxLayerValue(maxLayerValue.toString());
             minAndMaxToBeSet = false;
         }
 
         toDraw.stream()
-                .filter(l -> l instanceof BidimensionalGaussianLayer)
-                .map(l -> (BidimensionalGaussianLayer) l)
-                .forEach(l -> super.drawValues((Function<P, Number>) l::getValue, env, g, wormhole));
+            .filter(l -> l instanceof BidimensionalGaussianLayer)
+            .map(l -> (BidimensionalGaussianLayer) l)
+            .forEach(l -> super.drawValues((Function<P, Number>) l::getValue, env, g, wormhole));
     }
 }

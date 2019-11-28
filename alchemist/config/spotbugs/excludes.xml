@@ -46,6 +46,10 @@
 		<Source name="~.*\.kt" />
 	</Match>
 	<Match>
+		<Bug pattern="NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE" />
+		<Source name="~.*\.kt" />
+	</Match>
+	<Match>
 		<Bug pattern="CN_IDIOM_NO_SUPER_CALL" />
 	</Match>
 	<Match>

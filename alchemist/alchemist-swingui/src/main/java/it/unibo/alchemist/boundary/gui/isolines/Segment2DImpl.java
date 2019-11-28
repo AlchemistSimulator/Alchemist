@@ -9,6 +9,8 @@
 
 package it.unibo.alchemist.boundary.gui.isolines;
 
+import java.util.Objects;
+
 class Segment2DImpl implements Segment2D {
 
     private final Number x1;
@@ -42,5 +44,25 @@ class Segment2DImpl implements Segment2D {
     @Override
     public Number getY2() {
         return y2;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Segment2DImpl segment2D = (Segment2DImpl) o;
+        return Objects.equals(x1, segment2D.x1)
+                && Objects.equals(y1, segment2D.y1)
+                && Objects.equals(x2, segment2D.x2)
+                && Objects.equals(y2, segment2D.y2);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x1, y1, x2, y2);
     }
 }

@@ -10,6 +10,7 @@
 package it.unibo.alchemist.boundary.gui.isolines;
 
 import java.util.Collection;
+import java.util.Objects;
 
 class IsolineImpl implements Isoline {
 
@@ -31,4 +32,21 @@ class IsolineImpl implements Isoline {
         return segments;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final IsolineImpl isoline = (IsolineImpl) o;
+        return Objects.equals(value, isoline.value)
+                && Objects.equals(segments, isoline.segments);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value, segments);
+    }
 }

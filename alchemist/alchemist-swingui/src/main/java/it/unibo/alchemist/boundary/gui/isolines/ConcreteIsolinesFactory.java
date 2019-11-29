@@ -27,7 +27,6 @@ public class ConcreteIsolinesFactory implements IsolinesFactory {
         Objects.requireNonNull(y1);
         Objects.requireNonNull(x2);
         Objects.requireNonNull(y2);
-
         return new Segment2DImpl(x1, y1, x2, y2);
     }
 
@@ -37,8 +36,7 @@ public class ConcreteIsolinesFactory implements IsolinesFactory {
     @Override
     public Isoline makeIsoline(final Number value, final Collection<Segment2D> segments) {
         Objects.requireNonNull(value);
-        Utilities.requireNonNull(segments); // checks every element
-
+        Objects.requireNonNull(segments);
         return new IsolineImpl(value, segments);
     }
 

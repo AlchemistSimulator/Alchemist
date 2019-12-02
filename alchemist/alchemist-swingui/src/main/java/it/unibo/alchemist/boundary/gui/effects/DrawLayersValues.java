@@ -81,7 +81,6 @@ public abstract class DrawLayersValues extends DrawLayers {
     protected void updateMinAndMaxLayerValues() {
         minLayerValueCached = minLayerValue;
         maxLayerValueCached = maxLayerValue;
-
         try {
             minLayerValueDouble = Double.parseDouble(minLayerValueCached);
             maxLayerValueDouble = Double.parseDouble(maxLayerValueCached);

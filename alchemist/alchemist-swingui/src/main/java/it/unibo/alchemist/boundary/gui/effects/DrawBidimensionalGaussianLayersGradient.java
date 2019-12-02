@@ -48,7 +48,6 @@ public class DrawBidimensionalGaussianLayersGradient extends DrawLayersGradient 
             super.setMaxLayerValue(maxLayerValue.toString());
             minAndMaxToBeSet = false;
         }
-
         toDraw.stream()
             .filter(l -> l instanceof BidimensionalGaussianLayer)
             .map(l -> (BidimensionalGaussianLayer) l)

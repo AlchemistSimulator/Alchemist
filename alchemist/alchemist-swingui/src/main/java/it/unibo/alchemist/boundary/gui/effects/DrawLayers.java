@@ -108,8 +108,8 @@ public abstract class DrawLayers implements Effect {
     @Override
     public <T, P extends Position2D<P>> void apply(final Graphics2D g, final Node<T> n, final Environment<T, P> env, final IWormhole2D<P> wormhole) {
         // if marker node is no longer in the environment or it is no longer displayed, we need to change it
-        if (markerNode.isPresent() && (!env.getNodes().contains(markerNode.get())
-                                        || !wormhole.isInsideView(wormhole.getViewPoint(env.getPosition((Node<T>) markerNode.get()))))) {
+        if (markerNode.isPresent()
+                && (!env.getNodes().contains(markerNode.get()) || !wormhole.isInsideView(wormhole.getViewPoint(env.getPosition((Node<T>) markerNode.get()))))) {
             markerNode = Optional.empty();
         }
         if (markerNode.isEmpty()) {
@@ -132,17 +132,14 @@ public abstract class DrawLayers implements Effect {
                     L.error("Bug.", e);
                 }
             }
-
             colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
             g.setColor(colorCache);
-
             final List<Layer<T, P>> toDraw = new ArrayList<>();
             if (layerFilter && molecule != null && env.getLayer(molecule).isPresent()) {
                 toDraw.add(env.getLayer(molecule).get());
             } else {
                 toDraw.addAll(env.getLayers());
             }
-
             if (!toDraw.isEmpty()) {
                 drawLayers(toDraw, env, g, wormhole);
             }

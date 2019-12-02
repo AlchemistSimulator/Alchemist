@@ -59,39 +59,30 @@ public abstract class DrawLayersGradient extends DrawLayersValues {
         if (minOrMaxLayerValuesNeedsToBeUpdated()) {
             updateMinAndMaxLayerValues();
         }
-
         final Dimension2D viewSize = wormhole.getViewSize();
-
         final int viewStartX = 0;
         final int viewStartY = 0;
         final int viewEndX = (int) Math.ceil(viewSize.getWidth());
         final int viewEndY = (int) Math.ceil(viewSize.getHeight());
-
         final int stepX = (viewEndX - viewStartX) / samples.getVal();
         final int stepY = (viewEndY - viewStartY) / samples.getVal();
-
         for (int i1 = viewStartX; i1 < viewEndX; i1 += stepX) {
             final int i2 = i1 + stepX;
             for (int j1 = viewStartY; j1 < viewEndY; j1 += stepY) {
                 final int j2 = j1 + stepY;
-
                 final Point p1 = new Point(i1, j1);
                 final Point p2 = new Point(i1, j2);
                 final Point p3 = new Point(i2, j1);
                 final Point p4 = new Point(i2, j2);
-
                 final P envP1 = wormhole.getEnvPoint(p1);
                 final P envP2 = wormhole.getEnvPoint(p2);
                 final P envP3 = wormhole.getEnvPoint(p3);
                 final P envP4 = wormhole.getEnvPoint(p4);
-
                 final double v1 = f.apply(envP1).doubleValue();
                 final double v2 = f.apply(envP2).doubleValue();
                 final double v3 = f.apply(envP3).doubleValue();
                 final double v4 = f.apply(envP4).doubleValue();
-
                 final double v = (v1 + v2 + v3 + v4) / 4;
-
                 final double newAlpha = map(v, getMinLayerValueDouble(), getMaxLayerValueDouble(), 0, getAlpha().getVal());
                 g.setColor(new Color(getRed().getVal(), getGreen().getVal(), getBlue().getVal(), (int) Math.ceil(newAlpha)));
                 g.fillRect(i1, j1, i2 - i1, j2 - j1);

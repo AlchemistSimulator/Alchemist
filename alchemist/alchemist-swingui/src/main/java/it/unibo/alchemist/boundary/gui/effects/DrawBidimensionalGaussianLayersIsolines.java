@@ -50,7 +50,6 @@ public class DrawBidimensionalGaussianLayersIsolines extends DrawLayersIsolines 
                     .map(l -> (BidimensionalGaussianLayer) l)
                     .map(l -> l.getValue(env.makePosition(l.getCenterX(), l.getCenterY())))
                     .max(Double::compare).orElse(minLayerValue);
-
             super.setMinLayerValue(minLayerValue.toString());
             super.setMaxLayerValue(maxLayerValue.toString());
             minAndMaxToBeSet = false;

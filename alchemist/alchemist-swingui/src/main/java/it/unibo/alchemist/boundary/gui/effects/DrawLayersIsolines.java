@@ -11,7 +11,6 @@ package it.unibo.alchemist.boundary.gui.effects;
 
 import it.unibo.alchemist.boundary.gui.isolines.IsolinesFinder;
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
-import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 
@@ -23,6 +22,7 @@ import java.awt.Point;
 import java.awt.geom.Dimension2D;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -34,14 +34,13 @@ import java.util.stream.Collectors;
  * - the max layer value
  * - the distribution, used to space isoline values between min and max
  *
- * This class defines the {@link DrawLayersIsolines#drawValues(Function, Environment, Graphics2D, IWormhole2D)}
+ * This class defines the {@link DrawLayersIsolines#drawFunction(Function, Environment, Graphics2D, IWormhole2D)}
  * method, which is capable of drawing a layer's isolines given a function.
- * It's responsibility of the subclasses to map each layer to such a function.
+ * The only responsibility left to subclasses is to provide a {@link LayerToFunctionMapper}.
  */
 public abstract class DrawLayersIsolines extends DrawLayersValues {
 
     private static final int MAX_NUMBER_OF_ISOLINES = 50;
-    private static final long serialVersionUID = 1L;
     @ExportForGUI(nameToExport = "Number of isolines")
     private RangedInteger nOfIsolines = new RangedInteger(1, MAX_NUMBER_OF_ISOLINES, MAX_NUMBER_OF_ISOLINES / 4);
     @ExportForGUI(nameToExport = "Distribution between min and max")
@@ -71,13 +70,7 @@ public abstract class DrawLayersIsolines extends DrawLayersValues {
      * {@inheritDoc}
      */
     @Override
-    protected abstract <T, P extends Position2D<P>> void drawLayers(Collection<Layer<T, P>> toDraw, Environment<T, P> env, Graphics2D g, IWormhole2D<P> wormhole);
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected <T, P extends Position2D<P>> void drawValues(final Function<? super P, ? extends Number> f, final Environment<T, P> env, final Graphics2D g, final IWormhole2D<P> wormhole) {
+    public <T, P extends Position2D<P>> void drawFunction(final Function<? super P, ? extends Number> f, final Environment<T, P> env, final Graphics2D g, final IWormhole2D<P> wormhole) {
         final Dimension2D viewSize = wormhole.getViewSize();
         final int viewStartX = 0;
         final int viewStartY = 0;
@@ -167,19 +160,7 @@ public abstract class DrawLayersIsolines extends DrawLayersValues {
 
         @Override
         public String toString() {
-            final String sup = super.toString();
-            final StringBuilder sb = new StringBuilder(2 * sup.length());
-            if (!sup.isEmpty()) {
-                sb.append(sup.charAt(0));
-            }
-            for (int i = 1; i < sup.length(); i++) {
-                final char curChar = sup.charAt(i);
-                if (Character.isUpperCase(curChar)) {
-                    sb.append(' ');
-                }
-                sb.append(curChar);
-            }
-            return sb.toString();
+            return name().toLowerCase(Locale.ENGLISH);
         }
     }
 

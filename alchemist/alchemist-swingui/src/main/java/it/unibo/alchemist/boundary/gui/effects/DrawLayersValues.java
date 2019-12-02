@@ -29,16 +29,15 @@ import java.util.function.Function;
  * a "non-numerical" layer whose {@link it.unibo.alchemist.model.interfaces.Layer#getValue(it.unibo.alchemist.model.interfaces.Position)}
  * return type is an object from which a value can be extracted somehow. In the end,
  * drawing a layer's values makes sense as long as there is a way to map
- * those values to Numbers. As this class is not aware of how to do this
- * mapping for the different types of layers, this responsibility is left to subclasses.
+ * those values to Numbers. More generally, a {@link LayerToFunctionMapper} is needed.
+ * As this class is not aware of which mapper to use, this responsibility is left to subclasses.
  *
  * When drawing layers values, it can be important to know the min and max
  * layer values that will be drawn. This class declares gui controls
  * that allow the user to specify such boundaries.
  */
-public abstract class DrawLayersValues extends DrawLayers {
+public abstract class DrawLayersValues extends AbstractDrawLayers implements FunctionDrawer {
 
-    private static final long serialVersionUID = 1L;
     @ExportForGUI(nameToExport = "Min layer value")
     private String minLayerValue = "0.0";
     @ExportForGUI(nameToExport = "Max layer value")
@@ -48,25 +47,25 @@ public abstract class DrawLayersValues extends DrawLayers {
     private String maxLayerValueCached = maxLayerValue;
     private Double minLayerValueDouble = Double.parseDouble(minLayerValueCached);
     private Double maxLayerValueDouble = Double.parseDouble(maxLayerValueCached);
+    private LayerToFunctionMapper mapper;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected abstract <T, P extends Position2D<P>> void drawLayers(Collection<Layer<T, P>> toDraw, Environment<T, P> env, Graphics2D g, IWormhole2D<P> wormhole);
+    public <T, P extends Position2D<P>> void drawLayers(final Collection<Layer<T, P>> toDraw, final Environment<T, P> env, final Graphics2D g, final IWormhole2D<P> wormhole) {
+        if (mapper == null) {
+            mapper = createMapper();
+        }
+        mapper.prepare(this, toDraw, env, g, wormhole);
+        mapper.map(toDraw.stream()).forEach(f -> this.drawFunction(f, env, g, wormhole));
+    }
 
     /**
-     * Draw values of a provided function which takes a Position of type P as input and gives a
-     * Number as output. The subclasses are responsible for the mapping of each layer to such a function.
-     *
-     * @param f        - the function
-     * @param env      - the environment (mainly used to make positions)
-     * @param g        - the Graphics2D
-     * @param wormhole - the wormhole
-     * @param <T>      - concentration type
-     * @param <P>      - position type
+     * {@inheritDoc}
      */
-    protected abstract <T, P extends Position2D<P>> void drawValues(Function<? super P, ? extends Number> f, Environment<T, P> env, Graphics2D g, IWormhole2D<P> wormhole);
+    @Override
+    public abstract <T, P extends Position2D<P>> void drawFunction(Function<? super P, ? extends Number> f, Environment<T, P> env, Graphics2D g, IWormhole2D<P> wormhole);
 
     /**
      * @return a boolean representing whether or not min and max layer values should be updated
@@ -88,6 +87,11 @@ public abstract class DrawLayersValues extends DrawLayers {
             L.warn(minLayerValue + " or " + maxLayerValue + " are not valid values");
         }
     }
+
+    /**
+     * @return a layer to function mapper
+     */
+    protected abstract LayerToFunctionMapper createMapper();
 
     /**
      * @return a string representation of the min layer value

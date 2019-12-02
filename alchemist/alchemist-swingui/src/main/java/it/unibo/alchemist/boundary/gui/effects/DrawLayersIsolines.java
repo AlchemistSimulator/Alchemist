@@ -85,13 +85,11 @@ public abstract class DrawLayersIsolines extends DrawLayersValues {
             updateMinAndMaxLayerValues();
             distributionCached = distribution;
 
-            final double[] l;
-            if (distribution == Distribution.LOGARITHMIC) {
-                l = logspace(getMinLayerValueDouble(), getMaxLayerValueDouble(), nOfIsolines.getVal(), Math.E);
-            } else {
-                l = linspace(getMinLayerValueDouble(), getMaxLayerValueDouble(), nOfIsolines.getVal());
-            }
-            levels = Arrays.stream(l).boxed().collect(Collectors.toList());
+            levels = Arrays.stream(
+                    distribution == Distribution.LOGARITHMIC
+                            ? logspace(getMinLayerValueDouble(), getMaxLayerValueDouble(), nOfIsolines.getVal(), Math.E)
+                            : linspace(getMinLayerValueDouble(), getMaxLayerValueDouble(), nOfIsolines.getVal())
+            ).boxed().collect(Collectors.toList());
         }
         algorithm.findIsolines((x, y) -> f.apply(env.makePosition(x, y)),
                 envStart.getX(), envStart.getY(), envEnd.getX(), envEnd.getY(), levels).forEach(isoline -> {

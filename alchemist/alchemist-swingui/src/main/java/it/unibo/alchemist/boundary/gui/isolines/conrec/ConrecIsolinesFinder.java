@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 public class ConrecIsolinesFinder implements IsolinesFinder {
 
     private static final int SAMPLES = 100; // for each dimension
-
     private final IsolinesFactory factory;
 
     /**

@@ -46,7 +46,6 @@ public abstract class DrawLayersIsolines extends DrawLayersValues {
     private RangedInteger nOfIsolines = new RangedInteger(1, MAX_NUMBER_OF_ISOLINES, MAX_NUMBER_OF_ISOLINES / 4);
     @ExportForGUI(nameToExport = "Distribution between min and max")
     private Distribution distribution = Distribution.LINEAR;
-
     private int nOfIsolinesCached = nOfIsolines.getVal();
     private Distribution distributionCached = distribution;
     private Collection<Number> levels;

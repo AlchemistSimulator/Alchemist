@@ -43,7 +43,6 @@ public abstract class DrawLayersValues extends AbstractDrawLayers implements Fun
     private String minLayerValue = "0.0";
     @ExportForGUI(nameToExport = "Max layer value")
     private String maxLayerValue = "0.0";
-
     private String minLayerValueCached = minLayerValue;
     private String maxLayerValueCached = maxLayerValue;
     private Double minLayerValueDouble = Double.parseDouble(minLayerValueCached);

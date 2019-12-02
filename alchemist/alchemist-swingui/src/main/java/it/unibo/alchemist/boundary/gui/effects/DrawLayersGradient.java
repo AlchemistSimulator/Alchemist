@@ -39,7 +39,6 @@ public abstract class DrawLayersGradient extends DrawLayersValues {
     private static final long serialVersionUID = 1L;
     private static final int MIN_SAMPLES = 10;
     private static final int MAX_SAMPLES = 400;
-
     @ExportForGUI(nameToExport = "Samples for each side")
     private RangedInteger samples = new RangedInteger(MIN_SAMPLES, MAX_SAMPLES, MIN_SAMPLES * 10);
 

@@ -36,6 +36,7 @@ import java.util.function.Function;
  */
 public abstract class DrawLayersGradient extends DrawLayersValues {
 
+    private static final long serialVersionUID = 1L;
     private static final int MIN_SAMPLES = 10;
     private static final int MAX_SAMPLES = 400;
 

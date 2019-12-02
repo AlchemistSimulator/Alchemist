@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
  */
 public abstract class DrawLayersIsolines extends DrawLayersValues {
 
+    private static final long serialVersionUID = 1L;
     private static final int MAX_NUMBER_OF_ISOLINES = 50;
     @ExportForGUI(nameToExport = "Number of isolines")
     private RangedInteger nOfIsolines = new RangedInteger(1, MAX_NUMBER_OF_ISOLINES, MAX_NUMBER_OF_ISOLINES / 4);

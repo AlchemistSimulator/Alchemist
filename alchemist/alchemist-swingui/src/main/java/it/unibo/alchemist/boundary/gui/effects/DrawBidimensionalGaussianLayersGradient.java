@@ -15,6 +15,8 @@ package it.unibo.alchemist.boundary.gui.effects;
  */
 public class DrawBidimensionalGaussianLayersGradient extends DrawLayersGradient {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * {@inheritDoc}
      */

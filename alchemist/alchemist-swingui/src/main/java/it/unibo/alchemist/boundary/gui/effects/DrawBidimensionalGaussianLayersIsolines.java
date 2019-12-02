@@ -18,6 +18,8 @@ import it.unibo.alchemist.boundary.gui.isolines.IsolinesFactory;
  */
 public class DrawBidimensionalGaussianLayersIsolines extends DrawLayersIsolines {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      */
     public DrawBidimensionalGaussianLayersIsolines() {

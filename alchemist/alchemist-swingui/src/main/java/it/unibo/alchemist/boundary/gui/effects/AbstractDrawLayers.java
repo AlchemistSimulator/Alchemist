@@ -10,16 +10,12 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Position2D;
-import org.danilopianini.lang.CollectionWithCurrentElement;
-import org.danilopianini.lang.ImmutableCollectionWithCurrentElement;
 import org.danilopianini.lang.RangedInteger;
 import org.danilopianini.view.ExportForGUI;
 import org.slf4j.Logger;
@@ -29,7 +25,6 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.Set;
 import java.util.Collection;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -55,10 +50,9 @@ public abstract class AbstractDrawLayers implements DrawLayers {
     /**
      */
     protected static final Logger L = LoggerFactory.getLogger(DrawShape.class);
+    private static final long serialVersionUID = 1L;
     @ExportForGUI(nameToExport = "Draw only layer containing a molecule")
     private boolean layerFilter;
-    @ExportForGUI(nameToExport = "Incarnation to use")
-    private CollectionWithCurrentElement<String> curIncarnation;
     @ExportForGUI(nameToExport = "Molecule")
     private String molString = "";
     @ExportForGUI(nameToExport = "A")
@@ -76,26 +70,14 @@ public abstract class AbstractDrawLayers implements DrawLayers {
     @Nullable
     @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
     private transient Object molStringCached;
-    @SuppressFBWarnings(value = "SE_TRANSIENT_FIELD_NOT_RESTORED", justification = "If null, it gets reinitialized anyway if needed")
-    private transient CollectionWithCurrentElement<String> prevIncarnation;
-    private transient Incarnation<?, ?> incarnation;
     private transient Optional<Node> markerNode = Optional.empty();
-
-    /**
-     */
-    public AbstractDrawLayers() {
-        final Set<String> availableIncarnations = SupportedIncarnations.getAvailableIncarnations();
-        if (availableIncarnations.isEmpty()) {
-            throw new IllegalStateException(getClass().getSimpleName() + " can't work if no incarnation is available.");
-        }
-        curIncarnation = new ImmutableCollectionWithCurrentElement<>(availableIncarnations, availableIncarnations.stream().findAny().get());
-    }
 
     /**
      * {@inheritDoc}
      */
     @SuppressWarnings({"PMD.CompareObjectsWithEquals", "unchecked"})
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
+    @Override
     public <T, P extends Position2D<P>> void apply(final Graphics2D g, final Node<T> n, final Environment<T, P> env, final IWormhole2D<P> wormhole) {
         // if marker node is no longer in the environment or it is no longer displayed, we need to change it
         if (markerNode.isPresent()
@@ -106,21 +88,9 @@ public abstract class AbstractDrawLayers implements DrawLayers {
             markerNode = Optional.of(n);
         }
         if (markerNode.get() == n) { // at this point markerNode.isPresent() is always true, so we directly get it
-            if (layerFilter && (incarnation == null || curIncarnation != prevIncarnation || molString != molStringCached)) {
+            if (layerFilter && (molecule == null || molString != molStringCached)) {
                 molStringCached = molString;
-                prevIncarnation = curIncarnation;
-                incarnation = SupportedIncarnations.get(curIncarnation.getCurrent())
-                        .orElseThrow(() -> new IllegalStateException(curIncarnation.getCurrent() + " is not a valid incarnation."));
-                /*
-                 * Process in a separate thread: if it fails, does not kill EDT.
-                 */
-                final Thread th = new Thread(() -> molecule = incarnation.createMolecule(molString));
-                th.start();
-                try {
-                    th.join();
-                } catch (final InterruptedException e) {
-                    L.error("Bug.", e);
-                }
+                env.getIncarnation().ifPresent(incarnation -> molecule = incarnation.createMolecule(molString));
             }
             colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
             g.setColor(colorCache);
@@ -139,6 +109,7 @@ public abstract class AbstractDrawLayers implements DrawLayers {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Color getColorSummary() {
         return colorCache;
     }
@@ -161,20 +132,6 @@ public abstract class AbstractDrawLayers implements DrawLayers {
      */
     public void setLayerFilter(final boolean layerFilter) {
         this.layerFilter = layerFilter;
-    }
-
-    /**
-     * @return a String representing the current incarnation
-     */
-    public CollectionWithCurrentElement<String> getCurIncarnation() {
-        return curIncarnation;
-    }
-
-    /**
-     * @param curIncarnation a String representing the incarnation to use
-     */
-    public void setCurIncarnation(final CollectionWithCurrentElement<String> curIncarnation) {
-        this.curIncarnation = curIncarnation;
     }
 
     /**

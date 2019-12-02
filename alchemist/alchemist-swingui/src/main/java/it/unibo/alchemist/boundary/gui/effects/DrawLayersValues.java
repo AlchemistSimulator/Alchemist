@@ -38,6 +38,7 @@ import java.util.function.Function;
  */
 public abstract class DrawLayersValues extends AbstractDrawLayers implements FunctionDrawer {
 
+    private static final long serialVersionUID = 1L;
     @ExportForGUI(nameToExport = "Min layer value")
     private String minLayerValue = "0.0";
     @ExportForGUI(nameToExport = "Max layer value")

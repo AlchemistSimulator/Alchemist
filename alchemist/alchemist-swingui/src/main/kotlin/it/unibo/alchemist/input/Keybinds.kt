@@ -3,6 +3,7 @@ package it.unibo.alchemist.input
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import javafx.scene.input.KeyCode
 import org.kaikikm.threadresloader.ResourceLoader
 import java.io.File
@@ -59,6 +60,10 @@ class Keybinds {
          * @throws IOException
          */
         @Throws(IOException::class)
+        @SuppressFBWarnings(
+            "OBL_UNSATISFIED_OBLIGATION",
+            "The 'use' function guarantees that the resources will get closed down correctly"
+        )
         fun save() {
             File("$filesystemPath$filename").let {
                 if ((!it.parentFile.exists() && !it.parentFile.mkdirs()) || (!it.exists() && !it.createNewFile())) {

@@ -1,6 +1,7 @@
 package it.unibo.alchemist.boundary.monitor;
 
 import com.jfoenix.controls.JFXButton;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
@@ -30,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <T> The type which describes the {@link it.unibo.alchemist.model.interfaces.Concentration} of a molecule
  * @param <P> The type which describes the {@link Position} positions
  */
+@SuppressFBWarnings(value = "DM_EXIT", justification = "The program needs to exit when the user clicks on the exit button")
 public class PlayPauseMonitor<T, P extends Position<? extends P>> extends JFXButton implements OutputMonitor<T, P> {
     /**
      * Default serial version UID.
@@ -174,6 +176,7 @@ public class PlayPauseMonitor<T, P extends Position<? extends P>> extends JFXBut
      * Orders the simulation to transition into a certain status.
      * @param nextStatus the status to transition into.
      */
+    @SuppressFBWarnings(value = "DM_EXIT", justification = "The program needs to exit when a fatal error occurrs")
     private void setStatus(final Status nextStatus) {
         getSimulation().ifPresent(s -> {
             final long t = System.currentTimeMillis();

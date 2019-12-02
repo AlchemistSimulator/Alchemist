@@ -1,5 +1,6 @@
 package it.unibo.alchemist.boundary.gui.view;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.gui.controller.ButtonsBarController;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
@@ -58,6 +59,7 @@ import static it.unibo.alchemist.boundary.gui.controller.ButtonsBarController.BU
  * @param <T> the {@link it.unibo.alchemist.model.interfaces.Concentration} type
  * @param <P> the position type
  */
+@SuppressFBWarnings(value = "DM_EXIT", justification = "The program needs to exit when the user clicks on the exit button")
 public class SingleRunApp<T, P extends Position2D<P>> extends Application {
     /**
      * Main layout without nested layouts. Must inject eventual other nested layouts.

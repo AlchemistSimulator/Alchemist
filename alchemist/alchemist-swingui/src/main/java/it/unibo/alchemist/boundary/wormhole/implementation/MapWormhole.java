@@ -94,18 +94,12 @@ public final class MapWormhole extends Wormhole2D<GeoPosition> {
 
     @Override
     public Point getViewPoint(final GeoPosition environmentPoint) {
-        if (environmentPoint instanceof GeoPosition) {
-            final GeoPosition envPoint = (GeoPosition) environmentPoint;
-            final LatLong l = mapModel.getCenter();
-            final PointAdapter<GeoPosition> viewPoint = coordToPx(from(envPoint));
-            final PointAdapter<GeoPosition> centerView = coordToPx(from(l.longitude, l.latitude));
-            final PointAdapter<GeoPosition> diff = viewPoint.diff(centerView);
-            final PointAdapter<GeoPosition> vc = from(getViewPosition());
-            return vc.sum(diff).toPoint();
-        }
-        throw new IllegalArgumentException("Invalid position type on map: "
-                + environmentPoint + " of type: "
-                + environmentPoint.getClass().getName());
+        final LatLong l = mapModel.getCenter();
+        final PointAdapter<GeoPosition> viewPoint = coordToPx(from(environmentPoint));
+        final PointAdapter<GeoPosition> centerView = coordToPx(from(l.longitude, l.latitude));
+        final PointAdapter<GeoPosition> diff = viewPoint.diff(centerView);
+        final PointAdapter<GeoPosition> vc = from(getViewPosition());
+        return vc.sum(diff).toPoint();
     }
 
     @Override

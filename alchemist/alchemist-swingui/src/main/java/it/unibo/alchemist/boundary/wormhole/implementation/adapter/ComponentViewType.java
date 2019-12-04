@@ -58,6 +58,7 @@ public class ComponentViewType implements ViewType {
     /**
      * @inheritDocs
      */
+    @SuppressWarnings("checkstyle:MagicNumber")
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -67,7 +68,7 @@ public class ComponentViewType implements ViewType {
             return false;
         }
         final ComponentViewType nvt = (ComponentViewType) o;
-        return getWidth() == nvt.getWidth() && getHeight() == nvt.getHeight();
+        return Math.abs(getWidth() - nvt.getWidth()) < 0.0000001 && Math.abs(getHeight() - nvt.getHeight()) < 0.0000001;
     }
 
     /**

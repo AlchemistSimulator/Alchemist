@@ -19,6 +19,7 @@ import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
 import java.lang.reflect.Type
+import kotlin.math.abs
 
 private const val LOWER_BOUND = "lower bound"
 private const val UPPER_BOUND = "upper bound"
@@ -125,12 +126,13 @@ class RangedDoubleProperty @JvmOverloads constructor(
         if (javaClass != other?.javaClass) return false
         other as RangedDoubleProperty
         if (name != other.name) return false
-        if (lowerBound != other.lowerBound) return false
-        if (upperBound != other.upperBound) return false
+        if (abs(lowerBound - other.lowerBound) < 0.0000001) return false
+        if (abs(upperBound - other.upperBound) < 0.0000001) return false
         return true
     }
 
     companion object {
+
         /**
          * Returns a [JsonSerializer][com.google.gson.JsonSerializer] and
          * [JsonDeserializer][com.google.gson.JsonDeserializer] combo class

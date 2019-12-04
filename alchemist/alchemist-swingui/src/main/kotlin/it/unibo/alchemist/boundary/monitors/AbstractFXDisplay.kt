@@ -42,6 +42,10 @@ import java.util.stream.Stream
  * @param <T> The type which describes the [Concentration] of a molecule
  * @param <P> The type of position
  */
+@SuppressFBWarnings(
+    "NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR",
+    "Field is initialized in the initialize function"
+)
 abstract class AbstractFXDisplay<T, P : Position2D<P>>
 /**
  * Main constructor. It lets the developer specify the number of steps.
@@ -197,7 +201,7 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
      * @param environment the `Environment`
      * @param time the current `Time` of simulation
      */
-    @SuppressFBWarnings("CheckReturnValue", "False positive")
+    @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT", "False positive")
     private fun update(environment: Environment<T, P>, time: Time) {
 //            environment.simulation.schedule{ environment.moveNodeToPosition(environment.getNodeByID(0), LatLongPosition(8, 8)) }
         if (Thread.holdsLock(environment)) {

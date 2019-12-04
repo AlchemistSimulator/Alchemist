@@ -400,6 +400,15 @@ displacements:
       parameters: [0, 0]
 ```
 
+### Displacing multiple nodes on specific positions
+
+```yaml
+displacements:
+  - in:
+      type: SpecificPositions
+      parameters: [[0,1],[2,2],[3,4]]
+```
+
 ### Displacing multiple nodes at once
 
 This example places 10000 nodes randomly in a {{ anchor('Circle') }} with center in (0, 0) and radius 10.

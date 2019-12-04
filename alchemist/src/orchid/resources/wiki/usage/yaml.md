@@ -506,6 +506,20 @@ displacements:
       - *gradient
 ```
 
+### Triggers
+
+```yaml
+pools:
+  - pool:
+      - time-distribution:
+          type: Trigger
+          parameters: [0] # the param is the time step
+      type: Event
+      actions:
+        - type: MyActionType
+          parameters: [...] #
+```
+
 ## Writing layers
 
 It is possible to define overlays (layers) of data that can be sensed everywhere in the environment.

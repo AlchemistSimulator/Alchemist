@@ -43,7 +43,7 @@ public class Wormhole2D<P extends Position2D<? extends P>> extends AbstractWormh
         super(
                 env,
                 new ComponentViewType(comp),
-                from(comp.getWidth() / 2, comp.getHeight() / 2)
+                from(comp.getWidth() / 2.0, comp.getHeight() / 2.0)
         );
     }
 

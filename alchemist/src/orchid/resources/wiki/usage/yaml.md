@@ -162,6 +162,13 @@ If the simulation is not executed as batch, then the default value is used
 
 #### Arbitrary-valued variables
 
+```yaml
+variables:
+  myvar: &myvar
+    type: ArbitraryVariable
+    parameters: ["defaultValue", ["value1","value2","value3"]]
+```
+
 ### Dependent variables
 
 Some variables are combination of free parameters.

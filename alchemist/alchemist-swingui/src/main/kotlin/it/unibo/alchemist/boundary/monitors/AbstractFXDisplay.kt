@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary.monitors
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup
 import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory
 import it.unibo.alchemist.boundary.interfaces.DrawCommand
@@ -196,6 +197,7 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
      * @param environment the `Environment`
      * @param time the current `Time` of simulation
      */
+    @SuppressFBWarnings("CheckReturnValue", "False positive")
     private fun update(environment: Environment<T, P>, time: Time) {
 //            environment.simulation.schedule{ environment.moveNodeToPosition(environment.getNodeByID(0), LatLongPosition(8, 8)) }
         if (Thread.holdsLock(environment)) {

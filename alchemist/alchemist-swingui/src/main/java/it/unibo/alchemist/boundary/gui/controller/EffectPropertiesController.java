@@ -1,5 +1,6 @@
 package it.unibo.alchemist.boundary.gui.controller;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.HashMap;
@@ -59,6 +60,7 @@ import jiconfont.icons.GoogleMaterialDesignIcons;
  * on the effect specified in {@link #EffectPropertiesController(EffectFX, JFXDrawersStack, JFXDrawer) constructor}
  * it builds up the other effect-specific controls.
  */
+@SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH", justification = "Using assert to null-check avoids the possibility of null references")
 public class EffectPropertiesController implements Initializable {
     /**
      * Layout path.

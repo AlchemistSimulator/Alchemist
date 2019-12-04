@@ -34,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @param <P> the position type
  */
+@SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH", justification = "Using assert to null-check avoids the possibility of null references")
 public class ButtonsBarController<P extends Position2D<? extends P>> implements Initializable {
     /**
      * Layout path.
@@ -149,7 +150,6 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
      * @inheritDocs
      */
     @Override
-    @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH", justification = "Using assert to null-check avoids the possibility of null references")
     public void initialize(final URL location, final ResourceBundle resources) {
         assert controlPane != null : FXResourceLoader.getInjectionErrorMessage("controlPane", BUTTONS_BAR_LAYOUT);
         assert controlBar != null : FXResourceLoader.getInjectionErrorMessage("controlBar", BUTTONS_BAR_LAYOUT);

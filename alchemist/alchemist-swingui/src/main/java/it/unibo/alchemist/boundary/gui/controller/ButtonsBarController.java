@@ -4,6 +4,7 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
 import com.jfoenix.controls.JFXSlider;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
@@ -148,6 +149,7 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
      * @inheritDocs
      */
     @Override
+    @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH", justification = "Using assert to null-check avoids the possibility of null references")
     public void initialize(final URL location, final ResourceBundle resources) {
         assert controlPane != null : FXResourceLoader.getInjectionErrorMessage("controlPane", BUTTONS_BAR_LAYOUT);
         assert controlBar != null : FXResourceLoader.getInjectionErrorMessage("controlBar", BUTTONS_BAR_LAYOUT);

@@ -92,7 +92,7 @@ class Keybinds {
                     typeToken.type
                 )
                 true
-            } catch (e: Exception) {
+            } catch (e: IOException) {
                 false
             }
 

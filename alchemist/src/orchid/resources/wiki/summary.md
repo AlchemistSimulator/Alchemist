@@ -19,6 +19,7 @@
   - [Executing batches](usage/batch.md)
   - [Grid computing support](usage/grid.md)
   - [Writing custom components](usage/customization.md)
+  - [Frequently Asked Questions](usage/faq.md)
   - [Troubleshooting and known issues](usage/issues.md)
 - [Simulation examples](examples.md)
   - [With Protelis](examples/protelis.md)

@@ -36,3 +36,45 @@ which sets Swing non-accelerated mode, by invoking the following Java code:
 ```java
 System.setProperty("sun.java2d.opengl","false");
 ```
+
+### Writing simulations
+
+#### Use of formula-based vars as the basis for other vars
+
+
+#### Can I use formula-based variables for other variables?
+
+Problem
+
+```yaml
+variables:
+  episodes: &episodes
+    formula: 5
+  episode: &episode
+    min: 0
+    max: *episodes
+    step: 1
+    default: 0
+  learn: &learn
+    formula: 'episode==episodes'
+```
+
+Error: `Exception in thread "main" java.lang.IllegalArgumentException: Unable to convert {formula=5, name=episodes} to class java.lang.Number
+`
+
+Solution
+
+```yaml
+episodes: &episodes 5
+
+variables:
+  episodes:
+    formula: *episodes
+  episode: &episode
+    min: 0
+    max: *episodes
+    step: 1
+    default: 0
+  learn: &learn
+    formula: 'episode==episodes'
+```

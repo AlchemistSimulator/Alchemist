@@ -162,6 +162,13 @@ If the simulation is not executed as batch, then the default value is used
 
 #### Arbitrary-valued variables
 
+```yaml
+variables:
+  myvar: &myvar
+    type: ArbitraryVariable
+    parameters: ["defaultValue", ["value1","value2","value3"]]
+```
+
 ### Dependent variables
 
 Some variables are combination of free parameters.
@@ -400,6 +407,15 @@ displacements:
       parameters: [0, 0]
 ```
 
+### Displacing multiple nodes on specific positions
+
+```yaml
+displacements:
+  - in:
+      type: SpecificPositions
+      parameters: [[0,1],[2,2],[3,4]]
+```
+
 ### Displacing multiple nodes at once
 
 This example places 10000 nodes randomly in a {{ anchor('Circle') }} with center in (0, 0) and radius 10.
@@ -488,6 +504,20 @@ displacements:
       # Reference to the "gradient" list of programs. This program is executed in all
       # the grid nodes
       - *gradient
+```
+
+### Triggers
+
+```yaml
+pools:
+  - pool:
+      - time-distribution:
+          type: Trigger
+          parameters: [0] # the param is the time step
+      type: Event
+      actions:
+        - type: MyActionType
+          parameters: [...] #
 ```
 
 ## Writing layers

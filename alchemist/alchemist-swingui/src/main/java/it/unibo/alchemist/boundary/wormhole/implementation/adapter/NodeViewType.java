@@ -64,7 +64,7 @@ public class NodeViewType implements ViewType {
             return false;
         }
         final NodeViewType nvt = (NodeViewType) o;
-        return Math.abs(getWidth() - nvt.getWidth()) < Double.MIN_VALUE && Math.abs(getHeight() - nvt.getHeight()) < Double.MIN_VALUE ;
+        return Math.abs(getWidth() - nvt.getWidth()) < Double.MIN_VALUE && Math.abs(getHeight() - nvt.getHeight()) < Double.MIN_VALUE;
     }
 
     /**

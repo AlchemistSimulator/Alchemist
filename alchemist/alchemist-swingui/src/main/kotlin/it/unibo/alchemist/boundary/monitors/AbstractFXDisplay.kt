@@ -178,6 +178,7 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
 
     /**
      * The method initializes everything that is not initializable before first step.
+     * Inheriting classes that override this function should always call super.init to ensure proper initialization.
      *
      * @param environment the `Environment`
      */

@@ -15,12 +15,13 @@ import java.util.regex.Pattern
 
 object ClassPathScanner {
 
-    private fun classGraphForPackage(inPackage: String?): ClassGraph = ClassGraph().apply {
-        if (inPackage != null) {
-            whitelistPackages(inPackage)
-            blacklistPackages("org.gradle")
+    private fun classGraphForPackage(inPackage: String?): ClassGraph = ClassGraph()
+        .apply {
+            if (inPackage != null) {
+                whitelistPackages(inPackage)
+                blacklistPackages("org.gradle")
+            }
         }
-    }
 
     /**
      * This function loads all subtypes of the provided Java class that can be discovered on the current classpath.
@@ -37,10 +38,12 @@ object ClassPathScanner {
                 scanResult.getClassesImplementing(superClass.name)
             } else {
                 scanResult.getSubclasses(superClass.name)
-            }.filter { it -> !it.isAbstract }
+            }.filter { !it.isAbstract }
             .loadClasses()
-            .map { it -> it as Class<out T> }
+            .map { it as Class<out T> }
         }
+
+    inline fun <reified T> subTypesOf(inPackage: String? = null): List<Class<out T>> = subTypesOf(T::class.java, inPackage)
 
     /**
      * This function returns a list of all the resources in a certain (optional) package matching a regular expression.

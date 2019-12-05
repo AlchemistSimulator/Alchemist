@@ -12,7 +12,7 @@ import org.gradle.plugin.use.PluginDependencySpec
  * YOU are responsible for updating manually the dependency version.
  */
 object Versions {
-    const val io_github_javaeden_orchid: String = "0.17.6"
+    const val io_github_javaeden_orchid: String = "0.17.6" // available: "0.17.7"
 
     const val org_jetbrains_kotlin: String = "1.3.50"
 
@@ -37,7 +37,7 @@ object Versions {
     const val org_danilopianini_publish_on_central_gradle_plugin: String = "0.1.1"
              // available: "0.2.3"
 
-    const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String = "9.0.0"
+    const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String = "9.1.0"
 
     const val com_github_maiflai_scalatest_gradle_plugin: String = "0.25"
 
@@ -47,13 +47,13 @@ object Versions {
 
     const val org_jetbrains_kotlin_jvm_gradle_plugin: String = "1.3.50"
 
-    const val com_eden_orchidplugin_gradle_plugin: String = "0.17.6"
+    const val com_eden_orchidplugin_gradle_plugin: String = "0.17.6" // available: "0.17.7"
 
     const val com_gradle_build_scan_gradle_plugin: String = "2.4.2" // available: "3.0"
 
     const val thread_inheritable_resource_loader: String = "0.3.2"
 
-    const val com_github_spotbugs_gradle_plugin: String = "1.6.9" // available: "2.0.0"
+    const val com_github_spotbugs_gradle_plugin: String = "1.6.9" // available: "2.0.1"
 
     const val org_jetbrains_dokka_gradle_plugin: String = "0.10.0"
 
@@ -147,14 +147,14 @@ object Versions {
 
     const val konf: String = "0.13.3" // available: "0.20.0"
 
-    const val jpx: String = "1.5.3"
+    const val jpx: String = "1.5.3" // available: "1.6.0"
 
     /**
      * Current version: "5.6.3"
      * See issue 19: How to update Gradle itself?
      * https://github.com/jmfayard/buildSrcVersions/issues/19
      */
-    const val gradleLatestVersion: String = "5.6.3"
+    const val gradleLatestVersion: String = "5.6.4"
 }
 
 /**

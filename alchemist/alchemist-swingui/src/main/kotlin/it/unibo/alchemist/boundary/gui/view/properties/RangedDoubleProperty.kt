@@ -132,7 +132,6 @@ class RangedDoubleProperty @JvmOverloads constructor(
     }
 
     companion object {
-
         /**
          * Returns a [JsonSerializer][com.google.gson.JsonSerializer] and
          * [JsonDeserializer][com.google.gson.JsonDeserializer] combo class

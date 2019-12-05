@@ -60,10 +60,6 @@ class Keybinds {
          * @throws IOException
          */
         @Throws(IOException::class)
-        @SuppressFBWarnings(
-            "OBL_UNSATISFIED_OBLIGATION",
-            "The 'use' function guarantees that the resources will get closed down correctly"
-        )
         fun save() {
             File("$filesystemPath$filename").let {
                 if ((!it.parentFile.exists() && !it.parentFile.mkdirs()) || (!it.exists() && !it.createNewFile())) {

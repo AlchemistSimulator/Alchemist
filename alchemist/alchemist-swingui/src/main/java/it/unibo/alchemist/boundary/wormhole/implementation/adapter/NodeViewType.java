@@ -55,7 +55,6 @@ public class NodeViewType implements ViewType {
     /**
      * @inheritDocs
      */
-    @SuppressWarnings("checkstyle:MagicNumber")
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -65,7 +64,7 @@ public class NodeViewType implements ViewType {
             return false;
         }
         final NodeViewType nvt = (NodeViewType) o;
-        return Math.abs(getWidth() - nvt.getWidth()) < 0.0000001 && Math.abs(getHeight() - nvt.getHeight()) < 0.0000001;
+        return Math.abs(getWidth() - nvt.getWidth()) < Double.MIN_VALUE && Math.abs(getHeight() - nvt.getHeight()) < Double.MIN_VALUE ;
     }
 
     /**

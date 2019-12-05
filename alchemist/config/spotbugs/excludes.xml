@@ -2,9 +2,11 @@
 <FindBugsFilter xmlns="https://github.com/spotbugs/filter/3.0.0"
 				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 				xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubusercontent.com/spotbugs/spotbugs/release-3.1/spotbugs/etc/findbugsfilter.xsd">
+<!--	Disable all checks in Scala-->
 	<Match>
 		<Source name="~.*\.scala" />
 	</Match>
+<!--	Selectively disable checks generating false positives for Kotlin-->
 	<Match>
 		<Bug pattern="BC_BAD_CAST_TO_ABSTRACT_COLLECTION" />
 		<Source name="~.*\.kt" />
@@ -30,11 +32,23 @@
 		<Source name="~.*\.kt" />
 	</Match>
 	<Match>
+		<Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
+		<Source name="~.*\.kt"/>
+	</Match>
+	<Match>
+		<Bug pattern="SA_LOCAL_SELF_ASSIGNMENT"/>
+		<Source name="~.*\.kt"/>
+	</Match>
+	<Match>
 		<Bug pattern="SE_BAD_FIELD" />
 		<Source name="~.*\.kt" />
 	</Match>
 	<Match>
 		<Bug pattern="SE_NO_SERIALVERSIONID" />
+		<Source name="~.*\.kt" />
+	</Match>
+	<Match>
+		<Bug pattern="SF_SWITCH_NO_DEFAULT" />
 		<Source name="~.*\.kt" />
 	</Match>
 	<Match>
@@ -45,6 +59,7 @@
 		<Bug pattern="UWF_UNWRITTEN_FIELD" />
 		<Source name="~.*\.kt" />
 	</Match>
+<!--	Selectively disable checks generating false positives-->
 	<Match>
 		<Bug pattern="CN_IDIOM_NO_SUPER_CALL" />
 	</Match>
@@ -58,19 +73,14 @@
 		<Bug pattern="SE_INNER_CLASS" />
 	</Match>
 	<Match>
+		<Bug pattern="SE_INNER_CLASS" />
+	</Match>
+	<Match>
 		<Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON" />
 	</Match>
 	<Match>
 		<Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS" />
 	</Match>
-    <Match>
-        <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
-        <Source name="~.*\.kt"/>
-    </Match>
-    <Match>
-        <Bug pattern="SA_LOCAL_SELF_ASSIGNMENT"/>
-        <Source name="~.*\.kt"/>
-    </Match>
     <Match>
         <Bug pattern="UWF_NULL_FIELD"/>
     </Match>

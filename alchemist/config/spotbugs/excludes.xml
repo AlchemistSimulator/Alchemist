@@ -28,6 +28,10 @@
 		<Source name="~.*\.kt" />
 	</Match>
 	<Match>
+		<Bug pattern="OBL_UNSATISFIED_OBLIGATION" />
+		<Source name="~.*\.kt" />
+	</Match>
+	<Match>
 		<Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE" />
 		<Source name="~.*\.kt" />
 	</Match>

@@ -7,12 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.gui.isolines.conrec;
-
-import it.unibo.alchemist.boundary.gui.isolines.IsolinesFinder;
-import it.unibo.alchemist.boundary.gui.isolines.Isoline;
-import it.unibo.alchemist.boundary.gui.isolines.IsolinesFactory;
-import it.unibo.alchemist.boundary.gui.isolines.Segment2D;
+package it.unibo.alchemist.boundary.gui.isolines;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -22,12 +17,18 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+import it.unibo.alchemist.boundary.gui.effects.DrawShape;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import conrec.Conrec;
+
 /**
  * Conrec algorithm adapter to IsolinesFinder interface.
  */
 public class ConrecIsolinesFinder implements IsolinesFinder {
 
     private static final int SAMPLES = 100; // for each dimension
+    private static final Logger L = LoggerFactory.getLogger(DrawShape.class);
     private final IsolinesFactory factory;
 
     /**
@@ -90,14 +91,19 @@ public class ConrecIsolinesFinder implements IsolinesFinder {
         }
         // finding the isolines
         final Map<Double, List<Segment2D>> isolines = new HashMap<>();
-        new Conrec((startX1, startY1, endX1, endY1, contourLevel) -> { // render
-            final Segment2D segment = factory.makeSegment(startX1, startY1, endX1, endY1);
-            final double flooredValue = Math.floor(contourLevel * 10) / 10;
-            if (!isolines.containsKey(flooredValue)) {
-                isolines.put(flooredValue, new ArrayList<>());
-            }
-            isolines.get(flooredValue).add(segment);
-        }).contour(d, ilb, iub, jlb, jub, x, y, levels.size(), levels.stream().mapToDouble(Number::doubleValue).toArray());
+        try {
+            new Conrec((startX1, startY1, endX1, endY1, contourLevel) -> { // render
+                final Segment2D segment = factory.makeSegment(startX1, startY1, endX1, endY1);
+                final double flooredValue = Math.floor(contourLevel * 10) / 10;
+                if (!isolines.containsKey(flooredValue)) {
+                    isolines.put(flooredValue, new ArrayList<>());
+                }
+                isolines.get(flooredValue).add(segment);
+            }).contour(d, ilb, iub, jlb, jub, x, y, levels.size(), levels.stream().mapToDouble(Number::doubleValue).toArray());
+        } catch (Exception e) { // NOPMD
+            // this is horrible but necessary
+            L.warn("couldn't find isolines, conrec threw an exception: " + e.getMessage());
+        }
         return isolines.entrySet().stream().map(entry -> factory.makeIsoline(entry.getKey(), entry.getValue())).collect(Collectors.toList());
     }
 

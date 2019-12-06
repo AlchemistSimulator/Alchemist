@@ -9,8 +9,6 @@
 
 package it.unibo.alchemist.boundary.gui.isolines;
 
-import it.unibo.alchemist.boundary.gui.isolines.conrec.ConrecIsolinesFinder;
-
 import java.util.Collection;
 import java.util.Objects;
 

@@ -132,50 +132,46 @@ public final class SingleRunGUI {
         final GraphicalOutputMonitor<T, P> main = Objects.requireNonNull(sim).getEnvironment() instanceof MapEnvironment
                 ? (GraphicalOutputMonitor<T, P>) new MapDisplay<>()
                 : new Generic2DDisplay<>();
-        if (main instanceof Component) {
-            final JFrame frame = new JFrame("Alchemist Simulator");
-            frame.setDefaultCloseOperation(closeOperation);
-            final JPanel canvas = new JPanel();
-            frame.getContentPane().add(canvas);
-            canvas.setLayout(new BorderLayout());
-            canvas.add((Component) main, BorderLayout.CENTER);
-            /*
-             * Upper area
-             */
-            final JPanel upper = new JPanel();
-            upper.setLayout(new BoxLayout(upper, BoxLayout.X_AXIS));
-            canvas.add(upper, BorderLayout.NORTH);
-            final JEffectsTab<T> effects = new JEffectsTab<>(main, false);
-            if (effectsFile != null) {
-                try {
-                    effects.setEffects(EffectSerializationFactory.effectsFromFile(effectsFile));
-                } catch (IOException | ClassNotFoundException ex) {
-                    errorLoadingEffects(ex);
-                }
+        final JFrame frame = new JFrame("Alchemist Simulator");
+        frame.setDefaultCloseOperation(closeOperation);
+        final JPanel canvas = new JPanel();
+        frame.getContentPane().add(canvas);
+        canvas.setLayout(new BorderLayout());
+        canvas.add((Component) main, BorderLayout.CENTER);
+        /*
+         * Upper area
+         */
+        final JPanel upper = new JPanel();
+        upper.setLayout(new BoxLayout(upper, BoxLayout.X_AXIS));
+        canvas.add(upper, BorderLayout.NORTH);
+        final JEffectsTab<T> effects = new JEffectsTab<>(main, false);
+        if (effectsFile != null) {
+            try {
+                effects.setEffects(EffectSerializationFactory.effectsFromFile(effectsFile));
+            } catch (IOException | ClassNotFoundException ex) {
+                errorLoadingEffects(ex);
             }
-            upper.add(effects);
-            final TimeStepMonitor<T, P> time = new TimeStepMonitor<>();
-            sim.addOutputMonitor(time);
-            upper.add(time);
-            /*
-             * Go on screen
-             */
-            // frame.pack();
-            final Optional<Dimension> size = Arrays
-                    .stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices())
-                    .map(GraphicsDevice::getDisplayMode).map(dm -> new Dimension(dm.getWidth(), dm.getHeight()))
-                    .min(Comparator.comparingDouble(SingleRunGUI::area));
-            size.ifPresent(d -> d.setSize(d.getWidth() * SCALE_FACTOR, d.getHeight() * SCALE_FACTOR));
-            frame.setSize(size.orElse(new Dimension(FALLBACK_X_SIZE, FALLBACK_Y_SIZE)));
-            frame.setLocationByPlatform(true);
-            frame.setVisible(true);
-            /*
-             * OutputMonitor's add to the sim must be done as the last operation
-             */
-            sim.addOutputMonitor(main);
-        } else if (main instanceof Node) {
-            new SingleRunAppBuilder<>(sim).withEffectGroups(effectsFile).build();
         }
+        upper.add(effects);
+        final TimeStepMonitor<T, P> time = new TimeStepMonitor<>();
+        sim.addOutputMonitor(time);
+        upper.add(time);
+        /*
+         * Go on screen
+         */
+        // frame.pack();
+        final Optional<Dimension> size = Arrays
+                .stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices())
+                .map(GraphicsDevice::getDisplayMode).map(dm -> new Dimension(dm.getWidth(), dm.getHeight()))
+                .min(Comparator.comparingDouble(SingleRunGUI::area));
+        size.ifPresent(d -> d.setSize(d.getWidth() * SCALE_FACTOR, d.getHeight() * SCALE_FACTOR));
+        frame.setSize(size.orElse(new Dimension(FALLBACK_X_SIZE, FALLBACK_Y_SIZE)));
+        frame.setLocationByPlatform(true);
+        frame.setVisible(true);
+        /*
+         * OutputMonitor's add to the sim must be done as the last operation
+         */
+        sim.addOutputMonitor(main);
     }
 
     private static double area(final Dimension d) {

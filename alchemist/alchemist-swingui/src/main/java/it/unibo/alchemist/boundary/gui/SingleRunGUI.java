@@ -9,7 +9,6 @@ package it.unibo.alchemist.boundary.gui;
 
 import it.unibo.alchemist.boundary.gui.effects.EffectSerializationFactory;
 import it.unibo.alchemist.boundary.gui.effects.JEffectsTab;
-import it.unibo.alchemist.boundary.gui.view.SingleRunAppBuilder;
 import it.unibo.alchemist.boundary.interfaces.GraphicalOutputMonitor;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.monitors.Generic2DDisplay;
@@ -35,7 +34,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.Optional;
-import javafx.scene.Node;
 
 /**
  * Utility class for quickly creating non-reusable graphical interfaces.

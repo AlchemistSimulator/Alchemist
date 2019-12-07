@@ -65,7 +65,7 @@ public class SerializableStringProperty extends StringPropertyBase implements Se
             @Override
             public SerializableStringProperty deserialize(final JsonElement json, final Type typeOfT,
                                                           final JsonDeserializationContext context) {
-                final JsonObject jObj = (JsonObject) json;
+                final JsonObject jObj = json.getAsJsonObject();
 
                 final String name = jObj.get(NAME).getAsString();
                 final String value = jObj.get(VALUE).getAsString();

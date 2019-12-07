@@ -382,7 +382,7 @@ public class RangedIntegerProperty extends IntegerPropertyBase implements Serial
             @Override
             public RangedIntegerProperty deserialize(final JsonElement json, final Type typeOfT,
                     final JsonDeserializationContext context) {
-                final JsonObject jObj = (JsonObject) json;
+                final JsonObject jObj = json.getAsJsonObject();
 
                 final String name = jObj.get(NAME).getAsString();
                 final int value = jObj.get(VALUE).getAsInt();

@@ -3,6 +3,7 @@ package it.unibo.alchemist.boundary.gui.controller;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.gui.effects.EffectBuilderFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
@@ -36,6 +37,7 @@ import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRe
  *
  * @param <P> the position type
  */
+@SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH", justification = "Null checks are performed in the initialize function")
 public class EffectBarController<P extends Position2D<? extends P>> implements Initializable {
     /**
      * Layout path.

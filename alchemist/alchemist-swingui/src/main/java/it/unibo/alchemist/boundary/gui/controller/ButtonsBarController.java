@@ -4,13 +4,13 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
 import com.jfoenix.controls.JFXSlider;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -34,7 +34,6 @@ import org.jetbrains.annotations.Nullable;
  *
  * @param <P> the position type
  */
-@SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH", justification = "Using assert to null-check avoids the possibility of null references")
 public class ButtonsBarController<P extends Position2D<? extends P>> implements Initializable {
     /**
      * Layout path.
@@ -151,12 +150,12 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
      */
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
-        assert controlPane != null : FXResourceLoader.getInjectionErrorMessage("controlPane", BUTTONS_BAR_LAYOUT);
-        assert controlBar != null : FXResourceLoader.getInjectionErrorMessage("controlBar", BUTTONS_BAR_LAYOUT);
-        assert effectsButton != null : FXResourceLoader.getInjectionErrorMessage("effectsButton", BUTTONS_BAR_LAYOUT);
-        assert framerate != null : FXResourceLoader.getInjectionErrorMessage("speedSlider", BUTTONS_BAR_LAYOUT);
-        assert controlType != null : FXResourceLoader.getInjectionErrorMessage("controlType", BUTTONS_BAR_LAYOUT);
-        assert drawerStack != null : FXResourceLoader.getInjectionErrorMessage("drawerStack", BUTTONS_BAR_LAYOUT);
+        Objects.requireNonNull(controlPane, FXResourceLoader.getInjectionErrorMessage("controlPane", BUTTONS_BAR_LAYOUT));
+        Objects.requireNonNull(controlBar, FXResourceLoader.getInjectionErrorMessage("controlBar", BUTTONS_BAR_LAYOUT));
+        Objects.requireNonNull(effectsButton, FXResourceLoader.getInjectionErrorMessage("effectsButton", BUTTONS_BAR_LAYOUT));
+        Objects.requireNonNull(framerate, FXResourceLoader.getInjectionErrorMessage("speedSlider", BUTTONS_BAR_LAYOUT));
+        Objects.requireNonNull(controlType, FXResourceLoader.getInjectionErrorMessage("controlType", BUTTONS_BAR_LAYOUT));
+        Objects.requireNonNull(drawerStack, FXResourceLoader.getInjectionErrorMessage("drawerStack", BUTTONS_BAR_LAYOUT));
 
         addMonitors();
 

@@ -3,7 +3,6 @@ package it.unibo.alchemist.boundary.gui.controller;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.gui.effects.EffectBuilderFX;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
@@ -13,6 +12,7 @@ import it.unibo.alchemist.boundary.gui.view.cells.EffectGroupCell;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import java.net.URL;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -36,7 +36,6 @@ import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRe
  *
  * @param <P> the position type
  */
-@SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH", justification = "Using assert to null-check avoids the possibility of null references")
 public class EffectBarController<P extends Position2D<? extends P>> implements Initializable {
     /**
      * Layout path.
@@ -117,11 +116,11 @@ public class EffectBarController<P extends Position2D<? extends P>> implements I
      */
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
-        assert topBar != null : FXResourceLoader.getInjectionErrorMessage("topBar", EFFECT_BAR_LAYOUT);
-        assert addEffect != null : FXResourceLoader.getInjectionErrorMessage("add", EFFECT_BAR_LAYOUT);
-        assert effectsList != null : FXResourceLoader.getInjectionErrorMessage("effectsList", EFFECT_BAR_LAYOUT);
-        assert groupName != null : FXResourceLoader.getInjectionErrorMessage("groupName", EFFECT_BAR_LAYOUT);
-        assert backToGroups != null : FXResourceLoader.getInjectionErrorMessage("backToGroups", EFFECT_BAR_LAYOUT);
+        Objects.requireNonNull(topBar, FXResourceLoader.getInjectionErrorMessage("topBar", EFFECT_BAR_LAYOUT));
+        Objects.requireNonNull(addEffect, FXResourceLoader.getInjectionErrorMessage("add", EFFECT_BAR_LAYOUT));
+        Objects.requireNonNull(effectsList, FXResourceLoader.getInjectionErrorMessage("effectsList", EFFECT_BAR_LAYOUT));
+        Objects.requireNonNull(groupName, FXResourceLoader.getInjectionErrorMessage("groupName", EFFECT_BAR_LAYOUT));
+        Objects.requireNonNull(backToGroups, FXResourceLoader.getInjectionErrorMessage("backToGroups", EFFECT_BAR_LAYOUT));
 
         this.addEffect.setText("");
         this.addEffect.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.ADD));

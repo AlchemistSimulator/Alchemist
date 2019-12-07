@@ -1,6 +1,7 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
 import com.google.common.collect.Queues;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.gui.effects.json.ColorSerializationAdapter;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
@@ -30,6 +31,7 @@ import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur3_32;
  *
  * @param <P> the position type
  */
+@SuppressFBWarnings(value = "DMI_NONSERIALIZABLE_OBJECT_WRITTEN", justification = "The object that is written is actually serializable")
 public class DrawDot<P extends Position2D<? extends P>> extends AbstractEffect<P> {
 
     /**

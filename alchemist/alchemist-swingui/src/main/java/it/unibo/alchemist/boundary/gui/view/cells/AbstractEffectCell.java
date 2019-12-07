@@ -1,6 +1,7 @@
 package it.unibo.alchemist.boundary.gui.view.cells;
 
 import com.jfoenix.controls.JFXToggleButton;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
@@ -40,6 +41,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <T> the generic class that will be inside the cell; it should be
  *            {@link it.unibo.alchemist.boundary.gui.effects.EffectFX} or {@link it.unibo.alchemist.boundary.gui.effects.EffectGroup}
  */
+@SuppressFBWarnings(value = "BC_UNCONFIRMED_CAST_OF_RETURN_VALUE", justification = "A ChoiceDialog is always in its own stage")
 public abstract class AbstractEffectCell<T> extends ListCell<T> {
     /**
      * Default offset of the first injected node.

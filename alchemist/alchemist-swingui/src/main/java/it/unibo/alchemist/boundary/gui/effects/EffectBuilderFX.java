@@ -1,5 +1,6 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.ClassPathScanner;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
@@ -15,6 +16,7 @@ import java.util.Optional;
 /**
  * Class that lets the user choose the effect from all it can find.
  */
+@SuppressFBWarnings(value = "BC_UNCONFIRMED_CAST_OF_RETURN_VALUE", justification = "A ChoiceDialog is always in its own stage")
 public class EffectBuilderFX {
     /**
      * Set of available {@link EffectFX effect}s found by reflection.

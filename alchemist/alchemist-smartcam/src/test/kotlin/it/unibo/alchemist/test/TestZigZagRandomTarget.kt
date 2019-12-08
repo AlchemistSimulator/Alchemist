@@ -8,9 +8,9 @@ import io.kotlintest.specs.StringSpec
 import it.unibo.alchemist.model.implementations.geometry.asAngle
 import it.unibo.alchemist.model.implementations.movestrategies.ZigZagRandomTarget
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import org.apache.commons.math3.random.ISAACRandom
 import kotlin.math.cos
 import kotlin.math.sin
+import org.apache.commons.math3.random.ISAACRandom
 
 /**
  * This tests [ZigZagRandomTarget] and it's complicated because it takes in account both double comparison problems and

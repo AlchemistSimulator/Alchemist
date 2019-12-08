@@ -1,0 +1,10 @@
+incarnation: sapere
+
+variables:
+  var:
+    type: ListOf
+    parameters: [1, 2, 3, 4]
+
+environment:
+  type: Continuous2DEnvironment
+  parameters: []

@@ -4,14 +4,14 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.smartcam.randomAngle
-import java.lang.Math.toRadians
+import org.apache.commons.math3.random.RandomGenerator
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
-import org.apache.commons.math3.random.RandomGenerator
 
 /**
+ * NOTE: same as ZigZagRandomTarget but without the bug affecting Alchemist 9.0.0
  * Strategy to move an object in a zigzag fashion. It uses euclidean geometry to determine the next position.
  *
  * [getCurrentPosition] must return the current position of the object to move.
@@ -45,9 +45,7 @@ class ZigZagRandomTarget<T>(
         require(maxDistance >= 0.0)
     }
 
-    private val minChangeInDirectionRadians = toRadians(minChangeInDirection)
     private lateinit var startPosition: Euclidean2DPosition
-    private val distance = 100.0 // the random destination is picked at this distance from the node
     private var direction = 0.0 // angle in radians
 
     override fun initializePositions(currentPosition: Euclidean2DPosition) {
@@ -57,8 +55,8 @@ class ZigZagRandomTarget<T>(
     override fun shouldChangeTarget() = super.shouldChangeTarget() || getCurrentPosition().getDistanceTo(startPosition) >= maxDistance
 
     override fun chooseTarget() = with(changeDirection()) {
-        val x = cos(this) * distance
-        val y = sin(this) * sqrt(distance * distance + x * x)
+        val x = cos(this) * maxDistance
+        val y = sin(this) * sqrt(maxDistance * maxDistance + x * x)
         makePosition(x, y) + getCurrentPosition()
     }
 

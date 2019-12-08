@@ -11,7 +11,6 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 /**
- * NOTE: same as ZigZagRandomTarget but without the bug affecting Alchemist 9.0.0
  * Strategy to move an object in a zigzag fashion. It uses euclidean geometry to determine the next position.
  *
  * [getCurrentPosition] must return the current position of the object to move.

@@ -18,18 +18,16 @@ import java.util.stream.Collectors
 
 class TestSpecificPositions : StringSpec({
     "Test 2D specific positions" {
-        val coordinates = listOf(listOf(1.0, 3.0), listOf(15.0, 10.0), listOf(0.0, 20.0))
+        val coordinates = arrayOf(listOf(1.0, 3.0), listOf(15.0, 10.0), listOf(0.0, 20.0))
         val env = Continuous2DEnvironment<Any>()
-        val positions = SpecificPositions(env, *coordinates.toTypedArray())
+        val positions = SpecificPositions(env, *coordinates)
             .stream()
             .collect(Collectors.toList())
         positions shouldBe coordinates.map { env.makePosition(*it.toTypedArray()) }
     }
     "Wrong number of coordinates should fail" {
-        val coordinates = listOf(listOf(1.0, 3.0, 0.0))
-        val env = Continuous2DEnvironment<Any>()
         shouldThrow<IllegalArgumentException> {
-            SpecificPositions(env, *coordinates.toTypedArray())
+            SpecificPositions(Continuous2DEnvironment<Any>(), listOf(0.0, 1.0, 2.0))
         }
     }
 })

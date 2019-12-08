@@ -12,8 +12,11 @@ package it.unibo.alchemist.test
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldThrow
 import io.kotlintest.specs.StringSpec
+import it.unibo.alchemist.loader.YamlLoader
 import it.unibo.alchemist.loader.displacements.SpecificPositions
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import org.apache.commons.codec.Resources
 import java.util.stream.Collectors
 
 class TestSpecificPositions : StringSpec({
@@ -29,5 +32,10 @@ class TestSpecificPositions : StringSpec({
         shouldThrow<IllegalArgumentException> {
             SpecificPositions(Continuous2DEnvironment<Any>(), listOf(0.0, 1.0, 2.0))
         }
+    }
+    "Test YAML loading with 2D env" {
+        val loader = YamlLoader(Resources.getInputStream("testSpecificPositions.yml"))
+        val env = loader.getWith<Any, Euclidean2DPosition>(emptyMap<String, Double>())
+        env.nodes.map { env.getPosition(it) } shouldBe listOf(Euclidean2DPosition(1.0, 2.0), Euclidean2DPosition(3.0, 4.0))
     }
 })

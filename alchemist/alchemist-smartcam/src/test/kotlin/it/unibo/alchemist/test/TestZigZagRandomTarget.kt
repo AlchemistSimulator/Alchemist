@@ -13,11 +13,11 @@ import kotlin.math.sin
 import org.apache.commons.math3.random.ISAACRandom
 
 /**
- * This tests [ZigZagRandomTarget] and it's complicated because it takes in account bot double comparison problems and
+ * This tests [ZigZagRandomTarget] and it's complicated because it takes in account both double comparison problems and
  * the rare event in which a new random direction is the same as the previous one.
  */
 class TestZigZagRandomTarget : StringSpec() {
-    private val maxDistance = 10.0
+    private val maxDistance = 10000.0
     private val minChangeInDirection = 0.1
     private lateinit var zigZag: ZigZagRandomTarget<Any>
     private lateinit var currentPosition: Euclidean2DPosition
@@ -32,10 +32,11 @@ class TestZigZagRandomTarget : StringSpec() {
 
     init {
         "Target should not change while advancing toward it" {
-            advance(maxDistance / 4)
-            shouldNotHaveChangedDirection()
-            advance(maxDistance / 4)
-            shouldNotHaveChangedDirection()
+            val steps = 10
+            for (i in 1 until steps - 1) {
+                advance(maxDistance / steps)
+                shouldNotHaveChangedDirection()
+            }
         }
 
         "Target should change after maxDistance" {

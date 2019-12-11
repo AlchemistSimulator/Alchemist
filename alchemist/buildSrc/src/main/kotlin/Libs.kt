@@ -7,6 +7,8 @@ import kotlin.String
  *   `$ ./gradlew buildSrcVersions`
  */
 object Libs {
+    const val org_danilopianini_conrec: String = "org.danilopianini:conrec:" + Versions.org_danilopianini_conrec
+
     /**
      * https://javaeden.github.io/Orchid/latest/core/
      */

@@ -16,7 +16,7 @@ import it.unibo.alchemist.loader.YamlLoader
 import it.unibo.alchemist.loader.displacements.SpecificPositions
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import org.apache.commons.codec.Resources
+import org.kaikikm.threadresloader.ResourceLoader
 import java.util.stream.Collectors
 
 class TestSpecificPositions : StringSpec({
@@ -34,7 +34,7 @@ class TestSpecificPositions : StringSpec({
         }
     }
     "Test YAML loading with 2D env" {
-        val loader = YamlLoader(Resources.getInputStream("testSpecificPositions.yml"))
+        val loader = YamlLoader(ResourceLoader.getResourceAsStream("testSpecificPositions.yml"))
         val env = loader.getWith<Any, Euclidean2DPosition>(emptyMap<String, Double>())
         env.nodes.map { env.getPosition(it) } shouldBe listOf(Euclidean2DPosition(1.0, 2.0), Euclidean2DPosition(3.0, 4.0))
     }

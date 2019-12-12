@@ -37,7 +37,7 @@ open class FlowFieldSteeringAction<T>(
         }
     }
 ) {
-    override fun getDestination(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double) =
+    override fun interpolatePositions(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double) =
         current.surrounding(env, maxWalk)
                 .filter { env.canNodeFitPosition(pedestrian, it) }
                 .formula(targetMolecule) - current

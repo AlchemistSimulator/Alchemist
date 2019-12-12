@@ -67,7 +67,7 @@ public final class MoveToTarget<T, P extends Position2D<P>> extends AbstractConf
     }
 
     @Override
-    protected P getDestination(final P current, final P target, final double maxWalk) {
+    protected P interpolatePositions(final P current, final P target, final double maxWalk) {
         final P vector = target.minus(current);
         if (current.getDistanceTo(target) < maxWalk) {
             return vector;

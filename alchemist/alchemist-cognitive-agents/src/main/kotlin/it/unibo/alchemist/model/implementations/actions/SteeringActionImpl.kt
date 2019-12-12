@@ -43,7 +43,7 @@ open class SteeringActionImpl<T, P : Position<P>> @JvmOverloads constructor(
     override fun cloneAction(n: Node<T>?, r: Reaction<T>?) =
         SteeringActionImpl(env, r!!, n as Pedestrian<T>, target, speed, routing)
 
-    override fun getDestination(current: P, target: P, maxWalk: Double): P = with(current.getDistanceTo(target)) {
+    override fun interpolatePositions(current: P, target: P, maxWalk: Double): P = with(current.getDistanceTo(target)) {
         if (this < maxWalk)
             target
         else

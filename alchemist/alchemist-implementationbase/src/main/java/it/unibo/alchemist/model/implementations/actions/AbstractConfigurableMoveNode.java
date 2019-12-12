@@ -109,7 +109,7 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
         }
         if (route.size() < 1) {
             resetRoute();
-            return getDestination(curPos, end, maxWalk);
+            return interpolatePositions(curPos, end, maxWalk);
         }
         do {
             final P target = route.getPoint(curStep);
@@ -118,7 +118,7 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
                 /*
                  * I can arrive at most at maxWalk
                  */
-                return getDestination(curPos, target, maxWalk);
+                return interpolatePositions(curPos, target, maxWalk);
             }
             curStep++;
             maxWalk -= toWalk;
@@ -128,7 +128,7 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
          * I've followed the whole route
          */
         resetRoute();
-        return getDestination(curPos, end, maxWalk);
+        return interpolatePositions(curPos, end, maxWalk);
     }
 
     /**
@@ -140,7 +140,7 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
      * @param maxWalk how far the node can move
      * @return the position that the node reaches
      */
-    protected abstract P getDestination(P current, P target, double maxWalk);
+    protected abstract P interpolatePositions(P current, P target, double maxWalk);
 
     /**
      * @return the current target

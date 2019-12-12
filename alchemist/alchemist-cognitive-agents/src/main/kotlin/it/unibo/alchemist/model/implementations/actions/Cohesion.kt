@@ -33,7 +33,7 @@ class Cohesion<T, P : Position<P>>(
 
     override fun group(): List<Pedestrian<T>> = pedestrian.membershipGroup.members
 
-    override fun getDestination(current: P, target: P, maxWalk: Double): P = super.getDestination(
+    override fun interpolatePositions(current: P, target: P, maxWalk: Double): P = super.interpolatePositions(
         target,
         centroid() - current,
         maxWalk

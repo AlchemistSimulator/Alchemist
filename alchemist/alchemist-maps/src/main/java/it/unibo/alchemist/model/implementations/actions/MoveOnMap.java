@@ -60,7 +60,7 @@ public class MoveOnMap<T> extends AbstractConfigurableMoveNode<T, GeoPosition> {
     }
 
     @Override
-    protected final GeoPosition getDestination(final GeoPosition current, final GeoPosition target, final double maxWalk) {
+    protected final GeoPosition interpolatePositions(final GeoPosition current, final GeoPosition target, final double maxWalk) {
         return MapUtils.getDestinationLocation(current, target, maxWalk);
     }
 

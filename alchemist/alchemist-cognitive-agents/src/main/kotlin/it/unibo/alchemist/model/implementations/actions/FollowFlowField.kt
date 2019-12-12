@@ -1,9 +1,12 @@
 package it.unibo.alchemist.model.implementations.actions
 
+import it.unibo.alchemist.model.implementations.layers.BidimensionalGaussianLayer
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
+import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
 /**
  * Move the pedestrian towards positions of the environment with a high concentration of the target molecule.
@@ -32,5 +35,10 @@ open class FollowFlowField(
         this.map { it to layer.getValue(it).toDouble() }
             .filter { it.second > currentConcentration }
             .maxBy { it.second }?.first ?: currentPosition
+    },
+    TargetSelectionStrategy {
+        with(env.getLayer(targetMolecule).get() as BidimensionalGaussianLayer) {
+            Euclidean2DPosition(centerX, centerY)
+        }
     }
 )

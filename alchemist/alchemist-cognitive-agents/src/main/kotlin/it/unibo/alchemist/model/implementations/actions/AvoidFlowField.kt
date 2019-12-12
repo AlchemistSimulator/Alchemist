@@ -1,9 +1,13 @@
 package it.unibo.alchemist.model.implementations.actions
 
+import it.unibo.alchemist.model.implementations.layers.BidimensionalGaussianLayer
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.implementations.utils.origin
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
+import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
 /**
  * Move the pedestrian towards positions of the environment with a low concentration of the target molecule.
@@ -32,5 +36,29 @@ open class AvoidFlowField(
         this.map { it to layer.getValue(it).toDouble() }
             .filter { it.second < currentConcentration }
             .minBy { it.second }?.first ?: currentPosition
+    },
+    TargetSelectionStrategy {
+        with(env.getLayer(targetMolecule).get() as BidimensionalGaussianLayer) {
+            val p = env.getPosition(pedestrian)
+            if (p == null) {
+                env.origin()
+            } else {
+                p + (p - Euclidean2DPosition(centerX, centerY))
+            }
+        }
     }
+         /*
+    object : TargetSelectionStrategy<Euclidean2DPosition> {
+        val t: Euclidean2DPosition by lazy {
+            with(env.getLayer(targetMolecule).get() as BidimensionalGaussianLayer) {
+                var p = env.getPosition(pedestrian)
+                val step = p - Euclidean2DPosition(centerX, centerY)
+                while (getValue(p) > 1 / 1000) { p += step }
+                p
+            }
+        }
+
+        override fun getTarget() = if (env.getPosition(pedestrian) == null) env.origin() else t
+    }
+         */
 )

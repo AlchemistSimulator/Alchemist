@@ -7,15 +7,10 @@
  */
 import com.github.spotbugs.SpotBugsTask
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
-import java.net.URL
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-/*
- * don't ignore checkers failures
- * recheck all dependencies
- */
+import java.net.URL
 
 plugins {
     id("de.fayard.buildSrcVersions") version Versions.de_fayard_buildsrcversions_gradle_plugin
@@ -118,7 +113,7 @@ allprojects {
 
     tasks.withType<SpotBugsTask> {
         reports {
-            xml.setEnabled(false)
+            xml.isEnabled = false
             html.setEnabled(true)
         }
     }
@@ -213,6 +208,10 @@ allprojects {
                         name.set("Luca Nenni")
                         email.set("luca.nenni@studio.unibo.it")
                         url.set("http://apice.unibo.it/xwiki/bin/view/XWiki/LucaNenni/")
+                    }
+                    contributor {
+                        name.set("Lorenzo Paganelli")
+                        email.set("lorenzo.paganelli3@studio.unibo.it")
                     }
                     contributor {
                         name.set("Andrea Placuzzi")

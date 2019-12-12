@@ -7,8 +7,6 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import java.util.Objects;
-
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
@@ -16,6 +14,8 @@ import it.unibo.alchemist.model.interfaces.Route;
 import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy;
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy;
+
+import java.util.Objects;
 
 /**
  * An abstract class that factorizes code for multiple different movements. With
@@ -132,6 +132,9 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
     }
 
     /**
+     * Given a start position (current), a desired target position (target), and a maximum walkable distance (maxWalk),
+     * this method computes the actual position reached by the moving node.
+     *
      * @param current the current position of the node
      * @param target the target that should be reached
      * @param maxWalk how far the node can move

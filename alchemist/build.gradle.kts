@@ -114,7 +114,7 @@ allprojects {
     tasks.withType<SpotBugsTask> {
         reports {
             xml.isEnabled = false
-            html.setEnabled(true)
+            html.isEnabled = true
         }
     }
 
@@ -179,6 +179,10 @@ allprojects {
                         url.set("http://apice.unibo.it/xwiki/bin/view/XWiki/EnricoGalassi/")
                     }
                     contributor {
+                        name.set("Luca Giuliani")
+                        email.set("luca.giuliani10@studio.unibo.it")
+                    }
+                    contributor {
                         name.set("Gabriele Graffieti")
                         email.set("gabriele.graffieti@studio.unibo.it")
                     }
@@ -191,13 +195,17 @@ allprojects {
                         email.set("niccolo.maltoni@studio.unibo.it")
                     }
                     contributor {
-                        name.set("Vuksa Mihajlovic")
-                        email.set("vuksa.mihajlovic@studio.unibo.it")
+                        name.set("Diego Mazzieri")
+                        email.set("diego.mazzieri@studio.unibo.it")
                     }
                     contributor {
                         name.set("Luca Mella")
                         email.set("luca.mella@studio.unibo.it")
                         url.set("http://apice.unibo.it/xwiki/bin/view/XWiki/LucaMella/")
+                    }
+                    contributor {
+                        name.set("Vuksa Mihajlovic")
+                        email.set("vuksa.mihajlovic@studio.unibo.it")
                     }
                     contributor {
                         name.set("Sara Montagna")
@@ -212,6 +220,10 @@ allprojects {
                     contributor {
                         name.set("Lorenzo Paganelli")
                         email.set("lorenzo.paganelli3@studio.unibo.it")
+                    }
+                    contributor {
+                        name.set("Federico Pettinari")
+                        email.set("federico.pettinari2@studio.unibo.it")
                     }
                     contributor {
                         name.set("Andrea Placuzzi")

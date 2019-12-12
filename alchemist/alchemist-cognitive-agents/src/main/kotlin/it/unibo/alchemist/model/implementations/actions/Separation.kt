@@ -37,8 +37,8 @@ class Separation<T>(
             .filterIsInstance<Pedestrian<T>>()
             .plusElement(pedestrian)
 
-    override fun getDestination(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double): Euclidean2DPosition =
-        super.getDestination(
+    override fun interpolatePositions(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double): Euclidean2DPosition =
+        super.interpolatePositions(
             target,
             centroid(),
             maxWalk

@@ -32,5 +32,5 @@ class Combine<T, P : Position<P>>(
     pedestrian,
     TargetSelectionStrategy { steerStrategy.computeTarget(actions) }
 ) {
-    override fun getDestination(current: P, target: P, maxWalk: Double): P = steerStrategy.computeNextPosition(actions)
+    override fun interpolatePositions(current: P, target: P, maxWalk: Double): P = steerStrategy.computeNextPosition(actions)
 }

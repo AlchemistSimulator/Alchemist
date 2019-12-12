@@ -7,15 +7,10 @@
  */
 import com.github.spotbugs.SpotBugsTask
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
-import java.net.URL
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-/*
- * don't ignore checkers failures
- * recheck all dependencies
- */
+import java.net.URL
 
 plugins {
     id("de.fayard.buildSrcVersions") version Versions.de_fayard_buildsrcversions_gradle_plugin
@@ -118,8 +113,8 @@ allprojects {
 
     tasks.withType<SpotBugsTask> {
         reports {
-            xml.setEnabled(false)
-            html.setEnabled(true)
+            xml.isEnabled = false
+            html.isEnabled = true
         }
     }
 
@@ -184,6 +179,10 @@ allprojects {
                         url.set("http://apice.unibo.it/xwiki/bin/view/XWiki/EnricoGalassi/")
                     }
                     contributor {
+                        name.set("Luca Giuliani")
+                        email.set("luca.giuliani10@studio.unibo.it")
+                    }
+                    contributor {
                         name.set("Gabriele Graffieti")
                         email.set("gabriele.graffieti@studio.unibo.it")
                     }
@@ -196,13 +195,17 @@ allprojects {
                         email.set("niccolo.maltoni@studio.unibo.it")
                     }
                     contributor {
-                        name.set("Vuksa Mihajlovic")
-                        email.set("vuksa.mihajlovic@studio.unibo.it")
+                        name.set("Diego Mazzieri")
+                        email.set("diego.mazzieri@studio.unibo.it")
                     }
                     contributor {
                         name.set("Luca Mella")
                         email.set("luca.mella@studio.unibo.it")
                         url.set("http://apice.unibo.it/xwiki/bin/view/XWiki/LucaMella/")
+                    }
+                    contributor {
+                        name.set("Vuksa Mihajlovic")
+                        email.set("vuksa.mihajlovic@studio.unibo.it")
                     }
                     contributor {
                         name.set("Sara Montagna")
@@ -213,6 +216,14 @@ allprojects {
                         name.set("Luca Nenni")
                         email.set("luca.nenni@studio.unibo.it")
                         url.set("http://apice.unibo.it/xwiki/bin/view/XWiki/LucaNenni/")
+                    }
+                    contributor {
+                        name.set("Lorenzo Paganelli")
+                        email.set("lorenzo.paganelli3@studio.unibo.it")
+                    }
+                    contributor {
+                        name.set("Federico Pettinari")
+                        email.set("federico.pettinari2@studio.unibo.it")
                     }
                     contributor {
                         name.set("Andrea Placuzzi")

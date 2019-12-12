@@ -31,8 +31,8 @@ class ObstacleAvoidance<W : Obstacle2D, T, P : Position2D<P>>(
     } }
 ) {
 
-    override fun getDestination(current: P, target: P, maxWalk: Double): P =
-        super.getDestination(
+    override fun interpolatePositions(current: P, target: P, maxWalk: Double): P =
+        super.interpolatePositions(
             current,
             env.getObstaclesInRange(current.x, current.y, proximityRange)
                 .asSequence()

@@ -11,7 +11,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- * It's an [AbstractConfigurableMoveNode] for [Euclidean2DPosition] which provides a default [getDestination] that is
+ * It's an [AbstractConfigurableMoveNode] for [Euclidean2DPosition] which provides a default [interpolatePositions] that is
  * accurate in regards to the target given and the current maximum speed.
  */
 abstract class AbstractConfigurableMoveNodeWithAccurateEuclideanDestination<T>(
@@ -25,7 +25,7 @@ abstract class AbstractConfigurableMoveNodeWithAccurateEuclideanDestination<T>(
      * If [maxWalk] is greater than the speed needed to reach [target] then it positions precisely on [target] without going
      * farther.
      */
-    override fun getDestination(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double): Euclidean2DPosition =
+    override fun interpolatePositions(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double): Euclidean2DPosition =
         with(target - current) {
             if (getDistanceTo(current) < maxWalk) {
                 this

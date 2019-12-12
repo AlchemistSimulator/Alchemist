@@ -50,8 +50,8 @@ open class Wander<T>(
         }
     }
 
-    override fun getDestination(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double) =
-        super.getDestination(
+    override fun interpolatePositions(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double) =
+        super.interpolatePositions(
             env.origin(),
             heading().asAngle()
                 .let { Euclidean2DPosition(offset * cos(it), offset * sin(it)) }

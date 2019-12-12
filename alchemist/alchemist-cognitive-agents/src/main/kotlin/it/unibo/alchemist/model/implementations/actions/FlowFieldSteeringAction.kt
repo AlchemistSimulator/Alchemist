@@ -32,7 +32,7 @@ open class FlowFieldSteeringAction<T>(
     pedestrian,
     targetSelectionStrategy
 ) {
-    override fun getDestination(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double): Euclidean2DPosition {
+    override fun interpolatePositions(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double): Euclidean2DPosition {
         val canFit = current.surrounding(env, maxWalk)
                 //.union(current.surrounding(env, maxWalk / 2))
                 .filter { env.canNodeFitPosition(pedestrian, it) }

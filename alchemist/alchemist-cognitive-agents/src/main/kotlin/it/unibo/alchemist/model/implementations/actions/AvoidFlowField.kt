@@ -47,18 +47,4 @@ open class AvoidFlowField(
             }
         }
     }
-         /*
-    object : TargetSelectionStrategy<Euclidean2DPosition> {
-        val t: Euclidean2DPosition by lazy {
-            with(env.getLayer(targetMolecule).get() as BidimensionalGaussianLayer) {
-                var p = env.getPosition(pedestrian)
-                val step = p - Euclidean2DPosition(centerX, centerY)
-                while (getValue(p) > 1 / 1000) { p += step }
-                p
-            }
-        }
-
-        override fun getTarget() = if (env.getPosition(pedestrian) == null) env.origin() else t
-    }
-         */
 )

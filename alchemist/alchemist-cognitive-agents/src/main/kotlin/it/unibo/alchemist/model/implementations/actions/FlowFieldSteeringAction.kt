@@ -2,9 +2,10 @@ package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.utils.surrounding
-import it.unibo.alchemist.model.interfaces.*
+import it.unibo.alchemist.model.interfaces.Reaction
+import it.unibo.alchemist.model.interfaces.Pedestrian2D
+import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
-import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithObstacles
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
 /**
@@ -34,7 +35,7 @@ open class FlowFieldSteeringAction<T>(
 ) {
     override fun interpolatePositions(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double): Euclidean2DPosition {
         val canFit = current.surrounding(env, maxWalk)
-                //.union(current.surrounding(env, maxWalk / 2))
+                // .union(current.surrounding(env, maxWalk / 2))
                 .filter { env.canNodeFitPosition(pedestrian, it) }
                 /*
                 .filter {

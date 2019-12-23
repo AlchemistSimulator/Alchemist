@@ -4,7 +4,6 @@ import com.google.gson.reflect.TypeToken;
 import it.unibo.alchemist.boundary.gui.effects.json.AbstractPropertySerializationTest;
 import it.unibo.alchemist.boundary.gui.view.properties.SerializableBooleanProperty;
 import it.unibo.alchemist.test.TemporaryFile;
-import javafx.beans.property.Property;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -24,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * JUint test for custom {@link Property} serialization.
+ * JUnit test for custom {@link javafx.beans.property.Property} serialization.
  */
 public final class SerializableBooleanPropertySerializationTest extends AbstractPropertySerializationTest {
 
@@ -33,33 +32,22 @@ public final class SerializableBooleanPropertySerializationTest extends Abstract
     public void testJavaSerialization() throws IOException, ClassNotFoundException {
         final File file = TemporaryFile.create();
         assertTrue(file.createNewFile());
-
         final FileOutputStream fout = new FileOutputStream(file);
         final ObjectOutputStream oos = new ObjectOutputStream(fout);
-
         final SerializableBooleanProperty serializableBooleanProperty = new SerializableBooleanProperty("Test", true);
-
         oos.writeObject(serializableBooleanProperty);
-
         final FileInputStream fin = new FileInputStream(file);
         final ObjectInputStream ois = new ObjectInputStream(fin);
-
         final SerializableBooleanProperty deserialized = (SerializableBooleanProperty) ois.readObject();
-
         assertEquals(serializableBooleanProperty, deserialized, getMessage(serializableBooleanProperty, deserialized));
-
         final SerializableBooleanProperty serializableBooleanProperty2 = new SerializableBooleanProperty("Test2", false);
-
         oos.writeObject(serializableBooleanProperty2);
-
         final SerializableBooleanProperty deserialized2 = (SerializableBooleanProperty) ois.readObject();
-
         assertEquals(serializableBooleanProperty2, deserialized2, getMessage(serializableBooleanProperty2, deserialized2));
         assertNotEquals(serializableBooleanProperty, serializableBooleanProperty2);
         assertNotEquals(serializableBooleanProperty, deserialized2);
         assertNotEquals(deserialized, deserialized2);
         assertNotEquals(serializableBooleanProperty2, deserialized);
-
         oos.close();
         ois.close();
     }

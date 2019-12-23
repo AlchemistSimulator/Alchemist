@@ -19,8 +19,10 @@ import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur3_32;
  * Simple effect that draws a colored dot for each {@link it.unibo.alchemist.model.interfaces.Node}.
  * <p>
  * It's possible to set the size and the color of the dots.
+ *
+ * @param <P> position type
  */
-public class DrawColoredDot extends DrawDot<Position2D<? extends Position2D<?>>> {
+public class DrawColoredDot<P extends Position2D<? extends P>> extends DrawDot<P> {
 
     /**
      * Default generated Serial Version UID.
@@ -304,7 +306,7 @@ public class DrawColoredDot extends DrawDot<Position2D<? extends Position2D<?>>>
         if (obj == null || this.getClass() != obj.getClass()) {
             return false;
         }
-        final DrawColoredDot other = (DrawColoredDot) obj;
+        final var other = (DrawColoredDot<?>) obj;
         return super.equals(obj)
                 && checkEqualsProperties(blueProperty(), other.blueProperty())
                 && checkEqualsProperties(redProperty(), other.redProperty())

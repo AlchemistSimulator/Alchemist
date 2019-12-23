@@ -7,11 +7,7 @@ import it.unibo.alchemist.test.TemporaryFile;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -25,18 +21,9 @@ public final class DrawLinksSerializationTest extends AbstractEffectSerializatio
     @Test
     @Override
     public void testJavaSerialization() throws IOException, ClassNotFoundException {
-        final File file = TemporaryFile.create();
-        final FileOutputStream fout = new FileOutputStream(file);
-        final ObjectOutputStream oos = new ObjectOutputStream(fout);
         final var effect = new DrawLinks<>(TEST_NAME);
         effect.setSize(TEST_SIZE);
-        oos.writeObject(effect);
-        final FileInputStream fin = new FileInputStream(file);
-        final ObjectInputStream ois = new ObjectInputStream(fin);
-        final DrawLinks<?> deserialized = (DrawLinks<?>) ois.readObject();
-        assertEquals(effect, deserialized, getMessage(effect, deserialized));
-        oos.close();
-        ois.close();
+        testSerializationOf(effect);
     }
 
     @Test

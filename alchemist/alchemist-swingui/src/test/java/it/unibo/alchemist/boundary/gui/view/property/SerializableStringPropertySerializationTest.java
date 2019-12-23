@@ -4,7 +4,6 @@ import com.google.gson.reflect.TypeToken;
 import it.unibo.alchemist.boundary.gui.effects.json.AbstractPropertySerializationTest;
 import it.unibo.alchemist.boundary.gui.view.properties.SerializableStringProperty;
 import it.unibo.alchemist.test.TemporaryFile;
-import javafx.beans.property.Property;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -22,7 +21,7 @@ import java.lang.reflect.Type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * JUint test for custom {@link Property} serialization.
+ * JUnit test for custom {@link javafx.beans.property.Property} serialization.
  */
 public final class SerializableStringPropertySerializationTest extends AbstractPropertySerializationTest {
 

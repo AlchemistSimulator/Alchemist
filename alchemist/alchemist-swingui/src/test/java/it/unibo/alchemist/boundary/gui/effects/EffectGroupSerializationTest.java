@@ -1,17 +1,17 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
+import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
+import it.unibo.alchemist.model.interfaces.Position2D;
+import javafx.scene.paint.Color;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import javafx.scene.paint.Color;
-
-import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * JUnit test for {@link EffectGroup} and {@link EffectStack} serialization.
@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class EffectGroupSerializationTest {
     private static final double TEST_DOT_SIZE = 22.0;
     private static final double TEST_COLORED_DOT_SIZE = 25.0;
-    /** Temporary folder created before each test method, and deleted after each. */
 
     /**
      * Tests (de)serialization with default Java serialization engine.
@@ -30,16 +29,14 @@ public class EffectGroupSerializationTest {
     @Test
     public void testJavaSerialization() throws Exception {
         final File file = File.createTempFile("testJavaSerialization", null);
-        final FileOutputStream fout = new FileOutputStream(file);
-        final ObjectOutputStream oos = new ObjectOutputStream(fout);
-        final EffectGroup effects = this.setupEffectGroup();
-        oos.writeObject(effects);
-        final FileInputStream fin = new FileInputStream(file);
-        final ObjectInputStream ois = new ObjectInputStream(fin);
-        final EffectGroup deserialized = (EffectStack) ois.readObject();
-        assertTrue(effects.equals(deserialized), getMessage(effects, deserialized));
-        oos.close();
-        ois.close();
+        final var effects = this.setupEffectGroup();
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
+            oos.writeObject(effects);
+        }
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+            final var deserialized = (EffectStack<?>) ois.readObject();
+            assertEquals(effects, deserialized, getMessage(effects, deserialized));
+        }
     }
 
     /**
@@ -51,10 +48,10 @@ public class EffectGroupSerializationTest {
     @Test
     public void testGsonSerialization() throws Exception {
         final File file = File.createTempFile("testGsonSerialization", null);
-        final EffectGroup effect = this.setupEffectGroup();
+        final var effect = this.setupEffectGroup();
         EffectSerializer.effectsToFile(file, effect);
-        final EffectGroup deserialized = EffectSerializer.effectsFromFile(file);
-        assertTrue(effect.equals(deserialized), getMessage(effect, deserialized));
+        final var deserialized = EffectSerializer.effectsFromFile(file);
+        assertEquals(effect, deserialized, getMessage(effect, deserialized));
     }
 
     /**
@@ -67,15 +64,13 @@ public class EffectGroupSerializationTest {
      *            the deserialized {@link EffectFX effect}
      * @return the message of test fail
      */
-    protected String getMessage(final EffectGroup origin, final EffectGroup deserialized) {
+    protected String getMessage(final EffectGroup<?> origin, final EffectGroup<?> deserialized) {
         if (origin == null) {
             return "Original group is null";
         }
-
         if (deserialized == null) {
             return "Deserialized group is null";
         }
-
         return "Effect group\"" + origin.getName() + "\" is different from group \"" + deserialized.getName() + "\"";
     }
 
@@ -84,13 +79,13 @@ public class EffectGroupSerializationTest {
      * 
      * @return the effect group
      */
-    private EffectGroup setupEffectGroup() {
-        final EffectGroup effects = new EffectStack("TestGroup");
-        effects.add(new DrawDot("TestDot"));
-        final DrawDot dot = new DrawDot();
+    private <P extends Position2D<? extends P>> EffectGroup<P> setupEffectGroup() {
+        final EffectGroup<P> effects = new EffectStack<>("TestGroup");
+        effects.add(new DrawDot<>("TestDot"));
+        final var dot = new DrawDot<P>();
         dot.setSize(TEST_DOT_SIZE);
         effects.add(dot);
-        final DrawColoredDot coloredDot = new DrawColoredDot("Colored Dot");
+        final var coloredDot = new DrawColoredDot<P>("Colored Dot");
         coloredDot.setSize(TEST_COLORED_DOT_SIZE);
         coloredDot.setColor(Color.CYAN);
         effects.add(coloredDot);

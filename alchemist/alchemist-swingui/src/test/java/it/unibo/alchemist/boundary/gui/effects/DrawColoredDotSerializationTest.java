@@ -7,18 +7,14 @@ import javafx.scene.paint.Color;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * JUnit test for {@link DrawColoredDot} effect serialization.
  */
-public final class DrawColoredDotSerializationTest extends AbstractEffectSerializationTest<DrawColoredDot> {
+public final class DrawColoredDotSerializationTest extends AbstractEffectSerializationTest<DrawColoredDot<?>> {
     private static final String TEST_NAME = "TestDot";
     private static final double TEST_SIZE = 25.0;
     private static final Color TEST_COLOR = Color.CYAN;
@@ -26,35 +22,26 @@ public final class DrawColoredDotSerializationTest extends AbstractEffectSeriali
     @Test
     @Override
     public void testJavaSerialization() throws IOException, ClassNotFoundException {
-        final File file = TemporaryFile.create();
-        final FileOutputStream fout = new FileOutputStream(file);
-        final ObjectOutputStream oos = new ObjectOutputStream(fout);
-        final DrawColoredDot effect = new DrawColoredDot(TEST_NAME);
+        final var effect = new DrawColoredDot<>(TEST_NAME);
         effect.setSize(TEST_SIZE);
         effect.setColor(TEST_COLOR);
-        oos.writeObject(effect);
-        final FileInputStream fin = new FileInputStream(file);
-        final ObjectInputStream ois = new ObjectInputStream(fin);
-        final DrawColoredDot deserialized = (DrawColoredDot) ois.readObject();
-        assertEquals(effect, deserialized, getMessage(effect, deserialized));
-        oos.close();
-        ois.close();
+        testSerializationOf(effect);
     }
 
     @Test
     @Override
     public void testGsonSerialization() throws IOException {
         final File file = TemporaryFile.create();
-        final DrawColoredDot effect = new DrawColoredDot(TEST_NAME);
+        final var effect = new DrawColoredDot<>(TEST_NAME);
         effect.setSize(TEST_SIZE);
         effect.setColor(TEST_COLOR);
         EffectSerializer.effectToFile(file, effect);
-        final DrawColoredDot deserialized = (DrawColoredDot) EffectSerializer.effectFromFile(file);
+        final var deserialized = (DrawColoredDot<?>) EffectSerializer.effectFromFile(file);
         assertEquals(effect, deserialized, getMessage(effect, deserialized));
     }
 
     @Override
-    protected String getMessage(final DrawColoredDot origin, final DrawColoredDot deserialized) {
+    protected String getMessage(final DrawColoredDot<?> origin, final DrawColoredDot<?> deserialized) {
         if (origin == null || deserialized == null) {
             return super.getMessage(origin, deserialized);
         }

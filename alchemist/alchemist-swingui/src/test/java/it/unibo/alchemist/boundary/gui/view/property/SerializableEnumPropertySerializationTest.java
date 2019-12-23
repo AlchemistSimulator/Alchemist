@@ -3,6 +3,9 @@ package it.unibo.alchemist.boundary.gui.view.property;
 import com.google.gson.reflect.TypeToken;
 import it.unibo.alchemist.boundary.gui.effects.json.AbstractPropertySerializationTest;
 import it.unibo.alchemist.boundary.gui.view.properties.SerializableEnumProperty;
+import it.unibo.alchemist.test.TemporaryFile;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -15,16 +18,12 @@ import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Type;
 
-import it.unibo.alchemist.test.TemporaryFile;
-import javafx.beans.property.Property;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * JUint test for custom {@link Property} serialization.
+ * JUnit test for custom {@link javafx.beans.property.Property} serialization.
  */
 public class SerializableEnumPropertySerializationTest extends AbstractPropertySerializationTest {
     /**
@@ -57,7 +56,7 @@ public class SerializableEnumPropertySerializationTest extends AbstractPropertyS
         final ObjectInputStream ois = new ObjectInputStream(fin);
         @SuppressWarnings("unchecked") // If something goes wrong, the test will fail
         final SerializableEnumProperty<TestEnum> deserialized = (SerializableEnumProperty<TestEnum>) ois.readObject();
-        assertTrue(serializableEnumProperty.equals(deserialized), getMessage(serializableEnumProperty, deserialized));
+        assertEquals(serializableEnumProperty, deserialized, getMessage(serializableEnumProperty, deserialized));
         oos.close();
         ois.close();
     }
@@ -73,7 +72,7 @@ public class SerializableEnumPropertySerializationTest extends AbstractPropertyS
         final Reader reader = new FileReader(file);
         final SerializableEnumProperty<TestEnum> deserialized = GSON.fromJson(reader, this.getGsonType());
         reader.close();
-        assertTrue(serializableEnumProperty.equals(deserialized), getMessage(serializableEnumProperty, deserialized));
+        assertEquals(serializableEnumProperty, deserialized, getMessage(serializableEnumProperty, deserialized));
     }
 
     /**

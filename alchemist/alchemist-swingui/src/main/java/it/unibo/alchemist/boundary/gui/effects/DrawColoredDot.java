@@ -20,7 +20,7 @@ import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur3_32;
  * <p>
  * It's possible to set the size and the color of the dots.
  */
-public class DrawColoredDot extends DrawDot<Position2D<? extends Position2D>> {
+public class DrawColoredDot extends DrawDot<Position2D<? extends Position2D<?>>> {
 
     /**
      * Default generated Serial Version UID.
@@ -77,7 +77,7 @@ public class DrawColoredDot extends DrawDot<Position2D<? extends Position2D>> {
      * @param fxColor the JavaFX color
      * @return the AWT color
      */
-    protected static final java.awt.Color convertColor(final Color fxColor) {
+    protected static java.awt.Color convertColor(final Color fxColor) {
         return new java.awt.Color(
                 (float) fxColor.getRed(),
                 (float) fxColor.getGreen(),

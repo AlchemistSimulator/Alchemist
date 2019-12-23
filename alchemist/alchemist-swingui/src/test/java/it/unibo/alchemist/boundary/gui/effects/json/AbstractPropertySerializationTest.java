@@ -1,25 +1,16 @@
 package it.unibo.alchemist.boundary.gui.effects.json;
 
-import java.lang.reflect.Type;
-
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
 import com.google.gson.Gson;
-
 import javafx.beans.property.Property;
+import org.junit.jupiter.api.Test;
+
+import java.lang.reflect.Type;
 
 /**
  * Abstract class that provides a common base of methods for properties
  * serialization test.
  */
 public abstract class AbstractPropertySerializationTest {
-
-    /** Temporary folder created before each test method, and deleted after each. */
-    @Rule
-    public final TemporaryFolder folder = new TemporaryFolder();
 
     /** The {@link Gson} object used for serialization. */
     protected static final Gson GSON = EffectSerializer.getGSON();
@@ -43,8 +34,7 @@ public abstract class AbstractPropertySerializationTest {
     public abstract void testGsonSerialization() throws Exception;
 
     /**
-     * Method that generate {@link Assert#assertTrue(boolean) assertTrue()}
-     * messages.
+     * Method that generate {@link org.junit.jupiter.api.Assertions#assertTrue(boolean)} messages.
      * 
      * @param <T>
      *            the class wrapped by this property

@@ -1,6 +1,16 @@
 package it.unibo.alchemist.boundary.gui.effects.json;
 
+import com.google.gson.reflect.TypeToken;
+import it.unibo.alchemist.boundary.gui.effects.DrawColoredDot;
+import it.unibo.alchemist.boundary.gui.effects.DrawDot;
+import it.unibo.alchemist.boundary.gui.effects.EffectFX;
+import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
+import it.unibo.alchemist.boundary.gui.effects.EffectStack;
 import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.test.TemporaryFile;
+import javafx.scene.paint.Color;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -11,19 +21,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
-import com.google.gson.reflect.TypeToken;
-
-import it.unibo.alchemist.boundary.gui.effects.DrawColoredDot;
-import it.unibo.alchemist.boundary.gui.effects.DrawDot;
-import it.unibo.alchemist.boundary.gui.effects.EffectFX;
-import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
-import it.unibo.alchemist.boundary.gui.effects.EffectStack;
-import javafx.scene.paint.Color;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * JUnit test for EffectSerializer class.
@@ -31,12 +29,7 @@ import javafx.scene.paint.Color;
 public class EffectSerializerTest {
     private static final String TEST_EFFECTS = "/it/unibo/alchemist/gui/effects/json/TestEffects.json";
     private static final double TEST_SIZE = 6.0;
-
-    /**
-     * Temporary folder created before each test method, and deleted after each.
-     */
-    @Rule
-    public final TemporaryFolder folder = new TemporaryFolder();
+    private static final double TEST_SIZE_LIST = 7.0;
 
     /**
      * Tests methods {@link EffectSerializer#effectGroupsFromFile(File)} and
@@ -46,15 +39,11 @@ public class EffectSerializerTest {
      */
     @Test
     public void testMultipleEffectGroupsSerialization() throws IOException {
-        final File file = folder.newFile();
-
-        final List<EffectGroup<Position2D<? extends Position2D>>> groups = initList();
-
+        final File file = TemporaryFile.create();
+        final List<EffectGroup<Position2D<? extends Position2D<?>>>> groups = initList();
         EffectSerializer.effectGroupsToFile(file, groups);
-
-        final List<EffectGroup<Position2D<? extends Position2D>>> deserialized = EffectSerializer.effectGroupsFromFile(file);
-
-        Assert.assertTrue(groups.equals(deserialized));
+        final List<EffectGroup<Position2D<? extends Position2D<?>>>> deserialized = EffectSerializer.effectGroupsFromFile(file);
+        assertEquals(groups, deserialized);
     }
 
     /**
@@ -64,19 +53,19 @@ public class EffectSerializerTest {
      */
     @Test
     public void testListOfEffectSerialization() throws IOException {
-        final File file = folder.newFile();
-        final Type type = new TypeToken<List<EffectFX<Position2D<? extends Position2D>>>>() {
+        final File file = TemporaryFile.create();
+        final Type type = new TypeToken<List<EffectFX<Position2D<? extends Position2D<?>>>>>() {
         }.getType();
-        final List<EffectFX<Position2D<? extends Position2D>>> effects = new ArrayList<>();
+        final List<EffectFX<Position2D<? extends Position2D<?>>>> effects = new ArrayList<>();
         effects.add(new DrawDot<>());
         effects.add(new DrawColoredDot("Test"));
         final Writer writer = new FileWriter(file);
         EffectSerializer.getGSON().toJson(effects, type, writer);
         writer.close();
         final Reader reader = new FileReader(file);
-        final List<EffectFX<Position2D<? extends Position2D>>> deserialized = EffectSerializer.getGSON().fromJson(reader, type);
+        final List<EffectFX<Position2D<? extends Position2D<?>>>> deserialized = EffectSerializer.getGSON().fromJson(reader, type);
         reader.close();
-        Assert.assertTrue(effects.equals(deserialized));
+        assertEquals(effects, deserialized);
     }
 
     /**
@@ -84,26 +73,20 @@ public class EffectSerializerTest {
      *
      * @return a list of {@code EffectGroups}
      */
-    private List<EffectGroup<Position2D<? extends Position2D>>> initList() {
-        final List<EffectGroup<Position2D<? extends Position2D>>> groups = new ArrayList<>();
-
+    private List<EffectGroup<Position2D<? extends Position2D<?>>>> initList() {
+        final List<EffectGroup<Position2D<? extends Position2D<?>>>> groups = new ArrayList<>();
         groups.add(new EffectStack<>());
         groups.add(new EffectStack<>("Group 2"));
-
-        final EffectGroup<Position2D<? extends Position2D>> group3 = new EffectStack<>("Group 3");
+        final EffectGroup<Position2D<? extends Position2D<?>>> group3 = new EffectStack<>("Group 3");
         group3.setVisibility(false);
         groups.add(group3);
-
-        final EffectGroup<Position2D<? extends Position2D>> group4 = new EffectStack<>();
+        final EffectGroup<Position2D<? extends Position2D<?>>> group4 = new EffectStack<>();
         group4.add(new DrawDot<>());
         group4.add(new DrawDot<>("TestDot"));
         groups.add(group4);
-
-        final EffectGroup<Position2D<? extends Position2D>> group5 = new EffectStack<>("Group 5");
-        final DrawDot<Position2D<? extends Position2D>> dot = new DrawDot<>("Dot 2");
-        // CHECKSTYLE:OFF
-        dot.setSize(7.0);
-        // CHECKSTYLE:ON
+        final EffectGroup<Position2D<? extends Position2D<?>>> group5 = new EffectStack<>("Group 5");
+        final DrawDot<Position2D<? extends Position2D<?>>> dot = new DrawDot<>("Dot 2");
+        dot.setSize(TEST_SIZE_LIST);
         group5.add(dot);
         final DrawColoredDot colorDot = new DrawColoredDot();
         colorDot.setColor(Color.ORANGE);
@@ -111,7 +94,6 @@ public class EffectSerializerTest {
         group5.add(colorDot);
         group5.setVisibility(false);
         groups.add(group5);
-
         return groups;
     }
 
@@ -121,14 +103,14 @@ public class EffectSerializerTest {
      */
     @Test
     public void testResourceSerialization() throws IOException {
-        final EffectGroup<Position2D<? extends Position2D>> group = new EffectStack<>("Default Effects");
-        final DrawDot<Position2D<? extends Position2D>> effect = new DrawDot<>("Draw the dots");
+        final EffectGroup<Position2D<? extends Position2D<?>>> group = new EffectStack<>("Default Effects");
+        final DrawDot<Position2D<? extends Position2D<?>>> effect = new DrawDot<>("Draw the dots");
         effect.setSize(TEST_SIZE);
         group.add(effect);
-        final EffectGroup<Position2D<? extends Position2D>> deserialized = EffectSerializer.effectsFromResources(TEST_EFFECTS);
-        Assert.assertEquals(group, deserialized);
-        final File file = folder.newFile();
+        final EffectGroup<Position2D<? extends Position2D<?>>> deserialized = EffectSerializer.effectsFromResources(TEST_EFFECTS);
+        assertEquals(group, deserialized);
+        final File file = TemporaryFile.create();
         EffectSerializer.effectsToFile(file, group);
-        Assert.assertEquals(deserialized, EffectSerializer.effectsFromFile(file));
+        assertEquals(deserialized, EffectSerializer.effectsFromFile(file));
     }
 }

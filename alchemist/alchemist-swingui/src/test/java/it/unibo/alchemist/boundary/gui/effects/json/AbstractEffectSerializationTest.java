@@ -1,10 +1,10 @@
 package it.unibo.alchemist.boundary.gui.effects.json;
 
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Abstract class that provides a common base of methods for effects
@@ -13,11 +13,7 @@ import org.junit.rules.TemporaryFolder;
  * @param <T>
  *            the type of effect
  */
-public abstract class AbstractEffectSerializationTest<T extends EffectFX> {
-
-    /** Temporary folder created before each test method, and deleted after each. */
-    @Rule
-    public final TemporaryFolder folder = new TemporaryFolder();
+public abstract class AbstractEffectSerializationTest<T extends EffectFX<?>> {
 
     /**
      * Tests (de)serialization with default Java serialization engine.
@@ -38,7 +34,7 @@ public abstract class AbstractEffectSerializationTest<T extends EffectFX> {
     public abstract void testGsonSerialization() throws Exception;
 
     /**
-     * Method that generate {@link Assert#assertTrue(boolean) assertTrue()}
+     * Method that generate {@link org.junit.jupiter.api.Assertions#assertTrue(boolean)}
      * messages.
      * 
      * @param origin
@@ -51,11 +47,9 @@ public abstract class AbstractEffectSerializationTest<T extends EffectFX> {
         if (origin == null) {
             return "Original Effect is null";
         }
-
         if (deserialized == null) {
             return "Deserialized Effect is null";
         }
-
         return "Effect \"" + origin.getName() + "\" is different from effect \"" + deserialized.getName() + "\"";
     }
 }

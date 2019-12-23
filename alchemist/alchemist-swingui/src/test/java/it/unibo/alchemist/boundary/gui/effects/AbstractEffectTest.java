@@ -3,12 +3,12 @@ package it.unibo.alchemist.boundary.gui.effects;
 import it.unibo.alchemist.boundary.gui.view.properties.SerializableBooleanProperty;
 import it.unibo.alchemist.boundary.gui.view.properties.SerializableStringProperty;
 import javafx.beans.property.Property;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static it.unibo.alchemist.boundary.gui.effects.AbstractEffect.checkBasicProperties;
 import static it.unibo.alchemist.boundary.gui.effects.AbstractEffect.checkEqualsProperties;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for {@link AbstractEffect} static comparison methods.

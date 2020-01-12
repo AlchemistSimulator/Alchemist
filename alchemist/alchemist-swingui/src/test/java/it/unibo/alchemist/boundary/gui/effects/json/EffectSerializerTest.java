@@ -1,5 +1,6 @@
 package it.unibo.alchemist.boundary.gui.effects.json;
 
+import com.google.common.base.Charsets;
 import com.google.gson.reflect.TypeToken;
 import it.unibo.alchemist.boundary.gui.effects.DrawColoredDot;
 import it.unibo.alchemist.boundary.gui.effects.DrawDot;
@@ -58,13 +59,14 @@ public class EffectSerializerTest {
         }.getType();
         final List<EffectFX<Position2D<? extends Position2D<?>>>> effects = new ArrayList<>();
         effects.add(new DrawDot<>());
-        effects.add(new DrawColoredDot("Test"));
-        final Writer writer = new FileWriter(file);
-        EffectSerializer.getGSON().toJson(effects, type, writer);
-        writer.close();
-        final Reader reader = new FileReader(file);
-        final List<EffectFX<Position2D<? extends Position2D<?>>>> deserialized = EffectSerializer.getGSON().fromJson(reader, type);
-        reader.close();
+        effects.add(new DrawColoredDot<>("Test"));
+        try (Writer writer = new FileWriter(file, Charsets.UTF_8)) {
+            EffectSerializer.getGSON().toJson(effects, type, writer);
+        }
+        List<EffectFX<Position2D<? extends Position2D<?>>>> deserialized;
+        try (Reader reader = new FileReader(file, Charsets.UTF_8)) {
+            deserialized = EffectSerializer.getGSON().fromJson(reader, type);
+        }
         assertEquals(effects, deserialized);
     }
 

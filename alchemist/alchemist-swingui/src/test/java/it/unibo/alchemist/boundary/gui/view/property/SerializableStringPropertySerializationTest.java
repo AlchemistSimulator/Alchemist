@@ -1,5 +1,6 @@
 package it.unibo.alchemist.boundary.gui.view.property;
 
+import com.google.common.base.Charsets;
 import com.google.gson.reflect.TypeToken;
 import it.unibo.alchemist.boundary.gui.effects.json.AbstractPropertySerializationTest;
 import it.unibo.alchemist.boundary.gui.view.properties.SerializableStringProperty;
@@ -29,16 +30,19 @@ public final class SerializableStringPropertySerializationTest extends AbstractP
     @Override
     public void testJavaSerialization() throws IOException, ClassNotFoundException {
         final File file = TemporaryFile.create();
-        final FileOutputStream fout = new FileOutputStream(file);
-        final ObjectOutputStream oos = new ObjectOutputStream(fout);
-        final SerializableStringProperty serializableStringProperty = new SerializableStringProperty("Pippo", "Test string");
-        oos.writeObject(serializableStringProperty);
-        final FileInputStream fin = new FileInputStream(file);
-        final ObjectInputStream ois = new ObjectInputStream(fin);
-        final SerializableStringProperty deserialized = (SerializableStringProperty) ois.readObject();
+        SerializableStringProperty serializableStringProperty;
+        SerializableStringProperty deserialized;
+        try (
+                FileOutputStream fout = new FileOutputStream(file);
+                ObjectOutputStream oos = new ObjectOutputStream(fout);
+                FileInputStream fin = new FileInputStream(file);
+                ObjectInputStream ois = new ObjectInputStream(fin)
+                ) {
+            serializableStringProperty = new SerializableStringProperty("Pippo", "Test string");
+            oos.writeObject(serializableStringProperty);
+            deserialized = (SerializableStringProperty) ois.readObject();
+        }
         assertEquals(serializableStringProperty, deserialized, getMessage(serializableStringProperty, deserialized));
-        oos.close();
-        ois.close();
     }
 
     @Test
@@ -46,12 +50,14 @@ public final class SerializableStringPropertySerializationTest extends AbstractP
     public void testGsonSerialization() throws Exception {
         final File file = TemporaryFile.create();
         final SerializableStringProperty serializableStringProperty = new SerializableStringProperty("Pippo", "Test string");
-        final Writer writer = new FileWriter(file);
-        GSON.toJson(serializableStringProperty, this.getGsonType(), writer);
-        writer.close();
-        final Reader reader = new FileReader(file);
-        final SerializableStringProperty deserialized = GSON.fromJson(reader, this.getGsonType());
-        reader.close();
+        SerializableStringProperty deserialized;
+        try (
+                Writer writer = new FileWriter(file, Charsets.UTF_8);
+                Reader reader = new FileReader(file, Charsets.UTF_8)
+                ) {
+            GSON.toJson(serializableStringProperty, this.getGsonType(), writer);
+            deserialized = GSON.fromJson(reader, this.getGsonType());
+        }
         assertEquals(serializableStringProperty, deserialized, getMessage(serializableStringProperty, deserialized));
     }
 

@@ -1,5 +1,6 @@
 package it.unibo.alchemist.boundary.gui.view.property;
 
+import com.google.common.base.Charsets;
 import com.google.gson.reflect.TypeToken;
 import it.unibo.alchemist.boundary.gui.effects.json.AbstractPropertySerializationTest;
 import it.unibo.alchemist.boundary.gui.view.properties.SerializableEnumProperty;
@@ -46,19 +47,22 @@ public class SerializableEnumPropertySerializationTest extends AbstractPropertyS
 
     @Test
     @Override
+    @SuppressWarnings("unchecked") // If something goes wrong, the test will fail
     public void testJavaSerialization() throws IOException, ClassNotFoundException {
         final File file = TemporaryFile.create();
-        final FileOutputStream fout = new FileOutputStream(file);
-        final ObjectOutputStream oos = new ObjectOutputStream(fout);
-        final SerializableEnumProperty<TestEnum> serializableEnumProperty = new SerializableEnumProperty<>("Test", TestEnum.TEST);
-        oos.writeObject(serializableEnumProperty);
-        final FileInputStream fin = new FileInputStream(file);
-        final ObjectInputStream ois = new ObjectInputStream(fin);
-        @SuppressWarnings("unchecked") // If something goes wrong, the test will fail
-        final SerializableEnumProperty<TestEnum> deserialized = (SerializableEnumProperty<TestEnum>) ois.readObject();
+        SerializableEnumProperty<TestEnum> serializableEnumProperty;
+        SerializableEnumProperty<TestEnum> deserialized;
+        try (
+                FileOutputStream fout = new FileOutputStream(file);
+                ObjectOutputStream oos = new ObjectOutputStream(fout);
+                FileInputStream fin = new FileInputStream(file);
+                ObjectInputStream ois = new ObjectInputStream(fin)
+        ) {
+            serializableEnumProperty = new SerializableEnumProperty<>("Test", TestEnum.TEST);
+            oos.writeObject(serializableEnumProperty);
+            deserialized = (SerializableEnumProperty<TestEnum>) ois.readObject();
+        }
         assertEquals(serializableEnumProperty, deserialized, getMessage(serializableEnumProperty, deserialized));
-        oos.close();
-        ois.close();
     }
 
     @Test
@@ -66,12 +70,14 @@ public class SerializableEnumPropertySerializationTest extends AbstractPropertyS
     public void testGsonSerialization() throws Exception {
         final File file = TemporaryFile.create();
         final SerializableEnumProperty<TestEnum> serializableEnumProperty = new SerializableEnumProperty<>("Test", TestEnum.FOO);
-        final Writer writer = new FileWriter(file);
-        GSON.toJson(serializableEnumProperty, this.getGsonType(), writer);
-        writer.close();
-        final Reader reader = new FileReader(file);
-        final SerializableEnumProperty<TestEnum> deserialized = GSON.fromJson(reader, this.getGsonType());
-        reader.close();
+        SerializableEnumProperty<TestEnum> deserialized;
+        try (
+                Writer writer = new FileWriter(file, Charsets.UTF_8);
+                Reader reader = new FileReader(file, Charsets.UTF_8)
+                ) {
+            GSON.toJson(serializableEnumProperty, this.getGsonType(), writer);
+            deserialized = GSON.fromJson(reader, this.getGsonType());
+        }
         assertEquals(serializableEnumProperty, deserialized, getMessage(serializableEnumProperty, deserialized));
     }
 

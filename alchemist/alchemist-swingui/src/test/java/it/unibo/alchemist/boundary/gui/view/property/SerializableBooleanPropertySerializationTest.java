@@ -1,5 +1,6 @@
 package it.unibo.alchemist.boundary.gui.view.property;
 
+import com.google.common.base.Charsets;
 import com.google.gson.reflect.TypeToken;
 import it.unibo.alchemist.boundary.gui.effects.json.AbstractPropertySerializationTest;
 import it.unibo.alchemist.boundary.gui.view.properties.SerializableBooleanProperty;
@@ -32,24 +33,29 @@ public final class SerializableBooleanPropertySerializationTest extends Abstract
     public void testJavaSerialization() throws IOException, ClassNotFoundException {
         final File file = TemporaryFile.create();
         assertTrue(file.createNewFile());
-        final FileOutputStream fout = new FileOutputStream(file);
-        final ObjectOutputStream oos = new ObjectOutputStream(fout);
-        final SerializableBooleanProperty serializableBooleanProperty = new SerializableBooleanProperty("Test", true);
-        oos.writeObject(serializableBooleanProperty);
-        final FileInputStream fin = new FileInputStream(file);
-        final ObjectInputStream ois = new ObjectInputStream(fin);
-        final SerializableBooleanProperty deserialized = (SerializableBooleanProperty) ois.readObject();
-        assertEquals(serializableBooleanProperty, deserialized, getMessage(serializableBooleanProperty, deserialized));
-        final SerializableBooleanProperty serializableBooleanProperty2 = new SerializableBooleanProperty("Test2", false);
-        oos.writeObject(serializableBooleanProperty2);
-        final SerializableBooleanProperty deserialized2 = (SerializableBooleanProperty) ois.readObject();
+        SerializableBooleanProperty serializableBooleanProperty;
+        SerializableBooleanProperty deserialized;
+        SerializableBooleanProperty serializableBooleanProperty2;
+        SerializableBooleanProperty deserialized2;
+        try (
+                FileOutputStream fout = new FileOutputStream(file);
+                ObjectOutputStream oos = new ObjectOutputStream(fout);
+                FileInputStream fin = new FileInputStream(file);
+                ObjectInputStream ois = new ObjectInputStream(fin)
+        ) {
+            serializableBooleanProperty = new SerializableBooleanProperty("Test", true);
+            oos.writeObject(serializableBooleanProperty);
+            deserialized = (SerializableBooleanProperty) ois.readObject();
+            assertEquals(serializableBooleanProperty, deserialized, getMessage(serializableBooleanProperty, deserialized));
+            serializableBooleanProperty2 = new SerializableBooleanProperty("Test2", false);
+            oos.writeObject(serializableBooleanProperty2);
+            deserialized2 = (SerializableBooleanProperty) ois.readObject();
+        }
         assertEquals(serializableBooleanProperty2, deserialized2, getMessage(serializableBooleanProperty2, deserialized2));
         assertNotEquals(serializableBooleanProperty, serializableBooleanProperty2);
         assertNotEquals(serializableBooleanProperty, deserialized2);
         assertNotEquals(deserialized, deserialized2);
         assertNotEquals(serializableBooleanProperty2, deserialized);
-        oos.close();
-        ois.close();
     }
 
     @Test
@@ -57,13 +63,15 @@ public final class SerializableBooleanPropertySerializationTest extends Abstract
     public void testGsonSerialization() throws Exception {
         final File file = TemporaryFile.create();
         assertTrue(file.createNewFile());
-        final SerializableBooleanProperty serializableBooleanProperty = new SerializableBooleanProperty("Test", true);
-        final Writer writer = new FileWriter(file);
-        GSON.toJson(serializableBooleanProperty, this.getGsonType(), writer);
-        writer.close();
-        final Reader reader = new FileReader(file);
-        final SerializableBooleanProperty deserialized = GSON.fromJson(reader, this.getGsonType());
-        reader.close();
+        SerializableBooleanProperty serializableBooleanProperty = new SerializableBooleanProperty("Test", true);
+        SerializableBooleanProperty deserialized;
+        try (
+                Writer writer = new FileWriter(file, Charsets.UTF_8);
+                Reader reader = new FileReader(file, Charsets.UTF_8)
+        ) {
+            GSON.toJson(serializableBooleanProperty, this.getGsonType(), writer);
+            deserialized = GSON.fromJson(reader, this.getGsonType());
+        }
         assertEquals(serializableBooleanProperty, deserialized, getMessage(serializableBooleanProperty, deserialized));
     }
 

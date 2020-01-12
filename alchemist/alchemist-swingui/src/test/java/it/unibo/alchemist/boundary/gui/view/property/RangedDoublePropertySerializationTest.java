@@ -1,5 +1,6 @@
 package it.unibo.alchemist.boundary.gui.view.property;
 
+import com.google.common.base.Charsets;
 import com.google.gson.reflect.TypeToken;
 import it.unibo.alchemist.boundary.gui.effects.json.AbstractPropertySerializationTest;
 import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
@@ -38,27 +39,27 @@ public final class RangedDoublePropertySerializationTest extends AbstractPropert
     @Test
     @Override
     public void testJavaSerialization() throws IOException, ClassNotFoundException {
-        final File file = TemporaryFile.create();
-
-        final FileOutputStream fout = new FileOutputStream(file);
-        final ObjectOutputStream oos = new ObjectOutputStream(fout);
-
+        File file = TemporaryFile.create();
         RangedDoubleProperty rangedDoubleProperty = new RangedDoubleProperty(TEST_NAME, TEST_INITIAL_VALUE, TEST_LOWER_BOUND, TEST_UPPER_BOUND);
-        oos.writeObject(rangedDoubleProperty);
-        final FileInputStream fin = new FileInputStream(file);
-        final ObjectInputStream ois = new ObjectInputStream(fin);
-        RangedDoubleProperty deserialized = (RangedDoubleProperty) ois.readObject();
+        RangedDoubleProperty deserialized;
+        try (
+                FileOutputStream fout = new FileOutputStream(file);
+                ObjectOutputStream oos = new ObjectOutputStream(fout);
+                FileInputStream fin = new FileInputStream(file);
+                ObjectInputStream ois = new ObjectInputStream(fin)
+        ) {
+            oos.writeObject(rangedDoubleProperty);
+            deserialized = (RangedDoubleProperty) ois.readObject();
+            assertEquals(rangedDoubleProperty, deserialized, getMessage(rangedDoubleProperty, deserialized));
+            rangedDoubleProperty = PropertyFactory.getFXColorChannelProperty(TEST_COLOR_NAME, TEST_COLOR_INITIAL_VALUE);
+            oos.writeObject(rangedDoubleProperty);
+            deserialized = (RangedDoubleProperty) ois.readObject();
+            assertEquals(rangedDoubleProperty, deserialized, getMessage(rangedDoubleProperty, deserialized));
+            rangedDoubleProperty = PropertyFactory.getPercentageRangedProperty(TEST_PERCENT_NAME, TEST_PERCENT_INITIAL_VALUE);
+            oos.writeObject(rangedDoubleProperty);
+            deserialized = (RangedDoubleProperty) ois.readObject();
+        }
         assertEquals(rangedDoubleProperty, deserialized, getMessage(rangedDoubleProperty, deserialized));
-        rangedDoubleProperty = PropertyFactory.getFXColorChannelProperty(TEST_COLOR_NAME, TEST_COLOR_INITIAL_VALUE);
-        oos.writeObject(rangedDoubleProperty);
-        deserialized = (RangedDoubleProperty) ois.readObject();
-        assertEquals(rangedDoubleProperty, deserialized, getMessage(rangedDoubleProperty, deserialized));
-        rangedDoubleProperty = PropertyFactory.getPercentageRangedProperty(TEST_PERCENT_NAME, TEST_PERCENT_INITIAL_VALUE);
-        oos.writeObject(rangedDoubleProperty);
-        deserialized = (RangedDoubleProperty) ois.readObject();
-        assertEquals(rangedDoubleProperty, deserialized, getMessage(rangedDoubleProperty, deserialized));
-        oos.close();
-        ois.close();
     }
 
     @Test
@@ -66,22 +67,24 @@ public final class RangedDoublePropertySerializationTest extends AbstractPropert
     public void testGsonSerialization() throws Exception {
         final File file = TemporaryFile.create();
         RangedDoubleProperty rangedDoubleProperty = new RangedDoubleProperty(TEST_NAME, TEST_INITIAL_VALUE, TEST_LOWER_BOUND, TEST_UPPER_BOUND);
-        final Writer writer = new FileWriter(file);
-        GSON.toJson(rangedDoubleProperty, this.getGsonType(), writer);
-        writer.flush();
-        final Reader reader = new FileReader(file);
-        RangedDoubleProperty deserialized = GSON.fromJson(reader, this.getGsonType());
-        assertEquals(rangedDoubleProperty, deserialized, getMessage(rangedDoubleProperty, deserialized));
-        rangedDoubleProperty = PropertyFactory.getFXColorChannelProperty(TEST_COLOR_NAME, TEST_COLOR_INITIAL_VALUE);
-        GSON.toJson(rangedDoubleProperty, this.getGsonType(), writer);
-        writer.flush();
-        deserialized = GSON.fromJson(reader, this.getGsonType());
-        assertEquals(rangedDoubleProperty, deserialized, getMessage(rangedDoubleProperty, deserialized));
-        rangedDoubleProperty = PropertyFactory.getPercentageRangedProperty(TEST_PERCENT_NAME, TEST_PERCENT_INITIAL_VALUE);
-        GSON.toJson(rangedDoubleProperty, this.getGsonType(), writer);
-        writer.close();
-        deserialized = GSON.fromJson(reader, this.getGsonType());
-        reader.close();
+        RangedDoubleProperty deserialized;
+        try (
+                Writer writer = new FileWriter(file, Charsets.UTF_8);
+                Reader reader = new FileReader(file, Charsets.UTF_8)
+        ) {
+            GSON.toJson(rangedDoubleProperty, this.getGsonType(), writer);
+            writer.flush();
+            deserialized = GSON.fromJson(reader, this.getGsonType());
+            assertEquals(rangedDoubleProperty, deserialized, getMessage(rangedDoubleProperty, deserialized));
+            rangedDoubleProperty = PropertyFactory.getFXColorChannelProperty(TEST_COLOR_NAME, TEST_COLOR_INITIAL_VALUE);
+            GSON.toJson(rangedDoubleProperty, this.getGsonType(), writer);
+            writer.flush();
+            deserialized = GSON.fromJson(reader, this.getGsonType());
+            assertEquals(rangedDoubleProperty, deserialized, getMessage(rangedDoubleProperty, deserialized));
+            rangedDoubleProperty = PropertyFactory.getPercentageRangedProperty(TEST_PERCENT_NAME, TEST_PERCENT_INITIAL_VALUE);
+            GSON.toJson(rangedDoubleProperty, this.getGsonType(), writer);
+            deserialized = GSON.fromJson(reader, this.getGsonType());
+        }
         assertEquals(rangedDoubleProperty, deserialized, getMessage(rangedDoubleProperty, deserialized));
     }
 

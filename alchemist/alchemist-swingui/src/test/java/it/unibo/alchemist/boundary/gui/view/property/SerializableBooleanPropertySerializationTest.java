@@ -63,7 +63,7 @@ public final class SerializableBooleanPropertySerializationTest extends Abstract
     public void testGsonSerialization() throws Exception {
         final File file = TemporaryFile.create();
         assertTrue(file.createNewFile());
-        SerializableBooleanProperty serializableBooleanProperty = new SerializableBooleanProperty("Test", true);
+        final SerializableBooleanProperty serializableBooleanProperty = new SerializableBooleanProperty("Test", true);
         SerializableBooleanProperty deserialized;
         try (
                 Writer writer = new FileWriter(file, Charsets.UTF_8);

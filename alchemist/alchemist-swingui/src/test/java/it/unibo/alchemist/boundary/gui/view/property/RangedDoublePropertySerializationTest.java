@@ -39,7 +39,7 @@ public final class RangedDoublePropertySerializationTest extends AbstractPropert
     @Test
     @Override
     public void testJavaSerialization() throws IOException, ClassNotFoundException {
-        File file = TemporaryFile.create();
+        final File file = TemporaryFile.create();
         RangedDoubleProperty rangedDoubleProperty = new RangedDoubleProperty(TEST_NAME, TEST_INITIAL_VALUE, TEST_LOWER_BOUND, TEST_UPPER_BOUND);
         RangedDoubleProperty deserialized;
         try (

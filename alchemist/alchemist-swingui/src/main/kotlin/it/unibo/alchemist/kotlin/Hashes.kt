@@ -21,7 +21,7 @@ private val MURMUR3_32 = Hashing.murmur3_32()
  *
  * @param data the data to hash
  */
-fun hashMurmur3_32(vararg data: Any): Int = hash(MURMUR3_32.newHasher(), data)
+fun hashMurmur3_32(vararg data: Any): Int = hash(MURMUR3_32.newHasher(), *data)
 
 private fun hash(hasher: Hasher, vararg data: Any): Int =
     data.forEach { hasher.put(it) }.run { hasher.hash().asInt() }

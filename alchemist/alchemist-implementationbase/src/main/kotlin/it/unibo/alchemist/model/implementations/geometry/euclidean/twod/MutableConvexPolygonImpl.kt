@@ -14,7 +14,7 @@ import java.awt.geom.Path2D
 import java.util.Optional
 
 /**
- * Implementation of a [MutableConvexPolygon]
+ * Implementation of a [MutableConvexPolygon].
  */
 open class MutableConvexPolygonImpl (
         private val vertices: MutableList<Euclidean2DPosition>
@@ -87,8 +87,7 @@ open class MutableConvexPolygonImpl (
         return false
     }
 
-    override fun getEdge(index: Int) =
-        Pair(vertices[index], vertices[(index + 1) % vertices.size])
+    override fun getEdge(index: Int) = Pair(vertices[index], vertices[(index + 1) % vertices.size])
 
     override fun moveEdge(index: Int, newEdge: Pair<Euclidean2DPosition, Euclidean2DPosition>): Boolean {
         val oldEdge = getEdge(index)

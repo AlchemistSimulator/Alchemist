@@ -560,6 +560,24 @@ terminate:
     parameters: [100, 10]
 ```
 
+### Terminating the simulation after some time
+
+One of the simplest terminators availables allows for declaring a simulation completed when a certain simulated time is reached.
+In the following example, it is used in conjunction with a number of variables, showing how it's possible to use such
+variables to produce batches of simulations terminating at different times.
+
+```yaml
+variables:
+  stabilizationTime:
+    type: ArbitraryVariable
+    parameters: [10, [0, 1, 10, 100, 1000]]
+  simulationEnd: &simulationEnd
+    formula: 150 + stabilizationTime
+terminate:
+  - type: AfterTime
+    parameters: [*simulationEnd]
+```
+
 ### Terminating the simulation if the environment is not changing
 
 A terminator is provided for terminating when a simulation is "stable" (nothing changes in terms of positions and nodes' content).

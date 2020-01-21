@@ -541,3 +541,52 @@ layers:
     molecule: bar
     parameters: [0.0, 0.0, 5.0, 10.0]
 ```
+
+## Terminating the simulation if a condition is met
+
+Alchemist supports the possibility to write termination conditions for any simulation.
+Termination conditions are checked after every event, and, if met, cause the immediate termination of a simulation.
+Termination conditions are expected to be found in the {{ anchor('it.unibo.alchemist.model.implementations.terminators') }} package.
+
+To load them, use the `terminators` keyword.
+Multiple terminators are allowed, the first terminator matching causes the termination of the simulation (they are in and).
+
+Here is an example:
+```yaml
+terminate:
+  # Defines a new terminator which every 100 simulation steps for the environment to remain equal for the 10 subsequent
+  # simulation steps. If no change is detected, then the simulation is intended as concluded.
+  - type: StableForSteps
+    parameters: [100, 10]
+```
+
+### Terminating the simulation after some time
+
+One of the simplest terminators availables allows for declaring a simulation completed when a certain simulated time is reached.
+In the following example, it is used in conjunction with a number of variables, showing how it's possible to use such
+variables to produce batches of simulations terminating at different times.
+
+```yaml
+variables:
+  stabilizationTime:
+    type: ArbitraryVariable
+    parameters: [10, [0, 1, 10, 100, 1000]]
+  simulationEnd: &simulationEnd
+    formula: 150 + stabilizationTime
+terminate:
+  - type: AfterTime
+    parameters: [*simulationEnd]
+```
+
+### Terminating the simulation if the environment is not changing
+
+A terminator is provided for terminating when a simulation is "stable" (nothing changes in terms of positions and nodes' content).
+The class implementing it is {{ anchor('StableForSteps')) }}.
+The following code snippet exemplifies its usage:
+```yaml
+terminate:
+  # Defines a new terminator which every 100 simulation steps for the environment to remain equal for the 10 subsequent
+  # simulation steps. If no change is detected, then the simulation is intended as concluded.
+  - type: StableForSteps
+    parameters: [100, 10]
+```

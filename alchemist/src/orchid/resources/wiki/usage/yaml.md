@@ -553,7 +553,7 @@ Multiple terminators are allowed, the first terminator matching causes the termi
 
 Here is an example:
 ```yaml
-terminators:
+terminate:
   # Defines a new terminator which every 100 simulation steps for the environment to remain equal for the 10 subsequent
   # simulation steps. If no change is detected, then the simulation is intended as concluded.
   - type: StableForSteps
@@ -566,7 +566,7 @@ A terminator is provided for terminating when a simulation is "stable" (nothing 
 The class implementing it is {{ anchor('StableForSteps')) }}.
 The following code snippet exemplifies its usage:
 ```yaml
-terminators:
+terminate:
   # Defines a new terminator which every 100 simulation steps for the environment to remain equal for the 10 subsequent
   # simulation steps. If no change is detected, then the simulation is intended as concluded.
   - type: StableForSteps

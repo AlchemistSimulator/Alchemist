@@ -40,16 +40,16 @@ class TestHashes {
 
     private fun testMultipleElements(hash: (Any) -> Int, hashFunction: HashFunction): Unit {
         val sequence = sequenceOf("5", '5', 5, true)
-        assertEquals(
-            hash(sequence),
-            hashFunction.newHasher()
-                .putString("5", Charsets.UTF_16)
-                .putChar('5')
-                .putInt(5)
-                .putBoolean(true)
-                .hash().asInt()
-        )
-        assertEquals(hash(sequence.toList()), hash(sequence.toMutableList()))
+        val list = listOf("5", '5', 5, true)
+        val expected = hashFunction.newHasher()
+            .putString("5", Charsets.UTF_16)
+            .putChar('5')
+            .putInt(5)
+            .putBoolean(true)
+            .hash().asInt()
+        assertEquals(hash(sequence), expected)
+        assertEquals(hash(list), expected)
+        assertEquals(hash(list), hash(list.toMutableList()))
     }
 
     private fun testOrder(hash: (Any) -> Int): Unit {

@@ -1,8 +1,8 @@
 package it.unibo.alchemist.model.implementations.geometry
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import org.danilopianini.lang.MathUtils.fuzzyEquals
 import java.awt.Shape
-import java.awt.geom.AffineTransform
 import java.awt.geom.PathIterator
 import java.awt.geom.Point2D
 import kotlin.math.atan2
@@ -25,7 +25,7 @@ fun Euclidean2DPosition.asAngle() = atan2(y, x)
 fun Shape.vertices(): List<Euclidean2DPosition> {
     val vertices = mutableListOf<Euclidean2DPosition>()
     val coords = DoubleArray(6)
-    val iterator = getPathIterator(AffineTransform())
+    val iterator = getPathIterator(null)
     while (!iterator.isDone) {
         when (iterator.currentSegment(coords)) {
             PathIterator.SEG_MOVETO, PathIterator.SEG_LINETO -> vertices.add(Euclidean2DPosition(coords[0], coords[1]))
@@ -44,8 +44,8 @@ fun Euclidean2DPosition.translate(v: Euclidean2DPosition) = Euclidean2DPosition(
  * Normalizes the vector.
  */
 fun Euclidean2DPosition.normalize(): Euclidean2DPosition {
-    val len = sqrt(x*x + y*y)
-    return Euclidean2DPosition(x/len, y/len)
+    val len = sqrt(x * x + y * y)
+    return Euclidean2DPosition(x / len, y / len)
 }
 
 /**
@@ -59,17 +59,17 @@ fun Euclidean2DPosition.resize(newLen: Double): Euclidean2DPosition {
 
 /**
  * Checks whether the given point is inside a rectangular region starting in
- * (0,0) and of width and height specified. Bounds are included.
+ * lowerBound and ending in upperBound.
  */
-fun isInBoundaries(p: Euclidean2DPosition, boundX: Double, boundY: Double) =
-    p.x >= 0.0 && p.y >= 0.0 && p.x <= boundX && p.y <= boundY
+fun isInBoundaries(p: Euclidean2DPosition, lowerBound: Point2D, upperBound: Point2D) =
+    p.x >= lowerBound.x && p.y >= lowerBound.y && p.x <= upperBound.x && p.y <= upperBound.y
 
 /**
- * Checks whether the given segment is inside a rectangular region starting in
- * (0,0) and of width and height specified. Bounds are included.
+ * Checks whether the given edge is inside a rectangular region starting in
+ * lowerBound and ending in upperBound.
  */
-fun isInBoundaries(e: Pair<Euclidean2DPosition, Euclidean2DPosition>, boundX: Double, boundY: Double) =
-    isInBoundaries(e.first, boundX, boundY) && isInBoundaries(e.second, boundX, boundY)
+fun isInBoundaries(e: Pair<Euclidean2DPosition, Euclidean2DPosition>, lowerBound: Point2D, upperBound: Point2D) =
+    isInBoundaries(e.first, lowerBound, upperBound) && isInBoundaries(e.second, lowerBound, upperBound)
 
 /**
  * Computes the medium point of a segment.
@@ -83,12 +83,12 @@ fun Pair<Euclidean2DPosition, Euclidean2DPosition>.midPoint() =
  */
 fun Pair<Euclidean2DPosition, Euclidean2DPosition>.contains(p: Euclidean2DPosition): Boolean {
     val isCollinear: Boolean
-    isCollinear = if (first.x == second.x) {
-        p.x == first.x
+    isCollinear = if (fuzzyEquals(first.x, second.x)) {
+        fuzzyEquals(p.x, first.x)
     } else {
         val m = computeSlope()
         val q = first.y - m * first.x
-        (m * p.x + q) == p.y
+        fuzzyEquals((m * p.x + q), p.y)
     }
     return isCollinear && p.x.liesBetween(first.x, second.x) && p.y.liesBetween(first.y, second.y)
 }
@@ -107,8 +107,7 @@ fun Double.liesBetween(v1: Double, v2: Double) = this >= min(v1, v2) && this <= 
 /**
  * Finds the intersection point of two given segments.
  */
-fun intersection(s1: Pair<Euclidean2DPosition, Euclidean2DPosition>,
-                 s2: Pair<Euclidean2DPosition, Euclidean2DPosition>): Euclidean2DPosition {
+fun intersection(s1: Pair<Euclidean2DPosition, Euclidean2DPosition>, s2: Pair<Euclidean2DPosition, Euclidean2DPosition>): Euclidean2DPosition {
     val p1 = s1.first
     val p2 = s1.second
     val p3 = s2.first

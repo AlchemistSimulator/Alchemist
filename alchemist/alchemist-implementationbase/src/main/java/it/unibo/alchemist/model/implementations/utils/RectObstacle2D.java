@@ -171,7 +171,7 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
      *            the rectangle height. Can be negative.
      */
     public RectObstacle2D(final double x, final double y, final double w, final double h) {
-        super(x, y, w, h);
+        super(min(x, x + w), min(y, y + h), Math.abs(w), Math.abs(h));
         minX = min(x, x + w);
         minY = min(y, y + h);
         maxX = max(x, x + w);

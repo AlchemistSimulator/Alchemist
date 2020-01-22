@@ -1,19 +1,28 @@
 package it.unibo.alchemist.model.implementations.geometry.navigationmeshes.deaccon
 
-import it.unibo.alchemist.model.implementations.geometry.*
 import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.MutableConvexPolygonImpl
+import it.unibo.alchemist.model.implementations.geometry.isInBoundaries
+import it.unibo.alchemist.model.implementations.geometry.resize
+import it.unibo.alchemist.model.implementations.geometry.translate
+import it.unibo.alchemist.model.implementations.geometry.vertices
+import it.unibo.alchemist.model.implementations.geometry.computeSlope
+import it.unibo.alchemist.model.implementations.geometry.normalize
+import it.unibo.alchemist.model.implementations.geometry.midPoint
+import it.unibo.alchemist.model.implementations.geometry.intersection
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DEdge
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.MutableConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.navigationmeshes.deaccon.ExtendableConvexPolygon
+import org.danilopianini.lang.MathUtils.fuzzyEquals
 import java.awt.Shape
-import java.awt.geom.*
 import java.awt.geom.Point2D
+import java.awt.geom.Line2D
 
 /**
- * Implementation of [ExtendableConvexPolygon]
+ * Implementation of [ExtendableConvexPolygon].
  */
 open class ExtendableConvexPolygonImpl(
-        private val vertices: MutableList<Euclidean2DPosition>
+    private val vertices: MutableList<Euclidean2DPosition>
 ) : MutableConvexPolygonImpl(vertices), ExtendableConvexPolygon {
 
     /**
@@ -53,17 +62,16 @@ open class ExtendableConvexPolygonImpl(
         }
 
         /**
-         * Sets to the default value the specified edge.
+         * Sets the specified edge to the default value.
          */
         fun setDefault(edgeIndex: Int) {
             this[edgeIndex] = default
         }
-
     }
 
     private var canEdgeAdvance: EdgesCache<Boolean> = EdgesCache(true)
     /*
-     * Caches the growth direction (expressed as a Point2D) of both of the
+     * Caches the growth direction (expressed as a vector) of both of the
      * vertices of each edge. See [advanceEdge].
      */
     private var growthDirections: EdgesCache<Pair<Euclidean2DPosition?, Euclidean2DPosition?>?> = EdgesCache(null)
@@ -105,7 +113,7 @@ open class ExtendableConvexPolygonImpl(
         return false
     }
 
-    override fun moveEdge(index: Int, newEdge: Pair<Euclidean2DPosition, Euclidean2DPosition>): Boolean {
+    override fun moveEdge(index: Int, newEdge: Euclidean2DEdge): Boolean {
         // when moving an edge 3 edges are modified: the one moving and the two linked to it
         val oldEdge1 = getEdge(circularPrev(index))
         val oldEdge2 = getEdge(index)
@@ -139,6 +147,9 @@ open class ExtendableConvexPolygonImpl(
      * normal to e is equal to step.
      */
     override fun advanceEdge(index: Int, step: Double): Boolean {
+        if (step == 0.0) {
+            return true
+        }
         val e = getEdge(index)
         if (e.first == e.second) { // avoid degenerate edges
             return false
@@ -162,8 +173,11 @@ open class ExtendableConvexPolygonImpl(
         }
         var d1 = growthDirections[index]!!.first!!
         var d2 = growthDirections[index]!!.second!!
-        d1 = d1.resize(findLength(d1, n, step))
-        d2 = d2.resize(findLength(d2, n, step))
+        val l1 = findLength(d1, n, step)
+        val l2 = findLength(d2, n, step)
+        require(!l1.isInfinite() && !l2.isInfinite()) { "invalid growth direction" }
+        d1 = d1.resize(l1)
+        d2 = d2.resize(l2)
         // super method is used in order to avoid useless checks that would invalid useful cache
         return super.moveEdge(index, Pair(e.first.translate(d1), e.second.translate(d2)))
     }
@@ -172,24 +186,25 @@ open class ExtendableConvexPolygonImpl(
      * The advancement of an edge is blocked if an obstacle is intersected, unless in a
      * particular case called advanced case. Such case shows up when a single vertex of
      * the polygon intruded an obstacle, but no vertex from the obstacle intruded the polygon.
+     * Plus, the intruded side of the obstacle should be oblique (or better, its slope should
+     * be different from the one of the advancing edge).
      * When this happens, we can do a simple operation in order to keep growing and allow a
      * higher coverage of the walkable area. We increment the order of the polygon (by adding
      * a vertex) and adjust the direction of growth in order for the new edge to follow the
      * side of the obstacle.
      */
-    override fun extend(step: Double, obstacles: Collection<Shape>, envWidth: Double, envHeight: Double): Boolean {
+    override fun extend(step: Double, obstacles: Collection<Shape>, envStart: Point2D, envEnd: Point2D): Boolean {
+        val obs = obstacles.filter { it.vertices() != vertices }
         var extended = false
         var i = 0
         while (i < vertices.size) {
             if (canEdgeAdvance[i]) {
                 val hasAdvanced = advanceEdge(i, step)
-                if (hasAdvanced && isInBoundaries(getEdge(i), envWidth, envHeight)) {
-                    val intersectedObs = obstacles.filter { intersects(it) }
+                if (hasAdvanced && isInBoundaries(getEdge(i), envStart, envEnd)) {
+                    val intersectedObs = obs.filter { intersects(it) }
                     // can be in the advanced case for at most 2 obstacle at a time
-                    if (intersectedObs.size <= 2 && intersectedObs.all { isAdvancedCase(it) }) {
-                        if (intersectedObs.isNotEmpty()) {
-                            intersectedObs.forEach { adjustGrowth(it, i, step) }
-                        }
+                    if (intersectedObs.size <= 2 && intersectedObs.all { isAdvancedCase(it, i, step) }) {
+                        intersectedObs.forEach { adjustGrowth(it, i, step) }
                         extended = true
                         i++
                         continue
@@ -206,10 +221,10 @@ open class ExtendableConvexPolygonImpl(
         return extended
     }
 
-    private fun invalidCacheIfSlopeChanged(oldEdge: Pair<Euclidean2DPosition, Euclidean2DPosition>, i: Int) {
+    private fun invalidCacheIfSlopeChanged(oldEdge: Euclidean2DEdge, i: Int) {
         val oldM = oldEdge.computeSlope()
         val newM = getEdge(i).computeSlope()
-        if (oldM != newM && !(oldM.isNaN() && newM.isNaN())) {
+        if (!fuzzyEquals(oldM, newM) && !(oldM.isNaN() && newM.isNaN())) {
             canEdgeAdvance.setDefault(i)
             growthDirections.setDefault(i)
             normals.setDefault(i)
@@ -232,20 +247,16 @@ open class ExtendableConvexPolygonImpl(
      * algorithm). The trick is to be refined to be OPTIMAL (or replaced with a correct
      * method).
      */
-    private fun computeNormal(e: Pair<Euclidean2DPosition, Euclidean2DPosition>, step: Double): Euclidean2DPosition {
+    private fun computeNormal(e: Euclidean2DEdge, step: Double): Euclidean2DPosition {
         val dx = e.second.x - e.first.x
         val dy = e.second.y - e.first.y
         if (dx == 0.0 && dy == 0.0) {
             println("a")
         }
         require(dx != 0.0 || dy != 0.0) { "coincident points" }
-        val normal1 = Euclidean2DPosition(-dy, dx)
-        val normal2 = Euclidean2DPosition(dy, -dx)
-        var normal = normal1.resize(step)
-        val midPointT = e.midPoint().translate(normal)
-        if ((step > 0.0 && containsOrLiesOnBoundary(midPointT))
-                || (step < 0.0 && !containsOrLiesOnBoundary(midPointT))) {
-            normal = normal2
+        var normal = Euclidean2DPosition(-dy, dx).resize(step)
+        if (step > 0.0 == containsOrLiesOnBoundary(e.midPoint().translate(normal))) {
+            normal = Euclidean2DPosition(dy, -dx)
         }
         return normal.normalize()
     }
@@ -256,14 +267,55 @@ open class ExtendableConvexPolygonImpl(
      * so, we need to know the length of the new vector a'. This method computes
      * this quantity.
      */
-    private fun findLength(a: Euclidean2DPosition, bUnit: Euclidean2DPosition, q: Double): Double {
-        return q / (a.x * bUnit.x + a.y * bUnit.y)
+    private fun findLength(a: Euclidean2DPosition, bUnit: Euclidean2DPosition, q: Double) =
+        q / (a.x * bUnit.x + a.y * bUnit.y)
+
+    /*
+     * Checks whether we are in advanced case. See [extend]. The index of the
+     * growing edge and the step of growth should be provided as well.
+     */
+    private fun isAdvancedCase(obstacle: Shape, index: Int, step: Double) =
+        obstacle.vertices().none { containsOrLiesOnBoundary(it) } &&
+            vertices.filter { obstacle.contains(it.toPoint()) }.size == 1 &&
+            !fuzzyEquals(findIntrudedEdge(obstacle, index, step).computeSlope(), getEdge(index).computeSlope())
+
+    /*
+     * During the advancement of an edge, multiple edges of an obstacle may be
+     * intersected. This method allows to find the first intruded edge in the
+     * advanced case (i.e., the one that the polygon first intruded during its
+     * advancement). The index of the growing edge and the step of growth should
+     * be provided as well.
+     */
+    private fun findIntrudedEdge(obstacle: Shape, index: Int, step: Double): Euclidean2DEdge {
+        var intrudingVertex = getEdge(index).first
+        var d = growthDirections[index]!!.first!!
+        if (!obstacle.contains(intrudingVertex.toPoint())) {
+            intrudingVertex = getEdge(index).second
+            d = growthDirections[index]!!.second!!
+        }
+        // a segment going from the old position of the intruding vertex to the new one
+        val movementSegment = Pair(intrudingVertex, intrudingVertex.translate(d.resize(-step)))
+        val intrudedEdges = findIntersectingEdges(obstacle, movementSegment)
+        require(intrudedEdges.size == 1) { "vertex is not intruding" }
+        return intrudedEdges.first()
     }
 
-    private fun isAdvancedCase(obstacle: Shape): Boolean {
-        return obstacle.vertices().none { containsOrLiesOnBoundary(it) }
-                && vertices.filter { obstacle.contains(it.toPoint()) }.size == 1
+    /*
+     * Finds the edges of the obstacle intersecting with the given edge of the polygon.
+     */
+    private fun findIntersectingEdges(obstacle: Shape, e: Euclidean2DEdge): Collection<Euclidean2DEdge> {
+        val obsVertices = obstacle.vertices()
+        return obsVertices
+            .mapIndexed { i, v1 -> Pair(v1, obsVertices[(i + 1) % obsVertices.size]) }
+            .filter { edgesIntersect(it, e) }
     }
+
+    /*
+     * Delegates the check to java.awt.geom.Line2D.
+     */
+    private fun edgesIntersect(e1: Euclidean2DEdge, e2: Euclidean2DEdge) =
+        Line2D.Double(e1.first.toPoint(), e1.second.toPoint())
+            .intersectsLine(e2.first.x, e2.first.y, e2.second.x, e2.second.y)
 
     /*
      * Adjusts the growth directions in the advanced case. See [extend].
@@ -271,13 +323,12 @@ open class ExtendableConvexPolygonImpl(
     private fun adjustGrowth(obstacle: Shape, indexOfAdvancingEdge: Int, step: Double) {
         val indexOfIntrudingV = vertices.indexOfFirst { obstacle.contains(it.toPoint()) }
         // intersecting edges
-        val e1 = getEdge(indexOfIntrudingV)
-        val e2 = getEdge(circularPrev(indexOfIntrudingV))
-        val obstacleEdge = findIntersectingEdge(obstacle, e1)
-        check(obstacleEdge == findIntersectingEdge(obstacle, e2)) { "not in advanced case" }
+        val polygonEdge1 = getEdge(indexOfIntrudingV)
+        val polygonEdge2 = getEdge(circularPrev(indexOfIntrudingV))
+        val obstacleEdge = findIntrudedEdge(obstacle, indexOfAdvancingEdge, step)
         // intersecting points lying on polygon boundary
-        val p1 = intersection(e1, obstacleEdge)
-        val p2 = intersection(e2, obstacleEdge)
+        val p1 = intersection(polygonEdge1, obstacleEdge)
+        val p2 = intersection(polygonEdge2, obstacleEdge)
         // a new edge is going to be added, its vertices will grow following the intruded
         // obstacleEdge. In order to do so, their growth directions will be modified to be
         // parallel to such edge, but in opposite senses.
@@ -290,26 +341,12 @@ open class ExtendableConvexPolygonImpl(
             d1 = obstacleEdge.second.minus(p1).normalize()
             d2 = obstacleEdge.first.minus(p2).normalize()
         }
+        // since we intruded an obstacle we need to step back anyway
         advanceEdge(indexOfAdvancingEdge, -step)
         modifyGrowthDirection(indexOfIntrudingV, d1, true)
         addVertex(indexOfIntrudingV, vertices[indexOfIntrudingV].x, vertices[indexOfIntrudingV].y)
         canEdgeAdvance[indexOfIntrudingV] = false
         modifyGrowthDirection(circularPrev(indexOfIntrudingV), d2, false)
-    }
-
-    /*
-     * Finds the edge of the obstacle intersecting with the given edge of the polygon.
-     */
-    private fun findIntersectingEdge(obstacle: Shape, e: Pair<Euclidean2DPosition, Euclidean2DPosition>): Pair<Euclidean2DPosition, Euclidean2DPosition> {
-        val obsVertices = obstacle.vertices()
-        for (i in obsVertices.indices) {
-            val p1 = obsVertices[i]
-            val p2 = obsVertices[(i + 1) % obsVertices.size]
-            if (Line2D.Double(p1.toPoint(), p2.toPoint()).intersectsLine(e.first.x, e.first.y, e.second.x, e.second.y)) {
-                return Pair(p1, p2)
-            }
-        }
-        throw IllegalArgumentException("no edge of the obstacle is intersecting the given edge")
     }
 
     private fun modifyGrowthDirection(i: Int, newD: Euclidean2DPosition, first: Boolean) {
@@ -321,10 +358,11 @@ open class ExtendableConvexPolygonImpl(
         }
     }
 
-    private fun circularPrev(index: Int): Int {
-        return (index - 1 + canEdgeAdvance.size) % canEdgeAdvance.size
-    }
+    private fun circularPrev(index: Int) = (index - 1 + canEdgeAdvance.size) % canEdgeAdvance.size
 
     private fun Euclidean2DPosition.toPoint() = Point2D.Double(x, y)
 
+    override fun equals(other: Any?) = super.equals(other)
+
+    override fun hashCode() = super.hashCode()
 }

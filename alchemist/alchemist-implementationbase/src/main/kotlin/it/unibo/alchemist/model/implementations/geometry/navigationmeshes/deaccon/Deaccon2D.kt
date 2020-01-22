@@ -4,10 +4,7 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.navigationmeshes.deaccon.ExtendableConvexPolygon
 import java.awt.Shape
-import java.awt.geom.AffineTransform
-import java.awt.geom.PathIterator
 import java.awt.geom.Point2D
-import kotlin.math.min
 import kotlin.math.sqrt
 
 /**
@@ -20,6 +17,9 @@ import kotlin.math.sqrt
  * (namely, walkable areas). Since convex polygons are generated, a pedestrian
  * can freely walk around within these areas, as it is guaranteed that no obstacle
  * will be found.
+ *
+ * Deaccon works with rectangular shaped bidimensional environments with euclidean
+ * geometry and double precision coordinates (i.e. with [Euclidean2DPosition]s).
  *
  * For more information about the deaccon algorithm, see the related paper:
  * https://www.aaai.org/Papers/AIIDE/2008/AIIDE08-029.pdf
@@ -52,24 +52,24 @@ import kotlin.math.sqrt
  * in these locations, instead of in the whole environment.
  */
 class Deaccon2D(
-        /**
-         * Number of seeds to generate in the first phase of the algorithm. Note
-         * that the area that will initially be covered by seeds DO NOT grow with
-         * the number of seeds. In fact, the proportion of the environment's area
-         * to be covered in the initial seeding phase is fixed. By changing the
-         * number of seeds, what changes is their dimension. With their total area
-         * fixed, generating a lower number of seeds will result in coarse-grained
-         * initial seeds. Whereas generating a lot of seeds will result in fine-grained
-         * seeds. Ultimately, altering this parameter affects the grain of the initial
-         * seeds. This is highly dependent on the particular environment (if you have a
-         * single room coarse-grained seeds are the best, whereas if you have a whole
-         * building you'd better go with fine-grained ones or the resulting navigation
-         * mesh may be poor). It may be advisable to try different quantity of seeds
-         * and pick the best trade-off between coverage of walkable area and time.
-         * Generally speaking, the more detailed your environment is, the higher
-         * this quantity should be.
-         */
-        private val nSeeds: Int = 100
+    /**
+     * Number of seeds to generate in the first phase of the algorithm. Note
+     * that the area that will initially be covered by seeds DO NOT grow with
+     * the number of seeds. In fact, the proportion of the environment's area
+     * to be covered in the initial seeding phase is fixed. By changing the
+     * number of seeds, what changes is their dimension. With their total area
+     * fixed, generating a lower number of seeds will result in coarse-grained
+     * initial seeds. Whereas generating a lot of seeds will result in fine-grained
+     * seeds. Ultimately, altering this parameter affects the grain of the initial
+     * seeds. This is highly dependent on the particular environment (if you have a
+     * single room coarse-grained seeds are the best, whereas if you have a whole
+     * building you'd better go with fine-grained ones or the resulting navigation
+     * mesh may be poor). It may be advisable to try different quantity of seeds
+     * and pick the best trade-off between coverage of walkable area and time.
+     * Generally speaking, the more detailed your environment is, the higher
+     * this quantity should be.
+     */
+    private val nSeeds: Int = 100
 ) {
 
     /*
@@ -111,14 +111,12 @@ class Deaccon2D(
     }
 
     /**
-     * Generates a navigation mesh of the given environment.
-     *
-     * NOTE THAT:
-     * - only CONVEX POLYGONAL obstacles are supported, each curved segment
-     * connecting two points will be considered as a straight line between them.
-     * For curved obstacles consider using a bounding box, whereas for concave
-     * ones it's fairly easy to decompose them in convex meshes.
-     * - the generation may take a while.
+     * Generates a navigation mesh of an environment. A rectangular shaped
+     * environment is assumed, its south-west starting point, width and height
+     * need to be specified. Obstacles are represented with java.awt.Shape.
+     * Note that only CONVEX POLYGONAL obstacles are supported, each curved
+     * segment connecting two points will be considered as a straight line
+     * between them.
      */
     /*
      * Generally speaking, obstacles may be categorized into the following categories:
@@ -141,31 +139,28 @@ class Deaccon2D(
      * need to be taken into account. This possible future modification is the only reason
      * why this method does not take a Collection<ConvexPolygon> as input for obstacles.
      */
-    fun generateNavigationMesh(envWidth: Double, envHeight: Double, envObstacles: Collection<Shape>): Collection<ConvexPolygon> {
+    fun generateNavigationMesh(envStart: Point2D, envWidth: Double, envHeight: Double, envObstacles: Collection<Shape>): Collection<ConvexPolygon> {
+        val envEnd = Point2D.Double(envStart.x + envWidth, envStart.y + envHeight)
         // first seeding
         var nSeeds = this.nSeeds
         var side = sqrt((envWidth * envHeight) * AREA_TO_COVER / nSeeds)
         val (stepX, stepY) = computeSteps(envWidth, envHeight, nSeeds, side)
         var stepOfGrowth = (stepX + stepY) / 2 / STEP_OF_GROWTH_SCALE
-        val minSide = computeMinSide(envObstacles)
-        if (minSide <= stepOfGrowth) {
-            stepOfGrowth = minSide / 2
-        }
-        val walkableAreas = seedAndGrow(envWidth, envHeight, envObstacles, nSeeds, side, stepOfGrowth).toMutableList()
+        val walkableAreas = seedAndGrow(envStart, envEnd, envObstacles, nSeeds, side, stepOfGrowth).toMutableList()
         // active seeding
         nSeeds *= N_ACTIVE_SEEDS_SCALE
         side = stepOfGrowth * SIDE_ACTIVE_SEEDS_SCALE
         stepOfGrowth *= STEP_OF_GROWTH_ACTIVE_SEEDS_SCALE
         val obstacles = envObstacles.toMutableList()
         obstacles.addAll(walkableAreas.map { it.asAwtShape() }) // already generated regions are obstacles for new seeds
-        walkableAreas.addAll(seedAndGrow(envWidth, envHeight, obstacles, nSeeds, side, stepOfGrowth))
+        walkableAreas.addAll(seedAndGrow(envStart, envEnd, obstacles, nSeeds, side, stepOfGrowth))
         return walkableAreas
     }
 
-    private fun seedAndGrow(envWidth: Double, envHeight: Double, obstacles: Collection<Shape>, nSeeds: Int, side: Double, stepOfGrowth: Double): Collection<ConvexPolygon> {
-        val (stepX, stepY) = computeSteps(envWidth, envHeight, nSeeds, side)
-        val seeds = seedEnvironment(envWidth, envHeight, side, stepX, stepY).toMutableList()
-        growSeeds(seeds, obstacles, envWidth, envHeight, stepOfGrowth)
+    private fun seedAndGrow(envStart: Point2D, envEnd: Point2D, obstacles: Collection<Shape>, nSeeds: Int, side: Double, stepOfGrowth: Double): Collection<ConvexPolygon> {
+        val (stepX, stepY) = computeSteps(envEnd.x - envStart.x, envEnd.y - envStart.y, nSeeds, side)
+        val seeds = seedEnvironment(envStart, envEnd, side, stepX, stepY).toMutableList()
+        growSeeds(seeds, obstacles, envStart, envEnd, stepOfGrowth)
         combineAdjacentRegions(seeds, obstacles, stepOfGrowth)
         return seeds
     }
@@ -179,12 +174,12 @@ class Deaccon2D(
      * parameters represent the distance at which seeds need to be placed on each
      * axis respectively.
      */
-    private fun seedEnvironment(envWidth: Double, envHeight: Double, side: Double, stepX: Double, stepY: Double): MutableCollection<ExtendableConvexPolygon> {
+    private fun seedEnvironment(envStart: Point2D, envEnd: Point2D, side: Double, stepX: Double, stepY: Double): MutableCollection<ExtendableConvexPolygon> {
         val seeds = mutableListOf<ExtendableConvexPolygon>()
-        var x = 0.0
-        while (x <= envWidth - side) {
-            var y = 0.0
-            while (y <= envHeight - side) {
+        var x = envStart.x
+        while (x <= envEnd.x - side) {
+            var y = envStart.y
+            while (y <= envEnd.y - side) {
                 seeds.add(createRectangularSeed(x, y, side, side))
                 y += stepY + side
             }
@@ -196,20 +191,18 @@ class Deaccon2D(
     /*
      * Grows the seeds until possible.
      */
-    private fun growSeeds(seeds: MutableCollection<ExtendableConvexPolygon>, envObstacles: Collection<Shape>, envWidth: Double, envHeight: Double, step: Double) {
+    private fun growSeeds(seeds: MutableCollection<ExtendableConvexPolygon>, envObstacles: Collection<Shape>, envStart: Point2D, envEnd: Point2D, step: Double) {
         seeds.removeIf { s -> envObstacles.any { s.intersects(it) } }
         val obstacles = envObstacles.toMutableList()
         obstacles.addAll(seeds.map { it.asAwtShape() })
         var growing = true
         while (growing) {
             growing = false
-            seeds.forEach { s ->
+            seeds.forEachIndexed { i, s ->
                 // each seed should not consider itself as an obstacle, thus it's removed
-                obstacles.remove(s.asAwtShape())
-                if (s.extend(step, obstacles, envWidth, envHeight)) {
-                    growing = true
-                }
-                obstacles.add(s.asAwtShape())
+                obstacles.removeAt(envObstacles.size + i)
+                growing = s.extend(step, obstacles, envStart, envEnd)
+                obstacles.add(envObstacles.size + i, s.asAwtShape())
             }
         }
     }
@@ -236,15 +229,13 @@ class Deaccon2D(
             var hasGrown = false
             // if the region was incorporated into another region, we don't want to consider it
             if (!incorporated.contains(r)) {
-                // don't want to combine each region with itself,
-                // thus it's removed and added back at the end
+                // don't want to combine each region with itself, thus it's removed and added back at the end
                 regions.removeAt(i)
                 var j = 0
                 while (j < r.vertices().size) {
                     r.advanceEdge(j, unit)
-                    val intersectingObstacles = obstacles.filter { r.intersects(it) }
                     val neighbors = regions.filter { !incorporated.contains(it) && it.intersects(r.asAwtShape()) }
-                    if (intersectingObstacles.isEmpty() && neighbors.isNotEmpty() && r.union(neighbors)) {
+                    if (obstacles.none { r.intersects(it) } && neighbors.isNotEmpty() && r.union(neighbors)) {
                         incorporated.addAll(neighbors)
                         hasGrown = true
                     } else {
@@ -264,9 +255,9 @@ class Deaccon2D(
     private fun createRectangularSeed(x: Double, y: Double, width: Double, height: Double) =
         ExtendableConvexPolygonImpl(mutableListOf(
             Euclidean2DPosition(x, y),
-            Euclidean2DPosition(x+width, y),
-            Euclidean2DPosition(x+width, y+height),
-            Euclidean2DPosition(x, y+height)))
+            Euclidean2DPosition(x + width, y),
+            Euclidean2DPosition(x + width, y + height),
+            Euclidean2DPosition(x, y + height)))
 
     /*
      * Computes two parameters for later phases of the algorithm: stepX and stepY.
@@ -284,31 +275,4 @@ class Deaccon2D(
         val stepX = (envWidth - x * side) / x
         return Pair(stepX, stepY)
     }
-
-    /*
-     * Find the minimum side of an obstacle from the given collection. This
-     * is useful because the algorithm need the stepOfGrowth to be > of this quantity.
-     */
-    private fun computeMinSide(envObstacles: Collection<Shape>): Double {
-        var minSide = Double.POSITIVE_INFINITY
-        val coords = DoubleArray(6)
-        var p1: Point2D = Point2D.Double(0.0, 0.0)
-        var p2: Point2D
-        envObstacles.forEach { ob ->
-            val iterator = ob.getPathIterator(AffineTransform())
-            while(!iterator.isDone) {
-                when (iterator.currentSegment(coords)) {
-                    PathIterator.SEG_MOVETO -> p1 = Point2D.Double(coords[0], coords[1])
-                    PathIterator.SEG_LINETO -> {
-                        p2 = Point2D.Double(coords[0], coords[1])
-                        minSide = min(minSide, p1.distance(p2))
-                        p1 = p2
-                    }
-                }
-                iterator.next()
-            }
-        }
-        return minSide
-    }
-
 }

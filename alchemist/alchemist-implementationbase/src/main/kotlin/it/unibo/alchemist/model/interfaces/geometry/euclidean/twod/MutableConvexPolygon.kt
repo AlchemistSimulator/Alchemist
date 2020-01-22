@@ -1,7 +1,5 @@
 package it.unibo.alchemist.model.interfaces.geometry.euclidean.twod
 
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-
 /**
  * A mutable convex polygon.
  */
@@ -44,13 +42,13 @@ interface MutableConvexPolygon : ConvexPolygon {
      * The index parameter specify which edge to get: edge i connects
      * vertices i and i+1.
      */
-    fun getEdge(index: Int): Pair<Euclidean2DPosition, Euclidean2DPosition>
+    fun getEdge(index: Int): Euclidean2DEdge
 
     /**
      * If the new coords would cause the lost of the convexity,
      * false is returned.
      */
-    fun moveEdge(index: Int, newEdge: Pair<Euclidean2DPosition, Euclidean2DPosition>): Boolean
+    fun moveEdge(index: Int, newEdge: Euclidean2DEdge): Boolean
 
     /**
      * Performs a union in-place with a collection of overlapping

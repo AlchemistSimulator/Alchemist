@@ -4,10 +4,12 @@ import it.unibo.alchemist.model.implementations.geometry.contains
 import it.unibo.alchemist.model.implementations.geometry.vertices
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DEdge
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.MutableConvexPolygon
+
 import java.awt.Shape
 import java.awt.geom.Area
 import java.awt.geom.Path2D
@@ -16,8 +18,8 @@ import java.util.Optional
 /**
  * Implementation of a [MutableConvexPolygon].
  */
-open class MutableConvexPolygonImpl (
-        private val vertices: MutableList<Euclidean2DPosition>
+open class MutableConvexPolygonImpl(
+    private val vertices: MutableList<Euclidean2DPosition>
 ) : MutableConvexPolygon {
 
     companion object {
@@ -89,7 +91,7 @@ open class MutableConvexPolygonImpl (
 
     override fun getEdge(index: Int) = Pair(vertices[index], vertices[(index + 1) % vertices.size])
 
-    override fun moveEdge(index: Int, newEdge: Pair<Euclidean2DPosition, Euclidean2DPosition>): Boolean {
+    override fun moveEdge(index: Int, newEdge: Euclidean2DEdge): Boolean {
         val oldEdge = getEdge(index)
         vertices[index] = newEdge.first
         vertices[(index + 1) % vertices.size] = newEdge.second
@@ -166,7 +168,7 @@ open class MutableConvexPolygonImpl (
             return true
         }
         var e1 = getEdge(0)
-        var e2: Pair<Euclidean2DPosition, Euclidean2DPosition>
+        var e2: Euclidean2DEdge
         var sense: Boolean? = null
         for (i in 1 until vertices.size) {
             e2 = getEdge(i)
@@ -206,30 +208,16 @@ open class MutableConvexPolygonImpl (
     /*
      * Z component of the cross product.
      */
-    private fun computeZCrossProduct(e1: Pair<Euclidean2DPosition, Euclidean2DPosition>,
-                                     e2: Pair<Euclidean2DPosition, Euclidean2DPosition>) =
+    private fun computeZCrossProduct(e1: Euclidean2DEdge, e2: Euclidean2DEdge) =
         (e1.second.x - e1.first.x) * (e2.second.y - e1.second.y) -
             (e1.second.y - e1.first.y) * (e2.second.y - e1.second.y)
 
     /**
      */
-    override fun equals(other: Any?): Boolean {
-        if (this === other) {
-            return true
-        }
-        if (javaClass != other?.javaClass) {
-            return false
-        }
-        other as MutableConvexPolygonImpl
-        if (vertices != other.vertices) {
-            return false
-        }
-        return true
-    }
+    override fun equals(other: Any?) =
+        other != null && (this === other || (other is MutableConvexPolygonImpl && vertices == other.vertices))
 
     /**
      */
-    override fun hashCode(): Int {
-        return vertices.hashCode()
-    }
+    override fun hashCode() = vertices.hashCode()
 }

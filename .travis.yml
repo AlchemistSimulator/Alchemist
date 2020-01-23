@@ -86,8 +86,7 @@ before_install:
   - travis_retry source .install-jdk-travis.sh
 script:
   - cd "$TRAVIS_BUILD_DIR"/alchemist
-  - export TO_EXEC="./gradlew test --scan --parallel"
-  - $TO_EXEC || (sleep 60 && ($TO_EXEC || (sleep 60 && $TO_EXEC)))
+  - travis_retry ./gradlew clean test --scan --parallel
 before_cache:
   - curl "${GRAVIS}.clean_gradle_cache.sh" --output .clean_gradle_cache.sh
   - bash .clean_gradle_cache.sh

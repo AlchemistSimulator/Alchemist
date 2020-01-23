@@ -14,7 +14,7 @@ import kotlin.math.sqrt
  *
  * A navigation mesh is a collection of two-dimensional convex polygons
  * representing which areas of an environment are traversable by agents
- * (namely, walkable areas). Since convex polygons are generated, a pedestrian
+ * (namely, walkable areas). Since convex polygons are generated, pedestrians
  * can freely walk around within these areas, as it is guaranteed that no obstacle
  * will be found.
  *
@@ -33,10 +33,10 @@ import kotlin.math.sqrt
 /*
  * Here's a brief description of how the algorithm operates:
  * PHASE 1: SEEDING
- * A certain number of seeds are planted in the environment. Each seed is a
+ * A certain number of seeds is planted in the environment. Each seed is a
  * square-shaped region that will grow maintaining a convex shape.
  * PHASE 2: GROWING
- * Planted seeds are extended until possible (e.g. until they are in contact
+ * Planted seeds are extended until possible (i.e. until they are in contact
  * with an obstacle or another seed on each side)
  * PHASE 3: CLEAN-UP
  * Adjacent regions are combined if the resulting polygon is still convex.

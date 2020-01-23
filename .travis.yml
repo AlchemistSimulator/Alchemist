@@ -54,7 +54,7 @@ jobs:
         - *reference_jdk
       script:
         - cd "$TRAVIS_BUILD_DIR"/alchemist
-        - ./gradlew clean check fatJar --scan --parallel
+        - travis_retry ./gradlew clean check fatJar --scan --parallel
       workspaces:
         create:
           name: linux-reference-build
@@ -75,18 +75,18 @@ jobs:
         - bash prepare_environment.sh
       script:
         - cd "$TRAVIS_BUILD_DIR"/alchemist
-        - ./gradlew dokka > >(egrep -v '(null:-1:-1)|(t find node by signature)') --scan
-        - ./gradlew sign fatJar projectReport buildDashboard orchidDeploy -x test --scan --parallel
+        - travis_retry ./gradlew dokka > >(egrep -v '(null:-1:-1)|(t find node by signature)') --scan
+        - travis_retry ./gradlew sign fatJar projectReport buildDashboard orchidDeploy -x test --scan --parallel
         - mkdir -p report
         - cp --parent */build/reports build/reports report -R
       after_success:
         - travis_wait 30 ./gradlew publishAll --scan --parallel --stacktrace
 before_install:
-  - curl "${GRAVIS}.install-jdk-travis.sh" --output .install-jdk-travis.sh
-  - source .install-jdk-travis.sh
+  - travis_retry curl "${GRAVIS}.install-jdk-travis.sh" --output .install-jdk-travis.sh
+  - travis_retry source .install-jdk-travis.sh
 script:
   - cd "$TRAVIS_BUILD_DIR"/alchemist
-  - ./gradlew test --scan --parallel
+  - travis_retry ./gradlew test --scan --parallel
 before_cache:
   - curl "${GRAVIS}.clean_gradle_cache.sh" --output .clean_gradle_cache.sh
   - bash .clean_gradle_cache.sh

@@ -1,7 +1,10 @@
 package it.unibo.alchemist.model.implementations.geometry.euclidean.twod
 
+import it.unibo.alchemist.model.implementations.geometry.IntersectionResultTypes.*
 import it.unibo.alchemist.model.implementations.geometry.contains
+import it.unibo.alchemist.model.implementations.geometry.intersection
 import it.unibo.alchemist.model.implementations.geometry.vertices
+import it.unibo.alchemist.model.implementations.geometry.zCross
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DEdge
@@ -17,10 +20,18 @@ import java.util.Optional
 
 /**
  * Implementation of a [MutableConvexPolygon].
+ *
+ * Each modification operation on this object has a time complexity of
+ * O(n^2), where n is the number of vertices/edges. Such complexity
+ * could be reduced to O(n) in the future.
  */
 open class MutableConvexPolygonImpl(
     private val vertices: MutableList<Euclidean2DPosition>
 ) : MutableConvexPolygon {
+
+    init {
+        require(isConvex() && vertices.size > 2) { "Given vertices do not represent a convex polygon" }
+    }
 
     companion object {
         /**
@@ -142,6 +153,15 @@ open class MutableConvexPolygonImpl(
     final override fun asAwtShape() = getShape().asAwtShape()
 
     /**
+     */
+    override fun equals(other: Any?) =
+        other != null && (this === other || (other is MutableConvexPolygonImpl && vertices == other.vertices))
+
+    /**
+     */
+    override fun hashCode() = vertices.hashCode()
+
+    /**
      * Mutates this polygon to a copy of the specified one.
      */
     protected open fun mutateTo(p: MutableConvexPolygon) {
@@ -158,31 +178,86 @@ open class MutableConvexPolygonImpl(
         shape = null // invalid cached shape
     }
 
+    /**
+     */
+    protected fun circularPrev(index: Int) = (index - 1 + vertices.size) % vertices.size
+
+    /**
+     */
+    protected fun circularNext(index: Int) = (index + 1) % vertices.size
+
     /*
-     * Basically, we check that every edge either turn left or
-     * right with respect to the previous edge. If they all
-     * turn in the same direction then the polygon is convex.
+     * In order to be convex, a polygon must first be simple
+     * (not self-intersecting).
+     * Ascertained that the polygon is simple, a rather easy
+     * convexity test is the following: we check that every edge
+     * either turn left or right with respect to the previous edge.
+     * If they all turn in the same direction then the polygon is
+     * convex.
      */
     private fun isConvex(): Boolean {
-        if (vertices.isEmpty()) {
-            return true
+        if (isSelfIntersecting()) {
+            return false
         }
-        var e1 = getEdge(0)
+        var e1 = getEdge(vertices.size - 1)
         var e2: Euclidean2DEdge
         var sense: Boolean? = null
-        for (i in 1 until vertices.size) {
+        vertices.indices.forEach { i ->
             e2 = getEdge(i)
-            val z = computeZCrossProduct(e1, e2)
+            val z = zCross(e1.second - e1.first, e2.second - e2.first)
+            /*
+             * Cross product is 0 in the following cases:
+             * - one (or both) of the two edges is degenerate, so it's perfectly
+             * fine to skip it as it doesn't affect convexity.
+             * - the two edges are linearly dependent, i.e. either they have
+             * the same direction or opposite ones. In the former case it's
+             * fine to ignore the edge since it can't violate convexity,
+             * whereas the latter case means edges are overlapping (since they
+             * have opposite directions and are consecutive), which can't be
+             * as we ascertained that the polygon is not self-intersecting.
+             */
             if (z != 0.0) {
                 if (sense == null) {
                     sense = z > 0.0
                 } else if (sense != z > 0.0) {
                     return false
                 }
+                e1 = e2
             }
-            e1 = e2
         }
         return true
+    }
+
+    /*
+     * Checks whether the polygon is self-intersecting. In this context,
+     * a polygon is considered non self-intersecting if the following holds
+     * for every edge e:
+     * - e must share ONLY its endpoints with its neighboring edges,
+     * no other point shall be in common with those edges.
+     * - e should not have any point in common with any other edge.
+     *
+     * This method has a time complexity of O(n^2). Consider using a hash
+     * data structure with spatial-related buckets in the future.
+     */
+    private fun isSelfIntersecting(): Boolean {
+        vertices.indices.forEach { i ->
+            val prev = getEdge(circularPrev(i))
+            val curr = getEdge(i)
+            val next = getEdge(circularNext(i))
+            if (intersection(prev, curr).type != INTERSECTING) {
+                return true
+            }
+            if (intersection(curr, next).type != INTERSECTING) {
+                return true
+            }
+            if (vertices.indices
+                    .filter { it != i && it != circularPrev(i) && it != circularNext(i) }
+                    .map { intersection(curr, getEdge(it)) }
+                    .any { it.type == INTERSECTING || it.type == COLLINEAR_OVERLAPPING }) {
+                return true
+            }
+        }
+        return false
     }
 
     /*
@@ -204,20 +279,4 @@ open class MutableConvexPolygonImpl(
         }
         return shape as AwtEuclidean2DShape
     }
-
-    /*
-     * Z component of the cross product.
-     */
-    private fun computeZCrossProduct(e1: Euclidean2DEdge, e2: Euclidean2DEdge) =
-        (e1.second.x - e1.first.x) * (e2.second.y - e1.second.y) -
-            (e1.second.y - e1.first.y) * (e2.second.y - e1.second.y)
-
-    /**
-     */
-    override fun equals(other: Any?) =
-        other != null && (this === other || (other is MutableConvexPolygonImpl && vertices == other.vertices))
-
-    /**
-     */
-    override fun hashCode() = vertices.hashCode()
 }

@@ -15,19 +15,20 @@ To run the example you can rely on the pre-configured Gradle build script. It wi
 As first step, use `git` to locally clone the repository linked above.
 In order to launch, open a terminal and move to the project root folder, then on UNIX:
 ```bash
-./gradlew runAlchemist
+./gradlew runAll
 ```
 On Windows:
 ```
-gradlew.bat runAlchemist
+gradlew.bat runAll
 ```
-Press P and you will see some pedestrians wandering around. For further information about the gui, see the [graphical interface shortcuts](gui.md).
+Press P and you will see some pedestrians wandering around. For further information about the gui, see the {{ anchor('graphical interface shortcuts', 'Alchemist graphical interface') }}.
 
-Note that the first launch will be rather slow, since Gradle will download all the required files. They will get cached in the user's home folder (as per Gradle normal behavior).
+Note that the first launch will be rather slow, since Gradle will download all the required files.
+They will get cached in the user's home folder (as per Gradle normal behavior).
 
 ## The build script
 
-Let's explain how things work by looking at the `build.gradle` script.
+Let's explain how things work by looking at the `build.gradle.kts` script.
 
 ### Importing Alchemist
 

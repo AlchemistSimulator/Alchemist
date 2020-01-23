@@ -5,7 +5,9 @@ import it.unibo.alchemist.model.interfaces.geometry.AwtShapeCompatible
 import java.awt.Shape
 
 /**
- * A convex polygon.
+ * A convex polygon is a simple polygon (i.e. not self-intersecting and
+ * with no holes) in which no line segment between two points on the boundary
+ * ever goes outside the polygon.
  */
 interface ConvexPolygon : Euclidean2DShape, AwtShapeCompatible {
 

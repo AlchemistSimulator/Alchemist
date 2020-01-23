@@ -32,7 +32,7 @@ The world of Alchemist is composed of the following entities:
 * **{{anchor('Neighborhood')}}**
   * An entity composed by a *node* (centre) and a set of *nodes* (neighbors)
 * **{{anchor('Reaction')}}**
-  * Any event that can change the status of the *environment*
+  * Any event that can change the status of the *{{ anchor('environment', 'Environment') }}*
   * Each *node* has a possibly empty set of *reactions*
   * Each reaction is defined by a possibly empty list of *conditions*, one or more *actions* and a *{{ anchor('time distribution', 'TimeDistribution') }}*
   * The frequency at which it happens depends on:

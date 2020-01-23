@@ -584,7 +584,7 @@ terminate:
 ### Terminating the simulation if the environment is not changing
 
 A terminator is provided for terminating when a simulation is "stable" (nothing changes in terms of positions and nodes' content).
-The class implementing it is {{ anchor('StableForSteps')) }}.
+The class implementing it is {{ anchor('StableForSteps') }}.
 The following code snippet exemplifies its usage:
 ```yaml
 terminate:

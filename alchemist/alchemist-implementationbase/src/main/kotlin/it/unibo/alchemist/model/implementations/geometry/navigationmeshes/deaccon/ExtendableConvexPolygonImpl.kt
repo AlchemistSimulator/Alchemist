@@ -1,7 +1,18 @@
 package it.unibo.alchemist.model.implementations.geometry.navigationmeshes.deaccon
 
-import it.unibo.alchemist.model.implementations.geometry.*
 import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.MutableConvexPolygonImpl
+import it.unibo.alchemist.model.implementations.geometry.isDegenerate
+import it.unibo.alchemist.model.implementations.geometry.resize
+import it.unibo.alchemist.model.implementations.geometry.translate
+import it.unibo.alchemist.model.implementations.geometry.vertices
+import it.unibo.alchemist.model.implementations.geometry.isInBoundaries
+import it.unibo.alchemist.model.implementations.geometry.computeSlope
+import it.unibo.alchemist.model.implementations.geometry.intersection
+import it.unibo.alchemist.model.implementations.geometry.normalize
+import it.unibo.alchemist.model.implementations.geometry.normal
+import it.unibo.alchemist.model.implementations.geometry.zCross
+import it.unibo.alchemist.model.implementations.geometry.times
+import it.unibo.alchemist.model.implementations.geometry.dot
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DEdge
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.MutableConvexPolygon

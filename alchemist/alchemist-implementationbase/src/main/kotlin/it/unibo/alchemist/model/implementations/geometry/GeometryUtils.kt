@@ -6,8 +6,8 @@ import org.danilopianini.lang.MathUtils.fuzzyEquals
 import java.awt.Shape
 import java.awt.geom.PathIterator
 import java.awt.geom.Point2D
-import java.lang.IllegalStateException
-import java.util.*
+import java.util.Optional
+
 import kotlin.math.atan2
 import kotlin.math.max
 import kotlin.math.min
@@ -74,11 +74,6 @@ fun isInBoundaries(e: Euclidean2DEdge, lowerBound: Point2D, upperBound: Point2D)
     isInBoundaries(e.first, lowerBound, upperBound) && isInBoundaries(e.second, lowerBound, upperBound)
 
 /**
- * Computes the medium point of a segment.
- */
-fun Euclidean2DEdge.midPoint() = Euclidean2DPosition((first.x + second.x) / 2, (first.y + second.y) / 2)
-
-/**
  * Checks whether the segment (represented by a pair of positions)
  * contains the given point.
  */
@@ -110,27 +105,24 @@ fun Euclidean2DEdge.computeSlope() = (second.y - first.y) / (second.x - first.x)
 fun Double.liesBetween(v1: Double, v2: Double) = this >= min(v1, v2) && this <= max(v1, v2)
 
 /**
- * Finds the intersection point of two given segments (if present). This method is
+ * Finds the intersection point of two given segments (if exists). This method is
  * able to deal with degenerate edges (of length zero) and collinear segments.
- * See [IntersectionResultTypes] to know how interpret the results. In case of
- * collinear, overlapping segments that share a single endpoint, INTERSECTING
- * is returned.
  */
 fun intersection(s1: Euclidean2DEdge, s2: Euclidean2DEdge): IntersectionResult {
     if (s1.isDegenerate() && s2.isDegenerate()) {
-        return if (s1.first == s2.first) {
-            IntersectionResult(IntersectionResultTypes.INTERSECTING, Optional.of(s1.first))
+        return if (s1.first == s2.first) { // points coincide
+            IntersectionResult(SegmentsIntersectionTypes.POINT, Optional.of(s1.first))
         } else {
-            IntersectionResult(IntersectionResultTypes.NOT_INTERSECTING)
+            IntersectionResult(SegmentsIntersectionTypes.EMPTY)
         }
     }
     if (s1.isDegenerate() || s2.isDegenerate()) {
         val degenerate = if (s1.isDegenerate()) s1 else s2
         val other = if (degenerate == s1) s2 else s1
         return if (other.contains(degenerate.first)) {
-            IntersectionResult(IntersectionResultTypes.INTERSECTING, Optional.of(degenerate.first))
+            IntersectionResult(SegmentsIntersectionTypes.POINT, Optional.of(degenerate.first))
         } else {
-            IntersectionResult(IntersectionResultTypes.NOT_INTERSECTING)
+            IntersectionResult(SegmentsIntersectionTypes.EMPTY)
         }
     }
     val p = s1.first
@@ -144,27 +136,27 @@ fun intersection(s1: Euclidean2DEdge, s2: Euclidean2DEdge): IntersectionResult {
         val t1 = t0 + s.dot(r) / r.dot(r)
         if (Pair(t0, t1).intersects(0.0, 1.0)) { // segments are overlapping
             // we found out that segments are collinear and overlapping, but they may only share an endpoint,
-            // in which case they are normally intersecting
+            // in which case their intersection is a single point
             if ((fuzzyEquals(t0, 0.0) || fuzzyEquals(t0, 1.0)) && !t1.liesBetween(0.0, 1.0)) {
-                return IntersectionResult(IntersectionResultTypes.INTERSECTING, Optional.of(s2.first))
+                return IntersectionResult(SegmentsIntersectionTypes.POINT, Optional.of(s2.first))
             }
             if ((fuzzyEquals(t1, 0.0) || fuzzyEquals(t1, 1.0)) && !t0.liesBetween(0.0, 1.0)) {
-                return IntersectionResult(IntersectionResultTypes.INTERSECTING, Optional.of(s2.second))
+                return IntersectionResult(SegmentsIntersectionTypes.POINT, Optional.of(s2.second))
             }
-            return IntersectionResult(IntersectionResultTypes.COLLINEAR_OVERLAPPING)
-        } else {
-            return IntersectionResult(IntersectionResultTypes.COLLINEAR_DISJOINT)
+            return IntersectionResult(SegmentsIntersectionTypes.SEGMENT)
+        } else { // collinear but disjoint
+            return IntersectionResult(SegmentsIntersectionTypes.EMPTY)
         }
     }
-    if (fuzzyEquals(denom, 0.0) && !fuzzyEquals(num, 0.0)) {  // parallel
-        return IntersectionResult(IntersectionResultTypes.NOT_INTERSECTING)
+    if (fuzzyEquals(denom, 0.0) && !fuzzyEquals(num, 0.0)) { // parallel
+        return IntersectionResult(SegmentsIntersectionTypes.EMPTY)
     }
     val t = zCross((q - p), s) / denom
     val u = zCross((q - p), r) / denom
     if (t.liesBetween(0.0, 1.0) && u.liesBetween(0.0, 1.0)) {
-        return IntersectionResult(IntersectionResultTypes.INTERSECTING, Optional.of(p + r.times(t)))
+        return IntersectionResult(SegmentsIntersectionTypes.POINT, Optional.of(p + r.times(t)))
     }
-    return IntersectionResult(IntersectionResultTypes.NOT_INTERSECTING) // not parallel but not intersecting
+    return IntersectionResult(SegmentsIntersectionTypes.EMPTY) // not parallel but not intersecting
 }
 
 /**
@@ -195,27 +187,26 @@ fun Pair<Double, Double>.intersects(start: Double, end: Double) =
         start.liesBetween(first, second) || end.liesBetween(first, second)
 
 /**
+ * In euclidean geometry, the intersection of two segments can be
+ * an empty set, a point, or segment (in other words, infinite points).
  */
-enum class IntersectionResultTypes {
+enum class SegmentsIntersectionTypes {
     /**
-     * Segments intersects, i.e. they share a single common point.
+     * Segments have a single point of intersection.
      */
-    INTERSECTING,
+    POINT,
     /**
-     * Segments are collinear and overlapping. Note that two segments
-     * may be collinear, overlapping and share a single point as well
-     * (e.g. an endpoint). See [intersection] to know how such case
-     * is handled.
+     * Segments have infinite points of intersection, lying on a segment.
+     * In other words, they are collinear and overlapping.
+     * Note that two segments may be collinear, overlapping and share a
+     * single point (e.g. an endpoint). In this case the intersection
+     * type is [POINT].
      */
-    COLLINEAR_OVERLAPPING,
-    /**
-     * Segments are collinear but disjoint, thus they don't intersect.
-     */
-    COLLINEAR_DISJOINT,
+    SEGMENT,
     /**
      * Segments do not intersect.
      */
-    NOT_INTERSECTING;
+    EMPTY;
 }
 
 /**
@@ -223,7 +214,8 @@ enum class IntersectionResultTypes {
 data class IntersectionResult(
     /**
      */
-    val type: IntersectionResultTypes,
+    val type: SegmentsIntersectionTypes,
     /**
      */
-    val intersection: Optional<Euclidean2DPosition> = Optional.empty())
+    val intersection: Optional<Euclidean2DPosition> = Optional.empty()
+)

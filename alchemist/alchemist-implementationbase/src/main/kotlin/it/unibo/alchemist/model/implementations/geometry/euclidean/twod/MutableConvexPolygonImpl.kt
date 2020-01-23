@@ -1,6 +1,7 @@
 package it.unibo.alchemist.model.implementations.geometry.euclidean.twod
 
-import it.unibo.alchemist.model.implementations.geometry.IntersectionResultTypes.*
+import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionTypes.POINT
+import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionTypes.EMPTY
 import it.unibo.alchemist.model.implementations.geometry.contains
 import it.unibo.alchemist.model.implementations.geometry.intersection
 import it.unibo.alchemist.model.implementations.geometry.vertices
@@ -244,16 +245,15 @@ open class MutableConvexPolygonImpl(
             val prev = getEdge(circularPrev(i))
             val curr = getEdge(i)
             val next = getEdge(circularNext(i))
-            if (intersection(prev, curr).type != INTERSECTING) {
+            if (intersection(prev, curr).type != POINT) {
                 return true
             }
-            if (intersection(curr, next).type != INTERSECTING) {
+            if (intersection(curr, next).type != POINT) {
                 return true
             }
             if (vertices.indices
                     .filter { it != i && it != circularPrev(i) && it != circularNext(i) }
-                    .map { intersection(curr, getEdge(it)) }
-                    .any { it.type == INTERSECTING || it.type == COLLINEAR_OVERLAPPING }) {
+                    .any { intersection(curr, getEdge(it)).type != EMPTY }) {
                 return true
             }
         }

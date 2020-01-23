@@ -26,6 +26,16 @@ Press P and you will see some pedestrians wandering around. For further informat
 Note that the first launch will be rather slow, since Gradle will download all the required files.
 They will get cached in the user's home folder (as per Gradle normal behavior).
 
+## Importing the example project in an IDE
+
+Since Gradle is used to deal with the simulator configuration,
+any IDE supporting it should in principle be able to import it.
+We recommend IntelliJ Idea, as to the best of our knowledge has the smoothest integration with Gradle.
+
+If you have IntelliJ Idea, just right click from your file manager on the `build.gradle.kts` file and open it with IntelliJ.
+The IDE should warn that a Gradle project has been detected,
+and by confirming that this is correct it will self-configure appropriately.
+
 ## The build script
 
 Let's explain how things work by looking at the `build.gradle.kts` script.

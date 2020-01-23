@@ -233,13 +233,14 @@ class Deaccon2D(
                 regions.removeAt(i)
                 var j = 0
                 while (j < r.vertices().size) {
-                    r.advanceEdge(j, unit)
-                    val neighbors = regions.filter { !incorporated.contains(it) && it.intersects(r.asAwtShape()) }
-                    if (obstacles.none { r.intersects(it) } && neighbors.isNotEmpty() && r.union(neighbors)) {
-                        incorporated.addAll(neighbors)
-                        hasGrown = true
-                    } else {
-                        r.advanceEdge(j, -unit)
+                    if (r.advanceEdge(j, unit)) {
+                        val neighbors = regions.filter { !incorporated.contains(it) && it.intersects(r.asAwtShape()) }
+                        if (obstacles.none { r.intersects(it) } && neighbors.isNotEmpty() && r.union(neighbors)) {
+                            incorporated.addAll(neighbors)
+                            hasGrown = true
+                        } else {
+                            r.advanceEdge(j, -unit)
+                        }
                     }
                     j++
                 }

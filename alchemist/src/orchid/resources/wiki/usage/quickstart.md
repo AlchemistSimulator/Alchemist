@@ -3,7 +3,9 @@
 title: Quick start
 
 ---
-You can find [here](https://github.com/paagamelo/Alchemist-quickstart) a project showing how to use Alchemist via [Gradle](https://gradle.org) to run a simple simulation. Let's use it as a quick start to have you hit the ground running. 
+You can find [here](https://github.com/AlchemistSimulator/alchemist-primer) a project showing how to use Alchemist via
+[Gradle](https://gradle.org) to run a simple simulation.
+Let's use it as a quick start to have you hit the ground running. 
 
 You can either follow these instructions or those on the `README.md` file of the linked project, information is equivalent.
 

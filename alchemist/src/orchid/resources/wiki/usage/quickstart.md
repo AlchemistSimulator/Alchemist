@@ -44,9 +44,10 @@ With `SOME_ALCHEMIST_VERSION` replaced by the version used, nothing special actu
 
 If you do not need the whole Alchemist machinery but just a sub-part of it, you can restrict the set of imported artifacts by using as dependencies the modules you are actually in need of.
 
-### Running Alchemist
+### Detail: using Gradle to launch Alchemist (or any Java process...)
 
-Now, let's look at the `runAlchemist` task, it is a simple gradle task responsible for launching the simulation. Let's dissect it:
+The following is a `runAlchemist` task, it is a simple gradle task responsible for launching the simulation.
+Let's dissect it:
 ```kotlin
 tasks.register<JavaExec>("runAlchemist") {
     classpath = project.sourceSets.getByName("main").runtimeClasspath
@@ -91,9 +92,4 @@ The CLI supports the following options
 | -vv,--vverbose                             | Very verbose mode: prints debug-level informations. Slows the simulator down. A lot.                                                                                              |
 | -vvv,--vvverbose                           | Very very verbose mode: prints trace-level informations. Slows the simulator down. An awful lot.                                                                                  |
 | -y,--yaml \<file>                           | Load the specified Alchemist YAML file                                                                                                                                            |
-
-
-
-
-
 

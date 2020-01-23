@@ -87,7 +87,7 @@ before_install:
 script:
   - cd "$TRAVIS_BUILD_DIR"/alchemist
   - export TO_EXEC="./gradlew test --scan --parallel"
-  - $TO_EXEC || sleep 60 && $TO_EXEC || sleep 60 && $TO_EXEC
+  - $TO_EXEC || (sleep 60 && ($TO_EXEC || (sleep 60 && $TO_EXEC)))
 before_cache:
   - curl "${GRAVIS}.clean_gradle_cache.sh" --output .clean_gradle_cache.sh
   - bash .clean_gradle_cache.sh

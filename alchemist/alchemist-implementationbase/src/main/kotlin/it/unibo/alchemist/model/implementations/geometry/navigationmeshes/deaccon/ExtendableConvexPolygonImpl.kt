@@ -1,14 +1,7 @@
 package it.unibo.alchemist.model.implementations.geometry.navigationmeshes.deaccon
 
+import it.unibo.alchemist.model.implementations.geometry.*
 import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.MutableConvexPolygonImpl
-import it.unibo.alchemist.model.implementations.geometry.isInBoundaries
-import it.unibo.alchemist.model.implementations.geometry.resize
-import it.unibo.alchemist.model.implementations.geometry.translate
-import it.unibo.alchemist.model.implementations.geometry.vertices
-import it.unibo.alchemist.model.implementations.geometry.computeSlope
-import it.unibo.alchemist.model.implementations.geometry.normalize
-import it.unibo.alchemist.model.implementations.geometry.midPoint
-import it.unibo.alchemist.model.implementations.geometry.intersection
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DEdge
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.MutableConvexPolygon
@@ -115,13 +108,13 @@ open class ExtendableConvexPolygonImpl(
 
     override fun moveEdge(index: Int, newEdge: Euclidean2DEdge): Boolean {
         // when moving an edge 3 edges are modified: the one moving and the two linked to it
-        val oldEdge1 = getEdge(circularPrev(index))
-        val oldEdge2 = getEdge(index)
-        val oldEdge3 = getEdge((index + 1) % vertices.size)
+        val prev = getEdge(circularPrev(index))
+        val curr = getEdge(index)
+        val next = getEdge(circularNext(index))
         if (super.moveEdge(index, newEdge)) {
-            invalidCacheIfSlopeChanged(oldEdge1, circularPrev(index))
-            invalidCacheIfSlopeChanged(oldEdge2, index)
-            invalidCacheIfSlopeChanged(oldEdge3, (index + 1) % vertices.size)
+            invalidCacheIfSlopeChanged(prev, circularPrev(index))
+            invalidCacheIfSlopeChanged(curr, index)
+            invalidCacheIfSlopeChanged(next, circularNext(index))
             return true
         }
         return false
@@ -151,11 +144,11 @@ open class ExtendableConvexPolygonImpl(
             return true
         }
         val e = getEdge(index)
-        if (e.first == e.second) { // avoid degenerate edges
+        if (e.isDegenerate()) {
             return false
         }
         if (normals[index] == null) {
-            normals[index] = computeNormal(getEdge(index), step)
+            normals[index] = e.computeNormal(index)
         }
         val n = normals[index]!!
         val d = growthDirections[index]
@@ -232,33 +225,19 @@ open class ExtendableConvexPolygonImpl(
     }
 
     /*
-     * Computes the normal unit vector of the given edge.
-     *
-     * Since every segment has two normal vectors, a little workaround is used
-     * to determine which of the two is to be used. Both the normals are computed,
-     * then one of the two is picked and normalized to have length equal to the step
-     * parameter. The resulting vector is used to translate the medium point of the
-     * edge: if step is > 0 (polygon is growing) and the translated point is contained
-     * in the polygon, we need to pick the other vector, otherwise we will reduce the
-     * region instead of extending it. Similarly, if step is < 0 (polygon is reducing)
-     * and the translated point is not contained in the polygon, we need to change normal.
-     * This is a NON-OPTIMAL method, in particular it fails when the step parameter is
-     * bigger than the smallest side of the region (which is unlikely in the deaccon
-     * algorithm). The trick is to be refined to be OPTIMAL (or replaced with a correct
-     * method).
+     * Computes the normal (unit) vector of the edge that allows the polygon to
+     * extend. This method is all about figuring out the right direction of the
+     * normal vector.
      */
-    private fun computeNormal(e: Euclidean2DEdge, step: Double): Euclidean2DPosition {
-        val dx = e.second.x - e.first.x
-        val dy = e.second.y - e.first.y
-        if (dx == 0.0 && dy == 0.0) {
-            println("a")
+    private fun Euclidean2DEdge.computeNormal(index: Int): Euclidean2DPosition {
+        val v = second - first
+        val prev = getEdge(circularPrev(index))
+        val n = v.normal().normalize()
+        val sense = zCross(v, prev.second - prev.first) > 0.0
+        if (sense != zCross(v, n) > 0.0) {
+            return n.times(-1.0)
         }
-        require(dx != 0.0 || dy != 0.0) { "coincident points" }
-        var normal = Euclidean2DPosition(-dy, dx).resize(step)
-        if (step > 0.0 == containsOrLiesOnBoundary(e.midPoint().translate(normal))) {
-            normal = Euclidean2DPosition(dy, -dx)
-        }
-        return normal.normalize()
+        return n
     }
 
     /*
@@ -267,8 +246,7 @@ open class ExtendableConvexPolygonImpl(
      * so, we need to know the length of the new vector a'. This method computes
      * this quantity.
      */
-    private fun findLength(a: Euclidean2DPosition, bUnit: Euclidean2DPosition, q: Double) =
-        q / (a.x * bUnit.x + a.y * bUnit.y)
+    private fun findLength(a: Euclidean2DPosition, bUnit: Euclidean2DPosition, q: Double) = q / a.dot(bUnit)
 
     /*
      * Checks whether we are in advanced case. See [extend]. The index of the
@@ -306,7 +284,7 @@ open class ExtendableConvexPolygonImpl(
     private fun findIntersectingEdges(obstacle: Shape, e: Euclidean2DEdge): Collection<Euclidean2DEdge> {
         val obsVertices = obstacle.vertices()
         return obsVertices
-            .mapIndexed { i, v1 -> Pair(v1, obsVertices[(i + 1) % obsVertices.size]) }
+            .mapIndexed { i, v -> Pair(v, obsVertices[(i + 1) % obsVertices.size]) }
             .filter { edgesIntersect(it, e) }
     }
 
@@ -327,19 +305,19 @@ open class ExtendableConvexPolygonImpl(
         val polygonEdge2 = getEdge(circularPrev(indexOfIntrudingV))
         val obstacleEdge = findIntrudedEdge(obstacle, indexOfAdvancingEdge, step)
         // intersecting points lying on polygon boundary
-        val p1 = intersection(polygonEdge1, obstacleEdge)
-        val p2 = intersection(polygonEdge2, obstacleEdge)
+        val p1 = intersection(polygonEdge1, obstacleEdge).intersection.get()
+        val p2 = intersection(polygonEdge2, obstacleEdge).intersection.get()
         // a new edge is going to be added, its vertices will grow following the intruded
         // obstacleEdge. In order to do so, their growth directions will be modified to be
         // parallel to such edge, but in opposite senses.
         val d1: Euclidean2DPosition
         val d2: Euclidean2DPosition
-        if (p1.toPoint().distance(obstacleEdge.first.toPoint()) < p2.toPoint().distance(obstacleEdge.first.toPoint())) {
-            d1 = obstacleEdge.first.minus(p1).normalize()
-            d2 = obstacleEdge.second.minus(p2).normalize()
+        if (p1.getDistanceTo(obstacleEdge.first) < p2.getDistanceTo(obstacleEdge.first)) {
+            d1 = (obstacleEdge.first - p1).normalize()
+            d2 = (obstacleEdge.second - p2).normalize()
         } else {
-            d1 = obstacleEdge.second.minus(p1).normalize()
-            d2 = obstacleEdge.first.minus(p2).normalize()
+            d1 = (obstacleEdge.second - p1).normalize()
+            d2 = (obstacleEdge.first - p2).normalize()
         }
         // since we intruded an obstacle we need to step back anyway
         advanceEdge(indexOfAdvancingEdge, -step)
@@ -357,8 +335,6 @@ open class ExtendableConvexPolygonImpl(
             growthDirections[i] = if (first) d.copy(first = newD) else d.copy(second = newD)
         }
     }
-
-    private fun circularPrev(index: Int) = (index - 1 + canEdgeAdvance.size) % canEdgeAdvance.size
 
     private fun Euclidean2DPosition.toPoint() = Point2D.Double(x, y)
 

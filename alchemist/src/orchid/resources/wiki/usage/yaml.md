@@ -152,9 +152,12 @@ The difference is that variables of the latter kind can always be computed given
 ### Free variables
 
 Free variables define a set of values and a default.
-The value set is used to define the batch matrix, i.e., if the variable is selected for a batch, all its value are
-included in the cartesian product that determines which simulations are to be executed.
-If the simulation is not executed as batch, then the default value is used
+Their main scope is enabling Alchemist to run a set of simulations with different parameters (values of variables)
+without the need to duplicate the simulation code.
+When used in this mode (called "batch mode"),
+Alchemist by default produces the cartesian product of all the variables values' selected for the batch,
+and runs a simulation for each combination.
+If the simulation is not executed as batch, then the default value is used.
 
 #### Linear variables
 

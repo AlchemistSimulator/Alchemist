@@ -36,6 +36,12 @@ If you have IntelliJ Idea, just right click from your file manager on the `build
 The IDE should warn that a Gradle project has been detected,
 and by confirming that this is correct it will self-configure appropriately.
 
+### Project organization
+
+You will see a `src/main` folder,
+with subfolders divided by language.
+Simulations are in the `yaml` folder.
+
 ## The build script
 
 Let's explain how things work by looking at the `build.gradle.kts` script.

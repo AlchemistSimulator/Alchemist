@@ -1,18 +1,18 @@
 package it.unibo.alchemist.model.implementations.geometry.navigationmeshes.deaccon
 
-import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.MutableConvexPolygonImpl
 import it.unibo.alchemist.model.implementations.geometry.isDegenerate
 import it.unibo.alchemist.model.implementations.geometry.resize
-import it.unibo.alchemist.model.implementations.geometry.translate
 import it.unibo.alchemist.model.implementations.geometry.vertices
 import it.unibo.alchemist.model.implementations.geometry.isInBoundaries
-import it.unibo.alchemist.model.implementations.geometry.computeSlope
+import it.unibo.alchemist.model.implementations.geometry.slope
 import it.unibo.alchemist.model.implementations.geometry.intersection
 import it.unibo.alchemist.model.implementations.geometry.normalize
 import it.unibo.alchemist.model.implementations.geometry.normal
 import it.unibo.alchemist.model.implementations.geometry.zCross
 import it.unibo.alchemist.model.implementations.geometry.times
+import it.unibo.alchemist.model.implementations.geometry.toVector
 import it.unibo.alchemist.model.implementations.geometry.dot
+import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.MutableConvexPolygonImpl
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DEdge
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.MutableConvexPolygon
@@ -29,103 +29,49 @@ open class ExtendableConvexPolygonImpl(
     private val vertices: MutableList<Euclidean2DPosition>
 ) : MutableConvexPolygonImpl(vertices), ExtendableConvexPolygon {
 
-    /**
-     * A mutable list designed to cache a value for each edge, extended
-     * with some useful methods.
-     *
-     * Note that edges (or sides) of a polygon are not directed. However,
-     * the ith edge is referred to as the one connecting vertices i and i+1.
-     * Thus, in the following we will adopt such directing.
-     */
-    inner class EdgesCache<T>(
-        /**
-         */
-        val default: T
-    ) : MutableList<T> by (MutableList(vertices.size) { default }) {
-
-        /**
-         * Sets the specified value for the outgoing edge of the given vertex.
-         */
-        private fun setValueForEdgeFrom(vertexIndex: Int, v: T) {
-            this[vertexIndex] = v
-        }
-
-        /**
-         * Sets the specified value for the incoming edge of the given vertex.
-         */
-        fun setValueForEdgeTo(vertexIndex: Int, v: T) {
-            this[circularPrev(vertexIndex)] = v
-        }
-
-        /**
-         * Sets the specified value for both the edges incident on the given vertex.
-         */
-        fun setValueForEdgesIncidentOn(vertexIndex: Int, v: T) {
-            setValueForEdgeFrom(vertexIndex, v)
-            setValueForEdgeTo(vertexIndex, v)
-        }
-
-        /**
-         * Sets the specified edge to the default value.
-         */
-        fun setDefault(edgeIndex: Int) {
-            this[edgeIndex] = default
-        }
-    }
-
-    private var canEdgeAdvance: EdgesCache<Boolean> = EdgesCache(true)
+    private var canEdgeAdvance: MutableList<Boolean> = MutableList(vertices.size) { true }
     /*
      * Caches the growth direction (expressed as a vector) of both of the
      * vertices of each edge. See [advanceEdge].
      */
-    private var growthDirections: EdgesCache<Pair<Euclidean2DPosition?, Euclidean2DPosition?>?> = EdgesCache(null)
-    private var normals: EdgesCache<Euclidean2DPosition?> = EdgesCache(null)
+    private var growthDirections: MutableList<Pair<Euclidean2DPosition?, Euclidean2DPosition?>?> = MutableList(vertices.size) { null }
+    private var normals: MutableList<Euclidean2DPosition?> = MutableList(vertices.size) { null }
 
     override fun addVertex(index: Int, x: Double, y: Double): Boolean {
-        if (super.addVertex(index, x, y)) { // invalid all involved caches
-            canEdgeAdvance.add(index, canEdgeAdvance.default)
-            canEdgeAdvance.setValueForEdgeTo(index, canEdgeAdvance.default)
-            growthDirections.add(index, growthDirections.default)
-            growthDirections.setValueForEdgeTo(index, growthDirections.default)
-            normals.add(index, normals.default)
-            normals.setValueForEdgeTo(index, normals.default)
+        val oldEdge = getEdge(circularPrev(index))
+        if (super.addVertex(index, x, y)) {
+            addCacheAt(index)
+            voidCacheAt(circularPrev(index), oldEdge)
             return true
         }
         return false
     }
 
     override fun removeVertex(index: Int): Boolean {
+        val oldEdge = getEdge(circularPrev(index))
         if (super.removeVertex(index)) {
-            canEdgeAdvance.removeAt(index)
-            canEdgeAdvance.setValueForEdgeTo(index, canEdgeAdvance.default)
-            growthDirections.removeAt(index)
-            growthDirections.setValueForEdgeTo(index, growthDirections.default)
-            normals.removeAt(index)
-            normals.setValueForEdgeTo(index, normals.default)
+            removeCacheAt(index)
+            voidCacheAt(circularPrev(index), oldEdge)
             return true
         }
         return false
     }
 
     override fun moveVertex(index: Int, newX: Double, newY: Double): Boolean {
+        val modifiedEdges = mutableListOf(circularPrev(index), index)
+            .map { it to getEdge(it) }
         if (super.moveVertex(index, newX, newY)) {
-            canEdgeAdvance.setValueForEdgesIncidentOn(index, canEdgeAdvance.default)
-            growthDirections.setValueForEdgesIncidentOn(index, growthDirections.default)
-            normals.setValueForEdgesIncidentOn(index, normals.default)
+            modifiedEdges.forEach { voidCacheAt(it.first, it.second) }
             return true
         }
         return false
     }
 
     override fun moveEdge(index: Int, newEdge: Euclidean2DEdge): Boolean {
-        // when moving an edge 3 edges are modified: the one moving and the two linked to it
-        val prev = getEdge(circularPrev(index))
-        val curr = getEdge(index)
-        val next = getEdge(circularNext(index))
+        val modifiedEdges = mutableListOf(circularPrev(index), index, circularNext(index))
+            .map { it to getEdge(it) }
         if (super.moveEdge(index, newEdge)) {
-            invalidCacheIfSlopeChanged(prev, circularPrev(index))
-            invalidCacheIfSlopeChanged(curr, index)
-            invalidCacheIfSlopeChanged(next, circularNext(index))
+            modifiedEdges.forEach { voidCacheAt(it.first, it.second) }
             return true
         }
         return false
@@ -133,9 +79,9 @@ open class ExtendableConvexPolygonImpl(
 
     override fun mutateTo(p: MutableConvexPolygon) {
         super.mutateTo(p)
-        canEdgeAdvance = EdgesCache(canEdgeAdvance.default)
-        growthDirections = EdgesCache(growthDirections.default)
-        normals = EdgesCache(normals.default)
+        canEdgeAdvance = MutableList(vertices.size) { true }
+        growthDirections = MutableList(vertices.size) { null }
+        normals = MutableList(vertices.size) { null }
     }
 
     /*
@@ -182,8 +128,8 @@ open class ExtendableConvexPolygonImpl(
         require(!l1.isInfinite() && !l2.isInfinite()) { "invalid growth direction" }
         d1 = d1.resize(l1)
         d2 = d2.resize(l2)
-        // super method is used in order to avoid useless checks that would invalid useful cache
-        return super.moveEdge(index, Pair(e.first.translate(d1), e.second.translate(d2)))
+        // super method is used in order to avoid voiding useful cache
+        return super.moveEdge(index, Pair(e.first + d1, e.second + d2))
     }
 
     /*
@@ -198,14 +144,14 @@ open class ExtendableConvexPolygonImpl(
      * side of the obstacle.
      */
     override fun extend(step: Double, obstacles: Collection<Shape>, envStart: Point2D, envEnd: Point2D): Boolean {
-        val obs = obstacles.filter { it.vertices() != vertices }
+        //val obs = obstacles.filter { it.vertices() != vertices }
         var extended = false
         var i = 0
         while (i < vertices.size) {
             if (canEdgeAdvance[i]) {
                 val hasAdvanced = advanceEdge(i, step)
                 if (hasAdvanced && isInBoundaries(getEdge(i), envStart, envEnd)) {
-                    val intersectedObs = obs.filter { intersects(it) }
+                    val intersectedObs = obstacles.filter { intersects(it) }
                     // can be in the advanced case for at most 2 obstacle at a time
                     if (intersectedObs.size <= 2 && intersectedObs.all { isAdvancedCase(it, i, step) }) {
                         intersectedObs.forEach { adjustGrowth(it, i, step) }
@@ -225,27 +171,48 @@ open class ExtendableConvexPolygonImpl(
         return extended
     }
 
-    private fun invalidCacheIfSlopeChanged(oldEdge: Euclidean2DEdge, i: Int) {
-        val oldM = oldEdge.computeSlope()
-        val newM = getEdge(i).computeSlope()
-        if (!fuzzyEquals(oldM, newM) && !(oldM.isNaN() && newM.isNaN())) {
-            canEdgeAdvance.setDefault(i)
-            growthDirections.setDefault(i)
-            normals.setDefault(i)
+    /*
+     * The cache is set to some default value, the same it assumes when
+     * it's voided.
+     */
+    private fun addCacheAt(index: Int) {
+        canEdgeAdvance.add(index, true)
+        growthDirections.add(index, null)
+        normals.add(index, null)
+    }
+
+    private fun removeCacheAt(index: Int) {
+        canEdgeAdvance.removeAt(index)
+        growthDirections.removeAt(index)
+        normals.removeAt(index)
+    }
+
+    /*
+     * Usually, cache related to an edge is voided (or better, set to default)
+     * when the edge is somehow modified. However, different caches may apply
+     * different policies for voiding (e.g. a cache memorizing the normal to
+     * each edge is to be voided if the slope of the edge changes). This method
+     * accepts the index of the modified edge and the old edge and applies
+     * different policies to decide if each cache is to be voided.
+     */
+    private fun voidCacheAt(index: Int, old: Euclidean2DEdge) {
+        val new = getEdge(index)
+        canEdgeAdvance[index] = true
+        if (old.slope() != new.slope() && !(old.isDegenerate() || new.isDegenerate())) {
+            growthDirections[index] = null
+            normals[index] = null
         }
     }
 
     /*
-     * Computes the normal (unit) vector of the edge that allows the polygon to
-     * extend. This method is all about figuring out the right direction of the
-     * normal vector.
+     * Each vector has "two" normals: n and -n. This method is all about figuring
+     * out which of the two is to be used to allow the polygon to extend.
      */
     private fun Euclidean2DEdge.computeNormal(index: Int): Euclidean2DPosition {
-        val v = second - first
-        val prev = getEdge(circularPrev(index))
-        val n = v.normal().normalize()
-        val sense = zCross(v, prev.second - prev.first) > 0.0
-        if (sense != zCross(v, n) > 0.0) {
+        val curr = toVector()
+        val prev = getEdge(circularPrev(index)).toVector()
+        val n = curr.normal().normalize()
+        if (zCross(curr, n) > 0.0 != zCross(curr, prev) > 0.0) {
             return n.times(-1.0)
         }
         return n
@@ -266,7 +233,7 @@ open class ExtendableConvexPolygonImpl(
     private fun isAdvancedCase(obstacle: Shape, index: Int, step: Double) =
         obstacle.vertices().none { containsOrLiesOnBoundary(it) } &&
             vertices.filter { obstacle.contains(it.toPoint()) }.size == 1 &&
-            !fuzzyEquals(findIntrudedEdge(obstacle, index, step).computeSlope(), getEdge(index).computeSlope())
+            !fuzzyEquals(findIntrudedEdge(obstacle, index, step).slope(), getEdge(index).slope())
 
     /*
      * During the advancement of an edge, multiple edges of an obstacle may be
@@ -283,7 +250,7 @@ open class ExtendableConvexPolygonImpl(
             d = growthDirections[index]!!.second!!
         }
         // a segment going from the old position of the intruding vertex to the new one
-        val movementSegment = Pair(intrudingVertex, intrudingVertex.translate(d.resize(-step)))
+        val movementSegment = Pair(intrudingVertex, intrudingVertex - d.resize(step))
         val intrudedEdges = findIntersectingEdges(obstacle, movementSegment)
         require(intrudedEdges.size == 1) { "vertex is not intruding" }
         return intrudedEdges.first()
@@ -292,12 +259,10 @@ open class ExtendableConvexPolygonImpl(
     /*
      * Finds the edges of the obstacle intersecting with the given edge of the polygon.
      */
-    private fun findIntersectingEdges(obstacle: Shape, e: Euclidean2DEdge): Collection<Euclidean2DEdge> {
-        val obsVertices = obstacle.vertices()
-        return obsVertices
-            .mapIndexed { i, v -> Pair(v, obsVertices[(i + 1) % obsVertices.size]) }
-            .filter { edgesIntersect(it, e) }
-    }
+    private fun findIntersectingEdges(obstacle: Shape, e: Euclidean2DEdge) =
+        obstacle.vertices().run {
+            mapIndexed { i, v -> Pair(v, this[(i + 1) % size]) }.filter { edgesIntersect(it, e) }
+        }
 
     /*
      * Delegates the check to java.awt.geom.Line2D.

@@ -1,7 +1,6 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.layers.BidimensionalGaussianLayer
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.utils.origin
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
@@ -38,11 +37,14 @@ open class FollowFlowField(
             .maxBy { it.second }?.first ?: currentPosition
     },
     TargetSelectionStrategy {
-        val l = env.getLayer(targetMolecule)
-        if (l.isEmpty || l !is BidimensionalGaussianLayer<*>) {
-            env.origin()
-        } else {
-            env.makePosition(l.centerX, l.centerY)
+        with(env.getLayer(targetMolecule)) {
+            if (isEmpty || get() !is BidimensionalGaussianLayer<*>) {
+                env.origin()
+            } else {
+                with(get() as BidimensionalGaussianLayer) {
+                    env.makePosition(centerX, centerY)
+                }
+            }
         }
     }
 )

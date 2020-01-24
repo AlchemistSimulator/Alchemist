@@ -55,7 +55,7 @@ public class DrawNavigationMesh implements Effect {
     @ExportForGUI(nameToExport = "env end y (north-east)")
     private String envEndY = "600";
     @ExportForGUI(nameToExport = "to be drawn")
-    private boolean toBeDrawn = false; // NOPMD = if not initialized a NullPointerException is thrown
+    private boolean toBeDrawn;
     private Color colorCache = Color.BLUE;
     private Collection<ConvexPolygon> regions = new ArrayList<>();
     @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")

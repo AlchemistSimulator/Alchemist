@@ -144,7 +144,7 @@ open class ExtendableConvexPolygonImpl(
      * side of the obstacle.
      */
     override fun extend(step: Double, obstacles: Collection<Shape>, envStart: Point2D, envEnd: Point2D): Boolean {
-        //val obs = obstacles.filter { it.vertices() != vertices }
+        // val obs = obstacles.filter { it.vertices() != vertices }
         var extended = false
         var i = 0
         while (i < vertices.size) {
@@ -198,7 +198,7 @@ open class ExtendableConvexPolygonImpl(
     private fun voidCacheAt(index: Int, old: Euclidean2DEdge) {
         val new = getEdge(index)
         canEdgeAdvance[index] = true
-        if (old.slope() != new.slope() && !(old.isDegenerate() || new.isDegenerate())) {
+        if (!fuzzyEquals(old.slope(), new.slope()) && !(old.isDegenerate() || new.isDegenerate())) {
             growthDirections[index] = null
             normals[index] = null
         }

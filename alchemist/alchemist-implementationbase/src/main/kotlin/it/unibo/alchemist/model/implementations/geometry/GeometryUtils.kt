@@ -39,9 +39,9 @@ fun Shape.vertices(): List<Euclidean2DPosition> {
 }
 
 /**
- * Translates the point with the given vector.
+ * Multiplies each coordinate of a vector for a scalar number n.
  */
-fun Euclidean2DPosition.translate(v: Euclidean2DPosition) = Euclidean2DPosition(x + v.x, y + v.y)
+fun Euclidean2DPosition.times(n: Double) = Euclidean2DPosition(x * n, y * n)
 
 /**
  * Normalizes the vector.
@@ -60,6 +60,16 @@ fun Euclidean2DPosition.resize(newLen: Double): Euclidean2DPosition = normalize(
 fun Euclidean2DPosition.normal(): Euclidean2DPosition = Euclidean2DPosition(-y, x)
 
 /**
+ * Computes the z component of the cross product of the given vectors.
+ */
+fun zCross(v1: Euclidean2DPosition, v2: Euclidean2DPosition) = v1.x * v2.y - v1.y * v2.x
+
+/**
+ * Dot product between bidimensional vectors.
+ */
+fun Euclidean2DPosition.dot(v: Euclidean2DPosition) = x * v.x + y * v.y
+
+/**
  * Checks whether the given point is inside a rectangular region starting in
  * lowerBound and ending in upperBound (bounds are included).
  */
@@ -72,6 +82,23 @@ fun isInBoundaries(p: Euclidean2DPosition, lowerBound: Point2D, upperBound: Poin
  */
 fun isInBoundaries(e: Euclidean2DEdge, lowerBound: Point2D, upperBound: Point2D) =
     isInBoundaries(e.first, lowerBound, upperBound) && isInBoundaries(e.second, lowerBound, upperBound)
+
+/**
+ * Mutates an edge to a vector. In particular, the vector representing the
+ * movement from the first point to the second point of the edge.
+ */
+fun Euclidean2DEdge.toVector() = second - first
+
+/**
+ * Computes the slope of the line passing through a couple of points.
+ * If the points coincide NaN is the result.
+ */
+fun Euclidean2DEdge.slope() = toVector().run { y / x }
+
+/**
+ * An edge is degenerate if its points coincide (and its length is zero).
+ */
+fun Euclidean2DEdge.isDegenerate(): Boolean = first == second
 
 /**
  * Checks whether the segment (represented by a pair of positions)
@@ -87,17 +114,11 @@ fun areCollinear(p1: Euclidean2DPosition, p2: Euclidean2DPosition, p3: Euclidean
     return if (fuzzyEquals(p1.x, p2.x)) {
         fuzzyEquals(p1.x, p3.x)
     } else {
-        val m = Pair(p1, p2).computeSlope()
+        val m = Pair(p1, p2).slope()
         val q = p1.y - m * p1.x
         fuzzyEquals((m * p3.x + q), p3.y)
     }
 }
-
-/**
- * Computes the slope of the line passing through a couple of points.
- * If the points coincide NaN is the result.
- */
-fun Euclidean2DEdge.computeSlope() = (second.y - first.y) / (second.x - first.x)
 
 /**
  * Checks if a value lies between two values (included) provided in any order.
@@ -126,9 +147,9 @@ fun intersection(s1: Euclidean2DEdge, s2: Euclidean2DEdge): IntersectionResult {
         }
     }
     val p = s1.first
-    val r = s1.second - p
+    val r = s1.toVector()
     val q = s2.first
-    val s = s2.second - q
+    val s = s2.toVector()
     val denom = zCross(r, s)
     val num = zCross((q - p), r)
     if (fuzzyEquals(num, 0.0) && fuzzyEquals(denom, 0.0)) { // segments are collinear
@@ -158,26 +179,6 @@ fun intersection(s1: Euclidean2DEdge, s2: Euclidean2DEdge): IntersectionResult {
     }
     return IntersectionResult(SegmentsIntersectionTypes.EMPTY) // not parallel but not intersecting
 }
-
-/**
- * Computes the z component of the cross product of the given vectors.
- */
-fun zCross(v1: Euclidean2DPosition, v2: Euclidean2DPosition) = v1.x * v2.y - v1.y * v2.x
-
-/**
- * Dot product between bidimensional vectors.
- */
-fun Euclidean2DPosition.dot(v: Euclidean2DPosition) = x * v.x + y * v.y
-
-/**
- * Multiplies each coordinate of a vector for a scalar number n.
- */
-fun Euclidean2DPosition.times(n: Double) = Euclidean2DPosition(x * n, y * n)
-
-/**
- * An edge is degenerate if its points coincide (and its length is zero).
- */
-fun Euclidean2DEdge.isDegenerate(): Boolean = first == second
 
 /**
  * Checks whether two intervals (inclusive) intersects.

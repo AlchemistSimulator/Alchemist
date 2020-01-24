@@ -21,9 +21,8 @@ import kotlin.math.sqrt
 fun Euclidean2DPosition.asAngle() = atan2(y, x)
 
 /**
- * Obtains the vertices of a polygonal shape.
- * Any curved segment connecting two points will be considered as
- * a straight line between them.
+ * Obtains the vertices of a polygonal shape. Any curved segment connecting
+ * two points will be considered as a straight line between them.
  */
 fun Shape.vertices(): List<Euclidean2DPosition> {
     val vertices = mutableListOf<Euclidean2DPosition>()

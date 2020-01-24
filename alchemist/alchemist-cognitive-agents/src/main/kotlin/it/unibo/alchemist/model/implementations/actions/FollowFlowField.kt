@@ -2,6 +2,7 @@ package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.layers.BidimensionalGaussianLayer
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.implementations.utils.origin
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.Reaction
@@ -37,8 +38,11 @@ open class FollowFlowField(
             .maxBy { it.second }?.first ?: currentPosition
     },
     TargetSelectionStrategy {
-        with(env.getLayer(targetMolecule).get() as BidimensionalGaussianLayer) {
-            Euclidean2DPosition(centerX, centerY)
+        val l = env.getLayer(targetMolecule)
+        if (l.isEmpty || l !is BidimensionalGaussianLayer<*>) {
+            env.origin()
+        } else {
+            env.makePosition(l.centerX, l.centerY)
         }
     }
 )

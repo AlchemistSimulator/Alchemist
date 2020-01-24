@@ -38,13 +38,12 @@ open class AvoidFlowField(
             .minBy { it.second }?.first ?: currentPosition
     },
     TargetSelectionStrategy {
-        with(env.getLayer(targetMolecule).get() as BidimensionalGaussianLayer) {
-            val p = env.getPosition(pedestrian)
-            if (p == null) {
-                env.origin()
-            } else {
-                p + (p - Euclidean2DPosition(centerX, centerY))
-            }
+        val p = env.getPosition(pedestrian)
+        val l = env.getLayer(targetMolecule)
+        if (p == null || l.isEmpty || l !is BidimensionalGaussianLayer<*>) {
+            env.origin()
+        } else {
+            p + (p - env.makePosition(l.centerX, l.centerY))
         }
     }
 )

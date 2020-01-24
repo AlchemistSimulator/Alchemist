@@ -1,11 +1,8 @@
 package it.unibo.alchemist.model.implementations.geometry.euclidean.twod
 
+import it.unibo.alchemist.model.implementations.geometry.*
 import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionTypes.POINT
 import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionTypes.EMPTY
-import it.unibo.alchemist.model.implementations.geometry.contains
-import it.unibo.alchemist.model.implementations.geometry.intersection
-import it.unibo.alchemist.model.implementations.geometry.vertices
-import it.unibo.alchemist.model.implementations.geometry.zCross
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DEdge
@@ -23,15 +20,17 @@ import java.util.Optional
  * Implementation of a [MutableConvexPolygon].
  *
  * Each modification operation on this object has a time complexity of
- * O(n^2), where n is the number of vertices/edges. Such complexity
- * could be reduced to O(n) in the future.
+ * O(n), where n is the number of vertices/edges.
  */
 open class MutableConvexPolygonImpl(
     private val vertices: MutableList<Euclidean2DPosition>
 ) : MutableConvexPolygon {
 
     init {
-        require(isConvex() && vertices.size > 2) { "Given vertices do not represent a convex polygon" }
+        // at least 3 non degenerate edges to make a polygon
+        require(vertices.indices.filter { !getEdge(it).isDegenerate() }.size >= 3 && isConvex()) {
+            "Given vertices do not represent a convex polygon"
+        }
     }
 
     companion object {
@@ -68,8 +67,12 @@ open class MutableConvexPolygonImpl(
 
     override fun addVertex(index: Int, x: Double, y: Double): Boolean {
         vertices.add(index, Euclidean2DPosition(x, y))
-        if (isConvex()) {
-            shape = null // invalid cached shape
+        /*
+         * Only the modified/new edges are passed, which varies depending
+         * on the operation performed (addition/removal of a vertex/edge).
+         */
+        if (isConvex(circularPrev(index), index)) {
+            shape = null
             return true
         }
         vertices.removeAt(index)
@@ -80,35 +83,35 @@ open class MutableConvexPolygonImpl(
         if (vertices.size == 3) {
             return false
         }
-        val v = vertices[index]
+        val oldV = vertices[index]
         vertices.removeAt(index)
-        if (isConvex()) {
-            shape = null // invalid cached shape
+        if (isConvex(circularPrev(index))) {
+            shape = null
             return true
         }
-        vertices.add(index, v)
+        vertices.add(index, oldV)
         return false
     }
 
     override fun moveVertex(index: Int, newX: Double, newY: Double): Boolean {
         val oldV = vertices[index]
         vertices[index] = Euclidean2DPosition(newX, newY)
-        if (isConvex()) {
-            shape = null // invalid cached shape
+        if (isConvex(circularPrev(index), index)) {
+            shape = null
             return true
         }
         vertices[index] = oldV
         return false
     }
 
-    override fun getEdge(index: Int) = Pair(vertices[index], vertices[(index + 1) % vertices.size])
+    override fun getEdge(index: Int) = Pair(vertices[index], vertices[circularNext(index)])
 
     override fun moveEdge(index: Int, newEdge: Euclidean2DEdge): Boolean {
         val oldEdge = getEdge(index)
         vertices[index] = newEdge.first
-        vertices[(index + 1) % vertices.size] = newEdge.second
-        if (isConvex()) {
-            shape = null // invalid cached shape
+        vertices[circularNext(index)] = newEdge.second
+        if (isConvex(circularPrev(index), index, circularNext(index))) {
+            shape = null
             return true
         }
         moveEdge(index, oldEdge)
@@ -188,24 +191,31 @@ open class MutableConvexPolygonImpl(
     protected fun circularNext(index: Int) = (index + 1) % vertices.size
 
     /*
-     * In order to be convex, a polygon must first be simple
-     * (not self-intersecting).
-     * Ascertained that the polygon is simple, a rather easy
-     * convexity test is the following: we check that every edge
-     * either turn left or right with respect to the previous edge.
-     * If they all turn in the same direction then the polygon is
-     * convex.
+     * In order to be convex, a polygon must first be simple (not self-
+     * intersecting). Ascertained that the polygon is simple, a rather
+     * easy convexity test is the following: we check that every angle
+     * of the polygon is either > or < 180. That is the definition of
+     * convexity of a polygon's boundary in this context.
      */
-    private fun isConvex(): Boolean {
-        if (isSelfIntersecting()) {
-            return false
-        }
+    private fun isConvex() = !isSelfIntersecting() && isBoundaryConvex()
+
+    /*
+     * Checks if the polygon is convex, assuming that every edge apart from
+     * the specified ones does not cause self-intersection.
+     */
+    private fun isConvex(vararg modifiedEdges: Int) =
+        isBoundaryConvex() && modifiedEdges.none { causeSelfIntersection(it) }
+
+    /*
+     * Checks if the polygon's boundary is convex. See [isConvex].
+     */
+    private fun isBoundaryConvex(): Boolean {
         var e1 = getEdge(vertices.size - 1)
         var e2: Euclidean2DEdge
         var sense: Boolean? = null
         vertices.indices.forEach { i ->
             e2 = getEdge(i)
-            val z = zCross(e1.second - e1.first, e2.second - e2.first)
+            val z = zCross(e1.toVector(), e2.toVector())
             /*
              * Cross product is 0 in the following cases:
              * - one (or both) of the two edges is degenerate, so it's perfectly
@@ -214,8 +224,8 @@ open class MutableConvexPolygonImpl(
              * the same direction or opposite ones. In the former case it's
              * fine to ignore the edge since it can't violate convexity,
              * whereas the latter case means edges are overlapping (since they
-             * have opposite directions and are consecutive), which can't be
-             * as we ascertained that the polygon is not self-intersecting.
+             * have opposite directions and are consecutive), which will be
+             * detected by a self-intersection test.
              */
             if (z != 0.0) {
                 if (sense == null) {
@@ -240,25 +250,22 @@ open class MutableConvexPolygonImpl(
      * This method has a time complexity of O(n^2). Consider using a hash
      * data structure with spatial-related buckets in the future.
      */
-    private fun isSelfIntersecting(): Boolean {
-        vertices.indices.forEach { i ->
-            val prev = getEdge(circularPrev(i))
-            val curr = getEdge(i)
-            val next = getEdge(circularNext(i))
-            if (intersection(prev, curr).type != POINT) {
-                return true
-            }
-            if (intersection(curr, next).type != POINT) {
-                return true
-            }
-            if (vertices.indices
-                    .filter { it != i && it != circularPrev(i) && it != circularNext(i) }
-                    .any { intersection(curr, getEdge(it)).type != EMPTY }) {
-                return true
+    private fun isSelfIntersecting() = vertices.indices.any { causeSelfIntersection(it) }
+
+    /*
+     * Checks whether an edge of the polygon cause the latter to be self-
+     * intersecting. See [isSelfIntersecting].
+     */
+    private fun causeSelfIntersection(index: Int) =
+        vertices.indices.any {
+            if (it == index) {
+                false
+            } else if (it == circularPrev(index) || it == circularNext(index)) {
+                intersection(getEdge(index), getEdge(it)).type != POINT
+            } else {
+                intersection(getEdge(index), getEdge(it)).type != EMPTY
             }
         }
-        return false
-    }
 
     /*
      * If the cache is not valid, recomputes it.

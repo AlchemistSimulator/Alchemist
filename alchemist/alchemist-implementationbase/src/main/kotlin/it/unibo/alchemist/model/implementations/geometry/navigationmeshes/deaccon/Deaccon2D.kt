@@ -112,8 +112,8 @@ class Deaccon2D(
 
     /**
      * Generates a navigation mesh of an environment. A rectangular shaped
-     * environment is assumed, its south-west starting point, width and height
-     * need to be specified. Obstacles are represented with java.awt.Shape.
+     * environment is assumed, its starting point, width and height (only positive)
+     * need to be specified. Obstacles are represented with java.awt.Shapes.
      * Note that only CONVEX POLYGONAL obstacles are supported, each curved
      * segment connecting two points will be considered as a straight line
      * between them.
@@ -140,6 +140,7 @@ class Deaccon2D(
      * why this method does not take a Collection<ConvexPolygon> as input for obstacles.
      */
     fun generateNavigationMesh(envStart: Point2D, envWidth: Double, envHeight: Double, envObstacles: Collection<Shape>): Collection<ConvexPolygon> {
+        require(envWidth > 0.0 && envHeight > 0.0) { "invalid environment" }
         val envEnd = Point2D.Double(envStart.x + envWidth, envStart.y + envHeight)
         // first seeding
         var nSeeds = this.nSeeds

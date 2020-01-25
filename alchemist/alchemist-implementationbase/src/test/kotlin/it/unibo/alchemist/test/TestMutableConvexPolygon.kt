@@ -57,6 +57,24 @@ class TestMutableConvexPolygon {
     }
 
     @Test
+    fun testRemoveVertex() {
+        val p = MutableConvexPolygonImpl(mutableListOf(
+            Euclidean2DPosition(0.0, 0.0),
+            Euclidean2DPosition(1.0, 0.0),
+            Euclidean2DPosition(1.0, 1.0),
+            Euclidean2DPosition(0.0, 1.0)
+        ))
+        Assertions.assertEquals(true, p.removeVertex(2))
+        Assertions.assertEquals(false, p.removeVertex(2))
+        Assertions.assertEquals(true, p.addVertex(0, 0.0, 0.0))
+        Assertions.assertEquals(true, p.addVertex(0, 0.0, 0.0))
+        Assertions.assertEquals(false, p.removeVertex(4))
+        Assertions.assertEquals(true, p.removeVertex(2))
+        Assertions.assertEquals(true, p.removeVertex(1))
+        Assertions.assertEquals(false, p.removeVertex(0))
+    }
+
+    @Test
     fun testMoveVertex() {
         val p = MutableConvexPolygonImpl(mutableListOf(
             Euclidean2DPosition(0.0, 0.0),

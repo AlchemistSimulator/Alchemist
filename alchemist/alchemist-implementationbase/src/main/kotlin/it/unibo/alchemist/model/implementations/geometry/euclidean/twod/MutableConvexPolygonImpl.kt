@@ -32,10 +32,7 @@ open class MutableConvexPolygonImpl(
 ) : MutableConvexPolygon {
 
     init {
-        // at least 3 non degenerate edges to make a polygon
-        require(vertices.indices.filter { !getEdge(it).isDegenerate() }.size >= 3 && isConvex()) {
-            "Given vertices do not represent a convex polygon"
-        }
+        require(isConvex()) { "Given vertices do not represent a convex polygon" }
     }
 
     companion object {
@@ -73,7 +70,7 @@ open class MutableConvexPolygonImpl(
     override fun addVertex(index: Int, x: Double, y: Double): Boolean {
         vertices.add(index, Euclidean2DPosition(x, y))
         /*
-         * Only the modified/new edges are passed, which varies depending
+         * Only the modified/new edges are passed, which vary depending
          * on the operation performed (addition/removal of a vertex/edge).
          */
         if (isConvex(circularPrev(index), index)) {
@@ -85,9 +82,6 @@ open class MutableConvexPolygonImpl(
     }
 
     override fun removeVertex(index: Int): Boolean {
-        if (vertices.size == 3) {
-            return false
-        }
         val oldV = vertices[index]
         vertices.removeAt(index)
         if (isConvex(circularPrev(index))) {
@@ -198,9 +192,11 @@ open class MutableConvexPolygonImpl(
     /*
      * In order to be convex, a polygon must first be simple (not self-
      * intersecting). Ascertained that the polygon is simple, a rather
-     * easy convexity test is the following: we check that every angle
-     * of the polygon is either > or < 180. That is the definition of
-     * convexity of a polygon's boundary in this context.
+     * easy convexity test is the following: we check that every edge
+     * turns in the same direction either left or right with respect to
+     * the previous edge. If they all turn in the same direction, then
+     * the polygon is convex. That is the definition of convexity of a
+     * polygon's boundary in this context.
      */
     private fun isConvex() = !isSelfIntersecting() && isBoundaryConvex()
 
@@ -215,6 +211,12 @@ open class MutableConvexPolygonImpl(
      * Checks if the polygon's boundary is convex. See [isConvex].
      */
     private fun isBoundaryConvex(): Boolean {
+        /*
+         * We need to maintain at least 3 non degenerate edges to have a polygon.
+         */
+        if (vertices.indices.filter { !getEdge(it).isDegenerate() }.size < 3) {
+            return false
+        }
         var e1 = getEdge(vertices.size - 1)
         var e2: Euclidean2DEdge
         var sense: Boolean? = null
@@ -251,6 +253,7 @@ open class MutableConvexPolygonImpl(
      * - e must share ONLY its endpoints with its neighboring edges,
      * no other point shall be in common with those edges.
      * - e should not have any point in common with any other edge.
+     * Degenerate edges are not considered as they cannot cause self-intersection.
      *
      * This method has a time complexity of O(n^2). Consider using a hash
      * data structure with spatial-related buckets in the future.
@@ -261,16 +264,44 @@ open class MutableConvexPolygonImpl(
      * Checks whether an edge of the polygon cause the latter to be self-
      * intersecting. See [isSelfIntersecting].
      */
-    private fun causeSelfIntersection(index: Int) =
-        vertices.indices.any {
-            if (it == index) {
-                false
-            } else if (it == circularPrev(index) || it == circularNext(index)) {
-                intersection(getEdge(index), getEdge(it)).type != POINT
-            } else {
-                intersection(getEdge(index), getEdge(it)).type != EMPTY
-            }
+    private fun causeSelfIntersection(index: Int): Boolean {
+        val curr = getEdge(index)
+        if (curr.isDegenerate()) {
+            return false
         }
+        /*
+         * First previous edge not degenerate
+         */
+        var i = circularPrev(index)
+        while (getEdge(i).isDegenerate()) {
+            i = circularPrev(i)
+        }
+        val prevIndex = i
+        val prev = getEdge(i)
+        /*
+         * First next edge not degenerate
+         */
+        i = circularNext(index)
+        while (getEdge(i).isDegenerate()) {
+            i = circularNext(i)
+        }
+        val next = getEdge(i)
+        if (intersection(curr, next).type != POINT || intersection(prev, curr).type != POINT) {
+            return false
+        }
+        /*
+         * We check every edge between the first prev not
+         * degenerate and the first next not degenerate.
+         */
+        i = circularNext(i)
+        while (i != prevIndex) {
+            if (!getEdge(i).isDegenerate() && intersection(curr, getEdge(i)).type != EMPTY) {
+                return true
+            }
+            i = circularNext(i)
+        }
+        return false
+    }
 
     /*
      * If the cache is not valid, recomputes it.

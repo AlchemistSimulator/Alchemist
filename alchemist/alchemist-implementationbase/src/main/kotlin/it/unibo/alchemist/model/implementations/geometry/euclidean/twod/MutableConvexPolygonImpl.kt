@@ -286,8 +286,8 @@ open class MutableConvexPolygonImpl(
             i = circularNext(i)
         }
         val next = getEdge(i)
-        if (intersection(curr, next).type != POINT || intersection(prev, curr).type != POINT) {
-            return false
+        if (intersection(prev, curr).type != POINT || intersection(curr, next).type != POINT) {
+            return true
         }
         /*
          * We check every edge between the first prev not

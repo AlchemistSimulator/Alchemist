@@ -1,9 +1,12 @@
 package it.unibo.alchemist.model.implementations.actions
 
+import it.unibo.alchemist.model.implementations.layers.BidimensionalGaussianLayer
+import it.unibo.alchemist.model.implementations.utils.origin
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
+import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
 /**
  * Move the pedestrian towards positions of the environment with a low concentration of the target molecule.
@@ -32,5 +35,17 @@ open class AvoidFlowField(
         this.map { it to layer.getValue(it).toDouble() }
             .filter { it.second < currentConcentration }
             .minBy { it.second }?.first ?: currentPosition
+    },
+    TargetSelectionStrategy {
+        with(env.getLayer(targetMolecule)) {
+            val p = env.getPosition(pedestrian)
+            if (p == null || isEmpty || get() !is BidimensionalGaussianLayer<*>) {
+                env.origin()
+            } else {
+                with(get() as BidimensionalGaussianLayer) {
+                    p + (p - env.makePosition(centerX, centerY))
+                }
+            }
+        }
     }
 )

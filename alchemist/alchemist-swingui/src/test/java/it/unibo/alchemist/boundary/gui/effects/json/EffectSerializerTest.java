@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * JUnit test for EffectSerializer class.
  */
 public class EffectSerializerTest {
-    private static final String TEST_EFFECTS = "/it/unibo/alchemist/gui/effects/json/TestEffects.json";
+    private static final String TEST_EFFECTS = "it/unibo/alchemist/gui/effects/json/TestEffects.json";
     private static final double TEST_SIZE = 6.0;
     private static final double TEST_SIZE_LIST = 7.0;
 
@@ -90,7 +90,7 @@ public class EffectSerializerTest {
         final DrawDot<Position2D<? extends Position2D<?>>> dot = new DrawDot<>("Dot 2");
         dot.setSize(TEST_SIZE_LIST);
         group5.add(dot);
-        final DrawColoredDot colorDot = new DrawColoredDot();
+        final DrawColoredDot<Position2D<?>> colorDot = new DrawColoredDot<>();
         colorDot.setColor(Color.ORANGE);
         colorDot.setVisibility(false);
         group5.add(colorDot);

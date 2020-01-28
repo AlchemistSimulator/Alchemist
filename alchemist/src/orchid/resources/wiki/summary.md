@@ -12,6 +12,7 @@
   - [SAPERE](usage/sapere.md)
   - [Scafi](usage/scafi.md)
   - [Indoor environments](usage/indoor.md)
+  - [Generation of navigation meshes](usage/navmeshes.md)
   - [Cognitive Agents](usage/cognitive-agents.md)
   - [Smart Cameras](usage/smartcam.md)
   - [Maps and GPS traces](usage/maps.md)

@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import it.unibo.alchemist.boundary.gui.effects.json.AbstractPropertySerializationTest;
 import it.unibo.alchemist.boundary.gui.view.properties.SerializableBooleanProperty;
 import it.unibo.alchemist.test.TemporaryFile;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -21,7 +22,6 @@ import java.lang.reflect.Type;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * JUnit test for custom {@link javafx.beans.property.Property} serialization.
@@ -32,7 +32,9 @@ public final class SerializableBooleanPropertySerializationTest extends Abstract
     @Override
     public void testJavaSerialization() throws IOException, ClassNotFoundException {
         final File file = TemporaryFile.create();
-        assertTrue(file.createNewFile());
+        if (!file.exists() && !file.createNewFile()) {
+            Assertions.fail();
+        }
         SerializableBooleanProperty serializableBooleanProperty;
         SerializableBooleanProperty deserialized;
         SerializableBooleanProperty serializableBooleanProperty2;
@@ -62,7 +64,9 @@ public final class SerializableBooleanPropertySerializationTest extends Abstract
     @Override
     public void testGsonSerialization() throws Exception {
         final File file = TemporaryFile.create();
-        assertTrue(file.createNewFile());
+        if (!file.exists() && !file.createNewFile()) {
+            Assertions.fail();
+        }
         final SerializableBooleanProperty serializableBooleanProperty = new SerializableBooleanProperty("Test", true);
         SerializableBooleanProperty deserialized;
         try (

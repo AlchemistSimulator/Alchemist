@@ -59,10 +59,10 @@ allprojects {
     }
 
     repositories {
-        mavenCentral()
         listOf("", "-eu", "-asia").forEach {
             maven(url = "https://maven-central$it.storage-download.googleapis.com/repos/central/data/")
         }
+        mavenCentral()
         maven(url = "https://dl.bintray.com/kotlin/dokka/")
     }
 

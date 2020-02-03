@@ -11,14 +11,10 @@ package it.unibo.alchemist.core.interfaces;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import it.unibo.alchemist.model.interfaces.*;
 import org.jooq.lambda.fi.lang.CheckedRunnable;
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Neighborhood;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.Time;
 
 /**
  * This interface forces simulations to be independent threads, and make them
@@ -171,6 +167,24 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
      *            (used to calculate reverse dependencies)
      */
     void nodeRemoved(Node<T> node, Neighborhood<T> oldNeighborhood);
+
+    /**
+     * This method allows a reaction to be
+     * added during the simulation execution.
+     *
+     * @param reaction
+     *            the new reaction
+     */
+    void reactionAdded(Reaction<T> reaction);
+
+    /**
+     * This method allows a reaction to be
+     * removed during the simulation execution.
+     *
+     * @param reaction
+     *            the new reaction
+     */
+    void reactionRemoved(Reaction<T> reaction);
 
     /**
      * Sends a pause command to the simulation. There is no guarantee on when

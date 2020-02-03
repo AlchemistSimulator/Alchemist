@@ -1,0 +1,41 @@
+incarnation: protelis
+
+network-model:
+  type: ConnectWithinDistance
+  parameters: [2]
+
+#realistic networking configuration
+ns3:
+  nodes-count: 2
+  is-udp: false
+  packet-size: 0
+  error-rate: 0.0001
+  data-rate: "1Mbps"
+
+pools:
+  - pool: &prog
+    - time-distribution: 1
+      program: >
+        let base = if (env.has("msgs_received")) { env.get("msgs_received") } else { 0 };
+        let x = foldHood(base, nbr(1)) { a, b -> a + b };
+        env.put("msgs_received", x);
+    # This line enables sending the result of the computation to neighbors.
+    - program: send
+
+displacements:
+  - in:
+      type: Point
+      parameters: [0, 0]
+    programs:
+      - *prog
+    contents:
+      - molecule: ns3id
+        concentration: 0
+  - in:
+      type: Point
+      parameters: [0, 1]
+    programs:
+      - *prog
+    contents:
+      - molecule: ns3id
+        concentration: 1

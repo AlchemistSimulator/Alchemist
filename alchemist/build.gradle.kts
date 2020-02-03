@@ -61,6 +61,7 @@ allprojects {
     repositories {
         mavenCentral()
         maven(url = "https://dl.bintray.com/kotlin/dokka/")
+        maven(url = "https://jitpack.io")
     }
 
     dependencies {

@@ -22,6 +22,8 @@ dependencies {
     api(Libs.protelis_lang)
     implementation(project(":alchemist-time"))
     implementation(project(":alchemist-maps"))
+    //implementation(files("/home/giacomo/eclipse-workspace/ns3asy-bindings/build/libs/ns3asy-bindings-all-0.1.jar"))
+    implementation("com.github.gscaparrotti:ns3asy-bindings:develop-SNAPSHOT");
     implementation(Libs.commons_lang3)
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-loading"))

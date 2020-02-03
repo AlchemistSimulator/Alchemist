@@ -11,6 +11,7 @@ dependencies {
     api(project(":alchemist-interfaces"))
     implementation(project(":alchemist-time"))
     implementation(project(":alchemist-maps"))
+    implementation(project(":alchemist-incarnation-protelis"))
     implementation(Libs.commons_lang3)
     implementation(Libs.guava)
     implementation(Libs.jirf)

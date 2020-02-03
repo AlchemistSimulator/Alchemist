@@ -48,6 +48,7 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
+import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 import kotlin.Pair;
 import kotlin.Triple;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -146,6 +147,12 @@ public final class YamlLoader implements Loader {
     private static final String VALUE_FILTER = SYNTAX.getString("value-filter");
     private static final String VALUES = SYNTAX.getString("values");
     private static final String VARIABLES = SYNTAX.getString("variables");
+    private static final String NS3 = SYNTAX.getString("ns3");
+    private static final String NODES_COUNT = SYNTAX.getString("nodes-count");
+    private static final String IS_UDP = SYNTAX.getString("is-udp");
+    private static final String PACKET_SIZE = SYNTAX.getString("packet-size");
+    private static final String ERROR_RATE = SYNTAX.getString("error-rate");
+    private static final String DATA_RATE = SYNTAX.getString("data-rate");
     private static final Map<Class<?>, Map<String, Class<?>>> DEFAULT_MANDATORY_PARAMETERS = ImmutableMap.<Class<?>, Map<String, Class<?>>>builder()
             .put(Layer.class, ImmutableMap.of(TYPE, CharSequence.class, MOLECULE, CharSequence.class))
             .build();
@@ -508,6 +515,18 @@ public final class YamlLoader implements Loader {
         final LinkingRule<T, P> linkingRule = linkingBuilder.build(contents.get(LINKING_RULE));
         env.setLinkingRule(linkingRule);
         factory.registerSingleton(LinkingRule.class, linkingRule);
+        /*
+         * ns3
+         */
+        if (contents.get(NS3) != null) {
+            final Map<String, Object> ns3 = cast(factory, MAP_STRING_OBJECT, contents.get(NS3), "ns3");
+            final int nodesCount = cast(factory, Integer.class, ns3.get(NODES_COUNT), "nodes count");
+            final boolean isUdp = cast(factory, Boolean.class, ns3.get(IS_UDP), "is udp");
+            final int packetSize = cast(factory, Integer.class, ns3.get(PACKET_SIZE), "packet size");
+            final double errorRate = cast(factory, Double.class, ns3.get(ERROR_RATE), "error rate");
+            final String dataRate = cast(factory, String.class, ns3.get(DATA_RATE), "data rate");
+            AlchemistNetworkManager.ProtelisNs3.init(nodesCount, isUdp, packetSize, errorRate, dataRate);
+        }
         /*
          * Termination conditions
          */

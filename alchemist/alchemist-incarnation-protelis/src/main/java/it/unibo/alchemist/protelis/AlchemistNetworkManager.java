@@ -189,9 +189,11 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
             if (id instanceof Double && DoubleMath.isMathematicalInteger((Double) id)) {
                 final int intId = ((Double) id).intValue();
                 try {
-                    final var oos = new ObjectOutputStream(new NS3OutputStream(intId, false));
+                    final var ns3OutputStream = new NS3OutputStream(gateway, intId, false);
+                    final var oos = new ObjectOutputStream(ns3OutputStream);
                     oos.writeObject(msg);
                     oos.close();
+                    final var sendTimes = ns3OutputStream.getFirstSendTimesAndReset();
                     //At this point every received byte is already inside ns3 gateway
                     final var senderIpPointer = NS3asy.INSTANCE.getIpAddressFromIndex(intId);
                     final var sender = new Endpoint(senderIpPointer.getString(0), NS3Gateway.ANY_SENDER_PORT);
@@ -225,7 +227,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
                                         //The reception of the message is scheduled to happen with a delay
                                         //given by how much time the packets needed to go from one node to another
                                         //inside ns3. This is the whole point of using ns3.
-                                        final var delta = bytes.get(bytes.size() - 1).getRight() - bytes.get(0).getRight();
+                                        final var delta = bytes.get(bytes.size() - 1).getRight() - sendTimes.get(receiver.getIp());
                                         final var trigger = new Trigger<>(env.getSimulation().getTime().plus(new DoubleTime(delta)));
                                         final var reaction = new Event<>(neighbor, trigger);
                                         final var neighborProgram = neighbor.getReactions().stream()

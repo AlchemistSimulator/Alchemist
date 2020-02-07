@@ -31,7 +31,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * A series of tests checking that our Yaml Loader is working as expected.
@@ -60,6 +60,31 @@ public class TestInSimulator {
     @Test
     public void testLoadProtelisModule() {
         testNoVar("test00.yml");
+    }
+
+    @Test
+    public <T, P extends Position<P>> void testNs3asy() {
+        if (System.getProperty("os.name").toLowerCase().contains("linux")) {
+            final InputStream res = ResourceLoader.getResourceAsStream("ns3asy.yml");
+            final Environment<T, P> env = new YamlLoader(res).getWith(Collections.emptyMap());
+            final Simulation<T, P> sim = new Engine<>(env, 50);
+            sim.play();
+            sim.run();
+            if (env.getIncarnation().isPresent()) {
+                for (final var node : env.getNodes()) {
+                    int received = ((Double) node.getConcentration(env.getIncarnation().get().createMolecule("msgs_received"))).intValue();
+                    assertTrue(received > 0);
+                    System.out.println("The node " + node.toString() + " received " + received + " messages");
+                }
+                System.out.println("Time is " + env.getSimulation().getTime());
+            } else {
+                fail("Incarnation not present");
+            }
+            sim.getError().ifPresent(Unchecked.consumer(e ->  {
+                throw e;
+            }));
+        }
+
     }
 
     /**

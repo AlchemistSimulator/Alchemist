@@ -45,6 +45,12 @@ public final class Trigger<T> extends AbstractDistribution<T> {
     }
 
     @Override
+    public boolean canOccurAgain() {
+        //if the next occurrence is infinite, it means that the trigger has already been executed
+        return !this.getNextOccurence().isInfinite();
+    }
+
+    @Override
     public Trigger<T> clone(final Time currentTime) {
         return new Trigger<>(getNextOccurence());
     }

@@ -42,6 +42,12 @@ public interface TimeDistribution<T> extends Cloneable, Serializable {
     double getRate();
 
     /**
+     * @return true if this distribution can trigger another event in the future.
+     * Normally, it is true before the first execution.
+     */
+    boolean canOccurAgain();
+
+    /**
      * @param currentTime
      *            the time at which the cloning operation happened
      * @return an exact copy of this {@link TimeDistribution}

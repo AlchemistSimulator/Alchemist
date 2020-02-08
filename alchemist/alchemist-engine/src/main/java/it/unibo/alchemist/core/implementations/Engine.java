@@ -459,6 +459,11 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         ipq.addReaction(r);
     }
 
+    private void unscheduleReaction(final Reaction<T> r) {
+        dg.removeDependencies(r);
+        ipq.removeReaction(r);
+    }
+
     @Override
     public void terminate() {
         newStatus(TERMINATED);
@@ -576,7 +581,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
         @Override
         public void performChanges() {
-            //TODO
+            Engine.this.unscheduleReaction(reaction);
         }
     }
 

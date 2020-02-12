@@ -23,6 +23,8 @@ import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.protelis.utils.DefaultNs3Serializer;
+import it.unibo.alchemist.protelis.utils.Serializer;
 import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.lang.datatype.impl.IntegerUID;
 import org.protelis.vm.CodePath;
@@ -190,9 +192,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
                 final int intId = ((Double) id).intValue();
                 try {
                     final var ns3OutputStream = new NS3OutputStream(gateway, intId, false);
-                    final var oos = new ObjectOutputStream(ns3OutputStream);
-                    oos.writeObject(msg);
-                    oos.close();
+                    ProtelisNs3.getSerializer().serializeAndSend(msg, ns3OutputStream);
                     final var sendTimes = ns3OutputStream.getFirstSendTimesAndReset();
                     //At this point every received byte is already inside ns3 gateway
                     final var senderIpPointer = NS3asy.INSTANCE.getIpAddressFromIndex(intId);
@@ -217,9 +217,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
                                     //NS3asyInputStream ns3asyInputStream = new NS3asyInputStream(gateway, sender, receiver);
                                     //ObjectInputStream ois = new ObjectInputStream(ns3asyInputStream);
                                     final var bytes = gateway.getBytesInInterval(receiver, sender, 0, -1);
-                                    final var ois = new ObjectInputStream(new ByteArrayInputStream(NS3Gateway.convertToByteArray(bytes)));
-                                    final Object receivedObject = ois.readObject();
-                                    ois.close();
+                                    final var receivedObject = ProtelisNs3.getSerializer().deserialize(new ByteArrayInputStream(NS3Gateway.convertToByteArray(bytes)));
                                     //Once the object is read it must be removed from the not-read-yet bytes
                                     gateway.removeBytesInInterval(receiver, sender, 0, -1);
                                     if (receivedObject instanceof MessageInfo) {
@@ -282,11 +280,19 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
     public static final class ProtelisNs3 {
 
         private static NS3Gateway gateway = null;
+        private static Serializer serializer = null;
 
         private ProtelisNs3() {}
 
         private static NS3Gateway getInstance() {
             return gateway;
+        }
+
+        private static Serializer getSerializer() {
+            if (serializer == null) {
+                serializer = new DefaultNs3Serializer();
+            }
+            return serializer;
         }
 
         public static void init(final int nodesCount, final boolean isUdp, final int packetSize, final double errorRate, final String dataRate) {
@@ -303,6 +309,10 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
                 }
             }
             NS3asy.INSTANCE.FinalizeSimulationSetup(isUdp, packetSize, errorRate, dataRate);
+        }
+
+        public static void setSerializer(final Serializer serializer) {
+            ProtelisNs3.serializer = serializer;
         }
 
     }

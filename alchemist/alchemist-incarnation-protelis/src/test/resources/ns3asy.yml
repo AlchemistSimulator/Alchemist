@@ -28,14 +28,8 @@ displacements:
       parameters: [0, 0]
     programs:
       - *prog
-    contents:
-      - molecule: ns3id
-        concentration: 0
   - in:
       type: Point
       parameters: [0, 1]
     programs:
       - *prog
-    contents:
-      - molecule: ns3id
-        concentration: 1

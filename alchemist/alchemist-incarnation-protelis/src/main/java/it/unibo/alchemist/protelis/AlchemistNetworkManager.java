@@ -14,6 +14,7 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import communication.NS3Gateway;
 import communication.NS3Gateway.Endpoint;
+import it.unibo.alchemist.model.ProtelisIncarnation;
 import it.unibo.alchemist.model.implementations.actions.AbstractProtelisNetworkAction;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
@@ -183,83 +184,73 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
         if (gateway == null) {
             throw new IllegalStateException("ns3 not initialized");
         }
-        if (env.getIncarnation().isPresent()) {
-            final var incarnation = env.getIncarnation().get();
-            //Each node must contain a molecule whose concentration is its id in ns3.
-            //If it's not present, it's not possible to use the ns3 backend.
-            final var id = node.getConcentration(incarnation.createMolecule("ns3id"));
-            if (id instanceof Double && DoubleMath.isMathematicalInteger((Double) id)) {
-                final int intId = ((Double) id).intValue();
-                try {
-                    final var ns3OutputStream = new NS3OutputStream(gateway, intId, false);
-                    ProtelisNs3.getSerializer().serializeAndSend(msg, ns3OutputStream);
-                    final var sendTimes = ns3OutputStream.getFirstSendTimesAndReset();
-                    //At this point every received byte is already inside ns3 gateway
-                    final var senderIpPointer = NS3asy.INSTANCE.getIpAddressFromIndex(intId);
-                    final var sender = new Endpoint(senderIpPointer.getString(0), NS3Gateway.ANY_SENDER_PORT);
-                    for (final var genericNeighbor : env.getNeighborhood(node)) {
-                        if (genericNeighbor instanceof ProtelisNode) {
-                            final var neighbor = (ProtelisNode<?>) genericNeighbor;
-                            final var neighborId = neighbor.getConcentration(incarnation.createMolecule("ns3id"));
-                            if (neighborId instanceof Double && DoubleMath.isMathematicalInteger((Double) neighborId)) {
-                                final int neighborIntId = ((Double) neighborId).intValue();
-                                final var receiverIpPointer = NS3asy.INSTANCE.getIpAddressFromIndex(neighborIntId);
-                                final var receiver = new Endpoint(receiverIpPointer.getString(0), NS3Gateway.DEFAULT_PORT);
-                                //If nothing is present in ns3 gateway, it means that the message has been lost,
-                                //so we must do nothing; otherwise, we read what's been received and put it
-                                //inside the receiving node at the appropriate time.
-                                //When using TCP, which is mandatory when using Ns3OutputStream, a packet loss
-                                //can only mean that the connection failed, probably due to a
-                                //very high error rate, which should be lowered consequently, if possible.
-                                if (gateway.getBytesInInterval(receiver, sender, 0, 1).size() > 0) {
-                                    //This should work, but for some unknown reason it doesn't.
-                                    //The method below is a workaround.
-                                    //NS3asyInputStream ns3asyInputStream = new NS3asyInputStream(gateway, sender, receiver);
-                                    //ObjectInputStream ois = new ObjectInputStream(ns3asyInputStream);
-                                    final var bytes = gateway.getBytesInInterval(receiver, sender, 0, -1);
-                                    final var receivedObject = ProtelisNs3.getSerializer().deserialize(new ByteArrayInputStream(NS3Gateway.convertToByteArray(bytes)));
-                                    //Once the object is read it must be removed from the not-read-yet bytes
-                                    gateway.removeBytesInInterval(receiver, sender, 0, -1);
-                                    if (receivedObject instanceof MessageInfo) {
-                                        final var rcvdMsg = (MessageInfo) receivedObject;
-                                        //The reception of the message is scheduled to happen with a delay
-                                        //given by how much time the packets needed to go from one node to another
-                                        //inside ns3. This is the whole point of using ns3.
-                                        final var delta = bytes.get(bytes.size() - 1).getRight() - sendTimes.get(receiver.getIp());
-                                        final var trigger = new Trigger<>(env.getSimulation().getTime().plus(new DoubleTime(delta)));
-                                        final var reaction = new Event<>(neighbor, trigger);
-                                        final var neighborProgram = neighbor.getReactions().stream()
-                                                .flatMap(r -> r.getActions().stream())
-                                                .filter(a -> a instanceof RunProtelisProgram)
-                                                .findFirst();
-                                        if (neighborProgram.isPresent()) {
-                                            reaction.setActions(Lists.newArrayList(new ReceiveFromNetwork(neighbor, reaction, (RunProtelisProgram<?>) neighborProgram.get(), rcvdMsg)));
-                                            neighbor.addReaction(reaction);
-                                            env.getSimulation().reactionAdded(reaction);
-                                        } else {
-                                            throw new IllegalStateException("The destination node is not running a Protelis program");
-                                        }
-                                    } else {
-                                        //this should not happen
-                                        throw new IOException("Error while receiving Java object");
-                                    }
-                                }
-                                Native.free(Pointer.nativeValue(receiverIpPointer));
+        if (env.getIncarnation().isEmpty() || !(env.getIncarnation().get() instanceof ProtelisIncarnation)) {
+            throw new IllegalStateException();
+        }
+        final int intId = node.getId();
+        try {
+            final var ns3OutputStream = new NS3OutputStream(gateway, intId, false);
+            ProtelisNs3.getSerializer().serializeAndSend(msg, ns3OutputStream);
+            final var sendTimes = ns3OutputStream.getFirstSendTimesAndReset();
+            //At this point every received byte is already inside ns3 gateway
+            final var senderIpPointer = NS3asy.INSTANCE.getIpAddressFromIndex(intId);
+            final var sender = new Endpoint(senderIpPointer.getString(0), NS3Gateway.ANY_SENDER_PORT);
+            for (final var genericNeighbor : env.getNeighborhood(node)) {
+                if (genericNeighbor instanceof ProtelisNode) {
+                    final var neighbor = (ProtelisNode<?>) genericNeighbor;
+                    final int neighborIntId = neighbor.getId();
+                    final var receiverIpPointer = NS3asy.INSTANCE.getIpAddressFromIndex(neighborIntId);
+                    final var receiver = new Endpoint(receiverIpPointer.getString(0), NS3Gateway.DEFAULT_PORT);
+                    //If nothing is present in ns3 gateway, it means that the message has been lost,
+                    //so we must do nothing; otherwise, we read what's been received and put it
+                    //inside the receiving node at the appropriate time.
+                    //When using TCP, which is mandatory when using Ns3OutputStream, a packet loss
+                    //can only mean that the connection failed, probably due to a
+                    //very high error rate, which should be lowered consequently, if possible.
+                    if (gateway.getBytesInInterval(receiver, sender, 0, 1).size() > 0) {
+                        //This should work, but for some unknown reason it doesn't.
+                        //The method below is a workaround.
+                        //NS3asyInputStream ns3asyInputStream = new NS3asyInputStream(gateway, sender, receiver);
+                        //ObjectInputStream ois = new ObjectInputStream(ns3asyInputStream);
+                        final var bytes = gateway.getBytesInInterval(receiver, sender, 0, -1);
+                        final var receivedObject = ProtelisNs3.getSerializer().deserialize(new ByteArrayInputStream(NS3Gateway.convertToByteArray(bytes)));
+                        //Once the object is read it must be removed from the not-read-yet bytes
+                        gateway.removeBytesInInterval(receiver, sender, 0, -1);
+                        if (receivedObject instanceof MessageInfo) {
+                            final var rcvdMsg = (MessageInfo) receivedObject;
+                            //The reception of the message is scheduled to happen with a delay
+                            //given by how much time the packets needed to go from one node to another
+                            //inside ns3. This is the whole point of using ns3.
+                            final var delta = bytes.get(bytes.size() - 1).getRight() - sendTimes.get(receiver.getIp());
+                            final var trigger = new Trigger<>(env.getSimulation().getTime().plus(new DoubleTime(delta)));
+                            final var reaction = new Event<>(neighbor, trigger);
+                            final var neighborProgram = neighbor.getReactions().stream()
+                                    .flatMap(r -> r.getActions().stream())
+                                    .filter(a -> a instanceof RunProtelisProgram)
+                                    .findFirst();
+                            if (neighborProgram.isPresent()) {
+                                reaction.setActions(Lists.newArrayList(new ReceiveFromNetwork(neighbor, reaction, (RunProtelisProgram<?>) neighborProgram.get(), rcvdMsg)));
+                                neighbor.addReaction(reaction);
+                                env.getSimulation().reactionAdded(reaction);
                             } else {
-                                throw new IllegalArgumentException("A ns3id molecule must have an integer value");
+                                throw new IllegalStateException("The destination node is not running a Protelis program");
                             }
+                        } else {
+                            //this should not happen
+                            throw new IOException("Error while receiving Java object");
                         }
                     }
-                    Native.free(Pointer.nativeValue(senderIpPointer));
-                } catch (final IOException | ClassNotFoundException e) {
-                    //since we're writing inside a "fake" stream, this should not happen
-                    e.printStackTrace();
-                    System.exit(859965);
+                    Native.free(Pointer.nativeValue(receiverIpPointer));
                 }
-            } else {
-                throw new IllegalArgumentException("A ns3id molecule must have an integer value");
             }
+            Native.free(Pointer.nativeValue(senderIpPointer));
+        } catch (final IOException | ClassNotFoundException e) {
+            //since we're writing inside a "fake" stream, this should not happen,
+            //unless something bad happens in ns3 (maybe a programming error)
+            e.printStackTrace();
+            System.exit(859965);
         }
+
     }
 
     private void simulateSimpleMessageArrival(final MessageInfo msg) {
@@ -284,11 +275,11 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
 
         private ProtelisNs3() {}
 
-        private static NS3Gateway getInstance() {
+        public static NS3Gateway getInstance() {
             return gateway;
         }
 
-        private static Serializer getSerializer() {
+        public static Serializer getSerializer() {
             if (serializer == null) {
                 serializer = new DefaultNs3Serializer();
             }

@@ -39,7 +39,7 @@ public final class SendToNeighbor extends AbstractProtelisNetworkAction {
         boolean realistic = false;
         final var inc = prog.getEnvironment().getIncarnation();
         if (inc.isPresent() && inc.get() instanceof ProtelisIncarnation) {
-            if (reaction.getNode().contains(inc.get().createMolecule("ns3id"))) {
+            if (AlchemistNetworkManager.ProtelisNs3.getInstance() != null) {
                 realistic = true;
             }
         }

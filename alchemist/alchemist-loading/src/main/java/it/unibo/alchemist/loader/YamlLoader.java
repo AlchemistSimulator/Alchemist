@@ -491,7 +491,7 @@ public final class YamlLoader implements Loader {
                     }
                     return null;
                 });
-        final Builder<Void> ns3GatewayBuilder = new Builder<>(Void.class, ImmutableSet.of(ns3GatewayConfig), factory);
+        final Builder<Void> ns3GatewayBuilder = new Builder<>(Void.class, ImmutableSet.of(ns3GatewayConfig, emptyConfig(factory, () -> null)), factory);
         ns3GatewayBuilder.build(contents.get(NS3));
         /*
          * Termination conditions

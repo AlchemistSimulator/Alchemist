@@ -8,14 +8,7 @@
 package it.unibo.alchemist.loader;
 
 import com.google.common.base.Charsets;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.common.collect.Table;
+import com.google.common.collect.*;
 import com.google.common.collect.Table.Cell;
 import com.google.common.reflect.TypeToken;
 import it.unibo.alchemist.SupportedIncarnations;
@@ -26,29 +19,14 @@ import it.unibo.alchemist.loader.export.MoleculeReader;
 import it.unibo.alchemist.loader.export.NumberOfNodes;
 import it.unibo.alchemist.loader.export.filters.CommonFilters;
 import it.unibo.alchemist.loader.shapes.Shape;
-import it.unibo.alchemist.loader.variables.ArbitraryVariable;
-import it.unibo.alchemist.loader.variables.DependentVariable;
-import it.unibo.alchemist.loader.variables.JSR223Variable;
-import it.unibo.alchemist.loader.variables.LinearVariable;
-import it.unibo.alchemist.loader.variables.NumericConstant;
-import it.unibo.alchemist.loader.variables.Variable;
+import it.unibo.alchemist.loader.variables.*;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
-import it.unibo.alchemist.model.interfaces.Action;
-import it.unibo.alchemist.model.interfaces.Concentration;
-import it.unibo.alchemist.model.interfaces.Condition;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Incarnation;
-import it.unibo.alchemist.model.interfaces.Layer;
-import it.unibo.alchemist.model.interfaces.LinkingRule;
-import it.unibo.alchemist.model.interfaces.Molecule;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.Time;
-import it.unibo.alchemist.model.interfaces.TimeDistribution;
+import it.unibo.alchemist.model.interfaces.*;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
+import it.unibo.alchemist.protelis.utils.DefaultNs3Serializer;
+import it.unibo.alchemist.protelis.utils.Serializer;
 import kotlin.Pair;
 import kotlin.Triple;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -63,28 +41,11 @@ import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.annotation.Nonnull;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Reader;
-import java.io.StringReader;
+import java.io.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.ResourceBundle;
-import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -92,9 +53,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.emptySet;
+import static java.util.Collections.*;
 import static java.util.ResourceBundle.getBundle;
 
 /**
@@ -112,13 +71,16 @@ public final class YamlLoader implements Loader {
     private static final String CONCENTRATION = SYNTAX.getString("concentration");
     private static final String CONDITIONS = SYNTAX.getString("conditions");
     private static final String CONTENTS = SYNTAX.getString("contents");
+    private static final String DATA_RATE = SYNTAX.getString("data-rate");
     private static final String DEFAULT = SYNTAX.getString("default");
     private static final String DISPLACEMENTS = SYNTAX.getString("displacements");
     private static final String ENVIRONMENT = SYNTAX.getString("environment");
+    private static final String ERROR_RATE = SYNTAX.getString("error-rate");
     private static final String EXPORT = SYNTAX.getString("export");
     private static final String FORMULA = SYNTAX.getString("formula");
     private static final String IN = SYNTAX.getString("in");
     private static final String INCARNATION = SYNTAX.getString("incarnation");
+    private static final String IS_UDP = SYNTAX.getString("is-udp");
     private static final String LANGUAGE = SYNTAX.getString("language");
     private static final String LAYERS = SYNTAX.getString("layers");
     private static final String LINKING_RULE = SYNTAX.getString("linking-rule");
@@ -129,6 +91,9 @@ public final class YamlLoader implements Loader {
     private static final String MOLECULE = SYNTAX.getString("molecule");
     private static final String NODE = SYNTAX.getString("node");
     private static final String NODES = SYNTAX.getString("nodes");
+    private static final String NODES_COUNT = SYNTAX.getString("nodes-count");
+    private static final String NS3 = SYNTAX.getString("ns3");
+    private static final String PACKET_SIZE = SYNTAX.getString("packet-size");
     private static final String PARAMS = SYNTAX.getString("parameters");
     private static final String PARAMETER = SYNTAX.getString("parameter");
     private static final String PROGRAMS = SYNTAX.getString("programs");
@@ -137,6 +102,7 @@ public final class YamlLoader implements Loader {
     private static final String REMOTE_DEPENDENCIES = SYNTAX.getString("remote-dependencies");
     private static final String SCENARIO_SEED = SYNTAX.getString("scenario-seed");
     private static final String SEEDS = SYNTAX.getString("seeds");
+    private static final String SERIALIZER = SYNTAX.getString("serializer");
     private static final String SIMULATION_SEED = SYNTAX.getString("simulation-seed");
     private static final String STEP = SYNTAX.getString("step");
     private static final String TERMINATORS = SYNTAX.getString("terminators");
@@ -147,12 +113,7 @@ public final class YamlLoader implements Loader {
     private static final String VALUE_FILTER = SYNTAX.getString("value-filter");
     private static final String VALUES = SYNTAX.getString("values");
     private static final String VARIABLES = SYNTAX.getString("variables");
-    private static final String NS3 = SYNTAX.getString("ns3");
-    private static final String NODES_COUNT = SYNTAX.getString("nodes-count");
-    private static final String IS_UDP = SYNTAX.getString("is-udp");
-    private static final String PACKET_SIZE = SYNTAX.getString("packet-size");
-    private static final String ERROR_RATE = SYNTAX.getString("error-rate");
-    private static final String DATA_RATE = SYNTAX.getString("data-rate");
+
     private static final Map<Class<?>, Map<String, Class<?>>> DEFAULT_MANDATORY_PARAMETERS = ImmutableMap.<Class<?>, Map<String, Class<?>>>builder()
             .put(Layer.class, ImmutableMap.of(TYPE, CharSequence.class, MOLECULE, CharSequence.class))
             .build();
@@ -518,15 +479,20 @@ public final class YamlLoader implements Loader {
         /*
          * ns3
          */
-        if (contents.get(NS3) != null) {
-            final Map<String, Object> ns3 = cast(factory, MAP_STRING_OBJECT, contents.get(NS3), "ns3");
-            final int nodesCount = cast(factory, Integer.class, ns3.get(NODES_COUNT), "nodes count");
-            final boolean isUdp = cast(factory, Boolean.class, ns3.get(IS_UDP), "is udp");
-            final int packetSize = cast(factory, Integer.class, ns3.get(PACKET_SIZE), "packet size");
-            final double errorRate = cast(factory, Double.class, ns3.get(ERROR_RATE), "error rate");
-            final String dataRate = cast(factory, String.class, ns3.get(DATA_RATE), "data rate");
-            AlchemistNetworkManager.ProtelisNs3.init(nodesCount, isUdp, packetSize, errorRate, dataRate);
-        }
+        final BuilderConfiguration<Void> ns3GatewayConfig = new BuilderConfiguration<>(
+                ImmutableMap.of(NODES_COUNT, Integer.class, IS_UDP, Boolean.class, PACKET_SIZE, Integer.class, ERROR_RATE, Double.class, DATA_RATE, String.class), ImmutableMap.of(SERIALIZER, Object.class), factory,
+                m -> {
+                    AlchemistNetworkManager.ProtelisNs3.init((int) m.get(NODES_COUNT), (boolean) m.get(IS_UDP), (int) m.get(PACKET_SIZE), (double) m.get(ERROR_RATE), (String) m.get(DATA_RATE));
+                    if (m.containsKey(SERIALIZER)) {
+                        final BuilderConfiguration<Serializer> ns3SerializerConfig = emptyConfig(factory, DefaultNs3Serializer::new);
+                        final Builder<Serializer> ns3SerializerBuilder = new Builder<>(Serializer.class, ImmutableSet.of(ns3SerializerConfig), factory);
+                        final Serializer serializer = ns3SerializerBuilder.build(m.get(SERIALIZER));
+                        AlchemistNetworkManager.ProtelisNs3.setSerializer(serializer);
+                    }
+                    return null;
+                });
+        final Builder<Void> ns3GatewayBuilder = new Builder<>(Void.class, ImmutableSet.of(ns3GatewayConfig), factory);
+        ns3GatewayBuilder.build(contents.get(NS3));
         /*
          * Termination conditions
          */

@@ -6,11 +6,13 @@ network-model:
 
 #realistic networking configuration
 ns3:
-  nodes-count: 2
+  nodes-count: 3
   is-udp: false
   packet-size: 0
   error-rate: 0.0001
   data-rate: "1Mbps"
+  serializer:
+    type: it.unibo.alchemist.protelis.utils.DefaultNs3Serializer
 
 pools:
   - pool: &prog
@@ -31,5 +33,10 @@ displacements:
   - in:
       type: Point
       parameters: [0, 1]
+    programs:
+      - *prog
+  - in:
+      type: Point
+      parameters: [1, 0]
     programs:
       - *prog

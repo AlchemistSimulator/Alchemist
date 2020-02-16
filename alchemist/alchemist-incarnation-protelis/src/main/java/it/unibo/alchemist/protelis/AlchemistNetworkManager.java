@@ -303,6 +303,9 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
         }
 
         public static void setSerializer(final Serializer serializer) {
+            if (ProtelisNs3.serializer != null) {
+                throw new IllegalStateException("You cannot initialize ns3 serializer more than once");
+            }
             ProtelisNs3.serializer = serializer;
         }
 

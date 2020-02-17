@@ -7,13 +7,12 @@
  */
 package it.unibo.alchemist.protelis;
 
-import bindings.NS3asy;
+import com.github.gscaparrotti.ns3asybindings.bindings.NS3asy;
 import com.google.common.collect.Lists;
-import com.google.common.math.DoubleMath;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import communication.NS3Gateway;
-import communication.NS3Gateway.Endpoint;
+import com.github.gscaparrotti.ns3asybindings.communication.NS3Gateway;
+import com.github.gscaparrotti.ns3asybindings.communication.NS3Gateway.Endpoint;
 import it.unibo.alchemist.model.ProtelisIncarnation;
 import it.unibo.alchemist.model.implementations.actions.AbstractProtelisNetworkAction;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
@@ -24,13 +23,12 @@ import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.protelis.utils.DefaultNs3Serializer;
-import it.unibo.alchemist.protelis.utils.Serializer;
+import it.unibo.alchemist.ns3.AlchemistNs3;
 import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.lang.datatype.impl.IntegerUID;
 import org.protelis.vm.CodePath;
 import org.protelis.vm.NetworkManager;
-import streams.NS3OutputStream;
+import com.github.gscaparrotti.ns3asybindings.streams.NS3OutputStream;
 
 import java.io.*;
 import java.util.*;
@@ -180,7 +178,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
     }
 
     private void simulateRealisticMessageArrival(final MessageInfo msg) {
-        final var gateway = ProtelisNs3.getInstance();
+        final var gateway = AlchemistNs3.getInstance();
         if (gateway == null) {
             throw new IllegalStateException("ns3 not initialized");
         }
@@ -190,7 +188,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
         final int intId = node.getId();
         try {
             final var ns3OutputStream = new NS3OutputStream(gateway, intId, false);
-            ProtelisNs3.getSerializer().serializeAndSend(msg, ns3OutputStream);
+            AlchemistNs3.getSerializer().serializeAndSend(msg, ns3OutputStream);
             final var sendTimes = ns3OutputStream.getFirstSendTimesAndReset();
             //At this point every received byte is already inside ns3 gateway
             final var senderIpPointer = NS3asy.INSTANCE.getIpAddressFromIndex(intId);
@@ -213,7 +211,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
                         //NS3asyInputStream ns3asyInputStream = new NS3asyInputStream(gateway, sender, receiver);
                         //ObjectInputStream ois = new ObjectInputStream(ns3asyInputStream);
                         final var bytes = gateway.getBytesInInterval(receiver, sender, 0, -1);
-                        final var receivedObject = ProtelisNs3.getSerializer().deserialize(new ByteArrayInputStream(NS3Gateway.convertToByteArray(bytes)));
+                        final var receivedObject = AlchemistNs3.getSerializer().deserialize(new ByteArrayInputStream(NS3Gateway.convertToByteArray(bytes)));
                         //Once the object is read it must be removed from the not-read-yet bytes
                         gateway.removeBytesInInterval(receiver, sender, 0, -1);
                         if (receivedObject instanceof MessageInfo) {
@@ -266,49 +264,6 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
                 }
             }
         });
-    }
-
-    public static final class ProtelisNs3 {
-
-        private static NS3Gateway gateway = null;
-        private static Serializer serializer = null;
-
-        private ProtelisNs3() {}
-
-        public static NS3Gateway getInstance() {
-            return gateway;
-        }
-
-        public static Serializer getSerializer() {
-            if (serializer == null) {
-                serializer = new DefaultNs3Serializer();
-            }
-            return serializer;
-        }
-
-        public static void init(final int nodesCount, final boolean isUdp, final int packetSize, final double errorRate, final String dataRate) {
-            if (gateway != null) {
-                throw new IllegalStateException("You cannot initialize ns3 more than once");
-            }
-            gateway = new NS3Gateway();
-            NS3asy.INSTANCE.SetNodesCount(nodesCount);
-            for (int source = 0; source < nodesCount; source++) {
-                for (int destination = 0; destination < nodesCount; destination++) {
-                    if (source != destination) {
-                        NS3asy.INSTANCE.AddLink(source, destination);
-                    }
-                }
-            }
-            NS3asy.INSTANCE.FinalizeSimulationSetup(isUdp, packetSize, errorRate, dataRate);
-        }
-
-        public static void setSerializer(final Serializer serializer) {
-            if (ProtelisNs3.serializer != null) {
-                throw new IllegalStateException("You cannot initialize ns3 serializer more than once");
-            }
-            ProtelisNs3.serializer = serializer;
-        }
-
     }
 
     private final class ReceiveFromNetwork extends AbstractProtelisNetworkAction {

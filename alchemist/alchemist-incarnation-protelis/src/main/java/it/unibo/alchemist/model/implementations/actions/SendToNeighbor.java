@@ -10,6 +10,7 @@ package it.unibo.alchemist.model.implementations.actions;
 import it.unibo.alchemist.model.ProtelisIncarnation;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.ns3.AlchemistNs3;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 
 import java.util.Objects;
@@ -39,7 +40,7 @@ public final class SendToNeighbor extends AbstractProtelisNetworkAction {
         boolean realistic = false;
         final var inc = prog.getEnvironment().getIncarnation();
         if (inc.isPresent() && inc.get() instanceof ProtelisIncarnation) {
-            if (AlchemistNetworkManager.ProtelisNs3.getInstance() != null) {
+            if (AlchemistNs3.getInstance() != null) {
                 realistic = true;
             }
         }

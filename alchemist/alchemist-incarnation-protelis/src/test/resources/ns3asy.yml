@@ -12,7 +12,7 @@ ns3:
   error-rate: 0.0001
   data-rate: "1Mbps"
   serializer:
-    type: it.unibo.alchemist.protelis.utils.DefaultNs3Serializer
+    type: it.unibo.alchemist.ns3.utils.DefaultNs3Serializer
 
 pools:
   - pool: &prog

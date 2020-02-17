@@ -24,9 +24,9 @@ import it.unibo.alchemist.model.implementations.environments.Continuous2DEnviron
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.*;
-import it.unibo.alchemist.protelis.AlchemistNetworkManager;
-import it.unibo.alchemist.protelis.utils.DefaultNs3Serializer;
-import it.unibo.alchemist.protelis.utils.Serializer;
+import it.unibo.alchemist.ns3.*;
+import it.unibo.alchemist.ns3.utils.DefaultNs3Serializer;
+import it.unibo.alchemist.ns3.utils.Serializer;
 import kotlin.Pair;
 import kotlin.Triple;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -482,12 +482,12 @@ public final class YamlLoader implements Loader {
         final BuilderConfiguration<Void> ns3GatewayConfig = new BuilderConfiguration<>(
                 ImmutableMap.of(NODES_COUNT, Integer.class, IS_UDP, Boolean.class, PACKET_SIZE, Integer.class, ERROR_RATE, Double.class, DATA_RATE, String.class), ImmutableMap.of(SERIALIZER, Object.class), factory,
                 m -> {
-                    AlchemistNetworkManager.ProtelisNs3.init((int) m.get(NODES_COUNT), (boolean) m.get(IS_UDP), (int) m.get(PACKET_SIZE), (double) m.get(ERROR_RATE), (String) m.get(DATA_RATE));
+                    AlchemistNs3.init((int) m.get(NODES_COUNT), (boolean) m.get(IS_UDP), (int) m.get(PACKET_SIZE), (double) m.get(ERROR_RATE), (String) m.get(DATA_RATE));
                     if (m.containsKey(SERIALIZER)) {
                         final BuilderConfiguration<Serializer> ns3SerializerConfig = emptyConfig(factory, DefaultNs3Serializer::new);
                         final Builder<Serializer> ns3SerializerBuilder = new Builder<>(Serializer.class, ImmutableSet.of(ns3SerializerConfig), factory);
                         final Serializer serializer = ns3SerializerBuilder.build(m.get(SERIALIZER));
-                        AlchemistNetworkManager.ProtelisNs3.setSerializer(serializer);
+                        AlchemistNs3.setSerializer(serializer);
                     }
                     return null;
                 });

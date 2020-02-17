@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.protelis.utils;
+package it.unibo.alchemist.ns3.utils;
 
 import java.io.*;
 

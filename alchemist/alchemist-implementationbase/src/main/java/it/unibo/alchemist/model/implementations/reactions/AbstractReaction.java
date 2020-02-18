@@ -327,7 +327,9 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
         dist.update(curTime, executed, getRate(), env);
         if (!dist.canOccurAgain()) {
             node.removeReaction(this);
-            env.getSimulation().reactionRemoved(this);
+            if (env.getSimulation() != null) {
+                env.getSimulation().reactionRemoved(this);
+            }
         }
     }
 

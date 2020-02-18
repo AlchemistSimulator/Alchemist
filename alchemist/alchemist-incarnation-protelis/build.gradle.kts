@@ -22,30 +22,9 @@ dependencies {
     api(Libs.protelis_lang)
     implementation(project(":alchemist-time"))
     implementation(project(":alchemist-maps"))
-    //implementation(files("/home/giacomo/eclipse-workspace/ns3asy-bindings/build/libs/ns3asy-bindings-all-0.1.jar"))
     implementation(project(":alchemist-ns3"))
     implementation(Libs.commons_lang3)
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-loading"))
     testImplementation(Libs.commons_io)
-}
-
-tasks.register("download", Exec::class) {
-    commandLine("sh", "./ns3asy.sh")
-}
-
-tasks.getByName("download") {
-    //ns3asy must be downloaded (if not present) only if we're under linux
-    onlyIf {
-        !(File("./alchemist-incarnation-protelis/tmp/ns3/ns-allinone-3.29/ns-3.29/build/lib/libns3.29-ns3asy-debug.so").isFile)
-            && System.getProperty("os.name").contains("linux", true)
-    }
-}
-
-tasks.test {
-    dependsOn(tasks.getByName("download"))
-}
-
-tasks.withType(Test::class) {
-    environment("LD_LIBRARY_PATH", "tmp/ns3/ns-allinone-3.29/ns-3.29/build/lib")
 }

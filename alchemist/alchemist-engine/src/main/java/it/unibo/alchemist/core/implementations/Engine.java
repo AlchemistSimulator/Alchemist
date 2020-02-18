@@ -570,7 +570,6 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         }
     }
 
-    //TODO: implement performChanges();
     private final class ReactionRemoval extends Update {
         private Reaction<T> reaction;
 

@@ -41,10 +41,6 @@ env:
     - JDK="adopt@1.12.0"
     - JDK="adopt-openj9@1.12.0"
 #    - JDK="adopt@1.13.0"
-matrix:
-  exclude:
-    - os: *reference_os
-      env: *reference_jdk
 
 before_install:
   - travis_retry curl "${GRAVIS}.install-jdk-travis.sh" --output .install-jdk-travis.sh
@@ -61,6 +57,9 @@ cache:
     - $HOME/.gradle/wrapper/
 
 jobs:
+  exclude:
+    - os: *reference_os
+      env: *reference_jdk
   include:
     - stage: check
       name: "Deep check on reference OS and JDK"

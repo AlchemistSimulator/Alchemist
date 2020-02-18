@@ -30,8 +30,14 @@ import org.protelis.vm.CodePath;
 import org.protelis.vm.NetworkManager;
 import com.github.gscaparrotti.ns3asybindings.streams.NS3OutputStream;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
@@ -199,26 +205,32 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
                     final int neighborIntId = neighbor.getId();
                     final var receiverIpPointer = NS3asy.INSTANCE.getIpAddressFromIndex(neighborIntId);
                     final var receiver = new Endpoint(receiverIpPointer.getString(0), NS3Gateway.DEFAULT_PORT);
-                    //If nothing is present in ns3 gateway, it means that the message has been lost,
-                    //so we must do nothing; otherwise, we read what's been received and put it
-                    //inside the receiving node at the appropriate time.
-                    //When using TCP, which is mandatory when using Ns3OutputStream, a packet loss
-                    //can only mean that the connection failed, probably due to a
-                    //very high error rate, which should be lowered consequently, if possible.
+                    /*
+                     * If nothing is present in ns3 gateway, it means that the message has been lost,
+                     * so we must do nothing; otherwise, we read what's been received and put it
+                     * inside the receiving node at the appropriate time.
+                     * When using TCP, which is mandatory when using Ns3OutputStream, a packet loss
+                     * can only mean that the connection failed, probably due to a
+                     * very high error rate, which should be lowered consequently, if possible.
+                     */
                     if (gateway.getBytesInInterval(receiver, sender, 0, 1).size() > 0) {
-                        //This should work, but for some unknown reason it doesn't.
-                        //The method below is a workaround.
-                        //NS3asyInputStream ns3asyInputStream = new NS3asyInputStream(gateway, sender, receiver);
-                        //ObjectInputStream ois = new ObjectInputStream(ns3asyInputStream);
+                        /*
+                         * This should work, but for some unknown reason it doesn't.
+                         * The method below is a workaround.
+                         * NS3asyInputStream ns3asyInputStream = new NS3asyInputStream(gateway, sender, receiver);
+                         * ObjectInputStream ois = new ObjectInputStream(ns3asyInputStream);
+                         */
                         final var bytes = gateway.getBytesInInterval(receiver, sender, 0, -1);
                         final var receivedObject = AlchemistNs3.getSerializer().deserialize(new ByteArrayInputStream(NS3Gateway.convertToByteArray(bytes)));
                         //Once the object is read it must be removed from the not-read-yet bytes
                         gateway.removeBytesInInterval(receiver, sender, 0, -1);
                         if (receivedObject instanceof MessageInfo) {
                             final var rcvdMsg = (MessageInfo) receivedObject;
-                            //The reception of the message is scheduled to happen with a delay
-                            //given by how much time the packets needed to go from one node to another
-                            //inside ns3. This is the whole point of using ns3.
+                            /*
+                             * The reception of the message is scheduled to happen with a delay
+                             * given by how much time the packets needed to go from one node to another
+                             * inside ns3. This is the whole point of using ns3.
+                             */
                             final var delta = bytes.get(bytes.size() - 1).getRight() - sendTimes.get(receiver.getIp());
                             final var trigger = new Trigger<>(env.getSimulation().getTime().plus(new DoubleTime(delta)));
                             final var reaction = new Event<>(neighbor, trigger);
@@ -242,9 +254,11 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
             }
             Native.free(Pointer.nativeValue(senderIpPointer));
         } catch (final IOException | ClassNotFoundException e) {
-            //since we're writing inside a "fake" stream, this should not happen,
-            //unless something bad happens in ns3 (maybe a programming error)
-            throw new IllegalStateException("ns3 was unable to deliver the message");
+            /*
+             * since we're writing inside a "fake" stream, this should not happen,
+             * unless something bad happens in ns3 (maybe a programming error)
+             */
+            throw new IllegalStateException("ns3 was unable to deliver the message", e);
         }
 
     }

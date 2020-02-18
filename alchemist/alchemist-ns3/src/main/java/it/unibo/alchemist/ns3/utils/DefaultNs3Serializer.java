@@ -9,7 +9,11 @@
 
 package it.unibo.alchemist.ns3.utils;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 
 public class DefaultNs3Serializer implements Serializer {
 

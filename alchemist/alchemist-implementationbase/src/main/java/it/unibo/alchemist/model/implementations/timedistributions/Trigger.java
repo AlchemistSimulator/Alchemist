@@ -22,6 +22,7 @@ public final class Trigger<T> extends AbstractDistribution<T> {
 
     private static final long serialVersionUID = 5207992119302525618L;
     private boolean dryRunDone;
+    private boolean executed;
 
     /**
      * @param event
@@ -41,13 +42,13 @@ public final class Trigger<T> extends AbstractDistribution<T> {
         if (dryRunDone && curTime.compareTo(getNextOccurence()) >= 0 && executed) {
             setTau(new DoubleTime(Double.POSITIVE_INFINITY));
         }
+        this.executed = executed;
         dryRunDone = true;
     }
 
     @Override
     public boolean canOccurAgain() {
-        //if the next occurrence is infinite, it means that the trigger has already been executed
-        return !this.getNextOccurence().isInfinite();
+        return !(executed && this.getNextOccurence().isInfinite());
     }
 
     @Override

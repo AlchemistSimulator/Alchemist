@@ -8,7 +8,13 @@ In order to load map of indoor environment, you can use {{ anchor('ImageEnvironm
 
 ImageEnvironment loads the map as raster image from file, interpreting the black pixels as obstacles
 (wall-like areas not accessible to nodes). Color of pixels that represents obstacles can be set to
-every color with relative constructor's parameter, black color is only the default.
+every color with relative constructor's parameter, black is default.
+
+By default, each pixel is considered as a 1x1 block.
+As a consequence, a 1200x600 image with a vertical line of black pixels at coordinate 500 will be interpreted as a single
+obstacle of size 1x600 starting at coordinate (500, 0).
+It is possible to scale up or down the size of the environment by acting on the zoom parameter of {{ anchor('ImageEnvironment') }},
+as well as changing the initial coordinates.
 
 In this example the image with the map is in the classpath in the folder `images`. Using a network-model 
 like {{ anchor('ObstaclesBreakConnection') }} the connections between nodes are created only if there

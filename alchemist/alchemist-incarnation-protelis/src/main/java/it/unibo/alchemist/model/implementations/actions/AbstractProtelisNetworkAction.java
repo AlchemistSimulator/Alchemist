@@ -13,7 +13,6 @@ import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 
 import java.util.List;
 import java.util.Objects;

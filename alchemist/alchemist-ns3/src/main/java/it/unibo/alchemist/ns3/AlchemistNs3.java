@@ -5,10 +5,11 @@ import com.github.gscaparrotti.ns3asybindings.communication.NS3Gateway;
 import it.unibo.alchemist.ns3.utils.DefaultNs3Serializer;
 import it.unibo.alchemist.ns3.utils.Serializer;
 
-public class AlchemistNs3 {
+@SuppressWarnings("PMD.NonThreadSafeSingleton")
+public final class AlchemistNs3 {
 
-    private static NS3Gateway gateway = null;
-    private static Serializer serializer = null;
+    private static NS3Gateway gateway;
+    private static Serializer serializer;
 
     private AlchemistNs3() {}
 

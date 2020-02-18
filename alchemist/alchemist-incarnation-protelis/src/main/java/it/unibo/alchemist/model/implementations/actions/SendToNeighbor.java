@@ -37,13 +37,10 @@ public final class SendToNeighbor extends AbstractProtelisNetworkAction {
     public void execute() {
         final AlchemistNetworkManager mgr = getNode().getNetworkManager(prog);
         Objects.requireNonNull(mgr);
-        boolean realistic = false;
-        final var inc = prog.getEnvironment().getIncarnation();
-        if (inc.isPresent() && inc.get() instanceof ProtelisIncarnation) {
-            if (AlchemistNs3.getInstance() != null) {
-                realistic = true;
-            }
-        }
+        final var incarnation = prog.getEnvironment().getIncarnation();
+        final boolean realistic = incarnation.isPresent()
+                && incarnation.get() instanceof ProtelisIncarnation
+                && AlchemistNs3.getInstance() != null;
         mgr.simulateMessageArrival(reaction.getTau().toDouble(), realistic);
         prog.prepareForComputationalCycle();
     }

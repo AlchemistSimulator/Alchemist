@@ -557,7 +557,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     private final class ReactionAddition extends Update {
-        private Reaction<T> reaction;
+        private final Reaction<T> reaction;
 
         private ReactionAddition(final Reaction<T> reaction) {
             super(reaction.getNode());
@@ -571,7 +571,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     private final class ReactionRemoval extends Update {
-        private Reaction<T> reaction;
+        private final Reaction<T> reaction;
 
         private ReactionRemoval(final Reaction<T> reaction) {
             super(reaction.getNode());

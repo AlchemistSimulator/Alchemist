@@ -234,7 +234,6 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
                                 throw new IllegalStateException("The destination node is not running a Protelis program");
                             }
                         } else {
-                            //this should not happen
                             throw new IOException("Error while receiving Java object");
                         }
                     }
@@ -245,8 +244,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
         } catch (final IOException | ClassNotFoundException e) {
             //since we're writing inside a "fake" stream, this should not happen,
             //unless something bad happens in ns3 (maybe a programming error)
-            e.printStackTrace();
-            System.exit(859965);
+            throw new IllegalStateException("ns3 was unable to deliver the message");
         }
 
     }
@@ -266,7 +264,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
         });
     }
 
-    private final class ReceiveFromNetwork extends AbstractProtelisNetworkAction {
+    private static final class ReceiveFromNetwork extends AbstractProtelisNetworkAction {
 
         private final MessageInfo msg;
 

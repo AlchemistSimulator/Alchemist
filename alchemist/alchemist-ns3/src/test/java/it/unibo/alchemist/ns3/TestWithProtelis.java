@@ -50,9 +50,7 @@ public class TestWithProtelis {
                 for (final var node : env.getNodes()) {
                     final int received = ((Double) node.getConcentration(env.getIncarnation().get().createMolecule("msgs_received"))).intValue();
                     assertTrue(received > 0);
-                    System.out.println("The node " + node.toString() + " received " + received + " messages");
                 }
-                System.out.println("Time is " + env.getSimulation().getTime());
             } else {
                 fail("Incarnation not present");
             }

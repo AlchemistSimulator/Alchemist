@@ -12,11 +12,10 @@ import it.unibo.alchemist.ns3.utils.Serializer;
  * Only one instance of ns3asy-bindings should be used, so this class
  * is implemented as a "configurable" singleton.
  */
-@SuppressWarnings("PMD.NonThreadSafeSingleton")
 public final class AlchemistNs3 {
 
     private static NS3Gateway gateway;
-    private static Serializer serializer;
+    private static Serializer serializer = new DefaultNs3Serializer();
 
     private AlchemistNs3() { }
 
@@ -29,12 +28,9 @@ public final class AlchemistNs3 {
 
     /**
      * @return the configured instance of {@link Serializer}. If it hasn't been configured,
-     * a new instance of {@link DefaultNs3Serializer} is created and returned.
+     * an instance of {@link DefaultNs3Serializer} and returned.
      */
     public static Serializer getSerializer() {
-        if (serializer == null) {
-            serializer = new DefaultNs3Serializer();
-        }
         return serializer;
     }
 
@@ -71,9 +67,6 @@ public final class AlchemistNs3 {
      * @param serializer the object in charge of serializing Java objects before sending it through the channel
      */
     public static void setSerializer(final Serializer serializer) {
-        if (AlchemistNs3.serializer != null) {
-            throw new IllegalStateException("You cannot initialize ns3 serializer more than once");
-        }
         AlchemistNs3.serializer = serializer;
     }
 

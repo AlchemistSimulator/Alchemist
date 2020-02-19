@@ -20,6 +20,7 @@ import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.implementations.reactions.Event;
 import it.unibo.alchemist.model.implementations.timedistributions.Trigger;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
+import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
@@ -168,6 +169,8 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
      * @param currentTime
      *            the current simulation time (used to understand when a message
      *            should get dropped).
+     * @param realistic true if the message arrival should be simulated using
+     *                  a dedicated network simulator
      */
     public void simulateMessageArrival(final double currentTime, final boolean realistic) {
         assert toBeSent != null;
@@ -283,22 +286,27 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
         private static final long serialVersionUID = 8070126754596200378L;
         private final MessageInfo msg;
 
-        public ReceiveFromNetwork(final ProtelisNode<?> node, final Reaction<Object> reaction, final RunProtelisProgram<?> program, final MessageInfo msg) {
+        private ReceiveFromNetwork(final ProtelisNode<?> node, final Reaction<Object> reaction, final RunProtelisProgram<?> program, final MessageInfo msg) {
             super(node, reaction, program);
             this.msg = msg;
         }
 
         @Override
         public void execute() {
-            final AlchemistNetworkManager destination = this.getNode().getNetworkManager(prog);
+            final AlchemistNetworkManager destination = this.getNode().getNetworkManager(this.getProtelisProgram());
             if (destination != null) {
                 destination.receiveMessage(msg);
             }
         }
 
         @Override
+        public Action<Object> cloneAction(final Node<Object> n, final Reaction<Object> r) {
+            throw new UnsupportedOperationException("Action cloning is not currently supported for ReceiveFromNetwork");
+        }
+
+        @Override
         public String toString() {
-            return "receive " + prog.asMolecule().getName() + " data";
+            return "receive " + this.getProtelisProgram().asMolecule().getName() + " data";
         }
     }
 

@@ -11,17 +11,17 @@ package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.interfaces.Context;
-import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
+/**
+ * Base class for actions involving network communication in Protelis.
+ */
 public abstract class AbstractProtelisNetworkAction extends AbstractAction<Object> {
     private static final long serialVersionUID = -4480142077176788705L;
-    protected final RunProtelisProgram<?> prog;
-    protected final Reaction<Object> reaction;
+    private final RunProtelisProgram<?> prog;
+    private final Reaction<Object> reaction;
 
     /**
      * @param node
@@ -39,30 +39,12 @@ public abstract class AbstractProtelisNetworkAction extends AbstractAction<Objec
     }
 
     @Override
-    public SendToNeighbor cloneAction(final Node<Object> n, final Reaction<Object> r) {
-        if (n instanceof ProtelisNode) {
-            final List<RunProtelisProgram<?>> possibleRefs = n.getReactions().stream()
-                    .map(Reaction::getActions)
-                    .flatMap(List::stream)
-                    .filter(a -> a instanceof RunProtelisProgram)
-                    .map(a -> (RunProtelisProgram<?>) a)
-                    .collect(Collectors.toList());
-            if (possibleRefs.size() == 1) {
-                return new SendToNeighbor((ProtelisNode<?>) n, reaction, possibleRefs.get(0));
-            }
-            throw new IllegalStateException("There must be one and one only unconfigured " + RunProtelisProgram.class.getSimpleName());
-        }
-        throw new IllegalStateException(getClass().getSimpleName() + " cannot get cloned on a node of type "
-                + n.getClass().getSimpleName());
-    }
-
-    @Override
-    public Context getContext() {
+    public final Context getContext() {
         return Context.NEIGHBORHOOD;
     }
 
     @Override
-    public ProtelisNode<?> getNode() {
+    public final ProtelisNode<?> getNode() {
         return (ProtelisNode<?>) super.getNode();
     }
 
@@ -71,5 +53,12 @@ public abstract class AbstractProtelisNetworkAction extends AbstractAction<Objec
      */
     public RunProtelisProgram<?> getProtelisProgram() {
         return prog;
+    }
+
+    /**
+     * @return the {@link Reaction} this action belongs to
+     */
+    public Reaction<Object> getReaction() {
+        return reaction;
     }
 }

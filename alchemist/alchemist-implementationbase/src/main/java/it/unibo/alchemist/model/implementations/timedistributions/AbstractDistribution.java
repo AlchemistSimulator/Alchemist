@@ -80,6 +80,10 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
      */
     protected abstract void updateStatus(Time curTime, boolean executed, double param, Environment<T, ?> env);
 
+    /**
+     * @return true if this distribution can produce new events (defaults to true, override this method
+     * if the distribution can stop emitting events.
+     */
     @Override
     public boolean canOccurAgain() {
         return true;

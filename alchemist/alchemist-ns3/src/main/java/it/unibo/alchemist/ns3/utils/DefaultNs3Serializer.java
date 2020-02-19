@@ -15,7 +15,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
-public class DefaultNs3Serializer implements Serializer {
+/**
+ * A {@link Serializer} which uses a {@link ObjectOutputStream} to serialize objects and
+ * a {@link ObjectInputStream} to deserialize them.
+ */
+public final class DefaultNs3Serializer implements Serializer {
 
     @Override
     public void serializeAndSend(final Object toSend, final OutputStream outputStream) throws IOException {

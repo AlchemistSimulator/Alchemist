@@ -9,11 +9,14 @@ package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.ProtelisIncarnation;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
+import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.ns3.AlchemistNs3;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  */
@@ -35,18 +38,36 @@ public final class SendToNeighbor extends AbstractProtelisNetworkAction {
 
     @Override
     public void execute() {
-        final AlchemistNetworkManager mgr = getNode().getNetworkManager(prog);
+        final AlchemistNetworkManager mgr = getNode().getNetworkManager(this.getProtelisProgram());
         Objects.requireNonNull(mgr);
-        final var incarnation = prog.getEnvironment().getIncarnation();
+        final var incarnation = this.getProtelisProgram().getEnvironment().getIncarnation();
         final boolean realistic = incarnation.isPresent()
                 && incarnation.get() instanceof ProtelisIncarnation
                 && AlchemistNs3.getInstance() != null;
-        mgr.simulateMessageArrival(reaction.getTau().toDouble(), realistic);
-        prog.prepareForComputationalCycle();
+        mgr.simulateMessageArrival(this.getReaction().getTau().toDouble(), realistic);
+        this.getProtelisProgram().prepareForComputationalCycle();
+    }
+
+    @Override
+    public SendToNeighbor cloneAction(final Node<Object> n, final Reaction<Object> r) {
+        if (n instanceof ProtelisNode) {
+            final List<RunProtelisProgram<?>> possibleRefs = n.getReactions().stream()
+                    .map(Reaction::getActions)
+                    .flatMap(List::stream)
+                    .filter(a -> a instanceof RunProtelisProgram)
+                    .map(a -> (RunProtelisProgram<?>) a)
+                    .collect(Collectors.toList());
+            if (possibleRefs.size() == 1) {
+                return new SendToNeighbor((ProtelisNode<?>) n, this.getReaction(), possibleRefs.get(0));
+            }
+            throw new IllegalStateException("There must be one and one only unconfigured " + RunProtelisProgram.class.getSimpleName());
+        }
+        throw new IllegalStateException(getClass().getSimpleName() + " cannot get cloned on a node of type "
+                + n.getClass().getSimpleName());
     }
 
     @Override
     public String toString() {
-        return "broadcast " + prog.asMolecule().getName() + " data";
+        return "broadcast " + this.getProtelisProgram().asMolecule().getName() + " data";
     }
 }

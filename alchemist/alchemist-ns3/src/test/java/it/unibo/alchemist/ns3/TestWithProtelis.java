@@ -25,6 +25,9 @@ import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+/**
+ * Tests the ns3 module by using it with the Protelis incarnation.
+ */
 public class TestWithProtelis {
 
     /**

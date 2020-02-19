@@ -14,8 +14,8 @@ import it.unibo.alchemist.ns3.utils.Serializer;
  */
 public final class AlchemistNs3 {
 
-    private static NS3Gateway gateway;
-    private static Serializer serializer = new DefaultNs3Serializer();
+    private static volatile NS3Gateway gateway;
+    private static volatile Serializer serializer = new DefaultNs3Serializer();
 
     private AlchemistNs3() { }
 
@@ -28,7 +28,7 @@ public final class AlchemistNs3 {
 
     /**
      * @return the configured instance of {@link Serializer}. If it hasn't been configured,
-     * an instance of {@link DefaultNs3Serializer} and returned.
+     * an instance of {@link DefaultNs3Serializer} is returned.
      */
     public static Serializer getSerializer() {
         return serializer;

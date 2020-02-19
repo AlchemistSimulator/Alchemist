@@ -20,10 +20,10 @@ tasks.register("download", Exec::class) {
 }
 
 tasks.getByName("download") {
-    //ns3asy must be downloaded (if not present) only if we're under linux
+    // ns3asy must be downloaded (if not present) only if we're under linux
     onlyIf {
-        !(File("./alchemist-ns3/tmp/ns3/ns-allinone-3.29/ns-3.29/build/lib/libns3.29-ns3asy-debug.so").isFile)
-            && System.getProperty("os.name").contains("linux", true)
+        !(File("./alchemist-ns3/tmp/ns3/ns-allinone-3.29/ns-3.29/build/lib/libns3.29-ns3asy-debug.so").isFile) &&
+            System.getProperty("os.name").contains("linux", true)
     }
 }
 

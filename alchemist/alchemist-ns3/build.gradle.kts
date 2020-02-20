@@ -16,13 +16,13 @@ dependencies {
 }
 
 tasks.register("download", Exec::class) {
-    commandLine("bash", "./ns3asy.sh")
+    commandLine("bash", "$rootDir/alchemist-ns3/ns3asy.sh")
 }
 
 tasks.getByName("download") {
     // ns3asy must be downloaded (if not present) only if we're under linux
     onlyIf {
-        !(File("./alchemist-ns3/tmp/ns3/ns-allinone-3.29/ns-3.29/build/lib/libns3.29-ns3asy-debug.so").isFile) &&
+        !(File("$rootDir/alchemist-ns3/tmp/ns3/ns-allinone-3.29/ns-3.29/build/lib/libns3.29-ns3asy-debug.so").isFile) &&
             System.getProperty("os.name").contains("linux", true)
     }
 }
@@ -32,5 +32,5 @@ tasks.test {
 }
 
 tasks.withType(Test::class) {
-    environment("LD_LIBRARY_PATH", "tmp/ns3/ns-allinone-3.29/ns-3.29/build/lib")
+    environment("LD_LIBRARY_PATH", "$rootDir/alchemist-ns3/tmp/ns3/ns-allinone-3.29/ns-3.29/build/lib")
 }

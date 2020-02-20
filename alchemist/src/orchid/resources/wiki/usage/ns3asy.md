@@ -10,7 +10,7 @@ This can be useful, for example, when simulating distributed system where the no
 
 The integration between Alchemist and ns3 is currently supported only by the Protelis incarnation. 
 
-###What the integration with ns3 can do
+### What the integration with ns3 can do
 
 The integration with ns3 provides the ability to configure the following parameters: 
 
@@ -20,7 +20,7 @@ The integration with ns3 provides the ability to configure the following paramet
 - The data rate at which the nodes should send multiple packets
 - How objects should be serialized (and deserialized) before sending them
 
-###How to setup a simulation using ns3 with the Protelis incarnation
+### How to setup a simulation using ns3 with the Protelis incarnation
 
 The use of the ns3 simulator can be added to a pre-existing simulation (based on the Protelis incarnation) by adding these configuration parameters to the `.yml` file: 
 
@@ -38,7 +38,7 @@ If such configuration is present, every time the `send` program is executed the 
 
 To understand how to setup a fully fledged Protelis simulation, please refer to its wiki. 
 
-###Current limitations
+### Current limitations
 
 - It is not possible to make the nodes move when using ns3
 - It's only possible to use it on Linux

@@ -16,7 +16,7 @@ dependencies {
 }
 
 tasks.register("download", Exec::class) {
-    commandLine("sh", "./ns3asy.sh")
+    commandLine("bash", "./ns3asy.sh")
 }
 
 tasks.getByName("download") {

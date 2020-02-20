@@ -283,7 +283,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
 
     private static final class ReceiveFromNetwork extends AbstractProtelisNetworkAction {
 
-        private static final long serialVersionUID = 8070126754596200378L;
+        private static final long serialVersionUID = 1L;
         private final MessageInfo msg;
 
         private ReceiveFromNetwork(final ProtelisNode<?> node, final Reaction<Object> reaction, final RunProtelisProgram<?> program, final MessageInfo msg) {

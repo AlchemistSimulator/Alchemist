@@ -123,7 +123,6 @@ public final class YamlLoader implements Loader {
     private static final String FORMULA = SYNTAX.getString("formula");
     private static final String IN = SYNTAX.getString("in");
     private static final String INCARNATION = SYNTAX.getString("incarnation");
-    private static final String IS_UDP = SYNTAX.getString("is-udp");
     private static final String LANGUAGE = SYNTAX.getString("language");
     private static final String LAYERS = SYNTAX.getString("layers");
     private static final String LINKING_RULE = SYNTAX.getString("linking-rule");
@@ -134,13 +133,13 @@ public final class YamlLoader implements Loader {
     private static final String MOLECULE = SYNTAX.getString("molecule");
     private static final String NODE = SYNTAX.getString("node");
     private static final String NODES = SYNTAX.getString("nodes");
-    private static final String NODES_COUNT = SYNTAX.getString("nodes-count");
     private static final String NS3 = SYNTAX.getString("ns3");
     private static final String PACKET_SIZE = SYNTAX.getString("packet-size");
     private static final String PARAMS = SYNTAX.getString("parameters");
     private static final String PARAMETER = SYNTAX.getString("parameter");
     private static final String PROGRAMS = SYNTAX.getString("programs");
     private static final String PROPERTY = SYNTAX.getString("property");
+    private static final String PROTOCOL = SYNTAX.getString("protocol");
     private static final String REACTION = SYNTAX.getString("reaction");
     private static final String REMOTE_DEPENDENCIES = SYNTAX.getString("remote-dependencies");
     private static final String SCENARIO_SEED = SYNTAX.getString("scenario-seed");
@@ -520,23 +519,6 @@ public final class YamlLoader implements Loader {
         env.setLinkingRule(linkingRule);
         factory.registerSingleton(LinkingRule.class, linkingRule);
         /*
-         * ns3
-         */
-        final BuilderConfiguration<Void> ns3GatewayConfig = new BuilderConfiguration<>(
-                ImmutableMap.of(NODES_COUNT, Integer.class, IS_UDP, Boolean.class, PACKET_SIZE, Integer.class, ERROR_RATE, Double.class, DATA_RATE, String.class), ImmutableMap.of(SERIALIZER, Object.class), factory,
-                m -> {
-                    AlchemistNs3.init((int) m.get(NODES_COUNT), (boolean) m.get(IS_UDP), (int) m.get(PACKET_SIZE), (double) m.get(ERROR_RATE), (String) m.get(DATA_RATE));
-                    if (m.containsKey(SERIALIZER)) {
-                        final BuilderConfiguration<Serializer> ns3SerializerConfig = emptyConfig(factory, DefaultNs3Serializer::new);
-                        final Builder<Serializer> ns3SerializerBuilder = new Builder<>(Serializer.class, ImmutableSet.of(ns3SerializerConfig), factory);
-                        final Serializer serializer = ns3SerializerBuilder.build(m.get(SERIALIZER));
-                        AlchemistNs3.setSerializer(serializer);
-                    }
-                    return null;
-                });
-        final Builder<Void> ns3GatewayBuilder = new Builder<>(Void.class, ImmutableSet.of(ns3GatewayConfig, emptyConfig(factory, () -> null)), factory);
-        ns3GatewayBuilder.build(contents.get(NS3));
-        /*
          * Termination conditions
          */
         final Builder<Predicate<Environment<T, P>>> terminatorBuilder = new Builder<>(Predicate.class, emptySet(), factory);
@@ -658,6 +640,25 @@ public final class YamlLoader implements Loader {
                 }
             }
         }
+        /*
+         * ns3
+         */
+        final BuilderConfiguration<Void> ns3GatewayConfig = new BuilderConfiguration<>(
+                ImmutableMap.of(PROTOCOL, String.class, ERROR_RATE, Double.class, DATA_RATE, String.class), ImmutableMap.of(PACKET_SIZE, Integer.class, SERIALIZER, Object.class), factory,
+                m -> {
+                    final int packetSize = (int) m.getOrDefault(PACKET_SIZE, 0);
+                    AlchemistNs3.init(env.getNodesNumber(), (String) m.get(PROTOCOL), packetSize, (double) m.get(ERROR_RATE), (String) m.get(DATA_RATE));
+                    if (m.containsKey(SERIALIZER)) {
+                        final BuilderConfiguration<Serializer> ns3SerializerConfig = emptyConfig(factory, DefaultNs3Serializer::new);
+                        final Builder<Serializer> ns3SerializerBuilder = new Builder<>(Serializer.class, ImmutableSet.of(ns3SerializerConfig), factory);
+                        final Serializer serializer = ns3SerializerBuilder.build(m.get(SERIALIZER));
+                        AlchemistNs3.setSerializer(serializer);
+                    }
+                    return null;
+                });
+        final Builder<Void> ns3GatewayBuilder = new Builder<>(Void.class, ImmutableSet.of(ns3GatewayConfig, emptyConfig(factory, () -> null)), factory);
+        ns3GatewayBuilder.build(contents.get(NS3));
+
         return env;
     }
 

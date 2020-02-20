@@ -6,13 +6,12 @@ network-model:
 
 #realistic networking configuration
 ns3:
-  nodes-count: 3
-  is-udp: false
-  packet-size: 0
+  protocol: "TCP"
+  packet-size: 0 #optional
   error-rate: 0.0001
   data-rate: "1Mbps"
   serializer:
-    type: it.unibo.alchemist.ns3.utils.DefaultNs3Serializer
+    type: it.unibo.alchemist.ns3.utils.DefaultNs3Serializer #optional
 
 pools:
   - pool: &prog

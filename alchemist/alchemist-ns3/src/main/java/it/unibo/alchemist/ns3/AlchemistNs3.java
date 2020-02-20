@@ -40,14 +40,14 @@ public final class AlchemistNs3 {
      * with every other node.
      *
      * @param nodesCount How many nodes in the network
-     * @param isUdp true if UDP should be used, false is TCP should be used
+     * @param protocol the protocol to be used
      * @param packetSize The size of a packet (0 for default size)
      * @param errorRate The error rate of the channel
      * @param dataRate The data rate at which the nodes emit data
      *
      * @throws IllegalStateException if {@link NS3Gateway} has already been configured
      */
-    public static void init(final int nodesCount, final boolean isUdp, final int packetSize, final double errorRate, final String dataRate) {
+    public static void init(final int nodesCount, final String protocol, final int packetSize, final double errorRate, final String dataRate) {
         if (gateway != null) {
             throw new IllegalStateException("You cannot initialize ns3 more than once");
         }
@@ -60,7 +60,7 @@ public final class AlchemistNs3 {
                 }
             }
         }
-        NS3asy.INSTANCE.FinalizeSimulationSetup(isUdp, packetSize, errorRate, dataRate);
+        NS3asy.INSTANCE.FinalizeSimulationSetup(protocol.equalsIgnoreCase("udp"), packetSize, errorRate, dataRate);
     }
 
     /**

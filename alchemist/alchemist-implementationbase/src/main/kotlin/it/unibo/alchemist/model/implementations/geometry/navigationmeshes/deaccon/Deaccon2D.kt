@@ -204,7 +204,7 @@ class Deaccon2D(
                                 && neighbor.containsOrLiesOnBoundary(advancedEdge.second)) {
                             if (intersectingObstacles.isEmpty()) {
                                 builder.addEdge(a, neighbor, oldEdge)
-                                val intrudingEdge = neighbor.findIntrudingEdge(prevEdge)
+                                val intrudingEdge = neighbor.findIntrudingEdge(prevEdge, nextEdge)
                                 val p1: Euclidean2DPosition = intersection(intrudingEdge, prevEdge).intersection.get()
                                 val p2: Euclidean2DPosition = intersection(intrudingEdge, nextEdge).intersection.get()
                                 builder.addEdge(neighbor, a, Euclidean2DSegment(p1, p2))
@@ -263,7 +263,7 @@ class Deaccon2D(
                                         /*
                                          * Find the shape of the passage
                                          */
-                                        val intrudingEdge = neighbor.findIntrudingEdge(prevEdge)
+                                        val intrudingEdge = neighbor.findIntrudingEdge(prevEdge, nextEdge)
                                         segment = if (advancedEdge.isXAxisAligned()) {
                                             Pair(intrudingEdge.findPointOnLineGivenX(segment.first.x)!!,
                                                 intrudingEdge.findPointOnLineGivenX(segment.second.x)!!)
@@ -479,12 +479,15 @@ class Deaccon2D(
         i.first <= first && i.second >= second
 
     /*
-     * Find the first edge of the polygon intruding with the given segment.
+     * Find the first edge of the polygon intruding with both the given segments.
      */
-    private fun ConvexPolygon.findIntrudingEdge(s: Euclidean2DSegment) =
+    private fun ConvexPolygon.findIntrudingEdge(s1: Euclidean2DSegment, s2: Euclidean2DSegment) =
         vertices().indices
             .map { getEdge(it) }
-            .first { intersection(it, s).type == SegmentsIntersectionTypes.POINT }
+            .first {
+                intersection(it, s1).type == SegmentsIntersectionTypes.POINT &&
+                    intersection(it, s2).type == SegmentsIntersectionTypes.POINT
+            }
 
     private fun Euclidean2DSegment.findPointOnLineGivenX(x: Double): Euclidean2DPosition? {
         val m = slope()

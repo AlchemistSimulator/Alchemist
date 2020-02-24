@@ -1,14 +1,10 @@
 package it.unibo.alchemist.model.implementations.reactions
 
 import it.unibo.alchemist.model.implementations.actions.Combine
-import it.unibo.alchemist.model.implementations.actions.FollowFlowField
-import it.unibo.alchemist.model.implementations.actions.Seek
-import it.unibo.alchemist.model.implementations.actions.SeekCloser
+import it.unibo.alchemist.model.implementations.actions.Seek2D
 import it.unibo.alchemist.model.implementations.actions.steeringstrategies.DistanceWeighted
 import it.unibo.alchemist.model.implementations.geometry.*
 import it.unibo.alchemist.model.implementations.geometry.graph.Euclidean2DCrossing
-import it.unibo.alchemist.model.implementations.layers.BidimensionalGaussianLayer
-import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.*
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
@@ -53,7 +49,7 @@ class OrientingSteeringBehavior2D<T> @JvmOverloads constructor(
          * farthest position the pedestrian could reach in this execution step towards
          * the target depending on his/her physical characteristics.
          */
-        var desiredMovement = SeekCloser(env, this, pedestrian, *target.cartesianCoordinates).nextPosition
+        var desiredMovement = Seek2D(env, this, pedestrian, *target.cartesianCoordinates).nextPosition
         /*
          * Vector representing the movement of the pedestrian considering only the combination
          * of the other social forces a part from the will to reach the target position.
@@ -85,7 +81,7 @@ class OrientingSteeringBehavior2D<T> @JvmOverloads constructor(
                 && (state == State.MOVING_TO_FINAL || !crosses(currPosition, movement, targetEdge!!))) {
             nextPosition = adjustFinalMovement(currPosition, nextPosition, currRoom)
         }
-        SeekCloser(env, this, pedestrian, *nextPosition.cartesianCoordinates).execute()
+        Seek2D(env, this, pedestrian, *nextPosition.cartesianCoordinates).execute()
     }
 
     private fun adjustDisturbingMovement(desiredMovement: Euclidean2DPosition, disturbingMovement: Euclidean2DPosition): Euclidean2DPosition {

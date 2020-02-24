@@ -1,5 +1,6 @@
 package it.unibo.alchemist.model.implementations.reactions
 
+import it.unibo.alchemist.model.implementations.actions.Seek2D
 import it.unibo.alchemist.model.implementations.geometry.*
 import it.unibo.alchemist.model.implementations.geometry.graph.Euclidean2DCrossing
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
@@ -27,6 +28,10 @@ open class OrientingBehavior2D<T>(
     timeDistribution: TimeDistribution<T>,
     private val envGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DCrossing>
 ) : AbstractOrientingBehavior<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DCrossing, ConvexEuclidean2DShape, T>(env, pedestrian, timeDistribution, envGraph) {
+
+    override fun moveTowards(currRoom: ConvexPolygon, target: Euclidean2DPosition, currPosition: Euclidean2DPosition) {
+        Seek2D(env, this, pedestrian, *target.cartesianCoordinates).execute()
+    }
 
     /*
      * We build a graph composed by the edges' midpoints, the room vertices and the provided

@@ -140,7 +140,7 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
     /**
      */
     override fun execute() {
-        var p = env.getPosition(pedestrian)
+        val p = env.getPosition(pedestrian)
         when (state) {
             State.START -> {
                 currRoom = envGraph.nodeContaining(p)
@@ -230,6 +230,10 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
                     val arrived = p.getDistanceTo(subdestination!!) <= TOLERANCE
                     if (state == State.MOVING_TO_DOOR) {
                         if (arrived) {
+                            /*
+                             * A more sophisticated approach to avoid deviations
+                             * would be to move always in the same direction
+                             */
                             subdestination = nextRoom!!.centroid
                             state = State.CROSSING_DOOR
                         } else {

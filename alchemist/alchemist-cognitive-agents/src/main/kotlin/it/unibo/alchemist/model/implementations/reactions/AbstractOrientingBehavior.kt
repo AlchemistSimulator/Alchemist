@@ -226,30 +226,33 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
                 }
             }
             State.MOVING_TO_DOOR, State.CROSSING_DOOR, State.MOVING_TO_FINAL -> {
-                moveTowards(currRoom!!, subdestination!!, p)
-                p = env.getPosition(pedestrian)
-                when (state) {
-                    State.CROSSING_DOOR -> {
-                        if (nextRoom!!.contains(p) || envGraph.nodes().any { it != currRoom && it.contains(p) }) {
-                            state = State.NEW_ROOM
+                if (state != State.CROSSING_DOOR) {
+                    val arrived = p.getDistanceTo(subdestination!!) <= TOLERANCE
+                    if (state == State.MOVING_TO_DOOR) {
+                        if (arrived) {
+                            subdestination = nextRoom!!.centroid
+                            state = State.CROSSING_DOOR
+                        } else {
+                            /*
+                             * Recomputes sub-destination
+                             */
+                            subdestination = computeSubdestination(targetEdge!!)
                         }
+                    } else if (arrived) {
+                        state = State.ARRIVED
                     }
-                    else -> {
-                        val arrived = fuzzyEquals(p.getDistanceTo(subdestination!!), 0.0, TOLERANCE)
-                        if (state == State.MOVING_TO_DOOR) {
-                            if (arrived) {
-                                subdestination = nextRoom!!.centroid
-                                state = State.CROSSING_DOOR
-                            } else {
-                                /*
-                                 * Recomputes sub-destination
-                                 */
-                                subdestination = computeSubdestination(targetEdge!!)
-                            }
-                        } else if (arrived) {
-                            state = State.ARRIVED
-                        }
+                }
+                /*
+                 * We want to perform this if state has been changed to CROSSING_DOOR
+                 * in the previous if branch, thus we don't use else.
+                 */
+                if (state == State.CROSSING_DOOR) {
+                    if (nextRoom!!.contains(p) || envGraph.nodes().any { it != currRoom && it.contains(p) }) {
+                        state = State.NEW_ROOM
                     }
+                }
+                if (state == State.MOVING_TO_DOOR || state == State.CROSSING_DOOR || state == State.MOVING_TO_FINAL) {
+                    moveTowards(currRoom!!, subdestination!!, p)
                 }
             }
             State.ARRIVED -> {}

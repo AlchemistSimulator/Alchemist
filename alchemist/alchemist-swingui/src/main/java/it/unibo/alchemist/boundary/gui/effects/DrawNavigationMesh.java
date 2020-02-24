@@ -2,13 +2,17 @@ package it.unibo.alchemist.boundary.gui.effects;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
+import it.unibo.alchemist.model.implementations.geometry.graph.PredefinedEnvGraphsKt;
 import it.unibo.alchemist.model.implementations.geometry.navigationmeshes.deaccon.Deaccon2D;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
+import it.unibo.alchemist.model.interfaces.geometry.graph.GraphEdgeWithData;
+import it.unibo.alchemist.model.interfaces.geometry.graph.NavigationGraph;
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon;
+import kotlin.Pair;
 import org.danilopianini.lang.RangedInteger;
 import org.danilopianini.view.ExportForGUI;
 import org.slf4j.Logger;
@@ -21,19 +25,19 @@ import java.awt.Point;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Optional;
 
 /**
+ * @param <Euclidean2DSegment>
  */
-public class DrawNavigationMesh implements Effect {
+public class DrawNavigationMesh<Euclidean2DSegment> implements Effect {
 
     /**
      */
     protected static final int MAX_COLOUR_VALUE = 255;
     /**
      */
-    protected static final int INITIAL_ALPHA_DIVIDER = 3;
+    protected static final int INITIAL_ALPHA_DIVIDER = 5;
     /**
      */
     protected static final Logger L = LoggerFactory.getLogger(DrawShape.class);
@@ -46,18 +50,24 @@ public class DrawNavigationMesh implements Effect {
     private RangedInteger green = new RangedInteger(0, MAX_COLOUR_VALUE);
     @ExportForGUI(nameToExport = "B")
     private RangedInteger blue = new RangedInteger(0, MAX_COLOUR_VALUE, MAX_COLOUR_VALUE);
+    @ExportForGUI(nameToExport = "number of seeds")
+    private String nSeeds = "60";
     @ExportForGUI(nameToExport = "env start x (south-west)")
-    private String envStartX = "-550";
+    private String envStartX = "0";
     @ExportForGUI(nameToExport = "env start y (south-west)")
-    private String envStartY = "-100";
+    private String envStartY = "0";
     @ExportForGUI(nameToExport = "env end x (north-east)")
-    private String envEndX = "1000";
+    private String envEndX = "300";
     @ExportForGUI(nameToExport = "env end y (north-east)")
-    private String envEndY = "600";
+    private String envEndY = "300";
     @ExportForGUI(nameToExport = "to be drawn")
     private boolean toBeDrawn;
+    @ExportForGUI(nameToExport = "to be obtained")
+    private boolean toBeObtained;
+    @ExportForGUI(nameToExport = "draw underlying graph")
+    private boolean drawGraph;
     private Color colorCache = Color.BLUE;
-    private Collection<ConvexPolygon> regions = new ArrayList<>();
+    private NavigationGraph<Euclidean2DPosition, ?, ConvexPolygon, GraphEdgeWithData<ConvexPolygon, Euclidean2DSegment>> envGraph = null;
     @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
     private transient Optional<Node> markerNode = Optional.empty();
 
@@ -69,7 +79,7 @@ public class DrawNavigationMesh implements Effect {
      * @param <T> concentration type
      * @param <P> position type
      */
-    @SuppressWarnings({"PMD.CompareObjectsWithEquals", "unchecked"})
+    @SuppressWarnings({"PMD.CompareObjectsWithEquals", "unchecked", "checkstyle:WhitespaceAfter"})
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
     public <T, P extends Position2D<P>> void apply(final Graphics2D g, final Node<T> n, final Environment<T, P> env, final IWormhole2D<P> wormhole) {
@@ -81,30 +91,58 @@ public class DrawNavigationMesh implements Effect {
         if (markerNode.isEmpty()) {
             markerNode = Optional.of(n);
         }
-        if (markerNode.get() == n && regions != null) { // at this point markerNode.isPresent() is always true, so we directly get it
+        if (markerNode.get() == n && envGraph != null) { // at this point markerNode.isPresent() is always true, so we directly get it
+            final IWormhole2D<Euclidean2DPosition> w = (IWormhole2D<Euclidean2DPosition>) wormhole;
             colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
-            regions.stream()
-                    .map(r -> mapEnvConvexPolygonToAwtShape(r, (IWormhole2D<Euclidean2DPosition>) wormhole))
+            envGraph.nodes().stream()
+                    .map(r -> mapEnvConvexPolygonToAwtShape(r, w))
                     .forEach(r -> {
                         g.setColor(colorCache);
                         g.fill(r);
                         g.setColor(colorCache.brighter().brighter());
                         g.draw(r);
                     });
+            if (drawGraph) {
+                envGraph.nodes().forEach(r -> {
+                    final Point centroidFrom = w.getViewPoint(r.getCentroid());
+                    //g.setColor(colorCache);
+                    //g.fillOval(centroidFrom.x, centroidFrom.y, 10, 10);
+                    envGraph.edgesFrom(r).forEach(e -> {
+                        final Pair<Euclidean2DPosition, Euclidean2DPosition> c = (Pair<Euclidean2DPosition, Euclidean2DPosition>) e.getData();
+                        final Point viewP1 = w.getViewPoint(c.getFirst());
+                        final Point viewP2 = w.getViewPoint(c.getSecond());
+                        g.setColor(Color.GREEN);
+                        g.drawLine(viewP1.x, viewP1.y, viewP2.x, viewP2.y);
+                        final Point midPoint = new Point((viewP1.x + viewP2.x) / 2, (viewP1.y + viewP2.y) / 2);
+                        g.setColor(colorCache);
+                        g.drawLine(centroidFrom.x, centroidFrom.y, midPoint.x, midPoint.y);
+                        /*
+                        final Point centroidTo = w.getViewPoint(e.getTo().getCentroid());
+                        g.drawLine(midPoint.x, midPoint.y, centroidTo.x, centroidTo.y);
+                        */
+                    });
+                });
+            }
         }
-        if (toBeDrawn && !envStartX.equals("") && !envStartY.equals("") && !envEndX.equals("") && !envEndY.equals("")
+        if ((toBeDrawn || toBeObtained) && !envStartX.equals("") && !envStartY.equals("") && !envEndX.equals("") && !envEndY.equals("")
                 && env instanceof Environment2DWithObstacles
                 && env.makePosition(0.0, 0.0) instanceof Euclidean2DPosition) {
-            final Double startX = Double.parseDouble(envStartX);
-            final Double startY = Double.parseDouble(envStartY);
-            final Double endX = Double.parseDouble(envEndX);
-            final Double endY = Double.parseDouble(envEndY);
-            regions = new Deaccon2D().generateNavigationMesh(
+            if (toBeDrawn) {
+                final Double startX = Double.parseDouble(envStartX);
+                final Double startY = Double.parseDouble(envStartY);
+                final Double endX = Double.parseDouble(envEndX);
+                final Double endY = Double.parseDouble(envEndY);
+                envGraph = new Deaccon2D(Integer.parseInt(nSeeds)).generateEnvGraph(
                         new Point2D.Double(startX, startY),
                         Math.abs(endX - startX),
                         Math.abs(endY - startY),
-                        ((Environment2DWithObstacles<?, T, Euclidean2DPosition>) env).getObstacles());
-            toBeDrawn = false;
+                        ((Environment2DWithObstacles<?, T, Euclidean2DPosition>) env).getObstacles(),
+                        new ArrayList());
+                toBeDrawn = false;
+            } else {
+                envGraph = (NavigationGraph<Euclidean2DPosition, ?, ConvexPolygon, GraphEdgeWithData<ConvexPolygon, Euclidean2DSegment>>) PredefinedEnvGraphsKt.congestionAvoidanceEnvGraph(((Environment2DWithObstacles) env).getObstacles());
+                toBeObtained = false;
+            }
         }
     }
 
@@ -184,6 +222,20 @@ public class DrawNavigationMesh implements Effect {
      */
     public void setBlue(final RangedInteger blue) {
         this.blue = blue;
+    }
+
+    /**
+     * @return the number of seeds
+     */
+    public String getnSeeds() {
+        return nSeeds;
+    }
+
+    /**
+     * @param nSeeds the number of seeds
+     */
+    public void setnSeeds(final String nSeeds) {
+        this.nSeeds = nSeeds;
     }
 
     /**

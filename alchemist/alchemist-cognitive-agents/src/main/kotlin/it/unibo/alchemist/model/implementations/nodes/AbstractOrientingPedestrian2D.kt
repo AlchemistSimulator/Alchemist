@@ -12,6 +12,8 @@ import it.unibo.alchemist.model.implementations.geometry.graph.destinationsWithi
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.PedestrianGroup
+import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
+import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.graph.GraphEdge
 import org.apache.commons.math3.random.RandomGenerator
 import java.awt.Shape
@@ -20,17 +22,21 @@ import java.awt.geom.Rectangle2D
 
 /**
  * An [AbstractOrientingPedestrian] in an Euclidean bidimensional space.
- * It defines the method responsible for the creation of landmarks.
+ * It defines the method responsible for the creation of landmarks: in
+ * particular, it represents landmarks as ellipses and accepts an [envGraph]
+ * whose nodes are [ConvexPolygon]s.
  *
- * @param E the type of edges of the environment's graph.
+ * @param N1 the type of nodes in the [envGraph].
+ * @param E1 the type of edges of the [envGraph].
+ * @param T  the concentration type.
  */
-abstract class AbstractOrientingPedestrian2D<T, E : GraphEdge<ConvexPolygon>>(
+abstract class AbstractOrientingPedestrian2D<N1 : ConvexPolygon, E1 : GraphEdge<N1>, T>(
     knowledgeDegree: Double,
     private val rg: RandomGenerator,
-    private val envGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, E>,
+    private val envGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, N1, E1>,
     env: Environment<T, Euclidean2DPosition>,
     group: PedestrianGroup<T>? = null
-) : AbstractOrientingPedestrian<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, E, Ellipse, T>(knowledgeDegree, rg, envGraph, env, group),
+) : AbstractOrientingPedestrian<Euclidean2DPosition, Euclidean2DTransformation, N1, E1, Ellipse, T>(knowledgeDegree, rg, envGraph, env, group),
     Pedestrian2D<T> {
 
     /*
@@ -44,14 +50,15 @@ abstract class AbstractOrientingPedestrian2D<T, E : GraphEdge<ConvexPolygon>>(
     }
 
     /*
-     * Generate a random ellipse entirely contained in the given convex polygon.
+     * Generates a random ellipse entirely contained in the given convex polygon.
      * If such polygon contains one or more destinations, the generated ellipse
      * will contain at least one of them.
      */
-    override fun generateLandmarkWithin(region: ConvexPolygon): Ellipse =
+    override fun generateLandmarkWithin(region: N1): Ellipse =
         with(region) {
             val w = rg.nextDouble(MIN_SIDE, MAX_SIDE) * shape.diameter
             val h = rg.nextDouble(MIN_SIDE, MAX_SIDE) * shape.diameter
+            envGraph.containsDestination(this)
             val isFinal = envGraph.containsDestination(this)
             /*
              * If is final, the center of the ellipse will be the destination (too simplistic,

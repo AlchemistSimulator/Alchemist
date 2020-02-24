@@ -38,7 +38,8 @@ abstract class AbstractOrientingPedestrian<P, A : GeometricTransformation<P>, N1
     private val envGraph: NavigationGraph<P, A, N1, E1>,
     env: Environment<T, P>,
     group: PedestrianGroup<T>? = null
-) : OrientingPedestrian<P, A, N2, GraphEdge<N2>, T>, HomogeneousPedestrianImpl<T, P>(env, rg, group) where P : Position<P>, P : Vector<P> {
+) : OrientingPedestrian<P, A, N2, GraphEdge<N2>, T>,
+    HomogeneousPedestrianImpl<T, P>(env, rg, group) where P : Position<P>, P : Vector<P> {
 
     init {
         require(knowledgeDegree.liesBetween(0.0, 1.0)) { "knowledge degree must be in [0,1]" }
@@ -64,7 +65,7 @@ abstract class AbstractOrientingPedestrian<P, A : GeometricTransformation<P>, N1
      * reachable from it, with an edge whose weight depends on the number of
      * rooms that need to be traversed (information on reachability between regions
      * and number of areas to be traversed can be obtained from the environment's
-     * graph). We then produce a minimum spanning tree of the described  graph.
+     * graph). We then produce a minimum spanning tree of the described graph.
      */
     override val cognitiveMap: NavigationGraph<P, A, N2, GraphEdge<N2>> by lazy {
         val builder = NavigationGraphBuilder<P, A, N2, GraphEdge<N2>>()

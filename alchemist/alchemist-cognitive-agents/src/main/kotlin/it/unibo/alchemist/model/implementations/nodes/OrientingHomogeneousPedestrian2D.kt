@@ -10,6 +10,7 @@
 package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.graph.NavigationGraph
@@ -19,17 +20,19 @@ import it.unibo.alchemist.model.interfaces.geometry.graph.GraphEdge
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
- * An orienting homogeneous pedestrian in an euclidean bidimensional space.
+ * An orienting homogeneous pedestrian in a [EuclideanPhysics2DEnvironment].
  *
- * @param E the type of edges of the environment's graph.
+ * @param N1 the type of nodes in the [envGraph].
+ * @param E1 the type of edges of the [envGraph].
+ * @param T  the concentration type.
  */
-class OrientingHomogeneousPedestrian2D<T, E : GraphEdge<ConvexPolygon>> @JvmOverloads constructor(
+class OrientingHomogeneousPedestrian2D<N1 : ConvexPolygon, E1 : GraphEdge<N1>, T> @JvmOverloads constructor(
     knowledgeDegree: Double,
     rg: RandomGenerator,
-    envGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, E>,
+    envGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, N1, E1>,
     env: EuclideanPhysics2DEnvironment<T>,
     group: PedestrianGroup<T>? = null
-) : AbstractOrientingPedestrian2D<T, E>(knowledgeDegree, rg, envGraph, env, group) {
+) : AbstractOrientingPedestrian2D<N1, E1, T>(knowledgeDegree, rg, envGraph, env, group) {
 
     private val shape = shape(env)
 

@@ -1,6 +1,8 @@
 package it.unibo.alchemist.test
 
+import it.unibo.alchemist.model.implementations.geometry.CircleSegmentIntersectionType
 import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionTypes
+import it.unibo.alchemist.model.implementations.geometry.closestPointTo
 import it.unibo.alchemist.model.implementations.geometry.intersection
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShapeFactory
@@ -20,7 +22,7 @@ internal const val DEFAULT_SHAPE_SIZE: Double = 1.0
 class TestGeometryUtils {
 
     @Test
-    fun testIntersection() {
+    fun testSegmentsIntersection() {
         var s1 = Pair(Euclidean2DPosition(1.0, 1.0), Euclidean2DPosition(5.0, 5.0)) // (1,1) -> (5,5)
         var s2 = Pair(Euclidean2DPosition(3.0, 1.0), Euclidean2DPosition(1.0, 3.0)) // (3,1) -> (1,3)
         var i = intersection(s1, s2)
@@ -101,5 +103,38 @@ class TestGeometryUtils {
         s2 = Pair(Euclidean2DPosition(1.0, 2.0), Euclidean2DPosition(1.0, -6.0))
         i = intersection(s1, s2)
         Assertions.assertEquals(SegmentsIntersectionTypes.SEGMENT, i.type)
+    }
+
+    @Test
+    fun testClosestPoint() {
+        val segment = Pair(Euclidean2DPosition(1.0, 3.0), Euclidean2DPosition(3.0, 1.0))
+        Assertions.assertEquals(segment.second, segment.closestPointTo(Euclidean2DPosition(4.0, 2.0)))
+        Assertions.assertEquals(segment.second, segment.closestPointTo(Euclidean2DPosition(4.0, 1.0)))
+        Assertions.assertEquals(Euclidean2DPosition(2.5, 1.5), segment.closestPointTo(Euclidean2DPosition(3.0, 2.0)))
+    }
+
+    @Test
+    fun testCircleSegmentIntersection() {
+        val center = Euclidean2DPosition(3.0, 3.0)
+        val radius = 2.0
+        var s = Pair(Euclidean2DPosition(1.0, 1.0), Euclidean2DPosition(5.0, 1.0))
+        var i = intersection(s, center, radius)
+        Assertions.assertEquals(CircleSegmentIntersectionType.POINT, i.type)
+        Assertions.assertEquals(Euclidean2DPosition(3.0, 1.0), i.p1.get())
+        s = Pair(Euclidean2DPosition(1.0, -1.0), Euclidean2DPosition(5.0, -1.0))
+        i = intersection(s, center, radius)
+        Assertions.assertEquals(CircleSegmentIntersectionType.EMPTY, i.type)
+        s = Pair(Euclidean2DPosition(0.0, 3.0), Euclidean2DPosition(6.0, 3.0))
+        i = intersection(s, center, radius)
+        Assertions.assertEquals(CircleSegmentIntersectionType.PAIR, i.type)
+        val expectedPoints = mutableSetOf(Euclidean2DPosition(1.0, 3.0),Euclidean2DPosition(5.0, 3.0))
+        Assertions.assertEquals(expectedPoints, mutableSetOf(i.p1.get(), i.p2.get()))
+        s = Pair(Euclidean2DPosition(3.0, 3.0), Euclidean2DPosition(6.0, 3.0))
+        i = intersection(s, center, radius)
+        Assertions.assertEquals(CircleSegmentIntersectionType.POINT, i.type)
+        Assertions.assertEquals(Euclidean2DPosition(5.0, 3.0), i.p1.get())
+        s = Pair(Euclidean2DPosition(10.0, 3.0), Euclidean2DPosition(12.0, 3.0))
+        i = intersection(s, center, radius)
+        Assertions.assertEquals(CircleSegmentIntersectionType.EMPTY, i.type)
     }
 }

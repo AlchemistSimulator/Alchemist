@@ -41,4 +41,5 @@ To understand how to setup a fully fledged Protelis simulation, please refer to 
 ### Current limitations
 
 - It is not possible to make the nodes move when using ns3
+- It's only possibile to use ns3 from a single thread at once (be aware of this when running multiple simulations in batch mode)
 - It's only possible to use it on Linux

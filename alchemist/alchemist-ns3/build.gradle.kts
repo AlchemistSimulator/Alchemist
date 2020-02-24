@@ -7,7 +7,7 @@
  */
 
 dependencies {
-    api("com.github.gscaparrotti:ns3asy-bindings:0.2.0")
+    api("com.github.gscaparrotti:ns3asy-bindings:0.2.1")
     testImplementation(project(":alchemist-interfaces"))
     testImplementation(project(":alchemist-implementationbase"))
     testImplementation(project(":alchemist-engine"))

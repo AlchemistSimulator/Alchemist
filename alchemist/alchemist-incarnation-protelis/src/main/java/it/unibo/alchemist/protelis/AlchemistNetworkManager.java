@@ -9,6 +9,7 @@ package it.unibo.alchemist.protelis;
 
 import com.github.gscaparrotti.ns3asybindings.bindings.NS3asy;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.github.gscaparrotti.ns3asybindings.communication.NS3Gateway;
@@ -253,6 +254,22 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
                         }
                     }
                     Native.free(Pointer.nativeValue(receiverIpPointer));
+                } else {
+                    throw new IllegalStateException("The neighborhood must be composed by Protelis nodes");
+                }
+            }
+            //If a node received a packet despite not being part of the neighborhood it must be discarded
+            for (final var genericFarNode : Sets.difference(env.getNodes(), env.getNeighborhood(node).getNeighbors())) {
+                if (genericFarNode instanceof ProtelisNode) {
+                    final var farNode = (ProtelisNode<?>) genericFarNode;
+                    final var farNodeIpPointer = NS3asy.INSTANCE.getIpAddressFromIndex(farNode.getId());
+                    final var farReceiver = new Endpoint(farNodeIpPointer.getString(0), NS3Gateway.DEFAULT_PORT);
+                    if (gateway.getBytesInInterval(farReceiver, sender, 0, -1).size() > 0) {
+                        gateway.removeBytesInInterval(farReceiver, sender, 0, -1);
+                    }
+                    Native.free(Pointer.nativeValue(farNodeIpPointer));
+                } else {
+                    throw new IllegalStateException("The neighborhood must be composed by Protelis nodes");
                 }
             }
             Native.free(Pointer.nativeValue(senderIpPointer));

@@ -52,10 +52,14 @@ public class TestWithProtelis {
         }
     }
 
+    /**
+     * Tests the integration with ns3 via ns3asy by running a simulation consisting in some nodes
+     * executing the 'channel' Protelis program.
+     */
     @Test
     public void testChannel() {
         if (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("linux")) {
-            final var env = testInSimulator("channel.yml", Long.MAX_VALUE);
+            testInSimulator("channel.yml", Long.MAX_VALUE);
             //System.out.println("Step is " + env.getSimulation().getStep());
             //System.out.println("Time is " + env.getSimulation().getTime());
         }

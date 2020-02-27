@@ -3,7 +3,7 @@ package it.unibo.alchemist.model.interfaces.geometry.graph
 /**
  * Models a basic directed edge.
  *
- * @param N the type of the node this edge connects.
+ * @param N the type of nodes this edge connects.
  */
 open class GraphEdge<N>(
     /**
@@ -17,7 +17,7 @@ open class GraphEdge<N>(
 /**
  * A [GraphEdge] storing some kind of data.
  *
- * @param N the type nodes this edge connects.
+ * @param N the type of nodes this edge connects.
  * @param D the type of data.
  */
 open class GraphEdgeWithData<N, D>(

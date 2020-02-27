@@ -1,14 +1,9 @@
 package it.unibo.alchemist.model.implementations.geometry.graph.builder
 
 import it.unibo.alchemist.model.implementations.geometry.graph.GraphImpl
-import it.unibo.alchemist.model.implementations.geometry.graph.NavigationGraphImpl
-import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
-import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
-import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.geometry.graph.Graph
 import it.unibo.alchemist.model.interfaces.geometry.graph.GraphEdge
 import it.unibo.alchemist.model.interfaces.geometry.graph.GraphEdgeWithData
-import it.unibo.alchemist.model.interfaces.geometry.graph.NavigationGraph
 import java.lang.IllegalArgumentException
 
 /**

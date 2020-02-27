@@ -12,8 +12,6 @@ import it.unibo.alchemist.model.implementations.geometry.graph.destinationsWithi
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.PedestrianGroup
-import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
-import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.graph.GraphEdge
 import org.apache.commons.math3.random.RandomGenerator
 import java.awt.Shape
@@ -26,7 +24,7 @@ import java.awt.geom.Rectangle2D
  * particular, it represents landmarks as ellipses and accepts an [envGraph]
  * whose nodes are [ConvexPolygon]s.
  *
- * @param N1 the type of nodes in the [envGraph].
+ * @param N1 the type of nodes of the [envGraph].
  * @param E1 the type of edges of the [envGraph].
  * @param T  the concentration type.
  */

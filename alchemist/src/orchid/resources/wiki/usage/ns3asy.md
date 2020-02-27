@@ -16,8 +16,8 @@ The integration with ns3 provides the ability to configure the following paramet
 
 - The transport protocol (TCP and UDP are supported)
 - The packet size
-- The error rate of the underlying physical layer (in terms of packet loss)
-- The data rate at which the nodes should send multiple packets
+- The error rate of the underlying physical layer (determined by [this formula](https://www.nsnam.org/doxygen/error-model_8cc_source.html#l00259))
+- The channel's data rate, also used to determine the rate at which the nodes should send multiple packets
 - How objects should be serialized (and deserialized) before sending them
 
 ### How to setup a simulation using ns3 with the Protelis incarnation

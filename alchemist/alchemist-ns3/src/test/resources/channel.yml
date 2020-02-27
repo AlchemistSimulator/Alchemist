@@ -9,9 +9,18 @@ ns3:
   protocol: "TCP"
   packet-size: 0 #optional
   error-rate: 0.0001
-  data-rate: "1Mbps"
+  data-rate: "Default"
   serializer:
     type: it.unibo.alchemist.ns3.utils.DefaultNs3Serializer #optional
+
+#ns3:
+#  protocol: "TCP"
+#  packet-size: 0 #optional
+#  ap-position: [0, 0] #optional
+#  propagation-delay: "ns3::ConstantSpeedPropagationDelayModel"
+#  propagation-loss: "ns3::FriisPropagationLossModel"
+#  serializer:
+#    type: it.unibo.alchemist.ns3.utils.DefaultNs3Serializer #optional
 
 pools:
   - pool: &prog

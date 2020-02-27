@@ -13,6 +13,14 @@ ns3:
   serializer:
     type: it.unibo.alchemist.ns3.utils.DefaultNs3Serializer #optional
 
+#ns3:
+#  protocol: "TCP"
+#  packet-size: 0 #optional
+#  propagation-delay: "ns3::ConstantSpeedPropagationDelayModel"
+#  propagation-loss: "ns3::FriisPropagationLossModel"
+#  serializer:
+#    type: it.unibo.alchemist.ns3.utils.DefaultNs3Serializer #optional
+
 pools:
   - pool: &prog
     - time-distribution: 1

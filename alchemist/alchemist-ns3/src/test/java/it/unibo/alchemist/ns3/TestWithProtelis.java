@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.ns3;
 
+import com.github.gscaparrotti.ns3asybindings.bindings.NS3asy;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.loader.YamlLoader;
@@ -16,6 +17,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.AfterEach;
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import java.io.InputStream;
@@ -63,6 +65,14 @@ public class TestWithProtelis {
             //System.out.println("Step is " + env.getSimulation().getStep());
             //System.out.println("Time is " + env.getSimulation().getTime());
         }
+    }
+
+    /**
+     * Clean up ns3 after each test.
+     */
+    @AfterEach
+    public final void finish() {
+        NS3asy.INSTANCE.StopSimulation();
     }
 
     private <T, P extends Position<P>> Environment<T, P> testInSimulator(final String ymlName, final long steps) {

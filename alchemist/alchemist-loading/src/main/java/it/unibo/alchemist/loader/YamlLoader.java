@@ -53,6 +53,7 @@ import it.unibo.alchemist.ns3.utils.DefaultNs3Serializer;
 import it.unibo.alchemist.ns3.utils.Serializer;
 import kotlin.Pair;
 import kotlin.Triple;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -88,6 +89,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -110,6 +112,7 @@ public final class YamlLoader implements Loader {
     private static final ResourceBundle SYNTAX = getBundle(YamlLoader.class.getPackage().getName() + ".YamlSyntax", Locale.US);
     private static final String ACTIONS = SYNTAX.getString("actions");
     private static final String AGGREGATORS = SYNTAX.getString("aggregators");
+    private static final String AP_POSITION = SYNTAX.getString("ap-position");
     private static final String ALCHEMIST_PACKAGE_ROOT = "it.unibo.alchemist.";
     private static final String CONCENTRATION = SYNTAX.getString("concentration");
     private static final String CONDITIONS = SYNTAX.getString("conditions");
@@ -138,6 +141,8 @@ public final class YamlLoader implements Loader {
     private static final String PARAMS = SYNTAX.getString("parameters");
     private static final String PARAMETER = SYNTAX.getString("parameter");
     private static final String PROGRAMS = SYNTAX.getString("programs");
+    private static final String PROPAGATION_DELAY = SYNTAX.getString("propagation-delay");
+    private static final String PROPAGATION_LOSS = SYNTAX.getString("propagation-loss");
     private static final String PROPERTY = SYNTAX.getString("property");
     private static final String PROTOCOL = SYNTAX.getString("protocol");
     private static final String REACTION = SYNTAX.getString("reaction");
@@ -643,20 +648,38 @@ public final class YamlLoader implements Loader {
         /*
          * ns3
          */
-        final BuilderConfiguration<Void> ns3GatewayConfig = new BuilderConfiguration<>(
+
+        final Consumer<Map<String, Object>> serializerBuildFunction = m -> {
+            if (m.containsKey(SERIALIZER)) {
+                final BuilderConfiguration<Serializer> ns3SerializerConfig = emptyConfig(factory, DefaultNs3Serializer::new);
+                final Builder<Serializer> ns3SerializerBuilder = new Builder<>(Serializer.class, ImmutableSet.of(ns3SerializerConfig), factory);
+                final Serializer serializer = ns3SerializerBuilder.build(m.get(SERIALIZER));
+                AlchemistNs3.setSerializer(serializer);
+            }
+        };
+        final BuilderConfiguration<Void> ns3GatewayConfigCsma = new BuilderConfiguration<>(
                 ImmutableMap.of(PROTOCOL, String.class, ERROR_RATE, Double.class, DATA_RATE, String.class), ImmutableMap.of(PACKET_SIZE, Integer.class, SERIALIZER, Object.class), factory,
                 m -> {
                     final int packetSize = (int) m.getOrDefault(PACKET_SIZE, 0);
-                    AlchemistNs3.init(env.getNodesNumber(), (String) m.get(PROTOCOL), packetSize, (double) m.get(ERROR_RATE), (String) m.get(DATA_RATE));
-                    if (m.containsKey(SERIALIZER)) {
-                        final BuilderConfiguration<Serializer> ns3SerializerConfig = emptyConfig(factory, DefaultNs3Serializer::new);
-                        final Builder<Serializer> ns3SerializerBuilder = new Builder<>(Serializer.class, ImmutableSet.of(ns3SerializerConfig), factory);
-                        final Serializer serializer = ns3SerializerBuilder.build(m.get(SERIALIZER));
-                        AlchemistNs3.setSerializer(serializer);
-                    }
+                    AlchemistNs3.initWithCsma(env.getNodesNumber(), (String) m.get(PROTOCOL), packetSize, (double) m.get(ERROR_RATE), (String) m.get(DATA_RATE));
+                    serializerBuildFunction.accept(m);
                     return null;
                 });
-        final Builder<Void> ns3GatewayBuilder = new Builder<>(Void.class, ImmutableSet.of(ns3GatewayConfig, emptyConfig(factory, () -> null)), factory);
+        final BuilderConfiguration<Void> ns3GatewayConfigWifi = new BuilderConfiguration<>(
+                ImmutableMap.of(PROTOCOL, String.class, PROPAGATION_DELAY, String.class, PROPAGATION_LOSS, String.class), ImmutableMap.of(AP_POSITION, Double[].class,
+                PACKET_SIZE, Integer.class, SERIALIZER, Object.class), factory,
+                m -> {
+                    final double[] apPosition = ArrayUtils.toPrimitive((Double[]) m.getOrDefault(AP_POSITION, new Double[] {0.0, 0.0}));
+                    final int packetSize = (int) m.getOrDefault(PACKET_SIZE, 0);
+                    final List<double[]> nodesPositions = env.getNodes().stream()
+                            .map(n -> env.getPosition(n).getCartesianCoordinates())
+                            .collect(Collectors.toList());
+                    AlchemistNs3.initWithWifi(env.getNodesNumber(), (String) m.get(PROTOCOL), packetSize, (String) m.get(PROPAGATION_DELAY), (String) m.get(PROPAGATION_LOSS),
+                            nodesPositions, apPosition);
+                    serializerBuildFunction.accept(m);
+                    return null;
+                });
+        final Builder<Void> ns3GatewayBuilder = new Builder<>(Void.class, ImmutableSet.of(ns3GatewayConfigCsma, ns3GatewayConfigWifi, emptyConfig(factory, () -> null)), factory);
         ns3GatewayBuilder.build(contents.get(NS3));
 
         return env;

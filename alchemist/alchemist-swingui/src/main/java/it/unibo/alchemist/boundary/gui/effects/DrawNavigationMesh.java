@@ -114,8 +114,6 @@ public class DrawNavigationMesh implements Effect {
             if (drawGraph) {
                 envGraph.nodes().forEach(r -> {
                     final Point centroidFrom = w.getViewPoint(r.getCentroid());
-                    //g.setColor(colorCache);
-                    //g.fillOval(centroidFrom.x, centroidFrom.y, 10, 10);
                     envGraph.edgesFrom(r).forEach(e -> {
                         final Pair<Euclidean2DPosition, Euclidean2DPosition> c = (Pair<Euclidean2DPosition, Euclidean2DPosition>) e.getData();
                         final Point viewP1 = w.getViewPoint(c.getFirst());
@@ -125,10 +123,6 @@ public class DrawNavigationMesh implements Effect {
                         final Point midPoint = new Point((viewP1.x + viewP2.x) / 2, (viewP1.y + viewP2.y) / 2);
                         g.setColor(colorCache);
                         g.drawLine(centroidFrom.x, centroidFrom.y, midPoint.x, midPoint.y);
-                        /*
-                        final Point centroidTo = w.getViewPoint(e.getTo().getCentroid());
-                        g.drawLine(midPoint.x, midPoint.y, centroidTo.x, centroidTo.y);
-                        */
                     });
                 });
             }

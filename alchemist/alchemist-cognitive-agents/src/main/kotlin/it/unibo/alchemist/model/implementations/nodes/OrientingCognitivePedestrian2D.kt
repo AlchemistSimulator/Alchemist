@@ -34,6 +34,9 @@ class OrientingCognitivePedestrian2D<N1 : ConvexPolygon, E1 : GraphEdge<N1>, T> 
 ) : OrientingPedestrian2D<N1, E1, T>(knowledgeDegree, randomGenerator, environmentGraph, environment, group),
     OrientingCognitivePedestrian<Euclidean2DPosition, Euclidean2DTransformation, Ellipse, GraphEdge<Ellipse>, T> {
 
+    /**
+     * Allows to specify age and gender with a string.
+     */
     @JvmOverloads constructor(
         knowledgeDegree: Double,
         randomGenerator: RandomGenerator,
@@ -45,6 +48,9 @@ class OrientingCognitivePedestrian2D<N1 : ConvexPolygon, E1 : GraphEdge<N1>, T> 
         danger: Molecule? = null
     ) : this(knowledgeDegree, randomGenerator, envGraph, env, group, Age.fromString(age), Gender.fromString(gender), danger)
 
+    /**
+     * Allows to specify age with an int and gender with a string.
+     */
     @JvmOverloads constructor(
         knowledgeDegree: Double,
         randomGenerator: RandomGenerator,

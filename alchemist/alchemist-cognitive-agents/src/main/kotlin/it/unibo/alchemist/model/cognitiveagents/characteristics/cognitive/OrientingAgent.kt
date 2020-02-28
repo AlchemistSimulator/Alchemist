@@ -17,7 +17,8 @@ import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
 interface OrientingAgent<V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>> {
 
     /**
-     * The knowledge degree of the agent concerning the environment.
+     * The knowledge degree of the agent concerning the environment. It's
+     * a percentage value in [0, 1].
      */
     val knowledgeDegree: Double
 

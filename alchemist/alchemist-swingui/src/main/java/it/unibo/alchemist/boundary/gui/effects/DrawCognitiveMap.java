@@ -13,7 +13,10 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
 import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.Ellipse;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.interfaces.*;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.graph.NavigationGraph;
 import it.unibo.alchemist.model.interfaces.graph.OrientingAgent;
 import org.danilopianini.lang.RangedInteger;
@@ -21,26 +24,28 @@ import org.danilopianini.view.ExportForGUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
 /**
+ * Draws an orienting pedestrian' cognitive map.
  */
 public class DrawCognitiveMap implements Effect {
 
     /**
-     *
      */
     protected static final int MAX_COLOUR_VALUE = 255;
     /**
-     *
      */
     protected static final int INITIAL_ALPHA_DIVIDER = 5;
     /**
-     *
      */
     protected static final Logger L = LoggerFactory.getLogger(DrawShape.class);
     private static final long serialVersionUID = 1L;
@@ -91,8 +96,6 @@ public class DrawCognitiveMap implements Effect {
                     });
             cognitiveMap.nodes().forEach(r -> {
                 final Point centroidFrom = w.getViewPoint(r.getCentroid());
-                //g.setColor(colorCache);
-                //g.fillOval(centroidFrom.x, centroidFrom.y, 10, 10);
                 cognitiveMap.edgesFrom(r).forEach(e -> {
                     final Point centroidTo = w.getViewPoint(e.getTo().getCentroid());
                     g.setColor(colorCache);
@@ -103,8 +106,15 @@ public class DrawCognitiveMap implements Effect {
         if (cognitiveMap == null && markerNode.get() instanceof OrientingAgent
                 && env instanceof Environment2DWithObstacles
                 && env.makePosition(0.0, 0.0) instanceof Euclidean2DPosition) {
-            OrientingAgent<? extends Euclidean2DPosition, ?, Ellipse, ?> p = (OrientingAgent) markerNode.get();
-            this.cognitiveMap = p.getCognitiveMap();
+            /*
+             * Interface OrientingPedestrian is not visible, so this horrible kludge is adopted
+             */
+            try {
+                this.cognitiveMap = (NavigationGraph<? extends Euclidean2DPosition, ?, Ellipse, ?>)
+                        markerNode.get().getClass().getMethod("getCognitiveMap").invoke(markerNode.get());
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                L.error("unable to get cognitive map from node");
+            }
         }
     }
 

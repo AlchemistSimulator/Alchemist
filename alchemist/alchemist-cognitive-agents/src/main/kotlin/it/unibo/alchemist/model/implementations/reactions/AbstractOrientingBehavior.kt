@@ -5,12 +5,16 @@ import it.unibo.alchemist.model.implementations.actions.Seek
 import it.unibo.alchemist.model.implementations.graph.containsDestination
 import it.unibo.alchemist.model.implementations.graph.destinationsWithin
 import it.unibo.alchemist.model.implementations.graph.dijkstraShortestPath
-import it.unibo.alchemist.model.interfaces.*
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
 import it.unibo.alchemist.model.implementations.graph.nodeContaining
+import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.OrientingPedestrian
+import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.TimeDistribution
+import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.model.interfaces.graph.GraphEdge
 import kotlin.math.pow
 
@@ -24,8 +28,8 @@ import kotlin.math.pow
  *
  * @param P  the [Position] type and [Vector] type for the space the pedestrian is inside.
  * @param A  the transformations supported by the shapes in this space.
- * @param N1 the type of nodes of the [envGraph].
- * @param E1 the type of edges of the [envGraph].
+ * @param N1 the type of nodes of the [environmentGraph].
+ * @param E1 the type of edges of the [environmentGraph].
  * @param N2 the type of landmarks of the pedestrian's cognitive map.
  * @param E2 the type of edges of the pedestrian's cognitive map.
  * @param T  the concentration type.
@@ -34,10 +38,25 @@ import kotlin.math.pow
  * is stored in the edges of the cognitive map.
  */
 abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 : ConvexGeometricShape<P, A>, E1 : GraphEdge<N1>, N2: ConvexGeometricShape<P, A>, E2 : GraphEdge<N2>, T>(
-    private val env: Environment<T, P>,
-    private val pedestrian: OrientingPedestrian<P, A, N2, E2, T>,
+    /**
+     * The environment the pedestrian is into.
+     */
+    protected val environment: Environment<T, P>,
+    /**
+     * The pedestrian holder of this behavior.
+     */
+    protected val pedestrian: OrientingPedestrian<P, A, N2, E2, T>,
     timeDistribution: TimeDistribution<T>,
-    private val envGraph: NavigationGraph<P, A, N1, E1>
+    /**
+     * A navigation graph describing the environment. Nodes are [ConvexGeometricShape]s
+     * that should describe the walkable areas of the environment (i.e. the areas of the
+     * environment that are freely traversable by agents). Edges represent the connection
+     * between such areas. Additionally, a [NavigationGraph] can store some destinations
+     * which will be considered as possible final destinations.
+     * Note that the pedestrian's perceptional capabilities are limited to the walkable area
+     * he/she is into.
+     */
+    protected val environmentGraph: NavigationGraph<P, A, N1, E1>
 ) : AbstractReaction<T>(pedestrian, timeDistribution) where P : Position<P>, P : Vector<P> {
 
     companion object {
@@ -53,7 +72,7 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
      */
     private val route: MutableList<N2> by lazy {
         with(pedestrian.cognitiveMap) {
-            val currPos = env.getPosition(pedestrian)
+            val currPos = environment.getPosition(pedestrian)
             /*
              * Landmarks and destinations are sorted by the distance from the
              * pedestrian current position as the crow flies.
@@ -89,11 +108,11 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
         }
     }
     /*
-     * The room the pedestrian is into.
+     * The room (or walkable area) the pedestrian is into.
      */
     private lateinit var currRoom: N1
     /*
-     * The room the pedestrian is heading to.
+     * The room (or walkable area) the pedestrian is heading to.
      */
     private lateinit var nextRoom: N1
     /*
@@ -115,6 +134,10 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
          */
         NEW_ROOM,
         /**
+         * There is one unusual case in which the pedestrian cannot locate itself
+         * inside any room of the [environmentGraph], and decides to try to reach
+         * the closest edge possible. In such case, [currRoom] won't be initialised
+         * yet.
          */
         MOVING_TO_DOOR,
         /**
@@ -135,7 +158,7 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
     /**
      * This behavior is organised as a finite state machine
      */
-    protected var state: State = State.START
+    private var state: State = State.START
 
     /**
      */
@@ -148,10 +171,10 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
     /**
      */
     override fun execute() {
-        var currPos = env.getPosition(pedestrian)
+        var currPos = environment.getPosition(pedestrian)
         when (state) {
             State.START -> {
-                with (envGraph.nodeContaining(currPos)) {
+                with (environmentGraph.nodeContaining(currPos)) {
                     if (this != null) {
                         state = State.NEW_ROOM
                     }
@@ -161,8 +184,8 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
                      * to enter one. If this isn't possible, it simply won't move.
                      */
                     else {
-                        val closestDoor = envGraph.nodes()
-                            .flatMap { envGraph.edgesFrom(it) }
+                        val closestDoor = environmentGraph.nodes()
+                            .flatMap { environmentGraph.edgesFrom(it) }
                             .map { it to computeSubdestination(it) }
                             .minBy { it.second.getDistanceTo(currPos) }
                         if (closestDoor != null) {
@@ -180,10 +203,10 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
                 currRoom = if (::nextRoom.isInitialized && nextRoom.contains(currPos)) {
                     nextRoom
                 } else {
-                    envGraph.nodes().first { it.contains(currPos) }
+                    environmentGraph.nodes().first { it.contains(currPos) }
                 }
                 pedestrian.registerVisit(currRoom)
-                with (envGraph.destinationsWithin(currRoom)) {
+                with (environmentGraph.destinationsWithin(currRoom)) {
                     if (isNotEmpty()) {
                         route.clear()
                         subdestination = first()
@@ -205,7 +228,7 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
                 } else {
                     null
                 }
-                val edge = envGraph.edgesFrom(currRoom)
+                val edge = environmentGraph.edgesFrom(currRoom)
                     .minWith(
                         compareBy({
                             weight(it, rankings?.get(it))
@@ -231,8 +254,8 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
             }
             State.MOVING_TO_DOOR, State.CROSSING_DOOR, State.MOVING_TO_FINAL -> {
                 moveTowards(subdestination, if (::currRoom.isInitialized) currRoom else null)
-                currPos = env.getPosition(pedestrian)
-                if (envGraph.nodes().any { (!::currRoom.isInitialized || it != currRoom) && it.contains(currPos) }) {
+                currPos = environment.getPosition(pedestrian)
+                if (environmentGraph.nodes().any { (!::currRoom.isInitialized || it != currRoom) && it.contains(currPos) }) {
                     state = State.NEW_ROOM
                 } else if (state != State.CROSSING_DOOR) {
                     val arrived = currPos.getDistanceTo(subdestination) <= MIN_DISTANCE
@@ -293,21 +316,42 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
      * obstacle is placed between him and such position).
      */
     protected open fun moveTowards(target: P, currentRoom: N1?) {
-        Seek(env, this, pedestrian, *target.cartesianCoordinates).execute()
+        Seek(environment, this, pedestrian, *target.cartesianCoordinates).execute()
     }
 
     /**
-     * Weights an edge.
+     * Weights an edge. The one with minimum weight will be crossed.
+     * @param rank is the rank given to the edge when assessing its suitability to
+     * reach the next subdestination. See [cognitiveMapFactor].
      */
     protected open fun weight(edge: E1, rank: Int?): Double =
         volatileMemoryFactor(edge) * cognitiveMapFactor(rank) * finalDestinationFactor(edge) * impasseFactor(edge)
 
+    /*
+     * Computes the factor deriving from the pedestrian's volatile memory for the
+     * weighting system. It is computed as 2^k where k is the number of visits
+     * to the area the assessed edge leads to.
+     */
     private fun volatileMemoryFactor(edge: E1) = 2.0.pow(pedestrian.volatileMemory[edge.to] ?: 0)
 
+    /*
+     * Computes the factor deriving from the pedestrian's cognitive map for the
+     * weighting system. It is computed as 1 - 0.5^i where i is the rank given
+     * to the edge assessing its suitability to reach the next subdestination.
+     * If rank is null, the factor is 1.
+     */
     private fun cognitiveMapFactor(rank: Int?) = 1.0 - (rank?.let { 0.5.pow(it) } ?: 0.0)
 
-    private fun finalDestinationFactor(edge: E1) = if (envGraph.containsDestination(edge.to)) 0.1 else 1.0
+    /*
+     * Computes the factor for the weighting system taking into account final
+     * destinations discovered while travelling.
+     */
+    private fun finalDestinationFactor(edge: E1) = if (environmentGraph.containsDestination(edge.to)) 0.1 else 1.0
 
+    /*
+     * Computes the factor for the weighting system taking into account whereas
+     * the assessed edge leads to an impasse or not.
+     */
     private fun impasseFactor(edge: E1) = if (isImpasse(edge.to)) 10.0 else 1.0
 
     /*
@@ -323,5 +367,5 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
      */
     private fun isImpasse(area: N1): Boolean =
         pedestrian.volatileMemory.contains(area) &&
-            envGraph.edgesFrom(area).map { it.to }.distinct().count() <= 1
+            environmentGraph.edgesFrom(area).map { it.to }.distinct().count() <= 1
 }

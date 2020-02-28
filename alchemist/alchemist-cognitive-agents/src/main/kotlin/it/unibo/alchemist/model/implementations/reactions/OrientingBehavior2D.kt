@@ -2,18 +2,37 @@ package it.unibo.alchemist.model.implementations.reactions
 
 import it.unibo.alchemist.model.implementations.actions.Seek
 import it.unibo.alchemist.model.implementations.actions.Seek2D
-import it.unibo.alchemist.model.implementations.geometry.*
+import it.unibo.alchemist.model.implementations.geometry.closestPointTo
+import it.unibo.alchemist.model.implementations.geometry.intersectionLines
+import it.unibo.alchemist.model.implementations.geometry.intersectsBoundaryExcluded
+import it.unibo.alchemist.model.implementations.geometry.midPoint
+import it.unibo.alchemist.model.implementations.geometry.toVector
+import it.unibo.alchemist.model.implementations.geometry.resize
+import it.unibo.alchemist.model.implementations.geometry.contains
+import it.unibo.alchemist.model.implementations.geometry.magnitude
+import it.unibo.alchemist.model.implementations.geometry.intersection
+import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionTypes
+import it.unibo.alchemist.model.implementations.geometry.angleBetween
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.*
 import it.unibo.alchemist.model.interfaces.graph.GraphEdge
 import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.*
 import it.unibo.alchemist.model.implementations.graph.builder.GraphBuilder
 import it.unibo.alchemist.model.implementations.graph.builder.addEdge
 import it.unibo.alchemist.model.implementations.graph.builder.addUndirectedEdge
 import it.unibo.alchemist.model.implementations.graph.dijkstraShortestPath
 import it.unibo.alchemist.model.interfaces.graph.GraphEdgeWithData
 import it.unibo.alchemist.model.implementations.graph.Euclidean2DCrossing
+import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.OrientingPedestrian
+import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.TimeDistribution
+import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.model.interfaces.Reaction
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexEuclidean2DShape
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSegment
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
 import java.awt.Shape
 import kotlin.math.PI
 import kotlin.math.abs
@@ -21,35 +40,37 @@ import kotlin.math.pow
 
 /**
  * An [AbstractOrientingBehavior] in an euclidean bidimensional space.
- * Accepts an [envGraph] whose nodes are [ConvexPolygon]s and edges store
+ * Accepts an [environmentGraph] whose nodes are [ConvexPolygon]s and edges store
  * information regarding the shape of each passage. In particular, edges of
- * the [envGraph] are [GraphEdgeWithData] storing an [Euclidean2DSegment].
+ * the [environmentGraph] are [GraphEdgeWithData] storing an [Euclidean2DSegment].
  * Similarly to an [Euclidean2DCrossing], given an edge e connecting convex
  * polygon a to convex polygon b, the segment provided by e MUST belong to
  * the boundary of a, but can or cannot belong the boundary of b.
+ * Additionally, this class redefines [moveTowards] in order to perform a more
+ * sophisticated movement, see [Seek2D].
  *
- * @param N1 the type of nodes of the [envGraph].
- * @param E1 the type of edges of the [envGraph].
+ * @param N1 the type of nodes of the [environmentGraph].
+ * @param E1 the type of edges of the [environmentGraph].
  * @param N2 the type of landmarks of the pedestrian's cognitive map.
  * @param E2 the type of edges of the pedestrian's cognitive map.
  * @param T  the concentration type.
  */
 open class OrientingBehavior2D<N1 : ConvexPolygon, E1 : GraphEdgeWithData<N1, Euclidean2DSegment>, N2: ConvexEuclidean2DShape, E2 : GraphEdge<N2>, T>(
-    private val env: Environment<T, Euclidean2DPosition>,
-    private val pedestrian: OrientingPedestrian<Euclidean2DPosition, Euclidean2DTransformation, N2, E2, T>,
+    environment: Environment<T, Euclidean2DPosition>,
+    pedestrian: OrientingPedestrian<Euclidean2DPosition, Euclidean2DTransformation, N2, E2, T>,
     timeDistribution: TimeDistribution<T>,
-    private val envGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, N1, E1>
-) : AbstractOrientingBehavior<Euclidean2DPosition, Euclidean2DTransformation, N1, E1, N2, E2, T>(env, pedestrian, timeDistribution, envGraph) {
+    environmentGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, N1, E1>
+) : AbstractOrientingBehavior<Euclidean2DPosition, Euclidean2DTransformation, N1, E1, N2, E2, T>(environment, pedestrian, timeDistribution, environmentGraph) {
 
     override fun moveTowards(target: Euclidean2DPosition, currentRoom: N1?) {
         if (currentRoom == null) {
-            Seek2D(env, this, pedestrian, *target.cartesianCoordinates).execute()
+            Seek2D(environment, this, pedestrian, *target.cartesianCoordinates).execute()
         } else {
-            val currPos = env.getPosition(pedestrian)
+            val currPos = environment.getPosition(pedestrian)
             /*
              * Sophisticated seek is used to find the desired movement of the pedestrian.
              */
-            val movement = Seek2D(env, this, pedestrian, *target.cartesianCoordinates).nextPosition
+            val movement = Seek2D(environment, this, pedestrian, *target.cartesianCoordinates).nextPosition
             var nextPos = currPos + movement
             /*
              * If such movement leads outside the current room and not through the desired
@@ -59,10 +80,11 @@ open class OrientingBehavior2D<N1 : ConvexPolygon, E1 : GraphEdgeWithData<N1, Eu
                 nextPos = adjustMovement(currPos, nextPos, currentRoom)
             }
             /*
-             * Normal seek is used to actually move, this because sophisticated seek may bring
-             * the pedestrian outside the current room anyway and we don't want it.
+             * Normal seek is used to actually move, this because sophisticated seek may anyway
+             * bring the pedestrian outside the current room crossing an edge which is not the
+             * target one and we don't want it.
              */
-            Seek(env, this, pedestrian, *nextPos.cartesianCoordinates).execute()
+            Seek(environment, this, pedestrian, *nextPos.cartesianCoordinates).execute()
         }
     }
 
@@ -76,7 +98,7 @@ open class OrientingBehavior2D<N1 : ConvexPolygon, E1 : GraphEdgeWithData<N1, Eu
         /*
          * Maps each edge's midpoint to the correspondent edge object
          */
-        val edges = envGraph.edgesFrom(currentRoom).map { it.data.midPoint() to it }
+        val edges = environmentGraph.edgesFrom(currentRoom).map { it.data.midPoint() to it }
         currentRoom.vertices().indices
             .map { currentRoom.getEdge(it) }
             .forEach { s ->
@@ -100,7 +122,7 @@ open class OrientingBehavior2D<N1 : ConvexPolygon, E1 : GraphEdgeWithData<N1, Eu
                 graph.dijkstraShortestPath(it.first, destination, { e -> e.from.getDistanceTo(e.to)})?.weight
             }
             .map { it.second }
-        return envGraph.edgesFrom(currentRoom).map { it to sorted.indexOf(it) + 1 }.toMap()
+        return environmentGraph.edgesFrom(currentRoom).map { it to sorted.indexOf(it) + 1 }.toMap()
     }
 
     /*
@@ -114,7 +136,7 @@ open class OrientingBehavior2D<N1 : ConvexPolygon, E1 : GraphEdgeWithData<N1, Eu
              * The ideal movement the pedestrian would perform connects its current
              * position to the centroid of the next room.
              */
-            val movement = Pair(targetEdge.to.centroid, env.getPosition(pedestrian))
+            val movement = Pair(targetEdge.to.centroid, environment.getPosition(pedestrian))
             /*
              * The sub-destination is computed as the point belonging to the crossing
              * which is closest to the intersection between the lines defined by movement
@@ -144,9 +166,9 @@ open class OrientingBehavior2D<N1 : ConvexPolygon, E1 : GraphEdgeWithData<N1, Eu
     public override fun weight(edge: E1, rank: Int?): Double = super.weight(edge, rank) * congestionFactor(edge.to)
 
     private fun congestionFactor(room: N1): Double {
-        val nPedestrian = env.nodes
+        val nPedestrian = environment.nodes
             .filterIsInstance<Pedestrian<T>>()
-            .filter { room.contains(env.getPosition(it)) }
+            .filter { room.contains(environment.getPosition(it)) }
             .count()
         val density = (pedestrian.shape.diameter.pow(2) * nPedestrian) / room.asAwtShape().area()
         return density + 1
@@ -158,7 +180,7 @@ open class OrientingBehavior2D<N1 : ConvexPolygon, E1 : GraphEdgeWithData<N1, Eu
     override fun cloneOnNewNode(n: Node<T>?, currentTime: Time?): Reaction<T> {
         try {
             n as OrientingPedestrian<Euclidean2DPosition, Euclidean2DTransformation, N1, E1, T>
-            return OrientingBehavior2D(env, n, timeDistribution, envGraph)
+            return OrientingBehavior2D(environment, n, timeDistribution, environmentGraph)
         } catch (e: ClassCastException) {
             throw IllegalArgumentException("node not compatible")
         }
@@ -186,7 +208,7 @@ open class OrientingBehavior2D<N1 : ConvexPolygon, E1 : GraphEdgeWithData<N1, Eu
             .minBy { it.getDistanceTo(nextPos) } ?: nextPos
 
     /*
-     * Checks whether the segment described by currPos - nextPos intersects the given edge.
+     * Checks whether the segment described by (currPos, nextPos) intersects the given edge.
      */
     private fun crosses(currPos: Euclidean2DPosition, nextPos: Euclidean2DPosition, targetEdge: E1): Boolean =
         intersection(Pair(currPos, nextPos), targetEdge.data).type == SegmentsIntersectionTypes.POINT

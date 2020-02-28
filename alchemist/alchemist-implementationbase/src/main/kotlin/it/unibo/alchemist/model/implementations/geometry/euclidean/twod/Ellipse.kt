@@ -8,7 +8,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTr
 import java.awt.geom.Ellipse2D
 
 /**
- * Adaptor of [java.awt.geom.Ellipse2D] to [ConvexEuclidean2DShape].
+ * Adapter of [java.awt.geom.Ellipse2D] to [ConvexEuclidean2DShape].
  */
 class Ellipse(
     private val ellipse: Ellipse2D

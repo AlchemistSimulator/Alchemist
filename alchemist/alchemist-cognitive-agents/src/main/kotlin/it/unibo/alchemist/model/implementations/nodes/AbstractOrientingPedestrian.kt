@@ -43,7 +43,11 @@ abstract class AbstractOrientingPedestrian<P, A : GeometricTransformation<P>, N1
      */
     protected val randomGenerator: RandomGenerator,
     /**
-     * A navigation graph describing the walkable areas of the environment.
+     * A navigation graph describing the environment. Nodes are [ConvexGeometricShape]s
+     * that should describe the walkable areas of the environment (i.e. the areas of the
+     * environment that are freely traversable by agents). Edges represent the connection
+     * between such areas. Additionally, a [NavigationGraph] can store some destinations
+     * which will be considered as possible final destinations by this pedestrian.
      */
     protected val environmentGraph: NavigationGraph<P, A, N1, E1>,
     environment: Environment<T, P>,

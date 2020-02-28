@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.graph.GraphEdge
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
- * An orienting cognitive pedestrian in an [EuclideanPhysics2DEnvironment].
+ * A cognitive [OrientingPedestrian2D] in an [EuclideanPhysics2DEnvironment].
  *
  * @param N1 the type of nodes of the [environmentGraph].
  * @param E1 the type of edges of the [environmentGraph].

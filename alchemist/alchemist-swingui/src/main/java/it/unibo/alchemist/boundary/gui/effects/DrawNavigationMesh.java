@@ -128,19 +128,17 @@ public class DrawNavigationMesh implements Effect {
         if (toBeDrawn && !envStartX.equals("") && !envStartY.equals("") && !envEndX.equals("") && !envEndY.equals("")
                 && env instanceof Environment2DWithObstacles
                 && env.makePosition(0.0, 0.0) instanceof Euclidean2DPosition) {
-            if (toBeDrawn) {
-                final Double startX = Double.parseDouble(envStartX);
-                final Double startY = Double.parseDouble(envStartY);
-                final Double endX = Double.parseDouble(envEndX);
-                final Double endY = Double.parseDouble(envEndY);
-                envGraph = new Deaccon2D(Integer.parseInt(nSeeds)).generateEnvGraph(
-                        new Point2D.Double(startX, startY),
-                        Math.abs(endX - startX),
-                        Math.abs(endY - startY),
-                        ((Environment2DWithObstacles<?, T, Euclidean2DPosition>) env).getObstacles(),
-                        new ArrayList());
-                toBeDrawn = false;
-            }
+            final Double startX = Double.parseDouble(envStartX);
+            final Double startY = Double.parseDouble(envStartY);
+            final Double endX = Double.parseDouble(envEndX);
+            final Double endY = Double.parseDouble(envEndY);
+            envGraph = new Deaccon2D(Integer.parseInt(nSeeds)).generateEnvGraph(
+                    new Point2D.Double(startX, startY),
+                    Math.abs(endX - startX),
+                    Math.abs(endY - startY),
+                    ((Environment2DWithObstacles<?, T, Euclidean2DPosition>) env).getObstacles(),
+                    new ArrayList());
+            toBeDrawn = false;
         }
     }
 

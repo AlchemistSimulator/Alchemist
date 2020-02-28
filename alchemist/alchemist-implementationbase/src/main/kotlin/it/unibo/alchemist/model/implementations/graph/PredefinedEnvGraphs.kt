@@ -1,8 +1,8 @@
-package it.unibo.alchemist.model.implementations.geometry.graph
+package it.unibo.alchemist.model.implementations.graph
 
 import it.unibo.alchemist.model.implementations.geometry.navigationmeshes.deaccon.Deaccon2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.geometry.graph.NavigationGraph
+import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
 import java.awt.Shape

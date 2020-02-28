@@ -1,4 +1,4 @@
-package it.unibo.alchemist.model.interfaces.geometry.graph
+package it.unibo.alchemist.model.interfaces.graph
 
 /**
  * Models a basic directed edge.

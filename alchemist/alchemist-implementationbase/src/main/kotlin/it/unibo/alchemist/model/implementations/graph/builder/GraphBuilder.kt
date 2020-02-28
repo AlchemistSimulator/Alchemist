@@ -1,9 +1,9 @@
-package it.unibo.alchemist.model.implementations.geometry.graph.builder
+package it.unibo.alchemist.model.implementations.graph.builder
 
-import it.unibo.alchemist.model.implementations.geometry.graph.GraphImpl
-import it.unibo.alchemist.model.interfaces.geometry.graph.Graph
-import it.unibo.alchemist.model.interfaces.geometry.graph.GraphEdge
-import it.unibo.alchemist.model.interfaces.geometry.graph.GraphEdgeWithData
+import it.unibo.alchemist.model.implementations.graph.GraphImpl
+import it.unibo.alchemist.model.interfaces.graph.Graph
+import it.unibo.alchemist.model.interfaces.graph.GraphEdge
+import it.unibo.alchemist.model.interfaces.graph.GraphEdgeWithData
 import java.lang.IllegalArgumentException
 
 /**
@@ -42,27 +42,27 @@ open class GraphBuilder<N, E : GraphEdge<N>>(
 
     /**
      * @returns true if the edge was added, false otherwise
-     * (e.g. it was already present an edge connecting such
+     * (edge.g. it was already present an edge connecting such
      * nodes).
      */
-    open fun addEdge(e: E): Boolean {
+    open fun addEdge(edge: E): Boolean {
         /*
          * Each node should be added to the key set of the adjacency list
          * (even if it has no edges departing from it), otherwise it won't
          * be considered when the nodes() function is called.
          */
-        if (adjacencyList[e.to] == null) {
-            adjacencyList[e.to] = mutableListOf()
+        if (adjacencyList[edge.to] == null) {
+            adjacencyList[edge.to] = mutableListOf()
         }
-        adjacencyList[e.from]?.let {
-            return if (!it.map { e -> e.to }.contains(e.to)) {
-                it.add(e)
+        adjacencyList[edge.from]?.let {
+            return if (!it.map { e -> e.to }.contains(edge.to)) {
+                it.add(edge)
                 true
             } else {
                 false
             }
         }
-        adjacencyList[e.from] = mutableListOf(e)
+        adjacencyList[edge.from] = mutableListOf(edge)
         return true
     }
 
@@ -78,10 +78,10 @@ fun <N> GraphBuilder<N, GraphEdge<N>>.addEdge(from: N, to: N): Boolean =
     addEdge(GraphEdge(from, to))
 
 /**
- * Adds two edges: one connecting n1 to n2 and another connecting n2 to n1.
+ * Adds two edges: one connecting node1 to node2 and another connecting node2 to node1.
  */
-fun <N> GraphBuilder<N, GraphEdge<N>>.addUndirectedEdge(n1: N, n2: N): Boolean =
-    addEdge(n1, n2) || addEdge(n2, n1)
+fun <N> GraphBuilder<N, GraphEdge<N>>.addUndirectedEdge(node1: N, node2: N): Boolean =
+    addEdge(node1, node2) || addEdge(node2, node1)
 
 /**
  */
@@ -89,7 +89,7 @@ fun <N, D> GraphBuilder<N, GraphEdgeWithData<N, D>>.addEdge(from: N, to: N, data
     addEdge(GraphEdgeWithData(from, to, data))
 
 /**
- * Adds two edges: one connecting n1 to n2 and another connecting n2 to n1.
+ * Adds two edges: one connecting node1 to node2 and another connecting node2 to node1.
  */
-fun <N, D> GraphBuilder<N, GraphEdgeWithData<N, D>>.addUndirectedEdge(n1: N, n2: N, data: D): Boolean =
-    addEdge(n1, n2, data) || addEdge(n2, n1, data)
+fun <N, D> GraphBuilder<N, GraphEdgeWithData<N, D>>.addUndirectedEdge(node1: N, node2: N, data: D): Boolean =
+    addEdge(node1, node2, data) || addEdge(node2, node1, data)

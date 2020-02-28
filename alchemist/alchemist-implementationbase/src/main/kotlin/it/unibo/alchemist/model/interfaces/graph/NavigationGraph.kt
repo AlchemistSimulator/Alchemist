@@ -1,4 +1,4 @@
-package it.unibo.alchemist.model.interfaces.geometry.graph
+package it.unibo.alchemist.model.interfaces.graph
 
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation

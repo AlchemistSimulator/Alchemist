@@ -1,8 +1,8 @@
-package it.unibo.alchemist.model.implementations.geometry.graph
+package it.unibo.alchemist.model.implementations.graph
 
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSegment
-import it.unibo.alchemist.model.interfaces.geometry.graph.GraphEdgeWithData
+import it.unibo.alchemist.model.interfaces.graph.GraphEdgeWithData
 
 /**
  * Defines a connection between two [ConvexPolygon]s represented as an [Euclidean2DSegment].

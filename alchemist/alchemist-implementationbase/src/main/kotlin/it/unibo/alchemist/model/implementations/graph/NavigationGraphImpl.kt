@@ -1,10 +1,10 @@
-package it.unibo.alchemist.model.implementations.geometry.graph
+package it.unibo.alchemist.model.implementations.graph
 
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import it.unibo.alchemist.model.interfaces.geometry.graph.GraphEdge
-import it.unibo.alchemist.model.interfaces.geometry.graph.NavigationGraph
+import it.unibo.alchemist.model.interfaces.graph.GraphEdge
+import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
 
 /**
  * An implementation of [NavigationGraph].

@@ -1,8 +1,8 @@
 package it.unibo.alchemist.model.implementations.nodes
 
-import it.unibo.alchemist.model.implementations.geometry.graph.*
-import it.unibo.alchemist.model.implementations.geometry.graph.builder.NavigationGraphBuilder
-import it.unibo.alchemist.model.implementations.geometry.graph.builder.addEdge
+import it.unibo.alchemist.model.implementations.graph.*
+import it.unibo.alchemist.model.implementations.graph.builder.NavigationGraphBuilder
+import it.unibo.alchemist.model.implementations.graph.builder.addEdge
 import it.unibo.alchemist.model.implementations.geometry.liesBetween
 import it.unibo.alchemist.model.implementations.utils.shuffled
 import it.unibo.alchemist.model.interfaces.Position
@@ -12,18 +12,19 @@ import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import it.unibo.alchemist.model.interfaces.geometry.graph.GraphEdge
-import it.unibo.alchemist.model.interfaces.geometry.graph.GraphEdgeWithData
-import it.unibo.alchemist.model.interfaces.geometry.graph.NavigationGraph
+import it.unibo.alchemist.model.interfaces.graph.GraphEdge
+import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * An abstract orienting pedestrian, defining an algorithm capable of generating
  * a [cognitiveMap], provided a [NavigationGraph] describing the environment.
+ * The creation of landmarks is left to subclasses via factory method, see
+ * [generateLandmarkWithin].
  *
  * @param P  the [Position] type and [Vector] type for the space this pedestrian is inside.
  * @param A  the transformations supported by the shapes in this space.
- * @param N1 the type of nodes in the [envGraph].
+ * @param N1 the type of nodes of the [envGraph].
  * @param E1 the type of edges of the [envGraph].
  * @param N2 the type of landmarks in the pedestrian's [cognitiveMap].
  * @param T  the concentration type.
@@ -34,12 +35,12 @@ import org.apache.commons.math3.random.RandomGenerator
  */
 abstract class AbstractOrientingPedestrian<P, A : GeometricTransformation<P>, N1 : ConvexGeometricShape<P, A>, E1 : GraphEdge<N1>, N2: ConvexGeometricShape<P, A>, T>(
     final override val knowledgeDegree: Double,
-    private val rg: RandomGenerator,
+    private val randomGenerator: RandomGenerator,
     private val envGraph: NavigationGraph<P, A, N1, E1>,
     env: Environment<T, P>,
     group: PedestrianGroup<T>? = null
 ) : OrientingPedestrian<P, A, N2, GraphEdge<N2>, T>,
-    HomogeneousPedestrianImpl<T, P>(env, rg, group) where P : Position<P>, P : Vector<P> {
+    HomogeneousPedestrianImpl<T, P>(env, randomGenerator, group) where P : Position<P>, P : Vector<P> {
 
     init {
         require(knowledgeDegree.liesBetween(0.0, 1.0)) { "knowledge degree must be in [0,1]" }
@@ -74,7 +75,7 @@ abstract class AbstractOrientingPedestrian<P, A : GeometricTransformation<P>, N1
          */
         val rooms = envGraph.nodes()
             .filter { it.diameter > shape.diameter * MIN_AREA || envGraph.containsDestination(it) }
-            .shuffled(rg)
+            .shuffled(randomGenerator)
             .toList()
             .takePercentage(knowledgeDegree)
             .toMutableList()
@@ -104,7 +105,7 @@ abstract class AbstractOrientingPedestrian<P, A : GeometricTransformation<P>, N1
                     rooms[landmarks.indexOf(it.from)],
                     rooms[landmarks.indexOf(it.to)],
                     { 1.0 }
-                )!!.weight
+                )?.weight ?: it.from.centroid.getDistanceTo(it.to.centroid)
             }
     }
 

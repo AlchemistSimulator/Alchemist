@@ -3,8 +3,8 @@ package it.unibo.alchemist.model.interfaces
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import it.unibo.alchemist.model.interfaces.geometry.graph.GraphEdge
-import it.unibo.alchemist.model.interfaces.geometry.graph.OrientingAgent
+import it.unibo.alchemist.model.interfaces.graph.GraphEdge
+import it.unibo.alchemist.model.interfaces.graph.OrientingAgent
 
 /**
  * A pedestrian capable of orienting itself.

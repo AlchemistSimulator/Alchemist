@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.interfaces.geometry.graph
+package it.unibo.alchemist.model.interfaces.graph
 
 
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape

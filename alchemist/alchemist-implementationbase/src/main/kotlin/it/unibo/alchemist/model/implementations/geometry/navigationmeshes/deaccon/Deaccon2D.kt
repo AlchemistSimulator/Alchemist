@@ -1,14 +1,11 @@
 package it.unibo.alchemist.model.implementations.geometry.navigationmeshes.deaccon
 
 import it.unibo.alchemist.model.implementations.geometry.*
-import it.unibo.alchemist.model.implementations.geometry.graph.Euclidean2DCrossing
-import it.unibo.alchemist.model.implementations.geometry.graph.NavigationGraphImpl
-import it.unibo.alchemist.model.implementations.geometry.graph.builder.GraphBuilder
-import it.unibo.alchemist.model.implementations.geometry.graph.builder.NavigationGraphBuilder
-import it.unibo.alchemist.model.implementations.geometry.graph.builder.addEdge
+import it.unibo.alchemist.model.implementations.graph.Euclidean2DCrossing
+import it.unibo.alchemist.model.implementations.graph.builder.NavigationGraphBuilder
+import it.unibo.alchemist.model.implementations.graph.builder.addEdge
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.geometry.graph.NavigationGraph
-import it.unibo.alchemist.model.interfaces.geometry.graph.GraphEdgeWithData
+import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSegment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation

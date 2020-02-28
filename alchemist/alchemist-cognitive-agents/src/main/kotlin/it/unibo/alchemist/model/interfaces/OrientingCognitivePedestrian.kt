@@ -3,7 +3,7 @@ package it.unibo.alchemist.model.interfaces
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import it.unibo.alchemist.model.interfaces.geometry.graph.GraphEdge
+import it.unibo.alchemist.model.interfaces.graph.GraphEdge
 
 /**
  * A heterogeneous pedestrian with cognitive and orienting capabilities.

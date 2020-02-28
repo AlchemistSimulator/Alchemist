@@ -1,7 +1,7 @@
-package it.unibo.alchemist.model.implementations.geometry.graph
+package it.unibo.alchemist.model.implementations.graph
 
-import it.unibo.alchemist.model.interfaces.geometry.graph.Graph
-import it.unibo.alchemist.model.interfaces.geometry.graph.GraphEdge
+import it.unibo.alchemist.model.interfaces.graph.Graph
+import it.unibo.alchemist.model.interfaces.graph.GraphEdge
 
 /**
  * An implementation of [Graph].

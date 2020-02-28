@@ -1,3 +1,12 @@
+/*
+ * Copyright (C) 2010-2020, Danilo Pianini and contributors
+ * listed in the main project's alchemist/build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 package it.unibo.alchemist.boundary.gui.effects;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -10,27 +19,31 @@ import org.danilopianini.view.ExportForGUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 /**
+ * Draws the paths took by pedestrians.
  */
 public class DrawPedestrianPath implements Effect {
 
     /**
-     *
      */
     protected static final int MAX_COLOUR_VALUE = 255;
     /**
-     *
      */
     protected static final int INITIAL_ALPHA_DIVIDER = 3;
     /**
-     *
      */
     protected static final Logger L = LoggerFactory.getLogger(DrawShape.class);
+    /**
+     * The paths will be drawn as circles of this diameter.
+     */
+    protected static final int DIAMETER = 5;
     private static final long serialVersionUID = 1L;
     @ExportForGUI(nameToExport = "A")
     private RangedInteger alpha = new RangedInteger(0, MAX_COLOUR_VALUE, MAX_COLOUR_VALUE / INITIAL_ALPHA_DIVIDER);
@@ -74,7 +87,7 @@ public class DrawPedestrianPath implements Effect {
                 g.setColor(colorCache);
                 path.forEach(p -> {
                     final Point viewP = ((IWormhole2D<Position2D<?>>) wormhole).getViewPoint(p);
-                    g.fillOval(viewP.x, viewP.y, 5, 5);
+                    g.fillOval(viewP.x, viewP.y, DIAMETER, DIAMETER);
                 });
             }
         }

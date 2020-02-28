@@ -1,3 +1,12 @@
+/*
+ * Copyright (C) 2010-2020, Danilo Pianini and contributors
+ * listed in the main project's alchemist/build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 package it.unibo.alchemist.boundary.gui.effects;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -28,7 +37,8 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 /**
- * @param <Euclidean2DSegment>
+ * Draws the navigation mesh of an environment, using the Deaccon algorithm.
+ * @param <Euclidean2DSegment> a kotlin typealias representing a segment.
  */
 public class DrawNavigationMesh<Euclidean2DSegment> implements Effect {
 
@@ -292,5 +302,19 @@ public class DrawNavigationMesh<Euclidean2DSegment> implements Effect {
      */
     public void setEnvEndY(final String envEndY) {
         this.envEndY = envEndY;
+    }
+
+    /**
+     * @return if the underlying graph should be drawn
+     */
+    public boolean isDrawGraph() {
+        return drawGraph;
+    }
+
+    /**
+     * @param drawGraph if the underlying graph should be drawn
+     */
+    public void setDrawGraph(final boolean drawGraph) {
+        this.drawGraph = drawGraph;
     }
 }

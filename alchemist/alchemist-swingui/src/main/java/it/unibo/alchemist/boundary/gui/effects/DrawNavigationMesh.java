@@ -11,7 +11,6 @@ package it.unibo.alchemist.boundary.gui.effects;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
-import it.unibo.alchemist.model.implementations.graph.PredefinedEnvGraphsKt;
 import it.unibo.alchemist.model.implementations.geometry.navigationmeshes.deaccon.Deaccon2D;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Node;

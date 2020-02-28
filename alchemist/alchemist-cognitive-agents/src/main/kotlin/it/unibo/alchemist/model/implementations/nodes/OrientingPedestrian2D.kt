@@ -21,20 +21,20 @@ import java.awt.geom.Rectangle2D
 /**
  * An orienting pedestrian in an euclidean bidimensional space.
  * This class defines the method responsible for the creation of landmarks: in
- * particular, it represents landmarks as ellipses and accepts an [envGraph]
+ * particular, it represents landmarks as [Ellipse]s and accepts an [environmentGraph]
  * whose nodes are [ConvexPolygon]s.
  *
- * @param N1 the type of nodes of the [envGraph].
- * @param E1 the type of edges of the [envGraph].
+ * @param N1 the type of nodes of the [environmentGraph].
+ * @param E1 the type of edges of the [environmentGraph].
  * @param T  the concentration type.
  */
 open class OrientingPedestrian2D<N1 : ConvexPolygon, E1 : GraphEdge<N1>, T>(
     knowledgeDegree: Double,
-    private val randomGenerator: RandomGenerator,
-    private val envGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, N1, E1>,
-    env: Environment<T, Euclidean2DPosition>,
+    randomGenerator: RandomGenerator,
+    environmentGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, N1, E1>,
+    environment: Environment<T, Euclidean2DPosition>,
     group: PedestrianGroup<T>? = null
-) : AbstractOrientingPedestrian<Euclidean2DPosition, Euclidean2DTransformation, N1, E1, Ellipse, T>(knowledgeDegree, randomGenerator, envGraph, env, group),
+) : AbstractOrientingPedestrian<Euclidean2DPosition, Euclidean2DTransformation, N1, E1, Ellipse, T>(knowledgeDegree, randomGenerator, environmentGraph, environment, group),
     Pedestrian2D<T> {
 
     /*
@@ -56,13 +56,13 @@ open class OrientingPedestrian2D<N1 : ConvexPolygon, E1 : GraphEdge<N1>, T>(
         with(region) {
             val width = randomGenerator.nextDouble(MIN_SIDE, MAX_SIDE) * shape.diameter
             val height = randomGenerator.nextDouble(MIN_SIDE, MAX_SIDE) * shape.diameter
-            val isFinal = envGraph.containsDestination(this)
+            val isFinal = environmentGraph.containsDestination(this)
             /*
              * If is final, the center of the ellipse will be the destination (too simplistic,
              * can be modified in the future).
              */
             val origin = centroid.takeUnless { isFinal }
-                ?: envGraph.destinationsWithin(this).first() - Euclidean2DPosition(width / 2, height / 2)
+                ?: environmentGraph.destinationsWithin(this).first() - Euclidean2DPosition(width / 2, height / 2)
             val frame = Rectangle2D.Double(origin.x, origin.y, width, height)
             while (!contains(frame)) {
                 /*

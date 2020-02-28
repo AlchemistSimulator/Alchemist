@@ -15,20 +15,20 @@ import org.apache.commons.math3.random.RandomGenerator
 /**
  * An orienting cognitive pedestrian in an [EuclideanPhysics2DEnvironment].
  *
- * @param N1 the type of nodes of the [envGraph].
- * @param E1 the type of edges of the [envGraph].
+ * @param N1 the type of nodes of the [environmentGraph].
+ * @param E1 the type of edges of the [environmentGraph].
  * @param T  the concentration type.
  */
 class OrientingCognitivePedestrian2D<N1 : ConvexPolygon, E1 : GraphEdge<N1>, T> @JvmOverloads constructor(
     knowledgeDegree: Double,
     randomGenerator: RandomGenerator,
-    envGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, N1, E1>,
-    env: EuclideanPhysics2DEnvironment<T>,
+    environmentGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, N1, E1>,
+    environment: EuclideanPhysics2DEnvironment<T>,
     group: PedestrianGroup<T>? = null,
     override val age: Age,
     override val gender: Gender,
     danger: Molecule? = null
-) : OrientingPedestrian2D<N1, E1, T>(knowledgeDegree, randomGenerator, envGraph, env, group),
+) : OrientingPedestrian2D<N1, E1, T>(knowledgeDegree, randomGenerator, environmentGraph, environment, group),
     OrientingCognitivePedestrian<Euclidean2DPosition, Euclidean2DTransformation, Ellipse, GraphEdge<Ellipse>, T> {
 
     @JvmOverloads constructor(
@@ -57,11 +57,11 @@ class OrientingCognitivePedestrian2D<N1 : ConvexPolygon, E1 : GraphEdge<N1>, T> 
      * The cognitive part of the pedestrian, composition is used due to the lack
      * of multiple inheritance.
      */
-    private val cognitive = CognitivePedestrianImpl(env, randomGenerator, age, gender, danger, group)
-    private val shape = shape(env)
+    private val cognitive = CognitivePedestrianImpl(environment, randomGenerator, age, gender, danger, group)
+    private val shape = shape(environment)
 
     init {
-        senses += fieldOfView(env)
+        senses += fieldOfView(environment)
     }
 
     override val compliance = cognitive.compliance

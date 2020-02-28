@@ -24,8 +24,8 @@ import org.apache.commons.math3.random.RandomGenerator
  *
  * @param P  the [Position] type and [Vector] type for the space this pedestrian is inside.
  * @param A  the transformations supported by the shapes in this space.
- * @param N1 the type of nodes of the [envGraph].
- * @param E1 the type of edges of the [envGraph].
+ * @param N1 the type of nodes of the [environmentGraph].
+ * @param E1 the type of edges of the [environmentGraph].
  * @param N2 the type of landmarks in the pedestrian's [cognitiveMap].
  * @param T  the concentration type.
  *
@@ -35,12 +35,17 @@ import org.apache.commons.math3.random.RandomGenerator
  */
 abstract class AbstractOrientingPedestrian<P, A : GeometricTransformation<P>, N1 : ConvexGeometricShape<P, A>, E1 : GraphEdge<N1>, N2: ConvexGeometricShape<P, A>, T>(
     final override val knowledgeDegree: Double,
-    private val randomGenerator: RandomGenerator,
-    private val envGraph: NavigationGraph<P, A, N1, E1>,
-    env: Environment<T, P>,
+    /**
+     */
+    protected val randomGenerator: RandomGenerator,
+    /**
+     * A navigation graph describing the walkable areas of the environment.
+     */
+    protected val environmentGraph: NavigationGraph<P, A, N1, E1>,
+    environment: Environment<T, P>,
     group: PedestrianGroup<T>? = null
 ) : OrientingPedestrian<P, A, N2, GraphEdge<N2>, T>,
-    HomogeneousPedestrianImpl<T, P>(env, randomGenerator, group) where P : Position<P>, P : Vector<P> {
+    HomogeneousPedestrianImpl<T, P>(environment, randomGenerator, group) where P : Position<P>, P : Vector<P> {
 
     init {
         require(knowledgeDegree.liesBetween(0.0, 1.0)) { "knowledge degree must be in [0,1]" }
@@ -73,8 +78,8 @@ abstract class AbstractOrientingPedestrian<P, A : GeometricTransformation<P>, N1
         /*
          * The rooms in which landmarks will be placed.
          */
-        val rooms = envGraph.nodes()
-            .filter { it.diameter > shape.diameter * MIN_AREA || envGraph.containsDestination(it) }
+        val rooms = environmentGraph.nodes()
+            .filter { it.diameter > shape.diameter * MIN_AREA || environmentGraph.containsDestination(it) }
             .shuffled(randomGenerator)
             .toList()
             .takePercentage(knowledgeDegree)
@@ -82,9 +87,9 @@ abstract class AbstractOrientingPedestrian<P, A : GeometricTransformation<P>, N1
         /*
          * At least one destination is provided if knowledge degree >= 0.1
          */
-        if (rooms.none { envGraph.containsDestination(it) } && knowledgeDegree >= 0.1) {
-            envGraph.nodes()
-                .firstOrNull { envGraph.containsDestination(it) }
+        if (rooms.none { environmentGraph.containsDestination(it) } && knowledgeDegree >= 0.1) {
+            environmentGraph.nodes()
+                .firstOrNull { environmentGraph.containsDestination(it) }
                 ?.let { rooms.add(it) }
         }
         val landmarks = rooms.map { generateLandmarkWithin(it) }
@@ -94,14 +99,14 @@ abstract class AbstractOrientingPedestrian<P, A : GeometricTransformation<P>, N1
         val reachability = rooms
             .mapIndexed { i, r ->
                 i to rooms.indices
-                    .filter { r != rooms[it] && envGraph.isReachable(r, rooms[it]) }
+                    .filter { r != rooms[it] && environmentGraph.isReachable(r, rooms[it]) }
             }.toMap()
         reachability.forEach {
             it.value.forEach { i -> builder.addEdge(landmarks[it.key], landmarks[i]) }
         }
-        builder.build(rooms.flatMap { envGraph.destinationsWithin(it) })
+        builder.build(rooms.flatMap { environmentGraph.destinationsWithin(it) })
             .primMST {
-                envGraph.dijkstraShortestPath(
+                environmentGraph.dijkstraShortestPath(
                     rooms[landmarks.indexOf(it.from)],
                     rooms[landmarks.indexOf(it.to)],
                     { 1.0 }

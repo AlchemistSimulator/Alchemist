@@ -12,25 +12,26 @@ import org.apache.commons.math3.random.RandomGenerator
 /**
  * An orienting homogeneous pedestrian in a [EuclideanPhysics2DEnvironment].
  *
- * @param N1 the type of nodes of the [envGraph].
- * @param E1 the type of edges of the [envGraph].
+ * @param N1 the type of nodes of the [environmentGraph].
+ * @param E1 the type of edges of the [environmentGraph].
  * @param T  the concentration type.
  */
 class OrientingHomogeneousPedestrian2D<N1 : ConvexPolygon, E1 : GraphEdge<N1>, T> @JvmOverloads constructor(
     knowledgeDegree: Double,
     randomGenerator: RandomGenerator,
-    envGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, N1, E1>,
-    env: EuclideanPhysics2DEnvironment<T>,
+    environmentGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, N1, E1>,
+    environment: EuclideanPhysics2DEnvironment<T>,
     group: PedestrianGroup<T>? = null
-) : OrientingPedestrian2D<N1, E1, T>(knowledgeDegree, randomGenerator, envGraph, env, group) {
+) : OrientingPedestrian2D<N1, E1, T>(knowledgeDegree, randomGenerator, environmentGraph, environment, group) {
 
-    private val shape = shape(env)
+    private val shape = shape(environment)
 
     init {
-        senses += fieldOfView(env)
+        senses += fieldOfView(environment)
     }
 
     /**
+     * @inheritDoc
      */
     override fun getShape() = shape
 }

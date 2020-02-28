@@ -62,7 +62,7 @@ open class OrientingBehavior2D<N1 : ConvexPolygon, E1 : GraphEdgeWithData<N1, Eu
     environmentGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, N1, E1>
 ) : AbstractOrientingBehavior<Euclidean2DPosition, Euclidean2DTransformation, N1, E1, N2, E2, T>(environment, pedestrian, timeDistribution, environmentGraph) {
 
-    override fun moveTowards(target: Euclidean2DPosition, currentRoom: N1?) {
+    override fun moveTowards(target: Euclidean2DPosition, currentRoom: N1?, targetEdge: E1) {
         if (currentRoom == null) {
             Seek2D(environment, this, pedestrian, *target.cartesianCoordinates).execute()
         } else {

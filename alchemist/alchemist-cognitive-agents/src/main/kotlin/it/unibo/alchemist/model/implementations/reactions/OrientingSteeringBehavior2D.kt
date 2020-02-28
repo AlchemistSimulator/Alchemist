@@ -42,7 +42,7 @@ class OrientingSteeringBehavior2D<N1 : ConvexPolygon, E1 : GraphEdgeWithData<N1,
     private val steerStrategy: SteeringStrategy<T, Euclidean2DPosition> = DistanceWeighted(environment, pedestrian)
 ) : OrientingBehavior2D<N1, E1, N2, E2, T>(environment, pedestrian, timeDistribution, environmentGraph) {
 
-    override fun moveTowards(target: Euclidean2DPosition, currentRoom: N1?) {
+    override fun moveTowards(target: Euclidean2DPosition, currentRoom: N1?, targetEdge: E1) {
         val currPos = environment.getPosition(pedestrian)
         var desiredMovement = Seek2D(environment, this, pedestrian, *target.cartesianCoordinates).nextPosition
         var disturbingMovement = Combine(environment, this, pedestrian, steerActions(), steerStrategy).nextPosition
@@ -63,7 +63,7 @@ class OrientingSteeringBehavior2D<N1 : ConvexPolygon, E1 : GraphEdgeWithData<N1,
             desiredMovement = desiredMovement.resize(disturbingMovement.magnitude() * 1.2)
         }
         val movement = desiredMovement + disturbingMovement
-        super.moveTowards(currPos + movement, currentRoom)
+        super.moveTowards(currPos + movement, currentRoom, targetEdge)
     }
 
     private fun adjustDisturbingMovement(desiredMovement: Euclidean2DPosition, disturbingMovement: Euclidean2DPosition): Euclidean2DPosition {

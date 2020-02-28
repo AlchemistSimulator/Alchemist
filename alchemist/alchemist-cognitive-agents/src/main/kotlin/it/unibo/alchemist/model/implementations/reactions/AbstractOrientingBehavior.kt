@@ -119,10 +119,10 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
      * between the agent and this position.
      */
     private lateinit var subdestination: P
-    /**
+    /*
      * The edge (or better, crossing) the pedestrian is moving towards.
      */
-    protected lateinit var targetEdge: E1
+    private lateinit var targetEdge: E1
     /*
      */
     private enum class State {
@@ -247,7 +247,7 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
                 }
             }
             State.MOVING_TO_DOOR, State.CROSSING_DOOR, State.MOVING_TO_FINAL -> {
-                moveTowards(subdestination, if (::currRoom.isInitialized) currRoom else null)
+                moveTowards(subdestination, if (::currRoom.isInitialized) currRoom else null, targetEdge)
                 currPos = environment.getPosition(pedestrian)
                 if (environmentGraph.nodes().any { (!::currRoom.isInitialized || it != currRoom) && it.contains(currPos) }) {
                     state = State.NEW_ROOM
@@ -309,9 +309,8 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
      * Move the pedestrian towards a position which is guaranteed to be in sight (i.e. no
      * obstacle is placed between him and such position).
      */
-    protected open fun moveTowards(target: P, currentRoom: N1?) {
+    protected open fun moveTowards(target: P, currentRoom: N1?, targetEdge: E1): Unit =
         Seek(environment, this, pedestrian, *target.cartesianCoordinates).execute()
-    }
 
     /**
      * Assign a weight to a given edge. The one with minimum weight will be chosen and crossed.

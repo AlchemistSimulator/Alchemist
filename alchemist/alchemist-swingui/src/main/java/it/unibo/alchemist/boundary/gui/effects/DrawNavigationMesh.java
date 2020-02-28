@@ -37,10 +37,9 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 /**
- * Draws the navigation mesh of an environment, using the Deaccon algorithm.
- * @param <Euclidean2DSegment> a kotlin typealias representing a segment.
+ * Draws the navigation mesh of an environment, obtained using the Deaccon algorithm.
  */
-public class DrawNavigationMesh<Euclidean2DSegment> implements Effect {
+public class DrawNavigationMesh implements Effect {
 
     /**
      */
@@ -77,7 +76,7 @@ public class DrawNavigationMesh<Euclidean2DSegment> implements Effect {
     @ExportForGUI(nameToExport = "draw underlying graph")
     private boolean drawGraph;
     private Color colorCache = Color.BLUE;
-    private NavigationGraph<Euclidean2DPosition, ?, ConvexPolygon, GraphEdgeWithData<ConvexPolygon, Euclidean2DSegment>> envGraph = null;
+    private NavigationGraph<Euclidean2DPosition, ?, ConvexPolygon, GraphEdgeWithData<ConvexPolygon, Pair<Euclidean2DPosition, Euclidean2DPosition>>> envGraph;
     @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
     private transient Optional<Node> markerNode = Optional.empty();
 
@@ -150,7 +149,7 @@ public class DrawNavigationMesh<Euclidean2DSegment> implements Effect {
                         new ArrayList());
                 toBeDrawn = false;
             } else {
-                envGraph = (NavigationGraph<Euclidean2DPosition, ?, ConvexPolygon, GraphEdgeWithData<ConvexPolygon, Euclidean2DSegment>>) PredefinedEnvGraphsKt.orientingSimulationEnvGraph(((Environment2DWithObstacles) env).getObstacles());
+                envGraph = (NavigationGraph<Euclidean2DPosition, ?, ConvexPolygon, GraphEdgeWithData<ConvexPolygon, Pair<Euclidean2DPosition, Euclidean2DPosition>>>) PredefinedEnvGraphsKt.orientingSimulationEnvGraph(((Environment2DWithObstacles) env).getObstacles());
                 toBeObtained = false;
             }
         }

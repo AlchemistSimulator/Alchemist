@@ -13,6 +13,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
 import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.Ellipse;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
+
+import it.unibo.alchemist.model.interfaces.OrientingPedestrian;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -30,7 +32,6 @@ import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
 /**
@@ -57,7 +58,7 @@ public class DrawCognitiveMap implements Effect {
     @ExportForGUI(nameToExport = "B")
     private RangedInteger blue = new RangedInteger(0, MAX_COLOUR_VALUE);
     private Color colorCache = Color.RED;
-    private NavigationGraph<? extends Euclidean2DPosition, ?, Ellipse, ?> cognitiveMap = null;
+    private NavigationGraph<? extends Euclidean2DPosition, ?, Ellipse, ?> cognitiveMap;
     @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
     private transient Optional<Node> markerNode = Optional.empty();
 
@@ -102,17 +103,10 @@ public class DrawCognitiveMap implements Effect {
                 });
             });
         }
-        if (cognitiveMap == null && env instanceof Environment2DWithObstacles
+        if (cognitiveMap == null && markerNode.get() instanceof OrientingPedestrian
+                && env instanceof Environment2DWithObstacles
                 && env.makePosition(0.0, 0.0) instanceof Euclidean2DPosition) {
-            /*
-             * Interface OrientingPedestrian is not visible, so this horrible kludge is adopted
-             */
-            try {
-                this.cognitiveMap = (NavigationGraph<? extends Euclidean2DPosition, ?, Ellipse, ?>)
-                        markerNode.get().getClass().getMethod("getCognitiveMap").invoke(markerNode.get());
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                L.error("unable to get cognitive map from node");
-            }
+            this.cognitiveMap = ((OrientingPedestrian) markerNode.get()).getCognitiveMap();
         }
     }
 

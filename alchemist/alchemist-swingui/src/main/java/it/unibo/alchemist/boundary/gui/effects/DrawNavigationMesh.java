@@ -2,15 +2,15 @@ package it.unibo.alchemist.boundary.gui.effects;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
-import it.unibo.alchemist.model.implementations.geometry.graph.PredefinedEnvGraphsKt;
+import it.unibo.alchemist.model.implementations.graph.PredefinedEnvGraphsKt;
 import it.unibo.alchemist.model.implementations.geometry.navigationmeshes.deaccon.Deaccon2D;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
-import it.unibo.alchemist.model.interfaces.geometry.graph.GraphEdgeWithData;
-import it.unibo.alchemist.model.interfaces.geometry.graph.NavigationGraph;
+import it.unibo.alchemist.model.interfaces.graph.GraphEdgeWithData;
+import it.unibo.alchemist.model.interfaces.graph.NavigationGraph;
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon;
 import kotlin.Pair;
 import org.danilopianini.lang.RangedInteger;
@@ -140,7 +140,7 @@ public class DrawNavigationMesh<Euclidean2DSegment> implements Effect {
                         new ArrayList());
                 toBeDrawn = false;
             } else {
-                envGraph = (NavigationGraph<Euclidean2DPosition, ?, ConvexPolygon, GraphEdgeWithData<ConvexPolygon, Euclidean2DSegment>>) PredefinedEnvGraphsKt.congestionAvoidanceEnvGraph(((Environment2DWithObstacles) env).getObstacles());
+                envGraph = (NavigationGraph<Euclidean2DPosition, ?, ConvexPolygon, GraphEdgeWithData<ConvexPolygon, Euclidean2DSegment>>) PredefinedEnvGraphsKt.orientingSimulationEnvGraph(((Environment2DWithObstacles) env).getObstacles());
                 toBeObtained = false;
             }
         }

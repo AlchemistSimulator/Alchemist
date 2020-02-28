@@ -1,0 +1,42 @@
+incarnation: protelis
+
+environment:
+  type: ImageEnvironment
+  parameters: [images/building-planimetry.png, 0.1]
+
+positions:
+  type: EuclideanPosition2D
+
+network-model:
+  type: NoLinks
+
+seeds:
+  scenario: 0
+  simulation: 1
+
+variables:
+  envGraph: &envGraph
+    formula: |
+      import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+      it.unibo.alchemist.test.buildingPlanimetryEnvGraph(
+        0.1,
+        mutableListOf(Euclidean2DPosition(135.0, 105.0))
+      )
+    language: kotlin
+
+reactions: &behavior
+  - time-distribution:
+      type: DiracComb
+      parameters: [0.25]
+    type: OrientingBehavior2D
+    parameters: [*envGraph]
+
+displacements:
+  - in:
+      type: Point
+      parameters: [15, 15]
+    nodes:
+      type: OrientingHomogeneousPedestrian2D
+      parameters: [0.0, *envGraph]
+    programs:
+      - *behavior

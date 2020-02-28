@@ -26,18 +26,18 @@ import org.apache.commons.math3.random.RandomGenerator
  * The creation of landmarks is left to subclasses via factory method, see
  * [generateLandmarkWithin].
  *
- * @param P  the [Position] type and [Vector] type for the space this pedestrian is inside.
- * @param A  the transformations supported by the shapes in this space.
+ * @param P the [Position] type and [Vector] type for the space this pedestrian is inside.
+ * @param A the transformations supported by the shapes in this space.
  * @param N1 the type of nodes of the [environmentGraph].
  * @param E1 the type of edges of the [environmentGraph].
  * @param N2 the type of landmarks in the pedestrian's [cognitiveMap].
- * @param T  the concentration type.
+ * @param T the concentration type.
  *
  * The algorithm produces a cognitive map whose edges are simple [GraphEdge]s, this means
  * no extra information regarding the connection of landmarks is stored in the cognitive map
  * (a part from the boolean information concerning the fact a connection is present of course).
  */
-abstract class AbstractOrientingPedestrian<P, A : GeometricTransformation<P>, N1 : ConvexGeometricShape<P, A>, E1 : GraphEdge<N1>, N2: ConvexGeometricShape<P, A>, T>(
+abstract class AbstractOrientingPedestrian<P, A : GeometricTransformation<P>, N1 : ConvexGeometricShape<P, A>, E1 : GraphEdge<N1>, N2 : ConvexGeometricShape<P, A>, T>(
     final override val knowledgeDegree: Double,
     /**
      */

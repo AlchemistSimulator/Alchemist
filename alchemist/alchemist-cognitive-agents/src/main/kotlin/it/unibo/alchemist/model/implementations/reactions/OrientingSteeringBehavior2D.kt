@@ -3,9 +3,16 @@ package it.unibo.alchemist.model.implementations.reactions
 import it.unibo.alchemist.model.implementations.actions.Combine
 import it.unibo.alchemist.model.implementations.actions.Seek2D
 import it.unibo.alchemist.model.implementations.actions.steeringstrategies.DistanceWeighted
-import it.unibo.alchemist.model.implementations.geometry.*
+import it.unibo.alchemist.model.implementations.geometry.angleBetween
+import it.unibo.alchemist.model.implementations.geometry.magnitude
+import it.unibo.alchemist.model.implementations.geometry.normal
+import it.unibo.alchemist.model.implementations.geometry.resize
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.*
+import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.OrientingPedestrian
+import it.unibo.alchemist.model.interfaces.SteeringStrategy
+import it.unibo.alchemist.model.interfaces.TimeDistribution
+import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.graph.GraphEdgeWithData
 import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexEuclidean2DShape
@@ -25,9 +32,9 @@ import kotlin.math.PI
  * @param E1 the type of edges of the [environmentGraph].
  * @param N2 the type of landmarks of the pedestrian's cognitive map.
  * @param E2 the type of edges of the pedestrian's cognitive map.
- * @param T  the concentration type.
+ * @param T the concentration type.
  */
-class OrientingSteeringBehavior2D<N1 : ConvexPolygon, E1 : GraphEdgeWithData<N1, Euclidean2DSegment>, N2: ConvexEuclidean2DShape, E2 : GraphEdge<N2>, T> @JvmOverloads constructor(
+class OrientingSteeringBehavior2D<N1 : ConvexPolygon, E1 : GraphEdgeWithData<N1, Euclidean2DSegment>, N2 : ConvexEuclidean2DShape, E2 : GraphEdge<N2>, T> @JvmOverloads constructor(
     environment: Environment<T, Euclidean2DPosition>,
     pedestrian: OrientingPedestrian<Euclidean2DPosition, Euclidean2DTransformation, N2, E2, T>,
     timeDistribution: TimeDistribution<T>,

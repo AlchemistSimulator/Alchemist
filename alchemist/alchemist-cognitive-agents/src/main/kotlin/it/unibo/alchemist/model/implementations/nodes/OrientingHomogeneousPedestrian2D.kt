@@ -14,7 +14,7 @@ import org.apache.commons.math3.random.RandomGenerator
  *
  * @param N1 the type of nodes of the [environmentGraph].
  * @param E1 the type of edges of the [environmentGraph].
- * @param T  the concentration type.
+ * @param T the concentration type.
  */
 class OrientingHomogeneousPedestrian2D<N1 : ConvexPolygon, E1 : GraphEdge<N1>, T> @JvmOverloads constructor(
     knowledgeDegree: Double,

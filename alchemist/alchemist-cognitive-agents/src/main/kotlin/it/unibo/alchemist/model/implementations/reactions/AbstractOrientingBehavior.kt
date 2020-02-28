@@ -10,7 +10,11 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
 import it.unibo.alchemist.model.implementations.graph.nodeContaining
-import it.unibo.alchemist.model.interfaces.*
+import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.OrientingPedestrian
+import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.TimeDistribution
+import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.model.interfaces.graph.GraphEdge
 import kotlin.math.pow
 
@@ -22,18 +26,18 @@ import kotlin.math.pow
  * Two tasks are left to the derived classes via template method, see [computeEdgeRankings]
  * and [computeSubdestination].
  *
- * @param P  the [Position] type and [Vector] type for the space the pedestrian is inside.
- * @param A  the transformations supported by the shapes in this space.
+ * @param P the [Position] type and [Vector] type for the space the pedestrian is inside.
+ * @param A the transformations supported by the shapes in this space.
  * @param N1 the type of nodes of the [environmentGraph].
  * @param E1 the type of edges of the [environmentGraph].
  * @param N2 the type of landmarks of the pedestrian's cognitive map.
  * @param E2 the type of edges of the pedestrian's cognitive map.
- * @param T  the concentration type.
+ * @param T the concentration type.
  *
  * Since E2 is simply any subtype of GraphEdge<N2>, this reaction assumes no information
  * is stored in the edges of the cognitive map.
  */
-abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 : ConvexGeometricShape<P, A>, E1 : GraphEdge<N1>, N2: ConvexGeometricShape<P, A>, E2 : GraphEdge<N2>, T>(
+abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 : ConvexGeometricShape<P, A>, E1 : GraphEdge<N1>, N2 : ConvexGeometricShape<P, A>, E2 : GraphEdge<N2>, T>(
     /**
      * The environment the pedestrian is into.
      */
@@ -53,18 +57,18 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
     protected val environmentGraph: NavigationGraph<P, A, N1, E1>
 ) : AbstractReaction<T>(pedestrian, timeDistribution) where P : Position<P>, P : Vector<P> {
 
-   /*
-    * When navigating towards a sub-destination, such target will be considered
-    * reached when the pedestrian's distance from it is <= of this quantity.
-    *
-    * Considering a target reached when the distance from it it's (fuzzy) equal to
-    * zero may still lead to some extreme cases in which pedestrians remain blocked
-    * due to how the environment manage collisions (namely, if a pedestrian wants
-    * to reach an already occupied position, it can't move at all, it can't even
-    * approach such position). This workaround allows to specify a minDistance
-    * which is not absolute, instead it's dependent on the pedestrian shape. In the
-    * future, something better could be done.
-    */
+    /*
+     * When navigating towards a sub-destination, such target will be considered
+     * reached when the pedestrian's distance from it is <= of this quantity.
+     *
+     * Considering a target reached when the distance from it it's (fuzzy) equal to
+     * zero may still lead to some extreme cases in which pedestrians remain blocked
+     * due to how the environment manage collisions (namely, if a pedestrian wants
+     * to reach an already occupied position, it can't move at all, it can't even
+     * approach such position). This workaround allows to specify a minDistance
+     * which is not absolute, instead it's dependent on the pedestrian shape. In the
+     * future, something better could be done.
+     */
     private val minDistance = pedestrian.shape.diameter
 
     /*
@@ -161,7 +165,7 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
         var currPos = environment.getPosition(pedestrian)
         when (state) {
             State.START -> {
-                with (environmentGraph.nodeContaining(currPos)) {
+                with(environmentGraph.nodeContaining(currPos)) {
                     if (this != null) {
                         state = State.NEW_ROOM
                     }
@@ -193,7 +197,7 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
                     environmentGraph.nodes().first { it.contains(currPos) }
                 }
                 pedestrian.registerVisit(currRoom)
-                with (environmentGraph.destinationsWithin(currRoom)) {
+                with(environmentGraph.destinationsWithin(currRoom)) {
                     if (isNotEmpty()) {
                         route.clear()
                         subdestination = first()

@@ -53,9 +53,9 @@ import kotlin.math.pow
  * @param E1 the type of edges of the [environmentGraph].
  * @param N2 the type of landmarks of the pedestrian's cognitive map.
  * @param E2 the type of edges of the pedestrian's cognitive map.
- * @param T  the concentration type.
+ * @param T the concentration type.
  */
-open class OrientingBehavior2D<N1 : ConvexPolygon, E1 : GraphEdgeWithData<N1, Euclidean2DSegment>, N2: ConvexEuclidean2DShape, E2 : GraphEdge<N2>, T>(
+open class OrientingBehavior2D<N1 : ConvexPolygon, E1 : GraphEdgeWithData<N1, Euclidean2DSegment>, N2 : ConvexEuclidean2DShape, E2 : GraphEdge<N2>, T>(
     environment: Environment<T, Euclidean2DPosition>,
     pedestrian: OrientingPedestrian<Euclidean2DPosition, Euclidean2DTransformation, N2, E2, T>,
     timeDistribution: TimeDistribution<T>,
@@ -119,7 +119,7 @@ open class OrientingBehavior2D<N1 : ConvexPolygon, E1 : GraphEdgeWithData<N1, Eu
         val graph = builder.build()
         val sorted = edges
             .sortedBy {
-                graph.dijkstraShortestPath(it.first, destination, { e -> e.from.getDistanceTo(e.to)})?.weight
+                graph.dijkstraShortestPath(it.first, destination, { e -> e.from.getDistanceTo(e.to) })?.weight
             }
             .map { it.second }
         return environmentGraph.edgesFrom(currentRoom).map { it to sorted.indexOf(it) + 1 }.toMap()
@@ -131,7 +131,7 @@ open class OrientingBehavior2D<N1 : ConvexPolygon, E1 : GraphEdgeWithData<N1, Eu
      * segment which is more convenient to cross.
      */
     override fun computeSubdestination(targetEdge: E1): Euclidean2DPosition {
-        with (targetEdge.data) {
+        with(targetEdge.data) {
             /*
              * The ideal movement the pedestrian would perform connects its current
              * position to the centroid of the next room.

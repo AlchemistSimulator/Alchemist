@@ -26,7 +26,7 @@ import java.awt.geom.Rectangle2D
  *
  * @param N1 the type of nodes of the [environmentGraph].
  * @param E1 the type of edges of the [environmentGraph].
- * @param T  the concentration type.
+ * @param T the concentration type.
  */
 open class OrientingPedestrian2D<N1 : ConvexPolygon, E1 : GraphEdge<N1>, T>(
     knowledgeDegree: Double,

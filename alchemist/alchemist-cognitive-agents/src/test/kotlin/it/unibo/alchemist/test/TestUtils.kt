@@ -20,7 +20,6 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTr
 import it.unibo.alchemist.model.interfaces.graph.GraphEdge
 import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
 import org.kaikikm.threadresloader.ResourceLoader
-import java.awt.Shape
 import java.awt.geom.Point2D
 
 /**
@@ -64,15 +63,23 @@ fun <T, P : Position<P>> loadYamlSimulation(resource: String, vars: Map<String, 
         YamlLoader(this).getWith<T, P>(vars)
     }
 
+/**
+ * Provides an empty [NavigationGraph].
+ */
 fun <V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>> emptyNavigationGraph(): NavigationGraph<V, A, N, E> =
     NavigationGraphBuilder<V, A, N, E>().build(mutableListOf())
 
+/**
+ * Provides an empty [NavigationGraph] in an euclidean bidimensional space.
+ */
 fun emptyNavigationGraph2D(): NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, *, *> =
     emptyNavigationGraph()
 
 typealias NavigationGraph2D = NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DCrossing>
 
 /**
+ * Generates an environment graph for an image environment obtained with the image at the
+ * following path: "images/building-planimetry.png". Zoom and destinations are to be specified.
  */
 fun buildingPlanimetryEnvGraph(zoom: Double, destinations: Collection<Euclidean2DPosition>): NavigationGraph2D =
     Deaccon2D().generateEnvGraph(
@@ -106,6 +113,8 @@ fun buildingPlanimetryEnvGraph(zoom: Double, destinations: Collection<Euclidean2
         2.5
     )
 /**
+ * Generates an environment graph for an image environment obtained with the image at the
+ * following path: "images/congestion-avoidance.png". Zoom and destinations are to be specified.
  */
 fun congestionAvoidanceEnvGraph(zoom: Double, destinations: Collection<Euclidean2DPosition>): NavigationGraph2D =
     Deaccon2D().generateEnvGraph(

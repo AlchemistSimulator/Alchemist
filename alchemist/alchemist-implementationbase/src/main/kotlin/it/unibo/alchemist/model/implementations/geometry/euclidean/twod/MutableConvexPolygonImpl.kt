@@ -1,8 +1,14 @@
 package it.unibo.alchemist.model.implementations.geometry.euclidean.twod
 
-import it.unibo.alchemist.model.implementations.geometry.*
+import it.unibo.alchemist.model.implementations.geometry.contains
+import it.unibo.alchemist.model.implementations.geometry.isDegenerate
+import it.unibo.alchemist.model.implementations.geometry.zCross
+import it.unibo.alchemist.model.implementations.geometry.toVector
+import it.unibo.alchemist.model.implementations.geometry.intersection
 import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionTypes.POINT
 import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionTypes.EMPTY
+import it.unibo.alchemist.model.implementations.geometry.areCollinear
+import it.unibo.alchemist.model.implementations.geometry.vertices
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSegment
@@ -10,7 +16,6 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSh
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.MutableConvexPolygon
-
 import java.awt.Shape
 import java.awt.geom.Area
 import java.awt.geom.Path2D

@@ -10,7 +10,7 @@ open class GraphImpl<N, E : GraphEdge<N>>(
     /*
      * The adjacency list maps each node to the edges departing from it.
      */
-    private val adjacencyList : LinkedHashMap<N, out List<E>>
+    private val adjacencyList: LinkedHashMap<N, out List<E>>
 ) : Graph<N, E> {
 
     /*

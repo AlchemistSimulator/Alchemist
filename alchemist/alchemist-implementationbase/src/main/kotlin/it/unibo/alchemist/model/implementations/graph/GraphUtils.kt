@@ -159,7 +159,7 @@ fun <N, E : GraphEdge<N>> Graph<N, E>.dijkstraShortestPath(from: N, to: N, weigh
  * two [ConvexGeometricShape]s the edge connects.
  */
 fun <V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>> NavigationGraph<V, A, N, E>.dijkstraShortestPath(from: N, to: N): Path<N>? =
-    dijkstraShortestPath(from, to, { (it.from.centroid - it.to.centroid).magnitude() } )
+    dijkstraShortestPath(from, to, { (it.from.centroid - it.to.centroid).magnitude() })
 
 /**
  * Computes the minimum spanning tree of the graph. Note that the graph must be

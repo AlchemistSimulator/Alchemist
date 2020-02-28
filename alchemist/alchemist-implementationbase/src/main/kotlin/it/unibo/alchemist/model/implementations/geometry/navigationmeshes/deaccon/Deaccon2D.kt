@@ -1,6 +1,12 @@
 package it.unibo.alchemist.model.implementations.geometry.navigationmeshes.deaccon
 
-import it.unibo.alchemist.model.implementations.geometry.*
+import it.unibo.alchemist.model.implementations.geometry.intersects
+import it.unibo.alchemist.model.implementations.geometry.vertices
+import it.unibo.alchemist.model.implementations.geometry.isXAxisAligned
+import it.unibo.alchemist.model.implementations.geometry.intersection
+import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionTypes
+import it.unibo.alchemist.model.implementations.geometry.slope
+import it.unibo.alchemist.model.implementations.geometry.isAxisAligned
 import it.unibo.alchemist.model.implementations.graph.Euclidean2DCrossing
 import it.unibo.alchemist.model.implementations.graph.builder.NavigationGraphBuilder
 import it.unibo.alchemist.model.implementations.graph.builder.addEdge
@@ -190,15 +196,15 @@ class Deaccon2D(
                     /*
                      * Here we consider only the basic case in which only one neighbor is found
                      */
-                    if (intersectingRegions.size == 1
-                            && !builder.edgesFrom(a).map { it.to }.contains(intersectingRegions.first())) {
+                    if (intersectingRegions.size == 1 &&
+                        !builder.edgesFrom(a).map { it.to }.contains(intersectingRegions.first())) {
                         val neighbor = intersectingRegions.first()
                         /*
                          * This is the basic case in which the advanced edge is completely contained
                          * in the intersected region
                          */
-                        if (neighbor.containsOrLiesOnBoundary(advancedEdge.first)
-                                && neighbor.containsOrLiesOnBoundary(advancedEdge.second)) {
+                        if (neighbor.containsOrLiesOnBoundary(advancedEdge.first) &&
+                            neighbor.containsOrLiesOnBoundary(advancedEdge.second)) {
                             if (intersectingObstacles.isEmpty()) {
                                 builder.addEdge(a, neighbor, oldEdge)
                                 val intrudingEdge = neighbor.findIntrudingEdge(prevEdge, nextEdge)

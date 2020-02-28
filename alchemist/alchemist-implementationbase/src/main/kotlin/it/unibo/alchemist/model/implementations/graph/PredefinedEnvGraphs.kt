@@ -11,7 +11,7 @@ import java.awt.geom.Point2D
 /**
  */
 fun orientingSimulationEnvGraph(envObstacles: Collection<Shape>): NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DCrossing> =
-     Deaccon2D().generateEnvGraph(Point2D.Double(0.0, 0.0), 150.0, 150.0, envObstacles, mutableListOf(
+    Deaccon2D().generateEnvGraph(Point2D.Double(0.0, 0.0), 150.0, 150.0, envObstacles, mutableListOf(
         Point2D.Double(15.0, 15.0),
         Point2D.Double(15.0, 42.0),
         Point2D.Double(62.0, 15.0),
@@ -31,7 +31,7 @@ fun orientingSimulationEnvGraph(envObstacles: Collection<Shape>): NavigationGrap
         Point2D.Double(37.0, 136.0),
         Point2D.Double(109.0, 136.0),
         Point2D.Double(109.0, 11.0)
-     ), 1.0, mutableListOf(), 2.5)
+    ), 1.0, mutableListOf(), 2.5)
 
 /**
  */

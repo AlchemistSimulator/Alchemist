@@ -1,6 +1,11 @@
 package it.unibo.alchemist.test
 
-import it.unibo.alchemist.model.implementations.geometry.*
+import it.unibo.alchemist.model.implementations.geometry.closestPointTo
+import it.unibo.alchemist.model.implementations.geometry.intersection
+import it.unibo.alchemist.model.implementations.geometry.intersectionLines
+import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionTypes
+import it.unibo.alchemist.model.implementations.geometry.LinesIntersectionType
+import it.unibo.alchemist.model.implementations.geometry.CircleSegmentIntersectionType
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShapeFactory
 import org.junit.jupiter.api.Assertions
@@ -124,7 +129,7 @@ class TestGeometryUtils {
         s = Pair(Euclidean2DPosition(0.0, 3.0), Euclidean2DPosition(6.0, 3.0))
         i = intersection(s, center, radius)
         Assertions.assertEquals(CircleSegmentIntersectionType.PAIR, i.type)
-        val expectedPoints = mutableSetOf(Euclidean2DPosition(1.0, 3.0),Euclidean2DPosition(5.0, 3.0))
+        val expectedPoints = mutableSetOf(Euclidean2DPosition(1.0, 3.0), Euclidean2DPosition(5.0, 3.0))
         Assertions.assertEquals(expectedPoints, mutableSetOf(i.point1.get(), i.point2.get()))
         s = Pair(Euclidean2DPosition(3.0, 3.0), Euclidean2DPosition(6.0, 3.0))
         i = intersection(s, center, radius)

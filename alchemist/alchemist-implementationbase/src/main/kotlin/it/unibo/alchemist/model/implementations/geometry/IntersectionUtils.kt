@@ -8,6 +8,8 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 /**
+ * In euclidean geometry, the intersection of two lines can be
+ * an empty set, a point, or a line (in other words, infinite points).
  */
 enum class LinesIntersectionType {
     /**
@@ -33,8 +35,8 @@ data class LinesIntersectionResult(
 )
 
 /**
- * Finds the intersection point of two given segments (if exists). This method is
- * able to deal with degenerate edges (of length zero) and collinear segments.
+ * Finds the intersection of two lines represented by two segments.
+ * Such segments are required not to be degenerate (of length 0).
  */
 fun intersectionLines(l1: Euclidean2DSegment, l2: Euclidean2DSegment): LinesIntersectionResult {
     require(!l1.isDegenerate() && !l2.isDegenerate()) { "degenerate lines" }

@@ -115,7 +115,7 @@ public class DrawNavigationMesh implements Effect {
                 envGraph.nodes().forEach(r -> {
                     final Point centroidFrom = w.getViewPoint(r.getCentroid());
                     envGraph.edgesFrom(r).forEach(e -> {
-                        final Pair<Euclidean2DPosition, Euclidean2DPosition> c = (Pair<Euclidean2DPosition, Euclidean2DPosition>) e.getData();
+                        final Pair<Euclidean2DPosition, Euclidean2DPosition> c = e.getData();
                         final Point viewP1 = w.getViewPoint(c.getFirst());
                         final Point viewP2 = w.getViewPoint(c.getSecond());
                         g.setColor(Color.GREEN);

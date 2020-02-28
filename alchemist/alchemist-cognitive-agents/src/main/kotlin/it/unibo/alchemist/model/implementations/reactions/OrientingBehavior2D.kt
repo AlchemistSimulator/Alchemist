@@ -161,18 +161,19 @@ open class OrientingBehavior2D<N1 : ConvexPolygon, E1 : GraphEdgeWithData<N1, Eu
     }
 
     /**
-     * We add a factor taking into account the congestion of the room the edge leads to.
+     * We add a factor taking into account the congestion of the room the edge
+     * being weighted leads to.
      */
     public override fun weight(edge: E1, rank: Int?): Double = super.weight(edge, rank) * congestionFactor(edge.to)
 
-    private fun congestionFactor(room: N1): Double {
-        val nPedestrian = environment.nodes
+    private fun congestionFactor(room: N1): Double =
+        environment.nodes
             .filterIsInstance<Pedestrian<T>>()
             .filter { room.contains(environment.getPosition(it)) }
             .count()
-        val density = (pedestrian.shape.diameter.pow(2) * nPedestrian) / room.asAwtShape().area()
-        return density + 1
-    }
+            .run {
+                (pedestrian.shape.diameter.pow(2) * this / room.asAwtShape().area()) + 1
+            }
 
     /**
      */

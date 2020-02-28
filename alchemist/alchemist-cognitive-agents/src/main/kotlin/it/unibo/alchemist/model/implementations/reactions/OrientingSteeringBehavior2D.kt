@@ -56,8 +56,7 @@ class OrientingSteeringBehavior2D<N1 : ConvexPolygon, E1 : GraphEdgeWithData<N1,
             desiredMovement = desiredMovement.resize(disturbingMovement.magnitude() * 1.2)
         }
         val movement = desiredMovement + disturbingMovement
-        val nextPosition = currPos + movement
-        super.moveTowards(nextPosition, currentRoom)
+        super.moveTowards(currPos + movement, currentRoom)
     }
 
     private fun adjustDisturbingMovement(desiredMovement: Euclidean2DPosition, disturbingMovement: Euclidean2DPosition): Euclidean2DPosition {

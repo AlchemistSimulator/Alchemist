@@ -39,18 +39,16 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
      */
     protected val environment: Environment<T, P>,
     /**
-     * The pedestrian holder of this behavior.
+     * The owner of this behavior.
      */
     protected val pedestrian: OrientingPedestrian<P, A, N2, E2, T>,
     timeDistribution: TimeDistribution<T>,
     /**
      * A navigation graph describing the environment. Nodes are [ConvexGeometricShape]s
-     * that should describe the walkable areas of the environment (i.e. the areas of the
-     * environment that are freely traversable by agents). Edges represent the connection
-     * between such areas. Additionally, a [NavigationGraph] can store some destinations
-     * which will be considered as possible final destinations.
-     * Note that the pedestrian's perceptional capabilities are limited to the walkable area
-     * he/she is into.
+     * that should represent the walkable areas of the environment (i.e. the areas that
+     * are freely traversable by agents). Edges represent connections between these
+     * areas. Additionally, a [NavigationGraph] can store some destinations which
+     * will be considered as possible final destinations.
      */
     protected val environmentGraph: NavigationGraph<P, A, N1, E1>
 ) : AbstractReaction<T>(pedestrian, timeDistribution) where P : Position<P>, P : Vector<P> {
@@ -126,23 +124,19 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
      * The edge (or better, crossing) the pedestrian is moving towards.
      */
     protected lateinit var targetEdge: E1
-    /**
+    /*
      */
-    protected enum class State {
-        /**
-         */
+    private enum class State {
         START,
-        /**
-         */
         NEW_ROOM,
-        /**
+        /*
          * There is one unusual case in which the pedestrian cannot locate itself
          * inside any room of the [environmentGraph], and decides to try to reach
          * the closest edge possible. In such case, [currRoom] won't be initialised
          * yet.
          */
         MOVING_TO_DOOR,
-        /**
+        /*
          * Adjacent rooms are not guaranteed to be exactly geometrically adjacent,
          * there can be some distance between them. Consequently, the pedestrian could
          * find itself in a situation in which he/she is crossing a door but cannot locate
@@ -150,14 +144,10 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
          * we want to reach.
          */
         CROSSING_DOOR,
-        /**
-         */
         MOVING_TO_FINAL,
-        /**
-         */
         ARRIVED
     }
-    /**
+    /*
      * This behavior is organised as a finite state machine
      */
     private var state: State = State.START
@@ -217,7 +207,7 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
                     }
                 }
                 /*
-                 * If a sub-destination of the route is in sight, updates the root removing
+                 * If a sub-destination of the route is in sight, updates the route removing
                  * all the sub-destination up to the one encountered.
                  */
                 if (route.isNotEmpty() && route.any { currRoom.contains(it.centroid) }) {
@@ -230,6 +220,9 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
                 } else {
                     null
                 }
+                /*
+                 * The pedestrian can see and assess all the edges outgoing from the current room
+                 */
                 val edge = environmentGraph.edgesFrom(currRoom)
                     .minWith(
                         compareBy({
@@ -322,9 +315,9 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
     }
 
     /**
-     * Weights an edge. The one with minimum weight will be crossed.
-     * @param rank is the rank given to the edge when assessing its suitability to
-     * reach the next subdestination. See [cognitiveMapFactor].
+     * Assign a weight to a given edge. The one with minimum weight will be chosen and crossed.
+     * @param rank is the rank given to the edge when assessing its suitability to reach the
+     * next subdestination. See [cognitiveMapFactor].
      */
     protected open fun weight(edge: E1, rank: Int?): Double =
         volatileMemoryFactor(edge) * cognitiveMapFactor(rank) * finalDestinationFactor(edge) * impasseFactor(edge)
@@ -332,7 +325,7 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
     /*
      * Computes the factor deriving from the pedestrian's volatile memory for the
      * weighting system. It is computed as 2^k where k is the number of visits
-     * to the area the assessed edge leads to.
+     * to the area the edge being weighted leads to.
      */
     private fun volatileMemoryFactor(edge: E1) = 2.0.pow(pedestrian.volatileMemory[edge.to] ?: 0)
 
@@ -357,7 +350,7 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
     private fun impasseFactor(edge: E1) = if (isImpasse(edge.to)) 10.0 else 1.0
 
     /*
-     * Registers visit in volatile memory.
+     * Registers a visit in the given area in the pedestrian's volatile memory.
      */
     private fun OrientingAgent<P, A, N2, *>.registerVisit(area: N1) {
         volatileMemory[area] = (volatileMemory[area] ?: 0) + 1

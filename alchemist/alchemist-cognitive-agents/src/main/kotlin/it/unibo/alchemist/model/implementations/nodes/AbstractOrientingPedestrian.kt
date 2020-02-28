@@ -1,9 +1,13 @@
 package it.unibo.alchemist.model.implementations.nodes
 
-import it.unibo.alchemist.model.implementations.graph.*
 import it.unibo.alchemist.model.implementations.graph.builder.NavigationGraphBuilder
 import it.unibo.alchemist.model.implementations.graph.builder.addEdge
 import it.unibo.alchemist.model.implementations.geometry.liesBetween
+import it.unibo.alchemist.model.implementations.graph.containsDestination
+import it.unibo.alchemist.model.implementations.graph.destinationsWithin
+import it.unibo.alchemist.model.implementations.graph.isReachable
+import it.unibo.alchemist.model.implementations.graph.primMST
+import it.unibo.alchemist.model.implementations.graph.dijkstraShortestPath
 import it.unibo.alchemist.model.implementations.utils.shuffled
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Environment

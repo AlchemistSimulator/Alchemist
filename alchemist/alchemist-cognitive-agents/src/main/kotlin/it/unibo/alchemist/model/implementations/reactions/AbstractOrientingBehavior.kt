@@ -10,11 +10,7 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
 import it.unibo.alchemist.model.implementations.graph.nodeContaining
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.OrientingPedestrian
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.TimeDistribution
-import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.model.interfaces.*
 import it.unibo.alchemist.model.interfaces.graph.GraphEdge
 import kotlin.math.pow
 
@@ -59,13 +55,19 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
     protected val environmentGraph: NavigationGraph<P, A, N1, E1>
 ) : AbstractReaction<T>(pedestrian, timeDistribution) where P : Position<P>, P : Vector<P> {
 
-    companion object {
-        /*
-         * When navigating towards a sub-destination, such target will be considered
-         * reached when the pedestrian's distance from it is <= of this quantity.
-         */
-        private const val MIN_DISTANCE = 1.0
-    }
+   /*
+    * When navigating towards a sub-destination, such target will be considered
+    * reached when the pedestrian's distance from it is <= of this quantity.
+    *
+    * Considering a target reached when the distance from it it's (fuzzy) equal to
+    * zero may still lead to some extreme cases in which pedestrians remain blocked
+    * due to how the environment manage collisions (namely, if a pedestrian wants
+    * to reach an already occupied position, it can't move at all, it can't even
+    * approach such position). This workaround allows to specify a minDistance
+    * which is not absolute, instead it's dependent on the pedestrian shape. In the
+    * future, something better could be done.
+    */
+    private val minDistance = pedestrian.shape.diameter
 
     /*
      * Route to a possible destination derived from the cognitive map.
@@ -258,7 +260,7 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
                 if (environmentGraph.nodes().any { (!::currRoom.isInitialized || it != currRoom) && it.contains(currPos) }) {
                     state = State.NEW_ROOM
                 } else if (state != State.CROSSING_DOOR) {
-                    val arrived = currPos.getDistanceTo(subdestination) <= MIN_DISTANCE
+                    val arrived = currPos.getDistanceTo(subdestination) <= minDistance
                     if (state == State.MOVING_TO_DOOR) {
                         if (arrived) {
                             /*

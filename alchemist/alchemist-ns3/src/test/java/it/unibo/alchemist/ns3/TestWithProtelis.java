@@ -39,7 +39,7 @@ public class TestWithProtelis {
      */
     @Test
     public void testNs3asySimple() {
-        if (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("linux")) {
+        if (canExecute()) {
             final var env = testInSimulator("ns3asy.yml", 50);
             if (env.getIncarnation().isPresent()) {
                 for (final var node : env.getNodes()) {
@@ -60,7 +60,7 @@ public class TestWithProtelis {
      */
     @Test
     public void testChannel() {
-        if (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("linux")) {
+        if (canExecute()) {
             testInSimulator("channel.yml", Long.MAX_VALUE);
             //System.out.println("Step is " + env.getSimulation().getStep());
             //System.out.println("Time is " + env.getSimulation().getTime());
@@ -72,7 +72,13 @@ public class TestWithProtelis {
      */
     @AfterEach
     public final void finish() {
-        NS3asy.INSTANCE.StopSimulation();
+        if (canExecute()) {
+            NS3asy.INSTANCE.StopSimulation();
+        }
+    }
+
+    private boolean canExecute() {
+        return System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("linux");
     }
 
     private <T, P extends Position<P>> Environment<T, P> testInSimulator(final String ymlName, final long steps) {

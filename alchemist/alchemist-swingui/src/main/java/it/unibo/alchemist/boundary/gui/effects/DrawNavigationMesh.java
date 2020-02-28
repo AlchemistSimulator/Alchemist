@@ -71,8 +71,6 @@ public class DrawNavigationMesh implements Effect {
     private String envEndY = "300";
     @ExportForGUI(nameToExport = "to be drawn")
     private boolean toBeDrawn;
-    @ExportForGUI(nameToExport = "to be obtained")
-    private boolean toBeObtained;
     @ExportForGUI(nameToExport = "draw underlying graph")
     private boolean drawGraph;
     private Color colorCache = Color.BLUE;
@@ -128,7 +126,7 @@ public class DrawNavigationMesh implements Effect {
                 });
             }
         }
-        if ((toBeDrawn || toBeObtained) && !envStartX.equals("") && !envStartY.equals("") && !envEndX.equals("") && !envEndY.equals("")
+        if (toBeDrawn && !envStartX.equals("") && !envStartY.equals("") && !envEndX.equals("") && !envEndY.equals("")
                 && env instanceof Environment2DWithObstacles
                 && env.makePosition(0.0, 0.0) instanceof Euclidean2DPosition) {
             if (toBeDrawn) {
@@ -143,9 +141,6 @@ public class DrawNavigationMesh implements Effect {
                         ((Environment2DWithObstacles<?, T, Euclidean2DPosition>) env).getObstacles(),
                         new ArrayList());
                 toBeDrawn = false;
-            } else {
-                envGraph = (NavigationGraph<Euclidean2DPosition, ?, ConvexPolygon, GraphEdgeWithData<ConvexPolygon, Pair<Euclidean2DPosition, Euclidean2DPosition>>>) PredefinedEnvGraphsKt.orientingSimulationEnvGraph(((Environment2DWithObstacles) env).getObstacles());
-                toBeObtained = false;
             }
         }
     }

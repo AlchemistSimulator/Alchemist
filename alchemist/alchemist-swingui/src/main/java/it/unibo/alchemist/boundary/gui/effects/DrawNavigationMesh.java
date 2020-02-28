@@ -76,7 +76,8 @@ public class DrawNavigationMesh implements Effect {
     @ExportForGUI(nameToExport = "draw underlying graph")
     private boolean drawGraph;
     private Color colorCache = Color.BLUE;
-    private NavigationGraph<Euclidean2DPosition, ?, ConvexPolygon, GraphEdgeWithData<ConvexPolygon, Pair<Euclidean2DPosition, Euclidean2DPosition>>> envGraph;
+    @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
+    private transient NavigationGraph<Euclidean2DPosition, ?, ConvexPolygon, GraphEdgeWithData<ConvexPolygon, Pair<Euclidean2DPosition, Euclidean2DPosition>>> envGraph;
     @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
     private transient Optional<Node> markerNode = Optional.empty();
 

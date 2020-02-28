@@ -2,13 +2,18 @@ package it.unibo.alchemist.model.implementations.geometry
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSegment
 import org.danilopianini.lang.MathUtils.fuzzyEquals
 import java.awt.Shape
 import java.awt.geom.PathIterator
 import java.awt.geom.Point2D
-import java.util.Optional
-import kotlin.math.*
+import kotlin.math.atan2
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.sqrt
+import kotlin.math.pow
+import kotlin.math.acos
 
 /**
  * Computes the angle with atan2(y, x)
@@ -127,100 +132,11 @@ fun areCollinear(p1: Euclidean2DPosition, p2: Euclidean2DPosition, p3: Euclidean
 fun Double.liesBetween(v1: Double, v2: Double) = this >= min(v1, v2) && this <= max(v1, v2)
 
 /**
- * Finds the intersection point of two given segments (if exists). This method is
- * able to deal with degenerate edges (of length zero) and collinear segments.
- */
-fun intersection(s1: Euclidean2DSegment, s2: Euclidean2DSegment): SegmentsIntersectionResult {
-    if (s1.isDegenerate() && s2.isDegenerate()) {
-        return if (s1.first == s2.first) { // points coincide
-            SegmentsIntersectionResult(SegmentsIntersectionTypes.POINT, Optional.of(s1.first))
-        } else {
-            SegmentsIntersectionResult(SegmentsIntersectionTypes.EMPTY)
-        }
-    }
-    if (s1.isDegenerate() || s2.isDegenerate()) {
-        val degenerate = if (s1.isDegenerate()) s1 else s2
-        val other = if (degenerate == s1) s2 else s1
-        return if (other.contains(degenerate.first)) {
-            SegmentsIntersectionResult(SegmentsIntersectionTypes.POINT, Optional.of(degenerate.first))
-        } else {
-            SegmentsIntersectionResult(SegmentsIntersectionTypes.EMPTY)
-        }
-    }
-    val p = s1.first
-    val r = s1.toVector()
-    val q = s2.first
-    val s = s2.toVector()
-    val denom = zCross(r, s)
-    val num = zCross((q - p), r)
-    if (fuzzyEquals(num, 0.0) && fuzzyEquals(denom, 0.0)) { // segments are collinear
-        val t0 = (q - p).dot(r) / r.dot(r)
-        val t1 = t0 + s.dot(r) / r.dot(r)
-        if (Pair(t0, t1).intersects(0.0, 1.0)) { // segments are overlapping
-            // we found out that segments are collinear and overlapping, but they may only share an endpoint,
-            // in which case their intersection is a single point
-            if ((fuzzyEquals(t0, 0.0) || fuzzyEquals(t0, 1.0)) && !t1.liesBetween(0.0, 1.0)) {
-                return SegmentsIntersectionResult(SegmentsIntersectionTypes.POINT, Optional.of(s2.first))
-            }
-            if ((fuzzyEquals(t1, 0.0) || fuzzyEquals(t1, 1.0)) && !t0.liesBetween(0.0, 1.0)) {
-                return SegmentsIntersectionResult(SegmentsIntersectionTypes.POINT, Optional.of(s2.second))
-            }
-            return SegmentsIntersectionResult(SegmentsIntersectionTypes.SEGMENT)
-        } else { // collinear but disjoint
-            return SegmentsIntersectionResult(SegmentsIntersectionTypes.EMPTY)
-        }
-    }
-    if (fuzzyEquals(denom, 0.0) && !fuzzyEquals(num, 0.0)) { // parallel
-        return SegmentsIntersectionResult(SegmentsIntersectionTypes.EMPTY)
-    }
-    val t = zCross((q - p), s) / denom
-    val u = zCross((q - p), r) / denom
-    if (t.liesBetween(0.0, 1.0) && u.liesBetween(0.0, 1.0)) {
-        return SegmentsIntersectionResult(SegmentsIntersectionTypes.POINT, Optional.of(p + r.times(t)))
-    }
-    return SegmentsIntersectionResult(SegmentsIntersectionTypes.EMPTY) // not parallel but not intersecting
-}
-
-/**
  * Checks whether two intervals (inclusive) intersects.
  */
 fun Pair<Double, Double>.intersects(start: Double, end: Double) =
     first.liesBetween(start, end) || second.liesBetween(start, end) ||
         start.liesBetween(first, second) || end.liesBetween(first, second)
-
-/**
- * In euclidean geometry, the intersection of two segments can be
- * an empty set, a point, or segment (in other words, infinite points).
- */
-enum class SegmentsIntersectionTypes {
-    /**
-     * Segments have a single point of intersection.
-     */
-    POINT,
-    /**
-     * Segments have infinite points of intersection, lying on a segment.
-     * In other words, they are collinear and overlapping.
-     * Note that two segments may be collinear, overlapping and share a
-     * single point (e.g. an endpoint). In this case the intersection
-     * type is [POINT].
-     */
-    SEGMENT,
-    /**
-     * Segments do not intersect.
-     */
-    EMPTY;
-}
-
-/**
- */
-data class SegmentsIntersectionResult(
-    /**
-     */
-    val type: SegmentsIntersectionTypes,
-    /**
-     */
-    val intersection: Optional<Euclidean2DPosition> = Optional.empty()
-)
 
 /**
  * Finds the magnitude of a vector.
@@ -300,75 +216,12 @@ fun Euclidean2DSegment.closestPointTo(p: Euclidean2DPosition): Euclidean2DPositi
 }
 
 /**
- * Finds the intersection between a circle and a segment.
+ * Checks if the provided segment intersects with the polygon, boundary excluded.
  */
-fun intersection(s: Euclidean2DSegment, center: Euclidean2DPosition, r: Double): CircleSegmentIntersectionResult {
-    val v = s.toVector()
-    val a = v.x.pow(2) + v.y.pow(2)
-    val b = 2 * (v.x * (s.first.x - center.x) + v.y * (s.first.y - center.y))
-    val c = (s.first.x - center.x).pow(2) + (s.first.y - center.y).pow(2) - r.pow(2)
-    val det = b.pow(2) - 4 * a * c
-    if (fuzzyEquals(a, 0.0) || a < 0.0 || det < 0.0) {
-        return CircleSegmentIntersectionResult(CircleSegmentIntersectionType.EMPTY)
-    } else if (fuzzyEquals(det, 0.0)) {
-        val t = -b / (2 * a)
-        return if (t.liesBetween(0.0, 1.0)) {
-            CircleSegmentIntersectionResult(CircleSegmentIntersectionType.POINT,
-                Optional.of(Euclidean2DPosition(s.first.x + t * v.x, s.first.y + t * v.y)))
-        } else {
-            CircleSegmentIntersectionResult(CircleSegmentIntersectionType.EMPTY)
-        }
-    } else {
-        val t1 = (-b + sqrt(det)) / (2 * a)
-        val t2 = (-b - sqrt(det)) / (2 * a)
-        val p1 = if (t1.liesBetween(0.0, 1.0)) {
-            Optional.of(Euclidean2DPosition(s.first.x + t1 * v.x, s.first.y + t1 * v.y))
-        } else {
-            Optional.empty()
-        }
-        val p2 = if (t2.liesBetween(0.0, 1.0)) {
-            Optional.of(Euclidean2DPosition(s.first.x + t2 * v.x, s.first.y + t2 * v.y))
-        } else {
-            Optional.empty()
-        }
-        return when (mutableListOf(t1, t2).filter { it.liesBetween(0.0, 1.0) }.count()) {
-            0 -> CircleSegmentIntersectionResult(CircleSegmentIntersectionType.EMPTY)
-            1 -> {
-                if (p2.isEmpty) {
-                    CircleSegmentIntersectionResult(CircleSegmentIntersectionType.POINT, p1, p2)
-                } else {
-                    CircleSegmentIntersectionResult(CircleSegmentIntersectionType.POINT, p2, p1)
-                }
-            }
-            else -> CircleSegmentIntersectionResult(CircleSegmentIntersectionType.PAIR, p1, p2)
-        }
-    }
-}
-
-/**
- */
-enum class CircleSegmentIntersectionType {
-    /**
-     */
-    POINT,
-    /**
-     */
-    PAIR,
-    /**
-     */
-    EMPTY;
-}
-
-/**
- */
-data class CircleSegmentIntersectionResult(
-    /**
-     */
-    val type: CircleSegmentIntersectionType,
-    /**
-     */
-    val p1: Optional<Euclidean2DPosition> = Optional.empty(),
-    /**
-     */
-    val p2: Optional<Euclidean2DPosition> = Optional.empty()
-)
+fun ConvexPolygon.intersectsBoundaryExcluded(s: Euclidean2DSegment): Boolean =
+    vertices().indices
+        .map { intersection(getEdge(it), s) }
+        .filter { it.type == SegmentsIntersectionTypes.POINT }
+        .map { it.intersection.get() }
+        .distinct()
+        .size > 1

@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
  * @param N the type of landmarks. See [cognitiveMap].
  * @param E the type of edges of the [cognitiveMap].
  */
-interface OrientingAgentAlt<V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>> {
+interface OrientingAgent<V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>> {
 
     /**
      * The knowledge degree of the agent concerning the environment.
@@ -34,5 +34,5 @@ interface OrientingAgentAlt<V : Vector<V>, A : GeometricTransformation<V>, N : C
      * of the simulation. In particular, each room is paired with the number of
      * visits.
      */
-    val volatileMemory: Map<N, Int>
+    val volatileMemory: MutableMap<in ConvexGeometricShape<V, A>, Int>
 }

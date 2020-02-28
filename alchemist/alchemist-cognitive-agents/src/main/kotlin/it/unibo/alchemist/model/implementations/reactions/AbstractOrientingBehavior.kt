@@ -1,5 +1,6 @@
 package it.unibo.alchemist.model.implementations.reactions
 
+import it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive.OrientingAgent
 import it.unibo.alchemist.model.implementations.actions.Seek
 import it.unibo.alchemist.model.implementations.graph.containsDestination
 import it.unibo.alchemist.model.implementations.graph.destinationsWithin
@@ -11,7 +12,6 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
 import it.unibo.alchemist.model.implementations.graph.nodeContaining
 import it.unibo.alchemist.model.interfaces.graph.GraphEdge
-import it.unibo.alchemist.model.interfaces.graph.OrientingAgent
 import kotlin.math.pow
 
 /**

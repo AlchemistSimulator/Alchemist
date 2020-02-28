@@ -86,9 +86,8 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
              * The pedestrian will look for a path leading from his closest
              * landmark to the closest destination possible.
              */
-            var path: List<N2>? = null
-            for (d in closerDestinations) {
-                for (l in closerLandmarks) {
+            closerDestinations.map { d ->
+                closerLandmarks.mapNotNull {
                     /*
                      * At present the cognitive map is a MST, so there's a single
                      * path between each pair of nodes. In the future, things may
@@ -98,13 +97,9 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
                      * reason is that such a path contains more detailed information
                      * regarding the route to follow.
                      */
-                    path = dijkstraShortestPath(l, d)?.path
-                    if (path != null) {
-                        break
-                    }
-                }
-            }
-            path?.toMutableList() ?: mutableListOf()
+                    l -> dijkstraShortestPath(l, d)?.path
+                }.first()
+            }.firstOrNull()?.toMutableList() ?: mutableListOf()
         }
     }
     /*

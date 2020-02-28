@@ -18,7 +18,6 @@ import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.graph.NavigationGraph;
-import it.unibo.alchemist.model.interfaces.graph.OrientingAgent;
 import org.danilopianini.lang.RangedInteger;
 import org.danilopianini.view.ExportForGUI;
 import org.slf4j.Logger;
@@ -103,8 +102,7 @@ public class DrawCognitiveMap implements Effect {
                 });
             });
         }
-        if (cognitiveMap == null && markerNode.get() instanceof OrientingAgent
-                && env instanceof Environment2DWithObstacles
+        if (cognitiveMap == null && env instanceof Environment2DWithObstacles
                 && env.makePosition(0.0, 0.0) instanceof Euclidean2DPosition) {
             /*
              * Interface OrientingPedestrian is not visible, so this horrible kludge is adopted

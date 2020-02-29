@@ -20,8 +20,6 @@ import it.unibo.alchemist.model.interfaces.geometry.navigationmeshes.deaccon.Ext
 import org.danilopianini.lang.MathUtils.fuzzyEquals
 import java.awt.Shape
 import java.awt.geom.Point2D
-import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.sqrt
 
 /**
@@ -160,7 +158,8 @@ class Deaccon2D(
      * where to plant seeds and their side, as well as the side of crossings.
      * The latter quantity specify the maximum distance of two neighboring
      * areas, i.e. two areas whose distance is <= crossingSide will be considered
-     * connected (if no obstacle is between them).
+     * connected (if no obstacle is between them). Note that active seeding and
+     * cleaning phases won't be performed.
      */
     fun generateEnvGraph(envStart: Point2D, envWidth: Double, envHeight: Double, envObstacles: Collection<Shape>, seedsPositions: Collection<Point2D>, side: Double, destinations: Collection<Euclidean2DPosition>, crossingSide: Double? = null): NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DCrossing> =
         generateEnvGraph(generateNavigationMeshHelper(envStart, envWidth, envHeight, envObstacles, seedsPositions, side), destinations, envObstacles, crossingSide)

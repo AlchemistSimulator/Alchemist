@@ -29,7 +29,7 @@ displacements:
 ```
 
 #### Heterogeneous Pedestrian
-Heterogeneous pedestrians are _Nodes_ who have a given sex and gender, based on which their speed, compliance 
+Heterogeneous pedestrians are _Nodes_ who have a given age and gender, based on which their speed, compliance 
 and social attitudes are computed.
 The kinds of age which can be used are: *child*, *adult*, *elderly*; alternatively you can specify the exact age as a number.
 The kinds of sex available are: *male*, *female*.

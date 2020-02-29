@@ -6,6 +6,8 @@ import it.unibo.alchemist.model.implementations.geometry.isXAxisAligned
 import it.unibo.alchemist.model.implementations.geometry.intersection
 import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionTypes
 import it.unibo.alchemist.model.implementations.geometry.slope
+import it.unibo.alchemist.model.implementations.geometry.findPointOnLineGivenX
+import it.unibo.alchemist.model.implementations.geometry.findPointOnLineGivenY
 import it.unibo.alchemist.model.implementations.geometry.isAxisAligned
 import it.unibo.alchemist.model.implementations.graph.Euclidean2DCrossing
 import it.unibo.alchemist.model.implementations.graph.builder.NavigationGraphBuilder
@@ -138,17 +140,18 @@ class Deaccon2D(
         generateNavigationMeshHelper(envStart, envWidth, envHeight, envObstacles).first
 
     /**
-     * See [generateNavigationMesh]. This method allow to specify the positions
-     * where to plant seeds and their side.
+     * See [generateNavigationMesh]. This method allow to specify the initial
+     * positions of seeds and their initial side. Note that active seeding
+     * and cleaning phases won't be performed.
      */
     private fun generateNavigationMesh(envStart: Point2D, envWidth: Double, envHeight: Double, envObstacles: Collection<Shape>, seedsPositions: Collection<Point2D>, side: Double): Collection<ConvexPolygon> =
         generateNavigationMeshHelper(envStart, envWidth, envHeight, envObstacles, seedsPositions, side).first
 
     /**
-     * Generates a navigation graph describing the environment. Nodes are [ConvexPolygon]s
+     * Generates a navigation graph of the environment. Nodes are [ConvexPolygon]s
      * and edges are [Euclidean2DCrossing]s. The only difference from a navigation mesh
      * is that an environment's graph provides information regarding the connection
-     * between convex polygons, i.e. different areas of the environment.
+     * between convex polygons.
      */
     fun generateEnvGraph(envStart: Point2D, envWidth: Double, envHeight: Double, envObstacles: Collection<Shape>, destinations: Collection<Euclidean2DPosition>): NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DCrossing> =
         generateEnvGraph(generateNavigationMeshHelper(envStart, envWidth, envHeight, envObstacles), destinations, envObstacles)
@@ -157,7 +160,7 @@ class Deaccon2D(
      * See [generateEnvGraph]. This method allow to specify the positions
      * where to plant seeds and their side, as well as the side of crossings.
      * The latter quantity specify the maximum distance of two neighboring
-     * areas, e.g. two areas whose distance is < crossingSide will be considered
+     * areas, i.e. two areas whose distance is <= crossingSide will be considered
      * connected (if no obstacle is between them).
      */
     fun generateEnvGraph(envStart: Point2D, envWidth: Double, envHeight: Double, envObstacles: Collection<Shape>, seedsPositions: Collection<Point2D>, side: Double, destinations: Collection<Euclidean2DPosition>, crossingSide: Double? = null): NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DCrossing> =
@@ -175,7 +178,7 @@ class Deaccon2D(
         walkableAreas.forEachIndexed { aIndex, a ->
             /*
              * We want to find the neighbors of a (the regions whose distance from a is
-             * < step), thus we advance each of its edges and see which regions are intersected
+             * <= step), thus we advance each of its edges and see which regions are intersected
              */
             a.vertices().indices.forEach { i ->
                 val oldEdge = a.getEdge(i)
@@ -193,20 +196,21 @@ class Deaccon2D(
                     val advancedEdge = a.getEdge(i)
                     val nextEdge = a.getEdge((i + 1) % size)
                     a.moveEdge(i, oldEdge)
-                    /*
-                     * Here we consider only the basic case in which only one neighbor is found
-                     */
-                    if (intersectingRegions.size == 1 &&
-                        !builder.edgesFrom(a).map { it.to }.contains(intersectingRegions.first())) {
-                        val neighbor = intersectingRegions.first()
+                    with(intersectingRegions) {
                         /*
-                         * This is the basic case in which the advanced edge is completely contained
-                         * in the intersected region
+                         * We consider only the basic case in which only one neighbor is found
+                         * and the advanced edge is completely contained in it
                          */
-                        if (neighbor.containsOrLiesOnBoundary(advancedEdge.first) &&
-                            neighbor.containsOrLiesOnBoundary(advancedEdge.second)) {
+                        if (this.size == 1 && !builder.edgesFrom(a).map { it.to }.contains(first()) &&
+                            first().containsOrLiesOnBoundary(advancedEdge.first) &&
+                            first().containsOrLiesOnBoundary(advancedEdge.second)) {
+                            val neighbor = first()
                             if (intersectingObstacles.isEmpty()) {
                                 builder.addEdge(a, neighbor, oldEdge)
+                                /*
+                                 * See [Euclidean2DCrossing], we need to find the segment on
+                                 * neighbor's boundary that leads to region a.
+                                 */
                                 val intrudingEdge = neighbor.findIntrudingEdge(prevEdge, nextEdge)
                                 val p1: Euclidean2DPosition = intersection(intrudingEdge, prevEdge).intersection.get()
                                 val p2: Euclidean2DPosition = intersection(intrudingEdge, nextEdge).intersection.get()
@@ -217,30 +221,44 @@ class Deaccon2D(
                              * only if the advanced edge is axis-aligned.
                              */
                             else if (advancedEdge.isAxisAligned()) {
+                                val selector: (Euclidean2DPosition) -> Double =
+                                    if (advancedEdge.isXAxisAligned()) { p -> p.x } else { p -> p.y }
+                                /*
+                                 * Once we know the advanced edge is axis-aligned, we are only interested
+                                 * in the intervals occluded by obstacles along such axis.
+                                 */
                                 val obstacleIntervals = intersectingObstacles
                                     .map { it.vertices() }
-                                    .map {
-                                        if (advancedEdge.isXAxisAligned()) {
-                                            Pair(it.minBy { v -> v.x }!!.x, it.maxBy { v -> v.x }!!.x)
+                                    .mapNotNull {
+                                        val min = it.minBy(selector)?.run(selector)
+                                        val max = it.maxBy(selector)?.run(selector)
+                                        if (min == null || max == null) {
+                                            null
                                         } else {
-                                            Pair(it.minBy { v -> v.y }!!.y, it.maxBy { v -> v.y }!!.y)
+                                            Pair(min, max)
                                         }
                                     }
-                                val min: Double
-                                val max: Double
-                                if (advancedEdge.isXAxisAligned()) {
-                                    min = min(advancedEdge.first.x, advancedEdge.second.x)
-                                    max = max(advancedEdge.first.x, advancedEdge.second.x)
-                                } else {
-                                    min = min(advancedEdge.first.y, advancedEdge.second.y)
-                                    max = max(advancedEdge.first.y, advancedEdge.second.y)
-                                }
-                                val passages = mutableListOf(Pair(min, max))
+                                /*
+                                 * Passages are the intervals not occluded by obstacles along the axis
+                                 * (at the beginning, the whole edge is considered as not occluded, then
+                                 * each obstacle is considered to figure out which portions of the edge
+                                 * are "free")
+                                 */
+                                val passages = mutableListOf(
+                                    Pair(advancedEdge.first.run(selector), advancedEdge.second.run(selector))
+                                ).map {
+                                    /*
+                                     * We want ordered intervals
+                                     */
+                                    if (it.first > it.second) {
+                                        Pair(it.second, it.first)
+                                    } else it
+                                }.toMutableList()
                                 var index = 0
                                 while (index < passages.size) {
                                     var p = passages[index]
-                                    for (obsInterval in obstacleIntervals) {
-                                        val subtraction = p.subtract(obsInterval)
+                                    for (obs in obstacleIntervals) {
+                                        val subtraction = p.subtract(obs)
                                         if (subtraction.isEmpty()) {
                                             passages.removeAt(index)
                                             index--
@@ -253,30 +271,42 @@ class Deaccon2D(
                                     }
                                     index++
                                 }
-                                passages.forEach {
-                                    if (!fuzzyEquals(it.first, it.second)) {
-                                        var segment = if (advancedEdge.isXAxisAligned()) {
-                                            Pair(Euclidean2DPosition(it.first, oldEdge.first.y),
-                                                Euclidean2DPosition(it.second, oldEdge.first.y))
-                                        } else {
-                                            Pair(Euclidean2DPosition(oldEdge.first.x, it.first),
-                                                Euclidean2DPosition(oldEdge.first.x, it.second))
+                                /*
+                                 * Each passage will be an edge (actually, a pair of edge, one in
+                                 * each direction) in the generated graph
+                                 */
+                                passages
+                                    .filter { !fuzzyEquals(it.first, it.second) }
+                                    .forEach {
+                                        val passage = with(oldEdge.first) {
+                                            if (advancedEdge.isXAxisAligned()) {
+                                                Pair(
+                                                    Euclidean2DPosition(it.first, y),
+                                                    Euclidean2DPosition(it.second, y)
+                                                )
+                                            } else {
+                                                Pair(
+                                                    Euclidean2DPosition(x, it.first),
+                                                    Euclidean2DPosition(x, it.second)
+                                                )
+                                            }
                                         }
-                                        builder.addEdge(a, neighbor, segment)
-                                        /*
-                                         * Find the shape of the passage
-                                         */
+                                        builder.addEdge(a, neighbor, passage)
                                         val intrudingEdge = neighbor.findIntrudingEdge(prevEdge, nextEdge)
-                                        segment = if (advancedEdge.isXAxisAligned()) {
-                                            Pair(intrudingEdge.findPointOnLineGivenX(segment.first.x)!!,
-                                                intrudingEdge.findPointOnLineGivenX(segment.second.x)!!)
+                                        val p1 = if (advancedEdge.isXAxisAligned()) {
+                                            intrudingEdge.findPointOnLineGivenX(passage.first.x)
                                         } else {
-                                            Pair(intrudingEdge.findPointOnLineGivenY(segment.first.y)!!,
-                                                intrudingEdge.findPointOnLineGivenY(segment.second.y)!!)
+                                            intrudingEdge.findPointOnLineGivenY(passage.first.y)
                                         }
-                                        builder.addEdge(neighbor, a, segment)
+                                        val p2 = if (advancedEdge.isXAxisAligned()) {
+                                            intrudingEdge.findPointOnLineGivenX(passage.second.x)
+                                        } else {
+                                            intrudingEdge.findPointOnLineGivenY(passage.second.y)
+                                        }
+                                        if (p1 != null && p2 != null) {
+                                            builder.addEdge(neighbor, a, Pair(p1, p2))
+                                        }
                                     }
-                                }
                             }
                         }
                     }
@@ -308,11 +338,19 @@ class Deaccon2D(
         side = stepOfGrowth * SIDE_ACTIVE_SEEDS_SCALE
         stepOfGrowth *= STEP_OF_GROWTH_ACTIVE_SEEDS_SCALE
         val obstacles = envObstacles.toMutableList()
-        obstacles.addAll(walkableAreas.map { it.asAwtShape() }) // already generated regions are obstacles for new seeds
+        /*
+         * already generated regions are obstacles for new seeds
+         */
+        obstacles.addAll(walkableAreas.map { it.asAwtShape() })
         walkableAreas.addAll(seedAndGrow(envStart, envEnd, obstacles, nSeeds, side, stepOfGrowth))
         return Pair(walkableAreas, stepOfGrowth)
     }
 
+    /*
+     * Similarly to the previous function, this helper fun generates a nav mesh and returns
+     * the step of growth used, but allows to specify the positions of initial seeds as well
+     * as their initial side.
+     */
     private fun generateNavigationMeshHelper(envStart: Point2D, envWidth: Double, envHeight: Double, envObstacles: Collection<Shape>, seedsPositions: Collection<Point2D>, side: Double): Pair<MutableList<ExtendableConvexPolygon>, Double> {
         require(envWidth > 0.0 && envHeight > 0.0) { "invalid environment" }
         val envEnd = Point2D.Double(envStart.x + envWidth, envStart.y + envHeight)
@@ -443,7 +481,7 @@ class Deaccon2D(
     }
 
     /*
-     * Subtracts a given interval by the current one.
+     * Subtracts a given interval from the current one.
      */
     private fun Pair<Double, Double>.subtract(i: Pair<Double, Double>): MutableList<Pair<Double, Double>> {
         val min = mutableListOf(first, second, i.first, i.second).min()!!
@@ -491,25 +529,4 @@ class Deaccon2D(
                 intersection(it, s1).type == SegmentsIntersectionTypes.POINT &&
                     intersection(it, s2).type == SegmentsIntersectionTypes.POINT
             }
-
-    private fun Euclidean2DSegment.findPointOnLineGivenX(x: Double): Euclidean2DPosition? {
-        val m = slope()
-        if (m.isInfinite()) {
-            return null
-        }
-        val q = first.y - m * first.x
-        return Euclidean2DPosition(x, m * x + q)
-    }
-
-    private fun Euclidean2DSegment.findPointOnLineGivenY(y: Double): Euclidean2DPosition? {
-        val m = slope()
-        if (m.isInfinite()) {
-            return Euclidean2DPosition(first.x, y)
-        }
-        if (fuzzyEquals(m, 0.0)) {
-            return null
-        }
-        val q = first.y - m * first.x
-        return Euclidean2DPosition((y - q) / m, y)
-    }
 }

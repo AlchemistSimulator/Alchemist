@@ -225,3 +225,32 @@ fun ConvexPolygon.intersectsBoundaryExcluded(s: Euclidean2DSegment): Boolean =
         .map { it.intersection.get() }
         .distinct()
         .size > 1
+
+/**
+ * Finds the point on the line represented by the current segment, given
+ * its x coordinate. Returns null if the point cannot be located.
+ */
+fun Euclidean2DSegment.findPointOnLineGivenX(x: Double): Euclidean2DPosition? {
+    val m = slope()
+    if (m.isInfinite()) {
+        return null
+    }
+    val q = first.y - m * first.x
+    return Euclidean2DPosition(x, m * x + q)
+}
+
+/**
+ * Finds the point on the line represented by the current segment, given
+ * its y coordinate. Returns null if the point cannot be located.
+ */
+fun Euclidean2DSegment.findPointOnLineGivenY(y: Double): Euclidean2DPosition? {
+    val m = slope()
+    if (m.isInfinite()) {
+        return Euclidean2DPosition(first.x, y)
+    }
+    if (fuzzyEquals(m, 0.0)) {
+        return null
+    }
+    val q = first.y - m * first.x
+    return Euclidean2DPosition((y - q) / m, y)
+}

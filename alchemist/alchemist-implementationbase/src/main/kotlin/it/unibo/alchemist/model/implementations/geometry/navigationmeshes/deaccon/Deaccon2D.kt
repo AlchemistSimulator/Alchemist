@@ -5,7 +5,6 @@ import it.unibo.alchemist.model.implementations.geometry.vertices
 import it.unibo.alchemist.model.implementations.geometry.isXAxisAligned
 import it.unibo.alchemist.model.implementations.geometry.intersection
 import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionTypes
-import it.unibo.alchemist.model.implementations.geometry.slope
 import it.unibo.alchemist.model.implementations.geometry.findPointOnLineGivenX
 import it.unibo.alchemist.model.implementations.geometry.findPointOnLineGivenY
 import it.unibo.alchemist.model.implementations.geometry.isAxisAligned

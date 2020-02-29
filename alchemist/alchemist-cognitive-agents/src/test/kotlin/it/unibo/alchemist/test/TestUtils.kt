@@ -83,7 +83,7 @@ typealias NavigationGraph2D = NavigationGraph<Euclidean2DPosition, Euclidean2DTr
  * following path: "images/building-planimetry.png". Zoom and destinations are to be specified.
  */
 fun buildingPlanimetryEnvGraph(zoom: Double = 0.1, destinations: Collection<Euclidean2DPosition>): NavigationGraph2D =
-    with (zoom / 0.1) {
+    with(zoom / 0.1) {
         /*
          * Absolute values here are calibrated for a zoom of 0.1
          */
@@ -124,7 +124,7 @@ fun buildingPlanimetryEnvGraph(zoom: Double = 0.1, destinations: Collection<Eucl
  * following path: "images/congestion-avoidance.png". Zoom and destinations are to be specified.
  */
 fun congestionAvoidanceEnvGraph(zoom: Double = 0.1, destinations: Collection<Euclidean2DPosition>): NavigationGraph2D =
-    with (zoom / 0.1) {
+    with(zoom / 0.1) {
         val scaler = this
         Deaccon2D().generateEnvGraph(
             Point2D.Double(0.0, 0.0),

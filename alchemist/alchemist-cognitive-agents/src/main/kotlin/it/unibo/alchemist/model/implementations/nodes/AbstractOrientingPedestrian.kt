@@ -37,7 +37,14 @@ import org.apache.commons.math3.random.RandomGenerator
  * no extra information regarding the connection of landmarks is stored in the cognitive map
  * (a part from the boolean information concerning the fact a connection is present of course).
  */
-abstract class AbstractOrientingPedestrian<P, A : GeometricTransformation<P>, N1 : ConvexGeometricShape<P, A>, E1 : GraphEdge<N1>, N2 : ConvexGeometricShape<P, A>, T>(
+abstract class AbstractOrientingPedestrian<
+    P,
+    A : GeometricTransformation<P>,
+    N1 : ConvexGeometricShape<P, A>,
+    E1 : GraphEdge<N1>,
+    N2 : ConvexGeometricShape<P, A>,
+    T
+>(
     final override val knowledgeDegree: Double,
     /**
      */

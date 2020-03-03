@@ -25,16 +25,16 @@ import java.awt.geom.Rectangle2D
  * whose nodes are [ConvexPolygon]s.
  *
  * @param T the concentration type.
- * @param N1 the type of nodes of the [environmentGraph].
- * @param E1 the type of edges of the [environmentGraph].
+ * @param N the type of nodes of the [environmentGraph].
+ * @param E the type of edges of the [environmentGraph].
  */
-open class OrientingPedestrian2D<T, N1 : ConvexPolygon, E1 : GraphEdge<N1>>(
+open class OrientingPedestrian2D<T, N : ConvexPolygon, E : GraphEdge<N>>(
     knowledgeDegree: Double,
     randomGenerator: RandomGenerator,
-    environmentGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, N1, E1>,
+    environmentGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, N, E>,
     environment: Environment<T, Euclidean2DPosition>,
     group: PedestrianGroup<T>? = null
-) : AbstractOrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N1, E1, Ellipse>(knowledgeDegree, randomGenerator, environmentGraph, environment, group),
+) : AbstractOrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N, E, Ellipse>(knowledgeDegree, randomGenerator, environmentGraph, environment, group),
     Pedestrian2D<T> {
 
     /*
@@ -52,7 +52,7 @@ open class OrientingPedestrian2D<T, N1 : ConvexPolygon, E1 : GraphEdge<N1>>(
      * If such polygon contains one or more destinations, the generated ellipse
      * will contain at least one of them.
      */
-    override fun generateLandmarkWithin(region: N1): Ellipse =
+    override fun generateLandmarkWithin(region: N): Ellipse =
         with(region) {
             val width = randomGenerator.nextDouble(MIN_SIDE, MAX_SIDE) * shape.diameter
             val height = randomGenerator.nextDouble(MIN_SIDE, MAX_SIDE) * shape.diameter

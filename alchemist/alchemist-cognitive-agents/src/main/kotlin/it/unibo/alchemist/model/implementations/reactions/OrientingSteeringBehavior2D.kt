@@ -29,20 +29,26 @@ import kotlin.math.PI
  * of opposite forces). However, the resulting movements still present some shaking.
  *
  * @param T the concentration type.
- * @param N1 the type of nodes of the [environmentGraph].
- * @param E1 the type of edges of the [environmentGraph].
- * @param N2 the type of landmarks of the pedestrian's cognitive map.
- * @param E2 the type of edges of the pedestrian's cognitive map.
+ * @param N the type of nodes of the [environmentGraph].
+ * @param E the type of edges of the [environmentGraph].
+ * @param M the type of landmarks of the pedestrian's cognitive map.
+ * @param F the type of edges of the pedestrian's cognitive map.
  */
-class OrientingSteeringBehavior2D<N1 : ConvexPolygon, E1 : GraphEdgeWithData<N1, Euclidean2DSegment>, N2 : ConvexEuclidean2DShape, E2 : GraphEdge<N2>, T> @JvmOverloads constructor(
+class OrientingSteeringBehavior2D<
+    T,
+    N : ConvexPolygon,
+    E : GraphEdgeWithData<N, Euclidean2DSegment>,
+    M : ConvexEuclidean2DShape,
+    F : GraphEdge<M>
+> @JvmOverloads constructor(
     environment: Environment<T, Euclidean2DPosition>,
-    pedestrian: OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N2, E2>,
+    pedestrian: OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, M, F>,
     timeDistribution: TimeDistribution<T>,
-    environmentGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, N1, E1>,
+    environmentGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, N, E>,
     private val steerStrategy: SteeringStrategy<T, Euclidean2DPosition> = DistanceWeighted(environment, pedestrian)
-) : OrientingBehavior2D<T, N1, E1, N2, E2>(environment, pedestrian, timeDistribution, environmentGraph) {
+) : OrientingBehavior2D<T, N, E, M, F>(environment, pedestrian, timeDistribution, environmentGraph) {
 
-    override fun moveTowards(target: Euclidean2DPosition, currentRoom: N1?, targetEdge: E1) {
+    override fun moveTowards(target: Euclidean2DPosition, currentRoom: N?, targetEdge: E) {
         val currPos = environment.getPosition(pedestrian)
         var desiredMovement = Seek2D(environment, this, pedestrian, *target.cartesianCoordinates).nextPosition
         var disturbingMovement = Combine(environment, this, pedestrian, steerActions(), steerStrategy).nextPosition

@@ -29,9 +29,9 @@ import org.apache.commons.math3.random.RandomGenerator
  * @param T the concentration type.
  * @param P the [Position] type and [Vector] type for the space this pedestrian is inside.
  * @param A the transformations supported by the shapes in this space.
- * @param N1 the type of nodes of the [environmentGraph].
- * @param E1 the type of edges of the [environmentGraph].
- * @param N2 the type of landmarks in the pedestrian's [cognitiveMap].
+ * @param N the type of nodes of the [environmentGraph].
+ * @param E the type of edges of the [environmentGraph].
+ * @param M the type of landmarks in the pedestrian's [cognitiveMap].
  *
  * The algorithm produces a cognitive map whose edges are simple [GraphEdge]s, this means
  * no extra information regarding the connection of landmarks is stored in the cognitive map
@@ -41,9 +41,9 @@ abstract class AbstractOrientingPedestrian<
     T,
     P,
     A : GeometricTransformation<P>,
-    N1 : ConvexGeometricShape<P, A>,
-    E1 : GraphEdge<N1>,
-    N2 : ConvexGeometricShape<P, A>
+    N : ConvexGeometricShape<P, A>,
+    E : GraphEdge<N>,
+    M : ConvexGeometricShape<P, A>
 >(
     final override val knowledgeDegree: Double,
     /**
@@ -56,10 +56,10 @@ abstract class AbstractOrientingPedestrian<
      * areas. Additionally, a [NavigationGraph] can store some destinations which
      * will be considered as possible final destinations by this pedestrian.
      */
-    protected val environmentGraph: NavigationGraph<P, A, N1, E1>,
+    protected val environmentGraph: NavigationGraph<P, A, N, E>,
     environment: Environment<T, P>,
     group: PedestrianGroup<T>? = null
-) : OrientingPedestrian<T, P, A, N2, GraphEdge<N2>>,
+) : OrientingPedestrian<T, P, A, M, GraphEdge<M>>,
     HomogeneousPedestrianImpl<T, P>(environment, randomGenerator, group) where P : Position<P>, P : Vector<P> {
 
     init {
@@ -88,8 +88,8 @@ abstract class AbstractOrientingPedestrian<
      * and number of areas to be traversed can be obtained from the environment's
      * graph). We then produce a minimum spanning tree of the described graph.
      */
-    override val cognitiveMap: NavigationGraph<P, A, N2, GraphEdge<N2>> by lazy {
-        val builder = NavigationGraphBuilder<P, A, N2, GraphEdge<N2>>()
+    override val cognitiveMap: NavigationGraph<P, A, M, GraphEdge<M>> by lazy {
+        val builder = NavigationGraphBuilder<P, A, M, GraphEdge<M>>()
         /*
          * The rooms in which landmarks will be placed.
          */
@@ -134,7 +134,7 @@ abstract class AbstractOrientingPedestrian<
      * If such region contains one or more destinations, the generated
      * landmark must contain at least one of them.
      */
-    protected abstract fun generateLandmarkWithin(region: N1): N2
+    protected abstract fun generateLandmarkWithin(region: N): M
 
     private fun <E> List<E>.takePercentage(percentage: Double) = subList(0, (percentage * size).toInt())
 }

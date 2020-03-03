@@ -19,19 +19,19 @@ import org.apache.commons.math3.random.RandomGenerator
  * A cognitive [OrientingPedestrian2D] in an [EuclideanPhysics2DEnvironment].
  *
  * @param T the concentration type.
- * @param N1 the type of nodes of the [environmentGraph].
- * @param E1 the type of edges of the [environmentGraph].
+ * @param N the type of nodes of the [environmentGraph].
+ * @param E the type of edges of the [environmentGraph].
  */
-class OrientingCognitivePedestrian2D<T, N1 : ConvexPolygon, E1 : GraphEdge<N1>> @JvmOverloads constructor(
+class OrientingCognitivePedestrian2D<T, N : ConvexPolygon, E : GraphEdge<N>> @JvmOverloads constructor(
     knowledgeDegree: Double,
     randomGenerator: RandomGenerator,
-    environmentGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, N1, E1>,
+    environmentGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, N, E>,
     environment: EuclideanPhysics2DEnvironment<T>,
     group: PedestrianGroup<T>? = null,
     override val age: Age,
     override val gender: Gender,
     danger: Molecule? = null
-) : OrientingPedestrian2D<T, N1, E1>(knowledgeDegree, randomGenerator, environmentGraph, environment, group),
+) : OrientingPedestrian2D<T, N, E>(knowledgeDegree, randomGenerator, environmentGraph, environment, group),
     OrientingCognitivePedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, Ellipse, GraphEdge<Ellipse>> {
 
     /**
@@ -40,7 +40,7 @@ class OrientingCognitivePedestrian2D<T, N1 : ConvexPolygon, E1 : GraphEdge<N1>> 
     @JvmOverloads constructor(
         knowledgeDegree: Double,
         randomGenerator: RandomGenerator,
-        envGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, N1, E1>,
+        envGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, N, E>,
         env: EuclideanPhysics2DEnvironment<T>,
         group: PedestrianGroup<T>? = null,
         age: String,
@@ -54,7 +54,7 @@ class OrientingCognitivePedestrian2D<T, N1 : ConvexPolygon, E1 : GraphEdge<N1>> 
     @JvmOverloads constructor(
         knowledgeDegree: Double,
         randomGenerator: RandomGenerator,
-        envGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, N1, E1>,
+        envGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, N, E>,
         env: EuclideanPhysics2DEnvironment<T>,
         group: PedestrianGroup<T>? = null,
         age: Int,

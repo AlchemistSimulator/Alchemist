@@ -29,15 +29,23 @@ import kotlin.math.pow
  * @param T the concentration type.
  * @param P the [Position] type and [Vector] type for the space the pedestrian is inside.
  * @param A the transformations supported by the shapes in this space.
- * @param N1 the type of nodes of the [environmentGraph].
- * @param E1 the type of edges of the [environmentGraph].
- * @param N2 the type of landmarks of the pedestrian's cognitive map.
- * @param E2 the type of edges of the pedestrian's cognitive map.
+ * @param N the type of nodes of the [environmentGraph].
+ * @param E the type of edges of the [environmentGraph].
+ * @param M the type of landmarks of the pedestrian's cognitive map.
+ * @param F the type of edges of the pedestrian's cognitive map.
  *
- * Since E2 is simply any subtype of GraphEdge<N2>, this reaction assumes no information
+ * Since F is simply any subtype of GraphEdge<M>, this reaction assumes no information
  * is stored in the edges of the cognitive map.
  */
-abstract class AbstractOrientingBehavior<T, P, A : GeometricTransformation<P>, N1 : ConvexGeometricShape<P, A>, E1 : GraphEdge<N1>, N2 : ConvexGeometricShape<P, A>, E2 : GraphEdge<N2>>(
+abstract class AbstractOrientingBehavior<
+    T,
+    P,
+    A : GeometricTransformation<P>,
+    N : ConvexGeometricShape<P, A>,
+    E : GraphEdge<N>,
+    M : ConvexGeometricShape<P, A>,
+    F : GraphEdge<M>
+>(
     /**
      * The environment the pedestrian is into.
      */
@@ -45,7 +53,7 @@ abstract class AbstractOrientingBehavior<T, P, A : GeometricTransformation<P>, N
     /**
      * The owner of this behavior.
      */
-    protected val pedestrian: OrientingPedestrian<T, P, A, N2, E2>,
+    protected val pedestrian: OrientingPedestrian<T, P, A, M, F>,
     timeDistribution: TimeDistribution<T>,
     /**
      * A navigation graph describing the environment. Nodes are [ConvexGeometricShape]s
@@ -54,7 +62,7 @@ abstract class AbstractOrientingBehavior<T, P, A : GeometricTransformation<P>, N
      * areas. Additionally, a [NavigationGraph] can store some destinations which
      * will be considered as possible final destinations.
      */
-    protected val environmentGraph: NavigationGraph<P, A, N1, E1>
+    protected val environmentGraph: NavigationGraph<P, A, N, E>
 ) : AbstractReaction<T>(pedestrian, timeDistribution) where P : Position<P>, P : Vector<P> {
 
     /*
@@ -74,7 +82,7 @@ abstract class AbstractOrientingBehavior<T, P, A : GeometricTransformation<P>, N
     /*
      * Route to a possible destination derived from the cognitive map.
      */
-    private val route: MutableList<N2> by lazy {
+    private val route: MutableList<M> by lazy {
         with(pedestrian.cognitiveMap) {
             val currPos = environment.getPosition(pedestrian)
             /*
@@ -109,11 +117,11 @@ abstract class AbstractOrientingBehavior<T, P, A : GeometricTransformation<P>, N
     /*
      * The room (or walkable area) the pedestrian is into.
      */
-    private lateinit var currRoom: N1
+    private lateinit var currRoom: N
     /*
      * The room (or walkable area) the pedestrian is heading to.
      */
-    private lateinit var nextRoom: N1
+    private lateinit var nextRoom: N
     /*
      * The position the pedestrian is moving towards, no obstacle is placed
      * between the agent and this position.
@@ -122,7 +130,7 @@ abstract class AbstractOrientingBehavior<T, P, A : GeometricTransformation<P>, N
     /*
      * The edge (or better, crossing) the pedestrian is moving towards.
      */
-    private lateinit var targetEdge: E1
+    private lateinit var targetEdge: E
     /*
      */
     private enum class State {
@@ -290,7 +298,7 @@ abstract class AbstractOrientingBehavior<T, P, A : GeometricTransformation<P>, N
      * This method should implement an algorithm allowing the pedestrian to perform an educated
      * guess of which crossing to take in order to get closer to the provided destination.
      */
-    protected abstract fun computeEdgeRankings(currentRoom: N1, destination: P): Map<E1, Int>
+    protected abstract fun computeEdgeRankings(currentRoom: N, destination: P): Map<E, Int>
 
     /**
      * Computes the next sub-destination the pedestrian will move towards, provided an edge the
@@ -303,13 +311,13 @@ abstract class AbstractOrientingBehavior<T, P, A : GeometricTransformation<P>, N
      * its shape and location in the room boundary) to determine which point the pedestrian
      * shall point towards.
      */
-    protected abstract fun computeSubdestination(targetEdge: E1): P
+    protected abstract fun computeSubdestination(targetEdge: E): P
 
     /**
      * Move the pedestrian towards a position which is guaranteed to be in sight (i.e. no
      * obstacle is placed between him and such position).
      */
-    protected open fun moveTowards(target: P, currentRoom: N1?, targetEdge: E1): Unit =
+    protected open fun moveTowards(target: P, currentRoom: N?, targetEdge: E): Unit =
         Seek(environment, this, pedestrian, *target.cartesianCoordinates).execute()
 
     /**
@@ -317,7 +325,7 @@ abstract class AbstractOrientingBehavior<T, P, A : GeometricTransformation<P>, N
      * @param rank is the rank given to the edge when assessing its suitability to reach the
      * next subdestination. See [cognitiveMapFactor].
      */
-    protected open fun weight(edge: E1, rank: Int?): Double =
+    protected open fun weight(edge: E, rank: Int?): Double =
         volatileMemoryFactor(edge) * cognitiveMapFactor(rank) * finalDestinationFactor(edge) * impasseFactor(edge)
 
     /*
@@ -325,7 +333,7 @@ abstract class AbstractOrientingBehavior<T, P, A : GeometricTransformation<P>, N
      * weighting system. It is computed as 2^k where k is the number of visits
      * to the area the edge being weighted leads to.
      */
-    private fun volatileMemoryFactor(edge: E1) = 2.0.pow(pedestrian.volatileMemory[edge.to] ?: 0)
+    private fun volatileMemoryFactor(edge: E) = 2.0.pow(pedestrian.volatileMemory[edge.to] ?: 0)
 
     /*
      * Computes the factor deriving from the pedestrian's cognitive map for the
@@ -339,18 +347,18 @@ abstract class AbstractOrientingBehavior<T, P, A : GeometricTransformation<P>, N
      * Computes the factor for the weighting system taking into account final
      * destinations discovered while travelling.
      */
-    private fun finalDestinationFactor(edge: E1) = if (environmentGraph.containsDestination(edge.to)) 0.1 else 1.0
+    private fun finalDestinationFactor(edge: E) = if (environmentGraph.containsDestination(edge.to)) 0.1 else 1.0
 
     /*
      * Computes the factor for the weighting system taking into account whereas
      * the assessed edge leads to an impasse or not.
      */
-    private fun impasseFactor(edge: E1) = if (isImpasse(edge.to)) 10.0 else 1.0
+    private fun impasseFactor(edge: E) = if (isImpasse(edge.to)) 10.0 else 1.0
 
     /*
      * Registers a visit in the given area in the pedestrian's volatile memory.
      */
-    private fun OrientingAgent<P, A, N2, *>.registerVisit(area: N1) {
+    private fun OrientingAgent<P, A, M, *>.registerVisit(area: N) {
         volatileMemory[area] = (volatileMemory[area] ?: 0) + 1
     }
 
@@ -358,7 +366,7 @@ abstract class AbstractOrientingBehavior<T, P, A : GeometricTransformation<P>, N
      * Checks if the pedestrian knows that the given area is an impasse
      * (i.e. with a single door).
      */
-    private fun isImpasse(area: N1): Boolean =
+    private fun isImpasse(area: N): Boolean =
         pedestrian.volatileMemory.contains(area) &&
             environmentGraph.edgesFrom(area).map { it.to }.distinct().count() <= 1
 }

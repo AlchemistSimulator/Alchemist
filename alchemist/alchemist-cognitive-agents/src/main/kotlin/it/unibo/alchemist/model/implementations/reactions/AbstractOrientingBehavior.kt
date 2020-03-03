@@ -188,7 +188,7 @@ abstract class AbstractOrientingBehavior<
                             .map { it to computeSubdestination(it) }
                             .minBy { it.second.getDistanceTo(currPos) }
                         if (closestDoor != null) {
-                            nextRoom = closestDoor.first.to
+                            nextRoom = closestDoor.first.head
                             subdestination = closestDoor.second
                             targetEdge = closestDoor.first
                             state = State.MOVING_TO_DOOR
@@ -242,7 +242,7 @@ abstract class AbstractOrientingBehavior<
                         })
                     )
                 if (edge != null) {
-                    nextRoom = edge.to
+                    nextRoom = edge.head
                     subdestination = computeSubdestination(edge)
                     targetEdge = edge
                     state = State.MOVING_TO_DOOR
@@ -333,7 +333,7 @@ abstract class AbstractOrientingBehavior<
      * weighting system. It is computed as 2^k where k is the number of visits
      * to the area the edge being weighted leads to.
      */
-    private fun volatileMemoryFactor(edge: F) = 2.0.pow(pedestrian.volatileMemory[edge.to] ?: 0)
+    private fun volatileMemoryFactor(edge: F) = 2.0.pow(pedestrian.volatileMemory[edge.head] ?: 0)
 
     /*
      * Computes the factor deriving from the pedestrian's cognitive map for the
@@ -347,13 +347,13 @@ abstract class AbstractOrientingBehavior<
      * Computes the factor for the weighting system taking into account final
      * destinations discovered while travelling.
      */
-    private fun finalDestinationFactor(edge: F) = if (environmentGraph.containsDestination(edge.to)) 0.1 else 1.0
+    private fun finalDestinationFactor(edge: F) = if (environmentGraph.containsDestination(edge.head)) 0.1 else 1.0
 
     /*
      * Computes the factor for the weighting system taking into account whereas
      * the assessed edge leads to an impasse or not.
      */
-    private fun impasseFactor(edge: F) = if (isImpasse(edge.to)) 10.0 else 1.0
+    private fun impasseFactor(edge: F) = if (isImpasse(edge.head)) 10.0 else 1.0
 
     /*
      * Registers a visit in the given area in the pedestrian's volatile memory.
@@ -368,5 +368,5 @@ abstract class AbstractOrientingBehavior<
      */
     private fun isImpasse(area: M): Boolean =
         pedestrian.volatileMemory.contains(area) &&
-            environmentGraph.edgesFrom(area).map { it.to }.distinct().count() <= 1
+            environmentGraph.edgesFrom(area).map { it.head }.distinct().count() <= 1
 }

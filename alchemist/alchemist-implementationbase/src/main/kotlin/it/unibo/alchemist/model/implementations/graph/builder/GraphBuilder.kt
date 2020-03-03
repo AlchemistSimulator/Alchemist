@@ -51,18 +51,18 @@ open class GraphBuilder<N, E : GraphEdge<N>>(
          * (even if it has no edges departing from it), otherwise it won't
          * be considered when the nodes() function is called.
          */
-        if (adjacencyList[edge.to] == null) {
-            adjacencyList[edge.to] = mutableListOf()
+        if (adjacencyList[edge.head] == null) {
+            adjacencyList[edge.head] = mutableListOf()
         }
-        adjacencyList[edge.from]?.let {
-            return if (!it.map { e -> e.to }.contains(edge.to)) {
+        adjacencyList[edge.tail]?.let {
+            return if (!it.map { e -> e.head }.contains(edge.head)) {
                 it.add(edge)
                 true
             } else {
                 false
             }
         }
-        adjacencyList[edge.from] = mutableListOf(edge)
+        adjacencyList[edge.tail] = mutableListOf(edge)
         return true
     }
 

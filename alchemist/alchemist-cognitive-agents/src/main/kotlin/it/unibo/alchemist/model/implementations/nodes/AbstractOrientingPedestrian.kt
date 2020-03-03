@@ -122,10 +122,10 @@ abstract class AbstractOrientingPedestrian<
         builder.build(rooms.flatMap { environmentGraph.destinationsWithin(it) })
             .primMST {
                 environmentGraph.dijkstraShortestPath(
-                    rooms[landmarks.indexOf(it.from)],
-                    rooms[landmarks.indexOf(it.to)],
+                    rooms[landmarks.indexOf(it.tail)],
+                    rooms[landmarks.indexOf(it.head)],
                     { 1.0 }
-                )?.weight ?: it.from.centroid.getDistanceTo(it.to.centroid)
+                )?.weight ?: it.tail.centroid.getDistanceTo(it.head.centroid)
             }
     }
 

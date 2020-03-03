@@ -86,15 +86,15 @@ class TestGraph {
         g.nodes().forEach {
             Assertions.assertEquals(true, mst.nodes().contains(it))
         }
-        Assertions.assertEquals(mutableSetOf(1, 7), mst.edgesFrom(0).map { it.to }.toSet())
-        Assertions.assertEquals(mutableSetOf(0), mst.edgesFrom(1).map { it.to }.toSet())
-        Assertions.assertEquals(mutableSetOf(3, 5, 8), mst.edgesFrom(2).map { it.to }.toSet())
-        Assertions.assertEquals(mutableSetOf(2, 4), mst.edgesFrom(3).map { it.to }.toSet())
-        Assertions.assertEquals(mutableSetOf(3), mst.edgesFrom(4).map { it.to }.toSet())
-        Assertions.assertEquals(mutableSetOf(2, 6), mst.edgesFrom(5).map { it.to }.toSet())
-        Assertions.assertEquals(mutableSetOf(5, 7), mst.edgesFrom(6).map { it.to }.toSet())
-        Assertions.assertEquals(mutableSetOf(0, 6), mst.edgesFrom(7).map { it.to }.toSet())
-        Assertions.assertEquals(mutableSetOf(2), mst.edgesFrom(8).map { it.to }.toSet())
+        Assertions.assertEquals(mutableSetOf(1, 7), mst.edgesFrom(0).map { it.head }.toSet())
+        Assertions.assertEquals(mutableSetOf(0), mst.edgesFrom(1).map { it.head }.toSet())
+        Assertions.assertEquals(mutableSetOf(3, 5, 8), mst.edgesFrom(2).map { it.head }.toSet())
+        Assertions.assertEquals(mutableSetOf(2, 4), mst.edgesFrom(3).map { it.head }.toSet())
+        Assertions.assertEquals(mutableSetOf(3), mst.edgesFrom(4).map { it.head }.toSet())
+        Assertions.assertEquals(mutableSetOf(2, 6), mst.edgesFrom(5).map { it.head }.toSet())
+        Assertions.assertEquals(mutableSetOf(5, 7), mst.edgesFrom(6).map { it.head }.toSet())
+        Assertions.assertEquals(mutableSetOf(0, 6), mst.edgesFrom(7).map { it.head }.toSet())
+        Assertions.assertEquals(mutableSetOf(2), mst.edgesFrom(8).map { it.head }.toSet())
     }
 
     @Test
@@ -126,18 +126,18 @@ class TestGraph {
         g.nodes().forEach {
             Assertions.assertEquals(true, mst.nodes().contains(it))
         }
-        Assertions.assertEquals(mutableSetOf(1, 7), mst.edgesFrom(0).map { it.to }.toSet())
-        Assertions.assertEquals(mutableSetOf(0), mst.edgesFrom(1).map { it.to }.toSet())
-        Assertions.assertEquals(mutableSetOf(3, 5, 8), mst.edgesFrom(2).map { it.to }.toSet())
-        Assertions.assertEquals(mutableSetOf(2, 4), mst.edgesFrom(3).map { it.to }.toSet())
-        Assertions.assertEquals(mutableSetOf(3), mst.edgesFrom(4).map { it.to }.toSet())
-        Assertions.assertEquals(mutableSetOf(2, 6), mst.edgesFrom(5).map { it.to }.toSet())
-        Assertions.assertEquals(mutableSetOf(5, 7), mst.edgesFrom(6).map { it.to }.toSet())
-        Assertions.assertEquals(mutableSetOf(0, 6), mst.edgesFrom(7).map { it.to }.toSet())
-        Assertions.assertEquals(mutableSetOf(2), mst.edgesFrom(8).map { it.to }.toSet())
+        Assertions.assertEquals(mutableSetOf(1, 7), mst.edgesFrom(0).map { it.head }.toSet())
+        Assertions.assertEquals(mutableSetOf(0), mst.edgesFrom(1).map { it.head }.toSet())
+        Assertions.assertEquals(mutableSetOf(3, 5, 8), mst.edgesFrom(2).map { it.head }.toSet())
+        Assertions.assertEquals(mutableSetOf(2, 4), mst.edgesFrom(3).map { it.head }.toSet())
+        Assertions.assertEquals(mutableSetOf(3), mst.edgesFrom(4).map { it.head }.toSet())
+        Assertions.assertEquals(mutableSetOf(2, 6), mst.edgesFrom(5).map { it.head }.toSet())
+        Assertions.assertEquals(mutableSetOf(5, 7), mst.edgesFrom(6).map { it.head }.toSet())
+        Assertions.assertEquals(mutableSetOf(0, 6), mst.edgesFrom(7).map { it.head }.toSet())
+        Assertions.assertEquals(mutableSetOf(2), mst.edgesFrom(8).map { it.head }.toSet())
         // disconnected part below
-        Assertions.assertEquals(mutableSetOf(11, 10), mst.edgesFrom(9).map { it.to }.toSet())
-        Assertions.assertEquals(mutableSetOf(9, 12), mst.edgesFrom(10).map { it.to }.toSet())
+        Assertions.assertEquals(mutableSetOf(11, 10), mst.edgesFrom(9).map { it.head }.toSet())
+        Assertions.assertEquals(mutableSetOf(9, 12), mst.edgesFrom(10).map { it.head }.toSet())
     }
 
     private fun <N, D> HashMap<N, MutableList<GraphEdgeWithData<N, D>>>.addUndirectEdge(from: N, to: N, data: D) {

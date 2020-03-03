@@ -124,7 +124,7 @@ open class OrientingBehavior2D<
         val graph = builder.build()
         val sorted = edges
             .sortedBy {
-                graph.dijkstraShortestPath(it.first, destination, { e -> e.from.getDistanceTo(e.to) })?.weight
+                graph.dijkstraShortestPath(it.first, destination, { e -> e.tail.getDistanceTo(e.head) })?.weight
             }
             .map { it.second }
         return environmentGraph.edgesFrom(currentRoom).map { it to sorted.indexOf(it) + 1 }.toMap()
@@ -141,7 +141,7 @@ open class OrientingBehavior2D<
              * The ideal movement the pedestrian would perform connects its current
              * position to the centroid of the next room.
              */
-            val movement = Pair(targetEdge.to.centroid, environment.getPosition(pedestrian))
+            val movement = Pair(targetEdge.head.centroid, environment.getPosition(pedestrian))
             /*
              * The sub-destination is computed as the point belonging to the crossing
              * which is closest to the intersection between the lines defined by movement
@@ -169,7 +169,7 @@ open class OrientingBehavior2D<
      * We add a factor taking into account the congestion of the room the edge
      * being weighted leads to.
      */
-    public override fun weight(edge: F, rank: Int?): Double = super.weight(edge, rank) * congestionFactor(edge.to)
+    public override fun weight(edge: F, rank: Int?): Double = super.weight(edge, rank) * congestionFactor(edge.head)
 
     private fun congestionFactor(room: M): Double =
         environment.nodes

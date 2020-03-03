@@ -98,7 +98,7 @@ public class DrawCognitiveMap implements Effect {
             cognitiveMap.nodes().forEach(r -> {
                 final Point centroidFrom = w.getViewPoint(r.getCentroid());
                 cognitiveMap.edgesFrom(r).forEach(e -> {
-                    final Point centroidTo = w.getViewPoint(e.getTo().getCentroid());
+                    final Point centroidTo = w.getViewPoint(e.getHead().getCentroid());
                     g.setColor(colorCache);
                     g.drawLine(centroidFrom.x, centroidFrom.y, centroidTo.x, centroidTo.y);
                 });

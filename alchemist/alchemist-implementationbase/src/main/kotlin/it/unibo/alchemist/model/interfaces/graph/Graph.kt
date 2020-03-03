@@ -8,10 +8,10 @@ package it.unibo.alchemist.model.interfaces.graph
 open class GraphEdge<N>(
     /**
      */
-    val from: N,
+    val tail: N,
     /**
      */
-    val to: N
+    val head: N
 )
 
 /**
@@ -21,12 +21,12 @@ open class GraphEdge<N>(
  * @param D the type of data.
  */
 open class GraphEdgeWithData<N, D>(
-    from: N,
-    to: N,
+    tail: N,
+    head: N,
     /**
      */
     val data: D
-) : GraphEdge<N>(from, to)
+) : GraphEdge<N>(tail, head)
 
 /**
  * A graph composed by a set of nodes and a set of edges

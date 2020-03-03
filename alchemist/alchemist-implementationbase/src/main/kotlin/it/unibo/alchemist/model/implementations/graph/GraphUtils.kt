@@ -26,7 +26,7 @@ fun <N, E : GraphEdge<N>> Graph<N, E>.edges(): List<E> =
  */
 fun <N, E : GraphEdge<N>> Graph<N, E>.isReachable(from: N, to: N): Boolean {
     require(nodes().contains(from) && nodes().contains(to)) { "nodes not found" }
-    if (from == to || edgesFrom(from).any { it.to == to }) {
+    if (from == to || edgesFrom(from).any { it.head == to }) {
         return true
     }
     return dfs(from, to)
@@ -39,7 +39,7 @@ fun <N, E : GraphEdge<N>> Graph<N, E>.isReachable(from: N, to: N): Boolean {
  */
 fun <N, E : GraphEdge<N>> Graph<N, E>.dfs(node: N, target: N, visited: HashMap<N, Boolean> = HashMap(nodes().size)): Boolean {
     visited[node] = true
-    with(edgesFrom(node).map { it.to }) {
+    with(edgesFrom(node).map { it.head }) {
         if (any { it == target }) {
             return true
         }
@@ -120,7 +120,7 @@ fun <N, E : GraphEdge<N>> Graph<N, E>.dijkstraShortestPath(from: N, to: N, weigh
             /*
              * Edge e connects u to v
              */
-            val v = e.to
+            val v = e.head
             val distToV = dist[u]!! + weight(e)
             /*
              * A shorter path has been found
@@ -159,7 +159,7 @@ fun <N, E : GraphEdge<N>> Graph<N, E>.dijkstraShortestPath(from: N, to: N, weigh
  * two [ConvexGeometricShape]s the edge connects.
  */
 fun <V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>> NavigationGraph<V, A, N, E>.dijkstraShortestPath(from: N, to: N): Path<N>? =
-    dijkstraShortestPath(from, to, { (it.from.centroid - it.to.centroid).magnitude() })
+    dijkstraShortestPath(from, to, { (it.tail.centroid - it.head.centroid).magnitude() })
 
 /**
  * Computes the minimum spanning tree of the graph. Note that the graph must be
@@ -171,7 +171,7 @@ fun <N, E : GraphEdge<N>> Graph<N, E>.primMST(weight: (E) -> Double): Graph<N, E
 /**
  * See [primMST].
  */
-fun <V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>> NavigationGraph<V, A, N, E>.primMST(weight: (E) -> Double = { (it.from.centroid - it.to.centroid).magnitude() }): NavigationGraph<V, A, N, E> =
+fun <V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>> NavigationGraph<V, A, N, E>.primMST(weight: (E) -> Double = { (it.tail.centroid - it.head.centroid).magnitude() }): NavigationGraph<V, A, N, E> =
     with(NavigationGraphBuilder<V, A, N, E>(nodes().size)) {
         primMST(weight, this)
         build(destinations())
@@ -204,11 +204,11 @@ private fun <N, E : GraphEdge<N>> Graph<N, E>.primMST(weight: (E) -> Double, bui
          */
         if (builder.addNode(u)) {
             prev[u]?.let {
-                builder.addEdge(edgesFrom(it).first { e -> e.to == u })
-                builder.addEdge(edgesFrom(u).first { e -> e.to == it })
+                builder.addEdge(edgesFrom(it).first { e -> e.head == u })
+                builder.addEdge(edgesFrom(u).first { e -> e.head == it })
             }
             edgesFrom(u).forEach { e ->
-                val v = e.to
+                val v = e.head
                 if (!builder.nodes().contains(v)) {
                     val w = weight(e)
                     if (w < cost[v]!!) {

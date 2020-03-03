@@ -199,7 +199,7 @@ class Deaccon2D(
                          * We consider only the basic case in which only one neighbor is found
                          * and the advanced edge is completely contained in it
                          */
-                        if (this.size == 1 && !builder.edgesFrom(a).map { it.to }.contains(first()) &&
+                        if (this.size == 1 && !builder.edgesFrom(a).map { it.head }.contains(first()) &&
                             first().containsOrLiesOnBoundary(advancedEdge.first) &&
                             first().containsOrLiesOnBoundary(advancedEdge.second)) {
                             val neighbor = first()

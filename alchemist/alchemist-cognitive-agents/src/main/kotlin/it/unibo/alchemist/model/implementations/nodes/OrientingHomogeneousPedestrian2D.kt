@@ -13,16 +13,16 @@ import org.apache.commons.math3.random.RandomGenerator
  * A homogeneous [OrientingPedestrian2D] in a [EuclideanPhysics2DEnvironment].
  *
  * @param T the concentration type.
- * @param N the type of nodes of the [environmentGraph].
- * @param E the type of edges of the [environmentGraph].
+ * @param M the type of nodes of the [environmentGraph].
+ * @param F the type of edges of the [environmentGraph].
  */
-class OrientingHomogeneousPedestrian2D<T, N : ConvexPolygon, E : GraphEdge<N>> @JvmOverloads constructor(
+class OrientingHomogeneousPedestrian2D<T, M : ConvexPolygon, F : GraphEdge<M>> @JvmOverloads constructor(
     knowledgeDegree: Double,
     randomGenerator: RandomGenerator,
-    environmentGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, N, E>,
+    environmentGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, M, F>,
     environment: EuclideanPhysics2DEnvironment<T>,
     group: PedestrianGroup<T>? = null
-) : OrientingPedestrian2D<T, N, E>(knowledgeDegree, randomGenerator, environmentGraph, environment, group) {
+) : OrientingPedestrian2D<T, M, F>(knowledgeDegree, randomGenerator, environmentGraph, environment, group) {
 
     private val shape = shape(environment)
 

@@ -50,25 +50,25 @@ import kotlin.math.pow
  * sophisticated movement, see [Seek2D].
  *
  * @param T the concentration type.
- * @param N the type of nodes of the [environmentGraph].
- * @param E the type of edges of the [environmentGraph].
- * @param M the type of landmarks of the pedestrian's cognitive map.
- * @param F the type of edges of the pedestrian's cognitive map.
+ * @param N the type of landmarks of the pedestrian's cognitive map.
+ * @param E the type of edges of the pedestrian's cognitive map.
+ * @param M the type of nodes of the [environmentGraph].
+ * @param F the type of edges of the [environmentGraph].
  */
 open class OrientingBehavior2D<
     T,
-    N : ConvexPolygon,
-    E : GraphEdgeWithData<N, Euclidean2DSegment>,
-    M : ConvexEuclidean2DShape,
-    F : GraphEdge<M>
+    N : ConvexEuclidean2DShape,
+    E : GraphEdge<N>,
+    M : ConvexPolygon,
+    F : GraphEdgeWithData<M, Euclidean2DSegment>
 >(
     environment: Environment<T, Euclidean2DPosition>,
-    pedestrian: OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, M, F>,
+    pedestrian: OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N, E>,
     timeDistribution: TimeDistribution<T>,
-    environmentGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, N, E>
+    environmentGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, M, F>
 ) : AbstractOrientingBehavior<T, Euclidean2DPosition, Euclidean2DTransformation, N, E, M, F>(environment, pedestrian, timeDistribution, environmentGraph) {
 
-    override fun moveTowards(target: Euclidean2DPosition, currentRoom: N?, targetEdge: E) {
+    override fun moveTowards(target: Euclidean2DPosition, currentRoom: M?, targetEdge: F) {
         if (currentRoom == null) {
             Seek2D(environment, this, pedestrian, *target.cartesianCoordinates).execute()
         } else {
@@ -99,7 +99,7 @@ open class OrientingBehavior2D<
      * destination, then we compute the shortest paths between each midpoint and the final
      * destination and rank each edge consequently.
      */
-    override fun computeEdgeRankings(currentRoom: N, destination: Euclidean2DPosition): Map<E, Int> {
+    override fun computeEdgeRankings(currentRoom: M, destination: Euclidean2DPosition): Map<F, Int> {
         val builder = GraphBuilder<Euclidean2DPosition, GraphEdge<Euclidean2DPosition>>()
         /*
          * Maps each edge's midpoint to the correspondent edge object
@@ -135,7 +135,7 @@ open class OrientingBehavior2D<
      * boundary of the current room. This method finds the point of such
      * segment which is more convenient to cross.
      */
-    override fun computeSubdestination(targetEdge: E): Euclidean2DPosition {
+    override fun computeSubdestination(targetEdge: F): Euclidean2DPosition {
         with(targetEdge.data) {
             /*
              * The ideal movement the pedestrian would perform connects its current
@@ -169,9 +169,9 @@ open class OrientingBehavior2D<
      * We add a factor taking into account the congestion of the room the edge
      * being weighted leads to.
      */
-    public override fun weight(edge: E, rank: Int?): Double = super.weight(edge, rank) * congestionFactor(edge.to)
+    public override fun weight(edge: F, rank: Int?): Double = super.weight(edge, rank) * congestionFactor(edge.to)
 
-    private fun congestionFactor(room: N): Double =
+    private fun congestionFactor(room: M): Double =
         environment.nodes
             .filterIsInstance<Pedestrian<T>>()
             .filter { room.contains(environment.getPosition(it)) }
@@ -185,7 +185,7 @@ open class OrientingBehavior2D<
     @Suppress("UNCHECKED_CAST")
     override fun cloneOnNewNode(n: Node<T>?, currentTime: Time?): Reaction<T> {
         try {
-            n as OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N, E>
+            n as OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, M, F>
             return OrientingBehavior2D(environment, n, timeDistribution, environmentGraph)
         } catch (e: ClassCastException) {
             throw IllegalArgumentException("node not compatible")
@@ -198,7 +198,7 @@ open class OrientingBehavior2D<
      * distance of the old nextPos from currPos. That is to say, the magnitude of the
      * pedestrian's movement isn't reduced.
      */
-    private fun adjustMovement(currPos: Euclidean2DPosition, nextPos: Euclidean2DPosition, currRoom: N): Euclidean2DPosition =
+    private fun adjustMovement(currPos: Euclidean2DPosition, nextPos: Euclidean2DPosition, currRoom: M): Euclidean2DPosition =
         currRoom.vertices().indices
             .map { currRoom.getEdge(it) }
             .filter {
@@ -216,7 +216,7 @@ open class OrientingBehavior2D<
     /*
      * Checks whether the segment described by (currPos, nextPos) intersects the given edge.
      */
-    private fun crosses(currPos: Euclidean2DPosition, nextPos: Euclidean2DPosition, targetEdge: E): Boolean =
+    private fun crosses(currPos: Euclidean2DPosition, nextPos: Euclidean2DPosition, targetEdge: F): Boolean =
         intersection(Pair(currPos, nextPos), targetEdge.data).type == SegmentsIntersectionTypes.POINT
 
     /*

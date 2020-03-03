@@ -14,7 +14,12 @@ import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
  * @param N the type of landmarks. See [cognitiveMap].
  * @param E the type of edges of the [cognitiveMap].
  */
-interface OrientingAgent<V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>> {
+interface OrientingAgent<
+    V : Vector<V>,
+    A : GeometricTransformation<V>,
+    N : ConvexGeometricShape<V, A>,
+    E : GraphEdge<N>
+> {
 
     /**
      * The knowledge degree of the agent concerning the environment. It's

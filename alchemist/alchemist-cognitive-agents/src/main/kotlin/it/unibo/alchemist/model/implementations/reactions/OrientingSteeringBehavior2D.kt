@@ -29,26 +29,26 @@ import kotlin.math.PI
  * of opposite forces). However, the resulting movements still present some shaking.
  *
  * @param T the concentration type.
- * @param N the type of nodes of the [environmentGraph].
- * @param E the type of edges of the [environmentGraph].
- * @param M the type of landmarks of the pedestrian's cognitive map.
- * @param F the type of edges of the pedestrian's cognitive map.
+ * @param M the type of nodes of the [environmentGraph].
+ * @param F the type of edges of the [environmentGraph].
+ * @param N the type of landmarks of the pedestrian's cognitive map.
+ * @param E the type of edges of the pedestrian's cognitive map.
  */
 class OrientingSteeringBehavior2D<
     T,
-    N : ConvexPolygon,
-    E : GraphEdgeWithData<N, Euclidean2DSegment>,
-    M : ConvexEuclidean2DShape,
-    F : GraphEdge<M>
+    N : ConvexEuclidean2DShape,
+    E : GraphEdge<N>,
+    M : ConvexPolygon,
+    F : GraphEdgeWithData<M, Euclidean2DSegment>
 > @JvmOverloads constructor(
     environment: Environment<T, Euclidean2DPosition>,
-    pedestrian: OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, M, F>,
+    pedestrian: OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N, E>,
     timeDistribution: TimeDistribution<T>,
-    environmentGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, N, E>,
+    environmentGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, M, F>,
     private val steerStrategy: SteeringStrategy<T, Euclidean2DPosition> = DistanceWeighted(environment, pedestrian)
 ) : OrientingBehavior2D<T, N, E, M, F>(environment, pedestrian, timeDistribution, environmentGraph) {
 
-    override fun moveTowards(target: Euclidean2DPosition, currentRoom: N?, targetEdge: E) {
+    override fun moveTowards(target: Euclidean2DPosition, currentRoom: M?, targetEdge: F) {
         val currPos = environment.getPosition(pedestrian)
         var desiredMovement = Seek2D(environment, this, pedestrian, *target.cartesianCoordinates).nextPosition
         var disturbingMovement = Combine(environment, this, pedestrian, steerActions(), steerStrategy).nextPosition

@@ -26,18 +26,18 @@ import kotlin.math.pow
  * Two tasks are left to the derived classes via template method, see [computeEdgeRankings]
  * and [computeSubdestination].
  *
+ * @param T the concentration type.
  * @param P the [Position] type and [Vector] type for the space the pedestrian is inside.
  * @param A the transformations supported by the shapes in this space.
  * @param N1 the type of nodes of the [environmentGraph].
  * @param E1 the type of edges of the [environmentGraph].
  * @param N2 the type of landmarks of the pedestrian's cognitive map.
  * @param E2 the type of edges of the pedestrian's cognitive map.
- * @param T the concentration type.
  *
  * Since E2 is simply any subtype of GraphEdge<N2>, this reaction assumes no information
  * is stored in the edges of the cognitive map.
  */
-abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 : ConvexGeometricShape<P, A>, E1 : GraphEdge<N1>, N2 : ConvexGeometricShape<P, A>, E2 : GraphEdge<N2>, T>(
+abstract class AbstractOrientingBehavior<T, P, A : GeometricTransformation<P>, N1 : ConvexGeometricShape<P, A>, E1 : GraphEdge<N1>, N2 : ConvexGeometricShape<P, A>, E2 : GraphEdge<N2>>(
     /**
      * The environment the pedestrian is into.
      */
@@ -45,7 +45,7 @@ abstract class AbstractOrientingBehavior<P, A : GeometricTransformation<P>, N1 :
     /**
      * The owner of this behavior.
      */
-    protected val pedestrian: OrientingPedestrian<P, A, N2, E2, T>,
+    protected val pedestrian: OrientingPedestrian<T, P, A, N2, E2>,
     timeDistribution: TimeDistribution<T>,
     /**
      * A navigation graph describing the environment. Nodes are [ConvexGeometricShape]s

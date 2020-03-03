@@ -18,11 +18,11 @@ import org.apache.commons.math3.random.RandomGenerator
 /**
  * A cognitive [OrientingPedestrian2D] in an [EuclideanPhysics2DEnvironment].
  *
+ * @param T the concentration type.
  * @param N1 the type of nodes of the [environmentGraph].
  * @param E1 the type of edges of the [environmentGraph].
- * @param T the concentration type.
  */
-class OrientingCognitivePedestrian2D<N1 : ConvexPolygon, E1 : GraphEdge<N1>, T> @JvmOverloads constructor(
+class OrientingCognitivePedestrian2D<T, N1 : ConvexPolygon, E1 : GraphEdge<N1>> @JvmOverloads constructor(
     knowledgeDegree: Double,
     randomGenerator: RandomGenerator,
     environmentGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, N1, E1>,
@@ -31,8 +31,8 @@ class OrientingCognitivePedestrian2D<N1 : ConvexPolygon, E1 : GraphEdge<N1>, T> 
     override val age: Age,
     override val gender: Gender,
     danger: Molecule? = null
-) : OrientingPedestrian2D<N1, E1, T>(knowledgeDegree, randomGenerator, environmentGraph, environment, group),
-    OrientingCognitivePedestrian<Euclidean2DPosition, Euclidean2DTransformation, Ellipse, GraphEdge<Ellipse>, T> {
+) : OrientingPedestrian2D<T, N1, E1>(knowledgeDegree, randomGenerator, environmentGraph, environment, group),
+    OrientingCognitivePedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, Ellipse, GraphEdge<Ellipse>> {
 
     /**
      * Allows to specify age and gender with a string.

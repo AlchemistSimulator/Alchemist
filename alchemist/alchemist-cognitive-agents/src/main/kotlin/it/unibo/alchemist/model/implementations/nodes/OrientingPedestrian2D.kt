@@ -24,17 +24,17 @@ import java.awt.geom.Rectangle2D
  * particular, it represents landmarks as [Ellipse]s and accepts an [environmentGraph]
  * whose nodes are [ConvexPolygon]s.
  *
+ * @param T the concentration type.
  * @param N1 the type of nodes of the [environmentGraph].
  * @param E1 the type of edges of the [environmentGraph].
- * @param T the concentration type.
  */
-open class OrientingPedestrian2D<N1 : ConvexPolygon, E1 : GraphEdge<N1>, T>(
+open class OrientingPedestrian2D<T, N1 : ConvexPolygon, E1 : GraphEdge<N1>>(
     knowledgeDegree: Double,
     randomGenerator: RandomGenerator,
     environmentGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, N1, E1>,
     environment: Environment<T, Euclidean2DPosition>,
     group: PedestrianGroup<T>? = null
-) : AbstractOrientingPedestrian<Euclidean2DPosition, Euclidean2DTransformation, N1, E1, Ellipse, T>(knowledgeDegree, randomGenerator, environmentGraph, environment, group),
+) : AbstractOrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N1, E1, Ellipse>(knowledgeDegree, randomGenerator, environmentGraph, environment, group),
     Pedestrian2D<T> {
 
     /*

@@ -49,18 +49,18 @@ import kotlin.math.pow
  * Additionally, this class redefines [moveTowards] in order to perform a more
  * sophisticated movement, see [Seek2D].
  *
+ * @param T the concentration type.
  * @param N1 the type of nodes of the [environmentGraph].
  * @param E1 the type of edges of the [environmentGraph].
  * @param N2 the type of landmarks of the pedestrian's cognitive map.
  * @param E2 the type of edges of the pedestrian's cognitive map.
- * @param T the concentration type.
  */
-open class OrientingBehavior2D<N1 : ConvexPolygon, E1 : GraphEdgeWithData<N1, Euclidean2DSegment>, N2 : ConvexEuclidean2DShape, E2 : GraphEdge<N2>, T>(
+open class OrientingBehavior2D<T, N1 : ConvexPolygon, E1 : GraphEdgeWithData<N1, Euclidean2DSegment>, N2 : ConvexEuclidean2DShape, E2 : GraphEdge<N2>>(
     environment: Environment<T, Euclidean2DPosition>,
-    pedestrian: OrientingPedestrian<Euclidean2DPosition, Euclidean2DTransformation, N2, E2, T>,
+    pedestrian: OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N2, E2>,
     timeDistribution: TimeDistribution<T>,
     environmentGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, N1, E1>
-) : AbstractOrientingBehavior<Euclidean2DPosition, Euclidean2DTransformation, N1, E1, N2, E2, T>(environment, pedestrian, timeDistribution, environmentGraph) {
+) : AbstractOrientingBehavior<T, Euclidean2DPosition, Euclidean2DTransformation, N1, E1, N2, E2>(environment, pedestrian, timeDistribution, environmentGraph) {
 
     override fun moveTowards(target: Euclidean2DPosition, currentRoom: N1?, targetEdge: E1) {
         if (currentRoom == null) {
@@ -179,7 +179,7 @@ open class OrientingBehavior2D<N1 : ConvexPolygon, E1 : GraphEdgeWithData<N1, Eu
     @Suppress("UNCHECKED_CAST")
     override fun cloneOnNewNode(n: Node<T>?, currentTime: Time?): Reaction<T> {
         try {
-            n as OrientingPedestrian<Euclidean2DPosition, Euclidean2DTransformation, N1, E1, T>
+            n as OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N1, E1>
             return OrientingBehavior2D(environment, n, timeDistribution, environmentGraph)
         } catch (e: ClassCastException) {
             throw IllegalArgumentException("node not compatible")

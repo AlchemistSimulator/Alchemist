@@ -12,7 +12,7 @@ class TestOrientingBehavior<T, P : Position2D<P>> : StringSpec({
             finished = { e, _, _ ->
                 val expectedPos = e.makePosition(103.0, 99.0)
                 e.nodes
-                    .filterIsInstance<OrientingPedestrian<*, *, *, *, T>>()
+                    .filterIsInstance<OrientingPedestrian<T, *, *, *, *>>()
                     .forEach { p ->
                         e.getPosition(p).getDistanceTo(expectedPos) shouldBeLessThan 2.0
                     }
@@ -26,7 +26,7 @@ class TestOrientingBehavior<T, P : Position2D<P>> : StringSpec({
             finished = { e, _, _ ->
                 val destination = e.makePosition(135.0, 15.0)
                 e.nodes
-                .filterIsInstance<OrientingPedestrian<*, *, *, *, T>>()
+                .filterIsInstance<OrientingPedestrian<T, *, *, *, *>>()
                 .forEach { p ->
                     e.getPosition(p).getDistanceTo(destination) shouldBeLessThan 5.0
                 }
@@ -40,7 +40,7 @@ class TestOrientingBehavior<T, P : Position2D<P>> : StringSpec({
             finished = { e, _, _ ->
                 val destination = e.makePosition(135.0, 15.0)
                 e.nodes
-                    .filterIsInstance<OrientingPedestrian<*, *, *, *, T>>()
+                    .filterIsInstance<OrientingPedestrian<T, *, *, *, *>>()
                     .forEach { p ->
                         e.getPosition(p).getDistanceTo(destination) shouldBeLessThan 5.0
                     }
@@ -54,7 +54,7 @@ class TestOrientingBehavior<T, P : Position2D<P>> : StringSpec({
             finished = { e, _, _ ->
                 val destination = e.makePosition(135.0, 105.0)
                 e.nodes
-                    .filterIsInstance<OrientingPedestrian<*, *, *, *, T>>()
+                    .filterIsInstance<OrientingPedestrian<T, *, *, *, *>>()
                     .forEach { p ->
                         e.getPosition(p).getDistanceTo(destination) shouldBeLessThan 5.0
                     }
@@ -68,7 +68,7 @@ class TestOrientingBehavior<T, P : Position2D<P>> : StringSpec({
             finished = { e, _, _ ->
                 val expectedPos = e.makePosition(33.0, 33.0)
                 e.nodes
-                    .filterIsInstance<OrientingPedestrian<*, *, *, *, T>>()
+                    .filterIsInstance<OrientingPedestrian<T, *, *, *, *>>()
                     .forEach { p ->
                         /*
                          * This is quite strict
@@ -85,7 +85,7 @@ class TestOrientingBehavior<T, P : Position2D<P>> : StringSpec({
             finished = { e, _, _ ->
                 val expectedPos = e.makePosition(12.0, 60.0)
                 e.nodes
-                    .filterIsInstance<OrientingPedestrian<*, *, *, *, T>>()
+                    .filterIsInstance<OrientingPedestrian<T, *, *, *, *>>()
                     .forEach { p ->
                         e.getPosition(p).getDistanceTo(expectedPos) shouldBeLessThan 15.0
                     }

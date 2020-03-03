@@ -233,7 +233,8 @@ variables:
 
 The system is [JSR-233](http://archive.fo/PGdk8)-compatible, as such, every language with a valid JSR-233 implementation could be used.
 The only requirement for the language to be available is the availability in the runtime classpath of a JSR-233 compatible version of the desired language.
-If Alchemist is being used (as recommended) in conjunction with Gradle, and you want to embed your favorite JSR-233 compatible scripting language, you should have a dependency declaration similar to:
+If Alchemist is being used (as recommended) in conjunction with Gradle,
+and you want to embed your favorite JSR-233 compatible scripting language, you should have a dependency declaration similar to:
 
 ```kotlin
 dependencies {

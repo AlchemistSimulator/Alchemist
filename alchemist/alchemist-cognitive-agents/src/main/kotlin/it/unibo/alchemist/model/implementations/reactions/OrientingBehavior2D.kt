@@ -102,12 +102,11 @@ open class OrientingBehavior2D<N1 : ConvexPolygon, E1 : GraphEdgeWithData<N1, Eu
         currentRoom.vertices().indices
             .map { currentRoom.getEdge(it) }
             .forEach { s ->
-                mutableListOf(s.first, *edges
-                    .map { it.first }
+                val doorCenters = edges.map { it.first }
                     .filter { p -> s.contains(p) }
                     .sortedBy { it.getDistanceTo(s.first) }
-                    .toTypedArray(),
-                    s.second)
+                    .toTypedArray()
+                mutableListOf(s.first, *doorCenters, s.second)
                     .zipWithNext()
                     .forEach { builder.addUndirectedEdge(it.first, it.second) }
             }
@@ -171,8 +170,8 @@ open class OrientingBehavior2D<N1 : ConvexPolygon, E1 : GraphEdgeWithData<N1, Eu
             .filterIsInstance<Pedestrian<T>>()
             .filter { room.contains(environment.getPosition(it)) }
             .count()
-            .run {
-                (pedestrian.shape.diameter.pow(2) * this / room.asAwtShape().area()) + 1
+            .let {
+                (pedestrian.shape.diameter.pow(2) * it / room.asAwtShape().area()) + 1
             }
 
     /**

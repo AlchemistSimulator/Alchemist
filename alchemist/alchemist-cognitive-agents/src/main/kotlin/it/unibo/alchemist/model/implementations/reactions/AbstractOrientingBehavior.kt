@@ -337,7 +337,7 @@ abstract class AbstractOrientingBehavior<
 
     /*
      * Computes the factor deriving from the pedestrian's cognitive map for the
-     * weighting system. It is computed as 1 - 0.5^i where i is the rank given
+     * weighting system. It is computed as 1 - 0.5^r where r is the rank given
      * to the edge assessing its suitability to reach the next subdestination.
      * If rank is null, the factor is 1.
      */

@@ -117,12 +117,12 @@ abstract class AbstractOrientingPedestrian<
             it.value.forEach { i -> builder.addEdge(landmarks[it.key], landmarks[i]) }
         }
         builder.build(rooms.flatMap { environmentGraph.destinationsWithin(it) })
-            .primMinimumSpanningForest {
+            .primMinimumSpanningForest { edge ->
                 environmentGraph.dijkstraShortestPath(
-                    rooms[landmarks.indexOf(it.tail)],
-                    rooms[landmarks.indexOf(it.head)],
+                    rooms[landmarks.indexOf(edge.tail)],
+                    rooms[landmarks.indexOf(edge.head)],
                     { 1.0 }
-                )?.weight ?: it.tail.centroid.getDistanceTo(it.head.centroid)
+                )?.weight ?: edge.tail.centroid.getDistanceTo(edge.head.centroid)
             }
     }
 

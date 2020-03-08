@@ -18,7 +18,8 @@ variables:
   envGraph: &envGraph
     formula: |
       import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-      it.unibo.alchemist.test.congestionAvoidanceEnvGraph(
+      it.unibo.alchemist.test.envGraphFromConf(
+        "congestion-avoidance.toml",
         0.1,
         mutableListOf(Euclidean2DPosition(12.0, 60.0))
       )

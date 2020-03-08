@@ -18,7 +18,8 @@ variables:
   envGraph: &envGraph
     formula: |
       import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-      it.unibo.alchemist.test.buildingPlanimetryEnvGraph(
+      it.unibo.alchemist.test.envGraphFromConf(
+        "building-planimetry.toml",
         0.1,
         mutableListOf(Euclidean2DPosition(135.0, 15.0))
       )

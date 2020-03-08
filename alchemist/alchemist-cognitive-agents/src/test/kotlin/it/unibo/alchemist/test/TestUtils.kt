@@ -1,11 +1,11 @@
 package it.unibo.alchemist.test
 
+import com.uchuhimo.konf.Config
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor
 import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.loader.YamlLoader
 import it.unibo.alchemist.model.implementations.environments.ImageEnvironment
 import it.unibo.alchemist.model.implementations.geometry.navigationmeshes.deaccon.Deaccon2D
-import it.unibo.alchemist.model.implementations.geometry.times
 import it.unibo.alchemist.model.implementations.graph.Euclidean2DCrossing
 import it.unibo.alchemist.model.implementations.graph.builder.NavigationGraphBuilder
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
@@ -78,72 +78,39 @@ fun emptyNavigationGraph2D(): NavigationGraph<Euclidean2DPosition, Euclidean2DTr
 
 typealias NavigationGraph2D = NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DCrossing>
 
+const val PATH_TO_NAVIGATION_GRAPH = "navigation-graphs/"
+
 /**
- * Generates an environment graph for an image environment obtained with the image at the
- * following path: "images/building-planimetry.png". Zoom and destinations are to be specified.
+ * Generates a navigation graph of an environment from a configuration file. The name of
+ * the file, the zoom of the environment and the destinations are to be specified.
  */
-fun buildingPlanimetryEnvGraph(zoom: Double = 0.1, destinations: Collection<Euclidean2DPosition>): NavigationGraph2D =
-    with(zoom / 0.1) {
-        /*
-         * Absolute values here are calibrated for a zoom of 0.1
-         */
-        val scaler = this
-        Deaccon2D().generateEnvGraph(
-            Point2D.Double(0.0, 0.0),
-            150.0 * scaler,
-            150.0 * scaler,
-            ImageEnvironment<Number>("images/building-planimetry.png", zoom).obstacles,
-            mutableListOf(
-                Point2D.Double(15.0, 15.0),
-                Point2D.Double(15.0, 42.0),
-                Point2D.Double(62.0, 15.0),
-                Point2D.Double(60.0, 42.0),
-                Point2D.Double(83.0, 42.0),
-                Point2D.Double(85.0, 15.0),
-                Point2D.Double(132.0, 15.0),
-                Point2D.Double(132.0, 42.0),
-                Point2D.Double(14.0, 86.0),
-                Point2D.Double(72.0, 108.0),
-                Point2D.Double(130.0, 117.0),
-                Point2D.Double(70.0, 132.0),
-                Point2D.Double(14.0, 134.0),
-                Point2D.Double(38.0, 74.0),
-                Point2D.Double(111.0, 74.0),
-                Point2D.Double(37.0, 13.0),
-                Point2D.Double(37.0, 136.0),
-                Point2D.Double(109.0, 136.0),
-                Point2D.Double(109.0, 11.0)
-            ).map { it.times(scaler) },
-            1.0 * scaler,
-            destinations,
-            2.5 * scaler
-        )
-    }
-/**
- * Generates an environment graph for an image environment obtained with the image at the
- * following path: "images/congestion-avoidance.png". Zoom and destinations are to be specified.
- */
-fun congestionAvoidanceEnvGraph(zoom: Double = 0.1, destinations: Collection<Euclidean2DPosition>): NavigationGraph2D =
-    with(zoom / 0.1) {
-        val scaler = this
-        Deaccon2D().generateEnvGraph(
-            Point2D.Double(0.0, 0.0),
-            90.0 * scaler,
-            70.0 * scaler,
-            ImageEnvironment<Number>("images/congestion-avoidance.png", zoom).obstacles,
-            mutableListOf(
-                Point2D.Double(80.0, 50.0),
-                Point2D.Double(53.0, 45.0),
-                Point2D.Double(12.0, 61.0),
-                Point2D.Double(25.0, 38.0),
-                Point2D.Double(40.0, 55.0),
-                Point2D.Double(40.0, 43.0),
-                Point2D.Double(35.0, 32.0)
-            ).map { it.times(scaler) },
-            2.0 * scaler,
-            destinations,
-            2.5 * scaler
-        )
-    }
+fun envGraphFromConf(confFile: String, zoom: Double, destinations: Collection<Euclidean2DPosition>): NavigationGraph2D {
+    val config = Config {
+        addSpec(EnvironmentSpec)
+        addSpec(SeedsSpec)
+        addSpec(CrossingsSpec)
+    }.from.toml.resource("navigation-graphs/$confFile")
+    val name = config[EnvironmentSpec.name]
+    val scaler = zoom / config[EnvironmentSpec.zoom]
+    val envStartX = config[EnvironmentSpec.startX]
+    val envStartY = config[EnvironmentSpec.startY]
+    val width = config[EnvironmentSpec.width]
+    val height = config[EnvironmentSpec.height]
+    val seedsPositions = config[SeedsSpec.positions]
+    val side = config[SeedsSpec.side]
+    val crossingsSide = config[CrossingsSpec.side]
+    return Deaccon2D().generateEnvGraph(
+        Point2D.Double(envStartX * scaler, envStartY * scaler),
+        width * scaler,
+        height * scaler,
+        ImageEnvironment<Number>("images/$name", zoom).obstacles,
+        seedsPositions.map {
+            Point2D.Double(it[0], it[1]).times(scaler)
+        },
+        side * scaler,
+        destinations,
+        crossingsSide * scaler
+    )
+}
 
 fun Point2D.times(n: Double) = Point2D.Double(x * n, y * n)

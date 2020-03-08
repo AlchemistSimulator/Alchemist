@@ -194,12 +194,11 @@ open class OrientingBehavior2D<
      */
     @Suppress("UNCHECKED_CAST")
     override fun cloneOnNewNode(n: Node<T>?, currentTime: Time?): Reaction<T> {
-        try {
-            n as OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, M, F>
-            return OrientingBehavior2D(environment, n, timeDistribution, environmentGraph)
-        } catch (e: ClassCastException) {
-            throw IllegalArgumentException("node not compatible")
+        require(n as? OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, M, F> != null) {
+            "node not compatible, required: " + pedestrian.javaClass + ", found: " + n?.javaClass
         }
+        n as OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, M, F>
+        return OrientingBehavior2D(environment, n, timeDistribution, environmentGraph)
     }
 
     /*

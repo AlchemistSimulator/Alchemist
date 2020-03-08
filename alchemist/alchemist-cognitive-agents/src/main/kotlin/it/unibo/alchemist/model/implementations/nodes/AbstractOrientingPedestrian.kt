@@ -47,6 +47,7 @@ abstract class AbstractOrientingPedestrian<
 >(
     final override val knowledgeDegree: Double,
     /**
+     * The random generator to use in order to preserve reproducibility.
      */
     protected val randomGenerator: RandomGenerator,
     /**
@@ -58,21 +59,18 @@ abstract class AbstractOrientingPedestrian<
      */
     protected val environmentGraph: NavigationGraph<P, A, M, F>,
     environment: Environment<T, P>,
-    group: PedestrianGroup<T>? = null
+    group: PedestrianGroup<T>? = null,
+    /*
+     * When generating the cognitive map, the regions whose diameter is
+     * < of this quantity * the diameter of the agent will be discarded
+     * and no landmark will be generated inside them.
+     */
+    private val minArea: Double = 10.0
 ) : OrientingPedestrian<T, P, A, N, GraphEdge<N>>,
     HomogeneousPedestrianImpl<T, P>(environment, randomGenerator, group) where P : Position<P>, P : Vector<P> {
 
     init {
         require(knowledgeDegree.liesBetween(0.0, 1.0)) { "knowledge degree must be in [0,1]" }
-    }
-
-    companion object {
-        /*
-         * The regions whose diameter is < of this quantity * the diameter
-         * of the agent will be discarded and no landmark will be generated
-         * inside them.
-         */
-        private const val MIN_AREA = 10.0
     }
 
     override val volatileMemory: MutableMap<in ConvexGeometricShape<P, A>, Int> = HashMap()
@@ -94,7 +92,7 @@ abstract class AbstractOrientingPedestrian<
          * The rooms in which landmarks will be placed.
          */
         val rooms = environmentGraph.nodes()
-            .filter { it.diameter > shape.diameter * MIN_AREA || environmentGraph.containsDestination(it) }
+            .filter { it.diameter > shape.diameter * minArea || environmentGraph.containsDestination(it) }
             .shuffled(randomGenerator)
             .toList()
             .takePercentage(knowledgeDegree)

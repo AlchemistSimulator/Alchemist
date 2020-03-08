@@ -33,7 +33,14 @@ open class OrientingPedestrian2D<T, M : ConvexPolygon, F : GraphEdge<M>>(
     randomGenerator: RandomGenerator,
     environmentGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, M, F>,
     environment: Environment<T, Euclidean2DPosition>,
-    group: PedestrianGroup<T>? = null
+    group: PedestrianGroup<T>? = null,
+    /*
+     * The starting width and height of the generated Ellipses
+     * will be a random quantity in [MIN_SIDE, MAX_SIDE] * the
+     * diameter of this pedestrian.
+     */
+    private val minSide: Double = 30.0,
+    private val maxSide: Double = 60.0
 ) : AbstractOrientingPedestrian<
         T,
         Euclidean2DPosition,
@@ -44,24 +51,14 @@ open class OrientingPedestrian2D<T, M : ConvexPolygon, F : GraphEdge<M>>(
     >(knowledgeDegree, randomGenerator, environmentGraph, environment, group), Pedestrian2D<T> {
 
     /*
-     * The starting width and height of the generated Ellipses
-     * will be a random quantity in [MIN_SIDE, MAX_SIDE] * the
-     * diameter of this pedestrian.
-     */
-    companion object {
-        private const val MIN_SIDE = 30.0
-        private const val MAX_SIDE = 60.0
-    }
-
-    /*
      * Generates a random ellipse entirely contained in the given convex polygon.
      * If such polygon contains one or more destinations, the generated ellipse
      * will contain at least one of them.
      */
     override fun generateLandmarkWithin(region: M): Ellipse =
         with(region) {
-            val width = randomGenerator.nextDouble(MIN_SIDE, MAX_SIDE) * shape.diameter
-            val height = randomGenerator.nextDouble(MIN_SIDE, MAX_SIDE) * shape.diameter
+            val width = randomEllipseSide()
+            val height = randomEllipseSide()
             val isFinal = environmentGraph.containsDestination(this)
             /*
              * If is final, the center of the ellipse will be the destination (too simplistic,
@@ -87,4 +84,6 @@ open class OrientingPedestrian2D<T, M : ConvexPolygon, F : GraphEdge<M>>(
         }
 
     private fun ConvexPolygon.contains(s: Shape): Boolean = s.vertices().all { contains(it) }
+
+    private fun randomEllipseSide(): Double = randomGenerator.nextDouble(minSide, maxSide) * shape.diameter
 }

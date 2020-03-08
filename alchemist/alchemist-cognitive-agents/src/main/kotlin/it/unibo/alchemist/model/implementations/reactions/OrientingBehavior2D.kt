@@ -211,7 +211,7 @@ open class OrientingBehavior2D<
         currRoom.vertices().indices
             .map { currRoom.getEdge(it) }
             .filter {
-                intersection(Pair(currPos, nextPos), it).type == SegmentsIntersectionTypes.POINT
+                intersection(currPos to nextPos, it).type == SegmentsIntersectionTypes.POINT
             }
             .map {
                 intersection(it, currPos, nextPos.getDistanceTo(currPos))
@@ -229,7 +229,7 @@ open class OrientingBehavior2D<
         intersection(Pair(currPos, nextPos), targetEdge.data).type == SegmentsIntersectionTypes.POINT
 
     /*
-     * A rough esteem of the area of a shape.
+     * A rough estimation of the area of a shape.
      */
     private fun Shape.area(): Double =
         with(bounds2D) {

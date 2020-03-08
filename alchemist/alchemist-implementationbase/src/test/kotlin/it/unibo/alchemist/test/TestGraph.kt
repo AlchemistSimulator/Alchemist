@@ -12,7 +12,7 @@ package it.unibo.alchemist.test
 import it.unibo.alchemist.model.implementations.graph.GraphImpl
 import it.unibo.alchemist.model.implementations.graph.isReachable
 import it.unibo.alchemist.model.implementations.graph.dijkstraShortestPath
-import it.unibo.alchemist.model.implementations.graph.primMST
+import it.unibo.alchemist.model.implementations.graph.primMinimumSpanningForest
 import it.unibo.alchemist.model.interfaces.graph.GraphEdge
 import it.unibo.alchemist.model.interfaces.graph.GraphEdgeWithData
 import org.junit.jupiter.api.Assertions
@@ -82,7 +82,7 @@ class TestGraph {
         adjacencyList.addUndirectEdge(6, 8, 6)
         adjacencyList.addUndirectEdge(7, 8, 7)
         val g = GraphImpl(adjacencyList)
-        val mst = g.primMST { e -> e.data.toDouble() }
+        val mst = g.primMinimumSpanningForest { e -> e.data.toDouble() }
         g.nodes().forEach {
             Assertions.assertEquals(true, mst.nodes().contains(it))
         }
@@ -122,7 +122,7 @@ class TestGraph {
         adjacencyList.addUndirectEdge(10, 12, 2)
         adjacencyList.addUndirectEdge(11, 12, 5)
         val g = GraphImpl(adjacencyList)
-        val mst = g.primMST { e -> e.data.toDouble() }
+        val mst = g.primMinimumSpanningForest { e -> e.data.toDouble() }
         g.nodes().forEach {
             Assertions.assertEquals(true, mst.nodes().contains(it))
         }

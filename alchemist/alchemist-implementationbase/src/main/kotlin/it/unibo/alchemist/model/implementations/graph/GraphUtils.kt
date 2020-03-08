@@ -162,25 +162,25 @@ fun <V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, 
     dijkstraShortestPath(from, to, { (it.tail.centroid - it.head.centroid).magnitude() })
 
 /**
- * Computes the minimum spanning tree of the graph. Note that the graph must be
- * undirected (i.e. each edge must be duplicated).
+ * Computes the minimum spanning forest of the graph using Prim's algorithm.
+ * Note that the graph must be undirected (i.e. each edge must be duplicated).
  */
-fun <N, E : GraphEdge<N>> Graph<N, E>.primMST(weight: (E) -> Double): Graph<N, E> =
-    primMST(weight, GraphBuilder(nodes().size)).build()
+fun <N, E : GraphEdge<N>> Graph<N, E>.primMinimumSpanningForest(weight: (E) -> Double): Graph<N, E> =
+    primMinimumSpanningForest(weight, GraphBuilder(nodes().size)).build()
 
 /**
- * See [primMST].
+ * See [primMinimumSpanningForest].
  */
-fun <V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>> NavigationGraph<V, A, N, E>.primMST(weight: (E) -> Double = { (it.tail.centroid - it.head.centroid).magnitude() }): NavigationGraph<V, A, N, E> =
+fun <V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>> NavigationGraph<V, A, N, E>.primMinimumSpanningForest(weight: (E) -> Double = { (it.tail.centroid - it.head.centroid).magnitude() }): NavigationGraph<V, A, N, E> =
     with(NavigationGraphBuilder<V, A, N, E>(nodes().size)) {
-        primMST(weight, this)
+        primMinimumSpanningForest(weight, this)
         build(destinations())
     }
 
 /*
- * Helper function to compute the MST. Param s is the source node for prim's algorithm.
+ * Helper function to compute the MSF. Param s is the source node for prim's algorithm.
  */
-private fun <N, E : GraphEdge<N>> Graph<N, E>.primMST(weight: (E) -> Double, builder: GraphBuilder<N, E>, s: N? = null): GraphBuilder<N, E> {
+private fun <N, E : GraphEdge<N>> Graph<N, E>.primMinimumSpanningForest(weight: (E) -> Double, builder: GraphBuilder<N, E>, s: N? = null): GraphBuilder<N, E> {
     if (nodes().isEmpty()) {
         return builder
     }
@@ -222,7 +222,7 @@ private fun <N, E : GraphEdge<N>> Graph<N, E>.primMST(weight: (E) -> Double, bui
         }
     }
     if (!builder.nodes().containsAll(nodes())) {
-        return primMST(weight, builder, nodes().first { !builder.nodes().contains(it) })
+        return primMinimumSpanningForest(weight, builder, nodes().first { !builder.nodes().contains(it) })
     }
     return builder
 }

@@ -6,7 +6,7 @@ import it.unibo.alchemist.model.implementations.geometry.liesBetween
 import it.unibo.alchemist.model.implementations.graph.containsDestination
 import it.unibo.alchemist.model.implementations.graph.destinationsWithin
 import it.unibo.alchemist.model.implementations.graph.isReachable
-import it.unibo.alchemist.model.implementations.graph.primMST
+import it.unibo.alchemist.model.implementations.graph.primMinimumSpanningForest
 import it.unibo.alchemist.model.implementations.graph.dijkstraShortestPath
 import it.unibo.alchemist.model.implementations.utils.shuffled
 import it.unibo.alchemist.model.interfaces.Position
@@ -117,7 +117,7 @@ abstract class AbstractOrientingPedestrian<
             it.value.forEach { i -> builder.addEdge(landmarks[it.key], landmarks[i]) }
         }
         builder.build(rooms.flatMap { environmentGraph.destinationsWithin(it) })
-            .primMST {
+            .primMinimumSpanningForest {
                 environmentGraph.dijkstraShortestPath(
                     rooms[landmarks.indexOf(it.tail)],
                     rooms[landmarks.indexOf(it.head)],

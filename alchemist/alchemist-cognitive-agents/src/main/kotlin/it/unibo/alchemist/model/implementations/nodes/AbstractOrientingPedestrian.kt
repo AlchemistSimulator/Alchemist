@@ -107,12 +107,11 @@ abstract class AbstractOrientingPedestrian<
         }
         val landmarks = rooms.map { generateLandmarkWithin(it) }
         /*
-         * Maps each landmark's (and room) index to the indices of the ones reachable from it
+         * Maps each landmark's index to the indices of the ones reachable from it
          */
-        val reachability = rooms
-            .mapIndexed { i, r ->
-                i to rooms.indices
-                    .filter { r != rooms[it] && environmentGraph.isReachable(r, rooms[it]) }
+        val reachability = rooms.indices
+            .map { i ->
+                i to rooms.indices.filter { j -> i != j && environmentGraph.isReachable(rooms[i], rooms[j]) }
             }.toMap()
         reachability.forEach {
             it.value.forEach { i -> builder.addEdge(landmarks[it.key], landmarks[i]) }

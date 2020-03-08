@@ -7,90 +7,40 @@ import it.unibo.alchemist.model.interfaces.Position2D
 
 class TestOrientingBehavior<T, P : Position2D<P>> : StringSpec({
 
-    "pedestrian should take nearest door when no spatial info is available" {
-        loadYamlSimulation<T, P>("nearest-door.yml").startSimulation(
+    fun runSimulation(name: String, tolerance: Double, numSteps: Long, vararg coords: Number) {
+        loadYamlSimulation<T, P>(name).startSimulation(
             finished = { e, _, _ ->
-                val expectedPos = e.makePosition(103.0, 99.0)
                 e.nodes
                     .filterIsInstance<OrientingPedestrian<T, *, *, *, *>>()
                     .forEach { p ->
-                        e.getPosition(p).getDistanceTo(expectedPos) shouldBeLessThan 2.0
+                        e.getPosition(p).getDistanceTo(e.makePosition(*coords)) shouldBeLessThan tolerance
                     }
             },
-            numSteps = 11
+            numSteps = numSteps
         )
+    }
+
+    "pedestrian should take nearest door when no spatial info is available" {
+        runSimulation("nearest-door.yml", 2.0, 11, 103.0, 99.0)
     }
 
     "pedestrian with complete knowledge should reach destination" {
-        loadYamlSimulation<T, P>("complete-knowledge.yml").startSimulation(
-            finished = { e, _, _ ->
-                val destination = e.makePosition(135.0, 15.0)
-                e.nodes
-                .filterIsInstance<OrientingPedestrian<T, *, *, *, *>>()
-                .forEach { p ->
-                    e.getPosition(p).getDistanceTo(destination) shouldBeLessThan 5.0
-                }
-            },
-            numSteps = 120
-        )
+        runSimulation("complete-knowledge.yml", 5.0, 120, 135.0, 15.0)
     }
 
     "pedestrian with partial knowledge (30%) should reach destination" {
-        loadYamlSimulation<T, P>("partial-knowledge.yml").startSimulation(
-            finished = { e, _, _ ->
-                val destination = e.makePosition(135.0, 15.0)
-                e.nodes
-                    .filterIsInstance<OrientingPedestrian<T, *, *, *, *>>()
-                    .forEach { p ->
-                        e.getPosition(p).getDistanceTo(destination) shouldBeLessThan 5.0
-                    }
-            },
-            numSteps = 170
-        )
+        runSimulation("partial-knowledge.yml", 5.0, 170, 135.0, 15.0)
     }
 
     "pedestrian with no knowledge should reach destination" {
-        loadYamlSimulation<T, P>("no-knowledge.yml").startSimulation(
-            finished = { e, _, _ ->
-                val destination = e.makePosition(135.0, 105.0)
-                e.nodes
-                    .filterIsInstance<OrientingPedestrian<T, *, *, *, *>>()
-                    .forEach { p ->
-                        e.getPosition(p).getDistanceTo(destination) shouldBeLessThan 5.0
-                    }
-            },
-            numSteps = 250
-        )
+        runSimulation("no-knowledge.yml", 5.0, 250, 135.0, 105.0)
     }
 
     "pedestrian should avoid congestion" {
-        loadYamlSimulation<T, P>("congestion-avoidance.yml").startSimulation(
-            finished = { e, _, _ ->
-                val expectedPos = e.makePosition(33.0, 33.0)
-                e.nodes
-                    .filterIsInstance<OrientingPedestrian<T, *, *, *, *>>()
-                    .forEach { p ->
-                        /*
-                         * This is quite strict
-                         */
-                        e.getPosition(p).getDistanceTo(expectedPos) shouldBeLessThan 2.0
-                    }
-            },
-            numSteps = 32
-        )
+        runSimulation("congestion-avoidance.yml", 2.0, 32, 33.0, 33.0)
     }
 
     "every orienting pedestrian should reach the destination" {
-        loadYamlSimulation<T, P>("multiple-orienting-pedestrians.yml").startSimulation(
-            finished = { e, _, _ ->
-                val expectedPos = e.makePosition(12.0, 60.0)
-                e.nodes
-                    .filterIsInstance<OrientingPedestrian<T, *, *, *, *>>()
-                    .forEach { p ->
-                        e.getPosition(p).getDistanceTo(expectedPos) shouldBeLessThan 15.0
-                    }
-            },
-            numSteps = 25000
-        )
+        runSimulation("multiple-orienting-pedestrians.yml", 15.0, 25000, 12.0, 60.0)
     }
 })

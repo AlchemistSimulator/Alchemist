@@ -66,7 +66,15 @@ open class OrientingBehavior2D<
     pedestrian: OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N, E>,
     timeDistribution: TimeDistribution<T>,
     environmentGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, M, F>
-) : AbstractOrientingBehavior<T, Euclidean2DPosition, Euclidean2DTransformation, N, E, M, F>(environment, pedestrian, timeDistribution, environmentGraph) {
+) : AbstractOrientingBehavior<
+        T,
+        Euclidean2DPosition,
+        Euclidean2DTransformation,
+        N,
+        E,
+        M,
+        F
+    >(environment, pedestrian, timeDistribution, environmentGraph) {
 
     override fun moveTowards(target: Euclidean2DPosition, currentRoom: M?, targetEdge: F) {
         if (currentRoom == null) {
@@ -107,12 +115,16 @@ open class OrientingBehavior2D<
         val edges = environmentGraph.edgesFrom(currentRoom).map { it.data.midPoint() to it }
         currentRoom.vertices().indices
             .map { currentRoom.getEdge(it) }
-            .forEach { s ->
+            .forEach { side ->
+                /*
+                 * The midpoints of the passages lying on the side
+                 * of the current room being considered
+                 */
                 val doorCenters = edges.map { it.first }
-                    .filter { p -> s.contains(p) }
-                    .sortedBy { it.getDistanceTo(s.first) }
+                    .filter { side.contains(it) }
+                    .sortedBy { it.getDistanceTo(side.first) }
                     .toTypedArray()
-                mutableListOf(s.first, *doorCenters, s.second)
+                mutableListOf(side.first, *doorCenters, side.second)
                     .zipWithNext()
                     .forEach { builder.addUndirectedEdge(it.first, it.second) }
             }
@@ -123,8 +135,8 @@ open class OrientingBehavior2D<
         }
         val graph = builder.build()
         val sorted = edges
-            .sortedBy {
-                graph.dijkstraShortestPath(it.first, destination, { e -> e.tail.getDistanceTo(e.head) })?.weight
+            .sortedBy { (midPoint, _) ->
+                graph.dijkstraShortestPath(midPoint, destination, { e -> e.tail.getDistanceTo(e.head) })?.weight
             }
             .map { it.second }
         return environmentGraph.edgesFrom(currentRoom).map { it to sorted.indexOf(it) + 1 }.toMap()
@@ -176,9 +188,7 @@ open class OrientingBehavior2D<
             .filterIsInstance<Pedestrian<T>>()
             .filter { room.contains(environment.getPosition(it)) }
             .count()
-            .let {
-                (pedestrian.shape.diameter.pow(2) * it / room.asAwtShape().area()) + 1
-            }
+            .let { (pedestrian.shape.diameter.pow(2) * it / room.asAwtShape().area()) + 1 }
 
     /**
      */

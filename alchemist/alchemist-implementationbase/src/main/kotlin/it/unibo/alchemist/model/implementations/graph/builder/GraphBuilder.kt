@@ -81,9 +81,14 @@ fun <N> GraphBuilder<N, GraphEdge<N>>.addEdge(from: N, to: N): Boolean =
  * Adds two edges: one connecting node1 to node2 and another connecting node2 to node1.
  */
 fun <N> GraphBuilder<N, GraphEdge<N>>.addUndirectedEdge(node1: N, node2: N): Boolean =
-    addEdge(node1, node2) || addEdge(node2, node1)
+    addEdge(node1, node2) && addEdge(node2, node1)
 
 /**
  */
 fun <N, D> GraphBuilder<N, GraphEdgeWithData<N, D>>.addEdge(from: N, to: N, data: D): Boolean =
     addEdge(GraphEdgeWithData(from, to, data))
+
+/**
+ */
+fun <N, D> GraphBuilder<N, GraphEdgeWithData<N, D>>.addUndirectedEdge(node1: N, node2: N, data: D): Boolean =
+    addEdge(node1, node2, data) && addEdge(node2, node1, data)

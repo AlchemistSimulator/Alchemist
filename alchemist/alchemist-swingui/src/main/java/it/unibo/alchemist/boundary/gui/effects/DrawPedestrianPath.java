@@ -24,12 +24,11 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Draws the paths took by pedestrians.
  */
-public class DrawPedestrianPath implements Effect {
+public class DrawPedestrianPath extends DrawOnce {
 
     /**
      */
@@ -57,8 +56,6 @@ public class DrawPedestrianPath implements Effect {
     @ExportForGUI(nameToExport = "to be drawn")
     private boolean toBeDrawn;
     private final List<Position2D> path = new ArrayList<>();
-    @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
-    private transient Optional<Node> markerNode = Optional.empty();
 
     /**
      * @param g        graphics
@@ -71,25 +68,15 @@ public class DrawPedestrianPath implements Effect {
     @SuppressWarnings({"PMD.CompareObjectsWithEquals", "unchecked", "checkstyle:WhitespaceAfter"})
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
-    public <T, P extends Position2D<P>> void apply(final Graphics2D g, final Node<T> n, final Environment<T, P> env, final IWormhole2D<P> wormhole) {
-        // if marker node is no longer in the environment or it is no longer displayed, we need to change it
-        if (markerNode.isPresent()
-                && (!env.getNodes().contains(markerNode.get()) || !wormhole.isInsideView(wormhole.getViewPoint(env.getPosition((Node<T>) markerNode.get()))))) {
-            markerNode = Optional.empty();
-        }
-        if (markerNode.isEmpty()) {
-            markerNode = Optional.of(n);
-        }
-        if (markerNode.get() == n) { // at this point markerNode.isPresent() is always true, so we directly get it
-            path.add(env.getPosition(n));
-            if (toBeDrawn) {
-                colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
-                g.setColor(colorCache);
-                path.forEach(p -> {
-                    final Point viewP = ((IWormhole2D<Position2D<?>>) wormhole).getViewPoint(p);
-                    g.fillOval(viewP.x, viewP.y, DIAMETER, DIAMETER);
-                });
-            }
+    protected <T, P extends Position2D<P>> void draw(final Graphics2D g, final Node<T> n, final Environment<T, P> env, final IWormhole2D<P> wormhole) {
+        path.add(env.getPosition(n));
+        if (toBeDrawn) {
+            colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
+            g.setColor(colorCache);
+            path.forEach(p -> {
+                final Point viewP = ((IWormhole2D<Position2D<?>>) wormhole).getViewPoint(p);
+                g.fillOval(viewP.x, viewP.y, DIAMETER, DIAMETER);
+            });
         }
     }
 

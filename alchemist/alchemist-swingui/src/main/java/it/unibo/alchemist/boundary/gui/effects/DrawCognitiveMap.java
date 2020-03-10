@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary.gui.effects;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
 import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.Ellipse;
@@ -32,12 +33,11 @@ import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Optional;
 
 /**
  * Draws an orienting pedestrian' cognitive map.
  */
-public class DrawCognitiveMap implements Effect {
+public class DrawCognitiveMap extends DrawOnce {
 
     /**
      */
@@ -58,10 +58,8 @@ public class DrawCognitiveMap implements Effect {
     @ExportForGUI(nameToExport = "B")
     private RangedInteger blue = new RangedInteger(0, MAX_COLOUR_VALUE);
     private Color colorCache = Color.RED;
-    @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
+    @Nullable
     private transient NavigationGraph<? extends Euclidean2DPosition, ?, Ellipse, ?> cognitiveMap;
-    @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
-    private transient Optional<Node> markerNode = Optional.empty();
 
     /**
      * @param g        graphics
@@ -71,24 +69,29 @@ public class DrawCognitiveMap implements Effect {
      * @param <T>      concentration type
      * @param <P>      position type
      */
-    @SuppressWarnings({"PMD.CompareObjectsWithEquals", "unchecked", "checkstyle:WhitespaceAfter"})
+    @SuppressWarnings({"PMD.CompareObjectsWithEquals", "unchecked"})
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
     public <T, P extends Position2D<P>> void apply(final Graphics2D g, final Node<T> n, final Environment<T, P> env, final IWormhole2D<P> wormhole) {
-        // if marker node is no longer in the environment or it is no longer displayed, we need to change it
-        if (markerNode.isPresent()
-                && (!env.getNodes().contains(markerNode.get()) || !wormhole.isInsideView(wormhole.getViewPoint(env.getPosition((Node<T>) markerNode.get()))))) {
-            markerNode = Optional.empty();
+        super.apply(g, n, env, wormhole);
+        final Integer markerNodeID = getMarkerNodeID();
+        if (cognitiveMap == null && markerNodeID != null && env.getNodeByID(markerNodeID) instanceof OrientingPedestrian
+                && env instanceof Environment2DWithObstacles
+                && env.makePosition(0.0, 0.0) instanceof Euclidean2DPosition) {
+            cognitiveMap = ((OrientingPedestrian) env.getNodeByID(markerNodeID)).getCognitiveMap();
         }
-        if (markerNode.isEmpty()) {
-            markerNode = Optional.of(n);
-        }
-        if (markerNode.get() == n && cognitiveMap != null) { // at this point markerNode.isPresent() is always true, so we directly get it
-            final IWormhole2D<Euclidean2DPosition> w = (IWormhole2D<Euclidean2DPosition>) wormhole;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected <T, P extends Position2D<P>> void draw(final Graphics2D g, final Node<T> n, final Environment<T, P> env, final IWormhole2D<P> wormhole) {
+        if (cognitiveMap != null) {
             colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
             g.setColor(Color.RED);
             cognitiveMap.nodes().stream()
-                    .map(r -> mapEnvEllipseToAwtShape(r, w))
+                    .map(r -> mapEnvEllipseToAwtShape(r, wormhole, env))
                     .forEach(r -> {
                         g.setColor(colorCache);
                         g.fill(r);
@@ -96,18 +99,13 @@ public class DrawCognitiveMap implements Effect {
                         g.draw(r);
                     });
             cognitiveMap.nodes().forEach(r -> {
-                final Point centroidFrom = w.getViewPoint(r.getCentroid());
+                final Point centroidFrom = wormhole.getViewPoint(env.makePosition(r.getCentroid().getX(), r.getCentroid().getY()));
                 cognitiveMap.edgesFrom(r).forEach(e -> {
-                    final Point centroidTo = w.getViewPoint(e.getHead().getCentroid());
+                    final Point centroidTo = wormhole.getViewPoint(env.makePosition(e.getHead().getCentroid().getX(), e.getHead().getCentroid().getY()));
                     g.setColor(colorCache);
                     g.drawLine(centroidFrom.x, centroidFrom.y, centroidTo.x, centroidTo.y);
                 });
             });
-        }
-        if (cognitiveMap == null && markerNode.get() instanceof OrientingPedestrian
-                && env instanceof Environment2DWithObstacles
-                && env.makePosition(0.0, 0.0) instanceof Euclidean2DPosition) {
-            this.cognitiveMap = ((OrientingPedestrian) markerNode.get()).getCognitiveMap();
         }
     }
 
@@ -119,10 +117,10 @@ public class DrawCognitiveMap implements Effect {
         return colorCache;
     }
 
-    private Shape mapEnvEllipseToAwtShape(final Ellipse e, final IWormhole2D<Euclidean2DPosition> wormhole) {
+    private <P extends Position2D<P>> Shape mapEnvEllipseToAwtShape(final Ellipse e, final IWormhole2D<P> wormhole, final Environment<?, P> env) {
         final Rectangle2D frame = e.asAwtShape().getFrame();
-        final Euclidean2DPosition startEnv = new Euclidean2DPosition(frame.getMinX(), frame.getMinY());
-        final Euclidean2DPosition endEnv = new Euclidean2DPosition(frame.getMaxX(), frame.getMaxY());
+        final P startEnv = env.makePosition(frame.getMinX(), frame.getMinY());
+        final P endEnv = env.makePosition(frame.getMaxX(), frame.getMaxY());
         final Point startView = wormhole.getViewPoint(startEnv);
         final Point endView = wormhole.getViewPoint(endEnv);
         final Point2D minPoint = new Point2D.Double(Math.min(startView.getX(), endView.getX()), Math.min(startView.getY(), endView.getY()));

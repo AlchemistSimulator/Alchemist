@@ -33,12 +33,11 @@ import java.awt.Point;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Optional;
 
 /**
  * Draws the navigation mesh of an environment, obtained using the Deaccon algorithm.
  */
-public class DrawNavigationMesh implements Effect {
+public class DrawNavigationMesh extends DrawOnce {
 
     /**
      */
@@ -75,9 +74,6 @@ public class DrawNavigationMesh implements Effect {
     private Color colorCache = Color.BLUE;
     @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
     private transient NavigationGraph<Euclidean2DPosition, ?, ConvexPolygon, GraphEdgeWithData<ConvexPolygon, Pair<Euclidean2DPosition, Euclidean2DPosition>>> envGraph;
-    @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
-    private transient Optional<Node> markerNode = Optional.empty();
-
     /**
      * @param g        graphics
      * @param n        node
@@ -86,23 +82,14 @@ public class DrawNavigationMesh implements Effect {
      * @param <T> concentration type
      * @param <P> position type
      */
-    @SuppressWarnings({"PMD.CompareObjectsWithEquals", "unchecked", "checkstyle:WhitespaceAfter"})
+    @SuppressWarnings({"PMD.CompareObjectsWithEquals", "unchecked"})
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
-    public <T, P extends Position2D<P>> void apply(final Graphics2D g, final Node<T> n, final Environment<T, P> env, final IWormhole2D<P> wormhole) {
-        // if marker node is no longer in the environment or it is no longer displayed, we need to change it
-        if (markerNode.isPresent()
-                && (!env.getNodes().contains(markerNode.get()) || !wormhole.isInsideView(wormhole.getViewPoint(env.getPosition((Node<T>) markerNode.get()))))) {
-            markerNode = Optional.empty();
-        }
-        if (markerNode.isEmpty()) {
-            markerNode = Optional.of(n);
-        }
-        if (markerNode.get() == n && envGraph != null) { // at this point markerNode.isPresent() is always true, so we directly get it
-            final IWormhole2D<Euclidean2DPosition> w = (IWormhole2D<Euclidean2DPosition>) wormhole;
+    protected <T, P extends Position2D<P>> void draw(final Graphics2D g, final Node<T> n, final Environment<T, P> env, final IWormhole2D<P> wormhole) {
+        if (envGraph != null) {
             colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
             envGraph.nodes().stream()
-                    .map(r -> mapEnvConvexPolygonToAwtShape(r, w))
+                    .map(r -> mapEnvConvexPolygonToAwtShape(r, wormhole, env))
                     .forEach(r -> {
                         g.setColor(colorCache);
                         g.fill(r);
@@ -111,11 +98,11 @@ public class DrawNavigationMesh implements Effect {
                     });
             if (drawGraph) {
                 envGraph.nodes().forEach(r -> {
-                    final Point centroidFrom = w.getViewPoint(r.getCentroid());
+                    final Point centroidFrom = wormhole.getViewPoint(env.makePosition(r.getCentroid().getX(), r.getCentroid().getY()));
                     envGraph.edgesFrom(r).forEach(e -> {
                         final Pair<Euclidean2DPosition, Euclidean2DPosition> c = e.getData();
-                        final Point viewP1 = w.getViewPoint(c.getFirst());
-                        final Point viewP2 = w.getViewPoint(c.getSecond());
+                        final Point viewP1 = wormhole.getViewPoint(env.makePosition(c.getFirst().getX(), c.getSecond().getY()));
+                        final Point viewP2 = wormhole.getViewPoint(env.makePosition(c.getSecond().getX(), c.getSecond().getY()));
                         g.setColor(Color.GREEN);
                         g.drawLine(viewP1.x, viewP1.y, viewP2.x, viewP2.y);
                         final Point midPoint = new Point((viewP1.x + viewP2.x) / 2, (viewP1.y + viewP2.y) / 2);
@@ -150,10 +137,10 @@ public class DrawNavigationMesh implements Effect {
         return colorCache;
     }
 
-    private Shape mapEnvConvexPolygonToAwtShape(final ConvexPolygon p, final IWormhole2D<Euclidean2DPosition> wormhole) {
+    private <T, P extends Position2D<P>> Shape mapEnvConvexPolygonToAwtShape(final ConvexPolygon p, final IWormhole2D<P> wormhole, final Environment<T, P> env) {
         final Path2D shape = new Path2D.Double();
         for (int i = 0; i < p.vertices().size(); i++) {
-            final Point viewPoint = wormhole.getViewPoint(p.vertices().get(i));
+            final Point viewPoint = wormhole.getViewPoint(env.makePosition(p.vertices().get(i).getX(), p.vertices().get(i).getY()));
             if (i == 0) {
                 shape.moveTo(viewPoint.getX(), viewPoint.getY());
             } else {

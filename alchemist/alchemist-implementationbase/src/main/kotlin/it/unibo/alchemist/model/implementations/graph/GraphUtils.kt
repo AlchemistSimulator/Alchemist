@@ -3,15 +3,12 @@ package it.unibo.alchemist.model.implementations.graph
 import it.unibo.alchemist.model.implementations.graph.builder.GraphBuilder
 import it.unibo.alchemist.model.implementations.graph.builder.NavigationGraphBuilder
 import it.unibo.alchemist.model.implementations.geometry.magnitude
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.graph.Graph
 import it.unibo.alchemist.model.interfaces.graph.GraphEdge
 import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
 import java.util.PriorityQueue
 import kotlin.collections.HashMap
 
@@ -29,7 +26,7 @@ fun <N, E : GraphEdge<N>> Graph<N, E>.isReachable(from: N, to: N): Boolean {
     if (from == to || edgesFrom(from).any { it.head == to }) {
         return true
     }
-    return dfs(from, to)
+    return depthFirstSearch(from, to)
 }
 
 /**
@@ -37,40 +34,41 @@ fun <N, E : GraphEdge<N>> Graph<N, E>.isReachable(from: N, to: N): Boolean {
  * @param node is the node that will be visited with the first iteration.
  * @param target is the target node we want to find.
  */
-fun <N, E : GraphEdge<N>> Graph<N, E>.dfs(node: N, target: N, visited: HashMap<N, Boolean> = HashMap(nodes().size)): Boolean {
+fun <N, E : GraphEdge<N>> Graph<N, E>.depthFirstSearch(
+    node: N,
+    target: N,
+    visited: HashMap<N, Boolean> = HashMap(nodes().size)
+): Boolean {
     visited[node] = true
     with(edgesFrom(node).map { it.head }) {
         if (any { it == target }) {
             return true
         }
-        return filter { visited[it] == null }.any { dfs(it, target, visited) }
+        return filter { visited[it] == null }.any { depthFirstSearch(it, target, visited) }
     }
 }
 
 /**
  * @returns the destinations within the provided [node].
  */
-fun <V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>> NavigationGraph<V, A, N, E>.destinationsWithin(node: N): Collection<V> =
+fun <V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>>
+NavigationGraph<V, A, N, E>.destinationsWithin(node: N): Collection<V> =
     destinations().filter { node.contains(it) }
 
 /**
  * Checks whether the provided [node] contains any destination.
  */
-fun <V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>> NavigationGraph<V, A, N, E>.containsDestination(node: N): Boolean =
+fun <V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>>
+NavigationGraph<V, A, N, E>.containsDestination(node: N): Boolean =
     destinations().any { node.contains(it) }
 
 /**
  * @returns the first node containing the specified position (or destination),
  * null if no node containing it could be found.
  */
-fun <V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>> NavigationGraph<V, A, N, E>.nodeContaining(position: V): N? =
+fun <V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>>
+NavigationGraph<V, A, N, E>.nodeContaining(position: V): N? =
     nodes().firstOrNull { it.contains(position) }
-
-/**
- * See [nodeContaining].
- */
-fun NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DCrossing>.nodeContaining(position: Euclidean2DPosition): ConvexPolygon? =
-    nodes().firstOrNull { it.containsOrLiesOnBoundary(position) }
 
 /**
  * Models a path composed by a list of nodes and a weight.
@@ -109,31 +107,29 @@ fun <N, E : GraphEdge<N>> Graph<N, E>.dijkstraShortestPath(from: N, to: N, weigh
      * Predecessor of each node
      */
     val prev: HashMap<N, N> = HashMap(nodes().size)
-    val q: PriorityQueue<N> = PriorityQueue(nodes().size, compareBy { dist[it] })
-    q.add(from)
-    while (q.isNotEmpty()) {
+    val queue: PriorityQueue<N> = PriorityQueue(nodes().size, compareBy { dist[it] })
+    queue.add(from)
+    while (queue.isNotEmpty()) {
         /*
          * This is the node with min dist
          */
-        val u = q.poll()
-        edgesFrom(u).forEach { e ->
-            /*
-             * Edge e connects u to v
-             */
-            val v = e.head
-            val distToV = dist[u]!! + weight(e)
-            /*
-             * A shorter path has been found
-             */
-            if (distToV < dist[v]!!) {
-                /*
-                 * The element is removed (if present) and added back to
-                 * recompute its position in the heap since its dist changed
-                 */
-                q.remove(v)
-                dist[v] = distToV
-                prev[v] = u
-                q.add(v)
+        val node = queue.poll()
+        edgesFrom(node).forEach { edge ->
+            val neighbor = edge.head
+            dist[node]?.let { distToNode ->
+                val distToNeighbor = distToNode + weight(edge)
+                dist[neighbor]?.let { prevDist ->
+                    if (distToNeighbor < prevDist) {
+                        /*
+                         * The element is removed (if present) and added back to
+                         * recompute its position in the heap since its dist changed
+                         */
+                        queue.remove(neighbor)
+                        dist[neighbor] = distToNeighbor
+                        prev[neighbor] = node
+                        queue.add(neighbor)
+                    }
+                }
             }
         }
     }
@@ -143,11 +139,13 @@ fun <N, E : GraphEdge<N>> Graph<N, E>.dijkstraShortestPath(from: N, to: N, weigh
     val path: MutableList<N> = mutableListOf(to)
     var curr = to
     while (prev[curr] != null) {
-        path.add(prev[curr]!!)
-        curr = prev[curr]!!
+        prev[curr]?.let {
+            path.add(it)
+            curr = it
+        }
     }
     return if (path.contains(from)) {
-        Path(path.reversed(), dist[to]!!)
+        Path(path.reversed(), dist[to] ?: Double.POSITIVE_INFINITY)
     } else {
         null
     }
@@ -158,7 +156,8 @@ fun <N, E : GraphEdge<N>> Graph<N, E>.dijkstraShortestPath(from: N, to: N, weigh
  * default to each edge is computed as the distance between the centroids of the
  * two [ConvexGeometricShape]s the edge connects.
  */
-fun <V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>> NavigationGraph<V, A, N, E>.dijkstraShortestPath(from: N, to: N): Path<N>? =
+fun <V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>>
+NavigationGraph<V, A, N, E>.dijkstraShortestPath(from: N, to: N): Path<N>? =
     dijkstraShortestPath(from, to, { (it.tail.centroid - it.head.centroid).magnitude() })
 
 /**
@@ -171,20 +170,27 @@ fun <N, E : GraphEdge<N>> Graph<N, E>.primMinimumSpanningForest(weight: (E) -> D
 /**
  * See [primMinimumSpanningForest].
  */
-fun <V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>> NavigationGraph<V, A, N, E>.primMinimumSpanningForest(weight: (E) -> Double = { (it.tail.centroid - it.head.centroid).magnitude() }): NavigationGraph<V, A, N, E> =
+fun <V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>>
+NavigationGraph<V, A, N, E>.primMinimumSpanningForest(
+    weight: (E) -> Double = { (it.tail.centroid - it.head.centroid).magnitude() }
+): NavigationGraph<V, A, N, E> =
     with(NavigationGraphBuilder<V, A, N, E>(nodes().size)) {
         primMinimumSpanningForest(weight, this)
         build(destinations())
     }
 
 /*
- * Helper function to compute the MSF. Param s is the source node for prim's algorithm.
+ * Helper function to compute the MSF.
  */
-private fun <N, E : GraphEdge<N>> Graph<N, E>.primMinimumSpanningForest(weight: (E) -> Double, builder: GraphBuilder<N, E>, s: N? = null): GraphBuilder<N, E> {
+private fun <N, E : GraphEdge<N>> Graph<N, E>.primMinimumSpanningForest(
+    weight: (E) -> Double,
+    builder: GraphBuilder<N, E>,
+    source: N? = null
+): GraphBuilder<N, E> {
     if (nodes().isEmpty()) {
         return builder
     }
-    val source = s ?: nodes().first()
+    val origin = source ?: nodes().first()
     /*
      * Cheapest cost of a connection (an edge) to each node.
      */
@@ -192,30 +198,32 @@ private fun <N, E : GraphEdge<N>> Graph<N, E>.primMinimumSpanningForest(weight: 
     nodes().forEach {
         cost[it] = Double.POSITIVE_INFINITY
     }
-    cost[source] = 0.0
+    cost[origin] = 0.0
     val prev: HashMap<N, N> = HashMap(nodes().size)
-    val q: PriorityQueue<N> = PriorityQueue(nodes().size, compareBy { cost[it] })
-    q.add(source)
-    while (q.isNotEmpty()) {
-        val u = q.poll()
+    val queue: PriorityQueue<N> = PriorityQueue(nodes().size, compareBy { cost[it] })
+    queue.add(origin)
+    while (queue.isNotEmpty()) {
+        val node = queue.poll()
         /*
          * We consider a node only if it is not already in
          * the minimum spanning tree
          */
-        if (builder.addNode(u)) {
-            prev[u]?.let {
-                builder.addEdge(edgesFrom(it).first { e -> e.head == u })
-                builder.addEdge(edgesFrom(u).first { e -> e.head == it })
+        if (builder.addNode(node)) {
+            prev[node]?.let {
+                builder.addEdge(edgesFrom(it).first { e -> e.head == node })
+                builder.addEdge(edgesFrom(node).first { e -> e.head == it })
             }
-            edgesFrom(u).forEach { e ->
-                val v = e.head
-                if (!builder.nodes().contains(v)) {
-                    val w = weight(e)
-                    if (w < cost[v]!!) {
-                        q.remove(v)
-                        cost[v] = w
-                        prev[v] = u
-                        q.add(v)
+            edgesFrom(node).forEach { edge ->
+                val neighbor = edge.head
+                if (!builder.nodes().contains(neighbor)) {
+                    val costToNeighbor = weight(edge)
+                    cost[neighbor]?.let { prevCost ->
+                        if (costToNeighbor < prevCost) {
+                            queue.remove(neighbor)
+                            cost[neighbor] = costToNeighbor
+                            prev[neighbor] = node
+                            queue.add(neighbor)
+                        }
                     }
                 }
             }

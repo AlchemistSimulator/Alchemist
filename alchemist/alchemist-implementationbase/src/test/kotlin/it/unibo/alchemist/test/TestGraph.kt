@@ -9,9 +9,11 @@
 
 package it.unibo.alchemist.test
 
-import it.unibo.alchemist.model.implementations.graph.GraphImpl
-import it.unibo.alchemist.model.implementations.graph.isReachable
+import it.unibo.alchemist.model.implementations.graph.builder.GraphBuilder
+import it.unibo.alchemist.model.implementations.graph.builder.addEdge
+import it.unibo.alchemist.model.implementations.graph.builder.addUndirectedEdge
 import it.unibo.alchemist.model.implementations.graph.dijkstraShortestPath
+import it.unibo.alchemist.model.implementations.graph.isReachable
 import it.unibo.alchemist.model.implementations.graph.primMinimumSpanningForest
 import it.unibo.alchemist.model.interfaces.graph.GraphEdge
 import it.unibo.alchemist.model.interfaces.graph.GraphEdgeWithData
@@ -22,68 +24,68 @@ class TestGraph {
 
     @Test
     fun testReachability() {
-        val adjacencyList: LinkedHashMap<Int, MutableList<GraphEdge<Int>>> = LinkedHashMap()
-        mutableListOf(0, 1, 2, 3).forEach { adjacencyList[it] = mutableListOf() }
-        adjacencyList[0]!!.add(GraphEdge(0, 1))
-        adjacencyList[0]!!.add(GraphEdge(0, 2))
-        adjacencyList[1]!!.add(GraphEdge(1, 2))
-        adjacencyList[2]!!.add(GraphEdge(2, 0))
-        adjacencyList[2]!!.add(GraphEdge(2, 3))
-        val g = GraphImpl(adjacencyList)
-        Assertions.assertEquals(true, g.isReachable(1, 3))
-        Assertions.assertEquals(false, g.isReachable(3, 0))
+        val builder = GraphBuilder<Int, GraphEdge<Int>>()
+        mutableListOf(0, 1, 2, 3).forEach { builder.addNode(it) }
+        builder.addEdge(0, 1)
+        builder.addEdge(0, 2)
+        builder.addEdge(1, 2)
+        builder.addEdge(2, 0)
+        builder.addEdge(2, 3)
+        val graph = builder.build()
+        Assertions.assertEquals(true, graph.isReachable(1, 3))
+        Assertions.assertEquals(false, graph.isReachable(3, 0))
     }
 
     @Test
     fun testShortestPath() {
-        val adjacencyList: LinkedHashMap<Int, MutableList<GraphEdge<Int>>> = LinkedHashMap()
-        mutableListOf(1, 2, 3, 4, 5, 6, 7, 8, 9).forEach { adjacencyList[it] = mutableListOf() }
-        adjacencyList[1]!!.add(GraphEdge(1, 2))
-        adjacencyList[1]!!.add(GraphEdge(1, 3))
-        adjacencyList[1]!!.add(GraphEdge(1, 4))
-        adjacencyList[2]!!.add(GraphEdge(2, 3))
-        adjacencyList[2]!!.add(GraphEdge(2, 4))
-        adjacencyList[3]!!.add(GraphEdge(3, 4))
-        adjacencyList[3]!!.add(GraphEdge(3, 5))
-        adjacencyList[4]!!.add(GraphEdge(4, 6))
-        adjacencyList[5]!!.add(GraphEdge(5, 4))
-        adjacencyList[6]!!.add(GraphEdge(6, 5))
-        adjacencyList[7]!!.add(GraphEdge(7, 8))
-        adjacencyList[8]!!.add(GraphEdge(8, 9))
-        adjacencyList[9]!!.add(GraphEdge(9, 7))
-        val g = GraphImpl(adjacencyList)
-        Assertions.assertEquals(true, g.isReachable(1, 6))
-        Assertions.assertEquals(true, g.isReachable(6, 5))
-        Assertions.assertEquals(false, g.isReachable(3, 2))
-        Assertions.assertEquals(false, g.isReachable(1, 7))
-        Assertions.assertEquals(true, g.isReachable(7, 9))
-        Assertions.assertEquals(mutableListOf(1, 4, 6), g.dijkstraShortestPath(1, 6, { 1.0 })!!.path)
-        Assertions.assertEquals(null, g.dijkstraShortestPath(1, 7, { 1.0 }))
-        Assertions.assertEquals(mutableListOf(7, 8, 9), g.dijkstraShortestPath(7, 9, { 1.0 })!!.path)
-        Assertions.assertEquals(mutableListOf(7), g.dijkstraShortestPath(7, 7, { 1.0 })!!.path)
+        val builder = GraphBuilder<Int, GraphEdge<Int>>()
+        mutableListOf(1, 2, 3, 4, 5, 6, 7, 8, 9).forEach { builder.addNode(it) }
+        builder.addEdge(1, 2)
+        builder.addEdge(1, 3)
+        builder.addEdge(1, 4)
+        builder.addEdge(2, 3)
+        builder.addEdge(2, 4)
+        builder.addEdge(3, 4)
+        builder.addEdge(3, 5)
+        builder.addEdge(4, 6)
+        builder.addEdge(5, 4)
+        builder.addEdge(6, 5)
+        builder.addEdge(7, 8)
+        builder.addEdge(8, 9)
+        builder.addEdge(9, 7)
+        val graph = builder.build()
+        Assertions.assertEquals(true, graph.isReachable(1, 6))
+        Assertions.assertEquals(true, graph.isReachable(6, 5))
+        Assertions.assertEquals(false, graph.isReachable(3, 2))
+        Assertions.assertEquals(false, graph.isReachable(1, 7))
+        Assertions.assertEquals(true, graph.isReachable(7, 9))
+        Assertions.assertEquals(mutableListOf(1, 4, 6), graph.dijkstraShortestPath(1, 6, { 1.0 })!!.path)
+        Assertions.assertEquals(null, graph.dijkstraShortestPath(1, 7, { 1.0 }))
+        Assertions.assertEquals(mutableListOf(7, 8, 9), graph.dijkstraShortestPath(7, 9, { 1.0 })!!.path)
+        Assertions.assertEquals(mutableListOf(7), graph.dijkstraShortestPath(7, 7, { 1.0 })!!.path)
     }
 
     @Test
     fun testMST() {
-        val adjacencyList: LinkedHashMap<Int, MutableList<GraphEdgeWithData<Int, Int>>> = LinkedHashMap()
-        mutableListOf(0, 1, 2, 3, 4, 5, 6, 7, 8).forEach { adjacencyList[it] = mutableListOf() }
-        adjacencyList.addUndirectEdge(0, 1, 4)
-        adjacencyList.addUndirectEdge(0, 7, 8)
-        adjacencyList.addUndirectEdge(1, 2, 8)
-        adjacencyList.addUndirectEdge(1, 7, 11)
-        adjacencyList.addUndirectEdge(2, 8, 2)
-        adjacencyList.addUndirectEdge(2, 5, 4)
-        adjacencyList.addUndirectEdge(2, 3, 7)
-        adjacencyList.addUndirectEdge(3, 4, 9)
-        adjacencyList.addUndirectEdge(3, 5, 14)
-        adjacencyList.addUndirectEdge(4, 5, 10)
-        adjacencyList.addUndirectEdge(5, 6, 2)
-        adjacencyList.addUndirectEdge(6, 7, 1)
-        adjacencyList.addUndirectEdge(6, 8, 6)
-        adjacencyList.addUndirectEdge(7, 8, 7)
-        val g = GraphImpl(adjacencyList)
-        val mst = g.primMinimumSpanningForest { e -> e.data.toDouble() }
-        g.nodes().forEach {
+        val builder = GraphBuilder<Int, GraphEdgeWithData<Int, Int>>()
+        mutableListOf(0, 1, 2, 3, 4, 5, 6, 7, 8).forEach { builder.addNode(it) }
+        builder.addUndirectedEdge(0, 1, 4)
+        builder.addUndirectedEdge(0, 7, 8)
+        builder.addUndirectedEdge(1, 2, 8)
+        builder.addUndirectedEdge(1, 7, 11)
+        builder.addUndirectedEdge(2, 8, 2)
+        builder.addUndirectedEdge(2, 5, 4)
+        builder.addUndirectedEdge(2, 3, 7)
+        builder.addUndirectedEdge(3, 4, 9)
+        builder.addUndirectedEdge(3, 5, 14)
+        builder.addUndirectedEdge(4, 5, 10)
+        builder.addUndirectedEdge(5, 6, 2)
+        builder.addUndirectedEdge(6, 7, 1)
+        builder.addUndirectedEdge(6, 8, 6)
+        builder.addUndirectedEdge(7, 8, 7)
+        val graph = builder.build()
+        val mst = graph.primMinimumSpanningForest { e -> e.data.toDouble() }
+        graph.nodes().forEach {
             Assertions.assertEquals(true, mst.nodes().contains(it))
         }
         Assertions.assertEquals(mutableSetOf(1, 7), mst.edgesFrom(0).map { it.head }.toSet())
@@ -99,31 +101,31 @@ class TestGraph {
 
     @Test
     fun testMinimumSpanningForest() {
-        val adjacencyList: LinkedHashMap<Int, MutableList<GraphEdgeWithData<Int, Int>>> = LinkedHashMap()
-        mutableListOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12).forEach { adjacencyList[it] = mutableListOf() }
-        adjacencyList.addUndirectEdge(0, 1, 4)
-        adjacencyList.addUndirectEdge(0, 7, 8)
-        adjacencyList.addUndirectEdge(1, 2, 8)
-        adjacencyList.addUndirectEdge(1, 7, 11)
-        adjacencyList.addUndirectEdge(2, 8, 2)
-        adjacencyList.addUndirectEdge(2, 5, 4)
-        adjacencyList.addUndirectEdge(2, 3, 7)
-        adjacencyList.addUndirectEdge(3, 4, 9)
-        adjacencyList.addUndirectEdge(3, 5, 14)
-        adjacencyList.addUndirectEdge(4, 5, 10)
-        adjacencyList.addUndirectEdge(5, 6, 2)
-        adjacencyList.addUndirectEdge(6, 7, 1)
-        adjacencyList.addUndirectEdge(6, 8, 6)
-        adjacencyList.addUndirectEdge(7, 8, 7)
+        val builder = GraphBuilder<Int, GraphEdgeWithData<Int, Int>>()
+        mutableListOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12).forEach { builder.addNode(it) }
+        builder.addUndirectedEdge(0, 1, 4)
+        builder.addUndirectedEdge(0, 7, 8)
+        builder.addUndirectedEdge(1, 2, 8)
+        builder.addUndirectedEdge(1, 7, 11)
+        builder.addUndirectedEdge(2, 8, 2)
+        builder.addUndirectedEdge(2, 5, 4)
+        builder.addUndirectedEdge(2, 3, 7)
+        builder.addUndirectedEdge(3, 4, 9)
+        builder.addUndirectedEdge(3, 5, 14)
+        builder.addUndirectedEdge(4, 5, 10)
+        builder.addUndirectedEdge(5, 6, 2)
+        builder.addUndirectedEdge(6, 7, 1)
+        builder.addUndirectedEdge(6, 8, 6)
+        builder.addUndirectedEdge(7, 8, 7)
         // disconnected part below
-        adjacencyList.addUndirectEdge(9, 10, 1)
-        adjacencyList.addUndirectEdge(9, 12, 3)
-        adjacencyList.addUndirectEdge(9, 11, 4)
-        adjacencyList.addUndirectEdge(10, 12, 2)
-        adjacencyList.addUndirectEdge(11, 12, 5)
-        val g = GraphImpl(adjacencyList)
-        val mst = g.primMinimumSpanningForest { e -> e.data.toDouble() }
-        g.nodes().forEach {
+        builder.addUndirectedEdge(9, 10, 1)
+        builder.addUndirectedEdge(9, 12, 3)
+        builder.addUndirectedEdge(9, 11, 4)
+        builder.addUndirectedEdge(10, 12, 2)
+        builder.addUndirectedEdge(11, 12, 5)
+        val graph = builder.build()
+        val mst = graph.primMinimumSpanningForest { e -> e.data.toDouble() }
+        graph.nodes().forEach {
             Assertions.assertEquals(true, mst.nodes().contains(it))
         }
         Assertions.assertEquals(mutableSetOf(1, 7), mst.edgesFrom(0).map { it.head }.toSet())
@@ -138,10 +140,5 @@ class TestGraph {
         // disconnected part below
         Assertions.assertEquals(mutableSetOf(11, 10), mst.edgesFrom(9).map { it.head }.toSet())
         Assertions.assertEquals(mutableSetOf(9, 12), mst.edgesFrom(10).map { it.head }.toSet())
-    }
-
-    private fun <N, D> HashMap<N, MutableList<GraphEdgeWithData<N, D>>>.addUndirectEdge(from: N, to: N, data: D) {
-        this[from]!!.add(GraphEdgeWithData(from, to, data))
-        this[to]!!.add(GraphEdgeWithData(to, from, data))
     }
 }

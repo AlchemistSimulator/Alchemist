@@ -190,11 +190,14 @@ data class CircleSegmentIntersectionResult(
 /**
  * Finds the intersection between a circle and a segment.
  */
-fun intersection(s: Euclidean2DSegment, center: Euclidean2DPosition, r: Double): CircleSegmentIntersectionResult {
-    val v = s.toVector()
-    val a = v.x.pow(2) + v.y.pow(2)
-    val b = 2 * (v.x * (s.first.x - center.x) + v.y * (s.first.y - center.y))
-    val c = (s.first.x - center.x).pow(2) + (s.first.y - center.y).pow(2) - r.pow(2)
+fun intersection(segment: Euclidean2DSegment, center: Euclidean2DPosition, radius: Double): CircleSegmentIntersectionResult {
+    val vector = segment.toVector()
+    /*
+     * a, b and c are the terms of the 2nd grade equation of the intersection
+     */
+    val a = vector.x.pow(2) + vector.y.pow(2)
+    val b = 2 * (vector.x * (segment.first.x - center.x) + vector.y * (segment.first.y - center.y))
+    val c = (segment.first.x - center.x).pow(2) + (segment.first.y - center.y).pow(2) - radius.pow(2)
     val det = b.pow(2) - 4 * a * c
     if (fuzzyEquals(a, 0.0) || a < 0.0 || det < 0.0) {
         return CircleSegmentIntersectionResult(CircleSegmentIntersectionType.EMPTY)
@@ -202,7 +205,7 @@ fun intersection(s: Euclidean2DSegment, center: Euclidean2DPosition, r: Double):
         val t = -b / (2 * a)
         return if (t.liesBetween(0.0, 1.0)) {
             CircleSegmentIntersectionResult(CircleSegmentIntersectionType.POINT,
-                Optional.of(Euclidean2DPosition(s.first.x + t * v.x, s.first.y + t * v.y)))
+                Optional.of(Euclidean2DPosition(segment.first.x + t * vector.x, segment.first.y + t * vector.y)))
         } else {
             CircleSegmentIntersectionResult(CircleSegmentIntersectionType.EMPTY)
         }
@@ -210,12 +213,12 @@ fun intersection(s: Euclidean2DSegment, center: Euclidean2DPosition, r: Double):
         val t1 = (-b + sqrt(det)) / (2 * a)
         val t2 = (-b - sqrt(det)) / (2 * a)
         val p1 = if (t1.liesBetween(0.0, 1.0)) {
-            Optional.of(Euclidean2DPosition(s.first.x + t1 * v.x, s.first.y + t1 * v.y))
+            Optional.of(Euclidean2DPosition(segment.first.x + t1 * vector.x, segment.first.y + t1 * vector.y))
         } else {
             Optional.empty()
         }
         val p2 = if (t2.liesBetween(0.0, 1.0)) {
-            Optional.of(Euclidean2DPosition(s.first.x + t2 * v.x, s.first.y + t2 * v.y))
+            Optional.of(Euclidean2DPosition(segment.first.x + t2 * vector.x, segment.first.y + t2 * vector.y))
         } else {
             Optional.empty()
         }

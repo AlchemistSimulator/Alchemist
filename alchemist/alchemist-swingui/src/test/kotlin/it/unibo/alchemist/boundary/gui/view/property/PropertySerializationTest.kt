@@ -16,17 +16,15 @@ import it.unibo.alchemist.boundary.gui.view.properties.*
 import it.unibo.alchemist.test.TemporaryFile.create
 import javafx.beans.property.Property
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.io.*
 import java.lang.reflect.Type
 
 class PropertySerializationTester<T: Property<E>, E: Any>(
         private val gsonType: Type,
-        private val fromAny: (Any) -> T,
+        private val toProperty: Any.() -> T,
         vararg serializables: T
 ) {
-
     private val properties: List<T> = serializables.asList()
 
     companion object {
@@ -35,16 +33,16 @@ class PropertySerializationTester<T: Property<E>, E: Any>(
 
     fun testJavaSerialization() {
         val file = create()
-        FileOutputStream(file).use { fout ->
-            ObjectOutputStream(fout).use { oos ->
-                FileInputStream(file).use { fin ->
-                    ObjectInputStream(fin).use { ois ->
-                        properties.forEach {
-                            oos.writeObject(it)
-                            val deserialized = fromAny(ois.readObject())
-                            Assertions.assertEquals(it, deserialized, "Java serialization: ${message(it, deserialized)}")
-                        }
-                    }
+        properties.forEach { property ->
+            file.outputStream().use { fout ->
+                ObjectOutputStream(fout).use { oos ->
+                    oos.writeObject(property)
+                }
+            }
+            file.inputStream().use { fin ->
+                ObjectInputStream(fin).use { ois ->
+                    val deserialized = ois.readObject().toProperty()
+                    Assertions.assertEquals(property, deserialized, message(property, deserialized))
                 }
             }
         }
@@ -52,13 +50,13 @@ class PropertySerializationTester<T: Property<E>, E: Any>(
 
     fun testGsonSerialization() {
         val file = create()
-        FileWriter(file, Charsets.UTF_8).use { writer ->
-            FileReader(file, Charsets.UTF_8).use { reader ->
-                properties.forEach {
-                    GSON.toJson(it, gsonType, writer)
-                    val deserialized = GSON.fromJson<T>(reader, gsonType)
-                    Assertions.assertEquals(it, deserialized, "Gson serialization: ${message(it, deserialized)}")
-                }
+        properties.forEach { property ->
+            FileWriter(file, Charsets.UTF_8).use {
+                GSON.toJson(property, gsonType, it)
+            }
+            FileReader(file, Charsets.UTF_8).use {
+                val deserialized = GSON.fromJson<T>(it, gsonType)
+                Assertions.assertEquals(property, deserialized, message(property, deserialized))
             }
         }
     }
@@ -105,7 +103,7 @@ class RangedDoublePropertySerializationTest: PropertySerializationTest() {
 
     override val tester = PropertySerializationTester(
             object : TypeToken<RangedDoubleProperty>() {}.type,
-            { e: Any -> e as RangedDoubleProperty },
+            { this as RangedDoubleProperty},
             RangedDoubleProperty(DOUBLE_PROPERTY, DOUBLE_INITIAL_VALUE, DOUBLE_LOWER_BOUND, DOUBLE_UPPER_BOUND),
             PropertyFactory.getFXColorChannelProperty(DOUBLE_COLOR_NAME, DOUBLE_COLOR_INITIAL_VALUE),
             PropertyFactory.getPercentageRangedProperty(DOUBLE_PERCENT_NAME, DOUBLE_PERCENT_INITIAL_VALUE)
@@ -122,7 +120,7 @@ class RangedIntegerPropertySerializationTest: PropertySerializationTest() {
 
     override val tester = PropertySerializationTester(
             object : TypeToken<RangedIntegerProperty>() {}.type,
-            { e: Any -> e as RangedIntegerProperty },
+            { this as RangedIntegerProperty },
             RangedIntegerProperty(INTEGER_PROPERTY, INTEGER_INITIAL_VALUE, INTEGER_LOWER_BOUND, INTEGER_UPPER_BOUND)
     )
 }
@@ -134,7 +132,7 @@ class SerializableBooleanPropertySerializationTest: PropertySerializationTest() 
 
     override val tester = PropertySerializationTester(
             object : TypeToken<SerializableBooleanProperty>() {}.type,
-            { e: Any -> e as SerializableBooleanProperty },
+            { this as SerializableBooleanProperty },
             SerializableBooleanProperty(BOOLEAN_PROPERTY, true),
             SerializableBooleanProperty(BOOLEAN_PROPERTY, false)
     )
@@ -153,7 +151,7 @@ class SerializableEnumPropertySerializationTest: PropertySerializationTest() {
     @Suppress("unchecked_cast")
     override val tester = PropertySerializationTester(
         object : TypeToken<SerializableEnumProperty<TestEnum>>() {}.type,
-        { e: Any -> e as SerializableEnumProperty<TestEnum> },
+        { this as SerializableEnumProperty<TestEnum> },
         SerializableEnumProperty(ENUM_PROPERTY, TestEnum.TEST)
     )
 }
@@ -166,7 +164,7 @@ class SerializableStringPropertySerializationTest: PropertySerializationTest() {
 
     override val tester = PropertySerializationTester(
         object : TypeToken<SerializableStringProperty>() {}.type,
-        { e: Any -> e as SerializableStringProperty },
+        { this as SerializableStringProperty },
         SerializableStringProperty(STRING_PROPERTY, STRING_INITIAL_VALUE)
     )
 }

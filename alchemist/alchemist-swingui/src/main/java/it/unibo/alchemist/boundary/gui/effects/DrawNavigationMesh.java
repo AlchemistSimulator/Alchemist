@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary.gui.effects;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
 import it.unibo.alchemist.model.implementations.geometry.navigationmeshes.deaccon.Deaccon2D;
@@ -72,6 +73,7 @@ public class DrawNavigationMesh extends DrawOnce {
     @ExportForGUI(nameToExport = "draw underlying graph")
     private boolean drawGraph;
     private Color colorCache = Color.BLUE;
+    @Nullable
     @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
     private transient NavigationGraph<Euclidean2DPosition, ?, ConvexPolygon, GraphEdgeWithData<ConvexPolygon, Pair<Euclidean2DPosition, Euclidean2DPosition>>> envGraph;
     /**

@@ -17,8 +17,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 interface NavigationGraph<V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>> : Graph<N, E> {
 
     /**
-     * A set of positions of interest for the navigation (usually destinations).
-     * A list is used to allow predictable iteration order.
+     * A list of positions of interest (usually destinations).
      */
     fun destinations(): List<V>
 }

@@ -100,11 +100,13 @@ public class DrawCognitiveMap extends DrawOnce {
                     });
             cognitiveMap.nodes().forEach(r -> {
                 final Point centroidFrom = wormhole.getViewPoint(env.makePosition(r.getCentroid().getX(), r.getCentroid().getY()));
-                cognitiveMap.edgesFrom(r).forEach(e -> {
-                    final Point centroidTo = wormhole.getViewPoint(env.makePosition(e.getHead().getCentroid().getX(), e.getHead().getCentroid().getY()));
-                    g.setColor(colorCache);
-                    g.drawLine(centroidFrom.x, centroidFrom.y, centroidTo.x, centroidTo.y);
-                });
+                if (cognitiveMap != null) {
+                    cognitiveMap.edgesFrom(r).forEach(e -> {
+                        final Point centroidTo = wormhole.getViewPoint(env.makePosition(e.getHead().getCentroid().getX(), e.getHead().getCentroid().getY()));
+                        g.setColor(colorCache);
+                        g.drawLine(centroidFrom.x, centroidFrom.y, centroidTo.x, centroidTo.y);
+                    });
+                }
             });
         }
     }

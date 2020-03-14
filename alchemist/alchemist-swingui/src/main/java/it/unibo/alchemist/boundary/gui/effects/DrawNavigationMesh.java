@@ -101,16 +101,18 @@ public class DrawNavigationMesh extends DrawOnce {
             if (drawGraph) {
                 envGraph.nodes().forEach(r -> {
                     final Point centroidFrom = wormhole.getViewPoint(env.makePosition(r.getCentroid().getX(), r.getCentroid().getY()));
-                    envGraph.edgesFrom(r).forEach(e -> {
-                        final Pair<Euclidean2DPosition, Euclidean2DPosition> c = e.getData();
-                        final Point viewP1 = wormhole.getViewPoint(env.makePosition(c.getFirst().getX(), c.getSecond().getY()));
-                        final Point viewP2 = wormhole.getViewPoint(env.makePosition(c.getSecond().getX(), c.getSecond().getY()));
-                        g.setColor(Color.GREEN);
-                        g.drawLine(viewP1.x, viewP1.y, viewP2.x, viewP2.y);
-                        final Point midPoint = new Point((viewP1.x + viewP2.x) / 2, (viewP1.y + viewP2.y) / 2);
-                        g.setColor(colorCache);
-                        g.drawLine(centroidFrom.x, centroidFrom.y, midPoint.x, midPoint.y);
-                    });
+                    if (envGraph != null) {
+                        envGraph.edgesFrom(r).forEach(e -> {
+                            final Pair<Euclidean2DPosition, Euclidean2DPosition> c = e.getData();
+                            final Point viewP1 = wormhole.getViewPoint(env.makePosition(c.getFirst().getX(), c.getSecond().getY()));
+                            final Point viewP2 = wormhole.getViewPoint(env.makePosition(c.getSecond().getX(), c.getSecond().getY()));
+                            g.setColor(Color.GREEN);
+                            g.drawLine(viewP1.x, viewP1.y, viewP2.x, viewP2.y);
+                            final Point midPoint = new Point((viewP1.x + viewP2.x) / 2, (viewP1.y + viewP2.y) / 2);
+                            g.setColor(colorCache);
+                            g.drawLine(centroidFrom.x, centroidFrom.y, midPoint.x, midPoint.y);
+                        });
+                    }
                 });
             }
         }

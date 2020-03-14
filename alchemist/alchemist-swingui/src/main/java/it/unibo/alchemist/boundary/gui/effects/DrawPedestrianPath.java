@@ -65,7 +65,7 @@ public class DrawPedestrianPath extends DrawOnce {
      * @param <T>      concentration type
      * @param <P>      position type
      */
-    @SuppressWarnings({"PMD.CompareObjectsWithEquals", "unchecked", "checkstyle:WhitespaceAfter"})
+    @SuppressWarnings({"PMD.CompareObjectsWithEquals", "unchecked"})
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
     protected <T, P extends Position2D<P>> void draw(final Graphics2D g, final Node<T> n, final Environment<T, P> env, final IWormhole2D<P> wormhole) {

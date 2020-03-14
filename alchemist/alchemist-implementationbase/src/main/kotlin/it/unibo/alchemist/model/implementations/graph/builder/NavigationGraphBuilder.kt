@@ -9,7 +9,12 @@ import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
 
 /**
  */
-class NavigationGraphBuilder<V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>>(
+class NavigationGraphBuilder<
+    V : Vector<V>,
+    A : GeometricTransformation<V>,
+    N : ConvexGeometricShape<V, A>,
+    E : GraphEdge<N>
+>(
     initialCapacity: Int = 1
 ) : GraphBuilder<N, E>(initialCapacity) {
 

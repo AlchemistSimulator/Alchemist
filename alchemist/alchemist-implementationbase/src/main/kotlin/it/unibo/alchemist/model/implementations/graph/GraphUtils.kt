@@ -185,12 +185,12 @@ NavigationGraph<V, A, N, E>.primMinimumSpanningForest(
 private fun <N, E : GraphEdge<N>> Graph<N, E>.primMinimumSpanningForest(
     weight: (E) -> Double,
     builder: GraphBuilder<N, E>,
-    source: N? = null
+    source_: N? = null
 ): GraphBuilder<N, E> {
     if (nodes().isEmpty()) {
         return builder
     }
-    val origin = source ?: nodes().first()
+    val source = source_ ?: nodes().first()
     /*
      * Cheapest cost of a connection (an edge) to each node.
      */
@@ -198,10 +198,10 @@ private fun <N, E : GraphEdge<N>> Graph<N, E>.primMinimumSpanningForest(
     nodes().forEach {
         cost[it] = Double.POSITIVE_INFINITY
     }
-    cost[origin] = 0.0
+    cost[source] = 0.0
     val prev: HashMap<N, N> = HashMap(nodes().size)
     val queue: PriorityQueue<N> = PriorityQueue(nodes().size, compareBy { cost[it] })
-    queue.add(origin)
+    queue.add(source)
     while (queue.isNotEmpty()) {
         val node = queue.poll()
         /*

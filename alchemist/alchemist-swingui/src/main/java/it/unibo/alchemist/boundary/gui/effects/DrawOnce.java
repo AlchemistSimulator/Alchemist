@@ -26,6 +26,7 @@ import java.util.Optional;
  */
 public abstract class DrawOnce implements Effect {
 
+    private static final long serialVersionUID = 1L;
     @Nullable
     private Integer markerNodeID;
 

@@ -233,7 +233,8 @@ variables:
 
 The system is [JSR-233](http://archive.fo/PGdk8)-compatible, as such, every language with a valid JSR-233 implementation could be used.
 The only requirement for the language to be available is the availability in the runtime classpath of a JSR-233 compatible version of the desired language.
-If Alchemist is being used (as recommended) in conjunction with Gradle, and you want to embed your favorite JSR-233 compatible scripting language, you should have a dependency declaration similar to:
+If Alchemist is being used (as recommended) in conjunction with Gradle,
+and you want to embed your favorite JSR-233 compatible scripting language, you should have a dependency declaration similar to:
 
 ```kotlin
 dependencies {
@@ -291,16 +292,6 @@ variables:
     language: kotlin
 ```
 If the string begins with a `|`, its contents preserve newlines, thus allowing for multiline scripts of arbitrary complexity.
-
-#### Known issues
-
-Alchemist exploit JSR-233's variable binding system to let the scripts use variables defined elsewhere.
-Not all languages support this system properly.
-In particular, Kotlin does not (yet) support variable injection and requires a workaround.
-In order for a script to access a variable named `myVar`, the programmer should write instead `bindings["myVar"]`.
-The issue is being tracked as [KT-15125](https://youtrack.jetbrains.com/issue/KT-15125).
-Once it gets solved (if ever), and as soon as Alchemist incorporates the version of Kotlin including the fix,
-the workaround will no longer be necessary.
 
 ### Using variables
 

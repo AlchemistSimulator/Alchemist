@@ -46,7 +46,16 @@ class OrientingCognitivePedestrian2D<T, M : ConvexPolygon, F : GraphEdge<M>> @Jv
         age: String,
         gender: String,
         danger: Molecule? = null
-    ) : this(knowledgeDegree, randomGenerator, envGraph, env, group, Age.fromString(age), Gender.fromString(gender), danger)
+    ) : this(
+            knowledgeDegree,
+            randomGenerator,
+            envGraph,
+            env,
+            group,
+            Age.fromString(age),
+            Gender.fromString(gender),
+            danger
+        )
 
     /**
      * Allows to specify age with an int and gender with a string.
@@ -60,7 +69,16 @@ class OrientingCognitivePedestrian2D<T, M : ConvexPolygon, F : GraphEdge<M>> @Jv
         age: Int,
         gender: String,
         danger: Molecule? = null
-    ) : this(knowledgeDegree, randomGenerator, envGraph, env, group, Age.fromYears(age), Gender.fromString(gender), danger)
+    ) : this(
+            knowledgeDegree,
+            randomGenerator,
+            envGraph,
+            env,
+            group,
+            Age.fromYears(age),
+            Gender.fromString(gender),
+            danger
+        )
 
     /*
      * The cognitive part of the pedestrian, composition is used due to the lack

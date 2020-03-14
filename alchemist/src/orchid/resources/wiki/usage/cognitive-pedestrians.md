@@ -1,23 +1,25 @@
 ---
 
-title: "Using Cognitive Agents"
+title: "Using Cognitive Pedestrians"
 
 ---
 
+Alchemist is capable of simulating the movement of pedestrians with sophisticated cognitive capabilities:
+
+![demo]({{ 'assets/media/usage/no-knowledge.gif'|asset }})
+
+The animation above shows an adult male with no previous knowledge of the environment trying to reach the destination marked green.
+
 ### Prerequisites
-This guide assumes you already know {{anchor('the Alchemist metamodel', 'The Alchemist Simulator metamodel')}} and {{anchor('how to write simulations in YAML', 'Writing Alchemist simulations')}}.
+This guide assumes you already know [the Alchemist metamodel](../simulator/metamodel.md), [how to write simulations in YAML](yaml.md) and [how to generate a navigation graph](navmeshes.md).
 
-### Cognitive Agent
-A cognitive agent is a pedestrian inside the simulation who has an emotional state thanks to it is able 
-to influence and to be influenced by the other people with the same capabilities in the environment.
-
-### Types of Agent
-The characteristics of the agents loadable in a simulation can be chosen from three available types, 
+### Types of pedestrians
+The characteristics of the pedestrians loadable in a simulation can be chosen from three available types, 
 each representing a more refined version of the previous one.
 
 #### Homogeneous Pedestrian
 Homogeneous pedestrians are a particular type of _Node_ which have no peculiar characteristic each other. 
-It is the most common type of agent which can be load in a simulation.
+It is the most common type of pedestrian which can be load in a simulation.
 
 ```yaml
 displacements:
@@ -51,9 +53,7 @@ displacements:
 ```
 
 #### Cognitive Pedestrian
-A cognitive pedestrian is the most refined type of agent currently present in Alchemist. It is an heterogeneous pedestrian
-with cognitive capabilities.
-For instance, cognitive pedestrians can perceive fear, not just directly but by contagion (seeing other people fleeing may make them flee as well).
+A cognitive pedestrian is a heterogeneous pedestrian with cognitive capabilities. It has an emotional state and is able to influence and to be influenced by other people with the same capabilities. For instance, cognitive pedestrians can perceive fear, not just directly but also by contagion (e.g. seeing other people fleeing may cause them flee as well).
 
 ```yaml
 reactions: &behavior
@@ -193,6 +193,60 @@ displacements:
       - *behavior
 ```
 
+### Orienting abilities
+
+As showed in the animation on the top of the page, pedestrians can be equipped with orienting abilities and different knowledge degrees of the environment. The latter quantity indicates the level of knowledge of the pedestrian concerning the environment prior to the start of the simulation, thus it does not take into account the knowledge the pedestrian will gain during it. Of the above described types of pedestrians only homogeneous and cognitive pedestrians can be equipped with orienting abilities.
+
+#### Homogeneous orienting pedestrians
+
+The only parameters you need to provide when instancing a homogeneous orienting pedestrian is its knowledge degree and a navigation graph of the environment:
+```yaml
+displacements:
+  - in:
+      type: Point
+      parameters: [0, 0]
+    nodes:
+      type: OrientingHomogeneousPedestrian2D
+      parameters: [0.5, *envGraph]
+```
+The knowledge degree is a `Double` value in [0, 1] describing the percentage of the environment the pedestrian is familiar with. The navigation graph of the environment is a complex data structure which is assumed to be instanced somewhere else in the simulation file. You can obtain such a data structure using the `Deaccon2D` class, and you can instance it in the simulation file using the `variables` key. For more information refer to [how to generate a navigation graph](navmeshes.md) and [how to write simulations in YAML](yaml.md). Note that despite their name, the knowledge degree of different homogeneous orienting pedestrians may differ, and even pedestrians with the same knowledge degree can be different as each one can be familiar with different portions of the environment.
+
+#### Cognitive orienting pedestrian
+
+Cognitive orienting pedestrians can be instanced providing knowledge degree and navigation graph of the environment before all the other parameters needed. Remember to provide them with cognitive behavior or their emotions won't evolve at all:
+```yaml
+reactions: &behavior
+  - time-distribution:
+      type: DiracComb
+      parameters: [1.0]
+    type: CognitiveBehavior
+
+displacements:
+  - in:
+      type: Point
+      parameters: [0, 0]
+    nodes:
+      type: OrientingCognitivePedestrian2D
+      parameters: [0.5, *envGraph, "adult", "male"]
+    programs:
+      - *behavior
+```
+
+#### Orienting behavior
+
+Similarly to cognitive pedestrians and the correspondent behavior, in order for orienting pedestrians to be able to navigate the environment, you need to provide them with the orienting behavior. Such object is a _reaction_ that will exploit the spatial information available to a pedestrian in order to navigate the environment towards (or in search of) a destination. It will also register new information gained by the pedestrian during the simulation.
+
+The only parameter you need to specify when declaring an orienting behavior is the navigation graph of the environment:
+```yaml
+reactions: &behavior
+  - time-distribution:
+      type: DiracComb
+      parameters: [1.0]
+    type: OrientingBehavior2D
+    parameters: [*envGraph]
+```
+As you may have noted, no destination is specified. This is because the navigation graph provides a set of destinations itself, which will be used by the orienting behavior.
+
 ### Evacuation Scenarios
 Pedestrians can be loaded in any kind of _Environment_ but it is recommended to use _PhysicsEnvironments_ since they
 have properties such as non-overlapping shapes which are advisable to be taken into consideration 
@@ -247,3 +301,6 @@ Transactions on Computational Collective Intelligence XXVII. 2017.](https://doi.
 
 [Craig W. Reynolds\
 Steering Behaviors for Autonomous Characters. 1999.](http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.16.8035)
+
+[Erik Andresen, Mohcine Chraibi & Armin Seyfried\
+A representation of partial spatial knowledge: a cognitive map approach for evacuation simulations](https://www.tandfonline.com/doi/full/10.1080/23249935.2018.1432717)

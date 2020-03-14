@@ -173,46 +173,46 @@ class Deaccon2D(
         val step = crossingSide ?: navMesh.second
         val builder = NavigationGraphBuilder<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DCrossing>(walkableAreas.size)
         walkableAreas.forEach { builder.addNode(it) }
-        walkableAreas.forEachIndexed { aIndex, a ->
+        walkableAreas.forEachIndexed { areaIndex, area ->
             /*
-             * We want to find the neighbors of a (the regions whose distance from a is
+             * We want to find the neighbors of area (the regions whose distance from area is
              * <= step), thus we advance each of its edges and see which regions are intersected
              */
-            a.vertices().indices.forEach { i ->
-                val oldEdge = a.getEdge(i)
-                if (a.advanceEdge(i, step)) {
+            area.vertices().indices.forEach { i ->
+                val oldEdge = area.getEdge(i)
+                if (area.advanceEdge(i, step)) {
                     val intersectingRegions = walkableAreas
                         .filterIndexed { rIndex, r ->
-                            rIndex != aIndex && r.intersects(a.asAwtShape())
+                            rIndex != areaIndex && r.intersects(area.asAwtShape())
                         }
-                    val intersectingObstacles = envObstacles.filter { a.intersects(it) }
-                    val size = a.vertices().size
+                    val intersectingObstacles = envObstacles.filter { area.intersects(it) }
+                    val size = area.vertices().size
                     /*
                      * When advancing edge i also edges i-1 and i+1 are modified
                      */
-                    val prevEdge = a.getEdge((i - 1 + size) % size)
-                    val advancedEdge = a.getEdge(i)
-                    val nextEdge = a.getEdge((i + 1) % size)
-                    a.moveEdge(i, oldEdge)
+                    val prevEdge = area.getEdge((i - 1 + size) % size)
+                    val advancedEdge = area.getEdge(i)
+                    val nextEdge = area.getEdge((i + 1) % size)
+                    area.moveEdge(i, oldEdge)
                     with(intersectingRegions) {
                         /*
                          * We consider only the basic case in which only one neighbor is found
                          * and the advanced edge is completely contained in it
                          */
-                        if (this.size == 1 && !builder.edgesFrom(a).map { it.head }.contains(first()) &&
+                        if (this.size == 1 && !builder.edgesFrom(area).map { it.head }.contains(first()) &&
                             first().containsOrLiesOnBoundary(advancedEdge.first) &&
                             first().containsOrLiesOnBoundary(advancedEdge.second)) {
                             val neighbor = first()
                             if (intersectingObstacles.isEmpty()) {
-                                builder.addEdge(a, neighbor, oldEdge)
+                                builder.addEdge(area, neighbor, oldEdge)
                                 /*
                                  * See [Euclidean2DCrossing], we need to find the segment on
-                                 * neighbor's boundary that leads to region a.
+                                 * neighbor's boundary that leads to region area.
                                  */
                                 val intrudingEdge = neighbor.findIntrudingEdge(prevEdge, nextEdge)
                                 val p1: Euclidean2DPosition = intersection(intrudingEdge, prevEdge).intersection.get()
                                 val p2: Euclidean2DPosition = intersection(intrudingEdge, nextEdge).intersection.get()
-                                builder.addEdge(neighbor, a, Euclidean2DSegment(p1, p2))
+                                builder.addEdge(neighbor, area, Euclidean2DSegment(p1, p2))
                             }
                             /*
                              * We also deal with the case in which obstacles are intersected but
@@ -254,23 +254,23 @@ class Deaccon2D(
                                 }.toMutableList()
                                 var index = 0
                                 while (index < passages.size) {
-                                    var p = passages[index]
+                                    var interval = passages[index]
                                     for (obs in obstacleIntervals) {
-                                        val subtraction = p.subtract(obs)
+                                        val subtraction = interval.subtract(obs)
                                         if (subtraction.isEmpty()) {
                                             passages.removeAt(index)
                                             index--
                                             break
                                         } else {
-                                            p = subtraction.first()
-                                            passages[index] = p
-                                            subtraction.filter { it != p }.forEach { passages.add(it) }
+                                            interval = subtraction.first()
+                                            passages[index] = interval
+                                            subtraction.filter { it != interval }.forEach { passages.add(it) }
                                         }
                                     }
                                     index++
                                 }
                                 /*
-                                 * Each passage will be an edge (actually, a pair of edge, one in
+                                 * Each passage will be an edge (actually, area pair of edge, one in
                                  * each direction) in the generated graph
                                  */
                                 passages
@@ -289,7 +289,7 @@ class Deaccon2D(
                                                 )
                                             }
                                         }
-                                        builder.addEdge(a, neighbor, passage)
+                                        builder.addEdge(area, neighbor, passage)
                                         val intrudingEdge = neighbor.findIntrudingEdge(prevEdge, nextEdge)
                                         val p1 = if (advancedEdge.isXAxisAligned()) {
                                             intrudingEdge.findPointOnLineGivenX(passage.first.x)
@@ -302,7 +302,7 @@ class Deaccon2D(
                                             intrudingEdge.findPointOnLineGivenY(passage.second.y)
                                         }
                                         if (p1 != null && p2 != null) {
-                                            builder.addEdge(neighbor, a, Pair(p1, p2))
+                                            builder.addEdge(neighbor, area, Pair(p1, p2))
                                         }
                                     }
                             }

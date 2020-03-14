@@ -7,8 +7,13 @@ import it.unibo.alchemist.model.interfaces.Position2D
 
 class TestOrientingBehavior<T, P : Position2D<P>> : StringSpec({
 
-    fun runSimulation(name: String, tolerance: Double, numSteps: Long, vararg coords: Number) {
-        loadYamlSimulation<T, P>(name).startSimulation(
+    /*
+     * Runs the specified simulation for the specified number of steps. At the end, it
+     * checks that the distance of each pedestrian from the target position specified
+     * with coords is less than the specified tolerance.
+     */
+    fun runSimulation(simulation: String, tolerance: Double, numSteps: Long, vararg coords: Number) {
+        loadYamlSimulation<T, P>(simulation).startSimulation(
             finished = { e, _, _ ->
                 e.nodes
                     .filterIsInstance<OrientingPedestrian<T, *, *, *, *>>()

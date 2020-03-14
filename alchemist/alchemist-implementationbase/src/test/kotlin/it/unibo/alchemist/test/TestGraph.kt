@@ -59,10 +59,16 @@ class TestGraph {
         Assertions.assertEquals(false, graph.isReachable(3, 2))
         Assertions.assertEquals(false, graph.isReachable(1, 7))
         Assertions.assertEquals(true, graph.isReachable(7, 9))
-        Assertions.assertEquals(mutableListOf(1, 4, 6), graph.dijkstraShortestPath(1, 6, { 1.0 })!!.path)
+        var path = graph.dijkstraShortestPath(1, 6, { 1.0 })
+        require(path != null) { "path shouldn't be null" }
+        Assertions.assertEquals(mutableListOf(1, 4, 6), path.path)
         Assertions.assertEquals(null, graph.dijkstraShortestPath(1, 7, { 1.0 }))
-        Assertions.assertEquals(mutableListOf(7, 8, 9), graph.dijkstraShortestPath(7, 9, { 1.0 })!!.path)
-        Assertions.assertEquals(mutableListOf(7), graph.dijkstraShortestPath(7, 7, { 1.0 })!!.path)
+        path = graph.dijkstraShortestPath(7, 9, { 1.0 })
+        require(path != null) { "path shouldn't be null" }
+        Assertions.assertEquals(mutableListOf(7, 8, 9), path.path)
+        path = graph.dijkstraShortestPath(7, 7, { 1.0 })
+        require(path != null) { "path shouldn't be null" }
+        Assertions.assertEquals(mutableListOf(7), path.path)
     }
 
     @Test

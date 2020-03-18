@@ -230,6 +230,21 @@ The knowledge degree is a `Double` value in [0, 1] describing the percentage of 
 
 Cognitive orienting pedestrians can be instanced providing knowledge degree and navigation graph of the environment before all the other parameters needed. Remember to provide them with cognitive behavior or their emotions won't evolve at all:
 ```yaml
+variables:
+  envGraph: &envGraph
+    formula: |
+      import it.unibo.alchemist.model.implementations.geometry.navigationmeshes.deaccon.Deaccon2D
+      import java.awt.geom.Point2D
+      import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+      Deaccon2D().generateEnvGraph(
+        Point2D.Double(0.0, 0.0), 
+        100.0, 
+        100.0, 
+        ImageEnvironment<Number>("path/to/myEnv.png").obstacles, 
+        mutableListOf(Euclidean2DPosition(50.0, 50.0))
+      )
+    language: kotlin
+
 reactions: &behavior
   - time-distribution:
       type: DiracComb
@@ -253,6 +268,21 @@ Similarly to cognitive pedestrians and the correspondent behavior, in order for 
 
 The only parameter you need to specify when declaring an orienting behavior is the navigation graph of the environment:
 ```yaml
+variables:
+  envGraph: &envGraph
+    formula: |
+      import it.unibo.alchemist.model.implementations.geometry.navigationmeshes.deaccon.Deaccon2D
+      import java.awt.geom.Point2D
+      import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+      Deaccon2D().generateEnvGraph(
+        Point2D.Double(0.0, 0.0), 
+        100.0, 
+        100.0, 
+        ImageEnvironment<Number>("path/to/myEnv.png").obstacles, 
+        mutableListOf(Euclidean2DPosition(50.0, 50.0))
+      )
+    language: kotlin
+
 reactions: &behavior
   - time-distribution:
       type: DiracComb

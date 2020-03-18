@@ -201,6 +201,21 @@ As showed in the animation on the top of the page, pedestrians can be equipped w
 
 The only parameters you need to provide when instancing a homogeneous orienting pedestrian is its knowledge degree and a navigation graph of the environment:
 ```yaml
+variables:
+  envGraph: &envGraph
+    formula: |
+      import it.unibo.alchemist.model.implementations.geometry.navigationmeshes.deaccon.Deaccon2D
+      import java.awt.geom.Point2D
+      import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+      Deaccon2D().generateEnvGraph(
+        Point2D.Double(0.0, 0.0), 
+        100.0, 
+        100.0, 
+        ImageEnvironment<Number>("path/to/myEnv.png").obstacles, 
+        mutableListOf(Euclidean2DPosition(50.0, 50.0))
+      )
+    language: kotlin
+
 displacements:
   - in:
       type: Point
@@ -209,7 +224,7 @@ displacements:
       type: OrientingHomogeneousPedestrian2D
       parameters: [0.5, *envGraph]
 ```
-The knowledge degree is a `Double` value in [0, 1] describing the percentage of the environment the pedestrian is familiar with. The navigation graph of the environment is a complex data structure which is assumed to be instanced somewhere else in the simulation file. You can obtain such a data structure using the `Deaccon2D` class, and you can instance it in the simulation file using the `variables` key. For more information refer to [how to generate a navigation graph](navmeshes.md) and [how to write simulations in YAML](yaml.md). Note that despite their name, the knowledge degree of different homogeneous orienting pedestrians may differ, and even pedestrians with the same knowledge degree can be different as each one can be familiar with different portions of the environment.
+The knowledge degree is a `Double` value in [0, 1] describing the percentage of the environment the pedestrian is familiar with. The navigation graph of the environment is a complex data structure which can be obtained using the `Deaccon2D` class, and can be instanced in the simulation file using the `variables` key. For more information refer to [how to generate a navigation graph](navmeshes.md) and [how to write simulations in YAML](yaml.md). Note that despite their name, the knowledge degree of different homogeneous orienting pedestrians may differ, and even pedestrians with the same knowledge degree can be different as each one can be familiar with different portions of the environment.
 
 #### Cognitive orienting pedestrian
 

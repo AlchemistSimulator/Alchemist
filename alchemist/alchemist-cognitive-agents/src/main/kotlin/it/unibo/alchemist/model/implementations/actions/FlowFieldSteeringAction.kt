@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
  *          the owner of this action.
  * @param targetMolecule
  *          the {@link Molecule} you want to know the concentration in the different positions of the environment.
- * @param formula
+ * @param selectPosition
  *          the logic according to the target position is determined from all the positions checked.
  */
 open class FlowFieldSteeringAction<T>(
@@ -25,7 +25,7 @@ open class FlowFieldSteeringAction<T>(
     reaction: Reaction<T>,
     private val pedestrian: Pedestrian2D<T>,
     private val targetMolecule: Molecule,
-    private val formula: Iterable<Euclidean2DPosition>.(Molecule) -> Euclidean2DPosition,
+    private val selectPosition: Iterable<Euclidean2DPosition>.(Molecule) -> Euclidean2DPosition,
     targetSelectionStrategy: TargetSelectionStrategy<Euclidean2DPosition>
 ) : SteeringActionImpl<T, Euclidean2DPosition>(
     env,
@@ -33,17 +33,10 @@ open class FlowFieldSteeringAction<T>(
     pedestrian,
     targetSelectionStrategy
 ) {
-    override fun interpolatePositions(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double): Euclidean2DPosition {
-        val canFit = current.surrounding(env, maxWalk)
-                // .union(current.surrounding(env, maxWalk / 2))
+
+    override fun interpolatePositions(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double): Euclidean2DPosition =
+        current.surrounding(env, maxWalk)
                 .filter { env.canNodeFitPosition(pedestrian, it) }
-                /*
-                .filter {
-                    if (env is EuclideanPhysics2DEnvironmentWithObstacles<*, *>) {
-                        env.canNodeFitPosition(pedestrian, env.next(current.x, current.y, it.x, it.y))
-                    } else true
-                }
-                 */
-        return canFit.formula(targetMolecule) - current
-    }
+                .toMutableList()
+                .selectPosition(targetMolecule) - current
 }

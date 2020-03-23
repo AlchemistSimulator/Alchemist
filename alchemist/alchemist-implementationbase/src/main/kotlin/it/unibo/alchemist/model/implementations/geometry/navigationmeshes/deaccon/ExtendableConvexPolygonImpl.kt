@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.implementations.geometry.toVector
 import it.unibo.alchemist.model.implementations.geometry.dot
 import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.MutableConvexPolygonImpl
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DEdge
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSegment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.MutableConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.navigationmeshes.deaccon.ExtendableConvexPolygon
 import org.danilopianini.lang.MathUtils.fuzzyEquals
@@ -67,7 +67,7 @@ open class ExtendableConvexPolygonImpl(
         return false
     }
 
-    override fun moveEdge(index: Int, newEdge: Euclidean2DEdge): Boolean {
+    override fun moveEdge(index: Int, newEdge: Euclidean2DSegment): Boolean {
         val modifiedEdges = mutableListOf(circularPrev(index), index, circularNext(index))
             .map { it to getEdge(it) }
         if (super.moveEdge(index, newEdge)) {
@@ -195,7 +195,7 @@ open class ExtendableConvexPolygonImpl(
      * accepts the index of the modified edge and the old edge and applies
      * different policies to decide if each cache is to be voided.
      */
-    private fun voidCacheAt(index: Int, old: Euclidean2DEdge) {
+    private fun voidCacheAt(index: Int, old: Euclidean2DSegment) {
         val new = getEdge(index)
         canEdgeAdvance[index] = true
         if (!fuzzyEquals(old.slope(), new.slope()) && !(old.isDegenerate() || new.isDegenerate())) {
@@ -208,7 +208,7 @@ open class ExtendableConvexPolygonImpl(
      * Each vector has "two" normals: n and -n. This method is all about figuring
      * out which of the two is to be used to allow the polygon to extend.
      */
-    private fun Euclidean2DEdge.computeNormal(index: Int): Euclidean2DPosition {
+    private fun Euclidean2DSegment.computeNormal(index: Int): Euclidean2DPosition {
         val curr = toVector()
         val prev = getEdge(circularPrev(index)).toVector()
         val n = curr.normal().normalize()
@@ -242,7 +242,7 @@ open class ExtendableConvexPolygonImpl(
      * advancement). The index of the growing edge and the step of growth should
      * be provided as well.
      */
-    private fun findIntrudedEdge(obstacle: Shape, index: Int, step: Double): Euclidean2DEdge {
+    private fun findIntrudedEdge(obstacle: Shape, index: Int, step: Double): Euclidean2DSegment {
         var intrudingVertex = getEdge(index).first
         var d = growthDirections[index]!!.first!!
         if (!obstacle.contains(intrudingVertex.toPoint())) {
@@ -259,7 +259,7 @@ open class ExtendableConvexPolygonImpl(
     /*
      * Finds the edges of the obstacle intersecting with the given edge of the polygon.
      */
-    private fun findIntersectingEdges(obstacle: Shape, e: Euclidean2DEdge) =
+    private fun findIntersectingEdges(obstacle: Shape, e: Euclidean2DSegment) =
         obstacle.vertices().run {
             mapIndexed { i, v -> Pair(v, this[(i + 1) % size]) }.filter { edgesIntersect(it, e) }
         }
@@ -267,7 +267,7 @@ open class ExtendableConvexPolygonImpl(
     /*
      * Delegates the check to java.awt.geom.Line2D.
      */
-    private fun edgesIntersect(e1: Euclidean2DEdge, e2: Euclidean2DEdge) =
+    private fun edgesIntersect(e1: Euclidean2DSegment, e2: Euclidean2DSegment) =
         Line2D.Double(e1.first.toPoint(), e1.second.toPoint())
             .intersectsLine(e2.first.x, e2.first.y, e2.second.x, e2.second.y)
 

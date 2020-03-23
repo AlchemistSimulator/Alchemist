@@ -1,8 +1,23 @@
 package it.unibo.alchemist.model.implementations.geometry.navigationmeshes.deaccon
 
+import it.unibo.alchemist.model.implementations.geometry.intersects
+import it.unibo.alchemist.model.implementations.geometry.vertices
+import it.unibo.alchemist.model.implementations.geometry.isXAxisAligned
+import it.unibo.alchemist.model.implementations.geometry.intersection
+import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionTypes
+import it.unibo.alchemist.model.implementations.geometry.findPointOnLineGivenX
+import it.unibo.alchemist.model.implementations.geometry.findPointOnLineGivenY
+import it.unibo.alchemist.model.implementations.geometry.isAxisAligned
+import it.unibo.alchemist.model.implementations.graph.Euclidean2DCrossing
+import it.unibo.alchemist.model.implementations.graph.builder.NavigationGraphBuilder
+import it.unibo.alchemist.model.implementations.graph.builder.addEdge
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSegment
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.geometry.navigationmeshes.deaccon.ExtendableConvexPolygon
+import org.danilopianini.lang.MathUtils.fuzzyEquals
 import java.awt.Shape
 import java.awt.geom.Point2D
 import kotlin.math.sqrt
@@ -118,47 +133,232 @@ class Deaccon2D(
      * segment connecting two points will be considered as a straight line
      * between them.
      */
-    /*
-     * Generally speaking, obstacles may be categorized into the following categories:
-     *
-     * - Polygons (plane figures described by a finite number of straight line segments
-     * connected to form a closed polygonal chain or polygonal circuit). Polygons can
-     * be:
-     * -- convex: these are the easiest to treat, and the only supported ones
-     * -- concave: it's fairly easy to convert a concave polygon to a mesh of convex
-     * ones, so they can be treated as well
-     *
-     * - Curves (formally, curves aren't necessarily closed. In this context, however,
-     * I am referring to closed shapes with some curved segment). The algorithm does
-     * not support any type of curves at present, so curved obstacles need to be
-     * converted to polygonal ones (e.g. using a bounding box, eventually an arbitrarily
-     * oriented minimum bounding box).
-     * In the future, however, the algorithm may be modified to support this kind of
-     * obstacles. In particular, the growing phase should be modified to support curves.
-     * Different scenarios involving both curved convex obstacles and concave ones
-     * need to be taken into account. This possible future modification is the only reason
-     * why this method does not take a Collection<ConvexPolygon> as input for obstacles.
+    private fun generateNavigationMesh(envStart: Point2D, envWidth: Double, envHeight: Double, envObstacles: Collection<Shape>): Collection<ConvexPolygon> =
+        generateNavigationMeshHelper(envStart, envWidth, envHeight, envObstacles).first
+
+    /**
+     * See [generateNavigationMesh]. This method allow to specify the initial
+     * positions of seeds and their initial side. Note that active seeding
+     * and cleaning phases won't be performed.
      */
-    fun generateNavigationMesh(envStart: Point2D, envWidth: Double, envHeight: Double, envObstacles: Collection<Shape>): Collection<ConvexPolygon> {
+    private fun generateNavigationMesh(envStart: Point2D, envWidth: Double, envHeight: Double, envObstacles: Collection<Shape>, seedsPositions: Collection<Point2D>, side: Double): Collection<ConvexPolygon> =
+        generateNavigationMeshHelper(envStart, envWidth, envHeight, envObstacles, seedsPositions, side).first
+
+    /**
+     * Generates a navigation graph of the environment. Nodes are [ConvexPolygon]s
+     * and edges are [Euclidean2DCrossing]s. The only difference from a navigation mesh
+     * is that an environment's graph provides information regarding the connection
+     * between convex polygons.
+     */
+    fun generateEnvGraph(envStart: Point2D, envWidth: Double, envHeight: Double, envObstacles: Collection<Shape>, destinations: Collection<Euclidean2DPosition>): NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DCrossing> =
+        generateEnvGraph(generateNavigationMeshHelper(envStart, envWidth, envHeight, envObstacles), destinations, envObstacles)
+
+    /**
+     * See [generateEnvGraph]. This method allow to specify the positions
+     * where to plant seeds and their side, as well as the side of crossings.
+     * The latter quantity specify the maximum distance of two neighboring
+     * areas, i.e. two areas whose distance is <= crossingSide will be considered
+     * connected (if no obstacle is between them). Note that active seeding and
+     * cleaning phases won't be performed.
+     */
+    fun generateEnvGraph(envStart: Point2D, envWidth: Double, envHeight: Double, envObstacles: Collection<Shape>, seedsPositions: Collection<Point2D>, side: Double, destinations: Collection<Euclidean2DPosition>, crossingSide: Double? = null): NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DCrossing> =
+        generateEnvGraph(generateNavigationMeshHelper(envStart, envWidth, envHeight, envObstacles, seedsPositions, side), destinations, envObstacles, crossingSide)
+
+    /*
+     * This is a basic algorithm for generating an environment's graph.
+     * It requires no degenerate edge or collinear points in the walkable areas.
+     */
+    private fun generateEnvGraph(navMesh: Pair<Collection<ExtendableConvexPolygon>, Double>, destinations: Collection<Euclidean2DPosition>, envObstacles: Collection<Shape>, crossingSide: Double? = null): NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DCrossing> {
+        val walkableAreas = navMesh.first
+        val step = crossingSide ?: navMesh.second
+        val builder = NavigationGraphBuilder<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DCrossing>(walkableAreas.size)
+        walkableAreas.forEach { builder.addNode(it) }
+        walkableAreas.forEachIndexed { areaIndex, area ->
+            /*
+             * We want to find the neighbors of area (the regions whose distance from area is
+             * <= step), thus we advance each of its edges and see which regions are intersected
+             */
+            area.vertices().indices.forEach { i ->
+                val oldEdge = area.getEdge(i)
+                if (area.advanceEdge(i, step)) {
+                    val intersectingRegions = walkableAreas
+                        .filterIndexed { rIndex, r ->
+                            rIndex != areaIndex && r.intersects(area.asAwtShape())
+                        }
+                    val intersectingObstacles = envObstacles.filter { area.intersects(it) }
+                    val size = area.vertices().size
+                    /*
+                     * When advancing edge i also edges i-1 and i+1 are modified
+                     */
+                    val prevEdge = area.getEdge((i - 1 + size) % size)
+                    val advancedEdge = area.getEdge(i)
+                    val nextEdge = area.getEdge((i + 1) % size)
+                    area.moveEdge(i, oldEdge)
+                    with(intersectingRegions) {
+                        /*
+                         * We consider only the basic case in which only one neighbor is found
+                         * and the advanced edge is completely contained in it
+                         */
+                        if (this.size == 1 && !builder.edgesFrom(area).map { it.head }.contains(first()) &&
+                            first().containsOrLiesOnBoundary(advancedEdge.first) &&
+                            first().containsOrLiesOnBoundary(advancedEdge.second)) {
+                            val neighbor = first()
+                            if (intersectingObstacles.isEmpty()) {
+                                builder.addEdge(area, neighbor, oldEdge)
+                                /*
+                                 * See [Euclidean2DCrossing], we need to find the segment on
+                                 * neighbor's boundary that leads to region area.
+                                 */
+                                val intrudingEdge = neighbor.findIntrudingEdge(prevEdge, nextEdge)
+                                val p1: Euclidean2DPosition = intersection(intrudingEdge, prevEdge).intersection.get()
+                                val p2: Euclidean2DPosition = intersection(intrudingEdge, nextEdge).intersection.get()
+                                builder.addEdge(neighbor, area, Euclidean2DSegment(p1, p2))
+                            }
+                            /*
+                             * We also deal with the case in which obstacles are intersected but
+                             * only if the advanced edge is axis-aligned.
+                             */
+                            else if (advancedEdge.isAxisAligned()) {
+                                val selector: (Euclidean2DPosition) -> Double =
+                                    if (advancedEdge.isXAxisAligned()) { p -> p.x } else { p -> p.y }
+                                /*
+                                 * Once we know the advanced edge is axis-aligned, we are only interested
+                                 * in the intervals occluded by obstacles along such axis.
+                                 */
+                                val obstacleIntervals = intersectingObstacles
+                                    .map { it.vertices() }
+                                    .mapNotNull {
+                                        val min = it.minBy(selector)?.run(selector)
+                                        val max = it.maxBy(selector)?.run(selector)
+                                        if (min == null || max == null) {
+                                            null
+                                        } else {
+                                            Pair(min, max)
+                                        }
+                                    }
+                                /*
+                                 * Passages are the intervals not occluded by obstacles along the axis
+                                 * (at the beginning, the whole edge is considered as not occluded, then
+                                 * each obstacle is considered to figure out which portions of the edge
+                                 * are "free")
+                                 */
+                                val passages = mutableListOf(
+                                    Pair(advancedEdge.first.run(selector), advancedEdge.second.run(selector))
+                                ).map {
+                                    /*
+                                     * We want ordered intervals
+                                     */
+                                    if (it.first > it.second) {
+                                        Pair(it.second, it.first)
+                                    } else it
+                                }.toMutableList()
+                                var index = 0
+                                while (index < passages.size) {
+                                    var interval = passages[index]
+                                    for (obs in obstacleIntervals) {
+                                        val subtraction = interval.subtract(obs)
+                                        if (subtraction.isEmpty()) {
+                                            passages.removeAt(index)
+                                            index--
+                                            break
+                                        } else {
+                                            interval = subtraction.first()
+                                            passages[index] = interval
+                                            subtraction.filter { it != interval }.forEach { passages.add(it) }
+                                        }
+                                    }
+                                    index++
+                                }
+                                /*
+                                 * Each passage will be an edge (actually, area pair of edge, one in
+                                 * each direction) in the generated graph
+                                 */
+                                passages
+                                    .filter { !fuzzyEquals(it.first, it.second) }
+                                    .forEach {
+                                        val passage = with(oldEdge.first) {
+                                            if (advancedEdge.isXAxisAligned()) {
+                                                Pair(
+                                                    Euclidean2DPosition(it.first, y),
+                                                    Euclidean2DPosition(it.second, y)
+                                                )
+                                            } else {
+                                                Pair(
+                                                    Euclidean2DPosition(x, it.first),
+                                                    Euclidean2DPosition(x, it.second)
+                                                )
+                                            }
+                                        }
+                                        builder.addEdge(area, neighbor, passage)
+                                        val intrudingEdge = neighbor.findIntrudingEdge(prevEdge, nextEdge)
+                                        val p1 = if (advancedEdge.isXAxisAligned()) {
+                                            intrudingEdge.findPointOnLineGivenX(passage.first.x)
+                                        } else {
+                                            intrudingEdge.findPointOnLineGivenY(passage.first.y)
+                                        }
+                                        val p2 = if (advancedEdge.isXAxisAligned()) {
+                                            intrudingEdge.findPointOnLineGivenX(passage.second.x)
+                                        } else {
+                                            intrudingEdge.findPointOnLineGivenY(passage.second.y)
+                                        }
+                                        if (p1 != null && p2 != null) {
+                                            builder.addEdge(neighbor, area, Pair(p1, p2))
+                                        }
+                                    }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return builder.build(destinations.toList())
+    }
+
+    /*
+     * This helper function generates a navigation mesh and returns the step of growth used,
+     * which may be useful for various things (e.g. generating a graph from the nav mesh).
+     */
+    private fun generateNavigationMeshHelper(envStart: Point2D, envWidth: Double, envHeight: Double, envObstacles: Collection<Shape>): Pair<MutableList<ExtendableConvexPolygon>, Double> {
         require(envWidth > 0.0 && envHeight > 0.0) { "invalid environment" }
         val envEnd = Point2D.Double(envStart.x + envWidth, envStart.y + envHeight)
-        // first seeding
+        /*
+         * first seeding
+         */
         var nSeeds = this.nSeeds
         var side = sqrt((envWidth * envHeight) * AREA_TO_COVER / nSeeds)
         val (stepX, stepY) = computeSteps(envWidth, envHeight, nSeeds, side)
         var stepOfGrowth = (stepX + stepY) / 2 / STEP_OF_GROWTH_SCALE
         val walkableAreas = seedAndGrow(envStart, envEnd, envObstacles, nSeeds, side, stepOfGrowth).toMutableList()
-        // active seeding
+        /*
+         * active seeding
+         */
         nSeeds *= N_ACTIVE_SEEDS_SCALE
         side = stepOfGrowth * SIDE_ACTIVE_SEEDS_SCALE
         stepOfGrowth *= STEP_OF_GROWTH_ACTIVE_SEEDS_SCALE
         val obstacles = envObstacles.toMutableList()
-        obstacles.addAll(walkableAreas.map { it.asAwtShape() }) // already generated regions are obstacles for new seeds
+        /*
+         * already generated regions are obstacles for new seeds
+         */
+        obstacles.addAll(walkableAreas.map { it.asAwtShape() })
         walkableAreas.addAll(seedAndGrow(envStart, envEnd, obstacles, nSeeds, side, stepOfGrowth))
-        return walkableAreas
+        return Pair(walkableAreas, stepOfGrowth)
     }
 
-    private fun seedAndGrow(envStart: Point2D, envEnd: Point2D, obstacles: Collection<Shape>, nSeeds: Int, side: Double, stepOfGrowth: Double): Collection<ConvexPolygon> {
+    /*
+     * Similarly to the previous function, this helper fun generates a nav mesh and returns
+     * the step of growth used, but allows to specify the positions of initial seeds as well
+     * as their initial side.
+     */
+    private fun generateNavigationMeshHelper(envStart: Point2D, envWidth: Double, envHeight: Double, envObstacles: Collection<Shape>, seedsPositions: Collection<Point2D>, side: Double): Pair<MutableList<ExtendableConvexPolygon>, Double> {
+        require(envWidth > 0.0 && envHeight > 0.0) { "invalid environment" }
+        val envEnd = Point2D.Double(envStart.x + envWidth, envStart.y + envHeight)
+        val stepOfGrowth = side / STEP_OF_GROWTH_SCALE
+        val seeds = seedsPositions.map { createRectangularSeed(it.x, it.y, side, side) }.toMutableList()
+        growSeeds(seeds, envObstacles, envStart, envEnd, stepOfGrowth)
+        return Pair(seeds, stepOfGrowth)
+    }
+
+    private fun seedAndGrow(envStart: Point2D, envEnd: Point2D, obstacles: Collection<Shape>, nSeeds: Int, side: Double, stepOfGrowth: Double): MutableCollection<ExtendableConvexPolygon> {
         val (stepX, stepY) = computeSteps(envEnd.x - envStart.x, envEnd.y - envStart.y, nSeeds, side)
         val seeds = seedEnvironment(envStart, envEnd, side, stepX, stepY).toMutableList()
         growSeeds(seeds, obstacles, envStart, envEnd, stepOfGrowth)
@@ -189,9 +389,6 @@ class Deaccon2D(
         return seeds
     }
 
-    /*
-     * Grows the seeds until possible.
-     */
     private fun growSeeds(seeds: MutableCollection<ExtendableConvexPolygon>, envObstacles: Collection<Shape>, envStart: Point2D, envEnd: Point2D, step: Double) {
         seeds.removeIf { s -> envObstacles.any { s.intersects(it) } }
         val obstacles = envObstacles.toMutableList()
@@ -202,7 +399,10 @@ class Deaccon2D(
             seeds.forEachIndexed { i, s ->
                 // each seed should not consider itself as an obstacle, thus it's removed
                 obstacles.removeAt(envObstacles.size + i)
-                growing = s.extend(step, obstacles, envStart, envEnd)
+                val extended = s.extend(step, obstacles, envStart, envEnd)
+                if (!growing) {
+                    growing = extended
+                }
                 obstacles.add(envObstacles.size + i, s.asAwtShape())
             }
         }
@@ -254,7 +454,7 @@ class Deaccon2D(
         regions.removeAll(incorporated)
     }
 
-    private fun createRectangularSeed(x: Double, y: Double, width: Double, height: Double) =
+    private fun createRectangularSeed(x: Double, y: Double, width: Double, height: Double): ExtendableConvexPolygon =
         ExtendableConvexPolygonImpl(mutableListOf(
             Euclidean2DPosition(x, y),
             Euclidean2DPosition(x + width, y),
@@ -277,4 +477,54 @@ class Deaccon2D(
         val stepX = (envWidth - x * side) / x
         return Pair(stepX, stepY)
     }
+
+    /*
+     * Subtracts a given interval from the current one.
+     */
+    private fun Pair<Double, Double>.subtract(i: Pair<Double, Double>): MutableList<Pair<Double, Double>> {
+        val min = mutableListOf(first, second, i.first, i.second).min()!!
+        if (min < 0) {
+            /*
+             * If there are negative values just translate the two intervals
+             * in [0,N] and translate the results back in the original intervals.
+             */
+            return Pair(first + min, second + min)
+                .subtract(Pair(i.first + min, i.second + min))
+                .map { Pair(it.first - min, it.second - min) }
+                .toMutableList()
+        }
+        if (isContained(i)) {
+            return mutableListOf()
+        }
+        if (!intersects(i.first, i.second)) {
+            return mutableListOf(this)
+        }
+        if (i.first <= first) {
+            return mutableListOf(Pair(i.second, second))
+        }
+        val res = Pair(first, i.first)
+        return if (i.second < second) {
+            mutableListOf(res, Pair(i.second, second))
+        } else {
+            mutableListOf(res)
+        }
+    }
+
+    /*
+     * Checks whether the interval is contained in another given interval i.
+     * Pair values must be ordered (i.e. first <= second).
+     */
+    private fun Pair<Double, Double>.isContained(i: Pair<Double, Double>): Boolean =
+        i.first <= first && i.second >= second
+
+    /*
+     * Find the first edge of the polygon intruding with both the given segments.
+     */
+    private fun ConvexPolygon.findIntrudingEdge(s1: Euclidean2DSegment, s2: Euclidean2DSegment) =
+        vertices().indices
+            .map { getEdge(it) }
+            .first {
+                intersection(it, s1).type == SegmentsIntersectionTypes.POINT &&
+                    intersection(it, s2).type == SegmentsIntersectionTypes.POINT
+            }
 }
